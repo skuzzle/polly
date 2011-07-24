@@ -31,6 +31,8 @@ public class RemindCommand extends AbstractRemindCommand {
                 new StringType());
         this.createSignature("Erinnert dich zu einer bestimmten Zeit an etwas.", 
                 new DateType(), new StringType());
+        this.createSignature("Erinnert den angegebenen Benutzer per Query an etwas.", 
+            new UserType(), new DateType(), new StringType());
         this.setRegisteredOnly();
         this.setHelpText("Hinterlässt Erinnerungen für Benutzer.");
     }
@@ -75,6 +77,21 @@ public class RemindCommand extends AbstractRemindCommand {
             
             RemindEntity remind = new RemindEntity(msg, executer.getCurrentNickName(), 
                     executer.getCurrentNickName(), channel, dueDate);
+            this.addRemind(remind, true);
+            this.reply(channel, FORMATTER.format(remind, this.getMyPolly().formatting()));
+        } else if (this.match(signature, 3)) {
+            /*
+             * ISSUE: 0000021
+             * This signatures allows to create reminds that are delivered via query
+             */
+            String forUser = signature.getStringValue(0);
+            Date dueDate = signature.getDateValue(1);
+            String msg = signature.getStringValue(2);
+            String fromUser = executer.getCurrentNickName();
+            
+
+            RemindEntity remind = new RemindEntity(msg, fromUser, forUser, forUser, 
+                    dueDate);
             this.addRemind(remind, true);
             this.reply(channel, FORMATTER.format(remind, this.getMyPolly().formatting()));
         }
