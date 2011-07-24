@@ -1,0 +1,1 @@
+java -cp polly/dist/polly.jar polly.MD5Tool %1

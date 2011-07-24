@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="polly" basedir="." default="dist">
+
+    <property name="version.num" value="Beta 0.5"/>
+    <property name="src.dir" value="src"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="cfg.dir" value="cfg"/>
+    <property name="classes.dir" value="classes"/>
+    <property name="lib.dir" value="lib"/>
+    <property name="plugin.dir" value="cfg/plugins"/>
+    <property name="dist.lib.dir" value="dist/lib"/>
+    <property name="dist.cfg.dir" value="dist/cfg"/>
+    <property name="dist.log.dir" value="dist/logs"/>
+    <property name="dist.plugin.dir" value="dist/cfg/plugins"/>
+    <property name="dist.cache.dir" value="dist/cache"/>
+    <property name="zip.filename" value="${ant.project.name}.zip"/>
+    <property name="classpath" value="./lib/de.skuzzle.polly.sdk.jar 
+                                      ./lib/log4j-1.2.16.jar
+                                      ./lib/de.skuzzle.polly.parser.jar
+                                      ./lib/eclipselink.jar
+                                      ./lib/javax.persistence_2.0.3.v201010191057.jar
+                                      ./lib/hsqldb.jar
+                                      ./lib/pircbot.jar"/>
+
+
+    <buildnumber file="build.num"/>
+    <tstamp>
+        <format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
+    </tstamp>
+   
+    <path id="libraries">
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+    </path>
+    
+    <target name="init">
+        <mkdir dir="${classes.dir}"/>
+    </target>
+
+
+    <target name="clean" depends="init">
+        <delete dir="${dist.dir}"/>
+        <delete dir="${classes.dir}"/>
+        <delete file="${dist.dir}/${ant.project.name}.jar"/>
+    </target>
+    
+    
+    
+    <target name="prepare" depends="clean">
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${classes.dir}"/>
+        <mkdir dir="${dist.lib.dir}"/>
+        <mkdir dir="${dist.cfg.dir}"/>
+        <mkdir dir="${dist.log.dir}"/>
+        <mkdir dir="${dist.plugin.dir}"/>
+        <mkdir dir="${dist.cache.dir}"/>
+        
+        <copy todir="${dist.lib.dir}">
+            <fileset dir="${lib.dir}" includes="**/*.jar*"/>
+        </copy>
+        <copy todir="${dist.cfg.dir}">
+            <fileset dir="${cfg.dir}"/>
+        </copy>
+        <copy todir="${dist.plugin.dir}">
+            <fileset dir="${plugin.dir}" includes="**/*.jar*"/>
+        </copy>
+    </target>
+
+    
+    <target name="compile" depends="init">
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="libraries" source="1.6" debug="on">
+            <exclude name="de/skuzzle/test/**"/>
+        </javac>
+    </target>
+
+    
+    
+    <target name="dist" depends="prepare,compile">
+        <jar destfile="${dist.dir}/${ant.project.name}.jar">
+            <manifest>
+                <attribute name="Main-Class" value="polly.Polly"/>
+                <attribute name="Implementation-Title" value="Polly"/>
+                <attribute name="Implementation-Version" value="${version.num}--build#${build.number}"/>
+                <attribute name="Class-Path" value="${cfg.dir}/ ${classpath}"/>
+                <attribute name="Build-Date" value="${TODAY}"/>
+            </manifest>
+            <fileset dir="${classes.dir}" excludes="de/skuzzle/test/** src/META-INF/**"/>
+        </jar>
+    </target>
+    
+   
+    
+    <target name="createZipFile" if="zip.filename">
+        <zip destfile="${dist.dir}/${zip.filename}" basedir="${dist.dir}"/>
+    </target>
+</project>

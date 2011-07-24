@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="de.skuzzle.polly.sdk.doc" basedir="." default="javadoc">
+    <property name="src.dir" value="src"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="classes.dir" value="classes"/>
+    <property name="lib.dir" value="lib"/>
+    <property name="zip.filename" value="${ant.project.name}.zip"/>
+    <property name="classpath" value=""/>
+
+    <path id="libraries">
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+    </path>
+    
+    <target name="init">
+        <mkdir dir="${classes.dir}"/>
+    </target>
+
+    
+
+    <target name="clean" depends="init">
+        <delete dir="${dist.dir}"/>
+        <delete dir="${classes.dir}"/>
+        <delete file="${dist.dir}/${ant.project.name}.jar"/>
+    </target>
+    
+    
+    
+    <target name="prepare" depends="clean">
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${classes.dir}"/>
+    </target>
+     
+    
+    
+    <target name="compile" depends="init">
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" source="1.6" debug="on">
+            <exclude name="de/skuzzle/test/**"/>
+        </javac>
+    </target>
+    
+    
+    <target name="javadoc" depends="compile">
+        <javadoc destdir="docs/api" classpathref="libraries" author="true" version="true" use="true"
+                 windowtitle="Polly SDK">
+
+            <packageset dir="src" defaultexcludes="yes">
+            </packageset>
+
+            <doctitle><![CDATA[<h1>Polly Plugin Interface</h1>]]></doctitle>
+            <bottom><![CDATA[]]></bottom>
+            <link href="http://java.sun.com/javase/6/docs/api/"/>
+        </javadoc>
+    </target>
+</project>

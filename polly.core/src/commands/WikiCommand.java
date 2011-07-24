@@ -1,0 +1,25 @@
+package commands;
+
+import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Types.StringType;
+import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
+
+
+
+public class WikiCommand extends SearchEngineCommand {
+
+    public WikiCommand(MyPolly polly) throws DuplicatedSignatureException {
+        super(polly, "wiki");
+        this.createSignature("Gibt einen Link zum angegebenen Wikipedia-Artikel zurück", 
+                new StringType());
+        
+        this.setHelpText("Befehl um Wikipedia-Artikel abzurufen.");
+    }
+
+    
+    
+    @Override
+    protected String getSearchLink(String key) {
+        return "http://de.wikipedia.org/wiki/" + key;
+    }
+}

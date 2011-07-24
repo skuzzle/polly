@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="polly.reminds" basedir="." default="dist">
+
+    <property name="src.dir" value="src"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="classes.dir" value="classes"/>
+    <property name="lib.dir" value="lib"/>
+    <property name="zip.filename" value="${ant.project.name}.zip"/>
+
+    <property name="classpath" value="./lib/de.skuzzle.polly.sdk.jar
+                                      ./lib/javax.persistence.jar 
+                                      ./lib/log4j-1.2.16.jar"/>
+
+    <path id="libraries">
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+    </path>
+    
+    <target name="init">
+        <mkdir dir="${classes.dir}"/>
+    </target>
+
+
+    <target name="clean" depends="init">
+        <delete dir="${dist.dir}"/>
+        <delete dir="${classes.dir}"/>
+        <delete file="${dist.dir}/${ant.project.name}.jar"/>
+    </target>
+    
+    
+    <target name="prepare" depends="clean">
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${classes.dir}"/>
+    </target>
+     
+    
+    <target name="compile" depends="init">
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="libraries" source="1.6" debug="on">
+            <exclude name="de/skuzzle/test/**"/>
+        </javac>
+    </target>
+
+    
+    <target name="dist" depends="prepare,compile">
+        <jar destfile="${dist.dir}/${ant.project.name}.jar">
+            <manifest>
+                <attribute name="Main-Class" value=""/>
+                <attribute name="Class-Path" value="${classpath}"/>
+            </manifest>
+            <fileset dir="${classes.dir}">
+                <exclude name="de/skuzzle/test/**"/>
+            </fileset>
+            <fileset dir="${src.dir}">
+                <exclude name="de/skuzzle/test/**"/>
+            </fileset>
+        </jar>
+    </target>
+    
+   
+    
+    <target name="createZipFile" if="zip.filename">
+        <zip destfile="${dist.dir}/${zip.filename}" basedir="${dist.dir}"/>
+    </target>
+
+</project>

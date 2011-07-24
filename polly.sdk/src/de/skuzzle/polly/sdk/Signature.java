@@ -1,0 +1,296 @@
+package de.skuzzle.polly.sdk;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+import de.skuzzle.polly.sdk.Types.BooleanType;
+import de.skuzzle.polly.sdk.Types.ChannelType;
+import de.skuzzle.polly.sdk.Types.CommandType;
+import de.skuzzle.polly.sdk.Types.DateType;
+import de.skuzzle.polly.sdk.Types.ListType;
+import de.skuzzle.polly.sdk.Types.NumberType;
+import de.skuzzle.polly.sdk.Types.StringType;
+import de.skuzzle.polly.sdk.Types.UserType;
+
+
+/**
+ * <p>This class represents a signature for a {@link Command}. It is used for formal and 
+ * actual signatures. That means, any Command may register a set of different formal 
+ * signatures that they are compatible with.</p> 
+ * 
+ * <p>If the command is executed, each formal signature is compared to the actual 
+ * signature that was entered by the user to resolve which action the command shall 
+ * execute.</p>
+ * 
+ * <p>The resolved signature gets passed to the 
+ * {@link Command#executeOnChannel(User, String, Signature)} or
+ * {@link Command#executeOnQuery(User, Signature)} method. The {@link Command} can 
+ * distinguish the actual passed signatures by their id. The formal signatures
+ * are numbered consecutively in order of their creation beginning by 0.</p>
+ *  
+ * @author Simon
+ * @since zero day
+ * @version RC 1.0
+ */
+public class Signature {
+
+	/**
+	 * The actual or formal parameters for this signature.
+	 */
+	private List<Types> parameters;
+	
+	/**
+	 * The command name that this signatures is for.
+	 */
+	private String name;
+	
+	/**
+	 * The id of this signature.
+	 */
+	private int signatureId;
+	
+	
+	
+	/**
+	 * Creates a new signature.
+	 * 
+	 * @param name The name of the command that this signature is for. The name must 
+	 * 		exactly equal the commands name.
+	 * @param id The id of this signature. Commands distinguish actual signatures by 
+	 * 		this id.
+	 * @param parameters The parameters of this signature. If this is a formal signature,
+	 * 		the values of the parameter types are ignored. This parameter can be empty.
+	 */
+	public Signature(String name, int id, Types...parameters) {
+		this(name, id, Arrays.asList(parameters));
+	}
+	
+	
+	
+	/**
+	 * Creates a new signature.
+	 * 
+	 * @param name The name of the command that this signature is for. The name must 
+	 * 		exactly equal the commands name.
+	 * @param id The id of this signature. Commands distinguish actual signatures by 
+	 * 		this id.
+	 * @param parameters The parameters of this signature. If this is a formal signature,
+	 * 		the values of the parameter types are irgnored. This list can be empty.
+	 */
+	public Signature(String name, int id, List<Types> parameters) {
+		this.name = name;
+		this.signatureId = id;
+		this.parameters = parameters;
+	}
+	
+	
+	
+	/**
+	 * Returns the name of the command that this signature is for.
+	 * @return The commands name.
+	 */
+	public String getName() {
+		return this.name;
+	}
+	
+	
+	
+	/**
+	 * Returns the id of this signature.
+	 * @return The signature id.
+	 */
+	public int getId() {
+		return this.signatureId;
+	}
+	
+	
+	
+	/**
+	 * Sets the id for this signature. Its highly discouraged to use this method. It is 
+	 * used by {@link CommandManager#getCommand(Signature)} to set the formal id
+	 * to the actual signature if it was resolved.
+	 * 
+	 * @param id The new id for this signature.
+	 */
+	public void setId(int id) {
+		this.signatureId = id;
+	}
+	
+	
+	
+	/**
+	 * Returns a parameter of this signature. You can access the actual values of the 
+	 * signature via this method. You must cast the returnvalue to your expected
+	 * {@link Types} instance.
+	 * 
+	 * @param paramId The index of the parameter to retrieve.
+	 * @return The {@link Types} instance at the given index.
+	 */
+	public Types getValue(int paramId) {
+		return this.parameters.get(paramId);
+		
+	}
+	
+	
+	
+	/**
+	 * This is a convenience method for accessing a number parameter. Note that this
+	 * method will crash if the parameter with given id is no {@link NumberType}. 
+	 * 
+	 * @param paramId The parameter whose value shall be resolved.
+	 * @return The parameters number value.
+	 */
+	public double getNumberValue(int paramId) {
+		NumberType nt = (NumberType) this.parameters.get(paramId);
+		return nt.getValue();
+	}
+	
+	
+	
+	/**
+	 * This is a convenience method for accessing a data parameter. Note that this
+	 * method will crash if the parameter with given id is no {@link DateType}.
+	 * 
+	 * @param paramId The parameter whose value shall be resolved.
+	 * @return The parameters date value.
+	 */
+	public Date getDateValue(int paramId) {
+	    DateType dt = (DateType) this.parameters.get(paramId);
+	    return dt.getValue();
+	}
+	
+	
+	
+	/**
+	 * This is a convenience method for accessing a string parameter. It returns the
+	 * String values for any of these types: {@link StringType}, {@link UserType},
+	 * {@link CommandType} and {@link ChannelType}.
+	 * 
+	 * @param paramId The parameter whose value shall be resolved.
+	 * @return The parameters string value.
+	 * @throws IllegalArgumentException If the parameter is none of the above mentioned
+	 * 		types.
+	 */
+	public String getStringValue(int paramId) {
+		Types t = this.parameters.get(paramId);
+		if (t instanceof StringType) {
+			return ((StringType) t).getValue();
+		} else if (t instanceof UserType) {
+			return ((UserType) t).getValue();
+		} else if (t instanceof ChannelType) {
+			return ((ChannelType) t).getValue();
+		} else if (t instanceof CommandType) {
+			return ((CommandType) t).getValue();
+		}
+		throw new IllegalArgumentException("No String-type parameter");
+	}
+	
+	
+	
+	/**
+	 * This is a convenience method for accessing a boolean parameter. Note that this
+	 * method will crash if the parameter with given id is no {@link BooleanType}.
+	 * 
+     * @param paramId The parameter whose value shall be resolved.
+     * @return The parameters boolean value.
+     * @since Beta 0.2
+	 */
+	public boolean getBooleanValue(int paramId) {
+	    BooleanType bt = (BooleanType) this.parameters.get(paramId);
+	    return bt.getValue();
+	}
+	
+	
+	/**
+	 * This is a convenience method for accessing list parameters. It returns a list
+	 * with the ListTypes elements.
+     *
+	 * @param subType The type of the elements that are contained in the list.
+	 * @param paramId The id of the list parameter. Note that calling this method
+	 *     for a parameter which is no ListType will result in a 
+	 *     {@link ClassCastException}.
+	 * @return A new List with correct generic type, containing the ListTypes elements.
+	 */
+	public <T extends Types> List<T> getListValue(Class<T> subType, int paramId) {
+		ListType lt = (ListType) this.parameters.get(paramId);
+		List<T> result = new ArrayList<T>(lt.getElements().size());
+		for (Types t : lt.getElements()) {
+		    result.add(subType.cast(t));
+		}
+
+		return result;
+	}
+	
+	
+	
+	
+	/**
+	 * Matches two signatures against each others. They match if their parameter
+	 * types equal pairwise.
+	 * 
+	 * @param other The signature to match against this signature.
+	 * @return This signature if the signatures matches or <code>null</code> if they
+	 * 		do not match.
+	 */
+	public Signature match(Signature other) {
+		if (other.parameters.size() != this.parameters.size() || 
+				!other.name.equals(this.name)) {
+			return null;
+		}
+		
+		Iterator<Types> formal = this.parameters.iterator();
+		Iterator<Types> actual = other.parameters.iterator();
+		while (formal.hasNext()) {
+			if (!formal.next().check(actual.next())) {
+				return null;
+			}
+		}
+		return this;
+	}
+	
+	
+	
+	/**
+	 * Two signatures are considered equals if they match each other.
+	 * 
+	 * @param obj The other signature to compare this one with.
+	 * @return <code>true</code> if the signatures match, <code>false</code> otherwise.
+	 * @see #match(Signature)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		} else if (!(obj instanceof Signature)) {
+			return false;
+		}
+		
+		Signature other = (Signature) obj;
+		return this.match(other) != null;
+	}
+	
+	
+	
+	@Override
+	public String toString() {
+		StringBuilder b = new StringBuilder();
+		b.append(":");
+		b.append(this.getName());
+		if (this.parameters.isEmpty()) {
+			return b.toString();
+		}
+		
+		b.append(" ");
+		Iterator<Types> it = this.parameters.iterator();
+		while (it.hasNext()) {
+			b.append(it.next().toString());
+			if (it.hasNext()) {
+				b.append(" ");
+			}
+		}
+		return b.toString();
+	}
+}
