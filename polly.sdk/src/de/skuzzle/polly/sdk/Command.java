@@ -60,7 +60,9 @@ import de.skuzzle.polly.sdk.model.User;
  * make it return <code>false</code>. Note that it returns <code>false</code> by default.
  * That means if you want your command to be only executable on a query, you need to
  * override {@link #executeOnBoth(User, String, Signature)} and make it return 
- * <code>false</code>.</p>
+ * <code>true</code>. Now, both {@link #executeOnChannel(User, String, Signature)} and
+ * {@link #executeOnQuery(User, Signature)} are executed, depending on where the 
+ * command has been called.</p>
  * 
  * <p>It is essential for the usability of polly, that you properly override the method
  * {@link #getHelpText()}.</p>
