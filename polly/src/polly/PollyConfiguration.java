@@ -8,32 +8,6 @@ import de.skuzzle.polly.sdk.Disposable;
 
 public class PollyConfiguration extends Configuration 
         implements de.skuzzle.polly.sdk.Configuration, Disposable {
-
-    public final static String LOG_CONFIG_FILE = "loggerSettings";
-    public final static String PLUGIN_EXCLUDES = "pluginExcludes";
-    public final static String CHANNELS = "channels";
-    public final static String NICKNAME = "nickName";
-    public final static String IDENT = "ident";
-    public final static String SERVER = "server";
-    public final static String PORT = "port";
-    public final static String DB_URL = "dbUrl";
-    public final static String DB_USER = "dbUser";
-    public final static String DB_PASSWORD = "dbPassword";
-    public final static String DB_DRIVER = "dbDriver";
-    public final static String IRC_LOGGING = "ircLogging";
-    public final static String ADMIN_NAME = "adminUserName";
-    public final static String ADMIN_PASSWORD_HASH = "adminPasswordHash";
-    public final static String ADMIN_USER_LEVEL = "adminUserLevel";
-    public final static String DECLARATION_CACHE = "declarationCache";
-    public final static String DATE_FORMAT = "dateFormat";
-    public final static String NUMBER_FORMAT = "numberFormat";
-    public final static String EVENT_THREADS = "eventThreads";
-    public final static String IGNORED_COMMANDS ="ignoreCommands";
-    public final static String ENCODING = "encoding";
-    public final static String LINE_LENGTH = "lineLength";
-    public final static String RECONNECT_DELAY = "reconnectDelay";
-    public final static String ENABLE_TELNET = "enableTelnet";
-    public final static String TELNET_PORT = "telnetPort";
     
 	private String logConfigFile;
 	private String[] pluginExcludes;
