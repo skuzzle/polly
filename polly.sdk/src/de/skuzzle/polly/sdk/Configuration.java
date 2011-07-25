@@ -8,7 +8,9 @@ import java.io.IOException;
  * <p>You can add your own property values and store them in pollys configuration file or
  * access existing properties from that file.</p>
  * 
- * <p>You should never override existing values which you did not set yourself!</p>
+ * <p>You should never override existing values which you did not set yourself! If you
+ * do so, note that most changes to polly config properties only take effect after
+ * restarting polly.</p>
  * 
  * <p>Please note that you have to call {@link #store()} in order to persist all of your 
  * changes. Polly automatically persists the config file upon shutdown</p>
@@ -22,6 +24,180 @@ import java.io.IOException;
  * @version RC 1.0
  */
 public interface Configuration {
+    
+    /**
+     * Config file property name which points the path to the log4j configuration file
+     * @since Beta 0.5
+     */
+    public final static String LOG_CONFIG_FILE = "loggerSettings";
+    
+    /**
+     * Config file property name which refers to a comma seperated list of plugin names
+     * that are to be excluded upon loading.
+     * @since Beta 0.5
+     */
+    public final static String PLUGIN_EXCLUDES = "pluginExcludes";
+    
+    /**
+     * Config file property name which refers to a comma seperated list of channel names
+     * that are to be joined upon starting.
+     * @since Beta 0.5
+     */
+    public final static String CHANNELS = "channels";
+    
+    /**
+     * Config file property name which refers to the irc-nickname of polly.
+     * @since Beta 0.5
+     */
+    public final static String NICKNAME = "nickName";
+    
+    /**
+     * Config file property name which refers to the nickserv password.
+     * @since Beta 0.5
+     */
+    public final static String IDENT = "ident";
+    
+    /**
+     * Config file property name which refers to the irc server address to connect to
+     * on startup.
+     * @since Beta 0.5
+     */
+    public final static String SERVER = "server";
+    
+    /**
+     * Config file property name which refers to the {@link #SERVER}s port.
+     * @since Beta 0.5
+     */
+    public final static String PORT = "port";
+    
+    /**
+     * Config file property name which refers to the database url. You should not change
+     * this config property!  lease Note that further polly version may restrict 
+     * access to this field.
+     * @since Beta 0.5
+     */
+    public final static String DB_URL = "dbUrl";
+    
+    /**
+     * Config file property name which refers to the database username. You should not 
+     * change this config property! Please Note that further polly version may restrict 
+     * access to this field.
+     * @since Beta 0.5
+     */
+    public final static String DB_USER = "dbUser";
+    
+    /**
+     * Config file property name which refers to the database password. You should not
+     * change this config property! Please Note that further polly version may restrict 
+     * access to this field.
+     * @since Beta 0.5
+     */
+    public final static String DB_PASSWORD = "dbPassword";
+    
+    /**
+     * Config file property name which refers to the database driver name.
+     * @since Beta 0.5
+     */
+    public final static String DB_DRIVER = "dbDriver";
+    
+    /**
+     * Config file property name which enables/disables logging of irc messages.
+     * @since Beta 0.5
+     */
+    public final static String IRC_LOGGING = "ircLogging";
+    
+    /**
+     * Config file property name which refers to the name of the admin user.  You should 
+     * not change this config property! Please Note that further polly version may 
+     * restrict access to this field.
+     * @since Beta 0.5
+     */
+    public final static String ADMIN_NAME = "adminUserName";
+    
+    /**
+     * Config file property name which refers to the admin password which is not stored
+     * as plaintext but as MD5 hash. You should not change this config property! 
+     * Please Note that further polly version may restrict access to this field.
+     * @since Beta 0.5
+     */
+    public final static String ADMIN_PASSWORD_HASH = "adminPasswordHash";
+    
+    /**
+     * Config file property name which sets the user level for the admin user. You should
+     * not change this property. If you do so, ensure to net set it lower than 
+     * {@link UserManager#ADMIN}. Please note that further polly version may restrict 
+     * access to this field.
+     * @since Beta 0.5
+     */
+    public final static String ADMIN_USER_LEVEL = "adminUserLevel";
+    
+    /**
+     * Config file property name which refers to the path where userdefined variable
+     * declarations are stored.
+     * @since Beta 0.5
+     */
+    public final static String DECLARATION_CACHE = "declarationCache";
+    
+    /**
+     * Config file property name which refers to the global date format pattern.
+     * @since Beta 0.5
+     */
+    public final static String DATE_FORMAT = "dateFormat";
+    
+    /**
+     * Config file property name which refers to the global number format pattern.
+     * @since Beta 0.5
+     */
+    public final static String NUMBER_FORMAT = "numberFormat";
+    
+    /**
+     * Config file property name which refers to maximum count of event threads.
+     * @since Beta 0.5
+     */
+    public final static String EVENT_THREADS = "eventThreads";
+    
+    /**
+     * Config file property name which refers to a comma separated list of command names
+     * which will be ignored when trying to register them.
+     * @since Beta 0.5
+     */
+    public final static String IGNORED_COMMANDS ="ignoreCommands";
+    
+    /**
+     * Config file property name which refers to the global encoding polly uses for 
+     * incoming as well as outgoing messages.
+     * @since Beta 0.5
+     */
+    public final static String ENCODING = "encoding";
+    
+    /**
+     * Config file property name which refers to the maximum line length for outgoing
+     * irc messages. Polly automatically wraps lines to this length.
+     * @since Beta 0.5
+     */
+    public final static String LINE_LENGTH = "lineLength";
+    
+    /**
+     * Config file property name which refers to the delay which polly waits when trying
+     * to reestablish a lost connection. Given in milliseconds.
+     * @since Beta 0.5
+     */
+    public final static String RECONNECT_DELAY = "reconnectDelay";
+    
+    /**
+     * Config file property name which enables/disables the polly telnet server feature.
+     * @since Beta 0.5
+     */
+    public final static String ENABLE_TELNET = "enableTelnet";
+    
+    /**
+     * Config file property name which sets the port for the polly telnet server (if 
+     * enabled).
+     * @since Beta 0.5
+     */
+    public final static String TELNET_PORT = "telnetPort";
+    
+    
 
 	/**
 	 * <p>Stores a property with given name and value. If a property with the same name
