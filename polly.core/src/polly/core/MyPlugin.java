@@ -5,6 +5,7 @@ import java.util.Calendar;
 import commands.AddTopicCommand;
 import commands.AddTrainCommand;
 import commands.AddUserCommand;
+import commands.CalendarCommand;
 import commands.CloseTrainCommand;
 import commands.ClumBombCommand;
 import commands.DelVarCommand;
@@ -70,6 +71,7 @@ public class MyPlugin extends PollyPlugin {
 		this.addCommand(new TalkCommand(myPolly));
 		this.addCommand(new VersionCommand(myPolly));
 		this.addCommand(new ShowCommandsCommand(myPolly));
+		this.addCommand(new CalendarCommand(myPolly));
 		
 		this.addCommand(new WikiCommand(myPolly));
 		this.addCommand(new LmgtfyCommand(myPolly));
