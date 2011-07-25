@@ -33,6 +33,9 @@ public class MyPlugin extends PollyPlugin {
     public final static String MESSAGE_FORMAT_NAME = "MESSAGE_FORMAT";
     public final static String MESSAGE_FORMAT_VALUE = "@%r%: %m%. (Hinterlassen von: %s% am %ld%)";
     
+    public final static String SLEEP_TIME = "SLEEP_TIME";
+    public final static String SLEEP_DEFAULT_VALUE = "60000";
+    
     private Logger logger;
     private RemindManager remindManager;
     private RemindTraceNickchangeHandler remindNickChangeTracer;
@@ -88,6 +91,7 @@ public class MyPlugin extends PollyPlugin {
             UserManager users = this.getMyPolly().users();
             users.addAttribute(REMIND_FORMAT_NAME, REMIND_FORMAT_VALUE);
             users.addAttribute(MESSAGE_FORMAT_NAME, MESSAGE_FORMAT_VALUE);
+            users.addAttribute(SLEEP_TIME, SLEEP_DEFAULT_VALUE);
         } catch (DatabaseException e) {
             e.printStackTrace();
         }

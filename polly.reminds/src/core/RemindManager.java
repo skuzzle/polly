@@ -109,9 +109,36 @@ public class RemindManager implements Disposable {
     
         myPolly.irc().sendMessage(remind.getOnChannel(), message);
         
-        this.sleeps.put(remind.getForUser(), remind);
-        this.remindScheduler.schedule(new SleepTask(remind.getForUser(), this), 60000);
+        this.putToSleep(remind);
         this.deleteRemind(remind);
+    }
+    
+    
+    
+    private void putToSleep(RemindEntity remind) {
+        String sleepString = MyPlugin.SLEEP_DEFAULT_VALUE;
+        
+        IrcUser tmp = new IrcUser(remind.getForUser(), "", "");
+        if (this.myPolly.users().isSignedOn(tmp)) {
+            User user = this.myPolly.users().getUser(tmp);
+            
+            try {
+                this.persistence.readLock();
+                sleepString = user.getAttribute(MyPlugin.SLEEP_TIME);
+            } finally {
+                this.persistence.readUnlock();
+            }
+        }
+        
+        int sleepTime = Integer.parseInt(sleepString);
+        this.sleeps.put(remind.getForUser(), remind);
+        if (sleepTime > 0) {
+            logger.trace("Scheduling remind for snooze for " + sleepString + "ms.");
+            this.remindScheduler.schedule(new SleepTask(remind.getForUser(), this), 
+                sleepTime);
+        } else {
+            logger.trace("Remind will be sleepable forever");
+        }
     }
     
     
