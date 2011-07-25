@@ -15,6 +15,9 @@ import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.PluginException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
 
+import polly.commandline.AbstractArgumentParser;
+import polly.commandline.ParameterException;
+import polly.commandline.PollyArgumentParser;
 import polly.core.BotConnectionSettings;
 import polly.core.CommandManagerImpl;
 import polly.core.FormatManagerImpl;
@@ -151,9 +154,10 @@ public class Polly {
     
     private void parseArguments(String[] args, PollyConfiguration config) {
         try {
-            ArgumentParser.parse(args, config);
+            AbstractArgumentParser parser = new PollyArgumentParser(config);
+            parser.parse(args);
         } catch (ParameterException e) {
-            logger.fatal(e.getMessage());
+            logger.fatal(e.getMessage(), e);
             this.printHelp();
             System.exit(0);
         }

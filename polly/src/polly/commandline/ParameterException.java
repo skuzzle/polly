@@ -1,4 +1,4 @@
-package polly;
+package polly.commandline;
 
 public class ParameterException extends Exception {
 

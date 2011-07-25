@@ -46,11 +46,36 @@ public abstract class Configuration {
     
     
     /**
+     * Creates a new memory configuration with no default values.
+     */
+    public Configuration() {
+        this.props = new Properties();
+    }
+    
+    
+    
+    /**
+     * Creates a new memory configuration with default values. Note that memory
+     * configurations can not be stored.
+     * 
+     * @param defaults The configuration default values.
+     */
+    public Configuration(Properties defaults) {
+        this.props = new Properties(defaults);
+    }
+    
+    
+    
+    /**
      * Writes this configuration file back to the disc.
      * 
-     * @throws IOException If storing the file fails for any reason.
+     * @throws IOException If this is a memory configuration or if storing the file 
+     *      fails for any reason.
      */
     public synchronized void store() throws IOException {
+        if (this.filename == null) {
+            throw new IOException("This is a memory config");
+        }
     	File file = new File(this.filename);
     	OutputStream out = null;
     	try {
@@ -106,12 +131,14 @@ public abstract class Configuration {
     
     
     protected boolean parseBoolean(String value) throws ConfigurationFileException {
-        if (value.equalsIgnoreCase("true")) {
+        if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("on") 
+                || value.equalsIgnoreCase("yes")) {
             return true;
-        } else if (value.equalsIgnoreCase("false")) {
+        } else if (value.equalsIgnoreCase("false") || value.equalsIgnoreCase("off")
+                ||value.equalsIgnoreCase("no")) {
             return false;
         } else {
-            throw new ConfigurationFileException("Invalid boolean literal.");
+            throw new ConfigurationFileException("invalid boolean literal: " + value);
         }
     }
 }

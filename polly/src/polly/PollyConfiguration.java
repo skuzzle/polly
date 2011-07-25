@@ -62,11 +62,26 @@ public class PollyConfiguration extends Configuration
 	private int telnetPort;
 	private boolean enableTelnet;
 	
+	
+	
 	public PollyConfiguration(String filename) 
 	        throws IOException, ConfigurationFileException {
 	    
 		super(filename);
 		this.init();
+	}
+	
+	
+	public PollyConfiguration() throws ConfigurationFileException {
+	    super();
+	    this.init();
+	}
+	
+	
+	public PollyConfiguration(PollyConfiguration defaults) 
+	        throws ConfigurationFileException {
+	    super(defaults.props);
+	    this.init();
 	}
 	
 	
@@ -109,7 +124,7 @@ public class PollyConfiguration extends Configuration
         this.port = this.parseInteger(tmp, 32, "Ungültige Portnummer");
         
         tmp = this.props.getProperty(IRC_LOGGING, "on");
-        this.ircLogging = tmp.equals("on");
+        this.ircLogging = this.parseBoolean(tmp);
         
         tmp = this.props.getProperty(ADMIN_USER_LEVEL, "1337");
         this.adminUserlevel = this.parseInteger(tmp, 1, "Ungültiges Admin User Level.");
@@ -148,25 +163,11 @@ public class PollyConfiguration extends Configuration
 	public String getNickName() {
 		return nickName;
 	}
-	
-	
-	
-	public void setNickName(String nickName) {
-	    this.nickName = nickName;
-	    this.props.setProperty(NICKNAME, nickName);
-	}
 
 
 	
 	public String getIdent() {
 		return ident;
-	}
-
-	
-
-	public void setIdent(String ident) {
-	    this.ident = ident;
-	    this.props.setProperty(IDENT, ident);
 	}
 	
 	
@@ -176,36 +177,14 @@ public class PollyConfiguration extends Configuration
 	}
 	
 	
-	
-	public void setServer(String server) {
-        this.server = server;
-        this.props.setProperty(SERVER, server);
-    }
-
-	
 
 	public int getPort() {
 		return port;
 	}
 	
 	
-	
-	public void setPort(int port) {
-	    this.port = port;
-	    this.props.setProperty(PORT, Integer.toString(port));
-	}
-	
-	
-	
 	public String[] getChannels() {
 		return this.channels;
-	}
-	
-	
-	
-	public void setChannels(String channels) {
-	    this.channels = channels.split(",");
-	    this.props.setProperty(CHANNELS, channels);
 	}
 
 	
@@ -213,38 +192,17 @@ public class PollyConfiguration extends Configuration
 	public String getLogConfigFile() {
 		return logConfigFile;
 	}
-	
-	
-	
-	public void setLogConfigFile(String file) {
-	    this.logConfigFile = file;
-	    this.props.setProperty(LOG_CONFIG_FILE, file);
-	}
 
 	
 
 	public String getDbUrl() {
         return dbUrl;
     }
-	
-	
-	
-	public void setDbUrl(String url) {
-	    this.dbUrl = url;
-	    this.props.setProperty(DB_URL, url);
-	}
 
 
 
     public String getDbUser() {
         return dbUser;
-    }
-    
-    
-    
-    public void setDbUser(String user) {
-        this.dbUser = user;
-        this.props.setProperty(DB_USER, user);
     }
 
 
@@ -252,25 +210,11 @@ public class PollyConfiguration extends Configuration
     public String getDbPassword() {
         return dbPassword;
     }
-    
-    
-    
-    public void setDbPassword(String password) {
-        this.dbPassword = password;
-        this.props.setProperty(DB_PASSWORD, password);
-    }
 
 
 
     public String getDbDriver() {
         return dbDriver;
-    }
-    
-    
-    
-    public void setDbDriver(String driver) {
-        this.dbDriver = driver;
-        this.props.setProperty(DB_DRIVER, driver);
     }
 
     
@@ -279,12 +223,6 @@ public class PollyConfiguration extends Configuration
         return this.ircLogging;
     }
     
-    
-    
-    public void setIrcLogging(boolean logging) {
-        this.ircLogging = logging;
-        this.props.setProperty(IRC_LOGGING, logging ? "on" : "off");
-    }
     
     
     public String getAdminUserName() {
@@ -363,25 +301,24 @@ public class PollyConfiguration extends Configuration
     }
     
     
-    public void setEnableTelnet(boolean value) {
-        this.enableTelnet = value;
-    }
-    
-    
     
     public int getTelnetPort() {
         return this.telnetPort;
     }
-    
-    
-    public void setTelnetPort(int port) {
-        this.telnetPort = port;
-    }
 
+    
     
     @Override
 	public synchronized <T> void setProperty(String name, T value) {
-		this.props.put(name, value);
+		this.props.setProperty(name, value.toString());
+		/*
+		 * HACK: update all 'static' config fields.
+		 */
+		try {
+		    this.init();
+		} catch (ConfigurationFileException e) {
+		    e.printStackTrace();
+		}
 	}
 
 
