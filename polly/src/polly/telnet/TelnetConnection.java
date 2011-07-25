@@ -61,6 +61,9 @@ public class TelnetConnection implements Runnable {
     
     
     public void close() {
+        if (this.closing.get()) {
+            return;
+        }
         this.closing.set(true);
         logger.info("Closing telnet connection with id " + this.id);
         try {
@@ -73,6 +76,9 @@ public class TelnetConnection implements Runnable {
     
     
     public synchronized void send(String message) {
+        if (this.closing.get()) {
+            return;
+        }
         try {
             byte[] bytes = message.getBytes();
             this.output.write(System.getProperty("line.separator", "\n").getBytes());
