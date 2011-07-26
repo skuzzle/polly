@@ -23,7 +23,7 @@ import java.util.TreeSet;
  * <pre>
  * true
  * false
- * _now
+ * now
  * </pre>
  * 
  * <p>Identifiers may start with a _ or a letter and can then contain any letter, 
@@ -68,7 +68,7 @@ public class InputScanner extends AbstractTokenStream {
         KEYWORDS.put("xor", TokenType.XOR);
         KEYWORDS.put("true", TokenType.TRUE);
         KEYWORDS.put("false", TokenType.FALSE);
-        KEYWORDS.put("_now", TokenType.DATETIME);
+        KEYWORDS.put("now", TokenType.DATETIME);
         
         /* To avoid 1char identifiers "_" */
         KEYWORDS.put("_", TokenType.UNKNOWN);
