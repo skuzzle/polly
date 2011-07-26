@@ -99,7 +99,7 @@ public class UserManagerImpl implements UserManager, Disposable {
     
     
     
-    public Declarations getDeclarations(User user) {
+    public synchronized Declarations getDeclarations(User user) {
         try {
             return this.namespaces.get(user.getName());
         } catch (ParseException goOn) { }
@@ -309,7 +309,7 @@ public class UserManagerImpl implements UserManager, Disposable {
     
     
     
-    public void traceNickChange(IrcUser oldUser, IrcUser newUser) {
+    public synchronized void traceNickChange(IrcUser oldUser, IrcUser newUser) {
         logger.debug("Tracing nickchange from '" + oldUser + "' to '" + newUser + "'");
         User tmp = this.onlineCache.get(oldUser.getNickName());
         tmp.setCurrentNickName(newUser.getNickName());

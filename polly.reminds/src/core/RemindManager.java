@@ -47,7 +47,7 @@ public class RemindManager implements Disposable {
 
     
     
-    public void scheduleRemind(RemindEntity remind, Date dueDate) {
+    public synchronized void scheduleRemind(RemindEntity remind, Date dueDate) {
         logger.info("Scheduling Remind: " + remind);
         RemindTask task = new RemindTask(remind, this);
         this.remindScheduler.schedule(task, dueDate);
@@ -67,7 +67,7 @@ public class RemindManager implements Disposable {
     
     
     
-    public void unSchedule(int remindId) {
+    public synchronized void unSchedule(int remindId) {
         RemindTask t = this.reminds.get(remindId);
         if (t != null) {
             logger.debug("Cancelling remind task for remind id " + remindId);
@@ -78,7 +78,7 @@ public class RemindManager implements Disposable {
     
     
     
-    public void deliverRemind(RemindEntity remind) {
+    public synchronized void deliverRemind(RemindEntity remind) {
         logger.debug("Executing Remind: " + remind);
         this.persistence.refresh(remind);
         
@@ -241,7 +241,7 @@ public class RemindManager implements Disposable {
     
     
     
-    public void traceNickChange(IrcUser oldUser, IrcUser newUser) {
+    public synchronized void traceNickChange(IrcUser oldUser, IrcUser newUser) {
         List<RemindEntity> reminds = this.getRemindsForUser(oldUser.getNickName());
         if (reminds.isEmpty()) {
             return;
