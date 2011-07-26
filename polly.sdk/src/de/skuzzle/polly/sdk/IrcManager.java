@@ -3,6 +3,7 @@ package de.skuzzle.polly.sdk;
 import java.util.List;
 import java.util.Set;
 
+import de.skuzzle.polly.sdk.eventlistener.ChannelModeListener;
 import de.skuzzle.polly.sdk.eventlistener.JoinPartListener;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
 import de.skuzzle.polly.sdk.eventlistener.NickChangeListener;
@@ -299,4 +300,25 @@ public interface IrcManager {
 	 * @param listener The listener to remove.
 	 */
 	public abstract void removeMessageListener(MessageListener listener);
+	
+	
+	
+    /**
+     * Adds a {@link ChannelModeListener}. It will be notified each time the mode of a
+     * channel that polly is on is changed.
+     * 
+     * @param listener The listener to add.
+     * @since Beta 0.5
+     */
+	public abstract void addChannelModeListener(ChannelModeListener listener);
+	
+	
+	
+    /**
+     * Removes a {@link ChannelModeListener}.
+     * 
+     * @param listener The listener to remove.
+     * @since Beta 0.5
+     */
+	public abstract void removeChannelModeListener(ChannelModeListener listener);
 }

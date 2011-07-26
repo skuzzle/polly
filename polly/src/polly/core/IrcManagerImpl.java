@@ -19,6 +19,8 @@ import org.jibble.pircbot.User;
 import de.skuzzle.polly.sdk.Disposable;
 import de.skuzzle.polly.sdk.IrcManager;
 import de.skuzzle.polly.sdk.eventlistener.ChannelEvent;
+import de.skuzzle.polly.sdk.eventlistener.ChannelModeEvent;
+import de.skuzzle.polly.sdk.eventlistener.ChannelModeListener;
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
 import de.skuzzle.polly.sdk.eventlistener.JoinPartListener;
 import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
@@ -168,6 +170,20 @@ public class IrcManagerImpl implements IrcManager, Disposable {
             
             IrcManagerImpl.this.fireActionMessageEvent(e);
         }
+        
+        
+        
+        @Override
+        protected void onMode(String channel, String sourceNick, String sourceLogin, 
+                String sourceHostname, String mode) {
+            
+            String nickName = IrcManagerImpl.this.stripNickname(sourceNick);
+            IrcUser user = new IrcUser(nickName, sourceLogin, sourceHostname);
+            ChannelModeEvent e = new ChannelModeEvent(IrcManagerImpl.this, user, 
+                channel, mode);
+            
+            IrcManagerImpl.this.fireChannelModeEvent(e);
+        };
         
         
         
@@ -513,6 +529,20 @@ public class IrcManagerImpl implements IrcManager, Disposable {
         this.eventProvider.removeListener(MessageListener.class, listener);
     }
     
+    
+    
+    @Override
+    public void addChannelModeListener(ChannelModeListener listener) {
+        this.eventProvider.addListener(ChannelModeListener.class, listener);
+    }
+    
+    
+    
+    @Override
+    public void removeChannelModeListener(ChannelModeListener listener) {
+        this.eventProvider.removeListener(ChannelModeListener.class, listener);
+    }
+    
    
     
     protected void fireNickChange(final NickChangeEvent e) {
@@ -626,6 +656,23 @@ public class IrcManagerImpl implements IrcManager, Disposable {
             public void run() {
                 for (MessageListener listener : listeners) {
                     listener.actionMessage(e);
+                }
+            }
+        };
+        this.eventProvider.dispatchEvent(r);
+    }
+    
+    
+    
+    protected void fireChannelModeEvent(final ChannelModeEvent e) {
+        final List<ChannelModeListener> listeners = 
+            this.eventProvider.getListeners(ChannelModeListener.class);
+        
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                for (ChannelModeListener listener : listeners) {
+                    listener.channelModeChanged(e);
                 }
             }
         };
