@@ -9,11 +9,16 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
-import de.skuzzle.polly.sdk.Disposable;
+import de.skuzzle.polly.sdk.AbstractDisposable;
+import de.skuzzle.polly.sdk.exceptions.DisposingException;
 
 
-
-public class UpdateManager implements Disposable {
+/**
+ * 
+ * @author Simon
+ * @version 27.07.2011 ae73250
+ */
+public class UpdateManager extends AbstractDisposable {
 
     public static void main(String[] args) {
         UpdateManager um = new UpdateManager();
@@ -85,7 +90,7 @@ public class UpdateManager implements Disposable {
 
 
     @Override
-    public void dispose() {
+    protected void actualDispose() throws DisposingException {
         this.downloadManager.dispose();
     }
 }

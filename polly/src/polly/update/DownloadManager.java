@@ -10,11 +10,16 @@ import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import de.skuzzle.polly.sdk.Disposable;
+import de.skuzzle.polly.sdk.AbstractDisposable;
+import de.skuzzle.polly.sdk.exceptions.DisposingException;
 
 
-
-public class DownloadManager implements Disposable {
+/**
+ * 
+ * @author Simon
+ * @version 27.07.2011 ae73250
+ */
+public class DownloadManager extends AbstractDisposable {
     
     public static void main(String[] args) throws MalformedURLException {
         DownloadManager dm = new DownloadManager();
@@ -38,7 +43,6 @@ public class DownloadManager implements Disposable {
             }
         });
         
-        dm.dispose();
     }
     
     
@@ -180,11 +184,11 @@ public class DownloadManager implements Disposable {
         DownloadObject d = new DownloadObject(url, destination, callback);
         d.run();
     }
-
+    
 
 
     @Override
-    public void dispose() {
+    protected void actualDispose() throws DisposingException {
         this.downloadPool.shutdown();
     }
 }

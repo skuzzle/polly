@@ -13,15 +13,20 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import de.skuzzle.polly.sdk.Disposable;
+import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PluginManager;
 import de.skuzzle.polly.sdk.PollyPlugin;
+import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.PluginException;
 
 
-
-public class PluginManagerImpl implements PluginManager, Disposable {
+/**
+ * 
+ * @author Simon
+ * @version 27.07.2011 ae73250
+ */
+public class PluginManagerImpl extends AbstractDisposable implements PluginManager {
 
     private static Logger logger = Logger.getLogger(PluginManagerImpl.class.getName());
     
@@ -98,7 +103,7 @@ public class PluginManagerImpl implements PluginManager, Disposable {
     
     
     @Override
-    public void dispose() {
+    protected void actualDispose() throws DisposingException {
         logger.info("Unloading all plugins.");
         for (PluginConfiguration pluginCfg : this.pluginCache.values()) {
             String pluginName = pluginCfg.getProperty(PluginConfiguration.PLUGIN_NAME);

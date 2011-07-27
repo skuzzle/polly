@@ -15,11 +15,17 @@ import org.apache.log4j.Logger;
 import polly.PollyConfiguration;
 import polly.core.IrcManagerImpl;
 
-import de.skuzzle.polly.sdk.Disposable;
+import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
+import de.skuzzle.polly.sdk.exceptions.DisposingException;
 
 
-public class TelnetServer implements Disposable, Runnable {
+/**
+ * 
+ * @author Simon
+ * @version 27.07.2011 ae73250
+ */
+public class TelnetServer extends AbstractDisposable implements Runnable {
 
     private static Logger logger = Logger.getLogger(TelnetServer.class.getName());
     
@@ -98,7 +104,7 @@ public class TelnetServer implements Disposable, Runnable {
     
     
     @Override
-    public synchronized void dispose() {
+    protected void actualDispose() throws DisposingException {
         this.closing.set(true);
         logger.debug("Closing telnet connections.");
         if (this.connection != null) {

@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.jibble.pircbot.NickAlreadyInUseException;
 
+import de.skuzzle.polly.sdk.CompositeDisposable;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.PluginException;
@@ -25,6 +26,7 @@ import polly.core.IrcManagerImpl;
 import polly.core.MyPollyImpl;
 import polly.core.PersistenceManagerImpl;
 import polly.core.PluginManagerImpl;
+import polly.core.ShutdownManagerImpl;
 import polly.core.UserManagerImpl;
 import polly.data.Attribute;
 import polly.data.User;
@@ -62,8 +64,7 @@ public class Polly {
     }
     
     
-    
-    private ShutdownManager shutdownManager;
+
    
     private Polly(String[] args) {
         File f = new File(".");
@@ -92,10 +93,10 @@ public class Polly {
                     Arrays.toString(config.getIgnoredCommands()));
         }
         
-        this.shutdownManager = new ShutdownManager();
         
         ExecutorService eventThreadPool = Executors.newFixedThreadPool
-                (config.getEventThreads());
+                (config.getEventThreads(), new EventThreadFactory());
+
         EventProvider eventProvider = new DefaultEventProvider(eventThreadPool);
         
         FormatManagerImpl formatManager = new FormatManagerImpl(
@@ -119,14 +120,24 @@ public class Polly {
                 config, 
                 persistence, 
                 userManager,
-                formatManager,
-                eventProvider, this);
+                formatManager);
         
         this.setupPlugins(pluginManager, myPolly, config, PLUGIN_FOLDER);        
         this.setupDatabase(persistence, config, pluginManager, 
                 PERSISTENCE_XML, PERSISTENCE_UNIT);
         this.setupDefaultUser(userManager, config);
         this.setupIrc(ircManager, config, commandManager, userManager);
+        
+        /*
+         * Configure shutdown list. Obey list order!
+         */
+        CompositeDisposable shutdownList = ShutdownManagerImpl.get().getShutdownList();
+        shutdownList.add(pluginManager);
+        shutdownList.add(ircManager);
+        shutdownList.add(userManager);
+        shutdownList.add(persistence);
+        shutdownList.add(config);
+        shutdownList.add(eventProvider);
         
         pluginManager.notifyPlugins();
     }
@@ -245,7 +256,7 @@ public class Polly {
         if (config.enableTelnet()) {
             try {
                 TelnetServer server = new TelnetServer(config, ircManager, handler);
-                this.shutdownManager.addDisposable(server);
+                ShutdownManagerImpl.get().getShutdownList().add(server);
                 server.start();
             } catch (Exception e) {
                 logger.error("Error setting up telnet server.", e);
@@ -323,11 +334,5 @@ public class Polly {
         } catch (DatabaseException e) {
             logger.fatal("Database error", e);
         }
-    }
-    
-    
-    
-    public void shutdown() {
-        this.shutdownManager.dispose();
     }
 }

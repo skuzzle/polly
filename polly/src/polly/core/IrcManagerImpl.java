@@ -16,6 +16,7 @@ import org.jibble.pircbot.NickAlreadyInUseException;
 import org.jibble.pircbot.PircBot;
 import org.jibble.pircbot.User;
 
+import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.Disposable;
 import de.skuzzle.polly.sdk.IrcManager;
 import de.skuzzle.polly.sdk.eventlistener.ChannelEvent;
@@ -29,6 +30,7 @@ import de.skuzzle.polly.sdk.eventlistener.NickChangeEvent;
 import de.skuzzle.polly.sdk.eventlistener.NickChangeListener;
 import de.skuzzle.polly.sdk.eventlistener.QuitEvent;
 import de.skuzzle.polly.sdk.eventlistener.QuitListener;
+import de.skuzzle.polly.sdk.exceptions.DisposingException;
 
 import polly.PollyConfiguration;
 import polly.events.EventProvider;
@@ -36,8 +38,12 @@ import polly.telnet.TelnetConnection;
 import polly.util.WrapIterator;
 
 
- 
-public class IrcManagerImpl implements IrcManager, Disposable {
+/**
+ * 
+ * @author Simon
+ * @version 27.07.2011 ae73250
+ */
+public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Disposable {
     
     private static Logger logger = Logger.getLogger(IrcManagerImpl.class.getName());
     
@@ -682,7 +688,7 @@ public class IrcManagerImpl implements IrcManager, Disposable {
 
 
     @Override
-    public void dispose() {
+    protected void actualDispose() throws DisposingException {
         if (this.isConnected()) {
             logger.debug("Closing irc connection using default quit message.");
             this.quit();

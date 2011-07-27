@@ -15,14 +15,20 @@ import org.apache.log4j.Logger;
 
 import polly.persistence.EntityList;
 
-import de.skuzzle.polly.sdk.Disposable;
+import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.PollyPlugin;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
+import de.skuzzle.polly.sdk.exceptions.DisposingException;
 
 
-
-public class PersistenceManagerImpl implements PersistenceManager, Disposable {
+/**
+ * 
+ * @author Simon
+ * @version 27.07.2011 ae73250
+ */
+public class PersistenceManagerImpl extends AbstractDisposable 
+        implements PersistenceManager {
     
     private static Logger logger =
         Logger.getLogger(PersistenceManagerImpl.class.getName());
@@ -53,7 +59,7 @@ public class PersistenceManagerImpl implements PersistenceManager, Disposable {
     
     
     @Override
-    public void dispose() {
+    protected void actualDispose() throws DisposingException {
         logger.debug("Shutting down database...");
         logger.trace("Shutting down entity manager...");
         try {
@@ -85,9 +91,8 @@ public class PersistenceManagerImpl implements PersistenceManager, Disposable {
         } finally {
             this.writeUnlock();
         }
-
     }
-
+    
     
     
     public EntityList getEntities() {

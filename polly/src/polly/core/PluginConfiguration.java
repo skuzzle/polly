@@ -3,10 +3,17 @@ package polly.core;
 import java.io.IOException;
 
 import de.skuzzle.polly.sdk.PollyPlugin;
+import de.skuzzle.polly.sdk.exceptions.DisposingException;
 
 import polly.Configuration;
 import polly.ConfigurationFileException;
 
+
+/**
+ * 
+ * @author Simon
+ * @version 27.07.2011 ae73250
+ */
 public class PluginConfiguration extends Configuration {
     
     public final static String JAR_FILE = "jarfile";
@@ -85,5 +92,12 @@ public class PluginConfiguration extends Configuration {
         b.append("    ");
         b.append("Version: " + this.props.getProperty(PLUGIN_VERSION, ""));
         return b.toString();
+    }
+
+
+
+    @Override
+    protected void actualDispose() throws DisposingException {
+        // do nothing
     }
 }

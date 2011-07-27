@@ -8,14 +8,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
 
+import de.skuzzle.polly.sdk.AbstractDisposable;
+
 
 /**
  * Adapted from bibi
  * 
  * @author F.Nolte
- *
+ * @version 27.07.2011 ae73250
  */
-public abstract class Configuration {
+public abstract class Configuration extends AbstractDisposable {
 
 
     protected Properties props;

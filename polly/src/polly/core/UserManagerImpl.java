@@ -18,11 +18,12 @@ import polly.events.EventProvider;
 import de.skuzzle.polly.parsing.Declarations;
 import de.skuzzle.polly.parsing.Namespaces;
 import de.skuzzle.polly.parsing.ParseException;
-import de.skuzzle.polly.sdk.Disposable;
+import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
 import de.skuzzle.polly.sdk.exceptions.AlreadySignedOnException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
+import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.UnknownAttributeException;
 import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
@@ -30,7 +31,12 @@ import de.skuzzle.polly.sdk.model.User;
 
 
 
-public class UserManagerImpl implements UserManager, Disposable {
+/**
+ * 
+ * @author Simon
+ * @version 27.07.2011 ae73250
+ */
+public class UserManagerImpl extends AbstractDisposable implements UserManager {
 
     private static Logger logger = Logger.getLogger(UserManagerImpl.class.getName());
     private PersistenceManagerImpl persistence;
@@ -380,7 +386,7 @@ public class UserManagerImpl implements UserManager, Disposable {
 
 
     @Override
-    public void dispose() {
+    protected void actualDispose() throws DisposingException {
         this.storeDeclarations();
         this.persistence = null;
         this.onlineCache.clear();

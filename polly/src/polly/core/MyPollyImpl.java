@@ -2,29 +2,30 @@ package polly.core;
 
 import java.util.Date;
 
-import org.apache.log4j.Logger;
-
 import polly.Polly;
 import polly.PollyConfiguration;
-import polly.events.EventProvider;
 
 
+import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.CommandManager;
 import de.skuzzle.polly.sdk.Configuration;
-import de.skuzzle.polly.sdk.Disposable;
 import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.IrcManager;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.PluginManager;
 import de.skuzzle.polly.sdk.UserManager;
+import de.skuzzle.polly.sdk.exceptions.DisposingException;
 
 
 
-public class MyPollyImpl implements MyPolly, Disposable {
-	
-	private static Logger logger = Logger.getLogger(MyPollyImpl.class.getName());
-	
+/**
+ * 
+ * @author Simon
+ * @version 27.07.2011 ae73250
+ */
+public class MyPollyImpl extends AbstractDisposable implements MyPolly {
+
 	private CommandManagerImpl commandManager;
 	private IrcManagerImpl ircManager;
 	private PluginManagerImpl pluginManager;
@@ -32,8 +33,6 @@ public class MyPollyImpl implements MyPolly, Disposable {
 	private PersistenceManagerImpl persistence;
 	private UserManagerImpl userManager;
 	private FormatManagerImpl formatManager;
-	private EventProvider eventProvider;
-	private Polly polly;
 	private Date startTime;
 	
 	
@@ -44,9 +43,7 @@ public class MyPollyImpl implements MyPolly, Disposable {
 			PollyConfiguration config, 
 			PersistenceManagerImpl pMngr,
 			UserManagerImpl usrMngr,
-			FormatManagerImpl fmtMngr,
-			EventProvider eventProvider,
-			Polly polly) {
+			FormatManagerImpl fmtMngr) {
 	    
 		this.commandManager = cmdMngr;
 		this.ircManager = ircMngr;
@@ -55,8 +52,6 @@ public class MyPollyImpl implements MyPolly, Disposable {
 		this.persistence = pMngr;
 		this.userManager = usrMngr;
 		this.formatManager = fmtMngr;
-		this.eventProvider = eventProvider;
-		this.polly = polly;
 		this.startTime = new Date();
 	}
 	
@@ -105,39 +100,20 @@ public class MyPollyImpl implements MyPolly, Disposable {
 
 	@Override
 	public synchronized void shutdown() {
-	    this.shutdown(true);
+	    ShutdownManagerImpl.get().shutdown();
 	}
 	
 	
 	
+	public ShutdownManagerImpl shutdownManager() {
+	    return ShutdownManagerImpl.get();
+	}
+	
+	
+	
+	@Deprecated
 	public void shutdown(boolean exit) {
-        logger.info("Preparing to shutdown...");
-        this.pluginManager.dispose();
-        this.ircManager.dispose();
-        this.userManager.dispose();
-        this.persistence.dispose();
-        this.config.dispose();
-        
-        logger.info("Shutting down event thread pool.");
-        eventProvider.dispose();
-        
-        this.polly.shutdown();
-        
-        logger.trace("Remaining active threads: " + Thread.activeCount());
-        logger.trace("Remaining stacktraces:");
-        Thread[] active = new Thread[Thread.activeCount()];
-        Thread.enumerate(active);
-        for (Thread t : active) {
-            logger.trace("Thread: " + t.toString());
-            for (StackTraceElement e : t.getStackTrace()) {
-                logger.trace("    " + e.toString());
-            }
-        }
-        
-        if (exit) {
-            logger.info("All connections closed. Now exiting the whole program. ByeBye");
-            System.exit(0);
-        }
+	    ShutdownManagerImpl.get().shutdown(exit);
 	}
 
 
@@ -168,9 +144,8 @@ public class MyPollyImpl implements MyPolly, Disposable {
     }
 
 
-
     @Override
-    public void dispose() {
+    protected void actualDispose() throws DisposingException {
         this.shutdown();
     }
 }

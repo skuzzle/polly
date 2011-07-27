@@ -3,7 +3,14 @@ package polly.events;
 import java.util.EventListener;
 import java.util.List;
 
-public interface EventProvider {
+import de.skuzzle.polly.sdk.Disposable;
+
+/**
+ * 
+ * @author Simon
+ * @version 27.07.2011 ae73250
+ */
+public interface EventProvider extends Disposable {
     
     public <T extends EventListener> void addListener(Class<T> listenerClass, 
             T listener);
@@ -14,6 +21,4 @@ public interface EventProvider {
     public <T extends EventListener> List<T> getListeners(Class<T> listenerClass);
 
     public void dispatchEvent(Runnable r);
-    
-    public void dispose();
 }
