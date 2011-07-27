@@ -5,6 +5,7 @@ import java.util.EventListener;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.event.EventListenerList;
 
@@ -74,6 +75,11 @@ public class DefaultEventProvider extends AbstractDisposable implements EventPro
     
     @Override
     protected void actualDispose() throws DisposingException {
-        this.dispatchPool.shutdown();
+        this.dispatchPool.shutdownNow();
+        try {
+            this.dispatchPool.awaitTermination(2000, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
