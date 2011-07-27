@@ -8,7 +8,7 @@ import java.util.Date;
  * 
  * @author Simon
  * @since zero day
- * @version RC 1.0
+ * @version 27.07.2011 0366137
  */
 public interface MyPolly {
 
@@ -103,7 +103,19 @@ public interface MyPolly {
 	
 	
 	/**
-	 * Performs a clean shutdown of polly.
+	 * Gets the ShutdownManager to safely restart and shutdown polly.
+	 * @return A ShutdownManager instance.
+	 * @since Beta 0.5
 	 */
+	public abstract ShutdownManager shutdownManager();
+	
+	
+	
+	/**
+	 * Performs a clean shutdown of polly.
+	 * @deprecated Use {@link ShutdownManager#shutdown()} instead.
+	 * @see #shutdownManager()
+	 */
+	@Deprecated
 	public abstract void shutdown();
 }
