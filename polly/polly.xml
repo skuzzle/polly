@@ -20,7 +20,8 @@
                                       ./lib/eclipselink.jar
                                       ./lib/javax.persistence_2.0.3.v201010191057.jar
                                       ./lib/hsqldb.jar
-                                      ./lib/pircbot.jar"/>
+                                      ./lib/pircbot.jar
+                                      ./lib/mysql-connector-java-5.1.17-bin.jar"/>
 
 
     <buildnumber file="build.num"/>
