@@ -31,21 +31,25 @@ public class IsGoneHandler implements QuitListener, JoinPartListener {
     
     @Override
     public void channelParted(ChannelEvent e) {
-        this.traceGone(e.getUser());
+        this.traceGone(e.getUser(), false);
     }
 
     
     
     @Override
     public void quited(QuitEvent e) {
-        this.traceGone(e.getUser());
+        this.traceGone(e.getUser(), true);
     }
     
     
     
-    private void traceGone(IrcUser user) {
+    private synchronized void traceGone(IrcUser user, boolean quit) {
         if (!this.ircManager.isOnline(user.getNickName())) {
             logger.warn("Auto logoff for user: " + user);
+            if (!quit) {
+                this.ircManager.sendMessage(user.getNickName(), 
+                    "Du wurdest automatisch ausgeloggt.");
+            }
             this.userManager.logoff(user);
         }
     }
