@@ -47,7 +47,7 @@ public class CalendarCommand extends Command {
     public static void main(String[] args) {
         Calendar c = Calendar.getInstance();
         
-        //c.set(Calendar.MONTH, 0);
+        c.set(Calendar.MONTH, 4);
         System.out.println(calendarString(c.getTime()));
     }
     
@@ -57,7 +57,7 @@ public class CalendarCommand extends Command {
         Calendar firstDay = Calendar.getInstance();
         firstDay.setTime(d);
         firstDay.set(Calendar.DAY_OF_MONTH, 1);        
-        
+        System.out.println(firstDay.getTime());
         Calendar lastMonth = Calendar.getInstance();
         lastMonth.setTime(d);
         lastMonth.add(Calendar.MONTH, -1);
@@ -65,14 +65,17 @@ public class CalendarCommand extends Command {
         // days last month
         int ld = lastMonth.getActualMaximum(Calendar.DAY_OF_MONTH);
         lastMonth.set(Calendar.DAY_OF_MONTH, ld);
-        
-        int diff = firstDay.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY - 1;
-        lastMonth.set(Calendar.DAY_OF_MONTH, ld - diff);
+
+        /*
+         * no one will ever get what happens here
+         */
+        lastMonth.add(Calendar.DAY_OF_MONTH, -diff(firstDay.get(Calendar.DAY_OF_WEEK)));
         
         SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy");
         b.append("Kalender für: " + sdf.format(d) + "\n");
         b.append("\u0002\u001fKW | Mo Di Mi Do Fr Sa So\n");
         
+        System.out.println(lastMonth.getTime());
         for (int j = 0; j < 6; ++j) {
             b.append(pad(lastMonth.get(Calendar.WEEK_OF_YEAR)));
             b.append(" | ");
@@ -100,6 +103,20 @@ public class CalendarCommand extends Command {
         }
         
         return b.toString();
+    }
+    
+    
+    private static int diff(int day) {
+        switch (day) {
+        case Calendar.MONDAY: return -1;
+        case Calendar.TUESDAY: return 0;
+        case Calendar.WEDNESDAY: return 1;
+        case Calendar.THURSDAY: return 2;
+        case Calendar.FRIDAY: return 3;
+        case Calendar.SATURDAY: return 4;
+        case Calendar.SUNDAY: return 5;
+        default: return 0;
+        }
     }
     
     
