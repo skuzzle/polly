@@ -3,6 +3,7 @@ package polly.core;
 import org.apache.log4j.Logger;
 
 import de.skuzzle.polly.sdk.CompositeDisposable;
+import de.skuzzle.polly.sdk.Disposable;
 import de.skuzzle.polly.sdk.ShutdownManager;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 
@@ -39,6 +40,12 @@ public class ShutdownManagerImpl implements ShutdownManager {
     
     public CompositeDisposable getShutdownList() {
         return this.shutdownList;
+    }
+    
+    
+    
+    public synchronized void addDisposable(Disposable d) {
+        this.shutdownList.addLast(d);
     }
     
     
