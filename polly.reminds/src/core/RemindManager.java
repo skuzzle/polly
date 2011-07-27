@@ -12,17 +12,23 @@ import org.apache.log4j.Logger;
 
 import polly.reminds.MyPlugin;
 
-import de.skuzzle.polly.sdk.Disposable;
+import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
+import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.model.User;
 import entities.RemindEntity;
 
 
 
-public class RemindManager implements Disposable {
+/**
+ * 
+ * @author Simon
+ * @version 27.07.2011 e1a9f7c
+ */
+public class RemindManager extends AbstractDisposable {
 
     private Logger logger;
     private PersistenceManager persistence;
@@ -271,9 +277,9 @@ public class RemindManager implements Disposable {
     }
 
 
-
+    
     @Override
-    public void dispose() {
+    protected void actualDispose() throws DisposingException {
         logger.debug("Shutting down remind scheduler.");
         this.remindScheduler.cancel();
     }

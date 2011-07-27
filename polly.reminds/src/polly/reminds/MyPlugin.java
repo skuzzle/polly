@@ -20,11 +20,17 @@ import de.skuzzle.polly.sdk.PollyPlugin;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.eventlistener.JoinPartListener;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
+import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
 import entities.RemindEntity;
 
 
+/**
+ * 
+ * @author Simon
+ * @version 27.07.2011 e1a9f7c
+ */
 public class MyPlugin extends PollyPlugin {
 
     public final static String REMIND_FORMAT_NAME = "REMIND_FORMAT";
@@ -71,10 +77,10 @@ public class MyPlugin extends PollyPlugin {
     
     
     @Override
-    public void dispose() {
-        super.dispose();
+    public void actualDispose() throws DisposingException {
         this.getMyPolly().irc().removeNickChangeListener(this.remindNickChangeTracer);
         this.getMyPolly().irc().removeJoinPartListener(this.deliverRemindHandler);
+        super.actualDispose();
     }       
 
     
