@@ -1,8 +1,6 @@
 package polly.core;
 
-import java.util.Calendar;
 
-import commands.AddTopicCommand;
 import commands.AddTrainCommand;
 import commands.AddUserCommand;
 import commands.CalendarCommand;
@@ -40,13 +38,18 @@ import core.TrainManager;
 
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
+import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
 import entities.TopicEntity;
 import entities.TrainEntity;
 
 
-
+/**
+ * 
+ * @author Simon
+ * @version 27.07.2011 3851c1b
+ */
 public class MyPlugin extends PollyPlugin {
 
     private TopicManager topicManager;
@@ -118,8 +121,8 @@ public class MyPlugin extends PollyPlugin {
 	
 	
 	@Override
-	public void dispose() {
-	    super.dispose();
+	protected void actualDispose() throws DisposingException {
+	    super.actualDispose();
 	    this.topicManager.dispose();
 	}
 }

@@ -9,7 +9,11 @@ import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
 
 
-
+/**
+ * 
+ * @author Simon
+ * @version 27.07.2011 3851c1b
+ */
 public class QuitCommand extends Command {
 
     public QuitCommand(MyPolly polly) throws DuplicatedSignatureException {
@@ -34,7 +38,7 @@ public class QuitCommand extends Command {
         }
         
         this.getMyPolly().irc().quit(message);
-        this.getMyPolly().shutdown();
+        this.getMyPolly().shutdownManager().shutdown();
         return false;
     }
 }

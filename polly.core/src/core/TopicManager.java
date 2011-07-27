@@ -8,13 +8,20 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import de.skuzzle.polly.sdk.Disposable;
+import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
+import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import entities.TopicEntity;
 
-public class TopicManager implements Disposable {
+
+/**
+ * 
+ * @author Simon
+ * @version 27.07.2011 3851c1b
+ */
+public class TopicManager extends AbstractDisposable {
 
     private final static long ONE_DAY = 86400000;
     
@@ -142,7 +149,7 @@ public class TopicManager implements Disposable {
 
 
     @Override
-    public void dispose() {
+    protected void actualDispose() throws DisposingException {
         this.topicTimer.cancel();
         this.topics.clear();
         this.topicTimer = null;

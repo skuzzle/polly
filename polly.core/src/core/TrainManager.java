@@ -2,15 +2,20 @@ package core;
 
 import java.util.List;
 
-import de.skuzzle.polly.sdk.Disposable;
+import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
+import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import entities.TrainEntity;
 
 
-
-public class TrainManager implements Disposable {
+/**
+ * 
+ * @author Simon
+ * @version 27.07.2011 3851c1b
+ */
+public class TrainManager extends AbstractDisposable {
 
     private PersistenceManager persistence;
     
@@ -101,7 +106,7 @@ public class TrainManager implements Disposable {
     
     
     @Override
-    public void dispose() {
+    protected void actualDispose() throws DisposingException {
         // TODO Auto-generated method stub
         
     }
