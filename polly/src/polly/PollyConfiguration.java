@@ -340,11 +340,11 @@ public class PollyConfiguration extends Configuration
 	
     @Override
     protected void actualDispose() throws DisposingException {
-        try {
+        /*try {
             this.store();
         } catch (IOException e) {
             throw new DisposingException(e);
-        }
+        }*/
     }
     
     

@@ -3,7 +3,6 @@ package polly.core;
 import java.util.Date;
 
 import polly.Polly;
-import polly.PollyConfiguration;
 
 
 import de.skuzzle.polly.sdk.AbstractDisposable;
@@ -29,7 +28,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 	private CommandManagerImpl commandManager;
 	private IrcManagerImpl ircManager;
 	private PluginManagerImpl pluginManager;
-	private PollyConfiguration config;
+	private Configuration config;
 	private PersistenceManagerImpl persistence;
 	private UserManagerImpl userManager;
 	private FormatManagerImpl formatManager;
@@ -40,7 +39,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 	public MyPollyImpl(CommandManagerImpl cmdMngr, 
 	        IrcManagerImpl ircMngr, 
 			PluginManagerImpl plgnMngr, 
-			PollyConfiguration config, 
+			Configuration config, 
 			PersistenceManagerImpl pMngr,
 			UserManagerImpl usrMngr,
 			FormatManagerImpl fmtMngr) {
@@ -48,7 +47,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 		this.commandManager = cmdMngr;
 		this.ircManager = ircMngr;
 		this.pluginManager = plgnMngr;
-		this.config = config;
+		this.config = new ConfigurationWrapper(config);
 		this.persistence = pMngr;
 		this.userManager = usrMngr;
 		this.formatManager = fmtMngr;
