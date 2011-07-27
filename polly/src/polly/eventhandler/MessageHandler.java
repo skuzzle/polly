@@ -41,14 +41,12 @@ import polly.util.Pair;
 public class MessageHandler implements MessageListener {
 
 	private static Logger logger = Logger.getLogger(MessageHandler.class.getName());
-    private InputParser parser;
     private CommandManager commands;
     private UserManagerImpl userManager;
     private String encodingName;
     
     public MessageHandler(CommandManager commandManager, UserManagerImpl userManager, 
             String encoding) {
-        this.parser = new InputParser();
         this.commands = commandManager;
         this.userManager = userManager;
         this.encodingName = encoding;
@@ -128,8 +126,9 @@ public class MessageHandler implements MessageListener {
         	logger.trace("Parsing input '" + e.getMessage() + "'");
         	// .trim(): remove trailing spaces to prevent strange error messages for
         	// inputs that have an additional space char.
-            Root root = this.parser.parse(e.getMessage().trim(), this.encodingName);
-            
+        	InputParser parser = new InputParser();
+        	Root root = parser.parse(e.getMessage().trim(), this.encodingName);
+
             if (root == null) {
             	logger.trace("No valid input");
             	return null;
