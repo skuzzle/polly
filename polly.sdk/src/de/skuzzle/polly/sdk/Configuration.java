@@ -5,19 +5,14 @@ import java.io.IOException;
 /**
  * <p>Provides access to the polly configuration file.</p>
  * 
- * <p>You can add your own property values and store them in pollys configuration file or
- * access existing properties from that file.</p>
+ * <p>You can access all polly configuration properties, but there may come up 
+ * restrictions in further polly versions for security reasons. So far, you have
+ * read-only access to all properties and can retrieve them by passing any of the
+ * static constants to the read methods.</p>
  * 
- * <p>You should never override existing values which you did not set yourself! If you
- * do so, note that most changes to polly config properties only take effect after
- * restarting polly.</p>
- * 
- * <p>Please note that you have to call {@link #store()} in order to persist all of your 
- * changes. Polly automatically persists the config file upon shutdown</p>
- * 
- * <p>Please note also, that other plugins may change the properties in this file at any 
- * time. The values you get are only considerable correct by the time you 
- * received them.</p>
+ * <p>Note that the {@link #setProperty(String, Object)} and {@link #store()} methods
+ * will always throw an {@link UnsupportedOperationException} as they are no longer
+ * supported.</p>
  * 
  * @author Simon
  * @since zero day
@@ -209,7 +204,10 @@ public interface Configuration {
 	 * @param name The property name.
 	 * @param value The properties value. This will be stored as a String, calling its
 	 * 		<code>toString</code> method.
+	 * @deprecated This method is no longer supported and will always throw an 
+	 *     {@link UnsupportedOperationException}.
 	 */
+    @Deprecated
 	public abstract <T> void setProperty(String name, T value);
 	
 	
@@ -262,6 +260,9 @@ public interface Configuration {
 	/**
 	 * Writes the current properties back to the configuration file.
 	 * @throws IOException If writing the file fails.
-	 */
+     * @deprecated This method is no longer supported and will always throw an 
+     *     {@link UnsupportedOperationException}.
+     */
+    @Deprecated
 	public abstract void store() throws IOException;
 }
