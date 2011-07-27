@@ -86,7 +86,6 @@ public class TelnetConnection implements Runnable {
             this.output.write(System.getProperty("line.separator", "\n").getBytes());
             this.output.flush();
         } catch (IOException e) {
-            e.printStackTrace();
             logger.error("Error while sending to connection " + this.id, e);
             this.close();
         }
@@ -131,9 +130,8 @@ public class TelnetConnection implements Runnable {
             }
         } catch (Exception e) {
             if (!this.closing.get()) {
+                logger.error("", e);
                 this.close();
-            } else {
-                logger.error(e);
             }
         }
     }

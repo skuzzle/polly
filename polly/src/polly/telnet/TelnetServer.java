@@ -72,13 +72,10 @@ public class TelnetServer implements Disposable, Runnable {
                 Socket connection = this.serverSocket.accept();
                 TelnetConnection newConnection = new TelnetConnection(connection, 
                     this.config, this.ircManager, this.handler);
-    
-                System.out.println(connection.getInetAddress());
-                if (connection.getInetAddress().isAnyLocalAddress()) {
-                    System.out.println("yeah");
-                }
+
                 if (this.connection == null || !this.connection.isConnected()) {
-                    logger.info("New Telnet connection accpeted.");
+                    logger.info("New Telnet connection from '" + 
+                        connection.getInetAddress() + "' accpeted.");
                     this.connection = newConnection;
                     this.ircManager.setTelnetConnection(newConnection);
                     this.connectionPool.execute(newConnection);
@@ -108,9 +105,9 @@ public class TelnetServer implements Disposable, Runnable {
             this.connection.close();
         }
         logger.debug("Closing connection thread pool.");
-        this.connectionPool.shutdown();
+        this.connectionPool.shutdownNow();
         
-        logger.debug("Shuttind down telnet server.");
+        logger.debug("Shutting down telnet server.");
         try {
             this.serverSocket.close();
         } catch (IOException e) {
