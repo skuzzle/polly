@@ -3,6 +3,7 @@ package de.skuzzle.polly.sdk;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
 
@@ -21,13 +22,13 @@ import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
  * 
  * @author Simon
  * @since zero day
- * @version RC 1.0
+ * @version 27.07.2011 5e9480b
  */
-public abstract class PollyPlugin implements Disposable {
+public abstract class PollyPlugin extends AbstractDisposable {
 	
 	private MyPolly myPolly;
 	private List<Command> commands;
-	private List<Disposable> disposables;
+	private CompositeDisposable disposables;
 	
 	
 
@@ -45,39 +46,36 @@ public abstract class PollyPlugin implements Disposable {
 	 */
 	public PollyPlugin(MyPolly myPolly) throws IncompatiblePluginException {
 	    this.commands = new LinkedList<Command>();
-	    this.disposables = new LinkedList<Disposable>();
+	    this.disposables = new CompositeDisposable();
 		this.myPolly = myPolly;
 	}
-
+	
 	
 	
 	/**
-	 * <p>This method is called by polly upon shutdown and on manual unload of your 
-	 * plugin. Your plugin has to take care of all commands it registered and must 
-	 * unregister them all upon calling this method.
-	 * Furthermore, you can release all resources that will no longer be needed.</p>
-	 * 
-	 * <p>The default implementation unregisters all commands that have been added using
-	 * {@link #addCommand(Command)}. Additionally, all Disposable objects registered
-	 * with {@link #addDisposable(Disposable)} are disposed.
-	 * If you override it, ensure to call super.unload() in order to properly unload your
-	 * plugin.</p>
-	 * 
-	 * <p>One use case to override {@linkplain #dispose()} is to unregister all listeners 
-	 * you assigned to polly.</p>
-	 */
-	public void dispose() {
-	    for (Command command : this.commands) {
-	        try {
-	            this.myPolly.commands().unregisterCommand(command);
-	        } catch (Exception ignore) {};
-	    }
-	    
-	    for (Disposable d : this.disposables) {
-	        try {
-	            d.dispose();
-	        } catch (Exception ignore) {}
-	    }
+     * <p>This method is called by polly upon shutdown and on manual unload of your 
+     * plugin. Your plugin has to take care of all commands it registered and must 
+     * unregister them all upon calling this method.
+     * Furthermore, you can release all resources that will no longer be needed.</p>
+     * 
+     * <p>The default implementation unregisters all commands that have been added using
+     * {@link #addCommand(Command)}. Additionally, all Disposable objects registered
+     * with {@link #addDisposable(Disposable)} are disposed.
+     * If you override it, ensure to call super.unload() in order to properly unload your
+     * plugin.</p>
+     * 
+     * <p>One use case to override {@linkplain #dispose()} is to unregister all listeners 
+     * you assigned to polly.</p>
+     */
+	@Override
+	protected void actualDispose() throws DisposingException {
+        for (Command command : this.commands) {
+            try {
+                this.myPolly.commands().unregisterCommand(command);
+            } catch (Exception ignore) {};
+        }
+        
+        this.disposables.dispose();
 	}
 	
 	
