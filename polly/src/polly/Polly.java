@@ -2,6 +2,7 @@ package polly;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -13,6 +14,7 @@ import org.jibble.pircbot.NickAlreadyInUseException;
 import de.skuzzle.polly.sdk.CompositeDisposable;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
+import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.PluginException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
 
@@ -39,10 +41,28 @@ import polly.events.EventProvider;
 import polly.persistence.DatabaseProperties;
 import polly.persistence.XmlCreator;
 import polly.telnet.TelnetServer;
+import polly.util.TestCommand;
 
 
 
 public class Polly {
+    
+    public static String getPid() {
+        String[] parts = ManagementFactory.getRuntimeMXBean().getName().split("@");
+        return parts[0];
+    }
+    
+    
+    public static File getPollyPath() {
+        return new File(".");
+    }
+    
+    private static String commandLine = "";
+    public static String getCommandLine() {
+        return commandLine.trim();
+    }
+    
+    
 
     // private final static String CONFIG_FOLDER = "cfg/";
     private final static String PLUGIN_FOLDER = "cfg/plugins/";
@@ -59,7 +79,10 @@ public class Polly {
      * 
      * @param args The commandline arguments passed to polly. This array may be empty
      */
-    public static void main(String[] args) {
+    public synchronized static void main(String[] args) {
+        for (String arg : args) {
+            commandLine += arg + " ";
+        }
         new Polly(args);
     }
     
@@ -107,6 +130,7 @@ public class Polly {
         PersistenceManagerImpl persistence = new PersistenceManagerImpl();
         CommandManagerImpl commandManager = new CommandManagerImpl(
                 config.getIgnoredCommands());
+        
         UserManagerImpl userManager = new UserManagerImpl(persistence, 
                 config.getDeclarationCachePath(),
                 eventProvider);
@@ -121,6 +145,16 @@ public class Polly {
                 persistence, 
                 userManager,
                 formatManager);
+        
+        /*
+         * Remove this!
+         */
+        try {
+            commandManager.registerCommand(new TestCommand(myPolly));
+        } catch (DuplicatedSignatureException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         
         this.setupPlugins(pluginManager, myPolly, config, PLUGIN_FOLDER);        
         this.setupDatabase(persistence, config, pluginManager, 
