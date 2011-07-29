@@ -141,17 +141,6 @@ public class ShutdownManagerImpl implements ShutdownManager {
     
     
     
-    public void restartApplication(Runnable runBeforeRestart) throws IOException {
-        try {
-
-        } catch (Exception e) {
-            // something went wrong
-            throw new IOException("Error while trying to restart the application", e);
-        }
-    }
-    
-    
-    
     public void shutdown(boolean exit) {
         logger.info("Shutting down all components.");
         try {

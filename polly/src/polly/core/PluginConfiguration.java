@@ -74,6 +74,12 @@ public class PluginConfiguration extends Configuration {
     
     
     
+    public boolean isUpdateable() {
+        return this.props.getProperty(UPDATE_URL) != null;
+    }
+    
+    
+    
     public String getProperty(String name) {
         return this.props.getProperty(name, "");
     }
