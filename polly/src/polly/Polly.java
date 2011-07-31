@@ -14,7 +14,6 @@ import org.jibble.pircbot.NickAlreadyInUseException;
 import de.skuzzle.polly.sdk.CompositeDisposable;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
-import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.PluginException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
 
@@ -41,7 +40,6 @@ import polly.events.EventProvider;
 import polly.persistence.DatabaseProperties;
 import polly.persistence.XmlCreator;
 import polly.telnet.TelnetServer;
-import polly.util.TestCommand;
 
 
 
@@ -145,16 +143,6 @@ public class Polly {
                 persistence, 
                 userManager,
                 formatManager);
-        
-        /*
-         * Remove this!
-         */
-        try {
-            commandManager.registerCommand(new TestCommand(myPolly));
-        } catch (DuplicatedSignatureException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
         
         this.setupPlugins(pluginManager, myPolly, config, PLUGIN_FOLDER);        
         this.setupDatabase(persistence, config, pluginManager, 
