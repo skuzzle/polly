@@ -44,7 +44,9 @@ public class IsGoneHandler implements QuitListener, JoinPartListener {
     
     
     private synchronized void traceGone(IrcUser user, boolean quit) {
-        if (!this.ircManager.isOnline(user.getNickName())) {
+        if (!this.ircManager.isOnline(user.getNickName()) && 
+                this.userManager.isSignedOn(user)) {
+            
             logger.warn("Auto logoff for user: " + user);
             if (!quit) {
                 this.ircManager.sendMessage(user.getNickName(), 

@@ -1,16 +1,15 @@
 package polly.update;
 
+
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
-import de.skuzzle.polly.sdk.AbstractDisposable;
-import de.skuzzle.polly.sdk.exceptions.DisposingException;
+import polly.update.DownloadManager.DownloadObject;
+import polly.update.DownloadManager.DownloadCallback;
 
 
 /**
@@ -18,79 +17,84 @@ import de.skuzzle.polly.sdk.exceptions.DisposingException;
  * @author Simon
  * @version 27.07.2011 ae73250
  */
-public class UpdateManager extends AbstractDisposable {
+public class UpdateManager {
 
     public static void main(String[] args) {
-        UpdateManager um = new UpdateManager();
-        
-        try {
-            um.checkAndStart(0.0f, 
-                "http://www.polly.skuzzle.de/release/pollyUpdate.properties", 
-                "C:\\Users\\Simon\\Desktop\\temp\\");
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+
     }
     
     private static Logger logger = Logger.getLogger(UpdateManager.class.getName());
-    public final static String UPDATE_URL = "updateURL";
-    public final static String UPDATE_CRC = "updateCRC";
-    public final static String UPDATE_VERSION = "updateVersion";
-    
-    
-    private DownloadManager downloadManager;
-    private List<UpdateItem> updates;
+
     
     
     public UpdateManager() {
-        this.updates = new LinkedList<UpdateItem>();
-        this.downloadManager = new DownloadManager();
     }
-
-   
     
-    public UpdateItem checkAndStart(float currentVersion, String propertyFile, 
-            String tempPath) throws IOException {
+
+    
+    public List<UpdateProperties> collect(List<UpdateItem> items) {
+        List<UpdateProperties> result = new LinkedList<UpdateProperties>();
         
-        Properties props = this.readProperties(propertyFile);
-        if (this.checkForUpdate(currentVersion, props)) {
-            logger.info("Newer version is available.");
-            URL updateUrl = new URL(props.getProperty(UPDATE_URL));
-
-            File tempFile = File.createTempFile("polly", "", new File(tempPath));
-            UpdateItem ui = new UpdateItem(props, tempFile);
-            this.updates.add(ui);
-            
-            logger.info("Downloading update: " + ui);
-            this.downloadManager.downloadLater(updateUrl, tempFile, ui);
-            return ui;
+        logger.info("Collecting update information for " + items.size() + " items.");
+        for (UpdateItem item : items) {
+            try {
+                UpdateProperties up = new UpdateProperties(item.getPropertyUrl());
+                if (up.getVersion().compareTo(item.getCurrentVersion()) > 0) {
+                    logger.info(item + " is out of date. Your version: " + 
+                            item.getCurrentVersion() + ", newest version: " + 
+                            up.getVersion());
+                    result.add(up);
+                } else {
+                    logger.info(item + " is up to date.");
+                }
+            } catch (IOException e) {
+                logger.warn("Could not read update information for item: " + item, e);
+            } catch (UpdateException e) {
+                logger.error("Invalid update property file for item: " + item, e);
+            }
         }
-        return null;
+        
+        return result;
     }
     
     
     
-    public boolean checkForUpdate(float currentVersion, Properties props) {
-        String versionString = props.getProperty(UPDATE_VERSION);
-        float f = Float.parseFloat(versionString);
-        return f > currentVersion;
+    public List<File> downloadUpdates(List<UpdateProperties> updates) {
+        final List<File> files = new LinkedList<File>();
+        DownloadManager dm = new DownloadManager();
+        
+        logger.info("Downloading " + updates.size() + " updates.");
+        for (final UpdateProperties update : updates) {
+            try {
+                File dest = File.createTempFile("" + System.nanoTime(), ".zip");
+                
+                dm.downloadAndWait(update.getUpdateUrl(), dest, new DownloadCallback() {
+                    
+                    @Override
+                    public void downloadFinished(DownloadObject o) {
+                        logger.info("Downloaded " + o);
+                        files.add(o.getDestination());
+                    }
+                    
+                    
+                    
+                    @Override
+                    public void downloadFailed(DownloadObject o, Exception e) {
+                        logger.error("Error while downloading " + o, e);
+                    }
+                });
+                
+            } catch (IOException e) {
+                logger.error("Could not generate temp file for " + update, e);
+            }
+        }
+        
+        return files;
     }
     
     
     
-    private Properties readProperties(String location) throws IOException {
-        logger.info("Getting update information from " + location);
-        URL url = new URL(location);
-        Properties props = new Properties();
-        props.load(url.openStream());
-        return props;
-    }
-
-
-
-    @Override
-    protected void actualDispose() throws DisposingException {
-        this.downloadManager.dispose();
+    public void install(List<File> files) {
+        
     }
 }

@@ -174,6 +174,8 @@ public class Polly {
         shutdownList.add(eventProvider);
         
         pluginManager.notifyPlugins();
+        
+        logger.info("Polly succesfully set up.");
     }
     
     
@@ -265,7 +267,8 @@ public class Polly {
                 config.getNickName(), 
                 config.getServer(), 
                 config.getPort(), 
-                config.getIdent());
+                config.getIdent(),
+                config.getChannels());
         
         try {
             ircManager.connect(settings);
@@ -277,9 +280,6 @@ public class Polly {
             logger.fatal("Connection failed: " + e.getMessage(), e);
             System.exit(0);
         }
-        
-        ircManager.joinChannels(config.getChannels());
-        
         this.setupTelnetServer(config, ircManager, handler);
     }
     

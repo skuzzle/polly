@@ -94,18 +94,20 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         
         
         @Override
-        protected void onPart(String channel, String sender, String login,
+        protected synchronized void onPart(String channel, String sender, String login,
                 String hostname) {
             
             String nickName = IrcManagerImpl.this.stripNickname(sender);
             IrcUser user = new IrcUser(nickName, login, hostname);
             ChannelEvent e = new ChannelEvent(IrcManagerImpl.this, user, channel);
             
-            /* ISSUE: 0000002 */
+            /* ISSUE: 0000002 && 0000026*/
             boolean known = false;
             for (String c : this.getChannels()) {
                 for (User u : this.getUsers(c)) {
-                    if (u.getNick().equals(sender)) {
+                    String uStripped = IrcManagerImpl.this.stripNickname(u.getNick());
+                    
+                    if (uStripped.equals(nickName)) {
                         known = true;
                         break;
                     }
@@ -131,7 +133,6 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
             
             IrcManagerImpl.this.onlineUsers.remove(nickName);
             IrcManagerImpl.this.fireQuit(e);
-
         }
         
         
@@ -214,6 +215,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     private PollyConfiguration config;
     private boolean disconnect;
     private TelnetConnection connection;
+    private BotConnectionSettings recent;
     
     
     
@@ -262,10 +264,16 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
 	public void connect(BotConnectionSettings e) 
             throws NickAlreadyInUseException, IOException, IrcException {
 
+	    if (this.isConnected()) {
+	        return;
+	    }
         this.bot.connect(e.getHostName(), e.getPort());
         
+        this.bot.sendMessage("nickserv", "ghost " + e.getNickName() + " " + e.getIdentity());
         this.bot.changeNick(e.getNickName());
         this.bot.identify(e.getIdentity());
+        this.joinChannels(e.getChannels());
+        this.recent = e;
     }
 	
 	
@@ -464,7 +472,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         logger.warn("IRC Connection lost. Trying to reconnect...");
         while (!this.isConnected()) {
             try {
-                this.bot.reconnect();
+                this.connect(this.recent);
                 this.disconnect = false;
                 logger.info("IRC Connection reestablished.");
             } catch (Exception e) {

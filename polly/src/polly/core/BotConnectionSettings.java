@@ -6,15 +6,16 @@ public class BotConnectionSettings {
     private String hostName;
     private int port;
     private String identity;
-    
+    private String[] channels;
     
 
     public BotConnectionSettings(String nickName, String hostName, 
-            int port, String identity) {
+            int port, String identity, String[] channels) {
         this.nickName = nickName;
         this.hostName = hostName;
         this.port = port;
         this.identity = identity;
+        this.channels = channels;
     }
     
     
@@ -40,4 +41,9 @@ public class BotConnectionSettings {
     public String getIdentity() {
         return this.identity;
     }    
+    
+    
+    public String[] getChannels() {
+        return this.channels;
+    }
 }
