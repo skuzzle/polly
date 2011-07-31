@@ -14,12 +14,10 @@ import de.skuzzle.polly.sdk.exceptions.DisposingException;
  * <pre>
  *    private boolean disposed;
  *    
- *    @Override
  *    public synchronized boolean isDisposed() {
  *        return this.disposed;
  *    }
  *    
- *    @Override
  *    public synchronized void dispose() throws DisposingException {
  *        if (this.isDisposed() {
  *            throw new IllegalStateException();
