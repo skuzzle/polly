@@ -134,7 +134,7 @@ public class InputScanner extends AbstractTokenStream {
                     this.pushBack(next);
                     return this.readNumber();
                     
-                }else if (next == '"') {
+                } else if (next == '"') {
                     this.pushBack(next);
                     return this.readString();
                     
@@ -437,20 +437,36 @@ public class InputScanner extends AbstractTokenStream {
      */
     private Token readIdentifier() throws ParseException {
         int tokenStart = this.getStreamIndex();
+        int state = 0;
         StringBuilder lexem = new StringBuilder();
         
+        // ISSUE: 0000027
+        // Fixed by adding state 0, which expects an identifier-start-character and then
+        // switches to state 1 which expects identifier-part-characters.
+        
         while (!this.eos) {
-            int next = this.readChar();
-            
-            if (InputScanner.isIdentifierPart(next)) {
-                lexem.appendCodePoint(next);
-            /*} else if (next == ':') {
-                //lexem.append(next); // do not append ':' to username
-                return new Token(TokenType.USER, this.spanFrom(tokenStart), 
-                        lexem.toString());*/
-            } else {
-                this.pushBack(next);
-                return this.identifierToToken(lexem.toString(), tokenStart);
+            if (state == 0) {
+                int next = this.readChar();
+                
+                if (InputScanner.isIdentifierStart(next)) {
+                    state = 1;
+                    lexem.appendCodePoint(next);
+                } else {
+                    this.parseException("Invalid Identifier", tokenStart);
+                }
+            } else if (state == 1) {
+                int next = this.readChar();
+                
+                if (InputScanner.isIdentifierPart(next)) {
+                    lexem.appendCodePoint(next);
+                /*} else if (next == ':') {
+                    //lexem.append(next); // do not append ':' to username
+                    return new Token(TokenType.USER, this.spanFrom(tokenStart), 
+                            lexem.toString());*/
+                } else {
+                    this.pushBack(next);
+                    return this.identifierToToken(lexem.toString(), tokenStart);
+                }
             }
         }
         
