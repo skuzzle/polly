@@ -201,6 +201,18 @@ public class BinaryOperators {
                     stack.push(new NumberLiteral(
                             left.isInteger() ^ right.isInteger(), span));
                     break;
+                case LEFT_SHIFT:
+                    stack.push(new NumberLiteral(
+                            left.isInteger() << right.isInteger(), span));
+                    break;
+                case RIGHT_SHIFT:
+                    stack.push(new NumberLiteral(
+                        left.isInteger() >> right.isInteger(), span));
+                    break;
+                case URIGHT_SHIFT:
+                    stack.push(new NumberLiteral(
+                        left.isInteger() >>> right.isInteger(), span));
+                    break;
             }
         }
         @Override

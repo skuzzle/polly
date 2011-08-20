@@ -40,6 +40,9 @@ public class PrecedenceTable {
         this.add(PrecedenceLevel.EXPRESSION, TokenType.ADDWAVE);
         this.add(PrecedenceLevel.EXPRESSION, TokenType.SUB);
         this.add(PrecedenceLevel.EXPRESSION, TokenType.WAVE);
+        this.add(PrecedenceLevel.EXPRESSION, TokenType.RIGHT_SHIFT);
+        this.add(PrecedenceLevel.EXPRESSION, TokenType.URIGHT_SHIFT);
+        this.add(PrecedenceLevel.EXPRESSION, TokenType.LEFT_SHIFT);
         
         this.add(PrecedenceLevel.TERM, TokenType.MUL);
         this.add(PrecedenceLevel.TERM, TokenType.DIV);

@@ -227,6 +227,9 @@ public class InputScanner extends AbstractTokenStream {
                 
                 if (next == '=') {
                     return new Token(TokenType.ELT, this.spanFrom(tokenStart), "<=");
+                } else if (next == '<') {
+                    return new Token(
+                        TokenType.LEFT_SHIFT, this.spanFrom(tokenStart), "<<");
                 } else {
                     this.pushBack(next);
                     return new Token(TokenType.LT, this.spanFrom(tokenStart), "<");
@@ -237,6 +240,8 @@ public class InputScanner extends AbstractTokenStream {
                 
                 if (next == '=') {
                     return new Token(TokenType.EGT, this.spanFrom(tokenStart), ">=");
+                } else if (next == '>') {
+                    state = 11;
                 } else {
                     this.pushBack(next);
                     return new Token(TokenType.GT, this.spanFrom(tokenStart), ">");
@@ -299,6 +304,17 @@ public class InputScanner extends AbstractTokenStream {
                 } else {
                     this.pushBack(next);
                     return new Token(TokenType.SUB, this.spanFrom(tokenStart), "-");
+                }
+            } else if (state == 11) {
+                int next = this.readChar();
+                
+                if (next == '>') {
+                    return new Token(
+                        TokenType.URIGHT_SHIFT, this.spanFrom(tokenStart), ">>>");
+                } else {
+                    this.pushBack(next);
+                    return new Token(
+                        TokenType.RIGHT_SHIFT, this.spanFrom(tokenStart), ">>");
                 }
             }
         }
