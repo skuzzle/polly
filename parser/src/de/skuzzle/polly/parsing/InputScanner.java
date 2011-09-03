@@ -420,7 +420,7 @@ public class InputScanner extends AbstractTokenStream {
     
     
     private Token readUser() throws ParseException {
-        int tokenStart = this.getStreamIndex();
+        int tokenStart = this.getStreamIndex() - 1; // include @ sign
         StringBuilder lexem = new StringBuilder();
 
         while (!this.eos) {
