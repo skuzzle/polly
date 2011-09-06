@@ -423,6 +423,9 @@ public class InputScanner extends AbstractTokenStream {
         int tokenStart = this.getStreamIndex() - 1; // include @ sign
         StringBuilder lexem = new StringBuilder();
 
+        // ISSUE: 0000031
+        // Userliterals can contain "-" which interferes with a following assignment
+        // operator.
         while (!this.eos) {
             int next = this.readChar();
         
