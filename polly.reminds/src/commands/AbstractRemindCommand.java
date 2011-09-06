@@ -19,7 +19,9 @@ public class AbstractRemindCommand extends Command {
         
         @Override
         protected String formatRemind(RemindEntity remind, FormatManager formatter) {
-            return "Erinnerung für " + remind.getForUser() + " gespeichert.";
+            // ISSUE: 0000032, fixed
+            return "Erinnerung für " + remind.getForUser() + " gespeichert. (Fällig: " + 
+                formatter.formatDate(remind.getDueDate()) + ")";
         }
         
         @Override
