@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="polly" basedir="." default="dist">
 
-    <property name="version.num" value="Beta 0.5.5"/>
+    <property name="version.num" value="Beta 0.5.6"/>
     <property name="src.dir" value="src"/>
     <property name="dist.dir" value="dist"/>
     <property name="cfg.dir" value="cfg"/>
