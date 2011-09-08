@@ -1,6 +1,7 @@
 package polly.telnet;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -51,7 +52,9 @@ public class TelnetServer extends AbstractDisposable implements Runnable {
         this.closing = new AtomicBoolean();
         
         ServerSocketFactory factory = ServerSocketFactory.getDefault();
-        this.serverSocket = factory.createServerSocket(config.getTelnetPort(), 10, null); 
+        // ISSUE: 0000035
+        this.serverSocket = factory.createServerSocket(config.getTelnetPort(), 10, 
+            InetAddress.getByName("localhost")); 
     }
     
     
