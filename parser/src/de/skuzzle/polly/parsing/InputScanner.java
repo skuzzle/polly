@@ -421,8 +421,8 @@ public class InputScanner extends AbstractTokenStream {
 
         // ISSUE: 0000031
         // Userliterals can contain "-" which interferes with a following assignment
-        // operator.
-        // Added special treatment now - pls verify!
+        // operator. This is now fixed by a special treatment with a lookahead to check
+        // if an assignment operator is following.
         while (!this.eos) {
             if (state == 0) {
                 int next = this.readChar();
@@ -442,12 +442,12 @@ public class InputScanner extends AbstractTokenStream {
                 if (next == '>') {
                     // XXX: this only works if pushback stategy is FIFO
                     this.pushBack('-');
-                    this.pushBack(next);
+                    this.pushBack('>');
                     return new Token(TokenType.USER, 
                         this.spanFrom(tokenStart), lexem.toString());
                 } else {
                     lexem.append("-");
-                    lexem.appendCodePoint(next);
+                    this.pushBack(next);
                     state = 0;
                 }
             }
