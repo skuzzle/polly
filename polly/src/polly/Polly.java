@@ -57,7 +57,7 @@ public class Polly {
     
     private static String commandLine = "";
     public static String getCommandLine() {
-        return commandLine.trim();
+        return commandLine;
     }
     
     
@@ -81,6 +81,7 @@ public class Polly {
         for (String arg : args) {
             commandLine += arg + " ";
         }
+        commandLine = commandLine.trim();
         new Polly(args);
     }
     

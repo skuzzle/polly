@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import polly.Polly;
+
 
 import de.skuzzle.polly.sdk.CompositeDisposable;
 import de.skuzzle.polly.sdk.Disposable;
@@ -66,7 +68,7 @@ public class ShutdownManagerImpl implements ShutdownManager {
     
     @Override
     public void restart() {
-        this.restart("");
+        this.restart(Polly.getCommandLine());
     }
     
     
@@ -76,12 +78,17 @@ public class ShutdownManagerImpl implements ShutdownManager {
      */
     
     @Override
-    public void restart(String commandLine) {
+    public synchronized void restart(String commandLine) {
+        // properly shutdown all loaded components
         this.shutdown(false);
+        logger.info("Preparing to restart...");
+        logger.debug("Commandline arguments: " + commandLine);
+        
         try {
             String s = System.getProperty("file.separator");
             // java binary
             String java = System.getProperty("java.home") + s +"bin" + s + "java";
+            logger.trace("Java Home resolved to: " + java);
             // vm arguments
             List<String> vmArguments = 
                 ManagementFactory.getRuntimeMXBean().getInputArguments();
@@ -98,24 +105,11 @@ public class ShutdownManagerImpl implements ShutdownManager {
             final StringBuffer cmd = new StringBuffer("\"" + java + "\" " + 
                 vmArgsOneLine);
 
-            // program main and program arguments
-            String command = System.getProperty(SUN_JAVA_COMMAND);
-            System.out.println("Command: " + command);
-            String[] mainCommand = command == null ? new String[]{""} : command.split(" ");
-            // program main is a jar
-            //if (mainCommand[0].endsWith(".jar")) {
-                // if it's a jar, add -jar mainJar
-                cmd.append("-jar polly.jar");// + new File(mainCommand[0]).getPath());
-            //} else {
-                // else it's a .class, add the classpath and mainClass
-            //    cmd.append("-cp \"" + System.getProperty("java.class.path") + "\" " + 
-            //        mainCommand[0]);
-            //}
-            // finally add program arguments
-            for (int i = 1; i < mainCommand.length; i++) {
-                cmd.append(" ");
-                cmd.append(mainCommand[i]);
-            }
+            cmd.append("-jar polly.jar");// + new File(mainCommand[0]).getPath());
+
+            cmd.append(" ");
+            cmd.append(commandLine);
+            logger.trace("Java command: '" + cmd.toString() + "'");
             // execute the command in a shutdown hook, to be sure that all the
             // resources have been disposed before restarting the application
             Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -126,21 +120,23 @@ public class ShutdownManagerImpl implements ShutdownManager {
                         Runtime.getRuntime().exec(cmd.toString());
                         logger.info("New polly instance initialized.");
                     } catch (IOException e) {
-                        logger.error("Could not start new polly instance.");
+                        logger.error("Could not start new polly instance.", e);
                     }
                 }
             });
             
-            this.shutdown(true);
         } catch (Exception e) {
             logger.error("Could not start new polly instance", e);
+        } finally {
+            // All resources have been unloaded, so perform shutdown
+            logger.warn("Exiting current polly process.");
+            System.exit(0);
         }
-        System.exit(0);
     }
     
     
     
-    public void shutdown(boolean exit) {
+    public synchronized void shutdown(boolean exit) {
         logger.info("Shutting down all components.");
         try {
             this.shutdownList.dispose();
