@@ -18,7 +18,7 @@ public class RegisterCommand extends Command {
     public RegisterCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "register");
         this.createSignature("Gib deinen gewünschten Benutzernamen " +
-        		"(am besten _me) und dein gewünschtes Passwort ein.", 
+        		"(am besten me) und dein gewünschtes Passwort ein.", 
         		new UserType(), new StringType());
         this.setHelpText("Befehl um dich bei Polly zu registrieren.");
         this.setUserLevel(UserManager.UNKNOWN);
@@ -37,7 +37,8 @@ public class RegisterCommand extends Command {
     @Override
     protected void executeOnChannel(User executer, String channel,
             Signature signature) {
-        this.reply(channel, "Dieser Befehl ist nur im Query ausführbar.");
+        this.reply(channel, "Dieser Befehl ist nur im Query ausführbar. Zudem solltest " +
+        		"du jetzt ein anderes Passwort wählen.");
     }
     
     
