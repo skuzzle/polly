@@ -42,6 +42,9 @@ public class Context {
         BINARY_OPERATORS.add(new BinaryOperators.ArithmeticOperator(TokenType.INT_OR));
         BINARY_OPERATORS.add(new BinaryOperators.ArithmeticOperator(TokenType.POWER));
         BINARY_OPERATORS.add(new BinaryOperators.ArithmeticOperator(TokenType.MOD));
+        BINARY_OPERATORS.add(new BinaryOperators.ArithmeticOperator(TokenType.LEFT_SHIFT));
+        BINARY_OPERATORS.add(new BinaryOperators.ArithmeticOperator(TokenType.RIGHT_SHIFT));
+        BINARY_OPERATORS.add(new BinaryOperators.ArithmeticOperator(TokenType.URIGHT_SHIFT));
         
         //BINARY_OPERATORS.add(new BinaryOperators.ArithmeticDateOperator(TokenType.ADD));
         BINARY_OPERATORS.add(new BinaryOperators.ArithmeticDateOperator(TokenType.SUB));

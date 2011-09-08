@@ -62,7 +62,6 @@ import java.util.TreeSet;
 public class InputScanner extends AbstractTokenStream {
 
     private final static Map<String, TokenType> KEYWORDS;
-    private final static Map<String, String> ESCAPES;
     static {
         KEYWORDS = new HashMap<String, TokenType>();
         KEYWORDS.put("xor", TokenType.XOR);
@@ -72,10 +71,6 @@ public class InputScanner extends AbstractTokenStream {
         
         /* To avoid 1char identifiers "_" */
         KEYWORDS.put("_", TokenType.UNKNOWN);
-        
-        ESCAPES = new HashMap<String, String>();
-        ESCAPES.put("\\", "\\");
-        ESCAPES.put("\"", "\"");
     }
     
 
@@ -421,20 +416,40 @@ public class InputScanner extends AbstractTokenStream {
     
     private Token readUser() throws ParseException {
         int tokenStart = this.getStreamIndex() - 1; // include @ sign
+        int state = 0;
         StringBuilder lexem = new StringBuilder();
 
         // ISSUE: 0000031
         // Userliterals can contain "-" which interferes with a following assignment
         // operator.
+        // Added special treatment now - pls verify!
         while (!this.eos) {
-            int next = this.readChar();
-        
-            if (InputScanner.isIdentifierPart(next) || next == '-') {
-                lexem.appendCodePoint(next);
-            } else {
-                this.pushBack(next);
-                return new Token(TokenType.USER, 
+            if (state == 0) {
+                int next = this.readChar();
+            
+                if (InputScanner.isIdentifierPart(next)) {
+                    lexem.appendCodePoint(next);
+                } else if (next == '-') {
+                    state = 1;
+                } else {
+                    this.pushBack(next);
+                    return new Token(TokenType.USER, 
+                            this.spanFrom(tokenStart), lexem.toString());
+                }
+            } else if (state == 1) {
+                int next = this.readChar();
+                
+                if (next == '>') {
+                    // XXX: this only works if pushback stategy is FIFO
+                    this.pushBack('-');
+                    this.pushBack(next);
+                    return new Token(TokenType.USER, 
                         this.spanFrom(tokenStart), lexem.toString());
+                } else {
+                    lexem.append("-");
+                    lexem.appendCodePoint(next);
+                    state = 0;
+                }
             }
         }
         
