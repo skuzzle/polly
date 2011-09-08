@@ -1,5 +1,6 @@
 package polly.core;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.List;
@@ -87,7 +88,7 @@ public class ShutdownManagerImpl implements ShutdownManager {
         try {
             String s = System.getProperty("file.separator");
             // java binary
-            String java = System.getProperty("java.home") + s +"bin" + s + "java";
+            final String java = System.getProperty("java.home") + s +"bin" + s + "java";
             logger.trace("Java Home resolved to: " + java);
             // vm arguments
             List<String> vmArguments = 
@@ -102,13 +103,15 @@ public class ShutdownManagerImpl implements ShutdownManager {
                 }
             }
             // init the command to execute, add the vm args
-            final StringBuffer cmd = new StringBuffer("\"" + java + "\" " + 
-                vmArgsOneLine);
+            final StringBuffer cmd = new StringBuffer(java + " " + vmArgsOneLine);
 
-            cmd.append("-jar polly.jar");// + new File(mainCommand[0]).getPath());
+            cmd.append(" -jar polly.jar");
 
-            cmd.append(" ");
-            cmd.append(commandLine);
+            if (commandLine != null && !commandLine.equals("")) {
+                cmd.append(" ");
+                cmd.append(commandLine);
+            }
+            
             logger.trace("Java command: '" + cmd.toString() + "'");
             // execute the command in a shutdown hook, to be sure that all the
             // resources have been disposed before restarting the application
