@@ -152,6 +152,13 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     }
     
     
+    /*
+     * This method is subject to ISSUE: 0000033
+     * It currently returns the keys from to Map that stores the declarations. This
+     * must be modified to return a set that contains the custom string representation
+     * for each declaration.
+     * 
+     */
     
     @Override
     public synchronized Set<String> getDeclaredIdentifiers(User user) {
