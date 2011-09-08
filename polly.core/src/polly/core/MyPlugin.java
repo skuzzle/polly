@@ -21,6 +21,7 @@ import commands.MyVenadCommand;
 import commands.PartCommand;
 import commands.QuitCommand;
 import commands.RegisterCommand;
+import commands.RestartCommand;
 import commands.SetMyPasswordCommand;
 import commands.SetPasswordCommand;
 import commands.SetUserLevelCommand;
@@ -101,6 +102,8 @@ public class MyPlugin extends PollyPlugin {
 		this.addCommand(new CloseTrainCommand(myPolly, this.trainManager));
 		this.addCommand(new MyTrainsCommand(myPolly, this.trainManager));
 		this.addCommand(new DeliverTrainCommand(myPolly, this.trainManager));
+		
+		this.addCommand(new RestartCommand(myPolly));
 	}
 	
 	
