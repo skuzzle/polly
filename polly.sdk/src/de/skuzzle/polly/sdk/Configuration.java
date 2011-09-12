@@ -192,8 +192,20 @@ public interface Configuration {
      */
     public final static String TELNET_PORT = "telnetPort";
     
+    /**
+     * Config file property which sets the update url for polly.
+     * @since Beta 0.6
+     */
+    public final static String UPDATE_URL = "updateUrl";
     
+    /**
+     * Config file property which enables auto updating.
+     * @since Beta 0.6
+     */
+    public final static String AUTO_UPDATE = "autoUpdate";
 
+    
+    
 	/**
 	 * <p>Stores a property with given name and value. If a property with the same name
 	 * existed before, it will be overridden. If it not existed, it will be created.</p>

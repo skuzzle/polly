@@ -46,7 +46,7 @@ public class Version implements Comparable<Version> {
      *      rules.
      */
     public Version(String version) {
-        String[] parts = version.split(".");
+        String[] parts = version.split("\\.");
         if (parts.length != 3) {
             throw new IllegalArgumentException("misformatted version string: " + version);
         }
