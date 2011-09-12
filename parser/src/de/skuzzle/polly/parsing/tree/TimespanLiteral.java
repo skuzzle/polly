@@ -3,6 +3,7 @@ package de.skuzzle.polly.parsing.tree;
 import java.util.Calendar;
 import java.util.Date;
 
+import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.Token;
 import de.skuzzle.polly.parsing.TokenType;
@@ -49,6 +50,14 @@ public class TimespanLiteral extends Literal {
         return this.getTarget(new Date());
     }
     
+    
+    @Override
+    public Literal castTo(Type target) throws ExecutionException {
+        if (target.check(Type.DATE)) {
+            return new DateLiteral(this.getTargetFromNow());
+        }
+        return super.castTo(target);
+    }
     
     
     @Override
