@@ -30,6 +30,7 @@ public class UpdateManager {
     public UpdateManager() {
     }
     
+        
 
     
     public List<UpdateProperties> collect(List<UpdateItem> items) {
@@ -45,7 +46,7 @@ public class UpdateManager {
                             up.getVersion());
                     result.add(up);
                 } else {
-                    logger.info(item + " is up to date.");
+                    logger.trace(item + " is up to date.");
                 }
             } catch (IOException e) {
                 logger.warn("Could not read update information for item: " + item, e);

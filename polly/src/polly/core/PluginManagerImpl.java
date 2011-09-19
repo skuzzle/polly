@@ -9,6 +9,8 @@ import java.net.URLClassLoader;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -171,6 +173,33 @@ public class PluginManagerImpl extends AbstractDisposable implements PluginManag
     
     public Collection<PluginConfiguration> loadedPlugins() {
         return Collections.unmodifiableCollection(this.pluginCache.values());
+    }
+    
+    
+    
+    public List<PluginConfiguration> enumerate(String folder, final String...excludes) {
+        List<PluginConfiguration> result = new LinkedList<PluginConfiguration>();
+        
+        FileFilter filter = new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                for (String exclude : excludes) {
+                    if (pathname.getName().equals(exclude)) {
+                        return false;
+                    }
+                }
+                return pathname.getName().toLowerCase().endsWith(".properties");
+            }
+        };
+        
+        for (File file : (new File(folder).listFiles(filter))) {
+            try {
+                result.add(new PluginConfiguration(file.getAbsolutePath()));
+            } catch (Exception e) {
+                logger.error("Error reading plugin property file.", e);
+            }
+        }
+        return result;
     }
     
     

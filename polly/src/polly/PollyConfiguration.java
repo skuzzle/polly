@@ -1,6 +1,8 @@
 package polly;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Map.Entry;
 
@@ -42,7 +44,8 @@ public class PollyConfiguration extends Configuration
 	private int reconnectDelay;
 	private int telnetPort;
 	private boolean enableTelnet;
-	
+	private boolean autoUpdate;
+	private String updateUrl;
 	
 	
 	public PollyConfiguration(String filename) 
@@ -65,7 +68,7 @@ public class PollyConfiguration extends Configuration
 	    this.init();
 	}
 	
-	
+
 
 	@Override
 	protected void init() throws ConfigurationFileException {
@@ -83,13 +86,22 @@ public class PollyConfiguration extends Configuration
         this.dateFormatString = this.props.getProperty(DATE_FORMAT, "dd.MM.yyyy@HH:mm:ss");
         this.numberFormatString = this.props.getProperty(NUMBER_FORMAT, "0.####");
         this.encodingName = this.props.getProperty(ENCODING, "ISO-8859-1");
-        
+        this.updateUrl = this.props.getProperty(UPDATE_URL, "");
+        this.autoUpdate = this.parseBoolean(this.props.getProperty(AUTO_UPDATE, "false"));
             
         try {
             this.encoding = Charset.forName(this.encodingName);
         } catch (Exception e) {
             throw new ConfigurationFileException("Invalid encoding: " + 
                 this.encodingName);
+        }
+        
+        try {
+            if (!this.updateUrl.equals("")) {
+                new URL(this.updateUrl);
+            }
+        } catch (MalformedURLException e) {
+            throw new ConfigurationFileException("Invalid update url: " + this.updateUrl);
         }
         
         String tmp = this.props.getProperty(PLUGIN_EXCLUDES, "");
@@ -287,6 +299,16 @@ public class PollyConfiguration extends Configuration
         return this.telnetPort;
     }
 
+    
+    
+    public boolean getAutoUpdate() {
+        return this.autoUpdate;
+    }
+    
+    
+    public String getUpdateUrl() {
+        return this.updateUrl;
+    }
     
     
     @Override

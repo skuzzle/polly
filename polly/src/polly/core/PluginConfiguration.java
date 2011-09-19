@@ -85,6 +85,11 @@ public class PluginConfiguration extends Configuration {
     }
     
     
+    public boolean updateSupported() {
+        return this.props.getProperty(UPDATE_URL) != null;
+    }
+    
+    
     
     @Override
     public String toString() {

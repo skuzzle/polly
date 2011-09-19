@@ -3,7 +3,11 @@ package polly;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -12,6 +16,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.jibble.pircbot.NickAlreadyInUseException;
 
 import de.skuzzle.polly.sdk.CompositeDisposable;
+import de.skuzzle.polly.sdk.Version;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.PluginException;
@@ -26,6 +31,7 @@ import polly.core.FormatManagerImpl;
 import polly.core.IrcManagerImpl;
 import polly.core.MyPollyImpl;
 import polly.core.PersistenceManagerImpl;
+import polly.core.PluginConfiguration;
 import polly.core.PluginManagerImpl;
 import polly.core.ShutdownManagerImpl;
 import polly.core.UserManagerImpl;
@@ -40,6 +46,9 @@ import polly.events.EventProvider;
 import polly.persistence.DatabaseProperties;
 import polly.persistence.XmlCreator;
 import polly.telnet.TelnetServer;
+import polly.update.UpdateItem;
+import polly.update.UpdateManager;
+import polly.update.UpdateProperties;
 
 
 
@@ -102,8 +111,9 @@ public class Polly {
         logger.info("");
         logger.info("Config file read from '" + CONFIG_FULL_PATH + "'");
         logger.info("Polly command line arguments: " + Arrays.toString(args));
-        logger.info("Version info: " + 
-                Polly.class.getPackage().getImplementationVersion());
+        String version = Polly.class.getPackage().getImplementationVersion();
+        logger.info("Version info: " + version);
+
         logger.trace("Configuration: \n" + config.toString());
         
         if (config.getPluginExcludes().length != 0) {
@@ -144,6 +154,8 @@ public class Polly {
                 persistence, 
                 userManager,
                 formatManager);
+        
+        this.checkUpdates(config, pluginManager, PLUGIN_FOLDER);
         
         this.setupPlugins(pluginManager, myPolly, config, PLUGIN_FOLDER);        
         this.setupDatabase(persistence, config, pluginManager, 
@@ -357,5 +369,47 @@ public class Polly {
         } catch (DatabaseException e) {
             logger.fatal("Database error", e);
         }
+    }
+    
+    
+    
+    private void checkUpdates(PollyConfiguration config, PluginManagerImpl pluginManager, String pluginFolder) {
+        if (!config.getAutoUpdate()) {
+            return;
+        }
+        List<PluginConfiguration> plugins = pluginManager.enumerate(pluginFolder, 
+            config.getPluginExcludes());
+        List<UpdateItem> updates = new LinkedList<UpdateItem>();
+        
+        try {
+            updates.add(new UpdateItem("polly", new Version(
+                "0.5.6"), 
+                new URL(config.getUpdateUrl())));
+        } catch (MalformedURLException e) {
+            // please never reach
+            logger.fatal("Unable to add update item for polly: " + config.getUpdateUrl(), e);
+        }
+        
+        for (PluginConfiguration pc : plugins) {
+            if (!pc.updateSupported()) {
+                continue;
+            }
+            try {
+                updates.add(UpdateItem.fromProperties(pc.props));
+            } catch (MalformedURLException e) {
+                logger.error("Failed to create update item for plugin " + 
+                    pc.getProperty(PluginConfiguration.PLUGIN_NAME));
+            } catch (IllegalArgumentException e) {
+                logger.error("Failed to create update item for plugin " + 
+                    pc.getProperty(PluginConfiguration.PLUGIN_NAME), e);
+            }
+        }
+        UpdateManager um = new UpdateManager();
+        
+        logger.debug("Collecting updates...");
+        List<UpdateProperties> actualUpdates = um.collect(updates);
+        logger.debug("Downloading updates...");
+        List<File> files = um.downloadUpdates(actualUpdates);
+        
     }
 }
