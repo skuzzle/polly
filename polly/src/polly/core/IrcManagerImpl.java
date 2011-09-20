@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -311,12 +312,16 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     
     @Override
     public List<String> getChannelUser(String channel) {
-        List<String> result = new LinkedList<String>();
+        Set<String> result = new HashSet<String>();
         User[] users = this.bot.getUsers(channel);
         for (User user : users) {
             result.add(this.stripNickname(user.getNick()));
         }
-        return result;
+        // ISSUE: 0000037
+        // HACK: first, add user to set, then create list from set so that it contains
+        //       no duplicates
+        // CONSIDER: Make return Value Set<String>
+        return new LinkedList<String>(result);
     }
     
     
