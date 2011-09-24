@@ -2,6 +2,7 @@ package polly;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -71,7 +72,7 @@ public class Polly {
     
     
 
-    // private final static String CONFIG_FOLDER = "cfg/";
+    private final static String CONFIG_FOLDER = "cfg/";
     private final static String PLUGIN_FOLDER = "cfg/plugins/";
     private final static String CONFIG_FULL_PATH = "cfg/polly.cfg";
     private final static String PERSISTENCE_XML = "cfg/META-INF/persistence.xml";
@@ -155,7 +156,7 @@ public class Polly {
                 userManager,
                 formatManager);
         
-        this.checkUpdates(config, pluginManager, PLUGIN_FOLDER);
+        this.checkUpdates(config, pluginManager, ShutdownManagerImpl.get(), PLUGIN_FOLDER);
         
         this.setupPlugins(pluginManager, myPolly, config, PLUGIN_FOLDER);        
         this.setupDatabase(persistence, config, pluginManager, 
@@ -225,6 +226,7 @@ public class Polly {
         System.out.println("(-port | -p) \t<port> \t\t Port für den IRC-Server.");
         System.out.println("(-join | -j) \t<#c1,..#cn> \t Joined nur die/den " +
                 "angegebenen Channel.");
+        System.out.println("(-update | -u) \t<'on'|'off'> \t Auto update ein/aus.");
         System.out.println("-telnet \t<'on'|'off'>\t Telnet-Server aktivieren.");
         System.out.println("-telnetport \t<port>\t\t Telnet-Port setzen.");
         System.out.println("(-help | -?) \t\t\t Diese übersicht anzeigen.");
@@ -373,7 +375,7 @@ public class Polly {
     
     
     
-    private void checkUpdates(PollyConfiguration config, PluginManagerImpl pluginManager, String pluginFolder) {
+    private void checkUpdates(PollyConfiguration config, PluginManagerImpl pluginManager, ShutdownManagerImpl shutdownManager, String pluginFolder) {
         if (!config.getAutoUpdate()) {
             return;
         }
@@ -408,8 +410,30 @@ public class Polly {
         
         logger.debug("Collecting updates...");
         List<UpdateProperties> actualUpdates = um.collect(updates);
+        if (actualUpdates.isEmpty()) {
+            logger.info("No updates available.");
+            return;
+        }
         logger.debug("Downloading updates...");
         List<File> files = um.downloadUpdates(actualUpdates);
+        logger.debug("Preparing to install downloaded updates.");
+        String arg = "\"";
+        for (File file : files) {
+            arg += file.getAbsolutePath() + ";";
+        }
+        arg += "\"";
         
+        try {
+            logger.info("Launching installer...");
+            String cmd = "java -jar polly.installer.jar " + arg;
+            logger.trace("Command: " + cmd);
+            Runtime.getRuntime().exec(cmd);
+            shutdownManager.shutdown(true);
+        } catch (IOException e) {
+            logger.fatal("Failed to start the installer. Deleting all downloads");
+            for (File file : files) {
+                file.delete();
+            }
+        }
     }
 }

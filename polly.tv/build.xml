@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project name="polly.core" basedir="." default="dist">
+<project name="polly.tv" basedir="." default="release">
 
     <property name="src.dir" value="src"/>
     <property name="dist.dir" value="dist"/>
@@ -7,9 +7,7 @@
     <property name="lib.dir" value="lib"/>
     <property name="zip.filename" value="${ant.project.name}.zip"/>
 
-    <property name="classpath" value="./lib/de.skuzzle.polly.sdk.jar
-                                      ./lib/javax.persistence.jar 
-                                      ./lib/log4j-1.2.16.jar"/>
+    <property name="classpath" value="./lib/de.skuzzle.polly.sdk.jar" />
 
     <path id="libraries">
         <fileset dir="${lib.dir}" includes="**/*.jar"/>
@@ -53,11 +51,12 @@
                 <exclude name="de/skuzzle/test/**"/>
             </fileset>
         </jar>
+        <copy file="polly.tv.properties" tofile="${dist.dir}/polly.tv.properties"/>
     </target>
     
    
     
-    <target name="createZipFile" if="zip.filename">
+    <target name="release" if="zip.filename" depends="dist">
         <zip destfile="${dist.dir}/${zip.filename}" basedir="${dist.dir}"/>
     </target>
 

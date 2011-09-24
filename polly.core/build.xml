@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project name="polly.reminds" basedir="." default="dist">
+<project name="polly.core" basedir="." default="release">
 
     <property name="src.dir" value="src"/>
     <property name="dist.dir" value="dist"/>
@@ -53,11 +53,12 @@
                 <exclude name="de/skuzzle/test/**"/>
             </fileset>
         </jar>
+        <copy file="polly.core.properties" tofile="${dist.dir}/polly.core.properties"/>
     </target>
     
    
     
-    <target name="createZipFile" if="zip.filename">
+    <target name="release" if="zip.filename">
         <zip destfile="${dist.dir}/${zip.filename}" basedir="${dist.dir}"/>
     </target>
 

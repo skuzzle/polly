@@ -16,9 +16,9 @@ public class PollyArgumentParser extends AbstractArgumentParser {
     
     
     private void createArguments() {
-        this.addArgument(new BooleanConfigArgument("-noupdate", this.config, 
+        this.addArgument(new BooleanConfigArgument("-update", this.config, 
         		PollyConfiguration.AUTO_UPDATE));
-        this.addArgument(new BooleanConfigArgument("-nu", this.config, 
+        this.addArgument(new BooleanConfigArgument("-u", this.config, 
             PollyConfiguration.AUTO_UPDATE));
         
         this.addArgument(new ConfigArgument("-server", this.config, 

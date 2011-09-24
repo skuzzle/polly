@@ -152,7 +152,7 @@ public class DownloadManager extends AbstractDisposable {
         public String toString() {
             return "Source: " + this.url.toString() + ", Destination: " + this.destination
                 + ", total bytes: " + this.getTotalBytes() + ", total time: " +
-                this.getTotalTime();
+                (this.getTotalTime() / 1000) + "sec";
         }
     }
     

@@ -13,7 +13,10 @@
     <property name="dist.log.dir" value="dist/logs"/>
     <property name="dist.plugin.dir" value="dist/cfg/plugins"/>
     <property name="dist.cache.dir" value="dist/cache"/>
-    <property name="zip.filename" value="${ant.project.name}.zip"/>
+    <property name="installer.jar" value="../installer/dist/polly.installer.jar"/>
+    <property name="release.filename" value="${ant.project.name}-${version.num}-full.zip"/>
+    <property name="update.filename" value="${ant.project.name}-${version.num}-update.zip"/>
+    
     <property name="classpath" value="./lib/de.skuzzle.polly.sdk.jar 
                                       ./lib/log4j-1.2.16.jar
                                       ./lib/de.skuzzle.polly.parser.jar
@@ -88,11 +91,12 @@
             </manifest>
             <fileset dir="${classes.dir}" excludes="de/skuzzle/test/** src/META-INF/**"/>
         </jar>
+        <copy file="install.script" tofile="${dist.dir}/install.script"/>
+        <copy file="${installer.jar}" tofile="${dist.dir}/polly.installer.jar"/>
     </target>
     
-   
-    
-    <target name="createZipFile" if="zip.filename">
-        <zip destfile="${dist.dir}/${zip.filename}" basedir="${dist.dir}"/>
+    <target name="release" depends="dist">
+        <zip destfile="${dist.dir}/${update.filename}" basedir="${dist.dir}" excludes="/cfg/ /logs/ /cache/ polly.installer.jar *.zip"/>
+        <zip destfile="${dist.dir}/${release.filename}" basedir="${dist.dir}" excludes="install.script *.zip"/>
     </target>
 </project>

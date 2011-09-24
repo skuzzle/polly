@@ -64,7 +64,7 @@ public class UpdateManager {
         final List<File> files = new LinkedList<File>();
         DownloadManager dm = new DownloadManager();
         
-        logger.info("Downloading " + updates.size() + " updates.");
+        logger.info("Downloading " + updates.size() + " updates (may take some time)...");
         for (final UpdateProperties update : updates) {
             try {
                 File dest = File.createTempFile("" + System.nanoTime(), ".zip");
@@ -82,6 +82,7 @@ public class UpdateManager {
                     @Override
                     public void downloadFailed(DownloadObject o, Exception e) {
                         logger.error("Error while downloading " + o, e);
+                        o.getDestination().delete();
                     }
                 });
                 
@@ -96,6 +97,9 @@ public class UpdateManager {
     
     
     public void install(List<File> files) {
-        
+        String arg4 = "";
+        for (File file : files) {
+            arg4 += file.getAbsolutePath() + ";";
+        }
     }
 }
