@@ -1,6 +1,5 @@
 package polly.core;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.List;
@@ -144,7 +143,7 @@ public class ShutdownManagerImpl implements ShutdownManager {
         try {
             this.shutdownList.dispose();
         } catch (DisposingException e) {
-            logger.error("One ore more components failed to properly unload. " +
+            logger.error("One or more components failed to properly unload. " +
             		"Last exception trace:", e);
         }
         

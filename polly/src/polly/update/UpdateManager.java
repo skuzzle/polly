@@ -93,13 +93,4 @@ public class UpdateManager {
         
         return files;
     }
-    
-    
-    
-    public void install(List<File> files) {
-        String arg4 = "";
-        for (File file : files) {
-            arg4 += file.getAbsolutePath() + ";";
-        }
-    }
 }

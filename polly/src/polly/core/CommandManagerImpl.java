@@ -17,6 +17,7 @@ import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.UnknownCommandException;
 import de.skuzzle.polly.sdk.exceptions.UnknownSignatureException;
+import de.skuzzle.polly.sdk.model.User;
 
 
 
@@ -119,5 +120,16 @@ public class CommandManagerImpl implements CommandManager {
 			throw new UnknownCommandException(name);
 		}
 		return cmd;
+	}
+	
+	
+	
+	public void executeString(String commandString) {
+	    // TODO ISSUE 0000040
+	}
+	
+	
+	public void executeString(String commandString, User asUser) {
+	    // TODO ISSUE 0000040
 	}
 }
