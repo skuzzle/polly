@@ -73,6 +73,7 @@ public class DeleteFolderAction extends ScriptAction {
         } else {
             this.parameterError("DELETE", line);
         }
+        this.folder = this.escapePath(this.folder);
     }
 
 }

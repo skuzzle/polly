@@ -1,11 +1,15 @@
 package de.skuzzle.polly.installer;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import de.skuzzle.polly.installer.script.InstallAction;
 import de.skuzzle.polly.installer.script.ScriptAction;
@@ -20,39 +24,119 @@ public class Installer {
     public final static String ENV_PLUGINS = "%plugins%";
     public final static String ENV_THIS = "%this%";
     
-    private static EnvironmentConstants environment;
     
-    public static EnvironmentConstants getEnvironment() {
+    
+    private static EnvironmentConstants environment;
+    public synchronized static EnvironmentConstants getEnvironment() {
+        if (environment == null) {
+            environment = new EnvironmentConstants();
+            environment.put(ENV_POLLY, new File("./").getAbsolutePath());
+            environment.put(ENV_CONFIG, new File("cfg/").getAbsolutePath());
+            environment.put(ENV_PLUGINS, new File("cfg/plugins/").getAbsolutePath());
+        }
         return environment;
     }
     
     
     
+    private static Properties config;
+    public synchronized static Properties getConfig() throws ScriptException {
+        if (config == null) {
+            InputStream input = null;
+            try {
+                String path = getEnvironment().resolve(ENV_CONFIG);
+                path += File.separator + "polly.cfg";
+                input = new FileInputStream(path);
+                config = new Properties();
+                config.load(input);
+                
+            } catch (IOException e) {
+                throw new ScriptException("Error while loading polly configuration.", e);
+            } finally {
+                if (input != null) {
+                    try {
+                        input.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        return config;
+    }
+    
+    
+    
+    private static void storeConfig() {
+        if (config != null) {
+            OutputStream out = null;
+            try {
+                String path = getEnvironment().resolve(ENV_CONFIG);
+                path += File.separator + "polly.cfg";
+                out = new FileOutputStream(getEnvironment().resolve(path));
+                config.store(out, "");
+                out.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (out != null) {
+                    try {
+                        out.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    
     public static void main(String[] args) {
-        // args length must be 4:
-        // [0] = polly root folder (contains polly.jar)
-        // [1] = polly config folder
-        // [2] = polly plugin folder
-        // [3] = semicolon separated list of zip file names
+        // args length must be 1:
+        // [0] = semicolon separated list of zip file names
+        boolean runPolly = true;
+        String pollyParams = "";
+        List<String> fileNames = null;
         
-        if (args.length != 4) {
-            System.out.println("Argument error!");
-            return;
+        for (int i = 0; i < args.length; ++i) {
+            try {
+                if (args[i].equals("-nopolly")) {
+                    runPolly = false;
+                } else if (args[i].equals("-pp")) {
+                    pollyParams = args[++i];
+                } else if (args[i].equals("-f")) {
+                    fileNames = Arrays.asList((args[++i].split(";")));
+                } else {
+                    System.out.println("Unbekannter Parameter: " + args[i]);
+                    return;
+                }
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.out.println("Fehlender Parameter für " + args[i - 1]);
+            }
         }
-        environment = new EnvironmentConstants();
-        environment.put(ENV_POLLY, args[0]);
-        environment.put(ENV_CONFIG, args[1]);
-        environment.put(ENV_PLUGINS, args[2]);
         
-        List<String> fileNames = Arrays.asList((args[3].split(";")));
-        installAll(fileNames);
-        
-        try {
-            Runtime.getRuntime().exec("java -jar polly.jar -nu");
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        // final copy
+        final String param = pollyParams;
+        if (fileNames != null && !fileNames.isEmpty()) {
+            installAll(fileNames);
+        } else {
+            System.out.println("No files to install");
         }
+        
+        if (runPolly) {
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        Runtime.getRuntime().exec("java -jar polly.jar -update false " + param);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+        System.exit(0);
     }
 
     
@@ -66,8 +150,7 @@ public class Installer {
             e1.printStackTrace();
             out = new TreeStream(System.out, 4);
         }
-        
-        
+
         for (String scriptName : fileNames) {
             out.println("INSTALLING: " + scriptName);
             out.indent();
@@ -94,7 +177,7 @@ public class Installer {
             try {
                 File script = new File(tempDir, "install.script");
                 if (!script.exists()) {
-                    throw new ScriptException("Install script does not exist.");
+                    throw new ScriptException("Install script not found");
                 }
                 install = new InstallAction();
                 install.fromLine(new String[] {"INSTALL", script.getAbsolutePath()}, 0);
@@ -115,9 +198,14 @@ public class Installer {
             out.unindent();
             out.unindent();
         }
+        storeConfig();
         out.println("Done");
         out.close();
     }
+    
+    
+    
+    
     
     
     

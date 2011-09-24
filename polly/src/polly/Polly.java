@@ -2,7 +2,6 @@ package polly;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -72,7 +71,6 @@ public class Polly {
     
     
 
-    private final static String CONFIG_FOLDER = "cfg/";
     private final static String PLUGIN_FOLDER = "cfg/plugins/";
     private final static String CONFIG_FULL_PATH = "cfg/polly.cfg";
     private final static String PERSISTENCE_XML = "cfg/META-INF/persistence.xml";
@@ -112,6 +110,7 @@ public class Polly {
         logger.info("");
         logger.info("Config file read from '" + CONFIG_FULL_PATH + "'");
         logger.info("Polly command line arguments: " + Arrays.toString(args));
+        logger.info("(Canonical: " + getCommandLine() + ")");
         String version = Polly.class.getPackage().getImplementationVersion();
         logger.info("Version info: " + version);
 
@@ -205,6 +204,7 @@ public class Polly {
         try {
             AbstractArgumentParser parser = new PollyArgumentParser(config);
             parser.parse(args);
+            commandLine = parser.getCanonicalArguments();
         } catch (ParameterException e) {
             logger.fatal(e.getMessage(), e);
             this.printHelp();
@@ -384,9 +384,8 @@ public class Polly {
         List<UpdateItem> updates = new LinkedList<UpdateItem>();
         
         try {
-            updates.add(new UpdateItem("polly", new Version(
-                "0.5.6"), 
-                new URL(config.getUpdateUrl())));
+            updates.add(new UpdateItem("polly", new Version("0.5.6"), 
+                    new URL(config.getUpdateUrl())));
         } catch (MalformedURLException e) {
             // please never reach
             logger.fatal("Unable to add update item for polly: " + config.getUpdateUrl(), e);
@@ -398,12 +397,9 @@ public class Polly {
             }
             try {
                 updates.add(UpdateItem.fromProperties(pc.props));
-            } catch (MalformedURLException e) {
+            } catch (Exception e) {
                 logger.error("Failed to create update item for plugin " + 
                     pc.getProperty(PluginConfiguration.PLUGIN_NAME));
-            } catch (IllegalArgumentException e) {
-                logger.error("Failed to create update item for plugin " + 
-                    pc.getProperty(PluginConfiguration.PLUGIN_NAME), e);
             }
         }
         UpdateManager um = new UpdateManager();
@@ -416,8 +412,9 @@ public class Polly {
         }
         logger.debug("Downloading updates...");
         List<File> files = um.downloadUpdates(actualUpdates);
+        
         logger.debug("Preparing to install downloaded updates.");
-        String arg = "\"";
+        String arg = "-pp \"" + getCommandLine() + "\" -f \"";
         for (File file : files) {
             arg += file.getAbsolutePath() + ";";
         }

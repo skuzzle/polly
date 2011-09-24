@@ -76,6 +76,7 @@ public class InstallAction extends ScriptAction {
         } else {
             this.parameterError("INSTALL", line);
         }
+        this.filePath = this.escapePath(this.filePath);
     }
 
 }

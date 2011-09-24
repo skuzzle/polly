@@ -8,6 +8,7 @@ import java.util.Set;
 public abstract class AbstractArgumentParser {
        
     protected Set<Argument> arguments;
+    private String canonical = "";
     
     public AbstractArgumentParser() {
         this.arguments = new HashSet<Argument>();
@@ -24,6 +25,8 @@ public abstract class AbstractArgumentParser {
     
     
     public final void parse(String[] args) throws ParameterException {
+        Set<String> tmp = new HashSet<String>();
+        
         int i = 0;
         while (i < args.length) {
             String param = args[i];
@@ -32,6 +35,17 @@ public abstract class AbstractArgumentParser {
             boolean found = false;
             for (Argument arg : arguments) {
                 if (param.equals(arg.getName())) {
+                    
+                    
+                    if (!tmp.contains(arg.getName())) {
+                        this.canonical += arg.getName() + " ";
+                        for (int j = i; j < arg.getParameters() + i; ++j) {
+                            this.canonical += args[j] + " ";
+                        }
+                    }
+                    tmp.add(arg.getName());
+                    
+                    
                     checkParam(args, i, arg.getParameters());
                     
                     String[] p = Arrays.copyOfRange(args, i, i + arg.getParameters() + 1);
@@ -44,6 +58,14 @@ public abstract class AbstractArgumentParser {
                 throw new ParameterException("unknown parameter: " + param);
             }
         }
+        
+        this.canonical = this.canonical.trim();
+    }
+    
+    
+    
+    public String getCanonicalArguments() {
+        return this.canonical;
     }
     
     

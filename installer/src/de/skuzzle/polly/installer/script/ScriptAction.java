@@ -28,6 +28,12 @@ public abstract class ScriptAction {
     }
     
     
+    public String escapePath(String path) {
+        //path = path.replaceAll("\\\\", File.separator);
+        return path;//.replaceAll("/", File.separator);
+    }
+    
+    
     public void parameterError(String commandName, int line) throws ScriptException {
         throw new ScriptException("Invalid parameters for command " + commandName + 
             " on line: " + line);

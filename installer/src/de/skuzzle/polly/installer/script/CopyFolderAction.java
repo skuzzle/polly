@@ -37,6 +37,8 @@ public class CopyFolderAction extends ScriptAction {
         } else {
             this.parameterError("COPYF", line);
         }
+        this.sourceFolder = this.escapePath(this.sourceFolder);
+        this.destinationFolder = this.escapePath(this.destinationFolder);
         
         this.sourceFolder = Installer.getEnvironment().resolve(this.sourceFolder);
         this.destinationFolder = Installer.getEnvironment().resolve(this.destinationFolder);
