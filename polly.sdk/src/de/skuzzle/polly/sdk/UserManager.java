@@ -3,6 +3,7 @@ package de.skuzzle.polly.sdk;
 import java.util.Set;
 
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
+import de.skuzzle.polly.sdk.eventlistener.UserListener;
 import de.skuzzle.polly.sdk.exceptions.AlreadySignedOnException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
@@ -234,4 +235,21 @@ public interface UserManager {
 	 * @throws DatabaseException If removing the attribute fails for any reason.
 	 */
 	public abstract void removeAttribute(String name) throws DatabaseException;
+	
+	
+	/**
+	 * Adds a listener to receive logon/logoff events.
+	 * 
+	 * @param listener The listener to add.
+	 */
+	public void addUserListener(UserListener listener);
+	
+	
+	
+    /**
+     * Adds a listener to receive logon/logoff events.
+     * 
+     * @param listener The listener to add.
+     */
+	public void removeUserListener(UserListener listener);
 }

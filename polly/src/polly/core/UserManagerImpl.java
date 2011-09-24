@@ -21,6 +21,8 @@ import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
+import de.skuzzle.polly.sdk.eventlistener.UserEvent;
+import de.skuzzle.polly.sdk.eventlistener.UserListener;
 import de.skuzzle.polly.sdk.exceptions.AlreadySignedOnException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
@@ -273,7 +275,6 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
         }
         
         if (this.onlineCache.containsKey(user.getCurrentNickName())) {
-            // TODO: throw exception
             throw new AlreadySignedOnException(user.getName());
         }
         
@@ -282,6 +283,9 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
             this.onlineCache.put(user.getCurrentNickName(), user);
             logger.info("Irc User " + from + " successfully logged in as " + 
                     registeredName);
+            
+            UserEvent e = new UserEvent(this, user);
+            this.fireUserSignedOn(e);
             return user;
         }
         
@@ -295,7 +299,10 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     @Override
     public void logoff(User user) {
         logger.info("User " + user + " logged off.");
+        UserEvent e = new UserEvent(this, user);
         this.onlineCache.remove(user.getCurrentNickName());
+        
+        this.fireUserSignedOff(e);
     }
     
     
@@ -303,7 +310,10 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     @Override
     public void logoff(IrcUser user) {
         logger.info("User " + user + " logged off.");
+        UserEvent e = new UserEvent(this, this.getUser(user));
         this.onlineCache.remove(user.getNickName());
+
+        this.fireUserSignedOff(e);
     }
     
 
@@ -409,14 +419,43 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     }
     
     
-    
-    protected void fireUserSignedOn() {
-        // TODO: ISSUE: 0000006
+    @Override
+    public void addUserListener(UserListener listener) {
+        this.eventProvider.addListener(UserListener.class, listener);
     }
     
     
     
-    protected void fireUserSignedOff() {
-        // TODO: ISSUE: 0000006
+    @Override
+    public void removeUserListener(UserListener listener) {
+        this.eventProvider.removeListener(UserListener.class, listener);
+    }
+    
+    
+    
+    protected void fireUserSignedOn(final UserEvent e) {
+        final List<UserListener> listeners = this.eventProvider.getListeners(UserListener.class);
+        this.eventProvider.dispatchEvent(new Runnable() {
+            @Override
+            public void run() {
+                for (UserListener listener : listeners) {
+                    listener.userSignedOn(e);
+                }
+            }
+        });
+    }
+    
+    
+    
+    protected void fireUserSignedOff(final UserEvent e) {
+        final List<UserListener> listeners = this.eventProvider.getListeners(UserListener.class);
+        this.eventProvider.dispatchEvent(new Runnable() {
+            @Override
+            public void run() {
+                for (UserListener listener : listeners) {
+                    listener.userSignedOff(e);
+                }
+            }
+        });
     }
 }
