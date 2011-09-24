@@ -51,14 +51,18 @@ public class ShowCommandsCommand extends Command {
             return false;
         }
         Command cmd = it.next();
+        // ISSUE: 0000041
+        //        fixed with this boolean trigger to add comma only if needed 
+        boolean addComma = false;
         while (cmd != null) {
             if (this.canExecute(executer, level, cmd)) {
                 b.append(cmd.getCommandName());
+                addComma = true;
             }
             
             if (it.hasNext()) {
                 cmd = it.next();
-                if (this.canExecute(executer, level, cmd)) {
+                if (this.canExecute(executer, level, cmd) && addComma) {
                     b.append(", ");
                 }
             } else { 
