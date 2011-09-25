@@ -58,8 +58,8 @@
     
    
     
-    <target name="release" if="zip.filename">
-        <zip destfile="${dist.dir}/${zip.filename}" basedir="${dist.dir}"/>
+    <target name="release" if="zip.filename" depends="dist">
+        <zip destfile="${dist.dir}/${zip.filename}" basedir="${dist.dir}" excludes="${zip.filename}"/>
     </target>
 
 </project>
