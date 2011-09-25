@@ -2,6 +2,7 @@ package de.skuzzle.polly.parsing.tree;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
@@ -170,5 +171,30 @@ public class FunctionDefinition extends Expression implements Cloneable {
     public void collapse(Stack<Literal> stack) throws ExecutionException {
         System.err.println("fuckfuck");
         // do nothing;
+    }
+    
+    
+    
+    @Override
+    public String toString() {
+        StringBuilder b = new StringBuilder();
+        b.append(this.getType().getTypeName().getIdentifier());
+        b.append(": ");
+        b.append(this.name.getIdentifier());
+        if (!this.formalParameters.isEmpty()) {
+            b.append("(");
+            Iterator<Parameter> it = this.formalParameters.iterator();
+            while (it.hasNext()) {
+                Parameter param = it.next();
+                b.append(param.getType().getTypeName().getIdentifier());
+                b.append(" ");
+                b.append(param.getName().getIdentifier());
+                if (it.hasNext()) {
+                    b.append(", ");
+                }
+            }
+            b.append(")");
+        }
+        return b.toString();
     }
 }
