@@ -109,6 +109,17 @@ public interface UserManager {
     
     
     /**
+     * Returns a String representation including type and parameters for a declaration.
+     * @param user The User whose declarations shall be retrieved.
+     * @param declaration The name of the declaration to inspect.
+     * @return A String representation of the declaration. <code>null</code> if the
+     *          declaration does not exist.
+     */
+    public abstract String inspect(User user, String declaration);
+    
+    
+    
+    /**
      * Updates an existing user. All attributes except the name of the existing user 
      * will be overridden with the values from the parameter <code>updated</code>. 
      * 
@@ -241,6 +252,7 @@ public interface UserManager {
 	 * Adds a listener to receive logon/logoff events.
 	 * 
 	 * @param listener The listener to add.
+	 * @since 0.6
 	 */
 	public void addUserListener(UserListener listener);
 	
@@ -250,6 +262,7 @@ public interface UserManager {
      * Adds a listener to receive logon/logoff events.
      * 
      * @param listener The listener to add.
+     * @since 0.6
      */
 	public void removeUserListener(UserListener listener);
 }
