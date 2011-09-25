@@ -18,6 +18,9 @@ import polly.events.EventProvider;
 import de.skuzzle.polly.parsing.Declarations;
 import de.skuzzle.polly.parsing.Namespaces;
 import de.skuzzle.polly.parsing.ParseException;
+import de.skuzzle.polly.parsing.tree.Expression;
+import de.skuzzle.polly.parsing.tree.FunctionDefinition;
+import de.skuzzle.polly.parsing.tree.ResolveableIdentifierLiteral;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
@@ -165,13 +168,48 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     @Override
     public synchronized Set<String> getDeclaredIdentifiers(User user) {
         try {
+            /*Set<String> result = new HashSet<String>();
+            Set<Entry<String, Expression>> entries = this.namespaces.get(
+                user.getName()).getDeclarations().entrySet();
+            
+            for (Entry<String, Expression> entry : entries) {
+                if (entry.getValue() instanceof FunctionDefinition) {
+                    // Add functions string representation, including parameters and
+                    // return type
+                    result.add(entry.getValue().toString());
+                } else {
+                    Expression e = entry.getValue();
+                    result.add(e.getType() + ": " + entry.getKey());
+                }
+            }
+            return result;*/
             return this.namespaces.get(user.getName()).getDeclarations().keySet();
         } catch (ParseException e) {
             return new HashSet<String>();
         }
     }
     
+    
+    
+    // TODO: inspect
+    public String inspect(User user, String declaration) {
+        try {
+            Expression e = this.namespaces.get(user.getName()).resolve(
+                    new ResolveableIdentifierLiteral(declaration));
+            
+            if (e == null) {
+                return null;
+            } else if (e instanceof FunctionDefinition) {
+                return e.toString();
+            } else {
+                return e.getType() + ": " + declaration;
+            }
+        } catch (ParseException e) {
+            return null;
+        }
+    }
 
+    
     
     @Override
     public User getUser(IrcUser user) {
