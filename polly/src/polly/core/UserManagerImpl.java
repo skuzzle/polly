@@ -347,8 +347,14 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     @Override
     public void logoff(IrcUser user) {
+        this.logoff(user, false);
+    }
+    
+    
+    
+    public void logoff(IrcUser user, boolean auto) {
         logger.info("User " + user + " logged off.");
-        UserEvent e = new UserEvent(this, this.getUser(user));
+        UserEvent e = new UserEvent(this, this.getUser(user), auto);
         this.onlineCache.remove(user.getNickName());
 
         this.fireUserSignedOff(e);

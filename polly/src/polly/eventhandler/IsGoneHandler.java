@@ -52,7 +52,7 @@ public class IsGoneHandler implements QuitListener, JoinPartListener {
                 this.ircManager.sendMessage(user.getNickName(), 
                     "Du wurdest automatisch ausgeloggt.");
             }
-            this.userManager.logoff(user);
+            this.userManager.logoff(user, true);
         }
     }
 }
