@@ -5,7 +5,8 @@
     <property name="dist.dir" value="dist"/>
     <property name="classes.dir" value="classes"/>
     <property name="lib.dir" value="lib"/>
-    <property name="zip.filename" value="${ant.project.name}.zip"/>
+    <property name="version" value="1.0.0"/>
+    <property name="zip.filename" value="${ant.project.name}-${version}.zip"/>
 
     <property name="classpath" value="./lib/de.skuzzle.polly.sdk.jar
                                       ./lib/javax.persistence.jar 
@@ -54,6 +55,7 @@
             </fileset>
         </jar>
         <copy file="polly.reminds.properties" tofile="${dist.dir}/polly.reminds.properties"/>
+        <copy file="install.script" tofile="${dist.dir}/install.script"/>
     </target>
     
    

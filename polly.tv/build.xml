@@ -5,7 +5,8 @@
     <property name="dist.dir" value="dist"/>
     <property name="classes.dir" value="classes"/>
     <property name="lib.dir" value="lib"/>
-    <property name="zip.filename" value="${ant.project.name}.zip"/>
+    <property name="version" value="0.1.0"/>
+    <property name="zip.filename" value="${ant.project.name}-${version}.zip"/>
 
     <property name="classpath" value="./lib/de.skuzzle.polly.sdk.jar" />
 
@@ -52,6 +53,7 @@
             </fileset>
         </jar>
         <copy file="polly.tv.properties" tofile="${dist.dir}/polly.tv.properties"/>
+        <copy file="install.script" tofile="${dist.dir}/install.script"/>
     </target>
     
    
