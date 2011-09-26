@@ -68,4 +68,23 @@ public class IrcUser {
     public String toString() {
         return this.nickName;
     }
+
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        IrcUser other = (IrcUser) obj;
+        if (nickName == null) {
+            if (other.nickName != null)
+                return false;
+        } else if (!nickName.equals(other.nickName))
+            return false;
+        return true;
+    }
 }

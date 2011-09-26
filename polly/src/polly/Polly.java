@@ -19,6 +19,7 @@ import de.skuzzle.polly.sdk.CompositeDisposable;
 import de.skuzzle.polly.sdk.Version;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
+import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.PluginException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
 
@@ -49,6 +50,7 @@ import polly.telnet.TelnetServer;
 import polly.update.UpdateItem;
 import polly.update.UpdateManager;
 import polly.update.UpdateProperties;
+import polly.util.ConversationTest;
 
 
 
@@ -156,7 +158,7 @@ public class Polly {
                 formatManager);
         
         this.checkUpdates(config, pluginManager, ShutdownManagerImpl.get(), PLUGIN_FOLDER);
-        
+
         this.setupPlugins(pluginManager, myPolly, config, PLUGIN_FOLDER);        
         this.setupDatabase(persistence, config, pluginManager, 
                 PERSISTENCE_XML, PERSISTENCE_UNIT);
@@ -175,6 +177,15 @@ public class Polly {
         shutdownList.add(eventProvider);
         
         pluginManager.notifyPlugins();
+        
+        
+        // XXX: DEBUG
+        try {
+            commandManager.registerCommand(new ConversationTest(myPolly));
+        } catch (DuplicatedSignatureException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         
         logger.info("Polly succesfully set up.");
     }
@@ -399,7 +410,7 @@ public class Polly {
                 updates.add(UpdateItem.fromProperties(pc.props));
             } catch (Exception e) {
                 logger.error("Failed to create update item for plugin " + 
-                    pc.getProperty(PluginConfiguration.PLUGIN_NAME));
+                    pc.getProperty(PluginConfiguration.PLUGIN_NAME), e);
             }
         }
         UpdateManager um = new UpdateManager();
