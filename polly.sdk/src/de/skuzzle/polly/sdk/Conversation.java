@@ -1,293 +1,123 @@
 package de.skuzzle.polly.sdk;
 
-
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.io.InputStream;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
-
 
 import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
-import de.skuzzle.polly.sdk.eventlistener.MessageListener;
-import de.skuzzle.polly.sdk.exceptions.ConversationException;
-import de.skuzzle.polly.sdk.exceptions.DisposingException;
-import de.skuzzle.polly.sdk.model.User;
 
 
 /**
- * <p>Conversations are a nice feature if any of your commands need to read multiple 
- * inputs from one user. 
- * For example, a 'RegisterCommand' could first ask for the desired username and then
- * for the desired password. Here is an example:</p>
- * 
- * <pre>
- *     Conversation c = null;
- *     try {
- *         c = Conversation.get(this.getMyPolly(), executor, channel);
- *         c.writeLine("Please insert your desired username:");
- *         String name = c.readStringLine();
- *         c.writeLine("Now insert your password");
- *         String password = c.readStringLine();
- *         c.writeLine("Please retype your password");
- *         String retype = c.readStringLine();
- *         if (!retype.equals(password)) {
- *             c.writeLine("Passwords do not match.");
- *         }
- *     } catch (ConversationException e) {
- *         // conversation could not be created because its already active
- *     } catch (IOException e) {
- *         // Error while reading input. you better close this conversation.
- *     } finally {
- *         if (c != null) {
- *             c.close();
- *         }
- *     }
- * </pre>
- * 
- * <p>As shown above you can use the {@link #get(MyPolly, User, String)} method to 
- * create a new conversation for a certain user and channel.<br/>
- * Note that there may only exist one conversation per user per channel at once. 
- * Therefore {@link #get(MyPolly, User, String)} throws a {@link ConversationException}
- * if the user tries to open a conversation that already exists.</p>
- * 
- * <p>The {@link #readLine()} and {@link #readStringLine()} methods are blocking the 
- * current thread until the user made an input on the channel this conversation is for.
- * As all commands are executed via the polly event system, this could cause some trouble
- * because many active conversations could prevent polly from executing further commands
- * if all event threads are blocked.<br/>
- * To prevent any trouble, ensure to always close a conversation when its not needed any
- * more. Furthermore, polly may shutdown idling conversations if they are blocking
- * an important event.
+ * <p>Conversations provide an easy way to read several inputs from one user within one 
+ * command. It can be used similar to in {@link InputStream}. You can create a
+ * new conversation using 
+ * {@link ConversationManager#create(MyPolly, de.skuzzle.polly.sdk.model.User, String)}
  * </p>
  * 
- * <p>Note that once a conversation has been closed its not possible to send or receive
- * messages using {@link #writeLine(String)} or {@link #readLine()}.</p>
+ * <p>Calling any of the {@link #readLine()} methods will cause the current thread to 
+ * block until the user for which this conversation was created wrote a line on the 
+ * channel for which this conversation was created. {@link #writeLine(String)} is a 
+ * convenient way for replying (it wraps {@link IrcManager#sendMessage(String, String)}</p>
  * 
+ * <p>Message from other users or from the same user on a different channel are ignored 
+ * by the conversation.</p>
+ * 
+ * <p>Please note: As Conversations are thread-blocking and usually called during 
+ * execution of a command they may block pollys event system. If all event threads are
+ * blocked, no further {@link MessageEvent}s can be fired thus causing polly to run into
+ * a deadlock (as the conversations are waiting for the MessageEvent which 
+ * unblocks them).</p>
+ * 
+ * <p>To prevent any trouble ensure to always close conversations and using them 
+ * thoughtfully. Additionally, polly may shutdown idling conversations in order to 
+ * gain a further event thread.</p>
+ * 
+ * <p>Once a conversation has been closed, it cannot further be used</p>
+ * 
+ * <p>Here is an example of how to create and use conversations:</p>
+ * <pre>
+ *  protected boolean executeOnBoth(User executer, String channel,
+ *      Signature signature) throws CommandException {
+ *      
+ *      IrcUser u = new IrcUser(executer.getCurrentNickName(), "", "");
+ *      Conversation c = null;
+ *      try {
+ *          c = this.getMyPolly().conversations().create(getMyPolly(), executer, channel);
+ *
+ *          c.writeLine("Please insert your desired username:");
+ *          String name = c.readStringLine();
+ *          c.writeLine("Now insert your password");
+ *          String password = c.readStringLine();
+ *          c.writeLine("Please retype your password");
+ *          String retype = c.readStringLine();
+ *          if (!retype.equals(password)) {
+ *              c.writeLine("Passwords do not match.");
+ *          }
+ *          c.writeLine(c.getHistory().toString());
+ *      } catch (Exception e) {
+ *          this.reply(channel, e.getMessage());
+ *      } finally {
+ *          if (c != null) {
+ *              c.close();
+ *          }
+ *      }
+ *      
+ *      return false;
+ *  }
+ * </pre>
+ *  
  * @author Simon
- * @since 0.6.0
+ *
  */
-public class Conversation extends AbstractDisposable 
-            implements MessageListener, Closeable {
+public interface Conversation extends Disposable, Closeable {
 
-    /** Stores currently active declarations */
-    private static List<Conversation> cache = Collections.synchronizedList(
-            new ArrayList<Conversation>());
     
+    /**
+     * Wrapper method for {@link #readLine()} which returns the message-string from the
+     * incoming {@link MessageEvent}.
+     * 
+     * @return The String the user wrote.
+     * @throws IOException If this thread was interrupted while waiting for the incoming
+     *          message.
+     * @throws IllegalStateException If this Conversation is closed.
+     */
+    public abstract String readStringLine() throws IOException;
+    
+    /**
+     * Waits until the user for which this conversation was created wrote a line on the
+     * channel for which this conversation was created.
+     * 
+     * @return The {@link MessageEvent} of the incoming message.
+     * @throws IOException If this thread was interrupted while waiting for the incoming
+     *          message.
+     * @throws IllegalStateException If this Conversation is closed.
+     */
+    public abstract MessageEvent readLine() throws IOException;
     
     
     /**
-     * Tries to create a new conversation with a given user on a given channel. Note that
-     * conversations are constrained to be unique in their channel-user combination. 
-     *  
+     * Writes the given line on the channel for which this conversation was created. This
+     * method is just a wrapper for {@link IrcManager#sendMessage(String, String)}.
      * 
-     * @param myPolly The {@link MyPolly} instance to work with.
-     * @param user The user to chat with.
-     * @param channel The channel to chat on. Messages from the user on other channels are
-     *          ignored for this conversation.
-     * @return The new Conversation instance.
-     * @throws ConversationException If there is already a conversation with the same user
-     *          on the same channel.
+     * @param line The line to send to the channel.
+     * @throws IllegalStateException If this Conversation is closed.
      */
-    public static Conversation get(MyPolly myPolly, User user, String channel) 
-                throws ConversationException {
-        synchronized (mutex) {
-            Conversation key = new Conversation(user, channel);
-            if (cache.contains(key)) {
-                throw new ConversationException("Conversation already active: " + key);
-            }
-            
-            Conversation c = new Conversation(myPolly, user, channel);
-            myPolly.irc().addMessageListener(c);
-            return c;
-        }
-    }
-    
-    
-    private static Object mutex = new Object();
-
-    
-    
-    private MyPolly myPolly;
-    private String channel;
-    private User user;
-    private boolean closed;
-    private BlockingQueue<MessageEvent> readQueue;
-    private List<MessageEvent> history;
-    private ExecutorService waitExecutor;
+    public abstract void writeLine(String line);
     
     
     /**
-     * Hidden constructor for creating the key conversation to look for existing 
-     * conversations.
+     * Gets a list of all {@link MessageEvent}s that this conversation received.
      * 
-     * ATTENTION: Better not use this. Conversations created with this constructor are
-     * not working!
-     * 
-     * @param user The user to chat with.
-     * @param channel The channel to chat on.
+     * @return A list of {@link MessageEvent}s
      */
-    private Conversation(User user, String channel) {
-        this.channel = channel;
-        this.user = user;
-    }
-    
+    public abstract List<MessageEvent> getHistory();
     
     
     /**
-     * This is the only constructor to create a valid conversation, but only when called
-     * from {@link #get(MyPolly, User, String)}, as it checks for existing conversations.
-     * 
-     * @param myPolly The {@link MyPolly} instance to work with.
-     * @param user The user to chat with.
-     * @param channel The channel to chat on.
+     * <p>Closes this conversation. After closing, you cannot use this conversation any
+     * more to read or write lines.</p>
+     * <p>This is a no-exception wrapper for {@link #dispose()}</p>
      */
-    private Conversation(MyPolly myPolly, User user, String channel) {
-        this.myPolly = myPolly;
-        this.channel = channel;
-        this.user = user;
-        this.readQueue = new LinkedBlockingQueue<MessageEvent>();
-        this.history = new ArrayList<MessageEvent>();
-        this.waitExecutor = Executors.newSingleThreadExecutor();
-    }
-    
-    
-    
-    @Override
-    public void close() {
-        synchronized (mutex) {
-            this.myPolly.irc().removeMessageListener(this);
-            cache.remove(this);
-            this.closed = true;
-            this.history.clear();
-            this.readQueue.clear();
-            this.waitExecutor.shutdown();
-        }
-    }
-    
-    
-    
-    public void writeLine(String message) {
-        this.checkClosed();
-        this.myPolly.irc().sendMessage(this.channel, message);
-    }
-    
-    
-    
-    public MessageEvent readLine() throws IOException {
-        this.checkClosed();
-        try {
-            return this.readQueue.take();
-        } catch (InterruptedException e) {
-            throw new IOException("Error while waiting for incoming line", e);
-        }
-    }
-    
-    
-    
-    public String readStringLine() throws IOException {
-        return this.readLine().getMessage();
-    }
-    
-    
-    
-    public List<MessageEvent> getHistory() {
-        return this.history;
-    }
-    
-    
-    
-    private void checkClosed() {
-        if (this.closed) {
-            throw new IllegalStateException("Conversation closed");
-        }
-    }
-    
-    
-    
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((channel == null) ? 0 : channel.hashCode());
-        result = prime * result + ((user == null) ? 0 : user.hashCode());
-        return result;
-    }
-    
-    
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Conversation other = (Conversation) obj;
-        if (channel == null) {
-            if (other.channel != null)
-                return false;
-        } else if (!channel.equals(other.channel))
-            return false;
-        if (user == null) {
-            if (other.user != null)
-                return false;
-        } else if (!user.equals(other.user))
-            return false;
-        return true;
-    }
-    
-    
-    
-    private synchronized void onMessage(final MessageEvent e) {
-        assert !this.closed : "Listener should have bene removed before closing";
-        if (!e.getChannel().equals(this.channel) || 
-            !e.getUser().getNickName().equals(this.user.getCurrentNickName())) {
-            
-            return;
-        }
-        this.history.add(e);
-        this.waitExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Conversation.this.readQueue.put(e);
-                } catch (InterruptedException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                }
-            }
-        });
-    }
-
-
-
-    @Override
-    public void publicMessage(MessageEvent e) {
-        this.onMessage(e);
-    }
-
-
-
-    @Override
-    public void privateMessage(MessageEvent e) {
-        this.onMessage(e);
-    }
-
-
-
-    @Override
-    public void actionMessage(MessageEvent e) {}
-
-
-    
-    @Override
-    protected void actualDispose() throws DisposingException {
-        this.close();
-    }
+    public abstract void close();
 }

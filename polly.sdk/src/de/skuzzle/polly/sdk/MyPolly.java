@@ -118,4 +118,13 @@ public interface MyPolly {
 	 */
 	@Deprecated
 	public abstract void shutdown();
+	
+	
+	/**
+	 * Gets the conversation manager for creating {@link Conversation}s.
+	 * 
+	 * @return The conversation manager.
+	 * @since 0.6
+	 */
+	public abstract ConversationManager conversations();
 }

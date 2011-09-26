@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import de.skuzzle.polly.sdk.exceptions.CommandException;
+import de.skuzzle.polly.sdk.exceptions.ConversationException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.model.User;
@@ -447,6 +448,24 @@ public abstract class Command {
 	 */
 	public boolean isRegisteredOnly() {
 	    return this.registeredOnly;
+	}
+	
+	
+	
+	/**
+	 * Convenience wrapper method for creating a {@link Conversation}.
+	 * 
+     * @param user The user this conversation is for.
+     * @param Channel The channel this conversation is for.
+     * @return The new {@link Conversation} instance.
+     * @throws ConversationException If there is already a conversation active with the
+     *          same user on the same channel.
+	 * @see {@link ConversationManager}
+	 * @since 0.6.0
+	 */
+	protected Conversation createConversation(User user, String channel) 
+	            throws ConversationException {
+	    return this.getMyPolly().conversations().create(this.getMyPolly(), user, channel);
 	}
 	
 	

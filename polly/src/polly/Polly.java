@@ -28,6 +28,7 @@ import polly.commandline.ParameterException;
 import polly.commandline.PollyArgumentParser;
 import polly.core.BotConnectionSettings;
 import polly.core.CommandManagerImpl;
+import polly.core.ConversationManagerImpl;
 import polly.core.FormatManagerImpl;
 import polly.core.IrcManagerImpl;
 import polly.core.MyPollyImpl;
@@ -148,6 +149,7 @@ public class Polly {
         IrcManagerImpl ircManager = new IrcManagerImpl(config.getNickName(),
                 eventProvider, config);
         
+        ConversationManagerImpl conversationManager = new ConversationManagerImpl();
         MyPollyImpl myPolly = new MyPollyImpl(
                 commandManager, 
                 ircManager, 
@@ -155,8 +157,10 @@ public class Polly {
                 config, 
                 persistence, 
                 userManager,
-                formatManager);
+                formatManager,
+                conversationManager);
         
+        conversationManager.setMyPolly(myPolly);
         this.checkUpdates(config, pluginManager, ShutdownManagerImpl.get(), PLUGIN_FOLDER);
 
         this.setupPlugins(pluginManager, myPolly, config, PLUGIN_FOLDER);        
@@ -175,6 +179,7 @@ public class Polly {
         shutdownList.add(persistence);
         shutdownList.add(config);
         shutdownList.add(eventProvider);
+        shutdownList.add(conversationManager);
         
         pluginManager.notifyPlugins();
         

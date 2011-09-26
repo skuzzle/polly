@@ -8,6 +8,7 @@ import polly.Polly;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.CommandManager;
 import de.skuzzle.polly.sdk.Configuration;
+import de.skuzzle.polly.sdk.ConversationManager;
 import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.IrcManager;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -32,6 +33,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 	private PersistenceManagerImpl persistence;
 	private UserManagerImpl userManager;
 	private FormatManagerImpl formatManager;
+	private ConversationManagerImpl conversationManager;
 	private Date startTime;
 	
 	
@@ -42,7 +44,8 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 			Configuration config, 
 			PersistenceManagerImpl pMngr,
 			UserManagerImpl usrMngr,
-			FormatManagerImpl fmtMngr) {
+			FormatManagerImpl fmtMngr,
+			ConversationManagerImpl convMngr) {
 	    
 		this.commandManager = cmdMngr;
 		this.ircManager = ircMngr;
@@ -51,6 +54,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 		this.persistence = pMngr;
 		this.userManager = usrMngr;
 		this.formatManager = fmtMngr;
+		this.conversationManager = convMngr;
 		this.startTime = new Date();
 	}
 	
@@ -134,6 +138,13 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
     @Override
     public FormatManager formatting() {
         return this.formatManager;
+    }
+    
+    
+    
+    @Override
+    public ConversationManager conversations() {
+        return this.conversationManager;
     }
     
     
