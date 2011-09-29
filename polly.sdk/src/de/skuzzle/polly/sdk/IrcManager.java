@@ -239,6 +239,24 @@ public interface IrcManager {
 	
 	
 	/**
+	 * Gets pollys current set nickname.
+	 * 
+	 * @return the nickname.
+	 */
+	public abstract String getNickname();
+	
+	
+	
+	/**
+	 * Sets polly irc nickname.
+	 * 
+	 *  @param nickname The new nickname.
+	 */
+	public abstract void setNickname(String nickname);
+	
+	
+	
+	/**
 	 * Adds a {@link NickChangeListener}. It will be notified each time a user changes 
 	 * its nickname.
 	 *   

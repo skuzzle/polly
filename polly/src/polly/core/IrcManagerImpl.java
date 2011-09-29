@@ -486,6 +486,20 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         }
         return "";
     }
+    
+    
+    
+    @Override
+    public String getNickname() {
+        return this.bot.getNick();
+    }
+    
+    
+    
+    @Override
+    public void setNickname(String nickname) {
+        this.bot.changeNick(nickname);
+    }
 
     
     
