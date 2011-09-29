@@ -206,6 +206,15 @@ public interface IrcManager {
 	
 	
 	/**
+	 * Sends a raw irc command to the current server.
+	 * 
+	 * @param command the command string to send.
+	 */
+	public abstract void sendRawCommand(String command);
+	
+	
+	
+	/**
 	 * Sets the topic for the specified channel to the specified String. Nothing
 	 * will happen if polly has not the permissions to change the topic.
 	 * 

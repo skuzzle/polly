@@ -21,6 +21,7 @@ import commands.MyTrainsCommand;
 import commands.MyVenadCommand;
 import commands.PartCommand;
 import commands.QuitCommand;
+import commands.RawIrcCommand;
 import commands.RegisterCommand;
 import commands.RestartCommand;
 import commands.SetMyPasswordCommand;
@@ -90,6 +91,7 @@ public class MyPlugin extends PollyPlugin {
 		this.addCommand(new SetPasswordCommand(myPolly));
 		this.addCommand(new SetUserLevelCommand(myPolly));
 		this.addCommand(new RegisterCommand(myPolly));
+		this.addCommand(new RawIrcCommand(myPolly));
 
 		this.addCommand(new FooCommand(myPolly));
 		this.addCommand(new VarCommand(myPolly));

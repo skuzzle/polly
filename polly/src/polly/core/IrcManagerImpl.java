@@ -462,6 +462,15 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     
     
     @Override
+    public void sendRawCommand(String command) {
+        if (this.isConnected()) {
+            this.bot.sendRawLineViaQueue(command);
+        }
+    }
+    
+    
+    
+    @Override
     public void setTopic(String channel, String topic) {
         if (this.isConnected()) {
             this.bot.setTopic(channel, topic);
