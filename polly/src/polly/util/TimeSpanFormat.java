@@ -3,6 +3,12 @@ package polly.util;
 public class TimeSpanFormat {
     
     
+    public static void main(String[] args) {
+        long seconds = 60*60*24+60*15;
+        TimeSpanFormat tsf = new TimeSpanFormat();
+        System.out.println(tsf.format(seconds));
+    }
+    
     public final static long SECONDS = 1L;
     public final static long MINUTES = 60L;
     public final static long HOURS = 60L;
@@ -22,52 +28,36 @@ public class TimeSpanFormat {
     private String pattern = "%[y]%[yn]%[d]%[dn]%h:%m:%s";
     
     public String format(long seconds) {
-        String copy = new String(this.pattern);
+        StringBuilder result = new StringBuilder(20);
+        
         long years = this.yearPart(seconds);
         long days = this.dayPart(seconds);
         long hours = this.hourPart(seconds);
         long minutes = this.minutePart(seconds);
         long s = this.secondPart(seconds);
-        String s1 = "";
-        String s2 = "";
 
-
-        s1 = days > 0 ? this.dayString(days) : "";
-        s2 = days > 0 ? Long.toString(days) : "";
-        copy = copy.replaceAll("%\\[dn\\]", s1);
-        copy = copy.replaceAll("%\\[d\\]", s2);
-        copy = copy.replaceAll("%dn", this.dayString(years));
-        copy = copy.replaceAll("%d", Long.toString(days));
+        if (years > 0) {
+            result.append(years);
+            result.append("y ");
+        }
+        if (days > 0) {
+            result.append(days);
+            result.append("d ");
+        }
+        if (hours > 0) {
+            result.append(hours);
+            result.append("h ");
+        }
+        if (minutes > 0) {
+            result.append(minutes);
+            result.append("m ");
+        }
+        if (s > 0) {
+            result.append(s);
+            result.append("s");
+        }
+        return result.toString();
         
-        s1 = hours > 0 ? this.hourString(hours) : "";
-        s2 = hours > 0 ? Long.toString(hours) : "";
-        copy = copy.replaceAll("%\\[hn\\]", s1);
-        copy = copy.replaceAll("%\\[h\\]", s2);
-        copy = copy.replaceAll("%hn", this.hourString(hours));
-        copy = copy.replaceAll("%h", Long.toString(hours));
-        
-        s1 = minutes > 0 ? this.minuteString(minutes) : "";
-        s2 = minutes > 0 ? Long.toString(minutes) : "";
-        copy = copy.replaceAll("%\\[mn\\]", s1);
-        copy = copy.replaceAll("%\\[m\\]", s2);
-        copy = copy.replaceAll("%mn", this.minuteString(minutes));
-        copy = copy.replaceAll("%m", Long.toString(minutes));
-        
-        s1 = s > 0 ? this.secondsString(s) : "";
-        s2 = s > 0 ? Long.toString(s) : "";
-        copy = copy.replaceAll("%\\[sn\\]", s1);
-        copy = copy.replaceAll("%\\[s\\]", s2);
-        copy = copy.replaceAll("%sn", this.secondsString(s));
-        copy = copy.replaceAll("%s", Long.toString(s));
-        
-        s1 = years > 0 ? this.yearString(years) : "";
-        s2 = years > 0 ? Long.toString(years) : "";
-        copy = copy.replaceAll("%\\[yn\\]", s1);
-        copy = copy.replaceAll("%\\[y\\]", s2);
-        copy = copy.replaceAll("%yn", this.yearString(years));
-        copy = copy.replaceAll("%y", Long.toString(years));
-        
-        return copy;
     }
     
     

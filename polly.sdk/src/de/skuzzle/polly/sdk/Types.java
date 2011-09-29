@@ -437,7 +437,7 @@ public class Types {
 	     */
 	    @Override
 	    public String valueString(FormatManager formatter) {
-	        return formatter.formatDate(this.getValue());
+	        return formatter.formatTimeSpan(this.span);
 	    }
 	    
 	    
