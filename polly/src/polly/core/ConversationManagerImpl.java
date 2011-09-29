@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -44,22 +43,17 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
     
     
     
-    private static class ConversationImpl extends AbstractDisposable 
+    private class ConversationImpl extends AbstractDisposable 
                 implements Conversation, MessageListener {
         
         private boolean closed;
         private List<MessageEvent> history;
         private BlockingQueue<MessageEvent> readQueue;
-        private Executor waitExecutor;
         private String channel;
         private User user;
         private MyPolly myPolly;
-            
         
-        public ConversationImpl(Executor executor, MyPolly myPolly, User user, 
-                String channel) {
-            
-            this.waitExecutor = executor;
+        public ConversationImpl(MyPolly myPolly, User user, String channel) {
             this.myPolly = myPolly;
             this.user = user;
             this.channel = channel;
@@ -119,7 +113,7 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
                 return;
             }
             this.history.add(e);
-            this.waitExecutor.execute(new Runnable() {
+            ConversationManagerImpl.this.convExecutor.execute(new Runnable() {
                 @Override
                 public void run() {
                     try {
@@ -156,6 +150,7 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
         protected void actualDispose() throws DisposingException {
             synchronized (crossMutex) {
                 this.myPolly.irc().removeMessageListener(this);
+                ConversationManagerImpl.this.cache.remove(this);
                 this.closed = true;
                 this.history.clear();
                 this.readQueue.clear();
@@ -206,7 +201,6 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
     
     
     private ExecutorService convExecutor;
-    private MyPolly myPolly;
     private List<Conversation> cache;
     
     
@@ -221,29 +215,21 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
     @Override
     public Conversation create(MyPolly myPolly, User user, String channel)
             throws ConversationException {
-        
-        assert this.myPolly != null : "Assure to set MyPolly";
+
         synchronized (crossMutex) {
-            Conversation key = new ConversationImpl(null, null, user, channel);
+            Conversation key = new ConversationImpl(myPolly, user, channel);
             if (this.cache.contains(key)) {
                 throw new ConversationException("Conversation already active");
             }
             
-            ConversationImpl c = new ConversationImpl(this.convExecutor, this.myPolly, 
-                user, channel);
-            this.myPolly.irc().addMessageListener(c);
+            ConversationImpl c = new ConversationImpl(myPolly, user, channel);
+            myPolly.irc().addMessageListener(c);
             this.cache.add(c);
             logger.debug("Created new conversation with " + user.getCurrentNickName() + 
                     " on channel " + channel);
             return c;
         }
 
-    }
-    
-    
-    
-    public void setMyPolly(MyPollyImpl myPolly) {
-        this.myPolly = myPolly;
     }
     
     
