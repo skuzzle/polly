@@ -8,6 +8,7 @@ import de.skuzzle.polly.sdk.eventlistener.JoinPartListener;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
 import de.skuzzle.polly.sdk.eventlistener.NickChangeListener;
 import de.skuzzle.polly.sdk.eventlistener.QuitListener;
+import de.skuzzle.polly.sdk.eventlistener.UserSpottedListener;
 
 
 /**
@@ -321,4 +322,26 @@ public interface IrcManager {
      * @since Beta 0.5
      */
 	public abstract void removeChannelModeListener(ChannelModeListener listener);
+	
+	
+	
+	/**
+	 * Adds a {@link UserSpottedListener}. It will be notified each time a user comes
+	 * in pollys sight for the first time (= join a channel) or leaves pollys sight
+	 * (part last common channel, quit).
+	 * 
+	 * @param listener The listener to add.
+	 * @since 0.6.0
+	 */
+	public abstract void addUserSpottedListener(UserSpottedListener listener);
+	
+	
+	
+	/**
+	 * Removes a {@link UserSpottedListener}.
+	 * 
+     * @param listener The listener to remove.
+     * @since 0.6.0
+	 */
+	public abstract void removeUserSpottedListener(UserSpottedListener listener);
 }

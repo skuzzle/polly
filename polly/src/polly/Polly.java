@@ -160,7 +160,6 @@ public class Polly {
                 formatManager,
                 conversationManager);
         
-        conversationManager.setMyPolly(myPolly);
         this.checkUpdates(config, pluginManager, ShutdownManagerImpl.get(), PLUGIN_FOLDER);
 
         this.setupPlugins(pluginManager, myPolly, config, PLUGIN_FOLDER);        
@@ -279,8 +278,7 @@ public class Polly {
         ircManager.addNickChangeListener(new TraceNickChangeHandler(userManager));
         
         IsGoneHandler isGoneHandler = new IsGoneHandler(ircManager, userManager);
-        ircManager.addJoinPartListener(isGoneHandler);
-        ircManager.addQuitListener(isGoneHandler);
+        ircManager.addUserSpottedListener(isGoneHandler);
         
         BotConnectionSettings settings = new BotConnectionSettings(
                 config.getNickName(), 

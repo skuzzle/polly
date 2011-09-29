@@ -31,6 +31,8 @@ import de.skuzzle.polly.sdk.eventlistener.NickChangeEvent;
 import de.skuzzle.polly.sdk.eventlistener.NickChangeListener;
 import de.skuzzle.polly.sdk.eventlistener.QuitEvent;
 import de.skuzzle.polly.sdk.eventlistener.QuitListener;
+import de.skuzzle.polly.sdk.eventlistener.SpotEvent;
+import de.skuzzle.polly.sdk.eventlistener.UserSpottedListener;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 
 import polly.PollyConfiguration;
@@ -88,6 +90,11 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
             IrcUser user = new IrcUser(nickName, login, hostname);
             ChannelEvent e = new ChannelEvent(IrcManagerImpl.this, user, channel);
             
+            if (!IrcManagerImpl.this.onlineUsers.contains(nickName)) {
+                SpotEvent e1 = new SpotEvent(IrcManagerImpl.this, user, channel, 
+                    SpotEvent.USER_JOINED);
+                IrcManagerImpl.this.fireUserSpotted(e1);
+            }
             IrcManagerImpl.this.onlineUsers.add(nickName);
             IrcManagerImpl.this.fireJoin(e);
         }
@@ -115,7 +122,10 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
                 }
             }
             if (!known) {
+                SpotEvent e1 = new SpotEvent(IrcManagerImpl.this, user, channel, 
+                        SpotEvent.USER_PART);
                 IrcManagerImpl.this.onlineUsers.remove(sender);
+                IrcManagerImpl.this.fireUserLost(e1);
             }
             
             IrcManagerImpl.this.topics.remove(channel);
@@ -131,9 +141,11 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
             String nickName = IrcManagerImpl.this.stripNickname(sourceNick);
             IrcUser user = new IrcUser(nickName, sourceLogin, sourceHostname);
             QuitEvent e = new QuitEvent(IrcManagerImpl.this, user, reason);
+            SpotEvent e1 = new SpotEvent(e);
             
             IrcManagerImpl.this.onlineUsers.remove(nickName);
             IrcManagerImpl.this.fireQuit(e);
+            IrcManagerImpl.this.fireUserLost(e1);
         }
         
         
@@ -562,6 +574,20 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         this.eventProvider.removeListener(ChannelModeListener.class, listener);
     }
     
+    
+    
+    @Override
+    public void addUserSpottedListener(UserSpottedListener listener) {
+        this.eventProvider.addListener(UserSpottedListener.class, listener);
+    }
+    
+    
+    
+    @Override
+    public void removeUserSpottedListener(UserSpottedListener listener) {
+        this.eventProvider.removeListener(UserSpottedListener.class, listener);
+    }
+    
    
     
     protected void fireNickChange(final NickChangeEvent e) {
@@ -692,6 +718,40 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
             public void run() {
                 for (ChannelModeListener listener : listeners) {
                     listener.channelModeChanged(e);
+                }
+            }
+        };
+        this.eventProvider.dispatchEvent(r);
+    }
+    
+    
+    
+    protected void fireUserSpotted(final SpotEvent e) {
+        final List<UserSpottedListener> listeners = 
+            this.eventProvider.getListeners(UserSpottedListener.class);
+        
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                for (UserSpottedListener listener : listeners) {
+                    listener.userSpotted(e);
+                }
+            }
+        };
+        this.eventProvider.dispatchEvent(r);
+    }
+    
+    
+    
+    protected void fireUserLost(final SpotEvent e) {
+        final List<UserSpottedListener> listeners = 
+            this.eventProvider.getListeners(UserSpottedListener.class);
+        
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                for (UserSpottedListener listener : listeners) {
+                    listener.userLost(e);
                 }
             }
         };

@@ -4,13 +4,10 @@ import org.apache.log4j.Logger;
 
 import polly.core.IrcManagerImpl;
 import polly.core.UserManagerImpl;
-import de.skuzzle.polly.sdk.eventlistener.ChannelEvent;
-import de.skuzzle.polly.sdk.eventlistener.IrcUser;
-import de.skuzzle.polly.sdk.eventlistener.JoinPartListener;
-import de.skuzzle.polly.sdk.eventlistener.QuitEvent;
-import de.skuzzle.polly.sdk.eventlistener.QuitListener;
+import de.skuzzle.polly.sdk.eventlistener.SpotEvent;
+import de.skuzzle.polly.sdk.eventlistener.UserSpottedListener;
 
-public class IsGoneHandler implements QuitListener, JoinPartListener {
+public class IsGoneHandler implements UserSpottedListener {
 
     private static Logger logger = Logger.getLogger(IsGoneHandler.class.getName());
     
@@ -21,38 +18,24 @@ public class IsGoneHandler implements QuitListener, JoinPartListener {
         this.ircManager = ircManager;
         this.userManager = userManager;
     }
-    
-    
-    
-    @Override
-    public void channelJoined(ChannelEvent e) {}
 
-    
-    
-    @Override
-    public void channelParted(ChannelEvent e) {
-        this.traceGone(e.getUser(), false);
-    }
 
-    
-    
+
     @Override
-    public void quited(QuitEvent e) {
-        this.traceGone(e.getUser(), true);
-    }
-    
-    
-    
-    private synchronized void traceGone(IrcUser user, boolean quit) {
-        if (!this.ircManager.isOnline(user.getNickName()) && 
-                this.userManager.isSignedOn(user)) {
-            
-            logger.warn("Auto logoff for user: " + user);
-            if (!quit) {
-                this.ircManager.sendMessage(user.getNickName(), 
-                    "Du wurdest automatisch ausgeloggt.");
+    public void userSpotted(SpotEvent e) {}
+
+
+
+    @Override
+    public synchronized void userLost(SpotEvent e) {
+        if (this.userManager.isSignedOn(e.getUser())) {
+            logger.warn("Auto logoff for user: " + e.getUser());
+            if (e.getType() != SpotEvent.USER_QUIT) {
+                this.ircManager.sendMessage(e.getUser().getNickName(), 
+                    "Du wurdest automatisch ausgeloggt weil du den letzten " +
+                    "gemeinsamen Channel verlassen hast.");
             }
-            this.userManager.logoff(user, true);
+            this.userManager.logoff(e.getUser(), true);
         }
     }
 }
