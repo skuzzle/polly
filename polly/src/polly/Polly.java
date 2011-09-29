@@ -392,6 +392,10 @@ public class Polly {
     private void checkUpdates(PollyConfiguration config, PluginManagerImpl pluginManager, ShutdownManagerImpl shutdownManager, String pluginFolder) {
         if (!config.getAutoUpdate()) {
             return;
+        } else if (!(new File("installer.jar")).exists()) {
+            logger.error("'installer.jar' not found in polly root directory. " +
+            		"Skipping updates");
+            return;
         }
         List<PluginConfiguration> plugins = pluginManager.enumerate(pluginFolder, 
             config.getPluginExcludes());
@@ -402,7 +406,8 @@ public class Polly {
                     new URL(config.getUpdateUrl())));
         } catch (MalformedURLException e) {
             // please never reach
-            logger.fatal("Unable to add update item for polly: " + config.getUpdateUrl(), e);
+            logger.fatal("Unable to add update item for polly: " + 
+                    config.getUpdateUrl(), e);
         }
         
         for (PluginConfiguration pc : plugins) {
