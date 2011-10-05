@@ -34,6 +34,12 @@ public class Argument {
     public ArgumentAction getAction() {
         return this.action;
     }
+    
+    
+    
+    public boolean filter() {
+        return false;
+    }
 
 
     @Override

@@ -77,5 +77,7 @@ public class PollyArgumentParser extends AbstractArgumentParser {
                 throw new ParameterException("showing help");
             } 
         });
+        
+        this.addArgument(new UpdateInfoArgument());
     }
 }

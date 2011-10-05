@@ -72,15 +72,19 @@ public class Installer {
         
         // final copy
         final String param = pollyParams;
+        String updateInfo = "";
         if (fileNames != null && !fileNames.isEmpty()) {
-            installAll(fileNames, log);
+            updateInfo = installAll(fileNames, log);
         } else {
             System.out.println("No files to install");
             return;
         }
         
         if (runPolly) {
-            final String cmd = "java -jar polly.jar -update false " + param;
+            updateInfo = !updateInfo.equals("") 
+                    ? "-updateinfo \"" + updateInfo + "\" " 
+                    : "";
+            final String cmd = "java -jar polly.jar -update false " + updateInfo + param;
             log.println("EXECUTING: " + cmd);
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override
@@ -98,7 +102,7 @@ public class Installer {
 
     
     
-    private static void installAll(List<String> fileNames, TreeStream log) {
+    private static String installAll(List<String> fileNames, TreeStream log) {
         File backup = null;
         try {
             log.println("CREATING BACKUP");
@@ -106,13 +110,17 @@ public class Installer {
             FileUtil.copyContent(Environment.POLLY_HOME, backup);
         } catch (IOException e) {
             log.println("ERROR WHILE CREATING BACKUP");
-            return;
+            return "";
         }
         
+        String updateInfo = "";
+        int i = 0;
         for (String file : fileNames) {
             try {
                 installSingle(new File(file), log);
+                ++i;
             } catch (IOException e) {
+                updateInfo = "Error while updating: " + e.getMessage();
                 log.println("ERROR WHILE INSTALLING UPDATE FROM FILE: " + file);
                 log.indent();
                 log.println(e.getMessage());
@@ -122,8 +130,9 @@ public class Installer {
                     FileUtil.copyContent(backup, Environment.POLLY_HOME);
                     FileUtil.deleteRecursive(backup);
                 } catch (IOException e1) {
+                    updateInfo += "; Error while restoring backup: " + e.getMessage();
                     log.println("ERROR WHILE RESTORING BACKUP: " + e1.getMessage());
-                    return;
+                    return updateInfo;
                 }
                 
             }
@@ -133,6 +142,9 @@ public class Installer {
         if (PollyConfiguration.getInstance() != null) {
             PollyConfiguration.getInstance().store();
         }
+        
+        updateInfo = "" + i + " items updated";
+        return updateInfo;
     }
     
     

@@ -4,7 +4,7 @@ import polly.PollyConfiguration;
 import polly.commandline.Argument.ArgumentAction;
 
 
-public class ConfigArgument extends Argument implements ArgumentAction{
+public class ConfigArgument extends Argument implements ArgumentAction {
 
     protected PollyConfiguration config;
     protected String field;

@@ -37,7 +37,7 @@ public abstract class AbstractArgumentParser {
                 if (param.equals(arg.getName())) {
                     
                     
-                    if (!tmp.contains(arg.getName())) {
+                    if (!arg.filter() && !tmp.contains(arg.getName())) {
                         this.canonical += arg.getName() + " ";
                         for (int j = i; j < arg.getParameters() + i; ++j) {
                             this.canonical += args[j] + " ";
