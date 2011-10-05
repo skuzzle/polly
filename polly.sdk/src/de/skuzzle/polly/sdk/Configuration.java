@@ -199,6 +199,12 @@ public interface Configuration {
     public final static String UPDATE_URL = "updateUrl";
     
     /**
+     * Config file property which sets the update url for the update installer.
+     * @since 0.6.0
+     */
+    public final static String INSTALLER_UPDATE_URL = "installerUpdateUrl";
+    
+    /**
      * Config file property which enables auto updating.
      * @since Beta 0.6
      */
@@ -232,6 +238,7 @@ public interface Configuration {
 	 * @return The properties value as a String.
 	 */
 	public abstract String readString(String name);
+	
 	
 	
 	/**

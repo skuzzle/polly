@@ -6,10 +6,14 @@ import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -52,10 +56,22 @@ import polly.update.UpdateItem;
 import polly.update.UpdateManager;
 import polly.update.UpdateProperties;
 import polly.util.ConversationTest;
+import polly.util.FileUtil;
 
 
 
 public class Polly {
+    
+    public static Version getPollyVersion() {
+        String version = Polly.class.getPackage().getImplementationVersion();
+        if (version == null) {
+            return new Version(DEVELOP_VERSION);
+        } else {
+            return new Version(version);
+        }
+    }
+    
+    
     
     public static String getPid() {
         String[] parts = ManagementFactory.getRuntimeMXBean().getName().split("@");
@@ -73,7 +89,7 @@ public class Polly {
     }
     
     
-
+    private final static String DEVELOP_VERSION = "0.5.6";
     private final static String PLUGIN_FOLDER = "cfg/plugins/";
     private final static String CONFIG_FULL_PATH = "cfg/polly.cfg";
     private final static String PERSISTENCE_XML = "cfg/META-INF/persistence.xml";
@@ -100,8 +116,10 @@ public class Polly {
 
    
     private Polly(String[] args) {
-        File f = new File(".");
-        System.out.println(f.getAbsolutePath());
+        if (!FileUtil.waitFor("polly.installer.jar")) {
+            System.out.println("Updates still running. Exiting!");
+            return;
+        }
         
         
         PollyConfiguration config = this.readConfig(CONFIG_FULL_PATH);
@@ -114,7 +132,7 @@ public class Polly {
         logger.info("Config file read from '" + CONFIG_FULL_PATH + "'");
         logger.info("Polly command line arguments: " + Arrays.toString(args));
         logger.info("(Canonical: " + getCommandLine() + ")");
-        String version = Polly.class.getPackage().getImplementationVersion();
+        Version version = getPollyVersion();
         logger.info("Version info: " + version);
 
         logger.trace("Configuration: \n" + config.toString());
@@ -160,7 +178,8 @@ public class Polly {
                 formatManager,
                 conversationManager);
         
-        this.checkUpdates(config, pluginManager, ShutdownManagerImpl.get(), PLUGIN_FOLDER);
+        this.updateInstaller(config);
+        this.checkUpdates(config, pluginManager, PLUGIN_FOLDER);
 
         this.setupPlugins(pluginManager, myPolly, config, PLUGIN_FOLDER);        
         this.setupDatabase(persistence, config, pluginManager, 
@@ -389,10 +408,59 @@ public class Polly {
     
     
     
-    private void checkUpdates(PollyConfiguration config, PluginManagerImpl pluginManager, ShutdownManagerImpl shutdownManager, String pluginFolder) {
+    private void updateInstaller(PollyConfiguration config) {
         if (!config.getAutoUpdate()) {
             return;
-        } else if (!(new File("installer.jar")).exists()) {
+        }
+        
+        UpdateItem ui = null;
+        try {
+            String version = "0.0.0";
+            if ((new File("polly.installer.jar")).exists()) {
+                JarFile installer = new JarFile("polly.installer.jar");
+                Manifest m = installer.getManifest();
+                Attributes main = m.getMainAttributes();
+                version = main.getValue("Implementation-Version");
+            }
+            ui = new UpdateItem("polly.installer", new Version(version), 
+                    new URL(config.getInstallerUpdateUrl()));
+        } catch (IOException e) {
+            logger.error("Error while updating installer", e);
+        }
+        
+        UpdateManager um = new UpdateManager();
+        logger.info("checking for new installer version...");
+        List<UpdateProperties> update = um.collect(Collections.singletonList(ui));
+        if (update.isEmpty()) {
+            return;
+        }
+        
+        logger.info("Downloading installer update...");
+        List<File> files = um.downloadUpdates(update);
+        if (files.size() != 1) {
+            return;
+        }
+        logger.info("installing installer update...");
+        try {
+            File zip = files.get(0);
+            File temp = FileUtil.createTempDirectory();
+            FileUtil.unzip(zip, temp);
+            FileUtil.copyContent(temp, Polly.getPollyPath());
+            FileUtil.deleteRecursive(temp);
+            logger.info("installer updated successfuly");
+        } catch (IOException e) {
+            logger.error("Error while updating installer.jar", e);
+            return;
+        }
+    }
+    
+    
+    
+    private void checkUpdates(PollyConfiguration config, PluginManagerImpl pluginManager, 
+                String pluginFolder) {
+        if (!config.getAutoUpdate()) {
+            return;
+        } else if (!(new File("polly.installer.jar")).exists()) {
             logger.error("'installer.jar' not found in polly root directory. " +
             		"Skipping updates");
             return;
@@ -402,7 +470,7 @@ public class Polly {
         List<UpdateItem> updates = new LinkedList<UpdateItem>();
         
         try {
-            updates.add(new UpdateItem("polly", new Version("0.5.6"), 
+            updates.add(new UpdateItem("polly", Polly.getPollyVersion(), 
                     new URL(config.getUpdateUrl())));
         } catch (MalformedURLException e) {
             // please never reach
@@ -444,7 +512,7 @@ public class Polly {
             String cmd = "java -jar polly.installer.jar " + arg;
             logger.trace("Command: " + cmd);
             Runtime.getRuntime().exec(cmd);
-            shutdownManager.shutdown(true);
+            ShutdownManagerImpl.get().shutdown(true);
         } catch (IOException e) {
             logger.fatal("Failed to start the installer. Deleting all downloads");
             for (File file : files) {

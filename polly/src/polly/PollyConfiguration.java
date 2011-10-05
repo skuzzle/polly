@@ -46,6 +46,7 @@ public class PollyConfiguration extends Configuration
 	private boolean enableTelnet;
 	private boolean autoUpdate;
 	private String updateUrl;
+	private String installerUpdateUrl;
 	
 	
 	public PollyConfiguration(String filename) 
@@ -87,6 +88,7 @@ public class PollyConfiguration extends Configuration
         this.numberFormatString = this.props.getProperty(NUMBER_FORMAT, "0.####");
         this.encodingName = this.props.getProperty(ENCODING, "ISO-8859-1");
         this.updateUrl = this.props.getProperty(UPDATE_URL, "");
+        this.installerUpdateUrl = this.props.getProperty(INSTALLER_UPDATE_URL, "");
         this.autoUpdate = this.parseBoolean(this.props.getProperty(AUTO_UPDATE, "false"));
             
         try {
@@ -99,6 +101,9 @@ public class PollyConfiguration extends Configuration
         try {
             if (!this.updateUrl.equals("")) {
                 new URL(this.updateUrl);
+            }
+            if (!this.installerUpdateUrl.equals("")) {
+                new URL(this.installerUpdateUrl);
             }
         } catch (MalformedURLException e) {
             throw new ConfigurationFileException("Invalid update url: " + this.updateUrl);
@@ -308,6 +313,12 @@ public class PollyConfiguration extends Configuration
     
     public String getUpdateUrl() {
         return this.updateUrl;
+    }
+    
+    
+    
+    public String getInstallerUpdateUrl() {
+        return installerUpdateUrl;
     }
     
     
