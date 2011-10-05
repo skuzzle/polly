@@ -73,7 +73,7 @@ public class TVMovieProvider implements TVProgramProvider {
         try {
             this.initChannelMap();
         } catch (Exception e) {
-            throw new PluginException("Unable to init channel map.");
+            throw new PluginException("Unable to init channel map.", e);
         }
         
     }
