@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import de.skuzzle.polly.installer.util.Environment;
 import de.skuzzle.polly.installer.util.FileUtil;
@@ -24,9 +25,11 @@ public class Installer {
         TreeStream log = null;
         try {
             log = new TreeStream(new FileOutputStream("update.log"), 4);
+            System.setOut(log);
         } catch (FileNotFoundException e1) {
             log = new TreeStream(System.out, 4);
         }
+        log.println("INSTALL LOG FROM: " + (new Date()).toString());
         
         for (int i = 0; i < args.length; ++i) {
             try {
@@ -45,7 +48,7 @@ public class Installer {
                 return;
             }
         }
-        
+
         if (!FileUtil.waitFor("polly.jar")) {
             log.println("polly.jar is not writable. Aborting update.");
             if (fileNames != null) {
@@ -72,15 +75,18 @@ public class Installer {
         if (fileNames != null && !fileNames.isEmpty()) {
             installAll(fileNames, log);
         } else {
-            log.println("No files to install");
+            System.out.println("No files to install");
+            return;
         }
         
         if (runPolly) {
+            final String cmd = "java -jar polly.jar -update false " + param;
+            log.println("EXECUTING: " + cmd);
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override
                 public void run() {
                     try {
-                        Runtime.getRuntime().exec("java -jar polly.jar -update false " + param);
+                        Runtime.getRuntime().exec(cmd);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -124,7 +130,9 @@ public class Installer {
         }
         log.println("DELETING BACKUP");
         FileUtil.deleteRecursive(backup);
-        PollyConfiguration.getInstance().store();
+        if (PollyConfiguration.getInstance() != null) {
+            PollyConfiguration.getInstance().store();
+        }
     }
     
     
@@ -136,14 +144,26 @@ public class Installer {
             log.println("CREATING TEMP DIR");
             File temp = FileUtil.createTempDirectory();
             log.println("EXTRACTING " + file + " INTO " + temp);
-            FileUtil.unzip(file, temp);
+            printFileList(FileUtil.unzip(file, temp), log);
             log.println("COPYING FROM " + temp + " TO " + Environment.POLLY_HOME);
-            FileUtil.copyContent(temp, Environment.POLLY_HOME);
+            printFileList(FileUtil.copy(temp, Environment.POLLY_HOME), log);
             log.println("DELETING TEMP DIR");
             FileUtil.deleteRecursive(temp);
+            log.println("DELETING ZIP FILE");
+            file.delete();
             log.println("DONE");
         } finally {
             log.unindent();
         }
+    }
+    
+    
+    
+    private static void printFileList(List<File> files, TreeStream log) {
+        log.indent();
+        for (File file : files) {
+            log.println(file.getAbsolutePath());
+        }
+        log.unindent();
     }
 }
