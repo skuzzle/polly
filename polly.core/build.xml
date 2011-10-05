@@ -3,6 +3,7 @@
 
     <property name="src.dir" value="src"/>
     <property name="dist.dir" value="dist"/>
+    <property name="release.dir" value="release/cfg/plugins"/>
     <property name="classes.dir" value="classes"/>
     <property name="lib.dir" value="lib"/>
     <property name="version" value="0.5.6"/>
@@ -24,6 +25,7 @@
     <target name="clean" depends="init">
         <delete dir="${dist.dir}"/>
         <delete dir="${classes.dir}"/>
+        <delete dir="${release.dir}"/>
         <delete file="${dist.dir}/${ant.project.name}.jar"/>
     </target>
     
@@ -31,6 +33,7 @@
     <target name="prepare" depends="clean">
         <mkdir dir="${dist.dir}"/>
         <mkdir dir="${classes.dir}"/>
+        <mkdir dir="${release.dir}"/>
     </target>
      
     
@@ -55,13 +58,14 @@
             </fileset>
         </jar>
         <copy file="polly.core.properties" tofile="${dist.dir}/polly.core.properties"/>
-        <copy file="install.script" tofile="${dist.dir}/install.script"/>
     </target>
     
    
     
     <target name="release" if="zip.filename" depends="dist">
-        <zip destfile="${dist.dir}/${zip.filename}" basedir="${dist.dir}" excludes="${zip.filename}"/>
+        <copy file="${dist.dir}/${ant.project.name}.jar" tofile="${release.dir}/${ant.project.name}.jar"/>
+        <copy file="${dist.dir}/polly.core.properties" tofile="${release.dir}/polly.core.properties"/>
+        <zip destfile="${dist.dir}/${zip.filename}" basedir="release" excludes="${zip.filename}"/>
     </target>
 
 </project>

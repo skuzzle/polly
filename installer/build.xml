@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project name="polly.installer" basedir="." default="dist">
+<project name="polly.installer" basedir="." default="release">
     <!-- 
         Version number must always have the format x.y[.z], with higher 
         numbers indicating higher versions, read from left to right. 
     -->
-    <property name="version.num" value="0.0.5"/>
+    <property name="version.num" value="0.0.1"/>
     <property name="src.dir" value="src"/>
     <property name="dist.dir" value="dist"/>
     <property name="classes.dir" value="classes"/>
     <property name="lib.dir" value="lib"/>
-    <property name="zip.filename" value="${ant.project.name}.zip"/>
+    <property name="zip.filename" value="${ant.project.name}-${version.num}.zip"/>
     <property name="classpath" value=""/>
     <buildnumber file="build.num"/>
 
@@ -58,7 +58,8 @@
         </jar>
     </target>
     
-    <target name="createZipFile" if="zip.filename">
+    
+    <target name="release" if="zip.filename" depends="dist">
         <zip destfile="${dist.dir}/${zip.filename}" basedir="${dist.dir}"/>
     </target>
 
