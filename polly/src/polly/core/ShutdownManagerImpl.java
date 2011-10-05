@@ -3,6 +3,7 @@ package polly.core;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 
@@ -34,6 +35,9 @@ public class ShutdownManagerImpl implements ShutdownManager {
     public static final String SUN_JAVA_COMMAND = "sun.java.command";
     
     
+    public AtomicBoolean isSafeShutdown;
+    
+    
     
     private static ShutdownManagerImpl instance;
     
@@ -49,7 +53,18 @@ public class ShutdownManagerImpl implements ShutdownManager {
     private CompositeDisposable shutdownList;
     
     private ShutdownManagerImpl() {
+        this.isSafeShutdown = new AtomicBoolean(false);
         this.shutdownList = new CompositeDisposable();
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                if (!ShutdownManagerImpl.this.isSafeShutdown.get()) {
+                    logger.warn("Unexpected shutdown. Trying to shutdown all " +
+                    		"resources properly.");
+                    ShutdownManagerImpl.this.emergencyShutdown();
+                }
+            }
+        });
     }
     
     
@@ -139,6 +154,7 @@ public class ShutdownManagerImpl implements ShutdownManager {
     
     
     public synchronized void shutdown(boolean exit) {
+        this.isSafeShutdown.set(true);
         logger.info("Shutting down all components.");
         try {
             this.shutdownList.dispose();
@@ -161,6 +177,16 @@ public class ShutdownManagerImpl implements ShutdownManager {
     
     public void shutdown() {
         this.shutdown(true);
+    }
+    
+    
+    
+    private void emergencyShutdown() {
+        try {
+            this.shutdownList.dispose();
+        } catch (DisposingException e) {
+            e.printStackTrace();
+        }
     }
     
     
