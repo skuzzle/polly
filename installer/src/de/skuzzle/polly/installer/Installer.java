@@ -11,7 +11,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 import de.skuzzle.polly.installer.util.Environment;
 import de.skuzzle.polly.installer.util.FileUtil;

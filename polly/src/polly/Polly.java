@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -229,7 +230,7 @@ public class Polly {
             parser.parse(args);
             commandLine = parser.getCanonicalArguments();
         } catch (ParameterException e) {
-            logger.fatal(e.getMessage(), e);
+            logger.warn(e.getMessage(), e);
             this.printHelp();
             System.exit(0);
         }
@@ -490,21 +491,27 @@ public class Polly {
         List<File> files = um.downloadUpdates(actualUpdates);
         
         logger.debug("Preparing to install downloaded updates.");
-        String arg = !getCommandLine().equals("") 
-            ? "-pp \"" + getCommandLine() + "\"" 
-            : "";
-        
-        arg += " -f \"";
-        for (File file : files) {
-            arg += file.getAbsolutePath() + ";";
+        final List<String> cmd = new ArrayList<String>(5);
+        cmd.add("java");
+        cmd.add("-jar");
+        cmd.add("polly.installer.jar");
+        if (!getCommandLine().equals("")) {
+            cmd.add("-pp");
+            cmd.add(getCommandLine());
         }
-        arg += "\"";
+        
+        cmd.add("-f");
+        StringBuilder b = new StringBuilder();
+        for (File file : files) {
+            b.append(file.getAbsolutePath());
+            b.append(";");
+        }
+        cmd.add(b.toString());
         
         try {
             logger.info("Launching installer...");
-            String cmd = "java -jar polly.installer.jar " + arg;
-            logger.trace("Command: " + cmd);
-            Runtime.getRuntime().exec(cmd);
+            logger.trace("Command: " + cmd.toString());
+            Runtime.getRuntime().exec(cmd.toArray(new String[cmd.size()]));
             ShutdownManagerImpl.get().shutdown(true);
         } catch (IOException e) {
             logger.fatal("Failed to start the installer. Deleting all downloads");
