@@ -56,9 +56,10 @@
             <entry key="entrypoint"  value="polly.reminds.MyPlugin"/>
         </propertyfile>
         <propertyfile file="${ant.project.name}.update.properties">
-        	<entry key="description" value="Polly remind plugin. This plugin provides functionality to remind users and leave messages."/>
-            <entry key="version"     value="${version}"/>
-            <entry key="updateURL"   value="http://www.polly.skuzzle.de/updaterepo/${ant.project.name}/${zip.filename}"/>
+        	<entry key="name"          value="${ant.project.name}"/>
+        	<entry key="description"   value="Polly remind plugin. This plugin provides functionality to remind users and leave messages."/>
+            <entry key="updateVersion" value="${version}"/>
+            <entry key="updateURL"     value="http://www.polly.skuzzle.de/updaterepo/${ant.project.name}/${zip.filename}"/>
         </propertyfile>
     </target>
 
