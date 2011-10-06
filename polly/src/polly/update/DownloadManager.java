@@ -4,11 +4,13 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.concurrent.ExecutorService;
@@ -30,7 +32,7 @@ public class DownloadManager extends AbstractDisposable {
     public static void main(String[] args) throws MalformedURLException {
         DownloadManager dm = new DownloadManager();
         
-        URL url = new URL("http://www.bullshit.skuzzle.de/KIZ.rar");
+        URL url = new URL("http://www.bullshit.skuzzle.de/avatar.png");
         File dest = new File("C:\\Users\\Simon\\Desktop\\kiz.rar");
         
         dm.downloadLater(url, dest, new DownloadCallback() {
@@ -62,6 +64,7 @@ public class DownloadManager extends AbstractDisposable {
         private int totalBytes;
         private long start;
         private long end;
+        private long md5Hash;
         private DownloadCallback callback;
         
         
@@ -69,6 +72,7 @@ public class DownloadManager extends AbstractDisposable {
             this.url = url;
             this.destination = destination;
             this.callback = callback;
+            this.md5Hash = 0;
         }
         
         
@@ -102,6 +106,12 @@ public class DownloadManager extends AbstractDisposable {
         
         
         
+        public long getMd5Hash() {
+            return this.md5Hash;
+        }
+        
+        
+        
         private int tryGetFileSize() {
             HttpURLConnection conn = null;
             try {
@@ -120,7 +130,7 @@ public class DownloadManager extends AbstractDisposable {
         
         @Override
         public void run() {
-            InputStream in = null;
+            DigestInputStream in = null;
             OutputStream out = null;
             boolean success = false;
             Exception failReason = null;
@@ -129,7 +139,8 @@ public class DownloadManager extends AbstractDisposable {
             try {
                 int size = this.tryGetFileSize();
                 float logNext = 5.0f;
-                in = this.url.openStream();
+                in = new DigestInputStream(this.url.openStream(), 
+                        MessageDigest.getInstance("MD5"));
                 out = new FileOutputStream(this.destination);
 
                 this.start = System.currentTimeMillis();
@@ -146,12 +157,15 @@ public class DownloadManager extends AbstractDisposable {
                         float progress = ((float)this.totalBytes / (float)size) * 100;
                         if (progress >= logNext) {
                             logger.trace("Progress: " + formatter.format(progress) + "%");
-                            // HACK: do not print 100% multiple times
-                            logNext = logNext >= 100.f ? 200 : logNext + 5.0f;
+                            // ISSUE: 0000046
+                            // HACK:  do not print 100% multiple times
+                            logNext = progress >= 100.f ? 200 : logNext + 5.0f;
                         }
                         
                     }
                 }
+                this.md5Hash = new BigInteger(
+                            1, in.getMessageDigest().digest()).longValue();
                 this.end = System.currentTimeMillis();
                 success = true;
             } catch (Exception e) {
@@ -186,7 +200,8 @@ public class DownloadManager extends AbstractDisposable {
         public String toString() {
             return "Source: " + this.url.toString() + ", Destination: " + this.destination
                 + ", total bytes: " + this.getTotalBytes() + ", total time: " +
-                (this.getTotalTime() / 1000) + "sec";
+                (this.getTotalTime() / 1000) + "sec, MD5: " + 
+                Long.toString(this.md5Hash, 16);
         }
     }
     
