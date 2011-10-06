@@ -16,10 +16,22 @@ public class PollyArgumentParser extends AbstractArgumentParser {
     
     
     private void createArguments() {
-        this.addArgument(new BooleanConfigArgument("-update", this.config, 
-        		PollyConfiguration.AUTO_UPDATE));
-        this.addArgument(new BooleanConfigArgument("-u", this.config, 
-            PollyConfiguration.AUTO_UPDATE));
+        this.addArgument(
+            new BooleanConfigArgument("-update", this.config, 
+                PollyConfiguration.AUTO_UPDATE) {
+                    @Override
+                    public boolean filter() {
+                        return true;
+                    }
+            });
+        this.addArgument(
+            new BooleanConfigArgument("-u", this.config, 
+                PollyConfiguration.AUTO_UPDATE) {
+                    @Override
+                    public boolean filter() {
+                        return true;
+                    }
+            });
         
         this.addArgument(new ConfigArgument("-server", this.config, 
             PollyConfiguration.SERVER));

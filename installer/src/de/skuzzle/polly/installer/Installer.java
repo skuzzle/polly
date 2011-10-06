@@ -70,8 +70,6 @@ public class Installer {
             return;
         }
         
-        // final copy
-        final String param = pollyParams;
         String updateInfo = "";
         if (fileNames != null && !fileNames.isEmpty()) {
             updateInfo = installAll(fileNames, log);
@@ -84,7 +82,9 @@ public class Installer {
             updateInfo = !updateInfo.equals("") 
                     ? "-updateinfo \"" + updateInfo + "\" " 
                     : "";
-            final String cmd = "java -jar polly.jar -update false " + updateInfo + param;
+            // final copy
+            final String cmd = "java -jar polly.jar -update false " + updateInfo + 
+                    pollyParams;
             log.println("EXECUTING: " + cmd);
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override
@@ -109,7 +109,12 @@ public class Installer {
             backup = FileUtil.createTempDirectory();
             FileUtil.copyContent(Environment.POLLY_HOME, backup);
         } catch (IOException e) {
-            log.println("ERROR WHILE CREATING BACKUP");
+            log.println("ERROR WHILE CREATING BACKUP: " + e.toString());
+            log.println("DELETING DOWNLOADS");
+            for (String file : fileNames) {
+                new File(file).delete();
+                new File(file).deleteOnExit();
+            }
             return "";
         }
         

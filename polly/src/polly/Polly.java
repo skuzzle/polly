@@ -501,7 +501,11 @@ public class Polly {
         List<File> files = um.downloadUpdates(actualUpdates);
         
         logger.debug("Preparing to install downloaded updates.");
-        String arg = "-pp \"" + getCommandLine() + "\" -f \"";
+        String arg = !getCommandLine().equals("") 
+            ? "-pp \"" + getCommandLine() + "\"" 
+            : "";
+        
+        arg += " -f \"";
         for (File file : files) {
             arg += file.getAbsolutePath() + ";";
         }
