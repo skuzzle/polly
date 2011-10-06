@@ -64,7 +64,7 @@ public class DownloadManager extends AbstractDisposable {
         private int totalBytes;
         private long start;
         private long end;
-        private long md5Hash;
+        private String md5Hash;
         private DownloadCallback callback;
         
         
@@ -72,7 +72,7 @@ public class DownloadManager extends AbstractDisposable {
             this.url = url;
             this.destination = destination;
             this.callback = callback;
-            this.md5Hash = 0;
+            this.md5Hash = "";
         }
         
         
@@ -106,7 +106,7 @@ public class DownloadManager extends AbstractDisposable {
         
         
         
-        public long getMd5Hash() {
+        public String getMd5Hash() {
             return this.md5Hash;
         }
         
@@ -165,7 +165,7 @@ public class DownloadManager extends AbstractDisposable {
                     }
                 }
                 this.md5Hash = new BigInteger(
-                            1, in.getMessageDigest().digest()).longValue();
+                            1, in.getMessageDigest().digest()).toString(16);
                 this.end = System.currentTimeMillis();
                 success = true;
             } catch (Exception e) {
@@ -200,8 +200,7 @@ public class DownloadManager extends AbstractDisposable {
         public String toString() {
             return "Source: " + this.url.toString() + ", Destination: " + this.destination
                 + ", total bytes: " + this.getTotalBytes() + ", total time: " +
-                (this.getTotalTime() / 1000) + "sec, MD5: " + 
-                Long.toString(this.md5Hash, 16);
+                (this.getTotalTime() / 1000) + "sec, MD5: " + this.md5Hash;
         }
     }
     

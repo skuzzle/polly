@@ -74,7 +74,13 @@ public class UpdateManager {
                     @Override
                     public void downloadFinished(DownloadObject o) {
                         logger.info("Downloaded " + o);
-                        files.add(o.getDestination());
+                        if (!o.getMd5Hash().equals(update.getChecksum())) {
+                            logger.error("MD5 mismatch. Downloaded: " + o.getMd5Hash() + 
+                                ", expected: " + update.getChecksum());
+                            o.getDestination().delete();
+                        } else {
+                            files.add(o.getDestination());
+                        }
                     }
                     
                     

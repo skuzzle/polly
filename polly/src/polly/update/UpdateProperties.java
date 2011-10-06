@@ -22,9 +22,10 @@ public class UpdateProperties {
     private Properties props;
     private String name;
     private String description;
-    private long checksum;
+    private String checksum;
     private URL updateUrl;
     private Version updateVersion;
+
     
     
     public UpdateProperties(URL propertyUrl) throws IOException, UpdateException {
@@ -47,13 +48,11 @@ public class UpdateProperties {
         try {
             this.name = this.props.getProperty(UPDATE_NAME);
             this.updateUrl = new URL(this.props.getProperty(UPDATE_URL));
-            this.checksum = Long.parseLong(this.props.getProperty(UPDATE_CHEKSUM, "0"));
+            this.checksum = this.props.getProperty(UPDATE_CHEKSUM, "0");
             this.updateVersion = new Version(this.props.getProperty(UPDATE_VERSION));
         } catch (MalformedURLException e) {
             throw new UpdateException(UPDATE_URL + ":" + 
                 this.props.getProperty(UPDATE_URL), e);
-        } catch (NumberFormatException e) {
-            throw new UpdateException(UPDATE_CHEKSUM, e);
         } catch (IllegalArgumentException e) {
             throw new UpdateException(e.getMessage(), e);
         }
@@ -70,7 +69,7 @@ public class UpdateProperties {
     
     
     
-    public long getChecksum() {
+    public String getChecksum() {
         return this.checksum;
     }
     

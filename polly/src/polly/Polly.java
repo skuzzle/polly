@@ -489,6 +489,10 @@ public class Polly {
         }
         logger.debug("Downloading updates...");
         List<File> files = um.downloadUpdates(actualUpdates);
+        if (files.isEmpty()) {
+            logger.info("No downloads available. Skipping update");
+            return;
+        }
         
         logger.debug("Preparing to install downloaded updates.");
         final List<String> cmd = new ArrayList<String>(5);
