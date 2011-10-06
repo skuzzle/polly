@@ -55,12 +55,7 @@
             <entry key="updateUrl"   value="http://www.polly.skuzzle.de/updaterepo/${ant.project.name}/${ant.project.name}.update.properties"/>
             <entry key="entrypoint"  value="polly.reminds.MyPlugin"/>
         </propertyfile>
-        <propertyfile file="${ant.project.name}.update.properties">
-        	<entry key="name"          value="${ant.project.name}"/>
-        	<entry key="description"   value="Polly remind plugin. This plugin provides functionality to remind users and leave messages."/>
-            <entry key="updateVersion" value="${version}"/>
-            <entry key="updateURL"     value="http://www.polly.skuzzle.de/updaterepo/${ant.project.name}/${zip.filename}"/>
-        </propertyfile>
+
     </target>
 
     
@@ -78,7 +73,7 @@
                 <exclude name="de/skuzzle/test/**"/>
             </fileset>
         </jar>
-        <copy file="polly.reminds.properties" tofile="${dist.dir}/polly.reminds.properties"/>
+        <copy file="${ant.project.name}.properties" tofile="${dist.dir}/${ant.project.name}.properties"/>
     </target>
     
    
@@ -87,6 +82,15 @@
         <copy file="${dist.dir}/${ant.project.name}.jar" tofile="${release.dir}/${ant.project.name}.jar"/>
         <copy file="${dist.dir}/polly.reminds.properties" tofile="${release.dir}/polly.reminds.properties"/>
         <zip destfile="${dist.dir}/${zip.filename}" basedir="release"/>
+        
+        <checksum file="${dist.dir}/${zip.filename}" property="md5"/>
+        <propertyfile file="${ant.project.name}.update.properties">
+        	<entry key="name"          value="${ant.project.name}"/>
+        	<entry key="description"   value="Polly remind plugin. This plugin provides functionality to remind users and leave messages."/>
+            <entry key="updateVersion" value="${version}"/>
+            <entry key="updateURL"     value="http://www.polly.skuzzle.de/updaterepo/${ant.project.name}/${zip.filename}"/>
+            <entry key="checksum"      value="${md5}"/>
+        </propertyfile>
     </target>
 
 </project>

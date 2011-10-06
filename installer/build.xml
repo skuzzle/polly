@@ -46,16 +46,11 @@
 
 	
     <target name="props">
-        <propertyfile file="${ant.project.name}.update.properties">
-            <entry key="name"          value="${ant.project.name}"/>
-            <entry key="description"   value="Polly update installer."/>
-            <entry key="updateVersion" value="${version.num}"/>
-            <entry key="updateURL"     value="http://www.polly.skuzzle.de/updaterepo/polly/${zip.filename}"/>
-        </propertyfile>
+
     </target>
     
     
-    <target name="dist" depends="prepare,compile,props">
+    <target name="dist" depends="prepare,compile">
         <jar destfile="${dist.dir}/${ant.project.name}.jar">
             <manifest>
                 <attribute name="Main-Class" value="de.skuzzle.polly.installer.Installer"/>
@@ -70,6 +65,15 @@
     
     <target name="release" if="zip.filename" depends="dist">
         <zip destfile="${dist.dir}/${zip.filename}" basedir="${dist.dir}"/>
+        
+        <checksum file="${dist.dir}/${zip.filename}" property="md5"/>
+        <propertyfile file="${ant.project.name}.update.properties">
+            <entry key="name"          value="${ant.project.name}"/>
+            <entry key="description"   value="Polly update installer."/>
+            <entry key="updateVersion" value="${version.num}"/>
+            <entry key="updateURL"     value="http://www.polly.skuzzle.de/updaterepo/polly/${zip.filename}"/>
+            <entry key="checksum"      value="${md5}"/>
+        </propertyfile>
     </target>
 
 </project>

@@ -42,10 +42,10 @@
             <exclude name="de/skuzzle/test/**"/>
         </javac>
     </target>
-	
-	
-	
-	<target name="props">
+    
+    
+    
+	<target name="pluginproperties">
 		<propertyfile file="${ant.project.name}.properties">
 			<entry key="jarfile"     value="${ant.project.name}.jar"/>
 			<entry key="name"        value="${ant.project.name}"/>
@@ -55,17 +55,11 @@
 			<entry key="updateUrl"   value="http://www.polly.skuzzle.de/updaterepo/${ant.project.name}/${ant.project.name}.update.properties"/>
 		    <entry key="entrypoint"  value="polly.core.MyPlugin"/>
 		</propertyfile>
-        <propertyfile file="${ant.project.name}.update.properties">
-        	<entry key="name"          value="${ant.project.name}"/>
-            <entry key="description"   value="Polly core plugin. This plugin provides all default polly commands."/>
-            <entry key="updateVersion" value="${version}"/>
-            <entry key="updateURL"     value="http://www.polly.skuzzle.de/updaterepo/${ant.project.name}/${zip.filename}"/>
-        </propertyfile>
 	</target>
-
-	
     
-    <target name="dist" depends="prepare,compile,props">
+    
+    
+    <target name="dist" depends="prepare,compile,pluginproperties">
         <jar destfile="${dist.dir}/${ant.project.name}.jar">
             <manifest>
                 <attribute name="Main-Class" value=""/>
@@ -79,7 +73,7 @@
                 <exclude name="de/skuzzle/test/**"/>
             </fileset>
         </jar>
-        <copy file="polly.core.properties" tofile="${dist.dir}/polly.core.properties"/>
+        <copy file="${ant.project.name}.properties" tofile="${dist.dir}/${ant.project.name}.properties"/>
     </target>
     
    
@@ -88,6 +82,15 @@
         <copy file="${dist.dir}/${ant.project.name}.jar" tofile="${release.dir}/${ant.project.name}.jar"/>
         <copy file="${dist.dir}/polly.core.properties" tofile="${release.dir}/polly.core.properties"/>
         <zip destfile="${dist.dir}/${zip.filename}" basedir="release" excludes="${zip.filename}"/>
+        
+        <checksum file="${dist.dir}/${zip.filename}" property="md5"/>
+        <propertyfile file="${ant.project.name}.update.properties">
+        	<entry key="name"          value="${ant.project.name}"/>
+            <entry key="description"   value="Polly core plugin. This plugin provides all default polly commands."/>
+            <entry key="updateVersion" value="${version}"/>
+            <entry key="updateURL"     value="http://www.polly.skuzzle.de/updaterepo/${ant.project.name}/${zip.filename}"/>
+            <entry key="checksum"      value="${md5}"/>
+        </propertyfile>
     </target>
 
 </project>

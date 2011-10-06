@@ -52,12 +52,6 @@
             <entry key="updateUrl"   value="http://www.polly.skuzzle.de/updaterepo/${ant.project.name}/${ant.project.name}.update.properties"/>
             <entry key="entrypoint"  value="polly.tv.MyPlugin"/>
         </propertyfile>
-        <propertyfile file="${ant.project.name}.update.properties">
-        	<entry key="name"          value="${ant.project.name}"/>
-            <entry key="description"   value="Polly TV plugin. This plugins reads current TV information."/>
-            <entry key="updateVersion" value="${version}"/>
-            <entry key="updateURL"     value="http://www.polly.skuzzle.de/updaterepo/${ant.project.name}/${zip.filename}"/>
-        </propertyfile>
     </target>
 
     
@@ -75,7 +69,7 @@
                 <exclude name="de/skuzzle/test/**"/>
             </fileset>
         </jar>
-        <copy file="polly.tv.properties" tofile="${dist.dir}/polly.tv.properties"/>
+        <copy file="${ant.project.name}.properties" tofile="${dist.dir}/${ant.project.name}.properties"/>
     </target>
     
    
@@ -84,6 +78,15 @@
         <copy file="${dist.dir}/${ant.project.name}.jar" tofile="${release.dir}/${ant.project.name}.jar"/>
         <copy file="${dist.dir}/polly.tv.properties" tofile="${release.dir}/polly.tv.properties"/>
         <zip destfile="${dist.dir}/${zip.filename}" basedir="release"/>
+        
+        <checksum file="${dist.dir}/${zip.filename}" property="md5"/>
+        <propertyfile file="${ant.project.name}.update.properties">
+        	<entry key="name"          value="${ant.project.name}"/>
+            <entry key="description"   value="Polly TV plugin. This plugins reads current TV information."/>
+            <entry key="updateVersion" value="${version}"/>
+            <entry key="updateURL"     value="http://www.polly.skuzzle.de/updaterepo/${ant.project.name}/${zip.filename}"/>
+            <entry key="checksum"      value="${md5}"/>
+        </propertyfile>
     </target>
 
 </project>
