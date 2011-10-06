@@ -13,12 +13,14 @@ import de.skuzzle.polly.sdk.Version;
 public class UpdateProperties {
 
     public final static String UPDATE_URL = "updateURL";
+    public final static String UPDATE_NAME = "name";
     public final static String UPDATE_DESCRIPTION = "updateDescription";
     public final static String UPDATE_VERSION = "updateVersion";
     public final static String UPDATE_CHEKSUM = "checksum";
     
     
     private Properties props;
+    private String name;
     private String description;
     private long checksum;
     private URL updateUrl;
@@ -43,6 +45,7 @@ public class UpdateProperties {
     
     private void validate() throws UpdateException {
         try {
+            this.name = this.props.getProperty(UPDATE_NAME);
             this.updateUrl = new URL(this.props.getProperty(UPDATE_URL));
             this.checksum = Long.parseLong(this.props.getProperty(UPDATE_CHEKSUM, "0"));
             this.updateVersion = new Version(this.props.getProperty(UPDATE_VERSION));
@@ -56,6 +59,13 @@ public class UpdateProperties {
         }
         
         this.description = this.props.getProperty(UPDATE_DESCRIPTION, "");
+    }
+    
+    
+    
+    
+    public String getName() {
+        return this.name;
     }
     
     

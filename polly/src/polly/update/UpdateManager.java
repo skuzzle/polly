@@ -67,7 +67,7 @@ public class UpdateManager {
         logger.info("Downloading " + updates.size() + " updates (may take some time)...");
         for (final UpdateProperties update : updates) {
             try {
-                File dest = File.createTempFile("" + System.nanoTime(), ".zip");
+                File dest = File.createTempFile(update.getName(), ".zip");
                 
                 dm.downloadAndWait(update.getUpdateUrl(), dest, new DownloadCallback() {
                     
@@ -82,7 +82,10 @@ public class UpdateManager {
                     @Override
                     public void downloadFailed(DownloadObject o, Exception e) {
                         logger.error("Error while downloading " + o, e);
-                        o.getDestination().delete();
+                        if (!o.getDestination().delete()) {
+                            logger.error("Could not delete temp file: " + 
+                                o.getDestination());
+                        }
                     }
                 });
                 

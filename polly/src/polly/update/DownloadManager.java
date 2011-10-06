@@ -3,12 +3,18 @@ package polly.update;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import org.apache.log4j.Logger;
 
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
@@ -46,7 +52,7 @@ public class DownloadManager extends AbstractDisposable {
     }
     
     
-    
+    private static Logger logger = Logger.getLogger(DownloadManager.class.getName());
     public final static int PAKET_SIZE = 1024 * 64; // 64kb
     
     public class DownloadObject implements Runnable {
@@ -96,17 +102,36 @@ public class DownloadManager extends AbstractDisposable {
         
         
         
+        private int tryGetFileSize() {
+            HttpURLConnection conn = null;
+            try {
+                conn = (HttpURLConnection) this.url.openConnection();
+                conn.setRequestMethod("HEAD");
+                conn.getInputStream();
+                return conn.getContentLength();
+            } catch (IOException e) {
+                return -1;
+            } finally {
+                conn.disconnect();
+            }
+        }
+        
+        
+        
         @Override
         public void run() {
             InputStream in = null;
             OutputStream out = null;
             boolean success = false;
             Exception failReason = null;
+            NumberFormat formatter = DecimalFormat.getIntegerInstance();
             
             try {
+                int size = this.tryGetFileSize();
+                float logNext = 5.0f;
                 in = this.url.openStream();
                 out = new FileOutputStream(this.destination);
-                
+
                 this.start = System.currentTimeMillis();
                 byte[] buffer = new byte[PAKET_SIZE];
                 int bytes = in.read(buffer);
@@ -117,6 +142,14 @@ public class DownloadManager extends AbstractDisposable {
                     out.flush();
                     bytes = in.read(buffer);
                     this.totalBytes += bytes;
+                    if (size != -1) {
+                        float progress = ((float)this.totalBytes / (float)size) * 100;
+                        if (progress >= logNext) {
+                            logger.trace("Progress: " + formatter.format(progress) + "%");
+                            logNext += 5.0f;
+                        }
+                        
+                    }
                 }
                 this.end = System.currentTimeMillis();
                 success = true;
