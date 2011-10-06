@@ -5,6 +5,7 @@ import java.lang.management.ManagementFactory;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import polly.Polly;
@@ -169,6 +170,7 @@ public class ShutdownManagerImpl implements ShutdownManager {
         
         if (exit) {
             logger.info("All connections closed. Now exiting the whole program. ByeBye");
+            LogManager.shutdown();
             System.exit(0);
         }
     }
@@ -183,6 +185,7 @@ public class ShutdownManagerImpl implements ShutdownManager {
     
     private void emergencyShutdown() {
         try {
+            LogManager.shutdown();
             this.shutdownList.dispose();
         } catch (DisposingException e) {
             e.printStackTrace();
