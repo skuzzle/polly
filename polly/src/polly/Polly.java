@@ -23,7 +23,6 @@ import de.skuzzle.polly.sdk.CompositeDisposable;
 import de.skuzzle.polly.sdk.Version;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
-import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.PluginException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
 
@@ -55,7 +54,6 @@ import polly.telnet.TelnetServer;
 import polly.update.UpdateItem;
 import polly.update.UpdateManager;
 import polly.update.UpdateProperties;
-import polly.util.ConversationTest;
 import polly.util.FileUtil;
 
 
@@ -89,7 +87,7 @@ public class Polly {
     }
     
     
-    private final static String DEVELOP_VERSION = "0.5.6";
+    private final static String DEVELOP_VERSION = "0.6.0";
     private final static String PLUGIN_FOLDER = "cfg/plugins/";
     private final static String CONFIG_FULL_PATH = "cfg/polly.cfg";
     private final static String PERSISTENCE_XML = "cfg/META-INF/persistence.xml";
@@ -200,15 +198,6 @@ public class Polly {
         shutdownList.add(conversationManager);
         
         pluginManager.notifyPlugins();
-        
-        
-        // XXX: DEBUG
-        try {
-            commandManager.registerCommand(new ConversationTest(myPolly));
-        } catch (DuplicatedSignatureException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
         
         logger.info("Polly succesfully set up.");
     }

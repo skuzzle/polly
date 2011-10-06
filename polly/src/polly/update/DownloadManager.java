@@ -146,7 +146,8 @@ public class DownloadManager extends AbstractDisposable {
                         float progress = ((float)this.totalBytes / (float)size) * 100;
                         if (progress >= logNext) {
                             logger.trace("Progress: " + formatter.format(progress) + "%");
-                            logNext += 5.0f;
+                            // HACK: do not print 100% multiple times
+                            logNext = logNext >= 100.f ? 200 : logNext + 5.0f;
                         }
                         
                     }
