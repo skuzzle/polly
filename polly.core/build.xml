@@ -42,13 +42,34 @@
             <exclude name="de/skuzzle/test/**"/>
         </javac>
     </target>
+	
+	
+	
+	<target name="props">
+		<propertyfile file="${ant.project.name}.properties">
+			<entry key="jarfile"     value="${ant.project.name}.jar"/>
+			<entry key="name"        value="${ant.project.name}"/>
+			<entry key="description" value="Polly core plugin. This plugin provides all default polly commands."/>
+			<entry key="developer"   value="betty"/>
+			<entry key="version"     value="${version}"/>
+			<entry key="updateUrl"   value="http://www.polly.skuzzle.de/updaterepo/${ant.project.name}/${ant.project.name}.update.properties"/>
+		    <entry key="entrypoint"  value="polly.core.MyPlugin"/>
+		</propertyfile>
+        <propertyfile file="${ant.project.name}.update.properties">
+            <entry key="description" value="Polly core plugin. This plugin provides all default polly commands."/>
+            <entry key="version"     value="${version}"/>
+            <entry key="updateURL"   value="http://www.polly.skuzzle.de/updaterepo/${ant.project.name}/${zip.filename}"/>
+        </propertyfile>
+	</target>
 
+	
     
-    <target name="dist" depends="prepare,compile">
+    <target name="dist" depends="prepare,compile,props">
         <jar destfile="${dist.dir}/${ant.project.name}.jar">
             <manifest>
                 <attribute name="Main-Class" value=""/>
                 <attribute name="Class-Path" value="${classpath}"/>
+            	<attribute name="Implementation-Version" value="${version}"/>
             </manifest>
             <fileset dir="${classes.dir}">
                 <exclude name="de/skuzzle/test/**"/>

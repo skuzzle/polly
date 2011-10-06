@@ -91,12 +91,16 @@
             </manifest>
             <fileset dir="${classes.dir}" excludes="de/skuzzle/test/** src/META-INF/**"/>
         </jar>
-        <copy file="install.script" tofile="${dist.dir}/install.script"/>
         <copy file="${installer.jar}" tofile="${dist.dir}/polly.installer.jar"/>
     </target>
     
     <target name="release" depends="dist">
-        <zip destfile="${dist.dir}/${update.filename}" basedir="${dist.dir}" excludes="/cfg/ /logs/ /cache/ polly.installer.jar *.zip"/>
+        <zip destfile="${dist.dir}/${update.filename}">
+        	<fileset dir="${dist.dir}" 
+        	         includes="polly.jar polly.installer.jar 
+        		               lib/de.skuzzle.polly.parser.jar 
+        		               lib/de.skuzzle.polly.sdk.jar"/>
+    	</zip>
         <zip destfile="${dist.dir}/${release.filename}" basedir="${dist.dir}" excludes="install.script *.zip"/>
     </target>
 </project>
