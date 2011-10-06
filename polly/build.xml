@@ -77,9 +77,18 @@
         </javac>
     </target>
 
+	
+    <target name="props">
+        <propertyfile file="${ant.project.name}.update.properties">
+            <entry key="name"          value="${ant.project.name}"/>
+            <entry key="description"   value="Polly core files"/>
+            <entry key="updateVersion" value="${version.num}"/>
+            <entry key="updateURL"     value="http://www.polly.skuzzle.de/updaterepo/polly/${update.filename}"/>
+        </propertyfile>
+    </target>
+	
     
-    
-    <target name="dist" depends="prepare,compile">
+    <target name="dist" depends="prepare,compile,props">
         <jar destfile="${dist.dir}/${ant.project.name}.jar">
             <manifest>
                 <attribute name="Main-Class" value="polly.Polly"/>
