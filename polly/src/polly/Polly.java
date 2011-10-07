@@ -437,6 +437,7 @@ public class Polly {
             FileUtil.unzip(zip, temp);
             FileUtil.copyContent(temp, Polly.getPollyPath());
             FileUtil.deleteRecursive(temp);
+            zip.delete();
             logger.info("installer updated successfuly");
         } catch (IOException e) {
             logger.error("Error while updating installer.jar", e);

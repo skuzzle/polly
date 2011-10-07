@@ -41,7 +41,7 @@ public class Installer {
         log.println("POLLY_HOME: " + Environment.POLLY_HOME.getAbsolutePath());
         log.println("POLLY_CONFIG: " + Environment.POLLY_CONFIG_DIR.getAbsolutePath());
         log.println("POLLY_CFG: " + Environment.POLLY_CONFIG_FILE.getAbsolutePath());
-        log.println("POLLYPLUGINS: " + Environment.POLLY_PLUGIN_DIR.getAbsolutePath());
+        log.println("POLLY_PLUGINS: " + Environment.POLLY_PLUGIN_DIR.getAbsolutePath());
         log.unindent();
         
         for (int i = 0; i < args.length; ++i) {
@@ -65,10 +65,7 @@ public class Installer {
         if (!FileUtil.waitFor("polly.jar")) {
             log.println("polly.jar is not writable. Aborting update.");
             if (fileNames != null) {
-                for (String file : fileNames) {
-                    new File(file).delete();
-                    new File(file).deleteOnExit();
-                }
+                FileUtil.safeDeletePaths(fileNames, 3);
             }
             return;
         }
@@ -107,17 +104,13 @@ public class Installer {
                 cmd.addAll(Installer.parsePollyCommands(pollyParams));
             }
 
-            log.println("EXECUTING: " + cmd.toString());
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                @Override
-                public void run() {
-                    try {
-                        Runtime.getRuntime().exec(cmd.toArray(new String[cmd.size()]));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
+            ProcessBuilder p = new ProcessBuilder(cmd);
+            try {
+                log.println("EXECUTING: " + cmd.toString());
+                p.start();
+            } catch (IOException e) {
+                e.printStackTrace(log);
+            }
         }
         System.exit(0);
     }
@@ -136,10 +129,7 @@ public class Installer {
             log.println("ERROR WHILE CREATING BACKUP");
             e.printStackTrace(log);
             log.println("DELETING DOWNLOADS");
-            for (String file : fileNames) {
-                new File(file).delete();
-                new File(file).deleteOnExit();
-            }
+            FileUtil.safeDeletePaths(fileNames, 3);
             return "Error while updating: " + e.getMessage();
         } finally {
             log.unindent();
@@ -166,6 +156,9 @@ public class Installer {
                     log.println("ERROR WHILE RESTORING BACKUP");
                     e1.printStackTrace(log);
                     return updateInfo;
+                } finally {
+                    log.println("DELETING TEMP FILES");
+                    FileUtil.safeDeletePaths(fileNames, 3);
                 }
                 
             }
@@ -184,20 +177,21 @@ public class Installer {
     
     private static void installSingle(File file, TreeStream log) throws IOException {
         log.println("INSTALLING " + file);
+        File temp = null;
         try {
             log.indent();
             log.println("CREATING TEMP DIR");
-            File temp = FileUtil.createTempDirectory();
-            log.println("EXTRACTING " + file + " INTO " + temp);
+            temp = FileUtil.createTempDirectory();
+            log.println("EXTRACTING " + file.getAbsolutePath() + " INTO " + temp.getAbsolutePath());
             printFileList(FileUtil.unzip(file, temp), log);
-            log.println("COPYING FROM " + temp + " TO " + Environment.POLLY_HOME);
+            log.println("COPYING FROM " + temp.getAbsolutePath() + " TO " + Environment.POLLY_HOME.getAbsolutePath());
             printFileList(FileUtil.copy(temp, Environment.POLLY_HOME), log);
+            log.println("DONE");
+        } finally {
             log.println("DELETING TEMP DIR");
             FileUtil.deleteRecursive(temp);
             log.println("DELETING ZIP FILE");
             file.delete();
-            log.println("DONE");
-        } finally {
             log.unindent();
         }
     }

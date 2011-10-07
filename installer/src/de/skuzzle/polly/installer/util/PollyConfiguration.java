@@ -6,7 +6,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 
 public class PollyConfiguration extends Properties {
@@ -40,14 +42,25 @@ public class PollyConfiguration extends Properties {
     
     
     private File store;
-    
+    private Set<String> forbiddenProperties;
     
     
     private PollyConfiguration(File store) {
         this.store = store;
+        this.forbiddenProperties = new HashSet<String>();
     }
     
     
+    
+    @Override
+    public synchronized Object setProperty(String key, String value) {
+        if (this.forbiddenProperties.contains(key)) {
+            return null;
+        }
+        return super.setProperty(key, value);
+    }
+
+
     
     public void store() {
         OutputStream out = null;

@@ -159,6 +159,7 @@ public class FileUtil {
             }
         } else {
             destination.delete();
+            destination.deleteOnExit();
         }
     }
 
@@ -177,6 +178,7 @@ public class FileUtil {
             }
         }
         destination.delete();
+        destination.deleteOnExit();
     }
     
     
@@ -351,15 +353,37 @@ public class FileUtil {
     
     
     public static void deleteList(List<File> files) {
+        boolean exists = false;
         for (File file : files) {
-            if (!file.isDirectory()) {
-                file.delete();
+            if (!file.isDirectory() && file.exists()) {
+                file.deleteOnExit();
+                exists |= !file.delete();
             }
         }
         for (File file : files) {
-            if (file.isDirectory()) {
+            if (file.isDirectory() && file.exists()) {
+                file.deleteOnExit();
                 file.delete();
+                exists |= !file.delete();
             }
+        }
+    }
+    
+    
+    
+    public static void safeDeletePaths(List<String> paths, int retries) {
+        List<File> files = new LinkedList<File>();
+        for (String path : paths) {
+            files.add(new File(path));
+        }
+        FileUtil.safeDeleteList(files, retries);
+    }
+    
+    
+    
+    public static void safeDeleteList(List<File> files, int retries) {
+        for (int i = 0; i < retries; ++i) {
+            FileUtil.deleteList(files);
         }
     }
     
