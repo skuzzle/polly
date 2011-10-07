@@ -9,6 +9,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import polly.Polly;
+import polly.util.events.ProcessExecutor;
 
 
 import de.skuzzle.polly.sdk.CompositeDisposable;
@@ -108,34 +109,35 @@ public class ShutdownManagerImpl implements ShutdownManager {
             // vm arguments
             List<String> vmArguments = 
                 ManagementFactory.getRuntimeMXBean().getInputArguments();
-            StringBuffer vmArgsOneLine = new StringBuffer();
+            final ProcessExecutor pe = new ProcessExecutor();
+            pe.setDefaultTerminal(Polly.getConfig().getDefaultTerminal());
+            pe.setTerminalArguments(Polly.getConfig().getTerminalArguments());
+            
+            // HACK: using absolute path fails on windows, so we assume there is a 
+            //       correct %PATH% entry for java
+            pe.addCommand("java");
             for (String arg : vmArguments) {
                 // if it's the agent argument : we ignore it otherwise the
                 // address of the old application and the new one will be in conflict
                 if (!arg.contains("-agentlib")) {
-                    vmArgsOneLine.append(arg);
-                    vmArgsOneLine.append(" ");
+                    pe.addCommand(arg);
                 }
             }
-            // init the command to execute, add the vm args
-            final StringBuffer cmd = new StringBuffer(java + " " + vmArgsOneLine);
-
-            cmd.append(" -jar polly.jar");
+            pe.addCommandsFromString("-jar polly.jar");
 
             if (commandLine != null && !commandLine.equals("")) {
-                cmd.append(" ");
-                cmd.append(commandLine);
+                pe.addCommandsFromString(commandLine);
             }
             
-            logger.trace("Java command: '" + cmd.toString() + "'");
+            logger.trace("Java command: '" + pe.toString() + "'");
             // execute the command in a shutdown hook, to be sure that all the
             // resources have been disposed before restarting the application
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override
                 public void run() {
                     try {
-                        logger.info("Starting new polly instance: " + cmd);
-                        Runtime.getRuntime().exec(cmd.toString());
+                        pe.start(Polly.getConfig().isRunInConsole());
+                        logger.trace("Executed: " + pe.toString());
                         logger.info("New polly instance initialized.");
                     } catch (IOException e) {
                         logger.error("Could not start new polly instance.", e);

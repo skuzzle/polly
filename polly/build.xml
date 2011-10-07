@@ -96,8 +96,8 @@
     <target name="release" depends="dist">
         <zip destfile="${dist.dir}/${update.filename}">
         	<fileset dir="${dist.dir}" 
-        	         includes="polly.jar polly.installer.jar 
-        		               lib/de.skuzzle.polly.parser.jar 
+        	         includes="polly.jar
+                               lib/de.skuzzle.polly.parser.jar 
         		               lib/de.skuzzle.polly.sdk.jar"/>
     	</zip>
         <zip destfile="${dist.dir}/${release.filename}" basedir="${dist.dir}" excludes="install.script *.zip"/>

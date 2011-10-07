@@ -4,17 +4,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import de.skuzzle.polly.installer.util.Environment;
 import de.skuzzle.polly.installer.util.FileUtil;
 import de.skuzzle.polly.installer.util.PollyConfiguration;
+import de.skuzzle.polly.installer.util.ProcessExecutor;
 
 
 
@@ -22,8 +19,6 @@ public class Installer {
     
     
     public static void main(String[] args) {
-        // args length must be 1:
-        // [0] = semicolon separated list of zip file names
         boolean runPolly = true;
         String pollyParams = "";
         List<String> fileNames = null;
@@ -38,6 +33,7 @@ public class Installer {
         
         log.println("ENVIRONMENT");
         log.indent();
+        log.println("ARGS: " + Arrays.toString(args));
         log.println("POLLY_HOME: " + Environment.POLLY_HOME.getAbsolutePath());
         log.println("POLLY_CONFIG: " + Environment.POLLY_CONFIG_DIR.getAbsolutePath());
         log.println("POLLY_CFG: " + Environment.POLLY_CONFIG_FILE.getAbsolutePath());
@@ -89,30 +85,43 @@ public class Installer {
         }
         
         if (runPolly) {
-            final List<String> cmd = new ArrayList<String>(10);
-            cmd.add("java");
-            cmd.add("-jar");
-            cmd.add("polly.jar");
-            cmd.add("-update");
-            cmd.add("false");
-            if (!updateInfo.equals("")) {
-                cmd.add("-updateinfo");
-                cmd.add(updateInfo);
-            }
-            
-            if (!pollyParams.equals("")) {
-                cmd.addAll(Installer.parsePollyCommands(pollyParams));
-            }
-
-            ProcessBuilder p = new ProcessBuilder(cmd);
-            try {
-                log.println("EXECUTING: " + cmd.toString());
-                p.start();
-            } catch (IOException e) {
-                e.printStackTrace(log);
-            }
+            Installer.runPolly(log, updateInfo, pollyParams);
         }
         System.exit(0);
+    }
+    
+    
+    
+    private static void runPolly(TreeStream log, String updateInfo, String pollyParam) {
+        PollyConfiguration cfg = PollyConfiguration.getInstance();
+        if (cfg == null) {
+            log.println("COULD NOT READ POLLY CFG");
+            return;
+        }
+        
+        try {  
+            ProcessExecutor pe = new ProcessExecutor();
+            pe.setDefaultTerminal(
+                    cfg.getProperty("defaultTerminal", System.getenv("TERM")));
+            pe.setTerminalArguments(cfg.getProperty("terminalArguments", "-e"));
+            
+            pe.addCommandsFromString("java -jar polly.jar -update false");
+            if (!updateInfo.equals("")) {
+                pe.addCommand("-updateinfo");
+                pe.addCommand(updateInfo);
+            }
+            
+            if (!pollyParam.equals("")) {
+                pe.addCommandsFromString(pollyParam);
+            }
+            
+            boolean console = cfg.getProperty("runInConsole", "false").equals("true");
+        
+            pe.start(console);
+            log.println("EXECUTING: " + pe.toString());
+        } catch (Exception e) {
+            e.printStackTrace(log);
+        }
     }
 
     
@@ -204,22 +213,5 @@ public class Installer {
             log.println(file.getAbsolutePath());
         }
         log.unindent();
-    }
-    
-    
-    
-    private static List<String> parsePollyCommands(String cmd) {
-        Pattern p = Pattern.compile("\\S+|\"[^\"]+\"");
-        Matcher m = p.matcher(cmd);
-        List<String> result = new LinkedList<String>();
-        while (m.find()) {
-            String found = cmd.substring(m.start(), m.end());
-            if (found.startsWith("\"")) {
-                assert found.endsWith("\"");
-                found = found.substring(1, found.length() - 1);
-            }
-            result.add(found);
-        }
-        return result;
     }
 }

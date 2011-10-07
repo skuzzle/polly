@@ -47,6 +47,9 @@ public class PollyConfiguration extends Configuration
 	private boolean autoUpdate;
 	private String updateUrl;
 	private String installerUpdateUrl;
+	private boolean runInConsole;
+	private String defaultTerminal;
+	private String terminalArguments;
 	
 	
 	public PollyConfiguration(String filename) 
@@ -90,7 +93,10 @@ public class PollyConfiguration extends Configuration
         this.updateUrl = this.props.getProperty(UPDATE_URL, "");
         this.installerUpdateUrl = this.props.getProperty(INSTALLER_UPDATE_URL, "");
         this.autoUpdate = this.parseBoolean(this.props.getProperty(AUTO_UPDATE, "false"));
-            
+        this.runInConsole = this.parseBoolean(this.props.getProperty(RUN_IN_CONSOLE, "false"));
+        this.defaultTerminal = this.props.getProperty(DEFAULT_TERMINAL, "xterm");
+        this.terminalArguments = this.props.getProperty(TERMINAL_ARGUMENTS, "-e");
+        
         try {
             this.encoding = Charset.forName(this.encodingName);
         } catch (Exception e) {
@@ -319,6 +325,24 @@ public class PollyConfiguration extends Configuration
     
     public String getInstallerUpdateUrl() {
         return installerUpdateUrl;
+    }
+    
+    
+    
+    public String getDefaultTerminal() {
+        return this.defaultTerminal;
+    }
+    
+    
+    
+    public boolean isRunInConsole() {
+        return this.runInConsole;
+    }
+    
+    
+    
+    public String getTerminalArguments() {
+        return this.terminalArguments;
     }
     
     

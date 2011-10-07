@@ -194,7 +194,7 @@ public interface Configuration {
     
     /**
      * Config file property which sets the update url for polly.
-     * @since Beta 0.6
+     * @since Beta 0.6.0
      */
     public final static String UPDATE_URL = "updateUrl";
     
@@ -206,9 +206,30 @@ public interface Configuration {
     
     /**
      * Config file property which enables auto updating.
-     * @since Beta 0.6
+     * @since Beta 0.6.0
      */
     public final static String AUTO_UPDATE = "autoUpdate";
+    
+    /**
+     * Config file property which sets whether polly is restarted (on restart or update)
+     * in a console/shell window are as an invisible background process.
+     * @since Beta 0.6.0
+     */
+    public final static String RUN_IN_CONSOLE = "runInConsole";
+    
+    /**
+     * This property specifies the default terminal for unix systems and ony applies when
+     * {@link #RUN_IN_CONSOLE} is set to <code>true</code>.
+     * @since Beta 0.6.0
+     */
+    public final static String DEFAULT_TERMINAL = "defaultTerminal";
+    
+    /**
+     * Config file property which sets the arguments for the {@link #DEFAULT_TERMINAL}.
+     * Only applies if {@link #RUN_IN_CONSOLE} is set to <code>true</code>.
+     * @since Beta 0.6.0
+     */
+    public final static String TERMINAL_ARGUMENTS = "terminalArguments";
 
     
     

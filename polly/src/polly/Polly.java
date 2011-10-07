@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -56,6 +55,7 @@ import polly.update.UpdateItem;
 import polly.update.UpdateManager;
 import polly.update.UpdateProperties;
 import polly.util.FileUtil;
+import polly.util.events.ProcessExecutor;
 
 
 
@@ -85,6 +85,13 @@ public class Polly {
     private static String commandLine = "";
     public static String getCommandLine() {
         return commandLine;
+    }
+    
+    // HACK: allow shutdownmanager to access the config
+    private static PollyConfiguration config = null;
+    public static PollyConfiguration getConfig() {
+        assert config != null;
+        return config;
     }
     
     
@@ -122,6 +129,7 @@ public class Polly {
         
         
         PollyConfiguration config = this.readConfig(CONFIG_FULL_PATH);
+        Polly.config = config;
         this.parseArguments(args, config);
         
         logger.info("----------------------------------------------");
@@ -496,30 +504,30 @@ public class Polly {
         }
         
         logger.debug("Preparing to install downloaded updates.");
-        final List<String> cmd = new ArrayList<String>(5);
-        cmd.add("java");
-        cmd.add("-jar");
-        cmd.add("polly.installer.jar");
+        final ProcessExecutor pe = new ProcessExecutor();
+        pe.addCommandsFromString("java -jar polly.installer.jar");
+
+        
         if (!getCommandLine().equals("")) {
-            cmd.add("-pp");
-            cmd.add(getCommandLine());
+            pe.addCommand("-pp");
+            pe.addCommand(getCommandLine());
         }
         
-        cmd.add("-f");
+        pe.addCommand("-f");
         StringBuilder b = new StringBuilder();
         for (File file : files) {
             b.append(file.getAbsolutePath());
             b.append(";");
         }
-        cmd.add(b.toString());
+        pe.addCommand(b.toString());
         
         try {
             logger.info("Launching installer...");
-            logger.trace("Command: " + cmd.toString());
-            Runtime.getRuntime().exec(cmd.toArray(new String[cmd.size()]));
+            pe.start();
+            logger.trace("Command: " + pe.toString());
             ShutdownManagerImpl.get().shutdown(true);
         } catch (IOException e) {
-            logger.fatal("Failed to start the installer. Deleting all downloads");
+            logger.fatal("Failed to start the installer. Deleting all downloads", e);
             for (File file : files) {
                 file.delete();
             }
