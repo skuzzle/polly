@@ -9,7 +9,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import polly.Polly;
-import polly.util.events.ProcessExecutor;
+import polly.util.ProcessExecutor;
 
 
 import de.skuzzle.polly.sdk.CompositeDisposable;
