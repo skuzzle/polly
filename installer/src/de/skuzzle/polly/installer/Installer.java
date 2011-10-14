@@ -8,17 +8,19 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+
 import de.skuzzle.polly.installer.util.Environment;
 import de.skuzzle.polly.installer.util.FileUtil;
 import de.skuzzle.polly.installer.util.PollyConfiguration;
-import de.skuzzle.polly.installer.util.ProcessExecutor;
+import de.skuzzle.polly.process.JavaProcessExecutor;
+import de.skuzzle.polly.process.ProcessExecutor;
 
 
 
 public class Installer {   
-    
-    
-    public static void main(String[] args) {
+
+
+    public static void main(String[] args) {        
         boolean runPolly = true;
         String pollyParams = "";
         List<String> fileNames = null;
@@ -34,6 +36,8 @@ public class Installer {
         log.println("ENVIRONMENT");
         log.indent();
         log.println("ARGS: " + Arrays.toString(args));
+        log.println("JAVA VERSION: " + System.getProperty("java.version"));
+        log.println("JAVA HOME: " + System.getProperty("java.home"));
         log.println("POLLY_HOME: " + Environment.POLLY_HOME.getAbsolutePath());
         log.println("POLLY_CONFIG: " + Environment.POLLY_CONFIG_DIR.getAbsolutePath());
         log.println("POLLY_CFG: " + Environment.POLLY_CONFIG_FILE.getAbsolutePath());
@@ -100,14 +104,10 @@ public class Installer {
         }
         
         try {  
-            ProcessExecutor pe = new ProcessExecutor();
-            pe.setDefaultTerminal(
-                    cfg.getProperty("defaultTerminal", System.getenv("TERM")));
-            pe.setTerminalArguments(cfg.getProperty("terminalArguments", "-e"));
-            
-            pe.addCommandsFromString("java -jar polly.jar -update false");
+            ProcessExecutor pe = JavaProcessExecutor.getOsInstance(false);            
+            pe.addCommandsFromString("-jar polly.jar -update false");
             if (!updateInfo.equals("")) {
-                pe.addCommand("-updateinfo");
+                pe.addCommand("-returninfo");
                 pe.addCommand(updateInfo);
             }
             
@@ -115,9 +115,7 @@ public class Installer {
                 pe.addCommandsFromString(pollyParam);
             }
             
-            boolean console = cfg.getProperty("runInConsole", "false").equals("true");
-        
-            pe.start(console);
+            pe.start();
             log.println("EXECUTING: " + pe.toString());
         } catch (Exception e) {
             e.printStackTrace(log);

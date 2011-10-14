@@ -15,18 +15,7 @@ public class TimeSpanFormat {
     public final static long DAYS = 24L;
     public final static long WEEKS = 7L;
     public final static long YEARS = 365L;
-    
-    /*
-     * y = years (if > 0)
-     * d = days (if > 0)
-     * h = hours (if > 0)
-     * m = minutes (if > 0)
-     * s = seconds (if > 0)
-     * 
-     * yn
-     */
-    private String pattern = "%[y]%[yn]%[d]%[dn]%h:%m:%s";
-    
+
     public String format(long seconds) {
         StringBuilder result = new StringBuilder(20);
         

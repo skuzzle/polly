@@ -20,6 +20,7 @@
     <property name="classpath" value="./lib/de.skuzzle.polly.sdk.jar 
                                       ./lib/log4j-1.2.16.jar
                                       ./lib/de.skuzzle.polly.parser.jar
+                                      ./lib/de.skuzzle.polly.process.jar
                                       ./lib/eclipselink.jar
                                       ./lib/javax.persistence_2.0.3.v201010191057.jar
                                       ./lib/hsqldb.jar
@@ -98,6 +99,7 @@
         	<fileset dir="${dist.dir}" 
         	         includes="polly.jar
                                lib/de.skuzzle.polly.parser.jar 
+                               lib/de.skuzzle.polly.process.jar
         		               lib/de.skuzzle.polly.sdk.jar"/>
     	</zip>
         <zip destfile="${dist.dir}/${release.filename}" basedir="${dist.dir}" excludes="install.script *.zip"/>

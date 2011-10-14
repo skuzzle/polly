@@ -88,7 +88,7 @@ public class UpdateManager {
                     @Override
                     public void downloadFailed(DownloadObject o, Exception e) {
                         logger.error("Error while downloading " + o, e);
-                        if (!o.getDestination().delete()) {
+                        if (o.getDestination().exists() && !o.getDestination().delete()) {
                             logger.error("Could not delete temp file: " + 
                                 o.getDestination());
                         }

@@ -1,17 +1,16 @@
 package polly.core;
 
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import polly.Polly;
-import polly.util.ProcessExecutor;
 
 
+import de.skuzzle.polly.process.JavaProcessExecutor;
+import de.skuzzle.polly.process.ProcessExecutor;
 import de.skuzzle.polly.sdk.CompositeDisposable;
 import de.skuzzle.polly.sdk.Disposable;
 import de.skuzzle.polly.sdk.ShutdownManager;
@@ -102,28 +101,9 @@ public class ShutdownManagerImpl implements ShutdownManager {
         logger.debug("Commandline arguments: " + commandLine);
         
         try {
-            String s = System.getProperty("file.separator");
-            // java binary
-            final String java = System.getProperty("java.home") + s +"bin" + s + "java";
-            logger.trace("Java Home resolved to: " + java);
-            // vm arguments
-            List<String> vmArguments = 
-                ManagementFactory.getRuntimeMXBean().getInputArguments();
-            final ProcessExecutor pe = new ProcessExecutor();
-            pe.setDefaultTerminal(Polly.getConfig().getDefaultTerminal());
-            pe.setTerminalArguments(Polly.getConfig().getTerminalArguments());
-            
-            // HACK: using absolute path fails on windows, so we assume there is a 
-            //       correct %PATH% entry for java
-            pe.addCommand("java");
-            for (String arg : vmArguments) {
-                // if it's the agent argument : we ignore it otherwise the
-                // address of the old application and the new one will be in conflict
-                if (!arg.contains("-agentlib")) {
-                    pe.addCommand(arg);
-                }
-            }
-            pe.addCommandsFromString("-jar polly.jar");
+            final ProcessExecutor pe = JavaProcessExecutor.getCurrentInstance(false);
+
+            pe.addCommandsFromString("-jar polly.jar -returninfo \"Returned from restart\"");
 
             if (commandLine != null && !commandLine.equals("")) {
                 pe.addCommandsFromString(commandLine);
@@ -136,7 +116,7 @@ public class ShutdownManagerImpl implements ShutdownManager {
                 @Override
                 public void run() {
                     try {
-                        pe.start(Polly.getConfig().isRunInConsole());
+                        pe.start();
                         logger.trace("Executed: " + pe.toString());
                         logger.info("New polly instance initialized.");
                     } catch (IOException e) {

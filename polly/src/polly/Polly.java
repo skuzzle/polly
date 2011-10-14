@@ -2,9 +2,11 @@ package polly;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.channels.FileLock;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -19,6 +21,8 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.jibble.pircbot.NickAlreadyInUseException;
 
+import de.skuzzle.polly.process.JavaProcessExecutor;
+import de.skuzzle.polly.process.ProcessExecutor;
 import de.skuzzle.polly.sdk.CompositeDisposable;
 import de.skuzzle.polly.sdk.Version;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
@@ -55,7 +59,6 @@ import polly.update.UpdateItem;
 import polly.update.UpdateManager;
 import polly.update.UpdateProperties;
 import polly.util.FileUtil;
-import polly.util.ProcessExecutor;
 
 
 
@@ -86,13 +89,7 @@ public class Polly {
     public static String getCommandLine() {
         return commandLine;
     }
-    
-    // HACK: allow shutdownmanager to access the config
-    private static PollyConfiguration config = null;
-    public static PollyConfiguration getConfig() {
-        assert config != null;
-        return config;
-    }
+
     
     
     private final static String DEVELOP_VERSION = "0.6.0";
@@ -122,6 +119,10 @@ public class Polly {
 
    
     private Polly(String[] args) {
+        if (!this.lockInstance(new File("polly.lck"))) {
+            System.out.println("Polly already running");
+            return;
+        }
         if (!FileUtil.waitFor("polly.installer.jar")) {
             System.out.println("Updates still running. Exiting!");
             return;
@@ -129,7 +130,10 @@ public class Polly {
         
         
         PollyConfiguration config = this.readConfig(CONFIG_FULL_PATH);
-        Polly.config = config;
+        
+        logger.info("");
+        logger.info("");
+        logger.info("");
         this.parseArguments(args, config);
         
         logger.info("----------------------------------------------");
@@ -141,6 +145,8 @@ public class Polly {
         logger.info("(Canonical: " + getCommandLine() + ")");
         Version version = getPollyVersion();
         logger.info("Version info: " + version);
+        logger.info("Java Version: " + System.getProperty("java.version"));
+        logger.info("Java Home: " + System.getProperty("java.home"));
 
         logger.trace("Configuration: \n" + config.toString());
         
@@ -209,6 +215,38 @@ public class Polly {
         pluginManager.notifyPlugins();
         
         logger.info("Polly succesfully set up.");
+    }
+    
+    
+    
+    private boolean lockInstance(final File file) {
+        try {
+            final boolean existed = file.exists();
+            if (!existed) {
+                file.createNewFile();
+            }
+            final RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
+            final FileLock fileLock = randomAccessFile.getChannel().tryLock();
+            if (fileLock != null) {
+                Runtime.getRuntime().addShutdownHook(new Thread() {
+                    public void run() {
+                        try {
+                            fileLock.release();
+                            randomAccessFile.close();
+                            if (!existed) {
+                                file.delete();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
     
     
@@ -504,8 +542,8 @@ public class Polly {
         }
         
         logger.debug("Preparing to install downloaded updates.");
-        final ProcessExecutor pe = new ProcessExecutor();
-        pe.addCommandsFromString("java -jar polly.installer.jar");
+        final ProcessExecutor pe = JavaProcessExecutor.getOsInstance(false); // do not run installer in console
+        pe.addCommandsFromString("-jar polly.installer.jar");
 
         
         if (!getCommandLine().equals("")) {

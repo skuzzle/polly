@@ -4,7 +4,7 @@
         Version number must always have the format x.y[.z], with higher 
         numbers indicating higher versions, read from left to right. 
     -->
-    <property name="version.num" value="0.6.4"/>
+    <property name="version.num" value="0.6.0"/>
     <property name="src.dir" value="src"/>
     <property name="dist.dir" value="dist"/>
     <property name="classes.dir" value="classes"/>
@@ -35,11 +35,15 @@
         <mkdir dir="${dist.dir}"/>
         <mkdir dir="${classes.dir}"/>
     </target>
-     
+    
+    
+    <path id="libraries">
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+    </path>
     
     
     <target name="compile" depends="init">
-        <javac srcdir="${src.dir}" destdir="${classes.dir}" source="1.6" debug="on">
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="libraries" source="1.6" debug="on">
             <exclude name="de/skuzzle/test/**"/>
         </javac>
     </target>
@@ -53,12 +57,14 @@
     <target name="dist" depends="prepare,compile">
         <jar destfile="${dist.dir}/${ant.project.name}.jar">
             <manifest>
-                <attribute name="Main-Class" value="de.skuzzle.polly.installer.Installer"/>
+                <attribute name="Main-Class" value="de.skuzzle.polly.installer.InstallerLauncher"/>
                 <attribute name="Implementation-Version" value="${version.num}"/>
+                <attribute name="Class-Path" value="lib"/>
             </manifest>
             <fileset dir="${classes.dir}">
                 <exclude name="de/skuzzle/test/**"/>
             </fileset>
+            <fileset dir="${lib.dir}"/>
         </jar>
     </target>
     

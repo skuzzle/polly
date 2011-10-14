@@ -90,6 +90,6 @@ public class PollyArgumentParser extends AbstractArgumentParser {
             } 
         });
         
-        this.addArgument(new UpdateInfoArgument());
+        this.addArgument(new ReturnInfoArgument());
     }
 }
