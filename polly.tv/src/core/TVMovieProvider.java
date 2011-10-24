@@ -21,7 +21,7 @@ import de.skuzzle.polly.sdk.exceptions.PluginException;
 
 public class TVMovieProvider implements TVProgramProvider {
     
-    private final static String API_URL = "http://tvapi.staskie.com/";
+    private final static String API_URL = "http://flomi.dyn.pl:4567/";
     
     
     private interface NodeVisitor {
@@ -36,7 +36,7 @@ public class TVMovieProvider implements TVProgramProvider {
     
 
     public static void main(String[] args) throws IOException, SAXException, ParserConfigurationException, PluginException {
-        TVMovieProvider tvmp = new TVMovieProvider();
+        TVMovieProvider tvmp = new TVMovieProvider(API_URL);
         
         System.out.println("Current");
         System.out.println(new PatternTVProgramFormatter("%c%: %n% (%t%, %d%)", false).format(tvmp.getCurrent("Pro 7"), new FormatManager() {
@@ -67,9 +67,10 @@ public class TVMovieProvider implements TVProgramProvider {
     }
     
     private Map<String, TVChannel> channelMap;
+    private String apiUrl;
     
-    
-    public TVMovieProvider() throws PluginException {
+    public TVMovieProvider(String apiUrl) throws PluginException {
+        this.apiUrl = apiUrl.endsWith("/") ? apiUrl : apiUrl + "/";
         try {
             this.initChannelMap();
         } catch (Exception e) {
@@ -101,7 +102,7 @@ public class TVMovieProvider implements TVProgramProvider {
     private Element formRequest(String requestString) throws Exception {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
-        Document dom = db.parse(new URL(API_URL + requestString).openStream());
+        Document dom = db.parse(new URL(this.apiUrl + requestString).openStream());
         
         return dom.getDocumentElement();
     }

@@ -19,12 +19,16 @@ public class MyPlugin extends PollyPlugin {
     public final static PatternTVProgramFormatter DEFAULT_FORMAT = 
             new PatternTVProgramFormatter("%c%: %n% (%t%, %d%)", false);
 
-    
+    public final static String API_URL_SETTING = "tvApiUrl";
     
     public MyPlugin(MyPolly myPolly) throws IncompatiblePluginException, DuplicatedSignatureException, PluginException {
         super(myPolly);
         
-        TVProgramProvider tvProvider = new TVMovieProvider();
+        String apiUrl = myPolly.configuration().readString(API_URL_SETTING);
+        if (apiUrl == null) {
+            throw new PluginException("config item 'tvApiUrl' not set");
+        }
+        TVProgramProvider tvProvider = new TVMovieProvider(apiUrl);
         this.addCommand(new TVNowCommand(myPolly, tvProvider));
         this.addCommand(new TVNextCommand(myPolly, tvProvider));
         this.addCommand(new TVProgramCommand(myPolly, tvProvider));

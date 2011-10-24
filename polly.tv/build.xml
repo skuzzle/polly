@@ -6,7 +6,7 @@
     <property name="release.dir" value="release/cfg/plugins"/>
     <property name="classes.dir" value="classes"/>
     <property name="lib.dir" value="lib"/>
-    <property name="version" value="0.1.1"/>
+    <property name="version" value="0.2.0"/>
     <property name="zip.filename" value="${ant.project.name}-${version}.zip"/>
 
     <property name="classpath" value="./lib/de.skuzzle.polly.sdk.jar" />
