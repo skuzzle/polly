@@ -1,6 +1,7 @@
 package de.skuzzle.polly.parsing.tree;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Stack;
 
 import de.skuzzle.polly.parsing.Context;
@@ -84,6 +85,16 @@ public class ListLiteral extends Literal {
     }
     
     
+    // ISSUE: 0000048 Added cast from list to string.
+    @Override
+    public Literal castTo(Type target) throws ExecutionException {
+        if (target.check(Type.STRING)) {
+            return new StringLiteral(this.toString(false));
+        }
+        return super.castTo(target);
+    }
+    
+    
     
     @Override
     public void collapse(Stack<Literal> stack) throws ExecutionException {
@@ -105,18 +116,28 @@ public class ListLiteral extends Literal {
     
     
     @Override
-    public java.lang.String toString() {
+    public String toString() {
+        return this.toString(true);
+    }
+    
+    
+    
+    public String toString(boolean braces) {
         StringBuilder result = new StringBuilder();
         
-        result.append("{");
-        for (Expression e : this.elements) {
-            result.append(e.toString());
-            result.append(",");
+        if (braces) {
+            result.append("{");
         }
-        if (!this.elements.isEmpty()) {
-            result.deleteCharAt(result.length() - 1);
+        Iterator<Expression> it = this.elements.iterator();
+        while (it.hasNext()) {
+            result.append(it.next().toString());
+            if (it.hasNext()) {
+                result.append(",");
+            }
         }
-        result.append("}");
+        if (braces) {
+            result.append("}");
+        }
         return result.toString();
     }
 
