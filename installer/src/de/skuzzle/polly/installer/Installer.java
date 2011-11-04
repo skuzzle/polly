@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 
 import de.skuzzle.polly.installer.util.Environment;
@@ -21,6 +22,8 @@ import de.skuzzle.polly.process.ProcessExecutor;
 
 
 public class Installer {   
+    
+    private static Properties pollyCfg;
 
 
     public static void main(String[] args) {        
@@ -124,12 +127,42 @@ public class Installer {
             e.printStackTrace(log);
         }
     }
+    
+    
+    private static void readPollyConfig() throws IOException {
+        pollyCfg = new Properties();
+        FileInputStream in = null;
+        try {
+            in = new FileInputStream(Environment.POLLY_CONFIG_FILE);
+            pollyCfg.load(in);
+        } finally {
+            if (in != null) {
+                in.close();
+            }
+        }
+    }
+    
+    
+    
+    private static void storePollyConfig() throws IOException {
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(Environment.POLLY_CONFIG_FILE);
+            pollyCfg.store(out, "");
+        } finally {
+            if (out != null) {
+                out.close();
+            }
+        }
+    }
 
     
     
     private static String installAll(List<String> fileNames, TreeStream log) {
         File backup = null;
         try {
+            log.println("OPENING POLLY CONFIGURATION");
+            readPollyConfig();
             log.println("CREATING BACKUP");
             log.indent();
             backup = FileUtil.createTempDirectory();
@@ -178,6 +211,13 @@ public class Installer {
             PollyConfiguration.getInstance().store();
         }
         
+        try {
+            log.println("STORING POLLY CONFIGURATION");
+            storePollyConfig();
+        } catch (IOException e) {
+            e.printStackTrace(log);
+        }
+        
         updateInfo = "" + i + " items updated";
         return updateInfo;
     }
@@ -194,6 +234,7 @@ public class Installer {
             log.println("EXTRACTING " + file.getAbsolutePath() + " INTO " + temp.getAbsolutePath());
             printFileList(FileUtil.unzip(file, temp), log);
             parseUpdateFile(temp, log);
+            updateConfiguration(temp, log);
             log.println("COPYING FROM " + temp.getAbsolutePath() + " TO " + Environment.POLLY_HOME.getAbsolutePath());
             printFileList(FileUtil.copy(temp, Environment.POLLY_HOME), log);
             log.println("DONE");
@@ -240,6 +281,31 @@ public class Installer {
                 r.close();
             }
         }
+    }
+    
+    
+    
+    private static void updateConfiguration(File tempdir, TreeStream log) throws IOException {
+        File cfgUpdate = new File(tempdir, "cfgupdate.cfg");
+        
+        if (!cfgUpdate.exists()) {
+            return;
+        }
+        
+        log.println("UPDATING CONFIGURATION");
+        Properties updateCfg = new Properties();
+        FileInputStream in = null;
+        try {
+            in = new FileInputStream(cfgUpdate);
+            updateCfg.load(in);
+            pollyCfg.putAll(updateCfg);
+        } finally {
+            if (in != null) {
+                in.close();
+            }
+        }
+
+        cfgUpdate.delete();
     }
     
     
