@@ -1,12 +1,16 @@
 package de.skuzzle.polly.installer;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 
 import de.skuzzle.polly.installer.util.Environment;
@@ -18,6 +22,8 @@ import de.skuzzle.polly.process.ProcessExecutor;
 
 
 public class Installer {   
+    
+    private static Properties pollyCfg;
 
 
     public static void main(String[] args) {        
@@ -121,12 +127,42 @@ public class Installer {
             e.printStackTrace(log);
         }
     }
+    
+    
+    private static void readPollyConfig() throws IOException {
+        pollyCfg = new Properties();
+        FileInputStream in = null;
+        try {
+            in = new FileInputStream(Environment.POLLY_CONFIG_FILE);
+            pollyCfg.load(in);
+        } finally {
+            if (in != null) {
+                in.close();
+            }
+        }
+    }
+    
+    
+    
+    private static void storePollyConfig() throws IOException {
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(Environment.POLLY_CONFIG_FILE);
+            pollyCfg.store(out, "");
+        } finally {
+            if (out != null) {
+                out.close();
+            }
+        }
+    }
 
     
     
     private static String installAll(List<String> fileNames, TreeStream log) {
         File backup = null;
         try {
+            log.println("OPENING POLLY CONFIGURATION");
+            readPollyConfig();
             log.println("CREATING BACKUP");
             log.indent();
             backup = FileUtil.createTempDirectory();
@@ -167,13 +203,19 @@ public class Installer {
                     log.println("DELETING TEMP FILES");
                     FileUtil.safeDeletePaths(fileNames, 3);
                 }
-                
             }
         }
         log.println("DELETING BACKUP");
         FileUtil.deleteRecursive(backup);
         if (PollyConfiguration.getInstance() != null) {
             PollyConfiguration.getInstance().store();
+        }
+        
+        try {
+            log.println("STORING POLLY CONFIGURATION");
+            storePollyConfig();
+        } catch (IOException e) {
+            e.printStackTrace(log);
         }
         
         updateInfo = "" + i + " items updated";
@@ -191,6 +233,8 @@ public class Installer {
             temp = FileUtil.createTempDirectory();
             log.println("EXTRACTING " + file.getAbsolutePath() + " INTO " + temp.getAbsolutePath());
             printFileList(FileUtil.unzip(file, temp), log);
+            parseUpdateFile(temp, log);
+            updateConfiguration(temp, log);
             log.println("COPYING FROM " + temp.getAbsolutePath() + " TO " + Environment.POLLY_HOME.getAbsolutePath());
             printFileList(FileUtil.copy(temp, Environment.POLLY_HOME), log);
             log.println("DONE");
@@ -201,6 +245,67 @@ public class Installer {
             file.delete();
             log.unindent();
         }
+    }
+    
+    
+    
+    private static void parseUpdateFile(File tempdir, TreeStream log) throws IOException {
+        File outdated = new File(tempdir, "update.dat");
+        
+        if (!outdated.exists()) {
+            return;
+        }
+        
+        log.println("PARSING update.dat");
+        BufferedReader r = null;
+        try {
+            r = new BufferedReader(new InputStreamReader(
+                    new FileInputStream(outdated)));
+
+            String line = null;
+            while ((line = r.readLine()) != null) {
+                File f = new File(Environment.POLLY_HOME, line);
+                log.println("OUTDATED: " + f.toString());
+                log.indent();
+                if (!f.exists()) {
+                    log.println("NOT FOUND, SKIPPING!");
+                } else {
+                    log.println("DELETED: " + f.delete());
+                }
+                log.unindent();
+            }
+            r.close();
+            outdated.delete();
+        } finally {
+            if (r != null) {
+                r.close();
+            }
+        }
+    }
+    
+    
+    
+    private static void updateConfiguration(File tempdir, TreeStream log) throws IOException {
+        File cfgUpdate = new File(tempdir, "cfgupdate.cfg");
+        
+        if (!cfgUpdate.exists()) {
+            return;
+        }
+        
+        log.println("UPDATING CONFIGURATION");
+        Properties updateCfg = new Properties();
+        FileInputStream in = null;
+        try {
+            in = new FileInputStream(cfgUpdate);
+            updateCfg.load(in);
+            pollyCfg.putAll(updateCfg);
+        } finally {
+            if (in != null) {
+                in.close();
+            }
+        }
+
+        cfgUpdate.delete();
     }
     
     
