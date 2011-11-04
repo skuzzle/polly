@@ -46,6 +46,7 @@ public class MyPlugin extends PollyPlugin {
     private RemindManager remindManager;
     private RemindTraceNickchangeHandler remindNickChangeTracer;
     private JoinPartListener deliverRemindHandler;
+    //private OnAnyActionListener deliverOnActionHandler;
 
     
 
@@ -59,14 +60,19 @@ public class MyPlugin extends PollyPlugin {
         
         this.remindManager = new RemindManager(myPolly);
         this.deliverRemindHandler = new DeliverRemindHandler(this.remindManager);
+        //this.deliverOnActionHandler = new DeliverOnActionListener(this.remindManager);
+        
         this.remindNickChangeTracer = new RemindTraceNickchangeHandler(
                 this.remindManager);
         myPolly.irc().addNickChangeListener(this.remindNickChangeTracer);
         myPolly.irc().addJoinPartListener(this.deliverRemindHandler);
-
+        //myPolly.irc().addJoinPartListener(this.deliverOnActionHandler);
+        //myPolly.irc().addMessageListener(this.deliverOnActionHandler);
+        
         this.addDisposable(this.remindManager);
         
         this.addCommand(new LeaveCommand(myPolly, this.remindManager));
+        //this.addCommand(new OnReturnCommand(myPolly, this.remindManager));
         this.addCommand(new RemindCommand(myPolly, this.remindManager));
         this.addCommand(new MyRemindsCommand(myPolly, this.remindManager));
         this.addCommand(new DeleteRemindCommand(myPolly, this.remindManager));
@@ -80,6 +86,8 @@ public class MyPlugin extends PollyPlugin {
     public void actualDispose() throws DisposingException {
         this.getMyPolly().irc().removeNickChangeListener(this.remindNickChangeTracer);
         this.getMyPolly().irc().removeJoinPartListener(this.deliverRemindHandler);
+        //this.getMyPolly().irc().removeJoinPartListener(this.deliverOnActionHandler);
+        //this.getMyPolly().irc().removeMessageListener(this.deliverOnActionHandler);
         super.actualDispose();
     }       
 

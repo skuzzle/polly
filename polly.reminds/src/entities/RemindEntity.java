@@ -53,7 +53,7 @@ public class RemindEntity {
     
     private boolean remind;
     
-    
+    private transient boolean onAction;
     
     public RemindEntity() {}
     
@@ -61,12 +61,19 @@ public class RemindEntity {
     
     public RemindEntity(String message, String fromUser, String forUser, 
             String onChannel, Date dueDate) {
+        this(message, fromUser, forUser, onChannel, dueDate, false);
+    }
+    
+    
+    public RemindEntity(String message, String fromUser, String forUser, 
+            String onChannel, Date dueDate, boolean onAction) {
         this.message = message;
         this.fromUser = fromUser;
         this.forUser = forUser;
         this.dueDate = dueDate;
         this.onChannel = onChannel;
         this.leaveDate = new Date();
+        this.onAction = onAction;
     }
 
 
@@ -137,6 +144,17 @@ public class RemindEntity {
         this.remind = wasRemind;
     }
     
+    
+    
+    public boolean isOnAction() {
+        return this.onAction;
+    }
+    
+    
+    
+    public void setOnAction(boolean onAction) {
+        this.onAction = onAction;
+    }
     
     
     public String toString(FormatManager formatter) {

@@ -7,8 +7,6 @@ import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Token;
 import de.skuzzle.polly.parsing.Type;
-import de.skuzzle.polly.parsing.tree.declarations.Declaration;
-
 
 
 
@@ -16,8 +14,6 @@ public class ResolveableIdentifierLiteral extends IdentifierLiteral {
 
     private static final long serialVersionUID = 1L;
     private Expression resolvedExpression;
-    
-    private Declaration declaration;
     
     
     public ResolveableIdentifierLiteral(Token token) {

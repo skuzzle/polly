@@ -47,5 +47,4 @@ public class AbstractRemindCommand extends Command {
         }
         return remind;
     }
-
 }

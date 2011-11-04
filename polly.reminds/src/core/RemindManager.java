@@ -113,7 +113,11 @@ public class RemindManager extends AbstractDisposable {
         
         String message = formatter.formatRemind(remind, this.myPolly.formatting());
     
-        myPolly.irc().sendMessage(remind.getOnChannel(), message);
+        // OnReturn messages are always delivered in query
+        String destination = remind.isOnAction() 
+                ? remind.getForUser() 
+                : remind.getOnChannel();
+        myPolly.irc().sendMessage(destination, message);
         
         this.putToSleep(remind);
         this.deleteRemind(remind);
