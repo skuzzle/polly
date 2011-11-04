@@ -47,6 +47,7 @@ public class PollyConfiguration extends Configuration
 	private boolean autoUpdate;
 	private String updateUrl;
 	private String installerUpdateUrl;
+	private int messageDelay;
 	
 	
 	public PollyConfiguration(String filename) 
@@ -141,6 +142,9 @@ public class PollyConfiguration extends Configuration
         
         tmp = this.props.getProperty(TELNET_PORT, "23");
         this.telnetPort = this.parseInteger(tmp, 0, "Ungültige Portnummer.");
+        
+        tmp = this.props.getProperty(MESSAGE_DELAY, "250");
+        this.messageDelay = this.parseInteger(tmp, 250, "Message delay zu niedrig.");
 	}
 		
 
@@ -318,7 +322,13 @@ public class PollyConfiguration extends Configuration
     
     
     public String getInstallerUpdateUrl() {
-        return installerUpdateUrl;
+        return this.installerUpdateUrl;
+    }
+    
+    
+    
+    public int getMessageDelay() {
+        return this.messageDelay;
     }
     
     

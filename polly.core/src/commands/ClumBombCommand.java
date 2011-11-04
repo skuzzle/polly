@@ -39,11 +39,6 @@ public class ClumBombCommand extends Command {
 			
 			for (int j = 0; j < i; j++) {
 				this.reply(channel, user);
-				try {
-					Thread.sleep(200);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
 			}
 		}
 	}

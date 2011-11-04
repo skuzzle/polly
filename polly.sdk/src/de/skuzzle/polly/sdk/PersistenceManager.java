@@ -257,6 +257,24 @@ public interface PersistenceManager {
     
     
     /**
+     * Retrieves a whole list of entities from the database using a named query.
+     * 
+     * @param type The entities type.
+     * @param query The name of the named query. The query may only use numbered 
+     *      parameters. 
+     * @param params The parameter values for the query in order they appear in the
+     *      query string.
+     * @param limit The maximum amount of entities to retrieve.
+     * @return A list of entities matching the query. The list may be empty if no
+     *      entity was found.
+     * @since 0.6.1
+     */
+    public abstract <T> List<T> findList(Class<T> type, String query, int limit, 
+        Object...params);
+    
+    
+    
+    /**
      * Removes an entity from the current persistence context.  If no transaction is 
      * currently active, calling this method may at least result in doing nothing but 
      * may as well throw an exception. In other words: You have to take care of a

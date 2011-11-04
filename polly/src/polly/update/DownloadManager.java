@@ -32,7 +32,7 @@ public class DownloadManager extends AbstractDisposable {
     public static void main(String[] args) throws MalformedURLException {
         DownloadManager dm = new DownloadManager();
         
-        URL url = new URL("http://www.bullshit.skuzzle.de/avatar.png");
+        URL url = new URL("http://www.bullshit.skuzzle.de/KIZ.rar");
         File dest = new File("C:\\Users\\Simon\\Desktop\\kiz.rar");
         
         dm.downloadLater(url, dest, new DownloadCallback() {
@@ -54,8 +54,7 @@ public class DownloadManager extends AbstractDisposable {
     }
     
     
-    private static Logger logger = Logger.getLogger(DownloadManager.class.getName());
-    public final static int PAKET_SIZE = 1024 * 64; // 64kb
+    public final static int PAKET_SIZE = 1024 * 64; // 64kb    
     
     public class DownloadObject implements Runnable {
     
@@ -127,6 +126,8 @@ public class DownloadManager extends AbstractDisposable {
         }
         
         
+               
+        
         
         @Override
         public void run() {
@@ -134,11 +135,9 @@ public class DownloadManager extends AbstractDisposable {
             OutputStream out = null;
             boolean success = false;
             Exception failReason = null;
-            NumberFormat formatter = DecimalFormat.getIntegerInstance();
             
             try {
                 int size = this.tryGetFileSize();
-                float logNext = 5.0f;
                 in = new DigestInputStream(this.url.openStream(), 
                         MessageDigest.getInstance("MD5"));
                 out = new FileOutputStream(this.destination);
@@ -148,22 +147,28 @@ public class DownloadManager extends AbstractDisposable {
                 int bytes = in.read(buffer);
                 this.totalBytes += bytes;
                 
+                System.out.println("Progress");
+                
+                int progressOld = 0;
+                int progress = 0;
                 while (bytes != -1) {
                     out.write(buffer, 0, bytes);
                     out.flush();
                     bytes = in.read(buffer);
                     this.totalBytes += bytes;
                     if (size != -1) {
-                        float progress = ((float)this.totalBytes / (float)size) * 100;
-                        if (progress >= logNext) {
-                            logger.trace("Progress: " + formatter.format(progress) + "%");
+                        progress = (int)((float)this.totalBytes / (float)size * 100f);
+                        if (progress != progressOld) {
+                            progressOld = progress;
+                            //logger.trace("Progress: " + formatter.format(progress) + "%");
+                            System.out.print("=");
                             // ISSUE: 0000046
                             // HACK:  do not print 100% multiple times
-                            logNext = progress >= 100.f ? 200 : logNext + 5.0f;
                         }
                         
                     }
                 }
+                System.out.println(" 100%");
                 this.md5Hash = new BigInteger(
                             1, in.getMessageDigest().digest()).toString(16);
                 this.end = System.currentTimeMillis();

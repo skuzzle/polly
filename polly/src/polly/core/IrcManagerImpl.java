@@ -229,6 +229,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     private boolean disconnect;
     private TelnetConnection connection;
     private BotConnectionSettings recent;
+    private MessageThread messageThread;
     
     
     
@@ -244,12 +245,17 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         } catch (UnsupportedEncodingException e) {
             logger.error("Encoding exception", e);
         }
+        
+        // Message thread has its own delay
         this.bot.setMessageDelay(0);
         
         /* 
          * IRC Verbose output
          */
         this.bot.setVerbose(false);
+        
+        this.messageThread = new MessageThread(this, config.getMessageDelay());
+        this.messageThread.start();
     }
     
     
@@ -282,8 +288,8 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
 	    }
         this.bot.connect(e.getHostName(), e.getPort());
         
-        this.bot.sendMessage("nickserv", "ghost " + e.getNickName() + " " + e.getIdentity());
         this.bot.changeNick(e.getNickName());
+        this.bot.sendMessage("nickserv", "ghost " + e.getNickName() + " " + e.getIdentity());
         this.bot.identify(e.getIdentity());
         this.joinChannels(e.getChannels());
         this.recent = e;
@@ -430,11 +436,18 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
 	public void deop(String channel, String nickName) {
     	this.bot.deOp(channel, nickName);
     }
+    
+    
+    
+    @Override
+    public void sendMessage(String channel, String message, Object source) {
+        this.messageThread.addMessage(channel, message, source);
+    }
    
     
     
     @Override
-	public synchronized void sendMessage(String channel, String message) {
+	public void sendMessage(String channel, String message) {
         if (this.isConnected()) {
             for (String line : new WrapIterator(message, this.config.getLineLength())) {
                 this.bot.sendMessage(channel, line);

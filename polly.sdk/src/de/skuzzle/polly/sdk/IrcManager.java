@@ -187,6 +187,27 @@ public interface IrcManager {
 	 * @param message The message to send.
 	 */
 	public abstract void sendMessage(String channel, String message);
+	
+	
+	/**
+     * <p>Sends a message to the irc. If the channel parameter is not preceded by a '#', 
+     * the message will be sent to a user with that name.</p>
+     * 
+     * <p>This method sends messages with a certain priority. Polly uses the source 
+     * parameter to distinguish between different message sources and tries to send them
+     * in a fair order.</p>
+     * 
+     * <p>Don't bother sending too long messages. Polly will automatically wrap them
+     * into lines with suitable length. The actual length of the lines is determined by
+     * pollys configuration.</p>
+     *  
+     * @param channel The channel or user to send a message to.
+     * @param message The message to send.
+     * @param source The source of this message. Used for fair message scheduling when
+     *      sending multiple messages.
+     * @since 0.6.1
+     */
+	public abstract void sendMessage(String channel, String message, Object source);
 
 	
 	

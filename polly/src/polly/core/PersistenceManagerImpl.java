@@ -220,6 +220,24 @@ public class PersistenceManagerImpl extends AbstractDisposable
         
         return q.getResultList();
     }
+    
+    
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> List<T> findList(Class<T> type, String query, int limit, Object... params) {
+        logger.trace("Executing named query '" + query + "'. Parameters: " + 
+                Arrays.toString(params) + ", limit: " + limit);
+        
+        Query q = this.em.createNamedQuery(query);
+        q.setMaxResults(limit);
+        int i = 1;
+        for (Object param : params) {
+            q.setParameter(i++, param);
+        }
+        
+        return q.getResultList();
+    }
 
 
 

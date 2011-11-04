@@ -246,7 +246,7 @@ public abstract class Command {
 	 * @param message The message to send.
 	 */
 	protected void reply(String channel, String message) {
-		this.getMyPolly().irc().sendMessage(channel, message);
+		this.getMyPolly().irc().sendMessage(channel, message, this);
 	}
 	
 	

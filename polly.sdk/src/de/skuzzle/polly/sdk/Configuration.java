@@ -210,6 +210,12 @@ public interface Configuration {
      */
     public final static String AUTO_UPDATE = "autoUpdate";
     
+    /**
+     * Sets the minimu delay between outgoing irc messages.
+     * @since 0.6.1
+     */
+    public final static String MESSAGE_DELAY = "messageDelay";
+    
     
     
 	/**
