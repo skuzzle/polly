@@ -1,9 +1,12 @@
 package de.skuzzle.polly.installer;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -167,7 +170,6 @@ public class Installer {
                     log.println("DELETING TEMP FILES");
                     FileUtil.safeDeletePaths(fileNames, 3);
                 }
-                
             }
         }
         log.println("DELETING BACKUP");
@@ -191,6 +193,7 @@ public class Installer {
             temp = FileUtil.createTempDirectory();
             log.println("EXTRACTING " + file.getAbsolutePath() + " INTO " + temp.getAbsolutePath());
             printFileList(FileUtil.unzip(file, temp), log);
+            parseUpdateFile(temp, log);
             log.println("COPYING FROM " + temp.getAbsolutePath() + " TO " + Environment.POLLY_HOME.getAbsolutePath());
             printFileList(FileUtil.copy(temp, Environment.POLLY_HOME), log);
             log.println("DONE");
@@ -200,6 +203,42 @@ public class Installer {
             log.println("DELETING ZIP FILE");
             file.delete();
             log.unindent();
+        }
+    }
+    
+    
+    
+    private static void parseUpdateFile(File tempdir, TreeStream log) throws IOException {
+        File outdated = new File(tempdir, "update.dat");
+        
+        if (!outdated.exists()) {
+            return;
+        }
+        
+        log.println("PARSING update.dat");
+        BufferedReader r = null;
+        try {
+            r = new BufferedReader(new InputStreamReader(
+                    new FileInputStream(outdated)));
+
+            String line = null;
+            while ((line = r.readLine()) != null) {
+                File f = new File(Environment.POLLY_HOME, line);
+                log.println("OUTDATED: " + f.toString());
+                log.indent();
+                if (!f.exists()) {
+                    log.println("NOT FOUND, SKIPPING!");
+                } else {
+                    log.println("DELETED: " + f.delete());
+                }
+                log.unindent();
+            }
+            r.close();
+            outdated.delete();
+        } finally {
+            if (r != null) {
+                r.close();
+            }
         }
     }
     
