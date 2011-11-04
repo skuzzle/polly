@@ -331,6 +331,30 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
                 "' failed: Invalid password.");
         return null;
     }
+    
+    
+    
+    public synchronized User logonWithoutPassword(String from) throws 
+                AlreadySignedOnException, UnknownUserException {
+        logger.info("Trying to autologon user '" + from + "'.");
+        User user = this.getUser(from);
+        if (user == null) {
+            throw new UnknownUserException(from);
+        }
+        
+        if (this.onlineCache.containsKey(user.getCurrentNickName())) {
+            throw new AlreadySignedOnException(user.getName());
+        }
+        
+        user.setCurrentNickName(from);
+        this.onlineCache.put(user.getCurrentNickName(), user);
+        logger.info("Irc User " + from + " successfully logged in as " + 
+                from);
+            
+        UserEvent e = new UserEvent(this, user);
+        this.fireUserSignedOn(e);
+        return user;
+    }
 
     
     

@@ -47,7 +47,7 @@ import polly.core.UserManagerImpl;
 import polly.data.Attribute;
 import polly.data.User;
 import polly.eventhandler.IrcLoggingHandler;
-import polly.eventhandler.IsGoneHandler;
+import polly.eventhandler.AutoLogonLogoffHandler;
 import polly.eventhandler.MessageHandler;
 import polly.eventhandler.TraceNickChangeHandler;
 import polly.events.DefaultEventProvider;
@@ -332,8 +332,10 @@ public class Polly {
         ircManager.addMessageListener(handler);
         ircManager.addNickChangeListener(new TraceNickChangeHandler(userManager));
         
-        IsGoneHandler isGoneHandler = new IsGoneHandler(ircManager, userManager);
+        AutoLogonLogoffHandler isGoneHandler = new AutoLogonLogoffHandler(
+                ircManager, userManager);
         ircManager.addUserSpottedListener(isGoneHandler);
+        ircManager.addNickChangeListener(isGoneHandler);
         
         BotConnectionSettings settings = new BotConnectionSettings(
                 config.getNickName(), 

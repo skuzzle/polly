@@ -210,7 +210,13 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         protected void onUserList(String channel, org.jibble.pircbot.User[] users) {
             for (int i = 0; i < users.length; ++i) {
                 String nickName = IrcManagerImpl.this.stripNickname(users[i].getNick());
-                IrcManagerImpl.this.onlineUsers.add(nickName);
+                
+                if (IrcManagerImpl.this.onlineUsers.add(nickName)) {
+                    IrcUser user = new IrcUser(nickName, channel, "");
+                    SpotEvent e = new SpotEvent(IrcManagerImpl.this, user, channel, 
+                            SpotEvent.USER_JOINED);
+                    IrcManagerImpl.this.fireUserSpotted(e);
+                }
             }
         }
         
