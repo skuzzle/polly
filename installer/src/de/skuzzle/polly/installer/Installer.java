@@ -23,9 +23,7 @@ import de.skuzzle.polly.process.ProcessExecutor;
 
 public class Installer {   
     
-    private static Properties pollyCfg;
-
-
+    
     public static void main(String[] args) {        
         boolean runPolly = true;
         String pollyParams = "";
@@ -127,42 +125,13 @@ public class Installer {
             e.printStackTrace(log);
         }
     }
-    
-    
-    private static void readPollyConfig() throws IOException {
-        pollyCfg = new Properties();
-        FileInputStream in = null;
-        try {
-            in = new FileInputStream(Environment.POLLY_CONFIG_FILE);
-            pollyCfg.load(in);
-        } finally {
-            if (in != null) {
-                in.close();
-            }
-        }
-    }
-    
-    
-    
-    private static void storePollyConfig() throws IOException {
-        FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(Environment.POLLY_CONFIG_FILE);
-            pollyCfg.store(out, "");
-        } finally {
-            if (out != null) {
-                out.close();
-            }
-        }
-    }
+
 
     
     
     private static String installAll(List<String> fileNames, TreeStream log) {
         File backup = null;
         try {
-            log.println("OPENING POLLY CONFIGURATION");
-            readPollyConfig();
             log.println("CREATING BACKUP");
             log.indent();
             backup = FileUtil.createTempDirectory();
@@ -209,13 +178,6 @@ public class Installer {
         FileUtil.deleteRecursive(backup);
         if (PollyConfiguration.getInstance() != null) {
             PollyConfiguration.getInstance().store();
-        }
-        
-        try {
-            log.println("STORING POLLY CONFIGURATION");
-            storePollyConfig();
-        } catch (IOException e) {
-            e.printStackTrace(log);
         }
         
         updateInfo = "" + i + " items updated";
@@ -298,7 +260,7 @@ public class Installer {
         try {
             in = new FileInputStream(cfgUpdate);
             updateCfg.load(in);
-            pollyCfg.putAll(updateCfg);
+            PollyConfiguration.getInstance().putAll(updateCfg);
         } finally {
             if (in != null) {
                 in.close();

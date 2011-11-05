@@ -285,22 +285,22 @@ public class Polly {
     
     
     private void printHelp() {
-        System.out.println("Polly Parameterübersicht:");
+        System.out.println("Polly Parameterï¿½bersicht:");
         System.out.println("Name: \t\tParameter:\t Beschreibung:");
         System.out.println("(-log | -l) \t<'on'|'off'> \t Schaltet IRC " +
                 "log ein/aus.");
-        System.out.println("(-nick | -n) \t<nickname> \t Nickname für den Bot.");
-        System.out.println("(-ident | -i) \t<ident> \t Passwort für den Nickserv.");
+        System.out.println("(-nick | -n) \t<nickname> \t Nickname fï¿½r den Bot.");
+        System.out.println("(-ident | -i) \t<ident> \t Passwort fï¿½r den Nickserv.");
         System.out.println("(-server | -s) \t<server> \t Server zu dem sich der Bot " +
                 "verbindet. Nutzt 6669 als Port wenn nicht anders angegeben.");
-        System.out.println("(-port | -p) \t<port> \t\t Port für den IRC-Server.");
+        System.out.println("(-port | -p) \t<port> \t\t Port fï¿½r den IRC-Server.");
         System.out.println("(-join | -j) \t<#c1,..#cn> \t Joined nur die/den " +
                 "angegebenen Channel.");
         System.out.println("(-update | -u) \t<'on'|'off'> \t Auto update ein/aus.");
         System.out.println("-telnet \t<'on'|'off'>\t Telnet-Server aktivieren.");
         System.out.println("-telnetport \t<port>\t\t Telnet-Port setzen.");
-        System.out.println("(-help | -?) \t\t\t Diese übersicht anzeigen.");
-        System.out.println("Beliebige Taste drücken zum Beenden.");
+        System.out.println("(-help | -?) \t\t\t Diese ï¿½bersicht anzeigen.");
+        System.out.println("Beliebige Taste drï¿½cken zum Beenden.");
         try {
             System.in.read();
         } catch (IOException e) {
@@ -529,7 +529,7 @@ public class Polly {
             }
         }
         UpdateManager um = new UpdateManager();
-        
+       
         logger.debug("Collecting updates...");
         List<UpdateProperties> actualUpdates = um.collect(updates);
         if (actualUpdates.isEmpty()) {
@@ -542,6 +542,10 @@ public class Polly {
             logger.info("No downloads available. Skipping update");
             return;
         }
+        
+        // create setup.dat for all updates that should have been downloaded.
+        //um.createSetupFile(actualUpdates);
+
         
         logger.debug("Preparing to install downloaded updates.");
         final ProcessExecutor pe = JavaProcessExecutor.getOsInstance(false); // do not run installer in console

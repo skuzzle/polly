@@ -222,6 +222,13 @@ public class PersistenceManagerImpl extends AbstractDisposable
     }
     
     
+    @Override
+    public void executeNativeQuery(String query) {
+        Query q = this.em.createNativeQuery(query);
+        q.executeUpdate();
+    }
+    
+    
     
     @SuppressWarnings("unchecked")
     @Override

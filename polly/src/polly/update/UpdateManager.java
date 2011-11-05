@@ -3,6 +3,7 @@ package polly.update;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -56,6 +57,31 @@ public class UpdateManager {
         }
         
         return result;
+    }
+    
+    
+    
+    public void createSetupFile(List<UpdateProperties> items) {
+        File setupDat = new File("setup.dat");
+        
+        if (setupDat.exists()) {
+            setupDat.delete();
+        }
+        
+        PrintWriter writer = null;
+        try {
+            writer = new PrintWriter(setupDat);
+            for (UpdateProperties item : items) {
+                writer.println(item.getName());
+            }
+            writer.flush();
+        } catch (IOException e) {
+            logger.error("", e);
+        } finally {
+            if (writer != null) {
+                writer.close();
+            }
+        }
     }
     
     

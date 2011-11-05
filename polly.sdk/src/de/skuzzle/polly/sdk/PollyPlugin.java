@@ -29,6 +29,7 @@ public abstract class PollyPlugin extends AbstractDisposable {
 	private MyPolly myPolly;
 	private List<Command> commands;
 	private CompositeDisposable disposables;
+	private PluginState state = PluginState.NOT_LOADED;
 	
 	
 
@@ -186,6 +187,30 @@ public abstract class PollyPlugin extends AbstractDisposable {
 			}
 		}
 	}
+	
+	
+	
+	/**
+	 * Sets the state of this plugin.
+	 * 
+	 * @param state The plugin state.
+	 * @since 0.6.1
+	 */
+	public void setPluginState(PluginState state) {
+	    this.state = state;
+	}
+	
+	
+
+	/**
+	 * Gets the current plugin state.
+	 * 
+	 * @return The plugin state.
+	 * @since 0.6.1
+	 */
+    public PluginState getState() {
+        return this.state;
+    }
 	
 	
 	

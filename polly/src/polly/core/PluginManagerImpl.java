@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PluginManager;
+import de.skuzzle.polly.sdk.PluginState;
 import de.skuzzle.polly.sdk.PollyPlugin;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.PluginException;
@@ -68,12 +69,12 @@ public class PluginManagerImpl extends AbstractDisposable implements PluginManag
             Constructor<?> cons = clazz.getConstructor(MyPolly.class); 
             pluginInstance = (PollyPlugin) cons.newInstance(myPolly);
             pluginCfg.setPluginInstance(pluginInstance);
+            pluginInstance.setPluginState(PluginState.LOADED);
             this.addPlugin(pluginCfg);
             logger.info("Plugin from " + propertyFile.getName() + "' loaded.");
         } catch (Exception e) {
             throw new PluginException(e);
         }
-        
     }
     
 
@@ -87,6 +88,7 @@ public class PluginManagerImpl extends AbstractDisposable implements PluginManag
         
         try {
             pluginCfg.getPluginInstance().dispose();
+            pluginCfg.getPluginInstance().setPluginState(PluginState.NOT_LOADED);
             logger.info("Plugin '" + pluginName + "' successfully unloaded.");
         } catch (Exception e) {
             
@@ -163,6 +165,7 @@ public class PluginManagerImpl extends AbstractDisposable implements PluginManag
             try {
                 entry.getValue().getPluginInstance().onLoad();
             } catch (Exception e) {
+                entry.getValue().getPluginInstance().setPluginState(PluginState.ERROR);
                 logger.error("Error while notifying plugin '" + 
                         entry.getKey() + "'.", e);
             }

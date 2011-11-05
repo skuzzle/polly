@@ -60,8 +60,7 @@ public class PollyConfiguration extends Properties {
         return super.setProperty(key, value);
     }
 
-
-    
+   
     public void store() {
         OutputStream out = null;
         try {
