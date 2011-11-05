@@ -87,6 +87,17 @@ public abstract class PollyPlugin extends AbstractDisposable {
 	public void onLoad() {}
 	
 	
+	/**
+	 * <p>This method is called when your plugin is loaded for the first time or after 
+	 * your plugin has been updated.</p>
+	 * 
+	 * <p>You may use it to delete unused files or alter table columns.</p>
+	 * @throws Exception When setup fails for any reason.
+	 * @since 0.6.1
+	 */
+	public void setup() throws Exception {}
+	
+	
 	
 	/**
 	 * Adds a command to a local command list and tries to register it with polly. If you 

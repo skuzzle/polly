@@ -275,6 +275,16 @@ public interface PersistenceManager {
     
     
     /**
+     * Executes a native SQL-query.
+     * 
+     * @param query The query String in SQL syntax to execute.
+     * @since 0.6.1
+     */
+    public abstract void executeNativeQuery(String query);
+    
+    
+    
+    /**
      * Removes an entity from the current persistence context.  If no transaction is 
      * currently active, calling this method may at least result in doing nothing but 
      * may as well throw an exception. In other words: You have to take care of a
