@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import commands.DeleteRemindCommand;
 import commands.LeaveCommand;
 import commands.MyRemindsCommand;
+import commands.OnReturnCommand;
 import commands.RemindCommand;
 import commands.RemindSettingsCommand;
 import commands.SleepCommand;
@@ -18,7 +19,6 @@ import core.RemindTraceNickchangeHandler;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
 import de.skuzzle.polly.sdk.UserManager;
-import de.skuzzle.polly.sdk.eventlistener.JoinPartListener;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
@@ -45,8 +45,7 @@ public class MyPlugin extends PollyPlugin {
     private Logger logger;
     private RemindManager remindManager;
     private RemindTraceNickchangeHandler remindNickChangeTracer;
-    private JoinPartListener deliverRemindHandler;
-    //private OnAnyActionListener deliverOnActionHandler;
+    private DeliverRemindHandler deliverRemindHandler;
 
     
 
@@ -59,20 +58,18 @@ public class MyPlugin extends PollyPlugin {
         myPolly.persistence().registerEntity(RemindEntity.class);
         
         this.remindManager = new RemindManager(myPolly);
-        this.deliverRemindHandler = new DeliverRemindHandler(this.remindManager);
-        //this.deliverOnActionHandler = new DeliverOnActionListener(this.remindManager);
         
+        this.deliverRemindHandler = new DeliverRemindHandler(this.remindManager);
         this.remindNickChangeTracer = new RemindTraceNickchangeHandler(
                 this.remindManager);
         myPolly.irc().addNickChangeListener(this.remindNickChangeTracer);
         myPolly.irc().addJoinPartListener(this.deliverRemindHandler);
-        //myPolly.irc().addJoinPartListener(this.deliverOnActionHandler);
-        //myPolly.irc().addMessageListener(this.deliverOnActionHandler);
+        myPolly.irc().addMessageListener(this.deliverRemindHandler);
         
         this.addDisposable(this.remindManager);
         
         this.addCommand(new LeaveCommand(myPolly, this.remindManager));
-        //this.addCommand(new OnReturnCommand(myPolly, this.remindManager));
+        this.addCommand(new OnReturnCommand(myPolly, this.remindManager));
         this.addCommand(new RemindCommand(myPolly, this.remindManager));
         this.addCommand(new MyRemindsCommand(myPolly, this.remindManager));
         this.addCommand(new DeleteRemindCommand(myPolly, this.remindManager));
@@ -86,8 +83,7 @@ public class MyPlugin extends PollyPlugin {
     public void actualDispose() throws DisposingException {
         this.getMyPolly().irc().removeNickChangeListener(this.remindNickChangeTracer);
         this.getMyPolly().irc().removeJoinPartListener(this.deliverRemindHandler);
-        //this.getMyPolly().irc().removeJoinPartListener(this.deliverOnActionHandler);
-        //this.getMyPolly().irc().removeMessageListener(this.deliverOnActionHandler);
+        this.getMyPolly().irc().removeMessageListener(this.deliverRemindHandler);
         super.actualDispose();
     }       
 
