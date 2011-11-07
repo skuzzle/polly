@@ -55,7 +55,7 @@ public class RemindManager extends AbstractDisposable {
     
     public synchronized void scheduleRemind(RemindEntity remind, Date dueDate) {
         logger.info("Scheduling Remind: " + remind);
-        RemindTask task = new RemindTask(remind, this);
+        RemindTask task = new RemindTask(remind, this, this.logger);
         this.remindScheduler.schedule(task, dueDate);
         this.reminds.put(remind.getId(), task);
     }
@@ -97,7 +97,7 @@ public class RemindManager extends AbstractDisposable {
                 remind.setWasRemind(true);
                 this.persistence.commitTransaction();
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("", e);
             } finally {
                 this.persistence.writeUnlock();
             }
