@@ -6,6 +6,7 @@ import java.util.List;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
+import de.skuzzle.polly.sdk.exceptions.PluginException;
 
 
 
@@ -89,14 +90,26 @@ public abstract class PollyPlugin extends AbstractDisposable {
 	
 	
 	/**
-	 * <p>This method is called when your plugin is loaded for the first time or after 
-	 * your plugin has been updated.</p>
+	 * <p>This method is called when your plugin has been updated and before it has been
+	 * loaded. Please note that not all polly features are available at this point. So 
+	 * you may get an exception when invoking a function from {@link MyPolly}.</p>
 	 * 
 	 * <p>You may use it to delete unused files or alter table columns.</p>
-	 * @throws Exception When setup fails for any reason.
+	 * @throws PluginException When setup fails for any reason.
 	 * @since 0.6.1
 	 */
-	public void setup() throws Exception {}
+	public void onUpdate(MyPolly myPolly) throws PluginException {}
+	
+	
+	/**
+	 * This method is called after you plugin has been installed. Please note that not 
+	 * all polly features are available at this point. So you may get an exception when
+	 * invoking a function from {@link MyPolly}.	 * 
+	 * 
+	 * @param myPolly The {@link MyPolly} instance.
+     * @throws PluginException When setup fails for any reason.
+	 */
+	public void onInstall(MyPolly myPolly) throws PluginException {}
 	
 	
 	
