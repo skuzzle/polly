@@ -55,6 +55,8 @@ public class TimespanLiteral extends Literal {
     public Literal castTo(Type target) throws ExecutionException {
         if (target.check(Type.DATE)) {
             return new DateLiteral(this.getTargetFromNow());
+        } else if (target.check(Type.DATE)) {
+            return new NumberLiteral(this.getValue());
         }
         return super.castTo(target);
     }
