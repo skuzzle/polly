@@ -94,13 +94,13 @@ public class MessageHandler implements MessageListener {
             logger.debug("Executed. Runtime: " + time + "ms");
         } catch (InsufficientRightsException e1) {
             e.getSource().sendMessage(e.getChannel(), "Du kannst den Befehl '" + 
-                    p.getFirst().getCommandName() + "' nicht ausführen.");
+                    p.getFirst().getCommandName() + "' nicht ausfï¿½hren.");
         } catch (Exception e1) {
             long time = System.currentTimeMillis() - i;
             logger.error("Exception while executing command '" + 
                     p.getFirst().getCommandName() + "': " + e1.getMessage(), e1);
             e.getSource().sendMessage(e.getChannel(), 
-                    "Interner Fehler beim Ausführen des Befehls.");
+                    "Interner Fehler beim Ausfï¿½hren des Befehls.");
             logger.debug("Execution time: " + time + "ms");
         }
     }
@@ -123,17 +123,17 @@ public class MessageHandler implements MessageListener {
         
         long i = System.currentTimeMillis();
         try {
-        	logger.trace("Parsing input '" + e.getMessage() + "'");
+        	
         	// .trim(): remove trailing spaces to prevent strange error messages for
         	// inputs that have an additional space char.
         	InputParser parser = new InputParser();
         	Root root = parser.parse(e.getMessage().trim(), this.encodingName);
 
             if (root == null) {
-            	logger.trace("No valid input");
             	return null;
             }
-
+            logger.trace("Parsed input '" + e.getMessage() + "'");
+            
             logger.trace("Creating local context for command execution");
             Context c = this.createContext(e, executor);
             
