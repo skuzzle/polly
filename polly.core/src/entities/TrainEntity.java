@@ -1,6 +1,7 @@
 package entities;
 
 
+import java.text.DecimalFormat;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -47,18 +48,25 @@ public class TrainEntity {
             throw new IllegalArgumentException("Misformatted input String");
         }
         StringBuilder b = new StringBuilder(input.length());
-        b.append(parts[0]); b.append(" "); 
+        DecimalFormat df = new DecimalFormat("0.00");
+        b.append("(x");
+        b.append(df.format(mod));
+        b.append(") ");
+        b.append(parts[0]); 
+        b.append(" "); 
         b.append(parts[1]);
-        b.append(" (*");
-        b.append(mod);
-        b.append("%)");
         
         int cost = 0;
         try {
             cost = Integer.parseInt(parts[2]);
+            b.append(": ");
+            b.append(cost);
             cost = (int) (cost * mod);
+            b.append(" (");
+            b.append(cost);
+            b.append(")");
         } catch  (NumberFormatException e) {
-            throw new IllegalArgumentException("Misformatted input String.");
+            throw new IllegalArgumentException("Misformatted input String.", e);
         }
         return new TrainEntity(forUser, cost, b.toString());
     }
@@ -137,7 +145,7 @@ public class TrainEntity {
     
     
     public String format(FormatManager formatter) {
-        return "(" + this.getId() + ") " + this.description + ": " + this.cost + " Cr. (" 
+        return "(" + this.getId() + ") " + this.description + " Cr. (" 
             + formatter.formatDate(this.date) + ")";
     }
     
@@ -145,6 +153,6 @@ public class TrainEntity {
     
     @Override
     public String toString() {
-        return "(" + this.getId() + ") " + this.description + ": " + this.cost + " Cr.";
+        return "(" + this.getId() + ") " + this.description + " Cr.";
     }
 }

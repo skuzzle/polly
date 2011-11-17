@@ -20,7 +20,7 @@ public class HelpCommand extends Command {
 				"angegebenen Befehls aus.", new CommandType(), new NumberType());
         this.createSignature("");
 		this.setHelpText("Gib ':help :<befehl>' ein um Hilfe zu einem Befehl zu " +
-				"bekommen. Gib :cmds ein um eine Liste der mÃ¶glichen Befehle " +
+				"bekommen. Gib :cmds ein um eine Liste der möglichen Befehle " +
 				"anzuzeigen.");
 	}
 

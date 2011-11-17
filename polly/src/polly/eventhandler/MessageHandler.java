@@ -101,13 +101,13 @@ public class MessageHandler implements MessageListener {
                     logger.debug("Executed. Runtime: " + time + "ms");
                 } catch (InsufficientRightsException e1) {
                     e.getSource().sendMessage(e.getChannel(), "Du kannst den Befehl '" + 
-                            p.getFirst().getCommandName() + "' nicht ausfï¿½hren.");
+                            p.getFirst().getCommandName() + "' nicht ausführen.");
                 } catch (Exception e1) {
                     long time = System.currentTimeMillis() - i;
                     logger.error("Exception while executing command '" + 
                             p.getFirst().getCommandName() + "': " + e1.getMessage(), e1);
                     e.getSource().sendMessage(e.getChannel(), 
-                            "Interner Fehler beim Ausfï¿½hren des Befehls.");
+                            "Interner Fehler beim Ausführen des Befehls.");
                     logger.debug("Execution time: " + time + "ms");
                 }
             }

@@ -49,6 +49,8 @@ public class PollyConfiguration extends Configuration
 	private String updateUrl;
 	private String installerUpdateUrl;
 	private int messageDelay;
+	private boolean autoLogon;
+	private int autoLogonTime;
 	
 	
 	public PollyConfiguration(String filename) 
@@ -149,6 +151,13 @@ public class PollyConfiguration extends Configuration
         
         tmp = this.props.getProperty(MESSAGE_DELAY, "250");
         this.messageDelay = this.parseInteger(tmp, 250, "Message delay zu niedrig.");
+        
+        tmp = this.props.getProperty(AUTO_LOGIN, "true");
+        this.autoLogon = this.parseBoolean(tmp);
+        
+        tmp = this.props.getProperty(tmp, "60000");
+        this.autoLogonTime = this.parseInteger(tmp, 4999, "autoLoginTime sollte mind. " +
+        		"5000 sein.");
 	}
 		
 
@@ -339,6 +348,19 @@ public class PollyConfiguration extends Configuration
     
     public int getMessageDelay() {
         return this.messageDelay;
+    }
+    
+    
+    
+    
+    public int getAutoLogonTime() {
+        return this.autoLogonTime;
+    }
+    
+    
+    
+    public boolean isAutoLogon() {
+        return this.autoLogon;
     }
     
     

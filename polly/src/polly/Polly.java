@@ -344,14 +344,16 @@ public class Polly {
         MessageHandler handler = new MessageHandler(commandManager, userManager, 
             config.getEncodingName(), executorThreadPool);
         ircManager.addMessageListener(handler);
+        
         ircManager.addNickChangeListener(new TraceNickChangeHandler(userManager));
         
         AutoLogonLogoffHandler isGoneHandler = new AutoLogonLogoffHandler(
-                ircManager, userManager);
+                ircManager, userManager, config);
         ircManager.addUserSpottedListener(isGoneHandler);
         ircManager.addNickChangeListener(isGoneHandler);
         userManager.addUserListener(isGoneHandler);
-        
+        ShutdownManagerImpl.get().addDisposable(isGoneHandler);
+
         BotConnectionSettings settings = new BotConnectionSettings(
                 config.getNickName(), 
                 config.getServer(), 

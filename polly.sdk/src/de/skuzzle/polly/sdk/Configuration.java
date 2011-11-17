@@ -223,6 +223,20 @@ public interface Configuration {
      */
     public final static String EXECUTION_THREADS = "executionThreads";
     
+    /**
+     * Sets the time in milliseconds after which a user gets automatically logged on
+     * after he has been spotted. This only takes effect if {@link #AUTO_LOGIN} is set
+     * to <code>true</code>.
+     * @since 0.6.1
+     */
+    public final static String AUTO_LOGIN_TIME = "autoLoginTime";
+    
+    /**
+     * Enables/Disables auto login for registered users.
+     * @since 0.6.1
+     */
+    public final static String AUTO_LOGIN = "autoLogin";
+    
     
     
 	/**

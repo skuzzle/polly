@@ -10,8 +10,10 @@ import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
 
 import polly.EventThreadFactory;
+import polly.PollyConfiguration;
 import polly.core.IrcManagerImpl;
 import polly.core.UserManagerImpl;
+import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.eventlistener.NickChangeEvent;
 import de.skuzzle.polly.sdk.eventlistener.NickChangeListener;
 import de.skuzzle.polly.sdk.eventlistener.SpotEvent;
@@ -19,12 +21,13 @@ import de.skuzzle.polly.sdk.eventlistener.UserEvent;
 import de.skuzzle.polly.sdk.eventlistener.UserListener;
 import de.skuzzle.polly.sdk.eventlistener.UserSpottedListener;
 import de.skuzzle.polly.sdk.exceptions.AlreadySignedOnException;
+import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
 import de.skuzzle.polly.sdk.model.User;
 
 
-public class AutoLogonLogoffHandler implements UserSpottedListener, NickChangeListener, 
-            UserListener {
+public class AutoLogonLogoffHandler extends AbstractDisposable
+        implements UserSpottedListener, NickChangeListener, UserListener {
     
     
     private class AutoLogonRunnable implements Runnable {
@@ -71,39 +74,41 @@ public class AutoLogonLogoffHandler implements UserSpottedListener, NickChangeLi
 
     private static Logger logger = Logger.getLogger(AutoLogonLogoffHandler.class.getName());
     
-    // XXX:
-    public final static int AUTO_LOGIN_DELAY = 20; // one minute
-    
+ 
     private IrcManagerImpl ircManager;
     private UserManagerImpl userManager;
     private ScheduledExecutorService autoLogonExecutor;
     private Map<String, AutoLogonRunnable> scheduledLogons;
+    private PollyConfiguration config;
     
     
-    public AutoLogonLogoffHandler(IrcManagerImpl ircManager, UserManagerImpl userManager) {
+    public AutoLogonLogoffHandler(IrcManagerImpl ircManager, 
+            UserManagerImpl userManager, PollyConfiguration config) {
         this.ircManager = ircManager;
         this.userManager = userManager;
         this.autoLogonExecutor = Executors.newScheduledThreadPool(4, 
                 new EventThreadFactory("LOGON"));
         this.scheduledLogons = new HashMap<String, AutoLogonRunnable>();
+        this.config = config;
     }
 
 
 
     @Override
     public void userSpotted(SpotEvent e) {
+        if (!this.config.isAutoLogon()) {
+            return;
+        }
         this.scheduleAutoLogon(e.getUser().getNickName());
     }
 
     
- // TODO:
- // Implement auto logon for users who have already been spotted but not with their
- // registered nick. Therefore auto login must be triggered when changing nick to a 
- // registered username and this user must nor currently be logged in
     
     @Override
     public void nickChanged(NickChangeEvent e) {
-        
+        if (!this.config.isAutoLogon()) {
+            return;
+        }
         /*
          * If there is a auto logon scheduled for the old nickname, it will be 
          * canceled. If there is a registered user with the new nickname that is 
@@ -133,7 +138,8 @@ public class AutoLogonLogoffHandler implements UserSpottedListener, NickChangeLi
             if (this.userExists(forUser)) {
                 AutoLogonRunnable runMe = new AutoLogonRunnable(forUser);
                 this.scheduledLogons.put(forUser, runMe);
-                this.autoLogonExecutor.schedule(runMe, AUTO_LOGIN_DELAY, TimeUnit.SECONDS);
+                this.autoLogonExecutor.schedule(runMe, this.config.getAutoLogonTime(), 
+                        TimeUnit.MILLISECONDS);
                 logger.debug("Auto logon for " + forUser + " scheduled");
             }
         }
@@ -165,6 +171,10 @@ public class AutoLogonLogoffHandler implements UserSpottedListener, NickChangeLi
 
     @Override
     public void userSignedOn(UserEvent e) {
+        if (!this.config.isAutoLogon()) {
+            return;
+        }
+        
         synchronized (this.scheduledLogons) {
             this.scheduledLogons.remove(e.getUser().getName());
         }
@@ -174,4 +184,11 @@ public class AutoLogonLogoffHandler implements UserSpottedListener, NickChangeLi
 
     @Override
     public void userSignedOff(UserEvent ignore) {}
+
+
+
+    @Override
+    protected void actualDispose() throws DisposingException {
+        this.autoLogonExecutor.shutdown();
+    }
 }

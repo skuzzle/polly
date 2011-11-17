@@ -63,6 +63,7 @@ public class MessageThread extends Thread implements Disposable {
                 logger.trace("Message available");
             } catch (InterruptedException e) {
                 logger.error("", e);
+                return;
             }
             
             
@@ -103,6 +104,7 @@ public class MessageThread extends Thread implements Disposable {
 
     @Override
     public synchronized void dispose() throws DisposingException {
-        this.shutdownFlag.set(true);        
+        this.shutdownFlag.set(true);
+        this.interrupt();
     }
 }
