@@ -211,10 +211,17 @@ public interface Configuration {
     public final static String AUTO_UPDATE = "autoUpdate";
     
     /**
-     * Sets the minimu delay between outgoing irc messages.
+     * Sets the minimum delay between outgoing irc messages.
      * @since 0.6.1
      */
     public final static String MESSAGE_DELAY = "messageDelay";
+    
+    /**
+     * Sets how many threads should be used for command execution. As of polly version
+     * 0.6.1 event threads and execution threads have been separated.
+     * @since 0.6.1
+     */
+    public final static String EXECUTION_THREADS = "executionThreads";
     
     
     

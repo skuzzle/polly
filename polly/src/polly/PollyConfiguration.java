@@ -38,6 +38,7 @@ public class PollyConfiguration extends Configuration
 	private String dateFormatString;
 	private String numberFormatString;
 	private int eventThreads;
+	private int executionThreads;
 	private String encodingName;
 	private Charset encoding;
 	private int lineLength;
@@ -120,16 +121,19 @@ public class PollyConfiguration extends Configuration
         this.ignoreCommands = tmp.split(",");
         
         tmp = this.props.getProperty(PORT, "6669");
-        this.port = this.parseInteger(tmp, 32, "Ungültige Portnummer");
+        this.port = this.parseInteger(tmp, 32, "Ungï¿½ltige Portnummer");
         
         tmp = this.props.getProperty(IRC_LOGGING, "on");
         this.ircLogging = this.parseBoolean(tmp);
         
         tmp = this.props.getProperty(ADMIN_USER_LEVEL, "1337");
-        this.adminUserlevel = this.parseInteger(tmp, 1, "Ungültiges Admin User Level.");
+        this.adminUserlevel = this.parseInteger(tmp, 1, "Ungï¿½ltiges Admin User Level.");
         
         tmp = this.props.getProperty(EVENT_THREADS, "4");
-        this.eventThreads = this.parseInteger(tmp, 1, "Ungültige Eventthread Zahl.");
+        this.eventThreads = this.parseInteger(tmp, 1, "Ungï¿½ltige Eventthread Zahl.");
+        
+        tmp = this.props.getProperty(EXECUTION_THREADS, "4");
+        this.executionThreads = this.parseInteger(tmp, 1, "Ungï¿½ltige Executionthread Zahl.");
         
         tmp = this.props.getProperty(LINE_LENGTH, "300");
         this.lineLength = this.parseInteger(tmp, 200, "Attribut lineLength zu kurz.");
@@ -141,7 +145,7 @@ public class PollyConfiguration extends Configuration
         this.enableTelnet = this.parseBoolean(tmp);
         
         tmp = this.props.getProperty(TELNET_PORT, "23");
-        this.telnetPort = this.parseInteger(tmp, 0, "Ungültige Portnummer.");
+        this.telnetPort = this.parseInteger(tmp, 0, "Ungï¿½ltige Portnummer.");
         
         tmp = this.props.getProperty(MESSAGE_DELAY, "250");
         this.messageDelay = this.parseInteger(tmp, 250, "Message delay zu niedrig.");
@@ -265,6 +269,12 @@ public class PollyConfiguration extends Configuration
     
     public int getEventThreads() {
         return this.eventThreads;
+    }
+    
+    
+    
+    public int getExecutionThreads() {
+        return this.executionThreads;
     }
     
     

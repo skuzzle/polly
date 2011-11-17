@@ -162,6 +162,9 @@ public class Polly {
         
         ExecutorService eventThreadPool = Executors.newFixedThreadPool
                 (config.getEventThreads(), new EventThreadFactory());
+        
+        ExecutorService executionThreadPool = Executors.newFixedThreadPool(
+                config.getExecutionThreads(), new EventThreadFactory("EXECUTION"));
 
         EventProvider eventProvider = new DefaultEventProvider(eventThreadPool);
         
@@ -198,7 +201,8 @@ public class Polly {
         this.setupDatabase(persistence, config, pluginManager, 
                 PERSISTENCE_XML, PERSISTENCE_UNIT);
         this.setupDefaultUser(userManager, config);
-        this.setupIrc(ircManager, config, commandManager, userManager);
+        this.setupIrc(ircManager, config, commandManager, userManager, 
+                executionThreadPool);
         
         /*
          * Configure shutdown list. Obey list order!
@@ -311,7 +315,8 @@ public class Polly {
     
     
     private void setupIrc(IrcManagerImpl ircManager, PollyConfiguration config, 
-            CommandManagerImpl commandManager, UserManagerImpl userManager) {
+            CommandManagerImpl commandManager, UserManagerImpl userManager, 
+            ExecutorService executorThreadPool) {
         
         logger.info("Starting bot with settings: (" +
                 "Nick: " + config.getNickName() + 
@@ -328,7 +333,7 @@ public class Polly {
         }
         
         MessageHandler handler = new MessageHandler(commandManager, userManager, 
-            config.getEncodingName());
+            config.getEncodingName(), executorThreadPool);
         ircManager.addMessageListener(handler);
         ircManager.addNickChangeListener(new TraceNickChangeHandler(userManager));
         

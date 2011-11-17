@@ -3,6 +3,7 @@ package polly.eventhandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.log4j.Logger;
 
@@ -44,12 +45,14 @@ public class MessageHandler implements MessageListener {
     private CommandManager commands;
     private UserManagerImpl userManager;
     private String encodingName;
+    private ExecutorService executorThreadPool;
     
     public MessageHandler(CommandManager commandManager, UserManagerImpl userManager, 
-            String encoding) {
+            String encoding, ExecutorService executorThreadPool) {
         this.commands = commandManager;
         this.userManager = userManager;
         this.encodingName = encoding;
+        this.executorThreadPool = executorThreadPool;
     }
     
 
@@ -75,34 +78,42 @@ public class MessageHandler implements MessageListener {
     
     
     
-    private void execute(MessageEvent e, boolean isQuery) {
-        User executor = this.getUser(e.getUser());
+    private void execute(final MessageEvent e, final boolean isQuery) {
+        final User executor = this.getUser(e.getUser());
         
-        Pair<Command, Signature> p = this.parse(executor, e, e.getChannel());
+        final Pair<Command, Signature> p = this.parse(executor, e, e.getChannel());
         if (p == null) {
             return;
         }
         
-        long i = System.currentTimeMillis();
-        try {
-            logger.debug("Executing '" + p.getSecond().toString() + 
-                    "' on channel " + e.getChannel());
+        Runnable command = new Runnable() {
+            @Override
+            public void run() {
+                long i = System.currentTimeMillis();
+                try {
+                    
+                    logger.debug("Executing '" + p.getSecond().toString() + 
+                            "' on channel " + e.getChannel());
 
-            
-            p.getFirst().doExecute(executor, e.getChannel(), isQuery, p.getSecond());
-            long time = System.currentTimeMillis() - i;
-            logger.debug("Executed. Runtime: " + time + "ms");
-        } catch (InsufficientRightsException e1) {
-            e.getSource().sendMessage(e.getChannel(), "Du kannst den Befehl '" + 
-                    p.getFirst().getCommandName() + "' nicht ausf�hren.");
-        } catch (Exception e1) {
-            long time = System.currentTimeMillis() - i;
-            logger.error("Exception while executing command '" + 
-                    p.getFirst().getCommandName() + "': " + e1.getMessage(), e1);
-            e.getSource().sendMessage(e.getChannel(), 
-                    "Interner Fehler beim Ausf�hren des Befehls.");
-            logger.debug("Execution time: " + time + "ms");
-        }
+                    
+                    p.getFirst().doExecute(executor, e.getChannel(), isQuery, p.getSecond());
+                    long time = System.currentTimeMillis() - i;
+                    logger.debug("Executed. Runtime: " + time + "ms");
+                } catch (InsufficientRightsException e1) {
+                    e.getSource().sendMessage(e.getChannel(), "Du kannst den Befehl '" + 
+                            p.getFirst().getCommandName() + "' nicht ausf�hren.");
+                } catch (Exception e1) {
+                    long time = System.currentTimeMillis() - i;
+                    logger.error("Exception while executing command '" + 
+                            p.getFirst().getCommandName() + "': " + e1.getMessage(), e1);
+                    e.getSource().sendMessage(e.getChannel(), 
+                            "Interner Fehler beim Ausf�hren des Befehls.");
+                    logger.debug("Execution time: " + time + "ms");
+                }
+            }
+        };
+        
+        this.executorThreadPool.execute(command);
     }
     
     
