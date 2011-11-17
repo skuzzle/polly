@@ -196,7 +196,6 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     
     
-    // TODO: inspect
     public String inspect(User user, String declaration) {
         try {
             Expression e = this.namespaces.get(user.getName()).resolve(

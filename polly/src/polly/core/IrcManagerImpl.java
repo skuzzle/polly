@@ -829,6 +829,8 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         } else {
             logger.debug("Irc connection already closed.");
         }
+        logger.trace("Shutting down message scheduler");
+        this.messageThread.dispose();
         logger.trace("Shutting down irc bot.");
         this.bot.dispose();
     }

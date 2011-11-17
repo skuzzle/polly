@@ -6,16 +6,19 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 
+import de.skuzzle.polly.sdk.Disposable;
 import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
+import de.skuzzle.polly.sdk.exceptions.DisposingException;
 
 /*
  * ISSUE: 0000049
  */
 
-public class MessageThread extends Thread {
+public class MessageThread extends Thread implements Disposable {
 
     private static Logger logger = Logger.getLogger(MessageThread.class.getName());
 
@@ -23,6 +26,7 @@ public class MessageThread extends Thread {
     private Semaphore sema;
     private ConcurrentMap<Object, LinkedList<MessageEvent>> messageQueue;
     private int messageDelay;
+    private AtomicBoolean shutdownFlag;
     
     
     public MessageThread(IrcManagerImpl ircManager, int messageDelay) {
@@ -31,6 +35,7 @@ public class MessageThread extends Thread {
         this.messageQueue = new ConcurrentHashMap<Object, LinkedList<MessageEvent>>();
         this.sema = new Semaphore(0);
         this.messageDelay = messageDelay;
+        this.shutdownFlag = new AtomicBoolean(false);
     }
     
     
@@ -51,7 +56,7 @@ public class MessageThread extends Thread {
     
     @Override
     public void run() {
-        while (true) {
+        while (!this.shutdownFlag.get()) {
             try {
                 logger.trace("Waiting for message input");
                 this.sema.acquire();
@@ -85,5 +90,19 @@ public class MessageThread extends Thread {
                 }
             }
         }
+    }
+
+
+
+    @Override
+    public boolean isDisposed() {
+        return !this.shutdownFlag.get();
+    }
+
+
+
+    @Override
+    public synchronized void dispose() throws DisposingException {
+        this.shutdownFlag.set(true);        
     }
 }

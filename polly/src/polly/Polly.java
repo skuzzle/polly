@@ -23,10 +23,12 @@ import org.jibble.pircbot.NickAlreadyInUseException;
 
 import de.skuzzle.polly.process.JavaProcessExecutor;
 import de.skuzzle.polly.process.ProcessExecutor;
+import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.CompositeDisposable;
 import de.skuzzle.polly.sdk.Version;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
+import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.PluginException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
 
@@ -163,7 +165,7 @@ public class Polly {
         ExecutorService eventThreadPool = Executors.newFixedThreadPool
                 (config.getEventThreads(), new EventThreadFactory());
         
-        ExecutorService executionThreadPool = Executors.newFixedThreadPool(
+        final ExecutorService executionThreadPool = Executors.newFixedThreadPool(
                 config.getExecutionThreads(), new EventThreadFactory("EXECUTION"));
 
         EventProvider eventProvider = new DefaultEventProvider(eventThreadPool);
@@ -215,6 +217,13 @@ public class Polly {
         shutdownList.add(config);
         shutdownList.add(eventProvider);
         shutdownList.add(conversationManager);
+        shutdownList.add(new AbstractDisposable() {
+            @Override
+            protected void actualDispose() throws DisposingException {
+                logger.info("Shutting down execution threadpool");
+                executionThreadPool.shutdown();
+            }
+        });
         
         pluginManager.notifyPlugins();
         

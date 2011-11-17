@@ -8,7 +8,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * ThreadFactory for polly event threads. This is specially used to set the thread names.
  * 
  * @author Simon
- * @version TODO
  * @since Beta 0.5
  */
 public class EventThreadFactory implements ThreadFactory {
