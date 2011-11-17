@@ -1,7 +1,7 @@
 package de.skuzzle.polly.sdk.model;
 
 
-public interface User {
+public interface User extends Comparable<User> {
 
     public abstract int getUserLevel();
     

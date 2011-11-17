@@ -32,6 +32,7 @@ import commands.InfoCommand;
 import commands.SignOffCommand;
 import commands.AuthCommand;
 import commands.TalkCommand;
+import commands.UsersCommand;
 import commands.VarCommand;
 import commands.VenadCommand;
 import commands.VersionCommand;
@@ -83,6 +84,7 @@ public class MyPlugin extends PollyPlugin {
 		this.addCommand(new LmgtfyCommand(myPolly));
 		this.addCommand(new DictCommand(myPolly));
 		
+		this.addCommand(new UsersCommand(myPolly));
 		this.addCommand(new AuthCommand(myPolly));
 		this.addCommand(new SignOffCommand(myPolly));
 		this.addCommand(new AddUserCommand(myPolly));

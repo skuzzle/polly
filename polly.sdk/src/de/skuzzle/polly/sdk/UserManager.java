@@ -1,5 +1,6 @@
 package de.skuzzle.polly.sdk;
 
+import java.util.List;
 import java.util.Set;
 
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
@@ -219,6 +220,15 @@ public interface UserManager {
 	 * @return <code>true</code> if the given user is currently logged in.
 	 */
 	public abstract boolean isSignedOn(User user);
+	
+	
+	/**
+	 * Gets a list of all registered users.
+	 * 
+	 * @return The registered users.
+	 * @since 0.6.1
+	 */
+	public abstract List<User> getRegisteredUsers();
 	
 	
 	

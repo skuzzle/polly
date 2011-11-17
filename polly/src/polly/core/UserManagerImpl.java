@@ -407,6 +407,17 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     }
     
     
+    @Override
+    public List<User> getRegisteredUsers() {
+        try {
+            this.persistence.readLock();
+            return this.persistence.findList(User.class, polly.data.User.ALL_USERS);
+        } finally {
+            this.persistence.readUnlock();
+        }
+    }
+    
+    
     
     public synchronized void traceNickChange(IrcUser oldUser, IrcUser newUser) {
         logger.debug("Tracing nickchange from '" + oldUser + "' to '" + newUser + "'");

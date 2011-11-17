@@ -34,6 +34,9 @@ import de.skuzzle.polly.sdk.exceptions.UnknownAttributeException;
 public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     
     private static final long serialVersionUID = 1L;
+    
+    public final static String ALL_USERS = "ALL_USERS";
+    
    
     @Id@GeneratedValue
     private int id;
@@ -183,5 +186,12 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
             throw new UnknownAttributeException(name);
         }
         this.attributes.put(name, value);
+    }
+
+
+    
+    @Override
+    public int compareTo(de.skuzzle.polly.sdk.model.User o) {
+        return new Integer(o.getUserLevel()).compareTo(this.getUserLevel());
     }
 }
