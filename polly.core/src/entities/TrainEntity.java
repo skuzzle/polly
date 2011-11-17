@@ -40,31 +40,33 @@ public class TrainEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
     
-
     
-    public static TrainEntity forString(String forUser, String input) {
-        /*
-         * Intelligenz Training     152300 Cr.
-         * Kommandolimit Training   380 Cr.
-         * Modullimit Training  3091 Cr.
-         * Körper Training  11987 Cr.
-         * Crewlimit Training   103 Cr.
-         * Techlimit Training   23118 Cr.
-         */
-
+    public static TrainEntity forString(String forUser, String input, double mod) {
         String[] parts = input.split("\\s+");
         if (parts.length != 4) {
             throw new IllegalArgumentException("Misformatted input String");
         }
         StringBuilder b = new StringBuilder(input.length());
-        b.append(parts[0]); b.append(" "); b.append(parts[1]);
+        b.append(parts[0]); b.append(" "); 
+        b.append(parts[1]);
+        b.append(" (*");
+        b.append(mod);
+        b.append("%)");
+        
         int cost = 0;
         try {
             cost = Integer.parseInt(parts[2]);
+            cost = (int) (cost * mod);
         } catch  (NumberFormatException e) {
             throw new IllegalArgumentException("Misformatted input String.");
         }
         return new TrainEntity(forUser, cost, b.toString());
+    }
+    
+
+    
+    public static TrainEntity forString(String forUser, String input) {
+        return forString(forUser, input, 1.0); 
     }
     
     

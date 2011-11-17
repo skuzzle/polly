@@ -9,6 +9,7 @@ import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.Types.UserType;
 import de.skuzzle.polly.sdk.Types.StringType;
 import de.skuzzle.polly.sdk.Types.BooleanType;
+import de.skuzzle.polly.sdk.Types.NumberType;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
 import entities.TrainEntity;
@@ -26,6 +27,8 @@ public class AddTrainCommand extends Command {
             new UserType(), new StringType());
         this.createSignature("Zeigt die offene Rechnungssumme für einen Benutzer an.", 
             new UserType(), new BooleanType());
+        this.createSignature("Fügt ein neues Training zur Rechnung des Benutzers hinzu.", 
+            new UserType(), new StringType(), new NumberType());
         this.setHelpText("Befehl zum Verwalten von Capi Trainings.");
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
@@ -38,16 +41,16 @@ public class AddTrainCommand extends Command {
     protected boolean executeOnBoth(User executer, String channel,
         Signature signature) {
 
+        double mod = 1.0;
         if (this.match(signature, 0)) {
             String userName = signature.getStringValue(0);
             String train = signature.getStringValue(1);
-            try {
-                TrainEntity e = TrainEntity.forString(userName, train);
-                this.trainManager.addTrain(e);
-                this.reply(channel, "Posten gespeichert.");
-            } catch (Exception e) {
-                this.reply(channel, "Fehler beim Speichern.");
-            }
+            this.addTrain(channel, userName, train, mod);
+        } else if (this.match(signature, 2)) {
+            String userName = signature.getStringValue(0);
+            String train = signature.getStringValue(1);
+            mod = signature.getNumberValue(2);
+            this.addTrain(channel, userName, train, mod);
         } else if (this.match(signature, 1)) {
             String userName = signature.getStringValue(0);
             boolean showAll = signature.getBooleanValue(1);
@@ -63,5 +66,16 @@ public class AddTrainCommand extends Command {
             this.reply(channel, bill.toString());
         }
         return false;
+    }
+    
+    
+    private void addTrain(String channel, String userName, String train, double mod) {
+        try {
+            TrainEntity e = TrainEntity.forString(userName, train, mod);
+            this.trainManager.addTrain(e);
+            this.reply(channel, "Posten gespeichert.");
+        } catch (Exception e) {
+            this.reply(channel, "Fehler beim Speichern.");
+        }
     }
 }

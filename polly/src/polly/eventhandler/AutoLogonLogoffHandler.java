@@ -15,16 +15,16 @@ import polly.core.UserManagerImpl;
 import de.skuzzle.polly.sdk.eventlistener.NickChangeEvent;
 import de.skuzzle.polly.sdk.eventlistener.NickChangeListener;
 import de.skuzzle.polly.sdk.eventlistener.SpotEvent;
+import de.skuzzle.polly.sdk.eventlistener.UserEvent;
+import de.skuzzle.polly.sdk.eventlistener.UserListener;
 import de.skuzzle.polly.sdk.eventlistener.UserSpottedListener;
 import de.skuzzle.polly.sdk.exceptions.AlreadySignedOnException;
 import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
 import de.skuzzle.polly.sdk.model.User;
 
-// TODO:
-// Implement auto logon for users who have already been spotted but not with their
-// registered nick. Therefore auto login must be triggered when changing nick to a 
-// registered username and this user must nor currently be logged in
-public class AutoLogonLogoffHandler implements UserSpottedListener, NickChangeListener {
+
+public class AutoLogonLogoffHandler implements UserSpottedListener, NickChangeListener, 
+            UserListener {
     
     
     private class AutoLogonRunnable implements Runnable {
@@ -49,11 +49,13 @@ public class AutoLogonLogoffHandler implements UserSpottedListener, NickChangeLi
                 return;
             }
             
-            synchronized (AutoLogonLogoffHandler.this.scheduledLogons) {
-                if (AutoLogonLogoffHandler.this.scheduledLogons.containsKey(this.forUser)) {
+            synchronized (scheduledLogons) {
+                if (scheduledLogons.containsKey(this.forUser)) {
                     try {
-                        AutoLogonLogoffHandler.this.scheduledLogons.remove(this.forUser);
-                        AutoLogonLogoffHandler.this.userManager.logonWithoutPassword(this.forUser);
+                        // removing the entry happens in the event handler
+                        // AutoLogonLogoffHandler.this.scheduledLogons.remove(this.forUser);
+                        
+                        userManager.logonWithoutPassword(this.forUser);
                     } catch (UnknownUserException e) {
                         logger.warn("Error while autologon", e);
                     } catch (AlreadySignedOnException e) {
@@ -65,6 +67,7 @@ public class AutoLogonLogoffHandler implements UserSpottedListener, NickChangeLi
             }
         }
     }
+    
 
     private static Logger logger = Logger.getLogger(AutoLogonLogoffHandler.class.getName());
     
@@ -93,19 +96,32 @@ public class AutoLogonLogoffHandler implements UserSpottedListener, NickChangeLi
     }
 
     
+ // TODO:
+ // Implement auto logon for users who have already been spotted but not with their
+ // registered nick. Therefore auto login must be triggered when changing nick to a 
+ // registered username and this user must nor currently be logged in
     
     @Override
     public void nickChanged(NickChangeEvent e) {
+        
+        /*
+         * If there is a auto logon scheduled for the old nickname, it will be 
+         * canceled. If there is a registered user with the new nickname that is 
+         * currently not logged on, a new auto logon is scheduled for that user. 
+         */
         synchronized (this.scheduledLogons) {
             AutoLogonRunnable alr = this.scheduledLogons.get(e.getOldUser().getNickName());
             
             if (alr != null) {
                 alr.cancel();
                 this.scheduledLogons.remove(e.getOldUser().getNickName());
+                logger.debug("Auto logon for " + e.getOldUser() + " canceled");
+            }
+            
+            if (this.userExists(e.getNewUser().getNickName()) && 
+                        !this.userManager.isSignedOn(e.getNewUser())) {
 
-                if (this.userExists(e.getNewUser().getNickName())) {
-                    this.scheduleAutoLogon(e.getNewUser().getNickName());
-                }
+                this.scheduleAutoLogon(e.getNewUser().getNickName());
             }
         }
     }
@@ -118,6 +134,7 @@ public class AutoLogonLogoffHandler implements UserSpottedListener, NickChangeLi
                 AutoLogonRunnable runMe = new AutoLogonRunnable(forUser);
                 this.scheduledLogons.put(forUser, runMe);
                 this.autoLogonExecutor.schedule(runMe, AUTO_LOGIN_DELAY, TimeUnit.SECONDS);
+                logger.debug("Auto logon for " + forUser + " scheduled");
             }
         }
     }
@@ -143,4 +160,18 @@ public class AutoLogonLogoffHandler implements UserSpottedListener, NickChangeLi
             this.userManager.logoff(e.getUser(), true);
         }
     }
+
+
+
+    @Override
+    public void userSignedOn(UserEvent e) {
+        synchronized (this.scheduledLogons) {
+            this.scheduledLogons.remove(e.getUser().getName());
+        }
+    }
+
+
+
+    @Override
+    public void userSignedOff(UserEvent ignore) {}
 }

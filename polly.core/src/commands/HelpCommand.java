@@ -18,8 +18,10 @@ public class HelpCommand extends Command {
 				new CommandType());
 		this.createSignature("Gibt die Beschreibung der angegebenen Signatur des " +
 				"angegebenen Befehls aus.", new CommandType(), new NumberType());
-		
-		this.setHelpText("Befehl um die Beschreibungen anderer Befehle anzuzeigen.");
+        this.createSignature("");
+		this.setHelpText("Gib ':help :<befehl>' ein um Hilfe zu einem Befehl zu " +
+				"bekommen. Gib :cmds ein um eine Liste der möglichen Befehle " +
+				"anzuzeigen.");
 	}
 
 	
@@ -42,7 +44,7 @@ public class HelpCommand extends Command {
     			
     		} else if (this.match(signature, 2)) {
     			this.reply(channel, this.getHelpText());
-    		}
+    		} 
 	    } catch (UnknownCommandException e) {
 	        this.reply(channel, "Der Befehl '" + e.getMessage() + "' existiert nicht.");
 	    }
