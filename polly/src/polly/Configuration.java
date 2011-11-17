@@ -20,7 +20,7 @@ import de.skuzzle.polly.sdk.AbstractDisposable;
 public abstract class Configuration extends AbstractDisposable {
 
 
-    protected Properties props;
+    protected SortedProperties props;
     private String filename;
     
 
@@ -34,7 +34,7 @@ public abstract class Configuration extends AbstractDisposable {
     	this.filename = filename;
         File file = new File(filename);
         InputStream in = null;
-        props = new Properties();
+        props = new SortedProperties();
         try {
             in = new FileInputStream(file);
             props.load(in);
@@ -51,7 +51,7 @@ public abstract class Configuration extends AbstractDisposable {
      * Creates a new memory configuration with no default values.
      */
     public Configuration() {
-        this.props = new Properties();
+        this.props = new SortedProperties();
     }
     
     
@@ -63,7 +63,7 @@ public abstract class Configuration extends AbstractDisposable {
      * @param defaults The configuration default values.
      */
     public Configuration(Properties defaults) {
-        this.props = new Properties(defaults);
+        this.props = new SortedProperties(defaults);
     }
     
     

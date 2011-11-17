@@ -21,7 +21,10 @@ import de.skuzzle.polly.sdk.model.User;
  * declared identifiers of delete the for a specific user.</p>
  * 
  * <p>Polly has a buildin auto logoff function for users: if a users quits or leaves the
- * last channel he shared with polly, he will automatically be logged off.
+ * last channel he shared with polly, he will automatically be logged off.</p>
+ * 
+ * <p>All user retrieval functions work case insensitive in regard to the users name
+ * or nickname, whatever the functions need.</p>
  * 
  * @author Simon
  * @since zero day

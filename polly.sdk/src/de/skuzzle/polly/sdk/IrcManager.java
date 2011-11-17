@@ -48,6 +48,18 @@ public interface IrcManager {
 	 * @return <code>true</code> if the user is online on any channel that polly is on.
 	 */
 	public abstract boolean isOnline(String nickName);
+	
+	
+	// ISSUE: 0000052
+    /**
+     * Determines whether a user with given nick is online in any channel. This method
+     * is case insensitive with nicknames.
+     * 
+     * @param nickName The nickname to check.
+     * @return <code>true</code> if the user is online on any channel that polly is on.
+     * @since 0.6.1
+     */
+	public abstract  boolean isOnlineIgnoreCase(String nickName);
 
 	
 	

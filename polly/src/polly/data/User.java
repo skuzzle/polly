@@ -54,7 +54,9 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     private String currentNickName;    
 
     
-    public User() {}
+    public User() {
+        this("", "", 0);
+    }
     
     
     

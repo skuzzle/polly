@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 
 import polly.data.Attribute;
 import polly.events.EventProvider;
+import polly.util.CaseInsensitiveStringKeyMap;
 
 import de.skuzzle.polly.parsing.Declarations;
 import de.skuzzle.polly.parsing.Namespaces;
@@ -67,7 +68,8 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
             String declarationCache, EventProvider eventProvider) {
         this.eventProvider = eventProvider;
         this.persistence = persistence;
-        this.onlineCache = Collections.synchronizedMap(new HashMap<String, User>());
+        this.onlineCache = Collections.synchronizedMap(
+                new CaseInsensitiveStringKeyMap<User>());
         this.declarationCachePath = declarationCache.endsWith("/") ? declarationCache :
             declarationCache + "/";
         this.createNamespaces();
@@ -94,6 +96,10 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
         
         File cacheDir = new File(this.declarationCachePath);
         File files[] = cacheDir.listFiles(cacheFiles);
+        if (files == null) {
+            logger.error("I\\O Error while listing declaration directory");
+            return;
+        }
         for (File cacheFile : files) {
             // remove '.cache' from filename
             String name = cacheFile.getName();
@@ -312,13 +318,11 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
             throw new UnknownUserException(registeredName);
         }
         
-        if (this.onlineCache.containsKey(user.getCurrentNickName().toLowerCase())) {
-            throw new AlreadySignedOnException(user.getName());
-        }
+        this.checkAlreadySignedOn(user);
         
         if (user.checkPassword(password)) {
             user.setCurrentNickName(from);
-            this.onlineCache.put(user.getCurrentNickName().toLowerCase(), user);
+            this.onlineCache.put(user.getCurrentNickName(), user);
             logger.info("Irc User " + from + " successfully logged in as " + 
                     registeredName);
             
@@ -342,9 +346,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
             throw new UnknownUserException(from);
         }
         
-        if (this.onlineCache.containsKey(user.getCurrentNickName().toLowerCase())) {
-            throw new AlreadySignedOnException(user.getName());
-        }
+        this.checkAlreadySignedOn(user);
         
         user.setCurrentNickName(from);
         this.onlineCache.put(user.getCurrentNickName(), user);
@@ -355,6 +357,14 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
         this.fireUserSignedOn(e);
         return user;
     }
+    
+    
+    
+    private void checkAlreadySignedOn(User user) throws AlreadySignedOnException {        
+        if (this.onlineCache.containsKey(user.getCurrentNickName())) {
+            throw new AlreadySignedOnException(user.getName());
+        }
+    }
 
     
     
@@ -362,7 +372,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     public void logoff(User user) {
         logger.info("User " + user + " logged off.");
         UserEvent e = new UserEvent(this, user);
-        this.onlineCache.remove(user.getCurrentNickName().toLowerCase());
+        this.onlineCache.remove(user.getCurrentNickName());
         
         this.fireUserSignedOff(e);
     }
@@ -379,7 +389,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     public synchronized void logoff(IrcUser user, boolean auto) {
         logger.info("User " + user + " logged off.");
         UserEvent e = new UserEvent(this, this.getUser(user), auto);
-        this.onlineCache.remove(user.getNickName().toLowerCase());
+        this.onlineCache.remove(user.getNickName());
 
         this.fireUserSignedOff(e);
     }
@@ -388,24 +398,24 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
 
     @Override
     public boolean isSignedOn(IrcUser user) {
-        return this.onlineCache.containsKey(user.getNickName().toLowerCase());
+        return this.onlineCache.containsKey(user.getNickName());
     }
     
     
     
     @Override
     public boolean isSignedOn(User user) {
-        return this.onlineCache.containsKey(user.getCurrentNickName().toLowerCase());
+        return this.onlineCache.containsKey(user.getCurrentNickName());
     }
     
     
     
     public synchronized void traceNickChange(IrcUser oldUser, IrcUser newUser) {
         logger.debug("Tracing nickchange from '" + oldUser + "' to '" + newUser + "'");
-        User tmp = this.onlineCache.get(oldUser.getNickName().toLowerCase());
+        User tmp = this.onlineCache.get(oldUser.getNickName());
         tmp.setCurrentNickName(newUser.getNickName());
-        this.onlineCache.remove(oldUser.getNickName().toLowerCase());
-        this.onlineCache.put(newUser.getNickName().toLowerCase(), tmp);
+        this.onlineCache.remove(oldUser.getNickName());
+        this.onlineCache.put(newUser.getNickName(), tmp);
     }
 
 

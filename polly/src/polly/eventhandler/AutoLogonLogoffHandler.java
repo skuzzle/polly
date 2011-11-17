@@ -57,6 +57,8 @@ public class AutoLogonLogoffHandler implements UserSpottedListener, NickChangeLi
                         logger.warn("Error while autologon", e);
                     } catch (AlreadySignedOnException e) {
                         logger.warn("Error while autologon", e);
+                    } catch (Exception e) {
+                        logger.error("Error while autologon", e);
                     }
                 }
             }
@@ -64,6 +66,8 @@ public class AutoLogonLogoffHandler implements UserSpottedListener, NickChangeLi
     }
 
     private static Logger logger = Logger.getLogger(AutoLogonLogoffHandler.class.getName());
+    
+    public final static int AUTO_LOGIN_DELAY = 20; // one minute
     
     private IrcManagerImpl ircManager;
     private UserManagerImpl userManager;
@@ -110,7 +114,7 @@ public class AutoLogonLogoffHandler implements UserSpottedListener, NickChangeLi
             if (this.userExists(forUser)) {
                 AutoLogonRunnable runMe = new AutoLogonRunnable(forUser);
                 this.scheduledLogons.put(forUser, runMe);
-                this.autoLogonExecutor.schedule(runMe, 60, TimeUnit.SECONDS);
+                this.autoLogonExecutor.schedule(runMe, AUTO_LOGIN_DELAY, TimeUnit.SECONDS);
             }
         }
     }

@@ -3,6 +3,7 @@ package polly.core;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -75,8 +76,10 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
             NickChangeEvent e = new NickChangeEvent(
                     IrcManagerImpl.this, oldUser, newUser);
             
-            IrcManagerImpl.this.onlineUsers.remove(oldIrcName);
-            IrcManagerImpl.this.onlineUsers.add(newIrcName);
+            synchronized (IrcManagerImpl.this.onlineUsers) {
+                IrcManagerImpl.this.onlineUsers.remove(oldIrcName);
+                IrcManagerImpl.this.onlineUsers.add(newIrcName);
+            }
             IrcManagerImpl.this.fireNickChange(e);
         }
         
@@ -211,6 +214,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
             for (int i = 0; i < users.length; ++i) {
                 String nickName = IrcManagerImpl.this.stripNickname(users[i].getNick());
                 
+                // !TODO: synchronize on online users?
                 if (IrcManagerImpl.this.onlineUsers.add(nickName)) {
                     IrcUser user = new IrcUser(nickName, channel, "");
                     SpotEvent e = new SpotEvent(IrcManagerImpl.this, user, channel, 
@@ -242,7 +246,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     public IrcManagerImpl(String ircName, EventProvider eventProvider, 
             PollyConfiguration config) {
         this.config = config;
-        this.onlineUsers = new TreeSet<String>();
+        this.onlineUsers = Collections.synchronizedSet(new TreeSet<String>());
         this.topics = new HashMap<String, String>();
         this.eventProvider = eventProvider;
         this.bot.changeNick(ircName);
@@ -329,7 +333,22 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
 
     @Override
 	public boolean isOnline(String nickName) {
-        return this.onlineUsers.contains(nickName);
+        synchronized (this.onlineUsers) {
+            return this.onlineUsers.contains(nickName);
+        }
+    }
+    
+    
+    @Override
+    public boolean isOnlineIgnoreCase(String nickName) {
+        synchronized (this.onlineUsers) {
+            for (String s : this.onlineUsers) {
+                if (s.equalsIgnoreCase(nickName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     
     
@@ -383,7 +402,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
 	public boolean isOnChannel(String channel, String nickName) {       
         User[] users = this.bot.getUsers(channel);
         for (User user : users) {
-            if (this.stripNickname(user.getNick()).equals(nickName)) {
+            if (this.stripNickname(user.getNick()).equalsIgnoreCase(nickName)) {
                 return true;
             }
         }
