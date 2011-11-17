@@ -21,7 +21,7 @@ public class SpotEvent extends ChannelEvent {
     /** Indicates a part */
     public final static int USER_PART = 2;
     
-    /** Indicats a join */
+    /** Indicates a join */
     public final static int USER_JOINED = 4;
     
     

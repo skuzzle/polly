@@ -123,9 +123,8 @@ public class AutoLogonLogoffHandler extends AbstractDisposable
                 logger.debug("Auto logon for " + e.getOldUser() + " canceled");
             }
             
-            if (this.userExists(e.getNewUser().getNickName()) && 
-                        !this.userManager.isSignedOn(e.getNewUser())) {
-
+            User u = this.userManager.getUser(e.getNewUser());
+            if (u != null && !this.userManager.isSignedOn(u)) {
                 this.scheduleAutoLogon(e.getNewUser().getNickName());
             }
         }
@@ -161,7 +160,7 @@ public class AutoLogonLogoffHandler extends AbstractDisposable
             if (e.getType() != SpotEvent.USER_QUIT) {
                 this.ircManager.sendMessage(e.getUser().getNickName(), 
                     "Du wurdest automatisch ausgeloggt weil du den letzten " +
-                    "gemeinsamen Channel verlassen hast.");
+                    "gemeinsamen Channel verlassen hast.", this);
             }
             this.userManager.logoff(e.getUser(), true);
         }

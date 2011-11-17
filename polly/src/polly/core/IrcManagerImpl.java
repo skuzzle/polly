@@ -115,6 +115,13 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
             /* ISSUE: 0000002 && 0000026*/
             boolean known = false;
             for (String c : this.getChannels()) {
+                
+                // HACK: continue on own channel as pircbot may not have removed the user
+                //       from its data structure
+                if (c.equals(channel)) {
+                    continue;
+                }
+                
                 for (User u : this.getUsers(c)) {
                     String uStripped = IrcManagerImpl.this.stripNickname(u.getNick());
                     
@@ -131,7 +138,9 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
                 IrcManagerImpl.this.fireUserLost(e1);
             }
             
-            IrcManagerImpl.this.topics.remove(channel);
+            // TODO: you cannot explain that
+            // IrcManagerImpl.this.topics.remove(channel);
+            
             IrcManagerImpl.this.firePart(e);
         }
         
