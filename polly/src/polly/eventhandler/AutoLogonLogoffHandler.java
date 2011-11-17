@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
+import polly.EventThreadFactory;
 import polly.core.IrcManagerImpl;
 import polly.core.UserManagerImpl;
 import de.skuzzle.polly.sdk.eventlistener.NickChangeEvent;
@@ -67,6 +68,7 @@ public class AutoLogonLogoffHandler implements UserSpottedListener, NickChangeLi
 
     private static Logger logger = Logger.getLogger(AutoLogonLogoffHandler.class.getName());
     
+    // XXX:
     public final static int AUTO_LOGIN_DELAY = 20; // one minute
     
     private IrcManagerImpl ircManager;
@@ -78,7 +80,8 @@ public class AutoLogonLogoffHandler implements UserSpottedListener, NickChangeLi
     public AutoLogonLogoffHandler(IrcManagerImpl ircManager, UserManagerImpl userManager) {
         this.ircManager = ircManager;
         this.userManager = userManager;
-        this.autoLogonExecutor = Executors.newScheduledThreadPool(4);
+        this.autoLogonExecutor = Executors.newScheduledThreadPool(4, 
+                new EventThreadFactory("LOGON"));
         this.scheduledLogons = new HashMap<String, AutoLogonRunnable>();
     }
 

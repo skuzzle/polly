@@ -59,12 +59,14 @@ public class MyPlugin extends PollyPlugin {
         
         this.remindManager = new RemindManager(myPolly);
         
-        this.deliverRemindHandler = new DeliverRemindHandler(this.remindManager);
+        this.deliverRemindHandler = new DeliverRemindHandler(this.remindManager, 
+            myPolly.users());
         this.remindNickChangeTracer = new RemindTraceNickchangeHandler(
                 this.remindManager);
         myPolly.irc().addNickChangeListener(this.remindNickChangeTracer);
         myPolly.irc().addJoinPartListener(this.deliverRemindHandler);
         myPolly.irc().addMessageListener(this.deliverRemindHandler);
+        myPolly.users().addUserListener(this.deliverRemindHandler);
         
         this.addDisposable(this.remindManager);
         
@@ -84,6 +86,7 @@ public class MyPlugin extends PollyPlugin {
         this.getMyPolly().irc().removeNickChangeListener(this.remindNickChangeTracer);
         this.getMyPolly().irc().removeJoinPartListener(this.deliverRemindHandler);
         this.getMyPolly().irc().removeMessageListener(this.deliverRemindHandler);
+        this.getMyPolly().users().removeUserListener(this.deliverRemindHandler);
         super.actualDispose();
     }       
 

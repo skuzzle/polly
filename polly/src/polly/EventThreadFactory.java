@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class EventThreadFactory implements ThreadFactory {
 
-    private static AtomicInteger threadId = new AtomicInteger(1);
+    private AtomicInteger threadId = new AtomicInteger(1);
     
     private String prefix;
     
@@ -29,7 +29,7 @@ public class EventThreadFactory implements ThreadFactory {
     
     @Override
     public Thread newThread(Runnable r) {
-        Thread t = new Thread(r, this.prefix + "_THREAD_" + threadId.getAndIncrement());
+        Thread t = new Thread(r, this.prefix + "_THREAD_" + this.threadId.getAndIncrement());
         return t;
     }
 
