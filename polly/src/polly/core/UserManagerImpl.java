@@ -47,7 +47,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     private PersistenceManagerImpl persistence;
 
     /**
-     * Stores the currently signed on users. Key: the nickname.
+     * Stores the currently signed on users. Key: the nickname in lower case.
      */
     private Map<String, User> onlineCache;
     
@@ -312,13 +312,13 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
             throw new UnknownUserException(registeredName);
         }
         
-        if (this.onlineCache.containsKey(user.getCurrentNickName())) {
+        if (this.onlineCache.containsKey(user.getCurrentNickName().toLowerCase())) {
             throw new AlreadySignedOnException(user.getName());
         }
         
         if (user.checkPassword(password)) {
             user.setCurrentNickName(from);
-            this.onlineCache.put(user.getCurrentNickName(), user);
+            this.onlineCache.put(user.getCurrentNickName().toLowerCase(), user);
             logger.info("Irc User " + from + " successfully logged in as " + 
                     registeredName);
             
@@ -342,7 +342,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
             throw new UnknownUserException(from);
         }
         
-        if (this.onlineCache.containsKey(user.getCurrentNickName())) {
+        if (this.onlineCache.containsKey(user.getCurrentNickName().toLowerCase())) {
             throw new AlreadySignedOnException(user.getName());
         }
         
@@ -362,7 +362,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     public void logoff(User user) {
         logger.info("User " + user + " logged off.");
         UserEvent e = new UserEvent(this, user);
-        this.onlineCache.remove(user.getCurrentNickName());
+        this.onlineCache.remove(user.getCurrentNickName().toLowerCase());
         
         this.fireUserSignedOff(e);
     }
@@ -376,10 +376,10 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     
     
-    public void logoff(IrcUser user, boolean auto) {
+    public synchronized void logoff(IrcUser user, boolean auto) {
         logger.info("User " + user + " logged off.");
         UserEvent e = new UserEvent(this, this.getUser(user), auto);
-        this.onlineCache.remove(user.getNickName());
+        this.onlineCache.remove(user.getNickName().toLowerCase());
 
         this.fireUserSignedOff(e);
     }
@@ -388,24 +388,24 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
 
     @Override
     public boolean isSignedOn(IrcUser user) {
-        return this.onlineCache.containsKey(user.getNickName());
+        return this.onlineCache.containsKey(user.getNickName().toLowerCase());
     }
     
     
     
     @Override
     public boolean isSignedOn(User user) {
-        return this.onlineCache.containsKey(user.getCurrentNickName());
+        return this.onlineCache.containsKey(user.getCurrentNickName().toLowerCase());
     }
     
     
     
     public synchronized void traceNickChange(IrcUser oldUser, IrcUser newUser) {
         logger.debug("Tracing nickchange from '" + oldUser + "' to '" + newUser + "'");
-        User tmp = this.onlineCache.get(oldUser.getNickName());
+        User tmp = this.onlineCache.get(oldUser.getNickName().toLowerCase());
         tmp.setCurrentNickName(newUser.getNickName());
-        this.onlineCache.remove(oldUser.getNickName());
-        this.onlineCache.put(newUser.getNickName(), tmp);
+        this.onlineCache.remove(oldUser.getNickName().toLowerCase());
+        this.onlineCache.put(newUser.getNickName().toLowerCase(), tmp);
     }
 
 
