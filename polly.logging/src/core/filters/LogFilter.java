@@ -1,4 +1,4 @@
-package core;
+package core.filters;
 
 import entities.LogEntry;
 

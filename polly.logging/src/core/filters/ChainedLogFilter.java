@@ -1,23 +1,30 @@
-package core;
+package core.filters;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import entities.LogEntry;
 
 
-public class CascadingLogFilter implements LogFilter {
+public class ChainedLogFilter implements LogFilter {
 
     private List<LogFilter> filters;
     
     
-    public CascadingLogFilter(List<LogFilter> filters) {
+    public ChainedLogFilter(List<LogFilter> filters) {
         this.filters = filters;
     }
     
     
-    public CascadingLogFilter(LogFilter...filters) {
-        this.filters = Arrays.asList(filters);
+    public ChainedLogFilter(LogFilter...filters) {
+        this.filters = new ArrayList<LogFilter>(Arrays.asList(filters));
+    }
+    
+    
+    
+    public void addFilter(LogFilter filter) {
+        this.filters.add(filter);
     }
     
     

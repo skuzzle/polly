@@ -9,17 +9,25 @@ public class DefaultLogFormatter implements LogFormatter {
     @Override
     public String formatLog(LogEntry entry, FormatManager formatter) {
         StringBuilder b = new StringBuilder();
-        
+                
         b.append("[");
         b.append(formatter.formatDate(entry.getDate()));
         b.append("] ");
-        if (entry.getType() != LogEntry.TYPE_QUIT && entry.getType() != LogEntry.TYPE_NICKCHANGE) {
-            b.append(entry.getChannel());
+        
+        if (entry.getType() == LogEntry.TYPE_NICKCHANGE) {
+            b.append(entry.getMessage());
+        } else if (entry.getType() == LogEntry.TYPE_JOIN) {
+            b.append(entry.getMessage());
+        } else if(entry.getType() == LogEntry.TYPE_PART) {
+            b.append(entry.getMessage());
+        } else if (entry.getType() == LogEntry.TYPE_QUIT) {
+            b.append(entry.getMessage());
+        } else if (entry.getType() == LogEntry.TYPE_MESSAGE) {
+            b.append("<");
+            b.append(entry.getNickname());
+            b.append("> ");
+            b.append(entry.getMessage());
         }
-        b.append(" <");
-        b.append(entry.getUser());
-        b.append("> ");
-        b.append(entry.getMessage());
         
         return b.toString();
     }

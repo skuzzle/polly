@@ -3,6 +3,12 @@ package core;
 import java.util.ArrayList;
 import java.util.List;
 
+import core.filters.LogFilter;
+import core.output.IrcLogOutput;
+import core.output.LogOutput;
+import core.output.PasteServiceLogOutput;
+import core.pasteservice.PasteServiceManager;
+
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PersistenceManager;
@@ -14,16 +20,23 @@ import entities.LogEntry;
 public class PollyLoggingManager extends AbstractDisposable {
     
     private PersistenceManager persistence;
+    private PasteServiceManager pasteServiceManager;
+    
     private List<LogEntry> cache;
     private int cacheSize;
+    private int pasteTreshold;
+    private int maxLogs;
     
     
     
-    public PollyLoggingManager(MyPolly myPolly) {
+    public PollyLoggingManager(MyPolly myPolly, PasteServiceManager pasteServiceManager, 
+                int cacheSize, int pasteTreshold, int maxLogs) {
         this.persistence = myPolly.persistence();
+        this.pasteServiceManager = pasteServiceManager;
         
-        // TODO: store size in config
-        this.cacheSize = 100;
+        this.cacheSize = cacheSize;
+        this.pasteTreshold = pasteTreshold;
+        this.maxLogs = maxLogs;
         this.cache = new ArrayList<LogEntry>(this.cacheSize);
     }
     
@@ -41,19 +54,63 @@ public class PollyLoggingManager extends AbstractDisposable {
     
     
     
-    public List<LogEntry> preFilterUser(String user) {
-        return null;
+    public List<LogEntry> preFilterUser(String user) throws DatabaseException {
+        return this.preFilterUser(user, this.maxLogs);
+    }
+    
+    
+    public List<LogEntry> preFilterUser(String user, int limit) throws DatabaseException {
+        return this.preFilterQuery(LogEntry.FIND_BY_USER, limit, user);
     }
     
     
     
-    public List<LogEntry> preFilterChannel(String channel) {
-        return null;
+    public List<LogEntry> preFilterChannel(String channel) throws DatabaseException {
+        return this.preFilterChannel(channel, this.maxLogs);
     }
     
     
-    public LogEntry lastJoin(String user, String channel) {
-        return null;
+    public List<LogEntry> preFilterChannel(String channel, int limit) throws DatabaseException {
+        return this.preFilterQuery(LogEntry.FIND_BY_CHANNEL, limit, channel);
+    }
+    
+    
+    
+    public LogEntry seenUser(String user) throws DatabaseException {
+        return this.preFilterQuery(LogEntry.USER_SSEN, 1, user).get(0);
+    }
+    
+    
+
+    private List<LogEntry> preFilterQuery(String queryName, int limit, String parameter) 
+            throws DatabaseException {
+        this.storeCache();
+        
+        try {
+            this.persistence.readLock();
+            return this.persistence.findList(LogEntry.class, queryName, limit, 
+                 new Object[] { parameter });
+            
+        } finally {
+            this.persistence.readUnlock();
+        }
+    }
+    
+    
+    
+    public void outputLogResults(MyPolly myPolly, List<LogEntry> logs, String channel) {
+        LogFormatter logFormatter = new DefaultLogFormatter();
+        LogOutput output = null;
+        
+        if (logs.size() < this.pasteTreshold) {
+            output = new IrcLogOutput();
+        } else {
+            output = new PasteServiceLogOutput(
+                    this.pasteServiceManager.getDefaultService());
+        }
+        
+        output.outputLogs(myPolly.irc(), channel, logs, logFormatter, 
+                myPolly.formatting());
     }
     
     
@@ -85,6 +142,7 @@ public class PollyLoggingManager extends AbstractDisposable {
             this.persistence.startTransaction();
             synchronized (this.cache) {
                 this.persistence.persistList(this.cache);
+                this.cache.clear();
             }
             this.persistence.commitTransaction();
         } finally {

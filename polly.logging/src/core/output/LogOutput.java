@@ -1,6 +1,8 @@
-package core;
+package core.output;
 
 import java.util.List;
+
+import core.LogFormatter;
 
 import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.IrcManager;
