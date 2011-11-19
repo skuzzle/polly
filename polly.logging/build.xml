@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="polly.logging" basedir="." default="release">
+
+    <property name="src.dir" value="src"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="release.dir" value="release/cfg/plugins"/>
+    <property name="classes.dir" value="classes"/>
+    <property name="lib.dir" value="lib"/>
+    <property name="version" value="0.0.1"/>
+    <property name="zip.filename" value="${ant.project.name}-${version}.zip"/>
+
+    <property name="classpath" value="./lib/de.skuzzle.polly.sdk.jar
+                                      ./lib/javax.persistence.jar"/>
+
+    <path id="libraries">
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+    </path>
+    
+    <target name="init">
+        <mkdir dir="${classes.dir}"/>
+    </target>
+
+
+    <target name="clean" depends="init">
+        <delete dir="${dist.dir}"/>
+        <delete dir="${classes.dir}"/>
+        <delete dir="${release.dir}"/>
+        <delete file="${dist.dir}/${ant.project.name}.jar"/>
+    </target>
+    
+    
+    <target name="prepare" depends="clean">
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${classes.dir}"/>
+        <mkdir dir="${release.dir}"/>
+    </target>
+     
+    
+    <target name="compile" depends="init">
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="libraries" source="1.6" debug="on">
+            <exclude name="de/skuzzle/test/**"/>
+        </javac>
+    </target>
+	
+	
+	
+    <target name="props">
+        <propertyfile file="${ant.project.name}.properties">
+            <entry key="jarfile"     value="${ant.project.name}.jar"/>
+            <entry key="name"        value="${ant.project.name}"/>
+            <entry key="description" value="Polly logging plugin"/>
+            <entry key="developer"   value="betty"/>
+            <entry key="version"     value="${version}"/>
+            <entry key="updateUrl"   value="http://www.polly.skuzzle.de/updaterepo/${ant.project.name}/${ant.project.name}.update.properties"/>
+            <entry key="entrypoint"  value="polly.logging.MyPlugin"/>
+        </propertyfile>
+
+    </target>
+
+    
+    <target name="dist" depends="prepare,compile,props">
+        <jar destfile="${dist.dir}/${ant.project.name}.jar">
+            <manifest>
+                <attribute name="Main-Class" value=""/>
+                <attribute name="Class-Path" value="${classpath}"/>
+            	<attribute name="Implementation-Version" value="${version}"/>
+            </manifest>
+            <fileset dir="${classes.dir}">
+                <exclude name="de/skuzzle/test/**"/>
+            </fileset>
+            <fileset dir="${src.dir}">
+                <exclude name="de/skuzzle/test/**"/>
+            </fileset>
+        </jar>
+        <copy file="${ant.project.name}.properties" tofile="${dist.dir}/${ant.project.name}.properties"/>
+    </target>
+    
+   
+    
+    <target name="release" if="zip.filename" depends="dist">
+        <copy file="${dist.dir}/${ant.project.name}.jar" tofile="${release.dir}/${ant.project.name}.jar"/>
+        <copy file="${dist.dir}/${ant.project.name}.properties" tofile="${release.dir}/${ant.project.name}.properties"/>
+        <zip destfile="${dist.dir}/${zip.filename}" basedir="release"/>
+        
+        <checksum file="${dist.dir}/${zip.filename}" property="md5"/>
+        <propertyfile file="${ant.project.name}.update.properties">
+        	<entry key="name"          value="${ant.project.name}"/>
+        	<entry key="description"   value="Polly logging plugin."/>
+            <entry key="updateVersion" value="${version}"/>
+            <entry key="updateURL"     value="http://www.polly.skuzzle.de/updaterepo/${ant.project.name}/${zip.filename}"/>
+            <entry key="checksum"      value="${md5}"/>
+        </propertyfile>
+    </target>
+
+</project>
