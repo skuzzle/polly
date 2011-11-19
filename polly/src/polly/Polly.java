@@ -1,6 +1,7 @@
 package polly;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.lang.management.ManagementFactory;
@@ -35,6 +36,7 @@ import de.skuzzle.polly.sdk.exceptions.UserExistsException;
 import polly.commandline.AbstractArgumentParser;
 import polly.commandline.ParameterException;
 import polly.commandline.PollyArgumentParser;
+import polly.configuration.DefaultPollyConfiguration;
 import polly.core.BotConnectionSettings;
 import polly.core.CommandManagerImpl;
 import polly.core.ConversationManagerImpl;
@@ -129,6 +131,8 @@ public class Polly {
             System.out.println("Updates still running. Exiting!");
             return;
         }
+        
+        this.checkDirectoryStructure();
         
         
         PollyConfiguration config = this.readConfig(CONFIG_FULL_PATH);
@@ -264,8 +268,39 @@ public class Polly {
     
     
     
+    private void checkDirectoryStructure() {
+        boolean success = true;
+        File cfg_plugins = new File(PLUGIN_FOLDER);
+        File cfg_metainf = new File(Polly.PERSISTENCE_XML).getParentFile();
+
+        if (!cfg_plugins.exists()) {
+            success &= cfg_plugins.mkdirs();
+            System.out.println("creating " + cfg_plugins + ": " + success);
+        }
+        if (!cfg_metainf.exists()) {
+            success &= cfg_metainf.mkdirs();
+            System.out.println("creating " + cfg_metainf + ": " + success);
+        }
+        
+        if (!success) {
+            System.exit(0);
+        }
+    }
+    
+    
+    
     private PollyConfiguration readConfig(String path) {
         try {
+            File configFile = new File(path);
+            
+            /*
+             * Create a default configuration file
+             */
+            if (!configFile.exists()) {
+                DefaultPollyConfiguration defCfg = new DefaultPollyConfiguration();
+                defCfg.store(new FileOutputStream(configFile), "");
+            }
+            
             PollyConfiguration config = new PollyConfiguration(path);
             PropertyConfigurator.configure(config.getLogConfigFile());
             return config;

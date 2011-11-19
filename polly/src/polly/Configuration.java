@@ -67,6 +67,15 @@ public abstract class Configuration extends AbstractDisposable {
     }
     
     
+    /**
+     * Returns whether this is a memory config.
+     * 
+     * @return <code>true</code> if this config has not been read from a file
+     */
+    public boolean isMemory() {
+        return this.filename == null;
+    }
+    
     
     /**
      * Writes this configuration file back to the disc.

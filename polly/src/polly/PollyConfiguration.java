@@ -412,18 +412,20 @@ public class PollyConfiguration extends Configuration
 		return i;	
 	}
 
-
 	
-    @Override
-    protected void actualDispose() throws DisposingException {
-        /*try {
-            this.store();
-        } catch (IOException e) {
-            throw new DisposingException(e);
-        }*/
-    }
-    
-    
+	@Override
+	protected void actualDispose() throws DisposingException {
+	    // Do not store cfg here, because it contains changes made by program parameters
+	    
+	    /*if (!this.isMemory()) {
+	        try {
+                this.store();
+            } catch (IOException e) {
+                throw new DisposingException(e);
+            }
+	    }*/
+	}
+
     
     @Override
     public String toString() {
