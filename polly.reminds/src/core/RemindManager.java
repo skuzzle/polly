@@ -4,8 +4,10 @@ package core;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
 
 import org.apache.log4j.Logger;
@@ -36,6 +38,7 @@ public class RemindManager extends AbstractDisposable {
     private Timer remindScheduler;
     private Map<Integer, RemindTask> reminds;
     private Map<String, RemindEntity> sleeps;
+    private Set<String> onReturnAvailable;
     
     private final static RemindFormatter DEFAULT_FORMAT = 
             PatternRemindFormatter.forPattern(MyPlugin.REMIND_FORMAT_VALUE);
@@ -49,6 +52,7 @@ public class RemindManager extends AbstractDisposable {
         this.remindScheduler = new Timer("REMIND_SCHEDULER");
         this.reminds = Collections.synchronizedMap(new HashMap<Integer, RemindTask>());
         this.sleeps = Collections.synchronizedMap(new HashMap<String, RemindEntity>());
+        this.onReturnAvailable = new HashSet<String>();
     }
 
     
@@ -120,9 +124,11 @@ public class RemindManager extends AbstractDisposable {
         String destination = inChannel ? remind.getOnChannel() : remind.getForUser();
         
         // OnReturn messages are always delivered in query
-        destination = remind.isOnAction() 
-                ? remind.getForUser() 
-                : destination;
+        if (remind.isOnAction()) {
+            destination = remind.getForUser();
+            this.onReturnAvailable.remove(remind.getForUser());
+        }
+        
         myPolly.irc().sendMessage(destination, message);
         
         this.putToSleep(remind);
@@ -169,6 +175,12 @@ public class RemindManager extends AbstractDisposable {
     
     
     
+    public boolean onReturnAvailable(String user) {
+        return this.onReturnAvailable.contains(user);
+    }
+    
+    
+    
     public RemindEntity getSleep(String nickName) {
         return this.sleeps.get(nickName);
     }
@@ -196,6 +208,11 @@ public class RemindManager extends AbstractDisposable {
     public void addRemind(RemindEntity remind) {
         logger.debug("Adding Remind: " + remind);
         try {
+            
+            if (remind.isOnAction()) {
+                this.onReturnAvailable.add(remind.getForUser());
+            }
+            
             this.persistence.writeLock();
             this.persistence.startTransaction();
             this.persistence.persist(remind);

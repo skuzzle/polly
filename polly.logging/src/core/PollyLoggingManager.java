@@ -1,9 +1,11 @@
 package core;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import core.filters.LogFilter;
+import core.filters.SecurityLogFilter;
 import core.output.IrcLogOutput;
 import core.output.LogOutput;
 import core.output.PasteServiceLogOutput;
@@ -14,6 +16,7 @@ import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
+import de.skuzzle.polly.sdk.model.User;
 import entities.LogEntry;
 
 
@@ -98,15 +101,25 @@ public class PollyLoggingManager extends AbstractDisposable {
     
     
     
-    public void outputLogResults(MyPolly myPolly, List<LogEntry> logs, String channel) {
+    public void outputLogResults(MyPolly myPolly, User executer, List<LogEntry> logs, 
+                String channel) {
+        
         LogFormatter logFormatter = new DefaultLogFormatter();
         LogOutput output = null;
+        
+        // filter messages from channels that the executer is not on
+        LogFilter security = new SecurityLogFilter(myPolly, executer);
+        logs = this.postFilter(logs, security);
+        
+        // the results are sorted by date, newest item on top. Reverse the order so
+        // the items are printed in proper order
+        Collections.reverse(logs);
         
         if (logs.size() < this.pasteTreshold) {
             output = new IrcLogOutput();
         } else {
             output = new PasteServiceLogOutput(
-                    this.pasteServiceManager.getDefaultService());
+                    this.pasteServiceManager.nextService());
         }
         
         output.outputLogs(myPolly.irc(), channel, logs, logFormatter, 

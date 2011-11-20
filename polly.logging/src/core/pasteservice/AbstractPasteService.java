@@ -9,6 +9,7 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -17,6 +18,7 @@ import java.util.Map;
 public abstract class AbstractPasteService implements PasteService {
 
     private String name;
+    private Date lastPasteTime;
     
     
     public AbstractPasteService(String name) {
@@ -25,8 +27,27 @@ public abstract class AbstractPasteService implements PasteService {
     
     
     
+    @Override
+    public Date getLastPasteTime() {
+        return this.lastPasteTime;
+    }
     
-    public PostResult postRequest(URL url, Map<String, String> properties) 
+    
+   
+    
+    @Override
+    public final String paste(String message) throws Exception {
+        this.lastPasteTime = new Date();
+        return this.doPaste(message);
+    }
+    
+    
+    
+    public abstract String doPaste(String message) throws Exception;
+    
+    
+    
+    protected PostResult postRequest(URL url, Map<String, String> properties) 
             throws IOException {
         
         URLConnection connection = null;

@@ -35,21 +35,27 @@ public class DeliverRemindHandler extends JoinPartAdapter implements MessageList
     
     @Override
     public void publicMessage(MessageEvent e) {
-        this.deliverRemind(e, false, false);
+        if (this.remindManager.onReturnAvailable(e.getUser().getNickName())) {
+            this.deliverRemind(e, false, false);
+        }
     }
 
 
 
     @Override
     public void privateMessage(MessageEvent e) {
-        this.deliverRemind(e, false, false);
+        if (this.remindManager.onReturnAvailable(e.getUser().getNickName())) {
+            this.deliverRemind(e, false, false);
+        }
     }
 
 
 
     @Override
     public void actionMessage(MessageEvent e) {
-        this.deliverRemind(e, false, false);
+        if (this.remindManager.onReturnAvailable(e.getUser().getNickName())) {
+            this.deliverRemind(e, false, false);
+        }
     }
 
     

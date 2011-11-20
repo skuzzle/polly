@@ -1,6 +1,7 @@
 package polly.logging;
 
 
+import commands.ChannelLogCommand;
 import commands.SeenCommand;
 import commands.UserLogCommand;
 
@@ -46,7 +47,7 @@ public class MyPlugin extends PollyPlugin {
         int maxLogs = myPolly.configuration().readInt(LOG_MAX_LOGS, DEFAULT_MAX_LOGS);
         
 
-        this.pasteServiceManager = new PasteServiceManager("phcn");
+        this.pasteServiceManager = new PasteServiceManager("pastebin");
         this.logManager = new PollyLoggingManager(
             myPolly, this.pasteServiceManager, cacheSize, pasteTreshold, maxLogs);
         
@@ -60,6 +61,7 @@ public class MyPlugin extends PollyPlugin {
         myPolly.irc().addNickChangeListener(this.logCollector);
         
         this.addCommand(new UserLogCommand(myPolly, this.logManager));
+        this.addCommand(new ChannelLogCommand(myPolly, this.logManager));
         this.addCommand(new SeenCommand(myPolly, this.logManager));
     }
     

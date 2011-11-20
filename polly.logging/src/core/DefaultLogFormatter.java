@@ -10,9 +10,8 @@ public class DefaultLogFormatter implements LogFormatter {
     public String formatLog(LogEntry entry, FormatManager formatter) {
         StringBuilder b = new StringBuilder();
                 
-        b.append("[");
         b.append(formatter.formatDate(entry.getDate()));
-        b.append("] ");
+        b.append(" ");
         
         if (entry.getType() == LogEntry.TYPE_NICKCHANGE) {
             b.append(entry.getMessage());
@@ -23,7 +22,8 @@ public class DefaultLogFormatter implements LogFormatter {
         } else if (entry.getType() == LogEntry.TYPE_QUIT) {
             b.append(entry.getMessage());
         } else if (entry.getType() == LogEntry.TYPE_MESSAGE) {
-            b.append("<");
+            b.append(entry.getChannel());
+            b.append(" <");
             b.append(entry.getNickname());
             b.append("> ");
             b.append(entry.getMessage());

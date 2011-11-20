@@ -16,7 +16,7 @@ public class GBPasteService extends AbstractPasteService {
     
 
     @Override
-    public String paste(String message) throws IOException {
+    public String doPaste(String message) throws IOException {
         Map<String, String> properties = new HashMap<String, String>(10);
         
         properties.put("nick", "polly");

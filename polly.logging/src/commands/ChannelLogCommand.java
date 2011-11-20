@@ -12,6 +12,7 @@ import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types.StringType;
 import de.skuzzle.polly.sdk.Types.NumberType;
 import de.skuzzle.polly.sdk.Types.DateType;
+import de.skuzzle.polly.sdk.Types.ChannelType;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
@@ -19,26 +20,26 @@ import de.skuzzle.polly.sdk.model.User;
 import entities.LogEntry;
 
 
-public class UserLogCommand extends AbstractLogCommand {
+public class ChannelLogCommand extends AbstractLogCommand {
 
-    public UserLogCommand(MyPolly polly, PollyLoggingManager logManager) 
+    public ChannelLogCommand(MyPolly polly, PollyLoggingManager logManager) 
                 throws DuplicatedSignatureException {
-        super(polly, "userlog", logManager);
-        this.createSignature("Filtert Log Einträge eines Benutzers", new StringType());
-        this.createSignature("Filtert Log Einträge eines Benutzers mit bestimmten Inhalt", 
-            new StringType(), 
+        super(polly, "channellog", logManager);
+        this.createSignature("Filtert Log Einträge eines Channels", new ChannelType());
+        this.createSignature("Filtert Log Einträge eines Channels mit bestimmten Inhalt", 
+            new ChannelType(), 
             new StringType());
-        this.createSignature("Filtert Log Einträge eines Benutzers mit bestimmten Inhalt", 
-            new StringType(), 
+        this.createSignature("Filtert Log Einträge eines Channels mit bestimmten Inhalt", 
+            new ChannelType(), 
             new StringType(),
             new NumberType());
         
-        this.createSignature("Filtert Log Einträge eines Benutzers mit bestimmten Inhalt die nicht älter sind als das angegebne Datum", 
-            new StringType(),
+        this.createSignature("Filtert Log Einträge eines Channels mit bestimmten Inhalt die nicht älter sind als das angegebne Datum", 
+            new ChannelType(),
             new StringType(), 
             new DateType());
-        this.createSignature("Filtert Log Einträge eines Benutzers mit bestimmten Inhalt die zweichen den Angegebenen Zeitpunkten liegen",
-            new StringType(), 
+        this.createSignature("Filtert Log Einträge eines Channels mit bestimmten Inhalt die zweichen den Angegebenen Zeitpunkten liegen",
+            new ChannelType(), 
             new StringType(),
             new DateType(),
             new DateType());
@@ -51,7 +52,7 @@ public class UserLogCommand extends AbstractLogCommand {
             Signature signature) throws CommandException {
         
         ChainedLogFilter filter = new ChainedLogFilter(new AnyLogFilter());
-        String user = signature.getStringValue(0);
+        String c = signature.getStringValue(0);
 
         // All signatures except the first have a message pattern
         if (signature.getId() > 0) {
@@ -65,10 +66,10 @@ public class UserLogCommand extends AbstractLogCommand {
         try {
             
             if (this.match(signature, 2)) {
-                prefiltered = this.logManager.preFilterUser(
-                    user, (int) signature.getNumberValue(2));
+                prefiltered = this.logManager.preFilterChannel(
+                    c, (int) signature.getNumberValue(2));
             } else {
-                prefiltered = this.logManager.preFilterUser(user);
+                prefiltered = this.logManager.preFilterChannel(c);
             }
 
             if (this.match(signature, 3)) {

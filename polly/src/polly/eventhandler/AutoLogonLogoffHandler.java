@@ -175,7 +175,13 @@ public class AutoLogonLogoffHandler extends AbstractDisposable
         }
         
         synchronized (this.scheduledLogons) {
-            this.scheduledLogons.remove(e.getUser().getName());
+            AutoLogonRunnable alr = this.scheduledLogons.get(e.getUser().getName());
+            if (alr != null) {
+                logger.trace("Removing scheduled auto logon for user " + 
+                    e.getUser().getName());
+                alr.cancel();
+                this.scheduledLogons.remove(e.getUser().getName());
+            }
         }
     }
 
