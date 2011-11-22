@@ -10,7 +10,7 @@ import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
 
 /**
  * <p>Conversations provide an easy way to read several inputs from one user within one 
- * command. It can be used similar to in {@link InputStream}. You can create a
+ * command. It can be used similar to an {@link InputStream}. You can create a
  * new conversation using 
  * {@link ConversationManager#create(MyPolly, de.skuzzle.polly.sdk.model.User, String)}
  * </p>
@@ -18,7 +18,8 @@ import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
  * <p>Calling any of the {@link #readLine()} methods will cause the current thread to 
  * block until the user for which this conversation was created wrote a line on the 
  * channel for which this conversation was created. {@link #writeLine(String)} is a 
- * convenient way for replying (it wraps {@link IrcManager#sendMessage(String, String)}</p>
+ * convenient way for replying (it wraps 
+ * {@link IrcManager#sendMessage(String, String, Object)}</p>
  * 
  * <p>Message from other users or from the same user on a different channel are ignored 
  * by the conversation.</p>
@@ -31,9 +32,12 @@ import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
  * 
  * <p>To prevent any trouble ensure to always close conversations and using them 
  * thoughtfully. Additionally, polly may shutdown idling conversations in order to 
- * gain a further event thread.</p>
+ * gain a further event threads. You may also define a timeout after which your
+ * conversation is closed automatically.</p>
  * 
- * <p>Once a conversation has been closed, it cannot further be used</p>
+ * <p>Once a conversation has been closed, it cannot further be used. You can check
+ * whether the conversation can still be used you may use 
+ * {@link #isDisposed()}</p>
  * 
  * <p>Here is an example of how to create and use conversations:</p>
  * <pre>

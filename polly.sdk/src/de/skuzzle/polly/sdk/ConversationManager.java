@@ -29,4 +29,22 @@ public interface ConversationManager extends Disposable {
      */
     public abstract Conversation create(MyPolly myPolly, User user, String Channel) 
             throws ConversationException;
+    
+    /**
+     * Creates a new {@link Conversation} with the given user on the given channel.
+     * The returned Conversation is automatically closed by polly after a given
+     * timeout.
+     * See the documentation of the Conversation class to see how to use them.
+     * 
+     * @param myPolly The MyPolly instance to work with.
+     * @param user The user this conversation is for.
+     * @param Channel The channel this conversation is for.
+     * @param timeout Timeout in seconds after which the returned conversation is 
+     *      automatically closed.
+     * @return The new {@link Conversation} instance.
+     * @throws ConversationException If there is already a conversation active with the
+     *          same user on the same channel.
+     */
+    public abstract Conversation create(MyPolly myPolly, User user, String Channel, 
+        int timeout) throws ConversationException;
 }

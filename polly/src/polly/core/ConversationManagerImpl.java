@@ -9,7 +9,9 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
@@ -49,7 +51,7 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
         private boolean closed;
         private List<MessageEvent> history;
         private BlockingQueue<MessageEvent> readQueue;
-        private String channel;
+        protected String channel;
         private User user;
         private MyPolly myPolly;
         
@@ -93,7 +95,7 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
         @Override
         public void writeLine(String line) {
             this.checkClosed();
-            this.myPolly.irc().sendMessage(this.channel, line);
+            this.myPolly.irc().sendMessage(this.channel, line, this);
         }
 
         
@@ -193,20 +195,22 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
         }
     }
     
-    
-    
+
+   
     
     // Object to synchronize on when closing or creating conversations
     private static Object crossMutex = new Object();
     
     
     private ExecutorService convExecutor;
+    private ScheduledExecutorService timeoutSched;
     private List<Conversation> cache;
     
     
     
     public ConversationManagerImpl() {
         this.convExecutor = Executors.newCachedThreadPool(new ConvThreadFactory());
+        this.timeoutSched = Executors.newScheduledThreadPool(5);
         this.cache = Collections.synchronizedList(new LinkedList<Conversation>());
     }
     
@@ -229,7 +233,25 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
                     " on channel " + channel);
             return c;
         }
-
+    }
+    
+    
+    
+    public Conversation create(MyPolly myPolly, User user, String channel, int timeout) 
+            throws ConversationException {
+        final Conversation c = this.create(myPolly, user, channel);
+        
+        this.timeoutSched.schedule(new Runnable() {
+            @Override
+            public void run() {
+                if (!c.isDisposed()) {
+                    logger.info("Auto closing converstation");
+                    c.close();
+                }
+            }
+        }, timeout, TimeUnit.SECONDS);
+        
+        return c;
     }
     
     
@@ -241,6 +263,7 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
                 conv.dispose();
             }
             this.convExecutor.shutdown();
+            this.timeoutSched.shutdown();
         } catch (Exception e) {
             throw new DisposingException(e);
         }
