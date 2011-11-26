@@ -53,9 +53,10 @@ public enum TokenType {
     OPENCURLBR("{"), 
     CLOSEDCURLBR("}"), 
     INDEX("Indizierung"),
-    KEYWORD("Schlüsselwort"),
+    KEYWORD("Schlï¿½sselwort"),
     UNKNOWN("Unbekanntes Zeichen"),
     COMMAND("Befehl"),
+    POLLY("Polly"),
     EOS("Ende der Eingabe");
     
     private String string;

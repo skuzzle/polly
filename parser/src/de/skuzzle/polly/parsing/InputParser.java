@@ -145,7 +145,7 @@ public class InputParser extends AbstractParser<InputScanner> {
     
     
     
-    private void allowWhiteSpace() throws ParseException {
+    protected void allowWhiteSpace() throws ParseException {
         if (this.scanner.lookAhead().matches(TokenType.SEPERATOR)) {
             this.scanner.consume();
         }
@@ -153,14 +153,14 @@ public class InputParser extends AbstractParser<InputScanner> {
     
     
     
-    private void enterExpression() {
+    protected void enterExpression() {
         ++this.openExpressions;
         this.scanner.setSkipWhiteSpaces(true);
     }
     
     
     
-    private void leaveExpression() {
+    protected void leaveExpression() {
         --this.openExpressions;
         if (this.openExpressions == 0) {
             this.scanner.setSkipWhiteSpaces(false);
@@ -203,7 +203,7 @@ public class InputParser extends AbstractParser<InputScanner> {
     
     
     
-    private void parse_signature(List<Expression> expressions) throws ParseException {
+    protected void parse_signature(List<Expression> expressions) throws ParseException {
         expressions.add(this.parse_assignment());
         
         while (this.scanner.lookAhead().matches(TokenType.SEPERATOR)) {
@@ -214,7 +214,7 @@ public class InputParser extends AbstractParser<InputScanner> {
     
     
     
-    private Expression parse_assignment() throws ParseException {
+    protected Expression parse_assignment() throws ParseException {
         Expression expression = this.parse_relational();
         
         Token la = this.scanner.lookAhead();
@@ -230,7 +230,7 @@ public class InputParser extends AbstractParser<InputScanner> {
     
     
     
-    private Expression parse_definition() throws ParseException {
+    protected Expression parse_definition() throws ParseException {
         Token id = this.expect(TokenType.IDENTIFIER);
         
         Token la = this.scanner.lookAhead();
@@ -248,7 +248,7 @@ public class InputParser extends AbstractParser<InputScanner> {
 
     
     
-    private void parse_func_definition(List<Parameter> parameters) throws ParseException {
+    protected void parse_func_definition(List<Parameter> parameters) throws ParseException {
         Expression type = this.parse_type_definition();
         this.expect(TokenType.SEPERATOR);
         Token paramName = this.expect(TokenType.IDENTIFIER);
@@ -270,7 +270,7 @@ public class InputParser extends AbstractParser<InputScanner> {
     
     
     
-    private Expression parse_type_definition() throws ParseException {
+    protected Expression parse_type_definition() throws ParseException {
         Token typeId = this.expect(TokenType.IDENTIFIER);
         
         Token la = this.scanner.lookAhead();
@@ -290,7 +290,7 @@ public class InputParser extends AbstractParser<InputScanner> {
     
     
     
-    private Expression parse_relational() throws ParseException {
+    protected Expression parse_relational() throws ParseException {
         Expression expression = this.parse_conjunction();
         
         Token la = this.scanner.lookAhead();
@@ -304,7 +304,7 @@ public class InputParser extends AbstractParser<InputScanner> {
     
     
     
-    private Expression parse_conjunction() throws ParseException {
+    protected Expression parse_conjunction() throws ParseException {
         Expression expression = parse_disjunction();
         
         Token la = this.scanner.lookAhead();
@@ -320,7 +320,7 @@ public class InputParser extends AbstractParser<InputScanner> {
     
     
     
-    private Expression parse_disjunction() throws ParseException {
+    protected Expression parse_disjunction() throws ParseException {
         Expression expression = parse_expression();
         
         Token la = this.scanner.lookAhead();
@@ -336,7 +336,7 @@ public class InputParser extends AbstractParser<InputScanner> {
     
     
     
-    private Expression parse_expression() throws ParseException {
+    protected Expression parse_expression() throws ParseException {
         Expression expression = this.parse_term();
         
         Token la = this.scanner.lookAhead();
@@ -352,7 +352,7 @@ public class InputParser extends AbstractParser<InputScanner> {
     
     
     
-    private Expression parse_term() throws ParseException {
+    protected Expression parse_term() throws ParseException {
         Expression expression = this.parse_factor();
         
         Token la = this.scanner.lookAhead();
@@ -368,7 +368,7 @@ public class InputParser extends AbstractParser<InputScanner> {
     
     
     
-    private Expression parse_factor() throws ParseException {
+    protected Expression parse_factor() throws ParseException {
         Expression expression = this.parse_postfix();
         
         Token la = this.scanner.lookAhead();
@@ -383,7 +383,7 @@ public class InputParser extends AbstractParser<InputScanner> {
     
     
     
-    private Expression parse_postfix() throws ParseException {
+    protected Expression parse_postfix() throws ParseException {
         Expression expression = this.parse_dotdot();
         
         Token la = this.scanner.lookAhead();
@@ -411,7 +411,7 @@ public class InputParser extends AbstractParser<InputScanner> {
     
     
     
-    private Expression parse_dotdot() throws ParseException {
+    protected Expression parse_dotdot() throws ParseException {
         Expression expression = this.parse_access();
         
         Token la = this.scanner.lookAhead();
@@ -434,7 +434,7 @@ public class InputParser extends AbstractParser<InputScanner> {
     
     
     
-    private Expression parse_access() throws ParseException {
+    protected Expression parse_access() throws ParseException {
         Expression e = this.parse_literal();
         Token la = this.scanner.lookAhead();
         
@@ -448,7 +448,7 @@ public class InputParser extends AbstractParser<InputScanner> {
 
     
     
-    private Expression parse_literal() throws ParseException {
+    protected Expression parse_literal() throws ParseException {
         Token la = this.scanner.lookAhead();
         Expression expression = null;
         
@@ -593,7 +593,7 @@ public class InputParser extends AbstractParser<InputScanner> {
     
        
     
-    private void parse_expression_list(List<Expression> result, 
+    protected void parse_expression_list(List<Expression> result, 
                 TokenType listEnd) throws ParseException {
         Token la = this.scanner.lookAhead();
         

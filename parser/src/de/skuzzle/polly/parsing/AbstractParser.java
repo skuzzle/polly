@@ -1,5 +1,7 @@
 package de.skuzzle.polly.parsing;
 
+import java.io.UnsupportedEncodingException;
+
 import de.skuzzle.polly.parsing.tree.TreeElement;
 
 
@@ -7,6 +9,35 @@ public abstract class AbstractParser<T extends AbstractTokenStream> {
 
     
     protected T scanner;
+    
+    
+    
+    public abstract TreeElement parse(String input, String encoding) 
+            throws ParseException, UnsupportedEncodingException;
+    
+    public TreeElement parse(String input) throws ParseException {
+        try {
+            return this.parse(input, "ISO-8859-1");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    
+    public TreeElement tryParse(String input) {
+        try {
+            return this.tryParse(input, "ISO-8859-1");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    public abstract TreeElement tryParse(String input, String encoding) 
+            throws ParseException, UnsupportedEncodingException;
     
     
     
