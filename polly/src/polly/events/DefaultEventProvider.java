@@ -67,8 +67,8 @@ public class DefaultEventProvider extends AbstractDisposable implements EventPro
 
 
     @Override
-    public void dispatchEvent(Runnable r) {
-        this.dispatchPool.execute(r);
+    public void dispatchEvent(Dispatchable<?, ?> d) {
+        this.dispatchPool.execute(d);
     }
     
     

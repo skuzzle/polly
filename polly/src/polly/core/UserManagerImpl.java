@@ -12,6 +12,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import polly.data.Attribute;
+import polly.events.Dispatchable;
 import polly.events.EventProvider;
 import polly.util.CaseInsensitiveStringKeyMap;
 
@@ -521,28 +522,32 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     
     protected void fireUserSignedOn(final UserEvent e) {
-        final List<UserListener> listeners = this.eventProvider.getListeners(UserListener.class);
-        this.eventProvider.dispatchEvent(new Runnable() {
-            @Override
-            public void run() {
-                for (UserListener listener : listeners) {
-                    listener.userSignedOn(e);
+        final List<UserListener> listeners = 
+            this.eventProvider.getListeners(UserListener.class);
+        
+        Dispatchable<UserListener, UserEvent> d = 
+            new Dispatchable<UserListener, UserEvent>(listeners, e) {
+                @Override
+                public void dispatch(UserListener listener, UserEvent event) {
+                    listener.userSignedOn(event);
                 }
-            }
-        });
+        };
+        this.eventProvider.dispatchEvent(d);
     }
     
     
     
     protected void fireUserSignedOff(final UserEvent e) {
-        final List<UserListener> listeners = this.eventProvider.getListeners(UserListener.class);
-        this.eventProvider.dispatchEvent(new Runnable() {
-            @Override
-            public void run() {
-                for (UserListener listener : listeners) {
-                    listener.userSignedOff(e);
+        final List<UserListener> listeners = 
+            this.eventProvider.getListeners(UserListener.class);
+        
+        Dispatchable<UserListener, UserEvent> d = 
+            new Dispatchable<UserListener, UserEvent>(listeners, e) {
+                @Override
+                public void dispatch(UserListener listener, UserEvent event) {
+                    listener.userSignedOff(event);
                 }
-            }
-        });
+        };
+        this.eventProvider.dispatchEvent(d);
     }
 }

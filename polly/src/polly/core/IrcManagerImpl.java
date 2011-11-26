@@ -37,6 +37,7 @@ import de.skuzzle.polly.sdk.eventlistener.UserSpottedListener;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 
 import polly.PollyConfiguration;
+import polly.events.Dispatchable;
 import polly.events.EventProvider;
 import polly.telnet.TelnetConnection;
 import polly.util.WrapIterator;
@@ -664,15 +665,14 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         final List<NickChangeListener> listeners = 
             this.eventProvider.getListeners(NickChangeListener.class);
     
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                for (NickChangeListener listener : listeners) {
-                    listener.nickChanged(e);
+        Dispatchable<NickChangeListener, NickChangeEvent> d = 
+            new Dispatchable<NickChangeListener, NickChangeEvent>(listeners, e) {
+                @Override
+                public void dispatch(NickChangeListener listener, NickChangeEvent event) {
+                    listener.nickChanged(event);
                 }
-            }
         };
-        this.eventProvider.dispatchEvent(r);
+        this.eventProvider.dispatchEvent(d);
     }
     
     
@@ -680,16 +680,15 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     protected void fireJoin(final ChannelEvent e) {
         final List<JoinPartListener> listeners = 
             this.eventProvider.getListeners(JoinPartListener.class);
-    
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                for (JoinPartListener listener : listeners) {
-                    listener.channelJoined(e);
+        
+        Dispatchable<JoinPartListener, ChannelEvent> d = 
+            new Dispatchable<JoinPartListener, ChannelEvent>(listeners, e) {
+                @Override
+                public void dispatch(JoinPartListener listener, ChannelEvent event) {
+                    listener.channelJoined(event);
                 }
-            }
         };
-        this.eventProvider.dispatchEvent(r);
+        this.eventProvider.dispatchEvent(d);
     }
     
     
@@ -698,15 +697,14 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         final List<JoinPartListener> listeners = 
             this.eventProvider.getListeners(JoinPartListener.class);
     
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                for (JoinPartListener listener : listeners) {
-                    listener.channelParted(e);
+        Dispatchable<JoinPartListener, ChannelEvent> d = 
+            new Dispatchable<JoinPartListener, ChannelEvent>(listeners, e) {
+                @Override
+                public void dispatch(JoinPartListener listener, ChannelEvent event) {
+                    listener.channelParted(event);
                 }
-            }
         };
-        this.eventProvider.dispatchEvent(r);
+        this.eventProvider.dispatchEvent(d);
     }
     
     
@@ -715,15 +713,14 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         final List<QuitListener> listeners = 
             this.eventProvider.getListeners(QuitListener.class);
         
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                for (QuitListener listener : listeners) {
-                    listener.quited(e);
+        Dispatchable<QuitListener, QuitEvent> d = 
+            new Dispatchable<QuitListener, QuitEvent>(listeners, e) {
+                @Override
+                public void dispatch(QuitListener listener, QuitEvent event) {
+                    listener.quited(event);
                 }
-            }
         };
-        this.eventProvider.dispatchEvent(r);
+        this.eventProvider.dispatchEvent(d);
     }
     
     
@@ -732,15 +729,14 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         final List<MessageListener> listeners = 
             this.eventProvider.getListeners(MessageListener.class);
 
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                for (MessageListener listener : listeners) {
-                    listener.publicMessage(e);
+        Dispatchable<MessageListener, MessageEvent> d = 
+            new Dispatchable<MessageListener, MessageEvent>(listeners, e) {
+                @Override
+                public void dispatch(MessageListener listener, MessageEvent event) {
+                    listener.publicMessage(event);
                 }
-            }
         };
-        this.eventProvider.dispatchEvent(r);
+        this.eventProvider.dispatchEvent(d);
     }
     
     
@@ -749,15 +745,14 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         final List<MessageListener> listeners = 
             this.eventProvider.getListeners(MessageListener.class);
         
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                for (MessageListener listener : listeners) {
-                    listener.privateMessage(e);
+        Dispatchable<MessageListener, MessageEvent> d = 
+            new Dispatchable<MessageListener, MessageEvent>(listeners, e) {
+                @Override
+                public void dispatch(MessageListener listener, MessageEvent event) {
+                    listener.privateMessage(event);
                 }
-            }
         };
-        this.eventProvider.dispatchEvent(r);
+        this.eventProvider.dispatchEvent(d);
     }
     
     
@@ -766,15 +761,14 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         final List<MessageListener> listeners = 
             this.eventProvider.getListeners(MessageListener.class);
         
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                for (MessageListener listener : listeners) {
-                    listener.actionMessage(e);
+        Dispatchable<MessageListener, MessageEvent> d = 
+            new Dispatchable<MessageListener, MessageEvent>(listeners, e) {
+                @Override
+                public void dispatch(MessageListener listener, MessageEvent event) {
+                    listener.actionMessage(event);
                 }
-            }
         };
-        this.eventProvider.dispatchEvent(r);
+        this.eventProvider.dispatchEvent(d);
     }
     
     
@@ -783,15 +777,14 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         final List<ChannelModeListener> listeners = 
             this.eventProvider.getListeners(ChannelModeListener.class);
         
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                for (ChannelModeListener listener : listeners) {
-                    listener.channelModeChanged(e);
+        Dispatchable<ChannelModeListener, ChannelModeEvent> d = 
+            new Dispatchable<ChannelModeListener, ChannelModeEvent>(listeners, e) {
+                @Override
+                public void dispatch(ChannelModeListener listener, ChannelModeEvent event) {
+                    listener.channelModeChanged(event);
                 }
-            }
         };
-        this.eventProvider.dispatchEvent(r);
+        this.eventProvider.dispatchEvent(d);
     }
     
     
@@ -800,15 +793,14 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         final List<UserSpottedListener> listeners = 
             this.eventProvider.getListeners(UserSpottedListener.class);
         
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                for (UserSpottedListener listener : listeners) {
-                    listener.userSpotted(e);
+        Dispatchable<UserSpottedListener, SpotEvent> d = 
+            new Dispatchable<UserSpottedListener, SpotEvent>(listeners, e) {
+                @Override
+                public void dispatch(UserSpottedListener listener, SpotEvent event) {
+                    listener.userSpotted(event);
                 }
-            }
         };
-        this.eventProvider.dispatchEvent(r);
+        this.eventProvider.dispatchEvent(d);
     }
     
     
@@ -817,15 +809,14 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         final List<UserSpottedListener> listeners = 
             this.eventProvider.getListeners(UserSpottedListener.class);
         
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                for (UserSpottedListener listener : listeners) {
-                    listener.userLost(e);
+        Dispatchable<UserSpottedListener, SpotEvent> d = 
+            new Dispatchable<UserSpottedListener, SpotEvent>(listeners, e) {
+                @Override
+                public void dispatch(UserSpottedListener listener, SpotEvent event) {
+                    listener.userLost(event);
                 }
-            }
         };
-        this.eventProvider.dispatchEvent(r);
+        this.eventProvider.dispatchEvent(d);
     }
 
 

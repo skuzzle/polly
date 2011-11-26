@@ -20,5 +20,5 @@ public interface EventProvider extends Disposable {
 
     public <T extends EventListener> List<T> getListeners(Class<T> listenerClass);
 
-    public void dispatchEvent(Runnable r);
+    public void dispatchEvent(Dispatchable<?, ?> d);
 }
