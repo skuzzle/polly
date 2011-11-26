@@ -83,21 +83,27 @@ public interface Conversation extends Disposable, Closeable {
      * 
      * @return The String the user wrote.
      * @throws IOException If this thread was interrupted while waiting for the incoming
-     *          message.
+     *          message or an invalid cross thread call happened.
+     * @throws InterruptedException If the conversation is closed while waiting for an
+     *          incoming line.
      * @throws IllegalStateException If this Conversation is closed.
      */
-    public abstract String readStringLine() throws IOException;
+    public abstract String readStringLine() throws IOException, InterruptedException;
     
     /**
      * Waits until the user for which this conversation was created wrote a line on the
      * channel for which this conversation was created.
+     * One conersation can only be read from one thread. If you call readLine() from two
+     * different threads, this will cause an IOException.
      * 
      * @return The {@link MessageEvent} of the incoming message.
      * @throws IOException If this thread was interrupted while waiting for the incoming
-     *          message.
+     *          message or an invalid cross thread call happened.
+     * @throws InterruptedException If the conversation is closed while waiting for an
+     *          incoming line.
      * @throws IllegalStateException If this Conversation is closed.
      */
-    public abstract MessageEvent readLine() throws IOException;
+    public abstract MessageEvent readLine() throws IOException, InterruptedException;
     
     
     /**
@@ -116,6 +122,15 @@ public interface Conversation extends Disposable, Closeable {
      * @return A list of {@link MessageEvent}s
      */
     public abstract List<MessageEvent> getHistory();
+    
+    
+    /**
+     * Determines whether this conversation is idle. An idle conversation will be
+     * automatically closed by polly.
+     * 
+     * @return If this conversation is idle.
+     */
+    public abstract boolean isIdle();
     
     
     /**
