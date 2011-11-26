@@ -10,10 +10,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
+
+import polly.util.concurrent.ThreadFactoryBuilder;
 
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.Conversation;
@@ -31,42 +32,44 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
     
     private static Logger logger = Logger.getLogger(
                     ConversationManagerImpl.class.getName());
-    
-    
-    
-    private static class ConvThreadFactory implements ThreadFactory {
 
-        @Override
-        public Thread newThread(Runnable r) {
-            Thread t = new Thread(r, "CONVERSATION");
-            return t;
-        }
-    }
-    
     
     
     private class ConversationImpl extends AbstractDisposable 
                 implements Conversation, MessageListener {
         
-        private boolean closed;
         private List<MessageEvent> history;
         private BlockingQueue<MessageEvent> readQueue;
         protected String channel;
         private User user;
         private MyPolly myPolly;
+        private Thread readThread;
+        private long lastInput;
+        private int idleTimeout;
         
-        public ConversationImpl(MyPolly myPolly, User user, String channel) {
+        public ConversationImpl(MyPolly myPolly, User user, String channel, 
+                int idleTimeout) {
             this.myPolly = myPolly;
             this.user = user;
             this.channel = channel;
             this.readQueue = new LinkedBlockingQueue<MessageEvent>();
             this.history = new ArrayList<MessageEvent>();
+            
+            /*
+             * Important:
+             * Set lastInput before setting idelTimeout. Otherwise it may happen
+             * that the timeout thread checks for idling right before idleTimout
+             * has been set. That would cause #isIdle() to return true although
+             * this conversation hasn't even started!
+             */
+            this.lastInput = System.currentTimeMillis();
+            this.idleTimeout = idleTimeout;
         }
         
         
         
         private void checkClosed() {
-            if (this.closed) {
+            if (this.isDisposed()) {
                 throw new IllegalStateException("ConversationImpl closed");
             }
         }
@@ -74,20 +77,29 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
         
         
         @Override
-        public String readStringLine() throws IOException {
+        public String readStringLine() throws IOException, InterruptedException {
             return this.readLine().getMessage();
         }
 
         
         
         @Override
-        public MessageEvent readLine() throws IOException {
+        public MessageEvent readLine() throws IOException, InterruptedException {
             this.checkClosed();
-            try {
-                return this.readQueue.take();
-            } catch (InterruptedException e) {
-                throw new IOException("Error while waiting for incoming line", e);
+            
+            // HACK: use the history list to synchronize on to save an extra attribute
+            //       to lock on.
+            synchronized (this.history) {
+                if (this.readThread == null) {
+                    this.readThread = Thread.currentThread();
+                } else if (!this.readThread.equals(Thread.currentThread())) {
+                    throw new IOException("invalid cross thread read");
+                }
             }
+            
+            MessageEvent msg = this.readQueue.take();
+            this.lastInput = System.currentTimeMillis();
+            return msg;
         }
 
         
@@ -107,13 +119,20 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
         
         
         
+        public boolean isIdle() {
+            return System.currentTimeMillis() - this.lastInput > this.idleTimeout;
+        }
+        
+        
+        
         private synchronized void onMessage(final MessageEvent e) {
-            assert !this.closed : "Listener should have been removed before closing";
+            assert !this.isDisposed() : "Listener should have been removed before closing";
             if (!e.getChannel().equals(this.channel) || 
                 !e.getUser().getNickName().equals(this.user.getCurrentNickName())) {
                 
                 return;
             }
+            
             this.history.add(e);
             ConversationManagerImpl.this.convExecutor.execute(new Runnable() {
                 @Override
@@ -140,7 +159,7 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
         public void privateMessage(MessageEvent e) {
             this.onMessage(e);
         }
-
+        
         
         
         @Override
@@ -153,7 +172,11 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
             synchronized (crossMutex) {
                 this.myPolly.irc().removeMessageListener(this);
                 ConversationManagerImpl.this.cache.remove(this);
-                this.closed = true;
+                
+                if (this.readThread != null) {
+                    this.readThread.interrupt();
+                }
+                
                 this.history.clear();
                 this.readQueue.clear();
             }
@@ -164,7 +187,9 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
         @Override
         public void close() {
             try {
-                this.dispose();
+                if (!this.isDisposed()) {
+                    this.dispose();
+                }
             } catch (DisposingException e) {
                 logger.error("Error while disposing", e);
             }
@@ -193,6 +218,12 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
                 return false;
             return true;
         }
+        
+        
+        @Override
+        public String toString() {
+            return "CONV " + this.channel + ": " + this.user.getCurrentNickName(); 
+        }
     }
     
 
@@ -209,9 +240,36 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
     
     
     public ConversationManagerImpl() {
-        this.convExecutor = Executors.newCachedThreadPool(new ConvThreadFactory());
-        this.timeoutSched = Executors.newScheduledThreadPool(5);
+        this.convExecutor = Executors.newCachedThreadPool(
+            new ThreadFactoryBuilder("CONVERSATION_%n%"));
+        this.timeoutSched = Executors.newScheduledThreadPool(1, 
+            new ThreadFactoryBuilder("CONVERSATION_TIMEOUT"));
         this.cache = Collections.synchronizedList(new LinkedList<Conversation>());
+        
+        
+        /*
+         * Schedule a Runnable that iterates through all conversations and checks 
+         * whether they are idle. If so, they are closed.
+         */
+        this.timeoutSched.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                // XXX: This is an unsafe check for emptiness. This avoids unneeded
+                //      synchronizations. 
+                if (cache.isEmpty()) {
+                    return;
+                }
+                
+                synchronized (crossMutex) {
+                    for (Conversation conv : cache) {
+                        if (conv.isIdle()) {
+                            logger.warn("Auto closing idling conversation: " + conv);
+                            conv.close();
+                        }
+                    }
+                }
+            }
+        }, 1000, 1000, TimeUnit.MILLISECONDS);
     }
     
     
@@ -220,13 +278,23 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
     public Conversation create(MyPolly myPolly, User user, String channel)
             throws ConversationException {
 
+        return this.create(myPolly, user, channel, 60);
+    }
+    
+    
+    
+    public Conversation create(MyPolly myPolly, User user, String channel, int idleTimeout) 
+            throws ConversationException {
+        
         synchronized (crossMutex) {
-            Conversation key = new ConversationImpl(myPolly, user, channel);
+            Conversation key = new ConversationImpl(myPolly, user, channel, idleTimeout);
+            logger.info("Checking for existing conversation");
             if (this.cache.contains(key)) {
                 throw new ConversationException("Conversation already active");
             }
             
-            ConversationImpl c = new ConversationImpl(myPolly, user, channel);
+            ConversationImpl c = new ConversationImpl(
+                myPolly, user, channel, idleTimeout * 1000); // calc timeout in seconds
             myPolly.irc().addMessageListener(c);
             this.cache.add(c);
             logger.debug("Created new conversation with " + user.getCurrentNickName() + 
@@ -235,26 +303,7 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
         }
     }
     
-    
-    
-    public Conversation create(MyPolly myPolly, User user, String channel, int timeout) 
-            throws ConversationException {
-        final Conversation c = this.create(myPolly, user, channel);
-        
-        this.timeoutSched.schedule(new Runnable() {
-            @Override
-            public void run() {
-                if (!c.isDisposed()) {
-                    logger.info("Auto closing converstation");
-                    c.close();
-                }
-            }
-        }, timeout, TimeUnit.SECONDS);
-        
-        return c;
-    }
-    
-    
+
 
     @Override
     protected void actualDispose() throws DisposingException {
@@ -264,6 +313,7 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
             }
             this.convExecutor.shutdown();
             this.timeoutSched.shutdown();
+            this.cache.clear();
         } catch (Exception e) {
             throw new DisposingException(e);
         }

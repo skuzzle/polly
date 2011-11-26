@@ -178,7 +178,7 @@ public abstract class Command {
 			FormalSignature fs = this.signatures.get(signatureId);
 			return "Signatur: " + fs.toString() + ". " + fs.getHelp();
 		}
-		return "Keine Signatur-Infos für den Befehl '" + this.commandName + 
+		return "Keine Signatur-Infos fï¿½r den Befehl '" + this.commandName + 
 			"' und Signatur " + signatureId;
 	}
 	
@@ -285,12 +285,17 @@ public abstract class Command {
 		    throw new InsufficientRightsException();
 		}
 		
-		boolean runOthers = this.executeOnBoth(executer, channel, signature);
-		
-		if (runOthers && query) {
-			this.executeOnQuery(executer, signature);
-		} else if (runOthers) {
-			this.executeOnChannel(executer, channel, signature);
+		try {
+    		boolean runOthers = this.executeOnBoth(executer, channel, signature);
+    		
+    		if (runOthers && query) {
+    			this.executeOnQuery(executer, signature);
+    		} else if (runOthers) {
+    			this.executeOnChannel(executer, channel, signature);
+    		}
+		} catch (Exception e) {
+		    throw new CommandException("Unerwarteter Fehler beim AusfÃ¼hren: " + 
+		        e.getMessage(), e);
 		}
 	}
 	

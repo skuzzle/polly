@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.Comparator;
+import java.util.SortedSet;
 import java.util.Map.Entry;
+import java.util.TreeSet;
 
 import de.skuzzle.polly.sdk.Disposable;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
@@ -430,7 +433,18 @@ public class PollyConfiguration extends Configuration
     @Override
     public String toString() {
         StringBuilder b = new StringBuilder();
-        for (Entry<Object, Object> entry : this.props.entrySet()) {
+        Comparator<Entry<Object, Object>> c = new Comparator<Entry<Object,Object>>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public int compare(Entry<Object, Object> o1,
+                        Entry<Object, Object> o2) {
+                return ((Comparable<Object>) o1.getKey()).compareTo(o2.getKey());
+            }
+        };
+        
+        SortedSet<Entry<Object, Object>> sorted = new TreeSet<Entry<Object,Object>>(c);
+        sorted.addAll(this.props.entrySet());
+        for (Entry<Object, Object> entry : sorted) {
             b.append(entry.getKey());
             b.append(" = ");
             b.append(entry.getValue());

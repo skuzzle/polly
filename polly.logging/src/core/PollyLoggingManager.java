@@ -2,6 +2,7 @@ package core;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import core.filters.LogFilter;
@@ -133,6 +134,20 @@ public class PollyLoggingManager extends AbstractDisposable {
     public List<LogEntry> postFilter(List<LogEntry> logs, LogFilter filter) {
         List<LogEntry> result = new ArrayList<LogEntry>();
         for (LogEntry log : logs) {
+            if (filter.accept(log)) {
+                result.add(log);
+            }
+        }
+        return result;
+    }
+    
+    
+    
+    public List<LogEntry> postFilter(List<LogEntry> logs, LogFilter filter, int max) {
+        List<LogEntry> result = new ArrayList<LogEntry>(max);
+        Iterator<LogEntry> it = logs.iterator();
+        while (result.size() < max && it.hasNext()) {
+            LogEntry log = it.next();
             if (filter.accept(log)) {
                 result.add(log);
             }

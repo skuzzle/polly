@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 
 import polly.PollyConfiguration;
 import polly.core.IrcManagerImpl;
+import polly.util.concurrent.ThreadFactoryBuilder;
 
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
@@ -48,7 +49,8 @@ public class TelnetServer extends AbstractDisposable implements Runnable {
         this.config = config;
         this.handler = messageHandler;
         this.ircManager = ircManager;
-        this.connectionPool = Executors.newSingleThreadExecutor();
+        this.connectionPool = Executors.newSingleThreadExecutor(
+                new ThreadFactoryBuilder().setName("TELENET_CONNECTION"));
         this.closing = new AtomicBoolean();
         
         ServerSocketFactory factory = ServerSocketFactory.getDefault();
