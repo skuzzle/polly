@@ -540,6 +540,18 @@ public class InputParser extends AbstractParser<InputScanner> {
                 }
 
                 expression = this.parse_relational();
+                /* 
+                 * HACK: EXPERIMENTAL
+                 */
+                la = this.scanner.lookAhead();
+                if (la.getType() == TokenType.COMMA) {
+                    this.scanner.consume();
+                    Expression e2 = this.parse_relational();
+                    this.expect(TokenType.CLOSEDBR);
+                    this.leaveExpression();
+                    return new BinaryExpression(expression, new Token(TokenType.CHOOSE, 
+                        la.getPosition()), e2);
+                }
                 this.expect(TokenType.CLOSEDBR);
                 
                 this.leaveExpression();

@@ -1,5 +1,6 @@
 package de.skuzzle.polly.parsing.tree.operators;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -213,8 +214,39 @@ public class BinaryOperators {
                     stack.push(new NumberLiteral(
                         left.isInteger() >>> right.isInteger(), span));
                     break;
+                case CHOOSE:
+                    int n = left.isInteger();
+                    int k = right.isInteger();
+                    int bin = binomialCoefficient(BigInteger.valueOf(n), 
+                            BigInteger.valueOf(k)).intValue();
+                    stack.push(new NumberLiteral(bin, span));
+                    break;
             }
         }
+        
+        private static BigInteger binomialCoefficient(BigInteger n, BigInteger k){
+            
+            BigInteger n_minus_k=n.subtract(k);
+            if(n_minus_k.compareTo(k)<0){
+                BigInteger temp=k;
+                k=n_minus_k;
+                n_minus_k=temp;
+            }
+            
+            BigInteger numerator=BigInteger.ONE;
+            BigInteger denominator=BigInteger.ONE;
+            
+            for(BigInteger j=BigInteger.ONE; j.compareTo(k)<=0; j=j.add(BigInteger.ONE)){
+                numerator=numerator.multiply(j.add(n_minus_k));
+                denominator=denominator.multiply(j);
+                BigInteger gcd=numerator.gcd(denominator);
+                numerator=numerator.divide(gcd);
+                denominator=denominator.divide(gcd);
+            }
+            
+            return numerator;
+        }
+        
         @Override
         public Object clone()  {
             return new ArithmeticOperator(this.getOperatorType());
