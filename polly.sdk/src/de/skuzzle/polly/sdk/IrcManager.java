@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import de.skuzzle.polly.sdk.eventlistener.ChannelModeListener;
+import de.skuzzle.polly.sdk.eventlistener.ConnectionListener;
 import de.skuzzle.polly.sdk.eventlistener.JoinPartListener;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
 import de.skuzzle.polly.sdk.eventlistener.NickChangeListener;
@@ -404,4 +405,25 @@ public interface IrcManager {
      * @since 0.6.0
 	 */
 	public abstract void removeUserSpottedListener(UserSpottedListener listener);
+	
+	
+	
+	/**
+	 * Adds a {@link ConnectionListener}. It will get notified each time an irc 
+	 * connection is (re)established or lost.
+	 * 
+	 * @param listener The listener to add.
+     * @since 0.6.1
+	 */
+	public abstract void addConnectionListener(ConnectionListener listener);
+	
+	
+	
+	/**
+	 * Removes a {@link ConnectionListener}.
+	 * 
+	 * @param listener The listener to remove.
+	 * @since 0.6.1
+	 */
+	public abstract void removeConnectionListener(ConnectionListener listener);
 }

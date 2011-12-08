@@ -7,15 +7,17 @@ public class BotConnectionSettings {
     private int port;
     private String identity;
     private String[] channels;
+    private String modes;
     
 
     public BotConnectionSettings(String nickName, String hostName, 
-            int port, String identity, String[] channels) {
+            int port, String identity, String[] channels, String modes) {
         this.nickName = nickName;
         this.hostName = hostName;
         this.port = port;
         this.identity = identity;
         this.channels = channels;
+        this.modes = modes;
     }
     
     
@@ -45,5 +47,10 @@ public class BotConnectionSettings {
     
     public String[] getChannels() {
         return this.channels;
+    }
+    
+    
+    public String getModes() {
+        return this.modes;
     }
 }

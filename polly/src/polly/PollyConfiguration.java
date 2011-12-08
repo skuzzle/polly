@@ -40,6 +40,7 @@ public class PollyConfiguration extends Configuration
 	private String declarationCache;
 	private String dateFormatString;
 	private String numberFormatString;
+	private String ircModes;
 	private int eventThreads;
 	private int executionThreads;
 	private String encodingName;
@@ -97,6 +98,7 @@ public class PollyConfiguration extends Configuration
         this.updateUrl = this.props.getProperty(UPDATE_URL, "");
         this.installerUpdateUrl = this.props.getProperty(INSTALLER_UPDATE_URL, "");
         this.autoUpdate = this.parseBoolean(this.props.getProperty(AUTO_UPDATE, "false"));
+        this.ircModes = this.props.getProperty(IRC_MODES, "+B");
         
         try {
             this.encoding = Charset.forName(this.encodingName);
@@ -239,6 +241,13 @@ public class PollyConfiguration extends Configuration
     
     public boolean getIrcLogging() {
         return this.ircLogging;
+    }
+    
+    
+    
+    
+    public String getIrcModes() {
+        return this.ircModes;
     }
     
     

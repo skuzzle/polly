@@ -237,6 +237,12 @@ public interface Configuration {
      */
     public final static String AUTO_LOGIN = "autoLogin";
     
+    /**
+     * Sets the irc modes to set after connecting.
+     * @since 0.6.1
+     */
+    public final static String IRC_MODES = "ircModes";
+    
     
     
 	/**

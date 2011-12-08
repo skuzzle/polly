@@ -394,7 +394,8 @@ public class Polly {
                 config.getServer(), 
                 config.getPort(), 
                 config.getIdent(),
-                config.getChannels());
+                config.getChannels(),
+                config.getIrcModes());
         
         try {
             ircManager.connect(settings);

@@ -24,6 +24,8 @@ import de.skuzzle.polly.sdk.IrcManager;
 import de.skuzzle.polly.sdk.eventlistener.ChannelEvent;
 import de.skuzzle.polly.sdk.eventlistener.ChannelModeEvent;
 import de.skuzzle.polly.sdk.eventlistener.ChannelModeListener;
+import de.skuzzle.polly.sdk.eventlistener.ConnectionEvent;
+import de.skuzzle.polly.sdk.eventlistener.ConnectionListener;
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
 import de.skuzzle.polly.sdk.eventlistener.JoinPartListener;
 import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
@@ -313,7 +315,9 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         this.bot.identify(e.getIdentity());
         this.joinChannels(e.getChannels());
         this.recent = e;
-        this.sendRawCommand("MODE +B " + e.getNickName());
+        this.sendRawCommand("MODE " + e.getModes() + " " + e.getNickName());
+        
+        this.fireConnectionEstablished(new ConnectionEvent(this));
     }
 	
 	
@@ -553,6 +557,8 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     
     
     public void retry() {
+        this.fireConnectionLost(new ConnectionEvent(this, disconnect));
+        
         if (this.disconnect) {
             return;
         }
@@ -660,6 +666,17 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         this.eventProvider.removeListener(UserSpottedListener.class, listener);
     }
     
+    
+    @Override
+    public void addConnectionListener(ConnectionListener listener) {
+        this.eventProvider.addListener(ConnectionListener.class, listener);
+    }
+    
+    
+    @Override
+    public void removeConnectionListener(ConnectionListener listener) {
+        this.eventProvider.removeListener(ConnectionListener.class, listener);
+    }
    
     
     protected void fireNickChange(final NickChangeEvent e) {
@@ -819,7 +836,38 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         };
         this.eventProvider.dispatchEvent(d);
     }
-
+    
+    
+    
+    protected void fireConnectionEstablished(ConnectionEvent e) {
+        final List<ConnectionListener> listeners = 
+            this.eventProvider.getListeners(ConnectionListener.class);
+        
+        Dispatchable<ConnectionListener, ConnectionEvent> d = 
+            new Dispatchable<ConnectionListener, ConnectionEvent>(listeners, e) {
+                @Override
+                public void dispatch(ConnectionListener listener, ConnectionEvent event) {
+                    listener.ircConnectionEstablished(event);
+                }
+        };
+        this.eventProvider.dispatchEvent(d);
+    }
+    
+    
+    
+    protected void fireConnectionLost(ConnectionEvent e) {
+        final List<ConnectionListener> listeners = 
+            this.eventProvider.getListeners(ConnectionListener.class);
+        
+        Dispatchable<ConnectionListener, ConnectionEvent> d = 
+            new Dispatchable<ConnectionListener, ConnectionEvent>(listeners, e) {
+                @Override
+                public void dispatch(ConnectionListener listener, ConnectionEvent event) {
+                    listener.ircConnectionLost(event);
+                }
+        };
+        this.eventProvider.dispatchEvent(d);
+    }
 
 
     @Override
