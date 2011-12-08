@@ -60,6 +60,14 @@ import java.util.TreeSet;
  *
  */
 public class InputScanner extends AbstractTokenStream {
+    
+    /**
+     * The maximum radix value for radix'ed integers. Higher values will cause a
+     * {@link ParseException} to be thrown when hitting on.
+     * 
+     * Note: The minimum value is always 2 (by nature)
+     */
+    public final static int MAX_RADIX = 35;
 
     protected Map<String, TokenType> keywords;
     private boolean skipWhiteSpaces;
@@ -129,6 +137,11 @@ public class InputScanner extends AbstractTokenStream {
                     this.pushBack(next);
                     return this.readIdentifier();
                     
+                } else if (next == '0') {
+                    /*
+                     * '0' cannot start a number, but starts the 0x: Operator
+                     */
+                    return this.readRadixOperator();
                 } else if (Character.isDigit(next)) {
                     this.pushBack(next);
                     return this.readNumber();
@@ -325,9 +338,61 @@ public class InputScanner extends AbstractTokenStream {
     
     
     /**
+     * Reads the 'radix' operator which changes the representation of a number into
+     * a number system with the given radix.
+     * 
+     * @return A {@link Token} which contains the radix in {@link Token#getLongValue()}.
+     * @throws ParseException If a lexical error appears.
+     */
+    private Token readRadixOperator() throws ParseException {
+        int tokenStart = this.getStreamIndex() - 1; // include the skipped '0'
+        int state = 0;
+        int radix = 0;
+        
+        while (!this.eos) {
+            if (state == 0) {
+                int next = this.readChar();
+                
+                if (next != 'x') {
+                    this.parseException("invalid 0x: Operator", tokenStart); 
+                } else {
+                    state = 1;
+                }
+            } else if (state == 1) {
+                int next = this.readChar();
+                
+                if (Character.isDigit(next)) {
+                    this.pushBack(next);
+                    state = 2;
+                } else {
+                    this.parseException("missing radix specification for 0x: Operator", 
+                        tokenStart);
+                }
+            } else if (state == 2) {
+                int next = this.readChar();
+                
+                if (Character.isDigit(next)) {
+                    radix = radix * 10 + Character.digit(next, 10);
+                } else if (next == ':') {
+                    
+                    if (radix > Character.MAX_RADIX) {
+                        this.parseException("Invalid Radix: " + radix, tokenStart);
+                    }
+                    
+                    return new Token(TokenType.RADIX, this.spanFrom(tokenStart), radix);
+                }
+            }
+        }
+        
+        this.parseException("invalid 0x: operator", tokenStart);
+        return null;
+    }
+    
+    
+    
+    /**
      * Reads a String-literal. A String-literal starts with a " and ends at the next
-     * ". In between there may occur any other char. There is no way to escape quotes
-     * within a string.
+     * ". In between there may occur any other char. 
      * 
      * @return A new String Token.
      * @throws ParseException If no closing quotes could be found.
@@ -359,7 +424,7 @@ public class InputScanner extends AbstractTokenStream {
                             lexem.toString());
                 } else if (next == -1) {
                     // HACK: to avoid errors if closing quotes are missing
-                    // This is subject to ISSUE: 0000022
+                    //       This is subject to ISSUE: 0000022
                     break;
                 } else {
                     lexem.appendCodePoint(next);
@@ -562,7 +627,8 @@ public class InputScanner extends AbstractTokenStream {
     private Token readNumber() throws ParseException {
         int tokenStart = this.getStreamIndex();
         int state = 0;
-        int firstPart = 0;  // first part of a time or a date
+        int firstPart = 0;  // first part of a time or a date. Also used as radix when
+                            // reading a radixed integer literal
         int secondPart = 0; // second part of a date (months)
         int thirdPart = 0;  // year-part of a date
         int tmp = 0;        // first part of a time, if read after a date
@@ -572,13 +638,15 @@ public class InputScanner extends AbstractTokenStream {
         double exp = 0.0;
         double exp_sign = 1.0;
 
+        
         while (!this.eos) {
             if (state == 0) {
                 int next = this.readChar();
-
                 if (Character.isDigit(next)) {
                     value = value * 10 + Character.digit(next, 10);
                     firstPart = firstPart * 10 + Character.digit(next, 10);
+                } else if (next == '#') {
+                    return this.readRadixedInteger(tokenStart, firstPart);
                 } else if (InputScanner.isTimeLiteralChar(next)) {
                     this.pushBack(next);
                     return this.readTimeSpan(firstPart, tokenStart);
@@ -861,6 +929,58 @@ public class InputScanner extends AbstractTokenStream {
         
         this.parseException("Ungültiges DateTime-Literal", tokenStart);
         return null;
+    }
+    
+    
+    
+    private Token readRadixedInteger(int tokenStart, int radix) throws ParseException {
+        int value = 0;
+        int state = 0;
+        
+        if (radix > Character.MAX_RADIX) {
+            this.parseException("Invalid Radix: " + radix, tokenStart);
+        }
+        
+        while (!this.eos) {
+            if (state == 0) {
+                int next = this.readChar();
+                
+                if (InputScanner.isDigit(next, radix)) {
+                    this.pushBack(next);
+                    state = 1;
+                } else {
+                    this.parseException("Invalid Radix'ed Integer", tokenStart);
+                }
+            } else if (state == 1) {
+                int next = this.readChar();
+                
+                if (InputScanner.isDigit(next, radix)) {
+                    value = value * radix + Character.digit(next, radix);
+                } else {
+                    this.pushBack(next);
+                    return new Token(TokenType.NUMBER, this.spanFrom(tokenStart), 
+                        (double) value);
+                }
+            }
+        }
+        
+        this.parseException("Invalid Radix'ed Integer", tokenStart);
+        return null;
+    }
+    
+    
+    
+    /**
+     * Determines whether the char c is a valid symbol for a number literal with
+     * the given radix. E.g. for radix = 16, this method would return <code>true</code>
+     * if c was eiter of <code>0123456789ABCDEFabcdef</code>.
+     *  
+     * @param c The character to test.
+     * @param radix The radix.
+     * @return <code>true</code> iff the char is a valid symbol for the given radix.  
+     */
+    protected static boolean isDigit(int c, int radix) {        
+        return Character.digit(c, radix) != -1;
     }
     
     

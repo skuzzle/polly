@@ -221,6 +221,10 @@ public class BinaryOperators {
                             BigInteger.valueOf(k)).intValue();
                     stack.push(new NumberLiteral(bin, span));
                     break;
+                case RADIX:
+                    right.setRadix(left.isInteger());
+                    stack.push(right);
+                    break;
             }
         }
         

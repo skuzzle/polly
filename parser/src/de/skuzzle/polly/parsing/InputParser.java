@@ -40,7 +40,7 @@ import de.skuzzle.polly.parsing.tree.VarAccessExpression;
  * 
  * assignment      -> relation ('->' definition)?
  * definition      -> identifier ( '(' func_definition ')' )
- * func_def        -> type_def \t identifier (',' type_def \t identifier)*
+ * func_def        -> ( type_def \t identifier (',' type_def \t identifier)* ) | e
  * type_def        -> identifier ('<' identifier '>')?
  * 
  * relation        -> conjunction (relational_op conjunction)?
@@ -249,6 +249,14 @@ public class InputParser extends AbstractParser<InputScanner> {
     
     
     protected void parse_func_definition(List<Parameter> parameters) throws ParseException {
+        /*
+         * If the next token is a closing brace, return. So we have functions with no
+         * parameters
+         */
+        if (this.scanner.lookAhead().getType() == TokenType.CLOSEDBR) {
+            return;
+        }
+        
         Expression type = this.parse_type_definition();
         this.expect(TokenType.SEPERATOR);
         Token paramName = this.expect(TokenType.IDENTIFIER);
@@ -480,7 +488,13 @@ public class InputParser extends AbstractParser<InputScanner> {
                     /* fixed ISSUE: 0000003 with VarAccessExpression */
                     return new VarAccessExpression(id, id.getPosition());
                 }
-                
+            case RADIX:
+                this.scanner.consume();
+                return new BinaryExpression(
+                    new NumberLiteral(la.getLongValue(), la.getPosition()), 
+                    la, 
+                    this.parse_literal());
+
             case CHANNEL:
                 this.scanner.consume();
                 return new ChannelLiteral(la);

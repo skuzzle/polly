@@ -17,7 +17,7 @@ import de.skuzzle.polly.parsing.Type;
 public class NumberLiteral extends Literal {
 
     private static final long serialVersionUID = 1L;
-    
+    private int radix = 10;
     
     public NumberLiteral(Token token) {
         super(token, Type.NUMBER);
@@ -41,6 +41,17 @@ public class NumberLiteral extends Literal {
     
     
     
+    public int getRadix() {
+        return this.radix;
+    }
+    
+    
+    public void setRadix(int radix) {
+        this.radix = radix;
+    }
+    
+    
+    
     @Override
     public Literal castTo(Type target) throws ExecutionException {
         if (target.check(Type.STRING)) {
@@ -54,6 +65,12 @@ public class NumberLiteral extends Literal {
     }
     
     
+    private boolean isIntegerHelper() {
+        int val = (int) this.getValue();
+        return (double)val == this.getValue();
+    }
+    
+    
     
     public int isInteger() throws ExecutionException {
         return this.isInteger(this.getPosition());
@@ -63,7 +80,7 @@ public class NumberLiteral extends Literal {
     
     public int isInteger(Position pos) throws ExecutionException {
         int val = (int) this.getValue();
-        if (!((double)val == this.getValue())) {
+        if (!this.isIntegerHelper()) {
             throw new ExecutionException("'" + this.getValue() + "' ist keine Ganzzahl", 
                     pos);
         }
@@ -103,7 +120,10 @@ public class NumberLiteral extends Literal {
     
     
     @Override
-    public java.lang.String toString() {
+    public String toString() {
+        if (this.isIntegerHelper()) {
+            return Integer.toString((int)this.getValue(), this.radix);
+        }
         DecimalFormat nf = (DecimalFormat) DecimalFormat.getInstance(Locale.ENGLISH);
         nf.applyPattern("0.####");
         return nf.format(this.getValue());
