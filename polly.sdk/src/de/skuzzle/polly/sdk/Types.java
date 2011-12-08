@@ -29,20 +29,31 @@ public class Types {
 	 */
 	public static class NumberType extends Types {
 		private double value;
+		private int radix;
 		
+        /**
+         * Creates a new Number-type with the given value and default radix = 10.
+         * @param value The value of this type.
+         */
+        public NumberType(double value) {
+            this(value, 10);
+        }
 		/**
-		 * Creates a new Number-type with the given value.
+		 * Creates a new Number-type with the given value and radix.
 		 * @param value The value of this type.
+		 * @param radix The radix of the value.
+		 * @since 0.6.1
 		 */
-		public NumberType(double value) {
+		public NumberType(double value, int radix) {
 			this.value = value;
+			this.radix = radix;
 		}
 		/**
 		 * Creates a new Number-type with a default value. This may be used for
 		 * formal signature parameters.
 		 */
 		public NumberType() {
-			this(0.0);
+			this(0.0, 10);
 		}
 		
 		
@@ -53,14 +64,28 @@ public class Types {
 		public double getValue() {
 			return this.value;
 		}
+		
+		
+		/**
+		 * Determines whether this is an integer number.
+		 * @return <code>true</code> if this number is integer.
+		 */
+		public boolean isInteger() {
+	        int val = (int) this.getValue();
+	        return (double)val == this.getValue();
+		}
 	
 		
 		
 		/**
-		 * @return Returns this values String representation.
+		 * @return Returns this values String representation. If this is an integer 
+		 *            number, the String is formatted in this numbers radix.
 		 */
 		@Override
 		public String valueString(FormatManager formatter) {
+		    if (this.isInteger()) {
+		        return Integer.toString((int) this.getValue(), this.radix);
+		    }
 		    return formatter.formatNumber(this.value);
 		}
 		

@@ -159,7 +159,7 @@ public class TypeMapper {
 			return new Types.DateType(dt.getValue());
 		} else if (literal instanceof NumberLiteral) {
 			NumberLiteral bl = (NumberLiteral) literal;
-			return new Types.NumberType(bl.getValue());
+			return new Types.NumberType(bl.getValue(), bl.getRadix());
 		} else if (literal instanceof StringLiteral) {
 			StringLiteral bl = (StringLiteral) literal;
 			return new Types.StringType(bl.getValue());
