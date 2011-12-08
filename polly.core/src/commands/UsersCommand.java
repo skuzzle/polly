@@ -10,6 +10,7 @@ import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
+import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
@@ -24,6 +25,8 @@ public class UsersCommand extends Command {
         this.createSignature("Listet alle registrierten Benutzer auf, deren Name auf das angegebene Pattern passt", new Types.StringType());
         this.createSignature("Listet alle registrierten Benutzer auf, deren Name auf " +
         		"das angegebene Pattern passt", new Types.StringType(), new Types.BooleanType());
+        this.setRegisteredOnly();
+        this.setUserLevel(UserManager.ADMIN);
     }
 
     
@@ -52,8 +55,9 @@ public class UsersCommand extends Command {
             User current = it.next();
             
             Matcher m1 = p.matcher(current.getName().toLowerCase());
-            String cNick = current.getCurrentNickName().toLowerCase();
-            Matcher m2 = p.matcher(cNick == null ? "" : cNick);
+            String cNick = current.getCurrentNickName();
+            cNick = cNick == null ? "" : cNick.toLowerCase();
+            Matcher m2 = p.matcher(cNick);
             
             if (m1.matches() || m2.matches()) {
                 if (loggedInOnly && !this.getMyPolly().users().isSignedOn(current)) {
