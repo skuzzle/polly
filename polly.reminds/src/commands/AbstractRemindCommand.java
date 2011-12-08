@@ -21,12 +21,13 @@ public class AbstractRemindCommand extends Command {
         protected String formatRemind(RemindEntity remind, FormatManager formatter) {
             // ISSUE: 0000032, fixed
             return "Erinnerung für " + remind.getForUser() + " gespeichert. (Fällig: " + 
-                formatter.formatDate(remind.getDueDate()) + ")";
+                formatter.formatDate(remind.getDueDate()) + ", Id: " + remind.getId() + ")";
         }
         
         @Override
         protected String formatMessage(RemindEntity remind, FormatManager formatter) {
-            return "Nachricht für " + remind.getForUser() + " hinterlassen.";
+            return "Nachricht für " + remind.getForUser() + " hinterlassen. (Id: " + 
+                remind.getId() + ")";
         }
     };
     

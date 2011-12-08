@@ -32,7 +32,8 @@ public class PatternRemindFormatter extends RemindFormatter {
      * %r = receiver
      * %dd = duedate
      * %ld = leavedate
-     * *c = channel
+     * %c = channel
+     * %id = id
      */
     
     private String escape(String other) {
@@ -66,6 +67,7 @@ public class PatternRemindFormatter extends RemindFormatter {
         tmp = tmp.replaceAll("%dd%", formatter.formatDate(remind.getDueDate()));
         tmp = tmp.replaceAll("%ld%", formatter.formatDate(remind.getLeaveDate()));
         tmp = tmp.replaceAll("%c%", this.escape(remind.getOnChannel()));
+        tmp = tmp.replaceAll("%id%", "" + remind.getId());
         return tmp;
     }
 }
