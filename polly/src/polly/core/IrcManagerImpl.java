@@ -315,7 +315,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         this.bot.identify(e.getIdentity());
         this.joinChannels(e.getChannels());
         this.recent = e;
-        this.sendRawCommand("MODE " + e.getModes() + " " + e.getNickName());
+        this.sendRawCommand("MODE " + e.getNickName() + " " + e.getModes());
         
         this.fireConnectionEstablished(new ConnectionEvent(this));
     }

@@ -50,6 +50,7 @@ import polly.core.ShutdownManagerImpl;
 import polly.core.UserManagerImpl;
 import polly.data.Attribute;
 import polly.data.User;
+import polly.eventhandler.IrcConnectionLostListener;
 import polly.eventhandler.IrcLoggingHandler;
 import polly.eventhandler.AutoLogonLogoffHandler;
 import polly.eventhandler.MessageHandler;
@@ -381,6 +382,7 @@ public class Polly {
         ircManager.addMessageListener(handler);
         
         ircManager.addNickChangeListener(new TraceNickChangeHandler(userManager));
+        ircManager.addConnectionListener(new IrcConnectionLostListener(userManager));
         
         AutoLogonLogoffHandler isGoneHandler = new AutoLogonLogoffHandler(
                 ircManager, userManager, config);

@@ -2,6 +2,7 @@ package polly.core;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -391,6 +392,17 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
         this.onlineCache.remove(user.getNickName());
 
         this.fireUserSignedOff(e);
+    }
+    
+    
+    
+    public synchronized void logoffAll() {
+        Collection<User> online = this.onlineCache.values();
+        
+        for (User user : online) {
+            IrcUser tmp = new IrcUser(user.getCurrentNickName(), "", "");
+            this.logoff(tmp, true);
+        }
     }
     
 
