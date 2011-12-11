@@ -352,21 +352,22 @@ public class FileUtil {
     
     
     
-    public static void deleteList(List<File> files) {
-        boolean exists = false;
+    public static boolean deleteList(List<File> files) {
+        boolean exists = true;
         for (File file : files) {
             if (!file.isDirectory() && file.exists()) {
                 file.deleteOnExit();
-                exists |= !file.delete();
+                exists &= file.delete();
             }
         }
         for (File file : files) {
             if (file.isDirectory() && file.exists()) {
                 file.deleteOnExit();
                 file.delete();
-                exists |= !file.delete();
+                exists &= file.delete();
             }
         }
+        return exists;
     }
     
     

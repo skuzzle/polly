@@ -267,7 +267,7 @@ public class Installer {
             }
         }
 
-        cfgUpdate.delete();
+        System.out.println("DELETING cfgupdate:" + cfgUpdate.delete());
     }
     
     
