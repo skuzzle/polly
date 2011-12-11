@@ -72,9 +72,7 @@ public class MessageHandler implements MessageListener {
     
     
     @Override
-    public void actionMessage(MessageEvent e) {
-        // TODO Auto-generated method stub
-    }
+    public void actionMessage(MessageEvent e) {}
     
     
     
