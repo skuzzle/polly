@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="polly" basedir="." default="dist">
 
-    <property name="version.num" value="0.6.1"/>
+    <property name="version.num" value="0.6.2"/>
     <property name="src.dir" value="src"/>
     <property name="dist.dir" value="dist"/>
     <property name="cfg.dir" value="cfg"/>
@@ -98,8 +98,6 @@
         <zip destfile="${dist.dir}/${update.filename}">
         	<fileset dir="${dist.dir}" 
         	         includes="polly.jar
-                               cfg/plugins/polly.logging.jar
-                               cfg/plugins/polly.logging.properties
                                lib/de.skuzzle.polly.parser.jar 
                                lib/de.skuzzle.polly.process.jar
         		               lib/de.skuzzle.polly.sdk.jar"/>
