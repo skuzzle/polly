@@ -123,7 +123,7 @@ public class AutoLogonLogoffHandler extends AbstractDisposable
                 logger.debug("Auto logon for " + e.getOldUser() + " canceled");
             }
             
-            User u = this.userManager.getUser(e.getNewUser());
+            User u = this.userManager.getUser(e.getNewUser().getNickName());
             if (u != null && !this.userManager.isSignedOn(u)) {
                 this.scheduleAutoLogon(e.getNewUser().getNickName());
             }
