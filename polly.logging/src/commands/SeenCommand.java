@@ -28,7 +28,7 @@ public class SeenCommand extends AbstractLogCommand {
             String user = signature.getStringValue(0);
             try {
                 LogEntry le = this.logManager.seenUser(user);
-                this.logManager.outputLogResults(polly, executer,
+                this.logManager.outputLogResults(this.getMyPolly(), executer,
                         Collections.singletonList(le), channel);
             } catch (Exception e) {
                 throw new CommandException(e);

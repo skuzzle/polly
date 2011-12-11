@@ -20,7 +20,7 @@ public class SecurityLogFilter implements LogFilter {
     @Override
     public boolean accept(LogEntry log) {
         return this.myPolly.irc().isOnChannel(log.getChannel(), 
-            this.executer.getCurrentNickName());
+            this.executer.getCurrentNickName()) || log.getType() == LogEntry.TYPE_UNKNOWN;
     }
 
 }

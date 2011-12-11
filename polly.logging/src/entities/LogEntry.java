@@ -37,6 +37,7 @@ public class LogEntry {
     public final static int TYPE_PART = 2;
     public final static int TYPE_QUIT = 4;
     public final static int TYPE_NICKCHANGE = 8;
+    public final static int TYPE_UNKNOWN = 16;
     
     public final static String FIND_BY_USER = "FIND_BY_USER";
     public final static String FIND_BY_CHANNEL = "FIND_BY_CHANNEL";
@@ -67,6 +68,10 @@ public class LogEntry {
     public static LogEntry forNickChange(String nickname, String message, String channel, 
             Date date) {
         return new LogEntry(nickname, message, channel, date, TYPE_NICKCHANGE);
+    }
+    
+    public static LogEntry forUnknown(String nickname) {
+        return new LogEntry(nickname, "", "", null, TYPE_UNKNOWN);
     }
     
     

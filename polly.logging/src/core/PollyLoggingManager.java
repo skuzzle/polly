@@ -81,7 +81,12 @@ public class PollyLoggingManager extends AbstractDisposable {
     
     
     public LogEntry seenUser(String user) throws DatabaseException {
-        return this.preFilterQuery(LogEntry.USER_SSEN, 1, user).get(0);
+        List<LogEntry> seen = this.preFilterQuery(LogEntry.USER_SSEN, 1, user);
+        if (seen.isEmpty()) {
+            return LogEntry.forUnknown(user);
+        } else {
+            return seen.get(0);
+        }
     }
     
     

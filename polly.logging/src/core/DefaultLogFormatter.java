@@ -9,7 +9,11 @@ public class DefaultLogFormatter implements LogFormatter {
     @Override
     public String formatLog(LogEntry entry, FormatManager formatter) {
         StringBuilder b = new StringBuilder();
-                
+               
+        if (entry.getType() == LogEntry.TYPE_UNKNOWN) {
+            b.append("Keine Daten für Benutzer " + entry.getNickname());
+            return b.toString();
+        }
         b.append(formatter.formatDate(entry.getDate()));
         b.append(" ");
         
