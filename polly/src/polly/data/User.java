@@ -192,6 +192,10 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     
     @Override
     public int compareTo(de.skuzzle.polly.sdk.model.User o) {
-        return new Integer(o.getUserLevel()).compareTo(this.getUserLevel());
+        int i = new Integer(o.getUserLevel()).compareTo(this.getUserLevel());
+        if (i == 0) {
+            return o.getName().compareTo(this.getName());
+        }
+        return i;
     }
 }
