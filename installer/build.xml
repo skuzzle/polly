@@ -4,7 +4,7 @@
         Version number must always have the format x.y[.z], with higher 
         numbers indicating higher versions, read from left to right. 
     -->
-    <property name="version.num" value="0.6.0"/>
+    <property name="version.num" value="0.6.2"/>
     <property name="src.dir" value="src"/>
     <property name="dist.dir" value="dist"/>
     <property name="classes.dir" value="classes"/>
