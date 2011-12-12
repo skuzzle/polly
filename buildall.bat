@@ -10,5 +10,3 @@ copy polly.core\dist\polly.core.jar polly\cfg\plugins\polly.core.jar
 
 call ant -f polly/build.xml release
 call ant -f polly.sdk/doc.xml
-
-copy polly\cfg\META-INF\persistence.xml polly\src\META-INF\persistence.xml
