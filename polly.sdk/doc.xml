@@ -20,6 +20,7 @@
     <target name="clean" depends="init">
         <delete dir="${dist.dir}"/>
         <delete dir="${classes.dir}"/>
+		<delete dir="${lib.dir}"/>
         <delete file="${dist.dir}/${ant.project.name}.jar"/>
     </target>
     
@@ -28,6 +29,7 @@
     <target name="prepare" depends="clean">
         <mkdir dir="${dist.dir}"/>
         <mkdir dir="${classes.dir}"/>
+		<mkdir dir="${lib.dir}"/>
     </target>
      
     
@@ -39,7 +41,7 @@
     </target>
     
     
-    <target name="javadoc" depends="compile">
+    <target name="javadoc" depends="prepare,compile">
         <javadoc destdir="docs/api" classpathref="libraries" author="true" version="true" use="true"
                  windowtitle="Polly SDK">
 
