@@ -354,7 +354,8 @@ public class InputScanner extends AbstractTokenStream {
                 int next = this.readChar();
                 
                 if (next != 'x') {
-                    this.parseException("invalid 0x: Operator", tokenStart); 
+                    this.pushBack(next);
+                    return new Token(TokenType.NUMBER, this.spanFrom(tokenStart), 0.0);
                 } else {
                     state = 1;
                 }
