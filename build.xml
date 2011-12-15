@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="polly.base" basedir="." default="dist">
+
+    
+    <!-- Relative path to the root dir -->
+    <property name="polly.root.dir" value="."/>
+    <property name="lib.dir"        value="${polly.root.dir}/libs"/>
+    <property name="plugin.dir"     value="${polly.root.dir}/plugins"/>
+    
+    
+    
+    <!-- 
+        builds the sdk project and copies the dist jar to the libs folder
+    -->
+    <target name="sdk">
+        <ant dir="polly.sdk" target="dist" inheritAll="false"/>
+        <copy 
+            file="polly.sdk/dist/de.skuzzle.polly.sdk.jar" 
+            todir="${lib.dir}"/>
+    </target>
+    
+    
+    
+    <!-- 
+        builds the process project and copies the dist jar to the libs folder
+    -->
+    <target name="process">
+        <ant dir="polly.process" target="dist" inheritAll="false"/>
+        <copy 
+            file="polly.process/dist/de.skuzzle.polly.process.jar" 
+            todir="${lib.dir}"/>
+    </target>
+    
+    
+    
+    <!-- 
+        builds the process project and copies the dist jar to the libs folder
+    -->
+    <target name="installer">
+        <ant dir="installer" target="dist" inheritAll="false"/>
+        <copy 
+            file="installer/dist/polly.installer.jar" 
+            todir="${lib.dir}"/>
+    </target>
+    
+    
+    
+    <!-- 
+        builds the parser project and copies the dist jar to the libs folder
+    -->
+    <target name="parser">
+        <ant dir="parser" target="dist" inheritAll="false"/>
+        <copy 
+            file="parser/dist/polly.parser.jar" 
+            todir="${lib.dir}"/>
+    </target>
+    
+    
+    
+    <!-- 
+        builds all plugins and copies them into pollys plugin dir
+    -->
+    <target name="plugins">
+        <ant dir="polly.core" target="dist" inheritAll="false"/>
+        <ant dir="polly.logging" target="dist" inheritAll="false"/>
+        <ant dir="polly.reminds" target="dist" inheritAll="false"/>
+        <ant dir="polly.tv" target="dist" inheritAll="false"/>
+        
+        <copy todir="${plugin.dir}">
+            <fileset dir="polly.core/dist"/>
+            <fileset dir="polly.logging/dist"/>
+            <fileset dir="polly.reminds/dist"/>
+            <fileset dir="polly.tv/dist"/>
+        </copy>
+        
+        <copy todir="polly/cfg/plugins">
+            <fileset dir="${plugin.dir}" includes="**/*.jar*"/>
+        </copy>
+    </target>
+    
+    
+    
+    <!-- 
+        builds only the polly project.
+    -->
+    <target name="polly">
+        <ant dir="polly" target="dist" inheritAll="false"/>
+    </target>
+    
+    
+    
+    <!--
+        Builds all polly dependencies
+    -->
+    <target name="all" depends="sdk,process,installer,parser,plugins,polly"/>
+
+    
+    
+    <!--
+        Cleans all polly plugin projects
+    -->
+    <target name="clean">
+        <ant dir="polly" target="clean" inheritAll="false"/>
+        <ant dir="polly.sdk" target="clean" inheritAll="false"/>
+        <ant dir="installer" target="clean" inheritAll="false"/>
+        <ant dir="parser" target="clean" inheritAll="false"/>
+        <ant dir="polly.core" target="clean" inheritAll="false"/>
+        <ant dir="polly.logging" target="clean" inheritAll="false"/>
+        <ant dir="polly.reminds" target="clean" inheritAll="false"/>
+        <ant dir="polly.tv" target="clean" inheritAll="false"/>
+    </target>
+    
+    
+    
+    <!--
+        (Re)creates eclipse projects for all subprojects
+    -->
+    <target name="eclipse">
+        <ant dir="polly" target="eclipse" inheritAll="false"/>
+        <ant dir="polly.process" target="eclipse" inheritAll="false"/>
+        <ant dir="polly.sdk" target="eclipse" inheritAll="false"/>
+        <ant dir="installer" target="eclipse" inheritAll="false"/>
+        <ant dir="parser" target="eclipse" inheritAll="false"/>
+        <ant dir="polly.core" target="eclipse" inheritAll="false"/>
+        <ant dir="polly.logging" target="eclipse" inheritAll="false"/>
+        <ant dir="polly.reminds" target="eclipse" inheritAll="false"/>
+        <ant dir="polly.tv" target="eclipse" inheritAll="false"/>
+    </target>
+</project>

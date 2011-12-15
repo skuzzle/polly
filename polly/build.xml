@@ -2,115 +2,200 @@
 <project name="polly" basedir="." default="dist">
 
     <property name="version.num" value="0.6.2"/>
-    <property name="src.dir" value="src"/>
-    <property name="dist.dir" value="dist"/>
-    <property name="cfg.dir" value="cfg"/>
-    <property name="classes.dir" value="classes"/>
-    <property name="lib.dir" value="lib"/>
-    <property name="plugin.dir" value="cfg/plugins"/>
-    <property name="dist.lib.dir" value="dist/lib"/>
-    <property name="dist.cfg.dir" value="dist/cfg"/>
-    <property name="dist.log.dir" value="dist/logs"/>
-    <property name="dist.plugin.dir" value="dist/cfg/plugins"/>
-    <property name="dist.cache.dir" value="dist/cache"/>
-    <property name="installer.jar" value="../installer/dist/polly.installer.jar"/>
-    <property name="release.filename" value="${ant.project.name}-${version.num}-full.zip"/>
-    <property name="update.filename" value="${ant.project.name}-${version.num}-update.zip"/>
+
+    <!-- Relative path to the root dir -->
+    <property name="polly.root.dir" value="../"/>
     
-    <property name="classpath" value="./lib/de.skuzzle.polly.sdk.jar 
-                                      ./lib/log4j-1.2.16.jar
-                                      ./lib/de.skuzzle.polly.parser.jar
-                                      ./lib/de.skuzzle.polly.process.jar
-                                      ./lib/eclipselink.jar
-                                      ./lib/javax.persistence_2.0.3.v201010191057.jar
-                                      ./lib/hsqldb.jar
-                                      ./lib/pircbot.jar
-                                      ./lib/mysql-connector-java-5.1.17-bin.jar
-                                      ./lib/commons-lang3-3.0.jar"/>
-
-
+    <!-- Build-specific properties - do not change -->
+    <property name="src.dir"      value="src"/>
+    <property name="dist.dir"     value="dist"/>
+    <property name="dist.lib.dir" value="${dist.dir}/lib"/>
+    <property name="release.dir"  value="release"/>
+    <property name="bin.dir"      value="bin"/>
+    <property name="lib.dir"      value="${polly.root.dir}/libs"/>
+    
+    <!-- jar file properties -->
+    <property name="mainclass" value="polly.Polly"/>
+    <property name="title"     value="Polly"/>
+    <property name="version"   value="version.num"/>
+    <property name="Builddate" value="${today}"/>
+    <property name="classpath" value="${includeJars}"/>
+    
+    <!-- Release properties -->
+    <property name="release.filename"       value="${ant.project.name}-${version.num}-full.zip"/>
+    <property name="update.filename"        value="${ant.project.name}-${version.num}-update.zip"/>
+    <property name="release.name"           value="${ant.project.name}"/>
+    <property name="release.developer"      value="betty"/>
+    <property name="release.entrypoint"     value="-"/>
+    <property name="release.description"    value="-"/>
+    <property name="release.updateVersion"  value="${version.num}"/>
+    <property name="release.updateFilename" value="${ant.project.name}-${release.updateVersion}-update.zip"/>
+    <property name="release.updateURL"      value="http://www.polly.skuzzle.de/updaterepo/polly/${update.filename}"/>
+    
+    
+    
+    <!-- 
+        Space-separated list of jar files relative to lib.dir to include in
+        build-process
+    -->
+    <property name="includeJars" value="
+        de.skuzzle.polly.sdk.jar 
+        log4j-1.2.16.jar
+        polly.parser.jar
+        de.skuzzle.polly.process.jar
+        eclipselink.jar
+        javax.persistence_2.0.3.v201010191057.jar
+        hsqldb.jar
+        pircbot.jar
+        mysql-connector-java-5.1.17-bin.jar
+        commons-lang3-3.0.jar
+    "/>
+    
+    <path id="buildpath">
+        <fileset dir="${lib.dir}" includes="${includeJars}"/>
+    </path>
+    
+    
+    
     <buildnumber file="build.num"/>
     <tstamp>
         <format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
     </tstamp>
-   
-    <path id="libraries">
-        <fileset dir="${lib.dir}" includes="**/*.jar"/>
-    </path>
     
-    <target name="init">
-        <mkdir dir="${classes.dir}"/>
-    </target>
-
-
-    <target name="clean" depends="init">
-        <delete dir="${dist.dir}"/>
-        <delete dir="${classes.dir}"/>
+    
+    
+    <!--
+        Cleans up all binary data and the dist directory which results 
+        from build
+    -->
+    <target name="clean">
         <delete file="${dist.dir}/${ant.project.name}.jar"/>
+        <delete dir="${dist.lib.dir}"/>
+        <delete dir="${dist.dir}"/>
+        <delete dir="${bin.dir}"/>
     </target>
     
     
     
+    <!--
+        Creates the dist folders and copies the dependent libs
+    -->
     <target name="prepare" depends="clean">
         <mkdir dir="${dist.dir}"/>
-        <mkdir dir="${classes.dir}"/>
+        <mkdir dir="${bin.dir}"/>
         <mkdir dir="${dist.lib.dir}"/>
-        <mkdir dir="${dist.cfg.dir}"/>
-        <mkdir dir="${dist.log.dir}"/>
-        <mkdir dir="${dist.plugin.dir}"/>
-        <mkdir dir="${dist.cache.dir}"/>
+        
+        
+        <mkdir dir="${dist.dir}/cache"/>
+        <mkdir dir="${dist.dir}/logs"/>
         
         <copy todir="${dist.lib.dir}">
-            <fileset dir="${lib.dir}" includes="**/*.jar*"/>
+            <fileset dir="${lib.dir}" includes="${includeJars}"/>
         </copy>
-        <copy todir="${dist.cfg.dir}">
-            <fileset dir="${cfg.dir}"/>
+        <copy todir="${dist.dir}/cfg">
+            <fileset dir="./cfg"/>
         </copy>
-        <copy todir="${dist.plugin.dir}">
-            <fileset dir="${plugin.dir}" includes="**/*.jar*"/>
-        </copy>
+        <copy file="${lib.dir}/polly.installer.jar" tofile="${dist.dir}/polly.installer.jar"/>
     </target>
-
     
-    <target name="compile" depends="init">
-        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="libraries" source="1.6" debug="on">
+    
+    
+    <!--
+        Performs a simple buil, building only those files that have been 
+        modified.
+    -->
+    <target name="build">
+        <javac srcdir="${src.dir}" destdir="${bin.dir}" classpathref="buildpath" source="1.6" debug="on">
             <exclude name="de/skuzzle/test/**"/>
         </javac>
     </target>
-	
     
-    <target name="dist" depends="prepare,compile">
+    
+    
+    <!--
+        Performs a clean build, deleting all class and dist files before 
+        rebuilding them
+    -->
+    <target name="clean_build" depends="clean,prepare,build"/>
+    
+    
+    
+    <!--
+        Performs a clean build and creates the release jar(s).
+    -->
+    <target name="dist" depends="clean_build">
         <jar destfile="${dist.dir}/${ant.project.name}.jar">
             <manifest>
-                <attribute name="Main-Class" value="polly.Polly"/>
-                <attribute name="Implementation-Title" value="Polly"/>
-                <!-- <attribute name="Implementation-Version" value="${version.num}build#${build.number}"/> -->
-                <attribute name="Implementation-Version" value="${version.num}"/>
-                <attribute name="Class-Path" value="${cfg.dir}/ ${classpath}"/>
-                <attribute name="Build-Date" value="${TODAY}"/>
+                <attribute name="Main-Class"             value="${mainclass}"/>
+                <attribute name="Implementation-Title"   value="${title}"/>
+                <attribute name="Implementation-Version" value="${version}"/>
+                <attribute name="Class-Path"             value="${classpath}"/>
+                <attribute name="Build-Date"             value="${builddate}"/>
             </manifest>
-            <fileset dir="${classes.dir}" excludes="de/skuzzle/test/** src/META-INF/**"/>
+            <fileset dir="${bin.dir}"/>
+            <fileset dir="${src.dir}"/>
         </jar>
-        <copy file="${installer.jar}" tofile="${dist.dir}/polly.installer.jar"/>
+    </target>
+
+    
+    
+    <!--
+        Creates the <name>.updates.properties file for this plugin
+    -->
+    <target name="updateProperties">
+        <checksum file="${dist.dir}/${update.filename}" property="md5"/>
+        <propertyfile file="${ant.project.name}.update.properties">
+            <entry key="name"          value="${release.name}"/>
+            <entry key="description"   value="${release.description}"/>
+            <entry key="updateVersion" value="${${release.updateVersion}"/>
+            <entry key="updateURL"     value="${release.updateURL}"/>
+            <entry key="checksum"      value="${md5}"/>
+        </propertyfile>
     </target>
     
+    
+    
+    <!--
+        Creates the release zip file for this project.
+    -->
     <target name="release" depends="dist">
-        <zip destfile="${dist.dir}/${update.filename}">
+        <zip destfile="${release.dir}/${release.filename}">
         	<fileset dir="${dist.dir}" 
         	         includes="polly.jar
                                lib/de.skuzzle.polly.parser.jar 
                                lib/de.skuzzle.polly.process.jar
         		               lib/de.skuzzle.polly.sdk.jar"/>
     	</zip>
-        <zip destfile="${dist.dir}/${release.filename}" basedir="${dist.dir}" excludes="install.script *.zip"/>
-        
-        <checksum file="${dist.dir}/${update.filename}" property="md5"/>
-        <propertyfile file="${ant.project.name}.update.properties">
-            <entry key="name"          value="${ant.project.name}"/>
-            <entry key="description"   value="Polly core files"/>
-            <entry key="updateVersion" value="${version.num}"/>
-            <entry key="updateURL"     value="http://www.polly.skuzzle.de/updaterepo/polly/${update.filename}"/>
-            <entry key="checksum"      value="${md5}"/>
-        </propertyfile>
+    </target>
+    
+    
+    
+    <!--
+        Creates the update zip file for this project.
+    -->
+    <target name="update" depends="dist">
+        <zip destfile="${release.dir}/${update.filename}">
+        	<fileset dir="${dist.dir}" 
+        	         includes="**/**"/>
+    	</zip>
+    </target>
+    
+    
+    
+    <!--
+        Creates eclipse project files for this ant file.
+        Requires ant task from http://ant-eclipse.sourceforge.net/
+    -->
+    <target name="eclipse" depends="prepare">
+        <taskdef name="eclipse" classname="prantl.ant.eclipse.EclipseTask" />
+        <eclipse mode="java">
+            <project name="${ant.project.name}"/>
+            <classpath>
+                <source path="${src.dir}" />
+                <source path="./cfg" />
+                <output path="${bin.dir}" />
+                <library pathref="buildpath"/>
+            </classpath>
+        </eclipse>
     </target>
 </project>

@@ -118,7 +118,7 @@
             <fileset dir="${bin.dir}"/>
             <fileset dir="${src.dir}"/>
             <!-- Include process jar -->
-            <fileset dir="${lib.dir}/de.skuzzle.polly.process.jar"/>
+            <fileset dir="${lib.dir}" includes="de.skuzzle.polly.process.jar"/>
         </jar>
     </target>
     

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project name="polly.process" basedir="." default="dist">
+<project name="de.skuzzle.polly.process" basedir="." default="dist">
 
     <property name="version.num" value="0.6.4"/>
 
@@ -43,7 +43,7 @@
     "/>
     
     <path id="buildpath">
-        <fileset dir="${lib.dir}" includes="${includeJars}"/>
+        <fileset dir="${lib.dir}" excludes="**/**"/>
     </path>
     
     
@@ -73,12 +73,7 @@
     -->
     <target name="prepare" depends="clean">
         <mkdir dir="${dist.dir}"/>
-        <mkdir dir="${bin.dir}"/>
-        <mkdir dir="${dist.lib.dir}"/>
-        
-        <copy todir="${dist.lib.dir}">
-            <fileset dir="${lib.dir}" includes="${includeJars}"/>
-        </copy>        
+        <mkdir dir="${bin.dir}"/> 
     </target>
     
     
