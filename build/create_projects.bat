@@ -1,0 +1,2 @@
+cd ..\
+call ant eclipse
