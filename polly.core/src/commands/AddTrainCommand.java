@@ -29,6 +29,8 @@ public class AddTrainCommand extends Command {
             new UserType(), new BooleanType());
         this.createSignature("Fügt ein neues Training zur Rechnung des Benutzers hinzu.", 
             new UserType(), new StringType(), new NumberType());
+        this.createSignature("Zeigt die offene Rechnungssumme für einen Benutzer an.", 
+            new UserType());
         this.setHelpText("Befehl zum Verwalten von Capi Trainings.");
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
@@ -56,16 +58,27 @@ public class AddTrainCommand extends Command {
             boolean showAll = signature.getBooleanValue(1);
             
             TrainBill bill = this.trainManager.getBill(userName);
-            if (showAll) {
-                for (TrainEntity train : bill.getTrains()) {
-                    this.reply(channel, train.format(this.getMyPolly().formatting()));
-                }
-                this.reply(channel, "=========================");
-            }
-            
-            this.reply(channel, bill.toString());
+            this.outputTrain(showAll, bill, channel);
+        } else if (this.match(signature, 3)) {
+            String userName = signature.getStringValue(0);
+            TrainBill bill = this.trainManager.getBill(userName);
+
+            this.outputTrain(false, bill, channel);
         }
         return false;
+    }
+    
+    
+    
+    private void outputTrain(boolean detailed, TrainBill bill, String channel) {
+        if (detailed) {
+            for (TrainEntity train : bill.getTrains()) {
+                this.reply(channel, train.format(this.getMyPolly().formatting()));
+            }
+            this.reply(channel, "=========================");
+        }
+        
+        this.reply(channel, bill.toString());
     }
     
     
