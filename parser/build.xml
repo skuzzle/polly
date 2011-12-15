@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="polly.parser" basedir="." default="dist">
+
+    <property name="version.num" value="0.6.2"/>
+
+    <!-- Relative path to the root dir -->
+    <property name="polly.root.dir" value="../"/>
+    
+    <!-- Build-specific properties - do not change -->
+    <property name="src.dir"      value="src"/>
+    <property name="dist.dir"     value="dist"/>
+    <property name="dist.lib.dir" value="${dist.dir}/lib"/>
+    <property name="release.dir"  value="release"/>
+    <property name="bin.dir"      value="bin"/>
+    <property name="lib.dir"      value="${polly.root.dir}/libs"/>
+    
+    <!-- jar file properties -->
+    <property name="mainclass" value=""/>
+    <property name="title"     value="Polly-Parser"/>
+    <property name="version"   value="version.num"/>
+    <property name="Builddate" value="${today}"/>
+    <property name="classpath" value="${includeJars}"/>
+    
+    <!-- Release properties -->
+    <property name="release.filename"       value="${ant.project.name}-${version.num}-full.zip"/>
+    <property name="update.filename"        value="${ant.project.name}-${version.num}-update.zip"/>
+    <property name="release.name"           value="${ant.project.name}"/>
+    <property name="release.developer"      value="-"/>
+    <property name="release.entrypoint"     value="-"/>
+    <property name="release.description"    value="-"/>
+    <property name="release.updateVersion"  value="${version.num}"/>
+    <property name="release.updateFilename" value="${ant.project.name}-${release.updateVersion}-update.zip"/>
+    <property name="release.updateURL"      value="http://www.polly.skuzzle.de/updaterepo/polly/${update.filename}"/>
+    
+    
+    
+    <!-- 
+        Space-separated list of jar files relative to lib.dir to include in
+        build-process
+    -->
+    <property name="includeJars" value="
+
+    "/>
+    
+    <path id="buildpath">
+        <fileset dir="${lib.dir}" includes="${includeJars}"/>
+    </path>
+    
+    
+    
+    <buildnumber file="build.num"/>
+    <tstamp>
+        <format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
+    </tstamp>
+    
+    
+    
+    <!--
+        Cleans up all binary data and the dist directory which results 
+        from build
+    -->
+    <target name="clean">
+        <delete file="${dist.dir}/${ant.project.name}.jar"/>
+        <delete dir="${dist.lib.dir}"/>
+        <delete dir="${dist.dir}"/>
+        <delete dir="${bin.dir}"/>
+    </target>
+    
+    
+    
+    <!--
+        Creates the dist folders and copies the dependent libs
+    -->
+    <target name="prepare" depends="clean">
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${bin.dir}"/>
+        <mkdir dir="${dist.lib.dir}"/>
+        
+        <copy todir="${dist.lib.dir}">
+            <fileset dir="${lib.dir}" includes="${includeJars}"/>
+        </copy>        
+    </target>
+    
+    
+    
+    <!--
+        Performs a simple buil, building only those files that have been 
+        modified.
+    -->
+    <target name="build">
+        <javac srcdir="${src.dir}" destdir="${bin.dir}" classpathref="buildpath" source="1.6" debug="on">
+            <exclude name="de/skuzzle/test/**"/>
+        </javac>
+    </target>
+    
+    
+    
+    <!--
+        Performs a clean build, deleting all class and dist files before 
+        rebuilding them
+    -->
+    <target name="clean_build" depends="clean,prepare,build"/>
+    
+    
+    
+    <!--
+        Performs a clean build and creates the release jar(s).
+    -->
+    <target name="dist" depends="clean_build">
+        <jar destfile="${dist.dir}/${ant.project.name}.jar">
+            <manifest>
+                <attribute name="Main-Class"             value="${mainclass}"/>
+                <attribute name="Implementation-Title"   value="${title}"/>
+                <attribute name="Implementation-Version" value="${version}"/>
+                <attribute name="Class-Path"             value="${classpath}"/>
+                <attribute name="Build-Date"             value="${builddate}"/>
+            </manifest>
+            <fileset dir="${bin.dir}"/>
+            <fileset dir="${src.dir}"/>
+        </jar>
+    </target>
+
+    
+    
+    <!--
+        Creates the <name>.updates.properties file for this plugin
+    -->
+    <target name="updateProperties">
+        <checksum file="${dist.dir}/${update.filename}" property="md5"/>
+        <propertyfile file="${ant.project.name}.update.properties">
+            <entry key="name"          value="${release.name}"/>
+            <entry key="description"   value="${release.description}"/>
+            <entry key="updateVersion" value="${${release.updateVersion}"/>
+            <entry key="updateURL"     value="${release.updateURL}"/>
+            <entry key="checksum"      value="${md5}"/>
+        </propertyfile>
+    </target>
+    
+    
+    
+    <!--
+        Creates the release zip file for this project.
+    -->
+    <target name="release" depends="dist">
+        <zip destfile="${release.dir}/${release.filename}">
+        	<fileset dir="${dist.dir}" 
+        	         includes="**/**"/>
+    	</zip>
+    </target>
+    
+    
+    
+    <!--
+        Creates the update zip file for this project.
+    -->
+    <target name="update" depends="dist">
+        <zip destfile="${release.dir}/${update.filename}">
+        	<fileset dir="${dist.dir}" 
+        	         includes="**/**"/>
+    	</zip>
+    </target>
+    
+    
+    
+    <!--
+        Creates eclipse project files for this ant file.
+        Requires ant task from http://ant-eclipse.sourceforge.net/
+    -->
+    <target name="eclipse" depends="prepare">
+        <taskdef name="eclipse" classname="prantl.ant.eclipse.EclipseTask" />
+        <eclipse mode="java">
+            <project name="${ant.project.name}"/>
+            <classpath>
+                <source path="${src.dir}" />
+                <output path="${bin.dir}" />
+                <library pathref="buildpath"/>
+            </classpath>
+        </eclipse>
+    </target>
+</project>
