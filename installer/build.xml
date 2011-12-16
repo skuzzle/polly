@@ -11,13 +11,14 @@
     <property name="dist.dir"     value="dist"/>
     <property name="dist.lib.dir" value="${dist.dir}/lib"/>
     <property name="release.dir"  value="release"/>
+    <property name="update.dir"  value="update"/>
     <property name="bin.dir"      value="bin"/>
     <property name="lib.dir"      value="${polly.root.dir}/libs"/>
     
     <!-- jar file properties -->
     <property name="mainclass" value="de.skuzzle.polly.installer.InstallerLauncher"/>
     <property name="title"     value="Polly-Installer"/>
-    <property name="version"   value="version.num"/>
+    <property name="version"   value="${version.num}"/>
     <property name="Builddate" value="${today}"/>
     <property name="classpath" value="${includeJars}"/>
     
@@ -64,6 +65,8 @@
         <delete dir="${dist.lib.dir}"/>
         <delete dir="${dist.dir}"/>
         <delete dir="${bin.dir}"/>
+        <delete dir="${update.dir}"/>
+        <delete dir="${release.dir}"/>
     </target>
     
     
@@ -134,23 +137,7 @@
         </jar>
     </target>
     
-    
-    
-    <!--
-        Creates the <name>.updates.properties file for this plugin
-    -->
-    <target name="updateProperties">
-        <checksum file="${dist.dir}/${update.filename}" property="md5"/>
-        <propertyfile file="${ant.project.name}.update.properties">
-            <entry key="name"          value="${release.name}"/>
-            <entry key="description"   value="${release.description}"/>
-            <entry key="updateVersion" value="${${release.updateVersion}"/>
-            <entry key="updateURL"     value="${release.updateURL}"/>
-            <entry key="checksum"      value="${md5}"/>
-        </propertyfile>
-    </target>
-    
-    
+      
     
     <!--
         Creates the release zip file for this project.
@@ -168,10 +155,22 @@
         Creates the update zip file for this project.
     -->
     <target name="update" depends="dist">
-        <zip destfile="${release.dir}/${update.filename}">
+        <zip destfile="${update.dir}/${update.filename}">
         	<fileset dir="${dist.dir}" 
         	         includes="**/**"/>
     	</zip>
+        
+        <!--
+            Creates the <name>.updates.properties file for this plugin
+        -->
+        <checksum file="${update.dir}/${update.filename}" property="md5"/>
+        <propertyfile file="${update.dir}/${ant.project.name}.update.properties">
+            <entry key="name"          value="${release.name}"/>
+            <entry key="description"   value="${release.description}"/>
+            <entry key="updateVersion" value="${release.updateVersion}"/>
+            <entry key="updateURL"     value="${release.updateURL}"/>
+            <entry key="checksum"      value="${md5}"/>
+        </propertyfile>
     </target>
     
     

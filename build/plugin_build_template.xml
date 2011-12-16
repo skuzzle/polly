@@ -179,7 +179,7 @@
         <propertyfile file="${update.dir}/${ant.project.name}.update.properties">
             <entry key="name"          value="${release.name}"/>
             <entry key="description"   value="${release.description}"/>
-            <entry key="updateVersion" value="${${release.updateVersion}"/>
+            <entry key="updateVersion" value="${release.updateVersion}"/>
             <entry key="updateURL"     value="${release.updateURL}"/>
             <entry key="checksum"      value="${md5}"/>
         </propertyfile>
