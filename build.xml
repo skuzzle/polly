@@ -6,14 +6,14 @@
     <property name="polly.root.dir" value="."/>
     <property name="lib.dir"        value="${polly.root.dir}/libs"/>
     <property name="plugin.dir"     value="${polly.root.dir}/plugins"/>
-    
+    <property name="mode"           value="dist"/>
     
     
     <!-- 
         builds the sdk project and copies the dist jar to the libs folder
     -->
     <target name="sdk">
-        <ant dir="polly.sdk" target="dist" inheritAll="false"/>
+        <ant dir="polly.sdk" target="${mode}" inheritAll="false"/>
         <copy 
             file="polly.sdk/dist/de.skuzzle.polly.sdk.jar" 
             todir="${lib.dir}"/>
@@ -25,7 +25,7 @@
         builds the process project and copies the dist jar to the libs folder
     -->
     <target name="process">
-        <ant dir="polly.process" target="dist" inheritAll="false"/>
+        <ant dir="polly.process" target="${mode}" inheritAll="false"/>
         <copy 
             file="polly.process/dist/de.skuzzle.polly.process.jar" 
             todir="${lib.dir}"/>
@@ -37,7 +37,7 @@
         builds the process project and copies the dist jar to the libs folder
     -->
     <target name="installer">
-        <ant dir="installer" target="dist" inheritAll="false"/>
+        <ant dir="installer" target="${mode}" inheritAll="false"/>
         <copy 
             file="installer/dist/polly.installer.jar" 
             todir="${lib.dir}"/>
@@ -49,7 +49,7 @@
         builds the parser project and copies the dist jar to the libs folder
     -->
     <target name="parser">
-        <ant dir="parser" target="dist" inheritAll="false"/>
+        <ant dir="parser" target="${mode}" inheritAll="false"/>
         <copy 
             file="parser/dist/polly.parser.jar" 
             todir="${lib.dir}"/>
@@ -62,10 +62,11 @@
     -->
     <target name="plugins">
         <mkdir dir="${plugin.dir}"/>
-        <ant dir="polly.core" target="dist" inheritAll="false"/>
-        <ant dir="polly.logging" target="dist" inheritAll="false"/>
-        <ant dir="polly.reminds" target="dist" inheritAll="false"/>
-        <ant dir="polly.tv" target="dist" inheritAll="false"/>
+        
+        <ant dir="polly.core" target="${mode}" inheritAll="false"/>
+        <ant dir="polly.logging" target="${mode}" inheritAll="false"/>
+        <ant dir="polly.reminds" target="${mode}" inheritAll="false"/>
+        <ant dir="polly.tv" target="${mode}" inheritAll="false"/>
         
         <copy todir="${plugin.dir}">
             <fileset dir="polly.core/dist"/>
@@ -85,7 +86,7 @@
         builds only the polly project.
     -->
     <target name="polly">
-        <ant dir="polly" target="dist" inheritAll="false"/>
+        <ant dir="polly" target="${mode}" inheritAll="false"/>
     </target>
     
     
@@ -118,14 +119,21 @@
         Rebuilds all changed files
     -->
     <target name="build">
-        <ant dir="polly" target="build" inheritAll="false"/>
-        <ant dir="polly.sdk" target="build" inheritAll="false"/>
-        <ant dir="installer" target="build" inheritAll="false"/>
-        <ant dir="parser" target="build" inheritAll="false"/>
-        <ant dir="polly.core" target="build" inheritAll="false"/>
-        <ant dir="polly.logging" target="build" inheritAll="false"/>
-        <ant dir="polly.reminds" target="build" inheritAll="false"/>
-        <ant dir="polly.tv" target="build" inheritAll="false"/>
+        <antcall target="sdk" inheritAll="true" inheritRefs="true">
+            <param name="mode" value="build"/>
+        </antcall>
+        <antcall target="installer" inheritAll="true" inheritRefs="true">
+            <param name="mode" value="build"/>
+        </antcall>
+        <antcall target="parser" inheritAll="true" inheritRefs="true">
+            <param name="mode" value="build"/>
+        </antcall>
+        <antcall target="process" inheritAll="true" inheritRefs="true">
+            <param name="mode" value="build"/>
+        </antcall>
+        <antcall target="plugins" inheritAll="true" inheritRefs="true">
+            <param name="mode" value="build"/>
+        </antcall>
     </target>
     
     
@@ -134,15 +142,22 @@
         Rebuilds all polly dependencies to dist and then builds all changed 
         files from polly.
     -->
-    <target name="build_depend">
-        <ant dir="polly.sdk" target="dist" inheritAll="false"/>
-        <ant dir="installer" target="dist" inheritAll="false"/>
-        <ant dir="parser" target="dist" inheritAll="false"/>
-        <ant dir="polly.core" target="dist" inheritAll="false"/>
-        <ant dir="polly.logging" target="dist" inheritAll="false"/>
-        <ant dir="polly.reminds" target="dist" inheritAll="false"/>
-        <ant dir="polly.tv" target="dist" inheritAll="false"/>
-        <ant dir="polly" target="build" inheritAll="false"/>
+    <target name="build_lazy">
+        <antcall target="sdk" inheritAll="true" inheritRefs="true">
+            <param name="mode" value="dist_no_clean"/>
+        </antcall>
+        <antcall target="installer" inheritAll="true" inheritRefs="true">
+            <param name="mode" value="dist_no_clean"/>
+        </antcall>
+        <antcall target="parser" inheritAll="true" inheritRefs="true">
+            <param name="mode" value="dist_no_clean"/>
+        </antcall>
+        <antcall target="process" inheritAll="true" inheritRefs="true">
+            <param name="mode" value="dist_no_clean"/>
+        </antcall>
+        <antcall target="plugins" inheritAll="true" inheritRefs="true">
+            <param name="mode" value="dist_no_clean"/>
+        </antcall>
     </target>
     
     

@@ -71,7 +71,7 @@
     <!--
         Creates the dist folders and copies the dependent libs
     -->
-    <target name="prepare" depends="clean">
+    <target name="prepare">
         <mkdir dir="${dist.dir}"/>
         <mkdir dir="${dist.lib.dir}"/>
         <mkdir dir="${bin.dir}"/>    
@@ -101,9 +101,16 @@
     
     
     <!--
-        Performs a clean build and creates the release jar(s).
+        Performs a normal build and creates the release jar(s).
     -->
-    <target name="dist" depends="clean_build">
+    <target name="dist" depends="clean, dist_no_clean" />
+    
+    
+    
+    <!--
+        Same as dist but does no cleanup before
+    -->
+    <target name="dist_no_clean" depends="prepare, build">
         <manifestclasspath property="jar.classpath"
                            jarfile="${dist.dir}/${dist.filename}">
             <classpath>
