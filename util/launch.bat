@@ -1,4 +1,4 @@
-cd polly/dist
+cd ..\polly\dist
 
 call java -jar polly.jar %1 %2 %3 %4 %5 %6 %7
 

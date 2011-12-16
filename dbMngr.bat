@@ -1,1 +1,0 @@
-java -cp polly\lib\hsqldb.jar org.hsqldb.util.DatabaseManagerSwing
