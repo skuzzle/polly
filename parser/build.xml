@@ -17,9 +17,9 @@
     <!-- jar file properties -->
     <property name="mainclass" value=""/>
     <property name="title"     value="Polly-Parser"/>
-    <property name="version"   value="version.num"/>
-    <property name="Builddate" value="${today}"/>
-    <property name="classpath" value="${includeJars}"/>
+    <property name="version"   value="${version.num}"/>
+    <property name="builddate" value="${today}"/>
+    <property name="classpath" value=""/>
     
     <!-- Release properties -->
     <property name="release.filename"       value="${ant.project.name}-${version.num}-full.zip"/>
@@ -73,6 +73,7 @@
     -->
     <target name="prepare" depends="clean">
         <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${dist.lib.dir}"/>
         <mkdir dir="${bin.dir}"/>    
     </target>
     
@@ -102,13 +103,19 @@
         Performs a clean build and creates the release jar(s).
     -->
     <target name="dist" depends="clean_build">
+        <manifestclasspath property="jar.classpath"
+                           jarfile="${dist.dir}/${dist.filename}">
+            <classpath>
+                <fileset dir="${dist.lib.dir}" includes="${includeJars}"/>
+            </classpath>
+        </manifestclasspath>
+    
         <jar destfile="${dist.dir}/${ant.project.name}.jar">
             <manifest>
                 <attribute name="Main-Class"             value="${mainclass}"/>
                 <attribute name="Implementation-Title"   value="${title}"/>
                 <attribute name="Implementation-Version" value="${version}"/>
-                <attribute name="Class-Path"             value="${classpath}"/>
-                <attribute name="Build-Date"             value="${builddate}"/>
+                <attribute name="Class-Path"             value="${classpath} ${jar.classpath}"/>
             </manifest>
             <fileset dir="${bin.dir}"/>
             <fileset dir="${src.dir}"/>

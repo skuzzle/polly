@@ -9,6 +9,7 @@
     <!-- Build-specific properties - do not change -->
     <property name="src.dir"      value="src"/>
     <property name="dist.dir"     value="dist"/>
+    <property name="dist.lib.dir" value="${dist}/lib"/>
     <property name="release.dir"  value="release"/>
     <property name="update.dir"   value="update"/>
     <property name="bin.dir"      value="bin"/>
@@ -17,7 +18,7 @@
     <!-- jar file properties -->
     <property name="mainclass" value=""/>
     <property name="title"     value="Polly-Reminds"/>
-    <property name="version"   value="version.num"/>
+    <property name="version"   value="${version.num}"/>
     <property name="Builddate" value="${today}"/>
     <property name="classpath" value="${includeJars}"/>
     
@@ -77,6 +78,7 @@
     -->
     <target name="prepare" depends="clean">
         <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${dist.lib.dir}"/>
         <mkdir dir="${bin.dir}"/>
     </target>
     
@@ -123,13 +125,19 @@
         Performs a clean build and creates the release jar(s).
     -->
     <target name="dist" depends="clean_build, plugin_properties">
+        <manifestclasspath property="jar.classpath"
+                           jarfile="${dist.dir}/${dist.filename}">
+            <classpath>
+                <fileset dir="${dist.lib.dir}" includes="${includeJars}"/>
+            </classpath>
+        </manifestclasspath>
+    
         <jar destfile="${dist.dir}/${ant.project.name}.jar">
             <manifest>
                 <attribute name="Main-Class"             value="${mainclass}"/>
                 <attribute name="Implementation-Title"   value="${title}"/>
                 <attribute name="Implementation-Version" value="${version}"/>
-                <attribute name="Class-Path"             value="${classpath}"/>
-                <attribute name="Build-Date"             value="${builddate}"/>
+                <attribute name="Class-Path"             value="${classpath} ${jar.classpath}"/>
             </manifest>
             <fileset dir="${bin.dir}"/>
             <fileset dir="${src.dir}"/>

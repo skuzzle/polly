@@ -17,11 +17,13 @@
     <!-- jar file properties -->
     <property name="mainclass" value="polly.Polly"/>
     <property name="title"     value="Polly"/>
-    <property name="version"   value="version.num"/>
+    <property name="version"   value="${version.num}"/>
     <property name="Builddate" value="${today}"/>
-    <property name="classpath" value="${includeJars}"/>
+    <!-- used to specify additional jar-classpath elements -->
+    <property name="classpath" value="cfg/"/>
     
     <!-- Release properties -->
+    <property name="dist.filename"          value="${ant.project.name}"/>
     <property name="release.filename"       value="${ant.project.name}-${version.num}-full.zip"/>
     <property name="update.filename"        value="${ant.project.name}-${version.num}-update.zip"/>
     <property name="release.name"           value="${ant.project.name}"/>
@@ -39,22 +41,23 @@
         in build-process
     -->
     <property name="includeJars" value="
-        libs/de.skuzzle.polly.sdk.jar 
-        libs/log4j-1.2.16.jar
-        libs/polly.parser.jar
-        libs/de.skuzzle.polly.process.jar
-        libs/eclipselink.jar
-        libs/javax.persistence_2.0.3.v201010191057.jar
-        libs/hsqldb.jar
-        libs/pircbot.jar
-        libs/mysql-connector-java-5.1.17-bin.jar
-        libs/commons-lang3-3.0.jar
+        de.skuzzle.polly.sdk.jar 
+        log4j-1.2.16.jar
+        polly.parser.jar
+        de.skuzzle.polly.process.jar
+        eclipselink.jar
+        javax.persistence_2.0.3.v201010191057.jar
+        hsqldb.jar
+        pircbot.jar
+        mysql-connector-java-5.1.17-bin.jar
+        commons-lang3-3.0.jar
     "/>
     
-    <path id="buildpath">
-        <fileset dir="${polly.root.dir}" includes="${includeJars}"/>
-    </path>
+
     
+    <path id="buildpath">
+        <fileset id="jars" dir="${lib.dir}" includes="${includeJars}"/>
+    </path>
     
     
     <buildnumber file="build.num"/>
@@ -69,7 +72,6 @@
         from build
     -->
     <target name="clean">
-    <echo message="${polly.root.dir}"/>
         <delete file="${dist.dir}/${ant.project.name}.jar"/>
         <delete dir="${dist.lib.dir}"/>
         <delete dir="${dist.dir}"/>
@@ -91,7 +93,7 @@
         <mkdir dir="${dist.dir}/logs"/>
         
         <copy todir="${dist.lib.dir}">
-            <fileset dir="${polly.root.dir}" includes="${includeJars}"/>
+            <fileset dir="${lib.dir}" includes="${includeJars}"/>
         </copy>
         <copy todir="${dist.dir}/cfg">
             <fileset dir="./cfg"/>
@@ -109,6 +111,7 @@
         <javac srcdir="${src.dir}" destdir="${bin.dir}" classpathref="buildpath" source="1.6" debug="on">
             <exclude name="de/skuzzle/test/**"/>
         </javac>
+        
     </target>
     
     
@@ -125,12 +128,19 @@
         Performs a clean build and creates the release jar(s).
     -->
     <target name="dist" depends="clean_build">
+        <manifestclasspath property="jar.classpath"
+                           jarfile="${dist.dir}/${dist.filename}">
+            <classpath>
+                <fileset dir="${dist.lib.dir}" includes="${includeJars}"/>
+            </classpath>
+        </manifestclasspath>
+        
         <jar destfile="${dist.dir}/${ant.project.name}.jar">
             <manifest>
                 <attribute name="Main-Class"             value="${mainclass}"/>
                 <attribute name="Implementation-Title"   value="${title}"/>
                 <attribute name="Implementation-Version" value="${version}"/>
-                <attribute name="Class-Path"             value="./cfg/ ${includeJars}"/>
+                <attribute name="Class-Path"             value="${classpath} ${jar.classpath}"/>
                 <attribute name="Build-Date"             value="${builddate}"/>
             </manifest>
             <fileset dir="${bin.dir}"/>
