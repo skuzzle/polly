@@ -1,1 +1,2 @@
+cd ..\..
 call ant all
