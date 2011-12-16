@@ -35,24 +35,24 @@
     
     
     <!-- 
-        Space-separated list of jar files relative to lib.dir to include in
-        build-process
+        Space-separated list of jar files relative to polly.root.dir to include 
+        in build-process
     -->
     <property name="includeJars" value="
-        de.skuzzle.polly.sdk.jar 
-        log4j-1.2.16.jar
-        polly.parser.jar
-        de.skuzzle.polly.process.jar
-        eclipselink.jar
-        javax.persistence_2.0.3.v201010191057.jar
-        hsqldb.jar
-        pircbot.jar
-        mysql-connector-java-5.1.17-bin.jar
-        commons-lang3-3.0.jar
+        libs/de.skuzzle.polly.sdk.jar 
+        libs/log4j-1.2.16.jar
+        libs/polly.parser.jar
+        libs/de.skuzzle.polly.process.jar
+        libs/eclipselink.jar
+        libs/javax.persistence_2.0.3.v201010191057.jar
+        libs/hsqldb.jar
+        libs/pircbot.jar
+        libs/mysql-connector-java-5.1.17-bin.jar
+        libs/commons-lang3-3.0.jar
     "/>
     
     <path id="buildpath">
-        <fileset dir="${lib.dir}" includes="${includeJars}"/>
+        <fileset dir="${polly.root.dir}" includes="${includeJars}"/>
     </path>
     
     
@@ -69,6 +69,7 @@
         from build
     -->
     <target name="clean">
+    <echo message="${polly.root.dir}"/>
         <delete file="${dist.dir}/${ant.project.name}.jar"/>
         <delete dir="${dist.lib.dir}"/>
         <delete dir="${dist.dir}"/>
@@ -90,7 +91,7 @@
         <mkdir dir="${dist.dir}/logs"/>
         
         <copy todir="${dist.lib.dir}">
-            <fileset dir="${lib.dir}" includes="${includeJars}"/>
+            <fileset dir="${polly.root.dir}" includes="${includeJars}"/>
         </copy>
         <copy todir="${dist.dir}/cfg">
             <fileset dir="./cfg"/>
@@ -129,7 +130,7 @@
                 <attribute name="Main-Class"             value="${mainclass}"/>
                 <attribute name="Implementation-Title"   value="${title}"/>
                 <attribute name="Implementation-Version" value="${version}"/>
-                <attribute name="Class-Path"             value="${classpath}"/>
+                <attribute name="Class-Path"             value="./cfg/ ${includeJars}"/>
                 <attribute name="Build-Date"             value="${builddate}"/>
             </manifest>
             <fileset dir="${bin.dir}"/>
