@@ -354,8 +354,9 @@ public class InputScanner extends AbstractTokenStream {
                 int next = this.readChar();
                 
                 if (next != 'x') {
+                    this.pushBack('0');
                     this.pushBack(next);
-                    return new Token(TokenType.NUMBER, this.spanFrom(tokenStart), 0.0);
+                    return this.readNumber();
                 } else {
                     state = 1;
                 }
