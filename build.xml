@@ -115,6 +115,22 @@
     
     
     <!--
+        Rebuilds all changed files
+    -->
+    <target name="build">
+        <ant dir="polly" target="build" inheritAll="false"/>
+        <ant dir="polly.sdk" target="build" inheritAll="false"/>
+        <ant dir="installer" target="build" inheritAll="false"/>
+        <ant dir="parser" target="build" inheritAll="false"/>
+        <ant dir="polly.core" target="build" inheritAll="false"/>
+        <ant dir="polly.logging" target="build" inheritAll="false"/>
+        <ant dir="polly.reminds" target="build" inheritAll="false"/>
+        <ant dir="polly.tv" target="build" inheritAll="false"/>
+    </target>
+    
+    
+    
+    <!--
         (Re)creates eclipse projects for all subprojects
     -->
     <target name="eclipse">
