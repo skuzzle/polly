@@ -142,7 +142,6 @@
                 <attribute name="Implementation-Title"   value="${title}"/>
                 <attribute name="Implementation-Version" value="${version}"/>
                 <attribute name="Class-Path"             value="${classpath} ${jar.classpath}"/>
-                <attribute name="Build-Date"             value="${builddate}"/>
             </manifest>
             <fileset dir="${bin.dir}"/>
             <fileset dir="${src.dir}"/>

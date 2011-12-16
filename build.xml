@@ -131,6 +131,23 @@
     
     
     <!--
+        Rebuilds all polly dependencies to dist and then builds all changed 
+        files from polly.
+    -->
+    <target name="build_depend">
+        <ant dir="polly.sdk" target="dist" inheritAll="false"/>
+        <ant dir="installer" target="dist" inheritAll="false"/>
+        <ant dir="parser" target="dist" inheritAll="false"/>
+        <ant dir="polly.core" target="dist" inheritAll="false"/>
+        <ant dir="polly.logging" target="dist" inheritAll="false"/>
+        <ant dir="polly.reminds" target="dist" inheritAll="false"/>
+        <ant dir="polly.tv" target="dist" inheritAll="false"/>
+        <ant dir="polly" target="build" inheritAll="false"/>
+    </target>
+    
+    
+    
+    <!--
         (Re)creates eclipse projects for all subprojects
     -->
     <target name="eclipse">
