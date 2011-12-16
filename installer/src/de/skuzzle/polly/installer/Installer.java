@@ -42,10 +42,12 @@ public class Installer {
         log.println("ARGS: " + Arrays.toString(args));
         log.println("JAVA VERSION: " + System.getProperty("java.version"));
         log.println("JAVA HOME: " + System.getProperty("java.home"));
+        log.println("INSTALLER VERSION: " + Installer.class.getPackage().getImplementationVersion());
         log.println("POLLY_HOME: " + Environment.POLLY_HOME.getAbsolutePath());
         log.println("POLLY_CONFIG: " + Environment.POLLY_CONFIG_DIR.getAbsolutePath());
         log.println("POLLY_CFG: " + Environment.POLLY_CONFIG_FILE.getAbsolutePath());
         log.println("POLLY_PLUGINS: " + Environment.POLLY_PLUGIN_DIR.getAbsolutePath());
+        
         log.unindent();
         
         for (int i = 0; i < args.length; ++i) {
