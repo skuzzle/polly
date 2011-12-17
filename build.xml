@@ -76,7 +76,7 @@
         </copy>
         
         <copy todir="polly/cfg/plugins">
-            <fileset dir="${plugin.dir}" includes="**/*.jar*"/>
+            <fileset dir="${plugin.dir}" includes="**/**"/>
         </copy>
     </target>
     
