@@ -294,6 +294,11 @@ public class InputScanner extends AbstractTokenStream {
                 
                 if (next == '.') {
                     return new Token(TokenType.DOTDOT, this.spanFrom(tokenStart), "..");
+                } else if (Character.isDigit(next)) {
+                    this.pushBack('0');
+                    this.pushBack('.');
+                    this.pushBack(next);
+                    return this.readNumber();
                 } else {
                     this.pushBack(next);
                     return new Token(TokenType.DOT, this.spanFrom(tokenStart), ".");
