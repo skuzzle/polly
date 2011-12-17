@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="polly" basedir="." default="dist">
 
-    <property name="version.num" value="0.6.2"/>
+    <property name="version.num" value="0.6.3"/>
 
     <!-- Relative path to the root dir -->
     <property name="polly.root.dir" value="../"/>
@@ -11,6 +11,7 @@
     <property name="dist.dir"     value="dist"/>
     <property name="dist.lib.dir" value="${dist.dir}/lib"/>
     <property name="release.dir"  value="release"/>
+    <property name="update.dir"   value="update"/>
     <property name="bin.dir"      value="bin"/>
     <property name="lib.dir"      value="${polly.root.dir}/libs"/>
     
@@ -76,6 +77,8 @@
         <delete dir="${dist.lib.dir}"/>
         <delete dir="${dist.dir}"/>
         <delete dir="${bin.dir}"/>
+        <delete dir="${release.dir}"/>
+        <delete dir="${update.dir}"/>
     </target>
     
     
@@ -86,6 +89,7 @@
     <target name="prepare">
         <mkdir dir="${dist.dir}"/>
         <mkdir dir="${bin.dir}"/>
+        <mkdir dir="cfg/META-INF"/>
         <mkdir dir="${dist.lib.dir}"/>
         
         
@@ -158,11 +162,22 @@
     
     
     <!--
-        Creates the <name>.updates.properties file for this plugin
+        Creates the release zip file for this project.
     -->
-    <target name="updateProperties">
-        <checksum file="${dist.dir}/${update.filename}" property="md5"/>
-        <propertyfile file="${ant.project.name}.update.properties">
+    <target name="update" depends="dist">
+        <copy file="update.dat" todir="${dist.dir}"/>
+        <zip destfile="${update.dir}/${update.filename}">
+        	<fileset dir="${dist.dir}" 
+        	         includes="polly.jar
+                               lib/polly.parser.jar 
+                               lib/de.skuzzle.polly.process.jar
+        		               lib/de.skuzzle.polly.sdk.jar
+                               update.dat"/>
+    	</zip>
+        <delete file="${dist.dir}/update.dat"/>
+        
+        <checksum file="${update.dir}/${update.filename}" property="md5"/>
+        <propertyfile file="${update.dir}/${ant.project.name}.update.properties">
             <entry key="name"          value="${release.name}"/>
             <entry key="description"   value="${release.description}"/>
             <entry key="updateVersion" value="${release.updateVersion}"/>
@@ -174,24 +189,9 @@
     
     
     <!--
-        Creates the release zip file for this project.
-    -->
-    <target name="release" depends="dist">
-        <zip destfile="${release.dir}/${release.filename}">
-        	<fileset dir="${dist.dir}" 
-        	         includes="polly.jar
-                               lib/de.skuzzle.polly.parser.jar 
-                               lib/de.skuzzle.polly.process.jar
-        		               lib/de.skuzzle.polly.sdk.jar"/>
-    	</zip>
-    </target>
-    
-    
-    
-    <!--
         Creates the update zip file for this project.
     -->
-    <target name="update" depends="dist">
+    <target name="release" depends="dist">
         <zip destfile="${release.dir}/${update.filename}">
         	<fileset dir="${dist.dir}" 
         	         includes="**/**"/>
