@@ -44,8 +44,18 @@
         javax.persistence_2.0.3.v201010191057.jar
     "/>
     
+    <!-- buildpath for javac -->
     <path id="buildpath">
         <fileset dir="${lib.dir}" includes="${includeJars}"/>
+    </path>
+    <!-- 
+        buildpath for eclipse. this ecludes the sdk, the parser and the process 
+        subproject 
+    -->
+    <path id="buildpath_eclipse">
+        <fileset dir="${lib.dir}" 
+            includes="${includeJars}"
+            excludes="de.skuzzle.polly.sdk.jar"/>
     </path>
     
     
@@ -195,9 +205,10 @@
         <eclipse mode="java">
             <project name="${ant.project.name}"/>
             <classpath>
+                <source path="/polly.sdk" />
                 <source path="${src.dir}" />
                 <output path="${bin.dir}" />
-                <library pathref="buildpath"/>
+                <library pathref="buildpath_eclipse"/>
             </classpath>
         </eclipse>
     </target>
