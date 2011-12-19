@@ -124,7 +124,7 @@
             <entry key="name"        value="${release.name}"/>
             <entry key="description" value="${release.description}"/>
             <entry key="developer"   value="${release.developer}"/>
-            <entry key="version"     value="${release.version}"/>
+            <entry key="version"     value="${release.updateVersion}"/>
             <entry key="updateUrl"   value="${release.name}"/>
             <entry key="entrypoint"  value="${release.entrypoint}"/>
         </propertyfile>
