@@ -32,9 +32,9 @@ import de.skuzzle.polly.sdk.exceptions.UnknownSignatureException;
 import de.skuzzle.polly.sdk.model.User;
 
 
-import polly.core.TypeMapper;
-import polly.core.UserManagerImpl;
+import polly.core.users.UserManagerImpl;
 import polly.util.Pair;
+import polly.util.TypeMapper;
 
 
 
@@ -99,13 +99,13 @@ public class MessageHandler implements MessageListener {
                     logger.debug("Executed. Runtime: " + time + "ms");
                 } catch (InsufficientRightsException e1) {
                     e.getSource().sendMessage(e.getChannel(), "Du kannst den Befehl '" + 
-                            p.getFirst().getCommandName() + "' nicht ausführen.");
+                            p.getFirst().getCommandName() + "' nicht ausfï¿½hren.");
                 } catch (Exception e1) {
                     long time = System.currentTimeMillis() - i;
                     logger.error("Exception while executing command '" + 
                             p.getFirst().getCommandName() + "': " + e1.getMessage(), e1);
                     e.getSource().sendMessage(e.getChannel(), 
-                            "Interner Fehler beim Ausführen des Befehls.");
+                            "Interner Fehler beim Ausfï¿½hren des Befehls.");
                     logger.debug("Execution time: " + time + "ms");
                 }
             }

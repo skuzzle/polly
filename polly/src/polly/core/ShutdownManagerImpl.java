@@ -37,23 +37,11 @@ public class ShutdownManagerImpl implements ShutdownManager {
     
     
     public AtomicBoolean isSafeShutdown;
-    
-    
-    
-    private static ShutdownManagerImpl instance;
-    
-    public static synchronized ShutdownManagerImpl get() {
-        if (instance == null) {
-            instance = new ShutdownManagerImpl();
-        }
-        return instance;
-    }
-    
-    
 
+    
     private CompositeDisposable shutdownList;
     
-    private ShutdownManagerImpl() {
+    public ShutdownManagerImpl() {
         this.isSafeShutdown = new AtomicBoolean(false);
         this.shutdownList = new CompositeDisposable();
         Runtime.getRuntime().addShutdownHook(new Thread() {

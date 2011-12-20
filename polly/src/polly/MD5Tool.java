@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 
 import de.skuzzle.polly.sdk.Configuration;
 
+import polly.configuration.ConfigurationFileException;
+import polly.configuration.PollyConfiguration;
 import polly.data.User;
 
 public class MD5Tool {

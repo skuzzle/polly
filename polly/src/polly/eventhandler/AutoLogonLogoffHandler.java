@@ -10,9 +10,9 @@ import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
 
 import polly.EventThreadFactory;
-import polly.PollyConfiguration;
-import polly.core.IrcManagerImpl;
-import polly.core.UserManagerImpl;
+import polly.configuration.PollyConfiguration;
+import polly.core.irc.IrcManagerImpl;
+import polly.core.users.UserManagerImpl;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.eventlistener.NickChangeEvent;
 import de.skuzzle.polly.sdk.eventlistener.NickChangeListener;

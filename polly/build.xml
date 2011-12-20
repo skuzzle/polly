@@ -227,7 +227,7 @@
                 <source path="${src.dir}" />
                 <source path="./cfg" />
                 <output path="${bin.dir}" />
-                <library pathref="buildpath_eclipse"/>
+                <library pathref="buildpath"/>
             </classpath>
         </eclipse>
     </target>

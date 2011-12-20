@@ -1,6 +1,6 @@
 package polly.eventhandler;
 
-import polly.core.UserManagerImpl;
+import polly.core.users.UserManagerImpl;
 import de.skuzzle.polly.sdk.eventlistener.NickChangeEvent;
 import de.skuzzle.polly.sdk.eventlistener.NickChangeListener;
 

@@ -1,6 +1,6 @@
 package polly.commandline;
 
-import polly.PollyConfiguration;
+import polly.configuration.PollyConfiguration;
 
 
 public class BooleanConfigArgument extends ConfigArgument {

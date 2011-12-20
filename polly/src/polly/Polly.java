@@ -5,49 +5,36 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.lang.management.ManagementFactory;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.channels.FileLock;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
-import de.skuzzle.polly.process.JavaProcessExecutor;
-import de.skuzzle.polly.process.ProcessExecutor;
 import de.skuzzle.polly.sdk.Version;
 
 import polly.commandline.AbstractArgumentParser;
 import polly.commandline.ParameterException;
 import polly.commandline.PollyArgumentParser;
-import polly.components.CommandComponent;
-import polly.components.ComponentBlackboard;
-import polly.components.DatabaseComponent;
-import polly.components.FormatterComponent;
-import polly.components.IrcComponent;
-import polly.components.MyPollyComponent;
-import polly.components.NotifyPluginsAction;
-import polly.components.PluginComponent;
-import polly.components.UserComponent;
 import polly.configuration.DefaultPollyConfiguration;
+import polly.configuration.PollyConfiguration;
 import polly.core.ConversationManagerImpl;
-import polly.core.PluginConfiguration;
-import polly.core.PluginManagerImpl;
 import polly.core.ShutdownManagerImpl;
+import polly.core.commands.CommandModule;
+import polly.core.formatting.FormatterModule;
+import polly.core.irc.IrcModule;
+import polly.core.mypolly.MyPollyModule;
+import polly.core.persistence.PersistenceModule;
+import polly.core.plugins.NotifyPluginsAction;
+import polly.core.plugins.PluginModule;
+import polly.core.update.UpdaterModule;
+import polly.core.users.UserModule;
 import polly.events.DefaultEventProvider;
 import polly.events.EventProvider;
-import polly.update.UpdateItem;
-import polly.update.UpdateManager;
-import polly.update.UpdateProperties;
 import polly.util.FileUtil;
+import polly.util.ModuleBlackboard;
 
 
 
@@ -81,7 +68,7 @@ public class Polly {
 
     
     
-    private final static String DEVELOP_VERSION = "0.6.0";
+    private final static String DEVELOP_VERSION = "0.6.3";
     private final static String PLUGIN_FOLDER = "cfg/plugins/";
     private final static String CONFIG_FULL_PATH = "cfg/polly.cfg";
     private final static String PERSISTENCE_XML = "cfg/META-INF/persistence.xml";
@@ -163,9 +150,9 @@ public class Polly {
 
         
         // Setup blackboard
-        ComponentBlackboard blackBoard = new ComponentBlackboard();
+        ModuleBlackboard blackBoard = new ModuleBlackboard();
         // base components:
-        blackBoard.provideComponent(ShutdownManagerImpl.class, ShutdownManagerImpl.get());
+        blackBoard.provideComponent(ShutdownManagerImpl.class, new ShutdownManagerImpl());
         blackBoard.provideComponent(PollyConfiguration.class, config);
         blackBoard.provideComponent(ExecutorService.class, commandExecutor);
         blackBoard.provideComponent(EventProvider.class, eventProvider);
@@ -173,27 +160,31 @@ public class Polly {
                 new ConversationManagerImpl());
         
         
-        blackBoard.registerComponent(new FormatterComponent(blackBoard));
-        blackBoard.registerComponent(new PluginComponent(blackBoard, PLUGIN_FOLDER));
-        blackBoard.registerComponent(new DatabaseComponent(blackBoard, PERSISTENCE_XML, 
+        // Register all components in the order they should be initialized. If a
+        // component requires another one it must be registered later than all
+        // required components.
+        blackBoard.registerModule(new PluginModule(blackBoard, PLUGIN_FOLDER));
+        
+        // Note: the updater module could shut down polly if updates are available.
+        blackBoard.registerModule(new UpdaterModule(blackBoard, PLUGIN_FOLDER));
+        blackBoard.registerModule(new FormatterModule(blackBoard));
+        blackBoard.registerModule(new PersistenceModule(blackBoard, PERSISTENCE_XML, 
             PERSISTENCE_UNIT));
-        blackBoard.registerComponent(new CommandComponent(blackBoard));
-        blackBoard.registerComponent(new UserComponent(blackBoard));
-        blackBoard.registerComponent(new IrcComponent(blackBoard));
-        blackBoard.registerComponent(new MyPollyComponent(blackBoard));
+        blackBoard.registerModule(new CommandModule(blackBoard));
+        blackBoard.registerModule(new UserModule(blackBoard));
+        blackBoard.registerModule(new IrcModule(blackBoard));
+        blackBoard.registerModule(new MyPollyModule(blackBoard));
         
         
         blackBoard.addAfterRunAction(new NotifyPluginsAction(blackBoard));
         
         
-        try {
-            blackBoard.setupAll();
-        } catch (Exception e) {
-            logger.fatal("Error while setting up components", e);
+        if (!blackBoard.setupAll()) {
+            logger.error("Crucial component could not be initialized. Exiting!");
             return;
         }
         
-        
+        logger.info("All modules have been setup");
         
         blackBoard.runAll();
 
@@ -331,22 +322,22 @@ public class Polly {
     
     
     private void printHelp() {
-        System.out.println("Polly Parameterübersicht:");
+        System.out.println("Polly Parameterï¿½bersicht:");
         System.out.println("Name: \t\tParameter:\t Beschreibung:");
         System.out.println("(-log | -l) \t<'on'|'off'> \t Schaltet IRC " +
                 "log ein/aus.");
-        System.out.println("(-nick | -n) \t<nickname> \t Nickname für den Bot.");
-        System.out.println("(-ident | -i) \t<ident> \t Passwort für den Nickserv.");
+        System.out.println("(-nick | -n) \t<nickname> \t Nickname fï¿½r den Bot.");
+        System.out.println("(-ident | -i) \t<ident> \t Passwort fï¿½r den Nickserv.");
         System.out.println("(-server | -s) \t<server> \t Server zu dem sich der Bot " +
                 "verbindet. Nutzt 6669 als Port wenn nicht anders angegeben.");
-        System.out.println("(-port | -p) \t<port> \t\t Port für den IRC-Server.");
+        System.out.println("(-port | -p) \t<port> \t\t Port fï¿½r den IRC-Server.");
         System.out.println("(-join | -j) \t<#c1,..#cn> \t Joined nur die/den " +
                 "angegebenen Channel.");
         System.out.println("(-update | -u) \t<'on'|'off'> \t Auto update ein/aus.");
         System.out.println("-telnet \t<'on'|'off'>\t Telnet-Server aktivieren.");
         System.out.println("-telnetport \t<port>\t\t Telnet-Port setzen.");
-        System.out.println("(-help | -?) \t\t\t Diese Übersicht anzeigen.");
-        System.out.println("Beliebige Taste drücken zum Beenden.");
+        System.out.println("(-help | -?) \t\t\t Diese ï¿½bersicht anzeigen.");
+        System.out.println("Beliebige Taste drï¿½cken zum Beenden.");
         try {
             System.in.read();
         } catch (IOException e) {
@@ -498,7 +489,7 @@ public class Polly {
     
     
     
-    private void updateInstaller(PollyConfiguration config) {
+    /*private void updateInstaller(PollyConfiguration config) {
         if (!config.getAutoUpdate()) {
             return;
         }
@@ -628,5 +619,5 @@ public class Polly {
                 file.delete();
             }
         }
-    }
+    }*/
 }

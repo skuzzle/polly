@@ -1,7 +1,7 @@
 package polly.commandline;
 
-import polly.PollyConfiguration;
 import polly.commandline.Argument.ArgumentAction;
+import polly.configuration.PollyConfiguration;
 
 
 public class ConfigArgument extends Argument implements ArgumentAction {
