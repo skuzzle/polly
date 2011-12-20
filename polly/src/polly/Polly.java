@@ -20,46 +20,30 @@ import java.util.jar.Manifest;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import org.jibble.pircbot.NickAlreadyInUseException;
 
 import de.skuzzle.polly.process.JavaProcessExecutor;
 import de.skuzzle.polly.process.ProcessExecutor;
-import de.skuzzle.polly.sdk.AbstractDisposable;
-import de.skuzzle.polly.sdk.CompositeDisposable;
 import de.skuzzle.polly.sdk.Version;
-import de.skuzzle.polly.sdk.eventlistener.MessageListener;
-import de.skuzzle.polly.sdk.exceptions.DatabaseException;
-import de.skuzzle.polly.sdk.exceptions.DisposingException;
-import de.skuzzle.polly.sdk.exceptions.PluginException;
-import de.skuzzle.polly.sdk.exceptions.UserExistsException;
 
 import polly.commandline.AbstractArgumentParser;
 import polly.commandline.ParameterException;
 import polly.commandline.PollyArgumentParser;
+import polly.components.CommandComponent;
+import polly.components.ComponentBlackboard;
+import polly.components.DatabaseComponent;
+import polly.components.FormatterComponent;
+import polly.components.IrcComponent;
+import polly.components.MyPollyComponent;
+import polly.components.NotifyPluginsAction;
+import polly.components.PluginComponent;
+import polly.components.UserComponent;
 import polly.configuration.DefaultPollyConfiguration;
-import polly.core.BotConnectionSettings;
-import polly.core.CommandManagerImpl;
 import polly.core.ConversationManagerImpl;
-import polly.core.FormatManagerImpl;
-import polly.core.IrcManagerImpl;
-import polly.core.MyPollyImpl;
-import polly.core.PersistenceManagerImpl;
 import polly.core.PluginConfiguration;
 import polly.core.PluginManagerImpl;
 import polly.core.ShutdownManagerImpl;
-import polly.core.UserManagerImpl;
-import polly.data.Attribute;
-import polly.data.User;
-import polly.eventhandler.IrcConnectionLostListener;
-import polly.eventhandler.IrcLoggingHandler;
-import polly.eventhandler.AutoLogonLogoffHandler;
-import polly.eventhandler.MessageHandler;
-import polly.eventhandler.TraceNickChangeHandler;
 import polly.events.DefaultEventProvider;
 import polly.events.EventProvider;
-import polly.persistence.DatabaseProperties;
-import polly.persistence.XmlCreator;
-import polly.telnet.TelnetServer;
 import polly.update.UpdateItem;
 import polly.update.UpdateManager;
 import polly.update.UpdateProperties;
@@ -167,54 +151,67 @@ public class Polly {
         }
         
         
+
+        // Threading services
         ExecutorService eventThreadPool = Executors.newFixedThreadPool
                 (config.getEventThreads(), new EventThreadFactory());
-        
-        final ExecutorService executionThreadPool = Executors.newFixedThreadPool(
-                config.getExecutionThreads(), new EventThreadFactory("EXECUTION"));
-
         EventProvider eventProvider = new DefaultEventProvider(eventThreadPool);
         
-        FormatManagerImpl formatManager = new FormatManagerImpl(
-                config.getDateFormatString(),
-                config.getNumberFormatString());
-        PluginManagerImpl pluginManager = new PluginManagerImpl();
 
-        PersistenceManagerImpl persistence = new PersistenceManagerImpl();
-        CommandManagerImpl commandManager = new CommandManagerImpl(
-                config.getIgnoredCommands());
-        
-        UserManagerImpl userManager = new UserManagerImpl(persistence, 
-                config.getDeclarationCachePath(),
-                eventProvider);
-        IrcManagerImpl ircManager = new IrcManagerImpl(config.getNickName(),
-                eventProvider, config);
-        
-        ConversationManagerImpl conversationManager = new ConversationManagerImpl();
-        MyPollyImpl myPolly = new MyPollyImpl(
-                commandManager, 
-                ircManager, 
-                pluginManager, 
-                config, 
-                persistence, 
-                userManager,
-                formatManager,
-                conversationManager);
-        
-        this.updateInstaller(config);
-        this.checkUpdates(config, pluginManager, PLUGIN_FOLDER);
+        final ExecutorService commandExecutor = Executors.newFixedThreadPool(
+                config.getExecutionThreads(), new EventThreadFactory("EXECUTION"));
 
-        this.setupPlugins(pluginManager, myPolly, config, PLUGIN_FOLDER);        
+        
+        // Setup blackboard
+        ComponentBlackboard blackBoard = new ComponentBlackboard();
+        // base components:
+        blackBoard.provideComponent(ShutdownManagerImpl.class, ShutdownManagerImpl.get());
+        blackBoard.provideComponent(PollyConfiguration.class, config);
+        blackBoard.provideComponent(ExecutorService.class, commandExecutor);
+        blackBoard.provideComponent(EventProvider.class, eventProvider);
+        blackBoard.provideComponent(ConversationManagerImpl.class, 
+                new ConversationManagerImpl());
+        
+        
+        blackBoard.registerComponent(new FormatterComponent(blackBoard));
+        blackBoard.registerComponent(new PluginComponent(blackBoard, PLUGIN_FOLDER));
+        blackBoard.registerComponent(new DatabaseComponent(blackBoard, PERSISTENCE_XML, 
+            PERSISTENCE_UNIT));
+        blackBoard.registerComponent(new CommandComponent(blackBoard));
+        blackBoard.registerComponent(new UserComponent(blackBoard));
+        blackBoard.registerComponent(new IrcComponent(blackBoard));
+        blackBoard.registerComponent(new MyPollyComponent(blackBoard));
+        
+        
+        blackBoard.addAfterRunAction(new NotifyPluginsAction(blackBoard));
+        
+        
+        try {
+            blackBoard.setupAll();
+        } catch (Exception e) {
+            logger.fatal("Error while setting up components", e);
+            return;
+        }
+        
+        
+        
+        blackBoard.runAll();
+
+        
+        //this.updateInstaller(config);
+        //this.checkUpdates(config, pluginManager, PLUGIN_FOLDER);
+
+        /*this.setupPlugins(pluginManager, myPolly, config, PLUGIN_FOLDER);        
         this.setupDatabase(persistence, config, pluginManager, 
                 PERSISTENCE_XML, PERSISTENCE_UNIT);
         this.setupDefaultUser(userManager, config);
         this.setupIrc(ircManager, config, commandManager, userManager, 
-                executionThreadPool);
+                executionThreadPool);*/
         
         /*
          * Configure shutdown list. Obey list order!
          */
-        CompositeDisposable shutdownList = ShutdownManagerImpl.get().getShutdownList();
+        /*CompositeDisposable shutdownList = ShutdownManagerImpl.get().getShutdownList();
         shutdownList.add(pluginManager);
         shutdownList.add(ircManager);
         shutdownList.add(userManager);
@@ -228,9 +225,9 @@ public class Polly {
                 logger.info("Shutting down execution threadpool");
                 executionThreadPool.shutdown();
             }
-        });
+        });*/
         
-        pluginManager.notifyPlugins();
+        //pluginManager.notifyPlugins();
         
         logger.info("Polly succesfully set up.");
     }
@@ -359,7 +356,7 @@ public class Polly {
     
     
     
-    private void setupIrc(IrcManagerImpl ircManager, PollyConfiguration config, 
+    /*private void setupIrc(IrcManagerImpl ircManager, PollyConfiguration config, 
             CommandManagerImpl commandManager, UserManagerImpl userManager, 
             ExecutorService executorThreadPool) {
         
@@ -497,7 +494,7 @@ public class Polly {
         } catch (DatabaseException e) {
             logger.fatal("Database error", e);
         }
-    }
+    }*/
     
     
     

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="polly.core" basedir="." default="dist">
 
-    <property name="version.num" value="0.6.1"/>
+    <property name="version.num" value="0.6.3"/>
 
     <!-- Relative path to the root dir -->
     <property name="polly.root.dir" value="../"/>
@@ -9,8 +9,9 @@
     <!-- Build-specific properties - do not change -->
     <property name="src.dir"      value="src"/>
     <property name="dist.dir"     value="dist"/>
-    <property name="dist.lib.dir" value="${dist}/lib"/>
+    <property name="dist.lib.dir" value="${dist.dir}/lib"/>
     <property name="release.dir"  value="release"/>
+    <property name="struct.dir"   value="cfg/plugins"/>
     <property name="update.dir"   value="update"/>
     <property name="bin.dir"      value="bin"/>
     <property name="lib.dir"      value="${polly.root.dir}/libs"/>
@@ -31,7 +32,7 @@
     <property name="release.description"    value="Polly core plugin. This plugin provides all default polly commands."/>
     <property name="release.updateVersion"  value="${version.num}"/>
     <property name="release.updateFilename" value="${ant.project.name}-${release.updateVersion}-update.zip"/>
-    <property name="release.updateURL"      value="http://www.polly.skuzzle.de/updaterepo/polly/${update.filename}"/>
+    <property name="release.updateURL"      value="http://www.polly.skuzzle.de/updaterepo/${ant.project.name}/${update.filename}"/>
     
     
     
@@ -180,10 +181,17 @@
         Creates the update zip file for this project.
     -->
     <target name="update" depends="dist">
-        <zip destfile="${update.dir}/${update.filename}">
+        <mkdir dir="${struct.dir}" />
+        <copy todir="${struct.dir}">
         	<fileset dir="${dist.dir}" 
         	         includes="**/**"/>
+        </copy>
+        <zip destfile="${update.dir}/${update.filename}">
+        	<fileset dir="." 
+        	         includes="${struct.dir}/**"
+                     excludes="**/lib"/>
     	</zip>
+        
         
         <checksum file="${update.dir}/${update.filename}" property="md5"/>
         <propertyfile file="${update.dir}/${ant.project.name}.update.properties">
