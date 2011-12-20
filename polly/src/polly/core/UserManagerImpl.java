@@ -96,6 +96,10 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
         };
         
         File cacheDir = new File(this.declarationCachePath);
+        if (!cacheDir.exists()) {
+            logger.warn("Directory " + cacheDir + " does not exist");
+            logger.info("Creating " + cacheDir + ". Success: " + cacheDir.mkdirs());
+        }
         File files[] = cacheDir.listFiles(cacheFiles);
         if (files == null) {
             logger.error("I\\O Error while listing declaration directory");
