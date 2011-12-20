@@ -218,7 +218,7 @@
                 <source path="/polly.sdk" />
                 <source path="${src.dir}" />
                 <output path="${bin.dir}" />
-                <library pathref="buildpath"/>
+                <library pathref="buildpath_eclipse"/>
             </classpath>
         </eclipse>
     </target>

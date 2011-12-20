@@ -166,14 +166,14 @@
         (Re)creates eclipse projects for all subprojects
     -->
     <target name="eclipse">
-        <ant dir="polly" target="eclipse" inheritAll="false"/>
-        <ant dir="polly.process" target="eclipse" inheritAll="false"/>
         <ant dir="polly.sdk" target="eclipse" inheritAll="false"/>
-        <ant dir="installer" target="eclipse" inheritAll="false"/>
+        <ant dir="polly.process" target="eclipse" inheritAll="false"/>
         <ant dir="parser" target="eclipse" inheritAll="false"/>
+        <ant dir="installer" target="eclipse" inheritAll="false"/>
         <ant dir="polly.core" target="eclipse" inheritAll="false"/>
         <ant dir="polly.logging" target="eclipse" inheritAll="false"/>
         <ant dir="polly.reminds" target="eclipse" inheritAll="false"/>
         <ant dir="polly.tv" target="eclipse" inheritAll="false"/>
+        <ant dir="polly" target="eclipse" inheritAll="false"/>
     </target>
 </project>
