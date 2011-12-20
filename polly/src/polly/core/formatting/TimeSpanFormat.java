@@ -1,4 +1,4 @@
-package polly.util;
+package polly.core.formatting;
 
 public class TimeSpanFormat {
     
