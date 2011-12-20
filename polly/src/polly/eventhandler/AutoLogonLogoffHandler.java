@@ -9,10 +9,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
-import polly.EventThreadFactory;
+
 import polly.configuration.PollyConfiguration;
 import polly.core.irc.IrcManagerImpl;
 import polly.core.users.UserManagerImpl;
+import polly.util.concurrent.ThreadFactoryBuilder;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.eventlistener.NickChangeEvent;
 import de.skuzzle.polly.sdk.eventlistener.NickChangeListener;
@@ -87,7 +88,7 @@ public class AutoLogonLogoffHandler extends AbstractDisposable
         this.ircManager = ircManager;
         this.userManager = userManager;
         this.autoLogonExecutor = Executors.newScheduledThreadPool(4, 
-                new EventThreadFactory("LOGON"));
+                new ThreadFactoryBuilder("LOGON"));
         this.scheduledLogons = new HashMap<String, AutoLogonRunnable>();
         this.config = config;
     }

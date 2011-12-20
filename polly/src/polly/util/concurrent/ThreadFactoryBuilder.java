@@ -40,9 +40,9 @@ public class ThreadFactoryBuilder implements ThreadFactory {
     
     @Override
     public Thread newThread(Runnable r) {
-        ThreadFactoryBuilder.PATTERN.matcher(this.name).replaceFirst(
+        String name = ThreadFactoryBuilder.PATTERN.matcher(this.name).replaceFirst(
                 "" + this.threadNum++);
-        Thread result = new Thread(r, this.name);
+        Thread result = new Thread(r, name);
         if (this.exceptionHandler != null) {
             result.setUncaughtExceptionHandler(this.exceptionHandler);
         }

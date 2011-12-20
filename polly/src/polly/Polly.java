@@ -7,8 +7,6 @@ import java.io.RandomAccessFile;
 import java.lang.management.ManagementFactory;
 import java.nio.channels.FileLock;
 import java.util.Arrays;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -23,6 +21,7 @@ import polly.configuration.PollyConfiguration;
 import polly.core.ConversationManagerImpl;
 import polly.core.ShutdownManagerImpl;
 import polly.core.commands.CommandModule;
+import polly.core.executors.ExecutorModule;
 import polly.core.formatting.FormatterModule;
 import polly.core.irc.IrcModule;
 import polly.core.mypolly.MyPollyModule;
@@ -31,8 +30,6 @@ import polly.core.plugins.NotifyPluginsAction;
 import polly.core.plugins.PluginModule;
 import polly.core.update.UpdaterModule;
 import polly.core.users.UserModule;
-import polly.events.DefaultEventProvider;
-import polly.events.EventProvider;
 import polly.util.FileUtil;
 import polly.util.ModuleBlackboard;
 
@@ -138,31 +135,42 @@ public class Polly {
         }
         
         
-
-        // Threading services
-        ExecutorService eventThreadPool = Executors.newFixedThreadPool
-                (config.getEventThreads(), new EventThreadFactory());
-        EventProvider eventProvider = new DefaultEventProvider(eventThreadPool);
         
+        /*
+         * POLLY INITIALIZATION:
+         * 
+         * Each component to be set up has its own Module subclass which does all the
+         * set up things for this component. While setting up, this module can
+         * provide all components that it has initialized to the other modules that
+         * will be setup next. This process is executed by the ModuleBlackboard. 
+         * 
+         * The setup runs in a well defined order, that is, the order in which the modules
+         * have been registered to the blackboard. If a module requires a component that
+         * has not been setup yet, the initialization will fail.
+         * 
+         * A provided component can be of any type, but the whole process can only handle
+         * one instance per type. E.g. if one module provides a component of type
+         * 'ExecutorService', and a second module provides another instance of the
+         * same type, the first one will be overriden!
+         */
 
-        final ExecutorService commandExecutor = Executors.newFixedThreadPool(
-                config.getExecutionThreads(), new EventThreadFactory("EXECUTION"));
-
-        
         // Setup blackboard
         ModuleBlackboard blackBoard = new ModuleBlackboard();
-        // base components:
+        
+        // Base components:
         blackBoard.provideComponent(ShutdownManagerImpl.class, new ShutdownManagerImpl());
         blackBoard.provideComponent(PollyConfiguration.class, config);
-        blackBoard.provideComponent(ExecutorService.class, commandExecutor);
-        blackBoard.provideComponent(EventProvider.class, eventProvider);
         blackBoard.provideComponent(ConversationManagerImpl.class, 
                 new ConversationManagerImpl());
         
         
-        // Register all components in the order they should be initialized. If a
-        // component requires another one it must be registered later than all
-        // required components.
+        // Modules:
+        // Register all modules in the order they should be initialized. If a
+        // module requires a component provided by another module it must be registered
+        // after the module that provides this component.
+        blackBoard.registerModule(new ExecutorModule(blackBoard));
+        
+
         blackBoard.registerModule(new PluginModule(blackBoard, PLUGIN_FOLDER));
         
         // Note: the updater module could shut down polly if updates are available.
@@ -188,38 +196,6 @@ public class Polly {
         
         blackBoard.runAll();
 
-        
-        //this.updateInstaller(config);
-        //this.checkUpdates(config, pluginManager, PLUGIN_FOLDER);
-
-        /*this.setupPlugins(pluginManager, myPolly, config, PLUGIN_FOLDER);        
-        this.setupDatabase(persistence, config, pluginManager, 
-                PERSISTENCE_XML, PERSISTENCE_UNIT);
-        this.setupDefaultUser(userManager, config);
-        this.setupIrc(ircManager, config, commandManager, userManager, 
-                executionThreadPool);*/
-        
-        /*
-         * Configure shutdown list. Obey list order!
-         */
-        /*CompositeDisposable shutdownList = ShutdownManagerImpl.get().getShutdownList();
-        shutdownList.add(pluginManager);
-        shutdownList.add(ircManager);
-        shutdownList.add(userManager);
-        shutdownList.add(persistence);
-        shutdownList.add(config);
-        shutdownList.add(eventProvider);
-        shutdownList.add(conversationManager);
-        shutdownList.add(new AbstractDisposable() {
-            @Override
-            protected void actualDispose() throws DisposingException {
-                logger.info("Shutting down execution threadpool");
-                executionThreadPool.shutdown();
-            }
-        });*/
-        
-        //pluginManager.notifyPlugins();
-        
         logger.info("Polly succesfully set up.");
     }
     
@@ -344,280 +320,4 @@ public class Polly {
             e.printStackTrace();
         }
     }
-    
-    
-    
-    /*private void setupIrc(IrcManagerImpl ircManager, PollyConfiguration config, 
-            CommandManagerImpl commandManager, UserManagerImpl userManager, 
-            ExecutorService executorThreadPool) {
-        
-        logger.info("Starting bot with settings: (" +
-                "Nick: " + config.getNickName() + 
-                ", Ident: *****" + 
-                ", Server: " + config.getServer() + 
-                ", Port: " + config.getPort() + 
-                ", Logging: " + config.getIrcLogging() + ")");
-        
-        if (config.getIrcLogging()) {
-            IrcLoggingHandler ircConsoleLogger = new IrcLoggingHandler();
-            ircManager.addMessageListener(ircConsoleLogger);
-            ircManager.addNickChangeListener(ircConsoleLogger);
-            ircManager.addJoinPartListener(ircConsoleLogger);
-        }
-        
-        MessageHandler handler = new MessageHandler(commandManager, userManager, 
-            config.getEncodingName(), executorThreadPool);
-        ircManager.addMessageListener(handler);
-        
-        ircManager.addNickChangeListener(new TraceNickChangeHandler(userManager));
-        ircManager.addConnectionListener(new IrcConnectionLostListener(userManager));
-        
-        AutoLogonLogoffHandler isGoneHandler = new AutoLogonLogoffHandler(
-                ircManager, userManager, config);
-        ircManager.addUserSpottedListener(isGoneHandler);
-        ircManager.addNickChangeListener(isGoneHandler);
-        userManager.addUserListener(isGoneHandler);
-        ShutdownManagerImpl.get().addDisposable(isGoneHandler);
-
-        BotConnectionSettings settings = new BotConnectionSettings(
-                config.getNickName(), 
-                config.getServer(), 
-                config.getPort(), 
-                config.getIdent(),
-                config.getChannels(),
-                config.getIrcModes());
-        
-        try {
-            ircManager.connect(settings);
-            logger.info("Connected!");
-        } catch (NickAlreadyInUseException e) {
-            logger.fatal("Connection rejected: nickname in use.", e);
-            System.exit(0);
-        } catch (Exception e) {
-            logger.fatal("Connection failed: " + e.getMessage(), e);
-            System.exit(0);
-        }
-        this.setupTelnetServer(config, ircManager, handler);
-    }
-    
-    
-    
-    private void setupTelnetServer(PollyConfiguration config, IrcManagerImpl ircManager, 
-            MessageListener handler) {
-        if (config.enableTelnet()) {
-            try {
-                TelnetServer server = new TelnetServer(config, ircManager, handler);
-                ShutdownManagerImpl.get().getShutdownList().add(server);
-                server.start();
-            } catch (Exception e) {
-                logger.error("Error setting up telnet server.", e);
-            }
-        }
-    }
-    
-    
-    
-    private void setupPlugins(PluginManagerImpl pluginManager, MyPollyImpl myPolly, 
-            PollyConfiguration config, String pluginFolder) {
-        
-        try {
-            pluginManager.loadFolder(pluginFolder, myPolly, config.getPluginExcludes());
-        } catch (PluginException e) {
-            logger.error("Plugin initialization error.", e);
-        }
-    }
-    
-    
-    
-    private void setupDatabase(PersistenceManagerImpl persistence, 
-            PollyConfiguration config, 
-            PluginManagerImpl pluginManager,
-            String xmlPath,
-            String persistenceUnit) {
-        
-        DatabaseProperties dp = new DatabaseProperties(
-                config.getDbPassword(), 
-                config.getDbUser(), 
-                config.getDbDriver(), 
-                config.getDbUrl());
-        
-        XmlCreator xc = new XmlCreator(
-                persistence.getEntities(), 
-                dp, 
-                persistenceUnit, 
-                pluginManager);
-
-        persistence.registerEntity(User.class);
-        persistence.registerEntity(Attribute.class);
-        try {
-            logger.debug("Writing persistence.xml to " + xmlPath);
-            xc.writePersistenceXml(xmlPath);
-            
-            logger.debug("Connecting to database.");
-            persistence.connect(persistenceUnit);
-            
-        } catch (IOException e) {
-            logger.fatal("Could not write persistence.xml to " + xmlPath, e);
-            System.exit(0);
-        } catch (Exception e) {
-            logger.fatal("Error while setting up database connection.", e);
-            System.exit(0);
-        }
-    }
-    
-    
-    
-    private void setupDefaultUser(UserManagerImpl userManager, 
-            PollyConfiguration config) {
-        
-        try {
-            logger.info("Creating default user with name '" + 
-                    config.getAdminUserName() + "'.");
-            User admin = new User(
-                    config.getAdminUserName(), 
-                    "", 
-                    config.getAdminUserLevel());
-            
-            admin.setHashedPassword(config.getAdminPasswordHash());
-            userManager.addUser(admin);
-        }  catch (UserExistsException e) {
-            logger.debug("Default user already existed.");
-        } catch (DatabaseException e) {
-            logger.fatal("Database error", e);
-        }
-    }*/
-    
-    
-    
-    /*private void updateInstaller(PollyConfiguration config) {
-        if (!config.getAutoUpdate()) {
-            return;
-        }
-        
-        UpdateItem ui = null;
-        try {
-            String version = "0.0.0";
-            if ((new File("polly.installer.jar")).exists()) {
-                JarFile installer = new JarFile("polly.installer.jar");
-                Manifest m = installer.getManifest();
-                Attributes main = m.getMainAttributes();
-                version = main.getValue("Implementation-Version");
-            }
-            ui = new UpdateItem("polly.installer", new Version(version), 
-                    new URL(config.getInstallerUpdateUrl()));
-        } catch (IOException e) {
-            logger.error("Error while updating installer", e);
-        }
-        
-        UpdateManager um = new UpdateManager();
-        logger.info("checking for new installer version...");
-        List<UpdateProperties> update = um.collect(Collections.singletonList(ui));
-        if (update.isEmpty()) {
-            return;
-        }
-        
-        logger.info("Downloading installer update...");
-        List<File> files = um.downloadUpdates(update);
-        if (files.size() != 1) {
-            return;
-        }
-        logger.info("installing installer update...");
-        try {
-            File zip = files.get(0);
-            File temp = FileUtil.createTempDirectory();
-            FileUtil.unzip(zip, temp);
-            FileUtil.copyContent(temp, Polly.getPollyPath());
-            FileUtil.deleteRecursive(temp);
-            zip.delete();
-            logger.info("installer updated successfuly");
-        } catch (IOException e) {
-            logger.error("Error while updating installer.jar", e);
-            return;
-        }
-    }
-    
-    
-    
-    private void checkUpdates(PollyConfiguration config, PluginManagerImpl pluginManager, 
-                String pluginFolder) {
-        if (!config.getAutoUpdate()) {
-            return;
-        } else if (!(new File("polly.installer.jar")).exists()) {
-            logger.error("'installer.jar' not found in polly root directory. " +
-            		"Skipping updates");
-            return;
-        }
-        List<PluginConfiguration> plugins = pluginManager.enumerate(pluginFolder, 
-            config.getPluginExcludes());
-        List<UpdateItem> updates = new LinkedList<UpdateItem>();
-        
-        try {
-            updates.add(new UpdateItem("polly", Polly.getPollyVersion(), 
-                    new URL(config.getUpdateUrl())));
-        } catch (MalformedURLException e) {
-            // please never reach
-            logger.fatal("Unable to add update item for polly: " + 
-                    config.getUpdateUrl(), e);
-        }
-        
-        for (PluginConfiguration pc : plugins) {
-            if (!pc.updateSupported()) {
-                continue;
-            }
-            try {
-                updates.add(UpdateItem.fromProperties(pc.props));
-            } catch (Exception e) {
-                logger.error("Failed to create update item for plugin " + 
-                    pc.getProperty(PluginConfiguration.PLUGIN_NAME), e);
-            }
-        }
-        UpdateManager um = new UpdateManager();
-       
-        logger.debug("Collecting updates...");
-        List<UpdateProperties> actualUpdates = um.collect(updates);
-        if (actualUpdates.isEmpty()) {
-            logger.info("No updates available.");
-            return;
-        }
-        logger.debug("Downloading updates...");
-        List<File> files = um.downloadUpdates(actualUpdates);
-        if (files.isEmpty()) {
-            logger.info("No downloads available. Skipping update");
-            return;
-        }
-        
-        // create setup.dat for all updates that should have been downloaded.
-        //um.createSetupFile(actualUpdates);
-
-        
-        logger.debug("Preparing to install downloaded updates.");
-        final ProcessExecutor pe = JavaProcessExecutor.getOsInstance(false); // do not run installer in console
-        pe.addCommandsFromString("-jar polly.installer.jar");
-
-        
-        if (!getCommandLine().equals("")) {
-            pe.addCommand("-pp");
-            pe.addCommand(getCommandLine());
-        }
-        
-        pe.addCommand("-f");
-        StringBuilder b = new StringBuilder();
-        for (File file : files) {
-            b.append(file.getAbsolutePath());
-            b.append(";");
-        }
-        pe.addCommand(b.toString());
-        
-        try {
-            logger.info("Launching installer...");
-            pe.start();
-            logger.trace("Command: " + pe.toString());
-            ShutdownManagerImpl.get().shutdown(true);
-        } catch (IOException e) {
-            logger.fatal("Failed to start the installer. Deleting all downloads", e);
-            for (File file : files) {
-                file.delete();
-            }
-        }
-    }*/
 }
