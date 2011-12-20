@@ -119,7 +119,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 	}
 	
 	
-	
+	@Override
 	public ShutdownManagerImpl shutdownManager() {
 	    return this.shutdownManager;
 	}

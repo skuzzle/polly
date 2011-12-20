@@ -86,6 +86,11 @@ import de.skuzzle.polly.sdk.exceptions.DatabaseException;
  *     }
  * </pre>
  * 
+ * Since SDK Version 0.6.4 the PersistenceManager supports atomic write operations
+ * without external locking. That means you do not need to manually lock/unlock
+ * the database. Its recommended that you update your implementations to use those new
+ * atomic-Methods.
+ * 
  * Deeper knowledge of the JPA is highly recommended for using the polly Persistence API.
  * 
  * @author Simon
@@ -295,6 +300,14 @@ public interface PersistenceManager {
     public abstract void remove(Object o);
     
     
+    /**
+     * Removes a list of entities from the database using {@link #remove(Object)}
+     * for every single entity from the list.
+     * 
+     * @param entities The entities to remove.
+     * @since 0.6.4
+     */
+    void removeList(List<Object> entities);
     
     /**
      * Refreshes an object with data from the database. You may only call this method
@@ -317,4 +330,77 @@ public interface PersistenceManager {
      *      from the wrong context.
      */
     public abstract void dropTable(String tableName) throws DatabaseException;
+    
+    
+    
+    /**
+     * Performs an atomic write action. The database is locked for all read and 
+     * write-accesses. Then the {@link WriteAction} is executed within a transaction.
+     * Finally, the writelock is released.
+     * 
+     * @param persistence This {@link PersistenceManager} instance.
+     * @throws DatabaseException If committing the transaction fails.
+     * @since 0.6.4
+     */
+    public abstract void atomicWriteOperation(WriteAction action) 
+            throws DatabaseException;
+    
+    
+    
+    /**
+     * Atomically persists the given entity using a transaction.
+     * 
+     * @param entity The entity to persist.
+     * @throws DatabaseException If committing the transaction fails.
+     * @since 0.6.4
+     */
+    public abstract void atomicPersist(final Object entity) 
+            throws DatabaseException;
+    
+    
+    
+    /**
+     * Atomically persists the given entities using a transaction.
+     * 
+     * @param entity The entities to persist.
+     * @throws DatabaseException If committing the transaction fails.
+     * @since 0.6.4
+     */
+    void atomicPersist(List<Object> entities) throws DatabaseException;
+    
+    
+    
+    /**
+     * Atomically removes the given entity using a transaction.
+     * 
+     * @param entity The entity to remove.
+     * @throws DatabaseException If committing the transaction fails.
+     * @since 0.6.4
+     */
+    public abstract void atomicRemove(final Object entity) 
+            throws DatabaseException;
+
+
+    
+    /**
+     * Atomically removes the given entities using a transaction.
+     * 
+     * @param entity The entities to remove.
+     * @throws DatabaseException If committing the transaction fails.
+     * @since 0.6.4
+     */
+    public void atomicRemove(List<Object> entities) throws DatabaseException;
+
+    
+
+    /**
+     * Retrieves a single entity using its primary key. Its guaranteed that no database
+     * changes happen while the entity is retrieved.
+     * 
+     * @param type Class-type of the entity to retrieve.
+     * @param key Primary key of the entity to retrieve.
+     * @return <code>null</code> if no entity with the given key exists. The retrieved
+     *          entity otherwise.
+     */
+    public <T> T atomicRetrieveSingle(Class<T> type, Object key);
 }

@@ -39,7 +39,7 @@ public class ExecutorModule extends AbstractPollyModule {
         
         ExecutorService commandExecutor = Executors.newFixedThreadPool(
                 config.getExecutionThreads(), 
-                new ThreadFactoryBuilder("EXECUTION_THREAD_%n"));
+                new ThreadFactoryBuilder("EXECUTION_THREAD_%n%"));
         
         this.provideComponent(EventProvider.class, eventProvider);
         this.provideComponent(ExecutorService.class, commandExecutor);

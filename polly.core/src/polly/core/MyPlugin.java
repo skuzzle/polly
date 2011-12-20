@@ -11,6 +11,7 @@ import commands.DeleteUserCommand;
 import commands.DeliverTrainCommand;
 import commands.DictCommand;
 import commands.FooCommand;
+import commands.GreetingCommand;
 import commands.HelpCommand;
 import commands.HopCommand;
 import commands.InspectCommand;
@@ -37,6 +38,7 @@ import commands.VarCommand;
 import commands.VenadCommand;
 import commands.VersionCommand;
 import commands.WikiCommand;
+import core.GreetDeliverer;
 import core.TopicManager;
 import core.TrainManager;
 
@@ -56,8 +58,12 @@ import entities.TrainEntity;
  */
 public class MyPlugin extends PollyPlugin {
 
+    public final static String GREETING = "GREETING";
+    public final static String VENAD = "VENAD";
+    
     private TopicManager topicManager;
     private TrainManager trainManager;
+    private GreetDeliverer greetDeliverer;
     
 	public MyPlugin(MyPolly myPolly) throws IncompatiblePluginException, DuplicatedSignatureException {
 		super(myPolly);
@@ -66,6 +72,10 @@ public class MyPlugin extends PollyPlugin {
 		this.trainManager = new TrainManager(myPolly);
         this.getMyPolly().persistence().registerEntity(TopicEntity.class);
         this.getMyPolly().persistence().registerEntity(TrainEntity.class);
+        
+        this.greetDeliverer = new GreetDeliverer(myPolly);
+        this.getMyPolly().users().addUserListener(this.greetDeliverer);
+        this.addCommand(new GreetingCommand(myPolly));
         
 		this.addCommand(new InfoCommand(myPolly));
 		this.addCommand(new HelpCommand(myPolly));
@@ -123,7 +133,8 @@ public class MyPlugin extends PollyPlugin {
 	    this.topicManager.addTopicTask(test);*/
 	    
 	    try {
-	        this.getMyPolly().users().addAttribute("VENAD", "<unbekannt>");
+	        this.getMyPolly().users().addAttribute(VENAD, "<unbekannt>");
+	        this.getMyPolly().users().addAttribute(GREETING, "");
 	    } catch (Exception ignore){}
 	}
 
@@ -133,5 +144,6 @@ public class MyPlugin extends PollyPlugin {
 	protected void actualDispose() throws DisposingException {
 	    super.actualDispose();
 	    this.topicManager.dispose();
+	    this.getMyPolly().users().removeUserListener(this.greetDeliverer);
 	}
 }

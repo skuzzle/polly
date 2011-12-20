@@ -13,50 +13,50 @@ import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
 
-
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.PollyPlugin;
+import de.skuzzle.polly.sdk.WriteAction;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
-
 
 /**
  * 
  * @author Simon
  * @version 27.07.2011 ae73250
  */
-public class PersistenceManagerImpl extends AbstractDisposable 
-        implements PersistenceManager {
-    
-    private static Logger logger =
-        Logger.getLogger(PersistenceManagerImpl.class.getName());
+public class PersistenceManagerImpl extends AbstractDisposable implements
+    PersistenceManager {
+
+    private static Logger logger = Logger
+        .getLogger(PersistenceManagerImpl.class.getName());
     private static ReentrantReadWriteLock crossLocker = new ReentrantReadWriteLock();
 
     private EntityManagerFactory emf;
     private EntityManager em;
-    private EntityTransaction activeTransaction;   
+    private EntityTransaction activeTransaction;
     private EntityList entities;
-    
 
-    
+
+
     public PersistenceManagerImpl() {
         this.entities = new EntityList();
     }
-    
-    
-    
+
+
+
     public void connect(String persistenceUnit) {
-        logger.info("Connecting to persistence unit '" + persistenceUnit + "'...");
+        logger.info("Connecting to persistence unit '" + persistenceUnit
+            + "'...");
 
         this.emf = Persistence.createEntityManagerFactory(persistenceUnit);
         this.em = this.emf.createEntityManager();
 
         logger.info("Database connection established.");
     }
-    
-    
-    
+
+
+
     @Override
     protected void actualDispose() throws DisposingException {
         logger.debug("Shutting down database...");
@@ -77,7 +77,7 @@ public class PersistenceManagerImpl extends AbstractDisposable
                 this.em.close();
                 this.em = null;
             }
-            
+
             logger.trace("Shutting down entity manager factory...");
             if (this.emf.isOpen()) {
                 this.emf.close();
@@ -91,13 +91,13 @@ public class PersistenceManagerImpl extends AbstractDisposable
             this.writeUnlock();
         }
     }
-    
-    
-    
+
+
+
     public EntityList getEntities() {
         return this.entities;
     }
-    
+
 
 
     @Override
@@ -182,7 +182,8 @@ public class PersistenceManagerImpl extends AbstractDisposable
 
     @Override
     public void persist(Object o) {
-        logger.trace("Persisting " + o.getClass().getName() + "(" + o.toString() + ")");
+        logger.trace("Persisting " + o.getClass().getName() + "("
+            + o.toString() + ")");
         this.em.persist(o);
     }
 
@@ -208,40 +209,42 @@ public class PersistenceManagerImpl extends AbstractDisposable
     @SuppressWarnings("unchecked")
     @Override
     public <T> List<T> findList(Class<T> type, String query, Object... params) {
-        logger.trace("Executing named query '" + query + "'. Parameters: " + 
-                Arrays.toString(params));
-        
+        logger.trace("Executing named query '" + query + "'. Parameters: "
+            + Arrays.toString(params));
+
         Query q = this.em.createNamedQuery(query);
         int i = 1;
         for (Object param : params) {
             q.setParameter(i++, param);
         }
-        
+
         return q.getResultList();
     }
-    
-    
+
+
+
     @Override
     public void executeNativeQuery(String query) {
         Query q = this.em.createNativeQuery(query);
         q.executeUpdate();
     }
-    
-    
-    
+
+
+
     @SuppressWarnings("unchecked")
     @Override
-    public <T> List<T> findList(Class<T> type, String query, int limit, Object... params) {
-        logger.trace("Executing named query '" + query + "'. Parameters: " + 
-                Arrays.toString(params) + ", limit: " + limit);
-        
+    public <T> List<T> findList(Class<T> type, String query, int limit,
+        Object... params) {
+        logger.trace("Executing named query '" + query + "'. Parameters: "
+            + Arrays.toString(params) + ", limit: " + limit);
+
         Query q = this.em.createNamedQuery(query);
         q.setMaxResults(limit);
         int i = 1;
         for (Object param : params) {
             q.setParameter(i++, param);
         }
-        
+
         return q.getResultList();
     }
 
@@ -249,8 +252,18 @@ public class PersistenceManagerImpl extends AbstractDisposable
 
     @Override
     public void remove(Object o) {
-        logger.trace("Removing " + o.getClass().getName() + "(" + o.toString() + ")");
+        logger.trace("Removing " + o.getClass().getName() + "(" + o.toString()
+            + ")");
         this.em.remove(o);
+    }
+
+
+
+    @Override
+    public void removeList(List<Object> entities) {
+        for (Object o : entities) {
+            this.remove(o);
+        }
     }
 
 
@@ -259,21 +272,21 @@ public class PersistenceManagerImpl extends AbstractDisposable
     @Override
     public <T> T findSingle(Class<T> type, String query, Object... params) {
         Query q = this.em.createNamedQuery(query);
-        
+
         int i = 1;
         for (Object param : params) {
             q.setParameter(i++, param);
         }
-        
+
         try {
             return (T) q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
     }
-    
-    
-    
+
+
+
     @Override
     public void dropTable(String tableName) throws DatabaseException {
         this.checkStack(PollyPlugin.class, "uninstall");
@@ -288,29 +301,114 @@ public class PersistenceManagerImpl extends AbstractDisposable
             this.writeUnlock();
         }
     }
-    
-    
-    
-    private void checkStack(Class<?> cls, String methodName) throws DatabaseException {
+
+
+
+    private void checkStack(Class<?> cls, String methodName)
+        throws DatabaseException {
         StackTraceElement[] stes = Thread.currentThread().getStackTrace();
         if (stes.length == 0) {
-            throw new DatabaseException("This method cannot be called in this context.");
+            throw new DatabaseException(
+                "This method cannot be called in this context.");
         }
-        
+
         StackTraceElement ste = stes[0];
         try {
             Class<?> clazz = Class.forName(ste.getClassName());
-            if (!ste.getMethodName().equals(methodName) || !cls.isAssignableFrom(clazz)) {
+            if (!ste.getMethodName().equals(methodName)
+                || !cls.isAssignableFrom(clazz)) {
                 throw new DatabaseException(
-                        "This method cannot be called in this context.");
+                    "This method cannot be called in this context.");
             }
         } catch (ClassNotFoundException e) {
-            throw new DatabaseException("This method cannot be called in this context.");
+            throw new DatabaseException(
+                "This method cannot be called in this context.");
         }
     }
-    
-    
-    
+
+
+
+    @Override
+    public void atomicWriteOperation(WriteAction action)
+        throws DatabaseException {
+        try {
+            this.writeLock();
+            this.startTransaction();
+            action.performUpdate(this);
+            this.commitTransaction();
+        } finally {
+            this.writeUnlock();
+        }
+    }
+
+
+
+    @Override
+    public void atomicPersist(final Object entity) throws DatabaseException {
+        this.atomicWriteOperation(new WriteAction() {
+
+            @Override
+            public void performUpdate(PersistenceManager persistence) {
+                persistence.persist(entity);
+            }
+        });
+    }
+
+
+
+    @Override
+    public void atomicPersist(final List<Object> entities)
+        throws DatabaseException {
+        this.atomicWriteOperation(new WriteAction() {
+
+            @Override
+            public void performUpdate(PersistenceManager persistence) {
+                persistence.persistList(entities);
+            }
+        });
+    }
+
+
+
+    @Override
+    public void atomicRemove(final Object entity) throws DatabaseException {
+        this.atomicWriteOperation(new WriteAction() {
+
+            @Override
+            public void performUpdate(PersistenceManager persistence) {
+                persistence.remove(entity);
+            }
+        });
+    }
+
+
+
+    @Override
+    public void atomicRemove(final List<Object> entities)
+        throws DatabaseException {
+        this.atomicWriteOperation(new WriteAction() {
+
+            @Override
+            public void performUpdate(PersistenceManager persistence) {
+                persistence.removeList(entities);
+            }
+        });
+    }
+
+
+
+    @Override
+    public <T> T atomicRetrieveSingle(Class<T> type, Object key) {
+        try {
+            this.readLock();
+            return this.find(type, key);
+        } finally {
+            this.readUnlock();
+        }
+    }
+
+
+
     @Override
     public void refresh(Object o) {
         this.em.refresh(o);
