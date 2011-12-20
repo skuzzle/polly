@@ -12,6 +12,7 @@
     <property name="dist.lib.dir" value="${dist.dir}/lib"/>
     <property name="release.dir"  value="release"/>
     <property name="struct.dir"   value="cfg/plugins"/>
+    <property name="temp.dir"     value="temp"/>
     <property name="update.dir"   value="update"/>
     <property name="bin.dir"      value="bin"/>
     <property name="lib.dir"      value="${polly.root.dir}/libs"/>
@@ -126,7 +127,7 @@
             <entry key="description" value="${release.description}"/>
             <entry key="developer"   value="${release.developer}"/>
             <entry key="version"     value="${release.updateVersion}"/>
-            <entry key="updateUrl"   value="${release.name}"/>
+            <entry key="updateUrl"   value="${release.updateURL}"/>
             <entry key="entrypoint"  value="${release.entrypoint}"/>
         </propertyfile>
     </target>
@@ -181,17 +182,17 @@
         Creates the update zip file for this project.
     -->
     <target name="update" depends="dist">
-        <mkdir dir="${struct.dir}" />
-        <copy todir="${struct.dir}">
+        <mkdir dir="${temp.dir}/${struct.dir}" />
+        <copy todir="${temp.dir}/${struct.dir}">
         	<fileset dir="${dist.dir}" 
         	         includes="**/**"/>
         </copy>
         <zip destfile="${update.dir}/${update.filename}">
-        	<fileset dir="." 
+        	<fileset dir="${temp.dir}" 
         	         includes="${struct.dir}/**"
                      excludes="**/lib"/>
     	</zip>
-        
+        <delete dir="${temp.dir}"/>
         
         <checksum file="${update.dir}/${update.filename}" property="md5"/>
         <propertyfile file="${update.dir}/${ant.project.name}.update.properties">
@@ -217,7 +218,7 @@
                 <source path="/polly.sdk" />
                 <source path="${src.dir}" />
                 <output path="${bin.dir}" />
-                <library pathref="buildpath_eclipse"/>
+                <library pathref="buildpath"/>
             </classpath>
         </eclipse>
     </target>

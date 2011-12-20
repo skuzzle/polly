@@ -12,14 +12,13 @@
     <property name="dist.lib.dir" value="${dist.dir}/lib"/>
     <property name="release.dir"  value="release"/>
     <property name="update.dir"   value="update"/>
+    <property name="struct.dir"   value="cfg/plugins"/>
+    <property name="temp.dir"     value="temp"/>
     <property name="bin.dir"      value="bin"/>
     <property name="lib.dir"      value="${polly.root.dir}/libs"/>
     
     <!-- jar file properties -->
-    <property name="mainclass" value="TODO"/>
     <property name="title"     value="TODO"/>
-    <property name="version"   value="${version.num}"/>
-    <property name="Builddate" value="${today}"/>
     <!-- used to specify additional jar-classpath elements -->
     <property name="classpath" value=""/>
     
@@ -30,7 +29,6 @@
     <property name="release.developer"      value="TODO"/>
     <property name="release.entrypoint"     value="TODO"/>
     <property name="release.description"    value="TODO"/>
-    <property name="release.updateVersion"  value="${version.num}"/>
     <property name="release.updateFilename" value="${ant.project.name}-${release.updateVersion}-update.zip"/>
     <property name="release.updateURL"      value="http://www.polly.skuzzle.de/updaterepo/polly/${update.filename}"/>
     
@@ -79,6 +77,7 @@
         <delete dir="${bin.dir}"/>
         <delete dir="${release.dir}"/>
         <delete dir="${update.dir}"/>
+        <delete dir="${temp.dir}"/>
     </target>
     
     
@@ -125,7 +124,7 @@
             <entry key="name"        value="${release.name}"/>
             <entry key="description" value="${release.description}"/>
             <entry key="developer"   value="${release.developer}"/>
-            <entry key="version"     value="${release.updateVersion}"/>
+            <entry key="version"     value="${version.num}"/>
             <entry key="updateUrl"   value="${release.name}"/>
             <entry key="entrypoint"  value="${release.entrypoint}"/>
         </propertyfile>
@@ -153,9 +152,8 @@
     
         <jar destfile="${dist.dir}/${ant.project.name}.jar">
             <manifest>
-                <attribute name="Main-Class"             value="${mainclass}"/>
                 <attribute name="Implementation-Title"   value="${title}"/>
-                <attribute name="Implementation-Version" value="${version}"/>
+                <attribute name="Implementation-Version" value="${version.num}"/>
                 <attribute name="Class-Path"             value="${classpath} ${jar.classpath}"/>
             </manifest>
             <fileset dir="${bin.dir}"/>
@@ -181,16 +179,23 @@
         Creates the update zip file for this project.
     -->
     <target name="update" depends="dist">
-        <zip destfile="${update.dir}/${update.filename}">
+        <mkdir dir="${temp.dir}/${struct.dir}" />
+        <copy todir="${temp.dir}/${struct.dir}">
         	<fileset dir="${dist.dir}" 
         	         includes="**/**"/>
+        </copy>
+        <zip destfile="${update.dir}/${update.filename}">
+        	<fileset dir="${temp.dir}" 
+        	         includes="${struct.dir}/**"
+                     excludes="**/lib"/>
     	</zip>
+        <delete dir="${temp.dir}"/>
         
         <checksum file="${update.dir}/${update.filename}" property="md5"/>
         <propertyfile file="${update.dir}/${ant.project.name}.update.properties">
             <entry key="name"          value="${release.name}"/>
             <entry key="description"   value="${release.description}"/>
-            <entry key="updateVersion" value="${release.updateVersion}"/>
+            <entry key="updateVersion" value="${version.num}"/>
             <entry key="updateURL"     value="${release.updateURL}"/>
             <entry key="checksum"      value="${md5}"/>
         </propertyfile>
