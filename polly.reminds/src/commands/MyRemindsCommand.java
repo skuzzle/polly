@@ -52,13 +52,7 @@ public class MyRemindsCommand extends Command {
     @Override
     protected boolean executeOnBoth(User executer, String channel,
             Signature signature) {
-        return true;
-    }
-    
-    
-    
-    @Override
-    protected void executeOnQuery(User executer, Signature signature) {
+        
         if (this.match(signature, 0)) {
             List<RemindEntity> reminds = 
                 this.remindManager.getRemindsForUser(executer.getCurrentNickName());
@@ -71,6 +65,8 @@ public class MyRemindsCommand extends Command {
                         this.getMyPolly().formatting()));
             }
         }
+        
+        return false;
     }
 
 }
