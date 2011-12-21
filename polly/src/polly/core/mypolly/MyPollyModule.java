@@ -1,19 +1,19 @@
 package polly.core.mypolly;
 
 import polly.configuration.PollyConfiguration;
-import polly.core.ConversationManagerImpl;
+import polly.core.AbstractModule;
+import polly.core.ModuleLoader;
 import polly.core.ShutdownManagerImpl;
 import polly.core.commands.CommandManagerImpl;
+import polly.core.conversations.ConversationManagerImpl;
 import polly.core.formatting.FormatManagerImpl;
 import polly.core.irc.IrcManagerImpl;
 import polly.core.persistence.PersistenceManagerImpl;
 import polly.core.plugins.PluginManagerImpl;
 import polly.core.users.UserManagerImpl;
-import polly.util.AbstractPollyModule;
-import polly.util.ModuleBlackboard;
 
 
-public class MyPollyModule extends AbstractPollyModule {
+public class MyPollyModule extends AbstractModule {
 
     private CommandManagerImpl commandManager;
     private IrcManagerImpl ircManager;
@@ -26,28 +26,39 @@ public class MyPollyModule extends AbstractPollyModule {
     private ShutdownManagerImpl shutdownManager;
     
     
-    public MyPollyModule(ModuleBlackboard initializer) {
-        super("MYPOLLY", initializer, true);
+    public MyPollyModule(ModuleLoader loader) {
+        super("MODULE_MYPOLLY", loader, true);
+        this.requireBeforeSetup(CommandManagerImpl.class);
+        this.requireBeforeSetup(IrcManagerImpl.class);
+        this.requireBeforeSetup(PluginManagerImpl.class);
+        this.requireBeforeSetup(PollyConfiguration.class);
+        this.requireBeforeSetup(PersistenceManagerImpl.class);
+        this.requireBeforeSetup(UserManagerImpl.class);
+        this.requireBeforeSetup(FormatManagerImpl.class);
+        this.requireBeforeSetup(ConversationManagerImpl.class);
+        this.requireBeforeSetup(ShutdownManagerImpl.class);
+        
+        this.willProvideDuringSetup(MyPollyImpl.class);
     }
     
     
     @Override
-    public void require() {
-        this.commandManager = this.requireComponent(CommandManagerImpl.class);
-        this.ircManager = this.requireComponent(IrcManagerImpl.class);
-        this.pluginManager = this.requireComponent(PluginManagerImpl.class);
-        this.config = this.requireComponent(PollyConfiguration.class);
-        this.persistencemanager = this.requireComponent(PersistenceManagerImpl.class);
-        this.userManager = this.requireComponent(UserManagerImpl.class);
-        this.formatManager = this.requireComponent(FormatManagerImpl.class);
-        this.conversationManager = this.requireComponent(ConversationManagerImpl.class);
-        this.shutdownManager = this.requireComponent(ShutdownManagerImpl.class);
+    public void beforeSetup() {
+        this.commandManager = this.requireNow(CommandManagerImpl.class);
+        this.ircManager = this.requireNow(IrcManagerImpl.class);
+        this.pluginManager = this.requireNow(PluginManagerImpl.class);
+        this.config = this.requireNow(PollyConfiguration.class);
+        this.persistencemanager = this.requireNow(PersistenceManagerImpl.class);
+        this.userManager = this.requireNow(UserManagerImpl.class);
+        this.formatManager = this.requireNow(FormatManagerImpl.class);
+        this.conversationManager = this.requireNow(ConversationManagerImpl.class);
+        this.shutdownManager = this.requireNow(ShutdownManagerImpl.class);
     }
     
     
     
     @Override
-    public boolean doSetup() throws Exception {
+    public void setup() {
         MyPollyImpl myPolly = new MyPollyImpl(
             this.commandManager, 
             this.ircManager, 
@@ -58,13 +69,6 @@ public class MyPollyModule extends AbstractPollyModule {
             this.formatManager, 
             this.conversationManager,
             this.shutdownManager);
-        this.provideComponent(MyPollyImpl.class, myPolly);
-        return true;
+        this.provideComponent(myPolly);
     }
-    
-    
-    
-    @Override
-    public void doRun() throws Exception {}
-
 }

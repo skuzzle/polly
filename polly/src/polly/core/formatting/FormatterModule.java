@@ -1,39 +1,30 @@
 package polly.core.formatting;
 
 import polly.configuration.PollyConfiguration;
-import polly.util.AbstractPollyModule;
-import polly.util.ModuleBlackboard;
+import polly.core.AbstractModule;
+import polly.core.ModuleLoader;
 
 
-public class FormatterModule extends AbstractPollyModule {
+public class FormatterModule extends AbstractModule {
 
-    private PollyConfiguration config;
-    
-    public FormatterModule(ModuleBlackboard initializer) {
-        super("FORMATTER", initializer, true);
-    }
-    
-    
-    
-    @Override
-    public void require() {
-        this.config = this.requireComponent(PollyConfiguration.class);
+
+    public FormatterModule(ModuleLoader loader) {
+        super("MODULE_FORMATTER", loader, true);
+        this.requireBeforeSetup(PollyConfiguration.class);
+        this.willProvideDuringSetup(FormatManagerImpl.class);
     }
 
     
     
     @Override
-    public boolean doSetup() throws Exception {
-        FormatManagerImpl formatter = new FormatManagerImpl(
-            this.config.getDateFormatString(), 
-            this.config.getNumberFormatString());
+    public void setup() {
+        PollyConfiguration config = this.requireNow(PollyConfiguration.class);
         
-        this.provideComponent(FormatManagerImpl.class, formatter);
-        return true;
+        FormatManagerImpl formatter = new FormatManagerImpl(
+            config.getDateFormatString(), 
+            config.getNumberFormatString());
+        
+        this.provideComponent(formatter);
     }
-
-    
-    @Override
-    public void doRun() throws Exception {}
 
 }

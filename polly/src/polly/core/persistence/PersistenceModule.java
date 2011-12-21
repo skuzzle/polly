@@ -1,15 +1,17 @@
 package polly.core.persistence;
 
 import polly.configuration.PollyConfiguration;
+import polly.core.AbstractModule;
+import polly.core.ModuleLoader;
+import polly.core.ModuleStates;
+import polly.core.SetupException;
 import polly.core.ShutdownManagerImpl;
 import polly.core.plugins.PluginManagerImpl;
 import polly.data.Attribute;
 import polly.data.User;
-import polly.util.AbstractPollyModule;
-import polly.util.ModuleBlackboard;
 
 
-public class PersistenceModule extends AbstractPollyModule {
+public class PersistenceModule extends AbstractModule {
 
     private String persistenceXMLPath;
     private String persistenceUnitName;
@@ -20,29 +22,39 @@ public class PersistenceModule extends AbstractPollyModule {
     private XmlCreator xmlCreator;
     
     
-    public PersistenceModule(ModuleBlackboard initializer, 
+    
+    public PersistenceModule(ModuleLoader loader, 
                 String persistenceXMLPath, String persistenceUnitName) {
-        super("PERSISTENCE", initializer, true);
+        super("MODULE_PERSISTENCE", loader, true);
         this.persistenceXMLPath = persistenceXMLPath;
         this.persistenceUnitName = persistenceUnitName;
+        
+        this.requireBeforeSetup(PollyConfiguration.class);
+        this.requireBeforeSetup(PluginManagerImpl.class);
+        this.requireBeforeSetup(ShutdownManagerImpl.class);
+        
+        this.willProvideDuringSetup(PersistenceManagerImpl.class);
+        
+        this.requireState(ModuleStates.PLUGINS_READY);
+        this.willSetState(ModuleStates.PERSISTENCE_READY);
 
     }
     
     
     
     @Override
-    public void require() {
-        this.config = this.requireComponent(PollyConfiguration.class);
-        this.pluginManager = this.requireComponent(PluginManagerImpl.class);
-        this.shutdownManager = this.requireComponent(ShutdownManagerImpl.class);
+    public void beforeSetup() {
+        this.config = this.requireNow(PollyConfiguration.class);
+        this.pluginManager = this.requireNow(PluginManagerImpl.class);
+        this.shutdownManager = this.requireNow(ShutdownManagerImpl.class);
     }
     
 
     
     @Override
-    public boolean doSetup() throws Exception {
+    public void setup() throws SetupException {
         this.persistenceManager = new PersistenceManagerImpl();
-        this.provideComponent(PersistenceManagerImpl.class, this.persistenceManager);
+        this.provideComponent(this.persistenceManager);
         
         DatabaseProperties dp = new DatabaseProperties(
             this.config.getDbPassword(), 
@@ -60,17 +72,17 @@ public class PersistenceModule extends AbstractPollyModule {
         this.persistenceManager.registerEntity(Attribute.class);
                
         this.shutdownManager.addDisposable(this.persistenceManager);
-        return true;
     }
 
     
     
-    @Override
-    public void doRun() throws Exception {
+
+    public void run() throws Exception {
         logger.debug("Writing persistence.xml to " + this.persistenceXMLPath);
         this.xmlCreator.writePersistenceXml(this.persistenceXMLPath);
         
         this.persistenceManager.connect(this.persistenceUnitName);
+        this.addState(ModuleStates.PERSISTENCE_READY);
     }
 
 

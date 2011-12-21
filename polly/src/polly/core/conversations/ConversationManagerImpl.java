@@ -1,4 +1,4 @@
-package polly.core;
+package polly.core.conversations;
 
 import java.io.IOException;
 import java.util.ArrayList;

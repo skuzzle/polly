@@ -4,9 +4,9 @@ import java.util.Date;
 
 import polly.Polly;
 import polly.configuration.ConfigurationWrapper;
-import polly.core.ConversationManagerImpl;
 import polly.core.ShutdownManagerImpl;
 import polly.core.commands.CommandManagerImpl;
+import polly.core.conversations.ConversationManagerImpl;
 import polly.core.formatting.FormatManagerImpl;
 import polly.core.irc.IrcManagerImpl;
 import polly.core.persistence.PersistenceManagerImpl;

@@ -1,14 +1,17 @@
 package polly.core.telnet;
 
+import java.io.IOException;
 import polly.configuration.PollyConfiguration;
+import polly.core.AbstractModule;
+import polly.core.ModuleLoader;
+import polly.core.ModuleStates;
+import polly.core.SetupException;
 import polly.core.ShutdownManagerImpl;
 import polly.core.irc.IrcManagerImpl;
 import polly.eventhandler.MessageHandler;
-import polly.util.AbstractPollyModule;
-import polly.util.ModuleBlackboard;
 
 
-public class TelnetModule extends AbstractPollyModule {
+public class TelnetModule extends AbstractModule {
 
     private PollyConfiguration config;
     private IrcManagerImpl ircManager;
@@ -17,40 +20,53 @@ public class TelnetModule extends AbstractPollyModule {
     private TelnetServer server;
     
     
-    public TelnetModule(ModuleBlackboard initializer) {
-        super("TELNET", initializer, false);
-    }
-    
-
-    
-    @Override
-    public void require() {
-        this.config = this.requireComponent(PollyConfiguration.class);
-        this.ircManager = this.requireComponent(IrcManagerImpl.class);
-        this.messageHandler = this.requireComponent(MessageHandler.class);
-        this.shutdownManager = this.requireComponent(ShutdownManagerImpl.class);
-    }
-    
-    
-    
-    @Override
-    public boolean doSetup() throws Exception {
-        if (this.config.enableTelnet()) {
-            this.server = new TelnetServer(
-                this.config, this.ircManager, this.messageHandler);
-            this.shutdownManager.addDisposable(this.server);
-            
-            this.provideComponent(TelnetServer.class, this.server);
-        }
+    public TelnetModule(ModuleLoader loader) {
+        super("TELNET", loader, false);
         
-        return true;
+        this.requireBeforeSetup(PollyConfiguration.class);
+        this.requireBeforeSetup(IrcManagerImpl.class);
+        this.requireBeforeSetup(MessageHandler.class);
+        this.requireBeforeSetup(ShutdownManagerImpl.class);
+        
+        this.willProvideDuringSetup(TelnetServer.class);
+        
+        this.willSetState(ModuleStates.TELENT_READY);
+    }
+    
+
+    
+    @Override
+    public void beforeSetup() {
+        this.config = this.requireNow(PollyConfiguration.class);
+        this.ircManager = this.requireNow(IrcManagerImpl.class);
+        this.messageHandler = this.requireNow(MessageHandler.class);
+        this.shutdownManager = this.requireNow(ShutdownManagerImpl.class);
+    }
+    
+    
+    
+    @Override
+    public void setup() throws SetupException {
+        if (this.config.enableTelnet()) {
+            try {
+                this.server = new TelnetServer(
+                    this.config, this.ircManager, this.messageHandler);
+                
+                this.shutdownManager.addDisposable(this.server);
+                
+                this.provideComponent(this.server);
+            } catch (IOException e) {
+                throw new SetupException(e);
+            } 
+        }
     }
     
     
 
-    @Override
-    public void doRun() throws Exception {
+
+    public void run() throws Exception {
         this.server.start();
+        this.addState(ModuleStates.TELENT_READY);
     }
 
 }

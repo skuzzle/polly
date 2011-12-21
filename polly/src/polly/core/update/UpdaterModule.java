@@ -16,56 +16,57 @@ import de.skuzzle.polly.process.ProcessExecutor;
 import de.skuzzle.polly.sdk.Version;
 import polly.Polly;
 import polly.configuration.PollyConfiguration;
+import polly.core.AbstractModule;
+import polly.core.ModuleLoader;
+import polly.core.SetupException;
 import polly.core.ShutdownManagerImpl;
 import polly.core.plugins.PluginConfiguration;
 import polly.core.plugins.PluginManagerImpl;
-import polly.util.AbstractPollyModule;
 import polly.util.FileUtil;
-import polly.util.ModuleBlackboard;
 
-
-public class UpdaterModule extends AbstractPollyModule {
+public class UpdaterModule extends AbstractModule {
 
     private PollyConfiguration config;
     private PluginManagerImpl pluginManager;
     private ShutdownManagerImpl shutdownManager;
     private String pluginFolder;
-    
-    public UpdaterModule(ModuleBlackboard initializer, String pluginFolder) {
-        super("UPDATER", initializer);
+
+
+
+    public UpdaterModule(ModuleLoader loader, String pluginFolder) {
+        super("MODULE_UPDATER", loader, false);
         this.pluginFolder = pluginFolder;
+
+        this.requireBeforeSetup(PollyConfiguration.class);
+        this.requireBeforeSetup(PluginManagerImpl.class);
+        this.requireBeforeSetup(ShutdownManagerImpl.class);
     }
-    
-    
-    
-    @Override
-    public void require() {
-        this.config = this.requireComponent(PollyConfiguration.class);
-        this.pluginManager = this.requireComponent(PluginManagerImpl.class);
-        this.shutdownManager = this.requireComponent(ShutdownManagerImpl.class);
-        
-    }
-    
+
+
 
     @Override
-    public boolean doSetup() throws Exception {
+    public void beforeSetup() {
+        this.config = this.requireNow(PollyConfiguration.class);
+        this.pluginManager = this.requireNow(PluginManagerImpl.class);
+        this.shutdownManager = this.requireNow(ShutdownManagerImpl.class);
+
+    }
+
+
+
+    @Override
+    public void setup() throws SetupException {
         this.updateInstaller();
         this.checkUpdates();
-        return true;
     }
 
-    
-    
-    @Override
-    public void doRun() throws Exception {}
-    
-    
-    
+
+
     private void updateInstaller() {
         if (!this.config.getAutoUpdate()) {
             return;
         }
-        
+
         UpdateItem ui = null;
         try {
             String version = "0.0.0";
@@ -75,19 +76,20 @@ public class UpdaterModule extends AbstractPollyModule {
                 Attributes main = m.getMainAttributes();
                 version = main.getValue("Implementation-Version");
             }
-            ui = new UpdateItem("polly.installer", new Version(version), 
-                    new URL(this.config.getInstallerUpdateUrl()));
+            ui = new UpdateItem("polly.installer", new Version(version),
+                new URL(this.config.getInstallerUpdateUrl()));
         } catch (IOException e) {
             logger.error("Error while updating installer", e);
         }
-        
+
         UpdateManager um = new UpdateManager();
         logger.info("checking for new installer version...");
-        List<UpdateProperties> update = um.collect(Collections.singletonList(ui));
+        List<UpdateProperties> update = um.collect(Collections
+            .singletonList(ui));
         if (update.isEmpty()) {
             return;
         }
-        
+
         logger.info("Downloading installer update...");
         List<File> files = um.downloadUpdates(update);
         if (files.size() != 1) {
@@ -107,32 +109,33 @@ public class UpdaterModule extends AbstractPollyModule {
             return;
         }
     }
-    
-    
-    
+
+
+
     private void checkUpdates() {
         if (!this.config.getAutoUpdate()) {
             return;
         } else if (!(new File("polly.installer.jar")).exists()) {
-            logger.error("'installer.jar' not found in polly root directory. " +
-                    "Skipping updates");
+            logger.error("'installer.jar' not found in polly root directory. "
+                + "Skipping updates");
             return;
         }
         List<PluginConfiguration> plugins = this.pluginManager.enumerate(
-            this.pluginFolder, 
-            this.config.getPluginExcludes());
-        
+            this.pluginFolder, this.config.getPluginExcludes());
+
         List<UpdateItem> updates = new LinkedList<UpdateItem>();
-        
+
         try {
-            updates.add(new UpdateItem("polly", Polly.getPollyVersion(), 
-                    new URL(config.getUpdateUrl())));
+            updates.add(new UpdateItem("polly", Polly.getPollyVersion(),
+                new URL(config.getUpdateUrl())));
         } catch (MalformedURLException e) {
             // please never reach
-            logger.fatal("Unable to add update item for polly: " + 
-                    config.getUpdateUrl(), e);
+            logger
+                .fatal(
+                    "Unable to add update item for polly: "
+                        + config.getUpdateUrl(), e);
         }
-        
+
         for (PluginConfiguration pc : plugins) {
             if (!pc.updateSupported()) {
                 continue;
@@ -140,12 +143,13 @@ public class UpdaterModule extends AbstractPollyModule {
             try {
                 updates.add(UpdateItem.fromProperties(pc.getProps()));
             } catch (Exception e) {
-                logger.error("Failed to create update item for plugin " + 
-                    pc.getProperty(PluginConfiguration.PLUGIN_NAME), e);
+                logger.error(
+                    "Failed to create update item for plugin "
+                        + pc.getProperty(PluginConfiguration.PLUGIN_NAME), e);
             }
         }
         UpdateManager um = new UpdateManager();
-        
+
         logger.debug("Collecting updates...");
         List<UpdateProperties> actualUpdates = um.collect(updates);
         if (actualUpdates.isEmpty()) {
@@ -158,21 +162,24 @@ public class UpdaterModule extends AbstractPollyModule {
             logger.info("No downloads available. Skipping update");
             return;
         }
-        
+
         // create setup.dat for all updates that should have been downloaded.
-        //um.createSetupFile(actualUpdates);
-        
-        
+        // um.createSetupFile(actualUpdates);
+
         logger.debug("Preparing to install downloaded updates.");
-        final ProcessExecutor pe = JavaProcessExecutor.getOsInstance(false); // do not run installer in console
+        final ProcessExecutor pe = JavaProcessExecutor.getOsInstance(false); // do
+                                                                             // not
+                                                                             // run
+                                                                             // installer
+                                                                             // in
+                                                                             // console
         pe.addCommandsFromString("-jar polly.installer.jar");
-        
-        
+
         if (!Polly.getCommandLine().equals("")) {
             pe.addCommand("-pp");
             pe.addCommand(Polly.getCommandLine());
         }
-        
+
         pe.addCommand("-f");
         StringBuilder b = new StringBuilder();
         for (File file : files) {
@@ -180,14 +187,15 @@ public class UpdaterModule extends AbstractPollyModule {
             b.append(";");
         }
         pe.addCommand(b.toString());
-        
+
         try {
             logger.info("Launching installer...");
             pe.start();
             logger.trace("Command: " + pe.toString());
             this.shutdownManager.shutdown(true);
         } catch (IOException e) {
-            logger.fatal("Failed to start the installer. Deleting all downloads", e);
+            logger.fatal(
+                "Failed to start the installer. Deleting all downloads", e);
             for (File file : files) {
                 file.delete();
             }

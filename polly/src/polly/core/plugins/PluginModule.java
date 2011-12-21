@@ -1,13 +1,15 @@
 package polly.core.plugins;
 
 import polly.configuration.PollyConfiguration;
+import polly.core.AbstractModule;
+import polly.core.ModuleLoader;
+import polly.core.ModuleStates;
 import polly.core.ShutdownManagerImpl;
 import polly.core.mypolly.MyPollyImpl;
-import polly.util.AbstractPollyModule;
-import polly.util.ModuleBlackboard;
 
 
-public class PluginModule extends AbstractPollyModule {
+
+public class PluginModule extends AbstractModule {
     
     private PluginManagerImpl pluginManager;
     private PollyConfiguration config;
@@ -15,38 +17,46 @@ public class PluginModule extends AbstractPollyModule {
     private String pluginFolder;
     
     
-    public PluginModule(ModuleBlackboard initializer, String pluginFolder) {
-        super("PLUGINS", initializer, false);
+    public PluginModule(ModuleLoader loader, String pluginFolder) {
+        super("MODULE_PLUGINS", loader, false);
         this.pluginFolder = pluginFolder;
+        
+        this.requireBeforeSetup(PollyConfiguration.class);
+        this.requireBeforeSetup(ShutdownManagerImpl.class);
+        
+        this.willProvideDuringSetup(PluginManagerImpl.class);
+        
+        this.willSetState(ModuleStates.PLUGINS_READY);
     }
 
     
     
     @Override
-    public void require() {
-        this.config = this.requireComponent(PollyConfiguration.class);
-        this.shutdownManager = this.requireComponent(ShutdownManagerImpl.class);
+    public void beforeSetup() {
+        this.config = this.requireNow(PollyConfiguration.class);
+        this.shutdownManager = this.requireNow(ShutdownManagerImpl.class);
     }
     
     
     
     @Override
-    public boolean doSetup() throws Exception {
+    public void setup() {
         this.pluginManager = new PluginManagerImpl();
         
-        this.provideComponent(PluginManagerImpl.class, this.pluginManager);
+        this.provideComponent(this.pluginManager);
         this.shutdownManager.addDisposable(this.pluginManager);
-        return true;
     }
 
     
     
-    @Override
-    public void doRun() throws Exception {
-        MyPollyImpl myPolly = this.requireComponent(MyPollyImpl.class);
+
+    public void run() throws Exception {
+        MyPollyImpl myPolly = this.requireNow(MyPollyImpl.class);
         
         this.pluginManager.loadFolder(this.pluginFolder, myPolly, 
             this.config.getPluginExcludes());
+        
+        this.addState(ModuleStates.PLUGINS_READY);
     }
 
 }
