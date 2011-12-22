@@ -11,8 +11,6 @@ import java.util.Arrays;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
-import de.skuzzle.polly.sdk.Version;
-
 import polly.commandline.AbstractArgumentParser;
 import polly.commandline.ParameterException;
 import polly.commandline.PollyArgumentParser;
@@ -33,6 +31,7 @@ import polly.core.plugins.PluginModule;
 import polly.core.update.UpdaterModule;
 import polly.core.users.UserModule;
 import polly.util.FileUtil;
+import de.skuzzle.polly.sdk.Version;
 
 public class Polly {
 

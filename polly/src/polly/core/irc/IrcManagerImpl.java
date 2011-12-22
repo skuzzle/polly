@@ -251,7 +251,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     private boolean disconnect;
     private TelnetConnection connection;
     private BotConnectionSettings recent;
-    private MessageThread messageThread;
+    private MessageScheduler messageScheduler;
     
     
     
@@ -276,8 +276,8 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
          */
         this.bot.setVerbose(false);
         
-        this.messageThread = new MessageThread(this, config.getMessageDelay());
-        this.messageThread.start();
+        this.messageScheduler = new RoundRobinScheduler(this, config.getMessageDelay());
+        this.messageScheduler.start();
     }
     
     
@@ -481,7 +481,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     
     @Override
     public void sendMessage(String channel, String message, Object source) {
-        this.messageThread.addMessage(channel, message, source);
+        this.messageScheduler.addMessage(channel, message, source);
     }
    
     
@@ -879,7 +879,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
             logger.debug("Irc connection already closed.");
         }
         logger.trace("Shutting down message scheduler");
-        this.messageThread.dispose();
+        this.messageScheduler.dispose();
         logger.trace("Shutting down irc bot.");
         this.bot.dispose();
     }
