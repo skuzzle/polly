@@ -167,19 +167,9 @@ public class PollyLoggingManager extends AbstractDisposable {
             if (this.cache.isEmpty()) {
                 return;
             }
-        }
-        
-        
-        try {
-            this.persistence.writeLock();
-            this.persistence.startTransaction();
-            synchronized (this.cache) {
-                this.persistence.persistList(this.cache);
-                this.cache.clear();
-            }
-            this.persistence.commitTransaction();
-        } finally {
-            this.persistence.writeUnlock();
+
+            this.persistence.atomicPersist(this.cache);
+            this.cache.clear();
         }
     }
     
