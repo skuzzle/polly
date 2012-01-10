@@ -4,7 +4,22 @@ import polly.core.AbstractModule;
 import polly.core.ModuleLoader;
 import polly.core.ModuleStates;
 import polly.core.SetupException;
+import polly.core.annotation.Module;
+import polly.core.annotation.Provide;
+import polly.core.annotation.Require;
 
+
+@Module(
+    requires = {
+        @Require(component = PluginManagerImpl.class),
+        @Require(state = ModuleStates.PLUGINS_READY),
+        @Require(state = ModuleStates.PERSISTENCE_READY),
+        @Require(state = ModuleStates.IRC_READY),
+        @Require(state = ModuleStates.USERS_READY),
+    },
+    provides =
+        @Provide(state = ModuleStates.PLUGINS_NOTIFIED)
+    )
 public class NotifyPluginsModule extends AbstractModule {
 
     private PluginManagerImpl pluginManager;
@@ -13,15 +28,6 @@ public class NotifyPluginsModule extends AbstractModule {
 
     public NotifyPluginsModule(ModuleLoader loader) {
         super("PLUGIN_NOTIFIER", loader, true);
-
-        this.requireBeforeSetup(PluginManagerImpl.class);
-
-        this.requireState(ModuleStates.PLUGINS_READY);
-        this.requireState(ModuleStates.PERSISTENCE_READY);
-        this.requireState(ModuleStates.IRC_READY);
-        this.requireState(ModuleStates.USERS_READY);
-
-        this.willSetState(ModuleStates.PLUGINS_NOTIFIED);
     }
 
 

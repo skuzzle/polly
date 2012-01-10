@@ -1,16 +1,30 @@
 package polly.core.persistence;
 
+
 import polly.configuration.PollyConfiguration;
 import polly.core.AbstractModule;
 import polly.core.ModuleLoader;
 import polly.core.ModuleStates;
 import polly.core.SetupException;
 import polly.core.ShutdownManagerImpl;
+import polly.core.annotation.Module;
+import polly.core.annotation.Provide;
+import polly.core.annotation.Require;
 import polly.core.plugins.PluginManagerImpl;
 import polly.data.Attribute;
 import polly.data.User;
 
-
+@Module(
+    requires = {
+        @Require(component = PluginManagerImpl.class),
+        @Require(component = PollyConfiguration.class),
+        @Require(component = ShutdownManagerImpl.class),
+        @Require(state = ModuleStates.PLUGINS_READY)
+    },
+    provides = {
+        @Provide(component = PersistenceManagerImpl.class),
+        @Provide(state = ModuleStates.PERSISTENCE_READY),
+    })
 public class PersistenceModule extends AbstractModule {
 
     private String persistenceXMLPath;
@@ -28,16 +42,6 @@ public class PersistenceModule extends AbstractModule {
         super("MODULE_PERSISTENCE", loader, true);
         this.persistenceXMLPath = persistenceXMLPath;
         this.persistenceUnitName = persistenceUnitName;
-        
-        this.requireBeforeSetup(PollyConfiguration.class);
-        this.requireBeforeSetup(PluginManagerImpl.class);
-        this.requireBeforeSetup(ShutdownManagerImpl.class);
-        
-        this.willProvideDuringSetup(PersistenceManagerImpl.class);
-        
-        this.requireState(ModuleStates.PLUGINS_READY);
-        this.willSetState(ModuleStates.PERSISTENCE_READY);
-
     }
     
     

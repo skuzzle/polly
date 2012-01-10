@@ -5,10 +5,21 @@ import polly.core.AbstractModule;
 import polly.core.ModuleLoader;
 import polly.core.ModuleStates;
 import polly.core.ShutdownManagerImpl;
+import polly.core.annotation.Module;
+import polly.core.annotation.Provide;
+import polly.core.annotation.Require;
 import polly.core.mypolly.MyPollyImpl;
 
 
-
+@Module(
+    requires = {
+        @Require(component = PollyConfiguration.class),
+        @Require(component = ShutdownManagerImpl.class),
+    },
+    provides = {
+        @Provide(component = PluginManagerImpl.class),
+        @Provide(state = ModuleStates.PLUGINS_READY)
+    })
 public class PluginModule extends AbstractModule {
     
     private PluginManagerImpl pluginManager;
@@ -20,13 +31,6 @@ public class PluginModule extends AbstractModule {
     public PluginModule(ModuleLoader loader, String pluginFolder) {
         super("MODULE_PLUGINS", loader, false);
         this.pluginFolder = pluginFolder;
-        
-        this.requireBeforeSetup(PollyConfiguration.class);
-        this.requireBeforeSetup(ShutdownManagerImpl.class);
-        
-        this.willProvideDuringSetup(PluginManagerImpl.class);
-        
-        this.willSetState(ModuleStates.PLUGINS_READY);
     }
 
     

@@ -7,10 +7,24 @@ import polly.core.ModuleLoader;
 import polly.core.ModuleStates;
 import polly.core.SetupException;
 import polly.core.ShutdownManagerImpl;
+import polly.core.annotation.Module;
+import polly.core.annotation.Provide;
+import polly.core.annotation.Require;
 import polly.core.irc.IrcManagerImpl;
 import polly.eventhandler.MessageHandler;
 
 
+@Module(
+    requires = {
+        @Require(component = PollyConfiguration.class),
+        @Require(component = ShutdownManagerImpl.class),
+        @Require(component = IrcManagerImpl.class),
+        @Require(component = MessageHandler.class)
+    },
+    provides = {
+        @Provide(component = TelnetServer.class),
+        @Provide(state = ModuleStates.TELNET_READY)
+    })
 public class TelnetModule extends AbstractModule {
 
     private PollyConfiguration config;
@@ -22,15 +36,6 @@ public class TelnetModule extends AbstractModule {
     
     public TelnetModule(ModuleLoader loader) {
         super("TELNET", loader, false);
-        
-        this.requireBeforeSetup(PollyConfiguration.class);
-        this.requireBeforeSetup(IrcManagerImpl.class);
-        this.requireBeforeSetup(MessageHandler.class);
-        this.requireBeforeSetup(ShutdownManagerImpl.class);
-        
-        this.willProvideDuringSetup(TelnetServer.class);
-        
-        this.willSetState(ModuleStates.TELENT_READY);
     }
     
 
@@ -66,7 +71,7 @@ public class TelnetModule extends AbstractModule {
 
     public void run() throws Exception {
         this.server.start();
-        this.addState(ModuleStates.TELENT_READY);
+        this.addState(ModuleStates.TELNET_READY);
     }
 
 }

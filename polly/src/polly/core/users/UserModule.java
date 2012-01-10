@@ -7,10 +7,26 @@ import polly.core.AbstractModule;
 import polly.core.ModuleLoader;
 import polly.core.ModuleStates;
 import polly.core.ShutdownManagerImpl;
+import polly.core.annotation.Module;
+import polly.core.annotation.Provide;
+import polly.core.annotation.Require;
 import polly.core.persistence.PersistenceManagerImpl;
 import polly.data.User;
 import polly.events.EventProvider;
 
+
+@Module(
+    requires = {
+        @Require(component = PollyConfiguration.class),
+        @Require(component = ShutdownManagerImpl.class),
+        @Require(component = EventProvider.class),
+        @Require(component = PersistenceManagerImpl.class),
+        @Require(state = ModuleStates.PERSISTENCE_READY)
+    },
+    provides = {
+        @Provide(component = UserManagerImpl.class),
+        @Provide(state = ModuleStates.USERS_READY)
+    })
 public class UserModule extends AbstractModule {
 
     private PersistenceManagerImpl persistenceManager;
@@ -23,17 +39,6 @@ public class UserModule extends AbstractModule {
 
     public UserModule(ModuleLoader loader) {
         super("MODULE_USER", loader, true);
-
-        this.requireBeforeSetup(PollyConfiguration.class);
-        this.requireBeforeSetup(EventProvider.class);
-        this.requireBeforeSetup(PersistenceManagerImpl.class);
-        this.requireBeforeSetup(ShutdownManagerImpl.class);
-
-        this.willProvideDuringSetup(UserManagerImpl.class);
-        
-        this.willSetState(ModuleStates.USERS_READY);
-        
-        this.requireState(ModuleStates.PERSISTENCE_READY);
     }
 
 

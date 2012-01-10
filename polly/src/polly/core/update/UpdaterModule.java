@@ -20,10 +20,19 @@ import polly.core.AbstractModule;
 import polly.core.ModuleLoader;
 import polly.core.SetupException;
 import polly.core.ShutdownManagerImpl;
+import polly.core.annotation.Module;
+import polly.core.annotation.Require;
 import polly.core.plugins.PluginConfiguration;
 import polly.core.plugins.PluginManagerImpl;
 import polly.util.FileUtil;
 
+
+@Module(
+    requires = {
+        @Require(component = PollyConfiguration.class),
+        @Require(component = ShutdownManagerImpl.class),
+        @Require(component = PluginManagerImpl.class),
+    })
 public class UpdaterModule extends AbstractModule {
 
     private PollyConfiguration config;
@@ -36,10 +45,6 @@ public class UpdaterModule extends AbstractModule {
     public UpdaterModule(ModuleLoader loader, String pluginFolder) {
         super("MODULE_UPDATER", loader, false);
         this.pluginFolder = pluginFolder;
-
-        this.requireBeforeSetup(PollyConfiguration.class);
-        this.requireBeforeSetup(PluginManagerImpl.class);
-        this.requireBeforeSetup(ShutdownManagerImpl.class);
     }
 
 

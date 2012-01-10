@@ -10,6 +10,9 @@ import polly.core.ModuleLoader;
 import polly.core.ModuleStates;
 import polly.core.SetupException;
 import polly.core.ShutdownManagerImpl;
+import polly.core.annotation.Module;
+import polly.core.annotation.Provide;
+import polly.core.annotation.Require;
 import polly.core.commands.CommandManagerImpl;
 import polly.core.users.UserManagerImpl;
 import polly.eventhandler.AutoLogonLogoffHandler;
@@ -19,6 +22,20 @@ import polly.eventhandler.MessageHandler;
 import polly.eventhandler.TraceNickChangeHandler;
 import polly.events.EventProvider;
 
+@Module(
+    requires = { 
+        @Require(component = PollyConfiguration.class),
+        @Require(component = ShutdownManagerImpl.class),
+        @Require(component = EventProvider.class),
+        @Require(component = UserManagerImpl.class),
+        @Require(component = CommandManagerImpl.class),
+        @Require(component = ExecutorService.class),
+        @Require(state = ModuleStates.PLUGINS_READY),
+        @Require(state = ModuleStates.PERSISTENCE_READY) }, 
+    provides = {
+        @Provide(component = IrcManagerImpl.class),
+        @Provide(component = MessageHandler.class),
+        @Provide(state = ModuleStates.IRC_READY) })
 public class IrcModule extends AbstractModule {
 
     private EventProvider events;
@@ -35,22 +52,9 @@ public class IrcModule extends AbstractModule {
 
     public IrcModule(ModuleLoader loader) {
         super("MODULE_IRC", loader, true);
-        this.requireBeforeSetup(PollyConfiguration.class);
-        this.requireBeforeSetup(EventProvider.class);
-        this.requireBeforeSetup(UserManagerImpl.class);
-        this.requireBeforeSetup(CommandManagerImpl.class);
-        this.requireBeforeSetup(ShutdownManagerImpl.class);
-        this.requireBeforeSetup(ExecutorService.class);
-        
-        this.willProvideDuringSetup(IrcManagerImpl.class);
-        this.willProvideDuringSetup(MessageHandler.class);
-        
-        this.requireState(ModuleStates.PLUGINS_READY);
-        this.requireState(ModuleStates.PERSISTENCE_READY);
-        this.willSetState(ModuleStates.IRC_READY);
     }
 
-    
+
 
     @Override
     public void beforeSetup() {
@@ -114,8 +118,8 @@ public class IrcModule extends AbstractModule {
         this.shutdownManager.addDisposable(this.ircManager);
     }
 
-    
-    
+
+
     @Override
     public void run() throws Exception {
         try {

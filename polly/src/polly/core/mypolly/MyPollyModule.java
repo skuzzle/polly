@@ -1,9 +1,14 @@
 package polly.core.mypolly;
 
+import java.util.concurrent.ExecutorService;
+
 import polly.configuration.PollyConfiguration;
 import polly.core.AbstractModule;
 import polly.core.ModuleLoader;
 import polly.core.ShutdownManagerImpl;
+import polly.core.annotation.Module;
+import polly.core.annotation.Provide;
+import polly.core.annotation.Require;
 import polly.core.commands.CommandManagerImpl;
 import polly.core.conversations.ConversationManagerImpl;
 import polly.core.formatting.FormatManagerImpl;
@@ -11,8 +16,26 @@ import polly.core.irc.IrcManagerImpl;
 import polly.core.persistence.PersistenceManagerImpl;
 import polly.core.plugins.PluginManagerImpl;
 import polly.core.users.UserManagerImpl;
+import polly.events.EventProvider;
 
 
+@Module(
+    requires = { 
+        @Require(component = PollyConfiguration.class),
+        @Require(component = ShutdownManagerImpl.class),
+        @Require(component = IrcManagerImpl.class),
+        @Require(component = PluginManagerImpl.class),
+        @Require(component = PollyConfiguration.class),
+        @Require(component = PersistenceManagerImpl.class),
+        @Require(component = FormatManagerImpl.class),
+        @Require(component = ConversationManagerImpl.class),
+        @Require(component = EventProvider.class),
+        @Require(component = UserManagerImpl.class),
+        @Require(component = CommandManagerImpl.class),
+        @Require(component = ExecutorService.class)
+    },
+    provides = 
+        @Provide(component = MyPollyImpl.class))
 public class MyPollyModule extends AbstractModule {
 
     private CommandManagerImpl commandManager;
@@ -28,18 +51,8 @@ public class MyPollyModule extends AbstractModule {
     
     public MyPollyModule(ModuleLoader loader) {
         super("MODULE_MYPOLLY", loader, true);
-        this.requireBeforeSetup(CommandManagerImpl.class);
-        this.requireBeforeSetup(IrcManagerImpl.class);
-        this.requireBeforeSetup(PluginManagerImpl.class);
-        this.requireBeforeSetup(PollyConfiguration.class);
-        this.requireBeforeSetup(PersistenceManagerImpl.class);
-        this.requireBeforeSetup(UserManagerImpl.class);
-        this.requireBeforeSetup(FormatManagerImpl.class);
-        this.requireBeforeSetup(ConversationManagerImpl.class);
-        this.requireBeforeSetup(ShutdownManagerImpl.class);
-        
-        this.willProvideDuringSetup(MyPollyImpl.class);
     }
+    
     
     
     @Override

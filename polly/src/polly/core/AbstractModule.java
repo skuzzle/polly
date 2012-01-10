@@ -29,42 +29,7 @@ public abstract class AbstractModule implements Module {
         this.loader.addState(state);
     }
 
-
-
-    @Override
-    public boolean isStateSet(int state) {
-        return this.loader.isStateSet(state);
-    }
-
-
-
-    @Override
-    public void requireState(int state) {
-        this.loader.requireState(state, this);
-    }
-
-
-
-    @Override
-    public void willSetState(int state) {
-        this.loader.willSetState(state, this);
-    }
-
-
-
-    @Override
-    public <T> void willProvideDuringSetup(Class<T> component) {
-        this.loader.willProvideDuringSetup(component, this);
-    }
-
-
-
-    @Override
-    public <T> void requireBeforeSetup(Class<T> component) {
-        this.loader.requireBeforeSetup(component, this);
-    }
-
-
+    
 
     @Override
     public void provideComponent(Object component) {
@@ -87,15 +52,7 @@ public abstract class AbstractModule implements Module {
 
 
 
-    @Override
-    public ModuleLoader getModuleLoader() {
-        return this.loader;
-    }
-
-
-
-    public void beforeSetup() {
-    }
+    public void beforeSetup() {}
 
 
 

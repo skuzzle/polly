@@ -3,7 +3,14 @@ package polly.core.commands;
 import polly.configuration.PollyConfiguration;
 import polly.core.AbstractModule;
 import polly.core.ModuleLoader;
+import polly.core.annotation.Module;
+import polly.core.annotation.Provide;
+import polly.core.annotation.Require;
 
+
+@Module(
+    requires = @Require(component = PollyConfiguration.class),
+    provides = @Provide(component = CommandManagerImpl.class))
 public class CommandModule extends AbstractModule {
 
     PollyConfiguration config;
@@ -12,8 +19,6 @@ public class CommandModule extends AbstractModule {
 
     public CommandModule(ModuleLoader loader) {
         super("MODULE_COMMAND", loader, true);
-        this.requireBeforeSetup(PollyConfiguration.class);
-        this.willProvideDuringSetup(CommandManagerImpl.class);
     }
 
 

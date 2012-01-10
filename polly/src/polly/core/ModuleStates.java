@@ -9,7 +9,7 @@ public interface ModuleStates {
     
     public static final int IRC_READY = 3;
     
-    public static final int TELENT_READY = 4;
+    public static final int TELNET_READY = 4;
     
     public static final int USERS_READY = 5;
     
