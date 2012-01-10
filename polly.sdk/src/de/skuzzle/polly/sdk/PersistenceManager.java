@@ -336,7 +336,17 @@ public interface PersistenceManager {
     /**
      * Performs an atomic write action. The database is locked for all read and 
      * write-accesses. Then the {@link WriteAction} is executed within a transaction.
-     * Finally, the writelock is released.
+     * Finally, the writelock is released. This is an example usage:
+     * 
+     * <pre>
+     *     persistenceManager.atomicWrite(new WriteAction() {
+     *         public void performUpdate(PersistenceManager persistence) {
+     *             persistence.persist(myEntity);
+     *             persistence.remove(otherEntity);
+     *             // ... other write operations...
+     *         }
+     *     }
+     * </pre>
      * 
      * @param persistence This {@link PersistenceManager} instance.
      * @throws DatabaseException If committing the transaction fails.
@@ -348,7 +358,15 @@ public interface PersistenceManager {
     
     
     /**
-     * Atomically persists the given entity using a transaction.
+     * <p>Atomically persists the given entity using a transaction. Use this method if you
+     * only need to persist a single entity. If you have to persist a list of entities
+     * you should use {@link #atomicPersist(List)} and if you need to perform further
+     * write actions within a single transaction use 
+     * {@link #atomicWriteOperation(WriteAction)} but do NOT use this method within a
+     * WriteAction.</p>
+     * 
+     * There is no need for external synchronization using {@link #writeLock()} and
+     * {@link #writeUnlock()}.
      * 
      * @param entity The entity to persist.
      * @throws DatabaseException If committing the transaction fails.
@@ -360,7 +378,13 @@ public interface PersistenceManager {
     
     
     /**
-     * Atomically persists the given entities using a transaction.
+     * <p>Atomically persists the given entities using a single transaction. If you need 
+     * to perform further write actions within a single transaction use 
+     * {@link #atomicWriteOperation(WriteAction)} but do NOT use this method within
+     * a write action</p>
+     * 
+     * <p>There is no need for external synchronization using {@link #writeLock()} and
+     * {@link #writeUnlock()}.</p>
      * 
      * @param entity The entities to persist.
      * @throws DatabaseException If committing the transaction fails.
@@ -371,7 +395,13 @@ public interface PersistenceManager {
     
     
     /**
-     * Atomically removes the given entity using a transaction.
+     * <p>Atomically removes the given entity using a single transaction. If you have
+     * to perform further write actions within a single transaction you may use
+     * {@link #atomicWriteOperation(WriteAction)} but do NOT use this method within
+     * a {@link WriteAction}.
+     * 
+     * <p>There is no need for external synchronization using {@link #writeLock()} and
+     * {@link #writeUnlock()}.</p>
      * 
      * @param entity The entity to remove.
      * @throws DatabaseException If committing the transaction fails.
@@ -383,7 +413,13 @@ public interface PersistenceManager {
 
     
     /**
-     * Atomically removes the given entities using a transaction.
+     * <p>Atomically removes the given entities using a single transaction. If you need 
+     * to perform further write actions within a single transaction use 
+     * {@link #atomicWriteOperation(WriteAction)} but do NOT use this method within
+     * a write action</p>
+     * 
+     * <p>There is no need for external synchronization using {@link #writeLock()} and
+     * {@link #writeUnlock()}.</p>
      * 
      * @param entity The entities to remove.
      * @throws DatabaseException If committing the transaction fails.

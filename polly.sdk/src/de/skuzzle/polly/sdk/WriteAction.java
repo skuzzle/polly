@@ -13,7 +13,7 @@ package de.skuzzle.polly.sdk;
     
     persistence.atomicWriteOperation(new WriteAction() {
     
-        public void performWrite(PersistenceManager persistence) {
+        public void performUpdate(PersistenceManager persistence) {
             persistence.persist(myEntity);
         }
     };
