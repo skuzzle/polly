@@ -184,6 +184,7 @@
         <eclipse mode="java">
             <project name="${ant.project.name}"/>
             <classpath>
+                <source path="/polly.process" />
                 <source path="${src.dir}" />
                 <output path="${bin.dir}" />
                 <library pathref="buildpath"/>
