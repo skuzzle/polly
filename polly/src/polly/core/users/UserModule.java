@@ -64,19 +64,22 @@ public class UserModule extends AbstractModule {
 
     @Override
     public void run() throws Exception {
+        de.skuzzle.polly.sdk.model.User admin = null;
         try {
             logger.info("Creating default user with name '"
                 + this.config.getAdminUserName() + "'.");
-            User admin = new User(this.config.getAdminUserName(), "",
+            admin = new User(this.config.getAdminUserName(), "",
                 this.config.getAdminUserLevel());
 
             admin.setHashedPassword(this.config.getAdminPasswordHash());
             this.userManager.addUser(admin);
         } catch (UserExistsException e) {
+            admin = e.getUser();
             logger.debug("Default user already existed.");
         } catch (DatabaseException e) {
             logger.fatal("Database error", e);
         } finally {
+            this.userManager.setAdmin(admin);
             this.addState(ModuleStates.USERS_READY);
         }
     }

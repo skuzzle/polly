@@ -55,6 +55,7 @@ public class PollyConfiguration extends Configuration
 	private int messageDelay;
 	private boolean autoLogon;
 	private int autoLogonTime;
+	private boolean isDebugMode;
 	
 	
 	public PollyConfiguration(String filename) 
@@ -97,8 +98,9 @@ public class PollyConfiguration extends Configuration
         this.encodingName = this.props.getProperty(ENCODING, "ISO-8859-1");
         this.updateUrl = this.props.getProperty(UPDATE_URL, "");
         this.installerUpdateUrl = this.props.getProperty(INSTALLER_UPDATE_URL, "");
-        this.autoUpdate = this.parseBoolean(this.props.getProperty(AUTO_UPDATE, "false"));
+        this.autoUpdate = this.readBoolean(this.props.getProperty(AUTO_UPDATE, "false"));
         this.ircModes = this.props.getProperty(IRC_MODES, "+B");
+        this.isDebugMode = this.readBoolean(this.props.getProperty(DEBUG_MODE, "false"));
         
         try {
             this.encoding = Charset.forName(this.encodingName);
@@ -131,16 +133,16 @@ public class PollyConfiguration extends Configuration
         this.port = this.parseInteger(tmp, 32, "Ungï¿½ltige Portnummer");
         
         tmp = this.props.getProperty(IRC_LOGGING, "on");
-        this.ircLogging = this.parseBoolean(tmp);
+        this.ircLogging = this.readBoolean(tmp);
         
         tmp = this.props.getProperty(ADMIN_USER_LEVEL, "1337");
-        this.adminUserlevel = this.parseInteger(tmp, 1, "Ungültiges Admin User Level.");
+        this.adminUserlevel = this.parseInteger(tmp, 1, "Ungï¿½ltiges Admin User Level.");
         
         tmp = this.props.getProperty(EVENT_THREADS, "4");
-        this.eventThreads = this.parseInteger(tmp, 1, "Ungültige Eventthread Zahl.");
+        this.eventThreads = this.parseInteger(tmp, 1, "Ungï¿½ltige Eventthread Zahl.");
         
         tmp = this.props.getProperty(EXECUTION_THREADS, "4");
-        this.executionThreads = this.parseInteger(tmp, 1, "Ungültige Executionthread Zahl.");
+        this.executionThreads = this.parseInteger(tmp, 1, "Ungï¿½ltige Executionthread Zahl.");
         
         tmp = this.props.getProperty(LINE_LENGTH, "300");
         this.lineLength = this.parseInteger(tmp, 200, "Attribut lineLength zu kurz.");
@@ -149,16 +151,16 @@ public class PollyConfiguration extends Configuration
         this.reconnectDelay = this.parseInteger(tmp, 1000, "Reconnect delay zu niedrig.");
         
         tmp = this.props.getProperty(ENABLE_TELNET, "true");
-        this.enableTelnet = this.parseBoolean(tmp);
+        this.enableTelnet = this.readBoolean(tmp);
         
         tmp = this.props.getProperty(TELNET_PORT, "23");
-        this.telnetPort = this.parseInteger(tmp, 0, "Ungültige Portnummer.");
+        this.telnetPort = this.parseInteger(tmp, 0, "Ungï¿½ltige Portnummer.");
         
         tmp = this.props.getProperty(MESSAGE_DELAY, "250");
         this.messageDelay = this.parseInteger(tmp, 250, "Message delay zu niedrig.");
         
         tmp = this.props.getProperty(AUTO_LOGIN, "true");
-        this.autoLogon = this.parseBoolean(tmp);
+        this.autoLogon = this.readBoolean(tmp);
         
         tmp = this.props.getProperty(tmp, "60000");
         this.autoLogonTime = this.parseInteger(tmp, 4999, "autoLoginTime sollte mind. " +
@@ -373,6 +375,12 @@ public class PollyConfiguration extends Configuration
     
     public boolean isAutoLogon() {
         return this.autoLogon;
+    }
+    
+    
+    
+    public boolean isDebugMode() {
+        return this.isDebugMode;
     }
     
     

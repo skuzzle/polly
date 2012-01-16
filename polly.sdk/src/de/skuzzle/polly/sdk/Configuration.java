@@ -243,6 +243,12 @@ public interface Configuration {
      */
     public final static String IRC_MODES = "ircModes";
     
+    /**
+     * Sets whether polly is running in debug mode. This is a boolean field.
+     * @since 0.7
+     */
+    public final static String DEBUG_MODE = "debugMode";
+    
     
     
 	/**

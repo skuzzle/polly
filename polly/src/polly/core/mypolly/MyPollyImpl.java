@@ -2,8 +2,11 @@ package polly.core.mypolly;
 
 import java.util.Date;
 
+import org.apache.log4j.Logger;
+
 import polly.Polly;
 import polly.configuration.ConfigurationWrapper;
+import polly.configuration.PollyConfiguration;
 import polly.core.ShutdownManagerImpl;
 import polly.core.commands.CommandManagerImpl;
 import polly.core.conversations.ConversationManagerImpl;
@@ -25,6 +28,8 @@ import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.PluginManager;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
+import de.skuzzle.polly.sdk.time.SystemTimeProvider;
+import de.skuzzle.polly.sdk.time.TimeProvider;
 
 
 
@@ -34,24 +39,27 @@ import de.skuzzle.polly.sdk.exceptions.DisposingException;
  * @version 27.07.2011 ae73250
  */
 public class MyPollyImpl extends AbstractDisposable implements MyPolly {
+    
+    private final static Logger logger = Logger.getLogger(MyPollyImpl.class.getName()); 
 
 	private CommandManagerImpl commandManager;
 	private IrcManagerImpl ircManager;
 	private PluginManagerImpl pluginManager;
-	private Configuration config;
+	private PollyConfiguration config;
+	private Configuration wrappedConfig;
 	private PersistenceManagerImpl persistence;
 	private UserManagerImpl userManager;
 	private FormatManagerImpl formatManager;
 	private ConversationManagerImpl conversationManager;
 	private ShutdownManagerImpl shutdownManager;
 	private Date startTime;
-	
+	private TimeProvider timeProvider;
 	
 	
 	public MyPollyImpl(CommandManagerImpl cmdMngr, 
 	        IrcManagerImpl ircMngr, 
 			PluginManagerImpl plgnMngr, 
-			Configuration config, 
+			PollyConfiguration config, 
 			PersistenceManagerImpl pMngr,
 			UserManagerImpl usrMngr,
 			FormatManagerImpl fmtMngr,
@@ -61,13 +69,15 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 		this.commandManager = cmdMngr;
 		this.ircManager = ircMngr;
 		this.pluginManager = plgnMngr;
-		this.config = new ConfigurationWrapper(config);
+		this.config = config;
+		this.wrappedConfig = new ConfigurationWrapper(config);
 		this.persistence = pMngr;
 		this.userManager = usrMngr;
 		this.formatManager = fmtMngr;
 		this.conversationManager = convMngr;
 		this.shutdownManager = shutdownManager;
 		this.startTime = new Date();
+		this.timeProvider = new SystemTimeProvider();
 	}
 	
 	
@@ -135,7 +145,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 
 	@Override
 	public Configuration configuration() {
-		return this.config;
+		return this.wrappedConfig;
 	}
 
 
@@ -165,6 +175,35 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
         return this.startTime;
     }
 
+    
+    @Override
+    public void setTimeProvider(TimeProvider timeProvider) {
+        if (this.config.isDebugMode()) {
+            this.timeProvider = timeProvider;
+            logger.info("Polly System Time has been changed. Current time is now: " + 
+                    this.formatManager.formatDate(this.pollySystemTime()));
+        }
+    }
+    
+    
+    @Override
+    public TimeProvider getTimeProvider() {
+        return this.timeProvider;
+    }
+    
+    
+    
+    @Override
+    public long currentTimeMillis() {
+        return this.timeProvider.currentTimeMillis();
+    }
+    
+    
+    @Override
+    public Date pollySystemTime() {
+        return new Date(this.currentTimeMillis());
+    }
+    
 
     @Override
     protected void actualDispose() throws DisposingException {

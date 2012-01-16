@@ -79,7 +79,7 @@ public class LeaveCommand extends AbstractRemindCommand {
             this.reply(channel, FORMATTER.format(remind, this.getMyPolly().formatting()));
             
         }
-        return false;
+        return false; 
     }
 
 }

@@ -154,7 +154,7 @@ public abstract class Configuration extends AbstractDisposable {
     
     
     
-    protected boolean parseBoolean(String value) throws ConfigurationFileException {
+    protected boolean readBoolean(String value) throws ConfigurationFileException {
         if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("on") 
                 || value.equalsIgnoreCase("yes")) {
             return true;

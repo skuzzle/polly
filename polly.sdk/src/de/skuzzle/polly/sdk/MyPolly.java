@@ -2,6 +2,9 @@ package de.skuzzle.polly.sdk;
 
 import java.util.Date;
 
+import de.skuzzle.polly.sdk.time.TimeProvider;
+
+
 /**
  * Main interface class which provides access to all available polly features you can 
  * use in your plugin.
@@ -127,4 +130,44 @@ public interface MyPolly {
 	 * @since 0.6
 	 */
 	public abstract ConversationManager conversations();
+	
+	
+	/**
+	 * Sets the time provider for the polly system time. This method will have no effect
+	 * if {@link Configuration#DEBUG_MODE} is "off".
+	 * 
+	 * @param timeProvider The TimeProvider which provides the current system time.
+	 * @since 0.7
+	 */
+	public abstract void setTimeProvider(TimeProvider timeProvider);
+	
+	/**
+	 * Gets the current polly system time provider.
+	 * 
+	 * @return The current time provider.
+	 * @since 0.7
+	 */
+	public abstract TimeProvider getTimeProvider();
+	
+	/**
+	 * Gets the current "polly"-system time. In productive systems, this will always
+	 * be equals to {@link System#currentTimeMillis()}. For debugging purposes polly 
+	 * might return different times.
+	 * 
+	 * When should use this method for all your time dependent applications.
+	 * 
+	 * @return Current system time as returned by {@link System#currentTimeMillis()}.
+	 * @since 0.7
+	 */
+	public abstract long currentTimeMillis();
+	
+	
+	/**
+	 * Gets a Date object constructed with the current polly system time.
+	 * 
+	 * @return A Date object representing the current polly system time.
+	 * @since 0.7
+	 * @see #currentTimeMillis()
+	 */
+	public abstract Date pollySystemTime();
 }

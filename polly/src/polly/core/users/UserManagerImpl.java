@@ -64,6 +64,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     private EventProvider eventProvider;
     private Namespaces namespaces;
     
+    private User admin;
     
     
     public UserManagerImpl(PersistenceManagerImpl persistence, 
@@ -220,6 +221,19 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
         }
     }
 
+    
+    
+    
+    public void setAdmin(User admin) {
+        this.admin = admin;
+    }
+    
+    
+    
+    
+    public User getAdmin() {
+        return this.admin;
+    }
     
     
     @Override
