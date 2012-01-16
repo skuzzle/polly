@@ -279,10 +279,10 @@ public abstract class Command {
 	        Signature signature) throws InsufficientRightsException, CommandException {
 	    
 		if (executer.getUserLevel() < this.getUserLevel()) {
-			throw new InsufficientRightsException();
+			throw new InsufficientRightsException(this);
 		}
 		if (this.registeredOnly && !this.getMyPolly().users().isSignedOn(executer)) {
-		    throw new InsufficientRightsException();
+		    throw new InsufficientRightsException(this);
 		}
 		
 		try {

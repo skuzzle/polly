@@ -1,20 +1,48 @@
 package polly.core.commands;
 
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 
 
 import org.apache.log4j.Logger;
 
+import polly.configuration.PollyConfiguration;
+import polly.core.users.UserManagerImpl;
+import polly.util.MillisecondStopwatch;
+import polly.util.Stopwatch;
+import polly.util.TypeMapper;
+
+import de.skuzzle.polly.parsing.AbstractParser;
+import de.skuzzle.polly.parsing.Context;
+import de.skuzzle.polly.parsing.Declarations;
+import de.skuzzle.polly.parsing.ParseException;
+import de.skuzzle.polly.parsing.PollyParserFactory;
+import de.skuzzle.polly.parsing.SyntaxMode;
+import de.skuzzle.polly.parsing.Type;
+import de.skuzzle.polly.parsing.tree.ChannelLiteral;
+import de.skuzzle.polly.parsing.tree.Expression;
+import de.skuzzle.polly.parsing.tree.IdentifierLiteral;
+import de.skuzzle.polly.parsing.tree.ListLiteral;
+import de.skuzzle.polly.parsing.tree.Literal;
+import de.skuzzle.polly.parsing.tree.Root;
+import de.skuzzle.polly.parsing.tree.UserLiteral;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.CommandManager;
+import de.skuzzle.polly.sdk.IrcManager;
 import de.skuzzle.polly.sdk.Signature;
+import de.skuzzle.polly.sdk.Types;
+import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
+import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.exceptions.UnknownCommandException;
 import de.skuzzle.polly.sdk.exceptions.UnknownSignatureException;
 import de.skuzzle.polly.sdk.model.User;
@@ -26,13 +54,16 @@ public class CommandManagerImpl implements CommandManager {
 	private static Logger logger = Logger.getLogger(CommandManagerImpl.class.getName());
 	private Map<String, Command> commands;
 	private Set<String> ignoredCommands;
+	private UserManagerImpl userManager;
+	private PollyConfiguration config;
 	
 	
-	
-	public CommandManagerImpl(String[] ignoredCommands) {
+	public CommandManagerImpl(UserManagerImpl userManager, PollyConfiguration config) {
+	    this.userManager = userManager;
+	    this.config = config;
 		this.commands = new HashMap<String, Command>();
 		this.ignoredCommands = new HashSet<String>(
-		        Arrays.asList(ignoredCommands));
+		        Arrays.asList(config.getIgnoredCommands()));
 	}
 	
 	
@@ -121,15 +152,117 @@ public class CommandManagerImpl implements CommandManager {
 		}
 		return cmd;
 	}
+
 	
 	
-	
-	public void executeString(String commandString) {
-	    // TODO ISSUE 0000040
-	}
-	
-	
-	public void executeString(String commandString, User asUser) {
-	    // TODO ISSUE 0000040
-	}
+    public void executeString(String input, String channel, boolean inQuery, 
+            User executor, IrcManager ircManager) 
+                throws UnsupportedEncodingException, 
+                       UnknownSignatureException, InsufficientRightsException, 
+                       CommandException {
+        Stopwatch watch = new MillisecondStopwatch();
+        watch.start();
+        
+        Context context = null;        
+        Root root = null;
+        try {
+            context = this.createContext(channel, executor, ircManager);
+            root = this.parseMessage(input, context);
+        } catch (ParseException e) {
+            // HACK: wrap exception into command exception, as ParseException is not 
+            //       available in the sdk
+            throw new CommandException(e.getMessage(), e);
+        }
+        Signature sig = this.createSignature(root);
+        
+        Command cmd = this.getCommand(sig);
+        try {
+            logger.debug("Executing '" + cmd + "' on channel " + 
+                channel);
+            
+            cmd.doExecute(executor, channel, inQuery, sig);
+        } finally {
+            watch.stop();
+            logger.trace("Execution time: " + watch.getDifference() + "ms");
+        }
+}
+
+
+
+
+    private Root parseMessage(String message, Context c) 
+        throws UnsupportedEncodingException, ParseException {
+    
+        Stopwatch watch = new MillisecondStopwatch();
+        watch.start();
+        
+        try {
+            AbstractParser<?> parser = PollyParserFactory.createParser(
+                    SyntaxMode.POLLY_CLASSIC);
+            
+            Root root = (Root) parser.parse(message.trim(), 
+                this.config.getEncodingName()); 
+            
+            if (root == null) {
+                return null;
+            }
+        
+            logger.trace("Parsed input '" + message + "'");
+            
+            logger.trace("Starting context check");
+            root.contextCheck(c);
+            
+            logger.trace("Collapsing all parameters");
+            root.collapse(new Stack<Literal>());
+            
+            return root;
+        } finally {
+            watch.stop();
+            logger.trace("Parsing time: " + watch.getDifference() + "ms");
+        }
+    }
+
+
+
+    private Context createContext(String channel, User user, 
+                IrcManager ircManager) throws ParseException {
+        Declarations d = this.userManager.getDeclarations(user);
+        
+        List<Expression> channels = new ArrayList<Expression>();
+        for (String chan : ircManager.getChannels()) {
+            channels.add(new ChannelLiteral(chan));
+        }
+        
+        // ISSUE: 0000008
+        List<Expression> users = new ArrayList<Expression>();
+        for (String u : ircManager.getChannelUser(channel)) {
+            users.add(new UserLiteral(u));
+        }
+        d.add(new IdentifierLiteral("me"), new UserLiteral(user.getCurrentNickName()));
+        d.add(new IdentifierLiteral("here"), new ChannelLiteral(channel));
+        d.add(new IdentifierLiteral("all"), new ListLiteral(channels, Type.CHANNEL));
+        d.add(new IdentifierLiteral("each"), new ListLiteral(users, Type.USER));
+        
+        logger.trace("    me   := " + user.getCurrentNickName());
+        logger.trace("    here := " + channel);
+        logger.trace("    all  := " + channels.toString());
+        logger.trace("    each := " + users);
+        
+        //d = Declarations.createContext(d);
+        return new Context(d, this.userManager.getNamespaces());
+    }
+    
+    
+    
+    private Signature createSignature(Root root) throws UnknownSignatureException {
+        List<Types> parameters = new ArrayList<Types>();
+        for (Literal lit : root.getResults()) {
+            parameters.add(TypeMapper.literalToTypes(lit));
+        }
+        return new Signature(root.getName().getCommandName(), -1, parameters);
+    }
+
+
+
+
 }

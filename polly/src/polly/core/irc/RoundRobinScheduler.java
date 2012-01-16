@@ -10,6 +10,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.log4j.Logger;
+
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
 import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
@@ -20,8 +22,8 @@ import de.skuzzle.polly.sdk.exceptions.DisposingException;
 
 public class RoundRobinScheduler extends Thread implements MessageScheduler {
 
-    // private static Logger logger = Logger.getLogger(RoundRobinScheduler.class
-    // .getName());
+    private static Logger logger = Logger.getLogger(RoundRobinScheduler.class
+        .getName());
 
     private Lock lock;
     private IrcManagerImpl ircManager;
@@ -70,7 +72,7 @@ public class RoundRobinScheduler extends Thread implements MessageScheduler {
             try {
                 this.sema.acquire();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.warn("", e);
             }
 
             if (this.lock.tryLock()) {

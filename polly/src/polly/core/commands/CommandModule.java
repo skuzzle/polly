@@ -6,10 +6,13 @@ import polly.core.ModuleLoader;
 import polly.core.annotation.Module;
 import polly.core.annotation.Provide;
 import polly.core.annotation.Require;
+import polly.core.users.UserManagerImpl;
 
 
 @Module(
-    requires = @Require(component = PollyConfiguration.class),
+    requires = {
+               @Require(component = PollyConfiguration.class),
+               @Require(component = UserManagerImpl.class)},
     provides = @Provide(component = CommandManagerImpl.class))
 public class CommandModule extends AbstractModule {
 
@@ -33,8 +36,9 @@ public class CommandModule extends AbstractModule {
     @Override
     public void setup() {
         PollyConfiguration config = this.requireNow(PollyConfiguration.class);
-        CommandManagerImpl commandManager = new CommandManagerImpl(
-            config.getIgnoredCommands());
+        UserManagerImpl userManager = this.requireNow(UserManagerImpl.class);
+        
+        CommandManagerImpl commandManager = new CommandManagerImpl(userManager, config);
         this.provideComponent(commandManager);
     }
 }

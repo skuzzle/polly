@@ -232,6 +232,16 @@ public interface UserManager {
 	
 	
 	
+    /**
+     * Gets the admin user set in the polly configuration.
+     * 
+     * @return The admin user.
+     * @since 0.7
+     */
+    public abstract User getAdmin();
+	
+	
+	
 	/**
 	 * <p>Adds an attribute to all users. You can add String attributes to all users to
 	 * store user-specific information for your plugin. Having an {@link User} instance,

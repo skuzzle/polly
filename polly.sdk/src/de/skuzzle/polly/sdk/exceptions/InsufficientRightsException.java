@@ -1,5 +1,6 @@
 package de.skuzzle.polly.sdk.exceptions;
 
+import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.model.User;
 
 /**
@@ -14,17 +15,25 @@ import de.skuzzle.polly.sdk.model.User;
 public class InsufficientRightsException extends Exception {
 
 	private static final long serialVersionUID = 1L;
-
+	private Command command;
 	
 	public InsufficientRightsException() {
 		super();
 	}
-
 	
-	public InsufficientRightsException(String message) {
-		super(message);
+	
+	public InsufficientRightsException(Command command) {
+	    super("");
+	    this.command = command;
 	}
 	
 	
-
+	/**
+	 * Gets the command which could not be executed.
+	 * 
+	 * @return The command.
+	 */
+    public Command getCommand() {
+        return this.command;
+    }
 }

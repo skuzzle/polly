@@ -1,10 +1,14 @@
 package de.skuzzle.polly.sdk;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 
+import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
+import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.exceptions.UnknownCommandException;
 import de.skuzzle.polly.sdk.exceptions.UnknownSignatureException;
+import de.skuzzle.polly.sdk.model.User;
 
 
 /**
@@ -95,4 +99,29 @@ public interface CommandManager {
 	 * @throws UnknownCommandException If no command with the name exists.
 	 */
 	public abstract Command getCommand(String name);
+	
+	
+	
+	/**
+	 * Executes the given String as a polly command.
+	 * 
+	 * @param input The command to parse and execute.
+	 * @param channel The channel in which the command shall be executed.
+	 * @param inQuery Whether the command shall be executed in a query.
+	 * @param executor The executing user.
+	 * @param ircManager The current irc manager isntance. Used to determine context 
+	 *             information for the parser.
+	 * @throws UnsupportedEncodingException If the parser encounters an unknown encoding.
+	 *             This will rarely happen.
+	 * @throws UnknownSignatureException The command that should be executed has no 
+	 *             signature that matches the parsed inputstring.
+	 * @throws InsufficientRightsException The given user can not execute that command.
+	 * @throws CommandException If the inputstring could not be parsed as a polly command
+	 *             or an error occured during execution of the command.                          
+	 */
+	public abstract void executeString(String input, String channel, boolean inQuery, 
+	    User executor, IrcManager ircManager) 
+	                    throws UnsupportedEncodingException, 
+                               UnknownSignatureException, InsufficientRightsException, 
+                               CommandException;
 }
