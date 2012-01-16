@@ -18,7 +18,6 @@
     <!-- jar file properties -->
     <property name="mainclass" value="de.skuzzle.polly.installer.InstallerLauncher"/>
     <property name="title"     value="Polly-Installer"/>
-    <property name="version"   value="${version.num}"/>
     <property name="Builddate" value="${today}"/>
     <property name="classpath" value="${includeJars}"/>
     
@@ -29,8 +28,7 @@
     <property name="release.developer"      value="-"/>
     <property name="release.entrypoint"     value="-"/>
     <property name="release.description"    value="-"/>
-    <property name="release.updateVersion"  value="${version.num}"/>
-    <property name="release.updateFilename" value="${ant.project.name}-${release.updateVersion}-update.zip"/>
+    <property name="release.updateFilename" value="${ant.project.name}-${version.num}-update.zip"/>
     <property name="release.updateURL"      value="http://www.polly.skuzzle.de/updaterepo/polly/${update.filename}"/>
     
     
@@ -129,7 +127,7 @@
             <manifest>
                 <attribute name="Main-Class"             value="${mainclass}"/>
                 <attribute name="Implementation-Title"   value="${title}"/>
-                <attribute name="Implementation-Version" value="${version}"/>
+                <attribute name="Implementation-Version" value="${version.num}"/>
                 <attribute name="Class-Path"             value="${classpath} ${jar.classpath}"/>
             </manifest>
             <fileset dir="${bin.dir}"/>
@@ -167,7 +165,7 @@
         <propertyfile file="${update.dir}/${ant.project.name}.update.properties">
             <entry key="name"          value="${release.name}"/>
             <entry key="description"   value="${release.description}"/>
-            <entry key="updateVersion" value="${release.updateVersion}"/>
+            <entry key="updateVersion" value="${version.num}"/>
             <entry key="updateURL"     value="${release.updateURL}"/>
             <entry key="checksum"      value="${md5}"/>
         </propertyfile>
