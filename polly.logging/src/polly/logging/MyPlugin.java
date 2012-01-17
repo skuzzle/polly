@@ -7,7 +7,6 @@ import commands.UserLogCommand;
 
 import core.IrcLogCollector;
 import core.PollyLoggingManager;
-import core.pasteservice.PasteServiceManager;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
@@ -30,7 +29,6 @@ public class MyPlugin extends PollyPlugin {
     
     private IrcLogCollector logCollector;
     private PollyLoggingManager logManager;
-    private PasteServiceManager pasteServiceManager;
     
     
     
@@ -47,9 +45,8 @@ public class MyPlugin extends PollyPlugin {
         int maxLogs = myPolly.configuration().readInt(LOG_MAX_LOGS, DEFAULT_MAX_LOGS);
         
 
-        this.pasteServiceManager = new PasteServiceManager("pastebin");
         this.logManager = new PollyLoggingManager(
-            myPolly, this.pasteServiceManager, cacheSize, pasteTreshold, maxLogs);
+            myPolly, cacheSize, pasteTreshold, maxLogs);
         
         this.logCollector = new IrcLogCollector(this.logManager);
         
@@ -76,8 +73,4 @@ public class MyPlugin extends PollyPlugin {
         this.getMyPolly().irc().removeQuitListener(this.logCollector);
         this.getMyPolly().irc().removeNickChangeListener(this.logCollector);
     }
-    
-    
-    
-
 }

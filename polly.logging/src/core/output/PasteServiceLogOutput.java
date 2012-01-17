@@ -3,10 +3,10 @@ package core.output;
 import java.util.List;
 
 import core.LogFormatter;
-import core.pasteservice.PasteService;
 
 import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.IrcManager;
+import de.skuzzle.polly.sdk.paste.PasteService;
 import entities.LogEntry;
 
 

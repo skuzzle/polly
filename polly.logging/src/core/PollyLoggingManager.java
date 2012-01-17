@@ -10,7 +10,6 @@ import core.filters.SecurityLogFilter;
 import core.output.IrcLogOutput;
 import core.output.LogOutput;
 import core.output.PasteServiceLogOutput;
-import core.pasteservice.PasteServiceManager;
 
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -18,6 +17,7 @@ import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.model.User;
+import de.skuzzle.polly.sdk.paste.PasteServiceManager;
 import entities.LogEntry;
 
 
@@ -33,10 +33,10 @@ public class PollyLoggingManager extends AbstractDisposable {
     
     
     
-    public PollyLoggingManager(MyPolly myPolly, PasteServiceManager pasteServiceManager, 
-                int cacheSize, int pasteTreshold, int maxLogs) {
+    public PollyLoggingManager(MyPolly myPolly, int cacheSize, int pasteTreshold, 
+            int maxLogs) {
         this.persistence = myPolly.persistence();
-        this.pasteServiceManager = pasteServiceManager;
+        this.pasteServiceManager = myPolly.pasting();
         
         this.cacheSize = cacheSize;
         this.pasteTreshold = pasteTreshold;
@@ -125,7 +125,7 @@ public class PollyLoggingManager extends AbstractDisposable {
             output = new IrcLogOutput();
         } else {
             output = new PasteServiceLogOutput(
-                    this.pasteServiceManager.nextService());
+                    this.pasteServiceManager.getRandomService());
         }
         
         output.outputLogs(myPolly.irc(), channel, logs, logFormatter, 
