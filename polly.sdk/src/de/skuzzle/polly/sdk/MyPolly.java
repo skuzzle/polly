@@ -2,6 +2,7 @@ package de.skuzzle.polly.sdk;
 
 import java.util.Date;
 
+import de.skuzzle.polly.sdk.paste.PasteServiceManager;
 import de.skuzzle.polly.sdk.time.TimeProvider;
 
 
@@ -93,6 +94,15 @@ public interface MyPolly {
 	 * @return A FormatManager instance.
 	 */
 	public abstract FormatManager formatting();
+	
+	
+	/**
+	 * Provides access to paste service features.
+	 * 
+	 * @return A PasteServiceManager instance.
+	 * @since 0.7
+	 */
+	public abstract PasteServiceManager pasting();
 	
 	
 	

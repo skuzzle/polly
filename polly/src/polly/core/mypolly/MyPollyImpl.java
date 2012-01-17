@@ -12,6 +12,7 @@ import polly.core.commands.CommandManagerImpl;
 import polly.core.conversations.ConversationManagerImpl;
 import polly.core.formatting.FormatManagerImpl;
 import polly.core.irc.IrcManagerImpl;
+import polly.core.paste.PasteServiceManagerImpl;
 import polly.core.persistence.PersistenceManagerImpl;
 import polly.core.plugins.PluginManagerImpl;
 import polly.core.users.UserManagerImpl;
@@ -28,6 +29,7 @@ import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.PluginManager;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
+import de.skuzzle.polly.sdk.paste.PasteServiceManager;
 import de.skuzzle.polly.sdk.time.SystemTimeProvider;
 import de.skuzzle.polly.sdk.time.TimeProvider;
 
@@ -54,7 +56,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 	private ShutdownManagerImpl shutdownManager;
 	private Date startTime;
 	private TimeProvider timeProvider;
-	
+	private PasteServiceManagerImpl pasteManager;
 	
 	public MyPollyImpl(CommandManagerImpl cmdMngr, 
 	        IrcManagerImpl ircMngr, 
@@ -64,7 +66,8 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 			UserManagerImpl usrMngr,
 			FormatManagerImpl fmtMngr,
 			ConversationManagerImpl convMngr,
-			ShutdownManagerImpl shutdownManager) {
+			ShutdownManagerImpl shutdownManager,
+			PasteServiceManagerImpl pasteManager) {
 	    
 		this.commandManager = cmdMngr;
 		this.ircManager = ircMngr;
@@ -76,6 +79,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 		this.formatManager = fmtMngr;
 		this.conversationManager = convMngr;
 		this.shutdownManager = shutdownManager;
+		this.pasteManager = pasteManager;
 		this.startTime = new Date();
 		this.timeProvider = new SystemTimeProvider();
 	}
@@ -148,7 +152,12 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 		return this.wrappedConfig;
 	}
 
-
+	
+	
+	@Override
+	public PasteServiceManager pasting() {
+	    return this.pasteManager;
+	}
 
 	@Override
 	public String getLoggerName(Class<?> clazz) {

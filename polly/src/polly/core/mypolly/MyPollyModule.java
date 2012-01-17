@@ -13,6 +13,7 @@ import polly.core.commands.CommandManagerImpl;
 import polly.core.conversations.ConversationManagerImpl;
 import polly.core.formatting.FormatManagerImpl;
 import polly.core.irc.IrcManagerImpl;
+import polly.core.paste.PasteServiceManagerImpl;
 import polly.core.persistence.PersistenceManagerImpl;
 import polly.core.plugins.PluginManagerImpl;
 import polly.core.users.UserManagerImpl;
@@ -32,6 +33,7 @@ import polly.events.EventProvider;
         @Require(component = EventProvider.class),
         @Require(component = UserManagerImpl.class),
         @Require(component = CommandManagerImpl.class),
+        @Require(component = PasteServiceManagerImpl.class),
         @Require(component = ExecutorService.class)
     },
     provides = 
@@ -46,6 +48,7 @@ public class MyPollyModule extends AbstractModule {
     private UserManagerImpl userManager;
     private FormatManagerImpl formatManager;
     private ConversationManagerImpl conversationManager;
+    private PasteServiceManagerImpl pasteManager;
     private ShutdownManagerImpl shutdownManager;
     
     
@@ -66,6 +69,7 @@ public class MyPollyModule extends AbstractModule {
         this.formatManager = this.requireNow(FormatManagerImpl.class);
         this.conversationManager = this.requireNow(ConversationManagerImpl.class);
         this.shutdownManager = this.requireNow(ShutdownManagerImpl.class);
+        this.pasteManager = this.requireNow(PasteServiceManagerImpl.class);
     }
     
     
@@ -81,7 +85,8 @@ public class MyPollyModule extends AbstractModule {
             this.userManager, 
             this.formatManager, 
             this.conversationManager,
-            this.shutdownManager);
+            this.shutdownManager,
+            this.pasteManager);
         this.provideComponent(myPolly);
     }
 }
