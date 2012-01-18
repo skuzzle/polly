@@ -3,12 +3,12 @@ package polly.core.commands;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Stack;
 
@@ -24,9 +24,12 @@ import polly.util.TypeMapper;
 import de.skuzzle.polly.parsing.AbstractParser;
 import de.skuzzle.polly.parsing.Context;
 import de.skuzzle.polly.parsing.Declarations;
+import de.skuzzle.polly.parsing.InputScanner;
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.PollyParserFactory;
 import de.skuzzle.polly.parsing.SyntaxMode;
+import de.skuzzle.polly.parsing.Token;
+import de.skuzzle.polly.parsing.TokenType;
 import de.skuzzle.polly.parsing.Type;
 import de.skuzzle.polly.parsing.tree.ChannelLiteral;
 import de.skuzzle.polly.parsing.tree.Expression;
@@ -100,8 +103,9 @@ public class CommandManagerImpl implements CommandManager {
 	
 	
 	@Override
-	public Collection<Command> getRegisteredCommands() {
-		return Collections.unmodifiableCollection(this.commands.values());
+	public List<Command> getRegisteredCommands() {
+		return Collections.unmodifiableList(
+		    new ArrayList<Command>(this.commands.values()));
 	}
 	
 	
@@ -166,7 +170,9 @@ public class CommandManagerImpl implements CommandManager {
         Context context = null;        
         Root root = null;
         try {
-            context = this.createContext(channel, executor, ircManager);
+            Map<String, Types> constants = this.getCommandConstants(input);
+            
+            context = this.createContext(channel, executor, ircManager, constants);
             root = this.parseMessage(input, context);
         } catch (ParseException e) {
             // HACK: wrap exception into command exception, as ParseException is not 
@@ -225,7 +231,7 @@ public class CommandManagerImpl implements CommandManager {
 
 
     private Context createContext(String channel, User user, 
-                IrcManager ircManager) throws ParseException {
+                IrcManager ircManager, Map<String, Types> constants) throws ParseException {
         Declarations d = this.userManager.getDeclarations(user);
         
         List<Expression> channels = new ArrayList<Expression>();
@@ -243,10 +249,20 @@ public class CommandManagerImpl implements CommandManager {
         d.add(new IdentifierLiteral("all"), new ListLiteral(channels, Type.CHANNEL));
         d.add(new IdentifierLiteral("each"), new ListLiteral(users, Type.USER));
         
+        
         logger.trace("    me   := " + user.getCurrentNickName());
         logger.trace("    here := " + channel);
         logger.trace("    all  := " + channels.toString());
         logger.trace("    each := " + users);
+        
+        if (constants != null) {
+            logger.trace("Command-specific constant names:");
+            for (Entry<String, Types> e : constants.entrySet()) {
+                d.add(new IdentifierLiteral(e.getKey()), 
+                    TypeMapper.typesToLiteral(e.getValue()));
+                logger.trace("    " + e.getKey());
+            }
+        }
         
         //d = Declarations.createContext(d);
         return new Context(d, this.userManager.getNamespaces());
@@ -263,6 +279,25 @@ public class CommandManagerImpl implements CommandManager {
     }
 
 
-
-
+    
+    private Map<String, Types> getCommandConstants(String input) {
+        try {
+            InputScanner s = new InputScanner(input);
+            Token id = s.lookAhead();
+            if (!id.matches(TokenType.COMMAND)) {
+                return null;
+            }
+            
+            Command cmd = this.getCommand(id.getStringValue());
+            if (cmd == null) {
+                return null;
+            }
+            cmd.renewConstants();
+            return cmd.getConstants();
+        } catch (ParseException e) {
+            return null;
+        } catch (UnsupportedEncodingException e) {
+            return null;
+        }
+    }
 }

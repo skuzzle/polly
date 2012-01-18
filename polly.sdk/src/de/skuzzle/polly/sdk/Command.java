@@ -3,7 +3,9 @@ package de.skuzzle.polly.sdk;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.ConversationException;
@@ -72,7 +74,7 @@ import de.skuzzle.polly.sdk.model.User;
  * @since zero day
  * @version RC 1.0
  */
-public abstract class Command {
+public abstract class Command implements Comparable<Command> {
 
 	/**
 	 * This commands name.
@@ -102,12 +104,21 @@ public abstract class Command {
 	 */
 	protected int userLevel;
 	
-	
+	/**
+	 * <code>true</code> if ths command can only be executed in qry.
+	 * @since 0.7
+	 */
+	protected boolean qryCommand;
 	
 	/**
 	 * This commands help message.
 	 */
 	protected String helpText;
+	
+	/**
+	 * Constants that will be used for the next execution of this command.
+	 */
+	protected Map<String, Types> constants;
 	
 	
 	/**
@@ -121,6 +132,7 @@ public abstract class Command {
 		this.signatures = new ArrayList<FormalSignature>();
 		this.userLevel = UserManager.UNKNOWN;
 		this.helpText = "Der Befehl '" + commandName + "' hat keine Beschreibung";
+		this.constants = new HashMap<String, Types>();
 	}
 	
 	
@@ -159,10 +171,38 @@ public abstract class Command {
 	}
 	
 	
-	
+	/**
+	 * Sets the help text which can be displayed using the help command.
+	 * 
+	 * @param helpText The help text for this command.
+	 */
 	public void setHelpText(String helpText) {
 	    this.helpText = helpText;
 	}
+	
+	
+	
+	/**
+	 * Determines if this command can only be executed in query.
+	 * 
+	 * @return <code>true</code> if this command can only be executed in query.
+	 * @since 0.7
+	 */
+    public boolean isQryCommand() {
+        return this.qryCommand;
+    }
+    
+    
+    
+    /**
+     * Sets whether this command can only be executed in a query.
+     * 
+     * @param qryCommand <code>true</code> if this command can only be executed in query.
+     * @since 0.7
+     */
+    public void setQryCommand(boolean qryCommand) {
+        this.qryCommand = qryCommand;
+    }
 	
 	
 	
@@ -178,7 +218,7 @@ public abstract class Command {
 			FormalSignature fs = this.signatures.get(signatureId);
 			return "Signatur: " + fs.toString() + ". " + fs.getHelp();
 		}
-		return "Keine Signatur-Infos f�r den Befehl '" + this.commandName + 
+		return "Keine Signatur-Infos für den Befehl '" + this.commandName + 
 			"' und Signatur " + signatureId;
 	}
 	
@@ -491,5 +531,106 @@ public abstract class Command {
 		}
 		
 		return ((Command) obj).getCommandName().equals(this.getCommandName());
+	}
+	
+	
+	
+	/**
+	 * <p>Registers the given Type including its  value as a constant that can be used in
+	 * any parameter of this command when executing it. The constant is only valid while 
+	 * parsing this command and becomes invalid after execution.</p>
+	 * 
+	 * <p>Before parsing of your command, polly will query your command for its 
+	 * registered constants (calling {@link #renewConstants()} and 
+	 * {@link #getConstants()}). After execution of the command, the constant map will be
+	 * cleared.</p> 
+	 * 
+	 * @param name The name of the constant. Must be a valid polly identifier, otherwise
+	 *             it won't be usable.
+	 * @param type The constant to register.
+	 * @since 0.7
+	 */
+	public void registerConstant(String name, Types type) {
+	    this.constants.put(name, type);
+	}
+	
+	
+	
+	/**
+	 * This method does nothing in its default implementation. It will be called by 
+	 * polly before parsing the complete command, so that you can use 
+	 * {@link #registerConstant(String, Types)} when overriding this method to
+	 * provide command sepcific constants.
+	 * 
+	 * @since 0.7
+	 */
+	public void renewConstants() { }
+	
+	
+	
+	/**
+	 * Gets a list of registered constants. This will be cleared after execution of your 
+	 * command, so you must implement {@link #renewConstants()} to provide fresh
+	 * constants upon every execution of your command.
+	 * 
+	 * @return A map of all registered constants.
+	 * @since 0.7
+	 */
+	public final Map<String, Types> getConstants() {
+	    return this.constants;
+	}
+	
+	
+	
+	/**
+	 * Returns a String representation of this command.
+	 * 
+	 * @return The name of this command.
+	 */
+	@Override
+	public String toString() {
+	    return this.getNameString();
+	}
+	
+	
+	
+	/**
+	 * Constructs the result string for the {@link #toString()} Method. It appends
+	 * "R" and/or "qry" to the command name according to whether this command is 
+	 * only executable for registered user or in query only.
+	 * 
+	 * @return The command name with additional infos.
+	 */
+	protected String getNameString() {
+	    StringBuilder result = new StringBuilder(this.getCommandName().length() + 10);
+	    result.append(this.commandName);
+	    
+	    if (this.isRegisteredOnly() || this.isQryCommand()) {
+	        result.append("(");
+	        if (this.registeredOnly) {
+	            result.append("R");
+	        } 
+	        if (this.isQryCommand()) {
+	            if (this.isRegisteredOnly()) {
+	                result.append(",");
+	            }
+	            result.append("qry");
+	        }
+	        result.append(")");
+	    }
+	    return result.toString();
+	}
+	
+	
+	
+	/**
+	 * Compares 2 commands using their required user level. Commands will be sorted from
+	 * low user level to high user level.
+	 * 
+	 * @return {@inheritDoc}
+	 */
+	@Override
+	public int compareTo(Command o) {
+	    return ((Integer)this.userLevel).compareTo(o.userLevel);
 	}
 }

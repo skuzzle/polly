@@ -1,7 +1,7 @@
 package de.skuzzle.polly.sdk;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Collection;
+import java.util.List;
 
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
@@ -44,10 +44,10 @@ public interface CommandManager {
 	
 	
 	/**
-	 * Returns a readonly {@link Collection} of all currently registered commands.
+	 * Returns a readonly {@link List} of all currently registered commands.
 	 * @return A set of commands.
 	 */
-	public abstract Collection<Command> getRegisteredCommands();
+	public abstract List<Command> getRegisteredCommands();
 	
 	
 	
