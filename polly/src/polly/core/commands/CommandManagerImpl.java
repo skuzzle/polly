@@ -174,9 +174,6 @@ public class CommandManagerImpl implements CommandManager {
             
             context = this.createContext(channel, executor, ircManager, constants);
             
-            // clear constants
-            constants.clear();
-            
             root = this.parseMessage(input, context);
         } catch (ParseException e) {
             // HACK: wrap exception into command exception, as ParseException is not 
@@ -219,11 +216,18 @@ public class CommandManagerImpl implements CommandManager {
         
             logger.trace("Parsed input '" + message + "'");
             
+            // HACK: store declarations as we dont know if they get switched away. This
+            //       way we can leave the declaration level that was entered for
+            //       command specific constants after parsing
+            Declarations declarations = c.getCurrentNamespace();
+            
             logger.trace("Starting context check");
             root.contextCheck(c);
             
             logger.trace("Collapsing all parameters");
             root.collapse(new Stack<Literal>());
+
+            declarations.leave();
             
             return root;
         } finally {
@@ -259,6 +263,7 @@ public class CommandManagerImpl implements CommandManager {
         logger.trace("    all  := " + channels.toString());
         logger.trace("    each := " + users);
         
+        d.enter();
         if (constants != null) {
             logger.trace("Command-specific constant names:");
             for (Entry<String, Types> e : constants.entrySet()) {
@@ -268,7 +273,6 @@ public class CommandManagerImpl implements CommandManager {
             }
         }
         
-        //d = Declarations.createContext(d);
         return new Context(d, this.userManager.getNamespaces());
     }
     
