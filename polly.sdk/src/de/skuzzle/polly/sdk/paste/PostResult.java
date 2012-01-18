@@ -1,11 +1,14 @@
 package de.skuzzle.polly.sdk.paste;
 
 
-
+/**
+ * TODO: comment
+ * @author Simon
+ * @since 0.7
+ */
 public class PostResult {
 
     private String resultURL;
-    
     private String resultString;
     
     

@@ -25,6 +25,7 @@ import polly.core.executors.ExecutorModule;
 import polly.core.formatting.FormatterModule;
 import polly.core.irc.IrcModule;
 import polly.core.mypolly.MyPollyModule;
+import polly.core.paste.PasteServiceModule;
 import polly.core.persistence.PersistenceModule;
 import polly.core.plugins.NotifyPluginsModule;
 import polly.core.plugins.PluginModule;
@@ -174,6 +175,7 @@ public class Polly {
         new IrcModule(loader);
         new MyPollyModule(loader);
         new NotifyPluginsModule(loader);
+        new PasteServiceModule(loader);
         
         try {
             loader.runSetup();

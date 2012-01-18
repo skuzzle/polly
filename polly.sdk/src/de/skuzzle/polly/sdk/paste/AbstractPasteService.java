@@ -14,7 +14,11 @@ import java.util.Iterator;
 import java.util.Map;
 
 
-
+/**
+ * TODO: comment
+ * @author Simon
+ * @since 0.7
+ */
 public abstract class AbstractPasteService implements PasteService {
 
     private String name;
