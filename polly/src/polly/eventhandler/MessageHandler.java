@@ -4,10 +4,12 @@ import java.util.concurrent.ExecutorService;
 
 import org.apache.log4j.Logger;
 
+import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.sdk.CommandManager;
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
 import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
+import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.exceptions.UnknownCommandException;
 import de.skuzzle.polly.sdk.exceptions.UnknownSignatureException;
@@ -63,6 +65,15 @@ public class MessageHandler implements MessageListener {
                 try {
                     MessageHandler.this.commands.executeString(e.getMessage(), e
                         .getChannel(), isQuery, executor, e.getSource());
+                } catch(CommandException e1) {
+                    if (e1.getCause() instanceof ParseException) {
+                        ParseException e2 = (ParseException) e1.getCause();
+                        e.getSource().sendMessage(e.getChannel(), e2.getMessage());
+                    } else {
+                        e.getSource().sendMessage(e.getChannel(), 
+                            "Fehler beim Ausführen des Befehls: " + e1.getMessage());
+                    }
+                    logger.debug("", e1);
                 } catch (UnknownCommandException e1) {
                     e.getSource().sendMessage(e.getChannel(), "Unbekannter Befehl: " + 
                             e1.getMessage());

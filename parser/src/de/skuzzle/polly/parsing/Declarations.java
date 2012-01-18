@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import de.skuzzle.polly.parsing.tree.Expression;
 import de.skuzzle.polly.parsing.tree.FunctionDefinition;
@@ -139,6 +140,25 @@ public class Declarations {
                 out.close();
             }
         }
+    }
+    
+    
+    
+    @Override
+    public String toString() {
+        StringBuilder b = new StringBuilder();
+        int i = 0;
+        for (Map<String, Expression> level : this.levels) {
+            b.append("Level: " + i++ + "\n");
+            for (Entry<String, Expression> e : level.entrySet()) {
+                b.append("    ");
+                b.append(e.getKey());
+                b.append(" := ");
+                b.append(e.getValue().toString());
+                b.append("\n");
+            }
+        }
+        return b.toString();
     }
     
     

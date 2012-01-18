@@ -126,7 +126,9 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     public synchronized Declarations getDeclarations(User user) {
         try {
             return this.namespaces.get(user.getName());
-        } catch (ParseException goOn) { }
+        } catch (ParseException goOn) { 
+            logger.warn("Ignored exception: ", goOn);
+        }
         
         
         logger.warn("Declaration-Cache file for user '" + user.getName() + 

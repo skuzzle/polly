@@ -17,6 +17,7 @@ import polly.reminds.MyPlugin;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PersistenceManager;
+import de.skuzzle.polly.sdk.WriteAction;
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
@@ -88,22 +89,26 @@ public class RemindManager extends AbstractDisposable {
     
     
     
-    public synchronized void deliverRemind(RemindEntity remind) {
+    public synchronized void deliverRemind(final RemindEntity remind) {
         logger.debug("Executing Remind: " + remind);
         this.persistence.refresh(remind);
         
         if (!this.myPolly.irc().isOnline(remind.getForUser())) {
             logger.debug("User is not online. Remind will be delivered when he returns.");
             try {
-                this.persistence.writeLock();
-                this.persistence.startTransaction();
-                remind.setIsMessage(true);
-                remind.setWasRemind(true);
+                this.persistence.atomicWriteOperation(new WriteAction() {
+                    
+                    @Override
+                    public void performUpdate(PersistenceManager persistence) {
+                        remind.setIsMessage(true);
+                        remind.setWasRemind(true);
+                    }
+                });
+            
+
                 this.persistence.commitTransaction();
             } catch (Exception e) {
                 logger.error("", e);
-            } finally {
-                this.persistence.writeUnlock();
             }
             return;
         }
@@ -128,8 +133,17 @@ public class RemindManager extends AbstractDisposable {
             destination = remind.getForUser();
             this.onReturnAvailable.remove(remind.getForUser());
         }
+
+        // determine whether this remind is delivered in qry
+        boolean isQuery = destination.equals(remind.getForUser());
         
-        myPolly.irc().sendMessage(destination, message);
+        myPolly.irc().sendMessage(destination, message, this);
+
+        if (isQuery && (!remind.getForUser().equals(remind.getFromUser()))) {
+            // send notice to user who left this remind if it was delivered in qry
+            this.myPolly.irc().sendMessage(remind.getFromUser(), "Deine Nachricht an '" + 
+                remind.getForUser() + "' wurde zugestellt");
+        }
         
         this.putToSleep(remind);
         this.deleteRemind(remind);
