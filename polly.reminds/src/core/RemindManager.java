@@ -104,9 +104,6 @@ public class RemindManager extends AbstractDisposable {
                         remind.setWasRemind(true);
                     }
                 });
-            
-
-                this.persistence.commitTransaction();
             } catch (Exception e) {
                 logger.error("", e);
             }
