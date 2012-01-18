@@ -41,6 +41,14 @@ public class AddUserCommand extends Command {
     }
     
     
+    @Override
+    public void renewConstants() {
+        this.registerConstant("ADMIN", new NumberType(UserManager.ADMIN));
+        this.registerConstant("MEMBER", new NumberType(UserManager.MEMBER));
+        this.registerConstant("REG", new NumberType(UserManager.REGISTERED));
+        this.registerConstant("UNKNOWN", new NumberType(UserManager.UNKNOWN));
+    }
+    
     
     @Override
     protected void executeOnQuery(User executer, Signature signature) {
