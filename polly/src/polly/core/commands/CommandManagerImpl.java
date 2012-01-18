@@ -173,6 +173,10 @@ public class CommandManagerImpl implements CommandManager {
             Map<String, Types> constants = this.getCommandConstants(input);
             
             context = this.createContext(channel, executor, ircManager, constants);
+            
+            // clear constants
+            constants.clear();
+            
             root = this.parseMessage(input, context);
         } catch (ParseException e) {
             // HACK: wrap exception into command exception, as ParseException is not 
@@ -258,9 +262,9 @@ public class CommandManagerImpl implements CommandManager {
         if (constants != null) {
             logger.trace("Command-specific constant names:");
             for (Entry<String, Types> e : constants.entrySet()) {
-                d.add(new IdentifierLiteral(e.getKey()), 
-                    TypeMapper.typesToLiteral(e.getValue()));
-                logger.trace("    " + e.getKey());
+                Literal l = TypeMapper.typesToLiteral(e.getValue());
+                d.add(new IdentifierLiteral(e.getKey()), l);
+                logger.trace("    " + e.getKey() + " := " + l.toString());
             }
         }
         
@@ -292,6 +296,8 @@ public class CommandManagerImpl implements CommandManager {
             if (cmd == null) {
                 return null;
             }
+            
+            logger.trace("Renewing command-specific constants");
             cmd.renewConstants();
             return cmd.getConstants();
         } catch (ParseException e) {
