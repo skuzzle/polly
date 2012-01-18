@@ -22,7 +22,7 @@ public class FooCommand extends Command {
         this.setHelpText("Dieser Befehl nimmt jede art von Parametern entgegen, " +
         		"wertet ihn aus und gibt das Ergebnis zurück.");
     }
-    
+
     
     
     @Override

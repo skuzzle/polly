@@ -1,7 +1,9 @@
 package commands;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -44,29 +46,22 @@ public class ShowCommandsCommand extends Command {
         }
         
         StringBuilder b = new StringBuilder();
-        Collection<Command> cmds = this.getMyPolly().commands().getRegisteredCommands();
+        List<Command> cmds = this.getMyPolly().commands().getRegisteredCommands();
+        Collections.sort(cmds);
+        List<Command> output = new ArrayList<Command>(20);
         
-        Iterator<Command> it = cmds.iterator();
-        if (!it.hasNext()) {
-            return false;
-        }
-        Command cmd = it.next();
-        // ISSUE: 0000041
-        //        fixed with this boolean trigger to add comma only if needed 
-        boolean addComma = false;
-        while (cmd != null) {
+        for (Command cmd : cmds) {
             if (this.canExecute(executer, level, cmd)) {
-                b.append(cmd.getCommandName());
-                addComma = true;
+                output.add(cmd);
             }
-            
+        }
+        
+        Iterator<Command> it = output.iterator();
+        while (it.hasNext()) {
+            Command cmd = it.next();
+            b.append(cmd.toString());
             if (it.hasNext()) {
-                cmd = it.next();
-                if (this.canExecute(executer, level, cmd) && addComma) {
-                    b.append(", ");
-                }
-            } else { 
-                cmd = null;
+                b.append(", ");
             }
         }
         

@@ -20,6 +20,7 @@ public class AuthCommand extends Command {
                 new StringType());
         this.createSignature("Meldet den Benutzer bei Polly an", new StringType());
         this.setHelpText("Befehl um dich bei Polly anzumelden.");
+        this.setQryCommand(true);
     }
     
     

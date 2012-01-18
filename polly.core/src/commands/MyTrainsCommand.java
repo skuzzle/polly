@@ -48,8 +48,9 @@ public class MyTrainsCommand extends Command {
     
     
     private void printTrains(boolean detailed, String forUser, String channel) {
-        TrainBill b = this.trainManager.getBill(forUser);
+        TrainBill b = this.trainManager.getBill(forUser);        
         if (detailed) {
+            channel = forUser; // print detailed bill in query
             for (TrainEntity train : b.getTrains()) {
                 this.reply(channel, train.format(this.getMyPolly().formatting()));
             }

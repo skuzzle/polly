@@ -20,6 +20,7 @@ public class SetMyPasswordCommand extends Command {
         		new StringType(), new StringType());
         this.setRegisteredOnly();
         this.setHelpText("Befehl um dein Passwort zu ändern.");
+        this.setQryCommand(true);
     }
 
     

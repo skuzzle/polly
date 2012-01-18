@@ -21,6 +21,7 @@ public class AddUserCommand extends Command {
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
         this.setHelpText("Befehl zum registrieren neuer Benutzer bei Polly.");
+        this.setQryCommand(true);
     }
     
     

@@ -22,6 +22,7 @@ public class RegisterCommand extends Command {
         		new UserType(), new StringType());
         this.setHelpText("Befehl um dich bei Polly zu registrieren.");
         this.setUserLevel(UserManager.UNKNOWN);
+        this.setQryCommand(true);
     }
     
     
