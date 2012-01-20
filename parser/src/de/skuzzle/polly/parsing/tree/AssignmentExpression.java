@@ -14,11 +14,19 @@ public class AssignmentExpression extends BinaryExpression {
 
     private static final long serialVersionUID = 1L;
 
+    private boolean isPublic;
 
 
     public AssignmentExpression(Expression leftOperand, Token operator,
             Expression rightOperand) {
+        this(leftOperand, operator, rightOperand, false);
+    }
+    
+    
+    public AssignmentExpression(Expression leftOperand, Token operator,
+            Expression rightOperand, boolean isPublic) {
         super(leftOperand, operator, rightOperand);
+        this.isPublic = isPublic;
     }
     
     
@@ -31,7 +39,7 @@ public class AssignmentExpression extends BinaryExpression {
             
             this.leftOperand = this.leftOperand.contextCheck(context);
             
-            context.getCurrentNamespace().add(id, this.leftOperand);
+            context.getCurrentNamespace().add(id, this.leftOperand, this.isPublic);
             this.setType(this.leftOperand.getType());
             
             return this.leftOperand;
@@ -69,7 +77,7 @@ public class AssignmentExpression extends BinaryExpression {
                     this.leftOperand, func.getFormalParameters());
             result.setType(checked.getType());
 
-            context.getCurrentNamespace().add(result);
+            context.getCurrentNamespace().add(result, this.isPublic);
             
             // Function definitions do not have a return value (yet?)
             this.setType(Type.UNKNOWN);

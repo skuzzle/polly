@@ -38,7 +38,8 @@ import de.skuzzle.polly.parsing.tree.VarAccessExpression;
  * input           -> command (\t signature)? EOS
  * signature       -> relation (\t relation)*
  * 
- * assignment      -> relation ('->' definition)?
+ * assignment      -> relation ('->' modifier? definition)?
+ * modifier        -> 'public' seperator
  * definition      -> identifier ( '(' func_definition ')' )
  * func_def        -> ( type_def \t identifier (',' type_def \t identifier)* ) | e
  * type_def        -> identifier ('<' identifier '>')?
@@ -221,8 +222,15 @@ public class InputParser extends AbstractParser<InputScanner> {
         if (la.matches(TokenType.ASSIGNMENT)) {
             this.scanner.consume();
             
+            boolean isPublic = false;
+            if (scanner.lookAhead().matches(TokenType.PUBLIC)) {
+                scanner.consume();
+                this.expect(TokenType.SEPERATOR);
+                isPublic = true;
+            }
+            
             expression = new AssignmentExpression(expression, la, 
-                    this.parse_definition());
+                    this.parse_definition(), isPublic);
         }
         
         return expression;
