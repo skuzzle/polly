@@ -18,7 +18,7 @@ package de.skuzzle.polly.process;
  *     pe.setProcessWatcher(new ProcessWatcher(60000) {
  *         public void processExit(ProcessWrapper proc, int exitType) {
  *             if (exitType == ProcessWatcher.EXIT_TYPE_TIMEOUT) {
- *                 System.out.println("Timeout while wainting for " + proc);
+ *                 System.out.println("Timeout while waiting for " + proc);
  *             }
  *         }}).start();
  * </pre>
@@ -64,7 +64,7 @@ public abstract class ProcessWatcher extends Thread {
      * Creates a new ProcessWatcher with a given timeout.
      * 
      * @param timeout The timeout in milliseconds when waiting for the observed process. 
-     *      Values < 0 will be ignored.
+     *      Values < 0 will be ignored (= no timeout will be set).
      */
     public ProcessWatcher(int timeout) {
         this.timeout = timeout;
@@ -86,7 +86,7 @@ public abstract class ProcessWatcher extends Thread {
     
     /**
      * Starts observation for the Process and additionally starts a thread which checks
-     * this thread for timeouts. If timeouted, this thrad is interrupted to stop 
+     * this thread for timeouts. If timeouted, this thread is interrupted to stop 
      * observation.
      */
     @Override
