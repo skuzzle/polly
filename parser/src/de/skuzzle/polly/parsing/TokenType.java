@@ -59,6 +59,7 @@ public enum TokenType {
     UNKNOWN("Unbekanntes Zeichen"),
     COMMAND("Befehl"),
     POLLY("Polly"),
+    PUBLIC("public"),
     EOS("Ende der Eingabe");
     
     private String string;

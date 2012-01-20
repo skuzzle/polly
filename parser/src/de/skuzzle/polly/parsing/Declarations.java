@@ -88,32 +88,73 @@ public class Declarations {
     
     
     public Expression resolve(ResolveableIdentifierLiteral name) throws ParseException {
+        Expression result = null;
+        // search in private declarations
+
         for (Map<String, Expression> level : this.levels) {
-            Expression result = level.get(name.getIdentifier());
+            result = resolve(name, level);
             if (result != null) {
-                result.setPosition(name.getPosition());
-                return (Expression) result.clone();
+                return result;
             }
         }
+        
+        
+        if (this != GLOBAL) {
+            // search in public declarations
+            for (Map<String, Expression> level : GLOBAL.levels) {
+                result = resolve(name, level);
+                if (result != null) {
+                    return result;
+                }
+            }
+        }
+        
         throw new ParseException("Unbekannter Bezeichner '" + name + "'", 
                 name.getPosition());
+    }
+    
+    
+    
+    private Expression resolve(ResolveableIdentifierLiteral name, 
+                Map<String, Expression> level) {
+        Expression result = level.get(name.getIdentifier());
+        if (result != null) {
+            result.setPosition(name.getPosition());
+            return (Expression) result.clone();
+        }
+        return null;
     }
 
     
     
     public void add(IdentifierLiteral identifier, 
             Expression expression) throws ParseException {
+        this.add(identifier, expression, false);
+    }
+    
+    
+    
+    public void add(IdentifierLiteral identifier, 
+        Expression expression, boolean isPublic) throws ParseException {
         if (RESERVED.getDeclarations().containsKey(identifier.getIdentifier())) {
             throw new ParseException("'" + identifier.getIdentifier() + 
                     "' ist ein reservierter Bezeichner", identifier.getPosition());
         }
-        this.levels.getFirst().put(identifier.getIdentifier(), expression);
+        Map<String, Expression> d = isPublic 
+                ? GLOBAL.getDeclarations() : this.levels.getFirst();
+    
+        d.put(identifier.getIdentifier(), expression);
     }
     
     
     
     public void add(FunctionDefinition function) throws ParseException {
-        this.add(function.getName(), function);
+        this.add(function, false);
+    }
+    
+    
+    public void add(FunctionDefinition function, boolean isPublic) throws ParseException {
+        this.add(function.getName(), function, isPublic);
     }
     
     

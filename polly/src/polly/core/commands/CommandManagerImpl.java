@@ -158,7 +158,7 @@ public class CommandManagerImpl implements CommandManager {
 	}
 
 	
-	
+	@Override
     public void executeString(String input, String channel, boolean inQuery, 
             User executor, IrcManager ircManager) 
                 throws UnsupportedEncodingException, 
@@ -179,6 +179,10 @@ public class CommandManagerImpl implements CommandManager {
             // HACK: wrap exception into command exception, as ParseException is not 
             //       available in the sdk
             throw new CommandException(e.getMessage(), e);
+        }
+        
+        if (root == null) {
+            return;
         }
         Signature sig = this.createSignature(root);
         

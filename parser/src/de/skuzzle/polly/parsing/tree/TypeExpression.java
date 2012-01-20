@@ -36,4 +36,10 @@ public class TypeExpression extends Expression {
         result.setPosition(this.getPosition());
         return result;
     }
+    
+    
+    @Override
+    public String toString() {
+        return this.getType().getTypeName().getIdentifier();
+    }
 }
