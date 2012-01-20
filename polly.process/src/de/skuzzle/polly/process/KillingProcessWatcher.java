@@ -16,7 +16,7 @@ public class KillingProcessWatcher extends ProcessWatcher {
      * Creates a new KillingProcessWatcher with a timeout.
      * 
      * @param timeout The timeout to wait before the process is destroyed.
-     * @param killOnError If set to <code>true</code>, the watche process is killed
+     * @param killOnError If set to <code>true</code>, the watched process is killed
      *      if an error occurred during waiting (this can happen before time ran out).
      * @throws IllegalArgumentException if timeout is < 0.
      */

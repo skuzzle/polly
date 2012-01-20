@@ -101,7 +101,7 @@ public abstract class StreamHandler extends Thread {
      * {@link #STATE_OFF}, {@link #STATE_ACTIVE},  {@link #STATE_OFF} or 
      * {@link #STATE_ERROR}.
      *  
-     * When state is STATE_ERROR, the excpetion which caused this error can be retrieved
+     * When state is STATE_ERROR, the exception which caused this error can be retrieved
      * using {@link #getErrorState()}.
      * 
      * @return The current handler state.

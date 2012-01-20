@@ -70,7 +70,7 @@ public class JavaProcessExecutor {
         ProcessExecutor pe = JavaProcessExecutor.getOsInstance(runInConsole);
         List<String> vmArgs = ManagementFactory.getRuntimeMXBean().getInputArguments();
         for (String arg : vmArgs) {
-            if (arg.contains("-agentlib")) {
+            if (!arg.contains("-agentlib")) {
                 pe.addCommand(arg);
             }
         }
