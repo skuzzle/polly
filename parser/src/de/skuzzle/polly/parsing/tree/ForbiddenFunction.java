@@ -1,24 +1,24 @@
 package de.skuzzle.polly.parsing.tree;
 
-import java.util.Stack;
 
-import de.skuzzle.polly.parsing.Context;
-import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.ParseException;
+import de.skuzzle.polly.parsing.declarations.FunctionDeclaration;
+import de.skuzzle.polly.parsing.declarations.Namespace;
+import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
 
 
-public class ForbiddenFunction extends FunctionDefinition {
+public class ForbiddenFunction extends FunctionDeclaration {
 
     private static final long serialVersionUID = 1L;
     
     public ForbiddenFunction(IdentifierLiteral name) {
-        super(name);
+        super(name, false, false);
     }
     
     
     
     @Override
-    public Expression contextCheck(Context context)
+    public void contextCheck(Namespace context)
             throws ParseException {
         /* At this time, this has been resolved as a recursive function
          * definition which is invalid. So the only thing to do is to throw 
@@ -27,23 +27,13 @@ public class ForbiddenFunction extends FunctionDefinition {
          */
         
         throw new ParseException("Ungültige rekursive Funktionsdeklaration", 
-                this.getPosition());
+                this.getName().getPosition());
     }
 
-    
-    
-    @Override
-    public void collapse(Stack<Literal> stack) throws ExecutionException {
-        // do nothing;
-    }
-
-    
     
     @Override
     public Object clone() {
         ForbiddenFunction result = new ForbiddenFunction(this.getName());
-        result.setPosition(this.getPosition());
-        result.setType(this.getType());
         return result;
     }
 

@@ -1,4 +1,4 @@
-package de.skuzzle.polly.parsing.tree;
+package de.skuzzle.polly.parsing.tree.literals;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.Token;

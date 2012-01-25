@@ -2,12 +2,13 @@ package de.skuzzle.polly.parsing.tree;
 
 import java.util.Stack;
 
-import de.skuzzle.polly.parsing.Context;
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.Token;
 import de.skuzzle.polly.parsing.TokenType;
+import de.skuzzle.polly.parsing.declarations.Namespace;
+import de.skuzzle.polly.parsing.tree.literals.Literal;
 import de.skuzzle.polly.parsing.tree.operators.UnaryOperatorOverload;
 
 
@@ -72,10 +73,10 @@ public class UnaryExpression extends Expression {
      *      context checking.
      */
     @Override
-    public Expression contextCheck(Context context) throws ParseException {
+    public Expression contextCheck(Namespace context) throws ParseException {
         this.operand = this.operand.contextCheck(context);
         
-        this.overload = context.resolveOverload(this.operator.getType(), 
+        this.overload = context.resolveOperator(this.operator.getType(), 
                 this.operand.getType(), this.getPosition());
         this.overload.contextCheck(context, this.operand);
         this.setType(this.overload.getReturnType());

@@ -2,13 +2,14 @@ package de.skuzzle.polly.parsing.tree;
 
 import java.util.Stack;
 
-import de.skuzzle.polly.parsing.Context;
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.Token;
 import de.skuzzle.polly.parsing.TokenType;
 import de.skuzzle.polly.parsing.Type;
+import de.skuzzle.polly.parsing.declarations.Namespace;
+import de.skuzzle.polly.parsing.tree.literals.Literal;
 import de.skuzzle.polly.parsing.tree.operators.TernaryOperatorOverload;
 
 
@@ -106,13 +107,13 @@ public class TernaryExpression extends Expression {
      *      context checking.
      */
     @Override
-    public Expression contextCheck(Context context) throws ParseException {
+    public Expression contextCheck(Namespace context) throws ParseException {
         this.firstOperand = this.firstOperand.contextCheck(context);
         this.secondOperand = this.secondOperand.contextCheck(context);
         this.thirdOperand = this.thirdOperand.contextCheck(context);
         
         
-        this.overload = context.resolveOverload(this.operator.getType(), 
+        this.overload = context.resolveOperator(this.operator.getType(), 
                 this.firstOperand.getType(), this.secondOperand.getType(),
                 this.thirdOperand.getType(), this.getPosition());
         

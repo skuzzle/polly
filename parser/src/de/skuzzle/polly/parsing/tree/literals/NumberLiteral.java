@@ -1,4 +1,4 @@
-package de.skuzzle.polly.parsing.tree;
+package de.skuzzle.polly.parsing.tree.literals;
 
 import java.text.DecimalFormat;
 import java.util.Date;

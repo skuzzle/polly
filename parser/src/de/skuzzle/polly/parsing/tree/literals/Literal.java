@@ -1,12 +1,13 @@
-package de.skuzzle.polly.parsing.tree;
+package de.skuzzle.polly.parsing.tree.literals;
 
 import java.util.Stack;
 
-import de.skuzzle.polly.parsing.Context;
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Token;
 import de.skuzzle.polly.parsing.Type;
+import de.skuzzle.polly.parsing.declarations.Namespace;
+import de.skuzzle.polly.parsing.tree.Expression;
 
 
 
@@ -21,7 +22,6 @@ public abstract class Literal extends Expression implements Comparable<Literal> 
         super(token.getPosition(), type);
         this.token = token;
     }
-    
     
     
     public Token getToken() {
@@ -41,7 +41,7 @@ public abstract class Literal extends Expression implements Comparable<Literal> 
     
     
     @Override
-    public Expression contextCheck(Context context) 
+    public Expression contextCheck(Namespace context) 
             throws ParseException {
         return this;
     }

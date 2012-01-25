@@ -1,4 +1,4 @@
-package de.skuzzle.polly.parsing.tree;
+package de.skuzzle.polly.parsing.tree.functions;
 
 import java.util.Stack;
 
@@ -7,17 +7,18 @@ import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.Type;
 import de.skuzzle.polly.parsing.declarations.Namespace;
+import de.skuzzle.polly.parsing.tree.Expression;
 import de.skuzzle.polly.parsing.tree.literals.Literal;
 
 
-public class TypeExpression extends Expression {
+public class ExpressionStub extends Expression {
 
     private static final long serialVersionUID = 1L;
 
-    public TypeExpression(Type type) {
-        super(Position.EMPTY, type);
+    public ExpressionStub(Type type) {
+        super(Position.EMPTY);
+        this.setType(type);
     }
-    
 
     @Override
     public Expression contextCheck(Namespace context) throws ParseException {
@@ -25,22 +26,12 @@ public class TypeExpression extends Expression {
     }
 
     @Override
-    public void collapse(Stack<Literal> stack) throws ExecutionException {
-        // do nothing;
-    }
-    
-    
-    
+    public void collapse(Stack<Literal> stack) throws ExecutionException {}
+
     @Override
     public Object clone() {
-        TypeExpression result = new TypeExpression(this.getType());
-        result.setPosition(this.getPosition());
-        return result;
+        // no need to clone
+        return this;
     }
-    
-    
-    @Override
-    public String toString() {
-        return this.getType().getTypeName().getIdentifier();
-    }
+
 }

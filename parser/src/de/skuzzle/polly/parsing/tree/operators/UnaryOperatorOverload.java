@@ -3,14 +3,14 @@ package de.skuzzle.polly.parsing.tree.operators;
 import java.io.Serializable;
 import java.util.Stack;
 
-import de.skuzzle.polly.parsing.Context;
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.TokenType;
 import de.skuzzle.polly.parsing.Type;
+import de.skuzzle.polly.parsing.declarations.Namespace;
 import de.skuzzle.polly.parsing.tree.Expression;
-import de.skuzzle.polly.parsing.tree.Literal;
+import de.skuzzle.polly.parsing.tree.literals.Literal;
 
 
 
@@ -47,7 +47,7 @@ public abstract class UnaryOperatorOverload implements Cloneable, Serializable {
     
     
     
-    public void contextCheck(Context context, 
+    public void contextCheck(Namespace context, 
             Expression expression) throws ParseException {
         
         if (!expression.getType().check(this.expected)) {

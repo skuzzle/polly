@@ -2,25 +2,27 @@ package de.skuzzle.polly.parsing.tree;
 
 import java.util.Stack;
 
-import de.skuzzle.polly.parsing.Context;
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.ListType;
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.Type;
+import de.skuzzle.polly.parsing.declarations.Namespace;
+import de.skuzzle.polly.parsing.tree.literals.Literal;
+import de.skuzzle.polly.parsing.tree.literals.ResolvableIdentifierLiteral;
 
 
 public class TypeParameterExpression extends Expression {
 
     private static final long serialVersionUID = 1L;
     
-    private ResolveableIdentifierLiteral mainType;
-    private ResolveableIdentifierLiteral subType;
+    private ResolvableIdentifierLiteral mainType;
+    private ResolvableIdentifierLiteral subType;
     
     
     
-    public TypeParameterExpression(ResolveableIdentifierLiteral mainType,
-            ResolveableIdentifierLiteral subType, Position position) {
+    public TypeParameterExpression(ResolvableIdentifierLiteral mainType,
+            ResolvableIdentifierLiteral subType, Position position) {
         super(position);
         this.mainType = mainType;
         this.subType = subType;
@@ -28,7 +30,7 @@ public class TypeParameterExpression extends Expression {
     
     
     
-    public TypeParameterExpression(ResolveableIdentifierLiteral mainType, 
+    public TypeParameterExpression(ResolvableIdentifierLiteral mainType, 
             Position position) {
         super(position);
         this.mainType = mainType;
@@ -37,7 +39,7 @@ public class TypeParameterExpression extends Expression {
 
 
     @Override
-    public Expression contextCheck(Context context) throws ParseException {
+    public Expression contextCheck(Namespace context) throws ParseException {
         Expression main = this.mainType.contextCheck(context);
         this.setType(main.getType());
         
@@ -65,7 +67,7 @@ public class TypeParameterExpression extends Expression {
     @Override
     public Object clone() {
         TypeParameterExpression result = new TypeParameterExpression(
-                (ResolveableIdentifierLiteral) this.mainType.clone(), 
+                (ResolvableIdentifierLiteral) this.mainType.clone(), 
                 this.getPosition());
         result.setType(this.getType());
         return result;

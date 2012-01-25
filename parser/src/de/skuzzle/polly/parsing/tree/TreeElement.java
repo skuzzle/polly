@@ -3,10 +3,11 @@ package de.skuzzle.polly.parsing.tree;
 import java.io.Serializable;
 import java.util.Stack;
 
-import de.skuzzle.polly.parsing.Context;
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.InputParser;
 import de.skuzzle.polly.parsing.ParseException;
+import de.skuzzle.polly.parsing.declarations.Namespace;
+import de.skuzzle.polly.parsing.tree.literals.Literal;
 
 
 
@@ -39,7 +40,7 @@ public interface TreeElement extends Cloneable, Serializable {
      * @throws ParseException if any context error such as type-mismatch occur during
      *      context checking.
      */
-    public abstract Expression contextCheck(Context context) 
+    public abstract Expression contextCheck(Namespace context) 
             throws ParseException;
     
     

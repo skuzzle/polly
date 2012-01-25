@@ -1,7 +1,4 @@
-package de.skuzzle.polly.parsing.tree;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
+package de.skuzzle.polly.parsing.tree.literals;
 
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.Position;
@@ -10,42 +7,32 @@ import de.skuzzle.polly.parsing.TokenType;
 import de.skuzzle.polly.parsing.Type;
 
 
-
-public class DateLiteral extends Literal {
+public class UserLiteral extends Literal {
 
     private static final long serialVersionUID = 1L;
     
-    private Date value;
+    private java.lang.String userName;
     
-    public DateLiteral(Token token) {
-        super(token, Type.DATE);
-        this.value = token.getDateValue();
+    
+    
+    public UserLiteral(Token token) {
+        super(token, Type.USER);
+        this.userName = token.getStringValue();
     }
     
     
     
-    public DateLiteral(java.util.Date value) {
-        this(new Token(TokenType.DATETIME, Position.EMPTY, value));
+    public UserLiteral(java.lang.String userName) {
+        super(new Token(TokenType.USER, Position.EMPTY, userName), Type.USER);
+        this.userName = userName;
     }
-    
-    
-    
-    public DateLiteral(Date value, Position position) {
-        this(new Token(TokenType.DATETIME, position, value));
-    }
-    
-    
-    
-    public java.util.Date getValue() {
-        return this.value;
-    }
-    
+
     
     
     @Override
     public Literal castTo(Type target) throws ExecutionException {
-        if (target.check(Type.NUMBER)) {
-            return new NumberLiteral(this.value.getTime(), this.getPosition());
+        if (target.check(Type.STRING)) {
+            return new StringLiteral(this.getToken());
         }
         return super.castTo(target);
     }
@@ -54,12 +41,17 @@ public class DateLiteral extends Literal {
     
     @Override
     public java.lang.String toString() {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy@HH:mm");
-        return sdf.format(this.value);
+        return this.userName;
     }
-
-
-
+    
+    
+    
+    public String getUserName() {
+    	return this.userName;
+    }
+    
+    
+    
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -71,23 +63,23 @@ public class DateLiteral extends Literal {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        DateLiteral other = (DateLiteral) obj;
-        if (this.value == null) {
-            if (other.value != null) {
+        UserLiteral other = (UserLiteral) obj;
+        if (this.userName == null) {
+            if (other.userName != null) {
                 return false;
             }
-        } else if (!this.value.equals(other.value)) {
+        } else if (!this.userName.equals(other.userName)) {
             return false;
         }
         return true;
     }
-
-
-
+    
+    
+    
     @Override
     public int compareTo(Literal o) {
-        if (o instanceof DateLiteral) {
-            return this.value.compareTo(((DateLiteral) o).value);
+        if (o instanceof UserLiteral) {
+            return this.userName.compareTo(((UserLiteral) o).userName);
         }
         throw new RuntimeException("Not compareable");
     }
@@ -96,7 +88,7 @@ public class DateLiteral extends Literal {
     
     @Override
     public Object clone() {
-        DateLiteral result = new DateLiteral(this.getToken());
+        UserLiteral result = new UserLiteral(this.getToken());
         result.setPosition(this.getPosition());
         result.setType(this.getType());
         return result;

@@ -2,10 +2,13 @@ package de.skuzzle.polly.parsing.tree;
 
 import java.util.Stack;
 
-import de.skuzzle.polly.parsing.Context;
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.declarations.Namespace;
+import de.skuzzle.polly.parsing.tree.literals.Literal;
+import de.skuzzle.polly.parsing.tree.literals.ResolvableIdentifierLiteral;
+import de.skuzzle.polly.parsing.tree.literals.UserLiteral;
 
 
 
@@ -28,7 +31,7 @@ public class NamespaceAccessExpression extends Expression {
     
 
     @Override
-    public Expression contextCheck(Context context) throws ParseException {
+    public Expression contextCheck(Namespace context) throws ParseException {
         if (this.namespace instanceof VarAccessExpression) {
             /*
              * If the left side of this expression is a var access, try to resolve it
@@ -45,20 +48,20 @@ public class NamespaceAccessExpression extends Expression {
         }
         
         // now look up the namespace
-        ResolveableIdentifierLiteral ns = null;
+        String ns = null;
         if (this.namespace instanceof UserLiteral) {
-            ns = new ResolveableIdentifierLiteral(
-                ((UserLiteral) this.namespace).getUserName());
-        } else if (this.namespace instanceof ResolveableIdentifierLiteral) {
-            ns = (ResolveableIdentifierLiteral) this.namespace;
+            ns = ((UserLiteral) this.namespace).getUserName();
+        } else if (this.namespace instanceof ResolvableIdentifierLiteral) {
+            ns = ((ResolvableIdentifierLiteral) this.namespace).getIdentifier();
         } else {
             throw new ParseException("Ungültiger Namespace Zugriff.", this.getPosition());
         }
         
-        ns.setPosition(this.namespace.getPosition());
-        context.switchNamespace(ns);
+        // Contextcheck the right hand expression with declarations of the selected 
+        // namespace
+        context.switchTo(ns, this.getPosition());
         this.rhs = this.rhs.contextCheck(context);
-        context.switchDefaultNamespace();
+        context.switchToRoot();
         return this.rhs;
     }
     

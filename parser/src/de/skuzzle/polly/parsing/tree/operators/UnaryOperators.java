@@ -4,19 +4,19 @@ import java.util.Collections;
 import java.util.Random;
 import java.util.Stack;
 
-import de.skuzzle.polly.parsing.Context;
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.ListType;
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.TokenType;
 import de.skuzzle.polly.parsing.Type;
-import de.skuzzle.polly.parsing.tree.BooleanLiteral;
+import de.skuzzle.polly.parsing.declarations.Namespace;
 import de.skuzzle.polly.parsing.tree.Expression;
-import de.skuzzle.polly.parsing.tree.ListLiteral;
-import de.skuzzle.polly.parsing.tree.Literal;
-import de.skuzzle.polly.parsing.tree.NumberLiteral;
-import de.skuzzle.polly.parsing.tree.StringLiteral;
-import de.skuzzle.polly.parsing.tree.TimespanLiteral;
+import de.skuzzle.polly.parsing.tree.literals.BooleanLiteral;
+import de.skuzzle.polly.parsing.tree.literals.ListLiteral;
+import de.skuzzle.polly.parsing.tree.literals.Literal;
+import de.skuzzle.polly.parsing.tree.literals.NumberLiteral;
+import de.skuzzle.polly.parsing.tree.literals.StringLiteral;
+import de.skuzzle.polly.parsing.tree.literals.TimespanLiteral;
 
 
 public class UnaryOperators {
@@ -101,7 +101,7 @@ public class UnaryOperators {
         }
         
         @Override
-        public void contextCheck(Context context, Expression expression)
+        public void contextCheck(Namespace context, Expression expression)
                 throws ParseException {
             super.contextCheck(context, expression);
             
@@ -202,7 +202,7 @@ public class UnaryOperators {
         }
         
         @Override
-        public void contextCheck(Context context, Expression left) throws ParseException {
+        public void contextCheck(Namespace context, Expression left) throws ParseException {
             super.contextCheck(context, left);
             
             ListType t = ((ListType) left.getType());

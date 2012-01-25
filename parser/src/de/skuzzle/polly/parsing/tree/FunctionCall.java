@@ -4,9 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import de.skuzzle.polly.parsing.Context;
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.ParseException;
+import de.skuzzle.polly.parsing.Type;
+import de.skuzzle.polly.parsing.declarations.FunctionDeclaration;
+import de.skuzzle.polly.parsing.declarations.Namespace;
+import de.skuzzle.polly.parsing.declarations.VarDeclaration;
+import de.skuzzle.polly.parsing.tree.literals.Literal;
+import de.skuzzle.polly.parsing.tree.literals.ResolvableIdentifierLiteral;
 
 
 
@@ -24,20 +29,20 @@ public class FunctionCall extends Expression {
 
     private static final long serialVersionUID = 1L;
     
-    private ResolveableIdentifierLiteral name;
+    private ResolvableIdentifierLiteral name;
     private List<Expression> actualParameters;
     private Expression resolvedExpression;
+    private boolean hardcoded;
     
     
-    
-    public FunctionCall(ResolveableIdentifierLiteral name) {
+    public FunctionCall(ResolvableIdentifierLiteral name) {
         this(name, new ArrayList<Expression>());
         this.name = name;
     }
     
     
     
-    public FunctionCall(ResolveableIdentifierLiteral name, 
+    public FunctionCall(ResolvableIdentifierLiteral name, 
             List<Expression> actualParameters) {
         super(name.getPosition());
         this.name = name;
@@ -53,23 +58,45 @@ public class FunctionCall extends Expression {
 
     
     @Override
-    public Expression contextCheck(Context context) throws ParseException {
-        Expression e = this.name.contextCheck(context);
+    public Expression contextCheck(Namespace context) throws ParseException {
+        FunctionDeclaration decl = context.resolveFunction(this.name);
         
-        if (!(e instanceof FunctionDefinition)) {
-            throw new ParseException("'" + this.name.getIdentifier() + 
-                    "' ist keine Funktion", this.getPosition());
+        if (decl.getFormalParameters().size() != this.actualParameters.size()) {
+            throw new ParseException("Falsche Parameteranzahl: " + 
+                    this.actualParameters.size() + ". Erwartet: " + 
+                    decl.getFormalParameters().size(), this.getPosition());
         }
-        
-        FunctionDefinition func = (FunctionDefinition) e;
-        
-        List<Expression> checkedExpressions = new ArrayList<Expression>();
-        for (Expression param : this.actualParameters) {
-            checkedExpressions.add(param.contextCheck(context));
+
+        context.enter();
+        try {
+            for (int i = 0; i < this.actualParameters.size(); ++i) {
+                Expression actual = this.actualParameters.get(i);
+                VarDeclaration formal = decl.getFormalParameters().get(i);
+                
+                formal.contextCheck(context);
+                actual = actual.contextCheck(context);
+                
+                if (formal.getType().check(actual.getType())) {
+                    Type.typeError(actual.getType(), formal.getType(), 
+                        actual.getPosition());
+                }
+                
+                // declare a new var for each formal parameter which contains
+                // the expression of the actual parameter
+                VarDeclaration act = new VarDeclaration(formal.getName(), false, false);
+                act.setExpression(actual);
+                context.add(act);
+            }
+            
+            this.hardcoded = decl.isHardcoded();
+            
+            // For non hardcoded functions, this will cause all parameters in the
+            // expression to be replaced by their actual expression
+            this.resolvedExpression = decl.getExpression().contextCheck(context);
+        } finally {
+            // make sure to leave the declarations in a clean state
+            context.leave();
         }
-        
-        func.setActualParameters(checkedExpressions);
-        this.resolvedExpression = func.contextCheck(context);
         
         this.setType(this.resolvedExpression.getType());
         return this;
@@ -86,6 +113,17 @@ public class FunctionCall extends Expression {
      */
     @Override
     public void collapse(Stack<Literal> stack) throws ExecutionException {
+        /* 
+         * if this is a hardcoded function, put all actual parameters onto the stack.
+         * 
+         * Parameters of normal functions will be resolved during context check and 
+         * replaced by heir actual expression
+         */
+        if (this.hardcoded) {
+            for (Expression exp : this.actualParameters) {
+                exp.collapse(stack);
+            }
+        }
         this.resolvedExpression.collapse(stack);
     }
     
@@ -104,8 +142,8 @@ public class FunctionCall extends Expression {
             params.add((Expression) param.clone());
         }
         FunctionCall call = new FunctionCall(
-                (ResolveableIdentifierLiteral) this.name.clone(), params);
-        call.name = (ResolveableIdentifierLiteral) this.name.clone();
+                (ResolvableIdentifierLiteral) this.name.clone(), params);
+        call.name = (ResolvableIdentifierLiteral) this.name.clone();
         call.setType(this.getType());
         call.setPosition(this.getPosition());
         call.resolvedExpression = (Expression) this.resolvedExpression.clone();

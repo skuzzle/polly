@@ -1,0 +1,31 @@
+package de.skuzzle.polly.parsing.tree.functions;
+
+
+import de.skuzzle.polly.parsing.ListType;
+import de.skuzzle.polly.parsing.Type;
+import de.skuzzle.polly.parsing.declarations.FunctionDeclaration;
+import de.skuzzle.polly.parsing.declarations.VarDeclaration;
+import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
+
+
+
+
+public class ListLengthFunction extends FunctionDeclaration {
+    
+    private static final long serialVersionUID = 1L;
+    
+    public ListLengthFunction() {
+        super(new IdentifierLiteral("length"), true);
+        this.getFormalParameters().add(new VarDeclaration(
+            new IdentifierLiteral(";_list"), new ListType(Type.ANY)));
+        this.setExpression(new Functions.Length());
+    }
+    
+    
+    
+    
+    @Override
+    public Object clone() {
+        return new ListLengthFunction();
+    }
+}

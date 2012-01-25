@@ -2,12 +2,13 @@ package de.skuzzle.polly.parsing.tree;
 
 import java.util.Stack;
 
-import de.skuzzle.polly.parsing.Context;
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.Token;
 import de.skuzzle.polly.parsing.Type;
+import de.skuzzle.polly.parsing.declarations.Namespace;
+import de.skuzzle.polly.parsing.tree.literals.Literal;
 import de.skuzzle.polly.parsing.tree.operators.BinaryOperatorOverload;
 
 
@@ -88,12 +89,12 @@ public class BinaryExpression extends Expression {
      *      context checking.
      */
     @Override
-    public Expression contextCheck(Context context) throws ParseException {
+    public Expression contextCheck(Namespace context) throws ParseException {
         this.leftOperand = this.leftOperand.contextCheck(context);
         this.rightOperand = this.rightOperand.contextCheck(context);
         
         
-        this.overload = context.resolveOverload( this.operator.getType(), 
+        this.overload = context.resolveOperator(this.operator.getType(), 
                 this.leftOperand.getType(), this.rightOperand.getType(), 
                 this.getPosition());
         

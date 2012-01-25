@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.skuzzle.polly.parsing.tree.IdentifierLiteral;
+import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
 
 
 public class Type implements Serializable {

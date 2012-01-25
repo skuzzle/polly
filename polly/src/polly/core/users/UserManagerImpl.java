@@ -23,7 +23,7 @@ import de.skuzzle.polly.parsing.Namespaces;
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.tree.Expression;
 import de.skuzzle.polly.parsing.tree.FunctionDefinition;
-import de.skuzzle.polly.parsing.tree.ResolveableIdentifierLiteral;
+import de.skuzzle.polly.parsing.tree.literals.ResolvableIdentifierLiteral;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
@@ -209,7 +209,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     public String inspect(User user, String declaration) {
         try {
             Expression e = this.namespaces.get(user.getName()).resolve(
-                    new ResolveableIdentifierLiteral(declaration));
+                    new ResolvableIdentifierLiteral(declaration));
             
             if (e == null) {
                 return null;

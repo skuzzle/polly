@@ -5,9 +5,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
-import de.skuzzle.polly.parsing.Context;
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.ParseException;
+import de.skuzzle.polly.parsing.declarations.Namespace;
+import de.skuzzle.polly.parsing.tree.literals.CommandLiteral;
+import de.skuzzle.polly.parsing.tree.literals.Literal;
 
 
 
@@ -52,7 +54,7 @@ public class Root implements TreeElement {
     
 
     @Override
-    public Expression contextCheck(Context context) throws ParseException {
+    public Expression contextCheck(Namespace context) throws ParseException {
         for (int i = 0; i < this.parameters.size(); ++i) {
             Expression e = this.parameters.get(i);
             this.parameters.set(i, e.contextCheck(context));

@@ -5,17 +5,17 @@ import java.util.List;
 
 import de.skuzzle.polly.parsing.ListType;
 import de.skuzzle.polly.parsing.Type;
-import de.skuzzle.polly.parsing.tree.BooleanLiteral;
-import de.skuzzle.polly.parsing.tree.ChannelLiteral;
-import de.skuzzle.polly.parsing.tree.CommandLiteral;
-import de.skuzzle.polly.parsing.tree.DateLiteral;
 import de.skuzzle.polly.parsing.tree.Expression;
-import de.skuzzle.polly.parsing.tree.ListLiteral;
-import de.skuzzle.polly.parsing.tree.Literal;
-import de.skuzzle.polly.parsing.tree.NumberLiteral;
-import de.skuzzle.polly.parsing.tree.StringLiteral;
-import de.skuzzle.polly.parsing.tree.TimespanLiteral;
-import de.skuzzle.polly.parsing.tree.UserLiteral;
+import de.skuzzle.polly.parsing.tree.literals.BooleanLiteral;
+import de.skuzzle.polly.parsing.tree.literals.ChannelLiteral;
+import de.skuzzle.polly.parsing.tree.literals.CommandLiteral;
+import de.skuzzle.polly.parsing.tree.literals.DateLiteral;
+import de.skuzzle.polly.parsing.tree.literals.ListLiteral;
+import de.skuzzle.polly.parsing.tree.literals.Literal;
+import de.skuzzle.polly.parsing.tree.literals.NumberLiteral;
+import de.skuzzle.polly.parsing.tree.literals.StringLiteral;
+import de.skuzzle.polly.parsing.tree.literals.TimespanLiteral;
+import de.skuzzle.polly.parsing.tree.literals.UserLiteral;
 import de.skuzzle.polly.sdk.Types;
 
 /**
