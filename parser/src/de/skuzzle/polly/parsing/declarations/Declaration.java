@@ -43,7 +43,7 @@ public abstract class Declaration implements Serializable {
     
     
     
-    protected void setType(Type type) {
+    public void setType(Type type) {
         this.type = type;
     }
     

@@ -55,7 +55,7 @@ public class Declarations {
         for (Map<String, Declaration> level : this.levels) {
             Declaration decl = level.get(id.getIdentifier());
             if (decl != null) {
-                return decl;
+                return (Declaration) decl.clone();
             }
         }
 

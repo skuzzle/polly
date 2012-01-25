@@ -16,7 +16,7 @@ public class VarAccessExpression extends Expression {
     private static final long serialVersionUID = 1L;
     
     private ResolvableIdentifierLiteral var;
-    
+    private Expression resolved;
     
     
     public VarAccessExpression(ResolvableIdentifierLiteral var, Position position) {
@@ -36,14 +36,16 @@ public class VarAccessExpression extends Expression {
     public Expression contextCheck(Namespace context) throws ParseException {
         VarDeclaration decl = context.resolveVar(this.var);
         
-        return decl.getExpression().contextCheck(context);
+        this.resolved = decl.getExpression().contextCheck(context);
+        this.setType(resolved.getType());
+        return this;
     }
     
 
     
     @Override
     public void collapse(Stack<Literal> stack) throws ExecutionException {
-        // do nothing as this expression will always be replaced.
+        this.resolved.collapse(stack);
     }
     
     

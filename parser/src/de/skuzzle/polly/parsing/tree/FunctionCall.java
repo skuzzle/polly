@@ -74,8 +74,9 @@ public class FunctionCall extends Expression {
                 VarDeclaration formal = decl.getFormalParameters().get(i);
                 
                 actual = actual.contextCheck(context);
+                this.actualParameters.set(i, actual);
                 
-                if (formal.getType().check(actual.getType())) {
+                if (!formal.getType().check(actual.getType())) {
                     Type.typeError(actual.getType(), formal.getType(), 
                         actual.getPosition());
                 }

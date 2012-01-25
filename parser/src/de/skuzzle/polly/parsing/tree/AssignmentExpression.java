@@ -13,6 +13,7 @@ import de.skuzzle.polly.parsing.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.tree.literals.Literal;
 
 
+
 public class AssignmentExpression extends Expression {
 
     private static final long serialVersionUID = 1L;
@@ -51,6 +52,10 @@ public class AssignmentExpression extends Expression {
             Expression checked = null;
             try {
                 for (VarDeclaration param : func.getFormalParameters()) {
+                    // Resolve the declared type
+                    Type type = param.getExpression().contextCheck(context).getType();
+                    param.setType(type);
+                    
                     context.add(param);
                 }
                 

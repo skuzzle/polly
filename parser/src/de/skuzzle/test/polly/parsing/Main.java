@@ -20,7 +20,7 @@ public class Main {
         Prepare.operators(context);
         
         InputParser p = new InputParser();
-        Root r = p.parse(":foo 5*x->f(Zahl x) f(5)");
+        Root r = p.parse(":foo math.sin(math.pi*0.5)");
         r.contextCheck(context);
         r.collapse(new Stack<Literal>());
         

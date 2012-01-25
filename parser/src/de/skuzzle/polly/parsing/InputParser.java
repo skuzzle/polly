@@ -279,6 +279,7 @@ public class InputParser extends AbstractParser<InputScanner> {
         Expression type = this.parse_type_definition();
         this.expect(TokenType.SEPERATOR);
         Token paramName = this.expect(TokenType.IDENTIFIER);
+        
         VarDeclaration decl = new VarDeclaration(
             new IdentifierLiteral(paramName.getStringValue()), false, false);
         decl.setExpression(type);
@@ -292,6 +293,7 @@ public class InputParser extends AbstractParser<InputScanner> {
             type = this.parse_type_definition();
             this.expect(TokenType.SEPERATOR);
             paramName = this.expect(TokenType.IDENTIFIER);
+            
             decl = new VarDeclaration(
                 new IdentifierLiteral(paramName.getStringValue()), false, false);
             decl.setExpression(type);
