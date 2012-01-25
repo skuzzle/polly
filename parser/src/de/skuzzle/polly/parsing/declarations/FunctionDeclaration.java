@@ -3,7 +3,6 @@ package de.skuzzle.polly.parsing.declarations;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
 
 
@@ -36,19 +35,7 @@ public class FunctionDeclaration extends VarDeclaration {
     }
     
     
-    
-    @Override
-    public void contextCheck(Namespace c) throws ParseException {
-        super.contextCheck(c);
-        
-        for (VarDeclaration vardecl : this.formalParameters) {
-            vardecl.contextCheck(c);
-        }
-    }
-    
-    
-    
-    
+
     public boolean isHardcoded() {
         return this.hardcoded;
     }

@@ -9,7 +9,7 @@ public class IdentifierLiteral extends Literal {
 
     private static final long serialVersionUID = 1L;
     
-    private java.lang.String identifier;
+    private String identifier;
     
     public IdentifierLiteral(Token token) {
         super(token, Type.UNKNOWN);
@@ -18,20 +18,20 @@ public class IdentifierLiteral extends Literal {
     
     
     
-    public IdentifierLiteral(java.lang.String identifier) {
+    public IdentifierLiteral(String identifier) {
         super(new Token(TokenType.IDENTIFIER, Position.EMPTY, identifier), Type.UNKNOWN);
         this.identifier = identifier;
     }    
     
     
-    public java.lang.String getIdentifier() {
+    public String getIdentifier() {
         return this.identifier;
     }
     
     
     
     @Override
-    public java.lang.String toString() {
+    public String toString() {
         return this.identifier;
     }
 

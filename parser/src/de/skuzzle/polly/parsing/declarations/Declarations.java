@@ -72,7 +72,6 @@ public class Declarations {
     
     
     
-    
     public void store(File file) throws IOException {
         ObjectOutputStream output = null;
         try {

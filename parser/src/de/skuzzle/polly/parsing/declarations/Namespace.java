@@ -23,6 +23,7 @@ public class Namespace {
 
     private Declarations global;
     private Declarations reserved;
+    private FunctionDeclaration forbidden;
     private List<UnaryOperatorOverload> unaryOperators;
     private List<BinaryOperatorOverload> binaryOperators;
     private List<TernaryOperatorOverload> ternaryOperators;
@@ -41,6 +42,18 @@ public class Namespace {
         this.binaryOperators = new LinkedList<BinaryOperatorOverload>();
         this.ternaryOperators = new LinkedList<TernaryOperatorOverload>();
         this.namespaces = new HashMap<String, Declarations>();
+    }
+    
+    
+    
+    public void forbidFunction(FunctionDeclaration function) {
+        this.forbidden = function;
+    }
+    
+    
+    
+    public void allowFunction() {
+        this.forbidden = null;
     }
     
     
@@ -103,6 +116,15 @@ public class Namespace {
     
     public void reserve(Declaration declaration) {
         this.reserved.add(declaration);
+    }
+    
+    
+    
+    public void create(String name) {
+        Declarations decl = this.namespaces.get(name);
+        if (decl == null) {
+            this.namespaces.put(name, new Declarations());
+        }
     }
     
     
@@ -175,6 +197,7 @@ public class Namespace {
     }
     
     
+    
     public Declaration resolve(ResolvableIdentifierLiteral id, String namespace, 
             Position nsPosition) throws ParseException {
         
@@ -192,9 +215,11 @@ public class Namespace {
     }
     
     
+    
     public VarDeclaration resolveVar(ResolvableIdentifierLiteral id) throws ParseException {
         return this.resolveVar(id, this.currentNS, Position.EMPTY);
     }
+    
     
     
     public VarDeclaration resolveVar(ResolvableIdentifierLiteral id, String namespace, 
@@ -219,6 +244,13 @@ public class Namespace {
 
     public FunctionDeclaration resolveFunction(ResolvableIdentifierLiteral id, 
             String namespace, Position nsPosition) throws ParseException {
+        
+        if (this.forbidden != null && 
+                id.getIdentifier().equals(this.forbidden.getName().getIdentifier())) {
+            throw new ParseException("Ungülter rekursiver Aufruf von " + id, 
+                id.getPosition());
+        }
+        
         Declaration decl = this.resolve(id, namespace, nsPosition);
         if (!(decl instanceof FunctionDeclaration)) {
             throw new ParseException("'" + decl.getName()

@@ -1,6 +1,5 @@
 package de.skuzzle.polly.parsing.declarations;
 
-import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Type;
 import de.skuzzle.polly.parsing.tree.Expression;
 import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
@@ -34,14 +33,6 @@ public class VarDeclaration extends Declaration {
     
     public Expression getExpression() {
         return this.expression;
-    }
-    
-    
-    
-    @Override
-    public void contextCheck(Namespace c) throws ParseException {
-        this.expression = this.expression.contextCheck(c);
-        this.setType(this.expression.getType());
     }
     
     

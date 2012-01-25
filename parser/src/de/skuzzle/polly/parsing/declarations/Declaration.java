@@ -2,7 +2,6 @@ package de.skuzzle.polly.parsing.declarations;
 
 import java.io.Serializable;
 
-import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Type;
 import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
 
@@ -38,7 +37,6 @@ public abstract class Declaration implements Serializable {
     
     
     
-    
     public Type getType() {
         return this.type;
     }
@@ -58,14 +56,10 @@ public abstract class Declaration implements Serializable {
     
     
     
-    
     public boolean isTemp() {
         return this.temp;
     }
     
-    
-    
-    public abstract void contextCheck(Namespace c) throws ParseException;
     
     
     @Override

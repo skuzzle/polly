@@ -1,6 +1,5 @@
 package de.skuzzle.polly.parsing.declarations;
 
-import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Type;
 
 
@@ -15,13 +14,7 @@ public class TypeDeclaration extends Declaration {
     }
     
 
-    @Override
-    public void contextCheck(Namespace c) throws ParseException {
-        // nothing to do here
-    }
     
-    
-
     @Override
     public Object clone() {
         return new TypeDeclaration(this.getType());

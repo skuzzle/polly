@@ -51,14 +51,13 @@ public class AssignmentExpression extends Expression {
             Expression checked = null;
             try {
                 for (VarDeclaration param : func.getFormalParameters()) {
-                    param.contextCheck(context);
                     context.add(param);
                 }
                 
                 /* The name of the function being declared may not occur on the 
                  * left side. So mark it as forbidden.
                  */
-                context.add(new ForbiddenFunction(func.getName()));
+                context.forbidFunction(func);
     
                 // Check context, but do not replace the root of the left subtree 
                 // (=> store result as a new expression)
@@ -66,6 +65,7 @@ public class AssignmentExpression extends Expression {
             } finally {
                 // make sure to always leave the declarations clean
                 context.leave();
+                context.allowFunction();
             }
             
             
@@ -78,7 +78,6 @@ public class AssignmentExpression extends Expression {
             this.setType(Type.UNKNOWN);
         } else if (this.declaration instanceof VarDeclaration) {
             
-            this.declaration.contextCheck(context);
             this.expression = this.expression.contextCheck(context);
             
             ((VarDeclaration) this.declaration).setExpression(this.expression);

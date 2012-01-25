@@ -73,7 +73,6 @@ public class FunctionCall extends Expression {
                 Expression actual = this.actualParameters.get(i);
                 VarDeclaration formal = decl.getFormalParameters().get(i);
                 
-                formal.contextCheck(context);
                 actual = actual.contextCheck(context);
                 
                 if (formal.getType().check(actual.getType())) {
