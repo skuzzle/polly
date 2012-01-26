@@ -334,8 +334,7 @@ public abstract class Command implements Comparable<Command> {
     			this.executeOnChannel(executer, channel, signature);
     		}
 		} catch (Exception e) {
-		    throw new CommandException("Unerwarteter Fehler beim Ausführen: " + 
-		        e.getMessage(), e);
+		    throw new CommandException(e.getMessage(), e);
 		}
 	}
 	
