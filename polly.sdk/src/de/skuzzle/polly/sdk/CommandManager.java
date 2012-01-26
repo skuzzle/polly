@@ -24,11 +24,26 @@ public interface CommandManager {
 	 * Registers a new command and all of its signatures.
 	 * 
 	 * @param cmd The command to add.
-	 * @throws DuplicatedSignatureException If the given command is already registered.
+	 * @throws DuplicatedSignatureException If the given commandname is already 
+	 *          registered.
 	 * @throws IllegalArgumentException If the commands name is shorter than 3 characters.
 	 */
 	public abstract void registerCommand(Command cmd) throws DuplicatedSignatureException;
 	
+	
+	/**
+	 * Registers a new command and all of its signatures. The command will be registered
+	 * with the given name, so this method can be used to create command aliases.
+	 * 
+	 * @param as The name as which the command should be added.
+	 * @param cmd The command to add.
+     * @throws DuplicatedSignatureException If the given commandname is already 
+     *          registered.
+     * @throws IllegalArgumentException If the commands name is shorter than 3 characters.
+     * @since 0.7
+	 */
+	public abstract void registerCommand(String as, Command cmd) 
+	        throws DuplicatedSignatureException;
 	
 	
 	/**
@@ -82,7 +97,7 @@ public interface CommandManager {
 	 * @throws UnknownCommandException If no command with the signatures name exists.
 	 */
 	public abstract Command getCommand(Signature signature) 
-			throws UnknownSignatureException;
+			throws UnknownSignatureException, UnknownCommandException;
 	
 	
 	
@@ -98,7 +113,7 @@ public interface CommandManager {
 	 * @return The command with the given name.
 	 * @throws UnknownCommandException If no command with the name exists.
 	 */
-	public abstract Command getCommand(String name);
+	public abstract Command getCommand(String name) throws UnknownCommandException;
 	
 	
 	
@@ -118,10 +133,11 @@ public interface CommandManager {
 	 * @throws InsufficientRightsException The given user can not execute that command.
 	 * @throws CommandException If the inputstring could not be parsed as a polly command
 	 *             or an error occured during execution of the command.                          
+	 * @throws UnknownCommandException If there is no command with that name.
 	 */
 	public abstract void executeString(String input, String channel, boolean inQuery, 
 	    User executor, IrcManager ircManager) 
 	                    throws UnsupportedEncodingException, 
                                UnknownSignatureException, InsufficientRightsException, 
-                               CommandException;
+                               CommandException, UnknownCommandException;
 }

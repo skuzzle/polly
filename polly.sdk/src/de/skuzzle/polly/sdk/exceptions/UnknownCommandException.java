@@ -10,7 +10,7 @@ import de.skuzzle.polly.sdk.CommandManager;
  * @since zero day
  * @version RC 1.0
  */
-public class UnknownCommandException extends RuntimeException {
+public class UnknownCommandException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 

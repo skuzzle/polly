@@ -236,8 +236,7 @@ public class Signature {
 	 * 		do not match.
 	 */
 	public Signature match(Signature other) {
-		if (other.parameters.size() != this.parameters.size() || 
-				!other.name.equals(this.name)) {
+		if (other.parameters.size() != this.parameters.size()) {
 			return null;
 		}
 		
