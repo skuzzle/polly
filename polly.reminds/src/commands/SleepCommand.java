@@ -8,6 +8,8 @@ import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types.DateType;
+import de.skuzzle.polly.sdk.exceptions.CommandException;
+import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
 import entities.RemindEntity;
@@ -31,7 +33,7 @@ public class SleepCommand extends Command {
     
     @Override
     protected boolean executeOnBoth(User executer, String channel,
-            Signature signature) {
+            Signature signature) throws CommandException {
         if (this.match(signature, 0)) {
             Date dueDate = signature.getDateValue(0);
             RemindEntity sleeping = this.remindManager.getSleep(
@@ -43,10 +45,14 @@ public class SleepCommand extends Command {
             }
             
             RemindEntity copy = sleeping.copyForNewDueDate(dueDate);
-            this.remindManager.addRemind(copy);
-            this.remindManager.scheduleRemind(copy, dueDate);
-            this.remindManager.removeSleep(sleeping.getForUser());
-            this.reply(channel, "Erinnerung wurde verlängert.");
+            try {
+                this.remindManager.addRemind(copy);
+                this.remindManager.scheduleRemind(copy, dueDate);
+                this.remindManager.removeSleep(sleeping.getForUser());
+                this.reply(channel, "Erinnerung wurde verlängert.");
+            } catch (DatabaseException e) {
+                throw new CommandException(e);
+            }
         }
         return false;
     }

@@ -5,9 +5,10 @@ import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types.NumberType;
+import de.skuzzle.polly.sdk.exceptions.CommandException;
+import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
-import entities.RemindEntity;
 
 
 public class DeleteRemindCommand extends Command {
@@ -24,26 +25,17 @@ public class DeleteRemindCommand extends Command {
     
     @Override
     protected boolean executeOnBoth(User executer, String channel,
-            Signature signature) {
+            Signature signature) throws CommandException {
         
         if (this.match(signature, 0)) {
             int remindId = (int) signature.getNumberValue(0);
             
-            RemindEntity remind = this.remindManager.getRemind(remindId);
-            if (remind == null) {
-                this.reply(channel, "Keine Erinnerung mit der angegebenen ID vorhanden");
-                return false;
+            try {
+                this.remindManager.deleteRemind(remindId, executer);
+                this.reply(channel, "Erinnerung wurde gelöscht");
+            } catch (DatabaseException e) {
+                throw new CommandException(e);
             }
-            
-            if (!remind.getForUser().equals(executer.getCurrentNickName())) {
-                this.reply(channel, 
-                        "Du kannst nur für dich bestimmte Erinnerungen löschen.");
-                return false;
-            }
-            
-            this.remindManager.unSchedule(remindId);
-            this.remindManager.deleteRemind(remindId);
-            this.reply(channel, "Erinnerung wurde gelöscht");
         }
         
         return false;

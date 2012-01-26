@@ -7,6 +7,8 @@ import core.RemindManager;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.exceptions.CommandException;
+import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import entities.RemindEntity;
 
 
@@ -41,8 +43,13 @@ public class AbstractRemindCommand extends Command {
     
     
     
-    protected RemindEntity addRemind(RemindEntity remind, boolean schedule) {
-        this.remindManager.addRemind(remind);
+    protected RemindEntity addRemind(RemindEntity remind, boolean schedule) 
+                throws CommandException {
+        try {
+            this.remindManager.addRemind(remind);
+        } catch (DatabaseException e) {
+            throw new CommandException(e);
+        }
         if (schedule) {
             this.remindManager.scheduleRemind(remind, remind.getDueDate());
         }

@@ -10,6 +10,7 @@ import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
 import de.skuzzle.polly.sdk.eventlistener.UserEvent;
 import de.skuzzle.polly.sdk.eventlistener.UserListener;
+import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import entities.RemindEntity;
 
 public class DeliverRemindHandler extends JoinPartAdapter implements MessageListener, 
@@ -96,7 +97,11 @@ public class DeliverRemindHandler extends JoinPartAdapter implements MessageList
             if (remind.isOnAction() || deliverLeave) {                
                 // remind.setNotDelivered(false);   // enable if leave messages should 
                                                     // not be 'sleepable'
-                this.remindManager.deliverRemind(remind);
+                try {
+                    this.remindManager.deliverRemind(remind);
+                } catch (DatabaseException e1) {
+                    e1.printStackTrace();
+                }
             }
         }
     }

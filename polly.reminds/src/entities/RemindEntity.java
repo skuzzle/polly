@@ -86,6 +86,11 @@ public class RemindEntity {
         return this.message;
     }
 
+    
+    public void setMessage(String message) {
+        this.message = message;
+    }
+    
 
     public String getForUser() {
         return this.forUser;
@@ -114,6 +119,10 @@ public class RemindEntity {
         return dueDate;
     }
     
+    
+    public void setDueDate(Date dueDate) {
+        this.dueDate = dueDate;
+    }
     
     
     public Date getLeaveDate() {

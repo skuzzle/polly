@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 
 import commands.DeleteRemindCommand;
 import commands.LeaveCommand;
+import commands.ModRemindCommand;
 import commands.MyRemindsCommand;
 import commands.OnReturnCommand;
 import commands.RemindCommand;
@@ -76,6 +77,7 @@ public class MyPlugin extends PollyPlugin {
         this.addCommand(new MyRemindsCommand(myPolly, this.remindManager));
         this.addCommand(new DeleteRemindCommand(myPolly, this.remindManager));
         this.addCommand(new SleepCommand(myPolly, this.remindManager));
+        this.addCommand(new ModRemindCommand(myPolly, this.remindManager));
         this.addCommand(new RemindSettingsCommand(myPolly));
     }
     

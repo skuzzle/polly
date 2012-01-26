@@ -17,8 +17,10 @@ import polly.reminds.MyPlugin;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PersistenceManager;
+import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.WriteAction;
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
+import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.model.User;
@@ -89,7 +91,8 @@ public class RemindManager extends AbstractDisposable {
     
     
     
-    public synchronized void deliverRemind(final RemindEntity remind) {
+    public synchronized void deliverRemind(final RemindEntity remind) 
+            throws DatabaseException {
         logger.debug("Executing Remind: " + remind);
         this.persistence.refresh(remind);
         
@@ -144,6 +147,14 @@ public class RemindManager extends AbstractDisposable {
         
         this.putToSleep(remind);
         this.deleteRemind(remind);
+    }
+    
+    
+    
+    public boolean canEdit(RemindEntity remind, User user) {
+        return user.getUserLevel() >= UserManager.ADMIN ||
+            remind.getForUser().equals(user.getCurrentNickName()) ||
+            remind.getFromUser().equals(user.getCurrentNickName());
     }
     
     
@@ -204,7 +215,39 @@ public class RemindManager extends AbstractDisposable {
     
     
     
+    private void checkRemind(int id, RemindEntity remind, User user) 
+            throws CommandException {
+        if (remind == null) {
+            throw new CommandException("Kein Remind mit der ID " + id);
+        } else if (!canEdit(remind, user)) {
+            throw new CommandException("Du kannst das Remind mit der ID " + id + 
+                " nicht ändern");
+        }
+    }
+    
+    
+    
+    public void modifyRemind(User executor, int id, final Date dueDate, 
+            final String msg) throws CommandException, DatabaseException {
+        final RemindEntity remind = this.persistence.atomicRetrieveSingle(
+                RemindEntity.class, id);
+        
+        checkRemind(id, remind, executor);
+        
+        this.persistence.atomicWriteOperation(new WriteAction() {
+            
+            @Override
+            public void performUpdate(PersistenceManager persistence) {
+                remind.setDueDate(dueDate);
+                remind.setMessage(msg);
+            }
+        });
+    }
+    
+    
+    
     public List<RemindEntity> undeliveredReminds(IrcUser user) {
+
         try {
             this.persistence.readLock();
             return this.persistence.findList(RemindEntity.class, "UNDELIVERED_FOR_USER", 
@@ -216,48 +259,40 @@ public class RemindManager extends AbstractDisposable {
     
     
     
-    public void addRemind(RemindEntity remind) {
+    public void addRemind(RemindEntity remind) throws DatabaseException {
         logger.debug("Adding Remind: " + remind);
-        try {
-            
-            if (remind.isOnAction()) {
-                this.onReturnAvailable.add(remind.getForUser());
-            }
-            
-            this.persistence.writeLock();
-            this.persistence.startTransaction();
-            this.persistence.persist(remind);
-            this.persistence.commitTransaction();
-        } catch (DatabaseException e) {
-            e.printStackTrace();
-        } finally {
-            this.persistence.writeUnlock();
+        
+        if (remind.isOnAction()) {
+            this.onReturnAvailable.add(remind.getForUser());
         }
+        
+        this.persistence.atomicPersist(remind);
+    }
+
+    
+    private void deleteRemind(RemindEntity remind) throws DatabaseException {
+        this.reminds.remove(remind);
+        this.persistence.atomicRemove(remind);
     }
     
     
-    
-    public void deleteRemind(RemindEntity remind) {
-        this.deleteRemind(remind.getId());
-    }
-    
-    
-    
-    public void deleteRemind(int id) {
+    public void deleteRemind(final int id, User executor) throws CommandException, DatabaseException {
+        final RemindEntity remind = this.persistence.atomicRetrieveSingle(
+            RemindEntity.class, id);
+        
+        this.checkRemind(id, remind, executor);
+        
+        
         logger.debug("Removing Remind with id " + id);
-        try {
-            this.persistence.writeLock();
-            this.reminds.remove(id);
-            RemindEntity r = this.persistence.find(RemindEntity.class, id);
+        this.reminds.remove(id);
+        this.unSchedule(id);
+        persistence.atomicWriteOperation(new WriteAction() {
             
-            this.persistence.startTransaction();
-            this.persistence.remove(r);
-            this.persistence.commitTransaction();
-        } catch (DatabaseException e) {
-            e.printStackTrace();
-        } finally {
-            this.persistence.writeUnlock();
-        }
+            @Override
+            public void performUpdate(PersistenceManager persistence) {
+                persistence.remove(remind);
+            }
+        });
     }
     
     

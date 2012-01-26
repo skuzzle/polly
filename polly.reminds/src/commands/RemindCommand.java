@@ -11,6 +11,7 @@ import de.skuzzle.polly.sdk.Types.DateType;
 import de.skuzzle.polly.sdk.Types.ListType;
 import de.skuzzle.polly.sdk.Types.StringType;
 import de.skuzzle.polly.sdk.Types.UserType;
+import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
 import entities.RemindEntity;
@@ -41,7 +42,7 @@ public class RemindCommand extends AbstractRemindCommand {
     
     @Override
     protected boolean executeOnBoth(User executer, String channel,
-            Signature signature) {
+            Signature signature) throws CommandException {
                
         if (this.match(signature, 0)) {
             String location = signature.getStringValue(1);
