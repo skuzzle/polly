@@ -20,7 +20,8 @@ public class MyRemindsCommand extends Command {
         
         @Override
         protected String formatRemind(RemindEntity remind, FormatManager formatter) {
-            return "(" + remind.getId() + ") Erinnerung an: '" + remind.getMessage() + 
+            return "(" + remind.getId() + ") Erinnerung für " + remind.getForUser() + 
+                    " an: '" + remind.getMessage() + 
                     "', Zeit: " + 
                     formatter.formatDate(remind.getDueDate()) + ", hinterlassen am " + 
                     formatter.formatDate(remind.getLeaveDate()) + 
@@ -28,7 +29,8 @@ public class MyRemindsCommand extends Command {
         }
         @Override
         protected String formatMessage(RemindEntity remind, FormatManager formatter) {
-            return "(" + remind.getId() + ") Nachricht: '" + remind.getMessage() + 
+            return "(" + remind.getId() + ") Nachricht für " + remind.getForUser() + 
+                    ": '" + remind.getMessage() + 
                     "', hinterlassen am " +
                     formatter.formatDate(remind.getLeaveDate()) + 
                     " von " + remind.getFromUser();
@@ -55,7 +57,7 @@ public class MyRemindsCommand extends Command {
         
         if (this.match(signature, 0)) {
             List<RemindEntity> reminds = 
-                this.remindManager.getRemindsForUser(executer.getCurrentNickName());
+                this.remindManager.getMyReminds(executer.getCurrentNickName());
             
             if (reminds.isEmpty()) {
                 this.reply(executer, "Keine Erinnerungen für dich vorhanden.");

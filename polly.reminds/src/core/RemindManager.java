@@ -70,12 +70,7 @@ public class RemindManager extends AbstractDisposable {
     
     
     public RemindEntity getRemind(int id) {
-        try {
-            this.persistence.readLock();
-            return this.persistence.find(RemindEntity.class, id);
-        } finally {
-            this.persistence.readUnlock();
-        }
+        return this.persistence.atomicRetrieveSingle(RemindEntity.class, id);
     }
     
     
@@ -284,8 +279,8 @@ public class RemindManager extends AbstractDisposable {
         
         
         logger.debug("Removing Remind with id " + id);
-        this.reminds.remove(id);
         this.unSchedule(id);
+        this.reminds.remove(id);
         persistence.atomicWriteOperation(new WriteAction() {
             
             @Override
@@ -313,6 +308,18 @@ public class RemindManager extends AbstractDisposable {
             this.persistence.readLock();
             return this.persistence.findList(
                     RemindEntity.class, "REMIND_FOR_USER", nickName);
+        } finally {
+            this.persistence.readUnlock();
+        }
+    }
+    
+    
+    
+    public List<RemindEntity> getMyReminds(String nickName) {
+        try {
+            this.persistence.readLock();
+            return this.persistence.findList(
+                    RemindEntity.class, "MY_REMIND_FOR_USER", nickName);
         } finally {
             this.persistence.readUnlock();
         }

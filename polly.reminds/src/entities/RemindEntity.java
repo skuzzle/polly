@@ -19,8 +19,11 @@ import de.skuzzle.polly.sdk.FormatManager;
         name =  "ALL_REMINDS",
         query = "SELECT r FROM RemindEntity r"),
     @NamedQuery(
-        name =  "REMIND_FOR_USER",
+        name =  "MY_REMIND_FOR_USER",
         query = "SELECT r FROM RemindEntity r WHERE r.forUser = ?1"),
+    @NamedQuery(
+        name =  "MY_REMIND_FOR_USER",
+        query = "SELECT r FROM RemindEntity r WHERE r.forUser = ?1 OR r.fromUser = ?1"),
     @NamedQuery(
         name =  "UNDELIVERED_FOR_USER",
         query = "SELECT r FROM RemindEntity r WHERE r.forUser = ?1 AND " +
