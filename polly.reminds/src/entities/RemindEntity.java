@@ -182,4 +182,11 @@ public class RemindEntity {
         copy.leaveDate = this.leaveDate;
         return copy;
     }
+    
+    
+    
+    @Override
+    public String toString() {
+        return "REMIND " + this.id + " for " + this.getForUser();
+    }
 }
