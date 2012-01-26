@@ -3,6 +3,7 @@ package polly.core;
 
 import commands.AddTrainCommand;
 import commands.AddUserCommand;
+import commands.AliasCommand;
 import commands.CalendarCommand;
 import commands.CloseTrainCommand;
 import commands.ClumBombCommand;
@@ -77,6 +78,7 @@ public class MyPlugin extends PollyPlugin {
         this.getMyPolly().users().addUserListener(this.greetDeliverer);
         this.addCommand(new GreetingCommand(myPolly));
         
+        this.addCommand(new AliasCommand(myPolly));
 		this.addCommand(new InfoCommand(myPolly));
 		this.addCommand(new HelpCommand(myPolly));
 		this.addCommand(new QuitCommand(myPolly));

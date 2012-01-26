@@ -75,29 +75,43 @@ public class CommandManagerImpl implements CommandManager {
 	public synchronized void registerCommand(Command cmd) 
 			throws DuplicatedSignatureException {
 		
-		if (cmd.getCommandName().length() < 3) {
-			throw new IllegalArgumentException(
-					"Too short commandname: " + cmd.getCommandName());
-		}
-		if (this.ignoredCommands.contains(cmd.getCommandName())) {
-		    logger.warn("Ignoring command '" + cmd.getCommandName() + "'.");
-		    return;
-		}
-		if (this.isRegistered(cmd)) {
-			throw new DuplicatedSignatureException(cmd.getCommandName());
-		}
-		this.commands.put(cmd.getCommandName(), cmd);
-		logger.debug("Command '" + cmd.getCommandName() + "' with " + 
-				cmd.getSignatures().size() + " signatures successfuly registered");
+	    this.registerCommand(cmd.getCommandName(), cmd);
+	}
+	
+	
+	
+	@Override
+	public synchronized void registerCommand(String as, Command cmd) 
+	        throws DuplicatedSignatureException {
+        if (as.length() < 3) {
+            throw new IllegalArgumentException(
+                    "Too short commandname: " + as);
+        }
+        if (this.ignoredCommands.contains(as)) {
+            logger.warn("Ignoring command '" + as + "'.");
+            return;
+        }
+        if (this.isRegistered(as)) {
+            throw new DuplicatedSignatureException(as);
+        }
+        this.commands.put(as, cmd);
+        logger.debug("Command '" + as + "' with " + 
+                cmd.getSignatures().size() + " signatures successfuly registered");
 	}
 	
 
 	
 	@Override
 	public synchronized void unregisterCommand(Command command) {
-		Command cmd = this.getCommand(command.getCommandName());
-		this.commands.remove(cmd.getCommandName());
-		logger.debug("Unregistered command: " + command.getCommandName());
+		Command cmd;
+        try {
+            cmd = this.getCommand(command.getCommandName());
+            this.commands.remove(cmd.getCommandName());
+            logger.debug("Unregistered command: " + command.getCommandName());
+        } catch (UnknownCommandException e) {
+            logger.debug("Tried to unregister nonexistent command", e);
+        }
+
 	}
 	
 	
@@ -126,7 +140,7 @@ public class CommandManagerImpl implements CommandManager {
 
 	@Override
 	public synchronized Command getCommand(Signature signature) 
-	        throws UnknownSignatureException {
+	        throws UnknownSignatureException, UnknownCommandException {
 		logger.debug("Looking for '" + signature.toString() + "'.");
 		
 		Command cmd = this.getCommand(signature.getName());
@@ -149,7 +163,7 @@ public class CommandManagerImpl implements CommandManager {
 
 
 	@Override
-	public Command getCommand(String name) {
+	public Command getCommand(String name) throws UnknownCommandException {
 		Command cmd = this.commands.get(name);
 		if (cmd == null)	 {
 			throw new UnknownCommandException(name);
@@ -163,7 +177,7 @@ public class CommandManagerImpl implements CommandManager {
             User executor, IrcManager ircManager) 
                 throws UnsupportedEncodingException, 
                        UnknownSignatureException, InsufficientRightsException, 
-                       CommandException {
+                       CommandException, UnknownCommandException {
         Stopwatch watch = new MillisecondStopwatch();
         watch.start();
         
@@ -292,7 +306,8 @@ public class CommandManagerImpl implements CommandManager {
 
 
     
-    private Map<String, Types> getCommandConstants(String input) {
+    private Map<String, Types> getCommandConstants(String input) 
+            throws UnknownCommandException {
         try {
             InputScanner s = new InputScanner(input);
             Token id = s.lookAhead();
@@ -301,9 +316,6 @@ public class CommandManagerImpl implements CommandManager {
             }
             
             Command cmd = this.getCommand(id.getStringValue());
-            if (cmd == null) {
-                return null;
-            }
             
             logger.trace("Renewing command-specific constants");
             cmd.renewConstants();
