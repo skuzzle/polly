@@ -630,6 +630,11 @@ public abstract class Command implements Comparable<Command> {
 	 */
 	@Override
 	public int compareTo(Command o) {
-	    return ((Integer)this.userLevel).compareTo(o.userLevel);
+	    int first = ((Integer)this.userLevel).compareTo(o.userLevel);
+	    if (first == 0) {
+	        return this.getCommandName().compareTo(o.getCommandName());
+	    } else {
+	        return first;
+	    }
 	}
 }
