@@ -12,6 +12,7 @@ import commands.DeleteUserCommand;
 import commands.DeliverTrainCommand;
 import commands.DictCommand;
 import commands.FooCommand;
+import commands.GhostCommand;
 import commands.GreetingCommand;
 import commands.HelpCommand;
 import commands.HopCommand;
@@ -99,6 +100,7 @@ public class MyPlugin extends PollyPlugin {
 		this.addCommand(new UsersCommand(myPolly));
 		this.addCommand(new AuthCommand(myPolly));
 		this.addCommand(new SignOffCommand(myPolly));
+		this.addCommand(new GhostCommand(myPolly));
 		this.addCommand(new AddUserCommand(myPolly));
 		this.addCommand(new DeleteUserCommand(myPolly));
 		this.addCommand(new SetMyPasswordCommand(myPolly));
