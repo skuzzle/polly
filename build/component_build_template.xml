@@ -24,11 +24,10 @@
     <property name="release.filename"       value="${ant.project.name}-${version.num}-full.zip"/>
     <property name="update.filename"        value="${ant.project.name}-${version.num}-update.zip"/>
     <property name="release.name"           value="${ant.project.name}"/>
-    <property name="release.developer"      value="TODO"/>
-    <property name="release.entrypoint"     value="TODO"/>
     <property name="release.description"    value="TODO"/>
     <property name="release.updateFilename" value="${ant.project.name}-${release.updateVersion}-update.zip"/>
     <property name="release.updateURL"      value="http://www.polly.skuzzle.de/updaterepo/polly/${update.filename}"/>
+    <property name="release.updateURLFile"  value="http://www.polly.skuzzle.de/updaterepo/polly/${ant.project.name}/update.properties""/>
     
     
     
@@ -111,13 +110,6 @@
     
     
     <!--
-        Performs a normal build and creates the release jar(s).
-    -->
-    <target name="dist" depends="clean, dist_no_clean" />
-    
-    
-    
-    <!--
         Same as dist but does no cleanup before
     -->
     <target name="dist_no_clean" depends="prepare, build">
@@ -171,7 +163,7 @@
             <entry key="name"          value="${release.name}"/>
             <entry key="description"   value="${release.description}"/>
             <entry key="updateVersion" value="${version.num}"/>
-            <entry key="updateURL"     value="${release.updateURL}"/>
+            <entry key="updateURL"     value="${release.updateURLFile}"/>
             <entry key="checksum"      value="${md5}"/>
         </propertyfile>
     </target>

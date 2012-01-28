@@ -31,6 +31,7 @@
     <property name="release.description"    value="TODO"/>
     <property name="release.updateFilename" value="${ant.project.name}-${release.updateVersion}-update.zip"/>
     <property name="release.updateURL"      value="http://www.polly.skuzzle.de/updaterepo/polly/${update.filename}"/>
+    <property name="release.updateURLFile"  value="http://www.polly.skuzzle.de/updaterepo/polly/${ant.project.name}/update.properties""/>
     
     
     
@@ -125,7 +126,7 @@
             <entry key="description" value="${release.description}"/>
             <entry key="developer"   value="${release.developer}"/>
             <entry key="version"     value="${version.num}"/>
-            <entry key="updateUrl"   value="${release.name}"/>
+            <entry key="updateUrl"   value="${release.updateURLFile}"/>
             <entry key="entrypoint"  value="${release.entrypoint}"/>
         </propertyfile>
     </target>
