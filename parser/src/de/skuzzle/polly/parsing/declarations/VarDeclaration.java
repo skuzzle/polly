@@ -24,6 +24,13 @@ public class VarDeclaration extends Declaration {
     
     
     
+    public VarDeclaration(IdentifierLiteral id, Expression exp) {
+    	super(id, false, false);
+    	this.setExpression(exp);
+    }
+    
+    
+    
     public void setExpression(Expression expression) {
         this.expression = expression;
         this.setType(expression.getType());

@@ -36,6 +36,7 @@ public class VarAccessExpression extends Expression {
     public Expression contextCheck(Namespace context) throws ParseException {
         VarDeclaration decl = context.resolveVar(this.var);
         
+        // TODO: insert namespace access expression for default namespace here
         this.resolved = decl.getExpression().contextCheck(context);
         this.setType(resolved.getType());
         return this;

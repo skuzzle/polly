@@ -13,14 +13,13 @@ import de.skuzzle.polly.parsing.tree.literals.Literal;
 public class Main {
 
     public static void main(String[] args) throws ParseException {
-        Namespace context = new Namespace("me");
+        Namespace context = new Namespace("");
         
-        context.create("me");
         Prepare.namespaces(context);
         Prepare.operators(context);
         
         InputParser p = new InputParser();
-        Root r = p.parse(":foo math.sin(math.pi*0.5)");
+        Root r = p.parse(":foo math.sin(pi*0.5)");
         r.contextCheck(context);
         r.collapse(new Stack<Literal>());
         

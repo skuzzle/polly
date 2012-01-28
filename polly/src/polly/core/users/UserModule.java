@@ -1,11 +1,13 @@
 package polly.core.users;
 
+
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
 import polly.configuration.PollyConfiguration;
 import polly.core.AbstractModule;
 import polly.core.ModuleLoader;
 import polly.core.ModuleStates;
+import polly.core.SetupException;
 import polly.core.ShutdownManagerImpl;
 import polly.core.annotation.Module;
 import polly.core.annotation.Provide;
@@ -54,7 +56,7 @@ public class UserModule extends AbstractModule {
 
 
     @Override
-    public void setup() throws SecurityException {
+    public void setup() throws SetupException {
         this.userManager = new UserManagerImpl(this.persistenceManager,
             this.config.getDeclarationCachePath(), this.eventProvider);
         this.provideComponent(this.userManager);

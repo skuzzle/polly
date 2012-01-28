@@ -42,6 +42,21 @@ public class Namespace {
         this.binaryOperators = new LinkedList<BinaryOperatorOverload>();
         this.ternaryOperators = new LinkedList<TernaryOperatorOverload>();
         this.namespaces = new HashMap<String, Declarations>();
+        this.create(rootNamespace);
+    }
+    
+    
+    
+    public Namespace copyFor(String rootNamespace) {
+    	Namespace copy = new Namespace(rootNamespace);
+    	copy.global = this.global;
+    	copy.reserved = this.reserved;
+    	copy.forbidden = this.forbidden;
+    	copy.unaryOperators = this.unaryOperators;
+    	copy.binaryOperators = this.binaryOperators;
+    	copy.ternaryOperators = this.ternaryOperators;
+    	copy.namespaces = this.namespaces;
+    	return copy;
     }
     
     
@@ -88,27 +103,16 @@ public class Namespace {
     
     
     
-    public void enter() throws ParseException {
-        this.enter(this.currentNS, Position.EMPTY);
-    }
-    
-    
-    
-    public void enter(String namespace, Position nsPosition) throws ParseException {
-        Declarations declarations = this.checkNamespace(namespace, nsPosition);
+    public void enter() {
+    	System.out.println(this.currentNS);
+        Declarations declarations = this.namespaces.get(this.currentNS);
         declarations.enter();
     }
     
     
     
-    public void leave() throws ParseException {
-        this.leave(this.currentNS, Position.EMPTY);
-    }
-    
-    
-    
-    public void leave(String namespace, Position nsPosition) throws ParseException {
-        Declarations declarations = this.checkNamespace(namespace, nsPosition);
+    public void leave() {
+        Declarations declarations = this.namespaces.get(this.currentNS);
         declarations.leave();
     }
     
@@ -193,15 +197,8 @@ public class Namespace {
     
     
     public Declaration resolve(ResolvableIdentifierLiteral id) throws ParseException {
-        return this.resolve(id, this.currentNS, Position.EMPTY);
-    }
-    
-    
-    
-    public Declaration resolve(ResolvableIdentifierLiteral id, String namespace, 
-            Position nsPosition) throws ParseException {
+        Declarations ns = this.namespaces.get(this.currentNS);
         
-        Declarations ns = this.checkNamespace(namespace, nsPosition);
         Declaration decl = ns.tryResolve(id);
         if (decl == null) {
             decl = this.global.tryResolve(id);
@@ -217,33 +214,19 @@ public class Namespace {
     
     
     public VarDeclaration resolveVar(ResolvableIdentifierLiteral id) throws ParseException {
-        return this.resolveVar(id, this.currentNS, Position.EMPTY);
-    }
-    
-    
-    
-    public VarDeclaration resolveVar(ResolvableIdentifierLiteral id, String namespace, 
-            Position nsPosition) throws ParseException {
         
-        Declaration decl = this.resolve(id, namespace, nsPosition);
+        Declaration decl = this.resolve(id);
         if (!(decl instanceof VarDeclaration)) {
             throw new ParseException("'" + decl.getName()
                 + "' ist keine Variable.", id.getPosition());
         }
         return (VarDeclaration) decl;
     }
-    
-    
-    
+
+
+
     public FunctionDeclaration resolveFunction(ResolvableIdentifierLiteral id) 
-            throws ParseException {
-        return this.resolveFunction(id, this.currentNS, Position.EMPTY);
-    }
-
-
-
-    public FunctionDeclaration resolveFunction(ResolvableIdentifierLiteral id, 
-            String namespace, Position nsPosition) throws ParseException {
+    		throws ParseException {
         
         if (this.forbidden != null && 
                 id.getIdentifier().equals(this.forbidden.getName().getIdentifier())) {
@@ -251,7 +234,7 @@ public class Namespace {
                 id.getPosition());
         }
         
-        Declaration decl = this.resolve(id, namespace, nsPosition);
+        Declaration decl = this.resolve(id);
         if (!(decl instanceof FunctionDeclaration)) {
             throw new ParseException("'" + decl.getName()
                 + "' ist keine Funktion.", id.getPosition());
