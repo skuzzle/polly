@@ -59,17 +59,20 @@ public class NamespaceAccessExpression extends Expression {
         
         // Contextcheck the right hand expression with declarations of the selected 
         // namespace
-        context.switchTo(ns, this.getPosition());
-        this.rhs = this.rhs.contextCheck(context);
-        context.switchToRoot();
-        return this.rhs;
+        try {
+            context.switchTo(ns, this.getPosition());
+            ((VarOrCall) this.rhs).contextCheckForMember(context);
+        } finally {
+            context.switchToRoot();
+        }
+        return this;
     }
     
     
 
     @Override
     public void collapse(Stack<Literal> stack) throws ExecutionException {
-        // do nothing. This expression will alway be replaced        
+        this.rhs.collapse(stack);  
     }
     
     

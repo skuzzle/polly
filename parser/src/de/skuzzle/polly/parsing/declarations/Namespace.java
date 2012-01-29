@@ -61,6 +61,12 @@ public class Namespace {
     
     
     
+    public String getRootNS() {
+		return rootNS;
+	}
+    
+    
+    
     public void forbidFunction(FunctionDeclaration function) {
         this.forbidden = function;
     }
