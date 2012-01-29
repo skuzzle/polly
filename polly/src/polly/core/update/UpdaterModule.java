@@ -16,15 +16,16 @@ import de.skuzzle.polly.process.ProcessExecutor;
 import de.skuzzle.polly.sdk.Version;
 import polly.Polly;
 import polly.configuration.PollyConfiguration;
-import polly.core.AbstractModule;
-import polly.core.ModuleLoader;
-import polly.core.SetupException;
 import polly.core.ShutdownManagerImpl;
-import polly.core.annotation.Module;
-import polly.core.annotation.Require;
 import polly.core.plugins.PluginConfiguration;
 import polly.core.plugins.PluginManagerImpl;
 import polly.util.FileUtil;
+import polly.moduleloader.AbstractModule;
+import polly.moduleloader.ModuleLoader;
+import polly.moduleloader.SetupException;
+import polly.moduleloader.annotations.Module;
+import polly.moduleloader.annotations.Require;
+
 
 
 @Module(

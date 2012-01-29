@@ -45,6 +45,7 @@
         de.skuzzle.polly.sdk.jar 
         log4j-1.2.16.jar
         polly.parser.jar
+        moduleloader.jar
         de.skuzzle.polly.process.jar
         eclipselink.jar
         javax.persistence_2.0.3.v201010191057.jar
@@ -68,6 +69,7 @@
             includes="${includeJars}"
             excludes="
                 polly.parser.jar 
+				modulloader.jar
                 de.skuzzle.polly.process.jar
                 de.skuzzle.polly.sdk.jar"/>
     </path>
@@ -224,6 +226,7 @@
                 <source path="/polly.sdk" />
                 <source path="/polly.process" />
                 <source path="/parser" />
+                <source path="/modulloader" />
                 <source path="${src.dir}" />
                 <source path="./cfg" />
                 <output path="${bin.dir}" />

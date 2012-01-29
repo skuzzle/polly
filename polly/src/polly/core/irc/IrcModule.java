@@ -5,14 +5,7 @@ import java.util.concurrent.ExecutorService;
 import org.jibble.pircbot.NickAlreadyInUseException;
 
 import polly.configuration.PollyConfiguration;
-import polly.core.AbstractModule;
-import polly.core.ModuleLoader;
-import polly.core.ModuleStates;
-import polly.core.SetupException;
 import polly.core.ShutdownManagerImpl;
-import polly.core.annotation.Module;
-import polly.core.annotation.Provide;
-import polly.core.annotation.Require;
 import polly.core.commands.CommandManagerImpl;
 import polly.core.users.UserManagerImpl;
 import polly.eventhandler.AutoLogonLogoffHandler;
@@ -21,6 +14,14 @@ import polly.eventhandler.IrcLoggingHandler;
 import polly.eventhandler.MessageHandler;
 import polly.eventhandler.TraceNickChangeHandler;
 import polly.events.EventProvider;
+import polly.moduleloader.AbstractModule;
+import polly.moduleloader.ModuleLoader;
+import polly.moduleloader.SetupException;
+import polly.moduleloader.annotations.Module;
+import polly.moduleloader.annotations.Require;
+import polly.moduleloader.annotations.Provide;
+import polly.core.ModuleStates;
+
 
 @Module(
     requires = { 

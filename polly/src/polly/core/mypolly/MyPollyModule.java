@@ -3,12 +3,7 @@ package polly.core.mypolly;
 import java.util.concurrent.ExecutorService;
 
 import polly.configuration.PollyConfiguration;
-import polly.core.AbstractModule;
-import polly.core.ModuleLoader;
 import polly.core.ShutdownManagerImpl;
-import polly.core.annotation.Module;
-import polly.core.annotation.Provide;
-import polly.core.annotation.Require;
 import polly.core.commands.CommandManagerImpl;
 import polly.core.conversations.ConversationManagerImpl;
 import polly.core.formatting.FormatManagerImpl;
@@ -18,7 +13,11 @@ import polly.core.persistence.PersistenceManagerImpl;
 import polly.core.plugins.PluginManagerImpl;
 import polly.core.users.UserManagerImpl;
 import polly.events.EventProvider;
-
+import polly.moduleloader.AbstractModule;
+import polly.moduleloader.ModuleLoader;
+import polly.moduleloader.annotations.Module;
+import polly.moduleloader.annotations.Require;
+import polly.moduleloader.annotations.Provide;;
 
 @Module(
     requires = { 

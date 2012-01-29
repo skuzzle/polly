@@ -1,15 +1,15 @@
 package polly.core.paste;
 
 import de.skuzzle.polly.sdk.exceptions.PasteException;
-import polly.core.AbstractModule;
-import polly.core.ModuleLoader;
-import polly.core.SetupException;
-import polly.core.annotation.Module;
-import polly.core.annotation.Provide;
 import polly.core.paste.services.GBPasteService;
 import polly.core.paste.services.NoPastePasteService;
 import polly.core.paste.services.PHCNPasteService;
 import polly.core.paste.services.PasteBinPasteService;
+import polly.moduleloader.AbstractModule;
+import polly.moduleloader.ModuleLoader;
+import polly.moduleloader.SetupException;
+import polly.moduleloader.annotations.Module;
+import polly.moduleloader.annotations.Provide;;
 
 @Module(
     provides = @Provide(component = PasteServiceManagerImpl.class)

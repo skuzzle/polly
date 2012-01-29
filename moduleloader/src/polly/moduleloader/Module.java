@@ -1,4 +1,4 @@
-package polly.core;
+package polly.moduleloader;
 
 
 public interface Module {

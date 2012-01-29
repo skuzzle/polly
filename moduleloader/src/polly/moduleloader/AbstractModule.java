@@ -1,6 +1,7 @@
-package polly.core;
+package polly.moduleloader;
 
 import org.apache.log4j.Logger;
+
 
 public abstract class AbstractModule implements Module {
 

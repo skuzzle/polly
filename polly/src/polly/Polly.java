@@ -16,8 +16,6 @@ import polly.commandline.ParameterException;
 import polly.commandline.PollyArgumentParser;
 import polly.configuration.DefaultPollyConfiguration;
 import polly.configuration.PollyConfiguration;
-import polly.core.DefaultModuleLoader;
-import polly.core.ModuleLoader;
 import polly.core.ShutdownManagerImpl;
 import polly.core.commands.CommandModule;
 import polly.core.conversations.ConversationModule;
@@ -31,6 +29,8 @@ import polly.core.plugins.NotifyPluginsModule;
 import polly.core.plugins.PluginModule;
 import polly.core.update.UpdaterModule;
 import polly.core.users.UserModule;
+import polly.moduleloader.DefaultModuleLoader;
+import polly.moduleloader.ModuleLoader;
 import polly.util.FileUtil;
 import de.skuzzle.polly.sdk.Version;
 

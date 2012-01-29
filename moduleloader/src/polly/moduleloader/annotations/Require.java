@@ -1,4 +1,4 @@
-package polly.core.annotation;
+package polly.moduleloader.annotations;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

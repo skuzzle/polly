@@ -1,4 +1,4 @@
-package polly.core;
+package polly.moduleloader;
 
 
 public class SetupException extends Exception {

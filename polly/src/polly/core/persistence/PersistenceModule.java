@@ -2,17 +2,17 @@ package polly.core.persistence;
 
 
 import polly.configuration.PollyConfiguration;
-import polly.core.AbstractModule;
-import polly.core.ModuleLoader;
-import polly.core.ModuleStates;
-import polly.core.SetupException;
 import polly.core.ShutdownManagerImpl;
-import polly.core.annotation.Module;
-import polly.core.annotation.Provide;
-import polly.core.annotation.Require;
 import polly.core.plugins.PluginManagerImpl;
 import polly.data.Attribute;
 import polly.data.User;
+import polly.moduleloader.AbstractModule;
+import polly.moduleloader.ModuleLoader;
+import polly.moduleloader.SetupException;
+import polly.moduleloader.annotations.Module;
+import polly.moduleloader.annotations.Require;
+import polly.moduleloader.annotations.Provide;
+import polly.core.ModuleStates;
 
 @Module(
     requires = {

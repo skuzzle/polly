@@ -1,4 +1,4 @@
-package polly.core;
+package polly.moduleloader;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,9 +8,10 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import polly.core.annotation.None;
-import polly.core.annotation.Provide;
-import polly.core.annotation.Require;
+import polly.moduleloader.annotations.None;
+import polly.moduleloader.annotations.Provide;
+import polly.moduleloader.annotations.Require;
+
 
 public class DefaultModuleLoader implements ModuleLoader {
 
@@ -43,8 +44,8 @@ public class DefaultModuleLoader implements ModuleLoader {
     private void processModule(Module module) {
         Class<?> cls = module.getClass();
 
-        polly.core.annotation.Module an = cls
-            .getAnnotation(polly.core.annotation.Module.class);
+        polly.moduleloader.annotations.Module an = cls.getAnnotation(
+        		polly.moduleloader.annotations.Module.class);
 
         if (an == null) {
             throw new ModuleDependencyException("module " + module

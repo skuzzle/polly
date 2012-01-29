@@ -8,6 +8,19 @@
     <property name="plugin.dir"     value="${polly.root.dir}/plugins"/>
     <property name="mode"           value="dist"/>
     
+	
+	
+    <!-- 
+        builds the sdk project and copies the dist jar to the libs folder
+    -->
+    <target name="moduleloader">
+        <ant dir="moduleloader" target="${mode}" inheritAll="false"/>
+        <copy 
+            file="moduleloader/dist/moduleloader.jar" 
+            todir="${lib.dir}"/>
+    </target>
+	
+	
     
     <!-- 
         builds the sdk project and copies the dist jar to the libs folder
