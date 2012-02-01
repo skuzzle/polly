@@ -22,6 +22,13 @@ public abstract class AbstractModule implements Module {
 
         loader.registerModule(this);
     }
+    
+    
+    
+    @Override
+    public ModuleLoader getModuleLoder() {
+        return this.loader;
+    }
 
 
 

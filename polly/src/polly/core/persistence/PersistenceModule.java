@@ -27,8 +27,6 @@ import polly.core.ModuleStates;
     })
 public class PersistenceModule extends AbstractModule {
 
-    private String persistenceXMLPath;
-    private String persistenceUnitName;
     private PollyConfiguration config;
     private PluginManagerImpl pluginManager;
     private PersistenceManagerImpl persistenceManager;
@@ -37,11 +35,8 @@ public class PersistenceModule extends AbstractModule {
     
     
     
-    public PersistenceModule(ModuleLoader loader, 
-                String persistenceXMLPath, String persistenceUnitName) {
+    public PersistenceModule(ModuleLoader loader) {
         super("MODULE_PERSISTENCE", loader, true);
-        this.persistenceXMLPath = persistenceXMLPath;
-        this.persistenceUnitName = persistenceUnitName;
     }
     
     
@@ -69,7 +64,7 @@ public class PersistenceModule extends AbstractModule {
         this.xmlCreator = new XmlCreator(
                 this.persistenceManager.getEntities(), 
                 dp, 
-                this.persistenceUnitName, 
+                this.config.getPersistenceUnit(), 
                 this.pluginManager);
         
         this.persistenceManager.registerEntity(User.class);
@@ -82,10 +77,10 @@ public class PersistenceModule extends AbstractModule {
     
 
     public void run() throws Exception {
-        logger.debug("Writing persistence.xml to " + this.persistenceXMLPath);
-        this.xmlCreator.writePersistenceXml(this.persistenceXMLPath);
+        logger.debug("Writing persistence.xml to " + this.config.getPersistenceXML());
+        this.xmlCreator.writePersistenceXml(this.config.getPersistenceXML());
         
-        this.persistenceManager.connect(this.persistenceUnitName);
+        this.persistenceManager.connect(this.config.getPersistenceUnit());
         this.addState(ModuleStates.PERSISTENCE_READY);
     }
 

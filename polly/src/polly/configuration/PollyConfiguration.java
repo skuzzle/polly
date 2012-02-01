@@ -56,6 +56,10 @@ public class PollyConfiguration extends Configuration
 	private boolean autoLogon;
 	private int autoLogonTime;
 	private boolean isDebugMode;
+	private String persistenceXML;
+	private String persistenceUnit;
+    private String pluginFolder;
+    private String modulesCfg;
 	
 	
 	public PollyConfiguration(String filename) 
@@ -101,6 +105,11 @@ public class PollyConfiguration extends Configuration
         this.autoUpdate = this.readBoolean(this.props.getProperty(AUTO_UPDATE, "false"));
         this.ircModes = this.props.getProperty(IRC_MODES, "+B");
         this.isDebugMode = this.readBoolean(this.props.getProperty(DEBUG_MODE, "false"));
+        this.persistenceUnit = this.props.getProperty(DB_PERSISTENCE_UNIT, "polly");
+        this.persistenceXML = this.props.getProperty(DB_PERSISTENCE_XML_PATH, 
+            "cfg/META_INF/persistence.xml");
+        this.pluginFolder = this.props.getProperty(PLUGIN_FOLDER, "cfg/plugins");
+        this.modulesCfg = this.props.getProperty(MODULE_CONFIG, "cfg/modules.cfg");
         
         try {
             this.encoding = Charset.forName(this.encodingName);
@@ -167,6 +176,11 @@ public class PollyConfiguration extends Configuration
         		"5000 sein.");
 	}
 		
+	
+	
+    public String getModulesCfg() {
+        return this.modulesCfg;
+    }
 
 	
 	public String[] getPluginExcludes() {
@@ -214,6 +228,12 @@ public class PollyConfiguration extends Configuration
 	public String getLogConfigFile() {
 		return logConfigFile;
 	}
+	
+	
+	
+    public String getPluginFolder() {
+        return this.pluginFolder;
+    }
 
 	
 
@@ -237,6 +257,18 @@ public class PollyConfiguration extends Configuration
 
     public String getDbDriver() {
         return dbDriver;
+    }
+    
+    
+    
+    public String getPersistenceUnit() {
+        return this.persistenceUnit;
+    }
+    
+    
+
+    public String getPersistenceXML() {
+        return this.persistenceXML;
     }
 
     

@@ -226,7 +226,7 @@
                 <source path="/polly.sdk" />
                 <source path="/polly.process" />
                 <source path="/parser" />
-                <source path="/modulloader" />
+                <source path="/moduleloader" />
                 <source path="${src.dir}" />
                 <source path="./cfg" />
                 <output path="${bin.dir}" />

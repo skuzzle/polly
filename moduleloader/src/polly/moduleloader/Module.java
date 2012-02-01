@@ -22,4 +22,6 @@ public interface Module {
     public abstract void setupModule() throws SetupException;
     
     public abstract void runModule() throws Exception;    
+    
+    public abstract ModuleLoader getModuleLoder();
 }

@@ -16,19 +16,8 @@ import polly.commandline.ParameterException;
 import polly.commandline.PollyArgumentParser;
 import polly.configuration.DefaultPollyConfiguration;
 import polly.configuration.PollyConfiguration;
+import polly.core.ModuleBootstrapper;
 import polly.core.ShutdownManagerImpl;
-import polly.core.commands.CommandModule;
-import polly.core.conversations.ConversationModule;
-import polly.core.executors.ExecutorModule;
-import polly.core.formatting.FormatterModule;
-import polly.core.irc.IrcModule;
-import polly.core.mypolly.MyPollyModule;
-import polly.core.paste.PasteServiceModule;
-import polly.core.persistence.PersistenceModule;
-import polly.core.plugins.NotifyPluginsModule;
-import polly.core.plugins.PluginModule;
-import polly.core.update.UpdaterModule;
-import polly.core.users.UserModule;
 import polly.moduleloader.DefaultModuleLoader;
 import polly.moduleloader.ModuleLoader;
 import polly.util.FileUtil;
@@ -68,10 +57,7 @@ public class Polly {
     }
 
     private final static String DEVELOP_VERSION = "0.6.3";
-    private final static String PLUGIN_FOLDER = "cfg/plugins/";
     private final static String CONFIG_FULL_PATH = "cfg/polly.cfg";
-    private final static String PERSISTENCE_XML = "cfg/META-INF/persistence.xml";
-    private final static String PERSISTENCE_UNIT = "polly";
 
     private static Logger logger = Logger.getLogger(Polly.class.getName());
 
@@ -104,9 +90,9 @@ public class Polly {
             return;
         }
 
-        this.checkDirectoryStructure();
-
         PollyConfiguration config = this.readConfig(CONFIG_FULL_PATH);
+        
+        this.checkDirectoryStructure(config);
 
         logger.info("");
         logger.info("");
@@ -149,6 +135,9 @@ public class Polly {
          * constructor. Given that information for every single module, the module
          * loader determines the order in which the modules are loaded so all 
          * dependencies can be satisfied.
+         * 
+         * The modules to be loaded must be specified in the modules.cfg as pointed to
+         * by Configuration#MODULES_CONFIG.
          */
 
         // Setup Module loader
@@ -163,21 +152,26 @@ public class Polly {
         // matter as the setup order will be automatically determined by the 
         // ModuleLoader. Just make sure your module properly reports all its 
         // dependencies!
+        
+        
 
-        new ConversationModule(loader);
+        /*new ConversationModule(loader);
         new ExecutorModule(loader);
-        new PluginModule(loader, PLUGIN_FOLDER);
-        new UpdaterModule(loader, PLUGIN_FOLDER);
+        new PluginModule(loader);
+        new UpdaterModule(loader);
         new FormatterModule(loader);
-        new PersistenceModule(loader, PERSISTENCE_XML, PERSISTENCE_UNIT);
+        new PersistenceModule(loader);
         new CommandModule(loader);
         new UserModule(loader);
         new IrcModule(loader);
         new MyPollyModule(loader);
         new NotifyPluginsModule(loader);
-        new PasteServiceModule(loader);
+        new PasteServiceModule(loader);*/
         
         try {
+            // This parses the modules.cfg and instantiates all listed modules
+            ModuleBootstrapper.prepareModuleLoader(loader, config);
+            
             loader.runSetup();
             loader.runModules();
         } catch (Exception e) {
@@ -226,10 +220,10 @@ public class Polly {
 
 
 
-    private void checkDirectoryStructure() {
+    private void checkDirectoryStructure(PollyConfiguration config) {
         boolean success = true;
-        File cfg_plugins = new File(PLUGIN_FOLDER);
-        File cfg_metainf = new File(Polly.PERSISTENCE_XML).getParentFile();
+        File cfg_plugins = new File(config.getPluginFolder());
+        File cfg_metainf = new File(config.getPersistenceXML()).getParentFile();
 
         if (!cfg_plugins.exists()) {
             success &= cfg_plugins.mkdirs();

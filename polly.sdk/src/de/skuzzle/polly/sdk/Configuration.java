@@ -96,6 +96,25 @@ public interface Configuration {
     public final static String DB_DRIVER = "dbDriver";
     
     /**
+     * The name of the persistenceunit to use. This is almost always 'polly'
+     * @since 0.7
+     */
+    public final static String DB_PERSISTENCE_UNIT = "persistenceUnit";
+    
+    /**
+     * The path of the persistence.xml. This is almost always 
+     * "cfg/META-INF/persistence.xml".
+     * @since 0.7
+     */
+    public final static String DB_PERSISTENCE_XML_PATH = "persistenceXML";
+    
+    /**
+     * The path of pollys plugin folder. This is almost always "cfg/plugins".
+     * @since 0.7
+     */
+    public final static String PLUGIN_FOLDER = "pluginFolder";
+    
+    /**
      * Config file property name which enables/disables logging of irc messages.
      * @since Beta 0.5
      */
@@ -248,6 +267,13 @@ public interface Configuration {
      * @since 0.7
      */
     public final static String DEBUG_MODE = "debugMode";
+    
+    /**
+     * Path to the modules cfg which contains the full qualified name of each module
+     * which will be loaded by polly upon start.
+     * @since 0.7
+     */
+    public final static String MODULE_CONFIG = "modulesCfg";
     
     
     

@@ -120,6 +120,7 @@
         <ant dir="polly.sdk" target="clean" inheritAll="false"/>
         <ant dir="installer" target="clean" inheritAll="false"/>
         <ant dir="parser" target="clean" inheritAll="false"/>
+        <ant dir="moduleloader" target="clean" inheritAll="false"/>
         <ant dir="polly.core" target="clean" inheritAll="false"/>
         <ant dir="polly.logging" target="clean" inheritAll="false"/>
         <ant dir="polly.reminds" target="clean" inheritAll="false"/>
@@ -138,6 +139,9 @@
         <antcall target="installer" inheritAll="true" inheritRefs="true">
             <param name="mode" value="build"/>
         </antcall>
+        <antcall target="moduleloader" inheritAll="true" inheritRefs="true">
+            <param name="mode" value="build"/>
+        </antcall>
         <antcall target="parser" inheritAll="true" inheritRefs="true">
             <param name="mode" value="build"/>
         </antcall>
@@ -145,6 +149,9 @@
             <param name="mode" value="build"/>
         </antcall>
         <antcall target="plugins" inheritAll="true" inheritRefs="true">
+            <param name="mode" value="build"/>
+        </antcall>
+        <antcall target="polly" inheritAll="true" inheritRefs="true">
             <param name="mode" value="build"/>
         </antcall>
     </target>
@@ -171,6 +178,9 @@
         <antcall target="plugins" inheritAll="true" inheritRefs="true">
             <param name="mode" value="dist_no_clean"/>
         </antcall>
+        <antcall target="polly" inheritAll="true" inheritRefs="true">
+            <param name="mode" value="dist_no_clean"/>
+        </antcall>
     </target>
     
     
@@ -180,6 +190,7 @@
     -->
     <target name="eclipse">
         <ant dir="polly.sdk" target="eclipse" inheritAll="false"/>
+        <ant dir="moduleloader" target="eclipse" inheritAll="false"/>
         <ant dir="polly.process" target="eclipse" inheritAll="false"/>
         <ant dir="parser" target="eclipse" inheritAll="false"/>
         <ant dir="installer" target="eclipse" inheritAll="false"/>

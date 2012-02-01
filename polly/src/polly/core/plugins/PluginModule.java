@@ -24,12 +24,10 @@ public class PluginModule extends AbstractModule {
     private PluginManagerImpl pluginManager;
     private PollyConfiguration config;
     private ShutdownManagerImpl shutdownManager;
-    private String pluginFolder;
     
     
-    public PluginModule(ModuleLoader loader, String pluginFolder) {
+    public PluginModule(ModuleLoader loader) {
         super("MODULE_PLUGINS", loader, false);
-        this.pluginFolder = pluginFolder;
     }
 
     
@@ -56,7 +54,7 @@ public class PluginModule extends AbstractModule {
     public void run() throws Exception {
         MyPollyImpl myPolly = this.requireNow(MyPollyImpl.class);
         
-        this.pluginManager.loadFolder(this.pluginFolder, myPolly, 
+        this.pluginManager.loadFolder(this.config.getPluginFolder(), myPolly, 
             this.config.getPluginExcludes());
         
         this.addState(ModuleStates.PLUGINS_READY);

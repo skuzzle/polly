@@ -39,13 +39,11 @@ public class UpdaterModule extends AbstractModule {
     private PollyConfiguration config;
     private PluginManagerImpl pluginManager;
     private ShutdownManagerImpl shutdownManager;
-    private String pluginFolder;
 
 
 
-    public UpdaterModule(ModuleLoader loader, String pluginFolder) {
+    public UpdaterModule(ModuleLoader loader) {
         super("MODULE_UPDATER", loader, false);
-        this.pluginFolder = pluginFolder;
     }
 
 
@@ -127,7 +125,7 @@ public class UpdaterModule extends AbstractModule {
             return;
         }
         List<PluginConfiguration> plugins = this.pluginManager.enumerate(
-            this.pluginFolder, this.config.getPluginExcludes());
+            this.config.getPluginFolder(), this.config.getPluginExcludes());
 
         List<UpdateItem> updates = new LinkedList<UpdateItem>();
 
