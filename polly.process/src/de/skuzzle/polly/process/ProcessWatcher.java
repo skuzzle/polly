@@ -68,6 +68,7 @@ public abstract class ProcessWatcher extends Thread {
      */
     public ProcessWatcher(int timeout) {
         this.timeout = timeout;
+        this.setDaemon(true);
     }
         
     
