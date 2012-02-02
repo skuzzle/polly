@@ -88,7 +88,7 @@ public class TelnetServer extends AbstractDisposable implements Runnable {
                     logger.info("New Telnet connection from '" + 
                         connection.getInetAddress() + "' accpeted.");
                     this.connection = newConnection;
-                    this.ircManager.setTelnetConnection(newConnection);
+                    this.ircManager.addMessageSendListener(newConnection);
                     this.connectionPool.execute(newConnection);
                 } else {
                     logger.info("Telnet connection rejected.");

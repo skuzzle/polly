@@ -30,8 +30,10 @@ import de.skuzzle.polly.sdk.eventlistener.IrcUser;
 import de.skuzzle.polly.sdk.eventlistener.JoinPartListener;
 import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
+import de.skuzzle.polly.sdk.eventlistener.MessageSendListener;
 import de.skuzzle.polly.sdk.eventlistener.NickChangeEvent;
 import de.skuzzle.polly.sdk.eventlistener.NickChangeListener;
+import de.skuzzle.polly.sdk.eventlistener.OwnMessageEvent;
 import de.skuzzle.polly.sdk.eventlistener.QuitEvent;
 import de.skuzzle.polly.sdk.eventlistener.QuitListener;
 import de.skuzzle.polly.sdk.eventlistener.SpotEvent;
@@ -39,7 +41,6 @@ import de.skuzzle.polly.sdk.eventlistener.UserSpottedListener;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 
 import polly.configuration.PollyConfiguration;
-import polly.core.telnet.TelnetConnection;
 import polly.events.Dispatchable;
 import polly.events.EventProvider;
 import polly.util.WrapIterator;
@@ -249,7 +250,6 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     private Map<String, String> topics;
     private PollyConfiguration config;
     private boolean disconnect;
-    private TelnetConnection connection;
     private BotConnectionSettings recent;
     private MessageScheduler messageScheduler;
     
@@ -292,12 +292,6 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
             nickName = nickName.substring(1);
         }
         return nickName;
-    }
-    
-    
-    
-    public void setTelnetConnection(TelnetConnection connection) {
-        this.connection = connection;
     }
     
     
@@ -482,6 +476,10 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     @Override
     public void sendMessage(String channel, String message, Object source) {
         this.messageScheduler.addMessage(channel, message, source);
+        
+        OwnMessageEvent e = new OwnMessageEvent(this, 
+            new IrcUser(this.getNickname(), "", ""), channel, message, source);
+        this.fireMessageSend(e);
     }
    
     
@@ -491,9 +489,6 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         if (this.isConnected()) {
             for (String line : new WrapIterator(message, this.config.getLineLength())) {
                 this.bot.sendMessage(channel, line);
-            }
-            if (this.connection != null) {
-                this.connection.send(message);
             }
         }
     }
@@ -505,9 +500,6 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         if (this.isConnected()) {
             for (String line : new WrapIterator(message, this.config.getLineLength())) {
                 this.bot.sendAction(channel, line);
-            }
-            if (this.connection != null) {
-                this.connection.send(message);
             }
         }
     }
@@ -580,6 +572,20 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
             }
             
         }
+    }
+    
+    
+    
+    @Override
+    public void addMessageSendListener(MessageSendListener listener) {
+        this.eventProvider.addListener(MessageSendListener.class, listener);
+    }
+    
+    
+    
+    @Override
+    public void removeMessageSendListener(MessageSendListener listener) {
+        this.eventProvider.removeListener(MessageSendListener.class, listener);
     }
     
     
@@ -677,7 +683,24 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     public void removeConnectionListener(ConnectionListener listener) {
         this.eventProvider.removeListener(ConnectionListener.class, listener);
     }
+    
+    
+    
+    protected void fireMessageSend(final OwnMessageEvent e) {
+        final List<MessageSendListener> listeners = 
+            this.eventProvider.getListeners(MessageSendListener.class);
+    
+        Dispatchable<MessageSendListener, OwnMessageEvent> d = 
+            new Dispatchable<MessageSendListener, OwnMessageEvent>(listeners, e) {
+                @Override
+                public void dispatch(MessageSendListener listener, OwnMessageEvent event) {
+                    listener.messageSent(event);
+                }
+        };
+        this.eventProvider.dispatchEvent(d);
+    }
    
+    
     
     protected void fireNickChange(final NickChangeEvent e) {
         final List<NickChangeListener> listeners = 

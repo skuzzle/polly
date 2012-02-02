@@ -7,6 +7,7 @@ import de.skuzzle.polly.sdk.eventlistener.ChannelModeListener;
 import de.skuzzle.polly.sdk.eventlistener.ConnectionListener;
 import de.skuzzle.polly.sdk.eventlistener.JoinPartListener;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
+import de.skuzzle.polly.sdk.eventlistener.MessageSendListener;
 import de.skuzzle.polly.sdk.eventlistener.NickChangeListener;
 import de.skuzzle.polly.sdk.eventlistener.QuitListener;
 import de.skuzzle.polly.sdk.eventlistener.UserSpottedListener;
@@ -287,6 +288,26 @@ public interface IrcManager {
 	 *  @param nickname The new nickname.
 	 */
 	public abstract void setNickname(String nickname);
+	
+	
+	
+	/**
+	 * Adds a {@link MessageSendListener}. It will be notified whenever polly sends a 
+	 * message via IRC.
+	 * 
+	 * @param listener The listener to add.
+	 */
+	public abstract void addMessageSendListener(MessageSendListener listener);
+	
+	
+	
+	/**
+	 * Removes a {@link MessageSendListener}.
+	 * 
+	 * @param listener The listener to remove.
+	 * @since 0.7
+	 */
+	public abstract void removeMessageSendListener(MessageSendListener listener);
 	
 	
 	

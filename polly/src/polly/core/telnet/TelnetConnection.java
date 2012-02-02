@@ -16,9 +16,11 @@ import de.skuzzle.polly.sdk.IrcManager;
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
 import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
+import de.skuzzle.polly.sdk.eventlistener.MessageSendListener;
+import de.skuzzle.polly.sdk.eventlistener.OwnMessageEvent;
 
 
-public class TelnetConnection implements Runnable {
+public class TelnetConnection implements Runnable, MessageSendListener {
     
     private static Logger logger = Logger.getLogger(TelnetConnection.class.getName());
     private static AtomicInteger connectionId = new AtomicInteger();
@@ -66,11 +68,19 @@ public class TelnetConnection implements Runnable {
         }
         this.closing.set(true);
         logger.info("Closing telnet connection with id " + this.id);
+        this.ircManager.removeMessageSendListener(this);
         try {
             this.socket.close();
         } catch (IOException e) {
             logger.error("", e);
         }
+    }
+    
+    
+    
+    @Override
+    public void messageSent(OwnMessageEvent e) {
+        this.send(e.toString());
     }
     
     
@@ -143,4 +153,5 @@ public class TelnetConnection implements Runnable {
         return new MessageEvent(this.ircManager, u, 
             this.config.getAdminUserName(), input);
     }
+
 }
