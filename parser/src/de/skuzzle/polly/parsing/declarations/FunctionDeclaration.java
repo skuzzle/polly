@@ -1,6 +1,7 @@
 package de.skuzzle.polly.parsing.declarations;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import de.skuzzle.polly.parsing.tree.Expression;
@@ -22,13 +23,11 @@ public class FunctionDeclaration extends VarDeclaration {
     
     
     
-    
     public FunctionDeclaration(IdentifierLiteral name, boolean hardcoded) {
         this(name, false, false);
         this.hardcoded = true;
     }
 
-    
     
     
     public List<VarDeclaration> getFormalParameters() {
@@ -42,6 +41,7 @@ public class FunctionDeclaration extends VarDeclaration {
     }
     
     
+    
     @Override
     public Object clone() {
         FunctionDeclaration copy = new FunctionDeclaration(this.getName(), 
@@ -53,10 +53,29 @@ public class FunctionDeclaration extends VarDeclaration {
     }
     
     
+    
     @Override
     public String toString() {
-        // TODO: parameter list
-        return "(FUNC) " + (this.isGlobal() ? "global" : "") + this.getType() + " " + 
-            this.getName();
+        StringBuilder b = new StringBuilder();
+        b.append ("(FUNC) ");
+        if (this.isGlobal()) {
+            b.append("global");
+        }
+        b.append(this.getType());
+        b.append(" ");
+        b.append(this.getName());
+        b.append("(");
+        Iterator<VarDeclaration> it = this.formalParameters.iterator();
+        while (it.hasNext()) {
+            VarDeclaration decl = it.next();
+            b.append(decl.getType());
+            b.append(" ");
+            b.append(decl.getName());
+            if (it.hasNext()) {
+                b.append(", ");
+            }
+        }
+        b.append(")");
+        return b.toString();
     }
 }

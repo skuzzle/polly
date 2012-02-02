@@ -31,20 +31,9 @@ public class NamespaceAccessExpression extends Expression {
     
 
     @Override
-    public Expression contextCheck(Namespace context) throws ParseException {
-        if (this.namespace instanceof VarAccessExpression) {
-            /*
-             * If the left side of this expression is a var access, try to resolve it
-             * as it might evaluate to a user 
-             */
-            VarAccessExpression vve = (VarAccessExpression) this.namespace;
-            
-            try {
-                this.namespace = vve.contextCheck(context);
-            } catch (ParseException e) {
-                // if it could not be resolved, use the identifier as namespace name
-                this.namespace = vve.getVar();
-            }
+    public Expression contextCheck(Namespace context) throws ParseException {       
+        if (this.namespace instanceof VarOrCallExpression) {
+            this.namespace = ((VarOrCallExpression) this.namespace).getId();
         }
         
         // now look up the namespace
@@ -59,12 +48,16 @@ public class NamespaceAccessExpression extends Expression {
         
         // Contextcheck the right hand expression with declarations of the selected 
         // namespace
+        // TODO: The selected namespace should not contain local variables 
+        //       because fuck you thats why
         try {
             context.switchTo(ns, this.getPosition());
-            ((VarOrCall) this.rhs).contextCheckForMember(context);
+            ((VarOrCallExpression) this.rhs).contextCheckForMember(context);
         } finally {
             context.switchToRoot();
         }
+        
+        this.setType(this.rhs.getType());
         return this;
     }
     

@@ -103,6 +103,15 @@ public class Declarations {
     }
     
     
+    
+    @Override
+    public Object clone() {
+        Declarations result = new Declarations();
+        result.levels = new LinkedList<Map<String,Declaration>>(this.levels);
+        return result;
+    }
+    
+    
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();

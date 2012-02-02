@@ -16,6 +16,12 @@ public class TypeDeclaration extends Declaration {
 
     
     @Override
+    public String toString() {
+        return "(TYPE) " + this.getName();
+    }
+    
+    
+    @Override
     public Object clone() {
         return new TypeDeclaration(this.getType());
     }

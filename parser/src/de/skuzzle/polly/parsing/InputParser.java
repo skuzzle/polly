@@ -11,14 +11,13 @@ import de.skuzzle.polly.parsing.tree.AssignmentExpression;
 import de.skuzzle.polly.parsing.tree.BinaryExpression;
 import de.skuzzle.polly.parsing.tree.CastExpression;
 import de.skuzzle.polly.parsing.tree.Expression;
-import de.skuzzle.polly.parsing.tree.FunctionCall;
 import de.skuzzle.polly.parsing.tree.NamespaceAccessExpression;
 import de.skuzzle.polly.parsing.tree.Root;
 import de.skuzzle.polly.parsing.tree.TernaryExpression;
 import de.skuzzle.polly.parsing.tree.TreeElement;
 import de.skuzzle.polly.parsing.tree.TypeParameterExpression;
 import de.skuzzle.polly.parsing.tree.UnaryExpression;
-import de.skuzzle.polly.parsing.tree.VarAccessExpression;
+import de.skuzzle.polly.parsing.tree.VarOrCallExpression;
 import de.skuzzle.polly.parsing.tree.literals.BooleanLiteral;
 import de.skuzzle.polly.parsing.tree.literals.ChannelLiteral;
 import de.skuzzle.polly.parsing.tree.literals.CommandLiteral;
@@ -498,7 +497,7 @@ public class InputParser extends AbstractParser<InputScanner> {
                 if (la.getType() == TokenType.OPENBR) {
                     this.scanner.consume();
                     
-                    FunctionCall call = new FunctionCall(id);
+                    VarOrCallExpression call = new VarOrCallExpression(id);
                     this.parse_expression_list(call.getActualParameters(), 
                             TokenType.CLOSEDBR);
                     
@@ -514,7 +513,7 @@ public class InputParser extends AbstractParser<InputScanner> {
                     return call;
                 } else {
                     /* fixed ISSUE: 0000003 with VarAccessExpression */
-                    return new VarAccessExpression(id, id.getPosition());
+                    return new VarOrCallExpression(id);
                 }
             case RADIX:
                 this.scanner.consume();

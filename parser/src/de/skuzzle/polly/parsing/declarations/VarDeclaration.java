@@ -9,6 +9,7 @@ public class VarDeclaration extends Declaration {
 
     private static final long serialVersionUID = 1L;
     private Expression expression;
+    private boolean local;
     
     public VarDeclaration(IdentifierLiteral id, boolean global, 
             boolean temp) {
@@ -25,8 +26,14 @@ public class VarDeclaration extends Declaration {
     
     
     public VarDeclaration(IdentifierLiteral id, Expression exp) {
-    	super(id, false, false);
-    	this.setExpression(exp);
+        this(id, exp, false);
+    }
+    
+    
+    public VarDeclaration(IdentifierLiteral id, Expression exp, boolean local) {
+        super(id, false, false);
+        this.local = local;
+        this.setExpression(exp);
     }
     
     
@@ -40,6 +47,12 @@ public class VarDeclaration extends Declaration {
     
     public Expression getExpression() {
         return this.expression;
+    }
+    
+    
+    
+    public boolean isLocal() {
+        return this.local;
     }
     
     

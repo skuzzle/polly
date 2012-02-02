@@ -1,12 +1,12 @@
 package de.skuzzle.polly.parsing.tree;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
 
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.ParseException;
-import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.Type;
 import de.skuzzle.polly.parsing.declarations.Declaration;
 import de.skuzzle.polly.parsing.declarations.FunctionDeclaration;
@@ -16,7 +16,7 @@ import de.skuzzle.polly.parsing.tree.literals.Literal;
 import de.skuzzle.polly.parsing.tree.literals.ResolvableIdentifierLiteral;
 import de.skuzzle.polly.parsing.tree.literals.UserLiteral;
 
-public class VarOrCall extends Expression {
+public class VarOrCallExpression extends Expression {
 
 	private ResolvableIdentifierLiteral id;
 	private Declaration resolvedDeclaration;
@@ -26,13 +26,25 @@ public class VarOrCall extends Expression {
 
 	private static final long serialVersionUID = 1L;
 
-	public VarOrCall(Position position) {
-		super(position);
+	public VarOrCallExpression(ResolvableIdentifierLiteral id) {
+		super(id.getPosition());
+		this.id = id;
 	}
 	
 	
 	
+    public ResolvableIdentifierLiteral getId() {
+        return this.id;
+    }
+	
+	
+	
 	public List<Expression> getActualParameters() {
+	    // lazy init, becaus this might aswell be a Var-access where no
+	    // parameters are needed.
+	    if (this.actualParameters == null) {
+	        this.actualParameters = new ArrayList<Expression>();
+	    }
         return this.actualParameters;
     }
 
@@ -40,19 +52,24 @@ public class VarOrCall extends Expression {
 	
 	@Override
 	public Expression contextCheck(Namespace context) throws ParseException {
-	    // Replace this expression with this expression preceded by a NameSpaceAccess
-	    // with the root namespace
-		this.resolvedDeclaration = context.resolve(this.id);
-		Expression result = new NamespaceAccessExpression(new UserLiteral(
-				context.getRootNS()), this, this.getPosition());
-		
-		result = result.contextCheck(context);
-		return result;
+	    // Precede this call with a namespace access if this call does not
+	    // reference a local declaration.
+	    this.contextCheckForMember(context);
+	    if (!((VarDeclaration)this.resolvedDeclaration).isLocal()) {
+    		Expression result = new NamespaceAccessExpression(new UserLiteral(
+    				context.getRootNS()), this, this.getPosition());
+    		
+    		result = result.contextCheck(context);
+    		return result;
+	    }
+	    return this;
 	}
 	
 	
 	
 	public void contextCheckForMember(Namespace context) throws ParseException {
+	    this.resolvedDeclaration = context.resolve(this.id);
+	    
 	    if (this.resolvedDeclaration instanceof FunctionDeclaration) {
 	        FunctionDeclaration decl = (FunctionDeclaration) this.resolvedDeclaration;
 	        
@@ -76,9 +93,9 @@ public class VarOrCall extends Expression {
 	                        actual.getPosition());
 	                }
 	                
-	                // declare a new var for each formal parameter which contains
+	                // declare a new local var for each formal parameter which contains
 	                // the expression of the actual parameter
-	                VarDeclaration act = new VarDeclaration(formal.getName(), actual);
+	                VarDeclaration act = new VarDeclaration(formal.getName(), actual, true);
 	                context.add(act);
 	            }
 	            
@@ -107,16 +124,33 @@ public class VarOrCall extends Expression {
 	
 	@Override
 	public void collapse(Stack<Literal> stack) throws ExecutionException {
-		// TODO Auto-generated method stub
-
+		if (this.resolvedDeclaration instanceof FunctionDeclaration) {
+		    // Hardcoded functions expect their params to be on the stack
+		    if (this.hardcoded) {
+		        for (Expression exp : this.actualParameters) {
+		            exp.collapse(stack);
+		        }
+		    }
+		}
+		
+		// this is the same for vars and functions
+	    this.resolvedExpression.collapse(stack);
 	}
 
 	
 	
 	@Override
 	public Object clone() {
-		// TODO Auto-generated method stub
-		return null;
+		VarOrCallExpression result = new VarOrCallExpression(this.id);
+		result.resolvedDeclaration = this.resolvedDeclaration == null 
+		    ? null 
+	        : (Declaration) this.resolvedDeclaration.clone();
+		result.resolvedExpression = this.resolvedExpression == null 
+		    ? null 
+	        : (Expression) this.resolvedExpression.clone();
+		result.hardcoded = this.hardcoded;
+		result.actualParameters = this.actualParameters;
+		return result;
 	}
 
 }

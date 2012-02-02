@@ -1,8 +1,8 @@
 package de.skuzzle.polly.parsing;
 
-import de.skuzzle.polly.parsing.declarations.ConstantDeclaration;
 import de.skuzzle.polly.parsing.declarations.Namespace;
 import de.skuzzle.polly.parsing.declarations.TypeDeclaration;
+import de.skuzzle.polly.parsing.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.tree.functions.ContainsFunction;
 import de.skuzzle.polly.parsing.tree.functions.DefaultMathFunction;
 import de.skuzzle.polly.parsing.tree.functions.Functions;
@@ -112,9 +112,9 @@ public final class Prepare {
             dest.add(new ContainsFunction(), "util");
             
             
-            dest.add(new ConstantDeclaration(new IdentifierLiteral("pi"), 
+            dest.add(new VarDeclaration(new IdentifierLiteral("pi"), 
                     new NumberLiteral(Math.PI)), "math");
-            dest.add(new ConstantDeclaration(new IdentifierLiteral("e"), 
+            dest.add(new VarDeclaration(new IdentifierLiteral("e"), 
                     new NumberLiteral(Math.E)), "math");
             dest.add(new RandomFunction(), "math");
             dest.add(new DefaultMathFunction(Functions.MathType.COS), "math");

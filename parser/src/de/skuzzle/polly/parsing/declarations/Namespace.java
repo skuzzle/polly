@@ -110,7 +110,6 @@ public class Namespace {
     
     
     public void enter() {
-    	System.out.println(this.currentNS);
         Declarations declarations = this.namespaces.get(this.currentNS);
         declarations.enter();
     }
@@ -203,6 +202,13 @@ public class Namespace {
     
     
     public Declaration resolve(ResolvableIdentifierLiteral id) throws ParseException {
+        
+        if (this.forbidden != null && 
+                id.getIdentifier().equals(this.forbidden.getName().getIdentifier())) {
+            throw new ParseException("Ungülter rekursiver Aufruf von " + id, 
+                id.getPosition());
+    }
+        
         Declarations ns = this.namespaces.get(this.currentNS);
         
         Declaration decl = ns.tryResolve(id);
@@ -219,7 +225,8 @@ public class Namespace {
     
     
     
-    public VarDeclaration resolveVar(ResolvableIdentifierLiteral id) throws ParseException {
+    public VarDeclaration resolveVar(ResolvableIdentifierLiteral id) 
+            throws ParseException {
         
         Declaration decl = this.resolve(id);
         if (!(decl instanceof VarDeclaration)) {
@@ -233,12 +240,6 @@ public class Namespace {
 
     public FunctionDeclaration resolveFunction(ResolvableIdentifierLiteral id) 
     		throws ParseException {
-        
-        if (this.forbidden != null && 
-                id.getIdentifier().equals(this.forbidden.getName().getIdentifier())) {
-            throw new ParseException("Ungülter rekursiver Aufruf von " + id, 
-                id.getPosition());
-        }
         
         Declaration decl = this.resolve(id);
         if (!(decl instanceof FunctionDeclaration)) {
