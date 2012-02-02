@@ -19,7 +19,7 @@ public class Main {
         Prepare.operators(context);
         
         InputParser p = new InputParser();
-        Root r = p.parse(":foo 7+x->f(Zahl x) 3*x+f(5)->f(Zahl x) f(11)");
+        Root r = p.parse(":foo \"wichser\"->public temp x");
         r.contextCheck(context);
         r.collapse(new Stack<Literal>());
         

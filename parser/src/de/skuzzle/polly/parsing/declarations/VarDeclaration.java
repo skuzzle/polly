@@ -70,7 +70,7 @@ public class VarDeclaration extends Declaration {
     
     @Override
     public String toString() {
-        return "(VAR) " + (this.isGlobal() ? "global" : "") + this.getType() + " " + 
+        return "(VAR) " + (this.isGlobal() ? "global " : "") + this.getType() + " " + 
             this.getName();
     }
 }
