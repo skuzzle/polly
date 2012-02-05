@@ -88,7 +88,8 @@ public class BinaryOperators {
           
             switch(this.getOperatorType()) {
                 case SUB:
-                    stack.push(new TimespanLiteral((left.getTime() - right.getTime()) / 1000));
+                    stack.push(new TimespanLiteral(
+                        Math.abs((left.getTime() - right.getTime()) / 1000)));
                     break;
             }
         }
