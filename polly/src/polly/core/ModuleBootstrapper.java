@@ -42,13 +42,14 @@ public class ModuleBootstrapper {
             
             while ((module = input.readLine()) != null) {
                 try {
+                    
+                    if (module.startsWith("#") || module.startsWith("//")) {
+                        // skip comments
+                        continue;
+                    }
                     logger.debug("Searching class for module '" + module + "'");
                     Class<?> cls = Class.forName(module);
-                    
-                    logger.trace("Getting constructor.");
                     Constructor<?> ctor = cls.getConstructor(ModuleLoader.class);
-                    
-                    logger.trace("Invoking constructor.");
                     ctor.newInstance(loader);
                 } catch (Exception e) {
                     throw new SetupException(e);

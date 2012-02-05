@@ -60,6 +60,8 @@ public class PollyConfiguration extends Configuration
 	private String persistenceUnit;
     private String pluginFolder;
     private String modulesCfg;
+    private String keyStoreFile;
+    private String keyStorePassword;
 	
 	
 	public PollyConfiguration(String filename) 
@@ -107,9 +109,11 @@ public class PollyConfiguration extends Configuration
         this.isDebugMode = this.readBoolean(this.props.getProperty(DEBUG_MODE, "false"));
         this.persistenceUnit = this.props.getProperty(DB_PERSISTENCE_UNIT, "polly");
         this.persistenceXML = this.props.getProperty(DB_PERSISTENCE_XML_PATH, 
-            "cfg/META_INF/persistence.xml");
+            "cfg/META-INF/persistence.xml");
         this.pluginFolder = this.props.getProperty(PLUGIN_FOLDER, "cfg/plugins");
         this.modulesCfg = this.props.getProperty(MODULE_CONFIG, "cfg/modules.cfg");
+        this.keyStoreFile = this.props.getProperty(KEYSTORE_FILE, "cfg/SSLKeyStore");
+        this.keyStorePassword = this.props.getProperty(KEYSTORE_PASSWORD, "");
         
         try {
             this.encoding = Charset.forName(this.encodingName);
@@ -176,6 +180,18 @@ public class PollyConfiguration extends Configuration
         		"5000 sein.");
 	}
 		
+	
+	
+    public String getKeyStoreFile() {
+        return this.keyStoreFile;
+    }
+    
+    
+    
+    public String getKeyStorePassword() {
+        return this.keyStorePassword;
+    }
+    
 	
 	
     public String getModulesCfg() {

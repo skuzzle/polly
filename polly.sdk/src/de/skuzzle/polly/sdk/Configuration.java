@@ -275,6 +275,19 @@ public interface Configuration {
      */
     public final static String MODULE_CONFIG = "modulesCfg";
     
+    /**
+     * Path to the keystore file which stores the certificate for the remote 
+     * administration servers SSL socket.
+     * @since 0.7
+     */
+    public final static String KEYSTORE_FILE = "keyStore";
+    
+    /**
+     * Password of the keystore file.
+     * @since 0.7
+     */
+    public final static String KEYSTORE_PASSWORD = "keyStorePassword";
+    
     
     
 	/**
