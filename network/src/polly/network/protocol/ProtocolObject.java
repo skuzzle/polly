@@ -30,6 +30,11 @@ public class ProtocolObject implements Serializable {
         return this.id;
     }
     
+    
+    public long travelTime() {
+        return this.receivedAt - this.timestamp;
+    }
+    
    
     public long getTimestamp() {
         return this.timestamp;

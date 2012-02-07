@@ -59,7 +59,6 @@ public class RemoteInterfaceModule extends AbstractModule {
         } catch (IOException e) {
             throw new SetupException(e);
         }
-        
     }
     
     

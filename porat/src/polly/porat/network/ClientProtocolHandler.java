@@ -2,7 +2,6 @@ package polly.porat.network;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.locks.ReentrantLock;
 
 import polly.network.events.ConnectionListener;
@@ -20,7 +19,7 @@ public class ClientProtocolHandler implements ConnectionListener, ObjectReceived
     
     public static void main(String[] args) {
         System.setProperty("javax.net.ssl.trustStore", "cfg/SSLKeyStore");
-        System.setProperty("javax.net.ssl.trustStorePassword", "stwombat123");
+        System.setProperty("javax.net.ssl.trustStorePassword", "blabla");
         
         ClientProtocolHandler cph = new ClientProtocolHandler();
         
@@ -47,7 +46,7 @@ public class ClientProtocolHandler implements ConnectionListener, ObjectReceived
     
     
     public void connect(InetAddress host, int port, String userName, String password) 
-            throws IOException, NoSuchAlgorithmException {
+            throws IOException {
         
         try {
             this.connectionLock.lock();

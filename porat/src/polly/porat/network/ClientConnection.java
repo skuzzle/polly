@@ -5,7 +5,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,36 +21,15 @@ import polly.network.events.ConnectionListener;
 import polly.network.events.NetworkEvent;
 import polly.network.events.ObjectReceivedEvent;
 import polly.network.events.ObjectReceivedListener;
-import polly.network.protocol.Constants;
 import polly.network.protocol.ErrorResponse;
 import polly.network.protocol.Ping;
 import polly.network.protocol.Pong;
 import polly.network.protocol.ProtocolObject;
-import polly.network.protocol.Request;
 import polly.network.protocol.Response;
-import polly.network.protocol.Constants.RequestType;
 import polly.network.protocol.Constants.ResponseType;
 
 
 public class ClientConnection implements Connection, Runnable {
-    
-    
-    
-    public static void main(String[] args) throws NoSuchAlgorithmException, UnknownHostException, IOException {
-
-        
-        ClientConnection con = new ClientConnection(InetAddress.getByName("localhost"), 
-            24500);
-        
-        Request login = new Request(RequestType.LOGIN);
-        login.getPayload().put(Constants.USER_NAME, "C0mb4t");
-        login.getPayload().put(Constants.PASSWORD, "nichtpenner");
-        
-        con.send(login);
-    }
-    
-    
-    
     
     private final static Logger logger = Logger.getLogger(
             ClientConnection.class.getName());
@@ -62,16 +40,17 @@ public class ClientConnection implements Connection, Runnable {
     private ObjectOutputStream output;
     private ExecutorService connectionThread;
     private AtomicBoolean shutdownFlag;
+    private Ping lastPing;
+    private int latency;
+    private double timeFactor;
     
     
-    
-    public ClientConnection(InetAddress serverHost, int port) 
-                throws NoSuchAlgorithmException, IOException {
-        
-        SSLContext context = SSLContext.getDefault();
-        SocketFactory sf = context.getSocketFactory();
+    public ClientConnection(InetAddress serverHost, int port) throws IOException {
         
         try {
+            SSLContext context = SSLContext.getDefault();
+            SocketFactory sf = context.getSocketFactory();
+        
             this.socket = sf.createSocket(serverHost, port);
             this.input = new ObjectInputStream(this.socket.getInputStream());
             this.output = new ObjectOutputStream(this.socket.getOutputStream());
@@ -89,12 +68,18 @@ public class ClientConnection implements Connection, Runnable {
             Response response = (Response) in;
             if (response.is(ResponseType.ACCEPTED)) {
                 this.shutdownFlag = new AtomicBoolean(false);
+                this.lastPing = new Ping();
+                this.lastPing.setReceivedAt(System.currentTimeMillis());
+                
                 this.connectionThread = Executors.newSingleThreadExecutor();
                 this.connectionThread.execute(this);
             } else if (response.is(ResponseType.ERROR)) {
                 throw new IOException("connection rejected. Error code: " + 
                     ((ErrorResponse) response).getErrorType());
             }
+        } catch (NoSuchAlgorithmException e) {
+            this.close();
+            throw new IOException(e);
         } catch (IOException e) {
             this.close();
             throw e;
@@ -128,18 +113,27 @@ public class ClientConnection implements Connection, Runnable {
     public void run() {
         try {
             while (!this.shutdownFlag.get()) {
-                Object incoming = this.input.readObject();
+                Object incoming = this.input.readObject(); 
                 
-                if (incoming instanceof Ping) {
-                    // XXX:
-                    Ping ping = (Ping) incoming;
-                    System.out.println("Ping: " + (System.currentTimeMillis() - ping.getTimestamp()));
-                    this.send(new Pong());
-                } else if (incoming instanceof ProtocolObject) {
+                if (incoming instanceof ProtocolObject) {
                     ProtocolObject po = (ProtocolObject) incoming;
                     po.setReceivedAt(System.currentTimeMillis());
                     
-                    this.fireObjectReceived(new ObjectReceivedEvent(this, po));
+                    if (po instanceof Ping) {
+                        Ping ping = (Ping) po;
+                        
+                        long clientTime = po.getReceivedAt() - this.lastPing.getReceivedAt();
+                        long serverTime = po.getTimestamp() - this.lastPing.getTimestamp();
+                        this.timeFactor = clientTime / serverTime;
+                        this.latency = (int) Math.abs(
+                            clientTime - this.serverTimeToLocal(serverTime));
+                        this.lastPing = ping;
+                        
+                        System.out.println("Latenz: " + this.latency());
+                        this.send(new Pong());
+                    } else {
+                        this.fireObjectReceived(new ObjectReceivedEvent(this, po));
+                    }
                 }
             }
         } catch (ClassNotFoundException e) {
@@ -152,6 +146,18 @@ public class ClientConnection implements Connection, Runnable {
         } finally {
             this.close();
         }
+    }
+    
+    
+    
+    public int latency() {
+        return this.latency;
+    }
+    
+    
+    
+    public long serverTimeToLocal(long timeStamp) {
+        return (long)(timeStamp * this.timeFactor);
     }
     
     

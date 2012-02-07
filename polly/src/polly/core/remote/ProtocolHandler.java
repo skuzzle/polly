@@ -1,7 +1,7 @@
 package polly.core.remote;
 
 
-import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
+import polly.core.remote.AdministrationManager.LoginResult;
 import polly.network.events.ConnectionListener;
 import polly.network.events.NetworkEvent;
 import polly.network.events.ObjectReceivedEvent;
@@ -75,11 +75,16 @@ public class ProtocolHandler implements ObjectReceivedListener, ConnectionListen
         String password = (String) request.getPayload().get(Constants.PASSWORD);
         Response answer = null;
         
-        try {
-            this.adminManager.login(e.getSource(), userName, password);
+        LoginResult login = this.adminManager.login(e.getSource(), userName, password);
+        switch (login) {
+        case INSUFICCIENT_RIGHTS:
+            answer = new ErrorResponse(ErrorType.INSUFFICIENT_RIGHTS); break;
+        case INVALID_PASSWORD:
+            answer = new ErrorResponse(ErrorType.INVALID_PASSWORD); break;
+        case UNKNOWN_USER:
+            answer = new ErrorResponse(ErrorType.UNKNOWN_USER); break;
+        case SUCCESS:
             answer = new Response(ResponseType.LOGGED_IN);
-        } catch (UnknownUserException e1) {
-            answer = new ErrorResponse(ErrorType.UNKNOWN_USER);
         }
         
         e.getSource().send(answer);

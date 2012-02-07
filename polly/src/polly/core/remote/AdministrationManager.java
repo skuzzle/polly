@@ -18,7 +18,6 @@ import org.apache.log4j.spi.LoggingEvent;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
-import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
 import de.skuzzle.polly.sdk.model.User;
 
 import polly.network.Connection;
@@ -30,6 +29,10 @@ import polly.core.remote.tcp.ServerConnection;
 
 
 public class AdministrationManager extends AbstractDisposable {
+    
+    public enum LoginResult {
+        SUCCESS, INSUFICCIENT_RIGHTS, UNKNOWN_USER, INVALID_PASSWORD;
+    }
     
     private final static File LOG_DIR = new File("./logs");
     private final static Pattern LOG_PATTERN = Pattern.compile(".+\\.log(\\.\\d+)?$");
@@ -54,16 +57,18 @@ public class AdministrationManager extends AbstractDisposable {
     
     
     
-    public void login(Connection connection, String userName, String password) throws UnknownUserException {
+    public LoginResult login(Connection connection, String userName, String password) {
         User user = this.userManager.getUser(userName);
         
         if (user == null) {
-            throw new  UnknownUserException(userName);
+            return LoginResult.UNKNOWN_USER;
         } else if (!user.checkPassword(password)) {
-            // !TODO: throw Exception
-            //throw new 
+            return LoginResult.INVALID_PASSWORD;
+        } else if (user.getUserLevel() < UserManager.ADMIN) {
+            return LoginResult.INSUFICCIENT_RIGHTS;
         } else {
             ((ServerConnection) connection).setUser(user);
+            return LoginResult.SUCCESS;
         }
         
     }
