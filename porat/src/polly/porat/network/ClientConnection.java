@@ -17,10 +17,8 @@ import org.apache.log4j.Logger;
 
 
 import polly.network.Connection;
-import polly.network.events.ConnectionListener;
 import polly.network.events.NetworkEvent;
 import polly.network.events.ObjectReceivedEvent;
-import polly.network.events.ObjectReceivedListener;
 import polly.network.protocol.ErrorResponse;
 import polly.network.protocol.Ping;
 import polly.network.protocol.Pong;
@@ -29,7 +27,8 @@ import polly.network.protocol.Response;
 import polly.network.protocol.Constants.ResponseType;
 
 
-public class ClientConnection implements Connection, Runnable {
+
+class ClientConnection implements Connection, Runnable {
     
     private final static Logger logger = Logger.getLogger(
             ClientConnection.class.getName());
@@ -43,9 +42,14 @@ public class ClientConnection implements Connection, Runnable {
     private Ping lastPing;
     private int latency;
     private double timeFactor;
+    private ClientProtocolHandler handler;
     
     
-    public ClientConnection(InetAddress serverHost, int port) throws IOException {
+    
+    public ClientConnection(InetAddress serverHost, int port, 
+            ClientProtocolHandler handler) throws IOException {
+        
+        this.handler = handler;
         
         try {
             SSLContext context = SSLContext.getDefault();
@@ -122,19 +126,20 @@ public class ClientConnection implements Connection, Runnable {
                     if (po instanceof Ping) {
                         Ping ping = (Ping) po;
                         
-                        long clientTime = po.getReceivedAt() - this.lastPing.getReceivedAt();
-                        long serverTime = po.getTimestamp() - this.lastPing.getTimestamp();
+                        long ct = po.getReceivedAt() - this.lastPing.getReceivedAt();
+                        long st = po.getTimestamp() - this.lastPing.getTimestamp();
                         
-                        this.timeFactor = (double)serverTime / (double)clientTime;
+                        this.timeFactor = (double)st / (double)ct;
                         
                         this.latency = (int) Math.abs(
-                            clientTime - this.serverTimeToLocal(serverTime));
+                            ct - this.serverTimeToLocal(st));
                         this.lastPing = ping;
                         
+                        // XXX: removeme
                         System.out.println("Latenz: " + this.latency());
                         this.send(new Pong());
                     } else {
-                        this.fireObjectReceived(new ObjectReceivedEvent(this, po));
+                        this.handler.objectReceived(new ObjectReceivedEvent(this, po));
                     }
                 }
             }
@@ -162,36 +167,6 @@ public class ClientConnection implements Connection, Runnable {
         return (long)((double)timeStamp * this.timeFactor);
     }
     
-    
-    
-    public void fireObjectReceived(ObjectReceivedEvent e) {
-        
-    }
-    
-    
-    public void fireConnectionClosed(NetworkEvent e) {
-        
-    }
-    
-    
-    public void addObjectReceivedListener(ObjectReceivedListener listener) {
-        
-    }
-    
-    
-    public void removeObjectReceivedListener(ObjectReceivedListener listener) {
-        
-    }
-    
-    
-    public void addConnectionListener(ConnectionListener listener) {
-        
-    }
-    
-    
-    public void removeConnectionListener(ConnectionListener listener) {
-        
-    }
     
     
     @Override
@@ -223,7 +198,7 @@ public class ClientConnection implements Connection, Runnable {
         }
         
         this.connectionThread.shutdown();
-        this.fireConnectionClosed(new NetworkEvent(this));
+        this.handler.connectionClosed(new NetworkEvent(this));
     }
 
 }

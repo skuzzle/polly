@@ -41,4 +41,11 @@ public class Response extends ProtocolObject {
     public boolean is(ResponseType type) {
         return this.type == type;
     }
+    
+    
+    
+    @Override
+    public String toString() {
+        return super.toString() + ": " + this.type + "\n" + this.getPayload();
+    }
 }

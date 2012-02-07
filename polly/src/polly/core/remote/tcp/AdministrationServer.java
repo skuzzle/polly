@@ -52,7 +52,8 @@ public class AdministrationServer extends AbstractDisposable implements Runnable
         this.shutdownFlag = new AtomicBoolean(false);
         this.connections = new LinkedList<ServerConnection>();
         
-        this.connectionThreadPool = Executors.newFixedThreadPool(maxConnections);
+        this.connectionThreadPool = Executors.newFixedThreadPool(maxConnections, 
+                new ThreadFactoryBuilder("CONNECTION_THREAD_%n%"));
         this.eventProvider = new DefaultEventProvider();
         
         logger.debug("Creating SSL Server Socket");

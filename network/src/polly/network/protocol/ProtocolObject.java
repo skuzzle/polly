@@ -57,4 +57,10 @@ public class ProtocolObject implements Serializable {
         return this.payload;
     }
     
+    
+    
+    @Override
+    public String toString() {
+        return "" + this.id;
+    }
 }

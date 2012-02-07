@@ -36,6 +36,8 @@ public class AdministrationManager extends AbstractDisposable {
     
     private final static File LOG_DIR = new File("./logs");
     private final static Pattern LOG_PATTERN = Pattern.compile(".+\\.log(\\.\\d+)?$");
+    private final static Logger logger = Logger.getLogger(
+            AdministrationManager.class.getName());
     
     private Set<Connection> liveLogList;
     private Set<Connection> ircForwards;
@@ -84,6 +86,7 @@ public class AdministrationManager extends AbstractDisposable {
     public void enableIrcForward(Connection connection) {
         synchronized (this.ircForwards) {
             this.ircForwards.add(connection);
+            logger.info("IRC forward enabled for " + connection);
         }
     }
     
@@ -92,6 +95,7 @@ public class AdministrationManager extends AbstractDisposable {
     public void disableIrcForward(Connection connection) {
         synchronized (this.ircForwards) {
             this.ircForwards.remove(connection);
+            logger.info("IRC forward disabled for " + connection);
         }
     }
     
@@ -101,6 +105,7 @@ public class AdministrationManager extends AbstractDisposable {
         synchronized (this.liveLogList) {
             this.liveLogList.add(connection);
             this.logAppender.setEnabled(!this.liveLogList.isEmpty());
+            logger.info("Live-Log enabled for " + connection);
         }
     }
     
@@ -110,6 +115,7 @@ public class AdministrationManager extends AbstractDisposable {
         synchronized (this.liveLogList) {
             this.liveLogList.remove(connection);
             this.logAppender.setEnabled(!this.liveLogList.isEmpty());
+            logger.info("Live-Log enabled for " + connection);
         }
     }
     

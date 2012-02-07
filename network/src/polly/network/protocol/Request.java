@@ -22,4 +22,10 @@ public class Request extends ProtocolObject {
     public boolean is(RequestType type) {
         return this.type == type;
     }
+    
+    
+    @Override
+    public String toString() {
+        return super.toString() + ": " + this.type + "\n" + this.getPayload();
+    }
 }

@@ -30,4 +30,10 @@ public class ErrorResponse extends Response {
         return this.type;
     }
     
+    
+    
+    @Override
+    public String toString() {
+        return super.toString() + ": " + this.type + "\n" + this.getPayload();
+    }
 }
