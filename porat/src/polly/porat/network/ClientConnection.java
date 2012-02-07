@@ -124,7 +124,9 @@ public class ClientConnection implements Connection, Runnable {
                         
                         long clientTime = po.getReceivedAt() - this.lastPing.getReceivedAt();
                         long serverTime = po.getTimestamp() - this.lastPing.getTimestamp();
-                        this.timeFactor = clientTime / serverTime;
+                        
+                        this.timeFactor = (double)serverTime / (double)clientTime;
+                        
                         this.latency = (int) Math.abs(
                             clientTime - this.serverTimeToLocal(serverTime));
                         this.lastPing = ping;
@@ -157,7 +159,7 @@ public class ClientConnection implements Connection, Runnable {
     
     
     public long serverTimeToLocal(long timeStamp) {
-        return (long)(timeStamp * this.timeFactor);
+        return (long)((double)timeStamp * this.timeFactor);
     }
     
     

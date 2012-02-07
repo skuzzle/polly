@@ -24,7 +24,7 @@ public class ClientProtocolHandler implements ConnectionListener, ObjectReceived
         ClientProtocolHandler cph = new ClientProtocolHandler();
         
         try {
-            cph.connect(InetAddress.getByName("localhost"), 24500, "C0mb4t", 
+            cph.connect(InetAddress.getByName("192.168.0.20"), 24500, "C0mb4t", 
                 "nichtpenner");
             System.out.println("connected");
         } catch (Exception e) {
