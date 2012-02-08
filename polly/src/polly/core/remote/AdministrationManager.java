@@ -53,7 +53,7 @@ public class AdministrationManager extends AbstractDisposable {
         this.liveLogList = new HashSet<Connection>();
         this.ircForwards = new HashSet<Connection>();
         
-        this.logAppender = new CachedLogAppender(this, 50);
+        this.logAppender = new CachedLogAppender(this, 5);
         Logger.getRootLogger().addAppender(this.logAppender);
     }
     
@@ -115,7 +115,7 @@ public class AdministrationManager extends AbstractDisposable {
         synchronized (this.liveLogList) {
             this.liveLogList.remove(connection);
             this.logAppender.setEnabled(!this.liveLogList.isEmpty());
-            logger.info("Live-Log enabled for " + connection);
+            logger.info("Live-Log disabled for " + connection);
         }
     }
     

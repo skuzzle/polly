@@ -53,6 +53,7 @@ public class RemoteInterfaceModule extends AbstractModule {
         try {
             this.server = new AdministrationServer(null, 24500, 5);
             this.shutdownManager.addDisposable(this.server);
+            this.shutdownManager.addDisposable(this.adminManager);
             this.server.addObjectReceivedListener(this.protocolHandler);
             this.server.addConnectionListener(this.protocolHandler);
             this.server.listen();
