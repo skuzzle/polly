@@ -9,9 +9,32 @@
     <property name="mode"           value="dist"/>
     
 	
-	
     <!-- 
-        builds the sdk project and copies the dist jar to the libs folder
+        builds the network project and copies the dist jar to the libs folder
+    -->
+    <target name="porat">
+        <ant dir="porat" target="${mode}" inheritAll="false"/>
+        <copy 
+            file="porat/dist/porat.jar" 
+            todir="${lib.dir}"/>
+    </target>
+    
+    
+    
+    <!-- 
+        builds the network project and copies the dist jar to the libs folder
+    -->
+    <target name="network">
+        <ant dir="network" target="${mode}" inheritAll="false"/>
+        <copy 
+            file="network/dist/network.jar" 
+            todir="${lib.dir}"/>
+    </target>
+	
+    
+    
+    <!-- 
+        builds the moduleloader project and copies the dist jar to the libs folder
     -->
     <target name="moduleloader">
         <ant dir="moduleloader" target="${mode}" inheritAll="false"/>
@@ -107,7 +130,9 @@
     <!--
         Builds all polly dependencies
     -->
-    <target name="all" depends="sdk,process,installer,parser,plugins,polly"/>
+    <target name="all" depends="sdk,process,installer,
+                                parser,plugins,network,moduleloader,polly,
+                                porat"/>
 
     
     
@@ -121,6 +146,8 @@
         <ant dir="installer" target="clean" inheritAll="false"/>
         <ant dir="parser" target="clean" inheritAll="false"/>
         <ant dir="moduleloader" target="clean" inheritAll="false"/>
+        <ant dir="network" target="clean" inheritAll="false"/>
+        <ant dir="porat" target="clean" inheritAll="false"/>
         <ant dir="polly.core" target="clean" inheritAll="false"/>
         <ant dir="polly.logging" target="clean" inheritAll="false"/>
         <ant dir="polly.reminds" target="clean" inheritAll="false"/>
@@ -151,6 +178,15 @@
         <antcall target="plugins" inheritAll="true" inheritRefs="true">
             <param name="mode" value="build"/>
         </antcall>
+        <antcall target="network" inheritAll="true" inheritRefs="true">
+            <param name="mode" value="build"/>
+        </antcall>
+        <antcall target="porat" inheritAll="true" inheritRefs="true">
+            <param name="mode" value="build"/>
+        </antcall>
+        <antcall target="moduleloader" inheritAll="true" inheritRefs="true">
+            <param name="mode" value="build"/>
+        </antcall>
         <antcall target="polly" inheritAll="true" inheritRefs="true">
             <param name="mode" value="build"/>
         </antcall>
@@ -178,6 +214,15 @@
         <antcall target="plugins" inheritAll="true" inheritRefs="true">
             <param name="mode" value="dist_no_clean"/>
         </antcall>
+        <antcall target="network" inheritAll="true" inheritRefs="true">
+            <param name="mode" value="dist_no_clean"/>
+        </antcall>
+        <antcall target="porat" inheritAll="true" inheritRefs="true">
+            <param name="mode" value="dist_no_clean"/>
+        </antcall>
+          <antcall target="moduleloader" inheritAll="true" inheritRefs="true">
+            <param name="mode" value="dist_no_clean"/>
+        </antcall>
         <antcall target="polly" inheritAll="true" inheritRefs="true">
             <param name="mode" value="dist_no_clean"/>
         </antcall>
@@ -199,5 +244,7 @@
         <ant dir="polly.reminds" target="eclipse" inheritAll="false"/>
         <ant dir="polly.tv" target="eclipse" inheritAll="false"/>
         <ant dir="polly" target="eclipse" inheritAll="false"/>
+        <ant dir="network" target="eclipse" inheritAll="false"/>
+        <ant dir="porat" target="eclipse" inheritAll="false"/>
     </target>
 </project>
