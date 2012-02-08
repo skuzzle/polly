@@ -101,15 +101,18 @@ public class IrcModule extends AbstractModule {
             this.userManager));
 
         // Setup auto logoin / logout handler
-        AutoLogonLogoffHandler logonHandler = new AutoLogonLogoffHandler(
-            this.ircManager, this.userManager, this.config);
+        if (this.config.isAutoLogon()) {
+            AutoLogonLogoffHandler logonHandler = new AutoLogonLogoffHandler(
+                this.ircManager, this.userManager, this.config.getAutoLogonTime());
 
-        this.ircManager.addUserSpottedListener(logonHandler);
-        this.ircManager.addNickChangeListener(logonHandler);
-        this.userManager.addUserListener(logonHandler);
+            this.ircManager.addUserSpottedListener(logonHandler);
+            this.ircManager.addNickChangeListener(logonHandler);
+            this.userManager.addUserListener(logonHandler);
 
-        this.shutdownManager.addDisposable(logonHandler);
+            this.shutdownManager.addDisposable(logonHandler);
 
+        }
+        
         this.connectionSettings = new BotConnectionSettings(
             this.config.getNickName(), this.config.getServer(),
             this.config.getPort(), this.config.getIdent(),

@@ -10,7 +10,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
 
 
-import polly.configuration.PollyConfiguration;
 import polly.core.irc.IrcManagerImpl;
 import polly.core.users.UserManagerImpl;
 import polly.util.concurrent.ThreadFactoryBuilder;
@@ -80,26 +79,22 @@ public class AutoLogonLogoffHandler extends AbstractDisposable
     private UserManagerImpl userManager;
     private ScheduledExecutorService autoLogonExecutor;
     private Map<String, AutoLogonRunnable> scheduledLogons;
-    private PollyConfiguration config;
-    
+    private int autoLoginTime;
     
     public AutoLogonLogoffHandler(IrcManagerImpl ircManager, 
-            UserManagerImpl userManager, PollyConfiguration config) {
+            UserManagerImpl userManager, int autoLoginTime) {
         this.ircManager = ircManager;
         this.userManager = userManager;
         this.autoLogonExecutor = Executors.newScheduledThreadPool(4, 
                 new ThreadFactoryBuilder("LOGON"));
         this.scheduledLogons = new HashMap<String, AutoLogonRunnable>();
-        this.config = config;
+        this.autoLoginTime = autoLoginTime;
     }
 
 
 
     @Override
     public void userSpotted(SpotEvent e) {
-        if (!this.config.isAutoLogon()) {
-            return;
-        }
         this.scheduleAutoLogon(e.getUser().getNickName());
     }
 
@@ -107,9 +102,6 @@ public class AutoLogonLogoffHandler extends AbstractDisposable
     
     @Override
     public void nickChanged(NickChangeEvent e) {
-        if (!this.config.isAutoLogon()) {
-            return;
-        }
         /*
          * If there is a auto logon scheduled for the old nickname, it will be 
          * canceled. If there is a registered user with the new nickname that is 
@@ -138,7 +130,7 @@ public class AutoLogonLogoffHandler extends AbstractDisposable
             if (this.userExists(forUser)) {
                 AutoLogonRunnable runMe = new AutoLogonRunnable(forUser);
                 this.scheduledLogons.put(forUser, runMe);
-                this.autoLogonExecutor.schedule(runMe, this.config.getAutoLogonTime(), 
+                this.autoLogonExecutor.schedule(runMe, this.autoLoginTime, 
                         TimeUnit.MILLISECONDS);
                 logger.debug("Auto logon for " + forUser + " scheduled");
             }
@@ -171,10 +163,6 @@ public class AutoLogonLogoffHandler extends AbstractDisposable
 
     @Override
     public void userSignedOn(UserEvent e) {
-        if (!this.config.isAutoLogon()) {
-            return;
-        }
-        
         synchronized (this.scheduledLogons) {
             AutoLogonRunnable alr = this.scheduledLogons.get(e.getUser().getName());
             if (alr != null) {
