@@ -71,6 +71,9 @@ public class SerializableFile implements Serializable {
         if (this.localFile.length() > Integer.MAX_VALUE) {
             throw new IOException("unsupported file size");
         }
+        
+        out.defaultWriteObject();
+        
         // first, write file length
         out.writeInt((int) this.localFile.length());
         
@@ -92,7 +95,10 @@ public class SerializableFile implements Serializable {
     
     
     
-    private void readObject(ObjectInputStream in) throws IOException {
+    private void readObject(ObjectInputStream in) 
+                throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        
         int length = in.readInt();
         
         this.received = new byte[length];

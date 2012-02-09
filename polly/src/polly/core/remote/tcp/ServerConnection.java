@@ -85,6 +85,7 @@ public class ServerConnection implements Runnable, Disposable, polly.network.Con
                         System.currentTimeMillis() - start > loginTimeOut) {
                     logger.info("No login Request within reasonable time from " + 
                         ServerConnection.this);
+                    send(new ErrorResponse(ErrorType.LOGIN_TIMEOUT));
                     dispose();
                 }
             

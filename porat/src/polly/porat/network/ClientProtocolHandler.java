@@ -197,9 +197,11 @@ public class ClientProtocolHandler {
     }
     
     
+    
     public void addConnectionListener(ConnectionListener listener) {
         this.eventProvider.addListener(ConnectionListener.class, listener);
     }
+    
     
     
     public void removeConnectionListener(ConnectionListener listener) {

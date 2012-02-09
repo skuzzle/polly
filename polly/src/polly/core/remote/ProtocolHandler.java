@@ -84,7 +84,7 @@ public class ProtocolHandler implements ObjectReceivedListener, ConnectionListen
         case UNKNOWN_USER:
             answer = new ErrorResponse(ErrorType.UNKNOWN_USER); break;
         case SUCCESS:
-            answer = new Response(ResponseType.LOGGED_IN);
+            answer = new Response(ResponseType.LOGGED_IN); break;
         }
         
         e.getSource().send(answer);

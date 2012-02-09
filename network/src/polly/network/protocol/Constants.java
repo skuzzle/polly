@@ -24,7 +24,7 @@ public interface Constants {
     
     public static enum ErrorType {
         UNKNOWN_USER, INVALID_PASSWORD, LIMIT_EXCEEDED, BAD_REQUESTS, 
-        INSUFFICIENT_RIGHTS, REQUEST_IGNORED;
+        INSUFFICIENT_RIGHTS, REQUEST_IGNORED, LOGIN_TIMEOUT;
     }
 
 }
