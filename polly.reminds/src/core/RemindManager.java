@@ -43,6 +43,10 @@ public class RemindManager extends AbstractDisposable {
     private Map<String, RemindEntity> sleeps;
     private Set<String> onReturnAvailable;
     
+    // XXX: special case for user clum, whose reminds will be delivered to several
+    //      random nicknames
+    private RemindFormatter heidiFormatter;
+    
     private final static RemindFormatter DEFAULT_FORMAT = 
             PatternRemindFormatter.forPattern(MyPlugin.REMIND_FORMAT_VALUE);
     
@@ -56,6 +60,7 @@ public class RemindManager extends AbstractDisposable {
         this.reminds = Collections.synchronizedMap(new HashMap<Integer, RemindTask>());
         this.sleeps = Collections.synchronizedMap(new HashMap<String, RemindEntity>());
         this.onReturnAvailable = new HashSet<String>();
+        this.heidiFormatter = new HeidiRemindFormatter();
     }
 
     
@@ -183,6 +188,11 @@ public class RemindManager extends AbstractDisposable {
     
     
     private RemindFormatter formatForUser(User user) {
+        // XXX: special case for user clum
+        if (user.getCurrentNickName().equalsIgnoreCase("clum")) {
+            return this.heidiFormatter;
+        }
+        
         String pattern = user.getAttribute(MyPlugin.REMIND_FORMAT_NAME);
         if (pattern == null) {
             return RemindManager.DEFAULT_FORMAT;
