@@ -4,8 +4,10 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -167,6 +169,13 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     public Map<String, String> getAttributes() {
         return this.attributes;
     }
+    
+    
+    
+    @Override
+    public Set<String> getAttributeNames() {
+        return Collections.unmodifiableSet(this.attributes.keySet());
+    }
 
 
     
@@ -180,7 +189,6 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     
     
     
-    @Override
     public void setAttribute(String name, String value) {
         if (!this.attributes.containsKey(name)) {
             throw new UnknownAttributeException(name);

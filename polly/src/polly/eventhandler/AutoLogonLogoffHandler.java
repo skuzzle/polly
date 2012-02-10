@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
 
 
+import polly.core.DefaultUserAttributes;
 import polly.core.irc.IrcManagerImpl;
 import polly.core.users.UserManagerImpl;
 import polly.util.concurrent.ThreadFactoryBuilder;
@@ -141,7 +142,8 @@ public class AutoLogonLogoffHandler extends AbstractDisposable
     
     private boolean userExists(String name) {
         User user = this.userManager.getUser(name);
-        return user != null;
+        return user != null && 
+            user.getAttribute(DefaultUserAttributes.AUTO_LOGON).equalsIgnoreCase("true");
     }
     
     

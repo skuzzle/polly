@@ -10,7 +10,6 @@ import commands.ModRemindCommand;
 import commands.MyRemindsCommand;
 import commands.OnReturnCommand;
 import commands.RemindCommand;
-import commands.RemindSettingsCommand;
 import commands.SleepCommand;
 
 import core.DeliverRemindHandler;
@@ -20,6 +19,7 @@ import core.RemindTraceNickchangeHandler;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
 import de.skuzzle.polly.sdk.UserManager;
+import de.skuzzle.polly.sdk.constraints.IntegerConstraint;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
@@ -42,6 +42,7 @@ public class MyPlugin extends PollyPlugin {
     
     public final static String SLEEP_TIME = "SLEEP_TIME";
     public final static String SLEEP_DEFAULT_VALUE = "60000";
+    
     
     private Logger logger;
     private RemindManager remindManager;
@@ -78,7 +79,6 @@ public class MyPlugin extends PollyPlugin {
         this.addCommand(new DeleteRemindCommand(myPolly, this.remindManager));
         this.addCommand(new SleepCommand(myPolly, this.remindManager));
         this.addCommand(new ModRemindCommand(myPolly, this.remindManager));
-        this.addCommand(new RemindSettingsCommand(myPolly));
     }
     
     
@@ -106,7 +106,7 @@ public class MyPlugin extends PollyPlugin {
             UserManager users = this.getMyPolly().users();
             users.addAttribute(REMIND_FORMAT_NAME, REMIND_FORMAT_VALUE);
             users.addAttribute(MESSAGE_FORMAT_NAME, MESSAGE_FORMAT_VALUE);
-            users.addAttribute(SLEEP_TIME, SLEEP_DEFAULT_VALUE);
+            users.addAttribute(SLEEP_TIME, SLEEP_DEFAULT_VALUE, new IntegerConstraint());
         } catch (DatabaseException e) {
             e.printStackTrace();
         }

@@ -1,5 +1,7 @@
 package de.skuzzle.polly.sdk.model;
 
+import java.util.Set;
+
 
 public interface User extends Comparable<User> {
 
@@ -23,7 +25,7 @@ public interface User extends Comparable<User> {
     
     public abstract void setCurrentNickName(String nickName);
     
-    public abstract String getAttribute(String name);
+    public abstract Set<String> getAttributeNames();
     
-    public abstract void setAttribute(String name, String value);
+    public abstract String getAttribute(String name);
 }

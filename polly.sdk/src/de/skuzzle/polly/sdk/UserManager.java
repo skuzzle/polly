@@ -3,9 +3,11 @@ package de.skuzzle.polly.sdk;
 import java.util.List;
 import java.util.Set;
 
+import de.skuzzle.polly.sdk.constraints.AttributeConstraint;
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
 import de.skuzzle.polly.sdk.eventlistener.UserListener;
 import de.skuzzle.polly.sdk.exceptions.AlreadySignedOnException;
+import de.skuzzle.polly.sdk.exceptions.ConstraintException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
@@ -262,6 +264,29 @@ public interface UserManager {
 	
 	
 	
+    /**
+     * <p>Adds an constrainted attribute to all users. You can add String attributes to 
+     * all users to store user-specific information for your plugin. Having an 
+     * {@link User} instance, you can retrieve the users value for an attribute via 
+     * {@link User#getAttribute(String)}.</p>
+     * 
+     * <p>Mind that attribute names must be unique. If you try to add an attribute which 
+     * already exists, this method does nothing. This might lead to interference with
+     * other plugins!</p>
+     * 
+     * <p>Only values which are accepted by the given {@link AttributeConstraint} can
+     * be set for this attribute.</p>
+     * 
+     * @param name the new attributes name.
+     * @param defaultValue The default value for the new attribute. This value will be 
+     *     assigned to each user.
+     * @throws DatabaseException If storing the new attribute fails for any reason.
+     */
+    void addAttribute(String name, String defaultValue,
+        AttributeConstraint constraint) throws DatabaseException;
+    
+    
+	
 	/**
 	 * Removes an attribute for all users.
 	 * 
@@ -269,6 +294,24 @@ public interface UserManager {
 	 * @throws DatabaseException If removing the attribute fails for any reason.
 	 */
 	public abstract void removeAttribute(String name) throws DatabaseException;
+	
+	
+	
+	/**
+	 * Sets an attribute value for a certain user. This method first checks whether the
+	 * given Attributes exists. If not, it does nothing. Then it checks whether the given
+	 * value matches the constraint given for that attribute. If so, the new value will 
+	 * be stored.
+	 * 
+	 * @param user The user for which the attribute should be set.
+	 * @param attribute The attributes name.
+	 * @param value The new value for this attribute.
+	 * @throws DatabaseException If the value doesnt match the constraint for this
+	 *             attribute.
+	 * @throws ConstraintException If storing the new attribute fails for any reason.
+	 */
+    void setAttributeFor(User user, String attribute, String value)
+        throws DatabaseException, ConstraintException;
 	
 	
 	/**
@@ -288,4 +331,5 @@ public interface UserManager {
      * @since 0.6
      */
 	public void removeUserListener(UserListener listener);
+
 }

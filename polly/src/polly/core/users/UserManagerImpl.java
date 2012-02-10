@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -25,11 +26,15 @@ import de.skuzzle.polly.parsing.tree.Expression;
 import de.skuzzle.polly.parsing.tree.FunctionDefinition;
 import de.skuzzle.polly.parsing.tree.ResolveableIdentifierLiteral;
 import de.skuzzle.polly.sdk.AbstractDisposable;
+import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.UserManager;
+import de.skuzzle.polly.sdk.WriteAction;
+import de.skuzzle.polly.sdk.constraints.AttributeConstraint;
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
 import de.skuzzle.polly.sdk.eventlistener.UserEvent;
 import de.skuzzle.polly.sdk.eventlistener.UserListener;
 import de.skuzzle.polly.sdk.exceptions.AlreadySignedOnException;
+import de.skuzzle.polly.sdk.exceptions.ConstraintException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.UnknownAttributeException;
@@ -47,6 +52,17 @@ import de.skuzzle.polly.sdk.model.User;
 public class UserManagerImpl extends AbstractDisposable implements UserManager {
 
     private static Logger logger = Logger.getLogger(UserManagerImpl.class.getName());
+    
+    
+    private final static AttributeConstraint NO_CONSTRAINT = new AttributeConstraint() {
+        
+        @Override
+        public boolean accept(String value) {
+            return true;
+        }
+    };
+    
+    
     private PersistenceManagerImpl persistence;
 
     /**
@@ -60,6 +76,8 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
      */
    
     private String declarationCachePath;
+    
+    private Map<String, AttributeConstraint> constraints;
     
     private EventProvider eventProvider;
     private Namespaces namespaces;
@@ -75,6 +93,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
                 new CaseInsensitiveStringKeyMap<User>());
         this.declarationCachePath = declarationCache.endsWith("/") ? declarationCache :
             declarationCache + "/";
+        this.constraints = new HashMap<String, AttributeConstraint>();
         this.createNamespaces();
     }
     
@@ -460,13 +479,17 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
         this.onlineCache.remove(oldUser.getNickName());
         this.onlineCache.put(newUser.getNickName(), tmp);
     }
-
-
-
+    
+    
+    
     @Override
-    public void addAttribute(String name, String defaultValue) throws DatabaseException {
+    public void addAttribute(final String name, final String defaultValue, 
+            AttributeConstraint constraint) throws DatabaseException {
+        
         try {
             this.persistence.writeLock();
+            
+            this.constraints.put(name.toLowerCase(), constraint);
             
             Attribute att = new Attribute(name, defaultValue);
             Attribute check = this.persistence.findSingle(Attribute.class, 
@@ -492,6 +515,36 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
             this.persistence.writeUnlock();
         }
     }
+    
+    
+    
+    @Override
+    public void setAttributeFor(final User user, final String attribute, 
+            final String value) throws DatabaseException, ConstraintException {
+        // check if attribute exists:
+        user.getAttribute(attribute);
+        
+        AttributeConstraint constraint = this.constraints.get(attribute.toLowerCase());
+        if (!constraint.accept(value)) {
+            throw new ConstraintException("'" + value + 
+                "' ist kein gültiger Wert für das Attribut '" + attribute + "'");
+        }
+        
+        this.persistence.atomicWriteOperation(new WriteAction() {
+            
+            @Override
+            public void performUpdate(PersistenceManager persistence) {
+                ((polly.data.User) user).setAttribute(attribute, value);
+            }
+        });
+    }
+
+
+
+    @Override
+    public void addAttribute(String name, String defaultValue) throws DatabaseException {
+        this.addAttribute(name, defaultValue, NO_CONSTRAINT);
+    }
 
 
 
@@ -515,6 +568,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
             }
             this.persistence.remove(att);
             this.persistence.commitTransaction();
+            this.constraints.remove(name);
             logger.info("Attribute " + att + " removed.");
         } finally {
             this.persistence.writeUnlock();

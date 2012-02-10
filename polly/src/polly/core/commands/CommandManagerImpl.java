@@ -172,6 +172,7 @@ public class CommandManagerImpl implements CommandManager {
 	}
 
 	
+	
 	@Override
     public void executeString(String input, String channel, boolean inQuery, 
             User executor, IrcManager ircManager) 
@@ -210,8 +211,7 @@ public class CommandManagerImpl implements CommandManager {
             watch.stop();
             logger.trace("Execution time: " + watch.getDifference() + "ms");
         }
-}
-
+	}
 
 
 

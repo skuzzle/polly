@@ -5,6 +5,7 @@ import java.util.concurrent.ExecutorService;
 import org.jibble.pircbot.NickAlreadyInUseException;
 
 import polly.configuration.PollyConfiguration;
+import polly.core.DefaultUserAttributes;
 import polly.core.ShutdownManagerImpl;
 import polly.core.commands.CommandManagerImpl;
 import polly.core.users.UserManagerImpl;
@@ -31,6 +32,7 @@ import polly.core.ModuleStates;
         @Require(component = UserManagerImpl.class),
         @Require(component = CommandManagerImpl.class),
         @Require(component = ExecutorService.class),
+        @Require(component = DefaultUserAttributes.class),
         @Require(state = ModuleStates.PLUGINS_READY),
         @Require(state = ModuleStates.PERSISTENCE_READY) }, 
     provides = {

@@ -2,9 +2,9 @@ package commands;
 
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
-import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types.StringType;
+import de.skuzzle.polly.sdk.exceptions.ConstraintException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
@@ -28,17 +28,14 @@ public class MyVenadCommand extends Command {
         
         if (this.match(signature, 0)) {
             String vname = signature.getStringValue(0);
-            PersistenceManager persistence = this.getMyPolly().persistence();
+            
             try {
-                persistence.writeLock();
-                persistence.startTransaction();
-                executer.setAttribute("VENAD", vname);
-                persistence.commitTransaction();
+                this.getMyPolly().users().setAttributeFor(executer, "VENAD", vname);
                 this.reply(channel, "Venadname gespeichert.");
             } catch (DatabaseException e) {
                 this.reply(channel, "Interner Datenbankfehler.");
-            } finally {
-                persistence.writeUnlock();
+            } catch (ConstraintException e) {
+                this.reply(channel, "Wert konnte nicht gesetzt werden.");
             }
         }
         
