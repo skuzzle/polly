@@ -520,10 +520,18 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     @Override
     public void setAttributeFor(final User user, final String attribute, 
-            final String value) throws DatabaseException, ConstraintException {
+            String value) throws DatabaseException, ConstraintException {
         // check if attribute exists:
         user.getAttribute(attribute);
         
+        if (value.equalsIgnoreCase("%default%")) {
+            Attribute attr = this.persistence.findSingle(Attribute.class, 
+                "ATTRIBUTE_BY_NAME", attribute);
+            
+            value = attr.getDefaultValue();
+        }
+        
+        final String valueCopy = value;
         AttributeConstraint constraint = this.constraints.get(attribute.toLowerCase());
         if (!constraint.accept(value)) {
             throw new ConstraintException("'" + value + 
@@ -534,7 +542,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
             
             @Override
             public void performUpdate(PersistenceManager persistence) {
-                ((polly.data.User) user).setAttribute(attribute, value);
+                ((polly.data.User) user).setAttribute(attribute, valueCopy);
             }
         });
     }

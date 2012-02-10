@@ -41,23 +41,24 @@ public class SetAttributeCommand extends Command {
             final String value = signature.getStringValue(2);
             
             final User dest = this.getMyPolly().users().getUser(user);
-            this.setAttribute(dest, attribute, value, channel);
+            this.setAttribute(dest, user, attribute, value, channel);
         } else if (this.match(signature, 1)) {
             final String attribute = signature.getStringValue(0);
             final String value = signature.getStringValue(1);
             
-            this.setAttribute(executer, attribute, value, channel);
+            this.setAttribute(executer, executer.getName(), attribute, value, 
+                channel);
         }
         return false;
     }
     
     
     
-    @SuppressWarnings("null")
-    private void setAttribute(User dest, String attribute, String value, String channel) 
-            throws CommandException {
+    private void setAttribute(User dest, String userName, String attribute, 
+            String value, String channel) throws CommandException {
+        
         if (dest == null) {
-            throw new CommandException("Unbekannter Benutzer: " + dest.getName());
+            throw new CommandException("Unbekannter Benutzer: " + userName);
         } 
         
         try {

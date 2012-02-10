@@ -330,14 +330,18 @@ public class PersistenceManagerImpl extends AbstractDisposable implements
 
     @Override
     public void atomicWriteOperation(WriteAction action)
-        throws DatabaseException {
+            throws DatabaseException {
         try {
             this.writeLock();
             this.startTransaction();
             action.performUpdate(this);
-            this.commitTransaction();
+            
         } finally {
-            this.writeUnlock();
+            try {
+                this.commitTransaction();
+            } finally {
+                this.writeUnlock();
+            }
         }
     }
 
@@ -357,7 +361,7 @@ public class PersistenceManagerImpl extends AbstractDisposable implements
 
 
     @Override
-    public void atomicPersist(final List<Object> entities)
+    public <T> void atomicPersistList(final List<T> entities)
         throws DatabaseException {
         this.atomicWriteOperation(new WriteAction() {
 

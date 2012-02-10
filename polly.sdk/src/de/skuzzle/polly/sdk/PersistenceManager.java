@@ -360,7 +360,7 @@ public interface PersistenceManager {
     /**
      * <p>Atomically persists the given entity using a transaction. Use this method if you
      * only need to persist a single entity. If you have to persist a list of entities
-     * you should use {@link #atomicPersist(List)} and if you need to perform further
+     * you should use {@link #atomicPersistList(List)} and if you need to perform further
      * write actions within a single transaction use 
      * {@link #atomicWriteOperation(WriteAction)} but do NOT use this method within a
      * WriteAction.</p>
@@ -390,7 +390,7 @@ public interface PersistenceManager {
      * @throws DatabaseException If committing the transaction fails.
      * @since 0.6.4
      */
-    void atomicPersist(List<Object> entities) throws DatabaseException;
+    public abstract <T> void atomicPersistList(List<T> entities) throws DatabaseException;
     
     
     

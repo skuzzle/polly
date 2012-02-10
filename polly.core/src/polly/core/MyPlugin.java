@@ -12,6 +12,7 @@ import commands.DeleteUserCommand;
 import commands.DeliverTrainCommand;
 import commands.DictCommand;
 import commands.FooCommand;
+import commands.GetAttributeCommand;
 import commands.GhostCommand;
 import commands.GreetingCommand;
 import commands.HelpCommand;
@@ -112,6 +113,7 @@ public class MyPlugin extends PollyPlugin {
 		this.addCommand(new RawIrcCommand(myPolly));
 		this.addCommand(new SetAttributeCommand(myPolly));
 		this.addCommand(new ListAttributesCommand(myPolly));
+		this.addCommand(new GetAttributeCommand(myPolly));
 
 		this.addCommand(new FooCommand(myPolly));
 		this.addCommand(new VarCommand(myPolly));
