@@ -54,10 +54,12 @@ public class PluginModule extends AbstractModule {
     public void run() throws Exception {
         MyPollyImpl myPolly = this.requireNow(MyPollyImpl.class);
         
-        this.pluginManager.loadFolder(this.config.getPluginFolder(), myPolly, 
-            this.config.getPluginExcludes());
-        
-        this.addState(ModuleStates.PLUGINS_READY);
+        try {
+            this.pluginManager.loadFolder(this.config.getPluginFolder(), myPolly, 
+                this.config.getPluginExcludes());
+        } finally {
+            this.addState(ModuleStates.PLUGINS_READY);
+        }
     }
 
 }

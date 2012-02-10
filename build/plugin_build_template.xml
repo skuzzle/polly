@@ -30,8 +30,8 @@
     <property name="release.entrypoint"     value="TODO"/>
     <property name="release.description"    value="TODO"/>
     <property name="release.updateFilename" value="${ant.project.name}-${release.updateVersion}-update.zip"/>
-    <property name="release.updateURL"      value="http://www.polly.skuzzle.de/updaterepo/polly/${update.filename}"/>
-    <property name="release.updateURLFile"  value="http://www.polly.skuzzle.de/updaterepo/polly/${ant.project.name}/update.properties""/>
+    <property name="release.updateURL"      value="http://www.polly.skuzzle.de/updaterepo/${ant.project.name}/${update.filename}"/>
+    <property name="release.updateURLFile"  value="http://www.polly.skuzzle.de/updaterepo/${ant.project.name}/${ant.project.name}.update.properties"/>
     
     
     
@@ -41,7 +41,6 @@
     -->
     <property name="includeJars" value="
         de.skuzzle.polly.sdk.jar
-        TODO.jar
     "/>
     
     <!-- buildpath for javac -->

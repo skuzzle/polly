@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="polly.core" basedir="." default="dist">
 
-    <property name="version.num" value="0.6.3"/>
+    <property name="version.num" value="0.7.0"/>
 
     <!-- Relative path to the root dir -->
     <property name="polly.root.dir" value="../"/>
@@ -32,6 +32,7 @@
     <property name="release.description"    value="Polly core plugin. This plugin provides all default polly commands."/>
     <property name="release.updateFilename" value="${ant.project.name}-${version.num}-update.zip"/>
     <property name="release.updateURL"      value="http://www.polly.skuzzle.de/updaterepo/${ant.project.name}/${update.filename}"/>
+    <property name="release.updateURLFile"  value="http://www.polly.skuzzle.de/updaterepo/${ant.project.name}/${ant.project.name}.update.properties"/>
     
     
     
@@ -125,7 +126,7 @@
             <entry key="description" value="${release.description}"/>
             <entry key="developer"   value="${release.developer}"/>
             <entry key="version"     value="${version.num}"/>
-            <entry key="updateUrl"   value="${release.updateURL}"/>
+            <entry key="updateUrl"   value="${release.updateURLFile}"/>
             <entry key="entrypoint"  value="${release.entrypoint}"/>
         </propertyfile>
     </target>

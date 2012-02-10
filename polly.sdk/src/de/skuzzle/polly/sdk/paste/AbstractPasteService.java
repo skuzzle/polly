@@ -15,7 +15,9 @@ import java.util.Map;
 
 
 /**
- * TODO: comment
+ * This class pre-implements the Paste-Service interface and provides a method
+ * to send a HTTP POST request which is needed for almost every paste service. 
+ *
  * @author Simon
  * @since 0.7
  */
@@ -47,10 +49,27 @@ public abstract class AbstractPasteService implements PasteService {
     
     
     
+    /**
+     * Actual implementation for {@link PasteService#paste(String)}
+     * 
+     * @param message The message to paste.
+     * @return The response url und which the new paste will be reachable.
+     * @throws Exception If an error occurred while pasting.
+     */
     public abstract String doPaste(String message) throws Exception;
     
     
     
+    /**
+     * Sends a post request to an URL. The request will contain all fields from
+     * the given properties map.
+     * 
+     * @param url The url to which the request will be sent.
+     * @param properties Map of properties for the request.
+     * @return A {@link PostResult} which contains the response url and the source
+     *          of the response.
+     * @throws IOException If an io error occurs while sending the request.
+     */
     protected PostResult postRequest(URL url, Map<String, String> properties) 
             throws IOException {
         

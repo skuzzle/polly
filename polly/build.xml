@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="polly" basedir="." default="dist">
 
-    <property name="version.num" value="0.6.3"/>
+    <property name="version.num" value="0.7.0"/>
 
     <!-- Relative path to the root dir -->
     <property name="polly.root.dir" value="../"/>
@@ -46,7 +46,6 @@
         log4j-1.2.16.jar
         polly.parser.jar
         moduleloader.jar
-        network.jar
         de.skuzzle.polly.process.jar
         eclipselink.jar
         javax.persistence_2.0.3.v201010191057.jar
@@ -130,6 +129,7 @@
         <mkdir dir="${bin.dir}"/>
         <javac srcdir="${src.dir}" destdir="${bin.dir}" classpathref="buildpath" source="1.6" debug="on">
             <exclude name="de/skuzzle/test/**"/>
+            <exclude name="polly/core/remote/**"/>
         </javac>
         
     </target>
@@ -169,8 +169,8 @@
                 <attribute name="Implementation-Version" value="${version}"/>
                 <attribute name="Class-Path"             value="${classpath} ${jar.classpath}"/>
             </manifest>
-            <fileset dir="${bin.dir}"/>
-            <fileset dir="${src.dir}"/>
+            <fileset dir="${bin.dir}" excludes="polly/core/remote/**"/>
+            <fileset dir="${src.dir}" excludes="polly/core/remote/**"/>
         </jar>
     </target>
 
@@ -181,13 +181,16 @@
     -->
     <target name="update" depends="dist">
         <copy file="update.dat" todir="${dist.dir}"/>
+        <copy file="cfgupdate.cfg" todir="${dist.dir}"/>
         <zip destfile="${update.dir}/${update.filename}">
         	<fileset dir="${dist.dir}" 
         	         includes="polly.jar
                                lib/polly.parser.jar 
+                               lib/moduleloader.jar 
                                lib/de.skuzzle.polly.process.jar
         		               lib/de.skuzzle.polly.sdk.jar
-                               update.dat"/>
+                               update.dat
+                               cfgupdate.cfg"/>
     	</zip>
         <delete file="${dist.dir}/update.dat"/>
         
