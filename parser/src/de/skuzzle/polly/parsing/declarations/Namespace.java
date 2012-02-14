@@ -30,7 +30,7 @@ public class Namespace {
     private Map<String, Declarations> namespaces;
     private String rootNS;
     private String currentNS;
-    
+
     
     
     public Namespace(String rootNamespace) {
@@ -202,7 +202,6 @@ public class Namespace {
     
     
     public Declaration resolve(ResolvableIdentifierLiteral id) throws ParseException {
-        
         if (this.forbidden != null && 
                 id.getIdentifier().equals(this.forbidden.getName().getIdentifier())) {
             throw new ParseException("Ungülter rekursiver Aufruf von " + id, 

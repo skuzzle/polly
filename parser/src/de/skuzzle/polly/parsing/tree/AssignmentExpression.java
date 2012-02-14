@@ -69,8 +69,8 @@ public class AssignmentExpression extends Expression {
                 checked = this.expression.contextCheck(context);
             } finally {
                 // make sure to always leave the declarations clean
-                context.leave();
                 context.allowFunction();
+                context.leave();
             }
             
             

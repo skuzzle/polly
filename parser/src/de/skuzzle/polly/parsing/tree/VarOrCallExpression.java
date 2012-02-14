@@ -67,7 +67,8 @@ public class VarOrCallExpression extends Expression {
 	
 	
 	
-	public void contextCheckForMember(Namespace context) throws ParseException {
+	public void contextCheckForMember(Namespace context) 
+	            throws ParseException {
 	    this.resolvedDeclaration = context.resolve(this.id);
 	    
 	    if (this.resolvedDeclaration instanceof FunctionDeclaration) {
@@ -95,7 +96,8 @@ public class VarOrCallExpression extends Expression {
 	                
 	                // declare a new local var for each formal parameter which contains
 	                // the expression of the actual parameter
-	                VarDeclaration act = new VarDeclaration(formal.getName(), actual, true);
+	                VarDeclaration act = new VarDeclaration(
+	                            formal.getName(), actual, true);
 	                context.add(act);
 	            }
 	            
@@ -112,6 +114,11 @@ public class VarOrCallExpression extends Expression {
 	        
 	        this.setType(this.resolvedExpression.getType());
 	    } else if (this.resolvedDeclaration instanceof VarDeclaration) {
+	        if (this.actualParameters != null && !this.actualParameters.isEmpty()) {
+	            throw new ParseException(this.id + 
+	                " ist eine Variable und kann nicht mit Parametern aufgerufen werden", 
+	                this.getPosition());
+	        }
 	        this.resolvedExpression = ((VarDeclaration) this.resolvedDeclaration)
 	                .getExpression().contextCheck(context);
 	        this.setType(this.resolvedExpression.getType());

@@ -55,6 +55,9 @@ public class Root implements TreeElement {
 
     @Override
     public Expression contextCheck(Namespace context) throws ParseException {
+        // at this time, the context contains only toplevel declarations and no 
+        // local declarations within a functioncall/declaration
+        
         for (int i = 0; i < this.parameters.size(); ++i) {
             Expression e = this.parameters.get(i);
             this.parameters.set(i, e.contextCheck(context));
