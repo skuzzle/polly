@@ -17,6 +17,7 @@ import de.skuzzle.polly.parsing.tree.literals.ResolvableIdentifierLiteral;
 import de.skuzzle.polly.parsing.tree.operators.BinaryOperatorOverload;
 import de.skuzzle.polly.parsing.tree.operators.TernaryOperatorOverload;
 import de.skuzzle.polly.parsing.tree.operators.UnaryOperatorOverload;
+import de.skuzzle.polly.parsing.util.CopyTool;
 
 
 public class Namespace {
@@ -268,7 +269,7 @@ public class Namespace {
         for (UnaryOperatorOverload overload : this.unaryOperators) {
             UnaryOperatorOverload result = overload.match(op, operandType);
             if (result != null) {
-                return (UnaryOperatorOverload) result.clone();
+                return CopyTool.copyOf(result);
             }
         }
         throw new ParseException("Operator " + op + " nicht anwendbar auf den Typ " + 
@@ -283,7 +284,7 @@ public class Namespace {
         for (BinaryOperatorOverload overload : this.binaryOperators) {
             BinaryOperatorOverload result = overload.match(op, operandType1, operandType2);
             if (result != null) {
-                return (BinaryOperatorOverload) result.clone();
+                return CopyTool.copyOf(result);
             }
         }
         throw new ParseException("Operator " + op + " nicht anwendbar auf die Typen " + 
@@ -299,7 +300,7 @@ public class Namespace {
             TernaryOperatorOverload result = overload.match(op, operandType1, 
                     operandType2, operandType3);
             if (result != null) {
-                return (TernaryOperatorOverload) result.clone();
+                return CopyTool.copyOf(result);
             }
         }
         throw new ParseException("Operator " + op + " nicht anwendbar auf die Typen " + 

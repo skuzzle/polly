@@ -83,14 +83,4 @@ public class ChannelLiteral extends Literal {
         }
         throw new RuntimeException("Not compareable");
     }
-    
-    
-    
-    @Override
-    public Object clone() {
-        ChannelLiteral result = new ChannelLiteral(this.channelName);
-        result.setPosition(this.getPosition());
-        result.setType(this.getType());
-        return result;
-    }
 }

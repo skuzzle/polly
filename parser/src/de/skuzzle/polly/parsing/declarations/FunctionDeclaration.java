@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import de.skuzzle.polly.parsing.tree.Expression;
 import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
 
 
@@ -38,18 +37,6 @@ public class FunctionDeclaration extends VarDeclaration {
 
     public boolean isHardcoded() {
         return this.hardcoded;
-    }
-    
-    
-    
-    @Override
-    public Object clone() {
-        FunctionDeclaration copy = new FunctionDeclaration(this.getName(), 
-            this.isGlobal(), this.isTemp());
-        copy.setExpression((Expression) this.getExpression().clone());
-        copy.hardcoded = this.hardcoded;
-        copy.formalParameters = this.formalParameters;
-        return copy;
     }
     
     

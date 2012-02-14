@@ -21,11 +21,4 @@ public class RandomFunction extends FunctionDeclaration {
         
         this.setExpression(new Functions.Random());
     }
-    
-    
-    @Override
-    public Object clone() {
-        return new RandomFunction();
-    }
-
 }

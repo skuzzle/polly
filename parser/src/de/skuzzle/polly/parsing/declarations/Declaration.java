@@ -59,9 +59,4 @@ public abstract class Declaration implements Serializable {
     public boolean isTemp() {
         return this.temp;
     }
-    
-    
-    
-    @Override
-    public abstract Object clone();
 }

@@ -159,14 +159,4 @@ public class NumberLiteral extends Literal {
         }
         throw new RuntimeException("Not compareable");
     }
-    
-    
-    
-    @Override
-    public Object clone() {
-        NumberLiteral result = new NumberLiteral(this.getToken());
-        result.setType(this.getType());
-        result.setPosition(this.getPosition());
-        return result;
-    }
 }

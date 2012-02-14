@@ -61,14 +61,6 @@ public class BinaryOperators {
                 break;
             }
         }
-
-        
-        
-        @Override
-        public Object clone() {
-            return new ArithemticDateTimespanOperator(this.getOperatorType());
-        }
-        
     }
     
     
@@ -92,10 +84,6 @@ public class BinaryOperators {
                         Math.abs((left.getTime() - right.getTime()) / 1000)));
                     break;
             }
-        }
-        @Override
-        public Object clone() {
-            return new ArithmeticDateOperator(this.getOperatorType());
         }
     }
     
@@ -124,11 +112,6 @@ public class BinaryOperators {
                     stack.push(new TimespanLiteral(left - right));
                     break;
             }
-        }
-
-        @Override
-        public Object clone() {
-            return new ArithmeticTimespanOperator(this.getOperatorType());
         }
     }
     
@@ -251,11 +234,6 @@ public class BinaryOperators {
             
             return numerator;
         }
-        
-        @Override
-        public Object clone()  {
-            return new ArithmeticOperator(this.getOperatorType());
-        }
     }
     
     
@@ -319,10 +297,6 @@ public class BinaryOperators {
                     break;
             }
         }
-        @Override
-        public Object clone()  {
-            return new ListArithmeticOperator(this.getOperatorType());
-        }
     }
     
     
@@ -358,10 +332,6 @@ public class BinaryOperators {
                     break;
             }
         }
-        @Override
-        public Object clone()  {
-            return new BooleanOperator(this.getOperatorType());
-        }
     }
     
     
@@ -391,11 +361,6 @@ public class BinaryOperators {
                     stack.push(new StringLiteral(left.getValue() + right.getValue()));
                     break;
             }
-        }
-        @Override
-        public Object clone() {
-            return new ConcatStringOperator();
-
         }
     }
     
@@ -444,10 +409,6 @@ public class BinaryOperators {
                     stack.push(new BooleanLiteral(!left.equals(right)));
                     break;
             }
-        }
-        @Override
-        public Object clone() {
-            return new EqualityOperator(this.getOperatorType());
         }
     }
     
@@ -503,10 +464,6 @@ public class BinaryOperators {
                     break;
             }
         }
-        @Override
-        public Object clone() {
-            return new IndexListOperator();
-        }
     }
     
     
@@ -544,10 +501,6 @@ public class BinaryOperators {
                     stack.push(new StringLiteral("" + c));
                     break;
             }
-        }
-        @Override
-        public Object clone() {
-            return new IndexStringOperator();
         }
     }
     
@@ -591,10 +544,6 @@ public class BinaryOperators {
                     break;
             }
         }
-        @Override
-        public Object clone() {
-            return new RelationalDateOperator(this.getOperatorType());
-        }
     }
     
     
@@ -633,10 +582,6 @@ public class BinaryOperators {
                     break;
             }
         }
-        @Override
-        public Object clone() {
-            return new RelationalListOperator(this.getOperatorType());
-        }
     }
     
     
@@ -674,10 +619,6 @@ public class BinaryOperators {
                     break;
             }
         }
-        @Override
-        public Object clone() {
-            return new RelationalNumberOperator(this.getOperatorType());
-        }
     }
     
     
@@ -714,10 +655,6 @@ public class BinaryOperators {
                     stack.push(new BooleanLiteral(left.compareTo(right) >= 0));
                     break;
             }
-        }
-        @Override
-        public Object clone() {
-            return new RelationalStringOperator(this.getOperatorType());
         }
     }
 }

@@ -70,11 +70,8 @@ public abstract class BinaryOperatorOverload implements Cloneable, Serializable 
     
     
     public abstract void collapse(Stack<Literal> stack) throws ExecutionException;
+
     
-    
-    
-    @Override
-    public abstract Object clone();
     
     public Type getReturnType() {
         return this.returnType;

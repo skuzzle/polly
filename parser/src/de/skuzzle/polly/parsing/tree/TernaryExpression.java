@@ -142,28 +142,4 @@ public class TernaryExpression extends Expression {
         this.thirdOperand.collapse(stack);
         this.overload.collapse(stack);
     }
-    
-    
-    
-    /**
-     * Performs a deep copy of this expression. The resulting expression will have the
-     * same type and position and their operands are full copies of this expressions
-     * operands.
-     * 
-     * @return An identical TernaryExpression.
-     */
-    @Override
-    public Object clone() {
-        TernaryExpression te = new TernaryExpression(
-                (Expression) this.firstOperand.clone(), 
-                (Expression) this.secondOperand.clone(), 
-                (Expression) this.thirdOperand.clone(), this.operator);
-        
-        te.setType(this.getType());
-        te.setPosition(this.getPosition());
-        if (this.overload != null) {
-            te.overload = (TernaryOperatorOverload) this.overload.clone();
-        }
-        return te;
-    }
 }

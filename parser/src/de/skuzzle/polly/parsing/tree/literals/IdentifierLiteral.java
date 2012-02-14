@@ -68,14 +68,4 @@ public class IdentifierLiteral extends Literal {
         }
         throw new RuntimeException("Not compareable");
     }
-    
-    
-    
-    @Override
-    public Object clone() {
-        IdentifierLiteral result = new IdentifierLiteral(this.identifier);
-        result.setPosition(this.getPosition());
-        result.setType(this.getType());
-        return result;
-    }
 }

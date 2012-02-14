@@ -81,9 +81,6 @@ public abstract class TernaryOperatorOverload implements Cloneable, Serializable
     
     public abstract void collapse(Stack<Literal> stack) throws ExecutionException;
     
-    @Override
-    public abstract Object clone();
-    
     
     public Type getReturnType() {
         return this.returnType;

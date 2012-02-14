@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 
 
 import de.skuzzle.polly.parsing.tree.literals.ResolvableIdentifierLiteral;
+import de.skuzzle.polly.parsing.util.CopyTool;
 
 public class Declarations {
 
@@ -55,7 +56,7 @@ public class Declarations {
         for (Map<String, Declaration> level : this.levels) {
             Declaration decl = level.get(id.getIdentifier());
             if (decl != null) {
-                return (Declaration) decl.clone();
+                return CopyTool.copyOf(decl);
             }
         }
 

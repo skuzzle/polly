@@ -69,11 +69,4 @@ public class TernaryDotDotOperator extends TernaryOperatorOverload {
                 stack.push(result);
         }
     }
-
-    
-    
-    @Override
-    public Object clone() {
-        return new TernaryDotDotOperator();
-    }
 }

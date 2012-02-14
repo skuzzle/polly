@@ -83,14 +83,4 @@ public class UserLiteral extends Literal {
         }
         throw new RuntimeException("Not compareable");
     }
-    
-    
-    
-    @Override
-    public Object clone() {
-        UserLiteral result = new UserLiteral(this.getToken());
-        result.setPosition(this.getPosition());
-        result.setType(this.getType());
-        return result;
-    }
 }

@@ -80,10 +80,4 @@ public abstract class UnaryOperatorOverload implements Cloneable, Serializable {
         return this.returnType + ": " + this.operator.toString() +
                 "(" + this.expected.toString() + ")";
     }
-    
-    
-    
-    @Override
-    public abstract Object clone();
-
 }

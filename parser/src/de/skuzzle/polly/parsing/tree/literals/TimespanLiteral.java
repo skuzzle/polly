@@ -69,11 +69,4 @@ public class TimespanLiteral extends Literal {
         }
         throw new RuntimeException("Not compareable");
     }
-    
-    
-
-    @Override
-    public Object clone() {
-        return new TimespanLiteral(this.getToken());
-    }
 }

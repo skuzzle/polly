@@ -121,27 +121,4 @@ public class BinaryExpression extends Expression {
         this.rightOperand.collapse(stack);
         this.overload.collapse(stack);
     }
-    
-    
-    
-    /**
-     * Performs a deep copy of this expression. The resulting expression will have the
-     * same type and position and their operands are full copies of this expressions
-     * operands.
-     * 
-     * @return An identical BinaryExpression.
-     */
-    @Override
-    public Object clone() {
-        BinaryExpression be =  new BinaryExpression(
-                (Expression) this.leftOperand.clone(), this.operator, 
-                (Expression) this.rightOperand.clone());
-        
-        be.setType(this.getType());
-        be.setPosition(this.getPosition());
-        if (this.overload != null) {
-            be.overload = (BinaryOperatorOverload) this.overload.clone();
-        }
-        return be;
-    }
 }

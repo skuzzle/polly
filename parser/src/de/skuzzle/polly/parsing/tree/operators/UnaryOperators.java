@@ -41,12 +41,6 @@ public class UnaryOperators {
                     break;
             }
         }
-
-        @Override
-        public Object clone() {
-            return new TimespanOperator();
-        }
-        
     }
     
     
@@ -78,10 +72,6 @@ public class UnaryOperators {
             StringBuilder result = new StringBuilder(s);
             return result.reverse().toString();
         }  
-        @Override
-        public Object clone() {
-            return new StringOperator(this.getOperatorType());
-        }
     }
     
     
@@ -120,10 +110,6 @@ public class UnaryOperators {
                     break;
             }
         }
-        @Override
-        public Object clone() {
-            return new ListOperator(this.getOperatorType());
-        }
     }
     
     
@@ -150,10 +136,6 @@ public class UnaryOperators {
                     stack.push(new BooleanLiteral(!left.getValue()));
                     break;
             }
-        }
-        @Override
-        public Object clone() {
-            return new BooleanOperator(this.getOperatorType());
         }
     }
     
@@ -182,11 +164,6 @@ public class UnaryOperators {
                     break;
             }
         }
-
-        @Override
-        public Object clone() {
-            return new ArithmeticOperator(this.getOperatorType());
-        }        
     }
     
     
@@ -219,10 +196,6 @@ public class UnaryOperators {
                     stack.push((Literal) left.getElements().get(i));
                     break;
             }
-        }
-        @Override
-        public Object clone() {
-            return new RandomListIndexOperator();
         }
     }
 }

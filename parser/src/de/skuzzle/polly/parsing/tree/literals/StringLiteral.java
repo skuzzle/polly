@@ -78,14 +78,4 @@ public class StringLiteral extends Literal {
         }
         throw new RuntimeException("Not compareable");
     }
-    
-    
-    
-    @Override
-    public Object clone() {
-        StringLiteral result = new StringLiteral(this.getToken());
-        result.setPosition(this.getPosition());
-        result.setType(this.getType());
-        return result;
-    }
 }

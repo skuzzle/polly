@@ -102,13 +102,4 @@ public abstract class Expression implements TreeElement {
     public void setPosition(Position position) {
         this.position = position;
     }
-    
-    
-    
-    /**
-     * Returns a deep copy of this expression and its child expressions.
-     * @return An identical expression.
-     */
-    @Override
-    public abstract Object clone();
 }

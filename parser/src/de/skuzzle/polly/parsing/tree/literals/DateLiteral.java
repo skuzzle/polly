@@ -53,7 +53,7 @@ public class DateLiteral extends Literal {
     
     
     @Override
-    public java.lang.String toString() {
+    public String toString() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy@HH:mm");
         return sdf.format(this.value);
     }
@@ -90,15 +90,5 @@ public class DateLiteral extends Literal {
             return this.value.compareTo(((DateLiteral) o).value);
         }
         throw new RuntimeException("Not compareable");
-    }
-    
-    
-    
-    @Override
-    public Object clone() {
-        DateLiteral result = new DateLiteral(this.getToken());
-        result.setPosition(this.getPosition());
-        result.setType(this.getType());
-        return result;
     }
 }

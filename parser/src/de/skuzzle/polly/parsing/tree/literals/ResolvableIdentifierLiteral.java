@@ -65,17 +65,4 @@ public class ResolvableIdentifierLiteral extends IdentifierLiteral {
         }
         throw new RuntimeException("Not compareable");
     }
-    
-    
-    
-    @Override
-    public Object clone() {
-        ResolvableIdentifierLiteral result = new ResolvableIdentifierLiteral(
-                this.getToken(), this.getType());
-        if (this.declaration != null) {
-            result.declaration = (VarDeclaration) this.declaration.clone();
-        }
-        result.setPosition(this.getPosition());
-        return result;
-    }
 }

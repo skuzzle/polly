@@ -28,15 +28,7 @@ public class TypeExpression extends Expression {
     public void collapse(Stack<Literal> stack) throws ExecutionException {
         // do nothing;
     }
-    
-    
-    
-    @Override
-    public Object clone() {
-        TypeExpression result = new TypeExpression(this.getType());
-        result.setPosition(this.getPosition());
-        return result;
-    }
+
     
     
     @Override

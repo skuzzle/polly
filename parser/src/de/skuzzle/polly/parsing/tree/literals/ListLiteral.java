@@ -177,18 +177,4 @@ public class ListLiteral extends Literal {
         }
         return true;
     }
-    
-    
-    
-    @Override
-    public Object clone() {
-    	java.util.List<Expression> expressions = new ArrayList<Expression>();
-        for (Expression e : this.elements) {
-            expressions.add((Expression) e.clone());
-        }
-        ListLiteral result = new ListLiteral(expressions);
-        result.setType(this.getType());
-        result.setPosition(this.getPosition());
-        return result;
-    }
 }

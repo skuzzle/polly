@@ -102,15 +102,4 @@ public class AssignmentExpression extends Expression {
         // be replaced by the declared expression during context check.
         // If this is aFunctionDeclaration: nothing to do here
     }
-
-
-
-    @Override
-    public Object clone() {
-        AssignmentExpression result = new AssignmentExpression(
-            (Expression)this.expression.clone(), 
-            this.getPosition(), 
-            (Declaration) this.declaration.clone());
-        return result;
-    }
 }

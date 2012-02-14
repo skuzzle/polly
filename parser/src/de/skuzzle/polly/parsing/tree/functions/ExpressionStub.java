@@ -27,11 +27,4 @@ public class ExpressionStub extends Expression {
 
     @Override
     public void collapse(Stack<Literal> stack) throws ExecutionException {}
-
-    @Override
-    public Object clone() {
-        // no need to clone
-        return this;
-    }
-
 }

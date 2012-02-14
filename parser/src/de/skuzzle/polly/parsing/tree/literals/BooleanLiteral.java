@@ -73,15 +73,4 @@ public class BooleanLiteral extends Literal {
     public int compareTo(Literal o) {
         return 0; 
     }
-    
-    
-    
-    @Override
-    public Object clone() {
-        BooleanLiteral result = new BooleanLiteral(this.getToken());
-        
-        result.setPosition(this.getPosition());
-        result.setType(this.getType());
-        return result;
-    }
 }

@@ -58,17 +58,6 @@ public class VarDeclaration extends Declaration {
     
     
     @Override
-    public Object clone() {
-        VarDeclaration result = new VarDeclaration(
-            this.getName(),  // TODO: clone name? Might be impossibru because its clone method calls clone of declaration
-            this.isGlobal(), this.isTemp());
-        result.setExpression((Expression) this.getExpression().clone());
-        return result;
-    }
-    
-    
-    
-    @Override
     public String toString() {
         return "(VAR) " + (this.isGlobal() ? "global " : "") + this.getType() + " " + 
             this.getName();

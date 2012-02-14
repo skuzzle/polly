@@ -143,21 +143,4 @@ public class VarOrCallExpression extends Expression {
 		// this is the same for vars and functions
 	    this.resolvedExpression.collapse(stack);
 	}
-
-	
-	
-	@Override
-	public Object clone() {
-		VarOrCallExpression result = new VarOrCallExpression(this.id);
-		result.resolvedDeclaration = this.resolvedDeclaration == null 
-		    ? null 
-	        : (Declaration) this.resolvedDeclaration.clone();
-		result.resolvedExpression = this.resolvedExpression == null 
-		    ? null 
-	        : (Expression) this.resolvedExpression.clone();
-		result.hardcoded = this.hardcoded;
-		result.actualParameters = this.actualParameters;
-		return result;
-	}
-
 }

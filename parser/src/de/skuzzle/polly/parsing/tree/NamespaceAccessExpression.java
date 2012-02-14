@@ -67,14 +67,4 @@ public class NamespaceAccessExpression extends Expression {
     public void collapse(Stack<Literal> stack) throws ExecutionException {
         this.rhs.collapse(stack);  
     }
-    
-    
-
-    @Override
-    public Object clone() {
-        NamespaceAccessExpression result = new NamespaceAccessExpression(
-            (Expression) this.namespace.clone(), 
-            (Expression)this.rhs.clone(), this.getPosition());
-        return result;
-    }
 }

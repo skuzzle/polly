@@ -60,17 +60,5 @@ public class TypeParameterExpression extends Expression {
 
 
     @Override
-    public void collapse(Stack<Literal> stack) throws ExecutionException {
-
-    }
-    
-    
-    @Override
-    public Object clone() {
-        TypeParameterExpression result = new TypeParameterExpression(
-                (ResolvableIdentifierLiteral) this.mainType.clone(), 
-                this.getPosition());
-        result.setType(this.getType());
-        return result;
-    }
+    public void collapse(Stack<Literal> stack) throws ExecutionException {}
 }

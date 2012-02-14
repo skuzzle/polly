@@ -57,11 +57,4 @@ public class CommandLiteral extends Literal {
         }
         throw new RuntimeException("Not compareable");
 	}
-
-	
-	
-	@Override
-	public Object clone() {
-		return new CommandLiteral(this.getToken());
-	}
 }

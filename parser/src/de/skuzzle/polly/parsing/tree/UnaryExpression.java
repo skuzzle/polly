@@ -100,25 +100,4 @@ public class UnaryExpression extends Expression {
         this.operand.collapse(stack);
         this.overload.collapse(stack);
     }
-    
-    
-    
-    /**
-     * Performs a deep copy of this expression. The resulting expression will have the
-     * same type and position and their operands are full copies of this expressions
-     * operands.
-     * 
-     * @return An identical UnaryExpression.
-     */
-    @Override
-    public Object clone() {
-        UnaryExpression ue =  new UnaryExpression(
-                this.operator, (Expression) this.operand.clone());
-        if (this.overload != null) {
-            ue.overload = (UnaryOperatorOverload) this.overload.clone();
-        }
-        ue.setType(this.getType());
-        ue.setPosition(this.getPosition());
-        return ue;
-    }
 }

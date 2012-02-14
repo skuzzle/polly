@@ -19,11 +19,4 @@ public class TypeDeclaration extends Declaration {
     public String toString() {
         return "(TYPE) " + this.getName();
     }
-    
-    
-    @Override
-    public Object clone() {
-        return new TypeDeclaration(this.getType());
-    }
-
 }

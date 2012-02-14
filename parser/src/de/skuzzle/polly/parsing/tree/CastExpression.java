@@ -52,18 +52,4 @@ public class CastExpression extends Expression {
         lit = lit.castTo(this.getType());
         stack.push(lit);
     }
-    
-    
-
-    @Override
-    public Object clone() {
-        CastExpression result = new CastExpression(
-            (Expression) this.expression.clone(), 
-            (ResolvableIdentifierLiteral) castOp.clone(), 
-            getPosition());
-        result.setType(this.getType());
-        result.setPosition(this.getPosition());
-        return result;
-    }
-
 }

@@ -20,12 +20,4 @@ public class ListLengthFunction extends FunctionDeclaration {
             new IdentifierLiteral(";_list"), new ListType(Type.ANY)));
         this.setExpression(new Functions.Length());
     }
-    
-    
-    
-    
-    @Override
-    public Object clone() {
-        return new ListLengthFunction();
-    }
 }

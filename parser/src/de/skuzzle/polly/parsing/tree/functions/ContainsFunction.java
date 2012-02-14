@@ -20,10 +20,4 @@ public class ContainsFunction extends FunctionDeclaration {
         
         this.setExpression(new Functions.Contains());
     }
-    
-    
-    
-    public Object clone() {
-        return new ContainsFunction();
-    };
 }
