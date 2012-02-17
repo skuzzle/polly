@@ -306,8 +306,7 @@ public class CommandManagerImpl implements CommandManager {
 
 
     
-    private Map<String, Types> getCommandConstants(String input) 
-            throws UnknownCommandException {
+    private Map<String, Types> getCommandConstants(String input) {
         try {
             InputScanner s = new InputScanner(input);
             Token id = s.lookAhead();
@@ -320,9 +319,7 @@ public class CommandManagerImpl implements CommandManager {
             logger.trace("Renewing command-specific constants");
             cmd.renewConstants();
             return cmd.getConstants();
-        } catch (ParseException e) {
-            return null;
-        } catch (UnsupportedEncodingException e) {
+        } catch (Exception e) {
             return null;
         }
     }
