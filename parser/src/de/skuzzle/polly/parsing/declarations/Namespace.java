@@ -14,6 +14,7 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.TokenType;
 import de.skuzzle.polly.parsing.Type;
 import de.skuzzle.polly.parsing.tree.literals.ResolvableIdentifierLiteral;
+import de.skuzzle.polly.parsing.tree.literals.StringLiteral;
 import de.skuzzle.polly.parsing.tree.operators.BinaryOperatorOverload;
 import de.skuzzle.polly.parsing.tree.operators.TernaryOperatorOverload;
 import de.skuzzle.polly.parsing.tree.operators.UnaryOperatorOverload;
@@ -217,8 +218,10 @@ public class Namespace {
         }
         
         if (decl == null) {
-            throw new ParseException("Unbekannter Bezeichner: '"
-                + id.getIdentifier() + "'", id.getPosition());
+            /*throw new ParseException("Unbekannter Bezeichner: '"
+                + id.getIdentifier() + "'", id.getPosition());*/
+            // ISSUE 0000085: If identifier doesnt exist, treat it as String
+            return new VarDeclaration(id, new StringLiteral(id.getIdentifier()));
         }
         return decl;
     }
