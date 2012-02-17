@@ -14,7 +14,7 @@ public class CopyTool {
             return (T) new ObjectInputStream(
                     new FastByteArrayInputStream(buffer)).readObject();
         } catch (Exception e) {
-            return null;
+            throw new RuntimeException("clone fail");
         }
     }
     

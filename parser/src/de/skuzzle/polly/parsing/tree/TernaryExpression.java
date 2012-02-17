@@ -142,4 +142,12 @@ public class TernaryExpression extends Expression {
         this.thirdOperand.collapse(stack);
         this.overload.collapse(stack);
     }
+    
+    
+    
+    @Override
+    public String toString() {
+        // TODO: string representation of ternary expression
+        return "TODO";
+    }
 }

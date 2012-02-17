@@ -121,4 +121,13 @@ public class BinaryExpression extends Expression {
         this.rightOperand.collapse(stack);
         this.overload.collapse(stack);
     }
+    
+    
+    
+    
+    @Override
+    public String toString() {
+        return this.leftOperand.toString() + 
+               this.operator.toString() + this.rightOperand.toString();
+    }
 }

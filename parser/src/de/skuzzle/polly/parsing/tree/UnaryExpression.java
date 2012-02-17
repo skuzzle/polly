@@ -100,4 +100,11 @@ public class UnaryExpression extends Expression {
         this.operand.collapse(stack);
         this.overload.collapse(stack);
     }
+    
+    
+    
+    @Override
+    public String toString() {
+        return this.operand.toString(); 
+    }
 }

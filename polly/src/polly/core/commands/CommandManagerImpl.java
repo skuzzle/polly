@@ -61,6 +61,7 @@ public class CommandManagerImpl implements CommandManager {
 	private PollyConfiguration config;
 	
 	
+	
 	public CommandManagerImpl(UserManagerImpl userManager, PollyConfiguration config) {
 	    this.userManager = userManager;
 	    this.config = config;
@@ -310,9 +311,7 @@ public class CommandManagerImpl implements CommandManager {
             logger.trace("Renewing command-specific constants");
             cmd.renewConstants();
             return cmd.getConstants();
-        } catch (ParseException e) {
-            return null;
-        } catch (UnsupportedEncodingException e) {
+        } catch (Exception e) {
             return null;
         }
     }

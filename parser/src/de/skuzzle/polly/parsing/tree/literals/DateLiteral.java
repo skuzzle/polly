@@ -36,7 +36,7 @@ public class DateLiteral extends Literal {
     
     
     
-    public java.util.Date getValue() {
+    public Date getValue() {
         return this.value;
     }
     
@@ -54,7 +54,7 @@ public class DateLiteral extends Literal {
     
     @Override
     public String toString() {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy@HH:mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
         return sdf.format(this.value);
     }
 

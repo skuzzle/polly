@@ -11,9 +11,10 @@ import java.util.Map.Entry;
 
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.Token;
 import de.skuzzle.polly.parsing.TokenType;
 import de.skuzzle.polly.parsing.Type;
-import de.skuzzle.polly.parsing.tree.literals.ResolvableIdentifierLiteral;
+import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
 import de.skuzzle.polly.parsing.tree.literals.StringLiteral;
 import de.skuzzle.polly.parsing.tree.operators.BinaryOperatorOverload;
 import de.skuzzle.polly.parsing.tree.operators.TernaryOperatorOverload;
@@ -32,7 +33,7 @@ public class Namespace {
     private Map<String, Declarations> namespaces;
     private String rootNS;
     private String currentNS;
-
+    private boolean hideLocals;
     
     
     public Namespace(String rootNamespace) {
@@ -44,6 +45,7 @@ public class Namespace {
         this.binaryOperators = new LinkedList<BinaryOperatorOverload>();
         this.ternaryOperators = new LinkedList<TernaryOperatorOverload>();
         this.namespaces = new HashMap<String, Declarations>();
+        this.hideLocals = false;
         this.create(rootNamespace);
     }
     
@@ -58,6 +60,7 @@ public class Namespace {
     	copy.binaryOperators = this.binaryOperators;
     	copy.ternaryOperators = this.ternaryOperators;
     	copy.namespaces = this.namespaces;
+    	copy.hideLocals = this.hideLocals;
     	return copy;
     }
     
@@ -77,6 +80,17 @@ public class Namespace {
     
     public void allowFunction() {
         this.forbidden = null;
+    }
+    
+    
+    
+    /*
+     * HACK: this hacks provides to hide local declarations during some phase of context
+     *       checking.
+     */
+    public boolean toggleHideLocals() {
+        this.hideLocals = !this.hideLocals;
+        return this.hideLocals;
     }
     
     
@@ -148,7 +162,8 @@ public class Namespace {
     
     public void add(Declaration declaration, String namespace) throws ParseException {
         if (this.reserved.tryResolve(
-                new ResolvableIdentifierLiteral(declaration.getName())) != null) {
+                new IdentifierLiteral(declaration.getName().getIdentifier()), 
+                false) != null) {
             throw new ParseException("'" + declaration.getName().getIdentifier() + 
                 "' ist ein reservierter Bezeichner", 
                 declaration.getName().getPosition());
@@ -203,7 +218,7 @@ public class Namespace {
     
     
     
-    public Declaration resolve(ResolvableIdentifierLiteral id) throws ParseException {
+    public Declaration resolve(IdentifierLiteral id) throws ParseException {
         if (this.forbidden != null && 
                 id.getIdentifier().equals(this.forbidden.getName().getIdentifier())) {
             throw new ParseException("Ungülter rekursiver Aufruf von " + id, 
@@ -212,23 +227,27 @@ public class Namespace {
         
         Declarations ns = this.namespaces.get(this.currentNS);
         
-        Declaration decl = ns.tryResolve(id);
+        Declaration decl = ns.tryResolve(id, this.hideLocals);
         if (decl == null) {
-            decl = this.global.tryResolve(id);
+            decl = this.global.tryResolve(id, this.hideLocals);
         }
         
         if (decl == null) {
-            /*throw new ParseException("Unbekannter Bezeichner: '"
-                + id.getIdentifier() + "'", id.getPosition());*/
-            // ISSUE 0000085: If identifier doesnt exist, treat it as String
-            return new VarDeclaration(id, new StringLiteral(id.getIdentifier()));
+            /* ISSUE 0000085: If identifier doesnt exist, treat it as String
+             * 
+             * throw new ParseException("Unbekannter Bezeichner: '"
+             *   + id.getIdentifier() + "'", id.getPosition());
+             */
+            
+            return new VarDeclaration(id, new StringLiteral(
+                new Token(TokenType.STRING, id.getPosition(), id.getIdentifier())));
         }
         return decl;
     }
     
     
     
-    public VarDeclaration resolveVar(ResolvableIdentifierLiteral id) 
+    /*public VarDeclaration resolveVar(ResolvableIdentifierLiteral id) 
             throws ParseException {
         
         Declaration decl = this.resolve(id);
@@ -250,13 +269,13 @@ public class Namespace {
                 + "' ist keine Funktion.", id.getPosition());
         }
         return (FunctionDeclaration) decl;
-    }
+    }*/
     
     
     
-    public TypeDeclaration resolveType(ResolvableIdentifierLiteral id) 
+    public TypeDeclaration resolveType(IdentifierLiteral id) 
             throws ParseException {
-        TypeDeclaration decl = (TypeDeclaration) this.reserved.tryResolve(id);
+        TypeDeclaration decl = (TypeDeclaration) this.reserved.tryResolve(id, false);
         if (decl != null) {
             return decl;
         }

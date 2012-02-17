@@ -12,13 +12,13 @@ import de.skuzzle.polly.parsing.declarations.Declaration;
 import de.skuzzle.polly.parsing.declarations.FunctionDeclaration;
 import de.skuzzle.polly.parsing.declarations.Namespace;
 import de.skuzzle.polly.parsing.declarations.VarDeclaration;
+import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
 import de.skuzzle.polly.parsing.tree.literals.Literal;
-import de.skuzzle.polly.parsing.tree.literals.ResolvableIdentifierLiteral;
 import de.skuzzle.polly.parsing.tree.literals.UserLiteral;
 
 public class VarOrCallExpression extends Expression {
 
-	private ResolvableIdentifierLiteral id;
+	private IdentifierLiteral id;
 	private Declaration resolvedDeclaration;
 	private Expression resolvedExpression;
 	private List<Expression> actualParameters;
@@ -26,14 +26,14 @@ public class VarOrCallExpression extends Expression {
 
 	private static final long serialVersionUID = 1L;
 
-	public VarOrCallExpression(ResolvableIdentifierLiteral id) {
+	public VarOrCallExpression(IdentifierLiteral id) {
 		super(id.getPosition());
 		this.id = id;
 	}
 	
 	
 	
-    public ResolvableIdentifierLiteral getId() {
+    public IdentifierLiteral getId() {
         return this.id;
     }
 	

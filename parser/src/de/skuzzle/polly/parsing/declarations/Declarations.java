@@ -13,7 +13,7 @@ import java.util.Map.Entry;
 
 
 
-import de.skuzzle.polly.parsing.tree.literals.ResolvableIdentifierLiteral;
+import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
 import de.skuzzle.polly.parsing.util.CopyTool;
 
 public class Declarations {
@@ -52,11 +52,16 @@ public class Declarations {
 
 
 
-    public Declaration tryResolve(ResolvableIdentifierLiteral id) {
+    public Declaration tryResolve(IdentifierLiteral id, boolean hideLocals) {
         for (Map<String, Declaration> level : this.levels) {
             Declaration decl = level.get(id.getIdentifier());
             if (decl != null) {
-                return CopyTool.copyOf(decl);
+                if (hideLocals && decl instanceof VarDeclaration && 
+                        !((VarDeclaration)decl).isLocal()) {
+                    return CopyTool.copyOf(decl);
+                } else if (!hideLocals) {
+                    return CopyTool.copyOf(decl);
+                }
             }
         }
 

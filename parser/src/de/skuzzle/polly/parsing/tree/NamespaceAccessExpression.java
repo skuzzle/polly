@@ -6,8 +6,8 @@ import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.declarations.Namespace;
+import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
 import de.skuzzle.polly.parsing.tree.literals.Literal;
-import de.skuzzle.polly.parsing.tree.literals.ResolvableIdentifierLiteral;
 import de.skuzzle.polly.parsing.tree.literals.UserLiteral;
 
 
@@ -40,21 +40,21 @@ public class NamespaceAccessExpression extends Expression {
         String ns = null;
         if (this.namespace instanceof UserLiteral) {
             ns = ((UserLiteral) this.namespace).getUserName();
-        } else if (this.namespace instanceof ResolvableIdentifierLiteral) {
-            ns = ((ResolvableIdentifierLiteral) this.namespace).getIdentifier();
+        } else if (this.namespace instanceof IdentifierLiteral) {
+            ns = ((IdentifierLiteral) this.namespace).getIdentifier();
         } else {
             throw new ParseException("Ungültiger Namespace Zugriff.", this.getPosition());
         }
         
         // Contextcheck the right hand expression with declarations of the selected 
         // namespace
-        // TODO: The selected namespace should not contain local variables 
-        //       because fuck you thats why
         try {
             context.switchTo(ns, this.getPosition());
+            context.toggleHideLocals();
             ((VarOrCallExpression) this.rhs).contextCheckForMember(context);
         } finally {
             context.switchToRoot();
+            context.toggleHideLocals();
         }
         
         this.setType(this.rhs.getType());
@@ -66,5 +66,12 @@ public class NamespaceAccessExpression extends Expression {
     @Override
     public void collapse(Stack<Literal> stack) throws ExecutionException {
         this.rhs.collapse(stack);  
+    }
+    
+    
+    
+    @Override
+    public String toString() {
+        return this.namespace.toString() + "." + this.rhs.toString();
     }
 }

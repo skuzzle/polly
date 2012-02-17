@@ -26,7 +26,6 @@ import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
 import de.skuzzle.polly.parsing.tree.literals.ListLiteral;
 import de.skuzzle.polly.parsing.tree.literals.Literal;
 import de.skuzzle.polly.parsing.tree.literals.NumberLiteral;
-import de.skuzzle.polly.parsing.tree.literals.ResolvableIdentifierLiteral;
 import de.skuzzle.polly.parsing.tree.literals.StringLiteral;
 import de.skuzzle.polly.parsing.tree.literals.TimespanLiteral;
 import de.skuzzle.polly.parsing.tree.literals.UserLiteral;
@@ -37,7 +36,7 @@ import de.skuzzle.polly.parsing.tree.literals.UserLiteral;
  * 
  * <pre>
  * input           -> command (\t signature)? EOS
- * signature       -> relation (\t relation)*
+ * signature       -> assignment (\t assignment)*
  * 
  * assignment      -> relation ('->' modifier definition)?
  * modifier        -> 'public'? 'temp'? 
@@ -314,12 +313,12 @@ public class InputParser extends AbstractParser<InputScanner> {
             Token subId = this.expect(TokenType.IDENTIFIER);
             this.expect(TokenType.GT);
             
-            return new TypeParameterExpression(new ResolvableIdentifierLiteral(typeId), 
-                    new ResolvableIdentifierLiteral(subId), 
+            return new TypeParameterExpression(new IdentifierLiteral(typeId), 
+                    new IdentifierLiteral(subId), 
                     this.scanner.spanFrom(typeId));
         }
         
-        return new TypeParameterExpression(new ResolvableIdentifierLiteral(typeId), 
+        return new TypeParameterExpression(new IdentifierLiteral(typeId), 
                 this.scanner.spanFrom(typeId));
     }
     
@@ -491,7 +490,7 @@ public class InputParser extends AbstractParser<InputScanner> {
             case IDENTIFIER:
                 this.scanner.consume();
                 
-                ResolvableIdentifierLiteral id = new ResolvableIdentifierLiteral(la);
+                IdentifierLiteral id = new IdentifierLiteral(la);
 
                 la = this.scanner.lookAhead();
                 if (la.getType() == TokenType.OPENBR) {
@@ -564,11 +563,11 @@ public class InputParser extends AbstractParser<InputScanner> {
                         this.leaveExpression();
                         
                         if (this.scanner.lookAhead().getType() == TokenType.EOS) {
-                            return new ResolvableIdentifierLiteral(tmp);
+                            return new IdentifierLiteral(tmp);
                         } else {
                             return new CastExpression(
                                 this.parse_literal(), 
-                                new ResolvableIdentifierLiteral(tmp), 
+                                new IdentifierLiteral(tmp), 
                                 this.scanner.spanFrom(la));
                         }
                     } else {

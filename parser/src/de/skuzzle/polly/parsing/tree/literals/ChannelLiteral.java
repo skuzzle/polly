@@ -28,7 +28,7 @@ public class ChannelLiteral extends Literal {
     
     
     @Override
-    public java.lang.String toString() {
+    public String toString() {
         return this.channelName;
     }
     

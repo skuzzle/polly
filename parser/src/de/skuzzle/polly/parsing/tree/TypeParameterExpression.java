@@ -9,21 +9,21 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.Type;
 import de.skuzzle.polly.parsing.declarations.Namespace;
 import de.skuzzle.polly.parsing.declarations.TypeDeclaration;
+import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
 import de.skuzzle.polly.parsing.tree.literals.Literal;
-import de.skuzzle.polly.parsing.tree.literals.ResolvableIdentifierLiteral;
 
 
 public class TypeParameterExpression extends Expression {
 
     private static final long serialVersionUID = 1L;
     
-    private ResolvableIdentifierLiteral mainType;
-    private ResolvableIdentifierLiteral subType;
+    private IdentifierLiteral mainType;
+    private IdentifierLiteral subType;
     
     
     
-    public TypeParameterExpression(ResolvableIdentifierLiteral mainType,
-            ResolvableIdentifierLiteral subType, Position position) {
+    public TypeParameterExpression(IdentifierLiteral mainType,
+            IdentifierLiteral subType, Position position) {
         super(position);
         this.mainType = mainType;
         this.subType = subType;
@@ -31,7 +31,7 @@ public class TypeParameterExpression extends Expression {
     
     
     
-    public TypeParameterExpression(ResolvableIdentifierLiteral mainType, 
+    public TypeParameterExpression(IdentifierLiteral mainType, 
             Position position) {
         super(position);
         this.mainType = mainType;
