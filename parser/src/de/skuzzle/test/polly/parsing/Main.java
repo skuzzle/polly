@@ -19,7 +19,7 @@ public class Main {
         Prepare.operators(context);
         
         InputParser p = new InputParser();
-        Root r = p.parse(":foo 5->x 10*x->f(Zahl x) affe.f(math.pi)");
+        Root r = p.parse(":foo 5->x 10*x->f(Zahl x) .f(math.pi)");
         r.contextCheck(context);
         r.collapse(new Stack<Literal>());
         

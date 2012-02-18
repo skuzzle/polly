@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,6 +19,8 @@ import polly.events.EventProvider;
 import polly.util.CaseInsensitiveStringKeyMap;
 
 import de.skuzzle.polly.parsing.Prepare;
+import de.skuzzle.polly.parsing.declarations.Declaration;
+import de.skuzzle.polly.parsing.declarations.Declarations;
 import de.skuzzle.polly.parsing.declarations.Namespace;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.UserManager;
@@ -100,16 +104,11 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
 
     @Override
     public void deleteDeclaration(User user, String id) {
-    	// TODO
-        /*try {
-            Declarations d = this.namespaces.get(user.getName());
-            if (d == null) {
-                return;
-            }
-            d.getDeclarations().remove(id);
-        } catch (Exception e) {
-            logger.error("Accessing non-existant namepsace " + user.getName());
-        }*/
+        Declarations d = this.namespace.getNamespaceFor(user.getName());
+        if (d == null) {
+            return;
+        }
+        d.getDeclarations().remove(id);
     }
     
     
@@ -123,8 +122,17 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     @Override
     public synchronized Set<String> getDeclaredIdentifiers(User user) {
-    	// TODO
-    	return Collections.singleton("FOO");
+        Declarations d = this.namespace.getNamespaceFor(user.getName());
+        if (d == null) {
+            return Collections.emptySet();
+        }
+        
+        Set<Declaration> decls = d.getDeclarations();
+        Set<String> result = new HashSet<String>();
+        for (Declaration decl : decls) {
+            result.add(decl.toString());
+        }
+        return result;
     }
     
     

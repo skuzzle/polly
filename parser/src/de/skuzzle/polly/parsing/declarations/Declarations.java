@@ -6,18 +6,24 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 
 
 import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
 import de.skuzzle.polly.parsing.util.CopyTool;
 
-public class Declarations {
-
+public class Declarations implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
+    
     private LinkedList<Map<String, Declaration>> levels;
 
 
@@ -27,7 +33,21 @@ public class Declarations {
         this.enter();
     }
 
+    
+    
+    public Set<Declaration> getDeclarations() {
+        Set<Declaration> result = new HashSet<Declaration>();
+        
+        // iterate descending, so higher level declarations get added first
+        Iterator<Map<String, Declaration>> it = this.levels.descendingIterator();
+        while (it.hasNext()) {
+            Map<String, Declaration> level = it.next();
+            result.addAll(level.values());
+        }
+        return result;
+    }
 
+    
 
     public void enter() {
         this.levels.addFirst(new HashMap<String, Declaration>());
@@ -113,7 +133,7 @@ public class Declarations {
     @Override
     public Object clone() {
         Declarations result = new Declarations();
-        result.levels = new LinkedList<Map<String,Declaration>>(this.levels);
+        result.levels = new LinkedList<Map<String, Declaration>>(this.levels);
         return result;
     }
     

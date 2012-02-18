@@ -179,7 +179,7 @@ public class CommandManagerImpl implements CommandManager {
             Namespace copy = ns.copyFor(executor.getName());
             copy.enter();
             
-            createContext(channel, executor, ircManager, constants, copy);
+            this.createContext(channel, executor, ircManager, constants, copy);
             
             root = this.parseMessage(input, copy);
         } catch (ParseException e) {

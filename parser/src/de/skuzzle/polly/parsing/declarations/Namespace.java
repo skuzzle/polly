@@ -60,6 +60,9 @@ public class Namespace {
     	copy.binaryOperators = this.binaryOperators;
     	copy.ternaryOperators = this.ternaryOperators;
     	copy.namespaces = this.namespaces;
+    	if (!copy.namespaces.containsKey(rootNamespace)) {
+    	    copy.namespaces.put(rootNamespace, new Declarations());
+    	}
     	copy.hideLocals = this.hideLocals;
     	return copy;
     }
@@ -244,32 +247,6 @@ public class Namespace {
         }
         return decl;
     }
-    
-    
-    
-    /*public VarDeclaration resolveVar(ResolvableIdentifierLiteral id) 
-            throws ParseException {
-        
-        Declaration decl = this.resolve(id);
-        if (!(decl instanceof VarDeclaration)) {
-            throw new ParseException("'" + decl.getName()
-                + "' ist keine Variable.", id.getPosition());
-        }
-        return (VarDeclaration) decl;
-    }
-
-
-
-    public FunctionDeclaration resolveFunction(ResolvableIdentifierLiteral id) 
-    		throws ParseException {
-        
-        Declaration decl = this.resolve(id);
-        if (!(decl instanceof FunctionDeclaration)) {
-            throw new ParseException("'" + decl.getName()
-                + "' ist keine Funktion.", id.getPosition());
-        }
-        return (FunctionDeclaration) decl;
-    }*/
     
     
     
