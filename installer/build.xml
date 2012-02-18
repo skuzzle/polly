@@ -180,7 +180,7 @@
     <target name="eclipse" depends="prepare">
         <taskdef name="eclipse" classname="prantl.ant.eclipse.EclipseTask" />
         <eclipse mode="java">
-            <project name="${ant.project.name}"/>
+            <project name="installer"/>
             <classpath>
                 <source path="/polly.process" />
                 <source path="${src.dir}" />

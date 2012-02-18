@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project name="de.skuzzle.polly.sdk" basedir="." default="dist">
+<project name="polly.sdk" basedir="." default="dist">
 
     <property name="version.num" value="0.7.0"/>
 
