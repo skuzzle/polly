@@ -53,7 +53,7 @@ public class Namespace {
     }
     
     
-    private static int tempVarLifeTime = 60000 * 5; // 5 min
+    private static int tempVarLifeTime = 600 * 5; // 5 min
     private final static Timer TEMP_VAR_KILLER = new Timer("TEMP_VAR_KILLER", true);
     private final static boolean IGNORE_UNKNOWN_IDENTIFIERS = true;
     private final static String GLOBAL_NAMESPACE = "~global";
@@ -215,7 +215,6 @@ public class Namespace {
     
     
         if (declaration.isGlobal()) {
-            System.out.println("added global");
             this.global.add(declaration, true);
             
             if (declaration.isTemp()) {
