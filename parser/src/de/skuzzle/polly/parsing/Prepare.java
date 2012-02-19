@@ -80,6 +80,21 @@ public final class Prepare {
         dest.add(new BinaryOperators.RelationalListOperator(TokenType.EGT));
         
         
+        dest.add(new BinaryOperators.ListScalarOperator(TokenType.ADD));
+        dest.add(new BinaryOperators.ListScalarOperator(TokenType.SUB));
+        dest.add(new BinaryOperators.ListScalarOperator(TokenType.MUL));
+        dest.add(new BinaryOperators.ListScalarOperator(TokenType.DIV));
+        dest.add(new BinaryOperators.ListScalarOperator(TokenType.MOD));
+        dest.add(new BinaryOperators.ListScalarOperator(TokenType.BOOLEAN_AND));
+        dest.add(new BinaryOperators.ListScalarOperator(TokenType.BOOLEAN_OR));
+        dest.add(new BinaryOperators.ListScalarOperator(TokenType.INT_AND));
+        dest.add(new BinaryOperators.ListScalarOperator(TokenType.INT_OR));
+        dest.add(new BinaryOperators.ListScalarOperator(TokenType.INT_XOR));
+        dest.add(new BinaryOperators.ListScalarOperator(TokenType.URIGHT_SHIFT));
+        dest.add(new BinaryOperators.ListScalarOperator(TokenType.RIGHT_SHIFT));
+        dest.add(new BinaryOperators.ListScalarOperator(TokenType.LEFT_SHIFT));
+        
+        
         dest.add(new UnaryOperators.ArithmeticOperator(TokenType.SUB));
         dest.add(new UnaryOperators.BooleanOperator(TokenType.EXCLAMATION));
         dest.add(new UnaryOperators.StringOperator(TokenType.EXCLAMATION));

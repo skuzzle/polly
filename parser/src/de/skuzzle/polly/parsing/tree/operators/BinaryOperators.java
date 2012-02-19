@@ -10,9 +10,11 @@ import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.ListType;
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.Token;
 import de.skuzzle.polly.parsing.TokenType;
 import de.skuzzle.polly.parsing.Type;
 import de.skuzzle.polly.parsing.declarations.Namespace;
+import de.skuzzle.polly.parsing.tree.BinaryExpression;
 import de.skuzzle.polly.parsing.tree.Expression;
 import de.skuzzle.polly.parsing.tree.literals.BooleanLiteral;
 import de.skuzzle.polly.parsing.tree.literals.DateLiteral;
@@ -235,6 +237,51 @@ public class BinaryOperators {
             return numerator;
         }
     }
+    
+    
+    
+    public static class ListScalarOperator extends BinaryOperatorOverload {
+        
+        private static final long serialVersionUID = 1L;
+        private ListLiteral resultList;
+        
+        public ListScalarOperator(TokenType operator) {
+            super(operator, new ListType(Type.ANY), Type.ANY, Type.ANY);
+        }
+        
+        
+        @Override
+        public void contextCheck(Namespace context, Expression left,
+                Expression right) throws ParseException {
+
+            super.contextCheck(context, left, right);
+
+            if (!(left instanceof ListLiteral)) {
+                throw new ParseException(
+                    "Diese Operation ist leider (noch) nicht möglich", 
+                    right.getPosition());
+            }
+            
+            ListLiteral list = (ListLiteral) left;
+            this.resultList = new ListLiteral(new ArrayList<Expression>());
+            Token op = new Token(this.getOperatorType(), Position.EMPTY);
+            for (Expression e : list.getElements()) {
+                Expression bin = new BinaryExpression(e, op, right);
+                bin = bin.contextCheck(context);
+                
+                this.resultList.getElements().add(bin);
+            }
+            this.setReturnType(this.resultList.getType());
+        }
+        
+        
+        
+        @Override
+        public void collapse(Stack<Literal> stack) throws ExecutionException {
+            this.resultList.collapse(stack);
+        }
+    }
+    
     
     
     /**

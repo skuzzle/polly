@@ -2,6 +2,7 @@ package de.skuzzle.polly.parsing.tree.literals;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Stack;
 
 import de.skuzzle.polly.parsing.ExecutionException;
@@ -21,7 +22,7 @@ public class ListLiteral extends Literal {
 
     private static final long serialVersionUID = 1L;
     
-    private java.util.List<Expression> elements;
+    private List<Expression> elements;
     
     public ListLiteral(Token token) {
         super(token, new ListType(Type.UNKNOWN));
@@ -30,21 +31,21 @@ public class ListLiteral extends Literal {
     
     
     
-    public ListLiteral(java.util.List<Expression> expressions) {
+    public ListLiteral(List<Expression> expressions) {
         super(new Token(TokenType.LIST, Position.EMPTY), new ListType(Type.UNKNOWN));
         this.elements = expressions;
     }
     
     
     
-    public ListLiteral(java.util.List<Expression> expressions, Type subType) {
+    public ListLiteral(List<Expression> expressions, Type subType) {
         this(expressions);
         this.setType(new ListType(subType));
     }
     
     
     
-    public java.util.List<Expression> getElements() {
+    public List<Expression> getElements() {
         return this.elements;
     }
 
