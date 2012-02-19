@@ -72,7 +72,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
                 new CaseInsensitiveStringKeyMap<User>());
         this.declarationCachePath = new File(declarationCache);
         
-        this.namespace = new Namespace("");
+        this.namespace = new Namespace();
         try {
 			this.namespace.restore(new File(declarationCache));
 		} catch (IOException e) {
@@ -86,17 +86,6 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     public Namespace getNamespace() {
         return this.namespace;
-    }
-    
-    
-    
-    private void storeDeclarations() {
-        logger.debug("Storing declaration cache to disk.");
-        try {
-			this.namespace.store(this.declarationCachePath);
-		} catch (IOException e) {
-			logger.error("Error while storing namespaces",e);
-		}
     }
     
     
@@ -457,7 +446,12 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
 
     @Override
     protected void actualDispose() throws DisposingException {
-        this.storeDeclarations();
+        logger.debug("Storing declaration cache to disk.");
+        try {
+            this.namespace.store(this.declarationCachePath);
+        } catch (IOException e) {
+            logger.error("Error while storing namespaces",e);
+        }
         this.persistence = null;
         this.onlineCache.clear();
         this.onlineCache = null;
@@ -470,6 +464,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     public User createUser(String name, String password, int userLevel) {
         return new polly.data.User(name, password, userLevel);
     }
+    
     
     
     @Override

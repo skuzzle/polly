@@ -31,7 +31,8 @@ public class Namespace {
     private final static FileFilter FILE_FILTER = new FileFilter() {
         @Override
         public boolean accept(File pathname) {
-            return pathname.getName().toLowerCase().endsWith(".declaration");
+            String n = pathname.getName().toLowerCase();
+            return !n.startsWith(GLOBAL_NAMESPACE) && n.endsWith(".declaration");
         }
     };
     
@@ -55,7 +56,7 @@ public class Namespace {
     private static int tempVarLifeTime = 60000 * 5; // 5 min
     private final static Timer TEMP_VAR_KILLER = new Timer("TEMP_VAR_KILLER", true);
     private final static boolean IGNORE_UNKNOWN_IDENTIFIERS = true;
-    
+    private final static String GLOBAL_NAMESPACE = "~global";
     
     
     private class TempVarKillTask extends TimerTask {
@@ -89,22 +90,21 @@ public class Namespace {
     
     
     
-    public Namespace(String rootNamespace) {
-        this.currentNS = rootNamespace;
+    public Namespace() {
         this.global = new Declarations();
         this.reserved = new Declarations();
         this.unaryOperators = new LinkedList<UnaryOperatorOverload>();
         this.binaryOperators = new LinkedList<BinaryOperatorOverload>();
         this.ternaryOperators = new LinkedList<TernaryOperatorOverload>();
         this.namespaces = new HashMap<String, Declarations>();
-        this.namespaces.put("~global", this.global);
-        this.create(rootNamespace);
+        this.namespaces.put(GLOBAL_NAMESPACE, this.global);
     }
     
     
     
     public synchronized Namespace copyFor(String rootNamespace) {
-    	Namespace copy = new Namespace(rootNamespace);
+    	Namespace copy = new Namespace();
+    	copy.currentNS = rootNamespace;
     	copy.global = this.global;
     	copy.reserved = this.reserved;
     	copy.forbidden = this.forbidden;
@@ -367,7 +367,7 @@ public class Namespace {
         if (!directory.isDirectory()) {
             throw new IOException(directory + " is no directory");
         }
-        this.global.store(new File(directory, "~global.declaration"));
+        this.global.store(new File(directory, GLOBAL_NAMESPACE + ".declaration"));
         for (Entry<String, Declarations> ns : this.namespaces.entrySet()) {
             ns.getValue().store(new File(directory, ns.getKey() + ".declaration"));
         }
@@ -379,7 +379,9 @@ public class Namespace {
         if (!directory.isDirectory()) {
             throw new IOException(directory + " is no directory");
         }
-        this.global = Declarations.restore(new File(directory, "~global.declaration"));
+        this.global = Declarations.restore(
+                new File(directory, GLOBAL_NAMESPACE + "declaration"));
+        this.namespaces.put(GLOBAL_NAMESPACE, this.global);
         
         File[] files = directory.listFiles(FILE_FILTER);
         
