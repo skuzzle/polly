@@ -117,7 +117,7 @@
             </classpath>
         </manifestclasspath>
     
-        <jar destfile="${dist.dir}/${ant.project.name}.jar">
+        <jar destfile="${dist.dir}/de.skuzzle.polly.sdk.jar">
             <manifest>
                 <attribute name="Main-Class"             value="${mainclass}"/>
                 <attribute name="Implementation-Title"   value="${title}"/>
