@@ -19,12 +19,12 @@ public class Type implements Serializable {
     public final static Type CHANNEL = new Type(new IdentifierLiteral("Channel"), false);
     public final static Type COMMAND = new Type(new IdentifierLiteral("Command"), false);
     public final static Type STRING = new Type(new IdentifierLiteral("String"), true);
-    public final static Type NUMBER = new Type(new IdentifierLiteral("Zahl"), true);
-    public final static Type USER = new Type(new IdentifierLiteral("Benutzer"), false);
+    public final static Type NUMBER = new Type(new IdentifierLiteral("Number"), true);
+    public final static Type USER = new Type(new IdentifierLiteral("User"), false);
     public final static Type BOOLEAN = new Type(new IdentifierLiteral("Boolean"), false);
     public final static Type DATE = new Type(new IdentifierLiteral("Date"), true);
     public final static Type TIMESPAN = new Type(new IdentifierLiteral("Timespan"), false);
-    public final static Type LIST = new Type(new IdentifierLiteral("Liste"), true);
+    public final static Type LIST = new Type(new IdentifierLiteral("List"), true);
     public final static Type ANY = new Type(new IdentifierLiteral("Any"), true);
     public final static Type EMPTY_LIST = new Type(new IdentifierLiteral("Leere Liste"), true);
     public final static Type UNKNOWN = new Type(new IdentifierLiteral("UNKNOWN"), false);

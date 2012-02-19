@@ -399,7 +399,7 @@ public class Namespace {
         StringBuilder result = new StringBuilder();
         result.append("RESERVED\n");
         result.append(this.reserved.toString());
-        result.append("GLOABL\n");
+        result.append("GLOBAL\n");
         result.append(this.global.toString());
         result.append("NAMESPACES\n");
         for (Entry<String, Declarations> ns : this.namespaces.entrySet()) {

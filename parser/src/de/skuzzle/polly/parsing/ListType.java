@@ -15,7 +15,7 @@ public class ListType extends Type {
     
 
     public ListType(Type primitive) {
-        super(new IdentifierLiteral("Liste(von " + primitive.toString() + ")"), false);
+        super(new IdentifierLiteral("List(of " + primitive.toString() + ")"), false);
         this.subType = primitive;
     }
     
