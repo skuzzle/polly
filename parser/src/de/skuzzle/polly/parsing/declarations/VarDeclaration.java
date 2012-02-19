@@ -57,6 +57,11 @@ public class VarDeclaration extends Declaration {
     
     
     
+    public void setLocal(boolean local) {
+        this.local = local;
+    }
+    
+    
     @Override
     public String toString() {
         return "(VAR) " + (this.isGlobal() ? "global " : "") + this.getType() + " " + 

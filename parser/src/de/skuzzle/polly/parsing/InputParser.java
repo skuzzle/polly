@@ -233,25 +233,20 @@ public class InputParser extends AbstractParser<InputScanner> {
     
     protected Declaration parse_definition() throws ParseException {
         boolean isPublic = false;
-        if (scanner.lookAhead().matches(TokenType.PUBLIC)) {
-            scanner.consume();
+        if (scanner.match(TokenType.PUBLIC)) {
             this.expect(TokenType.SEPERATOR);
             isPublic = true;
         }
         
         boolean isTemp = false;
-        if (scanner.lookAhead().matches(TokenType.TEMP)) {
-            scanner.consume();
+        if (scanner.match(TokenType.TEMP)) {
             this.expect(TokenType.SEPERATOR);
             isTemp = true;
         }
         
         Token id = this.expect(TokenType.IDENTIFIER);
         
-        Token la = this.scanner.lookAhead();
-        if (la.matches(TokenType.OPENBR)) {
-            this.scanner.consume();
-
+        if (this.scanner.match(TokenType.OPENBR)) {
             FunctionDeclaration decl = new FunctionDeclaration(new IdentifierLiteral(id), 
                     isPublic, isTemp);
             this.parse_func_definition(decl.getFormalParameters());
@@ -273,33 +268,22 @@ public class InputParser extends AbstractParser<InputScanner> {
         if (this.scanner.lookAhead().getType() == TokenType.CLOSEDBR) {
             return;
         }
-        
-        Expression type = this.parse_type_definition();
-        this.expect(TokenType.SEPERATOR);
-        Token paramName = this.expect(TokenType.IDENTIFIER);
-        
-        VarDeclaration decl = new VarDeclaration(
-            new IdentifierLiteral(paramName.getStringValue()), false, false);
-        decl.setExpression(type);
-        parameters.add(decl);
-        
-        Token la = this.scanner.lookAhead();
-        while (la.matches(TokenType.COMMA)) {
-            this.scanner.consume();
-            this.allowWhiteSpace();
-            
-            type = this.parse_type_definition();
+        int i = 0;
+        do {
+            if (i++ != 0) {
+                // HACK: in second iteration, a whitespace is allowed here
+                this.allowWhiteSpace();
+            }
+            Expression type = this.parse_type_definition();
             this.expect(TokenType.SEPERATOR);
-            paramName = this.expect(TokenType.IDENTIFIER);
+            Token paramName = this.expect(TokenType.IDENTIFIER);
             
-            decl = new VarDeclaration(
+            VarDeclaration decl = new VarDeclaration(
                 new IdentifierLiteral(paramName.getStringValue()), false, false);
             decl.setExpression(type);
-            
             parameters.add(decl);
-            
-            la = this.scanner.lookAhead();
-        }
+        } while (this.scanner.match(TokenType.COMMA));
+        
     }
     
     

@@ -25,17 +25,18 @@ public class Declarations implements Serializable {
     private static final long serialVersionUID = 1L;
     
     private LinkedList<Map<String, Declaration>> levels;
-
+    private Map<String, Declaration> rootLevel;
 
 
     public Declarations() {
         this.levels = new LinkedList<Map<String, Declaration>>();
         this.enter();
+        this.rootLevel = this.levels.getFirst();
     }
 
     
     
-    public Set<Declaration> getDeclarations() {
+    public synchronized Set<Declaration> getDeclarations() {
         Set<Declaration> result = new HashSet<Declaration>();
         
         // iterate descending, so higher level declarations get added first
@@ -49,39 +50,60 @@ public class Declarations implements Serializable {
 
     
 
-    public void enter() {
+    public synchronized void enter() {
         this.levels.addFirst(new HashMap<String, Declaration>());
     }
 
 
 
-    public void leave() {
+    public synchronized void leave() {
         this.levels.removeFirst();
     }
 
 
 
-    public void add(Declaration declaration) {
+    private synchronized void add(Map<String, Declaration> level, 
+            Declaration declaration) {
         if (declaration.getType() == null) {
             throw new IllegalStateException(
                 "Can not store Declaration with no type: " + declaration);
         }
-        Map<String, Declaration> level = this.levels.getFirst();
         level.put(declaration.getName().getIdentifier(), declaration);
+    }
+    
+    
+    
+    public void add(Declaration declaration, boolean root) {
+        if (root) {
+            this.add(this.rootLevel, declaration);
+        } else {
+            this.add(this.levels.getFirst(), declaration);
+        }
+    }
+    
+    
+    
+    public void add(Declaration declaration) {
+        this.add(this.levels.getFirst(), declaration);
     }
 
 
 
-    public Declaration tryResolve(IdentifierLiteral id, boolean hideLocals) {
+    public synchronized Declaration tryResolve(IdentifierLiteral id, boolean root) {
+        if (root) {
+            return this.tryResolveRoot(id);
+        }
+        
         for (Map<String, Declaration> level : this.levels) {
-            Declaration decl = level.get(id.getIdentifier());
+            Declaration decl = this.tryResolve(level, id);
             if (decl != null) {
-                if (hideLocals && decl instanceof VarDeclaration && 
+                /*if (hideLocals && decl instanceof VarDeclaration && 
                         !((VarDeclaration)decl).isLocal()) {
                     return CopyTool.copyOf(decl);
                 } else if (!hideLocals) {
                     return CopyTool.copyOf(decl);
-                }
+                }*/
+                return CopyTool.copyOf(decl);
             }
         }
 
@@ -90,7 +112,21 @@ public class Declarations implements Serializable {
     
     
     
-    public void remove(String name) {
+    public Declaration tryResolveRoot(IdentifierLiteral id) {
+        return this.tryResolve(this.rootLevel, id);
+    }
+    
+    
+    
+    private synchronized Declaration tryResolve(Map<String, Declaration> level, 
+            IdentifierLiteral id) {
+        Declaration decl = level.get(id.getIdentifier());
+        return decl;
+    }
+    
+    
+    
+    public synchronized void remove(String name) {
         for (Map<String, Declaration> level : this.levels) {
             level.remove(name);
         }

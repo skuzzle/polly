@@ -29,6 +29,7 @@ public class VarOrCallExpression extends Expression {
 	public VarOrCallExpression(IdentifierLiteral id) {
 		super(id.getPosition());
 		this.id = id;
+		this.actualParameters = new ArrayList<Expression>();
 	}
 	
 	
@@ -40,11 +41,6 @@ public class VarOrCallExpression extends Expression {
 	
 	
 	public List<Expression> getActualParameters() {
-	    // lazy init, becaus this might aswell be a Var-access where no
-	    // parameters are needed.
-	    if (this.actualParameters == null) {
-	        this.actualParameters = new ArrayList<Expression>();
-	    }
         return this.actualParameters;
     }
 
@@ -52,9 +48,16 @@ public class VarOrCallExpression extends Expression {
 	
 	@Override
 	public Expression contextCheck(Namespace context) throws ParseException {
+	    
+	    /*
+	     * This method is only called for var access' or function calls that are
+	     * not preceded by a namespace access. That means, the identifier can be resolved
+	     * within the current namespace
+	     */
+	    
 	    // Precede this call with a namespace access if this call does not
 	    // reference a local declaration.
-	    this.contextCheckForMember(context);
+	    this.contextCheckForMember(context, context, false);
 	    if (!((VarDeclaration)this.resolvedDeclaration).isLocal()) {
     		Expression result = new NamespaceAccessExpression(new UserLiteral(
     				context.getRootNS()), this, this.getPosition());
@@ -67,9 +70,21 @@ public class VarOrCallExpression extends Expression {
 	
 	
 	
-	public void contextCheckForMember(Namespace context) 
+	/**
+	 * 
+	 * @param context This is the namespace in which the declaration for this var or call
+	 *             will be resolved.
+	 * @param current This is the namespace used for contextchecking.
+	 * @param root Determines whether the declaration is only resolved in the root 
+	 *             declaration level of the current namespace. This is the case when
+	 *             accessing a var of function from a different namespace
+	 * @throws ParseException
+	 */
+	public void contextCheckForMember(Namespace context, Namespace current, boolean root) 
 	            throws ParseException {
-	    this.resolvedDeclaration = context.resolve(this.id);
+	    
+	    
+	    this.resolvedDeclaration = context.resolve(this.id, root);
 	    
 	    if (this.resolvedDeclaration instanceof FunctionDeclaration) {
 	        FunctionDeclaration decl = (FunctionDeclaration) this.resolvedDeclaration;
@@ -80,13 +95,13 @@ public class VarOrCallExpression extends Expression {
 	                    decl.getFormalParameters().size(), this.getPosition());
 	        }
 
-	        context.enter();
+	        current.enter();
 	        try {
 	            for (int i = 0; i < this.actualParameters.size(); ++i) {
 	                Expression actual = this.actualParameters.get(i);
 	                VarDeclaration formal = decl.getFormalParameters().get(i);
 	                
-	                actual = actual.contextCheck(context);
+	                actual = actual.contextCheck(current);
 	                this.actualParameters.set(i, actual);
 	                
 	                if (!formal.getType().check(actual.getType())) {
@@ -98,7 +113,7 @@ public class VarOrCallExpression extends Expression {
 	                // the expression of the actual parameter
 	                VarDeclaration act = new VarDeclaration(
 	                            formal.getName(), actual, true);
-	                context.add(act);
+	                current.addNormal(act);
 	            }
 	            
 	            this.hardcoded = decl.isHardcoded();
@@ -106,10 +121,10 @@ public class VarOrCallExpression extends Expression {
 	            // For non hardcoded functions, this will cause all parameters in the
 	            // expression to be replaced by their actual expression.
 	            // hardcoded functions will do nothing
-	            this.resolvedExpression = decl.getExpression().contextCheck(context);
+	            this.resolvedExpression = decl.getExpression().contextCheck(current);
 	        } finally {
 	            // make sure to leave the declarations in a clean state
-	            context.leave();
+	            current.leave();
 	        }
 	        
 	        this.setType(this.resolvedExpression.getType());

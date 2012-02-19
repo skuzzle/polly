@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -121,8 +120,8 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
      */
     
     @Override
-    public synchronized Set<String> getDeclaredIdentifiers(User user) {
-        Declarations d = this.namespace.getNamespaceFor(user.getName());
+    public synchronized Set<String> getDeclaredIdentifiers(String namespace) {
+        Declarations d = this.namespace.getNamespaceFor(namespace);
         if (d == null) {
             return Collections.emptySet();
         }

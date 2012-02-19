@@ -169,14 +169,14 @@ public class CommandManagerImpl implements CommandManager {
         Stopwatch watch = new MillisecondStopwatch();
         watch.start();
         
-        Namespace namespace = null;        
+        Namespace copy = null;
         Root root = null;
         try {
             Map<String, Types> constants = this.getCommandConstants(input);
             
             // get namespace and create copy for executor
             Namespace ns = this.userManager.getNamespace();
-            Namespace copy = ns.copyFor(executor.getName());
+            copy = ns.copyFor(executor.getName());
             copy.enter();
             
             this.createContext(channel, executor, ircManager, constants, copy);
@@ -187,8 +187,8 @@ public class CommandManagerImpl implements CommandManager {
             //       available in the sdk
             throw new CommandException(e.getMessage(), e);
         } finally {
-        	if (namespace != null) {
-				namespace.leave();
+        	if (copy != null) {
+				copy.leave();
         	}
         }
         
@@ -259,14 +259,14 @@ public class CommandManagerImpl implements CommandManager {
         for (String u : ircManager.getChannelUser(channel)) {
             users.add(new UserLiteral(u));
         }
-        d.add(new VarDeclaration(new IdentifierLiteral("me"), 
-        		new UserLiteral(user.getCurrentNickName())));
-        d.add(new VarDeclaration(new IdentifierLiteral("here"), 
-        		new ChannelLiteral(channel)));
-        d.add(new VarDeclaration(new IdentifierLiteral("all"), 
-        		new ListLiteral(channels, Type.CHANNEL)));
-        d.add(new VarDeclaration(new IdentifierLiteral("each"), 
-        		new ListLiteral(users, Type.USER)));
+        d.addNormal(new VarDeclaration(new IdentifierLiteral("me"), 
+        		new UserLiteral(user.getCurrentNickName()), true));
+        d.addNormal(new VarDeclaration(new IdentifierLiteral("here"), 
+        		new ChannelLiteral(channel), true));
+        d.addNormal(new VarDeclaration(new IdentifierLiteral("all"), 
+        		new ListLiteral(channels, Type.CHANNEL), true));
+        d.addNormal(new VarDeclaration(new IdentifierLiteral("each"), 
+        		new ListLiteral(users, Type.USER), true));
         
         logger.trace("    me   := " + user.getCurrentNickName());
         logger.trace("    here := " + channel);
@@ -277,7 +277,7 @@ public class CommandManagerImpl implements CommandManager {
             logger.trace("Command-specific constant names:");
             for (Entry<String, Types> e : constants.entrySet()) {
                 Literal l = TypeMapper.typesToLiteral(e.getValue());
-                d.add(new VarDeclaration(new IdentifierLiteral(e.getKey()), l));
+                d.addNormal(new VarDeclaration(new IdentifierLiteral(e.getKey()), l));
                 logger.trace("    " + e.getKey() + " := " + l.toString());
             }
         }

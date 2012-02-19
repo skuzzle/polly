@@ -7,7 +7,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TimerTask;
 import java.util.Map.Entry;
+import java.util.Timer;
 
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Position;
@@ -24,6 +26,57 @@ import de.skuzzle.polly.parsing.util.CopyTool;
 
 public class Namespace {
 
+    
+    
+    private final static FileFilter FILE_FILTER = new FileFilter() {
+        @Override
+        public boolean accept(File pathname) {
+            return pathname.getName().toLowerCase().endsWith(".declaration");
+        }
+    };
+    
+    
+    
+    
+    public static void setTempVarLifeTime(int lifeTime) {
+        tempVarLifeTime = lifeTime;
+    }
+    
+    
+    
+    private void scheduleDeletion(Declaration var, Declarations declarations) {
+        synchronized (TEMP_VAR_KILLER) {
+            TEMP_VAR_KILLER.schedule(new TempVarKillTask(declarations, var),
+                tempVarLifeTime);
+        }
+    }
+    
+    
+    private static int tempVarLifeTime = 60000 * 5; // 5 min
+    private final static Timer TEMP_VAR_KILLER = new Timer("TEMP_VAR_KILLER", true);
+    
+    
+    
+    private class TempVarKillTask extends TimerTask {
+        private Declarations declarations;
+        private Declaration var;
+        
+        
+        public TempVarKillTask(Declarations declarations, Declaration var) {
+            this.declarations = declarations;
+            this.var = var;
+        }
+        
+        
+        
+        @Override
+        public void run() {
+            this.declarations.remove(this.var.getName().getIdentifier());
+        }
+    }
+    
+    
+    
     private Declarations global;
     private Declarations reserved;
     private FunctionDeclaration forbidden;
@@ -31,13 +84,11 @@ public class Namespace {
     private List<BinaryOperatorOverload> binaryOperators;
     private List<TernaryOperatorOverload> ternaryOperators;
     private Map<String, Declarations> namespaces;
-    private String rootNS;
     private String currentNS;
-    private boolean hideLocals;
+    
     
     
     public Namespace(String rootNamespace) {
-        this.rootNS = rootNamespace;
         this.currentNS = rootNamespace;
         this.global = new Declarations();
         this.reserved = new Declarations();
@@ -45,13 +96,13 @@ public class Namespace {
         this.binaryOperators = new LinkedList<BinaryOperatorOverload>();
         this.ternaryOperators = new LinkedList<TernaryOperatorOverload>();
         this.namespaces = new HashMap<String, Declarations>();
-        this.hideLocals = false;
+        this.namespaces.put("~global", this.global);
         this.create(rootNamespace);
     }
     
     
     
-    public Namespace copyFor(String rootNamespace) {
+    public synchronized Namespace copyFor(String rootNamespace) {
     	Namespace copy = new Namespace(rootNamespace);
     	copy.global = this.global;
     	copy.reserved = this.reserved;
@@ -63,15 +114,14 @@ public class Namespace {
     	if (!copy.namespaces.containsKey(rootNamespace)) {
     	    copy.namespaces.put(rootNamespace, new Declarations());
     	}
-    	copy.hideLocals = this.hideLocals;
     	return copy;
     }
-    
+
     
     
     public String getRootNS() {
-		return rootNS;
-	}
+        return this.currentNS;
+    }
     
     
     
@@ -83,30 +133,6 @@ public class Namespace {
     
     public void allowFunction() {
         this.forbidden = null;
-    }
-    
-    
-    
-    /*
-     * HACK: this hacks provides to hide local declarations during some phase of context
-     *       checking.
-     */
-    public boolean toggleHideLocals() {
-        this.hideLocals = !this.hideLocals;
-        return this.hideLocals;
-    }
-    
-    
-    
-    public void switchTo(String namespace, Position nsPosition) throws ParseException {
-        this.checkNamespace(namespace, nsPosition);
-        this.currentNS = namespace;
-    }
-    
-    
-    
-    public void switchToRoot() {
-        this.currentNS = this.rootNS;
     }
     
     
@@ -128,27 +154,27 @@ public class Namespace {
     
     
     
-    public void enter() {
+    public synchronized void enter() {
         Declarations declarations = this.namespaces.get(this.currentNS);
         declarations.enter();
     }
     
     
     
-    public void leave() {
+    public synchronized void leave() {
         Declarations declarations = this.namespaces.get(this.currentNS);
         declarations.leave();
     }
     
     
     
-    public void reserve(Declaration declaration) {
+    public synchronized void reserve(Declaration declaration) {
         this.reserved.add(declaration);
     }
     
     
     
-    public void create(String name) {
+    public synchronized void create(String name) {
         Declarations decl = this.namespaces.get(name);
         if (decl == null) {
             this.namespaces.put(name, new Declarations());
@@ -157,24 +183,43 @@ public class Namespace {
     
     
     
-    public void add(Declaration declaration) throws ParseException {
-        this.add(declaration, this.currentNS);
+    public void addNormal(Declaration declaration) throws ParseException {
+        this.add(declaration, this.currentNS, false);
+    }
+    
+    
+    
+    public void addRoot(Declaration declaration) throws ParseException {
+        this.add(declaration, this.currentNS, true);
     }
     
     
     
     public void add(Declaration declaration, String namespace) throws ParseException {
+        this.add(declaration, namespace, false);
+    }
+    
+    
+    
+    private synchronized void add(Declaration declaration, String namespace, boolean root) 
+            throws ParseException {
+        
         if (this.reserved.tryResolve(
-                new IdentifierLiteral(declaration.getName().getIdentifier()), 
-                false) != null) {
-            throw new ParseException("'" + declaration.getName().getIdentifier() + 
-                "' ist ein reservierter Bezeichner", 
-                declaration.getName().getPosition());
+            new IdentifierLiteral(declaration.getName().getIdentifier()), 
+            false) != null) {
+                throw new ParseException("'" + declaration.getName().getIdentifier() + 
+                        "' ist ein reservierter Bezeichner", 
+                        declaration.getName().getPosition());
         }
-        
-        
+    
+    
         if (declaration.isGlobal()) {
-            this.global.add(declaration);
+            System.out.println("added global");
+            this.global.add(declaration, true);
+            
+            if (declaration.isTemp()) {
+                scheduleDeletion(declaration, this.global);
+            }
             return;
         }
         
@@ -185,7 +230,10 @@ public class Namespace {
             this.namespaces.put(namespace, ns);
         }
         
-        ns.add(declaration);
+        ns.add(declaration, root);
+        if (declaration.isTemp()) {
+            scheduleDeletion(declaration, ns);
+        }
     }
     
     
@@ -214,14 +262,16 @@ public class Namespace {
     
     
     
-    public void remove(String name, String namespace) throws ParseException {
+    public synchronized void remove(String name, String namespace) throws ParseException {
         Declarations ns = this.checkNamespace(namespace, Position.EMPTY);
         ns.remove(name);
     }
     
     
     
-    public Declaration resolve(IdentifierLiteral id) throws ParseException {
+    public synchronized Declaration resolve(IdentifierLiteral id, boolean root) 
+                throws ParseException {
+        
         if (this.forbidden != null && 
                 id.getIdentifier().equals(this.forbidden.getName().getIdentifier())) {
             throw new ParseException("Ungülter rekursiver Aufruf von " + id, 
@@ -230,9 +280,9 @@ public class Namespace {
         
         Declarations ns = this.namespaces.get(this.currentNS);
         
-        Declaration decl = ns.tryResolve(id, this.hideLocals);
+        Declaration decl = ns.tryResolve(id, root);
         if (decl == null) {
-            decl = this.global.tryResolve(id, this.hideLocals);
+            decl = this.global.tryResolve(id, false); 
         }
         
         if (decl == null) {
@@ -241,16 +291,17 @@ public class Namespace {
              * throw new ParseException("Unbekannter Bezeichner: '"
              *   + id.getIdentifier() + "'", id.getPosition());
              */
-            
-            return new VarDeclaration(id, new StringLiteral(
-                new Token(TokenType.STRING, id.getPosition(), id.getIdentifier())));
+            throw new ParseException("Unbekannter Bezeichner: '"
+                   + id.getIdentifier() + "'", id.getPosition());
+            /*return new VarDeclaration(id, new StringLiteral(
+                new Token(TokenType.STRING, id.getPosition(), id.getIdentifier())));*/
         }
         return decl;
     }
     
     
     
-    public TypeDeclaration resolveType(IdentifierLiteral id) 
+    public synchronized TypeDeclaration resolveType(IdentifierLiteral id) 
             throws ParseException {
         TypeDeclaration decl = (TypeDeclaration) this.reserved.tryResolve(id, false);
         if (decl != null) {
@@ -326,12 +377,7 @@ public class Namespace {
         }
         this.global = Declarations.restore(new File(directory, "~global.declaration"));
         
-        File[] files = directory.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.getName().toLowerCase().endsWith(".declaration");
-            }
-        });
+        File[] files = directory.listFiles(FILE_FILTER);
         
         for (File file : files) {
             Declarations ns = Declarations.restore(file);
@@ -357,8 +403,4 @@ public class Namespace {
         }
         return result.toString();
     }
-    
-    
-    
-    
 }

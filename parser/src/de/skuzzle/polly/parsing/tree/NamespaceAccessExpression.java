@@ -48,14 +48,8 @@ public class NamespaceAccessExpression extends Expression {
         
         // Contextcheck the right hand expression with declarations of the selected 
         // namespace
-        try {
-            context.switchTo(ns, this.getPosition());
-            context.toggleHideLocals();
-            ((VarOrCallExpression) this.rhs).contextCheckForMember(context);
-        } finally {
-            context.switchToRoot();
-            context.toggleHideLocals();
-        }
+        Namespace other = context.copyFor(ns);
+        ((VarOrCallExpression) this.rhs).contextCheckForMember(other, context, true);
         
         this.setType(this.rhs.getType());
         return this;

@@ -104,11 +104,11 @@ public interface UserManager {
     
     /**
      * Gets a set of all declared identifiers by the given user.
-     * @param user The User whose declarations shall be retrieved.
+     * @param namespace The namespace which declarations shall be retrieved.
      * @return A set of strings containing the identifiers. This may be empty but not
      *      <code>null</code>.
      */
-    public abstract Set<String> getDeclaredIdentifiers(User user);
+    public abstract Set<String> getDeclaredIdentifiers(String namepsace);
 	
     
     

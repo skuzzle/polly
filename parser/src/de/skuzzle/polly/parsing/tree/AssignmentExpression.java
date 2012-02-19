@@ -55,8 +55,8 @@ public class AssignmentExpression extends Expression {
                     // Resolve the declared type
                     Type type = param.getExpression().contextCheck(context).getType();
                     param.setType(type);
-                    
-                    context.add(param);
+                    param.setLocal(true);
+                    context.addNormal(param);
                 }
                 
                 /* The name of the function being declared may not occur on the 
@@ -77,7 +77,9 @@ public class AssignmentExpression extends Expression {
             
             this.expression.setType(checked.getType());
             func.setExpression(this.expression);
-            context.add(func);
+            
+            // Declarations must always be stored at root level!
+            context.addRoot(func);
 
             // Function definitions do not have a return value (yet?)
             this.setType(Type.UNKNOWN);
@@ -86,7 +88,9 @@ public class AssignmentExpression extends Expression {
             this.expression = this.expression.contextCheck(context);
             
             ((VarDeclaration) this.declaration).setExpression(this.expression);
-            context.add(this.declaration);
+            
+            // Declarations must always be stored at root level!
+            context.addRoot(this.declaration);
             this.setType(this.expression.getType());
             
             return this.expression;
