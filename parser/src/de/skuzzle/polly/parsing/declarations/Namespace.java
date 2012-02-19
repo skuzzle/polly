@@ -54,6 +54,7 @@ public class Namespace {
     
     private static int tempVarLifeTime = 60000 * 5; // 5 min
     private final static Timer TEMP_VAR_KILLER = new Timer("TEMP_VAR_KILLER", true);
+    private final static boolean IGNORE_UNKNOWN_IDENTIFIERS = true;
     
     
     
@@ -291,10 +292,13 @@ public class Namespace {
              * throw new ParseException("Unbekannter Bezeichner: '"
              *   + id.getIdentifier() + "'", id.getPosition());
              */
-            throw new ParseException("Unbekannter Bezeichner: '"
+            if (IGNORE_UNKNOWN_IDENTIFIERS) {
+                return new VarDeclaration(id, new StringLiteral(
+                    new Token(TokenType.STRING, id.getPosition(), id.getIdentifier())));
+            } else {
+                throw new ParseException("Unbekannter Bezeichner: '"
                    + id.getIdentifier() + "'", id.getPosition());
-            /*return new VarDeclaration(id, new StringLiteral(
-                new Token(TokenType.STRING, id.getPosition(), id.getIdentifier())));*/
+            }
         }
         return decl;
     }
