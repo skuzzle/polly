@@ -43,6 +43,9 @@ public class MyPlugin extends PollyPlugin {
     public final static String SLEEP_TIME = "SLEEP_TIME";
     public final static String SLEEP_DEFAULT_VALUE = "60000";
     
+    public static final String DEFAULT_MSG = "REMIND_DEFAULT_MSG";
+	private static final String DEFAULT_MSG_VALUE = "Reminder!";
+    
     
     private Logger logger;
     private RemindManager remindManager;
@@ -107,6 +110,7 @@ public class MyPlugin extends PollyPlugin {
             users.addAttribute(REMIND_FORMAT_NAME, REMIND_FORMAT_VALUE);
             users.addAttribute(MESSAGE_FORMAT_NAME, MESSAGE_FORMAT_VALUE);
             users.addAttribute(SLEEP_TIME, SLEEP_DEFAULT_VALUE, new IntegerConstraint());
+            users.addAttribute(DEFAULT_MSG, DEFAULT_MSG_VALUE);
         } catch (DatabaseException e) {
             e.printStackTrace();
         }
