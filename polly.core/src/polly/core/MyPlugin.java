@@ -46,6 +46,8 @@ import commands.WikiCommand;
 import core.GreetDeliverer;
 import core.TopicManager;
 import core.TrainManager;
+import core.sentence.SentenceBuilder;
+import core.sentence.WordCollector;
 
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
@@ -130,6 +132,12 @@ public class MyPlugin extends PollyPlugin {
 		this.addCommand(new DeliverTrainCommand(myPolly, this.trainManager));
 		
 		this.addCommand(new RestartCommand(myPolly));
+		
+		
+		SentenceBuilder sb = new SentenceBuilder();
+		WordCollector wc = new WordCollector(sb);
+		
+		//myPolly.irc().addMessageListener(wc);
 	}
 	
 	
