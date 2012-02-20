@@ -44,9 +44,9 @@ import commands.VenadCommand;
 import commands.VersionCommand;
 import commands.WikiCommand;
 import core.GreetDeliverer;
+import core.HighlightReplyHandler;
 import core.TopicManager;
 import core.TrainManager;
-import core.sentence.HighlightReplyHandler;
 
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
