@@ -3,9 +3,6 @@ package polly.core.plugins;
 import java.io.File;
 import java.io.FileFilter;
 import java.lang.reflect.Constructor;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -146,16 +143,11 @@ public class PluginManagerImpl extends AbstractDisposable implements PluginManag
     
     private Class<?> loadClass(String clazz, File jarFile) throws ClassNotFoundException {
         ClassLoader contextCl = Thread.currentThread().getContextClassLoader();
-        try {
-            URL url = jarFile.toURI().toURL();
-            URLClassLoader urlCl = new URLClassLoader(new URL[]{url}, contextCl);
-            Class<?> result = urlCl.loadClass(clazz);
+        ClassLoader urlCl = PluginClassLoader.getInstance(jarFile, contextCl);
+        Class<?> result = urlCl.loadClass(clazz);
 
-            Thread.currentThread().setContextClassLoader(urlCl);
-            return result;
-        } catch (MalformedURLException e) {
-            throw new ClassNotFoundException(clazz, e);
-        }
+        Thread.currentThread().setContextClassLoader(urlCl);
+        return result;
     }
     
     
