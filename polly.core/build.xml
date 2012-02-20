@@ -44,6 +44,7 @@
         de.skuzzle.polly.sdk.jar
         javax.persistence_2.0.3.v201010191057.jar
         log4j-1.2.16.jar
+        JMegaHal.jar
     "/>
     
     <!-- buildpath for javac -->
@@ -91,6 +92,8 @@
         <mkdir dir="${dist.dir}"/>
         <mkdir dir="${dist.lib.dir}"/>
         <mkdir dir="${bin.dir}"/>
+        
+        <copy todir="${dist.lib.dir}" file="${lib.dir}/JMegaHal.jar" />
     </target>
     
     
@@ -159,6 +162,7 @@
                 <attribute name="Class-Path"             value="${classpath} ${jar.classpath}"/>
             </manifest>
             <fileset dir="${bin.dir}"/>
+            <fileset dir="${dist.dir}" includes="lib/**"/>
             <fileset dir="${src.dir}"/>
         </jar>
     </target>

@@ -46,8 +46,7 @@ import commands.WikiCommand;
 import core.GreetDeliverer;
 import core.TopicManager;
 import core.TrainManager;
-import core.sentence.SentenceBuilder;
-import core.sentence.WordCollector;
+import core.sentence.HighlightReplyHandler;
 
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
@@ -71,6 +70,8 @@ public class MyPlugin extends PollyPlugin {
     private TopicManager topicManager;
     private TrainManager trainManager;
     private GreetDeliverer greetDeliverer;
+    private HighlightReplyHandler highlightHandler;
+    
     
 	public MyPlugin(MyPolly myPolly) throws IncompatiblePluginException, DuplicatedSignatureException {
 		super(myPolly);
@@ -134,10 +135,8 @@ public class MyPlugin extends PollyPlugin {
 		this.addCommand(new RestartCommand(myPolly));
 		
 		
-		SentenceBuilder sb = new SentenceBuilder();
-		WordCollector wc = new WordCollector(sb);
-		
-		//myPolly.irc().addMessageListener(wc);
+		this.highlightHandler= new HighlightReplyHandler(myPolly.getTimeProvider());
+		myPolly.irc().addMessageListener(this.highlightHandler);
 	}
 	
 	
@@ -163,5 +162,6 @@ public class MyPlugin extends PollyPlugin {
 	    super.actualDispose();
 	    this.topicManager.dispose();
 	    this.getMyPolly().users().removeUserListener(this.greetDeliverer);
+	    this.getMyPolly().irc().removeMessageListener(this.highlightHandler);
 	}
 }
