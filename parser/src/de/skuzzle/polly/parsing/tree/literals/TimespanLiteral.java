@@ -1,4 +1,4 @@
-package de.skuzzle.polly.parsing.tree;
+package de.skuzzle.polly.parsing.tree.literals;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -68,12 +68,5 @@ public class TimespanLiteral extends Literal {
             return (int) (this.getValue() - ((TimespanLiteral) o).getValue());
         }
         throw new RuntimeException("Not compareable");
-    }
-    
-    
-
-    @Override
-    public Object clone() {
-        return new TimespanLiteral(this.getToken());
     }
 }

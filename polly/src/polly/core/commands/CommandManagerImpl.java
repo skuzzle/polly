@@ -22,8 +22,6 @@ import polly.util.Stopwatch;
 import polly.util.TypeMapper;
 
 import de.skuzzle.polly.parsing.AbstractParser;
-import de.skuzzle.polly.parsing.Context;
-import de.skuzzle.polly.parsing.Declarations;
 import de.skuzzle.polly.parsing.InputScanner;
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.PollyParserFactory;
@@ -31,13 +29,15 @@ import de.skuzzle.polly.parsing.SyntaxMode;
 import de.skuzzle.polly.parsing.Token;
 import de.skuzzle.polly.parsing.TokenType;
 import de.skuzzle.polly.parsing.Type;
-import de.skuzzle.polly.parsing.tree.ChannelLiteral;
+import de.skuzzle.polly.parsing.declarations.Namespace;
+import de.skuzzle.polly.parsing.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.tree.Expression;
-import de.skuzzle.polly.parsing.tree.IdentifierLiteral;
-import de.skuzzle.polly.parsing.tree.ListLiteral;
-import de.skuzzle.polly.parsing.tree.Literal;
 import de.skuzzle.polly.parsing.tree.Root;
-import de.skuzzle.polly.parsing.tree.UserLiteral;
+import de.skuzzle.polly.parsing.tree.literals.ChannelLiteral;
+import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
+import de.skuzzle.polly.parsing.tree.literals.ListLiteral;
+import de.skuzzle.polly.parsing.tree.literals.Literal;
+import de.skuzzle.polly.parsing.tree.literals.UserLiteral;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.CommandManager;
 import de.skuzzle.polly.sdk.IrcManager;
@@ -59,6 +59,7 @@ public class CommandManagerImpl implements CommandManager {
 	private Set<String> ignoredCommands;
 	private UserManagerImpl userManager;
 	private PollyConfiguration config;
+	
 	
 	
 	public CommandManagerImpl(UserManagerImpl userManager, PollyConfiguration config) {
@@ -182,18 +183,27 @@ public class CommandManagerImpl implements CommandManager {
         Stopwatch watch = new MillisecondStopwatch();
         watch.start();
         
-        Context context = null;        
+        Namespace copy = null;
         Root root = null;
         try {
             Map<String, Types> constants = this.getCommandConstants(input);
             
-            context = this.createContext(channel, executor, ircManager, constants);
+            // get namespace and create copy for executor
+            Namespace ns = this.userManager.getNamespace();
+            copy = ns.copyFor(executor.getName());
+            copy.enter();
             
-            root = this.parseMessage(input, context);
+            this.createContext(channel, executor, ircManager, constants, copy);
+            
+            root = this.parseMessage(input, copy);
         } catch (ParseException e) {
             // HACK: wrap exception into command exception, as ParseException is not 
             //       available in the sdk
             throw new CommandException(e.getMessage(), e);
+        } finally {
+        	if (copy != null) {
+				copy.leave();
+        	}
         }
         
         if (root == null) {
@@ -215,7 +225,8 @@ public class CommandManagerImpl implements CommandManager {
 
 
 
-    private Root parseMessage(String message, Context c) 
+
+    private Root parseMessage(String message, Namespace namespace) 
         throws UnsupportedEncodingException, ParseException {
     
         Stopwatch watch = new MillisecondStopwatch();
@@ -233,20 +244,11 @@ public class CommandManagerImpl implements CommandManager {
             }
         
             logger.trace("Parsed input '" + message + "'");
-            
-            // HACK: store declarations as we dont know if they get switched away. This
-            //       way we can leave the declaration level that was entered for
-            //       command specific constants after parsing
-            Declarations declarations = c.getCurrentNamespace();
-            
-            logger.trace("Starting context check");
-            root.contextCheck(c);
+            root.contextCheck(namespace);
             
             logger.trace("Collapsing all parameters");
             root.collapse(new Stack<Literal>());
 
-            declarations.leave();
-            
             return root;
         } finally {
             watch.stop();
@@ -256,9 +258,8 @@ public class CommandManagerImpl implements CommandManager {
 
 
 
-    private Context createContext(String channel, User user, 
-                IrcManager ircManager, Map<String, Types> constants) throws ParseException {
-        Declarations d = this.userManager.getDeclarations(user);
+    private void createContext(String channel, User user, IrcManager ircManager, 
+    		Map<String, Types> constants, Namespace d) throws ParseException {
         
         List<Expression> channels = new ArrayList<Expression>();
         for (String chan : ircManager.getChannels()) {
@@ -270,28 +271,28 @@ public class CommandManagerImpl implements CommandManager {
         for (String u : ircManager.getChannelUser(channel)) {
             users.add(new UserLiteral(u));
         }
-        d.add(new IdentifierLiteral("me"), new UserLiteral(user.getCurrentNickName()));
-        d.add(new IdentifierLiteral("here"), new ChannelLiteral(channel));
-        d.add(new IdentifierLiteral("all"), new ListLiteral(channels, Type.CHANNEL));
-        d.add(new IdentifierLiteral("each"), new ListLiteral(users, Type.USER));
-        
+        d.addNormal(new VarDeclaration(new IdentifierLiteral("me"), 
+        		new UserLiteral(user.getCurrentNickName()), true));
+        d.addNormal(new VarDeclaration(new IdentifierLiteral("here"), 
+        		new ChannelLiteral(channel), true));
+        d.addNormal(new VarDeclaration(new IdentifierLiteral("all"), 
+        		new ListLiteral(channels, Type.CHANNEL), true));
+        d.addNormal(new VarDeclaration(new IdentifierLiteral("each"), 
+        		new ListLiteral(users, Type.USER), true));
         
         logger.trace("    me   := " + user.getCurrentNickName());
         logger.trace("    here := " + channel);
         logger.trace("    all  := " + channels.toString());
         logger.trace("    each := " + users);
         
-        d.enter();
-        if (constants != null) {
+        if (constants != null && !constants.isEmpty()) {
             logger.trace("Command-specific constant names:");
             for (Entry<String, Types> e : constants.entrySet()) {
                 Literal l = TypeMapper.typesToLiteral(e.getValue());
-                d.add(new IdentifierLiteral(e.getKey()), l);
+                d.addNormal(new VarDeclaration(new IdentifierLiteral(e.getKey()), l));
                 logger.trace("    " + e.getKey() + " := " + l.toString());
             }
         }
-        
-        return new Context(d, this.userManager.getNamespaces());
     }
     
     

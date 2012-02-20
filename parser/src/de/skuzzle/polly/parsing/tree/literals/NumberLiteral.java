@@ -1,4 +1,4 @@
-package de.skuzzle.polly.parsing.tree;
+package de.skuzzle.polly.parsing.tree.literals;
 
 import java.text.DecimalFormat;
 import java.util.Date;
@@ -158,15 +158,5 @@ public class NumberLiteral extends Literal {
             return Double.compare(this.getValue(), ((NumberLiteral) o).getValue());
         }
         throw new RuntimeException("Not compareable");
-    }
-    
-    
-    
-    @Override
-    public Object clone() {
-        NumberLiteral result = new NumberLiteral(this.getToken());
-        result.setType(this.getType());
-        result.setPosition(this.getPosition());
-        return result;
     }
 }

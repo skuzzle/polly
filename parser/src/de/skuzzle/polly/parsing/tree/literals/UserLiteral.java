@@ -1,4 +1,4 @@
-package de.skuzzle.polly.parsing.tree;
+package de.skuzzle.polly.parsing.tree.literals;
 
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.Position;
@@ -82,15 +82,5 @@ public class UserLiteral extends Literal {
             return this.userName.compareTo(((UserLiteral) o).userName);
         }
         throw new RuntimeException("Not compareable");
-    }
-    
-    
-    
-    @Override
-    public Object clone() {
-        UserLiteral result = new UserLiteral(this.getToken());
-        result.setPosition(this.getPosition());
-        result.setType(this.getType());
-        return result;
     }
 }

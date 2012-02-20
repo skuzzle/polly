@@ -2,50 +2,44 @@ package de.skuzzle.polly.parsing.tree;
 
 import java.util.Stack;
 
-import de.skuzzle.polly.parsing.Context;
 import de.skuzzle.polly.parsing.ExecutionException;
-import de.skuzzle.polly.parsing.Parameter;
 import de.skuzzle.polly.parsing.ParseException;
-import de.skuzzle.polly.parsing.Token;
+import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.Type;
+import de.skuzzle.polly.parsing.declarations.Declaration;
+import de.skuzzle.polly.parsing.declarations.FunctionDeclaration;
+import de.skuzzle.polly.parsing.declarations.Namespace;
+import de.skuzzle.polly.parsing.declarations.VarDeclaration;
+import de.skuzzle.polly.parsing.tree.literals.Literal;
 
 
-public class AssignmentExpression extends BinaryExpression {
+
+public class AssignmentExpression extends Expression {
 
     private static final long serialVersionUID = 1L;
 
-    private boolean isPublic;
+    private Expression expression;
+    private Declaration declaration;
 
-
-    public AssignmentExpression(Expression leftOperand, Token operator,
-            Expression rightOperand) {
-        this(leftOperand, operator, rightOperand, false);
-    }
-    
-    
-    public AssignmentExpression(Expression leftOperand, Token operator,
-            Expression rightOperand, boolean isPublic) {
-        super(leftOperand, operator, rightOperand);
-        this.isPublic = isPublic;
+    public AssignmentExpression(Expression expression, Position position,
+            Declaration declaration) {
+        super(position);
+        this.expression = expression;
+        this.declaration = declaration;
     }
     
     
     
     @Override
-    public Expression contextCheck(Context context) throws ParseException {       
-        if (this.rightOperand instanceof IdentifierLiteral) {
-            IdentifierLiteral id = 
-                (IdentifierLiteral) this.rightOperand.contextCheck(context);
-            
-            this.leftOperand = this.leftOperand.contextCheck(context);
-            
-            context.getCurrentNamespace().add(id, this.leftOperand, this.isPublic);
-            this.setType(this.leftOperand.getType());
-            
-            return this.leftOperand;
-        } else if (this.rightOperand instanceof FunctionDefinition) {
+    public Expression contextCheck(Namespace context) throws ParseException {       
+        /*
+         * Note: check FunctionDeclaration before VarDeclaration, because 
+         * FunctionDeclaration is a subclass of VarDeclaration! 
+         */
+        
+        if (this.declaration instanceof FunctionDeclaration) {
             // no context check here!
-            FunctionDefinition func = (FunctionDefinition) this.rightOperand;
+            FunctionDeclaration func = (FunctionDeclaration) this.declaration;
             
             /* Resolve parameter types and add them as "empty" Expressions to the
              * local declarations. That means that any occurrence of a parameter 
@@ -53,48 +47,63 @@ public class AssignmentExpression extends BinaryExpression {
              * Expression that only returns the type specified on the right hand side
              * of the declaration.
              */
-            context.getCurrentNamespace().enter();
+            context.enter();
             
-            for (Parameter param : func.getFormalParameters()) {
-                Type type = param.getTypeExpression().contextCheck(context).getType();
-                ResolveableIdentifierLiteral ril = 
-                    new ResolveableIdentifierLiteral(param.getName().getIdentifier());
-                ril.setType(type);
+            Expression checked = null;
+            try {
+                for (VarDeclaration param : func.getFormalParameters()) {
+                    // Resolve the declared type
+                    Type type = param.getExpression().contextCheck(context).getType();
+                    param.setType(type);
+                    param.setLocal(true);
+                    context.addNormal(param);
+                }
                 
-                context.getCurrentNamespace().add(param.getName(), ril);
+                /* The name of the function being declared may not occur on the 
+                 * left side. So mark it as forbidden.
+                 */
+                context.forbidFunction(func);
+    
+                // Check context, but do not replace the root of the left subtree 
+                // (=> store result as a new expression)
+                checked = this.expression.contextCheck(context);
+            } finally {
+                // make sure to always leave the declarations clean
+                context.allowFunction();
+                context.leave();
             }
             
-            /* The name of the function being declared may not occur on the left side. 
-             * So mark it as forbidden.
-             */
-            context.getCurrentNamespace().add(new ForbiddenFunction(func.getName()));
-
-            // Check context, but do not replace the root of the left subtree
-            Expression checked = this.leftOperand.contextCheck(context);
-            context.getCurrentNamespace().leave();
             
-            FunctionDefinition result = new FunctionDefinition(func.getName(), 
-                    this.leftOperand, func.getFormalParameters());
-            result.setType(checked.getType());
-
-            context.getCurrentNamespace().add(result, this.isPublic);
             
+            this.expression.setType(checked.getType());
+            func.setExpression(this.expression);
+            
+            // Declarations must always be stored at root level!
+            context.addRoot(func);
+
             // Function definitions do not have a return value (yet?)
             this.setType(Type.UNKNOWN);
+        } else if (this.declaration instanceof VarDeclaration) {
+            
+            this.expression = this.expression.contextCheck(context);
+            
+            ((VarDeclaration) this.declaration).setExpression(this.expression);
+            
+            // Declarations must always be stored at root level!
+            context.addRoot(this.declaration);
+            this.setType(this.expression.getType());
+            
+            return this.expression;
         }
-        
         return this;
     }
 
     
     
     @Override
-    public void collapse(Stack<Literal> stack) throws ExecutionException {}
-    
-
-    
-    @Override
-    public Object clone() {
-        return super.clone();
+    public void collapse(Stack<Literal> stack) throws ExecutionException {
+        // nothing happens here. if this was a VarDeclaration, this expression will
+        // be replaced by the declared expression during context check.
+        // If this is aFunctionDeclaration: nothing to do here
     }
 }

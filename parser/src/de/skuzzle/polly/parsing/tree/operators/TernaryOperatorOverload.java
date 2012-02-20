@@ -3,14 +3,14 @@ package de.skuzzle.polly.parsing.tree.operators;
 import java.io.Serializable;
 import java.util.Stack;
 
-import de.skuzzle.polly.parsing.Context;
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.TokenType;
 import de.skuzzle.polly.parsing.Type;
+import de.skuzzle.polly.parsing.declarations.Namespace;
 import de.skuzzle.polly.parsing.tree.Expression;
-import de.skuzzle.polly.parsing.tree.Literal;
+import de.skuzzle.polly.parsing.tree.literals.Literal;
 
 
 
@@ -57,7 +57,7 @@ public abstract class TernaryOperatorOverload implements Cloneable, Serializable
     
     
     
-    public void contextCheck(Context context, Expression first, Expression second, 
+    public void contextCheck(Namespace context, Expression first, Expression second, 
             Expression third) throws ParseException {
         
         if (!first.getType().check(this.firstExpected)) {
@@ -80,9 +80,6 @@ public abstract class TernaryOperatorOverload implements Cloneable, Serializable
     
     
     public abstract void collapse(Stack<Literal> stack) throws ExecutionException;
-    
-    @Override
-    public abstract Object clone();
     
     
     public Type getReturnType() {

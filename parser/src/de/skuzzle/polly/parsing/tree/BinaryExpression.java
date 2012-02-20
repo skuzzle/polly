@@ -2,12 +2,13 @@ package de.skuzzle.polly.parsing.tree;
 
 import java.util.Stack;
 
-import de.skuzzle.polly.parsing.Context;
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.Token;
 import de.skuzzle.polly.parsing.Type;
+import de.skuzzle.polly.parsing.declarations.Namespace;
+import de.skuzzle.polly.parsing.tree.literals.Literal;
 import de.skuzzle.polly.parsing.tree.operators.BinaryOperatorOverload;
 
 
@@ -88,12 +89,12 @@ public class BinaryExpression extends Expression {
      *      context checking.
      */
     @Override
-    public Expression contextCheck(Context context) throws ParseException {
+    public Expression contextCheck(Namespace context) throws ParseException {
         this.leftOperand = this.leftOperand.contextCheck(context);
         this.rightOperand = this.rightOperand.contextCheck(context);
         
         
-        this.overload = context.resolveOverload( this.operator.getType(), 
+        this.overload = context.resolveOperator(this.operator.getType(), 
                 this.leftOperand.getType(), this.rightOperand.getType(), 
                 this.getPosition());
         
@@ -123,24 +124,10 @@ public class BinaryExpression extends Expression {
     
     
     
-    /**
-     * Performs a deep copy of this expression. The resulting expression will have the
-     * same type and position and their operands are full copies of this expressions
-     * operands.
-     * 
-     * @return An identical BinaryExpression.
-     */
+    
     @Override
-    public Object clone() {
-        BinaryExpression be =  new BinaryExpression(
-                (Expression) this.leftOperand.clone(), this.operator, 
-                (Expression) this.rightOperand.clone());
-        
-        be.setType(this.getType());
-        be.setPosition(this.getPosition());
-        if (this.overload != null) {
-            be.overload = (BinaryOperatorOverload) this.overload.clone();
-        }
-        return be;
+    public String toString() {
+        return this.leftOperand.toString() + 
+               this.operator.toString() + this.rightOperand.toString();
     }
 }

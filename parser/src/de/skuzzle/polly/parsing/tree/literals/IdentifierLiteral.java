@@ -1,4 +1,4 @@
-package de.skuzzle.polly.parsing.tree;
+package de.skuzzle.polly.parsing.tree.literals;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.Token;
@@ -9,7 +9,7 @@ public class IdentifierLiteral extends Literal {
 
     private static final long serialVersionUID = 1L;
     
-    private java.lang.String identifier;
+    private String identifier;
     
     public IdentifierLiteral(Token token) {
         super(token, Type.UNKNOWN);
@@ -18,20 +18,20 @@ public class IdentifierLiteral extends Literal {
     
     
     
-    public IdentifierLiteral(java.lang.String identifier) {
+    public IdentifierLiteral(String identifier) {
         super(new Token(TokenType.IDENTIFIER, Position.EMPTY, identifier), Type.UNKNOWN);
         this.identifier = identifier;
     }    
     
     
-    public java.lang.String getIdentifier() {
+    public String getIdentifier() {
         return this.identifier;
     }
     
     
     
     @Override
-    public java.lang.String toString() {
+    public String toString() {
         return this.identifier;
     }
 
@@ -67,15 +67,5 @@ public class IdentifierLiteral extends Literal {
             return this.identifier.compareTo(((IdentifierLiteral) o).identifier);
         }
         throw new RuntimeException("Not compareable");
-    }
-    
-    
-    
-    @Override
-    public Object clone() {
-        IdentifierLiteral result = new IdentifierLiteral(this.identifier);
-        result.setPosition(this.getPosition());
-        result.setType(this.getType());
-        return result;
     }
 }

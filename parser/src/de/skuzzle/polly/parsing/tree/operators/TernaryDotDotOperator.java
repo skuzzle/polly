@@ -9,9 +9,9 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.TokenType;
 import de.skuzzle.polly.parsing.Type;
 import de.skuzzle.polly.parsing.tree.Expression;
-import de.skuzzle.polly.parsing.tree.ListLiteral;
-import de.skuzzle.polly.parsing.tree.Literal;
-import de.skuzzle.polly.parsing.tree.NumberLiteral;
+import de.skuzzle.polly.parsing.tree.literals.ListLiteral;
+import de.skuzzle.polly.parsing.tree.literals.Literal;
+import de.skuzzle.polly.parsing.tree.literals.NumberLiteral;
 
 
 
@@ -68,12 +68,5 @@ public class TernaryDotDotOperator extends TernaryOperatorOverload {
 
                 stack.push(result);
         }
-    }
-
-    
-    
-    @Override
-    public Object clone() {
-        return new TernaryDotDotOperator();
     }
 }

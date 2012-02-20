@@ -4,31 +4,31 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import de.skuzzle.polly.parsing.PrecedenceTable.PrecedenceLevel;
+import de.skuzzle.polly.parsing.declarations.Declaration;
+import de.skuzzle.polly.parsing.declarations.FunctionDeclaration;
+import de.skuzzle.polly.parsing.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.tree.AssignmentExpression;
 import de.skuzzle.polly.parsing.tree.BinaryExpression;
-import de.skuzzle.polly.parsing.tree.BooleanLiteral;
 import de.skuzzle.polly.parsing.tree.CastExpression;
-import de.skuzzle.polly.parsing.tree.ChannelLiteral;
-import de.skuzzle.polly.parsing.tree.CommandLiteral;
-import de.skuzzle.polly.parsing.tree.DateLiteral;
 import de.skuzzle.polly.parsing.tree.Expression;
-import de.skuzzle.polly.parsing.tree.FunctionCall;
-import de.skuzzle.polly.parsing.tree.FunctionDefinition;
-import de.skuzzle.polly.parsing.tree.IdentifierLiteral;
-import de.skuzzle.polly.parsing.tree.ListLiteral;
-import de.skuzzle.polly.parsing.tree.Literal;
 import de.skuzzle.polly.parsing.tree.NamespaceAccessExpression;
-import de.skuzzle.polly.parsing.tree.NumberLiteral;
-import de.skuzzle.polly.parsing.tree.ResolveableIdentifierLiteral;
 import de.skuzzle.polly.parsing.tree.Root;
-import de.skuzzle.polly.parsing.tree.StringLiteral;
 import de.skuzzle.polly.parsing.tree.TernaryExpression;
-import de.skuzzle.polly.parsing.tree.TimespanLiteral;
 import de.skuzzle.polly.parsing.tree.TreeElement;
 import de.skuzzle.polly.parsing.tree.TypeParameterExpression;
 import de.skuzzle.polly.parsing.tree.UnaryExpression;
-import de.skuzzle.polly.parsing.tree.UserLiteral;
-import de.skuzzle.polly.parsing.tree.VarAccessExpression;
+import de.skuzzle.polly.parsing.tree.VarOrCallExpression;
+import de.skuzzle.polly.parsing.tree.literals.BooleanLiteral;
+import de.skuzzle.polly.parsing.tree.literals.ChannelLiteral;
+import de.skuzzle.polly.parsing.tree.literals.CommandLiteral;
+import de.skuzzle.polly.parsing.tree.literals.DateLiteral;
+import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
+import de.skuzzle.polly.parsing.tree.literals.ListLiteral;
+import de.skuzzle.polly.parsing.tree.literals.Literal;
+import de.skuzzle.polly.parsing.tree.literals.NumberLiteral;
+import de.skuzzle.polly.parsing.tree.literals.StringLiteral;
+import de.skuzzle.polly.parsing.tree.literals.TimespanLiteral;
+import de.skuzzle.polly.parsing.tree.literals.UserLiteral;
 
 
 
@@ -36,10 +36,10 @@ import de.skuzzle.polly.parsing.tree.VarAccessExpression;
  * 
  * <pre>
  * input           -> command (\t signature)? EOS
- * signature       -> relation (\t relation)*
+ * signature       -> assignment (\t assignment)*
  * 
- * assignment      -> relation ('->' modifier? definition)?
- * modifier        -> 'public' seperator
+ * assignment      -> relation ('->' modifier definition)?
+ * modifier        -> 'public'? 'temp'? 
  * definition      -> identifier ( '(' func_definition ')' )
  * func_def        -> ( type_def \t identifier (',' type_def \t identifier)* ) | e
  * type_def        -> identifier ('<' identifier '>')?
@@ -222,15 +222,8 @@ public class InputParser extends AbstractParser<InputScanner> {
         if (la.matches(TokenType.ASSIGNMENT)) {
             this.scanner.consume();
             
-            boolean isPublic = false;
-            if (scanner.lookAhead().matches(TokenType.PUBLIC)) {
-                scanner.consume();
-                this.expect(TokenType.SEPERATOR);
-                isPublic = true;
-            }
-            
-            expression = new AssignmentExpression(expression, la, 
-                    this.parse_definition(), isPublic);
+            expression = new AssignmentExpression(expression, la.getPosition(), 
+                    this.parse_definition());
         }
         
         return expression;
@@ -238,25 +231,36 @@ public class InputParser extends AbstractParser<InputScanner> {
     
     
     
-    protected Expression parse_definition() throws ParseException {
+    protected Declaration parse_definition() throws ParseException {
+        boolean isPublic = false;
+        if (scanner.match(TokenType.PUBLIC)) {
+            this.expect(TokenType.SEPERATOR);
+            isPublic = true;
+        }
+        
+        boolean isTemp = false;
+        if (scanner.match(TokenType.TEMP)) {
+            this.expect(TokenType.SEPERATOR);
+            isTemp = true;
+        }
+        
         Token id = this.expect(TokenType.IDENTIFIER);
         
-        Token la = this.scanner.lookAhead();
-        if (la.matches(TokenType.OPENBR)) {
-            this.scanner.consume();
-
-            FunctionDefinition def = new FunctionDefinition(new IdentifierLiteral(id));
-            this.parse_func_definition(def.getFormalParameters());
+        if (this.scanner.match(TokenType.OPENBR)) {
+            FunctionDeclaration decl = new FunctionDeclaration(new IdentifierLiteral(id), 
+                    isPublic, isTemp);
+            this.parse_func_definition(decl.getFormalParameters());
             
             this.expect(TokenType.CLOSEDBR);
-            return def;
+            return decl;
         }
-        return new IdentifierLiteral(id);
+        return new VarDeclaration(new IdentifierLiteral(id), isPublic, isTemp);
     }
 
     
     
-    protected void parse_func_definition(List<Parameter> parameters) throws ParseException {
+    protected void parse_func_definition(List<VarDeclaration> parameters) 
+            throws ParseException {
         /*
          * If the next token is a closing brace, return. So we have functions with no
          * parameters
@@ -264,24 +268,22 @@ public class InputParser extends AbstractParser<InputScanner> {
         if (this.scanner.lookAhead().getType() == TokenType.CLOSEDBR) {
             return;
         }
-        
-        Expression type = this.parse_type_definition();
-        this.expect(TokenType.SEPERATOR);
-        Token paramName = this.expect(TokenType.IDENTIFIER);
-        parameters.add(new Parameter(type, paramName.getStringValue()));
-        
-        Token la = this.scanner.lookAhead();
-        while (la.matches(TokenType.COMMA)) {
-            this.scanner.consume();
-            this.allowWhiteSpace();
-            
-            type = this.parse_type_definition();
+        int i = 0;
+        do {
+            if (i++ != 0) {
+                // HACK: in second iteration, a whitespace is allowed here
+                this.allowWhiteSpace();
+            }
+            Expression type = this.parse_type_definition();
             this.expect(TokenType.SEPERATOR);
-            paramName = this.expect(TokenType.IDENTIFIER);
-            parameters.add(new Parameter(type, paramName.getStringValue()));
+            Token paramName = this.expect(TokenType.IDENTIFIER);
             
-            la = this.scanner.lookAhead();
-        }
+            VarDeclaration decl = new VarDeclaration(
+                new IdentifierLiteral(paramName.getStringValue()), false, false);
+            decl.setExpression(type);
+            parameters.add(decl);
+        } while (this.scanner.match(TokenType.COMMA));
+        
     }
     
     
@@ -295,12 +297,12 @@ public class InputParser extends AbstractParser<InputScanner> {
             Token subId = this.expect(TokenType.IDENTIFIER);
             this.expect(TokenType.GT);
             
-            return new TypeParameterExpression(new ResolveableIdentifierLiteral(typeId), 
-                    new ResolveableIdentifierLiteral(subId), 
+            return new TypeParameterExpression(new IdentifierLiteral(typeId), 
+                    new IdentifierLiteral(subId), 
                     this.scanner.spanFrom(typeId));
         }
         
-        return new TypeParameterExpression(new ResolveableIdentifierLiteral(typeId), 
+        return new TypeParameterExpression(new IdentifierLiteral(typeId), 
                 this.scanner.spanFrom(typeId));
     }
     
@@ -472,21 +474,21 @@ public class InputParser extends AbstractParser<InputScanner> {
             case IDENTIFIER:
                 this.scanner.consume();
                 
-                ResolveableIdentifierLiteral id = new ResolveableIdentifierLiteral(la);
+                IdentifierLiteral id = new IdentifierLiteral(la);
 
                 la = this.scanner.lookAhead();
                 if (la.getType() == TokenType.OPENBR) {
                     this.scanner.consume();
                     
-                    FunctionCall call = new FunctionCall(id);
+                    VarOrCallExpression call = new VarOrCallExpression(id);
                     this.parse_expression_list(call.getActualParameters(), 
                             TokenType.CLOSEDBR);
                     
                     this.expect(TokenType.CLOSEDBR);
                     
                     /*
-                     * CONSIDDER: make the function calls position span the whole
-                     * statement including parameter and braces?
+                     * CONSIDER: make the function calls position span the whole
+                     *           statement including parameter and braces?
                      * 
                      * call.setPosition(this.scanner.spanFrom(id.getToken()));
                      */
@@ -494,7 +496,7 @@ public class InputParser extends AbstractParser<InputScanner> {
                     return call;
                 } else {
                     /* fixed ISSUE: 0000003 with VarAccessExpression */
-                    return new VarAccessExpression(id, id.getPosition());
+                    return new VarOrCallExpression(id);
                 }
             case RADIX:
                 this.scanner.consume();
@@ -545,11 +547,11 @@ public class InputParser extends AbstractParser<InputScanner> {
                         this.leaveExpression();
                         
                         if (this.scanner.lookAhead().getType() == TokenType.EOS) {
-                            return new ResolveableIdentifierLiteral(tmp);
+                            return new IdentifierLiteral(tmp);
                         } else {
                             return new CastExpression(
                                 this.parse_literal(), 
-                                new ResolveableIdentifierLiteral(tmp), 
+                                new IdentifierLiteral(tmp), 
                                 this.scanner.spanFrom(la));
                         }
                     } else {

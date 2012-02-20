@@ -56,7 +56,7 @@ public class Polly {
         return commandLine;
     }
 
-    private final static String DEVELOP_VERSION = "0.6.3";
+    private final static String DEVELOP_VERSION = "0.7.1";
     private final static String CONFIG_FULL_PATH = "cfg/polly.cfg";
 
     private static Logger logger = Logger.getLogger(Polly.class.getName());

@@ -1,9 +1,9 @@
 package de.skuzzle.polly.parsing;
 
 
-import de.skuzzle.polly.parsing.tree.CommandLiteral;
 import de.skuzzle.polly.parsing.tree.Root;
 import de.skuzzle.polly.parsing.tree.TreeElement;
+import de.skuzzle.polly.parsing.tree.literals.CommandLiteral;
 
 
 public class PollyV07InputParser extends InputParser {

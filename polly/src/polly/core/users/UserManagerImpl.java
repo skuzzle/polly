@@ -1,14 +1,13 @@
 package polly.core.users;
 
 import java.io.File;
-import java.io.FileFilter;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -19,12 +18,10 @@ import polly.events.Dispatchable;
 import polly.events.EventProvider;
 import polly.util.CaseInsensitiveStringKeyMap;
 
-import de.skuzzle.polly.parsing.Declarations;
-import de.skuzzle.polly.parsing.Namespaces;
-import de.skuzzle.polly.parsing.ParseException;
-import de.skuzzle.polly.parsing.tree.Expression;
-import de.skuzzle.polly.parsing.tree.FunctionDefinition;
-import de.skuzzle.polly.parsing.tree.ResolveableIdentifierLiteral;
+import de.skuzzle.polly.parsing.Prepare;
+import de.skuzzle.polly.parsing.declarations.Declaration;
+import de.skuzzle.polly.parsing.declarations.Declarations;
+import de.skuzzle.polly.parsing.declarations.Namespace;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.UserManager;
@@ -75,12 +72,12 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
      * Stores user specific declarations. Key: the user name.
      */
    
-    private String declarationCachePath;
+    private File declarationCachePath;
     
     private Map<String, AttributeConstraint> constraints;
     
     private EventProvider eventProvider;
-    private Namespaces namespaces;
+    private Namespace namespace;
     
     private User admin;
     
@@ -91,103 +88,33 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
         this.persistence = persistence;
         this.onlineCache = Collections.synchronizedMap(
                 new CaseInsensitiveStringKeyMap<User>());
-        this.declarationCachePath = declarationCache.endsWith("/") ? declarationCache :
-            declarationCache + "/";
+        this.declarationCachePath = new File(declarationCache);
         this.constraints = new HashMap<String, AttributeConstraint>();
-        this.createNamespaces();
-    }
-    
-    
-    
-    public Namespaces getNamespaces() {
-        return this.namespaces;
-    }
-    
-    
-    
-    private void createNamespaces() {
-        logger.debug("Creating user namespaces");
-        this.namespaces = new Namespaces();
-        
-        FileFilter cacheFiles = new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.getName().endsWith(".cache");
-            }
-        };
-        
-        File cacheDir = new File(this.declarationCachePath);
-        if (!cacheDir.exists()) {
-            logger.warn("Directory " + cacheDir + " does not exist");
-            logger.info("Creating " + cacheDir + ". Success: " + cacheDir.mkdirs());
-        }
-        File files[] = cacheDir.listFiles(cacheFiles);
-        if (files == null) {
-            logger.error("I\\O Error while listing declaration directory");
-            return;
-        }
-        for (File cacheFile : files) {
-            // remove '.cache' from filename
-            String name = cacheFile.getName();
-            name = name.substring(0, name.length() - 6);
-            try {
-                this.namespaces.create(name, Declarations.restore(cacheFile));
-                logger.debug("Restored declaration cache for user '" + name + "'");
-            } catch (Exception e) {
-                logger.error("Error while restoring declarations for user '" + name +
-                    '.', e);
-            }
-        }
-    }
-    
-    
-    
-    public synchronized Declarations getDeclarations(User user) {
+        this.namespace = new Namespace();
         try {
-            return this.namespaces.get(user.getName());
-        } catch (ParseException goOn) { 
-            logger.warn("Ignored exception: ", goOn);
-        }
-        
-        
-        logger.warn("Declaration-Cache file for user '" + user.getName() + 
-                " not found -- creating empty declarations.");
-        Declarations d = new Declarations();
-        d.getDeclarations().putAll(Declarations.RESERVED.getDeclarations());
-        d.enter();
-        this.namespaces.create(user.getName(), d);
-        return d;
+			this.namespace.restore(new File(declarationCache));
+		} catch (IOException e) {
+			logger.warn("No declarations restored", e);
+		}
+        Prepare.operators(this.namespace);
+        Prepare.namespaces(this.namespace);
     }
     
     
     
-    private void storeDeclarations() {
-        logger.debug("Storing declaration cache to disk.");
-        for (Entry<String, Declarations> e : this.namespaces.getNamespaces().entrySet()) {
-            try {
-                File location = new File(this.declarationCachePath + e.getKey() 
-                        + ".cache");
-                e.getValue().store(location);
-            } catch (Exception e1) {
-                logger.error("Could not write declaration file for user '" + 
-                        e.getKey() + "'", e1);
-            }
-        }
+    public Namespace getNamespace() {
+        return this.namespace;
     }
     
     
 
     @Override
     public void deleteDeclaration(User user, String id) {
-        try {
-            Declarations d = this.namespaces.get(user.getName());
-            if (d == null) {
-                return;
-            }
-            d.getDeclarations().remove(id);
-        } catch (Exception e) {
-            logger.error("Accessing non-existant namepsace " + user.getName());
+        Declarations d = this.namespace.getNamespaceFor(user.getName());
+        if (d == null) {
+            return;
         }
+        d.getDeclarations().remove(id);
     }
     
     
@@ -200,35 +127,26 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
      */
     
     @Override
-    public synchronized Set<String> getDeclaredIdentifiers(User user) {
-        try {
-            /*Set<String> result = new HashSet<String>();
-            Set<Entry<String, Expression>> entries = this.namespaces.get(
-                user.getName()).getDeclarations().entrySet();
-            
-            for (Entry<String, Expression> entry : entries) {
-                if (entry.getValue() instanceof FunctionDefinition) {
-                    // Add functions string representation, including parameters and
-                    // return type
-                    result.add(entry.getValue().toString());
-                } else {
-                    Expression e = entry.getValue();
-                    result.add(e.getType() + ": " + entry.getKey());
-                }
-            }
-            return result;*/
-            return this.namespaces.get(user.getName()).getDeclarations().keySet();
-        } catch (ParseException e) {
-            return new HashSet<String>();
+    public synchronized Set<String> getDeclaredIdentifiers(String namespace) {
+        Declarations d = this.namespace.getNamespaceFor(namespace);
+        if (d == null) {
+            return Collections.emptySet();
         }
+        
+        Set<Declaration> decls = d.getDeclarations();
+        Set<String> result = new HashSet<String>();
+        for (Declaration decl : decls) {
+            result.add(decl.toString());
+        }
+        return result;
     }
     
     
     
     public String inspect(User user, String declaration) {
-        try {
+        /*try {
             Expression e = this.namespaces.get(user.getName()).resolve(
-                    new ResolveableIdentifierLiteral(declaration));
+                    new ResolvableIdentifierLiteral(declaration));
             
             if (e == null) {
                 return null;
@@ -239,7 +157,9 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
             }
         } catch (ParseException e) {
             return null;
-        }
+        }*/
+    	// todo
+    	return "TODO";
     }
 
     
@@ -535,7 +455,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
         AttributeConstraint constraint = this.constraints.get(attribute.toLowerCase());
         if (!constraint.accept(value)) {
             throw new ConstraintException("'" + value + 
-                "' ist kein gültiger Wert für das Attribut '" + attribute + "'");
+                "' ist kein g�ltiger Wert f�r das Attribut '" + attribute + "'");
         }
         
         this.persistence.atomicWriteOperation(new WriteAction() {
@@ -587,11 +507,16 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
 
     @Override
     protected void actualDispose() throws DisposingException {
-        this.storeDeclarations();
+        logger.debug("Storing declaration cache to disk.");
+        try {
+            this.namespace.store(this.declarationCachePath);
+        } catch (IOException e) {
+            logger.error("Error while storing namespaces",e);
+        }
         this.persistence = null;
         this.onlineCache.clear();
         this.onlineCache = null;
-        this.namespaces = null;
+        this.namespace = null;
     }
 
 
@@ -600,6 +525,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     public User createUser(String name, String password, int userLevel) {
         return new polly.data.User(name, password, userLevel);
     }
+    
     
     
     @Override

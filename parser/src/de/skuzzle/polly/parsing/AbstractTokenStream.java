@@ -236,15 +236,18 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
     
     
     /**
-     * Consumes the next token and checks whether it has the 
-     * expected type.
+     * Consumes the next token only if it has the expected type.
      * 
      * @param type The {@link TokenType} you expect the next token to be.
      * @return {@code true} if the consumed token has the expected type.
      * @throws ParseException If no valid token could be read.
      */
     public boolean match(TokenType type) throws ParseException {
-        return type == this.nextToken().getType();
+        if (this.lookAhead().matches(type)) {
+            this.consume();
+            return true;
+        }
+        return false;
     }
     
     

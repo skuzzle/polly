@@ -1,4 +1,4 @@
-package de.skuzzle.polly.parsing.tree;
+package de.skuzzle.polly.parsing.tree.literals;
 
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.Position;
@@ -15,20 +15,11 @@ public class BooleanLiteral extends Literal {
     public BooleanLiteral(Token token) {
         super(token, Type.BOOLEAN);
     }
-    
-    
+
 
     public BooleanLiteral(boolean value) {
         super(new Token(value == true ? TokenType.TRUE : TokenType.FALSE,
                 Position.EMPTY), Type.NUMBER);
-    }
-    
-    
-    
-    @Deprecated
-    public BooleanLiteral(boolean value, Position position) {
-        super(new Token(value == true ? TokenType.TRUE : TokenType.FALSE,
-                position), Type.NUMBER);
     }
     
     
@@ -81,16 +72,5 @@ public class BooleanLiteral extends Literal {
     @Override
     public int compareTo(Literal o) {
         return 0; 
-    }
-    
-    
-    
-    @Override
-    public Object clone() {
-        BooleanLiteral result = new BooleanLiteral(this.getToken());
-        
-        result.setPosition(this.getPosition());
-        result.setType(this.getType());
-        return result;
     }
 }

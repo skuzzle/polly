@@ -1,10 +1,10 @@
-package de.skuzzle.polly.parsing.tree;
+package de.skuzzle.polly.parsing.tree.literals;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Stack;
 
-import de.skuzzle.polly.parsing.Context;
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.ListType;
 import de.skuzzle.polly.parsing.ParseException;
@@ -12,6 +12,8 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.Token;
 import de.skuzzle.polly.parsing.TokenType;
 import de.skuzzle.polly.parsing.Type;
+import de.skuzzle.polly.parsing.declarations.Namespace;
+import de.skuzzle.polly.parsing.tree.Expression;
 
 
 
@@ -20,7 +22,7 @@ public class ListLiteral extends Literal {
 
     private static final long serialVersionUID = 1L;
     
-    private java.util.List<Expression> elements;
+    private List<Expression> elements;
     
     public ListLiteral(Token token) {
         super(token, new ListType(Type.UNKNOWN));
@@ -29,21 +31,21 @@ public class ListLiteral extends Literal {
     
     
     
-    public ListLiteral(java.util.List<Expression> expressions) {
+    public ListLiteral(List<Expression> expressions) {
         super(new Token(TokenType.LIST, Position.EMPTY), new ListType(Type.UNKNOWN));
         this.elements = expressions;
     }
     
     
     
-    public ListLiteral(java.util.List<Expression> expressions, Type subType) {
+    public ListLiteral(List<Expression> expressions, Type subType) {
         this(expressions);
         this.setType(new ListType(subType));
     }
     
     
     
-    public java.util.List<Expression> getElements() {
+    public List<Expression> getElements() {
         return this.elements;
     }
 
@@ -57,12 +59,11 @@ public class ListLiteral extends Literal {
     
     
     @Override
-    public Expression contextCheck(Context context) throws ParseException {
+    public Expression contextCheck(Namespace context) throws ParseException {
         if (!this.elements.isEmpty()) {
             Expression first = this.elements.get(0);
             first = first.contextCheck(context);
             ListType listT = new ListType(first.getType());
-            System.out.println("List Type: " + listT.toString());
             
             this.setType(listT);
             
@@ -176,19 +177,5 @@ public class ListLiteral extends Literal {
             return false;
         }
         return true;
-    }
-    
-    
-    
-    @Override
-    public Object clone() {
-    	java.util.List<Expression> expressions = new ArrayList<Expression>();
-        for (Expression e : this.elements) {
-            expressions.add((Expression) e.clone());
-        }
-        ListLiteral result = new ListLiteral(expressions);
-        result.setType(this.getType());
-        result.setPosition(this.getPosition());
-        return result;
     }
 }

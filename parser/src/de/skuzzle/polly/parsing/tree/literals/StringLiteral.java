@@ -1,4 +1,4 @@
-package de.skuzzle.polly.parsing.tree;
+package de.skuzzle.polly.parsing.tree.literals;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.Token;
@@ -77,15 +77,5 @@ public class StringLiteral extends Literal {
             return this.value.compareTo(((StringLiteral) o).value);
         }
         throw new RuntimeException("Not compareable");
-    }
-    
-    
-    
-    @Override
-    public Object clone() {
-        StringLiteral result = new StringLiteral(this.getToken());
-        result.setPosition(this.getPosition());
-        result.setType(this.getType());
-        return result;
     }
 }

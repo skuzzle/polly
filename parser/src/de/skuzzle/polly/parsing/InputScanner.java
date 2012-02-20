@@ -95,6 +95,7 @@ public class InputScanner extends AbstractTokenStream {
         this.keywords.put("now", TokenType.DATETIME);
         this.keywords.put("polly", TokenType.POLLY);
         this.keywords.put("public", TokenType.PUBLIC);
+        this.keywords.put("temp", TokenType.TEMP);
         
         /* To avoid 1char identifiers "_" */
         this.keywords.put("_", TokenType.UNKNOWN);
@@ -210,8 +211,7 @@ public class InputScanner extends AbstractTokenStream {
                     state = 4;
                 } else {
                     this.pushBack(next);
-                    this.parseException("Ungültiges Symbol: '" + (char) next + "'", 
-                            tokenStart);
+                    this.parseException("Ungültiges Symbol: '" + next + "'", tokenStart);
                 }
                     
             } else if (state == 1) {

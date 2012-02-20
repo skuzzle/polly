@@ -6,21 +6,23 @@ import java.util.Date;
 import java.util.List;
 import java.util.Stack;
 
-import de.skuzzle.polly.parsing.Context;
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.ListType;
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.Token;
 import de.skuzzle.polly.parsing.TokenType;
 import de.skuzzle.polly.parsing.Type;
-import de.skuzzle.polly.parsing.tree.BooleanLiteral;
-import de.skuzzle.polly.parsing.tree.DateLiteral;
+import de.skuzzle.polly.parsing.declarations.Namespace;
+import de.skuzzle.polly.parsing.tree.BinaryExpression;
 import de.skuzzle.polly.parsing.tree.Expression;
-import de.skuzzle.polly.parsing.tree.ListLiteral;
-import de.skuzzle.polly.parsing.tree.Literal;
-import de.skuzzle.polly.parsing.tree.NumberLiteral;
-import de.skuzzle.polly.parsing.tree.StringLiteral;
-import de.skuzzle.polly.parsing.tree.TimespanLiteral;
+import de.skuzzle.polly.parsing.tree.literals.BooleanLiteral;
+import de.skuzzle.polly.parsing.tree.literals.DateLiteral;
+import de.skuzzle.polly.parsing.tree.literals.ListLiteral;
+import de.skuzzle.polly.parsing.tree.literals.Literal;
+import de.skuzzle.polly.parsing.tree.literals.NumberLiteral;
+import de.skuzzle.polly.parsing.tree.literals.StringLiteral;
+import de.skuzzle.polly.parsing.tree.literals.TimespanLiteral;
 
 
 /**
@@ -61,14 +63,6 @@ public class BinaryOperators {
                 break;
             }
         }
-
-        
-        
-        @Override
-        public Object clone() {
-            return new ArithemticDateTimespanOperator(this.getOperatorType());
-        }
-        
     }
     
     
@@ -92,10 +86,6 @@ public class BinaryOperators {
                         Math.abs((left.getTime() - right.getTime()) / 1000)));
                     break;
             }
-        }
-        @Override
-        public Object clone() {
-            return new ArithmeticDateOperator(this.getOperatorType());
         }
     }
     
@@ -124,11 +114,6 @@ public class BinaryOperators {
                     stack.push(new TimespanLiteral(left - right));
                     break;
             }
-        }
-
-        @Override
-        public Object clone() {
-            return new ArithmeticTimespanOperator(this.getOperatorType());
         }
     }
     
@@ -251,12 +236,52 @@ public class BinaryOperators {
             
             return numerator;
         }
+    }
+    
+    
+    
+    public static class ListScalarOperator extends BinaryOperatorOverload {
+        
+        private static final long serialVersionUID = 1L;
+        private ListLiteral resultList;
+        
+        public ListScalarOperator(TokenType operator) {
+            super(operator, new ListType(Type.ANY), Type.ANY, Type.ANY);
+        }
+        
         
         @Override
-        public Object clone()  {
-            return new ArithmeticOperator(this.getOperatorType());
+        public void contextCheck(Namespace context, Expression left,
+                Expression right) throws ParseException {
+
+            super.contextCheck(context, left, right);
+
+            if (!(left instanceof ListLiteral)) {
+                throw new ParseException(
+                    "Diese Operation ist leider (noch) nicht möglich", 
+                    right.getPosition());
+            }
+            
+            ListLiteral list = (ListLiteral) left;
+            this.resultList = new ListLiteral(new ArrayList<Expression>());
+            Token op = new Token(this.getOperatorType(), Position.EMPTY);
+            for (Expression e : list.getElements()) {
+                Expression bin = new BinaryExpression(e, op, right);
+                bin = bin.contextCheck(context);
+                
+                this.resultList.getElements().add(bin);
+            }
+            this.setReturnType(this.resultList.getType());
+        }
+        
+        
+        
+        @Override
+        public void collapse(Stack<Literal> stack) throws ExecutionException {
+            this.resultList.collapse(stack);
         }
     }
+    
     
     
     /**
@@ -276,7 +301,7 @@ public class BinaryOperators {
         }
         
         @Override
-        public void contextCheck(Context context, Expression left, Expression right)
+        public void contextCheck(Namespace context, Expression left, Expression right)
                 throws ParseException {
             super.contextCheck(context, left, right);
             
@@ -319,10 +344,6 @@ public class BinaryOperators {
                     break;
             }
         }
-        @Override
-        public Object clone()  {
-            return new ListArithmeticOperator(this.getOperatorType());
-        }
     }
     
     
@@ -358,10 +379,6 @@ public class BinaryOperators {
                     break;
             }
         }
-        @Override
-        public Object clone()  {
-            return new BooleanOperator(this.getOperatorType());
-        }
     }
     
     
@@ -392,11 +409,6 @@ public class BinaryOperators {
                     break;
             }
         }
-        @Override
-        public Object clone() {
-            return new ConcatStringOperator();
-
-        }
     }
     
     
@@ -423,7 +435,7 @@ public class BinaryOperators {
         }
         
         @Override
-        public void contextCheck(Context context, Expression left, 
+        public void contextCheck(Namespace context, Expression left, 
                 Expression right) throws ParseException {
             if (!left.getType().check(right.getType())) {
                 Type.typeError(
@@ -444,10 +456,6 @@ public class BinaryOperators {
                     stack.push(new BooleanLiteral(!left.equals(right)));
                     break;
             }
-        }
-        @Override
-        public Object clone() {
-            return new EqualityOperator(this.getOperatorType());
         }
     }
     
@@ -470,7 +478,7 @@ public class BinaryOperators {
         }
         
         @Override
-        public void contextCheck(Context context, Expression left, 
+        public void contextCheck(Namespace context, Expression left, 
                 Expression right) throws ParseException {
             super.contextCheck(context, left, right);
             
@@ -502,10 +510,6 @@ public class BinaryOperators {
                     
                     break;
             }
-        }
-        @Override
-        public Object clone() {
-            return new IndexListOperator();
         }
     }
     
@@ -544,10 +548,6 @@ public class BinaryOperators {
                     stack.push(new StringLiteral("" + c));
                     break;
             }
-        }
-        @Override
-        public Object clone() {
-            return new IndexStringOperator();
         }
     }
     
@@ -591,10 +591,6 @@ public class BinaryOperators {
                     break;
             }
         }
-        @Override
-        public Object clone() {
-            return new RelationalDateOperator(this.getOperatorType());
-        }
     }
     
     
@@ -633,10 +629,6 @@ public class BinaryOperators {
                     break;
             }
         }
-        @Override
-        public Object clone() {
-            return new RelationalListOperator(this.getOperatorType());
-        }
     }
     
     
@@ -674,10 +666,6 @@ public class BinaryOperators {
                     break;
             }
         }
-        @Override
-        public Object clone() {
-            return new RelationalNumberOperator(this.getOperatorType());
-        }
     }
     
     
@@ -714,10 +702,6 @@ public class BinaryOperators {
                     stack.push(new BooleanLiteral(left.compareTo(right) >= 0));
                     break;
             }
-        }
-        @Override
-        public Object clone() {
-            return new RelationalStringOperator(this.getOperatorType());
         }
     }
 }

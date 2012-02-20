@@ -2,10 +2,13 @@ package de.skuzzle.polly.parsing.tree;
 
 import java.util.Stack;
 
-import de.skuzzle.polly.parsing.Context;
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.declarations.Namespace;
+import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
+import de.skuzzle.polly.parsing.tree.literals.Literal;
+import de.skuzzle.polly.parsing.tree.literals.UserLiteral;
 
 
 
@@ -28,54 +31,41 @@ public class NamespaceAccessExpression extends Expression {
     
 
     @Override
-    public Expression contextCheck(Context context) throws ParseException {
-        if (this.namespace instanceof VarAccessExpression) {
-            /*
-             * If the left side of this expression is a var access, try to resolve it
-             * as it might evaluate to a user 
-             */
-            VarAccessExpression vve = (VarAccessExpression) this.namespace;
-            
-            try {
-                this.namespace = vve.contextCheck(context);
-            } catch (ParseException e) {
-                // if it could not be resolved, use the identifier as namespace name
-                this.namespace = vve.getVar();
-            }
+    public Expression contextCheck(Namespace context) throws ParseException {       
+        if (this.namespace instanceof VarOrCallExpression) {
+            this.namespace = ((VarOrCallExpression) this.namespace).getId();
         }
         
         // now look up the namespace
-        ResolveableIdentifierLiteral ns = null;
+        String ns = null;
         if (this.namespace instanceof UserLiteral) {
-            ns = new ResolveableIdentifierLiteral(
-                ((UserLiteral) this.namespace).getUserName());
-        } else if (this.namespace instanceof ResolveableIdentifierLiteral) {
-            ns = (ResolveableIdentifierLiteral) this.namespace;
+            ns = ((UserLiteral) this.namespace).getUserName();
+        } else if (this.namespace instanceof IdentifierLiteral) {
+            ns = ((IdentifierLiteral) this.namespace).getIdentifier();
         } else {
             throw new ParseException("Ungültiger Namespace Zugriff.", this.getPosition());
         }
         
-        ns.setPosition(this.namespace.getPosition());
-        context.switchNamespace(ns);
-        this.rhs = this.rhs.contextCheck(context);
-        context.switchDefaultNamespace();
-        return this.rhs;
+        // Contextcheck the right hand expression with declarations of the selected 
+        // namespace
+        Namespace other = context.copyFor(ns);
+        ((VarOrCallExpression) this.rhs).contextCheckForMember(other, context, true);
+        
+        this.setType(this.rhs.getType());
+        return this;
     }
     
     
 
     @Override
     public void collapse(Stack<Literal> stack) throws ExecutionException {
-        // do nothing. This expression will alway be replaced        
+        this.rhs.collapse(stack);  
     }
     
     
-
+    
     @Override
-    public Object clone() {
-        NamespaceAccessExpression result = new NamespaceAccessExpression(
-            (Expression) this.namespace.clone(), 
-            (Expression)this.rhs.clone(), this.getPosition());
-        return result;
+    public String toString() {
+        return this.namespace.toString() + "." + this.rhs.toString();
     }
 }

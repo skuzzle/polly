@@ -1,4 +1,4 @@
-package de.skuzzle.polly.parsing.tree;
+package de.skuzzle.polly.parsing.tree.literals;
 
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.Position;
@@ -28,7 +28,7 @@ public class ChannelLiteral extends Literal {
     
     
     @Override
-    public java.lang.String toString() {
+    public String toString() {
         return this.channelName;
     }
     
@@ -82,15 +82,5 @@ public class ChannelLiteral extends Literal {
             return this.channelName.compareTo(((ChannelLiteral) o).channelName);
         }
         throw new RuntimeException("Not compareable");
-    }
-    
-    
-    
-    @Override
-    public Object clone() {
-        ChannelLiteral result = new ChannelLiteral(this.channelName);
-        result.setPosition(this.getPosition());
-        result.setType(this.getType());
-        return result;
     }
 }

@@ -2,10 +2,12 @@ package de.skuzzle.polly.parsing.tree;
 
 import java.util.Stack;
 
-import de.skuzzle.polly.parsing.Context;
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.declarations.Namespace;
+import de.skuzzle.polly.parsing.tree.literals.Literal;
+import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
 
 
 public class CastExpression extends Expression {
@@ -13,9 +15,9 @@ public class CastExpression extends Expression {
     private static final long serialVersionUID = 1L;
     
     private Expression expression;
-    private ResolveableIdentifierLiteral castOp;
+    private IdentifierLiteral castOp;
     
-    public CastExpression(Expression expression, ResolveableIdentifierLiteral castOp, 
+    public CastExpression(Expression expression, IdentifierLiteral castOp, 
             Position position) {
         super(position);
         this.expression = expression;
@@ -25,7 +27,7 @@ public class CastExpression extends Expression {
     
     
     @Override
-    public Expression contextCheck(Context context) throws ParseException {
+    public Expression contextCheck(Namespace context) throws ParseException {
         Expression target = this.castOp.contextCheck(context);
         
         if (!(target instanceof TypeExpression)) {
@@ -52,16 +54,9 @@ public class CastExpression extends Expression {
     }
     
     
-
+    
     @Override
-    public Object clone() {
-        CastExpression result = new CastExpression(
-            (Expression) this.expression.clone(), 
-            (ResolveableIdentifierLiteral) castOp.clone(), 
-            getPosition());
-        result.setType(this.getType());
-        result.setPosition(this.getPosition());
-        return result;
+    public String toString() {
+        return "(" + this.castOp.toString() + ")" + this.expression;
     }
-
 }

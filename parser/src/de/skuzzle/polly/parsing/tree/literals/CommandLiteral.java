@@ -1,4 +1,4 @@
-package de.skuzzle.polly.parsing.tree;
+package de.skuzzle.polly.parsing.tree.literals;
 
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.Position;
@@ -56,12 +56,5 @@ public class CommandLiteral extends Literal {
             return this.commandName.compareTo(((CommandLiteral) o).commandName);
         }
         throw new RuntimeException("Not compareable");
-	}
-
-	
-	
-	@Override
-	public Object clone() {
-		return new CommandLiteral(this.getToken());
 	}
 }

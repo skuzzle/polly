@@ -60,6 +60,7 @@ public enum TokenType {
     COMMAND("Befehl"),
     POLLY("Polly"),
     PUBLIC("public"),
+    TEMP("temp"),
     EOS("Ende der Eingabe");
     
     private String string;

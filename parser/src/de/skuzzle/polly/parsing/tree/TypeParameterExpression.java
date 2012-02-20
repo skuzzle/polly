@@ -2,25 +2,28 @@ package de.skuzzle.polly.parsing.tree;
 
 import java.util.Stack;
 
-import de.skuzzle.polly.parsing.Context;
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.ListType;
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.Type;
+import de.skuzzle.polly.parsing.declarations.Namespace;
+import de.skuzzle.polly.parsing.declarations.TypeDeclaration;
+import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
+import de.skuzzle.polly.parsing.tree.literals.Literal;
 
 
 public class TypeParameterExpression extends Expression {
 
     private static final long serialVersionUID = 1L;
     
-    private ResolveableIdentifierLiteral mainType;
-    private ResolveableIdentifierLiteral subType;
+    private IdentifierLiteral mainType;
+    private IdentifierLiteral subType;
     
     
     
-    public TypeParameterExpression(ResolveableIdentifierLiteral mainType,
-            ResolveableIdentifierLiteral subType, Position position) {
+    public TypeParameterExpression(IdentifierLiteral mainType,
+            IdentifierLiteral subType, Position position) {
         super(position);
         this.mainType = mainType;
         this.subType = subType;
@@ -28,7 +31,7 @@ public class TypeParameterExpression extends Expression {
     
     
     
-    public TypeParameterExpression(ResolveableIdentifierLiteral mainType, 
+    public TypeParameterExpression(IdentifierLiteral mainType, 
             Position position) {
         super(position);
         this.mainType = mainType;
@@ -37,12 +40,12 @@ public class TypeParameterExpression extends Expression {
 
 
     @Override
-    public Expression contextCheck(Context context) throws ParseException {
-        Expression main = this.mainType.contextCheck(context);
+    public Expression contextCheck(Namespace context) throws ParseException {
+        TypeDeclaration main = context.resolveType(this.mainType);
         this.setType(main.getType());
         
         if (this.subType != null && main.getType() == Type.LIST) {
-            Expression sub = this.subType.contextCheck(context);
+            TypeDeclaration sub = context.resolveType(this.subType);
             
             this.setType(new ListType(sub.getType()));
             
@@ -57,17 +60,5 @@ public class TypeParameterExpression extends Expression {
 
 
     @Override
-    public void collapse(Stack<Literal> stack) throws ExecutionException {
-
-    }
-    
-    
-    @Override
-    public Object clone() {
-        TypeParameterExpression result = new TypeParameterExpression(
-                (ResolveableIdentifierLiteral) this.mainType.clone(), 
-                this.getPosition());
-        result.setType(this.getType());
-        return result;
-    }
+    public void collapse(Stack<Literal> stack) throws ExecutionException {}
 }
