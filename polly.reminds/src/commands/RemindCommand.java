@@ -16,7 +16,6 @@ import de.skuzzle.polly.sdk.Types.ListType;
 import de.skuzzle.polly.sdk.Types.StringType;
 import de.skuzzle.polly.sdk.Types.UserType;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
-import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.UnknownAttributeException;
 import de.skuzzle.polly.sdk.model.User;
