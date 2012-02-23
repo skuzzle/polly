@@ -37,6 +37,18 @@
     
     
     
+    <!-- 
+        buildpath for eclipse. this ecludes the sdk, the parser and the process 
+        subproject 
+    -->
+    <path id="buildpath_eclipse">
+        <fileset dir="${lib.dir}" 
+            includes="${includeJars}"
+            excludes="network.jar"/>
+    </path>
+    
+    
+    
     <buildnumber file="build.num"/>
     <tstamp>
         <format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
@@ -170,9 +182,10 @@
         <eclipse mode="java">
             <project name="${ant.project.name}"/>
             <classpath>
+                <source path="/network" />
                 <source path="${src.dir}" />
                 <output path="${bin.dir}" />
-                <library pathref="buildpath"/>
+                <library pathref="buildpath_eclipse"/>
             </classpath>
         </eclipse>
     </target>

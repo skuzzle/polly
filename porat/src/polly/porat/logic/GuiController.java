@@ -28,6 +28,7 @@ import polly.porat.events.ProtocolListener;
 import polly.porat.gui.MainWindow;
 import polly.porat.gui.images.Icons;
 import polly.porat.gui.util.SwingInvoke;
+import polly.porat.gui.views.View;
 import polly.porat.network.ClientProtocolHandler;
 
 
@@ -117,6 +118,13 @@ public class GuiController implements ProtocolListener {
                 mainWindow.getStatusBar().endActivity();
             }
         });
+    }
+    
+    
+    
+    public void addView(View view) {
+        this.mainWindow.addView(view);
+        this.networkHandler.addConnectionListener(view);
     }
     
     

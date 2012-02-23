@@ -66,7 +66,7 @@ public class ProtocolHandler implements ObjectReceivedListener, ConnectionListen
             e.getSource().send(new Response(request, ResponseType.UPDATE_DONE));
             break;
         case UPDATE_CACHE:
-            this.adminManager.getLogAppender().processLogCache();
+            this.adminManager.getLogAppender().processLogCache(true);
             e.getSource().send(new Response(request, ResponseType.UPDATE_DONE));
             break;
         case LOGOUT:

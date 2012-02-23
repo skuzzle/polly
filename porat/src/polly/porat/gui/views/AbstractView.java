@@ -2,6 +2,8 @@ package polly.porat.gui.views;
 
 import javax.swing.Icon;
 
+import polly.network.events.NetworkEvent;
+
 
 public abstract class AbstractView implements View {
     
@@ -21,8 +23,26 @@ public abstract class AbstractView implements View {
     }
     
     
+    
+    @Override
     public String getName() {
         return this.name;
+    }
+    
+    
+    @Override
+    public void setEnabled(boolean value) {}
+    
+    
+    @Override
+    public void connectionAccepted(NetworkEvent e) {
+        this.setEnabled(true);
+    }
+    
+    
+    @Override
+    public void connectionClosed(NetworkEvent e) {
+        this.setEnabled(false);
     }
     
     

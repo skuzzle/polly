@@ -53,7 +53,7 @@ public class AdministrationManager extends AbstractDisposable {
         this.liveLogList = new HashSet<Connection>();
         this.ircForwards = new HashSet<Connection>();
         
-        this.logAppender = new CachedLogAppender(this, 5);
+        this.logAppender = new CachedLogAppender(this, 50);
         Logger.getRootLogger().addAppender(this.logAppender);
     }
     
@@ -183,7 +183,7 @@ public class AdministrationManager extends AbstractDisposable {
     @Override
     protected void actualDispose() throws DisposingException {
         this.logAppender.setEnabled(false);
-        this.logAppender.processLogCache();
+        this.logAppender.processLogCache(true);
         Logger.getRootLogger().removeAppender(this.logAppender);
         this.sender.shutdown();
         try {

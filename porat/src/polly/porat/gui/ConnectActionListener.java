@@ -17,6 +17,8 @@ public class ConnectActionListener implements ActionListener {
     private ConnectPanel connectPanel;
     private GuiController guiController;
     
+    
+    
     public ConnectActionListener(GuiController guiController, ConnectPanel connectPanel) {
         this.guiController = guiController;
         this.connectPanel = connectPanel;

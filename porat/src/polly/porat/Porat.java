@@ -63,8 +63,8 @@ public class Porat {
     
     private void prepareMainWindow(GuiController guiController, MainWindow mainWindow) {
         // add views
-        mainWindow.addView(this.prepareLogView(guiController));
-        mainWindow.addView(new IRCView());
+        guiController.addView(this.prepareLogView(guiController));
+        guiController.addView(new IRCView());
         
         // add connect listener
         ConnectActionListener cal = new ConnectActionListener(guiController, 

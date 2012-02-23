@@ -49,8 +49,8 @@ public class CachedLogAppender extends AppenderSkeleton {
     
     
     
-    public void processLogCache() {
-        if (cache.size() >= this.cacheSize) {
+    public void processLogCache(boolean force) {
+        if (cache.size() >= this.cacheSize || force) {
             this.adminManager.processLogCache(this.cache);
         }
     }
@@ -66,7 +66,7 @@ public class CachedLogAppender extends AppenderSkeleton {
         synchronized (this.cache) {
             this.cache.add(new LogItem(le.getTimeStamp(), le.getLevel().toString(), 
                 le.getThreadName(), le.getLoggerName(), le.getMessage().toString()));
-            this.processLogCache();
+            this.processLogCache(false);
         }
     }
 }

@@ -1,6 +1,8 @@
 package polly.porat.gui.components;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.BorderFactory;
@@ -16,7 +18,7 @@ import javax.swing.event.DocumentListener;
 import polly.porat.gui.images.Icons;
 
 
-public class ConnectPanel extends JToolBar implements DocumentListener {
+public class ConnectPanel extends JToolBar implements DocumentListener, ActionListener {
 
     private static final long serialVersionUID = 1L;
 
@@ -55,23 +57,36 @@ public class ConnectPanel extends JToolBar implements DocumentListener {
         
         this.hostText = new JTextField();
         this.hostText.setText(this.defaultHost);
+        this.hostText.addActionListener(this);
         this.hostText.getDocument().addDocumentListener(this);
+        
         this.portText = new JTextField();
         this.portText.setText("" + this.defaultPort);
         this.portText.getDocument().addDocumentListener(this);
+        this.portText.addActionListener(this);
+        
         this.userNameText = new JTextField();
         this.userNameText.getDocument().addDocumentListener(this);
+        this.userNameText.addActionListener(this);
+        
         this.passwordText = new JPasswordField();
         this.passwordText.getDocument().addDocumentListener(this);
+        this.passwordText.addActionListener(this);
         
-        JLabel hostLabel = new JLabel("Host:");
-        JLabel portLabel = new JLabel("Port:");
-        JLabel userNameLabel = new JLabel("Username:");
-        JLabel passwordLabel = new JLabel("Password:");
-        
+        JLabel hostLabel = new JLabel("Host:  ");
+        hostLabel.setDisplayedMnemonic('H');
         hostLabel.setLabelFor(this.hostText);
+        
+        JLabel portLabel = new JLabel("Port:  ");
+        portLabel.setDisplayedMnemonic('P');
         portLabel.setLabelFor(this.portText);
+        
+        JLabel userNameLabel = new JLabel("Username:  ");
+        userNameLabel.setDisplayedMnemonic('U');
         userNameLabel.setLabelFor(this.userNameText);
+        
+        JLabel passwordLabel = new JLabel("Password:  ");
+        passwordLabel.setDisplayedMnemonic('a');
         passwordLabel.setLabelFor(this.passwordText);
         
         this.add(Box.createHorizontalStrut(6));
@@ -183,5 +198,12 @@ public class ConnectPanel extends JToolBar implements DocumentListener {
             !this.portText.getText().equals("") &&
             !this.userNameText.getText().equals("") &&
             !(this.passwordText.getPassword().length == 0));
+    }
+
+
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        this.connect.doClick();
     }
 }

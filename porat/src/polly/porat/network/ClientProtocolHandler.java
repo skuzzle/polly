@@ -11,6 +11,7 @@ import polly.network.events.ConnectionListener;
 import polly.network.events.NetworkEvent;
 import polly.network.events.ObjectReceivedEvent;
 import polly.network.protocol.Constants;
+import polly.network.protocol.Constants.ResponseType;
 import polly.network.protocol.ErrorResponse;
 import polly.network.protocol.Ping;
 import polly.network.protocol.Request;
@@ -300,6 +301,9 @@ public class ClientProtocolHandler {
         
         Response response = (Response) e.getObject();
         
+        if (response.is(ResponseType.LOGGED_IN)) {
+            this.fireConnectionAccepted(new NetworkEvent(this.connection));
+        }
         if (response instanceof ErrorResponse) {
             this.fireErrorReceived(new ProtocolEvent(this, response));
         } else {

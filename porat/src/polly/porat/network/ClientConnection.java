@@ -76,7 +76,6 @@ class ClientConnection implements Connection, Runnable {
                 this.lastPing.setReceivedAt(System.currentTimeMillis());
                 
                 this.connectionThread.execute(this);
-                this.handler.fireConnectionAccepted(new NetworkEvent(this));
             } else if (response.is(ResponseType.ERROR)) {
                 throw new IOException("connection rejected. Error code: " + 
                     ((ErrorResponse) response).getErrorType());

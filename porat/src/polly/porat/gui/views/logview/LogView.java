@@ -43,12 +43,24 @@ public class LogView extends AbstractView {
     private TableRowSorter<LogItemTableModel> rowFilter;
     private LogItemTableModel model;
 
+    
 
     public LogView() {
         super("Log Viewer", Icons.LOG_VIEW_ICON);
         this.createContent();
+        this.setEnabled(false);
     }
 
+ 
+    
+    @Override
+    public void setEnabled(boolean value) {
+        this.update.setEnabled(value);
+        this.liveLog.setEnabled(value);
+        this.logFileCombo.setEnabled(value);
+        this.filter.setEnabled(value);
+    }
+    
     
     
     @Override
@@ -65,11 +77,14 @@ public class LogView extends AbstractView {
         top.setLayout(new BoxLayout(top, BoxLayout.X_AXIS));
         
         this.logFileCombo = new JComboBox<File>();
+        JLabel logComboLabel = new JLabel("Select a Logfile:  ");
+        logComboLabel.setLabelFor(logFileCombo);
         this.liveLog = new JCheckBox("Live Log");
         this.update = new KeyButton("Update", 
             KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
         
         top.add(Box.createHorizontalStrut(6));
+        top.add(logComboLabel);
         top.add(this.logFileCombo);
         top.add(this.liveLog);
         top.add(this.update);
@@ -99,14 +114,12 @@ public class LogView extends AbstractView {
         bottom.add(Box.createHorizontalStrut(6));
         bottom.add(filterLabel);
         bottom.add(this.filter);
-        bottom.add(Box.createHorizontalStrut(6));
         
         this.content.add(top, BorderLayout.NORTH);
         this.content.add(bottom, BorderLayout.SOUTH);
         
         return this.content;
     }
-    
     
     
     
@@ -128,7 +141,6 @@ public class LogView extends AbstractView {
     
     
     
-    
     public JTextField getFilter() {
         return this.filter;
     }
@@ -140,7 +152,9 @@ public class LogView extends AbstractView {
     }
     
     
+    
     public TableRowSorter<LogItemTableModel> getRowFilter() {
         return this.rowFilter;
     }
+    
 }
