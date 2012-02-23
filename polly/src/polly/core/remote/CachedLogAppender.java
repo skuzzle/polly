@@ -6,20 +6,22 @@ import java.util.List;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.LoggingEvent;
 
+import polly.network.protocol.LogItem;
+
 
 
 public class CachedLogAppender extends AppenderSkeleton {
 
     private AdministrationManager adminManager;
     private int cacheSize;
-    private List<LoggingEvent> cache;
+    private List<LogItem> cache;
     private boolean enabled;
     
     
     public CachedLogAppender(AdministrationManager adminManager, int cacheSize) {
         this.cacheSize = cacheSize;
         this.adminManager = adminManager;
-        this.cache = new ArrayList<LoggingEvent>(cacheSize);
+        this.cache = new ArrayList<LogItem>(cacheSize);
     }
     
     
@@ -62,7 +64,8 @@ public class CachedLogAppender extends AppenderSkeleton {
         }
         
         synchronized (this.cache) {
-            this.cache.add(le);
+            this.cache.add(new LogItem(le.getTimeStamp(), le.getLevel().toString(), 
+                le.getThreadName(), le.getLoggerName(), le.getMessage().toString()));
             this.processLogCache();
         }
     }

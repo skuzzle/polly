@@ -46,6 +46,13 @@ public class SerializableFile implements Serializable {
     }
     
     
+    
+    public String getName() {
+        return this.name;
+    }
+    
+    
+    
     public void store(File destination) throws IOException {
         if (this.received == null) {
             throw new IOException("nothing received");

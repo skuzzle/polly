@@ -12,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.spi.LoggingEvent;
 
 
 import de.skuzzle.polly.sdk.AbstractDisposable;
@@ -23,6 +22,7 @@ import de.skuzzle.polly.sdk.model.User;
 import polly.network.Connection;
 import polly.network.protocol.Constants;
 import polly.network.protocol.Constants.ResponseType;
+import polly.network.protocol.LogItem;
 import polly.network.protocol.Response;
 import polly.network.util.SerializableFile;
 import polly.core.remote.tcp.ServerConnection;
@@ -55,6 +55,12 @@ public class AdministrationManager extends AbstractDisposable {
         
         this.logAppender = new CachedLogAppender(this, 5);
         Logger.getRootLogger().addAppender(this.logAppender);
+    }
+    
+    
+    
+    public CachedLogAppender getLogAppender() {
+        return this.logAppender;
     }
     
     
@@ -148,10 +154,10 @@ public class AdministrationManager extends AbstractDisposable {
     
     
     
-    public void processLogCache(List<LoggingEvent> cache) {
-        final List<LoggingEvent> copy; 
+    public void processLogCache(List<LogItem> cache) {
+        final List<LogItem> copy; 
         synchronized (cache) {
-            copy = new ArrayList<LoggingEvent>(cache);
+            copy = new ArrayList<LogItem>(cache);
             cache.clear();
         }
         

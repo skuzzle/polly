@@ -55,15 +55,23 @@ public class ProtocolHandler implements ObjectReceivedListener, ConnectionListen
         switch (request.getType()) {
         case LIVE_LOG_ON:
             this.adminManager.enableLiveLog(e.getSource());
-            e.getSource().send(new Response(ResponseType.LIVE_LOG_ON));
+            e.getSource().send(new Response(request, ResponseType.LIVE_LOG_ON));
             break;
         case LIVE_LOG_OFF:
             this.adminManager.disableLiveLog(e.getSource());
-            e.getSource().send(new Response(ResponseType.LIVE_LOG_OFF));
+            e.getSource().send(new Response(request, ResponseType.LIVE_LOG_OFF));
+            break;
+        case UPDATE:
+            this.adminManager.sendLogs(e.getSource());
+            e.getSource().send(new Response(request, ResponseType.UPDATE_DONE));
+            break;
+        case UPDATE_CACHE:
+            this.adminManager.getLogAppender().processLogCache();
+            e.getSource().send(new Response(request, ResponseType.UPDATE_DONE));
             break;
         case LOGOUT:
             this.adminManager.logout(e.getSource());
-            e.getSource().send(new Response(ResponseType.LOGOUT));
+            e.getSource().send(new Response(request, ResponseType.LOGOUT));
         }
     }
     
@@ -78,13 +86,13 @@ public class ProtocolHandler implements ObjectReceivedListener, ConnectionListen
         LoginResult login = this.adminManager.login(e.getSource(), userName, password);
         switch (login) {
         case INSUFICCIENT_RIGHTS:
-            answer = new ErrorResponse(ErrorType.INSUFFICIENT_RIGHTS); break;
+            answer = new ErrorResponse(request, ErrorType.INSUFFICIENT_RIGHTS); break;
         case INVALID_PASSWORD:
-            answer = new ErrorResponse(ErrorType.INVALID_PASSWORD); break;
+            answer = new ErrorResponse(request, ErrorType.INVALID_PASSWORD); break;
         case UNKNOWN_USER:
-            answer = new ErrorResponse(ErrorType.UNKNOWN_USER); break;
+            answer = new ErrorResponse(request, ErrorType.UNKNOWN_USER); break;
         case SUCCESS:
-            answer = new Response(ResponseType.LOGGED_IN); break;
+            answer = new Response(request, ResponseType.LOGGED_IN); break;
         }
         
         e.getSource().send(answer);

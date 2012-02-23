@@ -41,7 +41,6 @@ class ClientConnection implements Connection, Runnable {
     private AtomicBoolean shutdownFlag;
     private Ping lastPing;
     private int latency;
-    private double timeFactor;
     private ClientProtocolHandler handler;
     
     
@@ -49,6 +48,8 @@ class ClientConnection implements Connection, Runnable {
     public ClientConnection(InetAddress serverHost, int port, 
             ClientProtocolHandler handler) throws IOException {
         
+        this.shutdownFlag = new AtomicBoolean(false);
+        this.connectionThread = Executors.newSingleThreadExecutor();
         this.handler = handler;
         
         try {
@@ -71,12 +72,11 @@ class ClientConnection implements Connection, Runnable {
             }
             Response response = (Response) in;
             if (response.is(ResponseType.ACCEPTED)) {
-                this.shutdownFlag = new AtomicBoolean(false);
                 this.lastPing = new Ping();
                 this.lastPing.setReceivedAt(System.currentTimeMillis());
                 
-                this.connectionThread = Executors.newSingleThreadExecutor();
                 this.connectionThread.execute(this);
+                this.handler.fireConnectionAccepted(new NetworkEvent(this));
             } else if (response.is(ResponseType.ERROR)) {
                 throw new IOException("connection rejected. Error code: " + 
                     ((ErrorResponse) response).getErrorType());
@@ -106,12 +106,13 @@ class ClientConnection implements Connection, Runnable {
                 this.output.reset();
             }
         } catch (IOException e) {
+            e.printStackTrace();
             logger.error("Error while sending", e);
             this.close();
         }
     }
-
-
+    
+    
 
     @Override
     public void run() {
@@ -129,18 +130,12 @@ class ClientConnection implements Connection, Runnable {
                         long ct = po.getReceivedAt() - this.lastPing.getReceivedAt();
                         long st = po.getTimestamp() - this.lastPing.getTimestamp();
                         
-                        this.timeFactor = (double)st / (double)ct;
-                        
-                        this.latency = (int) Math.abs(
-                            ct - this.serverTimeToLocal(st));
+                        this.latency = (int) Math.abs(ct - st);
                         this.lastPing = ping;
                         
-                        // XXX: removeme
-                        System.out.println("Latenz: " + this.latency());
                         this.send(new Pong());
-                    } else {
-                        this.handler.objectReceived(new ObjectReceivedEvent(this, po));
                     }
+                    this.handler.objectReceived(new ObjectReceivedEvent(this, po));
                 }
             }
         } catch (ClassNotFoundException e) {
@@ -159,12 +154,6 @@ class ClientConnection implements Connection, Runnable {
     
     public int latency() {
         return this.latency;
-    }
-    
-    
-    
-    public long serverTimeToLocal(long timeStamp) {
-        return (long)((double)timeStamp * this.timeFactor);
     }
     
     

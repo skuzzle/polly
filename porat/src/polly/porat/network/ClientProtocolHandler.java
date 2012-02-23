@@ -12,39 +12,18 @@ import polly.network.events.NetworkEvent;
 import polly.network.events.ObjectReceivedEvent;
 import polly.network.protocol.Constants;
 import polly.network.protocol.ErrorResponse;
+import polly.network.protocol.Ping;
 import polly.network.protocol.Request;
 import polly.network.protocol.Response;
 import polly.network.protocol.Constants.RequestType;
-import polly.porat.events.DefaultEventProvider;
 import polly.porat.events.Dispatchable;
 import polly.porat.events.EventProvider;
+import polly.porat.events.PingListener;
 import polly.porat.events.ProtocolEvent;
 import polly.porat.events.ProtocolListener;
 
 
 public class ClientProtocolHandler {
-    
-    
-    
-    public static void main(String[] args) {
-        System.setProperty("javax.net.ssl.trustStore", "cfg/SSLKeyStore");
-        System.setProperty("javax.net.ssl.trustStorePassword", "blabla");
-        
-        ClientProtocolHandler cph = new ClientProtocolHandler();
-        
-        try {
-            cph.connect(InetAddress.getByName("192.168.0.20"), 24500, "C0mb4t", 
-                "nichtpenner");
-            System.out.println("connected");
-            
-            cph.enableLiveLog();
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    
-    
     
     private final static Logger logger = Logger.getLogger(
             ClientProtocolHandler.class.getName());
@@ -57,14 +36,14 @@ public class ClientProtocolHandler {
     
     
     
-    public ClientProtocolHandler() {
+    public ClientProtocolHandler(EventProvider eventProvider) {
         this.connectionLock = new ReentrantLock();
-        this.eventProvider = new DefaultEventProvider();
+        this.eventProvider = eventProvider;
     }
     
     
     
-    public void connect(InetAddress host, int port, String userName, String password) 
+    public Request connect(InetAddress host, int port, String userName, String password) 
             throws IOException {
         
         try {
@@ -80,7 +59,7 @@ public class ClientProtocolHandler {
             login.getPayload().put(Constants.USER_NAME, userName);
             login.getPayload().put(Constants.PASSWORD, password);
             this.connection.send(login);
-            
+            return login;
         } finally {
             this.connectionLock.unlock();
         }
@@ -93,7 +72,7 @@ public class ClientProtocolHandler {
             this.connectionLock.lock();
             
             if (this.connection == null) {
-                throw new IllegalStateException("connection not active");
+                return;
             }
             
             Request request = new Request(RequestType.LOGOUT);
@@ -108,26 +87,86 @@ public class ClientProtocolHandler {
     
     
     
-    public void enableLiveLog() {
-        this.connection.send(new Request(RequestType.LIVE_LOG_ON));
+    public boolean isConnected() {
+        return this.connection != null && this.connection.isConnected();
     }
     
     
     
-    public void disableLiveLog() {
-        this.connection.send(new Request(RequestType.LIVE_LOG_OFF));
+    public Request enableLiveLog() {
+        if (!this.isConnected()) {
+            return null;
+        }
+        Request r = new Request(RequestType.LIVE_LOG_ON);
+        this.connection.send(r);
+        return r;
     }
     
     
     
-    public void enableIrcForwad() {
-        this.connection.send(new Request(RequestType.IRC_FORWARD_ON));
+    public Request disableLiveLog() {
+        if (!this.isConnected()) {
+            return null;
+        }
+        Request r = new Request(RequestType.LIVE_LOG_OFF);
+        this.connection.send(r);
+        return r;
     }
     
     
     
-    public void disableIrcForward() {
-        this.connection.send(new Request(RequestType.IRC_FORWARD_OFF));
+    public Request enableIrcForwad() {
+        if (!this.isConnected()) {
+            return null;
+        }
+        Request r = new Request(RequestType.IRC_FORWARD_ON);
+        this.connection.send(r);
+        return r;
+    }
+    
+    
+    
+    public Request disableIrcForward() {
+        if (!this.isConnected()) {
+            return null;
+        }
+        Request r = new Request(RequestType.IRC_FORWARD_OFF);
+        this.connection.send(r);
+        return r;
+    }
+    
+    
+    
+    public Request requestUpdates(boolean cacheOnly) {
+        if (!this.isConnected()) {
+            return null;
+        }
+        Request r = null;
+        if (cacheOnly) {
+            r = new Request(RequestType.UPDATE_CACHE);
+        } else {
+            r = new Request(RequestType.UPDATE);
+        }
+        this.connection.send(r);
+        return r;
+    }
+    
+    
+    
+    void fireConnectionAccepted(final NetworkEvent e) {
+        List<ConnectionListener> listeners = 
+            this.eventProvider.getListeners(ConnectionListener.class);
+        
+        Dispatchable<ConnectionListener, NetworkEvent> event = 
+            new Dispatchable<ConnectionListener, NetworkEvent>(listeners, e) {
+
+                @Override
+                public void dispatch(ConnectionListener listener,
+                    NetworkEvent event) {
+                    listener.connectionAccepted(e);
+                }
+        };
+        this.eventProvider.dispatchEvent(event);
     }
     
     
@@ -186,6 +225,24 @@ public class ClientProtocolHandler {
     
     
     
+    private void firePingReceived(final int latency) {
+        List<PingListener> listeners = 
+            this.eventProvider.getListeners(PingListener.class);
+        
+        Dispatchable<PingListener, Integer> event = 
+            new Dispatchable<PingListener, Integer>(listeners, latency) {
+
+                @Override
+                public void dispatch(PingListener listener,
+                    Integer latency) {
+                    listener.ping(latency);
+                }
+        };
+        this.eventProvider.dispatchEvent(event);
+    }
+    
+    
+    
     public void addProtocolListener(ProtocolListener listener) {
         this.eventProvider.addListener(ProtocolListener.class, listener);
     }
@@ -207,6 +264,18 @@ public class ClientProtocolHandler {
     public void removeConnectionListener(ConnectionListener listener) {
         this.eventProvider.addListener(ConnectionListener.class, listener);
     }
+    
+    
+    
+    public void addPingListener(PingListener listener) {
+        this.eventProvider.addListener(PingListener.class, listener);
+    }
+    
+    
+    
+    public void removePingListener(PingListener listener) {
+        this.eventProvider.removeListener(PingListener.class, listener);
+    }
 
     
 
@@ -219,6 +288,11 @@ public class ClientProtocolHandler {
 
     void objectReceived(ObjectReceivedEvent e) {
 
+        if (e.getObject() instanceof Ping) {
+            this.firePingReceived(((ClientConnection) e.getSource()).latency());
+            return;
+        }
+        
         if (!(e.getObject() instanceof Response)) {
             logger.error("Received object that is no response: \n" + e.getObject());
             return;
