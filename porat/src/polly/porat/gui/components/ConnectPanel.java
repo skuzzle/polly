@@ -27,10 +27,13 @@ public class ConnectPanel extends JToolBar implements DocumentListener {
     private JPasswordField passwordText;
     private KeyButton connect;
     private KeyButton disconnect;
+    private String defaultHost;
+    private int defaultPort;
     
     
-    
-    public ConnectPanel() {
+    public ConnectPanel(String defaultHost, int defaultPort) {
+        this.defaultHost = defaultHost;
+        this.defaultPort = defaultPort;
         this.setFloatable(false);
         this.setRollover(true);
         this.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
@@ -51,8 +54,10 @@ public class ConnectPanel extends JToolBar implements DocumentListener {
         this.disconnect.setVisible(false);
         
         this.hostText = new JTextField();
+        this.hostText.setText(this.defaultHost);
         this.hostText.getDocument().addDocumentListener(this);
         this.portText = new JTextField();
+        this.portText.setText("" + this.defaultPort);
         this.portText.getDocument().addDocumentListener(this);
         this.userNameText = new JTextField();
         this.userNameText.getDocument().addDocumentListener(this);

@@ -81,7 +81,7 @@ public class MainWindow extends JFrame {
     
     
     private JToolBar createConnectPanel() {
-        this.connectPanel = new ConnectPanel();
+        this.connectPanel = new ConnectPanel("localhost", 24500);
         return this.connectPanel;
     }
     

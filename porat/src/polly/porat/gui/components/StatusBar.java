@@ -47,7 +47,7 @@ public class StatusBar extends JToolBar {
         this.activity = new JLabel("Activity: ");
         this.activity.setVisible(false);
         
-        this.ping = new JLabel("Ping: 0 ms");
+        this.ping = new JLabel("Latency: 0 ms");
         this.ping.setVisible(false);
         
         this.setOnline(false);
@@ -115,6 +115,6 @@ public class StatusBar extends JToolBar {
     
     public void updatePing(int latency) {
         setStatusIcon(latency);
-        ping.setText("Ping: " + latency + " ms");
+        ping.setText("Latency: " + latency + " ms");
     }
 }

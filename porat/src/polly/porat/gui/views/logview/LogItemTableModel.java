@@ -81,8 +81,6 @@ public class LogItemTableModel extends AbstractTableModel {
     public Class<?> getColumnClass(int columnIndex) {
         if (columnIndex == 0) {
             return Integer.class;
-        } else if (columnIndex == 2) {
-            return Date.class;
         }
         return super.getColumnClass(columnIndex);
     }
