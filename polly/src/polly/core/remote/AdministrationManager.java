@@ -128,15 +128,18 @@ public class AdministrationManager extends AbstractDisposable {
     
     
     public void sendLogs(Connection connection) {
+        logger.info("Connection " + connection + " requested logfiles");
         Response response = new Response(ResponseType.FILE);
         response.getPayload().put(Constants.LOG_LIST, this.listLogFiles());
-        
-        connection.send(response);
+
+        ((ServerConnection) connection).send(response, true);
+        logger.info("Logfiles sent");
     }
     
     
     
     private List<SerializableFile> listLogFiles() {
+        logger.trace("Listing logfiles...");
         File[] logs = LOG_DIR.listFiles(new FileFilter() {
             
             @Override
@@ -145,6 +148,7 @@ public class AdministrationManager extends AbstractDisposable {
                 return LOG_PATTERN.matcher(name).matches(); 
             }
         });
+        logger.trace("Found " + logs.length + " Logfiles to send.");
         List<SerializableFile> result = new ArrayList<SerializableFile>(logs.length);
         for (File file : logs) {
             result.add(new SerializableFile(file));

@@ -44,7 +44,7 @@ public class ServerConnection implements Runnable, Disposable, polly.network.Con
     private int loginTimeOut;
     private long start;
     private ReentrantLock userLock;
-    
+    private boolean ignorePing;
     
     
     public ServerConnection(int id, AdministrationServer server, Socket socket, 
@@ -90,7 +90,9 @@ public class ServerConnection implements Runnable, Disposable, polly.network.Con
                 }
             
             
-                if (pongReceived.get()) {
+                if (ignorePing) {
+                    pongReceived.set(false);
+                } else if (pongReceived.get()) {
                     pongReceived.set(false);
                     send(new Ping());
                 } else {
@@ -104,10 +106,16 @@ public class ServerConnection implements Runnable, Disposable, polly.network.Con
             new ThreadFactoryBuilder("PING_SERVICE_" + this.id));
         this.pingService.scheduleAtFixedRate(r, 5000, 5000, TimeUnit.MILLISECONDS);
     }
-
+    
     
     
     public void send(ProtocolObject message) {
+        this.send(message, false);
+    }
+
+    
+    
+    public void send(ProtocolObject message, boolean ignorePing) {
         if (this.shutdownFlag.get() || this.output == null) {
             return;
             // throw new IOException("Trying to send over closed connection");
@@ -115,14 +123,32 @@ public class ServerConnection implements Runnable, Disposable, polly.network.Con
         
         try {
             synchronized (this.output) {
+                if (ignorePing) {
+                    logger.warn("Ignoring pings for " + this);
+                }
+                this.ignorePing = ignorePing;
                 this.output.writeObject(message);
                 this.output.flush();
                 this.output.reset();
+                this.ignorePing = false;
             }
         } catch (IOException e) {
             logger.error("Error while sending", e);
             this.dispose();
         }
+    }
+    
+    
+    
+    
+    public boolean isIgnorePing() {
+        return this.ignorePing;
+    }
+    
+    
+    
+    public void setIgnorePing(boolean ignorePing) {
+        this.ignorePing = ignorePing;
     }
     
     
