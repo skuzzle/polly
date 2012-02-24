@@ -1,2 +1,2 @@
 cd ..\..
-call ant all
+call build all

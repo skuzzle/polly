@@ -1,2 +1,2 @@
 cd ..\..
-call ant build_lazy
+call build build_lazy

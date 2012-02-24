@@ -1,2 +1,2 @@
 cd ..\..
-call ant eclipse
+call build eclipse
