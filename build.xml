@@ -12,7 +12,7 @@
     <!-- 
         builds the network project and copies the dist jar to the libs folder
     -->
-    <target name="porat">
+    <target name="porat" depends="network">
         <ant dir="porat" target="${mode}" inheritAll="false"/>
         <copy 
             file="porat/dist/porat.jar" 
