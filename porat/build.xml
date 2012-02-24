@@ -15,7 +15,7 @@
     <property name="lib.dir"      value="${polly.root.dir}/libs"/>
     
     <!-- jar file properties -->
-    <property name="mainclass" value="TODO"/>
+    <property name="mainclass" value="polly.porat.Porat"/>
     <property name="title"     value="Polly Remote Administration Tool"/>
     <!-- used to specify additional jar-classpath elements -->
     <property name="classpath" value=""/>
