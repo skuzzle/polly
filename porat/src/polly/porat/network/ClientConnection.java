@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 import polly.network.Connection;
 import polly.network.events.NetworkEvent;
 import polly.network.events.ObjectReceivedEvent;
+import polly.network.protocol.Constants;
 import polly.network.protocol.ErrorResponse;
 import polly.network.protocol.Ping;
 import polly.network.protocol.Pong;
@@ -33,7 +34,7 @@ class ClientConnection implements Connection, Runnable {
     private final static Logger logger = Logger.getLogger(
             ClientConnection.class.getName());
     
-
+    private int id;
     private Socket socket;
     private ObjectInputStream input;
     private ObjectOutputStream output;
@@ -72,9 +73,11 @@ class ClientConnection implements Connection, Runnable {
             }
             Response response = (Response) in;
             if (response.is(ResponseType.ACCEPTED)) {
+                
                 this.lastPing = new Ping();
                 this.lastPing.setReceivedAt(System.currentTimeMillis());
                 
+                this.id = (Integer) response.getPayload().get(Constants.CONNECTION_ID);
                 this.connectionThread.execute(this);
             } else if (response.is(ResponseType.ERROR)) {
                 throw new IOException("connection rejected. Error code: " + 
@@ -91,6 +94,12 @@ class ClientConnection implements Connection, Runnable {
     
     
     
+    public int getId() {
+        return this.id;
+    }
+    
+    
+    
     @Override
     public void send(ProtocolObject message) {
         if (this.shutdownFlag.get() || this.output == null) {
@@ -100,6 +109,7 @@ class ClientConnection implements Connection, Runnable {
         
         try {
             synchronized (this.output) {
+                message.setTimestamp(System.currentTimeMillis());
                 this.output.writeObject(message);
                 this.output.flush();
                 this.output.reset();

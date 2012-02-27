@@ -22,6 +22,7 @@ import polly.network.events.NetworkEvent;
 import polly.network.events.ObjectReceivedEvent;
 import polly.network.events.ObjectReceivedListener;
 import polly.network.protocol.Constants.ResponseType;
+import polly.network.protocol.Constants;
 import polly.network.protocol.ErrorResponse;
 import polly.network.protocol.Constants.ErrorType;
 import polly.network.protocol.Response;
@@ -97,7 +98,11 @@ public class AdministrationServer extends AbstractDisposable implements Runnable
                             connection.send(new ErrorResponse(ErrorType.LIMIT_EXCEEDED));
                             connection.dispose();
                         } else {
-                            connection.send(new Response(ResponseType.ACCEPTED));
+                            Response accepted = new Response(ResponseType.ACCEPTED);
+                            accepted.getPayload().put(Constants.CONNECTION_ID, 
+                                connection.getId());
+                            
+                            connection.send(accepted);
                             this.connections.add(connection);
                             this.connectionThreadPool.execute(connection);
                             

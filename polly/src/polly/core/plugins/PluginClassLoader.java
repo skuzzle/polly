@@ -2,6 +2,7 @@ package polly.core.plugins;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -9,11 +10,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.security.SecureClassLoader;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -37,7 +36,6 @@ import org.apache.log4j.Logger;
  */
 public class PluginClassLoader extends SecureClassLoader implements Cloneable {
 
-    
     
     private class BytesURLStreamHandler extends URLStreamHandler {
 
@@ -86,74 +84,70 @@ public class PluginClassLoader extends SecureClassLoader implements Cloneable {
     private JarFile jar;
     private File file;
     private long jarLastModified;
-    private ZipEntry[] dependencies = new ZipEntry[0];
-    private Map<String, byte[]> cache;
+    private Map<String, byte[]> dependencyCache;
+    private Map<String, Class<?>> classCache;
 
 
-    public static PluginClassLoader getInstance(File file) {
-        return getInstance(file, ClassLoader.getSystemClassLoader());
-    }
-
-
-
-    public static PluginClassLoader getInstance(File file, ClassLoader parent) {
-        PluginClassLoader loader = new PluginClassLoader(file, parent);
-        try {
-            loader.readManifestClasspath();
-            return loader;
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
-
-
-    private PluginClassLoader(File file) {
+    public PluginClassLoader(File file) throws IOException {
         this(file, ClassLoader.getSystemClassLoader());
     }
 
 
 
-    private PluginClassLoader(File file, ClassLoader parent) {
+    public PluginClassLoader(File file, ClassLoader parent) throws IOException {
         super(parent);
+        System.out.println("PARENT  " + parent.toString());
         this.file = file;
-        this.cache = new HashMap<String, byte[]>();
+        this.dependencyCache = new HashMap<String, byte[]>();
+        this.classCache = new HashMap<String, Class<?>>();
+        
+        this.jar = new JarFile(this.file);
+        this.jarLastModified = file.lastModified();
     }
 
 
-
-    private void openJar() throws IOException {
-        if (this.jar == null) {
-            this.jar = new JarFile(this.file);
-            this.jarLastModified = this.file.lastModified();
-        }
-    }
-
-    
 
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
+        if (this.jar == null) {
+            throw new ClassNotFoundException(name);
+        }
+        
         String path = name.replace('.', '/').concat(".class");
 
-        byte[] data = this.getFile(path);
+        Class<?> cached = this.classCache.get(path);
+        if (cached != null) {
+            return cached;
+        }
+        
+        byte[] data = this.getFile(this.jar, path);
         if (data == null)
             throw new ClassNotFoundException();
 
-        return this.defineClass(name, data, 0, data.length);
+        cached = this.defineClass(name, data, 0, data.length);
+        this.classCache.put(path, cached);
+        return cached;
     }
-
+    
 
     
     @Override
     protected URL findResource(String name) {
-        byte[] data = this.getFile(name);
-
-        if (data == null)
+        if (this.jar == null) {
             return null;
-        try {
-            return this.getDataURL(name, data);
-        } catch (MalformedURLException e) {
-            return null;
+        }
+        
+        synchronized (this.getClassLoadingLock(name)) {
+            byte[] data = this.getFile(this.jar, name);
+            
+            if (data == null) {
+                return null;
+            }
+            try {
+                return this.getDataURL(name, data);
+            } catch (MalformedURLException e) {
+                return null;
+            }
         }
     }
 
@@ -185,91 +179,137 @@ public class PluginClassLoader extends SecureClassLoader implements Cloneable {
 
 
 
-    private void initializeClasspath(String[] items) throws IOException {
-        openJar();
-        List<ZipEntry> deps = new ArrayList<ZipEntry>();
-        for (int i = 0; i < items.length; i++) {
-            String item = items[i].trim();
-            ZipEntry entry = this.jar.getEntry(item);
-            if (entry == null) {
-                logger.error("Class-Path entry " + item + " in jar " + file
-                    + " does not exist");
-            } else {
-                deps.add(entry);
-            }
-        }
-        this.dependencies = new ZipEntry[deps.size()];
-        deps.toArray(this.dependencies);
+    private String[] readManifestClasspath(JarFile jar) throws IOException {
+        return getClasspath(jar.getManifest());
     }
-
-
-
-    private void readManifestClasspath() throws IOException {
-        this.openJar();
-        Manifest mf = this.jar.getManifest();
+    
+    
+    
+    /*private String[] readMainfestClasspath(String jarName, JarInputStream in) {
+        String[] cp = this.cpCache.get(jarName);
+        if (cp != null) {
+            return cp;
+        }
+        
+        cp = getClasspath(in.getManifest());
+        this.cpCache.put(jarName, cp);
+        return cp;
+    }*/
+    
+    
+    
+    private String[] getClasspath(Manifest mf) {
         if (mf == null) {
-            return;
+            return null;
         }
         Attributes attribs = mf.getMainAttributes();
         String classpath = attribs.getValue(Attributes.Name.CLASS_PATH);
         if (classpath == null) {
-            return;
+            return null;
         }
-        String[] items = classpath.split(" ");
-        this.initializeClasspath(items);
+        
+        return classpath.split(" ");
     }
-
-
-
-    protected byte[] getFile(String path) {
+    
+    
+    
+    private byte[] readSimpleEntry(JarFile jar, ZipEntry entry) throws IOException {
+        InputStream in = jar.getInputStream(entry);
+        int size = (int) entry.getSize();
+        return readStream(in, size);
+    }
+    
+    
+    
+    private byte[] getFile(JarFile jar, String className) {
+        byte[] file = null;
+        
         try {
-            this.openJar();
-            ZipEntry entry = this.jar.getEntry(path);
+            // try finding class in current jar
+            ZipEntry entry = jar.getEntry(className);
+            if (entry != null) {
+                file = this.readSimpleEntry(jar, entry);
+                return file;
+            }
             
-            if (entry == null) {
-                byte[] cached = this.cache.get(path);
-                if (cached == null) {
-                    for (int i = 0; i < this.dependencies.length; ++i) {
-                        ZipEntry dep = this.dependencies[i];
-                        JarInputStream in = new JarInputStream(
-                                    this.jar.getInputStream(dep));
+            // try finding class in dependency cache
+            file = this.dependencyCache.get(className);
+            if (file != null) {
+                return file;
+            }
+            
+            String[] classpath = this.readManifestClasspath(jar);
+            
+            // now, try to find the path in our dependencies
+            for (int i = 0; i < classpath.length && file == null; ++i) {
+                String cpEntry = classpath[i];
+                
+                entry = jar.getEntry(cpEntry);
+                if (entry != null) {
+                    // dependency found in our jar
+                    if (cpEntry.endsWith(".jar")) {
+                        // dependencies in contained jars are not resolved recursively!
+                        // now try to find requested class in the dependency.
+                        // We read the whole referenced dependency into our cache so 
+                        // there is no need to open it again
+                        JarInputStream in = new JarInputStream(jar.getInputStream(entry));
                         
                         ZipEntry check = in.getNextEntry();
                         while (check != null) {
-                            String name = check.getName();
-                            if (!name.endsWith("/")) {
-                                byte[] data = this.readStream(in);
-                                this.cache.put(name, data);
-                                if (name.equals(path)) {
-                                    cached = data;
+                            if (!check.isDirectory()) {
+                                // cache the file so we do not need to read this jar
+                                // file again
+                                byte[] tmp = readStream(in);
+                                this.dependencyCache.put(check.getName(), tmp);
+                                if (check.getName().equals(className)) {
+                                    file = tmp;
                                 }
                             }
                             check = in.getNextEntry();
                         }
+                    } else if (cpEntry.endsWith(".class")) {
+                        file = this.readSimpleEntry(jar, entry);
                     }
+                } else {
+                    // try to find dependeny in directory
+                    File cpEntryFile = new File(cpEntry);
+                    if (!cpEntryFile.exists()) {
+                        continue;
+                    } else if (cpEntry.endsWith(".class")) {
+                        // classpath references a classfile, so we can read it directly
+                        file = readStream(new FileInputStream(cpEntryFile));
+                        continue;
+                    } else if (!cpEntry.endsWith("jar")) {
+                        // we cannot process dependencies that are no jar files
+                        continue;
+                    }
+                    
+                    // file exists, so try finding the requested class in the referenced
+                    // jar file recursively
+                    file = this.getFile(new JarFile(cpEntryFile), className);
                 }
-                return cached;
-            } else {
-                InputStream in = this.jar.getInputStream(entry);
-                int size = (int) entry.getSize();
-                return this.readStream(in, size);
             }
-        } catch (IOException e) {
-            return null;
+        } catch (IOException ignore) {
+            logger.error("", ignore);
+            /* returning null */ 
         }
+        
+        return file;
     }
-
-
-
-    protected byte[] readStream(InputStream in) throws IOException {
+    
+    
+    
+    private static byte[] readStream(InputStream in) throws IOException {
         byte[] buffer = new byte[1024];
 
         int bytesRead = 0;
         while (true) {
-            int byteReadThisTurn = in.read(buffer, bytesRead, buffer.length
-                - bytesRead);
-            if (byteReadThisTurn < 0)
+            int byteReadThisTurn = in.read(buffer, bytesRead, 
+                buffer.length - bytesRead);
+            
+            if (byteReadThisTurn < 0) {
                 break;
+            }
 
             bytesRead += byteReadThisTurn;
 
@@ -292,13 +332,14 @@ public class PluginClassLoader extends SecureClassLoader implements Cloneable {
 
 
 
-    protected byte[] readStream(InputStream in, int size) throws IOException {
-        if (in == null)
+    private static byte[] readStream(InputStream in, int size) throws IOException {
+        if (in == null) {
             return null;
-        if (size == 0)
+        } else if (size == 0) {
             return new byte[0];
+        }
         int currentTotal = 0;
-        int bytesRead;
+        int bytesRead = 0;
         byte[] data = new byte[size];
         while (currentTotal < data.length
             && (bytesRead = in.read(data, currentTotal, data.length
@@ -307,5 +348,12 @@ public class PluginClassLoader extends SecureClassLoader implements Cloneable {
 
         in.close();
         return data;
+    }
+    
+    
+    
+    @Override
+    public String toString() {
+        return "PluginClassLoader:" + this.file;
     }
 }

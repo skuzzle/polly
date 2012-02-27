@@ -18,6 +18,7 @@ public class ProtocolObject implements Serializable {
     private Map<String, Object> payload;
 
     
+    
     public ProtocolObject() {
         this.id = ID_COUNTER.getAndIncrement();
         this.timestamp = System.currentTimeMillis();
@@ -38,6 +39,12 @@ public class ProtocolObject implements Serializable {
    
     public long getTimestamp() {
         return this.timestamp;
+    }
+    
+    
+    
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
     
 

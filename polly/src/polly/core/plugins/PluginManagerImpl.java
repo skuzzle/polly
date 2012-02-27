@@ -2,6 +2,7 @@ package polly.core.plugins;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.Collections;
@@ -36,11 +37,13 @@ public class PluginManagerImpl extends AbstractDisposable implements PluginManag
      * Stores all loaded plugins. Key: plugin name
      */
     private Map<String, PluginConfiguration> pluginCache;
+    private PollyClassLoader pollyCl;
     
     
     
-    public PluginManagerImpl() {
+    public PluginManagerImpl(PollyClassLoader pollyCl) {
         this.pluginCache = new HashMap<String, PluginConfiguration>();
+        this.pollyCl = pollyCl;
     }
     
     
@@ -143,10 +146,16 @@ public class PluginManagerImpl extends AbstractDisposable implements PluginManag
     
     private Class<?> loadClass(String clazz, File jarFile) throws ClassNotFoundException {
         ClassLoader contextCl = Thread.currentThread().getContextClassLoader();
-        ClassLoader urlCl = PluginClassLoader.getInstance(jarFile, contextCl);
-        Class<?> result = urlCl.loadClass(clazz);
+        PluginClassLoader cl;
+        try {
+            cl = new PluginClassLoader(jarFile, contextCl);
+        } catch (IOException e) {
+            throw new ClassNotFoundException(clazz, e);
+        }
+        Class<?> result = cl.loadClass(clazz);
 
-        Thread.currentThread().setContextClassLoader(urlCl);
+        this.pollyCl.addPlugin(cl);
+        //Thread.currentThread().setContextClassLoader(urlCl);
         return result;
     }
     

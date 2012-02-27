@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.lang.management.ManagementFactory;
+import java.lang.reflect.Constructor;
 import java.nio.channels.FileLock;
 import java.util.Arrays;
 
@@ -18,6 +19,7 @@ import polly.configuration.DefaultPollyConfiguration;
 import polly.configuration.PollyConfiguration;
 import polly.core.ModuleBootstrapper;
 import polly.core.ShutdownManagerImpl;
+import polly.core.plugins.PollyClassLoader;
 import polly.moduleloader.DefaultModuleLoader;
 import polly.moduleloader.ModuleLoader;
 import polly.util.FileUtil;
@@ -70,17 +72,27 @@ public class Polly {
      *            The commandline arguments passed to polly. This array may be
      *            empty
      */
-    public synchronized static void main(String[] args) {
+    public synchronized static void main(String[] args) throws Exception {
         for (String arg : args) {
             commandLine += arg + " ";
         }
         commandLine = commandLine.trim();
-        new Polly(args);
+        
+        /*
+         * Make sure that all polly classes are laoded by polly classloader!
+         */
+        PollyClassLoader parentCl = new PollyClassLoader();
+        Class<?> polly = parentCl.loadClass("polly.Polly");
+        Constructor<?> ctor = polly.getConstructor(String[].class, 
+                PollyClassLoader.class);
+
+        Thread.currentThread().setContextClassLoader(parentCl);
+        ctor.newInstance(args, parentCl);
     }
 
 
 
-    private Polly(String[] args) {
+    public Polly(String[] args, PollyClassLoader parentCl) {
         if (!this.lockInstance(new File("polly.lck"))) {
             System.out.println("Polly already running");
             return;
@@ -146,6 +158,7 @@ public class Polly {
         // Base components which have no own module:
         loader.provideComponent(new ShutdownManagerImpl());
         loader.provideComponent(config);
+        loader.provideComponent(parentCl);
 
         // Modules:
         // Register all the modules. The order in which they are registered does not

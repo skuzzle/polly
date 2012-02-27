@@ -127,13 +127,16 @@ public class ServerConnection implements Runnable, Disposable, polly.network.Con
                     logger.warn("Ignoring pings for " + this);
                 }
                 this.ignorePing = ignorePing;
+                message.setTimestamp(System.currentTimeMillis());
                 this.output.writeObject(message);
                 this.output.flush();
                 this.output.reset();
                 this.ignorePing = false;
             }
         } catch (IOException e) {
-            logger.error("Error while sending", e);
+            if (!this.isDisposed()) { 
+                logger.error("Error while sending", e);
+            }
             this.dispose();
         }
     }
@@ -268,5 +271,11 @@ public class ServerConnection implements Runnable, Disposable, polly.network.Con
     @Override
     public boolean isConnected() {
         return !this.shutdownFlag.get() && this.socket.isConnected();
+    }
+
+
+
+    public Object getId() {
+        return this.id;
     }
 }

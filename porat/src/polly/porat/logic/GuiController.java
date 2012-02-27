@@ -11,6 +11,8 @@ import java.util.concurrent.Executors;
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
+import org.apache.log4j.Logger;
+
 import polly.network.events.ConnectionListener;
 import polly.network.events.NetworkEvent;
 import polly.network.protocol.Constants;
@@ -34,7 +36,8 @@ import polly.porat.network.ClientProtocolHandler;
 
 
 public class GuiController implements ProtocolListener {
-    
+
+    private final static Logger logger = Logger.getLogger(GuiController.class.getName());
 
     private ClientProtocolHandler networkHandler;
     private MainWindow mainWindow;
@@ -132,6 +135,7 @@ public class GuiController implements ProtocolListener {
     public void connect(InetAddress host, int port, String userName, String pw) 
             throws IOException {
 
+        logger.info("Connecting to " + host + ":" + port + " as " + userName);
         this.setActivity("Connecting...  ", Icons.NETWORKING_ICON);
         this.networkHandler.connect(host, port, userName, pw);
     }
@@ -139,6 +143,7 @@ public class GuiController implements ProtocolListener {
     
     
     public void requestUpdate(boolean cacheOnly) {
+        logger.info("Requesting updates");
         this.setActivity("Downloading logfiles...  ", Icons.NETWORKING_ICON);
         this.networkHandler.requestUpdates(cacheOnly);
     }

@@ -14,6 +14,7 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
@@ -40,7 +41,7 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     public final static String ALL_USERS = "ALL_USERS";
     
    
-    @Id@GeneratedValue
+    @Id@GeneratedValue(strategy = GenerationType.TABLE)
     private int id;
     
     private int userLevel;

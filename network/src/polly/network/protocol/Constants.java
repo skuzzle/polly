@@ -6,6 +6,7 @@ public interface Constants {
     public final static String LOG_LIST = "LOG_LIST";
     public final static String USER_NAME = "USER_NAME";
     public final static String PASSWORD = "PASSWORD";
+    public final static String CONNECTION_ID = "CONNECTION_ID";
     
     
     

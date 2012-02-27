@@ -46,8 +46,7 @@ public class PersistenceManagerImpl extends AbstractDisposable implements
 
 
     public void connect(String persistenceUnit) {
-        logger.info("Connecting to persistence unit '" + persistenceUnit
-            + "'...");
+        logger.info("Connecting to persistence unit '" + persistenceUnit + "'...");
 
         this.emf = Persistence.createEntityManagerFactory(persistenceUnit);
         this.em = this.emf.createEntityManager();
