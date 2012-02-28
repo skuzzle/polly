@@ -197,12 +197,11 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         @Override
         protected void onAction(String sender, String login, 
                 String hostname, String target, String action) {
-            
             String nickName = IrcManagerImpl.this.stripNickname(sender);
             IrcUser user = new IrcUser(nickName, login, hostname);
-            // TODO: target
+
             MessageEvent e = new MessageEvent(IrcManagerImpl.this, user,
-                    nickName, action);
+                    target, action);
             
             IrcManagerImpl.this.fireActionMessageEvent(e);
         }
