@@ -102,13 +102,11 @@
         <ant dir="polly.core" target="${mode}" inheritAll="false"/>
         <ant dir="polly.logging" target="${mode}" inheritAll="false"/>
         <ant dir="polly.reminds" target="${mode}" inheritAll="false"/>
-        <ant dir="polly.tv" target="${mode}" inheritAll="false"/>
         
         <copy todir="${plugin.dir}">
             <fileset dir="polly.core/dist"/>
             <fileset dir="polly.logging/dist"/>
             <fileset dir="polly.reminds/dist"/>
-            <fileset dir="polly.tv/dist"/>
         </copy>
         
         <mkdir dir="polly/plugins"/>
@@ -199,7 +197,7 @@
         Rebuilds all polly dependencies to dist and then builds all changed 
         files from polly.
     -->
-    <target name="build_lazy">
+    <target name="lazy">
         <antcall target="sdk" inheritAll="true" inheritRefs="true">
             <param name="mode" value="dist_no_clean"/>
         </antcall>

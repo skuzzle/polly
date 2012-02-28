@@ -161,6 +161,7 @@
             <fileset dir="${bin.dir}"/>
             <fileset dir="${src.dir}"/>
         </jar>
+        <delete dir="${dist.lib.dir}"/>
     </target>
     
     
