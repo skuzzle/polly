@@ -58,7 +58,6 @@ public class PollyConfiguration extends Configuration
 	private boolean isDebugMode;
 	private String persistenceXML;
 	private String persistenceUnit;
-    private String pluginFolder;
     private String modulesCfg;
     private String keyStoreFile;
     private String keyStorePassword;
@@ -110,7 +109,6 @@ public class PollyConfiguration extends Configuration
         this.persistenceUnit = this.props.getProperty(DB_PERSISTENCE_UNIT, "polly");
         this.persistenceXML = this.props.getProperty(DB_PERSISTENCE_XML_PATH, 
             "cfg/META-INF/persistence.xml");
-        this.pluginFolder = this.props.getProperty(PLUGIN_FOLDER, "cfg/plugins");
         this.modulesCfg = this.props.getProperty(MODULE_CONFIG, "cfg/modules.cfg");
         this.keyStoreFile = this.props.getProperty(KEYSTORE_FILE, "cfg/SSLKeyStore");
         this.keyStorePassword = this.props.getProperty(KEYSTORE_PASSWORD, "");
@@ -244,12 +242,6 @@ public class PollyConfiguration extends Configuration
 	public String getLogConfigFile() {
 		return logConfigFile;
 	}
-	
-	
-	
-    public String getPluginFolder() {
-        return this.pluginFolder;
-    }
 
 	
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="polly" basedir="." default="dist">
 
-    <property name="version.num" value="0.7.0"/>
+    <property name="version.num" value="0.7.1"/>
 
     <!-- Relative path to the root dir -->
     <property name="polly.root.dir" value="../"/>
@@ -9,6 +9,7 @@
     <!-- Build-specific properties - do not change -->
     <property name="src.dir"      value="src"/>
     <property name="dist.dir"     value="dist"/>
+    <property name="plugins.dir"  value="plugins"/>
     <property name="dist.lib.dir" value="${dist.dir}/lib"/>
     <property name="release.dir"  value="release"/>
     <property name="update.dir"   value="update"/>
@@ -46,6 +47,7 @@
         log4j-1.2.16.jar
         polly.parser.jar
         moduleloader.jar
+        network.jar
         de.skuzzle.polly.process.jar
         eclipselink.jar
         javax.persistence_2.0.3.v201010191057.jar
@@ -70,6 +72,7 @@
             excludes="
                 polly.parser.jar 
 				modulloader.jar
+                network.jar
                 de.skuzzle.polly.process.jar
                 de.skuzzle.polly.sdk.jar"/>
     </path>
@@ -101,6 +104,7 @@
         Creates the dist folders and copies the dependent libs
     -->
     <target name="prepare">
+        <mkdir dir="${plugins.dir}"/>
         <mkdir dir="${dist.dir}"/>
         <mkdir dir="${bin.dir}"/>
         <mkdir dir="cfg/META-INF"/>
@@ -109,12 +113,16 @@
         
         <mkdir dir="${dist.dir}/cache"/>
         <mkdir dir="${dist.dir}/logs"/>
+        <mkdir dir="${dist.dir}/plugins"/>
         
         <copy todir="${dist.lib.dir}">
             <fileset dir="${lib.dir}" includes="${includeJars}"/>
         </copy>
         <copy todir="${dist.dir}/cfg">
             <fileset dir="./cfg"/>
+        </copy>
+        <copy todir="${dist.dir}/plugins">
+            <fileset dir="${plugins.dir}"/>
         </copy>
         <copy file="${lib.dir}/polly.installer.jar" tofile="${dist.dir}/polly.installer.jar"/>
     </target>
@@ -129,7 +137,6 @@
         <mkdir dir="${bin.dir}"/>
         <javac srcdir="${src.dir}" destdir="${bin.dir}" classpathref="buildpath" source="1.6" debug="on">
             <exclude name="de/skuzzle/test/**"/>
-            <exclude name="polly/core/remote/**"/>
         </javac>
         
     </target>
@@ -169,8 +176,8 @@
                 <attribute name="Implementation-Version" value="${version}"/>
                 <attribute name="Class-Path"             value="${classpath} ${jar.classpath}"/>
             </manifest>
-            <fileset dir="${bin.dir}" excludes="polly/core/remote/**"/>
-            <fileset dir="${src.dir}" excludes="polly/core/remote/**"/>
+            <fileset dir="${bin.dir}"/>
+            <fileset dir="${src.dir}"/>
         </jar>
     </target>
 

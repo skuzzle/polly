@@ -130,6 +130,8 @@ public class PollyLoggingManager extends AbstractDisposable {
         
         output.outputLogs(myPolly.irc(), channel, logs, logFormatter, 
                 myPolly.formatting());
+        // clear log list
+        logs.clear();
     }
     
     

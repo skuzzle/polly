@@ -19,10 +19,10 @@ import polly.configuration.DefaultPollyConfiguration;
 import polly.configuration.PollyConfiguration;
 import polly.core.ModuleBootstrapper;
 import polly.core.ShutdownManagerImpl;
-import polly.core.plugins.PollyClassLoader;
 import polly.moduleloader.DefaultModuleLoader;
 import polly.moduleloader.ModuleLoader;
 import polly.util.FileUtil;
+import polly.util.PollyClassLoader;
 import de.skuzzle.polly.sdk.Version;
 
 public class Polly {
@@ -60,6 +60,11 @@ public class Polly {
 
     private final static String DEVELOP_VERSION = "0.7.1";
     private final static String CONFIG_FULL_PATH = "cfg/polly.cfg";
+    
+    /**
+     * The polly plugin folder. That folder is not supposed to change
+     */
+    public final static String PLUGIN_FOLDER = "plugins";
 
     private static Logger logger = Logger.getLogger(Polly.class.getName());
 
@@ -79,7 +84,7 @@ public class Polly {
         commandLine = commandLine.trim();
         
         /*
-         * Make sure that all polly classes are laoded by polly classloader!
+         * Make sure that all polly classes are loaded by polly classloader!
          */
         PollyClassLoader parentCl = new PollyClassLoader();
         Class<?> polly = parentCl.loadClass("polly.Polly");
@@ -235,7 +240,7 @@ public class Polly {
 
     private void checkDirectoryStructure(PollyConfiguration config) {
         boolean success = true;
-        File cfg_plugins = new File(config.getPluginFolder());
+        File cfg_plugins = new File(Polly.PLUGIN_FOLDER);
         File cfg_metainf = new File(config.getPersistenceXML()).getParentFile();
 
         if (!cfg_plugins.exists()) {

@@ -379,7 +379,7 @@ public class Namespace {
             throw new IOException(directory + " is no directory");
         }
         this.global = Declarations.restore(
-                new File(directory, GLOBAL_NAMESPACE + "declaration"));
+                new File(directory, GLOBAL_NAMESPACE + ".declaration"));
         this.namespaces.put(GLOBAL_NAMESPACE, this.global);
         
         File[] files = directory.listFiles(FILE_FILTER);

@@ -1,5 +1,6 @@
 package polly.core.plugins;
 
+import polly.Polly;
 import polly.configuration.PollyConfiguration;
 import polly.core.ModuleStates;
 import polly.core.ShutdownManagerImpl;
@@ -8,7 +9,8 @@ import polly.moduleloader.AbstractModule;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.annotations.Module;
 import polly.moduleloader.annotations.Require;
-import polly.moduleloader.annotations.Provide;;
+import polly.moduleloader.annotations.Provide;
+import polly.util.PollyClassLoader;
 
 @Module(
     requires = {
@@ -26,6 +28,7 @@ public class PluginModule extends AbstractModule {
     private PollyConfiguration config;
     private ShutdownManagerImpl shutdownManager;
     private PollyClassLoader pollyCl;
+    
     
     
     public PluginModule(ModuleLoader loader) {
@@ -52,13 +55,12 @@ public class PluginModule extends AbstractModule {
     }
 
     
-    
 
     public void run() throws Exception {
         MyPollyImpl myPolly = this.requireNow(MyPollyImpl.class);
         
         try {
-            this.pluginManager.loadFolder(this.config.getPluginFolder(), myPolly, 
+            this.pluginManager.loadFolder(Polly.PLUGIN_FOLDER, myPolly, 
                 this.config.getPluginExcludes());
         } finally {
             this.addState(ModuleStates.PLUGINS_READY);

@@ -109,12 +109,6 @@ public interface Configuration {
     public final static String DB_PERSISTENCE_XML_PATH = "persistenceXML";
     
     /**
-     * The path of pollys plugin folder. This is almost always "cfg/plugins".
-     * @since 0.7
-     */
-    public final static String PLUGIN_FOLDER = "pluginFolder";
-    
-    /**
      * Config file property name which enables/disables logging of irc messages.
      * @since Beta 0.5
      */

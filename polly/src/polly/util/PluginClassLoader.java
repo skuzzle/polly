@@ -1,4 +1,4 @@
-package polly.core.plugins;
+package polly.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;

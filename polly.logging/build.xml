@@ -12,7 +12,7 @@
     <property name="dist.lib.dir" value="${dist.dir}/lib"/>
     <property name="release.dir"  value="release"/>
     <property name="update.dir"   value="update"/>
-    <property name="struct.dir"   value="cfg/plugins"/>
+    <property name="struct.dir"   value="plugins"/>
     <property name="temp.dir"     value="temp"/>
     <property name="bin.dir"      value="bin"/>
     <property name="lib.dir"      value="${polly.root.dir}/libs"/>

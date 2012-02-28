@@ -13,6 +13,9 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import polly.util.PluginClassLoader;
+import polly.util.PollyClassLoader;
+
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PluginManager;

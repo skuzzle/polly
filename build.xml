@@ -111,7 +111,8 @@
             <fileset dir="polly.tv/dist"/>
         </copy>
         
-        <copy todir="polly/cfg/plugins">
+        <mkdir dir="polly/plugins"/>
+        <copy todir="polly/plugins">
             <fileset dir="${plugin.dir}" includes="**/**"/>
         </copy>
     </target>

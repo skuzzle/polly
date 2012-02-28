@@ -34,7 +34,7 @@ public class XmlCreator {
     }
 
 
-
+    
     private void buildPersistenceXml(PrintStream s) {
         s.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
         s.append("<persistence version=\"1.0\" xmlns=\"http://java.sun.com/xml/ns/persistence\"\n");
@@ -48,10 +48,12 @@ public class XmlCreator {
         s.append("    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>\n");
         s.append("    <description>Auto generated persistence.xml file</description>\n");
         s.append("    <exclude-unlisted-classes>false</exclude-unlisted-classes>\n\n");
+        
         s.append("    <!-- plugin jar file references -->\n");
         for (PluginConfiguration pluginCfg : this.pluginManager.loadedPlugins()) {
             s.append("    <jar-file>file:");
-            s.append("plugins/" + pluginCfg.getProperty(PluginConfiguration.JAR_FILE));
+            s.append("../plugins/"); // !TODO: read plugin folder from cfg
+            s.append(pluginCfg.getProperty(PluginConfiguration.JAR_FILE));
             s.append("</jar-file>\n");
         }
         s.append("\n");

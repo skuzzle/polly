@@ -1,4 +1,4 @@
-package polly.core.plugins;
+package polly.util;
 
 import java.net.URL;
 import java.util.LinkedList;

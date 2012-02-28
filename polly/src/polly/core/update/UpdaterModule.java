@@ -125,7 +125,7 @@ public class UpdaterModule extends AbstractModule {
             return;
         }
         List<PluginConfiguration> plugins = this.pluginManager.enumerate(
-            this.config.getPluginFolder(), this.config.getPluginExcludes());
+            Polly.PLUGIN_FOLDER, this.config.getPluginExcludes());
 
         List<UpdateItem> updates = new LinkedList<UpdateItem>();
 
