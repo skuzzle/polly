@@ -331,4 +331,18 @@ public class DefaultModuleLoader implements ModuleLoader {
         }
     }
 
+    
+    
+    public void dispose() {
+        for (Module mod : this.modules) {
+            mod.dispose();
+        }
+        this.beforeSetupReq.clear();
+        this.modules.clear();
+        this.providedStates.clear();
+        this.provides.clear();
+        this.requiredStates.clear();
+        this.setupProvides.clear();
+        this.state.clear();
+    }
 }

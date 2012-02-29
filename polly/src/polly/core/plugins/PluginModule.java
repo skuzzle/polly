@@ -10,13 +10,13 @@ import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.annotations.Module;
 import polly.moduleloader.annotations.Require;
 import polly.moduleloader.annotations.Provide;
-import polly.util.PollyClassLoader;
+import polly.util.ProxyClassLoader;
 
 @Module(
     requires = {
         @Require(component = PollyConfiguration.class),
         @Require(component = ShutdownManagerImpl.class),
-        @Require(component = PollyClassLoader.class),
+        @Require(component = ProxyClassLoader.class),
     },
     provides = {
         @Provide(component = PluginManagerImpl.class),
@@ -27,7 +27,7 @@ public class PluginModule extends AbstractModule {
     private PluginManagerImpl pluginManager;
     private PollyConfiguration config;
     private ShutdownManagerImpl shutdownManager;
-    private PollyClassLoader pollyCl;
+    private ProxyClassLoader pollyCl;
     
     
     
@@ -41,7 +41,7 @@ public class PluginModule extends AbstractModule {
     public void beforeSetup() {
         this.config = this.requireNow(PollyConfiguration.class);
         this.shutdownManager = this.requireNow(ShutdownManagerImpl.class);
-        this.pollyCl = this.requireNow(PollyClassLoader.class);
+        this.pollyCl = this.requireNow(ProxyClassLoader.class);
     }
     
     
@@ -67,4 +67,14 @@ public class PluginModule extends AbstractModule {
         }
     }
 
+    
+    
+    @Override
+    public void dispose() {
+        this.config = null;
+        this.pluginManager = null;
+        this.pollyCl = null;
+        this.shutdownManager = null;
+        super.dispose();
+    }
 }

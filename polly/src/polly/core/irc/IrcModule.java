@@ -138,5 +138,18 @@ public class IrcModule extends AbstractModule {
             throw e;
         }
     }
+    
+    
+    
+    @Override
+    public void dispose() {
+        this.config = null;
+        this.events = null;
+        this.userManager = null;
+        this.commandManager = null;
+        this.shutdownManager = null;
+        this.commandExecutor = null;
+        super.dispose();
+    }
 
 }

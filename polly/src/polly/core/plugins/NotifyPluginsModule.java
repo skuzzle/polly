@@ -48,4 +48,12 @@ public class NotifyPluginsModule extends AbstractModule {
         this.pluginManager.notifyPlugins();
         this.addState(ModuleStates.PLUGINS_NOTIFIED);
     }
+    
+    
+    
+    @Override
+    public void dispose() {
+        this.pluginManager = null;
+        super.dispose();
+    }
 }

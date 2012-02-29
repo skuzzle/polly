@@ -86,4 +86,13 @@ public class PersistenceModule extends AbstractModule {
 
 
 
+    @Override
+    public void dispose() {
+        this.config = null;
+        this.pluginManager = null;
+        this.shutdownManager = null;
+        this.persistenceManager = null;
+        this.xmlCreator = null;
+        super.dispose();
+    }
 }

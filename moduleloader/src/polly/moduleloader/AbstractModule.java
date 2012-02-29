@@ -154,4 +154,11 @@ public abstract class AbstractModule implements Module {
     public String toString() {
         return this.getName();
     }
+    
+    
+    
+    @Override
+    public void dispose() {
+        this.loader = null;
+    }
 }

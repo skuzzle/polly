@@ -5,28 +5,36 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-public class PollyClassLoader extends ClassLoader {
+public class ProxyClassLoader extends ClassLoader {
 
     private List<PluginClassLoader> children;
     
     
     
-    public PollyClassLoader() {
+    public ProxyClassLoader() {
         this(ClassLoader.getSystemClassLoader());
     }
 
 
 
-    public PollyClassLoader(ClassLoader parent) {
+    public ProxyClassLoader(ClassLoader parent) {
         super(parent);
         this.children = new LinkedList<PluginClassLoader>();
     }
     
     
     
-    public void addPlugin(PluginClassLoader child) {
+    public void addLoader(PluginClassLoader child) {
         synchronized (this.children) {
             this.children.add(child);
+        }
+    }
+    
+    
+    
+    public void removeLoader(PluginClassLoader child) {
+        synchronized (this.children) {
+            this.children.remove(child);
         }
     }
     

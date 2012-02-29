@@ -7,6 +7,7 @@ import de.skuzzle.polly.sdk.exceptions.DisposingException;
 
 import polly.configuration.Configuration;
 import polly.configuration.ConfigurationFileException;
+import polly.util.PluginClassLoader;
 
 
 /**
@@ -14,7 +15,7 @@ import polly.configuration.ConfigurationFileException;
  * @author Simon
  * @version 27.07.2011 ae73250
  */
-public class PluginConfiguration extends Configuration {
+public class Plugin extends Configuration {
     
     public final static String JAR_FILE = "jarfile";
     public final static String PLUGIN_NAME = "name";
@@ -26,9 +27,10 @@ public class PluginConfiguration extends Configuration {
     
 
     private PollyPlugin pluginInstance;
+    private PluginClassLoader loader;
     
     
-    public PluginConfiguration(String filename)
+    public Plugin(String filename)
             throws IOException, ConfigurationFileException {
         super(filename);
         this.init();
@@ -44,6 +46,19 @@ public class PluginConfiguration extends Configuration {
     
     public void setPluginInstance(PollyPlugin pluginInstance) {
         this.pluginInstance = pluginInstance;
+    }
+    
+    
+    
+    
+    public PluginClassLoader getLoader() {
+        return this.loader;
+    }
+    
+
+    
+    public void setLoader(PluginClassLoader loader) {
+        this.loader = loader;
     }
 
     
@@ -109,6 +124,13 @@ public class PluginConfiguration extends Configuration {
 
     @Override
     protected void actualDispose() throws DisposingException {
-        // do nothing
+        try {
+            if (this.pluginInstance != null) {
+                this.pluginInstance.dispose();
+                this.pluginInstance = null;
+            }
+        } finally {
+            this.loader.dispose();
+        }
     }
 }

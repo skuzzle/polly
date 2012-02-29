@@ -96,7 +96,6 @@ public class PluginClassLoader extends SecureClassLoader implements Cloneable {
 
     public PluginClassLoader(File file, ClassLoader parent) throws IOException {
         super(parent);
-        System.out.println("PARENT  " + parent.toString());
         this.file = file;
         this.dependencyCache = new HashMap<String, byte[]>();
         this.classCache = new HashMap<String, Class<?>>();
@@ -348,6 +347,15 @@ public class PluginClassLoader extends SecureClassLoader implements Cloneable {
 
         in.close();
         return data;
+    }
+    
+    
+    
+    public void dispose() {
+        this.classCache.clear();
+        this.dependencyCache.clear();
+        this.classCache = null;
+        this.dependencyCache = null;
     }
     
     

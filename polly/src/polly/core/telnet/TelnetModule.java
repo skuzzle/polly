@@ -72,5 +72,17 @@ public class TelnetModule extends AbstractModule {
         this.server.start();
         this.addState(ModuleStates.TELNET_READY);
     }
+    
+    
+    
+    @Override
+    public void dispose() {
+        this.config = null;
+        this.ircManager = null;
+        this.messageHandler = null;
+        this.server = null;
+        this.shutdownManager = null;
+        super.dispose();
+    }
 
 }

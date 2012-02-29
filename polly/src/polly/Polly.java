@@ -22,7 +22,7 @@ import polly.core.ShutdownManagerImpl;
 import polly.moduleloader.DefaultModuleLoader;
 import polly.moduleloader.ModuleLoader;
 import polly.util.FileUtil;
-import polly.util.PollyClassLoader;
+import polly.util.ProxyClassLoader;
 import de.skuzzle.polly.sdk.Version;
 
 public class Polly {
@@ -86,10 +86,10 @@ public class Polly {
         /*
          * Make sure that all polly classes are loaded by polly classloader!
          */
-        PollyClassLoader parentCl = new PollyClassLoader();
+        ProxyClassLoader parentCl = new ProxyClassLoader();
         Class<?> polly = parentCl.loadClass("polly.Polly");
         Constructor<?> ctor = polly.getConstructor(String[].class, 
-                PollyClassLoader.class);
+                ProxyClassLoader.class);
 
         Thread.currentThread().setContextClassLoader(parentCl);
         ctor.newInstance(args, parentCl);
@@ -97,7 +97,7 @@ public class Polly {
 
 
 
-    public Polly(String[] args, PollyClassLoader parentCl) {
+    public Polly(String[] args, ProxyClassLoader parentCl) {
         if (!this.lockInstance(new File("polly.lck"))) {
             System.out.println("Polly already running");
             return;
@@ -303,19 +303,19 @@ public class Polly {
 
 
     private void printHelp() {
-        System.out.println("Polly Parameterï¿½bersicht:");
+        System.out.println("Polly Parameterübersicht:");
         System.out.println("Name: \t\tParameter:\t Beschreibung:");
         System.out.println("(-log | -l) \t<'on'|'off'> \t Schaltet IRC "
             + "log ein/aus.");
         System.out
-            .println("(-nick | -n) \t<nickname> \t Nickname fï¿½r den Bot.");
+            .println("(-nick | -n) \t<nickname> \t Nickname für den Bot.");
         System.out
-            .println("(-ident | -i) \t<ident> \t Passwort fï¿½r den Nickserv.");
+            .println("(-ident | -i) \t<ident> \t Passwort für den Nickserv.");
         System.out
             .println("(-server | -s) \t<server> \t Server zu dem sich der Bot "
                 + "verbindet. Nutzt 6669 als Port wenn nicht anders angegeben.");
         System.out
-            .println("(-port | -p) \t<port> \t\t Port fï¿½r den IRC-Server.");
+            .println("(-port | -p) \t<port> \t\t Port für den IRC-Server.");
         System.out.println("(-join | -j) \t<#c1,..#cn> \t Joined nur die/den "
             + "angegebenen Channel.");
         System.out
@@ -323,8 +323,8 @@ public class Polly {
         System.out
             .println("-telnet \t<'on'|'off'>\t Telnet-Server aktivieren.");
         System.out.println("-telnetport \t<port>\t\t Telnet-Port setzen.");
-        System.out.println("(-help | -?) \t\t\t Diese ï¿½bersicht anzeigen.");
-        System.out.println("Beliebige Taste drï¿½cken zum Beenden.");
+        System.out.println("(-help | -?) \t\t\t Diese Übersicht anzeigen.");
+        System.out.println("Beliebige Taste drücken zum Beenden.");
         try {
             System.in.read();
         } catch (IOException e) {

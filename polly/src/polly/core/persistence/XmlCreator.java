@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import polly.core.plugins.PluginConfiguration;
+import polly.core.plugins.Plugin;
 import polly.core.plugins.PluginManagerImpl;
 
 public class XmlCreator {
@@ -50,10 +50,10 @@ public class XmlCreator {
         s.append("    <exclude-unlisted-classes>false</exclude-unlisted-classes>\n\n");
         
         s.append("    <!-- plugin jar file references -->\n");
-        for (PluginConfiguration pluginCfg : this.pluginManager.loadedPlugins()) {
+        for (Plugin pluginCfg : this.pluginManager.loadedPlugins()) {
             s.append("    <jar-file>file:");
             s.append("../plugins/"); // !TODO: read plugin folder from cfg
-            s.append(pluginCfg.getProperty(PluginConfiguration.JAR_FILE));
+            s.append(pluginCfg.getProperty(Plugin.JAR_FILE));
             s.append("</jar-file>\n");
         }
         s.append("\n");

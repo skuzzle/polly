@@ -87,4 +87,15 @@ public class UserModule extends AbstractModule {
         }
     }
 
+    
+    
+    @Override
+    public void dispose() {
+        this.config = null;
+        this.eventProvider = null;
+        this.persistenceManager = null;
+        this.shutdownManager = null;
+        this.userManager = null;
+        super.dispose();
+    }
 }

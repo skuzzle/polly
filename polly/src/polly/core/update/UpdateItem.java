@@ -4,7 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 
-import polly.core.plugins.PluginConfiguration;
+import polly.core.plugins.Plugin;
 
 import de.skuzzle.polly.sdk.Version;
 
@@ -18,9 +18,9 @@ public class UpdateItem {
     
     public static UpdateItem fromProperties(Properties props) 
                 throws MalformedURLException {
-        String name = props.getProperty(PluginConfiguration.PLUGIN_NAME);
-        String url = props.getProperty(PluginConfiguration.UPDATE_URL);
-        String version = props.getProperty(PluginConfiguration.PLUGIN_VERSION);
+        String name = props.getProperty(Plugin.PLUGIN_NAME);
+        String url = props.getProperty(Plugin.UPDATE_URL);
+        String version = props.getProperty(Plugin.PLUGIN_VERSION);
         
         return new UpdateItem(name, new Version(version), new URL(url));
     }

@@ -54,7 +54,6 @@
         hsqldb.jar
         pircbot.jar
         mysql-connector-java-5.1.17-bin.jar
-        commons-lang3-3.0.jar
     "/>
     
 

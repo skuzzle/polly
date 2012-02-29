@@ -43,8 +43,8 @@ public class HighlightReplyHandler implements MessageListener {
     public void setMode(Mode mode) {
         this.mode = mode;
     }
-
     
+
     
     public void resetTimeOut() {
         this.lastMessage = System.currentTimeMillis();

@@ -88,4 +88,21 @@ public class MyPollyModule extends AbstractModule {
             this.pasteManager);
         this.provideComponent(myPolly);
     }
+    
+    
+    
+    @Override
+    public void dispose() {
+        this.commandManager = null;
+        this.ircManager = null;
+        this.pluginManager = null;
+        this.config = null;
+        this.persistencemanager = null;
+        this.userManager = null;
+        this.formatManager = null;
+        this.conversationManager = null;
+        this.shutdownManager = null;
+        this.pasteManager = null;
+        super.dispose();
+    }
 }

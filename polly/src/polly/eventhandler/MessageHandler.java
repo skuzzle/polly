@@ -71,7 +71,7 @@ public class MessageHandler implements MessageListener {
                         e.getSource().sendMessage(e.getChannel(), e2.getMessage());
                     } else {
                         e.getSource().sendMessage(e.getChannel(), 
-                            "Fehler beim AusfÃ¼hren des Befehls: " + e1.getMessage());
+                            "Fehler beim Ausführen des Befehls: " + e1.getMessage());
                     }
                     logger.debug("", e1);
                 } catch (UnknownCommandException e1) {
@@ -82,12 +82,12 @@ public class MessageHandler implements MessageListener {
                             e1.getSignature().toString());
                 } catch (InsufficientRightsException e1) {
                     e.getSource().sendMessage(e.getChannel(), "Du kannst den Befehl '" + 
-                            e1.getCommand().getCommandName() + "' nicht ausfÃ¼hren.");
+                            e1.getCommand().getCommandName() + "' nicht ausführen.");
                 } catch (Exception e1) {
                     logger.error("Exception while executing command: " + 
                             e1.getMessage(), e1);
                     e.getSource().sendMessage(e.getChannel(), 
-                            "Interner Fehler beim AusfÃ¼hren des Befehls.");
+                            "Interner Fehler beim Ausführen des Befehls.");
                 }
             }
         };

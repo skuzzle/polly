@@ -17,7 +17,7 @@ import de.skuzzle.polly.sdk.Version;
 import polly.Polly;
 import polly.configuration.PollyConfiguration;
 import polly.core.ShutdownManagerImpl;
-import polly.core.plugins.PluginConfiguration;
+import polly.core.plugins.Plugin;
 import polly.core.plugins.PluginManagerImpl;
 import polly.util.FileUtil;
 import polly.moduleloader.AbstractModule;
@@ -124,7 +124,7 @@ public class UpdaterModule extends AbstractModule {
                 + "Skipping updates");
             return;
         }
-        List<PluginConfiguration> plugins = this.pluginManager.enumerate(
+        List<Plugin> plugins = this.pluginManager.enumerate(
             Polly.PLUGIN_FOLDER, this.config.getPluginExcludes());
 
         List<UpdateItem> updates = new LinkedList<UpdateItem>();
@@ -140,7 +140,7 @@ public class UpdaterModule extends AbstractModule {
                         + config.getUpdateUrl(), e);
         }
 
-        for (PluginConfiguration pc : plugins) {
+        for (Plugin pc : plugins) {
             if (!pc.updateSupported()) {
                 continue;
             }
@@ -149,7 +149,7 @@ public class UpdaterModule extends AbstractModule {
             } catch (Exception e) {
                 logger.error(
                     "Failed to create update item for plugin "
-                        + pc.getProperty(PluginConfiguration.PLUGIN_NAME), e);
+                        + pc.getProperty(Plugin.PLUGIN_NAME), e);
             }
         }
         UpdateManager um = new UpdateManager();
@@ -204,5 +204,15 @@ public class UpdaterModule extends AbstractModule {
                 file.delete();
             }
         }
+    }
+    
+    
+    
+    @Override
+    public void dispose() {
+        this.config = null;
+        this.pluginManager = null;
+        this.shutdownManager = null;
+        super.dispose();
     }
 }

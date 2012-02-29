@@ -74,4 +74,17 @@ public class RemoteInterfaceModule extends AbstractModule {
         System.setProperty("javax.net.ssl.keyStore", keyStore);
         System.setProperty("javax.net.ssl.keyStorePassword", password);
     }
+    
+    
+    
+    @Override
+    public void dispose() {
+        this.adminManager = null;
+        this.config = null;
+        this.protocolHandler = null;
+        this.server = null;
+        this.shutdownManager = null;
+        this.userManager = null;
+        super.dispose();
+    }
 }

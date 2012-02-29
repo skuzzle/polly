@@ -14,7 +14,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import polly.util.PluginClassLoader;
-import polly.util.PollyClassLoader;
+import polly.util.ProxyClassLoader;
 
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -39,13 +39,13 @@ public class PluginManagerImpl extends AbstractDisposable implements PluginManag
     /** 
      * Stores all loaded plugins. Key: plugin name
      */
-    private Map<String, PluginConfiguration> pluginCache;
-    private PollyClassLoader pollyCl;
+    private Map<String, Plugin> pluginCache;
+    private ProxyClassLoader pollyCl;
     
     
     
-    public PluginManagerImpl(PollyClassLoader pollyCl) {
-        this.pluginCache = new HashMap<String, PluginConfiguration>();
+    public PluginManagerImpl(ProxyClassLoader pollyCl) {
+        this.pluginCache = new HashMap<String, Plugin>();
         this.pollyCl = pollyCl;
     }
     
@@ -54,16 +54,16 @@ public class PluginManagerImpl extends AbstractDisposable implements PluginManag
     public synchronized void load(File propertyFile, MyPolly myPolly) 
             throws PluginException {
         
-        PluginConfiguration pluginCfg = null;
+        Plugin pluginCfg = null;
         try {
-            pluginCfg = new PluginConfiguration(propertyFile.getAbsolutePath());
+            pluginCfg = new Plugin(propertyFile.getAbsolutePath());
             logger.debug("Loading Plugin:\n" + pluginCfg.toString());
         } catch (Exception e) {
             throw new PluginException("Error reading plugin property file.", e);
         }
         
-        String mainClass = pluginCfg.getProperty(PluginConfiguration.ENTRY_POINT);
-        String fileName = pluginCfg.getProperty(PluginConfiguration.JAR_FILE);
+        String mainClass = pluginCfg.getProperty(Plugin.ENTRY_POINT);
+        String fileName = pluginCfg.getProperty(Plugin.JAR_FILE);
         File jarFile = new File(propertyFile.getParent(), fileName);
 
         PollyPlugin pluginInstance = null;
@@ -72,6 +72,7 @@ public class PluginManagerImpl extends AbstractDisposable implements PluginManag
             Constructor<?> cons = clazz.getConstructor(MyPolly.class); 
             pluginInstance = (PollyPlugin) cons.newInstance(myPolly);
             pluginCfg.setPluginInstance(pluginInstance);
+            pluginCfg.setLoader((PluginClassLoader) clazz.getClassLoader());
             pluginInstance.setPluginState(PluginState.LOADED);
             this.addPlugin(pluginCfg);
             logger.info("Plugin from " + propertyFile.getName() + "' loaded.");
@@ -84,17 +85,18 @@ public class PluginManagerImpl extends AbstractDisposable implements PluginManag
 
     @Override
     public synchronized void unload(String pluginName) throws PluginException {
-        PluginConfiguration pluginCfg = this.pluginCache.get(pluginName);
+        Plugin pluginCfg = this.pluginCache.get(pluginName);
         if (pluginCfg == null) {
             throw new PluginException("Plugin not loaded");
         }
         
         try {
-            pluginCfg.getPluginInstance().dispose();
+            this.pollyCl.removeLoader(pluginCfg.getLoader());
             pluginCfg.getPluginInstance().setPluginState(PluginState.NOT_LOADED);
+            pluginCfg.dispose();
             logger.info("Plugin '" + pluginName + "' successfully unloaded.");
         } catch (Exception e) {
-            
+            logger.error("Error while unloading plugin: '" + pluginName + "'", e);
         } finally {
             this.pluginCache.put(pluginName, null);
         }
@@ -112,8 +114,8 @@ public class PluginManagerImpl extends AbstractDisposable implements PluginManag
     @Override
     protected void actualDispose() throws DisposingException {
         logger.info("Unloading all plugins.");
-        for (PluginConfiguration pluginCfg : this.pluginCache.values()) {
-            String pluginName = pluginCfg.getProperty(PluginConfiguration.PLUGIN_NAME);
+        for (Plugin pluginCfg : this.pluginCache.values()) {
+            String pluginName = pluginCfg.getProperty(Plugin.PLUGIN_NAME);
             try {
                 this.unload(pluginName);
             } catch (Exception e) {
@@ -125,7 +127,7 @@ public class PluginManagerImpl extends AbstractDisposable implements PluginManag
     
     
     public void uninstall(String pluginName) throws PluginException {
-        PluginConfiguration pluginCfg = this.pluginCache.get(pluginName);
+        Plugin pluginCfg = this.pluginCache.get(pluginName);
         if (pluginCfg != null) {
             logger.info("Uninstalling plugin '" + pluginName + "'.");
             try {
@@ -140,8 +142,8 @@ public class PluginManagerImpl extends AbstractDisposable implements PluginManag
     
     
     
-    private void addPlugin(PluginConfiguration pluginCfg) {
-        this.pluginCache.put(pluginCfg.getProperty(PluginConfiguration.PLUGIN_NAME), 
+    private void addPlugin(Plugin pluginCfg) {
+        this.pluginCache.put(pluginCfg.getProperty(Plugin.PLUGIN_NAME), 
                 pluginCfg);
     }
     
@@ -157,15 +159,14 @@ public class PluginManagerImpl extends AbstractDisposable implements PluginManag
         }
         Class<?> result = cl.loadClass(clazz);
 
-        this.pollyCl.addPlugin(cl);
-        //Thread.currentThread().setContextClassLoader(urlCl);
+        this.pollyCl.addLoader(cl);
         return result;
     }
     
     
     
     public void notifyPlugins() {
-        for (Map.Entry<String, PluginConfiguration> entry : this.pluginCache.entrySet()) {
+        for (Map.Entry<String, Plugin> entry : this.pluginCache.entrySet()) {
             try {
                 entry.getValue().getPluginInstance().onLoad();
             } catch (Exception e) {
@@ -178,14 +179,14 @@ public class PluginManagerImpl extends AbstractDisposable implements PluginManag
     
     
     
-    public Collection<PluginConfiguration> loadedPlugins() {
+    public Collection<Plugin> loadedPlugins() {
         return Collections.unmodifiableCollection(this.pluginCache.values());
     }
     
     
     
-    public List<PluginConfiguration> enumerate(String folder, final String...excludes) {
-        List<PluginConfiguration> result = new LinkedList<PluginConfiguration>();
+    public List<Plugin> enumerate(String folder, final String...excludes) {
+        List<Plugin> result = new LinkedList<Plugin>();
         
         FileFilter filter = new FileFilter() {
             @Override
@@ -201,7 +202,7 @@ public class PluginManagerImpl extends AbstractDisposable implements PluginManag
         
         for (File file : (new File(folder).listFiles(filter))) {
             try {
-                result.add(new PluginConfiguration(file.getAbsolutePath()));
+                result.add(new Plugin(file.getAbsolutePath()));
             } catch (Exception e) {
                 logger.error("Error reading plugin property file.", e);
             }

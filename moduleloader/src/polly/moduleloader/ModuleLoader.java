@@ -28,4 +28,6 @@ public interface ModuleLoader {
 
     public abstract void runModules() throws Exception;
     
+    public abstract void dispose();
+    
 }

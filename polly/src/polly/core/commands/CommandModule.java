@@ -40,4 +40,13 @@ public class CommandModule extends AbstractModule {
         CommandManagerImpl commandManager = new CommandManagerImpl(userManager, config);
         this.provideComponent(commandManager);
     }
+    
+    
+    
+    
+    @Override
+    public void dispose() {
+        this.config = null;
+        super.dispose();
+    }
 }

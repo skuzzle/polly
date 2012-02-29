@@ -24,4 +24,6 @@ public interface Module {
     public abstract void runModule() throws Exception;    
     
     public abstract ModuleLoader getModuleLoder();
+    
+    public abstract void dispose();
 }
