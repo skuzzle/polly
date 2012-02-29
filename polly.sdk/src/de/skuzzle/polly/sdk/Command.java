@@ -218,7 +218,7 @@ public abstract class Command implements Comparable<Command> {
 			FormalSignature fs = this.signatures.get(signatureId);
 			return "Signatur: " + fs.toString() + ". " + fs.getHelp();
 		}
-		return "Keine Signatur-Infos fÃ¼r den Befehl '" + this.commandName + 
+		return "Keine Signatur-Infos für den Befehl '" + this.commandName + 
 			"' und Signatur " + signatureId;
 	}
 	

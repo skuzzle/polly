@@ -1,5 +1,5 @@
 /**
- * This package allows sage of several pasting services.
+ * This package allows usage of several pasting services.
  * 
  * @since 0.7
  */

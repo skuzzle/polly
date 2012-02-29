@@ -172,20 +172,6 @@ public class Polly {
         // dependencies!
         
         
-
-        /*new ConversationModule(loader);
-        new ExecutorModule(loader);
-        new PluginModule(loader);
-        new UpdaterModule(loader);
-        new FormatterModule(loader);
-        new PersistenceModule(loader);
-        new CommandModule(loader);
-        new UserModule(loader);
-        new IrcModule(loader);
-        new MyPollyModule(loader);
-        new NotifyPluginsModule(loader);
-        new PasteServiceModule(loader);*/
-        
         try {
             // This parses the modules.cfg and instantiates all listed modules
             ModuleBootstrapper.prepareModuleLoader(loader, config);
@@ -197,6 +183,8 @@ public class Polly {
             
             ShutdownManagerImpl s = loader.requireNow(ShutdownManagerImpl.class);
             s.shutdown(true);
+        } finally {
+            loader.dispose();
         }
 
         logger.info("Polly succesfully set up.");
