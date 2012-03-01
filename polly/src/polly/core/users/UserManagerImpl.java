@@ -513,6 +513,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
         logger.debug("Storing declaration cache to disk.");
         try {
             this.namespace.store(this.declarationCachePath);
+            this.namespace.dispose();
         } catch (IOException e) {
             logger.error("Error while storing namespaces",e);
         }

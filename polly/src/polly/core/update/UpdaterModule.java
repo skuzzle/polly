@@ -167,16 +167,9 @@ public class UpdaterModule extends AbstractModule {
             return;
         }
 
-        // create setup.dat for all updates that should have been downloaded.
-        // um.createSetupFile(actualUpdates);
-
         logger.debug("Preparing to install downloaded updates.");
-        final ProcessExecutor pe = JavaProcessExecutor.getOsInstance(false); // do
-                                                                             // not
-                                                                             // run
-                                                                             // installer
-                                                                             // in
-                                                                             // console
+        final ProcessExecutor pe = JavaProcessExecutor.getCurrentInstance(false);
+        
         pe.addCommandsFromString("-jar polly.installer.jar");
 
         if (!Polly.getCommandLine().equals("")) {

@@ -421,6 +421,18 @@ public class Namespace {
     
     
     
+    public void dispose() {
+        synchronized (killTasks) {
+            for (TempVarKillTask kt : killTasks.values()) {
+                kt.run();
+            }
+            TEMP_VAR_KILLER.cancel();
+            killTasks.clear();
+        }
+    }
+    
+    
+    
     public String toString() {
         StringBuilder result = new StringBuilder();
         result.append("RESERVED\n");

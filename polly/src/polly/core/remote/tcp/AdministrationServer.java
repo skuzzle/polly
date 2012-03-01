@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.net.ssl.SSLServerSocketFactory;
@@ -215,6 +216,11 @@ public class AdministrationServer extends AbstractDisposable implements Runnable
     protected void actualDispose() throws DisposingException {
         this.shutdownFlag.set(true);
         this.connectionThreadPool.shutdown();
+        try {
+            this.connectionThreadPool.awaitTermination(1000, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException ignore) {
+            logger.warn("Ignored exception: ", ignore);
+        }
         this.eventProvider.dispose();
     }
 }

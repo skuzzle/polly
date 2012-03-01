@@ -1,10 +1,13 @@
 package commands;
 
+
 import de.skuzzle.polly.sdk.Command;
+import de.skuzzle.polly.sdk.Conversation;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.Types.StringType;
+import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
 
@@ -16,6 +19,8 @@ import de.skuzzle.polly.sdk.model.User;
  */
 public class QuitCommand extends Command {
 
+    private final static String[] answers = {"ja", "yo", "jup", "yes", "jo", "ack"};
+    
     public QuitCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "flyaway");
         this.createSignature("Beendet polly.");
@@ -30,15 +35,38 @@ public class QuitCommand extends Command {
     
     @Override
     protected boolean executeOnBoth(User executer, String channel,
-            Signature signature) {
+            Signature signature) throws CommandException {
 
         String message = "*krächz* *krächz* *krächz*";
         if (this.match(signature, 1)) {
             message = signature.getStringValue(0);
         }
         
-        this.getMyPolly().irc().quit(message);
-        this.getMyPolly().shutdownManager().shutdown();
+
+        Conversation c = null;
+        try {
+            c = this.createConversation(executer, channel);
+            c.writeLine("Yo' seroius?");
+            String a = c.readLine().getMessage();
+            
+            for (String ans : answers) {
+                if (a.equals(ans)) {
+                    this.getMyPolly().irc().quit(message);
+                    this.getMyPolly().shutdownManager().shutdown();
+                    return false;
+                }
+            }
+        } catch (InterruptedException e) {
+            throw new CommandException("Answer timeout");
+        } catch (Exception e) {
+            throw new CommandException(e);
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
+        
+
         return false;
     }
 }

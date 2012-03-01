@@ -368,7 +368,13 @@ public abstract class ProcessExecutor {
     public String toString() {
         StringBuilder b = new StringBuilder();
         for (String cmd : this.commands) {
-            b.append(cmd);
+            if (cmd.indexOf(" ") != -1) {
+                b.append("\"");
+                b.append(cmd);
+                b.append("\"");
+            } else {
+                b.append(cmd);
+            }
             b.append(" ");
         }
         return b.toString().trim();

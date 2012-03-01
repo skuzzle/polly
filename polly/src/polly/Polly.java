@@ -51,14 +51,23 @@ public class Polly {
     }
 
     private static String commandLine = "";
+    private static String[] commandLineArgs = {};
 
 
 
     public static String getCommandLine() {
         return commandLine;
     }
+    
+    
+    
+    public static String[] getCommandLineArgs() {
+        return commandLineArgs;
+    }
+    
+    
 
-    private final static String DEVELOP_VERSION = "0.7.1";
+    private final static String DEVELOP_VERSION = "0.8.0";
     private final static String CONFIG_FULL_PATH = "cfg/polly.cfg";
     
     /**
@@ -78,8 +87,13 @@ public class Polly {
      *            empty
      */
     public synchronized static void main(String[] args) throws Exception {
+        commandLineArgs = args;
         for (String arg : args) {
-            commandLine += arg + " ";
+            if (arg.indexOf(' ') != -1) {
+                commandLine += "\"" + arg + "\" ";
+            } else {
+                commandLine += arg + " ";
+            }
         }
         commandLine = commandLine.trim();
         
@@ -106,6 +120,8 @@ public class Polly {
             System.out.println("Updates still running. Exiting!");
             return;
         }
+        
+        System.out.println(ManagementFactory.getRuntimeMXBean().getInputArguments().toString());
 
         PollyConfiguration config = this.readConfig(CONFIG_FULL_PATH);
         

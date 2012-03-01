@@ -110,7 +110,7 @@ public class Installer {
         }
         
         try {  
-            ProcessExecutor pe = JavaProcessExecutor.getOsInstance(false);            
+            ProcessExecutor pe = JavaProcessExecutor.getCurrentInstance(false);            
             pe.addCommandsFromString("-jar polly.jar -update false");
             if (!updateInfo.equals("")) {
                 pe.addCommand("-returninfo");
