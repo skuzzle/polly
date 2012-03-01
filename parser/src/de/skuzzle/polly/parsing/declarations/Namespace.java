@@ -25,7 +25,7 @@ import de.skuzzle.polly.parsing.util.CopyTool;
 
 
 public class Namespace {
-
+    
     
     
     private final static FileFilter FILE_FILTER = new FileFilter() {
@@ -46,10 +46,21 @@ public class Namespace {
     
     
     private void scheduleDeletion(Declaration var, Declarations declarations) {
-        synchronized (TEMP_VAR_KILLER) {
-            TEMP_VAR_KILLER.schedule(new TempVarKillTask(declarations, var),
-                tempVarLifeTime);
-        }
+        synchronized (TEMP_VAR_KILLER) { synchronized (killTasks) {
+            
+            // first, check if there is already a task for that var
+            TempVarKillTask tvkt = killTasks.get(var.getName().getIdentifier());
+            if (tvkt != null) {
+                // cancel it!
+                tvkt.cancel = true;
+                tvkt.cancel();
+                killTasks.remove(var.getName());
+            }
+            tvkt = new TempVarKillTask(declarations, var);
+            killTasks.put(var.getName().getIdentifier(), tvkt);
+            TEMP_VAR_KILLER.schedule(tvkt, tempVarLifeTime);
+            
+        }}
     }
     
     
@@ -57,11 +68,14 @@ public class Namespace {
     private final static Timer TEMP_VAR_KILLER = new Timer("TEMP_VAR_KILLER", true);
     private final static boolean IGNORE_UNKNOWN_IDENTIFIERS = true;
     private final static String GLOBAL_NAMESPACE = "~global";
+    private static Map<String, TempVarKillTask> killTasks = 
+            new HashMap<String, TempVarKillTask>();
     
     
     private class TempVarKillTask extends TimerTask {
         private Declarations declarations;
         private Declaration var;
+        public boolean cancel;
         
         
         public TempVarKillTask(Declarations declarations, Declaration var) {
@@ -73,7 +87,12 @@ public class Namespace {
         
         @Override
         public void run() {
-            this.declarations.remove(this.var.getName().getIdentifier());
+            if (!cancel) {
+                this.declarations.remove(this.var.getName().getIdentifier());
+                synchronized (killTasks) {
+                    killTasks.remove(this.var.getName().getIdentifier());
+                }
+            }
         }
     }
     
