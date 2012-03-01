@@ -39,6 +39,13 @@ public class Namespace {
     
     
     
+    public static void setIgnoreUnknownIdentifiers(
+            boolean ignoreUnknownIdentifiers) {
+        Namespace.ignoreUnknownIdentifiers = ignoreUnknownIdentifiers;
+    }
+    
+    
+    
     public static void setTempVarLifeTime(int lifeTime) {
         tempVarLifeTime = lifeTime;
     }
@@ -65,8 +72,9 @@ public class Namespace {
     
     
     private static int tempVarLifeTime = 600 * 5; // 5 min
+    private static boolean ignoreUnknownIdentifiers = true;
+    
     private final static Timer TEMP_VAR_KILLER = new Timer("TEMP_VAR_KILLER", true);
-    private final static boolean IGNORE_UNKNOWN_IDENTIFIERS = true;
     private final static String GLOBAL_NAMESPACE = "~global";
     private static Map<String, TempVarKillTask> killTasks = 
             new HashMap<String, TempVarKillTask>();
@@ -310,7 +318,7 @@ public class Namespace {
              * throw new ParseException("Unbekannter Bezeichner: '"
              *   + id.getIdentifier() + "'", id.getPosition());
              */
-            if (IGNORE_UNKNOWN_IDENTIFIERS) {
+            if (ignoreUnknownIdentifiers) {
                 return new VarDeclaration(id, new StringLiteral(
                     new Token(TokenType.STRING, id.getPosition(), id.getIdentifier())));
             } else {

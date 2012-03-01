@@ -59,10 +59,11 @@ public class UserModule extends AbstractModule {
     @Override
     public void setup() throws SetupException {
         this.userManager = new UserManagerImpl(this.persistenceManager,
-            this.config.getDeclarationCachePath(), this.eventProvider);
+            this.config, this.eventProvider);
         this.provideComponent(this.userManager);
         this.shutdownManager.addDisposable(this.userManager);
     }
+    
 
 
     @Override

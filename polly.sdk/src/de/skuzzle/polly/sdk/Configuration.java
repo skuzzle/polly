@@ -282,6 +282,19 @@ public interface Configuration {
      */
     public final static String KEYSTORE_PASSWORD = "keyStorePassword";
     
+    /**
+     * The lifetime for temporary variables in milliseconds.
+     * @since 0.8
+     */
+    public final static String TEMP_VAR_LIFETIME = "tempVarLifeTime";
+    
+    /**
+     * Sets whether unknown identifiers are automatically treated as String literals
+     * of the identifiers name.
+     * @since 0.8
+     */
+    public final static String IGNORE_UNKNOWN_IDENTIFIERS = "ignoreUnknownIdentifiers";
+    
     
     
 	/**

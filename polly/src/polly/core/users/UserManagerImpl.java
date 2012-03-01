@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import polly.configuration.PollyConfiguration;
 import polly.core.persistence.PersistenceManagerImpl;
 import polly.data.Attribute;
 import polly.events.Dispatchable;
@@ -83,21 +84,23 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     
     public UserManagerImpl(PersistenceManagerImpl persistence, 
-            String declarationCache, EventProvider eventProvider) {
+            PollyConfiguration cfg, EventProvider eventProvider) {
         this.eventProvider = eventProvider;
         this.persistence = persistence;
         this.onlineCache = Collections.synchronizedMap(
                 new CaseInsensitiveStringKeyMap<User>());
-        this.declarationCachePath = new File(declarationCache);
+        this.declarationCachePath = new File(cfg.getDeclarationCachePath());
         this.constraints = new HashMap<String, AttributeConstraint>();
         this.namespace = new Namespace();
         try {
-			this.namespace.restore(new File(declarationCache));
+			this.namespace.restore(new File(cfg.getDeclarationCachePath()));
 		} catch (IOException e) {
 			logger.warn("No declarations restored", e);
 		}
         Prepare.operators(this.namespace);
         Prepare.namespaces(this.namespace);
+        Namespace.setTempVarLifeTime(cfg.getTempVarLifeTime());
+        Namespace.setIgnoreUnknownIdentifiers(cfg.isIgnoreUnknownIdentifiers());
     }
     
     
