@@ -22,6 +22,16 @@ import java.util.zip.ZipOutputStream;
 
 public class FileUtil {
     
+    
+    
+    
+    public static interface FileActionFilter {
+        public abstract boolean ignore(String fileName);
+    }
+    
+    
+    
+    
     public final static FileFilter ALL_FILES = new FileFilter() {
         @Override
         public boolean accept(File pathname) {
@@ -58,6 +68,14 @@ public class FileUtil {
      *          If destination is no directory or an IO error occurs during extraction. 
      */
     public static List<File> unzip (File zip, File to) throws ZipException, IOException {
+        return unzip(zip, to, null);
+    }
+    
+    
+    
+    public static List<File> unzip(File zip, File to, FileActionFilter filter) throws 
+                ZipException, IOException {
+        
         if (to.exists() && !to.isDirectory()) {
             throw new IOException("destination must be a directory");
         } else if (!to.exists()) {
@@ -74,6 +92,10 @@ public class FileUtil {
             
             BufferedInputStream in =  new BufferedInputStream(
                 zipFile.getInputStream(entry));
+            
+            if (filter != null && filter.ignore(entry.getName())) {
+                continue;
+            }
             
             File next = new File(to, entry.getName());
             result.add(next);
