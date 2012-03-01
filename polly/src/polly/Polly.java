@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.lang.management.ManagementFactory;
-import java.lang.reflect.Constructor;
 import java.nio.channels.FileLock;
 import java.util.Arrays;
 
@@ -96,17 +95,11 @@ public class Polly {
             }
         }
         commandLine = commandLine.trim();
-        
-        /*
-         * Make sure that all polly classes are loaded by polly classloader!
-         */
-        ProxyClassLoader parentCl = new ProxyClassLoader();
-        Class<?> polly = parentCl.loadClass("polly.Polly");
-        Constructor<?> ctor = polly.getConstructor(String[].class, 
-                ProxyClassLoader.class);
 
-        Thread.currentThread().setContextClassLoader(parentCl);
-        ctor.newInstance(args, parentCl);
+        ProxyClassLoader parentCl = (ProxyClassLoader) 
+                    Thread.currentThread().getContextClassLoader();
+        
+        new Polly(args, parentCl);
     }
 
 
@@ -121,8 +114,6 @@ public class Polly {
             return;
         }
         
-        System.out.println(ManagementFactory.getRuntimeMXBean().getInputArguments().toString());
-
         PollyConfiguration config = this.readConfig(CONFIG_FULL_PATH);
         
         this.checkDirectoryStructure(config);

@@ -56,6 +56,8 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
             this.history = new ArrayList<MessageEvent>();
             
             /*
+             * This is a constructor. The following text therefore is totally stupid o_O
+             * 
              * Important:
              * Set lastInput before setting idelTimeout. Otherwise it may happen
              * that the timeout thread checks for idling right before idleTimout

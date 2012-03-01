@@ -9,5 +9,7 @@ public interface MessageScheduler extends Runnable, Disposable {
     
     public void start();
     
+    public void setMessageDelay(int delay);
+    
     
 }

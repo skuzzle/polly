@@ -102,4 +102,10 @@ public class DefaultMessageScheduler extends Thread implements MessageScheduler 
         this.shutdownFlag.set(true);
         this.interrupt();
     }
+
+
+
+    @Override
+    public void setMessageDelay(int delay) {
+    }
 }

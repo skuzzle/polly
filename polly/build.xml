@@ -17,7 +17,7 @@
     <property name="lib.dir"      value="${polly.root.dir}/libs"/>
     
     <!-- jar file properties -->
-    <property name="mainclass" value="polly.Polly"/>
+    <property name="mainclass" value="polly.PollyBootstrapper"/>
     <property name="title"     value="Polly"/>
     <property name="version"   value="${version.num}"/>
     <property name="Builddate" value="${today}"/>

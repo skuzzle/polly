@@ -28,6 +28,8 @@ public class RemoteInterfaceModule extends AbstractModule {
     private AdministrationServer server;
     private UserManagerImpl userManager;
     
+    
+    
     public RemoteInterfaceModule(ModuleLoader loader) {
         super("PORAT", loader, false);
     }

@@ -41,6 +41,7 @@ import de.skuzzle.polly.sdk.eventlistener.UserSpottedListener;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 
 import polly.configuration.PollyConfiguration;
+import polly.configuration.Reconfigurable;
 import polly.events.Dispatchable;
 import polly.events.EventProvider;
 import polly.util.WrapIterator;
@@ -51,7 +52,8 @@ import polly.util.WrapIterator;
  * @author Simon
  * @version 27.07.2011 ae73250
  */
-public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Disposable {
+public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Disposable, 
+        Reconfigurable {
     
     private static Logger logger = Logger.getLogger(IrcManagerImpl.class.getName());
     
@@ -277,6 +279,26 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         
         this.messageScheduler = new RoundRobinScheduler(this, config.getMessageDelay());
         this.messageScheduler.start();
+    }
+    
+    
+    
+    @Override
+    public void reconfigure(PollyConfiguration cfg) {
+        logger.warn("Reconfiguring IrcManager");
+        this.config = cfg;
+        this.messageScheduler.setMessageDelay(cfg.getMessageDelay());
+        try {
+            this.bot.setEncoding(cfg.getEncodingName());
+        } catch (UnsupportedEncodingException e) {
+            logger.error("Encoding exception", e);
+        }
+        
+        if (this.isConnected()) {
+            this.setNickname(cfg.getNickName());
+            this.bot.identify(cfg.getIdent());
+            this.sendRawCommand("MODE " + cfg.getNickName() + " " + cfg.getIrcModes());
+        }
     }
     
     

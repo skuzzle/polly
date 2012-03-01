@@ -128,4 +128,11 @@ public class RoundRobinScheduler extends Thread implements MessageScheduler {
         this.shutdownFlag.set(true);
         this.interrupt();
     }
+
+
+
+    @Override
+    public void setMessageDelay(int delay) {
+        this.messageDelay = delay;
+    }
 }

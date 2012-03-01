@@ -25,11 +25,7 @@ public class FormatterModule extends AbstractModule {
     @Override
     public void setup() {
         PollyConfiguration config = this.requireNow(PollyConfiguration.class);
-        
-        FormatManagerImpl formatter = new FormatManagerImpl(
-            config.getDateFormatString(), 
-            config.getNumberFormatString());
-        
+        FormatManagerImpl formatter = new FormatManagerImpl(config);
         this.provideComponent(formatter);
     }
 
