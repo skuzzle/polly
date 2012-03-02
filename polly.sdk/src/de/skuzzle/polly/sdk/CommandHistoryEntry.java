@@ -25,4 +25,12 @@ public interface CommandHistoryEntry {
      * @return The signature.
      */
     public abstract Signature getSignature();
+
+
+    /**
+     * Gets the nick name of the user who executed the command.
+     * 
+     * @return The nickname
+     */
+    public abstract String getExecuterName();
 }

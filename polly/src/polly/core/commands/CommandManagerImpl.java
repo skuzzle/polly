@@ -58,11 +58,13 @@ public class CommandManagerImpl implements CommandManager {
     private class HistoryEntryImpl implements CommandHistoryEntry {
         private Command command;
         private Signature Signature;
+        private String name;
         
         
-        public HistoryEntryImpl(Command command, Signature signature) {
+        public HistoryEntryImpl(Command command, Signature signature, String name) {
             this.command = command;
             this.Signature = signature;
+            this.name = name;
         }
 
 
@@ -78,7 +80,16 @@ public class CommandManagerImpl implements CommandManager {
         public Signature getSignature() {
             return this.Signature;
         }
+        
+        
+        
+        @Override
+        public String getExecuterName() {
+            return this.name;
+        }
     }
+    
+    
 	
 	private static Logger logger = Logger.getLogger(CommandManagerImpl.class.getName());
 	private Map<String, Command> commands;
@@ -251,7 +262,8 @@ public class CommandManagerImpl implements CommandManager {
             cmd.doExecute(executor, channel, inQuery, sig);
             synchronized (this.cmdHistory) {
                 if (cmd.trackInHistory()) {
-                    this.cmdHistory.put(channel, new HistoryEntryImpl(cmd, sig));
+                    this.cmdHistory.put(channel, new HistoryEntryImpl(cmd, sig, 
+                        executor.getCurrentNickName()));
                 }
             }
         } finally {

@@ -11,6 +11,7 @@ import commands.DelVarCommand;
 import commands.DeleteUserCommand;
 import commands.DeliverTrainCommand;
 import commands.DictCommand;
+import commands.DitoCommand;
 import commands.FooCommand;
 import commands.GetAttributeCommand;
 import commands.GhostCommand;
@@ -134,6 +135,7 @@ public class MyPlugin extends PollyPlugin {
 		
 		this.addCommand(new RestartCommand(myPolly));
 		
+		this.addCommand(new DitoCommand(myPolly));
 		
 		this.highlightHandler= new HighlightReplyHandler(myPolly.getTimeProvider());
 		myPolly.irc().addMessageListener(this.highlightHandler);

@@ -88,6 +88,19 @@ public class Signature {
 	
 	
 	
+	
+	/**
+	 * Returns this signatures parameters.
+	 * 
+	 * @return The parameters.
+	 * @since 0.8
+	 */
+    public List<Types> getParameters() {
+        return this.parameters;
+    }
+    
+	
+	
 	/**
 	 * Returns the name of the command that this signature is for.
 	 * @return The commands name.
