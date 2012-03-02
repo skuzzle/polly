@@ -39,6 +39,7 @@ import de.skuzzle.polly.parsing.tree.literals.ListLiteral;
 import de.skuzzle.polly.parsing.tree.literals.Literal;
 import de.skuzzle.polly.parsing.tree.literals.UserLiteral;
 import de.skuzzle.polly.sdk.Command;
+import de.skuzzle.polly.sdk.CommandHistoryEntry;
 import de.skuzzle.polly.sdk.CommandManager;
 import de.skuzzle.polly.sdk.IrcManager;
 import de.skuzzle.polly.sdk.Signature;
@@ -53,6 +54,31 @@ import de.skuzzle.polly.sdk.model.User;
 
 
 public class CommandManagerImpl implements CommandManager {
+    
+    private class HistoryEntryImpl implements CommandHistoryEntry {
+        private Command command;
+        private Signature Signature;
+        
+        
+        public HistoryEntryImpl(Command command, Signature signature) {
+            this.command = command;
+            this.Signature = signature;
+        }
+
+
+
+        @Override
+        public Command getCommand() {
+            return this.command;
+        }
+        
+        
+        
+        @Override
+        public Signature getSignature() {
+            return this.Signature;
+        }
+    }
 	
 	private static Logger logger = Logger.getLogger(CommandManagerImpl.class.getName());
 	private Map<String, Command> commands;
@@ -60,6 +86,10 @@ public class CommandManagerImpl implements CommandManager {
 	private UserManagerImpl userManager;
 	private PollyConfiguration config;
 	
+	/**
+	 * Command history. Key: channel, value: the last command executed on that channel
+	 */
+	private Map<String, CommandHistoryEntry> cmdHistory;
 	
 	
 	public CommandManagerImpl(UserManagerImpl userManager, PollyConfiguration config) {
@@ -68,6 +98,8 @@ public class CommandManagerImpl implements CommandManager {
 		this.commands = new HashMap<String, Command>();
 		this.ignoredCommands = new HashSet<String>(
 		        Arrays.asList(config.getIgnoredCommands()));
+		
+		this.cmdHistory = new HashMap<String, CommandHistoryEntry>();
 	}
 	
 	
@@ -217,9 +249,23 @@ public class CommandManagerImpl implements CommandManager {
                 channel);
             
             cmd.doExecute(executor, channel, inQuery, sig);
+            synchronized (this.cmdHistory) {
+                if (cmd.trackInHistory()) {
+                    this.cmdHistory.put(channel, new HistoryEntryImpl(cmd, sig));
+                }
+            }
         } finally {
             watch.stop();
             logger.trace("Execution time: " + watch.getDifference() + "ms");
+        }
+	}
+	
+	
+	
+	@Override
+	public CommandHistoryEntry getLastCommand(String channel) {
+	    synchronized (this.cmdHistory) {
+            return this.cmdHistory.get(channel);
         }
 	}
 

@@ -118,6 +118,19 @@ public interface CommandManager {
 	
 	
 	/**
+	 * Gets the command and signature for the last command that was executed on the given 
+	 * channel.
+	 * 
+	 * @param channel The channel.
+	 * @return The {@link CommandHistoryEntry} of the last command for that channel or
+	 *             <code>null</code> if no entry for that channel exists.
+	 * @since 0.8
+	 */
+	public abstract CommandHistoryEntry getLastCommand(String channel);
+	
+	
+	
+	/**
 	 * Executes the given String as a polly command.
 	 * 
 	 * @param input The command to parse and execute.

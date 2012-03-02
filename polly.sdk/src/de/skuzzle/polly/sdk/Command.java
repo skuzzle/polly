@@ -359,9 +359,11 @@ public abstract class Command implements Comparable<Command> {
 	 * @return Whether the 2 other executeX methods should be run afterwards.
      * @throws CommandException Implementors can throw this to indicate an error during
      *     execution.
+     * @throws InsufficientRightsException If, for any reasons, the executor can not 
+     *          execute this command.
 	 */
 	protected boolean executeOnBoth(User executer, String channel, Signature signature) 
-	        throws CommandException { 
+	        throws CommandException, InsufficientRightsException { 
 		return false;
 	}
 	
@@ -380,9 +382,13 @@ public abstract class Command implements Comparable<Command> {
 	 * @param executer The user who executed this command.
 	 * @param channel The channel this command was executed on.
 	 * @param signature The actual signature that this command was executed with.
+     * @throws CommandException Implementors can throw this to indicate an error during
+     *     execution.
+     * @throws InsufficientRightsException If, for any reasons, the executor can not 
+     *          execute this command.
 	 */
 	protected void executeOnChannel(User executer, String channel, 
-			Signature signature) throws CommandException {}
+			Signature signature) throws CommandException, InsufficientRightsException {}
 	
 	
 	
@@ -400,9 +406,11 @@ public abstract class Command implements Comparable<Command> {
 	 * @param signature The actual signature that this command was executed with.
      * @throws CommandException Implementors can throw this to indicate an error during
      *     execution.
+     * @throws InsufficientRightsException If, for any reasons, the executor can not 
+     *          execute this command.
 	 */
 	protected void executeOnQuery(User executer, Signature signature) 
-            throws CommandException {}
+            throws CommandException, InsufficientRightsException {}
 	
 	
 	
@@ -492,6 +500,20 @@ public abstract class Command implements Comparable<Command> {
 	 */
 	public boolean isRegisteredOnly() {
 	    return this.registeredOnly;
+	}
+	
+	
+	
+	/**
+	 * Determines whether this command will be stored in the {@link CommandManager}s
+	 * command history. This method always returns <code>true</code> and may be 
+	 * overriden in order to achieve different behavior.
+	 * 
+	 * @return If the command should be tracked in the command history.
+	 * @since 0.8
+	 */
+	public boolean trackInHistory() {
+	    return true;
 	}
 	
 	
