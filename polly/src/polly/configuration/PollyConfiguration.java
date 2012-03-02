@@ -5,11 +5,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.Map.Entry;
 import java.util.TreeSet;
 
 import de.skuzzle.polly.sdk.Disposable;
+import de.skuzzle.polly.sdk.eventlistener.ConfigurationEvent;
+import de.skuzzle.polly.sdk.eventlistener.ConfigurationListener;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 
 
@@ -63,12 +67,13 @@ public class PollyConfiguration extends Configuration
     private String keyStorePassword;
     private boolean ignoreUnknownIdentifiers;
     private int tempVarLifeTime;
-	
+	private List<ConfigurationListener> listener;
 	
 	public PollyConfiguration(String filename) 
 	        throws IOException, ConfigurationFileException {
 	    
 		super(filename);
+		this.listener = new LinkedList<ConfigurationListener>();
 		this.init();
 	}
 	
@@ -492,6 +497,29 @@ public class PollyConfiguration extends Configuration
 		} catch (Exception ignore) {}
 		
 		return i;	
+	}
+	
+	
+	@Override
+	public void addConfigurationListener(ConfigurationListener listener) {
+	    this.listener.add(listener);
+	}
+	
+	
+	
+	@Override
+	public void removeConfigurationListener(ConfigurationListener listener) {
+	    this.listener.remove(listener);
+	}
+	
+	
+	
+	@Override
+	public void fireConfigurationChanged() {
+	    ConfigurationEvent e = new ConfigurationEvent(this);
+	    for (ConfigurationListener listener : this.listener) {
+	        listener.configurationChange(e);
+	    }
 	}
 
 	

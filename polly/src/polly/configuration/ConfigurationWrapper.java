@@ -4,6 +4,7 @@ import java.io.IOException;
 
 
 import de.skuzzle.polly.sdk.Configuration;
+import de.skuzzle.polly.sdk.eventlistener.ConfigurationListener;
 
 
 /**
@@ -56,5 +57,26 @@ public class ConfigurationWrapper implements Configuration {
     @Override
     public void store() throws IOException {
         throw new UnsupportedOperationException();
+    }
+
+
+
+    @Override
+    public void addConfigurationListener(ConfigurationListener listener) {
+        this.config.addConfigurationListener(listener);
+    }
+
+
+
+    @Override
+    public void removeConfigurationListener(ConfigurationListener listener) {
+        this.config.removeConfigurationListener(listener);
+    }
+
+
+
+    @Override
+    public void fireConfigurationChanged() {
+        this.config.fireConfigurationChanged();
     }
 }

@@ -256,6 +256,8 @@ public class BinaryOperators {
 
             super.contextCheck(context, left, right);
 
+            // TODO: left operand can be any expression which evaluates to a list after
+            //       execution.
             if (!(left instanceof ListLiteral)) {
                 throw new ParseException(
                     "Diese Operation ist leider (noch) nicht möglich", 
