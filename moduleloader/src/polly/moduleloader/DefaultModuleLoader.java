@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import polly.moduleloader.annotations.None;
 import polly.moduleloader.annotations.Provide;
 import polly.moduleloader.annotations.Require;
+import polly.moduleloader.annotations.StartUp;
 
 
 public class DefaultModuleLoader implements ModuleLoader {
@@ -26,6 +27,7 @@ public class DefaultModuleLoader implements ModuleLoader {
     private Map<Class<?>, Object> provides;
     private Set<Module> modules;
     private Set<Integer> state;
+    private Module startUp;
 
 
 
@@ -46,10 +48,18 @@ public class DefaultModuleLoader implements ModuleLoader {
 
         polly.moduleloader.annotations.Module an = cls.getAnnotation(
         		polly.moduleloader.annotations.Module.class);
-
+        
         if (an == null) {
             throw new ModuleDependencyException("module " + module
                 + " is not annotated");
+        }
+        
+        if (cls.getAnnotation(StartUp.class) != null) {
+            if (this.startUp != null) {
+                throw new ModuleDependencyException("there is already a startup module: " 
+                        + this.startUp);
+            }
+            this.startUp = module;
         }
 
         for (Provide p : an.provides()) {
@@ -165,6 +175,7 @@ public class DefaultModuleLoader implements ModuleLoader {
 
     @Override
     public void runSetup() throws SetupException {
+        this.runModuleSetup(this.startUp, new HashSet<Module>());
         for (Module module : this.modules) {
             this.runModuleSetup(module, new HashSet<Module>());
         }
@@ -173,7 +184,7 @@ public class DefaultModuleLoader implements ModuleLoader {
 
 
     private void runModuleSetup(Module module, Set<Module> callSet)
-        throws SetupException {
+            throws SetupException {
         if (module.isSetup()) {
             return;
         }
@@ -337,6 +348,7 @@ public class DefaultModuleLoader implements ModuleLoader {
         for (Module mod : this.modules) {
             mod.dispose();
         }
+        this.startUp.dispose();
         this.beforeSetupReq.clear();
         this.modules.clear();
         this.providedStates.clear();
