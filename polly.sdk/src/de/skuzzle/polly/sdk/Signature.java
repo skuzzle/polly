@@ -316,7 +316,7 @@ public class Signature {
 		List<Types> paramThis = this.parameters;
 		List<Types> paramOther = other.parameters;
 		for (int i = 0; i < paramThis.size(); ++i) {
-			for (int j = 0; j < paramOther.size(); ++j) {
+			for (int j = i; j < paramOther.size(); ++j) {
 				if(paramOther.get(j).getClass().equals(paramThis.get(i).getClass()) && i != j) {
 					this.swap(paramOther, i, j);
 				}
@@ -343,7 +343,7 @@ public class Signature {
 	 */
 	private boolean checkCanonical(List<Types> parameters) {
 		for (int i = 0; i < parameters.size(); ++i) {
-			for (int j = 0; j < parameters.size(); ++j) {
+			for (int j = i; j < parameters.size(); ++j) {
 				if (parameters.get(i).getClass().equals(parameters.get(j).getClass()) && i != j) {
 					return false;
 				}
