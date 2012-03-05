@@ -117,7 +117,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
         if (d == null) {
             return;
         }
-        d.getDeclarations().remove(id);
+        d.remove(id);
     }
     
     

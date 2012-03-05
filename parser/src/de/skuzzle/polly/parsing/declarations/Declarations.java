@@ -128,10 +128,7 @@ public class Declarations implements Serializable {
     
     public synchronized void remove(String name) {
         for (Map<String, Declaration> level : this.levels) {
-            Declaration decl = level.get(name);
-            if (decl != null && decl.isTemp()) {
-                level.remove(name);
-            }
+            level.remove(name);
         }
     }
     
