@@ -36,6 +36,18 @@ import de.skuzzle.polly.sdk.Types.UserType;
  * @version RC 1.0
  */
 public class Signature {
+	
+	
+	
+	public static void main(String[] args) {
+		Signature sig1= new Signature("", 0, new StringType(), new NumberType());
+		Signature sig2= new Signature("", 0, new NumberType(), new StringType());
+		System.out.println(sig1.isCanonical());
+		System.out.println(sig1.match(sig2));
+		System.out.println(sig2);
+	}
+	
+	
 
 	/**
 	 * The actual or formal parameters for this signature.
@@ -51,6 +63,12 @@ public class Signature {
 	 * The id of this signature.
 	 */
 	private int signatureId;
+	
+	/**
+	 * This attributes is set to true if this signature only contains distinct
+	 * types.
+	 */
+	private boolean canonical;
 	
 	
 	
@@ -81,11 +99,24 @@ public class Signature {
 	 * 		the values of the parameter types are irgnored. This list can be empty.
 	 */
 	public Signature(String name, int id, List<Types> parameters) {
+		this.canonical = this.checkCanonical(parameters);
 		this.name = name;
 		this.signatureId = id;
 		this.parameters = parameters;
 	}
 	
+	
+	
+	/**
+	 * Gets whether this signature is canonical, i.e. it only contains distinct
+	 * types.
+	 * 
+	 * @return <code>true</code> if this signature only contains distinct types
+	 * since 0.8
+	 */
+	public boolean isCanonical() {
+		return this.canonical;
+	}
 	
 	
 	
@@ -244,6 +275,10 @@ public class Signature {
 	 * Matches two signatures against each others. They match if their parameter
 	 * types equal pairwise.
 	 * 
+	 * If both, this and the other signature are canonical as determined by 
+	 * {@link #isCanonical()}, this method first tries to rearrange the parameters 
+	 * of the other signature to match the sequence of this signature.
+	 * 
 	 * @param other The signature to match against this signature.
 	 * @return This signature if the signatures matches or <code>null</code> if they
 	 * 		do not match.
@@ -251,7 +286,19 @@ public class Signature {
 	public Signature match(Signature other) {
 		if (other.parameters.size() != this.parameters.size()) {
 			return null;
+		} else if (this.isCanonical() != other.isCanonical()) {
+			return null;
 		}
+		if (this.isCanonical()) {
+			// if both are canonical, we try to rearrange it to increase
+			// chance of matching.
+			// Additional, its of high importance that the parameter
+			// sequence of both signatures match if the result is
+			// positive
+			this.rearrange(other);
+		}
+		
+		
 		
 		Iterator<Types> formal = this.parameters.iterator();
 		Iterator<Types> actual = other.parameters.iterator();
@@ -261,6 +308,48 @@ public class Signature {
 			}
 		}
 		return this;
+	}
+	
+	
+	
+	private void rearrange(Signature other) {
+		List<Types> paramThis = this.parameters;
+		List<Types> paramOther = other.parameters;
+		for (int i = 0; i < paramThis.size(); ++i) {
+			for (int j = 0; j < paramOther.size(); ++j) {
+				if(paramOther.get(j).getClass().equals(paramThis.get(i).getClass()) && i != j) {
+					this.swap(paramOther, i, j);
+				}
+			}
+		}
+	}
+	
+	
+	
+	private void swap(List<Types> list, int i, int j) {
+		Types tmp = list.get(i);
+		list.set(i, list.get(j));
+		list.set(j, tmp);
+	}
+	
+	
+	
+	
+	/**
+	 * Checks whether the given parameter list is canonical.
+	 * 
+	 * @param parameters List of parameters to check.
+	 * @return If the list is canonical.
+	 */
+	private boolean checkCanonical(List<Types> parameters) {
+		for (int i = 0; i < parameters.size(); ++i) {
+			for (int j = 0; j < parameters.size(); ++j) {
+				if (parameters.get(i).getClass().equals(parameters.get(j).getClass()) && i != j) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 	
 	
@@ -276,6 +365,8 @@ public class Signature {
 	public boolean equals(Object obj) {
 		if (obj == null) {
 			return false;
+		} else if (obj == this) {
+			return true;
 		} else if (!(obj instanceof Signature)) {
 			return false;
 		}

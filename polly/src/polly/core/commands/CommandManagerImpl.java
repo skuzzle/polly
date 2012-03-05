@@ -194,6 +194,7 @@ public class CommandManagerImpl implements CommandManager {
 				found = true;
 				signature.setId(formal.getId());
 				logger.debug("Signature found. Formal id is " + signature.getId());
+				break;
 			}
 		}
 		if (!found) {
