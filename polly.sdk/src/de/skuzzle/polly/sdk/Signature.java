@@ -13,7 +13,6 @@ import de.skuzzle.polly.sdk.Types.DateType;
 import de.skuzzle.polly.sdk.Types.ListType;
 import de.skuzzle.polly.sdk.Types.NumberType;
 import de.skuzzle.polly.sdk.Types.StringType;
-import de.skuzzle.polly.sdk.Types.TimespanType;
 import de.skuzzle.polly.sdk.Types.UserType;
 
 
@@ -37,18 +36,6 @@ import de.skuzzle.polly.sdk.Types.UserType;
  * @version RC 1.0
  */
 public class Signature {
-	
-	
-	
-	public static void main(String[] args) {
-		Signature sig1= new Signature("", 0, new StringType(), new NumberType(), new DateType());
-		Signature sig2= new Signature("", 0, new NumberType(), new Types.TimespanType(), new StringType());
-		System.out.println(sig1.isCanonical());
-		System.out.println(sig1.match(sig2));
-		System.out.println(sig2);
-	}
-	
-	
 
 	/**
 	 * The actual or formal parameters for this signature.
