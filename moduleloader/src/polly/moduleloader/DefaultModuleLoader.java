@@ -175,7 +175,9 @@ public class DefaultModuleLoader implements ModuleLoader {
 
     @Override
     public void runSetup() throws SetupException {
-        this.runModuleSetup(this.startUp, new HashSet<Module>());
+        if (this.startUp != null) {
+            this.runModuleSetup(this.startUp, new HashSet<Module>());
+        }
         for (Module module : this.modules) {
             this.runModuleSetup(module, new HashSet<Module>());
         }
@@ -348,7 +350,9 @@ public class DefaultModuleLoader implements ModuleLoader {
         for (Module mod : this.modules) {
             mod.dispose();
         }
-        this.startUp.dispose();
+        if (this.startUp != null) {
+            this.startUp.dispose();
+        }
         this.beforeSetupReq.clear();
         this.modules.clear();
         this.providedStates.clear();

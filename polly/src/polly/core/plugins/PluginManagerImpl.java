@@ -98,7 +98,7 @@ public class PluginManagerImpl extends AbstractDisposable implements PluginManag
         } catch (Exception e) {
             logger.error("Error while unloading plugin: '" + pluginName + "'", e);
         } finally {
-            this.pluginCache.put(pluginName, null);
+            this.pluginCache.remove(pluginName);
         }
     }
     

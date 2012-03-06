@@ -3,6 +3,7 @@ package polly.core.commands;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,6 +35,7 @@ import de.skuzzle.polly.parsing.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.tree.Expression;
 import de.skuzzle.polly.parsing.tree.Root;
 import de.skuzzle.polly.parsing.tree.literals.ChannelLiteral;
+import de.skuzzle.polly.parsing.tree.literals.DateLiteral;
 import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
 import de.skuzzle.polly.parsing.tree.literals.ListLiteral;
 import de.skuzzle.polly.parsing.tree.literals.Literal;
@@ -339,10 +341,21 @@ public class CommandManagerImpl implements CommandManager {
         d.addNormal(new VarDeclaration(new IdentifierLiteral("each"), 
         		new ListLiteral(users, Type.USER), true));
         
-        logger.trace("    me   := " + user.getCurrentNickName());
-        logger.trace("    here := " + channel);
-        logger.trace("    all  := " + channels.toString());
-        logger.trace("    each := " + users);
+        Calendar tmp = Calendar.getInstance();
+        tmp.set(Calendar.DAY_OF_MONTH, tmp.get(Calendar.DAY_OF_MONTH) + 1);
+        tmp.set(Calendar.HOUR, 0);
+        tmp.set(Calendar.HOUR_OF_DAY, 0);
+        tmp.set(Calendar.MINUTE, 0);
+        tmp.set(Calendar.SECOND, 0);
+        tmp.set(Calendar.MILLISECOND, 0);
+        d.addNormal(new VarDeclaration(new IdentifierLiteral("morgen"), 
+            new DateLiteral(tmp.getTime()), true));
+        
+        logger.trace("    me     := " + user.getCurrentNickName());
+        logger.trace("    here   := " + channel);
+        logger.trace("    all    := " + channels.toString());
+        logger.trace("    each   := " + users);
+        logger.trace("    morgen := " + tmp.getTime());
         
         if (constants != null && !constants.isEmpty()) {
             logger.trace("Command-specific constant names:");

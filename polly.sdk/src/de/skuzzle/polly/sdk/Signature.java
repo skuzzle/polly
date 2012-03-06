@@ -13,6 +13,7 @@ import de.skuzzle.polly.sdk.Types.DateType;
 import de.skuzzle.polly.sdk.Types.ListType;
 import de.skuzzle.polly.sdk.Types.NumberType;
 import de.skuzzle.polly.sdk.Types.StringType;
+import de.skuzzle.polly.sdk.Types.TimespanType;
 import de.skuzzle.polly.sdk.Types.UserType;
 
 
@@ -40,8 +41,8 @@ public class Signature {
 	
 	
 	public static void main(String[] args) {
-		Signature sig1= new Signature("", 0, new StringType(), new NumberType());
-		Signature sig2= new Signature("", 0, new NumberType(), new StringType());
+		Signature sig1= new Signature("", 0, new StringType(), new NumberType(), new DateType());
+		Signature sig2= new Signature("", 0, new NumberType(), new Types.TimespanType(), new StringType());
 		System.out.println(sig1.isCanonical());
 		System.out.println(sig1.match(sig2));
 		System.out.println(sig2);
@@ -96,13 +97,13 @@ public class Signature {
 	 * @param id The id of this signature. Commands distinguish actual signatures by 
 	 * 		this id.
 	 * @param parameters The parameters of this signature. If this is a formal signature,
-	 * 		the values of the parameter types are irgnored. This list can be empty.
+	 * 		the values of the parameter types are ignored. This list can be empty.
 	 */
 	public Signature(String name, int id, List<Types> parameters) {
-		this.canonical = this.checkCanonical(parameters);
 		this.name = name;
 		this.signatureId = id;
 		this.parameters = parameters;
+		this.canonical = this.checkCanonical(parameters);
 	}
 	
 	
@@ -313,12 +314,14 @@ public class Signature {
 	
 	
 	private void rearrange(Signature other) {
-		List<Types> paramThis = this.parameters;
-		List<Types> paramOther = other.parameters;
-		for (int i = 0; i < paramThis.size(); ++i) {
-			for (int j = i; j < paramOther.size(); ++j) {
-				if(paramOther.get(j).getClass().equals(paramThis.get(i).getClass()) && i != j) {
-					this.swap(paramOther, i, j);
+		List<Types> formal = this.parameters;
+		List<Types> actual = other.parameters;
+		for (int i = 0; i < formal.size(); ++i) {
+			for (int j = i; j < actual.size(); ++j) {
+			    Class<?> formalCls = formal.get(i).getClass();
+			    Class<?> actualCls = actual.get(j).getClass();
+				if(i != j && actualCls.isAssignableFrom(formalCls)) {
+					this.swap(actual, i, j);
 				}
 			}
 		}
@@ -342,13 +345,17 @@ public class Signature {
 	 * @return If the list is canonical.
 	 */
 	private boolean checkCanonical(List<Types> parameters) {
-		for (int i = 0; i < parameters.size(); ++i) {
-			for (int j = i; j < parameters.size(); ++j) {
-				if (parameters.get(i).getClass().equals(parameters.get(j).getClass()) && i != j) {
-					return false;
-				}
-			}
-		}
+        List<Types> formal = this.parameters;
+        List<Types> actual = parameters;
+        for (int i = 0; i < formal.size(); ++i) {
+            for (int j = i; j < actual.size(); ++j) {
+                Class<?> formalCls = formal.get(i).getClass();
+                Class<?> actualCls = actual.get(j).getClass();
+                if(i != j && actualCls.isAssignableFrom(formalCls)) {
+                    return false;
+                }
+            }
+        }
 		return true;
 	}
 	
