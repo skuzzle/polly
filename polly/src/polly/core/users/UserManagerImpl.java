@@ -68,11 +68,6 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
      */
     private Map<String, User> onlineCache;
     
-    
-    /**
-     * Stores user specific declarations. Key: the user name.
-     */
-   
     private File declarationCachePath;
     
     private Map<String, AttributeConstraint> constraints;
@@ -121,14 +116,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     }
     
     
-    /*
-     * This method is subject to ISSUE: 0000033
-     * It currently returns the keys from to Map that stores the declarations. This
-     * must be modified to return a set that contains the custom string representation
-     * for each declaration.
-     * 
-     */
-    
+
     @Override
     public synchronized Set<String> getDeclaredIdentifiers(String namespace) {
         Declarations d = this.namespace.getNamespaceFor(namespace);
@@ -143,28 +131,6 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
         }
         return result;
     }
-    
-    
-    
-    public String inspect(User user, String declaration) {
-        /*try {
-            Expression e = this.namespaces.get(user.getName()).resolve(
-                    new ResolvableIdentifierLiteral(declaration));
-            
-            if (e == null) {
-                return null;
-            } else if (e instanceof FunctionDefinition) {
-                return e.toString();
-            } else {
-                return e.getType() + ": " + declaration;
-            }
-        } catch (ParseException e) {
-            return null;
-        }*/
-    	// todo
-    	return "TODO";
-    }
-
     
     
     

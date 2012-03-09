@@ -111,17 +111,6 @@ public interface UserManager {
      *      <code>null</code>.
      */
     public abstract Set<String> getDeclaredIdentifiers(String namepsace);
-	
-    
-    
-    /**
-     * Returns a String representation including type and parameters for a declaration.
-     * @param user The User whose declarations shall be retrieved.
-     * @param declaration The name of the declaration to inspect.
-     * @return A String representation of the declaration. <code>null</code> if the
-     *          declaration does not exist.
-     */
-    public abstract String inspect(User user, String declaration);
     
     
     

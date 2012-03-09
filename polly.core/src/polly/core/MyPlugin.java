@@ -18,7 +18,6 @@ import commands.GhostCommand;
 import commands.GreetingCommand;
 import commands.HelpCommand;
 import commands.HopCommand;
-import commands.InspectCommand;
 import commands.JoinCommand;
 import commands.KickCommand;
 import commands.ListAttributesCommand;
@@ -123,7 +122,6 @@ public class MyPlugin extends PollyPlugin {
 		this.addCommand(new FooCommand(myPolly));
 		this.addCommand(new VarCommand(myPolly));
 		this.addCommand(new DelVarCommand(myPolly));
-		this.addCommand(new InspectCommand(myPolly));
 		
 		this.addCommand(new VenadCommand(myPolly));
 		this.addCommand(new MyVenadCommand(myPolly));
