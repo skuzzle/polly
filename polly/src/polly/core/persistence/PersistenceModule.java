@@ -1,6 +1,7 @@
 package polly.core.persistence;
 
 
+import polly.Polly;
 import polly.configuration.PollyConfiguration;
 import polly.core.ShutdownManagerImpl;
 import polly.core.plugins.PluginManagerImpl;
@@ -65,7 +66,8 @@ public class PersistenceModule extends AbstractModule {
                 this.persistenceManager.getEntities(), 
                 dp, 
                 this.config.getPersistenceUnit(), 
-                this.pluginManager);
+                this.pluginManager,
+                Polly.PLUGIN_FOLDER);
         
         this.persistenceManager.registerEntity(User.class);
         this.persistenceManager.registerEntity(Attribute.class);

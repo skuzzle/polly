@@ -13,10 +13,12 @@ public class XmlCreator {
     private DatabaseProperties properties;
     private String persistenceUnit;
     private PluginManagerImpl pluginManager;
+    private String pluginFolder;
     
     
     public XmlCreator(EntityList entities, DatabaseProperties properties,
-            String persistenceUnit, PluginManagerImpl pluginManager) {
+            String persistenceUnit, PluginManagerImpl pluginManager, 
+            String pluginFolder) {
         this.entities = entities;
         this.properties = properties;
         this.persistenceUnit = persistenceUnit;
@@ -52,7 +54,7 @@ public class XmlCreator {
         s.append("    <!-- plugin jar file references -->\n");
         for (Plugin pluginCfg : this.pluginManager.loadedPlugins()) {
             s.append("    <jar-file>file:");
-            s.append("../plugins/"); // !TODO: read plugin folder from cfg
+            s.append("../" + this.pluginFolder + "/"); 
             s.append(pluginCfg.getProperty(Plugin.JAR_FILE));
             s.append("</jar-file>\n");
         }

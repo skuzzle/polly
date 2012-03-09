@@ -107,7 +107,6 @@ public class TrainManager extends AbstractDisposable {
     
     @Override
     protected void actualDispose() throws DisposingException {
-        // TODO Auto-generated method stub
-        
+        // nothing to do here
     }
 }
