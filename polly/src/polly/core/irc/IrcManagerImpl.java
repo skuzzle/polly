@@ -142,9 +142,8 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
                 IrcManagerImpl.this.fireUserLost(e1);
             }
             
-            // TODO: you cannot explain that
-            // IrcManagerImpl.this.topics.remove(channel);
-            
+            // XXX: not sure if this makes sense or not
+            IrcManagerImpl.this.topics.remove(channel);
             IrcManagerImpl.this.firePart(e);
         }
         
