@@ -55,7 +55,6 @@ public class ChannelEvent extends IrcEvent {
      * @return <code>true</code> iff this event occurred on a query.
      */
     public boolean inQuery() {
-        // TODO: strip '#' off channel name?
         return this.channel.equalsIgnoreCase(this.user.getNickName());
     }
     
