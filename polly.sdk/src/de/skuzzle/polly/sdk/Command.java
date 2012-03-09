@@ -333,6 +333,8 @@ public abstract class Command implements Comparable<Command> {
     		} else if (runOthers) {
     			this.executeOnChannel(executer, channel, signature);
     		}
+		} catch (InsufficientRightsException e) {
+		    throw e;
 		} catch (Exception e) {
 		    throw new CommandException(e.getMessage(), e);
 		}
