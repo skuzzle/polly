@@ -27,6 +27,8 @@ public class DefaultPollyConfiguration extends SortedProperties {
         this.setProperty(Configuration.LINE_LENGTH, "201");
         this.setProperty(Configuration.MESSAGE_DELAY, "251");
         this.setProperty(Configuration.PORT, "6669");
+        this.setProperty(Configuration.IGNORE_UNKNOWN_IDENTIFIERS, "true");
+        this.setProperty(Configuration.TEMP_VAR_LIFETIME, "5000");
         
         this.setProperty(Configuration.DATE_FORMAT, "dd.MM.yyyy HH\\:mm\\:ss");
         this.setProperty(Configuration.NUMBER_FORMAT, "0.\\#\\#\\#\\#\\#");
@@ -46,6 +48,8 @@ public class DefaultPollyConfiguration extends SortedProperties {
         
         this.setProperty(Configuration.LOG_CONFIG_FILE, "cfg/log4j.cfg");
         this.setProperty(Configuration.DECLARATION_CACHE, "./cache");
+        this.setProperty(Configuration.KEYSTORE_PASSWORD, "blabla");
+        this.setProperty(Configuration.KEYSTORE_FILE, "./cfg/SSLKeyStore");
     }
 
 }
