@@ -351,11 +351,11 @@ public class CommandManagerImpl implements CommandManager {
         d.addNormal(new VarDeclaration(new IdentifierLiteral("morgen"), 
             new DateLiteral(tmp.getTime()), true));
         
-        logger.trace("    me     := " + user.getCurrentNickName());
+        /*logger.trace("    me     := " + user.getCurrentNickName());
         logger.trace("    here   := " + channel);
         logger.trace("    all    := " + channels.toString());
         logger.trace("    each   := " + users);
-        logger.trace("    morgen := " + tmp.getTime());
+        logger.trace("    morgen := " + tmp.getTime());*/
         
         if (constants != null && !constants.isEmpty()) {
             logger.trace("Command-specific constant names:");
