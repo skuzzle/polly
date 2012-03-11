@@ -59,5 +59,12 @@ public class ForwardIrcHandler implements MessageListener, NickChangeListener,
     @Override
     public void actionMessage(MessageEvent e) {
     }
+
+
+
+
+    @Override
+    public void noticeMessage(MessageEvent e) {
+    }
     
 }

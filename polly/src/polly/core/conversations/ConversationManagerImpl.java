@@ -19,7 +19,7 @@ import polly.util.concurrent.ThreadFactoryBuilder;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.Conversation;
 import de.skuzzle.polly.sdk.ConversationManager;
-import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.IrcManager;
 import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
 import de.skuzzle.polly.sdk.exceptions.ConversationException;
@@ -42,14 +42,14 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
         private BlockingQueue<MessageEvent> readQueue;
         protected String channel;
         private User user;
-        private MyPolly myPolly;
+        private IrcManager ircManager;
         private Thread readThread;
         private long lastInput;
         private int idleTimeout;
         
-        public ConversationImpl(MyPolly myPolly, User user, String channel, 
+        public ConversationImpl(IrcManager ircManager, User user, String channel, 
                 int idleTimeout) {
-            this.myPolly = myPolly;
+            this.ircManager = ircManager;
             this.user = user;
             this.channel = channel;
             this.readQueue = new LinkedBlockingQueue<MessageEvent>();
@@ -109,7 +109,7 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
         @Override
         public void writeLine(String line) {
             this.checkClosed();
-            this.myPolly.irc().sendMessage(this.channel, line, this);
+            this.ircManager.sendMessage(this.channel, line, this);
         }
 
         
@@ -128,6 +128,7 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
         
         
         private synchronized void onMessage(final MessageEvent e) {
+            System.out.println(e);
             assert !this.isDisposed() : "Listener should have been removed before closing";
             if (!e.getChannel().equals(this.channel) || 
                 !e.getUser().getNickName().equals(this.user.getCurrentNickName())) {
@@ -162,6 +163,13 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
             this.onMessage(e);
         }
         
+
+        
+        @Override
+        public void noticeMessage(MessageEvent e) {
+            this.onMessage(e);
+        }
+        
         
         
         @Override
@@ -169,10 +177,11 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
 
         
         
+        
         @Override
         protected void actualDispose() throws DisposingException {
             synchronized (crossMutex) {
-                this.myPolly.irc().removeMessageListener(this);
+                this.ircManager.removeMessageListener(this);
                 ConversationManagerImpl.this.cache.remove(this);
                 
                 if (this.readThread != null) {
@@ -277,27 +286,27 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
     
 
     @Override
-    public Conversation create(MyPolly myPolly, User user, String channel)
+    public Conversation create(IrcManager ircManager, User user, String channel)
             throws ConversationException {
 
-        return this.create(myPolly, user, channel, 60);
+        return this.create(ircManager, user, channel, 60);
     }
     
     
     
-    public Conversation create(MyPolly myPolly, User user, String channel, int idleTimeout) 
+    public Conversation create(IrcManager ircManager, User user, String channel, int idleTimeout) 
             throws ConversationException {
         
         synchronized (crossMutex) {
-            Conversation key = new ConversationImpl(myPolly, user, channel, idleTimeout);
+            Conversation key = new ConversationImpl(ircManager, user, channel, idleTimeout);
             logger.info("Checking for existing conversation");
             if (this.cache.contains(key)) {
                 throw new ConversationException("Conversation already active");
             }
             
             ConversationImpl c = new ConversationImpl(
-                myPolly, user, channel, idleTimeout * 1000); // calc timeout in seconds
-            myPolly.irc().addMessageListener(c);
+                ircManager, user, channel, idleTimeout * 1000); // calc timeout in seconds
+            ircManager.addMessageListener(c);
             this.cache.add(c);
             logger.debug("Created new conversation with " + user.getCurrentNickName() + 
                     " on channel " + channel);

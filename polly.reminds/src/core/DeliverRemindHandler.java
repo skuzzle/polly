@@ -121,4 +121,9 @@ public class DeliverRemindHandler extends JoinPartAdapter implements MessageList
     public void userSignedOff(UserEvent ignore) {}
 
 
+
+    @Override
+    public void noticeMessage(MessageEvent ignore) {}
+
+
 }

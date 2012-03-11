@@ -105,4 +105,9 @@ public class MessageHandler implements MessageListener {
         }
         return u;
     }
+
+
+
+    @Override
+    public void noticeMessage(MessageEvent ignore) {}
 }

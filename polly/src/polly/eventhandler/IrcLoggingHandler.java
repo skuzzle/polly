@@ -44,6 +44,16 @@ public class IrcLoggingHandler implements MessageListener, NickChangeListener,
 	    this.filters.add(filter);
 	}
 	
+	
+	
+    @Override
+    public void noticeMessage(MessageEvent e) {
+        if (!this.discardMessage(e)) {
+            logger.trace(e);
+        }
+    }
+    
+	
     
     @Override
     public void publicMessage(MessageEvent e) {
@@ -126,5 +136,4 @@ public class IrcLoggingHandler implements MessageListener, NickChangeListener,
         }
         return false;
     }
-
 }

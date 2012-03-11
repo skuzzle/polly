@@ -33,4 +33,12 @@ public interface MessageListener extends IrcEventListener {
 	 * @param e The MessageEvent which holds detailed information about this event.
 	 */
     public void actionMessage(MessageEvent e);
+    
+    
+    /**
+     * This method is called whenever we receive a notice.
+     * 
+     * @param e The MessageEvent which holds detailed information about this event.
+     */
+    public void noticeMessage(MessageEvent e);
 }

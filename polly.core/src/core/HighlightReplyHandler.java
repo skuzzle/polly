@@ -87,5 +87,10 @@ public class HighlightReplyHandler implements MessageListener {
     
     
     @Override
-    public void privateMessage(MessageEvent e) {}
+    public void privateMessage(MessageEvent ignore) {}
+
+
+
+    @Override
+    public void noticeMessage(MessageEvent ignore) {}
 }

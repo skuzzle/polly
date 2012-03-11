@@ -179,6 +179,19 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         
         
         
+        protected void onNotice(String sourceNick, String sourceLogin, 
+            String sourceHostname, String target, String notice) {
+            
+            String nickName = IrcManagerImpl.this.stripNickname(sourceNick);
+            IrcUser user = new IrcUser(nickName, sourceLogin, sourceHostname);
+            MessageEvent e = new MessageEvent(IrcManagerImpl.this, user, 
+                    target, notice);
+            
+            IrcManagerImpl.this.fireNoticeMessageEvent(e);
+        };
+        
+        
+        
         @Override
         protected void onPrivateMessage(String sender, String login, String hostname,
                 String message) {
@@ -311,13 +324,6 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         
         this.fireConnectionEstablished(new ConnectionEvent(this));
     }
-	
-	
-	
-	public String getNickName() {
-	    return this.bot.getNick();
-	}
-    
     
     
 
@@ -805,6 +811,22 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
                 @Override
                 public void dispatch(MessageListener listener, MessageEvent event) {
                     listener.actionMessage(event);
+                }
+        };
+        this.eventProvider.dispatchEvent(d);
+    }
+    
+    
+    
+    protected void fireNoticeMessageEvent(final MessageEvent e) {
+        final List<MessageListener> listeners = 
+            this.eventProvider.getListeners(MessageListener.class);
+        
+        Dispatchable<MessageListener, MessageEvent> d = 
+            new Dispatchable<MessageListener, MessageEvent>(listeners, e) {
+                @Override
+                public void dispatch(MessageListener listener, MessageEvent event) {
+                    listener.noticeMessage(event);
                 }
         };
         this.eventProvider.dispatchEvent(d);

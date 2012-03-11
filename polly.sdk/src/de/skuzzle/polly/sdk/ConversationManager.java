@@ -26,14 +26,14 @@ public interface ConversationManager extends Disposable {
      * The returned conversation will automatically be closed when being idle for more
      * than one minute.
      * 
-     * @param myPolly The MyPolly instance to work with.
+     * @param ircManager The IrcManager instance to work with.
      * @param user The user this conversation is for.
      * @param Channel The channel this conversation is for.
      * @return The new {@link Conversation} instance.
      * @throws ConversationException If there is already a conversation active with the
      *          same user on the same channel.
      */
-    public abstract Conversation create(MyPolly myPolly, User user, String Channel) 
+    public abstract Conversation create(IrcManager ircManager, User user, String Channel) 
             throws ConversationException;
     
     /**
@@ -42,7 +42,7 @@ public interface ConversationManager extends Disposable {
      * for the given time.
      * See the documentation of the Conversation class to see how to use them.
      * 
-     * @param myPolly The MyPolly instance to work with.
+     * @param myPolly The IrcManager instance to work with.
      * @param user The user this conversation is for.
      * @param Channel The channel this conversation is for.
      * @param idleTime The time of idling in seconds after which the returned 
@@ -52,6 +52,6 @@ public interface ConversationManager extends Disposable {
      *          same user on the same channel.
      * @since 0.6.1
      */
-    public abstract Conversation create(MyPolly myPolly, User user, String Channel, 
+    public abstract Conversation create(IrcManager ircManager, User user, String Channel, 
         int idleTime) throws ConversationException;
 }

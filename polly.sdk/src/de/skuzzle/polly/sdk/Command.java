@@ -533,7 +533,8 @@ public abstract class Command implements Comparable<Command> {
 	 */
 	protected Conversation createConversation(User user, String channel) 
 	            throws ConversationException {
-	    return this.getMyPolly().conversations().create(this.getMyPolly(), user, channel);
+	    return this.getMyPolly().conversations().create(this.getMyPolly().irc(), user, 
+	        channel);
 	}
 	
 	

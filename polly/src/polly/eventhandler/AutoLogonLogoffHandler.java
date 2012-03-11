@@ -11,10 +11,12 @@ import org.apache.log4j.Logger;
 
 
 import polly.core.DefaultUserAttributes;
+import polly.core.conversations.ConversationManagerImpl;
 import polly.core.irc.IrcManagerImpl;
 import polly.core.users.UserManagerImpl;
 import polly.util.concurrent.ThreadFactoryBuilder;
 import de.skuzzle.polly.sdk.AbstractDisposable;
+import de.skuzzle.polly.sdk.Conversation;
 import de.skuzzle.polly.sdk.eventlistener.NickChangeEvent;
 import de.skuzzle.polly.sdk.eventlistener.NickChangeListener;
 import de.skuzzle.polly.sdk.eventlistener.SpotEvent;
@@ -30,6 +32,10 @@ import de.skuzzle.polly.sdk.model.User;
 public class AutoLogonLogoffHandler extends AbstractDisposable
         implements UserSpottedListener, NickChangeListener, UserListener {
     
+    private final static User NICKSERV = new polly.data.User("NickServ", "", 0);
+    static {
+        NICKSERV.setCurrentNickName("NickServ");
+    }
     
     private class AutoLogonRunnable implements Runnable {
         
@@ -55,17 +61,37 @@ public class AutoLogonLogoffHandler extends AbstractDisposable
             
             synchronized (scheduledLogons) {
                 if (scheduledLogons.containsKey(this.forUser)) {
+                    Conversation c = null;
                     try {
                         // removing the entry happens in the event handler
                         // AutoLogonLogoffHandler.this.scheduledLogons.remove(this.forUser);
                         
-                        userManager.logonWithoutPassword(this.forUser);
+                        // ISSUE 0000091: check nickserv if user is registered and 
+                        //                logged in
+                        c = convManager.create(ircManager, NICKSERV, 
+                                               ircManager.getNickname(), 5000);
+                        ircManager.sendRawCommand("NICKSERV STATUS " + this.forUser);
+                        String reply = c.readStringLine();
+                        
+                        if (reply.equalsIgnoreCase("status " + this.forUser + " 3")) {
+                            userManager.logonWithoutPassword(this.forUser);
+                        } else {
+                            logger.warn("User '" + this.forUser + "' could not be " +
+                            		"logged on automatically. NickServ replied: '" + 
+                            		reply + "'");
+                        }
+                    } catch (InterruptedException e) {
+                        logger.error("Timeout while waiting for nickserv reply", e);
                     } catch (UnknownUserException e) {
                         logger.warn("Error while autologon", e);
                     } catch (AlreadySignedOnException e) {
                         logger.warn("Error while autologon", e);
                     } catch (Exception e) {
                         logger.error("Error while autologon", e);
+                    } finally {
+                        if (c != null) {
+                            c.close();
+                        }
                     }
                 }
             }
@@ -77,19 +103,22 @@ public class AutoLogonLogoffHandler extends AbstractDisposable
     
  
     private IrcManagerImpl ircManager;
+    private ConversationManagerImpl convManager;
     private UserManagerImpl userManager;
     private ScheduledExecutorService autoLogonExecutor;
     private Map<String, AutoLogonRunnable> scheduledLogons;
     private int autoLoginTime;
     
     public AutoLogonLogoffHandler(IrcManagerImpl ircManager, 
-            UserManagerImpl userManager, int autoLoginTime) {
+            ConversationManagerImpl convManager, UserManagerImpl userManager, 
+            int autoLoginTime) {
         this.ircManager = ircManager;
         this.userManager = userManager;
         this.autoLogonExecutor = Executors.newScheduledThreadPool(4, 
                 new ThreadFactoryBuilder("LOGON"));
         this.scheduledLogons = new HashMap<String, AutoLogonRunnable>();
         this.autoLoginTime = autoLoginTime;
+        this.convManager = convManager;
     }
 
 

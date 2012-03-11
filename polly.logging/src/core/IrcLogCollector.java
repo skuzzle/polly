@@ -106,5 +106,10 @@ public class IrcLogCollector implements
     private void onDatabaseException(DatabaseException e) {
         e.printStackTrace();
     }
+
+
+
+    @Override
+    public void noticeMessage(MessageEvent ignore) {}
     
 }

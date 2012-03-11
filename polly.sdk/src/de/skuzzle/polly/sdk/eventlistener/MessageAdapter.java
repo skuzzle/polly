@@ -34,4 +34,14 @@ public abstract class MessageAdapter implements MessageListener {
 	 */
     @Override
     public void actionMessage(MessageEvent e) {}
+    
+    
+    
+    /**
+     * Empty implementation of {@link MessageListener#noticeMessage(MessageEvent)}.
+     * @param e The MessageEvent which holds detailed information about this event.
+     */
+    @Override
+    public void noticeMessage(MessageEvent e) {
+    }
 }

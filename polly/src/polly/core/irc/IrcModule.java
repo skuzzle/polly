@@ -8,6 +8,7 @@ import polly.configuration.PollyConfiguration;
 import polly.core.DefaultUserAttributes;
 import polly.core.ShutdownManagerImpl;
 import polly.core.commands.CommandManagerImpl;
+import polly.core.conversations.ConversationManagerImpl;
 import polly.core.users.UserManagerImpl;
 import polly.eventhandler.AutoLogonLogoffHandler;
 import polly.eventhandler.IrcConnectionLostListener;
@@ -31,6 +32,7 @@ import polly.core.ModuleStates;
         @Require(component = EventProvider.class),
         @Require(component = UserManagerImpl.class),
         @Require(component = CommandManagerImpl.class),
+        @Require(component = ConversationManagerImpl.class),
         @Require(component = ExecutorService.class),
         @Require(component = DefaultUserAttributes.class),
         @Require(state = ModuleStates.PLUGINS_READY),
@@ -47,6 +49,7 @@ public class IrcModule extends AbstractModule {
     private UserManagerImpl userManager;
     private IrcManagerImpl ircManager;
     private PollyConfiguration config;
+    private ConversationManagerImpl convManager;
     private ShutdownManagerImpl shutdownManager;
 
     private BotConnectionSettings connectionSettings;
@@ -67,6 +70,7 @@ public class IrcModule extends AbstractModule {
         this.commandManager = this.requireNow(CommandManagerImpl.class);
         this.shutdownManager = this.requireNow(ShutdownManagerImpl.class);
         this.commandExecutor = this.requireNow(ExecutorService.class);
+        this.convManager = this.requireNow(ConversationManagerImpl.class);
     }
 
 
@@ -105,7 +109,8 @@ public class IrcModule extends AbstractModule {
         // Setup auto logoin / logout handler
         if (this.config.isAutoLogon()) {
             AutoLogonLogoffHandler logonHandler = new AutoLogonLogoffHandler(
-                this.ircManager, this.userManager, this.config.getAutoLogonTime());
+                this.ircManager, this.convManager, this.userManager, 
+                this.config.getAutoLogonTime());
 
             this.ircManager.addUserSpottedListener(logonHandler);
             this.ircManager.addNickChangeListener(logonHandler);
