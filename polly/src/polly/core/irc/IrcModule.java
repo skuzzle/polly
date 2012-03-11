@@ -10,7 +10,8 @@ import polly.core.ShutdownManagerImpl;
 import polly.core.commands.CommandManagerImpl;
 import polly.core.conversations.ConversationManagerImpl;
 import polly.core.users.UserManagerImpl;
-import polly.eventhandler.AutoLogonLogoffHandler;
+import polly.eventhandler.AutoLogoffHandler;
+import polly.eventhandler.AutoLogonHandler;
 import polly.eventhandler.IrcConnectionLostListener;
 import polly.eventhandler.IrcLoggingHandler;
 import polly.eventhandler.MessageHandler;
@@ -106,9 +107,9 @@ public class IrcModule extends AbstractModule {
         this.ircManager.addConnectionListener(new IrcConnectionLostListener(
             this.userManager));
 
-        // Setup auto logoin / logout handler
+        // Setup auto login / logout handler
         if (this.config.isAutoLogon()) {
-            AutoLogonLogoffHandler logonHandler = new AutoLogonLogoffHandler(
+            AutoLogonHandler logonHandler = new AutoLogonHandler(
                 this.ircManager, this.convManager, this.userManager, 
                 this.config.getAutoLogonTime());
 
@@ -117,8 +118,10 @@ public class IrcModule extends AbstractModule {
             this.userManager.addUserListener(logonHandler);
 
             this.shutdownManager.addDisposable(logonHandler);
-
         }
+        AutoLogoffHandler logoffHandler = new AutoLogoffHandler(this.userManager, 
+            this.ircManager);
+        this.ircManager.addUserSpottedListener(logoffHandler);
         
         this.connectionSettings = new BotConnectionSettings(
             this.config.getNickName(), this.config.getServer(),

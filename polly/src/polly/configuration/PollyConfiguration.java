@@ -111,7 +111,7 @@ public class PollyConfiguration extends Configuration
         this.updateUrl = this.props.getProperty(UPDATE_URL, "");
         this.installerUpdateUrl = this.props.getProperty(INSTALLER_UPDATE_URL, "");
         this.autoUpdate = this.readBoolean(this.props.getProperty(AUTO_UPDATE, "false"));
-        //this.ircModes = this.props.getProperty(IRC_MODES, "+B");
+        this.ircModes = this.props.getProperty(IRC_MODES, "+B");
         this.isDebugMode = this.readBoolean(this.props.getProperty(DEBUG_MODE, "false"));
         this.persistenceUnit = this.props.getProperty(DB_PERSISTENCE_UNIT, "polly");
         this.persistenceXML = this.props.getProperty(DB_PERSISTENCE_XML_PATH, 

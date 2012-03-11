@@ -29,7 +29,7 @@ import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
 import de.skuzzle.polly.sdk.model.User;
 
 
-public class AutoLogonLogoffHandler extends AbstractDisposable
+public class AutoLogonHandler extends AbstractDisposable
         implements UserSpottedListener, NickChangeListener, UserListener {
     
     private final static User NICKSERV = new polly.data.User("NickServ", "", 0);
@@ -99,7 +99,7 @@ public class AutoLogonLogoffHandler extends AbstractDisposable
     }
     
 
-    private static Logger logger = Logger.getLogger(AutoLogonLogoffHandler.class.getName());
+    private static Logger logger = Logger.getLogger(AutoLogonHandler.class.getName());
     
  
     private IrcManagerImpl ircManager;
@@ -109,7 +109,7 @@ public class AutoLogonLogoffHandler extends AbstractDisposable
     private Map<String, AutoLogonRunnable> scheduledLogons;
     private int autoLoginTime;
     
-    public AutoLogonLogoffHandler(IrcManagerImpl ircManager, 
+    public AutoLogonHandler(IrcManagerImpl ircManager, 
             ConversationManagerImpl convManager, UserManagerImpl userManager, 
             int autoLoginTime) {
         this.ircManager = ircManager;
@@ -178,17 +178,7 @@ public class AutoLogonLogoffHandler extends AbstractDisposable
     
 
     @Override
-    public synchronized void userLost(SpotEvent e) {
-        if (this.userManager.isSignedOn(e.getUser())) {
-            logger.warn("Auto logoff for user: " + e.getUser());
-            if (e.getType() != SpotEvent.USER_QUIT) {
-                this.ircManager.sendMessage(e.getUser().getNickName(), 
-                    "Du wurdest automatisch ausgeloggt weil du den letzten " +
-                    "gemeinsamen Channel verlassen hast.", this);
-            }
-            this.userManager.logoff(e.getUser(), true);
-        }
-    }
+    public void userLost(SpotEvent ignore) {}
 
 
 
