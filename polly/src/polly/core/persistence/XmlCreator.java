@@ -23,6 +23,7 @@ public class XmlCreator {
         this.properties = properties;
         this.persistenceUnit = persistenceUnit;
         this.pluginManager = pluginManager;
+        this.pluginFolder = pluginFolder;
     }
     
     
