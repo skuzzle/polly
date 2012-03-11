@@ -128,7 +128,6 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
         
         
         private synchronized void onMessage(final MessageEvent e) {
-            System.out.println(e);
             assert !this.isDisposed() : "Listener should have been removed before closing";
             if (!e.getChannel().equals(this.channel) || 
                 !e.getUser().getNickName().equals(this.user.getCurrentNickName())) {
