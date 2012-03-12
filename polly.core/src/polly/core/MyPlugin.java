@@ -17,6 +17,7 @@ import commands.GetAttributeCommand;
 import commands.GhostCommand;
 import commands.GreetingCommand;
 import commands.HelpCommand;
+import commands.HighlightModeCommand;
 import commands.HopCommand;
 import commands.JoinCommand;
 import commands.KickCommand;
@@ -138,6 +139,7 @@ public class MyPlugin extends PollyPlugin {
 		
 		this.highlightHandler= new HighlightReplyHandler(myPolly.getTimeProvider());
 		myPolly.irc().addMessageListener(this.highlightHandler);
+		this.addCommand(new HighlightModeCommand(myPolly, this.highlightHandler));
 	}
 	
 	

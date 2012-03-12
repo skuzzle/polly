@@ -47,7 +47,7 @@ public class HighlightReplyHandler implements MessageListener {
 
     
     public void resetTimeOut() {
-        this.lastMessage = System.currentTimeMillis();
+        this.lastMessage = System.currentTimeMillis() - MESSAGE_DELAY;
     }
     
     

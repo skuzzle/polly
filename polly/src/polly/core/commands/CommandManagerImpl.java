@@ -310,11 +310,15 @@ public class CommandManagerImpl implements CommandManager {
             logger.trace("Collapsing all parameters");
             root.collapse(new Stack<Literal>());
 
+            watch.stop();
+            logger.trace("Parsing time: " + watch.getDifference() + "ms");
+            
             return root;
-        } finally {
+        } catch (Exception e) {
             watch.stop();
             logger.trace("Parsing time: " + watch.getDifference() + "ms");
         }
+        return null;
     }
 
 
