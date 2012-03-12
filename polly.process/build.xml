@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="de.skuzzle.polly.process" basedir="." default="dist">
 
-    <property name="version.num" value="0.6.4"/>
+    <property name="version.num" value="0.8.0"/>
 
     <!-- Relative path to the root dir -->
     <property name="polly.root.dir" value="../"/>

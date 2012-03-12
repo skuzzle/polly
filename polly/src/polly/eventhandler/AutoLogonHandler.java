@@ -29,6 +29,7 @@ import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
 import de.skuzzle.polly.sdk.model.User;
 
 
+
 public class AutoLogonHandler extends AbstractDisposable
         implements UserSpottedListener, NickChangeListener, UserListener {
     

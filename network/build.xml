@@ -29,7 +29,7 @@
     "/>
     
     <path id="buildpath">
-        <fileset dir="${lib.dir}" includes="${includeJars}"/>
+        <fileset dir="${lib.dir}" excludes="**/**"/>
     </path>
     
     
@@ -47,7 +47,6 @@
     -->
     <target name="clean">
         <delete file="${dist.dir}/${ant.project.name}.jar"/>
-        <delete dir="${dist.lib.dir}"/>
         <delete dir="${dist.dir}"/>
         <delete dir="${bin.dir}"/>
     </target>
@@ -59,12 +58,7 @@
     -->
     <target name="prepare">
         <mkdir dir="${dist.dir}"/>
-        <mkdir dir="${bin.dir}"/>
-        <mkdir dir="${dist.lib.dir}"/>
-        
-        <copy todir="${dist.lib.dir}">
-            <fileset dir="${lib.dir}" includes="${includeJars}"/>
-        </copy>        
+        <mkdir dir="${bin.dir}"/>     
     </target>
     
     
@@ -101,13 +95,7 @@
         Same as dist but does no cleanup before
     -->
     <target name="dist_no_clean" depends="prepare, build">
-        <manifestclasspath property="jar.classpath"
-                           jarfile="${dist.dir}/${dist.filename}">
-            <classpath>
-                <fileset dir="${dist.lib.dir}" includes="${includeJars}"/>
-            </classpath>
-        </manifestclasspath>
-    
+   
         <jar destfile="${dist.dir}/${ant.project.name}.jar">
             <manifest>
                 <attribute name="Implementation-Title"   value="${title}"/>

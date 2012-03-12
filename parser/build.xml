@@ -59,7 +59,6 @@
     -->
     <target name="clean">
         <delete file="${dist.dir}/${ant.project.name}.jar"/>
-        <delete dir="${dist.lib.dir}"/>
         <delete dir="${dist.dir}"/>
         <delete dir="${bin.dir}"/>
     </target>
@@ -71,7 +70,6 @@
     -->
     <target name="prepare">
         <mkdir dir="${dist.dir}"/>
-        <mkdir dir="${dist.lib.dir}"/>
         <mkdir dir="${bin.dir}"/>    
     </target>
     
