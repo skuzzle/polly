@@ -106,14 +106,7 @@
     <!--
         Same as dist but does no cleanup before
     -->
-    <target name="dist_no_clean" depends="prepare, build">
-        <manifestclasspath property="jar.classpath"
-                           jarfile="${dist.dir}/${dist.filename}">
-            <classpath>
-                <fileset dir="${dist.lib.dir}" includes="${includeJars}"/>
-            </classpath>
-        </manifestclasspath>
-    
+    <target name="dist_no_clean" depends="prepare, build">   
         <jar destfile="${dist.dir}/${ant.project.name}.jar">
             <manifest>
                 <attribute name="Main-Class"             value="${mainclass}"/>

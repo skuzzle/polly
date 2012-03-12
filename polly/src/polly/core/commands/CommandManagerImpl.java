@@ -365,7 +365,8 @@ public class CommandManagerImpl implements CommandManager {
             logger.trace("Command-specific constant names:");
             for (Entry<String, Types> e : constants.entrySet()) {
                 Literal l = TypeMapper.typesToLiteral(e.getValue());
-                d.addNormal(new VarDeclaration(new IdentifierLiteral(e.getKey()), l));
+                d.addNormal(new VarDeclaration(new IdentifierLiteral(e.getKey()), l, 
+                    true));
                 logger.trace("    " + e.getKey() + " := " + l.toString());
             }
         }
