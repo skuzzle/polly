@@ -71,6 +71,11 @@ public class IrcUser {
 
 
 
+    /**
+     * Checks if two IrcUser are equal. They are, if theire nicknames equal.
+     * 
+     * @param obj The object to compare this with.
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj)

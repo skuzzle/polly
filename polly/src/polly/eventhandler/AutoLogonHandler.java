@@ -11,12 +11,12 @@ import org.apache.log4j.Logger;
 
 
 import polly.core.DefaultUserAttributes;
-import polly.core.conversations.ConversationManagerImpl;
 import polly.core.irc.IrcManagerImpl;
 import polly.core.users.UserManagerImpl;
 import polly.util.concurrent.ThreadFactoryBuilder;
 import de.skuzzle.polly.sdk.AbstractDisposable;
-import de.skuzzle.polly.sdk.Conversation;
+import de.skuzzle.polly.sdk.eventlistener.MessageAdapter;
+import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
 import de.skuzzle.polly.sdk.eventlistener.NickChangeEvent;
 import de.skuzzle.polly.sdk.eventlistener.NickChangeListener;
 import de.skuzzle.polly.sdk.eventlistener.SpotEvent;
@@ -36,6 +36,8 @@ public class AutoLogonHandler extends AbstractDisposable
     static {
         NICKSERV.setCurrentNickName("NickServ");
     }
+    
+    
     
     private class AutoLogonRunnable implements Runnable {
         
@@ -59,66 +61,64 @@ public class AutoLogonHandler extends AbstractDisposable
                 return;
             }
             
+            // ISSUE 0000091: request status for the user from nickserv
             synchronized (scheduledLogons) {
                 if (scheduledLogons.containsKey(this.forUser)) {
-                    Conversation c = null;
-                    try {
-                        // removing the entry happens in the event handler
-                        // AutoLogonLogoffHandler.this.scheduledLogons.remove(this.forUser);
-                        
-                        // ISSUE 0000091: check nickserv if user is registered and 
-                        //                logged in
-                        c = convManager.create(ircManager, NICKSERV, 
-                                               ircManager.getNickname(), 5000);
-                        ircManager.sendRawCommand("NICKSERV STATUS " + this.forUser);
-                        String reply = c.readStringLine();
-                        
-                        if (reply.equalsIgnoreCase("status " + this.forUser + " 3")) {
-                            userManager.logonWithoutPassword(this.forUser);
-                        } else {
-                            logger.warn("User '" + this.forUser + "' could not be " +
-                            		"logged on automatically. NickServ replied: '" + 
-                            		reply + "'");
-                        }
-                    } catch (InterruptedException e) {
-                        logger.error("Timeout while waiting for nickserv reply", e);
-                    } catch (UnknownUserException e) {
-                        logger.warn("Error while autologon", e);
-                    } catch (AlreadySignedOnException e) {
-                        logger.warn("Error while autologon", e);
-                    } catch (Exception e) {
-                        logger.error("Error while autologon", e);
-                    } finally {
-                        if (c != null) {
-                            c.close();
-                        }
-                    }
+                    scheduledLogons.remove(this.forUser);
+                    ircManager.sendRawCommand("NICKSERV STATUS " + this.forUser);
                 }
             }
         }
     }
+    
+    
+    
+    private MessageAdapter autoSignOnHandler = new MessageAdapter() {
+        @Override
+        public void noticeMessage(MessageEvent e) {
+            if (!e.getUser().getNickName().equals(NICKSERV.getCurrentNickName())) {
+                return;
+            }
+            String[] parts = e.getMessage().split(" ");
+            if (parts.length != 3 || 
+                    !parts[0].equalsIgnoreCase("status") || 
+                    !parts[2].equals("3")) {
+                return;
+            }
+            String forUser = parts[1];
+            try {
+                userManager.logonWithoutPassword(forUser);
+            } catch (AlreadySignedOnException e1) {
+                logger.trace("User logged in while waiting for auto logon");
+            } catch (UnknownUserException e1) {
+                logger.error("Error while auto logon. User '" + forUser + 
+                    "' unknown", e1);
+            }
+        }
+    };
     
 
     private static Logger logger = Logger.getLogger(AutoLogonHandler.class.getName());
     
  
     private IrcManagerImpl ircManager;
-    private ConversationManagerImpl convManager;
     private UserManagerImpl userManager;
     private ScheduledExecutorService autoLogonExecutor;
     private Map<String, AutoLogonRunnable> scheduledLogons;
     private int autoLoginTime;
     
-    public AutoLogonHandler(IrcManagerImpl ircManager, 
-            ConversationManagerImpl convManager, UserManagerImpl userManager, 
+    
+    
+    public AutoLogonHandler(IrcManagerImpl ircManager, UserManagerImpl userManager, 
             int autoLoginTime) {
+        
+        ircManager.addMessageListener(this.autoSignOnHandler);
         this.ircManager = ircManager;
         this.userManager = userManager;
         this.autoLogonExecutor = Executors.newScheduledThreadPool(4, 
                 new ThreadFactoryBuilder("LOGON"));
         this.scheduledLogons = new HashMap<String, AutoLogonRunnable>();
         this.autoLoginTime = autoLoginTime;
-        this.convManager = convManager;
     }
 
 
@@ -178,11 +178,6 @@ public class AutoLogonHandler extends AbstractDisposable
     
 
     @Override
-    public void userLost(SpotEvent ignore) {}
-
-
-
-    @Override
     public void userSignedOn(UserEvent e) {
         synchronized (this.scheduledLogons) {
             AutoLogonRunnable alr = this.scheduledLogons.get(e.getUser().getName());
@@ -198,12 +193,18 @@ public class AutoLogonHandler extends AbstractDisposable
 
 
     @Override
-    public void userSignedOff(UserEvent ignore) {}
-
-
-
-    @Override
     protected void actualDispose() throws DisposingException {
         this.autoLogonExecutor.shutdown();
+        try {
+            this.autoLogonExecutor.awaitTermination(1000, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException ignore) {}
     }
+    
+    
+    
+    @Override
+    public void userSignedOff(UserEvent ignore) {}
+
+    @Override
+    public void userLost(SpotEvent ignore) {}
 }
