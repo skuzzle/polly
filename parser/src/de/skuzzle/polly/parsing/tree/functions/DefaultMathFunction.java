@@ -13,7 +13,7 @@ public class DefaultMathFunction extends FunctionDeclaration {
     public DefaultMathFunction(Functions.MathType type) {
         super(new IdentifierLiteral(type.name().toLowerCase()), true);
         this.getFormalParameters().add(
-            new VarDeclaration(new IdentifierLiteral(";_number"), Type.NUMBER));
+            new VarDeclaration(new IdentifierLiteral("x"), Type.NUMBER));
         this.setExpression(new Functions.Math(type));
     }
 }

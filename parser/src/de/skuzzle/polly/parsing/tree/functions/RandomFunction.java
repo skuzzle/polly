@@ -15,9 +15,9 @@ public class RandomFunction extends FunctionDeclaration {
     public RandomFunction() {
         super(new IdentifierLiteral("random"), true);
         this.getFormalParameters().add(new VarDeclaration(
-                new IdentifierLiteral(";_number1"), Type.NUMBER));
+                new IdentifierLiteral("lower"), Type.NUMBER));
         this.getFormalParameters().add(new VarDeclaration(
-            new IdentifierLiteral(";_number2"), Type.NUMBER));
+            new IdentifierLiteral("upper"), Type.NUMBER));
         
         this.setExpression(new Functions.Random());
     }

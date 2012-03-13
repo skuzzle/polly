@@ -17,7 +17,7 @@ public class ListLengthFunction extends FunctionDeclaration {
     public ListLengthFunction() {
         super(new IdentifierLiteral("length"), true);
         this.getFormalParameters().add(new VarDeclaration(
-            new IdentifierLiteral(";_list"), new ListType(Type.ANY)));
+            new IdentifierLiteral("list"), new ListType(Type.ANY)));
         this.setExpression(new Functions.Length());
     }
 }

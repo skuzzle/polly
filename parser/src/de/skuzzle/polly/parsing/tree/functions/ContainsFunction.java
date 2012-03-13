@@ -14,9 +14,9 @@ public class ContainsFunction extends FunctionDeclaration {
     public ContainsFunction() {
         super(new IdentifierLiteral("contains"), true);
         this.getFormalParameters().add(
-            new VarDeclaration(new IdentifierLiteral(";_list"), new ListType(Type.ANY)));
+            new VarDeclaration(new IdentifierLiteral("list"), new ListType(Type.ANY)));
         this.getFormalParameters().add(
-            new VarDeclaration(new IdentifierLiteral(";_item"), Type.ANY));
+            new VarDeclaration(new IdentifierLiteral("item"), Type.ANY));
         
         this.setExpression(new Functions.Contains());
     }

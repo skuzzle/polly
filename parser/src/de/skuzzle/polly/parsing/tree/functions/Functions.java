@@ -88,7 +88,7 @@ public class Functions {
     
     
     public static enum MathType {
-        SIN, COS, TAN, ABS, SQRT, CEIL, FLOOR, LOG, ROUND;
+        SIN, COS, TAN, ABS, SQRT, CEIL, FLOOR, LOG, ROUND, ATAN, ACOS, ASIN;
     }
     
     
@@ -137,6 +137,15 @@ public class Functions {
                 break;
             case ROUND:
                 result = java.lang.Math.round(operand.getValue());
+                break;
+            case ATAN:
+                result = java.lang.Math.atan(operand.getValue());
+                break;
+            case ASIN:
+                result = java.lang.Math.asin(operand.getValue());
+                break;
+            case ACOS:
+                result = java.lang.Math.acos(operand.getValue());
                 break;
             }
             

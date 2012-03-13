@@ -141,6 +141,9 @@ public final class Prepare {
             dest.add(new DefaultMathFunction(Functions.MathType.FLOOR), "math");
             dest.add(new DefaultMathFunction(Functions.MathType.LOG), "math");
             dest.add(new DefaultMathFunction(Functions.MathType.ROUND), "math");
+            dest.add(new DefaultMathFunction(Functions.MathType.ATAN), "math");
+            dest.add(new DefaultMathFunction(Functions.MathType.ASIN), "math");
+            dest.add(new DefaultMathFunction(Functions.MathType.ACOS), "math");
         } catch (ParseException ignore) {
             // can not happen
         }
