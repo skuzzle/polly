@@ -35,7 +35,7 @@ public class ClumBombCommand extends Command {
 		if (this.match(signature, 0)) {
 			String user = signature.getStringValue(0);
 			int i = (int) signature.getNumberValue(1);
-			//i = Math.min(10, i);
+			i = Math.min(10, i);
 			
 			for (int j = 0; j < i; j++) {
 				this.reply(channel, user);

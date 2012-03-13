@@ -70,7 +70,7 @@ public class HighlightReplyHandler implements MessageListener {
     
     
     private void onMessage(MessageEvent e) {
-        if (this.mode == Mode.OFF || 
+        if (this.mode == Mode.OFF || this.mode == Mode.COLLECTING || 
                 this.timeProvider.currentTimeMillis() - this.lastMessage < MESSAGE_DELAY) {
             return;
         }

@@ -20,6 +20,7 @@ public class RegisterCommand extends Command {
         this.createSignature("Gib deinen gewünschten Benutzernamen " +
         		"(am besten me) und dein gewünschtes Passwort ein.", 
         		new UserType(), new StringType());
+        this.createSignature("Gib dein gewünschtes Passwort ein. Als Benutzername wird dein aktueller Nickname genutzt", new StringType());
         this.setHelpText("Befehl um dich bei Polly zu registrieren.");
         this.setUserLevel(UserManager.UNKNOWN);
         this.setQryCommand(true);
@@ -51,22 +52,26 @@ public class RegisterCommand extends Command {
             return;
         }
         
+        String userName = "";
+        String password = "";
         if (this.match(signature, 0)) {
-            String userName = signature.getStringValue(0);
-            String password = signature.getStringValue(1);
-            
-            try {
-                this.getMyPolly().users().addUser(
-                        userName, password, UserManager.REGISTERED);
-                this.reply(executer, "Registrierung erfolgreich. Du kannst dich jetzt " +
-                		"mit \":auth @" + userName + "\" \"" + password + "\" anmelden.");
-            } catch (UserExistsException e) {
-                this.reply(executer, "Der Benutzer '" + userName + 
-                        "' existiert bereits.");
-            } catch (DatabaseException e) {
-                this.reply(executer, "Interner Datenbankfehler!");
-                e.printStackTrace();
-            }
+            userName = signature.getStringValue(0);
+            password = signature.getStringValue(1);
+        } else if (this.match(signature, 1)) {
+            userName = executer.getCurrentNickName();
+            password = signature.getStringValue(0);
+        }
+        try {
+            this.getMyPolly().users().addUser(
+                    userName, password, UserManager.REGISTERED);
+            this.reply(executer, "Registrierung erfolgreich. Du kannst dich jetzt " +
+            		"mit \":auth @" + userName + " " + password + "\" anmelden.");
+        } catch (UserExistsException e) {
+            this.reply(executer, "Der Benutzer '" + userName + 
+                    "' existiert bereits.");
+        } catch (DatabaseException e) {
+            this.reply(executer, "Interner Datenbankfehler!");
+            e.printStackTrace();
         }
     }
 }
