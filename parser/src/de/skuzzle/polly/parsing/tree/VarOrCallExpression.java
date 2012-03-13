@@ -138,7 +138,9 @@ public class VarOrCallExpression extends Expression {
 	                .getExpression().contextCheck(context);
 	        this.setType(this.resolvedExpression.getType());
 	    } else {
-	        assert false;
+	        throw new ParseException(
+	            this.getId().getIdentifier() + " ist keine Funktion",
+	            this.getPosition());
 	    }
 	}
 

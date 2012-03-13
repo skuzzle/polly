@@ -318,11 +318,11 @@ public class CommandManagerImpl implements CommandManager {
             logger.trace("Parsing time: " + watch.getDifference() + "ms");
             
             return root;
-        } catch (Exception e) {
+        } catch (ParseException e) {
             watch.stop();
             logger.trace("Parsing time: " + watch.getDifference() + "ms");
+            throw e;
         }
-        return null;
     }
 
 
