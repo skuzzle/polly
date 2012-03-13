@@ -10,6 +10,7 @@ import de.skuzzle.polly.parsing.tree.literals.BooleanLiteral;
 import de.skuzzle.polly.parsing.tree.literals.ChannelLiteral;
 import de.skuzzle.polly.parsing.tree.literals.CommandLiteral;
 import de.skuzzle.polly.parsing.tree.literals.DateLiteral;
+import de.skuzzle.polly.parsing.tree.literals.HelpLiteral;
 import de.skuzzle.polly.parsing.tree.literals.ListLiteral;
 import de.skuzzle.polly.parsing.tree.literals.Literal;
 import de.skuzzle.polly.parsing.tree.literals.NumberLiteral;
@@ -51,6 +52,8 @@ public class TypeMapper {
 			return Type.COMMAND;
 		} else if (types instanceof Types.AnyType) {
 			return Type.ANY;
+		} else if (types instanceof Types.HelpType) {
+		    return Type.HELP;
 		} else if (types instanceof Types.ListType) {
 			Types.ListType lt = (Types.ListType) types;
 			return new ListType(TypeMapper.typesToType(lt.getElementType()));
@@ -85,6 +88,8 @@ public class TypeMapper {
 			return new Types.CommandType();
 		} else if (type == Type.ANY) {
 			return new Types.AnyType();
+		} else if (type == Type.HELP) {
+		    return new Types.HelpType();
 		} else if (type == Type.LIST) {
 			ListType lt = (ListType) type;
 			return new Types.ListType(TypeMapper.typeToTypes(lt.getSubType()));
@@ -122,9 +127,11 @@ public class TypeMapper {
 		} else if (types instanceof Types.UserType) {
 			Types.UserType bt = (Types.UserType) types;
 			return new UserLiteral(bt.getValue());
-		}else if (types instanceof Types.CommandType) {
+		} else if (types instanceof Types.CommandType) {
 			Types.CommandType ct = (Types.CommandType) types;
 			return new CommandLiteral(ct.getValue());
+		} else if (types instanceof Types.HelpType) {
+		    return new HelpLiteral();
 		} else if (types instanceof Types.ListType) {
 			Types.ListType lt = (Types.ListType) types;
 			ArrayList<Expression> elements = new ArrayList<Expression>();
@@ -166,9 +173,11 @@ public class TypeMapper {
 		} else if (literal instanceof UserLiteral) {
 			UserLiteral bl = (UserLiteral) literal;
 			return new Types.UserType(bl.getUserName());
-		}else if (literal instanceof CommandLiteral) {
+		} else if (literal instanceof CommandLiteral) {
 			CommandLiteral cl = (CommandLiteral) literal;
 			return new Types.CommandType(cl.getCommandName());
+		} else if (literal instanceof HelpLiteral) {
+		    return new Types.HelpType();
 		} else if (literal instanceof ListLiteral) {
 			ListLiteral lt = (ListLiteral) literal;
 			List<Types> elements = new ArrayList<Types>();

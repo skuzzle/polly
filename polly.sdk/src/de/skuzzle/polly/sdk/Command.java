@@ -75,6 +75,7 @@ import de.skuzzle.polly.sdk.model.User;
  * @version RC 1.0
  */
 public abstract class Command implements Comparable<Command> {
+    
 
 	/**
 	 * This commands name.
@@ -120,6 +121,16 @@ public abstract class Command implements Comparable<Command> {
 	 */
 	protected Map<String, Types> constants;
 	
+	/**
+	 * Formal signature to output help text.
+	 */
+	private FormalSignature helpSignature0;
+	
+	/**
+	 * Formal signature to output help text of certain real signature
+	 */
+	private FormalSignature helpSignature1;
+	
 	
 	/**
 	 * Creates a new Command with the given MyPolly instance and command name.
@@ -133,6 +144,10 @@ public abstract class Command implements Comparable<Command> {
 		this.userLevel = UserManager.UNKNOWN;
 		this.helpText = "Der Befehl '" + commandName + "' hat keine Beschreibung";
 		this.constants = new HashMap<String, Types>();
+		this.helpSignature0 = new FormalSignature(commandName, 0, "", new Types.HelpType());
+		this.helpSignature1 = new FormalSignature(commandName, 0, "", 
+		    new Types.HelpType(), 
+		    new Types.NumberType());
 	}
 	
 	
@@ -298,6 +313,11 @@ public abstract class Command implements Comparable<Command> {
 	 * <p>It checks the users permission and if he has sufficient rights, it delivers
 	 * the execution to your implementations of the executeOn methods.</p>
 	 * 
+	 * <p>It also checks if the signature matches the two special signatures for 
+	 * displaying this commands help text. If so, the help is sent to the channel and
+	 * the method returns.
+	 * </p>
+	 * 
 	 * <p>If {@link #executeOnBoth(User, String, Signature)} returns <code>true</code>, 
 	 * it will call {@link #executeOnChannel(User, String, Signature)} or 
 	 * {@link #executeOnQuery(User, Signature)} according to given parameters.
@@ -324,6 +344,24 @@ public abstract class Command implements Comparable<Command> {
 		if (this.registeredOnly && !this.getMyPolly().users().isSignedOn(executer)) {
 		    throw new InsufficientRightsException(this);
 		}
+		
+		
+		// check if help is requested
+		if (signature.equals(this.helpSignature0)) {
+		    this.reply(channel, this.getHelpText());
+		    return;
+		} else if (signature.equals(this.helpSignature1)) {
+		    int num = (int) signature.getNumberValue(1);
+		    String reply = "";
+		    if (num < 0 || num > this.signatures.size()) {
+		        reply = "Keine Signatur mit der ID " + num;
+		    } else {
+		        reply = this.signatures.get(num).getHelp();
+		    }
+		    this.reply(channel, reply);
+		    return;
+		}
+		
 		
 		try {
     		boolean runOthers = this.executeOnBoth(executer, channel, signature);
@@ -429,6 +467,35 @@ public abstract class Command implements Comparable<Command> {
 	protected boolean match(Signature actual, int formalId) {
 		return actual.getId() == formalId;
 	}
+	
+	
+	
+	/**
+	 * This is the formal signature for displaying a brief description of this command.
+	 * It looks like 'commandName ?'
+	 * 
+	 * @return the formal signature for this commands help text.
+	 * @since 0.9
+	 * @see #setHelpText(String)
+	 */
+	public FormalSignature getHelpSignature0() {
+	    return this.helpSignature0;
+	}
+	
+	
+	
+    /**
+     * This is the formal signature for displaying the help text of a signature of this
+     * command. It looks like 'commandName ? Number'
+     * 
+     * @return the formal signature for this commands signatures help texts.
+     * @since 0.9
+     * @see FormalSignature#FormalSignature(String, int, String, List)
+     * @see FormalSignature#FormalSignature(String, int, String, Types...)
+     */
+    public FormalSignature getHelpSignature1() {
+        return this.helpSignature1;
+    }
 	
 	
 	

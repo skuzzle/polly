@@ -22,6 +22,7 @@ import de.skuzzle.polly.parsing.tree.literals.BooleanLiteral;
 import de.skuzzle.polly.parsing.tree.literals.ChannelLiteral;
 import de.skuzzle.polly.parsing.tree.literals.CommandLiteral;
 import de.skuzzle.polly.parsing.tree.literals.DateLiteral;
+import de.skuzzle.polly.parsing.tree.literals.HelpLiteral;
 import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
 import de.skuzzle.polly.parsing.tree.literals.ListLiteral;
 import de.skuzzle.polly.parsing.tree.literals.Literal;
@@ -615,6 +616,9 @@ public class InputParser extends AbstractParser<InputScanner> {
             case COMMAND:
             	this.scanner.consume();
             	return new CommandLiteral(la);
+            case QUESTION:
+                this.scanner.consume();
+                return new HelpLiteral(la);
             	
             default:
                 /*

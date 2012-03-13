@@ -673,9 +673,29 @@ public class Types {
 	
 	
 	
+	/**
+	 * This class represents the help parameter type "?"
+	 * 
+	 * @author Simon
+	 * @since 0.9
+	 */
+    public static class HelpType extends Types {
+        
+        public String toString() {
+            return "?";
+        }
+        
+    }
+	
+    
+    
+	
+	
 	public String valueString(FormatManager formatter) {
 	    return "";
 	}
+	
+	
 	
 	
 	/**

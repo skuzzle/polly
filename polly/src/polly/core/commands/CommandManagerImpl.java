@@ -191,13 +191,17 @@ public class CommandManagerImpl implements CommandManager {
 		
 		Command cmd = this.getCommand(signature.getName());
 		boolean found = false;
-		for (Signature formal : cmd.getSignatures()) {
-			if (formal.equals(signature)) {
-				found = true;
-				signature.setId(formal.getId());
-				logger.debug("Signature found. Formal id is " + signature.getId());
-				break;
-			}
+		if (signature.equals(cmd.getHelpSignature0()) || signature.equals(cmd.getHelpSignature1())) {
+		    found = true;
+		} else {
+    		for (Signature formal : cmd.getSignatures()) {
+    			if (formal.equals(signature)) {
+    				found = true;
+    				signature.setId(formal.getId());
+    				logger.debug("Signature found. Formal id is " + signature.getId());
+    				break;
+    			}
+    		}
 		}
 		if (!found) {
 			throw new UnknownSignatureException(signature);
@@ -375,7 +379,7 @@ public class CommandManagerImpl implements CommandManager {
     
     
     private Signature createSignature(Root root) throws UnknownSignatureException {
-        List<Types> parameters = new ArrayList<Types>();
+        List<Types> parameters = new ArrayList<Types>(root.getResults().size());
         for (Literal lit : root.getResults()) {
             parameters.add(TypeMapper.literalToTypes(lit));
         }

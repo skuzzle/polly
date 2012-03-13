@@ -27,6 +27,7 @@ public class Type implements Serializable {
     public final static Type LIST = new Type(new IdentifierLiteral("List"), true);
     public final static Type ANY = new Type(new IdentifierLiteral("Any"), true);
     public final static Type EMPTY_LIST = new Type(new IdentifierLiteral("Leere Liste"), true);
+    public final static Type HELP = new Type(new IdentifierLiteral("Help"), false);
     public final static Type UNKNOWN = new Type(new IdentifierLiteral("UNKNOWN"), false);
     
     private final static Map<String, Type> primitiveCache;
@@ -42,6 +43,7 @@ public class Type implements Serializable {
         primitiveCache.put(TIMESPAN.getTypeName().getIdentifier(), TIMESPAN);
         primitiveCache.put(LIST.getTypeName().getIdentifier(), LIST);
         primitiveCache.put(ANY.getTypeName().getIdentifier(), ANY);
+        primitiveCache.put(HELP.getTypeName().getIdentifier(), HELP);
         primitiveCache.put(EMPTY_LIST.getTypeName().getIdentifier(), EMPTY_LIST);
         primitiveCache.put(UNKNOWN.getTypeName().getIdentifier(), UNKNOWN);
     }

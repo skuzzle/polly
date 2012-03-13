@@ -10,6 +10,7 @@ import de.skuzzle.polly.parsing.tree.Root;
 import de.skuzzle.polly.parsing.tree.literals.Literal;
 
 
+
 public class Main {
 
     public static void main(String[] args) throws ParseException {
@@ -19,7 +20,8 @@ public class Main {
         Prepare.operators(context);
         
         InputParser p = new InputParser();
-        Root r = p.parse(":foo 5->x 10*x->f(Zahl x) f(math.pi)");
+        //Root r = p.parse(":foo 5->x 10*x->f(Zahl x) f(math.pi)");
+        Root r = p.parse(":foo ?");
         r.contextCheck(context);
         r.collapse(new Stack<Literal>());
         
