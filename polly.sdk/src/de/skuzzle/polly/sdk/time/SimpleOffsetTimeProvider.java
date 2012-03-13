@@ -13,6 +13,8 @@ public final class SimpleOffsetTimeProvider implements TimeProvider {
     private int offset;
     private TimeProvider baseTime;
     
+    
+    
     /**
      * Creates a new {@link SimpleOffsetTimeProvider}. 
      * 
@@ -26,6 +28,7 @@ public final class SimpleOffsetTimeProvider implements TimeProvider {
     }
     
     
+    
     /**
      * Creates a new {@link SimpleOffsetTimeProvider} relative to the current system
      * time.
@@ -35,6 +38,7 @@ public final class SimpleOffsetTimeProvider implements TimeProvider {
     public SimpleOffsetTimeProvider(int offset) {
         this(new SystemTimeProvider(), offset);
     }
+    
     
     
     /**

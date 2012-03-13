@@ -1,27 +1,12 @@
 package polly.util;
 
+import de.skuzzle.polly.sdk.time.SystemTimeProvider;
 
-public class MillisecondStopwatch implements Stopwatch {
 
-    private long start;
-    private long stop;
-    
-    @Override
-    public void start() {
-        this.start = System.currentTimeMillis();
-        this.stop = System.currentTimeMillis();
-    }
-    
+public class MillisecondStopwatch extends TimeProviderStopWatch {
 
-    @Override
-    public long stop() {
-        this.stop = System.currentTimeMillis();
-        return this.getDifference();
-    }
-
-    @Override
-    public long getDifference() {
-        return this.stop - this.start;
+    public MillisecondStopwatch() {
+        super(new SystemTimeProvider());
     }
 
 }
