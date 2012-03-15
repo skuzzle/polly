@@ -44,7 +44,8 @@ public class MyRemindsCommand extends Command {
     public MyRemindsCommand(MyPolly polly, RemindManager manager) 
             throws DuplicatedSignatureException {
         super(polly, "myreminds");
-        this.createSignature("");
+        this.createSignature("Zeigt die Reminds an, die dir oder die du für andere " +
+        		"hinterlassen hast.");
         this.remindManager = manager;
         this.setRegisteredOnly();
     }

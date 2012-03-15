@@ -2,6 +2,7 @@ package commands;
 
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.Types.UserType;
@@ -15,8 +16,15 @@ public class GetAttributeCommand extends Command {
 
     public GetAttributeCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "getattr");
-        this.createSignature("", new UserType(), new StringType());
-        this.createSignature("", new StringType());
+        this.createSignature("Liest den Wert eines Attributes eine Benutzers aus. " +
+        		"Dieser Befehl ist nur für Admins", 
+            new Parameter("Benutzer", new UserType()), 
+            new Parameter("Attributename", new StringType()));
+        this.createSignature("Liest ein Attribute des Benutzers aus, der den Befehl " +
+        		"ausführt.", 
+    		new Parameter("Attributname", new StringType()));
+        this.setHelpText("Liest Benutzer-Attribute aus. Verfügbare Attribute können " +
+        		"mit :listattr angezeigt werden.");
         this.setRegisteredOnly();
     }
 

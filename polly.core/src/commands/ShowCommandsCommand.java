@@ -7,6 +7,7 @@ import java.util.List;
 
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
@@ -21,7 +22,7 @@ public class ShowCommandsCommand extends Command {
         super(polly, "cmds");
         this.createSignature("Zeigt alle für dich ausführbaren Befehle an.");
         this.createSignature("Zeigt alle Befehle für das angegebene User-Level an.", 
-                new NumberType());
+                new Parameter("Userlevel", new NumberType()));
         this.setHelpText("Listet die verfügbaren Befehle auf.");
     }
     

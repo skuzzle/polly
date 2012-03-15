@@ -3,6 +3,7 @@ package commands;
 import core.TrainManager;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.Types.UserType;
@@ -20,9 +21,10 @@ public class CloseTrainCommand extends Command {
             throws DuplicatedSignatureException {
         super(polly, "closetrain");
         this.createSignature("Schliesst alle offenen Rechnungen für den angegebenen " +
-        		"Benutzer.", new UserType());
-        this.createSignature("Schliesst einzelnen Trainposten.", new NumberType());
-        
+            "Benutzer.", 
+            new Parameter("User", new UserType()));
+        this.createSignature("Schliesst einzelnen Trainposten.", 
+            new Parameter("Train Id", new NumberType()));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
         this.setHelpText("Schliesst offene Capitrain rechnungen.");

@@ -2,6 +2,7 @@ package commands;
 
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
@@ -14,14 +15,19 @@ public class KickCommand extends Command {
 	public KickCommand(MyPolly polly) throws DuplicatedSignatureException {
 		super(polly, "kick");
 		this.createSignature("Kickt den angegebenen User aus dem aktuellen Channel", 
-				new UserType());
+				new Parameter("User", new UserType()));
 		this.createSignature("Kickt den angegebenen User aus dem aktuellen Channel " +
-				"mit dem angegebenen Grund", new UserType(), new StringType());
+				"mit dem angegebenen Grund", 
+				new Parameter("User", new UserType()), 
+				new Parameter("Grund", new StringType()));
 		this.createSignature("Kickt den angegebenen User aus dem angegebenen Channel",
-				new ChannelType(), new UserType());	
+				new Parameter("Channel", new ChannelType()), 
+				new Parameter("User", new UserType()));	
 		this.createSignature("Kickt den angegebenen User aus dem angegebenen Channel " +
 				"mit dem angegebenen Grund", 
-				new ChannelType(), new UserType(), new StringType());	
+				new Parameter("Channel", new ChannelType()), 
+				new Parameter("User", new UserType()), 
+				new Parameter("Grund", new StringType()));	
 		this.setRegisteredOnly();
 		this.setUserLevel(UserManager.ADMIN);
 		this.setHelpText("Befehl zum Kicken von Benutzern.");

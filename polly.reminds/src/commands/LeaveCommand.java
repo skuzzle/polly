@@ -7,6 +7,7 @@ import java.util.List;
 import core.RemindManager;
 
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types.UserType;
 import de.skuzzle.polly.sdk.Types.StringType;
@@ -25,11 +26,16 @@ public class LeaveCommand extends AbstractRemindCommand {
     public LeaveCommand(MyPolly polly, RemindManager manager) throws DuplicatedSignatureException {
         super(polly, manager, "leave");
         this.createSignature("Hinterlässt eine Nachricht für einen Benutzer.", 
-                new UserType(), new ChannelType(), new StringType());
+                new Parameter("User", new UserType()), 
+                new Parameter("Channel", new ChannelType()), 
+                new Parameter("Nachricht", new StringType()));
         this.createSignature("HinterlÃ¤sst eine Nachricht für eine Liste von Benutzern.", 
-                new ListType(new UserType()), new ChannelType(), new StringType());
+                new Parameter("Benutzerliste", new ListType(new UserType())), 
+                new Parameter("Channel", new ChannelType()), 
+                new Parameter("Nachricht", new StringType()));
         this.createSignature("Hinterlässt eine private Nachricht für einen Benutzer.", 
-                new UserType(), new StringType());
+                new Parameter("User", new UserType()), 
+                new Parameter("Nachricht", new StringType()));
         this.setRegisteredOnly();
         this.setHelpText("Befehl um Nachrichten für Benutzer zu hinterlassen.");
     }

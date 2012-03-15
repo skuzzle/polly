@@ -8,6 +8,7 @@ import core.filters.ChainedLogFilter;
 import core.filters.DateLogFilter;
 import core.filters.MessageRegexLogFilter;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types.StringType;
 import de.skuzzle.polly.sdk.Types.NumberType;
@@ -24,24 +25,25 @@ public class UserLogCommand extends AbstractLogCommand {
     public UserLogCommand(MyPolly polly, PollyLoggingManager logManager) 
                 throws DuplicatedSignatureException {
         super(polly, "userlog", logManager);
-        this.createSignature("Filtert Log Einträge eines Benutzers", new StringType());
+        this.createSignature("Filtert Log Einträge eines Benutzers", 
+            new Parameter("Benutzername", new StringType()));
         this.createSignature("Filtert Log Einträge eines Benutzers mit bestimmten Inhalt", 
-            new StringType(), 
-            new StringType());
+            new Parameter("Benutzername", new StringType()), 
+            new Parameter("Pattern", new StringType()));
         this.createSignature("Filtert Log Einträge eines Benutzers mit bestimmten Inhalt", 
-            new StringType(), 
-            new StringType(),
-            new NumberType());
-        
-        this.createSignature("Filtert Log Einträge eines Benutzers mit bestimmten Inhalt die nicht älter sind als das angegebne Datum", 
-            new StringType(),
-            new StringType(), 
-            new DateType());
+            new Parameter("Benutzername", new StringType()), 
+            new Parameter("Pattern", new StringType()),
+            new Parameter("Limit", new NumberType()));
+        this.createSignature("Filtert Log Einträge eines Benutzers mit bestimmten " +
+        		"Inhalt die nicht älter sind als das angegebne Datum", 
+            new Parameter("Benutzername", new StringType()), 
+            new Parameter("Pattern", new StringType()),
+            new Parameter("Datum", new DateType()));
         this.createSignature("Filtert Log Einträge eines Benutzers mit bestimmten Inhalt die zweichen den Angegebenen Zeitpunkten liegen",
-            new StringType(), 
-            new StringType(),
-            new DateType(),
-            new DateType());
+            new Parameter("Benutzername", new StringType()), 
+            new Parameter("Pattern", new StringType()),
+            new Parameter("Von", new DateType()),
+            new Parameter("Bis", new DateType()));
     }
     
     

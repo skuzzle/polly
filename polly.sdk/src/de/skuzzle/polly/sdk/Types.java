@@ -57,6 +57,12 @@ public class Types {
 		}
 		
 		
+		@Override
+        public String getSample() {
+            return "27.45";
+        };
+		
+		
 		/**
 		 * Returns the number.
 		 * @return the number.
@@ -136,6 +142,12 @@ public class Types {
 		}
 		
 		
+		@Override
+        public String getSample() {
+            return "true";
+        };
+		
+		
 		/**
 		 * Returns the boolean value. 
 		 * @return The boolean value.
@@ -196,6 +208,12 @@ public class Types {
 		public StringType() {
 			this("");
 		}
+		
+		
+		@Override
+        public String getSample() {
+            return "\"Nur ein Beispiel\"";
+        };
 		
 		
 		/**
@@ -261,6 +279,12 @@ public class Types {
 		}
 		
 		
+		@Override
+        public String getSample() {
+            return "#channel";
+        };
+		
+		
 		
 		/**
 		 * Returns the channel name.
@@ -323,6 +347,12 @@ public class Types {
 		
 		
 		
+		@Override
+        public String getSample() {
+            return "@Hans";
+        };
+		
+		
 		/**
 		 * Returns the user name
 		 * @return the user name.
@@ -381,6 +411,13 @@ public class Types {
 		public DateType() {
 			this(new Date());
 		}
+		
+		
+		
+		@Override
+        public String getSample() {
+            return "24.12.2012@17:30";
+        };
 		
 		
 		
@@ -452,6 +489,13 @@ public class Types {
 	    
 	    
 	    
+	    @Override
+	    public String getSample() {
+	        return "8h22m7s";
+	    };
+	    
+	    
+	    
 	    /**
 	     * Formats this timespan as a string. Currently, it only returns the formatted
 	     * target date, that is, this timespan added to the date where this instance 
@@ -508,6 +552,15 @@ public class Types {
 		public String getValue() {
 			return this.value;
 		}
+		
+		
+		
+		@Override
+		public String getSample() {
+		    return ":sample";
+		}
+		
+		
 		
 	    /**
          * @return Returns this values String representation.
@@ -576,6 +629,12 @@ public class Types {
 			this.subtype = subtype;
 		}
 		
+		
+		
+		@Override
+		public String getSample() {
+		    return "{" + this.subtype.getSample() + "}"; 
+		};
 		
 		
 		/**
@@ -669,6 +728,12 @@ public class Types {
 		public String toString() {
 			return "Any";
 		}
+		
+		
+		
+		public String getSample() {
+		    return "5.8";
+		};
 	}
 	
 	
@@ -694,6 +759,15 @@ public class Types {
 	public String valueString(FormatManager formatter) {
 	    return "";
 	}
+	
+	
+	
+	/**
+	 * Gets a valid sample string representation of this type. 
+	 * 
+	 * @return A String sample for this type.
+	 */
+	public String getSample() { return ""; };
 	
 	
 	

@@ -1,5 +1,8 @@
 package de.skuzzle.polly.sdk;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -14,34 +17,33 @@ import java.util.List;
  * @version RC 1.0
  */
 public class FormalSignature extends Signature {
-	
+    
 	private String help;
+	private List<Parameter> formalParameters;
 
 	
+	
 	/**
-	 * Creates a new FormalSignature
-	 * @param name The name of the command which this signature is for.
-	 * @param id The formal id of this signature.
-	 * @param help The help String for this signature.
-	 * @param parameters The formal parameters of this signature.
-	 */
-	public FormalSignature(String name, int id, String help, List<Types> parameters) {
-		super(name, id, parameters);
-		this.help = help;
+     * Creates a new FormalSignature
+     * @param name The name of the command which this signature is for.
+     * @param id The formal id of this signature.
+     * @param help The help String for this signature.
+     * @param parameters The formal parameters of this signature.
+     */
+	public FormalSignature(String name, int id, String help, Parameter... parameters) {
+	    super(name, id, paramToType(parameters));
+	    this.formalParameters = Arrays.asList(parameters);
+	    this.help = help;
 	}
 	
 	
 	
-	/**
-	 * Creates a new FormalSignature
-	 * @param name The name of the command which this signature is for.
-	 * @param id The formal id of this signature.
-	 * @param help The help String for this signature.
-	 * @param parameters The formal parameters of this signature.
-	 */
-	public FormalSignature(String name, int id, String help, Types... parameters) {
-		super(name, id, parameters);
-		this.help = help;
+	private static List<Types> paramToType(Parameter[] parameters) {
+	    List<Types> result = new ArrayList<Types>(parameters.length);
+	    for (Parameter param : parameters) {
+	        result.add(param.getType());
+	    }
+	    return result;
 	}
 	
 	
@@ -51,6 +53,32 @@ public class FormalSignature extends Signature {
 	 * @return The help text.
 	 */
 	public String getHelp() {
-		return this.help;
+		String help = this.help.endsWith(".") ? this.help + " " : this.help + ". ";
+		help += "Signatur: ";
+		Iterator<Parameter> it = this.formalParameters.iterator();
+		while (it.hasNext()) {
+		    Parameter param = it.next();
+		    help += param.toString();
+		    if (it.hasNext()) {
+		        help += ", ";
+		    }
+		    
+		}
+		return help;
+	}
+	
+	
+	
+	public String getSample() {
+	    StringBuilder result = new StringBuilder();
+        Iterator<Parameter> it = this.formalParameters.iterator();
+        while (it.hasNext()) {
+            Parameter param = it.next();
+            result.append(param.getType().getSample());
+            if (it.hasNext()) {
+                result.append(" ");
+            }
+        }
+        return result.toString();
 	}
 }

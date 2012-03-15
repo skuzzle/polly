@@ -9,6 +9,7 @@ import polly.reminds.MyPlugin;
 
 import core.RemindManager;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types.ChannelType;
 import de.skuzzle.polly.sdk.Types.DateType;
@@ -32,23 +33,30 @@ public class RemindCommand extends AbstractRemindCommand {
         super(myPolly, remindManager, "remind");
         this.createSignature("Erinnert den Benutzer zu einer angegebenen Zeit im " +
                 "angegebenen Channel an etwas.", 
-                new UserType(), new ChannelType(), new DateType(), new StringType());
+            new Parameter("User", new UserType()), 
+            new Parameter("Channel", new ChannelType()), 
+            new Parameter("Zeit", new DateType()), 
+            new Parameter("Nachricht", new StringType()));
         this.createSignature("Erinnert eine Liste von Benutzern zu einer angegebenen " +
                 "Zeit an etwas.", 
-                new ListType(new UserType()), new ChannelType(), new DateType(), 
-                new StringType());
+            new Parameter("Benutzerliste", new ListType(new UserType())), 
+            new Parameter("Channel", new ChannelType()), 
+            new Parameter("Zeit", new DateType()), 
+            new Parameter("Nachricht", new StringType()));
         this.createSignature("Erinnert dich zu einer bestimmten Zeit an etwas.", 
-                new DateType(), new StringType());
+                new Parameter("Zeit", new DateType()), 
+                new Parameter("Nachricht", new StringType()));
         this.createSignature("Erinnert den angegebenen Benutzer per Query an etwas.", 
-            new UserType(), new DateType(), new StringType());
-        this.createSignature("Erinnert dich zu einer bestimmten Zeit mit einer Standardmeldung.",
-        		new DateType());
+            new Parameter("User", new UserType()), 
+            new Parameter("Zeit", new DateType()), 
+            new Parameter("Nachricht", new StringType()));
+        this.createSignature("Erinnert dich zu einer bestimmten Zeit mit einer " +
+        		"Standardmeldung.",
+    		new Parameter("Zeit", new DateType()));
         this.setRegisteredOnly();
         this.setHelpText("Hinterlässt Erinnerungen für Benutzer.");
     }
 	
-	
-    
     
     
     @Override

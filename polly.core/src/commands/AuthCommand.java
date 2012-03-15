@@ -2,6 +2,7 @@ package commands;
 
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types.UserType;
 import de.skuzzle.polly.sdk.Types.StringType;
@@ -16,9 +17,11 @@ public class AuthCommand extends Command {
 
     public AuthCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "auth");
-        this.createSignature("Meldet den Benutzer bei Polly an", new UserType(), 
-                new StringType());
-        this.createSignature("Meldet den Benutzer bei Polly an", new StringType());
+        this.createSignature("Meldet den Benutzer bei Polly an", 
+            new Parameter("Username", new UserType()),
+            new Parameter("Passwort", new StringType()));
+        this.createSignature("Meldet den Benutzer bei Polly an", 
+            new Parameter("Passwort", new StringType()));
         this.setHelpText("Befehl um dich bei Polly anzumelden.");
         this.setQryCommand(true);
     }

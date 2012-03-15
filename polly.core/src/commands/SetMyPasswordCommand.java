@@ -2,6 +2,7 @@ package commands;
 
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types.StringType;
@@ -17,7 +18,8 @@ public class SetMyPasswordCommand extends Command {
         super(polly, "setmypw");
         this.createSignature("Setzt dein Passwort neu. Gib dein altes Passwort und " +
         		"den gewünschtes Passwort an.", 
-        		new StringType(), new StringType());
+        		new Parameter("Altes Passwort", new StringType()), 
+        		new Parameter("Neues Passwort", new StringType()));
         this.setRegisteredOnly();
         this.setHelpText("Befehl um dein Passwort zu ändern.");
         this.setQryCommand(true);

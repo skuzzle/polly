@@ -6,10 +6,6 @@ import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.UserManager;
-import de.skuzzle.polly.sdk.Types.UserType;
-import de.skuzzle.polly.sdk.Types.StringType;
-import de.skuzzle.polly.sdk.Types.BooleanType;
-import de.skuzzle.polly.sdk.Types.NumberType;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
 import entities.TrainEntity;
@@ -23,14 +19,14 @@ public class AddTrainCommand extends Command {
             throws DuplicatedSignatureException {
         
         super(polly, "train");
-        this.createSignature("Fügt ein neues Training zur Rechnung des Benutzers hinzu.", 
+        /*this.createSignature("Fügt ein neues Training zur Rechnung des Benutzers hinzu.", 
             new UserType(), new StringType());
         this.createSignature("Zeigt die offene Rechnungssumme für einen Benutzer an.", 
             new UserType(), new BooleanType());
         this.createSignature("Fügt ein neues Training zur Rechnung des Benutzers hinzu.", 
             new UserType(), new StringType(), new NumberType());
         this.createSignature("Zeigt die offene Rechnungssumme für einen Benutzer an.", 
-            new UserType());
+            new UserType());*/
         this.setHelpText("Befehl zum Verwalten von Capi Trainings.");
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);

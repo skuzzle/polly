@@ -2,13 +2,16 @@ package commands;
 
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
-import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.UnknownCommandException;
 import de.skuzzle.polly.sdk.model.User;
+import de.skuzzle.polly.sdk.Types.CommandType;
+import de.skuzzle.polly.sdk.Types.StringType;
+
 
 
 public class AliasCommand extends Command {
@@ -16,7 +19,9 @@ public class AliasCommand extends Command {
     public AliasCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "alias");
         this.createSignature("Erstellt ein eines mit dem angegebenen Namen für den" +
-        		" angegebenen Befehl", new Types.StringType(), new Types.CommandType());
+            " angegebenen Befehl", 
+            new Parameter("Alias", new StringType()),
+            new Parameter("Befehl", new CommandType()));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
     }

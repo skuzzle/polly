@@ -6,6 +6,7 @@ import core.RemindManager;
 
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types.DateType;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
@@ -23,10 +24,10 @@ public class SleepCommand extends Command {
    
         super(polly, "sleep");
         this.remindManager = remindManager;
-        
-        this.createSignature("", new DateType());
+        this.createSignature("Verlängert die Erinnerung die dir zuletzt zugestellt wurde", 
+            new Parameter("Neue Zeit", new DateType()));
         this.setRegisteredOnly();
-        
+        this.setHelpText("Verlängert Erinnerungen");
     }
     
     

@@ -14,11 +14,11 @@ public class HelpCommand extends Command {
 
 	public HelpCommand(MyPolly polly) throws DuplicatedSignatureException {
 		super(polly, "help");
-		this.createSignature("Gibt die Beschreibung eines Befehls aus.", 
+		/*this.createSignature("Gibt die Beschreibung eines Befehls aus.", 
 				new CommandType());
 		this.createSignature("Gibt die Beschreibung der angegebenen Signatur des " +
 				"angegebenen Befehls aus.", new CommandType(), new NumberType());
-        this.createSignature("");
+        this.createSignature("");*/
 		this.setHelpText("Gib ':help :<befehl>' ein um Hilfe zu einem Befehl zu " +
 				"bekommen. Gib :cmds ein um eine Liste der möglichen Befehle " +
 				"anzuzeigen.");

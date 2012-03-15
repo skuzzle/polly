@@ -2,6 +2,7 @@ package commands;
 
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.Types.UserType;
@@ -17,7 +18,9 @@ public class AddUserCommand extends Command {
     public AddUserCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "adduser");
         this.createSignature("Fügt einen neuen User hinzu.", 
-                new UserType(), new StringType(), new NumberType());
+            new Parameter("Username", new UserType()),
+            new Parameter("Passwort", new StringType()),
+            new Parameter("Userlevel", new NumberType()));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
         this.setHelpText("Befehl zum registrieren neuer Benutzer bei Polly.");
@@ -41,6 +44,7 @@ public class AddUserCommand extends Command {
     }
     
     
+    
     @Override
     public void renewConstants() {
         this.registerConstant("ADMIN", new NumberType(UserManager.ADMIN));
@@ -48,6 +52,7 @@ public class AddUserCommand extends Command {
         this.registerConstant("REG", new NumberType(UserManager.REGISTERED));
         this.registerConstant("UNKNOWN", new NumberType(UserManager.UNKNOWN));
     }
+    
     
     
     @Override

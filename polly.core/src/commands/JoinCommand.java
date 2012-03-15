@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.Types.ChannelType;
@@ -19,9 +20,9 @@ public class JoinCommand extends Command {
     public JoinCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "join");
         this.createSignature("Lässt polly den angegebenen Channel betreten.", 
-                new ChannelType());
+                new Parameter("Channel", new ChannelType()));
         this.createSignature("Lässt polly alle Channels in der Liste betreten.", 
-                new ListType(new ChannelType()));
+                new Parameter("Channelliste", new ListType(new ChannelType())));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
         this.setHelpText("Befehl zum joinen von Channels.");

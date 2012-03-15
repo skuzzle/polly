@@ -2,6 +2,7 @@ package commands;
 
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.Types.StringType;
@@ -14,14 +15,16 @@ public class TalkCommand extends Command {
 
     public TalkCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "talk");
-        this.createSignature("Spricht zum aktuellen Channel", new StringType());
-        this.createSignature("Spricht zum angegebenen Channel", new ChannelType(), 
-                new StringType());
+        this.createSignature("Spricht zum aktuellen Channel", 
+            new Parameter("Nachricht", new StringType()));
+        this.createSignature("Spricht zum angegebenen Channel", 
+            new Parameter("Channel", new ChannelType()), 
+            new Parameter("Nachricht", new StringType()));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
-        
     }
 
+    
     
     @Override
     protected boolean executeOnBoth(User executer, String channel,

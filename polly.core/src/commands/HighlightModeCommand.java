@@ -4,6 +4,7 @@ import core.HighlightReplyHandler;
 import core.HighlightReplyHandler.Mode;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.Types.StringType;
@@ -21,7 +22,7 @@ public class HighlightModeCommand extends Command {
                 throws DuplicatedSignatureException {
         super(polly, "hlctrl");
         this.createSignature("Commands: OFF, COLLECTING, REPLYING, BOTH, RESET_TIME", 
-                new StringType());
+                new Parameter("Modus", new StringType()));
         this.setHelpText("Setzt den Modus für den Highlight-Replyer");
         this.setUserLevel(UserManager.ADMIN);
         this.setRegisteredOnly();

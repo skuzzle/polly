@@ -8,8 +8,10 @@ import java.util.regex.Pattern;
 
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
-import de.skuzzle.polly.sdk.Types;
+import de.skuzzle.polly.sdk.Types.StringType;
+import de.skuzzle.polly.sdk.Types.BooleanType;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
@@ -22,9 +24,13 @@ public class UsersCommand extends Command {
     public UsersCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "users");
         this.createSignature("Listet alle registrierten Benutzer auf");
-        this.createSignature("Listet alle registrierten Benutzer auf, deren Name auf das angegebene Pattern passt", new Types.StringType());
         this.createSignature("Listet alle registrierten Benutzer auf, deren Name auf " +
-        		"das angegebene Pattern passt", new Types.StringType(), new Types.BooleanType());
+        		"das angegebene Pattern passt", 
+    		new Parameter("Pattern", new StringType()));
+        this.createSignature("Listet alle registrierten Benutzer auf, deren Name auf " +
+        		"das angegebene Pattern passt", 
+    		new Parameter("Pattern", new StringType()), 
+    		new Parameter("Logged In Only", new BooleanType()));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
     }

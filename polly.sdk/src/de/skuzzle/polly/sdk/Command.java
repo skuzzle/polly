@@ -1,17 +1,20 @@
 package de.skuzzle.polly.sdk;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.skuzzle.polly.sdk.Types.HelpType;
+import de.skuzzle.polly.sdk.Types.NumberType;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.ConversationException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.model.User;
+
+
 
 /**
  * <p>This is the base class for all Commands that can be executed by polly. A command
@@ -20,7 +23,7 @@ import de.skuzzle.polly.sdk.model.User;
  * 
  * <p>A command has a reference to all of its formal signatures. Add new formal signatures
  * for a command via {@link #createSignature(String, List)} or 
- * {@link #createSignature(String, Types...)}. Upon execution of a command, the actual
+ * {@link #createSignature(String, Parameter...)}. Upon execution of a command, the actual
  * signature is passed.</p>
  * 
  * This is an example of creating an own command:
@@ -29,7 +32,9 @@ import de.skuzzle.polly.sdk.model.User;
  *     public MyCommand(MyPolly polly) throws DuplicatedSignatureException {
  *         super(polly, "mycmd");    // create command with name 'mycmd'
  *         // Create signature with a short help text, a String and a Number Parameter
- *         this.createSignature("Do something", new StringType(), new NumberType());
+ *         this.createSignature("Do something", 
+ *             new Parameter("ParamName", new StringType()), 
+ *             new Parameter("ParamName2", new NumberType()));
  *     }
  *     
  *     <code>@Override</code>
@@ -67,8 +72,8 @@ import de.skuzzle.polly.sdk.model.User;
  * {@link #executeOnQuery(User, Signature)} are executed, depending on where the 
  * command has been called.</p>
  * 
- * <p>It is essential for the usability of polly, that you properly override the method
- * {@link #getHelpText()}.</p>
+ * <p>It is essential for the usability of polly, that you set a proper help text using
+ * {@link #setHelpText(String)}.
  * 
  * @author Simon
  * @since zero day
@@ -144,10 +149,11 @@ public abstract class Command implements Comparable<Command> {
 		this.userLevel = UserManager.UNKNOWN;
 		this.helpText = "Der Befehl '" + commandName + "' hat keine Beschreibung";
 		this.constants = new HashMap<String, Types>();
-		this.helpSignature0 = new FormalSignature(commandName, 0, "", new Types.HelpType());
+		this.helpSignature0 = new FormalSignature(commandName, 0, "", 
+		    new Parameter("", new HelpType()));
 		this.helpSignature1 = new FormalSignature(commandName, 0, "", 
-		    new Types.HelpType(), 
-		    new Types.NumberType());
+		    new Parameter("", new HelpType()), 
+		    new Parameter("", new NumberType()));
 	}
 	
 	
@@ -182,8 +188,14 @@ public abstract class Command implements Comparable<Command> {
 	 * @return A help text for this command.
 	 */
 	public String getHelpText() {
-		return this.helpText;
+		String help = this.helpText.endsWith(".") 
+		    ? this.helpText + " " : this.helpText + ". ";
+		help += "Verfügbare Signaturen: " + this.signatures.size();
+		help += ". Gib ':" + this.commandName + " ? <nr>' ein, um weitere Informationen " +
+				"zu erhalten."; 
+		return help;
 	}
+	
 	
 	
 	/**
@@ -231,7 +243,7 @@ public abstract class Command implements Comparable<Command> {
 	public String getHelpText(int signatureId) {
 		if (signatureId >= 0 && signatureId < this.signatures.size()) {
 			FormalSignature fs = this.signatures.get(signatureId);
-			return "Signatur: " + fs.toString() + ". " + fs.getHelp();
+			return fs.getHelp();
 		}
 		return "Keine Signatur-Infos für den Befehl '" + this.commandName + 
 			"' und Signatur " + signatureId;
@@ -270,6 +282,7 @@ public abstract class Command implements Comparable<Command> {
 	public void setUserLevel(int userLevel) {
 	    this.userLevel = userLevel;
 	}
+	
 	
 	
 	/**
@@ -352,13 +365,12 @@ public abstract class Command implements Comparable<Command> {
 		    return;
 		} else if (signature.equals(this.helpSignature1)) {
 		    int num = (int) signature.getNumberValue(1);
-		    String reply = "";
 		    if (num < 0 || num > this.signatures.size()) {
-		        reply = "Keine Signatur mit der ID " + num;
-		    } else {
-		        reply = this.signatures.get(num).getHelp();
+		        this.reply(channel, "Kein Signatur mit der Id " + num);
 		    }
-		    this.reply(channel, reply);
+		    this.reply(channel, this.getHelpText(num));
+		    this.reply(channel, "Beispiel: :" + this.commandName + " " + 
+		            this.signatures.get(num).getSample());
 		    return;
 		}
 		
@@ -508,36 +520,18 @@ public abstract class Command implements Comparable<Command> {
 	 * @param parameters The formal parameters for the new signature.
 	 * @return A new signature for this command.
 	 * @throws DuplicatedSignatureException If the same signature already exists.
-	 */
-	public Signature createSignature(String help, Types... parameters) 
-			throws DuplicatedSignatureException {
-		return this.createSignature(help, Arrays.asList(parameters));
-	}
-	
-	
-	
-	/**
-	 * Factory method for creating a new signature for this command. Its equivalent 
-	 * of creating a new Signature with this commands name. The new signatures 
-	 * formal id gets incremented each call.
-	 * 
-	 * @param help A description text for this signature.
-	 * @param parameters The formal parameters for the new signature.
-	 * @return A new signature for this command.
-	 * @throws DuplicatedSignatureException If the same signature already exists.
-	 */
-	public Signature createSignature(String help, List<Types> parameters) 
-			throws DuplicatedSignatureException {
-		int id = this.signatures.size();
-		FormalSignature fs = 
-			new FormalSignature(this.getCommandName(), id, help, parameters);
-		
-		if (this.signatures.contains(fs)) {
-			throw new DuplicatedSignatureException(fs.toString());
-		}
-		
-		this.signatures.add(fs);
-		return fs;
+	 */	
+	public Signature createSignature(String help, Parameter... parameters)
+	        throws DuplicatedSignatureException {
+	    int id = this.signatures.size();
+	    FormalSignature fs = new FormalSignature(
+	        this.getCommandName(), id, help, parameters);
+	    
+	    if (this.signatures.contains(fs)) {
+	        throw new DuplicatedSignatureException(fs.toString());
+	    }
+	    this.signatures.add(fs);
+	    return fs;
 	}
 	
 	

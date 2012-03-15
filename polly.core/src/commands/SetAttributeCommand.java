@@ -2,6 +2,7 @@ package commands;
 
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.Types.UserType;
@@ -18,10 +19,17 @@ public class SetAttributeCommand extends Command {
 
     public SetAttributeCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "setattr");
-        this.createSignature("", new UserType(), new StringType(), new StringType());
-        this.createSignature("", new StringType(), new StringType());
+        this.createSignature("Setzt das Attribut des angegebenen Benutzers neu. " +
+        		"Diese Befehel ist nur für Admins", 
+            new Parameter("User", new UserType()), 
+            new Parameter("Attributname", new StringType()), 
+            new Parameter("Attributwert", new StringType()));
+        this.createSignature("Setzt das Attribut auf den angegebenen Wert.", 
+            new Parameter("Attributname", new StringType()), 
+            new Parameter("Attributwert", new StringType()));
         this.setRegisteredOnly();
-        this.setHelpText("Setzt ein Attribut auf den angegebenen Wert");
+        this.setHelpText("Setzt ein Attribut auf den angegebenen Wert. Verfügbare " +
+        		"Attribute können mit :listattr angezeigt werden.");
     }
     
     

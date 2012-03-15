@@ -6,8 +6,6 @@ import core.TopicManager;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Signature;
-import de.skuzzle.polly.sdk.Types.DateType;
-import de.skuzzle.polly.sdk.Types.StringType;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
 import entities.TopicEntity;
@@ -19,7 +17,7 @@ public class AddTopicCommand extends Command {
     public AddTopicCommand(MyPolly polly, TopicManager topicManager) throws DuplicatedSignatureException {
         super(polly, "topic");
         this.topicManager = topicManager;
-        this.createSignature("", new DateType(), new StringType(), new StringType());
+        //this.createSignature("Setzt", new DateType(), new StringType(), new StringType());
     }
 
     

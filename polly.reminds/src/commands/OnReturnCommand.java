@@ -4,8 +4,10 @@ import java.util.Date;
 
 import core.RemindManager;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
-import de.skuzzle.polly.sdk.Types;
+import de.skuzzle.polly.sdk.Types.StringType;
+import de.skuzzle.polly.sdk.Types.UserType;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
@@ -14,11 +16,16 @@ import entities.RemindEntity;
 
 public class OnReturnCommand extends AbstractRemindCommand {
 
-    public OnReturnCommand(MyPolly polly, RemindManager manager) throws DuplicatedSignatureException {
+    public OnReturnCommand(MyPolly polly, RemindManager manager) 
+            throws DuplicatedSignatureException {
         super(polly, manager, "onreturn");
-        this.createSignature("HinterlÃ¤sst eine Nachricht fÃ¼r einen Benutzer die " +
+        this.createSignature("Hinterlässt eine Nachricht für einen Benutzer die " +
         		"zugestellt wird wenn dieser wieder im IRC aktiv ist", 
-        		new Types.UserType(), new Types.StringType());
+    		new Parameter("User", new UserType()), 
+    		new Parameter("Nachricht", new StringType()));
+        this.setRegisteredOnly();
+        this.setHelpText("Dieser Befehl hinterlässt Nachrichten die zugestellt werden, " +
+        		"sobald der Benutzer wieder im IRC akti ist.");
     }
     
     

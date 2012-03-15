@@ -5,8 +5,11 @@ import java.util.Date;
 
 import core.RemindManager;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
-import de.skuzzle.polly.sdk.Types;
+import de.skuzzle.polly.sdk.Types.NumberType;
+import de.skuzzle.polly.sdk.Types.DateType;
+import de.skuzzle.polly.sdk.Types.StringType;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
@@ -19,11 +22,15 @@ public class ModRemindCommand extends AbstractRemindCommand {
     public ModRemindCommand(MyPolly polly, RemindManager manager) throws DuplicatedSignatureException {
         super(polly, manager, "modr");
         this.createSignature("Ändert das Datum des Reminds mit der angegebenen ID", 
-            new Types.NumberType(), new Types.DateType());
+            new Parameter("Remind-Id", new NumberType()), 
+            new Parameter("Neue Zeit", new DateType()));
         this.createSignature("Ändert die Nachricht des angegebenen Reminds", 
-            new Types.NumberType(), new Types.StringType());
+            new Parameter("Remind-Id", new NumberType()), 
+            new Parameter("Nachricht", new StringType()));
         this.createSignature("Ändert Nachricht und Datum des angegebenen Reminds", 
-            new Types.NumberType(), new Types.StringType(), new Types.DateType());
+            new Parameter("Remind-Id", new NumberType()), 
+            new Parameter("Nachricht", new StringType()), 
+            new Parameter("Meue Zeit", new DateType()));
         this.setHelpText("Mit diesem Befehl können bestehende Reminds modifiziert " +
         		"werden. Zum rausfinden der ID eines Reminds benutze :myreminds");
         this.setRegisteredOnly();

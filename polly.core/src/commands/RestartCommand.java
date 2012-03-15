@@ -2,6 +2,7 @@ package commands;
 
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.Types.StringType;
@@ -16,7 +17,7 @@ public class RestartCommand extends Command {
         super(polly, "restart");
         this.createSignature("Startet polly mit den aktuellen Parametern neu.");
         this.createSignature("Startet polly mit den angegebenen Parametern neu.", 
-            new StringType());
+            new Parameter("Parameter", new StringType()));
         this.setHelpText("Startet polly neu.");
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);

@@ -8,6 +8,7 @@ import core.DateUtils;
 
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types.DateType;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
@@ -23,7 +24,7 @@ public class CalendarCommand extends Command {
     public CalendarCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "cal");
         this.createSignature("Zeigt den Kalender für ein angegebenes Datum an.", 
-            new DateType());
+            new Parameter("Datum", new DateType()));
         this.setHelpText("Zeigt den Kalender für ein angegebenes Datum an.");
     }
     

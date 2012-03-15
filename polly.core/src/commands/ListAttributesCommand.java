@@ -16,7 +16,7 @@ public class ListAttributesCommand extends Command {
 
     public ListAttributesCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "listattr");
-        this.createSignature("");
+        this.createSignature("Listet die verfügbaren Attribute auf.");
         this.setUserLevel(UserManager.ADMIN);
     }
     

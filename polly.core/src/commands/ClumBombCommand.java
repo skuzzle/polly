@@ -2,6 +2,7 @@ package commands;
 
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
@@ -13,7 +14,9 @@ public class ClumBombCommand extends Command {
 
 	public ClumBombCommand(MyPolly polly) throws DuplicatedSignatureException {
 		super(polly, "clumbomb");
-		this.createSignature("Highlightbombe!", new UserType(), new NumberType());
+		this.createSignature("Highlightbombe!", 
+		    new Parameter("Benutzer", new UserType()), 
+		    new Parameter("Anzahl", new NumberType()));
 		this.setRegisteredOnly();
 		this.setUserLevel(UserManager.MEMBER);
 	}
