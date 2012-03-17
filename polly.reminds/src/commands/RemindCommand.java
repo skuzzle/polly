@@ -11,10 +11,8 @@ import core.RemindManager;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
-import de.skuzzle.polly.sdk.Types.ChannelType;
-import de.skuzzle.polly.sdk.Types.DateType;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.Types.ListType;
-import de.skuzzle.polly.sdk.Types.StringType;
 import de.skuzzle.polly.sdk.Types.UserType;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
@@ -33,26 +31,26 @@ public class RemindCommand extends AbstractRemindCommand {
         super(myPolly, remindManager, "remind");
         this.createSignature("Erinnert den Benutzer zu einer angegebenen Zeit im " +
                 "angegebenen Channel an etwas.", 
-            new Parameter("User", new UserType()), 
-            new Parameter("Channel", new ChannelType()), 
-            new Parameter("Zeit", new DateType()), 
-            new Parameter("Nachricht", new StringType()));
+            new Parameter("User", Types.newUser()), 
+            new Parameter("Channel", Types.newChannel()), 
+            new Parameter("Zeit", Types.newDate()), 
+            new Parameter("Nachricht", Types.newString()));
         this.createSignature("Erinnert eine Liste von Benutzern zu einer angegebenen " +
                 "Zeit an etwas.", 
-            new Parameter("Benutzerliste", new ListType(new UserType())), 
-            new Parameter("Channel", new ChannelType()), 
-            new Parameter("Zeit", new DateType()), 
-            new Parameter("Nachricht", new StringType()));
+            new Parameter("Benutzerliste", new ListType(Types.newUser())), 
+            new Parameter("Channel", Types.newChannel()), 
+            new Parameter("Zeit", Types.newDate()), 
+            new Parameter("Nachricht", Types.newString()));
         this.createSignature("Erinnert dich zu einer bestimmten Zeit an etwas.", 
-                new Parameter("Zeit", new DateType()), 
-                new Parameter("Nachricht", new StringType()));
+                new Parameter("Zeit", Types.newDate()), 
+                new Parameter("Nachricht", Types.newString()));
         this.createSignature("Erinnert den angegebenen Benutzer per Query an etwas.", 
-            new Parameter("User", new UserType()), 
-            new Parameter("Zeit", new DateType()), 
-            new Parameter("Nachricht", new StringType()));
+            new Parameter("User", Types.newUser()), 
+            new Parameter("Zeit", Types.newDate()), 
+            new Parameter("Nachricht", Types.newString()));
         this.createSignature("Erinnert dich zu einer bestimmten Zeit mit einer " +
         		"Standardmeldung.",
-    		new Parameter("Zeit", new DateType()));
+    		new Parameter("Zeit", Types.newDate()));
         this.setRegisteredOnly();
         this.setHelpText("Hinterlässt Erinnerungen für Benutzer.");
     }

@@ -5,7 +5,7 @@ import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.Signature;
-import de.skuzzle.polly.sdk.Types.StringType;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
@@ -18,8 +18,8 @@ public class SetMyPasswordCommand extends Command {
         super(polly, "setmypw");
         this.createSignature("Setzt dein Passwort neu. Gib dein altes Passwort und " +
         		"den gewünschtes Passwort an.", 
-        		new Parameter("Altes Passwort", new StringType()), 
-        		new Parameter("Neues Passwort", new StringType()));
+        		new Parameter("Altes Passwort", Types.newString()), 
+        		new Parameter("Neues Passwort", Types.newString()));
         this.setRegisteredOnly();
         this.setHelpText("Befehl um dein Passwort zu ändern.");
         this.setQryCommand(true);

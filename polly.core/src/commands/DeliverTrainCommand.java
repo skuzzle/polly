@@ -6,8 +6,8 @@ import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.UserManager;
-import de.skuzzle.polly.sdk.Types.UserType;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
 import entities.TrainEntity;
@@ -20,10 +20,10 @@ public class DeliverTrainCommand extends Command {
             throws DuplicatedSignatureException {
         super(polly, "deliver");
         this.createSignature("Liefert eine Capi-Train Rechnung aus.", 
-            new Parameter("User", new UserType()));
+            new Parameter("User", Types.newUser()));
         this.createSignature("Liefert eine Capi-Train Rechnung aus.", 
-            new Parameter("Benutzer", new UserType()), 
-            new Parameter("Empfänger", new UserType()));
+            new Parameter("Benutzer", Types.newUser()), 
+            new Parameter("Empfänger", Types.newUser()));
 
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);

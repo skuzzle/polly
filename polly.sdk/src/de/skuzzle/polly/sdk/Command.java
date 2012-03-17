@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.skuzzle.polly.sdk.Types.HelpType;
-import de.skuzzle.polly.sdk.Types.NumberType;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.ConversationException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
@@ -33,8 +31,8 @@ import de.skuzzle.polly.sdk.model.User;
  *         super(polly, "mycmd");    // create command with name 'mycmd'
  *         // Create signature with a short help text, a String and a Number Parameter
  *         this.createSignature("Do something", 
- *             new Parameter("ParamName", new StringType()), 
- *             new Parameter("ParamName2", new NumberType()));
+ *             new Parameter("ParamName", Types.newString()), 
+ *             new Parameter("ParamName2", Types.newNumber()));
  *     }
  *     
  *     <code>@Override</code>
@@ -150,10 +148,10 @@ public abstract class Command implements Comparable<Command> {
 		this.helpText = "Der Befehl '" + commandName + "' hat keine Beschreibung";
 		this.constants = new HashMap<String, Types>();
 		this.helpSignature0 = new FormalSignature(commandName, 0, "", 
-		    new Parameter("", new HelpType()));
+		    new Parameter("", Types.newHelp()));
 		this.helpSignature1 = new FormalSignature(commandName, 0, "", 
-		    new Parameter("", new HelpType()), 
-		    new Parameter("", new NumberType()));
+		    new Parameter("", Types.newHelp()), 
+		    new Parameter("", Types.newNumber()));
 	}
 	
 	

@@ -4,8 +4,7 @@ import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
-import de.skuzzle.polly.sdk.Types.UserType;
-import de.skuzzle.polly.sdk.Types.CommandType;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.UnknownCommandException;
 import de.skuzzle.polly.sdk.model.User;
@@ -15,9 +14,9 @@ public class InfoCommand extends Command {
 	public InfoCommand(MyPolly polly) throws DuplicatedSignatureException {
 		super(polly, "info");
 		this.createSignature("Gibt Informationen über den angegebenen Befehl aus", 
-            new Parameter("Befehl", new CommandType()));
+            new Parameter("Befehl", Types.newCommand()));
 		this.createSignature("Gibt Informationen über den angegebenen Benutzer aus.", 
-            new Parameter("User", new UserType()));
+            new Parameter("User", Types.newUser()));
 		this.setHelpText("Gibt Informationen über andere Befehle oder " +
 				"Benutzer aus.");
 	}

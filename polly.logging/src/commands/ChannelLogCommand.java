@@ -10,10 +10,7 @@ import core.filters.MessageRegexLogFilter;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
-import de.skuzzle.polly.sdk.Types.StringType;
-import de.skuzzle.polly.sdk.Types.NumberType;
-import de.skuzzle.polly.sdk.Types.DateType;
-import de.skuzzle.polly.sdk.Types.ChannelType;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
@@ -27,25 +24,25 @@ public class ChannelLogCommand extends AbstractLogCommand {
                 throws DuplicatedSignatureException {
         super(polly, "channellog", logManager);
         this.createSignature("Filtert Log Einträge eines Channels", 
-            new Parameter("Channel", new ChannelType()));
+            new Parameter("Channel", Types.newChannel()));
         this.createSignature("Filtert Log Einträge eines Channels mit bestimmten Inhalt", 
-            new Parameter("Channel", new ChannelType()), 
-            new Parameter("Pattern", new StringType()));
+            new Parameter("Channel", Types.newChannel()), 
+            new Parameter("Pattern", Types.newString()));
         this.createSignature("Filtert Log Einträge eines Channels mit bestimmten Inhalt", 
-            new Parameter("Channel", new ChannelType()), 
-            new Parameter("Pattern", new StringType()),
-            new Parameter("Limit", new NumberType()));
+            new Parameter("Channel", Types.newChannel()), 
+            new Parameter("Pattern", Types.newString()),
+            new Parameter("Limit", Types.newNumber()));
         this.createSignature("Filtert Log Einträge eines Channels mit bestimmten Inhalt " +
         		"die nicht älter sind als das angegebne Datum", 
-            new Parameter("Channel", new ChannelType()),
-            new Parameter("Pattern", new StringType()), 
-            new Parameter("Datum", new DateType()));
+            new Parameter("Channel", Types.newChannel()),
+            new Parameter("Pattern", Types.newString()), 
+            new Parameter("Datum", Types.newDate()));
         this.createSignature("Filtert Log Einträge eines Channels mit bestimmten Inhalt " +
         		"die zweichen den Angegebenen Zeitpunkten liegen",
-            new Parameter("Channel", new ChannelType()),
-            new Parameter("Pattern", new StringType()), 
-            new Parameter("Von", new DateType()),
-            new Parameter("Bis", new DateType()));
+            new Parameter("Channel", Types.newChannel()),
+            new Parameter("Pattern", Types.newString()), 
+            new Parameter("Von", Types.newDate()),
+            new Parameter("Bis", Types.newDate()));
     }
     
     

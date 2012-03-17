@@ -5,12 +5,11 @@ import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.UserManager;
-import de.skuzzle.polly.sdk.Types.UserType;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
-import de.skuzzle.polly.sdk.Types.NumberType;
 
 
 public class CloseTrainCommand extends Command {
@@ -22,9 +21,9 @@ public class CloseTrainCommand extends Command {
         super(polly, "closetrain");
         this.createSignature("Schliesst alle offenen Rechnungen für den angegebenen " +
             "Benutzer.", 
-            new Parameter("User", new UserType()));
+            new Parameter("User", Types.newUser()));
         this.createSignature("Schliesst einzelnen Trainposten.", 
-            new Parameter("Train Id", new NumberType()));
+            new Parameter("Train Id", Types.newNumber()));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
         this.setHelpText("Schliesst offene Capitrain rechnungen.");

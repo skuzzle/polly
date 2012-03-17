@@ -4,8 +4,7 @@ import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
-import de.skuzzle.polly.sdk.Types.UserType;
-import de.skuzzle.polly.sdk.Types.StringType;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.exceptions.AlreadySignedOnException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
@@ -18,10 +17,10 @@ public class AuthCommand extends Command {
     public AuthCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "auth");
         this.createSignature("Meldet den Benutzer bei Polly an", 
-            new Parameter("Username", new UserType()),
-            new Parameter("Passwort", new StringType()));
+            new Parameter("Username", Types.newUser()),
+            new Parameter("Passwort", Types.newString()));
         this.createSignature("Meldet den Benutzer bei Polly an", 
-            new Parameter("Passwort", new StringType()));
+            new Parameter("Passwort", Types.newString()));
         this.setHelpText("Befehl um dich bei Polly anzumelden.");
         this.setQryCommand(true);
     }

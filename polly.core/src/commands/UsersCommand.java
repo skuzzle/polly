@@ -10,8 +10,7 @@ import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
-import de.skuzzle.polly.sdk.Types.StringType;
-import de.skuzzle.polly.sdk.Types.BooleanType;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
@@ -26,11 +25,11 @@ public class UsersCommand extends Command {
         this.createSignature("Listet alle registrierten Benutzer auf");
         this.createSignature("Listet alle registrierten Benutzer auf, deren Name auf " +
         		"das angegebene Pattern passt", 
-    		new Parameter("Pattern", new StringType()));
+    		new Parameter("Pattern", Types.newString()));
         this.createSignature("Listet alle registrierten Benutzer auf, deren Name auf " +
         		"das angegebene Pattern passt", 
-    		new Parameter("Pattern", new StringType()), 
-    		new Parameter("Logged In Only", new BooleanType()));
+    		new Parameter("Pattern", Types.newString()), 
+    		new Parameter("Logged In Only", Types.newBoolean()));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
     }

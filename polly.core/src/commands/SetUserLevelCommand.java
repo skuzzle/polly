@@ -5,8 +5,8 @@ import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.Signature;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.UserManager;
-import de.skuzzle.polly.sdk.Types.UserType;
 import de.skuzzle.polly.sdk.Types.NumberType;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
@@ -18,8 +18,8 @@ public class SetUserLevelCommand extends Command {
     public SetUserLevelCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "setlevel");
         this.createSignature("Ä„ndert das user-Level des angegebenen Benutzers", 
-                new Parameter("User", new UserType()), 
-                new Parameter("Userlevel", new NumberType()));
+                new Parameter("User", Types.newUser()), 
+                new Parameter("Userlevel", Types.newNumber()));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
         this.setHelpText("Befehl zum Ändern von Benutzerberechtigungen.");

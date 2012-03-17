@@ -7,8 +7,7 @@ import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
-import de.skuzzle.polly.sdk.Types.UserType;
-import de.skuzzle.polly.sdk.Types.StringType;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
 
@@ -18,9 +17,9 @@ public class VarCommand extends Command {
         super(polly, "var");
         this.createSignature("Zeigt die Deklarationen des ausführenden Benutzers an");
         this.createSignature("Zeigt die Deklarationen des angegebenen Namespaces an.", 
-            new Parameter("Namespace", new StringType()));
+            new Parameter("Namespace", Types.newString()));
         this.createSignature("Zeigt die Deklarationen des angegebenen Benutzers an.", 
-            new Parameter("User", new UserType()));
+            new Parameter("User", Types.newUser()));
         this.setHelpText("Listet die verfügbaren Variablen für einen Benutzer auf.");
     }
     

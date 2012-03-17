@@ -4,8 +4,7 @@ import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
-import de.skuzzle.polly.sdk.Types.UserType;
-import de.skuzzle.polly.sdk.Types.StringType;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
@@ -17,8 +16,8 @@ public class GhostCommand extends Command {
     public GhostCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "ghost");
         this.createSignature("Loggt den angegebenen Benutzer aus.", 
-            new Parameter("User", new UserType()), 
-            new Parameter("Passwort", new StringType()));
+            new Parameter("User", Types.newUser()), 
+            new Parameter("Passwort", Types.newString()));
         this.setHelpText("Mit diesem Befehl kannst du einen Benutzer bei polly " +
         		"ausloggen. Gib dafür den Benutzer und sein Passwort an");
         this.setQryCommand(true);

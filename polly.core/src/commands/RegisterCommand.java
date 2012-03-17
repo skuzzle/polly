@@ -4,9 +4,8 @@ import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.UserManager;
-import de.skuzzle.polly.sdk.Types.UserType;
-import de.skuzzle.polly.sdk.Types.StringType;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
@@ -20,11 +19,11 @@ public class RegisterCommand extends Command {
         super(polly, "register");
         this.createSignature("Gib deinen gewünschten Benutzernamen " +
         		"(am besten me) und dein gewünschtes Passwort ein.", 
-    		new Parameter("Username", new UserType()), 
-		    new Parameter("Passwort", new StringType()));
+    		new Parameter("Username", Types.newUser()), 
+		    new Parameter("Passwort", Types.newString()));
         this.createSignature("Gib dein gewünschtes Passwort ein. Als Benutzername wird " +
         		"dein aktueller Nickname genutzt", 
-    		new Parameter("Passwort", new StringType()));
+    		new Parameter("Passwort", Types.newString()));
         this.setHelpText("Befehl um dich bei Polly zu registrieren.");
         this.setUserLevel(UserManager.UNKNOWN);
         this.setQryCommand(true);

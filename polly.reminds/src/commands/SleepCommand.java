@@ -8,7 +8,7 @@ import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
-import de.skuzzle.polly.sdk.Types.DateType;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
@@ -25,7 +25,7 @@ public class SleepCommand extends Command {
         super(polly, "sleep");
         this.remindManager = remindManager;
         this.createSignature("Verlängert die Erinnerung die dir zuletzt zugestellt wurde", 
-            new Parameter("Neue Zeit", new DateType()));
+            new Parameter("Neue Zeit", Types.newDate()));
         this.setRegisteredOnly();
         this.setHelpText("Verlängert Erinnerungen");
     }

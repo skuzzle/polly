@@ -4,9 +4,8 @@ import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.UserManager;
-import de.skuzzle.polly.sdk.Types.StringType;
-import de.skuzzle.polly.sdk.Types.ChannelType;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
 
@@ -16,10 +15,10 @@ public class TalkCommand extends Command {
     public TalkCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "talk");
         this.createSignature("Spricht zum aktuellen Channel", 
-            new Parameter("Nachricht", new StringType()));
+            new Parameter("Nachricht", Types.newString()));
         this.createSignature("Spricht zum angegebenen Channel", 
-            new Parameter("Channel", new ChannelType()), 
-            new Parameter("Nachricht", new StringType()));
+            new Parameter("Channel", Types.newChannel()), 
+            new Parameter("Nachricht", Types.newString()));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
     }

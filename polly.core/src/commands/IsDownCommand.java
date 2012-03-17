@@ -10,8 +10,7 @@ import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
-import de.skuzzle.polly.sdk.Types.StringType;
-import de.skuzzle.polly.sdk.Types.NumberType;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
@@ -25,11 +24,11 @@ public class IsDownCommand extends Command {
         super(polly, "isdown");
         this.createSignature("Dieser Befehl checkt ob eine Webseite derzeit erreichbar " +
         		"ist.", 
-    		new Parameter("URL", new StringType()));
+    		new Parameter("URL", Types.newString()));
         this.createSignature("Dieser Befehl checkt ob eine Webseite innerhalb eines " +
         		"Timeouts (in ms) erreichbar ist.", 
-    		new Parameter("URL", new StringType()),
-    		new Parameter("Timeout", new NumberType()));
+    		new Parameter("URL", Types.newString()),
+    		new Parameter("Timeout", Types.newNumber()));
         this.setHelpText("Überprüft ob eine Webseite erreichbar ist");
     }
     

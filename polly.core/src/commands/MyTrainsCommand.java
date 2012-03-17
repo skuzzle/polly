@@ -6,7 +6,7 @@ import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
-import de.skuzzle.polly.sdk.Types.BooleanType;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
 import entities.TrainEntity;
@@ -24,7 +24,7 @@ public class MyTrainsCommand extends Command {
         		"Benutzer auf.");
         this.createSignature("Listet eine detaillierte Capitrainrechnung für einen " +
         		"Benutzer auf", 
-    		new Parameter("Details", new BooleanType()));
+    		new Parameter("Details", Types.newBoolean()));
         this.setRegisteredOnly();
         this.setHelpText("Listet die offene Capitrain Rechnung für einen " +
                 "Benutzer auf.");

@@ -4,9 +4,8 @@ import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.UserManager;
-import de.skuzzle.polly.sdk.Types.UserType;
-import de.skuzzle.polly.sdk.Types.StringType;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.ConstraintException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
@@ -21,12 +20,12 @@ public class SetAttributeCommand extends Command {
         super(polly, "setattr");
         this.createSignature("Setzt das Attribut des angegebenen Benutzers neu. " +
         		"Diese Befehel ist nur für Admins", 
-            new Parameter("User", new UserType()), 
-            new Parameter("Attributname", new StringType()), 
-            new Parameter("Attributwert", new StringType()));
+            new Parameter("User", Types.newUser()), 
+            new Parameter("Attributname", Types.newString()), 
+            new Parameter("Attributwert", Types.newString()));
         this.createSignature("Setzt das Attribut auf den angegebenen Wert.", 
-            new Parameter("Attributname", new StringType()), 
-            new Parameter("Attributwert", new StringType()));
+            new Parameter("Attributname", Types.newString()), 
+            new Parameter("Attributwert", Types.newString()));
         this.setRegisteredOnly();
         this.setHelpText("Setzt ein Attribut auf den angegebenen Wert. Verfügbare " +
         		"Attribute können mit :listattr angezeigt werden.");

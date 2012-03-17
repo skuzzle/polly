@@ -4,8 +4,8 @@ import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.UserManager;
-import de.skuzzle.polly.sdk.Types.ChannelType;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
 
@@ -17,7 +17,7 @@ public class PartCommand extends Command {
         super(polly, "part");
         this.createSignature("Polly verlässt den aktuellen Channel");
         this.createSignature("Polly verlässt den angegebenen Channel.", 
-                new Parameter("Channel", new ChannelType()));
+                new Parameter("Channel", Types.newChannel()));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
         this.setHelpText("Befehl um einen Channel zu verlassen.");

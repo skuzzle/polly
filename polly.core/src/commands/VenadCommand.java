@@ -4,7 +4,7 @@ import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
-import de.skuzzle.polly.sdk.Types.UserType;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
 
@@ -15,7 +15,7 @@ public class VenadCommand extends Command {
     public VenadCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "venad");
         this.createSignature("Zeigt den Venadnamen eines Benutzers an.", 
-                new Parameter("User", new UserType()));
+                new Parameter("User",Types.newUser()));
         this.setHelpText("Befehl zum Rausfinden des Venad-Namens eines registrierten " +
         		"Benutzers.");
     }

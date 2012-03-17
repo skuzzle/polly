@@ -4,9 +4,8 @@ import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.UserManager;
-import de.skuzzle.polly.sdk.Types.UserType;
-import de.skuzzle.polly.sdk.Types.StringType;
 import de.skuzzle.polly.sdk.Types.NumberType;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
@@ -18,9 +17,9 @@ public class AddUserCommand extends Command {
     public AddUserCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "adduser");
         this.createSignature("Fügt einen neuen User hinzu.", 
-            new Parameter("Username", new UserType()),
-            new Parameter("Passwort", new StringType()),
-            new Parameter("Userlevel", new NumberType()));
+            new Parameter("Username", Types.newUser()),
+            new Parameter("Passwort", Types.newUser()),
+            new Parameter("Userlevel", Types.newNumber()));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
         this.setHelpText("Befehl zum registrieren neuer Benutzer bei Polly.");

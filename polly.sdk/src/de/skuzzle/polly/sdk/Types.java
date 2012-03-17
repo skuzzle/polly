@@ -2,18 +2,173 @@ package de.skuzzle.polly.sdk;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
- * These class represents a Type for a signature. Each Types-instance represents a
- * type as well as its value.
+ * <p>These class represents a Type for a signature. Each Types-instance represents a
+ * type as well as its value.</p>
+ * 
+ * <p>For each type exists only one instance that represents only the type with no value
+ * (for formal signatures). These isntances can be retrieved using the static factory
+ * methods.</p>
  * 
  * @author Simon
  * @since zero day
  * @version RC 1.0
  */
 public class Types {
+    
+    
+    private static Map<Class<?>, Types> typeCache = new HashMap<Class<?>, Types>(10);
+
+    /**
+     * Factory method to create a formal command type (for formal signatures). This 
+     * method will always return the same object.
+     * 
+     * @return A {@link CommandType}
+     * @since 0.9
+     */
+    public static CommandType newCommand() {
+        return newType(CommandType.class);
+    }
+    
+    
+    
+    /**
+     * Factory method to create a formal number type (for formal signatures). This 
+     * method will always return the same object.
+     * 
+     * @return A {@link NumberType}
+     * @since 0.9
+     */
+    public static NumberType newNumber() {
+        return newType(NumberType.class);
+    }
+    
+    
+    
+    /**
+     * Factory method to create a formal date type (for formal signatures). This 
+     * method will always return the same object.
+     * 
+     * @return A {@link DateType}
+     * @since 0.9
+     */
+    public static DateType newDate() {
+        return newType(DateType.class);
+    }
+    
+    
+    
+    /**
+     * Factory method to create a formal timespan type (for formal signatures). This 
+     * method will always return the same object.
+     * 
+     * @return A {@link TimespanType}
+     * @since 0.9
+     */
+    public static TimespanType newTimespan() {
+        return newType(TimespanType.class);
+    }
+    
+    
+    
+    /**
+     * Factory method to create a formal boolean type (for formal signatures). This 
+     * method will always return the same object.
+     * 
+     * @return A {@link BooleanType}
+     * @since 0.9
+     */
+    public static BooleanType newBoolean() {
+        return newType(BooleanType.class);
+    }
+    
+    
+    
+    /**
+     * Factory method to create a formal channel type (for formal signatures). This 
+     * method will always return the same object.
+     * 
+     * @return A {@link ChannelType}
+     * @since 0.9
+     */
+    public static ChannelType newChannel() {
+        return newType(ChannelType.class);
+    }
+    
+    
+    
+    /**
+     * Factory method to create a formal user type (for formal signatures). This 
+     * method will always return the same object.
+     * 
+     * @return A {@link UserType}
+     * @since 0.9
+     */
+    public static UserType newUser() {
+        return newType(UserType.class);
+    }
+    
+    
+    
+    /**
+     * Factory method to create a formal any type (for formal signatures). This 
+     * method will always return the same object.
+     * 
+     * @return A {@link AnyType}
+     * @since 0.9
+     */
+    public static AnyType newAny() {
+        return newType(AnyType.class);
+    }
+    
+    
+    
+    /**
+     * Factory method to create a formal help type (for formal signatures). This 
+     * method will always return the same object.
+     * 
+     * @return A {@link HelpType}
+     * @since 0.9
+     */
+    public static HelpType newHelp() {
+        return newType(HelpType.class);
+    }
+    
+    
+    
+    /**
+     * Factory method to create a formal string type (for formal signatures). This 
+     * method will always return the same object.
+     * 
+     * @return A {@link StringType}
+     * @since 0.9
+     */
+    public static StringType newString() {
+        return newType(StringType.class);
+    }
+    
+    
+    
+    
+    private static synchronized <T> T newType(Class<T> cls) {
+        Types t = typeCache.get(cls);
+        if (t == null) {
+            try {
+                t = (Types) cls.newInstance();
+            } catch (Exception e) {
+                return null;
+            }
+            typeCache.put(cls, t);
+        }
+        return cls.cast(t);
+    }
+    
+    
     
     private Types() {};
     
@@ -52,7 +207,7 @@ public class Types {
 		 * Creates a new Number-type with a default value. This may be used for
 		 * formal signature parameters.
 		 */
-		public NumberType() {
+		protected NumberType() {
 			this(0.0, 10);
 		}
 		
@@ -137,7 +292,7 @@ public class Types {
 		 * Creates a new Boolean-type with a default value. This may be used for
 		 * formal signature parameters.
 		 */
-		public BooleanType() {
+		protected BooleanType() {
 			this(false);
 		}
 		
@@ -205,7 +360,7 @@ public class Types {
 		 * Creates a new String-type with a default value. This may be used for
 		 * formal signature parameters.
 		 */
-		public StringType() {
+		protected StringType() {
 			this("");
 		}
 		
@@ -274,7 +429,7 @@ public class Types {
 		 * Creates a new Channel-type with a default value. This may be used for
 		 * formal signature parameters.
 		 */
-		public ChannelType() {
+		protected ChannelType() {
 			this("");
 		}
 		
@@ -341,7 +496,7 @@ public class Types {
 		 * Creates a new User-type with a default value. This may be used for
 		 * formal signature parameters.
 		 */
-		public UserType() {
+		protected UserType() {
 			this("");
 		}
 		
@@ -408,7 +563,7 @@ public class Types {
 		 * Creates a new Date-type with a default value. This may be used for
 		 * formal signature parameters.
 		 */
-		public DateType() {
+		protected DateType() {
 			this(new Date());
 		}
 		
@@ -476,7 +631,7 @@ public class Types {
 	        this.span = span;
 	    }
 	    
-	    public TimespanType() {}
+	    protected TimespanType() {}
 
 	    
 	    /**
@@ -539,7 +694,7 @@ public class Types {
 		 * Creates a new Command-type with a default value. This may be used for
 		 * formal signature parameters.
 		 */
-		public CommandType() {
+		protected CommandType() {
 			this("");
 		}
 		
@@ -722,7 +877,7 @@ public class Types {
 	    /**
 	     * Creates a new AnyType with no value. Mind: value will remain <code>null</code>.
 	     */
-	    public AnyType() {}
+	    protected AnyType() {}
 
 		@Override
 		public String toString() {
@@ -745,6 +900,8 @@ public class Types {
 	 * @since 0.9
 	 */
     public static class HelpType extends Types {
+        
+        protected HelpType() {}
         
         public String toString() {
             return "?";
@@ -783,10 +940,11 @@ public class Types {
 	 * 		otherwise.
 	 */
 	public boolean check(Types other) {
-		if (other instanceof AnyType || this instanceof AnyType) {
+	    if (other == this) {
+	        return true;
+	    } else if (other instanceof AnyType || this instanceof AnyType) {
 			return true;
 		}
 		return this.getClass().isAssignableFrom(other.getClass());
-		//return other.getClass().equals(this.getClass());
 	}
 }

@@ -73,23 +73,23 @@ public class TypeMapper {
 		if (type == Type.BOOLEAN) {
 			return new Types.BooleanType(false);
 		} else if (type == Type.CHANNEL) {
-			return new Types.ChannelType();
+			return Types.newChannel();
         } else if (type == Type.TIMESPAN) {
-            return new Types.TimespanType();
+            return Types.newTimespan();
 		} else if (type == Type.DATE) {
-			return new Types.DateType();
+			return Types.newDate();
 		} else if (type == Type.NUMBER) {
-			return new Types.NumberType();
+			return Types.newNumber();
 		} else if (type == Type.STRING) {
-			return new Types.StringType();
+			return Types.newString();
 		} else if (type == Type.USER) {
-			return new Types.UserType();
+			return Types.newUser();
 		} else if (type == Type.COMMAND) {
-			return new Types.CommandType();
+			return Types.newCommand();
 		} else if (type == Type.ANY) {
-			return new Types.AnyType();
+			return Types.newAny();
 		} else if (type == Type.HELP) {
-		    return new Types.HelpType();
+		    return Types.newHelp();
 		} else if (type == Type.LIST) {
 			ListType lt = (ListType) type;
 			return new Types.ListType(TypeMapper.typeToTypes(lt.getSubType()));
@@ -177,7 +177,7 @@ public class TypeMapper {
 			CommandLiteral cl = (CommandLiteral) literal;
 			return new Types.CommandType(cl.getCommandName());
 		} else if (literal instanceof HelpLiteral) {
-		    return new Types.HelpType();
+		    return Types.newHelp();
 		} else if (literal instanceof ListLiteral) {
 			ListLiteral lt = (ListLiteral) literal;
 			List<Types> elements = new ArrayList<Types>();

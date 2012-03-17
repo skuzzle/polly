@@ -5,7 +5,7 @@ import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
-import de.skuzzle.polly.sdk.Types.StringType;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.ConstraintException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
@@ -18,7 +18,7 @@ public class GreetingCommand extends Command {
     public GreetingCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "greeting");
         this.createSignature("Erstellt eine Begrüßung.", 
-            new Parameter("Grußnachricht", new StringType()));
+            new Parameter("Grußnachricht", Types.newString()));
         this.setHelpText("Eine Begrüßung wird dir zugestellt sobald du dich bei polly " +
         		"anmeldest");
         this.setRegisteredOnly();

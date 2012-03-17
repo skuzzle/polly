@@ -5,7 +5,7 @@ import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
-import de.skuzzle.polly.sdk.Types.NumberType;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
@@ -19,7 +19,7 @@ public class DeleteRemindCommand extends Command {
     public DeleteRemindCommand(MyPolly polly, RemindManager manager) throws DuplicatedSignatureException {
         super(polly, "delremind");
         this.createSignature("Löscht die Erinnerung mit der angegebenen Id", 
-            new Parameter("Remind-ID", new NumberType()));
+            new Parameter("Remind-ID", Types.newNumber()));
         this.remindManager = manager;
     }
     

@@ -6,7 +6,6 @@ import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
-import de.skuzzle.polly.sdk.Types.AnyType;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
 
@@ -15,14 +14,14 @@ public class FooCommand extends Command {
     public FooCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "foo");
         this.createSignature("Foo-Befehl mit einem Parameter.", 
-            new Parameter("Irgendwas", new AnyType()));
+            new Parameter("Irgendwas", Types.newAny()));
         this.createSignature("Foo-Befehl mit zwei Parametern.", 
-            new Parameter("Irgendwas", new AnyType()), 
-            new Parameter("Irgendwas", new AnyType()));
+            new Parameter("Irgendwas", Types.newAny()), 
+            new Parameter("Irgendwas", Types.newAny()));
         this.createSignature("Foo-Befehl mit drei Parametern", 
-            new Parameter("Irgendwas", new AnyType()), 
-            new Parameter("Irgendwas", new AnyType()), 
-            new Parameter("Irgendwas", new AnyType()));
+            new Parameter("Irgendwas", Types.newAny()), 
+            new Parameter("Irgendwas", Types.newAny()), 
+            new Parameter("Irgendwas", Types.newAny()));
         this.createSignature("Foo-Befehl mit 0 Parametern.");
         this.setHelpText("Dieser Befehl nimmt jede art von Parametern entgegen, " +
         		"wertet ihn aus und gibt das Ergebnis zurück.");

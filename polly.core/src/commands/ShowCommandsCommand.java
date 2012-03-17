@@ -9,6 +9,7 @@ import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
@@ -22,7 +23,7 @@ public class ShowCommandsCommand extends Command {
         super(polly, "cmds");
         this.createSignature("Zeigt alle für dich ausführbaren Befehle an.");
         this.createSignature("Zeigt alle Befehle für das angegebene User-Level an.", 
-                new Parameter("Userlevel", new NumberType()));
+                new Parameter("Userlevel", Types.newNumber()));
         this.setHelpText("Listet die verfügbaren Befehle auf.");
     }
     
