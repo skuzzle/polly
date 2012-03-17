@@ -77,7 +77,6 @@ public class HighlightReplyHandler implements MessageListener {
         String nick = e.getSource().getNickname().toLowerCase();
         String msg = e.getMessage().toLowerCase();
         if (msg.indexOf(nick) != -1) {
-            //String sentence = this.builder.createSentence(10);
             String sentence = this.hal.getSentence(e.getUser().getNickName());
             e.getSource().sendMessage(e.getChannel(), sentence);
             this.lastMessage = System.currentTimeMillis();

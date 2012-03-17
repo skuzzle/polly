@@ -28,6 +28,7 @@ import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.PluginManager;
 import de.skuzzle.polly.sdk.UserManager;
+import de.skuzzle.polly.sdk.UtilityManager;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.paste.PasteServiceManager;
 import de.skuzzle.polly.sdk.time.SystemTimeProvider;
@@ -158,6 +159,14 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 	public PasteServiceManager pasting() {
 	    return this.pasteManager;
 	}
+	
+	
+	
+	@Override
+	public UtilityManager utilities() {
+	    return new UtilityManager() {/* TODO: utilities */};
+	}
+	
 
 	@Override
 	public String getLoggerName(Class<?> clazz) {

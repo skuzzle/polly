@@ -89,6 +89,7 @@ public interface MyPolly {
 	public abstract Configuration configuration();
 	
 	
+	
 	/**
 	 * Gets the FormatManager to format Strings and Dates consistently.
 	 * @return A FormatManager instance.
@@ -105,6 +106,16 @@ public interface MyPolly {
 	public abstract PasteServiceManager pasting();
 	
 	
+	
+	/**
+	 * Provides some utility methods.
+	 * 
+	 * @return A UtilityManager instance.
+	 * @since 0.9
+	 */
+	public abstract UtilityManager utilities();
+	
+
 	
 	/**
 	 * Gets the time where current polly instance has been started. 

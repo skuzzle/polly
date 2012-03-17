@@ -18,6 +18,7 @@ import commands.GhostCommand;
 import commands.GreetingCommand;
 import commands.HighlightModeCommand;
 import commands.HopCommand;
+import commands.IsDownCommand;
 import commands.JoinCommand;
 import commands.KickCommand;
 import commands.ListAttributesCommand;
@@ -102,6 +103,7 @@ public class MyPlugin extends PollyPlugin {
 		this.addCommand(new WikiCommand(myPolly));
 		this.addCommand(new LmgtfyCommand(myPolly));
 		this.addCommand(new DictCommand(myPolly));
+		this.addCommand(new IsDownCommand(myPolly));
 		
 		this.addCommand(new UsersCommand(myPolly));
 		this.addCommand(new AuthCommand(myPolly));
