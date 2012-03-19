@@ -17,9 +17,9 @@ public class AddUserCommand extends Command {
     public AddUserCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "adduser");
         this.createSignature("Fügt einen neuen User hinzu.", 
-            new Parameter("Username", Types.newUser()),
-            new Parameter("Passwort", Types.newUser()),
-            new Parameter("Userlevel", Types.newNumber()));
+            new Parameter("Username", Types.USER),
+            new Parameter("Passwort", Types.USER),
+            new Parameter("Userlevel", Types.NUMBER));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
         this.setHelpText("Befehl zum registrieren neuer Benutzer bei Polly.");

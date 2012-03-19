@@ -25,7 +25,7 @@ public class SleepCommand extends Command {
         super(polly, "sleep");
         this.remindManager = remindManager;
         this.createSignature("Verlängert die Erinnerung die dir zuletzt zugestellt wurde", 
-            new Parameter("Neue Zeit", Types.newDate()));
+            new Parameter("Neue Zeit", Types.DATE));
         this.setRegisteredOnly();
         this.setHelpText("Verlängert Erinnerungen");
     }

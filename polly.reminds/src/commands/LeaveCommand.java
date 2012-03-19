@@ -25,16 +25,16 @@ public class LeaveCommand extends AbstractRemindCommand {
     public LeaveCommand(MyPolly polly, RemindManager manager) throws DuplicatedSignatureException {
         super(polly, manager, "leave");
         this.createSignature("Hinterlässt eine Nachricht für einen Benutzer.", 
-                new Parameter("User", Types.newUser()), 
-                new Parameter("Channel", Types.newChannel()), 
-                new Parameter("Nachricht", Types.newString()));
-        this.createSignature("HinterlÃ¤sst eine Nachricht für eine Liste von Benutzern.", 
-                new Parameter("Benutzerliste", new ListType(Types.newUser())), 
-                new Parameter("Channel", Types.newChannel()), 
-                new Parameter("Nachricht", Types.newString()));
+                new Parameter("User", Types.USER), 
+                new Parameter("Channel", Types.CHANNEL), 
+                new Parameter("Nachricht", Types.STRING));
+        this.createSignature("Hinterlässt eine Nachricht für eine Liste von Benutzern.", 
+                new Parameter("Benutzerliste", new ListType(Types.USER)), 
+                new Parameter("Channel", Types.CHANNEL), 
+                new Parameter("Nachricht", Types.STRING));
         this.createSignature("Hinterlässt eine private Nachricht für einen Benutzer.", 
-                new Parameter("User", Types.newUser()), 
-                new Parameter("Nachricht", Types.newString()));
+                new Parameter("User", Types.USER), 
+                new Parameter("Nachricht", Types.STRING));
         this.setRegisteredOnly();
         this.setHelpText("Befehl um Nachrichten für Benutzer zu hinterlassen.");
     }

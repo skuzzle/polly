@@ -31,8 +31,8 @@ import de.skuzzle.polly.sdk.model.User;
  *         super(polly, "mycmd");    // create command with name 'mycmd'
  *         // Create signature with a short help text, a String and a Number Parameter
  *         this.createSignature("Do something", 
- *             new Parameter("ParamName", Types.newString()), 
- *             new Parameter("ParamName2", Types.newNumber()));
+ *             new Parameter("ParamName", Types.STRING), 
+ *             new Parameter("ParamName2", Types.NUMBER));
  *     }
  *     
  *     <code>@Override</code>
@@ -133,6 +133,7 @@ public abstract class Command implements Comparable<Command> {
 	 * Formal signature to output help text of certain real signature
 	 */
 	private FormalSignature helpSignature1;
+
 	
 	
 	/**
@@ -148,10 +149,10 @@ public abstract class Command implements Comparable<Command> {
 		this.helpText = "Der Befehl '" + commandName + "' hat keine Beschreibung";
 		this.constants = new HashMap<String, Types>();
 		this.helpSignature0 = new FormalSignature(commandName, 0, "", 
-		    new Parameter("", Types.newHelp()));
+		    new Parameter("", Types.HELP));
 		this.helpSignature1 = new FormalSignature(commandName, 0, "", 
-		    new Parameter("", Types.newHelp()), 
-		    new Parameter("", Types.newNumber()));
+		    new Parameter("", Types.HELP), 
+		    new Parameter("", Types.NUMBER));
 	}
 	
 	

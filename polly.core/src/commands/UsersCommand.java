@@ -25,11 +25,11 @@ public class UsersCommand extends Command {
         this.createSignature("Listet alle registrierten Benutzer auf");
         this.createSignature("Listet alle registrierten Benutzer auf, deren Name auf " +
         		"das angegebene Pattern passt", 
-    		new Parameter("Pattern", Types.newString()));
+    		new Parameter("Pattern", Types.STRING));
         this.createSignature("Listet alle registrierten Benutzer auf, deren Name auf " +
         		"das angegebene Pattern passt", 
-    		new Parameter("Pattern", Types.newString()), 
-    		new Parameter("Logged In Only", Types.newBoolean()));
+    		new Parameter("Pattern", Types.STRING), 
+    		new Parameter("Logged In Only", Types.BOOLEAN));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
     }

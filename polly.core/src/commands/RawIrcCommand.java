@@ -15,7 +15,7 @@ public class RawIrcCommand extends Command {
     public RawIrcCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "raw");
         this.createSignature("Sendet einen Raw-command an den IRC Server.", 
-                new Parameter("Befehl", Types.newString()));
+                new Parameter("Befehl", Types.STRING));
         this.setRegisteredOnly();
         this.setHelpText("Dieser Befehl sendet einen Befehl direkt an den IRC Server");
         this.setUserLevel(UserManager.ADMIN);

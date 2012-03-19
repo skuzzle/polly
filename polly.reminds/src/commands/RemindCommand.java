@@ -31,26 +31,26 @@ public class RemindCommand extends AbstractRemindCommand {
         super(myPolly, remindManager, "remind");
         this.createSignature("Erinnert den Benutzer zu einer angegebenen Zeit im " +
                 "angegebenen Channel an etwas.", 
-            new Parameter("User", Types.newUser()), 
-            new Parameter("Channel", Types.newChannel()), 
-            new Parameter("Zeit", Types.newDate()), 
-            new Parameter("Nachricht", Types.newString()));
+            new Parameter("User", Types.USER), 
+            new Parameter("Channel", Types.CHANNEL), 
+            new Parameter("Zeit", Types.DATE), 
+            new Parameter("Nachricht", Types.STRING));
         this.createSignature("Erinnert eine Liste von Benutzern zu einer angegebenen " +
                 "Zeit an etwas.", 
-            new Parameter("Benutzerliste", new ListType(Types.newUser())), 
-            new Parameter("Channel", Types.newChannel()), 
-            new Parameter("Zeit", Types.newDate()), 
-            new Parameter("Nachricht", Types.newString()));
+            new Parameter("Benutzerliste", new ListType(Types.USER)), 
+            new Parameter("Channel", Types.CHANNEL), 
+            new Parameter("Zeit", Types.DATE), 
+            new Parameter("Nachricht", Types.STRING));
         this.createSignature("Erinnert dich zu einer bestimmten Zeit an etwas.", 
-                new Parameter("Zeit", Types.newDate()), 
-                new Parameter("Nachricht", Types.newString()));
+                new Parameter("Zeit", Types.DATE), 
+                new Parameter("Nachricht", Types.STRING));
         this.createSignature("Erinnert den angegebenen Benutzer per Query an etwas.", 
-            new Parameter("User", Types.newUser()), 
-            new Parameter("Zeit", Types.newDate()), 
-            new Parameter("Nachricht", Types.newString()));
+            new Parameter("User", Types.USER), 
+            new Parameter("Zeit", Types.DATE), 
+            new Parameter("Nachricht", Types.STRING));
         this.createSignature("Erinnert dich zu einer bestimmten Zeit mit einer " +
         		"Standardmeldung.",
-    		new Parameter("Zeit", Types.newDate()));
+    		new Parameter("Zeit", Types.DATE));
         this.setRegisteredOnly();
         this.setHelpText("Hinterlässt Erinnerungen für Benutzer.");
     }

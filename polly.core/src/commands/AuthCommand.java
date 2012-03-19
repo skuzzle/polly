@@ -17,10 +17,10 @@ public class AuthCommand extends Command {
     public AuthCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "auth");
         this.createSignature("Meldet den Benutzer bei Polly an", 
-            new Parameter("Username", Types.newUser()),
-            new Parameter("Passwort", Types.newString()));
+            new Parameter("Username", Types.USER),
+            new Parameter("Passwort", Types.STRING));
         this.createSignature("Meldet den Benutzer bei Polly an", 
-            new Parameter("Passwort", Types.newString()));
+            new Parameter("Passwort", Types.STRING));
         this.setHelpText("Befehl um dich bei Polly anzumelden.");
         this.setQryCommand(true);
     }

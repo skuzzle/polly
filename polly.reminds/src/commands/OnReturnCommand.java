@@ -20,8 +20,8 @@ public class OnReturnCommand extends AbstractRemindCommand {
         super(polly, manager, "onreturn");
         this.createSignature("Hinterlässt eine Nachricht für einen Benutzer die " +
         		"zugestellt wird wenn dieser wieder im IRC aktiv ist", 
-    		new Parameter("User", Types.newUser()), 
-    		new Parameter("Nachricht", Types.newString()));
+    		new Parameter("User", Types.USER), 
+    		new Parameter("Nachricht", Types.STRING));
         this.setRegisteredOnly();
         this.setHelpText("Dieser Befehl hinterlässt Nachrichten die zugestellt werden, " +
         		"sobald der Benutzer wieder im IRC akti ist.");

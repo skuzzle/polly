@@ -17,7 +17,7 @@ public class SeenCommand extends AbstractLogCommand {
     public SeenCommand(MyPolly polly, PollyLoggingManager logManager) throws DuplicatedSignatureException {
         super(polly, "seen", logManager);
         this.createSignature("Zeigt an wann ein Benutzer das letzte mal gesehen wurde.", 
-            new Parameter("User", Types.newUser()));
+            new Parameter("User", Types.USER));
     }
     
     

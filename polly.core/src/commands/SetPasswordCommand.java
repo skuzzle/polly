@@ -17,8 +17,8 @@ public class SetPasswordCommand extends Command {
     public SetPasswordCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "setpw");
         this.createSignature("Setzt das Passwort eines Benutzers neu.",
-        		new Parameter("User", Types.newUser()), 
-        		new Parameter("Passwort", Types.newString()));
+        		new Parameter("User", Types.USER), 
+        		new Parameter("Passwort", Types.STRING));
         this.setRegisteredOnly();
         this.setHelpText("Befehl um das Passwort eines Benutzers zu ändern.");
     }

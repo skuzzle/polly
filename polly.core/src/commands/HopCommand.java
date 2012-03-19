@@ -17,7 +17,7 @@ public class HopCommand extends Command {
         super(polly, "hop");
         this.createSignature("Rejoined den aktuellen Channel.");
         this.createSignature("Rejoined den angegebenen Channel", 
-            new Parameter("Channel", Types.newChannel()));
+            new Parameter("Channel", Types.CHANNEL));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
         this.setHelpText("Befehl zum rejoinen von channels.");

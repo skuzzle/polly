@@ -14,8 +14,8 @@ public class ClumBombCommand extends Command {
 	public ClumBombCommand(MyPolly polly) throws DuplicatedSignatureException {
 		super(polly, "clumbomb");
 		this.createSignature("Highlightbombe!", 
-		    new Parameter("Benutzer",Types.newUser()), 
-		    new Parameter("Anzahl", Types.newNumber()));
+		    new Parameter("Benutzer",Types.USER), 
+		    new Parameter("Anzahl", Types.NUMBER));
 		this.setRegisteredOnly();
 		this.setUserLevel(UserManager.MEMBER);
 	}

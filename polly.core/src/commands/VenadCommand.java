@@ -15,7 +15,7 @@ public class VenadCommand extends Command {
     public VenadCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "venad");
         this.createSignature("Zeigt den Venadnamen eines Benutzers an.", 
-                new Parameter("User",Types.newUser()));
+                new Parameter("User",Types.USER));
         this.setHelpText("Befehl zum Rausfinden des Venad-Namens eines registrierten " +
         		"Benutzers.");
     }

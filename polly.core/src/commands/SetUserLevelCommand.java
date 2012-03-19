@@ -18,8 +18,8 @@ public class SetUserLevelCommand extends Command {
     public SetUserLevelCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "setlevel");
         this.createSignature("Ä„ndert das user-Level des angegebenen Benutzers", 
-                new Parameter("User", Types.newUser()), 
-                new Parameter("Userlevel", Types.newNumber()));
+                new Parameter("User", Types.USER), 
+                new Parameter("Userlevel", Types.NUMBER));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
         this.setHelpText("Befehl zum Ändern von Benutzerberechtigungen.");

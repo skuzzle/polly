@@ -10,7 +10,7 @@ public class DictCommand extends SearchEngineCommand {
     public DictCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "dict");
         this.createSignature("Gibt einen Dict.cc-Link zurück.", 
-            new Parameter("Satz", Types.newString()));
+            new Parameter("Satz", Types.STRING));
     }
 
     

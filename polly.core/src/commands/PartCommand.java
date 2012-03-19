@@ -17,7 +17,7 @@ public class PartCommand extends Command {
         super(polly, "part");
         this.createSignature("Polly verlässt den aktuellen Channel");
         this.createSignature("Polly verlässt den angegebenen Channel.", 
-                new Parameter("Channel", Types.newChannel()));
+                new Parameter("Channel", Types.CHANNEL));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
         this.setHelpText("Befehl um einen Channel zu verlassen.");

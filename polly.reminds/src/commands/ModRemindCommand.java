@@ -20,15 +20,15 @@ public class ModRemindCommand extends AbstractRemindCommand {
     public ModRemindCommand(MyPolly polly, RemindManager manager) throws DuplicatedSignatureException {
         super(polly, manager, "modr");
         this.createSignature("Ändert das Datum des Reminds mit der angegebenen ID", 
-            new Parameter("Remind-Id", Types.newNumber()), 
-            new Parameter("Neue Zeit", Types.newDate()));
+            new Parameter("Remind-Id", Types.NUMBER), 
+            new Parameter("Neue Zeit", Types.DATE));
         this.createSignature("Ändert die Nachricht des angegebenen Reminds", 
-            new Parameter("Remind-Id", Types.newNumber()), 
-            new Parameter("Nachricht", Types.newString()));
+            new Parameter("Remind-Id", Types.NUMBER), 
+            new Parameter("Nachricht", Types.STRING));
         this.createSignature("Ändert Nachricht und Datum des angegebenen Reminds", 
-            new Parameter("Remind-Id", Types.newNumber()), 
-            new Parameter("Nachricht", Types.newString()), 
-            new Parameter("Meue Zeit", Types.newDate()));
+            new Parameter("Remind-Id", Types.NUMBER), 
+            new Parameter("Nachricht", Types.STRING), 
+            new Parameter("Meue Zeit", Types.DATE));
         this.setHelpText("Mit diesem Befehl können bestehende Reminds modifiziert " +
         		"werden. Zum rausfinden der ID eines Reminds benutze :myreminds");
         this.setRegisteredOnly();

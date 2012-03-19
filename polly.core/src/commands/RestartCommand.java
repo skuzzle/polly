@@ -17,7 +17,7 @@ public class RestartCommand extends Command {
         super(polly, "restart");
         this.createSignature("Startet polly mit den aktuellen Parametern neu.");
         this.createSignature("Startet polly mit den angegebenen Parametern neu.", 
-            new Parameter("Parameter", Types.newString()));
+            new Parameter("Parameter", Types.STRING));
         this.setHelpText("Startet polly neu.");
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);

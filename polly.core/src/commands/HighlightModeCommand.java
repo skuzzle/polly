@@ -22,7 +22,7 @@ public class HighlightModeCommand extends Command {
                 throws DuplicatedSignatureException {
         super(polly, "hlctrl");
         this.createSignature("Commands: OFF, COLLECTING, REPLYING, BOTH, RESET_TIME", 
-                new Parameter("Modus", Types.newString()));
+                new Parameter("Modus", Types.STRING));
         this.setHelpText("Setzt den Modus für den Highlight-Replyer");
         this.setUserLevel(UserManager.ADMIN);
         this.setRegisteredOnly();

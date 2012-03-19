@@ -12,7 +12,7 @@ public class WikiCommand extends SearchEngineCommand {
     public WikiCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "wiki");
         this.createSignature("Gibt einen Link zum angegebenen Wikipedia-Artikel zurück", 
-            new Parameter("Suchbegriff", Types.newString()));
+            new Parameter("Suchbegriff", Types.STRING));
         
         this.setHelpText("Befehl um Wikipedia-Artikel abzurufen.");
     }

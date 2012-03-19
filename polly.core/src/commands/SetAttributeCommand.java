@@ -20,12 +20,12 @@ public class SetAttributeCommand extends Command {
         super(polly, "setattr");
         this.createSignature("Setzt das Attribut des angegebenen Benutzers neu. " +
         		"Diese Befehel ist nur für Admins", 
-            new Parameter("User", Types.newUser()), 
-            new Parameter("Attributname", Types.newString()), 
-            new Parameter("Attributwert", Types.newString()));
+            new Parameter("User", Types.USER), 
+            new Parameter("Attributname", Types.STRING), 
+            new Parameter("Attributwert", Types.STRING));
         this.createSignature("Setzt das Attribut auf den angegebenen Wert.", 
-            new Parameter("Attributname", Types.newString()), 
-            new Parameter("Attributwert", Types.newString()));
+            new Parameter("Attributname", Types.STRING), 
+            new Parameter("Attributwert", Types.STRING));
         this.setRegisteredOnly();
         this.setHelpText("Setzt ein Attribut auf den angegebenen Wert. Verfügbare " +
         		"Attribute können mit :listattr angezeigt werden.");

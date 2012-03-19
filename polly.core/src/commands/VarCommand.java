@@ -17,9 +17,9 @@ public class VarCommand extends Command {
         super(polly, "var");
         this.createSignature("Zeigt die Deklarationen des ausführenden Benutzers an");
         this.createSignature("Zeigt die Deklarationen des angegebenen Namespaces an.", 
-            new Parameter("Namespace", Types.newString()));
+            new Parameter("Namespace", Types.STRING));
         this.createSignature("Zeigt die Deklarationen des angegebenen Benutzers an.", 
-            new Parameter("User", Types.newUser()));
+            new Parameter("User", Types.USER));
         this.setHelpText("Listet die verfügbaren Variablen für einen Benutzer auf.");
     }
     

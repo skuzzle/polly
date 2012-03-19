@@ -15,10 +15,10 @@ public class TalkCommand extends Command {
     public TalkCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "talk");
         this.createSignature("Spricht zum aktuellen Channel", 
-            new Parameter("Nachricht", Types.newString()));
+            new Parameter("Nachricht", Types.STRING));
         this.createSignature("Spricht zum angegebenen Channel", 
-            new Parameter("Channel", Types.newChannel()), 
-            new Parameter("Nachricht", Types.newString()));
+            new Parameter("Channel", Types.CHANNEL), 
+            new Parameter("Nachricht", Types.STRING));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
     }

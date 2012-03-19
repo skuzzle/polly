@@ -19,8 +19,8 @@ public class AliasCommand extends Command {
         super(polly, "alias");
         this.createSignature("Erstellt ein eines mit dem angegebenen Namen für den" +
             " angegebenen Befehl", 
-            new Parameter("Alias", Types.newString()),
-            new Parameter("Befehl", Types.newCommand()));
+            new Parameter("Alias", Types.STRING),
+            new Parameter("Befehl", Types.COMMAND));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
     }

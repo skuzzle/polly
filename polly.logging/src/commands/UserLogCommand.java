@@ -24,24 +24,24 @@ public class UserLogCommand extends AbstractLogCommand {
                 throws DuplicatedSignatureException {
         super(polly, "userlog", logManager);
         this.createSignature("Filtert Log Einträge eines Benutzers", 
-            new Parameter("Benutzername", Types.newString()));
+            new Parameter("Benutzername", Types.STRING));
         this.createSignature("Filtert Log Einträge eines Benutzers mit bestimmten Inhalt", 
-            new Parameter("Benutzername", Types.newString()), 
-            new Parameter("Pattern", Types.newString()));
+            new Parameter("Benutzername", Types.STRING), 
+            new Parameter("Pattern", Types.STRING));
         this.createSignature("Filtert Log Einträge eines Benutzers mit bestimmten Inhalt", 
-            new Parameter("Benutzername", Types.newString()), 
-            new Parameter("Pattern", Types.newString()),
-            new Parameter("Limit", Types.newNumber()));
+            new Parameter("Benutzername", Types.STRING), 
+            new Parameter("Pattern", Types.STRING),
+            new Parameter("Limit", Types.NUMBER));
         this.createSignature("Filtert Log Einträge eines Benutzers mit bestimmten " +
         		"Inhalt die nicht älter sind als das angegebne Datum", 
-            new Parameter("Benutzername", Types.newString()), 
-            new Parameter("Pattern", Types.newString()),
-            new Parameter("Datum", Types.newDate()));
+            new Parameter("Benutzername", Types.STRING), 
+            new Parameter("Pattern", Types.STRING),
+            new Parameter("Datum", Types.DATE));
         this.createSignature("Filtert Log Einträge eines Benutzers mit bestimmten Inhalt die zweichen den Angegebenen Zeitpunkten liegen",
-            new Parameter("Benutzername", Types.newString()), 
-            new Parameter("Pattern", Types.newString()),
-            new Parameter("Von", Types.newDate()),
-            new Parameter("Bis", Types.newDate()));
+            new Parameter("Benutzername", Types.STRING), 
+            new Parameter("Pattern", Types.STRING),
+            new Parameter("Von", Types.DATE),
+            new Parameter("Bis", Types.DATE));
     }
     
     

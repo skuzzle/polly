@@ -18,8 +18,8 @@ public class SetMyPasswordCommand extends Command {
         super(polly, "setmypw");
         this.createSignature("Setzt dein Passwort neu. Gib dein altes Passwort und " +
         		"den gewünschtes Passwort an.", 
-        		new Parameter("Altes Passwort", Types.newString()), 
-        		new Parameter("Neues Passwort", Types.newString()));
+        		new Parameter("Altes Passwort", Types.STRING), 
+        		new Parameter("Neues Passwort", Types.STRING));
         this.setRegisteredOnly();
         this.setHelpText("Befehl um dein Passwort zu ändern.");
         this.setQryCommand(true);

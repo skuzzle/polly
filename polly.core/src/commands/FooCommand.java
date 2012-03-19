@@ -14,14 +14,14 @@ public class FooCommand extends Command {
     public FooCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "foo");
         this.createSignature("Foo-Befehl mit einem Parameter.", 
-            new Parameter("Irgendwas", Types.newAny()));
+            new Parameter("Irgendwas", Types.ANY));
         this.createSignature("Foo-Befehl mit zwei Parametern.", 
-            new Parameter("Irgendwas", Types.newAny()), 
-            new Parameter("Irgendwas", Types.newAny()));
+            new Parameter("Irgendwas", Types.ANY), 
+            new Parameter("Irgendwas", Types.ANY));
         this.createSignature("Foo-Befehl mit drei Parametern", 
-            new Parameter("Irgendwas", Types.newAny()), 
-            new Parameter("Irgendwas", Types.newAny()), 
-            new Parameter("Irgendwas", Types.newAny()));
+            new Parameter("Irgendwas", Types.ANY), 
+            new Parameter("Irgendwas", Types.ANY), 
+            new Parameter("Irgendwas", Types.ANY));
         this.createSignature("Foo-Befehl mit 0 Parametern.");
         this.setHelpText("Dieser Befehl nimmt jede art von Parametern entgegen, " +
         		"wertet ihn aus und gibt das Ergebnis zurück.");

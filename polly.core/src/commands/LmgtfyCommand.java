@@ -10,7 +10,7 @@ public class LmgtfyCommand extends SearchEngineCommand {
     public LmgtfyCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "lmgtfy");
         this.createSignature("Gibt einen Google-Link zurück.", 
-            new Parameter("Suchbegriff", Types.newString()));
+            new Parameter("Suchbegriff", Types.STRING));
     }
 
     

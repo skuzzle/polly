@@ -24,7 +24,7 @@ public class CalendarCommand extends Command {
     public CalendarCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "cal");
         this.createSignature("Zeigt den Kalender für ein angegebenes Datum an.", 
-            new Parameter("Datum", Types.newDate()));
+            new Parameter("Datum", Types.DATE));
         this.setHelpText("Zeigt den Kalender für ein angegebenes Datum an.");
     }
     

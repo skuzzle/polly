@@ -14,9 +14,9 @@ public class InfoCommand extends Command {
 	public InfoCommand(MyPolly polly) throws DuplicatedSignatureException {
 		super(polly, "info");
 		this.createSignature("Gibt Informationen über den angegebenen Befehl aus", 
-            new Parameter("Befehl", Types.newCommand()));
+            new Parameter("Befehl", Types.COMMAND));
 		this.createSignature("Gibt Informationen über den angegebenen Benutzer aus.", 
-            new Parameter("User", Types.newUser()));
+            new Parameter("User", Types.USER));
 		this.setHelpText("Gibt Informationen über andere Befehle oder " +
 				"Benutzer aus.");
 	}

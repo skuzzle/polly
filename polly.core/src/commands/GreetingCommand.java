@@ -18,7 +18,7 @@ public class GreetingCommand extends Command {
     public GreetingCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "greeting");
         this.createSignature("Erstellt eine Begrüßung.", 
-            new Parameter("Grußnachricht", Types.newString()));
+            new Parameter("Grußnachricht", Types.STRING));
         this.setHelpText("Eine Begrüßung wird dir zugestellt sobald du dich bei polly " +
         		"anmeldest");
         this.setRegisteredOnly();

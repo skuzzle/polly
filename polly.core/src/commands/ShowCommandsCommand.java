@@ -23,7 +23,7 @@ public class ShowCommandsCommand extends Command {
         super(polly, "cmds");
         this.createSignature("Zeigt alle für dich ausführbaren Befehle an.");
         this.createSignature("Zeigt alle Befehle für das angegebene User-Level an.", 
-                new Parameter("Userlevel", Types.newNumber()));
+                new Parameter("Userlevel", Types.NUMBER));
         this.setHelpText("Listet die verfügbaren Befehle auf.");
     }
     

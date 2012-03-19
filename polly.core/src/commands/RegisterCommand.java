@@ -19,11 +19,11 @@ public class RegisterCommand extends Command {
         super(polly, "register");
         this.createSignature("Gib deinen gewünschten Benutzernamen " +
         		"(am besten me) und dein gewünschtes Passwort ein.", 
-    		new Parameter("Username", Types.newUser()), 
-		    new Parameter("Passwort", Types.newString()));
+    		new Parameter("Username", Types.USER), 
+		    new Parameter("Passwort", Types.STRING));
         this.createSignature("Gib dein gewünschtes Passwort ein. Als Benutzername wird " +
         		"dein aktueller Nickname genutzt", 
-    		new Parameter("Passwort", Types.newString()));
+    		new Parameter("Passwort", Types.STRING));
         this.setHelpText("Befehl um dich bei Polly zu registrieren.");
         this.setUserLevel(UserManager.UNKNOWN);
         this.setQryCommand(true);

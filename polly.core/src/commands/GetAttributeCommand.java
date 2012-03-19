@@ -17,11 +17,11 @@ public class GetAttributeCommand extends Command {
         super(polly, "getattr");
         this.createSignature("Liest den Wert eines Attributes eine Benutzers aus. " +
         		"Dieser Befehl ist nur für Admins", 
-            new Parameter("Benutzer", Types.newUser()), 
-            new Parameter("Attributename", Types.newString()));
+            new Parameter("Benutzer", Types.USER), 
+            new Parameter("Attributename", Types.STRING));
         this.createSignature("Liest ein Attribute des Benutzers aus, der den Befehl " +
         		"ausführt.", 
-    		new Parameter("Attributname", Types.newString()));
+    		new Parameter("Attributname", Types.STRING));
         this.setHelpText("Liest Benutzer-Attribute aus. Verfügbare Attribute können " +
         		"mit :listattr angezeigt werden.");
         this.setRegisteredOnly();

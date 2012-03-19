@@ -21,9 +21,9 @@ public class JoinCommand extends Command {
     public JoinCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "join");
         this.createSignature("Lässt polly den angegebenen Channel betreten.", 
-                new Parameter("Channel", Types.newChannel()));
+                new Parameter("Channel", Types.CHANNEL));
         this.createSignature("Lässt polly alle Channels in der Liste betreten.", 
-                new Parameter("Channelliste", new ListType(Types.newChannel())));
+                new Parameter("Channelliste", new ListType(Types.CHANNEL)));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
         this.setHelpText("Befehl zum joinen von Channels.");

@@ -2,18 +2,15 @@ package de.skuzzle.polly.sdk;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>These class represents a Type for a signature. Each Types-instance represents a
  * type as well as its value.</p>
  * 
  * <p>For each type exists only one instance that represents only the type with no value
- * (for formal signatures). These isntances can be retrieved using the static factory
- * methods.</p>
+ * (for formal signatures). These isntances can be retrieved using the static constants</p>
  * 
  * @author Simon
  * @since zero day
@@ -21,152 +18,65 @@ import java.util.Map;
  */
 public class Types {
     
-    
-    private static Map<Class<?>, Types> typeCache = new HashMap<Class<?>, Types>(10);
-
     /**
-     * Factory method to create a formal command type (for formal signatures). This 
-     * method will always return the same object.
-     * 
-     * @return A {@link CommandType}
-     * @since 0.9
+     * Valueless type constant for the type User
+     * @since 0.9 
      */
-    public static CommandType newCommand() {
-        return newType(CommandType.class);
-    }
-    
-    
+    public final static UserType USER = new UserType();
     
     /**
-     * Factory method to create a formal number type (for formal signatures). This 
-     * method will always return the same object.
-     * 
-     * @return A {@link NumberType}
-     * @since 0.9
-     */
-    public static NumberType newNumber() {
-        return newType(NumberType.class);
-    }
-    
-    
+    * Valueless type constant for the type Command
+    * @since 0.9 
+    */
+    public final static CommandType COMMAND = new CommandType();
     
     /**
-     * Factory method to create a formal date type (for formal signatures). This 
-     * method will always return the same object.
-     * 
-     * @return A {@link DateType}
-     * @since 0.9
+     * Valueless type constant for the type String
+     * @since 0.9 
      */
-    public static DateType newDate() {
-        return newType(DateType.class);
-    }
-    
-    
+    public final static StringType STRING = new StringType();
     
     /**
-     * Factory method to create a formal timespan type (for formal signatures). This 
-     * method will always return the same object.
-     * 
-     * @return A {@link TimespanType}
-     * @since 0.9
+     * Valueless type constant for the type Number
+     * @since 0.9 
      */
-    public static TimespanType newTimespan() {
-        return newType(TimespanType.class);
-    }
-    
-    
+    public final static NumberType NUMBER = new NumberType();
     
     /**
-     * Factory method to create a formal boolean type (for formal signatures). This 
-     * method will always return the same object.
-     * 
-     * @return A {@link BooleanType}
-     * @since 0.9
+     * Valueless type constant for the type Date
+     * @since 0.9 
      */
-    public static BooleanType newBoolean() {
-        return newType(BooleanType.class);
-    }
-    
-    
+    public final static DateType DATE = new DateType();
     
     /**
-     * Factory method to create a formal channel type (for formal signatures). This 
-     * method will always return the same object.
-     * 
-     * @return A {@link ChannelType}
-     * @since 0.9
+     * Valueless type constant for the type Timespan
+     * @since 0.9 
      */
-    public static ChannelType newChannel() {
-        return newType(ChannelType.class);
-    }
-    
-    
+    public final static TimespanType TIMESPAN = new TimespanType();
     
     /**
-     * Factory method to create a formal user type (for formal signatures). This 
-     * method will always return the same object.
-     * 
-     * @return A {@link UserType}
-     * @since 0.9
+     * Valueless type constant for the type Boolean
+     * @since 0.9 
      */
-    public static UserType newUser() {
-        return newType(UserType.class);
-    }
-    
-    
+    public final static BooleanType BOOLEAN = new BooleanType();
     
     /**
-     * Factory method to create a formal any type (for formal signatures). This 
-     * method will always return the same object.
-     * 
-     * @return A {@link AnyType}
-     * @since 0.9
+     * Valueless type constant for the type Channel
+     * @since 0.9 
      */
-    public static AnyType newAny() {
-        return newType(AnyType.class);
-    }
-    
-    
+    public final static ChannelType CHANNEL = new ChannelType();
     
     /**
-     * Factory method to create a formal help type (for formal signatures). This 
-     * method will always return the same object.
-     * 
-     * @return A {@link HelpType}
-     * @since 0.9
+     * Valueless type constant for the type Help
+     * @since 0.9 
      */
-    public static HelpType newHelp() {
-        return newType(HelpType.class);
-    }
-    
-    
+    public final static HelpType HELP = new HelpType();
     
     /**
-     * Factory method to create a formal string type (for formal signatures). This 
-     * method will always return the same object.
-     * 
-     * @return A {@link StringType}
-     * @since 0.9
+     * Valueless type constant for the type Any
+     * @since 0.9 
      */
-    public static StringType newString() {
-        return newType(StringType.class);
-    }
-    
-    
-    
-    
-    private static synchronized <T> T newType(Class<T> cls) {
-        Types t = typeCache.get(cls);
-        if (t == null) {
-            try {
-                t = (Types) cls.newInstance();
-            } catch (Exception e) {
-                return null;
-            }
-            typeCache.put(cls, t);
-        }
-        return cls.cast(t);
-    }
+    public final static AnyType ANY = new AnyType();
     
     
     

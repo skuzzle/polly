@@ -15,7 +15,7 @@ public class DelVarCommand extends Command {
         super(polly, "delvar");
         this.createSignature("Löscht die Variable mit angegebenen Namen. " +
             "Das Löschen vordefinierter Bezeichner hat keinen Effekt.", 
-            new Parameter("Variablenname", Types.newString()));
+            new Parameter("Variablenname", Types.STRING));
     }
 
     

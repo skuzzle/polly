@@ -20,10 +20,10 @@ public class DeliverTrainCommand extends Command {
             throws DuplicatedSignatureException {
         super(polly, "deliver");
         this.createSignature("Liefert eine Capi-Train Rechnung aus.", 
-            new Parameter("User", Types.newUser()));
+            new Parameter("User", Types.USER));
         this.createSignature("Liefert eine Capi-Train Rechnung aus.", 
-            new Parameter("Benutzer", Types.newUser()), 
-            new Parameter("Empfänger", Types.newUser()));
+            new Parameter("Benutzer", Types.USER), 
+            new Parameter("Empfänger", Types.USER));
 
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);

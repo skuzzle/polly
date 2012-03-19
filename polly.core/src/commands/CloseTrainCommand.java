@@ -21,9 +21,9 @@ public class CloseTrainCommand extends Command {
         super(polly, "closetrain");
         this.createSignature("Schliesst alle offenen Rechnungen für den angegebenen " +
             "Benutzer.", 
-            new Parameter("User", Types.newUser()));
+            new Parameter("User", Types.USER));
         this.createSignature("Schliesst einzelnen Trainposten.", 
-            new Parameter("Train Id", Types.newNumber()));
+            new Parameter("Train Id", Types.NUMBER));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
         this.setHelpText("Schliesst offene Capitrain rechnungen.");

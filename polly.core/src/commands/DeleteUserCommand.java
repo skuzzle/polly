@@ -16,7 +16,7 @@ public class DeleteUserCommand extends Command {
     public DeleteUserCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "deluser");
         this.createSignature("Löscht den angegebenen Benutzer.", 
-            new Parameter("User", Types.newUser()));
+            new Parameter("User", Types.USER));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
         this.setHelpText("Befehl zum Löschen von Benutzern.");

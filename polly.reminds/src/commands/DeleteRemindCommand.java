@@ -19,7 +19,7 @@ public class DeleteRemindCommand extends Command {
     public DeleteRemindCommand(MyPolly polly, RemindManager manager) throws DuplicatedSignatureException {
         super(polly, "delremind");
         this.createSignature("Löscht die Erinnerung mit der angegebenen Id", 
-            new Parameter("Remind-ID", Types.newNumber()));
+            new Parameter("Remind-ID", Types.NUMBER));
         this.remindManager = manager;
     }
     

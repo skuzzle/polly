@@ -17,7 +17,7 @@ public class MyVenadCommand extends Command {
     public MyVenadCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "myvenad");
         this.createSignature("Speichert deinen Venad-Namen", 
-            new Parameter("Venad-Name", Types.newString()));
+            new Parameter("Venad-Name", Types.STRING));
         this.setRegisteredOnly();
         this.setHelpText("Befehl zum Speichern deines Venad-Namens.");
     }

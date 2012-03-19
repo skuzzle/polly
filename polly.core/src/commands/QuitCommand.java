@@ -26,7 +26,7 @@ public class QuitCommand extends Command {
         super(polly, "flyaway");
         this.createSignature("Beendet polly.");
         this.createSignature("Beendet polly mit der angegebenen Quit-Message", 
-                new Parameter("Quit-Message", Types.newString()));
+                new Parameter("Quit-Message", Types.STRING));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
         this.setHelpText("Befehl zum Beenden von Polly.");

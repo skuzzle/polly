@@ -14,19 +14,19 @@ public class KickCommand extends Command {
 	public KickCommand(MyPolly polly) throws DuplicatedSignatureException {
 		super(polly, "kick");
 		this.createSignature("Kickt den angegebenen User aus dem aktuellen Channel", 
-				new Parameter("User", Types.newUser()));
+				new Parameter("User", Types.USER));
 		this.createSignature("Kickt den angegebenen User aus dem aktuellen Channel " +
 				"mit dem angegebenen Grund", 
-				new Parameter("User", Types.newUser()), 
-				new Parameter("Grund", Types.newString()));
+				new Parameter("User", Types.USER), 
+				new Parameter("Grund", Types.STRING));
 		this.createSignature("Kickt den angegebenen User aus dem angegebenen Channel",
-				new Parameter("Channel", Types.newChannel()), 
-				new Parameter("User", Types.newUser()));	
+				new Parameter("Channel", Types.CHANNEL), 
+				new Parameter("User", Types.USER));	
 		this.createSignature("Kickt den angegebenen User aus dem angegebenen Channel " +
 				"mit dem angegebenen Grund", 
-				new Parameter("Channel", Types.newChannel()), 
-				new Parameter("User", Types.newUser()), 
-				new Parameter("Grund", Types.newString()));	
+				new Parameter("Channel", Types.CHANNEL), 
+				new Parameter("User", Types.USER), 
+				new Parameter("Grund", Types.STRING));	
 		this.setRegisteredOnly();
 		this.setUserLevel(UserManager.ADMIN);
 		this.setHelpText("Befehl zum Kicken von Benutzern.");

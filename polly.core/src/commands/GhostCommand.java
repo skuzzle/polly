@@ -16,8 +16,8 @@ public class GhostCommand extends Command {
     public GhostCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "ghost");
         this.createSignature("Loggt den angegebenen Benutzer aus.", 
-            new Parameter("User", Types.newUser()), 
-            new Parameter("Passwort", Types.newString()));
+            new Parameter("User", Types.USER), 
+            new Parameter("Passwort", Types.STRING));
         this.setHelpText("Mit diesem Befehl kannst du einen Benutzer bei polly " +
         		"ausloggen. Gib dafür den Benutzer und sein Passwort an");
         this.setQryCommand(true);
