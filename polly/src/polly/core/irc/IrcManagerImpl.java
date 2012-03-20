@@ -239,12 +239,13 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
             for (int i = 0; i < users.length; ++i) {
                 String nickName = IrcManagerImpl.this.stripNickname(users[i].getNick());
                 
-                // !TODO: synchronize on online users?
-                if (IrcManagerImpl.this.onlineUsers.add(nickName)) {
-                    IrcUser user = new IrcUser(nickName, channel, "");
-                    SpotEvent e = new SpotEvent(IrcManagerImpl.this, user, channel, 
-                            SpotEvent.USER_JOINED);
-                    IrcManagerImpl.this.fireUserSpotted(e);
+                synchronized (IrcManagerImpl.this.onlineUsers) {
+                    if (IrcManagerImpl.this.onlineUsers.add(nickName)) {
+                        IrcUser user = new IrcUser(nickName, channel, "");
+                        SpotEvent e = new SpotEvent(IrcManagerImpl.this, user, channel, 
+                                SpotEvent.USER_JOINED);
+                        IrcManagerImpl.this.fireUserSpotted(e);
+                    }
                 }
             }
         }
