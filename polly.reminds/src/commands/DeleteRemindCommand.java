@@ -20,6 +20,7 @@ public class DeleteRemindCommand extends Command {
         super(polly, "delremind");
         this.createSignature("Löscht die Erinnerung mit der angegebenen Id", 
             new Parameter("Remind-ID", Types.NUMBER));
+        this.setRegisteredOnly();
         this.remindManager = manager;
     }
     
