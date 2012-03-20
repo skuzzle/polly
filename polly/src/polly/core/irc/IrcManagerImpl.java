@@ -58,7 +58,8 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     private PircBot bot = new PircBot() {
         @Override
         protected void onConnect() {
-            
+            IrcManagerImpl.this.fireConnectionEstablished(
+                new ConnectionEvent(IrcManagerImpl.this));
         };
         
         
@@ -321,8 +322,6 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         this.joinChannels(e.getChannels());
         this.recent = e;
         this.sendRawCommand("MODE " + e.getNickName() + " " + e.getModes());
-        
-        this.fireConnectionEstablished(new ConnectionEvent(this));
     }
     
     
