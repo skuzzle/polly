@@ -16,23 +16,31 @@ import de.skuzzle.polly.sdk.exceptions.UnknownSignatureException;
 import de.skuzzle.polly.sdk.model.User;
 
 
+import polly.configuration.PollyConfiguration;
 import polly.core.users.UserManagerImpl;
 
 
 
 
 public class MessageHandler implements MessageListener {
+    
+    private final static int OFF = 0;
+    private final static int SIMPLE = 1;
 
+    
 	private static Logger logger = Logger.getLogger(MessageHandler.class.getName());
     private CommandManager commands;
     private UserManagerImpl userManager;
     private ExecutorService executorThreadPool;
+    private PollyConfiguration config;
+    
     
     public MessageHandler(CommandManager commandManager, UserManagerImpl userManager, 
-            ExecutorService executorThreadPool) {
+            ExecutorService executorThreadPool, PollyConfiguration config) {
         this.commands = commandManager;
         this.userManager = userManager;
         this.executorThreadPool = executorThreadPool;
+        this.config = config;
     }
     
 
@@ -68,7 +76,7 @@ public class MessageHandler implements MessageListener {
                 } catch(CommandException e1) {
                     if (e1.getCause() instanceof ParseException) {
                         ParseException e2 = (ParseException) e1.getCause();
-                        e.getSource().sendMessage(e.getChannel(), e2.getMessage());
+                        MessageHandler.this.reportParseError(e, e2);
                     } else {
                         e.getSource().sendMessage(e.getChannel(), 
                             "Fehler beim Ausführen des Befehls: " + e1.getMessage());
@@ -93,6 +101,23 @@ public class MessageHandler implements MessageListener {
         };
         
         this.executorThreadPool.execute(command);
+    }
+    
+    
+    
+    private void reportParseError(MessageEvent e, ParseException ex) {
+        int detail = this.config.getParseErrorDetail();
+        if (detail == OFF) {
+            return;
+        }
+        
+        if (detail == SIMPLE) {
+            e.getSource().sendMessage(e.getChannel(), ex.getMessage());
+        }
+        if (detail > SIMPLE) {
+            e.getSource().sendMessage(e.getChannel(), 
+                ex.getPosition().mark(e.getMessage()));
+        }
     }
     
     

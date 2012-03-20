@@ -297,6 +297,13 @@ public interface Configuration {
      */
     public final static String IGNORE_UNKNOWN_IDENTIFIERS = "ignoreUnknownIdentifiers";
     
+    /**
+     * Sets the detail level for reported parse errors: 0 means off, 1 means simple and
+     * every value greater than 2 means detailed.
+     * @since 0.9
+     */
+    public final static String PARSE_ERROR_DETAILS = "parseErrorDetails";
+    
     
     
 	/**

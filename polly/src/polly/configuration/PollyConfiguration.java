@@ -67,6 +67,8 @@ public class PollyConfiguration extends Configuration
     private String keyStorePassword;
     private boolean ignoreUnknownIdentifiers;
     private int tempVarLifeTime;
+    private int parseErrorDetail;
+    
 	private List<ConfigurationListener> listener;
 	
 	public PollyConfiguration(String filename) 
@@ -189,9 +191,16 @@ public class PollyConfiguration extends Configuration
         
         tmp = this.props.getProperty(IGNORE_UNKNOWN_IDENTIFIERS, "true");
         this.ignoreUnknownIdentifiers = this.readBoolean(tmp);
+        
+        tmp = this.props.getProperty(PARSE_ERROR_DETAILS, "1");
+        this.parseErrorDetail = this.parseInteger(tmp, 0, "");
 	}
 	
 	
+	
+    public int getParseErrorDetail() {
+        return this.parseErrorDetail;
+    }
 	
 	
     public int getTempVarLifeTime() {

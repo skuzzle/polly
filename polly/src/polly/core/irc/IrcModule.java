@@ -94,7 +94,7 @@ public class IrcModule extends AbstractModule {
 
         // setup handler for incoming irc messages
         MessageHandler handler = new MessageHandler(this.commandManager,
-            this.userManager, this.commandExecutor);
+            this.userManager, this.commandExecutor, this.config);
         this.ircManager.addMessageListener(handler);
         this.provideComponent(handler);
 
