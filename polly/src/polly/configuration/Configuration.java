@@ -2,6 +2,7 @@ package polly.configuration;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,17 +35,41 @@ public abstract class Configuration extends AbstractDisposable {
      */
     public Configuration(String filename) throws IOException {
     	this.filename = filename;
-        File file = new File(filename);
+    	// HACK: This whole config thing is totally a hack and should be fixed
+    	IOException e = this.reloadFile();
+    	if (e != null) {
+    	    throw e;
+    	}
+    }
+    
+    
+    
+    protected IOException reloadFile() {
+        File file = new File(this.filename);
         InputStream in = null;
-        props = new SortedProperties();
+        SortedProperties tmp = new SortedProperties();
         try {
             in = new FileInputStream(file);
-            props.load(in);
+            tmp.load(in);
+            if (this.props != null) {
+                this.props.clear();
+            }
+            this.props = tmp;
+        } catch (FileNotFoundException e) {
+            return e;
+        } catch (IOException e) {
+            return e;
         } finally {
             if (in != null) {
-                in.close();
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    return e;
+                }
             }
         }
+        
+        return null;
     }
     
     

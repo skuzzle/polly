@@ -29,6 +29,7 @@ import commands.PartCommand;
 import commands.QuitCommand;
 import commands.RawIrcCommand;
 import commands.RegisterCommand;
+import commands.ReloadConfigCommand;
 import commands.RestartCommand;
 import commands.SetAttributeCommand;
 import commands.SetMyPasswordCommand;
@@ -134,6 +135,7 @@ public class MyPlugin extends PollyPlugin {
 		this.addCommand(new DeliverTrainCommand(myPolly, this.trainManager));
 		
 		this.addCommand(new RestartCommand(myPolly));
+		this.addCommand(new ReloadConfigCommand(myPolly));
 		
 		this.addCommand(new DitoCommand(myPolly));
 		

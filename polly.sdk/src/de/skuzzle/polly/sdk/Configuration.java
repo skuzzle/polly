@@ -409,4 +409,16 @@ public interface Configuration {
      */
     @Deprecated
 	public abstract void store() throws IOException;
+    
+    
+    
+    /**
+     * Tries to reload the configuration file. If this fails, the old configuration will 
+     * keep being used. If the reload succeeded, all {@link ConfigurationListener}s are
+     * automatically notified using {@link #fireConfigurationChanged()}.
+     * 
+     * @since 0.9
+     */
+    public abstract void reload();
+    
 }

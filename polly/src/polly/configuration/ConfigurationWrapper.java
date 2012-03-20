@@ -79,4 +79,11 @@ public class ConfigurationWrapper implements Configuration {
     public void fireConfigurationChanged() {
         this.config.fireConfigurationChanged();
     }
+    
+    
+    
+    @Override
+    public void reload() {
+        this.config.reload();
+    }
 }

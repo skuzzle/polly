@@ -92,7 +92,16 @@ public class PollyConfiguration extends Configuration
 	    this.init();
 	}
 	
-
+	
+	
+	@Override
+	public void reload() {
+	    super.reloadFile();
+	    
+	    this.fireConfigurationChanged();
+	}
+	
+	
 
 	@Override
 	protected void init() throws ConfigurationFileException {
