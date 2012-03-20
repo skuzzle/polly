@@ -11,6 +11,8 @@ import java.util.SortedSet;
 import java.util.Map.Entry;
 import java.util.TreeSet;
 
+import polly.SortedProperties;
+
 import de.skuzzle.polly.sdk.Disposable;
 import de.skuzzle.polly.sdk.eventlistener.ConfigurationEvent;
 import de.skuzzle.polly.sdk.eventlistener.ConfigurationListener;
@@ -96,8 +98,21 @@ public class PollyConfiguration extends Configuration
 	
 	@Override
 	public void reload() {
+	    SortedProperties old = this.props;
 	    super.reloadFile();
-	    
+	    try {
+	        this.init();
+	    } catch (ConfigurationFileException e) {
+	        e.printStackTrace();
+            this.props = old;
+            try {
+                this.init();
+            } catch (ConfigurationFileException ignore) {
+                ignore.printStackTrace();
+            }
+        } finally {
+            old.clear();
+        }
 	    this.fireConfigurationChanged();
 	}
 	
@@ -202,7 +217,7 @@ public class PollyConfiguration extends Configuration
         this.ignoreUnknownIdentifiers = this.readBoolean(tmp);
         
         tmp = this.props.getProperty(PARSE_ERROR_DETAILS, "1");
-        this.parseErrorDetail = this.parseInteger(tmp, 0, "");
+        this.parseErrorDetail = this.parseInteger(tmp, -1, "");
 	}
 	
 	

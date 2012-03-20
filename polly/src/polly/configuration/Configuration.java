@@ -51,9 +51,6 @@ public abstract class Configuration extends AbstractDisposable {
         try {
             in = new FileInputStream(file);
             tmp.load(in);
-            if (this.props != null) {
-                this.props.clear();
-            }
             this.props = tmp;
         } catch (FileNotFoundException e) {
             return e;

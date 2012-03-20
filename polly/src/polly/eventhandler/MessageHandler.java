@@ -6,6 +6,9 @@ import org.apache.log4j.Logger;
 
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.sdk.CommandManager;
+import de.skuzzle.polly.sdk.Configuration;
+import de.skuzzle.polly.sdk.eventlistener.ConfigurationEvent;
+import de.skuzzle.polly.sdk.eventlistener.ConfigurationListener;
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
 import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
@@ -22,7 +25,7 @@ import polly.core.users.UserManagerImpl;
 
 
 
-public class MessageHandler implements MessageListener {
+public class MessageHandler implements MessageListener, ConfigurationListener {
     
     private final static int OFF = 0;
     private final static int SIMPLE = 1;
@@ -41,6 +44,7 @@ public class MessageHandler implements MessageListener {
         this.userManager = userManager;
         this.executorThreadPool = executorThreadPool;
         this.config = config;
+        config.addConfigurationListener(this);
     }
     
 
@@ -111,7 +115,7 @@ public class MessageHandler implements MessageListener {
             return;
         }
         
-        if (detail == SIMPLE) {
+        if (detail > OFF) {
             e.getSource().sendMessage(e.getChannel(), ex.getMessage());
         }
         if (detail > SIMPLE) {
@@ -135,4 +139,11 @@ public class MessageHandler implements MessageListener {
 
     @Override
     public void noticeMessage(MessageEvent ignore) {}
+
+
+
+    @Override
+    public void configurationChange(ConfigurationEvent e) {
+        System.out.println(e.getSource().readInt(Configuration.PARSE_ERROR_DETAILS));
+    }
 }
