@@ -499,7 +499,7 @@ public class BinaryOperators {
 
                     if (i >= left.getElements().size() || i < 0) {
                         throw new ExecutionException(
-                            "UngÃ¼ltiger Index: " + i + "(" + 
+                            "Ungültiger Index: " + i + "(" + 
                             left.getElements().size() + ")", right.getPosition());
                     }
                     

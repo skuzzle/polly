@@ -403,7 +403,8 @@ public class InputParser extends AbstractParser<InputScanner> {
     
     
     protected Expression parse_postfix() throws ParseException {
-        Expression expression = this.parse_dotdot();
+//        Expression expression = this.parse_dotdot();
+        Expression expression = this.parse_autolist();
         
         Token la = this.scanner.lookAhead();
         while (this.operators.match(la, PrecedenceLevel.POSTFIX)) {
@@ -426,6 +427,24 @@ public class InputParser extends AbstractParser<InputScanner> {
             la = this.scanner.lookAhead();
         }
         return expression;
+    }
+    
+    
+    
+    protected Expression parse_autolist() throws ParseException {
+        Expression e = this.parse_dotdot();
+        Token la = this.scanner.lookAhead();
+        if (la.matches(TokenType.COMMA)) {
+            ListLiteral result = new ListLiteral(la);
+            result.getElements().add(e);
+            
+            while (this.scanner.match(TokenType.COMMA)) {
+                result.getElements().add(this.parse_dotdot());
+            }
+            return result;
+        } else {
+            return e;
+        }
     }
     
     
@@ -464,7 +483,7 @@ public class InputParser extends AbstractParser<InputScanner> {
         }
         return e;
     }
-
+    
     
     
     protected Expression parse_literal() throws ParseException {
