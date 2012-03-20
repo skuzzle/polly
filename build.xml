@@ -96,7 +96,7 @@
     <!-- 
         builds all plugins and copies them into pollys plugin dir
     -->
-    <target name="plugins">
+    <target name="plugins" depends="sdk">
         <mkdir dir="${plugin.dir}"/>
         
         <ant dir="polly.core" target="${mode}" inheritAll="false"/>
