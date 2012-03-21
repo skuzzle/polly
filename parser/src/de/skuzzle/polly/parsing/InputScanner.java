@@ -195,6 +195,8 @@ public class InputScanner extends AbstractTokenStream {
                     return new Token(TokenType.QUESTION, this.spanFrom(tokenStart), "?");
                 } else if (next == '~') {
                     return new Token(TokenType.WAVE, this.spanFrom(tokenStart), "~");
+                } else if (next == ';') {
+                    return new Token(TokenType.SEMICOLON, this.spanFrom(tokenStart), ";");
                 } else if (next == '&') {
                     state = 7;
                 } else if (next == '|') {
