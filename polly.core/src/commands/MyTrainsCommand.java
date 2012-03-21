@@ -25,7 +25,6 @@ public class MyTrainsCommand extends Command {
         this.createSignature("Listet eine detaillierte Capitrainrechnung für einen " +
         		"Benutzer auf", 
     		new Parameter("Details", Types.BOOLEAN));
-        this.setRegisteredOnly();
         this.setHelpText("Listet die offene Capitrain Rechnung für einen " +
                 "Benutzer auf.");
         this.trainManager = trainManager;
