@@ -5,6 +5,7 @@ import java.util.Stack;
 
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.Type;
+import de.skuzzle.polly.parsing.tree.Expression;
 import de.skuzzle.polly.parsing.tree.literals.BooleanLiteral;
 import de.skuzzle.polly.parsing.tree.literals.ListLiteral;
 import de.skuzzle.polly.parsing.tree.literals.Literal;
@@ -40,20 +41,64 @@ public class Functions {
     
     
     
-    
-    public final static class Length extends ExpressionStub {
-
+    public static class ListLength extends ExpressionStub {
+        
         private static final long serialVersionUID = 1L;
 
-        public Length() {
+        public ListLength() {
             super(Type.NUMBER);
         }
         
         
         @Override
         public void collapse(Stack<Literal> stack) throws ExecutionException {
-            ListLiteral list = (ListLiteral) stack.pop();
-            stack.push(new NumberLiteral(list.getElements().size()));
+            ListLiteral lit = (ListLiteral) stack.pop();
+            
+            stack.push(new NumberLiteral(lit.getElements().size()));
+        }
+
+        
+    }
+    
+    
+    
+    public static enum ListType {
+        SUM, AVG, LENGTH;
+    }
+    
+    
+    
+    public final static class List extends ExpressionStub {
+
+        private static final long serialVersionUID = 1L;
+
+        private ListType type;
+        
+        public List(ListType type) {
+            super(Type.NUMBER);
+            this.type = type;
+        }
+        
+        
+        @Override
+        public void collapse(Stack<Literal> stack) throws ExecutionException {
+            ListLiteral lit = (ListLiteral) stack.pop();
+            
+            double sum = 0;
+            switch (this.type) {
+            case SUM:
+                for (Expression e : lit.getElements()) {
+                    sum += ((NumberLiteral) e).getValue();
+                }
+                stack.push(new NumberLiteral(sum));
+                break;
+            case AVG:
+                for (Expression e : lit.getElements()) {
+                    sum += ((NumberLiteral) e).getValue();
+                }
+                stack.push(new NumberLiteral(sum / lit.getElements().size()));
+                break;
+            }
         }
         
     }
@@ -90,6 +135,7 @@ public class Functions {
     public static enum MathType {
         SIN, COS, TAN, ABS, SQRT, CEIL, FLOOR, LOG, ROUND, ATAN, ACOS, ASIN;
     }
+
     
     
     public final static class Math extends ExpressionStub {
@@ -153,7 +199,7 @@ public class Functions {
         }
     }
     
-
+    
     
     /**
      * Private constructor.

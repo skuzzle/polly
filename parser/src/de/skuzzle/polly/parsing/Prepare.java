@@ -6,6 +6,7 @@ import de.skuzzle.polly.parsing.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.tree.functions.ContainsFunction;
 import de.skuzzle.polly.parsing.tree.functions.DefaultMathFunction;
 import de.skuzzle.polly.parsing.tree.functions.Functions;
+import de.skuzzle.polly.parsing.tree.functions.AggregateListFunction;
 import de.skuzzle.polly.parsing.tree.functions.ListLengthFunction;
 import de.skuzzle.polly.parsing.tree.functions.RandomFunction;
 import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
@@ -144,6 +145,10 @@ public final class Prepare {
             dest.add(new DefaultMathFunction(Functions.MathType.ATAN), "math");
             dest.add(new DefaultMathFunction(Functions.MathType.ASIN), "math");
             dest.add(new DefaultMathFunction(Functions.MathType.ACOS), "math");
+            
+            dest.add(new AggregateListFunction(Functions.ListType.SUM), "math");
+            dest.add(new AggregateListFunction(Functions.ListType.AVG), "math");
+            
         } catch (ParseException ignore) {
             // can not happen
         }
