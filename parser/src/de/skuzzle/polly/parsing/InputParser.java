@@ -105,6 +105,7 @@ public class InputParser extends AbstractParser<InputScanner> {
 
     private PrecedenceTable operators;
     private int openExpressions;
+    private boolean insList;
 
     
     
@@ -434,7 +435,10 @@ public class InputParser extends AbstractParser<InputScanner> {
     protected Expression parse_autolist() throws ParseException {
         Expression e = this.parse_dotdot();
         Token la = this.scanner.lookAhead();
-        if (la.matches(TokenType.COMMA)) {
+        
+        // HACK: only check for lists here if we are not currently parsing a real
+        //       list literal
+        if (!this.insList && la.matches(TokenType.COMMA)) {
             ListLiteral result = new ListLiteral(la);
             result.getElements().add(e);
             
@@ -663,6 +667,8 @@ public class InputParser extends AbstractParser<InputScanner> {
             return;
         }
         
+        // HACK: set inList to not interfer with auto list detection
+        this.insList = true;
         result.add(this.parse_relational());
         
         /*
@@ -676,5 +682,6 @@ public class InputParser extends AbstractParser<InputScanner> {
             result.add(this.parse_relational());
             la = this.scanner.lookAhead();
         }
+        this.insList = false;
     }
 }
