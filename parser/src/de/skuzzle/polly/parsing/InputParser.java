@@ -664,7 +664,6 @@ public class InputParser extends AbstractParser<InputScanner> {
             return;
         }
         
-        // HACK: set inList to not interfer with auto list detection
         result.add(this.parse_relational());
         
         /*
