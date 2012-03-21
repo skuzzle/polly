@@ -317,8 +317,8 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
 	    }
         this.bot.connect(e.getHostName(), e.getPort());
         
-        this.bot.changeNick(e.getNickName());
         this.bot.sendMessage("nickserv", "ghost " + e.getNickName() + " " + e.getIdentity());
+        this.bot.changeNick(e.getNickName());
         this.bot.identify(e.getIdentity());
         this.joinChannels(e.getChannels());
         this.recent = e;
