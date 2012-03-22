@@ -51,7 +51,8 @@ import de.skuzzle.polly.parsing.tree.literals.UserLiteral;
  * expression      -> term (expression_op term)*
  * term            -> factor (term_op factor)*
  * factor          -> postfix (factor_op factor)?
- * postfix         -> dotdot (postfix_op)*
+ * postfix         -> autlist (postfix_op)*
+ * autolist        -> dotdot (';' dotdot)*
  * dotdot          -> literal ('..' literal ('?' literal)?)?
  * access          -> literal ['.' literal]
  * literal         -> identifier ( '(' parameters ')' )?

@@ -16,6 +16,7 @@ import de.skuzzle.polly.parsing.Type;
 import de.skuzzle.polly.parsing.declarations.Namespace;
 import de.skuzzle.polly.parsing.tree.BinaryExpression;
 import de.skuzzle.polly.parsing.tree.Expression;
+import de.skuzzle.polly.parsing.tree.TypeExpression;
 import de.skuzzle.polly.parsing.tree.literals.BooleanLiteral;
 import de.skuzzle.polly.parsing.tree.literals.DateLiteral;
 import de.skuzzle.polly.parsing.tree.literals.ListLiteral;
@@ -243,7 +244,7 @@ public class BinaryOperators {
     public static class ListScalarOperator extends BinaryOperatorOverload {
         
         private static final long serialVersionUID = 1L;
-        private ListLiteral resultList;
+        private BinaryExpression binaryExp;
         
         public ListScalarOperator(TokenType operator) {
             super(operator, new ListType(Type.ANY), Type.ANY, Type.ANY);
@@ -256,31 +257,39 @@ public class BinaryOperators {
 
             super.contextCheck(context, left, right);
 
-            // TODO: left operand can be any expression which evaluates to a list after
-            //       execution.
-            if (!(left instanceof ListLiteral)) {
-                throw new ParseException(
-                    "Diese Operation ist leider (noch) nicht möglich", 
-                    right.getPosition());
-            }
+            // check context for fictional list element of the right type. That makes
+            // this.binaryExp a valid binary expression which will be reused in
+            // #collapse to calculate the elements of the new list.
+            ListType type = (ListType) left.getType();
+            Expression e = new TypeExpression(type.getSubType());
             
-            ListLiteral list = (ListLiteral) left;
-            this.resultList = new ListLiteral(new ArrayList<Expression>());
             Token op = new Token(this.getOperatorType(), Position.EMPTY);
-            for (Expression e : list.getElements()) {
-                Expression bin = new BinaryExpression(e, op, right);
-                bin = bin.contextCheck(context);
-                
-                this.resultList.getElements().add(bin);
-            }
-            this.setReturnType(this.resultList.getType());
+            this.binaryExp = new BinaryExpression(e, op, right);
+            this.binaryExp = (BinaryExpression) this.binaryExp.contextCheck(context);
+            this.setReturnType(this.binaryExp.getType());
         }
         
         
         
         @Override
         public void collapse(Stack<Literal> stack) throws ExecutionException {
-            this.resultList.collapse(stack);
+            Literal right = stack.pop();
+            ListLiteral lit = (ListLiteral) stack.pop();
+            
+            ListLiteral result = new ListLiteral(
+                    new ArrayList<Expression>(
+                        lit.getElements().size()), lit.getElementType());
+            
+            Stack<Literal> tmp = new Stack<Literal>();
+            for (Expression e : lit.getElements()) {
+                tmp.push(right);
+                tmp.push((Literal) e);
+                this.binaryExp.setLeftOperand(e);
+                this.binaryExp.setRightOperand(right);
+                this.binaryExp.collapse(tmp);
+                result.getElements().add(tmp.pop());
+            }
+            stack.push(result);
         }
     }
     

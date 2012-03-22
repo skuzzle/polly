@@ -72,6 +72,18 @@ public class BinaryExpression extends Expression {
         this.operator = operator;
         this.rightOperand = rightOperand;
     }
+    
+    
+    
+    public void setLeftOperand(Expression left) {
+        this.leftOperand = left;
+    }
+    
+    
+    
+    public void setRightOperand(Expression right) {
+        this.rightOperand = right;
+    }
 
     
     
