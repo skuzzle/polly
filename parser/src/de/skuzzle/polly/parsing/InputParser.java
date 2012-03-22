@@ -375,8 +375,14 @@ public class InputParser extends AbstractParser<InputScanner> {
         Expression expression = this.parse_factor();
         
         Token la = this.scanner.lookAhead();
-        while (this.operators.match(la, PrecedenceLevel.TERM)) {
-            this.scanner.consume();
+        while (this.operators.match(la, PrecedenceLevel.TERM)) {            
+            // ISSUE 0000099: If Identifier or open brace, do not consume the token but
+            //                pretend it was a multiplication
+            if (la.matches(TokenType.IDENTIFIER) || la.matches(TokenType.OPENBR)) {
+                la = new Token(TokenType.MUL, la.getPosition());
+            } else {
+                this.scanner.consume();
+            }
             
             expression = new BinaryExpression(expression, la, this.parse_factor());
             la = this.scanner.lookAhead();

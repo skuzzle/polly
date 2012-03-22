@@ -44,6 +44,11 @@ public class PrecedenceTable {
         this.add(PrecedenceLevel.EXPRESSION, TokenType.URIGHT_SHIFT);
         this.add(PrecedenceLevel.EXPRESSION, TokenType.LEFT_SHIFT);
         
+        // ISSUE 0000099: Add open brace and identifier to TERM precedence level so they
+        //                are recognized as multiplications
+        this.add(PrecedenceLevel.TERM, TokenType.OPENBR);
+        this.add(PrecedenceLevel.TERM, TokenType.IDENTIFIER);
+        
         this.add(PrecedenceLevel.TERM, TokenType.MUL);
         this.add(PrecedenceLevel.TERM, TokenType.DIV);
         this.add(PrecedenceLevel.TERM, TokenType.INTDIV);
