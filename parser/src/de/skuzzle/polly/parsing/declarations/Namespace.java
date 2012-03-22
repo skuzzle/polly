@@ -333,9 +333,12 @@ public class Namespace {
     
     public synchronized TypeDeclaration resolveType(IdentifierLiteral id) 
             throws ParseException {
-        TypeDeclaration decl = (TypeDeclaration) this.reserved.tryResolve(id, false);
-        if (decl != null) {
-            return decl;
+        Declaration decl = this.reserved.tryResolve(id, false);
+        if (decl != null && (decl instanceof TypeDeclaration)) {
+            return (TypeDeclaration) decl;
+        } else if (decl != null) {
+            throw new ParseException(id.getIdentifier() + " ist kein Typ", 
+                id.getPosition());
         }
         
         throw new ParseException("Unbekannter Typ: " + id.getIdentifier(), 

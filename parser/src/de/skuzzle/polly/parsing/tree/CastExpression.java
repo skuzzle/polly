@@ -29,15 +29,7 @@ public class CastExpression extends Expression {
     
     @Override
     public Expression contextCheck(Namespace context) throws ParseException {
-        TypeDeclaration type = null;
-        try {
-            type = context.resolveType(this.castOp);
-        } catch (ParseException e) {
-            // this was no cast but a normal identifier in braces. So return the resolved
-            // expression
-            return new VarOrCallExpression(this.castOp).contextCheck(context);
-        }
-        
+        TypeDeclaration type = context.resolveType(this.castOp);
         this.expression = this.expression.contextCheck(context);
         this.setType(type.getType());
         return this;

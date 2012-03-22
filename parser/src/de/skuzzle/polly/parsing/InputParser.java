@@ -568,7 +568,9 @@ public class InputParser extends AbstractParser<InputScanner> {
                         this.leaveExpression();
                         
                         if (this.scanner.lookAhead().getType() == TokenType.EOS) {
-                            return new IdentifierLiteral(tmp);
+                            // just an identifier in braces?
+                            return new VarOrCallExpression(
+                                new IdentifierLiteral(tmp));
                         } else {
                             return new CastExpression(
                                 this.parse_literal(), 
