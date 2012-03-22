@@ -41,7 +41,7 @@ public abstract class AbstractParser<T extends AbstractTokenStream> {
     
     
     
-    protected synchronized TreeElement parse(T scanner) 
+    protected TreeElement parse(T scanner) 
             throws ParseException {
         this.scanner = scanner;
         return this.parse_input();
@@ -49,7 +49,7 @@ public abstract class AbstractParser<T extends AbstractTokenStream> {
     
     
     
-    protected synchronized TreeElement tryParse(T scanner) {
+    protected TreeElement tryParse(T scanner) {
         try {
             return this.parse(scanner);
         } catch (ParseException e) {

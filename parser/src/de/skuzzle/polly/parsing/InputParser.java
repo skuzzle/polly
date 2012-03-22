@@ -108,7 +108,7 @@ public class InputParser extends AbstractParser<InputScanner> {
 
     
     
-    public synchronized Root parse(String input) throws ParseException {
+    public Root parse(String input) throws ParseException {
         try {
             return this.parse(input, "ISO-8859-1");
         } catch (UnsupportedEncodingException ignore) {
@@ -120,7 +120,7 @@ public class InputParser extends AbstractParser<InputScanner> {
     
     
     
-    public synchronized Root parse(String input, String encoding) 
+    public Root parse(String input, String encoding) 
             throws ParseException, UnsupportedEncodingException {
         InputScanner inp = new InputScanner(input, encoding);
         this.operators = new PrecedenceTable();
@@ -130,7 +130,7 @@ public class InputParser extends AbstractParser<InputScanner> {
     
     
     
-    public synchronized Root tryParse(String input) {
+    public Root tryParse(String input) {
         try {
             return this.tryParse(input, "ISO-8859-1");
         } catch (UnsupportedEncodingException ignore) {
@@ -140,7 +140,7 @@ public class InputParser extends AbstractParser<InputScanner> {
     
     
     
-    public synchronized Root tryParse(String input, String encoding) 
+    public Root tryParse(String input, String encoding) 
             throws UnsupportedEncodingException {
         return (Root) this.tryParse(new InputScanner(input, encoding));
     }
