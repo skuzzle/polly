@@ -9,11 +9,6 @@ public class SetupException extends Exception {
         super();
     }
 
-    public SetupException(String message, Throwable cause,
-        boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
-
     public SetupException(String message, Throwable cause) {
         super(message, cause);
     }

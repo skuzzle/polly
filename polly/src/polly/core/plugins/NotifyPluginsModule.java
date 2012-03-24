@@ -14,7 +14,7 @@ import polly.moduleloader.annotations.Provide;;
         @Require(state = ModuleStates.PLUGINS_READY),
         @Require(state = ModuleStates.PERSISTENCE_READY),
         @Require(state = ModuleStates.IRC_READY),
-        @Require(state = ModuleStates.USERS_READY),
+        @Require(state = ModuleStates.USERS_READY)
     },
     provides =
         @Provide(state = ModuleStates.PLUGINS_NOTIFIED)

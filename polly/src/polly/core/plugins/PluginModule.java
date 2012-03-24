@@ -16,7 +16,7 @@ import polly.util.ProxyClassLoader;
     requires = {
         @Require(component = PollyConfiguration.class),
         @Require(component = ShutdownManagerImpl.class),
-        @Require(component = ProxyClassLoader.class),
+        @Require(component = ProxyClassLoader.class)
     },
     provides = {
         @Provide(component = PluginManagerImpl.class),

@@ -136,7 +136,7 @@ public class PluginClassLoader extends SecureClassLoader implements Cloneable {
             return null;
         }
         
-        synchronized (this.getClassLoadingLock(name)) {
+        synchronized (this) {
             byte[] data = this.getFile(this.jar, name);
             
             if (data == null) {

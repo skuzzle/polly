@@ -32,7 +32,7 @@ import polly.moduleloader.annotations.Require;
     requires = {
         @Require(component = PollyConfiguration.class),
         @Require(component = ShutdownManagerImpl.class),
-        @Require(component = PluginManagerImpl.class),
+        @Require(component = PluginManagerImpl.class)
     })
 public class UpdaterModule extends AbstractModule {
 

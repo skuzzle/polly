@@ -24,7 +24,7 @@ import polly.core.ModuleStates;
     },
     provides = {
         @Provide(component = PersistenceManagerImpl.class),
-        @Provide(state = ModuleStates.PERSISTENCE_READY),
+        @Provide(state = ModuleStates.PERSISTENCE_READY)
     })
 public class PersistenceModule extends AbstractModule {
 
