@@ -24,6 +24,9 @@ public class JoinCommand extends Command {
                 new Parameter("Channel", Types.CHANNEL));
         this.createSignature("Lässt polly alle Channels in der Liste betreten.", 
                 new Parameter("Channelliste", new ListType(Types.CHANNEL)));
+        this.createSignature("Lässt polly einen Channel mit Passwort betreten", 
+            new Parameter("Channel", Types.CHANNEL),
+            new Parameter("Passwort", Types.STRING));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
         this.setHelpText("Befehl zum joinen von Channels.");
@@ -41,6 +44,12 @@ public class JoinCommand extends Command {
             channels = Collections.singletonList(ct);
         } else if (this.match(signature, 1)) {
             channels = signature.getListValue(ChannelType.class, 0);
+        } else if (this.match(signature, 2)) {
+            String c = signature.getStringValue(0);
+            String pw = signature.getStringValue(1);
+            
+            this.getMyPolly().irc().joinChannel(c, pw);
+            return false;
         }
         
         for (ChannelType ct : channels) {
