@@ -464,7 +464,7 @@ public class InputScanner extends AbstractTokenStream {
                 lexem.append('\\');
                 return;
             } else {
-                this.parseException("Unültige-Escape Sequenz: '\\" + (char) next,
+                this.parseException("Ungültige-Escape Sequenz: '\\" + (char) next,
                     tokenStart);
             }
         }
@@ -533,7 +533,7 @@ public class InputScanner extends AbstractTokenStream {
             }
         }
         
-        this.parseException("Ungï¿½ltiges User-Literal: " + lexem.toString(), tokenStart);
+        this.parseException("Ungültiges User-Literal: " + lexem.toString(), tokenStart);
         return null;
     }
     
@@ -584,7 +584,7 @@ public class InputScanner extends AbstractTokenStream {
             }
         }
         
-        this.parseException("Ungï¿½ltiger identifier: " + lexem.toString(), tokenStart);
+        this.parseException("Ungülltiger identifier: " + lexem.toString(), tokenStart);
         return null;
     }
     
@@ -604,7 +604,7 @@ public class InputScanner extends AbstractTokenStream {
         if (lookup == null) {
             return new Token(TokenType.IDENTIFIER, this.spanFrom(tokenStart), string);
         } else if (lookup == TokenType.UNKNOWN) {
-            this.parseException("Ungï¿½ltiger Identifier: " + string, tokenStart);
+            this.parseException("Ungültiger Identifier: " + string, tokenStart);
             return null; /* unreachable */
         } else {
             return new Token(lookup, this.spanFrom(tokenStart));
@@ -733,7 +733,7 @@ public class InputScanner extends AbstractTokenStream {
                 // HACK: Need to ensure that at least on number has been read before 
                 //       reading on.
                 if (firstPart > 31 || secondPart > 12) {
-                    this.parseException("Ungï¿½ltiges DateTime-Literal", tokenStart);
+                    this.parseException("Ungülltiges DateTime-Literal", tokenStart);
                 }
                 
                 if (Character.isDigit(next)) {
@@ -753,7 +753,7 @@ public class InputScanner extends AbstractTokenStream {
                     state = 7;
                 } else {
                     this.pushBack(next);
-                    this.parseException("Ungï¿½ltiges DateTime-Literal", tokenStart);
+                    this.parseException("Ungültiges DateTime-Literal", tokenStart);
                 }
             } else if (state == 7) {
                 int next = this.readChar();
@@ -765,12 +765,12 @@ public class InputScanner extends AbstractTokenStream {
                     state = 8;
                 } else {
                     this.pushBack(next);
-                    this.parseException("Ungï¿½ltiges Date-Time-Literal", tokenStart);
+                    this.parseException("Ungültiges Date-Time-Literal", tokenStart);
                 }
                 
             } else if (state == 8) {
                 if (thirdPart < 1900 || thirdPart > 9999) {
-                    this.parseException("Ungï¿½ltiges DateTime-Literal", tokenStart);
+                    this.parseException("Ungültiges DateTime-Literal", tokenStart);
                 }
                 
                 Calendar c = Calendar.getInstance();
@@ -793,7 +793,7 @@ public class InputScanner extends AbstractTokenStream {
                     state = 10;
                 } else {
                     this.pushBack(next);
-                    this.parseException("Ungï¿½ltige Zahl", tokenStart);
+                    this.parseException("Ungültige Zahl", tokenStart);
                 }
                 
             } else if (state == 10) {
@@ -806,7 +806,7 @@ public class InputScanner extends AbstractTokenStream {
                     
                     // HACK: Ensure that at least one number has been read
                     if (exp == 0.0) {
-                        this.parseException("Ungï¿½ltige Zahl", tokenStart);
+                        this.parseException("Ungültige Zahl", tokenStart);
                     }
                     value = value * Math.pow(10, exp * exp_sign);
                     return new Token(TokenType.NUMBER, this.spanFrom(tokenStart), value);
@@ -833,7 +833,7 @@ public class InputScanner extends AbstractTokenStream {
                 if (InputScanner.isTimeLiteralChar(next)) {
                     
                     if (odd.contains(next)) {
-                        this.parseException("Ungï¿½ltiges DateTime-Literal", tokenStart);
+                        this.parseException("Ungültiges DateTime-Literal", tokenStart);
                     }
                     odd.add(next);
                     value += tmp * InputScanner.timeLiteralValue(next);
