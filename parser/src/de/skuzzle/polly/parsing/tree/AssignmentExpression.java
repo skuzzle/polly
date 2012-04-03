@@ -11,6 +11,7 @@ import de.skuzzle.polly.parsing.declarations.FunctionDeclaration;
 import de.skuzzle.polly.parsing.declarations.Namespace;
 import de.skuzzle.polly.parsing.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.tree.literals.Literal;
+import de.skuzzle.polly.parsing.tree.literals.StringLiteral;
 
 
 
@@ -81,19 +82,20 @@ public class AssignmentExpression extends Expression {
             // Declarations must always be stored at root level!
             context.addRoot(func);
 
-            // Function definitions do not have a return value (yet?)
-            this.setType(Type.UNKNOWN);
+            // Function definitions return a string indicating success
+            this.setType(Type.STRING);
         } else if (this.declaration instanceof VarDeclaration) {
             
             this.expression = this.expression.contextCheck(context);
             
-            ((VarDeclaration) this.declaration).setExpression(this.expression);
+            //((VarDeclaration) this.declaration).setExpression(this.expression);
             
+            this.declaration.setType(this.expression.getType());
             // Declarations must always be stored at root level!
             context.addRoot(this.declaration);
             this.setType(this.expression.getType());
             
-            return this.expression;
+            // return this.expression;
         }
         return this;
     }
@@ -102,8 +104,11 @@ public class AssignmentExpression extends Expression {
     
     @Override
     public void collapse(Stack<Literal> stack) throws ExecutionException {
-        // nothing happens here. if this was a VarDeclaration, this expression will
-        // be replaced by the declared expression during context check.
-        // If this is aFunctionDeclaration: nothing to do here
+        if (this.declaration instanceof FunctionDeclaration) {
+            stack.push(new StringLiteral("Funktion gespeichert"));
+        } else if (this.declaration instanceof VarDeclaration) {
+            this.expression.collapse(stack);
+            ((VarDeclaration) this.declaration).setExpression(stack.peek());
+        }
     }
 }
