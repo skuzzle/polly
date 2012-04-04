@@ -2,6 +2,7 @@ package entities;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -32,6 +33,8 @@ import javax.persistence.TemporalType;
     )
 })
 public class LogEntry {
+    
+    public final static int MESSAGE_LEN = 512;
     
     public final static int TYPE_MESSAGE = 0;
     public final static int TYPE_JOIN = 1;
@@ -83,6 +86,7 @@ public class LogEntry {
     
     private String message;
     
+    @Column(columnDefinition = "VARCHAR(" + MESSAGE_LEN + ")")
     private String channel;
     
     @Temporal(TemporalType.TIMESTAMP)
@@ -92,6 +96,10 @@ public class LogEntry {
 
     
     public LogEntry() {}
+    
+    public LogEntry(LogEntry other) {
+        this(other.nickname, other.message, other.channel, other.date, other.type);
+    }
     
     private LogEntry(String nickname, String message, String channel, Date date, int type) {
         super();
@@ -116,6 +124,11 @@ public class LogEntry {
     public String getMessage() {
         return message;
     }
+    
+    
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
     
     public String getChannel() {
@@ -131,5 +144,12 @@ public class LogEntry {
     
     public int getType() {
         return type;
+    }
+    
+    
+    
+    @Override
+    public String toString() {
+        return "[LogEntry: " + this.message + "]";
     }
 }

@@ -48,7 +48,15 @@ public class PollyLoggingManager extends AbstractDisposable {
     
     public void logMessage(LogEntry entry) throws DatabaseException {
         synchronized (this.cache) {
-            this.cache.add(entry);
+            String msg = entry.getMessage();
+            
+            do {
+                LogEntry newEntry = new LogEntry(entry);
+                int newLen = Math.min(LogEntry.MESSAGE_LEN, msg.length());
+                newEntry.setMessage(msg.substring(0, newLen));
+                msg = msg.substring(newLen);
+                this.cache.add(newEntry);
+            } while (msg.length() > 0);
             
             if (this.cache.size() == cacheSize) {
                 this.storeCache();
