@@ -40,6 +40,7 @@ import commands.InfoCommand;
 import commands.SignOffCommand;
 import commands.AuthCommand;
 import commands.TalkCommand;
+import commands.UptimeCommand;
 import commands.UsersCommand;
 import commands.VarCommand;
 import commands.VenadCommand;
@@ -120,6 +121,7 @@ public class MyPlugin extends PollyPlugin {
 		this.addCommand(new SetAttributeCommand(myPolly));
 		this.addCommand(new ListAttributesCommand(myPolly));
 		this.addCommand(new GetAttributeCommand(myPolly));
+		this.addCommand(new UptimeCommand(myPolly));
 
 		this.addCommand(new FooCommand(myPolly));
 		this.addCommand(new VarCommand(myPolly));
