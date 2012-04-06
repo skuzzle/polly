@@ -14,9 +14,6 @@
     -->
     <target name="porat" depends="network">
         <ant dir="porat" target="${mode}" inheritAll="false"/>
-        <copy 
-            file="porat/dist/porat.jar" 
-            todir="${lib.dir}"/>
     </target>
     
     
