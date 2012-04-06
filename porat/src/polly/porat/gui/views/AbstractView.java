@@ -3,6 +3,7 @@ package polly.porat.gui.views;
 import javax.swing.Icon;
 
 import polly.network.events.NetworkEvent;
+import polly.porat.events.ProtocolEvent;
 
 
 public abstract class AbstractView implements View {
@@ -44,6 +45,14 @@ public abstract class AbstractView implements View {
     public void connectionClosed(NetworkEvent e) {
         this.setEnabled(false);
     }
+    
+    
+    @Override
+    public void responseReceived(ProtocolEvent e) {}
+    
+    
+    @Override
+    public void errorReceived(ProtocolEvent e) {}
     
     
     @Override

@@ -6,7 +6,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 
-public class Icons {
+public final class Icons {
 
     
     public final static Icon TOOLBAR_ICON = loadIcon("widgets.png");
@@ -27,8 +27,13 @@ public class Icons {
     public final static Icon DRIVE_ICON = loadIcon("drive.png");
     
     
+    
     public static Icon loadIcon(String path) {
         URL imgUrl = Icons.class.getResource(path);
         return new ImageIcon(imgUrl);
     }
+    
+    
+    
+    private Icons() {}
 }

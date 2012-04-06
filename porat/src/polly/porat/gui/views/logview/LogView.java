@@ -22,8 +22,12 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.table.TableRowSorter;
 
+import polly.network.protocol.Constants;
+import polly.network.protocol.Constants.ResponseType;
+import polly.porat.events.ProtocolEvent;
 import polly.porat.gui.components.KeyButton;
 import polly.porat.gui.images.Icons;
+import polly.porat.gui.util.SwingInvoke;
 import polly.porat.gui.views.AbstractView;
 
 
@@ -42,6 +46,7 @@ public class LogView extends AbstractView {
     private JTextArea logText;
     private TableRowSorter<LogItemTableModel> rowFilter;
     private LogItemTableModel model;
+    private JLabel infoLabel;
 
     
 
@@ -109,14 +114,22 @@ public class LogView extends AbstractView {
         
         this.filter = new JTextField();
         
-        JLabel filterLabel = new JLabel("Filter:  ");
+        JLabel filterLabel = new JLabel("  Filter:  ");
         filterLabel.setLabelFor(this.filter);
-        bottom.add(Box.createHorizontalStrut(6));
         bottom.add(filterLabel);
         bottom.add(this.filter);
+        bottom.setAlignmentX(0.0f);
+        
+        JPanel temp = new JPanel();
+        temp.setLayout(new BoxLayout(temp, BoxLayout.Y_AXIS));
+        this.infoLabel = new JLabel("Info: ");
+        this.infoLabel.setAlignmentX(0.0f);
+        this.infoLabel.setVisible(false);
+        temp.add(bottom);
+        temp.add(this.infoLabel);
         
         this.content.add(top, BorderLayout.NORTH);
-        this.content.add(bottom, BorderLayout.SOUTH);
+        this.content.add(temp, BorderLayout.SOUTH);
         
         return this.content;
     }
@@ -157,4 +170,32 @@ public class LogView extends AbstractView {
         return this.rowFilter;
     }
     
+
+    
+    @Override
+    public void responseReceived(ProtocolEvent e) {
+        if (e.getType() == ResponseType.LIVE_LOG_ON) {
+            final int threshold = (Integer) e.getResponse().getPayload().get(
+                Constants.LIVE_LOG_THRESHOLD);
+            
+            SwingInvoke.later(new Runnable() {
+                
+                @Override
+                public void run() {
+                    infoLabel.setText("  Threshold is " + threshold + 
+                        ". Press F5 to update manually.");
+                    infoLabel.setVisible(true);
+                }
+            });
+        } else if (e.getType() == ResponseType.LIVE_LOG_OFF) {
+            SwingInvoke.later(new Runnable() {
+                
+                @Override
+                public void run() {
+                    infoLabel.setText("");
+                    infoLabel.setVisible(false);
+                }
+            });
+        }
+    }
 }

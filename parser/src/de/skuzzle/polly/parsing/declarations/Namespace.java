@@ -303,7 +303,7 @@ public class Namespace {
                 id.getIdentifier().equals(this.forbidden.getName().getIdentifier())) {
             throw new ParseException("Ungülter rekursiver Aufruf von " + id, 
                 id.getPosition());
-    }
+        }
         
         Declarations ns = this.namespaces.get(this.currentNS);
         

@@ -7,6 +7,7 @@ public interface Constants {
     public final static String USER_NAME = "USER_NAME";
     public final static String PASSWORD = "PASSWORD";
     public final static String CONNECTION_ID = "CONNECTION_ID";
+    public final static String LIVE_LOG_THRESHOLD = "LIVE_LOG_THRESHOLD"; 
     
     
     
@@ -19,7 +20,7 @@ public interface Constants {
     
     public static enum ResponseType {
         ERROR, LOGGED_IN, ACCEPTED, LOG_ITEM, FILE, IGNORED, LIVE_LOG_ON, LIVE_LOG_OFF, 
-        LOGOUT, IRC_FORWARD_ON, IRC_FORWARD_OFF, UPDATE_DONE;
+        LOGOUT, IRC_FORWARD_ON, IRC_FORWARD_OFF, UPDATE_DONE, INVALID;
     }
     
     

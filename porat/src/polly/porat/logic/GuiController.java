@@ -128,6 +128,7 @@ public class GuiController implements ProtocolListener {
     public void addView(View view) {
         this.mainWindow.addView(view);
         this.networkHandler.addConnectionListener(view);
+        this.networkHandler.addProtocolListener(view);
     }
     
     
@@ -222,8 +223,12 @@ public class GuiController implements ProtocolListener {
     public void responseReceived(ProtocolEvent e) {
         switch (e.getType()) {
         case LOGGED_IN: this.setOnline(true); break;
-        case FILE: this.storeFiles(e.getResponse());
-        case LIVE_LOG_ON: this.endActivity(); break;
+        case FILE: 
+            this.storeFiles(e.getResponse());
+            break;
+        case LIVE_LOG_ON: 
+            this.endActivity();
+            break;
         case LIVE_LOG_OFF: this.endActivity(); break;
         case UPDATE_DONE: this.endActivity(); break;
         }

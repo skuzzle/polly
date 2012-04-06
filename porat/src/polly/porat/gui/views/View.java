@@ -4,9 +4,10 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 
 import polly.network.events.ConnectionListener;
+import polly.porat.events.ProtocolListener;
 
 
-public interface View extends ConnectionListener {
+public interface View extends ConnectionListener, ProtocolListener {
 
     public abstract String getName();
     

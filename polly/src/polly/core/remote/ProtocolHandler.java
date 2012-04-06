@@ -52,27 +52,34 @@ public class ProtocolHandler implements ObjectReceivedListener, ConnectionListen
         }
         
         
+        Response response;
         switch (request.getType()) {
         case LIVE_LOG_ON:
             this.adminManager.enableLiveLog(e.getSource());
-            e.getSource().send(new Response(request, ResponseType.LIVE_LOG_ON));
+            response = new Response(request, ResponseType.LIVE_LOG_ON);
+            response.getPayload().put(Constants.LIVE_LOG_THRESHOLD, 
+                    AdministrationManager.LIVE_LOG_THRESHOLD);
             break;
         case LIVE_LOG_OFF:
             this.adminManager.disableLiveLog(e.getSource());
-            e.getSource().send(new Response(request, ResponseType.LIVE_LOG_OFF));
+            response = new Response(request, ResponseType.LIVE_LOG_OFF);
             break;
         case UPDATE:
             this.adminManager.sendLogs(e.getSource());
-            e.getSource().send(new Response(request, ResponseType.UPDATE_DONE));
+            response = new Response(request, ResponseType.UPDATE_DONE);
             break;
         case UPDATE_CACHE:
             this.adminManager.getLogAppender().processLogCache(true);
-            e.getSource().send(new Response(request, ResponseType.UPDATE_DONE));
+            response = new Response(request, ResponseType.UPDATE_DONE);
             break;
         case LOGOUT:
             this.adminManager.logout(e.getSource());
-            e.getSource().send(new Response(request, ResponseType.LOGOUT));
+            response = new Response(request, ResponseType.LOGOUT);
+        default:
+            response = new Response(request, ResponseType.INVALID);
+            break;
         }
+        e.getSource().send(response);
     }
     
     

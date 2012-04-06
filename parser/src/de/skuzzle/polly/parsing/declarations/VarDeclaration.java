@@ -11,6 +11,8 @@ public class VarDeclaration extends Declaration {
     private Expression expression;
     private boolean local;
     
+    
+
     public VarDeclaration(IdentifierLiteral id, boolean global, 
             boolean temp) {
         super(id, global, temp);

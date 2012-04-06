@@ -34,6 +34,10 @@ public class AdministrationManager extends AbstractDisposable {
         SUCCESS, INSUFICCIENT_RIGHTS, UNKNOWN_USER, INVALID_PASSWORD;
     }
     
+    
+    // TODO: move this to config file
+    public final static int LIVE_LOG_THRESHOLD = 50;
+    
     private final static File LOG_DIR = new File("./logs");
     private final static Pattern LOG_PATTERN = Pattern.compile(".+\\.log(\\.\\d+)?$");
     private final static Logger logger = Logger.getLogger(
@@ -53,7 +57,7 @@ public class AdministrationManager extends AbstractDisposable {
         this.liveLogList = new HashSet<Connection>();
         this.ircForwards = new HashSet<Connection>();
         
-        this.logAppender = new CachedLogAppender(this, 50);
+        this.logAppender = new CachedLogAppender(this, LIVE_LOG_THRESHOLD);
         Logger.getRootLogger().addAppender(this.logAppender);
     }
     
