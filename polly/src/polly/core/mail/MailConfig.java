@@ -2,11 +2,14 @@ package polly.core.mail;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.Constructor;
 import java.util.Properties;
 
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+
+import org.apache.log4j.Level;
+
 
 import polly.configuration.ConfigurationFileException;
 
@@ -15,45 +18,73 @@ public class MailConfig extends Properties {
 
     private static final long serialVersionUID = 1L;
     
+    public final static String SMTP_FROM = "mail.smtp.from";
     public final static String SMTP_HOST = "mail.smtp.host";
     public final static String SMTP_PORT = "mail.smtp.port";
-    public final static String SMTP_AUTH = "mail.smtp.auth";
-    
-    public final static String SMTP_LOGIN = "mail.smtp.login";
     public final static String SMTP_PASSWORD = "mail.smtp.password";
-    public final static String SMTP_SENDER = "mail.smtp.sender";
+    public final static String SMTP_LOGIN = "mail.smtp.login";
     
-    public final static String RECIEPIENTS = "recipients";
+    public final static String RECIPIENTS = "recipients";
     public final static String LOG_THRESHOLD = "threshold";
+    public final static String MAIL_PROVIDER = "mailProvider";
+    public final static String MAIL_DELAY = "mailDelay";
+    
+    private InternetAddress[] recipients;
+    private MailSender sender;
+    private Level logLevel;
     
     
-    private List<InternetAddress> recipients;
     
     public MailConfig(String cfgPath) throws IOException, ConfigurationFileException {
         FileInputStream input = new FileInputStream(cfgPath);
         this.load(input);
         
         // parse recipients
-        String[] parts = this.getProperty(RECIEPIENTS).split(";");
-        this.recipients = new ArrayList<InternetAddress>(parts.length);
-        
-        for (String part : parts) {
-            try {
-                this.recipients.add(new InternetAddress(part));
-            } catch (Exception e) {
-                // skip invalid mail
-                continue;
-            }
+        try {
+            this.recipients = InternetAddress.parse(this.getProperty(RECIPIENTS), false);
+        } catch (AddressException e) {
+            throw new ConfigurationFileException(e, e.getMessage());
         }
         
-        if (this.recipients.isEmpty()) {
-            throw new ConfigurationFileException("no valid recipients");
+        
+        this.logLevel = Level.toLevel(this.getProperty(LOG_THRESHOLD));
+        if (this.logLevel.toInt() <= Level.INFO_INT) {
+            throw new ConfigurationFileException(
+                "Log level threshold too low. Must at least be 'ERROR'.");
+        }
+        
+        
+        // init mail provider
+        String cls = this.getProperty(MAIL_PROVIDER);
+        try {
+            Class<?> provider = Class.forName(cls);
+            Constructor<?> con = provider.getConstructor(MailConfig.class);
+            Object tmp = con.newInstance(this);
+            
+            if (!(tmp instanceof MailSender)) {
+                throw new Exception(cls + " is no valid MailSender");
+            }
+            this.sender = (MailSender) tmp;
+        } catch (Exception e) {
+            throw new ConfigurationFileException(e, "Invalid MailProvider: " + cls);
         }
     }
     
     
     
-    public List<InternetAddress> getRecipients() {
+    public MailSender getSender() {
+        return this.sender;
+    }
+    
+    
+    
+    public InternetAddress[] getRecipients() {
         return this.recipients;
+    }
+
+
+
+    public Level getLevel() {
+        return this.logLevel;
     }
 }

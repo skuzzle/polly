@@ -8,33 +8,37 @@ import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
-import javax.mail.internet.AddressException;
+import javax.mail.Message.RecipientType;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-public class MailSender {
+import org.apache.log4j.Logger;
 
-    private Properties props;
-    private MailConfig config;
-    private InternetAddress[] reciepients;
-    
+
+public abstract class MailSender {
+
+    protected final static Logger logger = Logger.getLogger(MailSender.class.getName());
+    protected MailConfig config;
     
     
     public MailSender(MailConfig config) {
         this.config = config;
-        
-        this.props = new Properties();
-        this.props.put(MailConfig.SMTP_HOST, config.getProperty(MailConfig.SMTP_HOST));
-        this.props.put(MailConfig.SMTP_PORT, config.getProperty(MailConfig.SMTP_PORT));
-        this.props.put(MailConfig.SMTP_AUTH, config.getProperty(MailConfig.SMTP_AUTH));
-        this.reciepients = new InternetAddress[config.getRecipients().size()];
-        this.reciepients = config.getRecipients().toArray(this.reciepients);
     }
     
     
     
-    public void sendMail(String message, String subject) throws AddressException, MessagingException {
-        Session session = Session.getDefaultInstance(this.props, new Authenticator() {
+    protected Properties createProperties() {
+        return new Properties();
+    }
+    
+    
+    
+    public void sendMail(String subject, String message) 
+            throws MessagingException {
+        
+        Properties props = this.createProperties();
+        
+        Session session = Session.getDefaultInstance(props, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(
@@ -43,12 +47,14 @@ public class MailSender {
             }
         });
         
-        Message m = new MimeMessage(session);
-        m.setFrom(new InternetAddress(this.config.getProperty(MailConfig.SMTP_SENDER)));
-        m.setRecipients(Message.RecipientType.TO, this.reciepients);
-        m.setSubject(subject);
-        m.setText(message);
+        Message msg = new MimeMessage(session);
+        msg.setFrom(new InternetAddress(this.config.getProperty(MailConfig.SMTP_FROM)));
+        msg.setRecipients(RecipientType.TO, this.config.getRecipients());
+        msg.setSubject(subject);
+        msg.setText(message);
         
-        Transport.send(m);
+        logger.trace("Sending mail...");
+        Transport.send(msg);
+        logger.trace("Mail sent");
     }
 }
