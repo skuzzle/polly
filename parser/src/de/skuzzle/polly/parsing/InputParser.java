@@ -149,9 +149,7 @@ public class InputParser extends AbstractParser<InputScanner> {
     
     
     protected void allowWhiteSpace() throws ParseException {
-        if (this.scanner.lookAhead().matches(TokenType.SEPERATOR)) {
-            this.scanner.consume();
-        }
+        this.scanner.match(TokenType.SEPERATOR);
     }
     
     
@@ -169,7 +167,6 @@ public class InputParser extends AbstractParser<InputScanner> {
             this.scanner.setSkipWhiteSpaces(false);
         }
     }
-
 
     
     
@@ -235,13 +232,13 @@ public class InputParser extends AbstractParser<InputScanner> {
     
     protected Declaration parse_definition() throws ParseException {
         boolean isPublic = false;
-        if (scanner.match(TokenType.PUBLIC)) {
+        if (this.scanner.match(TokenType.PUBLIC)) {
             this.expect(TokenType.SEPERATOR);
             isPublic = true;
         }
         
         boolean isTemp = false;
-        if (scanner.match(TokenType.TEMP)) {
+        if (this.scanner.match(TokenType.TEMP)) {
             this.expect(TokenType.SEPERATOR);
             isTemp = true;
         }
