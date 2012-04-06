@@ -1,9 +1,7 @@
-package polly.core.irc;
+package polly.core.mail;
 
 import java.util.Properties;
 
-import polly.core.mail.MailConfig;
-import polly.core.mail.MailSender;
 
 
 public class DefaultMailSender extends MailSender {
