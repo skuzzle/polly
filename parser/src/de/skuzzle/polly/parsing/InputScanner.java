@@ -464,7 +464,7 @@ public class InputScanner extends AbstractTokenStream {
                 lexem.append('\\');
                 return;
             } else {
-                this.parseException("Ungültige-Escape Sequenz: '\\" + (char) next,
+                this.parseException("Ungültige-Escape Sequenz: '\\" + (char) next + "'",
                     tokenStart);
             }
         }
