@@ -54,6 +54,7 @@
         hsqldb.jar
         pircbot.jar
         mysql-connector-java-5.1.17-bin.jar
+        mail.jar
     "/>
     
 
