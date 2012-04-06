@@ -48,6 +48,7 @@ import commands.VersionCommand;
 import commands.WikiCommand;
 import core.GreetDeliverer;
 import core.HighlightReplyHandler;
+import core.JoinTimeCollector;
 import core.TopicManager;
 import core.TrainManager;
 
@@ -75,6 +76,8 @@ public class MyPlugin extends PollyPlugin {
     private TrainManager trainManager;
     private GreetDeliverer greetDeliverer;
     private HighlightReplyHandler highlightHandler;
+    private JoinTimeCollector joinTimeCollector;
+    
     
     
 	public MyPlugin(MyPolly myPolly) throws IncompatiblePluginException, DuplicatedSignatureException {
@@ -121,7 +124,12 @@ public class MyPlugin extends PollyPlugin {
 		this.addCommand(new SetAttributeCommand(myPolly));
 		this.addCommand(new ListAttributesCommand(myPolly));
 		this.addCommand(new GetAttributeCommand(myPolly));
-		this.addCommand(new UptimeCommand(myPolly));
+		
+		
+		this.joinTimeCollector = new JoinTimeCollector(myPolly.getTimeProvider());
+		this.joinTimeCollector.addTo(myPolly.irc());
+		this.addCommand(new UptimeCommand(myPolly, this.joinTimeCollector));
+		
 
 		this.addCommand(new FooCommand(myPolly));
 		this.addCommand(new VarCommand(myPolly));
@@ -171,5 +179,6 @@ public class MyPlugin extends PollyPlugin {
 	    this.topicManager.dispose();
 	    this.getMyPolly().users().removeUserListener(this.greetDeliverer);
 	    this.getMyPolly().irc().removeMessageListener(this.highlightHandler);
+	    this.joinTimeCollector.remove(this.getMyPolly().irc());
 	}
 }
