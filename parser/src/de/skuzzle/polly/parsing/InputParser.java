@@ -563,6 +563,8 @@ public class InputParser extends AbstractParser<InputScanner> {
                 /* 
                  * Check if this is a type cast. If it is not, but a normal 
                  * identifier in braces, context check will resolve this issue.
+                 * 
+                 * gettin' little messy now
                  */
                 Token tmp = this.scanner.lookAhead();
                 if (tmp.getType() == TokenType.IDENTIFIER) {
