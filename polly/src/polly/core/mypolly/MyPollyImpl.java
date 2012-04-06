@@ -12,6 +12,7 @@ import polly.core.commands.CommandManagerImpl;
 import polly.core.conversations.ConversationManagerImpl;
 import polly.core.formatting.FormatManagerImpl;
 import polly.core.irc.IrcManagerImpl;
+import polly.core.mail.MailManagerImpl;
 import polly.core.paste.PasteServiceManagerImpl;
 import polly.core.persistence.PersistenceManagerImpl;
 import polly.core.plugins.PluginManagerImpl;
@@ -59,7 +60,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 	private Date startTime;
 	private TimeProvider timeProvider;
 	private PasteServiceManagerImpl pasteManager;
-	private MailManager mailManager;
+	private MailManagerImpl mailManager;
 	
 	public MyPollyImpl(CommandManagerImpl cmdMngr, 
 	        IrcManagerImpl ircMngr, 
@@ -71,7 +72,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 			ConversationManagerImpl convMngr,
 			ShutdownManagerImpl shutdownManager,
 			PasteServiceManagerImpl pasteManager,
-			MailManager mailManager) {
+			MailManagerImpl mailManager) {
 	    
 		this.commandManager = cmdMngr;
 		this.ircManager = ircMngr;

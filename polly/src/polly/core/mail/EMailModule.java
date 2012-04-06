@@ -3,7 +3,6 @@ package polly.core.mail;
 
 import org.apache.log4j.Logger;
 
-import de.skuzzle.polly.sdk.MailManager;
 
 import polly.moduleloader.AbstractModule;
 import polly.moduleloader.ModuleLoader;
@@ -12,7 +11,7 @@ import polly.moduleloader.annotations.Module;
 import polly.moduleloader.annotations.Provide;
 
 
-@Module(provides = @Provide(component = MailManager.class))
+@Module(provides = @Provide(component = MailManagerImpl.class))
 public class EMailModule extends AbstractModule {
 
     
@@ -41,7 +40,7 @@ public class EMailModule extends AbstractModule {
             sender, this.config.getLevel(), delay);
         
         // create MailManager
-        MailManager mailManager = new MailManagerImpl(this.config.getSender());
+        MailManagerImpl mailManager = new MailManagerImpl(this.config.getSender());
         this.provideComponent(mailManager);
         
         Logger.getRootLogger().addAppender(appender);
