@@ -191,4 +191,14 @@ public interface MyPolly {
 	 * @see #currentTimeMillis()
 	 */
 	public abstract Date pollySystemTime();
+	
+	
+	
+	/**
+	 * Gets a MailManager instance that allows you to send emails.
+	 * 
+	 * @return A MailManager instance.
+	 * @since 0.9
+	 */
+	public abstract MailManager mails();
 }

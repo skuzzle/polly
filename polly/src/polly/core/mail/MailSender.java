@@ -33,6 +33,33 @@ public abstract class MailSender {
     
     
     
+    public void sendMail(String recipient, String subject, String message) 
+                throws MessagingException {
+        
+        Properties props = this.createProperties();
+        
+        Session session = Session.getDefaultInstance(props, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(
+                    config.getProperty(MailConfig.SMTP_LOGIN), 
+                    config.getProperty(MailConfig.SMTP_PASSWORD));
+            }
+        });
+        
+        Message msg = new MimeMessage(session);
+        msg.setFrom(new InternetAddress(this.config.getProperty(MailConfig.SMTP_FROM)));
+        msg.setRecipient(RecipientType.TO, new InternetAddress(recipient, false));
+        msg.setSubject(subject);
+        msg.setText(message);
+        
+        logger.trace("Sending mail...");
+        Transport.send(msg);
+        logger.trace("Mail sent");
+    }
+    
+    
+    
     public void sendMail(String subject, String message) 
             throws MessagingException {
         

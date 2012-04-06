@@ -2,6 +2,8 @@ package polly.core.mypolly;
 
 import java.util.concurrent.ExecutorService;
 
+import de.skuzzle.polly.sdk.MailManager;
+
 import polly.configuration.PollyConfiguration;
 import polly.core.ShutdownManagerImpl;
 import polly.core.commands.CommandManagerImpl;
@@ -33,7 +35,8 @@ import polly.moduleloader.annotations.Provide;;
         @Require(component = UserManagerImpl.class),
         @Require(component = CommandManagerImpl.class),
         @Require(component = PasteServiceManagerImpl.class),
-        @Require(component = ExecutorService.class)
+        @Require(component = ExecutorService.class),
+        @Require(component = MailManager.class)
     },
     provides = 
         @Provide(component = MyPollyImpl.class))
@@ -49,6 +52,7 @@ public class MyPollyModule extends AbstractModule {
     private ConversationManagerImpl conversationManager;
     private PasteServiceManagerImpl pasteManager;
     private ShutdownManagerImpl shutdownManager;
+    private MailManager mailManager;
     
     
     public MyPollyModule(ModuleLoader loader) {
@@ -69,6 +73,7 @@ public class MyPollyModule extends AbstractModule {
         this.conversationManager = this.requireNow(ConversationManagerImpl.class);
         this.shutdownManager = this.requireNow(ShutdownManagerImpl.class);
         this.pasteManager = this.requireNow(PasteServiceManagerImpl.class);
+        this.mailManager = this.requireNow(MailManager.class);
     }
     
     
@@ -85,7 +90,8 @@ public class MyPollyModule extends AbstractModule {
             this.formatManager, 
             this.conversationManager,
             this.shutdownManager,
-            this.pasteManager);
+            this.pasteManager,
+            this.mailManager);
         this.provideComponent(myPolly);
     }
     
@@ -103,6 +109,7 @@ public class MyPollyModule extends AbstractModule {
         this.conversationManager = null;
         this.shutdownManager = null;
         this.pasteManager = null;
+        this.mailManager = null;
         super.dispose();
     }
 }

@@ -24,6 +24,7 @@ import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.ConversationManager;
 import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.IrcManager;
+import de.skuzzle.polly.sdk.MailManager;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.PluginManager;
@@ -58,6 +59,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 	private Date startTime;
 	private TimeProvider timeProvider;
 	private PasteServiceManagerImpl pasteManager;
+	private MailManager mailManager;
 	
 	public MyPollyImpl(CommandManagerImpl cmdMngr, 
 	        IrcManagerImpl ircMngr, 
@@ -68,7 +70,8 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 			FormatManagerImpl fmtMngr,
 			ConversationManagerImpl convMngr,
 			ShutdownManagerImpl shutdownManager,
-			PasteServiceManagerImpl pasteManager) {
+			PasteServiceManagerImpl pasteManager,
+			MailManager mailManager) {
 	    
 		this.commandManager = cmdMngr;
 		this.ircManager = ircMngr;
@@ -83,6 +86,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 		this.pasteManager = pasteManager;
 		this.startTime = new Date();
 		this.timeProvider = new SystemTimeProvider();
+		this.mailManager = mailManager;
 	}
 	
 	
@@ -220,6 +224,12 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
     @Override
     public Date pollySystemTime() {
         return new Date(this.currentTimeMillis());
+    }
+    
+    
+    @Override
+    public MailManager mails() {
+        return this.mailManager;
     }
     
 
