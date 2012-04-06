@@ -34,15 +34,15 @@ public class StringLiteral extends Literal {
     
     
     
-    public java.lang.String getValue() {
+    public String getValue() {
         return this.value;
     }
     
     
     
     @Override
-    public java.lang.String toString() {
-        return "\"" + this.value + "\"";
+    public String toString() {
+        return this.value;
     }
 
     

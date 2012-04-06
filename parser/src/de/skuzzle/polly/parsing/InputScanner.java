@@ -312,6 +312,9 @@ public class InputScanner extends AbstractTokenStream {
                 
                 if (next == '~') {
                     return new Token(TokenType.ADDWAVE, this.spanFrom(tokenStart), "+~");
+                } else if (next == '=') {
+                    return new Token(TokenType.ADDEQUALS, this.spanFrom(tokenStart), 
+                        "+=");
                 } else {
                     this.pushBack(next);
                     return new Token(TokenType.ADD, this.spanFrom(tokenStart), "+");
@@ -322,6 +325,9 @@ public class InputScanner extends AbstractTokenStream {
                 
                 if (next == '>') {
                     return new Token(TokenType.ASSIGNMENT, this.spanFrom(tokenStart), "->");
+                } else if (next == '=') {
+                    return new Token(TokenType.SUBEQUALS, this.spanFrom(tokenStart), 
+                        "-=");
                 } else {
                     this.pushBack(next);
                     return new Token(TokenType.SUB, this.spanFrom(tokenStart), "-");

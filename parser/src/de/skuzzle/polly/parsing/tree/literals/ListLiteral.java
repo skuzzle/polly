@@ -91,6 +91,14 @@ public class ListLiteral extends Literal {
     public Literal castTo(Type target) throws ExecutionException {
         if (target.check(Type.STRING)) {
             return new StringLiteral(this.toString(false));
+        } else if (target instanceof ListType) {
+            ListType l = (ListType) target;
+            ListLiteral result = new ListLiteral(new ArrayList<Expression>(
+                this.elements.size()), l.getSubType());
+            for (Expression e : this.elements) {
+                result.getElements().add(((Literal) e).castTo(l.getSubType()));
+            }
+            return result;
         }
         return super.castTo(target);
     }
@@ -133,7 +141,7 @@ public class ListLiteral extends Literal {
         while (it.hasNext()) {
             result.append(it.next().toString());
             if (it.hasNext()) {
-                result.append(",");
+                result.append(", ");
             }
         }
         if (braces) {

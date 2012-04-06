@@ -11,6 +11,8 @@ public enum TokenType {
     ASSIGNMENT("->"),
     ADD("+"), 
     SUB("-"),
+    ADDEQUALS("+="),
+    SUBEQUALS("-="),
     WAVE("~"), 
     ADDWAVE("+~"), 
     MUL("*"), 

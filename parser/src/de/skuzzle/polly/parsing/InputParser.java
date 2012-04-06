@@ -567,20 +567,42 @@ public class InputParser extends AbstractParser<InputScanner> {
                 Token tmp = this.scanner.lookAhead();
                 if (tmp.getType() == TokenType.IDENTIFIER) {
                     this.scanner.consume();
+                    
+                    // check for subtype
+                    Token subType = null;
+                    if (this.scanner.match(TokenType.LT)) {
+                        subType = this.scanner.lookAhead();
+                        this.expect(TokenType.IDENTIFIER);
+                        this.expect(TokenType.GT);
+                    }
+                    
                     if (this.scanner.lookAhead().getType() == TokenType.CLOSEDBR) {
                         this.scanner.consume();
                         this.leaveExpression();
                         
+                        Expression castOp;
                         if (this.scanner.lookAhead().getType() == TokenType.EOS) {
                             // just an identifier in braces?
                             return new VarOrCallExpression(
                                 new IdentifierLiteral(tmp));
+                        } else if (subType == null) {
+                            castOp = new TypeParameterExpression(
+                                new IdentifierLiteral(tmp.getStringValue()), 
+                                tmp.getPosition());
                         } else {
-                            return new CastExpression(
-                                this.parse_literal(), 
-                                new IdentifierLiteral(tmp), 
-                                this.scanner.spanFrom(la));
+                            castOp = new TypeParameterExpression(
+                                new IdentifierLiteral(tmp.getStringValue()),
+                                new IdentifierLiteral(subType.getStringValue()), 
+                                this.scanner.spanFrom(tmp.getPosition().getStart()));
                         }
+                        
+                        return new CastExpression(
+                            castOp,
+                            this.parse_literal(), 
+                            this.scanner.spanFrom(la));
+                    } else if (subType != null) {
+                        throw new ParseException("Invalid sub type definition", 
+                            subType.getPosition());
                     } else {
                         /*
                          * this was no typecast, so pushback the identifier and go on
@@ -588,6 +610,12 @@ public class InputParser extends AbstractParser<InputScanner> {
                          */
                         this.scanner.pushback(tmp);
                     }
+                } else {
+                    /*
+                     * this was no typecast, so pushback the identifier and go on
+                     * the normal way.
+                     */
+                    this.scanner.pushback(tmp);
                 }
 
                 expression = this.parse_relational();

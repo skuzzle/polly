@@ -6,9 +6,7 @@ import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.declarations.Namespace;
-import de.skuzzle.polly.parsing.declarations.TypeDeclaration;
 import de.skuzzle.polly.parsing.tree.literals.Literal;
-import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
 
 
 public class CastExpression extends Expression {
@@ -16,9 +14,9 @@ public class CastExpression extends Expression {
     private static final long serialVersionUID = 1L;
     
     private Expression expression;
-    private IdentifierLiteral castOp;
+    private Expression castOp;
     
-    public CastExpression(Expression expression, IdentifierLiteral castOp, 
+    public CastExpression(Expression castOp, Expression expression, 
             Position position) {
         super(position);
         this.expression = expression;
@@ -29,11 +27,11 @@ public class CastExpression extends Expression {
     
     @Override
     public Expression contextCheck(Namespace context) throws ParseException {
-        TypeDeclaration type = context.resolveType(this.castOp);
+        //TypeDeclaration type = context.resolveType(this.castOp);
+        this.castOp = this.castOp.contextCheck(context);
         this.expression = this.expression.contextCheck(context);
-        this.setType(type.getType());
+        this.setType(this.castOp.getType());
         return this;
-        
     }
     
     

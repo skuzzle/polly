@@ -61,8 +61,9 @@ public abstract class AbstractParser<T extends AbstractTokenStream> {
     
     protected void unexpectedToken(TokenType expected, Token found) 
             throws ParseException {
-        throw new ParseException("Unerwartetes Symbol: " + found.toString(false, false) + 
-                ". Erwartet: " + expected.toString(), this.scanner.spanFrom(found));
+        throw new ParseException("Unerwartetes Symbol: '" + found.toString(false, false) + 
+                "'. Erwartet: '" + expected.toString() + "'", 
+                this.scanner.spanFrom(found));
     }
     
     
