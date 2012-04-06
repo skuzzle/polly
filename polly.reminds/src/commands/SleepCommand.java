@@ -50,7 +50,7 @@ public class SleepCommand extends Command {
                 this.remindManager.addRemind(copy);
                 this.remindManager.scheduleRemind(copy, dueDate);
                 this.remindManager.removeSleep(sleeping.getForUser());
-                this.reply(channel, "Erinnerung wurde verl√§ngert.");
+                this.reply(channel, "Erinnerung wurde verl‰ngert.");
             } catch (DatabaseException e) {
                 throw new CommandException(e);
             }
