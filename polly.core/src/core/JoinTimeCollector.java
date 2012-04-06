@@ -40,22 +40,28 @@ public class JoinTimeCollector implements UserSpottedListener, NickChangeListene
     
     
     public Long getJoinTime(String nickName) {
-        return this.joinTimes.get(nickName);
+        synchronized (this.joinTimes) {
+            return this.joinTimes.get(nickName);
+        }
     }
     
     
     
     @Override
     public void userSpotted(SpotEvent e) {
-        this.joinTimes.put(e.getUser().getNickName(), 
-            this.timeProvider.currentTimeMillis());
+        synchronized (this.joinTimes) {
+            this.joinTimes.put(e.getUser().getNickName(), 
+                this.timeProvider.currentTimeMillis());
+        }
     }
     
     
 
     @Override
     public void userLost(SpotEvent e) {
-        this.joinTimes.remove(e.getUser().getNickName());
+        synchronized (this.joinTimes) {
+            this.joinTimes.remove(e.getUser().getNickName());
+        }
     }
 
 
