@@ -31,5 +31,5 @@ public interface Constraints {
      * Constraints a value to a valid email address.
      * @see MailAddressConstraint
      */
-    public final static AttributeConstraint MAILADDRESS= new MailAddressConstraint();
+    public final static AttributeConstraint MAILADDRESS = new MailAddressConstraint();
 }
