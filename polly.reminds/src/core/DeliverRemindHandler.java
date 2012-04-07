@@ -10,7 +10,6 @@ import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
 import de.skuzzle.polly.sdk.eventlistener.UserEvent;
 import de.skuzzle.polly.sdk.eventlistener.UserListener;
-import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import entities.RemindEntity;
 
 public class DeliverRemindHandler extends JoinPartAdapter implements MessageListener, 
@@ -69,6 +68,11 @@ public class DeliverRemindHandler extends JoinPartAdapter implements MessageList
         List<RemindEntity> reminds = this.remindManager.undeliveredReminds(e.getUser());       
         for (RemindEntity remind : reminds) {
 
+            // mails are not delivered on irc events
+            if (remind.isMail()) {
+                continue;
+            }
+            
             /*
              * If this is a signon, there is no valid channel set in the ChannelEvent,
              * so we use the destination channel of the current remind.
@@ -99,7 +103,7 @@ public class DeliverRemindHandler extends JoinPartAdapter implements MessageList
                                                     // not be 'sleepable'
                 try {
                     this.remindManager.deliverRemind(remind);
-                } catch (DatabaseException e1) {
+                } catch (Exception e1) {
                     e1.printStackTrace();
                 }
             }

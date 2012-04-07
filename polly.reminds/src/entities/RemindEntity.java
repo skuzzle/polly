@@ -55,6 +55,8 @@ public class RemindEntity {
     
     private boolean isMessage;
     
+    private boolean isMail;
+    
     private boolean remind;
     
     private transient boolean onAction;
@@ -65,12 +67,17 @@ public class RemindEntity {
     
     public RemindEntity(String message, String fromUser, String forUser, 
             String onChannel, Date dueDate) {
-        this(message, fromUser, forUser, onChannel, dueDate, false);
+        this(message, fromUser, forUser, onChannel, dueDate, false, false);
+    }
+    
+    public RemindEntity(String message, String fromUser, String forUser, 
+        String onChannel, Date dueDate, boolean onAction) {
+        this(message, fromUser, forUser, onChannel, dueDate, onAction, false);
     }
     
     
     public RemindEntity(String message, String fromUser, String forUser, 
-            String onChannel, Date dueDate, boolean onAction) {
+            String onChannel, Date dueDate, boolean onAction, boolean isMail) {
         this.message = message;
         this.fromUser = fromUser;
         this.forUser = forUser;
@@ -78,6 +85,7 @@ public class RemindEntity {
         this.onChannel = onChannel;
         this.leaveDate = new Date();
         this.onAction = onAction;
+        this.isMail = isMail;
     }
 
 
@@ -143,6 +151,12 @@ public class RemindEntity {
     
     public void setIsMessage(boolean isMessage) {
         this.isMessage = isMessage;
+    }
+    
+    
+    
+    public boolean isMail() {
+        return this.isMail;
     }
     
     

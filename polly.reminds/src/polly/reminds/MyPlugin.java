@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 
 import commands.DeleteRemindCommand;
 import commands.LeaveCommand;
+import commands.MailRemindCommand;
 import commands.ModRemindCommand;
 import commands.MyRemindsCommand;
 import commands.OnReturnCommand;
@@ -45,7 +46,9 @@ public class MyPlugin extends PollyPlugin {
     
     public static final String DEFAULT_MSG = "REMIND_DEFAULT_MSG";
 	private static final String DEFAULT_MSG_VALUE = "Reminder!";
-    
+	
+	public static final String EMAIL = "EMAIL";
+	public static final String DEFAULT_EMAIL = "none";
     
     private Logger logger;
     private RemindManager remindManager;
@@ -82,6 +85,7 @@ public class MyPlugin extends PollyPlugin {
         this.addCommand(new DeleteRemindCommand(myPolly, this.remindManager));
         this.addCommand(new SleepCommand(myPolly, this.remindManager));
         this.addCommand(new ModRemindCommand(myPolly, this.remindManager));
+        this.addCommand(new MailRemindCommand(myPolly, this.remindManager));
     }
     
     
@@ -111,7 +115,7 @@ public class MyPlugin extends PollyPlugin {
             users.addAttribute(MESSAGE_FORMAT_NAME, MESSAGE_FORMAT_VALUE);
             users.addAttribute(SLEEP_TIME, SLEEP_DEFAULT_VALUE, Constraints.INTEGER);
             users.addAttribute(DEFAULT_MSG, DEFAULT_MSG_VALUE);
-            users.addAttribute("EMAIL", "none", Constraints.MAILADDRESS);
+            users.addAttribute(EMAIL, DEFAULT_EMAIL, Constraints.MAILADDRESS);
         } catch (DatabaseException e) {
             e.printStackTrace();
         }

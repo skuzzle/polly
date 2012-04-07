@@ -23,6 +23,7 @@ import de.skuzzle.polly.sdk.eventlistener.IrcUser;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
+import de.skuzzle.polly.sdk.exceptions.EMailException;
 import de.skuzzle.polly.sdk.model.User;
 import entities.RemindEntity;
 
@@ -49,6 +50,11 @@ public class RemindManager extends AbstractDisposable {
     
     private final static RemindFormatter DEFAULT_FORMAT = 
             PatternRemindFormatter.forPattern(MyPlugin.REMIND_FORMAT_VALUE);
+    
+    
+    private final static RemindFormatter MAIL_FORMAT = new MailRemindFormatter();
+    
+    private final static String SUBJECT = "[Reminder] Erinnerung um %s";
     
     
     
@@ -92,9 +98,14 @@ public class RemindManager extends AbstractDisposable {
     
     
     public synchronized void deliverRemind(final RemindEntity remind) 
-            throws DatabaseException {
+            throws DatabaseException, EMailException {
         logger.debug("Executing Remind: " + remind);
         this.persistence.refresh(remind);
+        
+        if (remind.isMail()) {
+            this.deliverByMail(remind);
+            return;
+        }
         
         if (!this.myPolly.irc().isOnline(remind.getForUser())) {
             logger.debug("User is not online. Remind will be delivered when he returns.");
@@ -147,6 +158,28 @@ public class RemindManager extends AbstractDisposable {
         
         this.putToSleep(remind);
         this.deleteRemind(remind);
+    }
+    
+    
+    
+    private void deliverByMail(RemindEntity remind) throws DatabaseException, 
+            EMailException {
+        User user = this.myPolly.users().getUser(remind.getForUser());
+        String mail = user.getAttribute(MyPlugin.EMAIL);
+        
+        if (mail.equals(MyPlugin.DEFAULT_EMAIL)) {
+            this.deleteRemind(remind);
+            return;
+        }
+        String subject = String.format(SUBJECT, 
+                this.myPolly.formatting().formatDate(remind.getDueDate()));
+        String message = MAIL_FORMAT.format(remind, this.myPolly.formatting());
+        
+        try {
+            this.myPolly.mails().sendMail(mail, subject, message);
+        } finally {
+            this.deleteRemind(remind);
+        }
     }
     
     
@@ -238,7 +271,7 @@ public class RemindManager extends AbstractDisposable {
                 RemindEntity.class, id);
         
         checkRemind(id, remind, executor);
-        
+        this.unSchedule(id);
         this.persistence.atomicWriteOperation(new WriteAction() {
             
             @Override
@@ -247,6 +280,7 @@ public class RemindManager extends AbstractDisposable {
                 remind.setMessage(msg);
             }
         });
+        this.scheduleRemind(remind, dueDate);
     }
     
     

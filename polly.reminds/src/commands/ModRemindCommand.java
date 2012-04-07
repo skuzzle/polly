@@ -57,7 +57,7 @@ public class ModRemindCommand extends AbstractRemindCommand {
         
         try {
             this.remindManager.modifyRemind(executer, id, dueDate, message);
-            this.reply(channel, "Remind erfolgreich aktualisier");
+            this.reply(channel, "Remind erfolgreich aktualisiert");
         } catch (DatabaseException e) {
             throw new CommandException(e);
         }
