@@ -567,7 +567,7 @@ public class InputParser extends AbstractParser<InputScanner> {
                  * gettin' little messy now
                  */
                 Token tmp = this.scanner.lookAhead();
-                if (tmp.getType() == TokenType.IDENTIFIER) {
+                if (tmp.matches(TokenType.IDENTIFIER)) {
                     this.scanner.consume();
                     
                     // check for subtype
@@ -612,12 +612,6 @@ public class InputParser extends AbstractParser<InputScanner> {
                          */
                         this.scanner.pushback(tmp);
                     }
-                } else {
-                    /*
-                     * this was no typecast, so pushback the identifier and go on
-                     * the normal way.
-                     */
-                    this.scanner.pushback(tmp);
                 }
 
                 expression = this.parse_relational();
@@ -625,7 +619,7 @@ public class InputParser extends AbstractParser<InputScanner> {
                  * HACK: EXPERIMENTAL
                  */
                 la = this.scanner.lookAhead();
-                if (la.getType() == TokenType.COMMA) {
+                if (la.matches(TokenType.COMMA)) {
                     this.scanner.consume();
                     Expression e2 = this.parse_relational();
                     this.expect(TokenType.CLOSEDBR);
