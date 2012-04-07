@@ -27,6 +27,13 @@ public class ModuleBootstrapper {
             PollyConfiguration config) throws IOException, SetupException {
         File modules = new File(config.getModulesCfg());
         
+        parseConfig(modules, loader);
+    }
+    
+    
+    
+    private static void parseConfig(File modules, ModuleLoader loader) 
+                throws IOException, SetupException {
         if (!modules.exists()) {
             throw new FileNotFoundException("Module definition not found: " + modules);
         }
@@ -41,9 +48,14 @@ public class ModuleBootstrapper {
             String module = null;
             
             while ((module = input.readLine()) != null) {
+                module = module.trim();
                 try {
-                    
-                    if (module.startsWith("#") || module.startsWith("//")) {
+                    if (module.startsWith("#include")) {
+                        String[] parts = module.split(" ", 2);
+                        File parent = modules.getParentFile();
+                        parseConfig(new File(parent, parts[1]), loader);
+                    } 
+                    if (module.startsWith("#") || module.startsWith("//") || module.equals("")) {
                         // skip comments
                         continue;
                     }
