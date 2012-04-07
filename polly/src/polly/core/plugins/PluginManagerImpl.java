@@ -7,6 +7,7 @@ import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -85,6 +86,12 @@ public class PluginManagerImpl extends AbstractDisposable implements PluginManag
 
     @Override
     public synchronized void unload(String pluginName) throws PluginException {
+
+    }
+    
+    
+    
+    private void unload(String pluginName, Iterator<Plugin> it) throws PluginException {
         Plugin pluginCfg = this.pluginCache.get(pluginName);
         if (pluginCfg == null) {
             throw new PluginException("Plugin not loaded");
@@ -98,7 +105,7 @@ public class PluginManagerImpl extends AbstractDisposable implements PluginManag
         } catch (Exception e) {
             logger.error("Error while unloading plugin: '" + pluginName + "'", e);
         } finally {
-            this.pluginCache.remove(pluginName);
+            it.remove();
         }
     }
     
@@ -114,10 +121,13 @@ public class PluginManagerImpl extends AbstractDisposable implements PluginManag
     @Override
     protected void actualDispose() throws DisposingException {
         logger.info("Unloading all plugins.");
-        for (Plugin pluginCfg : this.pluginCache.values()) {
+        Iterator<Plugin> it = this.pluginCache.values().iterator();
+        while (it.hasNext()) {
+            Plugin pluginCfg = it.next();
+            
             String pluginName = pluginCfg.getProperty(Plugin.PLUGIN_NAME);
             try {
-                this.unload(pluginName);
+                this.unload(pluginName, it);
             } catch (Exception e) {
                 logger.error("Error while unloading plugin '" + pluginName + "'", e);
             }

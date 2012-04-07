@@ -37,7 +37,9 @@ public class EMailModule extends AbstractModule {
         int delay = Integer.parseInt(this.config.getProperty(MailConfig.MAIL_DELAY));
         MailSender sender = this.config.getSender();
         EMailLogAppender appender = new EMailLogAppender(
-            sender, this.config.getLevel(), delay);
+            sender, this.config.getLevel(), delay, 
+            new EMailLogFormatter(this.config.getLevel()));
+        
         
         // create MailManager
         MailManagerImpl mailManager = new MailManagerImpl(this.config.getSender());

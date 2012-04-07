@@ -176,7 +176,7 @@ public class MyPlugin extends PollyPlugin {
 	@Override
 	protected void actualDispose() throws DisposingException {
 	    super.actualDispose();
-	    this.topicManager.dispose();
+	    //this.topicManager.dispose();
 	    this.getMyPolly().users().removeUserListener(this.greetDeliverer);
 	    this.getMyPolly().irc().removeMessageListener(this.highlightHandler);
 	    this.joinTimeCollector.remove(this.getMyPolly().irc());

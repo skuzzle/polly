@@ -48,7 +48,7 @@ public class MailConfig extends Properties {
         
         
         this.logLevel = Level.toLevel(this.getProperty(LOG_THRESHOLD));
-        if (this.logLevel.toInt() <= Level.INFO_INT) {
+        if (this.logLevel.toInt() < Level.INFO_INT) {
             throw new ConfigurationFileException(
                 "Log level threshold too low. Must at least be 'ERROR'.");
         }
