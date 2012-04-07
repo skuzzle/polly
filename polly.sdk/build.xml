@@ -12,6 +12,7 @@
     <property name="dist.lib.dir" value="${dist.dir}/lib"/>
     <property name="release.dir"  value="release"/>
     <property name="bin.dir"      value="bin"/>
+    <property name="docs.dir"     value="docs"/>
     <property name="lib.dir"      value="${polly.root.dir}/libs"/>
     
     <!-- jar file properties -->
@@ -63,6 +64,7 @@
         <delete dir="${dist.lib.dir}"/>
         <delete dir="${dist.dir}"/>
         <delete dir="${bin.dir}"/>
+        <delete dir="${docs.dir}"/>
     </target>
     
     
