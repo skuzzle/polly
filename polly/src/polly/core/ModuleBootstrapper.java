@@ -50,10 +50,11 @@ public class ModuleBootstrapper {
             while ((module = input.readLine()) != null) {
                 module = module.trim();
                 try {
-                    if (module.startsWith("#include")) {
+                    if (module.startsWith("include ")) {
                         String[] parts = module.split(" ", 2);
                         File parent = modules.getParentFile();
                         parseConfig(new File(parent, parts[1]), loader);
+                        continue;
                     } 
                     if (module.startsWith("#") || module.startsWith("//") || module.equals("")) {
                         // skip comments
