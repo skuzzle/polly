@@ -10,6 +10,7 @@ public class ThreadFactoryBuilder implements ThreadFactory {
     private final static Pattern PATTERN = Pattern.compile("%n%");
     private String name;
     private int threadNum;
+    private int priority;
     private UncaughtExceptionHandler exceptionHandler;
     
     
@@ -31,6 +32,13 @@ public class ThreadFactoryBuilder implements ThreadFactory {
     
     
     
+    public ThreadFactoryBuilder setPriority(int priority) {
+        this.priority = priority;
+        return this;
+    }
+    
+    
+    
     public ThreadFactoryBuilder setUncaughtExceptionHandler(UncaughtExceptionHandler h) {
         this.exceptionHandler = h;
         return this;
@@ -43,6 +51,7 @@ public class ThreadFactoryBuilder implements ThreadFactory {
         String name = ThreadFactoryBuilder.PATTERN.matcher(this.name).replaceFirst(
                 "" + this.threadNum++);
         Thread result = new Thread(r, name);
+        result.setPriority(this.priority);
         if (this.exceptionHandler != null) {
             result.setUncaughtExceptionHandler(this.exceptionHandler);
         }

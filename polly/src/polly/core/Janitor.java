@@ -9,6 +9,7 @@ import polly.moduleloader.AbstractModule;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.SetupException;
 import polly.moduleloader.annotations.Module;
+import polly.util.concurrent.ThreadFactoryBuilder;
 
 @Module
 public class Janitor extends AbstractModule {
@@ -23,7 +24,9 @@ public class Janitor extends AbstractModule {
 
     @Override
     public void setup() throws SetupException {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(new Runnable() {
+        Executors.newScheduledThreadPool(1, 
+            new ThreadFactoryBuilder("JANITOR").setPriority(0))
+                .scheduleAtFixedRate(new Runnable() {
             
             @Override
             public void run() {
