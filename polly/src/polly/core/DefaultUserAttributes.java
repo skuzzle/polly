@@ -1,6 +1,6 @@
 package polly.core;
 
-import de.skuzzle.polly.sdk.constraints.BooleanConstraint;
+import de.skuzzle.polly.sdk.constraints.Constraints;
 import polly.core.users.UserManagerImpl;
 import polly.moduleloader.AbstractModule;
 import polly.moduleloader.ModuleLoader;
@@ -37,7 +37,7 @@ public class DefaultUserAttributes extends AbstractModule {
         UserManagerImpl userManager = this.requireNow(UserManagerImpl.class);
         
         try {
-            userManager.addAttribute(AUTO_LOGON, "true", new BooleanConstraint());
+            userManager.addAttribute(AUTO_LOGON, "true", Constraints.BOOLEAN);
         } catch (Exception e) {
             throw new SetupException(e);
         }

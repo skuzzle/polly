@@ -5,8 +5,10 @@ import java.util.regex.Pattern;
 
 
 /**
- * This constraint only accepts email addresses formed like the pattern 
- * {@code ^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$}.
+ * <p>This constraint only accepts email addresses formed like the pattern 
+ * {@code ^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$}.</p>
+ * 
+ * <p>You can get an instance of this constraint using {@link Constraints#MAILADDRESS}</p>
  * 
  * @author Simon
  * @since 0.9
@@ -17,8 +19,11 @@ public class MailAddressConstraint implements AttributeConstraint {
      * A regex pattern that matches on valid formed mail addresses.
      */
     public final static Pattern MAIL_PATTERN = Pattern.compile(
-        "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$");
+        "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$", Pattern.CASE_INSENSITIVE);
     
+    
+    
+    MailAddressConstraint() {}
     
     @Override
     public boolean accept(String value) {

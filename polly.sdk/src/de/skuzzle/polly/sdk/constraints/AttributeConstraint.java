@@ -1,5 +1,8 @@
 package de.skuzzle.polly.sdk.constraints;
 
+import de.skuzzle.polly.sdk.UserManager;
+import de.skuzzle.polly.sdk.exceptions.ConstraintException;
+
 /**
  * AttributeConstraints are used to constraint an user attribute to certain values.
  * 
@@ -10,7 +13,9 @@ public interface AttributeConstraint {
 
     /**
      * This method is called by polly before setting the attribute to value. When this
-     * method returns <code>false</code>, the value can not be set.
+     * method returns <code>false</code>, the value can not be set and the method 
+     * {@link UserManager#setAttributeFor(de.skuzzle.polly.sdk.model.User, String, 
+     * String)} will throw a {@link ConstraintException}.
      * 
      * @param value
      *          The value to check.

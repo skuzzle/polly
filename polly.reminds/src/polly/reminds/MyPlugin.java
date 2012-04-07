@@ -19,7 +19,7 @@ import core.RemindTraceNickchangeHandler;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
 import de.skuzzle.polly.sdk.UserManager;
-import de.skuzzle.polly.sdk.constraints.IntegerConstraint;
+import de.skuzzle.polly.sdk.constraints.Constraints;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
@@ -109,8 +109,9 @@ public class MyPlugin extends PollyPlugin {
             UserManager users = this.getMyPolly().users();
             users.addAttribute(REMIND_FORMAT_NAME, REMIND_FORMAT_VALUE);
             users.addAttribute(MESSAGE_FORMAT_NAME, MESSAGE_FORMAT_VALUE);
-            users.addAttribute(SLEEP_TIME, SLEEP_DEFAULT_VALUE, new IntegerConstraint());
+            users.addAttribute(SLEEP_TIME, SLEEP_DEFAULT_VALUE, Constraints.INTEGER);
             users.addAttribute(DEFAULT_MSG, DEFAULT_MSG_VALUE);
+            users.addAttribute("EMAIL", "none", Constraints.MAILADDRESS);
         } catch (DatabaseException e) {
             e.printStackTrace();
         }

@@ -49,12 +49,11 @@ import commands.WikiCommand;
 import core.GreetDeliverer;
 import core.HighlightReplyHandler;
 import core.JoinTimeCollector;
-import core.TopicManager;
 import core.TrainManager;
 
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
-import de.skuzzle.polly.sdk.constraints.IntegerConstraint;
+import de.skuzzle.polly.sdk.constraints.Constraints;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
@@ -72,7 +71,6 @@ public class MyPlugin extends PollyPlugin {
     public final static String GREETING = "GREETING";
     public final static String VENAD = "VENAD";
     
-    private TopicManager topicManager;
     private TrainManager trainManager;
     private GreetDeliverer greetDeliverer;
     private HighlightReplyHandler highlightHandler;
@@ -167,7 +165,7 @@ public class MyPlugin extends PollyPlugin {
 	    try {
 	        this.getMyPolly().users().addAttribute(VENAD, "<unbekannt>");
 	        this.getMyPolly().users().addAttribute(GREETING, "");
-	        this.getMyPolly().users().addAttribute("AZ", "0", new IntegerConstraint());
+	        this.getMyPolly().users().addAttribute("AZ", "0", Constraints.INTEGER);
 	    } catch (Exception ignore){}
 	}
 
