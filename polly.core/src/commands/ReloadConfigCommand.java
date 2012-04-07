@@ -18,6 +18,7 @@ public class ReloadConfigCommand extends Command {
         this.setHelpText("Liest die Konfigurationsdatei neu ein. Nicht alle " +
         		"Konfigurationseinstellungen können zur Laufzeit übernommen werden." );
         this.setUserLevel(UserManager.ADMIN);
+        this.setRegisteredOnly();
     }
     
     

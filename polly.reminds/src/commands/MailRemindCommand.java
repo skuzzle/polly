@@ -74,7 +74,7 @@ public class MailRemindCommand extends AbstractRemindCommand {
             this.remindManager.addRemind(re);
             this.remindManager.scheduleRemind(re, dueDate);
             this.reply(channel, "E-Mail Nachricht für " + user.getName() + 
-                " hinterlassen");
+                " hinterlassen (ID: " + re.getId() + ")");
         } catch (DatabaseException e) {
             throw new CommandException(e);
         }

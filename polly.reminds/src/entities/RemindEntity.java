@@ -161,6 +161,12 @@ public class RemindEntity {
     
     
     
+    public void setIsMail(boolean isMail) {
+        this.isMail = isMail;
+    }
+    
+    
+    
     public boolean wasRemind() {
         return this.remind;
     }

@@ -283,6 +283,24 @@ public class RemindManager extends AbstractDisposable {
     
     
     
+    public RemindEntity toggleIsMail(User executor, int id) 
+            throws CommandException, DatabaseException {
+        final RemindEntity remind = this.persistence.atomicRetrieveSingle(
+            RemindEntity.class, id);
+        
+        this.checkRemind(id, remind, executor);
+        this.persistence.atomicWriteOperation(new WriteAction() {
+            
+            @Override
+            public void performUpdate(PersistenceManager persistence) {
+                remind.setIsMail(!remind.isMail());
+            }
+        });
+        return remind;
+    }
+    
+    
+    
     public void modifyRemind(User executor, int id, final Date dueDate, 
             final String msg) throws CommandException, DatabaseException {
         final RemindEntity remind = this.persistence.atomicRetrieveSingle(

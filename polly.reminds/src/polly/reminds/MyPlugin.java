@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import commands.ToggleMailCommand;
 import commands.DeleteRemindCommand;
 import commands.LeaveCommand;
 import commands.MailRemindCommand;
@@ -86,6 +87,7 @@ public class MyPlugin extends PollyPlugin {
         this.addCommand(new SleepCommand(myPolly, this.remindManager));
         this.addCommand(new ModRemindCommand(myPolly, this.remindManager));
         this.addCommand(new MailRemindCommand(myPolly, this.remindManager));
+        this.addCommand(new ToggleMailCommand(myPolly, this.remindManager));
     }
     
     
