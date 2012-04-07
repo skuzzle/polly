@@ -2,6 +2,8 @@ package commands;
 
 import java.util.Date;
 
+import polly.reminds.MyPlugin;
+
 import core.RemindManager;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -25,7 +27,14 @@ public class MailRemindCommand extends AbstractRemindCommand {
     		new Parameter("User", Types.USER), 
     		new Parameter("Datum", Types.DATE), 
     		new Parameter("Nachricht", Types.STRING));
+        this.createSignature("Sendet eine Erinngerung zur angegebenen Zeit an dich",
+            new Parameter("Datum", Types.DATE),
+            new Parameter("Nachricht", Types.STRING));
+        this.createSignature("Sendet eine Erinnerung mit Standardtext zur angegebenen " +
+        		"Zeit an dich.", 
+    		new Parameter("Datum", Types.DATE));
         
+        this.setHelpText("Speichert Erinnerungen die per Mail zugestellt werden.");
         this.setRegisteredOnly();
     }
     
@@ -35,29 +44,41 @@ public class MailRemindCommand extends AbstractRemindCommand {
     protected boolean executeOnBoth(User executer, String channel, Signature signature) 
         throws CommandException, InsufficientRightsException {
         
+        User user = null;
+        Date dueDate = null;
+        String message = "";
         if (this.match(signature, 0)) {
-            User user = this.getMyPolly().users().getUser(signature.getStringValue(0));
-            if (user == null) {
-                this.reply(channel, "Unbekannter Benutzer: " + 
-                    signature.getStringValue(0));
-                return false;
-            }
-            Date dueDate = signature.getDateValue(1);
-            String message = signature.getStringValue(2);
-            
-            RemindEntity re = new RemindEntity(message, executer.getName(), 
-                user.getName(), channel, dueDate, false, true);
-            try {
-                this.remindManager.addRemind(re);
-                this.remindManager.scheduleRemind(re, dueDate);
-                this.reply(channel, "E-Mail Nachricht für " + user.getName() + 
-                    " hinterlassen");
-            } catch (DatabaseException e) {
-                throw new CommandException(e);
-            }
+            user = this.getMyPolly().users().getUser(signature.getStringValue(0));
+            dueDate = signature.getDateValue(1);
+            message = signature.getStringValue(2);
+        } else if (this.match(signature, 1)) {
+            user = executer;
+            dueDate = signature.getDateValue(0);
+            message = signature.getStringValue(1);
+        } else if (this.match(signature, 2)) {
+            user = executer;
+            dueDate = signature.getDateValue(0);
+            message = user.getAttribute(MyPlugin.DEFAULT_MSG);
+        }
+        
+        if (user == null) {
+            this.reply(channel, "Unbekannter Benutzer: " + 
+                signature.getStringValue(0));
+            return false;
+        }
+
+        
+        RemindEntity re = new RemindEntity(message, executer.getName(), 
+            user.getName(), channel, dueDate, false, true);
+        try {
+            this.remindManager.addRemind(re);
+            this.remindManager.scheduleRemind(re, dueDate);
+            this.reply(channel, "E-Mail Nachricht für " + user.getName() + 
+                " hinterlassen");
+        } catch (DatabaseException e) {
+            throw new CommandException(e);
         }
         
         return false;
     }
-
 }
