@@ -25,7 +25,7 @@ public class Janitor extends AbstractModule {
     @Override
     public void setup() throws SetupException {
         Executors.newScheduledThreadPool(1, 
-            new ThreadFactoryBuilder("JANITOR").setPriority(0))
+            new ThreadFactoryBuilder("JANITOR").setPriority(Thread.MIN_PRIORITY))
                 .scheduleAtFixedRate(new Runnable() {
             
             @Override

@@ -16,12 +16,13 @@ public class ThreadFactoryBuilder implements ThreadFactory {
     
     
     public ThreadFactoryBuilder() {
-        this.name = "";
+        this("");
     }
     
     
     public ThreadFactoryBuilder(String name) {
         this.name = name;
+        this.priority = Thread.NORM_PRIORITY;
     }
     
     
