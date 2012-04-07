@@ -149,6 +149,15 @@
         <ant dir="polly.logging" target="clean" inheritAll="false"/>
         <ant dir="polly.reminds" target="clean" inheritAll="false"/>
         <ant dir="polly.tv" target="clean" inheritAll="false"/>
+        
+        <delete file="${lib.dir}/polly.parser.jar"/>
+        <delete file="${lib.dir}/de.skuzzle.polly.sdk.jar"/>
+        <delete file="${lib.dir}/porat.jar"/>
+        <delete file="${lib.dir}/porat.jar"/>
+        <delete file="${lib.dir}/polly.installer.jar"/>
+        <delete file="${lib.dir}/de.skuzzle.polly.process.jar"/>
+        <delete file="${lib.dir}/network.jar"/>
+        <delete file="${lib.dir}/moduleloader.jar"/>
     </target>
     
     
