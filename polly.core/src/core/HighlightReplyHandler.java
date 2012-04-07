@@ -29,7 +29,7 @@ public class HighlightReplyHandler implements MessageListener {
     public HighlightReplyHandler(TimeProvider timeProvider) {
         this.timeProvider = timeProvider;
         this.lastMessage = timeProvider.currentTimeMillis() - MESSAGE_DELAY;
-        this.mode = Mode.BOTH;
+        this.mode = Mode.COLLECTING;
     }
     
     
