@@ -164,22 +164,40 @@ public class RemindManager extends AbstractDisposable {
     
     private void deliverByMail(RemindEntity remind) throws DatabaseException, 
             EMailException {
+        
+        this.deleteRemind(remind);
         User user = this.myPolly.users().getUser(remind.getForUser());
+        if (user == null) {
+            throw new EMailException("Unbekannter Benutzer: " + remind.getForUser());
+        }
+        
         String mail = user.getAttribute(MyPlugin.EMAIL);
         
         if (mail.equals(MyPlugin.DEFAULT_EMAIL)) {
-            this.deleteRemind(remind);
+            if (this.myPolly.irc().isOnline(remind.getFromUser())) {
+                this.myPolly.irc().sendMessage(remind.getFromUser(), 
+                    "Deine E-Mail Nachricht an " + remind.getForUser() + 
+                    " konnte nicht zugestellt werden, da keine gültie E-mail Adresse " +
+                    "hinterlegt ist.", this);
+            } else {
+                RemindEntity r = new RemindEntity(
+                    "Deine E-Mail Nachricht an " + remind.getForUser() + 
+                    " konnte nicht zugestellt werden, da keine gültie E-mail Adresse " +
+                    "hinterlegt ist.", 
+                    this.myPolly.irc().getNickname(), 
+                    remind.getFromUser(), 
+                    remind.getFromUser(),
+                    new Date());
+                r.setIsMessage(true);
+                this.addRemind(r);
+            }
             return;
         }
         String subject = String.format(SUBJECT, 
                 this.myPolly.formatting().formatDate(remind.getDueDate()));
         String message = MAIL_FORMAT.format(remind, this.myPolly.formatting());
         
-        try {
-            this.myPolly.mails().sendMail(mail, subject, message);
-        } finally {
-            this.deleteRemind(remind);
-        }
+        this.myPolly.mails().sendMail(mail, subject, message);
     }
     
     

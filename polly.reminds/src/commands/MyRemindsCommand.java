@@ -20,7 +20,9 @@ public class MyRemindsCommand extends Command {
         
         @Override
         protected String formatRemind(RemindEntity remind, FormatManager formatter) {
-            return "(" + remind.getId() + ") Erinnerung für " + remind.getForUser() + 
+            String mail = remind.isMail() ? ", E-Mail" : "";
+            return "(" + remind.getId() + mail + ") Erinnerung für " + 
+                    remind.getForUser() + 
                     " an: '" + remind.getMessage() + 
                     "', Zeit: " + 
                     formatter.formatDate(remind.getDueDate()) + ", hinterlassen am " + 

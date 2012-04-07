@@ -37,6 +37,11 @@ public class MailRemindCommand extends AbstractRemindCommand {
         
         if (this.match(signature, 0)) {
             User user = this.getMyPolly().users().getUser(signature.getStringValue(0));
+            if (user == null) {
+                this.reply(channel, "Unbekannter Benutzer: " + 
+                    signature.getStringValue(0));
+                return false;
+            }
             Date dueDate = signature.getDateValue(1);
             String message = signature.getStringValue(2);
             
@@ -45,6 +50,8 @@ public class MailRemindCommand extends AbstractRemindCommand {
             try {
                 this.remindManager.addRemind(re);
                 this.remindManager.scheduleRemind(re, dueDate);
+                this.reply(channel, "E-Mail Nachricht für " + user.getName() + 
+                    " hinterlassen");
             } catch (DatabaseException e) {
                 throw new CommandException(e);
             }
