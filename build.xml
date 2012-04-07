@@ -144,6 +144,7 @@
         <ant dir="moduleloader" target="clean" inheritAll="false"/>
         <ant dir="network" target="clean" inheritAll="false"/>
         <ant dir="porat" target="clean" inheritAll="false"/>
+        <ant dir="polly.process" target="clean" inheritAll="false"/>
         <ant dir="polly.core" target="clean" inheritAll="false"/>
         <ant dir="polly.logging" target="clean" inheritAll="false"/>
         <ant dir="polly.reminds" target="clean" inheritAll="false"/>
