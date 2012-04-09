@@ -8,6 +8,7 @@ import java.util.Map;
 
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.ConversationException;
+import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.model.User;
@@ -77,7 +78,7 @@ import de.skuzzle.polly.sdk.model.User;
  * @since zero day
  * @version RC 1.0
  */
-public abstract class Command implements Comparable<Command> {
+public abstract class Command extends AbstractDisposable implements Comparable<Command> {
     
 
 	/**
@@ -347,7 +348,7 @@ public abstract class Command implements Comparable<Command> {
 	 *     execution.
 	 * @see #getUserLevel()
 	 */
-	public final void doExecute(User executer, String channel, boolean query, 
+	public void doExecute(User executer, String channel, boolean query, 
 	        Signature signature) throws InsufficientRightsException, CommandException {
 	    
 		if (executer.getUserLevel() < this.getUserLevel()) {
@@ -704,6 +705,15 @@ public abstract class Command implements Comparable<Command> {
 	    }
 	    return result.toString();
 	}
+	
+	
+	
+	/**
+	 * Implementation of the {@link Disposable} interface. The default implementation
+	 * in the {@link Command} class is empty.
+	 */
+	@Override
+	protected void actualDispose() throws DisposingException {}
 	
 	
 	

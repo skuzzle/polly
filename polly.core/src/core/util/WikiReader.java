@@ -20,10 +20,14 @@ public class WikiReader {
     private final static Pattern PARAGRAPH = Pattern.compile("<p>.*</p>");
     
     
+    public String getWikiLink(String article, String lang) {
+        return "http://" + lang + ".wikipedia.org/wiki/" + article;
+    }
+    
+    
     
     public String readFirstParagraph(String article, String lang) throws IOException {
-        String address = "http://" + lang + ".wikipedia.org/wiki/" + article;
-        URL url = new URL(address);
+        URL url = new URL(this.getWikiLink(article, lang));
         
         URLConnection connection = url.openConnection();
         BufferedReader r = null;

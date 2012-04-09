@@ -3,7 +3,7 @@ package commands;
 import java.io.IOException;
 
 import core.util.WikiReader;
-import de.skuzzle.polly.sdk.Command;
+import de.skuzzle.polly.sdk.DelayedCommand;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
@@ -14,10 +14,11 @@ import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.model.User;
 
 
-public class DefineCommand extends Command {
+public class DefineCommand extends DelayedCommand {
 
+    
     public DefineCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "define");
+        super(polly, "define", 10000);
         this.createSignature("Sucht nach der Definition des angegebenen Begriffs", 
             new Parameter("Begriff", Types.STRING));
         this.setHelpText("Sucht nach der Definition eines angegebenen Begriffs bei " +
@@ -37,6 +38,7 @@ public class DefineCommand extends Command {
             
             try {
                 this.reply(channel, wr.readFirstParagraph(article, lang));
+                this.reply(channel, "Mehr Infos: " + wr.getWikiLink(article, lang));
             } catch (IOException e) {
                 throw new CommandException("Fehler beim Zugriff auf den Wikipedia " +
                 		"Artikel '" + article + "'");
@@ -44,5 +46,6 @@ public class DefineCommand extends Command {
         }
         return false;
     }
-
+    
+    
 }
