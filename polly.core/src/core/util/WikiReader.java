@@ -3,17 +3,22 @@ package core.util;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.text.html.HTMLEditorKit.ParserCallback;
+import javax.swing.text.html.parser.ParserDelegator;
+
 
 
 public class WikiReader {
     
     private final static Pattern PARAGRAPH = Pattern.compile("<p>.*</p>");
+    
     
     
     public String readFirstParagraph(String article, String lang) throws IOException {
@@ -30,6 +35,11 @@ public class WikiReader {
             while ((line = r.readLine()) != null) {
                 b.append(line);
                 b.append("\n");
+                
+                if (b.indexOf("</p>") != -1) {
+                    // we read everything we needed
+                    break;
+                }
             }
             
             String wikiText = b.toString();
@@ -46,10 +56,17 @@ public class WikiReader {
     
     
     
-    private String removeHtml(String s) throws IOException {
-        Html2Text h2t = new Html2Text(s);
-        h2t.parse();
-        return h2t.getText();
+    public String removeHtml(String s) throws IOException {
+        final StringBuilder b = new StringBuilder();
+        ParserDelegator delegator = new ParserDelegator();
+        // the third parameter is TRUE to ignore charset directive
+        delegator.parse(new StringReader(s), new ParserCallback() {
+            public void handleText(char[] data, int pos) {
+                b.append(data);
+            };
+            
+        }, true);
+        return b.toString();
     }
     
     
