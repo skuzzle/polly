@@ -102,7 +102,7 @@ public class DeliverRemindHandler extends JoinPartAdapter implements MessageList
                 // remind.setNotDelivered(false);   // enable if leave messages should 
                                                     // not be 'sleepable'
                 try {
-                    this.remindManager.deliverRemind(remind);
+                    this.remindManager.deliverRemind(remind, false);
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }

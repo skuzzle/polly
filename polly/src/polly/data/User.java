@@ -208,6 +208,13 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     public void setLastMessageTime(long timeStamp) {
         this.lastActionTimeStamp = timeStamp;
     }
+    
+    
+    
+    @Override
+    public long getLastMessageTime() {
+        return this.lastActionTimeStamp;
+    }
 
     
     

@@ -26,6 +26,7 @@ import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
+import de.skuzzle.polly.sdk.model.User;
 import entities.RemindEntity;
 
 
@@ -54,9 +55,10 @@ public class MyPlugin extends PollyPlugin {
 	public final static String LEAVE_AS_MAIL = "LEAVE_AS_MAIL";
 	public final static String DEFAULT_LEAVE_AS_MAIL = "false";
 	
-	
 	public final static String REMIND_TRACK_NICKCHANGE = "REMIND_TRACK_NICKCHANGE";
 	public final static String DEFAULT_REMIND_TRACK_NICKCHANGE = "true";
+	
+	public final static String REMIND_IDLE_TIME = "REMIND_IDLE_TIME";
     
 	
 	
@@ -128,6 +130,8 @@ public class MyPlugin extends PollyPlugin {
             users.addAttribute(DEFAULT_MSG, DEFAULT_MSG_VALUE);
             users.addAttribute(EMAIL, DEFAULT_EMAIL, Constraints.MAILADDRESS);
             users.addAttribute(LEAVE_AS_MAIL, DEFAULT_LEAVE_AS_MAIL, Constraints.BOOLEAN);
+            users.addAttribute(REMIND_IDLE_TIME, "" + User.IDLE_AFTER, 
+                Constraints.INTEGER);
             users.addAttribute(REMIND_TRACK_NICKCHANGE, DEFAULT_REMIND_TRACK_NICKCHANGE, 
                 Constraints.BOOLEAN);
         } catch (DatabaseException e) {

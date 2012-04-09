@@ -97,30 +97,37 @@ public class RemindManager extends AbstractDisposable {
     
     
     
-    public synchronized void deliverRemind(final RemindEntity remind) 
-            throws DatabaseException, EMailException {
+    public synchronized void deliverRemind(final RemindEntity remind, boolean checkIdle) 
+                throws DatabaseException, EMailException {
+        
         logger.debug("Executing Remind: " + remind);
         this.persistence.refresh(remind);
+        
+        User forUser = this.getUser(remind.getForUser());
         
         if (remind.isMail()) {
             this.deliverByMail(remind);
             return;
         }
         
-        if (!this.myPolly.irc().isOnline(remind.getForUser())) {
-            if (this.checkAttribute(remind.getForUser(), MyPlugin.LEAVE_AS_MAIL)) {
-                logger.debug("User is not online. Remind is delivered by mail");
+        if (!this.myPolly.irc().isOnline(remind.getForUser()) || 
+                (this.isIdle(forUser) && checkIdle)) {
+            if (forUser.getAttribute(MyPlugin.LEAVE_AS_MAIL).equals("true")) {
+                logger.debug("User is not online or idle. Remind is delivered by mail");
                 this.deliverByMail(remind);
                 return;
             }
-            logger.debug("User is not online. Remind will be delivered when he returns.");
+            logger.debug("User is not online or idle. Remind will be delivered when " +
+                    "he returns.");
             try {
                 this.persistence.atomicWriteOperation(new WriteAction() {
                     
                     @Override
                     public void performUpdate(PersistenceManager persistence) {
+                        onReturnAvailable.add(remind.getForUser());
                         remind.setIsMessage(true);
                         remind.setWasRemind(true);
+                        remind.setOnAction(true);
                     }
                 });
             } catch (Exception e) {
@@ -167,6 +174,32 @@ public class RemindManager extends AbstractDisposable {
     
     
     
+    public void deliverRemind(final RemindEntity remind) 
+            throws DatabaseException, EMailException {
+
+        this.deliverRemind(remind, true);
+    }
+    
+    
+    
+    private boolean isIdle(User user) {
+        long lastMsg = Long.parseLong(user.getAttribute(MyPlugin.REMIND_IDLE_TIME));
+        return System.currentTimeMillis() - user.getLastMessageTime() > lastMsg;
+    }
+    
+    
+    
+    private User getUser(String forUser) {
+        User u = this.myPolly.users().getUser(forUser);
+        if (u == null) {
+            u = this.myPolly.users().createUser(forUser, "", 0);
+            u.setCurrentNickName(forUser);
+        }
+        return u;
+    }
+
+
+
     private void deliverByMail(RemindEntity remind) throws DatabaseException, 
             EMailException {
         
