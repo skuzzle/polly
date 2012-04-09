@@ -7,6 +7,7 @@ import commands.AliasCommand;
 import commands.CalendarCommand;
 import commands.CloseTrainCommand;
 import commands.ClumBombCommand;
+import commands.DefineCommand;
 import commands.DelVarCommand;
 import commands.DeleteUserCommand;
 import commands.DeliverTrainCommand;
@@ -104,6 +105,7 @@ public class MyPlugin extends PollyPlugin {
 		this.addCommand(new CalendarCommand(myPolly));
 		
 		this.addCommand(new WikiCommand(myPolly));
+		this.addCommand(new DefineCommand(myPolly));
 		this.addCommand(new LmgtfyCommand(myPolly));
 		this.addCommand(new DictCommand(myPolly));
 		this.addCommand(new IsDownCommand(myPolly));
