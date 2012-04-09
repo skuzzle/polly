@@ -38,6 +38,7 @@ public class MessageHandler implements MessageListener, ConfigurationListener {
     private PollyConfiguration config;
     
     
+    
     public MessageHandler(CommandManager commandManager, UserManagerImpl userManager, 
             ExecutorService executorThreadPool, PollyConfiguration config) {
         this.commands = commandManager;
@@ -64,13 +65,16 @@ public class MessageHandler implements MessageListener, ConfigurationListener {
     
     
     @Override
-    public void actionMessage(MessageEvent e) {}
+    public void actionMessage(MessageEvent e) {
+        this.getUser(e.getUser()).setLastMessageTime(System.currentTimeMillis());
+    }
     
     
     
     private void execute(final MessageEvent e, final boolean isQuery) {
         final User executor = this.getUser(e.getUser());
-
+        executor.setLastMessageTime(System.currentTimeMillis());
+        
         Runnable command = new Runnable() {
             @Override
             public void run() {
@@ -138,7 +142,9 @@ public class MessageHandler implements MessageListener, ConfigurationListener {
 
 
     @Override
-    public void noticeMessage(MessageEvent ignore) {}
+    public void noticeMessage(MessageEvent e) {
+        this.getUser(e.getUser()).setLastMessageTime(System.currentTimeMillis());
+    }
 
 
 

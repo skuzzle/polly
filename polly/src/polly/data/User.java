@@ -57,7 +57,10 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     private Map<String, String> attributes;
     
     @Transient
-    private String currentNickName;    
+    private String currentNickName;
+    
+    @Transient
+    private long lastActionTimeStamp;
 
     
     public User() {
@@ -196,8 +199,22 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
         }
         this.attributes.put(name, value);
     }
+    
+    
+    
+    @Override
+    public void setLastMessageTime(long timeStamp) {
+        this.lastActionTimeStamp = timeStamp;
+    }
 
+    
+    
+    @Override
+    public boolean isIdle() {
+        return System.currentTimeMillis() - this.lastActionTimeStamp > IDLE_AFTER;
+    }
 
+    
     
     @Override
     public int compareTo(de.skuzzle.polly.sdk.model.User o) {

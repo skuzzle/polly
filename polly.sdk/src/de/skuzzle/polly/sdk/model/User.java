@@ -4,6 +4,11 @@ import java.util.Set;
 
 
 public interface User extends Comparable<User> {
+    
+    /**
+     * Time in milliseconds after which a user is considered to be idle
+     */
+    public final static long IDLE_AFTER = 60 * 1000 * 30; // 30 min
 
     public abstract int getUserLevel();
     
@@ -28,4 +33,8 @@ public interface User extends Comparable<User> {
     public abstract Set<String> getAttributeNames();
     
     public abstract String getAttribute(String name);
+    
+    public abstract boolean isIdle();
+    
+    public abstract void setLastMessageTime(long timeStamp);
 }
