@@ -108,6 +108,11 @@ public class RemindManager extends AbstractDisposable {
         }
         
         if (!this.myPolly.irc().isOnline(remind.getForUser())) {
+            if (this.leaveAsMail(remind.getForUser())) {
+                logger.debug("User is not online. Remind is delivered by mail");
+                this.deliverByMail(remind);
+                return;
+            }
             logger.debug("User is not online. Remind will be delivered when he returns.");
             try {
                 this.persistence.atomicWriteOperation(new WriteAction() {
@@ -198,6 +203,17 @@ public class RemindManager extends AbstractDisposable {
         String message = MAIL_FORMAT.format(remind, this.myPolly.formatting());
         
         this.myPolly.mails().sendMail(mail, subject, message);
+    }
+    
+    
+    
+    private boolean leaveAsMail(String forUser) {
+        User user = this.myPolly.users().getUser(forUser);
+        if (forUser == null || 
+                    user.getAttribute(MyPlugin.LEAVE_AS_MAIL).equals("false")) {
+            return false;
+        }
+        return true;
     }
     
     

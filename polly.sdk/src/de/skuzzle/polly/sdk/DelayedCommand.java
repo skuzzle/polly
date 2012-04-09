@@ -9,6 +9,7 @@ import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.model.User;
 
 
+
 /**
  * <p>This extends a normal command to remember the time of last execution per user to 
  * define execution delays.</p>

@@ -50,7 +50,12 @@ public class MyPlugin extends PollyPlugin {
 	
 	public static final String EMAIL = "EMAIL";
 	public static final String DEFAULT_EMAIL = "none";
+	
+	public static final String LEAVE_AS_MAIL = "LEAVE_AS_MAIL";
+	public static final String DEFAULT_LEAVE_AS_MAIL = "false";
     
+	
+	
     private Logger logger;
     private RemindManager remindManager;
     private RemindTraceNickchangeHandler remindNickChangeTracer;
@@ -118,6 +123,7 @@ public class MyPlugin extends PollyPlugin {
             users.addAttribute(SLEEP_TIME, SLEEP_DEFAULT_VALUE, Constraints.INTEGER);
             users.addAttribute(DEFAULT_MSG, DEFAULT_MSG_VALUE);
             users.addAttribute(EMAIL, DEFAULT_EMAIL, Constraints.MAILADDRESS);
+            users.addAttribute(LEAVE_AS_MAIL, DEFAULT_LEAVE_AS_MAIL, Constraints.BOOLEAN);
         } catch (DatabaseException e) {
             e.printStackTrace();
         }
