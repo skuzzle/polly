@@ -16,7 +16,6 @@ import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.exceptions.UnknownCommandException;
 import de.skuzzle.polly.sdk.exceptions.UnknownSignatureException;
-import de.skuzzle.polly.sdk.model.User;
 
 
 import polly.configuration.PollyConfiguration;
@@ -72,7 +71,7 @@ public class MessageHandler implements MessageListener, ConfigurationListener {
     
     
     private void execute(final MessageEvent e, final boolean isQuery) {
-        final User executor = this.getUser(e.getUser());
+        final polly.data.User executor = this.getUser(e.getUser());
         executor.setLastMessageTime(System.currentTimeMillis());
         
         Runnable command = new Runnable() {
@@ -130,8 +129,8 @@ public class MessageHandler implements MessageListener, ConfigurationListener {
     
     
     
-    private User getUser(IrcUser user) {
-        User u = this.userManager.getUser(user);
+    private polly.data.User getUser(IrcUser user) {
+        polly.data.User u = (polly.data.User) this.userManager.getUser(user);
         if (u == null) {
             u = new polly.data.User("~UNKNOWN", "blabla", 0);
             u.setCurrentNickName(user.getNickName());

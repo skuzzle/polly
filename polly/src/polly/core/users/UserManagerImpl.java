@@ -255,6 +255,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
             logger.info("Irc User " + from + " successfully logged in as " + 
                     registeredName);
             
+            ((polly.data.User) user).setLoginTime(System.currentTimeMillis());
             UserEvent e = new UserEvent(this, user);
             this.fireUserSignedOn(e);
             return user;
@@ -281,7 +282,8 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
         this.onlineCache.put(user.getCurrentNickName(), user);
         logger.info("Irc User " + from + " successfully logged in as " + 
                 from);
-            
+        
+        ((polly.data.User) user).setLoginTime(System.currentTimeMillis());
         UserEvent e = new UserEvent(this, user);
         this.fireUserSignedOn(e);
         return user;

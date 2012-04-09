@@ -36,5 +36,5 @@ public interface User extends Comparable<User> {
     
     public abstract boolean isIdle();
     
-    public abstract void setLastMessageTime(long timeStamp);
+    public abstract long getLoginTime();
 }

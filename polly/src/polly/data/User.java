@@ -61,6 +61,9 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     
     @Transient
     private long lastActionTimeStamp;
+    
+    @Transient
+    private long loginTime;
 
     
     public User() {
@@ -202,7 +205,6 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     
     
     
-    @Override
     public void setLastMessageTime(long timeStamp) {
         this.lastActionTimeStamp = timeStamp;
     }
@@ -213,7 +215,19 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     public boolean isIdle() {
         return System.currentTimeMillis() - this.lastActionTimeStamp > IDLE_AFTER;
     }
+    
+    
+    
+    @Override
+    public long getLoginTime() {
+        return this.loginTime;
+    }
 
+    
+    
+    public void setLoginTime(long timeStamp) {
+        this.loginTime = timeStamp;
+    }
     
     
     @Override
