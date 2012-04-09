@@ -108,7 +108,7 @@ public class RemindManager extends AbstractDisposable {
         }
         
         if (!this.myPolly.irc().isOnline(remind.getForUser())) {
-            if (this.leaveAsMail(remind.getForUser())) {
+            if (this.checkAttribute(remind.getForUser(), MyPlugin.LEAVE_AS_MAIL)) {
                 logger.debug("User is not online. Remind is delivered by mail");
                 this.deliverByMail(remind);
                 return;
@@ -207,13 +207,12 @@ public class RemindManager extends AbstractDisposable {
     
     
     
-    private boolean leaveAsMail(String forUser) {
+    private boolean checkAttribute(String forUser, String booleanAttributeName) {
         User user = this.myPolly.users().getUser(forUser);
-        if (forUser == null || 
-                    user.getAttribute(MyPlugin.LEAVE_AS_MAIL).equals("false")) {
+        if (user == null) {
             return false;
         }
-        return true;
+        return user.getAttribute(booleanAttributeName).equals("true");
     }
     
     
@@ -367,7 +366,8 @@ public class RemindManager extends AbstractDisposable {
     }
     
     
-    public void deleteRemind(final int id, User executor) throws CommandException, DatabaseException {
+    public void deleteRemind(final int id, User executor) 
+                throws CommandException, DatabaseException {
         final RemindEntity remind = this.persistence.atomicRetrieveSingle(
             RemindEntity.class, id);
         
@@ -424,6 +424,12 @@ public class RemindManager extends AbstractDisposable {
     
     
     public synchronized void traceNickChange(IrcUser oldUser, IrcUser newUser) {
+        if (!this.checkAttribute(oldUser.getNickName(), 
+                MyPlugin.REMIND_TRACK_NICKCHANGE)) {
+            logger.trace("Ignoring nickchange for " + oldUser);
+            return;
+        }
+        
         List<RemindEntity> reminds = this.getRemindsForUser(oldUser.getNickName());
         if (reminds.isEmpty()) {
             return;

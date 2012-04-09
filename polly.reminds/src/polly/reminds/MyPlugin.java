@@ -45,14 +45,18 @@ public class MyPlugin extends PollyPlugin {
     public final static String SLEEP_TIME = "SLEEP_TIME";
     public final static String SLEEP_DEFAULT_VALUE = "60000";
     
-    public static final String DEFAULT_MSG = "REMIND_DEFAULT_MSG";
-	private static final String DEFAULT_MSG_VALUE = "Reminder!";
+    public final static String DEFAULT_MSG = "REMIND_DEFAULT_MSG";
+    public final static String DEFAULT_MSG_VALUE = "Reminder!";
 	
-	public static final String EMAIL = "EMAIL";
-	public static final String DEFAULT_EMAIL = "none";
+	public final static String EMAIL = "EMAIL";
+	public final static String DEFAULT_EMAIL = "none";
 	
-	public static final String LEAVE_AS_MAIL = "LEAVE_AS_MAIL";
-	public static final String DEFAULT_LEAVE_AS_MAIL = "false";
+	public final static String LEAVE_AS_MAIL = "LEAVE_AS_MAIL";
+	public final static String DEFAULT_LEAVE_AS_MAIL = "false";
+	
+	
+	public final static String REMIND_TRACK_NICKCHANGE = "REMIND_TRACK_NICKCHANGE";
+	public final static String DEFAULT_REMIND_TRACK_NICKCHANGE = "true";
     
 	
 	
@@ -124,6 +128,8 @@ public class MyPlugin extends PollyPlugin {
             users.addAttribute(DEFAULT_MSG, DEFAULT_MSG_VALUE);
             users.addAttribute(EMAIL, DEFAULT_EMAIL, Constraints.MAILADDRESS);
             users.addAttribute(LEAVE_AS_MAIL, DEFAULT_LEAVE_AS_MAIL, Constraints.BOOLEAN);
+            users.addAttribute(REMIND_TRACK_NICKCHANGE, DEFAULT_REMIND_TRACK_NICKCHANGE, 
+                Constraints.BOOLEAN);
         } catch (DatabaseException e) {
             e.printStackTrace();
         }
