@@ -27,6 +27,11 @@ import de.skuzzle.polly.sdk.exceptions.EMailException;
 import de.skuzzle.polly.sdk.model.User;
 import entities.RemindEntity;
 
+/*
+ * This class is subject to ISSUE 0000109. Before adding further features it should be
+ * completely restructured.
+ */
+
 
 
 /**
@@ -110,8 +115,8 @@ public class RemindManager extends AbstractDisposable {
             return;
         }
         
-        if (!this.myPolly.irc().isOnline(remind.getForUser()) || 
-                (this.isIdle(forUser) && checkIdle)) {
+        boolean idle = this.isIdle(forUser) && checkIdle;
+        if (!this.myPolly.irc().isOnline(remind.getForUser()) || idle) {
             if (forUser.getAttribute(MyPlugin.LEAVE_AS_MAIL).equals("true")) {
                 logger.debug("User is not online or idle. Remind is delivered by mail");
                 this.deliverByMail(remind);
