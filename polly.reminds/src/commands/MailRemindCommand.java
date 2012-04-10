@@ -5,22 +5,27 @@ import java.util.Date;
 import polly.reminds.MyPlugin;
 
 import core.RemindManager;
+import de.skuzzle.polly.sdk.DelayedCommand;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
+import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.model.User;
 import entities.RemindEntity;
 
 
-public class MailRemindCommand extends AbstractRemindCommand {
+public class MailRemindCommand extends DelayedCommand {
 
+    private RemindManager remindManager;
+    
     public MailRemindCommand(MyPolly polly, RemindManager manager) 
                 throws DuplicatedSignatureException {
-        super(polly, manager, "mremind");
+        super(polly, "mremind", 30000);
+        this.remindManager = manager;
         this.createSignature("Sendet eine Erinnerung zur angegebenen Zeit an den " +
         		"angegebenen User", 
     		new Parameter("User", Types.USER), 
@@ -70,9 +75,13 @@ public class MailRemindCommand extends AbstractRemindCommand {
         RemindEntity re = new RemindEntity(message, executer.getName(), 
             user.getName(), channel, dueDate, false, true);
 
-        this.addRemind(re, true);
-        this.reply(channel, "E-Mail Nachricht für " + user.getName() + 
-            " hinterlassen (ID: " + re.getId() + ")");
+        try {
+            this.remindManager.addRemind(re, true);
+            this.reply(channel, "E-Mail Nachricht für " + user.getName() + 
+                " hinterlassen (ID: " + re.getId() + ")");
+        } catch (DatabaseException e) {
+            throw new CommandException(e);
+        }
         
         return false;
     }
