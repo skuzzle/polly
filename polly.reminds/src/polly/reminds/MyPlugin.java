@@ -122,7 +122,7 @@ public class MyPlugin extends PollyPlugin {
         try {
             UserManager users = this.getMyPolly().users();
             
-            // compatability: remove sleep attribute
+            // Compatibility: remove sleep attribute
             users.removeAttribute("SLEEP_TIME");
             
             users.addAttribute(REMIND_FORMAT_NAME, REMIND_FORMAT_VALUE);
