@@ -6,15 +6,15 @@ import de.skuzzle.polly.sdk.eventlistener.NickChangeListener;
 
 public class RemindTraceNickchangeHandler implements NickChangeListener {
 
-    private RemindManagerImpl remindManagerImpl;
+    private RemindManager remindManager;
     
-    public RemindTraceNickchangeHandler(RemindManagerImpl manager) {
-        this.remindManagerImpl = manager;
+    public RemindTraceNickchangeHandler(RemindManager manager) {
+        this.remindManager = manager;
     }
     
     
     @Override
     public void nickChanged(NickChangeEvent e) {
-        this.remindManagerImpl.traceNickChange(e.getOldUser(), e.getNewUser());
+        this.remindManager.traceNickChange(e.getOldUser(), e.getNewUser());
     }
 }

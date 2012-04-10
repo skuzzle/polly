@@ -7,7 +7,7 @@ import org.apache.log4j.Logger;
 
 import polly.reminds.MyPlugin;
 
-import core.RemindManagerImpl;
+import core.RemindManager;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
@@ -26,9 +26,9 @@ public class RemindCommand extends AbstractRemindCommand {
 	
 	protected Logger logger = Logger.getLogger(RemindCommand.class.getName());
 
-	public RemindCommand(MyPolly myPolly, RemindManagerImpl remindManagerImpl) 
+	public RemindCommand(MyPolly myPolly, RemindManager remindManager) 
             throws DuplicatedSignatureException {
-        super(myPolly, remindManagerImpl, "remind");
+        super(myPolly, remindManager, "remind");
         this.createSignature("Erinnert den Benutzer zu einer angegebenen Zeit im " +
                 "angegebenen Channel an etwas.", 
             new Parameter("User", Types.USER), 

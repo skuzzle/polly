@@ -33,7 +33,7 @@ public interface RemindManager extends Disposable {
         @Override
         public void run() {
             try {
-                this.remindManager.deliverRemind(this.remind, false);
+                this.remindManager.deliverRemind(this.remind, true);
             } catch (Exception e) {
                 // todo exception handling
                 e.printStackTrace();
@@ -103,6 +103,9 @@ public interface RemindManager extends Disposable {
     
     public abstract void snooze(User executor, Date dueDate) 
             throws CommandException, DatabaseException;
+    
+    public abstract RemindEntity toggleIsMail(User executor, int id) 
+            throws DatabaseException, CommandException;
     
     public abstract User getUser(String nickName);
     

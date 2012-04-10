@@ -15,13 +15,13 @@ import entities.RemindEntity;
 public class DeliverRemindHandler extends JoinPartAdapter implements MessageListener, 
         UserListener {
 
-    private RemindManagerImpl remindManagerImpl;
+    private RemindManager remindManager;
     private UserManager userManager;
 
     
     
-    public DeliverRemindHandler(RemindManagerImpl remindManagerImpl, UserManager userManager) {
-        this.remindManagerImpl = remindManagerImpl;
+    public DeliverRemindHandler(RemindManager remindManager, UserManager userManager) {
+        this.remindManager = remindManager;
         this.userManager = userManager;
     }
     
@@ -35,7 +35,7 @@ public class DeliverRemindHandler extends JoinPartAdapter implements MessageList
     
     @Override
     public void publicMessage(MessageEvent e) {
-        if (this.remindManagerImpl.onReturnAvailable(e.getUser().getNickName())) {
+        if (this.remindManager.isOnActionAvailable(e.getUser().getNickName())) {
             this.deliverRemind(e, false, false);
         }
     }
@@ -44,7 +44,7 @@ public class DeliverRemindHandler extends JoinPartAdapter implements MessageList
 
     @Override
     public void privateMessage(MessageEvent e) {
-        if (this.remindManagerImpl.onReturnAvailable(e.getUser().getNickName())) {
+        if (this.remindManager.isOnActionAvailable(e.getUser().getNickName())) {
             this.deliverRemind(e, false, false);
         }
     }
@@ -53,7 +53,7 @@ public class DeliverRemindHandler extends JoinPartAdapter implements MessageList
 
     @Override
     public void actionMessage(MessageEvent e) {
-        if (this.remindManagerImpl.onReturnAvailable(e.getUser().getNickName())) {
+        if (this.remindManager.isOnActionAvailable(e.getUser().getNickName())) {
             this.deliverRemind(e, false, false);
         }
     }
@@ -65,7 +65,9 @@ public class DeliverRemindHandler extends JoinPartAdapter implements MessageList
             throw new IllegalArgumentException("cant be join and signon!");
         }
         
-        List<RemindEntity> reminds = this.remindManagerImpl.undeliveredReminds(e.getUser());       
+        List<RemindEntity> reminds = this.remindManager.getDatabaseWrapper()
+                .getUndeliveredReminds(e.getUser().getNickName());
+        
         for (RemindEntity remind : reminds) {
 
             // mails are not delivered on irc events
@@ -91,7 +93,7 @@ public class DeliverRemindHandler extends JoinPartAdapter implements MessageList
                       channel.equals(remind.getOnChannel()));
 
             /*
-             * The remind only gets delivered of the destination user is signed on or
+             * The remind only gets delivered if the destination user is signed on or
              * if no user with the destination user name exists.
              */
             deliverLeave &= this.userManager.isSignedOn(e.getUser()) ||
@@ -102,7 +104,7 @@ public class DeliverRemindHandler extends JoinPartAdapter implements MessageList
                 // remind.setNotDelivered(false);   // enable if leave messages should 
                                                     // not be 'sleepable'
                 try {
-                    this.remindManagerImpl.deliverRemind(remind, false);
+                    this.remindManager.deliverRemind(remind, false);
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }

@@ -1,6 +1,5 @@
 package polly.reminds;
 
-import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -12,9 +11,10 @@ import commands.ModRemindCommand;
 import commands.MyRemindsCommand;
 import commands.OnReturnCommand;
 import commands.RemindCommand;
-import commands.SleepCommand;
+import commands.SnoozeCommand;
 
 import core.DeliverRemindHandler;
+import core.RemindManager;
 import core.RemindManagerImpl;
 import core.RemindTraceNickchangeHandler;
 
@@ -43,8 +43,8 @@ public class MyPlugin extends PollyPlugin {
     public final static String MESSAGE_FORMAT_NAME = "MESSAGE_FORMAT";
     public final static String MESSAGE_FORMAT_VALUE = "@%r%: %m%. (Hinterlassen von: %s% am %ld%)";
     
-    public final static String SLEEP_TIME = "SLEEP_TIME";
-    public final static String SLEEP_DEFAULT_VALUE = "60000";
+    public final static String SNOOZE_TIME = "SNOOZE_TIME";
+    public final static String SNOOZE_DEFAULT_VALUE = "60000";
     
     public final static String DEFAULT_MSG = "REMIND_DEFAULT_MSG";
     public final static String DEFAULT_MSG_VALUE = "Reminder!";
@@ -63,7 +63,7 @@ public class MyPlugin extends PollyPlugin {
 	
 	
     private Logger logger;
-    private RemindManagerImpl remindManagerImpl;
+    private RemindManager remindManager;
     private RemindTraceNickchangeHandler remindNickChangeTracer;
     private DeliverRemindHandler deliverRemindHandler;
 
@@ -77,28 +77,28 @@ public class MyPlugin extends PollyPlugin {
         
         myPolly.persistence().registerEntity(RemindEntity.class);
         
-        this.remindManagerImpl = new RemindManagerImpl(myPolly);
+        this.remindManager = new RemindManagerImpl(myPolly);
         
-        this.deliverRemindHandler = new DeliverRemindHandler(this.remindManagerImpl, 
+        this.deliverRemindHandler = new DeliverRemindHandler(this.remindManager, 
             myPolly.users());
         this.remindNickChangeTracer = new RemindTraceNickchangeHandler(
-                this.remindManagerImpl);
+                this.remindManager);
         myPolly.irc().addNickChangeListener(this.remindNickChangeTracer);
         myPolly.irc().addJoinPartListener(this.deliverRemindHandler);
         myPolly.irc().addMessageListener(this.deliverRemindHandler);
         myPolly.users().addUserListener(this.deliverRemindHandler);
         
-        this.addDisposable(this.remindManagerImpl);
+        this.addDisposable(this.remindManager);
         
-        this.addCommand(new LeaveCommand(myPolly, this.remindManagerImpl));
-        this.addCommand(new OnReturnCommand(myPolly, this.remindManagerImpl));
-        this.addCommand(new RemindCommand(myPolly, this.remindManagerImpl));
-        this.addCommand(new MyRemindsCommand(myPolly, this.remindManagerImpl));
-        this.addCommand(new DeleteRemindCommand(myPolly, this.remindManagerImpl));
-        this.addCommand(new SleepCommand(myPolly, this.remindManagerImpl));
-        this.addCommand(new ModRemindCommand(myPolly, this.remindManagerImpl));
-        this.addCommand(new MailRemindCommand(myPolly, this.remindManagerImpl));
-        this.addCommand(new ToggleMailCommand(myPolly, this.remindManagerImpl));
+        this.addCommand(new LeaveCommand(myPolly, this.remindManager));
+        this.addCommand(new OnReturnCommand(myPolly, this.remindManager));
+        this.addCommand(new RemindCommand(myPolly, this.remindManager));
+        this.addCommand(new MyRemindsCommand(myPolly, this.remindManager));
+        this.addCommand(new DeleteRemindCommand(myPolly, this.remindManager));
+        this.addCommand(new SnoozeCommand(myPolly, this.remindManager));
+        this.addCommand(new ModRemindCommand(myPolly, this.remindManager));
+        this.addCommand(new MailRemindCommand(myPolly, this.remindManager));
+        this.addCommand(new ToggleMailCommand(myPolly, this.remindManager));
     }
     
     
@@ -117,16 +117,17 @@ public class MyPlugin extends PollyPlugin {
     @Override
     public void onLoad() {
         logger.info("Scheduling all reminds...");
-        List<RemindEntity> reminds = this.remindManagerImpl.getAllReminds();
-        for (RemindEntity remind : reminds) {
-            this.remindManagerImpl.scheduleRemind(remind, remind.getDueDate());
-        }
+        this.remindManager.rescheduleAll();
         
         try {
             UserManager users = this.getMyPolly().users();
+            
+            // compatability: remove sleep attribute
+            users.removeAttribute("SLEEP_TIME");
+            
             users.addAttribute(REMIND_FORMAT_NAME, REMIND_FORMAT_VALUE);
             users.addAttribute(MESSAGE_FORMAT_NAME, MESSAGE_FORMAT_VALUE);
-            users.addAttribute(SLEEP_TIME, SLEEP_DEFAULT_VALUE, Constraints.INTEGER);
+            users.addAttribute(SNOOZE_TIME, SNOOZE_DEFAULT_VALUE, Constraints.INTEGER);
             users.addAttribute(DEFAULT_MSG, DEFAULT_MSG_VALUE);
             users.addAttribute(EMAIL, DEFAULT_EMAIL, Constraints.MAILADDRESS);
             users.addAttribute(LEAVE_AS_MAIL, DEFAULT_LEAVE_AS_MAIL, Constraints.BOOLEAN);

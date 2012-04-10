@@ -4,9 +4,8 @@ package commands;
 import java.util.List;
 
 import core.RemindFormatter;
-import core.RemindManagerImpl;
+import core.RemindManager;
 
-import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Signature;
@@ -14,7 +13,7 @@ import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
 import entities.RemindEntity;
 
-public class MyRemindsCommand extends Command {
+public class MyRemindsCommand extends AbstractRemindCommand {
     
     protected final static RemindFormatter FORMATTER = new RemindFormatter() {
         
@@ -41,14 +40,12 @@ public class MyRemindsCommand extends Command {
     
     
     
-    private RemindManagerImpl remindManagerImpl;
     
-    public MyRemindsCommand(MyPolly polly, RemindManagerImpl manager) 
+    public MyRemindsCommand(MyPolly polly, RemindManager manager) 
             throws DuplicatedSignatureException {
-        super(polly, "myreminds");
+        super(polly, manager, "myreminds");
         this.createSignature("Zeigt die Reminds an, die dir oder die du für andere " +
         		"hinterlassen hast.");
-        this.remindManagerImpl = manager;
         this.setRegisteredOnly();
     }
     
@@ -60,7 +57,8 @@ public class MyRemindsCommand extends Command {
         
         if (this.match(signature, 0)) {
             List<RemindEntity> reminds = 
-                this.remindManagerImpl.getMyReminds(executer.getCurrentNickName());
+                this.remindManager.getDatabaseWrapper().getMyRemindsForUser(
+                    executer.getCurrentNickName());
             
             if (reminds.isEmpty()) {
                 this.reply(executer, "Keine Erinnerungen für dich vorhanden.");
