@@ -6,18 +6,18 @@ import java.util.TimerTask;
 public class SleepTask extends TimerTask {
 
     private String nickName;
-    private RemindManager remindManager;
+    private RemindManagerImpl remindManagerImpl;
     
-    public SleepTask(String nickName, RemindManager remindManager) {
+    public SleepTask(String nickName, RemindManagerImpl remindManagerImpl) {
         this.nickName = nickName;
-        this.remindManager = remindManager;
+        this.remindManagerImpl = remindManagerImpl;
     }
     
     
     
     @Override
     public void run() {
-        this.remindManager.removeSleep(this.nickName);
+        this.remindManagerImpl.removeSleep(this.nickName);
     }
 
 }

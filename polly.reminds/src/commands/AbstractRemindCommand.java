@@ -2,7 +2,7 @@ package commands;
 
 
 import core.RemindFormatter;
-import core.RemindManager;
+import core.RemindManagerImpl;
 
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.FormatManager;
@@ -15,7 +15,7 @@ import entities.RemindEntity;
 
 public class AbstractRemindCommand extends Command {
     
-    protected RemindManager remindManager;
+    protected RemindManagerImpl remindManagerImpl;
 
     protected final static RemindFormatter FORMATTER = new RemindFormatter() {
         
@@ -35,10 +35,10 @@ public class AbstractRemindCommand extends Command {
     
     
     
-    public AbstractRemindCommand(MyPolly polly, RemindManager manager, 
+    public AbstractRemindCommand(MyPolly polly, RemindManagerImpl manager, 
             String commandName) {
         super(polly, commandName);
-        this.remindManager = manager;
+        this.remindManagerImpl = manager;
     }
     
     
@@ -46,12 +46,12 @@ public class AbstractRemindCommand extends Command {
     protected RemindEntity addRemind(RemindEntity remind, boolean schedule) 
                 throws CommandException {
         try {
-            this.remindManager.addRemind(remind);
+            this.remindManagerImpl.addRemind(remind);
         } catch (DatabaseException e) {
             throw new CommandException(e);
         }
         if (schedule) {
-            this.remindManager.scheduleRemind(remind, remind.getDueDate());
+            this.remindManagerImpl.scheduleRemind(remind, remind.getDueDate());
         }
         return remind;
     }

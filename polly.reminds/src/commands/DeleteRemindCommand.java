@@ -1,6 +1,6 @@
 package commands;
 
-import core.RemindManager;
+import core.RemindManagerImpl;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -14,14 +14,14 @@ import de.skuzzle.polly.sdk.model.User;
 
 public class DeleteRemindCommand extends Command {
 
-    private RemindManager remindManager;
+    private RemindManagerImpl remindManagerImpl;
     
-    public DeleteRemindCommand(MyPolly polly, RemindManager manager) throws DuplicatedSignatureException {
+    public DeleteRemindCommand(MyPolly polly, RemindManagerImpl manager) throws DuplicatedSignatureException {
         super(polly, "delremind");
         this.createSignature("Löscht die Erinnerung mit der angegebenen Id", 
             new Parameter("Remind-ID", Types.NUMBER));
         this.setRegisteredOnly();
-        this.remindManager = manager;
+        this.remindManagerImpl = manager;
     }
     
     
@@ -34,7 +34,7 @@ public class DeleteRemindCommand extends Command {
             int remindId = (int) signature.getNumberValue(0);
             
             try {
-                this.remindManager.deleteRemind(remindId, executer);
+                this.remindManagerImpl.deleteRemind(remindId, executer);
                 this.reply(channel, "Erinnerung wurde gelöscht");
             } catch (DatabaseException e) {
                 throw new CommandException(e);

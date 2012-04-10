@@ -4,7 +4,7 @@ package commands;
 import java.util.Date;
 import java.util.List;
 
-import core.RemindManager;
+import core.RemindManagerImpl;
 
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -22,7 +22,7 @@ import entities.RemindEntity;
 public class LeaveCommand extends AbstractRemindCommand {
 
 
-    public LeaveCommand(MyPolly polly, RemindManager manager) throws DuplicatedSignatureException {
+    public LeaveCommand(MyPolly polly, RemindManagerImpl manager) throws DuplicatedSignatureException {
         super(polly, manager, "leave");
         this.createSignature("Hinterlässt eine Nachricht für einen Benutzer.", 
                 new Parameter("User", Types.USER), 

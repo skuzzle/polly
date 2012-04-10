@@ -1,6 +1,6 @@
 package commands;
 
-import core.RemindManager;
+import core.RemindManagerImpl;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
@@ -15,7 +15,7 @@ import entities.RemindEntity;
 
 public class ToggleMailCommand extends AbstractRemindCommand {
 
-    public ToggleMailCommand(MyPolly polly, RemindManager manager) 
+    public ToggleMailCommand(MyPolly polly, RemindManagerImpl manager) 
             throws DuplicatedSignatureException {
         
         super(polly, manager, "togglemail");
@@ -36,7 +36,7 @@ public class ToggleMailCommand extends AbstractRemindCommand {
         if (this.match(signature, 0)) {
             int id = (int) signature.getNumberValue(0);
             try {
-                RemindEntity r = this.remindManager.toggleIsMail(executer, id);
+                RemindEntity r = this.remindManagerImpl.toggleIsMail(executer, id);
                 if (r.isMail()) {
                     this.reply(channel, "Typ geändert zu: E-Mail Benachrichtigung.");
                 } else {

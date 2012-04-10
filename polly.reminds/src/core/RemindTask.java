@@ -12,12 +12,12 @@ import entities.RemindEntity;
 public class RemindTask extends TimerTask {
 
     private RemindEntity remind;
-    private RemindManager remindManager;
+    private RemindManagerImpl remindManagerImpl;
     private Logger logger;
     
-    public RemindTask(RemindEntity remind, RemindManager remindManager, Logger logger) {
+    public RemindTask(RemindEntity remind, RemindManagerImpl remindManagerImpl, Logger logger) {
         this.remind = remind;
-        this.remindManager = remindManager;
+        this.remindManagerImpl = remindManagerImpl;
         this.logger = logger;
     }
     
@@ -26,7 +26,7 @@ public class RemindTask extends TimerTask {
     @Override
     public void run() {
         try {
-            this.remindManager.deliverRemind(this.remind);
+            this.remindManagerImpl.deliverRemind(this.remind);
         } catch (Exception e) {
             logger.error("Error while delivering remind", e);
         }

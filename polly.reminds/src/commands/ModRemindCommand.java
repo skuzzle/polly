@@ -3,7 +3,7 @@ package commands;
 
 import java.util.Date;
 
-import core.RemindManager;
+import core.RemindManagerImpl;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
@@ -17,7 +17,7 @@ import entities.RemindEntity;
 
 public class ModRemindCommand extends AbstractRemindCommand {
 
-    public ModRemindCommand(MyPolly polly, RemindManager manager) throws DuplicatedSignatureException {
+    public ModRemindCommand(MyPolly polly, RemindManagerImpl manager) throws DuplicatedSignatureException {
         super(polly, manager, "modr");
         this.createSignature("Ändert das Datum des Reminds mit der angegebenen ID", 
             new Parameter("Remind-Id", Types.NUMBER), 
@@ -41,7 +41,7 @@ public class ModRemindCommand extends AbstractRemindCommand {
             Signature signature) throws CommandException {
         
         int id = (int) signature.getNumberValue(0);
-        RemindEntity remind = this.remindManager.getRemind(id);
+        RemindEntity remind = this.remindManagerImpl.getRemind(id);
 
         Date dueDate = remind.getDueDate();
         String message = remind.getMessage();
@@ -56,7 +56,7 @@ public class ModRemindCommand extends AbstractRemindCommand {
         }
         
         try {
-            this.remindManager.modifyRemind(executer, id, dueDate, message);
+            this.remindManagerImpl.modifyRemind(executer, id, dueDate, message);
             this.reply(channel, "Remind erfolgreich aktualisiert");
         } catch (DatabaseException e) {
             throw new CommandException(e);

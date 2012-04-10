@@ -4,7 +4,7 @@ import java.util.Date;
 
 import polly.reminds.MyPlugin;
 
-import core.RemindManager;
+import core.RemindManagerImpl;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
@@ -19,7 +19,7 @@ import entities.RemindEntity;
 
 public class MailRemindCommand extends AbstractRemindCommand {
 
-    public MailRemindCommand(MyPolly polly, RemindManager manager) 
+    public MailRemindCommand(MyPolly polly, RemindManagerImpl manager) 
                 throws DuplicatedSignatureException {
         super(polly, manager, "mremind");
         this.createSignature("Sendet eine Erinnerung zur angegebenen Zeit an den " +
@@ -71,8 +71,8 @@ public class MailRemindCommand extends AbstractRemindCommand {
         RemindEntity re = new RemindEntity(message, executer.getName(), 
             user.getName(), channel, dueDate, false, true);
         try {
-            this.remindManager.addRemind(re);
-            this.remindManager.scheduleRemind(re, dueDate);
+            this.remindManagerImpl.addRemind(re);
+            this.remindManagerImpl.scheduleRemind(re, dueDate);
             this.reply(channel, "E-Mail Nachricht für " + user.getName() + 
                 " hinterlassen (ID: " + re.getId() + ")");
         } catch (DatabaseException e) {

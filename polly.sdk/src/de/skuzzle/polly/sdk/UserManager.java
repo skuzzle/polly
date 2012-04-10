@@ -1,5 +1,6 @@
 package de.skuzzle.polly.sdk;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -220,6 +221,15 @@ public interface UserManager {
 	 * @since 0.6.1
 	 */
 	public abstract List<User> getRegisteredUsers();
+	
+	
+	/**
+	 * Gets a read-only collection of all users that are currently logged in.
+	 * 
+	 * @return A collection of users that are logged in.
+	 * @since 0.9
+	 */
+	public abstract Collection<User> getOnlineUsers();
 	
 	
 	

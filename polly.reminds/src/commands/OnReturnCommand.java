@@ -2,7 +2,7 @@ package commands;
 
 import java.util.Date;
 
-import core.RemindManager;
+import core.RemindManagerImpl;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
@@ -15,7 +15,7 @@ import entities.RemindEntity;
 
 public class OnReturnCommand extends AbstractRemindCommand {
 
-    public OnReturnCommand(MyPolly polly, RemindManager manager) 
+    public OnReturnCommand(MyPolly polly, RemindManagerImpl manager) 
             throws DuplicatedSignatureException {
         super(polly, manager, "onreturn");
         this.createSignature("Hinterlässt eine Nachricht für einen Benutzer die " +

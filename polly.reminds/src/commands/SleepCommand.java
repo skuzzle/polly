@@ -2,7 +2,7 @@ package commands;
 
 import java.util.Date;
 
-import core.RemindManager;
+import core.RemindManagerImpl;
 
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -17,13 +17,13 @@ import entities.RemindEntity;
 
 public class SleepCommand extends Command {
 
-    private RemindManager remindManager;
+    private RemindManagerImpl remindManagerImpl;
     
-    public SleepCommand(MyPolly polly, RemindManager remindManager) 
+    public SleepCommand(MyPolly polly, RemindManagerImpl remindManagerImpl) 
             throws DuplicatedSignatureException {
    
         super(polly, "sleep");
-        this.remindManager = remindManager;
+        this.remindManagerImpl = remindManagerImpl;
         this.createSignature("Verlängert die Erinnerung die dir zuletzt zugestellt wurde", 
             new Parameter("Neue Zeit", Types.DATE));
         this.setRegisteredOnly();
@@ -37,7 +37,7 @@ public class SleepCommand extends Command {
             Signature signature) throws CommandException {
         if (this.match(signature, 0)) {
             Date dueDate = signature.getDateValue(0);
-            RemindEntity sleeping = this.remindManager.getSleep(
+            RemindEntity sleeping = this.remindManagerImpl.getSleep(
                     executer.getCurrentNickName());
             
             if (sleeping == null) {
@@ -47,9 +47,9 @@ public class SleepCommand extends Command {
             
             RemindEntity copy = sleeping.copyForNewDueDate(dueDate);
             try {
-                this.remindManager.addRemind(copy);
-                this.remindManager.scheduleRemind(copy, dueDate);
-                this.remindManager.removeSleep(sleeping.getForUser());
+                this.remindManagerImpl.addRemind(copy);
+                this.remindManagerImpl.scheduleRemind(copy, dueDate);
+                this.remindManagerImpl.removeSleep(sleeping.getForUser());
                 this.reply(channel, "Erinnerung wurde verlängert.");
             } catch (DatabaseException e) {
                 throw new CommandException(e);

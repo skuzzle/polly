@@ -4,7 +4,7 @@ package commands;
 import java.util.List;
 
 import core.RemindFormatter;
-import core.RemindManager;
+import core.RemindManagerImpl;
 
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.FormatManager;
@@ -41,14 +41,14 @@ public class MyRemindsCommand extends Command {
     
     
     
-    private RemindManager remindManager;
+    private RemindManagerImpl remindManagerImpl;
     
-    public MyRemindsCommand(MyPolly polly, RemindManager manager) 
+    public MyRemindsCommand(MyPolly polly, RemindManagerImpl manager) 
             throws DuplicatedSignatureException {
         super(polly, "myreminds");
         this.createSignature("Zeigt die Reminds an, die dir oder die du für andere " +
         		"hinterlassen hast.");
-        this.remindManager = manager;
+        this.remindManagerImpl = manager;
         this.setRegisteredOnly();
     }
     
@@ -60,7 +60,7 @@ public class MyRemindsCommand extends Command {
         
         if (this.match(signature, 0)) {
             List<RemindEntity> reminds = 
-                this.remindManager.getMyReminds(executer.getCurrentNickName());
+                this.remindManagerImpl.getMyReminds(executer.getCurrentNickName());
             
             if (reminds.isEmpty()) {
                 this.reply(executer, "Keine Erinnerungen für dich vorhanden.");
