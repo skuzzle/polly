@@ -363,6 +363,12 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     
     
+    @Override
+    public Collection<User> getOnlineUsers() {
+        return Collections.unmodifiableCollection(this.onlineCache.values());
+    }
+    
+    
     public synchronized void traceNickChange(IrcUser oldUser, IrcUser newUser) {
         logger.debug("Tracing nickchange from '" + oldUser + "' to '" + newUser + "'");
         User tmp = this.onlineCache.get(oldUser.getNickName());

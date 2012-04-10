@@ -8,6 +8,8 @@ import de.skuzzle.polly.sdk.exceptions.EMailException;
 
 public class MailManagerImpl implements MailManager {
 
+    public final static long MAIL_DELAY = 30000; // 30 seconds
+    
     private MailSender sender;
     
     

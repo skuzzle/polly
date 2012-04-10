@@ -34,6 +34,13 @@ public class SetAttributeCommand extends Command {
     
     
     @Override
+    public void renewConstants() {
+        this.registerConstant("true", new Types.BooleanType(true));
+        this.registerConstant("false", new Types.BooleanType(false));
+    }
+    
+    
+    @Override
     protected boolean executeOnBoth(User executer, String channel,
             Signature signature) throws CommandException {
         

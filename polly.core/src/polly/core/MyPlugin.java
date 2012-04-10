@@ -47,6 +47,7 @@ import commands.VarCommand;
 import commands.VenadCommand;
 import commands.VersionCommand;
 import commands.WikiCommand;
+import core.ForwardHighlightHandler;
 import core.GreetDeliverer;
 import core.HighlightReplyHandler;
 import core.JoinTimeCollector;
@@ -55,6 +56,7 @@ import core.TrainManager;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
 import de.skuzzle.polly.sdk.constraints.Constraints;
+import de.skuzzle.polly.sdk.eventlistener.MessageListener;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
@@ -72,11 +74,14 @@ public class MyPlugin extends PollyPlugin {
     public final static String GREETING = "GREETING";
     public final static String VENAD = "VENAD";
     
+    public final static String FORWARD_HIGHLIGHTS = "FORWARD_HIGHLIGHTS";
+    public final static String DEFAULT_FORWARD_HIGHLIGHTS = "false";
+    
     private TrainManager trainManager;
     private GreetDeliverer greetDeliverer;
     private HighlightReplyHandler highlightHandler;
     private JoinTimeCollector joinTimeCollector;
-    
+    private MessageListener highlightForwarder;
     
     
 	public MyPlugin(MyPolly myPolly) throws IncompatiblePluginException, DuplicatedSignatureException {
@@ -149,9 +154,13 @@ public class MyPlugin extends PollyPlugin {
 		
 		this.addCommand(new DitoCommand(myPolly));
 		
-		this.highlightHandler= new HighlightReplyHandler(myPolly.getTimeProvider());
+		this.highlightHandler = new HighlightReplyHandler(myPolly.getTimeProvider());
 		myPolly.irc().addMessageListener(this.highlightHandler);
 		this.addCommand(new HighlightModeCommand(myPolly, this.highlightHandler));
+		
+		this.highlightForwarder = new ForwardHighlightHandler(myPolly.mails(), 
+		    myPolly.users());
+		myPolly.irc().addMessageListener(this.highlightForwarder);
 	}
 	
 	
@@ -168,6 +177,8 @@ public class MyPlugin extends PollyPlugin {
 	        this.getMyPolly().users().addAttribute(VENAD, "<unbekannt>");
 	        this.getMyPolly().users().addAttribute(GREETING, "");
 	        this.getMyPolly().users().addAttribute("AZ", "0", Constraints.INTEGER);
+	        this.getMyPolly().users().addAttribute(FORWARD_HIGHLIGHTS, 
+	            DEFAULT_FORWARD_HIGHLIGHTS, Constraints.BOOLEAN);
 	    } catch (Exception ignore){}
 	}
 
@@ -179,6 +190,7 @@ public class MyPlugin extends PollyPlugin {
 	    //this.topicManager.dispose();
 	    this.getMyPolly().users().removeUserListener(this.greetDeliverer);
 	    this.getMyPolly().irc().removeMessageListener(this.highlightHandler);
+	    this.getMyPolly().irc().removeMessageListener(this.highlightForwarder);
 	    this.joinTimeCollector.remove(this.getMyPolly().irc());
 	}
 }
