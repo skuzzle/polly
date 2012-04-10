@@ -351,6 +351,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     }
     
     
+    
     @Override
     public List<User> getRegisteredUsers() {
         try {
@@ -369,12 +370,24 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     }
     
     
+    
     public synchronized void traceNickChange(IrcUser oldUser, IrcUser newUser) {
         logger.debug("Tracing nickchange from '" + oldUser + "' to '" + newUser + "'");
         User tmp = this.onlineCache.get(oldUser.getNickName());
         tmp.setCurrentNickName(newUser.getNickName());
         this.onlineCache.remove(oldUser.getNickName());
         this.onlineCache.put(newUser.getNickName(), tmp);
+    }
+    
+    
+    
+    public List<Attribute> getAllAttributes() {
+        try {
+            this.persistence.readLock();
+            return this.persistence.findList(Attribute.class, Attribute.ALL_ATTRIBUTES);
+        } finally {
+            this.persistence.readUnlock();
+        }
     }
     
     
@@ -501,7 +514,11 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
 
     @Override
     public User createUser(String name, String password, int userLevel) {
-        return new polly.data.User(name, password, userLevel);
+        polly.data.User result = new polly.data.User(name, password, userLevel);
+        for (Attribute att : this.getAllAttributes()) {
+            result.setAttribute(att.getName(), att.getDefaultValue());
+        }
+        return result;
     }
     
     

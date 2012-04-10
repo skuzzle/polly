@@ -18,6 +18,11 @@ import javax.persistence.NamedQuery;
         query = "SELECT a FROM Attribute a WHERE a.name = ?1")
 })
 public class Attribute {
+    
+    public final static String ALL_ATTRIBUTES = "ALL_ATTRIBUTES";
+    
+    public final static String ATTRIBUTE_BY_NAME = "ATTRIBUTE_BY_NAME";
+    
 
     @Id@GeneratedValue(strategy = GenerationType.TABLE)
     private int id;
