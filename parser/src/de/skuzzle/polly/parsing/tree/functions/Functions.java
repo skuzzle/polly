@@ -1,5 +1,6 @@
 package de.skuzzle.polly.parsing.tree.functions;
 
+import java.math.BigInteger;
 import java.util.Stack;
 
 
@@ -126,6 +127,55 @@ public class Functions {
             int end = upper.isInteger();
             
             stack.push(new NumberLiteral(random.nextInt((end - start + 1) + start)));
+        }
+    }
+    
+    
+    
+    
+    public final static class Binomial extends ExpressionStub {
+        
+        private static final long serialVersionUID = 1L;
+
+        public Binomial() {
+            super(Type.NUMBER);
+        }
+        
+        
+        
+        @Override
+        public void collapse(Stack<Literal> stack) throws ExecutionException {
+            NumberLiteral upper = (NumberLiteral) stack.pop();
+            NumberLiteral lower = (NumberLiteral) stack.pop();
+            
+            BigInteger n = BigInteger.valueOf(lower.isInteger());
+            BigInteger k = BigInteger.valueOf(upper.isInteger());
+            
+            stack.push(new NumberLiteral(binomialCoefficient(n, k).intValue()));
+        }
+        
+        
+        private static BigInteger binomialCoefficient(BigInteger n, BigInteger k){
+            
+            BigInteger n_minus_k=n.subtract(k);
+            if(n_minus_k.compareTo(k)<0){
+                BigInteger temp=k;
+                k=n_minus_k;
+                n_minus_k=temp;
+            }
+            
+            BigInteger numerator=BigInteger.ONE;
+            BigInteger denominator=BigInteger.ONE;
+            
+            for(BigInteger j=BigInteger.ONE; j.compareTo(k)<=0; j=j.add(BigInteger.ONE)){
+                numerator=numerator.multiply(j.add(n_minus_k));
+                denominator=denominator.multiply(j);
+                BigInteger gcd=numerator.gcd(denominator);
+                numerator=numerator.divide(gcd);
+                denominator=denominator.divide(gcd);
+            }
+            
+            return numerator;
         }
     }
     

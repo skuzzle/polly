@@ -3,6 +3,7 @@ package de.skuzzle.polly.parsing;
 import de.skuzzle.polly.parsing.declarations.Namespace;
 import de.skuzzle.polly.parsing.declarations.TypeDeclaration;
 import de.skuzzle.polly.parsing.declarations.VarDeclaration;
+import de.skuzzle.polly.parsing.tree.functions.BinomialFunction;
 import de.skuzzle.polly.parsing.tree.functions.ContainsFunction;
 import de.skuzzle.polly.parsing.tree.functions.DefaultMathFunction;
 import de.skuzzle.polly.parsing.tree.functions.Functions;
@@ -132,7 +133,6 @@ public final class Prepare {
                     new NumberLiteral(Math.PI)), "math");
             dest.add(new VarDeclaration(new IdentifierLiteral("e"), 
                     new NumberLiteral(Math.E)), "math");
-            dest.add(new RandomFunction(), "math");
             dest.add(new DefaultMathFunction(Functions.MathType.COS), "math");
             dest.add(new DefaultMathFunction(Functions.MathType.SIN), "math");
             dest.add(new DefaultMathFunction(Functions.MathType.TAN), "math");
@@ -145,6 +145,9 @@ public final class Prepare {
             dest.add(new DefaultMathFunction(Functions.MathType.ATAN), "math");
             dest.add(new DefaultMathFunction(Functions.MathType.ASIN), "math");
             dest.add(new DefaultMathFunction(Functions.MathType.ACOS), "math");
+            
+            dest.add(new RandomFunction(), "math");
+            dest.add(new BinomialFunction(), "math");
             
             dest.add(new AggregateListFunction(Functions.ListType.SUM), "math");
             dest.add(new AggregateListFunction(Functions.ListType.AVG), "math");
