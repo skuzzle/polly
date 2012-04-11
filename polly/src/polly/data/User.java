@@ -198,7 +198,7 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     
     public void setAttribute(String name, String value) {
         if (!this.attributes.containsKey(name)) {
-            //throw new UnknownAttributeException(name);
+            throw new UnknownAttributeException(name);
         }
         this.attributes.put(name, value);
     }

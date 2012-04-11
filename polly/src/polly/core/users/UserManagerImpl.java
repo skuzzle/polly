@@ -2,6 +2,7 @@ package polly.core.users;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -67,15 +68,14 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
      * Stores the currently signed on users. Key: the nickname in lower case.
      */
     private Map<String, User> onlineCache;
-    
     private File declarationCachePath;
-    
     private Map<String, AttributeConstraint> constraints;
-    
     private EventProvider eventProvider;
     private Namespace namespace;
-    
     private User admin;
+    private boolean registeredChanged;
+    private List<User> registeredUsers;
+    
     
     
     public UserManagerImpl(PersistenceManagerImpl persistence, 
@@ -195,17 +195,10 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
                 logger.trace("User already exists.");
                 throw new UserExistsException(check);
             }
-            
-            List<Attribute> attributes = this.persistence.findList(Attribute.class, 
-                    "ALL_ATTRIBUTES");
-            polly.data.User u = (polly.data.User) user;
-            logger.trace("Adding all attributes to new user.");
-            for (Attribute att : attributes) {
-                u.getAttributes().put(att.getName(), att.getDefaultValue());
-            }
             this.persistence.startTransaction();
             this.persistence.persist(user);
             this.persistence.commitTransaction();
+            this.registeredChanged = true;
             logger.info("Added user " + user);
         } finally {
             this.persistence.writeUnlock();
@@ -230,6 +223,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
             this.persistence.startTransaction();
             this.persistence.remove(user);
             this.persistence.commitTransaction();
+            this.registeredChanged = true;
             logger.info("Deleted user " + user);
         } finally {
             this.persistence.writeUnlock();
@@ -328,7 +322,8 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     
     public synchronized void logoffAll() {
-        Collection<User> online = this.onlineCache.values();
+        //  HACK: copy users to not get a concurrent modification exception
+        Collection<User> online = new ArrayList<User>(this.onlineCache.values());
         
         for (User user : online) {
             IrcUser tmp = new IrcUser(user.getCurrentNickName(), "", "");
@@ -354,12 +349,16 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     @Override
     public List<User> getRegisteredUsers() {
-        try {
-            this.persistence.readLock();
-            return this.persistence.findList(User.class, polly.data.User.ALL_USERS);
-        } finally {
-            this.persistence.readUnlock();
+        if (this.registeredChanged || this.registeredUsers == null) {
+            try {
+                this.persistence.readLock();
+                this.registeredUsers = 
+                    this.persistence.findList(User.class, polly.data.User.ALL_USERS);
+            } finally {
+                this.persistence.readUnlock();
+            }
         }
+        return this.registeredUsers;
     }
     
     
@@ -515,8 +514,9 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     @Override
     public User createUser(String name, String password, int userLevel) {
         polly.data.User result = new polly.data.User(name, password, userLevel);
+        logger.trace("Adding all attributes to new user.");
         for (Attribute att : this.getAllAttributes()) {
-            result.setAttribute(att.getName(), att.getDefaultValue());
+            result.getAttributes().put(att.getName(), att.getDefaultValue());
         }
         return result;
     }
