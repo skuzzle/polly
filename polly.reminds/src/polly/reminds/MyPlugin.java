@@ -83,10 +83,6 @@ public class MyPlugin extends PollyPlugin {
             myPolly.users());
         this.remindNickChangeTracer = new RemindTraceNickchangeHandler(
                 this.remindManager);
-        myPolly.irc().addNickChangeListener(this.remindNickChangeTracer);
-        myPolly.irc().addJoinPartListener(this.deliverRemindHandler);
-        myPolly.irc().addMessageListener(this.deliverRemindHandler);
-        myPolly.users().addUserListener(this.deliverRemindHandler);
         
         this.addDisposable(this.remindManager);
         
@@ -111,6 +107,15 @@ public class MyPlugin extends PollyPlugin {
         this.getMyPolly().users().removeUserListener(this.deliverRemindHandler);
         super.actualDispose();
     }       
+    
+    
+    
+    private void assignListeners() {
+        this.getMyPolly().irc().addNickChangeListener(this.remindNickChangeTracer);
+        this.getMyPolly().irc().addJoinPartListener(this.deliverRemindHandler);
+        this.getMyPolly().irc().addMessageListener(this.deliverRemindHandler);
+        this.getMyPolly().users().addUserListener(this.deliverRemindHandler);
+    }
 
     
     
@@ -121,9 +126,6 @@ public class MyPlugin extends PollyPlugin {
         
         try {
             UserManager users = this.getMyPolly().users();
-            
-            // Compatibility: remove sleep attribute
-            users.removeAttribute("SLEEP_TIME");
             
             users.addAttribute(REMIND_FORMAT_NAME, REMIND_FORMAT_VALUE);
             users.addAttribute(MESSAGE_FORMAT_NAME, MESSAGE_FORMAT_VALUE);
@@ -138,6 +140,8 @@ public class MyPlugin extends PollyPlugin {
         } catch (DatabaseException e) {
             e.printStackTrace();
         }
+        
+        this.assignListeners();
     }
     
     
