@@ -21,7 +21,9 @@ public class MyPlugin extends PollyPlugin {
 
     public final static String API_URL_SETTING = "tvApiUrl";
     
-    public MyPlugin(MyPolly myPolly) throws IncompatiblePluginException, DuplicatedSignatureException, PluginException {
+    public MyPlugin(MyPolly myPolly) throws IncompatiblePluginException, 
+                DuplicatedSignatureException, PluginException {
+        
         super(myPolly);
         
         String apiUrl = myPolly.configuration().readString(API_URL_SETTING);

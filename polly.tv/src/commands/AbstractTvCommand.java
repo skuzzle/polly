@@ -7,18 +7,19 @@ import polly.tv.MyPlugin;
 import core.TVProgram;
 import core.TVProgramProvider;
 
-import de.skuzzle.polly.sdk.Command;
+import de.skuzzle.polly.sdk.DelayedCommand;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 
 
-public class AbstractTvCommand extends Command {
+public class AbstractTvCommand extends DelayedCommand {
 
 
     protected TVProgramProvider tvProvider;
     
-    public AbstractTvCommand(MyPolly polly, TVProgramProvider tvProvider, String commandName) throws DuplicatedSignatureException {
-        super(polly, commandName);
+    public AbstractTvCommand(MyPolly polly, TVProgramProvider tvProvider, 
+                String commandName) throws DuplicatedSignatureException {
+        super(polly, commandName, 10000);
         this.tvProvider = tvProvider;
     }
 

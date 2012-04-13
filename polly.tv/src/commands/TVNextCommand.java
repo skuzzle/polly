@@ -7,7 +7,9 @@ import java.util.List;
 import core.TVProgram;
 import core.TVProgramProvider;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.Types.ListType;
 import de.skuzzle.polly.sdk.Types.StringType;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
@@ -21,9 +23,11 @@ public class TVNextCommand extends AbstractTvCommand {
         throws DuplicatedSignatureException {
         super(polly, tvProvider, "tvnext");
         
-        this.createSignature("Gibt die n√§chste Sendung f√ºr den angegebenen Channel aus.", new StringType());
-        this.createSignature("Gibt die n√§chste Sendung f√ºr alle angegebenen Channel aus.", new ListType(new StringType()));
-        this.setHelpText("Befehl um das n√§chste TV Programm eines Senders auszugeben.");
+        this.createSignature("Gibt die n‰chste Sendung f¸r den angegebenen Channel aus.", 
+            new Parameter("Sender", Types.STRING));
+        this.createSignature("Gibt die n‰chste Sendung f¸r alle angegebenen Channel aus.", 
+            new Parameter("Senderliste", new ListType(Types.STRING)));
+        this.setHelpText("Befehl um das n‰chste TV Programm eines Senders auszugeben.");
     }
     
     

@@ -7,7 +7,9 @@ import java.util.List;
 import core.TVProgram;
 import core.TVProgramProvider;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.Types.ListType;
 import de.skuzzle.polly.sdk.Types.StringType;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
@@ -20,8 +22,12 @@ public class TVNowCommand extends AbstractTvCommand {
     public TVNowCommand(MyPolly polly, TVProgramProvider tvProvider)
             throws DuplicatedSignatureException {
         super(polly, tvProvider, "tvnow");
-        this.createSignature("Gibt die aktuelle Sendung fÃ¼r den angegebenen Channel aus.", new StringType());
-        this.createSignature("Gibt die aktuelle Sendung fÃ¼r alle angegebenen Channel aus.", new ListType(new StringType()));
+        this.createSignature("Gibt die aktuelle Sendung fürr den angegebenen Channel " +
+        		"aus.", 
+    		new Parameter("Sender", Types.STRING));
+        this.createSignature("Gibt die aktuelle Sendung fürr alle angegebenen Channel " +
+        		"aus.", 
+    		new Parameter("Senderliste", new ListType(Types.STRING)));
         this.setHelpText("Befehl um das aktuelle TV Programm eines Senders auszugeben.");
     }
     
