@@ -16,7 +16,7 @@ public class AddUserCommand extends Command {
 
     public AddUserCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "adduser");
-        this.createSignature("FÃ¼gt einen neuen User hinzu.", 
+        this.createSignature("Fügt einen neuen User hinzu.", 
             new Parameter("Username", Types.USER),
             new Parameter("Passwort", Types.STRING),
             new Parameter("Userlevel", Types.NUMBER));
@@ -39,7 +39,7 @@ public class AddUserCommand extends Command {
     @Override
     protected void executeOnChannel(User executer, String channel,
             Signature signature) {
-        this.reply(channel, "Dieser Befehl kann nur im Query ausgefÃ¼hrt werden.");
+        this.reply(channel, "Dieser Befehl kann nur im Query ausgeführt werden.");
     }
     
     

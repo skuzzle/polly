@@ -24,7 +24,7 @@ public class ExportAttributesCommand extends Command {
         this.createSignature("Exportiert alle deine polly Attribute");
         this.createSignature("Exportiert alle polly Attribute des angegebenen Benutzers", 
             new Parameter("Benutzer", Types.USER));
-        this.setHelpText("Mit diesem Befehl kÃ¶nnen die individuellen polly Attributes " +
+        this.setHelpText("Mit diesem Befehl können die individuellen polly Attributes " +
         		"eines Benutzers exportiert werden.");
         this.setRegisteredOnly();
     }

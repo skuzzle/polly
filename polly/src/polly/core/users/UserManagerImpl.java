@@ -442,7 +442,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
         AttributeConstraint constraint = this.constraints.get(attribute.toLowerCase());
         if (!constraint.accept(value)) {
             throw new ConstraintException("'" + value + 
-                "' ist kein gï¿½ltiger Wert fï¿½r das Attribut '" + attribute + "'");
+                "' ist kein gültiger Wert für das Attribut '" + attribute + "'");
         }
         
         this.persistence.atomicWriteOperation(new WriteAction() {
