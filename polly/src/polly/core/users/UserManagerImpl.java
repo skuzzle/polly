@@ -210,7 +210,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     @Override
     public void addUser(String name, String password, int level) 
             throws UserExistsException, DatabaseException {
-        this.addUser(new polly.data.User(name, password, level));
+        this.addUser(this.createUser(name, password, level));
     }
 
     
@@ -444,7 +444,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
         AttributeConstraint constraint = this.constraints.get(attribute.toLowerCase());
         if (!constraint.accept(value)) {
             throw new ConstraintException("'" + value + 
-                "' ist kein gültiger Wert für das Attribut '" + attribute + "'");
+                "' ist kein gï¿½ltiger Wert fï¿½r das Attribut '" + attribute + "'");
         }
         
         this.persistence.atomicWriteOperation(new WriteAction() {
