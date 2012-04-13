@@ -4,7 +4,9 @@ import core.TrainBill;
 import core.TrainManager;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
@@ -19,14 +21,18 @@ public class AddTrainCommand extends Command {
             throws DuplicatedSignatureException {
         
         super(polly, "train");
-        /*this.createSignature("Fügt ein neues Training zur Rechnung des Benutzers hinzu.", 
-            new UserType(), new StringType());
-        this.createSignature("Zeigt die offene Rechnungssumme für einen Benutzer an.", 
-            new UserType(), new BooleanType());
         this.createSignature("Fügt ein neues Training zur Rechnung des Benutzers hinzu.", 
-            new UserType(), new StringType(), new NumberType());
+            new Parameter("Benutzer", Types.USER),
+            new Parameter("Rechnung", Types.STRING));
         this.createSignature("Zeigt die offene Rechnungssumme für einen Benutzer an.", 
-            new UserType());*/
+            new Parameter("Benutzer", Types.USER),
+            new Parameter("Details?", Types.BOOLEAN));
+        this.createSignature("Fügt ein neues Training zur Rechnung des Benutzers hinzu.", 
+            new Parameter("Benutzer", Types.USER),
+            new Parameter("Rechnung", Types.STRING),
+            new Parameter("Faktor", Types.NUMBER));
+        this.createSignature("Zeigt die offene Rechnungssumme für einen Benutzer an.", 
+            new Parameter("Benutzer", Types.USER));
         this.setHelpText("Befehl zum Verwalten von Capi Trainings.");
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
