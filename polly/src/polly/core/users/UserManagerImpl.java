@@ -398,7 +398,6 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
             this.persistence.writeLock();
             
             this.constraints.put(name.toLowerCase(), constraint);
-            
             Attribute att = new Attribute(name, defaultValue);
             Attribute check = this.persistence.findSingle(Attribute.class, 
                     "ATTRIBUTE_BY_NAME", name);

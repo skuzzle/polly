@@ -63,7 +63,7 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     
     @Transient
     private long loginTime;
-
+    
     
     User() {
         this("", "", 0);
@@ -220,6 +220,7 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     public void setLoginTime(long timeStamp) {
         this.loginTime = timeStamp;
     }
+    
     
     
     @Override
