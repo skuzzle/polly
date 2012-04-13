@@ -41,6 +41,7 @@ public class DeleteMemeCommand extends Command {
             String name = signature.getStringValue(0);
             try {
                 this.memeManager.deleteMeme(name);
+                this.reply(channel, "Meme gelöscht.");
             } catch (DatabaseException e) {
                 throw new CommandException(e);
             }

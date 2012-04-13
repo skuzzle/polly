@@ -52,6 +52,7 @@ public class AddMemeCommand extends Command {
             }
             try {
                 this.memeManager.addMeme(new MemeEntity(name, url));
+                this.reply(channel, "Meme hinzugefügt.");
             } catch (DatabaseException e) {
                 throw new CommandException(e);
             }

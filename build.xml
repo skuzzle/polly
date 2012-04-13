@@ -99,11 +99,13 @@
         <ant dir="polly.core" target="${mode}" inheritAll="false"/>
         <ant dir="polly.logging" target="${mode}" inheritAll="false"/>
         <ant dir="polly.reminds" target="${mode}" inheritAll="false"/>
+        <ant dir="polly.memes" target="${mode}" inheritAll="false"/>
         
         <copy todir="${plugin.dir}">
             <fileset dir="polly.core/dist"/>
             <fileset dir="polly.logging/dist"/>
             <fileset dir="polly.reminds/dist"/>
+            <fileset dir="polly.memes/dist"/>
         </copy>
         
         <mkdir dir="polly/plugins"/>
@@ -149,6 +151,7 @@
         <ant dir="polly.logging" target="clean" inheritAll="false"/>
         <ant dir="polly.reminds" target="clean" inheritAll="false"/>
         <ant dir="polly.tv" target="clean" inheritAll="false"/>
+        <ant dir="polly.memes" target="clean" inheritAll="false"/>
         
         <delete file="${lib.dir}/polly.parser.jar"/>
         <delete file="${lib.dir}/de.skuzzle.polly.sdk.jar"/>
@@ -248,6 +251,7 @@
         <ant dir="polly.core" target="eclipse" inheritAll="false"/>
         <ant dir="polly.logging" target="eclipse" inheritAll="false"/>
         <ant dir="polly.reminds" target="eclipse" inheritAll="false"/>
+        <ant dir="polly.memes" target="eclipse" inheritAll="false"/>
         <ant dir="polly.tv" target="eclipse" inheritAll="false"/>
         <ant dir="polly" target="eclipse" inheritAll="false"/>
         <ant dir="network" target="eclipse" inheritAll="false"/>

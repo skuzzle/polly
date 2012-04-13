@@ -13,6 +13,7 @@ import commands.DeleteUserCommand;
 import commands.DeliverTrainCommand;
 import commands.DictCommand;
 import commands.DitoCommand;
+import commands.ExportAttributesCommand;
 import commands.FooCommand;
 import commands.GetAttributeCommand;
 import commands.GhostCommand;
@@ -129,6 +130,7 @@ public class MyPlugin extends PollyPlugin {
 		this.addCommand(new SetAttributeCommand(myPolly));
 		this.addCommand(new ListAttributesCommand(myPolly));
 		this.addCommand(new GetAttributeCommand(myPolly));
+		this.addCommand(new ExportAttributesCommand(myPolly));
 		
 		
 		this.joinTimeCollector = new JoinTimeCollector(myPolly.getTimeProvider());
