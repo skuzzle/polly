@@ -100,12 +100,14 @@
         <ant dir="polly.logging" target="${mode}" inheritAll="false"/>
         <ant dir="polly.reminds" target="${mode}" inheritAll="false"/>
         <ant dir="polly.memes" target="${mode}" inheritAll="false"/>
+        <ant dir="polly.tv" target="${mode}" inheritAll="false"/>
         
         <copy todir="${plugin.dir}">
             <fileset dir="polly.core/dist"/>
             <fileset dir="polly.logging/dist"/>
             <fileset dir="polly.reminds/dist"/>
             <fileset dir="polly.memes/dist"/>
+            <fileset dir="polly.tv/dist"/>
         </copy>
         
         <mkdir dir="polly/plugins"/>

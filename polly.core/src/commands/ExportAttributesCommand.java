@@ -1,6 +1,10 @@
 package commands;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -48,10 +52,12 @@ public class ExportAttributesCommand extends Command {
     
     private String export(User user) throws CommandException {
         StringBuilder b = new StringBuilder();
-        for (String att : user.getAttributeNames()) {
-            b.append(":setattr ");
+        List<String> names = new ArrayList<String>(user.getAttributeNames());
+        Collections.sort(names);
+        for (String att : names) {
+            b.append(":setattr \"");
             b.append(att);
-            b.append(" \"");
+            b.append("\" \"");
             b.append(user.getAttribute(att));
             b.append("\"\n");
         }
