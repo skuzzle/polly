@@ -7,7 +7,6 @@ import polly.configuration.PollyConfiguration;
 import polly.core.ModuleStates;
 import polly.core.ShutdownManagerImpl;
 import polly.core.persistence.PersistenceManagerImpl;
-import polly.data.User;
 import polly.events.EventProvider;
 import polly.moduleloader.AbstractModule;
 import polly.moduleloader.ModuleLoader;

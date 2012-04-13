@@ -19,6 +19,7 @@ import de.skuzzle.polly.sdk.exceptions.UnknownSignatureException;
 
 
 import polly.configuration.PollyConfiguration;
+import polly.core.users.User;
 import polly.core.users.UserManagerImpl;
 
 
@@ -71,7 +72,7 @@ public class MessageHandler implements MessageListener, ConfigurationListener {
     
     
     private void execute(final MessageEvent e, final boolean isQuery) {
-        final polly.data.User executor = this.getUser(e.getUser());
+        final polly.core.users.User executor = this.getUser(e.getUser());
         executor.setLastMessageTime(System.currentTimeMillis());
         
         Runnable command = new Runnable() {
@@ -86,7 +87,7 @@ public class MessageHandler implements MessageListener, ConfigurationListener {
                         MessageHandler.this.reportParseError(e, e2);
                     } else {
                         e.getSource().sendMessage(e.getChannel(), 
-                            "Fehler beim Ausführen des Befehls: " + e1.getMessage());
+                            "Fehler beim Ausfï¿½hren des Befehls: " + e1.getMessage());
                     }
                     logger.debug("", e1);
                 } catch (UnknownCommandException e1) {
@@ -97,12 +98,12 @@ public class MessageHandler implements MessageListener, ConfigurationListener {
                             e1.getSignature().toString());
                 } catch (InsufficientRightsException e1) {
                     e.getSource().sendMessage(e.getChannel(), "Du kannst den Befehl '" + 
-                            e1.getCommand().getCommandName() + "' nicht ausführen.");
+                            e1.getCommand().getCommandName() + "' nicht ausfï¿½hren.");
                 } catch (Exception e1) {
                     logger.error("Exception while executing command: " + 
                             e1.getMessage(), e1);
                     e.getSource().sendMessage(e.getChannel(), 
-                            "Interner Fehler beim Ausführen des Befehls.");
+                            "Interner Fehler beim Ausfï¿½hren des Befehls.");
                 }
             }
         };
@@ -129,10 +130,10 @@ public class MessageHandler implements MessageListener, ConfigurationListener {
     
     
     
-    private polly.data.User getUser(IrcUser user) {
-        polly.data.User u = (polly.data.User) this.userManager.getUser(user);
+    private polly.core.users.User getUser(IrcUser user) {
+        polly.core.users.User u = (polly.core.users.User) this.userManager.getUser(user);
         if (u == null) {
-            u = new polly.data.User("~UNKNOWN", "blabla", 0);
+            u = (User) this.userManager.createUser("~UNKNOWN", "blabla", 0);
             u.setCurrentNickName(user.getNickName());
         }
         return u;

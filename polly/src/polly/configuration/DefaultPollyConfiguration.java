@@ -2,7 +2,7 @@ package polly.configuration;
 
 
 import polly.SortedProperties;
-import polly.data.User;
+import polly.util.Hashes;
 import de.skuzzle.polly.sdk.Configuration;
 
 
@@ -14,8 +14,7 @@ public class DefaultPollyConfiguration extends SortedProperties {
 
     public DefaultPollyConfiguration() {
         this.setProperty(Configuration.ADMIN_NAME, "admin");
-        this.setProperty(Configuration.ADMIN_PASSWORD_HASH, 
-                    new User("", "root", 0).getHashedPassword());
+        this.setProperty(Configuration.ADMIN_PASSWORD_HASH, Hashes.md5("root"));
         this.setProperty(Configuration.ADMIN_USER_LEVEL, "1000");
         
         this.setProperty(Configuration.AUTO_LOGIN, "on");

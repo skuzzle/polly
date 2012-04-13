@@ -33,9 +33,9 @@ import de.skuzzle.polly.sdk.model.User;
 public class AutoLogonHandler extends AbstractDisposable
         implements UserSpottedListener, NickChangeListener, UserListener {
     
-    private final static User NICKSERV = new polly.data.User("NickServ", "", 0);
+    //private final static User NICKSERV = new polly.core.users.User("NickServ", "", 0);
     static {
-        NICKSERV.setCurrentNickName("NickServ");
+        //NICKSERV.setCurrentNickName("NickServ");
     }
     
     
@@ -77,7 +77,7 @@ public class AutoLogonHandler extends AbstractDisposable
     private MessageAdapter autoSignOnHandler = new MessageAdapter() {
         @Override
         public void noticeMessage(MessageEvent e) {
-            if (!e.getUser().getNickName().equals(NICKSERV.getCurrentNickName())) {
+            if (!e.getUser().getNickName().equalsIgnoreCase("nickserv")) {
                 return;
             }
             String[] parts = e.getMessage().split(" ");

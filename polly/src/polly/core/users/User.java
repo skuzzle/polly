@@ -1,9 +1,6 @@
-package polly.data;
+package polly.core.users;
 
 import java.io.Serializable;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +17,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Transient;
+
+import polly.util.Hashes;
 
 
 import de.skuzzle.polly.sdk.exceptions.UnknownAttributeException;
@@ -66,15 +65,15 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     private long loginTime;
 
     
-    public User() {
+    User() {
         this("", "", 0);
     }
     
     
     
-    public User(String name, String password, int userLevel) {
+    User(String name, String password, int userLevel) {
         this.name = name;
-        this.password = User.createMD5Hash(password);
+        this.password = Hashes.md5(password);
         this.userLevel = userLevel;
         this.attributes = new HashMap<String, String>();
     }
@@ -103,14 +102,14 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     
     @Override
     public boolean checkPassword(String password) {
-        return this.password.equals(User.createMD5Hash(password));
+        return this.password.equals(Hashes.md5(password));
     }
     
     
 
     @Override
     public void setPassword(String password) {
-        this.password = User.createMD5Hash(password);
+        this.password = Hashes.md5(password);
     }
     
     
@@ -155,20 +154,6 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     @Override
     public String toString() {
         return this.name + "(Level " + this.userLevel + ")";
-    }
-    
-    
-    
-    private static String createMD5Hash(String string) {
-        String result = "";
-        try {
-            MessageDigest m = MessageDigest.getInstance("MD5");
-            m.update(string.getBytes(), 0, string.length());
-            result = new BigInteger(1, m.digest()).toString(16);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return result;
     }
 
     

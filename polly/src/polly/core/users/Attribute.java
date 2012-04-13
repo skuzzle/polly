@@ -1,4 +1,4 @@
-package polly.data;
+package polly.core.users;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

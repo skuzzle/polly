@@ -15,7 +15,6 @@ import org.apache.log4j.Logger;
 
 import polly.configuration.PollyConfiguration;
 import polly.core.persistence.PersistenceManagerImpl;
-import polly.data.Attribute;
 import polly.events.Dispatchable;
 import polly.events.EventProvider;
 import polly.util.CaseInsensitiveStringKeyMap;
@@ -249,7 +248,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
             logger.info("Irc User " + from + " successfully logged in as " + 
                     registeredName);
             
-            ((polly.data.User) user).setLoginTime(System.currentTimeMillis());
+            ((polly.core.users.User) user).setLoginTime(System.currentTimeMillis());
             UserEvent e = new UserEvent(this, user);
             this.fireUserSignedOn(e);
             return user;
@@ -277,7 +276,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
         logger.info("Irc User " + from + " successfully logged in as " + 
                 from);
         
-        ((polly.data.User) user).setLoginTime(System.currentTimeMillis());
+        ((polly.core.users.User) user).setLoginTime(System.currentTimeMillis());
         UserEvent e = new UserEvent(this, user);
         this.fireUserSignedOn(e);
         return user;
@@ -353,7 +352,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
             try {
                 this.persistence.readLock();
                 this.registeredUsers = 
-                    this.persistence.findList(User.class, polly.data.User.ALL_USERS);
+                    this.persistence.findList(User.class, polly.core.users.User.ALL_USERS);
             } finally {
                 this.persistence.readUnlock();
             }
@@ -415,7 +414,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
             
             logger.trace("Adding new attribute to each user.");
             for (User user : all) {
-                polly.data.User u = (polly.data.User) user;
+                polly.core.users.User u = (polly.core.users.User) user;
                 u.getAttributes().put(name, defaultValue);
             }
             this.persistence.commitTransaction();
@@ -451,7 +450,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
             
             @Override
             public void performUpdate(PersistenceManager persistence) {
-                ((polly.data.User) user).setAttribute(attribute, valueCopy);
+                ((polly.core.users.User) user).setAttribute(attribute, valueCopy);
             }
         });
     }
@@ -480,7 +479,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
             this.persistence.startTransaction();
             logger.trace("Removing attribute from all users.");
             for (User user : all) {
-                polly.data.User u = (polly.data.User) user;
+                polly.core.users.User u = (polly.core.users.User) user;
                 u.getAttributes().remove(name);
             }
             this.persistence.remove(att);
@@ -513,7 +512,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
 
     @Override
     public User createUser(String name, String password, int userLevel) {
-        polly.data.User result = new polly.data.User(name, password, userLevel);
+        polly.core.users.User result = new polly.core.users.User(name, password, userLevel);
         logger.trace("Adding all attributes to new user.");
         for (Attribute att : this.getAllAttributes()) {
             result.getAttributes().put(att.getName(), att.getDefaultValue());
