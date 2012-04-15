@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="polly.installer" basedir="." default="dist">
 
-    <property name="version.num" value="0.6.2"/>
+    <property name="version.num" value="0.9.0"/>
 
     <!-- Relative path to the root dir -->
     <property name="polly.root.dir" value="../"/>

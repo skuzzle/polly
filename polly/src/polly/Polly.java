@@ -66,7 +66,7 @@ public class Polly {
     
     
 
-    private final static String DEVELOP_VERSION = "0.8.0";
+    private final static String DEVELOP_VERSION = "0.9.0";
     private final static String CONFIG_FULL_PATH = "cfg/polly.cfg";
     
     /**
