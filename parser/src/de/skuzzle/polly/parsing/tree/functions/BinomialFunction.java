@@ -18,6 +18,6 @@ public class BinomialFunction extends FunctionDeclaration {
         this.getFormalParameters().add(new VarDeclaration(
             new IdentifierLiteral("k"), Type.NUMBER));
         
-        this.setExpression(new Functions.Random());
+        this.setExpression(new Functions.Binomial());
     }
 }
