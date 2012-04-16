@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 
+import org.apache.log4j.Logger;
+
 
 import polly.reminds.MyPlugin;
 
@@ -51,7 +53,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     private OnActionSet onActionSet;
     private FormatManager formatter;
     private RemindDBWrapper dbWrapper;
-    
+    private Logger logger;
     
     
     public RemindManagerImpl(MyPolly myPolly) {
@@ -66,6 +68,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         this.specialFormats = new HashMap<String, RemindFormatter>();
         this.sleeping = new HashMap<String, RemindEntity>();
         this.onActionSet = new OnActionSet();
+        this.logger = Logger.getLogger(myPolly.getLoggerName(this.getClass()));
         
         // XXX: special case for clum:
         this.specialFormats.put("clum", heidiFormat);
@@ -81,9 +84,9 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     
     
     @Override
-    public void addRemind(final RemindEntity remind, boolean schedule) 
+    public synchronized void addRemind(final RemindEntity remind, boolean schedule) 
                 throws DatabaseException {
-        
+        logger.info("Adding " + remind + ", schedule: " + schedule);
         this.dbWrapper.addRemind(remind);
         
         if (schedule) {
@@ -91,6 +94,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         }
         
         if (remind.isOnAction()) {
+            logger.trace("Storing remind as on return action.");
             this.onActionSet.put(remind.getForUser());
         }
     }
@@ -100,16 +104,19 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     @Override
     public void deleteRemind(int id) throws DatabaseException {
         RemindEntity remind = this.dbWrapper.getRemind(id);
+        logger.trace("Deleting remind with id " + id);
         this.deleteRemind(remind);
     }
 
     
     
     @Override
-    public void deleteRemind(RemindEntity remind) throws DatabaseException {
+    public synchronized void deleteRemind(RemindEntity remind) throws DatabaseException {
         if (remind != null) {
             this.cancelScheduledRemind(remind.getId());
             this.dbWrapper.deleteRemind(remind);
+        } else {
+            logger.warn("tried to delete non-existent remind.");
         }
     }
     
@@ -118,6 +125,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     @Override
     public void deleteRemind(User executor, int id) 
             throws CommandException, DatabaseException {
+        logger.debug("User '" + executor + " wants to delete remind with id " + id);
         RemindEntity remind = this.dbWrapper.getRemind(id);
         this.checkRemind(executor, remind, id);
         this.deleteRemind(remind);
@@ -126,17 +134,20 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     
     
     @Override
-    public void deliverRemind(RemindEntity remind, boolean checkIdleStatus) 
+    public synchronized void deliverRemind(RemindEntity remind, boolean checkIdleStatus) 
             throws DatabaseException, EMailException {
         User forUser = this.getUser(remind.getForUser());
         
+        logger.info("Trying to deliver " + remind + " for " + forUser);
         try {
             if (remind.isMail()) {
                 this.deliverNowMail(remind, forUser);
             } else {
-            
+                logger.trace("Remind is to be delivered in IRC. Checking user state");
                 boolean idle = this.isIdle(forUser) && checkIdleStatus;
                 boolean online = this.irc.isOnline(forUser.getCurrentNickName());
+                logger.trace("Idle state: " + idle + ", online state: " + online);
+                
                 
                 if (!online || idle) {
                     this.deliverLater(remind, forUser, idle);
@@ -145,6 +156,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
                 }
             }
         } finally {
+            logger.trace("Now deleting " + remind);
             this.deleteRemind(remind);            
         }
     }
@@ -154,8 +166,9 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     @Override
     public void deliverLater(final RemindEntity remind, User forUser, boolean wasIdle) 
                 throws DatabaseException, EMailException {
-        
+        logger.trace("Delivering later. Checking if remind schould be delivered as mail");
         boolean asMail = forUser.getAttribute(MyPlugin.LEAVE_AS_MAIL).equals("true");
+        logger.trace("As Mail: " + asMail);
         
         if (asMail && wasIdle) {
             // user was idle and wanted email notification
@@ -192,6 +205,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     
     @Override
     public void deliverNowIrc(RemindEntity remind, User forUser) {
+        logger.trace("Delivering " + remind + " now in IRC");
         RemindFormatter formatter = this.getFormat(forUser);
         
         String message = formatter.format(remind, this.formatter);
@@ -202,6 +216,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         String channel = inChannel ? remind.getOnChannel() : remind.getForUser();
         // onAction messages are always delivered as qry
         if (remind.isOnAction()) {
+            logger.trace("Remind was onAction. Removing it from onActionSet");
             channel = remind.getForUser();
             this.onActionSet.take(remind.getForUser());
         }
@@ -222,11 +237,11 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     @Override
     public void deliverNowMail(RemindEntity remind, User forUser) 
                 throws DatabaseException, EMailException {
-        
-        this.deleteRemind(remind);
+        logger.trace("Delivering " + remind + " now as mail");
         
         String mail = forUser.getAttribute(MyPlugin.EMAIL);
         if (mail.equals(MyPlugin.DEFAULT_EMAIL)) {
+            logger.warn("Destination user has no valid email address set");
             RemindEntity r = new RemindEntity(
                 "Deine E-Mail Nachricht an " + remind.getForUser() + 
                 " konnte nicht zugestellt werden, da keine gültie E-mail Adresse " +
@@ -259,6 +274,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     
     @Override
     public void scheduleRemind(RemindEntity remind, Date dueDate) {
+        logger.trace("Scheduling remind " + remind + ". Due date: " + dueDate);
         RemindTask task = new RemindTask(this, remind);
         synchronized (this.scheduledReminds) {
             this.scheduledReminds.put(remind.getId(), task);
@@ -277,6 +293,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     
     @Override
     public void cancelScheduledRemind(int id) {
+        logger.trace("Cancelling scheduled remind with id " + id);
         RemindTask task = null;
         synchronized (this.scheduledReminds) {
             task = this.scheduledReminds.get(id);
@@ -291,16 +308,13 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     
     @Override
     public void putToSleep(RemindEntity remind, User forUser) {
+        logger.trace("Remembering " + remind + " for snooze");
         synchronized (this.sleeping) {
-            if (this.sleeping.containsKey(remind.getForUser())) {
-                // remind already scheduled for sleep
-                return;
-            }
-            
             this.sleeping.put(remind.getForUser(), remind);
         }
         // get sleep time:
         int sleepTime = Integer.parseInt(forUser.getAttribute(MyPlugin.SNOOZE_TIME));
+        logger.trace("Snooze time for " + forUser + ": " + sleepTime);
         if (sleepTime > 0) {
             SleepTask task = new SleepTask(this, remind.getForUser());
             this.remindScheduler.schedule(task, sleepTime);
@@ -318,6 +332,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     
     @Override
     public RemindEntity cancelSleep(String forUser) {
+        logger.trace("Cancelling snooze for user " + forUser);
         synchronized (this.sleeping) {
             return this.sleeping.remove(forUser);
         }
@@ -328,10 +343,12 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     @Override
     public void snooze(User executor, Date dueDate) 
             throws CommandException, DatabaseException {
+        
+        logger.trace("User " + executor + " requested snooze");
         RemindEntity existing;
         synchronized (this.sleeping) {
             existing = this.sleeping.get(executor.getCurrentNickName());
-            this.sleeping.remove(executor.getCurrentNickName());
+            this.cancelSleep(executor.getCurrentNickName());
         }
         
         if (existing == null) {
@@ -350,6 +367,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         final RemindEntity remind = this.persistence.atomicRetrieveSingle(
             RemindEntity.class, id);
         
+        logger.trace("Toggeling delivery of " + remind);
         this.checkRemind(executor, remind, id);
         this.persistence.atomicWriteOperation(new WriteAction() {
             @Override
@@ -357,6 +375,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
                 remind.setIsMail(!remind.isMail());
             }
         });
+        logger.trace("New delivery type: " + (remind.isMail() ? "Mail" : "IRC"));
         return remind;
     }
     
@@ -364,9 +383,13 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     
     @Override
     public User getUser(String nickName) {
+        logger.trace("Getting user for name '" + nickName + "'");
         User u = this.userManager.getUser(nickName);
         if (u == null) {
+            logger.trace("User is unknown, creating new one");
             u = this.userManager.createUser(nickName, "", 0);
+        }
+        if (u.getCurrentNickName() == null) {
             u.setCurrentNickName(nickName);
         }
         
@@ -410,18 +433,17 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     @Override
     public void modifyRemind(User executor, int id, final Date dueDate, final String msg)
             throws CommandException, DatabaseException {
-        
+        logger.trace("User " + executor + " requested to modify remind with id " + id);
         final RemindEntity remind = this.dbWrapper.getRemind(id);
     
         this.checkRemind(executor, remind, id);
         this.cancelScheduledRemind(id);
         this.persistence.atomicWriteOperation(new WriteAction() {
-        
-        @Override
-        public void performUpdate(PersistenceManager persistence) {
-            remind.setDueDate(dueDate);
-            remind.setMessage(msg);
-        }
+            @Override
+            public void performUpdate(PersistenceManager persistence) {
+                remind.setDueDate(dueDate);
+                remind.setMessage(msg);
+            }
         });
         this.scheduleRemind(remind, dueDate);
     }
@@ -440,6 +462,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     @Override
     public void checkRemind(User user, RemindEntity remind, int id) 
             throws CommandException {
+        logger.trace("Checking for sufficient rights of user " + user + " for " + remind);
         if (remind == null) {
             throw new CommandException("Kein Remind mit der ID " + id);
         } else if (!canEdit(user, remind)) {
@@ -452,8 +475,10 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     
     @Override
     public void traceNickChange(IrcUser oldUser, final IrcUser newUser) {
+        logger.trace("tracing nickchange " + oldUser + " -> " + newUser);
         User oldForUser = this.getUser(oldUser.getNickName());
         if (oldForUser.getAttribute(MyPlugin.REMIND_TRACK_NICKCHANGE).equals("false")) {
+            logger.trace("User doesnt want this nickchange to be tracked");
             return;
         }
         
@@ -490,6 +515,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     
     @Override
     public void rescheduleAll() {
+        logger.trace("Scheduling all existing reminds for their duedate");
         List<RemindEntity> allReminds = this.dbWrapper.getAllReminds();
         for (RemindEntity remind : allReminds) {
             this.scheduleRemind(remind);
