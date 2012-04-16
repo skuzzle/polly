@@ -4,7 +4,7 @@ import java.util.Properties;
 
 
 
-public class TLSMailSender extends MailSender {
+public class TLSMailSender extends DefaultMailSender {
 
     public TLSMailSender(MailConfig config) {
         super(config);
@@ -15,10 +15,7 @@ public class TLSMailSender extends MailSender {
     @Override
     protected Properties createProperties() {
         Properties props = super.createProperties();
-        props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", this.config.getProperty(MailConfig.SMTP_HOST));
-        props.put("mail.smtp.port", this.config.getProperty(MailConfig.SMTP_PORT));
         
         return props;
     }
