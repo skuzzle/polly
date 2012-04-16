@@ -21,6 +21,7 @@ public class WikiReader {
     
     
     public String getWikiLink(String article, String lang) {
+        article = article.replaceAll(" ", "%20");
         return "http://" + lang + ".wikipedia.org/wiki/" + article;
     }
     
