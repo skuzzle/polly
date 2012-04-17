@@ -779,6 +779,7 @@ public class InputScanner extends AbstractTokenStream {
                     this.parseException("Ungültiges DateTime-Literal", tokenStart);
                 }
                 
+                // CONSIDER ISSUE 0000115
                 Calendar c = Calendar.getInstance();
                 c.setTime(timeToken.getDateValue());
                 c.set(thirdPart, secondPart - 1, firstPart);
