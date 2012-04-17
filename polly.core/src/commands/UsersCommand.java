@@ -58,6 +58,7 @@ public class UsersCommand extends Command {
         Iterator<User> it = users.iterator();
         while (it.hasNext()) {
             User current = it.next();
+            this.getMyPolly().persistence().refresh(current);
             
             Matcher m1 = p.matcher(current.getName().toLowerCase());
             String cNick = current.getCurrentNickName();
