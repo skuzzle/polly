@@ -26,6 +26,12 @@ class Section extends ConfigEntry {
     
     
     
+    public Map<String, ConfigEntry> getEntries() {
+        return this.entries;
+    }
+    
+    
+    
     public void add(ConfigEntry entry) {
         this.entries.put(entry.getName(), entry);
     }
@@ -78,6 +84,17 @@ class Section extends ConfigEntry {
     
     
     
+    public double getDouble(String key) {
+        Object val = this.getEntry(key).getValue();
+        if (!(val instanceof Double)) {
+            throw new ConfigException("The key '" + key + "' in section '" + 
+                this.getName() + "' does not refer to a double value");
+        }
+        return (Double) val;     
+    }
+    
+    
+    
     @SuppressWarnings("unchecked")
     public List<String> getStringList(String key) {
         Object val = this.checkList(key, String.class);
@@ -98,6 +115,14 @@ class Section extends ConfigEntry {
     public List<Boolean> getBooleanList(String key) {
         Object val = this.checkList(key, Boolean.class);
         return (ArrayList<Boolean>) val;
+    }
+    
+    
+    
+    @SuppressWarnings("unchecked")
+    public List<Double> getDoubleList(String key) {
+        Object val = this.checkList(key, Double.class);
+        return (ArrayList<Double>) val;
     }
     
     

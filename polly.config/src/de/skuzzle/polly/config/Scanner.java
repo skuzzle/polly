@@ -238,8 +238,9 @@ class Scanner {
                 if (Character.isJavaIdentifierStart((char) next)) {
                     this.revert(1);
                     return this.readIdentifier(start);
-                } else if ((char)next >= '0' && (char)next <= '9') {
-                    
+                } else if (Character.isDigit(next) || (char)next == '-') {
+                    this.revert(1);
+                    return this.readNumber(start);
                 } else {
                     throw new ParseException("Invalid character: '" + ((char)next) + "'", 
                             this.spanFrom(start));
@@ -373,5 +374,77 @@ class Scanner {
         
         throw new ParseException("Unclosed String-literal", this.spanFrom(start));
     }
-
+    
+    
+    /** expecting sign */
+    private final static int SIGN = 0;
+    
+    /** reading integer part of a number */
+    private final static int INT_PART = 1;
+    
+    /** we hit a '.' after the integer part */
+    private final static int DECIMAL_PART_TEMP = 2;
+    
+    /** we hit a '.' after the integer part */
+    private final static int DECIMAL_PART= 3;
+    
+    private Token readNumber(Position start) throws ParseException {
+        int numInt = 0;
+        int sign = 1;
+        double numDouble = 0.0;
+        double dec = 1.0;
+        
+        int state = SIGN;
+        
+        while (!this.eos) {
+            char next = this.readChar();
+            
+            switch (state) {
+            case SIGN:
+                if (next == '-') {
+                    sign = -1;
+                    state = INT_PART;
+                }  else if (Character.isDigit(next)) {
+                    this.revert(1);
+                    state = INT_PART;
+                }
+                break;
+                
+            case INT_PART:
+                if (Character.isDigit(next)) {
+                    numInt = numInt * 10 + Character.getNumericValue(next);
+                } else if (next == '.') {
+                    numDouble = numInt;
+                    state = DECIMAL_PART_TEMP;
+                } else {
+                    this.revert(1);
+                    return new Token(numInt * sign, TokenType.INTEGER, 
+                        this.spanFrom(start));
+                }
+                break;
+                
+            case DECIMAL_PART_TEMP:
+                if (Character.isDigit(next)) {
+                    state = DECIMAL_PART;
+                } else {
+                    this.revert(1);
+                    throw new ParseException("Missing decimal part after '.'", 
+                        this.spanFrom(start));
+                }
+                break;
+                
+            case DECIMAL_PART:
+                if (Character.isDigit(next)) {
+                    dec *= 0.1;
+                    numDouble += Character.getNumericValue(next) * dec; 
+                } else {
+                    this.revert(1);
+                    return new Token(numDouble * sign, TokenType.FLOAT, 
+                        this.spanFrom(start));
+                }
+            }
+        }
+        
+        throw new ParseException("Unexpected EOS", this.spanFrom(start));
+    }
 }

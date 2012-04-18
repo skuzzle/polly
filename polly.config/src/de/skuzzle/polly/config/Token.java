@@ -5,6 +5,8 @@ class Token {
 
 	private Span position;
 	private String stringValue;
+	private int intValue;
+	private double doubleValue;
 	private TokenType tokenType;
 	
 	
@@ -14,6 +16,21 @@ class Token {
 		this.tokenType = tokenType;
 		this.position = position;
 	}
+	
+	
+	
+   public Token(int value, TokenType tokenType, Span position) {
+        this.intValue = value;
+        this.tokenType = tokenType;
+        this.position = position;
+    }
+   
+   
+    public Token(double value, TokenType tokenType, Span position) {
+        this.doubleValue = value;
+        this.tokenType = tokenType;
+        this.position = position;
+    }
 	
 
 	
@@ -44,6 +61,18 @@ class Token {
 	public String getStringValue() {
 		return this.stringValue;
 	}
+	
+	
+	
+    public int getIntValue() {
+        return this.intValue;
+    }
+    
+    
+    
+    public double getDoubleValue() {
+        return this.doubleValue;
+    }
 	
 	
 	

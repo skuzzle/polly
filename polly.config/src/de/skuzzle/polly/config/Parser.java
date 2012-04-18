@@ -102,7 +102,7 @@ class Parser {
     
     
     public ConfigurationFile parse() throws ParseException {
-        ConfigurationFile config = new ConfigurationFile();
+        ConfigurationFile config = new ConfigurationFile(this.source);
         
         while (!this.scanner.match(TokenType.EOS)) {
             
@@ -114,10 +114,6 @@ class Parser {
                 String fileName = la.getStringValue();
                 
                 File file = new File(fileName);
-                if (file.equals(this.source)) {
-                    throw new ParseException("Config can not include itself", 
-                        la.getPosition());
-                }
                 ConfigurationFile inc = null;
                 try {
                     inc = ConfigurationFile.open(file);
@@ -125,13 +121,8 @@ class Parser {
                     throw new ParseException("Could not read config file from " + file, 
                         la.getPosition());
                 }
+                config.addInclude(inc);
                 
-                // include comma separated sections
-                String section = this.expectIdentifier();
-                config.addSection(inc.getSection(section));
-                while (this.scanner.match(TokenType.COMMA)) {
-                    config.addSection(inc.getSection(this.expectIdentifier()));
-                }
             } else {
                 config.addSection(this.parseSection());
             }
@@ -152,7 +143,7 @@ class Parser {
         this.expect(TokenType.LINEBREAK);
         
         Section section = new Section(block, inline, sectionName);
-        while(!this.scanner.lookAhead(TokenType.EOS) && !this.scanner.lookAhead(null)) {
+        while(!this.scanner.lookAhead(TokenType.EOS)) {
             this.parseValuePair(section);
         }
         return section;
@@ -217,7 +208,12 @@ class Parser {
     private Object parseValue() throws ParseException {
         Token la = this.scanner.lookAhead();
         switch (la.getTokenType()) {
-        case NUMBER:
+        case INTEGER:
+            this.scanner.consume();
+            return la.getIntValue();
+        case FLOAT:
+            this.scanner.consume();
+            return la.getDoubleValue();
         case TRUE:
             this.scanner.consume();
             return Boolean.TRUE;

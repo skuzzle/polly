@@ -32,6 +32,18 @@ class ConfigEntry {
     
     
     
+    public Comment getBlockComment() {
+        return this.myBlockComment;
+    }
+    
+    
+    
+    public Comment getInlineComment() {
+        return this.myInlineComment;
+    }
+    
+    
+    
     public String getName() {
         return this.name;
     }
