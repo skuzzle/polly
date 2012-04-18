@@ -75,6 +75,7 @@ public class ProtocolHandler implements ObjectReceivedListener, ConnectionListen
         case LOGOUT:
             this.adminManager.logout(e.getSource());
             response = new Response(request, ResponseType.LOGOUT);
+            break;
         default:
             response = new Response(request, ResponseType.INVALID);
             break;
