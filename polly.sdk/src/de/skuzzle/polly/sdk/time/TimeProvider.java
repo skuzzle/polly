@@ -27,7 +27,7 @@ public interface TimeProvider {
      * This method should return a modified system time in milliseconds. All polly 
      * components which use {@link MyPolly#pollySystemTime()} to retrieve the current
      * time will get the time computed by this method. So it can be used to debug
-     * time dependant behavior.
+     * time dependent behavior.
      * 
      * @return The current system time in milliseconds
      * @since 0.7
