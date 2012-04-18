@@ -61,7 +61,7 @@ public class Namespace {
                 // cancel it!
                 tvkt.cancel = true;
                 tvkt.cancel();
-                killTasks.remove(var.getName());
+                killTasks.remove(var.getName().getIdentifier());
             }
             tvkt = new TempVarKillTask(declarations, var);
             killTasks.put(var.getName().getIdentifier(), tvkt);

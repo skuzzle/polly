@@ -162,6 +162,8 @@ public class Position implements Serializable {
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;
+        } else if (obj == null) {
+            return false;
         }
         
         if (obj.getClass() != this.getClass()) {

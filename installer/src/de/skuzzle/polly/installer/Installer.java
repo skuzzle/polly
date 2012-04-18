@@ -203,9 +203,11 @@ public class Installer {
             printFileList(FileUtil.copy(temp, Environment.POLLY_HOME), log);
             log.println("DONE");
         } finally {
-            log.println("DELETING TEMP DIR");
-            FileUtil.deleteRecursive(temp);
-            log.println("DELETING ZIP FILE");
+            if (temp != null) {
+                log.println("DELETING TEMP DIR");
+                FileUtil.deleteRecursive(temp);
+                log.println("DELETING ZIP FILE");
+            }
             file.delete();
             log.unindent();
         }
