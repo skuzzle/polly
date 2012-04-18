@@ -1,0 +1,377 @@
+package de.skuzzle.polly.config;
+
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+
+
+class Scanner {
+    
+    private final static boolean debug = true;
+    private final static Map<String, TokenType> keywords = new HashMap<String, TokenType>();
+    static {
+        keywords.put("true", TokenType.TRUE);
+        keywords.put("false", TokenType.FALSE);
+    }
+
+    private Token look;
+    private Position position;
+    private Position[] positionBuffer;
+    private char[] stream;
+    private boolean eos;
+    private List<Token> consumed;
+    
+    
+    
+    public Scanner(String input) {
+        this.stream = input.toCharArray();
+        this.position = new Position(1, 1, 0);
+        this.positionBuffer = new Position[input.length() + 1];
+        this.consumed = new ArrayList<Token>();
+    }
+    
+    
+    
+    public Scanner(InputStream stream) throws IOException {
+        this(stream, "ISO-8859-1");
+    }
+    
+    
+    
+    public Scanner(InputStream stream, String charset) throws IOException {
+        BufferedReader r = null;
+        StringBuilder content = new StringBuilder();
+        try {
+            r = new BufferedReader(new InputStreamReader(stream, 
+                    Charset.forName(charset)));
+            String line = null;
+            while ((line = r.readLine()) != null) {
+                content.append(line);
+                content.append('\n');
+            }
+        } finally {
+            if (r != null) {
+                r.close();
+            }
+        }
+        
+        this.stream = content.toString().toCharArray();
+        this.position = new Position(1, 1, 0);
+        this.positionBuffer = new Position[this.stream.length + 1];
+        this.consumed = new ArrayList<Token>();
+    }
+    
+    
+    
+    public String getOriginal() {
+        return new String(this.stream);
+    }
+    
+    
+    
+    public void dispose() {
+        for (int i = 0; i < this.positionBuffer.length; ++i) {
+            this.positionBuffer[i] = null;
+        }
+        this.consumed.clear();
+        this.consumed = null;
+        this.positionBuffer = null;
+        this.position = null;
+        this.stream = null;
+        this.look = null;
+    }
+
+    
+    
+    public boolean match(TokenType tokenType) throws ParseException {
+        if (this.lookAhead().matches(tokenType)) {
+            this.consume();
+            return true;
+        }
+        return false;
+    }
+
+    
+    
+    public boolean match(Token token) throws ParseException {
+        return this.match(token.getTokenType());
+    }
+    
+    
+
+    public Token lookAhead() throws ParseException {
+        if (this.look == null) {
+            this.look = this.readToken();
+        }
+        return this.look;
+    }
+    
+    
+    
+    public boolean lookAhead(TokenType type) throws ParseException {
+        return this.lookAhead().matches(type);
+    }
+
+    
+    
+    public void consume() throws ParseException {
+        Token t = this.readToken();
+        this.consumed.add(t);
+        if (debug) {
+            System.out.println(t);
+        }
+    }
+    
+    
+    
+    public List<Token> getConsumed() {
+        return this.consumed;
+    }
+    
+    
+    
+    private void revert(int n) {
+        int newIndex = this.position.getIndex() - n;
+        if (newIndex < 0) {
+            throw new IllegalArgumentException("cant revert " + n + 
+                    " characters from current stream position");
+        } else if (n < 0) {
+            throw new IllegalArgumentException("n must be positive");
+        }
+        this.position = new Position(this.positionBuffer[newIndex]);
+    }
+    
+    
+    
+    private char readChar() {
+        return this.readChar(false);
+    }
+
+    
+    
+    private char readChar(boolean trackLine) {
+        // buffer position data for current stream index
+        this.maintainPositionBuffer();
+        int next = this.position.getChar(this.stream);
+        if (trackLine && next == '\n') {
+            this.position.incrementLine();
+        } else if (next != '\n') {
+            this.position.incrementColumn();
+        }
+        if (next == -1) {
+            next = '\0';
+            this.eos = true;
+        }
+        return (char) next;
+    }
+    
+    
+    
+    private void maintainPositionBuffer() {
+        this.positionBuffer[this.position.getIndex()] = new Position(this.position);
+    }
+    
+    
+    
+    public Position getPosition() {
+        return this.position;
+    }
+    
+
+    
+    public Span spanFrom(Position start) {
+        return new Span(new Position(start), new Position(this.position));
+    }
+    
+    
+    
+    
+    /** constant for initial state in all following state machines */
+    private final static int INITIAL = 0;
+    
+    
+    private Token readToken() throws ParseException {
+        // return lookahead token
+        if (this.look != null) {
+            Token tmp = this.look;
+            this.look = null;
+            return tmp;
+        }
+        
+        Position start = new Position(this.position);
+        while (!this.eos) {
+            int next = this.readChar();
+            
+            switch (next) {
+            case '\0':  return new Token(TokenType.EOS, this.spanFrom(start));
+            case '\n':
+                this.position.incrementLine();
+                return new Token(TokenType.LINEBREAK, this.spanFrom(start));
+            case ' ':
+                start = new Position(this.position);
+                break;
+            case '=': return new Token(TokenType.EQ, this.spanFrom(start));
+            case '[': return new Token(TokenType.OPENSQBR, this.spanFrom(start));
+            case ']': return new Token(TokenType.CLOSEDSQBR, this.spanFrom(start));
+            case '{': return new Token(TokenType.OPENCBR, this.spanFrom(start));
+            case '}': return new Token(TokenType.CLOSEDCBR, this.spanFrom(start));
+            case ',': return new Token(TokenType.COMMA, this.spanFrom(start));
+            case '@':
+                Token t = this.readIdentifier(start);
+                if (t.getStringValue().equals("include")) {
+                    throw new ParseException("Invalid @include statement: '@" 
+                        + t.getStringValue() + "'", 
+                        this.spanFrom(start));
+                }
+                return new Token(TokenType.INCLUDE, this.spanFrom(start));
+            case '/': return this.readComment(start);
+            case '"': return this.readString(start);
+            default:
+                if (Character.isJavaIdentifierStart((char) next)) {
+                    this.revert(1);
+                    return this.readIdentifier(start);
+                } else if ((char)next >= '0' && (char)next <= '9') {
+                    
+                } else {
+                    throw new ParseException("Invalid character: '" + ((char)next) + "'", 
+                            this.spanFrom(start));
+                }
+            }
+        }
+        
+        return new Token(TokenType.EOS, this.spanFrom(start));
+    }
+    
+    
+    
+    /*
+     * States for read comment:
+     */
+    
+    /** we are reading a block comment */
+    private final static int BLOCK_COMMENT = 2;
+
+    /** we hit a potential block comment end */
+    private final static int BLOCK_COMMENT_END = 3;
+    
+    /** we read an inline comment */
+    private final static int INLINE_COMMENT = 1;
+    
+    private Token readComment(Position start) throws ParseException {
+        StringBuilder comment = new StringBuilder();
+        int state = INITIAL;
+        
+        // by now, we read a '/'
+        
+        while (!this.eos) {
+            // true => comments keep track of line changes themselves
+            char next = this.readChar(true);
+            
+            switch (state) {
+            case INITIAL:
+                if (next == '/') {
+                    state = INLINE_COMMENT;
+                } else if (next == '*') {
+                    state = BLOCK_COMMENT;
+                }
+                break;
+                
+            case INLINE_COMMENT:
+                if (next == '\n') {
+                    Token result = new Token(comment.toString(), TokenType.INLINECOMMENT, 
+                            this.spanFrom(start));
+                    this.revert(1);
+                    return result;
+                } else {
+                    comment.append(next);
+                }
+                break;
+                
+            case BLOCK_COMMENT:
+                if (next == '*') {
+                    state = BLOCK_COMMENT_END;
+                } else {
+                    comment.append(next);
+                }
+                break;
+                
+            case BLOCK_COMMENT_END:
+                if (next == '/') {
+                    return new Token(comment.toString(), TokenType.BLOCKCOMMENT, 
+                            this.spanFrom(start));
+                } else {
+                    comment.append("*");
+                    this.revert(1);
+                    state = BLOCK_COMMENT;
+                }
+            }
+        }
+        
+        throw new ParseException("Unclosed Block-Comment", this.spanFrom(start));
+    }
+
+    
+
+    /** we have read the first char of an identifier and are now reading the part */
+    private final static int PART = 1;
+
+    private Token readIdentifier(Position start) throws ParseException {
+        StringBuilder key = new StringBuilder();
+        int state = INITIAL;
+        
+        while (!this.eos) {
+            char next = this.readChar();
+            
+            switch (state) {
+            case INITIAL:
+                if (Character.isJavaIdentifierStart(next)) {
+                    key.append(next);
+                    state = PART;
+                } else {
+                    throw new ParseException("Invalid Key Token", this.spanFrom(start));
+                }
+                break;
+
+            case PART:
+                if (Character.isJavaIdentifierPart(next) || next == '.') {
+                    key.append(next);
+                } else {
+                    Token result = new Token(key.toString(), TokenType.IDENTIFIER, 
+                            this.spanFrom(start));
+                    this.revert(1);
+                    return result;
+                }
+                break;
+            }
+        }
+        
+        throw new ParseException("Unexpected EOS", this.spanFrom(start));
+    }
+    
+    
+    
+    private Token readString(Position start) throws ParseException {
+        StringBuilder string = new StringBuilder();
+        while (!this.eos) {
+            char next = this.readChar();
+            
+            if (next == '"') {
+                return new Token(string.toString(), TokenType.STRING, 
+                        this.spanFrom(start));
+            } else {
+                string.append((char) next);
+            }
+        }
+        
+        throw new ParseException("Unclosed String-literal", this.spanFrom(start));
+    }
+
+}
