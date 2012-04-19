@@ -28,7 +28,7 @@ public class MD5Tool {
                 "Soll das Passwort in der Konfigurationsdatei gespeichert werden (y/n)?");
         BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
         String line = r.readLine();
-        if (line.equals("y")) {
+        if (line != null && line.equals("y")) {
             PollyConfiguration cfg = new PollyConfiguration("./cfg/polly.cfg");
             cfg.setProperty(Configuration.ADMIN_PASSWORD_HASH, hash);
             cfg.store();

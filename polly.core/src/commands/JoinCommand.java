@@ -52,6 +52,11 @@ public class JoinCommand extends Command {
             return false;
         }
         
+        if (channels == null) {
+            throw new RuntimeException("This should not have happened. Command was " +
+            		"called with illegal signature");
+        }
+        
         for (ChannelType ct : channels) {
             this.getMyPolly().irc().joinChannel(ct.getValue(), "");
         }
