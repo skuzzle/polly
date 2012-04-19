@@ -22,6 +22,11 @@ public class MD5Tool {
             pw = args[0];
         }
 
+        if (pw == null) {
+            System.out.println("Invalid password entered. Cancelling");
+            return;
+        }
+        
         String hash = Hashes.md5(pw);
         System.out.println(hash);
         System.out.println(

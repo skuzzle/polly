@@ -71,6 +71,18 @@ public class IrcUser {
 
 
 
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+            + ((this.nickName == null) ? 0 : this.nickName.hashCode());
+        return result;
+    }
+
+
+    
     /**
      * Checks if two IrcUser are equal. They are, if theire nicknames equal.
      * 
@@ -78,18 +90,23 @@ public class IrcUser {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (!(obj instanceof IrcUser)) {
             return false;
+        }
         IrcUser other = (IrcUser) obj;
-        if (nickName == null) {
-            if (other.nickName != null)
+        if (this.nickName == null) {
+            if (other.nickName != null) {
                 return false;
-        } else if (!nickName.equals(other.nickName))
+            }
+        } else if (!this.nickName.equals(other.nickName)) {
             return false;
+        }
         return true;
     }
 }

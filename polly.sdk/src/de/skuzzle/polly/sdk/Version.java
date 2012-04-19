@@ -1,5 +1,7 @@
 package de.skuzzle.polly.sdk;
 
+import java.util.Arrays;
+
 
 /**
  * This class represents a three-part version number. The parts are called
@@ -103,7 +105,17 @@ public class Version implements Comparable<Version> {
     }
     
     
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(this.fields);
+        return result;
+    }
+
     
+
     /**
      * Considers {@code obj} equals to {@code this} iff all three version parts
      * equals.
@@ -111,13 +123,20 @@ public class Version implements Comparable<Version> {
      */
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (obj == null) {
             return false;
-        } else if (!(obj instanceof Version)) {
+        }
+        if (!(obj instanceof Version)) {
             return false;
         }
         Version other = (Version) obj;
-        return other.compareTo(this) == 0;
+        if (!Arrays.equals(this.fields, other.fields)) {
+            return false;
+        }
+        return true;
     }
     
     

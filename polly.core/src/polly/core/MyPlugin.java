@@ -181,7 +181,9 @@ public class MyPlugin extends PollyPlugin {
 	        this.getMyPolly().users().addAttribute("AZ", "0", Constraints.INTEGER);
 	        this.getMyPolly().users().addAttribute(FORWARD_HIGHLIGHTS, 
 	            DEFAULT_FORWARD_HIGHLIGHTS, Constraints.BOOLEAN);
-	    } catch (Exception ignore){}
+	    } catch (Exception ignore) {
+	        ignore.printStackTrace();
+	    }
 	}
 
 	

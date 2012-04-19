@@ -348,30 +348,45 @@ public class Signature {
 	
 	
 	
-	/**
-	 * Two signatures are considered equals if they match each other.
-	 * 
-	 * @param obj The other signature to compare this one with.
-	 * @return <code>true</code> if the signatures match, <code>false</code> otherwise.
-	 * @see #match(Signature)
-	 */
 	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) {
-			return false;
-		} else if (obj == this) {
-			return true;
-		} else if (!(obj instanceof Signature)) {
-			return false;
-		}
-		
-		Signature other = (Signature) obj;
-		return this.match(other) != null;
-	}
+    public int hashCode() {
+	    // HACK: this method does not completely conform to equals() as equals tries to
+	    //       rearrange signatures to increase the possibility of a match and thus
+	    //       produces no canonical result
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (this.canonical ? 1231 : 1237);
+        result = prime * result
+            + ((this.parameters == null) ? 0 : this.parameters.hashCode());
+        return result;
+    }
 	
 	
 	
-	@Override
+    /**
+     * Two signatures are considered equals if they match each other.
+     * 
+     * @param obj The other signature to compare this one with.
+     * @return <code>true</code> if the signatures match, <code>false</code> otherwise.
+     * @see #match(Signature)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        } else if (obj == this) {
+            return true;
+        } else if (!(obj instanceof Signature)) {
+            return false;
+        }
+        
+        Signature other = (Signature) obj;
+        return this.match(other) != null;
+    }
+
+
+
+    @Override
 	public String toString() {
 		StringBuilder b = new StringBuilder();
 		b.append(":");
