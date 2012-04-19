@@ -48,6 +48,17 @@ public class BooleanLiteral extends Literal {
     }
     
     
+    
+    @Override
+    public int hashCode() {
+        if (this.getValue()) {
+            return Boolean.TRUE.hashCode();
+        } else {
+            return Boolean.FALSE.hashCode();
+        }
+    }
+    
+    
 
     @Override
     public boolean equals(Object obj) {

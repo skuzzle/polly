@@ -159,18 +159,34 @@ public class Position implements Serializable {
     
     
     @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + this.end;
+        result = prime * result + this.start;
+        return result;
+    }
+
+
+
+    @Override
     public boolean equals(Object obj) {
-        if (obj == this) {
+        if (this == obj) {
             return true;
-        } else if (obj == null) {
+        }
+        if (obj == null) {
             return false;
         }
-        
-        if (obj.getClass() != this.getClass()) {
+        if (!(obj instanceof Position)) {
             return false;
         }
-        
         Position other = (Position) obj;
-        return this.start == other.start && this.end == other.end;
+        if (this.end != other.end) {
+            return false;
+        }
+        if (this.start != other.start) {
+            return false;
+        }
+        return true;
     }
 }

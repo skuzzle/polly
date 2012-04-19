@@ -166,6 +166,17 @@ public class ListLiteral extends Literal {
 
 
     @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+            + ((this.elements == null) ? 0 : this.elements.hashCode());
+        return result;
+    }
+
+
+
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -173,7 +184,7 @@ public class ListLiteral extends Literal {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof ListLiteral)) {
             return false;
         }
         ListLiteral other = (ListLiteral) obj;

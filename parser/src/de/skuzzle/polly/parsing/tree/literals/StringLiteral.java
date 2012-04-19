@@ -48,6 +48,17 @@ public class StringLiteral extends Literal {
     
 
     @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+            + ((this.value == null) ? 0 : this.value.hashCode());
+        return result;
+    }
+
+
+
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -55,7 +66,7 @@ public class StringLiteral extends Literal {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof StringLiteral)) {
             return false;
         }
         StringLiteral other = (StringLiteral) obj;
