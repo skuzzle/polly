@@ -67,6 +67,7 @@ class Parser {
     
     
     private void expect(TokenType expected) throws ParseException {
+        
         if (!this.scanner.match(expected)) {
             Token t = this.scanner.lookAhead();
             
@@ -76,8 +77,7 @@ class Parser {
             Span pos = t.getPosition();
             String msg = null;
             if (expected.belongsToPrevious()) {
-                Token previous = this.scanner.getConsumed().get(
-                        this.scanner.getConsumed().size() - 1);
+                Token previous = this.scanner.getPrevious();
                 pos = previous.getPosition();
                 msg = "Missing '" + expected + "' after " + previous.getTokenType() + 
                         " '" + previous.getStringValue() + "'";
@@ -106,14 +106,16 @@ class Parser {
         
         while (!this.scanner.match(TokenType.EOS)) {
             
-            while (this.scanner.match(TokenType.LINEBREAK));
-            
-            if (this.scanner.lookAhead(TokenType.INCLUDE)) {
+            if (this.scanner.match(TokenType.INCLUDE)) {
                 Token la = this.scanner.lookAhead();
                 this.expect(TokenType.STRING);
                 String fileName = la.getStringValue();
                 
-                File file = new File(fileName);
+                File file = new File(this.source.getParentFile(), fileName);
+                if (file.equals(this.source)) {
+                    throw new ConfigException("Configuration can not include itself");
+                }
+                
                 ConfigurationFile inc = null;
                 try {
                     inc = ConfigurationFile.open(file);
@@ -134,16 +136,13 @@ class Parser {
     
     
     private Section parseSection() throws ParseException {
-        Comment block = this.parseComment(TokenType.BLOCKCOMMENT);
+        Comment comment = this.scanner.getLastComment();
         this.expect(TokenType.OPENSQBR);
         String sectionName = this.expectIdentifier();
         this.expect(TokenType.CLOSEDSQBR);
-        Comment inline = this.parseComment(TokenType.INLINECOMMENT);
         
-        this.expect(TokenType.LINEBREAK);
-        
-        Section section = new Section(block, inline, sectionName);
-        while(!this.scanner.lookAhead(TokenType.EOS)) {
+        Section section = new Section(comment, sectionName);
+        while(this.scanner.lookAhead(TokenType.IDENTIFIER)) {
             this.parseValuePair(section);
         }
         return section;
@@ -151,28 +150,13 @@ class Parser {
     
     
     
-    private Comment parseComment(TokenType commentType) throws ParseException {
-        Comment block = null;
-        if (this.scanner.lookAhead(commentType)) {
-            boolean isBlock = commentType == TokenType.BLOCKCOMMENT;
-            block = new Comment(this.scanner.lookAhead().getStringValue(), isBlock);
-            this.scanner.consume();
-        }
-        return block;
-    }
-    
-    
-    
     private void parseValuePair(Section section) throws ParseException {
-        
-        Comment block = this.parseComment(TokenType.BLOCKCOMMENT);
+        Comment comment = this.scanner.getLastComment();
         String key = this.expectIdentifier();
         this.expect(TokenType.EQ);
         Object value = this.parseValueList();
-        Comment inline = this.parseComment(TokenType.INLINECOMMENT);
         
-        section.add(new ConfigEntry(block, inline, key, value));
-        while (this.scanner.match(TokenType.LINEBREAK));
+        section.add(new ConfigEntry(comment, key, value));
     }
     
     
@@ -187,8 +171,6 @@ class Parser {
         ArrayList<Object> objects = new ArrayList<Object>();
         objects.add(o);
         while (this.scanner.match(TokenType.COMMA)) {
-            // Tolerate linebreaks after commas
-            this.scanner.match(TokenType.LINEBREAK);
             
             Object o2 = this.parseValue();
             
@@ -198,7 +180,7 @@ class Parser {
                 throw new ParseException("Lists may only contain elements of the " +
                 		"same type", this.scanner.spanFrom(listStart));
             }
-            objects.add(this.parseValue());
+            objects.add(o2);
         }
         return objects;
     }

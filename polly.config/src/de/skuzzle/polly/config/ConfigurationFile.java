@@ -10,16 +10,40 @@ import java.util.Map;
 
 
 
-
 public class ConfigurationFile {
     
+    
+    public static void main(String[] args) throws IOException, ParseException {
+        ConfigurationFile cfg = ConfigurationFile.open(
+            new File("../polly/cfg/newConfig.cfg"), new ConfigValidator() {
+                
+                @Override
+                public void validate(ConfigurationFile config) {
+                    checkSectionsExists(config, "SSL", "TEST");
+                    //checkMaximum(config, "TEST", "key2", 14);
+                    checkMinimum(config, "TEST", "key2", 16);
+                    checkRange(config, "TEST", "key3", 10, 15);
+                }
+            });
+     
+        System.out.println(cfg.getStringList("SSL", "test"));
+        System.out.println(cfg.getString("TEST", "key"));
+        System.out.println(cfg.getString("TEST", "key1"));
+        //System.out.println(cfg.getString("TEST", "key2"));
+        System.out.println(cfg.format());
+    }
+    
     /**
+     * Opens the given file and tries to parse it as a configuration file. After parsing,
+     * the configuration is validated using the given validator.
      * 
      * @param file The file to read.
      * @param validator
      * @return The ConfigurationFile
      * @throws IOException If an I/O error occurs. 
      * @throws ParseException If the given file is not formatted properly.
+     * @throws ConfigException If the configuration could not be validated.
+     * @see #open(File)
      */
     public static ConfigurationFile open(File file, ConfigValidator validator) 
             throws IOException, ParseException {
@@ -55,6 +79,11 @@ public class ConfigurationFile {
     
     
     
+    /**
+     * Creates a new configuration for the given file.
+     * 
+     * @param path The path to the configuration file.
+     */
     ConfigurationFile(File path) {
         this.path = path;
         this.includes = new LinkedList<ConfigurationFile>();
@@ -63,6 +92,43 @@ public class ConfigurationFile {
     
     
     
+    /**
+     * Clears all sections in this configuration. All section inherited from included
+     * configurations are not cleared.
+     */
+    public void clear() {
+        for (Section section : this.sections.values()) {
+            section.clear();
+        }
+        this.sections.clear();
+    }
+    
+    
+    
+    /**
+     * <p>Clears only the given section. If a section with the same name is inherited from
+     * an included configuration, that section is not cleared and its values will still
+     * be accessible.</p>
+     * 
+     * <p>If no section with the given name exists, nothing happens.</p>
+     * 
+     * @param section The section to clear.
+     */
+    public void clear(String section) {
+        Section s = this.sections.get(section);
+        if (s != null) {
+            s.clear();
+        }
+    }
+    
+    
+    
+    /**
+     * Gets the path from which this configuration was loaded. Relative pathnames in
+     * include statements will be resolved using this path as the base path. 
+     * 
+     * @return The path to this configuration file.
+     */
     public File getPath() {
         return this.path;
     }
@@ -124,6 +190,33 @@ public class ConfigurationFile {
     
     
     
+    private Section getSectionWithKey(String section, String key) {
+        Section s = this.getSectionWithKeyHelper(section, key);
+        if (s == null) {
+            throw new ConfigException("Section '" + section + "' or key '" + key + 
+                "' not found.");
+        }
+        return s;
+    }
+    
+    
+    
+    private Section getSectionWithKeyHelper(String section, String key) {
+        Section s = this.sections.get(section);
+        if (s != null && s.containsKey(key)) {
+            return s;
+        }
+        for (ConfigurationFile cfg : this.includes) {
+            s = cfg.getSectionWithKey(section, key);
+            if (s != null) {
+                return s;
+            }
+        }
+        return null;
+    }
+    
+    
+    
     private Section getSectionHelper(String name) {
         Section s = this.sections.get(name);
         if (s == null) {
@@ -133,6 +226,8 @@ public class ConfigurationFile {
                     return s;
                 }
             }
+        } else {
+            return s;
         }
         return null;
     }
@@ -298,7 +393,7 @@ public class ConfigurationFile {
      *          exist in that section or the key is not associated with a boolean value.
      */
     public boolean getBoolean(String section, String key) {
-        return this.getSection(section).getBoolean(key);
+        return this.getSectionWithKey(section, key).getBoolean(key);
     }
     
     
@@ -313,7 +408,7 @@ public class ConfigurationFile {
      *          exist in that section or the key is not associated with an int value.
      */
     public int getInteger(String section, String key) {
-        return this.getSection(section).getInteger(key);    
+        return this.getSectionWithKey(section, key).getInteger(key);    
     }
     
     
@@ -328,7 +423,7 @@ public class ConfigurationFile {
      *          exist in that section or the key is not associated with a double value.
      */
     public double getDouble(String section, String key) {
-        return this.getSection(section).getDouble(key);    
+        return this.getSectionWithKey(section, key).getDouble(key);    
     }
     
     
@@ -343,7 +438,7 @@ public class ConfigurationFile {
      *          exist in that section or the key is not associated with a string value.
      */
     public String getString(String section, String key) {
-        return this.getSection(section).getString(key);
+        return this.getSectionWithKey(section, key).getString(key);
     }
     
     
@@ -359,7 +454,7 @@ public class ConfigurationFile {
      *          exist in that section or the key is not associated with a string list.
      */
     public List<String> getStringList(String section, String key) {
-        return this.getSection(section).getStringList(key);
+        return this.getSectionWithKey(section, key).getStringList(key);
     }
     
     
@@ -375,7 +470,7 @@ public class ConfigurationFile {
      *          exist in that section or the key is not associated with a double list.
      */
     public List<Double> getDoubleList(String section, String key) {
-        return this.getSection(section).getDoubleList(key);
+        return this.getSectionWithKey(section, key).getDoubleList(key);
     }
     
     
@@ -391,7 +486,7 @@ public class ConfigurationFile {
      *          exist in that section or the key is not associated with an int list.
      */
     public List<Integer> getIntList(String section, String key) {
-        return this.getSection(section).getIntList(key);
+        return this.getSectionWithKey(section, key).getIntList(key);
     }
     
     
@@ -407,13 +502,14 @@ public class ConfigurationFile {
      *          exist in that section or the key is not associated with a boolean list.
      */
     public List<Boolean> getBooleanList(String section, String key) {
-        return this.getSection(section).getBooleanList(key);
+        return this.getSectionWithKey(section, key).getBooleanList(key);
     }
     
     
     
     private String format() {
         StringBuilder b = new StringBuilder();
+        TypeFormatter formatter = new TypeFormatter();
         
         for (ConfigurationFile cfg : this.includes) {
             b.append("@include ");
@@ -423,34 +519,25 @@ public class ConfigurationFile {
         b.append("\n");
         
         for (Section section : this.sections.values()) {
-            if (section.getBlockComment() != null) {
-                b.append("    ");
-                b.append(section.getBlockComment().toString());
+            if (section.getComment() != null) {
+                b.append(section.getComment().toString());
                 b.append("\n");
             }
             b.append("[");
             b.append(section.getName());
             b.append("]");
-            if (section.getInlineComment() != null) {
-                b.append(" ");
-                b.append(section.getInlineComment().toString());
-            }
             b.append("\n");
             
             for (ConfigEntry entry : section.getEntries().values()) {
-                if (entry.getBlockComment() != null) {
+                if (entry.getComment() != null) {
                     b.append("    ");
-                    b.append(entry.getBlockComment().toString());
+                    b.append(entry.getComment().toString());
                     b.append("\n");
                 }
                 b.append("    ");
                 b.append(entry.getName());
                 b.append(" = ");
-                b.append(entry.getValue().toString());
-                if (entry.getInlineComment() != null) {
-                    b.append(" ");
-                    b.append(entry.getInlineComment());
-                }
+                b.append(formatter.format(entry.getValue()));
                 b.append("\n");
             }
             b.append("\n");

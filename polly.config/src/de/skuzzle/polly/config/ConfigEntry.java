@@ -3,43 +3,29 @@ package de.skuzzle.polly.config;
 
 class ConfigEntry {
 
-    private Comment myBlockComment;
-    private Comment myInlineComment;
+    private Comment comment;
     private String name;
     private Object value;
     
     
     
-    
-    
-    public ConfigEntry(Comment myBlockComment, Comment myInlineComment, String name, Object value) {
-        this.myBlockComment = myBlockComment;
-        this.myInlineComment = myInlineComment;
+    public ConfigEntry(Comment comment, String name, 
+                Object value) {
+        this.comment = comment;
         this.name = name;
+        this.value = value;
     }
     
     
     
     public void setBlockComment(Comment comment) {
-        this.myBlockComment = comment;
+        this.comment = comment;
     }
     
     
     
-    public void setInlineComment(Comment comment) {
-        this.myInlineComment = comment;
-    }
-    
-    
-    
-    public Comment getBlockComment() {
-        return this.myBlockComment;
-    }
-    
-    
-    
-    public Comment getInlineComment() {
-        return this.myInlineComment;
+    public Comment getComment() {
+        return this.comment;
     }
     
     
@@ -65,16 +51,13 @@ class ConfigEntry {
     @Override
     public String toString() {
         StringBuilder b = new StringBuilder();
-        if (this.myBlockComment != null) {
-            b.append(this.myBlockComment.toString());
+        if (this.comment != null) {
+            b.append(this.comment.toString());
             b.append(System.lineSeparator());
         }
         b.append(this.name);
         b.append(" = ");
         b.append(this.value.toString());
-        if (this.myInlineComment != null) {
-            b.append(this.myInlineComment.toString());
-        }
         return b.toString();
     }
 }

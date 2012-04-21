@@ -16,7 +16,7 @@ enum TokenType {
 	FALSE("false", false),
 	INTEGER("Integer", false),
 	FLOAT("Float", false),
-	LINEBREAK("Linebreak", true),
+	LINEBREAK("Linebreak", false),
 	INCLUDE("Include", false),
 	ANY("Any", false),
 	EOS("#", false), 

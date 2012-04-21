@@ -56,7 +56,7 @@ public abstract class ConfigValidator {
         
         if (config.getInteger(section, key) < minimum) {
             throw new ConfigException("Value for key '" + key + "' in section '" + 
-                section + "' below minumum. Must be bigger than " + minimum);
+                section + "' below minumum. Must be bigger than " + (minimum - 1));
         }
     }
     
@@ -81,7 +81,7 @@ public abstract class ConfigValidator {
     
         if (config.getInteger(section, key) > maximum) {
             throw new ConfigException("Value for key '" + key + "' in section '" + 
-                section + "' below minumum. Must be lower than " + maximum);
+                section + "' above maximum. Must be lower than " + (maximum + 1));
         }
     }
     

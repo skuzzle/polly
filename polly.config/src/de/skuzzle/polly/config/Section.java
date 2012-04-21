@@ -14,13 +14,13 @@ class Section extends ConfigEntry {
     
     
     public Section(String name) {
-        this(null, null, name);
+        this(null, name);
     }
     
     
     
-    public Section(Comment myBlockComment, Comment myInlineComment, String name) {
-        super(myBlockComment, myInlineComment, name, null);
+    public Section(Comment comment, String name) {
+        super(comment, name, null);
         this.entries = new HashMap<String, ConfigEntry>();
     }
     
@@ -40,6 +40,12 @@ class Section extends ConfigEntry {
     
     public boolean containsKey(String key) {
         return this.entries.containsKey(key);
+    }
+    
+    
+    
+    public void clear() {
+        this.entries.clear();
     }
 
 

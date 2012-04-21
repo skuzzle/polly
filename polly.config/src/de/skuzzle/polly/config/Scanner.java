@@ -28,6 +28,7 @@ class Scanner {
     private char[] stream;
     private boolean eos;
     private List<Token> consumed;
+    private Comment lastComment;
     
     
     
@@ -77,6 +78,14 @@ class Scanner {
     
     
     
+    public Comment getLastComment() {
+        Comment last = this.lastComment;
+        this.lastComment = null;
+        return last;
+    }
+    
+    
+    
     public void dispose() {
         for (int i = 0; i < this.positionBuffer.length; ++i) {
             this.positionBuffer[i] = null;
@@ -87,12 +96,19 @@ class Scanner {
         this.position = null;
         this.stream = null;
         this.look = null;
+        this.lastComment = null;
+    }
+    
+    
+    
+    public void skipWhile(TokenType type) throws ParseException {
+        while (this.match(type));
     }
 
     
     
-    public boolean match(TokenType tokenType) throws ParseException {
-        if (this.lookAhead().matches(tokenType)) {
+    public boolean match(TokenType expected) throws ParseException {
+        if (this.lookAhead(expected)) {
             this.consume();
             return true;
         }
@@ -138,14 +154,21 @@ class Scanner {
     
     
     
+    public Token getPrevious() {
+        return this.consumed.get(this.consumed.size() - 1);
+    }
+    
+    
+    
     private void revert(int n) {
         int newIndex = this.position.getIndex() - n;
         if (newIndex < 0) {
             throw new IllegalArgumentException("cant revert " + n + 
                     " characters from current stream position");
-        } else if (n < 0) {
-            throw new IllegalArgumentException("n must be positive");
+        } else if (n <= 0) {
+            throw new IllegalArgumentException("n must be positive and not zero");
         }
+        this.eos = false;
         this.position = new Position(this.positionBuffer[newIndex]);
     }
     
@@ -161,9 +184,9 @@ class Scanner {
         // buffer position data for current stream index
         this.maintainPositionBuffer();
         int next = this.position.getChar(this.stream);
-        if (trackLine && next == '\n') {
+        if (next == '\n') {
             this.position.incrementLine();
-        } else if (next != '\n') {
+        } else {
             this.position.incrementColumn();
         }
         if (next == -1) {
@@ -213,8 +236,8 @@ class Scanner {
             switch (next) {
             case '\0':  return new Token(TokenType.EOS, this.spanFrom(start));
             case '\n':
-                this.position.incrementLine();
-                return new Token(TokenType.LINEBREAK, this.spanFrom(start));
+                //this.position.incrementLine();
+                //return new Token(TokenType.LINEBREAK, this.spanFrom(start));
             case ' ':
                 start = new Position(this.position);
                 break;
@@ -226,13 +249,15 @@ class Scanner {
             case ',': return new Token(TokenType.COMMA, this.spanFrom(start));
             case '@':
                 Token t = this.readIdentifier(start);
-                if (t.getStringValue().equals("include")) {
+                if (!t.getStringValue().equals("include")) {
                     throw new ParseException("Invalid @include statement: '@" 
                         + t.getStringValue() + "'", 
                         this.spanFrom(start));
                 }
                 return new Token(TokenType.INCLUDE, this.spanFrom(start));
-            case '/': return this.readComment(start);
+            case '/': 
+                this.readComment(start);
+                return this.readToken();
             case '"': return this.readString(start);
             default:
                 if (Character.isJavaIdentifierStart((char) next)) {
@@ -274,7 +299,8 @@ class Scanner {
         
         while (!this.eos) {
             // true => comments keep track of line changes themselves
-            char next = this.readChar(true);
+            boolean trackLineBreak = state == BLOCK_COMMENT;
+            char next = this.readChar(trackLineBreak);
             
             switch (state) {
             case INITIAL:
@@ -287,9 +313,10 @@ class Scanner {
                 
             case INLINE_COMMENT:
                 if (next == '\n') {
+                    this.revert(1);
+                    this.lastComment = new Comment(comment.toString(), false);
                     Token result = new Token(comment.toString(), TokenType.INLINECOMMENT, 
                             this.spanFrom(start));
-                    this.revert(1);
                     return result;
                 } else {
                     comment.append(next);
@@ -306,6 +333,7 @@ class Scanner {
                 
             case BLOCK_COMMENT_END:
                 if (next == '/') {
+                    this.lastComment = new Comment(comment.toString(), true);
                     return new Token(comment.toString(), TokenType.BLOCKCOMMENT, 
                             this.spanFrom(start));
                 } else {
@@ -329,7 +357,7 @@ class Scanner {
         int state = INITIAL;
         
         while (!this.eos) {
-            char next = this.readChar();
+            char next = this.readChar(false);
             
             switch (state) {
             case INITIAL:
@@ -345,9 +373,9 @@ class Scanner {
                 if (Character.isJavaIdentifierPart(next) || next == '.') {
                     key.append(next);
                 } else {
+                    this.revert(1);
                     Token result = new Token(key.toString(), TokenType.IDENTIFIER, 
                             this.spanFrom(start));
-                    this.revert(1);
                     return result;
                 }
                 break;
@@ -397,7 +425,7 @@ class Scanner {
         int state = SIGN;
         
         while (!this.eos) {
-            char next = this.readChar();
+            char next = this.readChar(true);
             
             switch (state) {
             case SIGN:
