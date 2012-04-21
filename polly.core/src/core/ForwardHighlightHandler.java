@@ -19,7 +19,7 @@ public class ForwardHighlightHandler implements MessageListener {
     private final static String SUBJECT = "[POLLY Highlight Forwarder] Highlight in %s";
     
     private final static String MESSAGE = "Hi %s,\n\nDu wurdest im Channel %s " +
-    		"gehighlighted. Nachricht:\n%s\n\n Bye\nPolly";
+    		"von %s gehighlighted. Nachricht:\n%s\n\n Bye\nPolly";
     
     
     public final static long MAIL_DELAY = 30000; // 30 seconds
@@ -77,7 +77,7 @@ public class ForwardHighlightHandler implements MessageListener {
             if (fwd && hl && this.canSend(mail)) {
                 String subject = String.format(SUBJECT, e.getChannel());
                 String message = String.format(MESSAGE, user.getName(), e.getChannel(), 
-                    e.getMessage());
+                    e.getUser(), e.getMessage());
                 
                 try {
                     this.mailManager.sendMail(mail, subject, message);
