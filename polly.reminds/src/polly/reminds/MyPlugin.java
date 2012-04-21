@@ -58,6 +58,9 @@ public class MyPlugin extends PollyPlugin {
 	public final static String REMIND_TRACK_NICKCHANGE = "REMIND_TRACK_NICKCHANGE";
 	public final static String DEFAULT_REMIND_TRACK_NICKCHANGE = "true";
 	
+	public final static String REMIND_DOUBLE_DELIVERY = "REMIND_DOUBLE_DELIVERY";
+	public final static String DEFAULT_REMIND_DOUBLE_DELIVERY = "true";
+	
 	public final static String REMIND_IDLE_TIME = "REMIND_IDLE_TIME";
     
 	
@@ -136,6 +139,8 @@ public class MyPlugin extends PollyPlugin {
             users.addAttribute(REMIND_IDLE_TIME, "" + User.IDLE_AFTER, 
                 Constraints.INTEGER);
             users.addAttribute(REMIND_TRACK_NICKCHANGE, DEFAULT_REMIND_TRACK_NICKCHANGE, 
+                Constraints.BOOLEAN);
+            users.addAttribute(REMIND_DOUBLE_DELIVERY, DEFAULT_REMIND_DOUBLE_DELIVERY, 
                 Constraints.BOOLEAN);
         } catch (DatabaseException e) {
             e.printStackTrace();

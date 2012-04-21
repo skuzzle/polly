@@ -168,7 +168,10 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
                 throws DatabaseException, EMailException {
         logger.trace("Delivering later. Checking if remind schould be delivered as mail");
         boolean asMail = forUser.getAttribute(MyPlugin.LEAVE_AS_MAIL).equals("true");
+        boolean doubleDelivery = forUser.getAttribute(
+                MyPlugin.REMIND_DOUBLE_DELIVERY).equals("true");
         logger.trace("As Mail: " + asMail);
+        logger.trace("Double-delivery: " + asMail);
         
         if (asMail && wasIdle) {
             // user was idle and wanted email notification
@@ -181,14 +184,16 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
             // user was online and wanted no email notification: notify now and when he 
             // returns
             this.deliverNowIrc(remind, forUser);
-            RemindEntity onAction = new RemindEntity(remind.getMessage(), 
-                remind.getFromUser(), 
-                remind.getForUser(), 
-                remind.getOnChannel(), 
-                remind.getDueDate(), true);
-            
-            onAction.setIsMessage(true);
-            this.addRemind(onAction, false);
+            if (doubleDelivery) {
+                RemindEntity onAction = new RemindEntity(remind.getMessage(), 
+                    remind.getFromUser(), 
+                    remind.getForUser(), 
+                    remind.getOnChannel(), 
+                    remind.getDueDate(), true);
+                
+                onAction.setIsMessage(true);
+                this.addRemind(onAction, false);
+            }
         } else {
             RemindEntity message = new RemindEntity(remind.getMessage(), 
                 remind.getFromUser(), 
