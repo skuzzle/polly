@@ -45,7 +45,7 @@ public class TimeSpanFormat {
             result.append(s);
             result.append("s");
         }
-        return result.toString();
+        return result.toString().trim();
         
     }
     
