@@ -118,6 +118,13 @@ public abstract class DelayedCommand extends Command {
     public void doExecute(User executer, String channel, boolean query, 
             Signature signature) throws InsufficientRightsException, CommandException {
         
+        if (signature.match(this.getHelpSignature0()) != null || 
+            signature.match(this.getHelpSignature1()) != null) {
+            
+            super.doExecute(executer, channel, query, signature);
+            return;
+        }
+        
         if (!this.checkDelay(executer)) {
             return;
         }
