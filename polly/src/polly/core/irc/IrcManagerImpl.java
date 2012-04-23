@@ -551,6 +551,12 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     }
 
     
+    @Override
+    public void setAndIdentifyDefaultNickname() {
+        this.bot.changeNick(this.config.getNickName());
+        this.bot.identify(this.config.getIdent());
+    }
+    
     
     public void retry() {
         this.fireConnectionLost(new ConnectionEvent(this, disconnect));

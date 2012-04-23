@@ -292,6 +292,13 @@ public interface IrcManager {
 	
 	
 	/**
+	 * Sets pollys nickname to the default name and identifies with nickserv.
+	 */
+	public abstract void setAndIdentifyDefaultNickname();
+	
+	
+	
+	/**
 	 * Adds a {@link MessageSendListener}. It will be notified whenever polly sends a 
 	 * message via IRC.
 	 * 
