@@ -25,7 +25,7 @@ import commands.JoinCommand;
 import commands.KickCommand;
 import commands.ListAttributesCommand;
 import commands.LmgtfyCommand;
-import commands.LordificationCommand;
+import commands.AnyficationCommand;
 import commands.MyTrainsCommand;
 import commands.MyVenadCommand;
 import commands.PartCommand;
@@ -89,7 +89,7 @@ public class MyPlugin extends PollyPlugin {
 	public MyPlugin(MyPolly myPolly) throws IncompatiblePluginException, DuplicatedSignatureException {
 		super(myPolly);
 		
-		this.addCommand(new LordificationCommand(myPolly));
+		this.addCommand(new AnyficationCommand(myPolly));
 		
 		//this.topicManager = new TopicManager(myPolly);
 		this.trainManager = new TrainManager(myPolly);

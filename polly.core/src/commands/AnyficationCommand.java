@@ -21,24 +21,26 @@ import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.model.User;
 
 
-public class LordificationCommand extends DelayedCommand {
+public class AnyficationCommand extends DelayedCommand {
     
     private final static int DELAY = 10 * 1000 * 60; // 10 minutes
-    private final static int LORDIFICATION_TIME = 20 * 1000; // 10 minutes
+    private final static int ANYFICATION_TIME = 2 * 1000 * 60; // 2 minutes
     
     
-    private Timer lordificationTimer;
+    private Timer anyficationTimer;
     private Set<String> channels;
     
     
     
-    public LordificationCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "lordification", DELAY);
-        this.createSignature("Lordification!");
+    public AnyficationCommand(MyPolly polly) throws DuplicatedSignatureException {
+        super(polly, "anyfication", DELAY);
+        this.createSignature("Anyfication!", 
+            new Parameter("Prefix", Types.STRING));
         this.createSignature("Lordification innerhalb der angegebenen zeit!",
+            new Parameter("Prefix", Types.STRING), 
             new Parameter("Zeitspanne", Types.TIMESPAN));
         this.setUserLevel(UserManager.ADMIN);
-        this.lordificationTimer = new Timer("LORDIFICATION_TIMER", true);
+        this.anyficationTimer = new Timer("LORDIFICATION_TIMER", true);
         this.channels = new HashSet<String>();
     }
     
@@ -56,9 +58,10 @@ public class LordificationCommand extends DelayedCommand {
     protected synchronized void executeOnChannel(User executer, final String channel, 
             Signature signature) throws CommandException, InsufficientRightsException {
         
-        int timeSpan = LORDIFICATION_TIME;
+        int timeSpan = ANYFICATION_TIME;
+        final String prefix = signature.getStringValue(0);
         if (this.match(signature, 1)) {
-            TimespanType t = (TimespanType) signature.getValue(0);
+            TimespanType t = (TimespanType) signature.getValue(1);
             timeSpan = (int) t.getSpan() * 1000;
         }
         if (this.channels.contains(channel)) {
@@ -77,10 +80,10 @@ public class LordificationCommand extends DelayedCommand {
             this.getMyPolly().formatting().formatTimeSpan(timeSpan / 1000) + 
             " Zeit um euch zu lordifizieren.");
         this.reply(channel, b.toString());
-        this.getMyPolly().irc().setNickname("LoRd-Polly");
+        this.getMyPolly().irc().setNickname(prefix + "-Polly");
         
         this.channels.add(channel);
-        this.lordificationTimer.schedule(new TimerTask() {
+        this.anyficationTimer.schedule(new TimerTask() {
             String chan = channel;
             
             @Override
@@ -88,7 +91,7 @@ public class LordificationCommand extends DelayedCommand {
                 channels.remove(chan);
                 List<String> users = getMyPolly().irc().getChannelUser(chan);
                 for (String user : users) {
-                    if (!user.startsWith("LoRd")) {
+                    if (!user.startsWith(prefix)) {
                         getMyPolly().irc().kick(chan, user, "Nicht lordifiziert!");
                     }
                 }
@@ -102,6 +105,6 @@ public class LordificationCommand extends DelayedCommand {
     @Override
     protected void actualDispose() throws DisposingException {
         this.channels.clear();
-        this.lordificationTimer.cancel();
+        this.anyficationTimer.cancel();
     }
 }
