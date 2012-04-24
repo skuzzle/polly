@@ -17,6 +17,7 @@ import commands.ExportAttributesCommand;
 import commands.FooCommand;
 import commands.GetAttributeCommand;
 import commands.GhostCommand;
+import commands.GooglePicsCommand;
 import commands.GreetingCommand;
 import commands.HighlightModeCommand;
 import commands.HopCommand;
@@ -117,6 +118,7 @@ public class MyPlugin extends PollyPlugin {
 		this.addCommand(new DefineCommand(myPolly));
 		this.addCommand(new LmgtfyCommand(myPolly));
 		this.addCommand(new DictCommand(myPolly));
+		this.addCommand(new GooglePicsCommand(myPolly));
 		this.addCommand(new IsDownCommand(myPolly));
 		
 		this.addCommand(new UsersCommand(myPolly));

@@ -293,6 +293,7 @@ public interface IrcManager {
 	
 	/**
 	 * Sets pollys nickname to the default name and identifies with nickserv.
+	 * @since 0.9.1
 	 */
 	public abstract void setAndIdentifyDefaultNickname();
 	
