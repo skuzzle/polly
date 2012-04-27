@@ -120,7 +120,7 @@ public class AutoLogonHandler extends AbstractDisposable
         this.ircManager = ircManager;
         this.userManager = userManager;
         this.autoLogonExecutor = Executors.newScheduledThreadPool(4, 
-                new ThreadFactoryBuilder("LOGON"));
+                new ThreadFactoryBuilder("LOGON_%n%"));
         this.scheduledLogons = new HashMap<String, AutoLogonRunnable>();
         this.autoLoginTime = autoLoginTime;
     }
