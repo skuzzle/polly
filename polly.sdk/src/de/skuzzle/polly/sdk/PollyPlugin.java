@@ -126,6 +126,7 @@ public abstract class PollyPlugin extends AbstractDisposable {
 	public void addCommand(Command command) throws DuplicatedSignatureException {
 	    this.myPolly.commands().registerCommand(command);
 	    this.commands.add(command);
+	    this.myPolly.roles().registerPermissions(command.getContainedPermissions());
 	}
 	
 	

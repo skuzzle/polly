@@ -3,6 +3,7 @@ package polly.core.users;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,8 +17,10 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
+import polly.core.roles.Role;
 import polly.util.Hashes;
 
 
@@ -51,6 +54,9 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     @Column(columnDefinition = "VARCHAR(32)")
     private String password;
     
+    @OneToMany
+    private Set<Role> roles;
+    
     @ElementCollection(targetClass=String.class)
     @ManyToMany(cascade = CascadeType.ALL)
     private Map<String, String> attributes;
@@ -76,12 +82,19 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
         this.password = Hashes.md5(password);
         this.userLevel = userLevel;
         this.attributes = new HashMap<String, String>();
+        this.roles = new HashSet<Role>();
     }
     
     
     
     public int getId() {
         return this.id;
+    }
+    
+    
+    
+    public Set<Role> getRoles() {
+        return this.roles;
     }
     
     
