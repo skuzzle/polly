@@ -65,6 +65,8 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         
         
         protected void onDisconnect() {
+            IrcManagerImpl.this.onlineUsers.clear();
+            IrcManagerImpl.this.topics.clear();
             IrcManagerImpl.this.retry();
         };
 

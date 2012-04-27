@@ -15,6 +15,8 @@ import polly.core.irc.IrcManagerImpl;
 import polly.core.users.UserManagerImpl;
 import polly.util.concurrent.ThreadFactoryBuilder;
 import de.skuzzle.polly.sdk.AbstractDisposable;
+import de.skuzzle.polly.sdk.eventlistener.ConnectionEvent;
+import de.skuzzle.polly.sdk.eventlistener.ConnectionListener;
 import de.skuzzle.polly.sdk.eventlistener.MessageAdapter;
 import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
 import de.skuzzle.polly.sdk.eventlistener.NickChangeEvent;
@@ -31,7 +33,8 @@ import de.skuzzle.polly.sdk.model.User;
 
 
 public class AutoLogonHandler extends AbstractDisposable
-        implements UserSpottedListener, NickChangeListener, UserListener {
+        implements UserSpottedListener, NickChangeListener, UserListener, 
+                   ConnectionListener {
     
     //private final static User NICKSERV = new polly.core.users.User("NickServ", "", 0);
     static {
@@ -208,4 +211,16 @@ public class AutoLogonHandler extends AbstractDisposable
 
     @Override
     public void userLost(SpotEvent ignore) {}
+
+
+
+    @Override
+    public void ircConnectionEstablished(ConnectionEvent e) {
+    }
+
+
+
+    @Override
+    public void ircConnectionLost(ConnectionEvent e) {
+    }
 }

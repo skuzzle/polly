@@ -5,11 +5,13 @@ import org.apache.log4j.Logger;
 import polly.core.irc.IrcManagerImpl;
 import polly.core.users.UserManagerImpl;
 
+import de.skuzzle.polly.sdk.eventlistener.ConnectionEvent;
+import de.skuzzle.polly.sdk.eventlistener.ConnectionListener;
 import de.skuzzle.polly.sdk.eventlistener.SpotEvent;
 import de.skuzzle.polly.sdk.eventlistener.UserSpottedListener;
 
 
-public class AutoLogoffHandler implements UserSpottedListener {
+public class AutoLogoffHandler implements UserSpottedListener, ConnectionListener {
     
     private final static Logger logger = Logger.getLogger(
             AutoLogoffHandler.class.getName());
@@ -44,4 +46,17 @@ public class AutoLogoffHandler implements UserSpottedListener {
     
     @Override
     public void userSpotted(SpotEvent ignore) {}
+
+
+
+    @Override
+    public void ircConnectionEstablished(ConnectionEvent e) {
+    }
+
+
+
+    @Override
+    public void ircConnectionLost(ConnectionEvent e) {
+        this.userManager.logoffAll();
+    }
 }
