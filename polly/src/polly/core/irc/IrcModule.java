@@ -11,6 +11,7 @@ import polly.core.commands.CommandManagerImpl;
 import polly.core.users.UserManagerImpl;
 import polly.eventhandler.AutoLogoffHandler;
 import polly.eventhandler.AutoLogonHandler;
+import polly.eventhandler.GhostHandler;
 import polly.eventhandler.IrcLoggingHandler;
 import polly.eventhandler.MessageHandler;
 import polly.eventhandler.TraceNickChangeHandler;
@@ -96,6 +97,10 @@ public class IrcModule extends AbstractModule {
             this.userManager, this.commandExecutor, this.config);
         this.ircManager.addMessageListener(handler);
         this.provideComponent(handler);
+        
+        // this listener checks if we ghosted our original nick and changes our nickname
+        // to the default one
+        this.ircManager.addMessageListener(new GhostHandler());
 
         this.ircManager.addNickChangeListener(new TraceNickChangeHandler(
             this.userManager));
