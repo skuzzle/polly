@@ -320,12 +320,6 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         this.bot.connect(e.getHostName(), e.getPort());
         
         this.bot.sendMessage("nickserv", "ghost " + e.getNickName() + " " + e.getIdentity());
-        // HACK: wait 5seconds before changing nick to default
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e1) {
-            e1.printStackTrace();
-        }
         this.setAndIdentifyDefaultNickname();
         this.joinChannels(e.getChannels());
         this.recent = e;
@@ -428,6 +422,13 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
             }
         }
         return false;
+    }
+    
+    
+    
+    @Override
+    public void rejoinDefaultChannels() {
+        this.joinChannels(this.recent.getChannels());
     }
     
     

@@ -123,6 +123,15 @@ public interface IrcManager {
 	
 	
 	/**
+	 * Joins all the channels that are specified in the configuration file as 
+	 * {@link Configuration#CHANNELS}.
+	 * @since 0.9.1
+	 */
+	public abstract void rejoinDefaultChannels();
+	
+	
+	
+	/**
 	 * Lets polly join a channel using a password. Type any String as password if the
 	 * channel you are willing to join does not have a password.
 	 *  

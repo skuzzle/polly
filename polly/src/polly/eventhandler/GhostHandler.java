@@ -9,9 +9,12 @@ public class GhostHandler extends MessageAdapter {
     @Override
     public void noticeMessage(MessageEvent e) {
         if (e.getUser().getNickName().equalsIgnoreCase("nickserv")) {
-            if (e.getMessage().toLowerCase().indexOf(
-                        "ghost with your nick has been killed.") != -1) {
+            if (e.getMessage().toLowerCase().contains(
+                        "ghost with your nick has been killed.")) {
                 e.getSource().setAndIdentifyDefaultNickname();
+            } else if (e.getMessage().toLowerCase().contains(
+                        "password accepted - you are now recognized.")) {
+                e.getSource().rejoinDefaultChannels();
             }
         }
     }
