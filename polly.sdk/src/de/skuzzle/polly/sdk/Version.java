@@ -1,12 +1,17 @@
 package de.skuzzle.polly.sdk;
 
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 
 /**
- * This class represents a three-part version number. The parts are called
+ * <p>This class represents a three-part version number. The parts are called
  * VERSION, REVISION and BUILD and are integer fields. A Version has a natural order,
- * which is given by the values of its parts in the order from VERSION to BUILD.  
+ * which is given by the values of its parts in the order from VERSION to BUILD.</p>  
+ * 
+ * <p>A version number can optionally have a descriptive name.</p>
  * 
  * @author Simon
  * @version 28.07.2011
@@ -30,34 +35,48 @@ public class Version implements Comparable<Version> {
      */
     public final static int BUILD = 2;
     
-    
+    private final static Pattern PATTERN = Pattern.compile(
+        "(\\d+).(\\d+).(\\d+)( - (.+))?");
     
     private int[] fields;
     private String versionString;
+    private String name;
     
     
     
     /**
-     * Creates a new version from a String. The String must follow exactly this 
-     * formatting scheme: It must have three integer parts separated by a '.' (dot).
-     * For example {@code 1.3.4} as well as {@code 0.2.1} and {@code 0.0.0} are valid
-     * version strings.
+     * <p>Creates a new version from a String. The String must follow exactly this 
+     * formatting scheme: It must have three integer parts separated by a '.' (dot). Those
+     * three parts can optionally be followed by a dash surrounded by spaces following a
+     * description name of this version.</p>
+     * 
+     * <p>For example {@code 1.3.4} as well as {@code 0.2.1} and {@code 0.0.0} are valid
+     * version strings as well as {@code 1.2.3 - beta}</p>
      * 
      * @param version The version string to parse.
-     * @throws IllegalArgumentException If {@code version} does not follow the formmating
+     * @throws IllegalArgumentException If {@code version} does not follow the formatting
      *      rules.
      */
     public Version(String version) {
-        String[] parts = version.split("\\.");
-        if (parts.length != 3) {
+        Matcher m = PATTERN.matcher(version);
+        if (!m.matches()) {
             throw new IllegalArgumentException("misformatted version string: " + version);
         }
+        String v1 = version.substring(m.start(1), m.end(1));
+        String v2 = version.substring(m.start(2), m.end(2));
+        String v3 = version.substring(m.start(3), m.end(3));
+        
         try {
-            this.fields = new int[] {Integer.parseInt(parts[VERSION]), 
-                                     Integer.parseInt(parts[REVISION]), 
-                                     Integer.parseInt(parts[BUILD])};
+            this.fields = new int[] {Integer.parseInt(v1), 
+                                     Integer.parseInt(v2), 
+                                     Integer.parseInt(v3)};
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("misformatted version string: " + version);
+        }
+        if (m.groupCount() >= 5) {
+            this.name = version.substring(m.start(5), m.end(5));
+        } else {
+            name = "";
         }
 
         this.versionString = version;
@@ -66,15 +85,33 @@ public class Version implements Comparable<Version> {
     
     
     /**
-     * Creates a new version from its three integer parts.
+     * Creates a new version from its three integer parts with no version name.
      * 
      * @param version The VERSION part.
      * @param rev The REVISION part.
      * @param build The BUILD part.
      */
     public Version(int version, int rev, int build) {
+        this(version, rev, build, "");
+    }
+    
+    
+    
+    /**
+     * Creates a new version from its three integer parts and the given version name.
+     * 
+     * @param version The VERSION part.
+     * @param rev The REVISION part.
+     * @param build The BUILD part.
+     * @param name The name of this version.
+     * @since 0.9.1
+     */
+    public Version(int version, int rev, int build, String name) {
         this.fields = new int[] {version, rev, build};
-        this.versionString = version + "." + rev + "." + build;
+        String tmp = name == null ? "" : name;
+        tmp = tmp.equals("") ? "" : " - " + tmp;
+        this.versionString = version + "." + rev + "." + build + tmp;
+        this.name = name;
     }
     
     
@@ -91,6 +128,19 @@ public class Version implements Comparable<Version> {
             throw new IndexOutOfBoundsException("" + field);
         }
         return this.fields[field];
+    }
+    
+    
+    
+    /**
+     * Returns the version name of this version. If it has no version this is the empty
+     * String.
+     * 
+     * @return The name of this version.
+     * @since 0.9.1
+     */
+    public String getName() {
+        return this.name;
     }
     
     
@@ -147,7 +197,7 @@ public class Version implements Comparable<Version> {
      * than the other. They are considered equal if all three version parts matches. The
      * highest field is {@link #VERSION}, the lowest field is {@link #BUILD}.
      * 
-     * @param o The version to compare this vesion with.
+     * @param o The version to compare this version with.
      * @return An integer representing the order of these Versions in the means of the 
      *      Comparable contract.
      */
