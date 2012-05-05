@@ -16,6 +16,7 @@ import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.model.User;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.roles.SecurityContainer;
+import de.skuzzle.polly.sdk.roles.SecurityObject;
 
 
 
@@ -83,7 +84,7 @@ import de.skuzzle.polly.sdk.roles.SecurityContainer;
  * @version RC 1.0
  */
 public abstract class Command extends AbstractDisposable implements Comparable<Command>, 
-        SecurityContainer {
+        SecurityContainer, SecurityObject {
     
 
 	/**
@@ -362,18 +363,6 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 	public void doExecute(User executer, String channel, boolean query, 
 	        Signature signature) throws InsufficientRightsException, CommandException {
 
-	    // get matching formal signature to the actual signature and check the 
-	    // permissions.
-		FormalSignature formal = this.signatures.get(signature.getId());
-		if (!this.getMyPolly().roles().hasPermission(executer, 
-		        formal.getRequiredPermission())) {
-		    throw new InsufficientRightsException(this);
-		}
-		if (this.registeredOnly && !this.getMyPolly().users().isSignedOn(executer)) {
-		    throw new InsufficientRightsException(this);
-		}
-		
-		
 		// check if help is requested
 		if (signature.equals(this.helpSignature0)) {
 		    this.reply(channel, this.getHelpText());
@@ -389,6 +378,21 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 		            this.signatures.get(num).getSample());
 		    return;
 		}
+		
+		
+		
+        // get matching formal signature to the actual signature and check the 
+        // permissions.
+        FormalSignature formal = this.signatures.get(signature.getId());
+        if (!this.getMyPolly().roles().hasPermission(executer, 
+                formal.getRequiredPermission())) {
+            throw new InsufficientRightsException(formal);
+        }
+        if (!this.getMyPolly().roles().hasPermission(executer, 
+                    this.getRequiredPermission())) {
+            throw new InsufficientRightsException(this);
+        }
+		
 		
 		
 		try {
@@ -577,6 +581,16 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
     @Override
     public Set<String> getContainedPermissions() {
         return this.containedPermissions;
+    }
+    
+    
+    
+    @Override
+    public String getRequiredPermission() {
+        if (this.registeredOnly) {
+            return RoleManager.SIGNED_ON_PERMISSION;
+        }
+        return RoleManager.NONE_PERMISSIONS;
     }
 	
 	

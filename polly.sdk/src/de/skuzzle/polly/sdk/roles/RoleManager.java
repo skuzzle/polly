@@ -33,6 +33,8 @@ public interface RoleManager {
      */
     public final static String NONE_PERMISSIONS = "polly.permissions.none";
     
+    public final static String SIGNED_ON_PERMISSION = "polly.permissions.signedon";
+    
     /**
      * Constant for the admin role name. This role has permissions for accessing every 
      * {@link SecurityObject} within polly.
