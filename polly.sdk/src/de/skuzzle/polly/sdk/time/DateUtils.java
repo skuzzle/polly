@@ -195,16 +195,11 @@ public class DateUtils {
      * @since 0.9.1
      */
     public static Date getDayDate(int day) {
-        System.out.println("Day before: " + day);
         day = ((day - 1) % 7) + 1;
-        System.out.println("Day after: " + day);
         Calendar c = Calendar.getInstance();
         int today = c.get(Calendar.DAY_OF_WEEK);
         int diff = Math.abs(day - today);
         diff = diff == 0 ? 7 : diff;
-        
-        System.out.println("Today: " + today);
-        System.out.println("Diff: " + diff);
 
         c.add(Calendar.DAY_OF_MONTH, diff);
         c.set(Calendar.MINUTE, 0);
