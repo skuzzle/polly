@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import de.skuzzle.polly.sdk.Types.AnyType;
 import de.skuzzle.polly.sdk.Types.BooleanType;
 import de.skuzzle.polly.sdk.Types.ChannelType;
 import de.skuzzle.polly.sdk.Types.CommandType;
@@ -274,10 +275,8 @@ public class Signature {
 	public Signature match(Signature other) {
 		if (other.parameters.size() != this.parameters.size()) {
 			return null;
-		} else if (this.isCanonical() != other.isCanonical()) {
-			return null;
 		}
-		if (this.isCanonical()) {
+		if (this.isCanonical() && other.isCanonical()) {
 			// if both are canonical, we try to rearrange it to increase
 			// chance of matching.
 			// Additional, its of high importance that the parameter
@@ -332,12 +331,14 @@ public class Signature {
 	 * @return If the list is canonical.
 	 */
 	private boolean checkCanonical(List<Types> parameters) {
-        List<Types> formal = this.parameters;
-        List<Types> actual = parameters;
-        for (int i = 0; i < formal.size(); ++i) {
-            for (int j = i; j < actual.size(); ++j) {
-                Class<?> formalCls = formal.get(i).getClass();
-                Class<?> actualCls = actual.get(j).getClass();
+        for (int i = 0; i < parameters.size(); ++i) {
+            // signatures that contain the Any-Type can't be canonical
+            if (parameters.get(i) instanceof AnyType) {
+                return false;
+            }
+            for (int j = i; j < parameters.size(); ++j) {
+                Class<?> formalCls = parameters.get(i).getClass();
+                Class<?> actualCls = parameters.get(j).getClass();
                 if(i != j && actualCls.isAssignableFrom(formalCls)) {
                     return false;
                 }
