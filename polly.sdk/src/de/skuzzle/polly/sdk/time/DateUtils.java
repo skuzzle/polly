@@ -175,4 +175,42 @@ public class DateUtils {
     public static boolean isToday(Date d) {
         return isSameDay(new Date(), d);
     }
+    
+    
+    public static void main(String[] args) {
+        System.out.println(Calendar.MONDAY);
+        System.out.println(Calendar.SUNDAY);
+        System.out.println(Calendar.SATURDAY);
+    }
+    
+    
+    /**
+     * Returns a date starting at 00:00 on the specified day of week. Valid inputs for 
+     * this method are any of {@link Calendar#MONDAY}, ..., {@link Calendar#SUNDAY}. 
+     * Values that are not within the given range will be converted using a modulo
+     * calculation to make up a valid day number.
+     * 
+     * @param day The day of week to get the date for.
+     * @return A new date instance starting at the specified day of week.
+     * @since 0.9.1
+     */
+    public static Date getDayDate(int day) {
+        System.out.println("Day before: " + day);
+        day = ((day - 1) % 7) + 1;
+        System.out.println("Day after: " + day);
+        Calendar c = Calendar.getInstance();
+        int today = c.get(Calendar.DAY_OF_WEEK);
+        int diff = Math.abs(day - today);
+        diff = diff == 0 ? 7 : diff;
+        
+        System.out.println("Today: " + today);
+        System.out.println("Diff: " + diff);
+
+        c.add(Calendar.DAY_OF_MONTH, diff);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.HOUR, 0);
+        
+        return c.getTime();
+    }
 }

@@ -52,6 +52,7 @@ import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.exceptions.UnknownCommandException;
 import de.skuzzle.polly.sdk.exceptions.UnknownSignatureException;
 import de.skuzzle.polly.sdk.model.User;
+import de.skuzzle.polly.sdk.time.DateUtils;
 
 
 
@@ -92,6 +93,8 @@ public class CommandManagerImpl implements CommandManager {
     }
     
     
+	private final static String[] DAYS = {"montag", "dienstag", "mittwoch", 
+	    "donnerstag", "freitag", "samstag", "sonntag"};
 	
 	private static Logger logger = Logger.getLogger(CommandManagerImpl.class.getName());
 	private Map<String, Command> commands;
@@ -324,9 +327,9 @@ public class CommandManagerImpl implements CommandManager {
             throw e;
         }
     }
-
-
-
+    
+    
+    
     private void createContext(String channel, User user, IrcManager ircManager, 
     		Map<String, Types> constants, Namespace d) throws ParseException {
         
@@ -348,16 +351,18 @@ public class CommandManagerImpl implements CommandManager {
         		new ListLiteral(channels, Type.CHANNEL), true));
         d.addNormal(new VarDeclaration(new IdentifierLiteral("each"), 
         		new ListLiteral(users, Type.USER), true));
-        
-        Calendar tmp = Calendar.getInstance();
-        tmp.set(Calendar.DAY_OF_MONTH, tmp.get(Calendar.DAY_OF_MONTH) + 1);
-        tmp.set(Calendar.HOUR, 0);
-        tmp.set(Calendar.HOUR_OF_DAY, 0);
-        tmp.set(Calendar.MINUTE, 0);
-        tmp.set(Calendar.SECOND, 0);
-        tmp.set(Calendar.MILLISECOND, 0);
+
+        int m = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
         d.addNormal(new VarDeclaration(new IdentifierLiteral("morgen"), 
-            new DateLiteral(tmp.getTime()), true));
+            new DateLiteral(DateUtils.getDayDate(m + 1)), true));
+        d.addNormal(new VarDeclaration(new IdentifierLiteral("übermorgen"), 
+            new DateLiteral(DateUtils.getDayDate(m + 2)), true));
+        
+        int start = Calendar.MONDAY;
+        for (String day : DAYS) {
+            d.addNormal(new VarDeclaration(new IdentifierLiteral(day), 
+                new DateLiteral(DateUtils.getDayDate(start++)), true));
+        }
         
         /*logger.trace("    me     := " + user.getCurrentNickName());
         logger.trace("    here   := " + channel);
