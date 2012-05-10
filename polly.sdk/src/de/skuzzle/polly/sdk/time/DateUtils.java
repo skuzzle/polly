@@ -5,8 +5,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import com.sun.org.apache.xpath.internal.operations.Minus;
-
 
 
 /**
@@ -178,12 +176,6 @@ public class DateUtils {
         return isSameDay(new Date(), d);
     }
     
-    
-    public static void main(String[] args) {
-        System.out.println(Calendar.MONDAY);
-        System.out.println(Calendar.SUNDAY);
-        System.out.println(Calendar.SATURDAY);
-    }
     
     
     /**
