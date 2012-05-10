@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
+import com.sun.org.apache.xpath.internal.operations.Minus;
+
 
 
 /**
@@ -202,9 +204,9 @@ public class DateUtils {
         diff = diff == 0 ? 7 : diff;
 
         c.add(Calendar.DAY_OF_MONTH, diff);
+        c.set(Calendar.HOUR_OF_DAY, 0);
         c.set(Calendar.MINUTE, 0);
         c.set(Calendar.SECOND, 0);
-        c.set(Calendar.HOUR, 0);
         
         return c.getTime();
     }
