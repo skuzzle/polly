@@ -15,7 +15,7 @@ public class LogoutHttpAction extends AbstractHttpAction {
     
     @Override
     public void execute(HttpEvent e, HttpTemplateContext context) {
-        context.setResultUrl("webinterface/pages/home.html");
+        context.setTemplate("webinterface/pages/home.html");
         e.getSession().setUser(null);
     }
 

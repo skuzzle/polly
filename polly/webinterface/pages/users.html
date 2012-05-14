@@ -1,0 +1,26 @@
+<h2>Registered Polly Users</h2>
+
+<table>
+    <tr>
+        <th>Id</th>
+        <th>Username</th>
+        <th>Nickname</th>
+        <th>Userlevel</th>
+        <th>IsIdle</th>
+        <th>Last Action</th>
+        <th>Login Time</th>
+    </tr>
+    #foreach ($user in $users)
+    <tr>
+        <td>$user.getId()</td>
+        <td>$user.getName()</td>
+        <td>$!user.getCurrentNickName()</td>
+        <td>$user.getUserLevel()</td>
+        <td>$user.isIdle()</td>
+        <td>#if ($user.getLastMessageTime() != 0) $formatter.formatDate( $user.getLastMessageTime() ) #end</td>
+        <td>#if ($user.getLoginTime() != 0) $formatter.formatDate( $user.getLoginTime() ) #end</td>
+        <td><a href="user_info?userName=$user.getName()">Info</a></td>
+        <td><a href="Users?userName=$user.getName()&action=delete">Delete</a></td>
+    </tr>
+    #end
+</table>

@@ -7,12 +7,12 @@ public class HttpTemplateContext extends HashMap<String, Object> {
 
     private static final long serialVersionUID = 1L;
 
-    private String resultUrl;
+    private String template;
     
     
     
-    public HttpTemplateContext(String resultUrl) {
-        this.resultUrl = resultUrl;
+    public HttpTemplateContext(String template) {
+        this.template = template;
     }
     
     
@@ -23,14 +23,14 @@ public class HttpTemplateContext extends HashMap<String, Object> {
     
     
     
-    public void setResultUrl(String resultUrl) {
-        this.resultUrl = resultUrl;
+    public void setTemplate(String template) {
+        this.template = template;
     }
     
     
     
-    public String getResultUrl() {
-        return this.resultUrl;
+    public String getTemplate() {
+        return this.template;
     }
     
 }

@@ -1,6 +1,7 @@
 package polly.core.http;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +45,7 @@ public class SimpleWebServer implements HttpManager {
     private HttpServer server;
     private int port;
     private boolean running;
-    private Map<InetSocketAddress, HttpSession> sessions;
+    private Map<InetAddress, HttpSession> sessions;
     private EventProvider eventProvider;
     private Map<String, HttpAction> actions;
     private ArrayList<String> menu;
@@ -53,7 +54,7 @@ public class SimpleWebServer implements HttpManager {
     
     public SimpleWebServer(int port) {
         this.port = port;
-        this.sessions = new HashMap<InetSocketAddress, HttpSession>();
+        this.sessions = new HashMap<InetAddress, HttpSession>();
         this.eventProvider = new SynchronousEventProvider();
         this.actions = new HashMap<String, HttpAction>();
         this.menu = new ArrayList<String>();
@@ -78,7 +79,7 @@ public class SimpleWebServer implements HttpManager {
     
     
     
-    protected HttpSession getSession(InetSocketAddress remoteIp) {
+    protected HttpSession getSession(InetAddress remoteIp) {
         synchronized (this.sessions) {
             HttpSession session = this.sessions.get(remoteIp);
             if (session == null) {
@@ -93,6 +94,7 @@ public class SimpleWebServer implements HttpManager {
     
     protected void closeSession(HttpSession session) {
         synchronized (this.sessions) {
+            logger.warn("Killing " + session);
             this.sessions.remove(session.getRemoteIp());
         }
     }
@@ -101,7 +103,7 @@ public class SimpleWebServer implements HttpManager {
     
     private final static Random RANDOM = new Random();
     
-    private static String generateSessionId(InetSocketAddress remoteIp) {
+    private static String generateSessionId(InetAddress remoteIp) {
         long id = RANDOM.nextLong() * System.currentTimeMillis() * remoteIp.hashCode();
         return Long.toHexString(id);
     }
@@ -119,13 +121,14 @@ public class SimpleWebServer implements HttpManager {
         
         HttpTemplateContext actionContext = new HttpTemplateContext();
         if (action == null) {
-            actionContext.setResultUrl("webinterface/pages/error.html");
+            actionContext.setTemplate("webinterface/pages/error.html");
             actionContext.put("errorText", "No such action.");
+            return null;
         } else {
             action.execute(e, actionContext);
         }
         this.putRootContext(actionContext, e.getSession());
-        actionContext.put("content", actionContext.getResultUrl());
+        actionContext.put("content", actionContext.getTemplate());
         
         return actionContext;
     }
@@ -143,7 +146,7 @@ public class SimpleWebServer implements HttpManager {
         c.put("menu", this.menu);
         c.put("title", "Polly Webinterface");
         c.put("heading", "Polly Webinterface");
-        c.put("user", session.getUser());
+        c.put("me", session.getUser());
     }
 
 

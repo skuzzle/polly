@@ -33,6 +33,16 @@ public interface FormatManager {
     
     
     /**
+     * Formats the given date using pollys default DateFormat.
+     * 
+     * @param date The date to format.
+     * @return The formatted date as a String.
+     */
+    public String formatDate(long timestamp);
+    
+    
+    
+    /**
      * Formats the given int as a timespan.
      * 
      * @param span The timespan in seconds.

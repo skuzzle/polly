@@ -1,25 +1,39 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de">
-    <head>
-        <title>${title}</title>
-        <meta http-equiv="Content-Type" content="text/html;charset=UTF8" />
-        <!--<link rel="stylesheet" type="text/css" href="main.css" /> -->
-        <!--<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" /> -->
-    </head>
-    <body>
-        <h1 id="top">${heading}</h1>
-        #if ($user)
-            Eingeloggt als $user.getName() (<a href="logout">Ausloggen</a>)
+<head>
+    <title>${title}</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <!--<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" /> -->
+</head>
+<body>
+
+    <div id="loginInfo">
+        #if ($me)
+            Eingeloggt als $me.getName() (<a href="logout">Ausloggen</a>)
         #else
             Nicht eingeloggt
         #end
-        <h2>Inhalt</h2>
+    </div>
 
+    <h1 id="top">${heading}</h1>
+
+    <div id="menu">
+        #if ($me)
         <ul>
+            <li><a href="/">Home</a></li>
         #foreach ($page in $menu)
             <li><a href="$page">$page</a></li>
         #end
         </ul>
-        
+        #end
+    </div>
+    
+    <div id="content">
         #parse( ${content} )
-    </body>
+    </div>
+    
+    <div id="bottom">
+        Polly Webinterface. Copyright 2012 by Simon T.
+    </div>
+</body>
 </html>

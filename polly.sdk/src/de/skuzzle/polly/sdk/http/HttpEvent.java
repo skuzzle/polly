@@ -42,7 +42,6 @@ public class HttpEvent {
     
     
     
-    
     public HttpManager getSource() {
         return this.source;
     }

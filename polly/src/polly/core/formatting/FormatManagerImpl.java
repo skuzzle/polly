@@ -52,6 +52,13 @@ public class FormatManagerImpl implements FormatManager {
     
     
     
+    @Override
+    public String formatDate(long timestamp) {
+        return this.formatDate(new Date(timestamp));
+    }
+    
+    
+    
     public synchronized DateFormat getDefaultDateFormat() {
         return (DateFormat) this.defaultDateFormat.clone();
     }

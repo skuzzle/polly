@@ -1,0 +1,41 @@
+<a href="Users">&lt; back to Users</a>
+<h2>Info about $user.getName()</h2>
+<p>
+    Name: $user.getName()<br/>
+    Nickname: $!user.getCurrentNickName()<br/>
+    Userlevel: $user.getUserLevel()<br/>
+    Last IRC Action: #if ($user.getLastMessageTime() != 0) $formatter.formatDate( $user.getLastMessageTime() ) #end<br/>
+    Logged in since: #if ($user.getLoginTime() != 0) $formatter.formatDate( $user.getLoginTime() ) #end<br/>
+</p>
+
+<h3>Attributes</h3>
+#if ($action == "edit") 
+    #set ($actionUrl = "user_info?action=update&userName=${user.getName()}")
+#else 
+    #set ($actionUrl = "user_info?action=edit&userName=${user.getName()}")
+#end
+
+<form action="$actionUrl" method="POST">
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Value</th>
+    </tr>
+    #foreach ($attribute in $user.getAttributeNames())
+    <tr>
+        <td>$attribute</td>
+        #if ($action == "edit")
+            <td><input type="text" value="$user.getAttribute($attribute)" name="$attribute"/></td>
+            <td><input type="button" onclick="this.form.${attribute}.value='%default%'" value="Default"/></td>
+        #else 
+            <td>$user.getAttribute($attribute)</td>
+        #end
+    </tr>
+    #end
+</table>
+#if ($action == "edit")
+    <input type="submit" value="Update" />
+#else
+    <input type="submit" value="Edit" />
+#end
+</form>

@@ -1,9 +1,23 @@
 #if ($noAction)
 <form action="login" method="POST">
-    <label for="userName">Benutzername:</label><input type="text" id="userName" name="userName"/>
-    <label for="password">Passwort:</label><input type="text" id="password" name="password"/>
-    <input type="submit"/>
+    <table>
+        <tr>
+            <td>Benutzername:</td>
+            <td><input type="text" id="userName" name="userName"/></td>
+        </tr>
+        <tr>
+        </tr>
+            <td>Passwort:</td>
+            <td><input type="text" id="password" name="password"/></td>
+        </tr>
+        <tr>
+            <td><input type="submit" value="Login"/></td>
+            <td></td>
+        </tr>
+    </table>
 </form>
-#else
-Benutzername oder Passwort falsch.
+#elseif (!$success)
+    Login failed. Reason: ${reason}. <a href="login">Retry</a>.
+#else 
+    You are now logged in.
 #end

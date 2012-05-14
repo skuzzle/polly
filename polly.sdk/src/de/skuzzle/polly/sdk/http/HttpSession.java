@@ -1,6 +1,6 @@
 package de.skuzzle.polly.sdk.http;
 
-import java.net.InetSocketAddress;
+import java.net.InetAddress;
 
 import de.skuzzle.polly.sdk.model.User;
 
@@ -11,12 +11,12 @@ public class HttpSession {
     private String id;
     private long started;
     private long lastAction;
-    private InetSocketAddress remoteIp;
+    private InetAddress remoteIp;
     private User user;
     
     
     
-    public HttpSession(String id, InetSocketAddress remoteIp) {
+    public HttpSession(String id, InetAddress remoteIp) {
         this.id = id;
         this.remoteIp = remoteIp;
         this.started = System.currentTimeMillis();
@@ -33,6 +33,12 @@ public class HttpSession {
     
     public synchronized void setUser(User user) {
         this.user = user;
+    }
+    
+    
+    
+    public boolean isLoggedIn() {
+        return this.user != null;
     }
     
     
@@ -61,7 +67,7 @@ public class HttpSession {
     
     
     
-    public InetSocketAddress getRemoteIp() {
+    public InetAddress getRemoteIp() {
         return this.remoteIp;
     }
     

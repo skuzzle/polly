@@ -1,6 +1,8 @@
-#if (!$user)
+#if (!$me)
     #set($noAction = true)
     #parse("webinterface/pages/login.html")
 #else
-    Welcome home
+    <h2>Welcome home</h2>
+    
+    <p>Polly running since $formatter.formatDate( ${started} ) ($formatter.formatTimeSpan(${uptime}))</p>
 #end

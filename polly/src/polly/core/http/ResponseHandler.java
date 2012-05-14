@@ -2,6 +2,7 @@ package polly.core.http;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -73,7 +74,7 @@ public class ResponseHandler implements HttpHandler {
 
     public void handle(HttpExchange t) throws IOException {
         
-        HttpSession session = this.webServer.getSession(t.getRemoteAddress());
+        HttpSession session = this.webServer.getSession(t.getRemoteAddress().getAddress());
         session.setLastAction(System.currentTimeMillis());
         
         if (session.getLastAction() - session.getStarted() > 
@@ -84,7 +85,7 @@ public class ResponseHandler implements HttpHandler {
         }
         
         String uri = t.getRequestURI().toString();
-        logger.trace(t.getRemoteAddress() + " requested " + uri);
+        logger.trace(session + " requested " + uri);
         
         
         // extract GET parameters
@@ -95,6 +96,8 @@ public class ResponseHandler implements HttpHandler {
             uri = parts[0];
         }
         
+        logger.trace("Evaluated URI: " + uri);
+        
         if (t.getRequestMethod().equals("POST")) {
             parsePostParameters(t, parameters);
         }
@@ -103,8 +106,42 @@ public class ResponseHandler implements HttpHandler {
         e.getProperties().putAll(parameters);
         
         HttpTemplateContext c = this.webServer.executeAction(e);
-        this.respond(c, t);
+        if (c == null) {
+            // there is no action for the given uri, so treat it as a file request
+            this.respond(uri, t);
+        } else {
+            this.respond(c, t);
+        }
         t.close();
+    }
+    
+    
+    
+    private void respond(String uri, HttpExchange t) throws IOException {
+        File dest = new File(this.templateRoot, uri);
+        if (dest.exists()) {
+            t.sendResponseHeaders(200, 0);
+            
+            FileInputStream inp = null;
+            OutputStream out = null;
+            try {
+                out = t.getResponseBody();
+                inp = new FileInputStream(dest);
+                byte[] buffer = new byte[1024];
+                int len = 0;
+                
+                while ((len = inp.read(buffer)) > 0) {
+                    out.write(buffer, 0, len);
+                }
+            } finally {
+                if (inp != null) {
+                    inp.close();
+                }
+                if (out != null) {
+                    out.close();
+                }
+            }
+        }
     }
     
     
