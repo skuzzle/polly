@@ -8,7 +8,7 @@ import de.skuzzle.polly.sdk.exceptions.DisposingException;
 
 import polly.configuration.PollyConfiguration;
 import polly.core.ShutdownManagerImpl;
-import polly.events.DefaultEventProvider;
+import polly.events.AsynchronousEventProvider;
 import polly.events.EventProvider;
 import polly.moduleloader.AbstractModule;
 import polly.moduleloader.ModuleLoader;
@@ -38,7 +38,7 @@ public class ExecutorServiceProvider extends AbstractModule {
 
         ExecutorService eventThreadPool = Executors.newFixedThreadPool(config
             .getEventThreads(), new ThreadFactoryBuilder("EVENT_THREAD_%n%"));
-        EventProvider eventProvider = new DefaultEventProvider(eventThreadPool);
+        EventProvider eventProvider = new AsynchronousEventProvider(eventThreadPool);
 
         final ExecutorService commandExecutor = Executors.newFixedThreadPool(
             config.getExecutionThreads(), new ThreadFactoryBuilder(

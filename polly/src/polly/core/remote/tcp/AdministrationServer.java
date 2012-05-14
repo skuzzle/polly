@@ -15,7 +15,7 @@ import javax.net.ssl.SSLServerSocketFactory;
 
 import org.apache.log4j.Logger;
 
-import polly.events.DefaultEventProvider;
+import polly.events.AsynchronousEventProvider;
 import polly.events.Dispatchable;
 import polly.events.EventProvider;
 import polly.network.events.ConnectionListener;
@@ -56,7 +56,7 @@ public class AdministrationServer extends AbstractDisposable implements Runnable
         
         this.connectionThreadPool = Executors.newFixedThreadPool(maxConnections, 
                 new ThreadFactoryBuilder("CONNECTION_THREAD_%n%"));
-        this.eventProvider = new DefaultEventProvider();
+        this.eventProvider = new AsynchronousEventProvider();
         
         logger.debug("Creating SSL Server Socket");
         SSLServerSocketFactory factory = 
