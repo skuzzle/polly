@@ -1,0 +1,6 @@
+#if (!$user)
+    #set($noAction = true)
+    #parse("webinterface/pages/login.html")
+#else
+    Welcome home
+#end
