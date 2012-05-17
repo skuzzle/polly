@@ -9,9 +9,9 @@
 
     <div id="loginInfo">
         #if ($me)
-            Eingeloggt als $me.getName() (<a href="logout">Ausloggen</a>)
+            Logged in as <a href="user_info?userName=$me.getName()">$me.getName()</a> (<a href="logout">Logout</a>)
         #else
-            Nicht eingeloggt
+            Not logged in.
         #end
     </div>
 

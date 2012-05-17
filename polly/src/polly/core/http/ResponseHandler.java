@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -44,6 +46,11 @@ public class ResponseHandler implements HttpHandler {
         while (m.find()) {
             String key = in.substring(m.start(1), m.end(1));
             String value = in.substring(m.start(2), m.end(2));
+            try {
+                value = URLDecoder.decode(value, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
             params.put(key, value);
         }
     }
@@ -52,6 +59,7 @@ public class ResponseHandler implements HttpHandler {
     
     private static void parsePostParameters(HttpExchange t, Map<String, String> result) 
                 throws IOException {
+        
         BufferedReader r = new BufferedReader(new InputStreamReader(t.getRequestBody()));
         String line = null;
         while ((line = r.readLine()) != null) {
@@ -77,7 +85,8 @@ public class ResponseHandler implements HttpHandler {
         HttpSession session = this.webServer.getSession(t.getRemoteAddress().getAddress());
         session.setLastAction(System.currentTimeMillis());
         
-        if (session.getLastAction() - session.getStarted() > 
+        // kill the session if a user is logged in on it and it is expired
+        if (session.isLoggedIn() && session.getLastAction() - session.getStarted() > 
                     SimpleWebServer.SESSION_TIMEOUT) {
             
             this.webServer.closeSession(session);

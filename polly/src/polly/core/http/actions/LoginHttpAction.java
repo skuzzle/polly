@@ -1,13 +1,13 @@
 package polly.core.http.actions;
 
 import de.skuzzle.polly.sdk.UserManager;
-import de.skuzzle.polly.sdk.http.AbstractHttpAction;
+import de.skuzzle.polly.sdk.http.HttpAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.model.User;
 
 
-public class LoginHttpAction extends AbstractHttpAction {
+public class LoginHttpAction extends HttpAction {
 
     private UserManager userManager;
     

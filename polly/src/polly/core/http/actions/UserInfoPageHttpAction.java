@@ -1,16 +1,15 @@
 package polly.core.http.actions;
 
 
-import java.net.URLDecoder;
 
 import de.skuzzle.polly.sdk.MyPolly;
-import de.skuzzle.polly.sdk.http.AbstractHttpAction;
+import de.skuzzle.polly.sdk.http.HttpAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.model.User;
 
 
-public class UserInfoPageHttpAction extends AbstractHttpAction {
+public class UserInfoPageHttpAction extends HttpAction {
 
     private MyPolly myPolly;
     
@@ -36,8 +35,8 @@ public class UserInfoPageHttpAction extends AbstractHttpAction {
         if (action != null && action.equals("update")) {
             for (String attribute : u.getAttributeNames()) {
                 try {
-                    String value = URLDecoder.decode(e.getProperty(attribute), "UTF-8");
-                    this.myPolly.users().setAttributeFor(u, attribute, value);
+                    this.myPolly.users().setAttributeFor(
+                        u, attribute, e.getProperty(attribute));
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }

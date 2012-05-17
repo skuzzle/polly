@@ -5,13 +5,13 @@ import java.util.List;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
-import de.skuzzle.polly.sdk.http.AbstractHttpAction;
+import de.skuzzle.polly.sdk.http.HttpAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.model.User;
 
 
-public class UserPageHttpAction extends AbstractHttpAction {
+public class UserPageHttpAction extends HttpAction {
 
     private MyPolly myPolly;
     
