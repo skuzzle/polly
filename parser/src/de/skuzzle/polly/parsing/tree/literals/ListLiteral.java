@@ -14,6 +14,7 @@ import de.skuzzle.polly.parsing.TokenType;
 import de.skuzzle.polly.parsing.Type;
 import de.skuzzle.polly.parsing.declarations.Namespace;
 import de.skuzzle.polly.parsing.tree.Expression;
+import de.skuzzle.polly.parsing.util.Field;
 import de.skuzzle.polly.parsing.util.Fields;
 import de.skuzzle.polly.parsing.util.Matrix;
 
@@ -43,6 +44,22 @@ public class ListLiteral extends Literal {
     public ListLiteral(List<Expression> expressions, Type subType) {
         this(expressions);
         this.setType(new ListType(subType));
+    }
+    
+    
+    
+    public ListLiteral(Matrix<?> matrix) {
+        super(new Token(TokenType.LIST, Position.EMPTY), new ListType(
+            new ListType(Type.NUMBER)));
+        
+        this.elements = new ArrayList<Expression>();
+        for (int i = 0; i < matrix.getM(); ++i) {
+            ArrayList<Expression> row = new ArrayList<Expression>();
+            for (int j = 0; j < matrix.getN(); ++j) {
+                row.add(new NumberLiteral((Number) matrix.get(i, j)));
+            }
+            this.elements.add(new ListLiteral(row));
+        }
     }
     
     
@@ -84,11 +101,6 @@ public class ListLiteral extends Literal {
             this.setType(Type.EMPTY_LIST);
         }
         
-        if (this.checkIsValidMatrix()) {
-            Matrix<Double> matrix = this.toMatrix();
-            System.out.println(matrix.toAlignedString());
-        }
-        
         return this;
     }
     
@@ -112,7 +124,7 @@ public class ListLiteral extends Literal {
     
     
     
-    public Matrix<Double> toMatrix() {
+    public Matrix<Double> toDoubleMatrix() throws ExecutionException {
         int cols = ((ListLiteral) this.elements.get(0)).getElements().size();
         Matrix<Double> result = new Matrix<Double>(
                 this.elements.size(), cols, Fields.DOUBLE);
@@ -126,6 +138,28 @@ public class ListLiteral extends Literal {
                 result.set(i, j++, num.getValue());
             }
             ++i;
+            j = 0;
+        }
+        return result;
+    }
+    
+    
+    
+    public Matrix<Integer> toIntMatrix(Field<Integer> field) throws ExecutionException {
+        int cols = ((ListLiteral) this.elements.get(0)).getElements().size();
+        Matrix<Integer> result = new Matrix<Integer>(
+                this.elements.size(), cols, field);
+        
+        int i = 0;
+        int j = 0;
+        for (Expression e : this.elements) {
+            ListLiteral sub = (ListLiteral) e;
+            for (Expression e1 : sub.getElements()) {
+                NumberLiteral num = (NumberLiteral) e1;
+                result.set(i, j++, num.isInteger());
+            }
+            ++i;
+            j = 0;
         }
         return result;
     }

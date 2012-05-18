@@ -11,6 +11,9 @@ import de.skuzzle.polly.parsing.tree.literals.BooleanLiteral;
 import de.skuzzle.polly.parsing.tree.literals.ListLiteral;
 import de.skuzzle.polly.parsing.tree.literals.Literal;
 import de.skuzzle.polly.parsing.tree.literals.NumberLiteral;
+import de.skuzzle.polly.parsing.util.Fields;
+import de.skuzzle.polly.parsing.util.Matrix;
+import de.skuzzle.polly.parsing.util.MatrixUtils;
 
 
 
@@ -57,8 +60,6 @@ public class Functions {
             
             stack.push(new NumberLiteral(lit.getElements().size()));
         }
-
-        
     }
     
     
@@ -179,6 +180,69 @@ public class Functions {
         }
     }
     
+    
+    
+    public static enum MatrixType {
+        INT_MOD, DOUBLE;
+    }
+    
+    
+    
+    public final static class GaussianEliminationModP extends ExpressionStub {
+
+        private static final long serialVersionUID = 1L;
+        
+        public GaussianEliminationModP() {
+            super(new de.skuzzle.polly.parsing.ListType(
+                new de.skuzzle.polly.parsing.ListType(Type.NUMBER)));
+        }
+        
+        
+        
+        @Override
+        public void collapse(Stack<Literal> stack) throws ExecutionException {
+            NumberLiteral p = (NumberLiteral) stack.pop();
+            ListLiteral list = (ListLiteral) stack.pop();
+            
+            if (!list.checkIsValidMatrix()) {
+                throw new ExecutionException("Liste hat kein gültes Matrix-Format", 
+                    list.getPosition());
+            }
+            
+            Matrix<Integer> matrix = list.toIntMatrix(
+                Fields.integerModulo(p.isInteger()));
+            MatrixUtils.toGaussForm(matrix);
+            stack.push(new ListLiteral(matrix));
+        }
+    }
+    
+    
+    
+    public final static class GaussianElimination extends ExpressionStub {
+
+        private static final long serialVersionUID = 1L;
+        
+        public GaussianElimination() {
+            super(new de.skuzzle.polly.parsing.ListType(
+                new de.skuzzle.polly.parsing.ListType(Type.NUMBER)));
+        }
+        
+        
+        
+        @Override
+        public void collapse(Stack<Literal> stack) throws ExecutionException {
+            ListLiteral list = (ListLiteral) stack.pop();
+            
+            if (!list.checkIsValidMatrix()) {
+                throw new ExecutionException("Liste hat kein gültes Matrix-Format", 
+                    list.getPosition());
+            }
+            
+            Matrix<Double> matrix = list.toDoubleMatrix();
+            MatrixUtils.toGaussForm(matrix);
+            stack.push(new ListLiteral(matrix));
+        }
+    }
     
     
     

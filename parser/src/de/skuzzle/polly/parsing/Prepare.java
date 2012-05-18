@@ -8,7 +8,9 @@ import de.skuzzle.polly.parsing.tree.functions.ContainsFunction;
 import de.skuzzle.polly.parsing.tree.functions.DefaultMathFunction;
 import de.skuzzle.polly.parsing.tree.functions.Functions;
 import de.skuzzle.polly.parsing.tree.functions.AggregateListFunction;
+import de.skuzzle.polly.parsing.tree.functions.GaussEliminationModPFunction;
 import de.skuzzle.polly.parsing.tree.functions.ListLengthFunction;
+import de.skuzzle.polly.parsing.tree.functions.GaussEliminationFunction;
 import de.skuzzle.polly.parsing.tree.functions.RandomFunction;
 import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
 import de.skuzzle.polly.parsing.tree.literals.NumberLiteral;
@@ -152,6 +154,8 @@ public final class Prepare {
             dest.add(new AggregateListFunction(Functions.ListType.SUM), "math");
             dest.add(new AggregateListFunction(Functions.ListType.AVG), "math");
             
+            dest.add(new GaussEliminationFunction(), "matrix");
+            dest.add(new GaussEliminationModPFunction(), "matrix");
         } catch (ParseException ignore) {
             // can not happen
         }

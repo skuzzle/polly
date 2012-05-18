@@ -29,6 +29,13 @@ public class NumberLiteral extends Literal {
     }
     
     
+    
+    public NumberLiteral(Number value) {
+        this(value.doubleValue(), Position.EMPTY);
+    }
+    
+    
+    
     public NumberLiteral(double value, Position position) {
         super(new Token(TokenType.NUMBER, position, value), Type.NUMBER);
     }
