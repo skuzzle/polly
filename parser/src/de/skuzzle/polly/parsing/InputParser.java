@@ -667,9 +667,9 @@ public class InputParser extends AbstractParser<InputScanner> {
         }
         
         return null;
-    }    
+    }
     
-       
+    
     
     protected void parse_expression_list(List<Expression> result, 
                 TokenType listEnd) throws ParseException {

@@ -14,6 +14,8 @@ import de.skuzzle.polly.parsing.TokenType;
 import de.skuzzle.polly.parsing.Type;
 import de.skuzzle.polly.parsing.declarations.Namespace;
 import de.skuzzle.polly.parsing.tree.Expression;
+import de.skuzzle.polly.parsing.util.Fields;
+import de.skuzzle.polly.parsing.util.Matrix;
 
 
 
@@ -67,7 +69,7 @@ public class ListLiteral extends Literal {
             
             this.setType(listT);
             
-            java.util.List<Expression> checkedElements = new ArrayList<Expression>();
+            List<Expression> checkedElements = new ArrayList<Expression>();
             for (Expression lit : this.elements) {
                 lit = lit.contextCheck(context);
                 if (!lit.getType().check(first.getType())) {
@@ -82,7 +84,50 @@ public class ListLiteral extends Literal {
             this.setType(Type.EMPTY_LIST);
         }
         
+        if (this.checkIsValidMatrix()) {
+            Matrix<Double> matrix = this.toMatrix();
+            System.out.println(matrix.toAlignedString());
+        }
+        
         return this;
+    }
+    
+    
+    
+    public boolean checkIsValidMatrix() {
+        if (this.elements.isEmpty()) {
+            return true;
+        }
+        if (!this.elements.get(0).getType().check(new ListType(Type.NUMBER))) {
+            return false;
+        }
+        int dimension = ((ListLiteral) this.elements.get(0)).getElements().size();
+        for (Expression e : this.elements) {
+            if (((ListLiteral) e).getElements().size() != dimension) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    
+    
+    public Matrix<Double> toMatrix() {
+        int cols = ((ListLiteral) this.elements.get(0)).getElements().size();
+        Matrix<Double> result = new Matrix<Double>(
+                this.elements.size(), cols, Fields.DOUBLE);
+        
+        int i = 0;
+        int j = 0;
+        for (Expression e : this.elements) {
+            ListLiteral sub = (ListLiteral) e;
+            for (Expression e1 : sub.getElements()) {
+                NumberLiteral num = (NumberLiteral) e1;
+                result.set(i, j++, num.getValue());
+            }
+            ++i;
+        }
+        return result;
     }
     
     
