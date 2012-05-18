@@ -8,10 +8,11 @@ import de.skuzzle.polly.parsing.tree.functions.ContainsFunction;
 import de.skuzzle.polly.parsing.tree.functions.DefaultMathFunction;
 import de.skuzzle.polly.parsing.tree.functions.Functions;
 import de.skuzzle.polly.parsing.tree.functions.AggregateListFunction;
-import de.skuzzle.polly.parsing.tree.functions.GaussEliminationModPFunction;
 import de.skuzzle.polly.parsing.tree.functions.ListLengthFunction;
-import de.skuzzle.polly.parsing.tree.functions.GaussEliminationFunction;
+import de.skuzzle.polly.parsing.tree.functions.MatrixToMatrixFunction;
+import de.skuzzle.polly.parsing.tree.functions.MatrixToMatrixModPFunction;
 import de.skuzzle.polly.parsing.tree.functions.RandomFunction;
+import de.skuzzle.polly.parsing.tree.functions.Functions.MatrixType;
 import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
 import de.skuzzle.polly.parsing.tree.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.tree.operators.BinaryOperators;
@@ -154,8 +155,15 @@ public final class Prepare {
             dest.add(new AggregateListFunction(Functions.ListType.SUM), "math");
             dest.add(new AggregateListFunction(Functions.ListType.AVG), "math");
             
-            dest.add(new GaussEliminationFunction(), "matrix");
-            dest.add(new GaussEliminationModPFunction(), "matrix");
+            dest.add(new MatrixToMatrixFunction("gaussElim", MatrixType.GAUSS), "matrix");
+            dest.add(new MatrixToMatrixModPFunction("gaussElimModP", MatrixType.GAUSS), "matrix");
+            dest.add(new MatrixToMatrixFunction("invert", MatrixType.GAUSS), "matrix");
+            dest.add(new MatrixToMatrixModPFunction("invertModP", MatrixType.GAUSS), "matrix");
+            
+            dest.add(new MatrixToMatrixFunction("rank", new Functions.MatrixToScalarFunction(MatrixType.RANK)), "matrix");
+            dest.add(new MatrixToMatrixModPFunction("rankModP", new Functions.MatrixToScalarModPFunction(MatrixType.RANK)), "matrix");
+            dest.add(new MatrixToMatrixFunction("det", new Functions.MatrixToScalarFunction(MatrixType.RANK)), "matrix");
+            dest.add(new MatrixToMatrixModPFunction("detModP", new Functions.MatrixToScalarModPFunction(MatrixType.RANK)), "matrix");
         } catch (ParseException ignore) {
             // can not happen
         }

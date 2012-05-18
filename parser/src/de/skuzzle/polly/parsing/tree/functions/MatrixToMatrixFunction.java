@@ -4,23 +4,29 @@ import de.skuzzle.polly.parsing.ListType;
 import de.skuzzle.polly.parsing.Type;
 import de.skuzzle.polly.parsing.declarations.FunctionDeclaration;
 import de.skuzzle.polly.parsing.declarations.VarDeclaration;
+import de.skuzzle.polly.parsing.tree.Expression;
+import de.skuzzle.polly.parsing.tree.functions.Functions.MatrixType;
 import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
 
 
-public class GaussEliminationModPFunction extends FunctionDeclaration {
+public class MatrixToMatrixFunction extends FunctionDeclaration {
 
     private static final long serialVersionUID = 1L;
 
-    public GaussEliminationModPFunction() {
-        super(new IdentifierLiteral("gaussianModP"), true);
+    public MatrixToMatrixFunction(String name, MatrixType matType) {
+        this(name, new Functions.MatrixFunction(matType));
+    }
+    
+    
+    
+    public MatrixToMatrixFunction(String name, Expression function) {
+        super(new IdentifierLiteral(name), true);
         this.getFormalParameters().add(
             new VarDeclaration(
                 new IdentifierLiteral("matrix"), 
                 new ListType(new ListType(Type.NUMBER))));
-        this.getFormalParameters().add(
-            new VarDeclaration(
-                new IdentifierLiteral("p"), Type.NUMBER));
-        this.setExpression(new Functions.GaussianEliminationModP());
+        
+        this.setExpression(function);
     }
 
 }

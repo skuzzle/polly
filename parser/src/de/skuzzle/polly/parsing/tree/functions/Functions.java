@@ -183,18 +183,94 @@ public class Functions {
     
     
     public static enum MatrixType {
-        INT_MOD, DOUBLE;
+        INVERT, GAUSS, DETERMINANT, RANK;
     }
     
     
     
-    public final static class GaussianEliminationModP extends ExpressionStub {
+    public final static class MatrixToScalarModPFunction extends ExpressionStub {
 
         private static final long serialVersionUID = 1L;
         
-        public GaussianEliminationModP() {
+        private MatrixType matType;
+        
+        public MatrixToScalarModPFunction(MatrixType matType) {
+            super(Type.NUMBER);
+            this.matType = matType;
+        }
+        
+        
+        @Override
+        public void collapse(Stack<Literal> stack) throws ExecutionException {
+            NumberLiteral p = (NumberLiteral) stack.pop();
+            ListLiteral list = (ListLiteral) stack.pop();
+            
+            if (!list.checkIsValidMatrix()) {
+                throw new ExecutionException("Liste hat kein gültes Matrix-Format", 
+                    list.getPosition());
+            }
+            
+            Matrix<Integer> matrix = list.toIntMatrix(
+                Fields.integerModulo(p.isInteger()));
+            
+            Integer scalar = null;
+            if (this.matType == MatrixType.DETERMINANT) {
+                scalar = MatrixUtils.getDeterminant(matrix);
+            } else if (this.matType == MatrixType.RANK) {
+                scalar = MatrixUtils.rank(matrix);
+            }
+            
+            stack.push(new NumberLiteral(scalar));
+        }
+    }
+    
+    
+    
+    public final static class MatrixToScalarFunction extends ExpressionStub {
+
+        private static final long serialVersionUID = 1L;
+        
+        private MatrixType matType;
+        
+        public MatrixToScalarFunction(MatrixType matType) {
+            super(Type.NUMBER);
+            this.matType = matType;
+        }
+        
+        
+        @Override
+        public void collapse(Stack<Literal> stack) throws ExecutionException {
+            ListLiteral list = (ListLiteral) stack.pop();
+            
+            if (!list.checkIsValidMatrix()) {
+                throw new ExecutionException("Liste hat kein gültes Matrix-Format", 
+                    list.getPosition());
+            }
+            
+            Matrix<Double> matrix = list.toDoubleMatrix();
+            
+            Double scalar = null;
+            if (this.matType == MatrixType.DETERMINANT) {
+                scalar = MatrixUtils.getDeterminant(matrix);
+            } else if (this.matType == MatrixType.RANK) {
+                scalar = (double) MatrixUtils.rank(matrix);
+            }
+            
+            stack.push(new NumberLiteral(scalar));
+        }
+    }
+    
+    
+    
+    public final static class MatrixModPFunction extends ExpressionStub {
+
+        private static final long serialVersionUID = 1L;
+        private MatrixType matType;
+        
+        public MatrixModPFunction(MatrixType matType) {
             super(new de.skuzzle.polly.parsing.ListType(
                 new de.skuzzle.polly.parsing.ListType(Type.NUMBER)));
+            this.matType = matType;
         }
         
         
@@ -211,20 +287,28 @@ public class Functions {
             
             Matrix<Integer> matrix = list.toIntMatrix(
                 Fields.integerModulo(p.isInteger()));
-            MatrixUtils.toGaussForm(matrix);
+            
+            if (this.matType == MatrixType.GAUSS) {
+                MatrixUtils.toGaussForm(matrix);
+            } else if (this.matType == MatrixType.INVERT) {
+                matrix = MatrixUtils.invert(matrix);
+            }
             stack.push(new ListLiteral(matrix));
         }
     }
     
     
     
-    public final static class GaussianElimination extends ExpressionStub {
+    public final static class MatrixFunction extends ExpressionStub {
 
         private static final long serialVersionUID = 1L;
+        private MatrixType matType;
         
-        public GaussianElimination() {
+        public MatrixFunction(MatrixType matType) {
             super(new de.skuzzle.polly.parsing.ListType(
                 new de.skuzzle.polly.parsing.ListType(Type.NUMBER)));
+            
+            this.matType = matType;
         }
         
         
@@ -239,7 +323,13 @@ public class Functions {
             }
             
             Matrix<Double> matrix = list.toDoubleMatrix();
-            MatrixUtils.toGaussForm(matrix);
+            
+            if (this.matType == MatrixType.GAUSS) {
+                MatrixUtils.toGaussForm(matrix);
+            } else if (this.matType == MatrixType.INVERT) {
+                matrix = MatrixUtils.invert(matrix);
+            }
+            
             stack.push(new ListLiteral(matrix));
         }
     }
