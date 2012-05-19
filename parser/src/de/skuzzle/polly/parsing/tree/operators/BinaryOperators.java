@@ -23,6 +23,7 @@ import de.skuzzle.polly.parsing.tree.literals.Literal;
 import de.skuzzle.polly.parsing.tree.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.tree.literals.StringLiteral;
 import de.skuzzle.polly.parsing.tree.literals.TimespanLiteral;
+import de.skuzzle.polly.parsing.util.Matrix;
 
 
 /**
@@ -116,6 +117,56 @@ public class BinaryOperators {
             }
         }
     }
+    
+    
+    
+    
+    public static class MatrixArithmeticOperator extends BinaryOperatorOverload {
+
+        private static final long serialVersionUID = 1L;
+
+
+
+        public MatrixArithmeticOperator(TokenType operator) {
+            super(operator, ListType.MATRIX_LIST, ListType.MATRIX_LIST, 
+                ListType.MATRIX_LIST);
+        }
+        
+        
+        
+        @Override
+        public void collapse(Stack<Literal> stack) throws ExecutionException {
+            ListLiteral right = (ListLiteral) stack.pop();
+            ListLiteral left = (ListLiteral) stack.pop();
+            
+            if (!right.checkIsValidMatrix()) {
+                throw new ExecutionException("Keine gültige Matrix", right.getPosition());
+            } else if (!left.checkIsValidMatrix()) {
+                throw new ExecutionException("Keine gültige Matrix", left.getPosition());
+            }
+            
+            Matrix<Double> matrixRight = right.toDoubleMatrix();
+            Matrix<Double> matrixLeft = left.toDoubleMatrix();
+            
+            ListLiteral result = null;
+            switch (this.getOperatorType()) {
+            case ADD:
+                result = new ListLiteral(matrixLeft.add(matrixRight));
+                break;
+            case MUL:
+                result = new ListLiteral(matrixLeft.multiplyWith(matrixRight));
+                break;
+            default:
+                throw new ExecutionException("Ungültiger Operator aufruf", 
+                    left.getPosition());
+            }
+            stack.push(result);
+        }
+        
+        
+    }
+    
+    
     
     
     /**

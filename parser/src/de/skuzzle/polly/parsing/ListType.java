@@ -8,6 +8,8 @@ public class ListType extends Type {
     private static final long serialVersionUID = 1L;
 
     public final static ListType ANY_LIST = new ListType(Type.ANY);
+    
+    public final static ListType MATRIX_LIST = new ListType(new ListType(NUMBER));
 
     private Type subType;
     

@@ -268,8 +268,7 @@ public class Functions {
         private MatrixType matType;
         
         public MatrixModPFunction(MatrixType matType) {
-            super(new de.skuzzle.polly.parsing.ListType(
-                new de.skuzzle.polly.parsing.ListType(Type.NUMBER)));
+            super(de.skuzzle.polly.parsing.ListType.MATRIX_LIST);
             this.matType = matType;
         }
         
@@ -305,9 +304,7 @@ public class Functions {
         private MatrixType matType;
         
         public MatrixFunction(MatrixType matType) {
-            super(new de.skuzzle.polly.parsing.ListType(
-                new de.skuzzle.polly.parsing.ListType(Type.NUMBER)));
-            
+            super(de.skuzzle.polly.parsing.ListType.MATRIX_LIST);
             this.matType = matType;
         }
         

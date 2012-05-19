@@ -24,6 +24,12 @@ import de.skuzzle.polly.parsing.tree.operators.UnaryOperators;
 public final class Prepare {
 
     public static void operators(Namespace dest) {
+        
+        // these two operators must probably be added before the other list 
+        // operators as they operate on special types of lists.
+        dest.add(new BinaryOperators.MatrixArithmeticOperator(TokenType.ADD));
+        dest.add(new BinaryOperators.MatrixArithmeticOperator(TokenType.MUL));
+        
         dest.add(new BinaryOperators.IndexListOperator());
         dest.add(new BinaryOperators.ListArithmeticOperator(TokenType.ADD));
         dest.add(new BinaryOperators.ListArithmeticOperator(TokenType.SUB));
@@ -78,7 +84,7 @@ public final class Prepare {
         dest.add(new BinaryOperators.RelationalStringOperator(TokenType.ELT));
         dest.add(new BinaryOperators.RelationalStringOperator(TokenType.GT));
         dest.add(new BinaryOperators.RelationalStringOperator(TokenType.EGT));
-        
+
         dest.add(new BinaryOperators.RelationalListOperator(TokenType.LT));
         dest.add(new BinaryOperators.RelationalListOperator(TokenType.ELT));
         dest.add(new BinaryOperators.RelationalListOperator(TokenType.GT));
@@ -98,7 +104,6 @@ public final class Prepare {
         dest.add(new BinaryOperators.ListScalarOperator(TokenType.URIGHT_SHIFT));
         dest.add(new BinaryOperators.ListScalarOperator(TokenType.RIGHT_SHIFT));
         dest.add(new BinaryOperators.ListScalarOperator(TokenType.LEFT_SHIFT));
-        
         
         dest.add(new UnaryOperators.ArithmeticOperator(TokenType.SUB));
         dest.add(new UnaryOperators.BooleanOperator(TokenType.EXCLAMATION));

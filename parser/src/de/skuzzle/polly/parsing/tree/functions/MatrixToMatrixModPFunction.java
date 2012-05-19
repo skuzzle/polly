@@ -24,7 +24,7 @@ public class MatrixToMatrixModPFunction extends FunctionDeclaration {
         this.getFormalParameters().add(
             new VarDeclaration(
                 new IdentifierLiteral("matrix"), 
-                new ListType(new ListType(Type.NUMBER))));
+                ListType.MATRIX_LIST));
         
         this.getFormalParameters().add(
             new VarDeclaration(
