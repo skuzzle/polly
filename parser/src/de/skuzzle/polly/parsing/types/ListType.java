@@ -1,4 +1,4 @@
-package de.skuzzle.polly.parsing;
+package de.skuzzle.polly.parsing.types;
 
 import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
 
@@ -9,8 +9,6 @@ public class ListType extends Type {
 
     public final static ListType ANY_LIST = new ListType(Type.ANY);
     
-    public final static ListType MATRIX_LIST = new ListType(new ListType(NUMBER));
-
     private Type subType;
     
     

@@ -1,10 +1,13 @@
-package de.skuzzle.polly.parsing;
+package de.skuzzle.polly.parsing.types;
 
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.skuzzle.polly.parsing.ExecutionException;
+import de.skuzzle.polly.parsing.ParseException;
+import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
 
 

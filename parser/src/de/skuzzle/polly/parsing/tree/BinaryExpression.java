@@ -6,10 +6,10 @@ import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.Token;
-import de.skuzzle.polly.parsing.Type;
 import de.skuzzle.polly.parsing.declarations.Namespace;
 import de.skuzzle.polly.parsing.tree.literals.Literal;
 import de.skuzzle.polly.parsing.tree.operators.BinaryOperatorOverload;
+import de.skuzzle.polly.parsing.types.Type;
 
 
 

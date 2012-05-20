@@ -6,12 +6,10 @@ import java.util.List;
 import java.util.Stack;
 
 import de.skuzzle.polly.parsing.ExecutionException;
-import de.skuzzle.polly.parsing.ListType;
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.Token;
 import de.skuzzle.polly.parsing.TokenType;
-import de.skuzzle.polly.parsing.Type;
 import de.skuzzle.polly.parsing.declarations.Namespace;
 import de.skuzzle.polly.parsing.tree.BinaryExpression;
 import de.skuzzle.polly.parsing.tree.Expression;
@@ -23,6 +21,9 @@ import de.skuzzle.polly.parsing.tree.literals.Literal;
 import de.skuzzle.polly.parsing.tree.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.tree.literals.StringLiteral;
 import de.skuzzle.polly.parsing.tree.literals.TimespanLiteral;
+import de.skuzzle.polly.parsing.types.ListType;
+import de.skuzzle.polly.parsing.types.MatrixType;
+import de.skuzzle.polly.parsing.types.Type;
 import de.skuzzle.polly.parsing.util.Matrix;
 
 
@@ -128,8 +129,8 @@ public class BinaryOperators {
 
 
         public MatrixArithmeticOperator(TokenType operator) {
-            super(operator, ListType.MATRIX_LIST, ListType.MATRIX_LIST, 
-                ListType.MATRIX_LIST);
+            super(operator, MatrixType.MATRIX, MatrixType.MATRIX, 
+                MatrixType.MATRIX);
         }
         
         

@@ -1,6 +1,5 @@
 package de.skuzzle.polly.parsing.tree.functions;
 
-import de.skuzzle.polly.parsing.ListType;
 import de.skuzzle.polly.parsing.declarations.FunctionDeclaration;
 import de.skuzzle.polly.parsing.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.tree.Expression;
@@ -23,7 +22,7 @@ public class MatrixToMatrixFunction extends FunctionDeclaration {
         this.getFormalParameters().add(
             new VarDeclaration(
                 new IdentifierLiteral("matrix"), 
-                ListType.MATRIX_LIST));
+                de.skuzzle.polly.parsing.types.MatrixType.MATRIX));
         
         this.setExpression(function);
     }

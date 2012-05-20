@@ -4,14 +4,14 @@ import java.util.List;
 import java.util.Stack;
 
 import de.skuzzle.polly.parsing.ExecutionException;
-import de.skuzzle.polly.parsing.ListType;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.TokenType;
-import de.skuzzle.polly.parsing.Type;
 import de.skuzzle.polly.parsing.tree.Expression;
 import de.skuzzle.polly.parsing.tree.literals.ListLiteral;
 import de.skuzzle.polly.parsing.tree.literals.Literal;
 import de.skuzzle.polly.parsing.tree.literals.NumberLiteral;
+import de.skuzzle.polly.parsing.types.ListType;
+import de.skuzzle.polly.parsing.types.Type;
 
 
 

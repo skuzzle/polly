@@ -5,10 +5,8 @@ import java.util.Random;
 import java.util.Stack;
 
 import de.skuzzle.polly.parsing.ExecutionException;
-import de.skuzzle.polly.parsing.ListType;
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.TokenType;
-import de.skuzzle.polly.parsing.Type;
 import de.skuzzle.polly.parsing.declarations.Namespace;
 import de.skuzzle.polly.parsing.tree.Expression;
 import de.skuzzle.polly.parsing.tree.literals.BooleanLiteral;
@@ -17,6 +15,8 @@ import de.skuzzle.polly.parsing.tree.literals.Literal;
 import de.skuzzle.polly.parsing.tree.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.tree.literals.StringLiteral;
 import de.skuzzle.polly.parsing.tree.literals.TimespanLiteral;
+import de.skuzzle.polly.parsing.types.ListType;
+import de.skuzzle.polly.parsing.types.Type;
 
 
 public class UnaryOperators {

@@ -2,8 +2,8 @@ package de.skuzzle.polly.parsing.declarations;
 
 import java.io.Serializable;
 
-import de.skuzzle.polly.parsing.Type;
 import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
+import de.skuzzle.polly.parsing.types.Type;
 
 
 /**

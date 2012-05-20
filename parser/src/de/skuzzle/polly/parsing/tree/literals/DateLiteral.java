@@ -7,7 +7,7 @@ import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.Token;
 import de.skuzzle.polly.parsing.TokenType;
-import de.skuzzle.polly.parsing.Type;
+import de.skuzzle.polly.parsing.types.Type;
 
 
 

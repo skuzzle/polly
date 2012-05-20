@@ -3,7 +3,7 @@ package de.skuzzle.polly.parsing.tree;
 
 import de.skuzzle.polly.parsing.InputParser;
 import de.skuzzle.polly.parsing.Position;
-import de.skuzzle.polly.parsing.Type;
+import de.skuzzle.polly.parsing.types.Type;
 
 
 /**

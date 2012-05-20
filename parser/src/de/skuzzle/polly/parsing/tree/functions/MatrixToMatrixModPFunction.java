@@ -1,12 +1,11 @@
 package de.skuzzle.polly.parsing.tree.functions;
 
-import de.skuzzle.polly.parsing.ListType;
-import de.skuzzle.polly.parsing.Type;
 import de.skuzzle.polly.parsing.declarations.FunctionDeclaration;
 import de.skuzzle.polly.parsing.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.tree.Expression;
 import de.skuzzle.polly.parsing.tree.functions.Functions.MatrixType;
 import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
+import de.skuzzle.polly.parsing.types.Type;
 
 
 public class MatrixToMatrixModPFunction extends FunctionDeclaration {
@@ -24,7 +23,7 @@ public class MatrixToMatrixModPFunction extends FunctionDeclaration {
         this.getFormalParameters().add(
             new VarDeclaration(
                 new IdentifierLiteral("matrix"), 
-                ListType.MATRIX_LIST));
+                de.skuzzle.polly.parsing.types.MatrixType.MATRIX));
         
         this.getFormalParameters().add(
             new VarDeclaration(

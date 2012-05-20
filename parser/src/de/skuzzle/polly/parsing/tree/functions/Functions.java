@@ -5,12 +5,12 @@ import java.util.Stack;
 
 
 import de.skuzzle.polly.parsing.ExecutionException;
-import de.skuzzle.polly.parsing.Type;
 import de.skuzzle.polly.parsing.tree.Expression;
 import de.skuzzle.polly.parsing.tree.literals.BooleanLiteral;
 import de.skuzzle.polly.parsing.tree.literals.ListLiteral;
 import de.skuzzle.polly.parsing.tree.literals.Literal;
 import de.skuzzle.polly.parsing.tree.literals.NumberLiteral;
+import de.skuzzle.polly.parsing.types.Type;
 import de.skuzzle.polly.parsing.util.Fields;
 import de.skuzzle.polly.parsing.util.Matrix;
 import de.skuzzle.polly.parsing.util.MatrixUtils;
@@ -268,7 +268,7 @@ public class Functions {
         private MatrixType matType;
         
         public MatrixModPFunction(MatrixType matType) {
-            super(de.skuzzle.polly.parsing.ListType.MATRIX_LIST);
+            super(de.skuzzle.polly.parsing.types.MatrixType.MATRIX);
             this.matType = matType;
         }
         
@@ -304,7 +304,7 @@ public class Functions {
         private MatrixType matType;
         
         public MatrixFunction(MatrixType matType) {
-            super(de.skuzzle.polly.parsing.ListType.MATRIX_LIST);
+            super(de.skuzzle.polly.parsing.types.MatrixType.MATRIX);
             this.matType = matType;
         }
         
