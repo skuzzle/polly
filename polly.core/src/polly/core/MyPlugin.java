@@ -50,7 +50,6 @@ import commands.VarCommand;
 import commands.VenadCommand;
 import commands.VersionCommand;
 import commands.WikiCommand;
-import core.ForwardHighlightHandler;
 import core.GreetDeliverer;
 import core.HighlightReplyHandler;
 import core.JoinTimeCollector;
@@ -76,9 +75,6 @@ public class MyPlugin extends PollyPlugin {
 
     public final static String GREETING = "GREETING";
     public final static String VENAD = "VENAD";
-    
-    public final static String FORWARD_HIGHLIGHTS = "FORWARD_HIGHLIGHTS";
-    public final static String DEFAULT_FORWARD_HIGHLIGHTS = "false";
     
     private TrainManager trainManager;
     private GreetDeliverer greetDeliverer;
@@ -165,8 +161,6 @@ public class MyPlugin extends PollyPlugin {
 		myPolly.irc().addMessageListener(this.highlightHandler);
 		this.addCommand(new HighlightModeCommand(myPolly, this.highlightHandler));
 		
-		this.highlightForwarder = new ForwardHighlightHandler(myPolly.mails(), 
-		    myPolly.users());
 		myPolly.irc().addMessageListener(this.highlightForwarder);
 	}
 	
@@ -184,8 +178,6 @@ public class MyPlugin extends PollyPlugin {
 	        this.getMyPolly().users().addAttribute(VENAD, "<unbekannt>");
 	        this.getMyPolly().users().addAttribute(GREETING, "");
 	        this.getMyPolly().users().addAttribute("AZ", "0", Constraints.INTEGER);
-	        this.getMyPolly().users().addAttribute(FORWARD_HIGHLIGHTS, 
-	            DEFAULT_FORWARD_HIGHLIGHTS, Constraints.BOOLEAN);
 	    } catch (Exception ignore) {
 	        ignore.printStackTrace();
 	    }

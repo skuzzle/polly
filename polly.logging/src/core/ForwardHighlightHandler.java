@@ -4,7 +4,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import polly.core.MyPlugin;
+import polly.logging.MyPlugin;
+
 
 import de.skuzzle.polly.sdk.MailManager;
 import de.skuzzle.polly.sdk.UserManager;

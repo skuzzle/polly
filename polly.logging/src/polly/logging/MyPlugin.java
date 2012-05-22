@@ -5,10 +5,14 @@ import commands.ChannelLogCommand;
 import commands.SeenCommand;
 import commands.UserLogCommand;
 
+import core.ForwardHighlightHandler;
 import core.IrcLogCollector;
 import core.PollyLoggingManager;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
+import de.skuzzle.polly.sdk.constraints.Constraints;
+import de.skuzzle.polly.sdk.eventlistener.MessageListener;
+import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
@@ -25,11 +29,13 @@ public class MyPlugin extends PollyPlugin {
     public final static int DEFAULT_LOG_CACHE_SIZE = 100;
     public final static int DEFAULT_LOG_TRESHOLD = 10;
     public final static int DEFAULT_MAX_LOGS = 100;
-
+    
+    public final static String FORWARD_HIGHLIGHTS = "FORWARD_HIGHLIGHTS";
+    public final static String DEFAULT_FORWARD_HIGHLIGHTS = "false";
     
     private IrcLogCollector logCollector;
     private PollyLoggingManager logManager;
-    
+    private MessageListener highlightForwarder;
     
     
     public MyPlugin(MyPolly myPolly) throws IncompatiblePluginException, DuplicatedSignatureException {
@@ -60,6 +66,22 @@ public class MyPlugin extends PollyPlugin {
         this.addCommand(new UserLogCommand(myPolly, this.logManager));
         this.addCommand(new ChannelLogCommand(myPolly, this.logManager));
         this.addCommand(new SeenCommand(myPolly, this.logManager));
+        
+        this.highlightForwarder = new ForwardHighlightHandler(myPolly.mails(), 
+            myPolly.users());
+        myPolly.irc().addMessageListener(this.highlightForwarder);
+    }
+    
+    
+    
+    @Override
+    public void onLoad() {
+        try {
+            this.getMyPolly().users().addAttribute(FORWARD_HIGHLIGHTS, 
+                DEFAULT_FORWARD_HIGHLIGHTS, Constraints.BOOLEAN);
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        }
     }
     
     
@@ -72,5 +94,6 @@ public class MyPlugin extends PollyPlugin {
         this.getMyPolly().irc().removeMessageListener(this.logCollector);
         this.getMyPolly().irc().removeQuitListener(this.logCollector);
         this.getMyPolly().irc().removeNickChangeListener(this.logCollector);
+        this.getMyPolly().irc().removeMessageListener(this.highlightForwarder);
     }
 }
