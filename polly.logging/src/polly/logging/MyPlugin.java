@@ -67,8 +67,7 @@ public class MyPlugin extends PollyPlugin {
         this.addCommand(new ChannelLogCommand(myPolly, this.logManager));
         this.addCommand(new SeenCommand(myPolly, this.logManager));
         
-        this.highlightForwarder = new ForwardHighlightHandler(myPolly.mails(), 
-            myPolly.users());
+        this.highlightForwarder = new ForwardHighlightHandler(myPolly, this.logManager);
         myPolly.irc().addMessageListener(this.highlightForwarder);
     }
     

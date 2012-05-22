@@ -1,18 +1,24 @@
 package core;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import polly.logging.MyPlugin;
 
 
+import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.MailManager;
+import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
+import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.EMailException;
 import de.skuzzle.polly.sdk.model.User;
+import entities.LogEntry;
 
 
 public class ForwardHighlightHandler implements MessageListener {
@@ -20,7 +26,9 @@ public class ForwardHighlightHandler implements MessageListener {
     private final static String SUBJECT = "[POLLY Highlight Forwarder] Highlight in %s";
     
     private final static String MESSAGE = "Hi %s,\n\nDu wurdest im Channel %s " +
-    		"von %s gehighlighted. Nachricht:\n%s\n\n Bye\nPolly";
+    		"von %s gehighlighted. Nachricht:\n%s\n\n " +
+    		"Channellog:\n%s\n\n" +
+    		"Bye\nPolly";
     
     
     public final static long MAIL_DELAY = 30000; // 30 seconds
@@ -28,13 +36,19 @@ public class ForwardHighlightHandler implements MessageListener {
     private MailManager mailManager;
     private UserManager userManager;
     private Map<String, Long> timestamps;
+    private PollyLoggingManager logManager;
+    private LogFormatter logFormatter;
+    private FormatManager formatManager;
     
     
     
-    public ForwardHighlightHandler(MailManager mailManager, UserManager userManager) {
-        this.mailManager = mailManager;
-        this.userManager = userManager;
+    public ForwardHighlightHandler(MyPolly myPolly, PollyLoggingManager logManager) {
+        this.mailManager = myPolly.mails();
+        this.userManager = myPolly.users();
+        this.formatManager = myPolly.formatting();
         this.timestamps = new HashMap<String, Long>();
+        this.logManager = logManager;
+        this.logFormatter = new DefaultLogFormatter();
     }
     
     
@@ -73,21 +87,40 @@ public class ForwardHighlightHandler implements MessageListener {
             if (e.getUser().getNickName().equals(nick)) {
                 continue;
             }
-            boolean hl = e.getMessage().toLowerCase().indexOf(nick.toLowerCase()) != -1;
+            boolean hl = e.getMessage().toLowerCase().contains(nick.toLowerCase());
 
             if (fwd && hl && this.canSend(mail)) {
-                String subject = String.format(SUBJECT, e.getChannel());
-                String message = String.format(MESSAGE, user.getName(), e.getChannel(), 
-                    e.getUser(), e.getMessage());
-                
                 try {
+                    List<LogEntry> prefiltered = this.logManager.preFilterChannel(
+                        e.getChannel(), 10);
+                    
+                    Collections.reverse(prefiltered);
+                    
+                    String logs = this.formatList(prefiltered);
+                    String subject = String.format(SUBJECT, e.getChannel());
+                    String message = String.format(MESSAGE, user.getName(), e.getChannel(), 
+                        e.getUser(), e.getMessage(), logs);
+                
                     this.mailManager.sendMail(mail, subject, message);
+                } catch (DatabaseException e1) {
+                    e1.printStackTrace();
                 } catch (EMailException e1) {
                     e1.printStackTrace();
                 }
                 
             }
         }
+    }
+    
+    
+    
+    private String formatList(List<LogEntry> logs) {
+        StringBuilder b = new StringBuilder();
+        for (LogEntry logEntry : logs) {
+            b.append(this.logFormatter.formatLog(logEntry, this.formatManager));
+            b.append(System.lineSeparator());
+        }
+        return b.toString();
     }
     
     
