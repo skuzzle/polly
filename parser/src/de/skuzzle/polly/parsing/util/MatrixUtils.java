@@ -1,5 +1,6 @@
 package de.skuzzle.polly.parsing.util;
 
+
 import de.skuzzle.polly.parsing.util.Matrix.DimensionException;
 
 
@@ -99,7 +100,6 @@ public class MatrixUtils {
         }
         Matrix<K> result = Matrix.merge(matrix, matrix.getLeftId());
         toGaussForm(result);
-        
         return Matrix.splitRight(result, matrix.getN());
     }
     

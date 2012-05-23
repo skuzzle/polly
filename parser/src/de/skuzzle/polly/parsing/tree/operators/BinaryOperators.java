@@ -287,7 +287,7 @@ public class BinaryOperators {
             Token op = new Token(this.getOperatorType(), Position.EMPTY);
             this.binaryExp = new BinaryExpression(e, op, right);
             this.binaryExp = (BinaryExpression) this.binaryExp.contextCheck(context);
-            this.setReturnType(this.binaryExp.getType());
+            this.setReturnType(new ListType(this.binaryExp.getType()));
         }
         
         

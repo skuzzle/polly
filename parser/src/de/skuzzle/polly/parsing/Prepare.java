@@ -166,7 +166,7 @@ public final class Prepare {
             dest.add(new MatrixToMatrixFunction("gaussElim", MatrixType.GAUSS), "matrix");
             dest.add(new MatrixToMatrixModPFunction("gaussElimModP", MatrixType.GAUSS), "matrix");
             dest.add(new MatrixToMatrixFunction("invert", MatrixType.GAUSS), "matrix");
-            dest.add(new MatrixToMatrixModPFunction("invertModP", MatrixType.GAUSS), "matrix");
+            dest.add(new MatrixToMatrixModPFunction("invertModP", MatrixType.INVERT), "matrix");
             
             dest.add(new MatrixToMatrixFunction("rank", new Functions.MatrixToScalarFunction(MatrixType.RANK)), "matrix");
             dest.add(new MatrixToMatrixModPFunction("rankModP", new Functions.MatrixToScalarModPFunction(MatrixType.RANK)), "matrix");
