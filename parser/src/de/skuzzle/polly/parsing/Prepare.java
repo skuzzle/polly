@@ -140,6 +140,8 @@ public final class Prepare {
             
             dest.add(new VarDeclaration(new IdentifierLiteral("pi"), 
                     new NumberLiteral(Math.PI)), "math");
+            dest.add(new VarDeclaration(new IdentifierLiteral("tau"), 
+                new NumberLiteral(2.0 * Math.PI)), "math");
             dest.add(new VarDeclaration(new IdentifierLiteral("e"), 
                     new NumberLiteral(Math.E)), "math");
             dest.add(new DefaultMathFunction(Functions.MathType.COS), "math");
