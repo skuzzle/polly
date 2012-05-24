@@ -38,5 +38,7 @@ public interface User extends Comparable<User> {
     
     public abstract long getLastMessageTime();
     
+    public abstract long getLastIdleTime();
+    
     public abstract long getLoginTime();
 }

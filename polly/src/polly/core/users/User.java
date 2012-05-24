@@ -64,6 +64,9 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     @Transient
     private long loginTime;
     
+    @Transient
+    private long lastIdleTimeStamp;
+    
     
     User() {
         this("", "", 0);
@@ -76,6 +79,8 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
         this.password = Hashes.md5(password);
         this.userLevel = userLevel;
         this.attributes = new HashMap<String, String>();
+        this.lastActionTimeStamp = System.currentTimeMillis();
+        this.lastIdleTimeStamp = System.currentTimeMillis();
     }
     
     
@@ -191,6 +196,7 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     
     
     public void setLastMessageTime(long timeStamp) {
+        this.lastIdleTimeStamp = this.lastActionTimeStamp;
         this.lastActionTimeStamp = timeStamp;
     }
     
@@ -199,6 +205,12 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     @Override
     public long getLastMessageTime() {
         return this.lastActionTimeStamp;
+    }
+    
+    
+    @Override
+    public long getLastIdleTime() {
+        return this.lastIdleTimeStamp;
     }
 
     

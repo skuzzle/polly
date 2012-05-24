@@ -2,6 +2,7 @@ package polly.logging;
 
 
 import commands.ChannelLogCommand;
+import commands.ReplayCommand;
 import commands.SeenCommand;
 import commands.UserLogCommand;
 
@@ -66,6 +67,7 @@ public class MyPlugin extends PollyPlugin {
         this.addCommand(new UserLogCommand(myPolly, this.logManager));
         this.addCommand(new ChannelLogCommand(myPolly, this.logManager));
         this.addCommand(new SeenCommand(myPolly, this.logManager));
+        this.addCommand(new ReplayCommand(myPolly, this.logManager));
         
         this.highlightForwarder = new ForwardHighlightHandler(myPolly, this.logManager);
         myPolly.irc().addMessageListener(this.highlightForwarder);
