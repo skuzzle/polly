@@ -70,5 +70,12 @@ public class FastByteArrayOutputStream extends OutputStream {
     public void write(int b) throws IOException {
         this.buffer[this.size++] = (byte) b; 
     }
+    
+    
+    
+    @Override
+    public void close() {
+        this.buffer = null;
+    }
 
 }

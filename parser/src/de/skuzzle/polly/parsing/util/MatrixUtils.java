@@ -149,7 +149,7 @@ public class MatrixUtils {
         //            then contain a one)
         //      * if row consists of only zeros, continue with next row.
         //      * add k times row 'i' to all rows 'i1' above i with 
-        //            k =  A[i, j] * A[i1, j]^-1 produce a zero in A[i1, j]
+        //            k =  A[i, j] * A[i1, j]^-1 to produce a zero in A[i1, j]
         for (int i = matrix.getM() - 1; i > 0; --i) {
             for (int i1 = 0; i1 < i; ++i1) {
                 K a_i1 = matrix.get(i1, i);

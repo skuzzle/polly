@@ -389,7 +389,7 @@ public class Matrix<K> {
      * 
      * @param i The row index.
      * @param j The column index.
-     * @return
+     * @return The element at the specified coordinates.
      */
     public K get(int i, int j) {
         return this.matrix[i][j];
@@ -462,6 +462,51 @@ public class Matrix<K> {
     
     
     
+    
+    /**
+     * <p>Adds the other matrix to this by adding all elements pairwise. 
+     * This operation is only possible if both matrices have the exact same size.</p>
+     * 
+     * <p>This operation creates operates in place and the result is stored in this
+     * matrix instance.
+     * 
+     * @param other The matrix to be added to this one.
+     * @return The 'this' reference.
+     * @throws DimensionException if the dimensions of this matrix and the other mismatch.
+     */
+    public Matrix<K> addInPlace(Matrix<K> other) {
+        return this.addInPlace(other.matrix);
+    }
+    
+    
+    
+    /**
+     * <p>Adds the other matrix given as array to this by adding all elements pairwise. 
+     * This operation is only possible if both matrices have the exact same size.</p>
+     * 
+     * <p>This operation creates operates in place and the result is stored in this
+     * matrix instance.
+     * 
+     * @param other The matrix to be added to this one.
+     * @return The 'this' reference.
+     * @throws DimensionException if the dimensions of this matrix and the other mismatch.
+     */
+    public Matrix<K> addInPlace(K[][] other) {
+        if (!this.canAdd(other)) {
+            throw new DimensionException("illegal dimension");
+        }
+        
+        for (int i = 0; i < this.m; ++i) {
+            for (int j = 0; j < this.n; ++j) {
+                this.matrix[i][j] = this.field.add(this.matrix[i][j], other[i][j]);
+            }
+        }
+        
+        return this;
+    }
+    
+    
+    
     /**
      * Determines whether the other matrix can be added to this matrix. That is, if both
      * matrices have the same row- and column count.
@@ -505,6 +550,28 @@ public class Matrix<K> {
         
         return result;
     }
+    
+    
+    
+    /**
+     * If this is a quadratic matrix, this method creates the transposed matrix in place
+     * by mirroring each element on the diagonal elements.
+     * 
+     * @return The 'this' reference.
+     * @throws DimensionException If this matrix is not quadratic.
+     */
+    public Matrix<K> transposeInPlace() {
+        if (this.m != this.n) {
+            throw new DimensionException("illegal dimension");
+        }
+        
+        for (int i = 0; i < this.m; ++i) {
+            for (int j = 0; j < i; ++j) {
+                this.swap(i, j, j, i);
+            }
+        }
+        return this;
+    }
 
 
 
@@ -525,6 +592,24 @@ public class Matrix<K> {
         }
         
         return result;
+    }
+    
+    
+    
+    /**
+     * Multiplies each element in this matrix with the given scalar. This method works
+     * in place and changes the underlying matrix array of this instance.
+     * 
+     * @param scalar The scalar to multiply this matrix with.
+     * @return The 'this' reference.
+     */
+    public Matrix<K> multiplyWithInPlace(K scalar) {
+        for (int i = 0; i < this.m; ++i) {
+            for (int j = 0; j < this.n; ++j) {
+                this.matrix[i][j] = this.field.multiply(this.matrix[i][j], scalar);
+            }
+        }
+        return this;
     }
     
     
@@ -712,6 +797,35 @@ public class Matrix<K> {
     
     
     
+    /**
+     * Determines whether this matrix is the identical matrix. That is, it must be
+     * quadratic and may contain only zeros except on its diagonal where it must have 
+     * ones.
+     * 
+     * @return <code>true</code> if this matrix is quadratic and the identical matrix.
+     */
+    public boolean isId() {
+        if (this.m != this.n) {
+            return false;
+        }
+        K zero = this.field.getAdditiveNeutral();
+        K one = this.field.getMultiplicativeNeutral();
+        
+        for (int i = 0; i < this.m; ++i) {
+            for (int j = 0; j < this.n; ++j) {
+                if (i == j && !this.matrix[i][j].equals(one)) {
+                    return false;
+                } else if (!this.matrix.equals(zero)) {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+    
+    
+    
     @Override
     public String toString() {
         StringBuilder b = new StringBuilder();
@@ -783,7 +897,6 @@ public class Matrix<K> {
                 } else {
                     this.padSpaces(desiredLength, s.length(), b);
                     b.append(s);
-
                 }
                 
                 if (j < this.n - 1) {
