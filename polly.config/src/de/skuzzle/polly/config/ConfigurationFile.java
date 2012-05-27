@@ -440,6 +440,22 @@ public class ConfigurationFile {
     /**
      * Tries to retrieve the value associated with the given key from the given section.
      * 
+     * @param pair SectionKeyPair containing the name of the section and the key to 
+     *          retrieve.
+     * @return The value associated with the given key in the given section as a boolean.
+     * @throws ConfigException If the given section does not exist or the key does not 
+     *          exist in that section or the key is not associated with a boolean value.
+     */
+    public boolean getBoolean(SectionKeyPair pair) {
+        return this.getSectionWithKey(
+            pair.getSection(), pair.getKey()).getBoolean(pair.getKey());
+    }
+    
+    
+    
+    /**
+     * Tries to retrieve the value associated with the given key from the given section.
+     * 
      * @param section The section in which the key is stored.
      * @param key The key of the value to retrieve.
      * @return The value associated with the given key in the given section as an int.
@@ -448,6 +464,22 @@ public class ConfigurationFile {
      */
     public int getInteger(String section, String key) {
         return this.getSectionWithKey(section, key).getInteger(key);    
+    }
+    
+    
+    
+    /**
+     * Tries to retrieve the value associated with the given key from the given section.
+     * 
+     * @param pair SectionKeyPair containing the name of the section and the key to 
+     *          retrieve.
+     * @return The value associated with the given key in the given section as a int.
+     * @throws ConfigException If the given section does not exist or the key does not 
+     *          exist in that section or the key is not associated with a int value.
+     */
+    public int getInteger(SectionKeyPair pair) {
+        return this.getSectionWithKey(
+            pair.getSection(), pair.getKey()).getInteger(pair.getKey());
     }
     
     
@@ -470,6 +502,22 @@ public class ConfigurationFile {
     /**
      * Tries to retrieve the value associated with the given key from the given section.
      * 
+     * @param pair SectionKeyPair containing the name of the section and the key to 
+     *          retrieve.
+     * @return The value associated with the given key in the given section as a double.
+     * @throws ConfigException If the given section does not exist or the key does not 
+     *          exist in that section or the key is not associated with a double value.
+     */
+    public double getDouble(SectionKeyPair pair) {
+        return this.getSectionWithKey(
+            pair.getSection(), pair.getKey()).getDouble(pair.getKey());
+    }
+    
+    
+    
+    /**
+     * Tries to retrieve the value associated with the given key from the given section.
+     * 
      * @param section The section in which the key is stored.
      * @param key The key of the value to retrieve.
      * @return The value associated with the given key in the given section as a string.
@@ -478,6 +526,22 @@ public class ConfigurationFile {
      */
     public String getString(String section, String key) {
         return this.getSectionWithKey(section, key).getString(key);
+    }
+    
+    
+    
+    /**
+     * Tries to retrieve the value associated with the given key from the given section.
+     * 
+     * @param pair SectionKeyPair containing the name of the section and the key to 
+     *          retrieve.
+     * @return The value associated with the given key in the given section as a String.
+     * @throws ConfigException If the given section does not exist or the key does not 
+     *          exist in that section or the key is not associated with a String value.
+     */
+    public String getString(SectionKeyPair pair) {
+        return this.getSectionWithKey(
+            pair.getSection(), pair.getKey()).getString(pair.getKey());
     }
     
     
@@ -501,6 +565,23 @@ public class ConfigurationFile {
     /**
      * Tries to retrieve the value associated with the given key from the given section.
      * 
+     * @param pair SectionKeyPair containing the name of the section and the key to 
+     *          retrieve.
+     * @return The value associated with the given key in the given section as a String 
+     *          list.
+     * @throws ConfigException If the given section does not exist or the key does not 
+     *          exist in that section or the key is not associated with a String list.
+     */
+    public List<String> getStringList(SectionKeyPair pair) {
+        return this.getSectionWithKey(
+            pair.getSection(), pair.getKey()).getStringList(pair.getKey());
+    }
+    
+    
+    
+    /**
+     * Tries to retrieve the value associated with the given key from the given section.
+     * 
      * @param section The section in which the key is stored.
      * @param key The key of the value to retrieve.
      * @return The value associated with the given key in the given section as a double 
@@ -510,6 +591,23 @@ public class ConfigurationFile {
      */
     public List<Double> getDoubleList(String section, String key) {
         return this.getSectionWithKey(section, key).getDoubleList(key);
+    }
+    
+    
+    
+    /**
+     * Tries to retrieve the value associated with the given key from the given section.
+     * 
+     * @param pair SectionKeyPair containing the name of the section and the key to 
+     *          retrieve.
+     * @return The value associated with the given key in the given section as a double 
+     *          list.
+     * @throws ConfigException If the given section does not exist or the key does not 
+     *          exist in that section or the key is not associated with a double list.
+     */
+    public List<Double> getDoubleList(SectionKeyPair pair) {
+        return this.getSectionWithKey(
+            pair.getSection(), pair.getKey()).getDoubleList(pair.getKey());
     }
     
     
@@ -533,6 +631,23 @@ public class ConfigurationFile {
     /**
      * Tries to retrieve the value associated with the given key from the given section.
      * 
+     * @param pair SectionKeyPair containing the name of the section and the key to 
+     *          retrieve.
+     * @return The value associated with the given key in the given section as an int 
+     *          list.
+     * @throws ConfigException If the given section does not exist or the key does not 
+     *          exist in that section or the key is not associated with an int list.
+     */
+    public List<Integer> getIntList(SectionKeyPair pair) {
+        return this.getSectionWithKey(
+            pair.getSection(), pair.getKey()).getIntList(pair.getKey());
+    }
+    
+    
+    
+    /**
+     * Tries to retrieve the value associated with the given key from the given section.
+     * 
      * @param section The section in which the key is stored.
      * @param key The key of the value to retrieve.
      * @return The value associated with the given key in the given section as a boolean 
@@ -542,6 +657,23 @@ public class ConfigurationFile {
      */
     public List<Boolean> getBooleanList(String section, String key) {
         return this.getSectionWithKey(section, key).getBooleanList(key);
+    }
+    
+    
+    
+    /**
+     * Tries to retrieve the value associated with the given key from the given section.
+     * 
+     * @param pair SectionKeyPair containing the name of the section and the key to 
+     *          retrieve.
+     * @return The value associated with the given key in the given section as a boolean 
+     *          list.
+     * @throws ConfigException If the given section does not exist or the key does not 
+     *          exist in that section or the key is not associated with a boolean list.
+     */
+    public List<Boolean> getBooleanList(SectionKeyPair pair) {
+        return this.getSectionWithKey(
+            pair.getSection(), pair.getKey()).getBooleanList(pair.getKey());
     }
     
     
