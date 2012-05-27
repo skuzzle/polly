@@ -15,7 +15,7 @@ import java.util.Map;
 
 class Scanner {
     
-    private final static boolean debug = true;
+    private final static boolean debug = false;
     private final static Map<String, TokenType> keywords = new HashMap<String, TokenType>();
     static {
         keywords.put("true", TokenType.TRUE);
