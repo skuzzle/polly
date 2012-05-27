@@ -39,7 +39,7 @@
     "/>
     
     <path id="buildpath">
-        <fileset dir="${lib.dir}" includes="${includeJars}"/>
+        <fileset dir="${lib.dir}" excludes="**/**"/>
     </path>
     
     
@@ -70,11 +70,7 @@
     <target name="prepare">
         <mkdir dir="${dist.dir}"/>
         <mkdir dir="${bin.dir}"/>
-        <mkdir dir="${dist.lib.dir}"/>
-        
-        <copy todir="${dist.lib.dir}">
-            <fileset dir="${lib.dir}" includes="${includeJars}"/>
-        </copy>        
+        <mkdir dir="${dist.lib.dir}"/>    
     </target>
     
     

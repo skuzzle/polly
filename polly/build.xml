@@ -48,6 +48,7 @@
         polly.parser.jar
         moduleloader.jar
         network.jar
+        polly.config.jar
         de.skuzzle.polly.process.jar
         eclipselink.jar
         javax.persistence_2.0.3.v201010191057.jar
@@ -73,6 +74,7 @@
                 polly.parser.jar 
 				modulloader.jar
                 network.jar
+                polly.config.jar
                 de.skuzzle.polly.process.jar
                 de.skuzzle.polly.sdk.jar"/>
     </path>
@@ -235,6 +237,7 @@
             <project name="${ant.project.name}"/>
             <classpath>
                 <source path="/network"/>
+                <source path="/polly.config"/>
                 <source path="/polly.sdk"/>
                 <source path="/polly.process"/>
                 <source path="/parser"/>

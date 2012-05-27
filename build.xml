@@ -39,6 +39,18 @@
             file="moduleloader/dist/moduleloader.jar" 
             todir="${lib.dir}"/>
     </target>
+    
+    
+    
+    <!-- 
+        builds the configuration project and copies the dist jar to the libs folder
+    -->
+    <target name="configuration">
+        <ant dir="polly.config" target="${mode}" inheritAll="false"/>
+        <copy 
+            file="polly.config/dist/polly.config.jar" 
+            todir="${lib.dir}"/>
+    </target>
 	
 	
     
@@ -131,8 +143,8 @@
         Builds all polly dependencies
     -->
     <target name="all" depends="sdk,process,installer,
-                                parser,plugins,network,moduleloader,polly,
-                                porat"/>
+                                parser,plugins,network,moduleloader,
+                                configuration, polly, porat"/>
 
     
     
