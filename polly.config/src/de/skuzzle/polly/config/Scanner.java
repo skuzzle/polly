@@ -374,15 +374,23 @@ class Scanner {
                     key.append(next);
                 } else {
                     this.revert(1);
-                    Token result = new Token(key.toString(), TokenType.IDENTIFIER, 
-                            this.spanFrom(start));
-                    return result;
+                    return this.lookupKeyword(key.toString(), start);
                 }
                 break;
             }
         }
         
         throw new ParseException("Unexpected EOS", this.spanFrom(start));
+    }
+    
+    
+    
+    private Token lookupKeyword(String key, Position tokenStart) {
+        TokenType result = keywords.get(key);
+        if (result == null) {
+            result = TokenType.IDENTIFIER;
+        }
+        return new Token(key, result, this.spanFrom(tokenStart));
     }
     
     

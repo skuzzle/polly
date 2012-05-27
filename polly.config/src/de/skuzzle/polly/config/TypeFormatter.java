@@ -21,6 +21,10 @@ class TypeFormatter {
                     b.append(", ");
                 }
             }
+        } else if (obj instanceof String) {
+            b.append("\"");
+            b.append(obj.toString());
+            b.append("\"");
         } else {
             b.append(obj.toString());
         }
