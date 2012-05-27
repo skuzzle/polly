@@ -126,7 +126,7 @@ class Parser {
                 config.addInclude(inc);
                 
             } else {
-                config.addSection(this.parseSection());
+                config.addSection(this.parseSection(config));
             }
         }
         
@@ -135,28 +135,29 @@ class Parser {
     
     
     
-    private Section parseSection() throws ParseException {
+    private Section parseSection(ConfigurationFile parentFile) throws ParseException {
         Comment comment = this.scanner.getLastComment();
         this.expect(TokenType.OPENSQBR);
         String sectionName = this.expectIdentifier();
         this.expect(TokenType.CLOSEDSQBR);
         
-        Section section = new Section(comment, sectionName);
+        Section section = new Section(parentFile, comment, sectionName);
         while(this.scanner.lookAhead(TokenType.IDENTIFIER)) {
-            this.parseValuePair(section);
+            this.parseValuePair(parentFile, section);
         }
         return section;
     }
     
     
     
-    private void parseValuePair(Section section) throws ParseException {
+    private void parseValuePair(ConfigurationFile parentFile, Section section) 
+                throws ParseException {
         Comment comment = this.scanner.getLastComment();
         String key = this.expectIdentifier();
         this.expect(TokenType.EQ);
         Object value = this.parseValueList();
         
-        section.add(new ConfigEntry(comment, key, value));
+        section.add(new ConfigEntry(parentFile, section, comment, key, value));
     }
     
     

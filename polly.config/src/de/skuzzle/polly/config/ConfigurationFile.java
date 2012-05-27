@@ -8,6 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.event.EventListenerList;
+
 
 
 public class ConfigurationFile {
@@ -76,6 +78,7 @@ public class ConfigurationFile {
     private File path;
     private Map<String, Section> sections;
     private List<ConfigurationFile> includes;
+    private EventListenerList listeners;
     
     
     
@@ -88,6 +91,42 @@ public class ConfigurationFile {
         this.path = path;
         this.includes = new LinkedList<ConfigurationFile>();
         this.sections = new HashMap<String, Section>();
+        this.listeners = new EventListenerList();
+    }
+    
+    
+    
+    /**
+     * Adds a new {@link ConfigurationListener} that is notified each time a value in this
+     * config changes.
+     * 
+     * @param listener The listener to add.
+     */
+    public void addConfigurationListener(ConfigurationListener listener) {
+        this.listeners.add(ConfigurationListener.class, listener);
+    }
+    
+    
+    
+    /**
+     * Removes a {@link ConfigurationListener}.
+     * 
+     * @param listener The listener to remove.
+     */
+    public void removeConfigurationListener(ConfigurationListener listener) {
+        this.listeners.remove(ConfigurationListener.class, listener);
+    }
+    
+    
+    
+    protected void fireConfigurationChanged(String section, String key) {
+        ConfigurationEvent e = new ConfigurationEvent(this, section, key);
+        ConfigurationListener[] list = 
+            this.listeners.getListeners(ConfigurationListener.class);
+        
+        for (ConfigurationListener l : list) {
+            l.configurationChanged(e);
+        }
     }
     
     

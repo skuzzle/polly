@@ -13,14 +13,14 @@ class Section extends ConfigEntry {
     
     
     
-    public Section(String name) {
-        this(null, name);
+    public Section(ConfigurationFile parent, String name) {
+        this(parent, null, name);
     }
     
     
     
-    public Section(Comment comment, String name) {
-        super(comment, name, null);
+    public Section(ConfigurationFile parent, Comment comment, String name) {
+        super(parent, null, comment, name, null);
         this.entries = new HashMap<String, ConfigEntry>();
     }
     

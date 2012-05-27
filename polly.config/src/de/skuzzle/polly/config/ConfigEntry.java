@@ -6,11 +6,15 @@ class ConfigEntry {
     private Comment comment;
     private String name;
     private Object value;
+    private ConfigurationFile parentFile;
+    private Section parentSection;
     
     
     
-    public ConfigEntry(Comment comment, String name, 
-                Object value) {
+    public ConfigEntry(ConfigurationFile parentFile, Section parentSection, 
+            Comment comment, String name, Object value) {
+        this.parentSection = parentSection;
+        this.parentFile = parentFile;
         this.comment = comment;
         this.name = name;
         this.value = value;
@@ -44,6 +48,7 @@ class ConfigEntry {
     
     protected void setValue(Object value) {
         this.value = value;
+        this.parentFile.fireConfigurationChanged(this.parentSection.getName(), this.name);
     }
     
     
