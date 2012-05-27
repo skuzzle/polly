@@ -84,6 +84,15 @@ public class IrcModule extends AbstractModule {
             + this.config.getServer() + ", Port: " + this.config.getPort()
             + ", Logging: " + this.config.getIrcLogging() + ")");
 
+        // setup handler for incoming irc messages that are to be parsed as a command.
+        // XXX: Ensure that message handler is the first message listener to be added
+        //      because it updates a users idle time
+        MessageHandler handler = new MessageHandler(this.commandManager,
+            this.userManager, this.commandExecutor, this.config);
+        this.ircManager.addMessageListener(handler);
+        this.provideComponent(handler);
+        
+        
         // setup irc logger
         if (this.config.getIrcLogging()) {
             IrcLoggingHandler ircConsoleLogger = new IrcLoggingHandler();
@@ -92,12 +101,6 @@ public class IrcModule extends AbstractModule {
             this.ircManager.addJoinPartListener(ircConsoleLogger);
         }
 
-        // setup handler for incoming irc messages
-        MessageHandler handler = new MessageHandler(this.commandManager,
-            this.userManager, this.commandExecutor, this.config);
-        this.ircManager.addMessageListener(handler);
-        this.provideComponent(handler);
-        
         // this listener checks if we ghosted our original nick and changes our nickname
         // to the default one
         this.ircManager.addMessageListener(new GhostHandler());
