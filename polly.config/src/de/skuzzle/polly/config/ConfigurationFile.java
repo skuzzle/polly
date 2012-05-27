@@ -34,7 +34,7 @@ public class ConfigurationFile {
         System.out.println(cfg.getString("TEST", "key"));
         System.out.println(cfg.getString("TEST", "key1"));
         //System.out.println(cfg.getString("TEST", "key2"));
-        System.out.println(cfg.format(true));
+        System.out.println(cfg.format(true, true));
     }
     
     /**
@@ -680,7 +680,7 @@ public class ConfigurationFile {
     
     
     
-    public String format(boolean sortSections) {
+    public String format(boolean sortSections, boolean alignSections) {
         StringBuilder b = new StringBuilder();
         TypeFormatter formatter = new TypeFormatter();
         
@@ -707,6 +707,13 @@ public class ConfigurationFile {
                 Collections.sort(entries);
             }
             
+            int longest = 0;
+            if (alignSections) {
+                for (ConfigEntry entry : entries) {
+                    longest = Math.max(entry.getName().length(), longest);
+                }
+            }
+            
             for (ConfigEntry entry : entries) {
                 if (entry.getComment() != null) {
                     b.append("    ");
@@ -715,6 +722,7 @@ public class ConfigurationFile {
                 }
                 b.append("    ");
                 b.append(entry.getName());
+                this.padSpaces(longest, entry.getName().length(), b);
                 b.append(" = ");
                 b.append(formatter.format(entry.getValue()));
                 b.append("\n");
@@ -727,13 +735,25 @@ public class ConfigurationFile {
     
     
     
+    private void padSpaces(int desiredLength, int currentLength, StringBuilder b) {
+        int spaces = desiredLength - currentLength;
+        if (spaces <= 0) {
+            return;
+        }
+        for (int i = 0; i < spaces; ++i) {
+            b.append(" ");
+        }
+    }
+    
+    
+    
     /**
      * Stores this configuration under the same path as it was read from.
      * 
      * @throws IOException If writing the configuration fails.
      */
     public void store() throws IOException {
-        this.store(this.path, true);
+        this.store(this.path, true, true);
     }
     
     
@@ -744,13 +764,15 @@ public class ConfigurationFile {
      * 
      * @param file The file where to store this configuration.
      * @param sortSections Whether the entries in each section should be sorted by name.
+     * @param alignSections If set to <code>true</code>, the equal signs in each sections
+     *          will be aligned.
      * @throws IOException If writing the configuration fails.
      */
-    public void store(File file, boolean sortSections) throws IOException {
+    public void store(File file, boolean sortSections, boolean alignSections) throws IOException {
         PrintWriter w = null;
         try {
             w = new PrintWriter(file);
-            w.print(this.format(sortSections));
+            w.print(this.format(sortSections, alignSections));
         } finally {
             if (w != null) { w.close(); }
         }
