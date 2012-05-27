@@ -3,6 +3,8 @@ package de.skuzzle.polly.config;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,7 +34,7 @@ public class ConfigurationFile {
         System.out.println(cfg.getString("TEST", "key"));
         System.out.println(cfg.getString("TEST", "key1"));
         //System.out.println(cfg.getString("TEST", "key2"));
-        System.out.println(cfg.format());
+        System.out.println(cfg.format(true));
     }
     
     /**
@@ -678,7 +680,7 @@ public class ConfigurationFile {
     
     
     
-    private String format() {
+    public String format(boolean sortSections) {
         StringBuilder b = new StringBuilder();
         TypeFormatter formatter = new TypeFormatter();
         
@@ -699,7 +701,13 @@ public class ConfigurationFile {
             b.append("]");
             b.append("\n");
             
-            for (ConfigEntry entry : section.getEntries().values()) {
+            List<ConfigEntry> entries = new ArrayList<ConfigEntry>(
+                section.getEntries().values());
+            if (sortSections) {
+                Collections.sort(entries);
+            }
+            
+            for (ConfigEntry entry : entries) {
                 if (entry.getComment() != null) {
                     b.append("    ");
                     b.append(entry.getComment().toString());
@@ -725,7 +733,7 @@ public class ConfigurationFile {
      * @throws IOException If writing the configuration fails.
      */
     public void store() throws IOException {
-        this.store(this.path);
+        this.store(this.path, true);
     }
     
     
@@ -735,13 +743,14 @@ public class ConfigurationFile {
      * {@link #getPath()} attribute for this configuration.
      * 
      * @param file The file where to store this configuration.
+     * @param sortSections Whether the entries in each section should be sorted by name.
      * @throws IOException If writing the configuration fails.
      */
-    public void store(File file) throws IOException {
+    public void store(File file, boolean sortSections) throws IOException {
         PrintWriter w = null;
         try {
             w = new PrintWriter(file);
-            w.print(this.format());
+            w.print(this.format(sortSections));
         } finally {
             if (w != null) { w.close(); }
         }

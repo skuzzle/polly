@@ -1,7 +1,7 @@
 package de.skuzzle.polly.config;
 
 
-class ConfigEntry {
+class ConfigEntry implements Comparable<ConfigEntry> {
 
     private Comment comment;
     private String name;
@@ -64,5 +64,15 @@ class ConfigEntry {
         b.append(" = ");
         b.append(this.value.toString());
         return b.toString();
+    }
+
+
+
+    @Override
+    public int compareTo(ConfigEntry other) {
+        if (this.name == null || other.name == null) {
+            return 0;
+        }
+        return this.name.compareTo(other.name);
     }
 }
