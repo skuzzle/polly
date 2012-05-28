@@ -22,7 +22,11 @@ import polly.moduleloader.DefaultModuleLoader;
 import polly.moduleloader.ModuleLoader;
 import polly.util.FileUtil;
 import polly.util.ProxyClassLoader;
+import de.skuzzle.polly.config.ConfigurationFile;
+import de.skuzzle.polly.config.ParseException;
 import de.skuzzle.polly.sdk.Version;
+
+
 
 public class Polly {
 
@@ -115,7 +119,8 @@ public class Polly {
         }
         
         PollyConfiguration config = this.readConfig(CONFIG_FULL_PATH);
-        
+        ConfigurationFile newConfig = this.getConfig("./cfg/newConfig.cfg");
+        System.out.println(newConfig.format(true, true));
         this.checkDirectoryStructure(config);
 
         logger.info("");
@@ -170,6 +175,7 @@ public class Polly {
         // Base components which have no own module:
         loader.provideComponent(new ShutdownManagerImpl());
         loader.provideComponent(config);
+        loader.provideComponent(newConfig);
         loader.provideComponent(parentCl);
 
         // Modules:
@@ -250,6 +256,34 @@ public class Polly {
         if (!success) {
             System.exit(0);
         }
+    }
+    
+    
+
+    private ConfigurationFile getConfig(String path) {
+        try {
+            File configFile = new File(path);
+            
+            if (!configFile.exists()) {
+                
+            }
+            
+            return ConfigurationFile.open(configFile);
+        } catch (IOException e) {
+            System.out.println(
+                "Encountered IO Exception while reading Configuration from " + path);
+            e.printStackTrace();
+            System.exit(-1);
+        } catch (ParseException e) {
+            System.out.println("Invalid config file: " + path);
+            System.out.println("Encountered ParseException at " + e.getPosition() + ":");
+            System.out.println(e.getMessage());
+            System.out.println("StackTrace:");
+            e.printStackTrace();
+            System.exit(-1);
+        }
+        
+        return null;
     }
 
 
