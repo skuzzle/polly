@@ -43,7 +43,7 @@ public class ReplayCommand extends AbstractLogCommand {
                     if (this.getMyPolly().irc().isOnChannel(chan, 
                             executer.getCurrentNickName())) {
                         
-                        logs.addAll(this.logManager.preFilterChannel(channel));
+                        logs.addAll(this.logManager.preFilterChannel(chan));
                     }
                 }
                 LogFilter dateFilter = new DateLogFilter(
