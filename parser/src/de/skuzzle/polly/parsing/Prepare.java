@@ -171,7 +171,7 @@ public final class Prepare {
             dest.add(new MatrixToMatrixFunction("rank", new Functions.MatrixToScalarFunction(MatrixType.RANK)), "matrix");
             dest.add(new MatrixToMatrixModPFunction("rankModP", new Functions.MatrixToScalarModPFunction(MatrixType.RANK)), "matrix");
             dest.add(new MatrixToMatrixFunction("det", new Functions.MatrixToScalarFunction(MatrixType.RANK)), "matrix");
-            dest.add(new MatrixToMatrixModPFunction("detModP", new Functions.MatrixToScalarModPFunction(MatrixType.RANK)), "matrix");
+            dest.add(new MatrixToMatrixModPFunction("detModP", new Functions.MatrixToScalarModPFunction(MatrixType.DETERMINANT)), "matrix");
         } catch (ParseException ignore) {
             // can not happen
         }
