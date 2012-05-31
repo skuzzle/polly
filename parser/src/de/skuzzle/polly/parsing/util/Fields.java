@@ -138,7 +138,11 @@ public class Fields {
 
             @Override
             public Integer multiply(Integer left, Integer right) {
-                return Math.abs(left * right) % p;
+                int r = (left * right) % p;
+                if (r < 0) {
+                    r = p + r;
+                }
+                return r;
             }
             
             
