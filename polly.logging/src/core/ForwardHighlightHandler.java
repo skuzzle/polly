@@ -22,6 +22,8 @@ import entities.LogEntry;
 
 public class ForwardHighlightHandler implements MessageListener {
     
+    private final static int HIGHLIGHT_DELAY = 30000; // 30s
+    
     private final static String SUBJECT = "[POLLY Highlight Forwarder] Highlight in %s";
     
     private final static String MESSAGE = "Hi %s,\n\nDu wurdest im Channel %s " +
@@ -38,6 +40,52 @@ public class ForwardHighlightHandler implements MessageListener {
     private PollyLoggingManager logManager;
     private LogFormatter logFormatter;
     private FormatManager formatManager;
+    
+    
+    
+    private class Highlight extends Thread {
+
+        private MessageEvent e;
+        private User user;
+        
+        
+        public Highlight(MessageEvent e, User user) {
+            super("HL_FOR_" + e.getUser().getNickName());
+            this.e = e;
+            this.user = user;
+        }
+        
+        
+
+        @Override
+        public void run() {
+            
+            try {
+                Thread.sleep(HIGHLIGHT_DELAY);
+            } catch (InterruptedException e) {
+                return;
+            }
+            
+            try {
+                String mail = this.user.getAttribute("EMAIL");
+                
+                List<LogEntry> prefiltered = logManager.preFilterChannel(
+                    e.getChannel(), 10);
+                
+                String logs = formatList(prefiltered);
+                String subject = String.format(SUBJECT, this.e.getChannel());
+                String message = String.format(MESSAGE, 
+                    this.user.getName(), this.e.getChannel(), this.e.getUser(), 
+                    this.e.getMessage(), logs);
+            
+                mailManager.sendMail(mail, subject, message);
+            } catch (DatabaseException e1) {
+                e1.printStackTrace();
+            } catch (EMailException e1) {
+                e1.printStackTrace();
+            }
+        }
+    }
     
     
     
@@ -93,23 +141,9 @@ public class ForwardHighlightHandler implements MessageListener {
                 user.getAttribute(MyPlugin.FORWARD_HIGHLIGHTS).equals("true") &&
                 !mail.equals("none");
 
-
             if (fwd && this.canSend(mail)) {
-                try {
-                    List<LogEntry> prefiltered = this.logManager.preFilterChannel(
-                        e.getChannel(), 10);
-                    
-                    String logs = this.formatList(prefiltered);
-                    String subject = String.format(SUBJECT, e.getChannel());
-                    String message = String.format(MESSAGE, user.getName(), e.getChannel(), 
-                        e.getUser(), e.getMessage(), logs);
-                
-                    this.mailManager.sendMail(mail, subject, message);
-                } catch (DatabaseException e1) {
-                    e1.printStackTrace();
-                } catch (EMailException e1) {
-                    e1.printStackTrace();
-                }
+                // TODO: cancel highlight if user reacts within HIGHLIGHT_DELAY
+                new Highlight(e, user).start();
                 
             }
         }
