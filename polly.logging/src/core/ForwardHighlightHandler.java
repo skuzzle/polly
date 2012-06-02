@@ -1,7 +1,6 @@
 package core;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,12 +70,6 @@ public class ForwardHighlightHandler implements MessageListener {
         
         for (User user : allUsers) {
             
-            String mail = user.getAttribute("EMAIL");
-            
-            // forward if user is idle, wants forward and has a mail address set
-            boolean fwd = user.isIdle() &&
-                user.getAttribute(MyPlugin.FORWARD_HIGHLIGHTS).equals("true") &&
-                !mail.equals("none");
             // if user is offline, the nick to check is the username, otherwise the 
             // current nickname
             String nick = user.getCurrentNickName() == null 
@@ -88,13 +81,23 @@ public class ForwardHighlightHandler implements MessageListener {
                 continue;
             }
             boolean hl = e.getMessage().toLowerCase().contains(nick.toLowerCase());
+            
+            if (!hl) {
+                continue;
+            }
+            
+            String mail = user.getAttribute("EMAIL");
+            
+            // forward if user is idle, wants forward and has a mail address set
+            boolean fwd = user.isIdle() &&
+                user.getAttribute(MyPlugin.FORWARD_HIGHLIGHTS).equals("true") &&
+                !mail.equals("none");
 
-            if (fwd && hl && this.canSend(mail)) {
+
+            if (fwd && this.canSend(mail)) {
                 try {
                     List<LogEntry> prefiltered = this.logManager.preFilterChannel(
                         e.getChannel(), 10);
-                    
-                    Collections.reverse(prefiltered);
                     
                     String logs = this.formatList(prefiltered);
                     String subject = String.format(SUBJECT, e.getChannel());
