@@ -15,6 +15,7 @@ import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.MailManager;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.UserManager;
+import de.skuzzle.polly.sdk.eventlistener.MessageAdapter;
 import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
@@ -23,7 +24,7 @@ import de.skuzzle.polly.sdk.model.User;
 import entities.LogEntry;
 
 
-public class ForwardHighlightHandler implements MessageListener {
+public class ForwardHighlightHandler extends MessageAdapter {
     
     private final static int HIGHLIGHT_DELAY = 30000; // 30s
     
@@ -97,8 +98,8 @@ public class ForwardHighlightHandler implements MessageListener {
         
         
         private void checkCancel(MessageEvent e) {
-            if (e.getChannel().equals(this.e.getChannel()) &&
-                    e.getUser().getNickName().equals(this.user.getCurrentNickName())) {
+            // cancel highlight if user reacts within time
+            if (e.getUser().getNickName().equals(this.user.getCurrentNickName())) {
                 this.interrupt();
             }
         }
@@ -217,15 +218,4 @@ public class ForwardHighlightHandler implements MessageListener {
             }
         }
     }
-
-    
-
-    @Override
-    public void noticeMessage(MessageEvent ignore) {}
-    
-    
-    
-    @Override
-    public void privateMessage(MessageEvent ignore) {}
-
 }
