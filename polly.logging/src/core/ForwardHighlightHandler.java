@@ -1,9 +1,12 @@
 package core;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import core.filters.DateLogFilter;
 
 import polly.logging.MyPlugin;
 
@@ -73,8 +76,10 @@ public class ForwardHighlightHandler implements MessageListener {
                 String mail = this.user.getAttribute("EMAIL");
                 
                 List<LogEntry> prefiltered = logManager.preFilterChannel(
-                    e.getChannel(), 10);
+                    e.getChannel());
                 
+                prefiltered = logManager.postFilter(prefiltered, 
+                        new DateLogFilter(new Date(this.user.getLastIdleTime())));
                 String logs = formatList(prefiltered);
                 String subject = String.format(SUBJECT, this.e.getChannel());
                 String message = String.format(MESSAGE, 
