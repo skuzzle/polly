@@ -43,7 +43,7 @@ public class ForwardHighlightHandler implements MessageListener {
     
     
     
-    private class Highlight extends Thread {
+    private class Highlight extends Thread implements MessageListener {
 
         private MessageEvent e;
         private User user;
@@ -53,6 +53,7 @@ public class ForwardHighlightHandler implements MessageListener {
             super("HL_FOR_" + e.getUser().getNickName());
             this.e = e;
             this.user = user;
+            e.getSource().addMessageListener(this);
         }
         
         
@@ -64,6 +65,8 @@ public class ForwardHighlightHandler implements MessageListener {
                 Thread.sleep(HIGHLIGHT_DELAY);
             } catch (InterruptedException e) {
                 return;
+            } finally {
+                this.e.getSource().removeMessageListener(this);
             }
             
             try {
@@ -85,6 +88,38 @@ public class ForwardHighlightHandler implements MessageListener {
                 e1.printStackTrace();
             }
         }
+
+        
+        
+        private void checkCancel(MessageEvent e) {
+            if (e.getChannel().equals(this.e.getChannel()) &&
+                    e.getUser().getNickName().equals(this.user.getCurrentNickName())) {
+                this.interrupt();
+            }
+        }
+
+
+        @Override
+        public void publicMessage(MessageEvent e) {
+            this.checkCancel(e);
+        }
+
+        
+        
+        @Override
+        public void actionMessage(MessageEvent e) {
+            this.checkCancel(e);
+        }
+
+        
+
+        @Override
+        public void privateMessage(MessageEvent ignore) {}
+
+
+
+        @Override
+        public void noticeMessage(MessageEvent ignore) {}
     }
     
     
@@ -142,7 +177,6 @@ public class ForwardHighlightHandler implements MessageListener {
                 !mail.equals("none");
 
             if (fwd && this.canSend(mail)) {
-                // TODO: cancel highlight if user reacts within HIGHLIGHT_DELAY
                 new Highlight(e, user).start();
                 
             }
