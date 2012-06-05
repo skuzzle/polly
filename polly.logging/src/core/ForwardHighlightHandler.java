@@ -1,6 +1,7 @@
 package core;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -81,6 +82,9 @@ public class ForwardHighlightHandler extends MessageAdapter {
                 
                 prefiltered = logManager.postFilter(prefiltered, 
                         new DateLogFilter(new Date(this.user.getLastIdleTime())));
+                
+                Collections.reverse(prefiltered);
+                
                 String logs = formatList(prefiltered);
                 String subject = String.format(SUBJECT, this.e.getChannel());
                 String message = String.format(MESSAGE, 
