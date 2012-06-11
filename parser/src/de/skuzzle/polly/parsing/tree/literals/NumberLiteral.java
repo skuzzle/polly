@@ -72,9 +72,10 @@ public class NumberLiteral extends Literal {
     }
     
     
-    private boolean isIntegerHelper() {
-        int val = (int) this.getValue();
-        return (double)val == this.getValue();
+    
+    protected boolean isIntegerHelper(double value) {
+        int val = (int) value;
+        return (double)val == value;
     }
     
     
@@ -87,7 +88,7 @@ public class NumberLiteral extends Literal {
     
     public int isInteger(Position pos) throws ExecutionException {
         int val = (int) this.getValue();
-        if (!this.isIntegerHelper()) {
+        if (!this.isIntegerHelper(this.getValue())) {
             throw new ExecutionException("'" + this.getValue() + "' ist keine Ganzzahl", 
                     pos);
         }
@@ -128,7 +129,7 @@ public class NumberLiteral extends Literal {
     
     @Override
     public String toString() {
-        if (this.isIntegerHelper()) {
+        if (this.isIntegerHelper(this.getValue())) {
             return Integer.toString((int)this.getValue(), this.radix);
         }
         DecimalFormat nf = (DecimalFormat) DecimalFormat.getInstance(Locale.ENGLISH);
