@@ -7,6 +7,7 @@ import java.util.Stack;
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.tree.Expression;
 import de.skuzzle.polly.parsing.tree.literals.BooleanLiteral;
+import de.skuzzle.polly.parsing.tree.literals.FractionLiteral;
 import de.skuzzle.polly.parsing.tree.literals.ListLiteral;
 import de.skuzzle.polly.parsing.tree.literals.Literal;
 import de.skuzzle.polly.parsing.tree.literals.NumberLiteral;
@@ -334,7 +335,7 @@ public class Functions {
     
     
     public static enum MathType {
-        SIN, COS, TAN, ABS, SQRT, CEIL, FLOOR, LOG, ROUND, ATAN, ACOS, ASIN;
+        SIN, COS, TAN, ABS, SQRT, CEIL, FLOOR, LOG, ROUND, ATAN, ACOS, ASIN, FRAC;
     }
 
     
@@ -395,8 +396,12 @@ public class Functions {
                 result = java.lang.Math.acos(operand.getValue());
                 break;
             }
-            
-            stack.push(new NumberLiteral(result));
+
+            if (this.func == MathType.FRAC) {
+                stack.push(new FractionLiteral(operand.getValue()));
+            } else {
+                stack.push(new NumberLiteral(result));
+            }
         }
     }
     

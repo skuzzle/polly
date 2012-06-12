@@ -156,6 +156,7 @@ public final class Prepare {
             dest.add(new DefaultMathFunction(Functions.MathType.ATAN), "math");
             dest.add(new DefaultMathFunction(Functions.MathType.ASIN), "math");
             dest.add(new DefaultMathFunction(Functions.MathType.ACOS), "math");
+            dest.add(new DefaultMathFunction(Functions.MathType.FRAC), "math");
             
             dest.add(new RandomFunction(), "math");
             dest.add(new BinomialFunction(), "math");
