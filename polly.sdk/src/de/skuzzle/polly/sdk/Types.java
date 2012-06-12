@@ -180,6 +180,36 @@ public class Types {
 	
 	
 	
+	public static class FractionType extends NumberType {
+	    
+	    private int nominator;
+	    private int denominator;
+	    private boolean isIllegal;
+	    
+	    public FractionType(int nominator, int denominator, boolean illegal) {
+	        super(nominator / denominator);
+	        this.nominator = nominator;
+	        this.denominator = denominator;
+	        this.isIllegal = illegal;
+	    }
+	    
+	    
+	    
+	    @Override
+	    public String valueString(FormatManager formatter) {
+	        if (this.isIllegal) {
+	            return super.valueString(formatter);
+	        }
+	        if (denominator == 1) {
+	            return "" + this.nominator;
+	        } else {
+	            return "" + this.nominator + "/" + this.denominator; 
+	        }
+	    }
+	}
+	
+	
+	
 	/**
 	 * This class represents a Boolean-type.
 	 * 

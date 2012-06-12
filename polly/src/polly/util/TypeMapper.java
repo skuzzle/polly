@@ -8,6 +8,7 @@ import de.skuzzle.polly.parsing.tree.literals.BooleanLiteral;
 import de.skuzzle.polly.parsing.tree.literals.ChannelLiteral;
 import de.skuzzle.polly.parsing.tree.literals.CommandLiteral;
 import de.skuzzle.polly.parsing.tree.literals.DateLiteral;
+import de.skuzzle.polly.parsing.tree.literals.FractionLiteral;
 import de.skuzzle.polly.parsing.tree.literals.HelpLiteral;
 import de.skuzzle.polly.parsing.tree.literals.ListLiteral;
 import de.skuzzle.polly.parsing.tree.literals.Literal;
@@ -109,29 +110,38 @@ public class TypeMapper {
 		if (types instanceof Types.BooleanType) {
 			Types.BooleanType bt = (Types.BooleanType) types;
 			return new BooleanLiteral(bt.getValue());
+			
 		} else if(types instanceof Types.ChannelType) {
 			Types.ChannelType bt = (Types.ChannelType) types;
 			return new ChannelLiteral(bt.getValue());
+			
         } else if (types instanceof Types.TimespanType) {
             Types.TimespanType ts = (Types.TimespanType) types;
             return new TimespanLiteral(ts.getSpan());
+            
 		} else if (types instanceof Types.DateType) {
 			Types.DateType ct = (Types.DateType) types;
 			return new DateLiteral(ct.getValue());
+			
 		} else if (types instanceof Types.NumberType) {
 			Types.NumberType bt = (Types.NumberType) types;
 			return new NumberLiteral(bt.getValue());
+			
 		} else if (types instanceof Types.StringType) {
 			Types.StringType bt = (Types.StringType) types;
 			return new StringLiteral(bt.getValue());
+			
 		} else if (types instanceof Types.UserType) {
 			Types.UserType bt = (Types.UserType) types;
 			return new UserLiteral(bt.getValue());
+			
 		} else if (types instanceof Types.CommandType) {
 			Types.CommandType ct = (Types.CommandType) types;
 			return new CommandLiteral(ct.getValue());
+			
 		} else if (types instanceof Types.HelpType) {
 		    return new HelpLiteral();
+		    
 		} else if (types instanceof Types.ListType) {
 			Types.ListType lt = (Types.ListType) types;
 			ArrayList<Expression> elements = new ArrayList<Expression>();
@@ -155,29 +165,43 @@ public class TypeMapper {
 		if (literal instanceof BooleanLiteral) {
 			BooleanLiteral bl = (BooleanLiteral) literal;
 			return new Types.BooleanType(bl.getValue());
+			
 		} else if (literal instanceof ChannelLiteral) {
 			ChannelLiteral bl = (ChannelLiteral) literal;
 			return new Types.ChannelType(bl.getChannelName());
+			
         } else if (literal instanceof TimespanLiteral) {
             TimespanLiteral ts = (TimespanLiteral) literal;
             return new Types.TimespanType(ts.getValue(), ts.getTargetFromNow());
+            
 		} else if (literal instanceof DateLiteral) {
 			DateLiteral dt = (DateLiteral) literal;
 			return new Types.DateType(dt.getValue());
+			
+		} else if (literal instanceof FractionLiteral) {
+		    FractionLiteral fl = (FractionLiteral) literal;
+		    return new Types.FractionType(fl.getNominator(), 
+		        fl.getDenominator(), fl.isIllegal());
+		    
 		} else if (literal instanceof NumberLiteral) {
 			NumberLiteral bl = (NumberLiteral) literal;
 			return new Types.NumberType(bl.getValue(), bl.getRadix());
+			
 		} else if (literal instanceof StringLiteral) {
 			StringLiteral bl = (StringLiteral) literal;
 			return new Types.StringType(bl.getValue());
+			
 		} else if (literal instanceof UserLiteral) {
 			UserLiteral bl = (UserLiteral) literal;
 			return new Types.UserType(bl.getUserName());
+			
 		} else if (literal instanceof CommandLiteral) {
 			CommandLiteral cl = (CommandLiteral) literal;
 			return new Types.CommandType(cl.getCommandName());
+			
 		} else if (literal instanceof HelpLiteral) {
 		    return Types.HELP;
+		    
 		} else if (literal instanceof ListLiteral) {
 			ListLiteral lt = (ListLiteral) literal;
 			List<Types> elements = new ArrayList<Types>();

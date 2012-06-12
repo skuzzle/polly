@@ -34,6 +34,7 @@ public class Type implements Serializable {
     public final static Type UNKNOWN = new Type(new IdentifierLiteral("UNKNOWN"), false);
     
     private final static Map<String, Type> primitiveCache;
+
     static {
         primitiveCache = new HashMap<String, Type>();
         primitiveCache.put(CHANNEL.getTypeName().getIdentifier(), CHANNEL);

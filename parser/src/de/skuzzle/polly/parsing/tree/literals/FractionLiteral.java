@@ -25,6 +25,26 @@ public class FractionLiteral extends NumberLiteral {
     
     
     
+    
+    public int getNominator() {
+        return this.nominator;
+    }
+    
+    
+    
+    
+    public int getDenominator() {
+        return this.denominator;
+    }
+    
+    
+    
+    public boolean isIllegal() {
+        return this.illegal;
+    }
+    
+    
+    
     public FractionLiteral(double value, int maxDecimals) {
         super(value);
         if (this.isIntegerHelper(value)) {
@@ -35,7 +55,7 @@ public class FractionLiteral extends NumberLiteral {
             int dec = 0;
             while (!isIntegerHelper(value) && dec < maxDecimals) {
                 ++dec;
-                value *= 10;
+                value *= 10.0;
             }
             
             if (dec == maxDecimals) {
