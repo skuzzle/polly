@@ -12,7 +12,7 @@ public class FractionLiteral extends NumberLiteral {
 
     private static final long serialVersionUID = 1L;
     
-    private int nominator;
+    private int numerator;
     private int denominator;
     private boolean illegal;
     
@@ -25,30 +25,10 @@ public class FractionLiteral extends NumberLiteral {
     
     
     
-    
-    public int getNominator() {
-        return this.nominator;
-    }
-    
-    
-    
-    
-    public int getDenominator() {
-        return this.denominator;
-    }
-    
-    
-    
-    public boolean isIllegal() {
-        return this.illegal;
-    }
-    
-    
-    
     public FractionLiteral(double value, int maxDecimals) {
         super(value);
         if (this.isIntegerHelper(value)) {
-            this.nominator = (int) value;
+            this.numerator = (int) value;
             this.denominator = 1;
         } else {
             // count decimals
@@ -65,11 +45,30 @@ public class FractionLiteral extends NumberLiteral {
             
             int nom = (int) Math.pow(10, dec);
             int ggt = this.ggt((int) value, nom);
-            this.nominator = (int) value / ggt;
+            this.numerator = (int) value / ggt;
             this.denominator = nom / ggt;
         }
     }
-
+    
+    
+    
+    public int getNumerator() {
+        return this.numerator;
+    }
+    
+    
+    
+    
+    public int getDenominator() {
+        return this.denominator;
+    }
+    
+    
+    
+    public boolean isIllegal() {
+        return this.illegal;
+    }
+    
     
     
     private int ggt(int a, int b) {
@@ -89,9 +88,9 @@ public class FractionLiteral extends NumberLiteral {
             return super.toString();
         }
         if (this.denominator == 1) {
-            return "" + this.nominator;
+            return "" + this.numerator;
         } else {
-            return this.nominator + "/" + this.denominator;
+            return this.numerator + "/" + this.denominator;
         }
     }
 }

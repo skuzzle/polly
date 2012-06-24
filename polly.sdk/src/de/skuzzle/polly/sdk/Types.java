@@ -182,13 +182,13 @@ public class Types {
 	
 	public static class FractionType extends NumberType {
 	    
-	    private int nominator;
+	    private int numerator;
 	    private int denominator;
 	    private boolean isIllegal;
 	    
 	    public FractionType(int nominator, int denominator, boolean illegal) {
 	        super(nominator / denominator);
-	        this.nominator = nominator;
+	        this.numerator = nominator;
 	        this.denominator = denominator;
 	        this.isIllegal = illegal;
 	    }
@@ -201,9 +201,9 @@ public class Types {
 	            return super.valueString(formatter);
 	        }
 	        if (denominator == 1) {
-	            return "" + this.nominator;
+	            return "" + this.numerator;
 	        } else {
-	            return "" + this.nominator + "/" + this.denominator; 
+	            return "" + this.numerator + "/" + this.denominator; 
 	        }
 	    }
 	}

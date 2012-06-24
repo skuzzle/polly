@@ -180,7 +180,7 @@ public class TypeMapper {
 			
 		} else if (literal instanceof FractionLiteral) {
 		    FractionLiteral fl = (FractionLiteral) literal;
-		    return new Types.FractionType(fl.getNominator(), 
+		    return new Types.FractionType(fl.getNumerator(), 
 		        fl.getDenominator(), fl.isIllegal());
 		    
 		} else if (literal instanceof NumberLiteral) {
