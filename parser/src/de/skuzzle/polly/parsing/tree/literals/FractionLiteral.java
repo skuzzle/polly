@@ -4,7 +4,8 @@ package de.skuzzle.polly.parsing.tree.literals;
 public class FractionLiteral extends NumberLiteral {
     
     public final static int MAX_DECIMALS = 10;
-
+    public final static double PRECISION = 10000.0;
+    
     public static void main(String[] args) {
         FractionLiteral frac = new FractionLiteral(Math.sqrt(2));
         System.out.println(frac);
@@ -33,6 +34,7 @@ public class FractionLiteral extends NumberLiteral {
         } else {
             // count decimals
             int dec = 0;
+            value = Math.round(value * PRECISION) / PRECISION;
             while (!isIntegerHelper(value) && dec < maxDecimals) {
                 ++dec;
                 value *= 10.0;

@@ -186,8 +186,8 @@ public class Types {
 	    private int denominator;
 	    private boolean isIllegal;
 	    
-	    public FractionType(int nominator, int denominator, boolean illegal) {
-	        super(nominator / denominator);
+	    public FractionType(int nominator, int denominator, double value, boolean illegal) {
+	        super(value);
 	        this.numerator = nominator;
 	        this.denominator = denominator;
 	        this.isIllegal = illegal;

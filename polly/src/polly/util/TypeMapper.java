@@ -181,7 +181,7 @@ public class TypeMapper {
 		} else if (literal instanceof FractionLiteral) {
 		    FractionLiteral fl = (FractionLiteral) literal;
 		    return new Types.FractionType(fl.getNumerator(), 
-		        fl.getDenominator(), fl.isIllegal());
+		        fl.getDenominator(), fl.getValue(), fl.isIllegal());
 		    
 		} else if (literal instanceof NumberLiteral) {
 			NumberLiteral bl = (NumberLiteral) literal;
