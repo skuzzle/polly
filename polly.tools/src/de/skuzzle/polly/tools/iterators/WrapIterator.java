@@ -1,4 +1,4 @@
-package polly.util;
+package de.skuzzle.polly.tools.iterators;
 
 import java.util.ArrayList;
 import java.util.Iterator;

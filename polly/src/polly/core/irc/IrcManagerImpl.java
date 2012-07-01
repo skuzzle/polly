@@ -39,11 +39,11 @@ import de.skuzzle.polly.sdk.eventlistener.QuitListener;
 import de.skuzzle.polly.sdk.eventlistener.SpotEvent;
 import de.skuzzle.polly.sdk.eventlistener.UserSpottedListener;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
+import de.skuzzle.polly.tools.iterators.WrapIterator;
 
 import polly.configuration.PollyConfiguration;
 import polly.events.Dispatchable;
 import polly.events.EventProvider;
-import polly.util.WrapIterator;
 
 
 /**

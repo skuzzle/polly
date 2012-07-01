@@ -1,19 +1,30 @@
-package polly.util;
+package de.skuzzle.polly.tools.iterators;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 
-public class RangeIterator implements Iterable<Integer> {
+public class Interval implements Iterable<Integer> {
     
-    public static RangeIterator get(int end) {
-        return new RangeIterator(0, end);
+    public static Interval inclusive(int start, int end) {
+        return new Interval(start, end + 1);
     }
     
     
     
-    public static RangeIterator get(int start, int end) {
-        return new RangeIterator(start, end);
+    public static Interval exclusive(int start, int end) {
+        return new Interval(start + 1, end);
+    }
+    
+    
+    public static Interval get(int end) {
+        return new Interval(0, end);
+    }
+    
+    
+    
+    public static Interval get(int start, int end) {
+        return new Interval(start, end);
     }
     
 
@@ -21,7 +32,7 @@ public class RangeIterator implements Iterable<Integer> {
     private int end;
     
     
-    private RangeIterator(int start, int end) {
+    private Interval(int start, int end) {
         this.start = start;
         this.end = end;
     }

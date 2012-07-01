@@ -1,4 +1,4 @@
-package polly.util;
+package de.skuzzle.polly.tools.iterators;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
