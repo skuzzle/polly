@@ -27,6 +27,18 @@
             file="network/dist/network.jar" 
             todir="${lib.dir}"/>
     </target>
+    
+    
+    
+    <!-- 
+        builds the tools project and copies the dist jar to the libs folder
+    -->
+    <target name="tools">
+        <ant dir="polly.tools" target="${mode}" inheritAll="false"/>
+        <copy 
+            file="polly.tools/dist/polly.tools.jar" 
+            todir="${lib.dir}"/>
+    </target>
 	
     
     
@@ -142,7 +154,7 @@
     <!--
         Builds all polly dependencies
     -->
-    <target name="all" depends="sdk,process,installer,
+    <target name="all" depends="tools,sdk,process,installer,
                                 parser,plugins,network,moduleloader,
                                 configuration, polly, porat"/>
 
