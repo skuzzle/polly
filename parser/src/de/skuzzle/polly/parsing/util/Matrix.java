@@ -252,7 +252,7 @@ public class Matrix<K> {
      * its elements and the given field for its algebraic operations. The first dimension
      * of the array will be interpreted as the rows and the second as the columns.</p>
      * 
-     * <p>Please not that the given array is not copied, thus all operations done to
+     * <p>Please note that the given array is not copied, thus all operations done to
      * this matrix are reflected to the array and vice-versa.</p>
      * 
      * @param other The array to create this matrix from.
@@ -404,7 +404,7 @@ public class Matrix<K> {
      * 
      * <p>This setter supports chaining as it returns an instance to 'this'. So it can
      * be easily called multiple times on the same matrix like 
-     * {@code matrix.set(a, b 10).set(c, d,11).set(e, f.12)}</p>
+     * {@code matrix.set(a, b, 10).set(c, d, 11).set(e, f, 12)}</p>
      * 
      * @param i The row index.
      * @param j The column index.
