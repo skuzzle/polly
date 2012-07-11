@@ -26,7 +26,7 @@ import de.skuzzle.polly.sdk.eventlistener.UserSpottedListener;
 public interface IrcManager {
 
     /**
-     * Quits the irc with the given quit message. Note that this method may be overriden
+     * Quits the irc with the given quit message. Note that this message may be overriden
      * by IRC servers. For example euIrc overrides it by "Life is too short" if you
      * quit shortly after joining.
      * 
@@ -93,7 +93,7 @@ public interface IrcManager {
 	/**
 	 * Gets a list of all channels that polly is currently on.
 	 * 
-	 * @return A lit of channel names.
+	 * @return A list of channel names.
 	 */
 	public abstract List<String> getChannels();
 
