@@ -172,6 +172,9 @@ public class ForwardHighlightHandler extends MessageAdapter {
             // ignore self highlighting
             if (e.getUser().getNickName().equals(nick)) {
                 continue;
+            } else if (!e.getSource().isOnChannel(e.getChannel(), nick)) {
+                // ignore if user is not on that channel
+                continue;
             }
             boolean hl = e.getMessage().toLowerCase().contains(nick.toLowerCase());
             
