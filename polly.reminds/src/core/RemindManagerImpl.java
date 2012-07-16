@@ -489,9 +489,6 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         
         final List<RemindEntity> reminds = this.dbWrapper.getRemindsForUser(
             oldUser.getNickName());
-        if (reminds.isEmpty()) {
-            return;
-        }
         
         User newForUser = this.getUser(newUser.getNickName());
         
@@ -500,6 +497,10 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
             RemindEntity sleeping = this.cancelSleep(oldUser.getNickName());
             if (sleeping != null) {
                 this.putToSleep(sleeping, newForUser);
+            }
+            
+            if (reminds.isEmpty()) {
+                return;
             }
             
             this.persistence.atomicWriteOperation(new WriteAction() {
