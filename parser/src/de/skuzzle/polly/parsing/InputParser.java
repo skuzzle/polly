@@ -53,7 +53,8 @@ import de.skuzzle.polly.parsing.tree.literals.UserLiteral;
  * factor          -> postfix (factor_op factor)?
  * postfix         -> autlist (postfix_op)*
  * autolist        -> dotdot (';' dotdot)*
- * dotdot          -> literal ('..' literal ('?' literal)?)?
+ * dotdot          -> unary ('..' unary ('?' unary)?)?
+ * unary           -> unary_op unary | access
  * access          -> literal ['.' literal]
  * literal         -> identifier ( '(' parameters ')' )?
  *                  | boolean_literal
@@ -76,6 +77,7 @@ import de.skuzzle.polly.parsing.tree.literals.UserLiteral;
  * user_literal    -> identifier ':'
  * string_literal  -> '"' any_char '"'
  * date_literal    -> 
+ * unary_op        -> '-' | '!'
  * conjunction_op  -> '||' | '|'
  * disjunction_op  -> '&&' | '&'
  * relational_op   -> '>' | '<' | '<=' | '>=' | '==' | '!='
@@ -455,7 +457,7 @@ public class InputParser extends AbstractParser<InputScanner> {
     
     
     protected Expression parse_dotdot() throws ParseException {
-        Expression expression = this.parse_access();
+        Expression expression = this.parse_unary();
         
         Token la = this.scanner.lookAhead();
         if (this.operators.match(la, PrecedenceLevel.DOTDOT)) {
@@ -464,15 +466,26 @@ public class InputParser extends AbstractParser<InputScanner> {
              // Default step value
             Literal tmp = new NumberLiteral(1.0, this.scanner.spanFrom(la));
             TernaryExpression tmpExpression = new TernaryExpression(expression, 
-                this.parse_access(), tmp, la);
+                this.parse_unary(), tmp, la);
             la = scanner.lookAhead();
             if (la.matches(TokenType.DOLLAR)) {
                 this.scanner.consume();
-                tmpExpression.setThirdOperand(this.parse_access());
+                tmpExpression.setThirdOperand(this.parse_unary());
             }
             expression = tmpExpression;
         }
         return expression;
+    }
+    
+    
+    
+    protected Expression parse_unary() throws ParseException {
+        Token la = this.scanner.lookAhead();
+        if (this.operators.match(la, PrecedenceLevel.UNARY)) {
+            this.scanner.consume();
+            return new UnaryExpression(la, this.parse_unary());
+        }
+        return this.parse_access();
     }
     
     

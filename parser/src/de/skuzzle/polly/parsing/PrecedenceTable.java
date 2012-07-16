@@ -8,7 +8,7 @@ import java.util.TreeSet;
 public class PrecedenceTable {
 
     public enum PrecedenceLevel {
-        RELATION, DISJUNCTION, CONJUNCTION, EXPRESSION, TERM, FACTOR, POSTFIX, DOTDOT;
+        RELATION, DISJUNCTION, CONJUNCTION, EXPRESSION, TERM, FACTOR, POSTFIX, DOTDOT, UNARY;
     }
     
     private Map<PrecedenceLevel, Set<TokenType>> levels;
@@ -60,6 +60,9 @@ public class PrecedenceTable {
         this.add(PrecedenceLevel.POSTFIX, TokenType.QUESTION);
         
         this.add(PrecedenceLevel.DOTDOT, TokenType.DOTDOT);
+        
+        this.add(PrecedenceLevel.UNARY, TokenType.SUB);
+        this.add(PrecedenceLevel.UNARY, TokenType.EXCLAMATION);
     }
     
     
