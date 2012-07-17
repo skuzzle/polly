@@ -51,6 +51,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     private Map<String, RemindFormatter> specialFormats;
     private Map<String, RemindEntity> sleeping;
     private OnActionSet onActionSet;
+    private OnActionSet staleSet;
     private FormatManager formatter;
     private RemindDBWrapper dbWrapper;
     private Logger logger;
@@ -68,6 +69,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         this.specialFormats = new HashMap<String, RemindFormatter>();
         this.sleeping = new HashMap<String, RemindEntity>();
         this.onActionSet = new OnActionSet();
+        this.staleSet = new OnActionSet();
         this.logger = Logger.getLogger(myPolly.getLoggerName(this.getClass()));
         
         // XXX: special case for clum:
@@ -96,6 +98,10 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         if (remind.isOnAction()) {
             logger.trace("Storing remind as on return action.");
             this.onActionSet.put(remind.getForUser());
+        }
+        if (remind.isMessage()) {
+            logger.trace("Storing remind as leave message.");
+            this.staleSet.put(remind.getForUser());
         }
     }
     
@@ -225,6 +231,11 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
             channel = remind.getForUser();
             this.onActionSet.take(remind.getForUser());
         }
+
+        // decrease counter of undelivered reminds for that user
+        if (remind.isMessage()) {
+            this.staleSet.take(remind.getForUser());
+        }
         this.irc.sendMessage(channel, message, this);
 
         
@@ -285,20 +296,6 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
             this.scheduledReminds.put(remind.getId(), task);
         }
         this.remindScheduler.schedule(task, dueDate);
-    }
-    
-    
-    
-    @Override
-    public void scheduleRemindList(List<RemindEntity> reminds) {
-        synchronized (this.scheduledReminds) {
-            for (RemindEntity r : reminds) {
-                logger.trace("Scheduling remind " + r + ". Due date: " + r.getDueDate());
-                RemindTask task = new RemindTask(this, r);
-                this.scheduledReminds.put(r.getId(), task);
-                this.remindScheduler.schedule(task, r.getDueDate());
-            }
-        }
     }
 
     
@@ -380,6 +377,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     }
     
     
+    
     @Override
     public RemindEntity toggleIsMail(User executor, int id)
             throws DatabaseException, CommandException {
@@ -445,6 +443,13 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     @Override
     public boolean isOnActionAvailable(String forUser) {
         return this.onActionSet.available(forUser);
+    }
+    
+    
+    
+    @Override
+    public boolean isStale(String forUser) {
+        return this.staleSet.available(forUser);
     }
     
     
@@ -537,7 +542,21 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     public void rescheduleAll() {
         logger.trace("Scheduling all existing reminds for their duedate");
         List<RemindEntity> allReminds = this.dbWrapper.getAllReminds();
-        this.scheduleRemindList(allReminds);
+        synchronized (this.scheduledReminds) {
+            for (RemindEntity r : allReminds) {
+                logger.trace("Scheduling remind " + r + ". Due date: " + r.getDueDate());
+                RemindTask task = new RemindTask(this, r);
+                this.scheduledReminds.put(r.getId(), task);
+                this.remindScheduler.schedule(task, r.getDueDate());
+                
+                if (r.isMessage()) {
+                    this.staleSet.put(r.getForUser());
+                }
+                if (r.isOnAction()) {
+                    this.onActionSet.put(r.getForUser());
+                }
+            }
+        }
     }
     
     

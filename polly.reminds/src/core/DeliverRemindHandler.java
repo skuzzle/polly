@@ -65,6 +65,11 @@ public class DeliverRemindHandler extends JoinPartAdapter implements MessageList
             throw new IllegalArgumentException("cant be join and signon!");
         }
         
+        // if there are no new reminds, return
+        if (!this.remindManager.isStale(e.getUser().getNickName())) {
+            return;
+        }
+        
         List<RemindEntity> reminds = this.remindManager.getDatabaseWrapper()
                 .getUndeliveredReminds(e.getUser().getNickName());
         
