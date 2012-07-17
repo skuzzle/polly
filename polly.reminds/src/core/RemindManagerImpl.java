@@ -284,7 +284,21 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         synchronized (this.scheduledReminds) {
             this.scheduledReminds.put(remind.getId(), task);
         }
-        this.remindScheduler.schedule(task, remind.getDueDate());
+        this.remindScheduler.schedule(task, dueDate);
+    }
+    
+    
+    
+    @Override
+    public void scheduleRemindList(List<RemindEntity> reminds) {
+        synchronized (this.scheduledReminds) {
+            for (RemindEntity r : reminds) {
+                logger.trace("Scheduling remind " + r + ". Due date: " + r.getDueDate());
+                RemindTask task = new RemindTask(this, r);
+                this.scheduledReminds.put(r.getId(), task);
+                this.remindScheduler.schedule(task, r.getDueDate());
+            }
+        }
     }
 
     
@@ -523,9 +537,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     public void rescheduleAll() {
         logger.trace("Scheduling all existing reminds for their duedate");
         List<RemindEntity> allReminds = this.dbWrapper.getAllReminds();
-        for (RemindEntity remind : allReminds) {
-            this.scheduleRemind(remind);
-        }
+        this.scheduleRemindList(allReminds);
     }
     
     

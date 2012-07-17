@@ -1,6 +1,7 @@
 package core;
 
 import java.util.Date;
+import java.util.List;
 import java.util.TimerTask;
 
 import de.skuzzle.polly.sdk.Disposable;
@@ -90,6 +91,8 @@ public interface RemindManager extends Disposable {
     public abstract void scheduleRemind(RemindEntity remind);
     
     public abstract void scheduleRemind(RemindEntity remind, Date dueDate);
+    
+    public abstract void scheduleRemindList(List<RemindEntity> reminds);
     
     public abstract void cancelScheduledRemind(RemindEntity remind);
     
