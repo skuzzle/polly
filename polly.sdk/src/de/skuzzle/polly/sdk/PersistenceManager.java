@@ -439,4 +439,19 @@ public interface PersistenceManager {
      *          entity otherwise.
      */
     public <T> T atomicRetrieveSingle(Class<T> type, Object key);
+    
+    
+    
+    /**
+     * Retrieves a list of entities using a named query. Its guaranteed that no database 
+     * changes happen while the entities are retrieved.
+     * 
+     * @param type Class-type of the entities to retrieve.
+     * @param query The named query to select the entities.
+     * @param params Parameters for that query.
+     * @return A list of entities matching the query. The list may be empty if no
+     *      entity was found.
+     * @since 0.9.1
+     */
+    public <T> List<T> atomicRetrieveList(Class<T> type, String query, Object...params);
 }
