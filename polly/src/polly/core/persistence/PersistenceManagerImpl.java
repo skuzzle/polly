@@ -409,6 +409,18 @@ public class PersistenceManagerImpl extends AbstractDisposable implements
             this.readUnlock();
         }
     }
+    
+    
+    
+    @Override
+    public <T> List<T> atomicRetrieveList(Class<T> type, String query, Object...params) {
+        try {
+            this.readLock();
+            return this.findList(type, query, params);
+        } finally {
+            this.readUnlock();
+        }
+    }
 
 
 
