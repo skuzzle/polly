@@ -36,6 +36,15 @@ public class OnActionSet {
     
     
     
+    public void moveUser(String oldUser, String newUser) {
+        synchronized (this.actions) {
+            Integer i = this.actions.remove(oldUser);
+            this.actions.put(newUser, i);
+        }
+    }
+    
+    
+    
     public void clear() {
         this.actions.clear();
     }

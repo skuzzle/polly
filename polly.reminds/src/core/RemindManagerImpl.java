@@ -510,6 +510,8 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
             oldUser.getNickName());
         
         User newForUser = this.getUser(newUser.getNickName());
+        this.onActionSet.moveUser(oldUser.getNickName(), newUser.getNickName());
+        this.staleSet.moveUser(oldUser.getNickName(), newUser.getNickName());
         
         try {
             // HACK: this resets the sleep time
