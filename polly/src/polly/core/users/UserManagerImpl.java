@@ -74,6 +74,8 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     private User admin;
     private boolean registeredChanged;
     private List<User> registeredUsers;
+    private boolean attributesStale;
+    private List<Attribute> allAttributes;
     
     
     
@@ -380,12 +382,16 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     
     public List<Attribute> getAllAttributes() {
-        try {
-            this.persistence.readLock();
-            return this.persistence.findList(Attribute.class, Attribute.ALL_ATTRIBUTES);
-        } finally {
-            this.persistence.readUnlock();
+        if (this.attributesStale || this.allAttributes == null) {
+            try {
+                this.persistence.readLock();
+                this.allAttributes = 
+                    this.persistence.findList(Attribute.class, Attribute.ALL_ATTRIBUTES);
+            } finally {
+                this.persistence.readUnlock();
+            }
         }
+        return this.allAttributes;
     }
     
     
@@ -417,6 +423,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
                 u.getAttributes().put(name, defaultValue);
             }
             this.persistence.commitTransaction();
+            this.attributesStale = true;
             logger.info("Attribute " + att + " added.");
         } finally {
             this.persistence.writeUnlock();
