@@ -509,7 +509,6 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     @Override
     public User createUser(String name, String password, int userLevel) {
         polly.core.users.User result = new polly.core.users.User(name, password, userLevel);
-        logger.trace("Adding all attributes to new user.");
         for (Attribute att : this.getAllAttributes()) {
             result.getAttributes().put(att.getName(), att.getDefaultValue());
         }
