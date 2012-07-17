@@ -72,7 +72,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     private EventProvider eventProvider;
     private Namespace namespace;
     private User admin;
-    private boolean registeredChanged;
+    private boolean registeredStale;
     private List<User> registeredUsers;
     private boolean attributesStale;
     private List<Attribute> allAttributes;
@@ -199,7 +199,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
             this.persistence.startTransaction();
             this.persistence.persist(user);
             this.persistence.commitTransaction();
-            this.registeredChanged = true;
+            this.registeredStale = true;
             logger.info("Added user " + user);
         } finally {
             this.persistence.writeUnlock();
@@ -224,7 +224,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
             this.persistence.startTransaction();
             this.persistence.remove(user);
             this.persistence.commitTransaction();
-            this.registeredChanged = true;
+            this.registeredStale = true;
             logger.info("Deleted user " + user);
         } finally {
             this.persistence.writeUnlock();
@@ -350,14 +350,9 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     @Override
     public List<User> getRegisteredUsers() {
-        if (this.registeredChanged || this.registeredUsers == null) {
-            try {
-                this.persistence.readLock();
-                this.registeredUsers = 
-                    this.persistence.findList(User.class, polly.core.users.User.ALL_USERS);
-            } finally {
-                this.persistence.readUnlock();
-            }
+        if (this.registeredStale || this.registeredUsers == null) {
+            this.registeredUsers = this.persistence.atomicRetrieveList(User.class, 
+                polly.core.users.User.ALL_USERS);
         }
         return this.registeredUsers;
     }
@@ -383,13 +378,8 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     public List<Attribute> getAllAttributes() {
         if (this.attributesStale || this.allAttributes == null) {
-            try {
-                this.persistence.readLock();
-                this.allAttributes = 
-                    this.persistence.findList(Attribute.class, Attribute.ALL_ATTRIBUTES);
-            } finally {
-                this.persistence.readUnlock();
-            }
+            this.allAttributes = this.persistence.atomicRetrieveList(Attribute.class, 
+                Attribute.ALL_ATTRIBUTES);
         }
         return this.allAttributes;
     }
