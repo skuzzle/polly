@@ -41,6 +41,9 @@ public class TrainEntityV2 {
          * [4] duration
          */
         String[] parts = trainString.split("\\s+", 5);
+        if (parts.length != 5) {
+            throw new IllegalArgumentException("ungültiges TrainEntity");
+        }
         TrainType type = TrainType.parse(parts[0]);
         int costs = Integer.parseInt(parts[2]);
         Date now = new Date();

@@ -4,7 +4,7 @@ import java.util.NoSuchElementException;
 
 
 public enum TrainType {
-    INTELLIGENCE, BODY, MODULE, CREW, TECH, COMMANDO;
+    INTELLIGENCE, BODY, MODULE, CREW, TECH, COMMANDO, PAYMENT;
     
     
     public static TrainType parse(String s) {
@@ -20,6 +20,8 @@ public enum TrainType {
             return CREW;
         } else if (s.contains("Techlimit")) {
             return TECH;
+        } else if (s.contains("Anzahlung")) {
+            return PAYMENT;
         }
         throw new NoSuchElementException("unknown train type: " + s);
     }
@@ -36,6 +38,7 @@ public enum TrainType {
         case MODULE: return "Modullimit Training";
         case CREW: return "Crewlimit Training";
         case TECH: return "Techlimit Training";
+        case PAYMENT: return "Anzahlung";
         }
     }
 }
