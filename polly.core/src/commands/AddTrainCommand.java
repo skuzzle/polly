@@ -1,23 +1,22 @@
 package commands;
 
-import core.TrainBill;
-import core.TrainManager;
+import core.TrainBillV2;
+import core.TrainManagerV2;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
-import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
-import entities.TrainEntity;
+import entities.TrainEntityV2;
 
 
 public class AddTrainCommand extends Command {
     
-    private TrainManager trainManager;
+    private TrainManagerV2 trainManager;
 
-    public AddTrainCommand(MyPolly polly, TrainManager trainManager) 
+    public AddTrainCommand(MyPolly polly, TrainManagerV2 trainManager) 
             throws DuplicatedSignatureException {
         
         super(polly, "train");
@@ -35,7 +34,6 @@ public class AddTrainCommand extends Command {
             new Parameter("Benutzer", Types.USER));
         this.setHelpText("Befehl zum Verwalten von Capi Trainings.");
         this.setRegisteredOnly();
-        this.setUserLevel(UserManager.ADMIN);
         this.trainManager = trainManager;
     }
 
@@ -49,21 +47,26 @@ public class AddTrainCommand extends Command {
         if (this.match(signature, 0)) {
             String userName = signature.getStringValue(0);
             String train = signature.getStringValue(1);
-            this.addTrain(channel, userName, train, mod);
+            
+            this.addTrain(executer, channel, userName, train, mod);
         } else if (this.match(signature, 2)) {
             String userName = signature.getStringValue(0);
             String train = signature.getStringValue(1);
             mod = signature.getNumberValue(2);
-            this.addTrain(channel, userName, train, mod);
+            
+            this.addTrain(executer, channel, userName, train, mod);
         } else if (this.match(signature, 1)) {
             String userName = signature.getStringValue(0);
             boolean showAll = signature.getBooleanValue(1);
+            int trainerId = this.trainManager.getTrainerId(executer.getCurrentNickName());
             
-            TrainBill bill = this.trainManager.getBill(userName);
+            TrainBillV2 bill = this.trainManager.getBill(trainerId, userName);
             this.outputTrain(showAll, bill, channel);
         } else if (this.match(signature, 3)) {
             String userName = signature.getStringValue(0);
-            TrainBill bill = this.trainManager.getBill(userName);
+            int trainerId = this.trainManager.getTrainerId(executer.getCurrentNickName());
+            
+            TrainBillV2 bill = this.trainManager.getBill(trainerId, userName);
 
             this.outputTrain(false, bill, channel);
         }
@@ -72,9 +75,9 @@ public class AddTrainCommand extends Command {
     
     
     
-    private void outputTrain(boolean detailed, TrainBill bill, String channel) {
+    private void outputTrain(boolean detailed, TrainBillV2 bill, String channel) {
         if (detailed) {
-            for (TrainEntity train : bill.getTrains()) {
+            for (TrainEntityV2 train : bill.getTrains()) {
                 this.reply(channel, train.format(this.getMyPolly().formatting()));
             }
             this.reply(channel, "=========================");
@@ -84,10 +87,19 @@ public class AddTrainCommand extends Command {
     }
     
     
-    private void addTrain(String channel, String userName, String train, double mod) {
+    
+    private void addTrain(User executor, String channel, String forUser, 
+        String train, double mod) {
+        
+        int trainerId = this.trainManager.getTrainerId(executor.getCurrentNickName());
         try {
-            TrainEntity e = TrainEntity.forString(userName, train, mod);
-            this.trainManager.addTrain(e);
+            TrainEntityV2 te = TrainEntityV2.parseString(trainerId, forUser, mod, train);
+            this.trainManager.addTrain(te);
+            
+            // HACK: this requires the Remind Plugin to be installed and running!
+            this.getMyPolly().commands().executeString(
+                ":remind " + te.getDuration() / 1000 + "s", executor.getCurrentNickName(), 
+                true, executor, this.getMyPolly().irc());
             this.reply(channel, "Posten gespeichert.");
         } catch (Exception e) {
             this.reply(channel, "Fehler beim Speichern.");

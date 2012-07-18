@@ -10,6 +10,8 @@ public interface User extends Comparable<User> {
      */
     public final static long IDLE_AFTER = 60 * 1000 * 30; // 30 min
 
+    public abstract int getId();
+    
     public abstract int getUserLevel();
     
     public abstract void setUserLevel(int level);

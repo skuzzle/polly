@@ -53,17 +53,20 @@ import commands.WikiCommand;
 import core.GreetDeliverer;
 import core.HighlightReplyHandler;
 import core.JoinTimeCollector;
-import core.TrainManager;
+import core.TrainManagerV2;
 
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
 import de.skuzzle.polly.sdk.constraints.Constraints;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
+import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
 import entities.TopicEntity;
 import entities.TrainEntity;
+import entities.TrainEntityConverter;
+import entities.TrainEntityV2;
 
 
 /**
@@ -76,7 +79,7 @@ public class MyPlugin extends PollyPlugin {
     public final static String GREETING = "GREETING";
     public final static String VENAD = "VENAD";
     
-    private TrainManager trainManager;
+    private TrainManagerV2 trainManager;
     private GreetDeliverer greetDeliverer;
     private HighlightReplyHandler highlightHandler;
     private JoinTimeCollector joinTimeCollector;
@@ -89,9 +92,10 @@ public class MyPlugin extends PollyPlugin {
 		this.addCommand(new AnyficationCommand(myPolly));
 		
 		//this.topicManager = new TopicManager(myPolly);
-		this.trainManager = new TrainManager(myPolly);
+		this.trainManager = new TrainManagerV2(myPolly);
         this.getMyPolly().persistence().registerEntity(TopicEntity.class);
         this.getMyPolly().persistence().registerEntity(TrainEntity.class);
+        this.getMyPolly().persistence().registerEntity(TrainEntityV2.class);
         
         this.greetDeliverer = new GreetDeliverer(myPolly);
         this.getMyPolly().users().addUserListener(this.greetDeliverer);
@@ -173,6 +177,14 @@ public class MyPlugin extends PollyPlugin {
 	    c.set(Calendar.DAY_OF_MONTH, 25);
 	    TopicEntity test = new TopicEntity("C0mb4t", "#debugging", "Noch %ld% Tage bis ka", "Nu isses soweit", c.getTime());
 	    this.topicManager.addTopicTask(test);*/
+	    
+	    TrainEntityConverter tec = new TrainEntityConverter(
+	        this.getMyPolly().persistence());
+	    try {
+            tec.convertAllTrains();
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        }
 	    
 	    try {
 	        this.getMyPolly().users().addAttribute(VENAD, "<unbekannt>");
