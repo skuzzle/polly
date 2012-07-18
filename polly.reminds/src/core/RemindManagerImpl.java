@@ -50,8 +50,8 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     private Map<Integer, RemindTask> scheduledReminds;
     private Map<String, RemindFormatter> specialFormats;
     private Map<String, RemindEntity> sleeping;
-    private OnActionSet onActionSet;
-    private OnActionSet staleSet;
+    private ActionCounter actionCounter;
+    private ActionCounter messageCounter;
     private FormatManager formatter;
     private RemindDBWrapper dbWrapper;
     private Logger logger;
@@ -68,8 +68,8 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         this.scheduledReminds = new HashMap<Integer, RemindManager.RemindTask>();
         this.specialFormats = new HashMap<String, RemindFormatter>();
         this.sleeping = new HashMap<String, RemindEntity>();
-        this.onActionSet = new OnActionSet();
-        this.staleSet = new OnActionSet();
+        this.actionCounter = new ActionCounter();
+        this.messageCounter = new ActionCounter();
         this.logger = Logger.getLogger(myPolly.getLoggerName(this.getClass()));
         
         // XXX: special case for clum:
@@ -97,11 +97,11 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         
         if (remind.isOnAction()) {
             logger.trace("Storing remind as on return action.");
-            this.onActionSet.put(remind.getForUser());
+            this.actionCounter.put(remind.getForUser());
         }
         if (remind.isMessage()) {
             logger.trace("Storing remind as leave message.");
-            this.staleSet.put(remind.getForUser());
+            this.messageCounter.put(remind.getForUser());
         }
     }
     
@@ -229,12 +229,12 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         if (remind.isOnAction()) {
             logger.trace("Remind was onAction. Removing it from onActionSet");
             channel = remind.getForUser();
-            this.onActionSet.take(remind.getForUser());
+            this.actionCounter.take(remind.getForUser());
         }
 
         // decrease counter of undelivered reminds for that user
         if (remind.isMessage()) {
-            this.staleSet.take(remind.getForUser());
+            this.messageCounter.take(remind.getForUser());
         }
         this.irc.sendMessage(channel, message, this);
 
@@ -442,14 +442,14 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     
     @Override
     public boolean isOnActionAvailable(String forUser) {
-        return this.onActionSet.available(forUser);
+        return this.actionCounter.available(forUser);
     }
     
     
     
     @Override
     public boolean isStale(String forUser) {
-        return this.staleSet.available(forUser);
+        return this.messageCounter.available(forUser);
     }
     
     
@@ -510,8 +510,8 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
             oldUser.getNickName());
         
         User newForUser = this.getUser(newUser.getNickName());
-        this.onActionSet.moveUser(oldUser.getNickName(), newUser.getNickName());
-        this.staleSet.moveUser(oldUser.getNickName(), newUser.getNickName());
+        this.actionCounter.moveUser(oldUser.getNickName(), newUser.getNickName());
+        this.messageCounter.moveUser(oldUser.getNickName(), newUser.getNickName());
         
         try {
             // HACK: this resets the sleep time
@@ -552,10 +552,10 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
                 this.remindScheduler.schedule(task, r.getDueDate());
                 
                 if (r.isMessage()) {
-                    this.staleSet.put(r.getForUser());
+                    this.messageCounter.put(r.getForUser());
                 }
                 if (r.isOnAction()) {
-                    this.onActionSet.put(r.getForUser());
+                    this.actionCounter.put(r.getForUser());
                 }
             }
         }
@@ -567,7 +567,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     protected void actualDispose() throws DisposingException {
         this.remindScheduler.cancel();
         this.sleeping.clear();
-        this.onActionSet.clear();
+        this.actionCounter.clear();
         this.scheduledReminds.clear();
         this.specialFormats.clear();
     }

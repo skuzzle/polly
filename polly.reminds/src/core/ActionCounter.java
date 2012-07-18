@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class OnActionSet {
+public class ActionCounter {
 
     private Map<String, Integer> actions;
     
     
-    public OnActionSet() {
+    public ActionCounter() {
         this.actions = new HashMap<String, Integer>();
     }
     
