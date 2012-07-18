@@ -3,10 +3,12 @@ package polly.core.users;
 
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
+import de.skuzzle.polly.sdk.roles.RoleManager;
 import polly.configuration.PollyConfiguration;
 import polly.core.ModuleStates;
 import polly.core.ShutdownManagerImpl;
 import polly.core.persistence.PersistenceManagerImpl;
+import polly.core.roles.RoleManagerImpl;
 import polly.events.EventProvider;
 import polly.moduleloader.AbstractModule;
 import polly.moduleloader.ModuleLoader;
@@ -23,6 +25,7 @@ import polly.moduleloader.annotations.Provide;;
         @Require(component = ShutdownManagerImpl.class),
         @Require(component = EventProvider.class),
         @Require(component = PersistenceManagerImpl.class),
+        @Require(component = RoleManagerImpl.class),
         @Require(state = ModuleStates.PERSISTENCE_READY)
     },
     provides = {
@@ -36,7 +39,7 @@ public class UserModule extends AbstractModule {
     private PollyConfiguration config;
     private ShutdownManagerImpl shutdownManager;
     private UserManagerImpl userManager;
-
+    private RoleManagerImpl roleManager;
 
 
     public UserModule(ModuleLoader loader) {
@@ -51,6 +54,7 @@ public class UserModule extends AbstractModule {
         this.eventProvider = this.requireNow(EventProvider.class);
         this.persistenceManager = this.requireNow(PersistenceManagerImpl.class);
         this.shutdownManager = this.requireNow(ShutdownManagerImpl.class);
+        this.roleManager = this.requireNow(RoleManagerImpl.class);
     }
 
 
@@ -71,11 +75,12 @@ public class UserModule extends AbstractModule {
         try {
             logger.info("Creating default user with name '"
                 + this.config.getAdminUserName() + "'.");
-            admin = new User(this.config.getAdminUserName(), "",
+            admin = this.userManager.createUser(this.config.getAdminUserName(), "",
                 this.config.getAdminUserLevel());
 
             admin.setHashedPassword(this.config.getAdminPasswordHash());
             this.userManager.addUser(admin);
+            this.roleManager.assignRole(admin, RoleManager.ADMIN_ROLE);
         } catch (UserExistsException e) {
             admin = e.getUser();
             logger.debug("Default user already existed.");

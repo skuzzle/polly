@@ -3,6 +3,7 @@ package de.skuzzle.polly.sdk.roles;
 import java.util.Set;
 
 import de.skuzzle.polly.sdk.FormalSignature;
+import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.exceptions.RoleException;
 import de.skuzzle.polly.sdk.model.User;
@@ -31,9 +32,12 @@ public interface RoleManager {
      * Constant for a permission name for which {@link #hasPermission(User, String)}
      * will always return <code>true</code>
      */
-    public final static String NONE_PERMISSIONS = "polly.permissions.none";
+    public final static String NONE_PERMISSIONS = "polly.permissions.NONE";
     
-    public final static String SIGNED_ON_PERMISSION = "polly.permissions.signedon";
+    /**
+     * Constant for a permission that all registered users own.
+     */
+    public final static String REGISTERED_PERMISSION = "polly.permissions.REGISTERED";
     
     /**
      * Constant for the admin role name. This role has permissions for accessing every 
@@ -56,23 +60,25 @@ public interface RoleManager {
     
     public abstract Set<String> getRoles(User user);
     
-    public abstract void createRole(String newRoleName);
+    public abstract void createRole(String newRoleName) throws DatabaseException, RoleException;
     
-    public abstract void createRole(String baseRoleName, String newRoleName);
+    public abstract void createRole(String baseRoleName, String newRoleName) throws RoleException, DatabaseException;
     
-    public abstract void registerPermission(String permission) throws RoleException;
+    public abstract void registerPermission(String permission) throws DatabaseException;
     
-    public abstract void registerPermissions(Set<String> permissions) throws RoleException;
+    public abstract void registerPermissions(Set<String> permissions) throws DatabaseException;
 
-    public abstract void addPermission(String roleName, String permission) throws RoleException;
+    public abstract void addPermission(String roleName, String permission) throws DatabaseException, RoleException;
     
-    public abstract void removePermission(String roleName, String permission) throws RoleException;
+    public abstract void removePermission(String roleName, String permission) throws RoleException, DatabaseException;
     
-    public abstract void assignRole(User user, String roleName) throws RoleException;
+    public abstract void assignRole(User user, String roleName) throws RoleException, DatabaseException;
     
-    public abstract void removeRole(User user, String roleName) throws RoleException;
+    public abstract void removeRole(User user, String roleName) throws RoleException, DatabaseException;
     
     public abstract boolean hasPermission(User user, String permission);
+    
+    public abstract boolean hasPermission(User user, Set<String> permissions);
     
     public abstract Set<String> getPermissions(String roleName);
 }

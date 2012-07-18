@@ -2,8 +2,10 @@ package de.skuzzle.polly.sdk;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.roles.SecurityObject;
@@ -23,12 +25,12 @@ public class FormalSignature extends Signature implements SecurityObject {
     
 	private String help;
 	private List<Parameter> formalParameters;
-	private String permissionName;
+	private Set<String> permissions;
 
 	
 	
 	/**
-     * Creates a new FormalSignature with no permission.
+     * Creates a new FormalSignature with no required permission.
      * 
      * @param name The name of the command which this signature is for.
      * @param id The formal id of this signature.
@@ -42,7 +44,7 @@ public class FormalSignature extends Signature implements SecurityObject {
 	
 	
     /**
-     * Creates a new FormalSignature which can only be executed by a user which has the
+     * Creates a new FormalSignature which can only be executed by a user which has a
      * given permission.
      * 
      * @param name The name of the command which this signature is for.
@@ -56,7 +58,8 @@ public class FormalSignature extends Signature implements SecurityObject {
         super(name, id, paramToType(parameters));
         this.formalParameters = Arrays.asList(parameters);
         this.help = help;
-        this.permissionName = permissionName;
+        this.permissions = new HashSet<String>();
+        this.permissions.add(permissionName);
     }
     
 	
@@ -72,8 +75,8 @@ public class FormalSignature extends Signature implements SecurityObject {
 	
 	
 	@Override
-	public String getRequiredPermission() {
-	    return this.permissionName;
+	public Set<String> getRequiredPermission() {
+	    return this.permissions;
 	}
 	
 	

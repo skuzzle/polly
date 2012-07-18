@@ -5,6 +5,8 @@ import polly.Polly;
 import polly.configuration.PollyConfiguration;
 import polly.core.ShutdownManagerImpl;
 import polly.core.plugins.PluginManagerImpl;
+import polly.core.roles.Permission;
+import polly.core.roles.Role;
 import polly.core.users.Attribute;
 import polly.core.users.User;
 import polly.moduleloader.AbstractModule;
@@ -71,6 +73,8 @@ public class PersistenceModule extends AbstractModule {
         
         this.persistenceManager.registerEntity(User.class);
         this.persistenceManager.registerEntity(Attribute.class);
+        this.persistenceManager.registerEntity(Permission.class);
+        this.persistenceManager.registerEntity(Role.class);
                
         this.shutdownManager.addDisposable(this.persistenceManager);
     }

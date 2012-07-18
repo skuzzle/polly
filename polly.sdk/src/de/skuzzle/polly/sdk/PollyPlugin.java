@@ -3,11 +3,11 @@ package de.skuzzle.polly.sdk;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
 import de.skuzzle.polly.sdk.exceptions.PluginException;
-import de.skuzzle.polly.sdk.exceptions.RoleException;
 
 
 
@@ -86,8 +86,19 @@ public abstract class PollyPlugin extends AbstractDisposable {
 	/**
 	 * This method is called when all plugins have been loaded. From this point on, you
 	 * may use all {@link MyPolly} features.
+	 * 
+	 * By default, this method registers all command permissions. If you override it, you
+	 * must call super.onLoad() in order to make your command work properly!
+	 * 
+	 * @throws DatabaseException If any permissions could not be registered.
+	 * @throws PluginException If this plugin fails to initialize.
 	 */
-	public void onLoad() {}
+	public void onLoad() throws DatabaseException, PluginException {
+	    for (Command command : this.commands) {
+            this.getMyPolly().roles().registerPermissions(
+                command.getContainedPermissions());
+	    }
+	}
 	
 	
 	/**
@@ -123,13 +134,11 @@ public abstract class PollyPlugin extends AbstractDisposable {
 	 * @param command The command to add.
 	 * @throws DuplicatedSignatureException If the command you want to add already 
 	 *     exists.
-	 * @throws RoleException If the permissions for that command could not be registered.
 	 */
 	public void addCommand(Command command) 
-	            throws DuplicatedSignatureException, RoleException {
+	            throws DuplicatedSignatureException {
 	    this.myPolly.commands().registerCommand(command);
 	    this.commands.add(command);
-	    this.myPolly.roles().registerPermissions(command.getContainedPermissions());
 	}
 	
 	

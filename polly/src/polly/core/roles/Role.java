@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.Transient;
 
 
 
@@ -30,6 +31,10 @@ public class Role {
     
     private Set<Permission> permissions;
     
+    @Transient
+    private Set<String> permissionNames;
+    
+    private boolean stale;
     
     
     public Role() {}
@@ -65,6 +70,26 @@ public class Role {
     
     public Set<Permission> getPermissions() {
         return this.permissions;
+    }
+    
+    
+    
+    
+    public Set<String> getPermissionNames() {
+        if (this.permissionNames == null || this.stale) {
+            this.permissionNames = new HashSet<String>(this.permissions.size());
+            for (Permission perm : this.permissions) {
+                this.permissionNames.add(perm.getName());
+            }
+            this.stale = false;
+        }
+        return this.permissionNames;
+    }
+    
+    
+    
+    public void setStale(boolean stale) {
+        this.stale = stale;
     }
 
 

@@ -383,18 +383,21 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 		
         // get matching formal signature to the actual signature and check the 
         // permissions.
+        if (!this.getMyPolly().roles().hasPermission(executer, 
+                this.getRequiredPermission())) {
+            
+            throw new InsufficientRightsException(this);
+        }
         FormalSignature formal = this.signatures.get(signature.getId());
         if (!this.getMyPolly().roles().hasPermission(executer, 
                 formal.getRequiredPermission())) {
+            
             throw new InsufficientRightsException(formal);
         }
-        if (!this.getMyPolly().roles().hasPermission(executer, 
-                    this.getRequiredPermission())) {
-            throw new InsufficientRightsException(this);
-        }
+
 		
 		
-		
+		// execute the command
 		try {
     		boolean runOthers = this.executeOnBoth(executer, channel, signature);
     		
@@ -571,7 +574,7 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
             throw new DuplicatedSignatureException(fs.toString());
         }
         this.signatures.add(fs);
-        this.containedPermissions.add(fs.getRequiredPermission());
+        this.containedPermissions.addAll(fs.getRequiredPermission());
         
         return fs;
     }
@@ -586,11 +589,11 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
     
     
     @Override
-    public String getRequiredPermission() {
+    public final Set<String> getRequiredPermission() {
         if (this.registeredOnly) {
-            return RoleManager.SIGNED_ON_PERMISSION;
+            return Collections.singleton(RoleManager.REGISTERED_PERMISSION);
         }
-        return RoleManager.NONE_PERMISSIONS;
+        return Collections.singleton(RoleManager.NONE_PERMISSIONS);
     }
 	
 	

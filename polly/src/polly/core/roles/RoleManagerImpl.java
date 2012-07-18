@@ -1,9 +1,10 @@
 package polly.core.roles;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import de.skuzzle.polly.sdk.PersistenceManager;
-import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.WriteAction;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.RoleException;
@@ -13,10 +14,11 @@ import de.skuzzle.polly.sdk.roles.RoleManager;
 
 public class RoleManagerImpl implements RoleManager {
     
+    private final static Object SYNC = new Object();
+    
     private PersistenceManager persistence;
-    private UserManager userManager;
     private boolean rolesStale;
-    private Set<Role> allRoles;
+    private Set<String> allRoles;
     
     
     
@@ -28,51 +30,140 @@ public class RoleManagerImpl implements RoleManager {
 
     @Override
     public boolean roleExists(String roleName) {
-        return this.persistence.findSingle(Role.class, 
-            Role.ROLE_BY_NAME, roleName) != null;
-    }
-    
-    
-
-    @Override
-    public boolean permissionExists(String permissionName) {
-        return this.persistence.findSingle(Permission.class, 
-            Permission.PERMISSION_BY_NAME, permissionName) != null;
-    }
-
-    
-    
-    @Override
-    public Set<String> getRoles() {
-        if (this.rolesStale || this.allRoles == null) {
-            //this.allRoles = this.persistence.a
+        try {
+            this.persistence.readLock();
+            return this.persistence.findSingle(Role.class, 
+                Role.ROLE_BY_NAME, roleName) != null;
+        } finally {
+            this.persistence.readUnlock();
         }
     }
     
     
 
     @Override
-    public Set<String> getRoles(User user) {
-
-    }
-    
-    
-
-    @Override
-    public void createRole(String newRoleName) {
-    }
-    
-    
-
-    @Override
-    public void createRole(String baseRoleName, String newRoleName) {
-    }
-    
-    
-
-    @Override
-    public void registerPermission(final String permission) throws RoleException {
+    public boolean permissionExists(String permissionName) {
         try {
+            this.persistence.readLock();
+            return this.persistence.findSingle(Permission.class, 
+                Permission.PERMISSION_BY_NAME, permissionName) != null;
+        } finally {
+            this.persistence.readUnlock();
+        }
+    }
+
+    
+    
+    @Override
+    public Set<String> getRoles() {
+        synchronized(SYNC) {
+            if (this.rolesStale || this.allRoles == null) {
+                List<Role> roles = this.persistence.atomicRetrieveList(
+                    Role.class, Role.ALL_ROLES);
+                this.allRoles = new HashSet<String>(roles.size());
+                for (Role role : roles) {
+                    this.allRoles.add(role.getName());
+                }
+                this.rolesStale = false;
+            }
+        }
+        return this.allRoles;
+    }
+    
+    
+
+    @Override
+    public Set<String> getRoles(User user) {
+        Set<String> result = new HashSet<String>();
+        for (Role role : ((polly.core.users.User)user).getRoles()) {
+            result.add(role.getName());
+        }
+        return result;
+    }
+    
+    
+    
+    @Override
+    public Set<String> getPermissions(String roleName) {
+        try {
+            this.persistence.readLock();
+            Role role = this.persistence.findSingle(
+                    Role.class, Role.ROLE_BY_NAME, roleName);
+            
+            return role.getPermissionNames();
+        } finally {
+            this.persistence.readUnlock();
+        }
+    }
+    
+    
+
+    @Override
+    public void createRole(final String newRoleName) 
+                throws DatabaseException, RoleException {
+        synchronized(SYNC) {
+            try {
+                this.persistence.writeLock();
+                    final Role role = 
+                        this.persistence.findSingle(
+                            Role.class, Role.ROLE_BY_NAME, newRoleName);
+                    
+                    if (role != null) {
+                        throw new RoleException(
+                            "Role already exists: '" + newRoleName + "'");
+                    }
+                    
+                    this.persistence.startTransaction();
+                    this.persistence.persist(new Role(newRoleName));
+                    this.persistence.commitTransaction();
+                    this.rolesStale = true;
+            } finally {
+                this.persistence.writeUnlock();
+            }
+        }
+    }
+    
+    
+
+    @Override
+    public void createRole(String baseRoleName, String newRoleName) 
+                throws RoleException, DatabaseException {
+        synchronized (SYNC) {
+            try {
+                this.persistence.writeLock();
+                final Role role = 
+                    this.persistence.findSingle
+                    (Role.class, Role.ROLE_BY_NAME, newRoleName);
+                
+                if (role != null) {
+                    throw new RoleException(
+                        "Role already exists: '" + newRoleName + "'");
+                }
+                
+                Role baseRole = 
+                    this.persistence.findSingle(
+                        Role.class, Role.ROLE_BY_NAME, baseRoleName);
+                
+                if (baseRole == null) {
+                    throw new RoleException("Unknown base role: '" + baseRoleName + "'");
+                }
+                
+                this.persistence.startTransaction();
+                this.persistence.persist(new Role(newRoleName, 
+                        new HashSet<Permission>(baseRole.getPermissions())));
+                this.persistence.commitTransaction();
+                this.rolesStale = true;
+            } finally {
+                this.persistence.writeUnlock();
+            }
+        }
+    }
+    
+    
+
+    @Override
+    public void registerPermission(final String permission) throws DatabaseException {
+        synchronized(SYNC) {
             this.persistence.atomicWriteOperation(new WriteAction() {
                 
                 @Override
@@ -82,18 +173,16 @@ public class RoleManagerImpl implements RoleManager {
                     }
                 }
             });
-        } catch (DatabaseException e) {
-            throw new RoleException(e);
         }
     }
 
     
     
     @Override
-    public void registerPermissions(final Set<String> permissions) throws RoleException {
-        try {
+    public void registerPermissions(final Set<String> permissions) 
+                throws DatabaseException {
+        synchronized(SYNC) {
             this.persistence.atomicWriteOperation(new WriteAction() {
-                
                 @Override
                 public void performUpdate(PersistenceManager persistence) {
                     for (String perm : permissions) {
@@ -103,8 +192,6 @@ public class RoleManagerImpl implements RoleManager {
                     }
                 }
             });
-        } catch (DatabaseException e) {
-            throw new RoleException(e);
         }
     }
     
@@ -112,31 +199,33 @@ public class RoleManagerImpl implements RoleManager {
 
     @Override
     public void addPermission(final String roleName, final String permission) 
-                throws RoleException {
-        final Role role = 
-            this.persistence.findSingle(Role.class, Role.ROLE_BY_NAME, roleName);
-    
-        if (role == null) {
-            throw new RoleException("Unknown role: " + roleName);
-        }
+                throws DatabaseException, RoleException {
         
-        final Permission perm = this.persistence.findSingle(Permission.class, 
-                Permission.PERMISSION_BY_NAME, permission);
+        synchronized(SYNC) {
+            final Role role = 
+                this.persistence.findSingle(Role.class, Role.ROLE_BY_NAME, roleName);
         
-        if (perm == null) {
-            throw new RoleException("Unknown permission: " + roleName);
-        }
-        
-        try {
+            if (role == null) {
+                throw new RoleException("Unknown role: " + roleName);
+            }
+            
+            final Permission perm = this.persistence.findSingle(Permission.class, 
+                    Permission.PERMISSION_BY_NAME, permission);
+            
+            if (perm == null) {
+                throw new RoleException("Unknown permission: " + roleName);
+            }
+            
+            // TODO: add permission to admin role
+            
             this.persistence.atomicWriteOperation(new WriteAction() {
                 
                 @Override
                 public void performUpdate(PersistenceManager persistence) {
                     role.getPermissions().add(perm);
+                    role.setStale(true); // this updates the permission name string set
                 }
             });
-        } catch (DatabaseException e) {
-            throw new RoleException(e);
         }
     }
     
@@ -144,24 +233,25 @@ public class RoleManagerImpl implements RoleManager {
 
     @Override
     public synchronized void removePermission(final String roleName, 
-            final String permission) throws RoleException {
-        final Role role = 
-                this.persistence.findSingle(Role.class, Role.ROLE_BY_NAME, roleName);
-        
-        if (role == null) {
-            throw new RoleException("Unknown role: " + roleName);
-        }
-        
-        try {
+            final String permission) throws RoleException, DatabaseException {
+        synchronized(SYNC) {
+            final Role role = 
+                    this.persistence.findSingle(Role.class, Role.ROLE_BY_NAME, roleName);
+            
+            if (role == null) {
+                throw new RoleException("Unknown role: " + roleName);
+            }
+            
+            // TODO: remove permission from admin role
+            
             this.persistence.atomicWriteOperation(new WriteAction() {
                 
                 @Override
                 public void performUpdate(PersistenceManager persistence) {
                     role.getPermissions().remove(new Permission(permission));
+                    role.setStale(true);
                 }
             });
-        } catch (DatabaseException e) {
-            throw new RoleException(e);
         }
     }
     
@@ -169,24 +259,21 @@ public class RoleManagerImpl implements RoleManager {
 
     @Override
     public synchronized void assignRole(final User user, final String roleName) 
-            throws RoleException {
-        final Role role = 
-            this.persistence.findSingle(Role.class, Role.ROLE_BY_NAME, roleName);
-    
-        if (role == null) {
-            throw new RoleException("Unknown role: " + roleName);
-        }
+            throws RoleException, DatabaseException {
+        synchronized (SYNC) {
+            final Role role = 
+                this.persistence.findSingle(Role.class, Role.ROLE_BY_NAME, roleName);
         
-        try {
+            if (role == null) {
+                throw new RoleException("Unknown role: " + roleName);
+            }
+            
             this.persistence.atomicWriteOperation(new WriteAction() {
-                
                 @Override
                 public void performUpdate(PersistenceManager persistence) {
                     ((polly.core.users.User)user).getRoles().add(role);
                 }
             });
-        } catch (DatabaseException e) {
-            throw new RoleException(e);
         }
     }
     
@@ -194,17 +281,15 @@ public class RoleManagerImpl implements RoleManager {
 
     @Override
     public synchronized void removeRole(final User user, final String roleName) 
-            throws RoleException {
-        try {
+            throws RoleException, DatabaseException {
+        
+        synchronized (SYNC) {
             this.persistence.atomicWriteOperation(new WriteAction() {
-                
                 @Override
                 public void performUpdate(PersistenceManager persistence) {
                     ((polly.core.users.User)user).getRoles().remove(new Role(roleName));
                 }
             });
-        } catch (DatabaseException e) {
-            throw new RoleException(e);
         }
     }
     
@@ -212,25 +297,36 @@ public class RoleManagerImpl implements RoleManager {
 
     @Override
     public boolean hasPermission(User user, String permission) {
+        if (permission.equals(RoleManager.NONE_PERMISSIONS)) {
+            return true;
+        }
+        
         polly.core.users.User puser = (polly.core.users.User) user;
         
-        for (Role role : puser.getRoles()) {
-            if (role.getPermissions().contains(permission)) {
-                return true;
+        synchronized (SYNC) {
+            for (Role role : puser.getRoles()) {
+                if (role.getPermissions().contains(permission)) {
+                    return true;
+                }
             }
         }
         return false;
     }
     
     
-
+    
     @Override
-    public Set<String> getPermissions(String roleName) {
-        return null;
+    public boolean hasPermission(User user, Set<String> permissions) {
+        for (String perm : permissions) {
+            if (!this.hasPermission(user, perm)) {
+                return false;
+            }
+        }
+        return true;
     }
     
     
-    
+
     private boolean checkNameConvention(String roleOrPermission, String roleName) {
         String compare = "polly." + roleOrPermission + ".";
         if (!roleName.startsWith(compare)) {
