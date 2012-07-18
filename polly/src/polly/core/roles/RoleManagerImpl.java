@@ -15,6 +15,14 @@ public class RoleManagerImpl implements RoleManager {
     
     private PersistenceManager persistence;
     private UserManager userManager;
+    private boolean rolesStale;
+    private Set<Role> allRoles;
+    
+    
+    
+    public RoleManagerImpl(PersistenceManager persistence) {
+        this.persistence = persistence;
+    }
     
     
 
@@ -36,14 +44,16 @@ public class RoleManagerImpl implements RoleManager {
     
     @Override
     public Set<String> getRoles() {
-        return null;
+        if (this.rolesStale || this.allRoles == null) {
+            //this.allRoles = this.persistence.a
+        }
     }
     
     
 
     @Override
     public Set<String> getRoles(User user) {
-        return null;
+
     }
     
     
