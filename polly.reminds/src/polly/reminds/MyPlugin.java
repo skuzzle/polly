@@ -26,6 +26,7 @@ import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
+import de.skuzzle.polly.sdk.exceptions.RoleException;
 import de.skuzzle.polly.sdk.model.User;
 import entities.RemindEntity;
 
@@ -73,7 +74,7 @@ public class MyPlugin extends PollyPlugin {
     
 
     public MyPlugin(MyPolly myPolly) throws IncompatiblePluginException, 
-            DuplicatedSignatureException {
+                DuplicatedSignatureException, RoleException {
         super(myPolly);
         
         this.logger = Logger.getLogger(myPolly.getLoggerName(this.getClass()));

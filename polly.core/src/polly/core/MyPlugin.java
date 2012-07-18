@@ -63,6 +63,7 @@ import de.skuzzle.polly.sdk.eventlistener.MessageListener;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
+import de.skuzzle.polly.sdk.exceptions.RoleException;
 import entities.TopicEntity;
 import entities.TrainEntity;
 
@@ -87,7 +88,9 @@ public class MyPlugin extends PollyPlugin {
     private MessageListener highlightForwarder;
     
     
-	public MyPlugin(MyPolly myPolly) throws IncompatiblePluginException, DuplicatedSignatureException {
+	public MyPlugin(MyPolly myPolly) throws IncompatiblePluginException, 
+	            DuplicatedSignatureException, RoleException {
+	    
 		super(myPolly);
 		
 		this.addCommand(new AnyficationCommand(myPolly));

@@ -7,6 +7,7 @@ import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
 import de.skuzzle.polly.sdk.exceptions.PluginException;
+import de.skuzzle.polly.sdk.exceptions.RoleException;
 
 
 
@@ -122,8 +123,10 @@ public abstract class PollyPlugin extends AbstractDisposable {
 	 * @param command The command to add.
 	 * @throws DuplicatedSignatureException If the command you want to add already 
 	 *     exists.
+	 * @throws RoleException If the permissions for that command could not be registered.
 	 */
-	public void addCommand(Command command) throws DuplicatedSignatureException {
+	public void addCommand(Command command) 
+	            throws DuplicatedSignatureException, RoleException {
 	    this.myPolly.commands().registerCommand(command);
 	    this.commands.add(command);
 	    this.myPolly.roles().registerPermissions(command.getContainedPermissions());

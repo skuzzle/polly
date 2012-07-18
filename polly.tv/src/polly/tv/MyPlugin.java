@@ -12,6 +12,7 @@ import de.skuzzle.polly.sdk.PollyPlugin;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
 import de.skuzzle.polly.sdk.exceptions.PluginException;
+import de.skuzzle.polly.sdk.exceptions.RoleException;
 
 
 public class MyPlugin extends PollyPlugin {
@@ -22,7 +23,7 @@ public class MyPlugin extends PollyPlugin {
     public final static String API_URL_SETTING = "tvApiUrl";
     
     public MyPlugin(MyPolly myPolly) throws IncompatiblePluginException, 
-                DuplicatedSignatureException, PluginException {
+                DuplicatedSignatureException, PluginException, RoleException {
         
         super(myPolly);
         

@@ -7,13 +7,14 @@ import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
+import de.skuzzle.polly.sdk.exceptions.RoleException;
 
 
 public class MyPlugin extends PollyPlugin {
 
     
     public MyPlugin(MyPolly myPolly) throws IncompatiblePluginException, 
-            DuplicatedSignatureException {
+                DuplicatedSignatureException, RoleException {
         super(myPolly);
         
         myPolly.persistence().registerEntity(MemeEntity.class);
