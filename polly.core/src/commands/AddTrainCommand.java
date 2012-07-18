@@ -96,10 +96,13 @@ public class AddTrainCommand extends Command {
             TrainEntityV2 te = TrainEntityV2.parseString(trainerId, forUser, mod, train);
             this.trainManager.addTrain(te);
             
-            // HACK: this requires the Remind Plugin to be installed and running!
-            this.getMyPolly().commands().executeString(
-                ":remind " + te.getDuration() / 1000 + "s", executor.getCurrentNickName(), 
-                true, executor, this.getMyPolly().irc());
+            if (te.getDuration() != 0) {
+                // HACK: this requires the Remind Plugin to be installed and running!
+                this.getMyPolly().commands().executeString(
+                    ":remind \"Training abgeschlossen\"" + 
+                        te.getDuration() / 1000 + "s", executor.getCurrentNickName(), 
+                        true, executor, this.getMyPolly().irc());
+            }
             this.reply(channel, "Posten gespeichert.");
         } catch (Exception e) {
             this.reply(channel, "Fehler beim Speichern.");
