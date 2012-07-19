@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import polly.logging.MyPlugin;
+
 import core.PollyLoggingManager;
 import core.filters.DateLogFilter;
 import core.filters.LogFilter;
@@ -23,7 +25,8 @@ public class ReplayCommand extends AbstractLogCommand {
                 throws DuplicatedSignatureException {
         super(polly, "replay", logManager);
         this.createSignature(
-            "Zeigt alle IRC Nachrichten an, die seit deiner letzten Aktion gepostet wurden");
+            "Zeigt alle IRC Nachrichten an, die seit deiner letzten Aktion gepostet wurden",
+            MyPlugin.REPLAY_PERMISSION);
         this.setHelpText(
             "Zeigt alle IRC Nachrichten an, die seit deiner letzten Aktion gepostet wurden");
         this.setRegisteredOnly();
