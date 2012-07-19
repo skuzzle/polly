@@ -7,4 +7,5 @@ import java.lang.annotation.RetentionPolicy;
 public @interface Module {
     Provide[] provides() default {};
     Require[] requires() default {}; 
+    boolean startUp() default false;
 }

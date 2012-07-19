@@ -15,7 +15,6 @@ import org.apache.log4j.Logger;
 import polly.moduleloader.annotations.None;
 import polly.moduleloader.annotations.Provide;
 import polly.moduleloader.annotations.Require;
-import polly.moduleloader.annotations.StartUp;
 
 
 public class DefaultModuleLoader implements ModuleLoader {
@@ -54,10 +53,10 @@ public class DefaultModuleLoader implements ModuleLoader {
             
             w.println("digraph modules {");
             if (this.startUp != null) {
-                w.println("    node [shape=diamond color=lightblue2 style=filled] " + 
+                w.println("    node [shape=ellipse fillcolor=cadetblue color=black style=\"filled,solid\"] " + 
                         this.startUp.getName());
             }
-            w.println("    node [shape=ellipse color=lightblue2 style=filled];");
+            w.println("     node [shape=ellipse fillcolor=lightblue2 color=black style=\"filled,solid\"]");
             for (Module module : this.modules) {
                 if (module != this.startUp) {
                     w.println("    " + module.getName() + ";");
@@ -103,7 +102,7 @@ public class DefaultModuleLoader implements ModuleLoader {
                 + " is not annotated");
         }
         
-        if (cls.getAnnotation(StartUp.class) != null) {
+        if (an.startUp()) {
             if (this.startUp != null) {
                 throw new ModuleDependencyException("there is already a startup module: " 
                         + this.startUp);
