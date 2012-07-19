@@ -15,7 +15,7 @@ public class ErrorMailerProvider extends AbstractModule {
     private MailConfig config;
     
     public ErrorMailerProvider(ModuleLoader loader) {
-        super("MODULE_ERROR_MAILER", loader, false);
+        super("ERROR_MAILER_PROVIDER", loader, false);
     }
     
     
