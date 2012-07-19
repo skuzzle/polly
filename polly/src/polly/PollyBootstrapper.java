@@ -1,7 +1,7 @@
 package polly;
 
-import polly.util.ProxyClassLoader;
 
+import polly.util.ProxyClassLoader;
 
 public class PollyBootstrapper {
 
