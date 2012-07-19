@@ -28,7 +28,7 @@ import polly.core.ModuleStates;
         @Provide(component = PersistenceManagerImpl.class),
         @Provide(state = ModuleStates.PERSISTENCE_READY)
     })
-public class PersistenceModule extends AbstractModule {
+public class PersistenceManagerProvider extends AbstractModule {
 
     private PollyConfiguration config;
     private PluginManagerImpl pluginManager;
@@ -38,7 +38,7 @@ public class PersistenceModule extends AbstractModule {
     
     
     
-    public PersistenceModule(ModuleLoader loader) {
+    public PersistenceManagerProvider(ModuleLoader loader) {
         super("PERSISTENCE_MANAGER_PROVIDER", loader, true);
     }
     

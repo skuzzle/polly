@@ -13,13 +13,13 @@ import polly.moduleloader.annotations.Provide;;
                @Require(component = PollyConfiguration.class),
                @Require(component = UserManagerImpl.class)},
     provides = @Provide(component = CommandManagerImpl.class))
-public class CommandModule extends AbstractModule {
+public class CommandManagerProvider extends AbstractModule {
 
     PollyConfiguration config;
 
 
 
-    public CommandModule(ModuleLoader loader) {
+    public CommandManagerProvider(ModuleLoader loader) {
         super("COMMAND_MANAGER_PROVIDER", loader, true);
     }
 

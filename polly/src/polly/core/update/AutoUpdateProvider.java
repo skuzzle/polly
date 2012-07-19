@@ -34,7 +34,7 @@ import polly.moduleloader.annotations.Require;
         @Require(component = ShutdownManagerImpl.class),
         @Require(component = PluginManagerImpl.class)
     })
-public class UpdaterModule extends AbstractModule {
+public class AutoUpdateProvider extends AbstractModule {
 
     private PollyConfiguration config;
     private PluginManagerImpl pluginManager;
@@ -42,7 +42,7 @@ public class UpdaterModule extends AbstractModule {
 
 
 
-    public UpdaterModule(ModuleLoader loader) {
+    public AutoUpdateProvider(ModuleLoader loader) {
         super("AUTO_UPDATE_PROVIDER", loader, false);
     }
 

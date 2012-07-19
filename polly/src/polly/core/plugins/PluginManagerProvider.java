@@ -22,7 +22,7 @@ import polly.util.ProxyClassLoader;
         @Provide(component = PluginManagerImpl.class),
         @Provide(state = ModuleStates.PLUGINS_READY)
     })
-public class PluginModule extends AbstractModule {
+public class PluginManagerProvider extends AbstractModule {
     
     private PluginManagerImpl pluginManager;
     private PollyConfiguration config;
@@ -31,7 +31,7 @@ public class PluginModule extends AbstractModule {
     
     
     
-    public PluginModule(ModuleLoader loader) {
+    public PluginManagerProvider(ModuleLoader loader) {
         super("PLUGIN_MANAGER_PROVIDER", loader, false);
     }
 

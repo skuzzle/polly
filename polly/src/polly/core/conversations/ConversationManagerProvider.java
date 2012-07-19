@@ -11,9 +11,9 @@ import polly.moduleloader.annotations.Provide;;
 @Module(
     requires = @Require(component = ShutdownManagerImpl.class),
     provides = @Provide(component = ConversationManagerImpl.class))
-public class ConversationModule extends AbstractModule {
+public class ConversationManagerProvider extends AbstractModule {
 
-    public ConversationModule(ModuleLoader loader) {
+    public ConversationManagerProvider(ModuleLoader loader) {
         super("CONVERSATION_MANAGER_PROVIDER", loader, true);
     }
     

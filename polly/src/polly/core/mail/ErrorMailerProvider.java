@@ -10,11 +10,11 @@ import polly.moduleloader.annotations.Require;
 
 
 @Module(requires = @Require(component = MailConfig.class))
-public class ErrorMailerModule extends AbstractModule {
+public class ErrorMailerProvider extends AbstractModule {
 
     private MailConfig config;
     
-    public ErrorMailerModule(ModuleLoader loader) {
+    public ErrorMailerProvider(ModuleLoader loader) {
         super("MODULE_ERROR_MAILER", loader, false);
     }
     

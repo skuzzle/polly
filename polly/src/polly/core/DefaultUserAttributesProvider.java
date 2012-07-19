@@ -14,12 +14,12 @@ import polly.moduleloader.annotations.Require;
         @Require(state = ModuleStates.PERSISTENCE_READY),
         @Require(state = ModuleStates.USERS_READY)
     },
-    provides = @Provide(component = DefaultUserAttributes.class))
-public class DefaultUserAttributes extends AbstractModule {
+    provides = @Provide(component = DefaultUserAttributesProvider.class))
+public class DefaultUserAttributesProvider extends AbstractModule {
     
     public final static String AUTO_LOGON = "AUTO_LOGON"; 
 
-    public DefaultUserAttributes(ModuleLoader loader) {
+    public DefaultUserAttributesProvider(ModuleLoader loader) {
         super("DEFAULT_ATTRIBUTES_PROVIDER", loader, false);
     }
 

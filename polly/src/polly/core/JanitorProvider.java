@@ -12,12 +12,12 @@ import polly.moduleloader.annotations.Module;
 import polly.util.concurrent.ThreadFactoryBuilder;
 
 @Module
-public class Janitor extends AbstractModule {
+public class JanitorProvider extends AbstractModule {
 
     private final static int RATE = 1000 * 60 * 10; // 10 minutes
-    private final static Logger logger = Logger.getLogger(Janitor.class.getName());
+    private final static Logger logger = Logger.getLogger(JanitorProvider.class.getName());
     
-    public Janitor(ModuleLoader loader) {
+    public JanitorProvider(ModuleLoader loader) {
         super("JANITOR_PROVIDER", loader, false);
     }
     

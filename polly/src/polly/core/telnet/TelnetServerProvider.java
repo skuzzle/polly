@@ -24,7 +24,7 @@ import polly.moduleloader.annotations.Provide;;
         @Provide(component = TelnetServer.class),
         @Provide(state = ModuleStates.TELNET_READY)
     })
-public class TelnetModule extends AbstractModule {
+public class TelnetServerProvider extends AbstractModule {
 
     private PollyConfiguration config;
     private IrcManagerImpl ircManager;
@@ -33,7 +33,7 @@ public class TelnetModule extends AbstractModule {
     private TelnetServer server;
     
     
-    public TelnetModule(ModuleLoader loader) {
+    public TelnetServerProvider(ModuleLoader loader) {
         super("TELNET_PROVIDER", loader, false);
     }
     

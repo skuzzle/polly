@@ -13,11 +13,11 @@ import polly.moduleloader.annotations.Provide;;
     provides = 
         @Provide(component = FormatManagerImpl.class)
     )
-public class FormatterModule extends AbstractModule {
+public class FormatManagerProvider extends AbstractModule {
 
 
-    public FormatterModule(ModuleLoader loader) {
-        super("FORMATTER_PROVIDER", loader, true);
+    public FormatManagerProvider(ModuleLoader loader) {
+        super("FORMAT_MANAGER_PROVIDER", loader, true);
     }
 
     

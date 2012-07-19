@@ -41,7 +41,7 @@ import polly.moduleloader.annotations.Provide;;
     },
     provides = 
         @Provide(component = MyPollyImpl.class))
-public class MyPollyModule extends AbstractModule {
+public class MyPollyProvider extends AbstractModule {
 
     private CommandManagerImpl commandManager;
     private IrcManagerImpl ircManager;
@@ -57,7 +57,7 @@ public class MyPollyModule extends AbstractModule {
     private RoleManagerImpl roleManager;
     
     
-    public MyPollyModule(ModuleLoader loader) {
+    public MyPollyProvider(ModuleLoader loader) {
         super("MYPOLLY_PROVIDER", loader, true);
     }
     

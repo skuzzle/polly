@@ -19,7 +19,7 @@ import polly.moduleloader.annotations.Require;
     @Require(component = UserManagerImpl.class),
     @Require(component = ShutdownManagerImpl.class)}
 )
-public class RemoteInterfaceModule extends AbstractModule {
+public class RemoteInterfaceProvider extends AbstractModule {
 
     private PollyConfiguration config;
     private AdministrationManager adminManager;
@@ -30,7 +30,7 @@ public class RemoteInterfaceModule extends AbstractModule {
     
     
     
-    public RemoteInterfaceModule(ModuleLoader loader) {
+    public RemoteInterfaceProvider(ModuleLoader loader) {
         super("PORAT_PROVIDER", loader, false);
     }
     

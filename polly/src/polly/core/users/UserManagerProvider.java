@@ -33,7 +33,7 @@ import polly.moduleloader.annotations.Provide;;
         @Provide(component = UserManagerImpl.class),
         @Provide(state = ModuleStates.USERS_READY)
     })
-public class UserModule extends AbstractModule {
+public class UserManagerProvider extends AbstractModule {
 
     private PersistenceManagerImpl persistenceManager;
     private EventProvider eventProvider;
@@ -43,7 +43,7 @@ public class UserModule extends AbstractModule {
     private RoleManagerImpl roleManager;
 
 
-    public UserModule(ModuleLoader loader) {
+    public UserManagerProvider(ModuleLoader loader) {
         super("USER_MANAGER_PROVIDER", loader, true);
     }
 

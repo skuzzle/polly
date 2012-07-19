@@ -14,9 +14,9 @@ import polly.moduleloader.annotations.Provide;;
 @Module(
     provides = @Provide(component = PasteServiceManagerImpl.class)
 )
-public class PasteServiceModule extends AbstractModule {
+public class PasteServiceManagerProvider extends AbstractModule {
 
-    public PasteServiceModule(ModuleLoader loader) {
+    public PasteServiceManagerProvider(ModuleLoader loader) {
         super("PASTE_MANAGER_PROVIDER", loader, true);
     }
 

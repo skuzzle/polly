@@ -12,11 +12,11 @@ import polly.moduleloader.annotations.Provide;
 @Module(provides = {
     @Provide(component = MailManagerImpl.class),
     @Provide(component = MailConfig.class)})
-public class MailManagerModule extends AbstractModule {
+public class MailManagerProvider extends AbstractModule {
 
     
     
-    public MailManagerModule(ModuleLoader loader) {
+    public MailManagerProvider(ModuleLoader loader) {
         super("MAIL_MANAGER_PROVIDER", loader, false);
     }
 

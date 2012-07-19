@@ -5,7 +5,7 @@ import java.util.concurrent.ExecutorService;
 import org.jibble.pircbot.NickAlreadyInUseException;
 
 import polly.configuration.PollyConfiguration;
-import polly.core.DefaultUserAttributes;
+import polly.core.DefaultUserAttributesProvider;
 import polly.core.ShutdownManagerImpl;
 import polly.core.commands.CommandManagerImpl;
 import polly.core.users.UserManagerImpl;
@@ -33,14 +33,14 @@ import polly.core.ModuleStates;
         @Require(component = UserManagerImpl.class),
         @Require(component = CommandManagerImpl.class),
         @Require(component = ExecutorService.class),
-        @Require(component = DefaultUserAttributes.class),
+        @Require(component = DefaultUserAttributesProvider.class),
         @Require(state = ModuleStates.PLUGINS_READY),
         @Require(state = ModuleStates.PERSISTENCE_READY) }, 
     provides = {
         @Provide(component = IrcManagerImpl.class),
         @Provide(component = MessageHandler.class),
         @Provide(state = ModuleStates.IRC_READY) })
-public class IrcModule extends AbstractModule {
+public class IrcManagerProvider extends AbstractModule {
 
     private EventProvider events;
     private ExecutorService commandExecutor;
@@ -54,7 +54,7 @@ public class IrcModule extends AbstractModule {
 
 
 
-    public IrcModule(ModuleLoader loader) {
+    public IrcManagerProvider(ModuleLoader loader) {
         super("IRC_MANAGER_PROVIDER", loader, true);
     }
 

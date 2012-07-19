@@ -24,9 +24,9 @@ import polly.util.concurrent.ThreadFactoryBuilder;
     provides = {
         @Provide(component = EventProvider.class),
         @Provide(component = ExecutorService.class) })
-public class ExecutorModule extends AbstractModule {
+public class ExecutorServiceProvider extends AbstractModule {
 
-    public ExecutorModule(ModuleLoader loader) {
+    public ExecutorServiceProvider(ModuleLoader loader) {
         super("EXECUTOR_SERVICE_PROVIDER", loader, true);
     }
 

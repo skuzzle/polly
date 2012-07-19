@@ -21,14 +21,14 @@ import polly.moduleloader.annotations.Provide;;
     provides =
         @Provide(state = ModuleStates.PLUGINS_NOTIFIED)
     )
-public class NotifyPluginsModule extends AbstractModule {
+public class NotifyPluginsProvider extends AbstractModule {
 
     private PluginManagerImpl pluginManager;
 
 
 
-    public NotifyPluginsModule(ModuleLoader loader) {
-        super("PLUGIN_NOTIFIER", loader, true);
+    public NotifyPluginsProvider(ModuleLoader loader) {
+        super("NOTIFY_PLUGINS_PROVIDER", loader, true);
     }
 
 
