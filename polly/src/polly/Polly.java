@@ -198,9 +198,9 @@ public class Polly {
             loader.runSetup();
             loader.runModules();
             
-            //if (config.isDebugMode()) {
+            if (config.isDebugMode()) {
                 loader.exportToDot(new File("modules.dot"));
-            //}
+            }
         } catch (Exception e) {
             logger.fatal("Crucial component failed to load!", e);
             
