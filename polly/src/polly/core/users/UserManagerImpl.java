@@ -366,6 +366,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
         if (this.registeredStale || this.registeredUsers == null) {
             this.registeredUsers = this.persistence.atomicRetrieveList(User.class, 
                 polly.core.users.User.ALL_USERS);
+            this.registeredStale = false;
         }
         return this.registeredUsers;
     }

@@ -19,7 +19,6 @@ import commands.GetAttributeCommand;
 import commands.GhostCommand;
 import commands.GooglePicsCommand;
 import commands.GreetingCommand;
-import commands.HighlightModeCommand;
 import commands.HopCommand;
 import commands.IsDownCommand;
 import commands.JoinCommand;
@@ -59,14 +58,12 @@ import commands.roles.ListRolesCommand;
 import commands.roles.RemovePermissionCommand;
 import commands.roles.RemoveRoleCommand;
 import core.GreetDeliverer;
-import core.HighlightReplyHandler;
 import core.JoinTimeCollector;
 import core.TrainManagerV2;
 
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
 import de.skuzzle.polly.sdk.constraints.Constraints;
-import de.skuzzle.polly.sdk.eventlistener.MessageListener;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
@@ -138,9 +135,7 @@ public class MyPlugin extends PollyPlugin {
     
     private TrainManagerV2 trainManager;
     private GreetDeliverer greetDeliverer;
-    private HighlightReplyHandler highlightHandler;
     private JoinTimeCollector joinTimeCollector;
-    private MessageListener highlightForwarder;
     
     
     
@@ -283,12 +278,6 @@ public class MyPlugin extends PollyPlugin {
 		this.addCommand(new ReloadConfigCommand(myPolly));
 		
 		this.addCommand(new DitoCommand(myPolly));
-		
-		this.highlightHandler = new HighlightReplyHandler(myPolly.getTimeProvider());
-		myPolly.irc().addMessageListener(this.highlightHandler);
-		this.addCommand(new HighlightModeCommand(myPolly, this.highlightHandler));
-		
-		myPolly.irc().addMessageListener(this.highlightForwarder);
 	}
 	
 	
@@ -325,8 +314,6 @@ public class MyPlugin extends PollyPlugin {
 	    super.actualDispose();
 	    //this.topicManager.dispose();
 	    this.getMyPolly().users().removeUserListener(this.greetDeliverer);
-	    this.getMyPolly().irc().removeMessageListener(this.highlightHandler);
-	    this.getMyPolly().irc().removeMessageListener(this.highlightForwarder);
 	    this.joinTimeCollector.remove(this.getMyPolly().irc());
 	}
 }
