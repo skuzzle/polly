@@ -39,7 +39,7 @@ public class PersistenceModule extends AbstractModule {
     
     
     public PersistenceModule(ModuleLoader loader) {
-        super("MODULE_PERSISTENCE", loader, true);
+        super("PERSISTENCE_MANAGER_PROVIDER", loader, true);
     }
     
     

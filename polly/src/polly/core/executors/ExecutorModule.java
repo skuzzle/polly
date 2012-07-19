@@ -27,7 +27,7 @@ import polly.util.concurrent.ThreadFactoryBuilder;
 public class ExecutorModule extends AbstractModule {
 
     public ExecutorModule(ModuleLoader loader) {
-        super("MODULE_EXECUTORS", loader, true);
+        super("EXECUTOR_SERVICE_PROVIDER", loader, true);
     }
 
 

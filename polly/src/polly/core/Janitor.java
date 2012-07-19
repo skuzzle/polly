@@ -18,7 +18,7 @@ public class Janitor extends AbstractModule {
     private final static Logger logger = Logger.getLogger(Janitor.class.getName());
     
     public Janitor(ModuleLoader loader) {
-        super("JANITOR", loader, false);
+        super("JANITOR_PROVIDER", loader, false);
     }
     
 

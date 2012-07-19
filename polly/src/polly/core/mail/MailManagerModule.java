@@ -17,7 +17,7 @@ public class MailManagerModule extends AbstractModule {
     
     
     public MailManagerModule(ModuleLoader loader) {
-        super("MODULE_MAIL", loader, false);
+        super("MAIL_MANAGER_PROVIDER", loader, false);
     }
 
 

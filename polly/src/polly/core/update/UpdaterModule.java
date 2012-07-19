@@ -43,7 +43,7 @@ public class UpdaterModule extends AbstractModule {
 
 
     public UpdaterModule(ModuleLoader loader) {
-        super("MODULE_UPDATER", loader, false);
+        super("AUTO_UPDATE_PROVIDER", loader, false);
     }
 
 

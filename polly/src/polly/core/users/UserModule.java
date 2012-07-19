@@ -44,7 +44,7 @@ public class UserModule extends AbstractModule {
 
 
     public UserModule(ModuleLoader loader) {
-        super("MODULE_USER", loader, true);
+        super("USER_MANAGER_PROVIDER", loader, true);
     }
 
 

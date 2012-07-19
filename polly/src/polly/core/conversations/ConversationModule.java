@@ -14,7 +14,7 @@ import polly.moduleloader.annotations.Provide;;
 public class ConversationModule extends AbstractModule {
 
     public ConversationModule(ModuleLoader loader) {
-        super("MODULE_CONVERSATIONS", loader, true);
+        super("CONVERSATION_MANAGER_PROVIDER", loader, true);
     }
     
     

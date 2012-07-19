@@ -55,7 +55,7 @@ public class IrcModule extends AbstractModule {
 
 
     public IrcModule(ModuleLoader loader) {
-        super("MODULE_IRC", loader, true);
+        super("IRC_MANAGER_PROVIDER", loader, true);
     }
 
 

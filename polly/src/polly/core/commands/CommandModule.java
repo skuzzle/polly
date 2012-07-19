@@ -20,7 +20,7 @@ public class CommandModule extends AbstractModule {
 
 
     public CommandModule(ModuleLoader loader) {
-        super("MODULE_COMMAND", loader, true);
+        super("COMMAND_MANAGER_PROVIDER", loader, true);
     }
 
 

@@ -26,7 +26,7 @@ public class RoleManagerProvider extends AbstractModule {
     private RoleManagerImpl roleManager;
     
     public RoleManagerProvider(ModuleLoader loader) {
-        super("ROLE_MODULE", loader, true);
+        super("ROLE_MANAGER_PROVIDER", loader, true);
     }
     
     

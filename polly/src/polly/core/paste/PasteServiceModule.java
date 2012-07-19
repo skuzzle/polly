@@ -17,7 +17,7 @@ import polly.moduleloader.annotations.Provide;;
 public class PasteServiceModule extends AbstractModule {
 
     public PasteServiceModule(ModuleLoader loader) {
-        super("PASTE_MODULE", loader, true);
+        super("PASTE_MANAGER_PROVIDER", loader, true);
     }
 
     

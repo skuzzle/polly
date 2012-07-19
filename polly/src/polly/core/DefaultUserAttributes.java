@@ -20,7 +20,7 @@ public class DefaultUserAttributes extends AbstractModule {
     public final static String AUTO_LOGON = "AUTO_LOGON"; 
 
     public DefaultUserAttributes(ModuleLoader loader) {
-        super("DEFAULT_ATTRIBUTES", loader, false);
+        super("DEFAULT_ATTRIBUTES_PROVIDER", loader, false);
     }
 
     

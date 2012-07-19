@@ -32,7 +32,7 @@ public class PluginModule extends AbstractModule {
     
     
     public PluginModule(ModuleLoader loader) {
-        super("MODULE_PLUGINS", loader, false);
+        super("PLUGIN_MANAGER_PROVIDER", loader, false);
     }
 
     

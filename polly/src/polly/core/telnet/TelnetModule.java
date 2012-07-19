@@ -34,7 +34,7 @@ public class TelnetModule extends AbstractModule {
     
     
     public TelnetModule(ModuleLoader loader) {
-        super("TELNET", loader, false);
+        super("TELNET_PROVIDER", loader, false);
     }
     
 

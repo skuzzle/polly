@@ -58,7 +58,7 @@ public class MyPollyModule extends AbstractModule {
     
     
     public MyPollyModule(ModuleLoader loader) {
-        super("MODULE_MYPOLLY", loader, true);
+        super("MYPOLLY_PROVIDER", loader, true);
     }
     
     

@@ -17,7 +17,7 @@ public class FormatterModule extends AbstractModule {
 
 
     public FormatterModule(ModuleLoader loader) {
-        super("MODULE_FORMATTER", loader, true);
+        super("FORMATTER_PROVIDER", loader, true);
     }
 
     

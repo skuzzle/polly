@@ -31,7 +31,7 @@ public class RemoteInterfaceModule extends AbstractModule {
     
     
     public RemoteInterfaceModule(ModuleLoader loader) {
-        super("PORAT", loader, false);
+        super("PORAT_PROVIDER", loader, false);
     }
     
     
