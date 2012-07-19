@@ -1,5 +1,6 @@
 package polly.core.roles;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,8 +21,10 @@ import javax.persistence.Transient;
     @NamedQuery(name = "ALL_ROLES", query = "SELECT r FROM Role r"),
     @NamedQuery(name = "ROLE_BY_NAME", query = "SELECT r FROM Role r WHERE r.name = ?1")
 })
-public class Role {
-    
+public class Role implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     public final static String ROLE_BY_NAME = "ROLE_BY_NAME"; 
     
     public final static String ALL_ROLES = "ALL_ROLES";

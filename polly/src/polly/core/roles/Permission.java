@@ -1,5 +1,7 @@
 package polly.core.roles;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,8 +14,10 @@ import javax.persistence.NamedQuery;
     @NamedQuery(name = "ALL_PERMISSIONS", query = "SELECT p FROM Permission p"),
     @NamedQuery(name = "PERMISSION_BY_NAME", query = "SELECT p FROM Permission p WHERE p.name = ?1")
 })
-public class Permission {
+public class Permission implements Serializable {
     
+    private static final long serialVersionUID = 1L;
+
     public final static String ALL_PERMISSIONS = "ALL_PERMISSIONS";
     
     public final static String PERMISSION_BY_NAME = "PERMISSION_BY_NAME";

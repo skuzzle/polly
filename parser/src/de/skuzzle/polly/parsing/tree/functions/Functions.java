@@ -214,7 +214,7 @@ public class Functions {
             Matrix<Integer> matrix = list.toIntMatrix(
                 Fields.integerModulo(p.isInteger()));
             
-            Integer scalar = null;
+            Integer scalar = 0;
             if (this.matType == MatrixType.DETERMINANT) {
                 scalar = MatrixUtils.getDeterminant(matrix);
             } else if (this.matType == MatrixType.RANK) {
@@ -250,7 +250,7 @@ public class Functions {
             
             Matrix<Double> matrix = list.toDoubleMatrix();
             
-            Double scalar = null;
+            Double scalar = 0.0;
             if (this.matType == MatrixType.DETERMINANT) {
                 scalar = MatrixUtils.getDeterminant(matrix);
             } else if (this.matType == MatrixType.RANK) {
