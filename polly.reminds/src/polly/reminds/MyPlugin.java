@@ -26,7 +26,9 @@ import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
+import de.skuzzle.polly.sdk.exceptions.RoleException;
 import de.skuzzle.polly.sdk.model.User;
+import de.skuzzle.polly.sdk.roles.RoleManager;
 import entities.RemindEntity;
 
 
@@ -36,6 +38,18 @@ import entities.RemindEntity;
  * @version 27.07.2011 e1a9f7c
  */
 public class MyPlugin extends PollyPlugin {
+    
+    public final static String REMIND_ROLE = "polly.roles.REMIND";
+    
+    public final static String DELETE_REMIND_PERMISSION = "polly.permission.DELETE_REMIND";
+    public final static String LEAVE_PERMISSION = "polly.permission.LEAVE";
+    public final static String MAIL_REMIND_PERMISSION = "polly.permission.MAIL_REMIND";
+    public final static String MODIFY_REMIND_PERMISSION = "polly.permission.MODIFY_REMIND";
+    public final static String MY_REMINDS_PERMISSION = "polly.permission.MY_REMINDS";
+    public final static String ON_RETURN_PERMISSION = "polly.permission.ON_RETURN";
+    public final static String REMIND_PERMISSION = "polly.permission.REMIND";
+    public final static String SNOOZE_PERMISSION = "polly.permission.SNOOZE";
+    public final static String TOGGLE_MAIL_PERMISSION = "polly.permission.TOGGLE_MAIL";
 
     public final static String REMIND_FORMAT_NAME = "REMIND_FORMAT";
     public final static String REMIND_FORMAT_VALUE = "@%r%: %m%. (Hinterlassen von: %s% am %ld%)";
@@ -73,7 +87,7 @@ public class MyPlugin extends PollyPlugin {
     
 
     public MyPlugin(MyPolly myPolly) throws IncompatiblePluginException, 
-            DuplicatedSignatureException {
+                DuplicatedSignatureException {
         super(myPolly);
         
         this.logger = Logger.getLogger(myPolly.getLoggerName(this.getClass()));
@@ -120,6 +134,23 @@ public class MyPlugin extends PollyPlugin {
         this.getMyPolly().users().addUserListener(this.deliverRemindHandler);
     }
 
+    
+    @Override
+    public void assignPermissions(RoleManager roleManager)
+            throws RoleException, DatabaseException {
+        super.assignPermissions(roleManager);
+        
+        roleManager.createRole(REMIND_ROLE);
+        roleManager.assignPermission(REMIND_ROLE, DELETE_REMIND_PERMISSION);
+        roleManager.assignPermission(REMIND_ROLE, LEAVE_PERMISSION);
+        roleManager.assignPermission(REMIND_ROLE, MAIL_REMIND_PERMISSION);
+        roleManager.assignPermission(REMIND_ROLE, MODIFY_REMIND_PERMISSION);
+        roleManager.assignPermission(REMIND_ROLE, MY_REMINDS_PERMISSION);
+        roleManager.assignPermission(REMIND_ROLE, ON_RETURN_PERMISSION);
+        roleManager.assignPermission(REMIND_ROLE, REMIND_PERMISSION);
+        roleManager.assignPermission(REMIND_ROLE, SNOOZE_PERMISSION);
+        roleManager.assignPermission(REMIND_ROLE, TOGGLE_MAIL_PERMISSION);
+    }
     
     
     @Override

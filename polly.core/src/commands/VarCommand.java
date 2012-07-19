@@ -3,6 +3,8 @@ package commands;
 import java.util.Iterator;
 import java.util.Set;
 
+import polly.core.MyPlugin;
+
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -15,10 +17,13 @@ public class VarCommand extends Command {
 
     public VarCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "var");
-        this.createSignature("Zeigt die Deklarationen des ausführenden Benutzers an");
-        this.createSignature("Zeigt die Deklarationen des angegebenen Namespaces an.", 
+        this.createSignature("Zeigt die Deklarationen des ausführenden Benutzers an",
+            MyPlugin.LIST_VARS_PERMISSION);
+        this.createSignature("Zeigt die Deklarationen des angegebenen Namespaces an.",
+            MyPlugin.LIST_VARS_PERMISSION,
             new Parameter("Namespace", Types.STRING));
-        this.createSignature("Zeigt die Deklarationen des angegebenen Benutzers an.", 
+        this.createSignature("Zeigt die Deklarationen des angegebenen Benutzers an.",
+            MyPlugin.LIST_VARS_PERMISSION,
             new Parameter("User", Types.USER));
         this.setHelpText("Listet die verfügbaren Variablen für einen Benutzer auf.");
     }

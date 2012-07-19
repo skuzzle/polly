@@ -3,6 +3,7 @@ package de.skuzzle.polly.sdk;
 import java.util.Date;
 
 import de.skuzzle.polly.sdk.paste.PasteServiceManager;
+import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.time.TimeProvider;
 
 
@@ -132,6 +133,15 @@ public interface MyPolly {
 	 * @since Beta 0.5
 	 */
 	public abstract ShutdownManager shutdownManager();
+	
+	
+	
+	/**
+	 * Gets the RoleManager to manage user permissions.
+	 * @return A RoleManager instance.
+	 * @since 0.9.1
+	 */
+	public abstract RoleManager roles();
 	
 	
 	

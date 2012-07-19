@@ -6,6 +6,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
 
+import polly.core.MyPlugin;
+
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -24,9 +26,11 @@ public class IsDownCommand extends Command {
         super(polly, "isdown");
         this.createSignature("Dieser Befehl checkt ob eine Webseite derzeit erreichbar " +
         		"ist.", 
+    		MyPlugin.ISDOWN_PERMISSION,
     		new Parameter("URL", Types.STRING));
         this.createSignature("Dieser Befehl checkt ob eine Webseite innerhalb eines " +
         		"Timeouts (in ms) erreichbar ist.", 
+    		MyPlugin.ISDOWN_PERMISSION,
     		new Parameter("URL", Types.STRING),
     		new Parameter("Timeout", Types.NUMBER));
         this.setHelpText("Überprüft ob eine Webseite erreichbar ist");

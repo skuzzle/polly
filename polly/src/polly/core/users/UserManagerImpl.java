@@ -35,10 +35,12 @@ import de.skuzzle.polly.sdk.exceptions.AlreadySignedOnException;
 import de.skuzzle.polly.sdk.exceptions.ConstraintException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
+import de.skuzzle.polly.sdk.exceptions.RoleException;
 import de.skuzzle.polly.sdk.exceptions.UnknownAttributeException;
 import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
 import de.skuzzle.polly.sdk.model.User;
+import de.skuzzle.polly.sdk.roles.RoleManager;
 
 
 
@@ -76,13 +78,15 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     private List<User> registeredUsers;
     private boolean attributesStale;
     private List<Attribute> allAttributes;
-    
+    private RoleManager roleManager;
     
     
     public UserManagerImpl(PersistenceManagerImpl persistence, 
-            PollyConfiguration cfg, EventProvider eventProvider) {
+            PollyConfiguration cfg, EventProvider eventProvider, 
+            RoleManager roleManager) {
         this.eventProvider = eventProvider;
         this.persistence = persistence;
+        this.roleManager = roleManager;
         this.onlineCache = Collections.synchronizedMap(
                 new CaseInsensitiveStringKeyMap<User>());
         this.declarationCachePath = new File(cfg.getDeclarationCachePath());
@@ -186,7 +190,8 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     
     
-    public void addUser(User user) throws UserExistsException, DatabaseException {
+    public void addUser(User user) 
+                throws UserExistsException, DatabaseException {
         try {
             this.persistence.writeLock();
             User check = this.persistence.findSingle(User.class, "USER_BY_NAME", 
@@ -200,6 +205,14 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
             this.persistence.persist(user);
             this.persistence.commitTransaction();
             this.registeredStale = true;
+            
+            // Assign registered role to new user.
+            try {
+                this.roleManager.assignRole(user, RoleManager.DEFAULT_ROLE);
+            } catch (RoleException ignore) {
+                logger.warn("Ignoring RoleException", ignore);
+            }
+            
             logger.info("Added user " + user);
         } finally {
             this.persistence.writeUnlock();

@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -17,6 +18,7 @@ public class SetPasswordCommand extends Command {
     public SetPasswordCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "setpw");
         this.createSignature("Setzt das Passwort eines Benutzers neu.",
+                MyPlugin.SET_PASSWORD_PERMISSION,
         		new Parameter("User", Types.USER), 
         		new Parameter("Passwort", Types.STRING));
         this.setRegisteredOnly();

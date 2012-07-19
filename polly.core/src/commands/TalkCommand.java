@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -15,8 +16,10 @@ public class TalkCommand extends Command {
     public TalkCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "talk");
         this.createSignature("Spricht zum aktuellen Channel", 
+            MyPlugin.TALK_PERMISSION,
             new Parameter("Nachricht", Types.STRING));
-        this.createSignature("Spricht zum angegebenen Channel", 
+        this.createSignature("Spricht zum angegebenen Channel",
+            MyPlugin.TALK_PERMISSION,
             new Parameter("Channel", Types.CHANNEL), 
             new Parameter("Nachricht", Types.STRING));
         this.setRegisteredOnly();

@@ -1,6 +1,7 @@
 package commands;
 
 import core.TrainManagerV2;
+import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -21,8 +22,10 @@ public class CloseTrainCommand extends Command {
         super(polly, "closetrain");
         this.createSignature("Schliesst alle offenen Rechnungen für den angegebenen " +
             "Benutzer.", 
+            MyPlugin.CLOSE_TRAIN_PERMISSION,
             new Parameter("User", Types.USER));
         this.createSignature("Schliesst einzelnen Trainposten.", 
+            MyPlugin.CLOSE_TRAIN_PERMISSION,
             new Parameter("Train Id", Types.NUMBER));
         this.setRegisteredOnly();
         this.setHelpText("Schliesst offene Capitrain rechnungen.");

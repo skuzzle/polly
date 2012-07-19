@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import polly.core.MyPlugin;
+
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -22,12 +24,15 @@ public class UsersCommand extends Command {
     
     public UsersCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "users");
-        this.createSignature("Listet alle registrierten Benutzer auf");
+        this.createSignature("Listet alle registrierten Benutzer auf",
+            MyPlugin.LIST_USERS_PERMISSION);
         this.createSignature("Listet alle registrierten Benutzer auf, deren Name auf " +
         		"das angegebene Pattern passt", 
+        		MyPlugin.LIST_USERS_PERMISSION,
     		new Parameter("Pattern", Types.STRING));
         this.createSignature("Listet alle registrierten Benutzer auf, deren Name auf " +
-        		"das angegebene Pattern passt", 
+        		"das angegebene Pattern passt",
+    		MyPlugin.LIST_USERS_PERMISSION,
     		new Parameter("Pattern", Types.STRING), 
     		new Parameter("Logged In Only", Types.BOOLEAN));
         this.setRegisteredOnly();

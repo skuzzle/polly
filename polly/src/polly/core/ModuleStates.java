@@ -14,4 +14,6 @@ public interface ModuleStates {
     public static final int USERS_READY = 5;
     
     public static final int PLUGINS_NOTIFIED = 6;
+    
+    public final static int ROLES_READY = 7;
 }

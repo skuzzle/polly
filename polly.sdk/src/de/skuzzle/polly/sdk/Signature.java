@@ -17,6 +17,7 @@ import de.skuzzle.polly.sdk.Types.StringType;
 import de.skuzzle.polly.sdk.Types.UserType;
 
 
+
 /**
  * <p>This class represents a signature for a {@link Command}. It is used for formal and 
  * actual signatures. That means, any Command may register a set of different formal 
@@ -58,11 +59,11 @@ public class Signature {
 	 * types.
 	 */
 	private boolean canonical;
-	
+
 	
 	
 	/**
-	 * Creates a new signature.
+	 * Creates a new signature with no required permissions.
 	 * 
 	 * @param name The name of the command that this signature is for. The name must 
 	 * 		exactly equal the commands name.
@@ -86,6 +87,8 @@ public class Signature {
 	 * 		this id.
 	 * @param parameters The parameters of this signature. If this is a formal signature,
 	 * 		the values of the parameter types are ignored. This list can be empty.
+	 * @param permissionName The name of the permission that is required in order to 
+	 *      execute this signature.
 	 */
 	public Signature(String name, int id, List<Types> parameters) {
 		this.name = name;

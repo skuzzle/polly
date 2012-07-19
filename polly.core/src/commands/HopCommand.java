@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -15,8 +16,10 @@ public class HopCommand extends Command {
 
     public HopCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "hop");
-        this.createSignature("Rejoined den aktuellen Channel.");
-        this.createSignature("Rejoined den angegebenen Channel", 
+        this.createSignature("Rejoined den aktuellen Channel.",
+            MyPlugin.HOP_PERMISSION);
+        this.createSignature("Rejoined den angegebenen Channel",
+            MyPlugin.HOP_PERMISSION,
             new Parameter("Channel", Types.CHANNEL));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);

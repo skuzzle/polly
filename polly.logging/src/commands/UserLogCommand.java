@@ -2,6 +2,8 @@ package commands;
 
 import java.util.List;
 
+import polly.logging.MyPlugin;
+
 import core.PollyLoggingManager;
 import core.filters.AnyLogFilter;
 import core.filters.ChainedLogFilter;
@@ -24,20 +26,26 @@ public class UserLogCommand extends AbstractLogCommand {
                 throws DuplicatedSignatureException {
         super(polly, "userlog", logManager);
         this.createSignature("Filtert Log Einträge eines Benutzers", 
+            MyPlugin.USER_LOG_PERMISSION,
             new Parameter("Benutzername", Types.STRING));
-        this.createSignature("Filtert Log Einträge eines Benutzers mit bestimmten Inhalt", 
+        this.createSignature("Filtert Log Einträge eines Benutzers mit bestimmten Inhalt",
+            MyPlugin.USER_LOG_PERMISSION,
             new Parameter("Benutzername", Types.STRING), 
             new Parameter("Pattern", Types.STRING));
-        this.createSignature("Filtert Log Einträge eines Benutzers mit bestimmten Inhalt", 
+        this.createSignature("Filtert Log Einträge eines Benutzers mit bestimmten Inhalt",
+            MyPlugin.USER_LOG_PERMISSION,
             new Parameter("Benutzername", Types.STRING), 
             new Parameter("Pattern", Types.STRING),
             new Parameter("Limit", Types.NUMBER));
         this.createSignature("Filtert Log Einträge eines Benutzers mit bestimmten " +
         		"Inhalt die nicht älter sind als das angegebne Datum", 
+    		MyPlugin.USER_LOG_PERMISSION,
             new Parameter("Benutzername", Types.STRING), 
             new Parameter("Pattern", Types.STRING),
             new Parameter("Datum", Types.DATE));
-        this.createSignature("Filtert Log Einträge eines Benutzers mit bestimmten Inhalt die zweichen den Angegebenen Zeitpunkten liegen",
+        this.createSignature("Filtert Log Einträge eines Benutzers mit bestimmten " +
+        		"Inhalt die zweichen den Angegebenen Zeitpunkten liegen",
+    		MyPlugin.USER_LOG_PERMISSION,
             new Parameter("Benutzername", Types.STRING), 
             new Parameter("Pattern", Types.STRING),
             new Parameter("Von", Types.DATE),

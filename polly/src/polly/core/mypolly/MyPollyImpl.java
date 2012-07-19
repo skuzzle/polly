@@ -16,9 +16,8 @@ import polly.core.mail.MailManagerImpl;
 import polly.core.paste.PasteServiceManagerImpl;
 import polly.core.persistence.PersistenceManagerImpl;
 import polly.core.plugins.PluginManagerImpl;
+import polly.core.roles.RoleManagerImpl;
 import polly.core.users.UserManagerImpl;
-
-
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.CommandManager;
 import de.skuzzle.polly.sdk.Configuration;
@@ -33,6 +32,7 @@ import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.UtilityManager;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.paste.PasteServiceManager;
+import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.time.SystemTimeProvider;
 import de.skuzzle.polly.sdk.time.TimeProvider;
 
@@ -61,6 +61,9 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 	private TimeProvider timeProvider;
 	private PasteServiceManagerImpl pasteManager;
 	private MailManagerImpl mailManager;
+	private RoleManagerImpl roleManager;
+	
+	
 	
 	public MyPollyImpl(CommandManagerImpl cmdMngr, 
 	        IrcManagerImpl ircMngr, 
@@ -72,7 +75,8 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 			ConversationManagerImpl convMngr,
 			ShutdownManagerImpl shutdownManager,
 			PasteServiceManagerImpl pasteManager,
-			MailManagerImpl mailManager) {
+			MailManagerImpl mailManager,
+			RoleManagerImpl roleManager) {
 	    
 		this.commandManager = cmdMngr;
 		this.ircManager = ircMngr;
@@ -88,6 +92,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 		this.startTime = new Date();
 		this.timeProvider = new SystemTimeProvider();
 		this.mailManager = mailManager;
+		this.roleManager = roleManager;
 	}
 	
 	
@@ -237,5 +242,12 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
     @Override
     protected void actualDispose() throws DisposingException {
         this.shutdown();
+    }
+
+
+
+    @Override
+    public RoleManager roles() {
+        return this.roleManager;
     }
 }

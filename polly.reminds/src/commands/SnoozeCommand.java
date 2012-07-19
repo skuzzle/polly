@@ -2,6 +2,8 @@ package commands;
 
 import java.util.Date;
 
+import polly.reminds.MyPlugin;
+
 import core.RemindManager;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -18,7 +20,8 @@ public class SnoozeCommand extends AbstractRemindCommand {
     public SnoozeCommand(MyPolly polly, RemindManager remindManager) 
             throws DuplicatedSignatureException {
         super(polly, remindManager, "snooze");
-        this.createSignature("Verlängert die Erinnerung die dir zuletzt zugestellt wurde", 
+        this.createSignature("Verlängert die Erinnerung die dir zuletzt zugestellt wurde",
+            MyPlugin.SNOOZE_PERMISSION,
             new Parameter("Neue Zeit", Types.DATE));
         this.setRegisteredOnly();
         this.setHelpText("Verlängert Erinnerungen");

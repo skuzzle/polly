@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -14,16 +15,20 @@ public class KickCommand extends Command {
 	public KickCommand(MyPolly polly) throws DuplicatedSignatureException {
 		super(polly, "kick");
 		this.createSignature("Kickt den angegebenen User aus dem aktuellen Channel", 
+		    MyPlugin.KICK_PERMISSION,
 				new Parameter("User", Types.USER));
 		this.createSignature("Kickt den angegebenen User aus dem aktuellen Channel " +
-				"mit dem angegebenen Grund", 
+				"mit dem angegebenen Grund",
+				MyPlugin.KICK_PERMISSION,
 				new Parameter("User", Types.USER), 
 				new Parameter("Grund", Types.STRING));
 		this.createSignature("Kickt den angegebenen User aus dem angegebenen Channel",
+		    MyPlugin.KICK_PERMISSION,
 				new Parameter("Channel", Types.CHANNEL), 
 				new Parameter("User", Types.USER));	
 		this.createSignature("Kickt den angegebenen User aus dem angegebenen Channel " +
-				"mit dem angegebenen Grund", 
+				"mit dem angegebenen Grund",
+				MyPlugin.KICK_PERMISSION,
 				new Parameter("Channel", Types.CHANNEL), 
 				new Parameter("User", Types.USER), 
 				new Parameter("Grund", Types.STRING));	

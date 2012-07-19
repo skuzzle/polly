@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -14,8 +15,10 @@ public class InfoCommand extends Command {
 	public InfoCommand(MyPolly polly) throws DuplicatedSignatureException {
 		super(polly, "info");
 		this.createSignature("Gibt Informationen über den angegebenen Befehl aus", 
+		    MyPlugin.INFO_PERMISSION,
             new Parameter("Befehl", Types.COMMAND));
 		this.createSignature("Gibt Informationen über den angegebenen Benutzer aus.", 
+		    MyPlugin.INFO_PERMISSION,
             new Parameter("User", Types.USER));
 		this.setHelpText("Gibt Informationen über andere Befehle oder " +
 				"Benutzer aus.");

@@ -1,7 +1,7 @@
 package de.skuzzle.polly.sdk.exceptions;
 
-import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.model.User;
+import de.skuzzle.polly.sdk.roles.SecurityObject;
 
 /**
  * This exception is thrown upon executing a command if the executing users userlevel
@@ -15,25 +15,25 @@ import de.skuzzle.polly.sdk.model.User;
 public class InsufficientRightsException extends Exception {
 
 	private static final long serialVersionUID = 1L;
-	private Command command;
+	private SecurityObject object;
 	
 	public InsufficientRightsException() {
 		super();
 	}
 	
 	
-	public InsufficientRightsException(Command command) {
+	public InsufficientRightsException(SecurityObject object) {
 	    super("");
-	    this.command = command;
+	    this.object = object;
 	}
 	
 	
 	/**
-	 * Gets the command which could not be executed.
+	 * Gets the security object that could not be accessed.
 	 * 
-	 * @return The command.
+	 * @return The SecurityObject.
 	 */
-    public Command getCommand() {
-        return this.command;
+    public SecurityObject getObject() {
+        return this.object;
     }
 }

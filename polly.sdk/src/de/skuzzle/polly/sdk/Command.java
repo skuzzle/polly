@@ -3,8 +3,10 @@ package de.skuzzle.polly.sdk;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.ConversationException;
@@ -12,6 +14,9 @@ import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.model.User;
+import de.skuzzle.polly.sdk.roles.RoleManager;
+import de.skuzzle.polly.sdk.roles.SecurityContainer;
+import de.skuzzle.polly.sdk.roles.SecurityObject;
 
 
 
@@ -78,7 +83,8 @@ import de.skuzzle.polly.sdk.model.User;
  * @since zero day
  * @version RC 1.0
  */
-public abstract class Command extends AbstractDisposable implements Comparable<Command> {
+public abstract class Command extends AbstractDisposable implements Comparable<Command>, 
+        SecurityContainer, SecurityObject {
     
 
 	/**
@@ -95,7 +101,7 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 	/**
 	 * All formal signatures for this command.
 	 */
-	protected List<FormalSignature> signatures;
+	private List<FormalSignature> signatures;
 	
 	
 	/**
@@ -134,6 +140,11 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 	 * Formal signature to output help text of certain real signature
 	 */
 	private FormalSignature helpSignature1;
+	
+	/**
+	 * A set that contains the permissions of all signatures for this command. 
+	 */
+	private Set<String> containedPermissions;
 
 	
 	
@@ -154,6 +165,7 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 		this.helpSignature1 = new FormalSignature(commandName, 0, "", 
 		    new Parameter("", Types.HELP), 
 		    new Parameter("", Types.NUMBER));
+		this.containedPermissions = new HashSet<String>();
 	}
 	
 	
@@ -350,15 +362,7 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 	 */
 	public void doExecute(User executer, String channel, boolean query, 
 	        Signature signature) throws InsufficientRightsException, CommandException {
-	    
-		if (executer.getUserLevel() < this.getUserLevel()) {
-			throw new InsufficientRightsException(this);
-		}
-		if (this.registeredOnly && !this.getMyPolly().users().isSignedOn(executer)) {
-		    throw new InsufficientRightsException(this);
-		}
-		
-		
+
 		// check if help is requested
 		if (signature.equals(this.helpSignature0)) {
 		    this.reply(channel, this.getHelpText());
@@ -376,6 +380,23 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 		}
 		
 		
+		
+        // get matching formal signature to the actual signature and check the 
+        // permissions.
+        if (!this.getMyPolly().roles().canAccess(executer, this)) {
+            
+            throw new InsufficientRightsException(this);
+        }
+        FormalSignature formal = this.signatures.get(signature.getId());
+        if (!this.getMyPolly().roles().hasPermission(executer, 
+                formal.getRequiredPermission())) {
+            
+            throw new InsufficientRightsException(formal);
+        }
+
+		
+		
+		// execute the command
 		try {
     		boolean runOthers = this.executeOnBoth(executer, channel, signature);
     		
@@ -513,9 +534,9 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 	
 	
 	/**
-	 * Factory method for creating a new signature for this command. Its equivalent 
-	 * of creating a new Signature with this commands name. The new signatures 
-	 * formal id gets incremented each call.
+	 * Factory method for creating a new signature for this command. The new signatures 
+	 * formal id gets incremented each call and this signature will have no required 
+	 * permission.
 	 * 
 	 * @param help A description text for this signature.
 	 * @param parameters The formal parameters for the new signature.
@@ -524,16 +545,55 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 	 */	
 	public Signature createSignature(String help, Parameter... parameters)
 	        throws DuplicatedSignatureException {
-	    int id = this.signatures.size();
-	    FormalSignature fs = new FormalSignature(
-	        this.getCommandName(), id, help, parameters);
 	    
-	    if (this.signatures.contains(fs)) {
-	        throw new DuplicatedSignatureException(fs.toString());
-	    }
-	    this.signatures.add(fs);
-	    return fs;
+	    return this.createSignature(help, RoleManager.NONE_PERMISSION, parameters);
 	}
+	
+	
+	
+    /**
+     * Factory method for creating a new signature for this command. Its equivalent 
+     * of creating a new Signature with this commands name. The new signatures 
+     * formal id gets incremented each call.
+     * 
+     * @param help A description text for this signature.
+     * @param permissionName The name of the permission that is required to execute this
+     *      signature.
+     * @param parameters The formal parameters for the new signature.
+     * @return A new signature for this command.
+     * @throws DuplicatedSignatureException If the same signature already exists.
+     */ 
+    public Signature createSignature(String help, String permissionName, 
+            Parameter... parameters) throws DuplicatedSignatureException {
+        int id = this.signatures.size();
+        FormalSignature fs = new FormalSignature(
+            this.getCommandName(), id, help, permissionName, parameters);
+        
+        if (this.signatures.contains(fs)) {
+            throw new DuplicatedSignatureException(fs.toString());
+        }
+        this.signatures.add(fs);
+        this.containedPermissions.addAll(fs.getRequiredPermission());
+        
+        return fs;
+    }
+    
+    
+    
+    @Override
+    public Set<String> getContainedPermissions() {
+        return this.containedPermissions;
+    }
+    
+    
+    
+    @Override
+    public final Set<String> getRequiredPermission() {
+        if (this.registeredOnly) {
+            return Collections.singleton(RoleManager.REGISTERED_PERMISSION);
+        }
+        return Collections.singleton(RoleManager.NONE_PERMISSION);
+    }
 	
 	
 	

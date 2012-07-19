@@ -1,5 +1,6 @@
 package commands;
 
+import polly.reminds.MyPlugin;
 import core.RemindManager;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -21,6 +22,7 @@ public class ToggleMailCommand extends AbstractRemindCommand {
         super(polly, manager, "togglemail");
         this.createSignature("Wandelt eine Erinnerung in eine E-Mail Benachrichtigung " +
         		"um oder umgekehrt", 
+    		MyPlugin.TOGGLE_MAIL_PERMISSION,
             new Parameter("Remind Id", Types.NUMBER));
         this.setHelpText("Wandelt eine Erinnerung in eine E-Mail Benachrichtigung um " +
         		"oder umgekehrt");

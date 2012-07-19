@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -15,8 +16,10 @@ public class RestartCommand extends Command {
 
     public RestartCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "restart");
-        this.createSignature("Startet polly mit den aktuellen Parametern neu.");
-        this.createSignature("Startet polly mit den angegebenen Parametern neu.", 
+        this.createSignature("Startet polly mit den aktuellen Parametern neu.", 
+            MyPlugin.RESTART_PERMISSION);
+        this.createSignature("Startet polly mit den angegebenen Parametern neu.",
+            MyPlugin.RESTART_PERMISSION,
             new Parameter("Parameter", Types.STRING));
         this.setHelpText("Startet polly neu.");
         this.setRegisteredOnly();

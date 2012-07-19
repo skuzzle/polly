@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -15,8 +16,10 @@ public class PartCommand extends Command {
 
     public PartCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "part");
-        this.createSignature("Polly verlässt den aktuellen Channel");
-        this.createSignature("Polly verlässt den angegebenen Channel.", 
+        this.createSignature("Polly verlässt den aktuellen Channel", 
+            MyPlugin.PART_PERMISSION);
+        this.createSignature("Polly verlässt den angegebenen Channel.",
+                MyPlugin.PART_PERMISSION,
                 new Parameter("Channel", Types.CHANNEL));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);

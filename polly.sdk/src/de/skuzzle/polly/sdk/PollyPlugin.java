@@ -1,12 +1,18 @@
 package de.skuzzle.polly.sdk;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
+import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
 import de.skuzzle.polly.sdk.exceptions.PluginException;
+import de.skuzzle.polly.sdk.exceptions.RoleException;
+import de.skuzzle.polly.sdk.roles.RoleManager;
+import de.skuzzle.polly.sdk.roles.SecurityContainer;
 
 
 
@@ -23,9 +29,9 @@ import de.skuzzle.polly.sdk.exceptions.PluginException;
  * 
  * @author Simon
  * @since zero day
- * @version 27.07.2011 5e9480b
  */
-public abstract class PollyPlugin extends AbstractDisposable {
+public abstract class PollyPlugin extends AbstractDisposable 
+        implements SecurityContainer {
 	
 	private MyPolly myPolly;
 	private List<Command> commands;
@@ -83,10 +89,44 @@ public abstract class PollyPlugin extends AbstractDisposable {
 	
 	
 	/**
+	 * <p>This method returns all permissions that any command of this class needs in order
+	 * to be executed.</p>
+	 * 
+	 * <p>You may override it in order to report further permissions to polly but must 
+	 * remember to always call the super method if you do so.</p>
+	 * 
+	 * @return A set of all permissions required by the commands of this plugin.
+	 */
+	@Override
+	public Set<String> getContainedPermissions() {
+	    Set<String> result = new HashSet<String>();
+	    for (Command command : this.commands) {
+	        result.addAll(command.getContainedPermissions());
+	    }
+	    return result;
+	}
+	
+	
+	
+	/**
+	 * Using this method you can assign your commands permissions to the polly default
+	 * roles, or you may create your own role and assign the permissions to it.
+	 * 
+	 * @param roleManager Pollys role manager.
+	 */
+	public void assignPermissions(RoleManager roleManager) 
+	        throws RoleException, DatabaseException {}
+	
+	
+	
+	/**
 	 * This method is called when all plugins have been loaded. From this point on, you
 	 * may use all {@link MyPolly} features.
+	 * 
+	 * @throws PluginException If this plugin fails to initialize.
 	 */
-	public void onLoad() {}
+	public void onLoad() throws PluginException {}
+	
 	
 	
 	/**
@@ -99,6 +139,7 @@ public abstract class PollyPlugin extends AbstractDisposable {
 	 * @since 0.6.1
 	 */
 	public void onUpdate(MyPolly myPolly) throws PluginException {}
+	
 	
 	
 	/**
@@ -123,7 +164,8 @@ public abstract class PollyPlugin extends AbstractDisposable {
 	 * @throws DuplicatedSignatureException If the command you want to add already 
 	 *     exists.
 	 */
-	public void addCommand(Command command) throws DuplicatedSignatureException {
+	public void addCommand(Command command) 
+	            throws DuplicatedSignatureException {
 	    this.myPolly.commands().registerCommand(command);
 	    this.commands.add(command);
 	}

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import polly.core.MyPlugin;
+
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -21,8 +23,10 @@ public class ExportAttributesCommand extends Command {
     public ExportAttributesCommand(MyPolly polly) 
                 throws DuplicatedSignatureException {
         super(polly, "expattr");
-        this.createSignature("Exportiert alle deine polly Attribute");
-        this.createSignature("Exportiert alle polly Attribute des angegebenen Benutzers", 
+        this.createSignature("Exportiert alle deine polly Attribute", 
+            MyPlugin.EXPORT_ATTRIBUTES_PERMISSION);
+        this.createSignature("Exportiert alle polly Attribute des angegebenen Benutzers",
+            MyPlugin.EXPORT_USER_ATTRIBUTES_PERMISSION,
             new Parameter("Benutzer", Types.USER));
         this.setHelpText("Mit diesem Befehl können die individuellen polly Attributes " +
         		"eines Benutzers exportiert werden.");

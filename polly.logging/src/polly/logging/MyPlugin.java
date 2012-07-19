@@ -17,11 +17,20 @@ import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
+import de.skuzzle.polly.sdk.exceptions.RoleException;
+import de.skuzzle.polly.sdk.roles.RoleManager;
 import entities.LogEntry;
 
 
 
 public class MyPlugin extends PollyPlugin {
+
+    public final static String LOGGING_ROLE = "polly.roles.LOGGING";
+    public final static String USER_LOG_PERMISSION = "polly.permission.USER_LOG";
+    public final static String CHANNEL_LOG_PERMISSION = "polly.permission.CHANNEL_LOG";
+    public final static String REPLAY_PERMISSION = "polly.permission.REPLAY";
+    public final static String SEEN_PERMISSION = "polly.permission.SEEN";
+    
     
     public final static String LOG_CACHE_SIZE = "logCacheSize";
     public final static String LOG_PASTE_TRESHOLD = "logPasteTreshold";
@@ -39,7 +48,9 @@ public class MyPlugin extends PollyPlugin {
     private MessageListener highlightForwarder;
     
     
-    public MyPlugin(MyPolly myPolly) throws IncompatiblePluginException, DuplicatedSignatureException {
+    public MyPlugin(MyPolly myPolly) throws IncompatiblePluginException, 
+                DuplicatedSignatureException {
+        
         super(myPolly);
 
         myPolly.persistence().registerEntity(LogEntry.class);
@@ -83,6 +94,21 @@ public class MyPlugin extends PollyPlugin {
         } catch (DatabaseException e) {
             e.printStackTrace();
         }
+    }
+    
+    
+    
+    @Override
+    public void assignPermissions(RoleManager roleManager)
+            throws RoleException, DatabaseException {
+        
+        roleManager.createRole(LOGGING_ROLE);
+        roleManager.assignPermission(LOGGING_ROLE, USER_LOG_PERMISSION);
+        roleManager.assignPermission(LOGGING_ROLE, CHANNEL_LOG_PERMISSION);
+        roleManager.assignPermission(LOGGING_ROLE, REPLAY_PERMISSION);
+        roleManager.assignPermission(LOGGING_ROLE, SEEN_PERMISSION);
+        
+        super.assignPermissions(roleManager);
     }
     
     

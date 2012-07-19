@@ -13,7 +13,7 @@ public class LmgtfyCommand extends SearchEngineCommand {
             new Parameter("Suchbegriff", Types.STRING));
     }
 
-    
+
     
     @Override
     protected String getSearchLink(String key) {

@@ -13,7 +13,7 @@ public class MyPlugin extends PollyPlugin {
 
     
     public MyPlugin(MyPolly myPolly) throws IncompatiblePluginException, 
-            DuplicatedSignatureException {
+                DuplicatedSignatureException {
         super(myPolly);
         
         myPolly.persistence().registerEntity(MemeEntity.class);

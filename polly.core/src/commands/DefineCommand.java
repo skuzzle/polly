@@ -3,6 +3,9 @@ package commands;
 import java.io.IOException;
 
 import core.util.WikiReader;
+
+import polly.core.MyPlugin;
+
 import de.skuzzle.polly.sdk.DelayedCommand;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -19,7 +22,8 @@ public class DefineCommand extends DelayedCommand {
     
     public DefineCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "define", 10000);
-        this.createSignature("Sucht nach der Definition des angegebenen Begriffs", 
+        this.createSignature("Sucht nach der Definition des angegebenen Begriffs",
+            MyPlugin.DEFINE_PERMISSION,
             new Parameter("Begriff", Types.STRING));
         this.setHelpText("Sucht nach der Definition eines angegebenen Begriffs bei " +
     		"Wikipedia");
