@@ -1,5 +1,6 @@
 package polly.core.roles;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -81,6 +82,7 @@ public class Role {
             for (Permission perm : this.permissions) {
                 this.permissionNames.add(perm.getName());
             }
+            this.permissionNames = Collections.unmodifiableSet(this.permissionNames);
             this.stale = false;
         }
         return this.permissionNames;

@@ -1,13 +1,15 @@
 package de.skuzzle.polly.sdk;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
-import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
 import de.skuzzle.polly.sdk.exceptions.PluginException;
+import de.skuzzle.polly.sdk.roles.SecurityContainer;
 
 
 
@@ -24,9 +26,9 @@ import de.skuzzle.polly.sdk.exceptions.PluginException;
  * 
  * @author Simon
  * @since zero day
- * @version 27.07.2011 5e9480b
  */
-public abstract class PollyPlugin extends AbstractDisposable {
+public abstract class PollyPlugin extends AbstractDisposable 
+        implements SecurityContainer {
 	
 	private MyPolly myPolly;
 	private List<Command> commands;
@@ -84,21 +86,33 @@ public abstract class PollyPlugin extends AbstractDisposable {
 	
 	
 	/**
+	 * <p>This method returns all permissions that any command of this class needs in order
+	 * to be executed.</p>
+	 * 
+	 * <p>You may override it in order to report further permissions to polly but must 
+	 * remember to always call the super method if you do so.</p>
+	 * 
+	 * @return A set of all permissions required by the commands of this plugin.
+	 */
+	@Override
+	public Set<String> getContainedPermissions() {
+	    Set<String> result = new HashSet<String>();
+	    for (Command command : this.commands) {
+	        result.addAll(command.getContainedPermissions());
+	    }
+	    return result;
+	}
+	
+	
+	
+	/**
 	 * This method is called when all plugins have been loaded. From this point on, you
 	 * may use all {@link MyPolly} features.
 	 * 
-	 * By default, this method registers all command permissions. If you override it, you
-	 * must call super.onLoad() in order to make your command work properly!
-	 * 
-	 * @throws DatabaseException If any permissions could not be registered.
 	 * @throws PluginException If this plugin fails to initialize.
 	 */
-	public void onLoad() throws DatabaseException, PluginException {
-	    for (Command command : this.commands) {
-            this.getMyPolly().roles().registerPermissions(
-                command.getContainedPermissions());
-	    }
-	}
+	public void onLoad() throws PluginException {}
+	
 	
 	
 	/**
@@ -111,6 +125,7 @@ public abstract class PollyPlugin extends AbstractDisposable {
 	 * @since 0.6.1
 	 */
 	public void onUpdate(MyPolly myPolly) throws PluginException {}
+	
 	
 	
 	/**

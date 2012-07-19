@@ -1,6 +1,7 @@
 package polly.core.plugins;
 
 import polly.core.ModuleStates;
+import polly.core.roles.RoleManagerImpl;
 import polly.moduleloader.AbstractModule;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.SetupException;
@@ -45,6 +46,13 @@ public class NotifyPluginsModule extends AbstractModule {
 
     @Override
     public void run() throws Exception {
+        
+        // Get all contained permissions
+        RoleManagerImpl roleManager = this.requireNow(RoleManagerImpl.class);
+        
+        for (Plugin plugin : this.pluginManager.loadedPlugins()) {
+            roleManager.registerPermissions(plugin.getPluginInstance());
+        }
         this.pluginManager.notifyPlugins();
         this.addState(ModuleStates.PLUGINS_NOTIFIED);
     }

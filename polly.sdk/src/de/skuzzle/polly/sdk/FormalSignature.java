@@ -38,7 +38,7 @@ public class FormalSignature extends Signature implements SecurityObject {
      * @param parameters The formal parameters of this signature.
      */
 	public FormalSignature(String name, int id, String help, Parameter... parameters) {
-	    this(name, id, help, RoleManager.NONE_PERMISSIONS, parameters);
+	    this(name, id, help, RoleManager.NONE_PERMISSION, parameters);
 	}
 	
 	
