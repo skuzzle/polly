@@ -330,4 +330,16 @@ public interface RoleManager {
      * @return An unmodifiable set of permission names belonging to that role.
      */
     public abstract Set<String> getPermissions(String roleName);
+
+
+
+    /**
+     * Deletes a role from the database and removes it from all user who owned that role.
+     * If the given role does not exist, nothing happens.
+     * 
+     * @param roleName The name of the role to delete.
+     * @throws RoleException If trying to remove one of the default roles.
+     * @throws DatabaseException If deleting the role fails.
+     */
+    public abstract void deleteRole(String roleName) throws RoleException, DatabaseException;
 }

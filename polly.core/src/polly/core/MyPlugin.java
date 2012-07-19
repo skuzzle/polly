@@ -52,6 +52,8 @@ import commands.VersionCommand;
 import commands.WikiCommand;
 import commands.roles.AssignPermissionCommand;
 import commands.roles.AssignRoleCommand;
+import commands.roles.CreateRoleCommand;
+import commands.roles.DeleteRoleCommand;
 import commands.roles.ListPermissionsCommand;
 import commands.roles.ListRolesCommand;
 import commands.roles.RemovePermissionCommand;
@@ -149,10 +151,13 @@ public class MyPlugin extends PollyPlugin {
 		
 		this.addCommand(new AssignRoleCommand(myPolly));
 		this.addCommand(new RemoveRoleCommand(myPolly));
+		this.addCommand(new CreateRoleCommand(myPolly));
+		this.addCommand(new DeleteRoleCommand(myPolly));
 		this.addCommand(new ListRolesCommand(myPolly));
 		this.addCommand(new AssignPermissionCommand(myPolly));
 		this.addCommand(new RemovePermissionCommand(myPolly));
 		this.addCommand(new ListPermissionsCommand(myPolly));
+		
 		
 		
 		this.joinTimeCollector = new JoinTimeCollector(myPolly.getTimeProvider());

@@ -167,6 +167,40 @@ public class RoleManagerImpl implements RoleManager {
     }
     
     
+    
+    @Override
+    public void deleteRole(String roleName) throws RoleException, DatabaseException {
+        if (roleName.equals(ADMIN_ROLE) || roleName.equals(DEFAULT_ROLE)) {
+            throw new RoleException("Default roles cant be deleted");
+        }
+        
+        try {
+            this.persistence.writeLock();
+            
+            Role role = this.persistence.findSingle(
+                    Role.class, Role.ROLE_BY_NAME, roleName);
+            
+            if (role == null) {
+                return;
+            }
+            
+            List<User> allUsers = this.persistence.findList(
+                    User.class, polly.core.users.User.ALL_USERS);
+            logger.debug("Deleting role: '" + roleName + "'");
+            this.persistence.startTransaction();
+            this.persistence.remove(role);
+            logger.trace("Removing role from all users.");
+            for (User user : allUsers) {
+                polly.core.users.User puser = (polly.core.users.User) user;
+                puser.getRoles().remove(role);
+            }
+            this.persistence.commitTransaction();
+        } finally {
+            this.persistence.writeUnlock();
+        }
+    }
+    
+    
 
     @Override
     public void registerPermission(final String permission) throws DatabaseException {
@@ -301,14 +335,22 @@ public class RoleManagerImpl implements RoleManager {
                 throw new RoleException("Unknown role: " + roleName);
             }
             
-            // TODO: remove permission from admin role
+            final Permission perm = this.persistence.findSingle(Permission.class, 
+                Permission.PERMISSION_BY_NAME, permission);
+            
+            if (perm == null) {
+                return;
+            }
+            
             logger.debug("Removing permission '" + 
                 permission + "' from role '" + roleName + "'");
+            
             this.persistence.atomicWriteOperation(new WriteAction() {
                 
                 @Override
                 public void performUpdate(PersistenceManager persistence) {
-                    role.getPermissions().remove(new Permission(permission));
+                    role.getPermissions().remove(perm);
+                    persistence.remove(perm);
                     role.setStale(true);
                 }
             });
