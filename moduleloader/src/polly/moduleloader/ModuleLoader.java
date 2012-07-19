@@ -1,8 +1,13 @@
 package polly.moduleloader;
 
+import java.io.File;
+import java.io.IOException;
+
 
 
 public interface ModuleLoader {
+    
+    public void exportToDot(File output) throws IOException;
 
     public abstract void willSetState(int state, Module module);
     

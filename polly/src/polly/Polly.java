@@ -191,6 +191,7 @@ public class Polly {
             
             loader.runSetup();
             loader.runModules();
+            loader.exportToDot(new File("C:\\Users\\Simon\\Desktop\\modules.dot"));
         } catch (Exception e) {
             logger.fatal("Crucial component failed to load!", e);
             

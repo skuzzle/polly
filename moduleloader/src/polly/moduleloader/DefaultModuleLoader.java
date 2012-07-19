@@ -1,5 +1,9 @@
 package polly.moduleloader;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -39,6 +43,51 @@ public class DefaultModuleLoader implements ModuleLoader {
         this.provides = new HashMap<Class<?>, Object>();
         this.modules = new HashSet<Module>();
         this.state = new HashSet<Integer>();
+    }
+    
+    
+    
+    public void exportToDot(File output) throws IOException {
+        PrintWriter w = null;
+        try {
+            w = new PrintWriter(new FileWriter(output));
+            
+            w.println("digraph modules {");
+            if (this.startUp != null) {
+                w.println("    node [shape=diamond color=lightblue2 style=filled] " + 
+            this.startUp.getName());
+            }
+            w.println("    node [shape=ellipse color=lighblue2 style=filled];");
+            for (Module module : this.modules) {
+                if (module != this.startUp) {
+                    w.println("    " + module.getName() + ";");
+                }
+            }
+            
+            w.println();
+            w.println("    node [shape=ellipse fillcolor=azure2 color=azure4 style=\"dashed,filled\"];");
+            for (Entry<Class<?>, Module> e : this.setupProvides.entrySet()) {
+                w.println("    " + e.getKey().getSimpleName());
+            }
+            
+            for (Entry<Module, Set<Class<?>>> e : this.beforeSetupReq.entrySet()) {
+                for (Class<?> cls : e.getValue()) {
+                    w.println("    " + cls.getSimpleName() + "->" + e.getKey().getName());
+                }
+            }
+            
+            for (Entry<Class<?>, Module> e : this.setupProvides.entrySet()) {
+                w.println("    " + e.getValue().getName() + "->" + 
+                        e.getKey().getSimpleName());
+            }
+            
+            w.println("}");
+            w.flush();
+        } finally {
+            if (w != null) {
+                w.close();
+            }
+        }
     }
 
 
