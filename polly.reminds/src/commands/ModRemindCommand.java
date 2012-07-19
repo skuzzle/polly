@@ -3,6 +3,8 @@ package commands;
 
 import java.util.Date;
 
+import polly.reminds.MyPlugin;
+
 import core.RemindManager;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -20,13 +22,16 @@ public class ModRemindCommand extends AbstractRemindCommand {
     public ModRemindCommand(MyPolly polly, RemindManager manager) 
             throws DuplicatedSignatureException {
         super(polly, manager, "modr");
-        this.createSignature("Ändert das Datum des Reminds mit der angegebenen ID", 
+        this.createSignature("Ändert das Datum des Reminds mit der angegebenen ID",
+            MyPlugin.MODIFY_REMIND_PERMISSION,
             new Parameter("Remind-Id", Types.NUMBER), 
             new Parameter("Neue Zeit", Types.DATE));
         this.createSignature("Ändert die Nachricht des angegebenen Reminds", 
+            MyPlugin.MODIFY_REMIND_PERMISSION,
             new Parameter("Remind-Id", Types.NUMBER), 
             new Parameter("Nachricht", Types.STRING));
-        this.createSignature("Ändert Nachricht und Datum des angegebenen Reminds", 
+        this.createSignature("Ändert Nachricht und Datum des angegebenen Reminds",
+            MyPlugin.MODIFY_REMIND_PERMISSION,
             new Parameter("Remind-Id", Types.NUMBER), 
             new Parameter("Nachricht", Types.STRING), 
             new Parameter("Meue Zeit", Types.DATE));

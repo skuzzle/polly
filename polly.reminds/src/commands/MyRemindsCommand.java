@@ -3,6 +3,8 @@ package commands;
 
 import java.util.List;
 
+import polly.reminds.MyPlugin;
+
 import core.RemindFormatter;
 import core.RemindManager;
 
@@ -45,7 +47,8 @@ public class MyRemindsCommand extends AbstractRemindCommand {
             throws DuplicatedSignatureException {
         super(polly, manager, "myreminds");
         this.createSignature("Zeigt die Reminds an, die dir oder die du für andere " +
-        		"hinterlassen hast.");
+        		"hinterlassen hast.",
+        		MyPlugin.MY_REMINDS_PERMISSION);
         this.setRegisteredOnly();
     }
     

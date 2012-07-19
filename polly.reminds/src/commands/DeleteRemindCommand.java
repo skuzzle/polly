@@ -1,5 +1,6 @@
 package commands;
 
+import polly.reminds.MyPlugin;
 import core.RemindManager;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -18,6 +19,7 @@ public class DeleteRemindCommand extends AbstractRemindCommand {
             throws DuplicatedSignatureException {
         super(polly, manager, "delremind");
         this.createSignature("Löscht die Erinnerung mit der angegebenen Id", 
+            MyPlugin.DELETE_REMIND_PERMISSION,
             new Parameter("Remind-ID", Types.NUMBER));
         this.setRegisteredOnly();
     }

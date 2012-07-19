@@ -4,6 +4,8 @@ package commands;
 import java.util.Date;
 import java.util.List;
 
+import polly.reminds.MyPlugin;
+
 import core.RemindManager;
 
 import de.skuzzle.polly.sdk.MyPolly;
@@ -26,14 +28,17 @@ public class LeaveCommand extends AbstractRemindCommand {
             throws DuplicatedSignatureException {
         super(polly, manager, "leave");
         this.createSignature("Hinterlässt eine Nachricht für einen Benutzer.", 
+                MyPlugin.LEAVE_PERMISSION,
                 new Parameter("User", Types.USER), 
                 new Parameter("Channel", Types.CHANNEL), 
                 new Parameter("Nachricht", Types.STRING));
-        this.createSignature("Hinterlässt eine Nachricht für eine Liste von Benutzern.", 
+        this.createSignature("Hinterlässt eine Nachricht für eine Liste von Benutzern.",
+                MyPlugin.LEAVE_PERMISSION,
                 new Parameter("Benutzerliste", new ListType(Types.USER)), 
                 new Parameter("Channel", Types.CHANNEL), 
                 new Parameter("Nachricht", Types.STRING));
-        this.createSignature("Hinterlässt eine private Nachricht für einen Benutzer.", 
+        this.createSignature("Hinterlässt eine private Nachricht für einen Benutzer.",
+                MyPlugin.LEAVE_PERMISSION,
                 new Parameter("User", Types.USER), 
                 new Parameter("Nachricht", Types.STRING));
         this.setRegisteredOnly();

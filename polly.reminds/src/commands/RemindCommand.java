@@ -31,25 +31,30 @@ public class RemindCommand extends AbstractRemindCommand {
         super(myPolly, remindManager, "remind");
         this.createSignature("Erinnert den Benutzer zu einer angegebenen Zeit im " +
                 "angegebenen Channel an etwas.", 
+            MyPlugin.REMIND_PERMISSION,
             new Parameter("User", Types.USER), 
             new Parameter("Channel", Types.CHANNEL), 
             new Parameter("Zeit", Types.DATE), 
             new Parameter("Nachricht", Types.STRING));
         this.createSignature("Erinnert eine Liste von Benutzern zu einer angegebenen " +
-                "Zeit an etwas.", 
+                "Zeit an etwas.",
+            MyPlugin.REMIND_PERMISSION,
             new Parameter("Benutzerliste", new ListType(Types.USER)), 
             new Parameter("Channel", Types.CHANNEL), 
             new Parameter("Zeit", Types.DATE), 
             new Parameter("Nachricht", Types.STRING));
-        this.createSignature("Erinnert dich zu einer bestimmten Zeit an etwas.", 
-                new Parameter("Zeit", Types.DATE), 
-                new Parameter("Nachricht", Types.STRING));
-        this.createSignature("Erinnert den angegebenen Benutzer per Query an etwas.", 
+        this.createSignature("Erinnert dich zu einer bestimmten Zeit an etwas.",
+            MyPlugin.REMIND_PERMISSION,
+            new Parameter("Zeit", Types.DATE), 
+            new Parameter("Nachricht", Types.STRING));
+        this.createSignature("Erinnert den angegebenen Benutzer per Query an etwas.",
+            MyPlugin.REMIND_PERMISSION,
             new Parameter("User", Types.USER), 
             new Parameter("Zeit", Types.DATE), 
             new Parameter("Nachricht", Types.STRING));
         this.createSignature("Erinnert dich zu einer bestimmten Zeit mit einer " +
         		"Standardmeldung.",
+    		MyPlugin.REMIND_PERMISSION,
     		new Parameter("Zeit", Types.DATE));
         this.setRegisteredOnly();
         this.setHelpText("Hinterlässt Erinnerungen für Benutzer.");

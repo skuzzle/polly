@@ -2,6 +2,8 @@ package commands;
 
 import java.util.Date;
 
+import polly.reminds.MyPlugin;
+
 import core.RemindManager;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -20,6 +22,7 @@ public class OnReturnCommand extends AbstractRemindCommand {
         super(polly, manager, "onreturn");
         this.createSignature("Hinterlässt eine Nachricht für einen Benutzer die " +
         		"zugestellt wird wenn dieser wieder im IRC aktiv ist", 
+    		MyPlugin.ON_RETURN_PERMISSION,
     		new Parameter("User", Types.USER), 
     		new Parameter("Nachricht", Types.STRING));
         this.setRegisteredOnly();

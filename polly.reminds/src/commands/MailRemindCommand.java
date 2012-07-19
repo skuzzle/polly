@@ -28,14 +28,17 @@ public class MailRemindCommand extends DelayedCommand {
         this.remindManager = manager;
         this.createSignature("Sendet eine Erinnerung zur angegebenen Zeit an den " +
         		"angegebenen User", 
+    		MyPlugin.MAIL_REMIND_PERMISSION,
     		new Parameter("User", Types.USER), 
     		new Parameter("Datum", Types.DATE), 
     		new Parameter("Nachricht", Types.STRING));
         this.createSignature("Sendet eine Erinngerung zur angegebenen Zeit an dich",
+            MyPlugin.MAIL_REMIND_PERMISSION,
             new Parameter("Datum", Types.DATE),
             new Parameter("Nachricht", Types.STRING));
         this.createSignature("Sendet eine Erinnerung mit Standardtext zur angegebenen " +
         		"Zeit an dich.", 
+    		MyPlugin.MAIL_REMIND_PERMISSION,
     		new Parameter("Datum", Types.DATE));
         
         this.setHelpText("Speichert Erinnerungen die per Mail zugestellt werden.");
