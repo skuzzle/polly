@@ -119,8 +119,8 @@ public class AutoLogonHandler extends AbstractDisposable
         ircManager.addMessageListener(this.autoSignOnHandler);
         this.ircManager = ircManager;
         this.userManager = userManager;
-        this.autoLogonExecutor = Executors.newScheduledThreadPool(4, 
-                new ThreadFactoryBuilder("LOGON_%n%"));
+        this.autoLogonExecutor = Executors.newScheduledThreadPool(1, 
+                new ThreadFactoryBuilder("LOGON"));
         this.scheduledLogons = new HashMap<String, AutoLogonRunnable>();
         this.autoLoginTime = autoLoginTime;
     }
