@@ -73,7 +73,7 @@
             includes="${includeJars}"
             excludes="
                 polly.parser.jar 
-				modulloader.jar
+				moduleloader.jar
                 network.jar
                 polly.config.jar
                 de.skuzzle.polly.process.jar
