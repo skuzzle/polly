@@ -40,6 +40,11 @@ public interface RoleManager {
     public final static String REGISTERED_PERMISSION = "polly.permissions.REGISTERED";
     
     /**
+     * Constant for a permission that only admin users own.
+     */
+    public final static String ADMIN_PERMISSION = "polly.permissions.ADMIN";
+    
+    /**
      * Constant for the admin role name. This role has permissions for accessing every 
      * {@link SecurityObject} within polly.
      */

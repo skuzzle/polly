@@ -26,7 +26,8 @@ import polly.moduleloader.annotations.Provide;;
         @Require(component = EventProvider.class),
         @Require(component = PersistenceManagerImpl.class),
         @Require(component = RoleManagerImpl.class),
-        @Require(state = ModuleStates.PERSISTENCE_READY)
+        @Require(state = ModuleStates.PERSISTENCE_READY),
+        @Require(state = ModuleStates.ROLES_READY)
     },
     provides = {
         @Provide(component = UserManagerImpl.class),
@@ -62,7 +63,7 @@ public class UserModule extends AbstractModule {
     @Override
     public void setup() throws SetupException {
         this.userManager = new UserManagerImpl(this.persistenceManager,
-            this.config, this.eventProvider);
+            this.config, this.eventProvider, this.roleManager);
         this.provideComponent(this.userManager);
         this.shutdownManager.addDisposable(this.userManager);
     }

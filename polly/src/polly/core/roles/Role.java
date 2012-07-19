@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 
@@ -30,11 +31,13 @@ public class Role {
     
     private String name;
     
+    @OneToMany
     private Set<Permission> permissions;
     
     @Transient
     private Set<String> permissionNames;
     
+    @Transient
     private boolean stale;
     
     
@@ -127,5 +130,12 @@ public class Role {
             return false;
         }
         return true;
+    }
+    
+    
+    
+    @Override
+    public String toString() {
+        return "(" + this.id + ") " + this.name;
     }
 }

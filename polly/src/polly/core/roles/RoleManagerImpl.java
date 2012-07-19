@@ -224,7 +224,7 @@ public class RoleManagerImpl implements RoleManager {
                     Permission.PERMISSION_BY_NAME, permission);
             
             if (perm == null) {
-                throw new RoleException("Unknown permission: " + roleName);
+                throw new RoleException("Unknown permission: " + permission);
             }
             
             // TODO: add permission to admin role
@@ -364,13 +364,13 @@ public class RoleManagerImpl implements RoleManager {
     public boolean hasPermission(User user, String permission) {
         if (permission.equals(RoleManager.NONE_PERMISSION)) {
             return true;
-        }
-        
+        }        
         polly.core.users.User puser = (polly.core.users.User) user;
         
         synchronized (SYNC) {
             for (Role role : puser.getRoles()) {
-                if (role.getPermissions().contains(permission)) {
+                if (role.getName().equals(RoleManager.ADMIN_ROLE) || 
+                        role.getPermissionNames().contains(permission)) {
                     return true;
                 }
             }

@@ -50,6 +50,12 @@ import commands.VarCommand;
 import commands.VenadCommand;
 import commands.VersionCommand;
 import commands.WikiCommand;
+import commands.roles.AssignPermissionCommand;
+import commands.roles.AssignRoleCommand;
+import commands.roles.ListPermissionsCommand;
+import commands.roles.ListRolesCommand;
+import commands.roles.RemovePermissionCommand;
+import commands.roles.RemoveRoleCommand;
 import core.ForwardHighlightHandler;
 import core.GreetDeliverer;
 import core.HighlightReplyHandler;
@@ -138,6 +144,15 @@ public class MyPlugin extends PollyPlugin {
 		this.addCommand(new ListAttributesCommand(myPolly));
 		this.addCommand(new GetAttributeCommand(myPolly));
 		this.addCommand(new ExportAttributesCommand(myPolly));
+		
+		
+		
+		this.addCommand(new AssignRoleCommand(myPolly));
+		this.addCommand(new RemoveRoleCommand(myPolly));
+		this.addCommand(new ListRolesCommand(myPolly));
+		this.addCommand(new AssignPermissionCommand(myPolly));
+		this.addCommand(new RemovePermissionCommand(myPolly));
+		this.addCommand(new ListPermissionsCommand(myPolly));
 		
 		
 		this.joinTimeCollector = new JoinTimeCollector(myPolly.getTimeProvider());

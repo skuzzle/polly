@@ -98,7 +98,8 @@ public class MessageHandler implements MessageListener, ConfigurationListener {
                             e1.getSignature().toString());
                 } catch (InsufficientRightsException e1) {
                     e.getSource().sendMessage(e.getChannel(), "Du kannst den Befehl '" + 
-                            e1.getObject() + "' nicht ausführen.");
+                            e1.getObject() + "' nicht ausführen. Benötigte Rechte: " + 
+                            e1.getObject().getRequiredPermission());
                 } catch (Exception e1) {
                     logger.error("Exception while executing command: " + 
                             e1.getMessage(), e1);
