@@ -80,8 +80,8 @@ public class UserModule extends AbstractModule {
                 this.config.getAdminUserLevel());
 
             admin.setHashedPassword(this.config.getAdminPasswordHash());
-            this.userManager.addUser(admin);
             this.roleManager.assignRole(admin, RoleManager.ADMIN_ROLE);
+            this.userManager.addUser(admin);
         } catch (UserExistsException e) {
             admin = e.getUser();
             logger.debug("Default user already existed.");
