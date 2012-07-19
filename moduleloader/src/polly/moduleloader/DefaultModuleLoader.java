@@ -55,9 +55,9 @@ public class DefaultModuleLoader implements ModuleLoader {
             w.println("digraph modules {");
             if (this.startUp != null) {
                 w.println("    node [shape=diamond color=lightblue2 style=filled] " + 
-            this.startUp.getName());
+                        this.startUp.getName());
             }
-            w.println("    node [shape=ellipse color=lighblue2 style=filled];");
+            w.println("    node [shape=ellipse color=lightblue2 style=filled];");
             for (Module module : this.modules) {
                 if (module != this.startUp) {
                     w.println("    " + module.getName() + ";");

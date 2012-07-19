@@ -18,8 +18,12 @@ import polly.configuration.DefaultPollyConfiguration;
 import polly.configuration.PollyConfiguration;
 import polly.core.ModuleBootstrapper;
 import polly.core.ShutdownManagerImpl;
+import polly.moduleloader.AbstractModule;
 import polly.moduleloader.DefaultModuleLoader;
 import polly.moduleloader.ModuleLoader;
+import polly.moduleloader.SetupException;
+import polly.moduleloader.annotations.Module;
+import polly.moduleloader.annotations.Provide;
 import polly.util.FileUtil;
 import polly.util.ProxyClassLoader;
 import de.skuzzle.polly.config.ConfigurationFile;
@@ -189,9 +193,14 @@ public class Polly {
             // This parses the modules.cfg and instantiates all listed modules
             ModuleBootstrapper.prepareModuleLoader(loader, config);
             
+            new AnonymousModule(loader, config, newConfig, parentCl);
+            
             loader.runSetup();
             loader.runModules();
-            loader.exportToDot(new File("C:\\Users\\Simon\\Desktop\\modules.dot"));
+            
+            if (config.isDebugMode()) {
+                loader.exportToDot(new File("modules.dot"));
+            }
         } catch (Exception e) {
             logger.fatal("Crucial component failed to load!", e);
             
@@ -202,6 +211,41 @@ public class Polly {
         }
 
         logger.info("Polly succesfully set up.");
+    }
+
+    
+    
+    @Module(provides = {
+        @Provide(component = ShutdownManagerImpl.class),
+        @Provide(component = PollyConfiguration.class),
+        @Provide(component = ProxyClassLoader.class),
+        @Provide(component = ConfigurationFile.class)
+    })
+    private static class AnonymousModule extends AbstractModule {
+        
+        private PollyConfiguration pollyCfg;
+        private ConfigurationFile newCfg;
+        private ProxyClassLoader parentCl;
+        
+        
+        public AnonymousModule(ModuleLoader loader, PollyConfiguration pollyCfg,
+                ConfigurationFile newCfg, ProxyClassLoader parentCl) {
+            super("ROOT_PROVIDER", loader, true);
+            this.pollyCfg = pollyCfg;
+            this.newCfg = newCfg;
+            this.parentCl = parentCl;
+        }
+
+        
+        
+        @Override
+        public void setup() throws SetupException {
+            this.provideComponent(this.pollyCfg);
+            this.provideComponent(this.newCfg);
+            this.provideComponent(this.parentCl);
+            this.provideComponent(new ShutdownManagerImpl());
+        }
+        
     }
 
 
