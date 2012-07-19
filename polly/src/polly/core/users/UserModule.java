@@ -80,7 +80,6 @@ public class UserModule extends AbstractModule {
                 this.config.getAdminUserLevel());
 
             admin.setHashedPassword(this.config.getAdminPasswordHash());
-            this.roleManager.assignRole(admin, RoleManager.ADMIN_ROLE);
             this.userManager.addUser(admin);
         } catch (UserExistsException e) {
             admin = e.getUser();
@@ -90,6 +89,7 @@ public class UserModule extends AbstractModule {
         } finally {
             this.userManager.setAdmin(admin);
             this.addState(ModuleStates.USERS_READY);
+            this.roleManager.assignRole(admin, RoleManager.ADMIN_ROLE);
         }
     }
 
