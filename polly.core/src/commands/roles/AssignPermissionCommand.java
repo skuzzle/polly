@@ -1,5 +1,6 @@
 package commands.roles;
 
+import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -11,7 +12,6 @@ import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.exceptions.RoleException;
 import de.skuzzle.polly.sdk.model.User;
-import de.skuzzle.polly.sdk.roles.RoleManager;
 
 
 public class AssignPermissionCommand extends Command {
@@ -20,7 +20,7 @@ public class AssignPermissionCommand extends Command {
         super(polly, "assignpermission");
         this.createSignature(
             "Fügt einer Rolle eine weitere Berechtigung hinzu", 
-            RoleManager.ADMIN_PERMISSION, 
+            MyPlugin.ASSIGN_PERMISSION_PERMISSION, 
             new Parameter("Rollenname", Types.STRING), 
             new Parameter("Permission", Types.STRING));
         this.setHelpText("Fügt einer Rolle eine weitere Berechtigung hinzu.");

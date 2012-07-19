@@ -41,7 +41,9 @@ public class Role {
     private boolean stale;
     
     
-    public Role() {}
+    public Role() {
+        this.permissions = new HashSet<Permission>();
+    }
     
     
     

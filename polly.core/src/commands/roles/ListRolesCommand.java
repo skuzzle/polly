@@ -3,6 +3,8 @@ package commands.roles;
 import java.util.Iterator;
 import java.util.Set;
 
+import polly.core.MyPlugin;
+
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -22,11 +24,11 @@ public class ListRolesCommand extends Command {
         super(polly, "listroles");
         this.createSignature(
             "Listet alle Rollen eines Benutzers auf",
-            LIST_ROLES_PERMISSION,
+            MyPlugin.LIST_ROLES_PERMISSION,
             new Parameter("Benutzer", Types.USER));
         this.createSignature(
             "Listet alle verfügbaren Rollen auf",
-            LIST_ROLES_PERMISSION);
+            MyPlugin.LIST_ROLES_PERMISSION);
         this.setHelpText("Listet verfügbare Benutzer-Rollen auf");
     }
 

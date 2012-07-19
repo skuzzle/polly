@@ -3,6 +3,8 @@ package commands;
 import java.util.Iterator;
 import java.util.Set;
 
+import polly.core.MyPlugin;
+
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Signature;
@@ -16,7 +18,8 @@ public class ListAttributesCommand extends Command {
 
     public ListAttributesCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "listattr");
-        this.createSignature("Listet die verfügbaren Attribute auf.");
+        this.createSignature("Listet die verfügbaren Attribute auf.", 
+                MyPlugin.LIST_ATTRIBUTES_PERMISSION);
         this.setUserLevel(UserManager.ADMIN);
     }
     

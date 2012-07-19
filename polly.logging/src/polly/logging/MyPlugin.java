@@ -9,14 +9,21 @@ import core.IrcLogCollector;
 import core.PollyLoggingManager;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
+import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
+import de.skuzzle.polly.sdk.exceptions.RoleException;
+import de.skuzzle.polly.sdk.roles.RoleManager;
 import entities.LogEntry;
 
 
 
 public class MyPlugin extends PollyPlugin {
+
+    public final static String LOGGING_PERMISSION = "polly.permission.LOGGING";
+    public final static String SEEN_PERMISSION = "polly.permission.SEEN";
+    
     
     public final static String LOG_CACHE_SIZE = "logCacheSize";
     public final static String LOG_PASTE_TRESHOLD = "logPasteTreshold";
@@ -62,6 +69,18 @@ public class MyPlugin extends PollyPlugin {
         this.addCommand(new UserLogCommand(myPolly, this.logManager));
         this.addCommand(new ChannelLogCommand(myPolly, this.logManager));
         this.addCommand(new SeenCommand(myPolly, this.logManager));
+    }
+    
+    
+    
+    @Override
+    public void assignPermissions(RoleManager roleManager)
+            throws RoleException, DatabaseException {
+        
+        roleManager.assignPermission(RoleManager.DEFAULT_ROLE, LOGGING_PERMISSION);
+        roleManager.assignPermission(RoleManager.DEFAULT_ROLE, SEEN_PERMISSION);
+        
+        super.assignPermissions(roleManager);
     }
     
     

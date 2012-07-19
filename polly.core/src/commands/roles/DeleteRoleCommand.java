@@ -1,5 +1,6 @@
 package commands.roles;
 
+import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -15,13 +16,12 @@ import de.skuzzle.polly.sdk.model.User;
 
 public class DeleteRoleCommand extends Command {
 
-    public final static String DELETE_ROLE_PERMISSION = "polly.permission.DELETE_ROLE";
     
     public DeleteRoleCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "deleterole");
         this.createSignature(
             "Löscht eine Rolle und entfernt sie von jedem Benutzer.",
-            DELETE_ROLE_PERMISSION,
+            MyPlugin.DELETE_ROLE_PERMISSION,
             new Parameter("Rollenname", Types.STRING));
         
         this.setHelpText("Löscht eine Rolle und entfernt sie von jedem Benutzer.");

@@ -2,6 +2,8 @@ package commands.roles;
 
 import java.util.Iterator;
 
+import polly.core.MyPlugin;
+
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -15,15 +17,13 @@ import de.skuzzle.polly.sdk.model.User;
 
 public class ListPermissionsCommand extends Command {
 
-    public final static String LIST_PERMISSIONS_PERMISSION = 
-            "polly.permissions.LIST_PERMISSIONS";
     
     
     public ListPermissionsCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "listpermissions");
         this.createSignature(
             "Listet alle Berechtigungen einer Rolle auf.",
-            LIST_PERMISSIONS_PERMISSION,
+            MyPlugin.LIST_PERMISSIONS_PERMISSION,
             new Parameter("Rolle", Types.STRING));
         
         this.setHelpText("Listet alle Berechtigungen einer Rolle auf");

@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.MyPlugin;
 import core.TrainBill;
 import core.TrainManager;
 import de.skuzzle.polly.sdk.Command;
@@ -21,9 +22,10 @@ public class MyTrainsCommand extends Command {
             throws DuplicatedSignatureException {
         super(polly, "mytrains");
         this.createSignature("Listet die offene Capitrain Rechnung für einen " +
-        		"Benutzer auf.");
+        		"Benutzer auf.", MyPlugin.MYTRAINS_PERMISSION);
         this.createSignature("Listet eine detaillierte Capitrainrechnung für einen " +
         		"Benutzer auf", 
+        		MyPlugin.MYTRAINS_PERMISSION,
     		new Parameter("Details", Types.BOOLEAN));
         this.setHelpText("Listet die offene Capitrain Rechnung für einen " +
                 "Benutzer auf.");

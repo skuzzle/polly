@@ -1,11 +1,11 @@
 package commands;
 
+import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
-import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.ConstraintException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
@@ -20,10 +20,12 @@ public class SetAttributeCommand extends Command {
         super(polly, "setattr");
         this.createSignature("Setzt das Attribut des angegebenen Benutzers neu. " +
         		"Diese Befehel ist nur für Admins", 
+    		MyPlugin.SET_USER_ATTRIBUTE_PERMISSION,
             new Parameter("User", Types.USER), 
             new Parameter("Attributname", Types.STRING), 
             new Parameter("Attributwert", Types.STRING));
-        this.createSignature("Setzt das Attribut auf den angegebenen Wert.", 
+        this.createSignature("Setzt das Attribut auf den angegebenen Wert.",
+            MyPlugin.SET_ATTRIBUTE_PERMISSION,
             new Parameter("Attributname", Types.STRING), 
             new Parameter("Attributwert", Types.STRING));
         this.setRegisteredOnly();
@@ -45,11 +47,6 @@ public class SetAttributeCommand extends Command {
             Signature signature) throws CommandException {
         
         if (this.match(signature, 0)) {
-            if (executer.getUserLevel() < UserManager.ADMIN) {
-                throw new CommandException(
-                    "Du kannst keine Attribute für andere Benutzer ändern");
-            }
-            
             String user = signature.getStringValue(0);
             final String attribute = signature.getStringValue(1);
             final String value = signature.getStringValue(2);

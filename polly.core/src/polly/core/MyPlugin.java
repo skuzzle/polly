@@ -68,9 +68,12 @@ import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
 import de.skuzzle.polly.sdk.constraints.Constraints;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
+import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
+import de.skuzzle.polly.sdk.exceptions.RoleException;
+import de.skuzzle.polly.sdk.roles.RoleManager;
 import entities.TopicEntity;
 import entities.TrainEntity;
 
@@ -81,7 +84,54 @@ import entities.TrainEntity;
  * @version 27.07.2011 3851c1b
  */
 public class MyPlugin extends PollyPlugin {
-
+    
+    public final static String TRAINER = "polly.roles.TRAINER";
+    public final static String CASPER = "polly.roles.CASPER";
+    
+    public final static String ADD_TRAIN_PERMISSION = "polly.permission.ADD_TRAIN";
+    public final static String ADD_USER_PERMISSION = "polly.permission.ADD_USER";
+    public final static String ALIAS_PERMISSION = "polly.permission.ALIAS";
+    public final static String ANYFICATION_PERMISSION = "polly.permission.ANYFICATION";
+    public final static String CLOSE_TRAIN_PERMISSION = "polly.permission.CLOSE_TRAIN";
+    public final static String CLUMBOMB_PERMISSION = "polly.permission.CLUMBOMB";
+    public final static String DEFINE_PERMISSION = "polly.permission.DEFINE";
+    public final static String DELETE_USER_PERMISSION = "polly.permission.DELETE_USER";
+    public final static String DELIVER_TRAIN_PERMISSION = "polly.permission.DELIVER_TRAIN";
+    public final static String DICT_PERMISSION = "polly.permission.DICT";
+    public final static String DITO_PERMISSION = "polly.permission.DITO";
+    public final static String EXPORT_ATTRIBUTES_PERMISSION = "polly.permission.EXPORT_ATTRIBUTES";
+    public final static String EXPORT_USER_ATTRIBUTES_PERMISSION = "polly.permission.EXPORT_USER_ATTRIBUTES";
+    public final static String GET_ATTRIBUTE_PERMISSION = "polly.permission.GET_ATTRIBUTE";
+    public final static String GET_USER_ATTRIBUTE_PERMISSION = "polly.permission.GET_USER_ATTRIBUTE";
+    public final static String HOP_PERMISSION = "polly.permission.HOP";
+    public final static String INFO_PERMISSION = "polly.permission.INFO";
+    public final static String ISDOWN_PERMISSION = "polly.permission.ISDOWN";
+    public final static String JOIN_PERMISSION = "polly.permission.JOIN";
+    public final static String KICK_PERMISSION = "polly.permission.KICK";
+    public final static String LIST_ATTRIBUTES_PERMISSION = "polly.permission.LIST_ATTRIBUTES";
+    public final static String MYTRAINS_PERMISSION = "polly.permission.MY_TRAINS";
+    public final static String MY_VENAD_PERMISSION = "polly.permission.MY_VENAD";
+    public final static String PART_PERMISSION = "polly.permission.PART";
+    public final static String QUIT_PERMISSION = "polly.permission.QUIT";
+    public final static String RAW_IRC_PERMISSION = "polly.permission.RAW_IRC";
+    public final static String RELOAD_CFG_PERMISSION = "polly.permission.RELOAD_CFG";
+    public final static String RESTART_PERMISSION = "polly.permission.RESTART";
+    public final static String SET_ATTRIBUTE_PERMISSION = "polly.permission.SET_ATTRIBUTE";
+    public final static String SET_USER_ATTRIBUTE_PERMISSION = "polly.permission.SET_USER_ATTRIBUTE";
+    public final static String SET_PASSWORD_PERMISSION = "polly.permission.SET_PASSWORD";
+    public final static String TALK_PERMISSION = "polly.permission.TALK";
+    public final static String UPTIME_PERMISSION = "polly.permission.UPTIME";
+    public final static String LIST_USERS_PERMISSION = "polly.permission.LIST_USERS";
+    public final static String LIST_VARS_PERMISSION = "polly.permission.LIST_VARS";
+    public final static String ASSIGN_PERMISSION_PERMISSION = "polly.permission.ASSIGN_PERMISSION";
+    public final static String ASSIGN_ROLE_PERMISSION = "polly.permission.ASSIGN_ROLE";
+    public final static String CREATE_ROLE_PERMISSION = "polly.permission.CREATE_ROLE";
+    public final static String DELETE_ROLE_PERMISSION = "polly.permission.DELETE_ROLE";
+    public final static String LIST_PERMISSIONS_PERMISSION = "polly.permission.LIST_PERMISSIONS";
+    public final static String LIST_ROLES_PERMISSION = "polly.permission.LIST_ROLES";
+    public final static String REMOVE_PERMISSION_PERMISSION = "polly.permission.REMOVE_PERMISSION";
+    public final static String REMOVE_ROLE_PERMISSION = "polly.permission.REMOVE_ROLE";
+    
     public final static String GREETING = "GREETING";
     public final static String VENAD = "VENAD";
     
@@ -93,6 +143,58 @@ public class MyPlugin extends PollyPlugin {
     private HighlightReplyHandler highlightHandler;
     private JoinTimeCollector joinTimeCollector;
     private MessageListener highlightForwarder;
+    
+    
+    
+    @Override
+    public void assignPermissions(RoleManager roleManager) 
+            throws RoleException, DatabaseException {
+        super.assignPermissions(roleManager);
+        
+        roleManager.assignPermission(RoleManager.ADMIN_ROLE, ADD_USER_PERMISSION);
+        roleManager.assignPermission(RoleManager.ADMIN_ROLE, DELETE_USER_PERMISSION);
+        roleManager.assignPermission(RoleManager.ADMIN_ROLE, TALK_PERMISSION);
+        roleManager.assignPermission(RoleManager.ADMIN_ROLE, ALIAS_PERMISSION);
+        roleManager.assignPermission(RoleManager.ADMIN_ROLE, EXPORT_USER_ATTRIBUTES_PERMISSION);
+        roleManager.assignPermission(RoleManager.ADMIN_ROLE, SET_USER_ATTRIBUTE_PERMISSION);
+        roleManager.assignPermission(RoleManager.ADMIN_ROLE, GET_USER_ATTRIBUTE_PERMISSION);
+        roleManager.assignPermission(RoleManager.ADMIN_ROLE, SET_PASSWORD_PERMISSION);
+        roleManager.assignPermission(RoleManager.ADMIN_ROLE, PART_PERMISSION);
+        roleManager.assignPermission(RoleManager.ADMIN_ROLE, QUIT_PERMISSION);
+        roleManager.assignPermission(RoleManager.ADMIN_ROLE, KICK_PERMISSION);
+        roleManager.assignPermission(RoleManager.ADMIN_ROLE, JOIN_PERMISSION);
+        roleManager.assignPermission(RoleManager.ADMIN_ROLE, RAW_IRC_PERMISSION);
+        roleManager.assignPermission(RoleManager.ADMIN_ROLE, RESTART_PERMISSION);
+        roleManager.assignPermission(RoleManager.ADMIN_ROLE, RELOAD_CFG_PERMISSION);
+        roleManager.assignPermission(RoleManager.ADMIN_ROLE, ASSIGN_PERMISSION_PERMISSION);
+        roleManager.assignPermission(RoleManager.ADMIN_ROLE, ASSIGN_ROLE_PERMISSION);
+        roleManager.assignPermission(RoleManager.ADMIN_ROLE, CREATE_ROLE_PERMISSION);
+        roleManager.assignPermission(RoleManager.ADMIN_ROLE, DELETE_ROLE_PERMISSION);
+        roleManager.assignPermission(RoleManager.ADMIN_ROLE, LIST_PERMISSIONS_PERMISSION);
+        roleManager.assignPermission(RoleManager.ADMIN_ROLE, LIST_ROLES_PERMISSION);
+        roleManager.assignPermission(RoleManager.ADMIN_ROLE, REMOVE_PERMISSION_PERMISSION);
+        roleManager.assignPermission(RoleManager.ADMIN_ROLE, REMOVE_ROLE_PERMISSION);
+        
+        roleManager.createRole(TRAINER);
+        roleManager.assignPermission(TRAINER, ADD_TRAIN_PERMISSION);
+        roleManager.assignPermission(TRAINER, CLOSE_TRAIN_PERMISSION);
+        roleManager.assignPermission(TRAINER, DELIVER_TRAIN_PERMISSION);
+        
+        roleManager.createRole(CASPER);
+        roleManager.assignPermission(CASPER, CLUMBOMB_PERMISSION);
+        roleManager.assignPermission(CASPER, ANYFICATION_PERMISSION);
+        
+        roleManager.assignPermission(RoleManager.DEFAULT_ROLE, MYTRAINS_PERMISSION);
+        roleManager.assignPermission(RoleManager.DEFAULT_ROLE, DEFINE_PERMISSION);
+        roleManager.assignPermission(RoleManager.DEFAULT_ROLE, DICT_PERMISSION);
+        roleManager.assignPermission(RoleManager.DEFAULT_ROLE, DITO_PERMISSION);
+        roleManager.assignPermission(RoleManager.DEFAULT_ROLE, GET_ATTRIBUTE_PERMISSION);
+        roleManager.assignPermission(RoleManager.DEFAULT_ROLE, LIST_ATTRIBUTES_PERMISSION);
+        roleManager.assignPermission(RoleManager.DEFAULT_ROLE, SET_ATTRIBUTE_PERMISSION);
+        roleManager.assignPermission(RoleManager.DEFAULT_ROLE, ISDOWN_PERMISSION);
+        roleManager.assignPermission(RoleManager.DEFAULT_ROLE, EXPORT_ATTRIBUTES_PERMISSION);
+    }
+    
     
     
 	public MyPlugin(MyPolly myPolly) throws IncompatiblePluginException, 
@@ -212,7 +314,7 @@ public class MyPlugin extends PollyPlugin {
 	        ignore.printStackTrace();
 	    }
 	}
-
+	
 	
 	
 	@Override

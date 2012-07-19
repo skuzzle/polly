@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -16,6 +17,7 @@ public class DeleteUserCommand extends Command {
     public DeleteUserCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "deluser");
         this.createSignature("Löscht den angegebenen Benutzer.", 
+            MyPlugin.DELETE_USER_PERMISSION,
             new Parameter("User", Types.USER));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);

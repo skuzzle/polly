@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.MyPlugin;
 import core.TrainBill;
 import core.TrainManager;
 import de.skuzzle.polly.sdk.Command;
@@ -22,16 +23,20 @@ public class AddTrainCommand extends Command {
         
         super(polly, "train");
         this.createSignature("Fügt ein neues Training zur Rechnung des Benutzers hinzu.", 
+            MyPlugin.ADD_TRAIN_PERMISSION,
             new Parameter("Benutzer", Types.USER),
             new Parameter("Rechnung", Types.STRING));
-        this.createSignature("Zeigt die offene Rechnungssumme für einen Benutzer an.", 
+        this.createSignature("Zeigt die offene Rechnungssumme für einen Benutzer an.",
+            MyPlugin.ADD_TRAIN_PERMISSION,
             new Parameter("Benutzer", Types.USER),
             new Parameter("Details?", Types.BOOLEAN));
-        this.createSignature("Fügt ein neues Training zur Rechnung des Benutzers hinzu.", 
+        this.createSignature("Fügt ein neues Training zur Rechnung des Benutzers hinzu.",
+            MyPlugin.ADD_TRAIN_PERMISSION,
             new Parameter("Benutzer", Types.USER),
             new Parameter("Rechnung", Types.STRING),
             new Parameter("Faktor", Types.NUMBER));
-        this.createSignature("Zeigt die offene Rechnungssumme für einen Benutzer an.", 
+        this.createSignature("Zeigt die offene Rechnungssumme für einen Benutzer an.",
+            MyPlugin.ADD_TRAIN_PERMISSION,
             new Parameter("Benutzer", Types.USER));
         this.setHelpText("Befehl zum Verwalten von Capi Trainings.");
         this.setRegisteredOnly();

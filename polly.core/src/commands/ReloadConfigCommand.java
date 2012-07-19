@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Signature;
@@ -14,7 +15,8 @@ public class ReloadConfigCommand extends Command {
 
     public ReloadConfigCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "reloadcfg");
-        this.createSignature("Liest die Konfigurationsdatei neu ein");
+        this.createSignature("Liest die Konfigurationsdatei neu ein",
+            MyPlugin.RELOAD_CFG_PERMISSION);
         this.setHelpText("Liest die Konfigurationsdatei neu ein. Nicht alle " +
         		"Konfigurationseinstellungen können zur Laufzeit übernommen werden." );
         this.setUserLevel(UserManager.ADMIN);

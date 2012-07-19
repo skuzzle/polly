@@ -1,5 +1,6 @@
 package commands.roles;
 
+import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -11,7 +12,6 @@ import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.exceptions.RoleException;
 import de.skuzzle.polly.sdk.model.User;
-import de.skuzzle.polly.sdk.roles.RoleManager;
 
 
 public class RemovePermissionCommand extends Command {
@@ -20,7 +20,7 @@ public class RemovePermissionCommand extends Command {
         super(polly, "removepermission");
         this.createSignature(
             "Entfernt eine Berechtigung von einer Rolle", 
-            RoleManager.ADMIN_PERMISSION, 
+            MyPlugin.REMOVE_PERMISSION_PERMISSION, 
             new Parameter("Rollenname", Types.STRING), 
             new Parameter("Permission", Types.STRING));
         this.setHelpText("Entfernt eine Berechtigung von einer Rolle.");

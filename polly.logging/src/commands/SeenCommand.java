@@ -2,6 +2,8 @@ package commands;
 
 import java.util.Collections;
 
+import polly.logging.MyPlugin;
+
 import core.PollyLoggingManager;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -13,10 +15,12 @@ import de.skuzzle.polly.sdk.model.User;
 import entities.LogEntry;
 
 public class SeenCommand extends AbstractLogCommand {
-
-    public SeenCommand(MyPolly polly, PollyLoggingManager logManager) throws DuplicatedSignatureException {
+    
+    public SeenCommand(MyPolly polly, PollyLoggingManager logManager) 
+            throws DuplicatedSignatureException {
         super(polly, "seen", logManager);
         this.createSignature("Zeigt an wann ein Benutzer das letzte mal gesehen wurde.", 
+            MyPlugin.SEEN_PERMISSION,
             new Parameter("User", Types.USER));
     }
     

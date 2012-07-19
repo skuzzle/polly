@@ -7,6 +7,8 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import polly.core.MyPlugin;
+
 import de.skuzzle.polly.sdk.DelayedCommand;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -35,8 +37,10 @@ public class AnyficationCommand extends DelayedCommand {
     public AnyficationCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "anyfication", DELAY);
         this.createSignature("Anyfication!", 
+            MyPlugin.ANYFICATION_PERMISSION,
             new Parameter("Prefix", Types.STRING));
         this.createSignature("Lordification innerhalb der angegebenen zeit!",
+            MyPlugin.ANYFICATION_PERMISSION,
             new Parameter("Prefix", Types.STRING), 
             new Parameter("Zeitspanne", Types.TIMESPAN));
         this.setUserLevel(UserManager.ADMIN);

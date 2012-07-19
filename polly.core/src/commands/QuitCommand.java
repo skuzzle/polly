@@ -1,6 +1,7 @@
 package commands;
 
 
+import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.Conversation;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -24,8 +25,9 @@ public class QuitCommand extends Command {
     
     public QuitCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "flyaway");
-        this.createSignature("Beendet polly.");
-        this.createSignature("Beendet polly mit der angegebenen Quit-Message", 
+        this.createSignature("Beendet polly.", MyPlugin.QUIT_PERMISSION);
+        this.createSignature("Beendet polly mit der angegebenen Quit-Message",
+                MyPlugin.QUIT_PERMISSION,
                 new Parameter("Quit-Message", Types.STRING));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);

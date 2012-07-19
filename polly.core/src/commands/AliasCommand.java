@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -19,6 +20,7 @@ public class AliasCommand extends Command {
         super(polly, "alias");
         this.createSignature("Erstellt ein eines mit dem angegebenen Namen für den" +
             " angegebenen Befehl", 
+            MyPlugin.ALIAS_PERMISSION,
             new Parameter("Alias", Types.STRING),
             new Parameter("Befehl", Types.COMMAND));
         this.setRegisteredOnly();

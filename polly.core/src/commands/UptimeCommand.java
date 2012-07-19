@@ -2,6 +2,8 @@ package commands;
 
 import java.util.Date;
 
+import polly.core.MyPlugin;
+
 import core.JoinTimeCollector;
 
 import de.skuzzle.polly.sdk.Command;
@@ -24,8 +26,10 @@ public class UptimeCommand extends Command {
                 throws DuplicatedSignatureException {
         super(polly, "uptime");
         this.joinTimeCollector = jtc;
-        this.createSignature("Zeigt an wie lange polly schon läuft.");
-        this.createSignature("Zeigt an wie lange der angegebene Benutzer schon online ist.", 
+        this.createSignature("Zeigt an wie lange polly schon läuft.", 
+            MyPlugin.UPTIME_PERMISSION);
+        this.createSignature("Zeigt an wie lange der angegebene Benutzer schon online ist.",
+            MyPlugin.UPTIME_PERMISSION,
             new Parameter("Nickname", Types.USER));
         this.setHelpText("Zeigt an wie lange polly schon läuft.");
     }

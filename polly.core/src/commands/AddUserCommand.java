@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -17,6 +18,7 @@ public class AddUserCommand extends Command {
     public AddUserCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "adduser");
         this.createSignature("Fügt einen neuen User hinzu.", 
+            MyPlugin.ADD_USER_PERMISSION,
             new Parameter("Username", Types.USER),
             new Parameter("Passwort", Types.STRING),
             new Parameter("Userlevel", Types.NUMBER));

@@ -1,5 +1,6 @@
 package commands.roles;
 
+import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -15,18 +16,17 @@ import de.skuzzle.polly.sdk.model.User;
 
 public class CreateRoleCommand extends Command {
 
-    public final static String CREATE_ROLE_PERMISSION = "polly.permission.CREATE_ROLE";
     
     public CreateRoleCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "createrole");
         this.createSignature(
             "Erstellt eine neue Benutzer-Rolle", 
-            CREATE_ROLE_PERMISSION,
+            MyPlugin.CREATE_ROLE_PERMISSION,
             new Parameter("Rollenname", Types.STRING));
         
         this.createSignature(
             "Erstellt eine neue benutzerrolle basierend auf einer anderen Rolle", 
-            CREATE_ROLE_PERMISSION, 
+            MyPlugin.CREATE_ROLE_PERMISSION, 
             new Parameter("Basisrolle", Types.STRING),
             new Parameter("Rollenname", Types.STRING));
         

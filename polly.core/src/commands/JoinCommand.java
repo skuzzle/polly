@@ -3,6 +3,8 @@ package commands;
 import java.util.Collections;
 import java.util.List;
 
+import polly.core.MyPlugin;
+
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -21,10 +23,13 @@ public class JoinCommand extends Command {
     public JoinCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "join");
         this.createSignature("Lässt polly den angegebenen Channel betreten.", 
+            MyPlugin.JOIN_PERMISSION,
                 new Parameter("Channel", Types.CHANNEL));
-        this.createSignature("Lässt polly alle Channels in der Liste betreten.", 
+        this.createSignature("Lässt polly alle Channels in der Liste betreten.",
+            MyPlugin.JOIN_PERMISSION,
                 new Parameter("Channelliste", new ListType(Types.CHANNEL)));
-        this.createSignature("Lässt polly einen Channel mit Passwort betreten", 
+        this.createSignature("Lässt polly einen Channel mit Passwort betreten",
+            MyPlugin.JOIN_PERMISSION,
             new Parameter("Channel", Types.CHANNEL),
             new Parameter("Passwort", Types.STRING));
         this.setRegisteredOnly();

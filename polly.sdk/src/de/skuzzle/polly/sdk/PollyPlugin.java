@@ -5,10 +5,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
 import de.skuzzle.polly.sdk.exceptions.PluginException;
+import de.skuzzle.polly.sdk.exceptions.RoleException;
+import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.roles.SecurityContainer;
 
 
@@ -102,6 +105,17 @@ public abstract class PollyPlugin extends AbstractDisposable
 	    }
 	    return result;
 	}
+	
+	
+	
+	/**
+	 * Using this method you can assign your commands permissions to the polly default
+	 * roles, or you may create your own role and assign the permissions to it.
+	 * 
+	 * @param roleManager Pollys role manager.
+	 */
+	public void assignPermissions(RoleManager roleManager) 
+	        throws RoleException, DatabaseException {}
 	
 	
 	
