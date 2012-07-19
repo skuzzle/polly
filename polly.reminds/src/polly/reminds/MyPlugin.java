@@ -42,37 +42,37 @@ public class MyPlugin extends PollyPlugin {
     public final static String REMIND_ROLE = "polly.roles.REMIND";
     
     public final static String DELETE_REMIND_PERMISSION = "polly.permission.DELETE_REMIND";
-    public final static String LEAVE_PERMISSION = "polly.permission.LEAVE";
-    public final static String MAIL_REMIND_PERMISSION = "polly.permission.MAIL_REMIND";
+    public final static String LEAVE_PERMISSION         = "polly.permission.LEAVE";
+    public final static String MAIL_REMIND_PERMISSION   = "polly.permission.MAIL_REMIND";
     public final static String MODIFY_REMIND_PERMISSION = "polly.permission.MODIFY_REMIND";
-    public final static String MY_REMINDS_PERMISSION = "polly.permission.MY_REMINDS";
-    public final static String ON_RETURN_PERMISSION = "polly.permission.ON_RETURN";
-    public final static String REMIND_PERMISSION = "polly.permission.REMIND";
-    public final static String SNOOZE_PERMISSION = "polly.permission.SNOOZE";
-    public final static String TOGGLE_MAIL_PERMISSION = "polly.permission.TOGGLE_MAIL";
+    public final static String MY_REMINDS_PERMISSION    = "polly.permission.MY_REMINDS";
+    public final static String ON_RETURN_PERMISSION     = "polly.permission.ON_RETURN";
+    public final static String REMIND_PERMISSION        = "polly.permission.REMIND";
+    public final static String SNOOZE_PERMISSION        = "polly.permission.SNOOZE";
+    public final static String TOGGLE_MAIL_PERMISSION   = "polly.permission.TOGGLE_MAIL";
 
-    public final static String REMIND_FORMAT_NAME = "REMIND_FORMAT";
+    public final static String REMIND_FORMAT_NAME  = "REMIND_FORMAT";
     public final static String REMIND_FORMAT_VALUE = "@%r%: %m%. (Hinterlassen von: %s% am %ld%)";
     
-    public final static String MESSAGE_FORMAT_NAME = "MESSAGE_FORMAT";
+    public final static String MESSAGE_FORMAT_NAME  = "MESSAGE_FORMAT";
     public final static String MESSAGE_FORMAT_VALUE = "@%r%: %m%. (Hinterlassen von: %s% am %ld%)";
     
-    public final static String SNOOZE_TIME = "SNOOZE_TIME";
+    public final static String SNOOZE_TIME          = "SNOOZE_TIME";
     public final static String SNOOZE_DEFAULT_VALUE = "60000";
     
-    public final static String DEFAULT_MSG = "REMIND_DEFAULT_MSG";
+    public final static String DEFAULT_MSG       = "REMIND_DEFAULT_MSG";
     public final static String DEFAULT_MSG_VALUE = "Reminder!";
 	
-	public final static String EMAIL = "EMAIL";
+	public final static String EMAIL         = "EMAIL";
 	public final static String DEFAULT_EMAIL = "none";
 	
-	public final static String LEAVE_AS_MAIL = "LEAVE_AS_MAIL";
+	public final static String LEAVE_AS_MAIL         = "LEAVE_AS_MAIL";
 	public final static String DEFAULT_LEAVE_AS_MAIL = "false";
 	
-	public final static String REMIND_TRACK_NICKCHANGE = "REMIND_TRACK_NICKCHANGE";
+	public final static String REMIND_TRACK_NICKCHANGE         = "REMIND_TRACK_NICKCHANGE";
 	public final static String DEFAULT_REMIND_TRACK_NICKCHANGE = "true";
 	
-	public final static String REMIND_DOUBLE_DELIVERY = "REMIND_DOUBLE_DELIVERY";
+	public final static String REMIND_DOUBLE_DELIVERY         = "REMIND_DOUBLE_DELIVERY";
 	public final static String DEFAULT_REMIND_DOUBLE_DELIVERY = "true";
 	
 	public final static String REMIND_IDLE_TIME = "REMIND_IDLE_TIME";

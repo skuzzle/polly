@@ -25,22 +25,22 @@ import entities.LogEntry;
 
 public class MyPlugin extends PollyPlugin {
 
-    public final static String LOGGING_ROLE = "polly.roles.LOGGING";
-    public final static String USER_LOG_PERMISSION = "polly.permission.USER_LOG";
+    public final static String LOGGING_ROLE           = "polly.roles.LOGGING";
+    public final static String USER_LOG_PERMISSION    = "polly.permission.USER_LOG";
     public final static String CHANNEL_LOG_PERMISSION = "polly.permission.CHANNEL_LOG";
-    public final static String REPLAY_PERMISSION = "polly.permission.REPLAY";
-    public final static String SEEN_PERMISSION = "polly.permission.SEEN";
+    public final static String REPLAY_PERMISSION      = "polly.permission.REPLAY";
+    public final static String SEEN_PERMISSION        = "polly.permission.SEEN";
     
     
-    public final static String LOG_CACHE_SIZE = "logCacheSize";
+    public final static String LOG_CACHE_SIZE     = "logCacheSize";
     public final static String LOG_PASTE_TRESHOLD = "logPasteTreshold";
-    public final static String LOG_MAX_LOGS = "logMaxLogs";
+    public final static String LOG_MAX_LOGS       = "logMaxLogs";
     
     public final static int DEFAULT_LOG_CACHE_SIZE = 100;
-    public final static int DEFAULT_LOG_TRESHOLD = 10;
-    public final static int DEFAULT_MAX_LOGS = 100;
+    public final static int DEFAULT_LOG_TRESHOLD   = 10;
+    public final static int DEFAULT_MAX_LOGS       = 100;
     
-    public final static String FORWARD_HIGHLIGHTS = "FORWARD_HIGHLIGHTS";
+    public final static String FORWARD_HIGHLIGHTS         = "FORWARD_HIGHLIGHTS";
     public final static String DEFAULT_FORWARD_HIGHLIGHTS = "false";
     
     private IrcLogCollector logCollector;
