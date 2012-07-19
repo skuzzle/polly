@@ -21,7 +21,10 @@ import entities.LogEntry;
 
 public class MyPlugin extends PollyPlugin {
 
-    public final static String LOGGING_PERMISSION = "polly.permission.LOGGING";
+    public final static String LOGGING_ROLE = "polly.roles.LOGGING";
+    public final static String USER_LOG_PERMISSION = "polly.permission.USER_LOG";
+    public final static String CHANNEL_LOG_PERMISSION = "polly.permission.CHANNEL_LOG";
+    public final static String REPLAY_PERMISSION = "polly.permission.REPLAY";
     public final static String SEEN_PERMISSION = "polly.permission.SEEN";
     
     
@@ -77,8 +80,11 @@ public class MyPlugin extends PollyPlugin {
     public void assignPermissions(RoleManager roleManager)
             throws RoleException, DatabaseException {
         
-        roleManager.assignPermission(RoleManager.DEFAULT_ROLE, LOGGING_PERMISSION);
-        roleManager.assignPermission(RoleManager.DEFAULT_ROLE, SEEN_PERMISSION);
+        roleManager.createRole(LOGGING_ROLE);
+        roleManager.assignPermission(LOGGING_ROLE, USER_LOG_PERMISSION);
+        roleManager.assignPermission(LOGGING_ROLE, CHANNEL_LOG_PERMISSION);
+        roleManager.assignPermission(LOGGING_ROLE, REPLAY_PERMISSION);
+        roleManager.assignPermission(LOGGING_ROLE, SEEN_PERMISSION);
         
         super.assignPermissions(roleManager);
     }

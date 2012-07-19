@@ -26,26 +26,26 @@ public class ChannelLogCommand extends AbstractLogCommand {
                 throws DuplicatedSignatureException {
         super(polly, "channellog", logManager);
         this.createSignature("Filtert Log Einträge eines Channels", 
-            MyPlugin.LOGGING_PERMISSION,
+            MyPlugin.CHANNEL_LOG_PERMISSION,
             new Parameter("Channel", Types.CHANNEL));
         this.createSignature("Filtert Log Einträge eines Channels mit bestimmten Inhalt", 
-            MyPlugin.LOGGING_PERMISSION,
+            MyPlugin.CHANNEL_LOG_PERMISSION,
             new Parameter("Channel", Types.CHANNEL), 
             new Parameter("Pattern", Types.STRING));
         this.createSignature("Filtert Log Einträge eines Channels mit bestimmten Inhalt", 
-            MyPlugin.LOGGING_PERMISSION,
+            MyPlugin.CHANNEL_LOG_PERMISSION,
             new Parameter("Channel", Types.CHANNEL), 
             new Parameter("Pattern", Types.STRING),
             new Parameter("Limit", Types.NUMBER));
         this.createSignature("Filtert Log Einträge eines Channels mit bestimmten Inhalt " +
         		"die nicht älter sind als das angegebne Datum", 
-    		MyPlugin.LOGGING_PERMISSION,
+    		MyPlugin.CHANNEL_LOG_PERMISSION,
             new Parameter("Channel", Types.CHANNEL),
             new Parameter("Pattern", Types.STRING), 
             new Parameter("Datum", Types.DATE));
         this.createSignature("Filtert Log Einträge eines Channels mit bestimmten Inhalt " +
         		"die zweichen den Angegebenen Zeitpunkten liegen",
-    		MyPlugin.LOGGING_PERMISSION,
+    		MyPlugin.CHANNEL_LOG_PERMISSION,
             new Parameter("Channel", Types.CHANNEL),
             new Parameter("Pattern", Types.STRING), 
             new Parameter("Von", Types.DATE),
