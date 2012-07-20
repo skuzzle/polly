@@ -65,10 +65,9 @@ public interface UserManager {
      * 
      * @param name The user name.
      * @param password The users password as plaintext.
-     * @param userLevel The users level.
      * @return The created user instance.
      */
-    public User createUser(String name, String password, int userLevel);
+    public User createUser(String name, String password);
     
     
     
@@ -133,12 +132,11 @@ public interface UserManager {
      * @param name The users name.
      * @param password The users password in plaintext. This will then be stored as a
      *      hash value.
-     * @param level A number describing this users level.
      * @throws UserExistsException If a user with the same name already exists.
      * @throws DatabaseException If storing the new user to the database fails for any
      *      reason.
      */
-	public abstract void addUser(String name, String password, int level) 
+	public abstract void addUser(String name, String password) 
 	        throws UserExistsException, DatabaseException;
 	
 	

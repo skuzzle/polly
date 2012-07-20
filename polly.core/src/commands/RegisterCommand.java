@@ -66,7 +66,7 @@ public class RegisterCommand extends Command {
         }
         try {
             this.getMyPolly().users().addUser(
-                    userName, password, UserManager.REGISTERED);
+                    userName, password);
             this.reply(executer, "Registrierung erfolgreich. Du kannst dich jetzt " +
             		"mit \":auth @" + userName + " " + password + "\" anmelden.");
         } catch (UserExistsException e) {

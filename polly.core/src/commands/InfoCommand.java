@@ -61,8 +61,6 @@ public class InfoCommand extends Command {
 		    b.append(u);
 		    b.append(", aktueller Nickname: ");
 		    b.append(user.getCurrentNickName());
-		    b.append(", Userlevel: ");
-		    b.append(user.getUserLevel());
 		    this.reply(channel, b.toString());
 		}
 		

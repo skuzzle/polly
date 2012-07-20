@@ -20,8 +20,7 @@ public class AddUserCommand extends Command {
         this.createSignature("Fügt einen neuen User hinzu.", 
             MyPlugin.ADD_USER_PERMISSION,
             new Parameter("Username", Types.USER),
-            new Parameter("Passwort", Types.STRING),
-            new Parameter("Userlevel", Types.NUMBER));
+            new Parameter("Passwort", Types.STRING));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
         this.setHelpText("Befehl zum registrieren neuer Benutzer bei Polly.");
@@ -61,10 +60,9 @@ public class AddUserCommand extends Command {
         if (this.match(signature, 0)) {
             String userName = signature.getStringValue(0);
             String password = signature.getStringValue(1);
-            int userLevel = (int) signature.getNumberValue(2);
             
             try {
-                this.getMyPolly().users().addUser(userName, password, userLevel);
+                this.getMyPolly().users().addUser(userName, password);
                 this.reply(executer, "Benutzer '" + userName + "' angelegt.");
             } catch (UserExistsException e) {
                 this.reply(executer, "Benutzer '" + userName + "' existiert bereits.");

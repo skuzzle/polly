@@ -45,6 +45,7 @@ public class MyPlugin extends PollyPlugin {
     public final static String LEAVE_PERMISSION         = "polly.permission.LEAVE";
     public final static String MAIL_REMIND_PERMISSION   = "polly.permission.MAIL_REMIND";
     public final static String MODIFY_REMIND_PERMISSION = "polly.permission.MODIFY_REMIND";
+    public final static String MODIFY_OTHER_REMIND_PERMISSION = "polly.permission.MODIFY_OTHER_REMIND";
     public final static String MY_REMINDS_PERMISSION    = "polly.permission.MY_REMINDS";
     public final static String ON_RETURN_PERMISSION     = "polly.permission.ON_RETURN";
     public final static String REMIND_PERMISSION        = "polly.permission.REMIND";
@@ -139,6 +140,8 @@ public class MyPlugin extends PollyPlugin {
     public void assignPermissions(RoleManager roleManager)
             throws RoleException, DatabaseException {
         super.assignPermissions(roleManager);
+        
+        roleManager.assignPermission(RoleManager.ADMIN_ROLE, MODIFY_OTHER_REMIND_PERMISSION);
         
         roleManager.createRole(REMIND_ROLE);
         roleManager.assignPermission(REMIND_ROLE, DELETE_REMIND_PERMISSION);

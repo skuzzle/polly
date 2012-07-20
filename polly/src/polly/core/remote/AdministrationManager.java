@@ -18,6 +18,7 @@ import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.model.User;
+import de.skuzzle.polly.sdk.roles.RoleManager;
 
 import polly.network.Connection;
 import polly.network.protocol.Constants;
@@ -48,11 +49,12 @@ public class AdministrationManager extends AbstractDisposable {
     private ExecutorService sender;
     private CachedLogAppender logAppender;
     private UserManager userManager;
+    private RoleManager roleManager;
     
     
-    
-    public AdministrationManager(UserManager userManager) {
+    public AdministrationManager(UserManager userManager, RoleManager roleManager) {
         this.userManager = userManager;
+        this.roleManager = roleManager;
         this.sender = Executors.newFixedThreadPool(1);
         this.liveLogList = new HashSet<Connection>();
         this.ircForwards = new HashSet<Connection>();
@@ -76,7 +78,7 @@ public class AdministrationManager extends AbstractDisposable {
             return LoginResult.UNKNOWN_USER;
         } else if (!user.checkPassword(password)) {
             return LoginResult.INVALID_PASSWORD;
-        } else if (user.getUserLevel() < UserManager.ADMIN) {
+        } else if (!this.roleManager.hasPermission(user, RoleManager.ADMIN_PERMISSION)) {
             return LoginResult.INSUFICCIENT_RIGHTS;
         } else {
             ((ServerConnection) connection).setUser(user);

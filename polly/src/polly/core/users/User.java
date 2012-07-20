@@ -75,15 +75,14 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     
     
     User() {
-        this("", "", 0);
+        this("", "");
     }
     
     
     
-    User(String name, String password, int userLevel) {
+    User(String name, String password) {
         this.name = name;
         this.password = Hashes.md5(password);
-        this.userLevel = userLevel;
         this.attributes = new HashMap<String, String>();
         this.lastActionTimeStamp = System.currentTimeMillis();
         this.roles = new HashSet<Role>();
@@ -104,7 +103,6 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     
     
 
-    @Override
     public int getUserLevel() {
         return this.userLevel;
     }
@@ -250,10 +248,6 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     
     @Override
     public int compareTo(de.skuzzle.polly.sdk.model.User o) {
-        int i = new Integer(o.getUserLevel()).compareTo(this.getUserLevel());
-        if (i == 0) {
-            return o.getName().compareTo(this.getName());
-        }
-        return i;
+        return o.getName().compareTo(this.getName());
     }
 }

@@ -7,9 +7,7 @@ import java.util.List;
 
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
-import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
-import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
@@ -22,20 +20,15 @@ public class ShowCommandsCommand extends Command {
     public ShowCommandsCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "cmds");
         this.createSignature("Zeigt alle für dich ausführbaren Befehle an.");
-        this.createSignature("Zeigt alle Befehle für das angegebene User-Level an.", 
-                new Parameter("Userlevel", Types.NUMBER));
         this.setHelpText("Listet die verfügbaren Befehle auf.");
     }
     
     
     
-    private boolean canExecute(User user, int userLevel, Command cmd) {
-        boolean userOnline = this.getMyPolly().users().isSignedOn(user);
-        boolean result = cmd.getUserLevel() <= userLevel;
-        
-        result = userOnline ? result : result && !cmd.isRegisteredOnly();
-        return result;
+    private boolean canExecute(User user, Command cmd) {
+        return this.getMyPolly().roles().canAccess(user, cmd);
     }
+    
     
     
     @Override
@@ -47,14 +40,10 @@ public class ShowCommandsCommand extends Command {
     }
     
     
+    
     @Override
     protected boolean executeOnBoth(User executer, String channel,
             Signature signature) {
-
-        int level = executer.getUserLevel();
-        if (this.match(signature, 1)) {
-            level = (int) signature.getNumberValue(0);
-        }
         
         StringBuilder b = new StringBuilder();
         List<Command> cmds = new ArrayList<Command>(
@@ -63,7 +52,7 @@ public class ShowCommandsCommand extends Command {
         List<Command> output = new ArrayList<Command>(20);
         
         for (Command cmd : cmds) {
-            if (this.canExecute(executer, level, cmd)) {
+            if (this.canExecute(executer, cmd)) {
                 output.add(cmd);
             }
         }

@@ -25,6 +25,7 @@ import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.EMailException;
 import de.skuzzle.polly.sdk.model.User;
+import de.skuzzle.polly.sdk.roles.RoleManager;
 import entities.RemindEntity;
 
 
@@ -46,6 +47,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     private IrcManager irc;
     private PersistenceManager persistence;
     private UserManager userManager;
+    private RoleManager roleManager;
     private Timer remindScheduler;
     private Map<Integer, RemindTask> scheduledReminds;
     private Map<String, RemindFormatter> specialFormats;
@@ -63,6 +65,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         this.persistence = myPolly.persistence();
         this.userManager = myPolly.users();
         this.formatter = myPolly.formatting();
+        this.roleManager = myPolly.roles();
         this.dbWrapper = new RemindDBWrapperImpl(myPolly.persistence());
         this.remindScheduler = new Timer("REMIND_SCHEDULER", true);
         this.scheduledReminds = new HashMap<Integer, RemindManager.RemindTask>();
@@ -404,7 +407,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         User u = this.userManager.getUser(nickName);
         if (u == null) {
             logger.trace("User is unknown, creating new one");
-            u = this.userManager.createUser(nickName, "", 0);
+            u = this.userManager.createUser(nickName, "");
         }
         if (u.getCurrentNickName() == null) {
             u.setCurrentNickName(nickName);
@@ -476,9 +479,10 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     
     @Override
     public boolean canEdit(User user, RemindEntity remind) {
-        return user.getUserLevel() >= UserManager.ADMIN ||
-                remind.getForUser().equals(user.getCurrentNickName()) ||
-                remind.getFromUser().equals(user.getCurrentNickName());
+        return remind.getForUser().equals(user.getCurrentNickName()) ||
+            remind.getFromUser().equals(user.getCurrentNickName()) ||
+            this.roleManager.hasPermission(user, 
+                MyPlugin.MODIFY_OTHER_REMIND_PERMISSION);
     }
     
     

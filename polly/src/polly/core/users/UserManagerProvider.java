@@ -76,8 +76,7 @@ public class UserManagerProvider extends AbstractModule {
         try {
             logger.info("Creating default user with name '"
                 + this.config.getAdminUserName() + "'.");
-            admin = this.userManager.createUser(this.config.getAdminUserName(), "",
-                this.config.getAdminUserLevel());
+            admin = this.userManager.createUser(this.config.getAdminUserName(), "");
 
             admin.setHashedPassword(this.config.getAdminPasswordHash());
             this.userManager.addUser(admin);

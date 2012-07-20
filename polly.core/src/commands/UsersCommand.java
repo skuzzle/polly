@@ -79,8 +79,6 @@ public class UsersCommand extends Command {
                 if (this.getMyPolly().users().isSignedOn(current)) {
                     b.append(" (");
                     b.append(current.getCurrentNickName());
-                    b.append(", ");
-                    b.append(current.getUserLevel());
                     b.append(")");
                 }
                 

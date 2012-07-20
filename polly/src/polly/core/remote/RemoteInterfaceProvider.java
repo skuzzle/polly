@@ -6,6 +6,7 @@ import java.io.IOException;
 import polly.configuration.PollyConfiguration;
 import polly.core.ShutdownManagerImpl;
 import polly.core.remote.tcp.AdministrationServer;
+import polly.core.roles.RoleManagerImpl;
 import polly.core.users.UserManagerImpl;
 import polly.moduleloader.AbstractModule;
 import polly.moduleloader.ModuleLoader;
@@ -27,7 +28,7 @@ public class RemoteInterfaceProvider extends AbstractModule {
     private ProtocolHandler protocolHandler;
     private AdministrationServer server;
     private UserManagerImpl userManager;
-    
+    private RoleManagerImpl roleManager;
     
     
     public RemoteInterfaceProvider(ModuleLoader loader) {
@@ -40,6 +41,7 @@ public class RemoteInterfaceProvider extends AbstractModule {
     public void beforeSetup() {
         this.config = this.requireNow(PollyConfiguration.class);
         this.userManager = this.requireNow(UserManagerImpl.class);
+        this.roleManager = this.requireNow(RoleManagerImpl.class);
         this.shutdownManager = this.requireNow(ShutdownManagerImpl.class);
     }
     
@@ -50,7 +52,7 @@ public class RemoteInterfaceProvider extends AbstractModule {
         this.initKeyStore(this.config.getKeyStoreFile(), 
             this.config.getKeyStorePassword());
         
-        this.adminManager = new AdministrationManager(this.userManager);
+        this.adminManager = new AdministrationManager(this.userManager, this.roleManager);
         this.protocolHandler = new ProtocolHandler(this.adminManager);
         try {
             this.server = new AdministrationServer(null, 24500, 5);

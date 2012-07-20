@@ -177,7 +177,6 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
             this.persistence.writeLock();
             this.persistence.startTransaction();
             old.setHashedPassword(updated.getHashedPassword());
-            old.setUserLevel(updated.getUserLevel());
             this.persistence.commitTransaction();
             logger.info("User '" + old + "' updated to '" + updated + "'");
         } catch (DatabaseException e) {
@@ -222,9 +221,9 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
 
     @Override
-    public void addUser(String name, String password, int level) 
+    public void addUser(String name, String password) 
             throws UserExistsException, DatabaseException {
-        this.addUser(this.createUser(name, password, level));
+        this.addUser(this.createUser(name, password));
     }
 
     
@@ -521,8 +520,8 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
 
 
     @Override
-    public User createUser(String name, String password, int userLevel) {
-        polly.core.users.User result = new polly.core.users.User(name, password, userLevel);
+    public User createUser(String name, String password) {
+        polly.core.users.User result = new polly.core.users.User(name, password);
         for (Attribute att : this.getAllAttributes()) {
             result.getAttributes().put(att.getName(), att.getDefaultValue());
         }

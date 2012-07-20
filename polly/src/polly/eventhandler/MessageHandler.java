@@ -134,7 +134,7 @@ public class MessageHandler implements MessageListener, ConfigurationListener {
     private polly.core.users.User getUser(IrcUser user) {
         polly.core.users.User u = (polly.core.users.User) this.userManager.getUser(user);
         if (u == null) {
-            u = (User) this.userManager.createUser("~UNKNOWN", "blabla", 0);
+            u = (User) this.userManager.createUser("~UNKNOWN", "blabla");
             u.setCurrentNickName(user.getNickName());
         }
         return u;
