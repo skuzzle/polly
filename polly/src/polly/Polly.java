@@ -193,6 +193,7 @@ public class Polly {
             // This parses the modules.cfg and instantiates all listed modules
             ModuleBootstrapper.prepareModuleLoader(loader, config);
             
+            // add startup module
             new AnonymousModule(loader, config, newConfig, parentCl);
             
             loader.runSetup();
