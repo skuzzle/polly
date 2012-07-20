@@ -74,6 +74,7 @@
             excludes="
                 polly.parser.jar 
 				moduleloader.jar
+                polly.tools.jar
                 network.jar
                 polly.config.jar
                 de.skuzzle.polly.process.jar
