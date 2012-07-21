@@ -24,7 +24,7 @@ import polly.moduleloader.annotations.Require;
 )
 public class RemoteInterfaceProvider extends AbstractModule {
 
-    public static final String SERVER_CONFIG = "server.cfg";
+    public static final String SERVER_CONFIG = "porat.cfg";
     
     private AdministrationManager adminManager;
     private ShutdownManagerImpl shutdownManager;
