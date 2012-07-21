@@ -1,8 +1,11 @@
 package polly.core.persistence;
 
 
+import java.io.IOException;
+
+import de.skuzzle.polly.sdk.Configuration;
 import polly.Polly;
-import polly.configuration.PollyConfiguration;
+import polly.configuration.ConfigurationProviderImpl;
 import polly.core.ShutdownManagerImpl;
 import polly.core.plugins.PluginManagerImpl;
 import polly.core.roles.Permission;
@@ -20,7 +23,7 @@ import polly.core.ModuleStates;
 @Module(
     requires = {
         @Require(component = PluginManagerImpl.class),
-        @Require(component = PollyConfiguration.class),
+        @Require(component = ConfigurationProviderImpl.class),
         @Require(component = ShutdownManagerImpl.class),
         @Require(state = ModuleStates.PLUGINS_READY)
     },
@@ -30,12 +33,14 @@ import polly.core.ModuleStates;
     })
 public class PersistenceManagerProvider extends AbstractModule {
 
-    private PollyConfiguration config;
+    public final static String PERSISTENCE_CONFIG = "persistence.cfg";
+    
+    
     private PluginManagerImpl pluginManager;
     private PersistenceManagerImpl persistenceManager;
     private ShutdownManagerImpl shutdownManager;
     private XmlCreator xmlCreator;
-    
+    private Configuration persistenceCfg;
     
     
     public PersistenceManagerProvider(ModuleLoader loader) {
@@ -46,7 +51,6 @@ public class PersistenceManagerProvider extends AbstractModule {
     
     @Override
     public void beforeSetup() {
-        this.config = this.requireNow(PollyConfiguration.class);
         this.pluginManager = this.requireNow(PluginManagerImpl.class);
         this.shutdownManager = this.requireNow(ShutdownManagerImpl.class);
     }
@@ -55,19 +59,27 @@ public class PersistenceManagerProvider extends AbstractModule {
     
     @Override
     public void setup() throws SetupException {
+        ConfigurationProviderImpl configProvider = this.requireNow(
+                ConfigurationProviderImpl.class);
+        try {
+            this.persistenceCfg = configProvider.open(PERSISTENCE_CONFIG);
+        } catch (IOException e) {
+            throw new SetupException(e);
+        }
+        
         this.persistenceManager = new PersistenceManagerImpl();
         this.provideComponent(this.persistenceManager);
         
         DatabaseProperties dp = new DatabaseProperties(
-            this.config.getDbPassword(), 
-            this.config.getDbUser(), 
-            this.config.getDbDriver(), 
-            this.config.getDbUrl());
+            this.persistenceCfg.readString(Configuration.DB_PASSWORD),
+            this.persistenceCfg.readString(Configuration.DB_USER),
+            this.persistenceCfg.readString(Configuration.DB_DRIVER),
+            this.persistenceCfg.readString(Configuration.DB_URL));
     
         this.xmlCreator = new XmlCreator(
                 this.persistenceManager.getEntities(), 
                 dp, 
-                this.config.getPersistenceUnit(), 
+                this.persistenceCfg.readString(Configuration.DB_PERSISTENCE_UNIT), 
                 this.pluginManager,
                 Polly.PLUGIN_FOLDER);
         
@@ -83,10 +95,13 @@ public class PersistenceManagerProvider extends AbstractModule {
     
 
     public void run() throws Exception {
-        logger.debug("Writing persistence.xml to " + this.config.getPersistenceXML());
-        this.xmlCreator.writePersistenceXml(this.config.getPersistenceXML());
+        String persistenceXml = persistenceCfg.readString(
+                Configuration.DB_PERSISTENCE_XML_PATH);
+        logger.debug("Writing persistence.xml to " + persistenceXml);
+        this.xmlCreator.writePersistenceXml(persistenceXml);
         
-        this.persistenceManager.connect(this.config.getPersistenceUnit());
+        this.persistenceManager.connect(
+            this.persistenceCfg.readString(Configuration.DB_PERSISTENCE_UNIT));
         this.addState(ModuleStates.PERSISTENCE_READY);
     }
 
@@ -94,7 +109,6 @@ public class PersistenceManagerProvider extends AbstractModule {
 
     @Override
     public void dispose() {
-        this.config = null;
         this.pluginManager = null;
         this.shutdownManager = null;
         this.persistenceManager = null;

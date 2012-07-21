@@ -1,15 +1,15 @@
 package polly.commandline;
 
+import de.skuzzle.polly.sdk.Configuration;
 import polly.commandline.Argument.ArgumentAction;
-import polly.configuration.PollyConfiguration;
 
 
 public class ConfigArgument extends Argument implements ArgumentAction {
 
-    protected PollyConfiguration config;
+    protected Configuration config;
     protected String field;
     
-    public ConfigArgument(String name, PollyConfiguration config, String field) {
+    public ConfigArgument(String name, Configuration config, String field) {
         super(name, 1, null);
         this.config = config;
         this.field = field;

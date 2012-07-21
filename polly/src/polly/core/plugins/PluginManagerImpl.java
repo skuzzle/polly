@@ -63,8 +63,8 @@ public class PluginManagerImpl extends AbstractDisposable implements PluginManag
             throw new PluginException("Error reading plugin property file.", e);
         }
         
-        String mainClass = pluginCfg.getProperty(Plugin.ENTRY_POINT);
-        String fileName = pluginCfg.getProperty(Plugin.JAR_FILE);
+        String mainClass = pluginCfg.readString(Plugin.ENTRY_POINT);
+        String fileName = pluginCfg.readString(Plugin.JAR_FILE);
         File jarFile = new File(propertyFile.getParent(), fileName);
 
         PollyPlugin pluginInstance = null;
@@ -125,7 +125,7 @@ public class PluginManagerImpl extends AbstractDisposable implements PluginManag
         while (it.hasNext()) {
             Plugin pluginCfg = it.next();
             
-            String pluginName = pluginCfg.getProperty(Plugin.PLUGIN_NAME);
+            String pluginName = pluginCfg.readString(Plugin.PLUGIN_NAME);
             try {
                 this.unload(pluginName, it);
             } catch (Exception e) {
@@ -153,7 +153,7 @@ public class PluginManagerImpl extends AbstractDisposable implements PluginManag
     
     
     private void addPlugin(Plugin pluginCfg) {
-        this.pluginCache.put(pluginCfg.getProperty(Plugin.PLUGIN_NAME), 
+        this.pluginCache.put(pluginCfg.readString(Plugin.PLUGIN_NAME), 
                 pluginCfg);
     }
     
@@ -222,7 +222,7 @@ public class PluginManagerImpl extends AbstractDisposable implements PluginManag
     
     
     
-    public void loadFolder(String folder, MyPolly myPolly, final String...excludes) 
+    public void loadFolder(String folder, MyPolly myPolly, final List<String> excludes) 
             throws PluginException {
         
         File dir = new File(folder);

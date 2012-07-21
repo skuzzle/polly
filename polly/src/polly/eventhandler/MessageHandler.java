@@ -6,9 +6,6 @@ import org.apache.log4j.Logger;
 
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.sdk.CommandManager;
-import de.skuzzle.polly.sdk.Configuration;
-import de.skuzzle.polly.sdk.eventlistener.ConfigurationEvent;
-import de.skuzzle.polly.sdk.eventlistener.ConfigurationListener;
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
 import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
@@ -18,14 +15,13 @@ import de.skuzzle.polly.sdk.exceptions.UnknownCommandException;
 import de.skuzzle.polly.sdk.exceptions.UnknownSignatureException;
 
 
-import polly.configuration.PollyConfiguration;
 import polly.core.users.User;
 import polly.core.users.UserManagerImpl;
 
 
 
 
-public class MessageHandler implements MessageListener, ConfigurationListener {
+public class MessageHandler implements MessageListener {
     
     private final static int OFF = 0;
     private final static int SIMPLE = 1;
@@ -35,17 +31,15 @@ public class MessageHandler implements MessageListener, ConfigurationListener {
     private CommandManager commands;
     private UserManagerImpl userManager;
     private ExecutorService executorThreadPool;
-    private PollyConfiguration config;
-    
+    private int parseErrorDetails;
     
     
     public MessageHandler(CommandManager commandManager, UserManagerImpl userManager, 
-            ExecutorService executorThreadPool, PollyConfiguration config) {
+            ExecutorService executorThreadPool, int parseErrorDetails) {
         this.commands = commandManager;
         this.userManager = userManager;
         this.executorThreadPool = executorThreadPool;
-        this.config = config;
-        config.addConfigurationListener(this);
+        this.parseErrorDetails = parseErrorDetails;
     }
     
 
@@ -115,7 +109,7 @@ public class MessageHandler implements MessageListener, ConfigurationListener {
     
     
     private void reportParseError(MessageEvent e, ParseException ex) {
-        int detail = this.config.getParseErrorDetail();
+        int detail = this.parseErrorDetails;
         if (detail == OFF) {
             return;
         }
@@ -145,12 +139,5 @@ public class MessageHandler implements MessageListener, ConfigurationListener {
     @Override
     public void noticeMessage(MessageEvent e) {
         this.getUser(e.getUser()).setLastMessageTime(System.currentTimeMillis());
-    }
-
-
-
-    @Override
-    public void configurationChange(ConfigurationEvent e) {
-        System.out.println(e.getSource().readInt(Configuration.PARSE_ERROR_DETAILS));
     }
 }

@@ -1,6 +1,6 @@
 package de.skuzzle.polly.sdk;
 
-import java.io.IOException;
+import java.util.List;
 
 import de.skuzzle.polly.sdk.eventlistener.ConfigurationListener;
 
@@ -316,10 +316,7 @@ public interface Configuration {
 	 * @param name The property name.
 	 * @param value The properties value. This will be stored as a String, calling its
 	 * 		<code>toString</code> method.
-	 * @deprecated This method is no longer supported and will always throw an 
-	 *     {@link UnsupportedOperationException}.
 	 */
-    @Deprecated
 	public abstract <T> void setProperty(String name, T value);
 	
 	
@@ -370,6 +367,23 @@ public interface Configuration {
 	
 	
 	
+	public abstract boolean readBoolean(String name);
+	
+	
+	
+	
+	/**
+	 * Reads a list of strings from the configuration. Lists are normal properties 
+	 * separated by "," or ";".
+	 * 
+	 * @param name The property name.
+	 * @return A list of strings.
+	 */
+	public abstract List<String> readStringList(String name);
+	
+	
+	
+	
 	/**
 	 * Registers the given listener to listen for configuration changes.
 	 *  
@@ -398,27 +412,4 @@ public interface Configuration {
 	 * @since 0.8
 	 */
 	public void fireConfigurationChanged();
-	
-	
-	
-	/**
-	 * Writes the current properties back to the configuration file.
-	 * @throws IOException If writing the file fails.
-     * @deprecated This method is no longer supported and will always throw an 
-     *     {@link UnsupportedOperationException}.
-     */
-    @Deprecated
-	public abstract void store() throws IOException;
-    
-    
-    
-    /**
-     * Tries to reload the configuration file. If this fails, the old configuration will 
-     * keep being used. If the reload succeeded, all {@link ConfigurationListener}s are
-     * automatically notified using {@link #fireConfigurationChanged()}.
-     * 
-     * @since 0.9
-     */
-    public abstract void reload();
-    
 }

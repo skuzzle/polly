@@ -1,11 +1,12 @@
 package polly.commandline;
 
-import polly.configuration.PollyConfiguration;
+import de.skuzzle.polly.sdk.Configuration;
+
 
 
 public class IntegerConfigArgument extends ConfigArgument {
 
-    public IntegerConfigArgument(String name, PollyConfiguration config,
+    public IntegerConfigArgument(String name, Configuration config,
         String field) {
         super(name, config, field);
     }

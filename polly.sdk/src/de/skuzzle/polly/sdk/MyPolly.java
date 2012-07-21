@@ -84,10 +84,11 @@ public interface MyPolly {
 	
 	
 	/**
-	 * Gets the ConfigurationManager to access pollys configuration file.
-	 * @return A Configuration instance.
+	 * Gets the ConfigurationProvider which can be used to access any polly configuration 
+	 * file.
+	 * @return A ConfigurationProvider instance.
 	 */
-	public abstract Configuration configuration();
+	public abstract ConfigurationProvider configuration();
 	
 	
 	

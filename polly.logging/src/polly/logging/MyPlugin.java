@@ -1,6 +1,8 @@
 package polly.logging;
 
 
+import java.io.IOException;
+
 import commands.ChannelLogCommand;
 import commands.ReplayCommand;
 import commands.SeenCommand;
@@ -9,6 +11,8 @@ import commands.UserLogCommand;
 import core.ForwardHighlightHandler;
 import core.IrcLogCollector;
 import core.PollyLoggingManager;
+import de.skuzzle.polly.sdk.Configuration;
+import de.skuzzle.polly.sdk.ConfigurationProvider;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
 import de.skuzzle.polly.sdk.constraints.Constraints;
@@ -31,6 +35,8 @@ public class MyPlugin extends PollyPlugin {
     public final static String REPLAY_PERMISSION      = "polly.permission.REPLAY";
     public final static String SEEN_PERMISSION        = "polly.permission.SEEN";
     
+    
+    public final static String LOGGING_PLUGUIN_CFG = "plugin.logging.cfg";
     
     public final static String LOG_CACHE_SIZE     = "logCacheSize";
     public final static String LOG_PASTE_TRESHOLD = "logPasteTreshold";
@@ -55,12 +61,20 @@ public class MyPlugin extends PollyPlugin {
 
         myPolly.persistence().registerEntity(LogEntry.class);
         
+        ConfigurationProvider cfgProvider = myPolly.configuration();
         
-        int cacheSize = myPolly.configuration().readInt(
+        Configuration loggingCfg = null;
+        try {
+            loggingCfg = cfgProvider.open(LOGGING_PLUGUIN_CFG);
+        } catch (IOException e) {
+            loggingCfg = cfgProvider.emptyConfiguration();
+        }
+        
+        int cacheSize = loggingCfg.readInt(
                 LOG_CACHE_SIZE, DEFAULT_LOG_CACHE_SIZE);
-        int pasteTreshold = myPolly.configuration().readInt(
+        int pasteTreshold = loggingCfg.readInt(
             LOG_PASTE_TRESHOLD, DEFAULT_LOG_TRESHOLD);
-        int maxLogs = myPolly.configuration().readInt(LOG_MAX_LOGS, DEFAULT_MAX_LOGS);
+        int maxLogs = loggingCfg.readInt(LOG_MAX_LOGS, DEFAULT_MAX_LOGS);
         
 
         this.logManager = new PollyLoggingManager(

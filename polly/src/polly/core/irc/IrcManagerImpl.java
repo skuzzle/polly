@@ -19,6 +19,7 @@ import org.jibble.pircbot.PircBot;
 import org.jibble.pircbot.User;
 
 import de.skuzzle.polly.sdk.AbstractDisposable;
+import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.Disposable;
 import de.skuzzle.polly.sdk.IrcManager;
 import de.skuzzle.polly.sdk.eventlistener.ChannelEvent;
@@ -41,7 +42,6 @@ import de.skuzzle.polly.sdk.eventlistener.UserSpottedListener;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.tools.iterators.WrapIterator;
 
-import polly.configuration.PollyConfiguration;
 import polly.events.Dispatchable;
 import polly.events.EventProvider;
 
@@ -263,7 +263,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     private EventProvider eventProvider;
     private Set<String> onlineUsers;
     private Map<String, String> topics;
-    private PollyConfiguration config;
+    private Configuration config;
     private boolean disconnect;
     private BotConnectionSettings recent;
     private MessageScheduler messageScheduler;
@@ -271,14 +271,14 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     
     
     public IrcManagerImpl(String ircName, EventProvider eventProvider, 
-            PollyConfiguration config) {
+            Configuration config, String encodingName) {
         this.config = config;
         this.onlineUsers = Collections.synchronizedSet(new TreeSet<String>());
         this.topics = new HashMap<String, String>();
         this.eventProvider = eventProvider;
         this.bot.changeNick(ircName);
         try {
-            this.bot.setEncoding(config.getEncodingName());
+            this.bot.setEncoding(encodingName);
         } catch (UnsupportedEncodingException e) {
             logger.error("Encoding exception", e);
         }
@@ -291,7 +291,8 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
          */
         this.bot.setVerbose(false);
         
-        this.messageScheduler = new RoundRobinScheduler(this, config.getMessageDelay());
+        this.messageScheduler = new RoundRobinScheduler(this, 
+            config.readInt(Configuration.MESSAGE_DELAY));
         this.messageScheduler.start();
     }
     
@@ -321,7 +322,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         
         this.bot.sendMessage("nickserv", "ghost " + e.getNickName() + " " + e.getIdentity());
         this.setAndIdentifyDefaultNickname();
-        this.joinChannels(e.getChannels());
+        this.joinChannels(e.getChannels().toArray(new String[e.getChannels().size()]));
         this.recent = e;
         this.sendRawCommand("MODE " + e.getNickName() + " " + e.getModes());
     }
@@ -428,7 +429,8 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     
     @Override
     public void rejoinDefaultChannels() {
-        this.joinChannels(this.recent.getChannels());
+        this.joinChannels(this.recent.getChannels().toArray(
+            new String[this.recent.getChannels().size()]));
     }
     
     
@@ -500,7 +502,8 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     @Override
 	public void sendMessage(String channel, String message) {
         if (this.isConnected()) {
-            for (String line : new WrapIterator(message, this.config.getLineLength())) {
+            for (String line : new WrapIterator(message, 
+                this.config.readInt(Configuration.LINE_LENGTH))) {
                 this.bot.sendMessage(channel, line);
             }
         }
@@ -511,7 +514,8 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     @Override
 	public synchronized void sendAction(String channel, String message) {
         if (this.isConnected()) {
-            for (String line : new WrapIterator(message, this.config.getLineLength())) {
+            for (String line : new WrapIterator(message, 
+                        this.config.readInt(Configuration.LINE_LENGTH))) {
                 this.bot.sendAction(channel, line);
             }
         }
@@ -562,8 +566,8 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     
     @Override
     public void setAndIdentifyDefaultNickname() {
-        this.bot.changeNick(this.config.getNickName());
-        this.bot.identify(this.config.getIdent());
+        this.bot.changeNick(this.config.readString(Configuration.NICKNAME));
+        this.bot.identify(this.config.readString(Configuration.IDENT));
     }
     
     
@@ -584,7 +588,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
             } catch (Exception e) {
                 logger.warn("Reconnect failed. Starting attempt " + ++attempts +"...", e);
                 try {
-                    Thread.sleep(this.config.getReconnectDelay());
+                    Thread.sleep(this.config.readInt(Configuration.RECONNECT_DELAY));
                 } catch (InterruptedException e1) {
                     logger.error("", e1);
                 }

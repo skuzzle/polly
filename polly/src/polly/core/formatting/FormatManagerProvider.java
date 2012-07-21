@@ -1,6 +1,8 @@
 package polly.core.formatting;
 
-import polly.configuration.PollyConfiguration;
+import de.skuzzle.polly.sdk.Configuration;
+import de.skuzzle.polly.sdk.ConfigurationProvider;
+import polly.configuration.ConfigurationProviderImpl;
 import polly.moduleloader.AbstractModule;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.annotations.Module;
@@ -9,7 +11,7 @@ import polly.moduleloader.annotations.Provide;;
 
 @Module(
     requires = 
-        @Require(component = PollyConfiguration.class),
+        @Require(component = ConfigurationProviderImpl.class),
     provides = 
         @Provide(component = FormatManagerImpl.class)
     )
@@ -24,8 +26,10 @@ public class FormatManagerProvider extends AbstractModule {
     
     @Override
     public void setup() {
-        PollyConfiguration config = this.requireNow(PollyConfiguration.class);
-        FormatManagerImpl formatter = new FormatManagerImpl(config);
+        ConfigurationProvider configProvider = 
+            this.requireNow(ConfigurationProviderImpl.class);
+        Configuration pollyCfg = configProvider.getRootConfiguration();
+        FormatManagerImpl formatter = new FormatManagerImpl(pollyCfg);
         this.provideComponent(formatter);
     }
 

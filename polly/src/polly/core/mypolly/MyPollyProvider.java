@@ -2,7 +2,7 @@ package polly.core.mypolly;
 
 import java.util.concurrent.ExecutorService;
 
-import polly.configuration.PollyConfiguration;
+import polly.configuration.ConfigurationProviderImpl;
 import polly.core.ShutdownManagerImpl;
 import polly.core.commands.CommandManagerImpl;
 import polly.core.conversations.ConversationManagerImpl;
@@ -23,11 +23,10 @@ import polly.moduleloader.annotations.Provide;;
 
 @Module(
     requires = { 
-        @Require(component = PollyConfiguration.class),
         @Require(component = ShutdownManagerImpl.class),
         @Require(component = IrcManagerImpl.class),
         @Require(component = PluginManagerImpl.class),
-        @Require(component = PollyConfiguration.class),
+        @Require(component = ConfigurationProviderImpl.class),
         @Require(component = PersistenceManagerImpl.class),
         @Require(component = FormatManagerImpl.class),
         @Require(component = ConversationManagerImpl.class),
@@ -46,7 +45,7 @@ public class MyPollyProvider extends AbstractModule {
     private CommandManagerImpl commandManager;
     private IrcManagerImpl ircManager;
     private PluginManagerImpl pluginManager;
-    private PollyConfiguration config;
+    private ConfigurationProviderImpl config;
     private PersistenceManagerImpl persistencemanager;
     private UserManagerImpl userManager;
     private FormatManagerImpl formatManager;
@@ -68,7 +67,7 @@ public class MyPollyProvider extends AbstractModule {
         this.commandManager = this.requireNow(CommandManagerImpl.class);
         this.ircManager = this.requireNow(IrcManagerImpl.class);
         this.pluginManager = this.requireNow(PluginManagerImpl.class);
-        this.config = this.requireNow(PollyConfiguration.class);
+        this.config = this.requireNow(ConfigurationProviderImpl.class);
         this.persistencemanager = this.requireNow(PersistenceManagerImpl.class);
         this.userManager = this.requireNow(UserManagerImpl.class);
         this.formatManager = this.requireNow(FormatManagerImpl.class);

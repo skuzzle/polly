@@ -1,10 +1,13 @@
 package polly.core.users;
 
 
+import java.io.IOException;
+
+import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
 import de.skuzzle.polly.sdk.roles.RoleManager;
-import polly.configuration.PollyConfiguration;
+import polly.configuration.ConfigurationProviderImpl;
 import polly.core.ModuleStates;
 import polly.core.ShutdownManagerImpl;
 import polly.core.persistence.PersistenceManagerImpl;
@@ -21,7 +24,7 @@ import polly.moduleloader.annotations.Provide;;
 
 @Module(
     requires = {
-        @Require(component = PollyConfiguration.class),
+        @Require(component = ConfigurationProviderImpl.class),
         @Require(component = ShutdownManagerImpl.class),
         @Require(component = EventProvider.class),
         @Require(component = PersistenceManagerImpl.class),
@@ -34,14 +37,15 @@ import polly.moduleloader.annotations.Provide;;
         @Provide(state = ModuleStates.USERS_READY)
     })
 public class UserManagerProvider extends AbstractModule {
+    
+    public final static String USER_CONFIG = "user.cfg";
 
     private PersistenceManagerImpl persistenceManager;
     private EventProvider eventProvider;
-    private PollyConfiguration config;
     private ShutdownManagerImpl shutdownManager;
     private UserManagerImpl userManager;
     private RoleManagerImpl roleManager;
-
+    private Configuration userCfg;
 
     public UserManagerProvider(ModuleLoader loader) {
         super("USER_MANAGER_PROVIDER", loader, true);
@@ -51,7 +55,6 @@ public class UserManagerProvider extends AbstractModule {
 
     @Override
     public void beforeSetup() {
-        this.config = this.requireNow(PollyConfiguration.class);
         this.eventProvider = this.requireNow(EventProvider.class);
         this.persistenceManager = this.requireNow(PersistenceManagerImpl.class);
         this.shutdownManager = this.requireNow(ShutdownManagerImpl.class);
@@ -62,8 +65,26 @@ public class UserManagerProvider extends AbstractModule {
 
     @Override
     public void setup() throws SetupException {
-        this.userManager = new UserManagerImpl(this.persistenceManager,
-            this.config, this.eventProvider, this.roleManager);
+        ConfigurationProviderImpl configProvider = 
+                this.requireNow(ConfigurationProviderImpl.class);
+        try {
+            userCfg = configProvider.open(USER_CONFIG);
+        } catch (IOException e) {
+            throw new SetupException(e);
+        }
+        
+        boolean ignoreUnknownIdentifiers = userCfg.readBoolean(Configuration.IGNORE_UNKNOWN_IDENTIFIERS);
+        int tempVarLifeTime = this.userCfg.readInt(Configuration.TEMP_VAR_LIFETIME);
+        String declarationCachePath = this.userCfg.readString(Configuration.DECLARATION_CACHE);
+        
+        this.userManager = new UserManagerImpl(
+            this.persistenceManager,
+            declarationCachePath, 
+            tempVarLifeTime, 
+            ignoreUnknownIdentifiers, 
+            this.eventProvider, 
+            this.roleManager);
+        
         this.provideComponent(this.userManager);
         this.shutdownManager.addDisposable(this.userManager);
     }
@@ -74,11 +95,13 @@ public class UserManagerProvider extends AbstractModule {
     public void run() throws Exception {
         de.skuzzle.polly.sdk.model.User admin = null;
         try {
+            String adminName = this.userCfg.readString(Configuration.ADMIN_NAME); 
             logger.info("Creating default user with name '"
-                + this.config.getAdminUserName() + "'.");
-            admin = this.userManager.createUser(this.config.getAdminUserName(), "");
+                + adminName + "'.");
+            admin = this.userManager.createUser(adminName, "");
 
-            admin.setHashedPassword(this.config.getAdminPasswordHash());
+            admin.setHashedPassword(this.userCfg.readString(
+                Configuration.ADMIN_PASSWORD_HASH));
             this.userManager.addUser(admin);
         } catch (UserExistsException e) {
             admin = e.getUser();
@@ -96,7 +119,7 @@ public class UserManagerProvider extends AbstractModule {
     
     @Override
     public void dispose() {
-        this.config = null;
+        this.userCfg = null;
         this.eventProvider = null;
         this.persistenceManager = null;
         this.shutdownManager = null;

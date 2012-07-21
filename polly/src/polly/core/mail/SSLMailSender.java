@@ -16,7 +16,7 @@ public class SSLMailSender extends DefaultMailSender {
     protected Properties createProperties() {
         Properties props = super.createProperties();
         props.put("mail.smtp.socketFactory.port", 
-                this.config.getProperty(MailConfig.SMTP_PORT));
+                this.config.readString(MailConfig.SMTP_PORT));
         props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
         
         return props;

@@ -5,8 +5,7 @@ import java.util.Date;
 import org.apache.log4j.Logger;
 
 import polly.Polly;
-import polly.configuration.ConfigurationWrapper;
-import polly.configuration.PollyConfiguration;
+import polly.configuration.ConfigurationProviderImpl;
 import polly.core.ShutdownManagerImpl;
 import polly.core.commands.CommandManagerImpl;
 import polly.core.conversations.ConversationManagerImpl;
@@ -21,6 +20,7 @@ import polly.core.users.UserManagerImpl;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.CommandManager;
 import de.skuzzle.polly.sdk.Configuration;
+import de.skuzzle.polly.sdk.ConfigurationProvider;
 import de.skuzzle.polly.sdk.ConversationManager;
 import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.IrcManager;
@@ -50,8 +50,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 	private CommandManagerImpl commandManager;
 	private IrcManagerImpl ircManager;
 	private PluginManagerImpl pluginManager;
-	private PollyConfiguration config;
-	private Configuration wrappedConfig;
+	private ConfigurationProviderImpl configProvider;
 	private PersistenceManagerImpl persistence;
 	private UserManagerImpl userManager;
 	private FormatManagerImpl formatManager;
@@ -68,7 +67,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 	public MyPollyImpl(CommandManagerImpl cmdMngr, 
 	        IrcManagerImpl ircMngr, 
 			PluginManagerImpl plgnMngr, 
-			PollyConfiguration config, 
+			ConfigurationProviderImpl configProviderImpl, 
 			PersistenceManagerImpl pMngr,
 			UserManagerImpl usrMngr,
 			FormatManagerImpl fmtMngr,
@@ -81,8 +80,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 		this.commandManager = cmdMngr;
 		this.ircManager = ircMngr;
 		this.pluginManager = plgnMngr;
-		this.config = config;
-		this.wrappedConfig = new ConfigurationWrapper(config);
+		this.configProvider = configProviderImpl;
 		this.persistence = pMngr;
 		this.userManager = usrMngr;
 		this.formatManager = fmtMngr;
@@ -159,8 +157,8 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 
 
 	@Override
-	public Configuration configuration() {
-		return this.wrappedConfig;
+	public ConfigurationProvider configuration() {
+		return this.configProvider;
 	}
 
 	
@@ -204,9 +202,17 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
     }
 
     
+    
+    public boolean isDebugMode() {
+        return this.configProvider.getRootConfiguration().readBoolean(
+            Configuration.DEBUG_MODE);
+    }
+    
+    
+    
     @Override
     public void setTimeProvider(TimeProvider timeProvider) {
-        if (this.config.isDebugMode()) {
+        if (this.isDebugMode()) {
             this.timeProvider = timeProvider;
             logger.info("Polly System Time has been changed. Current time is now: " + 
                     this.formatManager.formatDate(this.pollySystemTime()));
