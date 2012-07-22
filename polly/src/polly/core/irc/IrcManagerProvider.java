@@ -1,20 +1,12 @@
 package polly.core.irc;
 
-import java.util.concurrent.ExecutorService;
 
 import org.jibble.pircbot.NickAlreadyInUseException;
 
 import polly.configuration.PollyConfiguration;
 import polly.core.DefaultUserAttributesProvider;
 import polly.core.ShutdownManagerImpl;
-import polly.core.commands.CommandManagerImpl;
-import polly.core.users.UserManagerImpl;
-import polly.eventhandler.AutoLogoffHandler;
-import polly.eventhandler.AutoLogonHandler;
-import polly.eventhandler.GhostHandler;
-import polly.eventhandler.IrcLoggingHandler;
 import polly.eventhandler.MessageHandler;
-import polly.eventhandler.TraceNickChangeHandler;
 import polly.events.EventProvider;
 import polly.moduleloader.AbstractModule;
 import polly.moduleloader.ModuleLoader;
@@ -29,10 +21,6 @@ import polly.core.ModuleStates;
     requires = { 
         @Require(component = PollyConfiguration.class),
         @Require(component = ShutdownManagerImpl.class),
-        @Require(component = EventProvider.class),
-        @Require(component = UserManagerImpl.class),
-        @Require(component = CommandManagerImpl.class),
-        @Require(component = ExecutorService.class),
         @Require(component = DefaultUserAttributesProvider.class),
         @Require(state = ModuleStates.PLUGINS_READY),
         @Require(state = ModuleStates.PERSISTENCE_READY) }, 
@@ -43,9 +31,6 @@ import polly.core.ModuleStates;
 public class IrcManagerProvider extends AbstractModule {
 
     private EventProvider events;
-    private ExecutorService commandExecutor;
-    private CommandManagerImpl commandManager;
-    private UserManagerImpl userManager;
     private IrcManagerImpl ircManager;
     private PollyConfiguration config;
     private ShutdownManagerImpl shutdownManager;
@@ -64,10 +49,7 @@ public class IrcManagerProvider extends AbstractModule {
     public void beforeSetup() {
         this.config = this.requireNow(PollyConfiguration.class);
         this.events = this.requireNow(EventProvider.class);
-        this.userManager = this.requireNow(UserManagerImpl.class);
-        this.commandManager = this.requireNow(CommandManagerImpl.class);
         this.shutdownManager = this.requireNow(ShutdownManagerImpl.class);
-        this.commandExecutor = this.requireNow(ExecutorService.class);
     }
 
 
@@ -79,53 +61,13 @@ public class IrcManagerProvider extends AbstractModule {
 
         this.provideComponent(this.ircManager);
 
+        // XXX: do not add any listeners to the irc manager here. this is done
+        //      in IrcEventHandlerProvider
         logger.info("Starting bot with settings: (" + "Nick: "
             + this.config.getNickName() + ", Ident: *****" + ", Server: "
             + this.config.getServer() + ", Port: " + this.config.getPort()
             + ", Logging: " + this.config.getIrcLogging() + ")");
 
-        // setup handler for incoming irc messages that are to be parsed as a command.
-        // XXX: Ensure that message handler is the first message listener to be added
-        //      because it updates a users idle time
-        MessageHandler handler = new MessageHandler(this.commandManager,
-            this.userManager, this.commandExecutor, this.config);
-        this.ircManager.addMessageListener(handler);
-        this.provideComponent(handler);
-        
-        
-        // setup irc logger
-        if (this.config.getIrcLogging()) {
-            IrcLoggingHandler ircConsoleLogger = new IrcLoggingHandler();
-            this.ircManager.addMessageListener(ircConsoleLogger);
-            this.ircManager.addNickChangeListener(ircConsoleLogger);
-            this.ircManager.addJoinPartListener(ircConsoleLogger);
-        }
-
-        // this listener checks if we ghosted our original nick and changes our nickname
-        // to the default one
-        this.ircManager.addMessageListener(new GhostHandler());
-
-        this.ircManager.addNickChangeListener(new TraceNickChangeHandler(
-            this.userManager));
-        
-
-        // Setup auto login / logout handler
-        if (this.config.isAutoLogon()) {
-            AutoLogonHandler logonHandler = new AutoLogonHandler(
-                this.ircManager, this.userManager, 
-                this.config.getAutoLogonTime());
-
-            this.ircManager.addUserSpottedListener(logonHandler);
-            this.ircManager.addNickChangeListener(logonHandler);
-            this.ircManager.addConnectionListener(logonHandler);
-            this.userManager.addUserListener(logonHandler);
-
-            this.shutdownManager.addDisposable(logonHandler);
-        }
-        AutoLogoffHandler logoffHandler = new AutoLogoffHandler(this.userManager, 
-            this.ircManager);
-        this.ircManager.addUserSpottedListener(logoffHandler);
-        this.ircManager.addConnectionListener(logoffHandler);
             
         this.connectionSettings = new BotConnectionSettings(
             this.config.getNickName(), this.config.getServer(),
@@ -157,10 +99,7 @@ public class IrcManagerProvider extends AbstractModule {
     public void dispose() {
         this.config = null;
         this.events = null;
-        this.userManager = null;
-        this.commandManager = null;
         this.shutdownManager = null;
-        this.commandExecutor = null;
         super.dispose();
     }
 
