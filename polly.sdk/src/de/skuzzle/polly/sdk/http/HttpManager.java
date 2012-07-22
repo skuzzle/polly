@@ -5,6 +5,8 @@ package de.skuzzle.polly.sdk.http;
 
 public interface HttpManager {
     
+    public final static String LOGIN_PERMISSION = "polly.permission.LOGIN";
+    
     public abstract void startWebServer();
     
     public abstract void stopWebServer();

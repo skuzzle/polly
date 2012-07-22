@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -73,6 +74,7 @@ public class ResponseHandler implements HttpHandler {
     private SimpleWebServer webServer;
     private File templateRoot;
     
+    
     public ResponseHandler(SimpleWebServer webServer) {
         this.webServer = webServer;
         this.templateRoot = new File("webinterface");
@@ -87,7 +89,7 @@ public class ResponseHandler implements HttpHandler {
         
         // kill the session if a user is logged in on it and it is expired
         if (session.isLoggedIn() && session.getLastAction() - session.getStarted() > 
-                    SimpleWebServer.SESSION_TIMEOUT) {
+                    this.webServer.getSessionTimeOut()) {
             
             this.webServer.closeSession(session);
             return;
@@ -111,16 +113,21 @@ public class ResponseHandler implements HttpHandler {
             parsePostParameters(t, parameters);
         }
         
+        
         HttpEvent e = new HttpEvent(this.webServer, session, uri);
         e.getProperties().putAll(parameters);
         
-        HttpTemplateContext c = this.webServer.executeAction(e);
-        if (c == null) {
+        if (uri.startsWith("action:")) {
+            HttpTemplateContext c = this.webServer.executeAction(e);
+            this.respond(c, t);
+        } else if (uri.startsWith("command:")) {
+            HttpTemplateContext c = this.webServer.executeCommand(e);
+            this.respond(c, t);
+        } else {
             // there is no action for the given uri, so treat it as a file request
             this.respond(uri, t);
-        } else {
-            this.respond(c, t);
         }
+
         t.close();
     }
     
@@ -161,8 +168,10 @@ public class ResponseHandler implements HttpHandler {
         try {
             out = t.getResponseBody();
             this.generateTemplate(c, out);
+        } catch (IOException e) {
+            throw e;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error while sending http response", e);
         } finally {
             out.close();
         }
@@ -170,7 +179,8 @@ public class ResponseHandler implements HttpHandler {
     
     
     
-    private void generateTemplate(HttpTemplateContext c, OutputStream out) throws IOException {
+    private void generateTemplate(HttpTemplateContext c, OutputStream out) 
+            throws IOException {
         Velocity.init();
         VelocityContext context = new VelocityContext(c);
         
@@ -179,6 +189,6 @@ public class ResponseHandler implements HttpHandler {
         //OutputStreamWriter writer = new OutputStreamWriter(out);
         StringWriter writer = new StringWriter();
         template.merge(context, writer);
-        out.write(writer.toString().getBytes());
+        out.write(writer.toString().getBytes(Charset.forName("UTF-8")));
     }
 }

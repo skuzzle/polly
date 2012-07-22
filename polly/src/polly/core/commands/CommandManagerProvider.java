@@ -1,6 +1,7 @@
 package polly.core.commands;
 
 import polly.configuration.PollyConfiguration;
+import polly.core.irc.IrcManagerImpl;
 import polly.core.users.UserManagerImpl;
 import polly.moduleloader.AbstractModule;
 import polly.moduleloader.ModuleLoader;
@@ -11,7 +12,8 @@ import polly.moduleloader.annotations.Provide;;
 @Module(
     requires = {
                @Require(component = PollyConfiguration.class),
-               @Require(component = UserManagerImpl.class)},
+               @Require(component = UserManagerImpl.class),
+               @Require(component = IrcManagerImpl.class)},
     provides = @Provide(component = CommandManagerImpl.class))
 public class CommandManagerProvider extends AbstractModule {
 
@@ -36,8 +38,10 @@ public class CommandManagerProvider extends AbstractModule {
     public void setup() {
         PollyConfiguration config = this.requireNow(PollyConfiguration.class);
         UserManagerImpl userManager = this.requireNow(UserManagerImpl.class);
+        IrcManagerImpl ircManager = this.requireNow(IrcManagerImpl.class);
         
-        CommandManagerImpl commandManager = new CommandManagerImpl(userManager, config);
+        CommandManagerImpl commandManager = new CommandManagerImpl(
+            userManager, config, ircManager);
         this.provideComponent(commandManager);
     }
     

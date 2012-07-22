@@ -13,6 +13,9 @@ import de.skuzzle.polly.sdk.exceptions.ConversationException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
+import de.skuzzle.polly.sdk.http.HttpEvent;
+import de.skuzzle.polly.sdk.http.HttpSession;
+import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.model.User;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.roles.SecurityContainer;
@@ -77,7 +80,24 @@ import de.skuzzle.polly.sdk.roles.SecurityObject;
  * command has been called.</p>
  * 
  * <p>It is essential for the usability of polly, that you set a proper help text using
- * {@link #setHelpText(String)}.
+ * {@link #setHelpText(String)}.</p>
+ * 
+ * <p>Commands are subject to pollys role based security system. Thus a command reports
+ * its require permissions using {@link #getRequiredPermission()}. The default 
+ * implementation return a Set containing only one element. If this command is set to be
+ * executable by only registered users, the set will contain the permission 
+ * {@link RoleManager#REGISTERED_PERMISSION}, otherwise it will contain 
+ * {@link RoleManager#NONE_PERMISSION} and will thus be executable by everyone.</p>
+ * 
+ * <p>Additionally, each formal signature can as well have a set of permissions that are
+ * required to execute it. So a user must not only have the required permissions for this 
+ * command but also the required permissions for the signature he wants to execute.</p>
+ * 
+ * <p>Commands can be set to be Http enabled using {@link #setHttpEnabled(boolean)}. By 
+ * doing so, this command can be executed using the polly webinterface. Http 
+ * functionality is implemented similar to irc functionality. See 
+ * {@link #executeHttp(User, Signature, HttpEvent, HttpSession)} for more information 
+ * about http invocations.</p> 
  * 
  * @author Simon
  * @since zero day
@@ -145,6 +165,11 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 	 * A set that contains the permissions of all signatures for this command. 
 	 */
 	private Set<String> containedPermissions;
+	
+	/**
+	 * Determines whether this command can be executed using the webinterface
+	 */
+	private boolean enableHttp;
 
 	
 	
@@ -187,6 +212,29 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 	public final String getCommandName() {
 		return this.commandName;
 	}
+	
+	
+	
+	/**
+	 * Determines whether this command can be executed using the webinterface.
+	 * 
+	 * @return <code>true</code> if this command can be executed using the webinterface.
+	 */
+	public boolean isHttpEnabled() {
+	    return this.enableHttp;
+	}
+	
+	
+	
+	/**
+	 * Sets whether this command can be executed using the webinterface.
+	 * 
+	 * @param enableHttp <code>true</code> if this command should be executable using
+	 *             the webinterface.
+	 */
+    public void setHttpEnabled(boolean enableHttp) {
+        this.enableHttp = enableHttp;
+    }
 	
 	
 	
@@ -353,19 +401,17 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 	 * @param channel The channel this command was executed on.
 	 * @param query Whether this command was executed on query.
 	 * @param signature The actual signature that this command was executed with.
-	 * @throws InsufficientRightsException If the users userlevel is too low to execute
-	 * 		this command or if this command can only be executed by signed on users and
-	 *      the specific user was not signed on.
+	 * @throws InsufficientRightsException If the executing user has not all permissions 
+	 *             required by either this command or the signature he tries to execute.
 	 * @throws CommandException Implementors can throw this to indicate an error during
 	 *     execution.
-	 * @see #getUserLevel()
 	 */
 	public void doExecute(User executer, String channel, boolean query, 
 	        Signature signature) throws InsufficientRightsException, CommandException {
 
 		// check if help is requested
 		if (signature.equals(this.helpSignature0)) {
-		    this.reply(channel, this.getHelpText());
+		    this.reply(channel, this.getHelpText()); 
 		    return;
 		} else if (signature.equals(this.helpSignature1)) {
 		    int num = (int) signature.getNumberValue(1);
@@ -378,21 +424,10 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 		            this.signatures.get(num).getSample());
 		    return;
 		}
+
 		
-		
-		
-        // get matching formal signature to the actual signature and check the 
-        // permissions.
-        if (!this.getMyPolly().roles().canAccess(executer, this)) {
-            
-            throw new InsufficientRightsException(this);
-        }
-        FormalSignature formal = this.signatures.get(signature.getId());
-        if (!this.getMyPolly().roles().hasPermission(executer, 
-                formal.getRequiredPermission())) {
-            
-            throw new InsufficientRightsException(formal);
-        }
+		FormalSignature formal = this.signatures.get(signature.getId());
+        this.checkPermissions(executer, formal);
 
 		
 		
@@ -411,6 +446,96 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 		    throw new CommandException(e.getMessage(), e);
 		}
 	}
+	
+	
+	
+	/**
+	 * <p>This method is called by pollys http server if this command is set to be 
+	 * executable using the webinterace. You should not call this method yourself.</p>
+	 * 
+	 * <p>This method checks whether the executing user has sufficient permissions for
+	 * this command and if so, it delivers the execution to your implementation of 
+	 * {@link #executeHttp(User, Signature, HttpEvent, HttpSession)}.</p>
+	 * 
+	 * @param executer The user that executes this command.
+	 * @param signature The signature that this command is executed with.
+	 * @param e The HttpEvent that invoked this execution.
+     * @return A HttpTemplateContext that contains all Object mappings that should be
+     *             displayed by the resulting webpage.
+     * @throws InsufficientRightsException If the executing user has not all permissions 
+     *             required by either this command or the signature he tries to execute.
+     * @throws CommandException Implementors can throw this to indicate an error during
+     *     execution.
+	 * @since 0.9.1
+     * @see #setHttpEnabled(boolean)
+     * @see #isHttpEnabled()
+	 */
+	public final HttpTemplateContext doExecuteHttp(User executer, Signature signature, HttpEvent e) 
+	        throws CommandException, InsufficientRightsException {
+	    
+	    FormalSignature formal = this.signatures.get(signature.getId());
+        this.checkPermissions(executer, formal);
+        
+        try {
+            return this.executeHttp(executer, signature, e);
+        } catch (CommandException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new CommandException(ex);
+        }
+	}
+	
+	
+	
+	/**
+	 * <p>This method is called by polly if a user invoked this command using the 
+	 * webinterface. It gets passed the actual signature with which the command should
+	 * be executed and additional http context information.</p>
+	 * 
+	 * <p>This method must return a {@link HttpTemplateContext} that contains all String 
+	 * or Object mappings that should be displayed on the resulting web page. The default
+	 * implementation returns an empty context.</p>
+	 * 
+     * @param executer The user that executes this command.
+     * @param signature The signature that this command is executed with.
+     * @param e The HttpEvent that invoked this execution.
+	 * @return A HttpTemplateContext that contains all Object mappings that should be
+	 *             displayed by the resulting webpage.
+     * @throws CommandException Implementors can throw this to indicate an error during
+     *     execution.
+     * @since 0.9.1
+     * @see #setHttpEnabled(boolean)
+     * @see #isHttpEnabled()
+	 */
+	public HttpTemplateContext executeHttp(User executer, Signature signature, 
+	        HttpEvent e) throws CommandException {
+	    return new HttpTemplateContext();
+	}
+	
+	
+	
+	/**
+	 * Checks whether a user has the required permissions to execute this command
+	 * and the given signature.
+	 * 
+	 * @param executer The user to check.
+	 * @param signature The signature to check.
+	 * @throws InsufficientRightsException If the user is not allowed to execute this 
+	 *             command.
+	 */
+    private void checkPermissions(User executer, FormalSignature signature) 
+            throws InsufficientRightsException {
+           
+        // get matching formal signature to the actual signature and check the 
+        // permissions.
+        if (!this.getMyPolly().roles().canAccess(executer, this)) {
+            throw new InsufficientRightsException(this);
+        }
+        if (!this.getMyPolly().roles().hasPermission(executer, 
+            signature.getRequiredPermission())) {
+            throw new InsufficientRightsException(signature);
+        }
+    }
 	
 	
 	

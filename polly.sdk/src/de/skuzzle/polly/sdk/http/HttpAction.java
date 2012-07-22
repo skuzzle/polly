@@ -1,22 +1,23 @@
 package de.skuzzle.polly.sdk.http;
 
+import java.util.Set;
+import java.util.TreeSet;
 
-public abstract class HttpAction {
+import de.skuzzle.polly.sdk.roles.RoleManager;
+import de.skuzzle.polly.sdk.roles.SecurityObject;
 
-    private String permission;
+
+public abstract class HttpAction implements SecurityObject {
+    
     private String name;
+    protected Set<String> permissions;
     
     
     
     public HttpAction(String name) {
-        this(name, "");
-    }
-    
-    
-    
-    public HttpAction(String name, String permission) {
         this.name = name;
-        this.permission = permission;
+        this.permissions = new TreeSet<String>();
+        this.permissions.add(RoleManager.NONE_PERMISSION);
     }
     
     
@@ -27,12 +28,12 @@ public abstract class HttpAction {
     
     
     
-    public String getPermission() {
-        return this.permission;
+    @Override
+    public Set<String> getRequiredPermission() {
+        return this.permissions;
     }
     
     
     
     public abstract void execute(HttpEvent e, HttpTemplateContext context);
-    
 }

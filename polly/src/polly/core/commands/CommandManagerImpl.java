@@ -101,6 +101,9 @@ public class CommandManagerImpl implements CommandManager {
 	private Set<String> ignoredCommands;
 	private UserManagerImpl userManager;
 	private PollyConfiguration config;
+	private IrcManager ircManager;
+	
+	
 	
 	/**
 	 * Command history. Key: channel, value: the last command executed on that channel
@@ -108,8 +111,11 @@ public class CommandManagerImpl implements CommandManager {
 	private Map<String, CommandHistoryEntry> cmdHistory;
 	
 	
-	public CommandManagerImpl(UserManagerImpl userManager, PollyConfiguration config) {
+	
+	public CommandManagerImpl(UserManagerImpl userManager, PollyConfiguration config, 
+	        IrcManager ircManager) {
 	    this.userManager = userManager;
+	    this.ircManager = ircManager;
 	    this.config = config;
 		this.commands = new HashMap<String, Command>();
 		this.ignoredCommands = new HashSet<String>(
@@ -228,6 +234,37 @@ public class CommandManagerImpl implements CommandManager {
 	
 	
 	@Override
+    public Signature signatureFromString(User executer, String input, String channel) 
+            throws CommandException, UnsupportedEncodingException {
+        Namespace copy = null;
+        Root root = null;
+        try {
+            Map<String, Types> constants = this.getCommandConstants(input);
+            
+            // get namespace and create copy for executor
+            Namespace ns = this.userManager.getNamespace();
+            copy = ns.copyFor(executer.getName());
+            copy.enter();
+            
+            this.createContext(channel, executer, this.ircManager, constants, copy);
+            
+            root = this.parseMessage(input, copy);
+        } catch (ParseException e) {
+            // HACK: wrap exception into command exception, as ParseException is not 
+            //       available in the sdk
+            throw new CommandException(e.getMessage(), e);
+        } finally {
+            if (copy != null) {
+                copy.leave();
+            }
+        }
+        
+        return this.createSignature(root);
+    }
+    
+	
+	
+	@Override
     public void executeString(String input, String channel, boolean inQuery, 
             User executor, IrcManager ircManager) 
                 throws UnsupportedEncodingException, 
@@ -236,34 +273,7 @@ public class CommandManagerImpl implements CommandManager {
         Stopwatch watch = new MillisecondStopwatch();
         watch.start();
         
-        Namespace copy = null;
-        Root root = null;
-        try {
-            Map<String, Types> constants = this.getCommandConstants(input);
-            
-            // get namespace and create copy for executor
-            Namespace ns = this.userManager.getNamespace();
-            copy = ns.copyFor(executor.getName());
-            copy.enter();
-            
-            this.createContext(channel, executor, ircManager, constants, copy);
-            
-            root = this.parseMessage(input, copy);
-        } catch (ParseException e) {
-            // HACK: wrap exception into command exception, as ParseException is not 
-            //       available in the sdk
-            throw new CommandException(e.getMessage(), e);
-        } finally {
-        	if (copy != null) {
-				copy.leave();
-        	}
-        }
-        
-        if (root == null) {
-            return;
-        }
-        Signature sig = this.createSignature(root);
-        
+        Signature sig = this.signatureFromString(executor, input, channel);
         Command cmd = this.getCommand(sig);
         try {
             logger.debug("Executing '" + cmd + "' on channel " + 
@@ -295,7 +305,7 @@ public class CommandManagerImpl implements CommandManager {
 
 
     private Root parseMessage(String message, Namespace namespace) 
-        throws UnsupportedEncodingException, ParseException {
+            throws UnsupportedEncodingException, ParseException {
     
         Stopwatch watch = new MillisecondStopwatch();
         watch.start();
@@ -383,7 +393,7 @@ public class CommandManagerImpl implements CommandManager {
     
     
     
-    private Signature createSignature(Root root) throws UnknownSignatureException {
+    private Signature createSignature(Root root) {
         List<Types> parameters = new ArrayList<Types>(root.getResults().size());
         for (Literal lit : root.getResults()) {
             parameters.add(TypeMapper.literalToTypes(lit));
