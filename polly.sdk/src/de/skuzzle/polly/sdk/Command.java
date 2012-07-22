@@ -369,7 +369,7 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 		    return;
 		} else if (signature.equals(this.helpSignature1)) {
 		    int num = (int) signature.getNumberValue(1);
-		    if (num < 0 || num > this.signatures.size()) {
+		    if (num < 0 || num >= this.signatures.size()) {
 		        this.reply(channel, "Kein Signatur mit der Id " + num);
 		        return;
 		    }
