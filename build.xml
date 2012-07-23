@@ -126,6 +126,7 @@
         <ant dir="polly.logging" target="${mode}" inheritAll="false"/>
         <ant dir="polly.reminds" target="${mode}" inheritAll="false"/>
         <ant dir="polly.memes" target="${mode}" inheritAll="false"/>
+
         
         <copy todir="${plugin.dir}">
             <fileset dir="polly.core/dist"/>

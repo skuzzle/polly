@@ -42,13 +42,13 @@ public abstract class MailSender {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(
-                    config.getProperty(MailConfig.SMTP_LOGIN), 
-                    config.getProperty(MailConfig.SMTP_PASSWORD));
+                    config.readString(MailConfig.SMTP_LOGIN), 
+                    config.readString(MailConfig.SMTP_PASSWORD));
             }
         });
         
         Message msg = new MimeMessage(session);
-        msg.setFrom(new InternetAddress(this.config.getProperty(MailConfig.SMTP_FROM)));
+        msg.setFrom(new InternetAddress(this.config.readString(MailConfig.SMTP_FROM)));
         msg.setRecipient(RecipientType.TO, new InternetAddress(recipient, false));
         msg.setSubject(subject);
         msg.setText(message);
@@ -69,13 +69,13 @@ public abstract class MailSender {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(
-                    config.getProperty(MailConfig.SMTP_LOGIN), 
-                    config.getProperty(MailConfig.SMTP_PASSWORD));
+                    config.readString(MailConfig.SMTP_LOGIN), 
+                    config.readString(MailConfig.SMTP_PASSWORD));
             }
         });
         
         Message msg = new MimeMessage(session);
-        msg.setFrom(new InternetAddress(this.config.getProperty(MailConfig.SMTP_FROM)));
+        msg.setFrom(new InternetAddress(this.config.readString(MailConfig.SMTP_FROM)));
         msg.setRecipients(RecipientType.TO, this.config.getRecipients());
         msg.setSubject(subject);
         msg.setText(message);

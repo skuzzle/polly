@@ -8,9 +8,9 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import polly.configuration.PollyConfiguration;
 
 
+import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.FormatManager;
 
 /* Note: This class is subject to ISSUE: 0000001 */
@@ -25,14 +25,15 @@ public class FormatManagerImpl implements FormatManager {
     
     
     
-    public FormatManagerImpl(PollyConfiguration cfg) {
-        this.defaultDateFormat = new SimpleDateFormat(cfg.getDateFormatString());
+    public FormatManagerImpl(Configuration cfg) {
+        this.defaultDateFormat = new SimpleDateFormat(
+            cfg.readString(Configuration.DATE_FORMAT));
         /*
          * ISSUE: 0000019
          */
         this.defaultDateFormat.setTimeZone(TimeZone.getTimeZone("ECT"));
         DecimalFormat nf = (DecimalFormat) DecimalFormat.getInstance(Locale.ENGLISH);
-        nf.applyPattern(cfg.getNumberFormatString());
+        nf.applyPattern(cfg.readString(Configuration.NUMBER_FORMAT));
         this.defaultNumberFormat = nf;
     }
     

@@ -2,7 +2,6 @@ package polly.core.commands;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,7 +15,6 @@ import java.util.Stack;
 
 import org.apache.log4j.Logger;
 
-import polly.configuration.PollyConfiguration;
 import polly.core.users.UserManagerImpl;
 import polly.util.MillisecondStopwatch;
 import polly.util.Stopwatch;
@@ -43,6 +41,7 @@ import de.skuzzle.polly.parsing.types.Type;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.CommandHistoryEntry;
 import de.skuzzle.polly.sdk.CommandManager;
+import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.IrcManager;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
@@ -93,6 +92,9 @@ public class CommandManagerImpl implements CommandManager {
     }
     
     
+    public final static String CONFIG_IGNORED_COMMANDS = "ignoredCommands";
+    
+    
 	private final static String[] DAYS = {"montag", "dienstag", "mittwoch", 
 	    "donnerstag", "freitag", "samstag", "sonntag"};
 	
@@ -100,7 +102,7 @@ public class CommandManagerImpl implements CommandManager {
 	private Map<String, Command> commands;
 	private Set<String> ignoredCommands;
 	private UserManagerImpl userManager;
-	private PollyConfiguration config;
+	private String encodingName;
 	private IrcManager ircManager;
 	
 	
@@ -111,16 +113,15 @@ public class CommandManagerImpl implements CommandManager {
 	private Map<String, CommandHistoryEntry> cmdHistory;
 	
 	
-	
-	public CommandManagerImpl(UserManagerImpl userManager, PollyConfiguration config, 
-	        IrcManager ircManager) {
+	public CommandManagerImpl(UserManagerImpl userManager, Configuration config, 
+	            IrcManager ircmanager, String messageEncoding) {
+
 	    this.userManager = userManager;
 	    this.ircManager = ircManager;
-	    this.config = config;
 		this.commands = new HashMap<String, Command>();
 		this.ignoredCommands = new HashSet<String>(
-		        Arrays.asList(config.getIgnoredCommands()));
-		
+		    config.readStringList(CONFIG_IGNORED_COMMANDS));
+		this.encodingName = messageEncoding;
 		this.cmdHistory = new HashMap<String, CommandHistoryEntry>();
 	}
 	
@@ -314,8 +315,7 @@ public class CommandManagerImpl implements CommandManager {
             AbstractParser<?> parser = PollyParserFactory.createParser(
                     SyntaxMode.POLLY_CLASSIC);
             
-            Root root = (Root) parser.parse(message.trim(), 
-                this.config.getEncodingName()); 
+            Root root = (Root) parser.parse(message.trim(), this.encodingName);
             
             if (root == null) {
                 return null;

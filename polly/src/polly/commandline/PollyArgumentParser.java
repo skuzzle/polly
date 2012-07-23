@@ -1,14 +1,14 @@
 package polly.commandline;
 
-import polly.configuration.PollyConfiguration;
+import de.skuzzle.polly.sdk.Configuration;
 
 
 public class PollyArgumentParser extends AbstractArgumentParser {
 
-    private PollyConfiguration config;
+    private Configuration config;
     
     
-    public PollyArgumentParser(PollyConfiguration config) {
+    public PollyArgumentParser(Configuration config) {
         this.config = config;
         this.createArguments();
     }
@@ -18,7 +18,7 @@ public class PollyArgumentParser extends AbstractArgumentParser {
     private void createArguments() {
         this.addArgument(
             new BooleanConfigArgument("-update", this.config, 
-                PollyConfiguration.AUTO_UPDATE) {
+                Configuration.AUTO_UPDATE) {
                     @Override
                     public boolean filter() {
                         return true;
@@ -26,7 +26,7 @@ public class PollyArgumentParser extends AbstractArgumentParser {
             });
         this.addArgument(
             new BooleanConfigArgument("-u", this.config, 
-                PollyConfiguration.AUTO_UPDATE) {
+                Configuration.AUTO_UPDATE) {
                     @Override
                     public boolean filter() {
                         return true;
@@ -34,39 +34,39 @@ public class PollyArgumentParser extends AbstractArgumentParser {
             });
         
         this.addArgument(new ConfigArgument("-server", this.config, 
-            PollyConfiguration.SERVER));
+            Configuration.SERVER));
         this.addArgument(new ConfigArgument("-s", this.config, 
-            PollyConfiguration.SERVER));
+            Configuration.SERVER));
         
         this.addArgument(new ConfigArgument("-nick", this.config, 
-            PollyConfiguration.NICKNAME));
+            Configuration.NICKNAME));
         this.addArgument(new ConfigArgument("-n", this.config, 
-            PollyConfiguration.NICKNAME));
+            Configuration.NICKNAME));
 
         this.addArgument(new ConfigArgument("-ident", this.config, 
-            PollyConfiguration.IDENT));
+            Configuration.IDENT));
         this.addArgument(new ConfigArgument("-i", this.config, 
-            PollyConfiguration.IDENT));
+            Configuration.IDENT));
 
         this.addArgument(new IntegerConfigArgument("-port", this.config, 
-            PollyConfiguration.PORT));
+            Configuration.PORT));
         this.addArgument(new IntegerConfigArgument("-p", this.config, 
-            PollyConfiguration.PORT));
+            Configuration.PORT));
 
         this.addArgument(new BooleanConfigArgument("-irclog", this.config, 
-            PollyConfiguration.IRC_LOGGING));
+            Configuration.IRC_LOGGING));
         this.addArgument(new BooleanConfigArgument("-il", this.config, 
-            PollyConfiguration.IRC_LOGGING));
+            Configuration.IRC_LOGGING));
 
         this.addArgument(new ConfigArgument("-join", this.config, 
-            PollyConfiguration.CHANNELS));
+            Configuration.CHANNELS));
         this.addArgument(new ConfigArgument("-j", this.config, 
-            PollyConfiguration.CHANNELS));
+            Configuration.CHANNELS));
         
         this.addArgument(new BooleanConfigArgument("-telnet", this.config, 
-            PollyConfiguration.ENABLE_TELNET));
+            Configuration.ENABLE_TELNET));
         this.addArgument(new IntegerConfigArgument("-telnetport", this.config, 
-            PollyConfiguration.TELNET_PORT));
+            Configuration.TELNET_PORT));
 
         this.addArgument(new ConfigArgument("-help", this.config, "") {
             @Override

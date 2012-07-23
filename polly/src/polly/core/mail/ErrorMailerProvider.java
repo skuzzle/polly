@@ -12,28 +12,22 @@ import polly.moduleloader.annotations.Require;
 @Module(requires = @Require(component = MailConfig.class))
 public class ErrorMailerProvider extends AbstractModule {
 
-    private MailConfig config;
     
     public ErrorMailerProvider(ModuleLoader loader) {
         super("ERROR_MAILER_PROVIDER", loader, false);
     }
     
     
-    
-    @Override
-    public void beforeSetup() {
-        this.config = this.requireNow(MailConfig.class);
-    }
-    
-    
 
     @Override
     public void setup() throws SetupException {
-        int delay = Integer.parseInt(this.config.getProperty(MailConfig.MAIL_DELAY));
-        MailSender sender = this.config.getSender();
+        MailConfig mailCfg = this.requireNow(MailConfig.class);
+        int delay = Integer.parseInt(
+            mailCfg.readString(MailConfig.MAIL_DELAY));
+        MailSender sender = mailCfg.getSender();
         EMailLogAppender appender = new EMailLogAppender(
-            sender, this.config.getLevel(), delay, 
-            new EMailLogFormatter(this.config.getLevel()));
+            sender, mailCfg.getLevel(), delay, 
+            new EMailLogFormatter(mailCfg.getLevel()));
         
         Logger.getRootLogger().addAppender(appender);
     }

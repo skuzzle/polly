@@ -1,32 +1,25 @@
 package polly.core.mail;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.util.Properties;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.log4j.Level;
 
+import polly.configuration.ConfigurationImpl;
+import polly.moduleloader.SetupException;
 
-import polly.configuration.ConfigurationFileException;
 
 
-public class MailConfig extends Properties {
+public class MailConfig extends ConfigurationImpl {
 
-    private static final long serialVersionUID = 1L;
-    
     public final static String SMTP_FROM = "mail.smtp.from";
     public final static String SMTP_HOST = "mail.smtp.host";
     public final static String SMTP_PORT = "mail.smtp.port";
     public final static String SMTP_PASSWORD = "mail.smtp.password";
     public final static String SMTP_LOGIN = "mail.smtp.login";
     
-    public final static String RECIPIENTS = "recipients";
-    public final static String LOG_THRESHOLD = "threshold";
-    public final static String MAIL_PROVIDER = "mailProvider";
     public final static String MAIL_DELAY = "mailDelay";
     
     private InternetAddress[] recipients;
@@ -35,27 +28,25 @@ public class MailConfig extends Properties {
     
     
     
-    public MailConfig(String cfgPath) throws IOException, ConfigurationFileException {
-        FileInputStream input = new FileInputStream(cfgPath);
-        this.load(input);
+    public MailConfig(String recipients, String logLevel, String mailProvider) 
+            throws SetupException {
         
         // parse recipients
         try {
-            this.recipients = InternetAddress.parse(this.getProperty(RECIPIENTS), false);
+            this.recipients = InternetAddress.parse(recipients, false);
         } catch (AddressException e) {
-            throw new ConfigurationFileException(e, e.getMessage());
+            throw new SetupException("invalid recipient list");
         }
         
         
-        this.logLevel = Level.toLevel(this.getProperty(LOG_THRESHOLD));
+        this.logLevel = Level.toLevel(logLevel);
         if (this.logLevel.toInt() < Level.INFO_INT) {
-            throw new ConfigurationFileException(
+            throw new SetupException(
                 "Log level threshold too low. Must at least be 'ERROR'.");
         }
         
-        
-        // init mail provider
-        String cls = this.getProperty(MAIL_PROVIDER);
+        // initialize mail provider
+        String cls = mailProvider;
         try {
             Class<?> provider = Class.forName(cls);
             Constructor<?> con = provider.getConstructor(MailConfig.class);
@@ -66,7 +57,7 @@ public class MailConfig extends Properties {
             }
             this.sender = (MailSender) tmp;
         } catch (Exception e) {
-            throw new ConfigurationFileException(e, "Invalid MailProvider: " + cls);
+            throw new SetupException("Invalid MailProvider: " + cls, e);
         }
     }
     

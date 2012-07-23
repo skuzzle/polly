@@ -1,17 +1,19 @@
 package polly.core.irc;
 
+import java.util.List;
+
 public class BotConnectionSettings {
 
     private String nickName;
     private String hostName;
     private int port;
     private String identity;
-    private String[] channels;
+    private List<String> channels;
     private String modes;
     
 
     public BotConnectionSettings(String nickName, String hostName, 
-            int port, String identity, String[] channels, String modes) {
+            int port, String identity, List<String> channels, String modes) {
         this.nickName = nickName;
         this.hostName = hostName;
         this.port = port;
@@ -45,7 +47,7 @@ public class BotConnectionSettings {
     }    
     
     
-    public String[] getChannels() {
+    public List<String> getChannels() {
         return this.channels;
     }
     

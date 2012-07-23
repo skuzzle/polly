@@ -10,6 +10,8 @@ public abstract class AbstractArgumentParser {
     protected Set<Argument> arguments;
     private String canonical = "";
     
+    
+    
     public AbstractArgumentParser() {
         this.arguments = new HashSet<Argument>();
     }

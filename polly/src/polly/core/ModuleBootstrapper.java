@@ -11,7 +11,7 @@ import java.lang.reflect.Constructor;
 import org.apache.log4j.Logger;
 
 
-import polly.configuration.PollyConfiguration;
+
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.SetupException;
 
@@ -24,10 +24,9 @@ public class ModuleBootstrapper {
 
     
     public static void prepareModuleLoader(ModuleLoader loader, 
-            PollyConfiguration config) throws IOException, SetupException {
-        File modules = new File(config.getModulesCfg());
+            File modulesCfg) throws IOException, SetupException {
         
-        parseConfig(modules, loader);
+        parseConfig(modulesCfg, loader);
     }
     
     

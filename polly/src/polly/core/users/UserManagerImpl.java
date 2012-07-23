@@ -13,7 +13,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import polly.configuration.PollyConfiguration;
 import polly.core.persistence.PersistenceManagerImpl;
 import polly.events.Dispatchable;
 import polly.events.EventProvider;
@@ -82,25 +81,26 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     
     public UserManagerImpl(PersistenceManagerImpl persistence, 
-            PollyConfiguration cfg, EventProvider eventProvider, 
+            String declarationCachePath, int tempVarLifeTime,
+            boolean ignoreUnknownIdentifiers, EventProvider eventProvider, 
             RoleManager roleManager) {
         this.eventProvider = eventProvider;
         this.persistence = persistence;
         this.roleManager = roleManager;
         this.onlineCache = Collections.synchronizedMap(
                 new CaseInsensitiveStringKeyMap<User>());
-        this.declarationCachePath = new File(cfg.getDeclarationCachePath());
+        this.declarationCachePath = new File(declarationCachePath);
         this.constraints = new HashMap<String, AttributeConstraint>();
         this.namespace = new Namespace();
         try {
-			this.namespace.restore(new File(cfg.getDeclarationCachePath()));
+			this.namespace.restore(new File(declarationCachePath));
 		} catch (IOException e) {
 			logger.warn("No declarations restored", e);
 		}
         Prepare.operators(this.namespace);
         Prepare.namespaces(this.namespace);
-        Namespace.setTempVarLifeTime(cfg.getTempVarLifeTime());
-        Namespace.setIgnoreUnknownIdentifiers(cfg.isIgnoreUnknownIdentifiers());
+        Namespace.setTempVarLifeTime(tempVarLifeTime);
+        Namespace.setIgnoreUnknownIdentifiers(ignoreUnknownIdentifiers);
     }
     
     

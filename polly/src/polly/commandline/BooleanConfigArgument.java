@@ -1,11 +1,11 @@
 package polly.commandline;
 
-import polly.configuration.PollyConfiguration;
+import de.skuzzle.polly.sdk.Configuration;
 
 
 public class BooleanConfigArgument extends ConfigArgument {
 
-    public BooleanConfigArgument(String name, PollyConfiguration config,
+    public BooleanConfigArgument(String name, Configuration config,
         String field) {
         super(name, config, field);
     }

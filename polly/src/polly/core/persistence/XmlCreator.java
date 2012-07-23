@@ -56,7 +56,7 @@ public class XmlCreator {
         for (Plugin pluginCfg : this.pluginManager.loadedPlugins()) {
             s.append("    <jar-file>file:");
             s.append("../" + this.pluginFolder + "/"); 
-            s.append(pluginCfg.getProperty(Plugin.JAR_FILE));
+            s.append(pluginCfg.readString(Plugin.JAR_FILE));
             s.append("</jar-file>\n");
         }
         s.append("\n");

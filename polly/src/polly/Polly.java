@@ -1,7 +1,7 @@
 package polly;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.lang.management.ManagementFactory;
@@ -14,8 +14,7 @@ import org.apache.log4j.PropertyConfigurator;
 import polly.commandline.AbstractArgumentParser;
 import polly.commandline.ParameterException;
 import polly.commandline.PollyArgumentParser;
-import polly.configuration.DefaultPollyConfiguration;
-import polly.configuration.PollyConfiguration;
+import polly.configuration.ConfigurationProviderImpl;
 import polly.core.ModuleBootstrapper;
 import polly.core.ShutdownManagerImpl;
 import polly.moduleloader.AbstractModule;
@@ -26,8 +25,7 @@ import polly.moduleloader.annotations.Module;
 import polly.moduleloader.annotations.Provide;
 import polly.util.FileUtil;
 import polly.util.ProxyClassLoader;
-import de.skuzzle.polly.config.ConfigurationFile;
-import de.skuzzle.polly.config.ParseException;
+import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.Version;
 
 
@@ -74,8 +72,10 @@ public class Polly {
     
     
 
-    private final static String DEVELOP_VERSION = "0.9.1 - dev";
-    private final static String CONFIG_FULL_PATH = "cfg/polly.cfg";
+    public final static String DEVELOP_VERSION = "0.9.1 - dev";
+    public final static String CONFIG_FULL_PATH = "cfg/polly.cfg";
+    public final static String CONFIG_FILE_NAME = "polly.cfg";
+    public final static String CONFIG_DIR = "./cfg";
     
     /**
      * The polly plugin folder. That folder is not supposed to change
@@ -122,15 +122,28 @@ public class Polly {
             return;
         }
         
-        PollyConfiguration config = this.readConfig(CONFIG_FULL_PATH);
-        ConfigurationFile newConfig = this.getConfig("./cfg/newConfig.cfg");
-        System.out.println(newConfig.format(true, true));
-        this.checkDirectoryStructure(config);
-
+        
+        ConfigurationProviderImpl configurationProvider = 
+            new ConfigurationProviderImpl(new File(CONFIG_DIR));
+        
+        Configuration pollyCfg = null;
+        try {
+            pollyCfg = configurationProvider.open(CONFIG_FILE_NAME, true);
+            PropertyConfigurator.configure(
+                pollyCfg.readString(Configuration.LOG_CONFIG_FILE));
+        } catch (FileNotFoundException e) {
+            System.out.println("Error while opening the main configuration file");
+            System.out.println("File '" + CONFIG_FILE_NAME + "' not found");
+        } catch (IOException e) {
+            System.out.println("Error while opening the main configuration file");
+            System.out.println("IO Exception: " + e.getMessage());
+            e.printStackTrace(System.out);
+        }
+        
         logger.info("");
         logger.info("");
         logger.info("");
-        this.parseArguments(args, config);
+        this.parseArguments(args, pollyCfg);
 
         logger.info("----------------------------------------------");
         logger.info("new polly session started!");
@@ -144,16 +157,6 @@ public class Polly {
         logger.info("Java Version: " + System.getProperty("java.version"));
         logger.info("Java Home: " + System.getProperty("java.home"));
 
-        logger.trace("Configuration: \n" + config.toString());
-
-        if (config.getPluginExcludes().length != 0) {
-            logger.info("Following plugins are excluded: "
-                + Arrays.toString(config.getPluginExcludes()));
-        }
-        if (config.getIgnoredCommands().length != 0) {
-            logger.info("Following commands will be ignored: "
-                + Arrays.toString(config.getIgnoredCommands()));
-        }
 
         /*
          * POLLY INITIALIZATION:
@@ -176,12 +179,6 @@ public class Polly {
         // Setup Module loader
         ModuleLoader loader = new DefaultModuleLoader();
 
-        // Base components which have no own module:
-        loader.provideComponent(new ShutdownManagerImpl());
-        loader.provideComponent(config);
-        loader.provideComponent(newConfig);
-        loader.provideComponent(parentCl);
-
         // Modules:
         // Register all the modules. The order in which they are registered does not
         // matter as the setup order will be automatically determined by the 
@@ -191,15 +188,16 @@ public class Polly {
         
         try {
             // This parses the modules.cfg and instantiates all listed modules
-            ModuleBootstrapper.prepareModuleLoader(loader, config);
+            File modulesCfg = new File(pollyCfg.readString(Configuration.MODULE_CONFIG));
+            ModuleBootstrapper.prepareModuleLoader(loader, modulesCfg);
             
             // add startup module
-            new AnonymousModule(loader, config, newConfig, parentCl);
+            new AnonymousModule(loader, configurationProvider, parentCl);
             
             loader.runSetup();
             loader.runModules();
             
-            if (config.isDebugMode()) {
+            if (pollyCfg.readBoolean(Configuration.DEBUG_MODE)) {
                 loader.exportToDot(new File("modules.dot"));
             }
         } catch (Exception e) {
@@ -218,31 +216,28 @@ public class Polly {
     
         @Module(startUp = true, provides = {
         @Provide(component = ShutdownManagerImpl.class),
-        @Provide(component = PollyConfiguration.class),
+        @Provide(component = ConfigurationProviderImpl.class),
         @Provide(component = ProxyClassLoader.class),
-        @Provide(component = ConfigurationFile.class)
     })
     private static class AnonymousModule extends AbstractModule {
         
-        private PollyConfiguration pollyCfg;
-        private ConfigurationFile newCfg;
+        private ConfigurationProviderImpl configurationProvider;
         private ProxyClassLoader parentCl;
         
         
-        public AnonymousModule(ModuleLoader loader, PollyConfiguration pollyCfg,
-                ConfigurationFile newCfg, ProxyClassLoader parentCl) {
+        public AnonymousModule(ModuleLoader loader, 
+                ConfigurationProviderImpl configurationProvider,  
+                ProxyClassLoader parentCl) {
             super("ROOT_PROVIDER", loader, true);
-            this.pollyCfg = pollyCfg;
-            this.newCfg = newCfg;
             this.parentCl = parentCl;
+            this.configurationProvider = configurationProvider;
         }
 
         
         
         @Override
         public void setup() throws SetupException {
-            this.provideComponent(this.pollyCfg);
-            this.provideComponent(this.newCfg);
+            this.provideComponent(this.configurationProvider);
             this.provideComponent(this.parentCl);
             this.provideComponent(new ShutdownManagerImpl());
         }
@@ -285,85 +280,7 @@ public class Polly {
 
 
 
-    private void checkDirectoryStructure(PollyConfiguration config) {
-        boolean success = true;
-        File cfg_plugins = new File(Polly.PLUGIN_FOLDER);
-        File cfg_metainf = new File(config.getPersistenceXML()).getParentFile();
-
-        if (!cfg_plugins.exists()) {
-            success &= cfg_plugins.mkdirs();
-            System.out.println("creating " + cfg_plugins + ": " + success);
-        }
-        if (!cfg_metainf.exists()) {
-            success &= cfg_metainf.mkdirs();
-            System.out.println("creating " + cfg_metainf + ": " + success);
-        }
-
-        if (!success) {
-            System.exit(0);
-        }
-    }
-    
-    
-
-    private ConfigurationFile getConfig(String path) {
-        try {
-            File configFile = new File(path);
-            
-            if (!configFile.exists()) {
-                
-            }
-            
-            return ConfigurationFile.open(configFile);
-        } catch (IOException e) {
-            System.out.println(
-                "Encountered IO Exception while reading Configuration from " + path);
-            e.printStackTrace();
-            System.exit(-1);
-        } catch (ParseException e) {
-            System.out.println("Invalid config file: " + path);
-            System.out.println("Encountered ParseException at " + e.getPosition() + ":");
-            System.out.println(e.getMessage());
-            System.out.println("StackTrace:");
-            e.printStackTrace();
-            System.exit(-1);
-        }
-        
-        return null;
-    }
-
-
-
-    private PollyConfiguration readConfig(String path) {
-        try {
-            File configFile = new File(path);
-
-            /*
-             * Create a default configuration file
-             */
-            if (!configFile.exists()) {
-                DefaultPollyConfiguration defCfg = new DefaultPollyConfiguration();
-                defCfg.store(new FileOutputStream(configFile), "");
-            }
-
-            PollyConfiguration config = new PollyConfiguration(path);
-            PropertyConfigurator.configure(config.getLogConfigFile());
-            return config;
-        } catch (Exception e) {
-            // Reply using stdout because logger may not be initialized
-            System.out.println("Fehler beim Lesen der Konfigurationsdatei: "
-                + e.getMessage());
-            e.printStackTrace();
-            System.exit(0);
-        }
-
-        // unreachable
-        return null;
-    }
-
-
-
-    private void parseArguments(String[] args, PollyConfiguration config) {
+    private void parseArguments(String[] args, Configuration config) {
         try {
             AbstractArgumentParser parser = new PollyArgumentParser(config);
             parser.parse(args);

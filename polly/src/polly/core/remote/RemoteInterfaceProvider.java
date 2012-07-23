@@ -3,7 +3,9 @@ package polly.core.remote;
 import java.io.File;
 import java.io.IOException;
 
-import polly.configuration.PollyConfiguration;
+import de.skuzzle.polly.sdk.Configuration;
+
+import polly.configuration.ConfigurationProviderImpl;
 import polly.core.ShutdownManagerImpl;
 import polly.core.remote.tcp.AdministrationServer;
 import polly.core.roles.RoleManagerImpl;
@@ -16,13 +18,14 @@ import polly.moduleloader.annotations.Require;
 
 
 @Module(requires = {
-    @Require(component = PollyConfiguration.class),
+    @Require(component = ConfigurationProviderImpl.class),
     @Require(component = UserManagerImpl.class),
     @Require(component = ShutdownManagerImpl.class)}
 )
 public class RemoteInterfaceProvider extends AbstractModule {
 
-    private PollyConfiguration config;
+    public static final String SERVER_CONFIG = "porat.cfg";
+    
     private AdministrationManager adminManager;
     private ShutdownManagerImpl shutdownManager;
     private ProtocolHandler protocolHandler;
@@ -39,7 +42,6 @@ public class RemoteInterfaceProvider extends AbstractModule {
     
     @Override
     public void beforeSetup() {
-        this.config = this.requireNow(PollyConfiguration.class);
         this.userManager = this.requireNow(UserManagerImpl.class);
         this.roleManager = this.requireNow(RoleManagerImpl.class);
         this.shutdownManager = this.requireNow(ShutdownManagerImpl.class);
@@ -49,8 +51,18 @@ public class RemoteInterfaceProvider extends AbstractModule {
     
     @Override
     public void setup() throws SetupException {
-        this.initKeyStore(this.config.getKeyStoreFile(), 
-            this.config.getKeyStorePassword());
+        ConfigurationProviderImpl configProvider = 
+            this.requireNow(ConfigurationProviderImpl.class);
+        Configuration serverCfg = null;
+        try {
+            serverCfg = configProvider.open(SERVER_CONFIG);
+        } catch (IOException e) {
+            throw new SetupException(e);
+        }
+        
+        this.initKeyStore(serverCfg.readString(
+            Configuration.KEYSTORE_FILE), 
+            serverCfg.readString(Configuration.KEYSTORE_PASSWORD));
         
         this.adminManager = new AdministrationManager(this.userManager, this.roleManager);
         this.protocolHandler = new ProtocolHandler(this.adminManager);
@@ -84,7 +96,6 @@ public class RemoteInterfaceProvider extends AbstractModule {
     @Override
     public void dispose() {
         this.adminManager = null;
-        this.config = null;
         this.protocolHandler = null;
         this.server = null;
         this.shutdownManager = null;

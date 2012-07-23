@@ -3,7 +3,10 @@ package polly.core.irc;
 
 import org.jibble.pircbot.NickAlreadyInUseException;
 
-import polly.configuration.PollyConfiguration;
+import de.skuzzle.polly.sdk.Configuration;
+import de.skuzzle.polly.sdk.ConfigurationProvider;
+
+import polly.configuration.ConfigurationProviderImpl;
 import polly.core.DefaultUserAttributesProvider;
 import polly.core.ShutdownManagerImpl;
 import polly.events.EventProvider;
@@ -18,7 +21,7 @@ import polly.core.ModuleStates;
 
 @Module(
     requires = { 
-        @Require(component = PollyConfiguration.class),
+        @Require(component = ConfigurationProviderImpl.class),
         @Require(component = ShutdownManagerImpl.class),
         @Require(component = DefaultUserAttributesProvider.class),
         @Require(component = EventProvider.class),
@@ -29,9 +32,11 @@ import polly.core.ModuleStates;
         @Provide(state = ModuleStates.IRC_READY) })
 public class IrcManagerProvider extends AbstractModule {
 
+    
+    public final static String IRC_CONFIG_FILE = "irc.cfg";
+    
     private EventProvider events;
     private IrcManagerImpl ircManager;
-    private PollyConfiguration config;
     private ShutdownManagerImpl shutdownManager;
 
     private BotConnectionSettings connectionSettings;
@@ -46,7 +51,6 @@ public class IrcManagerProvider extends AbstractModule {
 
     @Override
     public void beforeSetup() {
-        this.config = this.requireNow(PollyConfiguration.class);
         this.events = this.requireNow(EventProvider.class);
         this.shutdownManager = this.requireNow(ShutdownManagerImpl.class);
     }
@@ -55,23 +59,45 @@ public class IrcManagerProvider extends AbstractModule {
 
     @Override
     public void setup() throws SetupException {
-        this.ircManager = new IrcManagerImpl(this.config.getNickName(),
-            this.events, this.config);
+        ConfigurationProvider configProvider = 
+            this.requireNow(ConfigurationProviderImpl.class);
+        Configuration ircConfig = null;
+        try {
+            ircConfig = configProvider.open(IRC_CONFIG_FILE);
+        } catch (IOException e) {
+            throw new SetupException(e);
+        }
+        
+        String nickName = ircConfig.readString(Configuration.NICKNAME);
+        String server = ircConfig.readString(Configuration.SERVER);
+        String ident = ircConfig.readString(Configuration.IDENT);
+        String ircModes = ircConfig.readString(Configuration.IRC_MODES);
+        List<String> channels = ircConfig.readStringList(Configuration.CHANNELS);
+        int port = ircConfig.readInt(Configuration.PORT);
+        boolean ircLogging = ircConfig.readBoolean(Configuration.IRC_LOGGING);
+        boolean autoLogin = ircConfig.readBoolean(Configuration.AUTO_LOGIN);
+        String encodingName = configProvider.getRootConfiguration().readString(
+            Configuration.ENCODING);
+        int parseErrorDetails = ircConfig.readInt(Configuration.PARSE_ERROR_DETAILS);
+        int autoLoginTime = ircConfig.readInt(Configuration.AUTO_LOGIN_TIME);
+        
+        this.ircManager = new IrcManagerImpl(nickName,
+            this.events, ircConfig, encodingName);
 
         this.provideComponent(this.ircManager);
 
         // XXX: do not add any listeners to the irc manager here. this is done
         //      in IrcEventHandlerProvider
         logger.info("Starting bot with settings: (" + "Nick: "
-            + this.config.getNickName() + ", Ident: *****" + ", Server: "
-            + this.config.getServer() + ", Port: " + this.config.getPort()
-            + ", Logging: " + this.config.getIrcLogging() + ")");
+            + nickName + ", Ident: *****" + ", Server: "
+            + server + ", Port: " + port
+            + ", Logging: " + ircLogging + ")");
 
             
         this.connectionSettings = new BotConnectionSettings(
-            this.config.getNickName(), this.config.getServer(),
-            this.config.getPort(), this.config.getIdent(),
-            this.config.getChannels(), this.config.getIrcModes());
+            nickName, server,
+            port, ident,
+            channels, ircModes);
 
         this.shutdownManager.addDisposable(this.ircManager);
     }
@@ -96,7 +122,6 @@ public class IrcManagerProvider extends AbstractModule {
     
     @Override
     public void dispose() {
-        this.config = null;
         this.events = null;
         this.shutdownManager = null;
         super.dispose();
