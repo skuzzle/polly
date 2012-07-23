@@ -307,9 +307,9 @@ public class Signature {
 		List<Types> actual = other.parameters;
 		for (int i = 0; i < formal.size(); ++i) {
 			for (int j = i; j < actual.size(); ++j) {
-			    Class<?> formalCls = formal.get(i).getClass();
-			    Class<?> actualCls = actual.get(j).getClass();
-				if(i != j && actualCls.isAssignableFrom(formalCls)) {
+			    Types formalCls = formal.get(i);
+			    Types actualCls = actual.get(j);
+				if(i != j && formalCls.check(actualCls)) {
 					this.swap(actual, i, j);
 				}
 			}
@@ -340,9 +340,9 @@ public class Signature {
                 return false;
             }
             for (int j = i; j < parameters.size(); ++j) {
-                Class<?> formalCls = parameters.get(i).getClass();
-                Class<?> actualCls = parameters.get(j).getClass();
-                if(i != j && actualCls.isAssignableFrom(formalCls)) {
+                Types formalCls = parameters.get(i);
+                Types actualCls = parameters.get(j);
+                if(i != j && formalCls.check(actualCls)) {
                     return false;
                 }
             }
