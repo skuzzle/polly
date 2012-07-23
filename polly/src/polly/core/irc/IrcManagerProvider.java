@@ -6,7 +6,6 @@ import org.jibble.pircbot.NickAlreadyInUseException;
 import polly.configuration.PollyConfiguration;
 import polly.core.DefaultUserAttributesProvider;
 import polly.core.ShutdownManagerImpl;
-import polly.eventhandler.MessageHandler;
 import polly.events.EventProvider;
 import polly.moduleloader.AbstractModule;
 import polly.moduleloader.ModuleLoader;
@@ -22,11 +21,11 @@ import polly.core.ModuleStates;
         @Require(component = PollyConfiguration.class),
         @Require(component = ShutdownManagerImpl.class),
         @Require(component = DefaultUserAttributesProvider.class),
+        @Require(component = EventProvider.class),
         @Require(state = ModuleStates.PLUGINS_READY),
         @Require(state = ModuleStates.PERSISTENCE_READY) }, 
     provides = {
         @Provide(component = IrcManagerImpl.class),
-        @Provide(component = MessageHandler.class),
         @Provide(state = ModuleStates.IRC_READY) })
 public class IrcManagerProvider extends AbstractModule {
 

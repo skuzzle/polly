@@ -6,7 +6,10 @@ import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
+import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
+import de.skuzzle.polly.sdk.http.HttpEvent;
+import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.model.User;
 
 public class FooCommand extends Command {
@@ -25,6 +28,7 @@ public class FooCommand extends Command {
         this.createSignature("Foo-Befehl mit 0 Parametern.");
         this.setHelpText("Dieser Befehl nimmt jede art von Parametern entgegen, " +
         		"wertet ihn aus und gibt das Ergebnis zurück.");
+        this.setHttpEnabled(true);
     }
 
     
@@ -33,23 +37,41 @@ public class FooCommand extends Command {
     protected boolean executeOnBoth(User executer, String channel,
             Signature signature) {
         
-        FormatManager fm = this.getMyPolly().formatting();
+        this.reply(channel, this.execute(signature));
+        return false;
+    }
+    
+    
+    
+    @Override
+    public HttpTemplateContext executeHttp(User executer, Signature signature,
+            HttpEvent e) throws CommandException {
         
+        HttpTemplateContext result = new HttpTemplateContext();
+        String exec = this.execute(signature);
+        result.put("RESULT", exec);
+        return result;
+    }
+    
+    
+    
+    private String execute(Signature signature) {
+        FormatManager fm = this.getMyPolly().formatting();
         if (this.match(signature, 0)) {
             Types t1 = signature.getValue(0);
-            this.reply(channel, t1.valueString(fm));
+            return t1.valueString(fm);
         } else if (this.match(signature, 1)) {
             Types t1 = signature.getValue(0);
             Types t2 = signature.getValue(1);
-            this.reply(channel, t1.valueString(fm) + " " + t2.valueString(fm));
+            return t1.valueString(fm) + " " + t2.valueString(fm);
         } else if (this.match(signature, 2)) {
             Types t1 = signature.getValue(0);
             Types t2 = signature.getValue(1);
             Types t3 = signature.getValue(2);
-            this.reply(channel, t1.valueString(fm) + " " + t2.valueString(fm) + " " + 
-                    t3.valueString(fm));
+            return t1.valueString(fm) + " " + t2.valueString(fm) + " " + 
+                    t3.valueString(fm);
         }
-        return false;
+        // unreachable
+        return "";
     }
-
 }

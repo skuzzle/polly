@@ -19,9 +19,6 @@ import polly.util.concurrent.ThreadFactoryBuilder;
 
 import com.sun.net.httpserver.HttpServer;
 
-import de.skuzzle.polly.sdk.Command;
-import de.skuzzle.polly.sdk.CommandManager;
-import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.http.HttpAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpEventListener;
@@ -37,7 +34,7 @@ public class SimpleWebServer implements HttpManager {
     private final static Logger logger = Logger.getLogger(SimpleWebServer.class
         .getName());
     
-    private final static String SIGNATURE_PARAM = "signature";
+    
     
     
     private HttpServer server;
@@ -47,15 +44,12 @@ public class SimpleWebServer implements HttpManager {
     private EventProvider eventProvider;
     private Map<String, HttpAction> actions;
     private ArrayList<String> menu;
-    private CommandManager commandManager;
-
 
     private int sessionTimeOut;
     
     
     
-    public SimpleWebServer(CommandManager commandManager, int port, int sessionTimeOut) {
-        this.commandManager = commandManager;
+    public SimpleWebServer(int port, int sessionTimeOut) {
         this.port = port;
         this.sessionTimeOut = sessionTimeOut;
         this.sessions = new HashMap<InetAddress, HttpSession>();
@@ -121,7 +115,7 @@ public class SimpleWebServer implements HttpManager {
     
     
     protected HttpTemplateContext executeAction(HttpEvent e) {
-        String uri = e.getRequestUri().substring("action:".length());
+        String uri = e.getRequestUri();
         HttpAction action = this.actions.get(uri);
         
         HttpTemplateContext actionContext = new HttpTemplateContext();
@@ -136,30 +130,6 @@ public class SimpleWebServer implements HttpManager {
         actionContext.put("content", actionContext.getTemplate());
         
         return actionContext;
-    }
-    
-    
-    
-    protected HttpTemplateContext executeCommand(HttpEvent e) {
-        HttpTemplateContext c = new HttpTemplateContext();
-        
-        try {
-            String input = e.getProperty(SIGNATURE_PARAM);
-            Signature actual = this.commandManager.signatureFromString(
-                e.getSession().getUser(), input, "");
-            Command cmd = this.commandManager.getCommand(actual);
-            
-            HttpTemplateContext result = cmd.doExecuteHttp(
-                e.getSession().getUser(), actual, e);
-            c.putAll(result);
-            c.put("content", result.getTemplate());
-        } catch (Exception e1) {
-            c.setTemplate("webinterface/pages/error.html");
-            c.put("errorText", "No such action.");
-        }
-        
-        this.putRootContext(c, e.getSession());
-        return c;
     }
     
     

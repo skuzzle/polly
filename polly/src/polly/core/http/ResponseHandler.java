@@ -117,11 +117,10 @@ public class ResponseHandler implements HttpHandler {
         HttpEvent e = new HttpEvent(this.webServer, session, uri);
         e.getProperties().putAll(parameters);
         
-        if (uri.startsWith("action:")) {
-            HttpTemplateContext c = this.webServer.executeAction(e);
-            this.respond(c, t);
-        } else if (uri.startsWith("command:")) {
-            HttpTemplateContext c = this.webServer.executeCommand(e);
+        HttpTemplateContext c = null;
+        c = this.webServer.executeAction(e);
+        
+        if (c != null) {
             this.respond(c, t);
         } else {
             // there is no action for the given uri, so treat it as a file request
