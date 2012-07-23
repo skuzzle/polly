@@ -1,6 +1,9 @@
 package polly.core.irc;
 
 
+import java.io.IOException;
+import java.util.List;
+
 import org.jibble.pircbot.NickAlreadyInUseException;
 
 import de.skuzzle.polly.sdk.Configuration;
@@ -75,11 +78,9 @@ public class IrcManagerProvider extends AbstractModule {
         List<String> channels = ircConfig.readStringList(Configuration.CHANNELS);
         int port = ircConfig.readInt(Configuration.PORT);
         boolean ircLogging = ircConfig.readBoolean(Configuration.IRC_LOGGING);
-        boolean autoLogin = ircConfig.readBoolean(Configuration.AUTO_LOGIN);
         String encodingName = configProvider.getRootConfiguration().readString(
             Configuration.ENCODING);
-        int parseErrorDetails = ircConfig.readInt(Configuration.PARSE_ERROR_DETAILS);
-        int autoLoginTime = ircConfig.readInt(Configuration.AUTO_LOGIN_TIME);
+
         
         this.ircManager = new IrcManagerImpl(nickName,
             this.events, ircConfig, encodingName);

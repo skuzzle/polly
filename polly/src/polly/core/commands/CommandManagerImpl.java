@@ -114,7 +114,7 @@ public class CommandManagerImpl implements CommandManager {
 	
 	
 	public CommandManagerImpl(UserManagerImpl userManager, Configuration config, 
-	            IrcManager ircmanager, String messageEncoding) {
+	            IrcManager ircManager, String messageEncoding) {
 
 	    this.userManager = userManager;
 	    this.ircManager = ircManager;

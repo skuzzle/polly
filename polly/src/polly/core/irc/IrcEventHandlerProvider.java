@@ -1,8 +1,12 @@
 package polly.core.irc;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 
-import polly.configuration.PollyConfiguration;
+import de.skuzzle.polly.sdk.Configuration;
+import de.skuzzle.polly.sdk.ConfigurationProvider;
+
+import polly.configuration.ConfigurationProviderImpl;
 import polly.core.ShutdownManagerImpl;
 import polly.core.commands.CommandManagerImpl;
 import polly.core.users.UserManagerImpl;
@@ -20,9 +24,11 @@ import polly.moduleloader.annotations.Module;
 import polly.moduleloader.annotations.Provide;
 import polly.moduleloader.annotations.Require;
 
+
+
 @Module(
     requires = {
-        @Require(component = PollyConfiguration.class),
+        @Require(component = ConfigurationProviderImpl.class),
         @Require(component = ShutdownManagerImpl.class),
         @Require(component = EventProvider.class),
         @Require(component = UserManagerImpl.class),
@@ -45,20 +51,33 @@ public class IrcEventHandlerProvider extends AbstractModule {
         CommandManagerImpl commandManager = this.requireNow(CommandManagerImpl.class);
         UserManagerImpl userManager = this.requireNow(UserManagerImpl.class);
         ExecutorService executor = this.requireNow(ExecutorService.class);
-        PollyConfiguration config = this.requireNow(PollyConfiguration.class);
         ShutdownManagerImpl shutdownManager = this.requireNow(ShutdownManagerImpl.class);
+        
+        ConfigurationProvider configProvider = 
+            this.requireNow(ConfigurationProviderImpl.class);
+        Configuration ircConfig = null;
+        try {
+            ircConfig = configProvider.open(IrcManagerProvider.IRC_CONFIG_FILE);
+        } catch (IOException e) {
+            throw new SetupException(e);
+        }
+        
+        boolean autoLogin = ircConfig.readBoolean(Configuration.AUTO_LOGIN);
+        int parseErrorDetails = ircConfig.readInt(Configuration.PARSE_ERROR_DETAILS);
+        int autoLoginTime = ircConfig.readInt(Configuration.AUTO_LOGIN_TIME);
+        boolean ircLogging = ircConfig.readBoolean(Configuration.IRC_LOGGING);
         
         // setup handler for incoming irc messages that are to be parsed as a command.
         // XXX: Ensure that message handler is the first message listener to be added
         //      because it updates a users idle time
         MessageHandler handler = new MessageHandler(commandManager,
-            userManager, executor, config);
+            userManager, executor, parseErrorDetails);
         ircManager.addMessageListener(handler);
         provideComponent(handler);
         
         
         // setup irc logger
-        if (config.getIrcLogging()) {
+        if (ircLogging) {
             IrcLoggingHandler ircConsoleLogger = new IrcLoggingHandler();
             ircManager.addMessageListener(ircConsoleLogger);
             ircManager.addNickChangeListener(ircConsoleLogger);
@@ -74,10 +93,9 @@ public class IrcEventHandlerProvider extends AbstractModule {
         
 
         // Setup auto login / logout handler
-        if (config.isAutoLogon()) {
+        if (autoLogin) {
             AutoLogonHandler logonHandler = new AutoLogonHandler(
-                ircManager, userManager, 
-                config.getAutoLogonTime());
+                ircManager, userManager, autoLoginTime);
 
             ircManager.addUserSpottedListener(logonHandler);
             ircManager.addNickChangeListener(logonHandler);
