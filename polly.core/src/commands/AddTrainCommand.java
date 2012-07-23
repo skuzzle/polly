@@ -103,13 +103,16 @@ public class AddTrainCommand extends Command {
             
             if (te.getDuration() != 0) {
                 // HACK: this requires the Remind Plugin to be installed and running!
+                String command = ":remind \"Training abgeschlossen\" " + 
+                        (te.getDuration() / 1000) + "s";
                 this.getMyPolly().commands().executeString(
-                    ":remind \"Training abgeschlossen\"" + 
-                        te.getDuration() / 1000 + "s", executor.getCurrentNickName(), 
+                        command, 
+                        executor.getCurrentNickName(), 
                         true, executor, this.getMyPolly().irc());
             }
             this.reply(channel, "Posten gespeichert.");
         } catch (Exception e) {
+            e.printStackTrace();
             this.reply(channel, "Fehler beim Speichern.");
         }
     }
