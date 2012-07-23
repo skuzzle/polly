@@ -14,7 +14,7 @@
     <property name="update.dir"   value="update"/>
     <property name="struct.dir"   value="plugins"/>
     <property name="temp.dir"     value="temp"/>
-    <property name="bin.dir"      value="bin"/>
+    <property name="bin.dir"      value="build"/>
     <property name="lib.dir"      value="${polly.root.dir}/libs"/>
     
     <!-- jar file properties -->
