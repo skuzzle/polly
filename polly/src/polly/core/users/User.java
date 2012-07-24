@@ -103,12 +103,6 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     
     
 
-    public int getUserLevel() {
-        return this.userLevel;
-    }
-    
-    
-
     @Override
     public String getCurrentNickName() {
         return this.currentNickName;
@@ -157,13 +151,6 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     @Override
     public void setHashedPassword(String password) {
         this.password = password;
-    }
-
-
-
-    @Override
-    public void setUserLevel(int level) {
-        this.userLevel = level;
     }
     
     

@@ -1,6 +1,9 @@
 package polly.reminds;
 
 
+import java.util.Set;
+import java.util.TreeSet;
+
 import org.apache.log4j.Logger;
 
 import commands.ToggleMailCommand;
@@ -135,6 +138,16 @@ public class MyPlugin extends PollyPlugin {
         this.getMyPolly().users().addUserListener(this.deliverRemindHandler);
     }
 
+    
+    
+    @Override
+    public Set<String> getContainedPermissions() {
+        Set<String> result = new TreeSet<String>(super.getContainedPermissions());
+        result.add(MODIFY_OTHER_REMIND_PERMISSION);
+        return result;
+    }
+    
+    
     
     @Override
     public void assignPermissions(RoleManager roleManager)

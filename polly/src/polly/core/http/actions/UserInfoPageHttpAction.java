@@ -2,14 +2,14 @@ package polly.core.http.actions;
 
 
 
+import polly.core.http.HttpInterface;
 import de.skuzzle.polly.sdk.MyPolly;
-import de.skuzzle.polly.sdk.http.HttpAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.model.User;
 
 
-public class UserInfoPageHttpAction extends HttpAction {
+public class UserInfoPageHttpAction extends AbstractAdminAction {
 
     private MyPolly myPolly;
     
@@ -22,8 +22,9 @@ public class UserInfoPageHttpAction extends HttpAction {
     
     
     @Override
-    public void execute(HttpEvent e, HttpTemplateContext context) {
-        context.setTemplate("webinterface/pages/user_info.html");
+    public HttpTemplateContext execute(HttpEvent e) {
+        HttpTemplateContext context = new HttpTemplateContext(
+            HttpInterface.PAGE_USER_INFO);
         context.put("formatter", this.myPolly.formatting());
         String userName = e.getProperty("userName");
         String action = e.getProperty("action");
@@ -42,6 +43,8 @@ public class UserInfoPageHttpAction extends HttpAction {
                 }
             }
         }
+        
+        return context;
     }
 
 }

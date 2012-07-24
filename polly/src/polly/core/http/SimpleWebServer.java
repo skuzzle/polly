@@ -26,6 +26,7 @@ import de.skuzzle.polly.sdk.http.HttpEventListener;
 import de.skuzzle.polly.sdk.http.HttpManager;
 import de.skuzzle.polly.sdk.http.HttpSession;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
+import de.skuzzle.polly.sdk.roles.RoleManager;
 
 
 
@@ -47,10 +48,13 @@ public class SimpleWebServer implements HttpManager {
     private ArrayList<String> menu;
     private File templateRoot;
     private int sessionTimeOut;
+    private RoleManager roleManager;
     
     
     
-    public SimpleWebServer(File templateRoot, int port, int sessionTimeOut) {
+    public SimpleWebServer(RoleManager roleManager, File templateRoot, 
+            int port, int sessionTimeOut) {
+        this.roleManager = roleManager;
         this.templateRoot = templateRoot;
         this.port = port;
         this.sessionTimeOut = sessionTimeOut;
@@ -126,27 +130,34 @@ public class SimpleWebServer implements HttpManager {
         String uri = e.getRequestUri();
         HttpAction action = this.actions.get(uri);
         
-        HttpTemplateContext actionContext = new HttpTemplateContext();
+        HttpTemplateContext actionContext = null;
         if (action == null) {
             return null;
         } else {
-            action.execute(e, actionContext);
+            if (this.roleManager.canAccess(e.getSession().getUser(), action)) {
+                actionContext = action.execute(e);
+            } else {
+                return this.errorTemplate("Permission denied", 
+                    "You have insufficient permissions to acces this page/action.", 
+                    e.getSession());
+            }
         }
         this.putRootContext(actionContext, e.getSession());
-        actionContext.put(HttpInterface.CONTENT, actionContext.getTemplate());
+        actionContext.put(HttpInterface.CONTENT, 
+                this.getPage(actionContext.getTemplate()).getPath());
         
         return actionContext;
     }
     
     
     
-    protected HttpTemplateContext errorTemplate(String errorHeading, 
+    @Override
+    public HttpTemplateContext errorTemplate(String errorHeading, 
             String errorDescription, HttpSession session) {
-        File errorPage = this.getPage(HttpInterface.PAGE_ERROR);
-        HttpTemplateContext c = new HttpTemplateContext(errorPage.getPath());
+        HttpTemplateContext c = new HttpTemplateContext(HttpInterface.PAGE_ERROR);
         c.put(HttpInterface.ERROR_HEADING, errorHeading);
         c.put(HttpInterface.ERROR_DESCRIPTION, errorDescription);
-        c.put(HttpInterface.CONTENT, HttpInterface.PAGE_ERROR);
+        c.put(HttpInterface.CONTENT, this.getPage(HttpInterface.PAGE_ERROR).getPath());
         this.putRootContext(c, session);
         return c;
     }

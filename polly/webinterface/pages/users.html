@@ -5,22 +5,33 @@
         <th>Id</th>
         <th>Username</th>
         <th>Nickname</th>
-        <th>Userlevel</th>
         <th>IsIdle</th>
         <th>Last Action</th>
         <th>Login Time</th>
+        <th></th>
+        <th></th>
     </tr>
     #foreach ($user in $users)
     <tr>
         <td>$user.getId()</td>
         <td>$user.getName()</td>
         <td>$!user.getCurrentNickName()</td>
-        <td>$user.getUserLevel()</td>
         <td>$user.isIdle()</td>
         <td>#if ($user.getLastMessageTime() != 0) $formatter.formatDate( $user.getLastMessageTime() ) #end</td>
         <td>#if ($user.getLoginTime() != 0) $formatter.formatDate( $user.getLoginTime() ) #end</td>
-        <td><a href="user_info?userName=$user.getName()">Info</a></td>
-        <td><a href="Users?userName=$user.getName()&action=delete">Delete</a></td>
+        <td>
+            <form name="info$user.getName()" method="POST" action="user_info">
+                <input type="hidden" name="userName" value="$user.getName()"/>
+                <input type="submit" value="Info" class="button"/>
+            </form>
+        </td>
+        <td>
+            <form name="delete$user.getName()" method="POST" action="Users">
+                <input type="hidden" name="userName" value="$user.getName()"/>
+                <input type="hidden" name="action" value="delete"/>
+                <input type="submit" value="Delete" class="button"/>
+            </form>
+        </td>
     </tr>
     #end
 </table>

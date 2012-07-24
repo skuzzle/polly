@@ -13,9 +13,6 @@ import de.skuzzle.polly.sdk.exceptions.ConversationException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
-import de.skuzzle.polly.sdk.http.HttpEvent;
-import de.skuzzle.polly.sdk.http.HttpSession;
-import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.model.User;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.roles.SecurityContainer;
@@ -93,12 +90,6 @@ import de.skuzzle.polly.sdk.roles.SecurityObject;
  * required to execute it. So a user must not only have the required permissions for this 
  * command but also the required permissions for the signature he wants to execute.</p>
  * 
- * <p>Commands can be set to be Http enabled using {@link #setHttpEnabled(boolean)}. By 
- * doing so, this command can be executed using the polly webinterface. Http 
- * functionality is implemented similar to irc functionality. See 
- * {@link #executeHttp(User, Signature, HttpEvent, HttpSession)} for more information 
- * about http invocations.</p> 
- * 
  * @author Simon
  * @since zero day
  * @version RC 1.0
@@ -165,11 +156,6 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 	 * A set that contains the permissions of all signatures for this command. 
 	 */
 	private Set<String> containedPermissions;
-	
-	/**
-	 * Determines whether this command can be executed using the webinterface
-	 */
-	private boolean enableHttp;
 
 	
 	
@@ -212,29 +198,6 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 	public final String getCommandName() {
 		return this.commandName;
 	}
-	
-	
-	
-	/**
-	 * Determines whether this command can be executed using the webinterface.
-	 * 
-	 * @return <code>true</code> if this command can be executed using the webinterface.
-	 */
-	public boolean isHttpEnabled() {
-	    return this.enableHttp;
-	}
-	
-	
-	
-	/**
-	 * Sets whether this command can be executed using the webinterface.
-	 * 
-	 * @param enableHttp <code>true</code> if this command should be executable using
-	 *             the webinterface.
-	 */
-    public void setHttpEnabled(boolean enableHttp) {
-        this.enableHttp = enableHttp;
-    }
 	
 	
 	
@@ -446,71 +409,7 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 		    throw new CommandException(e.getMessage(), e);
 		}
 	}
-	
-	
-	
-	/**
-	 * <p>This method is called by pollys http server if this command is set to be 
-	 * executable using the webinterace. You should not call this method yourself.</p>
-	 * 
-	 * <p>This method checks whether the executing user has sufficient permissions for
-	 * this command and if so, it delivers the execution to your implementation of 
-	 * {@link #executeHttp(User, Signature, HttpEvent, HttpSession)}.</p>
-	 * 
-	 * @param executer The user that executes this command.
-	 * @param signature The signature that this command is executed with.
-	 * @param e The HttpEvent that invoked this execution.
-     * @return A HttpTemplateContext that contains all Object mappings that should be
-     *             displayed by the resulting webpage.
-     * @throws InsufficientRightsException If the executing user has not all permissions 
-     *             required by either this command or the signature he tries to execute.
-     * @throws CommandException Implementors can throw this to indicate an error during
-     *     execution.
-	 * @since 0.9.1
-     * @see #setHttpEnabled(boolean)
-     * @see #isHttpEnabled()
-	 */
-	public final HttpTemplateContext doExecuteHttp(User executer, Signature signature, HttpEvent e) 
-	        throws CommandException, InsufficientRightsException {
-	    
-	    FormalSignature formal = this.signatures.get(signature.getId());
-        this.checkPermissions(executer, formal);
-        
-        try {
-            return this.executeHttp(executer, signature, e);
-        } catch (CommandException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new CommandException(ex);
-        }
-	}
-	
-	
-	
-	/**
-	 * <p>This method is called by polly if a user invoked this command using the 
-	 * webinterface. It gets passed the actual signature with which the command should
-	 * be executed and additional http context information.</p>
-	 * 
-	 * <p>This method must return a {@link HttpTemplateContext} that contains all String 
-	 * or Object mappings that should be displayed on the resulting web page. The default
-	 * implementation returns an empty context.</p>
-	 * 
-     * @param executer The user that executes this command.
-     * @param signature The signature that this command is executed with.
-     * @param e The HttpEvent that invoked this execution.
-	 * @return A HttpTemplateContext that contains all Object mappings that should be
-	 *             displayed by the resulting webpage.
-     * @throws CommandException Implementors can throw this to indicate an error during
-     *     execution.
-     * @since 0.9.1
-     * @see #setHttpEnabled(boolean)
-     * @see #isHttpEnabled()
-	 */
-	public HttpTemplateContext executeHttp(User executer, Signature signature, 
-	        HttpEvent e) throws CommandException {
-	    return new HttpTemplateContext();
-	}
+
 	
 	
 	

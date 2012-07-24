@@ -6,11 +6,10 @@ import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
-import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
-import de.skuzzle.polly.sdk.http.HttpEvent;
-import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.model.User;
+
+
 
 public class FooCommand extends Command {
 
@@ -28,7 +27,6 @@ public class FooCommand extends Command {
         this.createSignature("Foo-Befehl mit 0 Parametern.");
         this.setHelpText("Dieser Befehl nimmt jede art von Parametern entgegen, " +
         		"wertet ihn aus und gibt das Ergebnis zurück.");
-        this.setHttpEnabled(true);
     }
 
     
@@ -39,18 +37,6 @@ public class FooCommand extends Command {
         
         this.reply(channel, this.execute(signature));
         return false;
-    }
-    
-    
-    
-    @Override
-    public HttpTemplateContext executeHttp(User executer, Signature signature,
-            HttpEvent e) throws CommandException {
-        
-        HttpTemplateContext result = new HttpTemplateContext();
-        String exec = this.execute(signature);
-        result.put("RESULT", exec);
-        return result;
     }
     
     

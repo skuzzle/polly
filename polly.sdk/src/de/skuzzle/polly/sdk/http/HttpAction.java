@@ -35,5 +35,5 @@ public abstract class HttpAction implements SecurityObject {
     
     
     
-    public abstract void execute(HttpEvent e, HttpTemplateContext context);
+    public abstract HttpTemplateContext execute(HttpEvent e);
 }

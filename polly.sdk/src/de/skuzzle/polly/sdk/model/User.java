@@ -12,8 +12,6 @@ public interface User extends Comparable<User> {
 
     public abstract int getId();
     
-    public abstract void setUserLevel(int level);
-    
     public abstract boolean checkPassword(String password);
     
     public abstract String getHashedPassword();

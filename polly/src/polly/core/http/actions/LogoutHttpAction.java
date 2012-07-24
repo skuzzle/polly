@@ -1,5 +1,6 @@
 package polly.core.http.actions;
 
+import polly.core.http.HttpInterface;
 import de.skuzzle.polly.sdk.http.HttpAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
@@ -14,9 +15,10 @@ public class LogoutHttpAction extends HttpAction {
     
     
     @Override
-    public void execute(HttpEvent e, HttpTemplateContext context) {
-        context.setTemplate("webinterface/pages/home.html");
+    public HttpTemplateContext execute(HttpEvent e) {
+        HttpTemplateContext context = new HttpTemplateContext(HttpInterface.PAGE_HOME);
         e.getSession().setUser(null);
+        return context;
     }
 
 }

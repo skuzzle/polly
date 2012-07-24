@@ -9,8 +9,6 @@ import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 
 
-import polly.core.commands.CommandManagerImpl;
-import polly.core.http.actions.ExecuteCommandAction;
 import polly.core.http.actions.IRCPageHttpAction;
 import polly.core.http.actions.LoginHttpAction;
 import polly.core.http.actions.LogoutHttpAction;
@@ -29,7 +27,7 @@ import polly.moduleloader.annotations.Require;
 @Module(
     requires = {
         @Require(component = MyPollyImpl.class),
-        @Require(component = CommandManagerImpl.class)
+        @Require(component = RoleManagerImpl.class)
     },
     provides = @Provide(component = SimpleWebServer.class))
 public class HttpManagerProvider extends AbstractModule {
@@ -54,13 +52,12 @@ public class HttpManagerProvider extends AbstractModule {
     
     @Override
     public void setup() throws SetupException {
-        CommandManagerImpl commandManager = this.requireNow(CommandManagerImpl.class);
         RoleManager roleManger = this.requireNow(RoleManagerImpl.class);
         
         File templateRoot = new File("webinterface");
-        final SimpleWebServer sws = new SimpleWebServer(templateRoot, 
-            8000, 1000 * 60 * 1);
-        sws.addHttpAction(new ExecuteCommandAction(commandManager));
+        final SimpleWebServer sws = new SimpleWebServer(this.myPolly.roles(),
+            templateRoot, 
+            8000, 1000 * 60 * 10);
         sws.addHttpAction(new RootHttpAction(this.myPolly));
         sws.addHttpAction(new LoginHttpAction(this.myPolly.users(), roleManger));
         sws.addHttpAction(new LogoutHttpAction());

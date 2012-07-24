@@ -406,7 +406,9 @@ public class RoleManagerImpl implements RoleManager {
     public boolean hasPermission(User user, String permission) {
         if (permission.equals(RoleManager.NONE_PERMISSION)) {
             return true;
-        }        
+        } else if (user == null) {
+            return false;
+        }
         polly.core.users.User puser = (polly.core.users.User) user;
         
         synchronized (SYNC) {

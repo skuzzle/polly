@@ -1,6 +1,7 @@
 package polly.core.http.actions;
 
 
+import polly.core.http.HttpInterface;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.http.HttpAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
@@ -20,12 +21,13 @@ public class IRCPageHttpAction extends HttpAction {
     
     
     @Override
-    public void execute(HttpEvent e, HttpTemplateContext context) {
-        context.setTemplate("webinterface/pages/irc.html");
+    public HttpTemplateContext execute(HttpEvent e) {
+        HttpTemplateContext context = new HttpTemplateContext(HttpInterface.PAGE_IRC);
         context.put("formatter", this.myPolly.formatting());
         if (e.getSession().isLoggedIn()) {
             context.put("channels", this.myPolly.irc().getChannels());
         }
+        return context;
     }
 
 }

@@ -19,14 +19,15 @@
 <table>
     <tr>
         <th>Name</th>
-        <th>Value</th>
+        <th style="width:100%;">Value</th>
+        <th></th>
     </tr>
     #foreach ($attribute in $user.getAttributeNames())
     <tr>
         <td>$attribute</td>
         #if ($action == "edit")
-            <td><input type="text" value="$user.getAttribute($attribute)" name="$attribute"/></td>
-            <td><input type="button" onclick="this.form.${attribute}.value='%default%'" value="Default"/></td>
+            <td><input type="text" value="$user.getAttribute($attribute)" name="$attribute" style="width: 100%;"/></td>
+            <td><input type="button" onclick="this.form.${attribute}.value='%default%'" value="Default" class="button"/></td>
         #else 
             <td>$user.getAttribute($attribute)</td>
         #end
@@ -34,8 +35,8 @@
     #end
 </table>
 #if ($action == "edit")
-    <input type="submit" value="Update" />
+    <input type="submit" value="Update" class="button"/>
 #else
-    <input type="submit" value="Edit" />
+    <input type="submit" value="Edit" class="button"/>
 #end
 </form>

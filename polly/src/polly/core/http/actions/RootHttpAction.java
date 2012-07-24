@@ -1,5 +1,6 @@
 package polly.core.http.actions;
 
+import polly.core.http.HttpInterface;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.http.HttpAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
@@ -19,11 +20,12 @@ public class RootHttpAction extends HttpAction {
     
     
     @Override
-    public void execute(HttpEvent e, HttpTemplateContext context) {
-        context.setTemplate("webinterface/pages/home.html");
+    public HttpTemplateContext execute(HttpEvent e) {
+        HttpTemplateContext context = new HttpTemplateContext(HttpInterface.PAGE_HOME);
         context.put("formatter", this.myPolly.formatting());
         context.put("started", this.myPolly.getStartTime());
         long uptime = this.myPolly.currentTimeMillis() - this.myPolly.getStartTime().getTime();
         context.put("uptime", uptime / 1000);
+        return context;
     }
 }

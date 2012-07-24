@@ -153,19 +153,4 @@ public interface CommandManager {
 	                    throws UnsupportedEncodingException, 
                                UnknownSignatureException, InsufficientRightsException, 
                                CommandException, UnknownCommandException;
-
-
-	/**
-	 * Creates a command signature from an input string.
-	 * 
-	 * @param executer The user for which this signature is created.
-	 * @param input The input to parse.
-	 * @param channel The channel for which this signature is.
-	 * @return A signature with the parsed data.
-     * @throws CommandException If the inputstring could not be parsed as a polly command.    
-     * @throws UnsupportedEncodingException If the parser encounters an unknown encoding.
-     *             This will rarely happen.
-	 */
-    public Signature signatureFromString(User executer, String input, String channel)
-        throws CommandException, UnsupportedEncodingException;
 }
