@@ -72,19 +72,18 @@ public class ResponseHandler implements HttpHandler {
     
     
     private SimpleWebServer webServer;
-    private File templateRoot;
     
     
     public ResponseHandler(SimpleWebServer webServer) {
         this.webServer = webServer;
-        this.templateRoot = new File("webinterface");
     }
     
     
 
     public void handle(HttpExchange t) throws IOException {
         
-        HttpSession session = this.webServer.getSession(t.getRemoteAddress().getAddress());
+        HttpSession session = this.webServer.getSession(
+            t.getRemoteAddress().getAddress());
         session.setLastAction(System.currentTimeMillis());
         
         // kill the session if a user is logged in on it and it is expired
@@ -92,6 +91,10 @@ public class ResponseHandler implements HttpHandler {
                     this.webServer.getSessionTimeOut()) {
             
             this.webServer.closeSession(session);
+            HttpTemplateContext c = this.webServer.errorTemplate("Session expired", 
+                "Your session has automatically been killed due to inactivity. " +
+                "Please login and try again.", session);
+            this.respond(c, t);
             return;
         }
         
@@ -124,37 +127,41 @@ public class ResponseHandler implements HttpHandler {
             this.respond(c, t);
         } else {
             // there is no action for the given uri, so treat it as a file request
-            this.respond(uri, t);
+            File dest = this.webServer.getPage(uri);
+            if (!dest.exists()) {
+                c = this.webServer.errorTemplate("404 - Not Found", 
+                    "Your request could not be processed because the requested " +
+                    "page/action was not found.", session);
+                this.respond(c, t);
+            } else {
+                this.respond(dest, t);
+            }
         }
-
-        t.close();
     }
     
     
     
-    private void respond(String uri, HttpExchange t) throws IOException {
-        File dest = new File(this.templateRoot, uri);
-        if (dest.exists()) {
-            t.sendResponseHeaders(200, 0);
+    private void respond(File dest, HttpExchange t) throws IOException {
+        t.sendResponseHeaders(200, 0);
+        
+        FileInputStream inp = null;
+        OutputStream out = null;
+        try {
+            out = t.getResponseBody();
+            inp = new FileInputStream(dest);
+            byte[] buffer = new byte[1024];
+            int len = 0;
             
-            FileInputStream inp = null;
-            OutputStream out = null;
-            try {
-                out = t.getResponseBody();
-                inp = new FileInputStream(dest);
-                byte[] buffer = new byte[1024];
-                int len = 0;
-                
-                while ((len = inp.read(buffer)) > 0) {
-                    out.write(buffer, 0, len);
-                }
-            } finally {
-                if (inp != null) {
-                    inp.close();
-                }
-                if (out != null) {
-                    out.close();
-                }
+            while ((len = inp.read(buffer)) > 0) {
+                out.write(buffer, 0, len);
+            }
+        } finally {
+            t.close();
+            if (inp != null) {
+                inp.close();
+            }
+            if (out != null) {
+                out.close();
             }
         }
     }
@@ -172,6 +179,7 @@ public class ResponseHandler implements HttpHandler {
         } catch (Exception e) {
             logger.error("Error while sending http response", e);
         } finally {
+            t.close();
             out.close();
         }
     }
@@ -183,7 +191,7 @@ public class ResponseHandler implements HttpHandler {
         Velocity.init();
         VelocityContext context = new VelocityContext(c);
         
-        File dest = new File(this.templateRoot, "index.html");
+        File dest = new File(this.webServer.getTemplateRoot(), "index.html");
         Template template = Velocity.getTemplate(dest.getPath());
         //OutputStreamWriter writer = new OutputStreamWriter(out);
         StringWriter writer = new StringWriter();

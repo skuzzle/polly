@@ -1,5 +1,6 @@
 package polly.core.http;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -44,18 +45,25 @@ public class SimpleWebServer implements HttpManager {
     private EventProvider eventProvider;
     private Map<String, HttpAction> actions;
     private ArrayList<String> menu;
-
+    private File templateRoot;
     private int sessionTimeOut;
     
     
     
-    public SimpleWebServer(int port, int sessionTimeOut) {
+    public SimpleWebServer(File templateRoot, int port, int sessionTimeOut) {
+        this.templateRoot = templateRoot;
         this.port = port;
         this.sessionTimeOut = sessionTimeOut;
         this.sessions = new HashMap<InetAddress, HttpSession>();
         this.eventProvider = new SynchronousEventProvider();
         this.actions = new HashMap<String, HttpAction>();
         this.menu = new ArrayList<String>();
+    }
+    
+    
+    
+    public File getTemplateRoot() {
+        return this.templateRoot;
     }
     
     
@@ -68,8 +76,8 @@ public class SimpleWebServer implements HttpManager {
         this.server = HttpServer.create(new InetSocketAddress(this.port), 5);
         this.server.createContext("/", new ResponseHandler(this));
         this.server.setExecutor(
-            Executors.newSingleThreadExecutor(
-                new ThreadFactoryBuilder("HTTP_SERVER")));
+            Executors.newCachedThreadPool(
+                new ThreadFactoryBuilder("HTTP_SERVER_%n%")));
         this.server.start();
         this.running = true;
         logger.info("Webserver running.");
@@ -120,16 +128,33 @@ public class SimpleWebServer implements HttpManager {
         
         HttpTemplateContext actionContext = new HttpTemplateContext();
         if (action == null) {
-            actionContext.setTemplate("webinterface/pages/error.html");
-            actionContext.put("errorText", "No such action.");
             return null;
         } else {
             action.execute(e, actionContext);
         }
         this.putRootContext(actionContext, e.getSession());
-        actionContext.put("content", actionContext.getTemplate());
+        actionContext.put(HttpInterface.CONTENT, actionContext.getTemplate());
         
         return actionContext;
+    }
+    
+    
+    
+    protected HttpTemplateContext errorTemplate(String errorHeading, 
+            String errorDescription, HttpSession session) {
+        File errorPage = this.getPage(HttpInterface.PAGE_ERROR);
+        HttpTemplateContext c = new HttpTemplateContext(errorPage.getPath());
+        c.put(HttpInterface.ERROR_HEADING, errorHeading);
+        c.put(HttpInterface.ERROR_DESCRIPTION, errorDescription);
+        c.put(HttpInterface.CONTENT, HttpInterface.PAGE_ERROR);
+        this.putRootContext(c, session);
+        return c;
+    }
+    
+    
+    
+    protected File getPage(String name) {
+        return new File(this.templateRoot, name);
     }
     
     

@@ -1,5 +1,6 @@
 package polly.core.http;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
@@ -39,7 +40,7 @@ public class HttpManagerProvider extends AbstractModule {
     private MyPolly myPolly;
     
     public HttpManagerProvider(ModuleLoader loader) {
-        super("HTTP_MODULE", loader, false);
+        super("HTTP_SERVER_PROVIDER", loader, false);
     }
     
     
@@ -56,7 +57,9 @@ public class HttpManagerProvider extends AbstractModule {
         CommandManagerImpl commandManager = this.requireNow(CommandManagerImpl.class);
         RoleManager roleManger = this.requireNow(RoleManagerImpl.class);
         
-        final SimpleWebServer sws = new SimpleWebServer(8000, 1000 * 60 * 5);
+        File templateRoot = new File("webinterface");
+        final SimpleWebServer sws = new SimpleWebServer(templateRoot, 
+            8000, 1000 * 60 * 1);
         sws.addHttpAction(new ExecuteCommandAction(commandManager));
         sws.addHttpAction(new RootHttpAction(this.myPolly));
         sws.addHttpAction(new LoginHttpAction(this.myPolly.users(), roleManger));
@@ -73,6 +76,7 @@ public class HttpManagerProvider extends AbstractModule {
             this.provideComponent(sws);
         } catch (IOException e) {
             logger.error("Error while starting webserver: ", e);
+            throw new SetupException(e);
         }
     }
 
