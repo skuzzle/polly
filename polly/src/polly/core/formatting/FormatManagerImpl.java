@@ -48,6 +48,9 @@ public class FormatManagerImpl implements FormatManager {
     
     @Override
     public synchronized String formatDate(Date date) {
+        if (date == null) {
+            return "Unknown";
+        }
         return this.defaultDateFormat.format(date);
     }
     
