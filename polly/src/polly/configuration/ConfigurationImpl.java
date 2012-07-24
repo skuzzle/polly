@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
@@ -81,7 +82,11 @@ public class ConfigurationImpl implements Configuration {
     
     @Override
     public List<String> readStringList(String name) {
-        String[] list = this.readString(name).split("[,;]");
+        String prop = this.readString(name);
+        if (prop == null) {
+            return new LinkedList<String>();
+        }
+        String[] list = prop.split("[,;]");
         return Arrays.asList(list);
     }
 
