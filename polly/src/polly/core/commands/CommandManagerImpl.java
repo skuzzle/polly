@@ -92,9 +92,6 @@ public class CommandManagerImpl implements CommandManager {
     }
     
     
-    public final static String CONFIG_IGNORED_COMMANDS = "ignoredCommands";
-    
-    
 	private final static String[] DAYS = {"montag", "dienstag", "mittwoch", 
 	    "donnerstag", "freitag", "samstag", "sonntag"};
 	
@@ -103,8 +100,6 @@ public class CommandManagerImpl implements CommandManager {
 	private Set<String> ignoredCommands;
 	private UserManagerImpl userManager;
 	private String encodingName;
-	private IrcManager ircManager;
-	
 	
 	
 	/**
@@ -113,15 +108,14 @@ public class CommandManagerImpl implements CommandManager {
 	private Map<String, CommandHistoryEntry> cmdHistory;
 	
 	
-	public CommandManagerImpl(UserManagerImpl userManager, Configuration config, 
-	            IrcManager ircManager, String messageEncoding) {
-
+	public CommandManagerImpl(UserManagerImpl userManager, String encoding, 
+	        Configuration config) {
 	    this.userManager = userManager;
-	    this.ircManager = ircManager;
+	    this.encodingName = encoding;
 		this.commands = new HashMap<String, Command>();
 		this.ignoredCommands = new HashSet<String>(
-		    config.readStringList(CONFIG_IGNORED_COMMANDS));
-		this.encodingName = messageEncoding;
+		        config.readStringList(Configuration.IGNORED_COMMANDS));
+		
 		this.cmdHistory = new HashMap<String, CommandHistoryEntry>();
 	}
 	
@@ -235,37 +229,6 @@ public class CommandManagerImpl implements CommandManager {
 	
 	
 	@Override
-    public Signature signatureFromString(User executer, String input, String channel) 
-            throws CommandException, UnsupportedEncodingException {
-        Namespace copy = null;
-        Root root = null;
-        try {
-            Map<String, Types> constants = this.getCommandConstants(input);
-            
-            // get namespace and create copy for executor
-            Namespace ns = this.userManager.getNamespace();
-            copy = ns.copyFor(executer.getName());
-            copy.enter();
-            
-            this.createContext(channel, executer, this.ircManager, constants, copy);
-            
-            root = this.parseMessage(input, copy);
-        } catch (ParseException e) {
-            // HACK: wrap exception into command exception, as ParseException is not 
-            //       available in the sdk
-            throw new CommandException(e.getMessage(), e);
-        } finally {
-            if (copy != null) {
-                copy.leave();
-            }
-        }
-        
-        return this.createSignature(root);
-    }
-    
-	
-	
-	@Override
     public void executeString(String input, String channel, boolean inQuery, 
             User executor, IrcManager ircManager) 
                 throws UnsupportedEncodingException, 
@@ -274,7 +237,34 @@ public class CommandManagerImpl implements CommandManager {
         Stopwatch watch = new MillisecondStopwatch();
         watch.start();
         
-        Signature sig = this.signatureFromString(executor, input, channel);
+        Namespace copy = null;
+        Root root = null;
+        try {
+            Map<String, Types> constants = this.getCommandConstants(input);
+            
+            // get namespace and create copy for executor
+            Namespace ns = this.userManager.getNamespace();
+            copy = ns.copyFor(executor.getName());
+            copy.enter();
+            
+            this.createContext(channel, executor, ircManager, constants, copy);
+            
+            root = this.parseMessage(input, copy);
+        } catch (ParseException e) {
+            // HACK: wrap exception into command exception, as ParseException is not 
+            //       available in the sdk
+            throw new CommandException(e.getMessage(), e);
+        } finally {
+        	if (copy != null) {
+				copy.leave();
+        	}
+        }
+        
+        if (root == null) {
+            return;
+        }
+        Signature sig = this.createSignature(root);
+        
         Command cmd = this.getCommand(sig);
         try {
             logger.debug("Executing '" + cmd + "' on channel " + 
@@ -306,7 +296,7 @@ public class CommandManagerImpl implements CommandManager {
 
 
     private Root parseMessage(String message, Namespace namespace) 
-            throws UnsupportedEncodingException, ParseException {
+        throws UnsupportedEncodingException, ParseException {
     
         Stopwatch watch = new MillisecondStopwatch();
         watch.start();
@@ -315,7 +305,8 @@ public class CommandManagerImpl implements CommandManager {
             AbstractParser<?> parser = PollyParserFactory.createParser(
                     SyntaxMode.POLLY_CLASSIC);
             
-            Root root = (Root) parser.parse(message.trim(), this.encodingName);
+            Root root = (Root) parser.parse(message.trim(), 
+                this.encodingName); 
             
             if (root == null) {
                 return null;
@@ -393,7 +384,7 @@ public class CommandManagerImpl implements CommandManager {
     
     
     
-    private Signature createSignature(Root root) {
+    private Signature createSignature(Root root) throws UnknownSignatureException {
         List<Types> parameters = new ArrayList<Types>(root.getResults().size());
         for (Literal lit : root.getResults()) {
             parameters.add(TypeMapper.literalToTypes(lit));

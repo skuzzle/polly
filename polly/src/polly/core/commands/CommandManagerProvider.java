@@ -5,7 +5,6 @@ import java.io.IOException;
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.ConfigurationProvider;
 import polly.configuration.ConfigurationProviderImpl;
-import polly.core.irc.IrcManagerImpl;
 import polly.core.users.UserManagerImpl;
 import polly.moduleloader.AbstractModule;
 import polly.moduleloader.ModuleLoader;
@@ -17,8 +16,7 @@ import polly.moduleloader.annotations.Provide;;
 @Module(
     requires = {
                @Require(component = ConfigurationProviderImpl.class),
-               @Require(component = UserManagerImpl.class),
-               @Require(component = IrcManagerImpl.class)},
+               @Require(component = UserManagerImpl.class)},
     provides = @Provide(component = CommandManagerImpl.class))
 public class CommandManagerProvider extends AbstractModule {
 
@@ -46,12 +44,11 @@ public class CommandManagerProvider extends AbstractModule {
         }
         
         UserManagerImpl userManager = this.requireNow(UserManagerImpl.class);
-        IrcManagerImpl ircManager = this.requireNow(IrcManagerImpl.class);
         
         CommandManagerImpl commandManager = 
-                new CommandManagerImpl(userManager, commandCfg, 
-                ircManager,
-                pollyCfg.readString(Configuration.ENCODING));
+                new CommandManagerImpl(userManager,
+                pollyCfg.readString(Configuration.ENCODING),
+                commandCfg);
         this.provideComponent(commandManager);
     }
 }
