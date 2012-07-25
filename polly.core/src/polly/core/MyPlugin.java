@@ -36,7 +36,6 @@ import commands.RestartCommand;
 import commands.SetAttributeCommand;
 import commands.SetMyPasswordCommand;
 import commands.SetPasswordCommand;
-import commands.SetUserLevelCommand;
 import commands.ShowCommandsCommand;
 import commands.InfoCommand;
 import commands.SignOffCommand;
@@ -234,7 +233,6 @@ public class MyPlugin extends PollyPlugin {
 		this.addCommand(new DeleteUserCommand(myPolly));
 		this.addCommand(new SetMyPasswordCommand(myPolly));
 		this.addCommand(new SetPasswordCommand(myPolly));
-		this.addCommand(new SetUserLevelCommand(myPolly));
 		this.addCommand(new RegisterCommand(myPolly));
 		this.addCommand(new RawIrcCommand(myPolly));
 		this.addCommand(new SetAttributeCommand(myPolly));
