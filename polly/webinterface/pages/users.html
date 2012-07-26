@@ -1,3 +1,7 @@
+#if (!$me)
+    #set($noAction = true)
+    #parse("webinterface/pages/login.html")
+#else
 <h2>Registered Polly Users</h2>
 
 <table>
@@ -35,3 +39,4 @@
     </tr>
     #end
 </table>
+#end
