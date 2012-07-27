@@ -31,6 +31,7 @@ import commands.MyVenadCommand;
 import commands.PartCommand;
 import commands.QuitCommand;
 import commands.RawIrcCommand;
+import commands.ReAuthCommand;
 import commands.RegisterCommand;
 import commands.RestartCommand;
 import commands.SetAttributeCommand;
@@ -127,7 +128,7 @@ public class MyPlugin extends PollyPlugin {
     public final static String LIST_ROLES_PERMISSION             = "polly.permission.LIST_ROLES";
     public final static String REMOVE_PERMISSION_PERMISSION      = "polly.permission.REMOVE_PERMISSION";
     public final static String REMOVE_ROLE_PERMISSION            = "polly.permission.REMOVE_ROLE";
-    
+    public final static String SET_AND_IDENTIFY_PERMISSION       = "polly.permission.SET_AND_IDENTIFY";
     public final static String GREETING = "GREETING";
     public final static String VENAD    = "VENAD";
     
@@ -165,6 +166,7 @@ public class MyPlugin extends PollyPlugin {
         roleManager.assignPermission(RoleManager.ADMIN_ROLE, LIST_ROLES_PERMISSION);
         roleManager.assignPermission(RoleManager.ADMIN_ROLE, REMOVE_PERMISSION_PERMISSION);
         roleManager.assignPermission(RoleManager.ADMIN_ROLE, REMOVE_ROLE_PERMISSION);
+        roleManager.assignPermission(RoleManager.ADMIN_ROLE, SET_AND_IDENTIFY_PERMISSION);
         
         roleManager.createRole(TRAINER);
         roleManager.assignPermission(TRAINER, ADD_TRAIN_PERMISSION);
@@ -227,6 +229,7 @@ public class MyPlugin extends PollyPlugin {
 		
 		this.addCommand(new UsersCommand(myPolly));
 		this.addCommand(new AuthCommand(myPolly));
+		this.addCommand(new ReAuthCommand(myPolly));
 		this.addCommand(new SignOffCommand(myPolly));
 		this.addCommand(new GhostCommand(myPolly));
 		this.addCommand(new AddUserCommand(myPolly));
