@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -86,8 +87,24 @@ public class ConfigurationImpl implements Configuration {
         if (prop == null) {
             return new LinkedList<String>();
         }
-        String[] list = prop.split("[,;]");
+        String[] list = prop.split(",");
         return Arrays.asList(list);
+    }
+    
+    
+    
+    @Override
+    public List<Integer> readIntList(String name) {
+        String prop = this.readString(name);
+        if (prop == null) {
+            return new LinkedList<Integer>();
+        }
+        String[] parts = prop.split(",");
+        ArrayList<Integer> result = new ArrayList<Integer>(parts.length);
+        for (String s : parts) {
+            result.add(Integer.parseInt(s));
+        }
+        return result;
     }
 
     

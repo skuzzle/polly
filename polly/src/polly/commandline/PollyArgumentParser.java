@@ -48,7 +48,7 @@ public class PollyArgumentParser extends AbstractArgumentParser {
         this.addArgument(new ConfigArgument("-i", this.config, 
             Configuration.IDENT));
 
-        this.addArgument(new IntegerConfigArgument("-port", this.config, 
+        this.addArgument(new IntegerConfigArgument("-ports", this.config, 
             Configuration.PORT));
         this.addArgument(new IntegerConfigArgument("-p", this.config, 
             Configuration.PORT));

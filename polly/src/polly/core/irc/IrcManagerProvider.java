@@ -76,7 +76,7 @@ public class IrcManagerProvider extends AbstractModule {
         String ident = ircConfig.readString(Configuration.IDENT);
         String ircModes = ircConfig.readString(Configuration.IRC_MODES);
         List<String> channels = ircConfig.readStringList(Configuration.CHANNELS);
-        int port = ircConfig.readInt(Configuration.PORT);
+        List<Integer> ports = ircConfig.readIntList(Configuration.PORT);
         boolean ircLogging = ircConfig.readBoolean(Configuration.IRC_LOGGING);
         String encodingName = configProvider.getRootConfiguration().readString(
             Configuration.ENCODING);
@@ -91,13 +91,13 @@ public class IrcManagerProvider extends AbstractModule {
         //      in IrcEventHandlerProvider
         logger.info("Starting bot with settings: (" + "Nick: "
             + nickName + ", Ident: *****" + ", Server: "
-            + server + ", Port: " + port
+            + server + ", Ports: " + ports.toString()
             + ", Logging: " + ircLogging + ")");
 
             
         this.connectionSettings = new BotConnectionSettings(
             nickName, server,
-            port, ident,
+            ports, ident,
             channels, ircModes);
 
         this.shutdownManager.addDisposable(this.ircManager);

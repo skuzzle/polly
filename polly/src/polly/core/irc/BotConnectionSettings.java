@@ -6,17 +6,17 @@ public class BotConnectionSettings {
 
     private String nickName;
     private String hostName;
-    private int port;
+    private List<Integer> ports;
     private String identity;
     private List<String> channels;
     private String modes;
     
 
     public BotConnectionSettings(String nickName, String hostName, 
-            int port, String identity, List<String> channels, String modes) {
+            List<Integer> ports, String identity, List<String> channels, String modes) {
         this.nickName = nickName;
         this.hostName = hostName;
-        this.port = port;
+        this.ports = ports;
         this.identity = identity;
         this.channels = channels;
         this.modes = modes;
@@ -37,7 +37,8 @@ public class BotConnectionSettings {
 
 
     public int getPort() {
-        return this.port;
+        int rndIdx = (int) (this.ports.size() * Math.random());
+        return this.ports.get(rndIdx);
     }
 
 
