@@ -62,10 +62,11 @@ public interface Configuration {
     public final static String SERVER = "server";
     
     /**
-     * Config file property name which refers to the {@link #SERVER}s port.
+     * Config file property name which refers to a list of possible ports for the
+     * {@link #SERVER}.
      * @since Beta 0.5
      */
-    public final static String PORT = "port";
+    public final static String PORT = "ports";
     
     /**
      * Config file property name which refers to the database url. You should not change
@@ -367,20 +368,35 @@ public interface Configuration {
 	
 	
 	
+	/**
+	 * Reads a boolean value from the configuration. That ist, the value of the property
+	 * must either be <code>true</code> or <code>false</code>.
+	 * @param name The property name.
+	 * @return The corresponding boolean value.
+	 */
 	public abstract boolean readBoolean(String name);
-	
 	
 	
 	
 	/**
 	 * Reads a list of strings from the configuration. Lists are normal properties 
-	 * separated by "," or ";".
+	 * separated by ",".
 	 * 
 	 * @param name The property name.
 	 * @return A list of strings.
 	 */
 	public abstract List<String> readStringList(String name);
 	
+	
+	
+    /**
+     * Reads a list of integers from the configuration. Lists are normal properties 
+     * separated by ",".
+     * 
+     * @param name The property name.
+     * @return A list of integers.
+     */
+	List<Integer> readIntList(String name);
 	
 	
 	
