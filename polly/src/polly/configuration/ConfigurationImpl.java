@@ -8,9 +8,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
+
 
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.ConfigurationValidator;
@@ -26,12 +30,14 @@ public class ConfigurationImpl implements Configuration {
     private Properties properties;
     private ConfigurationProviderImpl parent;
     private ConfigurationValidator validator;
+    private File cfgFile;
     
     
     
     public ConfigurationImpl(File cfgFile, ConfigurationProviderImpl parent) 
                 throws FileNotFoundException, IOException {
         this(parent);
+        this.cfgFile = cfgFile;
         this.properties.load(new FileInputStream(cfgFile));
     }
     
@@ -140,5 +146,49 @@ public class ConfigurationImpl implements Configuration {
             result.add(Integer.parseInt(s));
         }
         return result;
+    }
+    
+    
+    
+    @Override
+    public String toString() {
+        SortedMap<Object, Object> sorted = new TreeMap<Object, Object>(
+                this.properties);
+        int maxLength = 0;
+        
+        for (Object o : sorted.keySet()) {
+            maxLength = Math.max(maxLength, o.toString().length());
+        }
+        StringBuilder b = new StringBuilder();
+
+        if (this.cfgFile != null) {
+            b.append(this.cfgFile.getAbsolutePath());
+        } else {
+            b.append("Memory Configuration");
+        }
+        b.append(System.lineSeparator());
+        
+        for (Entry<Object, Object> e : sorted.entrySet()) {
+            b.append("    ");
+            b.append(e.getKey().toString());
+            this.padSpaces(maxLength, e.getKey().toString().length(), b);
+            b.append(" = ");
+            b.append(e.getValue().toString());
+            b.append(System.lineSeparator());
+        }
+        
+        return b.toString();
+    }
+    
+    
+    
+    private void padSpaces(int desiredLength, int currentLength, StringBuilder b) {
+        int spaces = desiredLength - currentLength;
+        if (spaces <= 0) {
+            return;
+        }
+        for (int i = 0; i < spaces; ++i) {
+            b.append(" ");
+        }
     }
 }

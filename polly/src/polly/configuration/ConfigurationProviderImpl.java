@@ -9,6 +9,8 @@ import java.util.WeakHashMap;
 
 import javax.naming.ConfigurationException;
 
+import org.apache.log4j.Logger;
+
 import polly.events.Dispatchable;
 import polly.events.EventProvider;
 import polly.events.SynchronousEventProvider;
@@ -30,7 +32,12 @@ public class ConfigurationProviderImpl implements ConfigurationProvider {
                 }
             }; 
             
-    
+
+            
+    private final static Logger logger = Logger.getLogger(
+            ConfigurationProviderImpl.class.getName());
+            
+            
     private File configDir;
     private File pluginConfigDir;
     
@@ -53,6 +60,7 @@ public class ConfigurationProviderImpl implements ConfigurationProvider {
             ConfigurationValidator validator) 
                     throws FileNotFoundException, IOException, ConfigurationException {
         
+        logger.trace("Trying to locate '" + cfgName + "'");
         File cfgFile = this.searchFor(cfgName);
         ConfigurationImpl cached = this.cfgCache.get(cfgFile.getCanonicalFile());
         if (cached == null) {
@@ -60,9 +68,13 @@ public class ConfigurationProviderImpl implements ConfigurationProvider {
             validator.validate(cached);
             cached.setValidator(validator);
             this.cfgCache.put(cfgFile.getCanonicalFile(), cached);
+            logger.info("Loaded configuration into memory\n" + cached.toString());
+        } else {
+            logger.trace("Configuration restored from cache");
         }
         
         if (isRoot) {
+            logger.info("Setting new root configuration");
             this.rootCfg = cached;
         }
         return cached;
