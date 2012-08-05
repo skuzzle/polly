@@ -165,11 +165,17 @@ public class DefaultModuleLoader implements ModuleLoader {
 
         Set<Class<?>> set = this.beforeSetupReq.get(module);
         if (set == null) {
-
             set = new HashSet<Class<?>>();
             this.beforeSetupReq.put(module, set);
         }
         set.add(component);
+    }
+    
+    
+    
+    @Override
+    public boolean checkRequires(Class<?> component, Module module) {
+        return this.beforeSetupReq.get(module).contains(component);
     }
 
 

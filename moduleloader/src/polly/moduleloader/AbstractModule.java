@@ -54,7 +54,11 @@ public abstract class AbstractModule implements Module {
 
 
     @Override
-    public <T> T requireNow(Class<T> component) {
+    public <T> T requireNow(Class<T> component, boolean check) {
+        if (check && !this.loader.checkRequires(component, this)) {
+            throw new ModuleDependencyException("Module " + this + 
+                    " tries to access a non-reported requirement: " + component);
+        }
         return this.loader.requireNow(component);
     }
 

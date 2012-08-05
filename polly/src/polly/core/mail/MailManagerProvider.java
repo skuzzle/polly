@@ -40,7 +40,7 @@ public class MailManagerProvider extends AbstractModule {
     @Override
     public void setup() throws SetupException {
         ConfigurationProviderImpl configProvider = 
-            this.requireNow(ConfigurationProviderImpl.class);
+            this.requireNow(ConfigurationProviderImpl.class, true);
         Configuration config = null;
         try {
             config = configProvider.open(MAIL_CONFIG);

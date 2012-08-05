@@ -27,7 +27,7 @@ public class FormatManagerProvider extends AbstractModule {
     @Override
     public void setup() {
         ConfigurationProvider configProvider = 
-            this.requireNow(ConfigurationProviderImpl.class);
+            this.requireNow(ConfigurationProviderImpl.class, true);
         Configuration pollyCfg = configProvider.getRootConfiguration();
         FormatManagerImpl formatter = new FormatManagerImpl(pollyCfg);
         this.provideComponent(formatter);

@@ -54,8 +54,8 @@ public class IrcManagerProvider extends AbstractModule {
 
     @Override
     public void beforeSetup() {
-        this.events = this.requireNow(EventProvider.class);
-        this.shutdownManager = this.requireNow(ShutdownManagerImpl.class);
+        this.events = this.requireNow(EventProvider.class, true);
+        this.shutdownManager = this.requireNow(ShutdownManagerImpl.class, true);
     }
 
 
@@ -63,7 +63,7 @@ public class IrcManagerProvider extends AbstractModule {
     @Override
     public void setup() throws SetupException {
         ConfigurationProvider configProvider = 
-            this.requireNow(ConfigurationProviderImpl.class);
+            this.requireNow(ConfigurationProviderImpl.class, true);
         this.ircConfig = null;
         try {
             this.ircConfig = configProvider.open(IRC_CONFIG_FILE);

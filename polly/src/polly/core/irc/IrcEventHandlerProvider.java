@@ -48,14 +48,16 @@ public class IrcEventHandlerProvider extends AbstractModule {
     
     @Override
     public void setup() throws SetupException {
-        IrcManagerImpl ircManager = this.requireNow(IrcManagerImpl.class);
-        CommandManagerImpl commandManager = this.requireNow(CommandManagerImpl.class);
-        UserManagerImpl userManager = this.requireNow(UserManagerImpl.class);
-        ExecutorService executor = this.requireNow(ExecutorService.class);
-        ShutdownManagerImpl shutdownManager = this.requireNow(ShutdownManagerImpl.class);
+        IrcManagerImpl ircManager = this.requireNow(IrcManagerImpl.class, true);
+        CommandManagerImpl commandManager = this.requireNow(
+                CommandManagerImpl.class, true);
+        UserManagerImpl userManager = this.requireNow(UserManagerImpl.class, true);
+        ExecutorService executor = this.requireNow(ExecutorService.class, true);
+        ShutdownManagerImpl shutdownManager = this.requireNow(
+                ShutdownManagerImpl.class, true);
         
         ConfigurationProvider configProvider = 
-            this.requireNow(ConfigurationProviderImpl.class);
+            this.requireNow(ConfigurationProviderImpl.class, true);
         Configuration ircConfig = null;
         try {
             ircConfig = configProvider.open(IrcManagerProvider.IRC_CONFIG_FILE);

@@ -34,5 +34,7 @@ public interface ModuleLoader {
     public abstract void runModules() throws Exception;
     
     public abstract void dispose();
+
+    boolean checkRequires(Class<?> component, Module module);
     
 }

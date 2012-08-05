@@ -9,7 +9,7 @@ public interface Module {
     
     public abstract void provideComponent(Object component);
     
-    public abstract <T> T requireNow(Class<T> component);
+    public abstract <T> T requireNow(Class<T> component, boolean check);
 
     public abstract boolean isCrucial();
     

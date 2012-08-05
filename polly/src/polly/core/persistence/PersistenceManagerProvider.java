@@ -51,8 +51,8 @@ public class PersistenceManagerProvider extends AbstractModule {
     
     @Override
     public void beforeSetup() {
-        this.pluginManager = this.requireNow(PluginManagerImpl.class);
-        this.shutdownManager = this.requireNow(ShutdownManagerImpl.class);
+        this.pluginManager = this.requireNow(PluginManagerImpl.class, true);
+        this.shutdownManager = this.requireNow(ShutdownManagerImpl.class, true);
     }
     
 
@@ -60,7 +60,7 @@ public class PersistenceManagerProvider extends AbstractModule {
     @Override
     public void setup() throws SetupException {
         ConfigurationProviderImpl configProvider = this.requireNow(
-                ConfigurationProviderImpl.class);
+                ConfigurationProviderImpl.class, true);
         try {
             this.persistenceCfg = configProvider.open(PERSISTENCE_CONFIG);
         } catch (IOException e) {

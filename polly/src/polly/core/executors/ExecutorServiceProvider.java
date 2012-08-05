@@ -37,7 +37,7 @@ public class ExecutorServiceProvider extends AbstractModule {
     @Override
     public void setup() {
         ConfigurationProviderImpl configProvider = 
-            this.requireNow(ConfigurationProviderImpl.class);
+            this.requireNow(ConfigurationProviderImpl.class, true);
         Configuration pollyCfg = configProvider.getRootConfiguration();
 
         ExecutorService eventThreadPool = Executors.newFixedThreadPool(
@@ -54,7 +54,7 @@ public class ExecutorServiceProvider extends AbstractModule {
         this.provideComponentAs(ExecutorService.class, commandExecutor);
 
         ShutdownManagerImpl shutdownManager = this
-            .requireNow(ShutdownManagerImpl.class);
+            .requireNow(ShutdownManagerImpl.class, true);
         shutdownManager.addDisposable(eventProvider);
         shutdownManager.addDisposable(new AbstractDisposable() {
 

@@ -46,8 +46,8 @@ public class PluginManagerProvider extends AbstractModule {
     
     @Override
     public void beforeSetup() {
-        this.shutdownManager = this.requireNow(ShutdownManagerImpl.class);
-        this.pollyCl = this.requireNow(ProxyClassLoader.class);
+        this.shutdownManager = this.requireNow(ShutdownManagerImpl.class, true);
+        this.pollyCl = this.requireNow(ProxyClassLoader.class, true);
     }
     
     
@@ -55,7 +55,7 @@ public class PluginManagerProvider extends AbstractModule {
     @Override
     public void setup() throws SetupException {
         ConfigurationProvider configProvider = this.requireNow(
-            ConfigurationProviderImpl.class);
+            ConfigurationProviderImpl.class, true);
         try {
             this.pluginCfg = configProvider.open(PLUGIN_CFG);
         } catch (IOException e) {
@@ -70,7 +70,7 @@ public class PluginManagerProvider extends AbstractModule {
     
 
     public void run() throws Exception {
-        MyPollyImpl myPolly = this.requireNow(MyPollyImpl.class);
+        MyPollyImpl myPolly = this.requireNow(MyPollyImpl.class, false);
         
         try {
             this.pluginManager.loadFolder(Polly.PLUGIN_FOLDER, myPolly, 

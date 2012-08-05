@@ -42,9 +42,9 @@ public class RemoteInterfaceProvider extends AbstractModule {
     
     @Override
     public void beforeSetup() {
-        this.userManager = this.requireNow(UserManagerImpl.class);
-        this.roleManager = this.requireNow(RoleManagerImpl.class);
-        this.shutdownManager = this.requireNow(ShutdownManagerImpl.class);
+        this.userManager = this.requireNow(UserManagerImpl.class, true);
+        this.roleManager = this.requireNow(RoleManagerImpl.class, true);
+        this.shutdownManager = this.requireNow(ShutdownManagerImpl.class, true);
     }
     
     
@@ -52,7 +52,7 @@ public class RemoteInterfaceProvider extends AbstractModule {
     @Override
     public void setup() throws SetupException {
         ConfigurationProviderImpl configProvider = 
-            this.requireNow(ConfigurationProviderImpl.class);
+            this.requireNow(ConfigurationProviderImpl.class, true);
         Configuration serverCfg = null;
         try {
             serverCfg = configProvider.open(SERVER_CONFIG);

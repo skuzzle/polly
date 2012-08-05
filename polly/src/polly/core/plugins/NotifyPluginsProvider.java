@@ -35,7 +35,7 @@ public class NotifyPluginsProvider extends AbstractModule {
 
     @Override
     public void beforeSetup() {
-        this.pluginManager = this.requireNow(PluginManagerImpl.class);
+        this.pluginManager = this.requireNow(PluginManagerImpl.class, true);
     }
 
 
@@ -49,7 +49,7 @@ public class NotifyPluginsProvider extends AbstractModule {
     public void run() throws Exception {
         
         // Get all contained permissions
-        RoleManagerImpl roleManager = this.requireNow(RoleManagerImpl.class);
+        RoleManagerImpl roleManager = this.requireNow(RoleManagerImpl.class, false);
         
         for (Plugin plugin : this.pluginManager.loadedPlugins()) {
             roleManager.registerPermissions(plugin.getPluginInstance());

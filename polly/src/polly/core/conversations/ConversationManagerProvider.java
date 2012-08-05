@@ -23,7 +23,8 @@ public class ConversationManagerProvider extends AbstractModule {
     public void setup() throws SetupException {
         ConversationManagerImpl conversationManager = new ConversationManagerImpl();
         this.provideComponent(conversationManager);
-        ShutdownManagerImpl shutdownManager = this.requireNow(ShutdownManagerImpl.class);
+        ShutdownManagerImpl shutdownManager = this.requireNow(
+                ShutdownManagerImpl.class, true);
         shutdownManager.addDisposable(conversationManager);
     }
 

@@ -64,18 +64,18 @@ public class MyPollyProvider extends AbstractModule {
     
     @Override
     public void beforeSetup() {
-        this.commandManager = this.requireNow(CommandManagerImpl.class);
-        this.ircManager = this.requireNow(IrcManagerImpl.class);
-        this.pluginManager = this.requireNow(PluginManagerImpl.class);
-        this.config = this.requireNow(ConfigurationProviderImpl.class);
-        this.persistencemanager = this.requireNow(PersistenceManagerImpl.class);
-        this.userManager = this.requireNow(UserManagerImpl.class);
-        this.formatManager = this.requireNow(FormatManagerImpl.class);
-        this.conversationManager = this.requireNow(ConversationManagerImpl.class);
-        this.shutdownManager = this.requireNow(ShutdownManagerImpl.class);
-        this.pasteManager = this.requireNow(PasteServiceManagerImpl.class);
-        this.mailManager = this.requireNow(MailManagerImpl.class);
-        this.roleManager = this.requireNow(RoleManagerImpl.class);
+        this.commandManager = this.requireNow(CommandManagerImpl.class, true);
+        this.ircManager = this.requireNow(IrcManagerImpl.class, true);
+        this.pluginManager = this.requireNow(PluginManagerImpl.class, true);
+        this.config = this.requireNow(ConfigurationProviderImpl.class, true);
+        this.persistencemanager = this.requireNow(PersistenceManagerImpl.class, true);
+        this.userManager = this.requireNow(UserManagerImpl.class, true);
+        this.formatManager = this.requireNow(FormatManagerImpl.class, true);
+        this.conversationManager = this.requireNow(ConversationManagerImpl.class, true);
+        this.shutdownManager = this.requireNow(ShutdownManagerImpl.class, true);
+        this.pasteManager = this.requireNow(PasteServiceManagerImpl.class, true);
+        this.mailManager = this.requireNow(MailManagerImpl.class, true);
+        this.roleManager = this.requireNow(RoleManagerImpl.class, true);
     }
     
     

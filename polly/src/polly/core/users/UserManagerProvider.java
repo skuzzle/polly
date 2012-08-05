@@ -55,10 +55,10 @@ public class UserManagerProvider extends AbstractModule {
 
     @Override
     public void beforeSetup() {
-        this.eventProvider = this.requireNow(EventProvider.class);
-        this.persistenceManager = this.requireNow(PersistenceManagerImpl.class);
-        this.shutdownManager = this.requireNow(ShutdownManagerImpl.class);
-        this.roleManager = this.requireNow(RoleManagerImpl.class);
+        this.eventProvider = this.requireNow(EventProvider.class, true);
+        this.persistenceManager = this.requireNow(PersistenceManagerImpl.class, true);
+        this.shutdownManager = this.requireNow(ShutdownManagerImpl.class, true);
+        this.roleManager = this.requireNow(RoleManagerImpl.class, true);
     }
 
 
@@ -66,7 +66,7 @@ public class UserManagerProvider extends AbstractModule {
     @Override
     public void setup() throws SetupException {
         ConfigurationProviderImpl configProvider = 
-                this.requireNow(ConfigurationProviderImpl.class);
+                this.requireNow(ConfigurationProviderImpl.class, true);
         try {
             userCfg = configProvider.open(USER_CONFIG);
         } catch (IOException e) {

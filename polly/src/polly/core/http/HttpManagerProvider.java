@@ -45,14 +45,14 @@ public class HttpManagerProvider extends AbstractModule {
     
     @Override
     public void beforeSetup() {
-        this.myPolly = this.requireNow(MyPollyImpl.class);
+        this.myPolly = this.requireNow(MyPollyImpl.class, true);
     }
 
     
     
     @Override
     public void setup() throws SetupException {
-        RoleManager roleManger = this.requireNow(RoleManagerImpl.class);
+        RoleManager roleManger = this.requireNow(RoleManagerImpl.class, true);
         
         File templateRoot = new File("webinterface");
         final SimpleWebServer sws = new SimpleWebServer(this.myPolly.roles(),

@@ -34,7 +34,7 @@ public class DefaultUserAttributesProvider extends AbstractModule {
     
     @Override
     public void run() throws Exception {
-        UserManagerImpl userManager = this.requireNow(UserManagerImpl.class);
+        UserManagerImpl userManager = this.requireNow(UserManagerImpl.class, false);
         
         try {
             userManager.addAttribute(AUTO_LOGON, "true", Constraints.BOOLEAN);

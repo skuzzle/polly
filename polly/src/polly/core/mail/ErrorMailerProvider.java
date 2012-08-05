@@ -22,7 +22,7 @@ public class ErrorMailerProvider extends AbstractModule {
 
     @Override
     public void setup() throws SetupException {
-        MailConfig mailCfg = this.requireNow(MailConfig.class);
+        MailConfig mailCfg = this.requireNow(MailConfig.class, true);
         int delay = Integer.parseInt(
             mailCfg.readString(MailConfig.MAIL_DELAY));
         MailSender sender = mailCfg.getSender();

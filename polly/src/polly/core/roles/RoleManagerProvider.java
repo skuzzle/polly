@@ -34,7 +34,7 @@ public class RoleManagerProvider extends AbstractModule {
     @Override
     public void setup() throws SetupException {
         PersistenceManagerImpl persistence = 
-                this.requireNow(PersistenceManagerImpl.class);
+                this.requireNow(PersistenceManagerImpl.class, true);
         
         this.roleManager = new RoleManagerImpl(persistence);
         

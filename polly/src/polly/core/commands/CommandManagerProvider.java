@@ -33,7 +33,7 @@ public class CommandManagerProvider extends AbstractModule {
     @Override
     public void setup() throws SetupException {
         ConfigurationProvider configProvider = 
-                this.requireNow(ConfigurationProviderImpl.class);
+                this.requireNow(ConfigurationProviderImpl.class, true);
         Configuration commandCfg = null;
         Configuration pollyCfg = null;
         try {
@@ -43,7 +43,7 @@ public class CommandManagerProvider extends AbstractModule {
             throw new SetupException(e);
         }
         
-        UserManagerImpl userManager = this.requireNow(UserManagerImpl.class);
+        UserManagerImpl userManager = this.requireNow(UserManagerImpl.class, true);
         
         CommandManagerImpl commandManager = 
                 new CommandManagerImpl(userManager,
