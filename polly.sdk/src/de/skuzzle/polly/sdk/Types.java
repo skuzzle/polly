@@ -592,9 +592,7 @@ public class Types {
 	    
 	    
 	    /**
-	     * Formats this timespan as a string. Currently, it only returns the formatted
-	     * target date, that is, this timespan added to the date where this instance 
-	     * was created.
+	     * Formats this timespan as a string. 
 	     *  
 	     * @param formatter The formatter which is used to format this timespan.
 	     * @return The formatted String.
