@@ -93,6 +93,11 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
         this.constraints = new HashMap<String, AttributeConstraint>();
         this.namespace = new Namespace();
         try {
+            if (!this.declarationCachePath.exists()) {
+                logger.warn("Declaration-cache directory does not exist. " +
+                		"Trying to create folder structure");
+                this.declarationCachePath.mkdirs();
+            }
 			this.namespace.restore(new File(declarationCachePath));
 		} catch (IOException e) {
 			logger.warn("No declarations restored", e);
