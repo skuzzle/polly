@@ -304,6 +304,12 @@ public interface Configuration {
      */
     public final static String PARSE_ERROR_DETAILS = "parseErrorDetails";
     
+    /**
+     * Number of connection rety for the initial connect before polly gives up and fails
+     * loading.
+     * @since 0.9.1
+     */
+    public final static String INITIAL_RETY_COUNT = "initialRetryCount";
     
     
 	/**

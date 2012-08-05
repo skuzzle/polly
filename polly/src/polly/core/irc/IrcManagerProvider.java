@@ -4,7 +4,6 @@ package polly.core.irc;
 import java.io.IOException;
 import java.util.List;
 
-import org.jibble.pircbot.NickAlreadyInUseException;
 
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.ConfigurationProvider;
@@ -41,7 +40,8 @@ public class IrcManagerProvider extends AbstractModule {
     private EventProvider events;
     private IrcManagerImpl ircManager;
     private ShutdownManagerImpl shutdownManager;
-
+    private Configuration ircConfig;
+    
     private BotConnectionSettings connectionSettings;
 
 
@@ -64,26 +64,26 @@ public class IrcManagerProvider extends AbstractModule {
     public void setup() throws SetupException {
         ConfigurationProvider configProvider = 
             this.requireNow(ConfigurationProviderImpl.class);
-        Configuration ircConfig = null;
+        this.ircConfig = null;
         try {
-            ircConfig = configProvider.open(IRC_CONFIG_FILE);
+            this.ircConfig = configProvider.open(IRC_CONFIG_FILE);
         } catch (IOException e) {
             throw new SetupException(e);
         }
         
-        String nickName = ircConfig.readString(Configuration.NICKNAME);
-        String server = ircConfig.readString(Configuration.SERVER);
-        String ident = ircConfig.readString(Configuration.IDENT);
-        String ircModes = ircConfig.readString(Configuration.IRC_MODES);
-        List<String> channels = ircConfig.readStringList(Configuration.CHANNELS);
-        List<Integer> ports = ircConfig.readIntList(Configuration.PORT);
-        boolean ircLogging = ircConfig.readBoolean(Configuration.IRC_LOGGING);
+        String nickName = this.ircConfig.readString(Configuration.NICKNAME);
+        String server = this.ircConfig.readString(Configuration.SERVER);
+        String ident = this.ircConfig.readString(Configuration.IDENT);
+        String ircModes = this.ircConfig.readString(Configuration.IRC_MODES);
+        List<String> channels = this.ircConfig.readStringList(Configuration.CHANNELS);
+        List<Integer> ports = this.ircConfig.readIntList(Configuration.PORT);
+        boolean ircLogging = this.ircConfig.readBoolean(Configuration.IRC_LOGGING);
         String encodingName = configProvider.getRootConfiguration().readString(
             Configuration.ENCODING);
 
         
         this.ircManager = new IrcManagerImpl(nickName,
-            this.events, ircConfig, encodingName);
+            this.events, this.ircConfig, encodingName);
 
         this.provideComponent(this.ircManager);
 
@@ -107,16 +107,21 @@ public class IrcManagerProvider extends AbstractModule {
 
     @Override
     public void run() throws Exception {
-        try {
-            this.ircManager.connect(this.connectionSettings);
-            this.addState(ModuleStates.IRC_READY);
-        } catch (NickAlreadyInUseException e) {
-            logger.fatal("Connection rejected: nickname in use.", e);
-            throw e;
-        } catch (Exception e) {
-            logger.fatal("Connection failed: " + e.getMessage(), e);
-            throw e;
+        int retries = this.ircConfig.readInt(Configuration.INITIAL_RETY_COUNT);
+        for (int i = 0; i < retries && !this.ircManager.isConnected(); ++i) {
+            logger.warn("Initial connection attempt " + (i + 1));
+            try {
+                this.ircManager.connect(this.connectionSettings);
+            } catch (Exception e) {
+                logger.error("Connection attempt failed", e);
+            }
         }
+        if (!this.ircManager.isConnected()) {
+            throw new SetupException("Failed to connect after " + retries + 
+                    " connection attempts");
+        }
+        logger.info("IRC Connection established!");
+        this.addState(ModuleStates.IRC_READY);
     }
     
     
