@@ -111,7 +111,6 @@ public class MyPlugin extends PollyPlugin {
     public final static String PART_PERMISSION                   = "polly.permission.PART";
     public final static String QUIT_PERMISSION                   = "polly.permission.QUIT";
     public final static String RAW_IRC_PERMISSION                = "polly.permission.RAW_IRC";
-    public final static String RELOAD_CFG_PERMISSION             = "polly.permission.RELOAD_CFG";
     public final static String RESTART_PERMISSION                = "polly.permission.RESTART";
     public final static String SET_ATTRIBUTE_PERMISSION          = "polly.permission.SET_ATTRIBUTE";
     public final static String SET_USER_ATTRIBUTE_PERMISSION     = "polly.permission.SET_USER_ATTRIBUTE";
@@ -157,7 +156,6 @@ public class MyPlugin extends PollyPlugin {
         roleManager.assignPermission(RoleManager.ADMIN_ROLE, JOIN_PERMISSION);
         roleManager.assignPermission(RoleManager.ADMIN_ROLE, RAW_IRC_PERMISSION);
         roleManager.assignPermission(RoleManager.ADMIN_ROLE, RESTART_PERMISSION);
-        roleManager.assignPermission(RoleManager.ADMIN_ROLE, RELOAD_CFG_PERMISSION);
         roleManager.assignPermission(RoleManager.ADMIN_ROLE, ASSIGN_PERMISSION_PERMISSION);
         roleManager.assignPermission(RoleManager.ADMIN_ROLE, ASSIGN_ROLE_PERMISSION);
         roleManager.assignPermission(RoleManager.ADMIN_ROLE, CREATE_ROLE_PERMISSION);
