@@ -13,6 +13,7 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 
 import de.skuzzle.polly.sdk.Configuration;
+import de.skuzzle.polly.sdk.ConfigurationValidator;
 import de.skuzzle.polly.sdk.eventlistener.ConfigurationEvent;
 
 
@@ -24,6 +25,7 @@ public class ConfigurationImpl implements Configuration {
     
     private Properties properties;
     private ConfigurationProviderImpl parent;
+    private ConfigurationValidator validator;
     
     
     
@@ -38,6 +40,26 @@ public class ConfigurationImpl implements Configuration {
     public ConfigurationImpl(ConfigurationProviderImpl parent) {
         this.parent = parent;
         this.properties = new Properties();
+    }
+    
+    
+    
+    public void setValidator(ConfigurationValidator validator) {
+        this.validator = validator;
+    }
+    
+    
+    
+    @Override
+    public ConfigurationValidator getValidator() {
+        return this.validator;
+    }
+    
+    
+    
+    @Override
+    public boolean isValidated() {
+        return this.validator != null;
     }
     
     

@@ -395,5 +395,26 @@ public interface Configuration {
      * @param name The property name.
      * @return A list of integers.
      */
-	List<Integer> readIntList(String name);
+	public List<Integer> readIntList(String name);
+
+
+
+	/**
+	 * Gets the validator instance with which this configuration was validated. Check
+	 * {@link #isValidated()} before calling this to ensure that this instance was
+	 * validated.
+	 * 
+	 * @return The validator of this configuration or <code>null</code> if this 
+	 *             configuration was not validated.
+	 */
+    public ConfigurationValidator getValidator();
+    
+    
+    
+    /**
+     * Returns whether this configuration was validated.
+     * 
+     * @return <code>true</code> iff this config was validated when it was opened.
+     */
+    public boolean isValidated();
 }

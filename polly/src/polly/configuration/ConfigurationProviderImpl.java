@@ -34,7 +34,7 @@ public class ConfigurationProviderImpl implements ConfigurationProvider {
     private File configDir;
     private File pluginConfigDir;
     
-    private Map<File, Configuration> cfgCache;
+    private Map<File, ConfigurationImpl> cfgCache;
     private Configuration rootCfg;
     private EventProvider eventProvider;
     
@@ -43,7 +43,7 @@ public class ConfigurationProviderImpl implements ConfigurationProvider {
     public ConfigurationProviderImpl(File configDir) {
         this.configDir = configDir;
         this.pluginConfigDir = new File(configDir, "pluginconfigs");
-        this.cfgCache = new WeakHashMap<File, Configuration>();
+        this.cfgCache = new WeakHashMap<File, ConfigurationImpl>();
         this.eventProvider = new SynchronousEventProvider();
     }
     
@@ -54,10 +54,11 @@ public class ConfigurationProviderImpl implements ConfigurationProvider {
                     throws FileNotFoundException, IOException, ConfigurationException {
         
         File cfgFile = this.searchFor(cfgName);
-        Configuration cached = this.cfgCache.get(cfgFile.getCanonicalFile());
+        ConfigurationImpl cached = this.cfgCache.get(cfgFile.getCanonicalFile());
         if (cached == null) {
             cached = new ConfigurationImpl(cfgFile, this);
             validator.validate(cached);
+            cached.setValidator(validator);
             this.cfgCache.put(cfgFile.getCanonicalFile(), cached);
         }
         
