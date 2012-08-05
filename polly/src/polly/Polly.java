@@ -8,6 +8,8 @@ import java.lang.management.ManagementFactory;
 import java.nio.channels.FileLock;
 import java.util.Arrays;
 
+import javax.naming.ConfigurationException;
+
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
@@ -128,16 +130,23 @@ public class Polly {
         
         Configuration pollyCfg = null;
         try {
-            pollyCfg = configurationProvider.open(CONFIG_FILE_NAME, true);
+            pollyCfg = configurationProvider.open(CONFIG_FILE_NAME, true, 
+                    ConfigurationProviderImpl.NOP_VALIDATOR);
             PropertyConfigurator.configure(
                 pollyCfg.readString(Configuration.LOG_CONFIG_FILE));
         } catch (FileNotFoundException e) {
             System.out.println("Error while opening the main configuration file");
             System.out.println("File '" + CONFIG_FILE_NAME + "' not found");
+            e.printStackTrace();
         } catch (IOException e) {
             System.out.println("Error while opening the main configuration file");
             System.out.println("IO Exception: " + e.getMessage());
-            e.printStackTrace(System.out);
+            e.printStackTrace();
+        } catch (ConfigurationException e) {
+            System.out.println("Error while opening the main configuration file");
+            System.out.println("The configuration could not be validated. Reason: " + 
+                    e.getMessage());
+            e.printStackTrace();
         }
         
         logger.info("");

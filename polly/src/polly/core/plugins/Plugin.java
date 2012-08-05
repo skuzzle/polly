@@ -33,9 +33,10 @@ public class Plugin extends ConfigurationImpl implements Disposable {
     private PluginClassLoader loader;
     
     
+    
     public Plugin(String filename)
             throws IOException, PluginException {
-        super(new File(filename));
+        super(new File(filename), null);
         this.init();
     }
     

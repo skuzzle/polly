@@ -10,25 +10,33 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 import de.skuzzle.polly.sdk.Configuration;
-import de.skuzzle.polly.sdk.eventlistener.ConfigurationListener;
+import de.skuzzle.polly.sdk.eventlistener.ConfigurationEvent;
+
 
 
 public class ConfigurationImpl implements Configuration {
 
+    private final static Logger logger = Logger.getLogger(
+            ConfigurationImpl.class.getName());
+    
     private Properties properties;
+    private ConfigurationProviderImpl parent;
     
     
     
-    public ConfigurationImpl(File cfgFile) 
+    public ConfigurationImpl(File cfgFile, ConfigurationProviderImpl parent) 
                 throws FileNotFoundException, IOException {
-        this();
+        this(parent);
         this.properties.load(new FileInputStream(cfgFile));
     }
     
     
     
-    public ConfigurationImpl() {
+    public ConfigurationImpl(ConfigurationProviderImpl parent) {
+        this.parent = parent;
         this.properties = new Properties();
     }
     
@@ -37,6 +45,11 @@ public class ConfigurationImpl implements Configuration {
     @Override
     public <T> void setProperty(String name, T value) {
         this.properties.setProperty(name, value.toString());
+        if (parent == null) {
+            logger.warn("Tried to dispatch a ConfigurationEvent, but no parent was set!");
+        } else {
+            this.parent.fireConfigurationChanged(new ConfigurationEvent(this));
+        }
     }
     
     
@@ -105,23 +118,5 @@ public class ConfigurationImpl implements Configuration {
             result.add(Integer.parseInt(s));
         }
         return result;
-    }
-
-    
-    
-    @Override
-    public void addConfigurationListener(ConfigurationListener listener) {
-    }
-
-    
-    
-    @Override
-    public void removeConfigurationListener(ConfigurationListener listener) {
-    }
-
-    
-    
-    @Override
-    public void fireConfigurationChanged() {
     }
 }

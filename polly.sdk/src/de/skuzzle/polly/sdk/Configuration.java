@@ -2,7 +2,6 @@ package de.skuzzle.polly.sdk;
 
 import java.util.List;
 
-import de.skuzzle.polly.sdk.eventlistener.ConfigurationListener;
 
 /**
  * <p>Provides access to the polly configuration file.</p>
@@ -397,35 +396,4 @@ public interface Configuration {
      * @return A list of integers.
      */
 	List<Integer> readIntList(String name);
-	
-	
-	
-	/**
-	 * Registers the given listener to listen for configuration changes.
-	 *  
-	 * @param listener The listener to register
-	 * @since 0.8
-	 */
-	public abstract void addConfigurationListener(ConfigurationListener listener);
-	
-	
-	
-	/**
-	 * Removes the given listener.
-	 * 
-	 * @param listener The listener to remove
-	 * @since 0.8
-	 */
-	public abstract void removeConfigurationListener(ConfigurationListener listener);
-	
-	
-	
-	/**
-	 * Notifies all {@link ConfigurationListener}s that configuration has benn changed.
-	 * Please note that, in contrast to all other polly events, this event will not be 
-	 * fired in a new, but in the current thread!
-	 * 
-	 * @since 0.8
-	 */
-	public void fireConfigurationChanged();
 }

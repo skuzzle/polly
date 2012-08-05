@@ -1,7 +1,6 @@
 package polly.core.mail;
 
 import de.skuzzle.polly.sdk.Configuration;
-import de.skuzzle.polly.sdk.ConfigurationProvider;
 import polly.configuration.ConfigurationProviderImpl;
 import polly.moduleloader.AbstractModule;
 import polly.moduleloader.ModuleLoader;
@@ -39,7 +38,7 @@ public class MailManagerProvider extends AbstractModule {
     
     @Override
     public void setup() throws SetupException {
-        ConfigurationProvider configProvider = 
+        ConfigurationProviderImpl configProvider = 
             this.requireNow(ConfigurationProviderImpl.class);
         Configuration config = null;
         try {
@@ -49,6 +48,7 @@ public class MailManagerProvider extends AbstractModule {
         }
         
         MailConfig cfg = new MailConfig(
+            configProvider,
             config.readString(RECIPIENTS), 
             config.readString(LOG_THRESHOLD), 
             config.readString(MAIL_PROVIDER));

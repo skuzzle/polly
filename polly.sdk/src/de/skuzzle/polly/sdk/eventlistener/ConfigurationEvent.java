@@ -24,7 +24,6 @@ public class ConfigurationEvent {
     
     
     
-    
     /**
      * Gets the source of this event.
      * 

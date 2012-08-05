@@ -8,6 +8,7 @@ import javax.mail.internet.InternetAddress;
 import org.apache.log4j.Level;
 
 import polly.configuration.ConfigurationImpl;
+import polly.configuration.ConfigurationProviderImpl;
 import polly.moduleloader.SetupException;
 
 
@@ -28,8 +29,9 @@ public class MailConfig extends ConfigurationImpl {
     
     
     
-    public MailConfig(String recipients, String logLevel, String mailProvider) 
-            throws SetupException {
+    public MailConfig(ConfigurationProviderImpl parent, String recipients, String logLevel, 
+            String mailProvider) throws SetupException {
+        super(parent);
         
         // parse recipients
         try {
