@@ -28,6 +28,7 @@ import polly.moduleloader.annotations.Require;
 
 @Module(
     requires = {
+        @Require(component = IrcManagerImpl.class),
         @Require(component = ConfigurationProviderImpl.class),
         @Require(component = ShutdownManagerImpl.class),
         @Require(component = EventProvider.class),
