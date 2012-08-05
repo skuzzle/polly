@@ -2,6 +2,7 @@ package polly.core.mail;
 
 import org.apache.log4j.Logger;
 
+import polly.core.mail.senders.MailSender;
 import polly.moduleloader.AbstractModule;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.SetupException;

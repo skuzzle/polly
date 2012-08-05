@@ -1,4 +1,4 @@
-package polly.core.mail;
+package polly.core.mail.senders;
 
 import java.util.Properties;
 
@@ -13,6 +13,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.log4j.Logger;
+
+import polly.core.mail.MailConfig;
 
 
 public abstract class MailSender {

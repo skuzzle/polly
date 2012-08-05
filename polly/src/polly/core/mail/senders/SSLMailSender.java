@@ -1,6 +1,8 @@
-package polly.core.mail;
+package polly.core.mail.senders;
 
 import java.util.Properties;
+
+import polly.core.mail.MailConfig;
 
 
 public class SSLMailSender extends DefaultMailSender {

@@ -2,6 +2,7 @@ package polly.core.mail;
 
 import de.skuzzle.polly.sdk.Configuration;
 import polly.configuration.ConfigurationProviderImpl;
+import polly.core.mail.senders.MailSender;
 import polly.moduleloader.AbstractModule;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.SetupException;

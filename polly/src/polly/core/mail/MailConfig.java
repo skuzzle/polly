@@ -9,6 +9,7 @@ import org.apache.log4j.Level;
 
 import polly.configuration.ConfigurationImpl;
 import polly.configuration.ConfigurationProviderImpl;
+import polly.core.mail.senders.MailSender;
 import polly.moduleloader.SetupException;
 
 

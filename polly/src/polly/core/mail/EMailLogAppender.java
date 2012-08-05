@@ -6,6 +6,8 @@ import org.apache.log4j.Layout;
 import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggingEvent;
 
+import polly.core.mail.senders.MailSender;
+
 
 
 public class EMailLogAppender extends AppenderSkeleton {

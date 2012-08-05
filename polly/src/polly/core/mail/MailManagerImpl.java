@@ -2,6 +2,8 @@ package polly.core.mail;
 
 import javax.mail.MessagingException;
 
+import polly.core.mail.senders.MailSender;
+
 import de.skuzzle.polly.sdk.MailManager;
 import de.skuzzle.polly.sdk.exceptions.EMailException;
 
