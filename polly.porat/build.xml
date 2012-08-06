@@ -95,6 +95,8 @@
         <mkdir dir="${dist.lib.dir}"/>
         <mkdir dir="${bin.dir}"/>
         <mkdir dir="${src.dir}"/>
+        
+        <copy todir="${dist.lib.dir}" file="${lib.dir}/network.jar"/>
     </target>
     
     
@@ -162,6 +164,7 @@
                 <attribute name="Class-Path"             value="${classpath} ${jar.classpath}"/>
             </manifest>
             <fileset dir="${bin.dir}"/>
+            <fileset dir="${dist.dir}" includes="lib/**"/>
             <fileset dir="${src.dir}"/>
         </jar>
         <delete dir="${dist.lib.dir}"/>
