@@ -25,6 +25,7 @@
 *.js
 *.ppk
 *.num
+*.declaration
 /plugins/
 /polly/cfg/mail.cfg
 /polly/dist
@@ -56,3 +57,5 @@
 /polly.tools/build/
 /porat/dist/
 /porat/build/
+/polly.porat/dist/
+/polly.porat/build/
