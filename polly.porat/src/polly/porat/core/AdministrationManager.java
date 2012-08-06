@@ -1,4 +1,4 @@
-package polly.core.remote;
+package polly.porat.core;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -20,13 +20,15 @@ import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.model.User;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 
+import polly.porat.core.tcp.ServerConnection;
+
 import polly.network.Connection;
 import polly.network.protocol.Constants;
 import polly.network.protocol.Constants.ResponseType;
 import polly.network.protocol.LogItem;
 import polly.network.protocol.Response;
 import polly.network.util.SerializableFile;
-import polly.core.remote.tcp.ServerConnection;
+
 
 
 public class AdministrationManager extends AbstractDisposable {
@@ -90,7 +92,7 @@ public class AdministrationManager extends AbstractDisposable {
     
     
     public void logout(Connection connection) {
-        ((polly.core.remote.tcp.ServerConnection) connection).setUser(null);
+        ((ServerConnection) connection).setUser(null);
     }
     
     

@@ -1,7 +1,6 @@
-package polly.core.remote;
+package polly.porat.core;
 
 
-import polly.core.remote.AdministrationManager.LoginResult;
 import polly.network.events.ConnectionListener;
 import polly.network.events.NetworkEvent;
 import polly.network.events.ObjectReceivedEvent;
@@ -13,6 +12,7 @@ import polly.network.protocol.Constants.ResponseType;
 import polly.network.protocol.ErrorResponse;
 import polly.network.protocol.Request;
 import polly.network.protocol.Response;
+import polly.porat.core.AdministrationManager.LoginResult;
 
 
 

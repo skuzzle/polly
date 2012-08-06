@@ -1,4 +1,4 @@
-package polly.core.remote.tcp;
+package polly.porat.core.tcp;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -19,7 +19,6 @@ import polly.network.protocol.ErrorResponse;
 import polly.network.protocol.Ping;
 import polly.network.protocol.Pong;
 import polly.network.protocol.ProtocolObject;
-import polly.util.concurrent.ThreadFactoryBuilder;
 
 import de.skuzzle.polly.sdk.Disposable;
 import de.skuzzle.polly.sdk.model.User;
@@ -102,8 +101,7 @@ public class ServerConnection implements Runnable, Disposable, polly.network.Con
             }
         };
         
-        this.pingService = Executors.newScheduledThreadPool(1, 
-            new ThreadFactoryBuilder("PING_SERVICE_" + this.id));
+        this.pingService = Executors.newScheduledThreadPool(1);
         this.pingService.scheduleAtFixedRate(r, 5000, 5000, TimeUnit.MILLISECONDS);
     }
     

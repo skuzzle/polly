@@ -1,4 +1,4 @@
-package polly.core.remote;
+package polly.porat.core;
 
 import de.skuzzle.polly.sdk.IrcManager;
 import de.skuzzle.polly.sdk.eventlistener.ChannelEvent;

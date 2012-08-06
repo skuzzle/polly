@@ -1,4 +1,4 @@
-package polly.core.remote.tcp;
+package polly.porat.core.tcp;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -15,9 +15,6 @@ import javax.net.ssl.SSLServerSocketFactory;
 
 import org.apache.log4j.Logger;
 
-import polly.events.AsynchronousEventProvider;
-import polly.events.Dispatchable;
-import polly.events.EventProvider;
 import polly.network.events.ConnectionListener;
 import polly.network.events.NetworkEvent;
 import polly.network.events.ObjectReceivedEvent;
@@ -27,10 +24,13 @@ import polly.network.protocol.Constants;
 import polly.network.protocol.ErrorResponse;
 import polly.network.protocol.Constants.ErrorType;
 import polly.network.protocol.Response;
-import polly.util.concurrent.ThreadFactoryBuilder;
 
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
+import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
+import de.skuzzle.polly.tools.events.AsynchronousEventProvider;
+import de.skuzzle.polly.tools.events.Dispatchable;
+import de.skuzzle.polly.tools.events.EventProvider;
 
 
 public class AdministrationServer extends AbstractDisposable implements Runnable {
