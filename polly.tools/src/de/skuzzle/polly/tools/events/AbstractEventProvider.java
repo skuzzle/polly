@@ -1,4 +1,4 @@
-package polly.events;
+package de.skuzzle.polly.tools.events;
 
 import java.util.Arrays;
 import java.util.EventListener;
@@ -6,11 +6,9 @@ import java.util.List;
 
 import javax.swing.event.EventListenerList;
 
-import de.skuzzle.polly.sdk.AbstractDisposable;
 
 
-public abstract class AbstractEventProvider extends AbstractDisposable 
-        implements EventProvider {
+public abstract class AbstractEventProvider implements EventProvider {
     
     protected EventListenerList listeners;
     

@@ -13,10 +13,6 @@ import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
 
-import polly.events.Dispatchable;
-import polly.events.EventProvider;
-import polly.events.SynchronousEventProvider;
-import polly.util.concurrent.ThreadFactoryBuilder;
 
 import com.sun.net.httpserver.HttpServer;
 
@@ -27,6 +23,10 @@ import de.skuzzle.polly.sdk.http.HttpManager;
 import de.skuzzle.polly.sdk.http.HttpSession;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.roles.RoleManager;
+import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
+import de.skuzzle.polly.tools.events.Dispatchable;
+import de.skuzzle.polly.tools.events.EventProvider;
+import de.skuzzle.polly.tools.events.SynchronousEventProvider;
 
 
 

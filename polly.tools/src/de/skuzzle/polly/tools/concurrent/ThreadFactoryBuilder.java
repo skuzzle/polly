@@ -1,4 +1,4 @@
-package polly.util.concurrent;
+package de.skuzzle.polly.tools.concurrent;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.concurrent.ThreadFactory;

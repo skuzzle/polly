@@ -11,15 +11,15 @@ import javax.naming.ConfigurationException;
 
 import org.apache.log4j.Logger;
 
-import polly.events.Dispatchable;
-import polly.events.EventProvider;
-import polly.events.SynchronousEventProvider;
 
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.ConfigurationProvider;
 import de.skuzzle.polly.sdk.ConfigurationValidator;
 import de.skuzzle.polly.sdk.eventlistener.ConfigurationEvent;
 import de.skuzzle.polly.sdk.eventlistener.ConfigurationListener;
+import de.skuzzle.polly.tools.events.Dispatchable;
+import de.skuzzle.polly.tools.events.EventProvider;
+import de.skuzzle.polly.tools.events.SynchronousEventProvider;
 
 
 public class ConfigurationProviderImpl implements ConfigurationProvider {

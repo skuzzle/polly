@@ -40,10 +40,10 @@ import de.skuzzle.polly.sdk.eventlistener.QuitListener;
 import de.skuzzle.polly.sdk.eventlistener.SpotEvent;
 import de.skuzzle.polly.sdk.eventlistener.UserSpottedListener;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
+import de.skuzzle.polly.tools.events.Dispatchable;
+import de.skuzzle.polly.tools.events.EventProvider;
 import de.skuzzle.polly.tools.iterators.WrapIterator;
 
-import polly.events.Dispatchable;
-import polly.events.EventProvider;
 
 
 /**

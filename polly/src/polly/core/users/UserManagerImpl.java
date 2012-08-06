@@ -14,8 +14,6 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import polly.core.persistence.PersistenceManagerImpl;
-import polly.events.Dispatchable;
-import polly.events.EventProvider;
 import polly.util.CaseInsensitiveStringKeyMap;
 
 import de.skuzzle.polly.parsing.Prepare;
@@ -40,6 +38,8 @@ import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
 import de.skuzzle.polly.sdk.model.User;
 import de.skuzzle.polly.sdk.roles.RoleManager;
+import de.skuzzle.polly.tools.events.Dispatchable;
+import de.skuzzle.polly.tools.events.EventProvider;
 
 
 

@@ -5,11 +5,12 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
+import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
+
 import polly.moduleloader.AbstractModule;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.SetupException;
 import polly.moduleloader.annotations.Module;
-import polly.util.concurrent.ThreadFactoryBuilder;
 
 @Module
 public class JanitorProvider extends AbstractModule {

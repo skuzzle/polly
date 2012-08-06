@@ -5,6 +5,7 @@ import java.util.concurrent.ExecutorService;
 
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.ConfigurationProvider;
+import de.skuzzle.polly.tools.events.EventProvider;
 
 import polly.configuration.ConfigurationProviderImpl;
 import polly.core.ShutdownManagerImpl;
@@ -16,7 +17,6 @@ import polly.eventhandler.GhostHandler;
 import polly.eventhandler.IrcLoggingHandler;
 import polly.eventhandler.MessageHandler;
 import polly.eventhandler.TraceNickChangeHandler;
-import polly.events.EventProvider;
 import polly.moduleloader.AbstractModule;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.SetupException;

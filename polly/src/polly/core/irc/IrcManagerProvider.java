@@ -7,11 +7,11 @@ import java.util.List;
 
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.ConfigurationProvider;
+import de.skuzzle.polly.tools.events.EventProvider;
 
 import polly.configuration.ConfigurationProviderImpl;
 import polly.core.DefaultUserAttributesProvider;
 import polly.core.ShutdownManagerImpl;
-import polly.events.EventProvider;
 import polly.moduleloader.AbstractModule;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.SetupException;

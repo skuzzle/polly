@@ -1,4 +1,4 @@
-package polly.events;
+package de.skuzzle.polly.tools.events;
 
 
 
@@ -12,6 +12,6 @@ public class SynchronousEventProvider extends AbstractEventProvider {
     
 
     @Override
-    protected void actualDispose() {}
+    public void dispose() {}
 
 }

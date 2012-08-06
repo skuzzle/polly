@@ -1,11 +1,10 @@
-package polly.events;
+package de.skuzzle.polly.tools.events;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 
-import de.skuzzle.polly.sdk.exceptions.DisposingException;
 
 
 /**
@@ -40,7 +39,7 @@ public class AsynchronousEventProvider extends AbstractEventProvider {
     
     
     @Override
-    protected void actualDispose() throws DisposingException {
+    public void dispose() {
         this.dispatchPool.shutdownNow();
         try {
             this.dispatchPool.awaitTermination(2000, TimeUnit.MILLISECONDS);

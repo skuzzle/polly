@@ -14,7 +14,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
-import polly.util.concurrent.ThreadFactoryBuilder;
 
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.Conversation;
@@ -25,6 +24,7 @@ import de.skuzzle.polly.sdk.eventlistener.MessageListener;
 import de.skuzzle.polly.sdk.exceptions.ConversationException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.model.User;
+import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
 
 
 

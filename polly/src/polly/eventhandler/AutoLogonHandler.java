@@ -13,7 +13,6 @@ import org.apache.log4j.Logger;
 import polly.core.DefaultUserAttributesProvider;
 import polly.core.irc.IrcManagerImpl;
 import polly.core.users.UserManagerImpl;
-import polly.util.concurrent.ThreadFactoryBuilder;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.eventlistener.ConnectionEvent;
 import de.skuzzle.polly.sdk.eventlistener.ConnectionListener;
@@ -29,6 +28,7 @@ import de.skuzzle.polly.sdk.exceptions.AlreadySignedOnException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
 import de.skuzzle.polly.sdk.model.User;
+import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
 
 
 

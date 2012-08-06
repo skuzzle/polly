@@ -6,17 +6,17 @@ import java.util.concurrent.Executors;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
+import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
+import de.skuzzle.polly.tools.events.AsynchronousEventProvider;
+import de.skuzzle.polly.tools.events.EventProvider;
 
 import polly.configuration.ConfigurationProviderImpl;
 import polly.core.ShutdownManagerImpl;
-import polly.events.AsynchronousEventProvider;
-import polly.events.EventProvider;
 import polly.moduleloader.AbstractModule;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.annotations.Module;
 import polly.moduleloader.annotations.Require;
 import polly.moduleloader.annotations.Provide;
-import polly.util.concurrent.ThreadFactoryBuilder;
 
 @Module(
     requires = { 
@@ -43,7 +43,7 @@ public class ExecutorServiceProvider extends AbstractModule {
         ExecutorService eventThreadPool = Executors.newFixedThreadPool(
             pollyCfg.readInt(Configuration.EVENT_THREADS),
             new ThreadFactoryBuilder("EVENT_THREAD_%n%"));
-        EventProvider eventProvider = new AsynchronousEventProvider(eventThreadPool);
+        final EventProvider eventProvider = new AsynchronousEventProvider(eventThreadPool);
 
         final ExecutorService commandExecutor = Executors.newFixedThreadPool(
             pollyCfg.readInt(Configuration.EXECUTION_THREADS), 
@@ -55,11 +55,10 @@ public class ExecutorServiceProvider extends AbstractModule {
 
         ShutdownManagerImpl shutdownManager = this
             .requireNow(ShutdownManagerImpl.class, true);
-        shutdownManager.addDisposable(eventProvider);
         shutdownManager.addDisposable(new AbstractDisposable() {
-
             @Override
             protected void actualDispose() throws DisposingException {
+                eventProvider.dispose();
                 commandExecutor.shutdown();
             }
         });
