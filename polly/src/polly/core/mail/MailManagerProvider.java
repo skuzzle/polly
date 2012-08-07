@@ -2,6 +2,7 @@ package polly.core.mail;
 
 import de.skuzzle.polly.sdk.Configuration;
 import polly.configuration.ConfigurationProviderImpl;
+import polly.configuration.ConfigurationImpl;
 import polly.core.mail.senders.MailSender;
 import polly.moduleloader.AbstractModule;
 import polly.moduleloader.ModuleLoader;
@@ -48,7 +49,9 @@ public class MailManagerProvider extends AbstractModule {
             throw new SetupException(e);
         }
         
+        // HACK: MailConfig is a total hack currently
         MailConfig cfg = new MailConfig(
+            (ConfigurationImpl) config,
             configProvider,
             config.readString(RECIPIENTS), 
             config.readString(LOG_THRESHOLD), 

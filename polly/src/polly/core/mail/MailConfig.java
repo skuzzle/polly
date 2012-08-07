@@ -30,9 +30,10 @@ public class MailConfig extends ConfigurationImpl {
     
     
     
-    public MailConfig(ConfigurationProviderImpl parent, String recipients, String logLevel, 
-            String mailProvider) throws SetupException {
-        super(parent);
+    public MailConfig(ConfigurationImpl config, ConfigurationProviderImpl parent, 
+            String recipients, String logLevel, String mailProvider) 
+                    throws SetupException {
+        super(parent, config);
         
         // parse recipients
         try {

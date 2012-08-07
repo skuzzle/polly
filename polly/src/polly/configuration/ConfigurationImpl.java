@@ -50,6 +50,14 @@ public class ConfigurationImpl implements Configuration {
     
     
     
+    public ConfigurationImpl(ConfigurationProviderImpl parent, 
+            ConfigurationImpl defaults) {
+        this(parent);
+        this.properties.putAll(defaults.properties);
+    }
+    
+    
+    
     public void setValidator(ConfigurationValidator validator) {
         this.validator = validator;
     }
