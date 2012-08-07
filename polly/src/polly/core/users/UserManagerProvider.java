@@ -110,6 +110,7 @@ public class UserManagerProvider extends AbstractModule {
             logger.fatal("Database error", e);
         } finally {
             this.userManager.setAdmin(admin);
+            ((User)admin).setIsPollyAdmin(true);
             this.addState(ModuleStates.USERS_READY);
             this.roleManager.assignRole(admin, RoleManager.ADMIN_ROLE);
         }

@@ -9,7 +9,7 @@ public class HttpEvent {
 
     private HttpManager source;
     private HttpSession session;
-    private Map<String, String> properties;
+    private Map<String, HttpParameter> properties;
     private String requestUri;
     
     
@@ -18,7 +18,7 @@ public class HttpEvent {
         this.source = source;
         this.session = session;
         this.requestUri = requestUri;
-        this.properties = new HashMap<String, String>();
+        this.properties = new HashMap<String, HttpParameter>();
     }
     
     
@@ -31,12 +31,13 @@ public class HttpEvent {
     
     
     public String getProperty(String key) {
-        return this.properties.get(key);
+        HttpParameter val = this.properties.get(key);
+        return val == null ? null : val.getValue();
     }
     
     
     
-    public Map<String, String> getProperties() {
+    public Map<String, HttpParameter> getProperties() {
         return this.properties;
     }
     

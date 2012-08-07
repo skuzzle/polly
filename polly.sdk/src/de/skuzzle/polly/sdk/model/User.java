@@ -39,4 +39,6 @@ public interface User extends Comparable<User> {
     public abstract long getLastIdleTime();
     
     public abstract long getLoginTime();
+
+    public boolean isPollyAdmin();
 }

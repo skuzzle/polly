@@ -73,6 +73,9 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     @Transient
     private long lastIdleTimeStamp;
     
+    @Transient
+    private boolean isPollyAdmin;
+    
     
     User() {
         this("", "");
@@ -211,6 +214,18 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
         return this.lastIdleTimeStamp;
     }
 
+    
+    
+    @Override
+    public boolean isPollyAdmin() {
+        return this.isPollyAdmin;
+    }
+    
+    
+    
+    public void setIsPollyAdmin(boolean isAdmin) {
+        this.isPollyAdmin = isAdmin;
+    }
     
     
     @Override

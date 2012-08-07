@@ -14,7 +14,7 @@
         <td>$user.getCurrentNickName()</td>
     </tr>
     <tr>
-        <td><b>List IRC Action:</b></td>
+        <td><b>Last IRC Action:</b></td>
         <td>#if ($user.getLastMessageTime() != 0) $formatter.formatDate( $user.getLastMessageTime() ) #end</td>
     </tr>
     <tr>
@@ -23,15 +23,38 @@
     </tr>
 </table>
 
+<h3>User Roles</h3>
+<table>
+    <tr>
+        <th>Roles</th>
+        <th>Actions</th>
+    </tr>
+    #foreach ($role in $roles)
+    <tr>
+        <td>$role</td>
+        <td>
+            <form name="removeRoleFromUser" action="user_info" method="POST">
+            <input type="hidden" name="action" value="removeRole"/> 
+            <input type="hidden" name="role" value="$role"/> 
+            <input type="hidden" name="userName" value="$user.getName()"/>
+            <input #if ($user.isPollyAdmin() && $role == "polly.roles.ADMIN") disabled #end type="submit" value="remove" class="button"/>
+            </form>
+        </td>
+    </tr>
+    #end
+    <tr>
+        <form name="addRoleToUser" action="user_info" method="POST">
+        <td><select name="role">#foreach ($role in $allRoles) <option>$role</option>#end</select></td>
+        <td>
+            <input type="hidden" name="action" value="addRoleToUser"/>
+            <input type="hidden" name="userName" value="$user.getName()"/>
+            <input type="submit" value="add" class="button" /></td>
+        </form>
+    </tr>
+</table>
 
 <h3>Attributes</h3>
-#if ($action == "edit") 
-    #set ($actionUrl = "user_info?action=update&userName=${user.getName()}")
-#else 
-    #set ($actionUrl = "user_info?action=edit&userName=${user.getName()}")
-#end
-
-<form action="$actionUrl" method="POST">
+<form action="user_info" method="POST">
 <table>
     <tr>
         <th>Name</th>
@@ -50,9 +73,12 @@
     </tr>
     #end
 </table>
+    <input type="hidden" name="userName" value="$user.getName()"/>
 #if ($action == "edit")
+    <input type="hidden" name="action" value="update"/>
     <input type="submit" value="Update" class="button"/>
 #else
+    <input type="hidden" name="action" value="edit"/>
     <input type="submit" value="Edit" class="button"/>
 #end
 </form>
