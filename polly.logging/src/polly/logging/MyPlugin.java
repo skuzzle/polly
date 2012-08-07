@@ -101,8 +101,8 @@ public class MyPlugin extends PollyPlugin {
         this.highlightForwarder = new ForwardHighlightHandler(myPolly, this.logManager);
         myPolly.irc().addMessageListener(this.highlightForwarder);
         
-        myPolly.web().addMenuUrl("Replay");
-        myPolly.web().addMenuUrl("Logging");
+        myPolly.web().addMenuUrl("Logging", "Replay");
+        myPolly.web().addMenuUrl("Logging", "Logging");
         myPolly.web().addHttpAction(new ReplayHttpAction(myPolly, 
                 new DefaultLogFormatter(), this.logManager));
         myPolly.web().addHttpAction(new LoggingHttpAction(myPolly));

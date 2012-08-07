@@ -15,10 +15,10 @@ public interface HttpManager {
     
     public abstract boolean isRunning();
     
-    public abstract void addMenuUrl(String name);
+    public abstract void removeMenuUrl(String category, String name);
     
-    public abstract void removeMenuUrl(String name);
-    
+    public abstract void addMenuUrl(String category, String name);
+
     public abstract void addHttpAction(HttpAction action);
     
     public abstract void addHttpEventListener(HttpEventListener listener);
@@ -29,4 +29,5 @@ public interface HttpManager {
         String errorDescription, HttpSession session);
 
     public abstract File getPage(String name);
+
 }

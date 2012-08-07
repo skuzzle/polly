@@ -65,10 +65,10 @@ public class HttpManagerProvider extends AbstractModule {
         this.httpManager.addHttpAction(new IRCPageHttpAction(myPolly));
         this.httpManager.addHttpAction(new RoleHttpAction(myPolly));
         
-        this.httpManager.addMenuUrl("Users");
-        this.httpManager.addMenuUrl("IRC");
-        this.httpManager.addMenuUrl("Logs");
-        this.httpManager.addMenuUrl("Roles");
+        this.httpManager.addMenuUrl("Admin", "Users");
+        this.httpManager.addMenuUrl("Admin", "IRC");
+        this.httpManager.addMenuUrl("Admin", "Logs");
+        this.httpManager.addMenuUrl("Admin", "Roles");
         
         try {
             this.httpManager.startServer();

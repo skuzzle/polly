@@ -19,12 +19,14 @@
 
     <div id="menu">
         #if ($me)
-        <ul>
-            <li><a href="/">Home</a></li>
-        #foreach ($page in $menu)
-            <li><a href="$page">$page</a></li>
+        #foreach ($entry in $menu.entrySet())
+            <h3>$entry.getKey()</h3>
+            <ul>
+            #foreach ($page in $entry.getValue())
+                <li><a href="$page">$page</a></li>
+            #end
+            </ul>
         #end
-        </ul>
         #end
     </div>
     

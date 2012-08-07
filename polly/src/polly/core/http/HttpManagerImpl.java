@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.TreeMap;
 import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
@@ -47,7 +48,7 @@ public class HttpManagerImpl implements HttpManager {
     private Map<InetAddress, HttpSession> sessions;
     private EventProvider eventProvider;
     private Map<String, HttpAction> actions;
-    private ArrayList<String> menu;
+    private Map<String, List<String>> menu;
     private File templateRoot;
     private int sessionTimeOut;
     private RoleManager roleManager;
@@ -62,7 +63,7 @@ public class HttpManagerImpl implements HttpManager {
         this.sessions = new HashMap<InetAddress, HttpSession>();
         this.eventProvider = new SynchronousEventProvider();
         this.actions = new HashMap<String, HttpAction>();
-        this.menu = new ArrayList<String>();
+        this.menu = new TreeMap<String, List<String>>();
     }
     
     
@@ -203,15 +204,22 @@ public class HttpManagerImpl implements HttpManager {
 
     
     @Override
-    public void addMenuUrl(String name) {
-        this.menu.add(name);
+    public void addMenuUrl(String category, String name) {
+        List<String> entries = this.menu.get(category);
+        if (entries == null) {
+            entries = new ArrayList<String>();
+            this.menu.put(category, entries);
+        }
+        entries.add(name);
     }
     
     
     
     @Override
-    public void removeMenuUrl(String name) {
-        this.menu.remove(name);
+    public void removeMenuUrl(String category, String name) {
+        if (this.menu.containsKey(category)) {
+            this.menu.get(category).remove(name);
+        }
     }
     
     
