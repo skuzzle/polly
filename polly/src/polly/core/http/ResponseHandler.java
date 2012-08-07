@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -133,7 +134,16 @@ public class ResponseHandler implements HttpHandler {
         e.getProperties().putAll(parameters);
         
         HttpTemplateContext c = null;
-        c = this.webServer.executeAction(e);
+        try {
+            c = this.webServer.executeAction(e);
+        } catch (Exception e1) {
+            StringWriter w = new StringWriter();
+            PrintWriter pw = new PrintWriter(w);
+            e1.printStackTrace(pw);
+            logger.error("Exception while executing Action", e1);
+            c = this.webServer.errorTemplate("Exception while executing action", 
+                    w.getBuffer().toString(), session);
+        }
         
         if (c != null) {
             this.respond(c, t);
