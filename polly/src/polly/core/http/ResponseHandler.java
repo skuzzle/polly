@@ -25,6 +25,8 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import de.skuzzle.polly.sdk.http.HttpEvent;
+import de.skuzzle.polly.sdk.http.HttpParameter;
+import de.skuzzle.polly.sdk.http.HttpParameter.ParameterType;
 import de.skuzzle.polly.sdk.http.HttpSession;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 
@@ -41,7 +43,8 @@ public class ResponseHandler implements HttpHandler {
         "(\\w+)=([^&]+)");
     
     
-    private static void parseGetParameters(String in, Map<String, String> params) {
+    private static void parseParameters(String in, Map<String, HttpParameter> params, 
+            ParameterType type) {
         Matcher m = GET_PARAMETERS.matcher(in);
         
         while (m.find()) {
@@ -52,20 +55,20 @@ public class ResponseHandler implements HttpHandler {
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            params.put(key, value);
+            params.put(key, new HttpParameter(key, value, type));
         }
     }
     
     
     
-    private static void parsePostParameters(HttpExchange t, Map<String, String> result) 
-                throws IOException {
+    private static void parsePostParameters(HttpExchange t, 
+            Map<String, HttpParameter> result) throws IOException {
         
         BufferedReader r = new BufferedReader(new InputStreamReader(t.getRequestBody()));
         String line = null;
         while ((line = r.readLine()) != null) {
             if (!line.equals("")) {
-                parseGetParameters(line, result);
+                parseParameters(line, result, ParameterType.POST);
             }
         }
     }
@@ -74,12 +77,14 @@ public class ResponseHandler implements HttpHandler {
     private SimpleWebServer webServer;
     
     
+    
     public ResponseHandler(SimpleWebServer webServer) {
         this.webServer = webServer;
     }
     
     
 
+    @Override
     public void handle(HttpExchange t) throws IOException {
         
         HttpSession session = this.webServer.getSession(
@@ -103,15 +108,16 @@ public class ResponseHandler implements HttpHandler {
         
         
         // extract GET parameters
-        Map<String, String> parameters = new HashMap<String, String>();
+        Map<String, HttpParameter> parameters = new HashMap<String, HttpParameter>();
         if (uri.contains("?")) {
             String[] parts = uri.split("\\?");
-            parseGetParameters(parts[1], parameters);
+            parseParameters(parts[1], parameters, ParameterType.GET);
             uri = parts[0];
         }
         
         logger.trace("Evaluated URI: " + uri);
         
+        // extract POST parameters
         if (t.getRequestMethod().equals("POST")) {
             parsePostParameters(t, parameters);
         }
