@@ -138,7 +138,8 @@ public class SimpleWebServer implements HttpManager {
                 actionContext = action.execute(e);
             } else {
                 return this.errorTemplate("Permission denied", 
-                    "You have insufficient permissions to acces this page/action.", 
+                    "You have insufficient permissions to acces this page/action." +
+                    "<br/><br/>Missing permission(s): " + action.getRequiredPermission(), 
                     e.getSession());
             }
         }

@@ -12,6 +12,7 @@ import de.skuzzle.polly.sdk.roles.RoleManager;
 import polly.core.http.actions.IRCPageHttpAction;
 import polly.core.http.actions.LoginHttpAction;
 import polly.core.http.actions.LogoutHttpAction;
+import polly.core.http.actions.RoleHttpAction;
 import polly.core.http.actions.RootHttpAction;
 import polly.core.http.actions.UserInfoPageHttpAction;
 import polly.core.http.actions.UserPageHttpAction;
@@ -64,10 +65,13 @@ public class HttpManagerProvider extends AbstractModule {
         sws.addHttpAction(new UserPageHttpAction(this.myPolly));
         sws.addHttpAction(new UserInfoPageHttpAction(this.myPolly));
         sws.addHttpAction(new IRCPageHttpAction(this.myPolly));
+        sws.addHttpAction(new RoleHttpAction(this.myPolly.roles()));
         
         sws.addMenuUrl("Users");
         sws.addMenuUrl("IRC");
         sws.addMenuUrl("Logs");
+        sws.addMenuUrl("Roles");
+        
         try {
             sws.startServer();
             this.provideComponent(sws);

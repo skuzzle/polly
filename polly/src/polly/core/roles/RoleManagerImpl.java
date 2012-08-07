@@ -350,7 +350,6 @@ public class RoleManagerImpl implements RoleManager {
                 @Override
                 public void performUpdate(PersistenceManager persistence) {
                     role.getPermissions().remove(perm);
-                    persistence.remove(perm);
                     role.setStale(true);
                 }
             });
