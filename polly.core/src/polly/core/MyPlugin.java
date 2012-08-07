@@ -47,6 +47,7 @@ import commands.UsersCommand;
 import commands.VarCommand;
 import commands.VenadCommand;
 import commands.VersionCommand;
+import commands.WebInterfaceCommand;
 import commands.WikiCommand;
 import commands.roles.AssignPermissionCommand;
 import commands.roles.AssignRoleCommand;
@@ -224,6 +225,7 @@ public class MyPlugin extends PollyPlugin {
 		this.addCommand(new DictCommand(myPolly));
 		this.addCommand(new GooglePicsCommand(myPolly));
 		this.addCommand(new IsDownCommand(myPolly));
+		this.addCommand(new WebInterfaceCommand(myPolly));
 		
 		this.addCommand(new UsersCommand(myPolly));
 		this.addCommand(new AuthCommand(myPolly));
