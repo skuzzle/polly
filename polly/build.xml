@@ -9,8 +9,10 @@
     <!-- Build-specific properties - do not change -->
     <property name="src.dir"      value="src"/>
     <property name="dist.dir"     value="dist"/>
+    <property name="web.dir"      value="webinterface"/>
     <property name="plugins.dir"  value="plugins"/>
     <property name="dist.lib.dir" value="${dist.dir}/lib"/>
+    <property name="dist.web.dir" value="${dist.dir}/webinterface"/>
     <property name="release.dir"  value="release"/>
     <property name="update.dir"   value="update"/>
     <property name="bin.dir"      value="build"/>
@@ -96,6 +98,7 @@
     <target name="clean">
         <delete file="${dist.dir}/${ant.project.name}.jar"/>
         <delete dir="${dist.lib.dir}"/>
+        <delete dir="${dist.web.dir}"/>
         <delete dir="${dist.dir}"/>
         <delete dir="${bin.dir}"/>
         <delete dir="${release.dir}"/>
@@ -113,6 +116,7 @@
         <mkdir dir="${bin.dir}"/>
         <mkdir dir="cfg/META-INF"/>
         <mkdir dir="${dist.lib.dir}"/>
+        <mkdir dir="${dist.web.dir}"/>
         
         
         <mkdir dir="${dist.dir}/cache"/>
@@ -121,6 +125,9 @@
         
         <copy todir="${dist.lib.dir}">
             <fileset dir="${lib.dir}" includes="${includeJars}"/>
+        </copy>
+        <copy todir="${dist.web.dir}">
+            <fileset dir="${web.dir}"/>
         </copy>
         <copy todir="${dist.dir}/cfg">
             <fileset dir="./cfg"/>
