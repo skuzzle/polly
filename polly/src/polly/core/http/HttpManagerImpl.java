@@ -122,7 +122,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     @Override
     public void stopWebServer() {
         logger.info("Stopping http service");
-        this.server.stop(5000);
+        this.server.stop(5);
         this.running = false;
         this.server = null;
     }
