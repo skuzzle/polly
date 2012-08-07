@@ -5,6 +5,8 @@
     <input type="submit" value="Mark all as read" class="button" />
 </form>
 
+(<b>Attention:</b> this resets your idle status as well)
+
 #foreach ($entry in $logs.entrySet())
     #if (!$entry.getValue().isEmpty())
         <h3>$entry.getKey()</h3>
