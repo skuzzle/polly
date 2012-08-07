@@ -33,7 +33,7 @@
     
     <div id="content">
         <p><div id="permissions">
-            Permissions required for this page: <b>#foreach ($permission in $permissions) $permission #end</b>
+            Permissions required for this page: <b>#foreach ($permission in $permissions) #if ($permission != "polly.permissions.NONE") $permission #end #end</b>
         </div></p>
         #parse( ${content} )
     </div>
