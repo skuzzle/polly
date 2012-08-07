@@ -1,0 +1,21 @@
+<h2>IRC Replay since your last Action</h2>
+
+#foreach ($entry in $logs.entrySet())
+<h3>$entry.getKey()</h3>
+<table>
+    <tr>
+        <th>Time</th>
+        <th>Nickname</th>
+        <th>Channel</th>
+        <th>Message</th>
+    </tr>
+#foreach ($log in $entry.getValue())
+    <tr>
+        <td>$myPolly.formatting().formatDate($log.getDate())</td>
+        <td>$!log.getNickname()</td>
+        <td>$!log.getChannel()</td>
+        <td>$!log.getMessage()</td>
+    </tr>
+#end
+</table>
+#end
