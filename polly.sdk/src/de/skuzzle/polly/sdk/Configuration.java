@@ -335,6 +335,13 @@ public interface Configuration {
      */
     public final static String HTTP_TEMPLATE_ROOT = "templateRoot";
     
+    /**
+     * Determines whether the server will be started when polly
+     * starts.
+     * @since 0.9.1
+     */
+    public final static String HTTP_START_SERVER = "startServer";
+    
     
 	/**
 	 * <p>Stores a property with given name and value. If a property with the same name

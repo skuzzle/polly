@@ -82,6 +82,7 @@ public class HttpManagerProvider extends AbstractModule {
     }
     
     
+    
     @Override
     public void run() throws Exception {
         MyPolly myPolly = this.requireNow(MyPollyImpl.class, false);
@@ -100,6 +101,11 @@ public class HttpManagerProvider extends AbstractModule {
         this.httpManager.addMenuUrl("Admin", "IRC");
         this.httpManager.addMenuUrl("Admin", "Logs");
         this.httpManager.addMenuUrl("Admin", "Roles");
+        
+        boolean start = this.serverCfg.readBoolean(Configuration.HTTP_START_SERVER);
+        if (!start) {
+            return;
+        }
         
         try {
             this.httpManager.startWebServer();
