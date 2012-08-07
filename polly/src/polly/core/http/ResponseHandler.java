@@ -55,7 +55,13 @@ public class ResponseHandler implements HttpHandler {
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            params.put(key, new HttpParameter(key, value, type));
+            if (params.containsKey(key)) {
+                HttpParameter current = params.get(key);
+                params.put(key, new HttpParameter(
+                        key, current.getValue() + ";" + value, type));
+            } else {
+                params.put(key, new HttpParameter(key, value, type));
+            }
         }
     }
     
@@ -74,11 +80,11 @@ public class ResponseHandler implements HttpHandler {
     }
     
     
-    private SimpleWebServer webServer;
+    private HttpManagerImpl webServer;
     
     
     
-    public ResponseHandler(SimpleWebServer webServer) {
+    public ResponseHandler(HttpManagerImpl webServer) {
         this.webServer = webServer;
     }
     

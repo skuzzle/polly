@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import org.apache.log4j.Logger;
 
 import com.sun.net.httpserver.HttpServer;
 
+import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.http.HttpAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpEventListener;
@@ -30,10 +32,10 @@ import de.skuzzle.polly.tools.events.SynchronousEventProvider;
 
 
 
-public class SimpleWebServer implements HttpManager {
+public class HttpManagerImpl implements HttpManager {
     
     
-    private final static Logger logger = Logger.getLogger(SimpleWebServer.class
+    private final static Logger logger = Logger.getLogger(HttpManagerImpl.class
         .getName());
     
     
@@ -49,12 +51,13 @@ public class SimpleWebServer implements HttpManager {
     private File templateRoot;
     private int sessionTimeOut;
     private RoleManager roleManager;
+    private MyPolly myPolly;
     
     
-    
-    public SimpleWebServer(RoleManager roleManager, File templateRoot, 
+    public HttpManagerImpl(MyPolly myPolly, File templateRoot, 
             int port, int sessionTimeOut) {
-        this.roleManager = roleManager;
+        this.roleManager = myPolly.roles();
+        this.myPolly = myPolly;
         this.templateRoot = templateRoot;
         this.port = port;
         this.sessionTimeOut = sessionTimeOut;
@@ -136,6 +139,8 @@ public class SimpleWebServer implements HttpManager {
         } else {
             if (this.roleManager.canAccess(e.getSession().getUser(), action)) {
                 actionContext = action.execute(e);
+                actionContext.put(HttpInterface.PERMISSIONS, 
+                        action.getRequiredPermission());
             } else {
                 return this.errorTemplate("Permission denied", 
                     "You have insufficient permissions to acces this page/action." +
@@ -159,6 +164,8 @@ public class SimpleWebServer implements HttpManager {
         c.put(HttpInterface.ERROR_HEADING, errorHeading);
         c.put(HttpInterface.ERROR_DESCRIPTION, errorDescription);
         c.put(HttpInterface.CONTENT, this.getPage(HttpInterface.PAGE_ERROR).getPath());
+        c.put(HttpInterface.PERMISSIONS, 
+                Collections.singleton(RoleManager.NONE_PERMISSION));
         this.putRootContext(c, session);
         return c;
     }
@@ -183,6 +190,7 @@ public class SimpleWebServer implements HttpManager {
         c.put("title", "Polly Webinterface");
         c.put("heading", "Polly Webinterface");
         c.put("me", session.getUser());
+        c.put("myPolly", this.myPolly);
     }
 
 
