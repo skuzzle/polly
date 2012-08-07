@@ -1,6 +1,7 @@
 package polly.logging;
 
 
+import http.LoggingHttpAction;
 import http.ReplayHttpAction;
 
 import java.io.IOException;
@@ -101,8 +102,10 @@ public class MyPlugin extends PollyPlugin {
         myPolly.irc().addMessageListener(this.highlightForwarder);
         
         myPolly.web().addMenuUrl("Replay");
+        myPolly.web().addMenuUrl("Logging");
         myPolly.web().addHttpAction(new ReplayHttpAction(myPolly, 
                 new DefaultLogFormatter(), this.logManager));
+        myPolly.web().addHttpAction(new LoggingHttpAction(myPolly));
     }
     
     

@@ -1,0 +1,43 @@
+<h2>Polly Irc Logging</h2>
+
+<h3>Search channel</h3>
+<form action="/Logging" method="POST">
+<table>
+    <tr>
+        <th>Channel</th>
+        <th>Regular Expression</th>
+        <th>Not older than</th>
+        <th>Not younger than</th>
+        <th>Action</th>
+    </tr>
+    <tr>
+        <td><input type="text" name="channel" /></td>
+        <td><input type="text" name="pattern" /></td>
+        <td><input type="text" name="from" /></td>
+        <td><input type="text" name="to"/></td>
+        <td><input type="submit" value="Search" class="button"/></td>
+    </tr>
+</table>
+<input type="hidden" name="action" value="channellog"/>
+</form>
+
+<h3>Search user</h3>
+<form action="/Logging" method="POST">
+<table>
+    <tr>
+        <th>Nickname</th>
+        <th>Regular Expression</th>
+        <th>Not older than</th>
+        <th>Not younger than</th>
+        <th>Action</th>
+    </tr>
+    <tr>
+        <td><input type="text" name="nickname" /></td>
+        <td><input type="text" name="pattern" /></td>
+        <td><input type="text" name="from" /></td>
+        <td><input type="text" name="to" /></td>
+        <td><input type="submit" value="Search" class="button"/></td>
+    </tr>
+</table>
+<input type="hidden" name="action" value="userlog"/>
+</form>
