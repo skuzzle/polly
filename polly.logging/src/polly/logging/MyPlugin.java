@@ -1,6 +1,8 @@
 package polly.logging;
 
 
+import http.ReplayHttpAction;
+
 import java.io.IOException;
 
 import commands.ChannelLogCommand;
@@ -8,6 +10,7 @@ import commands.ReplayCommand;
 import commands.SeenCommand;
 import commands.UserLogCommand;
 
+import core.DefaultLogFormatter;
 import core.ForwardHighlightHandler;
 import core.IrcLogCollector;
 import core.PollyLoggingManager;
@@ -96,6 +99,10 @@ public class MyPlugin extends PollyPlugin {
         
         this.highlightForwarder = new ForwardHighlightHandler(myPolly, this.logManager);
         myPolly.irc().addMessageListener(this.highlightForwarder);
+        
+        myPolly.web().addMenuUrl("Replay");
+        myPolly.web().addHttpAction(new ReplayHttpAction(myPolly, 
+                new DefaultLogFormatter(), this.logManager));
     }
     
     

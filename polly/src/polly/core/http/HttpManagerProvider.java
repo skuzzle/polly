@@ -21,31 +21,21 @@ import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.SetupException;
 import polly.moduleloader.annotations.Module;
 import polly.moduleloader.annotations.Provide;
-import polly.moduleloader.annotations.Require;
 
 
 
 @Module(
-    requires = {
-        @Require(component = MyPollyImpl.class),
-    },
-    provides = @Provide(component = HttpManagerImpl.class))
+    provides = @Provide(component = HttpManagerImpl.class)
+)
 public class HttpManagerProvider extends AbstractModule {
 
     private final static Logger logger = Logger.getLogger(HttpManagerProvider.class
         .getName());
     
-    private MyPolly myPolly;
+    private HttpManagerImpl httpManager;
     
     public HttpManagerProvider(ModuleLoader loader) {
         super("HTTP_SERVER_PROVIDER", loader, false);
-    }
-    
-    
-    
-    @Override
-    public void beforeSetup() {
-        this.myPolly = this.requireNow(MyPollyImpl.class, true);
     }
 
     
@@ -53,25 +43,35 @@ public class HttpManagerProvider extends AbstractModule {
     @Override
     public void setup() throws SetupException {
         File templateRoot = new File("webinterface");
-        final HttpManagerImpl sws = new HttpManagerImpl(this.myPolly,
+        this.httpManager = new HttpManagerImpl(
             templateRoot, 
             81, 1000 * 60 * 10);
-        sws.addHttpAction(new RootHttpAction(this.myPolly));
-        sws.addHttpAction(new LoginHttpAction(this.myPolly));
-        sws.addHttpAction(new LogoutHttpAction(this.myPolly));
-        sws.addHttpAction(new UserPageHttpAction(this.myPolly));
-        sws.addHttpAction(new UserInfoPageHttpAction(this.myPolly));
-        sws.addHttpAction(new IRCPageHttpAction(this.myPolly));
-        sws.addHttpAction(new RoleHttpAction(this.myPolly));
+        this.provideComponent(this.httpManager);
+
+    }
+    
+    
+    @Override
+    public void run() throws Exception {
+        MyPolly myPolly = this.requireNow(MyPollyImpl.class, false);
+        // HACK: this avoids cyclic dependency
+        this.httpManager.setMyPolly(myPolly);
         
-        sws.addMenuUrl("Users");
-        sws.addMenuUrl("IRC");
-        sws.addMenuUrl("Logs");
-        sws.addMenuUrl("Roles");
+        this.httpManager.addHttpAction(new RootHttpAction(myPolly));
+        this.httpManager.addHttpAction(new LoginHttpAction(myPolly));
+        this.httpManager.addHttpAction(new LogoutHttpAction(myPolly));
+        this.httpManager.addHttpAction(new UserPageHttpAction(myPolly));
+        this.httpManager.addHttpAction(new UserInfoPageHttpAction(myPolly));
+        this.httpManager.addHttpAction(new IRCPageHttpAction(myPolly));
+        this.httpManager.addHttpAction(new RoleHttpAction(myPolly));
+        
+        this.httpManager.addMenuUrl("Users");
+        this.httpManager.addMenuUrl("IRC");
+        this.httpManager.addMenuUrl("Logs");
+        this.httpManager.addMenuUrl("Roles");
         
         try {
-            sws.startServer();
-            this.provideComponent(sws);
+            this.httpManager.startServer();
         } catch (IOException e) {
             logger.error("Error while starting webserver: ", e);
             throw new SetupException(e);

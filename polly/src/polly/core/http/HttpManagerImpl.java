@@ -54,10 +54,8 @@ public class HttpManagerImpl implements HttpManager {
     private MyPolly myPolly;
     
     
-    public HttpManagerImpl(MyPolly myPolly, File templateRoot, 
+    public HttpManagerImpl(File templateRoot, 
             int port, int sessionTimeOut) {
-        this.roleManager = myPolly.roles();
-        this.myPolly = myPolly;
         this.templateRoot = templateRoot;
         this.port = port;
         this.sessionTimeOut = sessionTimeOut;
@@ -65,6 +63,14 @@ public class HttpManagerImpl implements HttpManager {
         this.eventProvider = new SynchronousEventProvider();
         this.actions = new HashMap<String, HttpAction>();
         this.menu = new ArrayList<String>();
+    }
+    
+    
+    
+    public void setMyPolly(MyPolly myPolly) {
+        // HACK: need this setter to avoid cyclic dependency
+        this.myPolly = myPolly;
+        this.roleManager = myPolly.roles();
     }
     
     
@@ -172,7 +178,8 @@ public class HttpManagerImpl implements HttpManager {
     
     
     
-    protected File getPage(String name) {
+    @Override
+    public File getPage(String name) {
         return new File(this.templateRoot, name);
     }
     

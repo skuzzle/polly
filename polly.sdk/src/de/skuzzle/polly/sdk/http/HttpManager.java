@@ -1,5 +1,7 @@
 package de.skuzzle.polly.sdk.http;
 
+import java.io.File;
+
 
 
 
@@ -23,6 +25,8 @@ public interface HttpManager {
     
     public abstract void removeHttpEventListener(HttpEventListener listener);
 
-    HttpTemplateContext errorTemplate(String errorHeading,
+    public abstract HttpTemplateContext errorTemplate(String errorHeading,
         String errorDescription, HttpSession session);
+
+    public abstract File getPage(String name);
 }
