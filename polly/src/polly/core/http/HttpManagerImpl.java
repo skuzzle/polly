@@ -53,11 +53,14 @@ public class HttpManagerImpl implements HttpManager {
     private int sessionTimeOut;
     private RoleManager roleManager;
     private MyPolly myPolly;
+    private String publicHost;
     
     
-    public HttpManagerImpl(File templateRoot, 
+    
+    public HttpManagerImpl(File templateRoot, String publicHost,
             int port, int sessionTimeOut) {
         this.templateRoot = templateRoot;
+        this.publicHost = publicHost;
         this.port = port;
         this.sessionTimeOut = sessionTimeOut;
         this.sessions = new HashMap<InetAddress, HttpSession>();
@@ -78,6 +81,20 @@ public class HttpManagerImpl implements HttpManager {
     
     public File getTemplateRoot() {
         return this.templateRoot;
+    }
+    
+    
+    
+    @Override
+    public String getPublicHost() {
+        return this.publicHost;
+    }
+    
+    
+    
+    @Override
+    public int getPort() {
+        return this.port;
     }
     
     

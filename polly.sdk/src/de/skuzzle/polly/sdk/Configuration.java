@@ -311,6 +311,30 @@ public interface Configuration {
      */
     public final static String INITIAL_RETY_COUNT = "initialRetryCount";
     
+    /**
+     * Timeout for HTTP sessions.
+     * @since 0.9.1
+     */
+    public final static String HTTP_SESSION_TIMEOUT = "sessionTimeOut";
+    
+    /**
+     * The public host name under which the web interface will be reachable.
+     * @since 0.9.1
+     */
+    public final static String HTTP_PUBLIC_HOST = "publicHost";
+    
+    /**
+     * The port for the HTTP server.
+     * @since 0.9.1
+     */
+    public final static String HTTP_PORT = "port";
+    
+    /**
+     * Root directory for html template files.
+     * @since 0.9.1
+     */
+    public final static String HTTP_TEMPLATE_ROOT = "templateRoot";
+    
     
 	/**
 	 * <p>Stores a property with given name and value. If a property with the same name

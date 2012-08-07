@@ -5,9 +5,12 @@ import java.io.IOException;
 
 import org.apache.log4j.Logger;
 
+import de.skuzzle.polly.sdk.Configuration;
+import de.skuzzle.polly.sdk.ConfigurationProvider;
 import de.skuzzle.polly.sdk.MyPolly;
 
 
+import polly.configuration.ConfigurationProviderImpl;
 import polly.core.http.actions.IRCPageHttpAction;
 import polly.core.http.actions.LoginHttpAction;
 import polly.core.http.actions.LogoutHttpAction;
@@ -21,10 +24,12 @@ import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.SetupException;
 import polly.moduleloader.annotations.Module;
 import polly.moduleloader.annotations.Provide;
+import polly.moduleloader.annotations.Require;
 
 
 
 @Module(
+    requires = @Require(component = ConfigurationProviderImpl.class),
     provides = @Provide(component = HttpManagerImpl.class)
 )
 public class HttpManagerProvider extends AbstractModule {
@@ -32,7 +37,11 @@ public class HttpManagerProvider extends AbstractModule {
     private final static Logger logger = Logger.getLogger(HttpManagerProvider.class
         .getName());
     
+    public final static String HTTP_CONFIG = "http.cfg";
+    
     private HttpManagerImpl httpManager;
+    private Configuration serverCfg;
+    
     
     public HttpManagerProvider(ModuleLoader loader) {
         super("HTTP_SERVER_PROVIDER", loader, false);
@@ -42,10 +51,26 @@ public class HttpManagerProvider extends AbstractModule {
     
     @Override
     public void setup() throws SetupException {
-        File templateRoot = new File("webinterface");
+        ConfigurationProvider configProvider = this.requireNow(
+                ConfigurationProviderImpl.class, true);
+        
+        try {
+            this.serverCfg = configProvider.open(HTTP_CONFIG);
+        } catch (IOException e) {
+            throw new SetupException(e);
+        }
+        
+        
+        File templateRoot = new File(
+                this.serverCfg.readString(Configuration.HTTP_TEMPLATE_ROOT));
+        int sessionTimeOut = this.serverCfg.readInt(Configuration.HTTP_SESSION_TIMEOUT);
+        int port = this.serverCfg.readInt(Configuration.HTTP_PORT);
+        String publicHost = this.serverCfg.readString(Configuration.HTTP_PUBLIC_HOST);
+        
         this.httpManager = new HttpManagerImpl(
-            templateRoot, 
-            81, 1000 * 60 * 10);
+            templateRoot, publicHost,
+            port, sessionTimeOut);
+        
         this.provideComponent(this.httpManager);
 
     }

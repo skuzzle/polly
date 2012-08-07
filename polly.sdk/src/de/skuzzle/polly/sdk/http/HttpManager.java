@@ -30,4 +30,8 @@ public interface HttpManager {
 
     public abstract File getPage(String name);
 
+    String getPublicHost();
+
+    int getPort();
+
 }
