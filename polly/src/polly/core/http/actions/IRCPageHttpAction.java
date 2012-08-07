@@ -10,12 +10,9 @@ import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 
 public class IRCPageHttpAction extends HttpAction {
 
-    private MyPolly myPolly;
-    
     
     public IRCPageHttpAction(MyPolly myPolly) {
-        super("/IRC");
-        this.myPolly = myPolly;
+        super("/IRC", myPolly);
     }
     
     

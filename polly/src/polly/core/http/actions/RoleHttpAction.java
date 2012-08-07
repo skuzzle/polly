@@ -4,6 +4,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import polly.core.http.HttpInterface;
+import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.RoleException;
 import de.skuzzle.polly.sdk.http.HttpAction;
@@ -16,9 +17,9 @@ public class RoleHttpAction extends HttpAction {
     private RoleManager roleManager;
     
     
-    public RoleHttpAction(RoleManager roleManager) {
-        super("/Roles");
-        this.roleManager = roleManager;
+    public RoleHttpAction(MyPolly myPolly) {
+        super("/Roles", myPolly);
+        this.roleManager = myPolly.roles();
     }
 
     

@@ -9,12 +9,9 @@ import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 
 public class RootHttpAction extends HttpAction {
 
-    private MyPolly myPolly;
-    
     
     public RootHttpAction(MyPolly myPolly) {
-        super("/");
-        this.myPolly = myPolly;
+        super("/", myPolly);
     }
 
     

@@ -6,6 +6,7 @@ import polly.core.http.HttpInterface;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.RoleException;
+import de.skuzzle.polly.sdk.http.AbstractAdminAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.model.User;
@@ -13,12 +14,9 @@ import de.skuzzle.polly.sdk.model.User;
 
 public class UserInfoPageHttpAction extends AbstractAdminAction {
 
-    private MyPolly myPolly;
-    
     
     public UserInfoPageHttpAction(MyPolly myPolly) {
-        super("/user_info");
-        this.myPolly = myPolly;
+        super("/user_info", myPolly);
     }
     
     

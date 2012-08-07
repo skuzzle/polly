@@ -1,4 +1,10 @@
-<h2>Polly Role Overview</h2>
+<h2 id="anchorTop">Polly Role Overview</h2>
+<ul>
+#foreach ($role in $roles) 
+<li><a href="#anchor$role">$role</a></li>
+#end
+</ul>
+
 <table>
 <tr>
     <th>Role/Permission</th>
@@ -7,7 +13,7 @@
 #foreach ($role in $roles)
 <tr>
     <td><b>$role</b></td>
-    <td></td>
+    <td><a name="anchor$role" href="#anchorTop">Top</a></td>
 </tr>
 #foreach ($permission in $rolemanager.getPermissions($role))
 <tr>
@@ -17,7 +23,7 @@
             <input type="hidden" name="role" value="$role"/>
             <input type="hidden" name="permission" value="$permission"/>
             <input type="hidden" name="action" value="removePermissionFromRole"/>
-            <input type="submit" value="Remove" class="button"/>
+            <input #if ($role == "polly.roles.ADMIN") disabled #end type="submit" value="Remove" class="button"/>
         </form>
     </td>
 </tr>

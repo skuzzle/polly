@@ -1,6 +1,7 @@
 package polly.core.http.actions;
 
 import polly.core.http.HttpInterface;
+import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.http.HttpAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
@@ -17,10 +18,10 @@ public class LoginHttpAction extends HttpAction {
     
     
     
-    public LoginHttpAction(UserManager userManager, RoleManager roleManager) {
-        super("/login");
-        this.userManager = userManager;
-        this.roleManager = roleManager;
+    public LoginHttpAction(MyPolly myPolly) {
+        super("/login", myPolly);
+        this.userManager = myPolly.users();
+        this.roleManager = myPolly.roles();
     }
     
     

@@ -15,7 +15,7 @@
         #end
     </div>
 
-    <h1 id="top">${heading}</h1>
+    <h1 id="top"><a href="/">${heading}</a></h1>
 
     <div id="menu">
         #if ($me)
@@ -28,7 +28,11 @@
         #end
     </div>
     
+    
     <div id="content">
+        <p><div id="permissions">
+            Permissions required for this page: <b>#foreach ($permission in $permissions) $permission #end</b>
+        </div></p>
         #parse( ${content} )
     </div>
     

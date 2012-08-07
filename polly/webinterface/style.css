@@ -46,6 +46,17 @@ body {
 }
 
 
+#content a {
+    font-weight: bold;
+    text-decoration: none;
+    color: black;
+}
+
+#content a:hover {
+    text-decoration: underline;
+}
+
+
 .button {
     border: 1px solid #808080;
     font-weight: bold;
@@ -64,6 +75,16 @@ body {
     background-color: #E0E0E0;
 }
 
+#permissions {
+    background-color: #F0F0F0;
+    border: 1px solid black;
+    font-size: x-small;
+    padding: 5px;
+    margin-bottom: 20px;
+    width: auto;
+    display:inline;
+}
+
 #bottom {
     margin-top: 5px;
     margin-left: 200px;
@@ -72,4 +93,9 @@ body {
     padding-top: 5px;
     text-align: center;
     font-size: x-small;
+}
+
+#top a  {
+    color: black;
+    text-decoration: none;
 }

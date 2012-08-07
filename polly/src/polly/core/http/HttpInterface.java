@@ -5,6 +5,8 @@ package polly.core.http;
 public interface HttpInterface {
     
     public final static String CONTENT = "content";
+    public final static String PERMISSIONS = "permissions";
+
     
     public final static String PAGE_ERROR = "pages/error.html";
     public final static String PAGE_IRC = "pages/irc.html";
@@ -17,6 +19,6 @@ public interface HttpInterface {
     
     public final static String ERROR_HEADING = "errorHeading";
     public final static String ERROR_DESCRIPTION = "errorDescription";
-
+    
 
 }
