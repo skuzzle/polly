@@ -40,6 +40,16 @@ public class ReplayHttpAction extends HttpAction {
     public HttpTemplateContext execute(HttpEvent e) {
         HttpTemplateContext c = new HttpTemplateContext("pages/replay.html");
         
+        String action = e.getProperty("action");
+        
+        if (action != null && action.equals("mark")) {
+            e.getSession().getUser().setLastMessageTime(
+                    this.myPolly.currentTimeMillis());
+            // HACK: do this twice!
+            e.getSession().getUser().setLastMessageTime(
+                    this.myPolly.currentTimeMillis());
+        }
+        
         Map<String, List<LogEntry>> logs = new TreeMap<String, List<LogEntry>>();
         
         LogFilter dateFilter = new DateLogFilter(
