@@ -10,6 +10,7 @@ import polly.core.ShutdownManagerImpl;
 import polly.core.commands.CommandManagerImpl;
 import polly.core.conversations.ConversationManagerImpl;
 import polly.core.formatting.FormatManagerImpl;
+import polly.core.http.HttpManagerImpl;
 import polly.core.irc.IrcManagerImpl;
 import polly.core.mail.MailManagerImpl;
 import polly.core.paste.PasteServiceManagerImpl;
@@ -31,6 +32,7 @@ import de.skuzzle.polly.sdk.PluginManager;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.UtilityManager;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
+import de.skuzzle.polly.sdk.http.HttpManager;
 import de.skuzzle.polly.sdk.paste.PasteServiceManager;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.time.SystemTimeProvider;
@@ -61,7 +63,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 	private PasteServiceManagerImpl pasteManager;
 	private MailManagerImpl mailManager;
 	private RoleManagerImpl roleManager;
-	
+	private HttpManagerImpl httpManager;
 	
 	
 	public MyPollyImpl(CommandManagerImpl cmdMngr, 
@@ -75,7 +77,8 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 			ShutdownManagerImpl shutdownManager,
 			PasteServiceManagerImpl pasteManager,
 			MailManagerImpl mailManager,
-			RoleManagerImpl roleManager) {
+			RoleManagerImpl roleManager,
+			HttpManagerImpl httpManager) {
 	    
 		this.commandManager = cmdMngr;
 		this.ircManager = ircMngr;
@@ -91,6 +94,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 		this.timeProvider = new SystemTimeProvider();
 		this.mailManager = mailManager;
 		this.roleManager = roleManager;
+		this.httpManager = httpManager;
 	}
 	
 	
@@ -107,6 +111,12 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 		return Polly.class.getPackage().getImplementationVersion();
 	}
 
+	
+	
+	@Override
+	public HttpManager web() {
+	    return this.httpManager;
+	}
 	
 	
 	@Override

@@ -9,6 +9,7 @@ import polly.core.ShutdownManagerImpl;
 import polly.core.commands.CommandManagerImpl;
 import polly.core.conversations.ConversationManagerImpl;
 import polly.core.formatting.FormatManagerImpl;
+import polly.core.http.HttpManagerImpl;
 import polly.core.irc.IrcManagerImpl;
 import polly.core.mail.MailManagerImpl;
 import polly.core.paste.PasteServiceManagerImpl;
@@ -37,7 +38,8 @@ import polly.moduleloader.annotations.Provide;;
         @Require(component = PasteServiceManagerImpl.class),
         @Require(component = ExecutorService.class),
         @Require(component = MailManagerImpl.class),
-        @Require(component = RoleManagerImpl.class)
+        @Require(component = RoleManagerImpl.class),
+        @Require(component = HttpManagerImpl.class)
     },
     provides = 
         @Provide(component = MyPollyImpl.class))
@@ -55,6 +57,8 @@ public class MyPollyProvider extends AbstractModule {
     private ShutdownManagerImpl shutdownManager;
     private MailManagerImpl mailManager;
     private RoleManagerImpl roleManager;
+    private HttpManagerImpl httpManager;
+    
     
     
     public MyPollyProvider(ModuleLoader loader) {
@@ -77,6 +81,7 @@ public class MyPollyProvider extends AbstractModule {
         this.pasteManager = this.requireNow(PasteServiceManagerImpl.class, true);
         this.mailManager = this.requireNow(MailManagerImpl.class, true);
         this.roleManager = this.requireNow(RoleManagerImpl.class, true);
+        this.httpManager = this.requireNow(HttpManagerImpl.class, true);
     }
     
     
@@ -95,7 +100,8 @@ public class MyPollyProvider extends AbstractModule {
             this.shutdownManager,
             this.pasteManager,
             this.mailManager,
-            this.roleManager);
+            this.roleManager,
+            this.httpManager);
         this.provideComponent(myPolly);
     }
     

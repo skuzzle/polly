@@ -2,6 +2,7 @@ package de.skuzzle.polly.sdk;
 
 import java.util.Date;
 
+import de.skuzzle.polly.sdk.http.HttpManager;
 import de.skuzzle.polly.sdk.paste.PasteServiceManager;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.time.TimeProvider;
@@ -212,4 +213,15 @@ public interface MyPolly {
 	 * @since 0.9
 	 */
 	public abstract MailManager mails();
+
+
+
+	
+	/**
+	 * Gets a HTTPManager implementation to access pollys webinterface.
+	 * 
+	 * @return A HttpManager instance.
+	 * @since 0.9.1
+	 */
+    public abstract HttpManager web();
 }
