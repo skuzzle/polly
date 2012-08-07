@@ -10,8 +10,10 @@ public class BotConnectionSettings {
     private String identity;
     private List<String> channels;
     private String modes;
+    private int lastPortIdx;
     
 
+    
     public BotConnectionSettings(String nickName, String hostName, 
             List<Integer> ports, String identity, List<String> channels, String modes) {
         this.nickName = nickName;
@@ -20,6 +22,7 @@ public class BotConnectionSettings {
         this.identity = identity;
         this.channels = channels;
         this.modes = modes;
+        this.lastPortIdx = 0;
     }
     
     
@@ -37,8 +40,7 @@ public class BotConnectionSettings {
 
 
     public int getPort() {
-        int rndIdx = (int) (this.ports.size() * Math.random());
-        return this.ports.get(rndIdx);
+        return this.ports.get(this.lastPortIdx++ % this.ports.size());
     }
 
 
@@ -48,9 +50,11 @@ public class BotConnectionSettings {
     }    
     
     
+    
     public List<String> getChannels() {
         return this.channels;
     }
+    
     
     
     public String getModes() {
