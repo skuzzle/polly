@@ -132,11 +132,12 @@ public interface UserManager {
      * @param name The users name.
      * @param password The users password in plaintext. This will then be stored as a
      *      hash value.
+     * @return The added user.
      * @throws UserExistsException If a user with the same name already exists.
      * @throws DatabaseException If storing the new user to the database fails for any
      *      reason.
      */
-	public abstract void addUser(String name, String password) 
+	public abstract User addUser(String name, String password) 
 	        throws UserExistsException, DatabaseException;
 	
 	

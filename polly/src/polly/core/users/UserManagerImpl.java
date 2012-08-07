@@ -226,9 +226,11 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
 
     @Override
-    public void addUser(String name, String password) 
+    public User addUser(String name, String password) 
             throws UserExistsException, DatabaseException {
-        this.addUser(this.createUser(name, password));
+        User newUser = this.createUser(name, password);
+        this.addUser(newUser);
+        return newUser;
     }
 
     
