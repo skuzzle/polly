@@ -7,12 +7,14 @@ import polly.core.http.HttpInterface;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.RoleException;
-import de.skuzzle.polly.sdk.http.HttpAction;
+import de.skuzzle.polly.sdk.http.AbstractAdminAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 
-public class RoleHttpAction extends HttpAction {
+
+
+public class RoleHttpAction extends AbstractAdminAction {
 
     private RoleManager roleManager;
     
