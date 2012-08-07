@@ -26,6 +26,7 @@
 *.ppk
 *.num
 *.declaration
+/libs/
 /plugins/
 /polly/cfg/mail.cfg
 /polly/dist
