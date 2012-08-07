@@ -11,6 +11,7 @@ import de.skuzzle.polly.sdk.MyPolly;
 
 
 import polly.configuration.ConfigurationProviderImpl;
+import polly.core.ShutdownManagerImpl;
 import polly.core.http.actions.IRCPageHttpAction;
 import polly.core.http.actions.LoginHttpAction;
 import polly.core.http.actions.LogoutHttpAction;
@@ -29,7 +30,10 @@ import polly.moduleloader.annotations.Require;
 
 
 @Module(
-    requires = @Require(component = ConfigurationProviderImpl.class),
+    requires = {
+        @Require(component = ConfigurationProviderImpl.class),
+        @Require(component = ShutdownManagerImpl.class)
+    },
     provides = @Provide(component = HttpManagerImpl.class)
 )
 public class HttpManagerProvider extends AbstractModule {
@@ -72,7 +76,9 @@ public class HttpManagerProvider extends AbstractModule {
             port, sessionTimeOut);
         
         this.provideComponent(this.httpManager);
-
+        ShutdownManagerImpl shutdownManager = this.requireNow(
+                ShutdownManagerImpl.class, true);
+        shutdownManager.addDisposable(this.httpManager);
     }
     
     
@@ -96,7 +102,7 @@ public class HttpManagerProvider extends AbstractModule {
         this.httpManager.addMenuUrl("Admin", "Roles");
         
         try {
-            this.httpManager.startServer();
+            this.httpManager.startWebServer();
         } catch (IOException e) {
             logger.error("Error while starting webserver: ", e);
             throw new SetupException(e);

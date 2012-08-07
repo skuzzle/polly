@@ -18,7 +18,9 @@ import org.apache.log4j.Logger;
 
 import com.sun.net.httpserver.HttpServer;
 
+import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.http.HttpAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpEventListener;
@@ -33,7 +35,7 @@ import de.skuzzle.polly.tools.events.SynchronousEventProvider;
 
 
 
-public class HttpManagerImpl implements HttpManager {
+public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     
     
     private final static Logger logger = Logger.getLogger(HttpManagerImpl.class
@@ -99,7 +101,8 @@ public class HttpManagerImpl implements HttpManager {
     
     
     
-    public void startServer() throws IOException {
+    @Override
+    public void startWebServer() throws IOException {
         if (this.isRunning()) {
             return;
         }
@@ -112,6 +115,16 @@ public class HttpManagerImpl implements HttpManager {
         this.server.start();
         this.running = true;
         logger.info("Webserver running.");
+    }
+    
+
+
+    @Override
+    public void stopWebServer() {
+        logger.info("Stopping http service");
+        this.server.stop(5000);
+        this.running = false;
+        this.server = null;
     }
     
     
@@ -241,19 +254,6 @@ public class HttpManagerImpl implements HttpManager {
     
     
     
-    @Override
-    public void startWebServer() {
-    }
-
-
-
-    @Override
-    public void stopWebServer() {
-    }
-    
-    
-    
-    
     protected void fireHttpAction(final HttpEvent e) {
         final List<HttpEventListener> listeners = 
             this.eventProvider.getListeners(HttpEventListener.class);
@@ -288,5 +288,12 @@ public class HttpManagerImpl implements HttpManager {
 
     public int getSessionTimeOut() {
         return this.sessionTimeOut;
+    }
+
+
+
+    @Override
+    protected void actualDispose() throws DisposingException {
+        this.stopWebServer();
     }
 }

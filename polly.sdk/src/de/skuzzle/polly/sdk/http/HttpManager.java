@@ -1,6 +1,7 @@
 package de.skuzzle.polly.sdk.http;
 
 import java.io.File;
+import java.io.IOException;
 
 
 
@@ -9,7 +10,7 @@ public interface HttpManager {
     
     public final static String HTTP_ADMIN_PERMISSION = "polly.permission.HTTP_ADMIN";
     
-    public abstract void startWebServer();
+    public abstract void startWebServer() throws IOException;
     
     public abstract void stopWebServer();
     
