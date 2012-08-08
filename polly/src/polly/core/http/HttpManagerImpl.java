@@ -57,14 +57,16 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     private RoleManager roleManager;
     private MyPolly myPolly;
     private String publicHost;
+    private String encoding;
     
     
     
     public HttpManagerImpl(File templateRoot, String publicHost,
-            int port, int sessionTimeOut) {
+            int port, int sessionTimeOut, String encoding) {
         this.templateRoot = templateRoot;
         this.publicHost = publicHost;
         this.port = port;
+        this.encoding = encoding;
         this.sessionTimeOut = sessionTimeOut;
         this.sessions = new HashMap<InetAddress, HttpSession>();
         this.eventProvider = new SynchronousEventProvider();
@@ -316,5 +318,11 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     @Override
     protected void actualDispose() throws DisposingException {
         this.stopWebServer();
+    }
+
+
+
+    public String getEncoding() {
+        return this.encoding;
     }
 }

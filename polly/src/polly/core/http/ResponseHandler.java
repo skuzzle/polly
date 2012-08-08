@@ -94,7 +94,6 @@ public class ResponseHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange t) throws IOException {
-        
         HttpSession session = this.webServer.getSession(
             t.getRemoteAddress().getAddress());
         session.setLastAction(System.currentTimeMillis());
@@ -218,10 +217,12 @@ public class ResponseHandler implements HttpHandler {
         VelocityContext context = new VelocityContext(c);
         
         File dest = new File(this.webServer.getTemplateRoot(), "index.html");
-        Template template = Velocity.getTemplate(dest.getPath());
+        Template template = Velocity.getTemplate(dest.getPath(), 
+                this.webServer.getEncoding());
         //OutputStreamWriter writer = new OutputStreamWriter(out);
         StringWriter writer = new StringWriter();
         template.merge(context, writer);
-        out.write(writer.toString().getBytes(Charset.forName("UTF-8")));
+        out.write(writer.toString().getBytes(Charset.forName(
+                this.webServer.getEncoding())));
     }
 }

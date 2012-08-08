@@ -71,10 +71,12 @@ public class HttpManagerProvider extends AbstractModule {
         int sessionTimeOut = this.serverCfg.readInt(Configuration.HTTP_SESSION_TIMEOUT);
         int port = this.serverCfg.readInt(Configuration.HTTP_PORT);
         String publicHost = this.serverCfg.readString(Configuration.HTTP_PUBLIC_HOST);
+        String encoding = configProvider.getRootConfiguration().readString(
+                Configuration.ENCODING);
         
         this.httpManager = new HttpManagerImpl(
             templateRoot, publicHost,
-            port, sessionTimeOut);
+            port, sessionTimeOut, encoding);
         
         this.provideComponent(this.httpManager);
         ShutdownManagerImpl shutdownManager = this.requireNow(
