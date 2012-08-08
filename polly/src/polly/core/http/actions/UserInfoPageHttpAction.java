@@ -61,6 +61,7 @@ public class UserInfoPageHttpAction extends HttpAction {
                 e.throwTemplateException("Invalid Request", 
                         "Your Request could not be executed");
             }
+            
             String role = e.getProperty("role");
             User user = this.myPolly.users().getUser(userName);
             
@@ -73,6 +74,11 @@ public class UserInfoPageHttpAction extends HttpAction {
                 e.throwTemplateException(e1);
             }
         } else if (action != null && action.equals("removeRole")) {
+            if (!isAdmin) {
+                e.throwTemplateException("Invalid Request", 
+                        "Your Request could not be executed");
+            }
+            
             String role = e.getProperty("role");
             User user = this.myPolly.users().getUser(userName);
             
@@ -85,6 +91,10 @@ public class UserInfoPageHttpAction extends HttpAction {
                 e.throwTemplateException(e1);
             }
         } else if (action != null && action.equals("setPassword")) {
+            if (!isAdmin && !isHome) {
+                e.throwTemplateException("Invalid Request", 
+                        "Your Request could not be executed");
+            }
             String newPassword = e.getProperty("password");
             
             if (newPassword == null || newPassword.equals("")) {

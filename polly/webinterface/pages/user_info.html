@@ -23,6 +23,7 @@
     </tr>
 </table>
 
+#if ($isHome || $isAdmin)
 <h3>Set new Password</h3>
 <form action="user_info" method="POST">
 <table>
@@ -38,7 +39,9 @@
 <input type="hidden" name="action" value="setPassword" />
 <input type="hidden" name="userName" value="$user.getName()" />
 </form>
+#end
 
+#if ($isAdmin)
 <h3>User Roles</h3>
 <table>
     <tr>
@@ -68,7 +71,9 @@
         </form>
     </tr>
 </table>
+#end
 
+#if ($isHome || $isAdmin)
 <h3>Attributes</h3>
 <form action="user_info" method="POST">
 <table>
@@ -98,4 +103,5 @@
     <input type="submit" value="Edit" class="button"/>
 #end
 </form>
+#end
 #end
