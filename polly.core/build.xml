@@ -101,7 +101,7 @@
     -->
     <target name="build">
         <mkdir dir="${bin.dir}"/>
-        <javac srcdir="${src.dir}" destdir="${bin.dir}" classpathref="buildpath" source="1.6" target="1.6" debug="off" encoding="iso-8859-1">
+        <javac srcdir="${src.dir}" destdir="${bin.dir}" classpathref="buildpath" source="1.6" target="1.6" debug="on" encoding="iso-8859-1">
             <exclude name="de/skuzzle/test/**"/>
         </javac>
     </target>

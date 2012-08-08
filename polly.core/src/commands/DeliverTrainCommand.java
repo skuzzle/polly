@@ -48,8 +48,7 @@ public class DeliverTrainCommand extends Command {
             userName = signature.getStringValue(0);
             deliverTo = signature.getStringValue(1);
         }
-        int trainerId = this.trainManager.getTrainerId(executer.getCurrentNickName());
-        TrainBillV2 bill = this.trainManager.getBill(trainerId, userName);
+        TrainBillV2 bill = this.trainManager.getBill(executer, userName);
         for (TrainEntityV2 train : bill.getTrains()) {
             this.reply(deliverTo, train.format(this.getMyPolly().formatting()));
         }

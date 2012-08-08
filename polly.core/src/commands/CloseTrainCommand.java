@@ -41,9 +41,7 @@ public class CloseTrainCommand extends Command {
         if (this.match(signature, 0)) {
             String userName = signature.getStringValue(0);
             try {
-                int trainerId = this.trainManager.getTrainerId
-                    (executer.getCurrentNickName());
-                this.trainManager.closeOpenTrains(trainerId, userName);
+                this.trainManager.closeOpenTrains(executer, userName);
                 this.reply(channel, "Alle offenen Rechnungen für '" + userName + 
                     "'geschlossen.");
             } catch (DatabaseException e) {
@@ -52,9 +50,7 @@ public class CloseTrainCommand extends Command {
         } else if (this.match(signature, 1)) {
             int id = (int) signature.getNumberValue(0);
             try {
-                int trainerId = this.trainManager.getTrainerId(
-                    executer.getCurrentNickName());
-                this.trainManager.closeOpenTrain(trainerId, id);
+                this.trainManager.closeOpenTrain(executer, id);
                 this.reply(channel, "Posten mit der Id '" + id + " ' geschlossen.");
             } catch (DatabaseException e) {
                 this.reply(channel, "Interner Datenbankfehler!");

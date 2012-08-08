@@ -10,6 +10,7 @@ public class TrainBillV2 {
     private List<TrainEntityV2> trains;
     
     
+    
     public TrainBillV2(List<TrainEntityV2> trains) {
         this.trains = trains;
     }
@@ -21,13 +22,27 @@ public class TrainBillV2 {
     }
     
     
+    
+    private int weightedSumCache = -1;
     private int sumCache = -1;
+    
+    public synchronized int weightedSum() {
+        if (this.weightedSumCache == -1) {
+            this.weightedSumCache = 0;
+            for (TrainEntityV2 train : this.trains) {
+                this.weightedSumCache += train.getCosts() * train.getFactor();
+            }
+        }
+        return this.weightedSumCache;
+    }
+    
+    
     
     public synchronized int sum() {
         if (this.sumCache == -1) {
             this.sumCache = 0;
             for (TrainEntityV2 train : this.trains) {
-                this.sumCache += train.getCosts() * train.getFactor();
+                this.sumCache += train.getCosts();
             }
         }
         return this.sumCache;
@@ -41,7 +56,7 @@ public class TrainBillV2 {
             return "Keine offene Rechnung.";
         } else {
             return "Rechnung für " + this.trains.size() + " Trainings: " + 
-                this.sum() + " Cr.";
+                this.weightedSum() + " Cr.";
         }
     }
     

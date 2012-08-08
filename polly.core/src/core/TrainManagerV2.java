@@ -7,10 +7,10 @@ import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.WriteAction;
-import de.skuzzle.polly.sdk.eventlistener.IrcUser;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
+import de.skuzzle.polly.sdk.model.User;
 import entities.TrainEntityV2;
 
 
@@ -33,16 +33,35 @@ public class TrainManagerV2 extends AbstractDisposable {
     
     
     
-    public int getTrainerId(String trainerNick) {
-        return this.userManager.getUser(new IrcUser(trainerNick, "", "")).getId();
+    public User getTrainer(int id) {
+        return this.userManager.getUser(id);
+    }
+    
+    
+    public User getTrainer(String name) {
+        return this.userManager.getUser(name);
     }
     
     
     
-    public TrainBillV2 getBill(int trainerId, String forUser) {
+    public TrainBillV2 getClosedTrains(String forUser) {
+        return new TrainBillV2(this.persistence.atomicRetrieveList(TrainEntityV2.class, 
+                TrainEntityV2.CLOSED_BY_USER, forUser));
+    }
+    
+    
+    
+    public TrainBillV2 getAllOpenTrains(String forUser) {
+        return new TrainBillV2(this.persistence.atomicRetrieveList(TrainEntityV2.class, 
+                TrainEntityV2.OPEN_BY_USER, forUser));
+    }
+    
+    
+    
+    public TrainBillV2 getBill(User trainer, String forUser) {
         List<TrainEntityV2> trains = this.persistence.atomicRetrieveList(
             TrainEntityV2.class, TrainEntityV2.OPEN_BY_USER_AND_TRAINER, 
-            trainerId, forUser);
+            trainer.getId(), forUser);
         
         return new TrainBillV2(trains);
     }
@@ -61,20 +80,20 @@ public class TrainManagerV2 extends AbstractDisposable {
     
     
     
-    public void closeOpenTrains(int trainerId, String forUser) throws DatabaseException {
-        this.closeOpenTrains(this.getBill(trainerId, forUser));
+    public void closeOpenTrains(User trainer, String forUser) throws DatabaseException {
+        this.closeOpenTrains(this.getBill(trainer, forUser));
     }
     
     
     
-    public void closeOpenTrain(int trainerId, final int id) 
+    public void closeOpenTrain(User trainer, final int id) 
                 throws DatabaseException, CommandException {
         final TrainEntityV2 te = this.persistence.atomicRetrieveSingle(
                 TrainEntityV2.class, id);
 
         if (te == null) {
             throw new CommandException("Ungültiger Train-Id");
-        } else if (te.getTrainerId() != trainerId) {
+        } else if (te.getTrainerId() != trainer.getId()) {
             throw new CommandException("Ungültige Trainer Id");
         }
         

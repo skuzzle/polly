@@ -53,8 +53,8 @@ public class MyTrainsCommand extends Command {
     
     private void printTrains(boolean detailed, String trainerNick, String forUser, 
                 String channel) {
-        int trainerId = this.trainManager.getTrainerId(trainerNick);
-        TrainBillV2 b = this.trainManager.getBill(trainerId, forUser);        
+        User trainer = this.trainManager.getTrainer(trainerNick);
+        TrainBillV2 b = this.trainManager.getBill(trainer, forUser);        
         if (detailed) {
             channel = forUser; // print detailed bill in query
             for (TrainEntityV2 train : b.getTrains()) {

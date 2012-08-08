@@ -63,15 +63,13 @@ public class AddTrainCommand extends Command {
         } else if (this.match(signature, 1)) {
             String userName = signature.getStringValue(0);
             boolean showAll = signature.getBooleanValue(1);
-            int trainerId = this.trainManager.getTrainerId(executer.getCurrentNickName());
             
-            TrainBillV2 bill = this.trainManager.getBill(trainerId, userName);
+            TrainBillV2 bill = this.trainManager.getBill(executer, userName);
             this.outputTrain(showAll, bill, channel);
         } else if (this.match(signature, 3)) {
             String userName = signature.getStringValue(0);
-            int trainerId = this.trainManager.getTrainerId(executer.getCurrentNickName());
             
-            TrainBillV2 bill = this.trainManager.getBill(trainerId, userName);
+            TrainBillV2 bill = this.trainManager.getBill(executer, userName);
 
             this.outputTrain(false, bill, channel);
         }
@@ -93,12 +91,11 @@ public class AddTrainCommand extends Command {
     
     
     
-    private void addTrain(User executor, String channel, String forUser, 
+    private void addTrain(User trainer, String channel, String forUser, 
         String train, double mod) {
         
-        int trainerId = this.trainManager.getTrainerId(executor.getCurrentNickName());
         try {
-            TrainEntityV2 te = TrainEntityV2.parseString(trainerId, forUser, mod, train);
+            TrainEntityV2 te = TrainEntityV2.parseString(trainer.getId(), forUser, mod, train);
             this.trainManager.addTrain(te);
             
             if (te.getDuration() != 0) {
@@ -107,8 +104,8 @@ public class AddTrainCommand extends Command {
                         (te.getDuration() / 1000) + "s";
                 this.getMyPolly().commands().executeString(
                         command, 
-                        executor.getCurrentNickName(), 
-                        true, executor, this.getMyPolly().irc());
+                        trainer.getCurrentNickName(), 
+                        true, trainer, this.getMyPolly().irc());
             }
             this.reply(channel, "Posten gespeichert.");
         } catch (Exception e) {

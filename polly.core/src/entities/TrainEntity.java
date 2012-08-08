@@ -20,12 +20,6 @@ import de.skuzzle.polly.sdk.FormatManager;
 @Entity
 @NamedQueries({
     @NamedQuery(
-        name =  "OPEN_BY_USER",
-        query = "SELECT t FROM TrainEntity t WHERE t.forUser = ?1 AND t.open=TRUE"),
-    @NamedQuery(
-        name =  "TRAINS_BY_USER",
-        query = "SELECT t FROM TrainEntity t WHERE t.forUser = ?1"),
-    @NamedQuery(
         name =  "ALL_TRAINS",
         query = "SELECT t FROM TrainEntity t")
 })

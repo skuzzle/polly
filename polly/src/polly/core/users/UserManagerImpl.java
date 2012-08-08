@@ -165,7 +165,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     @Override
     public User getUser(int id) {
-        return this.persistence.atomicRetrieveSingle(User.class, id);
+        return this.persistence.atomicRetrieveSingle(polly.core.users.User.class, id);
     }
 
     

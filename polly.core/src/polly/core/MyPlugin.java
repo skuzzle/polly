@@ -1,6 +1,7 @@
 package polly.core;
 
 
+import http.MyTrainsHttpAction;
 import commands.AddTrainCommand;
 import commands.AddUserCommand;
 import commands.AliasCommand;
@@ -277,6 +278,12 @@ public class MyPlugin extends PollyPlugin {
 		this.addCommand(new RestartCommand(myPolly));
 		
 		this.addCommand(new DitoCommand(myPolly));
+		
+		
+		
+		// HTTP stuff
+		myPolly.web().addMenuUrl("Revorix", "MyTrains");
+		myPolly.web().addHttpAction(new MyTrainsHttpAction(myPolly, this.trainManager));
 	}
 	
 	
