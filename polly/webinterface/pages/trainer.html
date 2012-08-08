@@ -1,0 +1,106 @@
+<h2>Capi Training Overview</h2>
+
+<h3>Open Trainings</h3>
+<table>
+    <tr>
+        <th>For User</th>
+        <th>Type</th>
+        <th>Factor</th>
+        <th>Costs</th>
+        <th>Weighted Costs</th>
+        <th>Started</th>
+        <th>Finished</th>
+        <th>Duration</th>
+        <th>Action</th>
+    </tr>
+    #foreach ($train in $allOpen.getTrains())
+    <tr>
+        <td>$train.getForUser()</td>
+        <td>$train.getType()</td>
+        <td>$train.getFactor()</td>
+        <td>$train.getCosts()</td>
+        #set ( $weighted = $train.getFactor()*$train.getCosts() )
+        <td>$weighted</td>
+        <td>$myPolly.formatting().formatDate($train.getTrainStart())</td>
+        <td>$myPolly.formatting().formatDate($train.getTrainFinished())</td>
+        #set ( $diff = $train.getTrainFinished().getTime() - $train.getTrainStart().getTime() )
+        <td>$myPolly.formatting().formatTimeSpan($diff)</td>
+        <td>
+            <form action="Trainer" method="POST">
+            <input type="hidden" name="action" value="closeTrain"/>
+            <input type="hidden" name="trainId" value="$train.getId()"/>
+            <input type="submit" value="Close" class="button"/>
+            </form>
+        </td>
+    </tr>
+    #end
+    <tr>
+        <th></th>
+        <th></th>
+        <th>Sum</th>
+        <th>$allOpen.sum()</th>
+        <th>$allOpen.weightedSum()</th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+    </tr>
+</table>
+
+<h3>Add Training</h3>
+<form action="Trainer" method="POST">
+<table>
+    <tr>
+        <th>For User</th>
+        <th>Paste</th>
+        <th>Factor</th>
+        <th>Action</th>
+    </tr>
+    <tr>
+        <td><input type="text" name="forUser" /></td>
+        <td><input type="text" name="paste" /></td>
+        <td><input type="text" name="factor" value="1.0"/></td>
+        <td><input type="submit" value="Add" class="button"/></td>
+    </tr>
+</table>
+<input type="hidden" name="action" value="addTrain"/>
+</form>
+
+
+<h3>Closed Trainings</h3>
+<table>
+    <tr>
+        <th>For User</th>
+        <th>Type</th>
+        <th>Factor</th>
+        <th>Costs</th>
+        <th>Weighted Costs</th>
+        <th>Started</th>
+        <th>Finished</th>
+        <th>Duration</th>
+    </tr>
+    #foreach ($train in $allClosed.getTrains())
+    <tr>
+        <td>$train.getForUser()</td>
+        <td>$train.getType()</td>
+        <td>$train.getFactor()</td>
+        <td>$train.getCosts()</td>
+        #set ( $weighted = $train.getFactor()*$train.getCosts() )
+        <td>$weighted</td>
+        <td>$myPolly.formatting().formatDate($train.getTrainStart())</td>
+        <td>$myPolly.formatting().formatDate($train.getTrainFinished())</td>
+        #set ( $diff = $train.getTrainFinished().getTime() - $train.getTrainStart().getTime() )
+        <td>$myPolly.formatting().formatTimeSpan($diff)</td>
+    </tr>
+    #end
+    <tr>
+        <th></th>
+        <th></th>
+        <th>Sum</th>
+        <th>$allClosed.sum()</th>
+        <th>$allClosed.weightedSum()</th>
+        <th></th>
+        <th></th>
+        <th></th>
+    </tr>
+</table>

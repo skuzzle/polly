@@ -68,6 +68,21 @@ public class TrainManagerV2 extends AbstractDisposable {
     
     
     
+    public TrainBillV2 getOpenTrains(User trainer) {
+        return new TrainBillV2(this.persistence.atomicRetrieveList(
+                TrainEntityV2.class, TrainEntityV2.OPEN_BY_TRAINER, trainer.getId()));
+        
+    }
+    
+    
+    public TrainBillV2 getClosedTrains(User trainer) {
+        return new TrainBillV2(this.persistence.atomicRetrieveList(
+                TrainEntityV2.class, TrainEntityV2.CLOSED_BY_TRAINER, trainer.getId()));
+        
+    }
+    
+    
+    
     public void closeOpenTrains(final TrainBillV2 bill) throws DatabaseException {
         this.persistence.atomicWriteOperation(new WriteAction() {
             
@@ -92,7 +107,7 @@ public class TrainManagerV2 extends AbstractDisposable {
                 TrainEntityV2.class, id);
 
         if (te == null) {
-            throw new CommandException("Ungültiger Train-Id");
+            throw new CommandException("Ungültige Train-Id");
         } else if (te.getTrainerId() != trainer.getId()) {
             throw new CommandException("Ungültige Trainer Id");
         }

@@ -27,6 +27,12 @@ import de.skuzzle.polly.sdk.FormatManager;
         name =  "CLOSED_BY_USER",
         query = "SELECT t FROM TrainEntityV2 t WHERE t.forUser = ?1 AND t.closed=true"),
     @NamedQuery(
+            name =  "OPEN_BY_TRAINER",
+            query = "SELECT t FROM TrainEntityV2 t WHERE t.trainerId = ?1 AND t.closed=false"),
+    @NamedQuery(
+            name =  "CLOSED_BY_TRAINER",
+            query = "SELECT t FROM TrainEntityV2 t WHERE t.trainerId = ?1 AND t.closed=true"),
+    @NamedQuery(
         name =  "TRAINSV2_BY_USER",
         query = "SELECT t FROM TrainEntityV2 t WHERE t.forUser = ?1")
 })
@@ -36,6 +42,9 @@ public class TrainEntityV2 {
     public final static String OPEN_BY_USER_AND_TRAINER = "OPEN_BY_USER_AND_TRAINER";
     public final static String OPEN_BY_USER = "OPEN_BY_USER";
     public final static String CLOSED_BY_USER = "CLOSED_BY_USER";
+    public final static String CLOSED_BY_TRAINER = "CLOSED_BY_TRAINER";
+    public final static String OPEN_BY_TRAINER = "OPEN_BY_TRAINER";
+    
     
     public static TrainEntityV2 parseString(int trainerId, String forUser, double factor, 
             String trainString) {
@@ -232,3 +241,4 @@ public class TrainEntityV2 {
             " Cr. Finish: " + this.trainFinished + "]";
     }
 }
+

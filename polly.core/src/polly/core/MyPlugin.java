@@ -2,6 +2,7 @@ package polly.core;
 
 
 import http.MyTrainsHttpAction;
+import http.TrainerHttpAction;
 import commands.AddTrainCommand;
 import commands.AddUserCommand;
 import commands.AliasCommand;
@@ -283,7 +284,9 @@ public class MyPlugin extends PollyPlugin {
 		
 		// HTTP stuff
 		myPolly.web().addMenuUrl("Revorix", "MyTrains");
+		myPolly.web().addMenuUrl("Revorix", "Trainer");
 		myPolly.web().addHttpAction(new MyTrainsHttpAction(myPolly, this.trainManager));
+		myPolly.web().addHttpAction(new TrainerHttpAction(myPolly, this.trainManager));
 	}
 	
 	
