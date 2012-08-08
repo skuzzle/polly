@@ -33,8 +33,10 @@ public interface HttpManager {
 
     String getPublicHost();
 
-    int getPort();
+    public abstract int getPort();
 
     public abstract void closeSession(HttpSession session);
+
+    public abstract HttpSession findSession(String id);
 
 }

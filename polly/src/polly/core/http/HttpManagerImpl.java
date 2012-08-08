@@ -144,6 +144,18 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     
     
     @Override
+    public HttpSession findSession(String id) {
+        for (HttpSession session : this.sessions.values()) {
+            if (session.getId().equalsIgnoreCase(id)) {
+                return session;
+            }
+        }
+        return null;
+    }
+    
+    
+    
+    @Override
     public void closeSession(HttpSession session) {
         synchronized (this.sessions) {
             logger.warn("Killing " + session);
@@ -237,6 +249,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
         c.put("session", session);
         c.put("now", System.currentTimeMillis());
         c.put("timeout", this.getSessionTimeOut());
+        c.put("sessions", this.sessions);
     }
 
 

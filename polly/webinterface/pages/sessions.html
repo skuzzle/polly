@@ -1,0 +1,25 @@
+<h2>Current Web Sessions</h2>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>IP</th>
+        <th>Last Action</th>
+        <th>Auto logout in</th>
+        <th>Action</th>
+    </tr>
+    #foreach ($sess in $sessions)
+    <tr>
+        <td>$sess.getId()</td>
+        <td>$sess.getRemoteIp()</td>
+        <td>$myPolly.formatting().formatDate($sess.getLastAction())</td>
+        #set ( $diff = ( $timeout - ($now - $sess.getStarted())) / 1000 )
+        <td>$myPolly.formatting().formatTimeSpan($diff)</td>
+        <td>
+            <form action="Sessions" method="POST">
+            <input type="hidden" name="action" value="killSession"/>
+            <input type="hidden" name="sessionId" value="$sess.getId()"/>
+            <input type="submit" value="Kill" class="button" />
+            </form>
+        </td>
+    #end
+</table>

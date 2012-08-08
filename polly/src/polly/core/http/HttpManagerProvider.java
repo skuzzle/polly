@@ -17,6 +17,7 @@ import polly.core.http.actions.LoginHttpAction;
 import polly.core.http.actions.LogoutHttpAction;
 import polly.core.http.actions.RoleHttpAction;
 import polly.core.http.actions.RootHttpAction;
+import polly.core.http.actions.SessionPageHttpAction;
 import polly.core.http.actions.UserInfoPageHttpAction;
 import polly.core.http.actions.UserPageHttpAction;
 import polly.core.mypolly.MyPollyImpl;
@@ -96,11 +97,13 @@ public class HttpManagerProvider extends AbstractModule {
         this.httpManager.addHttpAction(new UserInfoPageHttpAction(myPolly));
         this.httpManager.addHttpAction(new IRCPageHttpAction(myPolly));
         this.httpManager.addHttpAction(new RoleHttpAction(myPolly));
+        this.httpManager.addHttpAction(new SessionPageHttpAction(myPolly));
         
         this.httpManager.addMenuUrl("Admin", "Users");
         this.httpManager.addMenuUrl("Admin", "IRC");
         this.httpManager.addMenuUrl("Admin", "Logs");
         this.httpManager.addMenuUrl("Admin", "Roles");
+        this.httpManager.addMenuUrl("Admin", "Sessions");
         
         boolean start = this.serverCfg.readBoolean(Configuration.HTTP_START_SERVER);
         if (!start) {
