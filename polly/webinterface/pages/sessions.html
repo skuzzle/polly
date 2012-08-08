@@ -2,6 +2,7 @@
 <table>
     <tr>
         <th>ID</th>
+        <th>User</th>
         <th>IP</th>
         <th>Last Action</th>
         <th>Auto logout in</th>
@@ -10,6 +11,7 @@
     #foreach ($sess in $sessions)
     <tr>
         <td>$sess.getId()</td>
+        <td>$sess.getUser().getName()</td>
         <td>$sess.getRemoteIp()</td>
         <td>$myPolly.formatting().formatDate($sess.getLastAction())</td>
         #set ( $diff = ( $timeout - ($now - $sess.getStarted())) / 1000 )
