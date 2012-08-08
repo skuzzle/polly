@@ -1,16 +1,18 @@
 <h2>Capi Training Overview</h2>
+#set ( $openDesc = !$openDesc )
+#set ( $closedDesc = !$closedDesc )
 
 <h3>Unpaid Trainings</h3>
 <table>
     <tr>
-        <th>Trainer</th>
-        <th>Type</th>
-        <th>Factor</th>
-        <th>Costs</th>
+        <th><a href="MyTrains?openSortKey=BY_TRAINER&openDesc=$openDesc">Trainer</a></th>
+        <th><a href="MyTrains?openSortKey=BY_TYPE&openDesc=$openDesc">Type</a></th>
+        <th><a href="MyTrains?openSortKey=BY_FACTOR&openDesc=$openDesc">Factor</a></th>
+        <th><a href="MyTrains?openSortKey=BY_COSTS&openDesc=$openDesc">Costs</a></th>
         <th>Weighted Costs</th>
-        <th>Started</th>
-        <th>Finished</th>
-        <th>Duration</th>
+        <th><a href="MyTrains?openSortKey=BY_STARTED&openDesc=$openDesc">Started</a></th>
+        <th><a href="MyTrains?openSortKey=BY_FINISHED&openDesc=$openDesc">Finished</a></th>
+        <th><a href="MyTrains?openSortKey=BY_DURATION&openDesc=$openDesc">Duration</a></th>
     </tr>
     #foreach ($train in $allOpen.getTrains())
     <tr>

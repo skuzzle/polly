@@ -1,6 +1,10 @@
 package http;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import polly.core.MyPlugin;
+import core.TrainBillV2;
 import core.TrainManagerV2;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
@@ -65,9 +69,28 @@ public class TrainerHttpAction extends HttpAction {
             } catch (DatabaseException e1) {
                 e.throwTemplateException(e1);
             }
+        } else if (action != null && action.equals("closeTrainUser")) {
+            String forUser = e.getProperty("user");
+            
+            if (forUser == null || forUser.equals("")) {
+                e.throwTemplateException("Invalid request", 
+                        "Your request could not be processed");
+            }
+            
+            try {
+                this.trainManager.closeOpenTrains(e.getSession().getUser(), forUser);
+            } catch (DatabaseException e1) {
+                e.throwTemplateException(e1);
+            }
         }
         
-        c.put("allOpen", this.trainManager.getOpenTrains(e.getSession().getUser()));
+        TrainBillV2 allOpen = this.trainManager.getOpenTrains(e.getSession().getUser());
+        Set<String> clients = new HashSet<String>();
+        for (TrainEntityV2 te : allOpen.getTrains()) {
+            clients.add(te.getForUser());
+        }
+        c.put("clients", clients);
+        c.put("allOpen", allOpen);
         c.put("allClosed", this.trainManager.getClosedTrains(e.getSession().getUser()));
         c.put("trainManager", this.trainManager);
         return c;

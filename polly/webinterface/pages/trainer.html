@@ -1,6 +1,27 @@
 <h2>Capi Training Overview</h2>
 
 <h3>Open Trainings</h3>
+#if (!$clients.isEmpty())
+<table>
+    <tr>
+        <th>User</th>
+        <th>Action</th>
+    </tr>
+    #foreach ($client in $clients)
+    <tr>
+        <td>$client</td>
+        <td>
+        <form action="Trainer" method="POST">
+        <input type="hidden" name="action" value="closeTrainUser"/>
+        <input type="hidden" name="user" value="$client"/>
+        <input type="submit" value="Close all for this user" class="button"/>
+        </form>
+        </td>
+    </tr>
+    #end
+</table>
+#end
+
 <table>
     <tr>
         <th>For User</th>
