@@ -229,6 +229,9 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
         c.put("heading", "Polly Webinterface");
         c.put("me", session.getUser());
         c.put("myPolly", this.myPolly);
+        c.put("session", session);
+        c.put("now", System.currentTimeMillis());
+        c.put("timeout", this.getSessionTimeOut());
     }
 
 
