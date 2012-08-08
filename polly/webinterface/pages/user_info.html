@@ -23,6 +23,22 @@
     </tr>
 </table>
 
+<h3>Set new Password</h3>
+<form action="user_info" method="POST">
+<table>
+    <tr>
+        <th>New Password</th>
+        <th>Action</th>
+    </tr>
+    <tr>
+        <td><input type="text" name="password" /></td>
+        <td><input type="submit" value="Set" class="button"/></td>
+    </tr>
+</table>
+<input type="hidden" name="action" value="setPassword" />
+<input type="hidden" name="userName" value="$user.getName()" />
+</form>
+
 <h3>User Roles</h3>
 <table>
     <tr>

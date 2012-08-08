@@ -4,6 +4,7 @@ package polly.core.http.actions;
 
 import polly.core.http.HttpInterface;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.RoleException;
 import de.skuzzle.polly.sdk.http.AbstractAdminAction;
@@ -68,6 +69,27 @@ public class UserInfoPageHttpAction extends AbstractAdminAction {
                 return e.getSource().errorTemplate("Database Error", 
                         e1.getMessage(), e.getSession());
             }
+        } else if (action != null && action.equals("setPassword")) {
+            String newPassword = e.getProperty("password");
+            
+            if (newPassword == null || newPassword.equals("")) {
+                return e.getSource().errorTemplate("Invalid password", 
+                        "Password must not be empty", e.getSession());
+            }
+            
+            PersistenceManager persistence = this.getMyPolly().persistence();
+            try {
+                persistence.writeLock();
+                persistence.startTransaction();
+                u.setPassword(newPassword);
+                persistence.commitTransaction();
+            } catch (DatabaseException e1) {
+                return e.getSource().errorTemplate("Database Error", 
+                        e1.getMessage(), e.getSession());
+            } finally {
+                persistence.writeUnlock();
+            }
+            
         }
         
         context.put("roles", this.myPolly.roles().getRoles(u));
