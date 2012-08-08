@@ -52,4 +52,17 @@ public class HttpEvent {
     public HttpSession getSession() {
         return this.session;
     }
+    
+    
+    
+    public void throwTemplateException(String heading, String message) 
+            throws HttpTemplateException {
+        throw new HttpTemplateException(heading, message, this.getSession());
+    }
+    
+    
+    
+    public void throwTemplateException(Throwable cause) throws HttpTemplateException {
+        throw new HttpTemplateException(this.getSession(), cause);
+    }
 }

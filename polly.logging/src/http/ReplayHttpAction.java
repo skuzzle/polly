@@ -17,6 +17,7 @@ import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.http.HttpAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
+import de.skuzzle.polly.sdk.http.HttpTemplateException;
 import entities.LogEntry;
 
 public class ReplayHttpAction extends HttpAction {
@@ -37,7 +38,7 @@ public class ReplayHttpAction extends HttpAction {
     
     
     @Override
-    public HttpTemplateContext execute(HttpEvent e) {
+    public HttpTemplateContext execute(HttpEvent e) throws HttpTemplateException {
         HttpTemplateContext c = new HttpTemplateContext("pages/replay.html");
         
         String action = e.getProperty("action");
@@ -65,8 +66,7 @@ public class ReplayHttpAction extends HttpAction {
                     Collections.reverse(channelLogs);
                     logs.put(channel, channelLogs);
                 } catch (DatabaseException e1) {
-                    return e.getSource().errorTemplate("Database Error", 
-                            e1.getMessage(), e.getSession());
+                    e.throwTemplateException(e1);
                 }
             }
         }

@@ -10,6 +10,7 @@ import de.skuzzle.polly.sdk.exceptions.RoleException;
 import de.skuzzle.polly.sdk.http.AbstractAdminAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
+import de.skuzzle.polly.sdk.http.HttpTemplateException;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 
 
@@ -27,7 +28,7 @@ public class RoleHttpAction extends AbstractAdminAction {
     
     
     @Override
-    public HttpTemplateContext execute(HttpEvent e) {
+    public HttpTemplateContext execute(HttpEvent e) throws HttpTemplateException {
         HttpTemplateContext c = new HttpTemplateContext(HttpInterface.PAGE_ROLES);
         
         String action = e.getProperty("action");
@@ -39,11 +40,10 @@ public class RoleHttpAction extends AbstractAdminAction {
             try {
                 this.roleManager.assignPermission(role, permission);
             } catch (DatabaseException e1) {
-                return e.getSource().errorTemplate("Database Error", 
-                        e1.getMessage(), e.getSession());
+                e.throwTemplateException(e1);
             } catch (RoleException e1) {
-                return e.getSource().errorTemplate("Unknown permission", 
-                        e1.getMessage(), e.getSession());
+                e.throwTemplateException("Unknown permission", 
+                        e1.getMessage());
             }
         } else if (action != null && action.equals("removePermissionFromRole")) {
             String role = e.getProperty("role");
@@ -52,11 +52,10 @@ public class RoleHttpAction extends AbstractAdminAction {
             try {
                 this.roleManager.removePermission(role, permission);
             } catch (RoleException e1) {
-                return e.getSource().errorTemplate("Unknown role", 
-                        e1.getMessage(), e.getSession());
+                e.throwTemplateException("Unknown role", 
+                        e1.getMessage());
             } catch (DatabaseException e1) {
-                return e.getSource().errorTemplate("Database Error", 
-                        e1.getMessage(), e.getSession());
+                e.throwTemplateException(e1);
             }
         }
         

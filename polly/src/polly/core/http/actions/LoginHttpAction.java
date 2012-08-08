@@ -6,6 +6,7 @@ import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.http.HttpAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
+import de.skuzzle.polly.sdk.http.HttpTemplateException;
 import de.skuzzle.polly.sdk.model.User;
 
 
@@ -24,7 +25,7 @@ public class LoginHttpAction extends HttpAction {
     
 
     @Override
-    public HttpTemplateContext execute(HttpEvent e) {
+    public HttpTemplateContext execute(HttpEvent e) throws HttpTemplateException {
         HttpTemplateContext context = new HttpTemplateContext(HttpInterface.PAGE_LOGIN);
         String userName = e.getProperty("userName");
         String password = e.getProperty("password");
@@ -39,12 +40,12 @@ public class LoginHttpAction extends HttpAction {
                     e.getSession().setUser(u);
                     context.put("success", Boolean.TRUE);
                 } else {
-                    return e.getSource().errorTemplate("Login Error", 
-                        "Invalid login data", e.getSession());
+                    e.throwTemplateException("Login Error", 
+                        "Invalid login data");
                 }
             } else {
-                return e.getSource().errorTemplate("Login Error", 
-                    "Invalid login data", e.getSession());
+                e.throwTemplateException("Login Error", 
+                    "Invalid login data");
             }
         } else {
             context.put("noAction", Boolean.TRUE);
