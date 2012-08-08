@@ -23,7 +23,7 @@
         <td>$weighted</td>
         <td>$myPolly.formatting().formatDate($train.getTrainStart())</td>
         <td>$myPolly.formatting().formatDate($train.getTrainFinished())</td>
-        #set ( $diff = $train.getTrainFinished().getTime() - $train.getTrainStart().getTime() )
+        #set ( $diff = ($train.getTrainFinished().getTime() - $train.getTrainStart().getTime()) / 1000 )
         <td>$myPolly.formatting().formatTimeSpan($diff)</td>
         <td>
             <form action="Trainer" method="POST">
@@ -89,7 +89,7 @@
         <td>$weighted</td>
         <td>$myPolly.formatting().formatDate($train.getTrainStart())</td>
         <td>$myPolly.formatting().formatDate($train.getTrainFinished())</td>
-        #set ( $diff = $train.getTrainFinished().getTime() - $train.getTrainStart().getTime() )
+        #set ( $diff = ($train.getTrainFinished().getTime() - $train.getTrainStart().getTime()) / 1000 )
         <td>$myPolly.formatting().formatTimeSpan($diff)</td>
     </tr>
     #end

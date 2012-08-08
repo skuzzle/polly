@@ -45,18 +45,23 @@ public class TrainerHttpAction extends HttpAction {
         } else if (action != null && action.equals("addTrain")) {
             String forUser = e.getProperty("forUser");
             String paste = e.getProperty("paste");
-            double factor = Double.parseDouble(e.getProperty("factor"));
+            String f = e.getProperty("factor");
             
-            if (forUser == null | forUser.equals("") || paste == null || 
-                    paste.equals("")) {
+            
+            if (forUser == null || forUser.equals("") || paste == null || 
+                    paste.equals("") || f == null || f.equals("")) {
                 e.throwTemplateException("Invalid Train Information", 
-                        "Please fill out all fields");
+                        "Please fill out all fields properly.");
             }
             
             try {
-                    TrainEntityV2 te = TrainEntityV2.parseString(
+                double factor = Double.parseDouble(f);
+                TrainEntityV2 te = TrainEntityV2.parseString(
                     e.getSession().getUser().getId(), forUser, factor, paste);
                 this.trainManager.addTrain(te);
+            } catch (NumberFormatException e1) {
+                e.throwTemplateException("Invalid Factor", 
+                        "Please enter a valid double number");
             } catch (DatabaseException e1) {
                 e.throwTemplateException(e1);
             }
