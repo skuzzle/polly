@@ -30,6 +30,7 @@ import de.skuzzle.polly.sdk.http.HttpParameter;
 import de.skuzzle.polly.sdk.http.HttpParameter.ParameterType;
 import de.skuzzle.polly.sdk.http.HttpSession;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
+import de.skuzzle.polly.sdk.http.HttpTemplateException;
 
 
 public class ResponseHandler implements HttpHandler {
@@ -136,6 +137,9 @@ public class ResponseHandler implements HttpHandler {
         HttpTemplateContext c = null;
         try {
             c = this.webServer.executeAction(e);
+        } catch (HttpTemplateException e1) {
+            c = this.webServer.errorTemplate(e1.getHeading(), e1.getMessage(), session);
+            logger.warn("Template Exception: ", e1);
         } catch (Exception e1) {
             StringWriter w = new StringWriter();
             PrintWriter pw = new PrintWriter(w);

@@ -35,4 +35,6 @@ public interface HttpManager {
 
     int getPort();
 
+    public abstract void closeSession(HttpSession session);
+
 }

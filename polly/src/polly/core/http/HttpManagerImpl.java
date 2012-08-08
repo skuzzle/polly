@@ -27,6 +27,7 @@ import de.skuzzle.polly.sdk.http.HttpEventListener;
 import de.skuzzle.polly.sdk.http.HttpManager;
 import de.skuzzle.polly.sdk.http.HttpSession;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
+import de.skuzzle.polly.sdk.http.HttpTemplateException;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
 import de.skuzzle.polly.tools.events.Dispatchable;
@@ -168,7 +169,8 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     
     
     
-    protected HttpTemplateContext executeAction(HttpEvent e) {
+    protected HttpTemplateContext executeAction(HttpEvent e) 
+                throws HttpTemplateException {
         String uri = e.getRequestUri();
         HttpAction action = this.actions.get(uri);
         
@@ -181,10 +183,11 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
                 actionContext.put(HttpInterface.PERMISSIONS, 
                         action.getRequiredPermission());
             } else {
-                return this.errorTemplate("Permission denied", 
+                throw new HttpTemplateException(
+                    "Permission denied", 
                     "You have insufficient permissions to acces this page/action." +
-                    "<br/><br/>Missing permission(s): " + action.getRequiredPermission(), 
-                    e.getSession());
+                                "<br/><br/>Missing permission(s): " + 
+                            action.getRequiredPermission(), e.getSession());
             }
         }
         this.putRootContext(actionContext, e.getSession());
