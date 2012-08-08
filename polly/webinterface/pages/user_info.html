@@ -41,8 +41,8 @@
 </form>
 #end
 
-#if ($isAdmin)
 <h3>User Roles</h3>
+#if ($isAdmin)
 <table>
     <tr>
         <th><a href="Roles">Roles</a></th>
@@ -70,6 +70,17 @@
             <input type="submit" value="add" class="button" /></td>
         </form>
     </tr>
+</table>
+#elseif ($isHome)
+<table>
+    <tr>
+        <th><a href="Roles">Roles</a></th>
+    </tr>
+    #foreach ($role in $roles)
+    <tr>
+        <td>$role</td>
+    </tr>
+    #end
 </table>
 #end
 
