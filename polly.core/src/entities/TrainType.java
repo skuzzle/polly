@@ -33,7 +33,7 @@ public enum TrainType {
         switch (this) {
         default:
         case INTELLIGENCE: return "Intelligenz Training";
-        case BODY: return "Crewlimit Training";
+        case BODY: return "Körper Training";
         case COMMANDO: return "Kommandolimit Training";
         case MODULE: return "Modullimit Training";
         case CREW: return "Crewlimit Training";
