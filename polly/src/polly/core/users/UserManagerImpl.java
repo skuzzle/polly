@@ -160,6 +160,13 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     public User getUser(IrcUser user) {
         return this.onlineCache.get(user.getNickName());
     }
+    
+    
+    
+    @Override
+    public User getUser(int id) {
+        return this.persistence.atomicRetrieveSingle(User.class, id);
+    }
 
     
     

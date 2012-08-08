@@ -94,6 +94,16 @@ public interface UserManager {
     
     
     /**
+     * Retrieves a user with the given id from the database. 
+     * @param id The id of the user to retrieve.
+     * @return The user with that id or null if it did not exist.
+     * @since 0.9.1
+     */
+    public abstract User getUser(int id);
+    
+    
+    
+    /**
      * Deletes a declared identifier from the users namespace. This method will have
      * no effect of predefined functions or constants.
      * 
