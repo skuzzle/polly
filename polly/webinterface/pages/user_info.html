@@ -80,7 +80,7 @@
     <tr>
         <th>Name</th>
         <th style="width:100%;">Value</th>
-        <th></th>
+        #if ($action == "edit")<th>Defaults</th>#end
     </tr>
     #foreach ($attribute in $user.getAttributeNames())
     <tr>
