@@ -142,9 +142,11 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     
     
     
-    protected void closeSession(HttpSession session) {
+    @Override
+    public void closeSession(HttpSession session) {
         synchronized (this.sessions) {
             logger.warn("Killing " + session);
+            session.setUser(null);
             this.sessions.remove(session.getRemoteIp());
         }
     }
