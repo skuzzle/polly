@@ -1,11 +1,13 @@
 package http;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import polly.core.MyPlugin;
 import core.TrainBillV2;
 import core.TrainManagerV2;
+import core.TrainSorter;
+import core.TrainSorter.SortKey;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
@@ -84,14 +86,34 @@ public class TrainerHttpAction extends HttpAction {
             }
         }
         
-        TrainBillV2 allOpen = this.trainManager.getOpenTrains(e.getSession().getUser());
-        Set<String> clients = new HashSet<String>();
+        SortKey openSortKey = SortKey.parseSortKey(e.getProperty("openSortKey"));
+        SortKey closedSortKey = SortKey.parseSortKey(e.getProperty("closedSortKey"));
+        
+        boolean openDesc = e.getProperty("openDesc") != null && 
+                e.getProperty("openDesc").equals("true");
+        boolean closedDesc = e.getProperty("closedDesc") != null && 
+                e.getProperty("closedDesc").equals("true");
+        
+        TrainBillV2 allOpen = this.trainManager.getOpenTrains(
+                e.getSession().getUser());
+        TrainBillV2 allClosed = this.trainManager.getClosedTrains(
+                e.getSession().getUser());
+        
+        TrainSorter.sort(allOpen.getTrains(), openSortKey, openDesc);
+        TrainSorter.sort(allClosed.getTrains(), closedSortKey, closedDesc);
+        
+        Set<String> clients = new TreeSet<String>();
         for (TrainEntityV2 te : allOpen.getTrains()) {
             clients.add(te.getForUser());
         }
+        
+        c.put("openDesc", openDesc);
+        c.put("closedDesc", closedDesc);
+        c.put("openSortKey", openSortKey);
+        c.put("closedSortKey", closedSortKey);
         c.put("clients", clients);
         c.put("allOpen", allOpen);
-        c.put("allClosed", this.trainManager.getClosedTrains(e.getSession().getUser()));
+        c.put("allClosed", allClosed);
         c.put("trainManager", this.trainManager);
         return c;
     }

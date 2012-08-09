@@ -2,17 +2,20 @@
 #set ( $openDesc = !$openDesc )
 #set ( $closedDesc = !$closedDesc )
 
+
+
 <h3>Unpaid Trainings</h3>
+Sorted: <a href="MyTrains?openSortKey=NONE&openDesc=false">$openSortKey</a>
 <table>
     <tr>
-        <th><a href="MyTrains?openSortKey=BY_TRAINER&openDesc=$openDesc">Trainer</a></th>
-        <th><a href="MyTrains?openSortKey=BY_TYPE&openDesc=$openDesc">Type</a></th>
-        <th><a href="MyTrains?openSortKey=BY_FACTOR&openDesc=$openDesc">Factor</a></th>
-        <th><a href="MyTrains?openSortKey=BY_COSTS&openDesc=$openDesc">Costs</a></th>
-        <th>Weighted Costs</th>
-        <th><a href="MyTrains?openSortKey=BY_STARTED&openDesc=$openDesc">Started</a></th>
-        <th><a href="MyTrains?openSortKey=BY_FINISHED&openDesc=$openDesc">Finished</a></th>
-        <th><a href="MyTrains?openSortKey=BY_DURATION&openDesc=$openDesc">Duration</a></th>
+        <th><a href="MyTrains?openSortKey=BY_TRAINER&openDesc=$openDesc&closedSortKey=$closedSortKey">Trainer</a></th>
+        <th><a href="MyTrains?openSortKey=BY_TYPE&openDesc=$openDesc&closedSortKey=$closedSortKey">Type</a></th>
+        <th><a href="MyTrains?openSortKey=BY_FACTOR&openDesc=$openDesc&closedSortKey=$closedSortKey">Factor</a></th>
+        <th><a href="MyTrains?openSortKey=BY_COSTS&openDesc=$openDesc&closedSortKey=$closedSortKey">Costs</a></th>
+        <th><a href="MyTrains?openSortKey=BY_WEIGHTED&openDesc=$openDesc&closedSortKey=$closedSortKey">Weighted Costs</a></th>
+        <th><a href="MyTrains?openSortKey=BY_START&openDesc=$openDesc&closedSortKey=$closedSortKey">Started</a></th>
+        <th><a href="MyTrains?openSortKey=BY_FINISHED&openDesc=$openDesc&closedSortKey=$closedSortKey">Finished</a></th>
+        <th><a href="MyTrains?openSortKey=BY_DURATION&openDesc=$openDesc&closedSortKey=$closedSortKey">Duration</a></th>
     </tr>
     #foreach ($train in $allOpen.getTrains())
     <tr>
@@ -41,16 +44,17 @@
 </table>
     
 <h3>Paid Trainings</h3>
+Sorted: <a href="MyTrains?closedSortKey=NONE&closedDesc=false">$closedSortKey</a>
 <table>
     <tr>
-        <th>Trainer</th>
-        <th>Type</th>
-        <th>Factor</th>
-        <th>Costs</th>
-        <th>Weighted Costs</th>
-        <th>Started</th>
-        <th>Finished</th>
-        <th>Duration</th>
+        <th><a href="MyTrains?closedSortKey=BY_TRAINER&closedDesc=$closedDesc&openSortKey=$openSortKey">Trainer</a></th>
+        <th><a href="MyTrains?closedSortKey=BY_TYPE&closedDesc=$closedDesc&openSortKey=$openSortKey">Type</a></th>
+        <th><a href="MyTrains?closedSortKey=BY_FACTOR&closedDesc=$closedDesc&openSortKey=$openSortKey">Factor</a></th>
+        <th><a href="MyTrains?closedSortKey=BY_COSTS&closedDesc=$closedDesc&openSortKey=$openSortKey">Costs</a></th>
+        <th><a href="MyTrains?closedSortKey=BY_WEIGHTED&closedDesc=$closedDesc&openSortKey=$openSortKey">Weighted Costs</a></th>
+        <th><a href="MyTrains?closedSortKey=BY_START&closedDesc=$closedDesc&openSortKey=$openSortKey">Started</a></th>
+        <th><a href="MyTrains?closedSortKey=BY_FINISHED&closedDesc=$closedDesc&openSortKey=$openSortKey">Finished</a></th>
+        <th><a href="MyTrains?closedSortKey=BY_DURATION&closedDesc=$closedDesc&openSortKey=$openSortKey">Duration</a></th>
     </tr>
     #foreach ($train in $allClosed.getTrains())
     <tr>

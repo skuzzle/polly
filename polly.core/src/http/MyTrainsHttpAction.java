@@ -32,8 +32,8 @@ public class MyTrainsHttpAction extends HttpAction {
         
         HttpTemplateContext c = new HttpTemplateContext("pages/mytrains.html");
         
-        SortKey openSortKey = this.validateSortKey(e.getProperty("openSortKey"));
-        SortKey closedSortKey = this.validateSortKey(e.getProperty("closedSortKey"));
+        SortKey openSortKey = SortKey.parseSortKey(e.getProperty("openSortKey"));
+        SortKey closedSortKey = SortKey.parseSortKey(e.getProperty("closedSortKey"));
         
         boolean openDesc = e.getProperty("openDesc") != null && 
                 e.getProperty("openDesc").equals("true");
@@ -49,21 +49,12 @@ public class MyTrainsHttpAction extends HttpAction {
         
         c.put("openDesc", openDesc);
         c.put("closedDesc", closedDesc);
+        c.put("openSortKey", openSortKey);
+        c.put("closedSortKey", closedSortKey);
         c.put("trainManager", this.trainManager);
         c.put("allOpen", allOpen);
         c.put("allClosed", allClosed);
         
         return c;
     }
-    
-    
-    
-    private SortKey validateSortKey(String key) {
-        try {
-            return SortKey.valueOf(key);
-        } catch (Exception e) {
-            return SortKey.NONE;
-        }
-    }
-
 }

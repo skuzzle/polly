@@ -59,6 +59,17 @@ public class TrainSorter {
     
     
     
+    private final static Comparator<TrainEntityV2> BY_WEiGHTED = 
+            new Comparator<TrainEntityV2>() {
+        @Override
+        public int compare(TrainEntityV2 te1, TrainEntityV2 te2) {
+            return Double.compare(te1.getFactor() * te1.getCosts(), 
+                    te2.getFactor() * te2.getCosts());
+        }
+    };
+    
+    
+    
     private final static Comparator<TrainEntityV2> BY_START = 
             new Comparator<TrainEntityV2>() {
         @Override
@@ -69,7 +80,7 @@ public class TrainSorter {
     
     
     
-    private final static Comparator<TrainEntityV2> BY_END = 
+    private final static Comparator<TrainEntityV2> BY_FINISHED = 
             new Comparator<TrainEntityV2>() {
         @Override
         public int compare(TrainEntityV2 te1, TrainEntityV2 te2) {
@@ -113,14 +124,24 @@ public class TrainSorter {
         BY_TRAINER(TrainSorter.BY_TRAINER), 
         BY_USER(TrainSorter.BY_USER), 
         BY_TYPE(TrainSorter.BY_TYPE), 
-        BY_COSTS(TrainSorter.BY_COSTS), 
+        BY_COSTS(TrainSorter.BY_COSTS),
+        BY_WEIGHTED(TrainSorter.BY_WEiGHTED), 
         BY_FACTOR(TrainSorter.BY_FACTOR), 
         BY_START(TrainSorter.BY_START), 
-        BY_END(TrainSorter.BY_END), 
+        BY_FINISHED(TrainSorter.BY_FINISHED), 
         BY_DURATION(TrainSorter.BY_DURATION),
         NONE(null);
         
         private Comparator<TrainEntityV2> comp;
+        
+        
+        public static SortKey parseSortKey(String key) {
+            try {
+                return SortKey.valueOf(key);
+            } catch (Exception e) {
+                return SortKey.NONE;
+            }
+        }
         
         private SortKey(Comparator<TrainEntityV2> comp) {
             this.comp = comp;
