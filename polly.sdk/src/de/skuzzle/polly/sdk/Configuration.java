@@ -343,6 +343,15 @@ public interface Configuration {
     public final static String HTTP_START_SERVER = "startServer";
     
     
+    /**
+     * Number of session cache actions before the cache is cleaned up from
+     * timed out sessions.
+     * @since 0.9.1
+     */
+    public final static String HTTP_SESSION_CACHE_THRESHOLD = "cacheThreshold";
+    
+    
+    
 	/**
 	 * <p>Stores a property with given name and value. If a property with the same name
 	 * existed before, it will be overridden. If it not existed, it will be created.</p>

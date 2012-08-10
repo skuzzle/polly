@@ -7,8 +7,10 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.TreeMap;
 import java.util.concurrent.Executors;
@@ -58,11 +60,13 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     private MyPolly myPolly;
     private String publicHost;
     private String encoding;
+    private int cacheCounter;
+    private int cacheThreshold;
     
     
     
     public HttpManagerImpl(File templateRoot, String publicHost,
-            int port, int sessionTimeOut, String encoding) {
+            int port, int sessionTimeOut, String encoding, int cacheTreshold) {
         this.templateRoot = templateRoot;
         this.publicHost = publicHost;
         this.port = port;
@@ -72,6 +76,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
         this.eventProvider = new SynchronousEventProvider();
         this.actions = new HashMap<String, HttpAction>();
         this.menu = new TreeMap<String, List<String>>();
+        this.cacheThreshold = cacheTreshold;
     }
     
     
@@ -163,6 +168,20 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
             logger.warn("Killing " + session);
             session.setUser(null);
             this.sessions.remove(session.getRemoteIp());
+            
+            if (++this.cacheCounter % this.cacheThreshold == 0) {
+                Iterator<Entry<InetAddress, HttpSession>> it = 
+                        this.sessions.entrySet().iterator();
+                        
+                while (it.hasNext()) {
+                    Entry<InetAddress, HttpSession> e = it.next();
+                    if (System.currentTimeMillis() - e.getValue().getLastAction() > 
+                            this.getSessionTimeOut()) {
+                        e.getValue().setUser(null);
+                        it.remove();
+                    }
+                }
+            }
         }
     }
     

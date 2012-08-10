@@ -96,10 +96,10 @@ public class ResponseHandler implements HttpHandler {
     public void handle(HttpExchange t) throws IOException {
         HttpSession session = this.webServer.getSession(
             t.getRemoteAddress().getAddress());
-        session.setLastAction(System.currentTimeMillis());
+        long now = System.currentTimeMillis();
         
         // kill the session if a user is logged in on it and it is expired
-        if (session.isLoggedIn() && session.getLastAction() - session.getStarted() > 
+        if (session.isLoggedIn() && now - session.getLastAction() > 
                     this.webServer.getSessionTimeOut()) {
             
             this.webServer.closeSession(session);
@@ -109,6 +109,8 @@ public class ResponseHandler implements HttpHandler {
             this.respond(c, t);
             return;
         }
+        
+        session.setLastAction(now);
         
         String uri = t.getRequestURI().toString();
         logger.trace(session + " requested " + uri);
