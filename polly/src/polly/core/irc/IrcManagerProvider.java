@@ -10,7 +10,6 @@ import de.skuzzle.polly.sdk.ConfigurationProvider;
 import de.skuzzle.polly.tools.events.EventProvider;
 
 import polly.configuration.ConfigurationProviderImpl;
-import polly.core.DefaultUserAttributesProvider;
 import polly.core.ShutdownManagerImpl;
 import polly.moduleloader.AbstractModule;
 import polly.moduleloader.ModuleLoader;
@@ -25,7 +24,6 @@ import polly.core.ModuleStates;
     requires = { 
         @Require(component = ConfigurationProviderImpl.class),
         @Require(component = ShutdownManagerImpl.class),
-        @Require(component = DefaultUserAttributesProvider.class),
         @Require(component = EventProvider.class),
         @Require(state = ModuleStates.PLUGINS_READY),
         @Require(state = ModuleStates.PERSISTENCE_READY) }, 
