@@ -12,6 +12,7 @@
             #set ( $diff = ( $timeout - ($now - $session.getStarted())) / 1000 )
             Logged in as <a href="user_info?userName=$me.getName()"><strong>$me.getName()</strong></a> (<a href="logout">Logout</a>)<br/>
             Now: <strong>$myPolly.formatting().formatDate($now)</strong><br/>
+			Session timeout is <strong>$myPolly.formatting().formatTimeSpanMs($timeout)</strong>.
         #else
             Not logged in.
         #end

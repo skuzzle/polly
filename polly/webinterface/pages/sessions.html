@@ -14,8 +14,8 @@
         <td>$sess.getUser().getName()</td>
         <td>$sess.getRemoteIp()</td>
         <td>$myPolly.formatting().formatDate($sess.getLastAction())</td>
-        #set ( $diff = ( $timeout - ($now - $sess.getLastAction())) / 1000 )
-        <td>$myPolly.formatting().formatTimeSpan($diff)</td>
+        #set ( $diff = ( $timeout - ($now - $sess.getLastAction())))
+        <td>$myPolly.formatting().formatTimeSpanMs($diff)</td>
         <td>
             <form action="Sessions" method="POST">
             <input type="hidden" name="action" value="killSession"/>
