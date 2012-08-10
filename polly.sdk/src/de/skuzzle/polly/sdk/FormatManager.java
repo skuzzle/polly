@@ -58,6 +58,7 @@ public interface FormatManager {
      * 
      * @param span The timespan in milliseconds.
      * @return The formatted timespan string.
+     * @since 0.9.1
      */
     public abstract String formatTimeSpanMs(long ms);
     
