@@ -35,7 +35,7 @@ public class SessionPageHttpAction extends AbstractAdminAction {
                 e.throwTemplateException("Invalid Session Id", 
                         "No Session with ID " + sessionId);
             }
-            e.getSource().validateSessions(session);
+            e.getSource().closeSession(session);
         }
         
         return c;

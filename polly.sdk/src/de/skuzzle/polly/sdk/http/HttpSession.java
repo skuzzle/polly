@@ -25,6 +25,12 @@ public class HttpSession {
     
     
     
+    public boolean isTimedOut(int timeOut) {
+        return System.currentTimeMillis() - this.lastAction > timeOut;
+    }
+    
+    
+    
     public synchronized User getUser() {
         return this.user;
     }

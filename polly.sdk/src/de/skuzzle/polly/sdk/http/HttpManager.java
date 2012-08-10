@@ -35,8 +35,10 @@ public interface HttpManager {
 
     public abstract int getPort();
 
-    public abstract boolean validateSessions(HttpSession session);
+    public abstract void closeSession(HttpSession session);
 
     public abstract HttpSession findSession(String id);
+
+    public abstract void cleanUpSessions();
 
 }

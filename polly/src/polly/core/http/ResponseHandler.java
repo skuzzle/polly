@@ -94,14 +94,16 @@ public class ResponseHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange t) throws IOException {
+        this.webServer.cleanUpSessions();
+        
         HttpSession session = this.webServer.getSession(
             t.getRemoteAddress().getAddress());
         long now = System.currentTimeMillis();
         
         // kill the session if a user is logged in on it and it is expired
-        if (session.isLoggedIn() && !this.webServer.validateSessions(session)) {
-            
-            this.webServer.validateSessions(session);
+        if (session.isLoggedIn() && session.isTimedOut(
+                this.webServer.getSessionTimeOut())) {
+            this.webServer.closeSession(session);
             HttpTemplateContext c = this.webServer.errorTemplate("Session expired", 
                 "Your session has automatically been killed due to inactivity. " +
                 "Please login and try again.", session);
