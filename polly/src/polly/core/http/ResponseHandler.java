@@ -99,10 +99,9 @@ public class ResponseHandler implements HttpHandler {
         long now = System.currentTimeMillis();
         
         // kill the session if a user is logged in on it and it is expired
-        if (session.isLoggedIn() && now - session.getLastAction() > 
-                    this.webServer.getSessionTimeOut()) {
+        if (session.isLoggedIn() && !this.webServer.validateSessions(session)) {
             
-            this.webServer.closeSession(session);
+            this.webServer.validateSessions(session);
             HttpTemplateContext c = this.webServer.errorTemplate("Session expired", 
                 "Your session has automatically been killed due to inactivity. " +
                 "Please login and try again.", session);

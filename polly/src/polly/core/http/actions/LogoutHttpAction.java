@@ -18,7 +18,7 @@ public class LogoutHttpAction extends HttpAction {
     @Override
     public HttpTemplateContext execute(HttpEvent e) {
         HttpTemplateContext context = new HttpTemplateContext(HttpInterface.PAGE_HOME);
-        e.getSource().closeSession(e.getSession());
+        e.getSource().validateSessions(e.getSession());
         return context;
     }
 

@@ -163,13 +163,12 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     
     
     @Override
-    public void closeSession(HttpSession session) {
+    public boolean validateSessions(HttpSession session) {
         synchronized (this.sessions) {
-            logger.warn("Killing " + session);
-            session.setUser(null);
-            this.sessions.remove(session.getRemoteIp());
+            boolean result = true;
             
             if (++this.cacheCounter % this.cacheThreshold == 0) {
+                logger.debug("Cleaning session cache...");
                 Iterator<Entry<InetAddress, HttpSession>> it = 
                         this.sessions.entrySet().iterator();
                         
@@ -177,11 +176,15 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
                     Entry<InetAddress, HttpSession> e = it.next();
                     if (System.currentTimeMillis() - e.getValue().getLastAction() > 
                             this.getSessionTimeOut()) {
+                        logger.warn("Killing " + e.getValue());
                         e.getValue().setUser(null);
                         it.remove();
+                        result = false;
                     }
                 }
             }
+            
+            return result;
         }
     }
     
