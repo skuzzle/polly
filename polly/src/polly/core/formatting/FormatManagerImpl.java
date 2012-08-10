@@ -76,7 +76,14 @@ public class FormatManagerImpl implements FormatManager {
 
 
     @Override
-    public String formatTimeSpan(long span) {
-        return new TimeSpanFormat().format(span);
+    public String formatTimeSpan(long seconds) {
+        return new TimeSpanFormat().format(seconds);
+    }
+    
+    
+    
+    @Override
+    public String formatTimeSpanMs(long ms) {
+        return this.formatTimeSpan(ms / 1000);
     }
 }

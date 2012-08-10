@@ -43,11 +43,22 @@ public interface FormatManager {
     
     
     /**
-     * Formats the given int as a timespan.
+     * Formats the given int as a timespan. Note that this method interprets the
+     * timespan as seconds.
      * 
      * @param span The timespan in seconds.
      * @return The formatted timespan string.
      */
-    public String formatTimeSpan(long span);
+    public String formatTimeSpan(long seconds);
+
+
+
+    /**
+     * Formats the given int as a timespan.
+     * 
+     * @param span The timespan in milliseconds.
+     * @return The formatted timespan string.
+     */
+    public abstract String formatTimeSpanMs(long ms);
     
 }
