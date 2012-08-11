@@ -1,13 +1,7 @@
 package polly.core.formatting;
 
 public class TimeSpanFormat {
-    
-    
-    public static void main(String[] args) {
-        long seconds = 60*60*24+60*15;
-        TimeSpanFormat tsf = new TimeSpanFormat();
-        System.out.println(tsf.format(seconds));
-    }
+
     
     public final static long SECONDS = 1L;
     public final static long MINUTES = 60L;
