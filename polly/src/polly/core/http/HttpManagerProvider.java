@@ -21,7 +21,7 @@ import polly.core.http.actions.SessionPageHttpAction;
 import polly.core.http.actions.UserInfoPageHttpAction;
 import polly.core.http.actions.UserPageHttpAction;
 import polly.core.mypolly.MyPollyImpl;
-import polly.moduleloader.AbstractModule;
+import polly.moduleloader.AbstractProvider;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.SetupException;
 import polly.moduleloader.annotations.Module;
@@ -37,7 +37,7 @@ import polly.moduleloader.annotations.Require;
     },
     provides = @Provide(component = HttpManagerImpl.class)
 )
-public class HttpManagerProvider extends AbstractModule {
+public class HttpManagerProvider extends AbstractProvider {
 
     private final static Logger logger = Logger.getLogger(HttpManagerProvider.class
         .getName());

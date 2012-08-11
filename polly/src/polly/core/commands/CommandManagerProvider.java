@@ -6,7 +6,7 @@ import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.ConfigurationProvider;
 import polly.configuration.ConfigurationProviderImpl;
 import polly.core.users.UserManagerImpl;
-import polly.moduleloader.AbstractModule;
+import polly.moduleloader.AbstractProvider;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.SetupException;
 import polly.moduleloader.annotations.Module;
@@ -18,7 +18,7 @@ import polly.moduleloader.annotations.Provide;;
                @Require(component = ConfigurationProviderImpl.class),
                @Require(component = UserManagerImpl.class)},
     provides = @Provide(component = CommandManagerImpl.class))
-public class CommandManagerProvider extends AbstractModule {
+public class CommandManagerProvider extends AbstractProvider {
 
     
     private final static String COMMAND_CFG_NAME = "commandManager.cfg";

@@ -9,7 +9,7 @@ import polly.configuration.ConfigurationProviderImpl;
 import polly.core.ModuleStates;
 import polly.core.ShutdownManagerImpl;
 import polly.core.mypolly.MyPollyImpl;
-import polly.moduleloader.AbstractModule;
+import polly.moduleloader.AbstractProvider;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.SetupException;
 import polly.moduleloader.annotations.Module;
@@ -27,7 +27,7 @@ import polly.util.ProxyClassLoader;
         @Provide(component = PluginManagerImpl.class),
         @Provide(state = ModuleStates.PLUGINS_READY)
     })
-public class PluginManagerProvider extends AbstractModule {
+public class PluginManagerProvider extends AbstractProvider {
     
     public final static String PLUGIN_CFG = "plugin.cfg";
     

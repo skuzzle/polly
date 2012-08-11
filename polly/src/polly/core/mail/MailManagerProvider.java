@@ -4,7 +4,7 @@ import de.skuzzle.polly.sdk.Configuration;
 import polly.configuration.ConfigurationProviderImpl;
 import polly.configuration.ConfigurationImpl;
 import polly.core.mail.senders.MailSender;
-import polly.moduleloader.AbstractModule;
+import polly.moduleloader.AbstractProvider;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.SetupException;
 import polly.moduleloader.annotations.Module;
@@ -17,7 +17,7 @@ import polly.moduleloader.annotations.Require;
     provides = {
         @Provide(component = MailManagerImpl.class),
         @Provide(component = MailConfig.class)})
-public class MailManagerProvider extends AbstractModule {
+public class MailManagerProvider extends AbstractProvider {
 
     public final static String MAIL_CONFIG = "mail.cfg";
     

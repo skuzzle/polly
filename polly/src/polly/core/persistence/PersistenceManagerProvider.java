@@ -12,7 +12,7 @@ import polly.core.roles.Permission;
 import polly.core.roles.Role;
 import polly.core.users.Attribute;
 import polly.core.users.User;
-import polly.moduleloader.AbstractModule;
+import polly.moduleloader.AbstractProvider;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.SetupException;
 import polly.moduleloader.annotations.Module;
@@ -31,7 +31,7 @@ import polly.core.ModuleStates;
         @Provide(component = PersistenceManagerImpl.class),
         @Provide(state = ModuleStates.PERSISTENCE_READY)
     })
-public class PersistenceManagerProvider extends AbstractModule {
+public class PersistenceManagerProvider extends AbstractProvider {
 
     public final static String PERSISTENCE_CONFIG = "persistence.cfg";
     

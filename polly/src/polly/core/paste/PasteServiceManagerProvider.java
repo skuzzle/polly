@@ -5,7 +5,7 @@ import polly.core.paste.services.GBPasteService;
 import polly.core.paste.services.NoPastePasteService;
 import polly.core.paste.services.PHCNPasteService;
 import polly.core.paste.services.PasteBinPasteService;
-import polly.moduleloader.AbstractModule;
+import polly.moduleloader.AbstractProvider;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.SetupException;
 import polly.moduleloader.annotations.Module;
@@ -14,7 +14,7 @@ import polly.moduleloader.annotations.Provide;;
 @Module(
     provides = @Provide(component = PasteServiceManagerImpl.class)
 )
-public class PasteServiceManagerProvider extends AbstractModule {
+public class PasteServiceManagerProvider extends AbstractProvider {
 
     public PasteServiceManagerProvider(ModuleLoader loader) {
         super("PASTE_MANAGER_PROVIDER", loader, true);

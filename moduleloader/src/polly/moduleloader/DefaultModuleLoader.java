@@ -22,25 +22,25 @@ public class DefaultModuleLoader implements ModuleLoader {
     private static Logger logger = Logger.getLogger(DefaultModuleLoader.class
         .getName());
 
-    private Map<Class<?>, Module> setupProvides;
-    private Map<Integer, Module> providedStates;;
+    private Map<Class<?>, Provider> setupProvides;
+    private Map<Integer, Provider> providedStates;;
 
-    private Map<Module, Set<Class<?>>> beforeSetupReq;
-    private Map<Module, Set<Integer>> requiredStates;
+    private Map<Provider, Set<Class<?>>> beforeSetupReq;
+    private Map<Provider, Set<Integer>> requiredStates;
     private Map<Class<?>, Object> provides;
-    private Set<Module> modules;
+    private Set<Provider> providers;
     private Set<Integer> state;
-    private Module startUp;
+    private Provider startUp;
 
 
 
     public DefaultModuleLoader() {
-        this.setupProvides = new HashMap<Class<?>, Module>();
-        this.providedStates = new HashMap<Integer, Module>();
-        this.beforeSetupReq = new HashMap<Module, Set<Class<?>>>();
-        this.requiredStates = new HashMap<Module, Set<Integer>>();
+        this.setupProvides = new HashMap<Class<?>, Provider>();
+        this.providedStates = new HashMap<Integer, Provider>();
+        this.beforeSetupReq = new HashMap<Provider, Set<Class<?>>>();
+        this.requiredStates = new HashMap<Provider, Set<Integer>>();
         this.provides = new HashMap<Class<?>, Object>();
-        this.modules = new HashSet<Module>();
+        this.providers = new HashSet<Provider>();
         this.state = new HashSet<Integer>();
     }
     
@@ -57,25 +57,25 @@ public class DefaultModuleLoader implements ModuleLoader {
                         this.startUp.getName());
             }
             w.println("     node [shape=ellipse fillcolor=lightblue2 color=black style=\"filled,solid\"]");
-            for (Module module : this.modules) {
-                if (module != this.startUp) {
-                    w.println("    " + module.getName() + ";");
+            for (Provider provider : this.providers) {
+                if (provider != this.startUp) {
+                    w.println("    " + provider.getName() + ";");
                 }
             }
             
             w.println();
             w.println("    node [shape=ellipse fillcolor=azure2 color=azure4 style=\"dashed,filled\"];");
-            for (Entry<Class<?>, Module> e : this.setupProvides.entrySet()) {
+            for (Entry<Class<?>, Provider> e : this.setupProvides.entrySet()) {
                 w.println("    " + e.getKey().getSimpleName());
             }
             
-            for (Entry<Module, Set<Class<?>>> e : this.beforeSetupReq.entrySet()) {
+            for (Entry<Provider, Set<Class<?>>> e : this.beforeSetupReq.entrySet()) {
                 for (Class<?> cls : e.getValue()) {
                     w.println("    " + cls.getSimpleName() + "->" + e.getKey().getName());
                 }
             }
             
-            for (Entry<Class<?>, Module> e : this.setupProvides.entrySet()) {
+            for (Entry<Class<?>, Provider> e : this.setupProvides.entrySet()) {
                 w.println("    " + e.getValue().getName() + "->" + 
                         e.getKey().getSimpleName());
             }
@@ -91,14 +91,14 @@ public class DefaultModuleLoader implements ModuleLoader {
 
 
 
-    private void processModule(Module module) {
-        Class<?> cls = module.getClass();
+    private void processModule(Provider provider) {
+        Class<?> cls = provider.getClass();
 
         polly.moduleloader.annotations.Module an = cls.getAnnotation(
         		polly.moduleloader.annotations.Module.class);
         
         if (an == null) {
-            throw new ModuleDependencyException("module " + module
+            throw new ModuleDependencyException("module " + provider
                 + " is not annotated");
         }
         
@@ -107,24 +107,24 @@ public class DefaultModuleLoader implements ModuleLoader {
                 throw new ModuleDependencyException("there is already a startup module: " 
                         + this.startUp);
             }
-            this.startUp = module;
+            this.startUp = provider;
         }
 
         for (Provide p : an.provides()) {
             if (p.component() != None.class) {
-                this.willProvideDuringSetup(p.component(), module);
+                this.willProvideDuringSetup(p.component(), provider);
             }
             if (p.state() >= 0) {
-                this.willSetState(p.state(), module);
+                this.willSetState(p.state(), provider);
             }
         }
 
         for (Require r : an.requires()) {
             if (r.component() != None.class) {
-                this.requireBeforeSetup(r.component(), module);
+                this.requireBeforeSetup(r.component(), provider);
             }
             if (r.state() >= 0) {
-                this.requireState(r.state(), module);
+                this.requireState(r.state(), provider);
             }
         }
     }
@@ -132,8 +132,8 @@ public class DefaultModuleLoader implements ModuleLoader {
 
 
     @Override
-    public <T> void willProvideDuringSetup(Class<T> component, Module provider) {
-        Module m = this.setupProvides.get(component);
+    public <T> void willProvideDuringSetup(Class<T> component, Provider provider) {
+        Provider m = this.setupProvides.get(component);
         if (m != null) {
             throw new ModuleDependencyException("Module '" + provider
                 + "' cannot provide component '" + component
@@ -153,20 +153,20 @@ public class DefaultModuleLoader implements ModuleLoader {
 
 
     @Override
-    public <T> void requireBeforeSetup(Class<?> component, Module module) {
-        Module mod = this.setupProvides.get(component);
-        if (mod == module) {
-            throw new ModuleDependencyException("Module '" + module
+    public <T> void requireBeforeSetup(Class<?> component, Provider provider) {
+        Provider mod = this.setupProvides.get(component);
+        if (mod == provider) {
+            throw new ModuleDependencyException("Module '" + provider
                 + "' cannot require '" + component
                 + "' because it already provides it.");
         }
 
         // TODO: check cyclic dependency
 
-        Set<Class<?>> set = this.beforeSetupReq.get(module);
+        Set<Class<?>> set = this.beforeSetupReq.get(provider);
         if (set == null) {
             set = new HashSet<Class<?>>();
-            this.beforeSetupReq.put(module, set);
+            this.beforeSetupReq.put(provider, set);
         }
         set.add(component);
     }
@@ -174,8 +174,8 @@ public class DefaultModuleLoader implements ModuleLoader {
     
     
     @Override
-    public boolean checkRequires(Class<?> component, Module module) {
-        return this.beforeSetupReq.get(module).contains(component);
+    public boolean checkRequires(Class<?> component, Provider provider) {
+        return this.beforeSetupReq.get(provider).contains(component);
     }
 
 
@@ -201,9 +201,9 @@ public class DefaultModuleLoader implements ModuleLoader {
 
 
     @Override
-    public void registerModule(Module module) {
-        this.processModule(module);
-        this.modules.add(module);
+    public void registerModule(Provider provider) {
+        this.processModule(provider);
+        this.providers.add(provider);
     }
 
 
@@ -230,27 +230,27 @@ public class DefaultModuleLoader implements ModuleLoader {
     @Override
     public void runSetup() throws SetupException {
         if (this.startUp != null) {
-            this.runModuleSetup(this.startUp, new HashSet<Module>());
+            this.runModuleSetup(this.startUp, new HashSet<Provider>());
         }
-        for (Module module : this.modules) {
-            this.runModuleSetup(module, new HashSet<Module>());
+        for (Provider provider : this.providers) {
+            this.runModuleSetup(provider, new HashSet<Provider>());
         }
     }
 
 
 
-    private void runModuleSetup(Module module, Set<Module> callSet)
+    private void runModuleSetup(Provider provider, Set<Provider> callSet)
             throws SetupException {
-        if (module.isSetup()) {
+        if (provider.isSetup()) {
             return;
         }
 
-        callSet.add(module);
-        Set<Class<?>> required = this.beforeSetupReq.get(module);
+        callSet.add(provider);
+        Set<Class<?>> required = this.beforeSetupReq.get(provider);
         if (required != null) {
 
             logger.trace("Resolving " + required.size()
-                + " requirements for module '" + module + "': ");
+                + " requirements for module '" + provider + "': ");
 
             for (Class<?> component : required) {
 
@@ -259,7 +259,7 @@ public class DefaultModuleLoader implements ModuleLoader {
                 }
 
                 // find module that provides this component
-                Module mod = this.setupProvides.get(component);
+                Provider mod = this.setupProvides.get(component);
                 if (mod == null) {
                     throw new ModuleDependencyException(
                         "invalid dependency. no module provides '" + component
@@ -267,21 +267,21 @@ public class DefaultModuleLoader implements ModuleLoader {
                 } else if (callSet.contains(mod)) {
                     throw new ModuleDependencyException(
                         "invalid cyclic dependency between module '" + mod
-                            + "' and '" + module + "'");
-                } else if (mod != module) {
+                            + "' and '" + provider + "'");
+                } else if (mod != provider) {
                     this.runModuleSetup(mod, callSet);
                 }
             }
         }
-        logger.info("Running setup for '" + module + "'");
-        module.setupModule();
-        callSet.remove(module);
+        logger.info("Running setup for '" + provider + "'");
+        provider.setupModule();
+        callSet.remove(provider);
 
         // check if all components that 'module' claimed to provide are
         // actually provided now
-        for (Entry<Class<?>, Module> entry : this.setupProvides.entrySet()) {
-            if (entry.getValue() == module && !this.isProvided(entry.getKey())) {
-                throw new ModuleDependencyException("Module '" + module
+        for (Entry<Class<?>, Provider> entry : this.setupProvides.entrySet()) {
+            if (entry.getValue() == provider && !this.isProvided(entry.getKey())) {
+                throw new ModuleDependencyException("Module '" + provider
                     + "' claimed to provide '" + entry.getKey()
                     + "' but did not");
             }
@@ -305,18 +305,18 @@ public class DefaultModuleLoader implements ModuleLoader {
 
 
     @Override
-    public void requireState(int state, Module module) {
-        Module mod = this.providedStates.get(state);
-        if (mod == module) {
-            throw new ModuleDependencyException("Module '" + module
+    public void requireState(int state, Provider provider) {
+        Provider mod = this.providedStates.get(state);
+        if (mod == provider) {
+            throw new ModuleDependencyException("Module '" + provider
                 + "' cannot require state '" + state
                 + "' because it already provides it.");
         }
 
-        Set<Integer> set = this.requiredStates.get(module);
+        Set<Integer> set = this.requiredStates.get(provider);
         if (set == null) {
             set = new HashSet<Integer>();
-            this.requiredStates.put(module, set);
+            this.requiredStates.put(provider, set);
         }
         set.add(state);
     }
@@ -324,44 +324,44 @@ public class DefaultModuleLoader implements ModuleLoader {
 
 
     @Override
-    public void willSetState(int state, Module module) {
-        Module m = this.providedStates.get(state);
+    public void willSetState(int state, Provider provider) {
+        Provider m = this.providedStates.get(state);
         if (m != null) {
             throw new ModuleDependencyException("State '" + state
                 + "' already provided by module '" + m + "'");
         }
 
-        Set<Integer> requires = this.requiredStates.get(module);
+        Set<Integer> requires = this.requiredStates.get(provider);
         if (requires != null && requires.contains(state)) {
-            throw new ModuleDependencyException("Module '" + module + ""
+            throw new ModuleDependencyException("Module '" + provider + ""
                 + "' cannot provide state '" + state
                 + "' because it already requires it.");
         }
-        this.providedStates.put(state, module);
+        this.providedStates.put(state, provider);
     }
 
 
 
     @Override
     public void runModules() throws Exception {
-        for (Module module : this.modules) {
-            this.runModule(module, new HashSet<Module>());
+        for (Provider provider : this.providers) {
+            this.runModule(provider, new HashSet<Provider>());
         }
     }
 
 
 
-    private void runModule(Module module, Set<Module> callSet) throws Exception {
-        if (module.isRun()) {
+    private void runModule(Provider provider, Set<Provider> callSet) throws Exception {
+        if (provider.isRun()) {
             return;
         }
 
-        callSet.add(module);
-        Set<Integer> required = this.requiredStates.get(module);
+        callSet.add(provider);
+        Set<Integer> required = this.requiredStates.get(provider);
         if (required != null) {
 
             logger.trace("Requiring " + required.size()
-                + " states for module '" + module + "': ");
+                + " states for module '" + provider + "': ");
 
             for (Integer state : required) {
 
@@ -370,7 +370,7 @@ public class DefaultModuleLoader implements ModuleLoader {
                 }
 
                 // find module that provides this component
-                Module mod = this.providedStates.get(state);
+                Provider mod = this.providedStates.get(state);
                 if (mod == null) {
                     throw new ModuleDependencyException(
                         "invalid dependency. no module provides state '"
@@ -378,20 +378,20 @@ public class DefaultModuleLoader implements ModuleLoader {
                 } else if (callSet.contains(mod)) {
                     throw new ModuleDependencyException(
                         "invalid cyclic dependency between module '" + mod
-                            + "' and '" + module + "'");
-                } else if (mod != module) {
+                            + "' and '" + provider + "'");
+                } else if (mod != provider) {
                     this.runModule(mod, callSet);
                 }
             }
         }
-        logger.info("Running setup for '" + module + "'");
-        module.runModule();
+        logger.info("Running setup for '" + provider + "'");
+        provider.runModule();
 
         // check if all states that 'module' claimed to provide are
         // actually provided now
-        for (Entry<Integer, Module> entry : this.providedStates.entrySet()) {
-            if (entry.getValue() == module && !this.isStateSet(entry.getKey())) {
-                throw new ModuleDependencyException("Module '" + module
+        for (Entry<Integer, Provider> entry : this.providedStates.entrySet()) {
+            if (entry.getValue() == provider && !this.isStateSet(entry.getKey())) {
+                throw new ModuleDependencyException("Module '" + provider
                     + "' claimed to provide state '" + entry.getKey()
                     + "' but did not");
             }
@@ -401,14 +401,14 @@ public class DefaultModuleLoader implements ModuleLoader {
     
     
     public void dispose() {
-        for (Module mod : this.modules) {
+        for (Provider mod : this.providers) {
             mod.dispose();
         }
         if (this.startUp != null) {
             this.startUp.dispose();
         }
         this.beforeSetupReq.clear();
-        this.modules.clear();
+        this.providers.clear();
         this.providedStates.clear();
         this.provides.clear();
         this.requiredStates.clear();

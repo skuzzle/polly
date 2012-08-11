@@ -4,7 +4,7 @@ package polly.core.roles;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import polly.core.ModuleStates;
 import polly.core.persistence.PersistenceManagerImpl;
-import polly.moduleloader.AbstractModule;
+import polly.moduleloader.AbstractProvider;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.SetupException;
 import polly.moduleloader.annotations.Module;
@@ -21,7 +21,7 @@ import polly.moduleloader.annotations.Require;
         @Provide(state = ModuleStates.ROLES_READY)
     }
 )
-public class RoleManagerProvider extends AbstractModule {
+public class RoleManagerProvider extends AbstractProvider {
     
     private RoleManagerImpl roleManager;
     

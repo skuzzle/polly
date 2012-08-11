@@ -12,7 +12,7 @@ import de.skuzzle.polly.tools.events.EventProvider;
 
 import polly.configuration.ConfigurationProviderImpl;
 import polly.core.ShutdownManagerImpl;
-import polly.moduleloader.AbstractModule;
+import polly.moduleloader.AbstractProvider;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.annotations.Module;
 import polly.moduleloader.annotations.Require;
@@ -25,7 +25,7 @@ import polly.moduleloader.annotations.Provide;
     provides = {
         @Provide(component = EventProvider.class),
         @Provide(component = ExecutorService.class) })
-public class ExecutorServiceProvider extends AbstractModule {
+public class ExecutorServiceProvider extends AbstractProvider {
 
     
     public ExecutorServiceProvider(ModuleLoader loader) {

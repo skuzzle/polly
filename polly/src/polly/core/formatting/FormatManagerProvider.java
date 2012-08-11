@@ -3,7 +3,7 @@ package polly.core.formatting;
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.ConfigurationProvider;
 import polly.configuration.ConfigurationProviderImpl;
-import polly.moduleloader.AbstractModule;
+import polly.moduleloader.AbstractProvider;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.annotations.Module;
 import polly.moduleloader.annotations.Require;
@@ -15,7 +15,7 @@ import polly.moduleloader.annotations.Provide;;
     provides = 
         @Provide(component = FormatManagerImpl.class)
     )
-public class FormatManagerProvider extends AbstractModule {
+public class FormatManagerProvider extends AbstractProvider {
 
 
     public FormatManagerProvider(ModuleLoader loader) {

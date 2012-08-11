@@ -3,9 +3,9 @@ package polly.moduleloader;
 import org.apache.log4j.Logger;
 
 
-public abstract class AbstractModule implements Module {
+public abstract class AbstractProvider implements Provider {
 
-    protected Logger logger = Logger.getLogger(AbstractModule.class.getName());
+    protected Logger logger = Logger.getLogger(AbstractProvider.class.getName());
 
     private ModuleLoader loader;
     private String name;
@@ -15,7 +15,7 @@ public abstract class AbstractModule implements Module {
 
 
 
-    public AbstractModule(String name, ModuleLoader loader, boolean isCrucial) {
+    public AbstractProvider(String name, ModuleLoader loader, boolean isCrucial) {
         this.name = name;
         this.loader = loader;
         this.crucial = isCrucial;

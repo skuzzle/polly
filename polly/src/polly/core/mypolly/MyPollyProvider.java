@@ -17,7 +17,7 @@ import polly.core.persistence.PersistenceManagerImpl;
 import polly.core.plugins.PluginManagerImpl;
 import polly.core.roles.RoleManagerImpl;
 import polly.core.users.UserManagerImpl;
-import polly.moduleloader.AbstractModule;
+import polly.moduleloader.AbstractProvider;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.annotations.Module;
 import polly.moduleloader.annotations.Require;
@@ -43,7 +43,7 @@ import polly.moduleloader.annotations.Provide;;
     },
     provides = 
         @Provide(component = MyPollyImpl.class))
-public class MyPollyProvider extends AbstractModule {
+public class MyPollyProvider extends AbstractProvider {
 
     private CommandManagerImpl commandManager;
     private IrcManagerImpl ircManager;

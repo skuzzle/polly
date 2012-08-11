@@ -17,7 +17,7 @@ import polly.eventhandler.GhostHandler;
 import polly.eventhandler.IrcLoggingHandler;
 import polly.eventhandler.MessageHandler;
 import polly.eventhandler.TraceNickChangeHandler;
-import polly.moduleloader.AbstractModule;
+import polly.moduleloader.AbstractProvider;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.SetupException;
 import polly.moduleloader.annotations.Module;
@@ -38,7 +38,7 @@ import polly.moduleloader.annotations.Require;
     },
     provides = @Provide(component = MessageHandler.class)
 )
-public class IrcEventHandlerProvider extends AbstractModule {
+public class IrcEventHandlerProvider extends AbstractProvider {
 
     public IrcEventHandlerProvider(ModuleLoader loader) {
         super("IRC_EVENT_HANDLER_PROVIDER", loader, true);

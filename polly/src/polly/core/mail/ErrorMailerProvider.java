@@ -3,7 +3,7 @@ package polly.core.mail;
 import org.apache.log4j.Logger;
 
 import polly.core.mail.senders.MailSender;
-import polly.moduleloader.AbstractModule;
+import polly.moduleloader.AbstractProvider;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.SetupException;
 import polly.moduleloader.annotations.Module;
@@ -11,7 +11,7 @@ import polly.moduleloader.annotations.Require;
 
 
 @Module(requires = @Require(component = MailConfig.class))
-public class ErrorMailerProvider extends AbstractModule {
+public class ErrorMailerProvider extends AbstractProvider {
 
     
     public ErrorMailerProvider(ModuleLoader loader) {

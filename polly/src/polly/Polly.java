@@ -19,7 +19,7 @@ import polly.commandline.PollyArgumentParser;
 import polly.configuration.ConfigurationProviderImpl;
 import polly.core.ModuleBootstrapper;
 import polly.core.ShutdownManagerImpl;
-import polly.moduleloader.AbstractModule;
+import polly.moduleloader.AbstractProvider;
 import polly.moduleloader.DefaultModuleLoader;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.SetupException;
@@ -228,7 +228,7 @@ public class Polly {
         @Provide(component = ConfigurationProviderImpl.class),
         @Provide(component = ProxyClassLoader.class),
     })
-    private static class AnonymousModule extends AbstractModule {
+    private static class AnonymousModule extends AbstractProvider {
         
         private ConfigurationProviderImpl configurationProvider;
         private ProxyClassLoader parentCl;

@@ -7,13 +7,13 @@ import org.apache.log4j.Logger;
 
 import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
 
-import polly.moduleloader.AbstractModule;
+import polly.moduleloader.AbstractProvider;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.SetupException;
 import polly.moduleloader.annotations.Module;
 
 @Module
-public class JanitorProvider extends AbstractModule {
+public class JanitorProvider extends AbstractProvider {
 
     private final static int RATE = 1000 * 60 * 10; // 10 minutes
     private final static Logger logger = Logger.getLogger(JanitorProvider.class.getName());

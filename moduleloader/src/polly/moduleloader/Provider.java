@@ -1,7 +1,7 @@
 package polly.moduleloader;
 
 
-public interface Module {
+public interface Provider {
        
     public abstract void addState(int state);
             

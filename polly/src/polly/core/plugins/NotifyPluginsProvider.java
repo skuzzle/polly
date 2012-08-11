@@ -2,7 +2,7 @@ package polly.core.plugins;
 
 import polly.core.ModuleStates;
 import polly.core.roles.RoleManagerImpl;
-import polly.moduleloader.AbstractModule;
+import polly.moduleloader.AbstractProvider;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.SetupException;
 import polly.moduleloader.annotations.Module;
@@ -21,7 +21,7 @@ import polly.moduleloader.annotations.Provide;;
     provides =
         @Provide(state = ModuleStates.PLUGINS_NOTIFIED)
     )
-public class NotifyPluginsProvider extends AbstractModule {
+public class NotifyPluginsProvider extends AbstractProvider {
 
     private PluginManagerImpl pluginManager;
 

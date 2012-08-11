@@ -13,7 +13,7 @@ import polly.core.ModuleStates;
 import polly.core.ShutdownManagerImpl;
 import polly.core.persistence.PersistenceManagerImpl;
 import polly.core.roles.RoleManagerImpl;
-import polly.moduleloader.AbstractModule;
+import polly.moduleloader.AbstractProvider;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.SetupException;
 import polly.moduleloader.annotations.Module;
@@ -36,7 +36,7 @@ import polly.moduleloader.annotations.Provide;;
         @Provide(component = UserManagerImpl.class),
         @Provide(state = ModuleStates.USERS_READY)
     })
-public class UserManagerProvider extends AbstractModule {
+public class UserManagerProvider extends AbstractProvider {
     
     public final static String USER_CONFIG = "user.cfg";
 

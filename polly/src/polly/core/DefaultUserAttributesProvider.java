@@ -2,7 +2,7 @@ package polly.core;
 
 import de.skuzzle.polly.sdk.constraints.Constraints;
 import polly.core.users.UserManagerImpl;
-import polly.moduleloader.AbstractModule;
+import polly.moduleloader.AbstractProvider;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.SetupException;
 import polly.moduleloader.annotations.Module;
@@ -14,7 +14,7 @@ import polly.moduleloader.annotations.Require;
         @Require(state = ModuleStates.USERS_READY)
     }
 )
-public class DefaultUserAttributesProvider extends AbstractModule {
+public class DefaultUserAttributesProvider extends AbstractProvider {
     
     public final static String AUTO_LOGON = "AUTO_LOGON"; 
 

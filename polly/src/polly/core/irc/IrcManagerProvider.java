@@ -11,7 +11,7 @@ import de.skuzzle.polly.tools.events.EventProvider;
 
 import polly.configuration.ConfigurationProviderImpl;
 import polly.core.ShutdownManagerImpl;
-import polly.moduleloader.AbstractModule;
+import polly.moduleloader.AbstractProvider;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.SetupException;
 import polly.moduleloader.annotations.Module;
@@ -30,7 +30,7 @@ import polly.core.ModuleStates;
     provides = {
         @Provide(component = IrcManagerImpl.class),
         @Provide(state = ModuleStates.IRC_READY) })
-public class IrcManagerProvider extends AbstractModule {
+public class IrcManagerProvider extends AbstractProvider {
 
     
     public final static String IRC_CONFIG_FILE = "irc.cfg";
