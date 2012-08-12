@@ -20,6 +20,7 @@ public class LinkGrabberManager {
     
     public LinkGrabberManager() {
         this.grabbers = new LinkedList<LinkGrabber>();
+        this.enabled = true;
     }
     
     
