@@ -14,7 +14,8 @@
     <property name="bin.dir"      value="build"/>
     <property name="docs.dir"     value="docs"/>
     <property name="lib.dir"      value="${polly.root.dir}/libs"/>
-    
+    <property name="eclipse.bin.dir"      value="bin"/>
+	
     <!-- jar file properties -->
     <property name="mainclass" value=""/>
     <property name="title"     value="Polly-SDK"/>
@@ -183,7 +184,7 @@
             <project name="${ant.project.name}"/>
             <classpath>
                 <source path="${src.dir}" />
-                <output path="${bin.dir}" />
+                <output path="${eclipse.bin.dir}" />
                 <library pathref="buildpath"/>
             </classpath>
         </eclipse>

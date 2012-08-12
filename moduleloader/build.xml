@@ -13,7 +13,8 @@
     <property name="release.dir"  value="release"/>
     <property name="bin.dir"      value="build"/>
     <property name="lib.dir"      value="${polly.root.dir}/libs"/>
-    
+    <property name="eclipse.bin.dir"      value="bin"/>
+	
     <!-- jar file properties -->
     <property name="mainclass" value="TODO"/>
     <property name="title"     value="TODO"/>
@@ -87,7 +88,7 @@
         
         <copy todir="${dist.lib.dir}">
             <fileset dir="${lib.dir}" includes="${includeJars}"/>
-        </copy>        
+        </copy>
     </target>
     
     
@@ -191,7 +192,7 @@
             <project name="${ant.project.name}"/>
             <classpath>
                 <source path="${src.dir}" />
-                <output path="${bin.dir}" />
+                <output path="${eclipse.bin.dir}" />
                 <library pathref="buildpath_eclipse"/>
             </classpath>
         </eclipse>

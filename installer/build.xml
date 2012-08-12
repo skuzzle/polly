@@ -14,7 +14,8 @@
     <property name="update.dir"   value="update"/>
     <property name="bin.dir"      value="build"/>
     <property name="lib.dir"      value="${polly.root.dir}/libs"/>
-    
+	<property name="eclipse.bin.dir"      value="bin"/>
+
     <!-- jar file properties -->
     <property name="mainclass" value="de.skuzzle.polly.installer.InstallerLauncher"/>
     <property name="title"     value="Polly-Installer"/>
@@ -184,7 +185,7 @@
             <classpath>
                 <source path="/polly.process" />
                 <source path="${src.dir}" />
-                <output path="${bin.dir}" />
+                <output path="${eclipse.bin.dir}" />
                 <library pathref="buildpath"/>
             </classpath>
         </eclipse>

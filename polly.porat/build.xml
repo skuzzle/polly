@@ -16,7 +16,8 @@
     <property name="temp.dir"     value="temp"/>
     <property name="bin.dir"      value="build"/>
     <property name="lib.dir"      value="${polly.root.dir}/libs"/>
-    
+    <property name="eclipse.bin.dir"      value="bin"/>
+	
     <!-- jar file properties -->
     <property name="title"     value="polly.porat"/>
     <!-- used to specify additional jar-classpath elements -->
@@ -225,7 +226,7 @@
                 <source path="/network" />
                 <source path="/polly.tools" />
                 <source path="${src.dir}" />
-                <output path="${bin.dir}" />
+                <output path="${eclipse.bin.dir}" />
                 <library pathref="buildpath_eclipse"/>
             </classpath>
         </eclipse>

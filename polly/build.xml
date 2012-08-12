@@ -17,7 +17,8 @@
     <property name="update.dir"   value="update"/>
     <property name="bin.dir"      value="build"/>
     <property name="lib.dir"      value="${polly.root.dir}/libs"/>
-    
+    <property name="eclipse.bin.dir"      value="bin"/>
+	
     <!-- jar file properties -->
     <property name="mainclass" value="polly.PollyBootstrapper"/>
     <property name="title"     value="Polly"/>
@@ -252,7 +253,7 @@
                 <source path="/moduleloader"/>
                 <source path="${src.dir}"/>
                 <source path="./cfg" />
-                <output path="${bin.dir}" />
+                <output path="${eclipse.bin.dir}" />
                 <library pathref="buildpath_eclipse"/>
             </classpath>
         </eclipse>
