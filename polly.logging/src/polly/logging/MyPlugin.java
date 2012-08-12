@@ -43,11 +43,11 @@ public class MyPlugin extends PollyPlugin {
     public final static String LOGGING_PLUGUIN_CFG = "plugin.logging.cfg";
     
     public final static String LOG_CACHE_SIZE     = "logCacheSize";
-    public final static String LOG_PASTE_TRESHOLD = "logPasteTreshold";
+    public final static String LOG_PASTE_TRESHOLD = "logPasteThreshold";
     public final static String LOG_MAX_LOGS       = "logMaxLogs";
     
     public final static int DEFAULT_LOG_CACHE_SIZE = 100;
-    public final static int DEFAULT_LOG_TRESHOLD   = 10;
+    public final static int DEFAULT_LOG_THRESHOLD   = 10;
     public final static int DEFAULT_MAX_LOGS       = 100;
     
     public final static String FORWARD_HIGHLIGHTS         = "FORWARD_HIGHLIGHTS";
@@ -77,7 +77,7 @@ public class MyPlugin extends PollyPlugin {
         int cacheSize = loggingCfg.readInt(
                 LOG_CACHE_SIZE, DEFAULT_LOG_CACHE_SIZE);
         int pasteTreshold = loggingCfg.readInt(
-            LOG_PASTE_TRESHOLD, DEFAULT_LOG_TRESHOLD);
+            LOG_PASTE_TRESHOLD, DEFAULT_LOG_THRESHOLD);
         int maxLogs = loggingCfg.readInt(LOG_MAX_LOGS, DEFAULT_MAX_LOGS);
         
 
