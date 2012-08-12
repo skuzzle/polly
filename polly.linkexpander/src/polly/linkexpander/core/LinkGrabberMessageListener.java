@@ -9,7 +9,6 @@ public class LinkGrabberMessageListener implements MessageListener {
     private LinkGrabberManager linkGrabber;
     
     
-    
     public LinkGrabberMessageListener(LinkGrabberManager linkGrabber) {
         this.linkGrabber = linkGrabber;
     }

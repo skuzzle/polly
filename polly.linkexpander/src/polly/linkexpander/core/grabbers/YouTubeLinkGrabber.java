@@ -14,7 +14,7 @@ public class YouTubeLinkGrabber extends AbstractHttpRequestGrabber {
     
     public static void main(String[] args) {
         MessageEvent e = new MessageEvent(null, null, null, 
-            "http://www.youtube.com/watch?v=W7zCf29G32M&feature=g-logo-xit");
+            "http://www.youtube.com/watch?v=xyy-YY5tt0I&feature=g-user-u");
         
         YouTubeLinkGrabber ytlg = new YouTubeLinkGrabber();
         
@@ -25,7 +25,7 @@ public class YouTubeLinkGrabber extends AbstractHttpRequestGrabber {
     }
 
     private final static Pattern LINK_PATTERN = Pattern.compile(
-            "(http://www\\.youtube\\.com/watch\\?v=[a-zA-Z0-9]+).*");
+            "(http://www\\.youtube\\.com/watch\\?v=[a-zA-Z0-9-]+).*");
     
     private final static Pattern META_PATTERN = Pattern.compile(
         "<meta\\s+name=\"title\"\\s+content=\"([^\"]+)\">");

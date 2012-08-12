@@ -1,5 +1,7 @@
 package polly.linkexpander.core;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -12,6 +14,8 @@ import polly.linkexpander.core.grabbers.LinkGrabber;
 public class LinkGrabberManager {
 
     private List<LinkGrabber> grabbers;
+    private boolean enabled;
+    
     
     
     public LinkGrabberManager() {
@@ -26,14 +30,37 @@ public class LinkGrabberManager {
     
     
     
+    
+    public boolean isEnabled() {
+        return this.enabled;
+    }
+    
+    
+    
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+    
+    
+    
     public void processMessageEvent(MessageEvent e) {
+        if (!this.enabled) {
+            return;
+        }
+        
         for (LinkGrabber grabber : this.grabbers) {
             Matcher m = grabber.getLinkPattern().matcher(e.getMessage());
             if (m.find()) {
                 String r = grabber.processMatch(e.getMessage(), m);
                 if (r != null) {
-                    e.getSource().sendMessage(e.getChannel(),  
-                        "Video Titel (gepostet von " + e.getUser() + "): " + r, this);
+                    try {
+                        String decoded = URLDecoder.decode(r, "UTF-8");
+                        e.getSource().sendMessage(e.getChannel(),  
+                            "Video Titel (gepostet von " + e.getUser() + "): " + 
+                                decoded, this);
+                    } catch (UnsupportedEncodingException ignore) {
+                        ignore.printStackTrace();
+                    }
                 }
             }
         }
