@@ -57,7 +57,7 @@ public class LinkGrabberManager {
                     try {
                         String decoded = URLDecoder.decode(r, "UTF-8");
                         e.getSource().sendMessage(e.getChannel(), decoded + 
-                            " (geposted von (" + e.getUser() + ")", this);
+                            " (geposted von " + e.getUser() + ")", this);
                     } catch (UnsupportedEncodingException ignore) {
                         ignore.printStackTrace();
                     }
