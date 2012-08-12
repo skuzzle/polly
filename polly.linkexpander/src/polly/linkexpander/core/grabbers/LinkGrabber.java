@@ -9,4 +9,6 @@ public interface LinkGrabber {
     public abstract Pattern getLinkPattern();
     
     public abstract String processMatch(String grabbed, Matcher matcher);
+    
+    public abstract String getLink(String input, Matcher matcher);
 }

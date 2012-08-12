@@ -3,7 +3,6 @@ package polly.linkexpander.core.grabbers;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.regex.Matcher;
@@ -18,7 +17,7 @@ public abstract class AbstractHttpRequestGrabber implements LinkGrabber {
         URLConnection c = null;
         BufferedReader r = null;
         try {
-            URL url = this.getRequestUrlFromMatch(grabbed, matcher);
+            URL url = new URL(this.getLink(grabbed, matcher));
             c = url.openConnection();
             c.setDoInput(true);
             
@@ -48,9 +47,4 @@ public abstract class AbstractHttpRequestGrabber implements LinkGrabber {
     
     
     public abstract String processResponseLine(String line);
-    
-    
-    
-    public abstract URL getRequestUrlFromMatch(String grabbed, Matcher matcher) 
-        throws MalformedURLException;
 }

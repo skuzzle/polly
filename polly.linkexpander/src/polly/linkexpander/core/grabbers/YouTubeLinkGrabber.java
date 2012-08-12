@@ -1,7 +1,5 @@
 package polly.linkexpander.core.grabbers;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,11 +52,11 @@ public class YouTubeLinkGrabber extends AbstractHttpRequestGrabber {
     
     
     @Override
-    public URL getRequestUrlFromMatch(String grabbed, Matcher matcher) 
-            throws MalformedURLException {
-        String url = grabbed.substring(matcher.start(REQUEST_URL_GROUP), 
+    public String getLink(String input, Matcher matcher) {
+        String url = input.substring(matcher.start(REQUEST_URL_GROUP), 
             matcher.end(REQUEST_URL_GROUP));
-        return new URL(url);
+        
+        return url;
     }
 
 }
