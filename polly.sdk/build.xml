@@ -21,7 +21,7 @@
     <property name="title"     value="Polly-SDK"/>
     <property name="version"   value="${version.num}"/>
     <property name="Builddate" value="${today}"/>
-    <property name="classpath" value="$"/>
+    <property name="classpath" value=""/>
     
     <!-- Release properties -->
     <property name="release.filename"       value="${ant.project.name}-${version.num}-full.zip"/>
