@@ -30,6 +30,9 @@ public class XmlCreator {
     
     public void writePersistenceXml(String path) throws IOException {
         File file = new File(path);
+        if (file.exists()) {
+            file.delete();
+        }
         PrintStream out = new PrintStream(file);
         this.buildPersistenceXml(out);
         out.flush();
