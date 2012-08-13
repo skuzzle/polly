@@ -7,21 +7,27 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 
-import polly.tv.entities.TVEntity;
 
 
 public abstract class AbstractCrawlTask implements CrawlTask {
         
     private String url;
     private TVProgramIndexer indexer;
-    private boolean success;
-    private int resultSize;
+    private TVServiceProvider provider;
     
     
     
-    public AbstractCrawlTask(TVProgramIndexer indexer, String url) {
+    public AbstractCrawlTask(TVProgramIndexer indexer, 
+            TVServiceProvider provider, String url) {
         this.indexer = indexer;
+        this.provider = provider;
         this.url = url;
+    }
+    
+    
+    @Override
+    public TVServiceProvider getProvider() {
+        return this.provider;
     }
     
     
@@ -29,20 +35,6 @@ public abstract class AbstractCrawlTask implements CrawlTask {
     @Override
     public String getURL() {
         return this.url;
-    }
-    
-    
-    
-    @Override
-    public int resultSize() {
-        return this.resultSize;
-    }
-    
-    
-    
-    @Override
-    public boolean success() {
-        return this.success;
     }
     
     
@@ -68,11 +60,14 @@ public abstract class AbstractCrawlTask implements CrawlTask {
             while ((line = r.readLine()) != null) {
                 b.append(line);
             }
-            List<TVEntity> results = this.parseResults(b.toString());
-            this.success = true;
-            this.resultSize = results.size();
             
-            this.indexer.reportResults(this, results);
+            List<CrawlTask> subTasks = this.processPage(this.indexer, b.toString());
+            
+            if (!subTasks.isEmpty()) {
+                this.indexer.getLogger().debug(this + " yielded " + 
+                    subTasks.size() + " new tasks");
+                this.indexer.scheduleNextTasks(subTasks);
+            }
         } catch (Exception e) {
             this.indexer.reportCrawlError(this, e);
         } finally {

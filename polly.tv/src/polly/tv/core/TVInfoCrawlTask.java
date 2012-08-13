@@ -1,12 +1,10 @@
 package polly.tv.core;
 
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.skuzzle.polly.sdk.time.DateUtils;
 
 import polly.tv.entities.TVEntity;
 
@@ -24,22 +22,25 @@ public class TVInfoCrawlTask extends AbstractCrawlTask {
     );
     
     
-    private Date base;
     private String channel;
-    private int lastHour;
     
     
-    
-    public TVInfoCrawlTask(TVProgramIndexer indexer, String url, Date base, 
-            String channel) {
-        super(indexer, url);
-        this.base = base;
+    public TVInfoCrawlTask(TVProgramIndexer indexer, TVServiceProvider provider, 
+            String url, String channel) {
+        super(indexer, provider, url);
         this.channel = channel;
     }
     
     
-
+    
+    
     @Override
+    public List<CrawlTask> processPage(TVProgramIndexer indexer, String page) {
+        return new LinkedList<CrawlTask>();
+    }
+    
+    
+
     public List<TVEntity> parseResults(String page) {
         Matcher m = TV_PATTERN.matcher(page);
         List<TVEntity> result = new LinkedList<TVEntity>();
@@ -56,27 +57,9 @@ public class TVInfoCrawlTask extends AbstractCrawlTask {
                     page.substring(m.start(SUBTITLE_GROUP), m.end(SUBTITLE_GROUP)));
             }
             
-            TVEntity tve = new TVEntity(this.parseTimeString(time), new Date(), 
-                this.channel, title, subtitle);
-            result.add(tve);
         }
         
         return result;
-    }
-    
-    
-    
-    private Date parseTimeString(String time) {
-        String[] parts = time.split(":");
-        int hours = Integer.parseInt(parts[0]);
-        int minutes = Integer.parseInt(parts[1]);
-        
-        if (hours < this.lastHour) {
-            this.base = DateUtils.getDayAhead(this.base, 1);
-        }
-        this.lastHour = hours;
-        
-        return DateUtils.timeFor(this.base, hours, minutes, 0);
     }
 
 }

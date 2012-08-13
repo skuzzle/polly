@@ -10,6 +10,8 @@ public interface TVServiceProvider {
     
     public abstract String getBaseURL();
     
+    public abstract String resolveRelativeLink(String link);
+    
     public List<String> getSupportedChannels();
     
     public CrawlTask getFutureCrawlTask(TVProgramIndexer indexer, String channel, 

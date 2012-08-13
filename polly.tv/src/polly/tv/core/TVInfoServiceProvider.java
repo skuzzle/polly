@@ -39,6 +39,13 @@ public class TVInfoServiceProvider implements TVServiceProvider {
     }
     
     
+    
+    @Override
+    public String resolveRelativeLink(String link) {
+        return this.getBaseURL() + (link.startsWith("/") ? link : "/" + link);
+    }
+    
+    
 
     @Override
     public List<String> getSupportedChannels() {
@@ -51,13 +58,13 @@ public class TVInfoServiceProvider implements TVServiceProvider {
     public CrawlTask getFutureCrawlTask(TVProgramIndexer indexer, String channel, 
             Date day) {
         String url = this.createURL(channel, day);
-        return new TVInfoCrawlTask(indexer, url, day, channel);
+        return new TVInfoLinkCrawler(indexer, this, url, channel);
     }
     
     
     
     private String createURL(String channel, Date day) {
-        return this.getBaseURL() + "/sender/" + channel + "/" + this.df.format(day);
+        return this.resolveRelativeLink("/sender/" + channel + "/" + this.df.format(day));
     }
     
     

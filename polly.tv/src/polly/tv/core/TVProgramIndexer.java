@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
@@ -15,6 +16,7 @@ import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.time.DateUtils;
+import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
 
 import polly.tv.entities.TVEntity;
 
@@ -30,6 +32,9 @@ public class TVProgramIndexer extends AbstractDisposable implements Runnable {
     private Logger logger;
     private Date lastRun;
     private boolean running;
+    private ScheduledFuture<?> service;
+    private long lastScheduled;
+    
     
     
     // hours!!
@@ -49,9 +54,12 @@ public class TVProgramIndexer extends AbstractDisposable implements Runnable {
         this.serviceInterval = serviceInterval;
         this.futureDays = futureDays;
         this.scheduleDelay = scheduleDelay;
+        this.indexService = Executors.newScheduledThreadPool(10, 
+            new ThreadFactoryBuilder("TV_INDEX_SERVICE_%n%")
+                .setPriority(Thread.MIN_PRIORITY));
         
-        this.indexService = Executors.newScheduledThreadPool(10);
         this.provider = new LinkedList<TVServiceProvider>();
+        this.lastScheduled = System.currentTimeMillis();
     }
     
     
@@ -65,9 +73,18 @@ public class TVProgramIndexer extends AbstractDisposable implements Runnable {
     public void startIndexService() {
         if (!this.running) {
             logger.info("Starting Indexer Service");
-            this.indexService.scheduleAtFixedRate(this, 0, this.serviceInterval, 
-                TimeUnit.HOURS);
+            this.service = this.indexService.scheduleAtFixedRate(this, 0, 
+                this.serviceInterval, TimeUnit.HOURS);
             this.running = true;
+        }
+    }
+    
+    
+    
+    public void stopIndexService() {
+        if (this.running) {
+            this.service.cancel(false);
+            this.running = false;
         }
     }
     
@@ -93,9 +110,26 @@ public class TVProgramIndexer extends AbstractDisposable implements Runnable {
     
     
     
+    public synchronized void scheduleNextTasks(List<CrawlTask> tasks) {
+        long offset = Math.abs(System.currentTimeMillis() - this.lastScheduled);
+        
+        int i = 1;
+        for (CrawlTask task : tasks) {
+            // milliseconds!
+            long delay = offset + i++ * this.scheduleDelay * 1000;
+            logger.trace("Next task schedulued for execution at " + 
+                    new Date(System.currentTimeMillis() + delay));
+            this.indexService.schedule(task, delay, TimeUnit.MILLISECONDS);
+        }
+        this.lastScheduled = System.currentTimeMillis() + offset + 
+            tasks.size() * this.scheduleDelay * 1000;
+    }
+    
+    
+    
     private List<CrawlTask> generateNextTasks(TVServiceProvider provider) {
         List<CrawlTask> nextTasks = new LinkedList<CrawlTask>();
-        logger.debug("Generating next task from provider '" + provider + "'");
+        logger.debug("Generating next tasks from provider '" + provider + "'");
         
         
         for (String channel : provider.getSupportedChannels()) {
@@ -130,23 +164,21 @@ public class TVProgramIndexer extends AbstractDisposable implements Runnable {
             		"the current session");
         }
         
+        List<CrawlTask> tasks = new LinkedList<CrawlTask>();
+        
         synchronized (this.provider) {
             logger.trace("Registered Providers: " + this.provider.size());
             
             for (TVServiceProvider provider : this.provider) {
                 List<CrawlTask> nextTasks = this.generateNextTasks(provider);
-                
-                // this serves for not crawling all pages ordered by date
-                Collections.shuffle(nextTasks);
-                
-                logger.trace("Scheduling all new tasks");
-                int i = 1;
-                for (CrawlTask task : nextTasks) {
-                    this.indexService.schedule(task, (i++) * this.scheduleDelay, 
-                        TimeUnit.SECONDS);
-                }
+                tasks.addAll(nextTasks);
             }
         }
+        
+        // this serves for not crawling all pages ordered by date
+        Collections.shuffle(tasks);
+        logger.trace("Scheduling " + tasks.size() + " new tasks");
+        this.scheduleNextTasks(tasks);
         
         this.lastRun = new Date();
     }
@@ -169,8 +201,7 @@ public class TVProgramIndexer extends AbstractDisposable implements Runnable {
     
     void reportResults(CrawlTask reporter, List<TVEntity> results) {
         this.logger.debug("Crawl task for URL '" + reporter.getURL() + 
-            "' just finished. Success: " + reporter.success() + ", result size: " + 
-            reporter.resultSize());
+            "' just finished.");
         try {
             this.persistence.atomicPersistList(results);
         } catch (DatabaseException e) {

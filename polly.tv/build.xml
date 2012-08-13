@@ -44,6 +44,7 @@
         de.skuzzle.polly.sdk.jar
 		javax.persistence_2.0.3.v201010191057.jar
         log4j-1.2.16.jar
+		polly.tools.jar
     "/>
     
     <!-- buildpath for javac -->
