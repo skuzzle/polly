@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import de.skuzzle.polly.sdk.time.DateUtils;
+
 import polly.tv.entities.TVEntity;
 
 
@@ -23,8 +25,8 @@ public class TVInfoCrawlTask extends AbstractCrawlTask {
     
     
     private Date base;
-    private String lastTime;
     private String channel;
+    private int lastHour;
     
     
     
@@ -53,10 +55,28 @@ public class TVInfoCrawlTask extends AbstractCrawlTask {
                 subtitle = new String(
                     page.substring(m.start(SUBTITLE_GROUP), m.end(SUBTITLE_GROUP)));
             }
+            
+            TVEntity tve = new TVEntity(this.parseTimeString(time), new Date(), 
+                this.channel, title, subtitle);
+            result.add(tve);
         }
         
         return result;
+    }
+    
+    
+    
+    private Date parseTimeString(String time) {
+        String[] parts = time.split(":");
+        int hours = Integer.parseInt(parts[0]);
+        int minutes = Integer.parseInt(parts[1]);
         
+        if (hours < this.lastHour) {
+            this.base = DateUtils.getDayAhead(this.base, 1);
+        }
+        this.lastHour = hours;
+        
+        return DateUtils.timeFor(this.base, hours, minutes, 0);
     }
 
 }

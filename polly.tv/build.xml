@@ -16,6 +16,7 @@
     <property name="temp.dir"     value="temp"/>
     <property name="bin.dir"      value="build"/>
     <property name="lib.dir"      value="${polly.root.dir}/libs"/>
+	<property name="eclipse.bin.dir" value="bin"/>
     
     <!-- jar file properties -->
     <property name="title"     value="polly.tv"/>
@@ -41,6 +42,8 @@
     -->
     <property name="includeJars" value="
         de.skuzzle.polly.sdk.jar
+		javax.persistence_2.0.3.v201010191057.jar
+        log4j-1.2.16.jar
     "/>
     
     <!-- buildpath for javac -->
@@ -100,7 +103,7 @@
     -->
     <target name="build">
         <mkdir dir="${bin.dir}"/>
-        <javac srcdir="${src.dir}" destdir="${bin.dir}" classpathref="buildpath" source="1.6" target="1.6" debug="off" encoding="iso-8859-1">
+        <javac srcdir="${src.dir}" destdir="${bin.dir}" classpathref="buildpath" source="1.6" target="1.6" debug="on" encoding="iso-8859-1">
             <exclude name="de/skuzzle/test/**"/>
         </javac>
     </target>
@@ -215,7 +218,7 @@
             <classpath>
                 <source path="/polly.sdk" />
                 <source path="${src.dir}" />
-                <output path="${bin.dir}" />
+                <output path="${eclipse.bin.dir}" />
                 <library pathref="buildpath_eclipse"/>
             </classpath>
         </eclipse>

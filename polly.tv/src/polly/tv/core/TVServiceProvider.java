@@ -1,5 +1,6 @@
 package polly.tv.core;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -11,5 +12,6 @@ public interface TVServiceProvider {
     
     public List<String> getSupportedChannels();
     
-    public List<CrawlTask> getFutureCrawlTasks(int future);
+    public CrawlTask getFutureCrawlTask(TVProgramIndexer indexer, String channel, 
+            Date day);
 }

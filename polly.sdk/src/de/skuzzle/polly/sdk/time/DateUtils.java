@@ -7,6 +7,7 @@ import java.util.TimeZone;
 
 
 
+
 /**
  * Provides useful static methods for working with dates. Its based on the
  * {@link GregorianCalendar} class of the java framework.
@@ -150,6 +151,27 @@ public class DateUtils {
     
     
     /**
+     * Creates a new date of object for the given day with the given time.
+     * 
+     * @param base The base date.
+     * @param hours The hours (0-23)
+     * @param minutes The minutes.
+     * @param seconds The seconds.
+     * @return A new date object.
+     * @since 0.9.1
+     */
+    public static Date timeFor(Date base, int hours, int minutes, int seconds) {
+        Calendar then = new GregorianCalendar();
+        then.setTime(base);
+        then.set(Calendar.HOUR_OF_DAY, hours);
+        then.set(Calendar.MINUTE, minutes);
+        then.set(Calendar.SECOND, seconds);
+        return then.getTime();
+    }
+    
+    
+    
+    /**
      * Tests if the both given dates refer to the same day.
      * 
      * @param d1 The first date.
@@ -201,5 +223,40 @@ public class DateUtils {
         c.set(Calendar.SECOND, 0);
         
         return c.getTime();
+    }
+    
+    
+    
+    /**
+     * Returns a new date starting {@link Code days} from the base date in the future 
+     * at 00:00.
+     * 
+     * @param base The date to add the days to.
+     * @param days The amount of days to add.
+     * @return A new date.
+     * @since 0.9.1
+     */
+    public static Date getDayAhead(Date base, int days) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(base);
+        c.add(Calendar.DAY_OF_MONTH, days);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        return c.getTime();
+    }
+    
+    
+    
+    /**
+     * Returns a new date starting {@link Code days} from the current date in the future 
+     * at 00:00.
+     * 
+     * @param days The amount of days to add.
+     * @return A new date.
+     * @since 0.9.1
+     */
+    public static Date getDayAhead(int days) {
+        return getDayAhead(new Date(), days);
     }
 }

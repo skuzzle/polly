@@ -9,5 +9,9 @@ public interface CrawlTask extends Runnable {
 
     public abstract String getURL();
     
+    public abstract boolean success();
+    
+    public abstract int resultSize();
+    
     public abstract List<TVEntity> parseResults(String page);
 }
