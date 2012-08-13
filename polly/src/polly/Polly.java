@@ -223,7 +223,7 @@ public class Polly {
 
     
     
-        @Module(startUp = true, provides = {
+    @Module(startUp = true, provides = {
         @Provide(component = ShutdownManagerImpl.class),
         @Provide(component = ConfigurationProviderImpl.class),
         @Provide(component = ProxyClassLoader.class),
@@ -249,6 +249,12 @@ public class Polly {
             this.provideComponent(this.configurationProvider);
             this.provideComponent(this.parentCl);
             this.provideComponent(new ShutdownManagerImpl());
+            
+            if (this.configurationProvider.getRootConfiguration().readBoolean(
+                Configuration.DEBUG_MODE)) {
+                logger.warn(
+                    "\n\nPOLLY DEBUG MODE IS ENABLED. DISABLE THIS IN PRODUCTIVE SYSTEMS!\n\n");
+            }
         }
         
     }
