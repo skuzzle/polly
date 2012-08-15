@@ -22,10 +22,12 @@ public class MyTrainsCommand extends Command {
             throws DuplicatedSignatureException {
         super(polly, "mytrains");
         this.createSignature("Listet die offene Capitrain Rechnung für einen " +
-        		"Benutzer auf.", MyPlugin.MYTRAINS_PERMISSION);
+        		"Benutzer auf.", MyPlugin.MYTRAINS_PERMISSION,
+        		new Parameter("Trainer-Name", Types.USER));
         this.createSignature("Listet eine detaillierte Capitrainrechnung für einen " +
         		"Benutzer auf", 
         		MyPlugin.MYTRAINS_PERMISSION,
+    		new Parameter("Trainer-Name", Types.USER),
     		new Parameter("Details", Types.BOOLEAN));
         this.setHelpText("Listet die offene Capitrain Rechnung für einen " +
                 "Benutzer auf.");
