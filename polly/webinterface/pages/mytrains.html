@@ -21,10 +21,10 @@ Sorted: <a href="MyTrains?openSortKey=NONE&openDesc=false">$openSortKey</a>
     <tr>
         <td>$trainManager.getTrainer($train.getTrainerId()).getName()</td>
         <td>$train.getType()</td>
-        <td>$train.getFactor()</td>
+        <td>$myPolly.formatting().formatNumber($train.getFactor())</td>
         <td>$train.getCosts()</td>
         #set ( $weighted = $train.getFactor()*$train.getCosts() )
-        <td>$weighted</td>
+        <td>$myPolly.formatting().formatNumber($weighted)</td>
         <td>$myPolly.formatting().formatDate($train.getTrainStart())</td>
         <td>$myPolly.formatting().formatDate($train.getTrainFinished())</td>
         #set ( $diff = ($train.getTrainFinished().getTime() - $train.getTrainStart().getTime()) / 1000 )
@@ -60,10 +60,10 @@ Sorted: <a href="MyTrains?closedSortKey=NONE&closedDesc=false">$closedSortKey</a
     <tr>
         <td>$trainManager.getTrainer($train.getTrainerId()).getName()</td>
         <td>$train.getType()</td>
-        <td>$train.getFactor()</td>
+        <td>$myPolly.formatting().formatNumber($train.getFactor())</td>
         <td>$train.getCosts()</td>
         #set ( $weighted = $train.getFactor()*$train.getCosts() )
-        <td>$weighted</td>
+        <td>$myPolly.formatting().formatNumber($weighted)</td>
         <td>$myPolly.formatting().formatDate($train.getTrainStart())</td>
         <td>$myPolly.formatting().formatDate($train.getTrainFinished())</td>
         #set ( $diff = ($train.getTrainFinished().getTime() - $train.getTrainStart().getTime()) / 1000 )
