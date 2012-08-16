@@ -5,6 +5,7 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,7 +22,7 @@ import polly.rx.entities.RxRessource;
 public class BattleReportParser {
     
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException {
         String paste = " 12:17 16-08-2012\n" + 
         		"Zurückgelassene Ressourcen\n" + 
         		"0   0   0   1990    770     444     1114    788     769     0   35  33  0   0\n" + 
@@ -162,11 +163,7 @@ public class BattleReportParser {
         		"\n" + 
         		"";
         
-        try {
-            parse(paste);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        parse(paste);
     }
     
     
@@ -196,6 +193,32 @@ public class BattleReportParser {
     private final static int FLEET_NAME_GROUP = 2;
     private final static int VENAD_NAME_GROUP = 3;
     
+    private final static Pattern SHIP_PATTERN = Pattern.compile("(.*)\\s{2,}(.*)\\s+" + 
+        "Angriffswert\\s+(\\d+) / (\\d+)(\\(-(\\d+)\\))?\\s+Captain\\s+(\\d+) / (\\d+)(\\(-(\\d+)\\))? XPs (\\d+)\\s+" + 
+        "Schild\\s+(\\d+) / (\\d+)(\\(-(\\d+)\\))?\\s+Crew\\s+(\\d+) / (\\d+)(\\(-(\\d+)\\))? XPs (\\d+)\\s+" +
+        "Panzerung\\s+(\\d+) / (\\d+)(\\(-(\\d+)\\))?\\s+Systeme\\s+(\\d+) / (\\d+)(\\(-(\\d+)\\))?\\s+" + 
+        "Struktur\\s+(\\d+) / (\\d+)(\\(-(\\d+)\\))?\\s+ID:(\\d+)");
+    private final static int SHIP_NAME_GROUP = 1;
+    private final static int CAPI_NAME_GROUP = 2;
+    private final static int AW_GROUP = 4;
+    private final static int AW_DMG_GROUP = 6;
+    private final static int HP_GROUP = 8;
+    private final static int HP_DMG_GROUP = 10;
+    private final static int XP_CAPI_GROUP = 11;
+    private final static int SHIELDS_GROUP = 13;
+    private final static int SHIELDS_DMG_GROUP = 15;
+    private final static int MIN_CREW_GROUP = 16;
+    private final static int MAX_CREW_GROUP = 17;
+    private final static int CREW_DMG_GROUP = 19;
+    private final static int XP_CREW_GROUP = 20;
+    private final static int PZ_GROUP = 22;
+    private final static int PZ_DMG_GROUP = 24;
+    private final static int SYSTEMS_GROUP = 26;
+    private final static int SYSTEMS_DMG_GROUP = 28;
+    private final static int STRUCTURE_GROUP = 30;
+    private final static int STRUCTURE_DMG_GROUP = 32;
+    private final static int ID_GROUP = 33;
+    
     
     private final static DateFormat DATE_FORMAT;
     static {
@@ -210,7 +233,6 @@ public class BattleReportParser {
         } catch (java.text.ParseException e) {
             parseException(e);
         }
-        System.out.println("Date: " + DATE_FORMAT.format(date));
         
         // Parse Ress drop
         Matcher drop = DROP_PATTERN.matcher(paste);
@@ -228,11 +250,6 @@ public class BattleReportParser {
             drops.add(new Drop(ress, amount));
         }
         
-        for (Drop d : drops) {
-            System.out.println(d.toString());
-        }
-        
-        
         // Parse Battle location
         Matcher where = WHERE_PATTERN.matcher(paste);
         if (!where.find()) {
@@ -240,8 +257,8 @@ public class BattleReportParser {
         }
         
         String quadrant = substr(paste, where, QUADRANT_GROUP);
-        int x = Integer.parseInt(substr(paste, where, X_GROUP));
-        int y = Integer.parseInt(substr(paste, where, Y_GROUP));
+        int x = subint(paste, where, X_GROUP);
+        int y = subint(paste, where, Y_GROUP);
         
         System.out.println("Gefecht bei " + quadrant + " " + x + "," + y);
         
@@ -260,41 +277,81 @@ public class BattleReportParser {
         double defenderXpMod = Double.parseDouble(
             substr(paste, header, DEFENDER_XPMOD_GROUP));
         
-        System.out.println(tactic);
-        System.out.println("Attacker bonsu: " + attackerBonus);
-        System.out.println("Defender bonsu: " + defenderBonus);
-        System.out.println("Attacker kw: " + attackerKw);
-        System.out.println("Attacker xpmod: " + attackerXpMod);
-        System.out.println("Defender kw: " + defenderkw);
-        System.out.println("Defender xpmod: " + defenderXpMod);
-        
         String attackerVenad = "";
         String defenderVenad = "";
-        String attackerFleet = "";
-        String defenderFleet = "";
+        String attackerFleetName = "";
+        String defenderFleetName = "";
+        int defenderPos = 0;
         
         Matcher fleet = FLEET_NAME_PATTERN.matcher(paste);
         while (fleet.find()) {
             if (fleet.group().startsWith("Angreifer")) {
                 attackerVenad = substr(paste, fleet, VENAD_NAME_GROUP);
-                attackerFleet = substr(paste, fleet, FLEET_NAME_GROUP);
+                attackerFleetName = substr(paste, fleet, FLEET_NAME_GROUP);
             } else {
                 defenderVenad = substr(paste, fleet, VENAD_NAME_GROUP);
-                defenderFleet = substr(paste, fleet, FLEET_NAME_GROUP);
+                defenderFleetName = substr(paste, fleet, FLEET_NAME_GROUP);
+                defenderPos = fleet.end(VENAD_NAME_GROUP);
             }
         }
         
-        System.out.println("Attacker Fleet: " + attackerFleet);
-        System.out.println("Attacker Venad: " + attackerVenad);
-        System.out.println("Defender Fleet: " + defenderFleet);
-        System.out.println("Defender Venad: " + defenderVenad);
-        return new BattleReport();
+        List<BattleReportShip> attackerFleet = parseShips(substr(paste, 0, defenderPos));
+        List<BattleReportShip> defenderFleet = 
+            parseShips(substr(paste, defenderPos, paste.length()));
+        
+        BattleReport result = new BattleReport(quadrant, x, y, drops, date, tactic, 
+            attackerBonus, defenderBonus, attackerKw, attackerXpMod, defenderkw, 
+            defenderXpMod, attackerFleetName, attackerVenad, defenderFleetName, 
+            defenderVenad, attackerFleet, defenderFleet);
+        
+        return result;
     }
     
     
     
-    private List<BattleReportShip> parseShips(String sub) {
-        return null;
+    private static List<BattleReportShip> parseShips(String paste) {
+        System.out.println(paste);
+        Matcher ships = SHIP_PATTERN.matcher(paste);
+        List<BattleReportShip> result = new LinkedList<BattleReportShip>();
+        
+        while (ships.find()) {
+            String shipName = substr(paste, ships, SHIP_NAME_GROUP);
+            String capiName = substr(paste, ships, CAPI_NAME_GROUP);
+            int aw = subint(paste, ships, AW_GROUP);
+            int awDmg = subint(paste, ships, AW_DMG_GROUP);
+            int hp = subint(paste, ships, HP_GROUP);
+            int hpDmg = subint(paste, ships, HP_DMG_GROUP);
+            int shields = subint(paste, ships, SHIELDS_GROUP);
+            int shieldsDmg = subint(paste, ships, SHIELDS_DMG_GROUP);
+            int minCrew = subint(paste, ships, MIN_CREW_GROUP);
+            int maxCrew = subint(paste, ships, MAX_CREW_GROUP);
+            int crewDmg = subint(paste, ships, CREW_DMG_GROUP);
+            int xpCapi = subint(paste, ships, XP_CAPI_GROUP);
+            int xpCrew = subint(paste, ships, XP_CREW_GROUP);
+            int pz = subint(paste, ships, PZ_GROUP);
+            int pzDmg = subint(paste, ships, PZ_DMG_GROUP);
+            int systems = subint(paste, ships, SYSTEMS_GROUP);
+            int systemsDmg = subint(paste, ships, SYSTEMS_DMG_GROUP);
+            int structure = subint(paste, ships, STRUCTURE_GROUP);
+            int structureDmg = subint(paste, ships, STRUCTURE_DMG_GROUP);
+            int rxId = subint(paste, ships, ID_GROUP);
+            
+            BattleReportShip ship = new BattleReportShip(rxId, shipName, capiName, aw, 
+                shields, pz, structure, minCrew, maxCrew, systems, xpCapi, xpCrew, 
+                shieldsDmg, pzDmg, structureDmg, systemsDmg, hp, hpDmg, awDmg, crewDmg);
+            result.add(ship);
+        }
+        
+        return result;
+    }
+    
+    
+    
+    private final static int subint(String orig, Matcher m, int groupId) {
+        if (m.start(groupId) == -1) {
+            return 0;
+        }
+        return Integer.parseInt(substr(orig, m, groupId));
     }
     
     
