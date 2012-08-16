@@ -53,7 +53,7 @@ public class ResponseHandler implements HttpHandler {
             String key = in.substring(m.start(1), m.end(1));
             String value = in.substring(m.start(2), m.end(2));
             try {
-                value = URLDecoder.decode(value, "UTF-8");
+                value = URLDecoder.decode(value, "ISO-8859-1");
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -70,9 +70,10 @@ public class ResponseHandler implements HttpHandler {
     
     
     private static void parsePostParameters(HttpExchange t, 
-            Map<String, HttpParameter> result) throws IOException {
+            Map<String, HttpParameter> result, String encoding) throws IOException {
         
-        BufferedReader r = new BufferedReader(new InputStreamReader(t.getRequestBody()));
+        BufferedReader r = new BufferedReader(new InputStreamReader(t.getRequestBody(), 
+            encoding));
         String line = null;
         while ((line = r.readLine()) != null) {
             if (!line.equals("")) {
@@ -129,7 +130,7 @@ public class ResponseHandler implements HttpHandler {
         
         // extract POST parameters
         if (t.getRequestMethod().equals("POST")) {
-            parsePostParameters(t, parameters);
+            parsePostParameters(t, parameters, this.webServer.getEncoding());
         }
         
         

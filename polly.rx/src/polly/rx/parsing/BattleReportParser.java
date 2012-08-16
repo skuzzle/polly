@@ -1,7 +1,6 @@
 package polly.rx.parsing;
 
 import java.text.DateFormat;
-import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,7 +14,7 @@ import polly.rx.ParseException;
 import polly.rx.entities.BattleReport;
 import polly.rx.entities.BattleReportShip;
 import polly.rx.entities.BattleTactic;
-import polly.rx.entities.Drop;
+import polly.rx.entities.BattleDrop;
 import polly.rx.entities.RxRessource;
 
 
@@ -23,153 +22,153 @@ public class BattleReportParser {
     
     
     public static void main(String[] args) throws ParseException {
-        String paste = " 12:17 16-08-2012\n" + 
+        String paste = " 14:44 16-08-2012\n" + 
         		"Zurückgelassene Ressourcen\n" + 
-        		"0   0   0   1990    770     444     1114    788     769     0   35  33  0   0\n" + 
+        		"0   0   0   4614    443     145     696     694     481     158     73  19  0   0\n" + 
+        		"1 Artefakt(e) erbeutet\n" + 
         		"\n" + 
-        		"Gefecht bei Neu Kaledonien 9,10\n" + 
+        		"Gefecht bei Neu Kaledonien 8,12\n" + 
         		"Die Angreifer waren siegreich   Gefechtstaktik  Raubzug\n" + 
-        		"Bonus Angreifer 4%  Bonus Verteidiger   -3%\n" + 
-        		"Kampfwert Angreifer/XP-Mod  79697.65/0.63   Kampfwert Verteidiger/XP-Mod    49892.92/1\n" + 
+        		"Bonus Angreifer 32%     Bonus Verteidiger   -19%\n" + 
+        		"Kampfwert Angreifer/XP-Mod  98217.52/0.26   Kampfwert Verteidiger/XP-Mod    45978.82/1\n" + 
         		"\n" + 
-        		"Angreifer Flotte: AdventurousSquall (C0mb4t:Inc[Loki])\n" + 
+        		"Angreifer Flotte: RiskyChaser (C0mb4t:Inc[Loki])\n" + 
         		"Begleitschiff (LIII) Herxosi    Fleet Marshall Jan Martin Jacobs\n" + 
-        		"Angriffswert    194 / 194   Captain 15 / 15 XPs 10\n" + 
-        		"Schild  1417 / 2070(-653)   Crew    137 / 137   XPs 5\n" + 
-        		"Panzerung   12749 / 13680(-17)  Systeme 3938 / 3938\n" + 
+        		"Angriffswert    194 / 194   Captain 15 / 15 XPs 14\n" + 
+        		"Schild  1569 / 2070(-501)   Crew    137 / 137   XPs 7\n" + 
+        		"Panzerung   12178 / 13680(-196)     Systeme 3938 / 3938\n" + 
         		"Struktur    494 / 494   ID:11107040 \n" + 
         		"\n" + 
         		"Begleitschiff (LIII) Lentra     Galaxy Marshall Meike Ehler\n" + 
-        		"Angriffswert    195 / 195   Captain 15 / 15 XPs 16\n" + 
-        		"Schild  1257 / 2006(-749)   Crew    137 / 137   XPs 8\n" + 
-        		"Panzerung   12968 / 13675(-77)  Systeme 3841 / 3841\n" + 
+        		"Angriffswert    195 / 195   Captain 15 / 15 XPs 15\n" + 
+        		"Schild  1378 / 2006(-628)   Crew    137 / 137   XPs 7\n" + 
+        		"Panzerung   12480 / 13675(-214)     Systeme 3841 / 3841\n" + 
         		"Struktur    519 / 519   ID:11142075 \n" + 
         		"\n" + 
         		"Begleitschiff (LIII) Nemsek     Recruit Bodo Greene\n" + 
-        		"Angriffswert    191 / 191   Captain 10 / 10 XPs 32\n" + 
-        		"Schild  1355 / 2061(-706)   Crew    137 / 137   XPs 16\n" + 
-        		"Panzerung   11953 / 13712(-252)     Systeme 3883 / 3883\n" + 
+        		"Angriffswert    191 / 191   Captain 10 / 10 XPs 9\n" + 
+        		"Schild  1316 / 2061(-745)   Crew    137 / 137   XPs 4\n" + 
+        		"Panzerung   11339 / 13712(-54)  Systeme 3883 / 3883\n" + 
         		"Struktur    517 / 517   ID:11116300 \n" + 
         		"\n" + 
         		"Begleitschiff (LIII) Othrax     Fleet Admiral Gaynor Lanlermann\n" + 
-        		"Angriffswert    191 / 191   Captain 21 / 21 XPs 25\n" + 
-        		"Schild  1452 / 1997(-545)   Crew    137 / 137   XPs 12\n" + 
-        		"Panzerung   12153 / 13522(-177)     Systeme 3788 / 3788\n" + 
+        		"Angriffswert    191 / 191   Captain 21 / 21 XPs 11\n" + 
+        		"Schild  1543 / 1997(-454)   Crew    137 / 137   XPs 5\n" + 
+        		"Panzerung   11951 / 13522(-113)     Systeme 3788 / 3788\n" + 
         		"Struktur    497 / 497   ID:11212243 \n" + 
         		"\n" + 
         		"Begleitschiff (LIII) Sikerier   Star Marshall Gaby Kalckberner\n" + 
-        		"Angriffswert    198 / 198   Captain 15 / 15 XPs 8\n" + 
-        		"Schild  1029 / 2038(-1009)  Crew    137 / 137   XPs 4\n" + 
-        		"Panzerung   12620 / 13887   Systeme 3905 / 3905\n" + 
+        		"Angriffswert    198 / 198   Captain 15 / 15 XPs 18\n" + 
+        		"Schild  1499 / 2038(-539)   Crew    137 / 137   XPs 9\n" + 
+        		"Panzerung   11683 / 13887(-287)     Systeme 3905 / 3905\n" + 
         		"Struktur    506 / 506   ID:11161983 \n" + 
         		"\n" + 
         		"Begleitschiff (LIII) Zertrax    Star Marshall Lidie Zapata\n" + 
-        		"Angriffswert    196 / 196   Captain 21 / 21 XPs 28\n" + 
-        		"Schild  1449 / 2038(-589)   Crew    137 / 137   XPs 14\n" + 
-        		"Panzerung   12700 / 13800(-210)     Systeme 3873 / 3873\n" + 
+        		"Angriffswert    196 / 196   Captain 21 / 21 XPs 12\n" + 
+        		"Schild  1534 / 2038(-504)   Crew    137 / 137   XPs 6\n" + 
+        		"Panzerung   12199 / 13800(-133)     Systeme 3873 / 3873\n" + 
         		"Struktur    517 / 517   ID:11142076 \n" + 
         		"\n" + 
         		"Frachtschiff (LIX) Chantaus     Venad Sub Commander Shalyna Seehaus\n" + 
-        		"Angriffswert    169 / 169   Captain 15 / 15 XPs 32\n" + 
-        		"Schild  986 / 1440(-454)    Crew    30 / 32 XPs 16\n" + 
-        		"Panzerung   6756 / 8243(-252)   Systeme 2887 / 2887\n" + 
+        		"Angriffswert    169 / 169   Captain 15 / 15 XPs 15\n" + 
+        		"Schild  961 / 1440(-479)    Crew    30 / 32 XPs 7\n" + 
+        		"Panzerung   6093 / 8243(-215)   Systeme 2887 / 2887\n" + 
         		"Struktur    154 / 154   ID:10385501 \n" + 
         		"\n" + 
         		"Frachtschiff (LIX) Funga    Star Marshall Rieke Roughley\n" + 
-        		"Angriffswert    169 / 169   Captain 15 / 15 XPs 25\n" + 
-        		"Schild  728 / 1440(-712)    Crew    32 / 32 XPs 13\n" + 
-        		"Panzerung   6977 / 8243(-177)   Systeme 2887 / 2887\n" + 
+        		"Angriffswert    169 / 169   Captain 15 / 15 XPs 13\n" + 
+        		"Schild  768 / 1440(-672)    Crew    32 / 32 XPs 7\n" + 
+        		"Panzerung   6488 / 8243(-177)   Systeme 2887 / 2887\n" + 
         		"Struktur    154 / 154   ID:10296537 \n" + 
         		"\n" + 
         		"Frachtschiff (LIX) Netarus  Sub Marshall Tobi Piaget\n" + 
-        		"Angriffswert    166 / 166   Captain 21 / 21 XPs 38\n" + 
-        		"Schild  872 / 1418(-546)    Crew    32 / 32 XPs 19\n" + 
-        		"Panzerung   6839 / 8119(-316)   Systeme 2843 / 2843\n" + 
+        		"Angriffswert    166 / 166   Captain 21 / 21 XPs 8\n" + 
+        		"Schild  807 / 1418(-611)    Crew    32 / 32 XPs 4\n" + 
+        		"Panzerung   6410 / 8119(-44)    Systeme 2843 / 2843\n" + 
         		"Struktur    152 / 152   ID:10778297 \n" + 
         		"\n" + 
         		"Frachtschiff (LIX) Novalis  Group Marshall Zina Ahlers\n" + 
-        		"Angriffswert    169 / 169   Captain 15 / 15 XPs 18\n" + 
-        		"Schild  812 / 1440(-628)    Crew    30 / 32 XPs 9\n" + 
-        		"Panzerung   6872 / 8243(-107)   Systeme 2887 / 2887\n" + 
+        		"Angriffswert    169 / 169   Captain 15 / 15 XPs 11\n" + 
+        		"Schild  688 / 1440(-752)    Crew    30 / 32 XPs 5\n" + 
+        		"Panzerung   6477 / 8243(-111)   Systeme 2887 / 2887\n" + 
         		"Struktur    154 / 154   ID:10384757 \n" + 
         		"\n" + 
         		"Frachtschiff (LIX) Quasolas     Fleet Marshall Emmi Bamberg\n" + 
-        		"Angriffswert    169 / 169   Captain 21 / 21 XPs 25\n" + 
-        		"Schild  728 / 1440(-712)    Crew    30 / 32 XPs 13\n" + 
-        		"Panzerung   7442 / 8243(-177)   Systeme 2887 / 2887\n" + 
+        		"Angriffswert    169 / 169   Captain 21 / 21 XPs 19\n" + 
+        		"Schild  936 / 1440(-504)    Crew    30 / 32 XPs 9\n" + 
+        		"Panzerung   6703 / 8243(-317)   Systeme 2887 / 2887\n" + 
         		"Struktur    154 / 154   ID:10320935 \n" + 
         		"\n" + 
         		"Frachtschiff (LIX) Tridona  Fleet Marshall Shanice Nienhaus\n" + 
-        		"Angriffswert    169 / 169   Captain 16 / 16 XPs 8\n" + 
-        		"Schild  431 / 1440(-1009)   Crew    30 / 32 XPs 4\n" + 
-        		"Panzerung   6920 / 8243     Systeme 2887 / 2887\n" + 
+        		"Angriffswert    169 / 169   Captain 16 / 16 XPs 15\n" + 
+        		"Schild  897 / 1440(-543)    Crew    30 / 32 XPs 8\n" + 
+        		"Panzerung   6166 / 8243(-223)   Systeme 2887 / 2887\n" + 
         		"Struktur    154 / 154   ID:10341934 \n" + 
         		"\n" + 
         		"Kommandoschiff (XLII) Xontrapit     Vice Venad Commander Tasso Hilyard\n" + 
-        		"Angriffswert    58 / 58     Captain 20 / 20 XPs 33\n" + 
-        		"Schild  1089 / 1453(-364)   Crew    118 / 118   XPs 16\n" + 
-        		"Panzerung   5114 / 6847(-258)   Systeme 3421 / 3421\n" + 
+        		"Angriffswert    58 / 58     Captain 20 / 20 XPs 12\n" + 
+        		"Schild  737 / 1453(-716)    Crew    118 / 118   XPs 6\n" + 
+        		"Panzerung   4484 / 6847(-140)   Systeme 3421 / 3421\n" + 
         		"Struktur    260 / 260   ID:8643857  \n" + 
         		"\n" + 
         		"Zerstörer (XXXV) Degerox    Galaxy Marshall Basilius Heegmann\n" + 
-        		"Angriffswert    8826 / 8826     Captain 16 / 16 XPs 17\n" + 
-        		"Schild  1030 / 1928(-898)   Crew    191 / 246   XPs 9\n" + 
-        		"Panzerung   6267 / 7621(-93)    Systeme 3337 / 3337\n" + 
+        		"Angriffswert    8826 / 8826     Captain 16 / 16 XPs 10\n" + 
+        		"Schild  1457 / 1928(-471)   Crew    191 / 246   XPs 5\n" + 
+        		"Panzerung   5834 / 7621(-98)    Systeme 3337 / 3337\n" + 
         		"Struktur    169 / 169   ID:12479998 \n" + 
         		"\n" + 
         		"Zerstörer (XXXV) Moluga     Vice Venad Commander Cilia Albert\n" + 
         		"Angriffswert    9321 / 9321     Captain 20 / 20 XPs 10\n" + 
-        		"Schild  1211 / 2035(-824)   Crew    191 / 246   XPs 5\n" + 
-        		"Panzerung   6889 / 8048(-14)    Systeme 3523 / 3523\n" + 
+        		"Schild  1338 / 2035(-697)   Crew    191 / 246   XPs 5\n" + 
+        		"Panzerung   6299 / 8048(-94)    Systeme 3523 / 3523\n" + 
         		"Struktur    178 / 178   ID:10162025 \n" + 
         		"\n" + 
         		"Zerstörer (XXXV) Nesono     Vice Venad Commander Hedda Troost\n" + 
-        		"Angriffswert    9321 / 9321     Captain 17 / 17 XPs 25\n" + 
-        		"Schild  1323 / 2035(-712)   Crew    191 / 246   XPs 13\n" + 
-        		"Panzerung   6713 / 8048(-177)   Systeme 3523 / 3523\n" + 
+        		"Angriffswert    9321 / 9321     Captain 17 / 17 XPs 16\n" + 
+        		"Schild  1451 / 2035(-584)   Crew    191 / 246   XPs 8\n" + 
+        		"Panzerung   5968 / 8048(-251)   Systeme 3523 / 3523\n" + 
         		"Struktur    178 / 178   ID:10126012 \n" + 
         		"\n" + 
         		"Zerstörer (XXXV) Riwe   Vice Venad Commander Marko Kniess\n" + 
-        		"Angriffswert    9321 / 9321     Captain 20 / 20 XPs 31\n" + 
-        		"Schild  1573 / 2035(-462)   Crew    191 / 246   XPs 16\n" + 
-        		"Panzerung   7441 / 8048(-246)   Systeme 3523 / 3523\n" + 
+        		"Angriffswert    9321 / 9321     Captain 20 / 20 XPs 9\n" + 
+        		"Schild  1387 / 2035(-648)   Crew    191 / 246   XPs 5\n" + 
+        		"Panzerung   7099 / 8048(-74)    Systeme 3523 / 3523\n" + 
         		"Struktur    178 / 178   ID:10178200 \n" + 
         		"\n" + 
         		"Zerstörer (XXXV) Xemsial    Vice Venad Commander Jerry Jakobson\n" + 
-        		"Angriffswert    9321 / 9321     Captain 20 / 20 XPs 25\n" + 
-        		"Schild  1323 / 2035(-712)   Crew    191 / 246   XPs 13\n" + 
-        		"Panzerung   6286 / 8048(-177)   Systeme 3523 / 3523\n" + 
+        		"Angriffswert    9321 / 9321     Captain 20 / 20 XPs 9\n" + 
+        		"Schild  1372 / 2035(-663)   Crew    191 / 246   XPs 4\n" + 
+        		"Panzerung   5834 / 8048(-61)    Systeme 3523 / 3523\n" + 
         		"Struktur    178 / 178   ID:10177075 \n" + 
         		"\n" + 
         		"\n" + 
-        		"Verteidiger Flotte: Reg-Nr. 206 (Dharr-Grosch)\n" + 
+        		"Verteidiger Flotte: Reg-Nr. 116 (Dharr-Grosch)\n" + 
+        		"Kereliem    1st Lieutenant Captain\n" + 
+        		"Angriffswert    16200 / 16200   Captain 15 / 15     XPs 380\n" + 
+        		"Schild  8869 / 15000(-6131)     Crew    170 / 170   XPs 190\n" + 
+        		"Panzerung   369 / 2200(-1831)   Systeme 16949 / 16949\n" + 
+        		"Struktur    600 / 600   \n" + 
+        		"\n" + 
+        		"Kereliem    Lance Corporal Captain\n" + 
+        		"Angriffswert    16200 / 16200   Captain 27 / 27     XPs 332\n" + 
+        		"Schild  8551 / 15000(-6449)     Crew    170 / 170   XPs 166\n" + 
+        		"Panzerung   687 / 2200(-1513)   Systeme 16949 / 16949\n" + 
+        		"Struktur    600 / 600   \n" + 
+        		"\n" + 
         		"Sikrelias   Lieutenant Junior Grade Captain\n" + 
-        		"Angriffswert    16700 / 16700   Captain 13 / 13     XPs 190\n" + 
-        		"Schild  8108 / 14000(-5892)     Crew    165 / 165   XPs 95\n" + 
-        		"Panzerung   2117 / 2700(-583)   Systeme 15615 / 15615\n" + 
-        		"Struktur    480 / 480   \n" + 
-        		"\n" + 
-        		"Sikrelias   Space Officer Captain\n" + 
-        		"Angriffswert    16700 / 16700   Captain 18 / 18     XPs 263\n" + 
-        		"Schild  10212 / 14000(-3788)    Crew    165 / 165   XPs 131\n" + 
-        		"Panzerung   1632 / 2700(-1068)  Systeme 15615 / 15615\n" + 
-        		"Struktur    480 / 480   \n" + 
-        		"\n" + 
-        		"Sikrelias   Orbit Officer Captain\n" + 
-        		"Angriffswert    16700 / 16700   Captain 26 / 26     XPs 175\n" + 
-        		"Schild  9090 / 14000(-4910)     Crew    165 / 165   XPs 88\n" + 
-        		"Panzerung   2214 / 2700(-486)   Systeme 15615 / 15615\n" + 
+        		"Angriffswert    16700 / 16700   Captain 12 / 12     XPs 201\n" + 
+        		"Schild  9329 / 14000(-4671)     Crew    165 / 165   XPs 100\n" + 
+        		"Panzerung   2063 / 2700(-637)   Systeme 15615 / 15615\n" + 
         		"Struktur    480 / 480   \n" + 
         		"\n" + 
         		"";
-        
-        parse(paste);
-    }
     
+        BattleReport rep = BattleReportParser.parse(paste);
+    }
     
 
     private final static Pattern DROP_PATTERN = Pattern.compile(
-        "Zurückgelassene Ressourcen\\s+((\\d+\\s*)+)");
+        "Zurückgelassene Ressourcen\\s+((\\d+\\s*?)+)(1 Artefakt)?");
     private final static int DROP_GROUP = 1;
     
     private final static Pattern WHERE_PATTERN = Pattern.compile(
@@ -193,11 +192,11 @@ public class BattleReportParser {
     private final static int FLEET_NAME_GROUP = 2;
     private final static int VENAD_NAME_GROUP = 3;
     
-    private final static Pattern SHIP_PATTERN = Pattern.compile("(.*)\\s{2,}(.*)\\s+" + 
-        "Angriffswert\\s+(\\d+) / (\\d+)(\\(-(\\d+)\\))?\\s+Captain\\s+(\\d+) / (\\d+)(\\(-(\\d+)\\))? XPs (\\d+)\\s+" + 
-        "Schild\\s+(\\d+) / (\\d+)(\\(-(\\d+)\\))?\\s+Crew\\s+(\\d+) / (\\d+)(\\(-(\\d+)\\))? XPs (\\d+)\\s+" +
+    private final static Pattern SHIP_PATTERN = Pattern.compile("(.*?)\\s{2,}(.*?)\\s+" + 
+        "Angriffswert\\s+(\\d+) / (\\d+)(\\(-(\\d+)\\))?\\s+Captain\\s+(\\d+) / (\\d+)(\\(-(\\d+)\\))?\\s+XPs\\s+(\\d+)\\s+" + 
+        "Schild\\s+(\\d+) / (\\d+)(\\(-(\\d+)\\))?\\s+Crew\\s+(\\d+) / (\\d+)(\\(-(\\d+)\\))?\\s+XPs\\s+(\\d+)\\s+" +
         "Panzerung\\s+(\\d+) / (\\d+)(\\(-(\\d+)\\))?\\s+Systeme\\s+(\\d+) / (\\d+)(\\(-(\\d+)\\))?\\s+" + 
-        "Struktur\\s+(\\d+) / (\\d+)(\\(-(\\d+)\\))?\\s+ID:(\\d+)");
+        "Struktur\\s+(\\d+) / (\\d+)(\\(-(\\d+)\\))?\\s*(?:ID:(\\d+)\\s+)?");
     private final static int SHIP_NAME_GROUP = 1;
     private final static int CAPI_NAME_GROUP = 2;
     private final static int AW_GROUP = 4;
@@ -239,15 +238,16 @@ public class BattleReportParser {
         if (!drop.find()) {
             parseException();
         }
-        List<Drop> drops = new ArrayList<Drop>(14);
+        List<BattleDrop> battleDrops = new ArrayList<BattleDrop>(14);
         String dropString = substr(paste, drop, DROP_GROUP);
+        System.out.println(dropString);
         String[] parts = dropString.split("\\s+");
         
         int i = 0;
         for (String part : parts) {
             int amount = Integer.parseInt(part);
             RxRessource ress = RxRessource.byOrdinal(i++);
-            drops.add(new Drop(ress, amount));
+            battleDrops.add(new BattleDrop(ress, amount));
         }
         
         // Parse Battle location
@@ -259,8 +259,6 @@ public class BattleReportParser {
         String quadrant = substr(paste, where, QUADRANT_GROUP);
         int x = subint(paste, where, X_GROUP);
         int y = subint(paste, where, Y_GROUP);
-        
-        System.out.println("Gefecht bei " + quadrant + " " + x + "," + y);
         
         Matcher header = HEADER_PATTERN.matcher(paste);
         if (!header.find()) {
@@ -282,35 +280,36 @@ public class BattleReportParser {
         String attackerFleetName = "";
         String defenderFleetName = "";
         int defenderPos = 0;
+        int attackerPos = 0;
         
         Matcher fleet = FLEET_NAME_PATTERN.matcher(paste);
         while (fleet.find()) {
             if (fleet.group().startsWith("Angreifer")) {
                 attackerVenad = substr(paste, fleet, VENAD_NAME_GROUP);
                 attackerFleetName = substr(paste, fleet, FLEET_NAME_GROUP);
+                attackerPos = fleet.end(VENAD_NAME_GROUP) + 2;
             } else {
                 defenderVenad = substr(paste, fleet, VENAD_NAME_GROUP);
                 defenderFleetName = substr(paste, fleet, FLEET_NAME_GROUP);
-                defenderPos = fleet.end(VENAD_NAME_GROUP);
+                defenderPos = fleet.end(VENAD_NAME_GROUP) + 2;
             }
         }
         
-        List<BattleReportShip> attackerFleet = parseShips(substr(paste, 0, defenderPos));
+        List<BattleReportShip> attackerFleet = parseShips(
+            substr(paste, attackerPos, defenderPos));
         List<BattleReportShip> defenderFleet = 
             parseShips(substr(paste, defenderPos, paste.length()));
         
-        BattleReport result = new BattleReport(quadrant, x, y, drops, date, tactic, 
+        BattleReport result = new BattleReport(quadrant, x, y, battleDrops, date, tactic, 
             attackerBonus, defenderBonus, attackerKw, attackerXpMod, defenderkw, 
             defenderXpMod, attackerFleetName, attackerVenad, defenderFleetName, 
             defenderVenad, attackerFleet, defenderFleet);
-        
         return result;
     }
     
     
     
     private static List<BattleReportShip> parseShips(String paste) {
-        System.out.println(paste);
         Matcher ships = SHIP_PATTERN.matcher(paste);
         List<BattleReportShip> result = new LinkedList<BattleReportShip>();
         
@@ -339,6 +338,7 @@ public class BattleReportParser {
             BattleReportShip ship = new BattleReportShip(rxId, shipName, capiName, aw, 
                 shields, pz, structure, minCrew, maxCrew, systems, xpCapi, xpCrew, 
                 shieldsDmg, pzDmg, structureDmg, systemsDmg, hp, hpDmg, awDmg, crewDmg);
+            System.out.println(ship);
             result.add(ship);
         }
         
@@ -386,6 +386,4 @@ public class BattleReportParser {
         }
         return substr(orig, m.start(groupId), m.end(groupId));
     }
-    
-        
 }

@@ -1,8 +1,15 @@
 package polly.rx.entities;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
+
+@Entity
 public class BattleReportShip {
 
+    @Id@GeneratedValue(strategy = GenerationType.TABLE)
     private int id;
     
     private int rxId;
@@ -44,6 +51,13 @@ public class BattleReportShip {
     private int systemsDamage;
     
     private int crewDamage;
+    
+    
+    public BattleReportShip() {
+        this(0, "", "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    }
+    
+    
 
     public BattleReportShip(int rxId, String name, String capi, int attack,
         int shields, int pz, int structure, int minCrew, int maxCrew,
@@ -73,8 +87,137 @@ public class BattleReportShip {
         this.awDamage = awDamage;
         this.crewDamage = crewDamage;
     }
+
+    
+    
+    public int getId() {
+        return this.id;
+    }
+
+    
+    
+    public int getRxId() {
+        return this.rxId;
+    }
+
+    
+    
+    public String getName() {
+        return this.name;
+    }
+
+    
+    
+    public String getCapi() {
+        return this.capi;
+    }
+
+    
+    
+    public int getAttack() {
+        return this.attack;
+    }
+
+    
+    
+    public int getShields() {
+        return this.shields;
+    }
+
+    
+    
+    public int getPz() {
+        return this.pz;
+    }
+
+    
+    
+    public int getStructure() {
+        return this.structure;
+    }
+
+    
+    
+    public int getMinCrew() {
+        return this.minCrew;
+    }
+
+    
+    
+    public int getMaxCrew() {
+        return this.maxCrew;
+    }
+
+    
+    
+    public int getSystems() {
+        return this.systems;
+    }
+
+    
+    
+    public int getCapiXp() {
+        return this.capiXp;
+    }
+
+    
+    
+    public int getCrewXp() {
+        return this.crewXp;
+    }
+
+    
+    
+    public int getAwDamage() {
+        return this.awDamage;
+    }
+
+    
+    
+    public int getCapiHp() {
+        return this.capiHp;
+    }
+
+    
+    
+    public int getHpDamage() {
+        return this.hpDamage;
+    }
+
+    
+    
+    public int getShieldDamage() {
+        return this.shieldDamage;
+    }
+
+    
+    
+    public int getPzDamage() {
+        return this.pzDamage;
+    }
+
+    
+    
+    public int getStructureDamage() {
+        return this.structureDamage;
+    }
+
+    
+    
+    public int getSystemsDamage() {
+        return this.systemsDamage;
+    }
+
+    
+    
+    public int getCrewDamage() {
+        return this.crewDamage;
+    }
     
     
     
-    
+    @Override
+    public String toString() {
+        return this.name;
+    }
 }
