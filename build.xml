@@ -119,7 +119,7 @@
     <!-- 
         builds all plugins and copies them into pollys plugin dir
     -->
-    <target name="plugins" depends="sdk">
+    <target name="plugins" depends="sdk, network">
         <mkdir dir="${plugin.dir}"/>
         
         <ant dir="polly.core" target="${mode}" inheritAll="false"/>
