@@ -128,7 +128,7 @@
         <ant dir="polly.memes" target="${mode}" inheritAll="false"/>
         <ant dir="polly.porat" target="${mode}" inheritAll="false"/>
         <ant dir="polly.linkexpander" target="${mode}" inheritAll="false"/>
-        <ant dir="polly.tv" target="${mode}" inheritAll="false"/>
+        <ant dir="polly.rx" target="${mode}" inheritAll="false"/>
 
         
         <copy todir="${plugin.dir}">
@@ -138,7 +138,7 @@
             <fileset dir="polly.memes/dist"/>
             <fileset dir="polly.porat/dist"/>
             <fileset dir="polly.linkexpander/dist"/>
-            <fileset dir="polly.tv/dist"/>
+            <fileset dir="polly.rx/dist"/>
         </copy>
         
         <mkdir dir="polly/plugins"/>
@@ -186,7 +186,7 @@
         <ant dir="polly.memes" target="clean" inheritAll="false"/>
         <ant dir="polly.porat" target="clean" inheritAll="false"/>
         <ant dir="polly.linkexpander" target="clean" inheritAll="false"/>
-        <ant dir="polly.tv" target="clean" inheritAll="false"/>
+        <ant dir="polly.rx" target="clean" inheritAll="false"/>
         
         <delete file="${lib.dir}/polly.parser.jar"/>
         <delete file="${lib.dir}/de.skuzzle.polly.sdk.jar"/>
@@ -294,6 +294,6 @@
         <ant dir="porat" target="eclipse" inheritAll="false"/>
         <ant dir="polly.porat" target="eclipse" inheritAll="false"/>
         <ant dir="polly.linkexpander" target="eclipse" inheritAll="false"/>
-        <ant dir="polly.tv" target="eclipse" inheritAll="false"/>
+        <ant dir="polly.rx" target="eclipse" inheritAll="false"/>
     </target>
 </project>
