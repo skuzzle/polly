@@ -1,0 +1,39 @@
+<table>
+	<tr>
+		<th>Date</th>
+		<th>Location</th>
+		<th>Sens</th>
+		<th>Owner</th>
+		<th>Clan</th>
+		<th>Fleet Name</th>
+		<th>Fleet Tag</th>
+		<th>Ships</th>
+		<th>Action</th>
+		<th></th>
+	</tr>
+	#foreach ($scan in $fleetScans)
+	<tr>
+		<td>$myPolly.formatting().formatDate($scan.getDate())</td>
+		<td>$scan.getQuadrant() $scan.getX(),$scan.getY()</td>
+		<td>$scan.getLocalSens()</td>
+		<td>$scan.getOwnerName()</td>
+		<td>$scan.getOwnerClan()</td>
+		<td>$scan.getFleetName()</td>
+		<td>$scan.getFleetTag()</td>
+		<td>$scan.getShips().size()</td>
+		<td>
+			<form action="fleetscan_info" method="POST">
+			<input type="hidden" name="id" value="$scan.getId()"/>
+			<input type="submit" value="Details" class="button"/>
+			</form>
+		</td>
+		<td>
+			<form action="scan_info" method="POST">
+			<input type="hidden" name="id" value="$scan.getId()"/>
+			<input type="hidden" name="action" value="deleteScan"/>
+			<input type="submit" value="Delete" class="button"/>
+			</form>
+		</td>
+	</tr>
+	#end
+</table>

@@ -8,6 +8,8 @@ import polly.rx.entities.FleetScanHistoryEntry;
 import polly.rx.entities.FleetScanShip;
 import polly.rx.http.BattleReportHttpAction;
 import polly.rx.http.BattleReportInfosHttpAction;
+import polly.rx.http.FleetScanInfoHttpAction;
+import polly.rx.http.FleetShipInfoHttpAction;
 import polly.rx.http.FleetScanHttpAction;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
@@ -42,6 +44,8 @@ public class MyPlugin extends PollyPlugin {
         
         myPolly.web().addMenuUrl("Revorix", "FleetScans");
         myPolly.web().addHttpAction(new FleetScanHttpAction(myPolly, this.fleetDBManager));
+        myPolly.web().addHttpAction(new FleetShipInfoHttpAction(myPolly, this.fleetDBManager));
+        myPolly.web().addHttpAction(new FleetScanInfoHttpAction(myPolly, this.fleetDBManager));
     }
 
     

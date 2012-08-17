@@ -132,7 +132,7 @@ public class FleetScanParser {
                         }
                         
                         FleetScanShip ship = new FleetScanShip(shipId, shipName, shipTl, 
-                            ownerName, shipOwnerClan);
+                            ownerName, shipOwnerClan, quadrant, x, y);
                         ships.add(ship);
                     }
                 }

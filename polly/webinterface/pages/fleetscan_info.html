@@ -1,0 +1,39 @@
+<h2>Fleet Scan Information</h2>
+
+<table>
+	<tr>
+		<th>Date</th>
+		<td>$myPolly.formatting().formatDate($scan.getDate())</td>
+	</tr>
+	<tr>
+		<th>Sens</th>
+		<td>$scan.getLocalSens()</td>
+	</tr>
+	<tr>
+		<th>Fleet Name</th>
+		<td>$scan.getFleetName()</td>
+	</tr>
+	<tr>
+		<th>Owner Name</th>
+		<td>$scan.getOwnerName()</td>
+	</tr>
+	<tr>
+		<th>Owner Clan</th>
+		<td>$scan.getOwnerClan()</td>
+	</tr>
+	<tr>
+		<th>Fleet Tag</th>
+		<td>$scan.getFleetTag()</td>
+	</tr>
+	<tr>
+		<th>Location</th>
+		<td>$scan.getQuadrant() $scan.getX(), $scan.getY()</td>
+	</tr>
+</table>
+
+<h3>Meta Information</h3>
+<p>$scan.getMetaData()</p>
+
+<h3>Ships</h3>
+#set ($fleetShips = $scan.getShips())
+#parse ("webinterface/pages/helper/list_fleet_ships.html")

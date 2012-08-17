@@ -21,11 +21,17 @@ import javax.persistence.TemporalType;
     @NamedQuery(
         name = "ALL_SCANS",
         query= "SELECT scan FROM FleetScan scan"
+    ),
+    @NamedQuery(
+        name = "CONTAINING_SHIP",
+        query = "SELECT scan From FleetScan scan, IN(scan.ships) ship WHERE ship.rxId = ?1"
     )
 })
 public class FleetScan {
 
     public final static String ALL_SCANS = "ALL_SCANS";
+    
+    public final static String CONTAINING_SHIP = "CONTAINING_SHIP";
     
     @Id@GeneratedValue(strategy = GenerationType.TABLE)
     private int id;

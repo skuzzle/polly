@@ -63,9 +63,20 @@ public class FleetDBManager {
                 persistence.persist(scan);
             }
         });
-        
-        
-
+    }
+    
+    
+    
+    public FleetScanShip getShipByRevorixId(int rxId) {
+        return this.persistence.findSingle(
+            FleetScanShip.class, FleetScanShip.BY_REVORIX_ID, rxId);
+    }
+    
+    
+    
+    public List<FleetScan> getScanWithShip(int rxId) {
+        return this.persistence.findList(
+            FleetScan.class, FleetScan.CONTAINING_SHIP, new Object[] { rxId } );
     }
     
     
@@ -100,6 +111,12 @@ public class FleetDBManager {
     
     public BattleReport getReportById(int id) {
         return this.persistence.atomicRetrieveSingle(BattleReport.class, id);
+    }
+    
+    
+    
+    public FleetScan getScanById(int id) {
+        return this.persistence.atomicRetrieveSingle(FleetScan.class, id);
     }
     
     

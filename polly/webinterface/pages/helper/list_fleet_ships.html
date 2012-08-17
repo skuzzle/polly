@@ -1,0 +1,32 @@
+<table>
+	<tr>
+		<th>RxId</th>
+		<th>Ship Name</th>
+		<th>Techlevel</th>
+		<th>Latest Owner</th>
+		<th>Latest Clan</th>
+		<th>History entries</th>
+		<th>Action</th>
+	</tr>
+	#foreach ($ship in $fleetShips)
+	<tr>
+		<td>$ship.getRxId()</td>
+		<td>
+		#if ($ship.getNameWhenSpotted() != $ship.getName())
+			$ship.getName()<br/><small>(Original Name: $ship.getNameWhenSpotted()</small>)
+		#else
+			$ship.getName()
+		#end</td>
+		<td>$ship.getTechlevel()</td>
+		<td>$ship.getOwner()</td>
+		<td>$ship.getOwnerClan()</td>
+		<td>$ship.getHistory().size()</td>
+		<td>
+			<form action="fleetship_info" method="POST">
+			<input type="hidden" name="shipId" value="$ship.getRxId()"/>
+			<input type="submit" value="Details" class="button"/>
+			</form>
+		</td>
+	</tr>
+	#end
+</table>

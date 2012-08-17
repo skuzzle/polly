@@ -1,6 +1,5 @@
 package polly.rx.entities;
 
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -37,13 +36,19 @@ public class FleetScanShip {
     
     private String name;
     
+    private String nameWhenSpotted;
+    
     private int techlevel;
     
     private String owner;
     
     private String ownerClan;
     
+    private String quadrant;
     
+    private int x;
+    
+    private int y;
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<FleetScanHistoryEntry> history;
@@ -51,20 +56,25 @@ public class FleetScanShip {
     
     
     public FleetScanShip() {
-        this(0, "", 0, "", "");
+        this(0, "", 0, "", "", "", 0, 0);
     }
     
     
     
     public FleetScanShip(int rxId, String name, int techlevel, String owner, 
-            String ownerClan) {
+            String ownerClan, String quadrant, int x, int y) {
         super();
         this.rxId = rxId;
         this.name = name;
+        this.nameWhenSpotted = name;
         this.techlevel = techlevel;
         this.owner = owner;
         this.ownerClan = ownerClan;
         this.history = new LinkedList<FleetScanHistoryEntry>();
+        FleetScanHistoryEntry e = new FleetScanHistoryEntry();
+        e.getChanges().add(
+            "Spotted first time at: " + quadrant + " " + x + ", " + y);
+        this.history.add(e);
     }
 
 
@@ -84,6 +94,12 @@ public class FleetScanShip {
     public String getName() {
         return this.name;
     }
+    
+    
+    
+    public String getNameWhenSpotted() {
+        return this.nameWhenSpotted;
+    }
 
 
     
@@ -102,6 +118,25 @@ public class FleetScanShip {
     public String getOwnerClan() {
         return this.ownerClan;
     }
+    
+    
+    
+    public String getQuadrant() {
+        return this.quadrant;
+    }
+    
+    
+    
+    public int getX() {
+        return this.x;
+    }
+    
+    
+    
+    
+    public int getY() {
+        return this.y;
+    }
 
     
     
@@ -115,10 +150,13 @@ public class FleetScanShip {
         if (this.rxId != other.rxId) {
             throw new RuntimeException("cannot update ships with different rxId's");
         }
-        FleetScanHistoryEntry historyEntry = new FleetScanHistoryEntry(new Date());
+        FleetScanHistoryEntry historyEntry = new FleetScanHistoryEntry();
+        historyEntry.getChanges().add(
+            "Spotted at: " + this.quadrant + " " + this.x + ", " + this.y);
+        
         if (!this.name.equals(other.name)) {
             historyEntry.getChanges().add(
-                "Name changed from '" + this.name + "' to '" + other.name); 
+                "Name changed from '" + this.name + "' to '" + other.name + "'"); 
             this.name = other.name;
         }
         
@@ -131,6 +169,8 @@ public class FleetScanShip {
                 "' to '" + other.ownerClan + "'");
             this.ownerClan = other.ownerClan;
         }
-        this.history.add(historyEntry);
+        if (!historyEntry.getChanges().isEmpty()) {
+            this.history.add(historyEntry);
+        }
     }
 }
