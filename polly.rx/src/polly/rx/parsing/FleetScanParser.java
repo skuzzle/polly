@@ -101,7 +101,7 @@ public class FleetScanParser {
                 if (m.find()) {
                     ownerClan = RegexUtils.substr(parts[1], m, CLAN_GROUP);
                     owner = RegexUtils.substr(
-                        parts[1], 0, (parts[1].length() - ownerClan.length() + 2));
+                        parts[1], 0, parts[1].length() - (ownerClan.length() + 2));
                 } else {
                     owner = parts[1];
                 }
@@ -142,8 +142,4 @@ public class FleetScanParser {
         return new FleetScan(sens, fleetName, owner, ownerClan, fleetTag, ships, 
             quadrant, x, y, metaData);
     }
-    
-    
-    
-    
 }
