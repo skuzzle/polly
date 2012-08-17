@@ -178,7 +178,11 @@ public class BattleReportParser {
     private final static int Y_GROUP = 3;
     
     private final static Pattern HEADER_PATTERN = Pattern.compile(
-        "Die (Angreifer|Verteidiger) waren siegreich\\s+Gefechtstaktik\\s+([a-zA-Z ]+).*Bonus Angreifer\\s+(-?\\d+)%\\s+Bonus Verteidiger\\s+(-?\\d+)%.*Kampfwert Angreifer/XP-Mod\\s+(\\d+\\.\\d+)/(\\d+(\\.\\d+)?)\\s+Kampfwert Verteidiger/XP-Mod\\s+(\\d+\\.\\d+)/(\\d+(\\.\\d+)?)", Pattern.DOTALL);
+        "Die (Angreifer|Verteidiger) waren siegreich\\s+Gefechtstaktik\\s+([a-zA-Z ]+)" +
+        "\\s*Bonus Angreifer\\s+(-?\\d+)%\\s+Bonus Verteidiger\\s+(-?\\d+)%\\s*" +
+        "Kampfwert Angreifer/XP-Mod\\s+(\\d+\\.\\d+)/(\\d+(\\.\\d+)?)\\s+" +
+        "Kampfwert Verteidiger/XP-Mod\\s+(\\d+\\.\\d+)/(\\d+(\\.\\d+)?)", 
+        Pattern.DOTALL);
     private final static int TACTIC_GROUP = 2;
     private final static int ATTACKER_BONUS_GROUP = 3;
     private final static int DEFENDER_BONUS_GROUP = 4;
@@ -239,7 +243,7 @@ public class BattleReportParser {
             parseException();
         }
         List<BattleDrop> battleDrops = new ArrayList<BattleDrop>(14);
-        String dropString = substr(paste, drop, DROP_GROUP);
+        String dropString = RegexUtils.substr(paste, drop, DROP_GROUP);
         System.out.println(dropString);
         String[] parts = dropString.split("\\s+");
         
@@ -256,24 +260,26 @@ public class BattleReportParser {
             parseException();
         }
         
-        String quadrant = substr(paste, where, QUADRANT_GROUP);
-        int x = subint(paste, where, X_GROUP);
-        int y = subint(paste, where, Y_GROUP);
+        String quadrant = RegexUtils.substr(paste, where, QUADRANT_GROUP);
+        int x = RegexUtils.subint(paste, where, X_GROUP);
+        int y = RegexUtils.subint(paste, where, Y_GROUP);
         
         Matcher header = HEADER_PATTERN.matcher(paste);
         if (!header.find()) {
             parseException();
         }
         BattleTactic tactic = BattleTactic.parseTactic(
-            substr(paste, header, TACTIC_GROUP));
-        double attackerBonus = parseBonus(substr(paste, header, ATTACKER_BONUS_GROUP));
-        double defenderBonus = parseBonus(substr(paste, header, DEFENDER_BONUS_GROUP));
-        double attackerKw = Double.parseDouble(substr(paste, header, ATTACKER_KW_GROUP));
+            RegexUtils.substr(paste, header, TACTIC_GROUP));
+        double attackerBonus = 
+            parseBonus(RegexUtils.substr(paste, header, ATTACKER_BONUS_GROUP));
+        double defenderBonus = 
+            parseBonus(RegexUtils.substr(paste, header, DEFENDER_BONUS_GROUP));
+        double attackerKw = Double.parseDouble(RegexUtils.substr(paste, header, ATTACKER_KW_GROUP));
         double attackerXpMod = Double.parseDouble(
-            substr(paste, header, ATTACKER_XPMOD_GROUP));
-        double defenderkw = Double.parseDouble(substr(paste, header, DEFENDER_KW_GROUP));
+            RegexUtils.substr(paste, header, ATTACKER_XPMOD_GROUP));
+        double defenderkw = Double.parseDouble(RegexUtils.substr(paste, header, DEFENDER_KW_GROUP));
         double defenderXpMod = Double.parseDouble(
-            substr(paste, header, DEFENDER_XPMOD_GROUP));
+            RegexUtils.substr(paste, header, DEFENDER_XPMOD_GROUP));
         
         String attackerVenad = "";
         String defenderVenad = "";
@@ -285,20 +291,20 @@ public class BattleReportParser {
         Matcher fleet = FLEET_NAME_PATTERN.matcher(paste);
         while (fleet.find()) {
             if (fleet.group().startsWith("Angreifer")) {
-                attackerVenad = substr(paste, fleet, VENAD_NAME_GROUP);
-                attackerFleetName = substr(paste, fleet, FLEET_NAME_GROUP);
+                attackerVenad = RegexUtils.substr(paste, fleet, VENAD_NAME_GROUP);
+                attackerFleetName = RegexUtils.substr(paste, fleet, FLEET_NAME_GROUP);
                 attackerPos = fleet.end(VENAD_NAME_GROUP) + 2;
             } else {
-                defenderVenad = substr(paste, fleet, VENAD_NAME_GROUP);
-                defenderFleetName = substr(paste, fleet, FLEET_NAME_GROUP);
+                defenderVenad = RegexUtils.substr(paste, fleet, VENAD_NAME_GROUP);
+                defenderFleetName = RegexUtils.substr(paste, fleet, FLEET_NAME_GROUP);
                 defenderPos = fleet.end(VENAD_NAME_GROUP) + 2;
             }
         }
         
         List<BattleReportShip> attackerFleet = parseShips(
-            substr(paste, attackerPos, defenderPos));
+            RegexUtils.substr(paste, attackerPos, defenderPos));
         List<BattleReportShip> defenderFleet = 
-            parseShips(substr(paste, defenderPos, paste.length()));
+            parseShips(RegexUtils.substr(paste, defenderPos, paste.length()));
         
         BattleReport result = new BattleReport(quadrant, x, y, battleDrops, date, tactic, 
             attackerBonus, defenderBonus, attackerKw, attackerXpMod, defenderkw, 
@@ -309,31 +315,38 @@ public class BattleReportParser {
     
     
     
+    public static double parseBonus(String bonus) {
+        int b = Integer.parseInt(bonus);
+        return 1.0 + ((double)b / 100.0);
+    }
+    
+    
+    
     private static List<BattleReportShip> parseShips(String paste) {
         Matcher ships = SHIP_PATTERN.matcher(paste);
         List<BattleReportShip> result = new LinkedList<BattleReportShip>();
         
         while (ships.find()) {
-            String shipName = substr(paste, ships, SHIP_NAME_GROUP);
-            String capiName = substr(paste, ships, CAPI_NAME_GROUP);
-            int aw = subint(paste, ships, AW_GROUP);
-            int awDmg = subint(paste, ships, AW_DMG_GROUP);
-            int hp = subint(paste, ships, HP_GROUP);
-            int hpDmg = subint(paste, ships, HP_DMG_GROUP);
-            int shields = subint(paste, ships, SHIELDS_GROUP);
-            int shieldsDmg = subint(paste, ships, SHIELDS_DMG_GROUP);
-            int minCrew = subint(paste, ships, MIN_CREW_GROUP);
-            int maxCrew = subint(paste, ships, MAX_CREW_GROUP);
-            int crewDmg = subint(paste, ships, CREW_DMG_GROUP);
-            int xpCapi = subint(paste, ships, XP_CAPI_GROUP);
-            int xpCrew = subint(paste, ships, XP_CREW_GROUP);
-            int pz = subint(paste, ships, PZ_GROUP);
-            int pzDmg = subint(paste, ships, PZ_DMG_GROUP);
-            int systems = subint(paste, ships, SYSTEMS_GROUP);
-            int systemsDmg = subint(paste, ships, SYSTEMS_DMG_GROUP);
-            int structure = subint(paste, ships, STRUCTURE_GROUP);
-            int structureDmg = subint(paste, ships, STRUCTURE_DMG_GROUP);
-            int rxId = subint(paste, ships, ID_GROUP);
+            String shipName = RegexUtils.substr(paste, ships, SHIP_NAME_GROUP);
+            String capiName = RegexUtils.substr(paste, ships, CAPI_NAME_GROUP);
+            int aw = RegexUtils.subint(paste, ships, AW_GROUP);
+            int awDmg = RegexUtils.subint(paste, ships, AW_DMG_GROUP);
+            int hp = RegexUtils.subint(paste, ships, HP_GROUP);
+            int hpDmg = RegexUtils.subint(paste, ships, HP_DMG_GROUP);
+            int shields = RegexUtils.subint(paste, ships, SHIELDS_GROUP);
+            int shieldsDmg = RegexUtils.subint(paste, ships, SHIELDS_DMG_GROUP);
+            int minCrew = RegexUtils.subint(paste, ships, MIN_CREW_GROUP);
+            int maxCrew = RegexUtils.subint(paste, ships, MAX_CREW_GROUP);
+            int crewDmg = RegexUtils.subint(paste, ships, CREW_DMG_GROUP);
+            int xpCapi = RegexUtils.subint(paste, ships, XP_CAPI_GROUP);
+            int xpCrew = RegexUtils.subint(paste, ships, XP_CREW_GROUP);
+            int pz = RegexUtils.subint(paste, ships, PZ_GROUP);
+            int pzDmg = RegexUtils.subint(paste, ships, PZ_DMG_GROUP);
+            int systems = RegexUtils.subint(paste, ships, SYSTEMS_GROUP);
+            int systemsDmg = RegexUtils.subint(paste, ships, SYSTEMS_DMG_GROUP);
+            int structure = RegexUtils.subint(paste, ships, STRUCTURE_GROUP);
+            int structureDmg = RegexUtils.subint(paste, ships, STRUCTURE_DMG_GROUP);
+            int rxId = RegexUtils.subint(paste, ships, ID_GROUP);
             
             BattleReportShip ship = new BattleReportShip(rxId, shipName, capiName, aw, 
                 shields, pz, structure, minCrew, maxCrew, systems, xpCapi, xpCrew, 
@@ -347,21 +360,6 @@ public class BattleReportParser {
     
     
     
-    private final static int subint(String orig, Matcher m, int groupId) {
-        if (m.start(groupId) == -1) {
-            return 0;
-        }
-        return Integer.parseInt(substr(orig, m, groupId));
-    }
-    
-    
-    
-    private static double parseBonus(String bonus) {
-        int b = Integer.parseInt(bonus);
-        return 1.0 + ((double)b / 100.0);
-    }
-    
-    
     private final static void parseException() throws ParseException {
         throw new ParseException("ungültiger Kampfbericht");
     }
@@ -370,20 +368,5 @@ public class BattleReportParser {
     
     private final static void parseException(Throwable cause) throws ParseException {
         throw new ParseException("ungültiger Kampfbericht", cause);
-    }
-    
-    
-    
-    private final static String substr(String orig, int beginIndex, int endIndex) {
-        return new String(orig.substring(beginIndex, endIndex));
-    }
-    
-    
-    
-    private final static String substr(String orig, Matcher m, int groupId) {
-        if (m.start(groupId) == -1) {
-            return "";
-        }
-        return substr(orig, m.start(groupId), m.end(groupId));
     }
 }

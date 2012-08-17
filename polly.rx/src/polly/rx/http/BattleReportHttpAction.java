@@ -1,6 +1,6 @@
 package polly.rx.http;
 
-import polly.rx.BattleReportManager;
+import polly.rx.FleetDBManager;
 import polly.rx.ParseException;
 import polly.rx.entities.BattleReport;
 import polly.rx.parsing.BattleReportParser;
@@ -16,13 +16,13 @@ import de.skuzzle.polly.sdk.http.HttpTemplateException;
 public class BattleReportHttpAction extends HttpAction {
 
     
-    private BattleReportManager battleReportManager;
+    private FleetDBManager fleetDBManager;
     
     
     
-    public BattleReportHttpAction(MyPolly myPolly, BattleReportManager reportManager) {
+    public BattleReportHttpAction(MyPolly myPolly, FleetDBManager fleetDBManager) {
         super("/Kampfberichte", myPolly);
-        this.battleReportManager = reportManager;
+        this.fleetDBManager = fleetDBManager;
     }
 
     
@@ -39,16 +39,23 @@ public class BattleReportHttpAction extends HttpAction {
             try {
                 BattleReport br = BattleReportParser.parse(report);
                 
-                this.getMyPolly().persistence().atomicPersist(br);
+                this.fleetDBManager.addBattleReport(br);
             } catch (ParseException e1) {
                 e.throwTemplateException(e1);
             } catch (DatabaseException e1) {
                 e.throwTemplateException(e1);
             }
+        } else if (action != null && action.equals("delete")) {
+            int id = Integer.parseInt(e.getProperty("id"));
             
+            try {
+                this.fleetDBManager.deleteReportById(id);
+            } catch (DatabaseException e1) {
+                e.throwTemplateException(e1);
+            }
         }
         
-        c.put("allReports", this.battleReportManager.getAllReports());
+        c.put("allReports", this.fleetDBManager.getAllReports());
         
         return c;
     }

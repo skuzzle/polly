@@ -43,6 +43,7 @@
     <property name="includeJars" value="
         de.skuzzle.polly.sdk.jar
 		javax.persistence_2.0.3.v201010191057.jar
+		polly.tools.jar
     "/>
     
     <!-- buildpath for javac -->
@@ -56,7 +57,7 @@
     <path id="buildpath_eclipse">
         <fileset dir="${lib.dir}" 
             includes="${includeJars}"
-            excludes="de.skuzzle.polly.sdk.jar"/>
+            excludes="de.skuzzle.polly.sdk.jar polly.tools.jar"/>
     </path>
     
     
@@ -216,6 +217,7 @@
             <project name="${ant.project.name}"/>
             <classpath>
                 <source path="/polly.sdk" />
+                <source path="/polly.tools" />
                 <source path="${src.dir}" />
                 <output path="${bin.dir}" />
                 <library pathref="buildpath_eclipse"/>

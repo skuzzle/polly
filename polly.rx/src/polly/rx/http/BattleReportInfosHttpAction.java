@@ -1,6 +1,6 @@
 package polly.rx.http;
 
-import polly.rx.BattleReportManager;
+import polly.rx.FleetDBManager;
 import polly.rx.SumQueries;
 import polly.rx.entities.BattleReport;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -12,14 +12,14 @@ import de.skuzzle.polly.sdk.http.HttpTemplateException;
 
 public class BattleReportInfosHttpAction extends HttpAction {
 
-    private BattleReportManager battleReportManager;
+    private FleetDBManager fleetDBManager;
     
     
     
     public BattleReportInfosHttpAction(MyPolly myPolly, 
-            BattleReportManager reportManager) {
+            FleetDBManager fleetDBManager) {
         super("/battlereport_info", myPolly);
-        this.battleReportManager = reportManager;
+        this.fleetDBManager = fleetDBManager;
     }
     
     
@@ -29,7 +29,7 @@ public class BattleReportInfosHttpAction extends HttpAction {
         HttpTemplateContext c = new HttpTemplateContext("pages/battlereport_info.html");
         
         int id = Integer.parseInt(e.getProperty("id"));
-        BattleReport report = this.battleReportManager.getReportById(id);
+        BattleReport report = this.fleetDBManager.getReportById(id);
         
         c.put("report", report);
         c.put("pzDamageAttacker", report.querySumAttacker(SumQueries.PZ_DAMAGE));

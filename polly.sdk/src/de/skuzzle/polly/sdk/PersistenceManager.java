@@ -307,7 +307,7 @@ public interface PersistenceManager {
      * @param entities The entities to remove.
      * @since 0.6.4
      */
-    void removeList(List<Object> entities);
+    public abstract <T> void removeList(List<T> entities);
     
     /**
      * Refreshes an object with data from the database. You may only call this method

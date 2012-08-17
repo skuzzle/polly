@@ -259,7 +259,7 @@ public class PersistenceManagerImpl extends AbstractDisposable implements
 
 
     @Override
-    public void removeList(List<Object> entities) {
+    public <T> void removeList(List<T> entities) {
         for (Object o : entities) {
             this.remove(o);
         }

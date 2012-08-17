@@ -17,6 +17,7 @@
 		<th>Tactic</th>
 		<th>Date</th>
 		<th>Action</th>
+		<th></th>
 	</tr>
 	#foreach ($report in $allReports)
 	<tr>
@@ -29,10 +30,18 @@
 		<td>$report.getTactic()</td>
 		<td>$myPolly.formatting().formatDate($report.getDate())</td>
 		<td>
-		<form action="battlereport_info" method="POST">
-		<input type="hidden" name="id" value="$report.getId()"/>
-		<input type="submit" value="Details" class="button"/>
-		</form>
+			<form action="battlereport_info" method="POST">
+			<input type="hidden" name="id" value="$report.getId()"/>
+			<input type="submit" value="Details" class="button"/>
+			</form>
+		</td>
+		<td>
+			<form action="Kampfberichte" method="POST">
+			<input type="hidden" name="id" value="$report.getId()"/>
+			<input type="hidden" name="action" value="delete"/>
+			<input type="submit" value="Delete" class="button"/>
+			</form>
+		</td>
 	</tr>
 	#end
 </table>

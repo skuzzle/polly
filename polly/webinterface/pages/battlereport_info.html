@@ -44,6 +44,11 @@
 		<td>$report.getAttackerBonus()</td>
 	</tr>
 	<tr>
+		<th>Kw (Normalized)</th>
+		#set ($normalized = $report.getAttackerKw()*$report.getAttackerBonus() )
+		<td>$myPolly.formatting().formatNumber($normalized)</td>
+	</tr>
+	<tr>
 		<th>XP-Mod</th>
 		<td>$report.getAttackerXpMod()</td>
 	</tr>
@@ -105,6 +110,11 @@
 	<tr>
 		<th>Bonus (Factor)</th>
 		<td>$report.getDefenderBonus()</td>
+	</tr>
+	<tr>
+		<th>Kw (Normalized)</th>
+		#set ($normalized = $report.getDefenderKw()*$report.getDefenderBonus() )
+		<td>$myPolly.formatting().formatNumber($normalized)</td>
 	</tr>
 	<tr>
 		<th>XP-Mod</th>
