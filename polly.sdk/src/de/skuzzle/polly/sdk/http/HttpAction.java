@@ -44,5 +44,11 @@ public abstract class HttpAction implements SecurityObject {
     
     
     
+    public void requirePermission(String permission) {
+        this.permissions.add(permission);
+    }
+    
+    
+    
     public abstract HttpTemplateContext execute(HttpEvent e) throws HttpTemplateException;
 }
