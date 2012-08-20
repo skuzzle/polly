@@ -1,74 +1,22 @@
-<h2>Post new Scan</h2>
+<h2>Fleet Database Overview</h2>
+
+<h3>Post new Scan</h3>
 <form action="/FleetScans" method="POST">
 	Paste:<br/>
 	<textarea name="paste" style="width:100%;height:200px"></textarea></br>
-	(Optional) Quadrant: <input type="text" name="quadrant" /> X: <input type="text" name="x" value="0"/> Y: <input type="text" name="y" value="0"/></br>
+	(Optional) Quadrant: <input type="text" name="quadrant" value="Unbekannt"/> X: <input type="text" name="x" value="0"/> Y: <input type="text" name="y" value="0"/></br>
 	(Optional) Meta Information:<br/>
-	<textarea name="metadata" style="width:100%;height:200px"></textarea></br>
+	<textarea name="metaData" style="width:100%;height:200px"></textarea></br>
 	<input type="hidden" name="action" value="postScan"/>
 	<input type="submit" value="Submit" class="button"/>
 </form>
 
 
-<h2>Existing Scans</h2>
-<table>
-	<tr>
-		<th>Date</th>
-		<th>Location</th>
-		<th>Sens</th>
-		<th>Owner</th>
-		<th>Clan</th>
-		<th>Fleet Name</th>
-		<th>Fleet Tag</th>
-		<th>Ships</th>
-		<th>Action</th>
-		<th></th>
-	</tr>
-	#foreach ($scan in $allScans)
-	<tr>
-		<td>$myPolly.formatting().formatDate($scan.getDate())</td>
-		<td>$scan.getQuadrant() $scan.getX(),$scan.getY()</td>
-		<td>$scan.getLocalSens()</td>
-		<td>$scan.getOwnerName()</td>
-		<td>$scan.getOwnerClan()</td>
-		<td>$scan.getFleetName()</td>
-		<td>$scan.getFleetTag()</td>
-		<td>$scan.getShips().size()</td>
-		<td>
-			<form action="FleetScans" method="POST">
-			<input type="hidden" name="id" value="$scan.getId()"/>
-			<input type="submit" value="Details" class="button"/>
-			</form>
-		</td>
-		<td>
-			<form action="scan_info" method="POST">
-			<input type="hidden" name="id" value="$scan.getId()"/>
-			<input type="hidden" name="action" value="deleteScan"/>
-			<input type="submit" value="Delete" class="button"/>
-			</form>
-		</td>
-	</tr>
-	#end
-</table>
+<h3>Existing Scans</h3>
+#set ($fleetScans = $allScans)
+#parse ("webinterface/pages/helper/list_fleet_scans.html")
 
-<h2>All ships</h2>
-<table>
-	<tr>
-		<th>RxId</th>
-		<th>Ship Name</th>
-		<th>Techlevel</th>
-		<th>Latest Owner</th>
-		<th>Latest Clan</th>
-		<th>History entries</th>
-	</tr>
-	#foreach ($ship in $allShips)
-	<tr>
-		<td>$ship.getRxId()</td>
-		<td>$ship.getName()</td>
-		<td>$ship.getTechlevel()</td>
-		<td>$ship.getOwner()</td>
-		<td>$ship.getOwnerClan()</td>
-		<td>$ship.getHistory().size()</td>
-	</tr>
-	#end
-</table>
+<h3>All ships</h3>
+#set ($fleetShips = $allShips)
+#set ($original = false)
+#parse ("webinterface/pages/helper/list_fleet_ships.html")

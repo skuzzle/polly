@@ -58,8 +58,7 @@
         pircbot.jar
         mysql-connector-java-5.1.17-bin.jar
         mail.jar
-        commons-collections-3.2.1.jar
-        commons-lang-2.4.jar
+        commons-lang3-3.1.jar
         velocity-1.7.jar
     "/>
     
