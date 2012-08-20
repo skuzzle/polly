@@ -34,7 +34,8 @@ public class BattleReportHttpAction extends HttpAction {
         String action = e.getProperty("action");
         
         if (action != null && action.equals("postReport")) {
-            String report = e.getProperty("paste");
+            String report = e.getSource().escapeHtml(e.getProperty("paste"));
+            
             System.out.println(report);
             try {
                 BattleReport br = BattleReportParser.parse(report);

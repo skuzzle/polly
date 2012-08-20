@@ -41,4 +41,8 @@ public interface HttpManager {
 
     public abstract void cleanUpSessions();
 
+    HttpTemplateContext executeAction(HttpEvent e) throws HttpTemplateException;
+
+    String escapeHtml(String s);
+
 }

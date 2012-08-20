@@ -22,6 +22,7 @@ public class FleetScanHttpAction extends HttpAction {
     public FleetScanHttpAction(MyPolly myPolly, FleetDBManager fleetDBManager) {
         super("/FleetScans", myPolly);
         this.fleetDBManager = fleetDBManager;
+        this.requirePermission(FleetDBManager.VIEW_FLEET_SCAN_PERMISSION);
     }
     
     
@@ -33,13 +34,15 @@ public class FleetScanHttpAction extends HttpAction {
         String action = e.getProperty("action");
         
         if (action != null && action.equals("postScan")) {
-            String paste = e.getProperty("paste");
+            String paste = e.getSource().escapeHtml(e.getProperty("paste"));
             String metaData = e.getProperty("metaData") == null
                 ? ""
-                : e.getProperty("metaData");
+                : e.getSource().escapeHtml(e.getProperty("metaData"));
+            
             String quadrant = e.getProperty("quadrant") == null 
                 ? "Unbekannt" 
-                : e.getProperty("quadrant");
+                : e.getSource().escapeHtml(e.getProperty("quadrant"));
+            
             int x = Integer.parseInt(e.getProperty("x"));
             int y = Integer.parseInt(e.getProperty("y"));
             

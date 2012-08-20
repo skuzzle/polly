@@ -20,6 +20,7 @@ public class FleetShipInfoHttpAction extends HttpAction {
     public FleetShipInfoHttpAction(MyPolly myPolly, FleetDBManager fleetDBManager) {
         super("/fleetship_info", myPolly);
         this.fleetDBManager = fleetDBManager;
+        this.requirePermission(FleetDBManager.VIEW_FLEET_SCAN_PERMISSION);
     }
     
     

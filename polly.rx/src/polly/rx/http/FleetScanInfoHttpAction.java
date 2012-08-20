@@ -16,6 +16,7 @@ public class FleetScanInfoHttpAction extends HttpAction {
     public FleetScanInfoHttpAction(MyPolly myPolly, FleetDBManager fleetDBManager) {
         super("/fleetscan_info", myPolly);
         this.fleetDBManager = fleetDBManager;
+        this.requirePermission(FleetDBManager.VIEW_FLEET_SCAN_PERMISSION);
     }
     
     
