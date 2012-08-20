@@ -36,7 +36,7 @@ public class ShutdownManagerImpl implements ShutdownManager {
     public static final String SUN_JAVA_COMMAND = "sun.java.command";
     
     
-    public AtomicBoolean isSafeShutdown;
+    private AtomicBoolean isSafeShutdown;
 
     
     private CompositeDisposable shutdownList;

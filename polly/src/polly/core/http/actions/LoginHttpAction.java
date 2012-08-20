@@ -1,6 +1,7 @@
 package polly.core.http.actions;
 
 import polly.core.http.HttpInterface;
+import polly.core.http.HttpManagerProvider;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.http.HttpAction;
@@ -38,7 +39,10 @@ public class LoginHttpAction extends HttpAction {
             if (u != null) {
                 if (u.checkPassword(password)) {
                     e.getSession().setUser(u);
-                    context.put("success", Boolean.TRUE);
+                    
+                    String homePage = u.getAttribute(HttpManagerProvider.HOME_PAGE);
+                    HttpEvent e1 = new HttpEvent(e.getSource(), e.getSession(), homePage);
+                    return e.getSource().executeAction(e1);
                 } else {
                     e.throwTemplateException("Login Error", 
                         "Invalid login data");

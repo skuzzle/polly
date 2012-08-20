@@ -130,7 +130,9 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     @Override
     public void stopWebServer() {
         logger.info("Stopping http service");
-        this.server.stop(5);
+        if (this.server != null) {
+            this.server.stop(5);
+        }
         this.running = false;
         this.server = null;
     }
@@ -209,7 +211,8 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     
     
     
-    protected HttpTemplateContext executeAction(HttpEvent e) 
+    @Override
+    public HttpTemplateContext executeAction(HttpEvent e) 
                 throws HttpTemplateException {
         String uri = e.getRequestUri();
         HttpAction action = this.actions.get(uri);
@@ -278,6 +281,12 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
         c.put("now", System.currentTimeMillis());
         c.put("timeout", this.getSessionTimeOut());
         c.put("sessions", this.sessions);
+    }
+    
+    
+    
+    public boolean actionExists(String action) {
+        return this.actions.containsKey(action);
     }
 
 

@@ -8,6 +8,8 @@ import org.apache.log4j.Logger;
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.ConfigurationProvider;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.constraints.AttributeConstraint;
+import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 
 
 import polly.configuration.ConfigurationProviderImpl;
@@ -21,6 +23,7 @@ import polly.core.http.actions.SessionPageHttpAction;
 import polly.core.http.actions.UserInfoPageHttpAction;
 import polly.core.http.actions.UserPageHttpAction;
 import polly.core.mypolly.MyPollyImpl;
+import polly.core.users.UserManagerImpl;
 import polly.moduleloader.AbstractProvider;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.SetupException;
@@ -43,6 +46,7 @@ public class HttpManagerProvider extends AbstractProvider {
         .getName());
     
     public final static String HTTP_CONFIG = "http.cfg";
+    public final static String HOME_PAGE = "HOME_PAGE";
     
     private HttpManagerImpl httpManager;
     private Configuration serverCfg;
@@ -90,6 +94,24 @@ public class HttpManagerProvider extends AbstractProvider {
     
     @Override
     public void run() throws Exception {
+        
+        // Add HOME_PAGE attribute
+        AttributeConstraint constraint = new AttributeConstraint() {
+            @Override
+            public boolean accept(String value) {
+                return httpManager.actionExists(value);
+            }
+        };
+        
+        
+        UserManagerImpl userManager = this.requireNow(UserManagerImpl.class, false);
+        try {
+            userManager.addAttribute(HOME_PAGE, "/", constraint);
+        } catch (DatabaseException e) {
+            throw new SetupException(e);
+        }
+        
+        
         MyPolly myPolly = this.requireNow(MyPollyImpl.class, false);
         // HACK: this avoids cyclic dependency
         this.httpManager.setMyPolly(myPolly);
@@ -108,6 +130,7 @@ public class HttpManagerProvider extends AbstractProvider {
         this.httpManager.addMenuUrl("Admin", "Logs");
         this.httpManager.addMenuUrl("Admin", "Roles");
         this.httpManager.addMenuUrl("Admin", "Sessions");
+
         
         boolean start = this.serverCfg.readBoolean(Configuration.HTTP_START_SERVER);
         if (!start) {
