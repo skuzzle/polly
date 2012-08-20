@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -55,7 +54,6 @@ public class ResponseHandler implements HttpHandler {
             String value = in.substring(m.start(2), m.end(2));
             try {
                 value = URLDecoder.decode(value, "ISO-8859-1");
-                value = StringEscapeUtils.escapeHtml4(value);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }

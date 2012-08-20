@@ -60,6 +60,7 @@
         mail.jar
         commons-lang3-3.1.jar
         velocity-1.7.jar
+		commons-collections-3.2.1.jar
     "/>
     
 
