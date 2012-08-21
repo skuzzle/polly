@@ -4,13 +4,11 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -18,6 +16,7 @@ import org.apache.log4j.Logger;
 import org.jibble.pircbot.IrcException;
 import org.jibble.pircbot.NickAlreadyInUseException;
 import org.jibble.pircbot.PircBot;
+import org.jibble.pircbot.User;
 
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.Configuration;
@@ -56,20 +55,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     
     private static Logger logger = Logger.getLogger(IrcManagerImpl.class.getName());
     
-    
-    private final static Comparator<IrcUser> NICKNAME_COMPARATOR = 
-        new Comparator<IrcUser>() {
-
-            @Override
-            public int compare(IrcUser o1, IrcUser o2) {
-                return o1.getNickName().compareTo(o2.getNickName());
-            }
-        };
-    
-    
-    
-    private PircBot bot = new PircBot() {       
-        
+    private PircBot bot = new PircBot() {
         @Override
         protected void onConnect() {
             IrcManagerImpl.this.fireConnectionEstablished(
@@ -80,7 +66,6 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         
         protected void onDisconnect() {
             IrcManagerImpl.this.onlineUsers.clear();
-            IrcManagerImpl.this.channelUsers.clear();
             IrcManagerImpl.this.topics.clear();
             IrcManagerImpl.this.retry();
         };
@@ -102,28 +87,8 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
                 IrcManagerImpl.this.onlineUsers.remove(oldIrcName);
                 IrcManagerImpl.this.onlineUsers.add(newIrcName);
             }
-            synchronized (IrcManagerImpl.this.channelUsers) {
-                for (Entry<String, Set<IrcUser>> entry : 
-                                    IrcManagerImpl.this.channelUsers.entrySet()) {
-                    if (entry.getValue() != null) {
-                        entry.getValue().remove(oldUser);
-                        entry.getValue().add(newUser);
-                    }
-                    
-                }
-            }
             IrcManagerImpl.this.fireNickChange(e);
         }
-        
-        
-        
-        @Override
-        protected void onKick(String channel, String kickerNick, String kickerLogin, 
-            String kickerHostname, String recipientNick, String reason) {
-            
-            IrcUser kicked = new IrcUser(recipientNick, "", "");
-            this.checkUserLost(channel, kicked);
-        };
         
         
         
@@ -135,23 +100,12 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
             IrcUser user = new IrcUser(nickName, login, hostname);
             ChannelEvent e = new ChannelEvent(IrcManagerImpl.this, user, channel);
             
-            synchronized (IrcManagerImpl.this.onlineUsers) {
-                if (!IrcManagerImpl.this.onlineUsers.contains(nickName)) {
-                    SpotEvent e1 = new SpotEvent(IrcManagerImpl.this, user, channel, 
-                        SpotEvent.USER_JOINED);
-                    IrcManagerImpl.this.fireUserSpotted(e1);
-                }
-                IrcManagerImpl.this.onlineUsers.add(nickName);
+            if (!IrcManagerImpl.this.onlineUsers.contains(nickName)) {
+                SpotEvent e1 = new SpotEvent(IrcManagerImpl.this, user, channel, 
+                    SpotEvent.USER_JOINED);
+                IrcManagerImpl.this.fireUserSpotted(e1);
             }
-            
-            synchronized (IrcManagerImpl.this.channelUsers) {
-                Set<IrcUser> channelUsers = IrcManagerImpl.this.channelUsers.get(channel);
-                if (channelUsers == null) {
-                    channelUsers = new TreeSet<IrcUser>(NICKNAME_COMPARATOR);
-                    IrcManagerImpl.this.channelUsers.put(channel, channelUsers);
-                }
-                channelUsers.add(user);
-            }
+            IrcManagerImpl.this.onlineUsers.add(nickName);
             IrcManagerImpl.this.fireJoin(e);
         }
         
@@ -162,42 +116,38 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
                 String hostname) {
             
             String nickName = IrcManagerImpl.this.stripNickname(sender);
-            IrcUser parted = new IrcUser(nickName, login, hostname);
-            ChannelEvent e = new ChannelEvent(IrcManagerImpl.this, parted, channel);
+            IrcUser user = new IrcUser(nickName, login, hostname);
+            ChannelEvent e = new ChannelEvent(IrcManagerImpl.this, user, channel);
             
-            this.checkUserLost(channel, parted);
+            /* ISSUE: 0000002 && 0000026*/
+            boolean known = false;
+            for (String c : this.getChannels()) {
+                
+                // HACK: continue on own channel as pircbot may not have removed the user
+                //       from its data structure
+                if (c.equals(channel)) {
+                    continue;
+                }
+                
+                for (User u : this.getUsers(c)) {
+                    String uStripped = IrcManagerImpl.this.stripNickname(u.getNick());
+                    
+                    if (uStripped.equals(nickName)) {
+                        known = true;
+                        break;
+                    }
+                }
+            }
+            if (!known) {
+                SpotEvent e1 = new SpotEvent(IrcManagerImpl.this, user, channel, 
+                        SpotEvent.USER_PART);
+                IrcManagerImpl.this.onlineUsers.remove(sender);
+                IrcManagerImpl.this.fireUserLost(e1);
+            }
             
             // XXX: not sure if this makes sense or not
             IrcManagerImpl.this.topics.remove(channel);
             IrcManagerImpl.this.firePart(e);
-        }
-        
-        
-        
-        private void checkUserLost(String channel, IrcUser parted) {
-            /* ISSUE: 0000002 && 0000026*/
-            boolean known = false;
-            
-            // iterate over all currently joined channels and remove the user from that
-            // channel. If the user left the last common channel, a UserLost event is 
-            // fired.
-            for (String c : this.getChannels()) {
-                synchronized (IrcManagerImpl.this.channelUsers) {
-                    Set<IrcUser> channelUsers = IrcManagerImpl.this.channelUsers.get(c);
-                    
-                    if (c.equals(channel)) {
-                        channelUsers.remove(parted);
-                    }
-
-                    known |= channelUsers.contains(parted);
-                }
-            }
-            if (!known) {
-                SpotEvent e1 = new SpotEvent(IrcManagerImpl.this, parted, channel, 
-                        SpotEvent.USER_PART);
-                IrcManagerImpl.this.onlineUsers.remove(parted.getNickName());
-                IrcManagerImpl.this.fireUserLost(e1);
-            }
         }
         
         
@@ -210,16 +160,6 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
             IrcUser user = new IrcUser(nickName, sourceLogin, sourceHostname);
             QuitEvent e = new QuitEvent(IrcManagerImpl.this, user, reason);
             SpotEvent e1 = new SpotEvent(e);
-            
-            synchronized (IrcManagerImpl.this.channelUsers) {
-                for (Entry<String, Set<IrcUser>> entry : 
-                                    IrcManagerImpl.this.channelUsers.entrySet()) {
-                    if (entry.getValue() != null) {
-                        entry.getValue().remove(user);
-                    }
-                    
-                }
-            }
             
             IrcManagerImpl.this.onlineUsers.remove(nickName);
             IrcManagerImpl.this.fireQuit(e);
@@ -297,28 +237,13 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         
         
         
-        @Override
         protected void onUserList(String channel, org.jibble.pircbot.User[] users) {
-            
-            Set<IrcUser> channelUsers = null;
-            synchronized (IrcManagerImpl.this.channelUsers) {
-                channelUsers = IrcManagerImpl.this.channelUsers.get(channel);
-                if (channelUsers == null) {
-                    channelUsers = new TreeSet<IrcUser>(NICKNAME_COMPARATOR);
-                    IrcManagerImpl.this.channelUsers.put(channel, channelUsers);
-                }
-            }            
-            
             for (int i = 0; i < users.length; ++i) {
                 String nickName = IrcManagerImpl.this.stripNickname(users[i].getNick());
-                IrcUser user = new IrcUser(nickName, channel, "");
-                
-                synchronized (IrcManagerImpl.this.channelUsers) {
-                    channelUsers.add(user);
-                }
                 
                 synchronized (IrcManagerImpl.this.onlineUsers) {
                     if (IrcManagerImpl.this.onlineUsers.add(nickName)) {
+                        IrcUser user = new IrcUser(nickName, channel, "");
                         SpotEvent e = new SpotEvent(IrcManagerImpl.this, user, channel, 
                                 SpotEvent.USER_JOINED);
                         IrcManagerImpl.this.fireUserSpotted(e);
@@ -342,7 +267,6 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     private boolean disconnect;
     private BotConnectionSettings recent;
     private MessageScheduler messageScheduler;
-    private Map<String, Set<IrcUser>> channelUsers;
     
     
     
@@ -350,7 +274,6 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
             Configuration config, String encodingName) {
         this.config = config;
         this.onlineUsers = Collections.synchronizedSet(new TreeSet<String>());
-        this.channelUsers = new HashMap<String, Set<IrcUser>>();
         this.topics = new HashMap<String, String>();
         this.eventProvider = eventProvider;
         this.bot.changeNick(ircName);
@@ -376,14 +299,6 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     
     
     private String stripNickname(String nickName) {
-        char c = nickName.toCharArray()[0];
-        switch (c) {
-        case '*':
-        case '!':
-        case ':':
-        case '%':
-            nickName = nickName.substring(1);
-        }
         return nickName;
     }
     
@@ -451,18 +366,10 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     @Override
     public List<String> getChannelUser(String channel) {
         Set<String> result = new HashSet<String>();
-        Set<IrcUser> users = null;
-        synchronized (this.channelUsers) {
-            users = this.channelUsers.get(channel);
+        User[] users = this.bot.getUsers(channel);
+        for (User user : users) {
+            result.add(this.stripNickname(user.getNick()));
         }
-        if (users == null) {
-            return Collections.emptyList();
-        }
-        for (IrcUser user : users) {
-            result.add(user.getNickName());
-        }
-        
-        
         // ISSUE: 0000037
         // HACK: first, add user to set, then create list from set so that it contains
         //       no duplicates
@@ -502,13 +409,14 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     
     
     @Override
-	public boolean isOnChannel(String channel, String nickName) {
-        Set<IrcUser> channelUsers = null;
-        synchronized (this.channelUsers) {
-            channelUsers = this.channelUsers.get(channel);
-            IrcUser check = new IrcUser(nickName, "", "");
-            return channelUsers != null && channelUsers.contains(check);
+	public boolean isOnChannel(String channel, String nickName) {       
+        User[] users = this.bot.getUsers(channel);
+        for (User user : users) {
+            if (this.stripNickname(user.getNick()).equalsIgnoreCase(nickName)) {
+                return true;
+            }
         }
+        return false;
     }
     
     
