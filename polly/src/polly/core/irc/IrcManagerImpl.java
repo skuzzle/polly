@@ -946,6 +946,8 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         logger.trace("Shutting down message scheduler");
         this.messageScheduler.dispose();
         logger.trace("Shutting down irc bot.");
-        this.bot.dispose();
+        if (this.bot != null) {
+            this.bot.dispose();
+        }
     }
 }
