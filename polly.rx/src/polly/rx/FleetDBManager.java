@@ -6,6 +6,7 @@ import java.util.List;
 
 import polly.rx.entities.BattleReport;
 import polly.rx.entities.FleetScan;
+import polly.rx.entities.FleetScanHistoryEntry;
 import polly.rx.entities.FleetScanShip;
 
 import de.skuzzle.polly.sdk.PersistenceManager;
@@ -44,19 +45,24 @@ public class FleetDBManager {
         final FleetScan scan = this.getScanById(scanId);
         final List<FleetScanShip> deleteMe = new LinkedList<FleetScanShip>();
         
-        // only remove ships that do not belong to another scan
-        for (FleetScanShip ship : scan.getShips()) {
-            List<FleetScan> other = this.getScanWithShip(ship.getRxId());
-            if (other.isEmpty() || (other.size() == 1 && other.get(0).getId() == scan.getId())) {
-                deleteMe.add(ship);
-            }
-        }
-        
-        
         this.persistence.atomicWriteOperation(new WriteAction() {
             
             @Override
             public void performUpdate(PersistenceManager persistence) {
+        
+                // only remove ships that do not belong to another scan
+                for (FleetScanShip ship : scan.getShips()) {
+                    List<FleetScan> other = getScanWithShip(ship.getRxId());
+                    if (other.isEmpty() || (other.size() == 1 && other.get(0).getId() == scan.getId())) {
+                        deleteMe.add(ship);
+                    } else {
+                        FleetScanHistoryEntry e = new FleetScanHistoryEntry();
+                        e.getChanges().add("Deleted Fleet Scan that contained this ship");
+                        ship.getHistory().add(e);
+                    }
+                }
+        
+
                 scan.getShips().clear();
                 persistence.removeList(deleteMe);
                 persistence.remove(scan);
