@@ -148,9 +148,10 @@ public class ResponseHandler implements HttpHandler {
         } catch (InsufficientRightsException e1) {
             c = this.webServer.errorTemplate(
                 "Permission denied", 
-                "You have insufficient permissions to acces this page/action." +
-                            "<br/><br/>Missing permission(s): " + 
-                        e1.getObject().getRequiredPermission(), e.getSession());
+                "You have insufficient permissions to acces this page/action. Note: " +
+                "the following list may be incomplete!" +
+                "<br/><br/>Missing permission(s): " + 
+                    e1.getObject().getRequiredPermission(), e.getSession());
         } catch (Exception e1) {
             StringWriter w = new StringWriter();
             PrintWriter pw = new PrintWriter(w);
