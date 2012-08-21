@@ -33,7 +33,9 @@ public class AsynchronousEventProvider extends AbstractEventProvider {
 
     @Override
     public void dispatchEvent(Dispatchable<?, ?> d) {
-        this.dispatchPool.execute(d);
+        if (!this.dispatchPool.isShutdown() && !this.dispatchPool.isTerminated()) {
+            this.dispatchPool.execute(d);
+        }
     }
     
     
