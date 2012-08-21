@@ -21,5 +21,7 @@ public interface EventProvider {
 
     public void dispatchEvent(Dispatchable<?, ?> d);
     
+    public boolean canDispatch();
+    
     public void dispose();
 }

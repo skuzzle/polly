@@ -29,11 +29,18 @@ public class AsynchronousEventProvider extends AbstractEventProvider {
         this.dispatchPool = dispatcher;
     }
     
+    
+    
+    @Override
+    public boolean canDispatch() {
+        return !this.dispatchPool.isShutdown() && !this.dispatchPool.isTerminated();
+    }
+    
 
 
     @Override
     public void dispatchEvent(Dispatchable<?, ?> d) {
-        if (!this.dispatchPool.isShutdown() && !this.dispatchPool.isTerminated()) {
+        if (this.canDispatch()) {
             this.dispatchPool.execute(d);
         }
     }
