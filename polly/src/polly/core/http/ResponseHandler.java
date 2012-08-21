@@ -117,6 +117,7 @@ public class ResponseHandler implements HttpHandler {
         
         String uri = t.getRequestURI().toString();
         logger.trace(session + " requested " + uri);
+        session.setLastUri(uri);
         
         
         // extract GET parameters

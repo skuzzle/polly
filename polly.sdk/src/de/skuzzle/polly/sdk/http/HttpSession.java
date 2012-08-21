@@ -13,7 +13,7 @@ public class HttpSession {
     private long lastAction;
     private InetAddress remoteIp;
     private User user;
-    
+    private String lastUri;
     
     
     public HttpSession(String id, InetAddress remoteIp) {
@@ -21,6 +21,7 @@ public class HttpSession {
         this.remoteIp = remoteIp;
         this.started = System.currentTimeMillis();
         this.lastAction = System.currentTimeMillis();
+        this.lastUri = "";
     }
     
     
@@ -57,6 +58,19 @@ public class HttpSession {
     
     public synchronized void setLastAction(long lastAction) {
         this.lastAction = lastAction;
+    }
+    
+    
+    
+    
+    public synchronized String getLastUri() {
+        return this.lastUri;
+    }
+    
+    
+    
+    public synchronized void setLastUri(String lastUri) {
+        this.lastUri = lastUri;
     }
     
     
