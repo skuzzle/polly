@@ -15,7 +15,7 @@ import java.util.Random;
 import java.util.TreeMap;
 import java.util.concurrent.Executors;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 
 
@@ -366,6 +366,6 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     
     @Override
     public String escapeHtml(String s) {
-        return StringEscapeUtils.escapeHtml4(s);
+        return StringEscapeUtils.escapeHtml(s);
     }
 }
