@@ -2,6 +2,7 @@
 <p>Total scans: $fleetScans.size()</p>
 <table>
 	<tr>
+		<th><a href="${destination}&scanSortKey=getId&scanDesc=$scanDesc">ID</a></th>
 		<th><a href="${destination}&scanSortKey=getDate&scanDesc=$scanDesc">Date</a></th>
 		<th><a href="${destination}&scanSortKey=getQuadrant&scanDesc=$scanDesc">Location</a></th>
 		<th><a href="${destination}&scanSortKey=getLocalSens&scanDesc=$scanDesc">Sens</th>
@@ -19,6 +20,7 @@
 	#end
 	#foreach ($scan in $fleetScans)
 	<tr>
+		<td>$scan.getId()</td>
 		<td>$myPolly.formatting().formatDate($scan.getDate())</td>
 		<td>$scan.getQuadrant() $scan.getX(),$scan.getY()</td>
 		<td>$scan.getLocalSens()</td>
