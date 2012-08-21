@@ -63,5 +63,25 @@ public abstract class AbstractDisposable implements Disposable {
             throw new DisposingException(e);
         }
     }
-
+    
+    
+    
+    
+    /**
+     * Method for safely disposing a class. If disposing fails, this method returns the
+     * exception that caused that fail.
+     * 
+     * @param disp The object to dispose.
+     * @return <code>null</code> if the object was disposed without any exception, the
+     *          thrown exception otherwise.
+     * @since 0.9.1
+     */
+    public static DisposingException safeDispose(Disposable disp) {
+        try {
+            disp.dispose();
+            return null;
+        } catch (DisposingException e) {
+            return e;
+        }
+    }
 }
