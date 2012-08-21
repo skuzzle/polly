@@ -1,5 +1,5 @@
 #set ( $scanDesc = !$scanDesc )
-
+<p>Total scans: $fleetScans.size()</p>
 <table>
 	<tr>
 		<th><a href="${destination}&scanSortKey=getDate&scanDesc=$scanDesc">Date</a></th>
@@ -34,9 +34,9 @@
 			</form>
 		</td>
 		<td>
-			<form action="scan_info" method="POST">
+			<form action="FleetScans" method="POST">
 			<input type="hidden" name="id" value="$scan.getId()"/>
-			<input type="hidden" name="action" value="deleteScan"/>
+			<input type="hidden" name="action" value="delete"/>
 			<input type="submit" value="Delete" class="button"/>
 			</form>
 		</td>

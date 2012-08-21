@@ -64,6 +64,19 @@ public class FleetScanHttpAction extends HttpAction {
             } catch (DatabaseException e1) {
                 e.throwTemplateException(e1);
             }
+        } else if (action != null && action.equals("delete")) {
+            if (!this.getMyPolly().roles().hasPermission(
+                e.getSession().getUser(), FleetDBManager.DELETE_FLEET_SCAN_PERMISSION)) {
+                throw new InsufficientRightsException(this);
+            }
+            
+            int id = Integer.parseInt(e.getProperty("id"));
+            
+            try {
+                this.fleetDBManager.deleteFleetScan(id);
+            } catch (DatabaseException e1) {
+                e.throwTemplateException(e1);
+            }
         }
         
         HttpTemplateSortHelper.makeListSortable(c, e, "scanSortKey", "scanDesc", "getDate");

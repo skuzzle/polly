@@ -1,6 +1,7 @@
 package polly.rx;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import polly.rx.entities.BattleReport;
@@ -20,6 +21,7 @@ public class FleetDBManager {
     public final static String ADD_BATTLE_REPORT_PERMISSION = "polly.permission.ADD_BATTLE_REPORT";
     public final static String VIEW_BATTLE_REPORT_PERMISSION = "polly.permission.VIEW_BATTLE_REPORT";
     public final static String DELETE_BATTLE_REPORT_PERMISSION = "polly.permission.DELETE_BATTLE_REPORT";
+    public static final String DELETE_FLEET_SCAN_PERMISSION = "plly.permission.DELETE_FLEET_SCAN";
     
     
     private PersistenceManager persistence;
@@ -34,6 +36,32 @@ public class FleetDBManager {
     
     public void addBattleReport(BattleReport report) throws DatabaseException {
         this.persistence.atomicPersist(report);
+    }
+    
+    
+    
+    public void deleteFleetScan(int scanId) throws DatabaseException {
+        final FleetScan scan = this.getScanById(scanId);
+        final List<FleetScanShip> deleteMe = new LinkedList<FleetScanShip>();
+        
+        // only remove ships that do not belong to another scan
+        for (FleetScanShip ship : scan.getShips()) {
+            List<FleetScan> other = this.getScanWithShip(ship.getRxId());
+            if (other.isEmpty() || (other.size() == 1 && other.get(0).getId() == scan.getId())) {
+                deleteMe.add(ship);
+            }
+        }
+        
+        
+        this.persistence.atomicWriteOperation(new WriteAction() {
+            
+            @Override
+            public void performUpdate(PersistenceManager persistence) {
+                scan.getShips().clear();
+                persistence.removeList(deleteMe);
+                persistence.remove(scan);
+            }
+        });
     }
     
     

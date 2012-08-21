@@ -9,7 +9,6 @@ import polly.rx.entities.BattleDrop;
 import polly.rx.entities.FleetScan;
 import polly.rx.entities.FleetScanHistoryEntry;
 import polly.rx.entities.FleetScanShip;
-import polly.rx.http.BattleReportHttpAction;
 import polly.rx.http.BattleReportInfosHttpAction;
 import polly.rx.http.FleetScanInfoHttpAction;
 import polly.rx.http.FleetShipInfoHttpAction;
@@ -67,6 +66,7 @@ public class MyPlugin extends PollyPlugin {
         result.add(FleetDBManager.DELETE_BATTLE_REPORT_PERMISSION);
         result.add(FleetDBManager.VIEW_BATTLE_REPORT_PERMISSION);
         result.add(FleetDBManager.VIEW_FLEET_SCAN_PERMISSION);
+        result.add(FleetDBManager.DELETE_FLEET_SCAN_PERMISSION);
         return result;
     }
     
@@ -82,6 +82,7 @@ public class MyPlugin extends PollyPlugin {
         roleManager.assignPermission(FLEET_MANAGER_ROLE, FleetDBManager.DELETE_BATTLE_REPORT_PERMISSION);
         roleManager.assignPermission(FLEET_MANAGER_ROLE, FleetDBManager.VIEW_BATTLE_REPORT_PERMISSION);
         roleManager.assignPermission(FLEET_MANAGER_ROLE, FleetDBManager.VIEW_FLEET_SCAN_PERMISSION);
+        roleManager.assignPermission(FLEET_MANAGER_ROLE, FleetDBManager.DELETE_BATTLE_REPORT_PERMISSION);
         
         roleManager.assignPermission(RoleManager.DEFAULT_ROLE, FleetDBManager.VIEW_FLEET_SCAN_PERMISSION);
         roleManager.assignPermission(RoleManager.DEFAULT_ROLE, FleetDBManager.VIEW_BATTLE_REPORT_PERMISSION);
