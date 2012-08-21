@@ -79,15 +79,8 @@ public class MyPlugin extends PollyPlugin {
         roleManager.createRole(FLEET_MANAGER_ROLE);
         roleManager.assignPermission(FLEET_MANAGER_ROLE, FleetDBManager.ADD_FLEET_SCAN_PERMISSION);
         roleManager.assignPermission(FLEET_MANAGER_ROLE, FleetDBManager.ADD_BATTLE_REPORT_PERMISSION);
-        roleManager.assignPermission(FLEET_MANAGER_ROLE, FleetDBManager.DELETE_BATTLE_REPORT_PERMISSION);
         roleManager.assignPermission(FLEET_MANAGER_ROLE, FleetDBManager.VIEW_BATTLE_REPORT_PERMISSION);
         roleManager.assignPermission(FLEET_MANAGER_ROLE, FleetDBManager.VIEW_FLEET_SCAN_PERMISSION);
-        roleManager.assignPermission(FLEET_MANAGER_ROLE, FleetDBManager.DELETE_BATTLE_REPORT_PERMISSION);
-        
-        roleManager.assignPermission(RoleManager.DEFAULT_ROLE, FleetDBManager.ADD_FLEET_SCAN_PERMISSION);
-        roleManager.assignPermission(RoleManager.DEFAULT_ROLE, FleetDBManager.ADD_BATTLE_REPORT_PERMISSION);
-        roleManager.assignPermission(RoleManager.DEFAULT_ROLE, FleetDBManager.VIEW_FLEET_SCAN_PERMISSION);
-        roleManager.assignPermission(RoleManager.DEFAULT_ROLE, FleetDBManager.VIEW_BATTLE_REPORT_PERMISSION);
         
         super.assignPermissions(roleManager);
     }
