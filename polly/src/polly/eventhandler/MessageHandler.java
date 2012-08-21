@@ -32,14 +32,18 @@ public class MessageHandler implements MessageListener {
     private UserManagerImpl userManager;
     private ExecutorService executorThreadPool;
     private int parseErrorDetails;
+    private boolean reportUnknownCommand;
+    
     
     
     public MessageHandler(CommandManager commandManager, UserManagerImpl userManager, 
-            ExecutorService executorThreadPool, int parseErrorDetails) {
+            ExecutorService executorThreadPool, int parseErrorDetails, 
+            boolean reportUnknownCommand) {
         this.commands = commandManager;
         this.userManager = userManager;
         this.executorThreadPool = executorThreadPool;
         this.parseErrorDetails = parseErrorDetails;
+        this.reportUnknownCommand = reportUnknownCommand;
     }
     
 
@@ -85,8 +89,10 @@ public class MessageHandler implements MessageListener {
                     }
                     logger.debug("", e1);
                 } catch (UnknownCommandException e1) {
-                    e.getSource().sendMessage(e.getChannel(), "Unbekannter Befehl: " + 
+                    if (reportUnknownCommand) {
+                        e.getSource().sendMessage(e.getChannel(), "Unbekannter Befehl: " + 
                             e1.getMessage());
+                    }
                 } catch (UnknownSignatureException e1) {
                     e.getSource().sendMessage(e.getChannel(), "Unbekannte Signatur: " + 
                             e1.getSignature().toString());

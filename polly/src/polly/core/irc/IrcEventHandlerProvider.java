@@ -69,12 +69,14 @@ public class IrcEventHandlerProvider extends AbstractProvider {
         int parseErrorDetails = ircConfig.readInt(Configuration.PARSE_ERROR_DETAILS);
         int autoLoginTime = ircConfig.readInt(Configuration.AUTO_LOGIN_TIME);
         boolean ircLogging = ircConfig.readBoolean(Configuration.IRC_LOGGING);
+        boolean reportUnknownCommand = 
+            ircConfig.readBoolean(Configuration.REPORT_UNKNOWN_COMMAND_ERROR);
         
         // setup handler for incoming irc messages that are to be parsed as a command.
         // XXX: Ensure that message handler is the first message listener to be added
         //      because it updates a users idle time
         MessageHandler handler = new MessageHandler(commandManager,
-            userManager, executor, parseErrorDetails);
+            userManager, executor, parseErrorDetails, reportUnknownCommand);
         ircManager.addMessageListener(handler);
         provideComponent(handler);
         

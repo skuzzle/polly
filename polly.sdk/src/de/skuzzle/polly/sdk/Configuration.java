@@ -350,6 +350,13 @@ public interface Configuration {
      */
     public final static String HTTP_SESSION_CACHE_THRESHOLD = "cacheThreshold";
     
+    /**
+     * Whether polly should output an error message when a user tries to execute a 
+     * command that does not exist.
+     * @since 0.9.1
+     */
+    public final static String REPORT_UNKNOWN_COMMAND_ERROR = "reportUnknownCommandError";
+    
     
     
 	/**
