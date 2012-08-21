@@ -166,15 +166,14 @@ public class AdministrationManager extends AbstractDisposable {
     
     
     
-    public void processLogCache(List<LogItem> cache) {
+    public void processLogCache(List<LogItem> cache, boolean asynchron) {
         final List<LogItem> copy; 
         synchronized (cache) {
             copy = new ArrayList<LogItem>(cache);
             cache.clear();
         }
         
-        this.sender.execute(new Runnable() {
-            
+        Runnable r = new Runnable() {
             @Override
             public void run() {
                 Response response = new Response(ResponseType.LOG_ITEM);
@@ -186,8 +185,12 @@ public class AdministrationManager extends AbstractDisposable {
                     }
                 }
             }
-        });
-        
+        };
+        if (asynchron) {
+            this.sender.equals(r);
+        } else {
+            r.run();
+        }
     }
 
 
@@ -195,14 +198,15 @@ public class AdministrationManager extends AbstractDisposable {
     @Override
     protected void actualDispose() throws DisposingException {
         this.logAppender.setEnabled(false);
-        this.logAppender.processLogCache(true);
+        this.logAppender.processLogCacheNow();
         Logger.getRootLogger().removeAppender(this.logAppender);
-        this.sender.shutdown();
         try {
             this.sender.awaitTermination(1000, TimeUnit.MILLISECONDS);
+            this.sender.shutdown();
         } catch (InterruptedException ignore) {
             ignore.printStackTrace();
         }
         this.liveLogList.clear();
     }
+
 }

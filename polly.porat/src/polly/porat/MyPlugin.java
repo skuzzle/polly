@@ -11,6 +11,7 @@ import polly.porat.core.tcp.AdministrationServer;
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
+import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
 import de.skuzzle.polly.sdk.exceptions.PluginException;
 
@@ -37,8 +38,6 @@ public class MyPlugin extends PollyPlugin {
         this.protocolHandler = new ProtocolHandler(this.adminManager);
         
         this.server = new AdministrationServer(null, 24500, 5);
-        myPolly.shutdownManager().addDisposable(this.server);
-        myPolly.shutdownManager().addDisposable(this.adminManager);
         this.server.addObjectReceivedListener(this.protocolHandler);
         this.server.addConnectionListener(this.protocolHandler);
         this.server.listen();
@@ -55,5 +54,20 @@ public class MyPlugin extends PollyPlugin {
         
         System.setProperty("javax.net.ssl.keyStore", keyStore);
         System.setProperty("javax.net.ssl.keyStorePassword", password);
+    }
+    
+    
+    
+    @Override
+    protected void actualDispose() throws DisposingException {
+        super.actualDispose();
+        
+        DisposingException e = null;
+        if ((e = safeDispose(this.server)) != null) {
+            throw e;
+        }
+       if ((e = safeDispose(this.adminManager)) != null) {
+           throw e;
+       }
     }
 }
