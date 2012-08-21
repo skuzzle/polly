@@ -12,7 +12,7 @@
     #foreach ($sess in $sessions)
     <tr>
         <td>$sess.getId()</td>
-        <td>$sess.getUser().getName()</td>
+        <td>$!sess.getUser().getName()</td>
         <td>$sess.getRemoteIp()</td>
 		<td>$sess.getLastUri()</td>
         <td>$myPolly.formatting().formatDate($sess.getLastAction())</td>
