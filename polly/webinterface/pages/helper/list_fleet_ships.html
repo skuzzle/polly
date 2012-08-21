@@ -1,13 +1,20 @@
+#set ( $shipDesc = !$shipDesc )
+
 <table>
 	<tr>
-		<th>RxId</th>
-		<th>Ship Name</th>
-		<th>Techlevel</th>
-		<th>Latest Owner</th>
-		<th>Latest Clan</th>
-		<th>History entries</th>
+		<th><a href="${destination}&shipSortKey=getRxId&shipDesc=$shipDesc">RxId</a></th>
+		<th><a href="${destination}&shipSortKey=getName&shipDesc=$shipDesc">Ship Name</a></th>
+		<th><a href="${destination}&shipSortKey=getTechlevel&shipDesc=$shipDesc">Techlevel</a></th>
+		<th><a href="${destination}&shipSortKey=getOwner&shipDesc=$shipDesc">Latest Owner</a></th>
+		<th><a href="${destination}&shipSortKey=getOwnerClan&shipDesc=$shipDesc">Latest Clan</a></th>
+		<th><a href="${destination}&shipSortKey=getHistorySize&shipDesc=$shipDesc">History entries</a></th>
 		<th>Action</th>
 	</tr>
+	
+	#if ($shipSortKey)
+		$sorter.sort($fleetShips, $shipSortKey, $shipDesc)
+	#end
+	
 	#foreach ($ship in $fleetShips)
 	<tr>
 		<td>$ship.getRxId()</td>

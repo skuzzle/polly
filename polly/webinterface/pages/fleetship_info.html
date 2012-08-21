@@ -46,4 +46,5 @@
 
 <h3>Scans with this ship</h3>
 #set ($fleetScans = $scans)
+#set ($destination = "/fleetship_info?shipId=$ship.getRxId()")
 #parse ("webinterface/pages/helper/list_fleet_scans.html")

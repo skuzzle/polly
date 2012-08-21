@@ -11,6 +11,7 @@ import de.skuzzle.polly.sdk.http.HttpAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.http.HttpTemplateException;
+import de.skuzzle.polly.sdk.http.HttpTemplateSortHelper;
 
 
 public class FleetShipInfoHttpAction extends HttpAction {
@@ -32,6 +33,8 @@ public class FleetShipInfoHttpAction extends HttpAction {
         int rxId = Integer.parseInt(e.getProperty("shipId"));
         FleetScanShip ship = this.fleetDBManager.getShipByRevorixId(rxId);
         List<FleetScan> scans = this.fleetDBManager.getScanWithShip(rxId);
+        HttpTemplateSortHelper.makeListSortable(
+            c, e, "scanSortKey", "scanDesc", "getDate");
         
         c.put("ship", ship);
         c.put("scans", scans);

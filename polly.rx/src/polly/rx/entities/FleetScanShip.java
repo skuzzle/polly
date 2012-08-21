@@ -133,9 +133,14 @@ public class FleetScanShip {
     
     
     
-    
     public int getY() {
         return this.y;
+    }
+    
+    
+    
+    public int getHistorySize() {
+        return this.history.size();
     }
 
     

@@ -1,16 +1,22 @@
+#set ( $scanDesc = !$scanDesc )
+
 <table>
 	<tr>
-		<th>Date</th>
-		<th>Location</th>
-		<th>Sens</th>
-		<th>Owner</th>
-		<th>Clan</th>
-		<th>Fleet Name</th>
-		<th>Fleet Tag</th>
-		<th>Ships</th>
+		<th><a href="${destination}&scanSortKey=getDate&scanDesc=$scanDesc">Date</a></th>
+		<th><a href="${destination}&scanSortKey=getQuadrant&scanDesc=$scanDesc">Location</a></th>
+		<th><a href="${destination}&scanSortKey=getLocalSens&scanDesc=$scanDesc">Sens</th>
+		<th><a href="${destination}&scanSortKey=getOwnerName&scanDesc=$scanDesc">Owner</a></th>
+		<th><a href="${destination}&scanSortKey=getOwnerClan&scanDesc=$scanDesc">Clan</a></th>
+		<th><a href="${destination}&scanSortKey=getFleetName&scanDesc=$scanDesc">Fleet Name</a></th>
+		<th><a href="${destination}&scanSortKey=getFleetTag&scanDesc=$scanDesc">Fleet Tag</a></th>
+		<th><a href="${destination}&scanSortKey=getShipCount&scanDesc=$scanDesc">Ships</a></th>
 		<th>Action</th>
 		<th></th>
 	</tr>
+	
+	#if ($scanSortKey)
+		$sorter.sort($fleetScans, $scanSortKey, $scanDesc)
+	#end
 	#foreach ($scan in $fleetScans)
 	<tr>
 		<td>$myPolly.formatting().formatDate($scan.getDate())</td>
@@ -20,7 +26,7 @@
 		<td>$scan.getOwnerClan()</td>
 		<td>$scan.getFleetName()</td>
 		<td>$scan.getFleetTag()</td>
-		<td>$scan.getShips().size()</td>
+		<td>$scan.getShipCount()</td>
 		<td>
 			<form action="fleetscan_info" method="POST">
 			<input type="hidden" name="id" value="$scan.getId()"/>

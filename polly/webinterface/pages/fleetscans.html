@@ -14,9 +14,11 @@
 
 <h3>Existing Scans</h3>
 #set ($fleetScans = $allScans)
+#set ($destination = "/FleetScans?ignore=")
 #parse ("webinterface/pages/helper/list_fleet_scans.html")
 
 <h3>All ships</h3>
 #set ($fleetShips = $allShips)
 #set ($original = false)
+#set ($destination = "/FleetScans?igonre=")
 #parse ("webinterface/pages/helper/list_fleet_ships.html")

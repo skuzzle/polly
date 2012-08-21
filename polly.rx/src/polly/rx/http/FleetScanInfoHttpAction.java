@@ -7,6 +7,7 @@ import de.skuzzle.polly.sdk.http.HttpAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.http.HttpTemplateException;
+import de.skuzzle.polly.sdk.http.HttpTemplateSortHelper;
 
 
 public class FleetScanInfoHttpAction extends HttpAction {
@@ -30,6 +31,9 @@ public class FleetScanInfoHttpAction extends HttpAction {
         FleetScan scan = this.fleetDBManager.getScanById(scanId);
         
         c.put("scan", scan);
+        HttpTemplateSortHelper.makeListSortable(
+            c, e, "shipSortKey", "shipDesc", "getRxId");
+        
         return c;
     }
 

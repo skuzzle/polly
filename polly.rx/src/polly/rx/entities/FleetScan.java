@@ -155,6 +155,12 @@ public class FleetScan {
         return this.fleetTag;
     }
 
+    
+    
+    public int getShipCount() {
+        return this.ships.size();
+    }
+    
 
     
     public List<FleetScanShip> getShips() {

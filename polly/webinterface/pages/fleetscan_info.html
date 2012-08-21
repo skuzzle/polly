@@ -36,4 +36,5 @@
 
 <h3>Ships</h3>
 #set ($fleetShips = $scan.getShips())
+#set ($destination = "/fleetscan_info?id=$scan.getId()")
 #parse ("webinterface/pages/helper/list_fleet_ships.html")
