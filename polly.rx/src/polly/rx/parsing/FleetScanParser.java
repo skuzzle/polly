@@ -86,7 +86,7 @@ public class FleetScanParser {
         while (it.hasNext()) {
             String line = it.next();
             
-            if (line.startsWith("Lokale Sensorstärke")) {
+            if (line.startsWith("Lokale Sensor")) {
                 Matcher m = NUMBER_PATTERN.matcher(line);
                 m.find();
                 
