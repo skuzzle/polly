@@ -273,8 +273,9 @@ public class DefaultModuleLoader implements ModuleLoader {
                 }
             }
         }
-        logger.info("Running setup for '" + provider + "'");
+        logger.info("Running setup for '" + provider + "'...");
         provider.setupModule();
+        logger.trace("Success");
         callSet.remove(provider);
 
         // check if all components that 'module' claimed to provide are
@@ -384,9 +385,11 @@ public class DefaultModuleLoader implements ModuleLoader {
                 }
             }
         }
-        logger.info("Running setup for '" + provider + "'");
+        logger.info("Running Module for '" + provider + "'");
         provider.runModule();
-
+        logger.trace("Success");
+        callSet.remove(provider);
+        
         // check if all states that 'module' claimed to provide are
         // actually provided now
         for (Entry<Integer, Provider> entry : this.providedStates.entrySet()) {
