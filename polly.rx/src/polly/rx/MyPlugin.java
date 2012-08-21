@@ -45,9 +45,9 @@ public class MyPlugin extends PollyPlugin {
         
         myPolly.web().addHttpAction(new BattleReportInfosHttpAction(
             myPolly, this.fleetDBManager));
-        myPolly.web().addHttpAction(new BattleReportHttpAction(
+        /*myPolly.web().addHttpAction(new BattleReportHttpAction(
             myPolly, this.fleetDBManager));
-        myPolly.web().addMenuUrl("Revorix", "Kampfberichte");
+        myPolly.web().addMenuUrl("Revorix", "Kampfberichte");*/
         
         
         myPolly.web().addMenuUrl("Revorix", "FleetScans");
