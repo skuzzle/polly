@@ -141,7 +141,9 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
                         SpotEvent.USER_JOINED);
                     IrcManagerImpl.this.fireUserSpotted(e1);
                 }
+                IrcManagerImpl.this.onlineUsers.add(nickName);
             }
+            
             synchronized (IrcManagerImpl.this.channelUsers) {
                 Set<IrcUser> channelUsers = IrcManagerImpl.this.channelUsers.get(channel);
                 if (channelUsers == null) {
@@ -150,7 +152,6 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
                 }
                 channelUsers.add(user);
             }
-            IrcManagerImpl.this.onlineUsers.add(nickName);
             IrcManagerImpl.this.fireJoin(e);
         }
         
