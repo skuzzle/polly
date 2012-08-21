@@ -25,6 +25,7 @@ import org.apache.velocity.app.Velocity;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
+import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpParameter;
 import de.skuzzle.polly.sdk.http.HttpParameter.ParameterType;
@@ -143,6 +144,12 @@ public class ResponseHandler implements HttpHandler {
         } catch (HttpTemplateException e1) {
             c = this.webServer.errorTemplate(e1.getHeading(), e1.getMessage(), session);
             logger.warn("Template Exception: ", e1);
+        } catch (InsufficientRightsException e1) {
+            c = this.webServer.errorTemplate(
+                "Permission denied", 
+                "You have insufficient permissions to acces this page/action." +
+                            "<br/><br/>Missing permission(s): " + 
+                        e1.getObject().getRequiredPermission(), e.getSession());
         } catch (Exception e1) {
             StringWriter w = new StringWriter();
             PrintWriter pw = new PrintWriter(w);

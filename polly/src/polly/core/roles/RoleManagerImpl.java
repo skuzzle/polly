@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.WriteAction;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
+import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.exceptions.RoleException;
 import de.skuzzle.polly.sdk.model.User;
 import de.skuzzle.polly.sdk.roles.RoleManager;
@@ -439,5 +440,13 @@ public class RoleManagerImpl implements RoleManager {
     @Override
     public boolean canAccess(User user, SecurityObject securityObject) {
         return this.hasPermission(user, securityObject.getRequiredPermission());
+    }
+    
+    
+    
+    @Override
+    public void denyAccess(SecurityObject securityObject) 
+            throws InsufficientRightsException {
+        throw new InsufficientRightsException(securityObject);
     }
 }

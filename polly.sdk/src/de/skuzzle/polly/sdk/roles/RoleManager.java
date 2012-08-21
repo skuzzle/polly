@@ -107,7 +107,7 @@ public interface RoleManager {
      * group roles such like "polly.role.myplugin.MODIFY_DATA".</p>
      * 
      * @param newRoleName The full qualified name of the new role.
-     * @throws DatabaseException If persisting the new rule fails.
+     * @throws DatabaseException If persisting the new role fails.
      */
     public abstract void createRole(String newRoleName) 
             throws DatabaseException;
@@ -342,4 +342,15 @@ public interface RoleManager {
      * @throws DatabaseException If deleting the role fails.
      */
     public abstract void deleteRole(String roleName) throws RoleException, DatabaseException;
+
+
+
+    /**
+     * Throws an {@link InsufficientRightsException}.
+     * 
+     * @param securityObject The object for which the access is denied.
+     * @throws InsufficientRightsException Will always be thrown.
+     */
+    public abstract void denyAccess(SecurityObject securityObject)
+        throws InsufficientRightsException;
 }

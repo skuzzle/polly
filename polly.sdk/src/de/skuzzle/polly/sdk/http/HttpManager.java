@@ -3,6 +3,8 @@ package de.skuzzle.polly.sdk.http;
 import java.io.File;
 import java.io.IOException;
 
+import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
+
 
 
 
@@ -41,7 +43,8 @@ public interface HttpManager {
 
     public abstract void cleanUpSessions();
 
-    HttpTemplateContext executeAction(HttpEvent e) throws HttpTemplateException;
+    public abstract HttpTemplateContext executeAction(HttpEvent e) 
+            throws HttpTemplateException, InsufficientRightsException;
 
     String escapeHtml(String s);
 

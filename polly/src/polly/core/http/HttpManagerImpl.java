@@ -24,6 +24,7 @@ import com.sun.net.httpserver.HttpServer;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
+import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.http.HttpAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpEventListener;
@@ -214,7 +215,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     
     @Override
     public HttpTemplateContext executeAction(HttpEvent e) 
-                throws HttpTemplateException {
+                throws HttpTemplateException, InsufficientRightsException {
         String uri = e.getRequestUri();
         HttpAction action = this.actions.get(uri);
         
@@ -227,11 +228,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
                 actionContext.put(HttpInterface.PERMISSIONS, 
                         action.getRequiredPermission());
             } else {
-                throw new HttpTemplateException(
-                    "Permission denied", 
-                    "You have insufficient permissions to acces this page/action." +
-                                "<br/><br/>Missing permission(s): " + 
-                            action.getRequiredPermission(), e.getSession());
+                throw new InsufficientRightsException(action);
             }
         }
         this.putRootContext(actionContext, e.getSession());

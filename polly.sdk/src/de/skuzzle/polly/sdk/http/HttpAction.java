@@ -5,6 +5,7 @@ import java.util.TreeSet;
 
 
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.roles.SecurityObject;
 
@@ -104,9 +105,12 @@ public abstract class HttpAction implements SecurityObject {
      * @param e The HttpEvent that caused this action to be executed.
      * @return A HttpTemplateContext that contains information about the resulting web 
      *          page.
+     * @throws InsufficientRightsException If the user, for any reason, can not execute
+     *          this action.
      * @throws HttpTemplateException This can be thrown whenever your action fails to
      *          execute. In this case, polly will display an error page with the
      *          information from this exception.
      */
-    public abstract HttpTemplateContext execute(HttpEvent e) throws HttpTemplateException;
+    public abstract HttpTemplateContext execute(HttpEvent e) 
+        throws HttpTemplateException, InsufficientRightsException;
 }

@@ -4,6 +4,7 @@ import polly.core.http.HttpInterface;
 import polly.core.http.HttpManagerProvider;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.UserManager;
+import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.http.HttpAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
@@ -26,7 +27,9 @@ public class LoginHttpAction extends HttpAction {
     
 
     @Override
-    public HttpTemplateContext execute(HttpEvent e) throws HttpTemplateException {
+    public HttpTemplateContext execute(HttpEvent e) 
+            throws HttpTemplateException, InsufficientRightsException {
+        
         HttpTemplateContext context = new HttpTemplateContext(HttpInterface.PAGE_LOGIN);
         String userName = e.getProperty("userName");
         String password = e.getProperty("password");
