@@ -55,7 +55,7 @@
         eclipselink.jar
         javax.persistence_2.0.3.v201010191057.jar
         hsqldb.jar
-        pircbot.jar
+        pircbot-ppf.jar
         mysql-connector-java-5.1.17-bin.jar
         mail.jar
         commons-lang-2.4.jar
