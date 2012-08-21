@@ -119,6 +119,26 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
             IrcUser user = new IrcUser(nickName, login, hostname);
             ChannelEvent e = new ChannelEvent(IrcManagerImpl.this, user, channel);
             
+            // XXX: not sure if this makes sense or not
+            IrcManagerImpl.this.topics.remove(channel);
+            IrcManagerImpl.this.firePart(e);
+        }
+        
+        
+        
+        @Override
+        protected void onKick(String channel, String kickerNick, String kickerLogin, 
+            String kickerHostname, String recipientNick, String reason) {
+            
+            IrcUser user = new IrcUser(recipientNick, "", "");
+            this.checkUserLost(channel, user);
+            
+            // CONSIDER: add kick event to polly api
+        };
+        
+        
+        
+        private void checkUserLost(String channel, IrcUser user) {
             /* ISSUE: 0000002 && 0000026*/
             boolean known = false;
             for (String c : this.getChannels()) {
@@ -132,7 +152,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
                 for (User u : this.getUsers(c)) {
                     String uStripped = IrcManagerImpl.this.stripNickname(u.getNick());
                     
-                    if (uStripped.equals(nickName)) {
+                    if (uStripped.equals(user.getNickName())) {
                         known = true;
                         break;
                     }
@@ -141,13 +161,9 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
             if (!known) {
                 SpotEvent e1 = new SpotEvent(IrcManagerImpl.this, user, channel, 
                         SpotEvent.USER_PART);
-                IrcManagerImpl.this.onlineUsers.remove(sender);
+                IrcManagerImpl.this.onlineUsers.remove(user.getNickName());
                 IrcManagerImpl.this.fireUserLost(e1);
             }
-            
-            // XXX: not sure if this makes sense or not
-            IrcManagerImpl.this.topics.remove(channel);
-            IrcManagerImpl.this.firePart(e);
         }
         
         
@@ -299,6 +315,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     
     
     private String stripNickname(String nickName) {
+        // HACK: this method is a relict, but i did not dare to remove it completely
         return nickName;
     }
     
@@ -313,7 +330,6 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
 	    int port = e.getPort();
 	    logger.info("Connecting to " + e.getHostName() + ":" + port);
         this.bot.connect(e.getHostName(), e.getPort());
-        
         this.bot.sendMessage("nickserv", "ghost " + e.getNickName() + " " + e.getIdentity());
         this.setAndIdentifyDefaultNickname();
         this.joinChannels(e.getChannels().toArray(new String[e.getChannels().size()]));
