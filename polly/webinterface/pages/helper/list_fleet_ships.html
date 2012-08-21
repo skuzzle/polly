@@ -25,8 +25,8 @@
 			$ship.getName()
 		#end</td>
 		<td>$ship.getTechlevel()</td>
-		<td>$ship.getOwner()</td>
-		<td>$ship.getOwnerClan()</td>
+		<td><a href="/query_scans?method=owner&query=$ship.getOwner()">$ship.getOwner()</a></td>
+		<td><a href="/query_scans?method=clan&query=$ship.getOwnerClan()">$ship.getOwnerClan()</a></td>
 		<td>$ship.getHistory().size()</td>
 		<td>
 			<form action="fleetship_info" method="POST">

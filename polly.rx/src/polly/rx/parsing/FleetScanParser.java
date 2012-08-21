@@ -72,7 +72,7 @@ public class FleetScanParser {
     
     
     private final static FleetScan parseFleetScanHelper(String paste, String quadrant, 
-            int x, int y, String metaData) {
+            int x, int y, String metaData) throws ParseException {
         String[] lines = paste.split("[\n\r]+");
         
         int sens = 0;
@@ -137,6 +137,10 @@ public class FleetScanParser {
                     }
                 }
             }
+        }
+        
+        if (fleetName.equals("") || owner.equals("") || ships.isEmpty()) {
+            throw new ParseException("ungülter Flottenscan.");
         }
         
         return new FleetScan(sens, fleetName, owner, ownerClan, fleetTag, ships, 

@@ -6,19 +6,19 @@
 <h2>Info about $user.getName()</h2>
 <table>
     <tr>
-        <td><b>Name:</b></td>
+        <th>Name:</th>
         <td>$user.getName()</td>
     </tr>
     <tr>
-        <td><b>Nickname:</b></td>
+        <th>Nickname:</th>
         <td>$!user.getCurrentNickName()</td>
     </tr>
     <tr>
-        <td><b>Last IRC Action:</b></td>
+        <th>Last IRC Action:</th>
         <td>#if ($user.getLastMessageTime() != 0) $formatter.formatDate( $user.getLastMessageTime() ) #end</td>
     </tr>
     <tr>
-        <td><b>Logged in since:</b></td>
+        <th>Logged in since:</th>
         <td>#if ($user.getLoginTime() != 0) $formatter.formatDate( $user.getLoginTime() ) #end</td>
     </tr>
 </table>

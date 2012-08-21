@@ -22,8 +22,8 @@
 		<td>$myPolly.formatting().formatDate($scan.getDate())</td>
 		<td>$scan.getQuadrant() $scan.getX(),$scan.getY()</td>
 		<td>$scan.getLocalSens()</td>
-		<td>$scan.getOwnerName()</td>
-		<td>$scan.getOwnerClan()</td>
+		<td><a href="/query_scans?method=owner&query=$scan.getOwnerName()">$scan.getOwnerName()</a></td>
+		<td><a href="/query_scans?method=clan&query=$scan.getOwnerClan()">$scan.getOwnerClan()</a></td>
 		<td>$scan.getFleetName()</td>
 		<td>$scan.getFleetTag()</td>
 		<td>$scan.getShipCount()</td>

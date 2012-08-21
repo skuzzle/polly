@@ -25,13 +25,23 @@ import javax.persistence.TemporalType;
     @NamedQuery(
         name = "CONTAINING_SHIP",
         query = "SELECT scan From FleetScan scan, IN(scan.ships) ship WHERE ship.rxId = ?1"
+    ),
+    @NamedQuery(
+        name = "CONTAINING_OWNER",
+        query = "SELECT DISTINCT scan FROM FleetScan scan, IN(scan.ships) ship WHERE ship.owner = ?1"
+    ),
+    @NamedQuery(
+        name = "SCANS_BY_CLAN",
+        query = "SELECT DISTINCT scan FROM FleetScan scan, IN(scan.ships) ship WHERE scan.ownerClan = ?1 OR ship.ownerClan = ?1"
     )
 })
 public class FleetScan {
 
     public final static String ALL_SCANS = "ALL_SCANS";
-    
     public final static String CONTAINING_SHIP = "CONTAINING_SHIP";
+    public final static String CONTAINING_OWNER = "CONTAINING_OWNER";
+    public final static String SCANS_BY_CLAN = "SCANS_BY_CLAN";
+    
     
     @Id@GeneratedValue(strategy = GenerationType.TABLE)
     private int id;

@@ -21,12 +21,22 @@ import javax.persistence.OneToMany;
     @NamedQuery(
         name = "ALL_SHIPS",
         query = "SELECT ship FROM FleetScanShip ship"
-    )
+    ),
+    @NamedQuery(
+        name = "BY_OWNER",
+        query = "SELECT DISTINCT ship FROM FleetScanShip ship WHERE ship.owner = ?1"
+    ),
+    @NamedQuery(
+        name = "SHIPS_BY_CLAN",
+        query = "SELECT DISTINCT ship FROM FleetScanShip ship WHERE ship.ownerClan = ?1" 
+        )
 })
 public class FleetScanShip {
     
     public final static String BY_REVORIX_ID = "BY_REVORIX_ID";
     public final static String All_SHIPS = "ALL_SHIPS";
+    public final static String BY_OWNER = "BY_OWNER";
+    public final static String SHIPS_BY_CLAN = "SHIPS_BY_CLAN";
     
     
     @Id@GeneratedValue(strategy = GenerationType.TABLE)
@@ -74,6 +84,9 @@ public class FleetScanShip {
         FleetScanHistoryEntry e = new FleetScanHistoryEntry();
         e.getChanges().add(
             "Spotted first time at: " + quadrant + " " + x + ", " + y);
+        this.x = x;
+        this.y = y;
+        this.quadrant = quadrant;
         this.history.add(e);
     }
 
@@ -157,7 +170,7 @@ public class FleetScanShip {
         }
         FleetScanHistoryEntry historyEntry = new FleetScanHistoryEntry();
         historyEntry.getChanges().add(
-            "Spotted at: " + this.quadrant + " " + this.x + ", " + this.y);
+            "Spotted at: " + other.quadrant + " " + other.x + ", " + other.y);
         
         if (!this.name.equals(other.name)) {
             historyEntry.getChanges().add(

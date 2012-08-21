@@ -14,7 +14,7 @@ import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.http.HttpTemplateException;
 import de.skuzzle.polly.sdk.http.HttpTemplateSortHelper;
-
+import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 
 
 public class FleetScanHttpAction extends HttpAction {
@@ -30,12 +30,18 @@ public class FleetScanHttpAction extends HttpAction {
     
 
     @Override
-    public HttpTemplateContext execute(HttpEvent e) throws HttpTemplateException {
+    public HttpTemplateContext execute(HttpEvent e) 
+            throws HttpTemplateException, InsufficientRightsException {
         HttpTemplateContext c = new HttpTemplateContext("pages/fleetscans.html");
         
         String action = e.getProperty("action");
         
         if (action != null && action.equals("postScan")) {
+            if (!this.getMyPolly().roles().hasPermission(
+                e.getSession().getUser(), FleetDBManager.ADD_FLEET_SCAN_PERMISSION)) {
+                throw new InsufficientRightsException(this);
+            }
+            
             String paste = e.getSource().escapeHtml(e.getProperty("paste"));
             String metaData = e.getProperty("metaData") == null
                 ? ""

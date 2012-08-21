@@ -67,6 +67,20 @@ public class FleetDBManager {
     
     
     
+    public List<FleetScanShip> getShipsByOwner(String ownerName) {
+        return this.persistence.atomicRetrieveList(FleetScanShip.class, 
+            FleetScanShip.BY_OWNER, ownerName);
+    }
+    
+    
+    
+    public List<FleetScan> getScansWithOwner(String ownerName) {
+        return this.persistence.atomicRetrieveList(FleetScan.class, 
+            FleetScan.CONTAINING_OWNER, ownerName);
+    }
+    
+    
+    
     public FleetScanShip getShipByRevorixId(int rxId) {
         return this.persistence.findSingle(
             FleetScanShip.class, FleetScanShip.BY_REVORIX_ID, rxId);
@@ -137,5 +151,19 @@ public class FleetDBManager {
                 persistence.remove(report);
             }
         });
+    }
+
+
+
+    public List<FleetScan> getScansWithClan(String clanName) {
+        return this.persistence.atomicRetrieveList(FleetScan.class, 
+            FleetScan.SCANS_BY_CLAN, clanName);
+    }
+
+
+
+    public List<FleetScanShip> getShipsByClan(String clanName) {
+        return this.persistence.atomicRetrieveList(FleetScanShip.class, 
+            FleetScanShip.SHIPS_BY_CLAN, clanName);
     }
 }
