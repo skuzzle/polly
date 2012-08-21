@@ -203,7 +203,9 @@ public class Polly {
             // add startup module
             new AnonymousModule(loader, configurationProvider, parentCl);
             
+            logger.info("Running setup for all modules...");
             loader.runSetup();
+            logger.info("Setup done. Now executing each module...");
             loader.runModules();
             
             if (pollyCfg.readBoolean(Configuration.DEBUG_MODE)) {

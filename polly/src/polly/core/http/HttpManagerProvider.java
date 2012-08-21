@@ -139,6 +139,7 @@ public class HttpManagerProvider extends AbstractProvider {
         
         try {
             this.httpManager.startWebServer();
+            logger.info("Webserver started");
         } catch (IOException e) {
             logger.error("Error while starting webserver: ", e);
             throw new SetupException(e);
