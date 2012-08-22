@@ -11,37 +11,39 @@
 	<input type="submit" value="Submit" class="button"/>
 </form>
 
+#set ($divstyle = "font-size:x-small; float: left; border: 1px solid; padding: 5px; margin: 5px")
+#set ($linkstyle = "padding-left: 5px; color: red")
+<div style="$divstyle">
 <h3>All clans ($allClans.size())</h3>
-<p style="font-size:x-small">
 	#foreach ($clan in $allClans)
 		#if ($clan != "")
-			<a style="padding-left:5px;"href="/query_scans?method=clan&query=$clan">$clan</a>
+			<a style="$linkstyle" href="/query_scans?method=clan&query=$clan">$clan</a>
 		#end
 	#end
 	</ul>
-</p>
+</div>
 
+<div style="$divstyle">
 <h3>All venads ($allVenads.size())</h3>
-<p style="font-size:x-small">
 	#foreach ($venad in $allVenads)
 		#if ($venad != "")
-			<a style="padding-left:5px;"href="/query_scans?method=owner&query=$venad">$venad</a>
+			<a style="$linkstyle" href="/query_scans?method=owner&query=$venad">$venad</a>
 		#end
 	#end
 	</ul>
-</p>
+</div>
 
+<div style="$divstyle">
 <h3>All locations ($allQuads.size())</h3>
-<p style="font-size:x-small">
 	#foreach ($quad in $allQuads)
 		#if ($venad != "")
-			<a style="padding-left:5px;"href="/query_scans?method=location&query=$quad">$quad</a>
+			<a style="$linkstyle" href="/query_scans?method=location&query=$quad">$quad</a>
 		#end
 	#end
 	</ul>
-</p>
+</div>
 
-<div style="overflow: auto">
+<div style="overflow: auto; clear: both">
 	<h3>All Scans ($allScans.size())</h3>
 	#set ($hideTotal = true)
 	#set ($fleetScans = $allScans)
