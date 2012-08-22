@@ -33,7 +33,12 @@ import javax.persistence.TemporalType;
     @NamedQuery(
         name = "SCANS_BY_CLAN",
         query = "SELECT DISTINCT scan FROM FleetScan scan, IN(scan.ships) ship WHERE scan.ownerClan = ?1 OR ship.ownerClan = ?1"
+    ),
+    @NamedQuery(
+        name = "SCANS_BY_LOCATION",
+        query = "SELECT DISTINCT scan FROM FleetScan scan WHERE scan.quadrant = ?1"
     )
+    
 })
 public class FleetScan {
 
@@ -41,6 +46,7 @@ public class FleetScan {
     public final static String CONTAINING_SHIP = "CONTAINING_SHIP";
     public final static String CONTAINING_OWNER = "CONTAINING_OWNER";
     public final static String SCANS_BY_CLAN = "SCANS_BY_CLAN";
+    public final static String SCANS_BY_LOCATION = "SCANS_BY_LOCATION";
     
     
     @Id@GeneratedValue(strategy = GenerationType.TABLE)

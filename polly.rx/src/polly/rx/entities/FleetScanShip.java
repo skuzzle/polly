@@ -29,7 +29,12 @@ import javax.persistence.OneToMany;
     @NamedQuery(
         name = "SHIPS_BY_CLAN",
         query = "SELECT DISTINCT ship FROM FleetScanShip ship WHERE ship.ownerClan = ?1" 
-        )
+    ),
+    @NamedQuery(
+        name = "SHIPS_BY_LOCATION",
+        query = "SELECT DISTINCT ship FROM FleetScanShip ship WHERE ship.quadrant = ?1"
+    )
+    
 })
 public class FleetScanShip {
     
@@ -37,7 +42,7 @@ public class FleetScanShip {
     public final static String All_SHIPS = "ALL_SHIPS";
     public final static String BY_OWNER = "BY_OWNER";
     public final static String SHIPS_BY_CLAN = "SHIPS_BY_CLAN";
-    
+    public final static String SHIPS_BY_LOCATION = "SHIPS_BY_LOCATION";
     
     @Id@GeneratedValue(strategy = GenerationType.TABLE)
     private int id;

@@ -1,6 +1,8 @@
 package polly.rx.http;
 
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import polly.rx.FleetDBManager;
 import polly.rx.ParseException;
@@ -85,6 +87,24 @@ public class FleetScanHttpAction extends HttpAction {
         List<FleetScan> allScans = this.fleetDBManager.getAllScans();
         List<FleetScanShip> allShips = this.fleetDBManager.getAllScannedShips();
         
+        Set<String> clans = new TreeSet<String>();
+        Set<String> venads = new TreeSet<String>();
+        Set<String> allQuads = new TreeSet<String>();
+            
+        for (FleetScan scan : allScans) {
+            clans.add(scan.getOwnerClan());
+            venads.add(scan.getOwnerName());
+            allQuads.add(scan.getQuadrant());
+        }
+        for (FleetScanShip ship : allShips) {
+            clans.add(ship.getOwnerClan());
+            venads.add(ship.getOwner());
+            allQuads.add(ship.getQuadrant());
+        }
+        
+        c.put("allClans", clans);
+        c.put("allVenads", venads);
+        c.put("allQuads", allQuads);
         c.put("allScans", allScans);
         c.put("allShips", allShips);
         

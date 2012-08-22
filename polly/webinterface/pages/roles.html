@@ -12,8 +12,8 @@
 </tr>
 #foreach ($role in $roles)
 <tr>
-    <td><b>$role</b></td>
-    <td><a name="anchor$role" href="#anchorTop">Top</a></td>
+    <th>$role</th>
+    <th><a style="display:block" name="anchor$role" href="#anchorTop">Top</a></th>
 </tr>
 #foreach ($permission in $rolemanager.getPermissions($role))
 <tr>

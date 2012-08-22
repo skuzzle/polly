@@ -39,12 +39,26 @@ body {
 	text-align: left;
 }
 
+#content th a {
+	font-weight:bold;
+}
+
 #content td {
     background-color: #F0F0F0;
     padding-left: 2px;
     padding-right: 2px;
     font-size: small;
 	text-align: left;
+}
+
+#content td a {
+	font-weight:normal;
+	text-decoration: none;
+	color: red;
+}
+
+#content td a:hover {
+	text-decoration: underline;
 }
 
 #content .pre {
@@ -55,6 +69,7 @@ body {
 #content table {
 	width: 100%;
 }
+
 
 #content a {
     font-weight: bold;

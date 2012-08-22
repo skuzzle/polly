@@ -1,5 +1,6 @@
 #set ( $shipDesc = !$shipDesc )
-<p>Total ships: $fleetShips.size()</p>
+#if (!$hideTotal)<p>Total ships: $fleetShips.size()</p>#end
+<p style="font-size:x-small;font-weight:bold">Click on ID to view the ship.</p>
 <table>
 	<tr>
 		<th><a href="${destination}&shipSortKey=getRxId&shipDesc=$shipDesc">RxId</a></th>
@@ -8,7 +9,6 @@
 		<th><a href="${destination}&shipSortKey=getOwner&shipDesc=$shipDesc">Latest Owner</a></th>
 		<th><a href="${destination}&shipSortKey=getOwnerClan&shipDesc=$shipDesc">Latest Clan</a></th>
 		<th><a href="${destination}&shipSortKey=getHistorySize&shipDesc=$shipDesc">History entries</a></th>
-		<th>Action</th>
 	</tr>
 	
 	#if ($shipSortKey)
@@ -17,7 +17,7 @@
 	
 	#foreach ($ship in $fleetShips)
 	<tr>
-		<td>$ship.getRxId()</td>
+		<th><a href="fleetship_info?shipId=$ship.getRxId()">$ship.getRxId()</a></th>
 		<td>
 		#if ($ship.getNameWhenSpotted() != $ship.getName())
 			$ship.getName()<br/><small>(Original Name: $ship.getNameWhenSpotted()</small>)
@@ -28,12 +28,6 @@
 		<td><a href="/query_scans?method=owner&query=$ship.getOwner()">$ship.getOwner()</a></td>
 		<td><a href="/query_scans?method=clan&query=$ship.getOwnerClan()">$ship.getOwnerClan()</a></td>
 		<td>$ship.getHistory().size()</td>
-		<td>
-			<form action="fleetship_info" method="POST">
-			<input type="hidden" name="shipId" value="$ship.getRxId()"/>
-			<input type="submit" value="Details" class="button"/>
-			</form>
-		</td>
 	</tr>
 	#end
 </table>

@@ -27,11 +27,14 @@
 <h3>History</h3>
 <table>
 	<tr>
+		<th>#</th>
 		<th>Date</th>
 		<th>Changes</th>
 	</tr>
+	#set ($i = 1)
 	#foreach ($he in $ship.getHistory())
 	<tr>
+		<td>$i</td>
 		<td>$myPolly.formatting().formatDate($he.getDate())</td>
 		<td>
 		<ul>
@@ -41,6 +44,7 @@
 		</ul>
 		</td>
 	</tr>
+	#set ($i = $i+1)
 	#end
 </table>
 

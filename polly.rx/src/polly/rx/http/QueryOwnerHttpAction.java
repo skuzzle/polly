@@ -41,9 +41,15 @@ public class QueryOwnerHttpAction extends HttpAction {
         if (method.equals("owner")) {
             scans = this.fleetDBManager.getScansWithOwner(query);
             ships = this.fleetDBManager.getShipsByOwner(query);
-        } else {
+        } else if (method.equals("location")) {
+            scans = this.fleetDBManager.getScansWithLocation(query);
+            ships = this.fleetDBManager.getShipsWithLocation(query);
+        } else if (method.equals("clan")) {
             scans = this.fleetDBManager.getScansWithClan(query);
             ships = this.fleetDBManager.getShipsByClan(query);
+        } else {
+            e.throwTemplateException("Illegal querye method", "'" + method 
+                + "' is no valid query method");
         }
         
         c.put("fleetShips", ships);

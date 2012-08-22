@@ -1,5 +1,6 @@
 #set ( $scanDesc = !$scanDesc )
-<p>Total scans: $fleetScans.size()</p>
+#if (!$hideTotal)<p>Total scans: $fleetScans.size()</p>#end
+<p style="font-size:x-small;font-weight:bold">Click on ID to view the scan.</p>
 <table>
 	<tr>
 		<th><a href="${destination}&scanSortKey=getId&scanDesc=$scanDesc">ID</a></th>
@@ -12,7 +13,6 @@
 		<th><a href="${destination}&scanSortKey=getFleetTag&scanDesc=$scanDesc">Fleet Tag</a></th>
 		<th><a href="${destination}&scanSortKey=getShipCount&scanDesc=$scanDesc">Ships</a></th>
 		<th>Action</th>
-		<th></th>
 	</tr>
 	
 	#if ($scanSortKey)
@@ -20,21 +20,15 @@
 	#end
 	#foreach ($scan in $fleetScans)
 	<tr>
-		<td>$scan.getId()</td>
+		<th><a href="fleetscan_info?id=$scan.getId()">$scan.getId()</a></th>
 		<td>$myPolly.formatting().formatDate($scan.getDate())</td>
-		<td>$scan.getQuadrant() $scan.getX(),$scan.getY()</td>
+		<td><a href="/query_scans?method=location&query=$scan.getQuadrant()">$scan.getQuadrant()</a> $scan.getX(),$scan.getY()</td>
 		<td>$scan.getLocalSens()</td>
 		<td><a href="/query_scans?method=owner&query=$scan.getOwnerName()">$scan.getOwnerName()</a></td>
 		<td><a href="/query_scans?method=clan&query=$scan.getOwnerClan()">$scan.getOwnerClan()</a></td>
 		<td>$scan.getFleetName()</td>
 		<td>$scan.getFleetTag()</td>
 		<td>$scan.getShipCount()</td>
-		<td>
-			<form action="fleetscan_info" method="POST">
-			<input type="hidden" name="id" value="$scan.getId()"/>
-			<input type="submit" value="Details" class="button"/>
-			</form>
-		</td>
 		<td>
 			<form action="FleetScans" method="POST">
 			<input type="hidden" name="id" value="$scan.getId()"/>

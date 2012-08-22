@@ -200,4 +200,18 @@ public class FleetDBManager {
         return this.persistence.atomicRetrieveList(FleetScanShip.class, 
             FleetScanShip.SHIPS_BY_CLAN, clanName);
     }
+
+
+
+    public List<FleetScan> getScansWithLocation(String quadrant) {
+        return this.persistence.atomicRetrieveList(FleetScan.class, 
+            FleetScan.SCANS_BY_LOCATION, quadrant);
+    }
+
+
+
+    public List<FleetScanShip> getShipsWithLocation(String quadrant) {
+        return this.persistence.atomicRetrieveList(FleetScanShip.class, 
+            FleetScanShip.SHIPS_BY_LOCATION, quadrant);
+    }
 }

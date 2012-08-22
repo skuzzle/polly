@@ -11,14 +11,46 @@
 	<input type="submit" value="Submit" class="button"/>
 </form>
 
+<h3>All clans ($allClans.size())</h3>
+<p style="font-size:x-small">
+	#foreach ($clan in $allClans)
+		#if ($clan != "")
+			<a style="padding-left:5px;"href="/query_scans?method=clan&query=$clan">$clan</a>
+		#end
+	#end
+	</ul>
+</p>
 
-<h3>Existing Scans</h3>
-#set ($fleetScans = $allScans)
-#set ($destination = "/FleetScans?ignore=")
-#parse ("webinterface/pages/helper/list_fleet_scans.html")
+<h3>All venads ($allVenads.size())</h3>
+<p style="font-size:x-small">
+	#foreach ($venad in $allVenads)
+		#if ($venad != "")
+			<a style="padding-left:5px;"href="/query_scans?method=owner&query=$venad">$venad</a>
+		#end
+	#end
+	</ul>
+</p>
 
-<h3>All ships</h3>
-#set ($fleetShips = $allShips)
-#set ($original = false)
-#set ($destination = "/FleetScans?igonre=")
-#parse ("webinterface/pages/helper/list_fleet_ships.html")
+<h3>All locations ($allQuads.size())</h3>
+<p style="font-size:x-small">
+	#foreach ($quad in $allQuads)
+		#if ($venad != "")
+			<a style="padding-left:5px;"href="/query_scans?method=location&query=$quad">$quad</a>
+		#end
+	#end
+	</ul>
+</p>
+
+<div style="overflow: auto">
+	<h3>All Scans ($allScans.size())</h3>
+	#set ($hideTotal = true)
+	#set ($fleetScans = $allScans)
+	#set ($destination = "/FleetScans?ignore=")
+	#parse ("webinterface/pages/helper/list_fleet_scans.html")
+
+	<h3>All ships ($allShips.size())</h3>
+	#set ($fleetShips = $allShips)
+	#set ($original = false)
+	#set ($destination = "/FleetScans?igonre=")
+	#parse ("webinterface/pages/helper/list_fleet_ships.html")
+</div>
