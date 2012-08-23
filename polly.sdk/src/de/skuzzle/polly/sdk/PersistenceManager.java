@@ -454,4 +454,17 @@ public interface PersistenceManager {
      * @since 0.9.1
      */
     public <T> List<T> atomicRetrieveList(Class<T> type, String query, Object...params);
+
+
+
+    /**
+     * <p>Registers a new entity converter which will be run when the persistence manager
+     * is initialized.</p>
+     * 
+     * <p>Entity converters may be used to convert old outdated entities to new ones and
+     * to optionally remove the old entities.</p>
+     * @param ec The EntityConverter to register.
+     * @since 0.9.1
+     */
+    public void registerEntityConverter(EntityConverter ec);
 }

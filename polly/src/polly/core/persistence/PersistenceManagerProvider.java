@@ -4,6 +4,7 @@ package polly.core.persistence;
 import java.io.IOException;
 
 import de.skuzzle.polly.sdk.Configuration;
+import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import polly.Polly;
 import polly.configuration.ConfigurationProviderImpl;
 import polly.core.ShutdownManagerImpl;
@@ -102,6 +103,13 @@ public class PersistenceManagerProvider extends AbstractProvider {
         
         this.persistenceManager.connect(
             this.persistenceCfg.readString(Configuration.DB_PERSISTENCE_UNIT));
+        
+        try {
+            this.persistenceManager.runAllEntityConverters();
+        } catch (DatabaseException e) {
+            logger.error("Error while running entity converters", e);
+        }
+        
         this.addState(ModuleStates.PERSISTENCE_READY);
     }
 

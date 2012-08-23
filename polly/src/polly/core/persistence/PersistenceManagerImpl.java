@@ -14,6 +14,7 @@ import javax.persistence.Query;
 import org.apache.log4j.Logger;
 
 import de.skuzzle.polly.sdk.AbstractDisposable;
+import de.skuzzle.polly.sdk.EntityConverter;
 import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.PollyPlugin;
 import de.skuzzle.polly.sdk.WriteAction;
@@ -36,11 +37,13 @@ public class PersistenceManagerImpl extends AbstractDisposable implements
     private EntityManager em;
     private EntityTransaction activeTransaction;
     private EntityList entities;
-
+    private EntityConverterManagerImpl entityConverter;
+    
 
 
     public PersistenceManagerImpl() {
         this.entities = new EntityList();
+        this.entityConverter = new EntityConverterManagerImpl(this);
     }
 
 
@@ -52,6 +55,12 @@ public class PersistenceManagerImpl extends AbstractDisposable implements
         this.em = this.emf.createEntityManager();
 
         logger.info("Database connection established.");
+    }
+    
+    
+    
+    public void runAllEntityConverters() throws DatabaseException {
+        this.entityConverter.convertAll();
     }
 
 
@@ -103,6 +112,13 @@ public class PersistenceManagerImpl extends AbstractDisposable implements
     public void registerEntity(Class<?> clazz) {
         logger.debug("Registering new entity: " + clazz.getName());
         this.entities.add(clazz);
+    }
+    
+    
+    
+    @Override
+    public void registerEntityConverter(EntityConverter ec) {
+        this.entityConverter.addConverter(ec);
     }
 
 
