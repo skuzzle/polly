@@ -11,37 +11,39 @@
 	<input type="submit" value="Submit" class="button"/>
 </form>
 
-#set ($divstyle = "font-size:x-small; float: left; border: 1px solid; padding: 5px; margin: 5px")
 #set ($linkstyle = "padding-left: 5px; color: red")
-<div style="$divstyle">
-<h3>All clans ($allClans.size())</h3>
+<h3>Overview</h3>
+<table>
+	<tr>
+		<th>All Clans</th>
+		<th>All Venads</th>
+		<th>All Locations</th>
+	</tr>
+	<tr>
+		<td>
 	#foreach ($clan in $allClans)
 		#if ($clan != "")
 			<a style="$linkstyle" href="/query_scans?method=clan&query=$clan">$clan</a>
 		#end
 	#end
-	</ul>
-</div>
-
-<div style="$divstyle">
-<h3>All venads ($allVenads.size())</h3>
+		</td>
+		<td>
 	#foreach ($venad in $allVenads)
 		#if ($venad != "")
 			<a style="$linkstyle" href="/query_scans?method=owner&query=$venad">$venad</a>
 		#end
 	#end
-	</ul>
-</div>
-
-<div style="$divstyle">
-<h3>All locations ($allQuads.size())</h3>
+		</td>
+		<td>
 	#foreach ($quad in $allQuads)
 		#if ($venad != "")
 			<a style="$linkstyle" href="/query_scans?method=location&query=$quad">$quad</a>
 		#end
 	#end
-	</ul>
-</div>
+		</td>
+	</tr>
+</table>
+
 
 <div style="overflow: auto; clear: both">
 	<h3>All Scans ($allScans.size())</h3>
