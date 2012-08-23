@@ -11,7 +11,7 @@
 		<th><a href="${destination}&shipSortKey=getHistorySize&shipDesc=$shipDesc">History entries</a></th>
 	</tr>
 	
-	#if ($shipSortKey)
+	#if ($shipSortKey && $fleetShips)
 		$sorter.sort($fleetShips, $shipSortKey, $shipDesc)
 	#end
 	
