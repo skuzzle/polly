@@ -1,6 +1,8 @@
 package de.skuzzle.polly.sdk.http;
 
 import java.net.InetAddress;
+import java.util.Map;
+import java.util.TreeMap;
 
 import de.skuzzle.polly.sdk.model.User;
 
@@ -14,6 +16,8 @@ public class HttpSession {
     private InetAddress remoteIp;
     private User user;
     private String lastUri;
+    private Map<String, Object> data;
+    
     
     
     public HttpSession(String id, InetAddress remoteIp) {
@@ -22,6 +26,7 @@ public class HttpSession {
         this.started = System.currentTimeMillis();
         this.lastAction = System.currentTimeMillis();
         this.lastUri = "";
+        this.data = new TreeMap<String, Object>();
     }
     
     
@@ -62,7 +67,6 @@ public class HttpSession {
     
     
     
-    
     public synchronized String getLastUri() {
         return this.lastUri;
     }
@@ -89,6 +93,24 @@ public class HttpSession {
     
     public InetAddress getRemoteIp() {
         return this.remoteIp;
+    }
+    
+    
+    
+    public void putDtata(String key, Object o) {
+        this.data.put(key, o);
+    }
+    
+    
+    
+    public Object get(String key) {
+        return this.data.get(key);
+    }
+    
+    
+    
+    public void removeData(String key) {
+        this.data.remove(key);
     }
     
     
