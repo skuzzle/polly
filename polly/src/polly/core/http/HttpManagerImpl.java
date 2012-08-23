@@ -189,6 +189,12 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
                             this.getSessionTimeOut()) {
                         logger.warn("Killing " + e.getValue());
                         e.getValue().setUser(null);
+                        try {
+                            e.getValue().dispose();
+                        } catch (DisposingException e1) {
+                            // Impossibru to happen
+                            logger.fatal(e1);
+                        }
                         it.remove();
                     }
                 }
