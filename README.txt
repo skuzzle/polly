@@ -1,4 +1,7 @@
-Polly is a highly customizable irc bot with many build in features. For example
+Polly is an open source IRC bot available under GNU General Public License 
+(GPLv3). See the GPLv3.txt in this directory for detailed licensing information.
+
+Polly is a highly customizable irc bot with many built in features. For example
 polly has a parser which supports several types (like numbers, dates, booleans,
 etc.), operators and functions. Additionally every user may assign own variables
 or functions.
@@ -18,21 +21,16 @@ currently only works on irc servers that support the `NICKSERV` command.
 Please visit the Wiki page to see how to build and how to setup polly.
 
 Polly currently uses several third partie sources and libraries for which I
-would like to thank the authors. Namely that are:
+would like to thank the authors. 
 
-    * Paul Mutton for providing the PircBot API which polly uses to connect
-      to IRC servers and for the JMegaHal implementation which is used by
-      a polly plugin to generate random sentences when polly gets highlighted.
-      URL: http://www.jibble.org
-      
+    * Polly uses a fork of the PircBot-PPF 
+	 (http://sourceforge.net/projects/pircbot-ppf), which itself is a fork of 
+	 the famous PircBot by jibble.org.
+
     * Hani Suleiman who is the author of JBot, another PircBot based IRC bot.
       I found the sources and decided to adapt his Classloader implementation 
       for pollys plugin system.
       URL: http://java.net/projects/jbot/
-      
-Please note that polly is open source but currently not subject to any
-license. You may use and modify all sources that can be found here, as long
-as you leave a reference to the originals in the code you use.
 
-Additionally, it would be nice letting me know if you are using any parts of 
-polly.
+It would be nice letting me now if you are using any sources of polly by sending
+an e-mail to polly@skuzzle.de
