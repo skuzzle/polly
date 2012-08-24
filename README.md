@@ -1,8 +1,9 @@
-Polly - Java 1.6 IRC Framework
+#Polly - Java 1.6 IRC Framework
 
 Polly is an open source IRC bot available under GNU General Public License 
 (GPLv3). See the GPLv3.txt in this directory for detailed licensing information.
 
+##Abstract
 Polly is a highly customizable irc bot with many built in features. It is 
 authored and maintained by Simon Taddiken. Its main purpose was to serve some
 irc functionality related to the german browser game "Revorix" (www.revorix.de).
@@ -19,7 +20,7 @@ Commands that can be executed this way, can be provided by plugins which will
 be loaded when polly starts. Creating plugins is very easy, as they can use
 a pretty huge SDK framework which grants access to many further polly features.
 
-This is a list of pollys key-features:
+##Key features
 
 * context-free syntax which provides many (many!) syntactical features to
   use with any command. To mention just a few: the parser supports 
@@ -50,7 +51,10 @@ everything you could ever need to build polly. One key feature is, that the
 build script even generates eclipse projects for you, so that you are ready to
 start after a few seconds.
 
-Please visit the Wiki page to see how to build and how to setup polly. You can
+The polly plugin SDK is fully documented and the latest JavaDoc can be found
+at http://www.polly.skuzzle.de/sdk/doc/ (*)
+
+Please visit the Wiki pages to see how to build and how to setup polly. You can
 get furhter help by visiting the author in #tal-der-ahnungslosen on 
 irc.euirc.net 
 
