@@ -1,4 +1,4 @@
-package commands;
+package polly.rx.commands;
 
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;

@@ -1,11 +1,11 @@
-package http;
+package polly.rx.http;
 
 
-import core.TrainBillV2;
-import core.TrainManagerV2;
-import core.TrainSorter;
-import core.TrainSorter.SortKey;
-import polly.core.MyPlugin;
+import polly.rx.MyPlugin;
+import polly.rx.core.TrainBillV2;
+import polly.rx.core.TrainManagerV2;
+import polly.rx.core.TrainSorter;
+import polly.rx.core.TrainSorter.SortKey;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.http.HttpAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;

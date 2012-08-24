@@ -1,6 +1,8 @@
-package core;
+package polly.rx.core;
 
 import java.util.List;
+
+import polly.rx.entities.TrainEntityV2;
 
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -11,7 +13,6 @@ import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.model.User;
-import entities.TrainEntityV2;
 
 
 /**

@@ -1,18 +1,13 @@
 package polly.core;
 
 
-import http.MyTrainsHttpAction;
-import http.TrainerHttpAction;
-import commands.AddTrainCommand;
 import commands.AddUserCommand;
 import commands.AliasCommand;
 import commands.CalendarCommand;
-import commands.CloseTrainCommand;
 import commands.ClumBombCommand;
 import commands.DefineCommand;
 import commands.DelVarCommand;
 import commands.DeleteUserCommand;
-import commands.DeliverTrainCommand;
 import commands.DictCommand;
 import commands.DitoCommand;
 import commands.ExportAttributesCommand;
@@ -28,8 +23,6 @@ import commands.KickCommand;
 import commands.ListAttributesCommand;
 import commands.LmgtfyCommand;
 import commands.AnyficationCommand;
-import commands.MyTrainsCommand;
-import commands.MyVenadCommand;
 import commands.PartCommand;
 import commands.QuitCommand;
 import commands.RawIrcCommand;
@@ -47,7 +40,6 @@ import commands.TalkCommand;
 import commands.UptimeCommand;
 import commands.UsersCommand;
 import commands.VarCommand;
-import commands.VenadCommand;
 import commands.VersionCommand;
 import commands.WebInterfaceCommand;
 import commands.WikiCommand;
@@ -61,11 +53,9 @@ import commands.roles.RemovePermissionCommand;
 import commands.roles.RemoveRoleCommand;
 import core.GreetDeliverer;
 import core.JoinTimeCollector;
-import core.TrainManagerV2;
 
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
-import de.skuzzle.polly.sdk.constraints.Constraints;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
@@ -73,9 +63,6 @@ import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
 import de.skuzzle.polly.sdk.exceptions.RoleException;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import entities.TopicEntity;
-import entities.TrainEntity;
-import entities.TrainEntityConverter;
-import entities.TrainEntityV2;
 
 
 /**
@@ -85,18 +72,15 @@ import entities.TrainEntityV2;
  */
 public class MyPlugin extends PollyPlugin {
     
-    public final static String TRAINER = "polly.roles.TRAINER";
     public final static String CASPER  = "polly.roles.CASPER";
     
-    public final static String ADD_TRAIN_PERMISSION              = "polly.permission.ADD_TRAIN";
+
     public final static String ADD_USER_PERMISSION               = "polly.permission.ADD_USER";
     public final static String ALIAS_PERMISSION                  = "polly.permission.ALIAS";
     public final static String ANYFICATION_PERMISSION            = "polly.permission.ANYFICATION";
-    public final static String CLOSE_TRAIN_PERMISSION            = "polly.permission.CLOSE_TRAIN";
     public final static String CLUMBOMB_PERMISSION               = "polly.permission.CLUMBOMB";
     public final static String DEFINE_PERMISSION                 = "polly.permission.DEFINE";
     public final static String DELETE_USER_PERMISSION            = "polly.permission.DELETE_USER";
-    public final static String DELIVER_TRAIN_PERMISSION          = "polly.permission.DELIVER_TRAIN";
     public final static String DICT_PERMISSION                   = "polly.permission.DICT";
     public final static String DITO_PERMISSION                   = "polly.permission.DITO";
     public final static String EXPORT_ATTRIBUTES_PERMISSION      = "polly.permission.EXPORT_ATTRIBUTES";
@@ -109,8 +93,6 @@ public class MyPlugin extends PollyPlugin {
     public final static String JOIN_PERMISSION                   = "polly.permission.JOIN";
     public final static String KICK_PERMISSION                   = "polly.permission.KICK";
     public final static String LIST_ATTRIBUTES_PERMISSION        = "polly.permission.LIST_ATTRIBUTES";
-    public final static String MYTRAINS_PERMISSION               = "polly.permission.MY_TRAINS";
-    public final static String MY_VENAD_PERMISSION               = "polly.permission.MY_VENAD";
     public final static String PART_PERMISSION                   = "polly.permission.PART";
     public final static String QUIT_PERMISSION                   = "polly.permission.QUIT";
     public final static String RAW_IRC_PERMISSION                = "polly.permission.RAW_IRC";
@@ -132,9 +114,8 @@ public class MyPlugin extends PollyPlugin {
     public final static String REMOVE_ROLE_PERMISSION            = "polly.permission.REMOVE_ROLE";
     public final static String SET_AND_IDENTIFY_PERMISSION       = "polly.permission.SET_AND_IDENTIFY";
     public final static String GREETING = "GREETING";
-    public final static String VENAD    = "VENAD";
+
     
-    private TrainManagerV2 trainManager;
     private GreetDeliverer greetDeliverer;
     private JoinTimeCollector joinTimeCollector;
     
@@ -169,16 +150,10 @@ public class MyPlugin extends PollyPlugin {
         roleManager.assignPermission(RoleManager.ADMIN_ROLE, REMOVE_ROLE_PERMISSION);
         roleManager.assignPermission(RoleManager.ADMIN_ROLE, SET_AND_IDENTIFY_PERMISSION);
         
-        roleManager.createRole(TRAINER);
-        roleManager.assignPermission(TRAINER, ADD_TRAIN_PERMISSION);
-        roleManager.assignPermission(TRAINER, CLOSE_TRAIN_PERMISSION);
-        roleManager.assignPermission(TRAINER, DELIVER_TRAIN_PERMISSION);
-        
         roleManager.createRole(CASPER);
         roleManager.assignPermission(CASPER, CLUMBOMB_PERMISSION);
         roleManager.assignPermission(CASPER, ANYFICATION_PERMISSION);
         
-        roleManager.assignPermission(RoleManager.DEFAULT_ROLE, MYTRAINS_PERMISSION);
         roleManager.assignPermission(RoleManager.DEFAULT_ROLE, DEFINE_PERMISSION);
         roleManager.assignPermission(RoleManager.DEFAULT_ROLE, DICT_PERMISSION);
         roleManager.assignPermission(RoleManager.DEFAULT_ROLE, DITO_PERMISSION);
@@ -199,10 +174,7 @@ public class MyPlugin extends PollyPlugin {
 		this.addCommand(new AnyficationCommand(myPolly));
 		
 		//this.topicManager = new TopicManager(myPolly);
-		this.trainManager = new TrainManagerV2(myPolly);
         this.getMyPolly().persistence().registerEntity(TopicEntity.class);
-        this.getMyPolly().persistence().registerEntity(TrainEntity.class);
-        this.getMyPolly().persistence().registerEntity(TrainEntityV2.class);
         
         this.greetDeliverer = new GreetDeliverer(myPolly);
         this.getMyPolly().users().addUserListener(this.greetDeliverer);
@@ -267,50 +239,19 @@ public class MyPlugin extends PollyPlugin {
 		this.addCommand(new VarCommand(myPolly));
 		this.addCommand(new DelVarCommand(myPolly));
 		
-		this.addCommand(new VenadCommand(myPolly));
-		this.addCommand(new MyVenadCommand(myPolly));
+
 		//this.addCommand(new AddTopicCommand(myPolly, this.topicManager));
-		
-		this.addCommand(new AddTrainCommand(myPolly, this.trainManager));
-		this.addCommand(new CloseTrainCommand(myPolly, this.trainManager));
-		this.addCommand(new MyTrainsCommand(myPolly, this.trainManager));
-		this.addCommand(new DeliverTrainCommand(myPolly, this.trainManager));
-		
+	        
 		this.addCommand(new RestartCommand(myPolly));
-		
 		this.addCommand(new DitoCommand(myPolly));
-		
-		
-		
-		// HTTP stuff
-		myPolly.web().addMenuUrl("Revorix", "MyTrains");
-		myPolly.web().addMenuUrl("Revorix", "Trainer");
-		myPolly.web().addHttpAction(new MyTrainsHttpAction(myPolly, this.trainManager));
-		myPolly.web().addHttpAction(new TrainerHttpAction(myPolly, this.trainManager));
 	}
 	
 	
 	
 	@Override
 	public void onLoad() {
-	    //this.topicManager.loadAll();
-	    /*Calendar c = Calendar.getInstance();
-	    c.set(Calendar.DAY_OF_MONTH, 25);
-	    TopicEntity test = new TopicEntity("C0mb4t", "#debugging", "Noch %ld% Tage bis ka", "Nu isses soweit", c.getTime());
-	    this.topicManager.addTopicTask(test);*/
-	    
-	    TrainEntityConverter tec = new TrainEntityConverter(
-	        this.getMyPolly().persistence());
 	    try {
-            tec.convertAllTrains();
-        } catch (DatabaseException e) {
-            e.printStackTrace();
-        }
-	    
-	    try {
-	        this.getMyPolly().users().addAttribute(VENAD, "<unbekannt>");
 	        this.getMyPolly().users().addAttribute(GREETING, "");
-	        this.getMyPolly().users().addAttribute("AZ", "0", Constraints.INTEGER);
 	    } catch (Exception ignore) {
 	        ignore.printStackTrace();
 	    }

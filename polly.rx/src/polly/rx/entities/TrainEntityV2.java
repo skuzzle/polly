@@ -1,4 +1,4 @@
-package entities;
+package polly.rx.entities;
 
 import java.util.Date;
 import java.util.regex.Matcher;

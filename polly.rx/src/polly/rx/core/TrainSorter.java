@@ -1,10 +1,11 @@
-package core;
+package polly.rx.core;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import entities.TrainEntityV2;
+import polly.rx.entities.TrainEntityV2;
+
 
 public class TrainSorter {
     

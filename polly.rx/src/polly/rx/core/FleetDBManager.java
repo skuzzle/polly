@@ -1,4 +1,4 @@
-package polly.rx;
+package polly.rx.core;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

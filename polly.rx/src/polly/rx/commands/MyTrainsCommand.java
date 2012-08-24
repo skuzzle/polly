@@ -1,8 +1,9 @@
-package commands;
+package polly.rx.commands;
 
-import core.TrainBillV2;
-import core.TrainManagerV2;
-import polly.core.MyPlugin;
+import polly.rx.MyPlugin;
+import polly.rx.core.TrainBillV2;
+import polly.rx.core.TrainManagerV2;
+import polly.rx.entities.TrainEntityV2;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -10,7 +11,6 @@ import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
-import entities.TrainEntityV2;
 
 
 public class MyTrainsCommand extends Command {

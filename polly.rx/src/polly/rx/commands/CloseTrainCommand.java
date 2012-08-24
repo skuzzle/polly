@@ -1,7 +1,7 @@
-package commands;
+package polly.rx.commands;
 
-import core.TrainManagerV2;
-import polly.core.MyPlugin;
+import polly.rx.MyPlugin;
+import polly.rx.core.TrainManagerV2;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;

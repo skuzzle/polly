@@ -1,7 +1,7 @@
 package polly.rx.http;
 
-import polly.rx.FleetDBManager;
-import polly.rx.SumQueries;
+import polly.rx.core.FleetDBManager;
+import polly.rx.core.SumQueries;
 import polly.rx.entities.BattleReport;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.http.HttpAction;

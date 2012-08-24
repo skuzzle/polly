@@ -1,9 +1,9 @@
 package polly.rx.http;
 
-import polly.rx.FleetDBManager;
-import polly.rx.ParseException;
+import polly.rx.core.FleetDBManager;
 import polly.rx.entities.BattleReport;
 import polly.rx.parsing.BattleReportParser;
+import polly.rx.parsing.ParseException;
 
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;

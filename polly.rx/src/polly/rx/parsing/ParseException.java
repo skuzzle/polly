@@ -1,4 +1,4 @@
-package polly.rx;
+package polly.rx.parsing;
 
 
 public class ParseException extends Exception {

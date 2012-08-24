@@ -1,13 +1,14 @@
-package http;
+package polly.rx.http;
 
 import java.util.Set;
 import java.util.TreeSet;
 
-import polly.core.MyPlugin;
-import core.TrainBillV2;
-import core.TrainManagerV2;
-import core.TrainSorter;
-import core.TrainSorter.SortKey;
+import polly.rx.MyPlugin;
+import polly.rx.core.TrainBillV2;
+import polly.rx.core.TrainManagerV2;
+import polly.rx.core.TrainSorter;
+import polly.rx.core.TrainSorter.SortKey;
+import polly.rx.entities.TrainEntityV2;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
@@ -15,7 +16,6 @@ import de.skuzzle.polly.sdk.http.HttpAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.http.HttpTemplateException;
-import entities.TrainEntityV2;
 
 public class TrainerHttpAction extends HttpAction {
 

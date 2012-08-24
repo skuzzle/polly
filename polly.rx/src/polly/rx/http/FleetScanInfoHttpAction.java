@@ -1,6 +1,6 @@
 package polly.rx.http;
 
-import polly.rx.FleetDBManager;
+import polly.rx.core.FleetDBManager;
 import polly.rx.entities.FleetScan;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.http.HttpAction;

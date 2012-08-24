@@ -2,7 +2,7 @@ package polly.rx.http;
 
 import java.util.List;
 
-import polly.rx.FleetDBManager;
+import polly.rx.core.FleetDBManager;
 import polly.rx.entities.FleetScan;
 import polly.rx.entities.FleetScanShip;
 

@@ -8,7 +8,6 @@ import java.util.regex.Pattern;
 
 import de.skuzzle.polly.tools.iterators.ArrayIterator;
 
-import polly.rx.ParseException;
 import polly.rx.entities.FleetScan;
 import polly.rx.entities.FleetScanShip;
 

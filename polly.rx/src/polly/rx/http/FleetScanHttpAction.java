@@ -4,11 +4,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import polly.rx.FleetDBManager;
-import polly.rx.ParseException;
+import polly.rx.core.FleetDBManager;
 import polly.rx.entities.FleetScan;
 import polly.rx.entities.FleetScanShip;
 import polly.rx.parsing.FleetScanParser;
+import polly.rx.parsing.ParseException;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.http.HttpAction;

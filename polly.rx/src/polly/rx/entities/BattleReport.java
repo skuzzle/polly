@@ -18,7 +18,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import polly.rx.SumQuery;
+import polly.rx.core.SumQuery;
 
 
 @Entity

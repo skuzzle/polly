@@ -1,4 +1,4 @@
-package polly.rx;
+package polly.rx.core;
 
 import polly.rx.entities.BattleReportShip;
 
