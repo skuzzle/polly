@@ -1,4 +1,4 @@
-#Polly - Java 1.6 IRC Framework
+Polly - Java 1.6 IRC Framework
 
 Polly is an open source IRC bot available under GNU General Public License 
 (GPLv3). See the GPLv3.txt in this directory for detailed licensing information.
@@ -85,4 +85,4 @@ project, there currently exists no release that is considered "stable".
 Nevertheless, polly is used every day by a rather small group of people on the 
 euIRC making irc life a bit more comfortable for everyone :).
 
-Visit polly in #tal-der-ahnungslose on irc.euirc.net!
+Visit polly in #tal-der-ahnungslosen on irc.euirc.net!
