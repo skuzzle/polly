@@ -71,9 +71,9 @@ would like to thank the authors.
   for pollys plugin system.
   URL: http://java.net/projects/jbot/
 
-* There is no need to say how awesome the open source projects of 'Apache'
-  are. Polly uses Apache Velocity to create HTML pages from templates and
-  Log4J for debug logging.
+* There is no need to say how awesome the open source projects of the Apache
+  foundation are. Polly uses Apache Velocity to create HTML pages from templates 
+  and log4j for debug logging.
   URL: http://www.apache.org/
   
 * By default, polly uses the lightweight SQL database HSQLDB 
