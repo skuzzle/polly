@@ -18,6 +18,18 @@
         <ant dir="porat" target="${mode}" inheritAll="false"/>
     </target>
     
+	
+	
+    <!-- 
+        builds the pircbot project and copies the dist jar to the libs folder
+    -->
+    <target name="pircbot">
+        <ant dir="polly.pircbot" target="${mode}" inheritAll="false"/>
+        <copy 
+            file="polly.pircbot/dist/polly.pircbot.jar" 
+            todir="${lib.dir}"/>
+    </target>
+	
     
     
     <!-- 
@@ -163,7 +175,7 @@
     -->
     <target name="all" depends="tools,sdk,process,installer,
                                 parser,plugins,network,moduleloader,
-                                configuration, polly, porat"/>
+                                configuration, pircbot, polly, porat"/>
 
     
     
@@ -295,5 +307,6 @@
         <ant dir="polly.porat" target="eclipse" inheritAll="false"/>
         <ant dir="polly.linkexpander" target="eclipse" inheritAll="false"/>
         <ant dir="polly.rx" target="eclipse" inheritAll="false"/>
+        <ant dir="polly.pircbot" target="eclipse" inheritAll="false"/>
     </target>
 </project>
