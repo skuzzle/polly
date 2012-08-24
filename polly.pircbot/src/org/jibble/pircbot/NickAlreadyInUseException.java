@@ -9,7 +9,9 @@ package org.jibble.pircbot;
  * @version 1.0.0
  */
 public class NickAlreadyInUseException extends IrcException {
-    
+
+    private static final long serialVersionUID = 1L;
+
     /**
      * Constructs a new IrcException.
      *
