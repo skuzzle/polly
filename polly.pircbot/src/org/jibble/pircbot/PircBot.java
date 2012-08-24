@@ -43,7 +43,11 @@ import javax.net.SocketFactory;
  * framework.
  * <p>
  * This PircBot-PPF project is developed as a sub project of the PPF project.
- * <a href="http://ppf.sf.net">ppf.sf.net</a>
+ * <a href="http://ppf.sf.net">ppf.sf.net</a></p>
+ * 
+ * <p><b>NOTE:</b> This specific PircBot-PPF version is maintained by Simon Taddiken as
+ * sub-project of the polly irc bot. See <a href="https://github.com/skuzzle/polly">
+ * GitHub</a> for project documentation.</p>
  * 
  * @author PircBot-PPF project
  * @version 1.0.0
@@ -3179,8 +3183,7 @@ public abstract class PircBot implements ReplyConstants, PircBotLogger {
                 String channel = (String) enumeration.nextElement();
                 User user = getUser(oldNick, channel);
                 if (user == null) {
-                    user = new User("", newNick);
-                    this.addUser(channel, user);
+                    continue;
                 }
                 // keep the original info object
                 Object obj = user.getInfo();
