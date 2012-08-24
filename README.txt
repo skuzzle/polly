@@ -24,8 +24,8 @@ Polly currently uses several third partie sources and libraries for which I
 would like to thank the authors. 
 
     * Polly uses a fork of the PircBot-PPF 
-	 (http://sourceforge.net/projects/pircbot-ppf), which itself is a fork of 
-	 the famous PircBot by jibble.org.
+      (http://sourceforge.net/projects/pircbot-ppf), which itself is a fork of 
+      the famous PircBot by jibble.org.
 
     * Hani Suleiman who is the author of JBot, another PircBot based IRC bot.
       I found the sources and decided to adapt his Classloader implementation 
