@@ -22,6 +22,7 @@ import polly.core.http.actions.RootHttpAction;
 import polly.core.http.actions.SessionPageHttpAction;
 import polly.core.http.actions.UserInfoPageHttpAction;
 import polly.core.http.actions.UserPageHttpAction;
+import polly.core.http.actions.ShutdownHttpAction;
 import polly.core.mypolly.MyPollyImpl;
 import polly.core.users.UserManagerImpl;
 import polly.moduleloader.AbstractProvider;
@@ -124,6 +125,7 @@ public class HttpManagerProvider extends AbstractProvider {
         this.httpManager.addHttpAction(new IRCPageHttpAction(myPolly));
         this.httpManager.addHttpAction(new RoleHttpAction(myPolly));
         this.httpManager.addHttpAction(new SessionPageHttpAction(myPolly));
+        this.httpManager.addHttpAction(new ShutdownHttpAction(myPolly));
         
         this.httpManager.addMenuUrl("Admin", "Users");
         this.httpManager.addMenuUrl("Admin", "IRC");
