@@ -24,6 +24,7 @@
     
     <div id="menu">
         #if ($me)
+        <p style="font-size:xx-small">Some entries may be hidden</p>
         #foreach ($entry in $menu.entrySet())
             <h3>$entry.getKey()</h3>
             <ul>
