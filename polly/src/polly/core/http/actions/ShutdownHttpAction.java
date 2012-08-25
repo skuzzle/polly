@@ -31,7 +31,7 @@ public class ShutdownHttpAction extends HttpAction {
         UserManager userManager = this.getMyPolly().users();
         User user = userManager.getAdmin();
         
-        if (user.checkPassword(password)) {
+        if (password != null && user.checkPassword(password)) {
             Thread waitABit = new Thread(new Runnable() {
                 @Override
                 public void run() {
