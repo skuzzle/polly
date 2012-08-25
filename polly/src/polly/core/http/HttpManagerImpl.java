@@ -32,6 +32,7 @@ import de.skuzzle.polly.sdk.http.HttpManager;
 import de.skuzzle.polly.sdk.http.HttpSession;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.http.HttpTemplateException;
+import de.skuzzle.polly.sdk.model.User;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
 import de.skuzzle.polly.tools.events.Dispatchable;
@@ -370,5 +371,22 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     @Override
     public String escapeHtml(String s) {
         return StringEscapeUtils.escapeHtml(s);
+    }
+    
+    
+    
+    @Override
+    public String makeActionLink(String actionName, User user, 
+            String prefix, String postfix) {
+        String tmp = actionName.startsWith("/") ? actionName : "/" + actionName;
+        
+        HttpAction action = this.actions.get(tmp);
+        if (action == null) {
+            return "";
+        } else if (!this.myPolly.roles().canAccess(user, action)) {
+            return "";
+        }
+        
+        return prefix + "<a href=\"" + actionName + "\">" + actionName + "</a>" + postfix;
     }
 }

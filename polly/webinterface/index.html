@@ -28,7 +28,7 @@
             <h3>$entry.getKey()</h3>
             <ul>
             #foreach ($page in $entry.getValue())
-                <li><a href="$page">$page</a></li>
+                $myPolly.web().makeActionLink($page, $me, "<li>", "</li>")
             #end
             </ul>
         #end

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
+import de.skuzzle.polly.sdk.model.User;
 
 
 
@@ -47,5 +48,8 @@ public interface HttpManager {
             throws HttpTemplateException, InsufficientRightsException;
 
     String escapeHtml(String s);
+
+    String makeActionLink(String actionName, User user, String prefix,
+        String postfix);
 
 }
