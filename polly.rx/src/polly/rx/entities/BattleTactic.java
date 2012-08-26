@@ -4,9 +4,11 @@ package polly.rx.entities;
 public enum BattleTactic {
     NORMAL, RAUBZUG, MACHTDEMO, TPT, SCHNITT, NAHKAMPF, SYSTEM, AUSWEICH, TT, ZANGE, 
     ABGESICHERT, SONDIERUNG, FERN, MULTIVEKTOR, KONZENTRIERT, VERTREIBEN, KRALLE, SICHEL, 
-    HITNRUN, HINTERHALT, STURM, DAUERBESCHUSS;
+    HITNRUN, HINTERHALT, STURM, DAUERBESCHUSS, ALIEN;
     
     public static BattleTactic parseTactic(String tactic) {
+        tactic = tactic.trim();
+        
         if (tactic.equals("Normaler Angriff")) { return BattleTactic.NORMAL; }
         else if(tactic.equals("Raubzug")) { return BattleTactic.RAUBZUG; }
         else if(tactic.equals("Machtdemonstration")) { return BattleTactic.MACHTDEMO; }
@@ -29,6 +31,7 @@ public enum BattleTactic {
         else if(tactic.equals("Hinterhalt")) { return BattleTactic.HINTERHALT; }
         else if(tactic.equals("Sturmangriff")) { return BattleTactic.STURM; }
         else if(tactic.equals("Dauerbeschuss")) { return BattleTactic.DAUERBESCHUSS; }
+        else if(tactic.equals("Alien Angriff")) { return BattleTactic.ALIEN; }
         
         throw new IllegalArgumentException("invalid tactic: " + tactic);
     }
@@ -61,6 +64,7 @@ public enum BattleTactic {
         case HINTERHALT:  return "Hinterhalt";
         case STURM:  return "Sturmangriff";
         case DAUERBESCHUSS: return "Dauerbeschuss";
+        case ALIEN: return "Alien Angriff";
         }
     }
 }

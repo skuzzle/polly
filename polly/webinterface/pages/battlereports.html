@@ -5,43 +5,5 @@
 	<input type="submit" value="Submit" class="button"/>
 </form>
 
-<h2>All Battlereports</h2>
-<table style="width:100%">
-	<tr>
-		<th>Id</th>
-		<th>Quadrant</th>
-		<th>Attacker</th>
-		<th>Attacker KW/Xp-Mod</th>
-		<th>Defender</th>
-		<th>Defender KW/Xp-Mod</th>
-		<th>Tactic</th>
-		<th>Date</th>
-		<th>Action</th>
-		<th></th>
-	</tr>
-	#foreach ($report in $allReports)
-	<tr>
-		<td>$report.getId()</td>
-		<td>$report.getQuadrant() $report.getX(),$report.getY()</td>
-		<td>$report.getAttackerVenadName()</td>
-		<td>$myPolly.formatting().formatNumber($report.getAttackerKw()) / $myPolly.formatting().formatNumber($report.getAttackerXpMod())</td>
-		<td>$report.getDefenderVenadName()</td>
-		<td>$myPolly.formatting().formatNumber($report.getDefenderKw()) / $myPolly.formatting().formatNumber($report.getDefenderXpMod())</td>
-		<td>$report.getTactic()</td>
-		<td>$myPolly.formatting().formatDate($report.getDate())</td>
-		<td>
-			<form action="battlereport_info" method="POST">
-			<input type="hidden" name="id" value="$report.getId()"/>
-			<input type="submit" value="Details" class="button"/>
-			</form>
-		</td>
-		<td>
-			<form action="Kampfberichte" method="POST">
-			<input type="hidden" name="id" value="$report.getId()"/>
-			<input type="hidden" name="action" value="delete"/>
-			<input type="submit" value="Delete" class="button"/>
-			</form>
-		</td>
-	</tr>
-	#end
-</table>
+#set($reports = $allReports)
+#parse("webinterface/pages/helper/list_battlereports_helper.html")

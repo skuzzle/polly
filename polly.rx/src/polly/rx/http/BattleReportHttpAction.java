@@ -34,11 +34,12 @@ public class BattleReportHttpAction extends HttpAction {
         String action = e.getProperty("action");
         
         if (action != null && action.equals("postReport")) {
-            String report = e.getSource().escapeHtml(e.getProperty("paste"));
+            String report = e.getProperty("paste");
             
             System.out.println(report);
             try {
-                BattleReport br = BattleReportParser.parse(report);
+                BattleReport br = BattleReportParser.parseReport(report, 
+                    e.getSession().getUser());
                 
                 this.fleetDBManager.addBattleReport(br);
             } catch (ParseException e1) {

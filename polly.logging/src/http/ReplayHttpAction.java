@@ -70,6 +70,9 @@ public class ReplayHttpAction extends HttpAction {
                 
                 try {
                     List<LogEntry> channelLogs = this.logManager.preFilterChannel(channel);
+                    
+                    // XXX: no security filter is used here, because we only query for
+                    //      those channels that the user has joined
                     channelLogs = this.logManager.postFilter(channelLogs, dateFilter);
                     Collections.reverse(channelLogs);
                     logs.put(channel, channelLogs);

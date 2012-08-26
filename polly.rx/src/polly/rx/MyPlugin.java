@@ -19,6 +19,7 @@ import polly.rx.entities.FleetScanHistoryEntry;
 import polly.rx.entities.FleetScanShip;
 import polly.rx.entities.TrainEntity;
 import polly.rx.entities.TrainEntityV2;
+import polly.rx.http.BattleReportHttpAction;
 import polly.rx.http.BattleReportInfosHttpAction;
 import polly.rx.http.FleetScanInfoHttpAction;
 import polly.rx.http.FleetShipInfoHttpAction;
@@ -89,9 +90,9 @@ public class MyPlugin extends PollyPlugin {
         
         myPolly.web().addHttpAction(new BattleReportInfosHttpAction(
             myPolly, this.fleetDBManager));
-        /*myPolly.web().addHttpAction(new BattleReportHttpAction(
+        myPolly.web().addHttpAction(new BattleReportHttpAction(
             myPolly, this.fleetDBManager));
-        myPolly.web().addMenuUrl("Revorix", "Kampfberichte");*/
+        myPolly.web().addMenuUrl("Revorix", "Kampfberichte");
         
         
         myPolly.web().addMenuUrl("Revorix", "FleetScans");

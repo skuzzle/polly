@@ -1,0 +1,89 @@
+## Needed parameters:
+## $name - header name
+## $fleetName 
+## $venadName 
+## $clanName 
+## $kw 
+## $bonus 
+## $xpmod 
+## $damagePz 
+## $damageTotal 
+## $xpCapi 
+## $xpCrew
+## $ships 
+
+<h3>$name</h3>
+<table>
+	<tr>
+		<th>Fleetname</th>
+		<td>$fleetName</td>
+	</tr>
+	<tr>
+		<th>Venadname</th>
+		<td>$venadName</td>
+	</tr>
+	<tr>
+		<th>Clan</th>
+		<td>$clanName</td>
+	</tr>
+	<tr>
+		<th>Kw</th>
+		<td>$kw</td>
+	</tr>
+	<tr>
+		<th>Bonus (Factor)</th>
+		<td>$bonus</td>
+	</tr>
+	<tr>
+		<th>Kw (Normalized)</th>
+		#set ($normalized = $kw*$bonus )
+		<td>$myPolly.formatting().formatNumber($normalized)</td>
+	</tr>
+	<tr>
+		<th>XP-Mod</th>
+		<td>$xpmod</td>
+	</tr>
+	<tr>
+		<th>PZ-Damage</th>
+		<td>$damagePz</td>
+	</tr>
+	<tr>
+		<th>Total Damage</th>
+		<td>$damageTotal</td>
+	</tr>
+	<tr>
+		<th>Total Capi XP</th>
+		<td>$xpCapi</td>
+	</tr>
+	<tr>
+		<th>Total Crew XP</th>
+		<td>$xpCrew</td>
+	</tr>
+</table>
+
+<table style="width: 100%">
+	<tr>
+		<th>Revorix ID</th>
+		<th>Name</th>
+		<th>Crew XP</th>
+		<th>Captain</th>
+		<th>Captain XP</th>
+		<th>Aw (Damage)</th>
+		<th>Sc (Damage)</th>
+		<th>Pz (Damage)</th>
+		<th>Str (Damage)</th>
+	</tr>
+	#foreach ($ship in $ships)
+	<tr>
+		<td>$ship.getRxId()</td>
+		<td>$ship.getName()</td>
+		<td>+$ship.getCrewXp()</td>
+		<td>$ship.getCapi()</td>
+		<td>$ship.getCapiXp()</td>
+		<td>$ship.getAttack() ($ship.getAwDamage())</td>
+		<td>$ship.getShields() ($ship.getShieldDamage())</td>
+		<td>$ship.getPz() ($ship.getPzDamage())</td>
+		<td>$ship.getStructure() ($ship.getStructureDamage())</td>
+	</tr>
+	#end
+</table>

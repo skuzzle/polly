@@ -25,138 +25,30 @@
 	</tr>
 </table>
 
-<h3>Attacker Ships</h3>
-<table>
-	<tr>
-		<th>Fleetname</th>
-		<td>$report.getAttackerFleetName()</td>
-	</tr>
-	<tr>
-		<th>Venadname</th>
-		<td>$report.getAttackerVenadName()</td>
-	</tr>
-	<tr>
-		<th>Kw</th>
-		<td>$report.getAttackerKw()</td>
-	</tr>
-	<tr>
-		<th>Bonus (Factor)</th>
-		<td>$report.getAttackerBonus()</td>
-	</tr>
-	<tr>
-		<th>Kw (Normalized)</th>
-		#set ($normalized = $report.getAttackerKw()*$report.getAttackerBonus() )
-		<td>$myPolly.formatting().formatNumber($normalized)</td>
-	</tr>
-	<tr>
-		<th>XP-Mod</th>
-		<td>$report.getAttackerXpMod()</td>
-	</tr>
-	<tr>
-		<th>PZ-Damage</th>
-		<td>$pzDamageAttacker</td>
-	</tr>
-	<tr>
-		<th>Total Damage</th>
-		<td>$damageAttacker</td>
-	</tr>
-	<tr>
-		<th>Total Capi XP</th>
-		<td>$capiXpAttacker</td>
-	</tr>
-	<tr>
-		<th>Total Crew XP</th>
-		<td>$crewXpAttacker</td>
-	</tr>
-</table>
+#set ($name = "Attacker")
+#set ($fleetName = $report.getAttackerFleetName())
+#set ($venadName = $report.getAttackerVenadName())
+#set ($clanName = $report.getAttackerClan())
+#set ($kw = $report.getAttackerKw())
+#set ($bonus = $report.getAttackerBonus())
+#set ($xpmod = $report.getAttackerXpMod())
+#set ($damagePz = $pzDamageAttacker)
+#set ($damageTotal = $damageAttacker)
+#set ($xpCapi = $capiXpAttacker)
+#set ($xpCrew = $crewXpAttacker)
+#set ($ships = $report.getAttackerShips())
+#parse("webinterface/pages/helper/list_battlereportships_helper.html")
 
-<table style="width: 100%">
-	<tr>
-		<th>Revorix ID</th>
-		<th>Name (+XP)</th>
-		<th>Captain (+XP)</th>
-		<th>Aw (Damage)</th>
-		<th>Sc (Damage)</th>
-		<th>Pz (Damage)</th>
-		<th>Str (Damage)</th>
-	</tr>
-	#foreach ($ship in $report.getAttackerShips())
-	<tr>
-		<td>$ship.getRxId()</td>
-		<td>$ship.getName() (+$ship.getCrewXp())</td>
-		<td>$ship.getCapi() (+$ship.getCapiXp())</td>
-		<td>$ship.getAttack() ($ship.getAwDamage())</td>
-		<td>$ship.getShields() ($ship.getShieldDamage())</td>
-		<td>$ship.getPz() ($ship.getPzDamage())</td>
-		<td>$ship.getStructure() ($ship.getStructureDamage())</td>
-	</tr>
-	#end
-</table>
-
-<h3>Defender Ships</h3>
-<table>
-	<tr>
-		<th>Fleetname</th>
-		<td>$report.getDefenderFleetName()</td>
-	</tr>
-	<tr>
-		<th>Venadname</th>
-		<td>$report.getDefenderVenadName()</td>
-	</tr>
-	<tr>
-		<th>Kw</th>
-		<td>$report.getDefenderKw()</td>
-	</tr>
-	<tr>
-		<th>Bonus (Factor)</th>
-		<td>$report.getDefenderBonus()</td>
-	</tr>
-	<tr>
-		<th>Kw (Normalized)</th>
-		#set ($normalized = $report.getDefenderKw()*$report.getDefenderBonus() )
-		<td>$myPolly.formatting().formatNumber($normalized)</td>
-	</tr>
-	<tr>
-		<th>XP-Mod</th>
-		<td>$report.getDefenderXpMod()</td>
-	</tr>
-	<tr>
-		<th>PZ-Damage</th>
-		<td>$pzDamageDefender</td>
-	</tr>
-	<tr>
-		<th>Total Damage</th>
-		<td>$damageDefender</td>
-	</tr>
-	<tr>
-		<th>Total Capi XP</th>
-		<td>$capiXpDefender</td>
-	</tr>
-	<tr>
-		<th>Total Crew XP</th>
-		<td>$crewXpDefender</td>
-	</tr>
-</table>
-
-<table style="width: 100%">
-	<tr>
-		<th>Revorix ID</th>
-		<th>Name (+XP)</th>
-		<th>Captain (+XP)</th>
-		<th>Aw (Damage)</th>
-		<th>Sc (Damage)</th>
-		<th>Pz (Damage)</th>
-		<th>Str (Damage)</th>
-	</tr>
-	#foreach ($ship in $report.getDefenderShips())
-	<tr>
-		<td>$ship.getRxId()</td>
-		<td>$ship.getName() (+$ship.getCrewXp())</td>
-		<td>$ship.getCapi() (+$ship.getCapiXp())</td>
-		<td>$ship.getAttack() ($ship.getAwDamage())</td>
-		<td>$ship.getShields() ($ship.getShieldDamage())</td>
-		<td>$ship.getPz() ($ship.getPzDamage())</td>
-		<td>$ship.getStructure() ($ship.getStructureDamage())</td>
-	</tr>
-	#end
-</table>
+#set ($name = "Defender")
+#set ($fleetName = $report.getDefenderFleetName())
+#set ($venadName = $report.getDefenderVenadName())
+#set ($clanName = $report.getDefenderClan())
+#set ($kw = $report.getDefenderKw())
+#set ($bonus = $report.getDefenderBonus())
+#set ($xpmod = $report.getDefenderXpMod())
+#set ($damagePz = $pzDamageDefender)
+#set ($damageTotal = $damageDefender)
+#set ($xpCapi = $capiXpDefender)
+#set ($xpCrew = $crewXpDefender)
+#set ($ships = $report.getDefenderShips())
+#parse("webinterface/pages/helper/list_battlereportships_helper.html")

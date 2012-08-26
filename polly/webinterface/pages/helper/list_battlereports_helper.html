@@ -1,0 +1,38 @@
+<p style="font-size:xx-small; font-weight:bold">(Click Id for detailed info)</p>
+
+<table>
+	<tr>
+		<th>Id</th>
+		<th>Quadrant</th>
+		<th>Attacker</th>
+		<th>Attacker Clan</th>
+		<th>Attacker KW/Xp-Mod</th>
+		<th>Defender</th>
+		<th>Defender Clan</th>
+		<th>Defender KW/Xp-Mod</th>
+		<th>Tactic</th>
+		<th>Date</th>
+		<th>Action</th>
+	</tr>
+	#foreach ($report in $reports)
+	<tr>
+		<td><a href="battlereport_info?id=$report.getId()">$report.getId()</a></td>
+		<td>$report.getQuadrant() $report.getX(),$report.getY()</td>
+		<td>$report.getAttackerVenadName()</td>
+		<td>$!report.getAttackerClan()</td>
+		<td>$myPolly.formatting().formatNumber($report.getAttackerKw()) / $myPolly.formatting().formatNumber($report.getAttackerXpMod())</td>
+		<td>$report.getDefenderVenadName()</td>
+		<td>$!report.getDefenderClan()</td>
+		<td>$myPolly.formatting().formatNumber($report.getDefenderKw()) / $myPolly.formatting().formatNumber($report.getDefenderXpMod())</td>
+		<td>$report.getTactic()</td>
+		<td>$myPolly.formatting().formatDate($report.getDate())</td>
+		<td>
+			<form action="Kampfberichte" method="POST">
+			<input type="hidden" name="id" value="$report.getId()"/>
+			<input type="hidden" name="action" value="delete"/>
+			<input type="submit" value="Delete" class="button"/>
+			</form>
+		</td>
+	</tr>
+	#end
+</table>

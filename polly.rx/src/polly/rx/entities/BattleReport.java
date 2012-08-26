@@ -18,6 +18,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import de.skuzzle.polly.sdk.model.User;
+
 import polly.rx.core.SumQuery;
 
 
@@ -35,6 +37,10 @@ public class BattleReport {
     @Id@GeneratedValue(strategy = GenerationType.TABLE)
     private int id;
     
+    private int submitterId;
+    
+    private transient User submitter;
+    
     private String quadrant;
     
     private int x;
@@ -49,6 +55,8 @@ public class BattleReport {
     
     @Enumerated(EnumType.ORDINAL)
     private BattleTactic tactic;
+    
+    private boolean artifact;
     
     private double attackerBonus;
     
@@ -66,9 +74,13 @@ public class BattleReport {
     
     private String attackerVenadName;
     
+    private String attackerClan;
+    
     private String defenderFleetName;
     
     private String defenderVenadName;
+    
+    private String defenderClan;
     
     @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "BATTLE_REPORT_ATTACKERS")
@@ -80,25 +92,30 @@ public class BattleReport {
     
     
     public BattleReport() {
-        this("", 0, 0, new LinkedList<BattleDrop>(), new Date(), BattleTactic.NORMAL, 
-            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, "", "", "", "", 
+        this(null, "", 0, 0, new LinkedList<BattleDrop>(), false, new Date(), BattleTactic.NORMAL, 
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, "", "", "", "", "", "",
             new LinkedList<BattleReportShip>(), new LinkedList<BattleReportShip>());
     }
     
     
     
-    public BattleReport(String quadrant, int x, int y, List<BattleDrop> battleDrop,
+    public BattleReport(User submitter, String quadrant, int x, int y, List<BattleDrop> battleDrop,
+        boolean artifact,
         Date date, BattleTactic tactic, double attackerBonus,
         double defenderBonus, double attackerKw, double attackerXpMod,
         double defenderKw, double defenderXpMod, String attackerFleetName,
         String attackerVenadName, String defenderFleetName,
-        String defenderVenadName, List<BattleReportShip> attackerShips,
+        String defenderVenadName, String attackerClan, String defenderClan, 
+        List<BattleReportShip> attackerShips,
         List<BattleReportShip> defenderShips) {
         super();
+        this.submitter = submitter;
+        this.submitterId = submitter != null ? submitter.getId() : 0;
         this.quadrant = quadrant;
         this.x = x;
         this.y = y;
         this.battleDrops = battleDrop;
+        this.artifact = artifact;
         this.date = date;
         this.tactic = tactic;
         this.attackerBonus = attackerBonus;
@@ -111,6 +128,8 @@ public class BattleReport {
         this.attackerVenadName = attackerVenadName;
         this.defenderFleetName = defenderFleetName;
         this.defenderVenadName = defenderVenadName;
+        this.attackerClan = attackerClan;
+        this.defenderClan = defenderClan;
         this.attackerShips = attackerShips;
         this.defenderShips = defenderShips;
     }
@@ -119,6 +138,12 @@ public class BattleReport {
     
     public int getId() {
         return this.id;
+    }
+    
+    
+    
+    public int getSubmitterId() {
+        return this.submitterId;
     }
 
 
@@ -143,6 +168,12 @@ public class BattleReport {
     
     public List<BattleDrop> getDrop() {
         return this.battleDrops;
+    }
+    
+    
+    
+    public boolean hasArtifact() {
+        return this.artifact;
     }
 
 
@@ -215,6 +246,18 @@ public class BattleReport {
     
     public String getDefenderVenadName() {
         return this.defenderVenadName;
+    }
+    
+    
+    
+    public String getAttackerClan() {
+        return this.attackerClan;
+    }
+    
+    
+    
+    public String getDefenderClan() {
+        return this.defenderClan;
     }
 
 
