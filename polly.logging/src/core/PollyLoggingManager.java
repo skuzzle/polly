@@ -71,6 +71,7 @@ public class PollyLoggingManager extends AbstractDisposable {
     }
     
     
+    
     public List<LogEntry> preFilterUser(String user, int limit) throws DatabaseException {
         return this.preFilterQuery(LogEntry.FIND_BY_USER, limit, user);
     }
@@ -82,7 +83,8 @@ public class PollyLoggingManager extends AbstractDisposable {
     }
     
     
-    public List<LogEntry> preFilterChannel(String channel, int limit) throws DatabaseException {
+    public List<LogEntry> preFilterChannel(String channel, int limit) 
+            throws DatabaseException {
         return this.preFilterQuery(LogEntry.FIND_BY_CHANNEL, limit, channel);
     }
     

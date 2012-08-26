@@ -101,7 +101,8 @@ public class LogEntry {
         this(other.nickname, other.message, other.channel, other.date, other.type);
     }
     
-    private LogEntry(String nickname, String message, String channel, Date date, int type) {
+    private LogEntry(String nickname, String message, String channel, Date date, 
+            int type) {
         super();
         this.nickname = nickname;
         this.message = message;
@@ -111,19 +112,23 @@ public class LogEntry {
     }
 
     
+    
     public int getId() {
         return id;
     }
 
+    
     
     public String getNickname() {
         return nickname;
     }
 
     
+    
     public String getMessage() {
         return message;
     }
+    
     
     
     public void setMessage(String message) {
@@ -131,10 +136,12 @@ public class LogEntry {
     }
 
     
+    
     public String getChannel() {
         return channel;
     }
 
+    
     
     public Date getDate() {
         return date;
