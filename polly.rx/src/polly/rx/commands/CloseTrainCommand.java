@@ -43,7 +43,7 @@ public class CloseTrainCommand extends Command {
             try {
                 this.trainManager.closeOpenTrains(executer, userName);
                 this.reply(channel, "Alle offenen Rechnungen für '" + userName + 
-                    "'geschlossen.");
+                    "' geschlossen.");
             } catch (DatabaseException e) {
                 this.reply(channel, "Interner Datenbankfehler!");
             }
