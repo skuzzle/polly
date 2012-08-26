@@ -28,7 +28,7 @@ public class CloseTrainCommand extends Command {
             MyPlugin.CLOSE_TRAIN_PERMISSION,
             new Parameter("Train Id", Types.NUMBER));
         this.setRegisteredOnly();
-        this.setHelpText("Schliesst offene Capitrain rechnungen.");
+        this.setHelpText("Schliesst offene Capitrain Rechnungen.");
         this.trainManager = trainManager;
     }
 
