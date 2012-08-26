@@ -13,6 +13,7 @@ import core.PollyLoggingManager;
 import core.filters.DateLogFilter;
 import core.filters.LogFilter;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.http.HttpAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
@@ -42,6 +43,13 @@ public class ReplayHttpAction extends HttpAction {
         HttpTemplateContext c = new HttpTemplateContext("pages/replay.html");
         
         String action = e.getProperty("action");
+        
+        UserManager userManager = this.getMyPolly().users();
+        if (userManager.isSignedOn(e.getSession().getUser())) {
+            e.throwTemplateException("You are not logged in", 
+                "You are currently not logged in via irc on polly and thus are not " +
+                "allowed to see the IRC replay.");
+        }
         
         if (action != null && action.equals("mark")) {
             e.getSession().getUser().setLastMessageTime(
