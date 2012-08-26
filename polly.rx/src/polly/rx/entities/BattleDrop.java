@@ -44,6 +44,11 @@ public class BattleDrop {
     
     
     
+    public void incAmout(int amount) {
+        this.amount += amount;
+    }
+    
+    
     @Override
     public String toString() {
         return this.ressource + " " + this.amount;

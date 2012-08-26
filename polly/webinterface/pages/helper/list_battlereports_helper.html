@@ -1,8 +1,24 @@
 <p style="font-size:xx-small; font-weight:bold">(Click Id for detailed info)</p>
 
+<h3>Total drop</h3>
+<table>
+	<tr>
+	#foreach ($drop in $totalDrop)
+		<th>$!drop.getRessource()</th>
+	#end
+	</tr>
+	<tr>
+	#foreach ($drop in $totalDrop)
+		<td>$!drop.getAmount()</td>
+	#end
+	</tr>
+</table>
+
+<h3>Reports</h3>
 <table>
 	<tr>
 		<th>Id</th>
+		<th>SubmitterId</th>
 		<th>Quadrant</th>
 		<th>Attacker</th>
 		<th>Attacker Clan</th>
@@ -17,6 +33,7 @@
 	#foreach ($report in $reports)
 	<tr>
 		<td><a href="battlereport_info?id=$report.getId()">$report.getId()</a></td>
+		<td>$report.getSubmitterId()</td>
 		<td>$report.getQuadrant() $report.getX(),$report.getY()</td>
 		<td>$report.getAttackerVenadName()</td>
 		<td>$!report.getAttackerClan()</td>

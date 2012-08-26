@@ -1,7 +1,11 @@
 package polly.rx.http;
 
+import java.util.List;
+
 import polly.rx.core.FleetDBManager;
 import polly.rx.entities.BattleReport;
+import polly.rx.entities.BattleDrop;
+import polly.rx.entities.RxRessource;
 import polly.rx.parsing.BattleReportParser;
 import polly.rx.parsing.ParseException;
 
@@ -57,7 +61,22 @@ public class BattleReportHttpAction extends HttpAction {
             }
         }
         
-        c.put("allReports", this.fleetDBManager.getAllReports());
+        BattleDrop[] dropSum = new BattleDrop[14];
+        List<BattleReport> allReports = this.fleetDBManager.getAllReports();
+        
+        for (BattleReport report : allReports) {
+            for (int i = 0; i < 14; ++i) {
+                if (dropSum[i] == null) {
+                    dropSum[i] = new BattleDrop(RxRessource.byOrdinal(i), 
+                        report.getDrop().get(i).getAmount());
+                } else {
+                    dropSum[i].incAmout(report.getDrop().get(i).getAmount());
+                }
+            }
+        }
+        
+        c.put("dropSum", dropSum);
+        c.put("allReports", allReports);
         
         return c;
     }

@@ -36,7 +36,7 @@
 	</tr>
 	<tr>
 		<th>Kw (Normalized)</th>
-		#set ($normalized = $kw*$bonus )
+		#set ($normalized = $kw/$bonus )
 		<td>$myPolly.formatting().formatNumber($normalized)</td>
 	</tr>
 	<tr>
@@ -77,7 +77,7 @@
 	<tr>
 		<td>$ship.getRxId()</td>
 		<td>$ship.getName()</td>
-		<td>+$ship.getCrewXp()</td>
+		<td>$ship.getCrewXp()</td>
 		<td>$ship.getCapi()</td>
 		<td>$ship.getCapiXp()</td>
 		<td>$ship.getAttack() ($ship.getAwDamage())</td>
