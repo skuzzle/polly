@@ -3279,9 +3279,9 @@ public abstract class PircBot implements ReplyConstants, PircBotLogger {
     // Default settings for the PircBot.
     private boolean _autoNickChange = false;
     private boolean _verbose = false;
-    private String _name = "PircBotPPF";
+    private String _name = "PircBotPP";
     private String _nick = _name;
-    private String _login = "PircBotPPF";
+    private String _login = "polly";
     private String _version = "PircBot-PPF " + VERSION + " Java IRC Bot - ppf.sf.net";
     private String _finger = "You ought to be arrested for fingering a bot!";
     
