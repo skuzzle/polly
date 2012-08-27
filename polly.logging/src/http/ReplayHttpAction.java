@@ -45,7 +45,7 @@ public class ReplayHttpAction extends HttpAction {
         String action = e.getProperty("action");
         
         UserManager userManager = this.getMyPolly().users();
-        if (userManager.isSignedOn(e.getSession().getUser())) {
+        if (!userManager.isSignedOn(e.getSession().getUser())) {
             e.throwTemplateException("You are not logged in", 
                 "You are currently not logged in via irc on polly and thus are not " +
                 "allowed to see the IRC replay.");

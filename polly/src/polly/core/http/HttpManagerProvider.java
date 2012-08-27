@@ -109,7 +109,7 @@ public class HttpManagerProvider extends AbstractProvider {
         try {
             userManager.addAttribute(HOME_PAGE, "/", constraint);
         } catch (DatabaseException e) {
-            throw new SetupException(e);
+            logger.warn("ignored exception", e);
         }
         
         
