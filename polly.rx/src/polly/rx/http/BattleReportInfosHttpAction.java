@@ -34,7 +34,7 @@ public class BattleReportInfosHttpAction extends HttpAction {
         
         c.put("report", report);
         c.put("pzDamageAttacker", report.querySumAttacker(SumQueries.PZ_DAMAGE));
-        c.put("pzDamageDefender", report.querySumAttacker(SumQueries.PZ_DAMAGE));
+        c.put("pzDamageDefender", report.querySumDefender(SumQueries.PZ_DAMAGE));
         c.put("damageAttacker", report.querySumAttacker(SumQueries.TOTAL_DAMAGE));
         c.put("damageDefender", report.querySumDefender(SumQueries.TOTAL_DAMAGE));
         c.put("capiXpAttacker", report.querySumAttacker(SumQueries.CAPI_XP));
