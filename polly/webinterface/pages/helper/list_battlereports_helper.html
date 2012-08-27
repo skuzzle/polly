@@ -63,7 +63,6 @@
 	<tr>
         <th><input type="checkbox" name="blah" disabled></th>
 		<th>Id</th>
-		<th>SubmitterId</th>
 		<th>Quadrant</th>
 		<th>Attacker</th>
 		<th>Attacker Clan</th>
@@ -79,7 +78,6 @@
 	<tr>
         <td><input type="checkbox" value="$report.getId()" name="selectRP"/></td>
 		<td><a href="battlereport_info?id=$report.getId()">$report.getId()</a></td>
-		<td>$report.getSubmitterId()</td>
 		<td><a href="query_reports?action=byLocation&query=$report.getQuadrant()">$report.getQuadrant()</a> $report.getX(),$report.getY()</td>
 		<td><a href="query_reports?action=byVenad&query=$report.getAttackerVenadName()">$report.getAttackerVenadName()</a></td>
 		<td><a href="query_reports?action=byClan&query=$report.getAttackerClan()">$!report.getAttackerClan()</a></td>
