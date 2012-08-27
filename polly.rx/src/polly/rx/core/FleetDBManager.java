@@ -188,6 +188,35 @@ public class FleetDBManager {
     
     
     
+    public List<BattleReport> getReportByIdList(int...ids) {
+        List<BattleReport> result = new ArrayList<BattleReport>(ids.length);
+        try {
+            this.persistence.readLock();
+            for (int id : ids) {
+                BattleReport rp = this.persistence.find(BattleReport.class, id);
+                result.add(rp);
+            }
+        } finally {
+            this.persistence.readUnlock();
+        }
+        return result;
+    }
+    
+    
+    
+    public void deleteReportByIdList(final int...ids) throws DatabaseException {
+        this.persistence.atomicWriteOperation(new WriteAction() {
+            
+            @Override
+            public void performUpdate(PersistenceManager persistence) {
+                List<BattleReport> deleteMe = getReportByIdList(ids);
+                persistence.removeList(deleteMe);
+            }
+        });
+    }
+    
+    
+    
     public void deleteReportById(int id) throws DatabaseException {
         final BattleReport report = this.getReportById(id);
         

@@ -68,6 +68,7 @@
 		<th>Crew XP</th>
 		<th>Captain</th>
 		<th>Captain XP</th>
+		<th>KW (T 100)</th>
 		<th>Aw (Damage)</th>
 		<th>Sc (Damage)</th>
 		<th>Pz (Damage)</th>
@@ -80,6 +81,10 @@
 		<td>$ship.getCrewXp()</td>
 		<td>$ship.getCapi()</td>
 		<td>$ship.getCapiXp()</td>
+#set( $defsum = $ship.getShields() + $ship.getPz() )
+#set( $tmp = $defsum * $ship.getAttack() )
+#set( $shipkw = $Math.round($Math.sqrt($tmp)))
+		<td>$myPolly.formatting().formatNumber($shipkw)</td>
 		<td>$ship.getAttack() ($ship.getAwDamage())</td>
 		<td>$ship.getShields() ($ship.getShieldDamage())</td>
 		<td>$ship.getPz() ($ship.getPzDamage())</td>

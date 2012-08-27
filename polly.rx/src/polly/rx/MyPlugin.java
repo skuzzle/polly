@@ -21,6 +21,7 @@ import polly.rx.entities.TrainEntity;
 import polly.rx.entities.TrainEntityV2;
 import polly.rx.http.BattleReportHttpAction;
 import polly.rx.http.BattleReportInfosHttpAction;
+import polly.rx.http.QueryReportsHttpAction;
 import polly.rx.http.FleetScanInfoHttpAction;
 import polly.rx.http.FleetShipInfoHttpAction;
 import polly.rx.http.FleetScanHttpAction;
@@ -92,6 +93,8 @@ public class MyPlugin extends PollyPlugin {
             myPolly, this.fleetDBManager));
         myPolly.web().addHttpAction(new BattleReportHttpAction(
             myPolly, this.fleetDBManager));
+        myPolly.web().addHttpAction(new QueryReportsHttpAction(myPolly, 
+            this.fleetDBManager));
         myPolly.web().addMenuUrl("Revorix", "Kampfberichte");
         
         

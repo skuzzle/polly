@@ -20,6 +20,7 @@ public class BattleReportInfosHttpAction extends HttpAction {
             FleetDBManager fleetDBManager) {
         super("/battlereport_info", myPolly);
         this.fleetDBManager = fleetDBManager;
+        this.requirePermission(FleetDBManager.VIEW_BATTLE_REPORT_PERMISSION);
     }
     
     

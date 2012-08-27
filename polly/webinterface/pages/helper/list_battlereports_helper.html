@@ -1,4 +1,4 @@
-<h3>Total drop</h3>
+<h3>Total drop for shown reports</h3>
 <table>
 	<tr>
 	#foreach ($drop in $totalDrop)
@@ -12,10 +12,44 @@
 	</tr>
 </table>
 
-<h3>Reports</h3>
+<h3>Statistics for shown reports</h3>
+<table style="width:auto">
+    <tr>
+        <th>Total attacker Captain XP</th>
+        <td>$!capiXpSumAttacker</td>
+    </tr>
+    <tr>
+        <th>Total attacker Crew XP</th>
+        <td>$!crewXpSumAttacker</td>
+    </tr>
+    <tr>
+        <th>Total defender Captain XP</th>
+        <td>$!capiXpSumDefender</td>
+    </tr>
+    <tr>
+        <th>Total defender Crew XP</th>
+        <td>$!crewXpSumDefender</td>
+    </tr>
+    <tr>
+        <th>Total attacker PZ damage </th>
+        <td>$!pzDamageAttacker</td>
+    </tr>
+    <tr>
+        <th>Total defender PZ damage </th>
+        <td>$!pzDamageDefender</td>
+    </tr>
+</table>
+
+<h3>Reports ($!reports.size())</h3>
 <p style="font-size:xx-small; font-weight:bold">(Click Id for detailed info)</p>
+
+<form action="query_reports" method="POST">
+<input type="hidden" name="action" value="idSelect"/>
+<input type="submit" value="Statistic for selected" class="button"/>
+<input type="submit" value="Delete selected" name="delete" class="button"/>
 <table>
 	<tr>
+        <th><input type="checkbox" name="blah" disabled></th>
 		<th>Id</th>
 		<th>SubmitterId</th>
 		<th>Quadrant</th>
@@ -26,11 +60,12 @@
 		<th>Defender Clan</th>
 		<th>Defender KW/Xp-Mod</th>
 		<th>Tactic</th>
+		<th>Artifact</th>
 		<th>Date</th>
-		<th>Action</th>
 	</tr>
 	#foreach ($report in $reports)
 	<tr>
+        <td><input type="checkbox" value="$report.getId()" name="selectRP"/></td>
 		<td><a href="battlereport_info?id=$report.getId()">$report.getId()</a></td>
 		<td>$report.getSubmitterId()</td>
 		<td>$report.getQuadrant() $report.getX(),$report.getY()</td>
@@ -41,14 +76,11 @@
 		<td>$!report.getDefenderClan()</td>
 		<td>$myPolly.formatting().formatNumber($report.getDefenderKw()) / $myPolly.formatting().formatNumber($report.getDefenderXpMod())</td>
 		<td>$report.getTactic()</td>
+		<td>$report.hasArtifact()</td>
 		<td>$myPolly.formatting().formatDate($report.getDate())</td>
-		<td>
-			<form action="Kampfberichte" method="POST">
-			<input type="hidden" name="id" value="$report.getId()"/>
-			<input type="hidden" name="action" value="delete"/>
-			<input type="submit" value="Delete" class="button"/>
-			</form>
-		</td>
 	</tr>
 	#end
 </table>
+<input type="submit" value="Statistic for selected" name="select" class="button"/>
+<input type="submit" value="Delete selected" name="delete" class="button"/>
+</form>
