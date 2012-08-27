@@ -37,7 +37,7 @@ import polly.rx.core.SumQuery;
             "rp.y = ?3 AND " +
             "rp.attackerVenadName = ?4 AND " +
             "rp.defenderVenadName = ?5 AND " +
-            "rp.date = ?4"
+            "rp.date = ?6"
         )
     
 })
