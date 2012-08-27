@@ -1,9 +1,7 @@
 #set ( $scanDesc = !$scanDesc )
 #if (!$hideTotal)<p>Total scans: $fleetScans.size()</p>#end
-<p style="font-size:x-small;font-weight:bold">Click on ID to view the scan.</p>
 <table>
 	<tr>
-		<th><a href="${destination}&scanSortKey=getId&scanDesc=$scanDesc">ID</a></th>
 		<th><a href="${destination}&scanSortKey=getDate&scanDesc=$scanDesc">Date</a></th>
 		<th><a href="${destination}&scanSortKey=getQuadrant&scanDesc=$scanDesc">Location</a></th>
 		<th><a href="${destination}&scanSortKey=getLocalSens&scanDesc=$scanDesc">Sens</a></th>
@@ -20,13 +18,12 @@
 	#end
 	#foreach ($scan in $fleetScans)
 	<tr>
-		<th><a href="fleetscan_info?id=$scan.getId()">$scan.getId()</a></th>
 		<td>$myPolly.formatting().formatDate($scan.getDate())</td>
 		<td><a href="/query_scans?method=location&query=$scan.getQuadrant()">$scan.getQuadrant()</a> $scan.getX(),$scan.getY()</td>
 		<td>$scan.getLocalSens()</td>
 		<td><a href="/query_scans?method=owner&query=$scan.getOwnerName()">$scan.getOwnerName()</a></td>
 		<td><a href="/query_scans?method=clan&query=$scan.getOwnerClan()">$scan.getOwnerClan()</a></td>
-		<td>$scan.getFleetName()</td>
+		<td><a href="fleetscan_info?id=$scan.getId()">$scan.getFleetName()</a></td>
 		<td>$scan.getFleetTag()</td>
 		<td>$scan.getShipCount()</td>
 		<td>

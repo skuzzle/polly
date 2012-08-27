@@ -32,7 +32,9 @@ import javax.persistence.OneToMany;
     ),
     @NamedQuery(
         name = "SHIPS_BY_LOCATION",
-        query = "SELECT DISTINCT ship FROM FleetScanShip ship WHERE ship.quadrant = ?1"
+        query = "SELECT DISTINCT ship FROM FleetScanShip ship, IN(ship.history) h, IN(h.changes) c WHERE " +
+        		"ship.quadrant = ?1 OR " + 
+                "c LIKE ?2"
     )
     
 })

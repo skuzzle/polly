@@ -48,6 +48,11 @@
 		<td>$damagePz</td>
 	</tr>
 	<tr>
+		<th>Average PZ-Damage</th>
+        #set($avg = $damagePz/$ships.size())
+		<td>$avg</td>
+	</tr>
+	<tr>
 		<th>Total Damage</th>
 		<td>$damageTotal</td>
 	</tr>

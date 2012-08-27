@@ -260,6 +260,6 @@ public class FleetDBManager {
 
     public List<FleetScanShip> getShipsWithLocation(String quadrant) {
         return this.persistence.atomicRetrieveList(FleetScanShip.class, 
-            FleetScanShip.SHIPS_BY_LOCATION, quadrant);
+            FleetScanShip.SHIPS_BY_LOCATION, quadrant, "%" + quadrant + "%");
     }
 }

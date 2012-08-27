@@ -17,12 +17,12 @@
 	
 	#foreach ($ship in $fleetShips)
 	<tr>
-		<th><a href="fleetship_info?shipId=$ship.getRxId()">$ship.getRxId()</a></th>
+		<td><a href="fleetship_info?shipId=$ship.getRxId()">$ship.getRxId()</a></td>
 		<td>
 		#if ($ship.getNameWhenSpotted() != $ship.getName())
-			$ship.getName()<br/><small>(Original Name: $ship.getNameWhenSpotted()</small>)
+			<a href="fleetship_info?shipId=$ship.getRxId()">$ship.getName()</a><br/><small>(Original Name: $ship.getNameWhenSpotted()</small>)
 		#else
-			$ship.getName()
+			<a href="fleetship_info?shipId=$ship.getRxId()">$ship.getName()</a>
 		#end</td>
 		<td>$ship.getTechlevel()</td>
 		<td><a href="/query_scans?method=owner&query=$ship.getOwner()">$ship.getOwner()</a></td>
