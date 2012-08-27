@@ -37,6 +37,9 @@ public class FleetScanHttpAction extends HttpAction {
         HttpTemplateContext c = new HttpTemplateContext("pages/fleetscans.html");
         
         String action = e.getProperty("action");
+        c.put("quadrant", "Unbekannt");
+        c.put("lastX", 0);
+        c.put("lastY", 0);
         
         if (action != null && action.equals("postScan")) {
             if (!this.getMyPolly().roles().hasPermission(
@@ -61,6 +64,10 @@ public class FleetScanHttpAction extends HttpAction {
                 FleetScan scan = FleetScanParser.parseFleetScan(paste, 
                     quadrant, x, y, metaData);
                 this.fleetDBManager.addFleetScan(scan);
+                
+                c.put("quadrant", quadrant);
+                c.put("lastX", x);
+                c.put("lastY", y);
             } catch (ParseException e1) {
                 e.throwTemplateException(e1);
             } catch (DatabaseException e1) {

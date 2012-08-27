@@ -4,7 +4,7 @@
 <form action="/FleetScans" method="POST">
 	Paste:<br/>
 	<textarea name="paste" style="width:100%;height:200px"></textarea></br>
-	(Optional) Quadrant: <input type="text" name="quadrant" value="Unbekannt"/> X: <input type="text" name="x" value="0"/> Y: <input type="text" name="y" value="0"/></br>
+	(Optional) Quadrant: <input type="text" name="quadrant" value="$quadrant"/> X: <input type="text" name="x" value="$lastX"/> Y: <input type="text" name="y" value="$lastY"/></br>
 	(Optional) Meta Information:<br/>
 	<textarea name="metaData" style="width:100%;height:200px"></textarea></br>
 	<input type="hidden" name="action" value="postScan"/>
