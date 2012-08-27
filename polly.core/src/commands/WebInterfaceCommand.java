@@ -30,10 +30,10 @@ public class WebInterfaceCommand extends Command {
     protected boolean executeOnBoth(User executer, String channel,
             Signature signature) throws CommandException, InsufficientRightsException {
         
+        String url = "http://" + this.getMyPolly().web().getPublicHost() + ":" + 
+            this.getMyPolly().web().getPort();
+        
         if (this.match(signature, 0)) {
-            String url = "http://" + this.getMyPolly().web().getPublicHost() + ":" + 
-                    this.getMyPolly().web().getPort();
-            
             if (this.getMyPolly().web().isRunning()) {
                 this.reply(channel, "Polly Webinterface: " + url);
             } else {
@@ -43,9 +43,11 @@ public class WebInterfaceCommand extends Command {
             boolean newState = signature.getBooleanValue(0);
             if (this.getMyPolly().web().isRunning() && !newState) {
                 this.getMyPolly().web().stopWebServer();
+                this.reply(channel, "Webserver abgeschaltet");
             } else if (!this.getMyPolly().web().isRunning() && newState) {
                 try {
                     this.getMyPolly().web().startWebServer();
+                    this.reply(channel, "Webserver angeschaltet. URL: " + url);
                 } catch (IOException e) {
                     throw new CommandException(e);
                 }
