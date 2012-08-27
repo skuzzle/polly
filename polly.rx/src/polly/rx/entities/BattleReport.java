@@ -28,12 +28,25 @@ import polly.rx.core.SumQuery;
     @NamedQuery(
         name = "ALL_REPORTS",
         query= "SELECT rp FROM BattleReport rp"
-    )
+    ),
+    @NamedQuery(
+        name = "UNIQUE_CHECK",
+        query = "SELECT rp FROM BattleReport rp WHERE " + 
+            "rp.quadrant = ?1 AND " + 
+            "rp.x = ?2 AND " + 
+            "rp.y = ?3 AND " +
+            "rp.attackerVenadName = ?4 AND " +
+            "rp.defenderVenadName = ?5 AND " +
+            "rp.date = ?4"
+        )
+    
 })
 public class BattleReport {
 
     public static final String ALL_REPORTS = "ALL_REPORTS";
-
+    public static final String UNIQUE_CHECK = "UNIQUE_CHECK";
+    
+    
     @Id@GeneratedValue(strategy = GenerationType.TABLE)
     private int id;
     

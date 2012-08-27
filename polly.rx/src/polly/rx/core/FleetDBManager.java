@@ -35,7 +35,26 @@ public class FleetDBManager {
     
     
     
-    public void addBattleReport(BattleReport report) throws DatabaseException {
+    public synchronized void addBattleReport(BattleReport report) 
+            throws DatabaseException {
+        try {
+            this.persistence.readLock();
+            BattleReport rp = this.persistence.findSingle(
+                BattleReport.class, BattleReport.UNIQUE_CHECK, 
+                report.getQuadrant(), 
+                report.getX(), report.getY(), 
+                report.getAttackerVenadName(),
+                report.getDefenderVenadName(),
+                report.getDate());
+            
+            if (rp != null) {
+                throw new DatabaseException(
+                    "It seems like this Battlereport already exists.");
+            }
+        } finally {
+            this.persistence.readUnlock();
+        }
+        
         this.persistence.atomicPersist(report);
     }
     
