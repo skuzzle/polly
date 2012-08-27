@@ -204,6 +204,27 @@ public class FleetDBManager {
     
     
     
+    public List<BattleReport> getReportsWithVenad(String venad) {
+        return this.persistence.atomicRetrieveList(BattleReport.class, 
+            BattleReport.WITH_NAME, venad);
+    }
+    
+    
+    
+    public List<BattleReport> getReportsWithClan(String clan) {
+        return this.persistence.atomicRetrieveList(BattleReport.class, 
+            BattleReport.WITH_CLAN, clan);
+    }
+    
+    
+    
+    public List<BattleReport> getReportsByLocation(String location) {
+        return this.persistence.atomicRetrieveList(BattleReport.class, 
+            BattleReport.BY_LOCATION, location);
+    }
+    
+    
+    
     public void deleteReportByIdList(final int...ids) throws DatabaseException {
         this.persistence.atomicWriteOperation(new WriteAction() {
             
@@ -262,4 +283,6 @@ public class FleetDBManager {
         return this.persistence.atomicRetrieveList(FleetScanShip.class, 
             FleetScanShip.SHIPS_BY_LOCATION, quadrant, "%" + quadrant + "%");
     }
+    
+    
 }

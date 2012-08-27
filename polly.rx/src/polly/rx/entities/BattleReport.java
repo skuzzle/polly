@@ -38,13 +38,30 @@ import polly.rx.core.SumQuery;
             "rp.attackerVenadName = ?4 AND " +
             "rp.defenderVenadName = ?5 AND " +
             "rp.date = ?6"
-        )
+    ),
+    @NamedQuery(
+        name = "WITH_NAME",
+        query = "SELECT rp FROM BattleReport rp WHERE rp.attackerVenadName = ?1 OR " +
+            "rp.defenderVenadName = ?1"
+    ),
+    @NamedQuery(
+        name = "WITH_CLAN",
+        query = "SELECT rp FROM BattleReport rp WHERE rp.attackerClan = ?1 OR " +
+            "rp.defenderClan = ?1"
+    ),
+    @NamedQuery(
+        name = "BY_LOCATION",
+        query = "SELECT rp FROM BattleReport rp WHERE rp.quadrant = ?1"
+    )
     
 })
 public class BattleReport {
 
     public static final String ALL_REPORTS = "ALL_REPORTS";
     public static final String UNIQUE_CHECK = "UNIQUE_CHECK";
+    public static final String WITH_NAME = "WITH_NAME";
+    public static final String WITH_CLAN = "WITH_CLAN";
+    public static final String BY_LOCATION = "BY_LOCATION";
     
     
     @Id@GeneratedValue(strategy = GenerationType.TABLE)

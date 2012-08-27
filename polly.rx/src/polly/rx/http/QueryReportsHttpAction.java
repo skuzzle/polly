@@ -35,6 +35,7 @@ public class QueryReportsHttpAction extends HttpAction {
         String action = e.getProperty("action");
         boolean isDelete = e.getProperty("delete") != null;
         boolean isSelect = e.getProperty("select") != null;
+        String query = e.getProperty("query");
         
         if (action != null && action.equals("idSelect") && isSelect) {
             int[] ids = this.getIdList(e);
@@ -54,7 +55,15 @@ public class QueryReportsHttpAction extends HttpAction {
             } catch (DatabaseException e1) {
                 e.throwTemplateException(e1);
             }
-            
+        } else if (action != null && action.equals("byClan")) {
+            List<BattleReport> reports = this.fleetDBManager.getReportsWithClan(query);
+            TemplateContextHelper.prepareForReportsList(c, reports);
+        } else if (action != null && action.equals("byLocation")) {
+            List<BattleReport> reports = this.fleetDBManager.getReportsByLocation(query);
+            TemplateContextHelper.prepareForReportsList(c, reports);
+        } else if (action != null && action.equals("byVenad")) {
+            List<BattleReport> reports = this.fleetDBManager.getReportsWithVenad(query);
+            TemplateContextHelper.prepareForReportsList(c, reports);
         }
         
         return c;

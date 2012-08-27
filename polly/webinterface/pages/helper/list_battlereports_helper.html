@@ -5,9 +5,21 @@
 		<th>$!drop.getRessource()</th>
 	#end
 	</tr>
+    <tr>
+        <th colspan="14">Total drop</th>
+    </tr>
 	<tr>
 	#foreach ($drop in $totalDrop)
-		<td>$!drop.getAmount()</td>
+		<td style="text-align:right;">$!drop.getAmount()</td>
+	#end
+	</tr>
+    <tr>
+        <th colspan="14">Average drop</th>
+    </tr>
+	<tr>
+	#foreach ($drop in $totalDrop)
+#set ($ratio = $drop.getAmount()/$reports.size())
+		<td style="text-align:right;">$!ratio</td>
 	#end
 	</tr>
 </table>
@@ -16,27 +28,27 @@
 <table style="width:auto">
     <tr>
         <th>Total attacker Captain XP</th>
-        <td>$!capiXpSumAttacker</td>
+        <td style="text-align:right;">$!capiXpSumAttacker</td>
     </tr>
     <tr>
         <th>Total attacker Crew XP</th>
-        <td>$!crewXpSumAttacker</td>
+        <td style="text-align:right;">$!crewXpSumAttacker</td>
     </tr>
     <tr>
         <th>Total defender Captain XP</th>
-        <td>$!capiXpSumDefender</td>
+        <td style="text-align:right;">$!capiXpSumDefender</td>
     </tr>
     <tr>
         <th>Total defender Crew XP</th>
-        <td>$!crewXpSumDefender</td>
+        <td style="text-align:right;">$!crewXpSumDefender</td>
     </tr>
     <tr>
         <th>Total attacker PZ damage </th>
-        <td>$!pzDamageAttacker</td>
+        <td style="text-align:right;">$!pzDamageAttacker</td>
     </tr>
     <tr>
         <th>Total defender PZ damage </th>
-        <td>$!pzDamageDefender</td>
+        <td style="text-align:right;">$!pzDamageDefender</td>
     </tr>
 </table>
 
@@ -68,12 +80,12 @@
         <td><input type="checkbox" value="$report.getId()" name="selectRP"/></td>
 		<td><a href="battlereport_info?id=$report.getId()">$report.getId()</a></td>
 		<td>$report.getSubmitterId()</td>
-		<td>$report.getQuadrant() $report.getX(),$report.getY()</td>
-		<td>$report.getAttackerVenadName()</td>
-		<td>$!report.getAttackerClan()</td>
+		<td><a href="query_reports?action=byLocation&query=$report.getQuadrant()">$report.getQuadrant()</a> $report.getX(),$report.getY()</td>
+		<td><a href="query_reports?action=byVenad&query=$report.getAttackerVenadName()">$report.getAttackerVenadName()</a></td>
+		<td><a href="query_reports?action=byClan&query=$report.getAttackerClan()">$!report.getAttackerClan()</a></td>
 		<td>$myPolly.formatting().formatNumber($report.getAttackerKw()) / $myPolly.formatting().formatNumber($report.getAttackerXpMod())</td>
-		<td>$report.getDefenderVenadName()</td>
-		<td>$!report.getDefenderClan()</td>
+		<td><a href="query_reports?action=byVenad&query=$report.getDefenderVenadName()">$report.getDefenderVenadName()</a></td>
+		<td><a href="query_reports?action=byClan&query=$report.getDefenderClan()">$!report.getDefenderClan()</a></td>
 		<td>$myPolly.formatting().formatNumber($report.getDefenderKw()) / $myPolly.formatting().formatNumber($report.getDefenderXpMod())</td>
 		<td>$report.getTactic()</td>
 		<td>$report.hasArtifact()</td>
