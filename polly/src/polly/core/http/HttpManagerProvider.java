@@ -13,6 +13,7 @@ import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 
 
 import polly.configuration.ConfigurationProviderImpl;
+import polly.core.ModuleStates;
 import polly.core.ShutdownManagerImpl;
 import polly.core.http.actions.IRCPageHttpAction;
 import polly.core.http.actions.LoginHttpAction;
@@ -37,7 +38,8 @@ import polly.moduleloader.annotations.Require;
 @Module(
     requires = {
         @Require(component = ConfigurationProviderImpl.class),
-        @Require(component = ShutdownManagerImpl.class)
+        @Require(component = ShutdownManagerImpl.class),
+        @Require(state = ModuleStates.PERSISTENCE_READY)
     },
     provides = @Provide(component = HttpManagerImpl.class)
 )
@@ -54,7 +56,7 @@ public class HttpManagerProvider extends AbstractProvider {
     
     
     public HttpManagerProvider(ModuleLoader loader) {
-        super("HTTP_SERVER_PROVIDER", loader, false);
+        super("HTTP_SERVER_PROVIDER", loader, true);
     }
 
     
@@ -107,7 +109,9 @@ public class HttpManagerProvider extends AbstractProvider {
         
         UserManagerImpl userManager = this.requireNow(UserManagerImpl.class, false);
         try {
+            logger.trace("Trying to add HOME_PAGE Attribute");
             userManager.addAttribute(HOME_PAGE, "/", constraint);
+            logger.trace("Done");
         } catch (DatabaseException e) {
             logger.warn("ignored exception", e);
         }
@@ -117,6 +121,7 @@ public class HttpManagerProvider extends AbstractProvider {
         // HACK: this avoids cyclic dependency
         this.httpManager.setMyPolly(myPolly);
         
+        logger.trace("Adding default http actions...");
         this.httpManager.addHttpAction(new RootHttpAction(myPolly));
         this.httpManager.addHttpAction(new LoginHttpAction(myPolly));
         this.httpManager.addHttpAction(new LogoutHttpAction(myPolly));
@@ -127,6 +132,7 @@ public class HttpManagerProvider extends AbstractProvider {
         this.httpManager.addHttpAction(new SessionPageHttpAction(myPolly));
         this.httpManager.addHttpAction(new ShutdownHttpAction(myPolly));
         
+        logger.trace("Adding menu entries for default admin menu...");
         this.httpManager.addMenuUrl("Admin", "Users");
         this.httpManager.addMenuUrl("Admin", "IRC");
         this.httpManager.addMenuUrl("Admin", "Logs");
@@ -136,10 +142,12 @@ public class HttpManagerProvider extends AbstractProvider {
         
         boolean start = this.serverCfg.readBoolean(Configuration.HTTP_START_SERVER);
         if (!start) {
+            logger.info("Webserver will not be started due to configuration settings");
             return;
         }
         
         try {
+            logger.trace("Trying to start the http service...");
             this.httpManager.startWebServer();
             logger.info("Webserver started");
         } catch (IOException e) {
