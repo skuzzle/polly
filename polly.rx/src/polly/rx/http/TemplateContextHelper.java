@@ -15,6 +15,9 @@ public class TemplateContextHelper {
         List<BattleReport> reports) {
         
         BattleDrop[] dropSum = new BattleDrop[14];
+        BattleDrop[] dropMax = new BattleDrop[14];
+        BattleDrop[] dropMin = new BattleDrop[14];
+        
         int capiXpSumAttacker = 0;
         int crewXpSumAttacker = 0;
         int capiXpSumDefender = 0;
@@ -24,11 +27,22 @@ public class TemplateContextHelper {
         
         for (BattleReport report : reports) {
             for (int i = 0; i < 14; ++i) {
+                BattleDrop drop = report.getDrop().get(i);
+                
                 if (dropSum[i] == null) {
-                    dropSum[i] = new BattleDrop(RxRessource.byOrdinal(i), 
-                        report.getDrop().get(i).getAmount());
+                    dropSum[i] = new BattleDrop(drop.getRessource(),
+                        drop.getAmount());
+                    dropMin[i] = new BattleDrop(drop.getRessource(),
+                        drop.getAmount());
+                    dropMax[i] = new BattleDrop(drop.getRessource(),
+                        drop.getAmount());
+                    
                 } else {
                     dropSum[i].incAmout(report.getDrop().get(i).getAmount());
+                    dropMin[i].setAmount(Math.min(dropMin[i].getAmount(), 
+                        drop.getAmount()));
+                    dropMax[i].setAmount(Math.max(dropMin[i].getAmount(), 
+                        drop.getAmount()));
                 }
             }
             capiXpSumAttacker += report.querySumAttacker(SumQueries.CAPI_XP);
@@ -47,6 +61,8 @@ public class TemplateContextHelper {
         c.put("pzDamageDefender", pzDamageDefender);
         
         c.put("dropSum", dropSum);
+        c.put("dropMax", dropMax);
+        c.put("dropMin", dropMin);
         c.put("allReports", reports);
     }
     

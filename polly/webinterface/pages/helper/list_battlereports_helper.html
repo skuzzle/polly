@@ -22,6 +22,22 @@
 		<td style="text-align:right;">$!ratio</td>
 	#end
 	</tr>
+    <tr>
+        <th colspan="14">Max drop</th>
+    </tr>
+	<tr>
+	#foreach ($drop in $dropMax)
+		<td style="text-align:right;">$!drop.getAmount()</td>
+	#end
+	</tr>
+    <tr>
+        <th colspan="14">Min drop</th>
+    </tr>
+	<tr>
+	#foreach ($drop in $dropMin)
+		<td style="text-align:right;">$!drop.getAmount()</td>
+	#end
+	</tr>
 </table>
 
 <h3>Statistics for shown reports</h3>
