@@ -44,7 +44,7 @@
 
 <p>
 <b>Artifacts:</b> $artifacts<br/>
-<b>Chance:</b> $chance
+<b>Chance:</b> $myPolly.formatting().formatNumber($chance)
 </p>
 
 <h3>Statistics for shown reports</h3>
@@ -75,7 +75,7 @@
     </tr>
 </table>
 
-#if ($sortKey)
+#if ($sortKey && $reports)
     $sorter.sort($reports, $sortKey, $dir)
 #end
 
