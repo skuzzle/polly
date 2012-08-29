@@ -52,8 +52,11 @@ import polly.rx.core.SumQuery;
     @NamedQuery(
         name = "BY_LOCATION",
         query = "SELECT rp FROM BattleReport rp WHERE rp.quadrant = ?1"
+    ),
+    @NamedQuery(
+        name = "BY_USER_ID",
+        query = "SELECT rp FROM BattleReport rp WHERE rp.submitterId = ?1"
     )
-    
 })
 public class BattleReport {
 
@@ -62,6 +65,7 @@ public class BattleReport {
     public static final String WITH_NAME = "WITH_NAME";
     public static final String WITH_CLAN = "WITH_CLAN";
     public static final String BY_LOCATION = "BY_LOCATION";
+    public static final String BY_USER_ID = "BY_USER_ID";
     
     
     @Id@GeneratedValue(strategy = GenerationType.TABLE)

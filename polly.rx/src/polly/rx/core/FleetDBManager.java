@@ -283,6 +283,13 @@ public class FleetDBManager {
         return this.persistence.atomicRetrieveList(FleetScanShip.class, 
             FleetScanShip.SHIPS_BY_LOCATION, quadrant, "%" + quadrant + "%");
     }
+
+
+
+    public List<BattleReport> getReportByUserId(int id) {
+        return this.persistence.atomicRetrieveList(
+            BattleReport.class, BattleReport.BY_USER_ID, id);
+    }
     
     
 }

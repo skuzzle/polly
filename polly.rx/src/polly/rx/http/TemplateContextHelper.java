@@ -5,7 +5,6 @@ import java.util.List;
 import polly.rx.core.SumQueries;
 import polly.rx.entities.BattleDrop;
 import polly.rx.entities.BattleReport;
-import polly.rx.entities.RxRessource;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 
 
@@ -24,6 +23,7 @@ public class TemplateContextHelper {
         int crewXpSumDefender = 0;
         int pzDamageAttacker = 0;
         int pzDamageDefender = 0;
+        int artifacts = 0;
         
         for (BattleReport report : reports) {
             for (int i = 0; i < 14; ++i) {
@@ -51,6 +51,7 @@ public class TemplateContextHelper {
             crewXpSumDefender += report.querySumDefender(SumQueries.CREW_XP);
             pzDamageAttacker += report.querySumAttacker(SumQueries.PZ_DAMAGE);
             pzDamageDefender += report.querySumDefender(SumQueries.PZ_DAMAGE);
+            artifacts += report.hasArtifact() ? 1 : 0;
         }
         
         c.put("capiXpSumAttacker", capiXpSumAttacker);
@@ -59,6 +60,10 @@ public class TemplateContextHelper {
         c.put("crewXpSumDefender", crewXpSumDefender);
         c.put("pzDamageAttacker", pzDamageAttacker);
         c.put("pzDamageDefender", pzDamageDefender);
+        c.put("artifacts", artifacts);
+        double chance = reports.isEmpty() 
+            ? 0.0 : (double) artifacts / (double) reports.size();
+        c.put("chance", chance);
         
         c.put("dropSum", dropSum);
         c.put("dropMax", dropMax);

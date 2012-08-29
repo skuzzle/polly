@@ -1,3 +1,5 @@
+#set ($dir = !$dir)
+
 <h3>Total drop for shown reports</h3>
 <table>
 	<tr>
@@ -40,6 +42,11 @@
 	</tr>
 </table>
 
+<p>
+<b>Artifacts:</b> $artifacts<br/>
+<b>Chance:</b> $chance
+</p>
+
 <h3>Statistics for shown reports</h3>
 <table style="width:auto">
     <tr>
@@ -68,6 +75,11 @@
     </tr>
 </table>
 
+#if ($sortKey)
+    $sorter.sort($reports, $sortKey, $dir)
+#end
+
+
 <h3>Reports ($!reports.size())</h3>
 <p style="font-size:xx-small; font-weight:bold">(Click Id for detailed info)</p>
 
@@ -78,17 +90,17 @@
 <table>
 	<tr>
         <th><input type="checkbox" name="blah" disabled></th>
-		<th>Id</th>
-		<th>Quadrant</th>
-		<th>Attacker</th>
-		<th>Attacker Clan</th>
-		<th>Attacker KW/Xp-Mod</th>
-		<th>Defender</th>
-		<th>Defender Clan</th>
-		<th>Defender KW/Xp-Mod</th>
-		<th>Tactic</th>
-		<th>Artifact</th>
-		<th>Date</th>
+		<th><a href="$target&sortKey=getId&dir=$dir">Id</a></th>
+		<th><a href="$target&sortKey=getQuadrant&dir=$dir">Quadrant</a></th>
+		<th><a href="$target&sortKey=getAttackerVenadName&dir=$dir">Attacker</a></th>
+		<th><a href="$target&sortKey=getAttackerClan&dir=$dir">Attacker Clan</a></th>
+		<th><a href="$target&sortKey=getAttackerKw&dir=$dir">Attacker KW/Xp-Mod</a></th>
+		<th><a href="$target&sortKey=getDefenderVenadName&dir=$dir">Defender</a></th>
+		<th><a href="$target&sortKey=getDefenderClan&dir=$dir">Defender Clan</a></th>
+		<th><a href="$target&sortKey=getDefenderKw&dir=$dir">Defender KW/Xp-Mod</a></th>
+		<th><a href="$target&sortKey=getTactic&dir=$dir">Tactic</a></th>
+		<th><a href="$target&sortKey=hasArtifact&dir=$dir">Artifact</a></th>
+		<th><a href="$target&sortKey=getDate&dir=$dir">Date</a></th>
 	</tr>
 	#foreach ($report in $reports)
 	<tr>

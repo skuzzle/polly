@@ -14,6 +14,7 @@ import de.skuzzle.polly.sdk.http.HttpAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.http.HttpTemplateException;
+import de.skuzzle.polly.sdk.http.HttpTemplateSortHelper;
 
 
 public class BattleReportHttpAction extends HttpAction {
@@ -63,6 +64,7 @@ public class BattleReportHttpAction extends HttpAction {
         
         List<BattleReport> allReports = this.fleetDBManager.getAllReports();
         TemplateContextHelper.prepareForReportsList(c, allReports);
+        HttpTemplateSortHelper.makeListSortable(c, e, "sortKey", "dir", "getDate");
         
         return c;
     }

@@ -12,6 +12,7 @@ import de.skuzzle.polly.sdk.http.HttpAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.http.HttpTemplateException;
+import de.skuzzle.polly.sdk.http.HttpTemplateSortHelper;
 
 
 public class QueryReportsHttpAction extends HttpAction {
@@ -36,6 +37,8 @@ public class QueryReportsHttpAction extends HttpAction {
         boolean isDelete = e.getProperty("delete") != null;
         boolean isSelect = e.getProperty("select") != null;
         String query = e.getProperty("query");
+        c.put("action", action);
+        c.put("query", query);
         
         if (action != null && action.equals("idSelect") && isSelect) {
             int[] ids = this.getIdList(e);
@@ -64,7 +67,13 @@ public class QueryReportsHttpAction extends HttpAction {
         } else if (action != null && action.equals("byVenad")) {
             List<BattleReport> reports = this.fleetDBManager.getReportsWithVenad(query);
             TemplateContextHelper.prepareForReportsList(c, reports);
-        }
+        } else if (action != null && action.equals("byMe")) {
+            List<BattleReport> reports = this.fleetDBManager.getReportByUserId(
+                e.getSession().getUser().getId());
+            TemplateContextHelper.prepareForReportsList(c, reports);
+        } 
+        
+        HttpTemplateSortHelper.makeListSortable(c, e, "sortKey", "dir", "getDate");
         
         return c;
     }
