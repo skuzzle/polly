@@ -36,7 +36,8 @@ public class QueryReportsHttpAction extends HttpAction {
         String action = e.getProperty("action");
         boolean isDelete = e.getProperty("delete") != null;
         boolean isSelect = e.getProperty("select") != null;
-        String query = e.getProperty("query");
+        String query = e.getProperty("query") == null ? "" : e.getProperty("query");
+        
         c.put("action", action);
         c.put("query", query);
         
