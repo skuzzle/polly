@@ -216,6 +216,12 @@ public class BattleReportShip {
     
     
     
+    public int calcMaxWend() {
+        return this.systems - this.shields;
+    }
+    
+    
+    
     @Override
     public String toString() {
         return this.name;
