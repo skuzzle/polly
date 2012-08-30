@@ -199,21 +199,13 @@ public class UnaryOperators {
                     stack.push((Literal) left.getElements().get(i));
                     break;
                 case QUEST_EXCALAMTION:
-                    // XXX: Eggi magic
-                    int mid = left.getElements().size() / 2;
-                    i = this.gauss(mid, mid);
+                    int size = left.getElements().size() - 1;
+                    double gr = 2.0;
+                    double g = Math.max(Math.min(randomizer.nextGaussian(), gr), -gr);
+                    double f = ((g + gr) / (2.0 * gr));
+                    i = (int) Math.round(f * (double) size);
                     stack.push((Literal) left.getElements().get(i));
             }
-        }
-        
-        
-        
-        private int gauss(int a, int b) {
-            double tmp = (double) a;
-            for (int i = 0; i < 2 * b; ++i) {
-                tmp = randomizer.nextInt(2) == 0 ? tmp + 0.5 : tmp - 0.5;
-            }
-            return (int) Math.round(tmp);
         }
     }
 }
