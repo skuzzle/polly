@@ -110,7 +110,8 @@ public final class Prepare {
         dest.add(new UnaryOperators.BooleanOperator(TokenType.EXCLAMATION));
         dest.add(new UnaryOperators.StringOperator(TokenType.EXCLAMATION));
         dest.add(new UnaryOperators.ListOperator(TokenType.EXCLAMATION));
-        dest.add(new UnaryOperators.RandomListIndexOperator());
+        dest.add(new UnaryOperators.RandomListIndexOperator(TokenType.QUESTION));
+        dest.add(new UnaryOperators.RandomListIndexOperator(TokenType.QUEST_EXCALAMTION));
         dest.add(new UnaryOperators.TimespanOperator());
         
         dest.add(new TernaryDotDotOperator());

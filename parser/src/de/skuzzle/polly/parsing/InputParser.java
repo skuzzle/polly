@@ -3,6 +3,7 @@ package de.skuzzle.polly.parsing;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+
 import de.skuzzle.polly.parsing.PrecedenceTable.PrecedenceLevel;
 import de.skuzzle.polly.parsing.declarations.Declaration;
 import de.skuzzle.polly.parsing.declarations.FunctionDeclaration;
@@ -427,7 +428,8 @@ public class InputParser extends AbstractParser<InputScanner> {
                  * the closing braces.
                  */
                 expression.setPosition(this.scanner.spanFrom(la));
-            } else if (la.matches(TokenType.QUESTION)) {
+            } else if (la.matches(TokenType.QUESTION) || 
+                    la.matches(TokenType.QUEST_EXCALAMTION)) {
                 return new UnaryExpression(la, expression);
             }
             la = this.scanner.lookAhead();

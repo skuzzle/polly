@@ -174,8 +174,8 @@ public class UnaryOperators {
         
         private static Random randomizer = new Random();
         
-        public RandomListIndexOperator() {
-            super(TokenType.QUESTION, new ListType(Type.ANY), Type.ANY);
+        public RandomListIndexOperator(TokenType type) {
+            super(type, new ListType(Type.ANY), Type.ANY);
         }
         
         @Override
@@ -186,16 +186,34 @@ public class UnaryOperators {
             this.setReturnType(t.getSubType());
         }
 
+        
+        
         @Override
         public void collapse(Stack<Literal> stack) throws ExecutionException {
             ListLiteral left = (ListLiteral) stack.pop();
             
-            int i = randomizer.nextInt(left.getElements().size());
+            int i = 0;
             switch(this.getOperatorType()) {
                 case QUESTION:
+                    i = randomizer.nextInt(left.getElements().size());
                     stack.push((Literal) left.getElements().get(i));
                     break;
+                case QUEST_EXCALAMTION:
+                    // XXX: Eggi magic
+                    int mid = left.getElements().size() / 2;
+                    i = this.gauss(mid, mid);
+                    stack.push((Literal) left.getElements().get(i));
             }
+        }
+        
+        
+        
+        private int gauss(int a, int b) {
+            double tmp = (double) a;
+            for (int i = 0; i < 2 * b; ++i) {
+                tmp = randomizer.nextInt(2) == 0 ? tmp + 0.5 : tmp - 0.5;
+            }
+            return (int) Math.round(tmp);
         }
     }
 }

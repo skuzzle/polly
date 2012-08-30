@@ -58,6 +58,7 @@ public class PrecedenceTable {
         
         this.add(PrecedenceLevel.POSTFIX, TokenType.OPENSQBR);
         this.add(PrecedenceLevel.POSTFIX, TokenType.QUESTION);
+        this.add(PrecedenceLevel.POSTFIX, TokenType.QUEST_EXCALAMTION);
         
         this.add(PrecedenceLevel.DOTDOT, TokenType.DOTDOT);
         
