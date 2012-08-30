@@ -41,7 +41,7 @@ public class TemplateContextHelper {
                     dropSum[i].incAmout(report.getDrop().get(i).getAmount());
                     dropMin[i].setAmount(Math.min(dropMin[i].getAmount(), 
                         drop.getAmount()));
-                    dropMax[i].setAmount(Math.max(dropMin[i].getAmount(), 
+                    dropMax[i].setAmount(Math.max(dropMax[i].getAmount(), 
                         drop.getAmount()));
                 }
             }
