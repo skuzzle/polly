@@ -58,13 +58,5 @@ public class YouTubeLinkGrabber extends AbstractHttpRequestGrabber {
         
         return url;
     }
-    
-    
-    
-    @Override
-    public void onMatch(MessageEvent e, String processedResult, Matcher linkMatcher) {
-        e.getSource().sendMessage(e.getChannel(), processedResult + 
-            " (" + this.getLink(e.getMessage(), linkMatcher) + ")", this);
-    }
 
 }

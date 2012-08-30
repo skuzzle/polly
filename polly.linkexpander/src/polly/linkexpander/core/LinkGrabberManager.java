@@ -52,7 +52,8 @@ public class LinkGrabberManager {
             if (m.find()) {
                 String r = grabber.processMatch(e.getMessage(), m);
                 if (r != null) {
-                    grabber.onMatch(e, r, m);
+                    e.getSource().sendMessage(e.getChannel(), r + 
+                        " (" + grabber.getLink(e.getMessage(), m) + ")", this);
                 }
             }
         }
