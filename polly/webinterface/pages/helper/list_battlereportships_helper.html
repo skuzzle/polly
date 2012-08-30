@@ -44,34 +44,34 @@
 		<td>$xpmod</td>
 	</tr>
 	<tr>
-		<th>PZ-Damage</th>
-		<td>$damagePz</td>
+		<th>Shield-Damage (min/avg/max)</th>
+		<td>$shieldDamage ($minShieldDamage / $avgShieldDamage / $maxShieldDamage)</td>
 	</tr>
 	<tr>
-		<th>Average PZ-Damage</th>
-        #set($avg = $damagePz/$ships.size())
-		<td>$avg</td>
+		<th>PZ-Damage (min/avg/max)</th>
+		<td>$pzDamage ($minPzDamage / $avgPzDamage / $maxPzDamage)</td>
 	</tr>
 	<tr>
-		<th>Total Damage</th>
-		<td>$damageTotal</td>
+		<th>Capi XP (min/avg/max)</th>
+		<td>$capiXp ($minCapiXp / $avgCapiXp / $maxCapiXp)</td>
 	</tr>
 	<tr>
-		<th>Total Capi XP</th>
-		<td>$xpCapi</td>
-	</tr>
-	<tr>
-		<th>Total Crew XP</th>
-		<td>$xpCrew</td>
+		<th>Crew XP (min/avg/max)</th>
+		<td>$crewXp ($minCrewXp / $avgCrewXp / $maxCrewXp)</td>
 	</tr>
 </table>
 
+#set ($dq = '"')
+<p style="font-size:x-small">
+Green cells are ships with minimal damage, red cells are ships with maximum
+damage.
+</p>
 <table style="width: 100%">
 	<tr>
 		<th>Revorix ID</th>
 		<th>Name</th>
 		<th>Crew XP</th>
-		<th>Captain</th>
+		<th>Captain (HP)</th>
 		<th>Captain XP</th>
 		<th>KW (T 100)</th>
 		<th>Max Wend</th>
@@ -85,7 +85,7 @@
 		<td>$ship.getRxId()</td>
 		<td>$ship.getName()</td>
 		<td>$ship.getCrewXp()</td>
-		<td>$ship.getCapi()</td>
+		<td>$ship.getCapi() ($ship.getCapiHp())</td>
 		<td>$ship.getCapiXp()</td>
 #set( $defsum = $ship.getShields() + $ship.getPz() )
 #set( $tmp = $defsum * $ship.getAttack() )
@@ -93,8 +93,20 @@
 		<td>$myPolly.formatting().formatNumber($shipkw)</td>
 		<td>$ship.calcMaxWend()</td>
 		<td>$ship.getAttack() ($ship.getAwDamage())</td>
-		<td>$ship.getShields() ($ship.getShieldDamage())</td>
-		<td>$ship.getPz() ($ship.getPzDamage())</td>
+        #set ($bgc = "")
+        #if ($ship.getShieldDamage() == $maxShieldDamage)
+            #set ($bgc = "style=${dq}background-color: red;${dq}")
+        #elseif ($ship.getShieldDamage() == $minShieldDamage)
+            #set ($bgc = "style=${dq}background-color: green;${dq}")
+        #end
+		<td $bgc>$ship.getShields() ($ship.getShieldDamage())</td>
+        #set ($bgc = "")
+        #if ($ship.getPzDamage() == $maxPzDamage)
+            #set ($bgc = "style=${dq}background-color: red;${dq}")
+        #elseif ($ship.getPzDamage() == $minPzDamage)
+            #set ($bgc = "style=${dq}background-color: green;${dq}")
+        #end
+		<td $bgc>$ship.getPz() ($ship.getPzDamage())</td>
 		<td>$ship.getStructure() ($ship.getStructureDamage())</td>
 	</tr>
 	#end

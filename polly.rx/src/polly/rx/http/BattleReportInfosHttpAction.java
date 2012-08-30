@@ -1,8 +1,11 @@
 package polly.rx.http;
 
+import java.util.List;
+
 import polly.rx.core.FleetDBManager;
 import polly.rx.core.SumQueries;
 import polly.rx.entities.BattleReport;
+import polly.rx.entities.BattleReportShip;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.http.HttpAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
@@ -30,18 +33,79 @@ public class BattleReportInfosHttpAction extends HttpAction {
         HttpTemplateContext c = new HttpTemplateContext("pages/battlereport_info.html");
         
         int id = Integer.parseInt(e.getProperty("id"));
-        BattleReport report = this.fleetDBManager.getReportById(id);
+        BattleReport report = this.fleetDBManager.getReportById(id);       
         
         c.put("report", report);
-        c.put("pzDamageAttacker", report.querySumAttacker(SumQueries.PZ_DAMAGE));
-        c.put("pzDamageDefender", report.querySumDefender(SumQueries.PZ_DAMAGE));
-        c.put("damageAttacker", report.querySumAttacker(SumQueries.TOTAL_DAMAGE));
-        c.put("damageDefender", report.querySumDefender(SumQueries.TOTAL_DAMAGE));
-        c.put("capiXpAttacker", report.querySumAttacker(SumQueries.CAPI_XP));
-        c.put("crewXpAttacker", report.querySumAttacker(SumQueries.CREW_XP));
-        c.put("capiXpDefender", report.querySumDefender(SumQueries.CAPI_XP));
-        c.put("crewXpDefender", report.querySumDefender(SumQueries.CREW_XP));
+        this.prepareContext(report.getAttackerShips(), "Attacker", c);
+        this.prepareContext(report.getDefenderShips(), "Defender", c);
+
         return c;
+    }
+    
+    
+    
+    private void prepareContext(List<BattleReportShip> ships, 
+                String postfix, HttpTemplateContext c) {
+        
+        int pzDamage = 0;
+        int maxPzDamage = 0;
+        int minPzDamage = Integer.MAX_VALUE;
+        int avgPzDamage = 0;
+        
+        int shieldDamage = 0;
+        int maxShieldDamage = 0;
+        int minShieldDamage = Integer.MAX_VALUE;
+        int avgShieldDamage = 0;
+        
+        int capiXp = 0;
+        int maxCapiXp = 0;
+        int minCapiXp = Integer.MAX_VALUE;
+        int avgCapiXp = 0;
+        
+        int crewXp = 0;
+        int maxCrewXp = 0;
+        int minCrewXp = Integer.MAX_VALUE;
+        int avgCrewXp = 0;
+        
+        for (BattleReportShip ship : ships) {
+            pzDamage += ship.getPzDamage();
+            maxPzDamage = Math.max(maxPzDamage, ship.getPzDamage());
+            minPzDamage = Math.min(minPzDamage, ship.getPzDamage());
+            
+            shieldDamage += ship.getShieldDamage();
+            maxShieldDamage = Math.max(maxShieldDamage, ship.getShieldDamage());
+            minShieldDamage = Math.min(minShieldDamage, ship.getShieldDamage());
+            
+            capiXp += ship.getCapiXp();
+            maxCapiXp = Math.max(maxCapiXp, ship.getCapiXp());
+            minCapiXp = Math.min(minCapiXp, ship.getCapiXp());
+            
+            crewXp += ship.getCrewXp();
+            maxCrewXp = Math.max(maxCrewXp, ship.getCrewXp());
+            minCrewXp = Math.min(minCrewXp, ship.getCrewXp());
+        }
+        
+        avgPzDamage = pzDamage / ships.size();
+        avgShieldDamage = shieldDamage / ships.size();
+        avgCapiXp = capiXp / ships.size();
+        avgCrewXp = crewXp / ships.size();
+        
+        c.put("pzDamage" + postfix, pzDamage);
+        c.put("maxPzDamage" + postfix, maxPzDamage);
+        c.put("minPzDamage" + postfix, minPzDamage);
+        c.put("avgPzDamage" + postfix, avgPzDamage);
+        c.put("shieldDamage" + postfix, shieldDamage);
+        c.put("maxShieldDamage" + postfix, maxShieldDamage);
+        c.put("minShieldDamage" + postfix, minShieldDamage);
+        c.put("avgShieldDamage" + postfix, avgShieldDamage);
+        c.put("capiXp" + postfix, capiXp);
+        c.put("maxCapiXp" + postfix, maxCapiXp);
+        c.put("minCapiXp" + postfix, minCapiXp);
+        c.put("avgCapiXp" + postfix, avgCapiXp);
+        c.put("crewXp" + postfix, crewXp);
+        c.put("maxCrewXp" + postfix, maxCrewXp);
+        c.put("minCrewXp" + postfix, minCrewXp);
+        c.put("avgCrewXp" + postfix, avgCrewXp);
     }
 
 }

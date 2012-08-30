@@ -33,10 +33,27 @@
 #set ($kw = $report.getAttackerKw())
 #set ($bonus = $report.getAttackerBonus())
 #set ($xpmod = $report.getAttackerXpMod())
-#set ($damagePz = $pzDamageAttacker)
-#set ($damageTotal = $damageAttacker)
-#set ($xpCapi = $capiXpAttacker)
-#set ($xpCrew = $crewXpAttacker)
+
+#set ($pzDamage = $pzDamageAttacker)
+#set ($maxPzDamage = $maxPzDamageAttacker)
+#set ($minPzDamage = $minPzDamageAttacker)
+#set ($avgPzDamage = $avgPzDamageAttacker)
+
+#set ($shieldDamage = $shieldDamageAttacker)
+#set ($maxShieldDamage = $maxShieldDamageAttacker)
+#set ($minShieldDamage = $minShieldDamageAttacker)
+#set ($avgShieldDamage = $avgShieldDamageAttacker)
+
+#set ($capiXp = $capiXpAttacker)
+#set ($maxCapiXp = $maxCapiXpAttacker)
+#set ($minCapiXp = $minCapiXpAttacker)
+#set ($avgCapiXp = $avgCapiXpAttacker)
+
+#set ($crewXp = $crewXpAttacker)
+#set ($maxCrewXp = $maxCrewXpAttacker)
+#set ($minCrewXp = $minCrewXpAttacker)
+#set ($avgCrewXp = $avgCrewXpAttacker)
+
 #set ($ships = $report.getAttackerShips())
 #parse("webinterface/pages/helper/list_battlereportships_helper.html")
 
@@ -47,9 +64,26 @@
 #set ($kw = $report.getDefenderKw())
 #set ($bonus = $report.getDefenderBonus())
 #set ($xpmod = $report.getDefenderXpMod())
-#set ($damagePz = $pzDamageDefender)
-#set ($damageTotal = $damageDefender)
-#set ($xpCapi = $capiXpDefender)
-#set ($xpCrew = $crewXpDefender)
+
+#set ($pzDamage = $pzDamageDefender)
+#set ($maxPzDamage = $maxPzDamageDefender)
+#set ($minPzDamage = $minPzDamageDefender)
+#set ($avgPzDamage = $avgPzDamageDefender)
+
+#set ($shieldDamage = $shieldDamageDefender)
+#set ($maxShieldDamage = $maxShieldDamageDefender)
+#set ($minShieldDamage = $minShieldDamageDefender)
+#set ($avgShieldDamage = $avgShieldDamageDefender)
+
+#set ($capiXp = $capiXpDefender)
+#set ($maxCapiXp = $maxCapiXpDefender)
+#set ($minCapiXp = $minCapiXpDefender)
+#set ($avgCapiXp = $avgCapiXpDefender)
+
+#set ($crewXp = $crewXpDefender)
+#set ($maxCrewXp = $maxCrewXpDefender)
+#set ($minCrewXp = $minCrewXpDefender)
+#set ($avgCrewXp = $avgCrewXpDefender)
+
 #set ($ships = $report.getDefenderShips())
 #parse("webinterface/pages/helper/list_battlereportships_helper.html")
