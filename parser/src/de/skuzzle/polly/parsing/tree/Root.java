@@ -3,20 +3,22 @@ package de.skuzzle.polly.parsing.tree;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Stack;
 
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.ParseException;
+import de.skuzzle.polly.parsing.declarations.Declaration;
 import de.skuzzle.polly.parsing.declarations.Namespace;
+import de.skuzzle.polly.parsing.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.tree.literals.CommandLiteral;
+import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
 import de.skuzzle.polly.parsing.tree.literals.Literal;
 
 
 
 
-public class Root implements TreeElement {
-    
-    private static final long serialVersionUID = 1L;
+public class Root {
     
     private CommandLiteral name;
     private boolean collapsed;
@@ -53,14 +55,15 @@ public class Root implements TreeElement {
     }
     
 
-    @Override
     public Expression contextCheck(Namespace context) throws ParseException {
         // at this time, the context contains only toplevel declarations and no 
         // local declarations within a functioncall/declaration
         
         for (int i = 0; i < this.parameters.size(); ++i) {
-            Expression e = this.parameters.get(i);
-            this.parameters.set(i, e.contextCheck(context));
+            Expression e = this.parameters.get(i).contextCheck(context);
+            Declaration ans = new VarDeclaration(new IdentifierLiteral("ans"), e);
+            context.addRoot(ans);
+            this.parameters.set(i, e);
         }
         
         return null;
@@ -68,13 +71,15 @@ public class Root implements TreeElement {
 
     
     
-    @Override
-    public void collapse(Stack<Literal> stack) throws ExecutionException {
+    public void collapse(Stack<Literal> stack, Queue<Literal> answers) 
+            throws ExecutionException {
         for (Expression e : this.parameters) {
             e.collapse(stack);
             
             if (!stack.isEmpty()) {
-                this.results.add(stack.pop());
+                Literal l = stack.pop();
+                this.results.add(l);
+                answers.add(l);
             }
         }
         

@@ -15,7 +15,6 @@ import de.skuzzle.polly.parsing.tree.Expression;
 import de.skuzzle.polly.parsing.tree.NamespaceAccessExpression;
 import de.skuzzle.polly.parsing.tree.Root;
 import de.skuzzle.polly.parsing.tree.TernaryExpression;
-import de.skuzzle.polly.parsing.tree.TreeElement;
 import de.skuzzle.polly.parsing.tree.TypeParameterExpression;
 import de.skuzzle.polly.parsing.tree.UnaryExpression;
 import de.skuzzle.polly.parsing.tree.VarOrCallExpression;
@@ -174,7 +173,7 @@ public class InputParser extends AbstractParser<InputScanner> {
     
     
     @Override
-    protected TreeElement parse_input() throws ParseException {
+    protected Root parse_input() throws ParseException {
         /*
          * Ignore any ParseException when reading the first character to ignore
          * inputs that are not meant to be parsed.

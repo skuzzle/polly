@@ -13,8 +13,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Queue;
 import java.util.Set;
 
+import de.skuzzle.polly.parsing.tree.literals.Literal;
+import de.skuzzle.polly.parsing.util.LinkedRingBuffer;
 
 
 import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
@@ -22,18 +25,27 @@ import de.skuzzle.polly.parsing.util.CopyTool;
 
 public class Declarations implements Serializable {
     
+    public final static int CAPACITY = 10;
     private static final long serialVersionUID = 1L;
     
     private LinkedList<Map<String, Declaration>> levels;
     private Map<String, Declaration> rootLevel;
-
+    private transient Queue<Literal> answers;
+    
 
     public Declarations() {
         this.levels = new LinkedList<Map<String, Declaration>>();
         this.enter();
         this.rootLevel = this.levels.getFirst();
+        this.answers = new LinkedRingBuffer<Literal>(CAPACITY);
     }
-
+    
+    
+    
+    public Queue<Literal> getAnswers() {
+        return this.answers;
+    }
+    
     
     
     public synchronized Set<Declaration> getDeclarations() {
@@ -171,6 +183,14 @@ public class Declarations implements Serializable {
         Declarations result = new Declarations();
         result.levels = new LinkedList<Map<String, Declaration>>(this.levels);
         return result;
+    }
+    
+    
+    
+    private synchronized void readObject(ObjectInputStream s )
+        throws IOException, ClassNotFoundException {
+        s.defaultReadObject();
+        this.answers = new LinkedRingBuffer<Literal>(CAPACITY);
     }
     
     

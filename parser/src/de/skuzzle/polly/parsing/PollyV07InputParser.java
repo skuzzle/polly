@@ -2,7 +2,6 @@ package de.skuzzle.polly.parsing;
 
 
 import de.skuzzle.polly.parsing.tree.Root;
-import de.skuzzle.polly.parsing.tree.TreeElement;
 import de.skuzzle.polly.parsing.tree.literals.CommandLiteral;
 
 
@@ -14,7 +13,7 @@ public class PollyV07InputParser extends InputParser {
     
 
     @Override
-    protected TreeElement parse_input() throws ParseException {
+    protected Root parse_input() throws ParseException {
         Root root = null;
         
         if (!this.scanner.match(TokenType.POLLY)) {

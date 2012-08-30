@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.TimerTask;
 import java.util.Map.Entry;
 import java.util.Timer;
@@ -17,6 +18,7 @@ import de.skuzzle.polly.parsing.Token;
 import de.skuzzle.polly.parsing.TokenType;
 import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
 import de.skuzzle.polly.parsing.tree.literals.StringLiteral;
+import de.skuzzle.polly.parsing.tree.literals.Literal;
 import de.skuzzle.polly.parsing.tree.operators.BinaryOperatorOverload;
 import de.skuzzle.polly.parsing.tree.operators.TernaryOperatorOverload;
 import de.skuzzle.polly.parsing.tree.operators.UnaryOperatorOverload;
@@ -261,6 +263,13 @@ public class Namespace {
         if (declaration.isTemp()) {
             scheduleDeletion(declaration, ns);
         }
+    }
+    
+    
+    
+    public Queue<Literal> getAnswers() {
+        Declarations ns = this.getNamespaceFor(this.currentNS);
+        return ns.getAnswers();
     }
     
     

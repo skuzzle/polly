@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
 
@@ -316,7 +317,7 @@ public class CommandManagerImpl implements CommandManager {
             root.contextCheck(namespace);
             
             logger.trace("Collapsing all parameters");
-            root.collapse(new Stack<Literal>());
+            root.collapse(new Stack<Literal>(), namespace.getAnswers());
 
             watch.stop();
             logger.trace("Parsing time: " + watch.getDifference() + "ms");
@@ -379,6 +380,15 @@ public class CommandManagerImpl implements CommandManager {
                     true));
                 logger.trace("    " + e.getKey() + " := " + l.toString());
             }
+        }
+        
+        // add previous answers
+        int i = 1;
+        
+        Queue<Literal> answers = d.getAnswers();
+        for (Literal lit : answers) {
+            d.addNormal(
+                new VarDeclaration(new IdentifierLiteral("ans" + (i++)), lit, true));
         }
     }
     
