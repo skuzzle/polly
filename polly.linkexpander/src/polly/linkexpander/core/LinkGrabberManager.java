@@ -1,7 +1,5 @@
 package polly.linkexpander.core;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -54,13 +52,8 @@ public class LinkGrabberManager {
             if (m.find()) {
                 String r = grabber.processMatch(e.getMessage(), m);
                 if (r != null) {
-                    try {
-                        String decoded = URLDecoder.decode(r, "UTF-8");
-                        e.getSource().sendMessage(e.getChannel(), decoded + 
-                            " (" + grabber.getLink(e.getMessage(), m) + ")", this);
-                    } catch (UnsupportedEncodingException ignore) {
-                        ignore.printStackTrace();
-                    }
+                    e.getSource().sendMessage(e.getChannel(), r + 
+                        " (" + grabber.getLink(e.getMessage(), m) + ")", this);
                 }
             }
         }
