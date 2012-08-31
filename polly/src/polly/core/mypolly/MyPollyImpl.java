@@ -1,6 +1,7 @@
 package polly.core.mypolly;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -31,12 +32,16 @@ import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.PluginManager;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.UtilityManager;
+import de.skuzzle.polly.sdk.eventlistener.GenericEvent;
+import de.skuzzle.polly.sdk.eventlistener.GenericListener;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.http.HttpManager;
 import de.skuzzle.polly.sdk.paste.PasteServiceManager;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.time.SystemTimeProvider;
 import de.skuzzle.polly.sdk.time.TimeProvider;
+import de.skuzzle.polly.tools.events.Dispatchable;
+import de.skuzzle.polly.tools.events.EventProvider;
 
 
 
@@ -64,6 +69,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 	private MailManagerImpl mailManager;
 	private RoleManagerImpl roleManager;
 	private HttpManagerImpl httpManager;
+	private EventProvider eventProvider;
 	
 	
 	public MyPollyImpl(CommandManagerImpl cmdMngr, 
@@ -78,7 +84,8 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 			PasteServiceManagerImpl pasteManager,
 			MailManagerImpl mailManager,
 			RoleManagerImpl roleManager,
-			HttpManagerImpl httpManager) {
+			HttpManagerImpl httpManager,
+			EventProvider eventProvider) {
 	    
 		this.commandManager = cmdMngr;
 		this.ircManager = ircMngr;
@@ -265,5 +272,37 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
     @Override
     public RoleManager roles() {
         return this.roleManager;
+    }
+
+
+
+    @Override
+    public void addGenericListener(GenericListener listener) {
+        this.eventProvider.addListener(GenericListener.class, listener);
+    }
+
+
+
+    @Override
+    public void removeGenericListener(GenericListener listener) {
+        this.eventProvider.removeListener(GenericListener.class, listener);
+    }
+
+
+
+    @Override
+    public void fireGenericEvent(final GenericEvent e) {
+        List<GenericListener> listeners = this.eventProvider.getListeners(
+            GenericListener.class);
+        
+        Dispatchable<GenericListener, GenericEvent> d = 
+            new Dispatchable<GenericListener, GenericEvent>(listeners, e) {
+                @Override
+                public void dispatch(GenericListener listener,
+                        GenericEvent event) {
+                    listener.genericEvent(e);
+                }
+        };
+        this.eventProvider.dispatchEvent(d);
     }
 }

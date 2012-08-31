@@ -58,6 +58,7 @@ public class MyPollyProvider extends AbstractProvider {
     private MailManagerImpl mailManager;
     private RoleManagerImpl roleManager;
     private HttpManagerImpl httpManager;
+    private EventProvider eventProvider;
     
     
     
@@ -82,6 +83,7 @@ public class MyPollyProvider extends AbstractProvider {
         this.mailManager = this.requireNow(MailManagerImpl.class, true);
         this.roleManager = this.requireNow(RoleManagerImpl.class, true);
         this.httpManager = this.requireNow(HttpManagerImpl.class, true);
+        this.eventProvider = this.requireNow(EventProvider.class, true);
     }
     
     
@@ -101,7 +103,8 @@ public class MyPollyProvider extends AbstractProvider {
             this.pasteManager,
             this.mailManager,
             this.roleManager,
-            this.httpManager);
+            this.httpManager,
+            this.eventProvider);
         this.provideComponent(myPolly);
     }
     
@@ -120,6 +123,7 @@ public class MyPollyProvider extends AbstractProvider {
         this.shutdownManager = null;
         this.pasteManager = null;
         this.mailManager = null;
+        this.eventProvider = null;
         super.dispose();
     }
 }

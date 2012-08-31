@@ -2,6 +2,8 @@ package de.skuzzle.polly.sdk;
 
 import java.util.Date;
 
+import de.skuzzle.polly.sdk.eventlistener.GenericEvent;
+import de.skuzzle.polly.sdk.eventlistener.GenericListener;
 import de.skuzzle.polly.sdk.http.HttpManager;
 import de.skuzzle.polly.sdk.paste.PasteServiceManager;
 import de.skuzzle.polly.sdk.roles.RoleManager;
@@ -224,4 +226,35 @@ public interface MyPolly {
 	 * @since 0.9.1
 	 */
     public abstract HttpManager web();
+    
+    
+    
+    /**
+     * Adds a GenericListener which will be notified whenever a plugin fires a
+     * Generic event.
+     *  
+     * @param listener The listener to add.
+     * @since 0.9.1
+     */
+    public abstract void addGenericListener(GenericListener listener);
+    
+    
+    
+    /**
+     * Removes a GenericListener.
+     * 
+     * @param listener The listener to remove
+     * @since 0.9.1
+     */
+    public abstract void removeGenericListener(GenericListener listener);
+    
+    
+    
+    /**
+     * Fires a new GenericEvent which will notify all registered GenericListeners.
+     * 
+     * @param e The generic event to fire.
+     * @since 0.9.1
+     */
+    public abstract void fireGenericEvent(GenericEvent e);
 }
