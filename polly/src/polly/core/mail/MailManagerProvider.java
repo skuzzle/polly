@@ -3,7 +3,6 @@ package polly.core.mail;
 import de.skuzzle.polly.sdk.Configuration;
 import polly.configuration.ConfigurationProviderImpl;
 import polly.configuration.ConfigurationImpl;
-import polly.core.mail.senders.MailSender;
 import polly.moduleloader.AbstractProvider;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.SetupException;
@@ -35,8 +34,6 @@ public class MailManagerProvider extends AbstractProvider {
     }
 
 
-    private MailSender sender;
-    
     
     @Override
     public void setup() throws SetupException {
@@ -56,8 +53,10 @@ public class MailManagerProvider extends AbstractProvider {
             config.readString(RECIPIENTS), 
             config.readString(LOG_THRESHOLD), 
             config.readString(MAIL_PROVIDER));
+        
+        
         this.provideComponent(cfg);
-        MailManagerImpl mailManager = new MailManagerImpl(this.sender);
+        MailManagerImpl mailManager = new MailManagerImpl(cfg.getSender());
         
         this.provideComponent(mailManager);
     }
