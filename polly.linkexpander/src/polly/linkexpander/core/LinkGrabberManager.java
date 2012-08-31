@@ -50,7 +50,7 @@ public class LinkGrabberManager {
         for (LinkGrabber grabber : this.grabbers) {
             Matcher m = grabber.getLinkPattern().matcher(e.getMessage());
             if (m.find()) {
-                String r = grabber.processMatch(e.getMessage(), m);
+                String r = grabber.processMatch(e, m);
                 if (r != null) {
                     e.getSource().sendMessage(e.getChannel(), r + 
                         " (" + grabber.getLink(e.getMessage(), m) + ")", this);

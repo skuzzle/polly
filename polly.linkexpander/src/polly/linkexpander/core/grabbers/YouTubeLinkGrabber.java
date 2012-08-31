@@ -3,25 +3,11 @@ package polly.linkexpander.core.grabbers;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
-
 
 
 public class YouTubeLinkGrabber extends AbstractHttpRequestGrabber {
     
     
-    public static void main(String[] args) {
-        MessageEvent e = new MessageEvent(null, null, null, 
-            "http://www.youtube.com/watch?NR=1&v=vDyL-_-cVXI&feature=endscreen");
-        
-        YouTubeLinkGrabber ytlg = new YouTubeLinkGrabber();
-        
-        Matcher m = ytlg.getLinkPattern().matcher(e.getMessage());
-        if (m.matches()) {
-            System.out.println(ytlg.processMatch(e.getMessage(), m));
-        }
-    }
-
     private final static Pattern LINK_PATTERN = Pattern.compile(
             "(http://www\\.youtube\\.com/watch.*)");
     

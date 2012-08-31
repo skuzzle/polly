@@ -7,13 +7,15 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.regex.Matcher;
 
+import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
+
 
 
 public abstract class AbstractHttpRequestGrabber implements LinkGrabber {
 
     
-    public String processMatch(String grabbed, Matcher matcher) {
-        
+    public String processMatch(MessageEvent matched, Matcher matcher) {
+        String grabbed = matched.getMessage();
         URLConnection c = null;
         BufferedReader r = null;
         try {
