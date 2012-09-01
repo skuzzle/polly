@@ -45,6 +45,8 @@ public class FleetDBManager {
                 report.getX(), report.getY(), 
                 report.getAttackerVenadName(),
                 report.getDefenderVenadName(),
+                report.getAttackerFleetName(),
+                report.getDefenderFleetName(),
                 report.getDate());
             
             if (rp != null) {

@@ -37,7 +37,9 @@ import polly.rx.core.SumQuery;
             "rp.y = ?3 AND " +
             "rp.attackerVenadName = ?4 AND " +
             "rp.defenderVenadName = ?5 AND " +
-            "rp.date = ?6"
+            "rp.attackerFleetName = ?6 AND " +
+            "rp.defenderFleetName = ?7 AND " +
+            "rp.date = ?8"
     ),
     @NamedQuery(
         name = "WITH_NAME",
