@@ -329,6 +329,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
 	    }
 	    int port = e.getPort();
 	    logger.info("Connecting to " + e.getHostName() + ":" + port);
+	    this.bot.setAutoNickChange(true);
         this.bot.connect(e.getHostName(), e.getPort());
         this.bot.sendMessage("nickserv", "ghost " + e.getNickName() + " " + e.getIdentity());
         this.setAndIdentifyDefaultNickname();
