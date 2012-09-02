@@ -46,6 +46,9 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     @Id@GeneratedValue(strategy = GenerationType.TABLE)
     private int id;
     
+    
+    // XXX: this field is outdated and exists only for database compatabilty
+    @SuppressWarnings("unused")
     private int userLevel;
     
     @Column(unique = true, columnDefinition = "VARCHAR(255)")
@@ -157,9 +160,10 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     }
     
     
+    
     @Override
     public String toString() {
-        return this.name + "(Level " + this.userLevel + ")";
+        return this.name;
     }
 
     
