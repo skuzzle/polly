@@ -145,8 +145,6 @@ public class BattleReportFilterHttpAction extends HttpAction {
             } else {
                 e.throwTemplateException("Invalid filter options", "");
             }
-        } else {
-            e.throwTemplateException("Invalid Filter options", "");
         }
         
         
