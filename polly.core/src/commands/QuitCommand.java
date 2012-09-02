@@ -49,7 +49,7 @@ public class QuitCommand extends Command {
         Conversation c = null;
         try {
             c = this.createConversation(executer, channel);
-            c.writeLine("Yo' seroius?");
+            c.writeLine("Yo' serious?");
             String a = c.readLine().getMessage();
             
             for (String ans : answers) {
