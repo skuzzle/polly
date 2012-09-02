@@ -190,7 +190,7 @@ public class FleetDBManager {
     
     
     
-    public List<BattleReport> getReportByIdList(int...ids) {
+    public List<BattleReport> getReportByIdList(Integer...ids) {
         List<BattleReport> result = new ArrayList<BattleReport>(ids.length);
         try {
             this.persistence.readLock();
@@ -227,7 +227,7 @@ public class FleetDBManager {
     
     
     
-    public void deleteReportByIdList(final int...ids) throws DatabaseException {
+    public void deleteReportByIdList(final Integer...ids) throws DatabaseException {
         this.persistence.atomicWriteOperation(new WriteAction() {
             
             @Override

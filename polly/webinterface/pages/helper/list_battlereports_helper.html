@@ -75,6 +75,39 @@
     </tr>
 </table>
 
+<h3>Active Filters</h3>
+<table style="width: auto;">
+    <tr>
+        <th>Filter name</th>
+        <th>Filter value</th>
+        <th>Settings</th>
+    </tr>
+    <tr>
+        <td>Chaining method:</td>
+        <td>$FILTER_SETTINGS.getChainingMethod()</td>
+        <td><a href="filter_reports?action=or">OR</a> | <a href="filter_reports?action=and">AND</a></td>
+    </tr>
+    <tr>
+        <td>Switch alien Attacks</td>
+        <td>$FILTER_SETTINGS.isSwitchOnAlienAttack()</td>
+        <td><a href="filter_reports?action=toggleSwitching">Toggle</a></td>
+    </tr>
+    #foreach ($entry in $FILTER_SETTINGS.filterSet())
+    <tr>
+        <td>$entry.getKey()</td>
+        <td>$entry.getValue().toString($myPolly.formatting())</td>
+        <td><a href="filter_reports?action=removeFilter&filterKey=$entry.getKey()">Remove</a></td>
+    </tr>
+    #end
+    <tr>
+        <td></td>
+        <td></td>
+        <td><a href="filter_reports?action=clear">Clear all Filters</a></td>
+    </tr>
+</table>
+
+
+
 #if ($sortKey && $reports)
     $sorter.sort($reports, $sortKey, $dir)
 #end
@@ -83,7 +116,7 @@
 <h3>Reports ($!reports.size())</h3>
 <p style="font-size:xx-small; font-weight:bold">(Click Id for detailed info)</p>
 
-<form action="query_reports" method="POST">
+<form action="filter_reports" method="POST">
 <input type="hidden" name="action" value="idSelect"/>
 <input type="submit" value="Statistic for selected" name="select" class="button"/>
 <input type="submit" value="Delete selected" name="delete" class="button"/>
@@ -106,16 +139,16 @@
 	<tr>
         <td><input type="checkbox" value="$report.getId()" name="selectRP"/></td>
 		<td><a href="battlereport_info?id=$report.getId()">$report.getId()</a></td>
-		<td><a href="query_reports?action=byLocation&query=$report.getQuadrant()">$report.getQuadrant()</a> $report.getX(),$report.getY()</td>
-		<td><a href="query_reports?action=byVenad&query=$report.getAttackerVenadName()">$report.getAttackerVenadName()</a></td>
-		<td><a href="query_reports?action=byClan&query=$report.getAttackerClan()">$!report.getAttackerClan()</a></td>
+		<td><a href="filter_reports?action=addFilter&filterKey=LOCATION_FILTER&param=$report.getQuadrant()">$report.getQuadrant()</a> $report.getX(),$report.getY()</td>
+		<td><a href="filter_reports?action=addFilter&filterKey=ATTACKER_FILTER&param=$report.getAttackerVenadName()">$report.getAttackerVenadName()</a></td>
+		<td><a href="filter_reports?action=addFilter&filterKey=ATTACKER_CLAN_FILTER&param=$report.getAttackerClan()">$!report.getAttackerClan()</a></td>
 		<td>$myPolly.formatting().formatNumber($report.getAttackerKw()) / $myPolly.formatting().formatNumber($report.getAttackerXpMod())</td>
-		<td><a href="query_reports?action=byVenad&query=$report.getDefenderVenadName()">$report.getDefenderVenadName()</a></td>
-		<td><a href="query_reports?action=byClan&query=$report.getDefenderClan()">$!report.getDefenderClan()</a></td>
+		<td><a href="filter_reports?action=addFilter&filterKey=DEFENDER_FILTER&param=$report.getDefenderVenadName()">$report.getDefenderVenadName()</a></td>
+		<td><a href="filter_reports?action=addFilter&filterKey=DEFENDER_CLAN_FILTER&param==$report.getDefenderClan()">$!report.getDefenderClan()</a></td>
 		<td>$myPolly.formatting().formatNumber($report.getDefenderKw()) / $myPolly.formatting().formatNumber($report.getDefenderXpMod())</td>
-		<td>$report.getTactic()</td>
-		<td>$report.hasArtifact()</td>
-		<td>$myPolly.formatting().formatDate($report.getDate())</td>
+		<td><a href="filter_reports?action=addFilter&filterKey=TACTIC_FILTER&param=$report.getTactic()">$report.getTactic()</a></td>
+		<td><a href="filter_reports?action=addFilter&filterKey=HAS_ARTIFACT_FILTER">$report.hasArtifact()</a></td>
+		<td><a href="filter_reports?action=addFilter&filterKey=DATE_FILTER&param=$myPolly.formatting().formatDate($report.getDate())">$myPolly.formatting().formatDate($report.getDate())</a></td>
 	</tr>
 	#end
 </table>

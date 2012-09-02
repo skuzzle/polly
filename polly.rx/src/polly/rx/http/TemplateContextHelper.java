@@ -3,16 +3,29 @@ package polly.rx.http;
 import java.util.List;
 
 import polly.rx.core.SumQueries;
+import polly.rx.core.filter.BattleReportFilterRunner;
 import polly.rx.entities.BattleDrop;
 import polly.rx.entities.BattleReport;
+import polly.rx.entities.BattleTactic;
+import polly.rx.http.session.BattleReportFilterSettings;
+import de.skuzzle.polly.sdk.http.HttpSession;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 
 
 public class TemplateContextHelper {
+    
+    public final static String FILTER_SETTINGS = "FILTER_SETTINGS";
 
     public final static void prepareForReportsList(HttpTemplateContext c, 
-        List<BattleReport> reports) {
+        HttpSession httpSession, List<BattleReport> reports) {
         
+        BattleReportFilterSettings settings = 
+            (BattleReportFilterSettings) httpSession.get(FILTER_SETTINGS);
+        if (settings == null) {
+            settings = new BattleReportFilterSettings();
+        }
+        
+        c.put(FILTER_SETTINGS, settings);
         BattleDrop[] dropSum = new BattleDrop[14];
         BattleDrop[] dropMax = new BattleDrop[14];
         BattleDrop[] dropMin = new BattleDrop[14];
@@ -25,7 +38,14 @@ public class TemplateContextHelper {
         int pzDamageDefender = 0;
         int artifacts = 0;
         
+        BattleReportFilterRunner.filterInPlace(reports, settings.getFilter());
+        
         for (BattleReport report : reports) {
+            // do some filtering according to current sessions filter settings
+            if (settings.isSwitchOnAlienAttack() && report.getTactic() == BattleTactic.ALIEN) {
+                report = BattleReport.switchAttacker(report);
+            }
+            
             for (int i = 0; i < 14; ++i) {
                 BattleDrop drop = report.getDrop().get(i);
                 

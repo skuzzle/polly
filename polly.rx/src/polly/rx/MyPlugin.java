@@ -21,7 +21,7 @@ import polly.rx.entities.TrainEntity;
 import polly.rx.entities.TrainEntityV2;
 import polly.rx.http.BattleReportHttpAction;
 import polly.rx.http.BattleReportInfosHttpAction;
-import polly.rx.http.QueryReportsHttpAction;
+import polly.rx.http.BattleReportFilterHttpAction;
 import polly.rx.http.FleetScanInfoHttpAction;
 import polly.rx.http.FleetShipInfoHttpAction;
 import polly.rx.http.FleetScanHttpAction;
@@ -50,6 +50,9 @@ public class MyPlugin extends PollyPlugin {
     public final static String CLOSE_TRAIN_PERMISSION            = "polly.permission.CLOSE_TRAIN";
     
     public final static String VENAD    = "VENAD";
+    public final static String SWITCH_ON_ALIEN_ATTACK = "SWITCH_ON_ALIEN_ATTACK";
+    public final static String SWITCH_ON_ALIEN_ATTACK_DEFAULT = "false";
+    
     
     private FleetDBManager fleetDBManager;
     private TrainManagerV2 trainManager;
@@ -93,8 +96,8 @@ public class MyPlugin extends PollyPlugin {
             myPolly, this.fleetDBManager));
         myPolly.web().addHttpAction(new BattleReportHttpAction(
             myPolly, this.fleetDBManager));
-        myPolly.web().addHttpAction(new QueryReportsHttpAction(myPolly, 
-            this.fleetDBManager));
+        myPolly.web().addHttpAction(new BattleReportFilterHttpAction(
+            myPolly, this.fleetDBManager));
         myPolly.web().addMenuUrl("Revorix", "Kampfberichte");
         
         
@@ -148,6 +151,8 @@ public class MyPlugin extends PollyPlugin {
     public void onLoad() throws PluginException {
         try {
             this.getMyPolly().users().addAttribute(VENAD, "<unbekannt>");
+            this.getMyPolly().users().addAttribute(SWITCH_ON_ALIEN_ATTACK, 
+                SWITCH_ON_ALIEN_ATTACK_DEFAULT, Constraints.BOOLEAN);
             this.getMyPolly().users().addAttribute("AZ", "0", Constraints.INTEGER);
         } catch (Exception ignore) {
             ignore.printStackTrace();

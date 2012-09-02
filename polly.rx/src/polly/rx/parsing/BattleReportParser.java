@@ -406,8 +406,8 @@ public class BattleReportParser {
         }
         List<BattleReportShip> defenderShips = parseShips(b.toString());
         
-        return new BattleReport(submitter, quadrant, x, y, drops, artifact, date, tactic, 
-            attackerBonus, defenderBonus, attackerKw, attackerXpMod, defenderkw, 
+        return new BattleReport(submitter.getId(), quadrant, x, y, drops, artifact, date, 
+            tactic, attackerBonus, defenderBonus, attackerKw, attackerXpMod, defenderkw, 
             defenderXpMod, attackerFleetName, attackerVenad, defenderFleetName, 
             defenderVenad, attackerClan, defenderClan, attackerShips, defenderShips);
     }

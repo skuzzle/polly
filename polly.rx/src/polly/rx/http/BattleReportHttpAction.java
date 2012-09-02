@@ -63,7 +63,7 @@ public class BattleReportHttpAction extends HttpAction {
         } 
         
         List<BattleReport> allReports = this.fleetDBManager.getAllReports();
-        TemplateContextHelper.prepareForReportsList(c, allReports);
+        TemplateContextHelper.prepareForReportsList(c, e.getSession(), allReports);
         HttpTemplateSortHelper.makeListSortable(c, e, "sortKey", "dir", "getDate");
         
         return c;

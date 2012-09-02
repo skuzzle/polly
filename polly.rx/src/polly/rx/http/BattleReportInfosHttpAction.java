@@ -2,8 +2,8 @@ package polly.rx.http;
 
 import java.util.List;
 
+import polly.rx.MyPlugin;
 import polly.rx.core.FleetDBManager;
-import polly.rx.core.SumQueries;
 import polly.rx.entities.BattleReport;
 import polly.rx.entities.BattleReportShip;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -34,6 +34,11 @@ public class BattleReportInfosHttpAction extends HttpAction {
         
         int id = Integer.parseInt(e.getProperty("id"));
         BattleReport report = this.fleetDBManager.getReportById(id);       
+        
+        if (e.getSession().getUser().getAttribute(
+            MyPlugin.SWITCH_ON_ALIEN_ATTACK).equals("true")) {
+            
+        }
         
         c.put("report", report);
         this.prepareContext(report.getAttackerShips(), "Attacker", c);

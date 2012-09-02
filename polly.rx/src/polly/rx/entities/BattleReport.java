@@ -18,8 +18,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import de.skuzzle.polly.sdk.model.User;
-
 import polly.rx.core.SumQuery;
 
 
@@ -70,12 +68,25 @@ public class BattleReport {
     public static final String BY_USER_ID = "BY_USER_ID";
     
     
+    
+    public final static BattleReport switchAttacker(BattleReport report) {
+        return new BattleReport(
+            report.submitterId, report.quadrant, report.x, report.y, 
+            report.battleDrops, report.artifact, report.date, report.tactic, 
+            report.defenderBonus, report.attackerBonus, report.defenderKw, 
+            report.defenderXpMod, report.attackerKw, report.attackerXpMod, 
+            report.defenderFleetName, report.defenderVenadName, 
+            report.attackerFleetName, report.attackerVenadName, 
+            report.defenderClan, report.attackerClan, report.defenderShips, 
+            report.attackerShips);
+    }
+    
+    
+    
     @Id@GeneratedValue(strategy = GenerationType.TABLE)
     private int id;
     
     private int submitterId;
-    
-    private transient User submitter;
     
     private String quadrant;
     
@@ -127,15 +138,17 @@ public class BattleReport {
     private List<BattleReportShip> defenderShips;
     
     
+    
     public BattleReport() {
-        this(null, "", 0, 0, new LinkedList<BattleDrop>(), false, new Date(), BattleTactic.NORMAL, 
+        this(0, "", 0, 0, new LinkedList<BattleDrop>(), false, new Date(), 
+            BattleTactic.NORMAL, 
             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, "", "", "", "", "", "",
             new LinkedList<BattleReportShip>(), new LinkedList<BattleReportShip>());
     }
     
     
     
-    public BattleReport(User submitter, String quadrant, int x, int y, List<BattleDrop> battleDrop,
+    public BattleReport(int submitterId, String quadrant, int x, int y, List<BattleDrop> battleDrop,
         boolean artifact,
         Date date, BattleTactic tactic, double attackerBonus,
         double defenderBonus, double attackerKw, double attackerXpMod,
@@ -145,8 +158,7 @@ public class BattleReport {
         List<BattleReportShip> attackerShips,
         List<BattleReportShip> defenderShips) {
         super();
-        this.submitter = submitter;
-        this.submitterId = submitter != null ? submitter.getId() : 0;
+        this.submitterId = submitterId;
         this.quadrant = quadrant;
         this.x = x;
         this.y = y;

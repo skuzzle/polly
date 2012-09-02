@@ -52,6 +52,7 @@ public class BattleReportShip {
     
     private int crewDamage;
     
+
     
     public BattleReportShip() {
         this(0, "", "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
