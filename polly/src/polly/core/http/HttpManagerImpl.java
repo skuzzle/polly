@@ -59,6 +59,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     private Map<String, List<String>> menu;
     private File templateRoot;
     private int sessionTimeOut;
+    private int loginTimeOut;
     private RoleManager roleManager;
     private MyPolly myPolly;
     private String publicHost;
@@ -70,12 +71,15 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     
     
     public HttpManagerImpl(File templateRoot, String publicHost,
-            int port, int sessionTimeOut, String encoding, int cacheTreshold) {
+            int port, int sessionTimeOut, int loginTimeOut, String encoding, 
+            int cacheTreshold) {
+        
         this.templateRoot = templateRoot;
         this.publicHost = publicHost;
         this.port = port;
         this.encoding = encoding;
         this.sessionTimeOut = sessionTimeOut;
+        this.loginTimeOut = loginTimeOut;
         this.sessions = new HashMap<InetAddress, HttpSession>();
         this.eventProvider = new SynchronousEventProvider();
         this.actions = new HashMap<String, HttpAction>();
@@ -194,8 +198,14 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
                         
                 while (it.hasNext()) {
                     Entry<InetAddress, HttpSession> e = it.next();
-                    if (System.currentTimeMillis() - e.getValue().getLastAction() > 
-                            this.getSessionTimeOut()) {
+                    long liveTime = 
+                            System.currentTimeMillis() - e.getValue().getLastAction();
+                    boolean loginTimedOut = !e.getValue().isLoggedIn() && 
+                            liveTime > this.loginTimeOut;
+                    boolean timedOut = loginTimedOut || 
+                            (liveTime > this.getSessionTimeOut());
+                    
+                    if (timedOut) {
                         logger.warn("Killing " + e.getValue());
                         e.getValue().setUser(null);
                         try {

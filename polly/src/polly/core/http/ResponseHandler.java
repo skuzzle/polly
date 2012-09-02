@@ -99,7 +99,7 @@ public class ResponseHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange t) throws IOException {
         this.webServer.cleanUpSessions();
-        
+
         HttpSession session = this.webServer.getSession(
             t.getRemoteAddress().getAddress());
         long now = System.currentTimeMillis();

@@ -356,6 +356,14 @@ public interface Configuration {
      * @since 0.9.1
      */
     public final static String REPORT_UNKNOWN_COMMAND_ERROR = "reportUnknownCommandError";
+
+    
+    
+    /**
+     * Time after which a session will be marked as timed out if no user logged in on it.
+     * @since 0.9.1
+     */
+    public static final String HTTP_LOGIN_TIMEOUT = "loginTimeOut";
     
     
     
