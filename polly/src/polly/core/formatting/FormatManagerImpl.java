@@ -95,12 +95,12 @@ public class FormatManagerImpl implements FormatManager {
     @Override
     public String formatBytes(long bytes) {
         if (bytes > MEGA_BYTE) {
-            bytes /= MEGA_BYTE;
-            return bytes + " MB";
+            long mb = bytes / MEGA_BYTE;
+            return mb + "MB " + this.formatBytes(bytes % MEGA_BYTE);
         } else if (bytes > KILO_BYTE) {
-            bytes /= KILO_BYTE;
-            return bytes + " KB";
+            long kb = bytes / KILO_BYTE;
+            return kb + "KB " + this.formatBytes(bytes % KILO_BYTE);
         }
-        return bytes + " B";
+        return bytes + "B";
     }
 }
