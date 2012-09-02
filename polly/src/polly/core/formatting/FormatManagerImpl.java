@@ -20,6 +20,9 @@ import de.skuzzle.polly.sdk.FormatManager;
  */
 public class FormatManagerImpl implements FormatManager {
 
+    private final static long KILO_BYTE = 1L << 10L; 
+    private final static long MEGA_BYTE = 1L << 20L;
+    
     private DateFormat defaultDateFormat;
     private NumberFormat defaultNumberFormat;
     
@@ -85,5 +88,19 @@ public class FormatManagerImpl implements FormatManager {
     @Override
     public String formatTimeSpanMs(long ms) {
         return this.formatTimeSpan(ms / 1000);
+    }
+    
+    
+    
+    @Override
+    public String formatBytes(long bytes) {
+        if (bytes > MEGA_BYTE) {
+            bytes /= MEGA_BYTE;
+            return bytes + " MB";
+        } else if (bytes > KILO_BYTE) {
+            bytes /= KILO_BYTE;
+            return bytes + " KB";
+        }
+        return bytes + " B";
     }
 }

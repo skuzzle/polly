@@ -65,6 +65,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     private String encoding;
     private int cacheCounter;
     private int cacheThreshold;
+    private TrafficCounter counter;
     
     
     
@@ -80,6 +81,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
         this.actions = new HashMap<String, HttpAction>();
         this.menu = new TreeMap<String, List<String>>();
         this.cacheThreshold = cacheTreshold;
+        this.counter = new TrafficCounter();
     }
     
     
@@ -112,6 +114,12 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     
     
     
+    public TrafficCounter getTrafficCounter() {
+        return this.counter;
+    }
+    
+    
+    
     @Override
     public void startWebServer() throws IOException {
         if (this.isRunning()) {
@@ -119,7 +127,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
         }
         logger.info("Starting webserver at port " + this.port);
         this.server = HttpServer.create(new InetSocketAddress(this.port), 5);
-        this.server.createContext("/", new ResponseHandler(this));
+        this.server.createContext("/", new ResponseHandler(this, this.counter));
         this.server.setExecutor(
             Executors.newCachedThreadPool(
                 new ThreadFactoryBuilder("HTTP_SERVER_%n%")));
@@ -286,6 +294,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
         c.put("now", System.currentTimeMillis());
         c.put("timeout", this.getSessionTimeOut());
         c.put("sessions", this.sessions);
+        c.put("traffic", this.counter);
         c.put("Math", Math.class);
     }
     

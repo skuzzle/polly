@@ -61,5 +61,16 @@ public interface FormatManager {
      * @since 0.9.1
      */
     public abstract String formatTimeSpanMs(long ms);
+
+
+
+    /**
+     * Formats the given long value into a byte representation 
+     * (bytes, kilo bytes, mega bytes).
+     * 
+     * @param bytes Amount of bytes.
+     * @return Formatted byte string.
+     */
+    public abstract String formatBytes(long bytes);
     
 }

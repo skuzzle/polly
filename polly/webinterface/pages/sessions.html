@@ -4,9 +4,11 @@
         <th>ID</th>
         <th>User</th>
         <th>IP</th>
+        <th>Active since</th>
         <th>Last URI</th>
         <th>Last Action</th>
         <th>Auto logout in</th>
+        <th>Traffic (up)</th>
         <th>Action</th>
     </tr>
     #foreach ($sess in $sessions)
@@ -14,10 +16,12 @@
         <td>$sess.getId()</td>
         <td>$!sess.getUser().getName()</td>
         <td>$sess.getRemoteIp()</td>
+        <td>$myPolly.formatting().formatDate($sess.getStarted())</td>
 		<td>$sess.getLastUri()</td>
         <td>$myPolly.formatting().formatDate($sess.getLastAction())</td>
         #set ( $diff = ( $timeout - ($now - $sess.getLastAction())))
         <td>$myPolly.formatting().formatTimeSpanMs($diff)</td>
+        <td>$myPolly.formatting().formatBytes($sess.getTrafficUp())</td>
         <td>
             <form action="Sessions" method="POST">
             <input type="hidden" name="action" value="killSession"/>
@@ -27,3 +31,6 @@
         </td>
     #end
 </table>
+
+<h3>Total traffic (this polly session)</h3>
+Upstream: $myPolly.formatting().formatBytes($traffic.getUpload())

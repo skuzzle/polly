@@ -85,11 +85,13 @@ public class ResponseHandler implements HttpHandler {
     
     
     private HttpManagerImpl webServer;
+    private TrafficCounter counter;
     
     
     
-    public ResponseHandler(HttpManagerImpl webServer) {
+    public ResponseHandler(HttpManagerImpl webServer, TrafficCounter counter) {
         this.webServer = webServer;
+        this.counter = counter;
     }
     
     
@@ -109,7 +111,7 @@ public class ResponseHandler implements HttpHandler {
             HttpTemplateContext c = this.webServer.errorTemplate("Session expired", 
                 "Your session has automatically been killed due to inactivity. " +
                 "Please login and try again.", session);
-            this.respond(c, t);
+            this.respond(c, t, session);
             return;
         }
         
@@ -162,7 +164,7 @@ public class ResponseHandler implements HttpHandler {
         }
         
         if (c != null) {
-            this.respond(c, t);
+            this.respond(c, t, session);
         } else {
             // there is no action for the given uri, so treat it as a file request
             File dest = this.webServer.getPage(uri);
@@ -170,16 +172,16 @@ public class ResponseHandler implements HttpHandler {
                 c = this.webServer.errorTemplate("404 - Not Found", 
                     "Your request could not be processed because the requested " +
                     "page/action was not found.", session);
-                this.respond(c, t);
+                this.respond(c, t, session);
             } else {
-                this.respond(dest, t);
+                this.respond(dest, t, session);
             }
         }
     }
     
     
     
-    private void respond(File dest, HttpExchange t) throws IOException {
+    private void respond(File dest, HttpExchange t, HttpSession session) throws IOException {
         t.sendResponseHeaders(200, 0);
         
         FileInputStream inp = null;
@@ -192,6 +194,8 @@ public class ResponseHandler implements HttpHandler {
             
             while ((len = inp.read(buffer)) > 0) {
                 out.write(buffer, 0, len);
+                this.counter.updateUpload(len);
+                session.updateUpload(len);
             }
         } finally {
             t.close();
@@ -206,12 +210,14 @@ public class ResponseHandler implements HttpHandler {
     
     
     
-    private void respond(HttpTemplateContext c, HttpExchange t) throws IOException {
+    private void respond(HttpTemplateContext c, HttpExchange t, HttpSession session) 
+                throws IOException {
+        
         t.sendResponseHeaders(200, 0);
         OutputStream out = null;
         try {
             out = t.getResponseBody();
-            this.generateTemplate(c, out);
+            this.generateTemplate(c, out, session);
         } catch (IOException e) {
             throw e;
         } catch (Exception e) {
@@ -224,8 +230,8 @@ public class ResponseHandler implements HttpHandler {
     
     
     
-    private void generateTemplate(HttpTemplateContext c, OutputStream out) 
-            throws IOException {
+    private void generateTemplate(HttpTemplateContext c, OutputStream out, 
+            HttpSession session) throws IOException {
         Velocity.init();
         VelocityContext context = new VelocityContext(c);
         
@@ -235,7 +241,12 @@ public class ResponseHandler implements HttpHandler {
         //OutputStreamWriter writer = new OutputStreamWriter(out);
         StringWriter writer = new StringWriter();
         template.merge(context, writer);
-        out.write(writer.toString().getBytes(Charset.forName(
-                this.webServer.getEncoding())));
+        byte[] data = writer.toString().getBytes(Charset.forName(
+            this.webServer.getEncoding()));
+        
+        // update traffic data
+        this.counter.updateUpload(data.length);
+        session.updateUpload(data.length);
+        out.write(data);
     }
 }
