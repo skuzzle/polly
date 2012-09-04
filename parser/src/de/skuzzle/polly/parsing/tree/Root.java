@@ -8,11 +8,8 @@ import java.util.Stack;
 
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.ParseException;
-import de.skuzzle.polly.parsing.declarations.Declaration;
 import de.skuzzle.polly.parsing.declarations.Namespace;
-import de.skuzzle.polly.parsing.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.tree.literals.CommandLiteral;
-import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
 import de.skuzzle.polly.parsing.tree.literals.Literal;
 
 
@@ -61,8 +58,6 @@ public class Root {
         
         for (int i = 0; i < this.parameters.size(); ++i) {
             Expression e = this.parameters.get(i).contextCheck(context);
-            Declaration ans = new VarDeclaration(new IdentifierLiteral("ans"), e);
-            context.addRoot(ans);
             this.parameters.set(i, e);
         }
         
