@@ -6,6 +6,7 @@ import java.util.TreeSet;
 import polly.rx.commands.AddTrainCommand;
 import polly.rx.commands.CloseTrainCommand;
 import polly.rx.commands.DeliverTrainCommand;
+import polly.rx.commands.IPCommand;
 import polly.rx.commands.MyTrainsCommand;
 import polly.rx.commands.MyVenadCommand;
 import polly.rx.commands.VenadCommand;
@@ -48,7 +49,7 @@ public class MyPlugin extends PollyPlugin {
     public final static String MYTRAINS_PERMISSION               = "polly.permission.MY_TRAINS";
     public final static String MY_VENAD_PERMISSION               = "polly.permission.MY_VENAD";
     public final static String CLOSE_TRAIN_PERMISSION            = "polly.permission.CLOSE_TRAIN";
-    
+    public final static String IP_PERMISSION                     = "polly.permission.IP";
     public final static String VENAD    = "VENAD";
     
     
@@ -71,6 +72,7 @@ public class MyPlugin extends PollyPlugin {
         this.addCommand(new DeliverTrainCommand(myPolly, this.trainManager));
         this.addCommand(new VenadCommand(myPolly));
         this.addCommand(new MyVenadCommand(myPolly));
+        this.addCommand(new IPCommand(myPolly));
         
         
         myPolly.web().addMenuUrl("Revorix", "MyTrains");
@@ -140,6 +142,7 @@ public class MyPlugin extends PollyPlugin {
         roleManager.assignPermission(FLEET_MANAGER_ROLE, FleetDBManager.VIEW_BATTLE_REPORT_PERMISSION);
         roleManager.assignPermission(FLEET_MANAGER_ROLE, FleetDBManager.VIEW_FLEET_SCAN_PERMISSION);
         
+        roleManager.assignPermission(RoleManager.DEFAULT_ROLE, IP_PERMISSION);
         super.assignPermissions(roleManager);
     }
 
