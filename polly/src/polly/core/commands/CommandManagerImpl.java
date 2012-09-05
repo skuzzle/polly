@@ -58,6 +58,8 @@ import de.skuzzle.polly.sdk.time.DateUtils;
 
 public class CommandManagerImpl implements CommandManager {
     
+    private final static int MIN_COMMAND_NAME_LENGTH = 2;
+    
     private class HistoryEntryImpl implements CommandHistoryEntry {
         private Command command;
         private Signature Signature;
@@ -134,7 +136,7 @@ public class CommandManagerImpl implements CommandManager {
 	@Override
 	public synchronized void registerCommand(String as, Command cmd) 
 	        throws DuplicatedSignatureException {
-        if (as.length() < 3) {
+        if (as.length() < MIN_COMMAND_NAME_LENGTH) {
             throw new IllegalArgumentException(
                     "Too short commandname: " + as);
         }

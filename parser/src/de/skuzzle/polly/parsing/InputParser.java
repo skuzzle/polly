@@ -186,10 +186,6 @@ public class InputParser extends AbstractParser<InputScanner> {
             }
             root = new Root(new CommandLiteral(la));
             
-            // Commandnames must be at least 3 characters
-            if (root.getName().getCommandName().length() < 3) {
-            	return null;
-            }
         } catch (Exception e) {
             return null;
         }
