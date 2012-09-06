@@ -564,10 +564,9 @@ public class Types {
 	    /**
 	     * Creates a new Timespan-Type.
 	     * @param span The timespan in seconds.
-	     * @param target The target date from now.
 	     */
-	    public TimespanType(long span, Date target) {
-	        super(target);
+	    public TimespanType(long span) {
+	        super(new Date());
 	        this.span = span;
 	    }
 	    
@@ -580,6 +579,13 @@ public class Types {
 	     */
 	    public long getSpan() {
 	        return this.span;
+	    }
+	    
+	    
+	    
+	    @Override
+	    public Date getValue() {
+	        return new Date(System.currentTimeMillis() + this.span * 1000);
 	    }
 	    
 	    

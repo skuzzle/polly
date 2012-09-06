@@ -172,7 +172,7 @@ public class TypeMapper {
 			
         } else if (literal instanceof TimespanLiteral) {
             TimespanLiteral ts = (TimespanLiteral) literal;
-            return new Types.TimespanType(ts.getValue(), ts.getTargetFromNow());
+            return new Types.TimespanType(ts.getValue());
             
 		} else if (literal instanceof DateLiteral) {
 			DateLiteral dt = (DateLiteral) literal;
