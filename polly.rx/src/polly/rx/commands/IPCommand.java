@@ -24,7 +24,6 @@ public class IPCommand extends Command {
     private final static String REQUEST_URL = 
         "http://rx.eggsberde.de/polly/ip.php?venad=";
     
-    private final static int VENAD = 0;
     private final static int CLAN = 1;
     private final static int QUAD = 2;
     private final static int X = 3;
@@ -58,7 +57,6 @@ public class IPCommand extends Command {
                 URLConnection c = url.openConnection();
                 r = new BufferedReader(new InputStreamReader(c.getInputStream(), "UTF-8"));
 
-                r.readLine();
                 String line = r.readLine();
                 if (line == null) {
                     throw new CommandException("Fehler beim Lesen der Serverantwort");
