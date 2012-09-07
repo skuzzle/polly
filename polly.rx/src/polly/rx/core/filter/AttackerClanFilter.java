@@ -26,4 +26,11 @@ public class AttackerClanFilter implements BattleReportFilter {
     public String toString(FormatManager formatManager) {
         return "Attacker Clan is: " + this.attackerClan;
     }
+    
+    
+    
+    @Override
+    public String getHint() {
+        return "Matches reports with the same attacker clan as given.";
+    }
 }

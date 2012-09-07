@@ -50,6 +50,14 @@
 <h3>Statistics for shown reports</h3>
 <table style="width:auto">
     <tr>
+        <th>Average attacker KW</th>
+        <td style="text-align:right;">$myPolly.formatting().formatNumber($kwAttacker)</td>
+    </tr>
+    <tr>
+        <th>Average defender KW</th>
+        <td style="text-align:right;">$myPolly.formatting().formatNumber($kwDefender)</td>
+    </tr>
+    <tr>
         <th>Total attacker Captain XP</th>
         <td style="text-align:right;">$!capiXpSumAttacker</td>
     </tr>
@@ -81,28 +89,33 @@
         <th>Filter name</th>
         <th>Filter value</th>
         <th>Settings</th>
+        <th>Hint</th>
     </tr>
     <tr>
         <td>Chaining method:</td>
         <td>$FILTER_SETTINGS.getChainingMethod()</td>
         <td><a href="filter_reports?action=or">OR</a> | <a href="filter_reports?action=and">AND</a></td>
+        <td>Whether each of the filter below must match (and) or at least one filter must match (or)</td>
     </tr>
     <tr>
         <td>Switch alien Attacks</td>
         <td>$FILTER_SETTINGS.isSwitchOnAlienAttack()</td>
         <td><a href="filter_reports?action=toggleSwitching">Toggle</a></td>
+        <td>Switching this to true causes switching of the defender and attacker values in alien attacks for the purpose of the statistical values above.</td>
     </tr>
     #foreach ($entry in $FILTER_SETTINGS.filterSet())
     <tr>
         <td>$entry.getKey()</td>
         <td>$entry.getValue().toString($myPolly.formatting())</td>
         <td><a href="filter_reports?action=removeFilter&filterKey=$entry.getKey()">Remove</a></td>
+        <td>$entry.getValue().getHint()</td>
     </tr>
     #end
     <tr>
         <td></td>
         <td></td>
         <td><a href="filter_reports?action=clear">Clear all Filters</a></td>
+        <td></td>
     </tr>
 </table>
 

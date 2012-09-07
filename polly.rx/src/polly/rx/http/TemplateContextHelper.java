@@ -30,6 +30,8 @@ public class TemplateContextHelper {
         BattleDrop[] dropMax = new BattleDrop[14];
         BattleDrop[] dropMin = new BattleDrop[14];
         
+        double kwAttacker = 0;
+        double kwDefender = 0;
         int capiXpSumAttacker = 0;
         int crewXpSumAttacker = 0;
         int capiXpSumDefender = 0;
@@ -65,6 +67,9 @@ public class TemplateContextHelper {
                         drop.getAmount()));
                 }
             }
+            
+            kwAttacker += report.getAttackerKw() / report.getAttackerBonus();
+            kwDefender += report.getDefenderKw() / report.getDefenderBonus();
             capiXpSumAttacker += report.querySumAttacker(SumQueries.CAPI_XP);
             crewXpSumAttacker += report.querySumAttacker(SumQueries.CREW_XP);
             capiXpSumDefender+= report.querySumDefender(SumQueries.CAPI_XP);
@@ -74,12 +79,18 @@ public class TemplateContextHelper {
             artifacts += report.hasArtifact() ? 1 : 0;
         }
         
+        kwAttacker /= reports.size();
+        kwDefender /= reports.size();
+        
         c.put("capiXpSumAttacker", capiXpSumAttacker);
         c.put("crewXpSumAttacker", crewXpSumAttacker);
         c.put("capiXpSumDefender", capiXpSumDefender);
         c.put("crewXpSumDefender", crewXpSumDefender);
         c.put("pzDamageAttacker", pzDamageAttacker);
         c.put("pzDamageDefender", pzDamageDefender);
+        c.put("kwAttacker", kwAttacker);
+        c.put("kwDefender", kwDefender);
+        
         c.put("artifacts", artifacts);
         double chance = reports.isEmpty() 
             ? 0.0 : (double) artifacts / (double) reports.size();

@@ -18,4 +18,10 @@ public class HasArtifactFilter implements BattleReportFilter {
         return "Dropped Artifact";
     }
 
+    
+    
+    @Override
+    public String getHint() {
+        return "Matches reports that dropped an artifcat.";
+    }
 }

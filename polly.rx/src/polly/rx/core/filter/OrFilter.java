@@ -39,4 +39,11 @@ public class OrFilter  extends ChainedFilter {
         }
         return false;
     }
+    
+    
+    
+    @Override
+    public String getHint() {
+        return "";
+    }
 }

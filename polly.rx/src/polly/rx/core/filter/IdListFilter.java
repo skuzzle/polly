@@ -30,4 +30,11 @@ public class IdListFilter implements BattleReportFilter {
     public String toString(FormatManager formatManager) {
         return "ID Selection";
     }
+    
+    
+    
+    @Override
+    public String getHint() {
+        return "Matches reports with the selected ids.";
+    }
 }

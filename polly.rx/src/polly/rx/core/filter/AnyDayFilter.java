@@ -29,4 +29,9 @@ public class AnyDayFilter implements BattleReportFilter {
     public boolean accept(BattleReport report) {
         return DateUtils.isSameDay(this.base, report.getDate());
     }
+    
+    
+    public String getHint() {
+        return "Matches only reports from the same day as the given date.";
+    };
 }

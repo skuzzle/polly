@@ -27,4 +27,10 @@ public class AttackerFilter implements BattleReportFilter {
         return "Attacker is: " + this.attacker;
     }
 
+    
+    
+    @Override
+    public String getHint() {
+        return "Matches reports with the same attacker as given.";
+    }
 }

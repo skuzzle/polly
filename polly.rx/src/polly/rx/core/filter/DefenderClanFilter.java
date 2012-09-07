@@ -26,4 +26,10 @@ public class DefenderClanFilter implements BattleReportFilter {
     public String toString(FormatManager formatManager) {
         return "Defender Clan is: " + this.defenderClan;
     }
+    
+    
+    
+    public String getHint() {
+        return "Matches reports with the same defender clan as given.";
+    };
 }

@@ -37,5 +37,10 @@ public class AndFilter extends ChainedFilter {
     }
     
     
-
+    
+    
+    @Override
+    public String getHint() {
+        return "";
+    }
 }

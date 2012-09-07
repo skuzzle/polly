@@ -28,4 +28,10 @@ public class TacticFilter implements BattleReportFilter {
         return "Tactic is: " + this.tactic;
     }
 
+    
+    
+    @Override
+    public String getHint() {
+        return "Matches only reports with the given tactic.";
+    }
 }

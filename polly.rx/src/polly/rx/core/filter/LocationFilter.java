@@ -27,4 +27,9 @@ public class LocationFilter implements BattleReportFilter {
         return "Location is: " + this.location;
     }
 
+    
+    
+    public String getHint() {
+        return "Matches only reports from the given location (quadrant only).";
+    };
 }

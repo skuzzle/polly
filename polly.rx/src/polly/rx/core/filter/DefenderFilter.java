@@ -26,4 +26,11 @@ public class DefenderFilter implements BattleReportFilter {
     public String toString(FormatManager formatManager) {
         return "Defender is: " + this.defender;
     }
+    
+    
+    
+    @Override
+    public String getHint() {
+        return "Matches reports with the same defender as given.";
+    }
 }

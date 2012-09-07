@@ -8,4 +8,6 @@ public interface BattleReportFilter {
     public boolean accept(BattleReport report);
     
     public abstract String toString(FormatManager formatManager);
+    
+    public String getHint();
 }
