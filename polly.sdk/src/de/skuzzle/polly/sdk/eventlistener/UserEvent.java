@@ -33,7 +33,7 @@ public class UserEvent  {
      * 
      * @param source The source of this event.
      * @param user The user object.
-     * @param autologgoff Whether this event was an autologoff.
+     * @param autologoff Whether this event was an autologoff.
      */
     public UserEvent(UserManager source, User user, boolean autologoff) {
         this.source = source;

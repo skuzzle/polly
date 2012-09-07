@@ -11,6 +11,7 @@ import java.util.NoSuchElementException;
  * the beginning to the end.
  * 
  * @author Simon
+ * @param <T> Type of array elements.
  */
 public class ArrayIterator<T> implements Iterable<T>, Iterator<T> {
 

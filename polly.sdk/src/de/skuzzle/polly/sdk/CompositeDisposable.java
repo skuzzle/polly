@@ -42,6 +42,8 @@ public class CompositeDisposable extends LinkedList<Disposable> implements Dispo
      * Creates a new CompositeDisposable containing the given elements. The elements
      * will be disposed in the order they appear in this array if {@code reverse} is
      * <code>true</code>. Otherwise, they will be disposed in reverse order.
+     * 
+     * @param reverse Reverses the order in which the given classes will be disposed.
      * @param disposables The disposable elements.
      */
     public CompositeDisposable(boolean reverse, Disposable...disposables) {

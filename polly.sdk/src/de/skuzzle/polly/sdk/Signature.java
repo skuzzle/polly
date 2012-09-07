@@ -28,10 +28,11 @@ import de.skuzzle.polly.sdk.Types.UserType;
  * execute.</p>
  * 
  * <p>The resolved signature gets passed to the 
- * {@link Command#executeOnChannel(User, String, Signature)} or
- * {@link Command#executeOnQuery(User, Signature)} method. The {@link Command} can 
- * distinguish the actual passed signatures by their id. The formal signatures
- * are numbered consecutively in order of their creation beginning by 0.</p>
+ * {@link Command#executeOnChannel(de.skuzzle.polly.sdk.model.User, String, Signature)} or
+ * {@link Command#executeOnQuery(de.skuzzle.polly.sdk.model.User, Signature)} method. 
+ * The {@link Command} can distinguish the actual passed signatures by their id. The 
+ * formal signatures are numbered consecutively in order of their creation beginning at 
+ * 0.</p>
  *  
  * @author Simon
  * @since zero day
@@ -87,8 +88,6 @@ public class Signature {
 	 * 		this id.
 	 * @param parameters The parameters of this signature. If this is a formal signature,
 	 * 		the values of the parameter types are ignored. This list can be empty.
-	 * @param permissionName The name of the permission that is required in order to 
-	 *      execute this signature.
 	 */
 	public Signature(String name, int id, List<Types> parameters) {
 		this.name = name;

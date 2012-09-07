@@ -34,6 +34,8 @@ public abstract class AbstractDisposable implements Disposable {
      * not required to take care of exceptions being thrown by this method. This is
      * done by the final implementation of {@link #dispose()}. Anyway, you can throw
      * an exception, which then will be delegated by <code>dispose()</code>.
+     * 
+     * @throws DisposingException If disposing fails.
      */
     protected abstract void actualDispose() throws DisposingException;
     

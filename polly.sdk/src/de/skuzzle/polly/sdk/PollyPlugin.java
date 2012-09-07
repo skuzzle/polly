@@ -48,9 +48,7 @@ public abstract class PollyPlugin extends AbstractDisposable
      * @param myPolly The MyPolly instance which provides access to all important polly
      *      features.
 	 * @throws IncompatiblePluginException Your plugin may throw this exception if 
-	 * 		it is not compatible with the current polly version. You can retrieve the
-	 * 		current version via {@link MyPolly#getPollyVersion()} and check it with 
-	 * 		{@link #requireSpecificPollyVersion(String)}
+	 * 		it is not compatible with the current polly version.
 	 */
 	public PollyPlugin(MyPolly myPolly) throws IncompatiblePluginException {
 	    this.commands = new LinkedList<Command>();
@@ -113,6 +111,8 @@ public abstract class PollyPlugin extends AbstractDisposable
 	 * roles, or you may create your own role and assign the permissions to it.
 	 * 
 	 * @param roleManager Pollys role manager.
+	 * @throws RoleException See {@link RoleManager} for pollicy of thrown RoleExceptions
+	 * @throws DatabaseException When persisting of new assignments fails.
 	 */
 	public void assignPermissions(RoleManager roleManager) 
 	        throws RoleException, DatabaseException {}
@@ -126,31 +126,6 @@ public abstract class PollyPlugin extends AbstractDisposable
 	 * @throws PluginException If this plugin fails to initialize.
 	 */
 	public void onLoad() throws PluginException {}
-	
-	
-	
-	/**
-	 * <p>This method is called when your plugin has been updated and before it has been
-	 * loaded. Please note that not all polly features are available at this point. So 
-	 * you may get an exception when invoking a function from {@link MyPolly}.</p>
-	 * 
-	 * <p>You may use it to delete unused files or alter table columns.</p>
-	 * @throws PluginException When setup fails for any reason.
-	 * @since 0.6.1
-	 */
-	public void onUpdate(MyPolly myPolly) throws PluginException {}
-	
-	
-	
-	/**
-	 * This method is called after you plugin has been installed. Please note that not 
-	 * all polly features are available at this point. So you may get an exception when
-	 * invoking a function from {@link MyPolly}.	 * 
-	 * 
-	 * @param myPolly The {@link MyPolly} instance.
-     * @throws PluginException When setup fails for any reason.
-	 */
-	public void onInstall(MyPolly myPolly) throws PluginException {}
 	
 	
 	
@@ -193,55 +168,7 @@ public abstract class PollyPlugin extends AbstractDisposable
 	 * @throws Exception Propagate any exception that occurs during uninstall process.
 	 */
 	public void uninstall() throws Exception {}
-	
-	
-	
-	/**
-	 * <p>You can call this method if your plugin requires a very specific version of 
-	 * polly to work with.</p>
-	 * 
-	 * <p>You may specify wildcard characters to check for a range of versions. For 
-	 * example <code>2.x</code> will match every version that starts with a "2" followed
-	 * by a dot and one other character.
-	 * Further, you can check for multiple versions by separating them with ";" for 
-	 * example <code>1.x;2.0x</code>
-	 * If you need more complex version check for your plugin you may validate the 
-	 * String returned by {@link MyPolly#getPollyVersion()} yourself.</p>
-	 * 
-	 * <p>This version check method ignores the buildnumber and therefore compares only
-	 * the first part of the version String. Polly version Strings always have the 
-	 * following format:</p>
-	 * <pre>
-	 * [version-name] <version-number>--#<build-number>
-	 * </pre>
-	 * <p>Where the <code>version-name</code> part can be left out, the other parts are 
-	 * required. This method compares your input with the complete part before 
-	 * <code>--#build<build-number></code>.
-	 * 
-	 * @param required The required polly version.
-	 * @throws IncompatiblePluginException If the current version is not compatible with
-	 * 		your plugin.
-	 */
-	public void requireSpecificPollyVersion(String required) 
-			throws IncompatiblePluginException {
-		String versions[] = required.split(";");
-		// separate version from buildnumber 
-		String[] parts = this.myPolly.getPollyVersion().split("--build#");
-		if (parts.length != 2) {
-			throw new IncompatiblePluginException("Invalid version number format");
-		}
-		String current = parts[0];
-		
-		for (String version : versions) {
-			version = version.replace(".", "\\Q.\\E");
-			version = version.replaceAll("x", ".?");
-			if (!current.matches(version)) {
-				throw new IncompatiblePluginException(
-						"This plugin is not compatible with polly Version '" + current + 
-						"'. Required polly Version is '" + required + "'");
-			}
-		}
-	}
+
 	
 	
 	

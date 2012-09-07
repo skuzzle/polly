@@ -228,7 +228,7 @@ public class DateUtils {
     
     
     /**
-     * Returns a new date starting {@link Code days} from the base date in the future 
+     * Returns a new date starting {@code days} from the base date in the future 
      * at 00:00.
      * 
      * @param base The date to add the days to.
@@ -249,7 +249,7 @@ public class DateUtils {
     
     
     /**
-     * Returns a new date starting {@link Code days} from the current date in the future 
+     * Returns a new date starting {@code days} from the current date in the future 
      * at 00:00.
      * 
      * @param days The amount of days to add.

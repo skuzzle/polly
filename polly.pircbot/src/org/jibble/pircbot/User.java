@@ -91,17 +91,6 @@ public class User implements Serializable {
     
     /**
      * Returns true if the nick represented by this User object is the same
-     * as the argument. A case insensitive comparison is made.
-     * 
-     * @return true if the nicks are identical (case insensitive).
-     */
-    public boolean equals(String nick) {
-        return nick.toLowerCase().equals(_lowerNick);
-    }
-    
-    
-    /**
-     * Returns true if the nick represented by this User object is the same
      * as the nick of the User object given as an argument.
      * A case insensitive comparison is made.
      * 

@@ -87,13 +87,13 @@ public class UnaryExpression extends Expression {
     
     
     /**
-     * Executes this expression by executing the {@link #operand} which stores one
+     * Executes this expression by executing the operand which stores one
      * item on top of the stack and then executing the operator overload which replaces
      * the topmost item with a result of the operator being applied to it.
      * 
      * @param stack The stack used for execution.
      * @throws ExecutionException if a runtime error such as division by zero occurs. This
-     *      can not be covered by {@link #contextCheck(Context)}.
+     *      can not be covered by {@link #contextCheck(Namespace)}.
      */
     @Override
     public void collapse(Stack<Literal> stack) throws ExecutionException {

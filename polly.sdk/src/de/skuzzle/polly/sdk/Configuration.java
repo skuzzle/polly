@@ -11,10 +11,6 @@ import java.util.List;
  * read-only access to all properties and can retrieve them by passing any of the
  * static constants to the read methods.</p>
  * 
- * <p>Note that the {@link #setProperty(String, Object)} and {@link #store()} methods
- * will always throw an {@link UnsupportedOperationException} as they are no longer
- * supported.</p>
- * 
  * @author Simon
  * @since zero day
  * @version RC 1.0
@@ -370,9 +366,6 @@ public interface Configuration {
 	/**
 	 * <p>Stores a property with given name and value. If a property with the same name
 	 * existed before, it will be overridden. If it not existed, it will be created.</p>
-	 * 
-	 * <p>Note that you need to call {@link #store()} in order to persist these 
-	 * changes.</p>
 	 * 
 	 * @param name The property name.
 	 * @param value The properties value. This will be stored as a String, calling its

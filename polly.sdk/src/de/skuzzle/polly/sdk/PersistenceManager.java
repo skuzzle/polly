@@ -348,7 +348,7 @@ public interface PersistenceManager {
      *     }
      * </pre>
      * 
-     * @param persistence This {@link PersistenceManager} instance.
+     * @param action The action that should be executed atomically.
      * @throws DatabaseException If committing the transaction fails.
      * @since 0.6.4
      */
@@ -386,7 +386,7 @@ public interface PersistenceManager {
      * <p>There is no need for external synchronization using {@link #writeLock()} and
      * {@link #writeUnlock()}.</p>
      * 
-     * @param entity The entities to persist.
+     * @param entities The entities to persist.
      * @throws DatabaseException If committing the transaction fails.
      * @since 0.6.4
      */
@@ -421,7 +421,7 @@ public interface PersistenceManager {
      * <p>There is no need for external synchronization using {@link #writeLock()} and
      * {@link #writeUnlock()}.</p>
      * 
-     * @param entity The entities to remove.
+     * @param entities The entities to remove.
      * @throws DatabaseException If committing the transaction fails.
      * @since 0.6.4
      */

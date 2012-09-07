@@ -91,9 +91,8 @@ public class Polly {
     /**
      * Start polly.
      * 
-     * @param args
-     *            The commandline arguments passed to polly. This array may be
-     *            empty
+     * @param args The commandline arguments passed to polly. This array may be empty.
+     * @throws Exception If launching fails.
      */
     public synchronized static void main(String[] args) throws Exception {
         commandLineArgs = args;

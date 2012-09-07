@@ -64,7 +64,7 @@ public class JavaProcessExecutor {
      * as the current vm.
      * 
      * @param runInConsole
-     * @return
+     * @return The {@link ProcessExecutor} instance.
      */
     public static ProcessExecutor getCurrentInstance(boolean runInConsole) {
         ProcessExecutor pe = JavaProcessExecutor.getOsInstance(runInConsole);

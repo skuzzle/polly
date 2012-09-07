@@ -6,8 +6,8 @@ import de.skuzzle.polly.sdk.model.User;
 
 /**
  * <p>Manages the creation of {@link Conversation}. As conversations must be unique in 
- * their channel-user combination, the only way to create one is using this class' 
- * {@link #create(MyPolly, User, String)} method.</p>
+ * their channel-user combination, the only way to create one is using any this class' 
+ * 'create' methods.</p>
  * 
  * <p>Please note that the idle-timeouts are not checked very exact. So the actual
  * closing time can differ by few seconds.</p>
@@ -42,7 +42,7 @@ public interface ConversationManager extends Disposable {
      * for the given time.
      * See the documentation of the Conversation class to see how to use them.
      * 
-     * @param myPolly The IrcManager instance to work with.
+     * @param ircManager The IrcManager instance to work with.
      * @param user The user this conversation is for.
      * @param Channel The channel this conversation is for.
      * @param idleTime The time of idling in seconds after which the returned 

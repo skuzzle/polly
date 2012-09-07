@@ -96,7 +96,7 @@ public class Position implements Serializable {
     
     /**
      * Returns a prefix of the given String consisting of all characters with index
-     * lower than {@link #start}.
+     * lower than {@link #getStart()}.
      * 
      * @param original The String in which this object represents a Position.
      * @return A substring of the original String.

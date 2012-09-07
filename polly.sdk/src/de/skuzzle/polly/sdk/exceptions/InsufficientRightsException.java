@@ -1,13 +1,13 @@
 package de.skuzzle.polly.sdk.exceptions;
 
-import de.skuzzle.polly.sdk.model.User;
+import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.roles.SecurityObject;
 
 /**
- * This exception is thrown upon executing a command if the executing users userlevel
- * is too low.
+ * This exception is thrown upon executing a command if the executing user has 
+ * insufficient permissions to run it. Additionally its thrown whenever the 
+ * {@link RoleManager} needs to deny access to a {@link SecurityObject}.
  * 
- * @see User#getUserLevel()
  * @author Simon
  * @since zero day
  * @version RC 1.0

@@ -56,7 +56,8 @@ public class BinaryExpression extends Expression {
      * means it reaches from the beginning of the left operand to the end of the right 
      * operand.
      * 
-     * The type of this expression is UNKNOWN until {@link #contextCheck(Context)} is run.
+     * The type of this expression is UNKNOWN until {@link #contextCheck(Namespace)} is 
+     * run.
      * 
      * @param leftOperand The left operand.
      * @param operator The operator.
@@ -125,7 +126,7 @@ public class BinaryExpression extends Expression {
      * 
      * @param stack The stack used for execution.
      * @throws ExecutionException if a runtime error such as division by zero occurs. This
-     *      can not be covered by {@link #contextCheck(Context)}.
+     *      can not be covered by {@link #contextCheck(Namespace)}.
      */
     @Override
     public void collapse(Stack<Literal> stack) throws ExecutionException {

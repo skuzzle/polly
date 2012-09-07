@@ -63,7 +63,7 @@ public class MatrixUtils {
      * <code>true</code> if and only if the {@code matrix.getLeftId().equals(matrix}.
      * 
      * @param matrix The matrix to check.
-     * @return
+     * @return Whether the given matrix is the identical matrix.
      */
     public static <K> boolean isIdentity(Matrix<K> matrix) {
         if (matrix.getN() != matrix.getN()) {
@@ -116,7 +116,7 @@ public class MatrixUtils {
      * Where E is the identical matrix.
      * 
      * @param matrix The matrix to transform.
-     * @returns The same matrix instance as given by the parameter.
+     * @return The same matrix instance as given by the parameter.
      */
     public static <K> Matrix<K> toGaussForm(Matrix<K> matrix) {
         if (matrix.isZero()) {
@@ -171,7 +171,7 @@ public class MatrixUtils {
      * matrix.</p>
      * 
      * @param matrix The matrix to transform into echolon form.
-     * @returns The same matrix instance as given by the parameter.
+     * @return The same matrix instance as given by the parameter.
      */
     public static <K> Matrix<K> toEchelon(Matrix<K> matrix) {
         Field<K> f = matrix.getField();

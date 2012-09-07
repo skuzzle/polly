@@ -3,7 +3,7 @@ package de.skuzzle.polly.sdk;
 /**
  * <p>This class represents a simple action that can be atomically executed by the
  * {@link PersistenceManager}. Its action will ONLY be executed atomically when you
- * use the {@link PersistenceManager#atomicWriteOperation(PersistenceManager)}
+ * use the {@link PersistenceManager#atomicWriteOperation(WriteAction)}
  * method.</p>
  * 
  *  Sample usage:
@@ -27,7 +27,7 @@ public interface WriteAction {
 
     /**
      * Performs an atomic write on the database if used with 
-     * {@link PersistenceManager#atomicWriteOperation(PersistenceManager)}.
+     * {@link PersistenceManager#atomicWriteOperation(WriteAction)}.
      * 
      * @param persistence The {@link PersistenceManager} instance on which this
      *          WriteAction is used.

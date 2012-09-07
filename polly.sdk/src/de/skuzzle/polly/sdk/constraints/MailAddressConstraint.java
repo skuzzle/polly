@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 /**
  * <p>This constraint only accepts email addresses formed like the pattern 
- * {@code ^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$}.</p>
+ * <code>^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$</code>.</p>
  * 
  * <p>You can get an instance of this constraint using {@link Constraints#MAILADDRESS}</p>
  * 

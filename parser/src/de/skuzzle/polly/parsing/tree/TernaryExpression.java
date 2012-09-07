@@ -59,7 +59,7 @@ public class TernaryExpression extends Expression {
      * Creates a new ternary expression with the given expressions as operands. The
      * position of the new expression reaches from the beginning of the first expression
      * until the end of the <b>second</b> expression. The type of the new expression is 
-     * UNKNOWN until {@link #contextCheck(Context)} is run.
+     * UNKNOWN until {@link #contextCheck(Namespace)} is run.
      * 
      * @param firstOperand The first operand of the expression.
      * @param secondOperand The second operand of the expression.
@@ -96,8 +96,8 @@ public class TernaryExpression extends Expression {
     
     /**
      * Runs the context analysis on this expression. First, all three operands 
-     * are replaced by their contextCheck result.Next, the operator overload is
-     * determined by comparing all three operands types and the {@link #operator}.
+     * are replaced by their contextCheck result. Next, the operator overload is
+     * determined by comparing all three operands types and the operator.
      * Then, contextCheck is run on the resolved {@link TernaryOperatorOverload} to 
      * resolve the return type of this expression.
      * 
@@ -133,7 +133,7 @@ public class TernaryExpression extends Expression {
      * 
      * @param stack The stack used for execution.
      * @throws ExecutionException if a runtime error such as division by zero occurs. This
-     *      can not be covered by {@link #contextCheck(Context)}.
+     *      can not be covered by {@link #contextCheck(Namespace)}.
      */
     @Override
     public void collapse(Stack<Literal> stack) throws ExecutionException {

@@ -48,18 +48,18 @@ public interface TreeElement extends Cloneable, Serializable {
     /**
      * This method does the execution for this tree element using a stack. After 
      * context-checking this method must never fail for reasons of context errors.
-     * Invoking this method before {@link #contextCheck(Context)} will result in 
+     * Invoking this method before {@link #contextCheck(Namespace)} will result in 
      * entering an undefined state of execution.
      * 
      * If this method calls {@code collapse} on each of its sub elements, invoking
      * {@code collapse} on the root of the tree to collapse the whole tree.
      * 
-     * If you obey the above, {@link #contextCheck(Context)} will ensure that the stack
+     * If you obey the above, {@link #contextCheck(Namespace)} will ensure that the stack
      * by the time of calling this method will exactly contain the expected literals.
      * 
      * @param stack The stack used for execution. This method may modify it in any way.
      * @throws ExecutionException if a runtime error such as division by zero occurs. This
-     *      can not be covered by {@link #contextCheck(Context)}.
+     *      can not be covered by {@link #contextCheck(Namespace)}.
      */
     public abstract void collapse(Stack<Literal> stack) 
             throws ExecutionException;

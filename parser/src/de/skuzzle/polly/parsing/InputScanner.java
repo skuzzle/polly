@@ -1043,8 +1043,8 @@ public class InputScanner extends AbstractTokenStream {
     /**
      * Determines if a character is a valid time modifier. That is if it is any of the
      * following: {@code 'h' | 'm' | 's' | 'd' | 'w' | 'y'}.
-     * @param token
-     * @return
+     * @param token The lexical token to check.
+     * @return Whether the token is a time modifier.
      */
     protected static boolean isTimeLiteralChar(int token) {
         return token == 'h' || token == 'm' || token == 's' || token == 'd' || 
@@ -1060,7 +1060,7 @@ public class InputScanner extends AbstractTokenStream {
      * @param token TimeModifier character. 
      * @return The value the character represents in terms of a TimeModifier token.
      * @throws IllegalArgumentException If no valid time modifier char as determined by 
-     *      {@link #isTimeLiteralChar(char)} is entered.
+     *      {@link #isTimeLiteralChar(int)} is entered.
      */
     protected static int timeLiteralValue(int token) {
         switch (token) {

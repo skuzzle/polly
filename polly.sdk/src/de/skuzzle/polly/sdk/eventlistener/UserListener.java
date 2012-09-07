@@ -6,7 +6,7 @@ import java.util.EventListener;
  * Listener which listens for sign on/sign off events.
  * 
  * @author Simon
- * @ since 0.6
+ * @since 0.6
  */
 public interface UserListener extends EventListener {
 

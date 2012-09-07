@@ -120,7 +120,7 @@ public interface UserManager {
      * @return A set of strings containing the identifiers. This may be empty but not
      *      <code>null</code>.
      */
-    public abstract Set<String> getDeclaredIdentifiers(String namepsace);
+    public abstract Set<String> getDeclaredIdentifiers(String namespace);
     
     
     
@@ -288,6 +288,8 @@ public interface UserManager {
      * @param name the new attributes name.
      * @param defaultValue The default value for the new attribute. This value will be 
      *     assigned to each user.
+     * @param constraint {@link AttributeConstraint} instance which limits possible values
+     *          for the new attribute.
      * @throws DatabaseException If storing the new attribute fails for any reason.
      */
     void addAttribute(String name, String defaultValue,

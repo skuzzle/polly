@@ -11,8 +11,7 @@ import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
 /**
  * <p>Conversations provide an easy way to read several inputs from one user within one 
  * command. It can be used similar to an {@link InputStream}. You can create a
- * new conversation using 
- * {@link ConversationManager#create(MyPolly, de.skuzzle.polly.sdk.model.User, String)}
+ * new conversation using any of the create methods of the {@link ConversationManager}
  * </p>
  * 
  * <p>Calling any of the {@link #readLine()} methods will cause the current thread to 

@@ -3,6 +3,7 @@ package de.skuzzle.polly.parsing.tree;
 
 import de.skuzzle.polly.parsing.InputParser;
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.declarations.Namespace;
 import de.skuzzle.polly.parsing.types.Type;
 
 
@@ -52,7 +53,7 @@ public abstract class Expression implements TreeElement {
      * Creates a new Expression with unknown type. The type may than be resolved by
      * context analysis.
      * @param position The Position of this expression.
-     * @see #contextCheck(de.skuzzle.polly.parsing.Context)
+     * @see #contextCheck(Namespace)
      */
     public Expression(Position position) {
         this(position, Type.UNKNOWN);
@@ -73,7 +74,7 @@ public abstract class Expression implements TreeElement {
     
     /**
      * Sets the {@link Type} of this Expression. May be used by 
-     * {@link #contextCheck(de.skuzzle.polly.parsing.Context)} to dynamically infer the type of 
+     * {@link #contextCheck(Namespace)} to dynamically infer the type of 
      * this Expression.
      * @param type The new {@link Type} of this Expression.
      */

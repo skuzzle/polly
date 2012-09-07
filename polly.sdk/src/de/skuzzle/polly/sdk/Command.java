@@ -26,9 +26,9 @@ import de.skuzzle.polly.sdk.roles.SecurityObject;
  * is used.</p>
  * 
  * <p>A command has a reference to all of its formal signatures. Add new formal signatures
- * for a command via {@link #createSignature(String, List)} or 
- * {@link #createSignature(String, Parameter...)}. Upon execution of a command, the actual
- * signature is passed.</p>
+ * for a command via {@link #createSignature(String, Parameter...)} or 
+ * {@link #createSignature(String, String, Parameter...)}. Upon execution of a command, 
+ * the actual signature is passed.</p>
  * 
  * This is an example of creating an own command:
  * <pre>
@@ -548,8 +548,8 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
      * 
      * @return the formal signature for this commands signatures help texts.
      * @since 0.9
-     * @see FormalSignature#FormalSignature(String, int, String, List)
-     * @see FormalSignature#FormalSignature(String, int, String, Types...)
+     * @see FormalSignature#FormalSignature(String, int, String, Parameter...)
+     * @see FormalSignature#FormalSignature(String, int, String, String, Parameter...)
      */
     public FormalSignature getHelpSignature1() {
         return this.helpSignature1;
@@ -670,11 +670,11 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 	 * Convenience wrapper method for creating a {@link Conversation}.
 	 * 
      * @param user The user this conversation is for.
-     * @param Channel The channel this conversation is for.
+     * @param channel The channel this conversation is for.
      * @return The new {@link Conversation} instance.
      * @throws ConversationException If there is already a conversation active with the
      *          same user on the same channel.
-	 * @see {@link ConversationManager}
+	 * @see ConversationManager
 	 * @since 0.6.0
 	 */
 	protected Conversation createConversation(User user, String channel) 
