@@ -32,6 +32,7 @@ public class BattleReportFilterSettings {
     
     public BattleReportFilterSettings() {
         this.filter = new AndFilter();
+        this.switchOnAlienAttack = true;
         this.chainingMethod = "AND";
     }
     
