@@ -1194,7 +1194,7 @@ public abstract class PircBot implements ReplyConstants, PircBotLogger {
                     String modeSymbols = prefixSegment.substring(secondBracket+1);
                     if(modeLetters.length() == modeSymbols.length()) {  // just to make sure nothing funny is going on
                         // recreate the _userPrefixes table with the server specific info
-                        _userPrefixes = new Hashtable();
+                        _userPrefixes = new HashMap<String, String>();
                         _userPrefixOrder = "";
                         for(int x=0; x < modeLetters.length(); x++) {
                             _userPrefixes.put(modeLetters.charAt(x) +"", modeSymbols.charAt(x) +"");
@@ -1506,7 +1506,7 @@ public abstract class PircBot implements ReplyConstants, PircBotLogger {
                 if (atPos == '+' || atPos == '-') {
                     pn = atPos;
                 } else if(_userPrefixes.containsKey(atPos +"")) {
-                    this.updateUser(channel, pn, (String) _userPrefixes.get(atPos +""), params[p]);
+                    this.updateUser(channel, pn, "" +  _userPrefixes.get(atPos +""), params[p]);
                     // now deal with the known(standard) user modes
                     if (atPos == 'o') {
                         if (pn == '+') {
@@ -2814,12 +2814,12 @@ public abstract class PircBot implements ReplyConstants, PircBotLogger {
         channel = channel.toLowerCase();
         User[] userArray = new User[0];
         synchronized (_channels) {
-            Hashtable users = (Hashtable) _channels.get(channel);
+            Map<User, User> users = _channels.get(channel);
             if (users != null) {
                 userArray = new User[users.size()];
-                Enumeration enumeration = users.elements();
+                Iterator<User> enumeration = users.values().iterator();
                 for (int i = 0; i < userArray.length; i++) {
-                    User user = (User) enumeration.nextElement();
+                    User user = (User) enumeration.next();
                     userArray[i] = user;
                 }
             }
@@ -2852,11 +2852,11 @@ public abstract class PircBot implements ReplyConstants, PircBotLogger {
     public final User getUser(String sourceNick, String channel) {
         channel = channel.toLowerCase();
         synchronized (_channels) {
-            Hashtable users = (Hashtable) _channels.get(channel);
+            Map<User, User> users =  _channels.get(channel);
             if (users != null) {
-                Enumeration enumeration = users.elements();
-                while(enumeration.hasMoreElements()) {
-                    User user = (User) enumeration.nextElement();
+                Iterator<User> enumeration = users.values().iterator();
+                while(enumeration.hasNext()) {
+                    User user = enumeration.next();
                     if(user.getNick().equalsIgnoreCase(sourceNick)) {
                         return user;
                     }
@@ -2888,13 +2888,13 @@ public abstract class PircBot implements ReplyConstants, PircBotLogger {
      */
     public final Object getUserInfo(String sourceNick) {
         synchronized (_channels) {
-            Enumeration channelEnum = _channels.elements();
-            while(channelEnum.hasMoreElements()) {  
-                Hashtable users = (Hashtable) channelEnum.nextElement();
+            Iterator<Map<User, User>> channelEnum = _channels.values().iterator();
+            while(channelEnum.hasNext()) {  
+                Map<User, User> users = channelEnum.next();
                 if (users != null) {
-                    Enumeration enumeration = users.elements();
-                    while(enumeration.hasMoreElements()) {
-                        User userObj = (User) enumeration.nextElement();
+                    Iterator<User> enumeration = users.values().iterator();
+                    while(enumeration.hasNext()) {
+                        User userObj = enumeration.next();
                         if(userObj.getNick().equalsIgnoreCase(sourceNick)) {
                             return userObj.getInfo();
                         }
@@ -2918,13 +2918,13 @@ public abstract class PircBot implements ReplyConstants, PircBotLogger {
      */
     public final void setUserInfo(String nick, Object userInfo) {
         synchronized (_channels) {
-            Enumeration channelEnum = _channels.elements();
-            while(channelEnum.hasMoreElements()) {  
-                Hashtable users = (Hashtable) channelEnum.nextElement();
+            Iterator<Map<User, User>> channelEnum = _channels.values().iterator();
+            while(channelEnum.hasNext()) {  
+                Map<User, User> users = channelEnum.next();
                 if (users != null) {
-                    Enumeration enumeration = users.elements();
-                    while(enumeration.hasMoreElements()) {
-                        User userObj = (User) enumeration.nextElement();
+                    Iterator<User> enumeration = users.values().iterator();
+                    while(enumeration.hasNext()) {
+                        User userObj = (User) enumeration.next();
                         if(userObj.getNick().equalsIgnoreCase(nick)) {
                             userObj.setInfo(userInfo);
                         }
@@ -2948,9 +2948,9 @@ public abstract class PircBot implements ReplyConstants, PircBotLogger {
         String[] channels = new String[0];
         synchronized (_channels) {
             channels = new String[_channels.size()];
-            Enumeration enumeration = _channels.keys();
+            Iterator<String> enumeration = _channels.keySet().iterator();
             for (int i = 0; i < channels.length; i++) {
-                channels[i] = (String) enumeration.nextElement();
+                channels[i] = (String) enumeration.next();
             }
         }
         return channels;
@@ -2969,13 +2969,13 @@ public abstract class PircBot implements ReplyConstants, PircBotLogger {
      */
     public final boolean isInCommonChannel(String nick) {
         synchronized (_channels) {
-            Enumeration channelEnum = _channels.elements();
-            while(channelEnum.hasMoreElements()) {  
-                Hashtable users = (Hashtable) channelEnum.nextElement();
+            Iterator<Map<User, User>> channelEnum = _channels.values().iterator();
+            while(channelEnum.hasNext()) {  
+                Map<User, User> users = channelEnum.next();
                 if (users != null) {
-                    Enumeration enumeration = users.elements();
-                    while(enumeration.hasMoreElements()) {
-                        User userObj = (User) enumeration.nextElement();
+                    Iterator<User> enumeration = users.values().iterator();
+                    while(enumeration.hasNext()) {
+                        User userObj = (User) enumeration.next();
                         if(userObj.getNick().equalsIgnoreCase(nick)) {
                             return true;
                         }
@@ -3001,13 +3001,13 @@ public abstract class PircBot implements ReplyConstants, PircBotLogger {
         int chanCount = 0;
         
         synchronized (_channels) {
-            Enumeration channelEnum = _channels.elements();
-            while(channelEnum.hasMoreElements()) {  
-                Hashtable users = (Hashtable) channelEnum.nextElement();
+            Iterator<Map<User, User>> channelEnum = _channels.values().iterator();
+            while(channelEnum.hasNext()) {  
+                Map<User, User> users = channelEnum.next();
                 if (users != null) {
-                    Enumeration enumeration = users.elements();
-                    while(enumeration.hasMoreElements()) {
-                        User userObj = (User) enumeration.nextElement();
+                    Iterator<User> enumeration = users.values().iterator();
+                    while(enumeration.hasNext()) {
+                        User userObj = enumeration.next();
                         if(userObj.getNick().equalsIgnoreCase(nick)) {
                             chanCount++;
                         }
@@ -3034,15 +3034,15 @@ public abstract class PircBot implements ReplyConstants, PircBotLogger {
         String[] channels = new String[_channels.size()];
         int count = 0;
         synchronized (_channels) {
-            Enumeration chans = _channels.keys();
-            while(chans.hasMoreElements()) {
-                String chan = (String) chans.nextElement();
+            Iterator<String> chans = _channels.keySet().iterator();
+            while(chans.hasNext()) {
+                String chan = chans.next();
 
-                Hashtable users = (Hashtable) _channels.get(chan);
+                Map<User, User> users = (Map<User, User>) _channels.get(chan);
                 if (users != null) {
-                    Enumeration enumeration = users.elements();
-                    while(enumeration.hasMoreElements()) {
-                        User user = (User) enumeration.nextElement();
+                    Iterator<User> enumeration = users.keySet().iterator();
+                    while(enumeration.hasNext()) {
+                        User user = enumeration.next();
                         if(user.getNick().equalsIgnoreCase(nick)) {
                             channels[count] = chan;
                             count++;
@@ -3133,9 +3133,9 @@ public abstract class PircBot implements ReplyConstants, PircBotLogger {
     private final void addUser(String channel, User user) {
         channel = channel.toLowerCase();
         synchronized (_channels) {
-            Hashtable users = (Hashtable) _channels.get(channel);
+            Map<User, User> users = (Map<User, User>) _channels.get(channel);
             if (users == null) {
-                users = new Hashtable();
+                users = new HashMap<User, User>();
                 _channels.put(channel, users);
             }
             users.put(user, user);
@@ -3150,9 +3150,9 @@ public abstract class PircBot implements ReplyConstants, PircBotLogger {
         channel = channel.toLowerCase();
         User user = new User("", nick);
         synchronized (_channels) {
-            Hashtable users = (Hashtable) _channels.get(channel);
+            Map<User, User> users = (Map<User, User>) _channels.get(channel);
             if (users != null) {
-                return (User) users.remove(user);
+                return users.remove(user);
             }
         }
         return null;
@@ -3164,9 +3164,9 @@ public abstract class PircBot implements ReplyConstants, PircBotLogger {
      */
     private final void removeUser(String nick) {
         synchronized (_channels) {
-            Enumeration enumeration = _channels.keys();
-            while (enumeration.hasMoreElements()) {
-                String channel = (String) enumeration.nextElement();
+            Iterator<String> enumeration = _channels.keySet().iterator();
+            while (enumeration.hasNext()) {
+                String channel = enumeration.next();
                 this.removeUser(channel, nick);
             }
         }
@@ -3178,9 +3178,9 @@ public abstract class PircBot implements ReplyConstants, PircBotLogger {
      */
     private final void renameUser(String oldNick, String newNick) {
         synchronized (_channels) {
-            Enumeration enumeration = _channels.keys();
-            while (enumeration.hasMoreElements()) {
-                String channel = (String) enumeration.nextElement();
+            Iterator<String> enumeration = _channels.keySet().iterator();
+            while (enumeration.hasNext()) {
+                String channel = enumeration.next();
                 User user = getUser(oldNick, channel);
                 if (user == null) {
                     continue;
@@ -3215,18 +3215,19 @@ public abstract class PircBot implements ReplyConstants, PircBotLogger {
      */
     private final void removeAllChannels() {
         synchronized(_channels) {
-            _channels = new Hashtable();
+            _channels.clear();
+            _channels = new HashMap<String, Map<User, User>>();
         }
     }
 
     private final void updateUser(String channel, char giveTake, String userPrefix, String nick) {
         channel = channel.toLowerCase();
         synchronized (_channels) {
-            Hashtable users = (Hashtable) _channels.get(channel);
+            Map<User, User> users = (Map<User, User>) _channels.get(channel);
             if (users != null) {
-                Enumeration enumeration = users.elements();
-                while(enumeration.hasMoreElements()) {
-                    User userObj = (User) enumeration.nextElement();
+                Iterator<User> enumeration = users.keySet().iterator();
+                while(enumeration.hasNext()) {
+                    User userObj =enumeration.next();
                     if (userObj.getNick().equalsIgnoreCase(nick)) {
                         if(giveTake == '+') {
                             userObj.addPrefix(userPrefix);
@@ -3237,11 +3238,6 @@ public abstract class PircBot implements ReplyConstants, PircBotLogger {
                         }
                     }
                 }
-            }
-            else {
-                // just in case ...
-                User newUser = new User("", nick);
-                users.put(newUser, newUser);
             }
         }
     }
@@ -3260,16 +3256,16 @@ public abstract class PircBot implements ReplyConstants, PircBotLogger {
     private String _password = null;
     
     // Outgoing message stuff.
-    private Queue _outQueue = new Queue();
+    private Queue<String> _outQueue = new Queue<String>();
     private long _messageDelay = 1000;
     
     // A Hashtable of channels that points to a selfreferential Hashtable of
     // User objects (used to remember which users are in which channels).
-    private Hashtable _channels = new Hashtable();
+    private Map<String, Map<User, User>> _channels = new HashMap<String, Map<User, User>>();
     
     // A Hashtable to temporarily store channel topics when we join them
     // until we find out who set that topic.
-    private Hashtable _topics = new Hashtable();
+    private Map<String, String> _topics = new HashMap<String, String>();
     
     // DccManager to process and handle all DCC events.
     private DccManager _dccManager = new DccManager(this);
@@ -3286,7 +3282,7 @@ public abstract class PircBot implements ReplyConstants, PircBotLogger {
     private String _finger = "You ought to be arrested for fingering a bot!";
     
     // A Hashtable to store the available prefixes and associated mode operator
-    private Hashtable _userPrefixes = new Hashtable();
+    private Map<String, String> _userPrefixes = new HashMap<String, String>();
     // prefixes as delivered from the server .. highest to lowest - default to op/voice
     private String _userPrefixOrder = "@+";
 

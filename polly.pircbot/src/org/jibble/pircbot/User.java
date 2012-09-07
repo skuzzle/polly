@@ -13,7 +13,7 @@ import java.io.Serializable;
  * @author PircBot-PPF project
  * @version 1.0.0
  */
-public class User implements Serializable {
+public class User implements Serializable, Comparable<User> {
     
     private static final long serialVersionUID = 4990694420758734789L;
     
@@ -121,12 +121,8 @@ public class User implements Serializable {
      * 
      * @return the result of calling compareTo on lowercased nicks.
      */
-    public int compareTo(Object o) {
-        if (o instanceof User) {
-            User other = (User) o;
-            return other._lowerNick.compareTo(_lowerNick);
-        }
-        return -1;
+    public int compareTo(User o) {
+        return o._lowerNick.compareTo(_lowerNick);
     }
     
     /**

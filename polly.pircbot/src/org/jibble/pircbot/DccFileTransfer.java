@@ -19,6 +19,16 @@ public class DccFileTransfer {
     
     /**
      * Constructor used for receiving files.
+     * @param bot 
+     * @param manager 
+     * @param nick 
+     * @param login 
+     * @param hostname 
+     * @param type 
+     * @param filename 
+     * @param address 
+     * @param port 
+     * @param size 
      */
     DccFileTransfer(PircBot bot, DccManager manager, String nick, String login, String hostname, String type, String filename, long address, int port, long size) {
         _bot = bot;
@@ -39,6 +49,11 @@ public class DccFileTransfer {
     
     /**
      * Constructor used for sending files.
+     * @param bot 
+     * @param manager 
+     * @param file 
+     * @param nick 
+     * @param timeout 
      */
     DccFileTransfer(PircBot bot, DccManager manager, File file, String nick, int timeout) {
         _bot = bot;
@@ -88,6 +103,8 @@ public class DccFileTransfer {
     
     /**
      * Receive the file in a new thread.
+     * @param file 
+     * @param resume 
      */
     void doReceive(final File file, final boolean resume) {
         new Thread() {
@@ -154,6 +171,7 @@ public class DccFileTransfer {
 
     /**
      * Method to send the file inside a new thread.
+     * @param allowResume 
      */
     void doSend(final boolean allowResume) {
         new Thread() {
@@ -266,6 +284,7 @@ public class DccFileTransfer {
     
     /**
      * Package mutator for setting the progress of the file transfer.
+     * @param progress 
      */
     void setProgress(long progress) {
         _progress = progress;

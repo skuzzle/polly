@@ -24,7 +24,7 @@ public class OutputThread extends Thread {
      * @param bot The underlying PircBot instance.
      * @param outQueue The Queue from which we will obtain our messages.
      */
-    OutputThread(PircBot bot, Queue outQueue) {
+    OutputThread(PircBot bot, Queue<String> outQueue) {
         _bot = bot;
         _outQueue = outQueue;
         this.setName(this.getClass() + "-Thread");
@@ -82,6 +82,6 @@ public class OutputThread extends Thread {
     }
     
     private PircBot _bot = null;
-    private Queue _outQueue = null;
+    private Queue<String> _outQueue = null;
     
 }

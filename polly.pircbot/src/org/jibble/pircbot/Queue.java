@@ -1,6 +1,6 @@
 package org.jibble.pircbot;
 
-import java.util.Vector;
+import java.util.LinkedList;
 
 /**
  * Queue is a definition of a data structure that may
@@ -18,8 +18,9 @@ import java.util.Vector;
  * 
  * @author PircBot-PPF project
  * @version 1.0.0
+ * @param <T> 
  */
-public class Queue {
+public class Queue<T> {
     
 
     /**
@@ -35,9 +36,9 @@ public class Queue {
      *
      * @param o The Object to be added to the Queue.
      */
-    public void add(Object o) {
+    public void add(T o) {
         synchronized(_queue) {
-            _queue.addElement(o);
+            _queue.add(o);
             _queue.notify();
         }
     }
@@ -48,9 +49,9 @@ public class Queue {
      * 
      * @param o The Object to be added to the Queue.
      */
-    public void addFront(Object o) {
+    public void addFront(T o) {
         synchronized(_queue) {
-            _queue.insertElementAt(o, 0);
+            _queue.addFirst(o);
             _queue.notify();
         }
     }
@@ -81,8 +82,7 @@ public class Queue {
         
             // Return the Object.
             try {
-                o = _queue.firstElement();
-                _queue.removeElementAt(0);
+                o = _queue.pop();
             }
             catch (ArrayIndexOutOfBoundsException e) {
                 throw new InternalError("Race hazard in Queue object.");
@@ -111,7 +111,7 @@ public class Queue {
      */
     public void clear() {
         synchronized(_queue) {
-            _queue.removeAllElements();
+            _queue.clear();
         }
     }
     
@@ -126,6 +126,6 @@ public class Queue {
     }
     
 
-    private Vector _queue = new Vector();
+    private LinkedList<T> _queue = new LinkedList<T>();
     
 }

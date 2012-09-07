@@ -23,6 +23,10 @@ public class DccManager {
     
     /**
      * Processes a DCC request.
+     * @param nick 
+     * @param login 
+     * @param hostname 
+     * @param request 
      * 
      * @return True if the type of request was handled successfully.
      */
@@ -54,9 +58,9 @@ public class DccManager {
             DccFileTransfer transfer = null;
             synchronized (_awaitingResume) {
                 for (int i = 0; i < _awaitingResume.size(); i++) {
-                    transfer = (DccFileTransfer) _awaitingResume.elementAt(i);
+                    transfer = (DccFileTransfer) _awaitingResume.get(i);
                     if (transfer.getNick().equals(nick) && transfer.getPort() == port) {
-                        _awaitingResume.removeElementAt(i);
+                        _awaitingResume.remove(i);
                         break;
                     }
                 }
@@ -74,9 +78,9 @@ public class DccManager {
             DccFileTransfer transfer = null;
             synchronized (_awaitingResume) {
                 for (int i = 0; i < _awaitingResume.size(); i++) {
-                    transfer = (DccFileTransfer) _awaitingResume.elementAt(i);
+                    transfer = _awaitingResume.remove(i);
                     if (transfer.getNick().equals(nick) && transfer.getPort() == port) {
-                        _awaitingResume.removeElementAt(i);
+                        _awaitingResume.remove(i);
                         break;
                     }
                 }
@@ -115,20 +119,21 @@ public class DccManager {
      */
     void addAwaitingResume(DccFileTransfer transfer) {
         synchronized (_awaitingResume) {
-            _awaitingResume.addElement(transfer);
+            _awaitingResume.add(transfer);
         }
     }
     
     
     /**
      * Remove this transfer from the list of those awaiting resuming.
+     * @param transfer the transfer to remove.
      */
     void removeAwaitingResume(DccFileTransfer transfer) {
-        _awaitingResume.removeElement(transfer);
+        _awaitingResume.remove(transfer);
     }
     
     
     private PircBot _bot;
-    private Vector _awaitingResume = new Vector();
+    private List<DccFileTransfer> _awaitingResume = new ArrayList<DccFileTransfer>();
     
 }

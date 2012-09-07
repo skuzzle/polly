@@ -20,6 +20,7 @@ public class InputThread extends Thread {
      * PircBot to handle them.
      *
      * @param bot An instance of the underlying PircBot.
+     * @param socket 
      * @param breader The BufferedReader that reads lines from the server.
      * @param bwriter The BufferedWriter that sends lines to the server.
      */
