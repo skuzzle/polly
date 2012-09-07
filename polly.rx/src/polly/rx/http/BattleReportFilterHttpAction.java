@@ -17,7 +17,7 @@ import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.http.HttpTemplateException;
 import de.skuzzle.polly.sdk.http.HttpTemplateSortHelper;
 import polly.rx.core.FleetDBManager;
-import polly.rx.http.session.BattleReportFilterSettings;
+import polly.rx.core.filter.BattleReportFilterSettings;
 import polly.rx.core.filter.BattleReportFilter;
 import polly.rx.core.filter.AnyDayFilter;
 import polly.rx.core.filter.AttackerFilter;
@@ -73,8 +73,7 @@ public class BattleReportFilterHttpAction extends HttpAction {
         
         if (action != null && action.equals("idSelect") && isSelect) {
             Integer[] ids = this.getIdList(e);
-            settings.addFilter(BattleReportFilterSettings.ID_LIST_FILTER, 
-                new IdListFilter(ids));
+            settings.addFilter(new IdListFilter(ids));
             
         } else if (action != null && action.equals("idSelect") && isDelete) {
             
@@ -90,7 +89,14 @@ public class BattleReportFilterHttpAction extends HttpAction {
             } catch (DatabaseException e1) {
                 e.throwTemplateException(e1);
             }
+        } else if (action != null && action.equals("negate")) {
+            String filterId = e.getProperty("filterId");
+            int id = Integer.parseInt(filterId);
             
+            BattleReportFilter filter = settings.getFilter(id);
+            if (filter != null) {
+                filter.setNegate(!filter.isNegate());
+            }
         } else if (action != null && action.equals("toggleSwitching")) {
             settings.setSwitchOnAlienAttack(!settings.isSwitchOnAlienAttack());
         } else if (action != null && action.equals("or")) {
@@ -100,8 +106,9 @@ public class BattleReportFilterHttpAction extends HttpAction {
         } else if (action != null && action.equals("clear")) {
             settings.clearAll();
         } else if (action != null && action.equals("removeFilter")) {
-            String filterKey = e.getProperty("filterKey");
-            settings.removeFilter(filterKey);
+            String filterKey = e.getProperty("filterId");
+            int id = Integer.parseInt(filterKey);
+            settings.removeFilter(id);
             
         } else if (action != null && action.equals("addFilter")) {
             String filterKey = e.getProperty("filterKey");
@@ -112,36 +119,36 @@ public class BattleReportFilterHttpAction extends HttpAction {
                 
                 BattleReportFilter filter = this.createAnyDayFilter(
                     filterParam, e.getSession());
-                settings.addFilter(filterKey, filter);
+                settings.addFilter(filter);
             } else if (filterKey != null &&
                 filterKey.equals(BattleReportFilterSettings.ATTACKER_FILTER)) {
                 
-                settings.addFilter(filterKey, new AttackerFilter(filterParam));
+                settings.addFilter(new AttackerFilter(filterParam));
             } else if (filterKey != null &&
                 filterKey.equals(BattleReportFilterSettings.DEFENDER_FILTER)) {
                 
-                settings.addFilter(filterKey, new DefenderFilter(filterParam));
+                settings.addFilter(new DefenderFilter(filterParam));
             } else if (filterKey != null &&
                 filterKey.equals(BattleReportFilterSettings.DEFENDER_CLAN_FILTER)) {
                 
-                settings.addFilter(filterKey, new DefenderClanFilter(filterParam));
+                settings.addFilter(new DefenderClanFilter(filterParam));
             } else if (filterKey != null &&
                 filterKey.equals(BattleReportFilterSettings.ATTACKER_CLAN_FILTER)) {
                 
-                settings.addFilter(filterKey, new AttackerClanFilter(filterParam));
+                settings.addFilter(new AttackerClanFilter(filterParam));
             } else if (filterKey != null &&
                 filterKey.equals(BattleReportFilterSettings.LOCATION_FILTER)) {
                 
-                settings.addFilter(filterKey, new LocationFilter(filterParam));
+                settings.addFilter(new LocationFilter(filterParam));
             } else if (filterKey != null &&
                 filterKey.equals(BattleReportFilterSettings.HAS_ARTIFACT_FILTER)) {
                 
-                settings.addFilter(filterKey, new HasArtifactFilter());
+                settings.addFilter(new HasArtifactFilter());
             } else if (filterKey != null &&
                 filterKey.equals(BattleReportFilterSettings.TACTIC_FILTER)) {
                 
                 BattleTactic tactic = BattleTactic.parseTactic(filterParam);
-                settings.addFilter(filterKey, new TacticFilter(tactic));
+                settings.addFilter(new TacticFilter(tactic));
             } else {
                 e.throwTemplateException("Invalid filter options", "");
             }

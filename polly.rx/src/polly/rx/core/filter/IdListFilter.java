@@ -5,10 +5,9 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import polly.rx.entities.BattleReport;
-import de.skuzzle.polly.sdk.FormatManager;
 
 
-public class IdListFilter implements BattleReportFilter {
+public class IdListFilter extends BattleReportFilter {
 
     private Set<Integer> ids;
     
@@ -20,14 +19,14 @@ public class IdListFilter implements BattleReportFilter {
     
     
     @Override
-    public boolean accept(BattleReport report) {
+    public boolean acceptReport(BattleReport report) {
         return this.ids.contains(report.getId());
     }
     
     
 
     @Override
-    public String toString(FormatManager formatManager) {
+    public String toString() {
         return "ID Selection";
     }
     

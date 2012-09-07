@@ -1,13 +1,8 @@
-package polly.rx.http.session;
+package polly.rx.core.filter;
 
 
-import java.util.Map.Entry;
+import java.util.Iterator;
 import java.util.Set;
-
-import polly.rx.core.filter.AndFilter;
-import polly.rx.core.filter.ChainedFilter;
-import polly.rx.core.filter.OrFilter;
-import polly.rx.core.filter.BattleReportFilter;
 
 
 
@@ -76,20 +71,37 @@ public class BattleReportFilterSettings {
     
     
     
-    public void addFilter(String key, BattleReportFilter filter) {
-        this.filter.getChain().put(key, filter);
+    public void addFilter(BattleReportFilter filter) {
+        this.filter.getChain().add(filter);
     }
     
     
     
-    public Set<Entry<String, BattleReportFilter>> filterSet() {
-        return this.filter.getChain().entrySet();
+    public Set<BattleReportFilter> getFilters() {
+        return this.filter.getChain();
     }
     
     
     
-    public void removeFilter(String key) {
-        this.filter.getChain().remove(key);
+    public BattleReportFilter getFilter(int id) {
+        for (BattleReportFilter filter : this.filter.getChain()) {
+            if (filter.getId() == id) {
+                return filter;
+            }
+        }
+        return null;
+    }
+    
+    
+    
+    public void removeFilter(int id) {
+        Iterator<BattleReportFilter> it = this.filter.getChain().iterator();
+        while (it.hasNext()) {
+            if (it.next().getId() == id) {
+                it.remove();
+                return;
+            }
+        }
     }
     
     

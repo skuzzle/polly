@@ -1,21 +1,68 @@
 package polly.rx.http;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import polly.rx.core.SumQueries;
+import polly.rx.core.filter.BattleReportAggregator;
 import polly.rx.core.filter.BattleReportFilterRunner;
 import polly.rx.entities.BattleDrop;
 import polly.rx.entities.BattleReport;
 import polly.rx.entities.BattleTactic;
-import polly.rx.http.session.BattleReportFilterSettings;
+import polly.rx.core.filter.BattleReportFilterSettings;
 import de.skuzzle.polly.sdk.http.HttpSession;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
+import de.skuzzle.polly.sdk.time.DateUtils;
 
 
 public class TemplateContextHelper {
     
+    private final static class Aggregator implements BattleReportAggregator {
+
+        private Set<String> venads;
+        private Set<String> clans;
+        private Set<String> locations;
+        private Set<Date> dates;
+        
+        public Aggregator() {
+            this.venads = new TreeSet<String>();
+            this.clans = new TreeSet<String>();
+            this.locations = new TreeSet<String>();
+            this.dates = new TreeSet<Date>();
+        }
+        
+        
+        
+        @Override
+        public void process(BattleReport report) {
+            this.venads.add(report.getAttackerVenadName());
+            this.venads.add(report.getDefenderVenadName());
+            this.clans.add(report.getAttackerClan());
+            this.clans.add(report.getDefenderClan());
+            this.locations.add(report.getQuadrant());
+            Date d = DateUtils.getDayAhead(report.getDate(), 0);
+            this.dates.add(d);
+        }
+        
+        
+        
+        public void prepareContext(HttpTemplateContext c) {
+            c.put("venads", this.venads);
+            c.put("clans", this.clans);
+            c.put("locations", this.locations);
+            c.put("dates", this.dates);
+        }
+        
+    }
+    
     public final static String FILTER_SETTINGS = "FILTER_SETTINGS";
 
+    public final static DateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
+    
     public final static void prepareForReportsList(HttpTemplateContext c, 
         HttpSession httpSession, List<BattleReport> reports) {
         
@@ -40,7 +87,9 @@ public class TemplateContextHelper {
         int pzDamageDefender = 0;
         int artifacts = 0;
         
-        BattleReportFilterRunner.filterInPlace(reports, settings.getFilter());
+        Aggregator agg = new Aggregator();
+        BattleReportFilterRunner.filterInPlace(reports, settings.getFilter(), agg);
+        agg.prepareContext(c);
         
         for (BattleReport report : reports) {
             // do some filtering according to current sessions filter settings
@@ -99,6 +148,7 @@ public class TemplateContextHelper {
         c.put("dropSum", dropSum);
         c.put("dropMax", dropMax);
         c.put("dropMin", dropMin);
+        c.put("dateFormat", DATE_FORMAT);
         c.put("allReports", reports);
     }
     

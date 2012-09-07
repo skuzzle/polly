@@ -1,20 +1,19 @@
 package polly.rx.core.filter;
 
 import polly.rx.entities.BattleReport;
-import de.skuzzle.polly.sdk.FormatManager;
 
 
-public class HasArtifactFilter implements BattleReportFilter {
+public class HasArtifactFilter extends BattleReportFilter {
 
     @Override
-    public boolean accept(BattleReport report) {
+    public boolean acceptReport(BattleReport report) {
         return report.hasArtifact();
     }
     
     
 
     @Override
-    public String toString(FormatManager formatManager) {
+    public String toString() {
         return "Dropped Artifact";
     }
 

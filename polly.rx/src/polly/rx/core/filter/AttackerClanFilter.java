@@ -1,10 +1,10 @@
 package polly.rx.core.filter;
 
+
 import polly.rx.entities.BattleReport;
-import de.skuzzle.polly.sdk.FormatManager;
 
 
-public class AttackerClanFilter implements BattleReportFilter {
+public class AttackerClanFilter extends BattleReportFilter {
 
     private String attackerClan;
     
@@ -16,14 +16,14 @@ public class AttackerClanFilter implements BattleReportFilter {
     
     
     @Override
-    public boolean accept(BattleReport report) {
+    public boolean acceptReport(BattleReport report) {
         return report.getAttackerClan().equals(this.attackerClan);
     }
     
     
 
     @Override
-    public String toString(FormatManager formatManager) {
+    public String toString() {
         return "Attacker Clan is: " + this.attackerClan;
     }
     

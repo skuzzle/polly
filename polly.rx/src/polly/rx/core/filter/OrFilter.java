@@ -1,6 +1,6 @@
 package polly.rx.core.filter;
 
-import java.util.Map;
+import java.util.Set;
 
 import polly.rx.entities.BattleReport;
 
@@ -15,7 +15,7 @@ public class OrFilter  extends ChainedFilter {
 
     
     
-    public OrFilter(Map<String, BattleReportFilter> chain) {
+    public OrFilter(Set<BattleReportFilter> chain) {
         super(chain);
     }
 
@@ -28,12 +28,12 @@ public class OrFilter  extends ChainedFilter {
     
     
     @Override
-    public boolean accept(BattleReport report) {
+    public boolean acceptReport(BattleReport report) {
         if (this.getChain().isEmpty()) {
             return true;
         }
-        for (BattleReportFilter filter : this.getChain().values()) {
-            if (filter.accept(report)) {
+        for (BattleReportFilter filter : this.getChain()) {
+            if (filter.filter(report)) {
                 return true;
             }
         }
@@ -44,6 +44,7 @@ public class OrFilter  extends ChainedFilter {
     
     @Override
     public String getHint() {
-        return "";
+        return "Chains a list of filters using an 'or' operation which means at least " +
+        		"one of the filters must match in order to show a report.";
     }
 }

@@ -1,11 +1,11 @@
 package polly.rx.core.filter;
 
+
 import polly.rx.entities.BattleReport;
 import polly.rx.entities.BattleTactic;
-import de.skuzzle.polly.sdk.FormatManager;
 
 
-public class TacticFilter implements BattleReportFilter {
+public class TacticFilter extends BattleReportFilter {
 
     private BattleTactic tactic;
     
@@ -17,14 +17,14 @@ public class TacticFilter implements BattleReportFilter {
     
     
     @Override
-    public boolean accept(BattleReport report) {
+    public boolean acceptReport(BattleReport report) {
         return report.getTactic() == this.tactic;
     }
     
     
 
     @Override
-    public String toString(FormatManager formatManager) {
+    public String toString() {
         return "Tactic is: " + this.tactic;
     }
 

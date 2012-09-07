@@ -1,6 +1,6 @@
 package polly.rx.core.filter;
 
-import java.util.Map;
+import java.util.Set;
 
 import polly.rx.entities.BattleReport;
 
@@ -20,16 +20,16 @@ public class AndFilter extends ChainedFilter {
 
     
     
-    public AndFilter(Map<String, BattleReportFilter> chain) {
+    public AndFilter(Set<BattleReportFilter> chain) {
         super(chain);
     }
 
     
     
     @Override
-    public boolean accept(BattleReport report) {
-        for (BattleReportFilter filter : this.getChain().values()) {
-            if (!filter.accept(report)) {
+    public boolean acceptReport(BattleReport report) {
+        for (BattleReportFilter filter : this.getChain()) {
+            if (!filter.filter(report)) {
                 return false;
             }
         }
@@ -41,6 +41,7 @@ public class AndFilter extends ChainedFilter {
     
     @Override
     public String getHint() {
-        return "";
+        return "Chains a list of filters using an 'and' operation which means that each" +
+        		"filter must match in order to show a report.";
     }
 }

@@ -9,11 +9,12 @@ public class BattleReportFilterRunner {
 
     
     public final static List<BattleReport> filter(List<BattleReport> reports, 
-            BattleReportFilter filter) {
+            BattleReportFilter filter, BattleReportAggregator agg) {
         
         List<BattleReport> result = new ArrayList<BattleReport>(reports.size());
         for (BattleReport report : reports) {
-            if (filter.accept(report)) {
+            agg.process(report);
+            if (filter.filter(report)) {
                 result.add(report);
             }
         }
@@ -23,12 +24,13 @@ public class BattleReportFilterRunner {
     
     
     public final static void filterInPlace(List<BattleReport> reports, 
-            BattleReportFilter filter) {
+            BattleReportFilter filter, BattleReportAggregator agg) {
         
         Iterator<BattleReport> it = reports.iterator();
         while (it.hasNext()) {
             BattleReport report = it.next();
-            if (!filter.accept(report)) {
+            agg.process(report);
+            if (!filter.filter(report)) {
                 it.remove();
             }
         }

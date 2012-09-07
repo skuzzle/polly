@@ -1,10 +1,9 @@
 package polly.rx.core.filter;
 
 import polly.rx.entities.BattleReport;
-import de.skuzzle.polly.sdk.FormatManager;
 
 
-public class DefenderFilter implements BattleReportFilter {
+public class DefenderFilter extends BattleReportFilter {
 
     private String defender;
     
@@ -16,14 +15,14 @@ public class DefenderFilter implements BattleReportFilter {
     
     
     @Override
-    public boolean accept(BattleReport report) {
+    public boolean acceptReport(BattleReport report) {
         return report.getDefenderVenadName().equals(this.defender);
     }
     
     
 
     @Override
-    public String toString(FormatManager formatManager) {
+    public String toString() {
         return "Defender is: " + this.defender;
     }
     
