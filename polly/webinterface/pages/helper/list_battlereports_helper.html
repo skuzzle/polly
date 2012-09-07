@@ -86,36 +86,61 @@
 <h3>Active Filters</h3>
 <table style="width: auto;">
     <tr>
-        <th>Filter name</th>
+        <th>Filter type</th>
         <th>Filter value</th>
+        <th>Negate</th>
         <th>Settings</th>
         <th>Hint</th>
     </tr>
     <tr>
         <td>Chaining method:</td>
         <td>$FILTER_SETTINGS.getChainingMethod()</td>
+        <td>-</td>
         <td><a href="filter_reports?action=or">OR</a> | <a href="filter_reports?action=and">AND</a></td>
         <td>Whether each of the filter below must match (and) or at least one filter must match (or)</td>
     </tr>
     <tr>
         <td>Switch alien Attacks</td>
         <td>$FILTER_SETTINGS.isSwitchOnAlienAttack()</td>
+        <td>-</td>
         <td><a href="filter_reports?action=toggleSwitching">Toggle</a></td>
         <td>Switching this to true causes switching of the defender and attacker values in alien attacks for the purpose of the statistical values above.</td>
     </tr>
-    #foreach ($entry in $FILTER_SETTINGS.filterSet())
+    #foreach ($entry in $FILTER_SETTINGS.getFilters())
     <tr>
-        <td>$entry.getKey()</td>
-        <td>$entry.getValue().toString($myPolly.formatting())</td>
-        <td><a href="filter_reports?action=removeFilter&filterKey=$entry.getKey()">Remove</a></td>
-        <td>$entry.getValue().getHint()</td>
+        <td>Dynamic filter</td>
+        <td>$entry.toString()</td>
+        <td>$entry.isNegate()</td>
+        <td><a href="filter_reports?action=removeFilter&filterId=$entry.getId()">Remove</a> | <a href="filter_reports?action=negate&filterId=$entry.getId()">Negate</a></td>
+        <td>$entry.getHint()</td>
     </tr>
     #end
     <tr>
         <td></td>
         <td></td>
+        <td></td>
         <td><a href="filter_reports?action=clear">Clear all Filters</a></td>
         <td></td>
+    </tr>
+</table>
+
+<h3>More Filters</h3>
+<table>
+    <tr>
+        <th>Attacker is</th>
+        <th>Defender is</th>
+        <th>Attacker clan is</th>
+        <th>Defender clan is</th>
+        <th>Location is</th>
+        <th>Date is</th>
+    </tr>
+    <tr>
+        <td>#foreach ($v in $venads) <a href="filter_reports?action=addFilter&filterKey=ATTACKER_FILTER&param=$v">$v #end</td>
+        <td>#foreach ($v in $venads) <a href="filter_reports?action=addFilter&filterKey=DEFENDER_FILTER&param=$v">$v</a> #end</td>
+        <td>#foreach ($c in $clans) <a href="filter_reports?action=addFilter&filterKey=ATTACKER_CLAN_FILTER&param=$c">$c</a> #end</td>
+        <td>#foreach ($c in $clans) <a href="filter_reports?action=addFilter&filterKey=DEFENDER_CLAN_FILTER&param=$c">$c</a> #end</td>
+        <td>#foreach ($l in $locations) <a href="filter_reports?action=addFilter&filterKey=LOCATION_FILTER&param=$l">$l</a> #end</td>
+        <td>#foreach ($d in $dates) <a href="filter_reports?action=addFilter&filterKey=DATE_FILTER&param=$myPolly.formatting().formatDate($d)">$dateFormat.format($d)</a> #end</td>
     </tr>
 </table>
 
