@@ -113,7 +113,6 @@ public class TemplateContextHelper {
                         drop.getAmount());
                     dropMax[i] = new BattleDrop(drop.getRessource(),
                         drop.getAmount());
-                    
                 } else {
                     dropSum[i].incAmout(report.getDrop().get(i).getAmount());
                     dropMin[i].setAmount(Math.min(dropMin[i].getAmount(), 
@@ -137,17 +136,20 @@ public class TemplateContextHelper {
             repairTimeDefender += report.getDefenderRepairTimeOffset();
             
             for (int i = 0; i < repairCostAttacker.length; ++i) {
+                BattleDrop d = report.getAttackerRepairCostOffset().get(i);
                 if (repairCostAttacker[i] == null) {
-                    repairCostAttacker[i] = report.getAttackerRepairCostOffset().get(i);
+                    repairCostAttacker[i] = new BattleDrop(
+                        d.getRessource(), d.getAmount());
                 } else {
-                    repairCostAttacker[i].incAmout(
-                        report.getAttackerRepairCostOffset().get(i).getAmount());
+                    repairCostAttacker[i].incAmout(d.getAmount());
                 }
+                
+                d = report.getDefenderRepairCostOffset().get(i);
                 if (repairCostDefender[i] == null) {
-                    repairCostDefender[i] = report.getDefenderRepairCostOffset().get(i);
+                    repairCostDefender[i] = new BattleDrop(
+                        d.getRessource(), d.getAmount());
                 } else {
-                    repairCostDefender[i].incAmout(
-                        report.getDefenderRepairCostOffset().get(i).getAmount());
+                    repairCostDefender[i].incAmout(d.getAmount());
                 }
             }
             

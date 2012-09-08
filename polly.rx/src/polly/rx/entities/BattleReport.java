@@ -214,8 +214,10 @@ public class BattleReport {
                 ship.getRepairTimeOffset(), this.attackerRepairTimeOffset);
             
             for (int i = 0; i < ship.getRepairCostOffset().size(); ++i) {
+                BattleDrop d = ship.getRepairCostOffset().get(i);
                 if (this.attackerRepairCostOffset.size() == i) {
-                    this.attackerRepairCostOffset.add(ship.getRepairCostOffset().get(i));
+                    this.attackerRepairCostOffset.add(
+                        new BattleDrop(d.getRessource(), d.getAmount()));
                 } else {
                     this.attackerRepairCostOffset.get(i).incAmout(
                         ship.getRepairCostOffset().get(i).getAmount());
@@ -229,11 +231,12 @@ public class BattleReport {
                 ship.getRepairTimeOffset(), this.defenderRepairTimeOffset);
             
             for (int i = 0; i < ship.getRepairCostOffset().size(); ++i) {
+                BattleDrop d = ship.getRepairCostOffset().get(i);
                 if (this.defenderRepairCostOffset.size() == i) {
-                    this.defenderRepairCostOffset.add(ship.getRepairCostOffset().get(i));
+                    this.defenderRepairCostOffset.add(
+                        new BattleDrop(d.getRessource(), d.getAmount()));
                 } else {
-                    this.defenderRepairCostOffset.get(i).incAmout(
-                        ship.getRepairCostOffset().get(i).getAmount());
+                    this.defenderRepairCostOffset.get(i).incAmout(d.getAmount());
                 }
             }
         }
