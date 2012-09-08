@@ -76,6 +76,9 @@ public class TemplateContextHelper {
         BattleDrop[] dropSum = new BattleDrop[14];
         BattleDrop[] dropMax = new BattleDrop[14];
         BattleDrop[] dropMin = new BattleDrop[14];
+        BattleDrop[] repairCostAttacker = new BattleDrop[7];
+        BattleDrop[] repairCostDefender = new BattleDrop[7];
+        
         
         double kwAttacker = 0;
         double kwDefender = 0;
@@ -133,6 +136,21 @@ public class TemplateContextHelper {
             repairTimeAttacker += report.getAttackerRepairTimeOffset();
             repairTimeDefender += report.getDefenderRepairTimeOffset();
             
+            for (int i = 0; i < repairCostAttacker.length; ++i) {
+                if (repairCostAttacker[i] == null) {
+                    repairCostAttacker[i] = report.getAttackerRepairCostOffset().get(i);
+                } else {
+                    repairCostAttacker[i].incAmout(
+                        report.getAttackerRepairCostOffset().get(i).getAmount());
+                }
+                if (repairCostDefender[i] == null) {
+                    repairCostDefender[i] = report.getDefenderRepairCostOffset().get(i);
+                } else {
+                    repairCostDefender[i].incAmout(
+                        report.getDefenderRepairCostOffset().get(i).getAmount());
+                }
+            }
+            
             artifacts += report.hasArtifact() ? 1 : 0;
             
         }
@@ -148,6 +166,8 @@ public class TemplateContextHelper {
         c.put("pzDamageDefender", pzDamageDefender);
         c.put("repairTimeAttacker", repairTimeAttacker);
         c.put("repairTimeDefender", repairTimeDefender);
+        c.put("repairCostDefender", repairCostDefender);
+        c.put("repairCostAttacker", repairCostAttacker);
         c.put("kwAttacker", kwAttacker);
         c.put("kwDefender", kwDefender);
         

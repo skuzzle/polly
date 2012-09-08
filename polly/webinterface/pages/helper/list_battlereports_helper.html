@@ -50,20 +50,8 @@
 <h3>Statistics for shown reports</h3>
 <table style="width:auto">
     <tr>
-        <th>Average attacker KW</th>
-        <td style="text-align:right;">$myPolly.formatting().formatNumber($kwAttacker)</td>
-    </tr>
-    <tr>
         <th>Average defender KW</th>
         <td style="text-align:right;">$myPolly.formatting().formatNumber($kwDefender)</td>
-    </tr>
-    <tr>
-        <th>Total attacker Captain XP</th>
-        <td style="text-align:right;">$!capiXpSumAttacker</td>
-    </tr>
-    <tr>
-        <th>Total attacker Crew XP</th>
-        <td style="text-align:right;">$!crewXpSumAttacker</td>
     </tr>
     <tr>
         <th>Total defender Captain XP</th>
@@ -74,10 +62,6 @@
         <td style="text-align:right;">$!crewXpSumDefender</td>
     </tr>
     <tr>
-        <th>Total attacker PZ damage </th>
-        <td style="text-align:right;">$!pzDamageAttacker</td>
-    </tr>
-    <tr>
         <th>Total defender PZ damage </th>
         <td style="text-align:right;">$!pzDamageDefender</td>
     </tr>
@@ -86,8 +70,61 @@
         <td style="text-align:right;">$myPolly.formatting().formatTimeSpan($repairTimeDefender)</td>
     </tr>
     <tr>
+        <th>Total defender repair costs</th>
+        <td>
+            <table>
+                <tr>
+                #foreach ($i in $repairCostDefender)
+                    <th>$i.getRessource()</th>
+                #end
+                </tr>
+                <tr>
+                #foreach ($i in $repairCostDefender)
+                    <td>$i.getAmount()</th>
+                #end
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
+<table style="width:auto;">
+    <tr>
+        <th>Average attacker KW</th>
+        <td style="text-align:right;">$myPolly.formatting().formatNumber($kwAttacker)</td>
+    </tr>
+    <tr>
+        <th>Total attacker Captain XP</th>
+        <td style="text-align:right;">$!capiXpSumAttacker</td>
+    </tr>
+    <tr>
+        <th>Total attacker Crew XP</th>
+        <td style="text-align:right;">$!crewXpSumAttacker</td>
+    </tr>
+    <tr>
+        <th>Total attacker PZ damage </th>
+        <td style="text-align:right;">$!pzDamageAttacker</td>
+    </tr>
+    <tr>
         <th>Total attacker repair time</th>
         <td style="text-align:right;">$myPolly.formatting().formatTimeSpan($repairTimeAttacker)</td>
+    </tr>
+    <tr>
+        <th>Total attacker repair costs</th>
+        <td>
+            <table>
+                <tr>
+                #foreach ($i in $repairCostAttacker)
+                    <th>$i.getRessource()</th>
+                #end
+                </tr>
+                <tr>
+                #foreach ($i in $repairCostAttacker)
+                    <td>$i.getAmount()</th>
+                #end
+                </tr>
+            </table>
+        </td>
     </tr>
 </table>
 
