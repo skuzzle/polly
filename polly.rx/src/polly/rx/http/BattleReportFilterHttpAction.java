@@ -73,7 +73,10 @@ public class BattleReportFilterHttpAction extends HttpAction {
         
         if (action != null && action.equals("idSelect") && isSelect) {
             Integer[] ids = this.getIdList(e);
-            settings.addFilter(new IdListFilter(ids));
+            
+            if (ids != null) {
+                settings.addFilter(new IdListFilter(ids));
+            }
             
         } else if (action != null && action.equals("idSelect") && isDelete) {
             
@@ -83,11 +86,12 @@ public class BattleReportFilterHttpAction extends HttpAction {
             }
             
             Integer[] ids = this.getIdList(e);
-            
-            try {
-                this.fleetDBManager.deleteReportByIdList(ids);
-            } catch (DatabaseException e1) {
-                e.throwTemplateException(e1);
+            if (ids != null) {
+                try {
+                    this.fleetDBManager.deleteReportByIdList(ids);
+                } catch (DatabaseException e1) {
+                    e.throwTemplateException(e1);
+                }
             }
         } else if (action != null && action.equals("negate")) {
             String filterId = e.getProperty("filterId");
@@ -181,6 +185,9 @@ public class BattleReportFilterHttpAction extends HttpAction {
     
     
     private Integer[] getIdList(HttpEvent e) {
+        if (e.getProperty("selectRP") == null) {
+            return null;
+        }
         String[] stringIds = e.getProperty("selectRP").split(";");
         Integer ids[] = new Integer[stringIds.length];
         
