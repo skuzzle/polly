@@ -219,8 +219,7 @@ public class BattleReport {
                     this.attackerRepairCostOffset.add(
                         new BattleDrop(d.getRessource(), d.getAmount()));
                 } else {
-                    this.attackerRepairCostOffset.get(i).incAmout(
-                        ship.getRepairCostOffset().get(i).getAmount());
+                    this.attackerRepairCostOffset.get(i).incAmout(d.getAmount());
                 }
             }
         }
