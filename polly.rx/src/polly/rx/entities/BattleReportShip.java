@@ -1,9 +1,13 @@
 package polly.rx.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 
 @Entity
@@ -52,7 +56,13 @@ public class BattleReportShip {
     
     private int crewDamage;
     
+    @Transient
+    private List<BattleDrop> repairCostOffset;
 
+    @Transient
+    private int repairTimeOffset;
+    
+    
     
     public BattleReportShip() {
         this(0, "", "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -90,9 +100,44 @@ public class BattleReportShip {
     }
 
     
+    private final static double CRED_FACTOR_PZ = 6324.0 / 99940.0;
+    private final static double NRG_FACTOR_PZ = 6022.0 / 99940.0;
+    private final static double ORG_FACTOR_PZ = 9930.0 / 99940.0;
+    private final static double FE_FACTOR_PZ = 15031.0 / 99940;
+    private final static double LM_FACTOR_PZ = 8428.0 / 99940.0;
+    private final static double SM_FACTOR_PZ = 5438.0 / 99940.0;
+    private final static double REPAIR_TIME_FACTOR_PZ = 1798920.0 / 99940.0;
+    
+    
+    public void calcCostOffset() {
+        this.repairCostOffset = new ArrayList<BattleDrop>(7);
+        this.repairCostOffset.add(new BattleDrop(RxRessource.CR, (int)(CRED_FACTOR_PZ * this.pzDamage)));
+        this.repairCostOffset.add(new BattleDrop(RxRessource.NRG, (int)(NRG_FACTOR_PZ * this.pzDamage)));
+        this.repairCostOffset.add(new BattleDrop(RxRessource.ORG, (int)(ORG_FACTOR_PZ * this.pzDamage)));
+        this.repairCostOffset.add(new BattleDrop(RxRessource.SYNTH, 0));
+        this.repairCostOffset.add(new BattleDrop(RxRessource.FE, (int)(FE_FACTOR_PZ * this.pzDamage)));
+        this.repairCostOffset.add(new BattleDrop(RxRessource.LM, (int)(LM_FACTOR_PZ * this.pzDamage)));
+        this.repairCostOffset.add(new BattleDrop(RxRessource.SM, (int)(SM_FACTOR_PZ * this.pzDamage)));
+        this.repairTimeOffset = (int) (REPAIR_TIME_FACTOR_PZ * this.pzDamage);
+    }
+    
+    
     
     public int getId() {
         return this.id;
+    }
+    
+    
+    
+    
+    public List<BattleDrop> getRepairCostOffset() {
+        return this.repairCostOffset;
+    }
+    
+    
+    
+    public int getRepairTimeOffset() {
+        return this.repairTimeOffset;
     }
 
     

@@ -1,5 +1,6 @@
 package polly.rx.entities;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,6 +18,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import polly.rx.core.SumQuery;
 
@@ -137,6 +139,18 @@ public class BattleReport {
     @JoinTable(name = "BATTLE_REPORT_DEFENDERS")
     private List<BattleReportShip> defenderShips;
     
+    @Transient
+    private List<BattleDrop> defenderRepairCostOffset;
+    
+    @Transient
+    private List<BattleDrop> attackerRepairCostOffset;
+    
+    @Transient
+    private int defenderRepairTimeOffset;
+    
+    @Transient
+    private int attackerRepairTimeOffset;
+    
     
     
     public BattleReport() {
@@ -181,11 +195,80 @@ public class BattleReport {
         this.attackerShips = attackerShips;
         this.defenderShips = defenderShips;
     }
-
-
+    
+    
     
     public int getId() {
         return this.id;
+    }
+    
+    
+    
+    public void calculateRepairTimes() {
+        this.attackerRepairCostOffset = new ArrayList<BattleDrop>(7);
+        this.defenderRepairCostOffset = new ArrayList<BattleDrop>(7);
+        
+        for (BattleReportShip ship : this.attackerShips) {
+            ship.calcCostOffset();
+            this.attackerRepairTimeOffset = Math.max(
+                ship.getRepairTimeOffset(), this.attackerRepairTimeOffset);
+            
+            for (int i = 0; i < ship.getRepairCostOffset().size(); ++i) {
+                if (this.attackerRepairCostOffset.size() == i) {
+                    this.attackerRepairCostOffset.add(ship.getRepairCostOffset().get(i));
+                } else {
+                    this.attackerRepairCostOffset.get(i).incAmout(
+                        ship.getRepairCostOffset().get(i).getAmount());
+                }
+            }
+        }
+        
+        for (BattleReportShip ship : this.defenderShips) {
+            ship.calcCostOffset();
+            this.defenderRepairTimeOffset = Math.max(
+                ship.getRepairTimeOffset(), this.defenderRepairTimeOffset);
+            
+            for (int i = 0; i < ship.getRepairCostOffset().size(); ++i) {
+                if (this.defenderRepairCostOffset.size() == i) {
+                    this.defenderRepairCostOffset.add(ship.getRepairCostOffset().get(i));
+                } else {
+                    this.defenderRepairCostOffset.get(i).incAmout(
+                        ship.getRepairCostOffset().get(i).getAmount());
+                }
+            }
+        }
+    }
+    
+    
+    
+    
+    public List<BattleDrop> getAttackerRepairCostOffset() {
+        return this.attackerRepairCostOffset;
+    }
+    
+    
+    
+    
+    public int getAttackerRepairTimeOffset() {
+        return this.attackerRepairTimeOffset;
+    }
+    
+    
+    
+    public List<BattleDrop> getBattleDrops() {
+        return this.battleDrops;
+    }
+    
+    
+    
+    public List<BattleDrop> getDefenderRepairCostOffset() {
+        return this.defenderRepairCostOffset;
+    }
+    
+    
+    
+    public int getDefenderRepairTimeOffset() {
+        return this.defenderRepairTimeOffset;
     }
     
     

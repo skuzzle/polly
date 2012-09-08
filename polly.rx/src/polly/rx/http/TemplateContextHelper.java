@@ -86,6 +86,8 @@ public class TemplateContextHelper {
         int pzDamageAttacker = 0;
         int pzDamageDefender = 0;
         int artifacts = 0;
+        int repairTimeAttacker = 0;
+        int repairTimeDefender = 0;
         
         Aggregator agg = new Aggregator();
         BattleReportFilterRunner.filterInPlace(reports, settings.getFilter(), agg);
@@ -96,6 +98,7 @@ public class TemplateContextHelper {
             if (settings.isSwitchOnAlienAttack() && report.getTactic() == BattleTactic.ALIEN) {
                 report = BattleReport.switchAttacker(report);
             }
+            
             
             for (int i = 0; i < 14; ++i) {
                 BattleDrop drop = report.getDrop().get(i);
@@ -125,7 +128,13 @@ public class TemplateContextHelper {
             crewXpSumDefender += report.querySumDefender(SumQueries.CREW_XP);
             pzDamageAttacker += report.querySumAttacker(SumQueries.PZ_DAMAGE);
             pzDamageDefender += report.querySumDefender(SumQueries.PZ_DAMAGE);
+            
+            report.calculateRepairTimes();
+            repairTimeAttacker += report.getAttackerRepairTimeOffset();
+            repairTimeDefender += report.getDefenderRepairTimeOffset();
+            
             artifacts += report.hasArtifact() ? 1 : 0;
+            
         }
         
         kwAttacker /= reports.size();
@@ -137,6 +146,8 @@ public class TemplateContextHelper {
         c.put("crewXpSumDefender", crewXpSumDefender);
         c.put("pzDamageAttacker", pzDamageAttacker);
         c.put("pzDamageDefender", pzDamageDefender);
+        c.put("repairTimeAttacker", repairTimeAttacker);
+        c.put("repairTimeDefender", repairTimeDefender);
         c.put("kwAttacker", kwAttacker);
         c.put("kwDefender", kwDefender);
         
