@@ -1,5 +1,6 @@
 #set ($dir = !$dir)
 
+#if ($reports.size() != 0)
 <h3>Total drop for shown reports</h3>
 <table>
 	<tr>
@@ -75,12 +76,12 @@
             <table>
                 <tr>
                 #foreach ($i in $repairCostDefender)
-                    <th>$i.getRessource()</th>
+                    <th>$!i.getRessource()</th>
                 #end
                 </tr>
                 <tr>
                 #foreach ($i in $repairCostDefender)
-                    <td>$i.getAmount()</th>
+                    <td>$!i.getAmount()</th>
                 #end
                 </tr>
             </table>
@@ -115,18 +116,21 @@
             <table>
                 <tr>
                 #foreach ($i in $repairCostAttacker)
-                    <th>$i.getRessource()</th>
+                    <th>$!i.getRessource()</th>
                 #end
                 </tr>
                 <tr>
                 #foreach ($i in $repairCostAttacker)
-                    <td>$i.getAmount()</th>
+                    <td>$!i.getAmount()</th>
                 #end
                 </tr>
             </table>
         </td>
     </tr>
 </table>
+#else
+<h3>No battlereport matches your current filter settings.</h3>
+#end
 
 <h3>Active Filters</h3>
 <table style="width: auto;">
