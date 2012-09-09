@@ -17,6 +17,24 @@ public class BattleDrop {
     private RxRessource ressource;
     
     private int amount;
+    
+    
+    
+    public final static void sumUp(BattleDrop[] result, BattleDrop[] values) {
+        if (result.length != values.length) {
+            throw new RuntimeException("dimension mismatch");
+        }
+        
+        for (int i = 0; i < result.length; ++i) {
+            BattleDrop d = values[i];
+            if (result[i] == null) {
+                result[i] = new BattleDrop(d.getRessource(), d.getAmount());
+            } else {
+                result[i].incAmout(d);
+            }
+        }
+    }
+    
 
     
     public BattleDrop() {}
@@ -44,8 +62,8 @@ public class BattleDrop {
     
     
     
-    public void incAmout(int amount) {
-        this.amount += amount;
+    public void incAmout(BattleDrop other) {
+        this.amount += other.amount;
     }
     
     

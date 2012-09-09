@@ -114,7 +114,7 @@ public class TemplateContextHelper {
                     dropMax[i] = new BattleDrop(drop.getRessource(),
                         drop.getAmount());
                 } else {
-                    dropSum[i].incAmout(report.getDrop().get(i).getAmount());
+                    dropSum[i].incAmout(drop);
                     dropMin[i].setAmount(Math.min(dropMin[i].getAmount(), 
                         drop.getAmount()));
                     dropMax[i].setAmount(Math.max(dropMax[i].getAmount(), 
@@ -131,30 +131,13 @@ public class TemplateContextHelper {
             pzDamageAttacker += report.querySumAttacker(SumQueries.PZ_DAMAGE);
             pzDamageDefender += report.querySumDefender(SumQueries.PZ_DAMAGE);
             
-            report.calculateRepairTimes();
             repairTimeAttacker += report.getAttackerRepairTimeOffset();
             repairTimeDefender += report.getDefenderRepairTimeOffset();
             
-            for (int i = 0; i < repairCostAttacker.length; ++i) {
-                BattleDrop d = report.getAttackerRepairCostOffset().get(i);
-                if (repairCostAttacker[i] == null) {
-                    repairCostAttacker[i] = new BattleDrop(
-                        d.getRessource(), d.getAmount());
-                } else {
-                    repairCostAttacker[i].incAmout(d.getAmount());
-                }
-                
-                d = report.getDefenderRepairCostOffset().get(i);
-                if (repairCostDefender[i] == null) {
-                    repairCostDefender[i] = new BattleDrop(
-                        d.getRessource(), d.getAmount());
-                } else {
-                    repairCostDefender[i].incAmout(d.getAmount());
-                }
-            }
+            BattleDrop.sumUp(repairCostAttacker, report.getAttackerRepairCostOffset());
+            BattleDrop.sumUp(repairCostDefender, report.getDefenderRepairCostOffset());
             
             artifacts += report.hasArtifact() ? 1 : 0;
-            
         }
         
         kwAttacker /= reports.size();
