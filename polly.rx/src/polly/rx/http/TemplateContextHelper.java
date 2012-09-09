@@ -131,6 +131,7 @@ public class TemplateContextHelper {
             pzDamageAttacker += report.querySumAttacker(SumQueries.PZ_DAMAGE);
             pzDamageDefender += report.querySumDefender(SumQueries.PZ_DAMAGE);
             
+            report.calculateRepairTimes();
             repairTimeAttacker += report.getAttackerRepairTimeOffset();
             repairTimeDefender += report.getDefenderRepairTimeOffset();
             

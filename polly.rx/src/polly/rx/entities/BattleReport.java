@@ -205,8 +205,7 @@ public class BattleReport {
     
     
     @PostLoad
-    @SuppressWarnings("unused")
-    private void calculateRepairTimes() {
+    public void calculateRepairTimes() {
         this.attackerRepairCostOffset = new BattleDrop[7];
         this.defenderRepairCostOffset = new BattleDrop[7];
         this.attackerRepairTimeOffset = this.calculateRepairValues(
