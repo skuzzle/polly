@@ -130,7 +130,6 @@ public class BattleReportShip {
     
     
     
-    
     public BattleDrop[] getRepairCostOffset() {
         return this.repairCostOffset;
     }

@@ -35,6 +35,24 @@ public class FleetDBManager {
     
     
     
+    public void cleanInvalidBattleReports() throws DatabaseException {
+        final List<BattleReport> allReports = this.getAllReports();
+        
+        this.persistence.atomicWriteOperation(new WriteAction() {
+            @Override
+            public void performUpdate(PersistenceManager persistence) {
+                for (BattleReport report : allReports) {
+                    if (report.getDefenderShips().isEmpty() || 
+                            report.getAttackerShips().isEmpty()) {
+                        persistence.remove(report);
+                    }
+                }
+            }
+        });
+    }
+    
+    
+    
     public synchronized void addBattleReport(BattleReport report) 
             throws DatabaseException {
         try {

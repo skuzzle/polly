@@ -65,12 +65,12 @@
             <table>
                 <tr>
                 #foreach ($i in $repairCosts)
-                    <th>$i.getRessource()</th>
+                    <th>$!i.getRessource()</th>
                 #end
                 </tr>
                 <tr>
                 #foreach ($i in $repairCosts)
-                    <td>$i.getAmount()</th>
+                    <td>$!i.getAmount()</th>
                 #end
                 </tr>
             </table>

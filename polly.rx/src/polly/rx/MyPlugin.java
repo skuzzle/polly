@@ -156,5 +156,11 @@ public class MyPlugin extends PollyPlugin {
         } catch (Exception ignore) {
             ignore.printStackTrace();
         }
+        
+        try {
+            this.fleetDBManager.cleanInvalidBattleReports();
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        }
     }
 }
