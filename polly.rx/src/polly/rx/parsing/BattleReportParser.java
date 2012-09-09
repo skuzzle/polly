@@ -84,6 +84,10 @@ public class BattleReportParser {
     
     
     
+    private BattleReportParser() {}
+    
+    
+    
     public final static BattleReport parseReport(String paste, User submitter) throws ParseException {
         try {
             return parseReportHelper(paste, submitter);
@@ -197,12 +201,20 @@ public class BattleReportParser {
         }
         List<BattleReportShip> attackerShips = parseShips(b.toString());
         
+        if (attackerShips.isEmpty()) {
+            throw new ParseException();
+        }
+        
         b = new StringBuilder();
         while (it.hasNext()) {
             b.append(it.next());
             b.append('\n');
         }
         List<BattleReportShip> defenderShips = parseShips(b.toString());
+        
+        if (defenderShips.isEmpty()) {
+            throw new ParseException();
+        }
         
         return new BattleReport(submitter.getId(), quadrant, x, y, drops, artifact, date, 
             tactic, attackerBonus, defenderBonus, attackerKw, attackerXpMod, defenderkw, 
