@@ -29,7 +29,6 @@ public class LinkGrabberManager {
     
     
     
-    
     public boolean isEnabled() {
         return this.enabled;
     }
