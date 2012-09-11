@@ -147,11 +147,8 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
         this.server.createContext(FILE_REQUEST_PREFIX, 
             new FileResponseHandler(this, this.counter, FILE_REQUEST_PREFIX));
         
-        // create action handler and add a filter which filters file requests
-        this.server.createContext(
-            "/", new ActionResponseHandler(
-                this, this.counter)).getFilters().add(
-                    new FileFilter(FILE_REQUEST_PREFIX));
+        // create action handler
+        this.server.createContext("/", new ActionResponseHandler(this, this.counter));
         
         this.server.setExecutor(
             Executors.newCachedThreadPool(
