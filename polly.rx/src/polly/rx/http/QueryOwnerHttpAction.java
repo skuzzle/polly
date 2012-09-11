@@ -37,10 +37,11 @@ public class QueryOwnerHttpAction extends HttpAction {
             e.throwTemplateException("Invalid query string", "Query string must not " +
             		"be empty");
         }
+        query = e.getSource().escapeHtml(query);
         
         String method = e.getProperty("method") == null
             ? "owner"
-            : e.getProperty("method");
+            : e.getSource().escapeHtml(e.getProperty("method"));
         
         List<FleetScanShip> ships = null; 
         List<FleetScan> scans = null; 
