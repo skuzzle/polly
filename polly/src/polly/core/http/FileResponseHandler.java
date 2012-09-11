@@ -36,6 +36,8 @@ public class FileResponseHandler extends AbstractResponseHandler {
         File dest = this.webServer.getPage(path);
         
         if (!dest.exists() || dest.getName().toLowerCase().endsWith(".html")) {
+            logger.warn("Requested file does not exist or request has been blocked");
+            session.increaseErrorCounter();
             this.respond404(t);
         } else {
             this.respond(dest, t, session);
