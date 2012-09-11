@@ -261,7 +261,8 @@ public class HttpSession extends AbstractDisposable {
     
     @Override
     public String toString() {
-        return "HttpSession [ip = " + this.remoteIp + ", id = " + this.id + "]";
+        return "HttpSession [ip = " + this.remoteIp + ", id = " + this.id + 
+            ", user = " + this.user + "]";
     }
 
 
