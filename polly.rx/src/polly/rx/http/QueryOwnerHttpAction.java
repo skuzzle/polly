@@ -31,6 +31,13 @@ public class QueryOwnerHttpAction extends HttpAction {
         HttpTemplateContext c = new HttpTemplateContext("pages/query_scans.html");
         
         String query = e.getProperty("query");
+        
+        if (query == null) {
+            e.getSession().increaseErrorCounter();
+            e.throwTemplateException("Invalid query string", "Query string must not " +
+            		"be empty");
+        }
+        
         String method = e.getProperty("method") == null
             ? "owner"
             : e.getProperty("method");
@@ -48,7 +55,7 @@ public class QueryOwnerHttpAction extends HttpAction {
             scans = this.fleetDBManager.getScansWithClan(query);
             ships = this.fleetDBManager.getShipsByClan(query);
         } else {
-            e.throwTemplateException("Illegal querye method", "'" + method 
+            e.throwTemplateException("Illegal query method", "'" + method 
                 + "' is no valid query method");
         }
         
