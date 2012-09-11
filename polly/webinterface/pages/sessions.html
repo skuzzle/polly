@@ -10,6 +10,7 @@
         <th>Last Action</th>
         <th>Auto logout in</th>
         <th>Traffic (up)</th>
+        <th>Errors</th>
         <th>Status</th>
         <th>Action</th>
         <th>Action</th>
@@ -25,12 +26,13 @@
         #set ( $diff = ( $timeout - ($now - $sess.getLastAction())))
         <td>$myPolly.formatting().formatTimeSpanMs($diff)</td>
         <td>$myPolly.formatting().formatBytes($sess.getTrafficUp())</td>
+        <td>$session.getErrorCounter()</td>
         <td>#if ($session.shouldBlock($errorThreshold)) Blocked #else - #end</td>
         <td>
             <form action="Sessions" method="POST">
             <input type="hidden" name="action" value="unblock"/>
             <input type="hidden" name="sessionId" value="$sess.getId()"/>
-            <input type="submit" value="Unblock" class="button" />
+            <input type="submit" value="Unblock/Reset" class="button" />
             </form>
         </td>
         <td>
@@ -54,6 +56,7 @@
         <th>Last URI</th>
         <th>Last Action</th>
         <th>Traffic (up)</th>
+        <th>Errors</th>
     </tr>
     #foreach ($sess in $expiredSessions)
     <tr>
@@ -64,6 +67,7 @@
 		<td>$sess.getLastUri()</td>
         <td>$myPolly.formatting().formatDate($sess.getLastAction())</td>
         <td>$myPolly.formatting().formatBytes($sess.getTrafficUp())</td>
+        <td>$session.getErrorCounter()</td>
     #end
 </table>
 #end

@@ -101,6 +101,17 @@ public class HttpSession extends AbstractDisposable {
     
     
     /**
+     * Gets the count of errors that this session caused.
+     * 
+     * @return The number of errors.
+     */
+    public int getErrorCounter() {
+        return this.errorCounter;
+    }
+    
+    
+    
+    /**
      * A HttpSession will automatically be blocked by polly web service if it caused too 
      * many unexpected errors. It will either be unblocked after a certain time or 
      * manually by calling {@link #resetErroCounter()}.
