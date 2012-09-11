@@ -27,7 +27,7 @@
         <td>$myPolly.formatting().formatTimeSpanMs($diff)</td>
         <td>$myPolly.formatting().formatBytes($sess.getTrafficUp())</td>
         <td>$session.getErrorCounter()</td>
-        <td>#if ($session.shouldBlock($errorThreshold)) Blocked #else - #end</td>
+        <td>#if ($sess.shouldBlock($errorThreshold)) Blocked #else - #end</td>
         <td>
             <form action="Sessions" method="POST">
             <input type="hidden" name="action" value="unblock"/>
@@ -67,7 +67,7 @@
 		<td>$sess.getLastUri()</td>
         <td>$myPolly.formatting().formatDate($sess.getLastAction())</td>
         <td>$myPolly.formatting().formatBytes($sess.getTrafficUp())</td>
-        <td>$session.getErrorCounter()</td>
+        <td>$sess.getErrorCounter()</td>
     #end
 </table>
 #end
