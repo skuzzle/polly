@@ -178,6 +178,7 @@
     <tr>
         <th>Attacker is</th>
         <th>Defender is</th>
+        <th>Involved venad is</th>
         <th>Attacker clan is</th>
         <th>Defender clan is</th>
         <th>Location is</th>
@@ -186,6 +187,7 @@
     <tr>
         <td>#foreach ($v in $venads) <a href="filter_reports?action=addFilter&filterKey=ATTACKER_FILTER&param=$v">$v #end</td>
         <td>#foreach ($v in $venads) <a href="filter_reports?action=addFilter&filterKey=DEFENDER_FILTER&param=$v">$v</a> #end</td>
+        <td>#foreach ($v in $venads) <a href="filter_reports?action=addFilter&filterKey=ANY_VENAD_FILTER&param=$v">$v</a> #end</td>
         <td>#foreach ($c in $clans) <a href="filter_reports?action=addFilter&filterKey=ATTACKER_CLAN_FILTER&param=$c">$c</a> #end</td>
         <td>#foreach ($c in $clans) <a href="filter_reports?action=addFilter&filterKey=DEFENDER_CLAN_FILTER&param=$c">$c</a> #end</td>
         <td>#foreach ($l in $locations) <a href="filter_reports?action=addFilter&filterKey=LOCATION_FILTER&param=$l">$l</a> #end</td>

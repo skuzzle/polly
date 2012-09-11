@@ -17,6 +17,7 @@ public class BattleReportFilterSettings {
     public static final String ID_LIST_FILTER = "ID_LIST_FILTER";
     public static final String DEFENDER_CLAN_FILTER = "DEFENDER_CLAN_FILTER";
     public static final String ATTACKER_CLAN_FILTER = "ATTACKER_CLAN_FILTER";
+    public static final String ANY_VENAD_FILTER = "ANY_VENAD_FILTER";
     
     
     private boolean switchOnAlienAttack;

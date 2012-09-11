@@ -17,6 +17,7 @@ import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.http.HttpTemplateException;
 import de.skuzzle.polly.sdk.http.HttpTemplateSortHelper;
 import polly.rx.core.FleetDBManager;
+import polly.rx.core.filter.AnyVenadFilter;
 import polly.rx.core.filter.BattleReportFilterSettings;
 import polly.rx.core.filter.BattleReportFilter;
 import polly.rx.core.filter.AnyDayFilter;
@@ -124,6 +125,10 @@ public class BattleReportFilterHttpAction extends HttpAction {
                 BattleReportFilter filter = this.createAnyDayFilter(
                     filterParam, e.getSession());
                 settings.addFilter(filter);
+            } else if (filterKey != null &&
+                filterKey.equals(BattleReportFilterSettings.ANY_VENAD_FILTER)) {
+                
+                settings.addFilter(new AnyVenadFilter(filterParam));
             } else if (filterKey != null &&
                 filterKey.equals(BattleReportFilterSettings.ATTACKER_FILTER)) {
                 
