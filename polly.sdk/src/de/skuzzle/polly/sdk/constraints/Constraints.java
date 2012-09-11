@@ -10,7 +10,7 @@ package de.skuzzle.polly.sdk.constraints;
 public interface Constraints {
 
     /**
-     * Constraints a value to <code>true> or <code>false</code>
+     * Constraints a value to <code>true</code> or <code>false</code>
      * @see BooleanConstraint
      */
     public final static AttributeConstraint BOOLEAN = new BooleanConstraint();
