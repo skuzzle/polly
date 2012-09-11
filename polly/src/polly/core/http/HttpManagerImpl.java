@@ -190,9 +190,10 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     
     public void closeSession(HttpSession session) {
         synchronized (this.sessions) {
+            HttpSession copy = session.copy();
             session.setUser(null);
             this.sessions.remove(session.getRemoteIp());
-            this.expiredSessions.add(session);
+            this.expiredSessions.add(copy);
         }
     };
     

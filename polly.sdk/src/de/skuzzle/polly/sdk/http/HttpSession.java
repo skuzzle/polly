@@ -59,6 +59,27 @@ public class HttpSession extends AbstractDisposable {
     
     
     /**
+     * Copies this session for a given user. The result is an exact copy of this session,
+     * except that the new sessions data (see {@link #get(String)}, 
+     * {@link #putDtata(String, Object)}) will be empty.
+     * 
+     * @return A copy of this session.
+     * @since 0.9.1
+     */
+    public HttpSession copy() {
+        HttpSession copy = new HttpSession(this.id, this.remoteIp);
+        copy.errorCounter = this.errorCounter;
+        copy.started = this.started;
+        copy.lastAction = this.lastAction;
+        copy.user = this.user;
+        copy.lastUri = this.lastUri;
+        copy.trafficUp = this.trafficUp;
+        return copy;
+    }
+    
+    
+    
+    /**
      * Increases the error counter for this session by 1. If a session raises multiple
      * errors, the polly web service may kill it for security purposes.
      * @since 0.9.1
