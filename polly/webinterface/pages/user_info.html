@@ -100,7 +100,7 @@
             <td><input type="text" value="$user.getAttribute($attribute)" name="$attribute" style="width: 100%;"/></td>
             <td><input type="button" onclick="this.form.${attribute}.value='%default%'" value="Default" class="button"/></td>
         #else 
-            <td>$user.getAttribute($attribute)</td>
+            <td>$server.escapeHtml($user.getAttribute($attribute))</td>
         #end
     </tr>
     #end
