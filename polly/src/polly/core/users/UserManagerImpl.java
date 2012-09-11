@@ -54,12 +54,11 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
 
     private static Logger logger = Logger.getLogger(UserManagerImpl.class.getName());
     
-    
     private final static AttributeConstraint NO_CONSTRAINT = new AttributeConstraint() {
         
         @Override
         public boolean accept(String value) {
-            return true;
+            return value.length() < MAX_ATTRIBUTE_VALUE_LENGTH;
         }
     };
     

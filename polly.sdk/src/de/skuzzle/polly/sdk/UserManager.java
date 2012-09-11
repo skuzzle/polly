@@ -45,6 +45,11 @@ public interface UserManager {
     public final static Pattern USER_NAME_PATTERN = 
             Pattern.compile("[^\\d-][\\w\\d-_\\[\\]{}\\\\`^\\.]+");
     
+    /**
+     * Maximum length of attribute parameter values.
+     */
+    public final static int MAX_ATTRIBUTE_VALUE_LENGTH = 512;
+    
     
     /**
      * Classifies the userlevel 'unknown'
