@@ -45,6 +45,12 @@ public class ActionResponseHandler extends AbstractResponseHandler {
         Map<String, HttpParameter> parameters = new HashMap<String, HttpParameter>();
         if (uri.contains("?")) {
             String[] parts = uri.split("\\?");
+            
+            if (parts.length == 1) {
+                session.increaseErrorCounter();
+                throw new HttpTemplateException("Invalid parameters", 
+                    "Supplied URI has no valid parameters", session);
+            }
             parseParameters(parts[1], parameters, ParameterType.GET);
             uri = parts[0];
         }

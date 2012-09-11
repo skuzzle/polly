@@ -31,9 +31,19 @@ public class UserInfoPageHttpAction extends HttpAction {
             HttpInterface.PAGE_USER_INFO);
         context.put("formatter", this.myPolly.formatting());
         String userName = e.getProperty("userName");
+        
+        if (userName == null) {
+            e.getSession().increaseErrorCounter();
+            e.throwTemplateException("Invalid username", "No username supplied");
+        }
+        
         String action = e.getProperty("action");
         
         User u = this.myPolly.users().getUser(userName);
+        if (u == null) {
+            e.throwTemplateException("Invalid username", "User does not exist");
+        }
+        
         context.put("user", u);
         context.put("action", action);
         boolean isHome = u != null && u.equals(e.getSession().getUser());
