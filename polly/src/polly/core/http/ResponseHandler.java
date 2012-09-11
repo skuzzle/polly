@@ -113,6 +113,13 @@ public class ResponseHandler implements HttpHandler {
                 "Please login and try again.", session);
             this.respond(c, t, session);
             return;
+        } else if (session.isLoggedIn() && session.shouldBlock(
+                this.webServer.getErrorThreshold())) {
+            this.webServer.closeSession(session);
+            HttpTemplateContext c = this.webServer.errorTemplate("Session blocked", 
+                "Your session has automatically been blocked because it caused " +
+                "too many internal execution errors.", session);
+            this.respond(c, t, session);
         }
         
         session.setLastAction(now);

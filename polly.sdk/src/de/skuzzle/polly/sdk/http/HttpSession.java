@@ -30,6 +30,7 @@ import de.skuzzle.polly.sdk.AbstractDisposable;
 public class HttpSession extends AbstractDisposable {
     
     private String id;
+    private int errorCounter;
     private long started;
     private long lastAction;
     private InetAddress remoteIp;
@@ -58,13 +59,50 @@ public class HttpSession extends AbstractDisposable {
     
     
     /**
+     * Increases the error counter for this session by 1. If a session raises multiple
+     * errors, the polly web service may kill it for security purposes.
+     * @since 0.9.1
+     */
+    public void increaseErrorCounter() {
+        ++this.errorCounter;
+    }
+    
+    
+    
+    /**
+     * Resets the error counter of this session so it will no longer be blocked.
+     * @since 0.9.1
+     */
+    public void resetErroCounter() {
+        this.errorCounter = 0;
+    }
+    
+    
+    
+    /**
+     * A HttpSession will automatically be blocked by polly web service if it caused too 
+     * many unexpected errors. It will either be unblocked after a certain time or 
+     * manually by calling {@link #resetErroCounter()}.
+     * 
+     * @param errorThreshold The maximum number of unexpected errors that a session may 
+     *          caused before being closed for security reasons. 
+     * @return Whether the ip of this session should be blocked.
+     * @since 0.9.1
+     */
+    public boolean shouldBlock(int errorThreshold) {
+        return this.errorCounter > errorThreshold;
+    }
+    
+    
+    
+    /**
      * Tests whether this session is inactive for at least the amount of milliseconds 
      * passed.
      * 
      * @param timeOut Amount of milliseconds after which a session should be considered
      *          "timed out"
      * @return Whether this session was inactive for longer than the given amount of 
-     *          milliseconds.
+     *          milliseconds or exceeded the given error threshold.
      */
     public boolean isTimedOut(int timeOut) {
         return System.currentTimeMillis() - this.lastAction > timeOut;

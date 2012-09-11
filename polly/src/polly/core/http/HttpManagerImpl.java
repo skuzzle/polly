@@ -59,32 +59,32 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     private Map<String, List<String>> menu;
     private File templateRoot;
     private int sessionTimeOut;
-    private int loginTimeOut;
     private RoleManager roleManager;
     private MyPolly myPolly;
     private String publicHost;
     private String encoding;
     private int cacheCounter;
     private int cacheThreshold;
+    private int errorThreshold;
     private TrafficCounter counter;
     
     
     
     public HttpManagerImpl(File templateRoot, String publicHost,
-            int port, int sessionTimeOut, int loginTimeOut, String encoding, 
-            int cacheTreshold) {
+            int port, int sessionTimeOut, String encoding, 
+            int cacheTreshold, int errorThreshold) {
         
         this.templateRoot = templateRoot;
         this.publicHost = publicHost;
         this.port = port;
         this.encoding = encoding;
         this.sessionTimeOut = sessionTimeOut;
-        this.loginTimeOut = loginTimeOut;
         this.sessions = new HashMap<InetAddress, HttpSession>();
         this.eventProvider = new SynchronousEventProvider();
         this.actions = new HashMap<String, HttpAction>();
         this.menu = new TreeMap<String, List<String>>();
         this.cacheThreshold = cacheTreshold;
+        this.errorThreshold = errorThreshold;
         this.counter = new TrafficCounter();
     }
     
@@ -94,6 +94,12 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
         // HACK: need this setter to avoid cyclic dependency
         this.myPolly = myPolly;
         this.roleManager = myPolly.roles();
+    }
+    
+    
+    
+    public int getErrorThreshold() {
+        return this.errorThreshold;
     }
     
     
@@ -200,10 +206,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
                     Entry<InetAddress, HttpSession> e = it.next();
                     long liveTime = 
                             System.currentTimeMillis() - e.getValue().getLastAction();
-                    boolean loginTimedOut = !e.getValue().isLoggedIn() && 
-                            liveTime > this.loginTimeOut;
-                    boolean timedOut = loginTimedOut || 
-                            (liveTime > this.getSessionTimeOut());
+                    boolean timedOut = liveTime > this.getSessionTimeOut();
                     
                     if (timedOut) {
                         logger.warn("Killing " + e.getValue());

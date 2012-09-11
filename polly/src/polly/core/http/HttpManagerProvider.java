@@ -76,17 +76,17 @@ public class HttpManagerProvider extends AbstractProvider {
         File templateRoot = new File(
                 this.serverCfg.readString(Configuration.HTTP_TEMPLATE_ROOT));
         int sessionTimeOut = this.serverCfg.readInt(Configuration.HTTP_SESSION_TIMEOUT);
-        int loginTimeOut = this.serverCfg.readInt(Configuration.HTTP_LOGIN_TIMEOUT);
         int port = this.serverCfg.readInt(Configuration.HTTP_PORT);
         String publicHost = this.serverCfg.readString(Configuration.HTTP_PUBLIC_HOST);
         String encoding = configProvider.getRootConfiguration().readString(
                 Configuration.ENCODING);
-        int cacheThreshold = serverCfg.readInt(
+        int cacheThreshold = this.serverCfg.readInt(
                 Configuration.HTTP_SESSION_CACHE_THRESHOLD);
+        int errorThreshold = this.serverCfg.readInt(Configuration.HTTP_ERROR_THRESHOLD);
         
         this.httpManager = new HttpManagerImpl(
             templateRoot, publicHost,
-            port, sessionTimeOut, loginTimeOut, encoding, cacheThreshold);
+            port, sessionTimeOut, encoding, cacheThreshold, errorThreshold);
         
         this.provideComponent(this.httpManager);
         ShutdownManagerImpl shutdownManager = this.requireNow(
