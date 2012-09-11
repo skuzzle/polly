@@ -17,10 +17,6 @@ public class RegisterCommand extends Command {
 
     public RegisterCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "register");
-        this.createSignature("Gib deinen gewünschten Benutzernamen " +
-        		"(am besten me) und dein gewünschtes Passwort ein.", 
-    		new Parameter("Username", Types.USER), 
-		    new Parameter("Passwort", Types.STRING));
         this.createSignature("Gib dein gewünschtes Passwort ein. Als Benutzername wird " +
         		"dein aktueller Nickname genutzt", 
     		new Parameter("Passwort", Types.STRING));
@@ -58,9 +54,6 @@ public class RegisterCommand extends Command {
         String userName = "";
         String password = "";
         if (this.match(signature, 0)) {
-            userName = signature.getStringValue(0);
-            password = signature.getStringValue(1);
-        } else if (this.match(signature, 1)) {
             userName = executer.getCurrentNickName();
             password = signature.getStringValue(0);
         }
