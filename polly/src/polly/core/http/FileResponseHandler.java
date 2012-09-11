@@ -45,7 +45,7 @@ public class FileResponseHandler extends AbstractResponseHandler {
         FileInputStream inp = null;
         OutputStream out = null;
         try {
-            if (dest.exists()) {
+            if (dest != null && dest.exists()) {
                 t.sendResponseHeaders(200, 0);
                 out = t.getResponseBody();
                 inp = new FileInputStream(dest);

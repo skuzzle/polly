@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -302,7 +303,22 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     
     @Override
     public File getPage(String name) {
-        return new File(this.templateRoot, name);
+        File dest = new File(this.templateRoot, name);
+        
+        // check if requested path is relative to template dir
+        Path request = dest.toPath();
+        Path root = this.templateRoot.toPath();
+        
+        request = request.normalize();
+        root = root.normalize();
+        
+        String absoluteRequest = request.toString().toLowerCase();
+        String absoluteRoot = root.toString().toLowerCase();
+        
+        if (!absoluteRequest.startsWith(absoluteRoot)) {
+            return null;
+        }
+        return dest;
     }
     
     
