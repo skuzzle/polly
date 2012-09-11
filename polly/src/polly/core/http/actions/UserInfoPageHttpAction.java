@@ -45,6 +45,7 @@ public class UserInfoPageHttpAction extends HttpAction {
         
         if (action != null && action.equals("update")) {
             if (!isHome && !isAdmin) {
+                e.getSession().increaseErrorCounter();
                 e.throwTemplateException("Invalid Request", 
                         "Your Request could not be executed");
             }
@@ -58,6 +59,7 @@ public class UserInfoPageHttpAction extends HttpAction {
             }
         } else if (action != null && action.equals("addRoleToUser")) {
             if (!isAdmin) {
+                e.getSession().increaseErrorCounter();
                 e.throwTemplateException("Invalid Request", 
                         "Your Request could not be executed");
             }
@@ -75,6 +77,7 @@ public class UserInfoPageHttpAction extends HttpAction {
             }
         } else if (action != null && action.equals("removeRole")) {
             if (!isAdmin) {
+                e.getSession().increaseErrorCounter();
                 e.throwTemplateException("Invalid Request", 
                         "Your Request could not be executed");
             }

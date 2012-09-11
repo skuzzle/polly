@@ -49,6 +49,8 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
         .getName());
     
     
+    public final static String FILE_REQUEST_PREFIX = "/file:";
+    
     
     
     private HttpServer server;
@@ -140,7 +142,17 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
         }
         logger.info("Starting webserver at port " + this.port);
         this.server = HttpServer.create(new InetSocketAddress(this.port), 5);
-        this.server.createContext("/", new ResponseHandler(this, this.counter));
+        
+        // this context handles requests for files
+        this.server.createContext(FILE_REQUEST_PREFIX, 
+            new FileResponseHandler(this, this.counter, FILE_REQUEST_PREFIX));
+        
+        // create action handler and add a filter which filters file requests
+        this.server.createContext(
+            "/", new ActionResponseHandler(
+                this, this.counter)).getFilters().add(
+                    new FileFilter(FILE_REQUEST_PREFIX));
+        
         this.server.setExecutor(
             Executors.newCachedThreadPool(
                 new ThreadFactoryBuilder("HTTP_SERVER_%n%")));
@@ -156,6 +168,9 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
         logger.info("Stopping http service");
         if (this.server != null) {
             this.server.stop(5);
+        }
+        synchronized (this.sessions) {
+            this.sessions.clear();
         }
         this.running = false;
         this.server = null;
