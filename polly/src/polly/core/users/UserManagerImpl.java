@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
 
 import org.apache.log4j.Logger;
 
@@ -32,6 +33,7 @@ import de.skuzzle.polly.sdk.exceptions.AlreadySignedOnException;
 import de.skuzzle.polly.sdk.exceptions.ConstraintException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
+import de.skuzzle.polly.sdk.exceptions.InvalidUserNameException;
 import de.skuzzle.polly.sdk.exceptions.RoleException;
 import de.skuzzle.polly.sdk.exceptions.UnknownAttributeException;
 import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
@@ -202,7 +204,14 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     
     public void addUser(User user) 
-                throws UserExistsException, DatabaseException {
+                throws UserExistsException, DatabaseException, InvalidUserNameException {
+        
+        Matcher m = USER_NAME_PATTERN.matcher(user.getName());
+        if (!m.matches()) {
+            throw new InvalidUserNameException(user.getName());
+        }
+        
+        
         try {
             this.persistence.writeLock();
             User check = this.persistence.findSingle(User.class, "USER_BY_NAME", 
@@ -234,7 +243,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
 
     @Override
     public User addUser(String name, String password) 
-            throws UserExistsException, DatabaseException {
+            throws UserExistsException, DatabaseException, InvalidUserNameException {
         User newUser = this.createUser(name, password);
         this.addUser(newUser);
         return newUser;

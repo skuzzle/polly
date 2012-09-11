@@ -7,6 +7,7 @@ import polly.core.http.HttpInterface;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
+import de.skuzzle.polly.sdk.exceptions.InvalidUserNameException;
 import de.skuzzle.polly.sdk.exceptions.RoleException;
 import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
@@ -73,6 +74,9 @@ public class UserPageHttpAction extends AbstractAdminAction {
                 for (String role : roles) {
                     this.myPolly.roles().assignRole(newUser, role);
                 }
+            } catch (InvalidUserNameException e1) {
+                e.throwTemplateException("Can not add user", 
+                    "Invalid user name: " + newName);
             } catch (UserExistsException e1) {
                 e.throwTemplateException("Can not add user", 
                         "User with that name already exists");

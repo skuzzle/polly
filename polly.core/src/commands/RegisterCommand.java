@@ -8,6 +8,7 @@ import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
+import de.skuzzle.polly.sdk.exceptions.InvalidUserNameException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
 import de.skuzzle.polly.sdk.model.User;
 
@@ -68,6 +69,8 @@ public class RegisterCommand extends Command {
         } catch (DatabaseException e) {
             this.reply(executer, "Interner Datenbankfehler!");
             e.printStackTrace();
+        } catch (InvalidUserNameException e) {
+            this.reply(executer, "'" + userName + "' is no valid user name");
         }
     }
 }

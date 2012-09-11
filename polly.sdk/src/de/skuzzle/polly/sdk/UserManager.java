@@ -3,6 +3,7 @@ package de.skuzzle.polly.sdk;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import de.skuzzle.polly.sdk.constraints.AttributeConstraint;
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
@@ -10,6 +11,7 @@ import de.skuzzle.polly.sdk.eventlistener.UserListener;
 import de.skuzzle.polly.sdk.exceptions.AlreadySignedOnException;
 import de.skuzzle.polly.sdk.exceptions.ConstraintException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
+import de.skuzzle.polly.sdk.exceptions.InvalidUserNameException;
 import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
 import de.skuzzle.polly.sdk.model.User;
@@ -35,6 +37,14 @@ import de.skuzzle.polly.sdk.model.User;
  * @version RC 1.0
  */
 public interface UserManager {
+    
+    /**
+     * Pattern which matches only valid usernames.
+     * @since 0.9.1
+     */
+    public final static Pattern USER_NAME_PATTERN = 
+            Pattern.compile("[^\\d-][\\w\\d-_\\[\\]{}\\\\`^\\.]+");
+    
     
     /**
      * Classifies the userlevel 'unknown'
@@ -143,12 +153,14 @@ public interface UserManager {
      * @param password The users password in plaintext. This will then be stored as a
      *      hash value.
      * @return The added user.
+     * @throws InvalidUserNameException If the name does not match the pattern 
+     *          {@link #USER_NAME_PATTERN}.
      * @throws UserExistsException If a user with the same name already exists.
      * @throws DatabaseException If storing the new user to the database fails for any
      *      reason.
      */
 	public abstract User addUser(String name, String password) 
-	        throws UserExistsException, DatabaseException;
+	        throws InvalidUserNameException, UserExistsException, DatabaseException;
 	
 	
 	
