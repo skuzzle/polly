@@ -1,5 +1,7 @@
 package polly.core.http.actions;
 
+import org.apache.log4j.Logger;
+
 import polly.core.http.HttpInterface;
 import polly.core.http.HttpManagerProvider;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -15,6 +17,9 @@ import de.skuzzle.polly.sdk.model.User;
 
 public class LoginHttpAction extends HttpAction {
 
+    private final static Logger logger = Logger.getLogger(LoginHttpAction.class
+        .getName());
+    
     private UserManager userManager;
     
     
@@ -43,14 +48,18 @@ public class LoginHttpAction extends HttpAction {
                 if (u.checkPassword(password)) {
                     e.getSession().setUser(u);
                     
+                    logger.info("Successfull http login: " + u);
+                    
                     String homePage = u.getAttribute(HttpManagerProvider.HOME_PAGE);
                     HttpEvent e1 = new HttpEvent(e.getSource(), e.getSession(), homePage);
                     return e.getSource().executeAction(e1);
                 } else {
+                    logger.warn("Invalid login attempt: " + userName);
                     e.throwTemplateException("Login Error", 
                         "Invalid login data");
                 }
             } else {
+                logger.warn("Invalid login attempt: " + userName);
                 e.throwTemplateException("Login Error", 
                     "Invalid login data");
             }
