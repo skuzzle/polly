@@ -34,7 +34,19 @@ public class FileResponseHandler extends AbstractResponseHandler {
         String path = requestUri.substring(this.prefix.length());
         logger.debug("Evaluated requested file to: " + path);
         File dest = this.webServer.getPage(path);
-        this.respond(dest, t, session);
+        
+        if (!dest.exists() || dest.getName().toLowerCase().endsWith(".html")) {
+            this.respond404(t);
+        } else {
+            this.respond(dest, t, session);
+        }
+    }
+    
+    
+    
+    private void respond404(HttpExchange t) throws IOException {
+        t.sendResponseHeaders(404, 0);
+        t.close();
     }
     
     
@@ -45,20 +57,16 @@ public class FileResponseHandler extends AbstractResponseHandler {
         FileInputStream inp = null;
         OutputStream out = null;
         try {
-            if (dest != null && dest.exists()) {
-                t.sendResponseHeaders(200, 0);
-                out = t.getResponseBody();
-                inp = new FileInputStream(dest);
-                byte[] buffer = new byte[1024];
-                int len = 0;
-                
-                while ((len = inp.read(buffer)) > 0) {
-                    out.write(buffer, 0, len);
-                    this.counter.updateUpload(len);
-                    session.updateUpload(len);
-                }
-            } else {
-                t.sendResponseHeaders(404, 0);
+            t.sendResponseHeaders(200, 0);
+            out = t.getResponseBody();
+            inp = new FileInputStream(dest);
+            byte[] buffer = new byte[1024];
+            int len = 0;
+            
+            while ((len = inp.read(buffer)) > 0) {
+                out.write(buffer, 0, len);
+                this.counter.updateUpload(len);
+                session.updateUpload(len);
             }
         } finally {
             t.close();
