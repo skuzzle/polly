@@ -47,7 +47,7 @@ public class BattleReportHttpAction extends HttpAction {
                 throw new InsufficientRightsException(this);
             }
             
-            String report = e.getProperty("paste");
+            String report = e.getSource().escapeHtml(e.getProperty("paste"));
             
             System.out.println(report);
             try {
