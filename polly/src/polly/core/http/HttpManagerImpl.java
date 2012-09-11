@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -67,6 +68,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     private int cacheThreshold;
     private int errorThreshold;
     private TrafficCounter counter;
+    private List<HttpSession> expiredSessions;
     
     
     
@@ -86,6 +88,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
         this.cacheThreshold = cacheTreshold;
         this.errorThreshold = errorThreshold;
         this.counter = new TrafficCounter();
+        this.expiredSessions = new LinkedList<HttpSession>();
     }
     
     
@@ -189,6 +192,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
         synchronized (this.sessions) {
             session.setUser(null);
             this.sessions.remove(session.getRemoteIp());
+            this.expiredSessions.add(session);
         }
     };
     
@@ -306,7 +310,9 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
         c.put("session", session);
         c.put("now", System.currentTimeMillis());
         c.put("timeout", this.getSessionTimeOut());
+        c.put("errorThreshold", this.errorThreshold);
         c.put("sessions", this.sessions);
+        c.put("expiredSessions", this.expiredSessions);
         c.put("traffic", this.counter);
         c.put("Math", Math.class);
     }

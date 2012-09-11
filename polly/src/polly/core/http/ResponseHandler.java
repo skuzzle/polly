@@ -118,7 +118,8 @@ public class ResponseHandler implements HttpHandler {
             this.webServer.closeSession(session);
             HttpTemplateContext c = this.webServer.errorTemplate("Session blocked", 
                 "Your session has automatically been blocked because it caused " +
-                "too many internal execution errors.", session);
+                "too many internal execution errors. Your session will be automtically " +
+                "unblocked after it expired.", session);
             this.respond(c, t, session);
         }
         

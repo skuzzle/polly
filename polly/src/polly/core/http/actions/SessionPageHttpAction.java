@@ -36,6 +36,15 @@ public class SessionPageHttpAction extends AbstractAdminAction {
                         "No Session with ID " + sessionId);
             }
             e.getSource().closeSession(session);
+        } else if (action != null && action.equals("unblock")) {
+            String sessionId = e.getProperty("sessionId");
+
+            HttpSession session = e.getSource().findSession(sessionId);
+            if (session == null) {
+                e.throwTemplateException("Invalid Session Id", 
+                        "No Session with ID " + sessionId);
+            }
+            session.resetErroCounter();
         }
         
         return c;

@@ -1,4 +1,4 @@
-<h2>Current Web Sessions</h2>
+<h3>Current Web Sessions</h3>
 <table>
     <tr>
         <th>ID</th>
@@ -9,6 +9,8 @@
         <th>Last Action</th>
         <th>Auto logout in</th>
         <th>Traffic (up)</th>
+        <th>Status</th>
+        <th>Action</th>
         <th>Action</th>
     </tr>
     #foreach ($sess in $sessions)
@@ -22,6 +24,14 @@
         #set ( $diff = ( $timeout - ($now - $sess.getLastAction())))
         <td>$myPolly.formatting().formatTimeSpanMs($diff)</td>
         <td>$myPolly.formatting().formatBytes($sess.getTrafficUp())</td>
+        <td>#if ($session.shouldBlock($errorThreshold)) Blocked #else - #end</td>
+        <td>
+            <form action="Sessions" method="POST">
+            <input type="hidden" name="action" value="unblock"/>
+            <input type="hidden" name="sessionId" value="$sess.getId()"/>
+            <input type="submit" value="Unblock" class="button" />
+            </form>
+        </td>
         <td>
             <form action="Sessions" method="POST">
             <input type="hidden" name="action" value="killSession"/>
@@ -31,6 +41,31 @@
         </td>
     #end
 </table>
+
+#if ($expiredSessions.size() != 0)
+<h3>Expired Web Sessions</h3>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>User</th>
+        <th>IP</th>
+        <th>Active since</th>
+        <th>Last URI</th>
+        <th>Last Action</th>
+        <th>Traffic (up)</th>
+    </tr>
+    #foreach ($sess in $expiredSessions)
+    <tr>
+        <td>$sess.getId()</td>
+        <td>$!sess.getUser().getName()</td>
+        <td>$sess.getRemoteIp()</td>
+        <td>$myPolly.formatting().formatDate($sess.getStarted())</td>
+		<td>$sess.getLastUri()</td>
+        <td>$myPolly.formatting().formatDate($sess.getLastAction())</td>
+        <td>$myPolly.formatting().formatBytes($sess.getTrafficUp())</td>
+    #end
+</table>
+#end
 
 <h3>Total traffic (this polly session)</h3>
 Upstream: $myPolly.formatting().formatBytes($traffic.getUpload())
