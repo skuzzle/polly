@@ -11,6 +11,8 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
+import polly.util.InputStreamCounter;
+
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -33,8 +35,8 @@ public abstract class AbstractResponseHandler implements HttpHandler {
     
     
     
-    protected static void parseParameters(String in, Map<String, HttpParameter> params, 
-        ParameterType type) {
+    protected void parseParameters(String in, Map<String, HttpParameter> params, 
+            ParameterType type) {
         Matcher m = GET_PARAMETERS.matcher(in);
         
         while (m.find()) {
@@ -57,17 +59,18 @@ public abstract class AbstractResponseHandler implements HttpHandler {
 
 
 
-    protected static void parsePostParameters(HttpExchange t, 
-            Map<String, HttpParameter> result, String encoding) throws IOException {
-        
-        BufferedReader r = new BufferedReader(new InputStreamReader(t.getRequestBody(), 
-            encoding));
+    protected void parsePostParameters(HttpExchange t, Map<String, HttpParameter> result, HttpSession session) throws IOException {
+        InputStreamCounter c = new InputStreamCounter(t.getRequestBody());
+        BufferedReader r = new BufferedReader(
+            new InputStreamReader(c, this.webServer.getEncoding()));
         String line = null;
         while ((line = r.readLine()) != null) {
             if (!line.equals("")) {
                 parseParameters(line, result, ParameterType.POST);
             }
         }
+        session.updateDownload(c.getBytes());
+        this.counter.updateDownload(c.getBytes());
     }
     
     

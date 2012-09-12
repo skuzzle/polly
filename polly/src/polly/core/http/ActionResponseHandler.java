@@ -51,7 +51,7 @@ public class ActionResponseHandler extends AbstractResponseHandler {
                 throw new HttpTemplateException("Invalid parameters", 
                     "Supplied URI has no valid parameters", session);
             }
-            parseParameters(parts[1], parameters, ParameterType.GET);
+            this.parseParameters(parts[1], parameters, ParameterType.GET);
             uri = parts[0];
         }
         
@@ -59,7 +59,7 @@ public class ActionResponseHandler extends AbstractResponseHandler {
         
         // extract POST parameters
         if (t.getRequestMethod().equals("POST")) {
-            parsePostParameters(t, parameters, this.webServer.getEncoding());
+            this.parsePostParameters(t, parameters, session);
         }
         
         

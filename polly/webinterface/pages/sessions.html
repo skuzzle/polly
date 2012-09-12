@@ -10,6 +10,7 @@
         <th>Last Action</th>
         <th>Auto logout in</th>
         <th>Traffic (up)</th>
+        <th>Traffic (down)</th>
         <th>Errors</th>
         <th>Status</th>
         <th>Action</th>
@@ -26,6 +27,7 @@
         #set ( $diff = ( $timeout - ($now - $sess.getLastAction())))
         <td>$myPolly.formatting().formatTimeSpanMs($diff)</td>
         <td>$myPolly.formatting().formatBytes($sess.getTrafficUp())</td>
+        <td>$myPolly.formatting().formatBytes($sess.getTrafficDown())</td>
         <td>$session.getErrorCounter()</td>
         <td>#if ($sess.shouldBlock($errorThreshold)) Blocked #else - #end</td>
         <td>
@@ -56,6 +58,7 @@
         <th>Last URI</th>
         <th>Last Action</th>
         <th>Traffic (up)</th>
+        <th>Traffic (down)</th>
         <th>Errors</th>
     </tr>
     #foreach ($sess in $expiredSessions)
@@ -67,10 +70,20 @@
 		<td>$sess.getLastUri()</td>
         <td>$myPolly.formatting().formatDate($sess.getLastAction())</td>
         <td>$myPolly.formatting().formatBytes($sess.getTrafficUp())</td>
+        <td>$myPolly.formatting().formatBytes($sess.getTrafficDown())</td>
         <td>$sess.getErrorCounter()</td>
     #end
 </table>
 #end
 
 <h3>Total traffic (this polly session)</h3>
-Upstream: $myPolly.formatting().formatBytes($traffic.getUpload())
+<table style="width:auto;">
+    <tr>
+        <th>Upstream:</th>
+        <td>$myPolly.formatting().formatBytes($traffic.getUpload())</td>
+    </tr>
+    <tr>
+        <th>Downstream:</th>
+        <td>$myPolly.formatting().formatBytes($traffic.getDownload())</td>
+    </tr>
+</table>

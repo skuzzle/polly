@@ -38,6 +38,7 @@ public class HttpSession extends AbstractDisposable {
     private String lastUri;
     private Map<String, Object> data;
     private int trafficUp;
+    private int trafficDown;
     
     
     
@@ -313,6 +314,28 @@ public class HttpSession extends AbstractDisposable {
      */
     public void updateUpload(int len) {
         this.trafficUp += len;
+    }
+    
+    
+    
+    /**
+     * Updates the traffic that has been sent by the client.
+     * 
+     * @param len The bytes sent by the client.
+     */
+    public void updateDownload(int len) {
+        this.trafficDown += len;
+    }
+    
+    
+    
+    /**
+     * Gets the traffic that has been received from the client.
+     * 
+     * @return The bytes sent by the client.
+     */
+    public int getTrafficDown() {
+        return this.trafficDown;
     }
     
     
