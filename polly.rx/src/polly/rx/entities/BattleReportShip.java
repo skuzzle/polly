@@ -99,27 +99,27 @@ public class BattleReportShip {
     }
 
     
-    private final static double CRED_FACTOR_PZ = 6324.0 / 99940.0;
-    private final static double NRG_FACTOR_PZ = 6022.0 / 99940.0;
-    private final static double ORG_FACTOR_PZ = 9930.0 / 99940.0;
-    private final static double FE_FACTOR_PZ = 15031.0 / 99940;
-    private final static double LM_FACTOR_PZ = 8428.0 / 99940.0;
-    private final static double SM_FACTOR_PZ = 5438.0 / 99940.0;
-    private final static double REPAIR_TIME_FACTOR_PZ = 1798920.0 / 99940.0;
+    private final static double CRED_FACTOR_PZ = 0.063273;
+    private final static double NRG_FACTOR_PZ = 0.060257;
+    private final static double ORG_FACTOR_PZ = 0.099357;
+    private final static double FE_FACTOR_PZ = 0.150401;
+    private final static double LM_FACTOR_PZ = 0.084333;
+    private final static double SM_FACTOR_PZ = 0.054408;
+    private final static double REPAIR_TIME_FACTOR_PZ = 18.0;
     
     
     
     @PostLoad
     void calcCostOffset() {
         this.repairCostOffset = new BattleDrop[7];
-        this.repairCostOffset[0] = new BattleDrop(RxRessource.CR, (int)(CRED_FACTOR_PZ * this.pzDamage));
-        this.repairCostOffset[1] = new BattleDrop(RxRessource.NRG, (int)(NRG_FACTOR_PZ * this.pzDamage));
-        this.repairCostOffset[2] = new BattleDrop(RxRessource.ORG, (int)(ORG_FACTOR_PZ * this.pzDamage));
+        this.repairCostOffset[0] = new BattleDrop(RxRessource.CR, (int)Math.round(CRED_FACTOR_PZ * this.pzDamage));
+        this.repairCostOffset[1] = new BattleDrop(RxRessource.NRG, (int)Math.round(NRG_FACTOR_PZ * this.pzDamage));
+        this.repairCostOffset[2] = new BattleDrop(RxRessource.ORG, (int)Math.round(ORG_FACTOR_PZ * this.pzDamage));
         this.repairCostOffset[3] = new BattleDrop(RxRessource.SYNTH, 0);
-        this.repairCostOffset[4] = new BattleDrop(RxRessource.FE, (int)(FE_FACTOR_PZ * this.pzDamage));
-        this.repairCostOffset[5] = new BattleDrop(RxRessource.LM, (int)(LM_FACTOR_PZ * this.pzDamage));
-        this.repairCostOffset[6] = new BattleDrop(RxRessource.SM, (int)(SM_FACTOR_PZ * this.pzDamage));
-        this.repairTimeOffset = (int) (REPAIR_TIME_FACTOR_PZ * this.pzDamage);
+        this.repairCostOffset[4] = new BattleDrop(RxRessource.FE, (int)Math.round(FE_FACTOR_PZ * this.pzDamage));
+        this.repairCostOffset[5] = new BattleDrop(RxRessource.LM, (int)Math.round(LM_FACTOR_PZ * this.pzDamage));
+        this.repairCostOffset[6] = new BattleDrop(RxRessource.SM, (int)Math.round(SM_FACTOR_PZ * this.pzDamage));
+        this.repairTimeOffset = (int)Math.round(REPAIR_TIME_FACTOR_PZ * this.pzDamage);
     }
     
     
