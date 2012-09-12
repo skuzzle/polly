@@ -228,6 +228,8 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
                     
                     if (timedOut) {
                         logger.warn("Killing " + e.getValue());
+                        HttpSession copy = e.getValue().copy();
+                        this.expiredSessions.add(copy);
                         e.getValue().setUser(null);
                         try {
                             e.getValue().dispose();
@@ -235,6 +237,8 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
                             // Impossibru to happen
                             logger.fatal(e1);
                         }
+                        
+                        
                         it.remove();
                     }
                 }
