@@ -324,6 +324,20 @@ public interface RoleManager {
     
     
     /**
+     * Checks whether the given user is allowed to access the given object. If so, 
+     * nothing happens, but if not, an {@link InsufficientRightsException} will be thrown.
+     * 
+     * @param user The user to check.
+     * @param securityObject The SecurityObject that should be accessed.
+     * @throws InsufficientRightsException If the user is not allowed to access the given
+     *          object.
+     */
+    public abstract void checkAccess(User user, SecurityObject securityObject) 
+        throws InsufficientRightsException;
+    
+    
+    
+    /**
      * Gets a read only view of all permissions belonging to the given role name.
      * 
      * @param roleName The nam of the role which permissions shall be retrieved.

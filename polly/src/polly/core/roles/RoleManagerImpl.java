@@ -445,6 +445,16 @@ public class RoleManagerImpl implements RoleManager {
     
     
     @Override
+    public void checkAccess(User user, SecurityObject securityObject)
+            throws InsufficientRightsException {
+        if (!this.canAccess(user, securityObject)) {
+            this.denyAccess(securityObject);
+        }
+    }
+    
+    
+    
+    @Override
     public void denyAccess(SecurityObject securityObject) 
             throws InsufficientRightsException {
         throw new InsufficientRightsException(securityObject);
