@@ -149,7 +149,7 @@ public class ActionResponseHandler extends AbstractResponseHandler {
     private void generateTemplate(HttpTemplateContext c, OutputStream out, 
             HttpSession session) throws IOException {
         Velocity.init();
-        VelocityContext context = new VelocityContext(c);
+        VelocityContext context = new VelocityContext(c.getMap());
         
         File dest = new File(this.webServer.getTemplateRoot(), "index.html");
         Template template = Velocity.getTemplate(dest.getPath(), 
