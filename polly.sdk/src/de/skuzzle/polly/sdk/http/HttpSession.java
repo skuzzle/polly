@@ -75,6 +75,7 @@ public class HttpSession extends AbstractDisposable {
         copy.user = this.user;
         copy.lastUri = this.lastUri;
         copy.trafficUp = this.trafficUp;
+        copy.trafficDown = this.trafficDown;
         return copy;
     }
     
