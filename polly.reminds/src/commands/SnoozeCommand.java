@@ -41,7 +41,9 @@ public class SnoozeCommand extends AbstractRemindCommand {
             
             try {
                 this.remindManager.snooze(executer, dueDate);
-                this.reply(channel, "Erinnerung wurde verlängert.");
+                this.reply(channel, "Erinnerung wurde verlängert. Jetzt fällig: " 
+                    + this.getMyPolly().formatting().formatDate(dueDate));
+                
             } catch (DatabaseException e) {
                 throw new CommandException(e);
             }
@@ -53,7 +55,8 @@ public class SnoozeCommand extends AbstractRemindCommand {
                 Date dueDate = new Date(millis);
                 
                 this.remindManager.snooze(executer, dueDate);
-                this.reply(channel, "Erinnerung wurde verlängert.");
+                this.reply(channel, "Erinnerung wurde verlängert. Jetzt fällig: " 
+                    + this.getMyPolly().formatting().formatDate(dueDate));
                 
             } catch (UnknownAttributeException e) {
                 throw new CommandException(e);
