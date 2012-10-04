@@ -12,6 +12,7 @@ import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
+import de.skuzzle.polly.sdk.exceptions.UnknownAttributeException;
 import de.skuzzle.polly.sdk.model.User;
 
 public class SnoozeCommand extends AbstractRemindCommand {
@@ -23,6 +24,8 @@ public class SnoozeCommand extends AbstractRemindCommand {
         this.createSignature("Verlängert die Erinnerung die dir zuletzt zugestellt wurde",
             MyPlugin.SNOOZE_PERMISSION,
             new Parameter("Neue Zeit", Types.DATE));
+        this.createSignature(
+            "Verlängert die Erinnerung die dir zuletzt zugestellt wurde.");
         this.setRegisteredOnly();
         this.setHelpText("Verlängert Erinnerungen");
     }
@@ -39,6 +42,21 @@ public class SnoozeCommand extends AbstractRemindCommand {
             try {
                 this.remindManager.snooze(executer, dueDate);
                 this.reply(channel, "Erinnerung wurde verlängert.");
+            } catch (DatabaseException e) {
+                throw new CommandException(e);
+            }
+        } else if (this.match(signature, 1)) {
+            try {
+                long millis = System.currentTimeMillis();
+                millis += Long.parseLong(
+                    executer.getAttribute(MyPlugin.DEFAULT_REMIND_TIME));
+                Date dueDate = new Date(millis);
+                
+                this.remindManager.snooze(executer, dueDate);
+                this.reply(channel, "Erinnerung wurde verlängert.");
+                
+            } catch (UnknownAttributeException e) {
+                throw new CommandException(e);
             } catch (DatabaseException e) {
                 throw new CommandException(e);
             }

@@ -64,6 +64,9 @@ public class MyPlugin extends PollyPlugin {
     public final static String SNOOZE_TIME          = "SNOOZE_TIME";
     public final static String SNOOZE_DEFAULT_VALUE = "60000";
     
+    public final static String DEFAULT_REMIND_TIME = "DEFAULT_REMIND_TIME";
+    public final static String DEFAULT_REMIND_TIME_VALUE = "600000";
+    
     public final static String DEFAULT_MSG       = "REMIND_DEFAULT_MSG";
     public final static String DEFAULT_MSG_VALUE = "Reminder!";
 	
@@ -189,6 +192,8 @@ public class MyPlugin extends PollyPlugin {
                 Constraints.BOOLEAN);
             users.addAttribute(REMIND_DOUBLE_DELIVERY, DEFAULT_REMIND_DOUBLE_DELIVERY, 
                 Constraints.BOOLEAN);
+            users.addAttribute(DEFAULT_REMIND_TIME, DEFAULT_REMIND_TIME_VALUE, 
+                Constraints.INTEGER);
         } catch (DatabaseException e) {
             e.printStackTrace();
         }

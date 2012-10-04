@@ -56,6 +56,8 @@ public class RemindCommand extends AbstractRemindCommand {
         		"Standardmeldung.",
     		MyPlugin.REMIND_PERMISSION,
     		new Parameter("Zeit", Types.DATE));
+        this.createSignature(
+            "Erinnert dich nach einer bestimmten Zeit mit einer Standardmeldung.");
         this.setRegisteredOnly();
         this.setHelpText("Hinterlässt Erinnerungen für Benutzer.");
     }
@@ -126,6 +128,21 @@ public class RemindCommand extends AbstractRemindCommand {
                 throw new CommandException(e);
             }
             
+            RemindEntity remind = new RemindEntity(msg, executer.getCurrentNickName(), 
+                    executer.getCurrentNickName(), channel, dueDate);
+            this.addRemind(remind, true);
+            this.reply(channel, FORMATTER.format(remind, this.getMyPolly().formatting()));
+        } else if (this.match(signature, 5)) {
+            String msg = "Reminder";
+            long millis = System.currentTimeMillis();
+            try {
+                msg = executer.getAttribute(MyPlugin.DEFAULT_MSG);
+                millis += Long.parseLong(
+                    executer.getAttribute(MyPlugin.DEFAULT_REMIND_TIME));
+            } catch (UnknownAttributeException e) {
+                throw new CommandException(e);
+            }
+            Date dueDate = new Date(millis);
             RemindEntity remind = new RemindEntity(msg, executer.getCurrentNickName(), 
                     executer.getCurrentNickName(), channel, dueDate);
             this.addRemind(remind, true);
