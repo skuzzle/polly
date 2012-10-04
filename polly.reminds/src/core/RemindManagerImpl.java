@@ -180,7 +180,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         boolean doubleDelivery = forUser.getAttribute(
                 MyPlugin.REMIND_DOUBLE_DELIVERY).equals("true");
         logger.trace("As Mail: " + asMail);
-        logger.trace("Double-delivery: " + asMail);
+        logger.trace("Double-delivery: " + doubleDelivery);
         
         if (asMail && wasIdle) {
             // user was idle and wanted email notification
