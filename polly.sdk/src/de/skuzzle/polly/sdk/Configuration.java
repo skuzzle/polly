@@ -364,6 +364,14 @@ public interface Configuration {
      * @since 0.9.1
      */
     public static final String HTTP_ERROR_THRESHOLD = "errorThreshold";
+
+    
+    /**
+     * When set to <code>true</code>, polly joins the default channels immediately
+     * after being connected. Otherwise, the channels will be joined after
+     * nickserv identification.
+     */
+    public static final String JOIN_ON_CONNECT = "joinOnConnect";
     
     
     
