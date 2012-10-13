@@ -2,7 +2,6 @@ package de.skuzzle.polly.tools.events;
 
 import java.util.Arrays;
 import java.util.EventListener;
-import java.util.List;
 
 import javax.swing.event.EventListenerList;
 
@@ -20,9 +19,11 @@ public abstract class AbstractEventProvider implements EventProvider {
 
     
     @Override
-    public <T extends EventListener> List<T> getListeners(Class<T> listenerClass) {
+    public <T extends EventListener> Listeners<T> getListeners(Class<T> listenerClass) {
         synchronized (this.listeners) {
-            return Arrays.asList(this.listeners.getListeners(listenerClass));
+            return new Listeners<T>(
+                Arrays.asList(this.listeners.getListeners(listenerClass)), 
+                listenerClass, this);
         }
     }
     
@@ -45,4 +46,7 @@ public abstract class AbstractEventProvider implements EventProvider {
             this.listeners.remove(listenerClass, listener);
         }
     }
+    
+    
+    
 }

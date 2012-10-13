@@ -3,7 +3,6 @@ package polly.configuration;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -19,6 +18,7 @@ import de.skuzzle.polly.sdk.eventlistener.ConfigurationEvent;
 import de.skuzzle.polly.sdk.eventlistener.ConfigurationListener;
 import de.skuzzle.polly.tools.events.Dispatchable;
 import de.skuzzle.polly.tools.events.EventProvider;
+import de.skuzzle.polly.tools.events.Listeners;
 import de.skuzzle.polly.tools.events.SynchronousEventProvider;
 
 
@@ -144,8 +144,8 @@ public class ConfigurationProviderImpl implements ConfigurationProvider {
     
     
     public void fireConfigurationChanged(ConfigurationEvent e) {
-        final List<ConfigurationListener> listeners = this.eventProvider.getListeners(
-                ConfigurationListener.class);
+        final Listeners<ConfigurationListener> listeners = 
+            this.eventProvider.getListeners(ConfigurationListener.class);
         
         Dispatchable<ConfigurationListener, ConfigurationEvent> d = 
             new Dispatchable<ConfigurationListener, ConfigurationEvent>(listeners, e) {

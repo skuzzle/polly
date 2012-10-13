@@ -42,6 +42,7 @@ import de.skuzzle.polly.sdk.eventlistener.UserSpottedListener;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.tools.events.Dispatchable;
 import de.skuzzle.polly.tools.events.EventProvider;
+import de.skuzzle.polly.tools.events.Listeners;
 import de.skuzzle.polly.tools.iterators.WrapIterator;
 
 
@@ -727,7 +728,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     
     
     protected void fireMessageSend(final OwnMessageEvent e) {
-        final List<MessageSendListener> listeners = 
+        final Listeners<MessageSendListener> listeners = 
             this.eventProvider.getListeners(MessageSendListener.class);
     
         Dispatchable<MessageSendListener, OwnMessageEvent> d = 
@@ -743,7 +744,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     
     
     protected void fireNickChange(final NickChangeEvent e) {
-        final List<NickChangeListener> listeners = 
+        final Listeners<NickChangeListener> listeners = 
             this.eventProvider.getListeners(NickChangeListener.class);
     
         Dispatchable<NickChangeListener, NickChangeEvent> d = 
@@ -759,7 +760,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     
     
     protected void fireJoin(final ChannelEvent e) {
-        final List<JoinPartListener> listeners = 
+        final Listeners<JoinPartListener> listeners = 
             this.eventProvider.getListeners(JoinPartListener.class);
         
         Dispatchable<JoinPartListener, ChannelEvent> d = 
@@ -775,7 +776,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     
     
     protected void firePart(final ChannelEvent e) {
-        final List<JoinPartListener> listeners = 
+        final Listeners<JoinPartListener> listeners = 
             this.eventProvider.getListeners(JoinPartListener.class);
     
         Dispatchable<JoinPartListener, ChannelEvent> d = 
@@ -791,7 +792,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     
     
     protected void fireQuit(final QuitEvent e) {
-        final List<QuitListener> listeners = 
+        final Listeners<QuitListener> listeners = 
             this.eventProvider.getListeners(QuitListener.class);
         
         Dispatchable<QuitListener, QuitEvent> d = 
@@ -807,7 +808,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     
     
     protected void firePublicMessageEvent(final MessageEvent e) {
-        final List<MessageListener> listeners = 
+        final Listeners<MessageListener> listeners = 
             this.eventProvider.getListeners(MessageListener.class);
 
         Dispatchable<MessageListener, MessageEvent> d = 
@@ -823,7 +824,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     
     
     protected void firePrivateMessageEvent(final MessageEvent e) {
-        final List<MessageListener> listeners = 
+        final Listeners<MessageListener> listeners = 
             this.eventProvider.getListeners(MessageListener.class);
         
         Dispatchable<MessageListener, MessageEvent> d = 
@@ -839,7 +840,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     
     
     protected void fireActionMessageEvent(final MessageEvent e) {
-        final List<MessageListener> listeners = 
+        final Listeners<MessageListener> listeners = 
             this.eventProvider.getListeners(MessageListener.class);
         
         Dispatchable<MessageListener, MessageEvent> d = 
@@ -855,7 +856,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     
     
     protected void fireNoticeMessageEvent(final MessageEvent e) {
-        final List<MessageListener> listeners = 
+        final Listeners<MessageListener> listeners = 
             this.eventProvider.getListeners(MessageListener.class);
         
         Dispatchable<MessageListener, MessageEvent> d = 
@@ -871,7 +872,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     
     
     protected void fireChannelModeEvent(final ChannelModeEvent e) {
-        final List<ChannelModeListener> listeners = 
+        final Listeners<ChannelModeListener> listeners = 
             this.eventProvider.getListeners(ChannelModeListener.class);
         
         Dispatchable<ChannelModeListener, ChannelModeEvent> d = 
@@ -887,7 +888,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     
     
     protected void fireUserSpotted(final SpotEvent e) {
-        final List<UserSpottedListener> listeners = 
+        final Listeners<UserSpottedListener> listeners = 
             this.eventProvider.getListeners(UserSpottedListener.class);
         
         Dispatchable<UserSpottedListener, SpotEvent> d = 
@@ -903,7 +904,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     
     
     protected void fireUserLost(final SpotEvent e) {
-        final List<UserSpottedListener> listeners = 
+        final Listeners<UserSpottedListener> listeners = 
             this.eventProvider.getListeners(UserSpottedListener.class);
         
         Dispatchable<UserSpottedListener, SpotEvent> d = 
@@ -919,7 +920,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     
     
     protected void fireConnectionEstablished(ConnectionEvent e) {
-        final List<ConnectionListener> listeners = 
+        final Listeners<ConnectionListener> listeners = 
             this.eventProvider.getListeners(ConnectionListener.class);
         
         Dispatchable<ConnectionListener, ConnectionEvent> d = 
@@ -935,7 +936,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     
     
     protected void fireConnectionLost(ConnectionEvent e) {
-        final List<ConnectionListener> listeners = 
+        final Listeners<ConnectionListener> listeners = 
             this.eventProvider.getListeners(ConnectionListener.class);
         
         Dispatchable<ConnectionListener, ConnectionEvent> d = 

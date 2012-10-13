@@ -1,7 +1,6 @@
 package polly.core.mypolly;
 
 import java.util.Date;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -42,6 +41,7 @@ import de.skuzzle.polly.sdk.time.SystemTimeProvider;
 import de.skuzzle.polly.sdk.time.TimeProvider;
 import de.skuzzle.polly.tools.events.Dispatchable;
 import de.skuzzle.polly.tools.events.EventProvider;
+import de.skuzzle.polly.tools.events.Listeners;
 
 
 
@@ -292,7 +292,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 
     @Override
     public void fireGenericEvent(final GenericEvent e) {
-        List<GenericListener> listeners = this.eventProvider.getListeners(
+        Listeners<GenericListener> listeners = this.eventProvider.getListeners(
             GenericListener.class);
         
         Dispatchable<GenericListener, GenericEvent> d = 

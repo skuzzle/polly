@@ -20,5 +20,4 @@ public class SynchronousEventProvider extends AbstractEventProvider {
 
     @Override
     public void dispose() {}
-
 }

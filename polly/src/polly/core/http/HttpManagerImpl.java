@@ -39,6 +39,7 @@ import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
 import de.skuzzle.polly.tools.events.Dispatchable;
 import de.skuzzle.polly.tools.events.EventProvider;
+import de.skuzzle.polly.tools.events.Listeners;
 import de.skuzzle.polly.tools.events.SynchronousEventProvider;
 
 
@@ -381,7 +382,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     
     
     protected void fireHttpAction(final HttpEvent e) {
-        final List<HttpEventListener> listeners = 
+        final Listeners<HttpEventListener> listeners = 
             this.eventProvider.getListeners(HttpEventListener.class);
         
         this.eventProvider.dispatchEvent(new Dispatchable<HttpEventListener, 

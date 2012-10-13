@@ -42,6 +42,7 @@ import de.skuzzle.polly.sdk.model.User;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.tools.events.Dispatchable;
 import de.skuzzle.polly.tools.events.EventProvider;
+import de.skuzzle.polly.tools.events.Listeners;
 
 
 
@@ -567,7 +568,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     
     protected void fireUserSignedOn(final UserEvent e) {
-        final List<UserListener> listeners = 
+        final Listeners<UserListener> listeners = 
             this.eventProvider.getListeners(UserListener.class);
         
         Dispatchable<UserListener, UserEvent> d = 
@@ -583,7 +584,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     
     protected void fireUserSignedOff(final UserEvent e) {
-        final List<UserListener> listeners = 
+        final Listeners<UserListener> listeners = 
             this.eventProvider.getListeners(UserListener.class);
         
         Dispatchable<UserListener, UserEvent> d = 
