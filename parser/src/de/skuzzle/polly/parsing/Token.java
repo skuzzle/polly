@@ -120,6 +120,7 @@ public class Token implements Serializable {
         StringBuilder result = new StringBuilder(15);
         String value = this.stringValue;
         switch (this.type) {
+            default:    
             case DATETIME:
                 value = this.dateValue.toString();
                 break;

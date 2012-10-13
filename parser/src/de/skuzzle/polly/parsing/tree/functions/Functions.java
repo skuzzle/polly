@@ -89,6 +89,7 @@ public class Functions {
             
             double sum = 0;
             switch (this.type) {
+            default:
             case SUM:
                 for (Expression e : lit.getElements()) {
                     sum += ((NumberLiteral) e).getValue();
@@ -359,6 +360,7 @@ public class Functions {
             double result = Double.NaN;
             
             switch (this.func) {
+            default:
             case SIN:
                 result = java.lang.Math.sin(operand.getValue());
                 break;

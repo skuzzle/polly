@@ -35,6 +35,7 @@ public class TernaryDotDotOperator extends TernaryOperatorOverload {
         NumberLiteral first = (NumberLiteral) stack.pop();
         
         switch(this.getOperatorType()) {
+            default:
             case DOTDOT:
                 double start = first.getValue();
                 double end = second.getValue();

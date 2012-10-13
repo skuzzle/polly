@@ -36,6 +36,7 @@ public class UnaryOperators {
             TimespanLiteral left = (TimespanLiteral) stack.pop();
             
             switch(this.getOperatorType()) {
+                default:
                 case SUB:
                     stack.push(new TimespanLiteral(-left.getValue()));
                     break;
@@ -62,6 +63,7 @@ public class UnaryOperators {
             StringLiteral left = (StringLiteral) stack.pop();
             
             switch(this.getOperatorType()) {
+                default:
                 case EXCLAMATION:
                     stack.push(new StringLiteral(this.reverse(left.getValue())));
                     break;
@@ -104,6 +106,7 @@ public class UnaryOperators {
             ListLiteral left = (ListLiteral) stack.pop();
             
             switch(this.getOperatorType()) {
+                default:
                 case EXCLAMATION:
                     Collections.reverse(left.getElements());
                     stack.push(new ListLiteral(left.getElements()));
@@ -132,6 +135,7 @@ public class UnaryOperators {
             BooleanLiteral left = (BooleanLiteral) stack.pop();
             
             switch(this.getOperatorType()) {
+                default:    
                 case EXCLAMATION:
                     stack.push(new BooleanLiteral(!left.getValue()));
                     break;
@@ -159,6 +163,7 @@ public class UnaryOperators {
             NumberLiteral left = (NumberLiteral) stack.pop();
             
             switch(this.getOperatorType()) {
+                default:
                 case SUB:
                     stack.push(new NumberLiteral(-left.getValue(), left.getPosition()));
                     break;
@@ -194,6 +199,7 @@ public class UnaryOperators {
             
             int i = 0;
             switch(this.getOperatorType()) {
+                default:
                 case QUESTION:
                     i = randomizer.nextInt(left.getElements().size());
                     stack.push((Literal) left.getElements().get(i));

@@ -59,14 +59,22 @@ public abstract class AbstractResponseHandler implements HttpHandler {
 
 
 
-    protected void parsePostParameters(HttpExchange t, Map<String, HttpParameter> result, HttpSession session) throws IOException {
+    protected void parsePostParameters(HttpExchange t, Map<String, HttpParameter> result, 
+            HttpSession session) throws IOException {
         InputStreamCounter c = new InputStreamCounter(t.getRequestBody());
-        BufferedReader r = new BufferedReader(
-            new InputStreamReader(c, this.webServer.getEncoding()));
-        String line = null;
-        while ((line = r.readLine()) != null) {
-            if (!line.equals("")) {
-                parseParameters(line, result, ParameterType.POST);
+        BufferedReader r = null;
+        try {
+            r = new BufferedReader(
+                new InputStreamReader(c, this.webServer.getEncoding()));
+            String line = null;
+            while ((line = r.readLine()) != null) {
+                if (!line.equals("")) {
+                    parseParameters(line, result, ParameterType.POST);
+                }
+            }
+        } finally {
+            if (r != null) {
+                r.close();
             }
         }
         session.updateDownload(c.getBytes());

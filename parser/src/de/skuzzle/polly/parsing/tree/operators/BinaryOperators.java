@@ -56,6 +56,8 @@ public class BinaryOperators {
             
             
             switch (this.getOperatorType()) {
+            default:
+                break;
             case ADD:
                 stack.push(new DateLiteral(right.getTarget(left)));
                 break;
@@ -83,6 +85,7 @@ public class BinaryOperators {
             Date left = ((DateLiteral) stack.pop()).getValue();
           
             switch(this.getOperatorType()) {
+            default:
                 case SUB:
                     stack.push(new TimespanLiteral(
                         Math.abs((left.getTime() - right.getTime()) / 1000)));
@@ -109,6 +112,7 @@ public class BinaryOperators {
             long left = ((TimespanLiteral) stack.pop()).getValue();
           
             switch(this.getOperatorType()) {
+                default:    
                 case ADD:
                     stack.push(new TimespanLiteral(left + right));
                     break;
@@ -192,6 +196,7 @@ public class BinaryOperators {
             
             Position span = new Position(left.getPosition(), right.getPosition());
             switch(this.getOperatorType()) {
+                default:
                 case ADD:
                     stack.push(new NumberLiteral(
                             left.getValue() + right.getValue(), span));
@@ -353,6 +358,7 @@ public class BinaryOperators {
             
             List<Expression> newList;
             switch(this.getOperatorType()) {
+                default:
                 case ADD:
                     newList = new ArrayList<Expression>(left.getElements());
                     newList.addAll(right.getElements());
@@ -400,6 +406,7 @@ public class BinaryOperators {
             BooleanLiteral left = (BooleanLiteral) stack.pop();
             
             switch(this.getOperatorType()) {
+                default:
                 case BOOLEAN_AND:
                     stack.push(new BooleanLiteral(left.getValue() && right.getValue()));
                     break;
@@ -436,6 +443,7 @@ public class BinaryOperators {
             StringLiteral left = (StringLiteral) stack.pop();
             
             switch(this.getOperatorType()) {
+                default:
                 case ADD:
                     stack.push(new StringLiteral(left.getValue() + right.getValue()));
                     break;
@@ -481,6 +489,7 @@ public class BinaryOperators {
             Literal left = stack.pop();
             
             switch(this.getOperatorType()) {
+                default:
                 case EQ:
                     stack.push(new BooleanLiteral(left.equals(right)));
                     break;
@@ -524,6 +533,7 @@ public class BinaryOperators {
             ListLiteral left = (ListLiteral) stack.pop();
             
             switch(this.getOperatorType()) {
+                default:
                 case INDEX:
                     int i = right.isInteger();
 
@@ -568,6 +578,7 @@ public class BinaryOperators {
             StringLiteral left = (StringLiteral) stack.pop();
             
             switch(this.getOperatorType()) {
+                default:
                 case INDEX:
                     int i = right.isInteger();
                     char[] chars = left.getValue().toCharArray();
@@ -609,6 +620,7 @@ public class BinaryOperators {
             Literal left = stack.pop();
             
             switch(this.getOperatorType()) {
+                default:
                 case LT:
                     stack.push(new BooleanLiteral(left.compareTo(right) < 0));
                     break;
@@ -647,6 +659,7 @@ public class BinaryOperators {
             Literal left = stack.pop();
             
             switch(this.getOperatorType()) {
+                default:
                 case LT:
                     stack.push(new BooleanLiteral(left.compareTo(right) < 0));
                     break;
@@ -684,6 +697,7 @@ public class BinaryOperators {
             Literal left = stack.pop();
             
             switch(this.getOperatorType()) {
+                default:
                 case LT:
                     stack.push(new BooleanLiteral(left.compareTo(right) < 0));
                     break;
@@ -721,6 +735,7 @@ public class BinaryOperators {
             Literal left = stack.pop();
             
             switch(this.getOperatorType()) {
+                default:
                 case LT:
                     stack.push(new BooleanLiteral(left.compareTo(right) < 0));
                     break;

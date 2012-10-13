@@ -1,6 +1,5 @@
 package de.skuzzle.polly.sdk;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -73,7 +72,7 @@ import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
  * @author Simon
  *
  */
-public interface Conversation extends Disposable, Closeable {
+public interface Conversation extends Disposable {
 
     
     /**
