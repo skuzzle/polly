@@ -100,12 +100,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
             IrcUser user = new IrcUser(nickName, login, hostname);
             ChannelEvent e = new ChannelEvent(IrcManagerImpl.this, user, channel);
             
-            if (!IrcManagerImpl.this.onlineUsers.contains(nickName)) {
-                SpotEvent e1 = new SpotEvent(IrcManagerImpl.this, user, channel, 
-                    SpotEvent.USER_JOINED);
-                IrcManagerImpl.this.fireUserSpotted(e1);
-            }
-            IrcManagerImpl.this.onlineUsers.add(nickName);
+            this.checkUserSpotted(channel, nickName, SpotEvent.USER_JOINED);
             IrcManagerImpl.this.fireJoin(e);
         }
         
@@ -220,6 +215,8 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
             MessageEvent e = new MessageEvent(IrcManagerImpl.this, user, 
                     nickName, message);
             
+            this.checkUserSpotted(nickName, nickName, SpotEvent.PRIVATE_MSG);
+            
             IrcManagerImpl.this.firePrivateMessageEvent(e);
         }
         
@@ -257,13 +254,19 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
             for (int i = 0; i < users.length; ++i) {
                 String nickName = IrcManagerImpl.this.stripNickname(users[i].getNick());
                 
-                synchronized (IrcManagerImpl.this.onlineUsers) {
-                    if (IrcManagerImpl.this.onlineUsers.add(nickName)) {
-                        IrcUser user = new IrcUser(nickName, channel, "");
-                        SpotEvent e = new SpotEvent(IrcManagerImpl.this, user, channel, 
-                                SpotEvent.USER_JOINED);
-                        IrcManagerImpl.this.fireUserSpotted(e);
-                    }
+                this.checkUserSpotted(channel, nickName, SpotEvent.USER_JOINED);
+            }
+        }
+        
+        
+        
+        private void checkUserSpotted(String channel, String nickName, int type) {
+            synchronized (IrcManagerImpl.this.onlineUsers) {
+                if (IrcManagerImpl.this.onlineUsers.add(nickName)) {
+                    IrcUser user = new IrcUser(nickName, channel, "");
+                    SpotEvent e = new SpotEvent(IrcManagerImpl.this, user, channel, 
+                            type);
+                    IrcManagerImpl.this.fireUserSpotted(e);
                 }
             }
         }

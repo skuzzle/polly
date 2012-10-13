@@ -23,6 +23,9 @@ public class SpotEvent extends ChannelEvent {
     
     /** Indicates a join */
     public final static int USER_JOINED = 4;
+
+    /** Indicates a private message */
+    public static final int PRIVATE_MSG = 8;
     
     
     
