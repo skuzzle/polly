@@ -79,10 +79,10 @@ public interface RemindManager extends Disposable {
     public abstract void deliverRemind(RemindEntity remind, boolean ignoreIdleStatus) 
             throws DatabaseException, EMailException;
     
-    public abstract void deliverLater(RemindEntity remind, User forUser, boolean wasIdle) 
-            throws DatabaseException, EMailException;
+    public abstract void deliverLater(RemindEntity remind, User forUser, boolean wasIdle, 
+            boolean online) throws DatabaseException, EMailException;
     
-    public abstract void deliverNowIrc(RemindEntity remind, User forUser);
+    public abstract void deliverNowIrc(RemindEntity remind, User forUser, boolean online);
     
     public abstract void deliverNowMail(RemindEntity remind, User forUser) 
             throws DatabaseException, EMailException;

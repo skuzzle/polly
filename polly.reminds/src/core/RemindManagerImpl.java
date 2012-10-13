@@ -1,5 +1,6 @@
 package core;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +13,8 @@ import org.apache.log4j.Logger;
 import polly.reminds.MyPlugin;
 
 import de.skuzzle.polly.sdk.AbstractDisposable;
+import de.skuzzle.polly.sdk.Conversation;
+import de.skuzzle.polly.sdk.ConversationManager;
 import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.IrcManager;
 import de.skuzzle.polly.sdk.MailManager;
@@ -21,6 +24,7 @@ import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.WriteAction;
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
+import de.skuzzle.polly.sdk.exceptions.ConversationException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.EMailException;
@@ -55,6 +59,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     private ActionCounter actionCounter;
     private ActionCounter messageCounter;
     private FormatManager formatter;
+    private ConversationManager conversationManager;
     private RemindDBWrapper dbWrapper;
     private Logger logger;
     
@@ -66,6 +71,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         this.userManager = myPolly.users();
         this.formatter = myPolly.formatting();
         this.roleManager = myPolly.roles();
+        this.conversationManager = myPolly.conversations();
         this.dbWrapper = new RemindDBWrapperImpl(myPolly.persistence());
         this.remindScheduler = new Timer("REMIND_SCHEDULER", true);
         this.scheduledReminds = new HashMap<Integer, RemindManager.RemindTask>();
@@ -159,9 +165,9 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
                 
                 
                 if (!online || idle) {
-                    this.deliverLater(remind, forUser, idle);
+                    this.deliverLater(remind, forUser, idle, online);
                 } else {
-                    this.deliverNowIrc(remind, forUser);
+                    this.deliverNowIrc(remind, forUser, online);
                 }
             }
         } finally {
@@ -173,8 +179,8 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     
 
     @Override
-    public void deliverLater(final RemindEntity remind, User forUser, boolean wasIdle) 
-                throws DatabaseException, EMailException {
+    public void deliverLater(final RemindEntity remind, User forUser, boolean wasIdle, 
+                boolean online) throws DatabaseException, EMailException {
         logger.trace("Delivering later. Checking if remind schould be delivered as mail");
         boolean asMail = forUser.getAttribute(MyPlugin.LEAVE_AS_MAIL).equals("true");
         boolean doubleDelivery = forUser.getAttribute(
@@ -184,7 +190,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         
         if (asMail && wasIdle) {
             // user was idle and wanted email notification
-            this.deliverNowIrc(remind, forUser);
+            this.deliverNowIrc(remind, forUser, online);
             this.deliverNowMail(remind, forUser);
         } else if (asMail) {
             // user was offline and wanted email
@@ -192,7 +198,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         } else if (wasIdle) {
             // user was online and wanted no email notification: notify now and when he 
             // returns
-            this.deliverNowIrc(remind, forUser);
+            this.deliverNowIrc(remind, forUser, online);
             if (doubleDelivery) {
                 RemindEntity onAction = new RemindEntity(remind.getMessage(), 
                     remind.getFromUser(), 
@@ -218,7 +224,10 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     
     
     @Override
-    public void deliverNowIrc(RemindEntity remind, User forUser) {
+    public void deliverNowIrc(RemindEntity remind, User forUser, boolean online) {
+        if (!online) {
+            return;
+        }
         logger.trace("Delivering " + remind + " now in IRC");
         RemindFormatter formatter = this.getFormat(forUser);
         
@@ -249,6 +258,53 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
                 remind.getForUser() + "' wurde zugestellt");
         }
         this.putToSleep(remind, forUser);
+        //this.checkAutoSnooze(forUser);
+    }
+    
+    
+    
+    private final void checkAutoSnooze(User forUser) {
+        if (!this.userManager.isSignedOn(forUser)) {
+            return;
+        } else if (forUser.getAttribute(MyPlugin.AUTO_SNOOZE).equals("false")) {
+            return;
+        }
+        
+        long millis = System.currentTimeMillis();
+        int defaultRemindTime = Integer.parseInt(
+            forUser.getAttribute(MyPlugin.DEFAULT_REMIND_TIME));
+        millis += defaultRemindTime;
+        
+        Conversation conv = null;
+        try {
+            conv = this.conversationManager.create(
+                this.irc, forUser, forUser.getCurrentNickName());
+            conv.writeLine("Erinnerung um " + 
+                this.formatter.formatTimeSpanMs(defaultRemindTime) + " verlängern?");
+            conv.readLine();
+System.out.println("Auto snooze!");
+            Date dueDate = new Date(millis);
+            
+            this.snooze(forUser, dueDate);
+            this.irc.sendMessage(forUser.getCurrentNickName(), 
+                "Erinnerung wurde verlängert. Jetzt fällig: " 
+                    + this.formatter.formatDate(dueDate), this);
+        } catch (ConversationException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+System.out.println("Auto close!");
+            e.printStackTrace();
+        } catch (CommandException e) {
+            e.printStackTrace();
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        } finally {
+            if (conv != null) {
+                conv.close();
+            }
+        }
     }
     
     

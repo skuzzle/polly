@@ -33,6 +33,7 @@ public class DeliverRemindHandler extends JoinPartAdapter implements MessageList
     }
     
     
+    
     @Override
     public void publicMessage(MessageEvent e) {
         if (this.remindManager.isOnActionAvailable(e.getUser().getNickName())) {
