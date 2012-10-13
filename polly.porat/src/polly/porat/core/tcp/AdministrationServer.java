@@ -31,6 +31,7 @@ import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
 import de.skuzzle.polly.tools.events.AsynchronousEventProvider;
 import de.skuzzle.polly.tools.events.Dispatchable;
 import de.skuzzle.polly.tools.events.EventProvider;
+import de.skuzzle.polly.tools.events.Listeners;
 
 
 public class AdministrationServer extends AbstractDisposable implements Runnable {
@@ -159,7 +160,7 @@ public class AdministrationServer extends AbstractDisposable implements Runnable
     
     
     protected void fireObjectReceived(final ObjectReceivedEvent e) {
-        List<ObjectReceivedListener> listeners = 
+        Listeners<ObjectReceivedListener> listeners = 
             this.eventProvider.getListeners(ObjectReceivedListener.class);
         
         Dispatchable<ObjectReceivedListener, ObjectReceivedEvent> event = 
@@ -177,7 +178,7 @@ public class AdministrationServer extends AbstractDisposable implements Runnable
     
     
     protected void fireConnectionAccepted(final NetworkEvent e) {
-        List<ConnectionListener> listeners = 
+        Listeners<ConnectionListener> listeners = 
             this.eventProvider.getListeners(ConnectionListener.class);
         
         Dispatchable<ConnectionListener, NetworkEvent> event = 
@@ -195,7 +196,7 @@ public class AdministrationServer extends AbstractDisposable implements Runnable
     
     
     protected void fireConnectionClosed(final NetworkEvent e) {
-        List<ConnectionListener> listeners = 
+        Listeners<ConnectionListener> listeners = 
             this.eventProvider.getListeners(ConnectionListener.class);
         
         Dispatchable<ConnectionListener, NetworkEvent> event = 

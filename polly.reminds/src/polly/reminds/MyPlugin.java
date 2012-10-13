@@ -85,6 +85,9 @@ public class MyPlugin extends PollyPlugin {
 	public final static String AUTO_SNOOZE = "AUTO_SNOOZE";
 	public final static String AUTO_SNOOZE_VALUE = "false";
 	
+	public final static String AUTO_SNOOZE_INDICATOR = "AUTO_SNOOZE_INDICATOR";
+	public final static String AUTO_SNOOZE_INDICATOR_VALUE = "k";
+	
 	public final static String REMIND_IDLE_TIME = "REMIND_IDLE_TIME";
     
 	
@@ -198,6 +201,7 @@ public class MyPlugin extends PollyPlugin {
             users.addAttribute(DEFAULT_REMIND_TIME, DEFAULT_REMIND_TIME_VALUE, 
                 Constraints.INTEGER);
             users.addAttribute(AUTO_SNOOZE, AUTO_SNOOZE_VALUE, Constraints.BOOLEAN);
+            users.addAttribute(AUTO_SNOOZE_INDICATOR, AUTO_SNOOZE_INDICATOR_VALUE);
         } catch (DatabaseException e) {
             e.printStackTrace();
         }

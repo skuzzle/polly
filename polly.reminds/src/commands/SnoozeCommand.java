@@ -54,7 +54,7 @@ public class SnoozeCommand extends AbstractRemindCommand {
                     executer.getAttribute(MyPlugin.DEFAULT_REMIND_TIME));
                 Date dueDate = new Date(millis);
                 
-                this.remindManager.snooze(executer, dueDate);
+                this.remindManager.snooze(executer);
                 this.reply(channel, "Erinnerung wurde verlängert. Jetzt fällig: " 
                     + this.getMyPolly().formatting().formatDate(dueDate));
                 

@@ -6,7 +6,7 @@ import de.skuzzle.polly.sdk.model.User;
 
 /**
  * <p>Manages the creation of {@link Conversation}. As conversations must be unique in 
- * their channel-user combination, the only way to create one is using any this class' 
+ * their channel-user combination, the only way to create one is using any of this class' 
  * 'create' methods.</p>
  * 
  * <p>Please note that the idle-timeouts are not checked very exact. So the actual
@@ -28,12 +28,12 @@ public interface ConversationManager extends Disposable {
      * 
      * @param ircManager The IrcManager instance to work with.
      * @param user The user this conversation is for.
-     * @param Channel The channel this conversation is for.
+     * @param channel The channel this conversation is for.
      * @return The new {@link Conversation} instance.
      * @throws ConversationException If there is already a conversation active with the
      *          same user on the same channel.
      */
-    public abstract Conversation create(IrcManager ircManager, User user, String Channel) 
+    public abstract Conversation create(IrcManager ircManager, User user, String channel) 
             throws ConversationException;
     
     /**
@@ -44,7 +44,7 @@ public interface ConversationManager extends Disposable {
      * 
      * @param ircManager The IrcManager instance to work with.
      * @param user The user this conversation is for.
-     * @param Channel The channel this conversation is for.
+     * @param channel The channel this conversation is for.
      * @param idleTime The time of idling in seconds after which the returned 
      *      conversation is automatically closed.
      * @return The new {@link Conversation} instance.
@@ -52,6 +52,6 @@ public interface ConversationManager extends Disposable {
      *          same user on the same channel.
      * @since 0.6.1
      */
-    public abstract Conversation create(IrcManager ircManager, User user, String Channel, 
+    public abstract Conversation create(IrcManager ircManager, User user, String channel, 
         int idleTime) throws ConversationException;
 }

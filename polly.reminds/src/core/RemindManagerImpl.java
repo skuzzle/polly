@@ -1,6 +1,5 @@
 package core;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -13,8 +12,6 @@ import org.apache.log4j.Logger;
 import polly.reminds.MyPlugin;
 
 import de.skuzzle.polly.sdk.AbstractDisposable;
-import de.skuzzle.polly.sdk.Conversation;
-import de.skuzzle.polly.sdk.ConversationManager;
 import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.IrcManager;
 import de.skuzzle.polly.sdk.MailManager;
@@ -24,7 +21,6 @@ import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.WriteAction;
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
-import de.skuzzle.polly.sdk.exceptions.ConversationException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.EMailException;
@@ -39,6 +35,8 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     private final static RemindFormatter MAIL_FORMAT = new MailRemindFormatter();
     
     private final static String SUBJECT = "[Reminder] Erinnerung um %s";
+    
+    private final static int AUTO_SNOOZE_WAIT_TIME = 1000 * 60; //1m
     
     public final static RemindFormatter DEFAULT_FORMAT = 
         PatternRemindFormatter.forPattern(MyPlugin.REMIND_FORMAT_VALUE);
@@ -59,7 +57,6 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     private ActionCounter actionCounter;
     private ActionCounter messageCounter;
     private FormatManager formatter;
-    private ConversationManager conversationManager;
     private RemindDBWrapper dbWrapper;
     private Logger logger;
     
@@ -71,7 +68,6 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         this.userManager = myPolly.users();
         this.formatter = myPolly.formatting();
         this.roleManager = myPolly.roles();
-        this.conversationManager = myPolly.conversations();
         this.dbWrapper = new RemindDBWrapperImpl(myPolly.persistence());
         this.remindScheduler = new Timer("REMIND_SCHEDULER", true);
         this.scheduledReminds = new HashMap<Integer, RemindManager.RemindTask>();
@@ -258,53 +254,25 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
                 remind.getForUser() + "' wurde zugestellt");
         }
         this.putToSleep(remind, forUser);
-        //this.checkAutoSnooze(forUser);
+        this.checkTriggerAutoSnooze(forUser);
     }
     
     
     
-    private final void checkAutoSnooze(User forUser) {
+    private final void checkTriggerAutoSnooze(User forUser) {
         if (!this.userManager.isSignedOn(forUser)) {
             return;
         } else if (forUser.getAttribute(MyPlugin.AUTO_SNOOZE).equals("false")) {
             return;
         }
+        String indicator = forUser.getAttribute(MyPlugin.AUTO_SNOOZE_INDICATOR);
+        this.irc.sendMessage(forUser.getCurrentNickName(), 
+            "Auto Snooze aktiv. Schreibe '" + indicator + 
+            "' um deine letzte Erinnerung zu verlängern.", this);
         
-        long millis = System.currentTimeMillis();
-        int defaultRemindTime = Integer.parseInt(
-            forUser.getAttribute(MyPlugin.DEFAULT_REMIND_TIME));
-        millis += defaultRemindTime;
         
-        Conversation conv = null;
-        try {
-            conv = this.conversationManager.create(
-                this.irc, forUser, forUser.getCurrentNickName());
-            conv.writeLine("Erinnerung um " + 
-                this.formatter.formatTimeSpanMs(defaultRemindTime) + " verlängern?");
-            conv.readLine();
-System.out.println("Auto snooze!");
-            Date dueDate = new Date(millis);
-            
-            this.snooze(forUser, dueDate);
-            this.irc.sendMessage(forUser.getCurrentNickName(), 
-                "Erinnerung wurde verlängert. Jetzt fällig: " 
-                    + this.formatter.formatDate(dueDate), this);
-        } catch (ConversationException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-System.out.println("Auto close!");
-            e.printStackTrace();
-        } catch (CommandException e) {
-            e.printStackTrace();
-        } catch (DatabaseException e) {
-            e.printStackTrace();
-        } finally {
-            if (conv != null) {
-                conv.close();
-            }
-        }
+        new AutoSnoozeRunLater("AUTO_SNOOZE_WAITER", forUser, 
+            AUTO_SNOOZE_WAIT_TIME, this.irc, this).start();
     }
     
     
@@ -433,6 +401,18 @@ System.out.println("Auto close!");
         
         RemindEntity newRemind = existing.copyForNewDueDate(dueDate);
         this.addRemind(newRemind, true);
+    }
+    
+    
+    
+    @Override
+    public void snooze(User executor) throws DatabaseException,
+            CommandException {
+        
+        int defaultRemindTime = Integer.parseInt(
+            executor.getAttribute(MyPlugin.DEFAULT_REMIND_TIME));
+        
+        this.snooze(executor, new Date(System.currentTimeMillis() + defaultRemindTime));
     }
     
     

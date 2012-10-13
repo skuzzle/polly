@@ -281,7 +281,7 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
             }
         }, 1000, 1000, TimeUnit.MILLISECONDS);
     }
-    
+
     
 
     @Override
@@ -293,16 +293,36 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
     
     
     
-    public Conversation create(IrcManager ircManager, User user, String channel, int idleTimeout) 
-            throws ConversationException {
+    @Override
+    public Conversation create(IrcManager ircManager, User user, String channel, 
+            int idleTimeout) throws ConversationException {
+        
+        if (this.checkExisting(user, channel) != null) {
+            throw new ConversationException("Conversation already active");
+        }
+        return this.createInternal(ircManager, user, channel, idleTimeout);
+    }
+    
+    
+    
+    private Conversation checkExisting(User user, String channel) {
+        synchronized (crossMutex) {
+            Conversation key = new ConversationImpl(null, user, channel, 0);
+            logger.info("Checking for existing conversation");
+            int index = this.cache.indexOf(key);
+            if (index != -1) {
+                this.cache.get(index);
+            }
+            return null;
+        }
+    }
+    
+    
+    
+    private Conversation createInternal(IrcManager ircManager, User user, String channel, 
+        int idleTimeout) {
         
         synchronized (crossMutex) {
-            Conversation key = new ConversationImpl(ircManager, user, channel, idleTimeout);
-            logger.info("Checking for existing conversation");
-            if (this.cache.contains(key)) {
-                throw new ConversationException("Conversation already active");
-            }
-            
             ConversationImpl c = new ConversationImpl(
                 ircManager, user, channel, idleTimeout * 1000); // calc timeout in seconds
             ircManager.addMessageListener(c);
