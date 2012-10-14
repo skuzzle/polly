@@ -23,11 +23,11 @@ public class SetAttributeCommand extends Command {
     		MyPlugin.SET_USER_ATTRIBUTE_PERMISSION,
             new Parameter("User", Types.USER), 
             new Parameter("Attributname", Types.STRING), 
-            new Parameter("Attributwert", Types.STRING));
+            new Parameter("Attributwert", Types.ANY));
         this.createSignature("Setzt das Attribut auf den angegebenen Wert.",
             MyPlugin.SET_ATTRIBUTE_PERMISSION,
             new Parameter("Attributname", Types.STRING), 
-            new Parameter("Attributwert", Types.STRING));
+            new Parameter("Attributwert", Types.ANY));
         this.setRegisteredOnly();
         this.setHelpText("Setzt ein Attribut auf den angegebenen Wert. Verfügbare " +
         		"Attribute können mit :listattr angezeigt werden.");

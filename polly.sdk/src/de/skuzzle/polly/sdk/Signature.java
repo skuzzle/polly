@@ -202,7 +202,8 @@ public class Signature {
 	/**
 	 * This is a convenience method for accessing a string parameter. It returns the
 	 * String values for any of these types: {@link StringType}, {@link UserType},
-	 * {@link CommandType} and {@link ChannelType}.
+	 * {@link CommandType}, {@link BooleanType}, {@link NumberType} and 
+	 * {@link ChannelType}.
 	 * 
 	 * @param paramId The parameter whose value shall be resolved.
 	 * @return The parameters string value.
@@ -219,6 +220,10 @@ public class Signature {
 			return ((ChannelType) t).getValue();
 		} else if (t instanceof CommandType) {
 			return ((CommandType) t).getValue();
+		} else if (t instanceof BooleanType) {
+		    return Boolean.toString(((BooleanType) t).getValue());
+		} else if (t instanceof NumberType) {
+		    return Double.toString(((NumberType) t).getValue());
 		}
 		throw new IllegalArgumentException("No String-type parameter");
 	}
