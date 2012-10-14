@@ -1,6 +1,5 @@
 package polly.rx.entities;
 
-import java.util.Date;
 import java.util.List;
 
 import de.skuzzle.polly.sdk.PersistenceManager;

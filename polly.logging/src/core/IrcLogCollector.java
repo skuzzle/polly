@@ -1,7 +1,5 @@
 package core;
 
-import java.util.Date;
-
 import de.skuzzle.polly.sdk.eventlistener.ChannelEvent;
 import de.skuzzle.polly.sdk.eventlistener.JoinPartListener;
 import de.skuzzle.polly.sdk.eventlistener.MessageEvent;

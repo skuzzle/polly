@@ -2,7 +2,6 @@ package polly.network.util;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -11,24 +10,6 @@ import java.io.Serializable;
 
 
 public class SerializableFile implements Serializable {
-    
-    public static void main(String[] args) throws FileNotFoundException, IOException, 
-            ClassNotFoundException {
-        
-        SerializableFile test = new SerializableFile(new File("./logs/polly.log"));
-        ObjectOutputStream out = new ObjectOutputStream(
-            new FileOutputStream(new File("./logs/polly_copy.log")));
-        
-        out.writeObject(test);
-        out.flush();
-        out.close();
-        
-        ObjectInputStream in = new ObjectInputStream(
-            new FileInputStream(new File("./logs/polly_copy.log")));
-        
-        test = (SerializableFile) in.readObject();
-        test.store(new File("./logs/polly_copy2.log"));
-    }
     
     private static final long serialVersionUID = 1L;
     private static final int BUFFER_SIZE = 65536;

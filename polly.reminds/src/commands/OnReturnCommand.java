@@ -1,7 +1,5 @@
 package commands;
 
-import java.util.Date;
-
 import polly.reminds.MyPlugin;
 
 import core.RemindManager;
