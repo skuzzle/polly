@@ -13,6 +13,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import de.skuzzle.polly.sdk.FormatManager;
+import de.skuzzle.polly.sdk.time.Time;
 
 @Entity
 @NamedQueries({
@@ -83,7 +84,7 @@ public class RemindEntity {
         this.forUser = forUser;
         this.dueDate = dueDate;
         this.onChannel = onChannel;
-        this.leaveDate = new Date();
+        this.leaveDate = Time.currentTime();
         this.onAction = onAction;
         this.isMail = isMail;
     }

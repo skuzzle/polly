@@ -273,7 +273,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         
         
         new AutoSnoozeRunLater("AUTO_SNOOZE_WAITER", forUser, 
-            AUTO_SNOOZE_WAIT_TIME, this.irc, this).start();
+            AUTO_SNOOZE_WAIT_TIME, this.irc, this, this.formatter).start();
     }
     
     
@@ -385,7 +385,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     
     
     @Override
-    public void snooze(User executor, Date dueDate) 
+    public RemindEntity snooze(User executor, Date dueDate) 
             throws CommandException, DatabaseException {
         
         logger.trace("User " + executor + " requested snooze");
@@ -400,20 +400,37 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
             		"verlängern kannst");
         }
         
+        // if no explicit date is given, schedule new remind as long as the old was 
+        // running
+        if (dueDate == null) {
+            logger.trace("No duedate given. Calculating runtime of remind to snooze.");
+            long runtime = existing.getDueDate().getTime() - 
+                existing.getLeaveDate().getTime();
+            dueDate = new Date(Time.currentTimeMillis() + runtime);
+        }
+        
         RemindEntity newRemind = existing.copyForNewDueDate(dueDate);
         this.addRemind(newRemind, true);
+        return newRemind;
     }
     
     
     
     @Override
-    public void snooze(User executor) throws DatabaseException,
+    public RemindEntity snooze(User executor) throws DatabaseException,
             CommandException {
         
-        int defaultRemindTime = Integer.parseInt(
-            executor.getAttribute(MyPlugin.DEFAULT_REMIND_TIME));
+        boolean useSnoozeTime = executor.getAttribute(
+            MyPlugin.USE_SNOOZE_TIME).equals("true");
+        if (useSnoozeTime) {
+            int defaultRemindTime = Integer.parseInt(
+                executor.getAttribute(MyPlugin.DEFAULT_REMIND_TIME));
+            return this.snooze(executor, 
+                new Date(Time.currentTimeMillis() + defaultRemindTime));
+        } else {
+            return this.snooze(executor, null);
+        }
         
-        this.snooze(executor, new Date(Time.currentTimeMillis() + defaultRemindTime));
     }
     
     

@@ -1,12 +1,14 @@
 package core;
 
 import polly.reminds.MyPlugin;
+import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.IrcManager;
 import de.skuzzle.polly.sdk.eventlistener.MessageAdapter;
 import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
 import de.skuzzle.polly.sdk.model.User;
 import de.skuzzle.polly.tools.concurrent.RunLater;
+import entities.RemindEntity;
 
 
 public class AutoSnoozeRunLater extends RunLater {
@@ -17,7 +19,9 @@ public class AutoSnoozeRunLater extends RunLater {
     
     
     public AutoSnoozeRunLater(String name, final User forUser, long timespan, 
-            final IrcManager ircManager, final RemindManager remindManager) {
+            final IrcManager ircManager, final RemindManager remindManager, 
+            final FormatManager formatter) {
+        
         super(name, timespan);
         this.ircManager = ircManager;
         this.forUser = forUser;
@@ -32,9 +36,10 @@ public class AutoSnoozeRunLater extends RunLater {
                     AutoSnoozeRunLater.this.stop();
                     if (e.getMessage().equals(indicator)) {
                         try {
-                            remindManager.snooze(forUser);
+                            RemindEntity re = remindManager.snooze(forUser);
                             ircManager.sendMessage(
-                                nick, "Erinnerung wurde verlängert.", this);
+                                nick, "Erinnerung wurde verlängert. Jetzt fällig: " + 
+                                    formatter.formatDate(re.getDueDate()), this);
                         } catch (Exception e1) {
                             e1.printStackTrace();
                         }

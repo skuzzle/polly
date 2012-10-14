@@ -101,9 +101,10 @@ public interface RemindManager extends Disposable {
     
     public abstract RemindEntity cancelSleep(String forUser);
     
-    public abstract void snooze(User executor) throws DatabaseException, CommandException;
+    public abstract RemindEntity snooze(User executor) 
+            throws DatabaseException, CommandException;
     
-    public abstract void snooze(User executor, Date dueDate) 
+    public abstract RemindEntity snooze(User executor, Date dueDate) 
             throws CommandException, DatabaseException;
     
     public abstract RemindEntity toggleIsMail(User executor, int id) 
