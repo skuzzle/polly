@@ -26,6 +26,7 @@ import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.EMailException;
 import de.skuzzle.polly.sdk.model.User;
 import de.skuzzle.polly.sdk.roles.RoleManager;
+import de.skuzzle.polly.sdk.time.Milliseconds;
 import de.skuzzle.polly.sdk.time.Time;
 import entities.RemindEntity;
 
@@ -37,7 +38,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     
     private final static String SUBJECT = "[Reminder] Erinnerung um %s";
     
-    private final static int AUTO_SNOOZE_WAIT_TIME = 1000 * 60; //1m
+    private final static long AUTO_SNOOZE_WAIT_TIME = Milliseconds.fromMinutes(5);
     
     public final static RemindFormatter DEFAULT_FORMAT = 
         PatternRemindFormatter.forPattern(MyPlugin.REMIND_FORMAT_VALUE);
