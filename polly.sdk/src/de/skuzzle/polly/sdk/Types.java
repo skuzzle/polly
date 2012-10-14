@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import de.skuzzle.polly.sdk.time.Time;
+
 /**
  * <p>These class represents a Type for a signature. Each Types-instance represents a
  * type as well as its value.</p>
@@ -585,7 +587,7 @@ public class Types {
 	    
 	    @Override
 	    public Date getValue() {
-	        return new Date(System.currentTimeMillis() + this.span * 1000);
+	        return new Date(Time.currentTimeMillis() + this.span * 1000);
 	    }
 	    
 	    

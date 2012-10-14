@@ -25,6 +25,7 @@ import polly.util.Hashes;
 
 
 import de.skuzzle.polly.sdk.exceptions.UnknownAttributeException;
+import de.skuzzle.polly.sdk.time.Time;
 
 
 @Entity
@@ -90,9 +91,9 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
         this.name = name;
         this.password = Hashes.md5(password);
         this.attributes = new HashMap<String, String>();
-        this.lastActionTimeStamp = System.currentTimeMillis();
+        this.lastActionTimeStamp = Time.currentTimeMillis();
         this.roles = new HashSet<Role>();
-        this.lastIdleTimeStamp = System.currentTimeMillis();
+        this.lastIdleTimeStamp = Time.currentTimeMillis();
     }
     
     
@@ -235,7 +236,7 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     
     @Override
     public boolean isIdle() {
-        return System.currentTimeMillis() - this.lastActionTimeStamp > IDLE_AFTER;
+        return Time.currentTimeMillis() - this.lastActionTimeStamp > IDLE_AFTER;
     }
     
     

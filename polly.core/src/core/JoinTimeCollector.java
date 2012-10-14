@@ -8,18 +8,15 @@ import de.skuzzle.polly.sdk.eventlistener.NickChangeEvent;
 import de.skuzzle.polly.sdk.eventlistener.NickChangeListener;
 import de.skuzzle.polly.sdk.eventlistener.SpotEvent;
 import de.skuzzle.polly.sdk.eventlistener.UserSpottedListener;
-import de.skuzzle.polly.sdk.time.TimeProvider;
+import de.skuzzle.polly.sdk.time.Time;
 
 
 public class JoinTimeCollector implements UserSpottedListener, NickChangeListener {
 
     private Map<String, Long> joinTimes;
-    private TimeProvider timeProvider;
     
     
-    
-    public JoinTimeCollector(TimeProvider timeProvider) {
-        this.timeProvider = timeProvider;
+    public JoinTimeCollector() {
         this.joinTimes = new HashMap<String, Long>();
     }
     
@@ -51,7 +48,7 @@ public class JoinTimeCollector implements UserSpottedListener, NickChangeListene
     public void userSpotted(SpotEvent e) {
         synchronized (this.joinTimes) {
             this.joinTimes.put(e.getUser().getNickName(), 
-                this.timeProvider.currentTimeMillis());
+                Time.currentTimeMillis());
         }
     }
     

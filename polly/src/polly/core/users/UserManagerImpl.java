@@ -40,6 +40,7 @@ import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
 import de.skuzzle.polly.sdk.model.User;
 import de.skuzzle.polly.sdk.roles.RoleManager;
+import de.skuzzle.polly.sdk.time.Time;
 import de.skuzzle.polly.tools.events.Dispatchable;
 import de.skuzzle.polly.tools.events.EventProvider;
 import de.skuzzle.polly.tools.events.Listeners;
@@ -285,7 +286,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
             logger.info("Irc User " + from + " successfully logged in as " + 
                     registeredName);
             
-            ((polly.core.users.User) user).setLoginTime(System.currentTimeMillis());
+            ((polly.core.users.User) user).setLoginTime(Time.currentTimeMillis());
             UserEvent e = new UserEvent(this, user);
             this.fireUserSignedOn(e);
             return user;
@@ -313,7 +314,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
         logger.info("Irc User " + from + " successfully logged in as " + 
                 from);
         
-        ((polly.core.users.User) user).setLoginTime(System.currentTimeMillis());
+        ((polly.core.users.User) user).setLoginTime(Time.currentTimeMillis());
         UserEvent e = new UserEvent(this, user);
         this.fireUserSignedOn(e);
         return user;

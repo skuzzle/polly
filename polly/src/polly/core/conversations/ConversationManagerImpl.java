@@ -24,6 +24,7 @@ import de.skuzzle.polly.sdk.eventlistener.MessageListener;
 import de.skuzzle.polly.sdk.exceptions.ConversationException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.model.User;
+import de.skuzzle.polly.sdk.time.Time;
 import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
 
 
@@ -64,7 +65,7 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
              * has been set. That would cause #isIdle() to return true although
              * this conversation hasn't even started!
              */
-            this.lastInput = System.currentTimeMillis();
+            this.lastInput = Time.currentTimeMillis();
             this.idleTimeout = idleTimeout;
         }
         
@@ -100,7 +101,7 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
             }
             
             MessageEvent msg = this.readQueue.take();
-            this.lastInput = System.currentTimeMillis();
+            this.lastInput = Time.currentTimeMillis();
             return msg;
         }
 
@@ -122,7 +123,7 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
         
         
         public boolean isIdle() {
-            return System.currentTimeMillis() - this.lastInput > this.idleTimeout;
+            return Time.currentTimeMillis() - this.lastInput > this.idleTimeout;
         }
         
         

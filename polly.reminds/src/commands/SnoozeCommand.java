@@ -14,6 +14,7 @@ import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.UnknownAttributeException;
 import de.skuzzle.polly.sdk.model.User;
+import de.skuzzle.polly.sdk.time.Time;
 
 public class SnoozeCommand extends AbstractRemindCommand {
 
@@ -49,7 +50,7 @@ public class SnoozeCommand extends AbstractRemindCommand {
             }
         } else if (this.match(signature, 1)) {
             try {
-                long millis = System.currentTimeMillis();
+                long millis = Time.currentTimeMillis();
                 millis += Long.parseLong(
                     executer.getAttribute(MyPlugin.DEFAULT_REMIND_TIME));
                 Date dueDate = new Date(millis);

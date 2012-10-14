@@ -16,6 +16,7 @@ import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.model.User;
+import de.skuzzle.polly.sdk.time.Time;
 
 
 public class UptimeCommand extends Command {
@@ -40,7 +41,7 @@ public class UptimeCommand extends Command {
                 throws CommandException, InsufficientRightsException {
         
         Date start = this.getMyPolly().getStartTime();
-        Date now = this.getMyPolly().pollySystemTime();
+        Date now = Time.currentTime();
         FormatManager f = this.getMyPolly().formatting();
         String result = "";
         if (this.match(signature, 0)) {

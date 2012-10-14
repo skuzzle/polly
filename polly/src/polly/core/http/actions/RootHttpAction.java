@@ -5,6 +5,7 @@ import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.http.HttpAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
+import de.skuzzle.polly.sdk.time.Time;
 
 
 public class RootHttpAction extends HttpAction {
@@ -21,7 +22,7 @@ public class RootHttpAction extends HttpAction {
         HttpTemplateContext context = new HttpTemplateContext(HttpInterface.PAGE_HOME);
         context.put("formatter", this.myPolly.formatting());
         context.put("started", this.myPolly.getStartTime());
-        long uptime = this.myPolly.currentTimeMillis() - this.myPolly.getStartTime().getTime();
+        long uptime = Time.currentTimeMillis() - this.myPolly.getStartTime().getTime();
         context.put("uptime", uptime / 1000);
         return context;
     }

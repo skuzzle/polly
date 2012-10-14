@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import de.skuzzle.polly.sdk.model.User;
+import de.skuzzle.polly.sdk.time.Time;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 
 
@@ -51,8 +52,8 @@ public class HttpSession extends AbstractDisposable {
     public HttpSession(String id, InetAddress remoteIp) {
         this.id = id;
         this.remoteIp = remoteIp;
-        this.started = System.currentTimeMillis();
-        this.lastAction = System.currentTimeMillis();
+        this.started = Time.currentTimeMillis();
+        this.lastAction = Time.currentTimeMillis();
         this.lastUri = "";
         this.data = new TreeMap<String, Object>();
     }
@@ -139,7 +140,7 @@ public class HttpSession extends AbstractDisposable {
      *          milliseconds or exceeded the given error threshold.
      */
     public boolean isTimedOut(int timeOut) {
-        return System.currentTimeMillis() - this.lastAction > timeOut;
+        return Time.currentTimeMillis() - this.lastAction > timeOut;
     }
     
     

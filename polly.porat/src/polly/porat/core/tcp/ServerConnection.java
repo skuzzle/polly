@@ -22,6 +22,7 @@ import polly.network.protocol.ProtocolObject;
 
 import de.skuzzle.polly.sdk.Disposable;
 import de.skuzzle.polly.sdk.model.User;
+import de.skuzzle.polly.sdk.time.Time;
 
 
 
@@ -55,7 +56,7 @@ public class ServerConnection implements Runnable, Disposable, polly.network.Con
         this.maxBadRequests = maxBadRequests;
         this.pongReceived = new AtomicBoolean(true);
         this.shutdownFlag = new AtomicBoolean(false);
-        this.start = System.currentTimeMillis();
+        this.start = Time.currentTimeMillis();
         this.loginTimeOut = loginTimeOut;
         this.userLock = new ReentrantLock();
         
@@ -125,7 +126,7 @@ public class ServerConnection implements Runnable, Disposable, polly.network.Con
                     logger.warn("Ignoring pings for " + this);
                 }
                 this.ignorePing = ignorePing;
-                message.setTimestamp(System.currentTimeMillis());
+                message.setTimestamp(Time.currentTimeMillis());
                 this.output.writeObject(message);
                 this.output.flush();
                 this.output.reset();
@@ -191,7 +192,7 @@ public class ServerConnection implements Runnable, Disposable, polly.network.Con
                 
                 if (incoming instanceof ProtocolObject) {
                     ProtocolObject po = (ProtocolObject) incoming;
-                    po.setReceivedAt(System.currentTimeMillis());
+                    po.setReceivedAt(Time.currentTimeMillis());
                     
                     // reply to ping
                     if (po instanceof Pong) {

@@ -230,7 +230,7 @@ public class MyPlugin extends PollyPlugin {
 		
 		
 		
-		this.joinTimeCollector = new JoinTimeCollector(myPolly.getTimeProvider());
+		this.joinTimeCollector = new JoinTimeCollector();
 		this.joinTimeCollector.addTo(myPolly.irc());
 		this.addCommand(new UptimeCommand(myPolly, this.joinTimeCollector));
 		

@@ -22,6 +22,7 @@ import de.skuzzle.polly.sdk.eventlistener.MessageListener;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.EMailException;
 import de.skuzzle.polly.sdk.model.User;
+import de.skuzzle.polly.sdk.time.Time;
 import entities.LogEntry;
 
 
@@ -213,14 +214,14 @@ public class ForwardHighlightHandler extends MessageAdapter {
         synchronized (this.timestamps) {
             Long ts = this.timestamps.get(recipient);
             if (ts == null) {
-                this.timestamps.put(recipient, System.currentTimeMillis());
+                this.timestamps.put(recipient, Time.currentTimeMillis());
                 return true;
             }
-            long diff = System.currentTimeMillis() - ts;
+            long diff = Time.currentTimeMillis() - ts;
             if (diff < MAIL_DELAY) {
                 return false;
             } else {
-                this.timestamps.put(recipient, System.currentTimeMillis());
+                this.timestamps.put(recipient, Time.currentTimeMillis());
                 return true;
             }
         }

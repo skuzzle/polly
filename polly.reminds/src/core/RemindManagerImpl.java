@@ -26,6 +26,7 @@ import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.EMailException;
 import de.skuzzle.polly.sdk.model.User;
 import de.skuzzle.polly.sdk.roles.RoleManager;
+import de.skuzzle.polly.sdk.time.Time;
 import entities.RemindEntity;
 
 
@@ -412,7 +413,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         int defaultRemindTime = Integer.parseInt(
             executor.getAttribute(MyPlugin.DEFAULT_REMIND_TIME));
         
-        this.snooze(executor, new Date(System.currentTimeMillis() + defaultRemindTime));
+        this.snooze(executor, new Date(Time.currentTimeMillis() + defaultRemindTime));
     }
     
     
@@ -474,7 +475,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     @Override
     public boolean isIdle(User user) {
         long lastMsg = Long.parseLong(user.getAttribute(MyPlugin.REMIND_IDLE_TIME));
-        return System.currentTimeMillis() - user.getLastMessageTime() > lastMsg;
+        return Time.currentTimeMillis() - user.getLastMessageTime() > lastMsg;
     }
     
     

@@ -6,6 +6,8 @@ import org.apache.log4j.Layout;
 import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggingEvent;
 
+import de.skuzzle.polly.sdk.time.Time;
+
 import polly.core.mail.senders.MailSender;
 
 
@@ -49,12 +51,12 @@ public class EMailLogAppender extends AppenderSkeleton {
 
     @Override
     protected void append(LoggingEvent le) {
-        if (System.currentTimeMillis() - this.lastSent < this.delay) {
+        if (Time.currentTimeMillis() - this.lastSent < this.delay) {
             return;
         }
         
         if (le.getLevel().isGreaterOrEqual(this.threshold)) {
-            this.lastSent = System.currentTimeMillis();
+            this.lastSent = Time.currentTimeMillis();
             String message = this.formatter.format(le);
             
             try {

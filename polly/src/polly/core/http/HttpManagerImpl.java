@@ -36,6 +36,7 @@ import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.http.HttpTemplateException;
 import de.skuzzle.polly.sdk.model.User;
 import de.skuzzle.polly.sdk.roles.RoleManager;
+import de.skuzzle.polly.sdk.time.Time;
 import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
 import de.skuzzle.polly.tools.events.Dispatchable;
 import de.skuzzle.polly.tools.events.EventProvider;
@@ -224,7 +225,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
                 while (it.hasNext()) {
                     Entry<InetAddress, HttpSession> e = it.next();
                     long liveTime = 
-                            System.currentTimeMillis() - e.getValue().getLastAction();
+                            Time.currentTimeMillis() - e.getValue().getLastAction();
                     boolean timedOut = liveTime > this.getSessionTimeOut();
                     
                     if (timedOut) {
@@ -252,7 +253,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     private final static Random RANDOM = new Random();
     
     private static String generateSessionId(InetAddress remoteIp) {
-        long id = RANDOM.nextLong() * System.currentTimeMillis() * remoteIp.hashCode();
+        long id = RANDOM.nextLong() * Time.currentTimeMillis() * remoteIp.hashCode();
         return Long.toHexString(id);
     }
     
@@ -342,7 +343,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
         c.put("me", session.getUser());
         c.put("myPolly", this.myPolly);
         c.put("session", session);
-        c.put("now", System.currentTimeMillis());
+        c.put("now", Time.currentTimeMillis());
         c.put("timeout", this.getSessionTimeOut());
         c.put("errorThreshold", this.errorThreshold);
         c.put("sessions", this.sessions);

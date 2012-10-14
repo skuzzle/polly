@@ -7,6 +7,7 @@ import de.skuzzle.polly.sdk.eventlistener.GenericListener;
 import de.skuzzle.polly.sdk.http.HttpManager;
 import de.skuzzle.polly.sdk.paste.PasteServiceManager;
 import de.skuzzle.polly.sdk.roles.RoleManager;
+import de.skuzzle.polly.sdk.time.Time;
 import de.skuzzle.polly.sdk.time.TimeProvider;
 
 
@@ -173,7 +174,9 @@ public interface MyPolly {
 	 * 
 	 * @param timeProvider The TimeProvider which provides the current system time.
 	 * @since 0.7
+	 * @deprecated Use {@link Time#setProvider(TimeProvider)} instead.
 	 */
+	@Deprecated
 	public abstract void setTimeProvider(TimeProvider timeProvider);
 	
 	/**
@@ -182,6 +185,7 @@ public interface MyPolly {
 	 * @return The current time provider.
 	 * @since 0.7
 	 */
+	@Deprecated
 	public abstract TimeProvider getTimeProvider();
 	
 	/**
@@ -193,7 +197,9 @@ public interface MyPolly {
 	 * 
 	 * @return Current system time as returned by {@link System#currentTimeMillis()}.
 	 * @since 0.7
+	 * @deprecated Use {@link Time#currentTimeMillis()} instead.
 	 */
+	@Deprecated
 	public abstract long currentTimeMillis();
 	
 	
@@ -203,7 +209,9 @@ public interface MyPolly {
 	 * @return A Date object representing the current polly system time.
 	 * @since 0.7
 	 * @see #currentTimeMillis()
+	 * @deprecated Use {@link Time#currentTime()} instead.
 	 */
+	@Deprecated
 	public abstract Date pollySystemTime();
 	
 	

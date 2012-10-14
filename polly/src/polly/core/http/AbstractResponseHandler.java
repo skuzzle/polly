@@ -19,6 +19,7 @@ import com.sun.net.httpserver.HttpHandler;
 import de.skuzzle.polly.sdk.http.HttpParameter;
 import de.skuzzle.polly.sdk.http.HttpSession;
 import de.skuzzle.polly.sdk.http.HttpParameter.ParameterType;
+import de.skuzzle.polly.sdk.time.Time;
 
 
 public abstract class AbstractResponseHandler implements HttpHandler {
@@ -101,7 +102,7 @@ public abstract class AbstractResponseHandler implements HttpHandler {
 
         HttpSession session = this.webServer.getSession(
             t.getRemoteAddress().getAddress());
-        long now = System.currentTimeMillis();
+        long now = Time.currentTimeMillis();
         session.setLastAction(now);
         String uri = t.getRequestURI().toString();
         session.setLastUri(uri);

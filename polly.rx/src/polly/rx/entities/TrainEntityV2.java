@@ -14,6 +14,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import de.skuzzle.polly.sdk.FormatManager;
+import de.skuzzle.polly.sdk.time.Time;
 
 @Entity
 @NamedQueries({
@@ -90,7 +91,7 @@ public class TrainEntityV2 {
             int minutes = Integer.parseInt(duration.substring(m.start(4), m.end(4)));
             int seconds = Integer.parseInt(duration.substring(m.start(5), m.end(5)));
             long dur = seconds + minutes * 60 + hours * 60 * 60 + days * 24 * 60 * 60;
-            return new Date(System.currentTimeMillis() + dur * 1000);
+            return new Date(Time.currentTimeMillis() + dur * 1000);
         }
         return null;
     }

@@ -18,6 +18,7 @@ import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.UnknownAttributeException;
 import de.skuzzle.polly.sdk.model.User;
+import de.skuzzle.polly.sdk.time.Time;
 import entities.RemindEntity;
 
 
@@ -134,7 +135,7 @@ public class RemindCommand extends AbstractRemindCommand {
             this.reply(channel, FORMATTER.format(remind, this.getMyPolly().formatting()));
         } else if (this.match(signature, 5)) {
             String msg = "Reminder";
-            long millis = System.currentTimeMillis();
+            long millis = Time.currentTimeMillis();
             try {
                 msg = executer.getAttribute(MyPlugin.DEFAULT_MSG);
                 millis += Long.parseLong(

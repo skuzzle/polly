@@ -19,6 +19,7 @@ import de.skuzzle.polly.sdk.http.HttpAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.http.HttpTemplateException;
+import de.skuzzle.polly.sdk.time.Time;
 import entities.LogEntry;
 
 public class ReplayHttpAction extends HttpAction {
@@ -53,10 +54,10 @@ public class ReplayHttpAction extends HttpAction {
         
         if (action != null && action.equals("mark")) {
             e.getSession().getUser().setLastMessageTime(
-                    this.myPolly.currentTimeMillis());
+                    Time.currentTimeMillis());
             // HACK: do this twice!
             e.getSession().getUser().setLastMessageTime(
-                    this.myPolly.currentTimeMillis());
+                    Time.currentTimeMillis());
         }
         
         Map<String, List<LogEntry>> logs = new TreeMap<String, List<LogEntry>>();
