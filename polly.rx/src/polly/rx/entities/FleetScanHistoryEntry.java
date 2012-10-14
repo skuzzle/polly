@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import de.skuzzle.polly.sdk.time.Time;
+
 
 
 @Entity
@@ -29,7 +31,7 @@ public class FleetScanHistoryEntry {
     
     
     public FleetScanHistoryEntry() {
-        this(new Date());
+        this(Time.currentTime());
     }
     
     

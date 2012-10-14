@@ -6,6 +6,7 @@ import java.util.List;
 import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.WriteAction;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
+import de.skuzzle.polly.sdk.time.Time;
 
 
 public class TrainEntityConverter {
@@ -31,7 +32,7 @@ public class TrainEntityConverter {
                 for (TrainEntity old : oldTrains) {
                     TrainEntityV2 newTrain = new TrainEntityV2(0, old.getForUser(), 
                         TrainType.parse(old.getDescription()), 1.0, old.getCost(), 
-                        new Date(), new Date());
+                        Time.currentTime(), Time.currentTime());
                     
                     persistence.persist(newTrain);
                     persistence.remove(old);

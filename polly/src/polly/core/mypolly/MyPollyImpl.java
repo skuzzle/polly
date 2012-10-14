@@ -2,7 +2,6 @@ package polly.core.mypolly;
 
 import java.util.Date;
 
-import org.apache.log4j.Logger;
 
 import polly.Polly;
 import polly.configuration.ConfigurationProviderImpl;
@@ -37,8 +36,7 @@ import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.http.HttpManager;
 import de.skuzzle.polly.sdk.paste.PasteServiceManager;
 import de.skuzzle.polly.sdk.roles.RoleManager;
-import de.skuzzle.polly.sdk.time.SystemTimeProvider;
-import de.skuzzle.polly.sdk.time.TimeProvider;
+import de.skuzzle.polly.sdk.time.Time;
 import de.skuzzle.polly.tools.events.Dispatchable;
 import de.skuzzle.polly.tools.events.EventProvider;
 import de.skuzzle.polly.tools.events.Listeners;
@@ -52,8 +50,6 @@ import de.skuzzle.polly.tools.events.Listeners;
  */
 public class MyPollyImpl extends AbstractDisposable implements MyPolly {
     
-    private final static Logger logger = Logger.getLogger(MyPollyImpl.class.getName()); 
-
 	private CommandManagerImpl commandManager;
 	private IrcManagerImpl ircManager;
 	private PluginManagerImpl pluginManager;
@@ -64,7 +60,6 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 	private ConversationManagerImpl conversationManager;
 	private ShutdownManagerImpl shutdownManager;
 	private Date startTime;
-	private TimeProvider timeProvider;
 	private PasteServiceManagerImpl pasteManager;
 	private MailManagerImpl mailManager;
 	private RoleManagerImpl roleManager;
@@ -97,8 +92,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 		this.conversationManager = convMngr;
 		this.shutdownManager = shutdownManager;
 		this.pasteManager = pasteManager;
-		this.startTime = new Date();
-		this.timeProvider = new SystemTimeProvider();
+		this.startTime = Time.currentTime();
 		this.mailManager = mailManager;
 		this.roleManager = roleManager;
 		this.httpManager = httpManager;
@@ -225,35 +219,6 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
             Configuration.DEBUG_MODE);
     }
     
-    
-    
-    @Override
-    public void setTimeProvider(TimeProvider timeProvider) {
-        if (this.isDebugMode()) {
-            this.timeProvider = timeProvider;
-            logger.info("Polly System Time has been changed. Current time is now: " + 
-                    this.formatManager.formatDate(this.pollySystemTime()));
-        }
-    }
-    
-    
-    @Override
-    public TimeProvider getTimeProvider() {
-        return this.timeProvider;
-    }
-    
-    
-    
-    @Override
-    public long currentTimeMillis() {
-        return this.timeProvider.currentTimeMillis();
-    }
-    
-    
-    @Override
-    public Date pollySystemTime() {
-        return new Date(this.currentTimeMillis());
-    }
     
     
     @Override

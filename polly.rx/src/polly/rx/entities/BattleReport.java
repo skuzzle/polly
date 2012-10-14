@@ -20,6 +20,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import de.skuzzle.polly.sdk.time.Time;
+
 import polly.rx.core.SumQuery;
 
 
@@ -154,7 +156,7 @@ public class BattleReport {
     
     
     public BattleReport() {
-        this(0, "", 0, 0, new LinkedList<BattleDrop>(), false, new Date(), 
+        this(0, "", 0, 0, new LinkedList<BattleDrop>(), false, Time.currentTime(), 
             BattleTactic.NORMAL, 
             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, "", "", "", "", "", "",
             new LinkedList<BattleReportShip>(), new LinkedList<BattleReportShip>());

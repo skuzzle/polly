@@ -63,7 +63,7 @@ public class TrainEntityV2 {
         }
         TrainType type = TrainType.parse(parts[0]);
         int costs = Integer.parseInt(parts[2]);
-        Date now = new Date();
+        Date now = Time.currentTime();
         Date finished = parseDuration(parts[4]);
         return new TrainEntityV2(trainerId, forUser, type, factor, costs, now, finished);
     }

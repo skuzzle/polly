@@ -168,53 +168,6 @@ public interface MyPolly {
 	public abstract ConversationManager conversations();
 	
 	
-	/**
-	 * Sets the time provider for the polly system time. This method will have no effect
-	 * if {@link Configuration#DEBUG_MODE} is "off".
-	 * 
-	 * @param timeProvider The TimeProvider which provides the current system time.
-	 * @since 0.7
-	 * @deprecated Use {@link Time#setProvider(TimeProvider)} instead.
-	 */
-	@Deprecated
-	public abstract void setTimeProvider(TimeProvider timeProvider);
-	
-	/**
-	 * Gets the current polly system time provider.
-	 * 
-	 * @return The current time provider.
-	 * @since 0.7
-	 */
-	@Deprecated
-	public abstract TimeProvider getTimeProvider();
-	
-	/**
-	 * Gets the current "polly"-system time. In productive systems, this will always
-	 * be equals to {@link System#currentTimeMillis()}. For debugging purposes polly 
-	 * might return different times.
-	 * 
-	 * When should use this method for all your time dependent applications.
-	 * 
-	 * @return Current system time as returned by {@link System#currentTimeMillis()}.
-	 * @since 0.7
-	 * @deprecated Use {@link Time#currentTimeMillis()} instead.
-	 */
-	@Deprecated
-	public abstract long currentTimeMillis();
-	
-	
-	/**
-	 * Gets a Date object constructed with the current polly system time.
-	 * 
-	 * @return A Date object representing the current polly system time.
-	 * @since 0.7
-	 * @see #currentTimeMillis()
-	 * @deprecated Use {@link Time#currentTime()} instead.
-	 */
-	@Deprecated
-	public abstract Date pollySystemTime();
-	
-	
 	
 	/**
 	 * Gets a MailManager instance that allows you to send emails.

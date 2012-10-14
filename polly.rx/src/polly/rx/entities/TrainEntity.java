@@ -14,6 +14,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import de.skuzzle.polly.sdk.FormatManager;
+import de.skuzzle.polly.sdk.time.Time;
 
 
 
@@ -84,7 +85,7 @@ public class TrainEntity {
         this.cost = cost;
         this.description = description;
         this.open = true;
-        this.date = new Date();
+        this.date = Time.currentTime();
     }
 
 

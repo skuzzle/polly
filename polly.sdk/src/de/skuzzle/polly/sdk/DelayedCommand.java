@@ -7,6 +7,7 @@ import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.model.User;
+import de.skuzzle.polly.sdk.time.Time;
 
 
 
@@ -146,13 +147,13 @@ public abstract class DelayedCommand extends Command {
     
     /**
      * Stores the current Polly system time as provided by 
-     * {@link MyPolly#currentTimeMillis()} as last execution for the given user.
+     * {@link Time#currentTimeMillis()} as last execution for the given user.
      * 
      * @param user The user who executes this command.
      */
     protected void rememberExecution(User user) {
         synchronized (this.lastExecutions) {
-            this.lastExecutions.put(user, this.getMyPolly().currentTimeMillis());
+            this.lastExecutions.put(user, Time.currentTimeMillis());
         }
     }
 
@@ -174,7 +175,7 @@ public abstract class DelayedCommand extends Command {
         }
         
         long diff = 0L;
-        if (i == null || (diff = this.getMyPolly().currentTimeMillis() - i) >= this.delay) {
+        if (i == null || (diff = Time.currentTimeMillis() - i) >= this.delay) {
             return true;
         }
         

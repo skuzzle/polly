@@ -15,6 +15,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import de.skuzzle.polly.sdk.time.Time;
+
 
 @Entity
 @NamedQueries({
@@ -99,7 +101,7 @@ public class FleetScan {
         this.x = x;
         this.y = y;
         this.quadrant = quadrant;
-        this.date = new Date();
+        this.date = Time.currentTime();
     }
 
 

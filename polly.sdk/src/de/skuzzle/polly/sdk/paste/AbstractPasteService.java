@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
+import de.skuzzle.polly.sdk.time.Time;
+
 
 /**
  * This class pre-implements the Paste-Service interface and provides a method
@@ -43,7 +45,7 @@ public abstract class AbstractPasteService implements PasteService {
     
     @Override
     public final String paste(String message) throws Exception {
-        this.lastPasteTime = new Date();
+        this.lastPasteTime = Time.currentTime();
         return this.doPaste(message);
     }
     

@@ -11,6 +11,7 @@ import de.skuzzle.polly.sdk.eventlistener.NickChangeListener;
 import de.skuzzle.polly.sdk.eventlistener.QuitEvent;
 import de.skuzzle.polly.sdk.eventlistener.QuitListener;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
+import de.skuzzle.polly.sdk.time.Time;
 import entities.LogEntry;
 
 public class IrcLogCollector implements 
@@ -30,7 +31,7 @@ public class IrcLogCollector implements
         try {
             this.logManager.logMessage(LogEntry.forNickChange(
                     e.getOldUser().getNickName(), 
-                    e.toString(), "", new Date()));
+                    e.toString(), "", Time.currentTime()));
         } catch (DatabaseException e1) {
             this.onDatabaseException(e1);
         }
@@ -42,7 +43,7 @@ public class IrcLogCollector implements
     public void quited(QuitEvent e) {
         try {
             this.logManager.logMessage(LogEntry.forQuit(
-                        e.getUser().getNickName(), e.toString(), "", new Date()));
+                        e.getUser().getNickName(), e.toString(), "", Time.currentTime()));
         } catch (DatabaseException e1) {
             this.onDatabaseException(e1);
         }
@@ -55,7 +56,7 @@ public class IrcLogCollector implements
         try {
             this.logManager.logMessage(LogEntry.forJoin(
                         e.getUser().getNickName(),"*** JOIN " + e.toString(), 
-                        e.getChannel(), new Date()));
+                        e.getChannel(), Time.currentTime()));
         } catch (DatabaseException e1) {
             this.onDatabaseException(e1);
         }
@@ -68,7 +69,7 @@ public class IrcLogCollector implements
         try {
             this.logManager.logMessage(LogEntry.forPart(
                         e.getUser().getNickName(), "*** PART " + e.toString(), 
-                        e.getChannel(), new Date()));
+                        e.getChannel(), Time.currentTime()));
         } catch (DatabaseException e1) {
             this.onDatabaseException(e1);
         }
@@ -81,7 +82,7 @@ public class IrcLogCollector implements
         try {
             this.logManager.logMessage(LogEntry.forMessage(
                         e.getUser().getNickName(), 
-                        e.getMessage(), e.getChannel(), new Date()));
+                        e.getMessage(), e.getChannel(), Time.currentTime()));
         } catch (DatabaseException e1) {
             this.onDatabaseException(e1);
         }

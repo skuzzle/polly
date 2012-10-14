@@ -79,7 +79,7 @@ public class DateUtils {
      * @return The year.
      */
     public static int getYear() {
-        return DateUtils.getYear(new Date());
+        return DateUtils.getYear(Time.currentTime());
     }
     
     
@@ -103,7 +103,7 @@ public class DateUtils {
      * @return The month.
      */
     public static int getMonth() {
-        return DateUtils.getMonth(new Date());
+        return DateUtils.getMonth(Time.currentTime());
     }
     
     
@@ -127,7 +127,7 @@ public class DateUtils {
      * @return The day.
      */
     public static int getDay() {
-        return DateUtils.getDay(new Date());
+        return DateUtils.getDay(Time.currentTime());
     }
     
     
@@ -195,7 +195,7 @@ public class DateUtils {
      * @return <code>true</code> if the given date is today.
      */
     public static boolean isToday(Date d) {
-        return isSameDay(new Date(), d);
+        return isSameDay(Time.currentTime(), d);
     }
     
     
@@ -257,6 +257,6 @@ public class DateUtils {
      * @since 0.9.1
      */
     public static Date getDayAhead(int days) {
-        return getDayAhead(new Date(), days);
+        return getDayAhead(Time.currentTime(), days);
     }
 }

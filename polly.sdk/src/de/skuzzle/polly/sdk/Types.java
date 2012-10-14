@@ -506,7 +506,7 @@ public class Types {
 		 * formal signature parameters.
 		 */
 		protected DateType() {
-			this(new Date());
+			this(Time.currentTime());
 		}
 		
 		
@@ -568,7 +568,7 @@ public class Types {
 	     * @param span The timespan in seconds.
 	     */
 	    public TimespanType(long span) {
-	        super(new Date());
+	        super(Time.currentTime());
 	        this.span = span;
 	    }
 	    

@@ -17,6 +17,7 @@ import de.skuzzle.polly.sdk.Types.ListType;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
+import de.skuzzle.polly.sdk.time.Time;
 import entities.RemindEntity;
 
 
@@ -58,7 +59,7 @@ public class LeaveCommand extends AbstractRemindCommand {
             String forUser = signature.getStringValue(0);
 
             RemindEntity remind = new RemindEntity(msg, fromUser, forUser, location, 
-                    new Date());
+                    Time.currentTime());
             remind.setIsMessage(true);
             this.addRemind(remind, false);
             this.reply(channel, FORMATTER.format(remind, this.getMyPolly().formatting()));
@@ -71,7 +72,7 @@ public class LeaveCommand extends AbstractRemindCommand {
             List<UserType> users = signature.getListValue(UserType.class, 0);
             for (UserType ut : users) {
                 RemindEntity remind = new RemindEntity(msg, fromUser, ut.getValue(), 
-                        location, new Date());
+                        location, Time.currentTime());
                 remind.setIsMessage(true);
                 this.addRemind(remind, false);
             }
@@ -85,7 +86,7 @@ public class LeaveCommand extends AbstractRemindCommand {
             String forUser = signature.getStringValue(0);
             
             RemindEntity remind = new RemindEntity(msg, fromUser, forUser, forUser, 
-                    new Date());
+                    Time.currentTime());
             remind.setIsMessage(true);
             this.addRemind(remind, false);
             this.reply(channel, FORMATTER.format(remind, this.getMyPolly().formatting()));

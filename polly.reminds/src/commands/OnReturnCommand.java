@@ -12,6 +12,7 @@ import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
+import de.skuzzle.polly.sdk.time.Time;
 import entities.RemindEntity;
 
 
@@ -42,7 +43,7 @@ public class OnReturnCommand extends AbstractRemindCommand {
             String forUser = signature.getStringValue(0);
 
             RemindEntity remind = new RemindEntity(msg, fromUser, forUser, channel, 
-                    new Date());
+                    Time.currentTime());
             remind.setIsMessage(true);
             remind.setOnAction(true);
             this.addRemind(remind, false);

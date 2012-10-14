@@ -294,7 +294,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
                 this.irc.getNickname(), 
                 remind.getFromUser(), 
                 remind.getFromUser(),
-                new Date());
+                Time.currentTime());
             // schedule this Remind for now so it will be delivered immediately.
             // if user is not online, it will automatically be delivered later
             // by the policy implemented in #deliverLater
