@@ -20,7 +20,7 @@ public interface EntityConverter {
      * <p>This method must return a list of all old entities that should be converted to 
      * new ones.</p>
      * 
-     * <p>Please not that you must not use the atomic methods of the passed persistence
+     * <p>Please note that you must not use the atomic methods of the passed persistence
      * manager, as synchronization is done automatically when polly executes this 
      * entity converter.</p>
      * 
@@ -48,7 +48,7 @@ public interface EntityConverter {
      * entities, but you may also choose to leave your implementation of this method
      * empty so nothing happens to the old entities.</p>
      * 
-     * <p>Please not that you must not use the atomic methods of the passed persistence
+     * <p>Please note that you must not use the atomic methods of the passed persistence
      * manager, as synchronization is done automatically when polly executes this 
      * entity converter.</p>
      * 
