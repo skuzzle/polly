@@ -73,10 +73,10 @@ public class UserLogCommand extends AbstractLogCommand {
         try {
             
             if (this.match(signature, 2)) {
-                prefiltered = this.logManager.preFilterUser(
+                prefiltered = this.logManager.preFilterUserRegex(
                     user, (int) signature.getNumberValue(2));
             } else {
-                prefiltered = this.logManager.preFilterUser(user);
+                prefiltered = this.logManager.preFilterUserRegex(user);
             }
 
             if (this.match(signature, 3)) {

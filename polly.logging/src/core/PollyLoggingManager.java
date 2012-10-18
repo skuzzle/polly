@@ -7,6 +7,7 @@ import java.util.List;
 
 import core.filters.LogFilter;
 import core.filters.SecurityLogFilter;
+import core.filters.UserRegexFilter;
 import core.output.IrcLogOutput;
 import core.output.LogOutput;
 import core.output.PasteServiceLogOutput;
@@ -100,15 +101,30 @@ public class PollyLoggingManager extends AbstractDisposable {
     }
     
     
+    
+    public List<LogEntry> preFilterUserRegex(String userRegex) throws DatabaseException {
+        return this.preFilterUserRegex(userRegex, this.maxLogs);
+    }
+    
+    
+    
+    public List<LogEntry> preFilterUserRegex(String userRegex, int maxLogs) 
+            throws DatabaseException {
+        List<LogEntry> allEntries = this.preFilterQuery(LogEntry.ALL_LOG_ENTRIES, 
+            maxLogs);
+        return this.postFilter(allEntries, new UserRegexFilter(userRegex));
+    }
+    
+    
 
-    private List<LogEntry> preFilterQuery(String queryName, int limit, String parameter) 
+    private List<LogEntry> preFilterQuery(String queryName, int limit, String...parameter) 
             throws DatabaseException {
         this.storeCache();
         
         try {
             this.persistence.readLock();
             return this.persistence.findList(LogEntry.class, queryName, limit, 
-                 new Object[] { parameter });
+                 (Object[]) parameter);
             
         } finally {
             this.persistence.readUnlock();

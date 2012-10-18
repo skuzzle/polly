@@ -52,7 +52,7 @@ public class SnoozeCommand extends AbstractRemindCommand {
             try {
                 long millis = Time.currentTimeMillis();
                 millis += Long.parseLong(
-                    executer.getAttribute(MyPlugin.DEFAULT_REMIND_TIME));
+                    executer.getAttribute(MyPlugin.SNOOZE_TIME));
                 Date dueDate = new Date(millis);
                 
                 this.remindManager.snooze(executer);

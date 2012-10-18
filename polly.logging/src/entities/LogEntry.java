@@ -17,6 +17,10 @@ import javax.persistence.TemporalType;
 @Entity
 @NamedQueries({
     @NamedQuery(
+        name = "ALL_LOG_ENTRIES",
+        query = "SELECT e FROM LogEntry e ORDER BY e.date DESC"
+    ),
+    @NamedQuery(
         name = "FIND_BY_USER",
         query = "SELECT l FROM LogEntry l WHERE LOWER(l.nickname) LIKE LOWER(?1) ORDER BY l.date DESC"
     ),
@@ -43,6 +47,7 @@ public class LogEntry {
     public final static int TYPE_NICKCHANGE = 8;
     public final static int TYPE_UNKNOWN = 16;
     
+    public final static String ALL_LOG_ENTRIES = "ALL_LOG_ENTRIES";
     public final static String FIND_BY_USER = "FIND_BY_USER";
     public final static String FIND_BY_CHANNEL = "FIND_BY_CHANNEL";
     public final static String USER_SSEN = "USER_SEEN";
