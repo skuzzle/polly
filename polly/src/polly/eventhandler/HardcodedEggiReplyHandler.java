@@ -13,7 +13,7 @@ public class HardcodedEggiReplyHandler implements MessageListener {
             e.getMessage().toLowerCase().contains("hallo") && 
             e.getMessage().toLowerCase().contains("polly")) {
             
-            e.getSource().sendMessage("#regenbogen", "Hallo Eggi");
+            e.getSource().sendMessage("#regenbogen", "Hallo Eggi", this);
         }
     }
 
