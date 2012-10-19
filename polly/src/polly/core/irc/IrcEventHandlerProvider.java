@@ -14,6 +14,7 @@ import polly.core.users.UserManagerImpl;
 import polly.eventhandler.AutoLogoffHandler;
 import polly.eventhandler.AutoLogonHandler;
 import polly.eventhandler.GhostHandler;
+import polly.eventhandler.HardcodedEggiReplyHandler;
 import polly.eventhandler.IrcLoggingHandler;
 import polly.eventhandler.MessageHandler;
 import polly.eventhandler.TraceNickChangeHandler;
@@ -113,6 +114,9 @@ public class IrcEventHandlerProvider extends AbstractProvider {
             ircManager);
         ircManager.addUserSpottedListener(logoffHandler);
         ircManager.addConnectionListener(logoffHandler);
+        
+        // XXX: hardcoded greeting for eggi:
+        ircManager.addMessageListener(new HardcodedEggiReplyHandler());
     }
 
 }

@@ -111,7 +111,7 @@ public class PollyLoggingManager extends AbstractDisposable {
     public List<LogEntry> preFilterUserRegex(String userRegex, int maxLogs) 
             throws DatabaseException {
         List<LogEntry> allEntries = this.preFilterQuery(LogEntry.ALL_LOG_ENTRIES, 
-            maxLogs);
+            maxLogs );
         return this.postFilter(allEntries, new UserRegexFilter(userRegex));
     }
     
