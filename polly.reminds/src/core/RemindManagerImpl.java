@@ -408,6 +408,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
             long runtime = existing.getDueDate().getTime() - 
                 existing.getLeaveDate().getTime();
             dueDate = new Date(Time.currentTimeMillis() + runtime);
+            logger.trace("Remind runtime is: " + this.formatter.formatTimeSpanMs(runtime));
         }
         
         RemindEntity newRemind = existing.copyForNewDueDate(dueDate);
