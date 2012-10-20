@@ -201,7 +201,7 @@ public class RemindEntity {
     public RemindEntity copyForNewDueDate(Date newDueDate) {
         RemindEntity copy = new RemindEntity(this.message, this.fromUser, this.forUser, 
                 this.onChannel, newDueDate);
-        copy.leaveDate = this.leaveDate;
+        copy.leaveDate = Time.currentTime();
         return copy;
     }
     
