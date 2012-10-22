@@ -222,6 +222,7 @@ public class GuiController implements ProtocolListener {
     @Override
     public void responseReceived(ProtocolEvent e) {
         switch (e.getType()) {
+        default:
         case LOGGED_IN: this.setOnline(true); break;
         case FILE: 
             this.storeFiles(e.getResponse());
@@ -240,6 +241,7 @@ public class GuiController implements ProtocolListener {
     public void errorReceived(ProtocolEvent e) {
         ErrorResponse error = (ErrorResponse) e.getResponse();
         switch (error.getErrorType()) {
+        default:
         case INVALID_PASSWORD:
         case UNKNOWN_USER:
             this.networkHandler.disconnect();
