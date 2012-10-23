@@ -21,7 +21,7 @@ public class DailyGreeter {
     static {
         final String[] greetings = {
             "Hallo", "gumo", "Morgen", "Nabend", "Moin", "Hi", "Servus",
-            "Sers", "Jo", "Hey", "Aloha", "puh", "Moin moin"
+            "Sers", "Jo", "Hey", "Aloha", "puh", "Moin moin", "wb", "Guten Abend"
         };
         GREETINGS = new HashSet<String>(Arrays.asList(greetings));
     }
