@@ -33,6 +33,7 @@ import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
 import de.skuzzle.polly.sdk.constraints.Constraints;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
+import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
 import de.skuzzle.polly.sdk.exceptions.PluginException;
@@ -55,11 +56,16 @@ public class MyPlugin extends PollyPlugin {
     
     private FleetDBManager fleetDBManager;
     private TrainManagerV2 trainManager;
+    private DailyGreeter dailyGreeter;
     
     
     public MyPlugin(MyPolly myPolly) 
                 throws DuplicatedSignatureException, IncompatiblePluginException {
         super(myPolly);
+        
+        this.dailyGreeter = new DailyGreeter();
+        this.dailyGreeter.deploy(myPolly.irc());
+        
         
         /* capi train related */
         this.trainManager = new TrainManagerV2(myPolly);
@@ -106,6 +112,14 @@ public class MyPlugin extends PollyPlugin {
         myPolly.web().addHttpAction(new FleetShipInfoHttpAction(myPolly, this.fleetDBManager));
         myPolly.web().addHttpAction(new FleetScanInfoHttpAction(myPolly, this.fleetDBManager));
         myPolly.web().addHttpAction(new QueryOwnerHttpAction(myPolly, this.fleetDBManager));
+    }
+    
+    
+    
+    @Override
+    protected void actualDispose() throws DisposingException {
+        super.actualDispose();
+        this.dailyGreeter.undeploy(this.getMyPolly().irc());
     }
     
     
