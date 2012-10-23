@@ -1,6 +1,13 @@
 package de.skuzzle.polly.sdk.time;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import de.skuzzle.polly.sdk.eventlistener.DayChangedListener;
 
 /**
  * Used to obtain and set current polly system time using {@link TimeProvider} 
@@ -11,6 +18,26 @@ import java.util.Date;
 public final class Time {
 
     private static TimeProvider provider = new SystemTimeProvider();
+    private final static Collection<DayChangedListener> LISTENERS;
+    private final static ScheduledExecutorService EXECUTOR;
+    private final static long ONE_DAY = Milliseconds.fromDays(1); 
+    
+    static {
+        LISTENERS = new ArrayList<DayChangedListener>();
+        EXECUTOR = Executors.newSingleThreadScheduledExecutor();
+        final Date midnight = DateUtils.getDayAhead(1);
+        long untilMidnight = midnight.getTime() - Time.currentTimeMillis();
+        EXECUTOR.scheduleAtFixedRate(new Runnable() {
+            
+            @Override
+            public void run() {
+                final long now = Time.currentTimeMillis();
+                for (final DayChangedListener listener : LISTENERS) {
+                    listener.dayChanged(now);
+                }
+            }
+        }, untilMidnight, ONE_DAY, TimeUnit.MILLISECONDS);
+    }
     
     
     /**
@@ -42,6 +69,18 @@ public final class Time {
      */
     public final static Date currentTime() {
         return new Date(currentTimeMillis());
+    }
+    
+    
+    
+    public final static void addDayChangeListener(DayChangedListener listenner) {
+        
+    }
+    
+    
+    
+    public final static void removeDayChangeListener(DayChangedListener listener) {
+        
     }
     
     private Time() {}
