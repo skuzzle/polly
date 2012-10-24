@@ -124,7 +124,8 @@ public class ConfigurationImpl implements Configuration {
 
     @Override
     public boolean readBoolean(String name) {
-        return this.readString(name).equals("true");
+        final String tmp = this.readString(name);
+        return tmp != null && tmp.equals("true");
     }
     
     
