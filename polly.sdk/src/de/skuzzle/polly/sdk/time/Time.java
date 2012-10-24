@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import de.skuzzle.polly.sdk.eventlistener.DayChangedListener;
@@ -21,13 +22,24 @@ public final class Time {
     private final static Collection<DayChangedListener> LISTENERS;
     private final static ScheduledExecutorService EXECUTOR;
     private final static long ONE_DAY = Milliseconds.fromDays(1); 
+    private static ScheduledFuture<?> future;
+    
     
     static {
         LISTENERS = new ArrayList<DayChangedListener>();
         EXECUTOR = Executors.newSingleThreadScheduledExecutor();
+        scheduleEventTimer();
+    }
+    
+    
+    
+    private final static void scheduleEventTimer() {
+        if (future != null) {
+            future.cancel(false);
+        }
         final Date midnight = DateUtils.getDayAhead(1);
         long untilMidnight = midnight.getTime() - Time.currentTimeMillis();
-        EXECUTOR.scheduleAtFixedRate(new Runnable() {
+        future = EXECUTOR.scheduleAtFixedRate(new Runnable() {
             
             @Override
             public void run() {
@@ -40,11 +52,15 @@ public final class Time {
     }
     
     
+    
     /**
      * Sets a new {@link TimeProvider}.
      * @param timeProvider The provider to set.
      */
     public final static void setProvider(TimeProvider timeProvider) {
+        if (!timeProvider.equals(provider)) {
+            scheduleEventTimer();
+        }
         provider = timeProvider;
     }
     
@@ -73,15 +89,27 @@ public final class Time {
     
     
     
+    /**
+     * Adds a listener that will be notified when the day changed.
+     * 
+     * @param listenner The listener to add.
+     */
     public final static void addDayChangeListener(DayChangedListener listenner) {
-        
+        LISTENERS.add(listenner);
     }
     
     
     
+    /**
+     * Removes a DayChangedListener
+     * 
+     * @param listener The listener to remove
+     */
     public final static void removeDayChangeListener(DayChangedListener listener) {
-        
+        LISTENERS.remove(listener);
     }
+    
+    
     
     private Time() {}
 }
