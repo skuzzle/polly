@@ -11,8 +11,10 @@ import de.skuzzle.polly.parsing.tree.functions.AggregateListFunction;
 import de.skuzzle.polly.parsing.tree.functions.ListLengthFunction;
 import de.skuzzle.polly.parsing.tree.functions.MatrixToMatrixFunction;
 import de.skuzzle.polly.parsing.tree.functions.MatrixToMatrixModPFunction;
+import de.skuzzle.polly.parsing.tree.functions.MinMaxFunction;
 import de.skuzzle.polly.parsing.tree.functions.RandomFunction;
 import de.skuzzle.polly.parsing.tree.functions.Functions.MatrixType;
+import de.skuzzle.polly.parsing.tree.functions.Functions.MinMaxType;
 import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
 import de.skuzzle.polly.parsing.tree.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.tree.operators.BinaryOperators;
@@ -158,6 +160,9 @@ public final class Prepare {
             dest.add(new DefaultMathFunction(Functions.MathType.ASIN), "math");
             dest.add(new DefaultMathFunction(Functions.MathType.ACOS), "math");
             dest.add(new DefaultMathFunction(Functions.MathType.FRAC), "math");
+            
+            dest.add(new MinMaxFunction(MinMaxType.MIN), "math");
+            dest.add(new MinMaxFunction(MinMaxType.MAX), "math");
             
             dest.add(new RandomFunction(), "math");
             dest.add(new BinomialFunction(), "math");

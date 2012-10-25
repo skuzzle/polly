@@ -338,6 +338,44 @@ public class Functions {
     public static enum MathType {
         SIN, COS, TAN, ABS, SQRT, CEIL, FLOOR, LOG, ROUND, ATAN, ACOS, ASIN, FRAC;
     }
+    
+    
+    public static enum MinMaxType {
+        MIN, MAX;
+    }
+    
+    
+    public final static class MinMax extends ExpressionStub {
+        
+        private static final long serialVersionUID = 1L;
+
+        private MinMaxType minMaxType;
+        
+        public MinMax(MinMaxType type) {
+            super(Type.NUMBER);
+            this.minMaxType = type;
+        }
+        
+    
+        @Override
+        public void collapse(Stack<Literal> stack) throws ExecutionException {
+            NumberLiteral right = (NumberLiteral) stack.pop();
+            NumberLiteral left = (NumberLiteral) stack.pop();
+            
+            switch (this.minMaxType) {
+            default:
+            case MAX:
+                stack.push(new NumberLiteral(java.lang.Math.max(left.getValue(), 
+                    right.getValue())));
+                break;
+            case MIN:
+                stack.push(new NumberLiteral(java.lang.Math.min(left.getValue(), 
+                    right.getValue())));
+                break;
+            
+            }
+        }
+    }
 
     
     
