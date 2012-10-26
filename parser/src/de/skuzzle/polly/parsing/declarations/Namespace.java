@@ -73,8 +73,17 @@ public class Namespace {
     }
     
     
+    public final static void setDefaultCacheDirectory(File directory) {
+        if (!directory.isDirectory()) {
+            throw new RuntimeException(directory + " is no directory");
+        }
+        defaultCacheDirectory = directory;
+    }
+    
+    
     private static int tempVarLifeTime = 600 * 5; // 5 min
     private static boolean ignoreUnknownIdentifiers = true;
+    private static File defaultCacheDirectory;
     
     private final static Timer TEMP_VAR_KILLER = new Timer("TEMP_VAR_KILLER", true);
     private final static String GLOBAL_NAMESPACE = "~global";
@@ -262,7 +271,16 @@ public class Namespace {
         ns.add(declaration, root);
         if (declaration.isTemp()) {
             scheduleDeletion(declaration, ns);
+        } else if (root && defaultCacheDirectory != null){
+            // ISSUE 0000121: Immediately store declarations to disc 
+            // HACK: this is a pretty ugly solution for that issue
+            try {
+                ns.store(new File(defaultCacheDirectory, namespace + ".declaration"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+        System.out.println(ns.toString());
     }
     
     
@@ -417,9 +435,12 @@ public class Namespace {
         if (!directory.isDirectory()) {
             throw new IOException(directory + " is no directory");
         }
-        this.global = Declarations.restore(
-                new File(directory, GLOBAL_NAMESPACE + ".declaration"));
-        this.namespaces.put(GLOBAL_NAMESPACE, this.global);
+        File global = new File(directory, GLOBAL_NAMESPACE + ".declaration");
+        if (global.exists()) {
+            this.global = Declarations.restore(
+                    new File(directory, GLOBAL_NAMESPACE + ".declaration"));
+            this.namespaces.put(GLOBAL_NAMESPACE, this.global);
+        }
         
         File[] files = directory.listFiles(FILE_FILTER);
         

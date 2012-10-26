@@ -109,6 +109,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
         Prepare.namespaces(this.namespace);
         Namespace.setTempVarLifeTime(tempVarLifeTime);
         Namespace.setIgnoreUnknownIdentifiers(ignoreUnknownIdentifiers);
+        Namespace.setDefaultCacheDirectory(new File(declarationCachePath));
     }
     
     

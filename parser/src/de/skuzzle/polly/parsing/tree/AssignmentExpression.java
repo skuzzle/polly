@@ -88,7 +88,7 @@ public class AssignmentExpression extends Expression {
             
             this.expression = this.expression.contextCheck(context);
             
-            //((VarDeclaration) this.declaration).setExpression(this.expression);
+            ((VarDeclaration) this.declaration).setExpression(this.expression);
             
             this.declaration.setType(this.expression.getType());
             // Declarations must always be stored at root level!
