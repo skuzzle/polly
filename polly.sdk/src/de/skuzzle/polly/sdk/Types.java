@@ -882,8 +882,8 @@ public class Types {
 	/**
 	 * Checks if two types are compatible. The {@link AnyType} is compatible with
 	 * every other type.
-	 * Two types are considered compatible if their classes equals as returned by
-	 * their {@link Object#getClass()} methods.
+	 * Two types are considered compatible if this type is assignable from the
+	 * other type (as determined by {@link Class#isAssignableFrom(Class)}).
 	 * 
 	 * @param other The type to check this type against.
 	 * @return <code>true</code> if the types are compatible, <code>false</code> 
