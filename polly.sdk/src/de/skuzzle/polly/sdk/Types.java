@@ -1,6 +1,7 @@
 package de.skuzzle.polly.sdk;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -587,7 +588,10 @@ public class Types {
 	    
 	    @Override
 	    public Date getValue() {
-	        return new Date(Time.currentTimeMillis() + this.span * 1000);
+	        Calendar c = Calendar.getInstance();
+	        c.setTime(Time.currentTime());
+	        c.add(Calendar.SECOND, (int) this.span);
+	        return c.getTime();
 	    }
 	    
 	    
