@@ -307,21 +307,27 @@ public class InputParser extends AbstractParser<InputScanner> {
     }
     
     
-    //* if              -> 'if' ' ' relation ' ' if [':' if]
+    //* if              -> 'if' '(' relation ')'  '(' if ')' ['?' '(' if ')']
     //*                  | relation
     
     protected Expression parse_if() throws ParseException {
         if (this.scanner.match(TokenType.IF)) {
-            this.expect(TokenType.SEPERATOR);
+            this.scanner.match(TokenType.SEPERATOR);
+            this.expect(TokenType.OPENBR);
             Expression condition = this.parse_relational();
-            this.expect(TokenType.SEPERATOR);
+            this.expect(TokenType.CLOSEDBR);
+            this.scanner.match(TokenType.SEPERATOR);
             
+            this.expect(TokenType.OPENBR);
             Expression ifExpression = this.parse_if();
-            Expression elseExpression = null;
-            if (this.scanner.match(TokenType.QUESTION)) {
-                this.scanner.match(TokenType.SEPERATOR);
-                elseExpression = this.parse_if();
-            }
+            this.expect(TokenType.CLOSEDBR);
+            this.scanner.match(TokenType.SEPERATOR);
+            this.expect(TokenType.QUESTION);
+            this.scanner.match(TokenType.SEPERATOR);
+            this.expect(TokenType.OPENBR);
+            Expression elseExpression = this.parse_if();
+            this.expect(TokenType.CLOSEDBR);
+            
             return new IfExpression(condition, ifExpression, elseExpression);
         } else {
             return this.parse_relational();

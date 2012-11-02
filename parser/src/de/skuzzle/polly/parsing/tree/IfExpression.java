@@ -45,11 +45,11 @@ public class IfExpression extends Expression {
             ? this.elseExpression.contextCheck(context) 
             : null;
             
+        // type of this expression is the type of the "if"-branch
         this.setType(this.ifExpression.getType());
         
-        if (this.elseExpression != null && 
-            this.getType().check(this.elseExpression.getType())) {
-            
+        // type of "else"-branch must equal the type of the "if" branch
+        if (!this.getType().check(this.elseExpression.getType())) {
             Type.typeError(this.elseExpression.getType(), this.getType(), 
                 this.elseExpression.getPosition());
         }
@@ -66,7 +66,7 @@ public class IfExpression extends Expression {
         
         if (condition.getValue()) {
             this.ifExpression.collapse(stack);
-        } else if (this.elseExpression != null) {
+        } else {
             this.elseExpression.collapse(stack);
         }
     }
