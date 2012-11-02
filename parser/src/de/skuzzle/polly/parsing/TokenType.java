@@ -7,6 +7,7 @@ public enum TokenType {
     CHANNEL("Channel"),   /* Channel literals */
     USER("User"),               /* User literals */
     CHOOSE("choose"),    /* binomial coefficients */
+    IF("if"),
     RADIX("0x"),
     ASSIGNMENT("->"),
     ADD("+"), 

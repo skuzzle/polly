@@ -12,6 +12,7 @@ import de.skuzzle.polly.parsing.tree.AssignmentExpression;
 import de.skuzzle.polly.parsing.tree.BinaryExpression;
 import de.skuzzle.polly.parsing.tree.CastExpression;
 import de.skuzzle.polly.parsing.tree.Expression;
+import de.skuzzle.polly.parsing.tree.IfExpression;
 import de.skuzzle.polly.parsing.tree.NamespaceAccessExpression;
 import de.skuzzle.polly.parsing.tree.Root;
 import de.skuzzle.polly.parsing.tree.TernaryExpression;
@@ -39,12 +40,14 @@ import de.skuzzle.polly.parsing.tree.literals.UserLiteral;
  * input           -> command (\t signature)? EOS
  * signature       -> assignment (\t assignment)*
  * 
- * assignment      -> relation ('->' modifier definition)?
+ * assignment      -> if ('->' modifier definition)?
  * modifier        -> 'public'? 'temp'? 
  * definition      -> identifier ( '(' func_definition ')' )
  * func_def        -> ( type_def \t identifier (',' type_def \t identifier)* ) | e
  * type_def        -> identifier ('<' identifier '>')?
  * 
+ * if              -> 'if' ':' relation ':' if [':' if]
+ *                  | relation
  * relation        -> conjunction (relational_op conjunction)?
  * conjunction     -> disjunction (conjunction_op disjunction)*
  * disjunction     -> expression (disjunction_op expression)*
@@ -213,7 +216,7 @@ public class InputParser extends AbstractParser<InputScanner> {
     
     
     protected Expression parse_assignment() throws ParseException {
-        Expression expression = this.parse_relational();
+        Expression expression = this.parse_if();
         
         Token la = this.scanner.lookAhead();
         if (la.matches(TokenType.ASSIGNMENT)) {
@@ -303,6 +306,27 @@ public class InputParser extends AbstractParser<InputScanner> {
                 this.scanner.spanFrom(typeId));
     }
     
+    
+    //* if              -> 'if' ' ' relation ' ' if [':' if]
+    //*                  | relation
+    
+    protected Expression parse_if() throws ParseException {
+        if (this.scanner.match(TokenType.IF)) {
+            this.expect(TokenType.SEPERATOR);
+            Expression condition = this.parse_relational();
+            this.expect(TokenType.SEPERATOR);
+            
+            Expression ifExpression = this.parse_if();
+            Expression elseExpression = null;
+            if (this.scanner.match(TokenType.QUESTION)) {
+                this.scanner.match(TokenType.SEPERATOR);
+                elseExpression = this.parse_if();
+            }
+            return new IfExpression(condition, ifExpression, elseExpression);
+        } else {
+            return this.parse_relational();
+        }
+    }
     
     
     protected Expression parse_relational() throws ParseException {
