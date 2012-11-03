@@ -40,14 +40,12 @@ import de.skuzzle.polly.parsing.tree.literals.UserLiteral;
  * input           -> command (\t signature)? EOS
  * signature       -> assignment (\t assignment)*
  * 
- * assignment      -> if ('->' modifier definition)?
+ * assignment      -> relation ('->' modifier definition)?
  * modifier        -> 'public'? 'temp'? 
  * definition      -> identifier ( '(' func_definition ')' )
  * func_def        -> ( type_def \t identifier (',' type_def \t identifier)* ) | e
  * type_def        -> identifier ('<' identifier '>')?
  * 
- * if              -> 'if' ':' relation ':' if [':' if]
- *                  | relation
  * relation        -> conjunction (relational_op conjunction)?
  * conjunction     -> disjunction (conjunction_op disjunction)*
  * disjunction     -> expression (disjunction_op expression)*
@@ -69,6 +67,7 @@ import de.skuzzle.polly.parsing.tree.literals.UserLiteral;
  *                  | '(' relation ')'
  *                  | '-' literal
  *                  | '!' literal
+ *                  | 'if' '(' relation ')' '(' relation ')' '?' '(' relation ')'
  * list_literal    -> e         // for empty lists!
  *                  | expression (',' expression)
  * 
@@ -216,7 +215,7 @@ public class InputParser extends AbstractParser<InputScanner> {
     
     
     protected Expression parse_assignment() throws ParseException {
-        Expression expression = this.parse_if();
+        Expression expression = this.parse_relational();
         
         Token la = this.scanner.lookAhead();
         if (la.matches(TokenType.ASSIGNMENT)) {
@@ -306,33 +305,6 @@ public class InputParser extends AbstractParser<InputScanner> {
                 this.scanner.spanFrom(typeId));
     }
     
-    
-    //* if              -> 'if' '(' relation ')'  '(' if ')' ['?' '(' if ')']
-    //*                  | relation
-    
-    protected Expression parse_if() throws ParseException {
-        if (this.scanner.match(TokenType.IF)) {
-            this.scanner.match(TokenType.SEPERATOR);
-            this.expect(TokenType.OPENBR);
-            Expression condition = this.parse_relational();
-            this.expect(TokenType.CLOSEDBR);
-            this.scanner.match(TokenType.SEPERATOR);
-            
-            this.expect(TokenType.OPENBR);
-            Expression ifExpression = this.parse_if();
-            this.expect(TokenType.CLOSEDBR);
-            this.scanner.match(TokenType.SEPERATOR);
-            this.expect(TokenType.QUESTION);
-            this.scanner.match(TokenType.SEPERATOR);
-            this.expect(TokenType.OPENBR);
-            Expression elseExpression = this.parse_if();
-            this.expect(TokenType.CLOSEDBR);
-            
-            return new IfExpression(condition, ifExpression, elseExpression);
-        } else {
-            return this.parse_relational();
-        }
-    }
     
     
     protected Expression parse_relational() throws ParseException {
@@ -698,6 +670,25 @@ public class InputParser extends AbstractParser<InputScanner> {
                 this.scanner.consume();
                 return new HelpLiteral(la);
             	
+            case IF:
+                this.scanner.consume();
+                this.scanner.match(TokenType.SEPERATOR);
+                this.expect(TokenType.OPENBR);
+                Expression condition = this.parse_relational();
+                this.expect(TokenType.CLOSEDBR);
+                this.scanner.match(TokenType.SEPERATOR);
+                
+                this.expect(TokenType.OPENBR);
+                Expression ifExpression = this.parse_relational();
+                this.expect(TokenType.CLOSEDBR);
+                this.scanner.match(TokenType.SEPERATOR);
+                this.expect(TokenType.QUESTION);
+                this.scanner.match(TokenType.SEPERATOR);
+                this.expect(TokenType.OPENBR);
+                Expression elseExpression = this.parse_relational();
+                this.expect(TokenType.CLOSEDBR);
+                
+                return new IfExpression(condition, ifExpression, elseExpression);
             default:
                 /*
                  * This will cause a ParseException to be thrown, indicating a missing
