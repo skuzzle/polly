@@ -35,9 +35,10 @@ public abstract class Literal extends Expression implements Comparable<Literal> 
     /**
      * Formats the value of this literal as String.
      * 
+     * @param formatter The formatter used to format the literals with. 
      * @return Formatted value of this literal.
      */
-    public abstract String format();
+    public abstract String format(LiteralFormatter formatter);
     
     
     

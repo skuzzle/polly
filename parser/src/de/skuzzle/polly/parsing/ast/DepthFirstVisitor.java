@@ -1,5 +1,9 @@
 package de.skuzzle.polly.parsing.ast;
 
+import de.skuzzle.polly.parsing.ast.declarations.FunctionDeclaration;
+import de.skuzzle.polly.parsing.ast.declarations.Parameter;
+import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
+import de.skuzzle.polly.parsing.ast.expressions.AssignmentExpression;
 import de.skuzzle.polly.parsing.ast.expressions.BinaryExpression;
 import de.skuzzle.polly.parsing.ast.expressions.BinaryOperator;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
@@ -30,6 +34,8 @@ public class DepthFirstVisitor implements Visitor {
         this.afterRoot(root);
     }
 
+    
+    
     @Override
     public void beforeLiteral(Literal literal) throws ASTTraversalException {}
 
@@ -42,6 +48,8 @@ public class DepthFirstVisitor implements Visitor {
         this.afterLiteral(literal);
     }
 
+    
+    
     @Override
     public void beforeIdentifier(Identifier identifier) throws ASTTraversalException {}
 
@@ -53,6 +61,8 @@ public class DepthFirstVisitor implements Visitor {
         this.beforeIdentifier(identifier);
         this.afterdentifier(identifier);
     }
+    
+    
 
     @Override
     public void beforeBinaryOp(BinaryOperator op) throws ASTTraversalException {}
@@ -66,6 +76,8 @@ public class DepthFirstVisitor implements Visitor {
         this.afterBinaryOp(op);
     }
 
+    
+    
     @Override
     public void beforeBinaryExp(BinaryExpression binary) throws ASTTraversalException {}
 
@@ -81,4 +93,71 @@ public class DepthFirstVisitor implements Visitor {
         this.afterBinaryExp(binary);
     }
 
+    
+    
+    @Override
+    public void beforeAssignment(AssignmentExpression assign)
+        throws ASTTraversalException {}
+
+    @Override
+    public void afterAssignment(AssignmentExpression assign)
+        throws ASTTraversalException {}
+
+    @Override
+    public void visitAssignment(AssignmentExpression assign) 
+            throws ASTTraversalException {
+        this.beforeAssignment(assign);
+        assign.getExpression().visit(this);
+        assign.getDeclaration().visit(this);
+        this.afterAssignment(assign);
+    }
+
+    
+    
+    @Override
+    public void beforeParameter(Parameter param) throws ASTTraversalException {}
+
+    @Override
+    public void afterParameter(Parameter param) throws ASTTraversalException {}
+
+    @Override
+    public void visitParameter(Parameter param) throws ASTTraversalException {
+        this.beforeParameter(param);
+        this.afterParameter(param);
+    }
+
+    
+    
+    @Override
+    public void beforeVarDecl(VarDeclaration decl) throws ASTTraversalException {}
+
+    @Override
+    public void afterVarDecl(VarDeclaration decl) throws ASTTraversalException {}
+
+    @Override
+    public void visitVarDecl(VarDeclaration decl) throws ASTTraversalException {
+        this.beforeVarDecl(decl);
+        decl.getExpression().visit(this);
+        decl.getName().visit(this);
+        this.afterVarDecl(decl);
+    }
+
+    
+    
+    @Override
+    public void beforeFuncDecl(FunctionDeclaration decl) throws ASTTraversalException {}
+
+    @Override
+    public void afterFuncDecl(FunctionDeclaration decl) throws ASTTraversalException {}
+
+    @Override
+    public void visitFuncDecl(FunctionDeclaration decl) throws ASTTraversalException {
+        this.beforeFuncDecl(decl);
+        for (final Parameter formal : decl.getFormalParameters()) {
+            formal.visit(this);
+        }
+        decl.getExpression().visit(this);
+        decl.getName().visit(this);
+        this.afterFuncDecl(decl);
+    }
 }

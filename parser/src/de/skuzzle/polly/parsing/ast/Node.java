@@ -8,7 +8,7 @@ import de.skuzzle.polly.parsing.Position;
  *  
  * @author Simon Taddiken
  */
-public abstract class Node {
+public abstract class Node implements Visitable {
     
     private Node parent;
     private Position position;
@@ -69,16 +69,4 @@ public abstract class Node {
     public void setPosition(Position position) {
         this.position = position;
     }
-    
-    
-    
-    /**
-     * Callback method when the AST is iterated with a {@link Visitor}. This method
-     * must invoke the matching <code>visitXY</code> method on the passed visitor 
-     * according to this nodes type.
-     * 
-     * @param visitor The visitor to callback.
-     * @throws ASTTraversalException May be thrown to abort further traversal of the AST.
-     */
-    public abstract void visit(Visitor visitor) throws ASTTraversalException;
 }

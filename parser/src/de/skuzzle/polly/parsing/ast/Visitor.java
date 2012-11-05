@@ -1,5 +1,9 @@
 package de.skuzzle.polly.parsing.ast;
 
+import de.skuzzle.polly.parsing.ast.declarations.FunctionDeclaration;
+import de.skuzzle.polly.parsing.ast.declarations.Parameter;
+import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
+import de.skuzzle.polly.parsing.ast.expressions.AssignmentExpression;
 import de.skuzzle.polly.parsing.ast.expressions.BinaryExpression;
 import de.skuzzle.polly.parsing.ast.expressions.BinaryOperator;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
@@ -93,4 +97,19 @@ public interface Visitor {
     public void afterBinaryExp(BinaryExpression binary) throws ASTTraversalException;
     public void visitBinaryExp(BinaryExpression binary) throws ASTTraversalException;
     
+    public void beforeAssignment(AssignmentExpression assign) throws ASTTraversalException;
+    public void afterAssignment(AssignmentExpression assign) throws ASTTraversalException;
+    public void visitAssignment(AssignmentExpression assign) throws ASTTraversalException;
+    
+    public void beforeParameter(Parameter param) throws ASTTraversalException;
+    public void afterParameter(Parameter param) throws ASTTraversalException;
+    public void visitParameter(Parameter param) throws ASTTraversalException;
+    
+    public void beforeVarDecl(VarDeclaration decl) throws ASTTraversalException;
+    public void afterVarDecl(VarDeclaration decl) throws ASTTraversalException;
+    public void visitVarDecl(VarDeclaration decl) throws ASTTraversalException;
+    
+    public void beforeFuncDecl(FunctionDeclaration decl) throws ASTTraversalException;
+    public void afterFuncDecl(FunctionDeclaration decl) throws ASTTraversalException;
+    public void visitFuncDecl(FunctionDeclaration decl) throws ASTTraversalException;
 }
