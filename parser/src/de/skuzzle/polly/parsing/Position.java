@@ -32,7 +32,7 @@ public class Position implements Serializable {
      * Creates a new Position Object with given start and end index.
      * 
      * @param start The inclusive start index of this Position.
-     * @param end The inclusive end index of this postion.
+     * @param end The inclusive end index of this position.
      */
     public Position(int start, int end) {
         this.start = start;
