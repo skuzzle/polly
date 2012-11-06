@@ -6,6 +6,8 @@ import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.expressions.AssignmentExpression;
 import de.skuzzle.polly.parsing.ast.expressions.BinaryExpression;
 import de.skuzzle.polly.parsing.ast.expressions.BinaryOperator;
+import de.skuzzle.polly.parsing.ast.expressions.HardcodedExpression;
+import de.skuzzle.polly.parsing.ast.expressions.VarOrCall;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 
@@ -112,4 +114,13 @@ public interface Visitor {
     public void beforeFuncDecl(FunctionDeclaration decl) throws ASTTraversalException;
     public void afterFuncDecl(FunctionDeclaration decl) throws ASTTraversalException;
     public void visitFuncDecl(FunctionDeclaration decl) throws ASTTraversalException;
+    
+    
+    public void beforeVarOrCall(VarOrCall call) throws ASTTraversalException;
+    public void afterVarOrCall(VarOrCall call) throws ASTTraversalException;
+    public void visitVarOrCall(VarOrCall call) throws ASTTraversalException;
+    
+    public void beforeHardCoded(HardcodedExpression hc) throws ASTTraversalException;
+    public void afterHardCoded(HardcodedExpression hc) throws ASTTraversalException;
+    public void visitHardCoded(HardcodedExpression hc) throws ASTTraversalException;
 }

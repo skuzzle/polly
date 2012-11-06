@@ -6,6 +6,8 @@ import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.expressions.AssignmentExpression;
 import de.skuzzle.polly.parsing.ast.expressions.BinaryExpression;
 import de.skuzzle.polly.parsing.ast.expressions.BinaryOperator;
+import de.skuzzle.polly.parsing.ast.expressions.HardcodedExpression;
+import de.skuzzle.polly.parsing.ast.expressions.VarOrCall;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
@@ -159,5 +161,32 @@ public class DepthFirstVisitor implements Visitor {
         decl.getExpression().visit(this);
         decl.getName().visit(this);
         this.afterFuncDecl(decl);
+    }
+
+    @Override
+    public void beforeVarOrCall(VarOrCall call) throws ASTTraversalException {
+    }
+
+    @Override
+    public void afterVarOrCall(VarOrCall call) throws ASTTraversalException {
+    }
+
+    @Override
+    public void visitVarOrCall(VarOrCall call) throws ASTTraversalException {
+        this.beforeVarOrCall(call);
+        call.getIdentifier().visit(this);
+        
+    }
+
+    @Override
+    public void beforeHardCoded(HardcodedExpression hc) throws ASTTraversalException {}
+
+    @Override
+    public void afterHardCoded(HardcodedExpression hc) throws ASTTraversalException {}
+
+    @Override
+    public void visitHardCoded(HardcodedExpression hc) throws ASTTraversalException {
+        this.beforeHardCoded(hc);
+        this.afterHardCoded(hc);
     }
 }

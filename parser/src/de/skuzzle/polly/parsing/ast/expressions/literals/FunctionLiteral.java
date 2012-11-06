@@ -29,7 +29,7 @@ public class FunctionLiteral extends Literal {
     
     @Override
     public Literal castTo(Type type) throws ASTTraversalException {
-        throw new ASTTraversalException("not castable");
+        throw new ASTTraversalException(this.getPosition(), "not castable");
     }
     
     
