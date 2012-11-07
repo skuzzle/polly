@@ -1,9 +1,9 @@
 package de.skuzzle.polly.parsing.ast.expressions;
 
 import de.skuzzle.polly.parsing.Position;
-import de.skuzzle.polly.parsing.ast.ASTTraversalException;
-import de.skuzzle.polly.parsing.ast.Visitor;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
+import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 
 /**
  * Represents an Identifier Node in the AST.

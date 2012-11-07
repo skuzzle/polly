@@ -23,15 +23,14 @@ public class FunctionType extends Type {
     
     
     
-    @Override
-    public boolean check(Type other) {
+    private boolean check(Type other, boolean includeReturnType) {
         if (!(other instanceof FunctionType)) {
             return false;
         }
         
         // check if return type and parameter types match
         final FunctionType ft = (FunctionType) other;
-        if (!this.returnType.check(ft.returnType)) {
+        if (includeReturnType && !this.returnType.check(ft.returnType)) {
             return false;
         }
         
@@ -47,5 +46,12 @@ public class FunctionType extends Type {
             }
         }
         return true;
+    }
+    
+    
+    
+    @Override
+    public boolean check(Type other) {
+        return this.check(other, true);
     }
 }

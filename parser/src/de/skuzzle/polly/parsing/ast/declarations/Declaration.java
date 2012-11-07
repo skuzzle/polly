@@ -9,28 +9,18 @@ import de.skuzzle.polly.parsing.types.Type;
 public abstract class Declaration extends Node {
 
     private final Identifier name;
-    private Type type;
     private boolean isGlobal;
     private boolean isTemp;
     
     
-    public Declaration(Position position, Identifier name, Type type) {
+    public Declaration(Position position, Identifier name) {
         super(position);
         this.name = name;
-        this.type = type;
     }
     
     
     
-    public Type getType() {
-        return this.type;
-    }
-    
-    
-    
-    void setType(Type type) {
-        this.type = type;
-    }
+    public abstract Type getType();
     
     
     

@@ -5,8 +5,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.skuzzle.polly.parsing.ast.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
+import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.parsing.types.FunctionType;
 import de.skuzzle.polly.parsing.types.Type;
 
 
@@ -32,6 +33,43 @@ public class Namespace {
             ROOTS.put(name, check);
         }
         return check;
+    }
+    
+    
+    
+    /**
+     * Gets the toplevel namespace with the given name. If no namespace with that name
+     * exists, it is created.
+     * 
+     * @param name The name of the namespace to retrieve.
+     * @return The namespace.
+     */
+    public final static Namespace forName(Identifier name) {
+        return forName(name.getId());
+    }
+    
+    
+    
+    /**
+     * Checks whether a root namespace with given name exists.
+     *  
+     * @param name name to check.
+     * @return <code>true</code> if a namespace with that name exists.
+     */
+    public final static boolean exists(String name) {
+        return ROOTS.containsKey(name);
+    }
+    
+    
+    
+    /**
+     * Checks whether a root namespace with given name exists.
+     *  
+     * @param name name to check.
+     * @return <code>true</code> if a namespace with that name exists.
+     */
+    public final static boolean exists(Identifier name) {
+        return exists(name.getId());
     }
     
     
@@ -150,17 +188,26 @@ public class Namespace {
     
     
     /**
-     * Tries to resolve a function declaration with the given name and signature. If none
-     * was found, <code>null</code> is returned.
+     * <p>Tries to resolve a function declaration with the given name and signature. If 
+     * none was found, <code>null</code> is returned.</p>
+     * 
+     * <p>If a matching declaration was found, it will, before being returned, stored
+     * in the given identifiers declaration attribute.</p>
      * 
      * @param name The name of the function to resolve.
      * @param signature The signature of the function to resolve.
      * @return The resolved declaration or <code>null</code> if non was found.
      */
     public FunctionDeclaration tryResolveFunction(Identifier name, Type signature) {
+        if (!(signature instanceof FunctionType)) {
+            return null;
+        }
+        
         for(Namespace space = this; space != null; space = space.parent) {
             for (final FunctionDeclaration decl : space.functions) {
+                
                 if (decl.getName().equals(name) && decl.getType().check(signature)) {
+                    name.setDeclaration(decl);
                     return decl;
                 }
             }
@@ -171,8 +218,57 @@ public class Namespace {
     
     
     /**
-     * Tries to resolve a variable declaration with the given name. If none was found,
-     * <code>null</code> is returned.
+     * <p>Tries to resolve a function declaration with the given name and signature. If 
+     * non was found, an {@link ASTTraversalException} exception will be thrown.</p> 
+     * 
+     * <p>If a matching declaration was found, it will, before being returned, stored
+     * in the given identifiers declaration attribute.</p>
+     * 
+     * @param name The name of the function to resolve.
+     * @param signature The signature of the function to resolve.
+     * @return The resolved declaration.
+     * @throws ASTTraversalException If no function was found.
+     */
+    public FunctionDeclaration resolveFunction(Identifier name, Type signature) 
+            throws ASTTraversalException {
+        final FunctionDeclaration result = this.tryResolveFunction(name, signature);
+        if (result == null) {
+            throw new ASTTraversalException(name.getPosition(), 
+                "Unbekannte Funktion: " + name.getId());
+        }
+        return result;
+    }
+    
+    
+    
+    /**
+     * <p>Tries to resolve a variable declaration with the given name. If none was found,
+     * an {@link ASTTraversalException} is thrown.
+     * 
+     * <p>If a declaration was found, it will be stored in the identifiers declaration
+     * attribute.</p>
+     * 
+     * @param name The name to resolve.
+     * @return The resolved declaration or <code>null</code> if none was found.
+     * @throws ASTTraversalException If no variable declaration with that name was found.
+     */
+    public VarDeclaration resolveVar(Identifier name) throws ASTTraversalException {
+        final VarDeclaration result = this.resolveVar(name);
+        if (result == null) {
+            throw new ASTTraversalException(
+                name.getPosition(), "Unbekannte Variable: " + name.getId());
+        }
+        return result;
+    }
+    
+    
+    
+    /**
+     * <p>Tries to resolve a variable declaration with the given name. If none was found,
+     * <code>null</code> is returned.</p>
+     * 
+     * <p>If a declaration was found, it will be stored in the identifiers declaration
+     * attribute.</p>
      * 
      * @param name The name to resolve.
      * @return The resolved declaration or <code>null</code> if none was found.
@@ -181,6 +277,7 @@ public class Namespace {
         for(Namespace space = this; space != null; space = space.parent) {
             final VarDeclaration vd = space.vars.get(name);
             if (vd != null) {
+                name.setDeclaration(vd);
                 return vd;
             }
         }

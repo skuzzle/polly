@@ -1,10 +1,11 @@
 package de.skuzzle.polly.parsing.ast.declarations;
 
 import de.skuzzle.polly.parsing.Position;
-import de.skuzzle.polly.parsing.ast.ASTTraversalException;
-import de.skuzzle.polly.parsing.ast.Visitor;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
+import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.parsing.types.Type;
 
 
 public class VarDeclaration extends Declaration {
@@ -14,10 +15,16 @@ public class VarDeclaration extends Declaration {
     
     
     public VarDeclaration(Position position, Identifier name, Expression expression) {
-        super(position, name, expression.getType());
+        super(position, name);
         this.expression = expression;
     }
 
+    
+    
+    @Override
+    public Type getType() {
+        return this.expression.getType();
+    }
     
     
     public Expression getExpression() {

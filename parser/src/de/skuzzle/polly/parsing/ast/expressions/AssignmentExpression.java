@@ -1,9 +1,9 @@
 package de.skuzzle.polly.parsing.ast.expressions;
 
 import de.skuzzle.polly.parsing.Position;
-import de.skuzzle.polly.parsing.ast.ASTTraversalException;
-import de.skuzzle.polly.parsing.ast.Visitor;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
+import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 
 /**
  * Assignments either declare new variables or new functions.
@@ -39,7 +39,7 @@ public class AssignmentExpression extends Expression {
     
     
     /**
-     * Gets the declaration as whicht the expression should be stored.
+     * Gets the declaration as which the expression should be stored.
      * 
      * @return The declaration.
      */
@@ -53,5 +53,4 @@ public class AssignmentExpression extends Expression {
     public void visit(Visitor visitor) throws ASTTraversalException {
         visitor.visitAssignment(this);
     }
-
 }

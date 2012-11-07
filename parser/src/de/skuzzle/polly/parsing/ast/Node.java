@@ -1,6 +1,7 @@
 package de.skuzzle.polly.parsing.ast;
 
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.ast.visitor.Visitable;
 
 /**
  * Super class for all elements of the AST. It stores the parent Node and the Nodes

@@ -1,4 +1,4 @@
-package de.skuzzle.polly.parsing.ast;
+package de.skuzzle.polly.parsing.ast.visitor;
 
 import de.skuzzle.polly.parsing.Position;
 

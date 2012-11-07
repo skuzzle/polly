@@ -1,15 +1,17 @@
-package de.skuzzle.polly.parsing.ast;
+package de.skuzzle.polly.parsing.ast.visitor;
 
+import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.FunctionDeclaration;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
 import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
+import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.AssignmentExpression;
-import de.skuzzle.polly.parsing.ast.expressions.BinaryExpression;
-import de.skuzzle.polly.parsing.ast.expressions.BinaryOperator;
 import de.skuzzle.polly.parsing.ast.expressions.HardcodedExpression;
-import de.skuzzle.polly.parsing.ast.expressions.VarOrCall;
+import de.skuzzle.polly.parsing.ast.expressions.LambdaCall;
+import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
+import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 
 /**
@@ -56,43 +58,12 @@ public class DepthFirstVisitor implements Visitor {
     public void beforeIdentifier(Identifier identifier) throws ASTTraversalException {}
 
     @Override
-    public void afterdentifier(Identifier identifier) throws ASTTraversalException {}
+    public void afterIdentifier(Identifier identifier) throws ASTTraversalException {}
 
     @Override
     public void visitIdentifier(Identifier identifier)  throws ASTTraversalException {
         this.beforeIdentifier(identifier);
-        this.afterdentifier(identifier);
-    }
-    
-    
-
-    @Override
-    public void beforeBinaryOp(BinaryOperator op) throws ASTTraversalException {}
-
-    @Override
-    public void afterBinaryOp(BinaryOperator op) throws ASTTraversalException {}
-
-    @Override
-    public void visitBinaryOp(BinaryOperator op) throws ASTTraversalException {
-        this.beforeBinaryOp(op);
-        this.afterBinaryOp(op);
-    }
-
-    
-    
-    @Override
-    public void beforeBinaryExp(BinaryExpression binary) throws ASTTraversalException {}
-
-    @Override
-    public void afterBinaryExp(BinaryExpression binary) throws ASTTraversalException {}
-
-    @Override
-    public void visitBinaryExp(BinaryExpression binary) throws ASTTraversalException {
-        this.beforeBinaryExp(binary);
-        binary.getLeft().visit(this);
-        binary.getOperator().visit(this);
-        binary.getRight().visit(this);
-        this.afterBinaryExp(binary);
+        this.afterIdentifier(identifier);
     }
 
     
@@ -162,22 +133,27 @@ public class DepthFirstVisitor implements Visitor {
         decl.getName().visit(this);
         this.afterFuncDecl(decl);
     }
+    
+    
 
     @Override
-    public void beforeVarOrCall(VarOrCall call) throws ASTTraversalException {
-    }
+    public void beforeCall(Call call) throws ASTTraversalException {}
 
     @Override
-    public void afterVarOrCall(VarOrCall call) throws ASTTraversalException {
-    }
+    public void afterCall(Call call) throws ASTTraversalException {}
 
     @Override
-    public void visitVarOrCall(VarOrCall call) throws ASTTraversalException {
-        this.beforeVarOrCall(call);
+    public void visitCall(Call call) throws ASTTraversalException {
+        this.beforeCall(call);
         call.getIdentifier().visit(this);
-        
+        for (final Expression exp : call.getParameters()) {
+            exp.visit(this);
+        }
+        this.afterCall(call);
     }
 
+    
+    
     @Override
     public void beforeHardCoded(HardcodedExpression hc) throws ASTTraversalException {}
 
@@ -188,5 +164,49 @@ public class DepthFirstVisitor implements Visitor {
     public void visitHardCoded(HardcodedExpression hc) throws ASTTraversalException {
         this.beforeHardCoded(hc);
         this.afterHardCoded(hc);
+    }
+
+    
+    
+    @Override
+    public void beforeLambdaCall(LambdaCall call) throws ASTTraversalException {}
+
+    @Override
+    public void afterLambdaCall(LambdaCall call) throws ASTTraversalException {}
+
+    @Override
+    public void visitLambdaCall(LambdaCall call) throws ASTTraversalException {
+        this.beforeLambdaCall(call);
+        call.getLambda().visit(this);
+        this.afterLambdaCall(call);
+    }
+
+    
+    
+    @Override
+    public void beforeAccess(NamespaceAccess access) throws ASTTraversalException {}
+
+    @Override
+    public void afterAccess(NamespaceAccess access) throws ASTTraversalException {}
+
+    @Override
+    public void visitAccess(NamespaceAccess access) throws ASTTraversalException {
+        this.beforeAccess(access);
+        access.getName().visit(this);
+        access.getRhs().visit(this);
+        this.afterAccess(access);
+    }
+
+    @Override
+    public void beforeVarAccess(VarAccess access) throws ASTTraversalException {}
+
+    @Override
+    public void afterVarAccess(VarAccess access) throws ASTTraversalException {}
+
+    @Override
+    public void visitVarAccess(VarAccess access) throws ASTTraversalException {
+        this.beforeVarAccess(access);
+        access.getIdentifier().visit(this);
+        this.afterVarAccess(access);
     }
 }

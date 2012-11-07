@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import de.skuzzle.polly.parsing.Position;
-import de.skuzzle.polly.parsing.ast.ASTTraversalException;
-import de.skuzzle.polly.parsing.ast.Visitor;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
+import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.parsing.types.FunctionType;
 import de.skuzzle.polly.parsing.types.Type;
 
@@ -35,8 +35,14 @@ public class FunctionDeclaration extends VarDeclaration {
     public FunctionDeclaration(Position position, Identifier name, 
             Expression expression, final Collection<Parameter> formalParameters) {
         super(position, name, expression);
-        this.setType(this.createType(expression.getType(), formalParameters));
         this.formalParameters = new ArrayList<Parameter>(formalParameters);
+    }
+    
+    
+    
+    @Override
+    public Type getType() {
+        return this.createType(super.getType(), this.formalParameters);
     }
     
     

@@ -1,14 +1,16 @@
-package de.skuzzle.polly.parsing.ast;
+package de.skuzzle.polly.parsing.ast.visitor;
 
+import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.FunctionDeclaration;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
 import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
+import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.AssignmentExpression;
-import de.skuzzle.polly.parsing.ast.expressions.BinaryExpression;
-import de.skuzzle.polly.parsing.ast.expressions.BinaryOperator;
 import de.skuzzle.polly.parsing.ast.expressions.HardcodedExpression;
-import de.skuzzle.polly.parsing.ast.expressions.VarOrCall;
+import de.skuzzle.polly.parsing.ast.expressions.LambdaCall;
+import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
+import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 
 /**
@@ -81,7 +83,7 @@ public interface Visitor {
      * @param identifier The visited Node.
      * @throws ASTTraversalException May be thrown to abort further traversal of the AST.
      */
-    public void afterdentifier(Identifier identifier) throws ASTTraversalException;
+    public void afterIdentifier(Identifier identifier) throws ASTTraversalException;
     
     /**
      * This method initiates traversing an {@link Identifier} Node of the AST.
@@ -90,14 +92,6 @@ public interface Visitor {
      * @throws ASTTraversalException May be thrown to abort further traversal of the AST.
      */
     public void visitIdentifier(Identifier identifier) throws ASTTraversalException;
-    
-    public void beforeBinaryOp(BinaryOperator op) throws ASTTraversalException;
-    public void afterBinaryOp(BinaryOperator op) throws ASTTraversalException;
-    public void visitBinaryOp(BinaryOperator op) throws ASTTraversalException;
-    
-    public void beforeBinaryExp(BinaryExpression binary) throws ASTTraversalException;
-    public void afterBinaryExp(BinaryExpression binary) throws ASTTraversalException;
-    public void visitBinaryExp(BinaryExpression binary) throws ASTTraversalException;
     
     public void beforeAssignment(AssignmentExpression assign) throws ASTTraversalException;
     public void afterAssignment(AssignmentExpression assign) throws ASTTraversalException;
@@ -115,12 +109,23 @@ public interface Visitor {
     public void afterFuncDecl(FunctionDeclaration decl) throws ASTTraversalException;
     public void visitFuncDecl(FunctionDeclaration decl) throws ASTTraversalException;
     
+    public void beforeCall(Call call) throws ASTTraversalException;
+    public void afterCall(Call call) throws ASTTraversalException;
+    public void visitCall(Call call) throws ASTTraversalException;
     
-    public void beforeVarOrCall(VarOrCall call) throws ASTTraversalException;
-    public void afterVarOrCall(VarOrCall call) throws ASTTraversalException;
-    public void visitVarOrCall(VarOrCall call) throws ASTTraversalException;
+    public void beforeLambdaCall(LambdaCall call) throws ASTTraversalException;
+    public void afterLambdaCall(LambdaCall call) throws ASTTraversalException;
+    public void visitLambdaCall(LambdaCall call) throws ASTTraversalException;
     
     public void beforeHardCoded(HardcodedExpression hc) throws ASTTraversalException;
     public void afterHardCoded(HardcodedExpression hc) throws ASTTraversalException;
     public void visitHardCoded(HardcodedExpression hc) throws ASTTraversalException;
+    
+    public void beforeAccess(NamespaceAccess access) throws ASTTraversalException;
+    public void afterAccess(NamespaceAccess access) throws ASTTraversalException;
+    public void visitAccess(NamespaceAccess access) throws ASTTraversalException;
+    
+    public void beforeVarAccess(VarAccess access) throws ASTTraversalException;
+    public void afterVarAccess(VarAccess access) throws ASTTraversalException;
+    public void visitVarAccess(VarAccess access) throws ASTTraversalException;
 }

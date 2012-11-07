@@ -1,4 +1,5 @@
-package de.skuzzle.polly.parsing.ast;
+package de.skuzzle.polly.parsing.ast.visitor;
+
 
 /**
  * Interface for classes that can be visited using a {@link Visitor}.

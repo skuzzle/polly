@@ -10,6 +10,8 @@ import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
+import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.parsing.types.Type;
 
 
@@ -23,6 +25,9 @@ import de.skuzzle.polly.parsing.types.Type;
  */
 public abstract class BinaryOperator<L extends Literal, R extends Literal> extends Operator {
 
+    private final static String LEFT_PARAM_NAME = "$left";
+    private final static String RIGHT_PARAM_NAME = "$right";
+    
     private final Type left;
     private final Type right;
     
@@ -48,9 +53,9 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal> exten
     public FunctionDeclaration createDeclaration() {
         Collection<Parameter> p = Arrays.asList(new Parameter[] {
             new Parameter(Position.EMPTY, this.left, 
-                new Identifier(Position.EMPTY, "left")),
+                new Identifier(Position.EMPTY, LEFT_PARAM_NAME)),
             new Parameter(Position.EMPTY, this.right, 
-                new Identifier(Position.EMPTY, "left"))});
+                new Identifier(Position.EMPTY, RIGHT_PARAM_NAME))});
         
         final FunctionDeclaration result = new FunctionDeclaration(
             Position.EMPTY, 
@@ -62,7 +67,8 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal> exten
     
     @Override
     @SuppressWarnings("unchecked")
-    public void execute(LinkedList<Literal> stack, Namespace ns) {
+    public void execute(LinkedList<Literal> stack, Namespace ns, Visitor execVisitor) 
+            throws ASTTraversalException {
         final R right = (R) stack.pop();
         final L left = (L) stack.pop();
         
