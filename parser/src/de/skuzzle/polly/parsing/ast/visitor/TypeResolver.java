@@ -93,7 +93,7 @@ public class TypeResolver extends DepthFirstVisitor {
      * @return Whether the nodes type has already been resolved.
      */
     private final boolean testIsChecked(Node node) {
-        return this.checked.add(node);
+        return !this.checked.add(node);
     }
     
     
@@ -177,9 +177,6 @@ public class TypeResolver extends DepthFirstVisitor {
     
     @Override
     public void visitOperatorCall(OperatorCall call) throws ASTTraversalException {
-        if (this.testIsChecked(call)) {
-            return;
-        }
         this.beforeOperatorCall(call);
         // treat as normal call
         this.visitCall(call);
@@ -271,6 +268,8 @@ public class TypeResolver extends DepthFirstVisitor {
         
         // apply resolved type to this call
         call.setType(delegate.getType());
+        call.setResolvedParameters(delegate.getResolvedParameters());
+        
         this.afterCall(call);
     }
     

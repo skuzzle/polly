@@ -127,8 +127,6 @@ public class DepthFirstVisitor implements Visitor {
     @Override
     public void visitVarDecl(VarDeclaration decl) throws ASTTraversalException {
         this.beforeVarDecl(decl);
-        decl.getExpression().visit(this);
-        decl.getName().visit(this);
         this.afterVarDecl(decl);
     }
     
@@ -175,6 +173,10 @@ public class DepthFirstVisitor implements Visitor {
     @Override
     public void visitLambdaCall(LambdaCall call) throws ASTTraversalException {
         this.beforeLambdaCall(call);
+        call.getIdentifier().visit(this);
+        for (final Expression exp : call.getParameters()) {
+            exp.visit(this);
+        }
         call.getLambda().visit(this);
         this.afterLambdaCall(call);
     }
@@ -247,7 +249,11 @@ public class DepthFirstVisitor implements Visitor {
 
     @Override
     public void visitOperatorCall(OperatorCall call) throws ASTTraversalException {
-        // default action: treat as normal call
-        this.visitCall(call);
+        this.beforeOperatorCall(call);
+        call.getIdentifier().visit(this);
+        for (final Expression exp : call.getParameters()) {
+            exp.visit(this);
+        }
+        this.afterOperatorCall(call);
     }
 }

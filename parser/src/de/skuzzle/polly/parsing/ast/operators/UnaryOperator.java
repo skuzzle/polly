@@ -15,6 +15,7 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.parsing.types.FunctionType;
 import de.skuzzle.polly.parsing.types.Type;
 
 
@@ -39,6 +40,8 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
                 new ResolvableIdentifier(Position.EMPTY, PARAM_NAME))});
         
         final FunctionLiteral func = new FunctionLiteral(Position.EMPTY, p, this);
+        func.setType(new FunctionType(this.getType(), Parameter.asType(p)));
+        
         final Identifier fakeId = new Identifier(Position.EMPTY, this.getOp().getId());
         return new VarDeclaration(func.getPosition(), fakeId, func);
     }
@@ -49,7 +52,9 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
     @SuppressWarnings("unchecked")
     public void execute(LinkedList<Literal> stack, Namespace ns, Visitor execVisitor)
             throws ASTTraversalException {
-        final O operand = (O) stack.pop();
+        final O operand = (O) ns.resolveVar(
+            new ResolvableIdentifier(this.getPosition(), PARAM_NAME), 
+            Type.ANY).getExpression();
         
         this.exec(stack, ns, operand, operand.getPosition());
     }

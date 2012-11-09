@@ -13,6 +13,7 @@ public abstract class Declaration extends Node {
     private boolean isTemp;
     
     
+    
     public Declaration(Position position, Identifier name) {
         super(position);
         this.name = name;

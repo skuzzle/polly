@@ -15,6 +15,7 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.parsing.types.FunctionType;
 import de.skuzzle.polly.parsing.types.Type;
 
 
@@ -62,6 +63,8 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
                 new ResolvableIdentifier(Position.EMPTY, RIGHT_PARAM_NAME))});
         
         final FunctionLiteral func = new FunctionLiteral(Position.EMPTY, p, this);
+        func.setType(new FunctionType(this.getType(), Parameter.asType(p)));
+        
         final Identifier fakeId = new Identifier(Position.EMPTY, this.getOp().getId());
         return new VarDeclaration(func.getPosition(), fakeId, func);
     }
@@ -70,10 +73,14 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
     
     @Override
     @SuppressWarnings("unchecked")
-    public void execute(LinkedList<Literal> stack, Namespace ns, Visitor execVisitor) 
+    public final void execute(LinkedList<Literal> stack, Namespace ns, Visitor execVisitor) 
             throws ASTTraversalException {
-        final R right = (R) stack.pop();
-        final L left = (L) stack.pop();
+        final R right = (R) stack.pop(); /*(R) ns.resolveVar(
+            new ResolvableIdentifier(this.getPosition(), LEFT_PARAM_NAME), 
+            Type.ANY).getExpression();*/
+        final L left = (L) stack.pop(); /*(L) ns.resolveVar(
+            new ResolvableIdentifier(this.getPosition(), RIGHT_PARAM_NAME), 
+            Type.ANY).getExpression();*/
         
         this.exec(stack, ns, left, right, 
             new Position(left.getPosition(), right.getPosition()));

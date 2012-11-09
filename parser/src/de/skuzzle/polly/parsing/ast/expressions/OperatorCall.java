@@ -28,7 +28,7 @@ public class OperatorCall extends Call {
      */
     public OperatorCall(Position position, OpType operator, 
             Collection<Expression> parameters) {
-        super(position, parameters);
+        super(position, new ResolvableIdentifier(position, operator.getId()), parameters);
         this.operator = operator;
     }
 

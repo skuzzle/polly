@@ -34,4 +34,11 @@ public class StringLiteral extends Literal {
     public String format(LiteralFormatter formatter) {
         return null;
     }
+    
+    
+    
+    @Override
+    public String toString() {
+        return this.value;
+    }
 }

@@ -39,9 +39,28 @@ public class Identifier extends Expression {
 
 
 
-
     @Override
     public void visit(Visitor visitor) throws ASTTraversalException {
         visitor.visitIdentifier(this);
+    }
+    
+    
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        } else if (obj == null || !(obj instanceof Identifier)) {
+            return false;
+        }
+        final Identifier other = (Identifier)obj;
+        return this.id == null && other.id == null || this.id.equals(other.id);
+    }
+    
+    
+    
+    @Override
+    public String toString() {
+        return this.getId();
     }
 }

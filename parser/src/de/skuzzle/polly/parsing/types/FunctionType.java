@@ -54,4 +54,19 @@ public class FunctionType extends Type {
     public boolean check(Type other) {
         return this.check(other, true);
     }
+    
+    
+    
+    @Override
+    public String toString() {
+        final StringBuilder b = new StringBuilder();
+        b.append("Function: return: ");
+        b.append(this.returnType);
+        b.append(" signature: ");
+        for (final Type type : this.parameters) {
+            b.append(type);
+            b.append(" ");
+        }
+        return b.toString();
+    }
 }

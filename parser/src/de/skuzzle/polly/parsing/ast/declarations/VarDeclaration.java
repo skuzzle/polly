@@ -39,4 +39,10 @@ public class VarDeclaration extends Declaration {
     public void visit(Visitor visitor) throws ASTTraversalException {
         visitor.visitVarDecl(this);
     }
+    
+    
+    @Override
+    public String toString() {
+        return "[VarDeclaration: id=" + this.getName() + ", type=" + this.getType() + "]";
+    }
 }

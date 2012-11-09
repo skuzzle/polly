@@ -1,5 +1,9 @@
 package de.skuzzle.polly.parsing.ast.visitor;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -7,7 +11,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
-import de.skuzzle.polly.parsing.ast.declarations.Parameter;
 import de.skuzzle.polly.parsing.ast.declarations.ResolvedParameter;
 import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
@@ -17,12 +20,59 @@ import de.skuzzle.polly.parsing.ast.expressions.Identifier;
 import de.skuzzle.polly.parsing.ast.expressions.LambdaCall;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
+import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
+import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
+import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
+import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
+import de.skuzzle.polly.parsing.ast.operators.Operator;
+import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
+import de.skuzzle.polly.parsing.ast.operators.binary.Arithmetic;
 
 
 public class ExecutionVisitor extends DepthFirstVisitor {
+    
+    public static void main(String[] args) throws ASTTraversalException, IOException {
+        final VarDeclaration x = new VarDeclaration(Position.EMPTY, new Identifier(Position.EMPTY, "x"), new NumberLiteral(Position.EMPTY, 2.0));
+        Namespace.forName("me").declare(x);
+        
+        final VarAccess accessX = new VarAccess(Position.EMPTY, new ResolvableIdentifier(Position.EMPTY, "x"));
+        final NamespaceAccess nameAccess = new NamespaceAccess(Position.EMPTY, new Identifier(Position.EMPTY, "me"), accessX);
+        
+        final NumberLiteral left = new NumberLiteral(Position.EMPTY, 5.0);
+        final Expression right = nameAccess;
+        
+        final Collection<Expression> params = Arrays.asList(new Expression[] {left, right});
+        final OperatorCall call = new OperatorCall(Position.EMPTY, OpType.ADD, params);
+        
+        final Operator add = new Arithmetic(OpType.ADD);
+        final Operator sub = new Arithmetic(OpType.SUB);
+        Namespace.forName("me").declare(add.createDeclaration());
+        Namespace.forName("me").declare(sub.createDeclaration());
+        
+        final VarDeclaration vd = new VarDeclaration(Position.EMPTY, new Identifier(Position.EMPTY, "y"), call);
+        final Assignment ass = new Assignment(Position.EMPTY, call, vd);
+        
+        final VarAccess accessY = new VarAccess(Position.EMPTY, new ResolvableIdentifier(Position.EMPTY, "y"));
+        
+        
+        final Collection<Expression> params2 = Arrays.asList(new Expression[] {ass, accessY});
+        final OperatorCall call2 = new OperatorCall(Position.EMPTY, OpType.ADD, params2);
+        
+        final TypeResolver tr = new TypeResolver("me");
+        call2.visit(tr);
+        
+        final ASTVisualizer av = new ASTVisualizer();
+        av.toFile("test.dot", call2);
+        
+        final ExecutionVisitor ec = new ExecutionVisitor("me");
+        call2.visit(ec);
+        System.out.println(ec.stack.pop());
+    }
+    
+    
     
     private final static AtomicInteger lambdaIds = new AtomicInteger();
     
@@ -73,10 +123,34 @@ public class ExecutionVisitor extends DepthFirstVisitor {
     
     
     @Override
-    public void beforeLiteral(Literal literal) throws ASTTraversalException {
+    public void visitLiteral(Literal literal) throws ASTTraversalException {
         this.beforeLiteral(literal);
         this.stack.push(literal);
         this.afterLiteral(literal);
+    }
+    
+    
+    
+    @Override
+    public void visitFunctionLiteral(FunctionLiteral func) throws ASTTraversalException {
+        this.beforeFunctionLiteral(func);
+        this.stack.push(func);
+        this.afterFunctionLiteral(func);
+    }
+    
+    
+    
+    @Override
+    public void visitListLiteral(ListLiteral list) throws ASTTraversalException {
+        // create collection of executed list content
+        final Collection<Expression> executed = new ArrayList<Expression>();
+        for (final Expression exp : list.getContent()) {
+            // places executed expression on the stack
+            exp.visit(this);
+            executed.add(this.stack.pop());
+        }
+        final ListLiteral result = new ListLiteral(list.getPosition(), executed);
+        this.stack.push(result);
     }
     
     
@@ -87,7 +161,10 @@ public class ExecutionVisitor extends DepthFirstVisitor {
         
         // store current ns and switch to new one
         final Namespace backup = this.nspace;
-        this.nspace = Namespace.forName(access.getName());
+        
+        // get namespace which is accessed here and has the current namespace as 
+        // parent. 
+        this.nspace = Namespace.forName(access.getName()).derive(this.nspace);
         
         // execute expression and restore old namespace
         access.getRhs().visit(this);
@@ -121,6 +198,15 @@ public class ExecutionVisitor extends DepthFirstVisitor {
     
     
     @Override
+    public void visitOperatorCall(OperatorCall call) throws ASTTraversalException {
+        this.beforeOperatorCall(call);
+        this.visitCall(call);
+        this.afterOperatorCall(call);
+    }
+    
+    
+    
+    @Override
     public void visitLambdaCall(LambdaCall call) throws ASTTraversalException {
         this.beforeLambdaCall(call);
         
@@ -129,15 +215,16 @@ public class ExecutionVisitor extends DepthFirstVisitor {
         
         final FunctionLiteral func = (FunctionLiteral) this.stack.pop();
         
-        // declare the lambda function in a temporary namespace, then call it like a
-        // normal function and return to previous namespace
-        this.enter();
+        // create fake declaration
+        final Declaration vd = new VarDeclaration(func.getPosition(), 
+                getLambdaId(func.getPosition()), func);
         
-        this.nspace.declareFunction(func.getFunction());
+        final ResolvableIdentifier fakeId = new ResolvableIdentifier(vd.getName());
+        fakeId.setDeclaration(vd);
+        
         final Call lambdaCall = new Call(call.getPosition(), 
-                func.getFunction().getName(), call.getParameters());
+                fakeId, call.getParameters());
         lambdaCall.visit(this);
-        this.leave();
         
         this.afterLambdaCall(call);
     }
@@ -148,6 +235,10 @@ public class ExecutionVisitor extends DepthFirstVisitor {
     public void visitCall(Call call) throws ASTTraversalException {
         this.beforeCall(call);
         
+        for (final Expression exp : call.getParameters()) {
+            exp.visit(this);
+        }
+        
         final VarDeclaration vd = 
             (VarDeclaration) call.getIdentifier().getDeclaration();
         
@@ -157,7 +248,9 @@ public class ExecutionVisitor extends DepthFirstVisitor {
                 new VarDeclaration(p.getPosition(), p.getName(), p.getActual());
             this.nspace.declare(local);
         }
-        vd.getExpression().visit(this);
+
+        final FunctionLiteral func = (FunctionLiteral) vd.getExpression();
+        func.getExpression().visit(this);
         this.leave();
         
         this.afterCall(call);

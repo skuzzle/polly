@@ -42,4 +42,11 @@ public class NumberLiteral extends Literal {
         }
         return super.compareTo(o);
     };
+    
+    
+    
+    @Override
+    public String toString() {
+        return Double.toString(this.value);
+    };
 }

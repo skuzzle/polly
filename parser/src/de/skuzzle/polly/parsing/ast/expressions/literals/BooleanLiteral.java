@@ -34,4 +34,11 @@ public class BooleanLiteral extends Literal {
     public String format(LiteralFormatter formatter) {
         return null;
     }
+    
+    
+    
+    @Override
+    public String toString() {
+        return Boolean.toString(this.value);
+    }
 }
