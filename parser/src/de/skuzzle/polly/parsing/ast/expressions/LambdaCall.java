@@ -13,7 +13,7 @@ public class LambdaCall extends Call {
     private FunctionLiteral lambda;
     
     
-    protected LambdaCall(Position position, FunctionLiteral lambda, 
+    public LambdaCall(Position position, FunctionLiteral lambda, 
             Collection<Expression> parameters) {
         super(position, parameters);
         this.lambda = lambda;

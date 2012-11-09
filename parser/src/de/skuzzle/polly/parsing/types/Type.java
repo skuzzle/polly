@@ -8,6 +8,7 @@ import java.util.Map;
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
 
 
@@ -106,11 +107,11 @@ public class Type implements Serializable {
     
     
     public static void typeError(Type found, Type expected, 
-            Position position) throws ParseException {
+            Position position) throws ASTTraversalException {
         
         String msg = "Inkompatible Typen: " + found + " und " + expected + 
                      ". Erwartet: " + expected;
-        throw new ParseException(msg, position);
+        throw new ASTTraversalException(position, msg);
     }
     
     

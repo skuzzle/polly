@@ -1,7 +1,6 @@
 package de.skuzzle.polly.parsing.ast.expressions;
 
 import de.skuzzle.polly.parsing.Position;
-import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 
@@ -13,7 +12,6 @@ import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 public class Identifier extends Expression {
 
     private final String id;
-    private Declaration decl;
     
     
     
@@ -38,29 +36,7 @@ public class Identifier extends Expression {
     public String getId() {
         return this.id;
     }
-    
-    
-    
-    /**
-     * Sets the declaration of this identifier.
-     * 
-     * @param decl The declaration.
-     */
-    public void setDeclaration(Declaration decl) {
-        this.decl = decl;
-    }
-    
-    
-    
-    
-    /**
-     * Gets the declaration of this identifier.
-     * 
-     * @return The declaration.
-     */
-    public Declaration getDeclaration() {
-        return this.decl;
-    }
+
 
 
 

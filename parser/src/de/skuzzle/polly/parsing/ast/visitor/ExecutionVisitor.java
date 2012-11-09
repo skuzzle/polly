@@ -5,13 +5,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 import de.skuzzle.polly.parsing.Position;
-import de.skuzzle.polly.parsing.ast.declarations.FunctionDeclaration;
+import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
+import de.skuzzle.polly.parsing.ast.declarations.ResolvedParameter;
 import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
-import de.skuzzle.polly.parsing.ast.expressions.AssignmentExpression;
-import de.skuzzle.polly.parsing.ast.expressions.HardcodedExpression;
+import de.skuzzle.polly.parsing.ast.expressions.Assignment;
+import de.skuzzle.polly.parsing.ast.expressions.Hardcoded;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
 import de.skuzzle.polly.parsing.ast.expressions.LambdaCall;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
@@ -98,7 +99,7 @@ public class ExecutionVisitor extends DepthFirstVisitor {
     
     
     @Override
-    public void visitHardCoded(HardcodedExpression hc) throws ASTTraversalException {
+    public void visitHardCoded(Hardcoded hc) throws ASTTraversalException {
         this.beforeHardCoded(hc);
         hc.execute(this.stack, this.nspace, this);
         this.afterHardCoded(hc);
@@ -107,24 +108,12 @@ public class ExecutionVisitor extends DepthFirstVisitor {
     
     
     @Override
-    public void visitAssignment(AssignmentExpression assign) 
+    public void visitAssignment(Assignment assign) 
             throws ASTTraversalException {
         this.beforeAssignment(assign);
         
-        if (assign.getDeclaration() instanceof FunctionDeclaration) {
-            final FunctionDeclaration funDecl = 
-                    (FunctionDeclaration) assign.getDeclaration();
-            this.nspace.declareFunctionOverride(funDecl);
-            
-            // result is a FunctionLiteral for the declared function
-            final FunctionLiteral result = new FunctionLiteral(
-                assign.getExpression().getPosition(), funDecl);
-            result.visit(this);
-        } else {
-            final VarDeclaration varDecl = (VarDeclaration) assign.getDeclaration();
-            this.nspace.declareVarOverride(varDecl);
-            varDecl.getExpression().visit(this);
-        }
+        // result of assignment is the result of the assigned expression
+        assign.getExpression().visit(this);
         
         this.afterAssignment(assign);
     }
@@ -159,35 +148,17 @@ public class ExecutionVisitor extends DepthFirstVisitor {
     public void visitCall(Call call) throws ASTTraversalException {
         this.beforeCall(call);
         
-        // first, reresolve declaration
-        final FunctionDeclaration funDecl = this.nspace.tryResolveFunction(
-            call.getIdentifier(), call.getIdentifier().getDeclaration().getType());
+        final VarDeclaration vd = 
+            (VarDeclaration) call.getIdentifier().getDeclaration();
         
-        if (funDecl.getExpression() instanceof HardcodedExpression) {
-            // call of hardcoded expression. those need the parameters on the stack.
-            for (final Expression actual : call.getParameters()) {
-                actual.visit(this);
-            }
-            // now execute
-            funDecl.getExpression().visit(this);
-        } else {
-            // normal function call
-            
-            // create local namespace and declare all actual parameters in it
-            this.enter();
-            for(int i = 0; i < call.getParameters().size(); ++i) {
-                final Expression actual = call.getParameters().get(i);
-                final Parameter formal = funDecl.getFormalParameters().get(i);
-                
-                final VarDeclaration temp = new VarDeclaration(
-                        actual.getPosition(), formal.getName(), actual);
-                this.nspace.declareVarOverride(temp);
-            }
-            
-            // execute the expression and leave local namespace afterwards
-            funDecl.getExpression().visit(this);
-            this.leave();
+        this.enter();
+        for (final ResolvedParameter p : call.getResolvedParameters()) {
+            final VarDeclaration local = 
+                new VarDeclaration(p.getPosition(), p.getName(), p.getActual());
+            this.nspace.declare(local);
         }
+        vd.getExpression().visit(this);
+        this.leave();
         
         this.afterCall(call);
     }
@@ -198,10 +169,9 @@ public class ExecutionVisitor extends DepthFirstVisitor {
     public void visitVarAccess(VarAccess access) throws ASTTraversalException {
         this.beforeVarAccess(access);
         
-        final VarDeclaration varDecl = this.nspace.tryResolveVar(
-            access.getIdentifier());
-        
-        varDecl.getExpression().visit(this);
+        final VarDeclaration vd = 
+                (VarDeclaration) access.getIdentifier().getDeclaration();
+        vd.getExpression().visit(this);
         
         this.afterVarAccess(access);
     }

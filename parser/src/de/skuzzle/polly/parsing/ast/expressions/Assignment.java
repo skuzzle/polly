@@ -10,7 +10,7 @@ import de.skuzzle.polly.parsing.ast.visitor.Visitor;
  * 
  * @author Simon Taddiken
  */
-public class AssignmentExpression extends Expression {
+public class Assignment extends Expression {
 
     
     private final Expression expression;
@@ -18,7 +18,7 @@ public class AssignmentExpression extends Expression {
     
     
     
-    public AssignmentExpression(Position position, Expression expression, 
+    public Assignment(Position position, Expression expression, 
             Declaration declaration) {
         super(position);
         this.expression = expression;

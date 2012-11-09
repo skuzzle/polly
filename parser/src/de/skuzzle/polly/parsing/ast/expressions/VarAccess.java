@@ -7,17 +7,17 @@ import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 
 public class VarAccess extends Expression {
 
-    private final Identifier identifier;
+    private final ResolvableIdentifier identifier;
     
     
-    public VarAccess(Position position, Identifier identifier) {
+    public VarAccess(Position position, ResolvableIdentifier identifier) {
         super(position);
         this.identifier = identifier;
     }
     
     
     
-    public Identifier getIdentifier() {
+    public ResolvableIdentifier getIdentifier() {
         return this.identifier;
     }
 

@@ -5,9 +5,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.sun.org.apache.xml.internal.utils.NameSpace;
+
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
+import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.parsing.types.FunctionType;
 import de.skuzzle.polly.parsing.types.Type;
 
 
@@ -74,8 +76,7 @@ public class Namespace {
     
     
 
-    private final Collection<FunctionDeclaration> functions;
-    private final Map<Identifier, VarDeclaration> vars;
+    private final Collection<Declaration> decls;
     private final Namespace parent;
     private final String name;
     
@@ -98,11 +99,44 @@ public class Namespace {
      * @param name Name of the namespace.
      * @param parent Parent namespace.
      */
-    private Namespace(String name, Namespace parent) {
+    public Namespace(String name, Namespace parent) {
         this.name = name;
         this.parent = parent;
-        this.functions = new ArrayList<FunctionDeclaration>();
-        this.vars = new HashMap<Identifier, VarDeclaration>();
+        this.decls = new ArrayList<Declaration>();
+    }
+    
+    
+    
+    /**
+     * Creates a new Namespace that contains the same declarations as this one. Each
+     * parent namespace is copied as well. That means any changes made to the derived 
+     * namespace are <b>not</b> reflected to the original space. This excludes 
+     * modifications made to the stored declarations, as they are the same!
+     * 
+     * @return A new {@link Namespace}.
+     */
+    public Namespace derive() {
+        if (this.parent == null) {
+            return null;
+        }
+        final Namespace result = new Namespace(this.name, this.parent.derive());
+        result.decls.addAll(this.decls);
+        return result;
+    }
+    
+    
+    
+    /**
+     * Creates a new Namespace which contains the same declarations as this one. The
+     * new namespace will have the given namespace as parent.
+     * 
+     * @param parent The parent namespace for the new namespace.
+     * @return A new {@link NameSpace}.
+     */
+    public Namespace derive(Namespace parent) {
+        final Namespace result = new Namespace(this.name, parent);
+        result.decls.addAll(this.decls);
+        return result;
     }
     
     
@@ -128,42 +162,26 @@ public class Namespace {
     public Namespace getParent() {
         return this.parent;
     }
-    
-    
-    
-    /**
-     * Declares a new variable in this namespace, overriding any existing var with the
-     * same name. If the variable is to be declared public, it will be declared in 
-     * the gloab namespace instead of this namespace.
-     * 
-     * @param decl VarDeclaration to add.
-     */
-    public void declareVarOverride(VarDeclaration decl) {
-        if (decl.isGlobal() && this != GLOBAL) {
-            GLOBAL.vars.put(decl.getName(), decl);
-        } else {
-            this.vars.put(decl.getName(), decl);
-        }
-    }
-    
+
     
     
     /**
-     * Declares a new function in this namespace.
+     * Declares a new variable in this namespace.
      * 
      * @param decl The function to declare.
      * @throws ASTTraversalException If a function with the same name and signature
      *          already exists in this namespace.
      */
-    public void declareFunction(FunctionDeclaration decl) throws ASTTraversalException {
-        if (this.tryResolveFunction(decl.getName(), decl.getType()) != null) {
+    public void declare(Declaration decl) throws ASTTraversalException {
+        final ResolvableIdentifier ri = new ResolvableIdentifier(decl.getName());
+        if (this.tryResolve(ri, decl.getType()) != null) {
             throw new ASTTraversalException(decl.getPosition(), 
                 "Doppelte Deklaration von " + decl.getName());
         }
         if (decl.isGlobal()) {
-            GLOBAL.functions.add(decl);
+            GLOBAL.decls.add(decl);
         } else {
-            this.functions.add(decl);
+            this.decls.add(decl);
         }
     }
     
@@ -175,36 +193,34 @@ public class Namespace {
      * 
      * @param decl The function to declare.
      */
-    public void declareFunctionOverride(FunctionDeclaration decl) {
+    public void declareOverride(Declaration decl) {
         final Namespace space = decl.isGlobal() ? GLOBAL : this;
-        final FunctionDeclaration check = space.tryResolveFunction(
-            decl.getName(), decl.getType());
+        final ResolvableIdentifier ri = new ResolvableIdentifier(decl.getName());
+        final Declaration check = space.tryResolve(ri, decl.getType());
         if (check != null) {
-            space.functions.remove(check);
+            space.decls.remove(check);
         }
-        space.functions.add(decl);
+        space.decls.add(decl);
     }
     
     
     
     /**
-     * <p>Tries to resolve a function declaration with the given name and signature. If 
-     * none was found, <code>null</code> is returned.</p>
+     * <p>Tries to resolve a declaration with the given name and type. If 
+     * none was found, <code>null</code> is returned. This will return the first
+     * matching declaration in this or any of the parent namespaces.</p>
      * 
      * <p>If a matching declaration was found, it will, before being returned, stored
      * in the given identifiers declaration attribute.</p>
      * 
-     * @param name The name of the function to resolve.
-     * @param signature The signature of the function to resolve.
+     * @param name The name of the variable to resolve.
+     * @param signature The signature of the variable to resolve. Use {@link Type#ANY} 
+     *          if the signature should be ignored.
      * @return The resolved declaration or <code>null</code> if non was found.
      */
-    public FunctionDeclaration tryResolveFunction(Identifier name, Type signature) {
-        if (!(signature instanceof FunctionType)) {
-            return null;
-        }
-        
+    public Declaration tryResolve(ResolvableIdentifier name, Type signature) {
         for(Namespace space = this; space != null; space = space.parent) {
-            for (final FunctionDeclaration decl : space.functions) {
+            for (final Declaration decl : space.decls) {
                 
                 if (decl.getName().equals(name) && decl.getType().check(signature)) {
                     name.setDeclaration(decl);
@@ -218,70 +234,28 @@ public class Namespace {
     
     
     /**
-     * <p>Tries to resolve a function declaration with the given name and signature. If 
-     * non was found, an {@link ASTTraversalException} exception will be thrown.</p> 
-     * 
-     * <p>If a matching declaration was found, it will, before being returned, stored
-     * in the given identifiers declaration attribute.</p>
+     * Tries to resolve a declaration, disregarding the type of the declaration. This
+     * will resolve the first matching declaration in this or any parent namespace. This 
+     * method is equivalent to calling <code>tryResolve(name, Type.ANY)</code>.
      * 
      * @param name The name of the function to resolve.
-     * @param signature The signature of the function to resolve.
-     * @return The resolved declaration.
-     * @throws ASTTraversalException If no function was found.
+     * @return The resolved declaration or <code>null</code> if non was found.
+     * @see #tryResolve(ResolvableIdentifier, Type)
      */
-    public FunctionDeclaration resolveFunction(Identifier name, Type signature) 
+    public Declaration tryResolve(ResolvableIdentifier name) {
+        return this.tryResolve(name, Type.ANY);
+    }
+    
+    
+    
+    public VarDeclaration resolveVar(ResolvableIdentifier name, Type signature) 
             throws ASTTraversalException {
-        final FunctionDeclaration result = this.tryResolveFunction(name, signature);
-        if (result == null) {
-            throw new ASTTraversalException(name.getPosition(), 
-                "Unbekannte Funktion: " + name.getId());
+        final Declaration check = this.tryResolve(name, signature);
+        if (check instanceof VarDeclaration) {
+            return (VarDeclaration) check;
         }
-        return result;
-    }
-    
-    
-    
-    /**
-     * <p>Tries to resolve a variable declaration with the given name. If none was found,
-     * an {@link ASTTraversalException} is thrown.
-     * 
-     * <p>If a declaration was found, it will be stored in the identifiers declaration
-     * attribute.</p>
-     * 
-     * @param name The name to resolve.
-     * @return The resolved declaration or <code>null</code> if none was found.
-     * @throws ASTTraversalException If no variable declaration with that name was found.
-     */
-    public VarDeclaration resolveVar(Identifier name) throws ASTTraversalException {
-        final VarDeclaration result = this.resolveVar(name);
-        if (result == null) {
-            throw new ASTTraversalException(
-                name.getPosition(), "Unbekannte Variable: " + name.getId());
-        }
-        return result;
-    }
-    
-    
-    
-    /**
-     * <p>Tries to resolve a variable declaration with the given name. If none was found,
-     * <code>null</code> is returned.</p>
-     * 
-     * <p>If a declaration was found, it will be stored in the identifiers declaration
-     * attribute.</p>
-     * 
-     * @param name The name to resolve.
-     * @return The resolved declaration or <code>null</code> if none was found.
-     */
-    public VarDeclaration tryResolveVar(Identifier name) {
-        for(Namespace space = this; space != null; space = space.parent) {
-            final VarDeclaration vd = space.vars.get(name);
-            if (vd != null) {
-                name.setDeclaration(vd);
-                return vd;
-            }
-        }
-        return null;
+        throw new ASTTraversalException(name.getPosition(), name.getId() + 
+            " ist keine Variable");
     }
     
     

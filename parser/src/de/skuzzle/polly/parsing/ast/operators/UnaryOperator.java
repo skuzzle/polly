@@ -18,67 +18,42 @@ import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.parsing.types.Type;
 
 
-/**
- * Superclass for binary operators. The {@link #createDeclaration()} method is 
- * pre-implemented to return a matching declaration for this operator.
- * 
- * @author Simon Taddiken
- * @param <L> Literal type of the left operand of this operator.
- * @param <R> Literal type of the right operand of this operator.
- */
-public abstract class BinaryOperator<L extends Literal, R extends Literal> 
-        extends Operator {
+public abstract class UnaryOperator<O extends Literal> extends Operator {
 
-    private final static String LEFT_PARAM_NAME = "$left";
-    private final static String RIGHT_PARAM_NAME = "$right";
-    
-    private final Type left;
-    private final Type right;
+    protected final static String PARAM_NAME = "$param";
+    private final Type operandType;
     
     
     
-    /**
-     * Creates a new binary operator.
-     * 
-     * @param id The type of the operator.
-     * @param resultType The type of the value that this operator returns.
-     * @param left Type of the left operand.
-     * @param right Type of the right operand.
-     */
-    public BinaryOperator(OpType id, Type resultType, Type left, Type right) {
-        super(id, resultType);
-        this.left = left;
-        this.right = right;
+    public UnaryOperator(OpType op, Type resultType, Type operandType) {
+        super(op, resultType);
+        this.operandType = operandType;
     }
-    
+
     
     
     @Override
     public Declaration createDeclaration() {
         Collection<Parameter> p = Arrays.asList(new Parameter[] {
-            new Parameter(Position.EMPTY, this.left, 
-                new ResolvableIdentifier(Position.EMPTY, LEFT_PARAM_NAME)),
-            new Parameter(Position.EMPTY, this.right, 
-                new ResolvableIdentifier(Position.EMPTY, RIGHT_PARAM_NAME))});
+            new Parameter(Position.EMPTY, this.operandType, 
+                new ResolvableIdentifier(Position.EMPTY, PARAM_NAME))});
         
         final FunctionLiteral func = new FunctionLiteral(Position.EMPTY, p, this);
         final Identifier fakeId = new Identifier(Position.EMPTY, this.getOp().getId());
         return new VarDeclaration(func.getPosition(), fakeId, func);
     }
-    
+
     
     
     @Override
     @SuppressWarnings("unchecked")
-    public void execute(LinkedList<Literal> stack, Namespace ns, Visitor execVisitor) 
+    public void execute(LinkedList<Literal> stack, Namespace ns, Visitor execVisitor)
             throws ASTTraversalException {
-        final R right = (R) stack.pop();
-        final L left = (L) stack.pop();
+        final O operand = (O) stack.pop();
         
-        this.exec(stack, ns, left, right, 
-            new Position(left.getPosition(), right.getPosition()));
+        this.exec(stack, ns, operand, operand.getPosition());
     }
-    
+
     
     
     /**
@@ -86,11 +61,10 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
      * 
      * @param stack The current execution stack.
      * @param ns The current execution namespace.
-     * @param left Left operand of this operator.
-     * @param right Right operand of this operator.
+     * @param operand Operand literal of this operator.
      * @param resultPos Position that can be used as position for the result literal.
      * @throws ASTTraversalException If executing fails for any reason.
      */
     protected abstract void exec(LinkedList<Literal> stack, Namespace ns, 
-        L left, R right, Position resultPos) throws ASTTraversalException;
+        O operand, Position resultPos) throws ASTTraversalException;
 }

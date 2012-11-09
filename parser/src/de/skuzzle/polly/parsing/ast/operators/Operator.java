@@ -1,8 +1,8 @@
 package de.skuzzle.polly.parsing.ast.operators;
 
 
-import de.skuzzle.polly.parsing.ast.declarations.FunctionDeclaration;
-import de.skuzzle.polly.parsing.ast.expressions.HardcodedExpression;
+import de.skuzzle.polly.parsing.ast.declarations.Declaration;
+import de.skuzzle.polly.parsing.ast.expressions.Hardcoded;
 import de.skuzzle.polly.parsing.types.Type;
 
 /**
@@ -13,7 +13,7 @@ import de.skuzzle.polly.parsing.types.Type;
  * 
  * @author Simon Taddiken
  */
-public abstract class Operator extends HardcodedExpression {
+public abstract class Operator extends Hardcoded {
     
     /**
      * All possible operator types and their string representation.
@@ -42,19 +42,19 @@ public abstract class Operator extends HardcodedExpression {
 
     
     
-    private final OpType id;
+    private final OpType op;
     
     
     
     /**
      * Creates a new operator.
      * 
-     * @param id The operator type
+     * @param op The operator type
      * @param type The type of the value that this operator returns.
      */
-    public Operator(OpType id, Type type) {
+    public Operator(OpType op, Type type) {
         super(type);
-        this.id = id;
+        this.op = op;
     }
     
     
@@ -64,16 +64,16 @@ public abstract class Operator extends HardcodedExpression {
      * 
      * @return The identifier.
      */
-    public OpType getId() {
-        return this.id;
+    public OpType getOp() {
+        return this.op;
     }
 
     
     
     /**
-     * Creates a proper function declaration for this parameter.
+     * Creates a proper declaration for this operator.
      * 
-     * @return A functionDeclaration.
+     * @return A declaration.
      */
-    public abstract FunctionDeclaration createDeclaration();
+    public abstract Declaration createDeclaration();
 }

@@ -1,16 +1,19 @@
 package de.skuzzle.polly.parsing.ast.visitor;
 
 import de.skuzzle.polly.parsing.ast.Root;
-import de.skuzzle.polly.parsing.ast.declarations.FunctionDeclaration;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
 import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
-import de.skuzzle.polly.parsing.ast.expressions.AssignmentExpression;
-import de.skuzzle.polly.parsing.ast.expressions.HardcodedExpression;
+import de.skuzzle.polly.parsing.ast.expressions.Assignment;
+import de.skuzzle.polly.parsing.ast.expressions.Hardcoded;
 import de.skuzzle.polly.parsing.ast.expressions.LambdaCall;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
+import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
+import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
+import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
+import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 
 /**
@@ -93,9 +96,13 @@ public interface Visitor {
      */
     public void visitIdentifier(Identifier identifier) throws ASTTraversalException;
     
-    public void beforeAssignment(AssignmentExpression assign) throws ASTTraversalException;
-    public void afterAssignment(AssignmentExpression assign) throws ASTTraversalException;
-    public void visitAssignment(AssignmentExpression assign) throws ASTTraversalException;
+    public void beforeResolvable(ResolvableIdentifier id) throws ASTTraversalException;
+    public void afterResolvable(ResolvableIdentifier id) throws ASTTraversalException;
+    public void visitResolvable(ResolvableIdentifier id) throws ASTTraversalException;
+    
+    public void beforeAssignment(Assignment assign) throws ASTTraversalException;
+    public void afterAssignment(Assignment assign) throws ASTTraversalException;
+    public void visitAssignment(Assignment assign) throws ASTTraversalException;
     
     public void beforeParameter(Parameter param) throws ASTTraversalException;
     public void afterParameter(Parameter param) throws ASTTraversalException;
@@ -105,21 +112,21 @@ public interface Visitor {
     public void afterVarDecl(VarDeclaration decl) throws ASTTraversalException;
     public void visitVarDecl(VarDeclaration decl) throws ASTTraversalException;
     
-    public void beforeFuncDecl(FunctionDeclaration decl) throws ASTTraversalException;
-    public void afterFuncDecl(FunctionDeclaration decl) throws ASTTraversalException;
-    public void visitFuncDecl(FunctionDeclaration decl) throws ASTTraversalException;
-    
     public void beforeCall(Call call) throws ASTTraversalException;
     public void afterCall(Call call) throws ASTTraversalException;
     public void visitCall(Call call) throws ASTTraversalException;
+    
+    public void beforeOperatorCall(OperatorCall call) throws ASTTraversalException;
+    public void afterOperatorCall(OperatorCall call) throws ASTTraversalException;
+    public void visitOperatorCall(OperatorCall call) throws ASTTraversalException;
     
     public void beforeLambdaCall(LambdaCall call) throws ASTTraversalException;
     public void afterLambdaCall(LambdaCall call) throws ASTTraversalException;
     public void visitLambdaCall(LambdaCall call) throws ASTTraversalException;
     
-    public void beforeHardCoded(HardcodedExpression hc) throws ASTTraversalException;
-    public void afterHardCoded(HardcodedExpression hc) throws ASTTraversalException;
-    public void visitHardCoded(HardcodedExpression hc) throws ASTTraversalException;
+    public void beforeHardCoded(Hardcoded hc) throws ASTTraversalException;
+    public void afterHardCoded(Hardcoded hc) throws ASTTraversalException;
+    public void visitHardCoded(Hardcoded hc) throws ASTTraversalException;
     
     public void beforeAccess(NamespaceAccess access) throws ASTTraversalException;
     public void afterAccess(NamespaceAccess access) throws ASTTraversalException;
@@ -128,4 +135,12 @@ public interface Visitor {
     public void beforeVarAccess(VarAccess access) throws ASTTraversalException;
     public void afterVarAccess(VarAccess access) throws ASTTraversalException;
     public void visitVarAccess(VarAccess access) throws ASTTraversalException;
+    
+    public void beforeFunctionLiteral(FunctionLiteral func) throws ASTTraversalException;
+    public void afterFunctionLiteral(FunctionLiteral func) throws ASTTraversalException;
+    public void visitFunctionLiteral(FunctionLiteral func) throws ASTTraversalException;
+    
+    public void beforeListLiteral(ListLiteral list) throws ASTTraversalException;
+    public void afterListLiteral(ListLiteral list) throws ASTTraversalException;
+    public void visitListLiteral(ListLiteral list) throws ASTTraversalException;
 }

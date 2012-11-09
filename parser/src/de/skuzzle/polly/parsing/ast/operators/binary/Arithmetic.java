@@ -27,7 +27,7 @@ public class Arithmetic extends BinaryOperator<NumberLiteral, NumberLiteral> {
     protected void exec(LinkedList<Literal> stack, Namespace ns,
             NumberLiteral left, NumberLiteral right, Position resultPos) {
         
-        switch (this.getId()) {
+        switch (this.getOp()) {
         case ADD: 
             stack.push(new NumberLiteral(resultPos, left.getValue() + right.getValue()));
             break;

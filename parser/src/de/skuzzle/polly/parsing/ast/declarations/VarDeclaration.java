@@ -14,7 +14,8 @@ public class VarDeclaration extends Declaration {
     
     
     
-    public VarDeclaration(Position position, Identifier name, Expression expression) {
+    public VarDeclaration(Position position, Identifier name, 
+            Expression expression) {
         super(position, name);
         this.expression = expression;
     }
@@ -25,6 +26,7 @@ public class VarDeclaration extends Declaration {
     public Type getType() {
         return this.expression.getType();
     }
+    
     
     
     public Expression getExpression() {
