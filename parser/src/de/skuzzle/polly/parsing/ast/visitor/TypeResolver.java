@@ -231,6 +231,7 @@ public class TypeResolver extends DepthFirstVisitor {
         call.setResolvedParameters(resolved);
         // type of the call is the type of the called expression
         call.setType(func.getExpression().getType());
+        func.setReturnType(func.getExpression().getType());
         
         this.afterLambdaCall(call);
     }

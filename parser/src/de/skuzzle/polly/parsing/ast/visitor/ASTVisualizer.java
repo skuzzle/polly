@@ -153,7 +153,7 @@ public class ASTVisualizer extends DepthFirstVisitor {
 
     @Override
     public void beforeLiteral(Literal literal) throws ASTTraversalException {
-        this.printNode("", literal.toString(), literal);
+        this.printNode(literal.toString(), "", literal);
     }
     
     

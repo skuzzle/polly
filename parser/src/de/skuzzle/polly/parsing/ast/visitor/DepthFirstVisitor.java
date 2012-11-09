@@ -173,7 +173,6 @@ public class DepthFirstVisitor implements Visitor {
     @Override
     public void visitLambdaCall(LambdaCall call) throws ASTTraversalException {
         this.beforeLambdaCall(call);
-        call.getIdentifier().visit(this);
         for (final Expression exp : call.getParameters()) {
             exp.visit(this);
         }

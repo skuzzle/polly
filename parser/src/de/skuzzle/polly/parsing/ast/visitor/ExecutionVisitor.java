@@ -2,7 +2,6 @@ package de.skuzzle.polly.parsing.ast.visitor;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -26,7 +25,6 @@ import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
-import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.ast.operators.Operator;
 import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
 import de.skuzzle.polly.parsing.ast.operators.binary.Arithmetic;
@@ -35,41 +33,15 @@ import de.skuzzle.polly.parsing.ast.operators.binary.Arithmetic;
 public class ExecutionVisitor extends DepthFirstVisitor {
     
     public static void main(String[] args) throws ASTTraversalException, IOException {
-        final VarDeclaration x = new VarDeclaration(Position.EMPTY, new Identifier(Position.EMPTY, "x"), new NumberLiteral(Position.EMPTY, 2.0));
-        Namespace.forName("me").declare(x);
-        
-        final VarAccess accessX = new VarAccess(Position.EMPTY, new ResolvableIdentifier(Position.EMPTY, "x"));
-        final NamespaceAccess nameAccess = new NamespaceAccess(Position.EMPTY, new Identifier(Position.EMPTY, "me"), accessX);
-        
-        final NumberLiteral left = new NumberLiteral(Position.EMPTY, 5.0);
-        final Expression right = nameAccess;
-        
-        final Collection<Expression> params = Arrays.asList(new Expression[] {left, right});
-        final OperatorCall call = new OperatorCall(Position.EMPTY, OpType.ADD, params);
-        
         final Operator add = new Arithmetic(OpType.ADD);
         final Operator sub = new Arithmetic(OpType.SUB);
+        final Operator mul = new Arithmetic(OpType.MUL);
+        final Operator div = new Arithmetic(OpType.DIV);
         Namespace.forName("me").declare(add.createDeclaration());
         Namespace.forName("me").declare(sub.createDeclaration());
+        Namespace.forName("me").declare(mul.createDeclaration());
+        Namespace.forName("me").declare(div.createDeclaration());
         
-        final VarDeclaration vd = new VarDeclaration(Position.EMPTY, new Identifier(Position.EMPTY, "y"), call);
-        final Assignment ass = new Assignment(Position.EMPTY, call, vd);
-        
-        final VarAccess accessY = new VarAccess(Position.EMPTY, new ResolvableIdentifier(Position.EMPTY, "y"));
-        
-        
-        final Collection<Expression> params2 = Arrays.asList(new Expression[] {ass, accessY});
-        final OperatorCall call2 = new OperatorCall(Position.EMPTY, OpType.ADD, params2);
-        
-        final TypeResolver tr = new TypeResolver("me");
-        call2.visit(tr);
-        
-        final ASTVisualizer av = new ASTVisualizer();
-        av.toFile("test.dot", call2);
-        
-        final ExecutionVisitor ec = new ExecutionVisitor("me");
-        call2.visit(ec);
-        System.out.println(ec.stack.pop());
     }
     
     
@@ -224,6 +196,7 @@ public class ExecutionVisitor extends DepthFirstVisitor {
         
         final Call lambdaCall = new Call(call.getPosition(), 
                 fakeId, call.getParameters());
+        lambdaCall.setResolvedParameters(call.getResolvedParameters());
         lambdaCall.visit(this);
         
         this.afterLambdaCall(call);

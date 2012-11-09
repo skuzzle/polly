@@ -80,6 +80,17 @@ public class FunctionLiteral extends Literal {
     
     
     
+    /**
+     * Updates return type information for this function.
+     * 
+     * @param type New return type.
+     */
+    public void setReturnType(Type type) {
+        this.returnType = type;
+    }
+    
+    
+    
     @Override
     public Literal castTo(Type type) throws ASTTraversalException {
         throw new ASTTraversalException(this.getPosition(), "not castable");
