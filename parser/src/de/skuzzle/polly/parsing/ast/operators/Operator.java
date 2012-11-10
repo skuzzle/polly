@@ -21,6 +21,12 @@ public abstract class Operator extends Hardcoded {
      * @author Simon Taddiken
      */
     public static enum OpType {
+        // casting
+        STRING(Type.STRING.getTypeName().getId()),
+        NUMBER(Type.NUMBER.getTypeName().getId()),
+        DATE(Type.DATE.getTypeName().getId()),
+        TIMESPAN(Type.TIMESPAN.getTypeName().getId()),
+        
         ADD("+"),
         SUB("-"),
         MUL("*"),

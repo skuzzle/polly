@@ -34,7 +34,7 @@ public class Parameter extends Expression {
      * @param name Name of the parameter.
      * @param type Type of the parameter.
      */
-    protected Parameter(Position position, ResolvableIdentifier name, Type type) {
+    public Parameter(Position position, ResolvableIdentifier name, Type type) {
         super(position, type);
         this.name = name;
         this.typeName = new ResolvableIdentifier(type.getTypeName());

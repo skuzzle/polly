@@ -14,11 +14,13 @@ import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.BooleanLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ChannelLiteral;
+import de.skuzzle.polly.parsing.ast.expressions.literals.DateLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.StringLiteral;
+import de.skuzzle.polly.parsing.ast.expressions.literals.TimespanLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.UserLiteral;
 import de.skuzzle.polly.parsing.types.Type;
 
@@ -115,10 +117,10 @@ public class PollyV91InputParser extends AbstractParser<InputScanner> {
      * <pre>
      * parameter -> id id             // simple parameter
      *            | id<id> id         // parameter with subtype (list)
-     *            | '\(' id (',' id+ ')' id   // function parameter
+     *            | '\(' id (',' id)+ ')' id   // function parameter
      * </pre>
-     * @return
-     * @throws ParseException
+     * @return The parsed parameter.
+     * @throws ParseException If parsing fails.
      */
     protected Parameter parseParameter() throws ParseException {
         final Token la = this.scanner.lookAhead();
@@ -132,6 +134,7 @@ public class PollyV91InputParser extends AbstractParser<InputScanner> {
             sig.add(returnType);
             
             while (this.scanner.match(TokenType.COMMA)) {
+                this.allowSingleWhiteSpace();
                 sig.add(new ResolvableIdentifier(this.expectIdentifier()));
             }
             this.expect(TokenType.CLOSEDBR);
@@ -142,14 +145,18 @@ public class PollyV91InputParser extends AbstractParser<InputScanner> {
         } else {
              final ResolvableIdentifier typeName = new ResolvableIdentifier(
                  this.expectIdentifier());
+             
              if (this.scanner.match(TokenType.LT)) {
+                 
                  final ResolvableIdentifier subType = new ResolvableIdentifier(
                      this.expectIdentifier());
                  this.scanner.match(TokenType.GT);
                  
                  final ResolvableIdentifier name = new ResolvableIdentifier(
                      this.expectIdentifier());
-                 return new ListParameter(this.scanner.spanFrom(la), subType, name);
+                 return new ListParameter(
+                     this.scanner.spanFrom(la), typeName, subType, name);
+                 
              } else {
                  final ResolvableIdentifier name = new ResolvableIdentifier(
                      this.expectIdentifier());
@@ -169,7 +176,7 @@ public class PollyV91InputParser extends AbstractParser<InputScanner> {
     
     protected Expression parseLiteral() throws ParseException {
         final Token la = this.scanner.lookAhead();
-        int start = 0;
+        Expression exp = null;
         
         switch(la.getType()) {
         case IDENTIFIER:
@@ -183,27 +190,43 @@ public class PollyV91InputParser extends AbstractParser<InputScanner> {
                     this.parseExpressionList(TokenType.CLOSEDBR));
                 
                 this.expect(TokenType.CLOSEDBR);
+                call.setPosition(this.scanner.spanFrom(la));
                 return call;
             } else {
                 return new VarAccess(la.getPosition(), id);
             }
             
+        case OPENBR:
+            this.scanner.consume();
+            
+            /*
+             * Now we can ignore whitespaces until the matching closing brace is 
+             * read.
+             */
+            this.enterExpression();
+            
+            exp = this.parseExpression();
+            this.expect(TokenType.CLOSEDBR);
+            exp.setPosition(this.scanner.spanFrom(la));
+            
+            this.leaveExpression();
+            return exp;
+            
         case LAMBDA:
-            start = this.scanner.getStreamIndex();
             this.scanner.consume();
             
             final Collection<Parameter> formal = this.parseParameters(
                 TokenType.SEMICOLON);
             this.expect(TokenType.SEMICOLON);
             
-            final Expression exp = this.parseExpression();
+            exp = this.parseExpression();
             
             this.expect(TokenType.CLOSEDBR);
+            exp.setPosition(this.scanner.spanFrom(la));
             
-            return new FunctionLiteral(this.scanner.spanFrom(start), formal, exp);
+            return new FunctionLiteral(this.scanner.spanFrom(la), formal, exp);
             
         case OPENCURLBR:
-            start = this.scanner.getStreamIndex();
             this.scanner.consume();
             
             final Collection<Expression> elements = this.parseExpressionList(
@@ -211,8 +234,12 @@ public class PollyV91InputParser extends AbstractParser<InputScanner> {
             
             this.expect(TokenType.CLOSEDCURLBR);
             
-            final ListLiteral list = new ListLiteral(this.scanner.spanFrom(start), 
+            final ListLiteral list = new ListLiteral(this.scanner.spanFrom(la), 
                 elements);
+            
+            this.expect(TokenType.CLOSEDCURLBR);
+            list.setPosition(this.scanner.spanFrom(la));
+            return list;
             
         case TRUE:
             this.scanner.consume();
@@ -236,7 +263,19 @@ public class PollyV91InputParser extends AbstractParser<InputScanner> {
         case NUMBER:
             this.scanner.consume();
             return new NumberLiteral(la.getPosition(), la.getFloatValue());
+            
+        case DATETIME:
+            this.scanner.consume();
+            return new DateLiteral(la.getPosition(), la.getDateValue());
+            
+        case TIMESPAN:
+            this.scanner.consume();
+            return new TimespanLiteral(la.getPosition(), (int)la.getLongValue());
+        default:
+            this.expect(TokenType.LITERAL);
         }
+        
+        return null;
     }
     
     

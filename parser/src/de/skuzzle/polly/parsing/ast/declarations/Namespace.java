@@ -27,6 +27,7 @@ public class Namespace {
         TYPES.declareOverride(new TypeDeclaration(Type.HELP.getTypeName(), Type.HELP));
         TYPES.declareOverride(new TypeDeclaration(Type.LIST.getTypeName(), Type.LIST));
         TYPES.declareOverride(new TypeDeclaration(Type.USER.getTypeName(), Type.USER));
+        TYPES.declareOverride(new TypeDeclaration(Type.NUMBER.getTypeName(), Type.NUMBER));
     }
     
     

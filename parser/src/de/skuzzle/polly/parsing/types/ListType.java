@@ -1,6 +1,6 @@
 package de.skuzzle.polly.parsing.types;
 
-import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
+import de.skuzzle.polly.parsing.ast.expressions.Identifier;
 
 
 public class ListType extends Type {
@@ -15,7 +15,7 @@ public class ListType extends Type {
     
 
     public ListType(Type primitive) {
-        super(new IdentifierLiteral("List(of " + primitive.toString() + ")"), false);
+        super(new Identifier("List(of " + primitive.toString() + ")"), false);
         this.subType = primitive;
     }
     

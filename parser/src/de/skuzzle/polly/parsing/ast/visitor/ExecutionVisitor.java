@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 import de.skuzzle.polly.parsing.Position;
@@ -15,7 +14,6 @@ import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Hardcoded;
-import de.skuzzle.polly.parsing.ast.expressions.Identifier;
 import de.skuzzle.polly.parsing.ast.expressions.LambdaCall;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
@@ -25,6 +23,7 @@ import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
+import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.ast.operators.Operator;
 import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
 import de.skuzzle.polly.parsing.ast.operators.binary.Arithmetic;
@@ -42,6 +41,21 @@ public class ExecutionVisitor extends DepthFirstVisitor {
         Namespace.forName("me").declare(mul.createDeclaration());
         Namespace.forName("me").declare(div.createDeclaration());
         
+        Expression left = new NumberLiteral(Position.EMPTY, 5.0);
+        Expression right = new NumberLiteral(Position.EMPTY, 2.0);
+        OperatorCall binary1 = OperatorCall.binary(Position.EMPTY, OpType.ADD, left, right);
+     
+        left = binary1;
+        right = new NumberLiteral(Position.EMPTY, 8.0);
+        OperatorCall binary2 = OperatorCall.binary(Position.EMPTY, OpType.MUL, left, right);
+        
+        TypeResolver tr = new TypeResolver("me");
+        binary2.visit(tr);
+        
+        ExecutionVisitor ev = new ExecutionVisitor("me");
+        binary2.visit(ev);
+        
+        System.out.println("Result: " + ev.stack.peek());
     }
     
     
@@ -194,17 +208,19 @@ public class ExecutionVisitor extends DepthFirstVisitor {
     public void visitCall(Call call) throws ASTTraversalException {
         this.beforeCall(call);
         
-        for (final Expression exp : call.getParameters()) {
-            exp.visit(this);
-        }
-        
         final VarDeclaration vd = 
             (VarDeclaration) call.getIdentifier().getDeclaration();
         
         this.enter();
         for (final ResolvedParameter p : call.getResolvedParameters()) {
+            // execute actual parameter
+            p.getActual().visit(this);
+            
+            // declare result as local variable for this call
+            final Expression actual = this.stack.pop();
+            
             final VarDeclaration local = 
-                new VarDeclaration(p.getPosition(), p.getName(), p.getActual());
+                new VarDeclaration(p.getPosition(), p.getName(), actual);
             this.nspace.declare(local);
         }
 

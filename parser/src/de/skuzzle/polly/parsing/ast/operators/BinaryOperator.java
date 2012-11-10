@@ -57,9 +57,11 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
     @Override
     public Declaration createDeclaration() {
         Collection<Parameter> p = Arrays.asList(new Parameter[] {
-            new Parameter(Position.EMPTY, new ResolvableIdentifier(Position.EMPTY, LEFT_PARAM_NAME), 
+            new Parameter(Position.EMPTY, 
+                new ResolvableIdentifier(Position.EMPTY, LEFT_PARAM_NAME), 
                 this.left),
-            new Parameter(Position.EMPTY, new ResolvableIdentifier(Position.EMPTY, RIGHT_PARAM_NAME), 
+            new Parameter(Position.EMPTY, 
+                new ResolvableIdentifier(Position.EMPTY, RIGHT_PARAM_NAME), 
                 this.right)});
         
         final FunctionLiteral func = new FunctionLiteral(Position.EMPTY, p, this);
@@ -73,14 +75,15 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
     
     @Override
     @SuppressWarnings("unchecked")
-    public final void execute(LinkedList<Literal> stack, Namespace ns, Visitor execVisitor) 
-            throws ASTTraversalException {
-        final R right = (R) stack.pop(); /*(R) ns.resolveVar(
+    public final void execute(LinkedList<Literal> stack, Namespace ns, 
+            Visitor execVisitor) throws ASTTraversalException {
+        
+        final R right = (R) ns.resolveVar(
             new ResolvableIdentifier(this.getPosition(), LEFT_PARAM_NAME), 
-            Type.ANY).getExpression();*/
-        final L left = (L) stack.pop(); /*(L) ns.resolveVar(
+            Type.ANY).getExpression();
+        final L left = (L) ns.resolveVar(
             new ResolvableIdentifier(this.getPosition(), RIGHT_PARAM_NAME), 
-            Type.ANY).getExpression();*/
+            Type.ANY).getExpression();
         
         this.exec(stack, ns, left, right, 
             new Position(left.getPosition(), right.getPosition()));
