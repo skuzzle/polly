@@ -15,6 +15,45 @@ import de.skuzzle.polly.parsing.types.Type;
 
 public class Namespace {
     
+    private final static Namespace TYPES = new Namespace("~types", null);
+    static {
+        TYPES.declareOverride(new TypeDeclaration(Type.ANY.getTypeName(), Type.ANY));
+        TYPES.declareOverride(new TypeDeclaration(Type.BOOLEAN.getTypeName(), Type.BOOLEAN));
+        TYPES.declareOverride(new TypeDeclaration(Type.CHANNEL.getTypeName(), Type.CHANNEL));
+        TYPES.declareOverride(new TypeDeclaration(Type.STRING.getTypeName(), Type.STRING));
+        TYPES.declareOverride(new TypeDeclaration(Type.COMMAND.getTypeName(), Type.COMMAND));
+        TYPES.declareOverride(new TypeDeclaration(Type.DATE.getTypeName(), Type.DATE));
+        TYPES.declareOverride(new TypeDeclaration(Type.TIMESPAN.getTypeName(), Type.TIMESPAN));
+        TYPES.declareOverride(new TypeDeclaration(Type.HELP.getTypeName(), Type.HELP));
+        TYPES.declareOverride(new TypeDeclaration(Type.LIST.getTypeName(), Type.LIST));
+        TYPES.declareOverride(new TypeDeclaration(Type.USER.getTypeName(), Type.USER));
+    }
+    
+    
+    
+    /**
+     * Resolves a type declaration and stores the {@link TypeDeclaration} instance
+     * in the {@link ResolvableIdentifier}'s declaration attribute.
+     * 
+     * @param name Name of the type to resolve. Refers to {@link Type#getTypeName()}.
+     * @return The resolved {@link TypeDeclaration}
+     * @throws ASTTraversalException If no such type exists.
+     */
+    public final static TypeDeclaration resolveType(ResolvableIdentifier name) 
+            throws ASTTraversalException {
+        final Declaration decl = TYPES.tryResolve(name);
+        if (decl == null) {
+            throw new ASTTraversalException(
+                name.getPosition(), "Unbekannter Typ: " + name.getId());
+        } else if (!(decl instanceof TypeDeclaration)) {
+            throw new IllegalStateException(
+                "Namespace 'TYPES' must only contain instances of TypeDeclaration.");
+        }
+        return (TypeDeclaration) decl;
+    }
+    
+    
+    
     private final static Namespace GLOBAL = new Namespace("~global", null);
     private final static Map<String, Namespace> ROOTS = new HashMap<String, Namespace>();
 

@@ -19,18 +19,6 @@ public class Call extends VarAccess {
     private List<ResolvedParameter> resolvedParameters;
     
     
-    
-    /**
-     * Constructor for sub classes.
-     * 
-     * @param position Position of the call within the source.
-     * @param parameters Actual parameters of function call.
-     */
-    protected Call(Position position, Collection<Expression> parameters) {
-        this(position, null, parameters);
-    }
-    
-    
 
     /**
      * Creates a new function call.

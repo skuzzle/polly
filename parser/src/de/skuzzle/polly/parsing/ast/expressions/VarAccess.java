@@ -12,6 +12,9 @@ public class VarAccess extends Expression {
     
     public VarAccess(Position position, ResolvableIdentifier identifier) {
         super(position);
+        if (identifier == null) {
+            throw new NullPointerException("identifier is null");
+        }
         this.identifier = identifier;
     }
     

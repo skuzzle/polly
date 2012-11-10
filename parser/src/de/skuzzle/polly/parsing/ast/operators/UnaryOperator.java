@@ -36,8 +36,8 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
     @Override
     public Declaration createDeclaration() {
         Collection<Parameter> p = Arrays.asList(new Parameter[] {
-            new Parameter(Position.EMPTY, this.operandType, 
-                new ResolvableIdentifier(Position.EMPTY, PARAM_NAME))});
+            new Parameter(Position.EMPTY, new ResolvableIdentifier(Position.EMPTY, PARAM_NAME), 
+                this.operandType)});
         
         final FunctionLiteral func = new FunctionLiteral(Position.EMPTY, p, this);
         func.setType(new FunctionType(this.getType(), Parameter.asType(p)));

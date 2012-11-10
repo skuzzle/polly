@@ -57,10 +57,10 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
     @Override
     public Declaration createDeclaration() {
         Collection<Parameter> p = Arrays.asList(new Parameter[] {
-            new Parameter(Position.EMPTY, this.left, 
-                new ResolvableIdentifier(Position.EMPTY, LEFT_PARAM_NAME)),
-            new Parameter(Position.EMPTY, this.right, 
-                new ResolvableIdentifier(Position.EMPTY, RIGHT_PARAM_NAME))});
+            new Parameter(Position.EMPTY, new ResolvableIdentifier(Position.EMPTY, LEFT_PARAM_NAME), 
+                this.left),
+            new Parameter(Position.EMPTY, new ResolvableIdentifier(Position.EMPTY, RIGHT_PARAM_NAME), 
+                this.right)});
         
         final FunctionLiteral func = new FunctionLiteral(Position.EMPTY, p, this);
         func.setType(new FunctionType(this.getType(), Parameter.asType(p)));

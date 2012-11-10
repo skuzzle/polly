@@ -45,20 +45,6 @@ public class ExecutionVisitor extends DepthFirstVisitor {
     }
     
     
-    
-    private final static AtomicInteger lambdaIds = new AtomicInteger();
-    
-    /**
-     * Creates a unique identifier used for Lambda-FunctionDeclarations.
-     * 
-     * @param pos Source location of the {@link FunctionLiteral}.
-     * @return Unique identifier.
-     */
-    public final static Identifier getLambdaId(Position pos) {
-        return new Identifier(pos, "$lmbd_" + lambdaIds.getAndIncrement());
-    }
-    
-    
 
     private final LinkedList<Literal> stack;
     private Namespace nspace;
@@ -189,7 +175,7 @@ public class ExecutionVisitor extends DepthFirstVisitor {
         
         // create fake declaration
         final Declaration vd = new VarDeclaration(func.getPosition(), 
-                getLambdaId(func.getPosition()), func);
+                call.getIdentifier(), func);
         
         final ResolvableIdentifier fakeId = new ResolvableIdentifier(vd.getName());
         fakeId.setDeclaration(vd);

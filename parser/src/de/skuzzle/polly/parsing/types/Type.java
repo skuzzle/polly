@@ -8,8 +8,8 @@ import java.util.Map;
 import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.ast.expressions.Identifier;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
 
 
 public class Type implements Serializable {
@@ -20,52 +20,52 @@ public class Type implements Serializable {
     /*
      * Primitive types
      */
-    public final static Type CHANNEL = new Type(new IdentifierLiteral("Channel"), false);
-    public final static Type COMMAND = new Type(new IdentifierLiteral("Command"), false);
-    public final static Type STRING = new Type(new IdentifierLiteral("String"), true);
-    public final static Type NUMBER = new Type(new IdentifierLiteral("Number"), true);
-    public final static Type USER = new Type(new IdentifierLiteral("User"), false);
-    public final static Type BOOLEAN = new Type(new IdentifierLiteral("Boolean"), false);
-    public final static Type DATE = new Type(new IdentifierLiteral("Date"), true);
-    public final static Type TIMESPAN = new Type(new IdentifierLiteral("Timespan"), false);
-    public final static Type LIST = new Type(new IdentifierLiteral("List"), true);
-    public final static Type ANY = new Type(new IdentifierLiteral("Any"), true);
-    public final static Type EMPTY_LIST = new Type(new IdentifierLiteral("Leere Liste"), true);
-    public final static Type HELP = new Type(new IdentifierLiteral("Help"), false);
-    public final static Type UNKNOWN = new Type(new IdentifierLiteral("UNKNOWN"), false);
+    public final static Type CHANNEL = new Type(new Identifier("Channel"), false);
+    public final static Type COMMAND = new Type(new Identifier("Command"), false);
+    public final static Type STRING = new Type(new Identifier("String"), true);
+    public final static Type NUMBER = new Type(new Identifier("Number"), true);
+    public final static Type USER = new Type(new Identifier("User"), false);
+    public final static Type BOOLEAN = new Type(new Identifier("Boolean"), false);
+    public final static Type DATE = new Type(new Identifier("Date"), true);
+    public final static Type TIMESPAN = new Type(new Identifier("Timespan"), false);
+    public final static Type LIST = new Type(new Identifier("List"), true);
+    public final static Type ANY = new Type(new Identifier("Any"), true);
+    public final static Type EMPTY_LIST = new Type(new Identifier("Leere Liste"), true);
+    public final static Type HELP = new Type(new Identifier("Help"), false);
+    public final static Type UNKNOWN = new Type(new Identifier("UNKNOWN"), false);
     
     private final static Map<String, Type> primitiveCache;
 
     static {
         primitiveCache = new HashMap<String, Type>();
-        primitiveCache.put(CHANNEL.getTypeName().getIdentifier(), CHANNEL);
-        primitiveCache.put(COMMAND.getTypeName().getIdentifier(), COMMAND);
-        primitiveCache.put(STRING.getTypeName().getIdentifier(), STRING);
-        primitiveCache.put(NUMBER.getTypeName().getIdentifier(), NUMBER);
-        primitiveCache.put(USER.getTypeName().getIdentifier(), USER);
-        primitiveCache.put(BOOLEAN.getTypeName().getIdentifier(), BOOLEAN);
-        primitiveCache.put(DATE.getTypeName().getIdentifier(), DATE);
-        primitiveCache.put(TIMESPAN.getTypeName().getIdentifier(), TIMESPAN);
-        primitiveCache.put(LIST.getTypeName().getIdentifier(), LIST);
-        primitiveCache.put(ANY.getTypeName().getIdentifier(), ANY);
-        primitiveCache.put(HELP.getTypeName().getIdentifier(), HELP);
-        primitiveCache.put(EMPTY_LIST.getTypeName().getIdentifier(), EMPTY_LIST);
-        primitiveCache.put(UNKNOWN.getTypeName().getIdentifier(), UNKNOWN);
+        primitiveCache.put(CHANNEL.getTypeName().getId(), CHANNEL);
+        primitiveCache.put(COMMAND.getTypeName().getId(), COMMAND);
+        primitiveCache.put(STRING.getTypeName().getId(), STRING);
+        primitiveCache.put(NUMBER.getTypeName().getId(), NUMBER);
+        primitiveCache.put(USER.getTypeName().getId(), USER);
+        primitiveCache.put(BOOLEAN.getTypeName().getId(), BOOLEAN);
+        primitiveCache.put(DATE.getTypeName().getId(), DATE);
+        primitiveCache.put(TIMESPAN.getTypeName().getId(), TIMESPAN);
+        primitiveCache.put(LIST.getTypeName().getId(), LIST);
+        primitiveCache.put(ANY.getTypeName().getId(), ANY);
+        primitiveCache.put(HELP.getTypeName().getId(), HELP);
+        primitiveCache.put(EMPTY_LIST.getTypeName().getId(), EMPTY_LIST);
+        primitiveCache.put(UNKNOWN.getTypeName().getId(), UNKNOWN);
     }
     
-    private IdentifierLiteral typeName;
+    private Identifier typeName;
     private boolean compareable;
 
     
     
-    protected Type(IdentifierLiteral typeName, boolean compareable) {
+    protected Type(Identifier typeName, boolean compareable) {
         this.typeName = typeName;
         this.compareable = compareable;
     }
     
     
     
-    public IdentifierLiteral getTypeName() {
+    public Identifier getTypeName() {
         return this.typeName;
     }
     
@@ -88,7 +88,7 @@ public class Type implements Serializable {
 	public Type unique() {
 	    // HACK: This is a serialization hack to maintain unique instances of the
 	    //       primitive types.
-	    Type t = primitiveCache.get(this.getTypeName().getIdentifier());
+	    Type t = primitiveCache.get(this.getTypeName().getId());
 	    if (t != null) {
 	        return t;
 	    }

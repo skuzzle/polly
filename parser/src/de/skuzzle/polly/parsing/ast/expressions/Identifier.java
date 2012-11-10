@@ -14,6 +14,16 @@ public class Identifier extends Expression {
     private final String id;
     
     
+    /**
+     * Creates a new Identifier with an unknown position.
+     * 
+     * @param id Identifier String.
+     */
+    public Identifier(String id) {
+        this(Position.EMPTY, id);
+    }
+    
+    
     
     /**
      * Creates a new Identifier.

@@ -1,6 +1,8 @@
 package de.skuzzle.polly.parsing.ast.visitor;
 
 import de.skuzzle.polly.parsing.ast.Root;
+import de.skuzzle.polly.parsing.ast.declarations.FunctionParameter;
+import de.skuzzle.polly.parsing.ast.declarations.ListParameter;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
 import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
@@ -108,6 +110,18 @@ public interface Visitor {
     public void afterParameter(Parameter param) throws ASTTraversalException;
     public void visitParameter(Parameter param) throws ASTTraversalException;
     
+    public void beforeListParameter(ListParameter param) throws ASTTraversalException;
+    public void afterListParameter(ListParameter param) throws ASTTraversalException;
+    public void visitListParameter(ListParameter param) throws ASTTraversalException;
+    
+    
+    public void beforeFunctionParameter(FunctionParameter param) 
+            throws ASTTraversalException;
+    public void afterFunctionParameter(FunctionParameter param) 
+            throws ASTTraversalException;
+    public void visitFunctionParameter(FunctionParameter param) 
+            throws ASTTraversalException;
+    
     public void beforeVarDecl(VarDeclaration decl) throws ASTTraversalException;
     public void afterVarDecl(VarDeclaration decl) throws ASTTraversalException;
     public void visitVarDecl(VarDeclaration decl) throws ASTTraversalException;
@@ -143,4 +157,5 @@ public interface Visitor {
     public void beforeListLiteral(ListLiteral list) throws ASTTraversalException;
     public void afterListLiteral(ListLiteral list) throws ASTTraversalException;
     public void visitListLiteral(ListLiteral list) throws ASTTraversalException;
+
 }

@@ -1,6 +1,8 @@
 package de.skuzzle.polly.parsing.ast.visitor;
 
 import de.skuzzle.polly.parsing.ast.Root;
+import de.skuzzle.polly.parsing.ast.declarations.FunctionParameter;
+import de.skuzzle.polly.parsing.ast.declarations.ListParameter;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
 import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
@@ -112,6 +114,37 @@ public class DepthFirstVisitor implements Visitor {
 
     @Override
     public void visitParameter(Parameter param) throws ASTTraversalException {
+        this.beforeParameter(param);
+        this.afterParameter(param);
+    }
+    
+    
+    
+    @Override
+    public void beforeListParameter(ListParameter param) throws ASTTraversalException {}
+
+    @Override
+    public void afterListParameter(ListParameter param) throws ASTTraversalException {}
+
+    @Override
+    public void visitListParameter(ListParameter param) throws ASTTraversalException {
+        this.beforeListParameter(param);
+        this.afterListParameter(param);
+    }
+    
+    
+    
+    @Override
+    public void beforeFunctionParameter(FunctionParameter param) 
+            throws ASTTraversalException {}
+
+    @Override
+    public void afterFunctionParameter(FunctionParameter param) 
+            throws ASTTraversalException {}
+
+    @Override
+    public void visitFunctionParameter(FunctionParameter param) 
+            throws ASTTraversalException {
         this.beforeParameter(param);
         this.afterParameter(param);
     }

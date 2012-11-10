@@ -3,7 +3,7 @@ package de.skuzzle.polly.parsing.types;
 import java.util.Collection;
 import java.util.Iterator;
 
-import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
+import de.skuzzle.polly.parsing.ast.expressions.Identifier;
 
 
 public class FunctionType extends Type {
@@ -16,7 +16,7 @@ public class FunctionType extends Type {
     
     
     public FunctionType(Type returnType, Collection<Type> parameters) {
-        super(new IdentifierLiteral("function"), false);
+        super(new Identifier("function"), false);
         this.returnType = returnType;
         this.parameters = parameters;
     }

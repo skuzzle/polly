@@ -1,6 +1,7 @@
 package de.skuzzle.polly.parsing.ast.visitor;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -9,9 +10,12 @@ import java.util.Set;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Node;
+import de.skuzzle.polly.parsing.ast.declarations.FunctionParameter;
+import de.skuzzle.polly.parsing.ast.declarations.ListParameter;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
 import de.skuzzle.polly.parsing.ast.declarations.ResolvedParameter;
+import de.skuzzle.polly.parsing.ast.declarations.TypeDeclaration;
 import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
@@ -19,6 +23,7 @@ import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.LambdaCall;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
+import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
@@ -99,6 +104,58 @@ public class TypeResolver extends DepthFirstVisitor {
     
     
     @Override
+    public void visitParameter(Parameter param) throws ASTTraversalException {
+        this.beforeParameter(param);
+        
+        final TypeDeclaration decl = Namespace.resolveType(param.getTypeName());
+        param.setType(decl.getType());
+        
+        this.afterParameter(param);
+    }
+    
+    
+    
+    @Override
+    public void visitListParameter(ListParameter param) throws ASTTraversalException {
+        this.beforeListParameter(param);
+        
+        final TypeDeclaration mainTypeDecl = Namespace.resolveType(
+            param.getMainTypeName());
+        
+        if (mainTypeDecl.getType() != Type.LIST) {
+            throw new ASTTraversalException(param.getMainTypeName().getPosition(), 
+                "Nur Listen können Typ-Parameter haben.");
+        }
+        final TypeDeclaration subTypeDecl = Namespace.resolveType(param.getTypeName());
+        param.setType(new ListType(subTypeDecl.getType()));
+        
+        this.afterListParameter(param);
+    }
+    
+    
+    @Override
+    public void visitFunctionParameter(FunctionParameter param)
+            throws ASTTraversalException {
+        this.beforeFunctionParameter(param);
+        
+        final Iterator<ResolvableIdentifier> it = param.getSignature().iterator();
+        
+        // first element is the return type
+        final TypeDeclaration returnTypeDecl = Namespace.resolveType(it.next());
+        final Collection<Type> types = new ArrayList<Type>(param.getSignature().size());
+        while (it.hasNext()) {
+            final TypeDeclaration decl = Namespace.resolveType(it.next());
+            types.add(decl.getType());
+        }
+        
+        param.setType(new FunctionType(returnTypeDecl.getType(), types));
+        
+        this.afterFunctionParameter(param);
+    }
+    
+    
+    
+    @Override
     public void visitFunctionLiteral(FunctionLiteral func)
             throws ASTTraversalException {
         
@@ -114,6 +171,10 @@ public class TypeResolver extends DepthFirstVisitor {
         final Iterator<Parameter> formalIt = func.getFormal().iterator();
         while (formalIt.hasNext()) {
             final Parameter p = formalIt.next();
+            
+            // resolve parameter type
+            p.visit(this);
+            
             final VarDeclaration vd = new VarDeclaration(
                 p.getPosition(), p.getName(), new EmptyExpression(p.getType()));
             this.nspace.declare(vd);
@@ -219,7 +280,8 @@ public class TypeResolver extends DepthFirstVisitor {
             final Expression actual = actualIt.next();
             final Parameter formal = formalIt.next();
 
-            // resolve actual parameter's type and check against formal
+            // resolve parameter types and check
+            formal.visit(this);
             actual.visit(this);
             
             if (!actual.getType().check(formal.getType())) {
