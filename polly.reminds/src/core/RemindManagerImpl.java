@@ -253,7 +253,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         if (qry && (!remind.getForUser().equals(remind.getFromUser()))) {
             // send notice to user who left this remind if it was delivered in qry
             this.irc.sendMessage(remind.getFromUser(), "Deine Nachricht an '" + 
-                remind.getForUser() + "' wurde zugestellt");
+                remind.getForUser() + "' wurde zugestellt (" + remind.getMessage() + ")");
         }
         this.putToSleep(remind, forUser);
         this.checkTriggerAutoSnooze(forUser);
