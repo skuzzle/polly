@@ -11,6 +11,7 @@ import polly.rx.commands.MyTrainsCommand;
 import polly.rx.commands.MyVenadCommand;
 import polly.rx.commands.VenadCommand;
 import polly.rx.core.FleetDBManager;
+import polly.rx.core.ScoreBoardManager;
 import polly.rx.core.TrainManagerV2;
 import polly.rx.entities.BattleReport;
 import polly.rx.entities.BattleReportShip;
@@ -18,6 +19,7 @@ import polly.rx.entities.BattleDrop;
 import polly.rx.entities.FleetScan;
 import polly.rx.entities.FleetScanHistoryEntry;
 import polly.rx.entities.FleetScanShip;
+import polly.rx.entities.ScoreBoardEntry;
 import polly.rx.entities.TrainEntity;
 import polly.rx.entities.TrainEntityV2;
 import polly.rx.http.BattleReportHttpAction;
@@ -28,6 +30,8 @@ import polly.rx.http.FleetShipInfoHttpAction;
 import polly.rx.http.FleetScanHttpAction;
 import polly.rx.http.MyTrainsHttpAction;
 import polly.rx.http.QueryOwnerHttpAction;
+import polly.rx.http.ScoreBoardHttpAction;
+import polly.rx.http.ScoreboardDetailsHttpAction;
 import polly.rx.http.TrainerHttpAction;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
@@ -60,6 +64,7 @@ public class MyPlugin extends PollyPlugin {
     private FleetDBManager fleetDBManager;
     private TrainManagerV2 trainManager;
     private DailyGreeter dailyGreeter;
+    private ScoreBoardManager sbeManager;
     
     
     public MyPlugin(MyPolly myPolly) 
@@ -86,6 +91,7 @@ public class MyPlugin extends PollyPlugin {
         
         myPolly.web().addMenuUrl("Revorix", "MyTrains");
         myPolly.web().addMenuUrl("Revorix", "Trainer");
+        
         myPolly.web().addHttpAction(new MyTrainsHttpAction(myPolly, this.trainManager));
         myPolly.web().addHttpAction(new TrainerHttpAction(myPolly, this.trainManager));
         
@@ -115,6 +121,12 @@ public class MyPlugin extends PollyPlugin {
         myPolly.web().addHttpAction(new FleetShipInfoHttpAction(myPolly, this.fleetDBManager));
         myPolly.web().addHttpAction(new FleetScanInfoHttpAction(myPolly, this.fleetDBManager));
         myPolly.web().addHttpAction(new QueryOwnerHttpAction(myPolly, this.fleetDBManager));
+        
+        myPolly.persistence().registerEntity(ScoreBoardEntry.class);
+        this.sbeManager = new ScoreBoardManager(myPolly.persistence());
+        myPolly.web().addMenuUrl("Revorix", "Scoreboard");
+        myPolly.web().addHttpAction(new ScoreBoardHttpAction(myPolly, this.sbeManager));
+        myPolly.web().addHttpAction(new ScoreboardDetailsHttpAction(myPolly, this.sbeManager));
     }
     
     

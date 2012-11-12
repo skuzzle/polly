@@ -10,10 +10,18 @@ import polly.rx.entities.ScoreBoardEntry;
 
 public class ScoreBoardParser {
 
-    public Collection<ScoreBoardEntry> parse(String paste) throws ParseException {
+    public static Collection<ScoreBoardEntry> parse(String paste) throws ParseException {
+        if (paste == null) {
+            throw new ParseException();
+        }
+        
         String[] lines = paste.split("[\n\r]+");
         
         ArrayIterator<String> it = ArrayIterator.get(lines);
+        while (it.peekNext().equals("")) {
+            it.next();
+        }
+        
         if (it.peekNext().equals("Umgebungsliste")) {
             it.next();
         }
@@ -26,13 +34,20 @@ public class ScoreBoardParser {
             String line = it.next();
             
             String[] parts = line.split("\\s+");
+            
             if (parts.length != 3) {
-                throw new ParseException();
+                continue;
             }
             int rank = Integer.parseInt(parts[0]);
             String venad = parts[1];
+            String clan = "";
+            int i = venad.indexOf("[");
+            if (i != -1) {
+                clan = venad.substring(i + 1, venad.length() - 1);
+                venad = venad.substring(0, venad.length() - clan.length() - 2);
+            }
             int points = Integer.parseInt(parts[2]);
-            result.add(new ScoreBoardEntry(venad, rank, points));
+            result.add(new ScoreBoardEntry(venad, clan, rank, points));
         }
         return result;
     }

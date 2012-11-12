@@ -21,8 +21,17 @@ public class ScoreBoardManager {
     
     
     public void addEntry(final ScoreBoardEntry entry) throws DatabaseException {
+        
+        Collection<ScoreBoardEntry> existing = this.getEntries(entry.getVenadName());
+        
+        // skip identical entries.
+        for (ScoreBoardEntry e : existing) {
+            if (e.getPoints() == entry.getPoints() && e.getRank() == entry.getRank()) {
+                return;
+            }
+        }
+        
         this.persistence.atomicWriteOperation(new WriteAction() {
-            
             @Override
             public void performUpdate(PersistenceManager persistence) {
                 persistence.persist(entry);
