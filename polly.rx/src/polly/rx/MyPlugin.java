@@ -44,13 +44,16 @@ import de.skuzzle.polly.sdk.roles.RoleManager;
 public class MyPlugin extends PollyPlugin {
 
     public final static String FLEET_MANAGER_ROLE = "polly.roles.FLEET_MANAGER";
-    public final static String TRAINER = "polly.roles.TRAINER";
+    public final static String TRAINER_ROLE       = "polly.roles.TRAINER";
+    public final static String SBE_MANAGER_ROLE   = "polly.roles.SBE_MANAGER";
+    
     public final static String ADD_TRAIN_PERMISSION              = "polly.permission.ADD_TRAIN";
     public final static String DELIVER_TRAIN_PERMISSION          = "polly.permission.DELIVER_TRAIN";
     public final static String MYTRAINS_PERMISSION               = "polly.permission.MY_TRAINS";
     public final static String MY_VENAD_PERMISSION               = "polly.permission.MY_VENAD";
     public final static String CLOSE_TRAIN_PERMISSION            = "polly.permission.CLOSE_TRAIN";
     public final static String IP_PERMISSION                     = "polly.permission.IP";
+    public final static String SBE_PERMISSION                    = "polly.permission.SBE";
     public final static String VENAD    = "VENAD";
     
     
@@ -133,6 +136,7 @@ public class MyPlugin extends PollyPlugin {
         result.add(FleetDBManager.VIEW_BATTLE_REPORT_PERMISSION);
         result.add(FleetDBManager.VIEW_FLEET_SCAN_PERMISSION);
         result.add(FleetDBManager.DELETE_FLEET_SCAN_PERMISSION);
+        result.add(SBE_PERMISSION);
         result.addAll(super.getContainedPermissions());
         return result;
     }
@@ -143,10 +147,10 @@ public class MyPlugin extends PollyPlugin {
     public void assignPermissions(RoleManager roleManager)
             throws RoleException, DatabaseException {
         
-        roleManager.createRole(TRAINER);
-        roleManager.assignPermission(TRAINER, ADD_TRAIN_PERMISSION);
-        roleManager.assignPermission(TRAINER, CLOSE_TRAIN_PERMISSION);
-        roleManager.assignPermission(TRAINER, DELIVER_TRAIN_PERMISSION);
+        roleManager.createRole(TRAINER_ROLE);
+        roleManager.assignPermission(TRAINER_ROLE, ADD_TRAIN_PERMISSION);
+        roleManager.assignPermission(TRAINER_ROLE, CLOSE_TRAIN_PERMISSION);
+        roleManager.assignPermission(TRAINER_ROLE, DELIVER_TRAIN_PERMISSION);
         
         roleManager.assignPermission(RoleManager.DEFAULT_ROLE, MYTRAINS_PERMISSION);
         
@@ -155,6 +159,9 @@ public class MyPlugin extends PollyPlugin {
         roleManager.assignPermission(FLEET_MANAGER_ROLE, FleetDBManager.ADD_BATTLE_REPORT_PERMISSION);
         roleManager.assignPermission(FLEET_MANAGER_ROLE, FleetDBManager.VIEW_BATTLE_REPORT_PERMISSION);
         roleManager.assignPermission(FLEET_MANAGER_ROLE, FleetDBManager.VIEW_FLEET_SCAN_PERMISSION);
+        
+        roleManager.createRole(SBE_MANAGER_ROLE);
+        roleManager.assignPermission(SBE_MANAGER_ROLE, SBE_PERMISSION);
         
         roleManager.assignPermission(RoleManager.DEFAULT_ROLE, IP_PERMISSION);
         super.assignPermissions(roleManager);
