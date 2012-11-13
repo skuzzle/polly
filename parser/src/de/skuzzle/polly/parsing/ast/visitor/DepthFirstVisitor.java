@@ -100,7 +100,7 @@ public class DepthFirstVisitor implements Visitor {
             throws ASTTraversalException {
         this.beforeAssignment(assign);
         assign.getExpression().visit(this);
-        assign.getDeclaration().visit(this);
+        assign.getName().visit(this);
         this.afterAssignment(assign);
     }
 
@@ -224,7 +224,7 @@ public class DepthFirstVisitor implements Visitor {
     @Override
     public void visitAccess(NamespaceAccess access) throws ASTTraversalException {
         this.beforeAccess(access);
-        access.getName().visit(this);
+        access.getLhs().visit(this);
         access.getRhs().visit(this);
         this.afterAccess(access);
     }

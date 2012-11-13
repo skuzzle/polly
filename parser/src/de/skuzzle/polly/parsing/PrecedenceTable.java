@@ -8,7 +8,7 @@ import java.util.TreeSet;
 public class PrecedenceTable {
 
     public enum PrecedenceLevel {
-        RELATION, DISJUNCTION, CONJUNCTION, EXPRESSION, TERM, FACTOR, POSTFIX, DOTDOT, UNARY;
+        RELATION, DISJUNCTION, CONJUNCTION, SECTERM, TERM, FACTOR, POSTFIX, DOTDOT, UNARY;
     }
     
     private Map<PrecedenceLevel, Set<TokenType>> levels;
@@ -36,13 +36,13 @@ public class PrecedenceTable {
         this.add(PrecedenceLevel.CONJUNCTION, TokenType.BOOLEAN_AND);
         this.add(PrecedenceLevel.CONJUNCTION, TokenType.INT_AND);
         
-        this.add(PrecedenceLevel.EXPRESSION, TokenType.ADD);
-        this.add(PrecedenceLevel.EXPRESSION, TokenType.ADDWAVE);
-        this.add(PrecedenceLevel.EXPRESSION, TokenType.SUB);
-        this.add(PrecedenceLevel.EXPRESSION, TokenType.WAVE);
-        this.add(PrecedenceLevel.EXPRESSION, TokenType.RIGHT_SHIFT);
-        this.add(PrecedenceLevel.EXPRESSION, TokenType.URIGHT_SHIFT);
-        this.add(PrecedenceLevel.EXPRESSION, TokenType.LEFT_SHIFT);
+        this.add(PrecedenceLevel.SECTERM, TokenType.ADD);
+        this.add(PrecedenceLevel.SECTERM, TokenType.ADDWAVE);
+        this.add(PrecedenceLevel.SECTERM, TokenType.SUB);
+        this.add(PrecedenceLevel.SECTERM, TokenType.WAVE);
+        this.add(PrecedenceLevel.SECTERM, TokenType.RIGHT_SHIFT);
+        this.add(PrecedenceLevel.SECTERM, TokenType.URIGHT_SHIFT);
+        this.add(PrecedenceLevel.SECTERM, TokenType.LEFT_SHIFT);
         
         // ISSUE 0000099: Add open brace and identifier to TERM precedence level so they
         //                are recognized as multiplications

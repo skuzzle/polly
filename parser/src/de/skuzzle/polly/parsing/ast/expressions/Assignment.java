@@ -1,7 +1,6 @@
 package de.skuzzle.polly.parsing.ast.expressions;
 
 import de.skuzzle.polly.parsing.Position;
-import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 
@@ -14,15 +13,15 @@ public class Assignment extends Expression {
 
     
     private final Expression expression;
-    private final Declaration declaration;
+    private final Identifier name;
     
     
     
     public Assignment(Position position, Expression expression, 
-            Declaration declaration) {
+            Identifier name) {
         super(position);
         this.expression = expression;
-        this.declaration = declaration;
+        this.name = name;
     }
     
     
@@ -39,12 +38,12 @@ public class Assignment extends Expression {
     
     
     /**
-     * Gets the declaration as which the expression should be stored.
+     * Gets the name as which the expression should be stored.
      * 
-     * @return The declaration.
+     * @return The name.
      */
-    public Declaration getDeclaration() {
-        return this.declaration;
+    public Identifier getName() {
+        return this.name;
     }
     
     

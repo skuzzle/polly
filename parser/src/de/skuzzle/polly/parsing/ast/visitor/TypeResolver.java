@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.declarations.FunctionParameter;
@@ -228,8 +227,11 @@ public class TypeResolver extends DepthFirstVisitor {
         assign.getExpression().visit(this);
         assign.setType(assign.getExpression().getType());
         
+        final VarDeclaration vd = new VarDeclaration(assign.getPosition(), 
+            assign.getName(), assign.getExpression());
+        
         // declarations are always stored in the root namespace!
-        this.rootNs.declare(assign.getDeclaration());
+        this.rootNs.declare(vd);
         
         this.afterAssignment(assign);
     }
@@ -366,7 +368,13 @@ public class TypeResolver extends DepthFirstVisitor {
         
         // get namespace which is accessed here and has the current namespace as 
         // parent. 
-        this.nspace = Namespace.forName(access.getName()).derive(this.nspace);
+        final Expression lhs = access.getLhs();
+        if (!(lhs instanceof VarAccess) || lhs instanceof Call) {
+            throw new ASTTraversalException(lhs.getPosition(), 
+                "Linker Operand muss ein Namespace-Name sein.");
+        }
+        final VarAccess va = (VarAccess) lhs;
+        this.nspace = Namespace.forName(va.getIdentifier()).derive(this.nspace);
         access.getRhs().visit(this);
         this.nspace = backup;
         

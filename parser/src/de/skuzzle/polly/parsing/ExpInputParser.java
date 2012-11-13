@@ -3,12 +3,15 @@ package de.skuzzle.polly.parsing;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import de.skuzzle.polly.parsing.PrecedenceTable.PrecedenceLevel;
+import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.FunctionParameter;
 import de.skuzzle.polly.parsing.ast.declarations.ListParameter;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
+import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
@@ -18,45 +21,129 @@ import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.BooleanLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ChannelLiteral;
+import de.skuzzle.polly.parsing.ast.expressions.literals.CommandLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.DateLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
-import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.StringLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.TimespanLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.UserLiteral;
 import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
-import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.parsing.types.Type;
 
 
-public class PollyV91InputParser extends AbstractParser<InputScanner> {
+public class ExpInputParser {
 
     private PrecedenceTable operators;
     private int openExpressions;
+    protected InputScanner scanner;
     
     
     
-    @Override
-    public Root parse(String input, String encoding) throws ParseException,
-        UnsupportedEncodingException {
+    public Root parse(String input, String encoding) 
+            throws ParseException, UnsupportedEncodingException {
+        InputScanner inp = new InputScanner(input, encoding);
+        this.operators = new PrecedenceTable();
+        
+        return this.parse(inp);
+    }
+    
+    
+    
+    public Root tryParse(String input, String encoding) 
+            throws ParseException, UnsupportedEncodingException {
+        
+        return this.tryParse(new InputScanner(input, encoding));
+    }
+    
+    
+    
+    public Root parse(String input) throws ParseException {
+        try {
+            return this.parse(input, "ISO-8859-1");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         return null;
+    }
+    
+    
+    
+    public Root tryParse(String input) {
+        try {
+            return this.tryParse(input, "ISO-8859-1");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    
+    
+    protected Root parse(InputScanner scanner) 
+            throws ParseException {
+        this.scanner = scanner;
+        return this.parseRoot();
+    }
+    
+    
+    
+    protected Root tryParse(InputScanner scanner) {
+        try {
+            return this.parse(scanner);
+        } catch (ParseException e) {
+            return null;
+        }
     }
 
-    @Override
-    public Root tryParse(String input, String encoding) throws ParseException,
-        UnsupportedEncodingException {
-        return null;
+    
+    
+    /**
+     * Throws a {@link ParseException} indicating an unexpected token.
+     * 
+     * @param expected The token that was expected but not found.
+     * @param found The token which was found instead.
+     * @throws ParseException Always thrown.
+     */
+    protected void unexpectedToken(TokenType expected, Token found) 
+            throws ParseException {
+        throw new ParseException("Unerwartetes Symbol: '" + found.toString(false, false) + 
+                "'. Erwartet: '" + expected.toString() + "'", 
+                this.scanner.spanFrom(found));
     }
-
-    @Override
-    protected Root parse_input() throws ParseException {
-        return null;
+    
+    
+    
+    /**
+     * Throws a {@link ParseException} if the not token has not the expected type. If the 
+     * next token is the expected one, it is consumed and returned.
+     * 
+     * @param expected Expected token type.
+     * @return The consumed expected token.
+     * @throws ParseException If the next token has not the expected type.
+     */
+    protected Token expect(TokenType expected) throws ParseException {
+        Token la = this.scanner.lookAhead();
+        if (la.getType() != expected) {
+            this.scanner.consume();
+            this.unexpectedToken(expected, la);
+        }
+        this.scanner.consume();
+        return la;
     }
     
     
     
+    /**
+     * Expects the next token to be an {@link Identifier}. If not, a 
+     * {@link ParseException} is thrown. Otherwise, a new {@link Identifier} will be 
+     * created and returned.
+     * 
+     * @return An {@link Identifier} created from the next token.
+     * @throws ParseException If the next token is no identifier.
+     */
     protected Identifier expectIdentifier() throws ParseException {
         final Token la = this.scanner.lookAhead();
         if (!la.matches(TokenType.IDENTIFIER)) {
@@ -67,12 +154,20 @@ public class PollyV91InputParser extends AbstractParser<InputScanner> {
 
     
     
+    /**
+     * Consumes a single whitespace of the next token is one. If not, nothing happens.
+     * @throws ParseException If parsing fails.
+     */
     protected void allowSingleWhiteSpace() throws ParseException {
         this.scanner.match(TokenType.SEPERATOR);
     }
     
     
     
+    /**
+     * Enters a new expression. If at least one epxression is "entered", the scanner will
+     * ignore whitespaces.
+     */
     protected void enterExpression() {
         ++this.openExpressions;
         this.scanner.setSkipWhiteSpaces(true);
@@ -80,6 +175,10 @@ public class PollyV91InputParser extends AbstractParser<InputScanner> {
     
     
     
+    /**
+     * Leaves an entered expression. If the last expression was left, the scanner will 
+     * stop ignoring whitespaces.
+     */
     protected void leaveExpression() {
         --this.openExpressions;
         if (this.openExpressions == 0) {
@@ -89,14 +188,321 @@ public class PollyV91InputParser extends AbstractParser<InputScanner> {
     
     
     
+    protected Root parseRoot() throws ParseException {
+        
+        Root root = null;
+        final Token la = this.scanner.lookAhead();
+        try {
+            if (!this.scanner.match(TokenType.COMMAND)) {
+                return null;
+            }
+        } catch (ParseException ignore) {
+            // if an error occurs at this early stage of parsing, return null to 
+            // show that input was invalid.
+            return null;
+        }
+        
+        final CommandLiteral cmd = new CommandLiteral(la.getPosition(), 
+                la.getStringValue());
+        List<Expression> signature = new ArrayList<Expression>();
+        if (this.scanner.match(TokenType.SEPERATOR)) {
+            do {
+                final Expression next = this.parseExpr();
+                signature.add(next);
+            } while (this.scanner.match(TokenType.SEPERATOR));
+        }
+        
+        // end position is position of the last signature element.
+        final Position endPos = signature.isEmpty() 
+            ? cmd.getPosition() 
+            : signature.get(signature.size() - 1).getPosition();
+            
+        root = new Root(
+            new Position(la.getPosition(), endPos), 
+            cmd, signature);
+        
+        this.expect(TokenType.EOS);
+        return root;
+    }
 
     
     
-    
-    protected Expression parseExpression() throws ParseException {
+    /**
+     * Parses an assignment. If no ASSIGN_OP is found, the result of the next
+     * higher precedence level is returned. This is the root of all expressions and has 
+     * thus lowest precedence level.
+     * <pre>
+     * assign -> relation '->' ID    // assignment of relation to identifier X
+     * </pre>
+     * @return The parsed Assignment or the result of the next higher precedence level
+     *          if no ASSIGN_OP was found.
+     * @throws ParseException If parsing fails.
+     */
+    protected Expression parseExpr() throws ParseException {
+        final Expression lhs = this.parseRelation();
         
-        return null;
+        if (this.scanner.match(TokenType.ASSIGNMENT)) {
+            final Identifier id = this.expectIdentifier();
+            
+            return new Assignment(
+                new Position(lhs.getPosition(), id.getPosition()), 
+                lhs, id);
+        }
+        return lhs;
     }
+    
+    
+    
+    /**
+     * Parses RELATION precedence level operators.
+     * <pre>
+     * relation -> conjunction (REL_OP conjunction)*     // relation (<,>,<=,>=,==)
+     * </pre>
+     * @return The parsed operator call or the result from the next higher precedence 
+     *          level if no REL_OP was found.
+     * @throws ParseException If parsing fails.
+     */
+    protected Expression parseRelation() throws ParseException {
+        Expression expr = this.parseConjunction();
+        
+        Token la = this.scanner.lookAhead();
+        while (this.operators.match(la, PrecedenceLevel.RELATION)) {
+            this.scanner.consume();
+            
+            final Expression rhs = this.parseConjunction();
+            
+            expr = OperatorCall.binary(
+                new Position(expr.getPosition(), rhs.getPosition()), 
+                OpType.fromToken(la), expr, rhs);
+            
+            la = this.scanner.lookAhead();
+        }
+        return expr;
+    }
+    
+    
+    
+    /**
+     * Parses CONJUNCTION precedence level operators.
+     * <pre>
+     * conjunction -> disjunction (CONJ_OP disjunction)*   // conjunction (||)
+     * </pre>
+     * @return The parsed operator call or the result from the next higher precedence 
+     *          level if no CONJ_OP was found.
+     * @throws ParseException If parsing fails.
+     */
+    protected Expression parseConjunction() throws ParseException {
+        Expression expr = this.parseDisjunction();
+        
+        Token la = this.scanner.lookAhead();
+        while (this.operators.match(la, PrecedenceLevel.CONJUNCTION)) {
+            this.scanner.consume();
+            
+            final Expression rhs = this.parseDisjunction();
+            
+            expr = OperatorCall.binary(
+                new Position(expr.getPosition(), rhs.getPosition()), 
+                OpType.fromToken(la), expr, rhs);
+            
+            la = this.scanner.lookAhead();
+        }
+        return expr;
+    }
+    
+    
+    
+    /**
+     * Parses DISJUNCTION precedence level operators.
+     * <pre>
+     * disjunction -> secTerm (DISJ_OP secTerm)*     // disjunction (&&)
+     * </pre>
+     * @return The parsed operator call or the result from the next higher precedence 
+     *          level if no DISJ_OP was found.
+     * @throws ParseException If parsing fails.
+     */
+    protected Expression parseDisjunction() throws ParseException {
+        Expression expr = this.parseSecTerm();
+        
+        Token la = this.scanner.lookAhead();
+        while (this.operators.match(la, PrecedenceLevel.DISJUNCTION)) {
+            this.scanner.consume();
+            
+            final Expression rhs = this.parseSecTerm();
+            
+            expr = OperatorCall.binary(
+                new Position(expr.getPosition(), rhs.getPosition()), 
+                OpType.fromToken(la), expr, rhs);
+            
+            la = this.scanner.lookAhead();
+        }
+        return expr;
+    }
+    
+    
+    
+    /**
+     * Parses SECTERM precedence level operators.
+     * <pre>
+     * secTerm -> term (SECTERM_OP term)*   // plus minus
+     * </pre>
+     * @return The parsed operator call or the result from the next higher precedence 
+     *          level if no SECTERM_OP was found.
+     * @throws ParseException If parsing fails.
+     */
+    protected Expression parseSecTerm() throws ParseException {
+        Expression expr = this.parseTerm();
+        
+        Token la = this.scanner.lookAhead();
+        while (this.operators.match(la, PrecedenceLevel.SECTERM)) {
+            this.scanner.consume();
+            
+            final Expression rhs = this.parseTerm();
+            
+            expr = OperatorCall.binary(
+                new Position(expr.getPosition(), rhs.getPosition()), 
+                OpType.fromToken(la), expr, rhs);
+            
+            la = this.scanner.lookAhead();
+        }
+        return expr;
+    }
+    
+    
+    
+    /**
+     * Parses TERM precedence level operators.
+     * <pre>
+     * term -> factor (TERM_OP factor)*  // multiplication and co
+     * </pre>
+     * @return The parsed operator call or the result from the next higher precedence 
+     *          level if no TERM_OP was found.
+     * @throws ParseException If parsing fails.
+     */
+    protected Expression parseTerm() throws ParseException {
+        Expression expr = this.parseFactor();
+        
+        Token la = this.scanner.lookAhead();
+        while (this.operators.match(la, PrecedenceLevel.TERM)) {
+            // ISSUE 0000099: If Identifier or open brace, do not consume the token but
+            //                pretend it was a multiplication
+            if (la.matches(TokenType.IDENTIFIER) || la.matches(TokenType.OPENBR)) {
+                la = new Token(TokenType.MUL, la.getPosition());
+            } else {
+                this.scanner.consume();
+            }
+            
+            final Expression rhs = this.parseFactor();
+            
+            expr = OperatorCall.binary(
+                new Position(expr.getPosition(), rhs.getPosition()), 
+                OpType.fromToken(la), expr, rhs);
+            
+            la = this.scanner.lookAhead();
+        }
+        return expr;
+    }
+    
+    
+    
+    /**
+     * Parses FACTOR precedence operators. Result will be a nested OperatorCall or the
+     * result of the next higher precedence level if no FACTOR_OP was found.
+     * FACTOR operators are right-associative.
+     * <pre>
+     * factor -> postfix (FACTOR_OP factor)?    // right-associative (power operator)
+     * </pre>
+     * @return The parsed operator call or the result from the next higher precedence 
+     *          level if no FACTOR_OP was found.
+     * @throws ParseException If parsing fails.
+     */
+    protected Expression parseFactor() throws ParseException {
+        Expression expr = this.parsePostfix();
+        
+        Token la = this.scanner.lookAhead();
+        if (this.operators.match(la, PrecedenceLevel.FACTOR)) {
+            this.scanner.consume();
+            final Expression rhs = this.parseFactor();
+            
+            expr = OperatorCall.binary(
+                new Position(expr.getPosition(), rhs.getPosition()), 
+                OpType.fromToken(la), expr, rhs);
+        }
+        return expr;
+    }
+    
+    
+    
+    /**
+     * Parses a postfix operator. This may be either of the random index- or the
+     * concrete index operator.
+     * <pre>
+     * postfix -> dotdot (POSTFIX_OP expression)*       // postfix operator
+     * </pre>
+     * @return Either the parsed postifx operator call or the expression from the next
+     *          higher precedence level if no POSTFIX_OP was found.
+     * @throws ParseException If parsing fails.
+     */
+    protected Expression parsePostfix() throws ParseException {
+        Expression lhs = this.parseDotDot();
+        
+        Token la = this.scanner.lookAhead();
+        while (this.operators.match(la, PrecedenceLevel.POSTFIX)) {
+            this.scanner.consume();
+            
+            if (la.matches(TokenType.OPENSQBR)) {
+                // index operator
+                final Expression rhs = this.parseExpr();
+                
+                lhs = OperatorCall.binary(
+                    new Position(lhs.getPosition(), rhs.getPosition()), 
+                    OpType.fromToken(la), lhs, rhs);
+                
+                this.expect(TokenType.CLOSEDSQBR);
+            } else {
+                // ? or ?! operator
+                final Position endPos = this.scanner.spanFrom(la);
+                return OperatorCall.unary(
+                    new Position(lhs.getPosition(), endPos), 
+                    OpType.fromToken(la), lhs);
+            }
+            la = this.scanner.lookAhead();
+        }
+        
+        return lhs;
+    }
+    
+    /**
+     * Parses an implicit list literal.
+     * <pre>
+     * autolist -> dotdot (';' dotdot)*   // implicit list literal
+     * </pre>
+     * @return Either a {@link ListLiteral} containing the following expressions or the 
+     *          expression returned by the next higher precedence level.
+     * @throws ParseException If parsing fails.
+     */
+    protected Expression parseAutoList() throws ParseException {
+        Expression lhs = this.parseDotDot();
+        
+        final Token la = this.scanner.lookAhead();
+        if (la.matches(TokenType.SEMICOLON)) {
+            final List<Expression> content = new ArrayList<Expression>();
+            content.add(lhs);
+
+            Expression last = null;
+            while (this.scanner.match(TokenType.SEMICOLON)) {
+                last = this.parseDotDot();
+                content.add(last);
+            }
+            
+            // invariant: last cannot be null here!
+            return new ListLiteral(
+                new Position(lhs.getPosition(), last.getPosition()), 
+                content);
+        }
+        
+        return lhs;
+    }
+    
     
     
     
@@ -212,7 +618,7 @@ public class PollyV91InputParser extends AbstractParser<InputScanner> {
              */
             this.enterExpression();
             
-            exp = this.parseExpression();
+            exp = this.parseExpr();
             this.expect(TokenType.CLOSEDBR);
             exp.setPosition(this.scanner.spanFrom(la));
             
@@ -226,7 +632,7 @@ public class PollyV91InputParser extends AbstractParser<InputScanner> {
                 TokenType.SEMICOLON);
             this.expect(TokenType.SEMICOLON);
             
-            exp = this.parseExpression();
+            exp = this.parseExpr();
             
             this.expect(TokenType.CLOSEDBR);
             exp.setPosition(this.scanner.spanFrom(la));
@@ -353,11 +759,11 @@ public class PollyV91InputParser extends AbstractParser<InputScanner> {
         
         final Collection<Expression> result = new ArrayList<Expression>();
         
-        result.add(this.parseExpression());
+        result.add(this.parseExpr());
         
         while (!scanner.match(TokenType.COMMA)) {
             this.allowSingleWhiteSpace();
-            result.add(this.parseExpression());
+            result.add(this.parseExpr());
         }
         return result;
     }

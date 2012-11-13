@@ -29,6 +29,7 @@ import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
 import de.skuzzle.polly.parsing.ast.operators.binary.Arithmetic;
 
 
+
 public class ExecutionVisitor extends DepthFirstVisitor {
     
     public static void main(String[] args) throws ASTTraversalException, IOException {
@@ -136,7 +137,9 @@ public class ExecutionVisitor extends DepthFirstVisitor {
         
         // get namespace which is accessed here and has the current namespace as 
         // parent. 
-        this.nspace = Namespace.forName(access.getName()).derive(this.nspace);
+        // lhs of access is guaranteed to be a VarAccess
+        final VarAccess va = (VarAccess) access.getLhs();
+        this.nspace = Namespace.forName(va.getIdentifier()).derive(this.nspace);
         
         // execute expression and restore old namespace
         access.getRhs().visit(this);

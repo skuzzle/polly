@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
+import de.skuzzle.polly.parsing.ast.expressions.literals.CommandLiteral;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 
@@ -16,16 +17,22 @@ import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 public final class Root extends Node {
 
     private final ArrayList<Expression> expressions;
+    private final CommandLiteral command;
+    
+    
     
     /**
      * Creates a new Root Node with given {@link Position} and a collection of parsed
      * expressions.
      * 
      * @param position The Node's position.
+     * @param command Name of the parsed command.
      * @param expressions Collection of parsed expressions.
      */
-    public Root(Position position, Collection<Expression> expressions) {
+    public Root(Position position, CommandLiteral command, 
+            Collection<Expression> expressions) {
         super(position);
+        this.command = command;
         this.expressions = new ArrayList<Expression>(expressions);
     }
     
@@ -38,6 +45,17 @@ public final class Root extends Node {
      */
     public Collection<Expression> getExpressions() {
         return this.expressions;
+    }
+    
+    
+    
+    /**
+     * Gets the name of the parsed command.
+     * 
+     * @return The command name.
+     */
+    public CommandLiteral getCommand() {
+        return this.command;
     }
 
     

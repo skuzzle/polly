@@ -357,7 +357,7 @@ public class InputParser extends AbstractParser<InputScanner> {
         Expression expression = this.parse_term();
         
         Token la = this.scanner.lookAhead();
-        while (this.operators.match(la, PrecedenceLevel.EXPRESSION)) {
+        while (this.operators.match(la, PrecedenceLevel.SECTERM)) {
             this.scanner.consume();
             
             expression = new BinaryExpression(expression, la, this.parse_term());

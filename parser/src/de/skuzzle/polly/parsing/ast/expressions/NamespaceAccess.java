@@ -20,7 +20,7 @@ public class NamespaceAccess extends Expression {
 
     
     
-    public Expression getLHS() {
+    public Expression getLhs() {
         return this.lhs;
     }
     

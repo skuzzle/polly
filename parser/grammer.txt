@@ -1,13 +1,14 @@
 root        -> COMMAND (expr (WS expr)*)?            // AST root with a WS separated list of expressions
-expr        -> assign (';' assign)*                  // implicit list
-assign      -> relation '->' ID                      // assignment of relation to identifier X
+
+expr        -> relation '->' ID                      // assignment of relation to identifier X
 relation    -> conjunction (REL_OP conjunction)*     // relation (<,>,<=,>=,==)
 conjunction -> disjunction (CONJ_OP disjunction)*    // conjunction (||)
-disjunction -> secTerm (DISJ_OP secTerm)*            // disjungtion (&&)
+disjunction -> secTerm (DISJ_OP secTerm)*            // disjunction (&&)
 secTerm     -> term (SECTERM_OP term)*               // plus minus
 term        -> factor (TERM_OP factor)*              // multiplication and co
-factor      -> postfix FACTOR_OP factor)?            // right-associative (power operator)
-postfix     -> dotdot (POSTFIX_OP dotdot)+           // postfix operator
+factor      -> postfix (FACTOR_OP factor)?           // right-associative (power operator)
+postfix     -> autolist (POSTFIX_OP autolist)+       // postfix operator
+autolist    -> dotdot (';' dotdot)*                  // implicit list literal
 dotdot      -> unary ('..' unary ('$' unary)?)?      // range operator with optional step size
 unary       -> UNARY_OP unary                        // right-associative unary operator
              | access
@@ -36,4 +37,4 @@ parameter   -> ID ID                                 // typename, parameter name
             
             
             
-(10+5->x)+5
+5;8;9[2]
