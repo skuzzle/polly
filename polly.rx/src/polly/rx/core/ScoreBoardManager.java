@@ -1,6 +1,7 @@
 package polly.rx.core;
 
 import java.util.Collection;
+import java.util.List;
 
 import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.WriteAction;
@@ -62,7 +63,7 @@ public class ScoreBoardManager {
     
     
     
-    public Collection<ScoreBoardEntry> getEntries() {
+    public List<ScoreBoardEntry> getEntries() {
         return this.persistence.atomicRetrieveList(ScoreBoardEntry.class, 
             ScoreBoardEntry.ALL_SBE_DISTINCT);
     }

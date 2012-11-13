@@ -70,5 +70,17 @@ public final class Milliseconds {
     
     
     
+    /**
+     * Converts milliseconds into days.
+     * 
+     * @param ms Milliseconds to convert.
+     * @return Amount of days.
+     */
+    public final static long toDays(long ms) {
+        return ms / 1000 / 60 / 60 / 24;
+    }
+    
+    
+    
     private Milliseconds() {}
 }

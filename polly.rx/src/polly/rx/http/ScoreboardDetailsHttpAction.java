@@ -11,14 +11,15 @@ import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.http.HttpTemplateException;
 import de.skuzzle.polly.sdk.http.HttpTemplateSortHelper;
+import de.skuzzle.polly.sdk.time.Milliseconds;
 
 
-public class ScoreboardDetailsHttpAction extends HttpAction {
+public class ScoreBoardDetailsHttpAction extends HttpAction {
 
     private ScoreBoardManager sbeManager;
 
 
-    public ScoreboardDetailsHttpAction(MyPolly myPolly, ScoreBoardManager sbeManager) {
+    public ScoreBoardDetailsHttpAction(MyPolly myPolly, ScoreBoardManager sbeManager) {
         super("/sbe_details", myPolly);
         this.sbeManager = sbeManager;
     }
@@ -46,8 +47,8 @@ public class ScoreboardDetailsHttpAction extends HttpAction {
             }
         }
         
-        long diff = youngest.getDate().getTime() - oldest.getDate().getTime();
-        long days = diff / 1000 / 60 / 60 / 24;
+        long diff = Math.abs(youngest.getDate().getTime() - oldest.getDate().getTime());
+        long days = Milliseconds.toDays(diff);
         int pointDiff = youngest.getPoints() - oldest.getPoints();
         double pointsPerDay = (double) pointDiff / (double)days;
         
@@ -56,7 +57,8 @@ public class ScoreboardDetailsHttpAction extends HttpAction {
         
         c.put("entries", entries);
         c.put("venad", e.getSource().escapeHtml(venadName));
-        c.put("diff", diff);
+        c.put("span", diff);
+        c.put("days", days);
         c.put("pointsPerDay", pointsPerDay);
         
         return c;

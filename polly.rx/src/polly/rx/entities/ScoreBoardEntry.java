@@ -1,9 +1,11 @@
 package polly.rx.entities;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.TreeSet;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,7 +16,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import de.skuzzle.polly.sdk.time.Time;
+import de.skuzzle.polly.sdk.time.Milliseconds;
+
 
 @Entity
 @NamedQueries({
@@ -30,17 +33,59 @@ import de.skuzzle.polly.sdk.time.Time;
 public class ScoreBoardEntry {
     
     
-    public static Collection<ScoreBoardEntry> postFilter(Collection<ScoreBoardEntry> entries) {
-        TreeSet<ScoreBoardEntry> result = new TreeSet<ScoreBoardEntry>(
-            new Comparator<ScoreBoardEntry>() {
-
+    public static List<ScoreBoardEntry> postFilter(
+            List<ScoreBoardEntry> entries) {
+        
+        // HACK: most inefficient shit that has ever existed
+        Collections.sort(entries, new Comparator<ScoreBoardEntry>() {
             @Override
             public int compare(ScoreBoardEntry o1, ScoreBoardEntry o2) {
                 return o1.getVenadName().compareTo(o2.getVenadName());
             }
         });
         
-        result.addAll(entries);
+        
+        String name = null;
+        Collection<ScoreBoardEntry> tmp = new ArrayList<ScoreBoardEntry>();
+        List<ScoreBoardEntry> result = new ArrayList<ScoreBoardEntry>();
+        
+        for (ScoreBoardEntry e : entries) {
+            if (name != null && !name.equals(e.getVenadName())) {
+                if (tmp.isEmpty()) {
+                    tmp.clear();
+                    continue;
+                }
+                
+                // tmp now contains all entries with same name
+                ScoreBoardEntry oldest = tmp.iterator().next();
+                ScoreBoardEntry youngest = tmp.iterator().next();
+                
+                for (ScoreBoardEntry e1 : tmp) {
+                    if (e1.getDate().getTime() < oldest.getDate().getTime()) {
+                        oldest = e1;
+                    }
+                    if (e1.getDate().getTime() > youngest.getDate().getTime()) {
+                        youngest = e1;
+                    }
+                }
+                
+                long diff = Math.abs(
+                        youngest.getDate().getTime() - oldest.getDate().getTime());
+                long days = Milliseconds.toDays(diff);
+                int pointDiff = youngest.getPoints() - oldest.getPoints();
+                
+                double pointsPerDay = Double.NaN;
+                if (days != 0) {
+                    pointsPerDay = (double) pointDiff / (double)days;
+                }
+                
+                youngest.pointsPerDay = pointsPerDay;
+                result.add(youngest);
+                tmp.clear();
+            }
+            tmp.add(e);
+            name = e.getVenadName();
+        }
         return result;
     }
     
@@ -63,17 +108,20 @@ public class ScoreBoardEntry {
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
     
+    private transient double pointsPerDay;
+    
     
     public ScoreBoardEntry() {}
     
     
-    public ScoreBoardEntry(String venadName, String clan, int rank, int points) {
+    public ScoreBoardEntry(String venadName, String clan, int rank, int points, 
+            Date date) {
         super();
         this.venadName = venadName;
         this.clan = clan;
         this.rank = rank;
         this.points = points;
-        this.date = Time.currentTime();
+        this.date = date;
     }
 
     
@@ -109,5 +157,11 @@ public class ScoreBoardEntry {
     
     public Date getDate() {
         return this.date;
+    }
+    
+    
+    
+    public double getPointsPerDay() {
+        return this.pointsPerDay;
     }
 }

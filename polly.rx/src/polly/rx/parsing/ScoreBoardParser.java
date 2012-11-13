@@ -2,6 +2,7 @@ package polly.rx.parsing;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 import de.skuzzle.polly.tools.iterators.ArrayIterator;
 
@@ -10,7 +11,8 @@ import polly.rx.entities.ScoreBoardEntry;
 
 public class ScoreBoardParser {
 
-    public static Collection<ScoreBoardEntry> parse(String paste) throws ParseException {
+    public static Collection<ScoreBoardEntry> parse(String paste, Date date) 
+                throws ParseException {
         if (paste == null) {
             throw new ParseException();
         }
@@ -47,7 +49,7 @@ public class ScoreBoardParser {
                 venad = venad.substring(0, venad.length() - clan.length() - 2);
             }
             int points = Integer.parseInt(parts[2]);
-            result.add(new ScoreBoardEntry(venad, clan, rank, points));
+            result.add(new ScoreBoardEntry(venad, clan, rank, points, date));
         }
         return result;
     }

@@ -1,6 +1,10 @@
 package polly.rx.http;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 import polly.rx.MyPlugin;
 import polly.rx.core.ScoreBoardManager;
@@ -14,11 +18,16 @@ import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.http.HttpTemplateException;
 import de.skuzzle.polly.sdk.http.HttpTemplateSortHelper;
+import de.skuzzle.polly.sdk.time.Time;
 
 
 public class ScoreBoardHttpAction extends HttpAction {
 
     private ScoreBoardManager sbeManager;
+    
+
+    private final static DateFormat DATE_FORMAT = new SimpleDateFormat(
+            "EE MMM dd, yyyy hh:mm a");
     
     
     public ScoreBoardHttpAction(MyPolly myPolly, ScoreBoardManager sbeManager) {
@@ -37,8 +46,13 @@ public class ScoreBoardHttpAction extends HttpAction {
         String action = e.getProperty("action");
         if (action != null && action.equals("postSB")) {
             String paste = e.getProperty("paste");
+            String d = e.getProperty("date");
             try {
-                Collection<ScoreBoardEntry> ents = ScoreBoardParser.parse(paste);
+                Date date = Time.currentTime();
+                if (d != null && !d.equals("")) {
+                    date = DATE_FORMAT.parse(d);
+                }
+                Collection<ScoreBoardEntry> ents = ScoreBoardParser.parse(paste, date);
                 
                 for (ScoreBoardEntry ent : ents) {
                     this.sbeManager.addEntry(ent);
@@ -58,11 +72,13 @@ public class ScoreBoardHttpAction extends HttpAction {
             }
         }
         
-        Collection<ScoreBoardEntry> entries = this.sbeManager.getEntries();
-        c.put("entries", ScoreBoardEntry.postFilter(entries));
-        
         HttpTemplateSortHelper.makeListSortable(
             c, e, "sortKey", "dir", "getRank");
+        
+        List<ScoreBoardEntry> entries = this.sbeManager.getEntries();
+        entries = ScoreBoardEntry.postFilter(entries);
+        
+        c.put("entries", entries);
         
         return c;
     }
