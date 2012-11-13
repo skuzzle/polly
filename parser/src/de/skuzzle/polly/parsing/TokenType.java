@@ -6,7 +6,6 @@ public enum TokenType {
     LIST("Liste"),
     CHANNEL("Channel"),   /* Channel literals */
     USER("User"),               /* User literals */
-    CHOOSE("choose"),    /* binomial coefficients */
     IF("if"),
     RADIX("0x"),
     ASSIGNMENT("->"),

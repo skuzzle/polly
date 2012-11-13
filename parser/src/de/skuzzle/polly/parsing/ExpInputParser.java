@@ -1,5 +1,6 @@
 package de.skuzzle.polly.parsing;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,6 +16,7 @@ import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
+import de.skuzzle.polly.parsing.ast.expressions.LambdaCall;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
 import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
@@ -29,10 +31,42 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.StringLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.TimespanLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.UserLiteral;
+import de.skuzzle.polly.parsing.ast.operators.Operator;
 import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
+import de.skuzzle.polly.parsing.ast.operators.binary.Arithmetic;
+import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.parsing.ast.visitor.ASTVisualizer;
+import de.skuzzle.polly.parsing.ast.visitor.ExecutionVisitor;
+import de.skuzzle.polly.parsing.ast.visitor.TypeResolver;
 
 
 public class ExpInputParser {
+    
+    public static void main(String[] args) throws ParseException, IOException, ASTTraversalException {
+        final Operator add = new Arithmetic(OpType.ADD);
+        final Operator sub = new Arithmetic(OpType.SUB);
+        final Operator mul = new Arithmetic(OpType.MUL);
+        final Operator div = new Arithmetic(OpType.DIV);
+        Namespace.forName("me").declare(add.createDeclaration());
+        Namespace.forName("me").declare(sub.createDeclaration());
+        Namespace.forName("me").declare(mul.createDeclaration());
+        Namespace.forName("me").declare(div.createDeclaration());
+        
+        
+        String testMe = ":cmd \\(Number x;x)(2)";
+        ExpInputParser p = new ExpInputParser();
+        Root r = p.parse(testMe);
+        
+        TypeResolver tr = new TypeResolver("me");
+        r.visit(tr);
+        
+        ExecutionVisitor ev = new ExecutionVisitor("me");
+        r.visit(ev);
+        
+        System.out.println(ev.getResult());
+        ASTVisualizer av = new ASTVisualizer();
+        av.toFile("datAST", r);
+    }
 
     private PrecedenceTable operators;
     private int openExpressions;
@@ -146,9 +180,7 @@ public class ExpInputParser {
      */
     protected Identifier expectIdentifier() throws ParseException {
         final Token la = this.scanner.lookAhead();
-        if (!la.matches(TokenType.IDENTIFIER)) {
-            this.expect(TokenType.IDENTIFIER);
-        }
+        this.expect(TokenType.IDENTIFIER);
         return new Identifier(la.getPosition(), la.getStringValue());
     }
 
@@ -390,7 +422,6 @@ public class ExpInputParser {
             } else {
                 this.scanner.consume();
             }
-            
             final Expression rhs = this.parseFactor();
             
             expr = OperatorCall.binary(
@@ -637,7 +668,18 @@ public class ExpInputParser {
             this.expect(TokenType.CLOSEDBR);
             exp.setPosition(this.scanner.spanFrom(la));
             
-            return new FunctionLiteral(this.scanner.spanFrom(la), formal, exp);
+            final FunctionLiteral func = new FunctionLiteral(
+                this.scanner.spanFrom(la), formal, exp);
+            
+            if (this.scanner.match(TokenType.OPENBR)) {
+                // lambda function being called right here
+                final Collection<Expression> params = this.parseExpressionList(
+                    TokenType.CLOSEDBR);
+                
+                this.expect(TokenType.CLOSEDBR);
+                return new LambdaCall(this.scanner.spanFrom(la), func, params);
+            }
+            
             
         case OPENCURLBR:
             this.scanner.consume();
@@ -761,7 +803,7 @@ public class ExpInputParser {
         
         result.add(this.parseExpr());
         
-        while (!scanner.match(TokenType.COMMA)) {
+        while (this.scanner.match(TokenType.COMMA)) {
             this.allowSingleWhiteSpace();
             result.add(this.parseExpr());
         }
@@ -788,6 +830,7 @@ public class ExpInputParser {
             return new ArrayList<Parameter>(0);
         }
         
+        this.enterExpression();
         final Collection<Parameter> result = new ArrayList<Parameter>();
         result.add(this.parseParameter());
         
@@ -795,6 +838,7 @@ public class ExpInputParser {
             this.allowSingleWhiteSpace();
             result.add(this.parseParameter());
         }
+        this.leaveExpression();
         return result;
     }
     

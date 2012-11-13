@@ -73,6 +73,28 @@ public class ExecutionVisitor extends DepthFirstVisitor {
     
     
     /**
+     * Determines whether we have a unique result (e.g. stack has only one element).
+     * 
+     * @return Whether we have a unique result.
+     */
+    public boolean hasResult() {
+        return this.stack.size() == 1;
+    }
+    
+    
+    
+    /**
+     * Gets the result of the execution run of this visitor.
+     * 
+     * @return The executions result.
+     */
+    public Literal getResult() {
+        return this.stack.peek();
+    }
+    
+    
+    
+    /**
      * Creates a new sub namespace of the current namespace and sets that new namespace
      * as the current one.
      * 

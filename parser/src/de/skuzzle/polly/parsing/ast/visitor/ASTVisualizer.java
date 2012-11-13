@@ -22,6 +22,7 @@ import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
+import de.skuzzle.polly.parsing.types.Type;
 
 public class ASTVisualizer extends DepthFirstVisitor {
 
@@ -31,17 +32,18 @@ public class ASTVisualizer extends DepthFirstVisitor {
     
     
 
-    public void toFile(String filename, Node root) throws IOException, ASTTraversalException {
+    public void toFile(String filename, Node root) throws IOException, 
+            ASTTraversalException {
         try {
-            outputStream = new FileWriter(filename);
-            preorder_number = 0;
-            stack = new Stack<Integer>();
+            this.outputStream = new FileWriter(filename);
+            this.preorder_number = 0;
+            this.stack = new Stack<Integer>();
             printBanner();
             root.visit(this);
             printFooter();
         } finally {
-            if (outputStream != null) {
-                outputStream.close();
+            if (this.outputStream != null) {
+                this.outputStream.close();
             }
         }
     }
@@ -223,6 +225,17 @@ public class ASTVisualizer extends DepthFirstVisitor {
     @Override
     public void beforeVarDecl(VarDeclaration decl) throws ASTTraversalException {
         this.printNode(decl.getName().getId(), "", decl.getExpression());
+    }
+    
+    
+    @Override
+    public void beforeRoot(Root root) throws ASTTraversalException {
+        this.printNode("Root", "", new Expression(root.getPosition(), Type.UNKNOWN) {
+            
+            @Override
+            public void visit(Visitor visitor) throws ASTTraversalException {
+            }
+        });
     }
     
     
