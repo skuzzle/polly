@@ -49,6 +49,24 @@ public class OperatorCall extends Call {
     }
     
     
+    
+    /**
+     * Creates a new OperatorCall to a ternary expression which has three operands.
+     * 
+     * @param position Position of the call within the input.
+     * @param operator The called operator.
+     * @param operand1 The first operand.
+     * @param operand2 The second operand.
+     * @param operand3 The third operand.
+     * @return The created Operator call.
+     */
+    public final static OperatorCall ternary(Position position, OpType operator, 
+            Expression operand1, Expression operand2, Expression operand3) {
+        return new OperatorCall(position, operator, 
+            Arrays.asList(new Expression[] {operand1, operand2, operand3}));
+    }
+    
+    
 
     private final OpType operator;
     

@@ -1,6 +1,7 @@
 package de.skuzzle.polly.parsing.ast.operators;
 
 
+import de.skuzzle.polly.parsing.Token;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.expressions.Hardcoded;
 import de.skuzzle.polly.parsing.types.Type;
@@ -43,6 +44,12 @@ public abstract class Operator extends Hardcoded {
         
         public String getId() {
             return this.id;
+        }
+        
+        
+        public static OpType fromToken(Token token) {
+            // XXX: TODO: fromToken
+            return null;
         }
     }
 

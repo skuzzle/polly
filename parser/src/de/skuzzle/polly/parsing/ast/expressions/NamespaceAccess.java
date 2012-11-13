@@ -7,21 +7,21 @@ import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 
 public class NamespaceAccess extends Expression {
 
-    private final Identifier name;
+    private final Expression lhs;
     private final VarAccess rhs;
     
     
     
-    public NamespaceAccess(Position position, Identifier name, VarAccess rhs) {
+    public NamespaceAccess(Position position, Expression lhs, VarAccess rhs) {
         super(position);
-        this.name = name;
+        this.lhs = lhs;
         this.rhs = rhs;
     }
 
     
     
-    public Identifier getName() {
-        return this.name;
+    public Expression getLHS() {
+        return this.lhs;
     }
     
     

@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.Stack;
 
 import de.skuzzle.polly.parsing.ExecutionException;
-import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.TokenType;
+import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.declarations.Namespace;
 import de.skuzzle.polly.parsing.tree.Expression;
 import de.skuzzle.polly.parsing.tree.literals.Literal;
@@ -53,7 +53,7 @@ public abstract class BinaryOperatorOverload implements Cloneable, Serializable 
     
     
     public void contextCheck(Namespace context, Expression left, 
-            Expression right) throws ParseException {
+            Expression right) throws ASTTraversalException {
         
         if (!left.getType().check(this.leftExpected)) {
             Type.typeError(left.getType(), this.leftExpected, left.getPosition());
