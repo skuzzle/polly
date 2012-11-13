@@ -14,12 +14,13 @@ import de.skuzzle.polly.sdk.http.HttpTemplateSortHelper;
 import de.skuzzle.polly.sdk.time.Milliseconds;
 
 
-public class ScoreBoardDetailsHttpAction extends HttpAction {
+public class ScoreboardDetailsHttpAction extends HttpAction {
 
     private ScoreBoardManager sbeManager;
+    
 
 
-    public ScoreBoardDetailsHttpAction(MyPolly myPolly, ScoreBoardManager sbeManager) {
+    public ScoreboardDetailsHttpAction(MyPolly myPolly, ScoreBoardManager sbeManager) {
         super("/sbe_details", myPolly);
         this.sbeManager = sbeManager;
     }

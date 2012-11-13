@@ -31,7 +31,7 @@ import polly.rx.http.FleetScanHttpAction;
 import polly.rx.http.MyTrainsHttpAction;
 import polly.rx.http.QueryOwnerHttpAction;
 import polly.rx.http.ScoreBoardHttpAction;
-import polly.rx.http.ScoreBoardDetailsHttpAction;
+import polly.rx.http.ScoreboardDetailsHttpAction;
 import polly.rx.http.TrainerHttpAction;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
@@ -126,7 +126,7 @@ public class MyPlugin extends PollyPlugin {
         this.sbeManager = new ScoreBoardManager(myPolly.persistence());
         myPolly.web().addMenuUrl("Revorix", "Scoreboard");
         myPolly.web().addHttpAction(new ScoreBoardHttpAction(myPolly, this.sbeManager));
-        myPolly.web().addHttpAction(new ScoreBoardDetailsHttpAction(myPolly, this.sbeManager));
+        myPolly.web().addHttpAction(new ScoreboardDetailsHttpAction(myPolly, this.sbeManager));
     }
     
     
