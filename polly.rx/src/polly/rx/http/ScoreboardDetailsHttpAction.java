@@ -2,6 +2,7 @@ package polly.rx.http;
 
 import java.util.Collection;
 
+import polly.rx.MyPlugin;
 import polly.rx.core.ScoreBoardManager;
 import polly.rx.entities.ScoreBoardEntry;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -23,6 +24,7 @@ public class ScoreboardDetailsHttpAction extends HttpAction {
     public ScoreboardDetailsHttpAction(MyPolly myPolly, ScoreBoardManager sbeManager) {
         super("/sbe_details", myPolly);
         this.sbeManager = sbeManager;
+        this.requirePermission(MyPlugin.SBE_PERMISSION);
     }
 
     
