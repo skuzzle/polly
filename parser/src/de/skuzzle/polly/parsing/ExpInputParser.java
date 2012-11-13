@@ -53,7 +53,7 @@ public class ExpInputParser {
         Namespace.forName("me").declare(div.createDeclaration());
         
         
-        String testMe = ":cmd \\(Number x;x)(2)";
+        String testMe = ":foo \\(Number x, Number y;x*y+1*4)(2, 8)";
         ExpInputParser p = new ExpInputParser();
         Root r = p.parse(testMe);
         
@@ -68,16 +68,21 @@ public class ExpInputParser {
         av.toFile("datAST", r);
     }
 
-    private PrecedenceTable operators;
+    private final PrecedenceTable operators;
     private int openExpressions;
     protected InputScanner scanner;
+    
+    
+    
+    public ExpInputParser() {
+        this.operators = new PrecedenceTable();
+    }
     
     
     
     public Root parse(String input, String encoding) 
             throws ParseException, UnsupportedEncodingException {
         InputScanner inp = new InputScanner(input, encoding);
-        this.operators = new PrecedenceTable();
         
         return this.parse(inp);
     }

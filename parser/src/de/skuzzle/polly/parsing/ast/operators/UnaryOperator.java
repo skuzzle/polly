@@ -21,14 +21,14 @@ import de.skuzzle.polly.parsing.types.Type;
 
 public abstract class UnaryOperator<O extends Literal> extends Operator {
 
-    protected final static String PARAM_NAME = "$param";
     private final Type operandType;
-    
+    private final String paramName;
     
     
     public UnaryOperator(OpType op, Type resultType, Type operandType) {
         super(op, resultType);
         this.operandType = operandType;
+        this.paramName = getParamName();
     }
 
     
@@ -36,7 +36,8 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
     @Override
     public Declaration createDeclaration() {
         Collection<Parameter> p = Arrays.asList(new Parameter[] {
-            new Parameter(Position.EMPTY, new ResolvableIdentifier(Position.EMPTY, PARAM_NAME), 
+            new Parameter(Position.EMPTY, 
+                new ResolvableIdentifier(Position.EMPTY, this.paramName), 
                 this.operandType)});
         
         final FunctionLiteral func = new FunctionLiteral(Position.EMPTY, p, this);
@@ -53,7 +54,7 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
     public void execute(LinkedList<Literal> stack, Namespace ns, Visitor execVisitor)
             throws ASTTraversalException {
         final O operand = (O) ns.resolveVar(
-            new ResolvableIdentifier(this.getPosition(), PARAM_NAME), 
+            new ResolvableIdentifier(this.getPosition(), this.paramName), 
             Type.ANY).getExpression();
         
         this.exec(stack, ns, operand, operand.getPosition());

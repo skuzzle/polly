@@ -27,6 +27,7 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.ast.operators.Operator;
 import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
 import de.skuzzle.polly.parsing.ast.operators.binary.Arithmetic;
+import de.skuzzle.polly.parsing.types.Type;
 
 
 
@@ -262,8 +263,8 @@ public class ExecutionVisitor extends DepthFirstVisitor {
     public void visitVarAccess(VarAccess access) throws ASTTraversalException {
         this.beforeVarAccess(access);
         
-        final VarDeclaration vd = 
-                (VarDeclaration) access.getIdentifier().getDeclaration();
+        final VarDeclaration vd = this.nspace.resolveVar(access.getIdentifier(), Type.ANY);
+                /*(VarDeclaration) access.getIdentifier().getDeclaration();*/
         vd.getExpression().visit(this);
         
         this.afterVarAccess(access);

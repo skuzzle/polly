@@ -1,6 +1,7 @@
 package de.skuzzle.polly.parsing.ast.expressions;
 
 import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
@@ -16,6 +17,21 @@ import de.skuzzle.polly.parsing.types.Type;
  * @author Simon Taddiken
  */
 public abstract class Hardcoded extends Expression {
+    
+    
+    private final static AtomicInteger PARAM_ID = new AtomicInteger();
+    
+    
+    /**
+     * Creates a unique parameter name.
+     * 
+     * @return A unique name.
+     */
+    protected final static String getParamName() {
+        return "$param_" + PARAM_ID.getAndIncrement();
+    }
+    
+    
 
     /**
      * Creates new HardcodedExpression with the given type.

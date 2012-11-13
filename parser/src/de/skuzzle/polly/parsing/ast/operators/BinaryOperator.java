@@ -30,11 +30,11 @@ import de.skuzzle.polly.parsing.types.Type;
 public abstract class BinaryOperator<L extends Literal, R extends Literal> 
         extends Operator {
 
-    private final static String LEFT_PARAM_NAME = "$left";
-    private final static String RIGHT_PARAM_NAME = "$right";
-    
     private final Type left;
     private final Type right;
+    
+    private final String leftParamName;
+    private final String rightParamName;
     
     
     
@@ -50,6 +50,10 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
         super(id, resultType);
         this.left = left;
         this.right = right;
+        
+        // create unique parameter names 
+        this.leftParamName = getParamName();
+        this.rightParamName = getParamName();
     }
     
     
@@ -58,10 +62,10 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
     public Declaration createDeclaration() {
         Collection<Parameter> p = Arrays.asList(new Parameter[] {
             new Parameter(Position.EMPTY, 
-                new ResolvableIdentifier(Position.EMPTY, LEFT_PARAM_NAME), 
+                new ResolvableIdentifier(Position.EMPTY, this.leftParamName), 
                 this.left),
             new Parameter(Position.EMPTY, 
-                new ResolvableIdentifier(Position.EMPTY, RIGHT_PARAM_NAME), 
+                new ResolvableIdentifier(Position.EMPTY, this.rightParamName), 
                 this.right)});
         
         final FunctionLiteral func = new FunctionLiteral(Position.EMPTY, p, this);
@@ -79,10 +83,10 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
             Visitor execVisitor) throws ASTTraversalException {
         
         final R right = (R) ns.resolveVar(
-            new ResolvableIdentifier(this.getPosition(), LEFT_PARAM_NAME), 
+            new ResolvableIdentifier(this.getPosition(), this.leftParamName), 
             Type.ANY).getExpression();
         final L left = (L) ns.resolveVar(
-            new ResolvableIdentifier(this.getPosition(), RIGHT_PARAM_NAME), 
+            new ResolvableIdentifier(this.getPosition(), this.rightParamName), 
             Type.ANY).getExpression();
         
         this.exec(stack, ns, left, right, 
