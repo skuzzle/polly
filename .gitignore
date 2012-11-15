@@ -78,6 +78,9 @@
 /polly.linkexpander/dist/
 /polly.linkexpander/bin/
 /polly.linkexpander/build/
+/polly.pircbot/dist/
+/polly.pircbot/bin/
+/polly.pircbot/build/
 /polly.rx/dist/
 /polly.rx/bin/
 /polly.rx/build/
