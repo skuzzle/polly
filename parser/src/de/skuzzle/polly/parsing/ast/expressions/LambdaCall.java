@@ -41,7 +41,6 @@ public class LambdaCall extends Call {
     }
     
     
-    
 
     @Override
     public void visit(Visitor visitor) throws ASTTraversalException {

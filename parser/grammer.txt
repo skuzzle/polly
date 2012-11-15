@@ -12,8 +12,9 @@ autolist    -> dotdot (';' dotdot)*                  // implicit list literal
 dotdot      -> unary ('..' unary ('$' unary)?)?      // range operator with optional step size
 unary       -> UNARY_OP unary                        // right-associative unary operator
              | access
-access      -> literal ('.' varOrCall)?              // namespace access. literal must be a single identifier (represented by a VarAccess)
-literal     -> varOrCall
+access      -> call ('.' varOrCall)?                 // namespace access. call must be a single identifier (represented by a VarAccess)
+call        -> literal ( '(' parameters ')' )?
+literal     -> ID                                    // VarAccess
              | '(' expr ')'                          // braced expression
              | '\(' parameters ')'                   // lambda function literal
              | '{' exprList '}'                      // concrete list of expressions

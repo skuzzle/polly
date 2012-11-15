@@ -8,11 +8,11 @@ import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 public class NamespaceAccess extends Expression {
 
     private final Expression lhs;
-    private final VarAccess rhs;
+    private final Expression rhs;
     
     
     
-    public NamespaceAccess(Position position, Expression lhs, VarAccess rhs) {
+    public NamespaceAccess(Position position, Expression lhs, Expression rhs) {
         super(position);
         this.lhs = lhs;
         this.rhs = rhs;
@@ -26,7 +26,7 @@ public class NamespaceAccess extends Expression {
     
     
     
-    public VarAccess getRhs() {
+    public Expression getRhs() {
         return this.rhs;
     }
     

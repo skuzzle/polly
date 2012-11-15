@@ -228,8 +228,9 @@ public class Namespace {
     
     
     /**
-     * Declares a new function in this namespace, overriding any existing function with 
-     * the same name and signature.
+     * Declares a new variable in this namespace, overriding any existing var with 
+     * the same name and signature in this namespace. This does not take declarations 
+     * of parent namespace into account.
      * 
      * @param decl The function to declare.
      */

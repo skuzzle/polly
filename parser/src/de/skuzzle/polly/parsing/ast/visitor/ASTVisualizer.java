@@ -148,7 +148,7 @@ public class ASTVisualizer extends DepthFirstVisitor {
 
     @Override
     public void beforeCall(Call call) throws ASTTraversalException {
-        this.printNode("Call", call.getIdentifier().getId(), call);
+        this.printNode("Call", "", call);
     }
 
 

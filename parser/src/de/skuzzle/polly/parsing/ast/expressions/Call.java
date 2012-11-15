@@ -13,8 +13,9 @@ import de.skuzzle.polly.parsing.types.FunctionType;
 import de.skuzzle.polly.parsing.types.Type;
 
 
-public class Call extends VarAccess {
+public class Call extends Expression {
     
+    private final Expression lhs;
     private final List<Expression> parameters;
     private List<ResolvedParameter> resolvedParameters;
     
@@ -24,13 +25,21 @@ public class Call extends VarAccess {
      * Creates a new function call.
      * 
      * @param position Position of the call within the source.
-     * @param identifier Name of the function being called
+     * @param lhs Left handed expression of this call.
      * @param parameters Actual parameters of the call.
      */
-    public Call(Position position, ResolvableIdentifier identifier, 
+    public Call(Position position, Expression lhs, 
             Collection<Expression> parameters) {
-        super(position, identifier);
+        super(position);
         this.parameters = new ArrayList<Expression>(parameters);
+        this.lhs = lhs;
+    }
+    
+    
+    
+    
+    public Expression getLhs() {
+        return this.lhs;
     }
     
     

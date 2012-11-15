@@ -174,7 +174,7 @@ public class DepthFirstVisitor implements Visitor {
     @Override
     public void visitCall(Call call) throws ASTTraversalException {
         this.beforeCall(call);
-        call.getIdentifier().visit(this);
+        call.getLhs().visit(this);
         for (final Expression exp : call.getParameters()) {
             exp.visit(this);
         }
@@ -282,7 +282,7 @@ public class DepthFirstVisitor implements Visitor {
     @Override
     public void visitOperatorCall(OperatorCall call) throws ASTTraversalException {
         this.beforeOperatorCall(call);
-        call.getIdentifier().visit(this);
+        call.getLhs().visit(this);
         for (final Expression exp : call.getParameters()) {
             exp.visit(this);
         }

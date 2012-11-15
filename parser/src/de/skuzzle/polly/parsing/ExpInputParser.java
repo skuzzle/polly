@@ -37,6 +37,7 @@ import de.skuzzle.polly.parsing.ast.operators.binary.Arithmetic;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.ASTVisualizer;
 import de.skuzzle.polly.parsing.ast.visitor.ExecutionVisitor;
+import de.skuzzle.polly.parsing.ast.visitor.ParentSetter;
 import de.skuzzle.polly.parsing.ast.visitor.TypeResolver;
 
 
@@ -53,12 +54,15 @@ public class ExpInputParser {
         Namespace.forName("me").declare(div.createDeclaration());
         
         
-        String testMe = ":foo \\(Number x, Number y;x*y+1*4)(2, 8)";
+        String testMe = ":foo (\\(Number x, Number y;x*y+1*4)->kaka)";
         ExpInputParser p = new ExpInputParser();
         Root r = p.parse(testMe);
         
         TypeResolver tr = new TypeResolver("me");
         r.visit(tr);
+        
+        ParentSetter ps = new ParentSetter();
+        r.visit(ps);
         
         ExecutionVisitor ev = new ExecutionVisitor("me");
         r.visit(ev);
@@ -606,7 +610,7 @@ public class ExpInputParser {
     /**
      * Parses a {@link Namespace} access.
      * <pre>
-     * literal ('.' varOrCall)?
+     * call ('.' varOrCall)?
      * </pre>
      * 
      * @return The parsed literal if no DOT operator was found, or a {@link Namespace}
@@ -614,11 +618,11 @@ public class ExpInputParser {
      * @throws ParseException If parsing fails
      */
     protected Expression parseNamespaceAccess() throws ParseException {
-        final Expression lhs = this.parseLiteral();
+        final Expression lhs = this.parseCall();
         
         final Token la = this.scanner.lookAhead();
         if (this.scanner.match(TokenType.DOT)) {
-            final VarAccess rhs = this.parseVarOrCall();
+            final Expression rhs = this.parseVarOrCall();
             
             if (rhs == null) {
                 throw new ParseException("Erwartet: Variable oder Funktionsaufruf", 
@@ -633,18 +637,35 @@ public class ExpInputParser {
     
     
     
-    protected Expression parseLiteral() throws ParseException {
-        final VarAccess va = this.parseVarOrCall();
-        // check if var or call. if so, return, if not, test for other literals
-        if (va != null) {
-            return va;
+    protected Expression parseCall() throws ParseException {
+        final Expression lhs = this.parseLiteral();
+        
+        if (this.scanner.match(TokenType.OPENBR)) {
+            final Collection<Expression> params = this.parseExpressionList(
+                TokenType.CLOSEDBR);
+            
+            this.expect(TokenType.CLOSEDBR);
+            
+            return new Call(
+                new Position(lhs.getPosition().getStart(), this.scanner.getStreamIndex()), 
+                lhs, params);
         }
-        
-        
+        return lhs;
+    }
+    
+    
+    
+    protected Expression parseLiteral() throws ParseException {      
         final Token la = this.scanner.lookAhead();
         Expression exp = null;
         
         switch(la.getType()) {
+        case IDENTIFIER:
+            this.scanner.consume();
+            final ResolvableIdentifier id = new ResolvableIdentifier(
+                    la.getPosition(), la.getStringValue());
+            return new VarAccess(id.getPosition(), id);
+            
         case OPENBR:
             this.scanner.consume();
             
@@ -675,16 +696,7 @@ public class ExpInputParser {
             
             final FunctionLiteral func = new FunctionLiteral(
                 this.scanner.spanFrom(la), formal, exp);
-            
-            if (this.scanner.match(TokenType.OPENBR)) {
-                // lambda function being called right here
-                final Collection<Expression> params = this.parseExpressionList(
-                    TokenType.CLOSEDBR);
-                
-                this.expect(TokenType.CLOSEDBR);
-                return new LambdaCall(this.scanner.spanFrom(la), func, params);
-            }
-            
+            return func;
             
         case OPENCURLBR:
             this.scanner.consume();
@@ -756,7 +768,7 @@ public class ExpInputParser {
      *          identifier.
      * @throws ParseException If this was no valid call though it appeared to be one. 
      */
-    protected VarAccess parseVarOrCall() throws ParseException {
+    protected Expression parseVarOrCall() throws ParseException {
         final Token la = this.scanner.lookAhead();
         
         if (la.getType() == TokenType.IDENTIFIER) {

@@ -175,8 +175,11 @@ public class TypeResolver extends DepthFirstVisitor {
             p.visit(this);
             
             final VarDeclaration vd = new VarDeclaration(
-                p.getPosition(), p.getName(), new EmptyExpression(p.getType()));
-            this.nspace.declare(vd);
+                p.getPosition(), p.getName(), 
+                new EmptyExpression(p.getType()));
+            vd.setParameter(true);
+            
+            this.nspace.declareOverride(vd);
         }
         // now determine type of the function's expression
         func.getExpression().visit(this);
@@ -310,6 +313,9 @@ public class TypeResolver extends DepthFirstVisitor {
         
         this.beforeCall(call);
         
+        // check what type of call this is
+        call.getLhs().visit(this);
+        
         // resolve actual parameter types
         for (final Expression exp : call.getParameters()) {
             exp.visit(this);
@@ -317,13 +323,21 @@ public class TypeResolver extends DepthFirstVisitor {
         
         // create signature from actual parameter types.
         // signature does *not* obey return value as it is unknown by now.
-        final Type sig = call.createSignature(); 
-        final VarDeclaration decl = this.nspace.resolveVar(call.getIdentifier(), sig);
+        final Type sig = call.createSignature();
         
-        if (!(decl.getExpression().getType() instanceof FunctionType)) {
-            throw new ASTTraversalException(call.getIdentifier().getPosition(), 
-                call.getIdentifier().getId() + " ist keine Funktion");
+        if (call.getLhs() instanceof VarAccess) {
+            final VarAccess va = (VarAccess) call.getLhs();
+            final VarDeclaration decl = this.nspace.resolveVar(va.getIdentifier(), sig);
+            
+            if (!(decl.getExpression().getType() instanceof FunctionType)) {
+                throw new ASTTraversalException(va.getIdentifier().getPosition(), 
+                    va.getIdentifier().getId() + " ist keine Funktion");
+            }
         }
+        
+        
+        
+
 
         // now treat resolved function as a lambda function
         final FunctionLiteral func = (FunctionLiteral) decl.getExpression();

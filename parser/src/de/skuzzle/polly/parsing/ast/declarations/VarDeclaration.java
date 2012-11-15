@@ -11,13 +11,25 @@ import de.skuzzle.polly.parsing.types.Type;
 public class VarDeclaration extends Declaration {
 
     private final Expression expression;
-    
+    private boolean isParameter;
     
     
     public VarDeclaration(Position position, Identifier name, 
             Expression expression) {
         super(position, name);
         this.expression = expression;
+    }
+    
+    
+    
+    public void setParameter(boolean isParameter) {
+        this.isParameter = isParameter;
+    }
+    
+    
+    
+    public boolean isParameter() {
+        return this.isParameter;
     }
 
     

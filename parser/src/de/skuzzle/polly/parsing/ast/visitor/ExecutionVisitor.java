@@ -247,7 +247,7 @@ public class ExecutionVisitor extends DepthFirstVisitor {
             
             final VarDeclaration local = 
                 new VarDeclaration(p.getPosition(), p.getName(), actual);
-            this.nspace.declare(local);
+            this.nspace.declareOverride(local);
         }
 
         final FunctionLiteral func = (FunctionLiteral) vd.getExpression();
