@@ -23,6 +23,7 @@
         <th><a href="Scoreboard?sortKey=getClan&dir=$dir">Clan</a></th>
         <th><a href="Scoreboard?sortKey=getPoints&dir=$dir">Points</a></th>
         <th><a href="Scoreboard?sortKey=getPointsPerDay&dir=$dir">Points/Day</a></th>
+        <th><a href="Scoreboard?sortKey=getSpan&dir=$dir">Timespan</a> <a href="Scoreboard?sortKey=getEntries&dir=$dir">(Entries)</a></th>
         <th><a href="Scoreboard?&sortKey=getDate&dir=$dir">Date</a></th>
         <th>Action</th>
     </tr>
@@ -33,6 +34,7 @@
         <td>$entry.getClan()</td>
         <td>$entry.getPoints()</td>
         <td>$nformat.format($entry.getPointsPerDay())</td>
+        <td>$myPolly.formatting().formatTimeSpanMs($entry.getSpan()) ($entry.getEntries())</td>
         <td>$myPolly.formatting().formatDate($entry.getDate())</td>
         <td><a href="/sbe_details?venad=$entry.getVenadName()">Details</a> | <a href="/Scoreboard?action=delete&id=$entry.getId()">Delete</a></td>
     </tr>

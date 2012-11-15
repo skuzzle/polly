@@ -80,6 +80,8 @@ public class ScoreBoardEntry {
                 }
                 
                 youngest.pointsPerDay = pointsPerDay;
+                youngest.entries = tmp.size();
+                youngest.span = diff;
                 result.add(youngest);
                 tmp.clear();
             }
@@ -109,6 +111,10 @@ public class ScoreBoardEntry {
     private Date date;
     
     private transient double pointsPerDay;
+    
+    private transient int entries;
+    
+    private transient long span;
     
     
     public ScoreBoardEntry() {}
@@ -163,5 +169,17 @@ public class ScoreBoardEntry {
     
     public double getPointsPerDay() {
         return this.pointsPerDay;
+    }
+    
+    
+    
+    public int getEntries() {
+        return this.entries;
+    }
+    
+    
+    
+    public long getSpan() {
+        return this.span;
     }
 }
