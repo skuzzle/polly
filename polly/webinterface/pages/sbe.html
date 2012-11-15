@@ -32,7 +32,7 @@
         <td>$entry.getVenadName()</td>
         <td>$entry.getClan()</td>
         <td>$entry.getPoints()</td>
-        <td>$entry.getPointsPerDay()</td>
+        <td>$nformat.format($entry.getPointsPerDay())</td>
         <td>$myPolly.formatting().formatDate($entry.getDate())</td>
         <td><a href="/sbe_details?venad=$entry.getVenadName()">Details</a> | <a href="/Scoreboard?action=delete&id=$entry.getId()">Delete</a></td>
     </tr>

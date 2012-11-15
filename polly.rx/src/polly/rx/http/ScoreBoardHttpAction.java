@@ -78,6 +78,7 @@ public class ScoreBoardHttpAction extends HttpAction {
         List<ScoreBoardEntry> entries = this.sbeManager.getEntries();
         entries = ScoreBoardEntry.postFilter(entries);
         
+        c.put("nformat", ScoreBoardManager.NUMBER_FORMAT);
         c.put("entries", entries);
         
         return c;

@@ -1,7 +1,10 @@
 package polly.rx.core;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.WriteAction;
@@ -10,6 +13,12 @@ import polly.rx.entities.ScoreBoardEntry;
 
 
 public class ScoreBoardManager {
+    
+    public final static NumberFormat NUMBER_FORMAT = DecimalFormat.getInstance(
+            Locale.ENGLISH);
+    static {
+        ((DecimalFormat) NUMBER_FORMAT).applyPattern("0.00");
+    }
 
     private PersistenceManager persistence;
     

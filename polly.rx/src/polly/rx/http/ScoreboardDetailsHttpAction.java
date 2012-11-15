@@ -63,7 +63,7 @@ public class ScoreboardDetailsHttpAction extends HttpAction {
         c.put("span", diff);
         c.put("days", days);
         c.put("pointsPerDay", pointsPerDay);
-        
+        c.put("nformat", ScoreBoardManager.NUMBER_FORMAT);
         return c;
     }
 
