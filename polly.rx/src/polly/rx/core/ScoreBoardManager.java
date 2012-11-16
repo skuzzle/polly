@@ -9,6 +9,7 @@ import java.util.Locale;
 import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.WriteAction;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
+import de.skuzzle.polly.sdk.time.DateUtils;
 import polly.rx.entities.ScoreBoardEntry;
 
 
@@ -36,7 +37,7 @@ public class ScoreBoardManager {
         
         // skip identical entries.
         for (ScoreBoardEntry e : existing) {
-            if (e.getPoints() == entry.getPoints() && e.getRank() == entry.getRank()) {
+            if (DateUtils.isSameDay(e.getDate(), entry.getDate())) {
                 return;
             }
         }
