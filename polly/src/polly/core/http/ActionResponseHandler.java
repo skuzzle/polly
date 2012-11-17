@@ -14,6 +14,9 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 
+import polly.util.Stopwatch;
+import polly.util.TimeProviderStopWatch;
+
 
 import com.sun.net.httpserver.HttpExchange;
 
@@ -24,6 +27,7 @@ import de.skuzzle.polly.sdk.http.HttpParameter.ParameterType;
 import de.skuzzle.polly.sdk.http.HttpSession;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.http.HttpTemplateException;
+import de.skuzzle.polly.sdk.time.Time;
 
 
 public class ActionResponseHandler extends AbstractResponseHandler {
@@ -75,6 +79,9 @@ public class ActionResponseHandler extends AbstractResponseHandler {
     public void handleRequest(String requestUri, HttpSession session, 
             HttpExchange t, boolean timedOut, boolean blocked) throws IOException {
         
+        Stopwatch watch = new TimeProviderStopWatch(Time.getProvider());
+        watch.start();
+        
         HttpTemplateContext c = null;
         // kill the session if a user is logged in on it and it is expired
         if (timedOut) {
@@ -113,6 +120,7 @@ public class ActionResponseHandler extends AbstractResponseHandler {
         }
         
         if (c != null) {
+            c.put("generationTime", watch.stop());
             this.respond(c, t, session);
         } else {
             // there is no action for the given uri, so treat it as a file request

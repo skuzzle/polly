@@ -67,6 +67,17 @@ public final class Time {
     
     
     /**
+     * Gets the currently set {@link TimeProvider}
+     * 
+     * @return The provider.
+     */
+    public static TimeProvider getProvider() {
+        return provider;
+    }
+    
+    
+    
+    /**
      * Gets the current polly system time calculated by the time provider set with
      * {@link #setProvider(TimeProvider)}. By default, this method returns the same time
      * as {@link System#currentTimeMillis()}.
