@@ -43,6 +43,10 @@ body {
 	font-weight:bold;
 }
 
+#content tr:hover td{
+    background-color: #E0E0E0;
+}
+
 #content td {
     background-color: #F0F0F0;
     padding-left: 2px;
