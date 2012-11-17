@@ -5,6 +5,7 @@ import java.util.TreeSet;
 
 import polly.rx.commands.AddTrainCommand;
 import polly.rx.commands.CloseTrainCommand;
+import polly.rx.commands.CrackerCommand;
 import polly.rx.commands.DeliverTrainCommand;
 import polly.rx.commands.IPCommand;
 import polly.rx.commands.MyTrainsCommand;
@@ -58,8 +59,9 @@ public class MyPlugin extends PollyPlugin {
     public final static String CLOSE_TRAIN_PERMISSION            = "polly.permission.CLOSE_TRAIN";
     public final static String IP_PERMISSION                     = "polly.permission.IP";
     public final static String SBE_PERMISSION                    = "polly.permission.SBE";
+    public final static String CRACKER_PERMISSION                = "polly.permission.CRACKER";
     public final static String VENAD    = "VENAD";
-    
+    public final static String CRACKER  = "CRACKER";
     
     private FleetDBManager fleetDBManager;
     private TrainManagerV2 trainManager;
@@ -87,7 +89,7 @@ public class MyPlugin extends PollyPlugin {
         this.addCommand(new VenadCommand(myPolly));
         this.addCommand(new MyVenadCommand(myPolly));
         this.addCommand(new IPCommand(myPolly));
-        
+        this.addCommand(new CrackerCommand(myPolly));
         
         myPolly.web().addMenuUrl("Revorix", "MyTrains");
         myPolly.web().addMenuUrl("Revorix", "Trainer");
@@ -149,6 +151,7 @@ public class MyPlugin extends PollyPlugin {
         result.add(FleetDBManager.VIEW_FLEET_SCAN_PERMISSION);
         result.add(FleetDBManager.DELETE_FLEET_SCAN_PERMISSION);
         result.add(SBE_PERMISSION);
+        result.add(CRACKER_PERMISSION);
         result.addAll(super.getContainedPermissions());
         return result;
     }
@@ -176,6 +179,7 @@ public class MyPlugin extends PollyPlugin {
         roleManager.assignPermission(SBE_MANAGER_ROLE, SBE_PERMISSION);
         
         roleManager.assignPermission(RoleManager.DEFAULT_ROLE, IP_PERMISSION);
+        roleManager.assignPermission(RoleManager.DEFAULT_ROLE, CRACKER_PERMISSION);
         super.assignPermissions(roleManager);
     }
 
@@ -186,6 +190,7 @@ public class MyPlugin extends PollyPlugin {
         try {
             this.getMyPolly().users().addAttribute(VENAD, "<unbekannt>");
             this.getMyPolly().users().addAttribute("AZ", "0", Constraints.INTEGER);
+            this.getMyPolly().users().addAttribute(CRACKER, "0", Constraints.INTEGER);
         } catch (Exception ignore) {
             ignore.printStackTrace();
         }
