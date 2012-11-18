@@ -189,6 +189,8 @@ public class ScoreBoardEntry implements CSVExportable {
     
     @Override
     public void printBanner(PrintWriter writer, String separator) {
+        writer.print("date");
+        writer.print(separator);
         writer.print("rank");
         writer.print(separator);
         writer.print("venad");
@@ -202,6 +204,8 @@ public class ScoreBoardEntry implements CSVExportable {
 
     @Override
     public void printCSVLine(PrintWriter writer, String separator) {
+        writer.print(this.date);
+        writer.print(separator);
         writer.print(this.rank);
         writer.print(separator);
         writer.print(this.venadName);
