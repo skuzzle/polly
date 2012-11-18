@@ -25,8 +25,9 @@ public final class CSVExporter {
      *          has been written. <code>true</code> otherwise.
      * @throws IOException If an I/O error occurred.
      */
-    public final static boolean exportToCSV(Collection<CSVExportable> entities, 
-            String fileName, String separator) throws IOException {
+    public final static <T extends CSVExportable> boolean exportToCSV(
+            Collection<T> entities, String fileName, 
+            String separator) throws IOException {
         
         if (entities.isEmpty()) {
             return false;

@@ -1,5 +1,6 @@
 package polly.rx.http;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -10,6 +11,7 @@ import polly.rx.MyPlugin;
 import polly.rx.core.ScoreBoardManager;
 import polly.rx.entities.ScoreBoardEntry;
 import polly.rx.parsing.ScoreBoardParser;
+import de.skuzzle.polly.sdk.CSVExporter;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
@@ -24,6 +26,8 @@ import de.skuzzle.polly.sdk.time.Time;
 public class ScoreBoardHttpAction extends HttpAction {
 
     private ScoreBoardManager sbeManager;
+    
+    public final static String CSV_FILE_NAME = "scoreboard.txt";
     
 
     private final static DateFormat DATE_FORMAT = new SimpleDateFormat(
@@ -42,23 +46,29 @@ public class ScoreBoardHttpAction extends HttpAction {
     public HttpTemplateContext execute(HttpEvent e) throws HttpTemplateException,
             InsufficientRightsException {
         HttpTemplateContext c = new HttpTemplateContext("pages/sbe.html");
-        
         String action = e.getProperty("action");
         if (action != null && action.equals("postSB")) {
-            String paste = e.getProperty("paste");
-            String d = e.getProperty("date");
-            try {
-                Date date = Time.currentTime();
-                if (d != null && !d.equals("")) {
-                    date = DATE_FORMAT.parse(d);
+            synchronized (this) {
+                String paste = e.getProperty("paste");
+                String d = e.getProperty("date");
+                try {
+                    Date date = Time.currentTime();
+                    if (d != null && !d.equals("")) {
+                        date = DATE_FORMAT.parse(d);
+                    }
+                    Collection<ScoreBoardEntry> ents = ScoreBoardParser.parse(paste, date);
+                    
+                    for (ScoreBoardEntry ent : ents) {
+                        this.sbeManager.addEntry(ent);
+                    }
+
+                    Collection<ScoreBoardEntry> allEntries = this.sbeManager.getEntries();
+                    CSVExporter.exportToCSV(allEntries, 
+                            new File(e.getSource().getTemplateRoot(), 
+                                    CSV_FILE_NAME).toString(), ",");
+                } catch (Exception e1) {
+                    e.throwTemplateException("Invalid paste", "");
                 }
-                Collection<ScoreBoardEntry> ents = ScoreBoardParser.parse(paste, date);
-                
-                for (ScoreBoardEntry ent : ents) {
-                    this.sbeManager.addEntry(ent);
-                }
-            } catch (Exception e1) {
-                e.throwTemplateException("Invalid paste", "");
             }
         } else if (action != null && action.equals("delete")) {
             String idS = e.getProperty("id");
@@ -78,6 +88,7 @@ public class ScoreBoardHttpAction extends HttpAction {
         List<ScoreBoardEntry> entries = this.sbeManager.getEntries();
         entries = ScoreBoardEntry.postFilter(entries);
         
+        c.put("csvFileName", CSV_FILE_NAME);
         c.put("nformat", ScoreBoardManager.NUMBER_FORMAT);
         c.put("entries", entries);
         

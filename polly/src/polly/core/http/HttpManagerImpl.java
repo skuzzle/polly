@@ -52,10 +52,6 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
         .getName());
     
     
-    public final static String FILE_REQUEST_PREFIX = "/file:";
-    
-    
-    
     private HttpServer server;
     private int port;
     private boolean running;
@@ -112,6 +108,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     
     
     
+    @Override
     public File getTemplateRoot() {
         return this.templateRoot;
     }
@@ -289,6 +286,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
         
         return actionContext;
     }
+    
     
     
     
