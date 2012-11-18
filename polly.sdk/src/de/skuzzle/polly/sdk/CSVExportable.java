@@ -6,6 +6,7 @@ import java.io.PrintWriter;
  * Dataclasses can implement this interface to provide csv serializing.
  * 
  * @author Simon Taddiken
+ * @since 0.9.1
  */
 public interface CSVExportable {
     
