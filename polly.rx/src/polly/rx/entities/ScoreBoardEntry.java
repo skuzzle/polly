@@ -1,5 +1,6 @@
 package polly.rx.entities;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -16,6 +17,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import de.skuzzle.polly.sdk.CSVExportable;
 import de.skuzzle.polly.sdk.time.Milliseconds;
 
 
@@ -30,7 +32,7 @@ import de.skuzzle.polly.sdk.time.Milliseconds;
         query = "SELECT sbe FROM ScoreBoardEntry sbe WHERE sbe.venadName = ?1 ORDER BY sbe.date, sbe.rank DESC"
     )
 })
-public class ScoreBoardEntry {
+public class ScoreBoardEntry implements CSVExportable {
     
     
     public static List<ScoreBoardEntry> postFilter(
@@ -181,5 +183,31 @@ public class ScoreBoardEntry {
     
     public long getSpan() {
         return this.span;
+    }
+    
+    
+    
+    @Override
+    public void printBanner(PrintWriter writer, String separator) {
+        writer.print("rank");
+        writer.print(separator);
+        writer.print("venad");
+        writer.print(separator);
+        writer.print("clan");
+        writer.print(separator);
+        writer.println("points");
+    }
+    
+
+
+    @Override
+    public void printCSVLine(PrintWriter writer, String separator) {
+        writer.print(this.rank);
+        writer.print(separator);
+        writer.print(this.venadName);
+        writer.print(separator);
+        writer.print(this.clan);
+        writer.print(separator);
+        writer.println(this.points);
     }
 }
