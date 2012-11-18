@@ -7,6 +7,7 @@
 		<th><a href="${destination}&shipSortKey=getName&shipDesc=$shipDesc">Ship Name</a></th>
 		<th><a href="${destination}&shipSortKey=getTechlevel&shipDesc=$shipDesc">Techlevel</a></th>
 		<th><a href="${destination}&shipSortKey=getOwner&shipDesc=$shipDesc">Latest Owner</a></th>
+		<th><a href="${destination}&shipSortKey=changedOwner&shipDesc=$shipDesc">Changed Owner?</a></th>
 		<th><a href="${destination}&shipSortKey=getOwnerClan&shipDesc=$shipDesc">Latest Clan</a></th>
 		<th><a href="${destination}&shipSortKey=getHistorySize&shipDesc=$shipDesc">History entries</a></th>
 	</tr>
@@ -26,6 +27,7 @@
 		#end</td>
 		<td>$ship.getTechlevel()</td>
 		<td><a href="/query_scans?method=owner&query=$ship.getOwner()">$ship.getOwner()</a></td>
+		<td>$ship.changedOwner()</td>
 		<td><a href="/query_scans?method=clan&query=$ship.getOwnerClan()">$ship.getOwnerClan()</a></td>
 		<td>$ship.getHistory().size()</td>
 	</tr>

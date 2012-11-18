@@ -171,6 +171,19 @@ public class FleetScanShip {
     
     
     
+    public boolean changedOwner() {
+        for (final FleetScanHistoryEntry entry : this.getHistory()) {
+            for (final String change : entry.getChanges()) {
+                if (change.contains("Spotted with different owner")) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    
+    
     public void update(FleetScanShip other) {
         if (this.rxId != other.rxId) {
             throw new RuntimeException("cannot update ships with different rxId's");
@@ -186,7 +199,7 @@ public class FleetScanShip {
         }
         
         if (!this.owner.equals(other.owner)) {
-            historyEntry.getChanges().add("Spotted with differen owner: " + other.owner);
+            historyEntry.getChanges().add("Spotted with different owner: " + other.owner);
             this.owner = other.owner;
         }
         if (!this.ownerClan.equals(other.ownerClan)) {
