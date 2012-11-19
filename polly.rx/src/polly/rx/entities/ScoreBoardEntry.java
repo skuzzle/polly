@@ -1,6 +1,8 @@
 package polly.rx.entities;
 
 import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -97,6 +99,8 @@ public class ScoreBoardEntry implements CSVExportable {
     
     public final static String ALL_SBE_DISTINCT = "ALL_SBE_DISTINCT";
     public final static String SBE_BY_USER = "SBE_BY_USER";
+    
+    public final static DateFormat CSV_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
     
     @Id@GeneratedValue(strategy = GenerationType.TABLE)
     private int id;
@@ -204,7 +208,7 @@ public class ScoreBoardEntry implements CSVExportable {
 
     @Override
     public void printCSVLine(PrintWriter writer, String separator) {
-        writer.print(this.date);
+        writer.print(CSV_DATE_FORMAT.format(this.date));
         writer.print(separator);
         writer.print(this.rank);
         writer.print(separator);
