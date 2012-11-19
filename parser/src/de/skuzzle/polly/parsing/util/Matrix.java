@@ -174,7 +174,7 @@ public class Matrix<K> {
     /**
      * <p>Creates a new matrix by splitting the given one at a certain column and 
      * returning a matrix which contains all elements to the right of that column. The 
-     * column index is inclusive. Thus {@code splitLeft(matrix, 0)} will 
+     * column index is inclusive. Thus {@code splitRight(matrix, 0)} will 
      * return an exact copy of the given matrix.</p>
      * 
      * <p>In general the result will have {@code matrix.getM()} rows and {@code j}
@@ -462,7 +462,6 @@ public class Matrix<K> {
     
     
     
-    
     /**
      * <p>Adds the other matrix to this by adding all elements pairwise. 
      * This operation is only possible if both matrices have the exact same size.</p>
@@ -484,8 +483,8 @@ public class Matrix<K> {
      * <p>Adds the other matrix given as array to this by adding all elements pairwise. 
      * This operation is only possible if both matrices have the exact same size.</p>
      * 
-     * <p>This operation creates operates in place and the result is stored in this
-     * matrix instance.
+     * <p>This operation operates in place and the result is stored in this
+     * matrix instance.</p>
      * 
      * @param other The matrix to be added to this one.
      * @return The 'this' reference.
@@ -863,7 +862,7 @@ public class Matrix<K> {
      * characters can be chosen. Columns are aligned by padding each element by a number
      * of spaces until its length equals the length of the longest entry in the same 
      * column. The user can choose the column delimiter and additionally a string which is
-     * put after each line. This can be useful for example to produce a LaTex 
+     * put after each line. This can be useful for example to produce a LaTeX 
      * representation of this matrix (this.toAlignedString(" & ", "\\\\", true) will 
      * return a String suitable for LaTex documents). 
      * 
