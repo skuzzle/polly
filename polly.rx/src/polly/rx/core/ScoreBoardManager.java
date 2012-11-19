@@ -66,7 +66,7 @@ public class ScoreBoardManager {
     
     
     
-    public Collection<ScoreBoardEntry> getEntries(String venad) {
+    public List<ScoreBoardEntry> getEntries(String venad) {
         return this.persistence.atomicRetrieveList(ScoreBoardEntry.class, 
             ScoreBoardEntry.SBE_BY_USER, venad);
     }

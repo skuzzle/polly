@@ -37,6 +37,16 @@ import de.skuzzle.polly.sdk.time.Milliseconds;
 public class ScoreBoardEntry implements CSVExportable {
     
     
+    public final static Comparator<ScoreBoardEntry> BY_DATE = 
+        new Comparator<ScoreBoardEntry>() {
+    
+            @Override
+            public int compare(ScoreBoardEntry o1, ScoreBoardEntry o2) {
+                return o1.getDate().compareTo(o2.getDate());
+            }
+    };
+    
+    
     public static List<ScoreBoardEntry> postFilter(
             List<ScoreBoardEntry> entries) {
         
@@ -122,6 +132,12 @@ public class ScoreBoardEntry implements CSVExportable {
     
     private transient long span;
     
+    private transient int diffToPrevious;
+    
+    private transient int daysToPrevious;
+    
+    private transient double discDerivative;
+    
     
     public ScoreBoardEntry() {}
     
@@ -187,6 +203,42 @@ public class ScoreBoardEntry implements CSVExportable {
     
     public long getSpan() {
         return this.span;
+    }
+    
+    
+    
+    public void setDiscDerivative(double discDerivative) {
+        this.discDerivative = discDerivative;
+    }
+    
+    
+    
+    public double getDiscDerivative() {
+        return this.discDerivative;
+    }
+    
+    
+    
+    public int getDiffToPrevious() {
+        return this.diffToPrevious;
+    }
+    
+    
+    
+    public void setDiffToPrevious(int diffToPrevious) {
+        this.diffToPrevious = diffToPrevious;
+    }
+    
+    
+    
+    public int getDaysToPrevious() {
+        return this.daysToPrevious;
+    }
+    
+    
+    
+    public void setDaysToPrevious(int daysToPrevious) {
+        this.daysToPrevious = daysToPrevious;
     }
     
     

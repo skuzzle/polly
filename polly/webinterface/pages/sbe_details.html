@@ -24,6 +24,9 @@
         <th><a href="sbe_details?venad=$venad&sortKey=getVenadName&dir=$dir">Venad</a></th>
         <th><a href="sbe_details?venad=$venad&sortKey=getClan&dir=$dir">Clan</a></th>
         <th><a href="sbe_details?venad=$venad&sortKey=getPoints&dir=$dir">Points</a></th>
+        <th><a href="sbe_details?venad=$venad&sortKey=getDiffToPrevious&dir=$dir">Points to prev.</a></th>
+        <th><a href="sbe_details?venad=$venad&sortKey=getDaysToPrevious&dir=$dir">Days to prev.</a></th>
+        <th><a href="sbe_details?venad=$venad&sortKey=getDiscDerivative&dir=$dir">Derivative</a></th>
         <th><a href="sbe_details?venad=$venad&sortKey=getDate&dir=$dir">Date</a></th>
         <th>Action</th>
     </tr>
@@ -33,6 +36,9 @@
         <td>$entry.getVenadName()</td>
         <td>$entry.getClan()</td>
         <td>$entry.getPoints()</td>
+        <td>$entry.getDiffToPrevious()</td>
+        <td>$entry.getDaysToPrevious()</td>
+        <td>$nformat.format($entry.getDiscDerivative())</td>
         <td>$myPolly.formatting().formatDate($entry.getDate())</td>
         <td><a href="/Scoreboard?action=delete&id=$entry.getId()">Delete</a></td>
     </tr>

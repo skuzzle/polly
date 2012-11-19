@@ -1,6 +1,8 @@
 package polly.rx.http;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import polly.rx.MyPlugin;
 import polly.rx.core.ScoreBoardManager;
@@ -36,17 +38,27 @@ public class ScoreboardDetailsHttpAction extends HttpAction {
         
         String venadName = e.getProperty("venad");
         
-        Collection<ScoreBoardEntry> entries = this.sbeManager.getEntries(venadName);
+        List<ScoreBoardEntry> entries = this.sbeManager.getEntries(venadName);
+        
+        Collections.sort(entries, ScoreBoardEntry.BY_DATE);
         
         ScoreBoardEntry oldest = entries.iterator().next();
-        ScoreBoardEntry youngest = entries.iterator().next();
+        ScoreBoardEntry youngest = entries.get(entries.size() - 1);
         
-        for (ScoreBoardEntry entry : entries) {
-            if (entry.getDate().getTime() < oldest.getDate().getTime()) {
-                oldest = entry;
-            }
-            if (entry.getDate().getTime() > youngest.getDate().getTime()) {
-                youngest = entry;
+        // calculate discrete derivative
+        if (entries.size() > 1) {
+            for (int i = 1; i < entries.size(); ++i) {
+                ScoreBoardEntry before = entries.get(i - 1);
+                ScoreBoardEntry current = entries.get(i);
+                
+                long diff = Math.abs(before.getDate().getTime() - current.getDate().getTime());
+                long days = Milliseconds.toDays(diff);
+                int pointDiff = current.getPoints() - before.getPoints();
+                double pointsPerDay = (double) pointDiff / (double) days;
+                
+                current.setDaysToPrevious((int)days);
+                current.setDiffToPrevious(pointDiff);
+                current.setDiscDerivative(pointsPerDay);
             }
         }
         
@@ -56,7 +68,7 @@ public class ScoreboardDetailsHttpAction extends HttpAction {
         double pointsPerDay = (double) pointDiff / (double)days;
         
         HttpTemplateSortHelper.makeListSortable(
-            c, e, "sortKey", "dir", "getRank");
+            c, e, "sortKey", "dir", "getDate");
         
         c.put("entries", entries);
         c.put("venad", e.getSource().escapeHtml(venadName));

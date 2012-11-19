@@ -71,13 +71,15 @@ public final class Milliseconds {
     
     
     /**
-     * Converts milliseconds into days.
+     * Converts milliseconds into days with always rounding up the result. that means 
+     * a started day will count as a whole one.
      * 
      * @param ms Milliseconds to convert.
      * @return Amount of days.
      */
     public final static long toDays(long ms) {
-        return ms / 1000 / 60 / 60 / 24;
+        double tmp = (double) ms / (1000.0 * 60.0 * 60.0 * 24.0);
+        return (long) Math.ceil(tmp);
     }
     
     
