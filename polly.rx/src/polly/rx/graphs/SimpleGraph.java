@@ -5,19 +5,12 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.imageio.ImageWriter;
-
-import de.skuzzle.polly.sdk.time.Milliseconds;
-import de.skuzzle.polly.sdk.time.Time;
-
 import polly.rx.entities.ScoreBoardEntry;
 
 
@@ -26,23 +19,6 @@ public class SimpleGraph {
     
     private final static double X_MARGIN = 0.1; // %
     private final static double Y_MARGIN = 0.15; // %
-    
-    
-    
-    public static void main(String[] args) throws IOException {
-        SimpleGraph sg = new SimpleGraph();
-        
-        List<ScoreBoardEntry> entries = new ArrayList<ScoreBoardEntry>();
-        for (int i = 1; i < 100; ++i) {
-            entries.add(new ScoreBoardEntry("test", "", 1, (int)(Math.random() * 10000.0), new Date(Time.currentTimeMillis() + Milliseconds.fromDays(i))));
-        }
-        
-        ScoreBoardEntry oldest = entries.get(0);
-        ScoreBoardEntry youngest = entries.get(entries.size() - 1);
-        BufferedImage img = sg.createGraph(entries, oldest, youngest, 700, 400);
-        
-        sg.storeImage(img);
-    }
     
     
     
@@ -133,7 +109,6 @@ public class SimpleGraph {
             double newY = -Math.round(Math.abs(minPoints - e.getPoints()) * yScale);
             
             int x = (int)newX;
-            System.out.println("x: " + x);
             int y = (int)newY;
             
             if (i > 0 && i%xDensity == 0) {

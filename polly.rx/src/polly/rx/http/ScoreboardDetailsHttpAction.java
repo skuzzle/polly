@@ -43,13 +43,14 @@ public class ScoreboardDetailsHttpAction extends HttpAction {
         
         Collections.sort(entries, ScoreBoardEntry.BY_DATE);
         
-        SimpleGraph sg = new SimpleGraph();
         
         ScoreBoardEntry oldest = entries.iterator().next();
         ScoreBoardEntry youngest = entries.get(entries.size() - 1);
+        
+        /*SimpleGraph sg = new SimpleGraph();
         BufferedImage graph = sg.createGraph(entries, oldest, youngest, 700, 400);
         byte[] memFile = sg.storeImage(graph);
-        e.getSource().putMemoryFile(venadName + "_graph", memFile);
+        e.getSource().putMemoryFile(venadName + "_graph", memFile);*/
         
         // calculate discrete derivative
         if (entries.size() > 1) {
