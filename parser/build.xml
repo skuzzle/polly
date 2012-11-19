@@ -38,13 +38,20 @@
         build-process
     -->
     <property name="includeJars" value="
-        
+        polly.tools.jar
     "/>
     
     <path id="buildpath">
         <fileset dir="${lib.dir}" excludes="**/**"/>
     </path>
     
+    
+    <path id="buildpath_eclipse">
+        <fileset id="jars" dir="${lib.dir}" 
+            includes="${includeJars}"
+            excludes="
+                polly.tools.jar"/>
+    </path>
     
     
     <buildnumber file="build.num"/>
@@ -172,8 +179,9 @@
             <project name="parser"/>
             <classpath>
                 <source path="${src.dir}" />
+                <source path="/polly.tools" />
                 <output path="${eclipse.bin.dir}" />
-                <library pathref="buildpath"/>
+                <library pathref="buildpath_eclipse"/>
             </classpath>
         </eclipse>
     </target>

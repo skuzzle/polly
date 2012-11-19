@@ -1,4 +1,4 @@
-package de.skuzzle.polly.parsing.util;
+package de.skuzzle.polly.tools.streams;
 
 import java.io.IOException;
 import java.io.OutputStream;
