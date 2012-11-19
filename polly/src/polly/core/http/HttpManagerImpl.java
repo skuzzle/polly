@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Random;
 import java.util.TreeMap;
+import java.util.WeakHashMap;
 import java.util.concurrent.Executors;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -52,7 +53,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     
     private final static Logger logger = Logger.getLogger(HttpManagerImpl.class
         .getName());
-    
+
     
     private HttpServer server;
     private int port;
@@ -72,6 +73,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     private int errorThreshold;
     private TrafficCounter counter;
     private Queue<HttpSession> expiredSessions;
+    private Map<String, Byte[]> memoryFileMap;
     
     
     
@@ -92,6 +94,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
         this.errorThreshold = errorThreshold;
         this.counter = new TrafficCounter();
         this.expiredSessions = new LinkedRingBuffer<HttpSession>(EXPIRED_SESSION_BUFFER);
+        this.memoryFileMap = new WeakHashMap<String, Byte[]>();
     }
     
     
@@ -138,6 +141,19 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     
     
     @Override
+    public void putMemoryFile(String name, byte[] file) {
+        Byte[] tmp = new Byte[file.length];
+        for (int i = 0; i < file.length; ++i) {
+            tmp[i] = file[i];
+        }
+        synchronized (this.memoryFileMap) {
+            this.memoryFileMap.put(name, tmp);
+        }
+    }
+    
+    
+    
+    @Override
     public void startWebServer() throws IOException {
         if (this.isRunning()) {
             return;
@@ -148,6 +164,11 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
         // this context handles requests for files
         this.server.createContext(FILE_REQUEST_PREFIX, 
             new FileResponseHandler(this, this.counter, FILE_REQUEST_PREFIX));
+        
+        // this context handles request for files stored in memory
+        this.server.createContext(MEMORY_REQUEST_PREFIX, 
+            new MemoryFileResponseHandler(this, this.counter, this.memoryFileMap, 
+                MEMORY_REQUEST_PREFIX));
         
         // create action handler
         this.server.createContext("/", new ActionResponseHandler(this, this.counter));
@@ -422,6 +443,12 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
 
     @Override
     protected void actualDispose() throws DisposingException {
+        synchronized (this.memoryFileMap) {
+            this.memoryFileMap.clear();
+        }
+        this.sessions.clear();
+        this.menu.clear();
+        this.expiredSessions.clear();
         this.stopWebServer();
     }
 

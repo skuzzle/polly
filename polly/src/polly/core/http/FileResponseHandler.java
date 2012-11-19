@@ -3,6 +3,7 @@ package polly.core.http;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.log4j.Logger;
@@ -17,7 +18,7 @@ public class FileResponseHandler extends AbstractResponseHandler {
     private final static Logger logger = Logger
         .getLogger(FileResponseHandler.class.getName());
     
-    private String prefix;
+    protected String prefix;
     
     public FileResponseHandler(HttpManagerImpl webServer, TrafficCounter counter, 
             String prefix) {
@@ -40,7 +41,7 @@ public class FileResponseHandler extends AbstractResponseHandler {
             session.increaseErrorCounter();
             this.respond404(t);
         } else {
-            this.respond(dest, t, session);
+            this.respond(new FileInputStream(dest), t, session);
         }
     }
     
@@ -53,32 +54,28 @@ public class FileResponseHandler extends AbstractResponseHandler {
     
     
     
-    private void respond(File dest, HttpExchange t, HttpSession session) 
+    protected void respond(InputStream in, HttpExchange t, HttpSession session) 
             throws IOException {
-        
-        FileInputStream inp = null;
         OutputStream out = null;
         try {
             t.sendResponseHeaders(200, 0);
             out = t.getResponseBody();
-            inp = new FileInputStream(dest);
             byte[] buffer = new byte[1024];
             int len = 0;
             
-            while ((len = inp.read(buffer)) > 0) {
+            while ((len = in.read(buffer)) > 0) {
                 out.write(buffer, 0, len);
                 this.counter.updateUpload(len);
                 session.updateUpload(len);
             }
         } finally {
             t.close();
-            if (inp != null) {
-                inp.close();
+            if (in != null) {
+                in.close();
             }
             if (out != null) {
                 out.close();
             }
         }
     }
-
 }

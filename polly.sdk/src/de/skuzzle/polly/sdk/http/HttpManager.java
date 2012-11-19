@@ -13,7 +13,7 @@ public interface HttpManager {
     
     public final static String HTTP_ADMIN_PERMISSION = "polly.permission.HTTP_ADMIN";
     public final static String FILE_REQUEST_PREFIX = "/file:";
-    
+    public static final String MEMORY_REQUEST_PREFIX = "/memory:";
     
     public abstract void startWebServer() throws IOException;
     
@@ -54,6 +54,8 @@ public interface HttpManager {
     String makeActionLink(String actionName, User user, String prefix,
         String postfix);
 
-    File getTemplateRoot();
+    public File getTemplateRoot();
+
+    public void putMemoryFile(String name, byte[] file);
 
 }
