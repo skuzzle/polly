@@ -21,7 +21,7 @@ import de.skuzzle.polly.parsing.util.LinkedRingBuffer;
 
 
 import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
-import de.skuzzle.polly.parsing.util.CopyTool;
+import de.skuzzle.polly.tools.streams.CopyTool;
 
 public class Declarations implements Serializable {
     

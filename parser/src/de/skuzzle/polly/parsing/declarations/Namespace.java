@@ -23,7 +23,7 @@ import de.skuzzle.polly.parsing.tree.operators.BinaryOperatorOverload;
 import de.skuzzle.polly.parsing.tree.operators.TernaryOperatorOverload;
 import de.skuzzle.polly.parsing.tree.operators.UnaryOperatorOverload;
 import de.skuzzle.polly.parsing.types.Type;
-import de.skuzzle.polly.parsing.util.CopyTool;
+import de.skuzzle.polly.tools.streams.CopyTool;
 
 
 public class Namespace {
