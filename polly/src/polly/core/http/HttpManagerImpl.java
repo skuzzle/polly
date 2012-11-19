@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Queue;
 import java.util.Random;
 import java.util.TreeMap;
 import java.util.concurrent.Executors;
@@ -37,6 +37,7 @@ import de.skuzzle.polly.sdk.http.HttpTemplateException;
 import de.skuzzle.polly.sdk.model.User;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.time.Time;
+import de.skuzzle.polly.tools.collections.LinkedRingBuffer;
 import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
 import de.skuzzle.polly.tools.events.Dispatchable;
 import de.skuzzle.polly.tools.events.EventProvider;
@@ -47,6 +48,7 @@ import de.skuzzle.polly.tools.events.SynchronousEventProvider;
 
 public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     
+    private final static int EXPIRED_SESSION_BUFFER = 20;
     
     private final static Logger logger = Logger.getLogger(HttpManagerImpl.class
         .getName());
@@ -69,7 +71,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     private int cacheThreshold;
     private int errorThreshold;
     private TrafficCounter counter;
-    private List<HttpSession> expiredSessions;
+    private Queue<HttpSession> expiredSessions;
     
     
     
@@ -89,7 +91,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
         this.cacheThreshold = cacheTreshold;
         this.errorThreshold = errorThreshold;
         this.counter = new TrafficCounter();
-        this.expiredSessions = new LinkedList<HttpSession>();
+        this.expiredSessions = new LinkedRingBuffer<HttpSession>(EXPIRED_SESSION_BUFFER);
     }
     
     
