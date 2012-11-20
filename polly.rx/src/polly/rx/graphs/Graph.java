@@ -13,6 +13,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import com.sun.xml.internal.ws.policy.sourcemodel.ModelNode.Type;
+
 import polly.rx.graphs.Point.PointType;
 
 
@@ -29,7 +31,7 @@ public class Graph {
             public void run() {
                 JFrame frame = new JFrame();
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                final ImageGraph graph = new ImageGraph(600, 400, 0, 30000, 2000);
+                final ImageGraph graph = new ImageGraph(600, 400, 2000, 30000, 2000);
                 
                 String[] label = new String[24];
                 for (int i = 0; i < label.length; ++i) {
@@ -62,6 +64,15 @@ public class Graph {
                         graph.drawImageTo((Graphics2D) g);
                     }
                 };
+                
+                
+                PointSet test = new PointSet(Color.GREEN);
+                test.setName("Green");
+                test.add(1, 2000, PointType.DOT);
+                test.add(1, 2500, PointType.DOT);
+                test.add(1, 3000, PointType.DOT);
+                test.add(1, 6000, PointType.DOT);
+                graph.addPointSet(test);
                 
                 frame.setLayout(new BorderLayout());
                 frame.add(p, BorderLayout.CENTER);
@@ -245,7 +256,7 @@ public class Graph {
             
         }
         
-        final int steps = this.maxY / this.stepY;
+        final int steps = (this.maxY - this.minY) / this.stepY ;
         final double yScale = (double)actualHeight / (double)steps;
         for(int y = 0; y < steps; ++y) {
             int newY = -(int) Math.round(y * yScale);
@@ -257,7 +268,7 @@ public class Graph {
             }
             
             g.drawLine(-2, newY, 2, newY);
-            g.drawString("" + y * this.stepY, -(int)yLabelWidth + 5, 
+            g.drawString("" + (y * this.stepY + this.minY), -(int)yLabelWidth + 5, 
                 newY + m.getAscent() / 2);
         }
         
@@ -269,7 +280,12 @@ public class Graph {
             g.setColor(points.getColor());
             for (final Point p : points) {
                 final int x = (int) Math.round(p.getX() * xScale);
-                final int y = -(int) Math.round(p.getY() * scale);
+                final int y = -(int) Math.round((p.getY() - this.minY) * scale);
+                
+                if (y > 0) {
+                    continue;
+                }
+                
                 if (this.connect && !first) {
                     g.drawLine(lastX, lastY, x, y);
                 }
