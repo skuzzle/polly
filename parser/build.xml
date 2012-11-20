@@ -42,7 +42,7 @@
     "/>
     
     <path id="buildpath">
-        <fileset dir="${lib.dir}" excludes="**/**"/>
+        <fileset dir="${lib.dir}" includes="${includeJars}"/>
     </path>
     
     
