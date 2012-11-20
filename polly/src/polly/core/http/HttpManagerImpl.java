@@ -2,6 +2,7 @@ package polly.core.http;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.file.Path;
@@ -73,7 +74,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     private int errorThreshold;
     private TrafficCounter counter;
     private Queue<HttpSession> expiredSessions;
-    private Map<String, Byte[]> memoryFileMap;
+    private Map<String, InputStream> memoryFileMap;
     
     
     
@@ -94,7 +95,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
         this.errorThreshold = errorThreshold;
         this.counter = new TrafficCounter();
         this.expiredSessions = new LinkedRingBuffer<HttpSession>(EXPIRED_SESSION_BUFFER);
-        this.memoryFileMap = new WeakHashMap<String, Byte[]>();
+        this.memoryFileMap = new WeakHashMap<String, InputStream>();
     }
     
     
@@ -141,13 +142,9 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     
     
     @Override
-    public void putMemoryFile(String name, byte[] file) {
-        Byte[] tmp = new Byte[file.length];
-        for (int i = 0; i < file.length; ++i) {
-            tmp[i] = file[i];
-        }
+    public void putMemoryFile(String name, InputStream stream) {
         synchronized (this.memoryFileMap) {
-            this.memoryFileMap.put(name, tmp);
+            this.memoryFileMap.put(name, stream);
         }
     }
     

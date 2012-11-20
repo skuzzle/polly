@@ -2,6 +2,7 @@ package de.skuzzle.polly.sdk.http;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.model.User;
@@ -56,6 +57,6 @@ public interface HttpManager {
 
     public File getTemplateRoot();
 
-    public void putMemoryFile(String name, byte[] file);
+    public void putMemoryFile(String name, InputStream stream);
 
 }

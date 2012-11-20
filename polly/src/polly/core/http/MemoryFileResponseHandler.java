@@ -1,7 +1,7 @@
 package polly.core.http;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -17,12 +17,12 @@ public class MemoryFileResponseHandler extends FileResponseHandler {
         .getName());
     
     
-    private Map<String, Byte[]> memoryFiles;
+    private Map<String, InputStream> memoryFiles;
     
     
     
     public MemoryFileResponseHandler(HttpManagerImpl webServer, TrafficCounter counter, 
-            Map<String, Byte[]> memoryFiles, String prefix) {
+            Map<String, InputStream> memoryFiles, String prefix) {
         super(webServer, counter, prefix);
         this.memoryFiles = memoryFiles;
     }
@@ -35,19 +35,15 @@ public class MemoryFileResponseHandler extends FileResponseHandler {
         
         String name = requestUri.substring(this.prefix.length());
         synchronized (this.memoryFiles) {
-            Byte[] file = this.memoryFiles.get(name);
+            InputStream in = this.memoryFiles.get(name);
             
-            if (file == null) {
+            if (in == null) {
                 logger.warn("Requested memory file does not exist: " + name);
                 session.increaseErrorCounter();
                 t.sendResponseHeaders(404, 0);
                 t.close();
             } else {
-                byte[] data = new byte[file.length];
-                for (int i = 0; i < file.length; ++i) {
-                    data[i] = file[i];
-                }
-                this.respond(new ByteArrayInputStream(data), t, session);
+                this.respond(in, t, session);
             }
         }
     }
