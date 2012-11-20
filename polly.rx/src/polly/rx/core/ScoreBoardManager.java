@@ -46,6 +46,9 @@ public class ScoreBoardManager {
     
     
     public InputStream createGraph(List<ScoreBoardEntry> all) {
+        if (all.isEmpty()) {
+            return null;
+        }
         final DateFormat df = new SimpleDateFormat("MMM yyyy");
         Collections.sort(all, ScoreBoardEntry.BY_DATE);
         

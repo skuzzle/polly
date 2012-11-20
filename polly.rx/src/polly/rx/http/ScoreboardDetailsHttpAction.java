@@ -42,7 +42,6 @@ public class ScoreboardDetailsHttpAction extends HttpAction {
         
         Collections.sort(entries, ScoreBoardEntry.BY_DATE);
         
-        
         ScoreBoardEntry oldest = entries.iterator().next();
         ScoreBoardEntry youngest = entries.get(entries.size() - 1);
         
