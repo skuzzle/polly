@@ -1,8 +1,15 @@
 package polly.rx.core;
 
+import java.awt.Color;
+import java.io.InputStream;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -10,10 +17,17 @@ import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.WriteAction;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.time.DateUtils;
+import de.skuzzle.polly.sdk.time.Time;
 import polly.rx.entities.ScoreBoardEntry;
+import polly.rx.graphs.ImageGraph;
+import polly.rx.graphs.Point;
+import polly.rx.graphs.PointSet;
+import polly.rx.graphs.Point.PointType;
 
 
 public class ScoreBoardManager {
+    
+    public final static int X_LABELS = 24;
     
     public final static NumberFormat NUMBER_FORMAT = DecimalFormat.getInstance(
             Locale.ENGLISH);
@@ -27,6 +41,52 @@ public class ScoreBoardManager {
     
     public ScoreBoardManager(PersistenceManager persistence) {
         this.persistence = persistence;
+    }
+    
+    
+    
+    public InputStream createGraph(List<ScoreBoardEntry> all) {
+        final DateFormat df = new SimpleDateFormat("MMM yyyy");
+        Collections.sort(all, ScoreBoardEntry.BY_DATE);
+        
+        String[] labels = new String[X_LABELS];
+        final ScoreBoardEntry oldest = all.get(0);
+        final Date today = Time.currentTime();
+        for (int i = 0; i < X_LABELS; ++i) {
+            final Calendar c = Calendar.getInstance();
+            c.setTime(today);
+            c.add(Calendar.MONTH, -(X_LABELS - (i + 1)));
+            labels[i] = df.format(c.getTime());
+        }
+        
+        final ImageGraph g = new ImageGraph(700, 400, 2000, 30000, 2000);
+        g.setxLabels(labels);
+        g.setDrawGridHorizontal(true);
+        g.setDrawGridVertical(true);
+        g.setConnect(true);
+        
+        boolean zero = false;
+        final PointSet points = new PointSet(Color.RED);
+        for (final ScoreBoardEntry entry : all) {
+            final int monthsBetween = DateUtils.monthsBetween(
+                today, entry.getDate());
+            final int monthsAgo =  X_LABELS - monthsBetween - 1; 
+            
+            zero |= monthsAgo == 0;
+            if (monthsAgo < 0) {
+                // do not add points that are older than X_LABELS months
+                continue;
+            }
+            points.add(monthsAgo, entry.getPoints(), PointType.X);
+        }
+        if (!zero && Math.abs(
+                    DateUtils.monthsBetween(today, oldest.getDate())) > X_LABELS) {
+            points.add(new Point(0.0, oldest.getPoints(), PointType.DOT));
+        }
+        
+        g.setPointSet(points);
+        g.updateImage();
+        return g.getBytes();
     }
     
     

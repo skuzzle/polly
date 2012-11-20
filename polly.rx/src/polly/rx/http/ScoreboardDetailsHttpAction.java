@@ -1,13 +1,12 @@
 package polly.rx.http;
 
-import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
 import polly.rx.MyPlugin;
 import polly.rx.core.ScoreBoardManager;
 import polly.rx.entities.ScoreBoardEntry;
-import polly.rx.graphs.SimpleGraph;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.http.HttpAction;
@@ -47,10 +46,8 @@ public class ScoreboardDetailsHttpAction extends HttpAction {
         ScoreBoardEntry oldest = entries.iterator().next();
         ScoreBoardEntry youngest = entries.get(entries.size() - 1);
         
-        /*SimpleGraph sg = new SimpleGraph();
-        BufferedImage graph = sg.createGraph(entries, oldest, youngest, 700, 400);
-        byte[] memFile = sg.storeImage(graph);
-        e.getSource().putMemoryFile(venadName + "_graph", memFile);*/
+        InputStream graph = this.sbeManager.createGraph(entries);
+        e.getSource().putMemoryFile(venadName + "_graph", graph);
         
         // calculate discrete derivative
         if (entries.size() > 1) {

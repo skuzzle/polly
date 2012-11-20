@@ -3,14 +3,22 @@ package polly.rx.graphs;
 
 public class Point implements Comparable<Point> {
 
+    
+    public enum PointType {
+        X, DOT, NONE;
+    }
+    
     private final double x;
     private final double y;
+    private final PointType type;
     
     
-    public Point(double x, double y) {
+    
+    public Point(double x, double y, PointType type) {
         super();
         this.x = x;
         this.y = y;
+        this.type = type;
     }
     
     
@@ -23,6 +31,12 @@ public class Point implements Comparable<Point> {
     
     public double getY() {
         return this.y;
+    }
+    
+    
+    
+    public PointType getType() {
+        return this.type;
     }
 
 

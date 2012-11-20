@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import polly.rx.graphs.Point.PointType;
+
 
 public class PointSet implements Set<Point>{
 
@@ -42,6 +44,12 @@ public class PointSet implements Set<Point>{
     @Override
     public boolean add(Point e) {
         return this.backend.add(e);
+    }
+    
+    
+    
+    public boolean add(double x, double y, PointType type) {
+        return this.add(new Point(x, y, type));
     }
     
     

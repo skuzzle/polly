@@ -11,6 +11,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import polly.rx.graphs.Point.PointType;
+
 
 public class Graph {
     
@@ -25,7 +27,7 @@ public class Graph {
             public void run() {
                 JFrame frame = new JFrame();
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                final Graph graph = new Graph(600, 400, 0, 30000, 2000);
+                final ImageGraph graph = new ImageGraph(600, 400, 0, 30000, 2000);
                 
                 String[] label = new String[24];
                 for (int i = 0; i < label.length; ++i) {
@@ -33,14 +35,15 @@ public class Graph {
                 }
                 
                 final PointSet set = new PointSet();
+                set.setColor(Color.RED);
                 graph.setPointSet(set);
                 graph.setxLabels(label);
-                graph.setDrawGridHorizontal(true);
+                //graph.setDrawGridHorizontal(true);
                 graph.setDrawGridVertical(true);
                 graph.setConnect(true);
                 
                 for (int i = 0; i < 24; ++i) {
-                    set.add(new Point(i, Math.random()*30000));
+                    set.add(new Point(i+0.5, i*i*50, PointType.X));
                 }
                 
                 JPanel p = new JPanel() {
@@ -48,7 +51,8 @@ public class Graph {
 
                     @Override
                     public void paintComponent(Graphics g) {
-                        graph.draw((Graphics2D)g);
+                        graph.updateImage();
+                        graph.drawImageTo((Graphics2D) g);
                     }
                 };
                 
@@ -205,7 +209,7 @@ public class Graph {
         final int actualWidth = this.width - zeroX;
         final int actualHeight = this.height - (int)xLabelWidth;
 
-        g.setColor(Color.WHITE);
+        g.setBackground(Color.WHITE);
         g.clearRect(0, 0, this.width, this.height);
         g.setColor(Color.BLACK);
         
@@ -253,15 +257,32 @@ public class Graph {
         int lastY = 0;
         g.setColor(this.pointSet.getColor());
         double scale = (double)actualHeight / (this.maxY - this.minY);
+        boolean first = true;
         for (final Point p : this.pointSet) {
             final int x = (int) Math.round(p.getX() * xScale);
             final int y = -(int) Math.round(p.getY() * scale);
-            if (this.connect) {
+            if (this.connect && !first) {
                 g.drawLine(lastX, lastY, x, y);
             }
-            drawCross(g, x, y);
+            first = false;
+            drawPoint(g, x, y, p.getType());
             lastX = x;
             lastY = y;
+        }
+    }
+    
+    
+    
+    private void drawPoint(Graphics2D g, int x, int y, PointType type) {
+        switch (type) {
+        case X:
+            this.drawCross(g, x, y);
+            break;
+        case DOT:
+            g.drawOval(x - 2, y - 2, 4, 4);
+            break;
+        default:
+            break;
         }
     }
     

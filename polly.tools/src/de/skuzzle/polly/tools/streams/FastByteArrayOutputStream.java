@@ -1,6 +1,7 @@
 package de.skuzzle.polly.tools.streams;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 
@@ -21,6 +22,12 @@ public class FastByteArrayOutputStream extends OutputStream {
     
     public FastByteArrayOutputStream(int bufferSize) {
         this.buffer = new byte[bufferSize];
+    }
+    
+    
+    
+    public InputStream getInputStreamForBuffer() {
+        return new FastByteArrayInputStream(this);
     }
     
     
