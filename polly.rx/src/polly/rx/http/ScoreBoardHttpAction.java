@@ -23,7 +23,7 @@ import de.skuzzle.polly.sdk.http.HttpTemplateSortHelper;
 import de.skuzzle.polly.sdk.time.Time;
 
 
-public class ScoreBoardHttpAction extends HttpAction {
+public class ScoreboardHttpAction extends HttpAction {
 
     private ScoreBoardManager sbeManager;
     
@@ -34,7 +34,7 @@ public class ScoreBoardHttpAction extends HttpAction {
             "EE MMM dd, yyyy hh:mm a");
     
     
-    public ScoreBoardHttpAction(MyPolly myPolly, ScoreBoardManager sbeManager) {
+    public ScoreboardHttpAction(MyPolly myPolly, ScoreBoardManager sbeManager) {
         super("/Scoreboard", myPolly);
         this.requirePermission(MyPlugin.SBE_PERMISSION);
         this.sbeManager = sbeManager;
@@ -88,6 +88,7 @@ public class ScoreBoardHttpAction extends HttpAction {
         List<ScoreBoardEntry> entries = this.sbeManager.getEntries();
         entries = ScoreBoardEntry.postFilter(entries);
         
+        c.put("maxCompare", this.sbeManager.maxColors());
         c.put("csvFileName", CSV_FILE_NAME);
         c.put("nformat", ScoreBoardManager.NUMBER_FORMAT);
         c.put("entries", entries);

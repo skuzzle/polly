@@ -29,6 +29,10 @@ public class ScoreBoardManager {
     
     public final static int X_LABELS = 24;
     
+    private final static Color[] COLORS = {
+        Color.RED, Color.BLUE, Color.BLACK, Color.GREEN, Color.PINK
+    };
+    
     public final static NumberFormat NUMBER_FORMAT = DecimalFormat.getInstance(
             Locale.ENGLISH);
     static {
@@ -45,15 +49,58 @@ public class ScoreBoardManager {
     
     
     
+    public int maxColors() {
+        return COLORS.length;
+    }
+    
+    
+    
     public InputStream createGraph(List<ScoreBoardEntry> all) {
         if (all.isEmpty()) {
             return null;
         }
-        final DateFormat df = new SimpleDateFormat("MMM yyyy");
         Collections.sort(all, ScoreBoardEntry.BY_DATE);
         
+        final ImageGraph g = new ImageGraph(700, 400, 2000, 30000, 2000);
+        g.setxLabels(this.createXLabels());
+        g.setDrawGridHorizontal(true);
+        g.setDrawGridVertical(true);
+        g.setConnect(true);
+        g.addPointSet(this.createPointSet(all, Color.RED));
+
+        
+        g.updateImage();
+        return g.getBytes();
+    }
+    
+    
+    
+    public InputStream createMultiGraph(String...names) {
+        ImageGraph g = new ImageGraph(700, 400, 2000, 30000, 2000);
+        g.setxLabels(this.createXLabels());
+        g.setDrawGridHorizontal(true);
+        g.setDrawGridVertical(true);
+        g.setConnect(true);
+
+        int max = Math.min(COLORS.length, names.length);
+        for (int i = 0; i < max; ++i) {
+            final List<ScoreBoardEntry> entries = this.getEntries(names[i]);
+            Collections.sort(entries, ScoreBoardEntry.BY_DATE);
+            final Color next = COLORS[i];
+            final PointSet points = this.createPointSet(entries, next);
+            g.addPointSet(points);
+        }
+        
+        g.updateImage();
+        return g.getBytes();
+    }
+    
+    
+    
+    private final String[] createXLabels() {
+        final DateFormat df = new SimpleDateFormat("MMM yyyy");
+        
         String[] labels = new String[X_LABELS];
-        final ScoreBoardEntry oldest = all.get(0);
         final Date today = Time.currentTime();
         for (int i = 0; i < X_LABELS; ++i) {
             final Calendar c = Calendar.getInstance();
@@ -61,16 +108,18 @@ public class ScoreBoardManager {
             c.add(Calendar.MONTH, -(X_LABELS - (i + 1)));
             labels[i] = df.format(c.getTime());
         }
+        return labels;
+    }
+    
+    
+    
+    private PointSet createPointSet(List<ScoreBoardEntry> entries, Color color) {
+        final ScoreBoardEntry oldest = entries.get(0);
         
-        final ImageGraph g = new ImageGraph(700, 400, 2000, 30000, 2000);
-        g.setxLabels(labels);
-        g.setDrawGridHorizontal(true);
-        g.setDrawGridVertical(true);
-        g.setConnect(true);
-        
+        final Date today = Time.currentTime();
         boolean zero = false;
-        final PointSet points = new PointSet(Color.RED);
-        for (final ScoreBoardEntry entry : all) {
+        final PointSet points = new PointSet(color);
+        for (final ScoreBoardEntry entry : entries) {
             final int monthsBetween = DateUtils.monthsBetween(
                 today, entry.getDate());
             final int monthsAgo =  X_LABELS - monthsBetween - 1; 
@@ -91,10 +140,8 @@ public class ScoreBoardManager {
                     DateUtils.monthsBetween(today, oldest.getDate())) > X_LABELS) {
             points.add(new Point(0.0, oldest.getPoints(), PointType.DOT));
         }
-        
-        g.setPointSet(points);
-        g.updateImage();
-        return g.getBytes();
+        points.setName(oldest.getVenadName());
+        return points;
     }
     
     

@@ -39,12 +39,12 @@ public class Graph {
                 final PointSet set = new PointSet();
                 set.setName("Rot");
                 final PointSet set2 = new PointSet(Color.BLUE);
-                //set2.setName("Blau");
+                set2.setName("Blau");
                 set.setColor(Color.RED);
                 graph.addPointSet(set);
                 graph.addPointSet(set2);
                 graph.setxLabels(label);
-                //graph.setDrawGridHorizontal(true);
+                graph.setDrawGridHorizontal(true);
                 graph.setDrawGridVertical(true);
                 graph.setConnect(true);
                 

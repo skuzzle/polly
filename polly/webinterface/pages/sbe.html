@@ -18,8 +18,11 @@
 #end
 
 <h3>Current known Scoreboard state</h3>
+<form action="/sbe_compare" method="POST">
+<input type="submit" value="Compare selected" class="button"/> (max $maxCompare)
 <table>
     <tr>
+        <th><input type="checkbox" name="blah" disabled></th>
         <th><a href="Scoreboard?sortKey=getRank&dir=$dir">Rank</a></th>
         <th><a href="Scoreboard?sortKey=getVenadName&dir=$dir">Venad</a></th>
         <th><a href="Scoreboard?sortKey=getClan&dir=$dir">Clan</a></th>
@@ -31,6 +34,7 @@
     </tr>
     #foreach($entry in $entries)
     <tr>
+        <td><input type="checkbox" value="$entry.getVenadName()" name="names"/></td>
         <td>$entry.getRank()</td>
         <td>$entry.getVenadName()</td>
         <td>$entry.getClan()</td>
@@ -42,4 +46,5 @@
     </tr>
     #end
 </table>
-
+<input type="submit" value="Compare selected" class="button"/> (max $maxCompare)
+</form>
