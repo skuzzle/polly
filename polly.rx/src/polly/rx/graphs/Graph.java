@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -35,8 +37,10 @@ public class Graph {
                 }
                 
                 final PointSet set = new PointSet();
+                final PointSet set2 = new PointSet(Color.BLUE);
                 set.setColor(Color.RED);
-                graph.setPointSet(set);
+                graph.addPointSet(set);
+                graph.addPointSet(set2);
                 graph.setxLabels(label);
                 //graph.setDrawGridHorizontal(true);
                 graph.setDrawGridVertical(true);
@@ -44,6 +48,7 @@ public class Graph {
                 
                 for (int i = 0; i < 24; ++i) {
                     set.add(new Point(i+0.5, i*i*50, PointType.X));
+                    set2.add(new Point(i, i*1000, PointType.DOT));
                 }
                 
                 JPanel p = new JPanel() {
@@ -76,7 +81,7 @@ public class Graph {
     private boolean drawGridVertical;
     private boolean drawGridHorizontal;
     private boolean connect;
-    private PointSet pointSet;
+    private final Collection<PointSet> pointSets;
     
     
     
@@ -86,6 +91,7 @@ public class Graph {
         this.minY = minY;
         this.maxY = maxY;
         this.stepY = stepY;
+        this.pointSets = new ArrayList<PointSet>();
     }
     
     
@@ -186,14 +192,14 @@ public class Graph {
 
 
     
-    public PointSet getPointSet() {
-        return this.pointSet;
+    public void addPointSet(PointSet pointSet) {
+        this.pointSets.add(pointSet);
     }
-
-
     
-    public void setPointSet(PointSet pointSet) {
-        this.pointSet = pointSet;
+    
+    
+    public void removePointSet(PointSet pointSet) {
+        this.pointSets.remove(pointSet);
     }
 
 
@@ -253,21 +259,23 @@ public class Graph {
                 newY + m.getAscent() / 2);
         }
         
-        int lastX = 0;
-        int lastY = 0;
-        g.setColor(this.pointSet.getColor());
         double scale = (double)actualHeight / (this.maxY - this.minY);
-        boolean first = true;
-        for (final Point p : this.pointSet) {
-            final int x = (int) Math.round(p.getX() * xScale);
-            final int y = -(int) Math.round(p.getY() * scale);
-            if (this.connect && !first) {
-                g.drawLine(lastX, lastY, x, y);
+        for (final PointSet points : this.pointSets) {
+            boolean first = true;
+            int lastX = 0;
+            int lastY = 0;
+            g.setColor(points.getColor());
+            for (final Point p : points) {
+                final int x = (int) Math.round(p.getX() * xScale);
+                final int y = -(int) Math.round(p.getY() * scale);
+                if (this.connect && !first) {
+                    g.drawLine(lastX, lastY, x, y);
+                }
+                first = false;
+                drawPoint(g, x, y, p.getType());
+                lastX = x;
+                lastY = y;
             }
-            first = false;
-            drawPoint(g, x, y, p.getType());
-            lastX = x;
-            lastY = y;
         }
     }
     

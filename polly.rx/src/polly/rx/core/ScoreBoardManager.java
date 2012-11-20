@@ -85,7 +85,7 @@ public class ScoreBoardManager {
             final int dayInMonth = c.get(Calendar.DAY_OF_MONTH);
             final int days = c.getActualMaximum(Calendar.DAY_OF_MONTH);
             final double x = monthsAgo + (double) dayInMonth / (double) days; 
-            points.add(x, entry.getPoints(), PointType.X);
+            points.add(x, entry.getPoints(), PointType.NONE);
         }
         if (!zero && Math.abs(
                     DateUtils.monthsBetween(today, oldest.getDate())) > X_LABELS) {
