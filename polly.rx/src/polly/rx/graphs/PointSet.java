@@ -13,7 +13,7 @@ public class PointSet implements Set<Point>{
 
     private Color color;
     private final Set<Point> backend;
-    
+    private String name;
     
     
     public PointSet() {
@@ -25,10 +25,23 @@ public class PointSet implements Set<Point>{
     public PointSet(Color color) {
         this.backend = new TreeSet<Point>();
         this.color = color;
+        this.name = "";
     }
     
     
     
+    public String getName() {
+        return this.name;
+    }
+
+
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+
+
+
     public Color getColor() {
         return this.color;
     }

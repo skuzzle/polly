@@ -37,7 +37,9 @@ public class Graph {
                 }
                 
                 final PointSet set = new PointSet();
+                set.setName("Rot");
                 final PointSet set2 = new PointSet(Color.BLUE);
+                //set2.setName("Blau");
                 set.setColor(Color.RED);
                 graph.addPointSet(set);
                 graph.addPointSet(set2);
@@ -277,6 +279,31 @@ public class Graph {
                 lastY = y;
             }
         }
+        
+        drawLegend(g, actualWidth);
+    }
+    
+    
+    
+    private void drawLegend(Graphics2D g, int actualWidth) {
+        final FontMetrics m = g.getFontMetrics(); 
+        double longest = 0.0;
+        for (final PointSet points : this.pointSets) {
+            longest = Math.max(longest, m.stringWidth(points.getName()));
+        }
+        
+        final int legendX = (int) Math.round(actualWidth - (longest + 30.0));
+        int legendY = -20;
+        
+        for (final PointSet points : this.pointSets) {
+            if (!points.getName().equals("")) {
+                g.setColor(points.getColor());
+                g.fillRect(legendX, legendY, 10, 10);
+                g.drawString(points.getName(), legendX + 15, legendY + 10);
+                legendY -= 20;
+            }
+        }
+        g.setColor(Color.BLACK);
     }
     
     
