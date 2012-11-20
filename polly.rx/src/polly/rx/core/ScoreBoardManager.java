@@ -80,7 +80,12 @@ public class ScoreBoardManager {
                 // do not add points that are older than X_LABELS months
                 continue;
             }
-            points.add(monthsAgo, entry.getPoints(), PointType.X);
+            final Calendar c = Calendar.getInstance();
+            c.setTime(entry.getDate());
+            final int dayInMonth = c.get(Calendar.DAY_OF_MONTH);
+            final int days = c.getActualMaximum(Calendar.DAY_OF_MONTH);
+            final double x = monthsAgo + (double) dayInMonth / (double) days; 
+            points.add(x, entry.getPoints(), PointType.X);
         }
         if (!zero && Math.abs(
                     DateUtils.monthsBetween(today, oldest.getDate())) > X_LABELS) {
