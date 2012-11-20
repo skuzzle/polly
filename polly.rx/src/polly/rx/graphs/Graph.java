@@ -13,8 +13,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import com.sun.xml.internal.ws.policy.sourcemodel.ModelNode.Type;
-
 import polly.rx.graphs.Point.PointType;
 
 
