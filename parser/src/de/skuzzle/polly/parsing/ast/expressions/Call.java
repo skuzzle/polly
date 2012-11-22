@@ -6,7 +6,6 @@ import java.util.List;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
-import de.skuzzle.polly.parsing.ast.declarations.ResolvedParameter;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.parsing.types.FunctionType;
@@ -17,7 +16,6 @@ public class Call extends Expression {
     
     private final Expression lhs;
     private final List<Expression> parameters;
-    private List<ResolvedParameter> resolvedParameters;
     
     
 
@@ -72,32 +70,6 @@ public class Call extends Expression {
      */
     public List<Expression> getParameters() {
         return this.parameters;
-    }
-    
-    
-    
-    
-    /**
-     * Sets the resolved parameters for this call.
-     * 
-     * @param resolvedParameters The resolved parameters.
-     * @see #getResolvedParameters()
-     */
-    public void setResolvedParameters(List<ResolvedParameter> resolvedParameters) {
-        this.resolvedParameters = resolvedParameters;
-    }
-    
-    
-    
-    /**
-     * Gets the list of resolved parameters. That is, a list that contains the formal 
-     * parameter's name, type and the actual parameter's expression. This attribute is 
-     * available after type checking is done.
-     * 
-     * @return List of resolved parameters.
-     */
-    public List<ResolvedParameter> getResolvedParameters() {
-        return this.resolvedParameters;
     }
     
     

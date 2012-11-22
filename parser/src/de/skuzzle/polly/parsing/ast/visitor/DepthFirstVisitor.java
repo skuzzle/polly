@@ -8,7 +8,6 @@ import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Hardcoded;
-import de.skuzzle.polly.parsing.ast.expressions.LambdaCall;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
@@ -193,24 +192,6 @@ public class DepthFirstVisitor implements Visitor {
     public void visitHardCoded(Hardcoded hc) throws ASTTraversalException {
         this.beforeHardCoded(hc);
         this.afterHardCoded(hc);
-    }
-
-    
-    
-    @Override
-    public void beforeLambdaCall(LambdaCall call) throws ASTTraversalException {}
-
-    @Override
-    public void afterLambdaCall(LambdaCall call) throws ASTTraversalException {}
-
-    @Override
-    public void visitLambdaCall(LambdaCall call) throws ASTTraversalException {
-        this.beforeLambdaCall(call);
-        for (final Expression exp : call.getParameters()) {
-            exp.visit(this);
-        }
-        call.getLambda().visit(this);
-        this.afterLambdaCall(call);
     }
 
     

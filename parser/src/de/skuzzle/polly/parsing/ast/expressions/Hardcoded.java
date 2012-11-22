@@ -1,9 +1,9 @@
 package de.skuzzle.polly.parsing.ast.expressions;
 
-import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.Stack;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
@@ -53,7 +53,7 @@ public abstract class Hardcoded extends Expression {
      * @param execVisitor The visitor that is responsible for the execution of the AST.
      * @throws ASTTraversalException If executing fails.
      */
-    public abstract void execute(LinkedList<Literal> stack, Namespace ns, 
+    public abstract void execute(Stack<Literal> stack, Namespace ns, 
             Visitor execVisitor) throws ASTTraversalException;
     
     

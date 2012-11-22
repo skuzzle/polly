@@ -23,7 +23,17 @@ public class FunctionType extends Type {
     
     
     
+    
+    public Type getReturnType() {
+        return this.returnType;
+    }
+    
+    
+    
     private boolean check(Type other, boolean includeReturnType) {
+        if (other == Type.ANY) {
+            return true;
+        }
         if (!(other instanceof FunctionType)) {
             return false;
         }

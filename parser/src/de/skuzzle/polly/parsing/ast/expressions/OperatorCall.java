@@ -80,7 +80,9 @@ public class OperatorCall extends Call {
      */
     private OperatorCall(Position position, OpType operator, 
             Collection<Expression> parameters) {
-        super(position, new ResolvableIdentifier(position, operator.getId()), parameters);
+        super(position, 
+            new VarAccess(position, new ResolvableIdentifier(position, operator.getId())),
+            parameters);
         this.operator = operator;
     }
 

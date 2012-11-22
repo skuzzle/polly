@@ -15,19 +15,23 @@ import de.skuzzle.polly.parsing.types.Type;
 
 public class Namespace {
     
-    private final static Namespace TYPES = new Namespace("~types", null);
+    private final static Namespace TYPES = new Namespace(null);
     static {
-        TYPES.declareOverride(new TypeDeclaration(Type.ANY.getTypeName(), Type.ANY));
-        TYPES.declareOverride(new TypeDeclaration(Type.BOOLEAN.getTypeName(), Type.BOOLEAN));
-        TYPES.declareOverride(new TypeDeclaration(Type.CHANNEL.getTypeName(), Type.CHANNEL));
-        TYPES.declareOverride(new TypeDeclaration(Type.STRING.getTypeName(), Type.STRING));
-        TYPES.declareOverride(new TypeDeclaration(Type.COMMAND.getTypeName(), Type.COMMAND));
-        TYPES.declareOverride(new TypeDeclaration(Type.DATE.getTypeName(), Type.DATE));
-        TYPES.declareOverride(new TypeDeclaration(Type.TIMESPAN.getTypeName(), Type.TIMESPAN));
-        TYPES.declareOverride(new TypeDeclaration(Type.HELP.getTypeName(), Type.HELP));
-        TYPES.declareOverride(new TypeDeclaration(Type.LIST.getTypeName(), Type.LIST));
-        TYPES.declareOverride(new TypeDeclaration(Type.USER.getTypeName(), Type.USER));
-        TYPES.declareOverride(new TypeDeclaration(Type.NUMBER.getTypeName(), Type.NUMBER));
+        try {
+        TYPES.declare(new TypeDeclaration(Type.ANY.getTypeName(), Type.ANY));
+        TYPES.declare(new TypeDeclaration(Type.BOOLEAN.getTypeName(), Type.BOOLEAN));
+        TYPES.declare(new TypeDeclaration(Type.CHANNEL.getTypeName(), Type.CHANNEL));
+        TYPES.declare(new TypeDeclaration(Type.STRING.getTypeName(), Type.STRING));
+        TYPES.declare(new TypeDeclaration(Type.COMMAND.getTypeName(), Type.COMMAND));
+        TYPES.declare(new TypeDeclaration(Type.DATE.getTypeName(), Type.DATE));
+        TYPES.declare(new TypeDeclaration(Type.TIMESPAN.getTypeName(), Type.TIMESPAN));
+        TYPES.declare(new TypeDeclaration(Type.HELP.getTypeName(), Type.HELP));
+        TYPES.declare(new TypeDeclaration(Type.LIST.getTypeName(), Type.LIST));
+        TYPES.declare(new TypeDeclaration(Type.USER.getTypeName(), Type.USER));
+        TYPES.declare(new TypeDeclaration(Type.NUMBER.getTypeName(), Type.NUMBER));
+        } catch (ASTTraversalException e) {
+            throw new RuntimeException("impossibru", e);
+        }
     }
     
     
@@ -55,7 +59,7 @@ public class Namespace {
     
     
     
-    private final static Namespace GLOBAL = new Namespace("~global", null);
+    private final static Namespace GLOBAL = new Namespace(null);
     private final static Map<String, Namespace> ROOTS = new HashMap<String, Namespace>();
 
     /**
@@ -66,12 +70,12 @@ public class Namespace {
      * @return The namespace.
      */
     public final static Namespace forName(String name) {
-        if (name.equals(GLOBAL.name)) {
+        if (name.equals("~global")) {
             return GLOBAL;
         }
         Namespace check = ROOTS.get(name);
         if (check == null) {
-            check = new Namespace(name);
+            check = new Namespace();
             ROOTS.put(name, check);
         }
         return check;
@@ -118,7 +122,6 @@ public class Namespace {
 
     private final Collection<Declaration> decls;
     private final Namespace parent;
-    private final String name;
     
     
     
@@ -127,8 +130,8 @@ public class Namespace {
      * 
      * @param name The name of the namespace.
      */
-    private Namespace(String name) {
-        this(name, GLOBAL);
+    private Namespace() {
+        this(GLOBAL);
     }
     
     
@@ -136,11 +139,9 @@ public class Namespace {
     /**
      * Creates a new namespace which parent namespace is the given one.
      * 
-     * @param name Name of the namespace.
      * @param parent Parent namespace.
      */
-    public Namespace(String name, Namespace parent) {
-        this.name = name;
+    public Namespace(Namespace parent) {
         this.parent = parent;
         this.decls = new ArrayList<Declaration>();
     }
@@ -159,7 +160,7 @@ public class Namespace {
         if (this.parent == null) {
             return null;
         }
-        final Namespace result = new Namespace(this.name, this.parent.derive());
+        final Namespace result = new Namespace(this.parent.derive());
         result.decls.addAll(this.decls);
         return result;
     }
@@ -174,7 +175,7 @@ public class Namespace {
      * @return A new {@link NameSpace}.
      */
     public Namespace derive(Namespace parent) {
-        final Namespace result = new Namespace(this.name, parent);
+        final Namespace result = new Namespace(parent);
         result.decls.addAll(this.decls);
         return result;
     }
@@ -184,11 +185,10 @@ public class Namespace {
     /**
      * Creates a new sub namespace of this one and returns it.
      * 
-     * @param name Name of the subnamespace.
      * @return The new namespace.
      */
-    public Namespace enter(String name) {
-        return new Namespace(name, this);
+    public Namespace enter() {
+        return new Namespace(this);
     }
     
     
@@ -213,35 +213,15 @@ public class Namespace {
      *          already exists in this namespace.
      */
     public void declare(Declaration decl) throws ASTTraversalException {
-        final ResolvableIdentifier ri = new ResolvableIdentifier(decl.getName());
-        if (this.tryResolve(ri, decl.getType()) != null) {
-            throw new ASTTraversalException(decl.getPosition(), 
-                "Doppelte Deklaration von " + decl.getName());
+        Collection<Declaration> decls = decl.isGlobal() ? GLOBAL.decls : this.decls;
+        // check if declaration exists in current namespace
+        for (final Declaration d : decls) {
+            if (d.getName().equals(decl.getName())) {
+                throw new ASTTraversalException(decl.getPosition(), 
+                    "Doppelte Deklaration von " + decl.getName());
+            }
         }
-        if (decl.isGlobal()) {
-            GLOBAL.decls.add(decl);
-        } else {
-            this.decls.add(decl);
-        }
-    }
-    
-    
-    
-    /**
-     * Declares a new variable in this namespace, overriding any existing var with 
-     * the same name and signature in this namespace. This does not take declarations 
-     * of parent namespace into account.
-     * 
-     * @param decl The function to declare.
-     */
-    public void declareOverride(Declaration decl) {
-        final Namespace space = decl.isGlobal() ? GLOBAL : this;
-        final ResolvableIdentifier ri = new ResolvableIdentifier(decl.getName());
-        final Declaration check = space.tryResolve(ri, decl.getType());
-        if (check != null) {
-            space.decls.remove(check);
-        }
-        space.decls.add(decl);
+        decls.add(decl);
     }
     
     
@@ -297,16 +277,5 @@ public class Namespace {
         }
         throw new ASTTraversalException(name.getPosition(), name.getId() + 
             " ist keine Variable");
-    }
-    
-    
-    
-    @Override
-    public String toString() {
-        String result = this.name;
-        for(Namespace space = this.parent; space != null; space = space.parent) {
-            result = space.name + "." + result;
-        }
-        return result;
     }
 }

@@ -3,22 +3,21 @@ package de.skuzzle.polly.parsing.ast.visitor;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
+import java.util.Iterator;
 
 
+import de.skuzzle.polly.parsing.LinkedStack;
 import de.skuzzle.polly.parsing.Position;
-import de.skuzzle.polly.parsing.ast.declarations.Declaration;
+import de.skuzzle.polly.parsing.Stack;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
-import de.skuzzle.polly.parsing.ast.declarations.ResolvedParameter;
+import de.skuzzle.polly.parsing.ast.declarations.Parameter;
 import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Hardcoded;
-import de.skuzzle.polly.parsing.ast.expressions.LambdaCall;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
-import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
@@ -62,12 +61,12 @@ public class ExecutionVisitor extends DepthFirstVisitor {
     
     
 
-    private final LinkedList<Literal> stack;
+    private final Stack<Literal> stack;
     private Namespace nspace;
     
     
     public ExecutionVisitor(String executor) {
-        this.stack = new LinkedList<Literal>();
+        this.stack = new LinkedStack<Literal>();
         this.nspace = Namespace.forName(executor);
     }
     
@@ -102,7 +101,7 @@ public class ExecutionVisitor extends DepthFirstVisitor {
      * @return The created namespace.
      */
     private Namespace enter() {
-        return this.nspace = this.nspace.enter("local");
+        return this.nspace = this.nspace.enter();
     }
     
     
@@ -205,52 +204,31 @@ public class ExecutionVisitor extends DepthFirstVisitor {
     
     
     @Override
-    public void visitLambdaCall(LambdaCall call) throws ASTTraversalException {
-        this.beforeLambdaCall(call);
-        
-        // this will put the FunctionLiteral onto the stack
-        call.getLambda().visit(this);
-        
-        final FunctionLiteral func = (FunctionLiteral) this.stack.pop();
-        
-        // create fake declaration
-        final Declaration vd = new VarDeclaration(func.getPosition(), 
-                call.getIdentifier(), func);
-        
-        final ResolvableIdentifier fakeId = new ResolvableIdentifier(vd.getName());
-        fakeId.setDeclaration(vd);
-        
-        final Call lambdaCall = new Call(call.getPosition(), 
-                fakeId, call.getParameters());
-        lambdaCall.setResolvedParameters(call.getResolvedParameters());
-        lambdaCall.visit(this);
-        
-        this.afterLambdaCall(call);
-    }
-    
-    
-    
-    @Override
     public void visitCall(Call call) throws ASTTraversalException {
         this.beforeCall(call);
         
-        final VarDeclaration vd = 
-            (VarDeclaration) call.getIdentifier().getDeclaration();
+        // this will push the function call onto the stack
+        call.getLhs().visit(this);
+        
+        final FunctionLiteral func = (FunctionLiteral) this.stack.pop();
         
         this.enter();
-        for (final ResolvedParameter p : call.getResolvedParameters()) {
+        final Iterator<Expression> actualIt = call.getParameters().iterator();
+        final Iterator<Parameter> formalIt = func.getFormal().iterator();
+        while (formalIt.hasNext()) {
+            final Parameter formal = formalIt.next();
+            final Expression actual = actualIt.next();
+            
             // execute actual parameter
-            p.getActual().visit(this);
+            actual.visit(this);
             
             // declare result as local variable for this call
-            final Expression actual = this.stack.pop();
-            
+            final Expression result = this.stack.pop();
             final VarDeclaration local = 
-                new VarDeclaration(p.getPosition(), p.getName(), actual);
-            this.nspace.declareOverride(local);
+                new VarDeclaration(actual.getPosition(), formal.getName(), result);
+            this.nspace.declare(local);
         }
 
-        final FunctionLiteral func = (FunctionLiteral) vd.getExpression();
         func.getExpression().visit(this);
         this.leave();
         

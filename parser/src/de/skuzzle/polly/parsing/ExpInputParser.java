@@ -16,7 +16,6 @@ import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
-import de.skuzzle.polly.parsing.ast.expressions.LambdaCall;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
 import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
@@ -37,7 +36,6 @@ import de.skuzzle.polly.parsing.ast.operators.binary.Arithmetic;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.ASTVisualizer;
 import de.skuzzle.polly.parsing.ast.visitor.ExecutionVisitor;
-import de.skuzzle.polly.parsing.ast.visitor.ParentSetter;
 import de.skuzzle.polly.parsing.ast.visitor.TypeResolver;
 
 
@@ -54,15 +52,13 @@ public class ExpInputParser {
         Namespace.forName("me").declare(div.createDeclaration());
         
         
-        String testMe = ":foo (\\(Number x, Number y;x*y+1*4)->kaka)";
+        String testMe = ":foo (\\(Number x, Number y;x*y+1*4)->kaka)(2,4)+kaka(2,kaka(1,1))*(17->a)-a+233";
+        //testMe = ":foo 10*10+7*7";
         ExpInputParser p = new ExpInputParser();
         Root r = p.parse(testMe);
         
         TypeResolver tr = new TypeResolver("me");
         r.visit(tr);
-        
-        ParentSetter ps = new ParentSetter();
-        r.visit(ps);
         
         ExecutionVisitor ev = new ExecutionVisitor("me");
         r.visit(ev);

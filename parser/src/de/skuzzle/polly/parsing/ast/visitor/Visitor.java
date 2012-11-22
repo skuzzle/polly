@@ -8,7 +8,6 @@ import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Hardcoded;
-import de.skuzzle.polly.parsing.ast.expressions.LambdaCall;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
@@ -133,10 +132,6 @@ public interface Visitor {
     public void beforeOperatorCall(OperatorCall call) throws ASTTraversalException;
     public void afterOperatorCall(OperatorCall call) throws ASTTraversalException;
     public void visitOperatorCall(OperatorCall call) throws ASTTraversalException;
-    
-    public void beforeLambdaCall(LambdaCall call) throws ASTTraversalException;
-    public void afterLambdaCall(LambdaCall call) throws ASTTraversalException;
-    public void visitLambdaCall(LambdaCall call) throws ASTTraversalException;
     
     public void beforeHardCoded(Hardcoded hc) throws ASTTraversalException;
     public void afterHardCoded(Hardcoded hc) throws ASTTraversalException;

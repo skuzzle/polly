@@ -2,9 +2,9 @@ package de.skuzzle.polly.parsing.ast.operators;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
 
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.Stack;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
@@ -45,7 +45,7 @@ public class Cast extends Operator {
     
 
     @Override
-    public void execute(LinkedList<Literal> stack, Namespace ns, Visitor execVisitor)
+    public void execute(Stack<Literal> stack, Namespace ns, Visitor execVisitor)
             throws ASTTraversalException {
         
         // on a function call, parameters are already executed to be a Literal

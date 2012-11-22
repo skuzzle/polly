@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import de.skuzzle.polly.parsing.Position;
@@ -13,13 +12,11 @@ import de.skuzzle.polly.parsing.ast.declarations.FunctionParameter;
 import de.skuzzle.polly.parsing.ast.declarations.ListParameter;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
-import de.skuzzle.polly.parsing.ast.declarations.ResolvedParameter;
 import de.skuzzle.polly.parsing.ast.declarations.TypeDeclaration;
 import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
-import de.skuzzle.polly.parsing.ast.expressions.LambdaCall;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
 import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
@@ -73,7 +70,7 @@ public class TypeResolver extends DepthFirstVisitor {
      * @return The created namespace.
      */
     private Namespace enter() {
-        return this.nspace = this.nspace.enter("local");
+        return this.nspace = this.nspace.enter();
     }
     
     
@@ -179,7 +176,7 @@ public class TypeResolver extends DepthFirstVisitor {
                 new EmptyExpression(p.getType()));
             vd.setParameter(true);
             
-            this.nspace.declareOverride(vd);
+            this.nspace.declare(vd);
         }
         // now determine type of the function's expression
         func.getExpression().visit(this);
@@ -248,60 +245,7 @@ public class TypeResolver extends DepthFirstVisitor {
         this.visitCall(call);
         this.afterOperatorCall(call);
     }
-    
-    
-    
-    @Override
-    public void visitLambdaCall(LambdaCall call) throws ASTTraversalException {
-        if (this.testIsChecked(call)) {
-            return;
-        }
-        
-        
-        // NOTE: all calls (declared function calls and operator calls) are mapped to
-        //       lambda calls.
-        
-        
-        this.beforeLambdaCall(call);
-        
-        final FunctionLiteral func = call.getLambda();
-        
-        // resolve functions return type
-        func.visit(this);
-        
-        // validate call. If this was a call to a declared function instead of 
-        // a lambda function, parameter types will match anyway, as declared functions
-        // are resolved by their signature
-        if (call.getParameters().size() != func.getFormal().size()) {
-            throw new ASTTraversalException(call.getPosition(), 
-                "Ungültige Parameteranzahl. Erwartet: " + func.getFormal());
-        }
-        
-        final Iterator<Parameter> formalIt = func.getFormal().iterator();
-        final Iterator<Expression> actualIt = call.getParameters().iterator();
-        final List<ResolvedParameter> resolved = new ArrayList<ResolvedParameter>();
-        
-        while (formalIt.hasNext()) {
-            final Expression actual = actualIt.next();
-            final Parameter formal = formalIt.next();
 
-            // resolve parameter types and check
-            formal.visit(this);
-            actual.visit(this);
-            
-            if (!actual.getType().check(formal.getType())) {
-                Type.typeError(actual.getType(), formal.getType(), actual.getPosition());
-            }
-            resolved.add(new ResolvedParameter(
-                actual.getPosition(), formal.getName(), actual));
-        }
-        call.setResolvedParameters(resolved);
-        // type of the call is the type of the called expression
-        call.setType(func.getExpression().getType());
-        func.setReturnType(func.getExpression().getType());
-        
-        this.afterLambdaCall(call);
-    }
     
     
     
@@ -313,7 +257,8 @@ public class TypeResolver extends DepthFirstVisitor {
         
         this.beforeCall(call);
         
-        // check what type of call this is
+        // check what type of call this is. Might be a lambda call or a VarAccess which
+        // in turn references a function
         call.getLhs().visit(this);
         
         // resolve actual parameter types
@@ -323,31 +268,17 @@ public class TypeResolver extends DepthFirstVisitor {
         
         // create signature from actual parameter types.
         // signature does *not* obey return value as it is unknown by now.
-        final Type sig = call.createSignature();
+        final FunctionType signature = call.createSignature();
         
-        if (call.getLhs() instanceof VarAccess) {
-            final VarAccess va = (VarAccess) call.getLhs();
-            final VarDeclaration decl = this.nspace.resolveVar(va.getIdentifier(), sig);
-            
-            if (!(decl.getExpression().getType() instanceof FunctionType)) {
-                throw new ASTTraversalException(va.getIdentifier().getPosition(), 
-                    va.getIdentifier().getId() + " ist keine Funktion");
-            }
+        if (!call.getLhs().getType().check(signature)) {
+            Type.typeError(call.getLhs().getType(), signature, call.getPosition());
         }
         
+        // get lhs' type as FunctionType. This type already has a return type set,
+        // which will be the return type of this call
+        final FunctionType lhsType = (FunctionType) call.getLhs().getType();
+        call.setType(lhsType.getReturnType());
         
-        
-
-
-        // now treat resolved function as a lambda function
-        final FunctionLiteral func = (FunctionLiteral) decl.getExpression();
-        final LambdaCall delegate = new LambdaCall(
-            call.getPosition(), func, call.getParameters());
-        delegate.visit(this);
-        
-        // apply resolved type to this call
-        call.setType(delegate.getType());
-        call.setResolvedParameters(delegate.getResolvedParameters());
         
         this.afterCall(call);
     }

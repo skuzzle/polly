@@ -18,6 +18,7 @@ public class FunctionLiteral extends Literal {
     private final ArrayList<Parameter> formal;
     private final Expression expression;
     
+    
     // semantical edge will be resolved during type resolval.
     private Type returnType;
     

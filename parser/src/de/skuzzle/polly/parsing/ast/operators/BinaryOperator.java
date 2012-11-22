@@ -2,9 +2,9 @@ package de.skuzzle.polly.parsing.ast.operators;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
 
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.Stack;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
@@ -30,11 +30,11 @@ import de.skuzzle.polly.parsing.types.Type;
 public abstract class BinaryOperator<L extends Literal, R extends Literal> 
         extends Operator {
 
+    private final static String LEFT_PARAM_NAME = "$left";
+    private final static String RIGHT_PARAM_NAME = "$right";
+    
     private final Type left;
     private final Type right;
-    
-    private final String leftParamName;
-    private final String rightParamName;
     
     
     
@@ -50,10 +50,6 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
         super(id, resultType);
         this.left = left;
         this.right = right;
-        
-        // create unique parameter names 
-        this.leftParamName = getParamName();
-        this.rightParamName = getParamName();
     }
     
     
@@ -62,10 +58,10 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
     public Declaration createDeclaration() {
         Collection<Parameter> p = Arrays.asList(new Parameter[] {
             new Parameter(Position.EMPTY, 
-                new ResolvableIdentifier(Position.EMPTY, this.leftParamName), 
+                new ResolvableIdentifier(Position.EMPTY, LEFT_PARAM_NAME), 
                 this.left),
             new Parameter(Position.EMPTY, 
-                new ResolvableIdentifier(Position.EMPTY, this.rightParamName), 
+                new ResolvableIdentifier(Position.EMPTY, RIGHT_PARAM_NAME), 
                 this.right)});
         
         final FunctionLiteral func = new FunctionLiteral(Position.EMPTY, p, this);
@@ -79,14 +75,14 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
     
     @Override
     @SuppressWarnings("unchecked")
-    public final void execute(LinkedList<Literal> stack, Namespace ns, 
+    public final void execute(Stack<Literal> stack, Namespace ns, 
             Visitor execVisitor) throws ASTTraversalException {
         
         final R right = (R) ns.resolveVar(
-            new ResolvableIdentifier(this.getPosition(), this.leftParamName), 
+            new ResolvableIdentifier(this.getPosition(), LEFT_PARAM_NAME), 
             Type.ANY).getExpression();
         final L left = (L) ns.resolveVar(
-            new ResolvableIdentifier(this.getPosition(), this.rightParamName), 
+            new ResolvableIdentifier(this.getPosition(), RIGHT_PARAM_NAME), 
             Type.ANY).getExpression();
         
         this.exec(stack, ns, left, right, 
@@ -105,6 +101,6 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
      * @param resultPos Position that can be used as position for the result literal.
      * @throws ASTTraversalException If executing fails for any reason.
      */
-    protected abstract void exec(LinkedList<Literal> stack, Namespace ns, 
+    protected abstract void exec(Stack<Literal> stack, Namespace ns, 
         L left, R right, Position resultPos) throws ASTTraversalException;
 }

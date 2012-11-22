@@ -8,7 +8,6 @@ import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
-import de.skuzzle.polly.parsing.ast.expressions.LambdaCall;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
@@ -39,7 +38,7 @@ public class ParentSetter extends DepthFirstVisitor {
     
     @Override
     public void beforeCall(Call call) throws ASTTraversalException {
-        call.getIdentifier().setParent(call);
+        call.getLhs().visit(this);
         for (final Expression p : call.getParameters()) {
             p.setParent(call);
         }
@@ -64,14 +63,6 @@ public class ParentSetter extends DepthFirstVisitor {
         for (final Identifier id : param.getSignature()) {
             id.setParent(param);
         }
-    }
-    
-    
-    
-    @Override
-    public void beforeLambdaCall(LambdaCall call) throws ASTTraversalException {
-        call.getLambda().setParent(call);
-        this.beforeCall(call);
     }
     
     

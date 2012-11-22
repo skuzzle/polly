@@ -1,8 +1,8 @@
 package de.skuzzle.polly.parsing.ast.operators.binary;
 
-import java.util.LinkedList;
 
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.Stack;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
@@ -24,7 +24,7 @@ public class Arithmetic extends BinaryOperator<NumberLiteral, NumberLiteral> {
     
 
     @Override
-    protected void exec(LinkedList<Literal> stack, Namespace ns,
+    protected void exec(Stack<Literal> stack, Namespace ns,
             NumberLiteral left, NumberLiteral right, Position resultPos) {
         
         switch (this.getOp()) {

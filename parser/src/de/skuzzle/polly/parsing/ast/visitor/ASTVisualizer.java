@@ -14,7 +14,6 @@ import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.Hardcoded;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
-import de.skuzzle.polly.parsing.ast.expressions.LambdaCall;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
 import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
@@ -189,12 +188,6 @@ public class ASTVisualizer extends DepthFirstVisitor {
     
     
     @Override
-    public void beforeLambdaCall(LambdaCall call) throws ASTTraversalException {
-        this.printNode("LambdaCall", "", call);
-    }
-    
-    
-    @Override
     public void beforeIdentifier(Identifier identifier) throws ASTTraversalException {
         this.printNode(identifier.getId(), "", identifier);
     }
@@ -286,13 +279,6 @@ public class ASTVisualizer extends DepthFirstVisitor {
 
     @Override
     public void afterIdentifier(Identifier identifier) throws ASTTraversalException {
-        this.pop();
-    }
-
-
-
-    @Override
-    public void afterLambdaCall(LambdaCall call) throws ASTTraversalException {
         this.pop();
     }
 

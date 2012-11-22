@@ -1,4 +1,4 @@
-package de.skuzzle.polly.parsing.execution;
+package de.skuzzle.polly.parsing;
 
 
 public class StackOverflowException extends RuntimeException {

@@ -1,6 +1,7 @@
-package de.skuzzle.polly.parsing.execution;
+package de.skuzzle.polly.parsing;
 
 import java.util.EmptyStackException;
+
 
 /**
  * This is a simple fixed size stack.
@@ -9,7 +10,7 @@ import java.util.EmptyStackException;
  *
  * @param <T> Type for elements in this stack.
  */
-public class FixedSizeStack<T> {
+public class FixedSizeStack<T> implements Stack<T>{
 
     private final T[] stack;
     private int sp;
@@ -24,22 +25,24 @@ public class FixedSizeStack<T> {
     
     
     
+    @Override
     public boolean isEmpty() {
         return this.sp == -1;
     }
     
     
     
-    public int push(T t) {
+    @Override
+    public void push(T t) {
         if (this.sp + 1 == this.stack.length) {
             throw new StackOverflowException();
         }
         this.stack[this.sp++] = t;
-        return this.sp;
     }
     
     
     
+    @Override
     public T peek() {
         if (this.isEmpty()) {
             throw new EmptyStackException();
@@ -49,6 +52,16 @@ public class FixedSizeStack<T> {
     
     
     
+    public T peek(int n) {
+        if (this.sp - n < 0) {
+            throw new IllegalArgumentException("illegal peek value: " + n);
+        }
+        return this.stack[this.sp - n];
+    }
+    
+    
+    
+    @Override
     public T pop() {
         final T t = this.peek();
         --this.sp;
@@ -64,5 +77,12 @@ public class FixedSizeStack<T> {
             }
         }
         return -1;
+    }
+
+
+
+    @Override
+    public int size() {
+        return this.sp;
     }
 }
