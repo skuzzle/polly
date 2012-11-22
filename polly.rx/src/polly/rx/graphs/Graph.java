@@ -21,7 +21,7 @@ public class Graph {
     private final Color GRID_COLOR = new Color(230, 230, 230);
     
     
-    
+    // TEST: Graph
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             
