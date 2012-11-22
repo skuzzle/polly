@@ -9,6 +9,9 @@ import com.sun.org.apache.xml.internal.utils.NameSpace;
 
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
 import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
+import de.skuzzle.polly.parsing.ast.operators.BinaryArithmetic;
+import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
+import de.skuzzle.polly.parsing.ast.operators.UnaryArithmetic;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.types.Type;
 
@@ -60,6 +63,31 @@ public class Namespace {
     
     
     private final static Namespace GLOBAL = new Namespace(null);
+    static {
+        try {
+            // Arithmetic binary ops
+            GLOBAL.declare(new BinaryArithmetic(OpType.ADD).createDeclaration());
+            GLOBAL.declare(new BinaryArithmetic(OpType.SUB).createDeclaration());
+            GLOBAL.declare(new BinaryArithmetic(OpType.MUL).createDeclaration());
+            GLOBAL.declare(new BinaryArithmetic(OpType.DIV).createDeclaration());
+            GLOBAL.declare(new BinaryArithmetic(OpType.INTDIV).createDeclaration());
+            GLOBAL.declare(new BinaryArithmetic(OpType.INT_AND).createDeclaration());
+            GLOBAL.declare(new BinaryArithmetic(OpType.INT_OR).createDeclaration());
+            GLOBAL.declare(new BinaryArithmetic(OpType.MOD).createDeclaration());
+            GLOBAL.declare(new BinaryArithmetic(OpType.POWER).createDeclaration());
+            GLOBAL.declare(new BinaryArithmetic(OpType.LEFT_SHIFT).createDeclaration());
+            GLOBAL.declare(new BinaryArithmetic(OpType.RIGHT_SHIFT).createDeclaration());
+            GLOBAL.declare(new BinaryArithmetic(OpType.URIGHT_SHIFT).createDeclaration());
+            GLOBAL.declare(new BinaryArithmetic(OpType.RADIX).createDeclaration());
+            
+            // Arithmetic unary ops
+            GLOBAL.declare(new UnaryArithmetic(OpType.SUB).createDeclaration());
+        } catch (ASTTraversalException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    
     private final static Map<String, Namespace> ROOTS = new HashMap<String, Namespace>();
 
     /**
@@ -216,7 +244,7 @@ public class Namespace {
         Collection<Declaration> decls = decl.isGlobal() ? GLOBAL.decls : this.decls;
         // check if declaration exists in current namespace
         for (final Declaration d : decls) {
-            if (d.getName().equals(decl.getName())) {
+            if (d.getName().equals(decl.getName()) && d.getType().check(decl.getType())) {
                 throw new ASTTraversalException(decl.getPosition(), 
                     "Doppelte Deklaration von " + decl.getName());
             }

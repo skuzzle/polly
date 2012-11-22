@@ -42,17 +42,7 @@ import de.skuzzle.polly.parsing.ast.visitor.TypeResolver;
 public class ExpInputParser {
     
     public static void main(String[] args) throws ParseException, IOException, ASTTraversalException {
-        final Operator add = new BinaryArithmetic(OpType.ADD);
-        final Operator sub = new BinaryArithmetic(OpType.SUB);
-        final Operator mul = new BinaryArithmetic(OpType.MUL);
-        final Operator div = new BinaryArithmetic(OpType.DIV);
-        Namespace.forName("me").declare(add.createDeclaration());
-        Namespace.forName("me").declare(sub.createDeclaration());
-        Namespace.forName("me").declare(mul.createDeclaration());
-        Namespace.forName("me").declare(div.createDeclaration());
-        
-        
-        String testMe = ":foo ((\\(Number x, Number y;x*y+1*4)->kaka)(2,4)+kaka(2,kaka(1,1))*(17->a)-a+233->kaka)-10";
+        String testMe = ":foo ((\\(Number x, Number y;x*y+1*4)->kaka)(2,4)+kaka(2,kaka(1,1))*(17->a)-a+(-233))";
         //testMe = ":foo 10*10+7*7";
         ExpInputParser p = new ExpInputParser();
         Root r = p.parse(testMe);

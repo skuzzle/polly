@@ -5,6 +5,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+/**
+ * This class maps token types which represent operators to a certain precedence level.
+ * 
+ * @author Simon Taddiken
+ */
 public class PrecedenceTable {
 
     public enum PrecedenceLevel {

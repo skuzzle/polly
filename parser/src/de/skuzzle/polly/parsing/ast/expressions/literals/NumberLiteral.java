@@ -11,12 +11,18 @@ public class NumberLiteral extends Literal {
     private int radix;
     
     
+    
     public NumberLiteral(Position position, double value) {
         super(position, Type.NUMBER);
         this.value = value;
         this.radix = 10;
     }
     
+    
+    
+    public int getRadix() {
+        return this.radix;
+    }
     
     
     
@@ -26,15 +32,13 @@ public class NumberLiteral extends Literal {
     
     
     
+    /**
+     * Gets the value of this literal.
+     * 
+     * @return The literal's value.
+     */
     public double getValue() {
         return this.value;
-    }
-    
-    
-    
-    protected boolean isIntegerHelper(double value) {
-        int val = (int) value;
-        return (double)val == value;
     }
     
     
@@ -62,12 +66,11 @@ public class NumberLiteral extends Literal {
      * @throws ASTTraversalException If {@link #getValue()} returns 0.
      */
     public int isInteger(Position pos) throws ASTTraversalException {
-        int val = (int) this.getValue();
-        if (!this.isIntegerHelper(this.getValue())) {
+        if (Math.round(this.getValue()) != this.getValue()) {
             throw new ASTTraversalException(pos, "'" + this.getValue() + 
                 "' ist keine Ganzzahl"); 
         }
-        return val;
+        return (int) Math.round(this.getValue());
     }
     
     
@@ -142,7 +145,7 @@ public class NumberLiteral extends Literal {
     
     @Override
     public String format(LiteralFormatter formatter) {
-        return null;
+        return formatter.formatNumberLiteral(this);
     }
 
     
