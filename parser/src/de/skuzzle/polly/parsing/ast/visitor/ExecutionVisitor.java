@@ -23,9 +23,9 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
+import de.skuzzle.polly.parsing.ast.operators.BinaryArithmetic;
 import de.skuzzle.polly.parsing.ast.operators.Operator;
 import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
-import de.skuzzle.polly.parsing.ast.operators.binary.Arithmetic;
 import de.skuzzle.polly.parsing.types.Type;
 
 
@@ -33,10 +33,10 @@ import de.skuzzle.polly.parsing.types.Type;
 public class ExecutionVisitor extends DepthFirstVisitor {
     
     public static void main(String[] args) throws ASTTraversalException, IOException {
-        final Operator add = new Arithmetic(OpType.ADD);
-        final Operator sub = new Arithmetic(OpType.SUB);
-        final Operator mul = new Arithmetic(OpType.MUL);
-        final Operator div = new Arithmetic(OpType.DIV);
+        final Operator add = new BinaryArithmetic(OpType.ADD);
+        final Operator sub = new BinaryArithmetic(OpType.SUB);
+        final Operator mul = new BinaryArithmetic(OpType.MUL);
+        final Operator div = new BinaryArithmetic(OpType.DIV);
         Namespace.forName("me").declare(add.createDeclaration());
         Namespace.forName("me").declare(sub.createDeclaration());
         Namespace.forName("me").declare(mul.createDeclaration());
