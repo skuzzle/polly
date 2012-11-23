@@ -203,9 +203,7 @@ public class InputScanner extends AbstractTokenStream {
                 } else if (next == '|') {
                     state = 6;
                 } else if (next == ':') {
-                	Token tmp = this.readIdentifier();
-                    return new Token(TokenType.COMMAND, this.spanFrom(tokenStart), 
-                    		tmp.getStringValue());
+                    return new Token(TokenType.COLON, this.spanFrom(tokenStart), ":");
                 } else if (next == '=') {
                     state = 5;
                 } else if (next == '<') {

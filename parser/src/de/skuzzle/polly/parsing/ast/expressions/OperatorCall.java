@@ -29,7 +29,7 @@ public class OperatorCall extends Call {
     public final static OperatorCall binary(Position position, OpType operator, 
             Expression left, Expression right) {
         return new OperatorCall(position, operator, 
-            Arrays.asList(new Expression[] {left, right}));
+            Arrays.asList(new Expression[] {left, right}), false);
     }
     
     
@@ -40,12 +40,14 @@ public class OperatorCall extends Call {
      * @param position Position of the call within the input.
      * @param operator The called operator.
      * @param operand The operand of the operator.
+     * @param postfix Whether this is a postfix operator. If <code>false</code>, this 
+     *          operator is assumed to be prefix.
      * @return The created Operator call.
      */
     public final static OperatorCall unary(Position position, OpType operator, 
-            Expression operand) {
+            Expression operand, boolean postfix) {
         return new OperatorCall(position, operator, 
-            Arrays.asList(new Expression[] {operand}));
+            Arrays.asList(new Expression[] {operand}), postfix);
     }
     
     
@@ -63,12 +65,14 @@ public class OperatorCall extends Call {
     public final static OperatorCall ternary(Position position, OpType operator, 
             Expression operand1, Expression operand2, Expression operand3) {
         return new OperatorCall(position, operator, 
-            Arrays.asList(new Expression[] {operand1, operand2, operand3}));
+            Arrays.asList(new Expression[] {operand1, operand2, operand3}), false);
     }
     
     
 
     private final OpType operator;
+    private final boolean postfix;
+    
     
     
     /**
@@ -77,13 +81,17 @@ public class OperatorCall extends Call {
      * @param position Position of the call within the source.
      * @param operator The called operator.
      * @param parameters The actual parameters of the call.
+     * @param postfix Whether this is a postfix operator. If <code>false</code>, this 
+     *          operator is assumed to be prefix (only taken into account for unary 
+     *          operators.)
      */
     private OperatorCall(Position position, OpType operator, 
-            Collection<Expression> parameters) {
+            Collection<Expression> parameters, boolean postfix) {
         super(position, 
             new VarAccess(position, new ResolvableIdentifier(position, operator.getId())),
             parameters);
         this.operator = operator;
+        this.postfix = postfix;
     }
 
 
@@ -97,6 +105,12 @@ public class OperatorCall extends Call {
         return this.operator;
     }
     
+    
+    
+    public boolean isPostfix() {
+        return this.postfix;
+    }
+
     
     
     @Override

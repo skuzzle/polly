@@ -27,7 +27,8 @@ import de.skuzzle.polly.parsing.types.Type;
  */
 public class Cast extends Operator {
 
-    private final String paramName;
+    protected final static String PARAM_NAME = "$param";
+
     
     
     /**
@@ -39,7 +40,6 @@ public class Cast extends Operator {
      */
     public Cast(OpType operator, Type target) {
         super(operator, target);
-        this.paramName = getParamName();
     }
     
     
@@ -50,7 +50,7 @@ public class Cast extends Operator {
         
         // on a function call, parameters are already executed to be a Literal
         final Literal operand = (Literal) ns.resolveVar(
-            new ResolvableIdentifier(Position.EMPTY, this.paramName), 
+            new ResolvableIdentifier(Position.EMPTY, PARAM_NAME), 
             Type.ANY).getExpression();
         
         stack.push(operand.castTo(this.getType()));
@@ -62,14 +62,14 @@ public class Cast extends Operator {
     public Declaration createDeclaration() {
         // create parameter that accepts any expression (Type.ANY)
         final ResolvableIdentifier rid = 
-            new ResolvableIdentifier(Position.EMPTY, this.paramName);
+            new ResolvableIdentifier(Position.EMPTY, PARAM_NAME);
         final Collection<Parameter> p = Arrays.asList(
             new Parameter[] {new Parameter(Position.EMPTY, rid, Type.ANY)});
         
         final FunctionLiteral func = new FunctionLiteral(Position.EMPTY, p, this);
         func.setType(new FunctionType(this.getType(), Parameter.asType(p)));
+        func.setReturnType(this.getType());
         
         return new VarDeclaration(func.getPosition(), this.getType().getTypeName(), func);
     }
-
 }

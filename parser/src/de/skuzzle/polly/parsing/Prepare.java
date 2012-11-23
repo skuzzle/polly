@@ -52,7 +52,6 @@ public final class Prepare {
         dest.add(new BinaryOperators.ArithmeticOperator(TokenType.LEFT_SHIFT));
         dest.add(new BinaryOperators.ArithmeticOperator(TokenType.RIGHT_SHIFT));
         dest.add(new BinaryOperators.ArithmeticOperator(TokenType.URIGHT_SHIFT));
-        dest.add(new BinaryOperators.ArithmeticOperator(TokenType.CHOOSE));
         dest.add(new BinaryOperators.ArithmeticOperator(TokenType.RADIX));
         
         //dest.add(new BinaryOperators.ArithmeticDateOperator(TokenType.ADD));

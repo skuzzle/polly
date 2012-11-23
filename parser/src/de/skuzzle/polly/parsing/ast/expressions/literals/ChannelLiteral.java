@@ -9,4 +9,10 @@ public class ChannelLiteral extends StringLiteral {
         super(position, value);
     }
 
+    
+    
+    @Override
+    public String format(LiteralFormatter formatter) {
+        return formatter.formatChannel(this);
+    }
 }

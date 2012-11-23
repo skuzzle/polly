@@ -32,7 +32,7 @@ public class BooleanLiteral extends Literal {
 
     @Override
     public String format(LiteralFormatter formatter) {
-        return null;
+        return this.value ? "true" : "false";
     }
     
     

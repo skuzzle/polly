@@ -30,9 +30,10 @@ public class DateLiteral extends Literal {
         return null;
     }
 
+    
+    
     @Override
     public String format(LiteralFormatter formatter) {
-        return null;
+        return formatter.formatDate(this);
     }
-
 }

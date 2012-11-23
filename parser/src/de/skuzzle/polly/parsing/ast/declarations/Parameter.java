@@ -8,11 +8,26 @@ import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.parsing.types.FunctionType;
 import de.skuzzle.polly.parsing.types.Type;
 
 
+/**
+ * This class represents a formal parameter declaration for a function.
+ * 
+ * @author Simon Taddiken
+ */
 public class Parameter extends Expression {
     
+    
+    /**
+     * Converts a collection of Parameters into a Collection of {@link Type}s which can
+     * be used to create {@link FunctionType}s.
+     * 
+     * @param params The input collection of Parameters.
+     * @return A collection containing only the types of the parameters 
+     *          (in the same order).
+     */
     public static Collection<Type> asType(Collection<Parameter> params) {
         final Collection<Type> result = new ArrayList<Type>(params.size());
         for (final Parameter p : params) {
@@ -75,7 +90,7 @@ public class Parameter extends Expression {
     /**
      * Gets the name of this parameter.
      * 
-     * @return Tje parameter name.
+     * @return The parameter name.
      */
     public ResolvableIdentifier getName() {
         return this.name;

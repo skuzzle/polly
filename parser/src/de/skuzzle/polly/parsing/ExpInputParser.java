@@ -22,7 +22,6 @@ import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.BooleanLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ChannelLiteral;
-import de.skuzzle.polly.parsing.ast.expressions.literals.CommandLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.DateLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
@@ -35,12 +34,13 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.ASTVisualizer;
 import de.skuzzle.polly.parsing.ast.visitor.ExecutionVisitor;
 import de.skuzzle.polly.parsing.ast.visitor.TypeResolver;
+import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 
 
 public class ExpInputParser {
     
     public static void main(String[] args) throws ParseException, IOException, ASTTraversalException {
-        String testMe = ":foo (\\(Number x, Number y;x*y+1*4)->a)(1,2)+(a)(4,5)+4*8-8*7/2+3-a(18,9)+-8";
+        String testMe = ":foo (((((((\\(Number x,Number y;((x*y)+(1.0*4.0)))->a)(1.0,2.0)+a(4.0,5.0))+(4.0*8.0))-((8.0*7.0)/2.0))+3.0)-a(18.0,9.0))+-8.0)";
         //testMe = ":foo -10+5";
         ExpInputParser p = new ExpInputParser();
         Root r = p.parse(testMe);
@@ -56,6 +56,7 @@ public class ExpInputParser {
         ExecutionVisitor ev = new ExecutionVisitor("me");
         r.visit(ev);
         
+        r.visit(new Unparser(System.out));
         System.out.println(ev.getResult());
 
     }
@@ -220,9 +221,13 @@ public class ExpInputParser {
     protected Root parseRoot() throws ParseException {
         
         Root root = null;
-        final Token la = this.scanner.lookAhead();
+        Token la = this.scanner.lookAhead();
         try {
-            if (!this.scanner.match(TokenType.COMMAND)) {
+            if (!this.scanner.match(TokenType.COLON)) {
+                return null;
+            }
+            la = this.scanner.lookAhead();
+            if (!this.scanner.match(TokenType.IDENTIFIER)) {
                 return null;
             }
         } catch (ParseException ignore) {
@@ -231,8 +236,9 @@ public class ExpInputParser {
             return null;
         }
         
-        final CommandLiteral cmd = new CommandLiteral(la.getPosition(), 
-                la.getStringValue());
+        final Identifier cmd = new Identifier(
+            new Position(la.getPosition().getStart() - 1, la.getPosition().getEnd()),
+            la.getStringValue());
         List<Expression> signature = new ArrayList<Expression>();
         if (this.scanner.match(TokenType.SEPERATOR)) {
             do {
@@ -491,7 +497,7 @@ public class ExpInputParser {
                 final Position endPos = this.scanner.spanFrom(la);
                 return OperatorCall.unary(
                     new Position(lhs.getPosition(), endPos), 
-                    OpType.fromToken(la), lhs);
+                    OpType.fromToken(la), lhs, true);
             }
             la = this.scanner.lookAhead();
         }
@@ -587,7 +593,7 @@ public class ExpInputParser {
             this.scanner.consume();
             final Expression rhs = this.parseUnary();
             return OperatorCall.unary(new Position(la.getPosition(), 
-                    rhs.getPosition()), OpType.fromToken(la), rhs);
+                    rhs.getPosition()), OpType.fromToken(la), rhs, false);
         } else {
             return this.parseNamespaceAccess();
         }

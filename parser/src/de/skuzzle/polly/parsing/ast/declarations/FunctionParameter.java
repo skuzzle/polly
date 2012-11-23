@@ -7,11 +7,24 @@ import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 
-
+/**
+ * Represents a formal parameter which itself takes a function as actual value.
+ * 
+ * @author Simon Taddiken
+ */
 public class FunctionParameter extends Parameter {
 
     private final Collection<ResolvableIdentifier> signature;
     
+    /**
+     * Creates a new Function parameter.
+     * 
+     * @param position Position within the input string.
+     * @param sig The functions signature. The first entry will be interpreted as the
+     *          return type. Collection must thus have at least one entry in order not to
+     *          produce errors.
+     * @param name
+     */
     public FunctionParameter(Position position, Collection<ResolvableIdentifier> sig,
             ResolvableIdentifier name) {
         super(position, null, name);

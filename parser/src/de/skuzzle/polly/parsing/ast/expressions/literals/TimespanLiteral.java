@@ -23,6 +23,13 @@ public class TimespanLiteral extends DateLiteral {
         super(position, addSeconds(new Date(), seconds));
         this.seconds = seconds;
     }
+    
+    
+    
+    @Override
+    public String format(LiteralFormatter formatter) {
+        return formatter.formatTimespan(this);
+    }
 
     
     

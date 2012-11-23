@@ -161,7 +161,7 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
     protected PushbackStrategy<Token> tokenStrategy;
     
     /**
-     * Stringbuilder holds the current lexem. Will be resettet upon calling 
+     * Stringbuilder holds the current lexem. Will be reseted upon calling 
      * {@link #getLexem()}
      */
     protected StringBuilder currentLexem;
@@ -275,10 +275,6 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
      * @throws ParseException If no valid token could be read.
      */
     public Token lookAhead() throws ParseException {
-        /*if (this.lookahead == null) {
-            this.lookahead = this.nextToken();
-        }
-        return this.lookahead;*/
         if (this.tokenBuffer.isEmpty()) {
             this.tokenStrategy.push(this.tokenBuffer, this.readToken());
         }

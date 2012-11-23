@@ -5,7 +5,12 @@ import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 
-
+/**
+ * This class represents a list parameter in a function declaration and takes a list
+ * as actual value.
+ * 
+ * @author Simon Taddiken
+ */
 public class ListParameter extends Parameter {
 
     private final ResolvableIdentifier mainTypeName;

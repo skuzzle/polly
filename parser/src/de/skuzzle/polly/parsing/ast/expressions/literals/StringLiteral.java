@@ -32,7 +32,7 @@ public class StringLiteral extends Literal {
     
     @Override
     public String format(LiteralFormatter formatter) {
-        return null;
+        return formatter.formatString(this);
     }
     
     
