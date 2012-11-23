@@ -10,6 +10,7 @@ import java.util.TimeZone;
 
 
 
+import de.skuzzle.polly.parsing.util.TimeSpanFormat;
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.FormatManager;
 
@@ -80,7 +81,7 @@ public class FormatManagerImpl implements FormatManager {
 
     @Override
     public String formatTimeSpan(long seconds) {
-        return new TimeSpanFormat().format(seconds);
+        return new TimeSpanFormat(true).format(seconds);
     }
     
     
