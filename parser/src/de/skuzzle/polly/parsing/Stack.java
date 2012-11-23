@@ -1,6 +1,7 @@
 package de.skuzzle.polly.parsing;
 
 import java.util.EmptyStackException;
+import java.util.Iterator;
 
 
 /**
@@ -11,7 +12,7 @@ import java.util.EmptyStackException;
  * @author Simon Taddiken
  * @param <T> Type of elements in this stack.
  */
-public interface Stack<T> {
+public interface Stack<T> extends Iterable<T> {
 
     /**
      * Pushes an object onto the stack. The next call to {@link #peek()} or 
@@ -59,4 +60,14 @@ public interface Stack<T> {
      *          otherwise.
      */
     public boolean isEmpty();
+    
+    
+    
+    /**
+     * Gets an iterator which iterates the element in the same order in which they would
+     * be popped from the stack (LIFO).
+     * 
+     * @return An {@link Iterator} which iterates this stack in stack-order.
+     */
+    public Iterator<T> iterator();
 }

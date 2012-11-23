@@ -1,6 +1,7 @@
 package de.skuzzle.polly.parsing;
 
 import java.util.EmptyStackException;
+import java.util.Iterator;
 
 
 /**
@@ -85,5 +86,30 @@ public class FixedSizeStack<T> implements Stack<T>{
     @Override
     public int size() {
         return this.sp;
+    }
+
+
+
+    @Override
+    public Iterator<T> iterator() {
+        return new Iterator<T>() {
+            private int i = sp;
+            
+            
+            @Override
+            public boolean hasNext() {
+                return this.i != 0;
+            }
+
+            @Override
+            public T next() {
+                return stack[--i];
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        };
     }
 }

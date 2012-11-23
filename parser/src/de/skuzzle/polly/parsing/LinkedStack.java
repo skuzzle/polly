@@ -1,6 +1,7 @@
 package de.skuzzle.polly.parsing;
 
 import java.util.EmptyStackException;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
@@ -58,5 +59,12 @@ public class LinkedStack<T> implements Stack<T> {
     @Override
     public boolean isEmpty() {
         return this.backend.isEmpty();
+    }
+    
+    
+    
+    @Override
+    public Iterator<T> iterator() {
+        return this.backend.descendingIterator();
     }
 }
