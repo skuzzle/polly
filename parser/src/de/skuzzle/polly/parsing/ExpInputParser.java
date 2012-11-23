@@ -43,19 +43,23 @@ public class ExpInputParser {
     
     public static void main(String[] args) throws ParseException, IOException, ASTTraversalException {
         String testMe = ":foo ((\\(Number x, Number y;x*y+1*4)->kaka)(2,4)+kaka(2,kaka(1,1))*(17->a)-a+(-233))";
-        //testMe = ":foo 10*10+7*7";
+        testMe = ":foo -10";
         ExpInputParser p = new ExpInputParser();
         Root r = p.parse(testMe);
         
+        ASTVisualizer av = new ASTVisualizer();
+        av.toFile("datAST", r);
+        
         TypeResolver tr = new TypeResolver("me");
         r.visit(tr);
+        
+
         
         ExecutionVisitor ev = new ExecutionVisitor("me");
         r.visit(ev);
         
         System.out.println(ev.getResult());
-        ASTVisualizer av = new ASTVisualizer();
-        av.toFile("datAST", r);
+
     }
 
     private final PrecedenceTable operators;

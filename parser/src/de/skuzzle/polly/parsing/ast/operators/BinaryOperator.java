@@ -66,6 +66,7 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
         
         final FunctionLiteral func = new FunctionLiteral(Position.EMPTY, p, this);
         func.setType(new FunctionType(this.getType(), Parameter.asType(p)));
+        func.setReturnType(this.getType());
         
         final Identifier fakeId = new Identifier(Position.EMPTY, this.getOp().getId());
         return new VarDeclaration(func.getPosition(), fakeId, func);

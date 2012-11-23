@@ -23,7 +23,6 @@ public class FunctionType extends Type {
     
     
     
-    
     public Type getReturnType() {
         return this.returnType;
     }

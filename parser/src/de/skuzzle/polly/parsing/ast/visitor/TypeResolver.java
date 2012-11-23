@@ -182,6 +182,9 @@ public class TypeResolver extends DepthFirstVisitor {
         func.getExpression().visit(this);
         this.leave();
         
+        func.setType(new FunctionType(func.getExpression().getType(), 
+            Parameter.asType(func.getFormal())));
+        
         this.afterFunctionLiteral(func);
     }
     
@@ -257,18 +260,22 @@ public class TypeResolver extends DepthFirstVisitor {
         
         this.beforeCall(call);
         
-        // check what type of call this is. Might be a lambda call or a VarAccess which
-        // in turn references a function
-        call.getLhs().visit(this);
-        
         // resolve actual parameter types
         for (final Expression exp : call.getParameters()) {
             exp.visit(this);
         }
         
+        
         // create signature from actual parameter types.
         // signature does *not* obey return value as it is unknown by now.
         final FunctionType signature = call.createSignature();
+        
+        // check what type of call this is. Might be a lambda call or a VarAccess which
+        // in turn references a function. For that purpose, we need to pass the called 
+        // signature to the lhs so it can find the correct overload in case it is a
+        // VarAccess
+        call.getLhs().setTypeToResolve(signature);
+        call.getLhs().visit(this);
         
         if (!call.getLhs().getType().check(signature)) {
             Type.typeError(call.getLhs().getType(), signature, call.getPosition());

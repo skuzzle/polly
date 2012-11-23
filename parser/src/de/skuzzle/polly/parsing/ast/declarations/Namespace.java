@@ -241,7 +241,7 @@ public class Namespace {
      *          already exists in this namespace.
      */
     public void declare(Declaration decl) throws ASTTraversalException {
-        Collection<Declaration> decls = decl.isGlobal() ? GLOBAL.decls : this.decls;
+        final Collection<Declaration> decls = decl.isGlobal() ? GLOBAL.decls : this.decls;
         // check if declaration exists in current namespace
         for (final Declaration d : decls) {
             if (d.getName().equals(decl.getName()) && d.getType().check(decl.getType())) {
