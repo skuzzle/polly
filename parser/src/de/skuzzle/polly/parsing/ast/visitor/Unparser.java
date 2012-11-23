@@ -63,7 +63,7 @@ public class Unparser extends DepthFirstVisitor {
                 this.out.print(",");
             }
         }
-        this.out.print(";");
+        this.out.print(":");
         func.getExpression().visit(this);
         this.out.print(")");
         this.afterFunctionLiteral(func);

@@ -16,7 +16,7 @@ access      -> call ('.' varOrCall)?                 // namespace access. call m
 call        -> literal ( '(' parameters ')' )?
 literal     -> ID                                    // VarAccess
              | '(' expr ')'                          // braced expression
-             | '\(' parameters ')'                   // lambda function literal
+             | '\(' parameters ':' expr ')'          // lambda function literal
              | '{' exprList '}'                      // concrete list of expressions
              | TRUE | FALSE                          // boolean literal
              | CHANNEL                               // channel literal

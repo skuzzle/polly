@@ -40,7 +40,7 @@ import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 public class ExpInputParser {
     
     public static void main(String[] args) throws ParseException, IOException, ASTTraversalException {
-        String testMe = ":foo (((((((\\(Number x,Number y;((x*y)+(1.0*4.0)))->a)(1.0,2.0)+a(4.0,5.0))+(4.0*8.0))-((8.0*7.0)/2.0))+3.0)-a(18.0,9.0))+-8.0)";
+        String testMe = ":foo (((((((\\(Number x,Number y:((x*y)+(1.0*4.0)))->a)(1.0,2.0)+a(4.0,5.0))+(4.0*8.0))-((8.0*7.0)/2.0))+3.0)-a(18.0,9.0))+-8.0)";
         //testMe = ":foo -10+5";
         ExpInputParser p = new ExpInputParser();
         Root r = p.parse(testMe);
@@ -680,8 +680,8 @@ public class ExpInputParser {
             this.scanner.consume();
             
             final Collection<Parameter> formal = this.parseParameters(
-                TokenType.SEMICOLON);
-            this.expect(TokenType.SEMICOLON);
+                TokenType.COLON);
+            this.expect(TokenType.COLON);
             
             exp = this.parseExpr();
             
