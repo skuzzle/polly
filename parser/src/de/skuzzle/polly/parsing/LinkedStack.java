@@ -3,7 +3,12 @@ package de.skuzzle.polly.parsing;
 import java.util.EmptyStackException;
 import java.util.LinkedList;
 
-
+/**
+ * This {@link Stack} implementation uses a {@link LinkedList} as backend.
+ * 
+ * @author Simon Taddiken
+ * @param <T> Type of the elements in this stack.
+ */
 public class LinkedStack<T> implements Stack<T> {
 
     private final LinkedList<T> backend;
@@ -54,5 +59,4 @@ public class LinkedStack<T> implements Stack<T> {
     public boolean isEmpty() {
         return this.backend.isEmpty();
     }
-
 }

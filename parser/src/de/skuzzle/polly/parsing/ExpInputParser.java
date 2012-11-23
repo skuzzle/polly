@@ -30,8 +30,6 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.StringLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.TimespanLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.UserLiteral;
-import de.skuzzle.polly.parsing.ast.operators.BinaryArithmetic;
-import de.skuzzle.polly.parsing.ast.operators.Operator;
 import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.ASTVisualizer;
@@ -42,8 +40,8 @@ import de.skuzzle.polly.parsing.ast.visitor.TypeResolver;
 public class ExpInputParser {
     
     public static void main(String[] args) throws ParseException, IOException, ASTTraversalException {
-        String testMe = ":foo ((\\(Number x, Number y;x*y+1*4)->kaka)(2,4)+kaka(2,kaka(1,1))*(17->a)-a+(-233))";
-        testMe = ":foo -10";
+        String testMe = ":foo (\\(Number x, Number y;x*y+1*4)->a)(1,2)+(a)(4,5)+4*8-8*7/2+3-a(18,9)+-8";
+        //testMe = ":foo -10+5";
         ExpInputParser p = new ExpInputParser();
         Root r = p.parse(testMe);
         

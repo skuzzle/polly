@@ -80,7 +80,7 @@ public class InputScanner extends AbstractTokenStream {
     
     
     public InputScanner(String stream, String charset) 
-        throws UnsupportedEncodingException {
+            throws UnsupportedEncodingException {
         super(stream, charset);
         this.prepareKeywords();
     }

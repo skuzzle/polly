@@ -2,6 +2,7 @@ package de.skuzzle.polly.parsing.ast;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.visitor.Visitable;
+import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 
 /**
  * Super class for all elements of the AST. It stores the parent Node and the Nodes
@@ -9,7 +10,7 @@ import de.skuzzle.polly.parsing.ast.visitor.Visitable;
  *  
  * @author Simon Taddiken
  */
-public abstract class Node implements Visitable {
+public abstract class Node implements Visitable<Visitor> {
     
     private Node parent;
     private Position position;

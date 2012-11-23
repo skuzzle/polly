@@ -4,10 +4,11 @@ import java.util.EmptyStackException;
 
 
 /**
- * This is a simple fixed size stack.
+ * This is a simple fixed size {@link Stack} implementation. If you try to push an
+ * object onto the stack and it's capacity is exceeded, a {@link StackOverflowException}
+ * will be thrown.
  * 
  * @author Simon Taddiken
- *
  * @param <T> Type for elements in this stack.
  */
 public class FixedSizeStack<T> implements Stack<T>{

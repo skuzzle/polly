@@ -271,10 +271,11 @@ public class TypeResolver extends DepthFirstVisitor {
         final FunctionType signature = call.createSignature();
         
         // check what type of call this is. Might be a lambda call or a VarAccess which
-        // in turn references a function. For that purpose, we need to pass the called 
-        // signature to the lhs so it can find the correct overload in case it is a
-        // VarAccess
-        call.getLhs().setTypeToResolve(signature);
+        // in turn references a function. For that purpose, we need to find the next 
+        // VarAccess and tell it the actual signature.
+        if (call.getLhs() instanceof VarAccess) {
+            ((VarAccess) call.getLhs()).setTypeToResolve(signature);
+        }
         call.getLhs().visit(this);
         
         if (!call.getLhs().getType().check(signature)) {
@@ -301,7 +302,7 @@ public class TypeResolver extends DepthFirstVisitor {
         this.beforeVarAccess(access);
         
         final VarDeclaration vd = this.nspace.resolveVar(
-                access.getIdentifier(), Type.ANY);
+                access.getIdentifier(), access.getTypeToResolve());
         access.setType(vd.getType());
         
         this.afterVarAccess(access);

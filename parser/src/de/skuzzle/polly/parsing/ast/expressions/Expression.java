@@ -12,7 +12,6 @@ import de.skuzzle.polly.parsing.types.Type;
 public abstract class Expression extends Node {
 
     private Type type;
-    private Type typeToResolve;
     
     /**
      * Creates a new Expression with given {@link Position} and {@link Type}.
@@ -23,7 +22,6 @@ public abstract class Expression extends Node {
     public Expression(Position position, Type type) {
         super(position);
         this.type = type;
-        this.typeToResolve = Type.ANY;
     }
     
     
@@ -57,17 +55,5 @@ public abstract class Expression extends Node {
      */
     public void setType(Type type) {
         this.type = type;
-    }
-    
-    
-    
-    public Type getTypeToResolve() {
-        return this.typeToResolve;
-    }
-    
-    
-    
-    public void setTypeToResolve(Type typeToResolve) {
-        this.typeToResolve = typeToResolve;
     }
 }

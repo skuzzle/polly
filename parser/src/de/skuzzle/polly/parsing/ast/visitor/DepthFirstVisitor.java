@@ -26,6 +26,24 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
  * @author Simon Taddiken
  */
 public class DepthFirstVisitor implements Visitor {
+    
+    /** Flag to determine if current traversal should be stopped */
+    protected boolean aborted;
+    
+    
+    
+    /**
+     * Aborts the current traversal process. All further <code>visitXXX</code> methods 
+     * will return immediately without traversing their children after <code>abort</code> 
+     * has been called. This behavior will be leveraged when overriding any of the 
+     * <code>visitXXX</code> methods and must thus be reimplemented by querying the 
+     * {@link #aborted} flag.
+     */
+    public void abort() {
+        this.aborted = true;
+    }
+    
+    
 
     @Override
     public void beforeRoot(Root root) throws ASTTraversalException {}
@@ -35,6 +53,9 @@ public class DepthFirstVisitor implements Visitor {
 
     @Override
     public void visitRoot(Root root) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
         this.beforeRoot(root);
         for (final Expression exp : root.getExpressions()) {
             exp.visit(this);
@@ -52,6 +73,9 @@ public class DepthFirstVisitor implements Visitor {
 
     @Override
     public void visitLiteral(Literal literal) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
         this.beforeLiteral(literal);
         this.afterLiteral(literal);
     }
@@ -66,6 +90,9 @@ public class DepthFirstVisitor implements Visitor {
 
     @Override
     public void visitIdentifier(Identifier identifier)  throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
         this.beforeIdentifier(identifier);
         this.afterIdentifier(identifier);
     }
@@ -80,6 +107,9 @@ public class DepthFirstVisitor implements Visitor {
 
     @Override
     public void visitResolvable(ResolvableIdentifier id) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
         this.beforeResolvable(id);
         this.afterResolvable(id);
     }
@@ -97,6 +127,9 @@ public class DepthFirstVisitor implements Visitor {
     @Override
     public void visitAssignment(Assignment assign) 
             throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
         this.beforeAssignment(assign);
         assign.getExpression().visit(this);
         assign.getName().visit(this);
@@ -113,6 +146,9 @@ public class DepthFirstVisitor implements Visitor {
 
     @Override
     public void visitParameter(Parameter param) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
         this.beforeParameter(param);
         this.afterParameter(param);
     }
@@ -127,6 +163,9 @@ public class DepthFirstVisitor implements Visitor {
 
     @Override
     public void visitListParameter(ListParameter param) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
         this.beforeListParameter(param);
         this.afterListParameter(param);
     }
@@ -144,6 +183,9 @@ public class DepthFirstVisitor implements Visitor {
     @Override
     public void visitFunctionParameter(FunctionParameter param) 
             throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
         this.beforeParameter(param);
         this.afterParameter(param);
     }
@@ -158,6 +200,9 @@ public class DepthFirstVisitor implements Visitor {
 
     @Override
     public void visitVarDecl(VarDeclaration decl) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
         this.beforeVarDecl(decl);
         this.afterVarDecl(decl);
     }
@@ -172,6 +217,9 @@ public class DepthFirstVisitor implements Visitor {
 
     @Override
     public void visitCall(Call call) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
         this.beforeCall(call);
         call.getLhs().visit(this);
         for (final Expression exp : call.getParameters()) {
@@ -190,6 +238,9 @@ public class DepthFirstVisitor implements Visitor {
 
     @Override
     public void visitHardCoded(Hardcoded hc) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
         this.beforeHardCoded(hc);
         this.afterHardCoded(hc);
     }
@@ -204,6 +255,9 @@ public class DepthFirstVisitor implements Visitor {
 
     @Override
     public void visitAccess(NamespaceAccess access) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
         this.beforeAccess(access);
         access.getLhs().visit(this);
         access.getRhs().visit(this);
@@ -218,6 +272,9 @@ public class DepthFirstVisitor implements Visitor {
 
     @Override
     public void visitVarAccess(VarAccess access) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
         this.beforeVarAccess(access);
         access.getIdentifier().visit(this);
         this.afterVarAccess(access);
@@ -234,6 +291,9 @@ public class DepthFirstVisitor implements Visitor {
     @Override
     public void visitFunctionLiteral(FunctionLiteral func)
             throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
         this.beforeFunctionLiteral(func);
         func.getExpression().visit(this);
         this.afterFunctionLiteral(func);
@@ -247,6 +307,9 @@ public class DepthFirstVisitor implements Visitor {
 
     @Override
     public void visitListLiteral(ListLiteral list) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
         this.beforeListLiteral(list);
         for (final Expression exp : list.getContent()) {
             exp.visit(this);
@@ -262,6 +325,9 @@ public class DepthFirstVisitor implements Visitor {
 
     @Override
     public void visitOperatorCall(OperatorCall call) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
         this.beforeOperatorCall(call);
         call.getLhs().visit(this);
         for (final Expression exp : call.getParameters()) {

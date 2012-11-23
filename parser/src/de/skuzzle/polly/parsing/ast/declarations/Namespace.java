@@ -13,6 +13,7 @@ import de.skuzzle.polly.parsing.ast.operators.BinaryArithmetic;
 import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
 import de.skuzzle.polly.parsing.ast.operators.UnaryArithmetic;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.parsing.types.FunctionType;
 import de.skuzzle.polly.parsing.types.Type;
 
 
@@ -300,7 +301,14 @@ public class Namespace {
     public VarDeclaration resolveVar(ResolvableIdentifier name, Type signature) 
             throws ASTTraversalException {
         final Declaration check = this.tryResolve(name, signature);
-        if (check instanceof VarDeclaration) {
+        if (check == null && signature instanceof FunctionType) {
+            throw new ASTTraversalException(name.getPosition(), 
+                "Keine Überladung der Funktion " + name.getId() + " mit der Signatur " + 
+                    signature + " gefunden.");
+        } else if (check == null) {
+            throw new ASTTraversalException(name.getPosition(), "Unbekannte Variable: " + 
+                name.getId());
+        } else if (check instanceof VarDeclaration) {
             return (VarDeclaration) check;
         }
         throw new ASTTraversalException(name.getPosition(), name.getId() + 

@@ -10,7 +10,8 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.types.Type;
 
 /**
- * Contains arithmetic operators that operator on {@link NumberLiteral}s.
+ * Contains arithmetic operators that operate on {@link NumberLiteral}s and produce a
+ * new NumberLiteral.
  *  
  * @author Simon Taddiken
  */
