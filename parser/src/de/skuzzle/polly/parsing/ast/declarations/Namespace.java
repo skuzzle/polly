@@ -10,7 +10,10 @@ import com.sun.org.apache.xml.internal.utils.NameSpace;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
 import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.operators.BinaryArithmetic;
+import de.skuzzle.polly.parsing.ast.operators.DateArithmetic;
+import de.skuzzle.polly.parsing.ast.operators.DateTimespanArithmetic;
 import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
+import de.skuzzle.polly.parsing.ast.operators.TimespanArithmetic;
 import de.skuzzle.polly.parsing.ast.operators.UnaryArithmetic;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.types.FunctionType;
@@ -80,6 +83,13 @@ public class Namespace {
             GLOBAL.declare(new BinaryArithmetic(OpType.RIGHT_SHIFT).createDeclaration());
             GLOBAL.declare(new BinaryArithmetic(OpType.URIGHT_SHIFT).createDeclaration());
             GLOBAL.declare(new BinaryArithmetic(OpType.RADIX).createDeclaration());
+            
+            // Arithmetic timespan and date binary ops
+            GLOBAL.declare(new TimespanArithmetic(OpType.ADD).createDeclaration());
+            GLOBAL.declare(new TimespanArithmetic(OpType.SUB).createDeclaration());
+            GLOBAL.declare(new DateTimespanArithmetic(OpType.ADD).createDeclaration());
+            GLOBAL.declare(new DateTimespanArithmetic(OpType.SUB).createDeclaration());
+            GLOBAL.declare(new DateArithmetic(OpType.SUB).createDeclaration());
             
             // Arithmetic unary ops
             GLOBAL.declare(new UnaryArithmetic(OpType.SUB).createDeclaration());

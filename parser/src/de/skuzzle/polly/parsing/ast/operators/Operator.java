@@ -154,4 +154,17 @@ public abstract class Operator extends Hardcoded {
      * @return A declaration.
      */
     public abstract Declaration createDeclaration();
+    
+    
+    
+    /**
+     * Throws a RuntimeException indicating that a operator was declared and called with
+     * a wrong {@link OpType}.
+     *  
+     * @param op The invalied operator type.
+     */
+    protected void invalidOperatorType(OpType op) {
+        throw new RuntimeException("This should not have happened. " +
+            "Operator call with invalid operator type: " + op);
+    }
 }

@@ -85,8 +85,7 @@ public class BinaryArithmetic extends BinaryOperator<NumberLiteral, NumberLitera
                 Math.pow(left.getValue(), right.getValue())));
             break;
         default:
-            throw new RuntimeException("This should not have happened. Binary " +
-            		"operator call with invalid operator type");
+            this.invalidOperatorType(this.getOp());
         }
     }
 }

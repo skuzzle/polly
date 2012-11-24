@@ -26,6 +26,18 @@ public class TimespanLiteral extends DateLiteral {
     
     
     
+    /**
+     * Adds this timespan to the given date and returns the target date.
+     * 
+     * @param d The date to add this timespan to.
+     * @return The target date.
+     */
+    public Date addToDate(Date d) {
+        return addSeconds(d, this.getSeconds());
+    }
+    
+    
+    
     @Override
     public String format(LiteralFormatter formatter) {
         return formatter.formatTimespan(this);
