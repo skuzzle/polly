@@ -23,7 +23,7 @@ import de.skuzzle.polly.sdk.http.HttpTemplateSortHelper;
 import de.skuzzle.polly.sdk.time.Time;
 
 
-public class ScoreboardHttpAction extends HttpAction {
+public class ScoreBoardHttpAction extends HttpAction {
 
     private ScoreBoardManager sbeManager;
     
@@ -34,7 +34,7 @@ public class ScoreboardHttpAction extends HttpAction {
             "EE MMM dd, yyyy hh:mm a");
     
     
-    public ScoreboardHttpAction(MyPolly myPolly, ScoreBoardManager sbeManager) {
+    public ScoreBoardHttpAction(MyPolly myPolly, ScoreBoardManager sbeManager) {
         super("/Scoreboard", myPolly);
         this.requirePermission(MyPlugin.SBE_PERMISSION);
         this.sbeManager = sbeManager;
