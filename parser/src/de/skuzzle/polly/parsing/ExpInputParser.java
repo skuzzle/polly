@@ -40,18 +40,18 @@ import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 public class ExpInputParser {
     
     public static void main(String[] args) throws ParseException, IOException, ASTTraversalException {
-        String testMe = ":foo (5->x)+x";
+        String testMe = ":foo {1,2}[1]";
         //testMe = ":foo -10+5";
         ExpInputParser p = new ExpInputParser();
         Root r = p.parse(testMe);
         
+
         ASTVisualizer av = new ASTVisualizer();
         av.toFile("datAST", r);
         
         TypeResolver tr = new TypeResolver("me");
         r.visit(tr);
         
-
         
         ExecutionVisitor ev = new ExecutionVisitor("me");
         r.visit(ev);

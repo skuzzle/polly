@@ -29,7 +29,7 @@ public class ListType extends Type {
     
     @Override
     public boolean check(Type other) {
-        if (other == this) {
+        if (other == this || other == Type.ANY) {
             return true;
         } else if (!(other instanceof ListType)) {
             return false;

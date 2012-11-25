@@ -4,7 +4,6 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
-import de.skuzzle.polly.parsing.types.ListType;
 import de.skuzzle.polly.parsing.types.Type;
 
 /**
@@ -58,13 +57,6 @@ public class ListParameter extends Parameter {
     @Override
     public ResolvableIdentifier getTypeName() {
         return super.getTypeName();
-    }
-    
-    
-    
-    @Override
-    public Type getType() {
-        return new ListType(super.getType());
     }
     
     

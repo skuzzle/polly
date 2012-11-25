@@ -190,11 +190,12 @@ public class TypeResolver extends DepthFirstVisitor {
         final Iterator<Type> typeIt = sig == null ? null : sig.getParameters().iterator();
         while (formalIt.hasNext()) {
             final Parameter p = formalIt.next();
+            // resolve parameter type
+            p.visit(this);
+            
             // use either the type of the actual signature, or the type of the formal 
             // signature, depending on what information we have.
             final Type type = typeIt == null ? p.getType() : typeIt.next();
-            // resolve parameter type
-            p.visit(this);
             
             final VarDeclaration vd = new VarDeclaration(
                 p.getPosition(), p.getName(), 
