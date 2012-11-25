@@ -40,7 +40,7 @@ import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 public class ExpInputParser {
     
     public static void main(String[] args) throws ParseException, IOException, ASTTraversalException {
-        String testMe = ":foo {1,2}[1]";
+        String testMe = ":foo (\\(Number x, Number y: x+y)->add)(1,2)+add(2,{{4,5,add(0,1)}[2],2,3}[1])";
         //testMe = ":foo -10+5";
         ExpInputParser p = new ExpInputParser();
         Root r = p.parse(testMe);
@@ -57,6 +57,7 @@ public class ExpInputParser {
         r.visit(ev);
         
         r.visit(new Unparser(System.out));
+        System.out.println();
         System.out.println(ev.getResult());
 
     }

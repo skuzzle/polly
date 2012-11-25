@@ -1,5 +1,6 @@
 package de.skuzzle.polly.tools.iterators;
 
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Iterator;
 
@@ -54,36 +55,36 @@ public final class IteratorPrinter {
     
     /**
      * Prints all elements returned by the iterable's iterator into the given
-     * {@link PrintWriter}, separating them with the given separator String. The 
+     * {@link PrintStream}, separating them with the given separator String. The 
      * {@link #toString()} method is used to create Strings from each of the 
      * returned elements.
      * 
      * @param iterable Iterable that provides the iterator.
      * @param separator Separator string which will be put between the elements.
-     * @param w PrintWriter to print the result to.
+     * @param p PrintStream to print the result to.
      */
     public final static <T> void print(Iterable<T> iterable, String separator, 
-            PrintWriter w) {
-        print(iterable.iterator(), separator, w);
+            PrintStream p) {
+        print(iterable.iterator(), separator, p);
     }
     
     
     
     /**
      * Prints all elements returned by the given iterator into the given 
-     * {@link PrintWriter}, separating them with the given separator String. The
+     * {@link PrintStream}, separating them with the given separator String. The
      * {@link #toString()} method is used to create Strings from each of the returned
      * elements.
      * 
      * @param it Iterator that provides the elements to print.
      * @param separator Separator string which will be put between the elements.
-     * @param w PrintWriter to print the result to.
+     * @param p PrintStream to print the result to.
      */
-    public final static <T> void print(Iterator<T> it, String separator, PrintWriter w) {
+    public final static <T> void print(Iterator<T> it, String separator, PrintStream p) {
         while (it.hasNext()) {
-            w.write(it.next().toString());
+            p.print(it.next().toString());
             if (it.hasNext()) {
-                w.write(separator);
+                p.print(separator);
             }
         }
     }

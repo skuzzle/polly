@@ -16,8 +16,10 @@ import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
 import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
+import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.LiteralFormatter;
+import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
 
 
 public class Unparser extends DepthFirstVisitor {
@@ -135,6 +137,7 @@ public class Unparser extends DepthFirstVisitor {
         this.beforeOperatorCall(call);
         final Iterator<Expression> it = call.getParameters().iterator();
         
+        // HACK: add braces to ensure correct precedence
         if (call.getParameters().size() == 1) {
             if (call.isPostfix()) {
                 this.out.print("(");
@@ -148,11 +151,18 @@ public class Unparser extends DepthFirstVisitor {
                 this.out.print(")");
             }
         } else if (call.getParameters().size() == 2) {
-            // HACK: add braces to ensure correct precedence
+            // HACK: special treatment for certain operators
             this.out.print("(");
-            it.next().visit(this);
-            this.out.print(call.getOperator().getId());
-            it.next().visit(this);
+            if (call.getOperator() == OpType.INDEX) {
+                it.next().visit(this);
+                this.out.print("[");
+                it.next().visit(this);
+                this.out.print("]");
+            } else {
+                it.next().visit(this);
+                this.out.print(call.getOperator().getId());
+                it.next().visit(this);
+            }
             this.out.print(")");
         }
         this.afterOperatorCall(call);
@@ -207,5 +217,21 @@ public class Unparser extends DepthFirstVisitor {
         assign.getName().visit(this);
         this.out.print(")");
         this.afterAssignment(assign);
+    }
+    
+    
+    
+    @Override
+    public void visitListLiteral(ListLiteral list) throws ASTTraversalException {
+        this.beforeListLiteral(list);
+        this.out.print("{");
+        final Iterator<Expression> it = list.getContent().iterator();
+        while (it.hasNext()) {
+            it.next().visit(this);
+            if (it.hasNext()) {
+                this.out.print(",");
+            }
+        }
+        this.out.print("}");
     }
 }

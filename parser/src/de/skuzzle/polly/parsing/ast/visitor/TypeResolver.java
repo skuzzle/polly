@@ -333,7 +333,7 @@ public class TypeResolver extends DepthFirstVisitor {
         // its type
         final Type typeToResolve = this.signatureStack.isEmpty() 
             ? Type.ANY 
-            : this.signatureStack.pop();
+            : this.signatureStack.peek();
         
         final VarDeclaration vd = this.nspace.resolveVar(
                 access.getIdentifier(), typeToResolve);
