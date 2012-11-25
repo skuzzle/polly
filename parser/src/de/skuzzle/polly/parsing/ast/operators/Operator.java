@@ -1,10 +1,21 @@
 package de.skuzzle.polly.parsing.ast.operators;
 
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.Token;
 import de.skuzzle.polly.parsing.TokenType;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
+import de.skuzzle.polly.parsing.ast.declarations.FunctionParameter;
+import de.skuzzle.polly.parsing.ast.declarations.HardcodedDeclaration;
+import de.skuzzle.polly.parsing.ast.declarations.ListParameter;
+import de.skuzzle.polly.parsing.ast.declarations.Parameter;
 import de.skuzzle.polly.parsing.ast.expressions.Hardcoded;
+import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
+import de.skuzzle.polly.parsing.types.FunctionType;
+import de.skuzzle.polly.parsing.types.ListType;
 import de.skuzzle.polly.parsing.types.Type;
 
 /**
@@ -110,6 +121,7 @@ public abstract class Operator extends Hardcoded {
             case SUB:         return OpType.SUB;
             case URIGHT_SHIFT:return OpType.URIGHT_SHIFT;
             case WAVE:        return OpType.WAVE;
+            case OPENSQBR:    return OpType.INDEX;
             default:
                 throw new IllegalArgumentException("not a valid operator token: " + 
                     token);
@@ -154,6 +166,24 @@ public abstract class Operator extends Hardcoded {
      * @return A declaration.
      */
     public abstract Declaration createDeclaration();
+    
+    
+    
+    protected Parameter typeToParameter(Type type, String name) {
+        final ResolvableIdentifier resName = new ResolvableIdentifier(
+            Position.EMPTY, name);
+        
+        if (type instanceof ListType) {
+            final ListType lt = (ListType) type;
+            return new ListParameter(Position.EMPTY, resName, lt.getSubType());
+        } else if (type instanceof FunctionType) {
+            final FunctionType ft = (FunctionType) type;
+            return new FunctionParameter(Position.EMPTY, ft.getReturnType(), 
+                ft.getParameters(), resName);
+        } else {
+            return new Parameter(Position.EMPTY, resName, type);
+        }
+    }
     
     
     

@@ -133,9 +133,9 @@ public interface Visitor {
     public void afterOperatorCall(OperatorCall call) throws ASTTraversalException;
     public void visitOperatorCall(OperatorCall call) throws ASTTraversalException;
     
-    public void beforeHardCoded(Hardcoded hc) throws ASTTraversalException;
-    public void afterHardCoded(Hardcoded hc) throws ASTTraversalException;
-    public void visitHardCoded(Hardcoded hc) throws ASTTraversalException;
+    public void beforeHardcoded(Hardcoded hc) throws ASTTraversalException;
+    public void afterHardcoded(Hardcoded hc) throws ASTTraversalException;
+    public void visitHardcoded(Hardcoded hc) throws ASTTraversalException;
     
     public void beforeAccess(NamespaceAccess access) throws ASTTraversalException;
     public void afterAccess(NamespaceAccess access) throws ASTTraversalException;

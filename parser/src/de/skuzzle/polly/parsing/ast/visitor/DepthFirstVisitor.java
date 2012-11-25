@@ -231,18 +231,18 @@ public class DepthFirstVisitor implements Visitor {
     
     
     @Override
-    public void beforeHardCoded(Hardcoded hc) throws ASTTraversalException {}
+    public void beforeHardcoded(Hardcoded hc) throws ASTTraversalException {}
 
     @Override
-    public void afterHardCoded(Hardcoded hc) throws ASTTraversalException {}
+    public void afterHardcoded(Hardcoded hc) throws ASTTraversalException {}
 
     @Override
-    public void visitHardCoded(Hardcoded hc) throws ASTTraversalException {
+    public void visitHardcoded(Hardcoded hc) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
-        this.beforeHardCoded(hc);
-        this.afterHardCoded(hc);
+        this.beforeHardcoded(hc);
+        this.afterHardcoded(hc);
     }
 
     

@@ -40,7 +40,7 @@ import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 public class ExpInputParser {
     
     public static void main(String[] args) throws ParseException, IOException, ASTTraversalException {
-        String testMe = ":foo (((((((\\(Number x,Number y:((x*y)+(1.0*4.0)))->a)(1.0,2.0)+a(4.0,5.0))+(4.0*8.0))-((8.0*7.0)/2.0))+3.0)-a(18.0,9.0))+-8.0)";
+        String testMe = ":foo (5->x)+x";
         //testMe = ":foo -10+5";
         ExpInputParser p = new ExpInputParser();
         Root r = p.parse(testMe);
@@ -695,7 +695,7 @@ public class ExpInputParser {
         case OPENCURLBR:
             this.scanner.consume();
             
-            final Collection<Expression> elements = this.parseExpressionList(
+            final List<Expression> elements = this.parseExpressionList(
                 TokenType.CLOSEDCURLBR);
             
             this.expect(TokenType.CLOSEDCURLBR);
@@ -703,7 +703,6 @@ public class ExpInputParser {
             final ListLiteral list = new ListLiteral(this.scanner.spanFrom(la), 
                 elements);
             
-            this.expect(TokenType.CLOSEDCURLBR);
             list.setPosition(this.scanner.spanFrom(la));
             return list;
             
@@ -801,7 +800,7 @@ public class ExpInputParser {
      * @return A collection of parsed expressions.
      * @throws ParseException If parsing fails.
      */
-    protected Collection<Expression> parseExpressionList(TokenType end) 
+    protected List<Expression> parseExpressionList(TokenType end) 
             throws ParseException {
         
         // do not consume here. end token is consume by the caller
@@ -810,7 +809,7 @@ public class ExpInputParser {
             return new ArrayList<Expression>(0);
         }
         
-        final Collection<Expression> result = new ArrayList<Expression>();
+        final List<Expression> result = new ArrayList<Expression>();
         
         result.add(this.parseExpr());
         

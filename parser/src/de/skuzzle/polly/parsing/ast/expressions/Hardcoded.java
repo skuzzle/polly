@@ -7,6 +7,7 @@ import de.skuzzle.polly.parsing.Stack;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.parsing.ast.visitor.TypeResolver;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.parsing.types.Type;
 
@@ -58,8 +59,21 @@ public abstract class Hardcoded extends Expression {
     
     
     
+    /**
+     * Called by the {@link TypeResolver} when it hits an instance of this class during
+     * traversal of the AST. Can be used to perform some custom context checking.
+     * 
+     * @param ns Current {@link Namespace} during type resolval.
+     * @param typeResolver The type resolver.
+     * @throws ASTTraversalException Can be thrown if context checking fails.
+     */
+    public abstract void resolveType(Namespace ns, Visitor typeResolver) 
+        throws ASTTraversalException;
+    
+    
+    
     @Override
     public void visit(Visitor visitor) throws ASTTraversalException {
-        visitor.visitHardCoded(this);
+        visitor.visitHardcoded(this);
     }
 }

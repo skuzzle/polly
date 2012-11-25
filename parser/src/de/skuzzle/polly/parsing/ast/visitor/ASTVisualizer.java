@@ -181,7 +181,7 @@ public class ASTVisualizer extends DepthFirstVisitor {
     
     
     @Override
-    public void beforeHardCoded(Hardcoded hc) throws ASTTraversalException {
+    public void beforeHardcoded(Hardcoded hc) throws ASTTraversalException {
         this.printNode("Hardcoded", "", hc);
     }
     
@@ -271,7 +271,7 @@ public class ASTVisualizer extends DepthFirstVisitor {
 
 
     @Override
-    public void afterHardCoded(Hardcoded hc) throws ASTTraversalException {
+    public void afterHardcoded(Hardcoded hc) throws ASTTraversalException {
         this.pop();
     }
 

@@ -5,10 +5,9 @@ import java.util.Collection;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.Stack;
-import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
+import de.skuzzle.polly.parsing.ast.declarations.HardcodedDeclaration;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
-import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
@@ -16,6 +15,7 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.parsing.types.FunctionType;
 import de.skuzzle.polly.parsing.types.Type;
+
 
 
 /**
@@ -59,7 +59,7 @@ public class Cast extends Operator {
 
 
     @Override
-    public Declaration createDeclaration() {
+    public HardcodedDeclaration createDeclaration() {
         // create parameter that accepts any expression (Type.ANY)
         final ResolvableIdentifier rid = 
             new ResolvableIdentifier(Position.EMPTY, PARAM_NAME);
@@ -70,6 +70,7 @@ public class Cast extends Operator {
         func.setType(new FunctionType(this.getType(), Parameter.asType(p)));
         func.setReturnType(this.getType());
         
-        return new VarDeclaration(func.getPosition(), this.getType().getTypeName(), func);
+        return new HardcodedDeclaration(func.getPosition(), this.getType().getTypeName(), 
+            func);
     }
 }

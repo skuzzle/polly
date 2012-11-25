@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
+import de.skuzzle.polly.tools.iterators.IteratorPrinter;
 
 
 public class FunctionType extends Type {
@@ -25,6 +26,12 @@ public class FunctionType extends Type {
     
     public Type getReturnType() {
         return this.returnType;
+    }
+    
+    
+    
+    public Collection<Type> getParameters() {
+        return this.parameters;
     }
     
     
@@ -69,13 +76,9 @@ public class FunctionType extends Type {
     @Override
     public String toString() {
         final StringBuilder b = new StringBuilder();
-        b.append("Function: return: ");
         b.append(this.returnType);
-        b.append(" signature: ");
-        for (final Type type : this.parameters) {
-            b.append(type);
-            b.append(" ");
-        }
+        b.append(":");
+        IteratorPrinter.print(this.parameters, " ", b);
         return b.toString();
     }
 }

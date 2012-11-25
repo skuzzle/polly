@@ -4,6 +4,8 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.parsing.types.ListType;
+import de.skuzzle.polly.parsing.types.Type;
 
 /**
  * This class represents a list parameter in a function declaration and takes a list
@@ -12,13 +14,29 @@ import de.skuzzle.polly.parsing.ast.visitor.Visitor;
  * @author Simon Taddiken
  */
 public class ListParameter extends Parameter {
-
+    
+    private static final long serialVersionUID = 1L;
+    
     private final ResolvableIdentifier mainTypeName;
     
-    public ListParameter(Position position, ResolvableIdentifier mainTypeName, 
+    public ListParameter(Position position, ResolvableIdentifier mainType,
             ResolvableIdentifier subType, ResolvableIdentifier name) {
         super(position, subType, name);
-        this.mainTypeName = mainTypeName;
+        this.mainTypeName = mainType;
+    }
+    
+    
+    
+    /**
+     * Create a new ListParameter which' subtype is already known.
+     * 
+     * @param position
+     * @param name
+     * @param subType
+     */
+    public ListParameter(Position position, ResolvableIdentifier name, Type subType) {
+        super(position, name, subType);
+        this.mainTypeName = new ResolvableIdentifier(Type.LIST.getTypeName());
     }
     
     
@@ -35,13 +53,20 @@ public class ListParameter extends Parameter {
     
     
     /**
-     * Returns the sub type of the declared list.
+     * Returns the sub type name of the declared list.
      * 
      * @return The sub type.
      */
     @Override
     public ResolvableIdentifier getTypeName() {
         return super.getTypeName();
+    }
+    
+    
+    
+    @Override
+    public Type getType() {
+        return new ListType(super.getType());
     }
     
     

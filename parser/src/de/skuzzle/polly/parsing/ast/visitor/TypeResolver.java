@@ -6,7 +6,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import de.skuzzle.polly.parsing.LinkedStack;
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.Stack;
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.declarations.FunctionParameter;
 import de.skuzzle.polly.parsing.ast.declarations.ListParameter;
@@ -17,6 +19,7 @@ import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
+import de.skuzzle.polly.parsing.ast.expressions.Hardcoded;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
 import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
@@ -51,6 +54,7 @@ public class TypeResolver extends DepthFirstVisitor {
     private Namespace nspace;
     private final Namespace rootNs;
     private final Set<Node> checked;
+    private Stack<FunctionType> signatureStack;
     
     
     
@@ -59,6 +63,7 @@ public class TypeResolver extends DepthFirstVisitor {
         this.nspace = Namespace.forName(namespace);
         this.rootNs = nspace;
         this.checked = new HashSet<Node>();
+        this.signatureStack = new LinkedStack<FunctionType>();
     }
     
     
@@ -100,6 +105,15 @@ public class TypeResolver extends DepthFirstVisitor {
     
     
     @Override
+    public void visitHardcoded(Hardcoded hc) throws ASTTraversalException {
+        this.beforeHardcoded(hc);
+        hc.resolveType(this.nspace, this);
+        this.afterHardcoded(hc);
+    }
+    
+    
+    
+    @Override
     public void visitParameter(Parameter param) throws ASTTraversalException {
         this.beforeParameter(param);
         
@@ -127,6 +141,7 @@ public class TypeResolver extends DepthFirstVisitor {
         
         this.afterListParameter(param);
     }
+    
     
     
     @Override
@@ -163,17 +178,27 @@ public class TypeResolver extends DepthFirstVisitor {
 
         // add formal parameters as empty expressions into new local namespace, then
         // context check the functions expression to resolve the return type
+        
+        // If this is the lhs of a function call, the called signature will be on top
+        // of the signature stack. So we are able to use the actual called signature
+        final FunctionType sig = this.signatureStack.isEmpty() 
+                ? null 
+                : this.signatureStack.pop();
+        
         this.enter();
         final Iterator<Parameter> formalIt = func.getFormal().iterator();
+        final Iterator<Type> typeIt = sig == null ? null : sig.getParameters().iterator();
         while (formalIt.hasNext()) {
             final Parameter p = formalIt.next();
-            
+            // use either the type of the actual signature, or the type of the formal 
+            // signature, depending on what information we have.
+            final Type type = typeIt == null ? p.getType() : typeIt.next();
             // resolve parameter type
             p.visit(this);
             
             final VarDeclaration vd = new VarDeclaration(
                 p.getPosition(), p.getName(), 
-                new EmptyExpression(p.getType()));
+                new EmptyExpression(type));
             vd.setParameter(true);
             
             this.nspace.declare(vd);
@@ -265,17 +290,19 @@ public class TypeResolver extends DepthFirstVisitor {
             exp.visit(this);
         }
         
-        
         // create signature from actual parameter types.
         // signature does *not* obey return value as it is unknown by now.
         final FunctionType signature = call.createSignature();
         
+        // push actual signature.
+        this.signatureStack.push(signature);
+        
         // check what type of call this is. Might be a lambda call or a VarAccess which
         // in turn references a function. For that purpose, we need to find the next 
         // VarAccess and tell it the actual signature.
-        if (call.getLhs() instanceof VarAccess) {
+        /*if (call.getLhs() instanceof VarAccess) {
             ((VarAccess) call.getLhs()).setTypeToResolve(signature);
-        }
+        }*/
         call.getLhs().visit(this);
         
         if (!call.getLhs().getType().check(signature)) {
@@ -285,8 +312,9 @@ public class TypeResolver extends DepthFirstVisitor {
         // get lhs' type as FunctionType. This type already has a return type set,
         // which will be the return type of this call
         final FunctionType lhsType = (FunctionType) call.getLhs().getType();
+        final FunctionType compound = new FunctionType(lhsType.getReturnType(), 
+            signature.getParameters());
         call.setType(lhsType.getReturnType());
-        
         
         this.afterCall(call);
     }
@@ -301,8 +329,17 @@ public class TypeResolver extends DepthFirstVisitor {
         
         this.beforeVarAccess(access);
         
+        // if this is the lhs of a call, the called signature will be on top of the
+        // signature stack. Otherwise, we will look for any declaration, disregarding
+        // its type
+        final Type typeToResolve = this.signatureStack.isEmpty() 
+            ? Type.ANY 
+            : this.signatureStack.pop();
+        
         final VarDeclaration vd = this.nspace.resolveVar(
-                access.getIdentifier(), access.getTypeToResolve());
+                access.getIdentifier(), typeToResolve);
+        
+        vd.getExpression().visit(this);
         access.setType(vd.getType());
         
         this.afterVarAccess(access);

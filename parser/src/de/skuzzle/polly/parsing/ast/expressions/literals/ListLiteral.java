@@ -1,6 +1,6 @@
 package de.skuzzle.polly.parsing.ast.expressions.literals;
 
-import java.util.Collection;
+import java.util.List;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
@@ -12,17 +12,17 @@ import de.skuzzle.polly.parsing.types.Type;
 
 public class ListLiteral extends Literal {
     
-    private final Collection<Expression> content;
+    private final List<Expression> content;
     
 
-    public ListLiteral(Position position, Collection<Expression> content) {
+    public ListLiteral(Position position, List<Expression> content) {
         super(position, ListType.ANY_LIST);
         this.content = content;
     }
     
     
     
-    public Collection<Expression> getContent() {
+    public List<Expression> getContent() {
         return this.content;
     }
 

@@ -2,8 +2,8 @@ package de.skuzzle.polly.parsing.ast.visitor;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 
 import de.skuzzle.polly.parsing.LinkedStack;
@@ -23,9 +23,9 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
-import de.skuzzle.polly.parsing.ast.operators.BinaryArithmetic;
 import de.skuzzle.polly.parsing.ast.operators.Operator;
 import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
+import de.skuzzle.polly.parsing.ast.operators.impl.BinaryArithmetic;
 
 
 
@@ -137,7 +137,7 @@ public class ExecutionVisitor extends DepthFirstVisitor {
     @Override
     public void visitListLiteral(ListLiteral list) throws ASTTraversalException {
         // create collection of executed list content
-        final Collection<Expression> executed = new ArrayList<Expression>();
+        final List<Expression> executed = new ArrayList<Expression>();
         for (final Expression exp : list.getContent()) {
             // places executed expression on the stack
             exp.visit(this);
@@ -172,10 +172,10 @@ public class ExecutionVisitor extends DepthFirstVisitor {
     
     
     @Override
-    public void visitHardCoded(Hardcoded hc) throws ASTTraversalException {
-        this.beforeHardCoded(hc);
+    public void visitHardcoded(Hardcoded hc) throws ASTTraversalException {
+        this.beforeHardcoded(hc);
         hc.execute(this.stack, this.nspace, this);
-        this.afterHardCoded(hc);
+        this.afterHardcoded(hc);
     }
     
     

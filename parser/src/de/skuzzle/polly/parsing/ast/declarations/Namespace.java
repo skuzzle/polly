@@ -9,12 +9,14 @@ import com.sun.org.apache.xml.internal.utils.NameSpace;
 
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
 import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
-import de.skuzzle.polly.parsing.ast.operators.BinaryArithmetic;
-import de.skuzzle.polly.parsing.ast.operators.DateArithmetic;
-import de.skuzzle.polly.parsing.ast.operators.DateTimespanArithmetic;
 import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
+import de.skuzzle.polly.parsing.ast.operators.impl.BinaryArithmetic;
+import de.skuzzle.polly.parsing.ast.operators.impl.DateArithmetic;
+import de.skuzzle.polly.parsing.ast.operators.impl.DateTimespanArithmetic;
+import de.skuzzle.polly.parsing.ast.operators.impl.ListIndex;
+import de.skuzzle.polly.parsing.ast.operators.impl.UnaryArithmetic;
+import de.skuzzle.polly.parsing.ast.operators.impl.UnaryList;
 import de.skuzzle.polly.parsing.ast.operators.TimespanArithmetic;
-import de.skuzzle.polly.parsing.ast.operators.UnaryArithmetic;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.types.FunctionType;
 import de.skuzzle.polly.parsing.types.Type;
@@ -89,10 +91,18 @@ public class Namespace {
             GLOBAL.declare(new TimespanArithmetic(OpType.SUB).createDeclaration());
             GLOBAL.declare(new DateTimespanArithmetic(OpType.ADD).createDeclaration());
             GLOBAL.declare(new DateTimespanArithmetic(OpType.SUB).createDeclaration());
-            GLOBAL.declare(new DateArithmetic(OpType.SUB).createDeclaration());
+            
+            DateArithmetic da = new DateArithmetic(OpType.SUB);
+            Declaration decl = da.createDeclaration();
+            GLOBAL.declare(decl);
             
             // Arithmetic unary ops
             GLOBAL.declare(new UnaryArithmetic(OpType.SUB).createDeclaration());
+            
+            // list unary op
+            GLOBAL.declare(new UnaryList(OpType.EXCLAMATION).createDeclaration());
+            GLOBAL.declare(new ListIndex(OpType.INDEX).createDeclaration());
+            
         } catch (ASTTraversalException e) {
             e.printStackTrace();
         }

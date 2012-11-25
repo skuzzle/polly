@@ -1,11 +1,14 @@
 package de.skuzzle.polly.parsing.ast.declarations;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.parsing.types.FunctionType;
+import de.skuzzle.polly.parsing.types.Type;
 
 /**
  * Represents a formal parameter which itself takes a function as actual value.
@@ -29,6 +32,25 @@ public class FunctionParameter extends Parameter {
             ResolvableIdentifier name) {
         super(position, null, name);
         this.signature = sig;
+    }
+    
+    
+    
+    /**
+     * Creates a function parameter which' type is already known.
+     * @param position
+     * @param returnType
+     * @param sig
+     * @param name
+     */
+    public FunctionParameter(Position position, Type returnType, Collection<Type> sig, 
+            ResolvableIdentifier name) {
+        super(position, name, new FunctionType(returnType, sig));
+        this.signature = new ArrayList<ResolvableIdentifier>(sig.size() + 1);
+        this.signature.add(new ResolvableIdentifier(returnType.getTypeName()));
+        for (final Type t : sig) {
+            this.signature.add(new ResolvableIdentifier(t.getTypeName()));
+        }
     }
 
     

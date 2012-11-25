@@ -1,4 +1,4 @@
-package de.skuzzle.polly.parsing.ast.operators;
+package de.skuzzle.polly.parsing.ast.operators.impl;
 
 
 import de.skuzzle.polly.parsing.Position;
@@ -6,6 +6,7 @@ import de.skuzzle.polly.parsing.Stack;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
+import de.skuzzle.polly.parsing.ast.operators.UnaryOperator;
 import de.skuzzle.polly.parsing.types.Type;
 
 
