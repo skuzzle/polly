@@ -1,5 +1,7 @@
 package de.skuzzle.polly.parsing.ast;
 
+import java.io.Serializable;
+
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.visitor.Visitable;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
@@ -10,7 +12,7 @@ import de.skuzzle.polly.parsing.ast.visitor.Visitor;
  *  
  * @author Simon Taddiken
  */
-public abstract class Node implements Visitable<Visitor> {
+public abstract class Node implements Visitable<Visitor>, Serializable {
     
     private Node parent;
     private Position position;

@@ -41,7 +41,7 @@ public class ExpInputParser {
     
     public static void main(String[] args) throws ParseException, IOException, ASTTraversalException {
         String testMe = ":foo (\\(Number x, Number y: (x+y)/2)->add)(1,2)+add(2,{{4,5,add(0,1)}[2],2,3}[1])";
-        //testMe = ":foo -10+5";
+        testMe = ":foo {1,2}[0]-{\"1\",\"2\"}[1]";
         ExpInputParser p = new ExpInputParser();
         Root r = p.parse(testMe);
         

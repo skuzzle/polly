@@ -1,6 +1,7 @@
 package de.skuzzle.polly.parsing.ast.operators.impl;
 
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
@@ -16,12 +17,9 @@ import de.skuzzle.polly.parsing.util.Stack;
 
 public class ListIndex extends BinaryOperator<ListLiteral, NumberLiteral> {
 
-    private Type resolvedType;
-    
     
     public ListIndex(OpType id) {
         super(id, Type.ANY, ListType.ANY_LIST, Type.NUMBER);
-        this.resolvedType = Type.ANY;
     }
     
     
@@ -31,14 +29,16 @@ public class ListIndex extends BinaryOperator<ListLiteral, NumberLiteral> {
             Visitor typeResolver) throws ASTTraversalException {
         
         final ListType lt = (ListType) left.getType();
-        this.resolvedType = lt.getSubType();
+        this.setType(lt.getSubType());
     }
+    
 
     
-    
     @Override
-    public Type getType() {
-        return this.resolvedType;
+    public Declaration createDeclaration() {
+        final Declaration d = super.createDeclaration();
+        d.setMustCopy(true);
+        return d;
     }
     
     

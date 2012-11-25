@@ -11,7 +11,7 @@ public abstract class Declaration extends Node {
     private final Identifier name;
     private boolean isGlobal;
     private boolean isTemp;
-    
+    private boolean mustCopy;
     
     
     public Declaration(Position position, Identifier name) {
@@ -20,6 +20,18 @@ public abstract class Declaration extends Node {
     }
     
     
+    
+    public boolean mustCopy() {
+        return this.mustCopy;
+    }
+
+
+    
+    public void setMustCopy(boolean mustCopy) {
+        this.mustCopy = mustCopy;
+    }
+
+
     
     public abstract Type getType();
     

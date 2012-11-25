@@ -208,9 +208,14 @@ public class TypeResolver extends DepthFirstVisitor {
         func.getExpression().visit(this);
         this.leave();
         
-        func.setType(new FunctionType(func.getExpression().getType(), 
-            Parameter.asType(func.getFormal())));
+        FunctionType resultType = sig == null 
+            ? new FunctionType(func.getExpression().getType(), 
+                    Parameter.asType(func.getFormal())) 
+            : new FunctionType(func.getExpression().getType(), sig.getParameters());
+            
         
+        func.setType(resultType);
+        func.setReturnType(resultType.getReturnType());
         this.afterFunctionLiteral(func);
     }
     

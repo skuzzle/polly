@@ -20,6 +20,7 @@ import de.skuzzle.polly.parsing.ast.operators.impl.UnaryList;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.types.FunctionType;
 import de.skuzzle.polly.parsing.types.Type;
+import de.skuzzle.polly.parsing.util.CopyTool;
 
 
 public class Namespace {
@@ -290,9 +291,12 @@ public class Namespace {
      */
     public Declaration tryResolve(ResolvableIdentifier name, Type signature) {
         for(Namespace space = this; space != null; space = space.parent) {
-            for (final Declaration decl : space.decls) {
+            for (Declaration decl : space.decls) {
                 
                 if (decl.getName().equals(name) && decl.getType().check(signature)) {
+                    if (decl.mustCopy()) {
+                        decl = CopyTool.copyOf(decl);
+                    }
                     name.setDeclaration(decl);
                     return decl;
                 }
