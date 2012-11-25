@@ -13,29 +13,32 @@ import java.util.Iterator;
  * @author Simon Taddiken
  */
 public final class IteratorPrinter {
-
+    
+    
     /**
-     * Prints all elements returned by the iterable's iterator into the given
-     * {@link StringBuilder}, separating them with the given separator String. The 
-     * {@link #toString()} method is used to create Strings from each of the 
-     * returned elements.
+     * Interface to dynamically create different String representations of the same type.
      * 
-     * @param iterable Iterable that provides the iterator.
-     * @param separator Separator string which will be put between the elements.
-     * @param b StringBuilder to print the result to.
+     * @author Simon Taddiken
+     * @param <T> Type of objects for which a String representation is created.
      */
-    public final static <T> void print(Iterable<T> iterable, String separator, 
-            StringBuilder b) {
-        print(iterable.iterator(), separator, b);
+    public static interface StringProvider<T> {
+        
+        /**
+         * Creates a String representation for the provided instance of T.
+         * 
+         * @param o The object.
+         * @return A String representation of that object.
+         */
+        public String toString(T o);
     }
     
     
-    
+
     /**
      * Prints all elements returned by the given iterator into the given 
-     * {@link StringBuilder}, separating them with the given separator String. The
-     * {@link #toString()} method is used to create Strings from each of the returned
-     * elements.
+     * {@link StringBuilder}, separating them with the given separator String. The 
+     * {@link #toString()} method is used to create Strings from each of the 
+     * returned elements.
      * 
      * @param it Iterator that provides the elements to print.
      * @param separator Separator string which will be put between the elements.
@@ -43,8 +46,32 @@ public final class IteratorPrinter {
      */
     public final static <T> void print(Iterator<T> it, String separator, 
             StringBuilder b) {
+        print(it, separator, new StringProvider<T>() {
+            @Override
+            public String toString(T o) {
+                return o.toString();
+            }
+        }, b);
+    }
+    
+    
+    
+    /**
+     * Prints all elements returned by the given iterator into the given 
+     * {@link StringBuilder}, separating them with the given separator String. The
+     * provided {@link StringProvider} is used to create Strings from the objects returned
+     * by the iterator.
+     * 
+     * @param it Iterator that provides the elements to print.
+     * @param separator Separator string which will be put between the elements.
+     * @param stringProvider Provider to create strings from the iterator's objects.
+     * @param b StringBuilder to print the result to.
+     */
+    public final static <T> void print(Iterator<T> it, String separator, 
+            StringProvider<T> stringProvider, StringBuilder b) {
+        
         while (it.hasNext()) {
-            b.append(it.next().toString());
+            b.append(stringProvider.toString(it.next()));
             if (it.hasNext()) {
                 b.append(separator);
             }
@@ -54,18 +81,23 @@ public final class IteratorPrinter {
     
     
     /**
-     * Prints all elements returned by the iterable's iterator into the given
+     * Prints all elements returned by the given iterator into the given 
      * {@link PrintStream}, separating them with the given separator String. The 
      * {@link #toString()} method is used to create Strings from each of the 
      * returned elements.
      * 
-     * @param iterable Iterable that provides the iterator.
+     * @param it Iterator that provides the elements to print.
      * @param separator Separator string which will be put between the elements.
      * @param p PrintStream to print the result to.
      */
-    public final static <T> void print(Iterable<T> iterable, String separator, 
+    public final static <T> void print(Iterator<T> it, String separator, 
             PrintStream p) {
-        print(iterable.iterator(), separator, p);
+        print(it, separator, new StringProvider<T>() {
+            @Override
+            public String toString(T o) {
+                return o.toString();
+            }
+        }, p);
     }
     
     
@@ -78,11 +110,13 @@ public final class IteratorPrinter {
      * 
      * @param it Iterator that provides the elements to print.
      * @param separator Separator string which will be put between the elements.
+     * @param stringProvider 
      * @param p PrintStream to print the result to.
      */
-    public final static <T> void print(Iterator<T> it, String separator, PrintStream p) {
+    public final static <T> void print(Iterator<T> it, String separator,
+        StringProvider<T> stringProvider, PrintStream p) {
         while (it.hasNext()) {
-            p.print(it.next().toString());
+            p.print(stringProvider.toString(it.next()));
             if (it.hasNext()) {
                 p.print(separator);
             }
