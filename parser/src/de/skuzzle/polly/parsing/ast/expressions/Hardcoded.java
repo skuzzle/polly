@@ -3,13 +3,13 @@ package de.skuzzle.polly.parsing.ast.expressions;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import de.skuzzle.polly.parsing.Position;
-import de.skuzzle.polly.parsing.Stack;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.TypeResolver;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.parsing.types.Type;
+import de.skuzzle.polly.parsing.util.Stack;
 
 
 /**

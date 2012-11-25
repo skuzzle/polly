@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import de.skuzzle.polly.parsing.Position;
-import de.skuzzle.polly.parsing.Stack;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
@@ -19,6 +18,7 @@ import de.skuzzle.polly.parsing.ast.visitor.TypeResolver;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.parsing.types.FunctionType;
 import de.skuzzle.polly.parsing.types.Type;
+import de.skuzzle.polly.parsing.util.Stack;
 
 
 /**

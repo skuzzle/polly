@@ -6,9 +6,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import de.skuzzle.polly.parsing.LinkedStack;
 import de.skuzzle.polly.parsing.Position;
-import de.skuzzle.polly.parsing.Stack;
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.declarations.FunctionParameter;
 import de.skuzzle.polly.parsing.ast.declarations.ListParameter;
@@ -29,6 +27,8 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.types.FunctionType;
 import de.skuzzle.polly.parsing.types.ListType;
 import de.skuzzle.polly.parsing.types.Type;
+import de.skuzzle.polly.parsing.util.LinkedStack;
+import de.skuzzle.polly.parsing.util.Stack;
 
 
 public class TypeResolver extends DepthFirstVisitor {

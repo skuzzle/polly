@@ -2,13 +2,13 @@ package de.skuzzle.polly.parsing.ast.operators.impl;
 
 
 import de.skuzzle.polly.parsing.Position;
-import de.skuzzle.polly.parsing.Stack;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.ast.operators.BinaryOperator;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.types.Type;
+import de.skuzzle.polly.parsing.util.Stack;
 
 /**
  * Contains arithmetic operators that operate on {@link NumberLiteral}s and produce a

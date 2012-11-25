@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import de.skuzzle.polly.parsing.Position;
-import de.skuzzle.polly.parsing.Stack;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
@@ -12,6 +11,7 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.operators.UnaryOperator;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.types.Type;
+import de.skuzzle.polly.parsing.util.Stack;
 
 
 public class UnaryList extends UnaryOperator<ListLiteral> {

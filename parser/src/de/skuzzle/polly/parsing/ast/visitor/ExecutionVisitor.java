@@ -6,9 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 
-import de.skuzzle.polly.parsing.LinkedStack;
 import de.skuzzle.polly.parsing.Position;
-import de.skuzzle.polly.parsing.Stack;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
 import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
@@ -26,6 +24,8 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.ast.operators.Operator;
 import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
 import de.skuzzle.polly.parsing.ast.operators.impl.BinaryArithmetic;
+import de.skuzzle.polly.parsing.util.LinkedStack;
+import de.skuzzle.polly.parsing.util.Stack;
 
 
 

@@ -1,12 +1,12 @@
 package de.skuzzle.polly.parsing.ast.operators;
 
 import de.skuzzle.polly.parsing.Position;
-import de.skuzzle.polly.parsing.Stack;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.TimespanLiteral;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.types.Type;
+import de.skuzzle.polly.parsing.util.Stack;
 
 /**
  * Binary operators that operate on {@link TimespanLiteral}s and produce a new 
