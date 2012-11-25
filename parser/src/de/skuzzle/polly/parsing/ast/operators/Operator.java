@@ -1,15 +1,11 @@
 package de.skuzzle.polly.parsing.ast.operators;
 
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.Token;
 import de.skuzzle.polly.parsing.TokenType;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.FunctionParameter;
-import de.skuzzle.polly.parsing.ast.declarations.HardcodedDeclaration;
 import de.skuzzle.polly.parsing.ast.declarations.ListParameter;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
 import de.skuzzle.polly.parsing.ast.expressions.Hardcoded;

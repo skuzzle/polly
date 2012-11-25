@@ -1,6 +1,5 @@
 package de.skuzzle.polly.parsing.ast.operators;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -8,7 +7,6 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.Stack;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
-import de.skuzzle.polly.parsing.ast.declarations.HardcodedDeclaration;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
 import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;

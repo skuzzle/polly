@@ -7,8 +7,8 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.Stack;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
-import de.skuzzle.polly.parsing.ast.declarations.HardcodedDeclaration;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
+import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
 import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
@@ -58,7 +58,7 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
     public Declaration createDeclaration() {
         final FunctionLiteral func = this.createFunction();
         final Identifier fakeId = new Identifier(Position.EMPTY, this.getOp().getId());
-        return new HardcodedDeclaration(func.getPosition(), fakeId, func);
+        return new VarDeclaration(func.getPosition(), fakeId, func);
     }
     
     

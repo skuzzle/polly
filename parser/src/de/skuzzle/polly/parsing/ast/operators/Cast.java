@@ -5,9 +5,10 @@ import java.util.Collection;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.Stack;
+import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
-import de.skuzzle.polly.parsing.ast.declarations.HardcodedDeclaration;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
+import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
@@ -59,7 +60,7 @@ public class Cast extends Operator {
 
 
     @Override
-    public HardcodedDeclaration createDeclaration() {
+    public Declaration createDeclaration() {
         // create parameter that accepts any expression (Type.ANY)
         final ResolvableIdentifier rid = 
             new ResolvableIdentifier(Position.EMPTY, PARAM_NAME);
@@ -70,7 +71,13 @@ public class Cast extends Operator {
         func.setType(new FunctionType(this.getType(), Parameter.asType(p)));
         func.setReturnType(this.getType());
         
-        return new HardcodedDeclaration(func.getPosition(), this.getType().getTypeName(), 
+        return new VarDeclaration(func.getPosition(), this.getType().getTypeName(), 
             func);
     }
+
+
+
+    @Override
+    public void resolveType(Namespace ns, Visitor typeResolver)
+            throws ASTTraversalException { }
 }

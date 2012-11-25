@@ -312,8 +312,6 @@ public class TypeResolver extends DepthFirstVisitor {
         // get lhs' type as FunctionType. This type already has a return type set,
         // which will be the return type of this call
         final FunctionType lhsType = (FunctionType) call.getLhs().getType();
-        final FunctionType compound = new FunctionType(lhsType.getReturnType(), 
-            signature.getParameters());
         call.setType(lhsType.getReturnType());
         
         this.afterCall(call);
