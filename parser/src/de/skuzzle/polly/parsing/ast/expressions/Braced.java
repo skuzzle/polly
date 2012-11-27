@@ -6,7 +6,13 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.parsing.types.Type;
 
-
+/**
+ * Encapsulates another expression for the sole reason to represent that that expression
+ * was entered in braces. All changes made to this expressions are delegated to the 
+ * encapsulated expression.
+ * 
+ * @author Simon Taddiken
+ */
 public class Braced extends Expression {
 
     private static final long serialVersionUID = 1L;
