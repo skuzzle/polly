@@ -1,5 +1,8 @@
 package de.skuzzle.polly.parsing.ast.declarations;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,6 +23,7 @@ import de.skuzzle.polly.parsing.ast.operators.impl.TimespanArithmetic;
 import de.skuzzle.polly.parsing.ast.operators.impl.UnaryArithmetic;
 import de.skuzzle.polly.parsing.ast.operators.impl.UnaryList;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 import de.skuzzle.polly.parsing.types.FunctionType;
 import de.skuzzle.polly.parsing.types.Type;
 import de.skuzzle.polly.parsing.util.CopyTool;
@@ -33,6 +37,81 @@ public class Namespace {
      * {@link #findSimilar(String, Namespace)}.
      */
     private final static float LEVENSHTEIN_THRESHOLD_PERCENT = 0.6f;
+    
+    
+    public static File declarationFolder;
+    public static synchronized void setDeclarationFolder(File declarationFolder) {
+        Namespace.declarationFolder = declarationFolder;
+    }
+    
+    
+    
+    
+    
+    
+    private final static class StorableNamespace extends Namespace {
+
+        private String fileName;
+        
+        
+        
+        public StorableNamespace(String fileName, Namespace parent) {
+            super(parent);
+            this.fileName = fileName;
+        }
+        
+        
+        
+        @Override
+        public synchronized void declare(Declaration decl) throws ASTTraversalException {
+            super.declare(decl);
+            if (!(decl instanceof VarDeclaration)) {
+                return;
+            }
+            final VarDeclaration vd = (VarDeclaration) decl;
+            if (vd.isGlobal() || vd.isTemp() || vd.isOperator()) {
+                return;
+            }
+            
+            try {
+                this.store();
+            } catch (IOException ignore) {}
+        }
+        
+        
+        
+        public void store() throws IOException {
+            if (declarationFolder == null) {
+                throw new IOException("declaration folder has not been set");
+            }
+            
+            PrintStream ps = null;
+            try {
+                ps = new PrintStream(new File(declarationFolder, this.fileName));
+                
+                final Unparser up = new Unparser(ps);
+                for (final Declaration decl : this.decls) {
+                    if (!(decl instanceof VarDeclaration)) {
+                        continue;
+                    }
+                    final VarDeclaration vd = (VarDeclaration) decl;
+                    vd.getExpression().visit(up);
+                    ps.print("->");
+                    ps.println(vd.getName().getId());
+                }
+            } catch (ASTTraversalException e) {
+                throw new RuntimeException(e);
+            } finally {
+                if (ps != null) {
+                    ps.close();
+                }
+            }
+        }
+    }
+    
+    
+    
+    
     
     
     
@@ -161,7 +240,7 @@ public class Namespace {
      * This is the root namespace of all user namespaces. It contains all operator
      * declarations as well as public variable and function declarations made by users.
      */
-    private final static Namespace GLOBAL = new Namespace(null);
+    private final static Namespace GLOBAL = new StorableNamespace("~global.decl", null);
     static {
         try {
             // casting ops
@@ -225,7 +304,8 @@ public class Namespace {
         }
         Namespace check = ROOTS.get(name);
         if (check == null) {
-            check = new Namespace();
+            // TODO: create storable NS here
+            check = new StorableNamespace(name + ".decl", GLOBAL);
             ROOTS.put(name, check);
         }
         return check;
@@ -270,19 +350,8 @@ public class Namespace {
     
     
 
-    private final Collection<Declaration> decls;
-    private final Namespace parent;
-    
-    
-    
-    /**
-     * Creates a new namespace which parent namespace is the global namespace.
-     * 
-     * @param name The name of the namespace.
-     */
-    private Namespace() {
-        this(GLOBAL);
-    }
+    protected final Collection<Declaration> decls;
+    protected final Namespace parent;
     
     
     
