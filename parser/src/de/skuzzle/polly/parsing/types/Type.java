@@ -23,7 +23,7 @@ public class Type implements Serializable {
     public final static Type CHANNEL = new Type(new Identifier("Channel"), false);
     public final static Type COMMAND = new Type(new Identifier("Command"), false);
     public final static Type STRING = new Type(new Identifier("String"), true);
-    public final static Type NUMBER = new Type(new Identifier("Number"), true);
+    public final static Type NUMBER = new Type(new Identifier("Num"), true);
     public final static Type USER = new Type(new Identifier("User"), false);
     public final static Type BOOLEAN = new Type(new Identifier("Boolean"), false);
     public final static Type DATE = new Type(new Identifier("Date"), true);
