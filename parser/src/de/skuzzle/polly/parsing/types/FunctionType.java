@@ -76,9 +76,10 @@ public class FunctionType extends Type {
     @Override
     public String toString() {
         final StringBuilder b = new StringBuilder();
-        b.append(this.returnType);
-        b.append(":");
+        //b.append(this.returnType);
+        b.append("(");
         IteratorPrinter.print(this.parameters.iterator(), " ", b);
+        b.append(")");
         return b.toString();
     }
 }

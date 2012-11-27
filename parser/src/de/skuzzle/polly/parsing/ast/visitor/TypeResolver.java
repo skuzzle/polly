@@ -312,7 +312,7 @@ public class TypeResolver extends DepthFirstVisitor {
         call.getLhs().visit(this);
         
         if (!call.getLhs().getType().check(signature)) {
-            Type.typeError(call.getLhs().getType(), signature, call.getPosition());
+            Type.typeError(call.getLhs().getType(), signature, call.getLhs().getPosition());
         }
         
         // get lhs' type as FunctionType. This type already has a return type set,

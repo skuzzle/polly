@@ -186,8 +186,8 @@ public class DepthFirstVisitor implements Visitor {
         if (this.aborted) {
             return;
         }
-        this.beforeParameter(param);
-        this.afterParameter(param);
+        this.beforeFunctionParameter(param);
+        this.afterFunctionParameter(param);
     }
 
     

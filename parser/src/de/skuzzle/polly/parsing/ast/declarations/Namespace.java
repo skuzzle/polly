@@ -327,12 +327,9 @@ public class Namespace {
             throws ASTTraversalException {
         final Declaration check = this.tryResolve(name, signature);
         if (check == null && signature instanceof FunctionType) {
-            final StringBuilder b = new StringBuilder();
-            IteratorPrinter.print(((FunctionType) signature).getParameters().iterator(), 
-                    " ", b);
             throw new ASTTraversalException(name.getPosition(), 
-                "Keine Überladung der Funktion " + name.getId() + " mit der Signatur (" + 
-                    b.toString() + ") gefunden.");
+                "Keine Überladung der Funktion " + name.getId() + " mit der Signatur " + 
+                    signature + " gefunden");
         } else if (check == null) {
             throw new ASTTraversalException(name.getPosition(), "Unbekannte Variable: " + 
                 name.getId());
