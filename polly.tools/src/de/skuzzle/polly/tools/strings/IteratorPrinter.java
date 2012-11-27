@@ -1,4 +1,4 @@
-package de.skuzzle.polly.tools.iterators;
+package de.skuzzle.polly.tools.strings;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;

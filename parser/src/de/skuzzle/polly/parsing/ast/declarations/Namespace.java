@@ -23,7 +23,7 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.types.FunctionType;
 import de.skuzzle.polly.parsing.types.Type;
 import de.skuzzle.polly.parsing.util.CopyTool;
-import de.skuzzle.polly.tools.Levenshtein;
+import de.skuzzle.polly.tools.strings.Levenshtein;
 
 
 public class Namespace {
@@ -426,9 +426,11 @@ public class Namespace {
             throws ASTTraversalException {
         final Declaration check = this.tryResolve(name, signature);
         if (check == null && signature instanceof FunctionType) {
+            final FunctionType ft = (FunctionType) signature;
+            
             throw new ASTTraversalException(name.getPosition(), 
                 "Keine Überladung der Funktion '" + name + "' mit der Signatur " + 
-                    signature + " gefunden");
+                    ft.toString(false) + " gefunden");
         } else if (check == null) {
             final List<String> similar = findSimilar(name.getId(), this);
             

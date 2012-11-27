@@ -1,0 +1,113 @@
+package de.skuzzle.polly.parsing;
+
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+
+import de.skuzzle.polly.parsing.ast.Root;
+import de.skuzzle.polly.parsing.ast.declarations.Namespace;
+import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.parsing.ast.visitor.ExecutionVisitor;
+import de.skuzzle.polly.parsing.ast.visitor.TypeResolver;
+import de.skuzzle.polly.parsing.ast.visitor.Unparser;
+import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.tools.strings.StringBuilderOutputStream;
+
+
+public class Evaluator {
+    
+    // TEST:
+    public static void main(String[] args) throws UnsupportedEncodingException {
+        String testMe = ":foo (\\(Num x,\\(Num Num Num) y:y(x,10))->a)(5,\\(Num x, Num y : x * y))+a(17,\\(Num x, Num y:x+y))";
+        
+        final Evaluator eval = new Evaluator(testMe, "ISO-8859-1");
+        final Namespace ns = Namespace.forName("me");
+        
+        eval.evaluate(ns);
+        
+        if (eval.errorOccurred()) {
+            final ASTTraversalException e = eval.getLastError(); 
+            System.out.println(e.getMessage());
+            System.out.println(testMe);
+            System.out.println(e.getPosition().errorIndicatorString());
+        } else {
+            System.out.println(eval.getRoot());
+            System.out.println(eval.unparse());
+        }
+    }
+    
+    
+
+    private final String input;
+    private final String encoding;
+    private Root lastResult;
+    private ASTTraversalException lastError;
+    
+    
+    
+    public Evaluator(String input, String encoding) {
+        this.input = input;
+        this.encoding = encoding;
+    }
+    
+    
+    
+    public void evaluate(Namespace namespace) throws UnsupportedEncodingException {
+        try {
+            final ExpInputParser parser = new ExpInputParser();
+            final Root root = parser.parse(this.input, this.encoding);
+            
+            if (root == null) {
+                return;
+            }
+            
+            
+            // resolve types
+            final Visitor typeResolver = new TypeResolver(namespace);
+            root.visit(typeResolver);
+            
+            final Visitor executor = new ExecutionVisitor(namespace);
+            root.visit(executor);
+            
+            this.lastResult = root;
+        } catch (ASTTraversalException e) {
+            this.lastError = e;
+        }
+    }
+    
+    
+    
+    public boolean errorOccurred() {
+        return this.lastError != null;
+    }
+    
+    
+    
+    public ASTTraversalException getLastError() {
+        return this.lastError;
+    }
+    
+    
+    
+    public Root getRoot() {
+        if (this.errorOccurred()) {
+            throw new IllegalStateException("no valid result available");
+        }
+        return this.lastResult;
+    }
+    
+    
+    
+    public String unparse() {
+        final Root r = this.getRoot();
+        final StringBuilder b = new StringBuilder();
+        final Visitor unparser = new Unparser(
+            new PrintStream(new StringBuilderOutputStream(b)));
+        
+        try {
+            r.visit(unparser);
+            return b.toString();
+        } catch (ASTTraversalException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}

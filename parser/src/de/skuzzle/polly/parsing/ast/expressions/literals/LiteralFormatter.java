@@ -7,8 +7,8 @@ import java.text.SimpleDateFormat;
 
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.util.TimeSpanFormat;
-import de.skuzzle.polly.tools.iterators.IteratorPrinter;
-import de.skuzzle.polly.tools.iterators.IteratorPrinter.StringProvider;
+import de.skuzzle.polly.tools.strings.IteratorPrinter;
+import de.skuzzle.polly.tools.strings.IteratorPrinter.StringProvider;
 
 
 public interface LiteralFormatter {

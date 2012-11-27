@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
-import de.skuzzle.polly.tools.iterators.IteratorPrinter;
+import de.skuzzle.polly.tools.strings.IteratorPrinter;
 
 
 public class FunctionType extends Type {
@@ -73,14 +73,22 @@ public class FunctionType extends Type {
     
     
     
-    @Override
-    public String toString() {
+    public String toString(boolean includeReturn) {
         final StringBuilder b = new StringBuilder();
         b.append("(");
-        b.append(this.returnType);
-        b.append(":");
+        if (includeReturn) {
+            b.append(this.returnType);
+            b.append(":");
+        }
         IteratorPrinter.print(this.parameters.iterator(), " ", b);
         b.append(")");
         return b.toString();
+    }
+    
+    
+    
+    @Override
+    public String toString() {
+        return this.toString(true);
     }
 }

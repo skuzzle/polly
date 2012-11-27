@@ -1,6 +1,5 @@
 package de.skuzzle.polly.parsing;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,43 +30,9 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.StringLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.TimespanLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.UserLiteral;
 import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
-import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.parsing.ast.visitor.ASTVisualizer;
-import de.skuzzle.polly.parsing.ast.visitor.ExecutionVisitor;
-import de.skuzzle.polly.parsing.ast.visitor.TypeResolver;
-import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 
 
 public class ExpInputParser {
-    
-    // TEST:
-    public static void main(String[] args) throws ParseException, IOException, ASTTraversalException {
-        String testMe = ":foo (\\(String x,\\(Num Num Num) y:y(x,10))->a)(5,\\(String x, Num y : x * y))+a(17,\\(Num x, Num y:x+y))";
-        try {
-            //testMe = ":foo Num(true)+a";
-            ExpInputParser p = new ExpInputParser();
-            Root r = p.parse(testMe);
-    
-            
-            TypeResolver tr = new TypeResolver("me");
-            r.visit(tr);
-            
-            ASTVisualizer av = new ASTVisualizer();
-            av.toFile("datAST.dot", r);
-            
-            ExecutionVisitor ev = new ExecutionVisitor("me");
-            r.visit(ev);
-            
-            r.visit(new Unparser(System.out));
-            System.out.println();
-            System.out.println(ev.getResult());
-        } catch (ASTTraversalException e) {
-            System.out.println(e.getMessage());
-            System.out.println(testMe);
-            System.out.println(e.getPosition().errorIndicatorString());
-        }
-
-    }
 
     private final PrecedenceTable operators;
     private int openExpressions;

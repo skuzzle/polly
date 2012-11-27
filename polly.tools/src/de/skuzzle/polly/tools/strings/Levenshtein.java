@@ -1,4 +1,4 @@
-package de.skuzzle.polly.tools;
+package de.skuzzle.polly.tools.strings;
 
 public final class Levenshtein {
 

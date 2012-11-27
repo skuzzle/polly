@@ -2,12 +2,15 @@ package de.skuzzle.polly.parsing.ast;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
+import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.tools.strings.IteratorPrinter;
 
 /**
  * The root Node holds a collection of parsed expressions.
@@ -20,6 +23,7 @@ public final class Root extends Node {
 
     private final ArrayList<Expression> expressions;
     private final Identifier command;
+    private List<Literal> results;
     
     
     
@@ -65,5 +69,31 @@ public final class Root extends Node {
     @Override
     public void visit(Visitor visitor) throws ASTTraversalException {
         visitor.visitRoot(this);
+    }
+
+
+
+    public void setResults(List<Literal> results) {
+        this.results = results;
+    }
+    
+    
+    
+    public List<Literal> getResults() {
+        return this.results;
+    }
+    
+    
+    
+    @Override
+    public String toString() {
+        final StringBuilder b = new StringBuilder();
+        b.append(":");
+        b.append(this.command);
+        if (!this.results.isEmpty()) {
+            b.append(" ");
+            IteratorPrinter.print(this.results.iterator(), " ", b);
+        }
+        return b.toString();
     }
 }

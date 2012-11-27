@@ -59,9 +59,9 @@ public class TypeResolver extends DepthFirstVisitor {
     
     
     
-    public TypeResolver(String namespace) {
+    public TypeResolver(Namespace namespace) {
         // create temporary namespace for executing user
-        this.nspace = Namespace.forName(namespace);
+        this.nspace = namespace;
         this.rootNs = nspace;
         this.checked = new HashSet<Node>();
         this.signatureStack = new LinkedStack<FunctionType>();
@@ -100,7 +100,9 @@ public class TypeResolver extends DepthFirstVisitor {
      * @return Whether the nodes type has already been resolved.
      */
     private final boolean testIsChecked(Node node) {
-        return false;//!this.checked.add(node);
+        // TODO: remove, or what?
+        this.checked.add(node);
+        return false;
     }
     
     
@@ -313,7 +315,7 @@ public class TypeResolver extends DepthFirstVisitor {
         
         if (!call.getLhs().getType().check(signature)) {
             Type.typeError(call.getLhs().getType(), signature, 
-                call.getLhs().getPosition());
+                call.getPosition());
         }
         
         // get lhs' type as FunctionType. This type already has a return type set,

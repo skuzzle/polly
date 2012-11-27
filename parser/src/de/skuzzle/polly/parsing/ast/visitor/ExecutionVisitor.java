@@ -1,12 +1,11 @@
 package de.skuzzle.polly.parsing.ast.visitor;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 
-import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
 import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
@@ -20,53 +19,20 @@ import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
-import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
-import de.skuzzle.polly.parsing.ast.operators.Operator;
-import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
-import de.skuzzle.polly.parsing.ast.operators.impl.BinaryArithmetic;
 import de.skuzzle.polly.parsing.util.LinkedStack;
 import de.skuzzle.polly.parsing.util.Stack;
 
 
 
 public class ExecutionVisitor extends DepthFirstVisitor {
-    
-    public static void main(String[] args) throws ASTTraversalException, IOException {
-        final Operator add = new BinaryArithmetic(OpType.ADD);
-        final Operator sub = new BinaryArithmetic(OpType.SUB);
-        final Operator mul = new BinaryArithmetic(OpType.MUL);
-        final Operator div = new BinaryArithmetic(OpType.DIV);
-        Namespace.forName("me").declare(add.createDeclaration());
-        Namespace.forName("me").declare(sub.createDeclaration());
-        Namespace.forName("me").declare(mul.createDeclaration());
-        Namespace.forName("me").declare(div.createDeclaration());
-        
-        Expression left = new NumberLiteral(Position.EMPTY, 5.0);
-        Expression right = new NumberLiteral(Position.EMPTY, 2.0);
-        OperatorCall binary1 = OperatorCall.binary(Position.EMPTY, OpType.ADD, left, right);
-     
-        left = binary1;
-        right = new NumberLiteral(Position.EMPTY, 8.0);
-        OperatorCall binary2 = OperatorCall.binary(Position.EMPTY, OpType.MUL, left, right);
-        
-        TypeResolver tr = new TypeResolver("me");
-        binary2.visit(tr);
-        
-        ExecutionVisitor ev = new ExecutionVisitor("me");
-        binary2.visit(ev);
-        
-        System.out.println("Result: " + ev.stack.peek());
-    }
-    
-    
 
     private final Stack<Literal> stack;
     private Namespace nspace;
     
     
-    public ExecutionVisitor(String executor) {
+    public ExecutionVisitor(Namespace namespace) {
         this.stack = new LinkedStack<Literal>();
-        this.nspace = Namespace.forName(executor);
+        this.nspace = namespace;
     }
     
     
@@ -112,6 +78,22 @@ public class ExecutionVisitor extends DepthFirstVisitor {
      */
     private Namespace leave() {
         return this.nspace = this.nspace.getParent();
+    }
+    
+    
+    
+    @Override
+    public void visitRoot(Root root) throws ASTTraversalException {
+        this.beforeRoot(root);
+        
+        List<Literal> results = new ArrayList<Literal>(root.getExpressions().size());
+        for (final Expression exp : root.getExpressions()) {
+            exp.visit(this);
+            results.add(this.stack.pop());
+        }
+        root.setResults(results);
+        
+        this.afterRoot(root);
     }
     
     
