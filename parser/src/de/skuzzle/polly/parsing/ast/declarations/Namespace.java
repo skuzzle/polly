@@ -9,6 +9,7 @@ import com.sun.org.apache.xml.internal.utils.NameSpace;
 
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
 import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
+import de.skuzzle.polly.parsing.ast.operators.Cast;
 import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
 import de.skuzzle.polly.parsing.ast.operators.impl.BinaryArithmetic;
 import de.skuzzle.polly.parsing.ast.operators.impl.DateArithmetic;
@@ -73,6 +74,10 @@ public class Namespace {
     private final static Namespace GLOBAL = new Namespace(null);
     static {
         try {
+            // casting ops
+            GLOBAL.declare(new Cast(OpType.STRING, Type.STRING).createDeclaration());
+            GLOBAL.declare(new Cast(OpType.NUMBER, Type.NUMBER).createDeclaration());
+            
             // Arithmetic binary ops
             GLOBAL.declare(new BinaryArithmetic(OpType.ADD).createDeclaration());
             GLOBAL.declare(new BinaryArithmetic(OpType.SUB).createDeclaration());

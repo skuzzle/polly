@@ -28,7 +28,11 @@ public abstract class Literal extends Expression implements Comparable<Literal> 
      * @return A new Literal with the given type and converted value.
      * @throws ASTTraversalException If this literal can not be casted to the given type.
      */
-    public abstract Literal castTo(Type type) throws ASTTraversalException;
+    public Literal castTo(Type type) throws ASTTraversalException {
+        throw new ASTTraversalException(this.getPosition(), 
+            this.getType().getTypeName() + " kann nicht zu " + type.getTypeName() + 
+            " gecastet werden");
+    }
 
     
     

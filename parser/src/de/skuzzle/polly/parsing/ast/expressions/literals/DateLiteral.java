@@ -27,7 +27,10 @@ public class DateLiteral extends Literal {
     
     @Override
     public Literal castTo(Type type) throws ASTTraversalException {
-        return null;
+        if (type.check(Type.NUMBER)) {
+            return new NumberLiteral(this.getPosition(), this.getValue().getTime());
+        }
+        return super.castTo(type);
     }
 
     

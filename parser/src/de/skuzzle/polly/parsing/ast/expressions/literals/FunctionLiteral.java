@@ -91,17 +91,10 @@ public class FunctionLiteral extends Literal {
     }
     
     
-    
-    @Override
-    public Literal castTo(Type type) throws ASTTraversalException {
-        throw new ASTTraversalException(this.getPosition(), "not castable");
-    }
-    
-    
 
     @Override
     public String format(LiteralFormatter formatter) {
-        return null;
+        return formatter.formatFunction(this);
     }
     
     

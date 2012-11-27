@@ -5,7 +5,10 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 
+import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.util.TimeSpanFormat;
+import de.skuzzle.polly.tools.iterators.IteratorPrinter;
+import de.skuzzle.polly.tools.iterators.IteratorPrinter.StringProvider;
 
 
 public interface LiteralFormatter {
@@ -64,6 +67,36 @@ public interface LiteralFormatter {
         public String formatUser(UserLiteral user) {
             return "@" + user.getValue();
         }
+
+
+
+        @Override
+        public String formatList(ListLiteral listLiteral) {
+            StringBuilder b = new StringBuilder();
+            b.append("{");
+            IteratorPrinter.print(
+                listLiteral.getContent().iterator(), ", ", 
+                new StringProvider<Expression>() {
+                    @Override
+                    public String toString(Expression o) {
+                        return ((Literal)o).format(DEFAULT);
+                    }
+            }, b);
+            return b.toString();
+        }
+
+
+
+        @Override
+        public String formatFunction(FunctionLiteral functionLiteral) {
+            final StringBuilder b = new StringBuilder();
+            b.append("\\(");
+            b.append(functionLiteral.getExpression().getType().getTypeName());
+            b.append(":");
+            IteratorPrinter.print(functionLiteral.getFormal().iterator(), ", ", b);
+            b.append(")");
+            return b.toString();
+        }
     };
     
     
@@ -79,4 +112,8 @@ public interface LiteralFormatter {
     public String formatString(StringLiteral string);
 
     public String formatUser(UserLiteral user);
+
+    public String formatList(ListLiteral listLiteral);
+
+    public String formatFunction(FunctionLiteral functionLiteral);
 }

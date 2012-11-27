@@ -28,7 +28,8 @@ import de.skuzzle.polly.parsing.util.Stack;
  */
 public class Cast extends Operator {
 
-    protected final static String PARAM_NAME = "$param";
+    protected final static ResolvableIdentifier PARAM_NAME = new ResolvableIdentifier(
+        Position.EMPTY, "$param");
 
     
     
@@ -51,7 +52,7 @@ public class Cast extends Operator {
         
         // on a function call, parameters are already executed to be a Literal
         final Literal operand = (Literal) ns.resolveVar(
-            new ResolvableIdentifier(Position.EMPTY, PARAM_NAME), 
+            PARAM_NAME, 
             Type.ANY).getExpression();
         
         stack.push(operand.castTo(this.getType()));
@@ -62,22 +63,26 @@ public class Cast extends Operator {
     @Override
     public Declaration createDeclaration() {
         // create parameter that accepts any expression (Type.ANY)
-        final ResolvableIdentifier rid = 
-            new ResolvableIdentifier(Position.EMPTY, PARAM_NAME);
         final Collection<Parameter> p = Arrays.asList(
-            new Parameter[] {new Parameter(Position.EMPTY, rid, Type.ANY)});
+            new Parameter[] { new Parameter(Position.EMPTY, PARAM_NAME, Type.ANY) });
         
         final FunctionLiteral func = new FunctionLiteral(Position.EMPTY, p, this);
         func.setType(new FunctionType(this.getType(), Parameter.asType(p)));
         func.setReturnType(this.getType());
         
-        return new VarDeclaration(func.getPosition(), this.getType().getTypeName(), 
-            func);
+        final VarDeclaration vd = new VarDeclaration(
+            func.getPosition(), this.getType().getTypeName(), func);
+        vd.setMustCopy(true);
+        return vd;
     }
 
 
 
     @Override
     public void resolveType(Namespace ns, Visitor typeResolver)
-            throws ASTTraversalException { }
+            throws ASTTraversalException {
+        
+        // check if cast is p
+        //final Expression operand = ns.resolveVar(PARAM_NAME, Type.ANY).getExpression();
+    }
 }

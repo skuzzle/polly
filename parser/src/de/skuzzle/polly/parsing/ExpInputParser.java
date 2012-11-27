@@ -41,7 +41,7 @@ public class ExpInputParser {
     
     public static void main(String[] args) throws ParseException, IOException, ASTTraversalException {
         String testMe = ":foo \\(\\(Num Num Num) y:y(4,15)+1)(\\(Num x, Num y:x+y*4))";
-        //testMe = ":foo ";
+        testMe = ":foo Num(true)";
         ExpInputParser p = new ExpInputParser();
         Root r = p.parse(testMe);
         

@@ -30,14 +30,14 @@ public class ListLiteral extends Literal {
     
     @Override
     public Literal castTo(Type type) throws ASTTraversalException {
-        return null;
+        return super.castTo(type);
     }
 
     
     
     @Override
     public String format(LiteralFormatter formatter) {
-        return null;
+        return formatter.formatList(this);
     }
     
     

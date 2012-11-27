@@ -25,7 +25,14 @@ public class BooleanLiteral extends Literal {
 
     @Override
     public Literal castTo(Type type) throws ASTTraversalException {
-        return null;
+        if(type.check(Type.NUMBER)) {
+            double value = this.getValue() ? 1.0 : 0.0;
+            return new NumberLiteral(this.getPosition(), value);
+        } else if (type.check(Type.STRING)) {
+            return new StringLiteral(this.getPosition(),
+                Boolean.toString(this.getValue()));
+        }
+        return super.castTo(type);
     }
     
     

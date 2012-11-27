@@ -28,5 +28,6 @@ public class TypeDeclaration extends Declaration {
     
     @Override
     public void visit(Visitor visitor) throws ASTTraversalException {
+        // TODO: visit TypeDecl?
     }
 }
