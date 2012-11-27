@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.skuzzle.polly.parsing.ExecutionException;
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
@@ -97,15 +96,6 @@ public class Type implements Serializable {
 
 	
 	
-	public static void castError(Type from, Type to, Position position) 
-	    throws ExecutionException {
-	    
-        throw new ExecutionException(from + " kann nicht zu " + to + " gecastet werden.",
-           position);
-	}
-	
-    
-    
     public static void typeError(Type found, Type expected, 
             Position position) throws ASTTraversalException {
         

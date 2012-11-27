@@ -56,7 +56,6 @@ public class ASTVisualizer extends DepthFirstVisitor {
         pe.addCommandsFromString("-Tpdf -o ast.pdf");
         pe.addCommand("datAST.dot");
         pe.setProcessWatcher(new KillingProcessWatcher(10000, true));
-        System.out.println(pe.toString());
         pe.start();
     }
     

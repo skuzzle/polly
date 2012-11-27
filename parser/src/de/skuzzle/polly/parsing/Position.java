@@ -85,8 +85,31 @@ public class Position implements Serializable {
     
     
     
+    /**
+     * Gets the count of characters that this position spans.
+     * 
+     * @return Character count between end and start position.
+     */
     public int getWidth() {
         return this.end - this.start;
+    }
+    
+    
+    
+    public String errorIndicatorString() {
+        StringBuilder b = new StringBuilder(this.end);
+        int i = 0;
+        for (; i < this.start; ++i) {
+            b.append(" ");
+        }
+        b.append("^");
+        if (this.getWidth() > 1) {
+            for (; i < this.end - 2; ++i) {
+                b.append("-");
+            }
+            b.append("^");
+        }
+        return b.toString();
     }
     
     
@@ -161,9 +184,6 @@ public class Position implements Serializable {
     
     @Override
     public String toString() {
-        /*if (this.start == this.end - 1) {
-            return Integer.toString(this.start + 1);
-        }*/
         return (this.start + 1) + "-" + (this.end + 1);
     }
     
