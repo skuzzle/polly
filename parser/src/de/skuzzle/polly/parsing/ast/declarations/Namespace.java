@@ -75,12 +75,13 @@ public class Namespace {
     
     
     private final static String findSimilar(String given, Namespace nspace) {
-        final int threshold = (int) Math.round(given.length() * 0.6);
+        final int threshold = Math.max(1, (int) Math.round(given.length() * 0.6));
+        
         System.out.println(threshold);
         for(Namespace space = nspace; space != null; space = space.parent) {
-            for (Declaration decl : space.decls) {
+            for (final Declaration decl : space.decls) {
                 if (Levenshtein.getLevenshteinDistance(
-                        decl.getName().getId(), given) < threshold) {
+                        decl.getName().getId(), given) <= threshold) {
                     return decl.getName().getId();
                 }
             }
@@ -355,8 +356,10 @@ public class Namespace {
                 "Keine Überladung der Funktion " + name.getId() + " mit der Signatur " + 
                     signature + " gefunden");
         } else if (check == null) {
+            String similar = findSimilar(name.getId(), this);
+            
             throw new ASTTraversalException(name.getPosition(), "Unbekannte Variable: " + 
-                name.getId());
+                name.getId() + (similar != null ? ". Meintest du " + similar + "?" : ""));
         } else if (check instanceof VarDeclaration) {
             return (VarDeclaration) check;
         }
