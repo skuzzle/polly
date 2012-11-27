@@ -42,7 +42,7 @@ public class ExpInputParser {
     
     // TEST:
     public static void main(String[] args) throws ParseException, IOException, ASTTraversalException {
-        String testMe = ":foo (\\(Num x,\\(Num Num Num) y:y(x,10))->a)(5,\\(String x, Number y:x*y))+a(17,\\(Num x, Num y:x+y))";
+        String testMe = ":foo (\\(String x,\\(Num Num Num) y:y(x,10))->a)(5,\\(String x, Num y : x * y))+a(17,\\(Num x, Num y:x+y))";
         try {
             //testMe = ":foo Num(true)+a";
             ExpInputParser p = new ExpInputParser();
@@ -682,6 +682,8 @@ public class ExpInputParser {
         case LAMBDA:
             this.scanner.consume();
             
+            this.enterExpression();
+            
             final Collection<Parameter> formal = this.parseParameters(
                 TokenType.COLON);
             this.expect(TokenType.COLON);
@@ -692,6 +694,9 @@ public class ExpInputParser {
             
             final FunctionLiteral func = new FunctionLiteral(
                 this.scanner.spanFrom(la), formal, exp);
+            
+            this.leaveExpression();
+            
             return func;
             
         case OPENCURLBR:

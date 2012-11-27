@@ -201,7 +201,6 @@ public class TypeResolver extends DepthFirstVisitor {
             final VarDeclaration vd = new VarDeclaration(
                 p.getPosition(), p.getName(), 
                 new EmptyExpression(type));
-            vd.setParameter(true);
             
             this.nspace.declare(vd);
         }

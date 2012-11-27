@@ -59,7 +59,9 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
     public Declaration createDeclaration() {
         final FunctionLiteral func = this.createFunction();
         final Identifier fakeId = new Identifier(Position.EMPTY, this.getOp().getId());
-        return new VarDeclaration(func.getPosition(), fakeId, func);
+        final VarDeclaration vd = new VarDeclaration(func.getPosition(), fakeId, func);
+        vd.setOperator(true);
+        return vd;
     }
     
     

@@ -13,7 +13,8 @@ public class VarDeclaration extends Declaration {
     private static final long serialVersionUID = 1L;
     
     private final Expression expression;
-    private boolean isParameter;
+    private boolean operator;
+    
     
     
     public VarDeclaration(Position position, Identifier name, 
@@ -24,14 +25,15 @@ public class VarDeclaration extends Declaration {
     
     
     
-    public void setParameter(boolean isParameter) {
-        this.isParameter = isParameter;
+    
+    public boolean isOperator() {
+        return this.operator;
     }
     
     
     
-    public boolean isParameter() {
-        return this.isParameter;
+    public void setOperator(boolean operator) {
+        this.operator = operator;
     }
 
     
