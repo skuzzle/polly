@@ -100,8 +100,8 @@ public abstract class ProcessWatcher extends Thread {
                         Thread.sleep(ProcessWatcher.this.timeout);
                         ProcessWatcher.this.timeouted = true;
                         ProcessWatcher.this.interrupt();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    } catch (InterruptedException ignore) {
+                        // ignore
                     }
                 };
             };
