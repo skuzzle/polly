@@ -11,6 +11,8 @@ import de.skuzzle.polly.parsing.types.Type;
  */
 public abstract class Expression extends Node {
 
+    private static final long serialVersionUID = 1L;
+    
     private Type type;
     
     /**

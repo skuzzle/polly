@@ -7,6 +7,8 @@ import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 
 public class NamespaceAccess extends Expression {
 
+    private static final long serialVersionUID = 1L;
+    
     private final Expression lhs;
     private final Expression rhs;
     

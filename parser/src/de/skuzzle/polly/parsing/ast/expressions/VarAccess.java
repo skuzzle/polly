@@ -8,6 +8,8 @@ import de.skuzzle.polly.parsing.types.Type;
 
 public class VarAccess extends Expression {
 
+    private static final long serialVersionUID = 1L;
+    
     private final ResolvableIdentifier identifier;
     private Type typeToResolve;
     

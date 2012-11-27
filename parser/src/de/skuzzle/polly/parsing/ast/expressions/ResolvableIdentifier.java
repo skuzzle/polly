@@ -14,6 +14,8 @@ import de.skuzzle.polly.parsing.ast.visitor.Visitor;
  */
 public class ResolvableIdentifier extends Identifier {
 
+    private static final long serialVersionUID = 1L;
+    
     private Declaration decl;
     
     public ResolvableIdentifier(Position position, String id) {

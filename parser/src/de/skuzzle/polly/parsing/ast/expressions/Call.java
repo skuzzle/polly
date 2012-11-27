@@ -14,6 +14,8 @@ import de.skuzzle.polly.parsing.types.Type;
 
 public class Call extends Expression {
     
+    private static final long serialVersionUID = 1L;
+    
     private final Expression lhs;
     private final List<Expression> parameters;
     

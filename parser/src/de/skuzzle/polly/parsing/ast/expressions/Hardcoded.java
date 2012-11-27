@@ -19,6 +19,7 @@ import de.skuzzle.polly.parsing.util.Stack;
  */
 public abstract class Hardcoded extends Expression {
     
+    private static final long serialVersionUID = 1L;
     
     private final static AtomicInteger PARAM_ID = new AtomicInteger();
     
