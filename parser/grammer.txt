@@ -34,8 +34,4 @@ exprList    -> (expr (',' expr)*)?
 parameters  -> parameter (',' parameter)*
 parameter   -> ID ID                                 // typename, parameter name
              | ID<ID> ID                             // type name, subtype name, parameter name
-             | '\(' ID (',' ID)+ ')' ID              // return type name, parameter type names, parameter name
-            
-            
-            
-5;8;9[2]
+             | '\(' ID (' ' ID)+ ')' ID              // return type name, parameter type names, parameter name

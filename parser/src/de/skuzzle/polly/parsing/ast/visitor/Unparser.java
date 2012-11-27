@@ -123,7 +123,7 @@ public class Unparser extends DepthFirstVisitor {
             final ResolvableIdentifier next = it.next();
             next.visit(this);
             if (it.hasNext()) {
-                this.out.print(",");
+                this.out.print(" ");
             }
         }
         this.out.print(") ");

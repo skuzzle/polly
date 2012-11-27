@@ -40,7 +40,7 @@ import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 public class ExpInputParser {
     
     public static void main(String[] args) throws ParseException, IOException, ASTTraversalException {
-        String testMe = ":foo \\(\\(Number, Number, Number) y:y(4,15)+1)(\\(Number x, Number y:x+y*4))";
+        String testMe = ":foo \\(\\(Num Num Num) y:y(4,15)+1)(\\(Num x, Num y:x+y*4))";
         //testMe = ":foo ";
         ExpInputParser p = new ExpInputParser();
         Root r = p.parse(testMe);
@@ -859,7 +859,7 @@ public class ExpInputParser {
      * <pre>
      * parameter -> id id             // simple parameter
      *            | id<id> id         // parameter with subtype (list)
-     *            | '\(' id (',' id)* ')' id   // function parameter
+     *            | '\(' id (' ' id)* ')' id   // function parameter
      * </pre>
      * @return The parsed parameter.
      * @throws ParseException If parsing fails.
@@ -875,11 +875,13 @@ public class ExpInputParser {
                 new ArrayList<ResolvableIdentifier>();
             sig.add(returnType);
             
-            while (this.scanner.match(TokenType.COMMA)) {
-                this.allowSingleWhiteSpace();
+            boolean skip = this.scanner.skipWhiteSpaces();
+            this.scanner.setSkipWhiteSpaces(false);
+            while (this.scanner.match(TokenType.SEPERATOR)) {
                 sig.add(new ResolvableIdentifier(this.expectIdentifier()));
             }
             this.expect(TokenType.CLOSEDBR);
+            this.scanner.setSkipWhiteSpaces(skip);
             
             final ResolvableIdentifier name = new ResolvableIdentifier(
                 this.expectIdentifier());
