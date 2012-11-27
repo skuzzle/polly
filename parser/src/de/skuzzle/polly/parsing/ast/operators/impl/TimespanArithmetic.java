@@ -17,6 +17,8 @@ import de.skuzzle.polly.parsing.util.Stack;
  */
 public class TimespanArithmetic extends BinaryOperator<TimespanLiteral, TimespanLiteral>{
 
+    private static final long serialVersionUID = 1L;
+    
     public TimespanArithmetic(OpType id) {
         super(id, Type.TIMESPAN, Type.TIMESPAN, Type.TIMESPAN);
     }

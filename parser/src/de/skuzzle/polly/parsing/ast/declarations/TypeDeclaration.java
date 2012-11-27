@@ -9,6 +9,8 @@ import de.skuzzle.polly.parsing.types.Type;
 
 public class TypeDeclaration extends Declaration {
     
+    private static final long serialVersionUID = 1L;
+    
     private final Type type;
     
     

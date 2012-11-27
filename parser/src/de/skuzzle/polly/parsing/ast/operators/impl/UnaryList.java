@@ -16,6 +16,8 @@ import de.skuzzle.polly.parsing.util.Stack;
 
 public class UnaryList extends UnaryOperator<ListLiteral> {
 
+    private static final long serialVersionUID = 1L;
+    
     public UnaryList(OpType op) {
         super(op, Type.LIST, Type.LIST);
     }

@@ -19,6 +19,7 @@ import de.skuzzle.polly.parsing.types.Type;
  */
 public class Parameter extends Expression {
     
+    private static final long serialVersionUID = 1L;
     
     /**
      * Converts a collection of Parameters into a Collection of {@link Type}s which can

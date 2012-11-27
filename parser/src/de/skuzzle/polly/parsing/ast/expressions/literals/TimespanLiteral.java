@@ -8,6 +8,16 @@ import de.skuzzle.polly.parsing.Position;
 
 public class TimespanLiteral extends DateLiteral {
     
+    private static final long serialVersionUID = 1L;
+    
+    
+    /**
+     * Adds a given amount of seconds to a given date.
+     * 
+     * @param date The date.
+     * @param seconds The seconds to add.
+     * @return A new date.
+     */
     private final static Date addSeconds(Date date, int seconds) {
         final Calendar c = Calendar.getInstance();
         c.setTime(date);

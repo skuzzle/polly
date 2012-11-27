@@ -9,6 +9,8 @@ import de.skuzzle.polly.parsing.types.Type;
 
 public abstract class Literal extends Expression implements Comparable<Literal> {
 
+    private static final long serialVersionUID = 1L;
+    
     /**
      * Creates a new Literal with given {@link Position} and {@link Type}.
      * 

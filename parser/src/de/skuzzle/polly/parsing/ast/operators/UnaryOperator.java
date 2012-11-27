@@ -23,7 +23,9 @@ import de.skuzzle.polly.parsing.util.Stack;
 
 public abstract class UnaryOperator<O extends Literal> extends Operator {
 
-    protected final static String PARAM_NAME = "$param";
+    private static final long serialVersionUID = 1L;
+    protected final static ResolvableIdentifier PARAM_NAME = 
+            new ResolvableIdentifier(Position.EMPTY, "$param");
     private final Type operandType;
     
     
@@ -43,8 +45,7 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
      */
     protected FunctionLiteral createFunction() {
         Collection<Parameter> p = Arrays.asList(new Parameter[] {
-            new Parameter(Position.EMPTY, new ResolvableIdentifier(Position.EMPTY, 
-                PARAM_NAME), this.operandType)});
+            new Parameter(Position.EMPTY, PARAM_NAME, this.operandType)});
         
         final FunctionLiteral func = new FunctionLiteral(Position.EMPTY, p, this);
         func.setType(new FunctionType(this.getType(), Parameter.asType(p)));
@@ -66,8 +67,7 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
     @Override
     public final void resolveType(Namespace ns, Visitor typeResolver)
             throws ASTTraversalException {
-        final Expression param = ns.resolveVar(
-            new ResolvableIdentifier(this.getPosition(), PARAM_NAME), 
+        final Expression param = ns.resolveVar(PARAM_NAME, 
             Type.ANY).getExpression();
         
         this.resolve(param, ns, typeResolver);
@@ -94,8 +94,7 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
     @SuppressWarnings("unchecked")
     public void execute(Stack<Literal> stack, Namespace ns, Visitor execVisitor)
             throws ASTTraversalException {
-        final O operand = (O) ns.resolveVar(
-            new ResolvableIdentifier(this.getPosition(), PARAM_NAME), 
+        final O operand = (O) ns.resolveVar(PARAM_NAME, 
             Type.ANY).getExpression();
         
         this.exec(stack, ns, operand, operand.getPosition());

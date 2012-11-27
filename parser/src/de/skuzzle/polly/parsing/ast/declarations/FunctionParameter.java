@@ -17,6 +17,8 @@ import de.skuzzle.polly.parsing.types.Type;
  */
 public class FunctionParameter extends Parameter {
 
+    private static final long serialVersionUID = 1L;
+    
     private final Collection<ResolvableIdentifier> signature;
     
     /**

@@ -32,8 +32,12 @@ import de.skuzzle.polly.parsing.util.Stack;
 public abstract class BinaryOperator<L extends Literal, R extends Literal> 
         extends Operator {
 
-    private final static String LEFT_PARAM_NAME = "$left";
-    private final static String RIGHT_PARAM_NAME = "$right";
+    private static final long serialVersionUID = 1L;
+    
+    private final static ResolvableIdentifier LEFT_PARAM_NAME = 
+            new ResolvableIdentifier(Position.EMPTY, "$left");
+    private final static ResolvableIdentifier RIGHT_PARAM_NAME =
+            new ResolvableIdentifier(Position.EMPTY, "$right");
     
     private final Type left;
     private final Type right;
@@ -94,11 +98,9 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
     public final void execute(Stack<Literal> stack, Namespace ns, 
             Visitor execVisitor) throws ASTTraversalException {
         
-        final L left = (L) ns.resolveVar(
-            new ResolvableIdentifier(this.getPosition(), LEFT_PARAM_NAME), 
+        final L left = (L) ns.resolveVar(LEFT_PARAM_NAME, 
             Type.ANY).getExpression();
-        final R right = (R) ns.resolveVar(
-            new ResolvableIdentifier(this.getPosition(), RIGHT_PARAM_NAME), 
+        final R right = (R) ns.resolveVar(RIGHT_PARAM_NAME, 
             Type.ANY).getExpression();
         
         this.exec(stack, ns, left, right, 
@@ -110,11 +112,9 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
     @Override
     public final void resolveType(Namespace ns, Visitor typeResolver)
             throws ASTTraversalException {
-        final Expression left = ns.resolveVar(
-            new ResolvableIdentifier(this.getPosition(), LEFT_PARAM_NAME), 
+        final Expression left = ns.resolveVar(LEFT_PARAM_NAME, 
             Type.ANY).getExpression();
-        final Expression right = ns.resolveVar(
-            new ResolvableIdentifier(this.getPosition(), RIGHT_PARAM_NAME), 
+        final Expression right = ns.resolveVar(RIGHT_PARAM_NAME, 
             Type.ANY).getExpression();
         
         this.resolve(left, right, ns, typeResolver);

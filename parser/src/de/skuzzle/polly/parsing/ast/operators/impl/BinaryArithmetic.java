@@ -18,6 +18,7 @@ import de.skuzzle.polly.parsing.util.Stack;
  */
 public class BinaryArithmetic extends BinaryOperator<NumberLiteral, NumberLiteral> {
 
+    private static final long serialVersionUID = 1L;
     
     public BinaryArithmetic(OpType id) {
         super(id, Type.NUMBER, Type.NUMBER, Type.NUMBER);

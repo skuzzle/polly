@@ -12,6 +12,8 @@ import de.skuzzle.polly.parsing.types.Type;
 
 public class ListLiteral extends Literal {
     
+    private static final long serialVersionUID = 1L;
+    
     private final List<Expression> content;
     
 

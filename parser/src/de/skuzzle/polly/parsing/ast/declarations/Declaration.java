@@ -8,6 +8,9 @@ import de.skuzzle.polly.parsing.types.Type;
 
 public abstract class Declaration extends Node {
 
+
+    private static final long serialVersionUID = 1L;
+    
     private final Identifier name;
     private boolean isGlobal;
     private boolean isTemp;

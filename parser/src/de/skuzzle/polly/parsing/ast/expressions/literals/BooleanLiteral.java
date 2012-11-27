@@ -7,6 +7,8 @@ import de.skuzzle.polly.parsing.types.Type;
 
 public class BooleanLiteral extends Literal {
     
+    private static final long serialVersionUID = 1L;
+    
     private final boolean value;
     
 

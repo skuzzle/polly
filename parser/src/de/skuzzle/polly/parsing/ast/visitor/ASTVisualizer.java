@@ -70,7 +70,8 @@ public class ASTVisualizer extends DepthFirstVisitor {
     private void printLabel(String name, String type, String attr, Position pos) {
         name = name.equals("") ? "" : name + "|";
         attr = attr.equals("") ? "" : attr + "|";
-        println("n" + this.preorder_number + "[shape=record, label=\"{" + name + "Type: " + type + "|" + attr
+        println("n" + this.preorder_number + "[shape=record, label=\"{" + name + 
+            "Type: " + type + "|" + attr
             + pos.getStart() + ":" + pos.getEnd() + "}\"]");
     }
 
@@ -224,10 +225,9 @@ public class ASTVisualizer extends DepthFirstVisitor {
     @Override
     public void beforeRoot(Root root) throws ASTTraversalException {
         this.printNode("Root", "", new Expression(root.getPosition(), Type.UNKNOWN) {
-            
+            private static final long serialVersionUID = 1L;
             @Override
-            public void visit(Visitor visitor) throws ASTTraversalException {
-            }
+            public void visit(Visitor visitor) throws ASTTraversalException {}
         });
     }
     

@@ -10,6 +10,8 @@ import de.skuzzle.polly.parsing.types.Type;
 
 public class VarDeclaration extends Declaration {
 
+    private static final long serialVersionUID = 1L;
+    
     private final Expression expression;
     private boolean isParameter;
     

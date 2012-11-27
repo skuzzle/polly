@@ -24,6 +24,8 @@ import de.skuzzle.polly.parsing.types.Type;
  */
 public abstract class Operator extends Hardcoded {
     
+    private static final long serialVersionUID = 1L;
+    
     /**
      * All possible operator types and their string representation.
      * 
@@ -165,19 +167,16 @@ public abstract class Operator extends Hardcoded {
     
     
     
-    protected Parameter typeToParameter(Type type, String name) {
-        final ResolvableIdentifier resName = new ResolvableIdentifier(
-            Position.EMPTY, name);
-        
+    protected Parameter typeToParameter(Type type, ResolvableIdentifier name) {
         if (type instanceof ListType) {
             final ListType lt = (ListType) type;
-            return new ListParameter(Position.EMPTY, resName, lt.getSubType());
+            return new ListParameter(Position.EMPTY, name, lt.getSubType());
         } else if (type instanceof FunctionType) {
             final FunctionType ft = (FunctionType) type;
             return new FunctionParameter(Position.EMPTY, ft.getReturnType(), 
-                ft.getParameters(), resName);
+                ft.getParameters(), name);
         } else {
-            return new Parameter(Position.EMPTY, resName, type);
+            return new Parameter(Position.EMPTY, name, type);
         }
     }
     

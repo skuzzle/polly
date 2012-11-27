@@ -14,6 +14,8 @@ import de.skuzzle.polly.parsing.types.Type;
  */
 public class ListParameter extends Parameter {
     
+    private static final long serialVersionUID = 1L;
+    
     private final ResolvableIdentifier mainTypeName;
     
     public ListParameter(Position position, ResolvableIdentifier mainType,

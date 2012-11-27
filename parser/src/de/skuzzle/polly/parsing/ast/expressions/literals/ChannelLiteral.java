@@ -7,6 +7,8 @@ import de.skuzzle.polly.parsing.types.Type;
 
 public class ChannelLiteral extends StringLiteral {
 
+    private static final long serialVersionUID = 1L;
+    
     public ChannelLiteral(Position position, String value) {
         super(position, value);
         this.setType(Type.CHANNEL);

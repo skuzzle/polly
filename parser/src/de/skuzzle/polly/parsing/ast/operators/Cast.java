@@ -28,10 +28,11 @@ import de.skuzzle.polly.parsing.util.Stack;
  */
 public class Cast extends Operator {
 
+    private static final long serialVersionUID = 1L;
+    
     protected final static ResolvableIdentifier PARAM_NAME = new ResolvableIdentifier(
         Position.EMPTY, "$param");
 
-    
     
     /**
      * Creates a new Casting operator.

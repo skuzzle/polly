@@ -17,6 +17,7 @@ import de.skuzzle.polly.parsing.util.Stack;
 
 public class ListIndex extends BinaryOperator<ListLiteral, NumberLiteral> {
 
+    private static final long serialVersionUID = 1L;
     
     public ListIndex(OpType id) {
         super(id, Type.ANY, ListType.ANY_LIST, Type.NUMBER);

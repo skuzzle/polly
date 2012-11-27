@@ -14,6 +14,8 @@ import de.skuzzle.polly.parsing.ast.visitor.Visitor;
  */
 public abstract class Node implements Visitable<Visitor>, Serializable {
     
+    private static final long serialVersionUID = 1L;
+    
     private Node parent;
     private Position position;
 

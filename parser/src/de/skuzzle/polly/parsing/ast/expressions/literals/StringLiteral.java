@@ -7,6 +7,8 @@ import de.skuzzle.polly.parsing.types.Type;
 
 public class StringLiteral extends Literal {
 
+    private static final long serialVersionUID = 1L;
+    
     private final String value;
     
     

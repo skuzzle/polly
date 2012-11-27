@@ -40,6 +40,7 @@ public class TypeResolver extends DepthFirstVisitor {
      * @author Simon Taddiken
      */
     private final static class EmptyExpression extends Expression {
+        private static final long serialVersionUID = 1L;
 
         public EmptyExpression(Type type) {
             super(Position.EMPTY, type);

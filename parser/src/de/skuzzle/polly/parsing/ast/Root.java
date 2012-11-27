@@ -15,6 +15,8 @@ import de.skuzzle.polly.parsing.ast.visitor.Visitor;
  * @author Simon Taddiken
  */
 public final class Root extends Node {
+    
+    private static final long serialVersionUID = 1L;
 
     private final ArrayList<Expression> expressions;
     private final Identifier command;

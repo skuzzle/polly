@@ -22,7 +22,6 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.types.FunctionType;
 import de.skuzzle.polly.parsing.types.Type;
 import de.skuzzle.polly.parsing.util.CopyTool;
-import de.skuzzle.polly.tools.iterators.IteratorPrinter;
 
 
 public class Namespace {
