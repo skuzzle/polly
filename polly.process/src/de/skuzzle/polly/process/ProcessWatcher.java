@@ -119,8 +119,8 @@ public abstract class ProcessWatcher extends Thread {
      * @param exitType The event type which caused this callback being called. The value 
      *      is either of {@link #EXIT_TYPE_SUCCESS} (if process terminates properly), 
      *      {@link #EXIT_TYPE_TIMEOUT} (if a timeout occurred before termination of the 
-     *      process) or {@link #EXIT_TYPE_ERROR} (if an error while waiting for the 
-     *      process to terminate).
+     *      process) or {@link #EXIT_TYPE_ERROR} (if an error occurred while waiting for 
+     *      the process to terminate).
      */
     public abstract void processExit(ProcessWrapper proc, int exitType);
     
