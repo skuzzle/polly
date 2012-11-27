@@ -1,5 +1,6 @@
 package de.skuzzle.polly.parsing.ast.visitor;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Stack;
@@ -22,6 +23,8 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.types.Type;
+import de.skuzzle.polly.process.KillingProcessWatcher;
+import de.skuzzle.polly.process.ProcessExecutor;
 
 public class ASTVisualizer extends DepthFirstVisitor {
 
@@ -45,6 +48,16 @@ public class ASTVisualizer extends DepthFirstVisitor {
                 this.outputStream.close();
             }
         }
+        
+        String dotPath = "C:\\Program Files (x86)\\Graphviz 2.28\\bin\\dot.exe";
+        ProcessExecutor pe = ProcessExecutor.getOsInstance(false);
+        pe.setExecuteIn(new File("C:\\Users\\Simon\\Documents\\Java\\polly\\parser"));
+        pe.addCommand(dotPath);
+        pe.addCommandsFromString("-Tpdf -o ast.pdf");
+        pe.addCommand("datAST.dot");
+        pe.setProcessWatcher(new KillingProcessWatcher(10000, true));
+        System.out.println(pe.toString());
+        pe.start();
     }
     
     
@@ -72,7 +85,7 @@ public class ASTVisualizer extends DepthFirstVisitor {
         attr = attr.equals("") ? "" : attr + "|";
         println("n" + this.preorder_number + "[shape=record, label=\"{" + name + 
             "Type: " + type + "|" + attr
-            + pos.getStart() + ":" + pos.getEnd() + "}\"]");
+            + pos.toString() + "}\"]");
     }
 
 
@@ -176,7 +189,7 @@ public class ASTVisualizer extends DepthFirstVisitor {
     
     @Override
     public void beforeFunctionLiteral(FunctionLiteral func) throws ASTTraversalException {
-        this.printNode("Function", func.toString(), func);
+        this.printNode("Function", "", func);
     }
     
     

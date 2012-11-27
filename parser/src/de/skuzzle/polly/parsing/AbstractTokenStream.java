@@ -337,7 +337,8 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
      *      {@code start} until {@link #getStreamIndex()}. 
      */
     public Position spanFrom(int start) {
-        return new Position(start, this.getStreamIndex() - 1);
+        int endIdx = this.eos ? this.getStreamIndex() - 1 : this.getStreamIndex();
+        return new Position(start, endIdx);
     }
     
     
@@ -354,7 +355,22 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
      *        {@code token.getPosition.getStart()} until {@link #getStreamIndex()}. 
      */
     public Position spanFrom(Token token) {
-        return new Position(token.getPosition().getStart(), this.getStreamIndex() - 1);
+        return this.spanFrom(token.getPosition());
+    }
+    
+    
+    
+    /**
+     * Creates a new {@link Position} which spans from the beginning of the given 
+     * Position until the current stream index.
+     * 
+     * @param start Start position.
+     * @return A new Position representing the span from start until 
+     *          {@link #getStreamIndex()}
+     */
+    public Position spanFrom(Position start) {
+        int endIdx = this.eos ? this.getStreamIndex() - 1 : this.getStreamIndex();
+        return new Position(start.getStart(), endIdx);
     }
     
     
@@ -404,6 +420,10 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
      *         of the input has been reached.
      */
     protected int readChar() {
+        if (this.eos) {
+            throw new IllegalStateException("end of stream reached");
+        }
+        
         int next;
         boolean popped = false;
         
@@ -610,7 +630,7 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
         @Override
         public boolean hasNext() {
             return !AbstractTokenStream.this.eos && 
-                   !AbstractTokenStream.this.tokenBuffer.isEmpty();
+                   AbstractTokenStream.this.tokenBuffer.isEmpty();
         }
         
         

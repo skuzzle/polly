@@ -4,17 +4,14 @@ import java.io.Serializable;
 
 /**
  * Represents a span within a one-lined String. It consists of a inclusive 
- * start position and an inclusive end position.
- * 
- * This means that for a Position that spans one character, the start index equals 
- * the end index.
+ * start position and an exclusive end position.
  * 
  * For convenience, a Position has methods to retrieve substrings of a given String:
  * {@link #prefix(String)} which returns a String which consists of all characters 
  * berfore this Position.
  * {@link #substring(String)} which returns exactly the String which Position this
  * object represents and {@link #postfix(String)} which returns a String consisting of
- * all characters which follow of this span.   
+ * all characters which follow this span.   
  * 
  * @author Simon
  */
@@ -22,7 +19,7 @@ public class Position implements Serializable {
     
     private static final long serialVersionUID = 1L;
 
-    public final static Position EMPTY = new Position(0, 1);
+    public final static Position EMPTY = new Position(-1, -1);
     
     private int start;
     private int end;
@@ -32,7 +29,7 @@ public class Position implements Serializable {
      * Creates a new Position Object with given start and end index.
      * 
      * @param start The inclusive start index of this Position.
-     * @param end The inclusive end index of this position.
+     * @param end The exclusive end index of this position.
      */
     public Position(int start, int end) {
         this.start = start;
@@ -89,7 +86,7 @@ public class Position implements Serializable {
     
     
     public int getWidth() {
-        return this.end - this.start + 1;
+        return this.end - this.start;
     }
     
     
@@ -103,7 +100,9 @@ public class Position implements Serializable {
      * @throws IllegalArgumentException If the original String is too short.
      */
     public String prefix(String original) {
-        if (this.start > original.length()) {
+        if (this.equals(Position.EMPTY)) {
+            return original;
+        } else if (this.start > original.length()) {
             throw new IllegalArgumentException("Original String is too short!");
         }
         return original.substring(0, this.start);
@@ -111,20 +110,32 @@ public class Position implements Serializable {
     
     
     
+    /**
+     * Returns the postfix of the given string which consists of all characters that
+     * occur after this positions end index (including the character at the end index
+     * itself, because it is exclusive).
+     * 
+     * @param original The string to create the postfrix from.
+     * @return A postfix of that string.
+     */
     public String postfix(String original) {
-        if (this.start == this.end && this.start == original.length()) {
+        if (this.equals(Position.EMPTY)) {
+            return original;
+        } else if (this.start == this.end - 1 && this.start == original.length()) {
             return "";
         }
-        return original.substring(this.end + 1);
+        return original.substring(this.end);
     }
     
     
     
     public String substring(String original) {
-        if (this.start == this.end && this.start == original.length()) {
+        if (this.equals(Position.EMPTY)) {
+            return original;
+        } else if (this.start == this.end - 1 && this.start == original.length()) {
             return " ";
         }
-        return original.substring(this.start, this.end + 1);
+        return original.substring(this.start, this.end);
     }
     
     
@@ -150,10 +161,10 @@ public class Position implements Serializable {
     
     @Override
     public String toString() {
-        if (this.start == this.end) {
-            return Integer.toString(this.start);
-        }
-        return (this.start) + "-" + (this.end);
+        /*if (this.start == this.end - 1) {
+            return Integer.toString(this.start + 1);
+        }*/
+        return (this.start + 1) + "-" + (this.end + 1);
     }
     
     

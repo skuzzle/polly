@@ -41,18 +41,23 @@ import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 public class ExpInputParser {
     
     public static void main(String[] args) throws ParseException, IOException, ASTTraversalException {
-        String testMe = ":foo (5+5)";
+        String testMe = ":foo (\\(Num x,\\(Num Num Num) y:y(x,10))->a)(5,\\(Num x, Num y:x*y))+a(17,\\(Num x, Num y:x+y))";
+        InputScanner scanner = new InputScanner(testMe);
+        
+        for (Token t : scanner) {
+            System.out.println(t);
+        }
+        
         //testMe = ":foo Num(true)+a";
         ExpInputParser p = new ExpInputParser();
         Root r = p.parse(testMe);
-        
 
-        ASTVisualizer av = new ASTVisualizer();
-        av.toFile("datAST", r);
         
         TypeResolver tr = new TypeResolver("me");
         r.visit(tr);
         
+        ASTVisualizer av = new ASTVisualizer();
+        av.toFile("datAST.dot", r);
         
         ExecutionVisitor ev = new ExecutionVisitor("me");
         r.visit(ev);
@@ -224,6 +229,7 @@ public class ExpInputParser {
         
         Root root = null;
         Token la = this.scanner.lookAhead();
+        final Position start = la.getPosition();
         try {
             if (!this.scanner.match(TokenType.COLON)) {
                 return null;
@@ -239,24 +245,19 @@ public class ExpInputParser {
         }
         
         final Identifier cmd = new Identifier(
-            new Position(la.getPosition().getStart() - 1, la.getPosition().getEnd()),
+            new Position(start.getStart(), la.getPosition().getEnd()),
             la.getStringValue());
+        
         List<Expression> signature = new ArrayList<Expression>();
         if (this.scanner.match(TokenType.SEPERATOR)) {
+            System.out.println(this.scanner.streamIndex);
             do {
                 final Expression next = this.parseExpr();
                 signature.add(next);
             } while (this.scanner.match(TokenType.SEPERATOR));
         }
         
-        // end position is position of the last signature element.
-        final Position endPos = signature.isEmpty() 
-            ? cmd.getPosition() 
-            : signature.get(signature.size() - 1).getPosition();
-            
-        root = new Root(
-            new Position(la.getPosition(), endPos), 
-            cmd, signature);
+        root = new Root(this.scanner.spanFrom(start), cmd, signature);
         
         this.expect(TokenType.EOS);
         return root;
@@ -688,7 +689,6 @@ public class ExpInputParser {
             exp = this.parseExpr();
             
             this.expect(TokenType.CLOSEDBR);
-            exp.setPosition(this.scanner.spanFrom(la));
             
             final FunctionLiteral func = new FunctionLiteral(
                 this.scanner.spanFrom(la), formal, exp);
