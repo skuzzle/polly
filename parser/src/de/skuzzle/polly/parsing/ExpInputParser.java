@@ -41,7 +41,7 @@ import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 public class ExpInputParser {
     
     public static void main(String[] args) throws ParseException, IOException, ASTTraversalException {
-        String testMe = ":foo (\\(Num x,\\(Num Num Num) y:y(x,10))->a)(5,\\(Number x, Num y:x*y))+a(17,\\(Num x, Num y:x+y))";
+        String testMe = ":foo (\\(Num x,\\(Num Num Num) y:y(x,10))->a)(5,\\(Stirng x, Num y:x*y))+a(17,\\(Num x, Num y:x+y))";
         try {
             //testMe = ":foo Num(true)+a";
             ExpInputParser p = new ExpInputParser();

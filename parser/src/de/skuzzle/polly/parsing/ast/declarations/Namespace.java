@@ -22,6 +22,7 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.types.FunctionType;
 import de.skuzzle.polly.parsing.types.Type;
 import de.skuzzle.polly.parsing.util.CopyTool;
+import de.skuzzle.polly.tools.Levenshtein;
 
 
 public class Namespace {
@@ -59,13 +60,32 @@ public class Namespace {
             throws ASTTraversalException {
         final Declaration decl = TYPES.tryResolve(name);
         if (decl == null) {
+            String similar = findSimilar(name.getId(), TYPES);
+            
             throw new ASTTraversalException(
-                name.getPosition(), "Unbekannter Typ: " + name.getId());
+                name.getPosition(), "Unbekannter Typ: " + name.getId() + 
+                (similar != null ? " Meintest du " + similar + "?" : ""));
         } else if (!(decl instanceof TypeDeclaration)) {
             throw new IllegalStateException(
                 "Namespace 'TYPES' must only contain instances of TypeDeclaration.");
         }
         return (TypeDeclaration) decl;
+    }
+    
+    
+    
+    private final static String findSimilar(String given, Namespace nspace) {
+        final int threshold = (int) Math.round(given.length() * 0.6);
+        System.out.println(threshold);
+        for(Namespace space = nspace; space != null; space = space.parent) {
+            for (Declaration decl : space.decls) {
+                if (Levenshtein.getLevenshteinDistance(
+                        decl.getName().getId(), given) < threshold) {
+                    return decl.getName().getId();
+                }
+            }
+        }
+        return null;
     }
     
     
