@@ -8,6 +8,7 @@ import de.skuzzle.polly.parsing.ast.declarations.FunctionParameter;
 import de.skuzzle.polly.parsing.ast.declarations.ListParameter;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
+import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
@@ -38,6 +39,20 @@ public class Unparser extends DepthFirstVisitor {
     
     public Unparser(PrintStream out) {
         this(out, LiteralFormatter.DEFAULT);
+    }
+    
+    
+    
+    @Override
+    public void beforeBraced(Braced braced) throws ASTTraversalException {
+        this.out.print("(");
+    }
+    
+    
+    
+    @Override
+    public void afterBraced(Braced braced) throws ASTTraversalException {
+        this.out.print(")");
     }
     
     
@@ -140,19 +155,14 @@ public class Unparser extends DepthFirstVisitor {
         // HACK: add braces to ensure correct precedence
         if (call.getParameters().size() == 1) {
             if (call.isPostfix()) {
-                this.out.print("(");
                 it.next().visit(this);
-                this.out.print(")");
                 this.out.print(call.getOperator().getId());
             } else {
                 this.out.print(call.getOperator().getId());
-                this.out.print("(");
                 it.next().visit(this);
-                this.out.print(")");
             }
         } else if (call.getParameters().size() == 2) {
             // HACK: special treatment for certain operators
-            this.out.print("(");
             if (call.getOperator() == OpType.INDEX) {
                 it.next().visit(this);
                 this.out.print("[");
@@ -163,7 +173,6 @@ public class Unparser extends DepthFirstVisitor {
                 this.out.print(call.getOperator().getId());
                 it.next().visit(this);
             }
-            this.out.print(")");
         }
         this.afterOperatorCall(call);
     }

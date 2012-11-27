@@ -13,6 +13,7 @@ import de.skuzzle.polly.parsing.ast.declarations.ListParameter;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
+import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
@@ -40,8 +41,8 @@ import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 public class ExpInputParser {
     
     public static void main(String[] args) throws ParseException, IOException, ASTTraversalException {
-        String testMe = ":foo \\(\\(Num Num Num) y:y(4,15)+1)(\\(Num x, Num y:x+y*4))";
-        testMe = ":foo Num(true)";
+        String testMe = ":foo (5+5)";
+        //testMe = ":foo Num(true)+a";
         ExpInputParser p = new ExpInputParser();
         Root r = p.parse(testMe);
         
@@ -675,7 +676,7 @@ public class ExpInputParser {
             exp.setPosition(this.scanner.spanFrom(la));
             
             this.leaveExpression();
-            return exp;
+            return new Braced(exp);
             
         case LAMBDA:
             this.scanner.consume();

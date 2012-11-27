@@ -73,7 +73,6 @@ public class Cast extends Operator {
         
         final VarDeclaration vd = new VarDeclaration(
             func.getPosition(), this.getType().getTypeName(), func);
-        vd.setMustCopy(true);
         return vd;
     }
 
@@ -81,9 +80,5 @@ public class Cast extends Operator {
 
     @Override
     public void resolveType(Namespace ns, Visitor typeResolver)
-            throws ASTTraversalException {
-        
-        // check if cast is p
-        //final Expression operand = ns.resolveVar(PARAM_NAME, Type.ANY).getExpression();
-    }
+        throws ASTTraversalException { }
 }

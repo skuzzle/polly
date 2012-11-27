@@ -100,7 +100,7 @@ public class TypeResolver extends DepthFirstVisitor {
      * @return Whether the nodes type has already been resolved.
      */
     private final boolean testIsChecked(Node node) {
-        return !this.checked.add(node);
+        return false;//!this.checked.add(node);
     }
     
     
@@ -342,6 +342,7 @@ public class TypeResolver extends DepthFirstVisitor {
             ? Type.ANY 
             : this.signatureStack.peek();
         
+        access.setTypeToResolve(typeToResolve);
         final VarDeclaration vd = this.nspace.resolveVar(
                 access.getIdentifier(), typeToResolve);
         

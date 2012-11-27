@@ -222,6 +222,7 @@ public class ASTVisualizer extends DepthFirstVisitor {
     }
     
     
+    
     @Override
     public void beforeRoot(Root root) throws ASTTraversalException {
         this.printNode("Root", "", new Expression(root.getPosition(), Type.UNKNOWN) {
@@ -260,8 +261,8 @@ public class ASTVisualizer extends DepthFirstVisitor {
     public void afterCall(Call call) throws ASTTraversalException {
         this.pop();
     }
-
-
+    
+    
 
     @Override
     public void afterFunctionLiteral(FunctionLiteral func) throws ASTTraversalException {
