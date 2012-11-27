@@ -2,10 +2,11 @@ package de.skuzzle.polly.parsing.ast.declarations;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import com.sun.org.apache.xml.internal.utils.NameSpace;
 
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
 import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
@@ -26,6 +27,14 @@ import de.skuzzle.polly.tools.Levenshtein;
 
 
 public class Namespace {
+    
+    /** 
+     * Percentage of word length that will be used as levenshtein thresold in
+     * {@link #findSimilar(String, Namespace)}.
+     */
+    private final static float LEVENSHTEIN_THRESHOLD_PERCENT = 0.6f;
+    
+    
     
     private final static Namespace TYPES = new Namespace(null);
     static {
@@ -54,17 +63,16 @@ public class Namespace {
      * 
      * @param name Name of the type to resolve. Refers to {@link Type#getTypeName()}.
      * @return The resolved {@link TypeDeclaration}
-     * @throws ASTTraversalException If no such type exists.
+     * @throws DeclarationException If no such type exists.
      */
     public final static TypeDeclaration resolveType(ResolvableIdentifier name) 
-            throws ASTTraversalException {
+            throws DeclarationException {
         final Declaration decl = TYPES.tryResolve(name);
         if (decl == null) {
-            String similar = findSimilar(name.getId(), TYPES);
+            List<String> similar = findSimilar(name.getId(), TYPES);
             
-            throw new ASTTraversalException(
-                name.getPosition(), "Unbekannter Typ: " + name.getId() + 
-                (similar != null ? " Meintest du " + similar + "?" : ""));
+            throw new DeclarationException(name.getPosition(), 
+                "Unbekannter Typ: " + name + ".", similar);
         } else if (!(decl instanceof TypeDeclaration)) {
             throw new IllegalStateException(
                 "Namespace 'TYPES' must only contain instances of TypeDeclaration.");
@@ -74,23 +82,85 @@ public class Namespace {
     
     
     
-    private final static String findSimilar(String given, Namespace nspace) {
-        final int threshold = Math.max(1, (int) Math.round(given.length() * 0.6));
+    /**
+     * Helper class that encapsulates the result of a Levenshtein comparison: the distance
+     * and the actual found string.
+     * @author Simon Taddiken
+     */
+    private final static class LevenshteinResult implements 
+                Comparable<LevenshteinResult> {
         
-        System.out.println(threshold);
-        for(Namespace space = nspace; space != null; space = space.parent) {
-            for (final Declaration decl : space.decls) {
-                if (Levenshtein.getLevenshteinDistance(
-                        decl.getName().getId(), given) <= threshold) {
-                    return decl.getName().getId();
-                }
-            }
+        private int distance;
+        public String string;
+        
+        public LevenshteinResult(int distance, String string) {
+            super();
+            this.distance = distance;
+            this.string = string;
         }
-        return null;
+        
+        
+        
+        @Override
+        public int compareTo(LevenshteinResult o) {
+            return Integer.compare(this.distance, o.distance);
+        }
     }
     
     
     
+    /**
+     * <p>Tries to find declarations that have a name similar to the given string. All
+     * declarations in all parent namespaces, beginning at the given one are searched.
+     * All declarations that have a levenshtein distance lower than 
+     * {@link #LEVENSHTEIN_THRESHOLD_PERCENT} of the given string's length will be 
+     * returned. If no such declaration was found, the resulting list will be empty.</p>
+     * 
+     * <p>The resulting list will be sorted by the distance. The declaration with the 
+     * lowest distance to the given string will be on first place and so on.</p>
+     * 
+     * @param given The string to compare with all declarations.
+     * @param nspace The root namespace to search. All parent namespaces are searched
+     *          as well.
+     * @return A collection of similar declaration names.
+     * @see Levenshtein
+     */
+    private final static List<String> findSimilar(String given, Namespace nspace) {
+        final int threshold = 
+            Math.max(1, (int) Math.round(given.length() * LEVENSHTEIN_THRESHOLD_PERCENT));
+        final List<LevenshteinResult> results = 
+                new ArrayList<Namespace.LevenshteinResult>();
+        
+        for(Namespace space = nspace; space != null; space = space.parent) {
+            for (final Declaration decl : space.decls) {
+                
+                final String name = decl.getName().getId();
+                
+                // only take valid identifiers into account (this will skip operator
+                // declarations.
+                if (!Character.isJavaIdentifierPart(name.charAt(0))) {
+                    continue;
+                }
+                
+                final int dist = Levenshtein.getLevenshteinDistance(name, given);
+                if (dist <= threshold) {
+                    results.add(new LevenshteinResult(dist, decl.getName().getId()));
+                }
+            }
+        }
+        Collections.sort(results);
+        final List<String> stringResults = new ArrayList<String>(results.size());
+        for (final LevenshteinResult lr : results) {
+            stringResults.add(lr.string);
+        }
+        return stringResults;
+    }
+    
+    
+    /**
+     * This is the root namespace of all user namespaces. It contains all operator
+     * declarations as well as public variable and function declarations made by users.
+     */
     private final static Namespace GLOBAL = new Namespace(null);
     static {
         try {
@@ -136,8 +206,12 @@ public class Namespace {
     }
     
     
+    
+    /** Contains all user namespaces mapped to their user name */
     private final static Map<String, Namespace> ROOTS = new HashMap<String, Namespace>();
 
+    
+    
     /**
      * Gets the toplevel namespace with the given name. If no namespace with that name
      * exists, it is created.
@@ -248,7 +322,7 @@ public class Namespace {
      * new namespace will have the given namespace as parent.
      * 
      * @param parent The parent namespace for the new namespace.
-     * @return A new {@link NameSpace}.
+     * @return A new {@link Namespace}.
      */
     public Namespace derive(Namespace parent) {
         final Namespace result = new Namespace(parent);
@@ -356,10 +430,10 @@ public class Namespace {
                 "Keine Überladung der Funktion " + name.getId() + " mit der Signatur " + 
                     signature + " gefunden");
         } else if (check == null) {
-            String similar = findSimilar(name.getId(), this);
+            List<String> similar = findSimilar(name.getId(), this);
             
-            throw new ASTTraversalException(name.getPosition(), "Unbekannte Variable: " + 
-                name.getId() + (similar != null ? ". Meintest du " + similar + "?" : ""));
+            throw new DeclarationException(name.getPosition(), 
+                "Unbekannte Variable: " + name + ".", similar);
         } else if (check instanceof VarDeclaration) {
             return (VarDeclaration) check;
         }
