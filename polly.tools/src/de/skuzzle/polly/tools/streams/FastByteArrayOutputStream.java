@@ -77,5 +77,4 @@ public class FastByteArrayOutputStream extends OutputStream {
     public void close() {
         this.buffer = null;
     }
-
 }
