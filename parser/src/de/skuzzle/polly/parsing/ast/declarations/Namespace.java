@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 
+import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
 import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.operators.Cast;
@@ -27,7 +28,7 @@ import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 import de.skuzzle.polly.parsing.types.FunctionType;
 import de.skuzzle.polly.parsing.types.Type;
 import de.skuzzle.polly.parsing.util.CopyTool;
-import de.skuzzle.polly.tools.strings.Levenshtein;
+import de.skuzzle.polly.tools.strings.StringUtils;
 
 
 public class Namespace {
@@ -95,7 +96,7 @@ public class Namespace {
                         continue;
                     }
                     final VarDeclaration vd = (VarDeclaration) decl;
-                    vd.getExpression().visit(up);
+                    new Braced(vd.getExpression()).visit(up);
                     ps.print("->");
                     ps.println(vd.getName().getId());
                 }
@@ -202,7 +203,7 @@ public class Namespace {
      * @param nspace The root namespace to search. All parent namespaces are searched
      *          as well.
      * @return A collection of similar declaration names.
-     * @see Levenshtein
+     * @see StringUtils
      */
     private final static List<String> findSimilar(String given, Namespace nspace) {
         final int threshold = 
@@ -221,7 +222,7 @@ public class Namespace {
                     continue;
                 }
                 
-                final int dist = Levenshtein.getLevenshteinDistance(name, given);
+                final int dist = StringUtils.getLevenshteinDistance(name, given);
                 if (dist <= threshold) {
                     results.add(new LevenshteinResult(dist, decl.getName().getId()));
                 }
