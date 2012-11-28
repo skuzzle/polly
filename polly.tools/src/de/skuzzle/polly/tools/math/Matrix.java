@@ -2,6 +2,8 @@ package de.skuzzle.polly.tools.math;
 
 import java.util.Arrays;
 
+import de.skuzzle.polly.tools.strings.StringUtils;
+
 
 /**
  * <p>This class represents a rectangular matrix of size m times n, where m denotes the
@@ -893,9 +895,9 @@ public class Matrix<K> {
                 
                 if (alignLeft) {
                     b.append(s);
-                    this.padSpaces(desiredLength, s.length(), b);
+                    StringUtils.padSpaces(desiredLength, s.length(), b);
                 } else {
-                    this.padSpaces(desiredLength, s.length(), b);
+                    StringUtils.padSpaces(desiredLength, s.length(), b);
                     b.append(s);
                 }
                 
@@ -915,18 +917,6 @@ public class Matrix<K> {
     
     
     
-    private void padSpaces(int desiredLength, int currentLength, StringBuilder b) {
-        int spaces = desiredLength - currentLength;
-        if (spaces <= 0) {
-            return;
-        }
-        for (int i = 0; i < spaces; ++i) {
-            b.append(" ");
-        }
-    }
-
-
-
     @Override
     public int hashCode() {
         final int prime = 31;

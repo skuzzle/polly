@@ -1,6 +1,6 @@
 package de.skuzzle.polly.tools.strings;
 
-public final class Levenshtein {
+public final class StringUtils {
 
     // Algorithm from: http://mrfoo.de/archiv/1176-Levenshtein-Distance-in-Java.html
     public static int getLevenshteinDistance(String s, String t) {
@@ -52,5 +52,17 @@ public final class Levenshtein {
         // our last action in the above loop was to switch d and p, so p now
         // actually has the most recent cost counts
         return p[n];
+    }
+    
+    
+    
+    public static void padSpaces(int desiredLength, int currentLength, StringBuilder b) {
+        int spaces = desiredLength - currentLength;
+        if (spaces <= 0) {
+            return;
+        }
+        for (int i = 0; i < spaces; ++i) {
+            b.append(" ");
+        }
     }
 }
