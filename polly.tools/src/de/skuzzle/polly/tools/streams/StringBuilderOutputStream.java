@@ -22,7 +22,7 @@ public class StringBuilderOutputStream extends OutputStream {
      * Bytes to buffer before the bytes are actually decoded into characters and put
      * into the StringBuilder.
      */
-    protected final static int BUFFER_SIZE = 255;
+    protected final static int BUFFER_SIZE = 10;
     
     protected final StringBuilder stringBuilder;
     protected final CharsetDecoder decoder;
@@ -65,6 +65,8 @@ public class StringBuilderOutputStream extends OutputStream {
         this.decoder = cs.newDecoder();
         this.stringBuilder = target;
         this.buffer = ByteBuffer.allocate(BUFFER_SIZE);
+        this.buffer.mark();
+        this.buffer.reset();
     }
     
     
@@ -88,13 +90,17 @@ public class StringBuilderOutputStream extends OutputStream {
     
     @Override
     public void flush() throws CharacterCodingException {
-        this.decoder.reset();
+        if (this.buffer.position() == 0) {
+            return;
+        }
+        this.buffer.reset();
         CharBuffer buff = this.decoder.decode(this.buffer);
         while (this.decoder.flush(buff) == CoderResult.OVERFLOW) {
             final CharBuffer tmp = CharBuffer.allocate(buff.capacity() + 16);
             tmp.append(buff);
             buff = tmp;
         }
+        this.buffer.reset();
         this.stringBuilder.append(buff);
     }
 }

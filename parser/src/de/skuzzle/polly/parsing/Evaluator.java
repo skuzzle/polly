@@ -11,7 +11,8 @@ import de.skuzzle.polly.parsing.ast.visitor.ExecutionVisitor;
 import de.skuzzle.polly.parsing.ast.visitor.TypeResolver;
 import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
-import de.skuzzle.polly.tools.strings.StringBuilderOutputStream;
+import de.skuzzle.polly.tools.streams.StringBuilderOutputStream;
+import de.skuzzle.polly.tools.streams.StringBuilderPrintStream;
 
 
 /**
@@ -28,7 +29,7 @@ public class Evaluator {
     
     // TEST:
     public static void main(String[] args) throws UnsupportedEncodingException {
-        String testMe = ":foo ((\\(Stirng x,\\(Number Num Num) y:y(x,10))->a)(5,\\(Num x, Num y : x * y))+a(17,\\(Num x, Num y:x+y)))->a";
+        String testMe = ":foo ((\\(Num x,\\(Num Num Num) y:y(x,10))->a)(5,\\(Num x, Num y : x * y))+a(17,\\(Num x, Num y:x+y)))->a";
         
         final Evaluator eval = new Evaluator(testMe, "ISO-8859-1");
         File decls = new File("decls");
@@ -114,9 +115,9 @@ public class Evaluator {
     public String unparse() {
         final Root r = this.getRoot();
         final StringBuilder b = new StringBuilder();
-        final Visitor unparser = new Unparser(
-            new PrintStream(new StringBuilderOutputStream(b)));
-        
+        final PrintStream out = new StringBuilderPrintStream(b);
+        final Visitor unparser = new Unparser(out);
+        out.flush();
         try {
             r.visit(unparser);
             return b.toString();
