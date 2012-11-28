@@ -1,4 +1,4 @@
-package de.skuzzle.polly.parsing.util;
+package de.skuzzle.polly.tools.math;
 
 import java.util.Arrays;
 

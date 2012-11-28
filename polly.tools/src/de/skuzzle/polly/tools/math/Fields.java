@@ -1,4 +1,4 @@
-package de.skuzzle.polly.parsing.util;
+package de.skuzzle.polly.tools.math;
 
 /**
  * Predefines several useful fields for usage with a matrix. Please note that the set

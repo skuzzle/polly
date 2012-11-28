@@ -1,7 +1,7 @@
-package de.skuzzle.polly.parsing.util;
+package de.skuzzle.polly.tools.math;
 
 
-import de.skuzzle.polly.parsing.util.Matrix.DimensionException;
+import de.skuzzle.polly.tools.math.Matrix.DimensionException;
 
 
 /**

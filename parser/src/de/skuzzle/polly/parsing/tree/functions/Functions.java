@@ -12,9 +12,9 @@ import de.skuzzle.polly.parsing.tree.literals.ListLiteral;
 import de.skuzzle.polly.parsing.tree.literals.Literal;
 import de.skuzzle.polly.parsing.tree.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.types.Type;
-import de.skuzzle.polly.parsing.util.Fields;
-import de.skuzzle.polly.parsing.util.Matrix;
-import de.skuzzle.polly.parsing.util.MatrixUtils;
+import de.skuzzle.polly.tools.math.Fields;
+import de.skuzzle.polly.tools.math.Matrix;
+import de.skuzzle.polly.tools.math.MatrixUtils;
 
 
 

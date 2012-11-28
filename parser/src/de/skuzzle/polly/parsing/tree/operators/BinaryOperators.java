@@ -24,7 +24,7 @@ import de.skuzzle.polly.parsing.tree.literals.TimespanLiteral;
 import de.skuzzle.polly.parsing.types.ListType;
 import de.skuzzle.polly.parsing.types.MatrixType;
 import de.skuzzle.polly.parsing.types.Type;
-import de.skuzzle.polly.parsing.util.Matrix;
+import de.skuzzle.polly.tools.math.Matrix;
 
 
 /**
