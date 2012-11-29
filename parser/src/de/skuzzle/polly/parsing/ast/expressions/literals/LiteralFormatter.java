@@ -1,5 +1,6 @@
 package de.skuzzle.polly.parsing.ast.expressions.literals;
 
+import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -7,6 +8,7 @@ import java.text.SimpleDateFormat;
 
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.util.TimeSpanFormat;
+import de.skuzzle.polly.tools.streams.StringBuilderWriter;
 import de.skuzzle.polly.tools.strings.IteratorPrinter;
 import de.skuzzle.polly.tools.strings.IteratorPrinter.StringProvider;
 
@@ -75,13 +77,13 @@ public interface LiteralFormatter {
             StringBuilder b = new StringBuilder();
             b.append("{");
             IteratorPrinter.print(
-                listLiteral.getContent().iterator(), ", ", 
+                listLiteral.getContent(), ", ", 
                 new StringProvider<Expression>() {
                     @Override
                     public String toString(Expression o) {
                         return ((Literal)o).format(DEFAULT);
                     }
-            }, b);
+            }, new PrintWriter(new StringBuilderWriter(b)));
             return b.toString();
         }
 
@@ -93,7 +95,8 @@ public interface LiteralFormatter {
             b.append("\\(");
             b.append(functionLiteral.getExpression().getType().getTypeName());
             b.append(":");
-            IteratorPrinter.print(functionLiteral.getFormal().iterator(), ", ", b);
+            IteratorPrinter.print(functionLiteral.getFormal(), ", ", 
+                    new PrintWriter(new StringBuilderWriter(b)));
             b.append(")");
             return b.toString();
         }

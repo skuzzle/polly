@@ -2,7 +2,7 @@ package de.skuzzle.polly.parsing.ast.declarations;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -86,25 +86,25 @@ public class Namespace {
                 throw new IOException("declaration folder has not been set");
             }
             
-            PrintStream ps = null;
+            PrintWriter pw = null;
             try {
-                ps = new PrintStream(new File(declarationFolder, this.fileName));
+                pw = new PrintWriter(new File(declarationFolder, this.fileName));
                 
-                final Unparser up = new Unparser(ps);
+                final Unparser up = new Unparser(pw);
                 for (final Declaration decl : this.decls) {
                     if (!(decl instanceof VarDeclaration)) {
                         continue;
                     }
                     final VarDeclaration vd = (VarDeclaration) decl;
                     new Braced(vd.getExpression()).visit(up);
-                    ps.print("->");
-                    ps.println(vd.getName().getId());
+                    pw.print("->");
+                    pw.println(vd.getName().getId());
                 }
             } catch (ASTTraversalException e) {
                 throw new RuntimeException(e);
             } finally {
-                if (ps != null) {
-                    ps.close();
+                if (pw != null) {
+                    pw.close();
                 }
             }
         }

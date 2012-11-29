@@ -7,14 +7,15 @@ import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CoderResult;
 
+// TODO: 
 /**
  * Convenience {@link OutputStream} implementation to write into {@link StringBuilder}s. 
  * This can be used for example as bridge between {@link PrintStream}s and
  * StringBuilders.
  *  
  * @author Simon Taddiken
+ * @deprecated This class does not work correctly by now
  */
 public class StringBuilderOutputStream extends OutputStream {
     
@@ -95,11 +96,6 @@ public class StringBuilderOutputStream extends OutputStream {
         }
         this.buffer.reset();
         CharBuffer buff = this.decoder.decode(this.buffer);
-        while (this.decoder.flush(buff) == CoderResult.OVERFLOW) {
-            final CharBuffer tmp = CharBuffer.allocate(buff.capacity() + 16);
-            tmp.append(buff);
-            buff = tmp;
-        }
         this.buffer.reset();
         this.stringBuilder.append(buff);
     }

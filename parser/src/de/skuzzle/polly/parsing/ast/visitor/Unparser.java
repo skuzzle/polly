@@ -1,6 +1,6 @@
 package de.skuzzle.polly.parsing.ast.visitor;
 
-import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.Iterator;
 
 import de.skuzzle.polly.parsing.ast.Root;
@@ -25,19 +25,19 @@ import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
 
 public class Unparser extends DepthFirstVisitor {
 
-    private final PrintStream out;
+    private final PrintWriter out;
     private final LiteralFormatter literalFormatter;
     
 
     
-    public Unparser(PrintStream out, LiteralFormatter formatter) {
+    public Unparser(PrintWriter out, LiteralFormatter formatter) {
         this.out = out;
         this.literalFormatter = formatter;
     }
     
     
     
-    public Unparser(PrintStream out) {
+    public Unparser(PrintWriter out) {
         this(out, LiteralFormatter.DEFAULT);
     }
     

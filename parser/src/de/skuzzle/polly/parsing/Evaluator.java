@@ -1,7 +1,7 @@
 package de.skuzzle.polly.parsing;
 
 import java.io.File;
-import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
 import de.skuzzle.polly.parsing.ast.Root;
@@ -11,14 +11,13 @@ import de.skuzzle.polly.parsing.ast.visitor.ExecutionVisitor;
 import de.skuzzle.polly.parsing.ast.visitor.TypeResolver;
 import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
-import de.skuzzle.polly.tools.streams.StringBuilderOutputStream;
-import de.skuzzle.polly.tools.streams.StringBuilderPrintStream;
+import de.skuzzle.polly.tools.streams.StringBuilderWriter;
 
 
 /**
  * This is the main class for accessing the most often used parser feature: evaluating
  * an input String. It parses the String, resolves all types and executes the input in
- * the context of a provided {@link Namespace}. Evaluation may be either successfull or
+ * the context of a provided {@link Namespace}. Evaluation may be either successful or
  * fail. In the latter case, you can retrieve the Exception that caused the fail using
  * {@link #getLastError()}. If no exception occurred, you may retrieve the result using
  * {@link #getRoot()}.  
@@ -115,9 +114,8 @@ public class Evaluator {
     public String unparse() {
         final Root r = this.getRoot();
         final StringBuilder b = new StringBuilder();
-        final PrintStream out = new StringBuilderPrintStream(b);
-        final Visitor unparser = new Unparser(out);
-        out.flush();
+        final Visitor unparser = new Unparser(
+            new PrintWriter(new StringBuilderWriter(b)));
         try {
             r.visit(unparser);
             return b.toString();

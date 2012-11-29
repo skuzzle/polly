@@ -1,5 +1,6 @@
 package de.skuzzle.polly.parsing.ast;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -10,6 +11,7 @@ import de.skuzzle.polly.parsing.ast.expressions.Identifier;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.tools.streams.StringBuilderWriter;
 import de.skuzzle.polly.tools.strings.IteratorPrinter;
 
 /**
@@ -92,7 +94,8 @@ public final class Root extends Node {
         b.append(this.command);
         if (!this.results.isEmpty()) {
             b.append(" ");
-            IteratorPrinter.print(this.results.iterator(), " ", b);
+            IteratorPrinter.print(this.results, " ", 
+                new PrintWriter(new StringBuilderWriter(b)));
         }
         return b.toString();
     }

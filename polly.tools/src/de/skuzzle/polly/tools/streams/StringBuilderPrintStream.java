@@ -10,6 +10,7 @@ import java.nio.charset.Charset;
  * {@link StringBuilderOutputStream} instance.
  * 
  * @author Simon Taddiken
+ * @deprecated see {@link StringBuilderOutputStream}.
  */
 public class StringBuilderPrintStream extends PrintStream {
 
