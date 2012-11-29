@@ -147,7 +147,7 @@ public class CommandManagerImpl implements CommandManager {
         if (this.isRegistered(as)) {
             throw new DuplicatedSignatureException(as);
         }
-        this.commands.put(as, cmd);
+        this.commands.put(as.toLowerCase(), cmd);
         logger.debug("Command '" + as + "' with " + 
                 cmd.getSignatures().size() + " signatures successfuly registered");
 	}
@@ -159,7 +159,7 @@ public class CommandManagerImpl implements CommandManager {
 		Command cmd;
         try {
             cmd = this.getCommand(command.getCommandName());
-            this.commands.remove(cmd.getCommandName());
+            this.commands.remove(cmd.getCommandName().toLowerCase());
             logger.debug("Unregistered command: " + command.getCommandName());
         } catch (UnknownCommandException e) {
             logger.debug("Tried to unregister nonexistent command", e);
@@ -186,7 +186,7 @@ public class CommandManagerImpl implements CommandManager {
 	
 	@Override
 	public boolean isRegistered(String name) {
-		return this.commands.containsKey(name);
+		return this.commands.containsKey(name.toLowerCase());
 	}
 
 
@@ -222,7 +222,7 @@ public class CommandManagerImpl implements CommandManager {
 
 	@Override
 	public Command getCommand(String name) throws UnknownCommandException {
-		Command cmd = this.commands.get(name);
+		Command cmd = this.commands.get(name.toLowerCase());
 		if (cmd == null)	 {
 			throw new UnknownCommandException(name);
 		}
