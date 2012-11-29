@@ -220,11 +220,9 @@ public class Unparser extends DepthFirstVisitor {
     @Override
     public void visitAssignment(Assignment assign) throws ASTTraversalException {
         this.beforeAssignment(assign);
-        this.out.print("(");
         assign.getExpression().visit(this);
         this.out.print("->");
         assign.getName().visit(this);
-        this.out.print(")");
         this.afterAssignment(assign);
     }
     
