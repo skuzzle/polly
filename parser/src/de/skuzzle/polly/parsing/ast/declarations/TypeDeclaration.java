@@ -25,7 +25,7 @@ public class TypeDeclaration extends Declaration {
     public Type getType() {
         return this.type;
     }
-
+    
     
     
     @Override

@@ -17,47 +17,45 @@ public class Braced extends Expression {
 
     private static final long serialVersionUID = 1L;
     
-    private final Expression braced;
+    private Expression expression;
     
     
     
     public Braced(Expression braced) {
         super(braced.getPosition(), braced.getType());
-        this.braced = braced;
-    }
-    
-    
-    @Override
-    public Node getParent() {
-        return this.braced.getParent();
+        this.expression = braced;
     }
     
     
     
     @Override
-    public void setParent(Node parent) {
-        this.braced.setParent(parent);
+    public <T extends Node> void replaceChild(T current, T newChild) {
+        if (current == this.expression) {
+            this.expression = (Expression) newChild;
+        } else {
+            super.replaceChild(current, newChild);
+        }
     }
     
     
     
     @Override
     public Position getPosition() {
-        return this.braced.getPosition();
+        return this.expression.getPosition();
     }
     
     
     
     @Override
     public void setType(Type type) {
-        this.braced.setType(type);
+        this.expression.setType(type);
     }
     
     
     
     @Override
     public Type getType() {
-        return this.braced.getType();
+        return this.expression.getType();
     }
     
     
@@ -70,6 +68,6 @@ public class Braced extends Expression {
 
     
     public Expression getExpression() {
-        return this.braced;
+        return this.expression;
     }
 }

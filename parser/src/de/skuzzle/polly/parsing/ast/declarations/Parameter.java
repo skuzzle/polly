@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
@@ -38,8 +39,8 @@ public class Parameter extends Expression {
     }
     
     
-    private final ResolvableIdentifier name;
-    private final ResolvableIdentifier typeName;
+    private ResolvableIdentifier name;
+    private ResolvableIdentifier typeName;
     
     
     
@@ -72,6 +73,19 @@ public class Parameter extends Expression {
         super(position);
         this.typeName = typeName;
         this.name = name;
+    }
+    
+    
+    
+    @Override
+    public <T extends Node> void replaceChild(T current, T newChild) {
+        if (current == name) {
+            this.name = (ResolvableIdentifier) newChild;
+        } else if (current == this.typeName) {
+            this.typeName = (ResolvableIdentifier) newChild;
+        } else {
+            super.replaceChild(current, newChild);
+        }
     }
 
     

@@ -75,4 +75,11 @@ public abstract class Node implements Visitable<Visitor>, Serializable {
     public void setPosition(Position position) {
         this.position = position;
     }
+    
+    
+    
+    public <T extends Node> void replaceChild(T current, T newChild) {
+        throw new RuntimeException("No such child to replace: " + 
+            current + " @ node " + this);
+    }
 }

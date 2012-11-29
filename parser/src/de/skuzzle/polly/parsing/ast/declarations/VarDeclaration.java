@@ -1,6 +1,7 @@
 package de.skuzzle.polly.parsing.ast.declarations;
 
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
@@ -12,7 +13,7 @@ public class VarDeclaration extends Declaration {
 
     private static final long serialVersionUID = 1L;
     
-    private final Expression expression;
+    private Expression expression;
     private boolean operator;
     
     
@@ -52,9 +53,21 @@ public class VarDeclaration extends Declaration {
     
     
     @Override
+    public <T extends Node> void replaceChild(T current, T newChild) {
+        if (current == this.expression) {
+            this.expression = (Expression) newChild;
+        } else {
+            super.replaceChild(current, newChild);
+        }
+    }
+    
+    
+    
+    @Override
     public void visit(Visitor visitor) throws ASTTraversalException {
         visitor.visitVarDecl(this);
     }
+    
     
     
     @Override

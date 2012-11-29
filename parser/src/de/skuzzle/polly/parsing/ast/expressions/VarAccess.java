@@ -1,6 +1,7 @@
 package de.skuzzle.polly.parsing.ast.expressions;
 
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.parsing.types.Type;
@@ -10,7 +11,7 @@ public class VarAccess extends Expression {
 
     private static final long serialVersionUID = 1L;
     
-    private final ResolvableIdentifier identifier;
+    private ResolvableIdentifier identifier;
     private Type typeToResolve;
     
     
@@ -21,6 +22,17 @@ public class VarAccess extends Expression {
         }
         this.identifier = identifier;
         this.typeToResolve = Type.ANY;
+    }
+    
+    
+    
+    @Override
+    public <T extends Node> void replaceChild(T current, T newChild) {
+        if (current == this.identifier) {
+            this.identifier = (ResolvableIdentifier) newChild;
+        } else {
+            super.replaceChild(current, newChild);
+        }
     }
     
     

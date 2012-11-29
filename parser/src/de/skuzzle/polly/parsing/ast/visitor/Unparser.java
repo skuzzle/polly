@@ -21,8 +21,7 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.LiteralFormatter;
 import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
-import de.skuzzle.polly.tools.strings.IteratorPrinter;
-import de.skuzzle.polly.tools.strings.IteratorPrinter.StringProvider;
+
 
 
 public class Unparser extends DepthFirstVisitor {

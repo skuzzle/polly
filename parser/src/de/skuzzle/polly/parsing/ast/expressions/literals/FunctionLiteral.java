@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
@@ -18,7 +19,7 @@ public class FunctionLiteral extends Literal {
     private static final long serialVersionUID = 1L;
     
     private final ArrayList<Parameter> formal;
-    private final Expression expression;
+    private Expression expression;
     
     
     // semantical edge will be resolved during type resolval.
@@ -34,6 +35,23 @@ public class FunctionLiteral extends Literal {
         
         //Important: ANY type, otherwise call can not be resolved
         this.returnType = Type.ANY;  
+    }
+    
+    
+    
+    @Override
+    public <T extends Node> void replaceChild(T current, T newChild) {
+        if (current == this.expression) {
+            this.expression = (Expression) newChild;
+        } else {
+            for (int i = 0; i < this.formal.size(); ++i) {
+                if (this.formal.get(i) == current) {
+                    this.formal.set(i, (Parameter) newChild);
+                    return;
+                }
+            }
+            super.replaceChild(current, newChild);
+        }
     }
 
     

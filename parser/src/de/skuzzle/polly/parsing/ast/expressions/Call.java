@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
@@ -16,7 +17,7 @@ public class Call extends Expression {
     
     private static final long serialVersionUID = 1L;
     
-    private final Expression lhs;
+    private Expression lhs;
     private final List<Expression> parameters;
     
     
@@ -35,6 +36,22 @@ public class Call extends Expression {
         this.lhs = lhs;
     }
     
+    
+    
+    @Override
+    public <T extends Node> void replaceChild(T current, T newChild) {
+        if (current == this.lhs) {
+            this.lhs = (Expression) newChild;
+        } else {
+            for (int i = 0; i < this.parameters.size(); ++i) {
+                if (this.parameters.get(i) == current) {
+                    this.parameters.set(i, (Expression) newChild);
+                    return;
+                }
+            }
+            super.replaceChild(current, newChild);
+        }
+    }
     
     
     

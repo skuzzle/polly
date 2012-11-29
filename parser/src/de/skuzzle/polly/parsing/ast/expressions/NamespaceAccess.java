@@ -1,6 +1,7 @@
 package de.skuzzle.polly.parsing.ast.expressions;
 
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 
@@ -9,8 +10,8 @@ public class NamespaceAccess extends Expression {
 
     private static final long serialVersionUID = 1L;
     
-    private final Expression lhs;
-    private final Expression rhs;
+    private Expression lhs;
+    private Expression rhs;
     
     
     
@@ -32,6 +33,18 @@ public class NamespaceAccess extends Expression {
         return this.rhs;
     }
     
+    
+    
+    @Override
+    public <T extends Node> void replaceChild(T current, T newChild) {
+        if (current == this.lhs) {
+            this.lhs = (Expression) newChild;
+        } else if (current == this.rhs) {
+            this.rhs = (Expression) newChild;
+        } else {
+            super.replaceChild(current, newChild);
+        }
+    }
     
     
     @Override

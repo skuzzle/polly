@@ -4,7 +4,9 @@ import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.FunctionParameter;
 import de.skuzzle.polly.parsing.ast.declarations.ListParameter;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
+import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
+import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
@@ -37,7 +39,14 @@ public class ParentSetter extends DepthFirstVisitor {
     
     
     @Override
+    public void beforeBraced(Braced braced) throws ASTTraversalException {
+        braced.getExpression().setParent(braced);
+    }
+    
+    
+    @Override
     public void beforeCall(Call call) throws ASTTraversalException {
+        call.getLhs().setParent(call);
         call.getLhs().visit(this);
         for (final Expression p : call.getParameters()) {
             p.setParent(call);
@@ -103,5 +112,13 @@ public class ParentSetter extends DepthFirstVisitor {
     @Override
     public void beforeVarAccess(VarAccess access) throws ASTTraversalException {
         access.getIdentifier().setParent(access);
+    }
+    
+    
+    
+    @Override
+    public void beforeVarDecl(VarDeclaration decl) throws ASTTraversalException {
+        decl.getExpression().setParent(decl);
+        decl.getName().setParent(decl);
     }
 }

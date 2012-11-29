@@ -8,6 +8,7 @@ import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.ExecutionVisitor;
+import de.skuzzle.polly.parsing.ast.visitor.ParentSetter;
 import de.skuzzle.polly.parsing.ast.visitor.TypeResolver;
 import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
@@ -74,6 +75,9 @@ public class Evaluator {
             if (root == null) {
                 return;
             }
+            
+            final Visitor parentSetter = new ParentSetter();
+            root.visit(parentSetter);
             
             // resolve types
             final Visitor typeResolver = new TypeResolver(namespace);

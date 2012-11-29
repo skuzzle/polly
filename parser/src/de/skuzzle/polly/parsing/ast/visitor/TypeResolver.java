@@ -263,13 +263,11 @@ public class TypeResolver extends DepthFirstVisitor {
         assign.getExpression().visit(this);
         assign.setType(assign.getExpression().getType());
         
-        System.out.println(assign.getType());
         final VarDeclaration vd = new VarDeclaration(assign.getPosition(), 
             assign.getName(), assign.getExpression());
         
         // declarations are always stored in the root namespace!
         this.rootNs.declare(vd);
-        
         this.afterAssignment(assign);
     }
     
@@ -282,7 +280,6 @@ public class TypeResolver extends DepthFirstVisitor {
         this.visitCall(call);
         this.afterOperatorCall(call);
     }
-
     
     
     

@@ -24,7 +24,7 @@ public final class Root extends Node {
     private static final long serialVersionUID = 1L;
 
     private final ArrayList<Expression> expressions;
-    private final Identifier command;
+    private Identifier command;
     private List<Literal> results;
     
     
@@ -65,7 +65,24 @@ public final class Root extends Node {
     public Identifier getCommand() {
         return this.command;
     }
-
+    
+    
+    
+    @Override
+    public <T extends Node> void replaceChild(T current, T newChild) {
+        if (current == this.command) {
+            this.command = (Identifier) newChild;
+        } else {
+            for (int i = 0; i < this.expressions.size(); ++i) {
+                if (this.expressions.get(i) == current) {
+                    this.expressions.set(i, (Expression) newChild);
+                    return;
+                }
+            }
+            super.replaceChild(current, newChild);
+        }
+    }
+    
     
     
     @Override
@@ -92,7 +109,7 @@ public final class Root extends Node {
         final StringBuilder b = new StringBuilder();
         b.append(":");
         b.append(this.command);
-        if (!this.results.isEmpty()) {
+        if (this.results != null && !this.results.isEmpty()) {
             b.append(" ");
             IteratorPrinter.print(this.results, " ", 
                 new PrintWriter(new StringBuilderWriter(b)));
