@@ -436,9 +436,11 @@ public class Namespace {
         final Collection<Declaration> decls = decl.isGlobal() ? GLOBAL.decls : this.decls;
         // check if declaration exists in current namespace
         for (final Declaration d : decls) {
-            if (d.getName().equals(decl.getName()) && d.getType().check(decl.getType())) {
+            if (d.getName().equals(decl.getName())) {// && d.getType().check(decl.getType())) {
+                if (!(d.getType() instanceof FunctionType) && !(decl.getType() instanceof FunctionType) || d.getType().check(decl.getType())) {
                 throw new ASTTraversalException(decl.getPosition(), 
                     "Doppelte Deklaration von " + decl.getName());
+                }
             }
         }
         decls.add(decl);

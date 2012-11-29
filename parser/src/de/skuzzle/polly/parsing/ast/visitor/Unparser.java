@@ -21,6 +21,8 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.LiteralFormatter;
 import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
+import de.skuzzle.polly.tools.strings.IteratorPrinter;
+import de.skuzzle.polly.tools.strings.IteratorPrinter.StringProvider;
 
 
 public class Unparser extends DepthFirstVisitor {
@@ -58,12 +60,24 @@ public class Unparser extends DepthFirstVisitor {
     
     
     @Override
-    public void beforeRoot(Root root) throws ASTTraversalException {
+    public void visitRoot(Root root) throws ASTTraversalException {
+        this.beforeRoot(root);
         this.out.print(":");
         this.out.print(root.getCommand());
+        
         if (!root.getExpressions().isEmpty()) {
             this.out.print(" ");
+            final Iterator<Expression> it = root.getExpressions().iterator();
+            while (it.hasNext()) {
+                it.next().visit(this);
+                if (it.hasNext()) {
+                    this.out.print(" ");
+                }
+            }
         }
+        
+
+        this.afterRoot(root);
     }
     
     

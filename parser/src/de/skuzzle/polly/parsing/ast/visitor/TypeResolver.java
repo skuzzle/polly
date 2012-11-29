@@ -263,6 +263,7 @@ public class TypeResolver extends DepthFirstVisitor {
         assign.getExpression().visit(this);
         assign.setType(assign.getExpression().getType());
         
+        System.out.println(assign.getType());
         final VarDeclaration vd = new VarDeclaration(assign.getPosition(), 
             assign.getName(), assign.getExpression());
         

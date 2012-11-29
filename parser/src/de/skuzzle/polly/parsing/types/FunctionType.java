@@ -1,9 +1,11 @@
 package de.skuzzle.polly.parsing.types;
 
+import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Iterator;
 
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
+import de.skuzzle.polly.tools.streams.StringBuilderWriter;
 import de.skuzzle.polly.tools.strings.IteratorPrinter;
 
 
@@ -80,7 +82,8 @@ public class FunctionType extends Type {
             b.append(this.returnType);
             b.append(":");
         }
-        IteratorPrinter.print(this.parameters.iterator(), " ", b);
+        IteratorPrinter.print(this.parameters, " ", 
+            new PrintWriter(new StringBuilderWriter(b)));
         b.append(")");
         return b.toString();
     }

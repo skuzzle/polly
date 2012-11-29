@@ -40,45 +40,25 @@ public class ExpInputParser {
     
     
     
-    public ExpInputParser() {
+    public ExpInputParser(String input) throws UnsupportedEncodingException {
+        this.scanner = new InputScanner(input);
         this.operators = new PrecedenceTable();
     }
     
     
     
-    public Root parse(String input, String encoding) 
-            throws ParseException, UnsupportedEncodingException {
-        InputScanner inp = new InputScanner(input, encoding);
-        
-        return this.parse(inp);
+    
+    public ExpInputParser(String input, String encoding) 
+            throws UnsupportedEncodingException {
+        this.scanner = new InputScanner(input, encoding);
+        this.operators = new PrecedenceTable();
     }
     
     
     
-    public Root tryParse(String input, String encoding) 
-            throws ParseException, UnsupportedEncodingException {
-        
-        return this.tryParse(new InputScanner(input, encoding));
-    }
-    
-    
-    
-    public Root parse(String input) throws ParseException {
+    public Root tryParse() {
         try {
-            return this.parse(input, "ISO-8859-1");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-    
-    
-    
-    public Root tryParse(String input) {
-        try {
-            return this.tryParse(input, "ISO-8859-1");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            return this.parse();
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -87,20 +67,8 @@ public class ExpInputParser {
     
     
     
-    protected Root parse(InputScanner scanner) 
-            throws ParseException {
-        this.scanner = scanner;
+    protected Root parse() throws ParseException {
         return this.parseRoot();
-    }
-    
-    
-    
-    protected Root tryParse(InputScanner scanner) {
-        try {
-            return this.parse(scanner);
-        } catch (ParseException e) {
-            return null;
-        }
     }
 
     

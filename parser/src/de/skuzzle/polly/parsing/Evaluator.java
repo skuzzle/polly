@@ -28,7 +28,7 @@ public class Evaluator {
     
     // TEST:
     public static void main(String[] args) throws UnsupportedEncodingException {
-        String testMe = ":foo ((\\(Num x,\\(Num Num Num) y:y(x,10))->a)(5,\\(Num x, Num y : x * y))+a(17,\\(Num x, Num y:x+y)))->a";
+        String testMe = ":foo ((\\(Num x,\\(Num Num Num) y:y(x,10))->a)(5,\\(Num x, Num y : x * y))+a(17,\\(Num x, Num y:x+y)))->a \\(Num x, Num y: x-y)->a a";
         
         final Evaluator eval = new Evaluator(testMe, "ISO-8859-1");
         File decls = new File("decls");
@@ -68,8 +68,8 @@ public class Evaluator {
     
     public void evaluate(Namespace namespace) throws UnsupportedEncodingException {
         try {
-            final ExpInputParser parser = new ExpInputParser();
-            final Root root = parser.parse(this.input, this.encoding);
+            final ExpInputParser parser = new ExpInputParser(this.input, this.encoding);
+            final Root root = parser.parse();
             
             if (root == null) {
                 return;
