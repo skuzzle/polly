@@ -67,7 +67,8 @@ public class DailyGreeter {
             }
             
             for (String greeting : GREETINGS) {
-                if (msg.contains(greeting.toLowerCase())) {
+            	String incomingGreet = greeting.toLowerCase() + " " + nick;
+                if (msg.contains(incomingGreet)) {
                     greeted.add(e.getUser());
                     String greet = greeting + " " + e.getUser().getNickName();
                     e.getSource().sendMessage(e.getChannel(), greet, this);
