@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -435,11 +436,16 @@ public class Namespace {
     public void declare(Declaration decl) throws ASTTraversalException {
         final Collection<Declaration> decls = decl.isGlobal() ? GLOBAL.decls : this.decls;
         // check if declaration exists in current namespace
-        for (final Declaration d : decls) {
+        final Iterator<Declaration> it = decls.iterator();
+        while (it.hasNext()) {
+            final Declaration d = it.next();
+            
+            // TODO: on exact same signature, replace existing with new
             if (d.getName().equals(decl.getName())) {// && d.getType().check(decl.getType())) {
                 if (!(d.getType() instanceof FunctionType) && !(decl.getType() instanceof FunctionType) || d.getType().check(decl.getType())) {
-                throw new ASTTraversalException(decl.getPosition(), 
-                    "Doppelte Deklaration von " + decl.getName());
+                /*throw new ASTTraversalException(decl.getPosition(), 
+                    "Doppelte Deklaration von " + decl.getName());*/
+                    it.remove();
                 }
             }
         }

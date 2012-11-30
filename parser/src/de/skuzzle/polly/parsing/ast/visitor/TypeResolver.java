@@ -33,12 +33,15 @@ import de.skuzzle.polly.parsing.util.Stack;
 
 public class TypeResolver extends DepthFirstVisitor {
     
+    
+    
     /**
      * Expression that does nothing except to represent the type that has been set in the
      * Constructor.
      * 
      * It will be used to represent formal parameter types. Thus, if this instance 
-     * represents a Function, it must pop one signature off the stack when being visited.
+     * represents a Function, it must pop one signature off the stack (if one exists) 
+     * when being visited.
      * 
      * @author Simon Taddiken
      */
@@ -51,8 +54,8 @@ public class TypeResolver extends DepthFirstVisitor {
         
         @Override
         public void visit(Visitor visitor) throws ASTTraversalException {
-            if (this.getType() instanceof FunctionType) {
-                System.out.println("hit mee");
+            if (this.getType() instanceof FunctionType && 
+                    !TypeResolver.this.signatureStack.isEmpty()) {
                 TypeResolver.this.signatureStack.pop();
             }
         }
@@ -280,7 +283,7 @@ public class TypeResolver extends DepthFirstVisitor {
         // exchange assignment with its sole expression
         // this needs to be done in case that further assignments are following. They 
         // would then contain this assignment too. 
-        assign.getParent().replaceChild(assign, assign.getExpression());
+        //assign.getParent().replaceChild(assign, assign.getExpression());
         this.afterAssignment(assign);
     }
     

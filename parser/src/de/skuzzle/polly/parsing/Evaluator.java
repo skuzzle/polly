@@ -29,7 +29,7 @@ public class Evaluator {
     
     // TEST:
     public static void main(String[] args) throws UnsupportedEncodingException {
-        String testMe = ":foo ((\\(Num x,\\(Num Num Num) y:y(x,10))->a)(5,\\(Num x, Num y : x * y))+a(17,\\(Num x, Num y:x+y)))->a \\(Num x, \\(Num Num Num) v: v(x,17))->a a";       
+        String testMe = ":foo ((\\(Num x,\\(Num Num Num) y:y(x,10))->a)(5,\\(Num x, Num y : x * y))+a(17,\\(Num x, Num y:x+y)))->a \\(Num x, \\(Num Num Num) v: v(x,5))->a a";       
         final Evaluator eval = new Evaluator(testMe, "ISO-8859-1");
         File decls = new File("decls");
         decls.mkdirs();
