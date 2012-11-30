@@ -37,9 +37,12 @@ public class TypeResolver extends DepthFirstVisitor {
      * Expression that does nothing except to represent the type that has been set in the
      * Constructor.
      * 
+     * It will be used to represent formal parameter types. Thus, if this instance 
+     * represents a Function, it must pop one signature off the stack when being visited.
+     * 
      * @author Simon Taddiken
      */
-    private final static class EmptyExpression extends Expression {
+    private final class EmptyExpression extends Expression {
         private static final long serialVersionUID = 1L;
 
         public EmptyExpression(Type type) {
@@ -47,7 +50,12 @@ public class TypeResolver extends DepthFirstVisitor {
         }
         
         @Override
-        public void visit(Visitor visitor) throws ASTTraversalException {}
+        public void visit(Visitor visitor) throws ASTTraversalException {
+            if (this.getType() instanceof FunctionType) {
+                System.out.println("hit mee");
+                TypeResolver.this.signatureStack.pop();
+            }
+        }
     }
     
     
@@ -268,6 +276,11 @@ public class TypeResolver extends DepthFirstVisitor {
         
         // declarations are always stored in the root namespace!
         this.rootNs.declare(vd);
+        
+        // exchange assignment with its sole expression
+        // this needs to be done in case that further assignments are following. They 
+        // would then contain this assignment too. 
+        assign.getParent().replaceChild(assign, assign.getExpression());
         this.afterAssignment(assign);
     }
     
