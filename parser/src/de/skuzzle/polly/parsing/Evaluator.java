@@ -1,18 +1,18 @@
 package de.skuzzle.polly.parsing;
 
 import java.io.File;
-import java.io.PrintWriter;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.parsing.ast.visitor.ASTVisualizer;
 import de.skuzzle.polly.parsing.ast.visitor.ExecutionVisitor;
 import de.skuzzle.polly.parsing.ast.visitor.ParentSetter;
 import de.skuzzle.polly.parsing.ast.visitor.TypeResolver;
 import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
-import de.skuzzle.polly.tools.streams.StringBuilderWriter;
 
 
 /**
@@ -28,8 +28,9 @@ import de.skuzzle.polly.tools.streams.StringBuilderWriter;
 public class Evaluator {
     
     // TEST:
-    public static void main(String[] args) throws UnsupportedEncodingException {
-        String testMe = ":foo ((\\(Num x,\\(Num Num Num) y:y(x,10))->a)(5,\\(Num x, Num y : x * y))+a(17,\\(Num x, Num y:x+y)))->a \\(Num x, \\(Num Num Num) v: v(x,5))->a a";       
+    public static void main(String[] args) throws IOException {
+        String testMe = ":foo ((\\(Num x,\\(Num Num Num) y:y(x,10))->a)(5,\\(Num x, Num y : x * y))+a(17,\\(Num x, Num y:x+y)))->a \\(Num x, \\(Num Num Num) v: v(x,5))->a a";
+        //testMe = ":foo 2->a a+3->a";
         final Evaluator eval = new Evaluator(testMe, "ISO-8859-1");
         File decls = new File("decls");
         decls.mkdirs();
@@ -77,7 +78,7 @@ public class Evaluator {
     
     
     
-    public void evaluate(Namespace namespace) throws UnsupportedEncodingException {
+    public void evaluate(Namespace namespace) throws IOException {
         try {
             final ExpInputParser parser = new ExpInputParser(this.input, this.encoding);
             final Root root = parser.parse();
@@ -93,6 +94,9 @@ public class Evaluator {
             // resolve types
             final Visitor typeResolver = new TypeResolver(namespace);
             root.visit(typeResolver);
+            
+            ASTVisualizer ast = new ASTVisualizer();
+            ast.toFile("datAST.dot", root);
             
             final Visitor executor = new ExecutionVisitor(namespace);
             root.visit(executor);
@@ -127,15 +131,6 @@ public class Evaluator {
     
     
     public String unparse() {
-        final Root r = this.getRoot();
-        final StringBuilder b = new StringBuilder();
-        final Visitor unparser = new Unparser(
-            new PrintWriter(new StringBuilderWriter(b)));
-        try {
-            r.visit(unparser);
-            return b.toString();
-        } catch (ASTTraversalException e) {
-            throw new RuntimeException(e);
-        }
+        return Unparser.toString(this.getRoot());
     }
 }

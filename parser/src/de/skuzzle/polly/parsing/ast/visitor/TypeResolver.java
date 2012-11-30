@@ -45,7 +45,7 @@ public class TypeResolver extends DepthFirstVisitor {
      * 
      * @author Simon Taddiken
      */
-    private final class EmptyExpression extends Expression {
+    private class EmptyExpression extends Expression {
         private static final long serialVersionUID = 1L;
 
         public EmptyExpression(Type type) {
@@ -72,8 +72,8 @@ public class TypeResolver extends DepthFirstVisitor {
     
     public TypeResolver(Namespace namespace) {
         // create temporary namespace for executing user
-        this.nspace = namespace;
-        this.rootNs = nspace;
+        this.rootNs = namespace.enter();
+        this.nspace = this.rootNs;
         this.checked = new HashSet<Node>();
         this.signatureStack = new LinkedStack<FunctionType>();
     }
@@ -274,8 +274,18 @@ public class TypeResolver extends DepthFirstVisitor {
         assign.getExpression().visit(this);
         assign.setType(assign.getExpression().getType());
         
+        final EmptyExpression exp = new EmptyExpression(
+                assign.getExpression().getType()) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void visit(Visitor visitor) throws ASTTraversalException {
+                //super.visit(visitor);
+            }
+        };
+        
         final VarDeclaration vd = new VarDeclaration(assign.getPosition(), 
-            assign.getName(), assign.getExpression());
+            assign.getName(), exp);
         
         // declarations are always stored in the root namespace!
         this.rootNs.declare(vd);

@@ -3,6 +3,7 @@ package de.skuzzle.polly.parsing.ast.visitor;
 import java.io.PrintWriter;
 import java.util.Iterator;
 
+import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.FunctionParameter;
 import de.skuzzle.polly.parsing.ast.declarations.ListParameter;
@@ -21,11 +22,25 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.LiteralFormatter;
 import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
+import de.skuzzle.polly.tools.streams.StringBuilderWriter;
 
 
 
 public class Unparser extends DepthFirstVisitor {
+    
+    public static String toString(Node node) {
+        final StringBuilderWriter sbw = new StringBuilderWriter();
+        final Unparser unp = new Unparser(new PrintWriter(sbw));
+        try {
+            node.visit(unp);
+        } catch (ASTTraversalException e) {
+            e.printStackTrace();
+        }
+        return sbw.getBuilder().toString();
+    }
 
+    
+    
     private final PrintWriter out;
     private final LiteralFormatter literalFormatter;
     

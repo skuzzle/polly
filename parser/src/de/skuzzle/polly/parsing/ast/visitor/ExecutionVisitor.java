@@ -28,11 +28,12 @@ public class ExecutionVisitor extends DepthFirstVisitor {
 
     private final Stack<Literal> stack;
     private Namespace nspace;
-    
+    private final Namespace rootNs;
     
     public ExecutionVisitor(Namespace namespace) {
         this.stack = new LinkedStack<Literal>();
         this.nspace = namespace;
+        this.rootNs = namespace;
     }
     
     
@@ -169,6 +170,10 @@ public class ExecutionVisitor extends DepthFirstVisitor {
         
         // result of assignment is the result of the assigned expression
         assign.getExpression().visit(this);
+        
+        final VarDeclaration vd = new VarDeclaration(assign.getName().getPosition(), 
+                assign.getName(), assign.getExpression());
+        this.rootNs.declare(vd);
         
         this.afterAssignment(assign);
     }
