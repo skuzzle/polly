@@ -18,6 +18,7 @@ literal     -> ID                                    // VarAccess
              | '(' expr ')'                          // braced expression
              | '\(' parameters ':' expr ')'          // lambda function literal
              | '{' exprList '}'                      // concrete list of expressions
+             | IF expr ':' expr expr                 // conditional operator
              | TRUE | FALSE                          // boolean literal
              | CHANNEL                               // channel literal
              | USER                                  // user literal

@@ -2,7 +2,6 @@ package de.skuzzle.polly.parsing;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
@@ -30,7 +29,7 @@ public class Evaluator {
     // TEST:
     public static void main(String[] args) throws IOException {
         String testMe = ":foo ((\\(Num x,\\(Num Num Num) y:y(x,10))->a)(5,\\(Num x, Num y : x * y))+a(17,\\(Num x, Num y:x+y)))->a \\(Num x, \\(Num Num Num) v: v(x,5))->a a";
-        //testMe = ":foo 2->a a+3->a";
+        testMe = ":foo if 1<2 : 5 6";
         final Evaluator eval = new Evaluator(testMe, "ISO-8859-1");
         File decls = new File("decls");
         decls.mkdirs();
@@ -95,6 +94,7 @@ public class Evaluator {
             final Visitor typeResolver = new TypeResolver(namespace);
             root.visit(typeResolver);
             
+            // TODO: remove AST creation here
             ASTVisualizer ast = new ASTVisualizer();
             ast.toFile("datAST.dot", root);
             

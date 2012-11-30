@@ -66,7 +66,8 @@ public abstract class Operator extends Hardcoded {
         RADIX("#"), 
         RIGHT_SHIFT(">>"), 
         URIGHT_SHIFT(">>>"), 
-        WAVE("~");
+        WAVE("~"), 
+        IF("if");
         
         private final String id;
         
@@ -120,6 +121,7 @@ public abstract class Operator extends Hardcoded {
             case URIGHT_SHIFT:return OpType.URIGHT_SHIFT;
             case WAVE:        return OpType.WAVE;
             case OPENSQBR:    return OpType.INDEX;
+            case IF:          return OpType.IF;
             default:
                 throw new IllegalArgumentException("not a valid operator token: " + 
                     token);

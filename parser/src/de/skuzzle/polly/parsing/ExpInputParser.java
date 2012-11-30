@@ -646,6 +646,23 @@ public class ExpInputParser {
             list.setPosition(this.scanner.spanFrom(la));
             return list;
             
+        case IF:
+            this.scanner.consume();
+            this.allowSingleWhiteSpace();
+            
+            final Expression condition = this.parseExpr();
+            this.allowSingleWhiteSpace();
+            
+            this.expect(TokenType.COLON);
+            this.allowSingleWhiteSpace();
+            
+            final Expression second = this.parseExpr();
+            this.expect(TokenType.SEPERATOR);
+            final Expression third = this.parseExpr();
+            
+            return OperatorCall.ternary(this.scanner.spanFrom(la), OpType.IF, 
+                condition, second, third);
+            
         case TRUE:
             this.scanner.consume();
             return new BooleanLiteral(la.getPosition(), true);
