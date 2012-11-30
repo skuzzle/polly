@@ -180,7 +180,6 @@ public class Unparser extends DepthFirstVisitor {
         this.beforeOperatorCall(call);
         final Iterator<Expression> it = call.getParameters().iterator();
         
-        // HACK: add braces to ensure correct precedence
         if (call.getParameters().size() == 1) {
             if (call.isPostfix()) {
                 it.next().visit(this);
@@ -199,6 +198,15 @@ public class Unparser extends DepthFirstVisitor {
             } else {
                 it.next().visit(this);
                 this.out.print(call.getOperator().getId());
+                it.next().visit(this);
+            }
+        } else if (call.getParameters().size() == 3) {
+            if (call.getOperator() == OpType.IF) {
+                this.out.print("if ");
+                it.next().visit(this);
+                this.out.print(" : ");
+                it.next().visit(this);
+                this.out.print(" ");
                 it.next().visit(this);
             }
         }
