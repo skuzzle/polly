@@ -1,6 +1,7 @@
 package de.skuzzle.polly.parsing.ast.expressions.literals;
 
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -9,9 +10,11 @@ import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.parsing.types.FunctionType;
 import de.skuzzle.polly.parsing.types.Type;
+import de.skuzzle.polly.tools.streams.StringBuilderWriter;
 
 
 public class FunctionLiteral extends Literal {
@@ -122,5 +125,19 @@ public class FunctionLiteral extends Literal {
     @Override
     public void visit(Visitor visitor) throws ASTTraversalException {
         visitor.visitFunctionLiteral(this);
+    }
+    
+    
+    
+    @Override
+    public String toString() {
+        final StringBuilderWriter sbw = new StringBuilderWriter();
+        final Unparser unp = new Unparser(new PrintWriter(sbw));
+        try {
+            this.visit(unp);
+        } catch (ASTTraversalException e) {
+            e.printStackTrace();
+        }
+        return sbw.getBuilder().toString();
     }
 }
