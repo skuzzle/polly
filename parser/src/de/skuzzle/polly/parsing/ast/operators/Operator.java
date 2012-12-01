@@ -8,8 +8,11 @@ import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.FunctionParameter;
 import de.skuzzle.polly.parsing.ast.declarations.ListParameter;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
+import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.expressions.Hardcoded;
+import de.skuzzle.polly.parsing.ast.expressions.Identifier;
 import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
+import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.types.FunctionType;
 import de.skuzzle.polly.parsing.types.ListType;
 import de.skuzzle.polly.parsing.types.Type;
@@ -161,11 +164,27 @@ public abstract class Operator extends Hardcoded {
     
     
     /**
+     * Creates a {@link FunctionLiteral} which represents this operator. Its parameters 
+     * musst correspond to the operators operand types.
+     * 
+     * @return A new FunctionLiteral.
+     */
+    protected abstract FunctionLiteral createFunction();
+    
+    
+    
+    /**
      * Creates a proper declaration for this operator.
      * 
      * @return A declaration.
      */
-    public abstract Declaration createDeclaration();
+    public Declaration createDeclaration() {
+        final FunctionLiteral func = this.createFunction();
+        final Identifier fakeId = new Identifier(Position.EMPTY, this.getOp().getId());
+        final VarDeclaration vd = new VarDeclaration(func.getPosition(), fakeId, func);
+        vd.setOperator(true);
+        return vd;
+    }
     
     
     

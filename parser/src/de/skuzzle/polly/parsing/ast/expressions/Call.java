@@ -97,4 +97,12 @@ public class Call extends Expression {
     public void visit(Visitor visitor) throws ASTTraversalException {
         visitor.visitCall(this);
     }
+    
+    
+    
+    @Override
+    public String toString() {
+        return "[Call: " + this.parameters.size() + " params, type: " + 
+            this.getType() + "]";
+    }
 }

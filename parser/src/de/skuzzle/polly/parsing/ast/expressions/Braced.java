@@ -70,4 +70,11 @@ public class Braced extends Expression {
     public Expression getExpression() {
         return this.expression;
     }
+    
+    
+    
+    @Override
+    public String toString() {
+        return "(" + this.expression.toString() + ")";
+    }
 }

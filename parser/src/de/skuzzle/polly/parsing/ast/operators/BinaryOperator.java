@@ -4,12 +4,9 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import de.skuzzle.polly.parsing.Position;
-import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
-import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
-import de.skuzzle.polly.parsing.ast.expressions.Identifier;
 import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
@@ -60,12 +57,7 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
     
     
     
-    /**
-     * Creates a {@link FunctionLiteral} which represents this operator. It will have two
-     * formal parameters corresponding to this operators operand types.
-     * 
-     * @return A new FunctionLiteral.
-     */
+    @Override
     protected FunctionLiteral createFunction() {
         Collection<Parameter> p = Arrays.asList(new Parameter[] {
             this.typeToParameter(this.left, LEFT_PARAM_NAME),
@@ -79,17 +71,6 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
         func.setReturnType(this.getType());
         
         return func;
-    }
-    
-    
-    
-    @Override
-    public Declaration createDeclaration() {
-        final FunctionLiteral func = this.createFunction();
-        final Identifier fakeId = new Identifier(Position.EMPTY, this.getOp().getId());
-        final VarDeclaration vd = new VarDeclaration(func.getPosition(), fakeId, func);
-        vd.setOperator(true);
-        return vd;
     }
     
     

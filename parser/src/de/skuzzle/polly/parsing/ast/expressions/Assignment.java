@@ -67,4 +67,11 @@ public class Assignment extends Expression {
     public void visit(Visitor visitor) throws ASTTraversalException {
         visitor.visitAssignment(this);
     }
+    
+    
+    
+    @Override
+    public String toString() {
+        return "[Assignment to: " + this.getName() + ", type: " + this.getType() + "]";
+    }
 }

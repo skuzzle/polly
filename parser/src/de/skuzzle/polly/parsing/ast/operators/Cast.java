@@ -60,9 +60,9 @@ public class Cast extends Operator {
     }
 
 
-
+    
     @Override
-    public Declaration createDeclaration() {
+    protected FunctionLiteral createFunction() {
         // create parameter that accepts any expression (Type.ANY)
         final Collection<Parameter> p = Arrays.asList(
             new Parameter[] { new Parameter(Position.EMPTY, PARAM_NAME, Type.ANY) });
@@ -70,7 +70,14 @@ public class Cast extends Operator {
         final FunctionLiteral func = new FunctionLiteral(Position.EMPTY, p, this);
         func.setType(new FunctionType(this.getType(), Parameter.asType(p)));
         func.setReturnType(this.getType());
-        
+        return func;
+    }
+    
+    
+
+    @Override
+    public Declaration createDeclaration() {
+        final FunctionLiteral func = this.createFunction();
         final VarDeclaration vd = new VarDeclaration(
             func.getPosition(), this.getType().getTypeName(), func);
         return vd;

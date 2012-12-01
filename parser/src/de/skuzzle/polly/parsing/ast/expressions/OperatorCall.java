@@ -11,7 +11,8 @@ import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 
 
 /**
- * Represents a call of an operator.
+ * Represents a call of an operator. OperatorCalls can be created using one of the static 
+ * factory methods.
  *  
  * @author Simon Taddiken
  */
@@ -109,6 +110,12 @@ public class OperatorCall extends Call {
     
     
     
+    /**
+     * For unary operators, returns whether it is a postix or prefix op. For other 
+     * operators, the result is undefined but likely to be <code>false</code>.
+     * 
+     * @return Whether this is a postfix operator.
+     */
     public boolean isPostfix() {
         return this.postfix;
     }
@@ -118,5 +125,13 @@ public class OperatorCall extends Call {
     @Override
     public void visit(Visitor visitor) throws ASTTraversalException {
         visitor.visitOperatorCall(this);
+    }
+    
+    
+    
+    @Override
+    public String toString() {
+        return "[OpCall: " + this.operator.getId() + 
+            ", type:" + this.getType() + "]";
     }
 }
