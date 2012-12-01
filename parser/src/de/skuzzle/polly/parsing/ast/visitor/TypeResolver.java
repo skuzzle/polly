@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.declarations.FunctionParameter;
 import de.skuzzle.polly.parsing.ast.declarations.ListParameter;
@@ -16,6 +15,7 @@ import de.skuzzle.polly.parsing.ast.declarations.TypeDeclaration;
 import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
+import de.skuzzle.polly.parsing.ast.expressions.Empty;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.Hardcoded;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
@@ -35,34 +35,6 @@ public class TypeResolver extends DepthFirstVisitor {
     
     
     
-    /**
-     * Expression that does nothing except to represent the type that has been set in the
-     * Constructor.
-     * 
-     * It will be used to represent formal parameter types. Thus, if this instance 
-     * represents a Function, it must pop one signature off the stack (if one exists) 
-     * when being visited.
-     * 
-     * @author Simon Taddiken
-     */
-    private class EmptyExpression extends Expression {
-        private static final long serialVersionUID = 1L;
-
-        public EmptyExpression(Type type) {
-            super(Position.EMPTY, type);
-        }
-        
-        @Override
-        public void visit(Visitor visitor) throws ASTTraversalException {
-            if (this.getType() instanceof FunctionType && 
-                    !TypeResolver.this.signatureStack.isEmpty()) {
-                TypeResolver.this.signatureStack.pop();
-            }
-        }
-    }
-    
-    
-
     private Namespace nspace;
     private final Namespace rootNs;
     private final Set<Node> checked;
@@ -213,7 +185,7 @@ public class TypeResolver extends DepthFirstVisitor {
             
             final VarDeclaration vd = new VarDeclaration(
                 p.getPosition(), p.getName(), 
-                new EmptyExpression(type));
+                new Empty(type, this.signatureStack));
             
             this.nspace.declare(vd);
         }
@@ -274,8 +246,8 @@ public class TypeResolver extends DepthFirstVisitor {
         assign.getExpression().visit(this);
         assign.setType(assign.getExpression().getType());
         
-        final EmptyExpression exp = new EmptyExpression(
-                assign.getExpression().getType()) {
+        final Empty exp = new Empty(
+                assign.getExpression().getType(), this.signatureStack) {
             private static final long serialVersionUID = 1L;
 
             @Override

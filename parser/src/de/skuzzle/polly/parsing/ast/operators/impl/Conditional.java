@@ -27,7 +27,7 @@ public class Conditional extends TernaryOperator<BooleanLiteral, Literal, Litera
 
 
     public Conditional(OpType id) {
-        super(id, Type.UNKNOWN, Type.BOOLEAN, Type.ANY, Type.ANY);
+        super(id, Type.ANY, Type.BOOLEAN, Type.ANY, Type.ANY);
     }
 
     
@@ -45,9 +45,9 @@ public class Conditional extends TernaryOperator<BooleanLiteral, Literal, Litera
     protected void resolve(Expression first, Expression second, Expression third,
             Namespace ns, Visitor typeResolver) throws ASTTraversalException {
         
-        if (second.getType().check(third.getType())) {
+        if (!second.getType().check(third.getType())) {
             throw new ASTTraversalException(third.getPosition(), 
-                "Operanden müssen den selben Typ haben.");
+                "Operanden müssen den selben Typ haben");
         }
         this.setType(second.getType());
     }

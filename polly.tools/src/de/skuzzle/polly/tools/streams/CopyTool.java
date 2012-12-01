@@ -23,7 +23,7 @@ public final class CopyTool {
             return (T) new ObjectInputStream(
                     new FastByteArrayInputStream(buffer)).readObject();
         } catch (Exception e) {
-            throw new RuntimeException("clone fail", e);
+            throw new RuntimeException("clone of object " + root + " failed", e);
         }
     }
     
