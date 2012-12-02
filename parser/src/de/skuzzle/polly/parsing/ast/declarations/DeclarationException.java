@@ -23,6 +23,10 @@ public class DeclarationException extends ASTTraversalException {
         this.similar = similar;
         
         final StringBuilder b = new StringBuilder();
+        if (similar.isEmpty()) {
+            this.message = message;
+            return;
+        }
         b.append(message);
         b.append(" Meintest du vielleicht: ");
         int max = Math.min(MAX_SUGGESTIONS, similar.size());

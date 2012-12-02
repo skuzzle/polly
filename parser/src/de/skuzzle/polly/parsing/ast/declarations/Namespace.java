@@ -449,16 +449,35 @@ public class Namespace {
         while (it.hasNext()) {
             final Declaration d = it.next();
             
-            // TODO: on exact same signature, replace existing with new
             if (d.getName().equals(decl.getName())) {// && d.getType().check(decl.getType())) {
                 if (!(d.getType() instanceof FunctionType) && !(decl.getType() instanceof FunctionType) || d.getType().check(decl.getType())) {
-                /*throw new ASTTraversalException(decl.getPosition(), 
-                    "Doppelte Deklaration von " + decl.getName());*/
                     it.remove();
                 }
             }
         }
         decls.add(decl);
+    }
+    
+    
+    
+    /**
+     * Removes all declarations in this namespace with the given name.
+     * 
+     * @param id Name of the declaration to delete.
+     * @return How many declarations have been removed.
+     */
+    public int delete(Identifier id) {
+        final Iterator<Declaration> it = decls.iterator();
+        int i = 0;
+        while (it.hasNext()) {
+            final Declaration d = it.next();
+            
+            if (d.getName().equals(id)) {
+                it.remove();
+                ++i;
+            }
+        }
+        return i;
     }
     
     

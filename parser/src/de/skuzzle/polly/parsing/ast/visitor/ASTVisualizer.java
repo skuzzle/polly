@@ -8,10 +8,13 @@ import java.util.Stack;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.Root;
+import de.skuzzle.polly.parsing.ast.declarations.FunctionParameter;
+import de.skuzzle.polly.parsing.ast.declarations.ListParameter;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
 import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
+import de.skuzzle.polly.parsing.ast.expressions.Delete;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.Hardcoded;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
@@ -223,7 +226,33 @@ public class ASTVisualizer extends DepthFirstVisitor {
     
     @Override
     public void beforeParameter(Parameter param) throws ASTTraversalException {
-        System.out.println("does this even happen?");
+        this.printNode(param.getName().getId(), "", new Expression(Position.EMPTY) {
+            private static final long serialVersionUID = 1L;
+            @Override
+            public void visit(Visitor visitor) throws ASTTraversalException { }
+        });
+    }
+    
+    
+    
+    @Override
+    public void beforeListParameter(ListParameter param) throws ASTTraversalException {
+        this.beforeParameter(param);
+    }
+    
+    
+    
+    @Override
+    public void beforeFunctionParameter(FunctionParameter param)
+            throws ASTTraversalException {
+        this.beforeParameter(param);
+    }
+    
+    
+    
+    @Override
+    public void beforeDelete(Delete delete) throws ASTTraversalException {
+        this.printNode("Delete", "", delete);
     }
     
     
@@ -348,6 +377,27 @@ public class ASTVisualizer extends DepthFirstVisitor {
 
     @Override
     public void afterVarDecl(VarDeclaration decl) throws ASTTraversalException {
+        this.pop();
+    }
+    
+    
+    
+    @Override
+    public void afterDelete(Delete delete) throws ASTTraversalException {
+        this.pop();
+    }
+    
+    
+    @Override
+    public void afterListParameter(ListParameter param) throws ASTTraversalException {
+        this.pop();
+    }
+    
+    
+    
+    @Override
+    public void afterFunctionParameter(FunctionParameter param)
+            throws ASTTraversalException {
         this.pop();
     }
 }

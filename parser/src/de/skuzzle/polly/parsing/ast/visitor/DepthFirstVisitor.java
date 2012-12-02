@@ -6,6 +6,7 @@ import de.skuzzle.polly.parsing.ast.declarations.ListParameter;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
 import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
+import de.skuzzle.polly.parsing.ast.expressions.Delete;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Hardcoded;
@@ -347,8 +348,31 @@ public class DepthFirstVisitor implements Visitor {
     
     @Override
     public void visitBraced(Braced braced) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
         this.beforeBraced(braced);
         braced.getExpression().visit(this);
         this.afterBraced(braced);
+    }
+    
+    
+    
+    @Override
+    public void beforeDelete(Delete delete) throws ASTTraversalException {}
+    
+    @Override
+    public void afterDelete(Delete delete) throws ASTTraversalException {}
+    
+    @Override
+    public void visitDelete(Delete delete) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        this.beforeDelete(delete);
+        for (final Identifier id : delete.getIdentifiers()) {
+            id.visit(this);
+        }
+        this.afterDelete(delete);
     }
 }

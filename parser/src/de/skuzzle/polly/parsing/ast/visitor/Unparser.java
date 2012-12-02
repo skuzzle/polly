@@ -11,6 +11,7 @@ import de.skuzzle.polly.parsing.ast.declarations.Parameter;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
+import de.skuzzle.polly.parsing.ast.expressions.Delete;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
@@ -276,5 +277,22 @@ public class Unparser extends DepthFirstVisitor {
             }
         }
         this.out.print("}");
+    }
+    
+    
+    
+    @Override
+    public void visitDelete(Delete delete) throws ASTTraversalException {
+        this.beforeDelete(delete);
+        this.out.print("del(");
+        final Iterator<Identifier> it = delete.getIdentifiers().iterator();
+        while (it.hasNext()) {
+            it.next().visit(this);
+            if (it.hasNext()) {
+                this.out.print(",");
+            }
+        }
+        this.out.print(")");
+        this.afterDelete(delete);
     }
 }

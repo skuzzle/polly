@@ -14,6 +14,7 @@ import de.skuzzle.polly.parsing.ast.declarations.Parameter;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
+import de.skuzzle.polly.parsing.ast.expressions.Delete;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
@@ -649,6 +650,22 @@ public class ExpInputParser {
             list.setPosition(this.scanner.spanFrom(la));
             return list;
             
+        case DELETE:
+            this.scanner.consume();
+            this.expect(TokenType.OPENBR);
+            this.enterExpression();
+            
+            final List<Identifier> ids = new ArrayList<Identifier>();
+            ids.add(this.expectIdentifier());
+            
+            while (this.scanner.match(TokenType.COMMA)) {
+                ids.add(this.expectIdentifier());
+            }
+            
+            this.expect(TokenType.CLOSEDBR);
+            this.leaveExpression();
+            
+            return new Delete(this.scanner.spanFrom(la), ids);
         case IF:
             this.scanner.consume();
             this.allowSingleWhiteSpace();
@@ -798,14 +815,14 @@ public class ExpInputParser {
      * @return Collection of parsed formal parameters.
      * @throws ParseException If parsing fails.
      */
-    protected Collection<Parameter> parseParameters(TokenType end) throws ParseException {
+    protected List<Parameter> parseParameters(TokenType end) throws ParseException {
         if (this.scanner.lookAhead().matches(end)) {
             // empty list.
             return new ArrayList<Parameter>(0);
         }
         
         this.enterExpression();
-        final Collection<Parameter> result = new ArrayList<Parameter>();
+        final List<Parameter> result = new ArrayList<Parameter>();
         result.add(this.parseParameter());
         
         while (this.scanner.match(TokenType.COMMA)) {

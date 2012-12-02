@@ -67,7 +67,8 @@ public enum TokenType {
     SEMICOLON(";"),
     EOS("Ende der Eingabe"), 
     TEMP("temp"), 
-    ELSE("else");
+    ELSE("else"), 
+    DELETE("del");
     
     private String string;
     

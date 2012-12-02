@@ -18,6 +18,7 @@ literal     -> ID                                    // VarAccess
              | '(' expr ')'                          // braced expression
              | '\(' parameters ':' expr ')'          // lambda function literal
              | '{' exprList '}'                      // concrete list of expressions
+             | DELETE '(' ID (',' ID)* ')'           // delete operator
              | IF expr '?' expr ':' expr             // conditional operator
              | TRUE | FALSE                          // boolean literal
              | CHANNEL                               // channel literal
@@ -32,10 +33,10 @@ varOrCall   -> ID                                    // var access
          
 exprList    -> (expr (',' expr)*)?
 parameters  -> parameter (',' parameter)*
-parameter   -> ID ID                                 // typename, parameter name
-             | ID<ID> ID                             // type name, subtype name, parameter name
-             | '\(' ID (' ' ID)+ ')' ID              // return type name, parameter type names, parameter name
-
+parameter   -> type ID
+type        -> ID                                    // typename, parameter name
+             | ID<ID>                                // type name, subtype name, parameter name
+             | '\(' ID (' ' ID)+ ')'                 // return type name, parameter type names, parameter name
              
 WS       -> ' ' | \t
 TEMP     -> 'temp'
