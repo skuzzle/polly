@@ -279,15 +279,7 @@ public class TypeResolver extends DepthFirstVisitor {
         
         final Empty exp = new Empty(
                 assign.getExpression().getType(), assign.getExpression().getPosition(), 
-                this.signatureStack) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void visit(Visitor visitor) throws ASTTraversalException {
-                // TODO XXX HACK: what's here?
-                //super.visit(visitor);
-            }
-        };
+                this.signatureStack);
         
         final VarDeclaration vd = new VarDeclaration(assign.getPosition(), 
             assign.getName(), exp);

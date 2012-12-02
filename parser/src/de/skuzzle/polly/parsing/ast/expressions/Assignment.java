@@ -16,14 +16,29 @@ public class Assignment extends Expression {
     
     private Expression expression;
     private Identifier name;
-    
+    private final boolean isPublic;
+    private final boolean isTemp;
     
     
     public Assignment(Position position, Expression expression, 
-            Identifier name) {
+            Identifier name, boolean isPublic, boolean isTemp) {
         super(position);
         this.expression = expression;
         this.name = name;
+        this.isPublic = isPublic;
+        this.isTemp = isTemp;
+    }
+    
+    
+    
+    public boolean isPublic() {
+        return this.isPublic;
+    }
+    
+    
+    
+    public boolean isTemp() {
+        return this.isTemp;
     }
     
     

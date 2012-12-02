@@ -175,6 +175,7 @@ public class ExecutionVisitor extends DepthFirstVisitor {
                 assign.getName(), assign.getExpression());
         this.rootNs.declare(vd);
         
+        assign.getParent().replaceChild(assign, assign.getExpression());
         this.afterAssignment(assign);
     }
     

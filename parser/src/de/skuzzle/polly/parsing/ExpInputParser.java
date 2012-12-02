@@ -218,11 +218,9 @@ public class ExpInputParser {
             
             final Identifier id = this.expectIdentifier();
             
-            
-            
             return new Assignment(
                 new Position(lhs.getPosition(), id.getPosition()), 
-                lhs, id);
+                lhs, id, pblc, temp);
         }
         return lhs;
     }
