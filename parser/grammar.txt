@@ -1,6 +1,6 @@
 root        -> ':' ID (expr (WS expr)*)?             // AST root with a WS separated list of expressions
 
-expr        -> relation '->' ID                      // assignment of relation to identifier X
+expr        -> relation '->' PUBLIC? TEMP? ID        // assignment of relation to identifier X
 relation    -> conjunction (REL_OP conjunction)*     // relation (<,>,<=,>=,==, !=)
 conjunction -> disjunction (CONJ_OP disjunction)*    // conjunction (||)
 disjunction -> secTerm (DISJ_OP secTerm)*            // disjunction (&&)
@@ -26,7 +26,6 @@ literal     -> ID                                    // VarAccess
              | NUMBER                                // number literal
              | DATETIME                              // date literal
              | TIMESPAN                              // timespan literal
-             | COMMAND                               // command literal
 
 varOrCall   -> ID                                    // var access
              | ID '(' exprList ')'                   // call   
@@ -36,3 +35,20 @@ parameters  -> parameter (',' parameter)*
 parameter   -> ID ID                                 // typename, parameter name
              | ID<ID> ID                             // type name, subtype name, parameter name
              | '\(' ID (' ' ID)+ ')' ID              // return type name, parameter type names, parameter name
+
+             
+WS       -> ' ' | \t
+TEMP     -> 'temp'
+PUBLIC   -> 'public'
+IF       -> 'if'
+TRUE     -> 'true'
+FALSE    -> 'false'
+CHANNEL  -> '#' ID
+USER     -> '@' ID
+STRING   -> '"' .* '"'
+NUMBER   -> [0-9]*(\.[0-9]+([eE][0-9]+)?)?
+TIMESPAN -> ([0-9]+[ywdhms])+
+DATE     -> [0-9]{1,2}\.[0-9]{1,2}\.[0-9]{4}
+TIME     -> [0-9]{1,2}:[0-9]{1,2}
+DATETIME -> TIME | DATE | DATE@TIME
+ID     -> [_a-zA-Z][_a-zA-Z0-9]+

@@ -213,7 +213,12 @@ public class ExpInputParser {
         final Expression lhs = this.parseRelation();
         
         if (this.scanner.match(TokenType.ASSIGNMENT)) {
+            boolean pblc = this.scanner.match(TokenType.PUBLIC);
+            boolean temp = this.scanner.match(TokenType.TEMP);
+            
             final Identifier id = this.expectIdentifier();
+            
+            
             
             return new Assignment(
                 new Position(lhs.getPosition(), id.getPosition()), 
