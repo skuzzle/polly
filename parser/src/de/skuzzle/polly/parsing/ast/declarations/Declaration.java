@@ -12,7 +12,7 @@ public abstract class Declaration extends Node implements Comparable<Declaration
     private static final long serialVersionUID = 1L;
     
     private final Identifier name;
-    private boolean isGlobal;
+    private boolean isPublic;
     private boolean isTemp;
     private boolean mustCopy;
     
@@ -46,14 +46,14 @@ public abstract class Declaration extends Node implements Comparable<Declaration
 
 
     
-    public boolean isGlobal() {
-        return this.isGlobal;
+    public boolean isPublic() {
+        return this.isPublic;
     }
 
 
     
-    public void setGlobal(boolean isGlobal) {
-        this.isGlobal = isGlobal;
+    public void setPublic(boolean isPublic) {
+        this.isPublic = isPublic;
     }
 
 

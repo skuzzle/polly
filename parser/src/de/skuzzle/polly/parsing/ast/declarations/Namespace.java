@@ -73,7 +73,7 @@ public class Namespace {
                 return;
             }
             final VarDeclaration vd = (VarDeclaration) decl;
-            if (vd.isGlobal() || vd.isTemp() || vd.isOperator()) {
+            if (vd.isPublic() || vd.isTemp() || vd.isOperator()) {
                 return;
             }
             
@@ -443,7 +443,7 @@ public class Namespace {
      *          already exists in this namespace.
      */
     public void declare(Declaration decl) throws ASTTraversalException {
-        final Collection<Declaration> decls = decl.isGlobal() ? GLOBAL.decls : this.decls;
+        final Collection<Declaration> decls = decl.isPublic() ? GLOBAL.decls : this.decls;
         // check if declaration exists in current namespace
         final Iterator<Declaration> it = decls.iterator();
         while (it.hasNext()) {

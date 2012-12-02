@@ -173,6 +173,9 @@ public class ExecutionVisitor extends DepthFirstVisitor {
         
         final VarDeclaration vd = new VarDeclaration(assign.getName().getPosition(), 
                 assign.getName(), assign.getExpression());
+        vd.setPublic(assign.isPublic());
+        vd.setTemp(assign.isTemp());
+        
         this.rootNs.declare(vd);
         
         if (assign.getParent() != null) {
