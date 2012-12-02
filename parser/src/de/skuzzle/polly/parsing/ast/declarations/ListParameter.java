@@ -18,6 +18,8 @@ public class ListParameter extends Parameter {
     
     private final ResolvableIdentifier mainTypeName;
     
+    
+    
     public ListParameter(Position position, ResolvableIdentifier mainType,
             ResolvableIdentifier subType, ResolvableIdentifier name) {
         super(position, subType, name);

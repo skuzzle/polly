@@ -60,4 +60,11 @@ public abstract class Literal extends Expression implements Comparable<Literal> 
         throw new UnsupportedOperationException(
             this.getClass().getSimpleName() + " is not comparable");
     }
+    
+    
+    
+    @Override
+    public String toString() {
+        return this.format(LiteralFormatter.DEFAULT);
+    }
 }

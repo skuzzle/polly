@@ -84,6 +84,7 @@ public interface LiteralFormatter {
                         return ((Literal)o).format(DEFAULT);
                     }
             }, new PrintWriter(new StringBuilderWriter(b)));
+            b.append("}");
             return b.toString();
         }
 
