@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
+import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.declarations.FunctionParameter;
 import de.skuzzle.polly.parsing.ast.declarations.ListParameter;
@@ -34,11 +36,24 @@ import de.skuzzle.polly.parsing.util.Stack;
 public class TypeResolver extends DepthFirstVisitor {
     
     
+    public final static class CallContext {
+        
+        public final FunctionType signature;
+        public final List<Expression> actualParameters;
+        
+        public CallContext(FunctionType signature, List<Expression> actualParameters) {
+            super();
+            this.signature = signature;
+            this.actualParameters = actualParameters;
+        }
+    }
+    
+    
     
     private Namespace nspace;
     private final Namespace rootNs;
     private final Set<Node> checked;
-    private Stack<FunctionType> signatureStack;
+    private Stack<CallContext> signatureStack;
     
     
     
@@ -47,7 +62,7 @@ public class TypeResolver extends DepthFirstVisitor {
         this.rootNs = namespace.enter();
         this.nspace = this.rootNs;
         this.checked = new HashSet<Node>();
-        this.signatureStack = new LinkedStack<FunctionType>();
+        this.signatureStack = new LinkedStack<CallContext>();
     }
     
     
@@ -167,13 +182,18 @@ public class TypeResolver extends DepthFirstVisitor {
         
         // If this is the lhs of a function call, the called signature will be on top
         // of the signature stack. So we are able to use the actual called signature
-        final FunctionType sig = this.signatureStack.isEmpty() 
+        final CallContext c = this.signatureStack.isEmpty() 
                 ? null 
                 : this.signatureStack.pop();
         
         this.enter();
         final Iterator<Parameter> formalIt = func.getFormal().iterator();
-        final Iterator<Type> typeIt = sig == null ? null : sig.getParameters().iterator();
+        final Iterator<Type> typeIt = c == null 
+                ? null 
+                : c.signature.getParameters().iterator();
+        final Iterator<Expression> actualIt = c == null ? null :
+            c.actualParameters.iterator();
+                
         while (formalIt.hasNext()) {
             final Parameter p = formalIt.next();
             // resolve parameter type
@@ -182,10 +202,13 @@ public class TypeResolver extends DepthFirstVisitor {
             // use either the type of the actual signature, or the type of the formal 
             // signature, depending on what information we have.
             final Type type = typeIt == null ? p.getType() : typeIt.next();
+            // try to obtain position from actual parameter
+            final Position pos = actualIt == null 
+                ? p.getPosition() : actualIt.next().getPosition();
             
             final VarDeclaration vd = new VarDeclaration(
-                p.getPosition(), p.getName(), 
-                new Empty(type, this.signatureStack));
+                pos, p.getName(), 
+                new Empty(type, pos, this.signatureStack));
             
             this.nspace.declare(vd);
         }
@@ -193,10 +216,11 @@ public class TypeResolver extends DepthFirstVisitor {
         func.getExpression().visit(this);
         this.leave();
         
-        FunctionType resultType = sig == null 
+        final FunctionType resultType = c == null 
             ? new FunctionType(func.getExpression().getType(), 
                     Parameter.asType(func.getFormal())) 
-            : new FunctionType(func.getExpression().getType(), sig.getParameters());
+            : new FunctionType(func.getExpression().getType(), 
+                    c.signature.getParameters());
             
         
         func.setType(resultType);
@@ -247,7 +271,7 @@ public class TypeResolver extends DepthFirstVisitor {
         assign.setType(assign.getExpression().getType());
         
         final Empty exp = new Empty(
-                assign.getExpression().getType(), this.signatureStack) {
+                assign.getExpression().getType(), assign.getExpression().getPosition(), this.signatureStack) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -297,9 +321,10 @@ public class TypeResolver extends DepthFirstVisitor {
         // create signature from actual parameter types.
         // signature does *not* obey return value as it is unknown by now.
         final FunctionType signature = call.createSignature();
+        final CallContext c = new CallContext(signature, call.getParameters());
         
         // push actual signature.
-        this.signatureStack.push(signature);
+        this.signatureStack.push(c);
         
         // check what type of call this is. Might be a lambda call or a VarAccess which
         // in turn references a function. For that purpose, we need to find the next 
@@ -337,7 +362,7 @@ public class TypeResolver extends DepthFirstVisitor {
         // its type
         final Type typeToResolve = this.signatureStack.isEmpty() 
             ? Type.ANY 
-            : this.signatureStack.peek();
+            : this.signatureStack.peek().signature;
         
         access.setTypeToResolve(typeToResolve);
         final VarDeclaration vd = this.nspace.resolveVar(

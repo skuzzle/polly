@@ -6,7 +6,7 @@ import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.parsing.types.FunctionType;
 import de.skuzzle.polly.parsing.types.Type;
 import de.skuzzle.polly.parsing.util.Stack;
-
+import de.skuzzle.polly.parsing.ast.visitor.TypeResolver.CallContext;
 
 
 /**
@@ -23,12 +23,12 @@ public class Empty extends Expression {
 
     private static final long serialVersionUID = 1L;
 
-    private final transient Stack<FunctionType> signatureStack;
+    private final transient Stack<CallContext> signatureStack;
 
     
 
-    public Empty(Type type, Stack<FunctionType> signatureStack) {
-        super(Position.EMPTY, type);
+    public Empty(Type type, Position position, Stack<CallContext> signatureStack) {
+        super(position, type);
         this.signatureStack = signatureStack;
     }
 
