@@ -653,13 +653,13 @@ public class ExpInputParser {
             final Expression condition = this.parseExpr();
             this.allowSingleWhiteSpace();
             
-            this.expect(TokenType.COLON);
+            this.expect(TokenType.QUESTION);
             this.allowSingleWhiteSpace();
             
             final Expression second = this.parseExpr();
             
             this.allowSingleWhiteSpace();
-            this.expect(TokenType.ELSE);
+            this.expect(TokenType.COLON);
             this.allowSingleWhiteSpace();
             
             final Expression third = this.parseExpr();

@@ -29,7 +29,7 @@ public class Evaluator {
     // TEST:
     public static void main(String[] args) throws IOException {
         String testMe = ":foo ((\\(Num x,\\(Num Num Num) y:y(x,10))->a)(5,\\(Num x, Num y : x * y))+a(17,\\(Num x, Num y:x+y)))->a \\(Num x, \\(Num Num Num) v: v(x,5))->b a";
-        testMe = ":foo if 3<2 : \"b\"else\"a\"";
+        testMe = ":foo if 3!=2 ? 5m+4m : 10m";
         final Evaluator eval = new Evaluator(testMe, "ISO-8859-1");
         File decls = new File("decls");
         decls.mkdirs();

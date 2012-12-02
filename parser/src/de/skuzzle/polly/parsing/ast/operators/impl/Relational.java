@@ -48,6 +48,9 @@ public class Relational extends BinaryOperator<Literal, Literal> {
         case EQ:
             stack.push(new BooleanLiteral(resultPos, comp == 0));
             break;
+        case NEQ:
+            stack.push(new BooleanLiteral(resultPos, comp != 0));
+            break;
         case LT:
             stack.push(new BooleanLiteral(resultPos, comp < 0));
             break;

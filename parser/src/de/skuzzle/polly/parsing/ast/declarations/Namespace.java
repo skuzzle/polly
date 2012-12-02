@@ -253,6 +253,7 @@ public class Namespace {
             
             // relational ops
             GLOBAL.declare(new Relational(OpType.EQ).createDeclaration());
+            GLOBAL.declare(new Relational(OpType.NEQ).createDeclaration());
             GLOBAL.declare(new Relational(OpType.LT).createDeclaration());
             GLOBAL.declare(new Relational(OpType.ELT).createDeclaration());
             GLOBAL.declare(new Relational(OpType.GT).createDeclaration());

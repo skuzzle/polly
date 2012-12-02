@@ -1,7 +1,7 @@
-root        -> COMMAND (expr (WS expr)*)?            // AST root with a WS separated list of expressions
+root        -> ':' ID (expr (WS expr)*)?             // AST root with a WS separated list of expressions
 
 expr        -> relation '->' ID                      // assignment of relation to identifier X
-relation    -> conjunction (REL_OP conjunction)*     // relation (<,>,<=,>=,==)
+relation    -> conjunction (REL_OP conjunction)*     // relation (<,>,<=,>=,==, !=)
 conjunction -> disjunction (CONJ_OP disjunction)*    // conjunction (||)
 disjunction -> secTerm (DISJ_OP secTerm)*            // disjunction (&&)
 secTerm     -> term (SECTERM_OP term)*               // plus minus
@@ -18,7 +18,7 @@ literal     -> ID                                    // VarAccess
              | '(' expr ')'                          // braced expression
              | '\(' parameters ':' expr ')'          // lambda function literal
              | '{' exprList '}'                      // concrete list of expressions
-             | IF expr ':' expr ELSE expr            // conditional operator
+             | IF expr '?' expr ':' expr             // conditional operator
              | TRUE | FALSE                          // boolean literal
              | CHANNEL                               // channel literal
              | USER                                  // user literal

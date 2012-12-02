@@ -36,6 +36,13 @@ import de.skuzzle.polly.parsing.util.Stack;
 public class TypeResolver extends DepthFirstVisitor {
     
     
+    
+    /**
+     * Class used to encapsulate information about recent function calls. It holds the
+     * called functions's signature and a collection of the actual parameters.
+     * 
+     * @author Simon Taddiken
+     */
     public final static class CallContext {
         
         public final FunctionType signature;
@@ -271,11 +278,13 @@ public class TypeResolver extends DepthFirstVisitor {
         assign.setType(assign.getExpression().getType());
         
         final Empty exp = new Empty(
-                assign.getExpression().getType(), assign.getExpression().getPosition(), this.signatureStack) {
+                assign.getExpression().getType(), assign.getExpression().getPosition(), 
+                this.signatureStack) {
             private static final long serialVersionUID = 1L;
 
             @Override
             public void visit(Visitor visitor) throws ASTTraversalException {
+                // TODO XXX HACK: what's here?
                 //super.visit(visitor);
             }
         };

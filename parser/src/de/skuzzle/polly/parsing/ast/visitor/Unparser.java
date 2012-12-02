@@ -204,9 +204,9 @@ public class Unparser extends DepthFirstVisitor {
             if (call.getOperator() == OpType.IF) {
                 this.out.print("if ");
                 it.next().visit(this);
-                this.out.print(" : ");
+                this.out.print(" ? ");
                 it.next().visit(this);
-                this.out.print(" else ");
+                this.out.print(" : ");
                 it.next().visit(this);
             }
         }
