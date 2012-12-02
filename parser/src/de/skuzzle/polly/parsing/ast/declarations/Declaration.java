@@ -6,7 +6,7 @@ import de.skuzzle.polly.parsing.ast.expressions.Identifier;
 import de.skuzzle.polly.parsing.types.Type;
 
 
-public abstract class Declaration extends Node {
+public abstract class Declaration extends Node implements Comparable<Declaration> {
 
 
     private static final long serialVersionUID = 1L;
@@ -66,5 +66,20 @@ public abstract class Declaration extends Node {
     
     public void setTemp(boolean isTemp) {
         this.isTemp = isTemp;
+    }
+    
+    
+    
+    @Override
+    public int compareTo(Declaration o) {
+        
+        // order by length, then lexically
+        
+        final String thisId = this.getName().getId();
+        final String otherId = o.getName().getId();
+        final int lengthComp = Integer.compare(thisId.length(), otherId.length());
+        
+        return lengthComp != 0 ? lengthComp : 
+            this.name.getId().compareTo(o.getName().getId());
     }
 }

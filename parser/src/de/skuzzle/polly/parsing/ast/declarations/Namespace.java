@@ -529,4 +529,34 @@ public class Namespace {
         throw new ASTTraversalException(name.getPosition(), name.getId() + 
             " ist keine Variable");
     }
+    
+    
+    
+    @Override
+    public String toString() {
+        final StringBuilder b = new StringBuilder();
+        int level = 0;
+        for(Namespace space = this; space != null; space = space.parent) {
+            final List<Declaration> copy = new ArrayList<Declaration>(space.decls);
+            Collections.sort(copy);
+            
+            b.append("Level: ");
+            b.append(level++);
+            b.append("\n");
+            for (final Declaration decl : copy) {
+                b.append("    '");
+                b.append(decl.getName());
+                b.append("'");
+                if (decl instanceof VarDeclaration) {
+                    final VarDeclaration vd = (VarDeclaration) decl;
+                    b.append(" = ");
+                    b.append(Unparser.toString(vd.getExpression()));
+                }
+                b.append(" [Type: ");
+                b.append(decl.getType());
+                b.append("]\n");
+            }
+        }
+        return b.toString();
+    }
 }

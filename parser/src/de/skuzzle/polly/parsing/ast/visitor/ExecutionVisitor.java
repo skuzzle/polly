@@ -175,7 +175,10 @@ public class ExecutionVisitor extends DepthFirstVisitor {
                 assign.getName(), assign.getExpression());
         this.rootNs.declare(vd);
         
-        assign.getParent().replaceChild(assign, assign.getExpression());
+        if (assign.getParent() != null) {
+            // HACK: for assignments read from declaration file, parent will be null
+            assign.getParent().replaceChild(assign, assign.getExpression());
+        }
         this.afterAssignment(assign);
     }
     
