@@ -657,7 +657,11 @@ public class ExpInputParser {
             this.allowSingleWhiteSpace();
             
             final Expression second = this.parseExpr();
-            this.expect(TokenType.SEPERATOR);
+            
+            this.allowSingleWhiteSpace();
+            this.expect(TokenType.ELSE);
+            this.allowSingleWhiteSpace();
+            
             final Expression third = this.parseExpr();
             
             return OperatorCall.ternary(this.scanner.spanFrom(la), OpType.IF, 
