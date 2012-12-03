@@ -315,7 +315,6 @@ public class Namespace {
         }
         Namespace check = ROOTS.get(name);
         if (check == null) {
-            // TODO: create storable NS here
             check = new StorableNamespace(name + ".decl", GLOBAL);
             ROOTS.put(name, check);
         }
