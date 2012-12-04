@@ -206,10 +206,13 @@ public class TypeResolver extends DepthFirstVisitor {
             // resolve parameter type
             p.visit(this);
             
-            // use either the type of the actual signature, or the type of the formal 
-            // signature, depending on what information we have.
+            // use both the type of the actual signature, and the type of the formal 
+            // signature, depending on what information we have. The actual signature
+            // might have more concrete type information, but may as well be totally
+            // wrong. If it was wrong, we can fallback to the actual signature
             
-            // HACK or not? declaring both, the formal and actual signature here
+            // HACK or not? declaring both, the formal and actual signature here. The 
+            //     second is a fallback if the actual signature did not match
             if (typeIt != null) {
                 final Position pos = actualIt == null 
                     ? p.getPosition() : actualIt.next().getPosition();

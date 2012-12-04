@@ -204,7 +204,7 @@ public class ExpInputParser {
      * higher precedence level is returned. This is the root of all expressions and has 
      * thus lowest precedence level.
      * <pre>
-     * assign -> relation '->' ID    // assignment of relation to identifier X
+     * assign -> relation '->' (ID | ESCAPED)    // assignment of relation to identifier X
      * </pre>
      * @return The parsed Assignment or the result of the next higher precedence level
      *          if no ASSIGN_OP was found.
@@ -216,8 +216,16 @@ public class ExpInputParser {
         if (this.scanner.match(TokenType.ASSIGNMENT)) {
             boolean pblc = this.scanner.match(TokenType.PUBLIC);
             boolean temp = this.scanner.match(TokenType.TEMP);
-            
-            final Identifier id = this.expectIdentifier();
+
+            Identifier id = null;
+            if (this.scanner.lookAhead().matches(TokenType.ESCAPED)) {
+                final EscapedToken la = (EscapedToken) this.scanner.lookAhead();
+                this.scanner.consume();
+                
+                id = new Identifier(la.getPosition(), la.getEscaped().getStringValue());
+            } else {
+                id = this.expectIdentifier();
+            }
             
             return new Assignment(
                 new Position(lhs.getPosition(), id.getPosition()), 

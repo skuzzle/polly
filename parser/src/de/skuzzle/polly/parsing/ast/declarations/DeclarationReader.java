@@ -80,6 +80,7 @@ public class DeclarationReader implements Closeable {
      * Reads all declarations from the file and stores them in the namespace.
      * 
      * @throws IOException If an IO error occurs.
+     * @see #readDeclaration
      */
     public void readAll() throws IOException {
         while(this.readDeclaration());
