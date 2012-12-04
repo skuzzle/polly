@@ -9,8 +9,6 @@ import de.skuzzle.polly.parsing.ast.declarations.FunctionParameter;
 import de.skuzzle.polly.parsing.ast.declarations.ListParameter;
 import de.skuzzle.polly.parsing.ast.declarations.Parameter;
 import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
-import de.skuzzle.polly.parsing.ast.expressions.Hardcoded;
-import de.skuzzle.polly.parsing.ast.expressions.Identifier;
 import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.types.FunctionType;
@@ -25,7 +23,7 @@ import de.skuzzle.polly.parsing.types.Type;
  * 
  * @author Simon Taddiken
  */
-public abstract class Operator extends Hardcoded {
+public abstract class Operator extends Function {
     
     private static final long serialVersionUID = 1L;
     
@@ -146,7 +144,8 @@ public abstract class Operator extends Hardcoded {
      * @param type The type of the value that this operator returns.
      */
     public Operator(OpType op, Type type) {
-        super(type);
+        super(op.getId());
+        this.setType(type);
         this.op = op;
     }
     
@@ -179,15 +178,26 @@ public abstract class Operator extends Hardcoded {
      * @return A declaration.
      */
     public Declaration createDeclaration() {
-        final FunctionLiteral func = this.createFunction();
-        final Identifier fakeId = new Identifier(Position.EMPTY, this.getOp().getId());
-        final VarDeclaration vd = new VarDeclaration(func.getPosition(), fakeId, func);
-        vd.setOperator(true);
+        // HACK: save type, because it will be changed by call to super.createDeclaration
+        final Type t = this.getType(); 
+        final VarDeclaration vd = (VarDeclaration) super.createDeclaration();
+        
+        // restore saved type
+        this.setType(t);
         return vd;
     }
     
     
     
+    /**
+     * Creates a new Parameter from a given type and name. Depending on the type, either
+     * a {@link ListParameter}, {@link FunctionParameter} or normal {@link Parameter} os
+     * returned.
+     * 
+     * @param type The parameters type.
+     * @param name The parameters name.
+     * @return A new parameter instance.
+     */
     protected Parameter typeToParameter(Type type, ResolvableIdentifier name) {
         if (type instanceof ListType) {
             final ListType lt = (ListType) type;

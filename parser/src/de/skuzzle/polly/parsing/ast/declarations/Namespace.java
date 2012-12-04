@@ -73,7 +73,7 @@ public class Namespace {
                 return;
             }
             final VarDeclaration vd = (VarDeclaration) decl;
-            if (vd.isPublic() || vd.isTemp() || vd.isOperator()) {
+            if (vd.isPublic() || vd.isTemp() || vd.isPrimitive()) {
                 return;
             }
             

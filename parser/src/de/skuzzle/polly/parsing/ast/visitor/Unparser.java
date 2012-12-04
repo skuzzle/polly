@@ -249,6 +249,9 @@ public class Unparser extends DepthFirstVisitor {
     
     @Override
     public void visitVarAccess(VarAccess access) throws ASTTraversalException {
+        if (access.wasEscaped()) {
+            this.out.print("\\");
+        }
         access.getIdentifier().visit(this);
     }
     

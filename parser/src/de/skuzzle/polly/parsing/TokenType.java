@@ -68,7 +68,8 @@ public enum TokenType {
     EOS("Ende der Eingabe"), 
     TEMP("temp"), 
     ELSE("else"), 
-    DELETE("del");
+    DELETE("del"), 
+    ESCAPED("\\");
     
     private String string;
     

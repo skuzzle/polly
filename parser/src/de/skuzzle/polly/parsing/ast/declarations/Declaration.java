@@ -3,6 +3,7 @@ package de.skuzzle.polly.parsing.ast.declarations;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
+import de.skuzzle.polly.parsing.ast.operators.Function;
 import de.skuzzle.polly.parsing.types.Type;
 
 
@@ -15,6 +16,7 @@ public abstract class Declaration extends Node implements Comparable<Declaration
     private boolean isPublic;
     private boolean isTemp;
     private boolean mustCopy;
+    private boolean primitive;
     
     
     public Declaration(Position position, Identifier name) {
@@ -66,6 +68,30 @@ public abstract class Declaration extends Node implements Comparable<Declaration
     
     public void setTemp(boolean isTemp) {
         this.isTemp = isTemp;
+    }
+    
+    
+    
+    /**
+     * Gets whether this is a primitive delcaration.
+     * 
+     * @return Whether this is a primitive declaration.
+     */
+    public boolean isPrimitive() {
+        return this.primitive;
+    }
+    
+    
+    
+    /**
+     * Sets whether this is a primitive declaration. Primitive delcarations are those, 
+     * that are hardcoded into polly (mostly created by {@link Function} subclasses). 
+     * Those declarations are not stored to file.
+     * 
+     * @param primitive Whether this is a primitive declaration.
+     */
+    public void setPrimitive(boolean primitive) {
+        this.primitive = primitive;
     }
     
     

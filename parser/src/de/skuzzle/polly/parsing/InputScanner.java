@@ -360,7 +360,9 @@ public class InputScanner extends AbstractTokenStream {
                     return new Token(TokenType.LAMBDA, this.spanFrom(tokenStart), "\\(");
                 } else {
                     this.pushBack(next);
-                    return new Token(TokenType.INTDIV, this.spanFrom(tokenStart), "\\");
+                    final Token escaped= this.readToken();
+                    return new EscapedToken(this.spanFrom(tokenStart), escaped);
+                    //return new Token(TokenType.INTDIV, this.spanFrom(tokenStart), "\\");
                 }
             }
         }

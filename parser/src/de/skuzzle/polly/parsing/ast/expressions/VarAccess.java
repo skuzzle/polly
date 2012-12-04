@@ -13,13 +13,17 @@ public class VarAccess extends Expression {
     
     private ResolvableIdentifier identifier;
     private Type typeToResolve;
+    private final boolean wasEscaped;
     
     
-    public VarAccess(Position position, ResolvableIdentifier identifier) {
+    
+    public VarAccess(Position position, ResolvableIdentifier identifier, 
+            boolean wasEscaped) {
         super(position);
         if (identifier == null) {
             throw new NullPointerException("identifier is null");
         }
+        this.wasEscaped = wasEscaped;
         this.identifier = identifier;
         this.typeToResolve = Type.ANY;
     }
@@ -33,6 +37,12 @@ public class VarAccess extends Expression {
         } else {
             super.replaceChild(current, newChild);
         }
+    }
+    
+    
+    
+    public boolean wasEscaped() {
+        return this.wasEscaped;
     }
     
     

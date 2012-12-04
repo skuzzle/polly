@@ -594,11 +594,18 @@ public class ExpInputParser {
         Expression exp = null;
         
         switch(la.getType()) {
+        case ESCAPED:
+            this.scanner.consume();
+            final EscapedToken escaped = (EscapedToken) la;
+            final ResolvableIdentifier escId = new ResolvableIdentifier(la.getPosition(), 
+                escaped.getEscaped().getStringValue());
+            return new VarAccess(la.getPosition(), escId, true);
+            
         case IDENTIFIER:
             this.scanner.consume();
             final ResolvableIdentifier id = new ResolvableIdentifier(
                     la.getPosition(), la.getStringValue());
-            return new VarAccess(id.getPosition(), id);
+            return new VarAccess(id.getPosition(), id, false);
             
         case OPENBR:
             this.scanner.consume();
@@ -759,7 +766,7 @@ public class ExpInputParser {
                 call.setPosition(this.scanner.spanFrom(la));
                 return call;
             } else {
-                return new VarAccess(la.getPosition(), id);
+                return new VarAccess(la.getPosition(), id, false);
             }
         }
         

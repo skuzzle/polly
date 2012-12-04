@@ -14,7 +14,6 @@ public class VarDeclaration extends Declaration {
     private static final long serialVersionUID = 1L;
     
     private Expression expression;
-    private boolean operator;
     
     
     
@@ -22,19 +21,6 @@ public class VarDeclaration extends Declaration {
             Expression expression) {
         super(position, name);
         this.expression = expression;
-    }
-    
-    
-    
-    
-    public boolean isOperator() {
-        return this.operator;
-    }
-    
-    
-    
-    public void setOperator(boolean operator) {
-        this.operator = operator;
     }
 
     

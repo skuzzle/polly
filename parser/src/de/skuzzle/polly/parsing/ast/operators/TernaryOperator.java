@@ -72,7 +72,7 @@ public abstract class TernaryOperator<FIRST extends Literal, SECOND extends Lite
     public final void execute(Stack<Literal> stack, Namespace ns, 
             Visitor execVisitor) throws ASTTraversalException {
         
-        final FIRST first= (FIRST) ns.resolveVar(FIRST_PARAM_NAME, 
+        final FIRST first = (FIRST) ns.resolveVar(FIRST_PARAM_NAME, 
             Type.ANY).getExpression();
         final SECOND second = (SECOND) ns.resolveVar(SECOND_PARAM_NAME, 
             Type.ANY).getExpression();
@@ -96,7 +96,8 @@ public abstract class TernaryOperator<FIRST extends Literal, SECOND extends Lite
      * @throws ASTTraversalException If executing fails for any reason.
      */
     protected abstract void exec(Stack<Literal> stack, Namespace ns, 
-        FIRST first, SECOND second, THIRD third, Position resultPos) throws ASTTraversalException;
+        FIRST first, SECOND second, THIRD third, Position resultPos) 
+            throws ASTTraversalException;
     
     
     
