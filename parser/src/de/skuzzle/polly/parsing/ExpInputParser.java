@@ -574,6 +574,7 @@ public class ExpInputParser {
     protected Expression parseCall() throws ParseException {
         final Expression lhs = this.parseLiteral();
         
+        final Token la = this.scanner.lookAhead();
         if (this.scanner.match(TokenType.OPENBR)) {
             final Collection<Expression> params = this.parseExpressionList(
                 TokenType.CLOSEDBR);
@@ -582,7 +583,7 @@ public class ExpInputParser {
             
             return new Call(
                 new Position(lhs.getPosition().getStart(), this.scanner.getStreamIndex()), 
-                lhs, params);
+                lhs, params, this.scanner.spanFrom(la));
         }
         return lhs;
     }
@@ -757,13 +758,15 @@ public class ExpInputParser {
             
             final ResolvableIdentifier id = new ResolvableIdentifier(
                 la.getPosition(), la.getStringValue());
-            
+
+            final Token la2 = this.scanner.lookAhead();
             if (this.scanner.match(TokenType.OPENBR)) {
-                final Call call = new Call(id.getPosition(), id, 
-                    this.parseExpressionList(TokenType.CLOSEDBR));
-                
+                final List<Expression> parameters = 
+                        this.parseExpressionList(TokenType.CLOSEDBR);
                 this.expect(TokenType.CLOSEDBR);
-                call.setPosition(this.scanner.spanFrom(la));
+
+                final Call call = new Call(this.scanner.spanFrom(la), id,
+                    parameters, this.scanner.spanFrom(la2));
                 return call;
             } else {
                 return new VarAccess(la.getPosition(), id, false);

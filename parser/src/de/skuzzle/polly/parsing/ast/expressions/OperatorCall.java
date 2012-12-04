@@ -32,7 +32,7 @@ public class OperatorCall extends Call {
     public final static OperatorCall binary(Position position, OpType operator, 
             Expression left, Expression right) {
         return new OperatorCall(position, operator, 
-            Arrays.asList(new Expression[] {left, right}), false);
+            Arrays.asList(new Expression[] {left, right}), false, position);
     }
     
     
@@ -50,7 +50,7 @@ public class OperatorCall extends Call {
     public final static OperatorCall unary(Position position, OpType operator, 
             Expression operand, boolean postfix) {
         return new OperatorCall(position, operator, 
-            Arrays.asList(new Expression[] {operand}), postfix);
+            Arrays.asList(new Expression[] {operand}), postfix, position);
     }
     
     
@@ -68,7 +68,8 @@ public class OperatorCall extends Call {
     public final static OperatorCall ternary(Position position, OpType operator, 
             Expression operand1, Expression operand2, Expression operand3) {
         return new OperatorCall(position, operator, 
-            Arrays.asList(new Expression[] {operand1, operand2, operand3}), false);
+            Arrays.asList(new Expression[] {operand1, operand2, operand3}), false, 
+            position);
     }
     
     
@@ -87,13 +88,14 @@ public class OperatorCall extends Call {
      * @param postfix Whether this is a postfix operator. If <code>false</code>, this 
      *          operator is assumed to be prefix (only taken into account for unary 
      *          operators.)
+     * @param parameterPos Position that spans the actual parameters.
      */
     private OperatorCall(Position position, OpType operator, 
-            Collection<Expression> parameters, boolean postfix) {
+            Collection<Expression> parameters, boolean postfix, Position parameterPos) {
         super(position, 
             new VarAccess(position, new ResolvableIdentifier(position, 
                 operator.getId()), false),
-            parameters);
+            parameters, parameterPos);
         this.operator = operator;
         this.postfix = postfix;
     }

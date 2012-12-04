@@ -19,21 +19,23 @@ public class Call extends Expression {
     
     private Expression lhs;
     private final List<Expression> parameters;
+    private final Position parameterPosition;
     
     
-
-    /**
-     * Creates a new function call.
-     * 
-     * @param position Position of the call within the source.
-     * @param lhs Left handed expression of this call.
-     * @param parameters Actual parameters of the call.
-     */
-    public Call(Position position, Expression lhs, 
-            Collection<Expression> parameters) {
+    
+    public Call(Position position, Expression lhs, Collection<Expression> parameters, 
+        Position parameterPosition) {
         super(position);
         this.parameters = new ArrayList<Expression>(parameters);
         this.lhs = lhs;
+        this.parameterPosition = parameterPosition;
+    }
+    
+    
+    
+    
+    public Position getParameterPosition() {
+        return this.parameterPosition;
     }
     
     
