@@ -169,13 +169,13 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
     
     
     /**
-     * Creates a new TokenStream with the given String as input. 
-     * It assumes the String to be ISO-8859-1 encoded!
+     * Creates a new TokenStream with the given String as input. It will use the
+     * systems default charset.
+     * 
      * @param stream The String to scan for tokens.
-     * @throws UnsupportedEncodingException If the given encoding string is not supported.
      */
-    public AbstractTokenStream(String stream) throws UnsupportedEncodingException {      
-        this(stream, "ISO-8859-1");
+    public AbstractTokenStream(String stream) {      
+        this(stream, Charset.defaultCharset());
     }
     
     
@@ -184,14 +184,10 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
      * Creates a new TokenStream with the given String as input. 
      * 
      * @param stream The String to scan for tokens.
-     * @param charset The name of the charset in which the stream is encoded.
-     * @throws UnsupportedEncodingException If the given encoding string is not supported.
+     * @param charset The charset in which the stream is encoded.
      */
-    public AbstractTokenStream(String stream, String charset) 
-        throws UnsupportedEncodingException {      
-        InputStream inp = new ByteArrayInputStream(
-                stream.getBytes(Charset.forName(charset)));
-
+    public AbstractTokenStream(String stream, Charset charset) {      
+        InputStream inp = new ByteArrayInputStream(stream.getBytes(charset));
         this.reader = new BufferedReader(new InputStreamReader(inp, charset));
         this.pushbackBuffer = new LinkedList<Integer>();
         this.tokenBuffer = new LinkedList<Token>();
@@ -209,10 +205,8 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
      * @param stream The InputStream to scan for tokens.
      * @param charset The name of the charset in which the characters from the stream are
      *      encoded.
-     * @throws UnsupportedEncodingException If the provided charset is not supported.
      */
-    public AbstractTokenStream(InputStream stream, String charset) 
-            throws UnsupportedEncodingException {
+    public AbstractTokenStream(InputStream stream, Charset charset) {
         this.reader = new InputStreamReader(stream, charset);
         this.pushbackBuffer = new LinkedList<Integer>();
         this.tokenBuffer = new LinkedList<Token>();

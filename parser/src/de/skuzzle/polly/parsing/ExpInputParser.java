@@ -1,11 +1,13 @@
 package de.skuzzle.polly.parsing;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import de.skuzzle.polly.parsing.PrecedenceTable.PrecedenceLevel;
+import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.FunctionParameter;
 import de.skuzzle.polly.parsing.ast.declarations.ListParameter;
@@ -33,6 +35,78 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.UserLiteral;
 import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
 
 
+/**
+ * <p>This class provides recursive descent parsing for polly expressions and cann output
+ * an abstract syntax tree for the parsed expression. The root of the AST is represented
+ * by the class {@link Root}, all AST nodes are subclasses of {@link Node}.
+ * Every AST node that is created by this parser gets assigned its actual 
+ * {@link Position} within the input string. This allows to provide detailed error
+ * message during parsing, type-checking or execution of the AST.</p>
+ * 
+ * <p>This parser uses the following context-free syntax, given in EBNF. There may exist
+ * some tweaks in the implementation that are not expressed in the following grammar.</p>
+ * 
+ * <pre>
+ *   root        -> ':' ID (expr (WS expr)*)?                  // AST root with a WS separated list of expressions
+ *   
+ *   expr        -> relation '->' PUBLIC? TEMP? (ID | ESCAPED) // assignment of relation to identifier X
+ *   relation    -> conjunction (REL_OP conjunction)*          // relation (<,>,<=,>=,==, !=)
+ *   conjunction -> disjunction (CONJ_OP disjunction)*         // conjunction (||)
+ *   disjunction -> secTerm (DISJ_OP secTerm)*                 // disjunction (&&)
+ *   secTerm     -> term (SECTERM_OP term)*                    // plus minus
+ *   term        -> factor (TERM_OP factor)*                   // multiplication and co
+ *   factor      -> postfix (FACTOR_OP factor)?                // right-associative (power operator)
+ *   postfix     -> autolist (POSTFIX_OP autolist)+            // postfix operator
+ *   autolist    -> dotdot (';' dotdot)*                       // implicit list literal
+ *   dotdot      -> unary ('..' unary ('$' unary)?)?           // range operator with optional step size
+ *   unary       -> UNARY_OP unary                             // right-associative unary operator
+ *                | access
+ *   access      -> call ('.' varOrCall)?                      // namespace access. call must be a single identifier (represented by a VarAccess)
+ *   call        -> literal ( '(' parameters ')' )?
+ *   literal     -> ID                                         // VarAccess
+ *                | ESCAPED                                    // token escape
+ *                | '(' expr ')'                               // braced expression
+ *                | '\(' parameters ':' expr ')'               // lambda function literal
+ *                | '{' exprList '}'                           // concrete list of expressions
+ *                | DELETE '(' ID (',' ID)* ')'                // delete operator
+ *                | IF expr '?' expr ':' expr                  // conditional operator
+ *                | TRUE | FALSE                               // boolean literal
+ *                | CHANNEL                                    // channel literal
+ *                | USER                                       // user literal
+ *                | STRING                                     // string literal
+ *                | NUMBER                                     // number literal
+ *                | DATETIME                                   // date literal
+ *                | TIMESPAN                                   // timespan literal
+ *   
+ *   varOrCall   -> ID                                         // var access
+ *                | ID '(' exprList ')'                        // call   
+ *            
+ *   exprList    -> (expr (',' expr)*)?
+ *   parameters  -> parameter (',' parameter)*
+ *   parameter   -> type ID
+ *   type        -> ID                                         // typename, parameter name
+ *                | ID<ID>                                     // type name, subtype name, parameter name
+ *                | '\(' ID (' ' ID)+ ')'                      // return type name, parameter type names, parameter name
+ *                
+ *   WS       -> ' ' | \t
+ *   TEMP     -> 'temp'
+ *   PUBLIC   -> 'public'
+ *   IF       -> 'if'
+ *   TRUE     -> 'true'
+ *   FALSE    -> 'false'
+ *   CHANNEL  -> '#' ID
+ *   USER     -> '@' ID
+ *   STRING   -> '"' .* '"'
+ *   NUMBER   -> [0-9]*(\.[0-9]+([eE][0-9]+)?)?
+ *   TIMESPAN -> ([0-9]+[ywdhms])+
+ *   DATE     -> [0-9]{1,2}\.[0-9]{1,2}\.[0-9]{4}
+ *   TIME     -> [0-9]{1,2}:[0-9]{1,2}
+ *   DATETIME -> TIME | DATE | DATE@TIME
+ *   ID     -> [_a-zA-Z][_a-zA-Z0-9]+
+ * </pre>
+ * 
+ * @author Simon Taddiken
+ */
 public class ExpInputParser {
 
     private final PrecedenceTable operators;
@@ -41,22 +115,54 @@ public class ExpInputParser {
     
     
     
-    public ExpInputParser(String input) throws UnsupportedEncodingException {
+    /**
+     * Creates a new parser which will use the provided scanner to read the tokens from.
+     * 
+     * @param scanner The {@link InputScanner} which provides the token stream.
+     */
+    public ExpInputParser(InputScanner scanner) {
+        this.scanner = scanner;
+        this.operators = new PrecedenceTable();
+    }
+    
+    
+    
+    /**
+     * Creates a new parser which will parse the given input string using the default 
+     * encoding.
+     * 
+     * @param input The string to parse.
+     */
+    public ExpInputParser(String input) {
         this.scanner = new InputScanner(input);
         this.operators = new PrecedenceTable();
     }
     
     
     
-    
+    /**
+     * Creates a new parser which will parse the given input string using the provided
+     * encoding.
+     * 
+     * @param input The string to parse.
+     * @param encoding The charset name to use.
+     * @throws UnsupportedEncodingException If the charset name was invalid.
+     */
     public ExpInputParser(String input, String encoding) 
             throws UnsupportedEncodingException {
-        this.scanner = new InputScanner(input, encoding);
+        this.scanner = new InputScanner(input, Charset.forName(encoding));
         this.operators = new PrecedenceTable();
     }
     
     
     
+    /**
+     * Tries to parse the input string and returns the root of the AST. If the string was
+     * not valid, this method returns <code>null</code>.
+     * 
+     * @return The parsed AST root or <code>null</code> if the string was not well
+     *          formatted.
+     */
     public Root tryParse() {
         try {
             return this.parse();
@@ -68,6 +174,13 @@ public class ExpInputParser {
     
     
     
+    /**
+     * Parses the input string and returns the root of the AST. If the string was not 
+     * valid, this method will throw a {@link ParseException}.
+     * 
+     * @return The parsed AST root.
+     * @throws ParseException If the string was not well formatted.
+     */
     protected Root parse() throws ParseException {
         return this.parseRoot();
     }
@@ -579,6 +692,17 @@ public class ExpInputParser {
     
     
     
+    /**
+     * Parses a function call. If no open braces was matched, the result of the next
+     * higher precedence level will be returned.
+     * 
+     * <pre>
+     * call -> literal ( '(' parameters ')' )?
+     * </pre>
+     * @return The call statement of the result of the next higher precedence level if
+     *          this was no call.
+     * @throws ParseException If parsing fails
+     */
     protected Expression parseCall() throws ParseException {
         final Expression lhs = this.parseLiteral();
         
@@ -598,6 +722,30 @@ public class ExpInputParser {
     
     
     
+    /**
+     * Parses the highest precedence level which is mostly a single literal, but also 
+     * a delete or if statement.
+     * 
+     * <pre>
+     * literal -> ID                                    // VarAccess
+     *          | ESCAPED                               // token escape
+     *          | '(' expr ')'                          // braced expression
+     *          | '\(' parameters ':' expr ')'          // lambda function literal
+     *          | '{' exprList '}'                      // concrete list of expressions
+     *          | DELETE '(' ID (',' ID)* ')'           // delete operator
+     *          | IF expr '?' expr ':' expr             // conditional operator
+     *          | TRUE | FALSE                          // boolean literal
+     *          | CHANNEL                               // channel literal
+     *          | USER                                  // user literal
+     *          | STRING                                // string literal
+     *          | NUMBER                                // number literal
+     *          | DATETIME                              // date literal
+     *          | TIMESPAN                              // timespan literal
+     * </pre>
+     *  
+     * @return The parsed expression.
+     * @throws ParseException If parsing fails
+     */
     protected Expression parseLiteral() throws ParseException {      
         final Token la = this.scanner.lookAhead();
         Expression exp = null;

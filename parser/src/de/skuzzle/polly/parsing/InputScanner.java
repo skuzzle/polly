@@ -1,6 +1,6 @@
 package de.skuzzle.polly.parsing;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -72,15 +72,16 @@ public class InputScanner extends AbstractTokenStream {
     protected Map<String, TokenType> keywords;
     private boolean skipWhiteSpaces;
     
-    public InputScanner(String stream) throws UnsupportedEncodingException {
+    
+    
+    public InputScanner(String stream) {
         super(stream);
         this.prepareKeywords();
     }
     
     
     
-    public InputScanner(String stream, String charset) 
-            throws UnsupportedEncodingException {
+    public InputScanner(String stream, Charset charset) {
         super(stream, charset);
         this.prepareKeywords();
     }
