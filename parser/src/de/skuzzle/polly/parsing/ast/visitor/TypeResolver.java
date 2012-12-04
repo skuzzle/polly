@@ -208,14 +208,22 @@ public class TypeResolver extends DepthFirstVisitor {
             
             // use either the type of the actual signature, or the type of the formal 
             // signature, depending on what information we have.
-            final Type type = typeIt == null ? p.getType() : typeIt.next();
-            // try to obtain position from actual parameter
-            final Position pos = actualIt == null 
-                ? p.getPosition() : actualIt.next().getPosition();
             
-            final VarDeclaration vd = new VarDeclaration(
-                pos, p.getName(), 
-                new Empty(type, pos, this.signatureStack));
+            // HACK or not? declaring both, the formal and actual signature here
+            if (typeIt != null) {
+                final Position pos = actualIt == null 
+                    ? p.getPosition() : actualIt.next().getPosition();
+                
+                final VarDeclaration vd = new VarDeclaration(
+                    pos, p.getName(), 
+                    new Empty(typeIt.next(), pos, this.signatureStack));
+                
+                this.nspace.declare(vd);
+            }
+            
+            
+            final VarDeclaration vd = new VarDeclaration(p.getPosition(), p.getName(), 
+                new Empty(p.getType(), p.getPosition(), this.signatureStack));
             
             this.nspace.declare(vd);
         }
@@ -336,7 +344,7 @@ public class TypeResolver extends DepthFirstVisitor {
         call.getLhs().visit(this);
         
         if (!call.getLhs().getType().check(signature)) {
-            Type.typeError(call.getLhs().getType(), signature, 
+            Type.typeError(signature, call.getLhs().getType(), 
                 call.getPosition());
         }
         
