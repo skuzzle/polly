@@ -450,6 +450,12 @@ public class Namespace {
             
             if (d.getName().equals(decl.getName())) {// && d.getType().check(decl.getType())) {
                 if (!(d.getType() instanceof FunctionType) && !(decl.getType() instanceof FunctionType) || d.getType().check(decl.getType())) {
+                    if (d.isPrimitive()) {
+                        throw new ASTTraversalException(decl.getPosition(), 
+                            "Du kannst keine primitiven Deklarationen " +
+                            "überschreiben. Deklaration '" + d.getName() + 
+                            "' existiert bereits.");
+                    }
                     it.remove();
                 }
             }
