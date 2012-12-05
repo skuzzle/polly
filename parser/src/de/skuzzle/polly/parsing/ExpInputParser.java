@@ -108,6 +108,11 @@ import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
  * @author Simon Taddiken
  */
 public class ExpInputParser {
+    
+    
+    public final static boolean ESCAPABLE = true;
+    
+    
 
     private final PrecedenceTable operators;
     private int openExpressions;
@@ -226,13 +231,18 @@ public class ExpInputParser {
     /**
      * Expects the next token to be an {@link Identifier}. If not, a 
      * {@link ParseException} is thrown. Otherwise, a new {@link Identifier} will be 
-     * created and returned.
+     * created and returned. This method also recognizes escaped tokens as identifiers.
      * 
      * @return An {@link Identifier} created from the next token.
      * @throws ParseException If the next token is no identifier.
      */
     protected Identifier expectIdentifier() throws ParseException {
         final Token la = this.scanner.lookAhead();
+        if (ESCAPABLE && la.matches(TokenType.ESCAPED)) {
+            this.scanner.consume();
+            final EscapedToken esc = (EscapedToken) la;
+            return new Identifier(esc.getPosition(), esc.getEscaped().getStringValue());
+        }
         this.expect(TokenType.IDENTIFIER);
         return new Identifier(la.getPosition(), la.getStringValue());
     }
@@ -327,18 +337,10 @@ public class ExpInputParser {
         final Expression lhs = this.parseRelation();
         
         if (this.scanner.match(TokenType.ASSIGNMENT)) {
-            boolean pblc = this.scanner.match(TokenType.PUBLIC);
-            boolean temp = this.scanner.match(TokenType.TEMP);
+            final boolean pblc = this.scanner.match(TokenType.PUBLIC);
+            final boolean temp = this.scanner.match(TokenType.TEMP);
 
-            Identifier id = null;
-            if (this.scanner.lookAhead().matches(TokenType.ESCAPED)) {
-                final EscapedToken la = (EscapedToken) this.scanner.lookAhead();
-                this.scanner.consume();
-                
-                id = new Identifier(la.getPosition(), la.getEscaped().getStringValue());
-            } else {
-                id = this.expectIdentifier();
-            }
+            final Identifier id = this.expectIdentifier();
             
             return new Assignment(
                 new Position(lhs.getPosition(), id.getPosition()), 
