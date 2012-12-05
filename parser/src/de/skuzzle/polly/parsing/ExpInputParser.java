@@ -60,9 +60,9 @@ import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
  *   autolist    -> dotdot (';' dotdot)*                       // implicit list literal
  *   dotdot      -> unary ('..' unary ('$' unary)?)?           // range operator with optional step size
  *   unary       -> UNARY_OP unary                             // right-associative unary operator
- *                | access
- *   access      -> call ('.' varOrCall)?                      // namespace access. call must be a single identifier (represented by a VarAccess)
- *   call        -> literal ( '(' parameters ')' )?
+ *                | call
+ *   call        -> access ( '(' parameters ')' )?
+ *   access      -> literal ('.' literal)?                     // namespace access. both operands must be a single identifier (represented by a VarAccess)
  *   literal     -> ID                                         // VarAccess
  *                | ESCAPED                                    // token escape
  *                | '(' expr ')'                               // braced expression
@@ -641,7 +641,7 @@ public class ExpInputParser {
      * Parses an unary operator call.
      * <pre>
      * unary -> UNARY_OP unary    // right-associative unary operator
-              | access
+              | call
      * </pre>
      * @return A unary operator call or the expression returned by the next higher
      *          precedence level if no UNARY_OP was found.
@@ -656,38 +656,8 @@ public class ExpInputParser {
             return OperatorCall.unary(new Position(la.getPosition(), 
                     rhs.getPosition()), OpType.fromToken(la), rhs, false);
         } else {
-            return this.parseNamespaceAccess();
+            return this.parseCall();
         }
-    }
-    
-    
-    
-    /**
-     * Parses a {@link Namespace} access.
-     * <pre>
-     * call ('.' varOrCall)?
-     * </pre>
-     * 
-     * @return The parsed literal if no DOT operator was found, or a {@link Namespace}
-     *          access if the was a dot followed by a VarOrCall.
-     * @throws ParseException If parsing fails
-     */
-    protected Expression parseNamespaceAccess() throws ParseException {
-        final Expression lhs = this.parseCall();
-        
-        final Token la = this.scanner.lookAhead();
-        if (this.scanner.match(TokenType.DOT)) {
-            final Expression rhs = this.parseVarOrCall();
-            
-            if (rhs == null) {
-                throw new ParseException("Erwartet: Variable oder Funktionsaufruf", 
-                    this.scanner.spanFrom(lhs.getPosition().getStart()));
-            }
-            return new NamespaceAccess(new Position(lhs.getPosition(), 
-                this.scanner.spanFrom(la)), lhs, rhs);
-        }
-        
-        return lhs;
     }
     
     
@@ -697,14 +667,14 @@ public class ExpInputParser {
      * higher precedence level will be returned.
      * 
      * <pre>
-     * call -> literal ( '(' parameters ')' )?
+     * call -> access ( '(' parameters ')' )?
      * </pre>
      * @return The call statement of the result of the next higher precedence level if
      *          this was no call.
      * @throws ParseException If parsing fails
      */
     protected Expression parseCall() throws ParseException {
-        final Expression lhs = this.parseLiteral();
+        final Expression lhs = this.parseNamespaceAccess();
         
         final Token la = this.scanner.lookAhead();
         if (this.scanner.match(TokenType.OPENBR)) {
@@ -717,6 +687,32 @@ public class ExpInputParser {
                 new Position(lhs.getPosition().getStart(), this.scanner.getStreamIndex()), 
                 lhs, params, this.scanner.spanFrom(la));
         }
+        return lhs;
+    }
+    
+    
+    
+    /**
+     * Parses a {@link Namespace} access.
+     * <pre>
+     * access -> literal ('.' literal)?
+     * </pre>
+     * 
+     * @return The parsed literal if no DOT operator was found, or a {@link Namespace}
+     *          access if the was a dot followed by a VarOrCall.
+     * @throws ParseException If parsing fails
+     */
+    protected Expression parseNamespaceAccess() throws ParseException {
+        final Expression lhs = this.parseLiteral();
+        
+        final Token la = this.scanner.lookAhead();
+        if (this.scanner.match(TokenType.DOT)) {
+            final Expression rhs = this.parseLiteral();
+            
+            return new NamespaceAccess(new Position(lhs.getPosition(), 
+                this.scanner.spanFrom(la)), lhs, rhs);
+        }
+        
         return lhs;
     }
     

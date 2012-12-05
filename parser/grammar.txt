@@ -11,9 +11,9 @@ postfix     -> autolist (POSTFIX_OP autolist)+            // postfix operator
 autolist    -> dotdot (';' dotdot)*                       // implicit list literal
 dotdot      -> unary ('..' unary ('$' unary)?)?           // range operator with optional step size
 unary       -> UNARY_OP unary                             // right-associative unary operator
-             | access
-access      -> call ('.' varOrCall)?                      // namespace access. call must be a single identifier (represented by a VarAccess)
-call        -> literal ( '(' parameters ')' )?
+             | call
+call        -> access ( '(' parameters ')' )?
+access      -> literal ('.' literal)?                     // namespace access. both operands must be a single identifier (represented by a VarAccess)
 literal     -> ID                                         // VarAccess
              | ESCAPED                                    // token escape
              | '(' expr ')'                               // braced expression
