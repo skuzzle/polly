@@ -28,7 +28,7 @@ public class Evaluator {
     
     // TEST:
     public static void main(String[] args) throws IOException {
-        String testMe = ":foo ((\\(Num x,\\(Num Num Num) \\~:\\~(x,5))->a)(5,\\+))->\\10";
+        String testMe = ":foo ((\\(Num x,\\(Num Num Num) y:y(x,5))->a)(5,\\+))";
         //testMe = ":foo if 3!=2 ? !{1,2,3} : {4,5,6}";
         final Evaluator eval = new Evaluator(testMe, "ISO-8859-1");
         File decls = new File("decls");
@@ -49,6 +49,23 @@ public class Evaluator {
             System.out.println(eval.getRoot());
             System.out.println(eval.unparse());
             System.out.println(ns.toString());
+        }
+        
+        String testMe2 = ":bloo a(10,\\+)";
+        final Namespace other = Namespace.forName("other");
+        final Evaluator eval2 = new Evaluator(testMe2, "ISO-8859-1");
+        
+        eval2.evaluate(other);
+        
+        if (eval2.errorOccurred()) {
+            final ASTTraversalException e = eval2.getLastError(); 
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+            System.out.println(testMe2);
+            System.out.println(e.getPosition().errorIndicatorString());
+        } else {
+            System.out.println(eval2.getRoot());
+            //System.out.println(eval2.unparse());
         }
     }
     
