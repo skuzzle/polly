@@ -94,7 +94,7 @@ public class OperatorCall extends Call {
             Collection<Expression> parameters, boolean postfix, Position parameterPos) {
         super(position, 
             new VarAccess(position, new ResolvableIdentifier(position, 
-                operator.getId()), false),
+                operator.getId())),
             parameters, parameterPos);
         this.operator = operator;
         this.postfix = postfix;

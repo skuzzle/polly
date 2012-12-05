@@ -14,6 +14,7 @@ public class Identifier extends Expression {
     private static final long serialVersionUID = 1L;
     
     private final String id;
+    private final boolean wasEscaped;
     
     
     /**
@@ -25,6 +26,21 @@ public class Identifier extends Expression {
         this(Position.EMPTY, id);
     }
     
+
+    
+    /**
+     * Creates a new Identifier.
+     * 
+     * @param position Position of the identifier within the input String.
+     * @param id Identifier String.
+     * @param wasEscaped Whether this was an escaped identifier.
+     */
+    public Identifier(Position position, String id, boolean wasEscaped) {
+        super(position);
+        this.id = id;
+        this.wasEscaped = wasEscaped;
+    }
+    
     
     
     /**
@@ -34,10 +50,18 @@ public class Identifier extends Expression {
      * @param id Identifier String.
      */
     public Identifier(Position position, String id) {
-        super(position);
-        this.id = id;
+        this(position, id, false);
     }
 
+    
+    
+    
+    
+    
+    public boolean wasEscaped() {
+        return this.wasEscaped;
+    }
+    
     
     
     /**

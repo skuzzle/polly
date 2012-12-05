@@ -18,6 +18,14 @@ public class ResolvableIdentifier extends Identifier {
     
     private Declaration decl;
     
+    
+    
+    public ResolvableIdentifier(Position position, String id, boolean wasEscaped) {
+        super(position, id, wasEscaped);
+    }
+    
+    
+    
     public ResolvableIdentifier(Position position, String id) {
         super(position, id);
     }
@@ -25,7 +33,7 @@ public class ResolvableIdentifier extends Identifier {
     
     
     public ResolvableIdentifier(Identifier id) {
-        super(id.getPosition(), id.getId());
+        super(id.getPosition(), id.getId(), id.wasEscaped());
     }
     
     

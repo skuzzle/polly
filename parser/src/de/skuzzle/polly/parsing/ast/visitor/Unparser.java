@@ -126,6 +126,9 @@ public class Unparser extends DepthFirstVisitor {
     
     @Override
     public void beforeIdentifier(Identifier identifier) throws ASTTraversalException {
+        if (identifier.wasEscaped()) {
+            this.out.print("\\");
+        }
         this.out.print(identifier.getId());
     }
     
@@ -133,6 +136,9 @@ public class Unparser extends DepthFirstVisitor {
     
     @Override
     public void beforeResolvable(ResolvableIdentifier id) throws ASTTraversalException {
+        if (id.wasEscaped()) {
+            this.out.print("\\");
+        }
         this.out.print(id.getId());
     }
     
@@ -249,9 +255,7 @@ public class Unparser extends DepthFirstVisitor {
     
     @Override
     public void visitVarAccess(VarAccess access) throws ASTTraversalException {
-        if (access.wasEscaped()) {
-            this.out.print("\\");
-        }
+
         access.getIdentifier().visit(this);
     }
     

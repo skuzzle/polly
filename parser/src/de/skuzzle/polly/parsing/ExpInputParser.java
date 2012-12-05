@@ -241,7 +241,8 @@ public class ExpInputParser {
         if (ESCAPABLE && la.matches(TokenType.ESCAPED)) {
             this.scanner.consume();
             final EscapedToken esc = (EscapedToken) la;
-            return new Identifier(esc.getPosition(), esc.getEscaped().getStringValue());
+            return new Identifier(esc.getPosition(), esc.getEscaped().getStringValue(), 
+                true);
         }
         this.expect(TokenType.IDENTIFIER);
         return new Identifier(la.getPosition(), la.getStringValue());
@@ -753,14 +754,14 @@ public class ExpInputParser {
             this.scanner.consume();
             final EscapedToken escaped = (EscapedToken) la;
             final ResolvableIdentifier escId = new ResolvableIdentifier(la.getPosition(), 
-                escaped.getEscaped().getStringValue());
-            return new VarAccess(la.getPosition(), escId, true);
+                escaped.getEscaped().getStringValue(), true);
+            return new VarAccess(la.getPosition(), escId);
             
         case IDENTIFIER:
             this.scanner.consume();
             final ResolvableIdentifier id = new ResolvableIdentifier(
-                    la.getPosition(), la.getStringValue());
-            return new VarAccess(id.getPosition(), id, false);
+                    la.getPosition(), la.getStringValue(), false);
+            return new VarAccess(id.getPosition(), id);
             
         case OPENBR:
             this.scanner.consume();
@@ -923,7 +924,7 @@ public class ExpInputParser {
                     parameters, this.scanner.spanFrom(la2));
                 return call;
             } else {
-                return new VarAccess(la.getPosition(), id, false);
+                return new VarAccess(la.getPosition(), id);
             }
         }
         
