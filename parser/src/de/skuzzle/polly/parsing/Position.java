@@ -97,7 +97,10 @@ public class Position implements Serializable {
     
     
     public String errorIndicatorString() {
-        StringBuilder b = new StringBuilder(this.end);
+        if (this == Position.NONE) {
+            return "";
+        }
+        final StringBuilder b = new StringBuilder(this.end);
         int i = 0;
         for (; i < this.start; ++i) {
             b.append(" ");
