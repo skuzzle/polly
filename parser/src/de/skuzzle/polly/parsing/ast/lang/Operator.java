@@ -201,13 +201,13 @@ public abstract class Operator extends Function {
     protected Parameter typeToParameter(Type type, ResolvableIdentifier name) {
         if (type instanceof ListType) {
             final ListType lt = (ListType) type;
-            return new ListParameter(Position.EMPTY, name, lt.getSubType());
+            return new ListParameter(Position.NONE, name, lt.getSubType());
         } else if (type instanceof FunctionType) {
             final FunctionType ft = (FunctionType) type;
-            return new FunctionParameter(Position.EMPTY, ft.getReturnType(), 
+            return new FunctionParameter(Position.NONE, ft.getReturnType(), 
                 ft.getParameters(), name);
         } else {
-            return new Parameter(Position.EMPTY, name, type);
+            return new Parameter(Position.NONE, name, type);
         }
     }
     

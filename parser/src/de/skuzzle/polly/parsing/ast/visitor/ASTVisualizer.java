@@ -226,7 +226,7 @@ public class ASTVisualizer extends DepthFirstVisitor {
     
     @Override
     public void beforeParameter(Parameter param) throws ASTTraversalException {
-        this.printNode(param.getName().getId(), "", new Expression(Position.EMPTY) {
+        this.printNode(param.getName().getId(), "", new Expression(Position.NONE) {
             private static final long serialVersionUID = 1L;
             @Override
             public void visit(Visitor visitor) throws ASTTraversalException { }

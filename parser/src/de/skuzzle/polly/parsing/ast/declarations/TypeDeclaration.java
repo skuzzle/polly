@@ -15,7 +15,7 @@ public class TypeDeclaration extends Declaration {
     
     
     public TypeDeclaration(Identifier name, Type type) {
-        super(Position.EMPTY, name);
+        super(Position.NONE, name);
         this.type = type;
     }
 

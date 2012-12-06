@@ -38,11 +38,11 @@ public class FoldLeft extends Function {
     private static final long serialVersionUID = 1L;
     
     private final static ResolvableIdentifier FIRST_PARAM_NAME = 
-        new ResolvableIdentifier(Position.EMPTY, "$list");
+        new ResolvableIdentifier(Position.NONE, "$list");
     private final static ResolvableIdentifier SECOND_PARAM_NAME =
-        new ResolvableIdentifier(Position.EMPTY, "$operator");
+        new ResolvableIdentifier(Position.NONE, "$operator");
     private final static ResolvableIdentifier THIRD_PARAM_NAME =
-        new ResolvableIdentifier(Position.EMPTY, "$arg");
+        new ResolvableIdentifier(Position.NONE, "$arg");
     
     
     
@@ -72,7 +72,7 @@ public class FoldLeft extends Function {
             this.typeToParameter(this.thirdOperand, THIRD_PARAM_NAME)
         });
         
-        final FunctionLiteral func = new FunctionLiteral(Position.EMPTY, p, this);
+        final FunctionLiteral func = new FunctionLiteral(Position.NONE, p, this);
         func.setType(new FunctionType(Type.ANY, Arrays.asList(
             new Type[] { this.firstOperand, this.secondOperand, this.thirdOperand})));
         func.setReturnType(Type.ANY);
@@ -95,8 +95,8 @@ public class FoldLeft extends Function {
         
         Literal result = arg;
         for (final Expression exp : list.getContent()) {
-            final Call call = new Call(Position.EMPTY, func, 
-                Arrays.asList(new Expression[] {result, exp}), Position.EMPTY);
+            final Call call = new Call(Position.NONE, func, 
+                Arrays.asList(new Expression[] {result, exp}), Position.NONE);
             
             call.visit(execVisitor);
             result = stack.pop();

@@ -22,7 +22,7 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
 
     private static final long serialVersionUID = 1L;
     protected final static ResolvableIdentifier PARAM_NAME = 
-            new ResolvableIdentifier(Position.EMPTY, "$param");
+            new ResolvableIdentifier(Position.NONE, "$param");
     private final Type operandType;
     
     
@@ -39,7 +39,7 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
         Collection<Parameter> p = Arrays.asList(new Parameter[] {
             this.typeToParameter(this.operandType, PARAM_NAME)});
         
-        final FunctionLiteral func = new FunctionLiteral(Position.EMPTY, p, this);
+        final FunctionLiteral func = new FunctionLiteral(Position.NONE, p, this);
         func.setType(new FunctionType(this.getType(), Parameter.asType(p)));
         func.setReturnType(this.getType());
         return func;

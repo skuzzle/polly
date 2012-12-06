@@ -19,7 +19,7 @@ public class Position implements Serializable {
     
     private static final long serialVersionUID = 1L;
 
-    public final static Position EMPTY = new Position(-1, -1);
+    public final static Position NONE = new Position(-1, -1);
     
     private int start;
     private int end;
@@ -123,7 +123,7 @@ public class Position implements Serializable {
      * @throws IllegalArgumentException If the original String is too short.
      */
     public String prefix(String original) {
-        if (this.equals(Position.EMPTY)) {
+        if (this.equals(Position.NONE)) {
             return original;
         } else if (this.start > original.length()) {
             throw new IllegalArgumentException("Original String is too short!");
@@ -142,7 +142,7 @@ public class Position implements Serializable {
      * @return A postfix of that string.
      */
     public String postfix(String original) {
-        if (this.equals(Position.EMPTY)) {
+        if (this.equals(Position.NONE)) {
             return original;
         } else if (this.start == this.end - 1 && this.start == original.length()) {
             return "";
@@ -153,7 +153,7 @@ public class Position implements Serializable {
     
     
     public String substring(String original) {
-        if (this.equals(Position.EMPTY)) {
+        if (this.equals(Position.NONE)) {
             return original;
         } else if (this.start == this.end - 1 && this.start == original.length()) {
             return " ";

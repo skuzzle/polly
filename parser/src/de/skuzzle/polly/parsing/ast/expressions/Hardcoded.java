@@ -41,7 +41,7 @@ public abstract class Hardcoded extends Expression {
      * @param type Type of this expression.
      */
     public Hardcoded(Type type) {
-        super(Position.EMPTY, type);
+        super(Position.NONE, type);
     }
     
     

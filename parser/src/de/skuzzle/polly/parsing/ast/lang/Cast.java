@@ -31,7 +31,7 @@ public class Cast extends Operator {
     private static final long serialVersionUID = 1L;
     
     protected final static ResolvableIdentifier PARAM_NAME = new ResolvableIdentifier(
-        Position.EMPTY, "$param");
+        Position.NONE, "$param");
 
     
     /**
@@ -65,9 +65,9 @@ public class Cast extends Operator {
     protected FunctionLiteral createFunction() {
         // create parameter that accepts any expression (Type.ANY)
         final Collection<Parameter> p = Arrays.asList(
-            new Parameter[] { new Parameter(Position.EMPTY, PARAM_NAME, Type.ANY) });
+            new Parameter[] { new Parameter(Position.NONE, PARAM_NAME, Type.ANY) });
         
-        final FunctionLiteral func = new FunctionLiteral(Position.EMPTY, p, this);
+        final FunctionLiteral func = new FunctionLiteral(Position.NONE, p, this);
         func.setType(new FunctionType(this.getType(), Parameter.asType(p)));
         func.setReturnType(this.getType());
         return func;

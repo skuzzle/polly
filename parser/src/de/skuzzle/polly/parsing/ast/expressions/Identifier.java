@@ -23,7 +23,7 @@ public class Identifier extends Expression {
      * @param id Identifier String.
      */
     public Identifier(String id) {
-        this(Position.EMPTY, id);
+        this(Position.NONE, id);
     }
     
 

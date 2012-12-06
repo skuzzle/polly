@@ -255,7 +255,7 @@ public class ExecutionVisitor extends DepthFirstVisitor {
         for (final Identifier id: delete.getIdentifiers()) {
             i += this.nspace.delete(id);
         }
-        this.stack.push(new NumberLiteral(Position.EMPTY, i));
+        this.stack.push(new NumberLiteral(Position.NONE, i));
         this.afterDelete(delete);
     }
 }

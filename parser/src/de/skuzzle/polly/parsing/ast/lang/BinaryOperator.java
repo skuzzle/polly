@@ -32,9 +32,9 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
     private static final long serialVersionUID = 1L;
     
     private final static ResolvableIdentifier LEFT_PARAM_NAME = 
-            new ResolvableIdentifier(Position.EMPTY, "$left");
+            new ResolvableIdentifier(Position.NONE, "$left");
     private final static ResolvableIdentifier RIGHT_PARAM_NAME =
-            new ResolvableIdentifier(Position.EMPTY, "$right");
+            new ResolvableIdentifier(Position.NONE, "$right");
     
     private final Type left;
     private final Type right;
@@ -64,7 +64,7 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
             this.typeToParameter(this.right, RIGHT_PARAM_NAME)
         });
         
-        final FunctionLiteral func = new FunctionLiteral(Position.EMPTY, p, this);
+        final FunctionLiteral func = new FunctionLiteral(Position.NONE, p, this);
         func.setType(new FunctionType(this.getType(), Arrays.asList(new Type[] {
             this.left, 
             this.right})));

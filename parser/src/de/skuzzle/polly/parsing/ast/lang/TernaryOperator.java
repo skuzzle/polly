@@ -25,11 +25,11 @@ public abstract class TernaryOperator<FIRST extends Literal, SECOND extends Lite
     private static final long serialVersionUID = 1L;
     
     private final static ResolvableIdentifier FIRST_PARAM_NAME = 
-            new ResolvableIdentifier(Position.EMPTY, "$first");
+            new ResolvableIdentifier(Position.NONE, "$first");
     private final static ResolvableIdentifier SECOND_PARAM_NAME =
-            new ResolvableIdentifier(Position.EMPTY, "$second");
+            new ResolvableIdentifier(Position.NONE, "$second");
     private final static ResolvableIdentifier THIRD_PARAM_NAME =
-        new ResolvableIdentifier(Position.EMPTY, "$third");
+        new ResolvableIdentifier(Position.NONE, "$third");
     
     private final Type first;
     private final Type second;
@@ -55,7 +55,7 @@ public abstract class TernaryOperator<FIRST extends Literal, SECOND extends Lite
             this.typeToParameter(this.third, THIRD_PARAM_NAME),
         });
         
-        final FunctionLiteral func = new FunctionLiteral(Position.EMPTY, p, this);
+        final FunctionLiteral func = new FunctionLiteral(Position.NONE, p, this);
         func.setType(new FunctionType(this.getType(), Arrays.asList(new Type[] {
             this.first, 
             this.second,
