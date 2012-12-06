@@ -22,6 +22,15 @@ import de.skuzzle.polly.parsing.types.Type;
 import de.skuzzle.polly.parsing.util.Stack;
 
 
+/**
+ * <p>Function that takes a list and another function. It creates a new list by applying
+ * the function to each element of the source list and adding the result to a new 
+ * list.</p>
+ * 
+ * <p>Type information: <code>List&lt;B&gt; map(List&lt;A&gt;, \(B : A))</code></p>
+ * 
+ * @author Simon Taddiken
+ */
 public class Map extends Function {
 
     private static final long serialVersionUID = 1L;

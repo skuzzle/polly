@@ -51,7 +51,7 @@ public class Evaluator {
             System.out.println(ns.toString());
         }
         
-        String testMe2 = ":bloo map({1,2,3,4}, String)";
+        String testMe2 = ":bloo map({1,2,3,4}, \\+)";
         final Namespace other = Namespace.forName("other");
         final Evaluator eval2 = new Evaluator(testMe2, "ISO-8859-1");
         
