@@ -22,7 +22,7 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.LiteralFormatter;
-import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
+import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
 import de.skuzzle.polly.tools.streams.StringBuilderWriter;
 
 

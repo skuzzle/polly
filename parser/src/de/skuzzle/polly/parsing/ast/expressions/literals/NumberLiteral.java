@@ -135,13 +135,6 @@ public class NumberLiteral extends Literal {
         
         return this.getValue();
     }
-    
-    
-    
-    @Override
-    public Literal castTo(Type type) throws ASTTraversalException {
-        return null;
-    }
 
     
     

@@ -1,4 +1,4 @@
-package de.skuzzle.polly.parsing.ast.operators;
+package de.skuzzle.polly.parsing.ast.lang;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -59,7 +59,7 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
     
     @Override
     protected FunctionLiteral createFunction() {
-        Collection<Parameter> p = Arrays.asList(new Parameter[] {
+        final Collection<Parameter> p = Arrays.asList(new Parameter[] {
             this.typeToParameter(this.left, LEFT_PARAM_NAME),
             this.typeToParameter(this.right, RIGHT_PARAM_NAME)
         });

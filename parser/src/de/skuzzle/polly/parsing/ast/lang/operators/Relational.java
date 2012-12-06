@@ -1,11 +1,11 @@
-package de.skuzzle.polly.parsing.ast.operators.impl;
+package de.skuzzle.polly.parsing.ast.lang.operators;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.literals.BooleanLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
-import de.skuzzle.polly.parsing.ast.operators.BinaryOperator;
+import de.skuzzle.polly.parsing.ast.lang.BinaryOperator;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.parsing.types.Type;
@@ -33,7 +33,7 @@ public class Relational extends BinaryOperator<Literal, Literal> {
         
         if (!left.getType().isCompareable()) {
             throw new ASTTraversalException(left.getPosition(), 
-                "Typ ist nicht Vergleichbar");
+                "Typ '" + left.getType() + "' definiert keine Ordnung");
         }
     }
     

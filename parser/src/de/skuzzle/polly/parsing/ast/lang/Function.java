@@ -1,4 +1,4 @@
-package de.skuzzle.polly.parsing.ast.operators;
+package de.skuzzle.polly.parsing.ast.lang;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
@@ -32,6 +32,7 @@ public abstract class Function extends Hardcoded {
 
     private static final long serialVersionUID = 1L;
     private final ResolvableIdentifier name;
+    private boolean mustCopy;
     
     
 
@@ -48,6 +49,31 @@ public abstract class Function extends Hardcoded {
     
     
     /**
+     * Sets whether the declaration created by {@link #createDeclaration()} for this 
+     * function must be copied when being resolved.
+     *  
+     * @param mustCopy Whether declarations to this function shall be copied when being 
+     *          resolved.
+     */
+    protected void setMustCopy(boolean mustCopy) {
+        this.mustCopy = mustCopy;
+    }
+    
+    
+    
+    /**
+     * Gets whether the declaration created by {@link #createDeclaration()} for this 
+     * function is set to 'mustCopy'.
+     *  
+     * @return Whether declarations to this function shall be copied when being resolved.
+     */
+    public boolean mustCopy() {
+        return this.mustCopy;
+    }
+    
+    
+    
+    /**
      * Creates a {@link FunctionLiteral} which represents this hardcoded function.
      * 
      * @return A {@link FunctionLiteral}.
@@ -57,17 +83,21 @@ public abstract class Function extends Hardcoded {
     
     
     /**
-     * Creates a proper declaration for this operator. Additionally, sets this Function's
-     * type according to the Type of the {@link FunctionLiteral} created by 
-     * {@link #createFunction()}. This method should be called only once per instance.
+     * <p>Creates a proper declaration for this operator. Additionally, sets this 
+     * Function's type according to the Type of the {@link FunctionLiteral} created by 
+     * {@link #createFunction()}. This method should be called only once per instance.</p>
      * 
-     * @return A declaration.
+     * <p>The created declaration will have the 'isPrimitive' flag set to true and the 
+     * 'mustCopy' flag set according to the value {@link #mustCopy()} returns.</p>
+     * 
+     * @return A declaration for this function.
      */
     public Declaration createDeclaration() {
         final FunctionLiteral func = this.createFunction();
         final VarDeclaration vd = new VarDeclaration(func.getPosition(), this.name, func);
         this.setType(func.getType());
         vd.setPrimitive(true);
+        vd.setMustCopy(this.mustCopy());
         return vd;
     }
     

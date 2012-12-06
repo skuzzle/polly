@@ -15,17 +15,18 @@ import java.util.Map;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
 import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
-import de.skuzzle.polly.parsing.ast.operators.Cast;
-import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
-import de.skuzzle.polly.parsing.ast.operators.impl.BinaryArithmetic;
-import de.skuzzle.polly.parsing.ast.operators.impl.Conditional;
-import de.skuzzle.polly.parsing.ast.operators.impl.DateArithmetic;
-import de.skuzzle.polly.parsing.ast.operators.impl.DateTimespanArithmetic;
-import de.skuzzle.polly.parsing.ast.operators.impl.ListIndex;
-import de.skuzzle.polly.parsing.ast.operators.impl.Relational;
-import de.skuzzle.polly.parsing.ast.operators.impl.TimespanArithmetic;
-import de.skuzzle.polly.parsing.ast.operators.impl.UnaryArithmetic;
-import de.skuzzle.polly.parsing.ast.operators.impl.UnaryList;
+import de.skuzzle.polly.parsing.ast.lang.Cast;
+import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
+import de.skuzzle.polly.parsing.ast.lang.functions.FoldLeft;
+import de.skuzzle.polly.parsing.ast.lang.operators.BinaryArithmetic;
+import de.skuzzle.polly.parsing.ast.lang.operators.Conditional;
+import de.skuzzle.polly.parsing.ast.lang.operators.DateArithmetic;
+import de.skuzzle.polly.parsing.ast.lang.operators.DateTimespanArithmetic;
+import de.skuzzle.polly.parsing.ast.lang.operators.ListIndex;
+import de.skuzzle.polly.parsing.ast.lang.operators.Relational;
+import de.skuzzle.polly.parsing.ast.lang.operators.TimespanArithmetic;
+import de.skuzzle.polly.parsing.ast.lang.operators.UnaryArithmetic;
+import de.skuzzle.polly.parsing.ast.lang.operators.UnaryList;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 import de.skuzzle.polly.parsing.types.FunctionType;
@@ -290,6 +291,11 @@ public class Namespace {
             
             // ternary ops
             GLOBAL.declare(new Conditional(OpType.IF).createDeclaration());
+            
+            
+            // FUNCTIONS
+            GLOBAL.declare(new FoldLeft().createDeclaration());
+            GLOBAL.declare(new de.skuzzle.polly.parsing.ast.lang.functions.Map().createDeclaration());
         } catch (ASTTraversalException e) {
             e.printStackTrace();
         }

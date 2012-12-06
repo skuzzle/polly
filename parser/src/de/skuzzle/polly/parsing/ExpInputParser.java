@@ -32,7 +32,7 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.StringLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.TimespanLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.UserLiteral;
-import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
+import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
 
 
 /**

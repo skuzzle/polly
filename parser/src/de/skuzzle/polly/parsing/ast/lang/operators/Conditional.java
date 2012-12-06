@@ -1,12 +1,11 @@
-package de.skuzzle.polly.parsing.ast.operators.impl;
+package de.skuzzle.polly.parsing.ast.lang.operators;
 
 import de.skuzzle.polly.parsing.Position;
-import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.literals.BooleanLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
-import de.skuzzle.polly.parsing.ast.operators.TernaryOperator;
+import de.skuzzle.polly.parsing.ast.lang.TernaryOperator;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.parsing.types.Type;
@@ -28,15 +27,8 @@ public class Conditional extends TernaryOperator<BooleanLiteral, Literal, Litera
 
     public Conditional(OpType id) {
         super(id, Type.ANY, Type.BOOLEAN, Type.ANY, Type.ANY);
-    }
-
-    
-    
-    @Override
-    public Declaration createDeclaration() {
-        final Declaration d = super.createDeclaration();
-        d.setMustCopy(true);
-        return d;
+        
+        this.setMustCopy(true);
     }
     
     

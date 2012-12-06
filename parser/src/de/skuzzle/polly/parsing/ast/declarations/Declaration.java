@@ -3,7 +3,7 @@ package de.skuzzle.polly.parsing.ast.declarations;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.expressions.Identifier;
-import de.skuzzle.polly.parsing.ast.operators.Function;
+import de.skuzzle.polly.parsing.ast.lang.Function;
 import de.skuzzle.polly.parsing.types.Type;
 
 
