@@ -400,7 +400,7 @@ public class TypeResolver extends DepthFirstVisitor {
         // get namespace which is accessed here and has the current namespace as 
         // parent. 
         final Expression lhs = access.getLhs();
-        if (!(lhs instanceof VarAccess) || !(access.getRhs() instanceof VarAccess)) {
+        if (!(lhs instanceof VarAccess)) {
             throw new ASTTraversalException(access.getPosition(), 
                 "Operanden müssen Bezeichner sein.");
         }

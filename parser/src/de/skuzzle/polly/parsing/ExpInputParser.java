@@ -62,7 +62,7 @@ import de.skuzzle.polly.parsing.ast.operators.Operator.OpType;
  *   unary       -> UNARY_OP unary                             // right-associative unary operator
  *                | call
  *   call        -> access ( '(' parameters ')' )?
- *   access      -> literal ('.' literal)?                     // namespace access. both operands must be a single identifier (represented by a VarAccess)
+ *   access      -> literal ('.' expr )?                       // namespace access. left operand must be a single identifier (represented by a VarAccess)
  *   literal     -> ID                                         // VarAccess
  *                | ESCAPED                                    // token escape
  *                | '(' expr ')'                               // braced expression
@@ -698,7 +698,7 @@ public class ExpInputParser {
     /**
      * Parses a {@link Namespace} access.
      * <pre>
-     * access -> literal ('.' literal)?
+     * access -> literal ('.' expr)?
      * </pre>
      * 
      * @return The parsed literal if no DOT operator was found, or a {@link Namespace}
@@ -710,7 +710,7 @@ public class ExpInputParser {
         
         final Token la = this.scanner.lookAhead();
         if (this.scanner.match(TokenType.DOT)) {
-            final Expression rhs = this.parseLiteral();
+            final Expression rhs = this.parseExpr();
             
             return new NamespaceAccess(new Position(lhs.getPosition(), 
                 this.scanner.spanFrom(la)), lhs, rhs);

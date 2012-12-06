@@ -13,7 +13,7 @@ dotdot      -> unary ('..' unary ('$' unary)?)?           // range operator with
 unary       -> UNARY_OP unary                             // right-associative unary operator
              | call
 call        -> access ( '(' parameters ')' )?
-access      -> literal ('.' literal)?                     // namespace access. both operands must be a single identifier (represented by a VarAccess)
+access      -> literal ('.' expr)?                        // namespace access. left operand must be a single identifier (represented by a VarAccess)
 literal     -> ID                                         // VarAccess
              | ESCAPED                                    // token escape
              | '(' expr ')'                               // braced expression
