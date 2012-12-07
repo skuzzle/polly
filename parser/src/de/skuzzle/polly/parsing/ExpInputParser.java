@@ -7,7 +7,9 @@ import java.util.Collection;
 import java.util.List;
 
 import de.skuzzle.polly.parsing.PrecedenceTable.PrecedenceLevel;
+import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.Node;
+import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.FunctionParameter;
 import de.skuzzle.polly.parsing.ast.declarations.ListParameter;
@@ -18,10 +20,8 @@ import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Delete;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
-import de.skuzzle.polly.parsing.ast.expressions.Identifier;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
-import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.BooleanLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ChannelLiteral;
@@ -77,9 +77,6 @@ import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
  *                | NUMBER                                     // number literal
  *                | DATETIME                                   // date literal
  *                | TIMESPAN                                   // timespan literal
- *   
- *   varOrCall   -> ID                                         // var access
- *                | ID '(' exprList ')'                        // call   
  *            
  *   exprList    -> (expr (',' expr)*)?
  *   parameters  -> parameter (',' parameter)*
@@ -884,51 +881,6 @@ public class ExpInputParser {
             this.expect(TokenType.LITERAL);
         }
         
-        return null;
-    }
-    
-    
-    
-    /**
-     * Tries to parse a variable access or function call. If the next tokens form 
-     * no valid function call (i.e. the next token is no identifier, this method 
-     * returns <code>null</code>).
-     * 
-     * <pre>
-     * varOrCall -> ID                    // var access
-     *            | ID '(' exprList ')'   // call   
-     *            | epsilon
-     * </pre>
-     * @return Either a {@link VarAccess} instance if the next token is a single 
-     *          identifier, or a {@link Call} if the next tokens form a valid 
-     *          function call, or <code>null</code> if the next token is no 
-     *          identifier.
-     * @throws ParseException If this was no valid call though it appeared to be one. 
-     */
-    protected Expression parseVarOrCall() throws ParseException {
-        final Token la = this.scanner.lookAhead();
-        
-        if (la.getType() == TokenType.IDENTIFIER) {
-            this.scanner.consume();
-            
-            final ResolvableIdentifier id = new ResolvableIdentifier(
-                la.getPosition(), la.getStringValue());
-
-            final Token la2 = this.scanner.lookAhead();
-            if (this.scanner.match(TokenType.OPENBR)) {
-                final List<Expression> parameters = 
-                        this.parseExpressionList(TokenType.CLOSEDBR);
-                this.expect(TokenType.CLOSEDBR);
-
-                final Call call = new Call(this.scanner.spanFrom(la), id,
-                    parameters, this.scanner.spanFrom(la2));
-                return call;
-            } else {
-                return new VarAccess(la.getPosition(), id);
-            }
-        }
-        
-        // indicates that this was no var access or function call.
         return null;
     }
     

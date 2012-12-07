@@ -1,4 +1,4 @@
-package de.skuzzle.polly.parsing.ast.expressions;
+package de.skuzzle.polly.parsing.ast;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
@@ -9,7 +9,7 @@ import de.skuzzle.polly.parsing.ast.visitor.Visitor;
  * 
  * @author Simon Taddiken
  */
-public class Identifier extends Expression {
+public class Identifier extends Node {
 
     private static final long serialVersionUID = 1L;
     
@@ -55,9 +55,11 @@ public class Identifier extends Expression {
 
     
     
-    
-    
-    
+    /**
+     * Gets whether the identifier was created from an escaped token.
+     * 
+     * @return Whether the identifier was created from an escaped token.
+     */
     public boolean wasEscaped() {
         return this.wasEscaped;
     }

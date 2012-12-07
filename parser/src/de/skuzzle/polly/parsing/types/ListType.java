@@ -1,6 +1,6 @@
 package de.skuzzle.polly.parsing.types;
 
-import de.skuzzle.polly.parsing.ast.expressions.Identifier;
+import de.skuzzle.polly.parsing.ast.Identifier;
 
 
 public class ListType extends Type {

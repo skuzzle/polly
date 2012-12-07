@@ -1,4 +1,4 @@
-package de.skuzzle.polly.parsing.ast.expressions;
+package de.skuzzle.polly.parsing.ast;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;

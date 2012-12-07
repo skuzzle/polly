@@ -4,7 +4,7 @@ import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Iterator;
 
-import de.skuzzle.polly.parsing.ast.expressions.Identifier;
+import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.tools.streams.StringBuilderWriter;
 import de.skuzzle.polly.tools.strings.IteratorPrinter;
 

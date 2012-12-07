@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.lang.Operator;
 import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;

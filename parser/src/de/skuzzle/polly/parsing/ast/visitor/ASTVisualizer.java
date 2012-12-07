@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.util.Stack;
 
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.Node;
+import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.FunctionParameter;
 import de.skuzzle.polly.parsing.ast.declarations.ListParameter;
@@ -17,17 +19,16 @@ import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Delete;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.Hardcoded;
-import de.skuzzle.polly.parsing.ast.expressions.Identifier;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
-import de.skuzzle.polly.parsing.ast.expressions.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
-import de.skuzzle.polly.parsing.types.Type;
 import de.skuzzle.polly.process.KillingProcessWatcher;
 import de.skuzzle.polly.process.ProcessExecutor;
+
+
 
 public class ASTVisualizer extends DepthFirstVisitor {
 
@@ -85,8 +86,9 @@ public class ASTVisualizer extends DepthFirstVisitor {
     private void printLabel(String name, String type, String attr, Position pos) {
         name = name.equals("") ? "" : name + "|";
         attr = attr.equals("") ? "" : attr + "|";
+        type = type.equals("") ? "" : "Type: " + type + "|";
         println("n" + this.preorder_number + "[shape=record, label=\"{" + name + 
-            "Type: " + type + "|" + attr
+            type + attr
             + pos.toString() + "}\"]");
     }
 
@@ -105,6 +107,18 @@ public class ASTVisualizer extends DepthFirstVisitor {
     // increases the peorder number, pushes this number onto the
     // stack, and emits the node including an edge from its
     // parent
+    private void printNode(String name, String attr, Node n) {
+        this.preorder_number++;
+        this.printLabel(name, "", attr, n.getPosition());
+        // emit edge
+        if (has_elements()) {
+            this.println("n" + top() + " -- " + "n" + this.preorder_number);
+        }
+        this.push(this.preorder_number);
+    }
+    
+    
+    
     private void printNode(String name, String attr, Expression n) {
         this.preorder_number++;
         this.printLabel(name, n.getType().toString(), attr, n.getPosition());
@@ -226,11 +240,7 @@ public class ASTVisualizer extends DepthFirstVisitor {
     
     @Override
     public void beforeParameter(Parameter param) throws ASTTraversalException {
-        this.printNode(param.getName().getId(), "", new Expression(Position.NONE) {
-            private static final long serialVersionUID = 1L;
-            @Override
-            public void visit(Visitor visitor) throws ASTTraversalException { }
-        });
+        this.printNode(param.getName().getId(), "", param);
     }
     
     
@@ -266,11 +276,7 @@ public class ASTVisualizer extends DepthFirstVisitor {
     
     @Override
     public void beforeRoot(Root root) throws ASTTraversalException {
-        this.printNode("Root", "", new Expression(root.getPosition(), Type.UNKNOWN) {
-            private static final long serialVersionUID = 1L;
-            @Override
-            public void visit(Visitor visitor) throws ASTTraversalException {}
-        });
+        this.printNode("Root", "", root);
     }
     
     
