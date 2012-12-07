@@ -19,10 +19,18 @@ public class Position implements Serializable {
     
     private static final long serialVersionUID = 1L;
 
+    /**
+     * A Position instance that represents no valid position within a String. Can be used
+     * for internally created AST Nodes, that have no matching representation within
+     * the input String.
+     */
     public final static Position NONE = new Position(-1, -1);
     
-    private int start;
-    private int end;
+    
+    
+    private final int start;
+    private final int end;
+    
     
     
     /**
@@ -96,6 +104,15 @@ public class Position implements Serializable {
     
     
     
+    /**
+     * Gives a String which indicates this position. That means, the returned String will
+     * consist of spaces until the start position. There, a "^" will be printed to 
+     * indicate the beginning of this position. If {@link #getWidth()} is greater than
+     * 1, a second "^" will be printed at the end position. So the returned String will
+     * have the length <code>getWidth() > 1 ? this.getEnd() : this.getStart()</code>
+     * 
+     * @return A String indicating this position.
+     */
     public String errorIndicatorString() {
         if (this == Position.NONE) {
             return "";
@@ -141,7 +158,7 @@ public class Position implements Serializable {
      * occur after this positions end index (including the character at the end index
      * itself, because it is exclusive).
      * 
-     * @param original The string to create the postfrix from.
+     * @param original The string to create the postfix from.
      * @return A postfix of that string.
      */
     public String postfix(String original) {
@@ -155,6 +172,13 @@ public class Position implements Serializable {
     
     
     
+    /**
+     * Returns the substring of the given string that this position represents. If this
+     * is {@link Position#NONE}, the whole other string will be returned.
+     * 
+     * @param original The string to create the substring from.
+     * @return The substring.
+     */
     public String substring(String original) {
         if (this.equals(Position.NONE)) {
             return original;
