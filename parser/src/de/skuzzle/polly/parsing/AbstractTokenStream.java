@@ -31,11 +31,6 @@ import java.util.Queue;
  * to change the behavior of the pushback method. The default strategy is LIFO (this
  * takes only effect when pushing back more than one character).</p>
  * 
- * 
- * 
- * <p>Until now, this class only works for input strings encoded 
- * in ISO-8859-1.</p>
- * 
  * @author Simon
  */
 public abstract class AbstractTokenStream implements Iterable<Token> {

@@ -1,6 +1,6 @@
 package de.skuzzle.polly.parsing;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -21,7 +21,7 @@ public class PrecedenceTable {
     
     
     public PrecedenceTable() {
-        this.levels = new HashMap<PrecedenceLevel, Set<TokenType>>();
+        this.levels = new EnumMap<PrecedenceLevel, Set<TokenType>>(PrecedenceLevel.class);
         for (PrecedenceLevel lvl : PrecedenceLevel.values()) {
             this.levels.put(lvl, new TreeSet<TokenType>());
         }
