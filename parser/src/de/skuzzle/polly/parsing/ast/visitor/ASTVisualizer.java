@@ -88,8 +88,7 @@ public class ASTVisualizer extends DepthFirstVisitor {
         attr = attr.equals("") ? "" : attr + "|";
         type = type.equals("") ? "" : "Type: " + type + "|";
         println("n" + this.preorder_number + "[shape=record, label=\"{" + name + 
-            type + attr
-            + pos.toString() + "}\"]");
+            type + attr + pos.toString() + "}\"]");
     }
 
 

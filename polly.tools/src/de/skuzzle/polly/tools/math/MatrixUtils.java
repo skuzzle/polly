@@ -66,7 +66,7 @@ public class MatrixUtils {
      * @return Whether the given matrix is the identical matrix.
      */
     public static <K> boolean isIdentity(Matrix<K> matrix) {
-        if (matrix.getN() != matrix.getN()) {
+        if (matrix.getN() != matrix.getM()) {
             return false;
         }
         return matrix.getLeftId().equals(matrix);
