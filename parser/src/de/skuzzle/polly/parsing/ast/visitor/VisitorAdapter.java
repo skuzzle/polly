@@ -1,0 +1,142 @@
+package de.skuzzle.polly.parsing.ast.visitor;
+
+import de.skuzzle.polly.parsing.ast.Identifier;
+import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
+import de.skuzzle.polly.parsing.ast.Root;
+import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
+import de.skuzzle.polly.parsing.ast.expressions.Assignment;
+import de.skuzzle.polly.parsing.ast.expressions.Braced;
+import de.skuzzle.polly.parsing.ast.expressions.Call;
+import de.skuzzle.polly.parsing.ast.expressions.Delete;
+import de.skuzzle.polly.parsing.ast.expressions.Hardcoded;
+import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
+import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
+import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
+import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
+import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
+import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
+import de.skuzzle.polly.parsing.ast.expressions.parameters.FunctionParameter;
+import de.skuzzle.polly.parsing.ast.expressions.parameters.ListParameter;
+import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
+
+
+
+/**
+ * Provides an abstract {@link Visitor} where all <code>beforeXYZ</code> and all 
+ * <code>afterXYZ</code> methods are pre-implemented empty.
+ * 
+ * @author Simon Taddiken
+ */
+public abstract class VisitorAdapter implements Visitor {
+
+    @Override
+    public void beforeRoot(Root root) throws ASTTraversalException {}
+
+    @Override
+    public void afterRoot(Root root) throws ASTTraversalException {}
+
+    @Override
+    public void beforeLiteral(Literal literal) throws ASTTraversalException {}
+
+    @Override
+    public void afterLiteral(Literal literal) throws ASTTraversalException {}
+
+    @Override
+    public void beforeIdentifier(Identifier identifier) throws ASTTraversalException {}
+
+    @Override
+    public void afterIdentifier(Identifier identifier) throws ASTTraversalException {}
+
+    @Override
+    public void beforeResolvable(ResolvableIdentifier id) throws ASTTraversalException {}
+
+    @Override
+    public void afterResolvable(ResolvableIdentifier id) throws ASTTraversalException {}
+
+    @Override
+    public void beforeAssignment(Assignment assign) throws ASTTraversalException {}
+
+    @Override
+    public void afterAssignment(Assignment assign) throws ASTTraversalException {}
+
+    @Override
+    public void beforeParameter(Parameter param) throws ASTTraversalException {}
+
+    @Override
+    public void afterParameter(Parameter param) throws ASTTraversalException {}
+
+    @Override
+    public void beforeListParameter(ListParameter param) throws ASTTraversalException {}
+
+    @Override
+    public void afterListParameter(ListParameter param) throws ASTTraversalException {}
+
+    @Override
+    public void beforeFunctionParameter(FunctionParameter param)
+        throws ASTTraversalException {}
+
+    @Override
+    public void afterFunctionParameter(FunctionParameter param)
+        throws ASTTraversalException {}
+
+    @Override
+    public void beforeVarDecl(VarDeclaration decl) throws ASTTraversalException {}
+
+    @Override
+    public void afterVarDecl(VarDeclaration decl) throws ASTTraversalException {}
+
+    @Override
+    public void beforeCall(Call call) throws ASTTraversalException {}
+
+    @Override
+    public void afterCall(Call call) throws ASTTraversalException {}
+
+    @Override
+    public void beforeOperatorCall(OperatorCall call) throws ASTTraversalException {}
+
+    @Override
+    public void afterOperatorCall(OperatorCall call) throws ASTTraversalException {}
+
+    @Override
+    public void beforeHardcoded(Hardcoded hc) throws ASTTraversalException {}
+
+    @Override
+    public void afterHardcoded(Hardcoded hc) throws ASTTraversalException {}
+
+    @Override
+    public void beforeAccess(NamespaceAccess access) throws ASTTraversalException {}
+
+    @Override
+    public void afterAccess(NamespaceAccess access) throws ASTTraversalException {}
+
+    @Override
+    public void beforeVarAccess(VarAccess access) throws ASTTraversalException {}
+
+    @Override
+    public void afterVarAccess(VarAccess access) throws ASTTraversalException {}
+
+    @Override
+    public void beforeFunctionLiteral(FunctionLiteral func) 
+        throws ASTTraversalException {}
+
+    @Override
+    public void afterFunctionLiteral(FunctionLiteral func) throws ASTTraversalException {}
+
+    @Override
+    public void beforeListLiteral(ListLiteral list) throws ASTTraversalException {}
+
+    @Override
+    public void afterListLiteral(ListLiteral list) throws ASTTraversalException {}
+
+    @Override
+    public void beforeBraced(Braced braced) throws ASTTraversalException {}
+
+    @Override
+    public void afterBraced(Braced braced) throws ASTTraversalException {}
+
+    @Override
+    public void beforeDelete(Delete delete) throws ASTTraversalException {}
+
+    @Override
+    public void afterDelete(Delete delete) throws ASTTraversalException {}
+}

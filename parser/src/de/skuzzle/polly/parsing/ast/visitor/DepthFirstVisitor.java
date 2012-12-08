@@ -27,7 +27,7 @@ import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
  * 
  * @author Simon Taddiken
  */
-public class DepthFirstVisitor implements Visitor {
+public class DepthFirstVisitor extends VisitorAdapter {
     
     /** Flag to determine if current traversal should be stopped */
     protected boolean aborted;
@@ -44,15 +44,9 @@ public class DepthFirstVisitor implements Visitor {
     public void abort() {
         this.aborted = true;
     }
+
     
     
-
-    @Override
-    public void beforeRoot(Root root) throws ASTTraversalException {}
-
-    @Override
-    public void afterRoot(Root root) throws ASTTraversalException {}
-
     @Override
     public void visitRoot(Root root) throws ASTTraversalException {
         if (this.aborted) {
@@ -68,12 +62,6 @@ public class DepthFirstVisitor implements Visitor {
     
     
     @Override
-    public void beforeLiteral(Literal literal) throws ASTTraversalException {}
-
-    @Override
-    public void afterLiteral(Literal literal) throws ASTTraversalException {}
-
-    @Override
     public void visitLiteral(Literal literal) throws ASTTraversalException {
         if (this.aborted) {
             return;
@@ -84,12 +72,6 @@ public class DepthFirstVisitor implements Visitor {
 
     
     
-    @Override
-    public void beforeIdentifier(Identifier identifier) throws ASTTraversalException {}
-
-    @Override
-    public void afterIdentifier(Identifier identifier) throws ASTTraversalException {}
-
     @Override
     public void visitIdentifier(Identifier identifier)  throws ASTTraversalException {
         if (this.aborted) {
@@ -102,12 +84,6 @@ public class DepthFirstVisitor implements Visitor {
     
     
     @Override
-    public void beforeResolvable(ResolvableIdentifier id) throws ASTTraversalException {}
-
-    @Override
-    public void afterResolvable(ResolvableIdentifier id) throws ASTTraversalException {}
-
-    @Override
     public void visitResolvable(ResolvableIdentifier id) throws ASTTraversalException {
         if (this.aborted) {
             return;
@@ -118,14 +94,6 @@ public class DepthFirstVisitor implements Visitor {
     
     
     
-    @Override
-    public void beforeAssignment(Assignment assign)
-        throws ASTTraversalException {}
-
-    @Override
-    public void afterAssignment(Assignment assign)
-        throws ASTTraversalException {}
-
     @Override
     public void visitAssignment(Assignment assign) 
             throws ASTTraversalException {
@@ -139,12 +107,6 @@ public class DepthFirstVisitor implements Visitor {
     }
 
     
-    
-    @Override
-    public void beforeParameter(Parameter param) throws ASTTraversalException {}
-
-    @Override
-    public void afterParameter(Parameter param) throws ASTTraversalException {}
 
     @Override
     public void visitParameter(Parameter param) throws ASTTraversalException {
@@ -156,12 +118,6 @@ public class DepthFirstVisitor implements Visitor {
     }
     
     
-    
-    @Override
-    public void beforeListParameter(ListParameter param) throws ASTTraversalException {}
-
-    @Override
-    public void afterListParameter(ListParameter param) throws ASTTraversalException {}
 
     @Override
     public void visitListParameter(ListParameter param) throws ASTTraversalException {
@@ -173,14 +129,6 @@ public class DepthFirstVisitor implements Visitor {
     }
     
     
-    
-    @Override
-    public void beforeFunctionParameter(FunctionParameter param) 
-            throws ASTTraversalException {}
-
-    @Override
-    public void afterFunctionParameter(FunctionParameter param) 
-            throws ASTTraversalException {}
 
     @Override
     public void visitFunctionParameter(FunctionParameter param) 
@@ -193,12 +141,6 @@ public class DepthFirstVisitor implements Visitor {
     }
 
     
-    
-    @Override
-    public void beforeVarDecl(VarDeclaration decl) throws ASTTraversalException {}
-
-    @Override
-    public void afterVarDecl(VarDeclaration decl) throws ASTTraversalException {}
 
     @Override
     public void visitVarDecl(VarDeclaration decl) throws ASTTraversalException {
@@ -210,12 +152,6 @@ public class DepthFirstVisitor implements Visitor {
     }
     
     
-
-    @Override
-    public void beforeCall(Call call) throws ASTTraversalException {}
-
-    @Override
-    public void afterCall(Call call) throws ASTTraversalException {}
 
     @Override
     public void visitCall(Call call) throws ASTTraversalException {
@@ -231,12 +167,6 @@ public class DepthFirstVisitor implements Visitor {
     }
 
     
-    
-    @Override
-    public void beforeHardcoded(Hardcoded hc) throws ASTTraversalException {}
-
-    @Override
-    public void afterHardcoded(Hardcoded hc) throws ASTTraversalException {}
 
     @Override
     public void visitHardcoded(Hardcoded hc) throws ASTTraversalException {
@@ -248,12 +178,6 @@ public class DepthFirstVisitor implements Visitor {
     }
 
     
-    
-    @Override
-    public void beforeAccess(NamespaceAccess access) throws ASTTraversalException {}
-
-    @Override
-    public void afterAccess(NamespaceAccess access) throws ASTTraversalException {}
 
     @Override
     public void visitAccess(NamespaceAccess access) throws ASTTraversalException {
@@ -266,12 +190,8 @@ public class DepthFirstVisitor implements Visitor {
         this.afterAccess(access);
     }
 
-    @Override
-    public void beforeVarAccess(VarAccess access) throws ASTTraversalException {}
 
-    @Override
-    public void afterVarAccess(VarAccess access) throws ASTTraversalException {}
-
+    
     @Override
     public void visitVarAccess(VarAccess access) throws ASTTraversalException {
         if (this.aborted) {
@@ -282,14 +202,8 @@ public class DepthFirstVisitor implements Visitor {
         this.afterVarAccess(access);
     }
 
-    @Override
-    public void beforeFunctionLiteral(FunctionLiteral func)
-        throws ASTTraversalException {}
 
-    @Override
-    public void afterFunctionLiteral(FunctionLiteral func)
-        throws ASTTraversalException {}
-
+    
     @Override
     public void visitFunctionLiteral(FunctionLiteral func)
             throws ASTTraversalException {
@@ -301,12 +215,8 @@ public class DepthFirstVisitor implements Visitor {
         this.afterFunctionLiteral(func);
     }
 
-    @Override
-    public void beforeListLiteral(ListLiteral list) throws ASTTraversalException {}
 
-    @Override
-    public void afterListLiteral(ListLiteral list) throws ASTTraversalException {}
-
+    
     @Override
     public void visitListLiteral(ListLiteral list) throws ASTTraversalException {
         if (this.aborted) {
@@ -319,12 +229,8 @@ public class DepthFirstVisitor implements Visitor {
         this.afterListLiteral(list);
     }
 
-    @Override
-    public void beforeOperatorCall(OperatorCall call) throws ASTTraversalException {}
 
-    @Override
-    public void afterOperatorCall(OperatorCall call) throws ASTTraversalException {}
-
+    
     @Override
     public void visitOperatorCall(OperatorCall call) throws ASTTraversalException {
         if (this.aborted) {
@@ -341,12 +247,6 @@ public class DepthFirstVisitor implements Visitor {
     
     
     @Override
-    public void beforeBraced(Braced braced) throws ASTTraversalException {}
-    
-    @Override
-    public void afterBraced(Braced braced) throws ASTTraversalException {}
-    
-    @Override
     public void visitBraced(Braced braced) throws ASTTraversalException {
         if (this.aborted) {
             return;
@@ -357,12 +257,6 @@ public class DepthFirstVisitor implements Visitor {
     }
     
     
-    
-    @Override
-    public void beforeDelete(Delete delete) throws ASTTraversalException {}
-    
-    @Override
-    public void afterDelete(Delete delete) throws ASTTraversalException {}
     
     @Override
     public void visitDelete(Delete delete) throws ASTTraversalException {
