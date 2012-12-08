@@ -1,4 +1,4 @@
-package de.skuzzle.polly.parsing.ast.declarations;
+package de.skuzzle.polly.parsing.ast.expressions.parameters;
 
 import java.util.ArrayList;
 import java.util.Collection;

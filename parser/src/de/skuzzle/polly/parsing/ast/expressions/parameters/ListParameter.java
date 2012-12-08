@@ -1,10 +1,12 @@
-package de.skuzzle.polly.parsing.ast.declarations;
+package de.skuzzle.polly.parsing.ast.expressions.parameters;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.parsing.types.Type;
+
+
 
 /**
  * This class represents a list parameter in a function declaration and takes a list

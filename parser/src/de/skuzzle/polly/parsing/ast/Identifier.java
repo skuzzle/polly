@@ -97,7 +97,7 @@ public class Identifier extends Node implements Equatable {
     @Override
     public boolean actualEquals(Equatable o) {
         final Identifier other = (Identifier) o;
-        return this.wasEscaped == other.wasEscaped && this.id.equals(other.id);
+        return this.id.equals(other.id);
     }
 
 

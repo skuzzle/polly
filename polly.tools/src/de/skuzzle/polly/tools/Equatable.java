@@ -116,7 +116,8 @@ public interface Equatable {
      * 
      * <p>After casting, you may perform equality checks for the attributes of your 
      * class.</p>
-     * @param o The object to compare this one with.
+     * @param o The object to compare this one with. Note that this is guaranteed to be 
+     *          <code> != null</code>.
      * @return Whether both objects are equal.
      * @see EqualsHelper
      */

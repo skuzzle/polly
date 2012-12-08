@@ -2,9 +2,6 @@ package de.skuzzle.polly.parsing.ast.visitor;
 
 import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.Root;
-import de.skuzzle.polly.parsing.ast.declarations.FunctionParameter;
-import de.skuzzle.polly.parsing.ast.declarations.ListParameter;
-import de.skuzzle.polly.parsing.ast.declarations.Parameter;
 import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
@@ -14,6 +11,9 @@ import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
+import de.skuzzle.polly.parsing.ast.expressions.parameters.FunctionParameter;
+import de.skuzzle.polly.parsing.ast.expressions.parameters.ListParameter;
+import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
 
 /**
  * Visitor that sets the parent attribute for each node in the AST

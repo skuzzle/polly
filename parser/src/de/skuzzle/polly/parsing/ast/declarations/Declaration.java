@@ -5,8 +5,16 @@ import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.lang.Function;
 import de.skuzzle.polly.parsing.types.Type;
+import de.skuzzle.polly.tools.Equatable;
 
-
+/**
+ * Base class for declarations. They must have at least a name and a {@link Position}. 
+ * During type checking, a declaration may get assigned a {@link Type}. Two declarations
+ * are considered equal, if their names are equal and their types a compatible as 
+ * determined by {@link Type#check(Type)}.
+ *   
+ * @author Simon Taddiken
+ */
 public abstract class Declaration extends Node implements Comparable<Declaration> {
 
 
@@ -92,6 +100,21 @@ public abstract class Declaration extends Node implements Comparable<Declaration
      */
     public void setPrimitive(boolean primitive) {
         this.primitive = primitive;
+    }
+    
+    
+    
+    @Override
+    public Class<?> getEquivalenceClass() {
+        return Declaration.class;
+    }
+    
+    
+    
+    @Override
+    public boolean actualEquals(Equatable o) {
+        final Declaration other = (Declaration) o;
+        return this.name.equals(other.name) && this.getType().check(other.getType());
     }
     
     

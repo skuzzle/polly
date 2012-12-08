@@ -3,9 +3,6 @@ package de.skuzzle.polly.parsing.ast.visitor;
 import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.Root;
-import de.skuzzle.polly.parsing.ast.declarations.FunctionParameter;
-import de.skuzzle.polly.parsing.ast.declarations.ListParameter;
-import de.skuzzle.polly.parsing.ast.declarations.Parameter;
 import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.Delete;
@@ -19,6 +16,9 @@ import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
+import de.skuzzle.polly.parsing.ast.expressions.parameters.FunctionParameter;
+import de.skuzzle.polly.parsing.ast.expressions.parameters.ListParameter;
+import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
 
 /**
  * {@link Visitor} implementation that traverses the AST in depth-first order. 

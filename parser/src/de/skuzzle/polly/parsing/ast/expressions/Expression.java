@@ -3,6 +3,7 @@ package de.skuzzle.polly.parsing.ast.expressions;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.types.Type;
+import de.skuzzle.polly.tools.Equatable;
 
 /**
  * Super class for all expression Nodes in the AST.
@@ -40,6 +41,18 @@ public abstract class Expression extends Node {
     
     
     /**
+     * Gets whether the type of this expression was already resolved.
+     * 
+     * @return <code>true</code> if the type of this expression is not 
+     *          {@link Type#UNKNOWN}.
+     */
+    public boolean typeResolved() {
+        return this.getType() != Type.UNKNOWN;
+    }
+    
+    
+    
+    /**
      * Gets the {@link Type} of this expression.
      * 
      * @return The type.
@@ -57,5 +70,20 @@ public abstract class Expression extends Node {
      */
     public void setType(Type type) {
         this.type = type;
+    }
+
+    
+    
+    @Override
+    public Class<?> getEquivalenceClass() {
+        return Expression.class;
+    }
+
+
+
+    @Override
+    public boolean actualEquals(Equatable o) {
+        final Expression other = (Expression) o;
+        return this.getType().check(other.getType());
     }
 }

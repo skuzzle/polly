@@ -1,4 +1,4 @@
-package de.skuzzle.polly.parsing.ast.declarations;
+package de.skuzzle.polly.parsing.ast.expressions.parameters;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,6 +11,7 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.parsing.types.FunctionType;
 import de.skuzzle.polly.parsing.types.Type;
+import de.skuzzle.polly.tools.Equatable;
 
 
 /**
@@ -37,6 +38,7 @@ public class Parameter extends Expression {
         }
         return result;
     }
+    
     
     
     private ResolvableIdentifier name;
@@ -79,7 +81,7 @@ public class Parameter extends Expression {
     
     @Override
     public <T extends Node> void replaceChild(T current, T newChild) {
-        if (current == name) {
+        if (current == this.name) {
             this.name = (ResolvableIdentifier) newChild;
         } else if (current == this.typeName) {
             this.typeName = (ResolvableIdentifier) newChild;
@@ -116,5 +118,21 @@ public class Parameter extends Expression {
     @Override
     public void visit(Visitor visitor) throws ASTTraversalException {
         visitor.visitParameter(this);
+    }
+
+    
+    
+    @Override
+    public Class<?> getEquivalenceClass() {
+        return Parameter.class;
+    }
+
+
+
+    @Override
+    public boolean actualEquals(Equatable o) {
+        final Parameter other = (Parameter) o;
+        return this.name.equals(other.name) && super.actualEquals(o);
+        
     }
 }
