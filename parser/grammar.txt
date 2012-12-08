@@ -29,9 +29,6 @@ literal     -> ID                                         // VarAccess
              | DATETIME                                   // date literal
              | TIMESPAN                                   // timespan literal
 
-varOrCall   -> ID                                         // var access
-             | ID '(' exprList ')'                        // call   
-         
 exprList    -> (expr (',' expr)*)?
 parameters  -> parameter (',' parameter)*
 parameter   -> type ID
