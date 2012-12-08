@@ -2,6 +2,11 @@ package de.skuzzle.polly.parsing;
 
 import java.io.Serializable;
 
+
+import de.skuzzle.polly.tools.EqualsHelper;
+import de.skuzzle.polly.tools.Equatable;
+import de.skuzzle.polly.tools.Immutable;
+
 /**
  * Represents a span within a one-lined String. It consists of a inclusive 
  * start position and an exclusive end position.
@@ -15,7 +20,7 @@ import java.io.Serializable;
  * 
  * @author Simon
  */
-public class Position implements Serializable {
+public class Position implements Serializable, Equatable, Immutable {
     
     private static final long serialVersionUID = 1L;
 
@@ -225,26 +230,25 @@ public class Position implements Serializable {
         return result;
     }
 
+    
+    
+    @Override
+    public Class<?> getEquivalenceClass() {
+        return Position.class;
+    }
+    
 
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof Position)) {
-            return false;
-        }
-        Position other = (Position) obj;
-        if (this.end != other.end) {
-            return false;
-        }
-        if (this.start != other.start) {
-            return false;
-        }
-        return true;
+    public final boolean equals(Object obj) {
+        return EqualsHelper.testEquality(this, obj);
+    }
+    
+    
+    
+    @Override
+    public boolean actualEquals(Equatable o) {
+        final Position other = (Position) o;
+        return this.start == other.start && this.end == other.end;
     }
 }

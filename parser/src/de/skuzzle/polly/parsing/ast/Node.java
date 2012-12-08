@@ -5,6 +5,8 @@ import java.io.Serializable;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.visitor.Visitable;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.tools.EqualsHelper;
+import de.skuzzle.polly.tools.Equatable;
 
 /**
  * Super class for all elements of the AST. It stores the parent Node and the Nodes
@@ -12,7 +14,7 @@ import de.skuzzle.polly.parsing.ast.visitor.Visitor;
  *  
  * @author Simon Taddiken
  */
-public abstract class Node implements Visitable<Visitor>, Serializable {
+public abstract class Node implements Visitable<Visitor>, Serializable, Equatable {
     
     private static final long serialVersionUID = 1L;
     
@@ -78,6 +80,36 @@ public abstract class Node implements Visitable<Visitor>, Serializable {
     
     
     
+    @Override
+    public final boolean equals(Object obj) {
+        return EqualsHelper.testEquality(this, obj);
+    }
+    
+    
+    
+    @Override
+    public Class<?> getEquivalenceClass() {
+        return Node.class;
+    }
+    
+    
+    
+    @Override
+    public boolean actualEquals(Equatable o) {
+        final Node other = (Node) o;
+        return this.position.equals(other.position);
+    }
+    
+    
+    
+    /**
+     * Method to replace a child node of this node with the given node. Nodes may only
+     * be replaced by nodes of the same type. The default implementation will throw
+     * a {@link RuntimeException} to indicate a missing implementation of this method.
+     * 
+     * @param current Child to be replaced.
+     * @param newChild New child to replace the existing with.
+     */
     public <T extends Node> void replaceChild(T current, T newChild) {
         throw new RuntimeException("No such child to replace: " + 
             current + " @ node " + this);

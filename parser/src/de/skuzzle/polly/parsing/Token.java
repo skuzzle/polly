@@ -3,8 +3,11 @@ package de.skuzzle.polly.parsing;
 import java.io.Serializable;
 import java.util.Date;
 
+import de.skuzzle.polly.tools.EqualsHelper;
+import de.skuzzle.polly.tools.Equatable;
 
-public class Token implements Serializable {
+
+public class Token implements Serializable, Equatable {
     
     private static final long serialVersionUID = 1L;
     
@@ -111,9 +114,33 @@ public class Token implements Serializable {
     }
     
     
+    
     public boolean matches(TokenType t) {
         return this.getType() == t;
     }
+    
+    
+    
+    @Override
+    public final boolean equals(Object o) {
+        return EqualsHelper.testEquality(this, o);
+    }
+    
+    
+    
+    @Override
+    public Class<?> getEquivalenceClass() {
+        return Token.class;
+    }
+    
+    
+    
+    @Override
+    public boolean actualEquals(Equatable o) {
+        final Token other = (Token) o;
+        return this.type == other.type && this.position.equals(other.position);
+    }
+    
     
     
     public String toString(boolean printPosition, boolean printValue) {

@@ -3,13 +3,16 @@ package de.skuzzle.polly.parsing.ast;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.tools.Equatable;
+
+
 
 /**
  * Represents an Identifier Node in the AST.
  * 
  * @author Simon Taddiken
  */
-public class Identifier extends Node {
+public class Identifier extends Node implements Equatable {
 
     private static final long serialVersionUID = 1L;
     
@@ -85,20 +88,22 @@ public class Identifier extends Node {
     
     
     @Override
-    public boolean equals(Object obj) {
-        if (obj == this) {
-            return true;
-        } else if (obj == null || !(obj instanceof Identifier)) {
-            return false;
-        }
-        final Identifier other = (Identifier)obj;
-        return this.id == null && other.id == null || this.id.equals(other.id);
-    }
-    
-    
-    
-    @Override
     public String toString() {
         return this.getId();
+    }
+
+
+
+    @Override
+    public boolean actualEquals(Equatable o) {
+        final Identifier other = (Identifier) o;
+        return this.wasEscaped == other.wasEscaped && this.id.equals(other.id);
+    }
+
+
+
+    @Override
+    public Class<?> getEquivalenceClass() {
+        return Identifier.class;
     }
 }
