@@ -9,6 +9,7 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.parsing.types.FunctionType;
 import de.skuzzle.polly.parsing.types.Type;
+import de.skuzzle.polly.tools.Equatable;
 
 /**
  * Represents a formal parameter which itself takes a function as actual value.
@@ -28,7 +29,7 @@ public class FunctionParameter extends Parameter {
      * @param sig The functions signature. The first entry will be interpreted as the
      *          return type. Collection must thus have at least one entry in order not to
      *          produce errors.
-     * @param name
+     * @param name Name of this parameter.
      */
     public FunctionParameter(Position position, Collection<ResolvableIdentifier> sig,
             ResolvableIdentifier name) {
@@ -40,10 +41,11 @@ public class FunctionParameter extends Parameter {
     
     /**
      * Creates a function parameter which' type is already known.
-     * @param position
-     * @param returnType
-     * @param sig
-     * @param name
+     * 
+     * @param position Position within the input string.
+     * @param returnType Return type of the function that this parameter represents.
+     * @param sig Signature of the function that this parameter represents.
+     * @param name Name of this parameter. 
      */
     public FunctionParameter(Position position, Type returnType, Collection<Type> sig, 
             ResolvableIdentifier name) {
@@ -84,5 +86,21 @@ public class FunctionParameter extends Parameter {
     @Override
     public void visit(Visitor visitor) throws ASTTraversalException {
         visitor.visitFunctionParameter(this);
+    }
+    
+    
+
+    @Override
+    public Class<?> getEquivalenceClass() {
+        return FunctionParameter.class;
+    }
+
+
+
+    @Override
+    public boolean actualEquals(Equatable o) {
+        final FunctionParameter other = (FunctionParameter) o;
+        return this.getName().equals(other.getName())
+            && this.signature.equals(other.signature);
     }
 }

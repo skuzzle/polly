@@ -132,7 +132,8 @@ public class Parameter extends Expression {
     @Override
     public boolean actualEquals(Equatable o) {
         final Parameter other = (Parameter) o;
-        return this.name.equals(other.name) && super.actualEquals(o);
-        
+        // compare names and typenames
+        return this.name.equals(other.name)
+            && this.getTypeName().equals(other.getTypeName());
     }
 }
