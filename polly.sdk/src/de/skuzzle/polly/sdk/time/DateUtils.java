@@ -215,12 +215,19 @@ public class DateUtils {
     }
 
 
+    public static void main(String[] args) {
+        System.out.println(Calendar.SATURDAY);
+        System.out.println(getDayDate(Calendar.SUNDAY));
+        System.out.println(getDayAhead(new Date(), 1));
+    }
+    
+    
 
     /**
      * Returns a date starting at 00:00 on the specified day of week. Valid
      * inputs for this method are any of {@link Calendar#MONDAY}, ...,
-     * {@link Calendar#SUNDAY}. Values that are not within the given range will
-     * be converted using a modulo calculation to make up a valid day number.
+     * {@link Calendar#SUNDAY}. Other values will cause a {@link IllegalArgumentException}
+     * to be thrown.
      * 
      * @param day
      *            The day of week to get the date for.
@@ -228,18 +235,17 @@ public class DateUtils {
      * @since 0.9.1
      */
     public static Date getDayDate(int day) {
-        day = ((day - 1) % 7) + 1;
+        if (day < 1 || day > 7) {
+            throw new IllegalArgumentException("invalid day of week: " + day);
+        }
         Calendar c = Calendar.getInstance();
         int today = c.get(Calendar.DAY_OF_WEEK);
-        int diff = Math.abs(day - today);
+        int diff = ((day - today) + 7) % 7;
+        
+        // if today, add one week
         diff = diff == 0 ? 7 : diff;
 
-        c.add(Calendar.DAY_OF_MONTH, diff);
-        c.set(Calendar.HOUR_OF_DAY, 0);
-        c.set(Calendar.MINUTE, 0);
-        c.set(Calendar.SECOND, 0);
-
-        return c.getTime();
+        return getDayAhead(diff);
     }
 
 
