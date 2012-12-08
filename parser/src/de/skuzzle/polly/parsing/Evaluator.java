@@ -28,7 +28,7 @@ public class Evaluator {
     
     // TEST:
     public static void main(String[] args) throws IOException {
-        String testMe = ":foo ((\\(Num x,\\(Num Num Num) y:y(x,5))->\\10)(5,\\+))";
+        String testMe = ":foo (\\(Num x, Num y: x+y)->\\-) \\(Num x, Num y: x-y)->\\+";
         //testMe = ":foo if 3!=2 ? !{1,2,3} : {4,5,6}";
         final Evaluator eval = new Evaluator(testMe, "ISO-8859-1");
         File decls = new File("decls");

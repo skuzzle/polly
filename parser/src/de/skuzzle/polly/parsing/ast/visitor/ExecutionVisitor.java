@@ -176,7 +176,7 @@ public class ExecutionVisitor extends DepthFirstVisitor {
         assign.getExpression().visit(this);
         
         final VarDeclaration vd = new VarDeclaration(assign.getName().getPosition(), 
-                assign.getName(), assign.getExpression());
+                assign.getName(), this.stack.peek());
         vd.setPublic(assign.isPublic());
         vd.setTemp(assign.isTemp());
         

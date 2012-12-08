@@ -33,6 +33,7 @@ import de.skuzzle.polly.parsing.util.LinkedStack;
 import de.skuzzle.polly.parsing.util.Stack;
 
 
+
 public class TypeResolver extends DepthFirstVisitor {
     
     
@@ -278,7 +279,7 @@ public class TypeResolver extends DepthFirstVisitor {
     
     
     @Override
-    public void visitAssignment(Assignment assign) throws ASTTraversalException {
+    public void visitAssignment(final Assignment assign) throws ASTTraversalException {
         if (this.testIsChecked(assign)) {
             return;
         }
@@ -288,12 +289,12 @@ public class TypeResolver extends DepthFirstVisitor {
         assign.getExpression().visit(this);
         assign.setType(assign.getExpression().getType());
         
-        final Empty exp = new Empty(
+        /*final Empty exp = new Empty(
                 assign.getExpression().getType(), assign.getExpression().getPosition(), 
-                this.signatureStack);
+                this.signatureStack); */
         
         final VarDeclaration vd = new VarDeclaration(assign.getPosition(), 
-            assign.getName(), exp);
+            assign.getName(), assign.getExpression());
         
         // declarations are always stored in the root namespace!
         this.rootNs.declare(vd);
@@ -302,6 +303,32 @@ public class TypeResolver extends DepthFirstVisitor {
         // this needs to be done in case that further assignments are following. They 
         // would then contain this assignment too. 
         //assign.getParent().replaceChild(assign, assign.getExpression());
+        
+        // Transitive deep recursion check: check whether assigned expression contains
+        //                                  transitive relations to itself.
+        if (vd.getType() instanceof FunctionType) {
+            final Visitor recursiveCallChecker = new DepthFirstVisitor() {
+                
+                @Override
+                public void beforeVarAccess(VarAccess access) 
+                        throws ASTTraversalException {
+                    
+                    final VarDeclaration test = (VarDeclaration) nspace.tryResolve(access.getIdentifier(), 
+                        vd.getType());
+                    
+                    if (test != null) {
+                        if (vd.equals(test)) {
+                            throw new ASTTraversalException(vd.getPosition(), 
+                                "Rekursive Deklaration von '" + access.getIdentifier() + 
+                                "'");
+                        }
+                        test.getExpression().visit(this);
+                    }
+                }
+            };
+            assign.getExpression().visit(recursiveCallChecker);
+        }
+        
         this.afterAssignment(assign);
     }
     
@@ -363,7 +390,8 @@ public class TypeResolver extends DepthFirstVisitor {
     
     @Override
     public void visitVarAccess(VarAccess access) throws ASTTraversalException {
-        if (this.testIsChecked(access)) {
+        if (access.getIdentifier().getDeclaration() != null) {
+            // do not double check (accessed expression is already resolved
             return;
         }
         
@@ -379,7 +407,7 @@ public class TypeResolver extends DepthFirstVisitor {
         access.setTypeToResolve(typeToResolve);
         final VarDeclaration vd = this.nspace.resolveVar(
                 access.getIdentifier(), typeToResolve);
-        
+
         vd.getExpression().visit(this);
         access.setType(vd.getType());
         
