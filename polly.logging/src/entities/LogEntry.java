@@ -31,7 +31,7 @@ import javax.persistence.TemporalType;
     @NamedQuery(
         name = "USER_SEEN",
         query = "SELECT l FROM LogEntry l WHERE " +
-        		    "l.nickname = ?1 AND " +
+        		    "LOWER(l.nickname) = LOWER(?1) AND " +
         		    "l.type = 0 " +
     		    "ORDER BY l.date DESC"
     )
