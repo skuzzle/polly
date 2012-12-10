@@ -213,13 +213,6 @@ public class DateUtils {
     public static boolean isToday(Date d) {
         return isSameDay(Time.currentTime(), d);
     }
-
-
-    public static void main(String[] args) {
-        System.out.println(Calendar.SATURDAY);
-        System.out.println(getDayDate(Calendar.SUNDAY));
-        System.out.println(getDayAhead(new Date(), 1));
-    }
     
     
 
