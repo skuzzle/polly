@@ -313,8 +313,8 @@ public class TypeResolver extends DepthFirstVisitor {
                 public void beforeVarAccess(VarAccess access) 
                         throws ASTTraversalException {
                     
-                    final VarDeclaration test = (VarDeclaration) nspace.tryResolve(access.getIdentifier(), 
-                        vd.getType());
+                    final VarDeclaration test = (VarDeclaration) nspace.tryResolve(
+                            access.getIdentifier(), vd.getType());
                     
                     if (test != null) {
                         if (vd.equals(test)) {

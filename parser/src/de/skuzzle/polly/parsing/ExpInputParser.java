@@ -304,7 +304,7 @@ public class ExpInputParser {
             new Position(start.getStart(), la.getPosition().getEnd()),
             la.getStringValue());
         
-        List<Expression> signature = new ArrayList<Expression>();
+        final List<Expression> signature = new ArrayList<Expression>();
         if (this.scanner.match(TokenType.SEPERATOR)) {
             do {
                 final Expression next = this.parseExpr();

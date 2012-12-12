@@ -91,7 +91,9 @@ public class ExecutionVisitor extends DepthFirstVisitor {
     public void visitRoot(Root root) throws ASTTraversalException {
         this.beforeRoot(root);
         
-        List<Literal> results = new ArrayList<Literal>(root.getExpressions().size());
+        final List<Literal> results = 
+            new ArrayList<Literal>(root.getExpressions().size());
+        
         for (final Expression exp : root.getExpressions()) {
             exp.visit(this);
             results.add(this.stack.pop());
@@ -124,7 +126,9 @@ public class ExecutionVisitor extends DepthFirstVisitor {
     @Override
     public void visitListLiteral(ListLiteral list) throws ASTTraversalException {
         // create collection of executed list content
-        final List<Expression> executed = new ArrayList<Expression>();
+        final List<Expression> executed = new ArrayList<Expression>(
+                list.getContent().size());
+        
         for (final Expression exp : list.getContent()) {
             // places executed expression on the stack
             exp.visit(this);
