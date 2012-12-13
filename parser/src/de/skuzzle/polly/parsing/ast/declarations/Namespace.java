@@ -23,6 +23,7 @@ import de.skuzzle.polly.parsing.ast.lang.operators.Conditional;
 import de.skuzzle.polly.parsing.ast.lang.operators.DateArithmetic;
 import de.skuzzle.polly.parsing.ast.lang.operators.DateTimespanArithmetic;
 import de.skuzzle.polly.parsing.ast.lang.operators.ListIndex;
+import de.skuzzle.polly.parsing.ast.lang.operators.RandomListIndex;
 import de.skuzzle.polly.parsing.ast.lang.operators.Relational;
 import de.skuzzle.polly.parsing.ast.lang.operators.TimespanArithmetic;
 import de.skuzzle.polly.parsing.ast.lang.operators.UnaryArithmetic;
@@ -288,6 +289,8 @@ public class Namespace {
             // list unary op
             GLOBAL.declare(new UnaryList(OpType.EXCLAMATION).createDeclaration());
             GLOBAL.declare(new ListIndex(OpType.INDEX).createDeclaration());
+            GLOBAL.declare(new RandomListIndex(OpType.QUEST_EXCL).createDeclaration());
+            GLOBAL.declare(new RandomListIndex(OpType.QUESTION).createDeclaration());
             
             // ternary ops
             GLOBAL.declare(new Conditional(OpType.IF).createDeclaration());
