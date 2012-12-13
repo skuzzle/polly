@@ -84,8 +84,9 @@ public abstract class Function extends Native {
     
     /**
      * <p>Creates a proper declaration for this operator. Additionally, sets this 
-     * Function's type according to the Type of the {@link FunctionLiteral} created by 
-     * {@link #createFunction()}. This method should be called only once per instance.</p>
+     * Function's type according to the return type of the {@link FunctionLiteral} 
+     * created by {@link #createFunction()}. This method should be called only once per 
+     * instance.</p>
      * 
      * <p>The created declaration will have the 'isPrimitive' flag set to true and the 
      * 'mustCopy' flag set according to the value {@link #mustCopy()} returns.</p>
@@ -95,7 +96,7 @@ public abstract class Function extends Native {
     public Declaration createDeclaration() {
         final FunctionLiteral func = this.createFunction();
         final VarDeclaration vd = new VarDeclaration(func.getPosition(), this.name, func);
-        this.setType(func.getType());
+        this.setType(((FunctionType) func.getType()).getReturnType());
         vd.setNative(true);
         vd.setMustCopy(this.mustCopy());
         return vd;
