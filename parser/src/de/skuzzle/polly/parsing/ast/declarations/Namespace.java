@@ -483,7 +483,7 @@ public class Namespace {
         while (it.hasNext()) {
             final Declaration d = it.next();
             
-            if (d.getName().equals(id)) {
+            if (d.getName().equals(id) && !d.isPrimitive()) {
                 it.remove();
                 ++i;
             }
@@ -546,7 +546,7 @@ public class Namespace {
             final FunctionType ft = (FunctionType) signature;
             
             throw new ASTTraversalException(name.getPosition(), 
-                "Keine Überladung der Funktion '" + name + "' mit der Signatur " + 
+                "Keine Überladung von '" + name + "' mit der Signatur " + 
                     ft.toString(false) + " gefunden");
         } else if (check == null) {
             final List<String> similar = findSimilar(name.getId(), this);
