@@ -46,9 +46,9 @@ public class Main {
             
             if (eval.errorOccurred()) {
                 final ASTTraversalException e = eval.getLastError();
-                System.out.println(e.getMessage());
-                System.out.println(cmd);
-                System.out.println(e.getPosition().errorIndicatorString());
+                System.err.println(e.getMessage());
+                System.err.println(cmd);
+                System.err.println(e.getPosition().errorIndicatorString());
             } else if (eval.getRoot() != null){
                 System.out.println(eval.getRoot().toString());
                 
