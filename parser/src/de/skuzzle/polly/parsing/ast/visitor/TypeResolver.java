@@ -67,7 +67,7 @@ public class TypeResolver extends DepthFirstVisitor {
     
     public TypeResolver(Namespace namespace) {
         // create temporary namespace for executing user
-        this.rootNs = namespace.enter();
+        this.rootNs = namespace.enter(false);
         this.nspace = this.rootNs;
         this.checked = new HashSet<Node>();
         this.signatureStack = new LinkedStack<CallContext>();
@@ -82,7 +82,7 @@ public class TypeResolver extends DepthFirstVisitor {
      * @return The created namespace.
      */
     private Namespace enter() {
-        return this.nspace = this.nspace.enter();
+        return this.nspace = this.nspace.enter(true);
     }
     
     
@@ -409,7 +409,7 @@ public class TypeResolver extends DepthFirstVisitor {
                 access.getIdentifier(), typeToResolve);
 
         vd.getExpression().visit(this);
-        access.setType(vd.getType());
+        access.setType(vd.getExpression().getType());
         
         this.afterVarAccess(access);
     }

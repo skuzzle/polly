@@ -130,11 +130,7 @@ public class FoldLeft extends Function {
                 !param2.check(subType)) {
             Type.typeError(ft.getReturnType(), argType, first.getPosition());
         }
-        
-        
-        final FunctionType resultType = new FunctionType(argType, Arrays.asList(
-            new Type[] {argType, subType}));
-        this.setType(resultType);
+        this.setType(argType);
     }
 
 }

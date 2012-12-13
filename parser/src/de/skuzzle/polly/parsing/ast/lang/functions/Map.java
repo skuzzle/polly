@@ -100,7 +100,7 @@ public class Map extends Function {
         final Expression first = ns.resolveVar(
                 FIRST_PARAM_NAME, Type.ANY).getExpression();
         final Expression second = ns.resolveVar(
-            SECOND_PARAM_NAME, Type.ANY).getExpression();
+                SECOND_PARAM_NAME, Type.ANY).getExpression();
         
         
         
@@ -112,8 +112,7 @@ public class Map extends Function {
             Type.typeError(paramType, subType, second.getPosition());
         }
         
-        this.setType(new FunctionType(ft.getReturnType(), Arrays.asList(
-            new Type[] { subType })));
+        this.setType(first.getType());
     }
     
 

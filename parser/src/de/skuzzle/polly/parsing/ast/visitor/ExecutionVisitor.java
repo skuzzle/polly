@@ -71,7 +71,7 @@ public class ExecutionVisitor extends DepthFirstVisitor {
      * @return The created namespace.
      */
     private Namespace enter() {
-        return this.nspace = this.nspace.enter();
+        return this.nspace = this.nspace.enter(false);
     }
     
     

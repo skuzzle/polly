@@ -7,7 +7,7 @@ disjunction -> secTerm (DISJ_OP secTerm)*                 // disjunction (&&)
 secTerm     -> term (SECTERM_OP term)*                    // plus minus
 term        -> factor (TERM_OP factor)*                   // multiplication and co
 factor      -> postfix (FACTOR_OP factor)?                // right-associative (power operator)
-postfix     -> autolist (POSTFIX_OP autolist)+            // postfix operator
+postfix     -> autolist (POSTFIX_OP autolist)*            // postfix operator
 autolist    -> dotdot (';' dotdot)*                       // implicit list literal
 dotdot      -> unary ('..' unary ('$' unary)?)?           // range operator with optional step size
 unary       -> UNARY_OP unary                             // right-associative unary operator

@@ -62,7 +62,8 @@ public abstract class Hardcoded extends Expression {
     
     /**
      * Called by the {@link TypeResolver} when it hits an instance of this class during
-     * traversal of the AST. Can be used to perform some custom context checking.
+     * traversal of the AST. Can be used to perform some custom context checking. This 
+     * should set this expression's type to the type of the result of this expression.
      * 
      * @param ns Current {@link Namespace} during type resolval.
      * @param typeResolver The type resolver.

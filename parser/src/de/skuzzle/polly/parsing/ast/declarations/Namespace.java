@@ -368,6 +368,7 @@ public class Namespace {
 
     protected final Collection<Declaration> decls;
     protected final Namespace parent;
+    protected boolean local;
     
     
     
@@ -420,10 +421,13 @@ public class Namespace {
     /**
      * Creates a new sub namespace of this one and returns it.
      * 
+     * @param local Whether the new namespace is used for local function parameters. 
      * @return The new namespace.
      */
-    public Namespace enter() {
-        return new Namespace(this);
+    public Namespace enter(boolean local) {
+        final Namespace ns = new Namespace(this);
+        ns.local = local;
+        return ns;
     }
     
     
@@ -456,13 +460,15 @@ public class Namespace {
             
             if (d.getName().equals(decl.getName())) {// && d.getType().check(decl.getType())) {
                 if (!(d.getType() instanceof FunctionType) && !(decl.getType() instanceof FunctionType) || d.getType().check(decl.getType())) {
+                    if (!this.local) {
                     if (d.isPrimitive()) {
                         throw new ASTTraversalException(decl.getPosition(), 
                             "Du kannst keine primitiven Deklarationen " +
                             "überschreiben. Deklaration '" + d.getName() + 
-                            "' existiert bereits.");
+                            "' existiert bereits");
                     }
                     it.remove();
+                    }
                 }
             }
         }

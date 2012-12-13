@@ -56,7 +56,7 @@ import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
  *   secTerm     -> term (SECTERM_OP term)*                    // plus minus
  *   term        -> factor (TERM_OP factor)*                   // multiplication and co
  *   factor      -> postfix (FACTOR_OP factor)?                // right-associative (power operator)
- *   postfix     -> autolist (POSTFIX_OP autolist)+            // postfix operator
+ *   postfix     -> autolist (POSTFIX_OP autolist)*            // postfix operator
  *   autolist    -> dotdot (';' dotdot)*                       // implicit list literal
  *   dotdot      -> unary ('..' unary ('$' unary)?)?           // range operator with optional step size
  *   unary       -> UNARY_OP unary                             // right-associative unary operator
@@ -531,14 +531,14 @@ public class ExpInputParser {
      * Parses a postfix operator. This may be either of the random index- or the
      * concrete index operator.
      * <pre>
-     * postfix -> dotdot (POSTFIX_OP expression)*       // postfix operator
+     * postfix -> autolist (POSTFIX_OP autolist)*       // postfix operator
      * </pre>
      * @return Either the parsed postifx operator call or the expression from the next
      *          higher precedence level if no POSTFIX_OP was found.
      * @throws ParseException If parsing fails.
      */
     protected Expression parsePostfix() throws ParseException {
-        Expression lhs = this.parseDotDot();
+        Expression lhs = this.parseAutoList();
         
         Token la = this.scanner.lookAhead();
         while (this.operators.match(la, PrecedenceLevel.POSTFIX)) {
@@ -546,7 +546,7 @@ public class ExpInputParser {
             
             if (la.matches(TokenType.OPENSQBR)) {
                 // index operator
-                final Expression rhs = this.parseExpr();
+                final Expression rhs = this.parseAutoList();
                 
                 lhs = OperatorCall.binary(
                     new Position(lhs.getPosition(), rhs.getPosition()), 
