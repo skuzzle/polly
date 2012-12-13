@@ -19,6 +19,12 @@ public class Main {
     public static void main(String[] args) throws IOException, ASTTraversalException {
         final BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
         String nsName = "default";
+        
+        System.out.println("Welcome to PPC - Polly Parser Console");
+        System.out.println("Just enter any valid polly expression, or type :q to exit.");
+        System.out.println("Type :ns <name> to switch namespaces.");
+        System.out.println();
+        
         while (true) {
             Namespace ns = Namespace.forName(nsName);
             System.out.print(nsName + "> ");
@@ -29,7 +35,7 @@ public class Main {
             } else if (cmd.startsWith(":ns")) {
                 final String[] parts = cmd.split(" ");
                 if (parts.length != 2) {
-                    System.out.println("Invalid Invalid parameters for ':ns'");
+                    System.out.println("Invalid parameters for ':ns'");
                 } else {
                     nsName = parts[1];
                 }
