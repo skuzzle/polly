@@ -19,12 +19,14 @@ import de.skuzzle.polly.parsing.ast.lang.Cast;
 import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
 import de.skuzzle.polly.parsing.ast.lang.functions.FoldLeft;
 import de.skuzzle.polly.parsing.ast.lang.operators.BinaryArithmetic;
+import de.skuzzle.polly.parsing.ast.lang.operators.BinaryDotDot;
 import de.skuzzle.polly.parsing.ast.lang.operators.Conditional;
 import de.skuzzle.polly.parsing.ast.lang.operators.DateArithmetic;
 import de.skuzzle.polly.parsing.ast.lang.operators.DateTimespanArithmetic;
 import de.skuzzle.polly.parsing.ast.lang.operators.ListIndex;
 import de.skuzzle.polly.parsing.ast.lang.operators.RandomListIndex;
 import de.skuzzle.polly.parsing.ast.lang.operators.Relational;
+import de.skuzzle.polly.parsing.ast.lang.operators.TernaryDotDot;
 import de.skuzzle.polly.parsing.ast.lang.operators.TimespanArithmetic;
 import de.skuzzle.polly.parsing.ast.lang.operators.UnaryArithmetic;
 import de.skuzzle.polly.parsing.ast.lang.operators.UnaryList;
@@ -291,6 +293,10 @@ public class Namespace {
             GLOBAL.declare(new ListIndex(OpType.INDEX).createDeclaration());
             GLOBAL.declare(new RandomListIndex(OpType.QUEST_EXCL).createDeclaration());
             GLOBAL.declare(new RandomListIndex(OpType.QUESTION).createDeclaration());
+            
+            // DOTDOT
+            GLOBAL.declare(new TernaryDotDot().createDeclaration());
+            GLOBAL.declare(new BinaryDotDot().createDeclaration());
             
             // ternary ops
             GLOBAL.declare(new Conditional(OpType.IF).createDeclaration());
