@@ -27,7 +27,7 @@ public class Main {
         
         while (true) {
             Namespace ns = Namespace.forName(nsName);
-            System.out.print(nsName + "> ");
+            System.out.print(nsName + " > ");
             final String cmd = r.readLine();
             
             if (cmd.equals(":q")) {
@@ -46,15 +46,15 @@ public class Main {
                 continue;
             }
             
-            final Evaluator eval = new Evaluator(cmd, "ISO-8859-1");
+            final Evaluator eval = new Evaluator(":result \">\" " + cmd, "ISO-8859-1");
             
             eval.evaluate(ns);
             
             if (eval.errorOccurred()) {
                 final ASTTraversalException e = eval.getLastError();
-                System.err.println(e.getMessage());
-                System.err.println(cmd);
-                System.err.println(e.getPosition().errorIndicatorString());
+                System.out.println(e.getMessage());
+                System.out.println("            " + cmd);
+                System.out.println(e.getPosition().errorIndicatorString());
             } else if (eval.getRoot() != null){
                 System.out.println(eval.getRoot().toString());
                 

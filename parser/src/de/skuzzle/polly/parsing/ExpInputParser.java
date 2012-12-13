@@ -799,10 +799,12 @@ public class ExpInputParser {
         case OPENCURLBR:
             this.scanner.consume();
             
+            this.enterExpression();
             final List<Expression> elements = this.parseExpressionList(
                 TokenType.CLOSEDCURLBR);
             
             this.expect(TokenType.CLOSEDCURLBR);
+            this.leaveExpression();
             
             final ListLiteral list = new ListLiteral(this.scanner.spanFrom(la), 
                 elements);
