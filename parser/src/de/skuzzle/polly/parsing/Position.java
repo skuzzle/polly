@@ -216,7 +216,7 @@ public class Position implements Serializable, Equatable, Immutable {
     
     @Override
     public String toString() {
-        return (this.start + 1) + "-" + (this.end + 1);
+        return (this.start + 1) + (this.getWidth() == 0 ? "" : "-" + (this.end + 1));
     }
     
     

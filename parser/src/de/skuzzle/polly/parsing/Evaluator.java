@@ -6,7 +6,6 @@ import java.io.IOException;
 import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.parsing.ast.visitor.ASTVisualizer;
 import de.skuzzle.polly.parsing.ast.visitor.ExecutionVisitor;
 import de.skuzzle.polly.parsing.ast.visitor.ParentSetter;
 import de.skuzzle.polly.parsing.ast.visitor.TypeResolver;
@@ -112,10 +111,6 @@ public class Evaluator {
             // resolve types
             final Visitor typeResolver = new TypeResolver(namespace);
             root.visit(typeResolver);
-            
-            // TODO: remove AST creation here
-            ASTVisualizer ast = new ASTVisualizer();
-            ast.toFile("datAST.dot", root);
             
             final Visitor executor = new ExecutionVisitor(namespace);
             root.visit(executor);

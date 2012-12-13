@@ -13,7 +13,7 @@ dotdot      -> unary ('..' unary ('$' unary)?)?           // range operator with
 unary       -> UNARY_OP unary                             // right-associative unary operator
              | call
 call        -> access ( '(' parameters ')' )?
-access      -> literal ('.' expr)?                        // namespace access. left operand must be a single identifier (represented by a VarAccess)
+access      -> literal ('.' literal)?                     // namespace access. left operand must be a single identifier (represented by a VarAccess)
 literal     -> ID                                         // VarAccess
              | ESCAPED                                    // token escape
              | '(' expr ')'                               // braced expression
@@ -49,5 +49,5 @@ NUMBER   -> [0-9]*(\.[0-9]+([eE][0-9]+)?)?
 TIMESPAN -> ([0-9]+[ywdhms])+
 DATE     -> [0-9]{1,2}\.[0-9]{1,2}\.[0-9]{4}
 TIME     -> [0-9]{1,2}:[0-9]{1,2}
-DATETIME -> TIME | DATE | DATE@TIME
+DATETIME -> TIME | DATE | DATE '@' TIME
 ID     -> [_a-zA-Z][_a-zA-Z0-9]+
