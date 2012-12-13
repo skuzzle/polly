@@ -5,7 +5,7 @@ import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
-import de.skuzzle.polly.parsing.ast.expressions.Hardcoded;
+import de.skuzzle.polly.parsing.ast.expressions.Native;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.FunctionParameter;
@@ -26,9 +26,9 @@ import de.skuzzle.polly.parsing.util.Stack;
  * expressions and thus need a special treatment.
  * 
  * @author Simon Taddiken
- * @see Hardcoded
+ * @see Native
  */
-public abstract class Function extends Hardcoded {
+public abstract class Function extends Native {
 
     private static final long serialVersionUID = 1L;
     private final ResolvableIdentifier name;
@@ -96,7 +96,7 @@ public abstract class Function extends Hardcoded {
         final FunctionLiteral func = this.createFunction();
         final VarDeclaration vd = new VarDeclaration(func.getPosition(), this.name, func);
         this.setType(func.getType());
-        vd.setPrimitive(true);
+        vd.setNative(true);
         vd.setMustCopy(this.mustCopy());
         return vd;
     }

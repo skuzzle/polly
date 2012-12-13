@@ -8,7 +8,7 @@ import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.Delete;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
-import de.skuzzle.polly.parsing.ast.expressions.Hardcoded;
+import de.skuzzle.polly.parsing.ast.expressions.Native;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
@@ -135,9 +135,9 @@ public interface Visitor {
     public void afterOperatorCall(OperatorCall call) throws ASTTraversalException;
     public void visitOperatorCall(OperatorCall call) throws ASTTraversalException;
     
-    public void beforeHardcoded(Hardcoded hc) throws ASTTraversalException;
-    public void afterHardcoded(Hardcoded hc) throws ASTTraversalException;
-    public void visitHardcoded(Hardcoded hc) throws ASTTraversalException;
+    public void beforeNative(Native nat) throws ASTTraversalException;
+    public void afterNative(Native nat) throws ASTTraversalException;
+    public void visitNative(Native nat) throws ASTTraversalException;
     
     public void beforeAccess(NamespaceAccess access) throws ASTTraversalException;
     public void afterAccess(NamespaceAccess access) throws ASTTraversalException;

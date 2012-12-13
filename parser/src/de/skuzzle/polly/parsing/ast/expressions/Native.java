@@ -17,7 +17,7 @@ import de.skuzzle.polly.parsing.util.Stack;
  * 
  * @author Simon Taddiken
  */
-public abstract class Hardcoded extends Expression {
+public abstract class Native extends Expression {
     
     private static final long serialVersionUID = 1L;
     
@@ -40,7 +40,7 @@ public abstract class Hardcoded extends Expression {
      * 
      * @param type Type of this expression.
      */
-    public Hardcoded(Type type) {
+    public Native(Type type) {
         super(Position.NONE, type);
     }
     
@@ -76,6 +76,6 @@ public abstract class Hardcoded extends Expression {
     
     @Override
     public void visit(Visitor visitor) throws ASTTraversalException {
-        visitor.visitHardcoded(this);
+        visitor.visitNative(this);
     }
 }

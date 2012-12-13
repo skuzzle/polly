@@ -15,7 +15,7 @@ import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Delete;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
-import de.skuzzle.polly.parsing.ast.expressions.Hardcoded;
+import de.skuzzle.polly.parsing.ast.expressions.Native;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
@@ -210,7 +210,7 @@ public class ASTVisualizer extends DepthFirstVisitor {
     
     
     @Override
-    public void beforeHardcoded(Hardcoded hc) throws ASTTraversalException {
+    public void beforeNative(Native hc) throws ASTTraversalException {
         this.printNode("Hardcoded", "", hc);
     }
     
@@ -318,7 +318,7 @@ public class ASTVisualizer extends DepthFirstVisitor {
 
 
     @Override
-    public void afterHardcoded(Hardcoded hc) throws ASTTraversalException {
+    public void afterNative(Native hc) throws ASTTraversalException {
         this.pop();
     }
 

@@ -24,7 +24,7 @@ public abstract class Declaration extends Node implements Comparable<Declaration
     private boolean isPublic;
     private boolean isTemp;
     private boolean mustCopy;
-    private boolean primitive;
+    private boolean isNative;
     
     
     public Declaration(Position position, Identifier name) {
@@ -85,21 +85,21 @@ public abstract class Declaration extends Node implements Comparable<Declaration
      * 
      * @return Whether this is a primitive declaration.
      */
-    public boolean isPrimitive() {
-        return this.primitive;
+    public boolean isNative() {
+        return this.isNative;
     }
     
     
     
     /**
-     * Sets whether this is a primitive declaration. Primitive delcarations are those, 
+     * Sets whether this is a native declaration. Native delcarations are those, 
      * that are hardcoded into polly (mostly created by {@link Function} subclasses). 
      * Those declarations are not stored to file.
      * 
-     * @param primitive Whether this is a primitive declaration.
+     * @param isNative Whether this is a native declaration.
      */
-    public void setPrimitive(boolean primitive) {
-        this.primitive = primitive;
+    public void setNative(boolean isNative) {
+        this.isNative = isNative;
     }
     
     

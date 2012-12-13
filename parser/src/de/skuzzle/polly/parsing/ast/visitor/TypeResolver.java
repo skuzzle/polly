@@ -17,7 +17,7 @@ import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Empty;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
-import de.skuzzle.polly.parsing.ast.expressions.Hardcoded;
+import de.skuzzle.polly.parsing.ast.expressions.Native;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
@@ -114,10 +114,10 @@ public class TypeResolver extends DepthFirstVisitor {
     
     
     @Override
-    public void visitHardcoded(Hardcoded hc) throws ASTTraversalException {
-        this.beforeHardcoded(hc);
+    public void visitNative(Native hc) throws ASTTraversalException {
+        this.beforeNative(hc);
         hc.resolveType(this.nspace, this);
-        this.afterHardcoded(hc);
+        this.afterNative(hc);
     }
     
     

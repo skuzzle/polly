@@ -74,7 +74,7 @@ public class Namespace {
                 return;
             }
             final VarDeclaration vd = (VarDeclaration) decl;
-            if (vd.isPublic() || vd.isTemp() || vd.isPrimitive()) {
+            if (vd.isPublic() || vd.isTemp() || vd.isNative()) {
                 return;
             }
             
@@ -461,13 +461,13 @@ public class Namespace {
             if (d.getName().equals(decl.getName())) {// && d.getType().check(decl.getType())) {
                 if (!(d.getType() instanceof FunctionType) && !(decl.getType() instanceof FunctionType) || d.getType().check(decl.getType())) {
                     if (!this.local) {
-                    if (d.isPrimitive()) {
-                        throw new ASTTraversalException(decl.getPosition(), 
-                            "Du kannst keine primitiven Deklarationen " +
-                            "überschreiben. Deklaration '" + d.getName() + 
-                            "' existiert bereits");
-                    }
-                    it.remove();
+                        if (d.isNative()) {
+                            throw new ASTTraversalException(decl.getPosition(), 
+                                "Du kannst keine nativen Deklarationen " +
+                                "überschreiben. Deklaration '" + d.getName() + 
+                                "' existiert bereits");
+                        }
+                        it.remove();
                     }
                 }
             }
@@ -484,12 +484,12 @@ public class Namespace {
      * @return How many declarations have been removed.
      */
     public int delete(Identifier id) {
-        final Iterator<Declaration> it = decls.iterator();
+        final Iterator<Declaration> it = this.decls.iterator();
         int i = 0;
         while (it.hasNext()) {
             final Declaration d = it.next();
             
-            if (d.getName().equals(id) && !d.isPrimitive()) {
+            if (d.getName().equals(id) && !d.isNative()) {
                 it.remove();
                 ++i;
             }
