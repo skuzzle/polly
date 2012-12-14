@@ -1,5 +1,8 @@
 package de.skuzzle.polly.parsing.ast.expressions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.types.Type;
@@ -15,6 +18,9 @@ public abstract class Expression extends Node {
     private static final long serialVersionUID = 1L;
     
     private Type type;
+    public List<Type> possibleTypes;
+    
+    
     
     /**
      * Creates a new Expression with given {@link Position} and {@link Type}.
@@ -25,6 +31,7 @@ public abstract class Expression extends Node {
     public Expression(Position position, Type type) {
         super(position);
         this.type = type;
+        this.possibleTypes = new ArrayList<Type>();
     }
     
     
@@ -37,6 +44,16 @@ public abstract class Expression extends Node {
     public Expression(Position position) {
         this(position, Type.UNKNOWN);
     }
+    
+    
+    
+    public void addPossibleType(Type type) {
+        if (this.typeResolved()) {
+            throw new IllegalStateException(
+                "can not add possile type because type was resolved");
+        }
+        this.possibleTypes.add(type);
+    }
 
     
     
@@ -47,7 +64,7 @@ public abstract class Expression extends Node {
      *          {@link Type#UNKNOWN}.
      */
     public boolean typeResolved() {
-        return this.getType() != Type.UNKNOWN;
+        return this.possibleTypes.isEmpty() && this.getType() != Type.UNKNOWN;
     }
     
     

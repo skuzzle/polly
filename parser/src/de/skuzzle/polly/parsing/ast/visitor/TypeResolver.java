@@ -296,9 +296,6 @@ public class TypeResolver extends DepthFirstVisitor {
         final VarDeclaration vd = new VarDeclaration(assign.getPosition(), 
             assign.getName(), assign.getExpression());
         
-        // declarations are always stored in the root namespace!
-        this.rootNs.declare(vd);
-        
         // exchange assignment with its sole expression
         // this needs to be done in case that further assignments are following. They 
         // would then contain this assignment too. 
@@ -329,6 +326,8 @@ public class TypeResolver extends DepthFirstVisitor {
             assign.getExpression().visit(recursiveCallChecker);
         }
         
+        // declarations are always stored in the root namespace!
+        this.rootNs.declare(vd);
         this.afterAssignment(assign);
     }
     
@@ -368,9 +367,6 @@ public class TypeResolver extends DepthFirstVisitor {
         // check what type of call this is. Might be a lambda call or a VarAccess which
         // in turn references a function. For that purpose, we need to find the next 
         // VarAccess and tell it the actual signature.
-        /*if (call.getLhs() instanceof VarAccess) {
-            ((VarAccess) call.getLhs()).setTypeToResolve(signature);
-        }*/
         call.getLhs().visit(this);
         
         if (!call.getLhs().getType().check(signature)) {
@@ -400,16 +396,36 @@ public class TypeResolver extends DepthFirstVisitor {
         // if this is the lhs of a call, the called signature will be on top of the
         // signature stack. Otherwise, we will look for any declaration, disregarding
         // its type
+        if (!this.signatureStack.isEmpty()) {
+            final CallContext cc = this.signatureStack.peek();
+
+            VarDeclaration vd = this.nspace.resolveBySignature(access.getIdentifier(), 
+                cc.actualParameters);
+            
+            vd.getExpression().visit(this);
+            access.setType(vd.getExpression().getType());
+            return;
+        }
+
+        
+        final List<VarDeclaration> decls = this.nspace.resolveAll(access.getIdentifier());
+        
+        for (final VarDeclaration decl : decls) {
+            access.addPossibleType(decl.getType());
+        }
+        
+        /*
         final Type typeToResolve = this.signatureStack.isEmpty() 
             ? Type.ANY 
             : this.signatureStack.peek().signature;
-        
+            
         access.setTypeToResolve(typeToResolve);
         final VarDeclaration vd = this.nspace.resolveVar(
                 access.getIdentifier(), typeToResolve);
 
         vd.getExpression().visit(this);
-        access.setType(vd.getExpression().getType());
+        access.setType(vd.getExpression().getType());*/
+        
         
         this.afterVarAccess(access);
     }

@@ -7,15 +7,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
+import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.ast.lang.Cast;
 import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
@@ -516,15 +519,20 @@ public class Namespace {
         // check if declaration exists in current namespace
         final Iterator<Declaration> it = decls.iterator();
         while (it.hasNext()) {
-            final Declaration d = it.next();
+            final Declaration existing = it.next();
             
-            if (d.getName().equals(decl.getName())) {// && d.getType().check(decl.getType())) {
-                if (!(d.getType() instanceof FunctionType) && !(decl.getType() instanceof FunctionType) || d.getType().check(decl.getType())) {
+            if (existing.getName().equals(decl.getName())) {
+                
+                // Existing declaration must be removed, if:
+                // * existing is a function and new is a variable
+                // * exising is a variable and 
+                
+                if (!(existing.getType() instanceof FunctionType) && !(decl.getType() instanceof FunctionType) || existing.getType().check(decl.getType())) {
                     if (!this.local) {
-                        if (d.isNative()) {
+                        if (existing.isNative()) {
                             throw new ASTTraversalException(decl.getPosition(), 
                                 "Du kannst keine nativen Deklarationen " +
-                                "überschreiben. Deklaration '" + d.getName() + 
+                                "überschreiben. Deklaration '" + existing.getName() + 
                                 "' existiert bereits");
                         }
                         it.remove();
@@ -586,6 +594,79 @@ public class Namespace {
             }
         }
         return null;
+    }
+    
+    
+    // TODO: comment
+    public List<VarDeclaration> resolveAll(ResolvableIdentifier name) 
+            throws DeclarationException {
+        final List<VarDeclaration> result = new ArrayList<VarDeclaration>();
+        for(Namespace space = this; space != null; space = space.parent) {
+            for (Declaration decl : space.decls) {
+                if (decl.getName().equals(name)) {
+                    result.add((VarDeclaration) decl);
+                }
+            }
+        }
+        
+        if (result.isEmpty()) {
+            final List<String> similar = findSimilar(name.getId(), this);
+            
+            throw new DeclarationException(name.getPosition(), 
+                "Unbekannte Variable: '" + name + "'", similar);
+        }
+        return result;
+    }
+    
+    
+    
+    public VarDeclaration resolveBySignature(ResolvableIdentifier name, 
+            List<Expression> actualSignature) throws ASTTraversalException {
+        
+        int[] nextType = new int[actualSignature.size()];
+        boolean[] done = new boolean[actualSignature.size()];
+        
+        final Set<VarDeclaration> resolvedDecls = new HashSet<VarDeclaration>();
+        
+        while (!done[0]) {
+            final Collection<Type> signature = new ArrayList<Type>();
+            for (int i = 0; i < actualSignature.size(); ++i) {
+                final Expression exp = actualSignature.get(i);
+                if (exp.typeResolved()) {
+                    signature.add(exp.getType());
+                } else {
+                    signature.add(exp.possibleTypes.get(nextType[i]));
+                }
+                
+                nextType[i] = nextType[i] + 1;
+                if (exp.typeResolved() || nextType[i] == exp.possibleTypes.size()) {
+                    nextType[i] = 0;
+                    done[i] = true;
+                }
+            }
+            
+            final FunctionType ft = new FunctionType(Type.ANY, signature);
+            Declaration d = tryResolve(name, ft);
+            if (d != null) {
+                resolvedDecls.add((VarDeclaration) d);
+            }
+        }
+        
+        if (resolvedDecls.isEmpty()) {
+            throw new ASTTraversalException(name.getPosition(), 
+                "Keine passende Überladung der Funktion '" + name.getId() + "' gefunden");
+        } else if (resolvedDecls.size() != 1) {
+            throw new ASTTraversalException(name.getPosition(), 
+                "Nicht eindeutiger Aufruf von '" + name.getId() + "'");
+        }
+        
+        VarDeclaration vd = resolvedDecls.iterator().next();
+        FunctionType ft = (FunctionType) vd.getType();
+        Iterator<Expression> expIt = actualSignature.iterator();
+        for (Type t : ft.getParameters()) {
+            expIt.next().setType(t);
+        }
+        return resolvedDecls.iterator().next();
     }
     
     

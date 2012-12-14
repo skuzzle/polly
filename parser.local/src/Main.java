@@ -102,8 +102,9 @@ public class Main {
                 final ASTTraversalException e1 = 
                     new ASTTraversalException(pos, e.getPlainMessage());
                 System.out.println(e1.getMessage());
-                System.out.println(cmd);
-                System.out.println(e1.getPosition().errorIndicatorString());
+                System.out.println("    " + cmd);
+                System.out.println("    " + e1.getPosition().errorIndicatorString());
+                e.printStackTrace();
             } else if (eval.getRoot() != null){
                 System.out.println(eval.getRoot().toString());
                 

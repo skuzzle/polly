@@ -18,6 +18,60 @@ public class Permutator {
     }
     
     
+    public static <T extends Comparable<T>> void nextPermutation(ArrayList<T> seq) {
+        if (seq.size() < 2) {
+            return;
+        }
+        int i = seq.size() - 2;
+        for (; i >= 0 && seq.get(i).compareTo(seq.get(i + 1)) > 0; --i);
+        if (i >= 0) {
+            int j = seq.size() - 1;
+            for (; seq.get(j).compareTo(seq.get(i)) <= 0; --j);
+            swap(seq, i, j);
+        }
+        reverse(seq, i + 1, seq.size() - 1);
+    }
+    
+    
+    
+    private static <T> void swap(ArrayList<T> list, int i, int j) {
+        T tmp = list.get(i);
+        list.set(i, list.get(j));
+        list.set(j, tmp);
+    }
+    
+    
+    
+    private static <T> void reverse(ArrayList<T> list, int l, int r) {
+        while (l < r) {
+            swap(list, l++, r--);
+        }
+    }
+    
+    
+    
+    public static <T extends Comparable<T>> void nextPermutation(T[] seq) {
+        if (seq.length < 2) {
+            return;
+        }
+        int i = seq.length - 2;
+        for (; i >= 0 && seq[i].compareTo(seq[i + 1]) > 0; --i);
+        if (i >= 0) {
+            int j = seq.length - 1;
+            for (; seq[j].compareTo(seq[i]) <= 0; --j);
+            swap(seq, i, j);
+        }
+        reverse(seq, i + 1, seq.length - 1);
+    }
+    
+    
+    private static void reverse(Object[] arr, int l, int r) {
+        while (l < r) {
+            swap(arr, l++, r--);
+        }
+    }
+    
+    
     
     public static <T> List<T[]> permute(T[] arr) {
         if (arr.length > MAX_FACULTY_SIZE) {
