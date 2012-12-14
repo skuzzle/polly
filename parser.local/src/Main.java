@@ -85,6 +85,10 @@ public class Main {
             } else if (cmd.equals(":cns")) {
                 //System.out.println();
                 continue;
+            } else if (cmd.equals(":vns")) {
+                System.out.println("Namespace: " + nsName);
+                System.out.println(ns.toString());
+                continue;
             }
             
             final Evaluator eval = new Evaluator(":result \">\" " + cmd, "ISO-8859-1");
