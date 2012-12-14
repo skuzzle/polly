@@ -79,7 +79,7 @@ import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
  *                | TIMESPAN                                   // timespan literal
  *            
  *   exprList    -> (expr (',' expr)*)?
- *   parameters  -> parameter (',' parameter)*
+ *   parameters  -> (parameter (',' parameter)*)?
  *   parameter   -> type ID
  *   type        -> ID                                         // typename, parameter name
  *                | ID<ID>                                     // type name, subtype name, parameter name
