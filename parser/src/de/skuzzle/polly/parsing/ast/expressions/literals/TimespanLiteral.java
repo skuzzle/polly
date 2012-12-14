@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.types.Type;
 
 
@@ -65,6 +66,17 @@ public class TimespanLiteral extends DateLiteral {
      */
     public int getSeconds() {
         return this.seconds;
+    }
+    
+    
+    
+    @Override
+    public Literal castTo(Type type) throws ASTTraversalException {
+        if (type.check(Type.DATE)) {
+            return new DateLiteral(this.getPosition(), addToDate(new Date()));
+        } else {
+            return super.castTo(type);
+        }
     }
     
     

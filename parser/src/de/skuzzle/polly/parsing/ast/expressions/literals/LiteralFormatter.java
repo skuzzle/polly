@@ -23,7 +23,7 @@ public interface LiteralFormatter {
         private final NumberFormat NUMBER_FORMAT = new DecimalFormat("0.######");
         private final TimeSpanFormat TIMESPAN_FORMAT = new TimeSpanFormat(false);
         private final DateFormat DATE_FORMAT = new SimpleDateFormat(
-            "hh:mm@dd.MM.yyyy");
+            "HH:mm@dd.MM.yyyy");
         
         @Override
         public String formatNumberLiteral(NumberLiteral number) {

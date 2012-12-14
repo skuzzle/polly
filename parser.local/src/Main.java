@@ -97,8 +97,10 @@ public class Main {
             
             if (eval.errorOccurred()) {
                 final ASTTraversalException e = eval.getLastError();
-                Position pos = new Position(e.getPosition().getStart() - 12, e.getPosition().getEnd() - 12);
-                final ASTTraversalException e1 = new ASTTraversalException(pos, e.getPlainMessage());
+                Position pos = new Position(e.getPosition().getStart() - 12, 
+                    e.getPosition().getEnd() - 12);
+                final ASTTraversalException e1 = 
+                    new ASTTraversalException(pos, e.getPlainMessage());
                 System.out.println(e1.getMessage());
                 System.out.println(cmd);
                 System.out.println(e1.getPosition().errorIndicatorString());

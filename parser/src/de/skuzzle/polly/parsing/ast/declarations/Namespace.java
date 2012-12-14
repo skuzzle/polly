@@ -270,6 +270,7 @@ public class Namespace {
             // casting ops
             GLOBAL.declare(new Cast(OpType.STRING, Type.STRING).createDeclaration());
             GLOBAL.declare(new Cast(OpType.NUMBER, Type.NUMBER).createDeclaration());
+            GLOBAL.declare(new Cast(OpType.DATE, Type.DATE).createDeclaration());
             
             // relational ops
             GLOBAL.declare(new Relational(OpType.EQ).createDeclaration());
