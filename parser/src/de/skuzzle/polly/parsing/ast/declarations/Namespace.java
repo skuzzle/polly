@@ -175,7 +175,7 @@ public class Namespace {
             final List<String> similar = findSimilar(name.getId(), TYPES);
             
             throw new DeclarationException(name.getPosition(), 
-                "Unbekannter Typ: '" + name + "'.", similar);
+                "Unbekannter Typ: '" + name, similar);
         } else if (!(decl instanceof TypeDeclaration)) {
             throw new IllegalStateException(
                 "Namespace 'TYPES' must only contain instances of TypeDeclaration.");
@@ -583,7 +583,7 @@ public class Namespace {
             final List<String> similar = findSimilar(name.getId(), this);
             
             throw new DeclarationException(name.getPosition(), 
-                "Unbekannte Variable: '" + name + "'.", similar);
+                "Unbekannte Variable: '" + name, similar);
         } else if (check instanceof VarDeclaration) {
             return (VarDeclaration) check;
         }

@@ -49,6 +49,12 @@ public class ASTTraversalException extends Exception {
     
     
     
+    public String getPlainMessage() {
+        return super.getMessage();
+    }
+    
+    
+    
     @Override
     public String getMessage() {
         return super.getMessage() + ". In Eingabe an Position " + this.position;

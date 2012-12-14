@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import de.skuzzle.polly.parsing.Evaluator;
+import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.DeclarationReader;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
@@ -92,9 +93,11 @@ public class Main {
             
             if (eval.errorOccurred()) {
                 final ASTTraversalException e = eval.getLastError();
-                System.out.println(e.getMessage());
-                System.out.println("            " + cmd);
-                System.out.println(e.getPosition().errorIndicatorString());
+                Position pos = new Position(e.getPosition().getStart() - 12, e.getPosition().getEnd() - 12);
+                final ASTTraversalException e1 = new ASTTraversalException(pos, e.getPlainMessage());
+                System.out.println(e1.getMessage());
+                System.out.println(cmd);
+                System.out.println(e1.getPosition().errorIndicatorString());
             } else if (eval.getRoot() != null){
                 System.out.println(eval.getRoot().toString());
                 
