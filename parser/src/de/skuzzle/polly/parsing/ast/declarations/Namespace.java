@@ -12,9 +12,11 @@ import java.util.List;
 import java.util.Map;
 
 
+import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
+import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.ast.lang.Cast;
 import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
 import de.skuzzle.polly.parsing.ast.lang.functions.FoldLeft;
@@ -267,6 +269,19 @@ public class Namespace {
     private final static Namespace GLOBAL = new StorableNamespace("~global.decl", null);
     static {
         try {
+            
+            final VarDeclaration pi = new VarDeclaration(Position.NONE, 
+                new Identifier(Position.NONE, "pi"), 
+                new NumberLiteral(Position.NONE, Math.PI));
+            pi.setNative(true);
+            final VarDeclaration e = new VarDeclaration(Position.NONE, 
+                new Identifier(Position.NONE, "e"), 
+                new NumberLiteral(Position.NONE, Math.E));
+            e.setNative(true);
+            
+            GLOBAL.declare(pi);
+            GLOBAL.declare(e);
+            
             // casting ops
             GLOBAL.declare(new Cast(OpType.STRING, Type.STRING).createDeclaration());
             GLOBAL.declare(new Cast(OpType.NUMBER, Type.NUMBER).createDeclaration());
@@ -294,6 +309,8 @@ public class Namespace {
             GLOBAL.declare(new BinaryArithmetic(OpType.RIGHT_SHIFT).createDeclaration());
             GLOBAL.declare(new BinaryArithmetic(OpType.URIGHT_SHIFT).createDeclaration());
             GLOBAL.declare(new BinaryArithmetic(OpType.RADIX).createDeclaration());
+            GLOBAL.declare(new BinaryArithmetic(OpType.MIN).createDeclaration());
+            GLOBAL.declare(new BinaryArithmetic(OpType.MAX).createDeclaration());
             
             // Arithmetic timespan and date binary ops
             GLOBAL.declare(new TimespanArithmetic(OpType.ADD).createDeclaration());
@@ -304,6 +321,23 @@ public class Namespace {
             
             // Arithmetic unary ops
             GLOBAL.declare(new UnaryArithmetic(OpType.SUB).createDeclaration());
+            GLOBAL.declare(new UnaryArithmetic(OpType.LOG).createDeclaration());
+            GLOBAL.declare(new UnaryArithmetic(OpType.LN).createDeclaration());
+            GLOBAL.declare(new UnaryArithmetic(OpType.SQRT).createDeclaration());
+            GLOBAL.declare(new UnaryArithmetic(OpType.CEIL).createDeclaration());
+            GLOBAL.declare(new UnaryArithmetic(OpType.FLOOR).createDeclaration());
+            GLOBAL.declare(new UnaryArithmetic(OpType.ROUND).createDeclaration());
+            GLOBAL.declare(new UnaryArithmetic(OpType.SIG).createDeclaration());
+            GLOBAL.declare(new UnaryArithmetic(OpType.COS).createDeclaration());
+            GLOBAL.declare(new UnaryArithmetic(OpType.SIN).createDeclaration());
+            GLOBAL.declare(new UnaryArithmetic(OpType.TAN).createDeclaration());
+            GLOBAL.declare(new UnaryArithmetic(OpType.ACOS).createDeclaration());
+            GLOBAL.declare(new UnaryArithmetic(OpType.ATAN).createDeclaration());
+            GLOBAL.declare(new UnaryArithmetic(OpType.ASIN).createDeclaration());
+            GLOBAL.declare(new UnaryArithmetic(OpType.ABS).createDeclaration());
+            GLOBAL.declare(new UnaryArithmetic(OpType.TO_DEGREES).createDeclaration());
+            GLOBAL.declare(new UnaryArithmetic(OpType.TO_RADIANS).createDeclaration());
+            GLOBAL.declare(new UnaryArithmetic(OpType.EXP).createDeclaration());
             
             // list unary op
             GLOBAL.declare(new UnaryList(OpType.EXCLAMATION).createDeclaration());
@@ -584,7 +618,7 @@ public class Namespace {
             final List<String> similar = findSimilar(name.getId(), this);
             
             throw new DeclarationException(name.getPosition(), 
-                "Unbekannte Variable: '" + name, similar);
+                "Unbekannte Variable: '" + name + "'", similar);
         } else if (check instanceof VarDeclaration) {
             return (VarDeclaration) check;
         }

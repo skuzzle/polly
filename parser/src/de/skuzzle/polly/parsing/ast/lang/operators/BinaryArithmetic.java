@@ -86,6 +86,14 @@ public class BinaryArithmetic extends BinaryOperator<NumberLiteral, NumberLitera
             stack.push(new NumberLiteral(resultPos, 
                 Math.pow(left.getValue(), right.getValue())));
             break;
+        case MIN:
+            stack.push(new NumberLiteral(resultPos, 
+                Math.min(left.getValue(), right.getValue())));
+            break;
+        case MAX:
+            stack.push(new NumberLiteral(resultPos, 
+                Math.max(left.getValue(), right.getValue())));
+            break;
         default:
             this.invalidOperatorType(this.getOp());
         }
