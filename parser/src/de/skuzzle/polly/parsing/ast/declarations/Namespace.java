@@ -88,6 +88,22 @@ public class Namespace {
         
         
         
+        @Override
+        public int delete(Identifier id) {
+            final int i = super.delete(id);
+            
+            if (i != 0) {
+                try {
+                    this.store();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return i;
+        }
+        
+        
+        
         public void store() throws IOException {
             if (declarationFolder == null) {
                 throw new IOException("declaration folder has not been set");
