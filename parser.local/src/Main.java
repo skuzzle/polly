@@ -1,8 +1,11 @@
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 import de.skuzzle.polly.parsing.Evaluator;
+import de.skuzzle.polly.parsing.ast.declarations.DeclarationReader;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.ASTVisualizer;
@@ -15,8 +18,45 @@ public class Main {
     
     private final static String DOT_PATH = 
             "C:\\Program Files (x86)\\Graphviz 2.28\\bin\\dot.exe";
+    
+    private final static File DECLARATION_FOLDER = new File("decls");
+    
+    private final static FileFilter DECLARATION_FILTER = new FileFilter() {
+        
+        @Override
+        public boolean accept(File pathname) {
+            return pathname.getName().toLowerCase().endsWith(".decl");
+        }
+    };
+    
+    
+    
+    private static void readDeclarations() throws IOException {
+        for (final File file : DECLARATION_FOLDER.listFiles(DECLARATION_FILTER)) {
+            DeclarationReader dr = null;
+            try {
+                final String nsName = file.getName().substring(
+                        0, file.getName().length() - 5);
+                Namespace ns = Namespace.forName(nsName);
+                dr = new DeclarationReader(file, "ISO-8859-1", ns);
+                dr.readAll();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (dr != null) {
+                    dr.close();
+                }
+            }
+        }
+    }
+    
 
     public static void main(String[] args) throws IOException, ASTTraversalException {
+        
+        Namespace.setDeclarationFolder(new File("decls"));
+        
+        readDeclarations();
+        
         final BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
         String nsName = "default";
         
