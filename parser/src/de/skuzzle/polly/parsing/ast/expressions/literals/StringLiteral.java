@@ -1,8 +1,8 @@
 package de.skuzzle.polly.parsing.ast.expressions.literals;
 
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.parsing.types.Type;
 
 
 public class StringLiteral extends Literal {
@@ -27,7 +27,7 @@ public class StringLiteral extends Literal {
 
     @Override
     public Literal castTo(Type type) throws ASTTraversalException {
-        return null;
+        return super.castTo(type);
     }
 
     

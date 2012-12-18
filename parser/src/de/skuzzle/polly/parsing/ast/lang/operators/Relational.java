@@ -27,13 +27,13 @@ public class Relational extends BinaryOperator<Literal, Literal> {
     protected void resolve(Expression left, Expression right, Namespace ns,
             Visitor typeResolver) throws ASTTraversalException {
         
-        if (!left.getType().check(right.getType())) {
-            Type.typeError(right.getType(), left.getType(), right.getPosition());
+        if (!left.getUnique().check(right.getUnique())) {
+            Type.typeError(right.getUnique(), left.getUnique(), right.getPosition());
         }
         
-        if (!left.getType().isCompareable()) {
+        if (!left.getUnique().isCompareable()) {
             throw new ASTTraversalException(left.getPosition(), 
-                "Typ '" + left.getType() + "' definiert keine Ordnung");
+                "Typ '" + left.getUnique() + "' definiert keine Ordnung");
         }
     }
     

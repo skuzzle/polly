@@ -2,15 +2,16 @@ package de.skuzzle.polly.parsing.ast.expressions.parameters;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.parsing.types.FunctionType;
-import de.skuzzle.polly.parsing.types.Type;
 import de.skuzzle.polly.tools.Equatable;
 
 
@@ -31,10 +32,10 @@ public class Parameter extends Expression {
      * @return A collection containing only the types of the parameters 
      *          (in the same order).
      */
-    public static Collection<Type> asType(Collection<Parameter> params) {
-        final Collection<Type> result = new ArrayList<Type>(params.size());
+    public static List<Type> asType(Collection<Parameter> params) {
+        final List<Type> result = new ArrayList<Type>(params.size());
         for (final Parameter p : params) {
-            result.add(p.getType());
+            result.add(p.getUnique());
         }
         return result;
     }

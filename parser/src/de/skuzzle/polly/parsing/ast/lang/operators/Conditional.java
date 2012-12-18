@@ -37,11 +37,11 @@ public class Conditional extends TernaryOperator<BooleanLiteral, Literal, Litera
     protected void resolve(Expression first, Expression second, Expression third,
             Namespace ns, Visitor typeResolver) throws ASTTraversalException {
         
-        if (!second.getType().check(third.getType())) {
+        if (!second.getUnique().check(third.getUnique())) {
             throw new ASTTraversalException(third.getPosition(), 
                 "Operanden müssen den selben Typ haben");
         }
-        this.setType(second.getType());
+        this.setUnique(second.getUnique());
     }
     
     

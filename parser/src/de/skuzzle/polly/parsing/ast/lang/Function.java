@@ -96,7 +96,7 @@ public abstract class Function extends Native {
     public Declaration createDeclaration() {
         final FunctionLiteral func = this.createFunction();
         final VarDeclaration vd = new VarDeclaration(func.getPosition(), this.name, func);
-        this.setType(((FunctionType) func.getType()).getReturnType());
+        this.setUnique(((FunctionType) func.getUnique()).getReturnType());
         vd.setNative(true);
         vd.setMustCopy(this.mustCopy());
         return vd;

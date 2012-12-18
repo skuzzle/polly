@@ -1,10 +1,10 @@
 package de.skuzzle.polly.parsing.ast.expressions.literals;
 
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
-import de.skuzzle.polly.parsing.types.Type;
 
 
 public abstract class Literal extends Expression implements Comparable<Literal> {
@@ -31,12 +31,12 @@ public abstract class Literal extends Expression implements Comparable<Literal> 
      * @throws ASTTraversalException If this literal can not be casted to the given type.
      */
     public Literal castTo(Type type) throws ASTTraversalException {
-        if (type.check(Type.STRING)) {
+        if (type.equals(Type.STRING)) {
             return new StringLiteral(this.getPosition(), 
                 this.format(LiteralFormatter.DEFAULT));
         }
         throw new ASTTraversalException(this.getPosition(), 
-            this.getType().getTypeName() + " kann nicht zu " + type.getTypeName() + 
+            this.getUnique().getName() + " kann nicht zu " + type.getName() + 
             " gecastet werden");
     }
 

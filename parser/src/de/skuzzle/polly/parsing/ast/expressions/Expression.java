@@ -1,11 +1,11 @@
 package de.skuzzle.polly.parsing.ast.expressions;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Node;
-import de.skuzzle.polly.parsing.types.Type;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.tools.Equatable;
 
 /**
@@ -17,21 +17,21 @@ public abstract class Expression extends Node {
 
     private static final long serialVersionUID = 1L;
     
-    private Type type;
-    public List<Type> possibleTypes;
+    private Type unique;
+    private Set<Type> types;
     
     
     
     /**
-     * Creates a new Expression with given {@link Position} and {@link Type}.
+     * Creates a new Expression with given {@link Position} and unique {@link Type}.
      * 
      * @param position Position within the input String of this expression.
-     * @param type Type of this expression.
+     * @param unique Type of this expression.
      */
-    public Expression(Position position, Type type) {
+    public Expression(Position position, Type unique) {
         super(position);
-        this.type = type;
-        this.possibleTypes = new ArrayList<Type>();
+        this.unique = unique;
+        this.types = new HashSet<Type>();
     }
     
     
@@ -47,12 +47,18 @@ public abstract class Expression extends Node {
     
     
     
+    public Set<Type> getPossibleTypes() {
+        return this.types;
+    }
+    
+    
+    
     public void addPossibleType(Type type) {
         if (this.typeResolved()) {
             throw new IllegalStateException(
                 "can not add possile type because type was resolved");
         }
-        this.possibleTypes.add(type);
+        this.types.add(type);
     }
 
     
@@ -64,29 +70,30 @@ public abstract class Expression extends Node {
      *          {@link Type#UNKNOWN}.
      */
     public boolean typeResolved() {
-        return this.possibleTypes.isEmpty() && this.getType() != Type.UNKNOWN;
+        return this.getUnique() != Type.UNKNOWN;
     }
     
     
     
     /**
-     * Gets the {@link Type} of this expression.
+     * Gets the single resolved {@link Type} of this expression. If it has not yet been
+     * resolved, it will be {@link Type#UNKNOWN}.
      * 
      * @return The type.
      */
-    public Type getType() {
-        return this.type;
+    public Type getUnique() {
+        return this.unique;
     }
     
     
     
     /**
-     * Sets the type of this expression.
+     * Sets the unique type of this expression.
      * 
-     * @param type The new type.
+     * @param unique The new type.
      */
-    public void setType(Type type) {
-        this.type = type;
+    public void setUnique(Type unique) {
+        this.unique = unique;
     }
 
     
@@ -101,6 +108,6 @@ public abstract class Expression extends Node {
     @Override
     public boolean actualEquals(Equatable o) {
         final Expression other = (Expression) o;
-        return this.getType().check(other.getType());
+        return this.getUnique().equals(other.getUnique());
     }
 }

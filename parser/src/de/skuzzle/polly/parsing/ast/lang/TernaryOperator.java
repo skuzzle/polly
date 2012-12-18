@@ -56,11 +56,11 @@ public abstract class TernaryOperator<FIRST extends Literal, SECOND extends Lite
         });
         
         final FunctionLiteral func = new FunctionLiteral(Position.NONE, p, this);
-        func.setType(new FunctionType(this.getType(), Arrays.asList(new Type[] {
+        func.setUnique(new FunctionType(this.getUnique(), Arrays.asList(new Type[] {
             this.first, 
             this.second,
             this.third})));
-        func.setReturnType(this.getType());
+        func.setReturnType(this.getUnique());
         
         return func;
     }

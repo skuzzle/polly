@@ -56,7 +56,7 @@ public class Cast extends Operator {
             PARAM_NAME, 
             Type.ANY).getExpression();
         
-        stack.push(operand.castTo(this.getType()));
+        stack.push(operand.castTo(this.getUnique()));
     }
 
 
@@ -68,8 +68,8 @@ public class Cast extends Operator {
             new Parameter[] { new Parameter(Position.NONE, PARAM_NAME, Type.ANY) });
         
         final FunctionLiteral func = new FunctionLiteral(Position.NONE, p, this);
-        func.setType(new FunctionType(this.getType(), Parameter.asType(p)));
-        func.setReturnType(this.getType());
+        func.setUnique(new FunctionType(this.getUnique(), Parameter.asType(p)));
+        func.setReturnType(this.getUnique());
         return func;
     }
     
@@ -79,7 +79,7 @@ public class Cast extends Operator {
     public Declaration createDeclaration() {
         final FunctionLiteral func = this.createFunction();
         final VarDeclaration vd = new VarDeclaration(
-            func.getPosition(), this.getType().getTypeName(), func);
+            func.getPosition(), this.getUnique().getTypeName(), func);
         return vd;
     }
 

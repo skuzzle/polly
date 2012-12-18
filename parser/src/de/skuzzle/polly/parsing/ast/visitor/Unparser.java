@@ -157,7 +157,7 @@ public class Unparser extends DepthFirstVisitor {
     public void beforeListParameter(ListParameter param) throws ASTTraversalException {
         param.getMainTypeName().visit(this);
         this.out.print("<");
-        param.getType().getTypeName().visit(this);
+        param.getUnique().getName().visit(this);
         this.out.print("> ");
         param.getName().visit(this);
     }

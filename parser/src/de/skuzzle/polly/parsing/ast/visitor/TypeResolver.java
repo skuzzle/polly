@@ -12,7 +12,13 @@ import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.TypeDeclaration;
+import de.skuzzle.polly.parsing.ast.declarations.Typespace;
 import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
+import de.skuzzle.polly.parsing.ast.declarations.types.ListTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.ProductTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
+import de.skuzzle.polly.parsing.ast.declarations.types.TypeVar;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Empty;
@@ -26,9 +32,6 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.FunctionParameter;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.ListParameter;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
-import de.skuzzle.polly.parsing.types.FunctionType;
-import de.skuzzle.polly.parsing.types.ListType;
-import de.skuzzle.polly.parsing.types.Type;
 import de.skuzzle.polly.parsing.util.LinkedStack;
 import de.skuzzle.polly.parsing.util.Stack;
 
@@ -38,30 +41,11 @@ public class TypeResolver extends DepthFirstVisitor {
     
     
     
-    /**
-     * Class used to encapsulate information about recent function calls. It holds the
-     * called functions's signature and a collection of the actual parameters.
-     * 
-     * @author Simon Taddiken
-     */
-    public final static class CallContext {
-        
-        public final FunctionType signature;
-        public final List<Expression> actualParameters;
-        
-        public CallContext(FunctionType signature, List<Expression> actualParameters) {
-            super();
-            this.signature = signature;
-            this.actualParameters = actualParameters;
-        }
-    }
-    
-    
-    
     private Namespace nspace;
     private final Namespace rootNs;
     private final Set<Node> checked;
-    private Stack<CallContext> signatureStack;
+    private Stack<Call> signatureStack;
+    private final Typespace types;
     
     
     
@@ -70,7 +54,8 @@ public class TypeResolver extends DepthFirstVisitor {
         this.rootNs = namespace.enter(false);
         this.nspace = this.rootNs;
         this.checked = new HashSet<Node>();
-        this.signatureStack = new LinkedStack<CallContext>();
+        this.signatureStack = new LinkedStack<Call>();
+        this.types = new Typespace();
     }
     
     
@@ -125,9 +110,8 @@ public class TypeResolver extends DepthFirstVisitor {
     @Override
     public void visitParameter(Parameter param) throws ASTTraversalException {
         this.beforeParameter(param);
-        
-        final TypeDeclaration decl = Namespace.resolveType(param.getTypeName());
-        param.setType(decl.getType());
+        final TypeDeclaration decl = this.types.resolveType(param.getName());
+        param.setUnique(decl.getType());
         
         this.afterParameter(param);
     }
@@ -138,15 +122,13 @@ public class TypeResolver extends DepthFirstVisitor {
     public void visitListParameter(ListParameter param) throws ASTTraversalException {
         this.beforeListParameter(param);
         
-        final TypeDeclaration mainTypeDecl = Namespace.resolveType(
-            param.getMainTypeName());
-        
-        if (mainTypeDecl.getType() != Type.LIST) {
-            throw new ASTTraversalException(param.getMainTypeName().getPosition(), 
-                "Nur Listen können Typ-Parameter haben.");
+        if (param.getTypeName() != null) {
+            final TypeDeclaration subTypeDecl = 
+                this.types.resolveType(param.getTypeName());
+            param.setUnique(new ListTypeConstructor(subTypeDecl.getType()));
+        } else {
+            param.setUnique(new ListTypeConstructor(TypeVar.create()));
         }
-        final TypeDeclaration subTypeDecl = Namespace.resolveType(param.getTypeName());
-        param.setType(new ListType(subTypeDecl.getType()));
         
         this.afterListParameter(param);
     }
@@ -161,14 +143,14 @@ public class TypeResolver extends DepthFirstVisitor {
         final Iterator<ResolvableIdentifier> it = param.getSignature().iterator();
         
         // first element is the return type
-        final TypeDeclaration returnTypeDecl = Namespace.resolveType(it.next());
-        final Collection<Type> types = new ArrayList<Type>(param.getSignature().size());
+        final TypeDeclaration returnTypeDecl = this.types.resolveType(it.next());
+        final List<Type> types = new ArrayList<Type>(param.getSignature().size());
         while (it.hasNext()) {
-            final TypeDeclaration decl = Namespace.resolveType(it.next());
+            final TypeDeclaration decl = this.types.resolveType(it.next());
             types.add(decl.getType());
         }
         
-        param.setType(new FunctionType(returnTypeDecl.getType(), types));
+        param.setUnique(new MapTypeConstructor(types, returnTypeDecl.getType()));
         
         this.afterFunctionParameter(param);
     }
@@ -190,15 +172,12 @@ public class TypeResolver extends DepthFirstVisitor {
         
         // If this is the lhs of a function call, the called signature will be on top
         // of the signature stack. So we are able to use the actual called signature
-        final CallContext c = this.signatureStack.isEmpty() 
+        final Call c = this.signatureStack.isEmpty() 
                 ? null 
                 : this.signatureStack.pop();
         
         this.enter();
         final Iterator<Parameter> formalIt = func.getFormal().iterator();
-        final Iterator<Type> typeIt = c == null 
-                ? null 
-                : c.signature.getParameters().iterator();
         final Iterator<Expression> actualIt = c == null ? null :
             c.actualParameters.iterator();
                 
@@ -214,20 +193,20 @@ public class TypeResolver extends DepthFirstVisitor {
             
             // HACK or not? declaring both, the formal and actual signature here. The 
             //     second is a fallback if the actual signature did not match
-            if (typeIt != null) {
-                final Position pos = actualIt == null 
-                    ? p.getPosition() : actualIt.next().getPosition();
+            if (actualIt != null) {
+                final Expression actual = actualIt.next();
+                final Position pos = actual.getPosition();
                 
                 final VarDeclaration vd = new VarDeclaration(
                     pos, p.getName(), 
-                    new Empty(typeIt.next(), pos, this.signatureStack));
+                    new Empty(actual.getUnique(), pos, this.signatureStack));
                 
                 this.nspace.declare(vd);
             }
             
             
             final VarDeclaration vd = new VarDeclaration(p.getPosition(), p.getName(), 
-                new Empty(p.getType(), p.getPosition(), this.signatureStack));
+                new Empty(p.getUnique(), p.getPosition(), this.signatureStack));
             
             this.nspace.declare(vd);
         }
@@ -236,13 +215,13 @@ public class TypeResolver extends DepthFirstVisitor {
         this.leave();
         
         final FunctionType resultType = c == null 
-            ? new FunctionType(func.getExpression().getType(), 
+            ? new FunctionType(func.getExpression().getUnique(), 
                     Parameter.asType(func.getFormal())) 
-            : new FunctionType(func.getExpression().getType(), 
+            : new FunctionType(func.getExpression().getUnique(), 
                     c.signature.getParameters());
             
         
-        func.setType(resultType);
+        func.setUnique(resultType);
         func.setReturnType(resultType.getReturnType());
         this.afterFunctionLiteral(func);
     }
@@ -258,19 +237,19 @@ public class TypeResolver extends DepthFirstVisitor {
         this.beforeListLiteral(list);
         
         if (list.getContent().isEmpty()) {
-            list.setType(Type.EMPTY_LIST);
+            throw new ASTTraversalException(list.getPosition(), "Leere Liste");
         } else {
             // resolve expression types
             Type last = null; 
             for (final Expression exp : list.getContent()) {
                 exp.visit(this);
-                if (last != null && !last.check(exp.getType())) {
+                if (last != null && !last.equals(exp.getUnique())) {
                     throw new ASTTraversalException(exp.getPosition(), 
                         "Listen dürfen nur Elemente des selben Typs beinhalten");
                 }
-                last = exp.getType();
+                last = exp.getUnique();
             }
-            list.setType(new ListType(last));
+            list.getUnique().isUnifiableWith(last);
         }
         
         this.afterListLiteral(list);
@@ -287,7 +266,7 @@ public class TypeResolver extends DepthFirstVisitor {
         this.beforeAssignment(assign);
         // resolve assignments type
         assign.getExpression().visit(this);
-        assign.setType(assign.getExpression().getType());
+        assign.setUnique(assign.getExpression().getUnique());
         
         /*final Empty exp = new Empty(
                 assign.getExpression().getType(), assign.getExpression().getPosition(), 
@@ -357,27 +336,41 @@ public class TypeResolver extends DepthFirstVisitor {
         }
         
         // create signature from actual parameter types.
-        // signature does *not* obey return value as it is unknown by now.
-        final FunctionType signature = call.createSignature();
-        final CallContext c = new CallContext(signature, call.getParameters());
+        final ProductTypeConstructor signature = call.createSignature();
         
-        // push actual signature.
-        this.signatureStack.push(c);
+        // push call signature.
+        this.signatureStack.push(call);
         
         // check what type of call this is. Might be a lambda call or a VarAccess which
-        // in turn references a function. For that purpose, we need to find the next 
-        // VarAccess and tell it the actual signature.
+        // in turn references a function. 
         call.getLhs().visit(this);
         
-        if (!call.getLhs().getType().check(signature)) {
-            Type.typeError(signature, call.getLhs().getType(), 
-                call.getParameterPosition());
+        // Choose a matching type from the possible types of the LHS
+        if (call.getLhs().typeResolved()) {
+            if (!(call.getLhs().getUnique() instanceof MapTypeConstructor)) {
+                throw new ASTTraversalException(call.getLhs().getPosition(), 
+                    "Funktion erwartet");
+            }
+            final MapTypeConstructor mc = (MapTypeConstructor) call.getLhs().getUnique();
+            call.setUnique(mc.getTarget());
+        } else {
+            for (final Type t : call.getLhs().getPossibleTypes()) {
+                // only interested in functions here
+                if (!(t instanceof MapTypeConstructor)) {
+                    continue;
+                }
+                
+                final MapTypeConstructor mc = (MapTypeConstructor) t;
+                final ProductTypeConstructor pc = new ProductTypeConstructor(mc.getSource());
+                if (pc.isUnifiableWith(signature)) {
+                    call.getLhs().setUnique(mc);
+                    call.setUnique(mc.getTarget());
+                    break;
+                } else {
+                    call.addPossibleType(mc.getTarget());
+                }
+            }
         }
-        
-        // get lhs' type as FunctionType. This type already has a return type set,
-        // which will be the return type of this call
-        final FunctionType lhsType = (FunctionType) call.getLhs().getType();
-        call.setType(lhsType.getReturnType());
         
         this.afterCall(call);
     }
@@ -393,39 +386,16 @@ public class TypeResolver extends DepthFirstVisitor {
         
         this.beforeVarAccess(access);
         
-        // if this is the lhs of a call, the called signature will be on top of the
-        // signature stack. Otherwise, we will look for any declaration, disregarding
-        // its type
-        if (!this.signatureStack.isEmpty()) {
-            final CallContext cc = this.signatureStack.peek();
-
-            VarDeclaration vd = this.nspace.resolveBySignature(access.getIdentifier(), 
-                cc.actualParameters);
-            
-            vd.getExpression().visit(this);
-            access.setType(vd.getExpression().getType());
-            return;
-        }
-
-        
         final List<VarDeclaration> decls = this.nspace.resolveAll(access.getIdentifier());
         
         for (final VarDeclaration decl : decls) {
-            access.addPossibleType(decl.getType());
+            decl.getExpression().visit(this);
+            access.addPossibleType(decl.getExpression().getUnique());
         }
         
-        /*
-        final Type typeToResolve = this.signatureStack.isEmpty() 
-            ? Type.ANY 
-            : this.signatureStack.peek().signature;
-            
-        access.setTypeToResolve(typeToResolve);
-        final VarDeclaration vd = this.nspace.resolveVar(
-                access.getIdentifier(), typeToResolve);
-
-        vd.getExpression().visit(this);
-        access.setType(vd.getExpression().getType());*/
-        
+        if (decls.size() == 1) {
+            access.setUnique(decls.get(0).getType());
+        }
         
         this.afterVarAccess(access);
     }
@@ -453,7 +423,7 @@ public class TypeResolver extends DepthFirstVisitor {
         access.getRhs().visit(this);
         this.nspace = backup;
         
-        access.setType(access.getRhs().getType());
+        access.setUnique(access.getRhs().getUnique());
         
         this.afterAccess(access);
     }

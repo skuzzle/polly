@@ -1,7 +1,7 @@
 package de.skuzzle.polly.parsing.ast.expressions.literals;
 
 import de.skuzzle.polly.parsing.Position;
-import de.skuzzle.polly.parsing.types.Type;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 
 
 public class UserLiteral extends StringLiteral {
@@ -10,7 +10,7 @@ public class UserLiteral extends StringLiteral {
     
     public UserLiteral(Position position, String value) {
         super(position, value);
-        this.setType(Type.USER);
+        this.setUnique(Type.USER);
     }
 
     

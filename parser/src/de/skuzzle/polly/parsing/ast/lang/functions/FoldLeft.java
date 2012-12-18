@@ -73,7 +73,7 @@ public class FoldLeft extends Function {
         });
         
         final FunctionLiteral func = new FunctionLiteral(Position.NONE, p, this);
-        func.setType(new FunctionType(Type.ANY, Arrays.asList(
+        func.setUnique(new FunctionType(Type.ANY, Arrays.asList(
             new Type[] { this.firstOperand, this.secondOperand, this.thirdOperand})));
         func.setReturnType(Type.ANY);
         
@@ -117,20 +117,20 @@ public class FoldLeft extends Function {
         final Expression third = ns.resolveVar(THIRD_PARAM_NAME, 
             Type.ANY).getExpression();
         
-        final ListType lt = (ListType) first.getType();
+        final ListType lt = (ListType) first.getUnique();
         final Type subType = lt.getSubType();
         
-        final FunctionType ft = (FunctionType) second.getType();
+        final FunctionType ft = (FunctionType) second.getUnique();
         final Iterator<Type> paramIt = ft.getParameters().iterator();
         final Type param1 = paramIt.next();
         final Type param2 = paramIt.next();
-        final Type argType = third.getType(); // type of the argument will be return type
+        final Type argType = third.getUnique(); // type of the argument will be return type
         
         if (!ft.getReturnType().check(argType) || !param1.check(argType) || 
                 !param2.check(subType)) {
             Type.typeError(ft.getReturnType(), argType, first.getPosition());
         }
-        this.setType(argType);
+        this.setUnique(argType);
     }
 
 }

@@ -30,8 +30,8 @@ public class ListIndex extends BinaryOperator<ListLiteral, NumberLiteral> {
     protected void resolve(Expression left, Expression right, Namespace ns,
             Visitor typeResolver) throws ASTTraversalException {
         
-        final ListType lt = (ListType) left.getType();
-        this.setType(lt.getSubType());
+        final ListType lt = (ListType) left.getUnique();
+        this.setUnique(lt.getSubType());
     }
     
     

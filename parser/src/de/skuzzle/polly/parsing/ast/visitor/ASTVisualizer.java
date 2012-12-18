@@ -120,7 +120,7 @@ public class ASTVisualizer extends DepthFirstVisitor {
     
     private void printNode(String name, String attr, Expression n) {
         this.preorder_number++;
-        this.printLabel(name, n.getType().toString(), attr, n.getPosition());
+        this.printLabel(name, n.getUnique().toString(), attr, n.getPosition());
         // emit edge
         if (has_elements()) {
             this.println("n" + top() + " -- " + "n" + this.preorder_number);

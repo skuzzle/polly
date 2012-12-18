@@ -65,10 +65,10 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
         });
         
         final FunctionLiteral func = new FunctionLiteral(Position.NONE, p, this);
-        func.setType(new FunctionType(this.getType(), Arrays.asList(new Type[] {
+        func.setUnique(new FunctionType(this.getUnique(), Arrays.asList(new Type[] {
             this.left, 
             this.right})));
-        func.setReturnType(this.getType());
+        func.setReturnType(this.getUnique());
         
         return func;
     }

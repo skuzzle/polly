@@ -166,7 +166,7 @@ public abstract class Operator extends Function {
      */
     public Operator(OpType op, Type type) {
         super(op.getId());
-        this.setType(type);
+        this.setUnique(type);
         this.op = op;
     }
     
@@ -200,11 +200,11 @@ public abstract class Operator extends Function {
      */
     public Declaration createDeclaration() {
         // HACK: save type, because it will be changed by call to super.createDeclaration
-        final Type t = this.getType(); 
+        final Type t = this.getUnique(); 
         final VarDeclaration vd = (VarDeclaration) super.createDeclaration();
         
         // restore saved type
-        this.setType(t);
+        this.setUnique(t);
         return vd;
     }
     

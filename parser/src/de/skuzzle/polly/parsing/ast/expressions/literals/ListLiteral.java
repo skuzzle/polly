@@ -3,11 +3,12 @@ package de.skuzzle.polly.parsing.ast.expressions.literals;
 import java.util.List;
 
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.ast.declarations.types.ListTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
+import de.skuzzle.polly.parsing.ast.declarations.types.TypeVar;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
-import de.skuzzle.polly.parsing.types.ListType;
-import de.skuzzle.polly.parsing.types.Type;
 
 
 public class ListLiteral extends Literal {
@@ -18,7 +19,7 @@ public class ListLiteral extends Literal {
     
 
     public ListLiteral(Position position, List<Expression> content) {
-        super(position, ListType.ANY_LIST);
+        super(position, new ListTypeConstructor(TypeVar.create()));
         this.content = content;
     }
     

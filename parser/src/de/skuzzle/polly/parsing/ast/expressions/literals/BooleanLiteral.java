@@ -1,8 +1,8 @@
 package de.skuzzle.polly.parsing.ast.expressions.literals;
 
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.parsing.types.Type;
 
 
 public class BooleanLiteral extends Literal {
@@ -27,10 +27,10 @@ public class BooleanLiteral extends Literal {
 
     @Override
     public Literal castTo(Type type) throws ASTTraversalException {
-        if(type.check(Type.NUMBER)) {
+        if(type.equals(Type.NUM)) {
             double value = this.getValue() ? 1.0 : 0.0;
             return new NumberLiteral(this.getPosition(), value);
-        } else if (type.check(Type.STRING)) {
+        } else if (type.equals(Type.STRING)) {
             return new StringLiteral(this.getPosition(),
                 Boolean.toString(this.getValue()));
         }

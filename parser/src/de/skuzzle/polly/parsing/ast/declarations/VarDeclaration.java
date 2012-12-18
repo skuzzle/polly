@@ -3,10 +3,10 @@ package de.skuzzle.polly.parsing.ast.declarations;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.Node;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
-import de.skuzzle.polly.parsing.types.Type;
 
 
 public class VarDeclaration extends Declaration {
@@ -27,7 +27,7 @@ public class VarDeclaration extends Declaration {
     
     @Override
     public Type getType() {
-        return this.expression.getType();
+        return this.expression.getUnique();
     }
     
     

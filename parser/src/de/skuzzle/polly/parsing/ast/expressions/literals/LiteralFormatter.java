@@ -94,7 +94,7 @@ public interface LiteralFormatter {
         public String formatFunction(FunctionLiteral functionLiteral) {
             final StringBuilder b = new StringBuilder();
             b.append("\\(");
-            b.append(functionLiteral.getExpression().getType().getTypeName());
+            b.append(functionLiteral.getExpression().getUnique().getName());
             b.append(":");
             IteratorPrinter.print(functionLiteral.getFormal(), ", ", 
                     new PrintWriter(new StringBuilderWriter(b)));

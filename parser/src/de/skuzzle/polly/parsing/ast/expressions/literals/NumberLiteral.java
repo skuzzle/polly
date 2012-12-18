@@ -1,8 +1,8 @@
 package de.skuzzle.polly.parsing.ast.expressions.literals;
 
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.parsing.types.Type;
 
 
 public class NumberLiteral extends Literal {
@@ -15,7 +15,7 @@ public class NumberLiteral extends Literal {
     
     
     public NumberLiteral(Position position, double value) {
-        super(position, Type.NUMBER);
+        super(position, Type.NUM);
         this.value = value;
         this.radix = 10;
     }

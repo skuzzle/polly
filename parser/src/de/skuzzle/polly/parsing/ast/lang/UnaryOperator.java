@@ -40,8 +40,8 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
             this.typeToParameter(this.operandType, PARAM_NAME)});
         
         final FunctionLiteral func = new FunctionLiteral(Position.NONE, p, this);
-        func.setType(new FunctionType(this.getType(), Parameter.asType(p)));
-        func.setReturnType(this.getType());
+        func.setUnique(new FunctionType(this.getUnique(), Parameter.asType(p)));
+        func.setReturnType(this.getUnique());
         return func;
     }
     

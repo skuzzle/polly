@@ -88,6 +88,6 @@ public class Assignment extends Expression {
     
     @Override
     public String toString() {
-        return "[Assignment to: " + this.getName() + ", type: " + this.getType() + "]";
+        return "[Assignment to: " + this.getName() + ", type: " + this.getUnique() + "]";
     }
 }

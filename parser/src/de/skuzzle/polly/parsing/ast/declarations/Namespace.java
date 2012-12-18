@@ -7,18 +7,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
-import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.ast.lang.Cast;
 import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
@@ -144,49 +141,7 @@ public class Namespace {
     
     
     
-    private final static Namespace TYPES = new Namespace(null);
-    static {
-        try {
-        TYPES.declare(new TypeDeclaration(Type.ANY.getTypeName(), Type.ANY));
-        TYPES.declare(new TypeDeclaration(Type.BOOLEAN.getTypeName(), Type.BOOLEAN));
-        TYPES.declare(new TypeDeclaration(Type.CHANNEL.getTypeName(), Type.CHANNEL));
-        TYPES.declare(new TypeDeclaration(Type.STRING.getTypeName(), Type.STRING));
-        TYPES.declare(new TypeDeclaration(Type.COMMAND.getTypeName(), Type.COMMAND));
-        TYPES.declare(new TypeDeclaration(Type.DATE.getTypeName(), Type.DATE));
-        TYPES.declare(new TypeDeclaration(Type.TIMESPAN.getTypeName(), Type.TIMESPAN));
-        TYPES.declare(new TypeDeclaration(Type.HELP.getTypeName(), Type.HELP));
-        TYPES.declare(new TypeDeclaration(Type.LIST.getTypeName(), Type.LIST));
-        TYPES.declare(new TypeDeclaration(Type.USER.getTypeName(), Type.USER));
-        TYPES.declare(new TypeDeclaration(Type.NUMBER.getTypeName(), Type.NUMBER));
-        } catch (ASTTraversalException e) {
-            throw new RuntimeException("impossibru", e);
-        }
-    }
-    
-    
-    
-    /**
-     * Resolves a type declaration and stores the {@link TypeDeclaration} instance
-     * in the {@link ResolvableIdentifier}'s declaration attribute.
-     * 
-     * @param name Name of the type to resolve. Refers to {@link Type#getTypeName()}.
-     * @return The resolved {@link TypeDeclaration}
-     * @throws DeclarationException If no such type exists.
-     */
-    public final static TypeDeclaration resolveType(ResolvableIdentifier name) 
-            throws DeclarationException {
-        final Declaration decl = TYPES.tryResolve(name);
-        if (decl == null) {
-            final List<String> similar = findSimilar(name.getId(), TYPES);
-            
-            throw new DeclarationException(name.getPosition(), 
-                "Unbekannter Typ: '" + name, similar);
-        } else if (!(decl instanceof TypeDeclaration)) {
-            throw new IllegalStateException(
-                "Namespace 'TYPES' must only contain instances of TypeDeclaration.");
-        }
-        return (TypeDeclaration) decl;
-    }
+
     
     
     
@@ -527,7 +482,7 @@ public class Namespace {
                 // * existing is a function and new is a variable
                 // * exising is a variable and 
                 
-                if (!(existing.getType() instanceof FunctionType) && !(decl.getType() instanceof FunctionType) || existing.getType().check(decl.getType())) {
+                if (existing.getType().equals(decl.getType())) {
                     if (!this.local) {
                         if (existing.isNative()) {
                             throw new ASTTraversalException(decl.getPosition(), 
@@ -584,7 +539,7 @@ public class Namespace {
         for(Namespace space = this; space != null; space = space.parent) {
             for (Declaration decl : space.decls) {
                 
-                if (decl.getName().equals(name) && decl.getType().check(signature)) {
+                if (decl.getName().equals(name) && decl.getType().equals(signature)) {
                     if (decl.mustCopy()) {
                         decl = CopyTool.copyOf(decl);
                     }
@@ -597,9 +552,11 @@ public class Namespace {
     }
     
     
+    
     // TODO: comment
     public List<VarDeclaration> resolveAll(ResolvableIdentifier name) 
             throws DeclarationException {
+        
         final List<VarDeclaration> result = new ArrayList<VarDeclaration>();
         for(Namespace space = this; space != null; space = space.parent) {
             for (Declaration decl : space.decls) {
@@ -620,57 +577,6 @@ public class Namespace {
     
     
     
-    public VarDeclaration resolveBySignature(ResolvableIdentifier name, 
-            List<Expression> actualSignature) throws ASTTraversalException {
-        
-        int[] nextType = new int[actualSignature.size()];
-        boolean[] done = new boolean[actualSignature.size()];
-        
-        final Set<VarDeclaration> resolvedDecls = new HashSet<VarDeclaration>();
-        
-        while (!done[0]) {
-            final Collection<Type> signature = new ArrayList<Type>();
-            for (int i = 0; i < actualSignature.size(); ++i) {
-                final Expression exp = actualSignature.get(i);
-                if (exp.typeResolved()) {
-                    signature.add(exp.getType());
-                } else {
-                    signature.add(exp.possibleTypes.get(nextType[i]));
-                }
-                
-                nextType[i] = nextType[i] + 1;
-                if (exp.typeResolved() || nextType[i] == exp.possibleTypes.size()) {
-                    nextType[i] = 0;
-                    done[i] = true;
-                }
-            }
-            
-            final FunctionType ft = new FunctionType(Type.ANY, signature);
-            Declaration d = tryResolve(name, ft);
-            if (d != null) {
-                resolvedDecls.add((VarDeclaration) d);
-            }
-        }
-        
-        if (resolvedDecls.isEmpty()) {
-            throw new ASTTraversalException(name.getPosition(), 
-                "Keine passende Überladung der Funktion '" + name.getId() + "' gefunden");
-        } else if (resolvedDecls.size() != 1) {
-            throw new ASTTraversalException(name.getPosition(), 
-                "Nicht eindeutiger Aufruf von '" + name.getId() + "'");
-        }
-        
-        VarDeclaration vd = resolvedDecls.iterator().next();
-        FunctionType ft = (FunctionType) vd.getType();
-        Iterator<Expression> expIt = actualSignature.iterator();
-        for (Type t : ft.getParameters()) {
-            expIt.next().setType(t);
-        }
-        return resolvedDecls.iterator().next();
-    }
-    
-    
-    
     /**
      * Tries to resolve a declaration, disregarding the type of the declaration. This
      * will resolve the first matching declaration in this or any parent namespace. This 
@@ -681,7 +587,19 @@ public class Namespace {
      * @see #tryResolve(ResolvableIdentifier, Type)
      */
     public Declaration tryResolve(ResolvableIdentifier name) {
-        return this.tryResolve(name, Type.ANY);
+        for(Namespace space = this; space != null; space = space.parent) {
+            for (Declaration decl : space.decls) {
+                
+                if (decl.getName().equals(name)) {
+                    if (decl.mustCopy()) {
+                        decl = CopyTool.copyOf(decl);
+                    }
+                    name.setDeclaration(decl);
+                    return decl;
+                }
+            }
+        }
+        return null;
     }
     
     

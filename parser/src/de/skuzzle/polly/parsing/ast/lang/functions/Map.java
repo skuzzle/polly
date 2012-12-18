@@ -63,7 +63,7 @@ public class Map extends Function {
         });
         
         final FunctionLiteral func = new FunctionLiteral(Position.NONE, p, this);
-        func.setType(new FunctionType(Type.ANY, Arrays.asList(
+        func.setUnique(new FunctionType(Type.ANY, Arrays.asList(
             new Type[] { this.firstOperand, this.secondOperand})));
         func.setReturnType(Type.ANY);
         
@@ -104,15 +104,15 @@ public class Map extends Function {
         
         
         
-        final Type subType = ((ListType) first.getType()).getSubType();
-        final FunctionType ft = (FunctionType) second.getType();
+        final Type subType = ((ListType) first.getUnique()).getSubType();
+        final FunctionType ft = (FunctionType) second.getUnique();
         final Type paramType = ft.getParameters().iterator().next();
         
         if (!subType.check(paramType)) {
             Type.typeError(paramType, subType, second.getPosition());
         }
         
-        this.setType(first.getType());
+        this.setUnique(first.getUnique());
     }
     
 

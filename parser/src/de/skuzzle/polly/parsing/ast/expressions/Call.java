@@ -6,11 +6,10 @@ import java.util.List;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Node;
-import de.skuzzle.polly.parsing.ast.declarations.Namespace;
+import de.skuzzle.polly.parsing.ast.declarations.types.ProductTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
-import de.skuzzle.polly.parsing.types.FunctionType;
-import de.skuzzle.polly.parsing.types.Type;
 
 
 public class Call extends Expression {
@@ -24,13 +23,12 @@ public class Call extends Expression {
     
     
     public Call(Position position, Expression lhs, Collection<Expression> parameters, 
-        Position parameterPosition) {
+            Position parameterPosition) {
         super(position);
         this.parameters = new ArrayList<Expression>(parameters);
         this.lhs = lhs;
         this.parameterPosition = parameterPosition;
     }
-    
     
     
     
@@ -63,23 +61,12 @@ public class Call extends Expression {
     
     
     
-    /**
-     * Creates a {@link FunctionType} signature for this call which can be used to 
-     * resolve the matching declaration from a {@link Namespace}. The returned type's
-     * <code>returnType</code> will be {@link Type#ANY}, causing var resolution to 
-     * disregard the return type.
-     * 
-     * @return A new {@link FunctionType} suitable to resolve the declaration for the
-     *          called function.
-     */
-    public FunctionType createSignature() {
+    public ProductTypeConstructor createSignature() {
         final Collection<Type> types = new ArrayList<Type>(this.parameters.size());
         for (final Expression exp : this.parameters) {
-            types.add(exp.getType());
+            types.add(exp.getUnique());
         }
-        // We do not know the return type yet, so chose one that will match every
-        // type
-        return new FunctionType(Type.ANY, types);
+        return new ProductTypeConstructor(types);
     }
     
     
@@ -105,6 +92,6 @@ public class Call extends Expression {
     @Override
     public String toString() {
         return "[Call: " + this.parameters.size() + " params, type: " + 
-            this.getType() + "]";
+            this.getUnique() + "]";
     }
 }

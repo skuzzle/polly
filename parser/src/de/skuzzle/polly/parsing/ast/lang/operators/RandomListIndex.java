@@ -37,8 +37,8 @@ public class RandomListIndex extends UnaryOperator<ListLiteral> {
     @Override
     protected void resolve(Expression param, Namespace ns, Visitor typeResolver)
             throws ASTTraversalException {
-        final ListType lt = (ListType) param.getType();
-        this.setType(lt.getSubType());
+        final ListType lt = (ListType) param.getUnique();
+        this.setUnique(lt.getSubType());
     }
 
 

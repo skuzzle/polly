@@ -2,9 +2,9 @@ package de.skuzzle.polly.parsing.ast.expressions;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Node;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
-import de.skuzzle.polly.parsing.types.Type;
 
 /**
  * Encapsulates another expression for the sole reason to represent that that expression
@@ -22,7 +22,7 @@ public class Braced extends Expression {
     
     
     public Braced(Expression braced) {
-        super(braced.getPosition(), braced.getType());
+        super(braced.getPosition(), braced.getUnique());
         this.expression = braced;
     }
     
@@ -47,15 +47,15 @@ public class Braced extends Expression {
     
     
     @Override
-    public void setType(Type type) {
-        this.expression.setType(type);
+    public void setUnique(Type type) {
+        this.expression.setUnique(type);
     }
     
     
     
     @Override
-    public Type getType() {
-        return this.expression.getType();
+    public Type getUnique() {
+        return this.expression.getUnique();
     }
     
     

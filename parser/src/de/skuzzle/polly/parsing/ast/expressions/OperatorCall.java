@@ -136,6 +136,6 @@ public class OperatorCall extends Call {
     @Override
     public String toString() {
         return "[OpCall: " + this.operator.getId() + 
-            ", type:" + this.getType() + "]";
+            ", type:" + this.getUnique() + "]";
     }
 }

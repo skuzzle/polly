@@ -6,13 +6,13 @@ import java.util.Collection;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Node;
+import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
-import de.skuzzle.polly.parsing.types.FunctionType;
-import de.skuzzle.polly.parsing.types.Type;
 
 
 public class FunctionLiteral extends Literal {
@@ -33,9 +33,6 @@ public class FunctionLiteral extends Literal {
         super(position, Type.UNKNOWN);
         this.formal = new ArrayList<Parameter>(formal);
         this.expression = expression;
-        
-        //Important: ANY type, otherwise call can not be resolved
-        this.returnType = Type.ANY;  
     }
     
     
@@ -79,24 +76,21 @@ public class FunctionLiteral extends Literal {
     
     
     
-    private final FunctionType createType(Type returnType, Collection<Parameter> formal) {
-        final Collection<Type> signature = new ArrayList<Type>(formal.size());
-        for (final Parameter f : formal) {
-            signature.add(f.getType());
-        }
-        return new FunctionType(returnType, signature);
+    private final Type createType(Type returnType, Collection<Parameter> formal) {
+        return new MapTypeConstructor(Parameter.asType(this.formal), 
+            returnType);
     }
     
     
     
     /**
-     * Will always return a {@link FunctionType} created from current context information
-     * of this literal.
+     * Will always return a {@link MapTypeConstructor} created from current context 
+     * information of this literal.
      * 
-     * @return an instance of {@link FunctionType}
+     * @return an instance of {@link MapTypeConstructor}
      */
     @Override
-    public Type getType() {
+    public Type getUnique() {
         return this.createType(this.returnType, this.formal);
     }
     

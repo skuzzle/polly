@@ -33,8 +33,8 @@ public class UnaryList extends UnaryOperator<ListLiteral> {
     protected void resolve(Expression param, Namespace ns, Visitor typeResolver)
             throws ASTTraversalException {
         
-        final ListType lt = (ListType) param.getType(); 
-        this.setType(lt);
+        final ListType lt = (ListType) param.getUnique(); 
+        this.setUnique(lt);
     }
 
     
