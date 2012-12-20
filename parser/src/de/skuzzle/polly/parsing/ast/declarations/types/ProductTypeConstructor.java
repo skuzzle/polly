@@ -18,7 +18,7 @@ public class ProductTypeConstructor extends Type {
         b.append("(");
         final Iterator<Type> typeIt = types.iterator();
         while (typeIt.hasNext()) {
-            b.append(typeIt.next().getName());
+            b.append(typeIt.next().toString());
             if (typeIt.hasNext()) {
                 b.append(", ");
             }
@@ -34,6 +34,9 @@ public class ProductTypeConstructor extends Type {
     
     public ProductTypeConstructor(Collection<Type> types) {
         super(typeName(types), true, false);
+        for (final Type t : types) {
+            t.parent = this;
+        }
         this.types = types;
     }
     
@@ -56,7 +59,19 @@ public class ProductTypeConstructor extends Type {
     
     
     @Override
-    public boolean isUnifiableWith(Type other) throws ASTTraversalException {
+    protected boolean canSubstitute(TypeVar var, Type type) {
+        for (final Type t : this.types) {
+            if (!t.canSubstitute(var, type)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    
+    
+    @Override
+    public boolean isUnifiableWith(Type other, boolean unify) throws ASTTraversalException {
         if (other instanceof ProductTypeConstructor) {
             final ProductTypeConstructor pc = (ProductTypeConstructor) other;
             if (this.types.size() != pc.types.size()) {
@@ -65,7 +80,7 @@ public class ProductTypeConstructor extends Type {
             final Iterator<Type> thisIt = this.types.iterator();
             final Iterator<Type> otherIt = pc.types.iterator();
             while (thisIt.hasNext()) {
-                if (thisIt.next().isUnifiableWith(otherIt.next())) {
+                if (!thisIt.next().isUnifiableWith(otherIt.next(), unify)) {
                     return false;
                 }
             }
@@ -89,4 +104,17 @@ public class ProductTypeConstructor extends Type {
         return this.types.equals(other.types);
     }
 
+    
+    
+    @Override
+    public String toString() {
+        return typeName(this.types).toString();
+    }
+    
+    
+    
+    @Override
+    public void visit(TypeVisitor visitor) {
+        visitor.visitProduct(this);
+    }
 }

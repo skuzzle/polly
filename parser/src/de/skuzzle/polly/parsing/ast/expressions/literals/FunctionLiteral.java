@@ -7,6 +7,7 @@ import java.util.Collection;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.ProductTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
@@ -77,7 +78,8 @@ public class FunctionLiteral extends Literal {
     
     
     private final Type createType(Type returnType, Collection<Parameter> formal) {
-        return new MapTypeConstructor(Parameter.asType(this.formal), 
+        return new MapTypeConstructor(
+            new ProductTypeConstructor(Parameter.asType(this.formal)), 
             returnType);
     }
     

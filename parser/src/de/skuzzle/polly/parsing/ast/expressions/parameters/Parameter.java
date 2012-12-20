@@ -57,7 +57,7 @@ public class Parameter extends Expression {
     public Parameter(Position position, ResolvableIdentifier name, Type type) {
         super(position, type);
         this.name = name;
-        this.typeName = new ResolvableIdentifier(type.getTypeName());
+        this.typeName = new ResolvableIdentifier(type.getName());
         
     }
     

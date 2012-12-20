@@ -7,14 +7,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.ast.lang.Cast;
@@ -35,7 +38,6 @@ import de.skuzzle.polly.parsing.ast.lang.operators.UnaryList;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 import de.skuzzle.polly.parsing.types.FunctionType;
-import de.skuzzle.polly.parsing.types.Type;
 import de.skuzzle.polly.tools.streams.CopyTool;
 import de.skuzzle.polly.tools.strings.StringUtils;
 
@@ -116,14 +118,16 @@ public class Namespace {
                 pw = new PrintWriter(new File(declarationFolder, this.fileName));
                 
                 final Unparser up = new Unparser(pw);
-                for (final Declaration decl : this.decls) {
-                    if (!(decl instanceof VarDeclaration)) {
-                        continue;
+                for (final List<Declaration> decls : this.decls.values()) {
+                    for (final Declaration decl : decls) {
+                        if (!(decl instanceof VarDeclaration)) {
+                            continue;
+                        }
+                        final VarDeclaration vd = (VarDeclaration) decl;
+                        new Braced(vd.getExpression()).visit(up);
+                        pw.print("->");
+                        pw.println(vd.getName().getId());
                     }
-                    final VarDeclaration vd = (VarDeclaration) decl;
-                    new Braced(vd.getExpression()).visit(up);
-                    pw.print("->");
-                    pw.println(vd.getName().getId());
                 }
             } catch (ASTTraversalException e) {
                 throw new RuntimeException(e);
@@ -384,7 +388,7 @@ public class Namespace {
     
     
 
-    protected final Collection<Declaration> decls;
+    protected final Map<String, List<Declaration>> decls;
     protected final Namespace parent;
     protected boolean local;
     
@@ -397,7 +401,7 @@ public class Namespace {
      */
     public Namespace(Namespace parent) {
         this.parent = parent;
-        this.decls = new ArrayList<Declaration>();
+        this.decls = new HashMap<String, List<Declaration>>();
     }
     
     
@@ -415,7 +419,7 @@ public class Namespace {
             return null;
         }
         final Namespace result = new Namespace(this.parent.derive());
-        result.decls.addAll(this.decls);
+        result.decls.putAll(this.decls);
         return result;
     }
     
@@ -430,7 +434,7 @@ public class Namespace {
      */
     public Namespace derive(Namespace parent) {
         final Namespace result = new Namespace(parent);
-        result.decls.addAll(this.decls);
+        result.decls.putAll(this.decls);
         return result;
     }
     
@@ -470,32 +474,41 @@ public class Namespace {
      *          already exists in this namespace.
      */
     public void declare(Declaration decl) throws ASTTraversalException {
-        final Collection<Declaration> decls = decl.isPublic() ? GLOBAL.decls : this.decls;
+        if (decl.getType().equals(Type.UNKNOWN)) {
+            throw new IllegalStateException(
+                "cannot declare variable with unresolved type: " + decl);
+        }
+        final Map<String, List<Declaration>> decls = decl.isPublic() 
+            ? GLOBAL.decls : this.decls;
+        
+        List<Declaration> d = decls.get(decl.getName());
+        if (d == null) {
+            d = new ArrayList<Declaration>();
+            decls.put(decl.getName().getId(), d);
+        }
+        
         // check if declaration exists in current namespace
-        final Iterator<Declaration> it = decls.iterator();
+        final Iterator<Declaration> it = d.iterator();
         while (it.hasNext()) {
             final Declaration existing = it.next();
+                
+            // Existing declaration must be removed, if:
+            // * existing is a function and new is a variable
+            // * exising is a variable and 
             
-            if (existing.getName().equals(decl.getName())) {
-                
-                // Existing declaration must be removed, if:
-                // * existing is a function and new is a variable
-                // * exising is a variable and 
-                
-                if (existing.getType().equals(decl.getType())) {
-                    if (!this.local) {
-                        if (existing.isNative()) {
-                            throw new ASTTraversalException(decl.getPosition(), 
-                                "Du kannst keine nativen Deklarationen " +
-                                "überschreiben. Deklaration '" + existing.getName() + 
-                                "' existiert bereits");
-                        }
-                        it.remove();
+            if (existing.getType().equals(decl.getType())) {
+                if (!this.local) {
+                    if (existing.isNative()) {
+                        throw new ASTTraversalException(decl.getPosition(), 
+                            "Du kannst keine nativen Deklarationen " +
+                            "überschreiben. Deklaration '" + existing.getName() + 
+                            "' existiert bereits");
                     }
+                    it.remove();
                 }
             }
         }
-        decls.add(decl);
+        d.add(decl);
     }
     
     
@@ -507,12 +520,17 @@ public class Namespace {
      * @return How many declarations have been removed.
      */
     public int delete(Identifier id) {
-        final Iterator<Declaration> it = this.decls.iterator();
+        List<Declaration> decls = this.decls.get(id.getId());
+        if (decls == null) {
+            return 0;
+        }
+        
+        final Iterator<Declaration> it = decls.iterator();
         int i = 0;
         while (it.hasNext()) {
             final Declaration d = it.next();
             
-            if (d.getName().equals(id) && !d.isNative()) {
+            if (!d.isNative()) {
                 it.remove();
                 ++i;
             }
@@ -537,9 +555,13 @@ public class Namespace {
      */
     public Declaration tryResolve(ResolvableIdentifier name, Type signature) {
         for(Namespace space = this; space != null; space = space.parent) {
-            for (Declaration decl : space.decls) {
+            final List<Declaration> decls = space.decls.get(name.getId());
+            if (decls == null) {
+                continue;
+            }
+            for (Declaration decl : decls) {
                 
-                if (decl.getName().equals(name) && decl.getType().equals(signature)) {
+                if (decl.getType().equals(signature)) {
                     if (decl.mustCopy()) {
                         decl = CopyTool.copyOf(decl);
                     }
@@ -559,7 +581,11 @@ public class Namespace {
         
         final List<VarDeclaration> result = new ArrayList<VarDeclaration>();
         for(Namespace space = this; space != null; space = space.parent) {
-            for (Declaration decl : space.decls) {
+            final List<Declaration> decls = space.decls.get(name.getId());
+            if (decls == null) {
+                continue;
+            }
+            for (Declaration decl : decls) {
                 if (decl.getName().equals(name)) {
                     result.add((VarDeclaration) decl);
                 }
@@ -577,6 +603,24 @@ public class Namespace {
     
     
     
+    public Set<Type> lookup(ResolvableIdentifier name) {
+        final Set<Type> result = new HashSet<Type>();
+        for(Namespace space = this; space != null; space = space.parent) {
+            final List<Declaration> decls = space.decls.get(name.getId());
+            if (decls == null) {
+                continue;
+            }
+            for (Declaration decl : decls) {
+                if (decl.getName().equals(name)) {
+                    result.add(decl.getType());
+                }
+            }
+        }
+        return result;
+    }
+    
+    
+    
     /**
      * Tries to resolve a declaration, disregarding the type of the declaration. This
      * will resolve the first matching declaration in this or any parent namespace. This 
@@ -588,7 +632,11 @@ public class Namespace {
      */
     public Declaration tryResolve(ResolvableIdentifier name) {
         for(Namespace space = this; space != null; space = space.parent) {
-            for (Declaration decl : space.decls) {
+            final List<Declaration> decls = space.decls.get(name.getId());
+            if (decls == null) {
+                continue;
+            }
+            for (Declaration decl : decls) {
                 
                 if (decl.getName().equals(name)) {
                     if (decl.mustCopy()) {

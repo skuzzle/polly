@@ -354,7 +354,7 @@ public class TypeResolver extends DepthFirstVisitor {
             final MapTypeConstructor mc = (MapTypeConstructor) call.getLhs().getUnique();
             call.setUnique(mc.getTarget());
         } else {
-            for (final Type t : call.getLhs().getPossibleTypes()) {
+            for (final Type t : call.getLhs().getTypes()) {
                 // only interested in functions here
                 if (!(t instanceof MapTypeConstructor)) {
                     continue;
@@ -367,7 +367,7 @@ public class TypeResolver extends DepthFirstVisitor {
                     call.setUnique(mc.getTarget());
                     break;
                 } else {
-                    call.addPossibleType(mc.getTarget());
+                    call.addType(mc.getTarget());
                 }
             }
         }
@@ -386,16 +386,7 @@ public class TypeResolver extends DepthFirstVisitor {
         
         this.beforeVarAccess(access);
         
-        final List<VarDeclaration> decls = this.nspace.resolveAll(access.getIdentifier());
-        
-        for (final VarDeclaration decl : decls) {
-            decl.getExpression().visit(this);
-            access.addPossibleType(decl.getExpression().getUnique());
-        }
-        
-        if (decls.size() == 1) {
-            access.setUnique(decls.get(0).getType());
-        }
+        access.addTypes(this.nspace.lookup(access.getIdentifier()));
         
         this.afterVarAccess(access);
     }

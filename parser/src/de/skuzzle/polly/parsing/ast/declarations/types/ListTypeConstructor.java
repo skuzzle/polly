@@ -36,10 +36,20 @@ public class ListTypeConstructor extends Type {
     
     
     @Override
-    public boolean isUnifiableWith(Type other) throws ASTTraversalException {
+    protected boolean canSubstitute(TypeVar var, Type type) {
+        return this.subType.canSubstitute(var, type);
+    }
+    
+    
+    
+    @Override
+    public boolean isUnifiableWith(Type other, boolean unify) 
+            throws ASTTraversalException {
         if (other instanceof ListTypeConstructor) {
             final ListTypeConstructor lc = (ListTypeConstructor) other;
-            return this.subType.isUnifiableWith(lc.subType);
+            return this.subType.isUnifiableWith(lc.subType, unify);
+        } else if (other instanceof TypeVar) {
+            
         }
         return false;
     }
@@ -57,5 +67,19 @@ public class ListTypeConstructor extends Type {
     public boolean actualEquals(Equatable o) {
         final ListTypeConstructor other = (ListTypeConstructor) o;
         return this.subType.equals(other.subType);
+    }
+    
+    
+    
+    @Override
+    public String toString() {
+        return "List<" + this.subType.toString() + ">";
+    }
+    
+    
+    
+    @Override
+    public void visit(TypeVisitor visitor) {
+        visitor.visitList(this);
     }
 }

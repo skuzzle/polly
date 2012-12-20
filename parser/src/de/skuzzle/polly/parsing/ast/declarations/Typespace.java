@@ -2,6 +2,7 @@ package de.skuzzle.polly.parsing.ast.declarations;
 
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
+import de.skuzzle.polly.parsing.ast.declarations.types.TypeVar;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 
 
@@ -46,10 +47,13 @@ public class Typespace extends Namespace {
     
     
     
-    public TypeDeclaration resolveType(ResolvableIdentifier name) 
+    public Type resolveType(ResolvableIdentifier name) 
             throws ASTTraversalException {
         final Declaration decl = this.tryResolve(name);
-        return (TypeDeclaration) decl;
+        if (decl == null) {
+            return new TypeVar(name);
+        }
+        return ((TypeDeclaration) decl).getType();
     }
 
 }

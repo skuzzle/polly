@@ -985,26 +985,26 @@ public class ExpInputParser {
             final ResolvableIdentifier name = new ResolvableIdentifier(
                 this.expectIdentifier());
             return new FunctionParameter(this.scanner.spanFrom(la), sig, name);
-        } else {
-             final ResolvableIdentifier typeName = new ResolvableIdentifier(
-                 this.expectIdentifier());
+            
+        } else if (this.scanner.match(TokenType.LIST)) {
+            this.expect(TokenType.LT);
              
-             if (this.scanner.match(TokenType.LT)) {
+            final ResolvableIdentifier subType = new ResolvableIdentifier(
+                this.expectIdentifier());
+            
+            this.expect(TokenType.GT);
                  
-                 final ResolvableIdentifier subType = new ResolvableIdentifier(
-                     this.expectIdentifier());
-                 this.scanner.match(TokenType.GT);
-                 
-                 final ResolvableIdentifier name = new ResolvableIdentifier(
-                     this.expectIdentifier());
-                 return new ListParameter(
-                     this.scanner.spanFrom(la), typeName, subType, name);
-                 
-             } else {
-                 final ResolvableIdentifier name = new ResolvableIdentifier(
-                     this.expectIdentifier());
-                 return new Parameter(this.scanner.spanFrom(la), typeName, name);
-             }
-        }
+             final ResolvableIdentifier name = new ResolvableIdentifier(
+                 this.expectIdentifier());
+             return new ListParameter(
+                 this.scanner.spanFrom(la), subType, name);
+             
+         } else {
+             final ResolvableIdentifier typeName = 
+                 new ResolvableIdentifier(this.expectIdentifier());
+             final ResolvableIdentifier name = new ResolvableIdentifier(
+                 this.expectIdentifier());
+             return new Parameter(this.scanner.spanFrom(la), typeName, name);
+         }
     }
 }

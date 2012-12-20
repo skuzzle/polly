@@ -1,7 +1,8 @@
 package de.skuzzle.polly.parsing.ast.expressions;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Node;
@@ -18,7 +19,7 @@ public abstract class Expression extends Node {
     private static final long serialVersionUID = 1L;
     
     private Type unique;
-    private Set<Type> types;
+    private List<Type> types;
     
     
     
@@ -31,7 +32,10 @@ public abstract class Expression extends Node {
     public Expression(Position position, Type unique) {
         super(position);
         this.unique = unique;
-        this.types = new HashSet<Type>();
+        this.types = new ArrayList<Type>();
+        if (!unique.equals(Type.UNKNOWN)) {
+            this.types.add(unique);
+        }
     }
     
     
@@ -47,18 +51,28 @@ public abstract class Expression extends Node {
     
     
     
-    public Set<Type> getPossibleTypes() {
+    public List<Type> getTypes() {
         return this.types;
     }
     
     
     
-    public void addPossibleType(Type type) {
+    public void addType(Type type) {
         if (this.typeResolved()) {
             throw new IllegalStateException(
                 "can not add possile type because type was resolved");
+        } else if (this.types.contains(type)) {
+            return;
         }
         this.types.add(type);
+    }
+    
+    
+    
+    public void addTypes(Collection<Type> types) {
+        for (final Type type : types) {
+            this.addType(type);
+        }
     }
 
     

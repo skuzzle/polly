@@ -5,10 +5,11 @@ import java.util.Collection;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
+import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.ProductTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
-import de.skuzzle.polly.parsing.types.FunctionType;
-import de.skuzzle.polly.parsing.types.Type;
 import de.skuzzle.polly.tools.Equatable;
 
 /**
@@ -49,11 +50,12 @@ public class FunctionParameter extends Parameter {
      */
     public FunctionParameter(Position position, Type returnType, Collection<Type> sig, 
             ResolvableIdentifier name) {
-        super(position, name, new FunctionType(returnType, sig));
+        super(position, name, 
+            new MapTypeConstructor(new ProductTypeConstructor(sig), returnType));
         this.signature = new ArrayList<ResolvableIdentifier>(sig.size() + 1);
-        this.signature.add(new ResolvableIdentifier(returnType.getTypeName()));
+        this.signature.add(new ResolvableIdentifier(returnType.getName()));
         for (final Type t : sig) {
-            this.signature.add(new ResolvableIdentifier(t.getTypeName()));
+            this.signature.add(new ResolvableIdentifier(t.getName()));
         }
     }
 

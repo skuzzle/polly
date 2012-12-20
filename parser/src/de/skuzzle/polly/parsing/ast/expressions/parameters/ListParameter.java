@@ -2,9 +2,10 @@ package de.skuzzle.polly.parsing.ast.expressions.parameters;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
+import de.skuzzle.polly.parsing.ast.declarations.types.ListTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
-import de.skuzzle.polly.parsing.types.Type;
 
 
 
@@ -18,14 +19,11 @@ public class ListParameter extends Parameter {
     
     private static final long serialVersionUID = 1L;
     
-    private final ResolvableIdentifier mainTypeName;
     
     
-    
-    public ListParameter(Position position, ResolvableIdentifier mainType,
-            ResolvableIdentifier subType, ResolvableIdentifier name) {
+    public ListParameter(Position position, ResolvableIdentifier subType, 
+            ResolvableIdentifier name) {
         super(position, subType, name);
-        this.mainTypeName = mainType;
     }
     
     
@@ -33,24 +31,12 @@ public class ListParameter extends Parameter {
     /**
      * Create a new ListParameter which' subtype is already known.
      * 
-     * @param position
-     * @param name
-     * @param subType
+     * @param position Position of this Parameter.
+     * @param subType Subtype of this parameter.
      */
-    public ListParameter(Position position, ResolvableIdentifier name, Type subType) {
-        super(position, name, subType);
-        this.mainTypeName = new ResolvableIdentifier(Type.LIST.getTypeName());
-    }
-    
-    
-    
-    /**
-     * Gets the main type name (the type name before &lt;xyz&gt; subtype declaration)
-     * 
-     * @return The main types name
-     */
-    public ResolvableIdentifier getMainTypeName() {
-        return this.mainTypeName;
+    public ListParameter(Position position, Type subType) {
+        super(position, new ResolvableIdentifier(position, subType.getName().getId()), 
+            new ListTypeConstructor(subType));
     }
     
     

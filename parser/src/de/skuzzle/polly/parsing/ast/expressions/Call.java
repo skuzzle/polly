@@ -19,6 +19,7 @@ public class Call extends Expression {
     private Expression lhs;
     private final List<Expression> parameters;
     private final Position parameterPosition;
+    private final List<ProductTypeConstructor> signatureTypes;
     
     
     
@@ -26,10 +27,25 @@ public class Call extends Expression {
             Position parameterPosition) {
         super(position);
         this.parameters = new ArrayList<Expression>(parameters);
+        this.signatureTypes = new ArrayList<ProductTypeConstructor>();
         this.lhs = lhs;
         this.parameterPosition = parameterPosition;
     }
     
+    
+    
+    public void addSignatureType(ProductTypeConstructor ptc) {
+        if (!this.signatureTypes.contains(ptc)) {
+            this.signatureTypes.add(ptc);
+        }
+    }
+    
+    
+    
+    public List<ProductTypeConstructor> getSignatureTypes() {
+        return this.signatureTypes;
+    }
+
     
     
     public Position getParameterPosition() {

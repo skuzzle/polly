@@ -6,7 +6,6 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.parsing.types.FunctionType;
 import de.skuzzle.polly.parsing.util.Stack;
-import de.skuzzle.polly.parsing.ast.visitor.TypeResolver.CallContext;
 
 
 /**
@@ -23,22 +22,15 @@ public class Empty extends Expression {
 
     private static final long serialVersionUID = 1L;
 
-    private final transient Stack<CallContext> signatureStack;
-
     
 
-    public Empty(Type type, Position position, Stack<CallContext> signatureStack) {
+    public Empty(Type type, Position position) {
         super(position, type);
-        this.signatureStack = signatureStack;
     }
 
 
 
     @Override
     public void visit(Visitor visitor) throws ASTTraversalException {
-        if (this.getUnique() instanceof FunctionType
-                && !this.signatureStack.isEmpty()) {
-            this.signatureStack.pop();
-        }
     }
 }

@@ -9,19 +9,17 @@ public class TypeVar extends Type {
 
     private static final long serialVersionUID = 1L;
     
-    private static int ids = 0;
-    public static TypeVar create() {
-        final Identifier id = new Identifier("$_" + (ids++));
-        return new TypeVar(id);
+    private Type substitute;
+    
+    
+    public TypeVar(Identifier name) {
+        super(name, false, false);
     }
     
     
     
-    private Type substitute;
-    
-    
-    private TypeVar(Identifier name) {
-        super(name, false, false);
+    protected void setSubstitute(Type t) {
+        this.substitute = t;
     }
 
     
@@ -46,7 +44,15 @@ public class TypeVar extends Type {
     
     
     @Override
-    public boolean isUnifiableWith(Type other) throws ASTTraversalException {
+    protected boolean canSubstitute(TypeVar var, Type type) {
+        return var == this || this.substitute == null || this.substitute.equals(type);
+    }
+    
+    
+    
+    @Override
+    public boolean isUnifiableWith(Type other, boolean unify) 
+            throws ASTTraversalException {
         if (this.substitute != null) {
             // if this typevar already represents a concrete type, expressions are only
             // unifiable if the substitute equals the given type.
@@ -60,8 +66,11 @@ public class TypeVar extends Type {
             // find root, then propagate substitution from there 
             Type next = this;
             for(; next.parent != null; next = next.parent);
-            next.substituteTypeVar(this, other);
-            return true;
+            if (unify) {
+                next.substituteTypeVar(this, other);
+                return true;
+            }
+            return next.canSubstitute(this, other);
         }
     }
     
@@ -80,7 +89,22 @@ public class TypeVar extends Type {
             TypeVar tv = (TypeVar) o;
             return this.getName().equals(tv.getName());
         }
-        return this.substitute != null && this.substitute.equals(o);
+        // vars that have not been substituted are equal to any type
+        return this.substitute == null ? true : this.substitute.equals(o);
     }
 
+    
+    
+    @Override
+    public String toString() {
+        return this.substitute == null 
+            ? this.getName().toString() : this.substitute.toString();
+    }
+    
+    
+    
+    @Override
+    public void visit(TypeVisitor visitor) {
+        visitor.visitVar(this);
+    }
 }

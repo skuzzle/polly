@@ -1,10 +1,5 @@
 package de.skuzzle.polly.parsing.ast.declarations.types;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
 import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.tools.Equatable;
@@ -16,33 +11,28 @@ public class MapTypeConstructor extends Type {
 
 
 
-    private final static Identifier typeName(Collection<Type> source, Type target) {
+    private final static Identifier typeName(ProductTypeConstructor source, Type target) {
         final StringBuilder b = new StringBuilder();
         b.append("(");
-        for (final Type stype : source) {
-            b.append(stype.getName());
-            b.append(", ");
-        }
-        b.append("-> ");
-        b.append(target.getName());
+        b.append(source.toString());
+        b.append(" -> ");
+        b.append(target.toString());
         b.append(")");
         
         return new Identifier(b.toString());
     }
 
-    private final List<Type> source;
+    private final ProductTypeConstructor source;
     private final Type target;
     
     
     
-    public MapTypeConstructor(List<Type> source, Type target) {
+    public MapTypeConstructor(ProductTypeConstructor source, Type target) {
         super(typeName(source, target), false, false);
-        for (final Type t : source) {
-            t.parent = this;
-        }
+        source.parent = this;
         target.parent = this;
         
-        this.source = Collections.unmodifiableList(source);
+        this.source = source;
         this.target = target;
     }
     
@@ -51,36 +41,33 @@ public class MapTypeConstructor extends Type {
     @Override
     protected void substituteTypeVar(TypeVar var, Type type) 
             throws ASTTraversalException {
-        for (final Type stype : this.source) {
-            stype.substituteTypeVar(var, type);
-        }
+        this.source.substituteTypeVar(var, type);
         this.target.substituteTypeVar(var, type);
     }
     
     
     
     @Override
-    public boolean isUnifiableWith(Type other) throws ASTTraversalException {
+    protected boolean canSubstitute(TypeVar var, Type type) {
+        return this.source.canSubstitute(var, type) && 
+            this.target.canSubstitute(var, type);
+    }
+    
+    
+    
+    @Override
+    public boolean isUnifiableWith(Type other, boolean unify) throws ASTTraversalException {
         if (other instanceof MapTypeConstructor) {
             final MapTypeConstructor mc = (MapTypeConstructor) other;
-            if (this.source.size() != mc.source.size()) {
-                return false;
-            }
-            final Iterator<Type> thisIt = this.source.iterator();
-            final Iterator<Type> otherIt = mc.source.iterator();
-            while (thisIt.hasNext()) {
-                if (thisIt.next().isUnifiableWith(otherIt.next())) {
-                    return false;
-                }
-            }
-            return this.target.isUnifiableWith(mc.target);
+            return this.source.isUnifiableWith(mc.source, unify) && 
+                this.target.isUnifiableWith(mc.target, unify);
         }
         return false;
     }
     
     
     
-    public final List<Type> getSource() {
+    public final ProductTypeConstructor getSource() {
         return this.source;
     }
     
@@ -98,4 +85,17 @@ public class MapTypeConstructor extends Type {
         return this.source.equals(other.source) && this.target.equals(other.target);
     }
 
+    
+    
+    @Override
+    public String toString() {
+        return typeName(this.source, this.target).toString();
+    }
+    
+    
+    
+    @Override
+    public void visit(TypeVisitor visitor) {
+        visitor.visitMap(this);
+    }
 }

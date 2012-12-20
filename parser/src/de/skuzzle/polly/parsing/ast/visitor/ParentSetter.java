@@ -83,7 +83,6 @@ public class ParentSetter extends DepthFirstVisitor {
     
     @Override
     public void beforeListParameter(ListParameter param) throws ASTTraversalException {
-        param.getMainTypeName().setParent(param);
         param.getTypeName().setParent(param);
     }
     
