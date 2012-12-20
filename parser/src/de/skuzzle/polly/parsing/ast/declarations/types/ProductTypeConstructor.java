@@ -1,10 +1,10 @@
 package de.skuzzle.polly.parsing.ast.declarations.types;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
 import de.skuzzle.polly.parsing.ast.Identifier;
-import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.tools.Equatable;
 
 
@@ -42,51 +42,15 @@ public class ProductTypeConstructor extends Type {
     
     
     
+    
+    public ProductTypeConstructor(Type...types) {
+        this(Arrays.asList(types));
+    }
+    
+    
+    
     public Collection<Type> getTypes() {
         return this.types;
-    }
-    
-    
-    
-    @Override
-    protected void substituteTypeVar(TypeVar var, Type type)
-            throws ASTTraversalException {
-        for (final Type t : this.types) {
-            t.substituteTypeVar(var, type);
-        }
-    }
-    
-    
-    
-    @Override
-    protected boolean canSubstitute(TypeVar var, Type type) {
-        for (final Type t : this.types) {
-            if (!t.canSubstitute(var, type)) {
-                return false;
-            }
-        }
-        return true;
-    }
-    
-    
-    
-    @Override
-    public boolean isUnifiableWith(Type other, boolean unify) throws ASTTraversalException {
-        if (other instanceof ProductTypeConstructor) {
-            final ProductTypeConstructor pc = (ProductTypeConstructor) other;
-            if (this.types.size() != pc.types.size()) {
-                return false;
-            }
-            final Iterator<Type> thisIt = this.types.iterator();
-            final Iterator<Type> otherIt = pc.types.iterator();
-            while (thisIt.hasNext()) {
-                if (!thisIt.next().isUnifiableWith(otherIt.next(), unify)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
     }
     
     

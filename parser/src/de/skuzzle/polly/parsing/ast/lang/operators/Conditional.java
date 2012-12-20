@@ -2,13 +2,12 @@ package de.skuzzle.polly.parsing.ast.lang.operators;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
-import de.skuzzle.polly.parsing.ast.expressions.Expression;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.literals.BooleanLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.lang.TernaryOperator;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
-import de.skuzzle.polly.parsing.types.Type;
 import de.skuzzle.polly.parsing.util.Stack;
 
 
@@ -23,10 +22,9 @@ public class Conditional extends TernaryOperator<BooleanLiteral, Literal, Litera
 
     private static final long serialVersionUID = 1L;
 
-
-
     public Conditional(OpType id) {
-        super(id, Type.ANY, Type.BOOLEAN, Type.ANY, Type.ANY);
+        super(id, Type.newTypeVar("A"), Type.BOOLEAN, Type.newTypeVar("A"), 
+            Type.newTypeVar("A"));
         
         this.setMustCopy(true);
     }
@@ -34,21 +32,8 @@ public class Conditional extends TernaryOperator<BooleanLiteral, Literal, Litera
     
     
     @Override
-    protected void resolve(Expression first, Expression second, Expression third,
-            Namespace ns, Visitor typeResolver) throws ASTTraversalException {
-        
-        if (!second.getUnique().check(third.getUnique())) {
-            throw new ASTTraversalException(third.getPosition(), 
-                "Operanden müssen den selben Typ haben");
-        }
-        this.setUnique(second.getUnique());
-    }
-    
-    
-    
-    @Override
     protected void exec(Stack<Literal> stack, Namespace ns, BooleanLiteral first,
-            Literal second, Literal third, Position resultPos) 
+            Literal second, Literal third, Position resultPos, Visitor execVisitor) 
                 throws ASTTraversalException {
         
         if (first.getValue()) {
@@ -57,6 +42,4 @@ public class Conditional extends TernaryOperator<BooleanLiteral, Literal, Litera
             stack.push(third);
         }
     }
-    
-
 }

@@ -5,14 +5,15 @@ import java.util.List;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
+import de.skuzzle.polly.parsing.ast.declarations.types.ListTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.ast.lang.BinaryOperator;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.parsing.types.ListType;
-import de.skuzzle.polly.parsing.types.Type;
+import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.parsing.util.Stack;
 
 
@@ -73,14 +74,15 @@ public class BinaryDotDot extends BinaryOperator<NumberLiteral, NumberLiteral> {
 
     
     public BinaryDotDot() {
-        super(OpType.DOTDOT, new ListType(Type.NUMBER), Type.NUMBER, Type.NUMBER);
+        super(OpType.DOTDOT, new ListTypeConstructor(Type.NUM), Type.NUM, Type.NUM);
     }
     
     
 
     @Override
     protected void exec(Stack<Literal> stack, Namespace ns, NumberLiteral left,
-            NumberLiteral right, Position resultPos) throws ASTTraversalException {
+            NumberLiteral right, Position resultPos, Visitor execVisitor) 
+                throws ASTTraversalException {
         
         switch (this.getOp()) {
         case DOTDOT:
@@ -89,9 +91,6 @@ public class BinaryDotDot extends BinaryOperator<NumberLiteral, NumberLiteral> {
             break;
         default:
             this.invalidOperatorType(this.getOp());
-            
         }
     }
-    
-
 }

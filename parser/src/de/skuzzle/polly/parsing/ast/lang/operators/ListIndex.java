@@ -2,15 +2,14 @@ package de.skuzzle.polly.parsing.ast.lang.operators;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
-import de.skuzzle.polly.parsing.ast.expressions.Expression;
+import de.skuzzle.polly.parsing.ast.declarations.types.ListTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.ast.lang.BinaryOperator;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
-import de.skuzzle.polly.parsing.types.ListType;
-import de.skuzzle.polly.parsing.types.Type;
 import de.skuzzle.polly.parsing.util.Stack;
 
 
@@ -19,7 +18,8 @@ public class ListIndex extends BinaryOperator<ListLiteral, NumberLiteral> {
     private static final long serialVersionUID = 1L;
     
     public ListIndex(OpType id) {
-        super(id, Type.ANY, ListType.ANY_LIST, Type.NUMBER);
+        super(id, Type.newTypeVar("A"), new ListTypeConstructor(Type.newTypeVar("A")), 
+            Type.NUM);
         
         this.setMustCopy(true);
     }
@@ -27,18 +27,9 @@ public class ListIndex extends BinaryOperator<ListLiteral, NumberLiteral> {
     
     
     @Override
-    protected void resolve(Expression left, Expression right, Namespace ns,
-            Visitor typeResolver) throws ASTTraversalException {
-        
-        final ListType lt = (ListType) left.getUnique();
-        this.setUnique(lt.getSubType());
-    }
-    
-    
-    
-    @Override
     protected void exec(Stack<Literal> stack, Namespace ns, ListLiteral left,
-            NumberLiteral right, Position resultPos) throws ASTTraversalException {
+            NumberLiteral right, Position resultPos, Visitor execVisitor) 
+                throws ASTTraversalException {
         
         switch (this.getOp()) {
         case INDEX:
@@ -48,5 +39,4 @@ public class ListIndex extends BinaryOperator<ListLiteral, NumberLiteral> {
             this.invalidOperatorType(this.getOp());
         }
     }
-
 }

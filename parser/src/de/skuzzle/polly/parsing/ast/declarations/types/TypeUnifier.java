@@ -3,7 +3,6 @@ package de.skuzzle.polly.parsing.ast.declarations.types;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 
 final class TypeUnifier {
@@ -28,14 +27,16 @@ final class TypeUnifier {
      *   
      * @param m Type to check.
      * @param n Type to check.
+     * @param substitute Whether TypeVars should be substituted if unification was 
+     *          successful.
      * @return Whether both type expressions are structural equal.
      */
-    public boolean unify(Type m, Type n) {
+    public boolean unify(Type m, Type n, boolean substitute) {
         boolean result = this.unifyInternal(m, n);
         if (result) {
-            for (final Entry<Type, Integer> e : this.typeToClass.entrySet()) {
-                if (e.getKey() instanceof TypeVar) {
-                    final TypeVar tv = (TypeVar) e.getKey();
+            for (final Type t : this.typeToClass.keySet()) {
+                if (t instanceof TypeVar) {
+                    final TypeVar tv = (TypeVar) t;
                     tv.setSubstitute(this.find(tv));
                 }
             }

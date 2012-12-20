@@ -5,13 +5,13 @@ import java.util.Collections;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
+import de.skuzzle.polly.parsing.ast.declarations.types.ListTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.lang.UnaryOperator;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.parsing.ast.visitor.Visitor;
-import de.skuzzle.polly.parsing.types.ListType;
 import de.skuzzle.polly.parsing.util.Stack;
 
 
@@ -22,19 +22,10 @@ public class UnaryList extends UnaryOperator<ListLiteral> {
     
     
     public UnaryList(OpType op) {
-        super(op, ListType.ANY_LIST, ListType.ANY_LIST);
+        super(op, new ListTypeConstructor(Type.newTypeVar("A")), 
+            new ListTypeConstructor(Type.newTypeVar("A")));
         
         this.setMustCopy(true);
-    }
-
-    
-    
-    @Override
-    protected void resolve(Expression param, Namespace ns, Visitor typeResolver)
-            throws ASTTraversalException {
-        
-        final ListType lt = (ListType) param.getUnique(); 
-        this.setUnique(lt);
     }
 
     

@@ -2,13 +2,13 @@ package de.skuzzle.polly.parsing.ast.lang.operators;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.literals.BooleanLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.lang.BinaryOperator;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
-import de.skuzzle.polly.parsing.types.Type;
 import de.skuzzle.polly.parsing.util.Stack;
 
 
@@ -18,7 +18,7 @@ public class Relational extends BinaryOperator<Literal, Literal> {
     private static final long serialVersionUID = 1L;
     
     public Relational(OpType id) {
-        super(id, Type.BOOLEAN, Type.ANY, Type.ANY);
+        super(id, Type.BOOLEAN, Type.newTypeVar("A"), Type.newTypeVar("A"));
     }
 
 
@@ -26,12 +26,8 @@ public class Relational extends BinaryOperator<Literal, Literal> {
     @Override
     protected void resolve(Expression left, Expression right, Namespace ns,
             Visitor typeResolver) throws ASTTraversalException {
-        
-        if (!left.getUnique().check(right.getUnique())) {
-            Type.typeError(right.getUnique(), left.getUnique(), right.getPosition());
-        }
-        
-        if (!left.getUnique().isCompareable()) {
+
+        if (!left.getUnique().isComparable()) {
             throw new ASTTraversalException(left.getPosition(), 
                 "Typ '" + left.getUnique() + "' definiert keine Ordnung");
         }
@@ -41,7 +37,7 @@ public class Relational extends BinaryOperator<Literal, Literal> {
 
     @Override
     protected void exec(Stack<Literal> stack, Namespace ns, Literal left, Literal right,
-            Position resultPos) throws ASTTraversalException {
+            Position resultPos, Visitor execVisitor) throws ASTTraversalException {
         
         final int comp = left.compareTo(right);
         switch (this.getOp()) {

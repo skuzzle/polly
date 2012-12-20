@@ -5,6 +5,9 @@ import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
+import de.skuzzle.polly.parsing.ast.declarations.types.ListTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Native;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
@@ -13,9 +16,6 @@ import de.skuzzle.polly.parsing.ast.expressions.parameters.ListParameter;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
-import de.skuzzle.polly.parsing.types.FunctionType;
-import de.skuzzle.polly.parsing.types.ListType;
-import de.skuzzle.polly.parsing.types.Type;
 import de.skuzzle.polly.parsing.util.Stack;
 
 
@@ -96,7 +96,7 @@ public abstract class Function extends Native {
     public Declaration createDeclaration() {
         final FunctionLiteral func = this.createFunction();
         final VarDeclaration vd = new VarDeclaration(func.getPosition(), this.name, func);
-        this.setUnique(((FunctionType) func.getUnique()).getReturnType());
+        this.setUnique(((MapTypeConstructor) func.getUnique()).getTarget());
         vd.setNative(true);
         vd.setMustCopy(this.mustCopy());
         return vd;
@@ -114,13 +114,13 @@ public abstract class Function extends Native {
      * @return A new parameter instance.
      */
     protected Parameter typeToParameter(Type type, ResolvableIdentifier name) {
-        if (type instanceof ListType) {
-            final ListType lt = (ListType) type;
-            return new ListParameter(Position.NONE, name, lt.getSubType());
-        } else if (type instanceof FunctionType) {
-            final FunctionType ft = (FunctionType) type;
-            return new FunctionParameter(Position.NONE, ft.getReturnType(), 
-                ft.getParameters(), name);
+        if (type instanceof ListTypeConstructor) {
+            final ListTypeConstructor lt = (ListTypeConstructor) type;
+            return new ListParameter(Position.NONE, lt.getSubType());
+        } else if (type instanceof MapTypeConstructor) {
+            final MapTypeConstructor ft = (MapTypeConstructor) type;
+            return new FunctionParameter(Position.NONE, ft.getTarget(), 
+                ft.getSource().getTypes(), name);
         } else {
             return new Parameter(Position.NONE, name, type);
         }
@@ -130,8 +130,7 @@ public abstract class Function extends Native {
 
     @Override
     public void execute(Stack<Literal> stack, Namespace ns, Visitor execVisitor)
-        throws ASTTraversalException {
-    }
+        throws ASTTraversalException {}
 
 
 

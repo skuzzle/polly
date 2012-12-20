@@ -79,8 +79,7 @@ public class FunctionLiteral extends Literal {
     
     private final Type createType(Type returnType, Collection<Parameter> formal) {
         return new MapTypeConstructor(
-            new ProductTypeConstructor(Parameter.asType(this.formal)), 
-            returnType);
+            new ProductTypeConstructor(Parameter.asType(this.formal)), returnType);
     }
     
     

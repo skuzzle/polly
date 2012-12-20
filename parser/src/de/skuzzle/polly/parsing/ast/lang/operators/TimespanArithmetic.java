@@ -2,11 +2,12 @@ package de.skuzzle.polly.parsing.ast.lang.operators;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.TimespanLiteral;
 import de.skuzzle.polly.parsing.ast.lang.BinaryOperator;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.parsing.types.Type;
+import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.parsing.util.Stack;
 
 /**
@@ -27,7 +28,8 @@ public class TimespanArithmetic extends BinaryOperator<TimespanLiteral, Timespan
 
     @Override
     protected void exec(Stack<Literal> stack, Namespace ns, TimespanLiteral left,
-            TimespanLiteral right, Position resultPos) throws ASTTraversalException {
+            TimespanLiteral right, Position resultPos, Visitor execVisitor) 
+                throws ASTTraversalException {
         
         switch (this.getOp()) {
         case ADD:

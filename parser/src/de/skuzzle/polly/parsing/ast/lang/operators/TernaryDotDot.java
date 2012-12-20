@@ -2,12 +2,13 @@ package de.skuzzle.polly.parsing.ast.lang.operators;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
+import de.skuzzle.polly.parsing.ast.declarations.types.ListTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.ast.lang.TernaryOperator;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.parsing.types.ListType;
-import de.skuzzle.polly.parsing.types.Type;
+import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.parsing.util.Stack;
 
 
@@ -18,16 +19,16 @@ public class TernaryDotDot extends
 
 
     public TernaryDotDot() {
-        super(OpType.DOTDOT, new ListType(Type.NUMBER), Type.NUMBER, Type.NUMBER, 
-            Type.NUMBER);
+        super(OpType.DOTDOT, new ListTypeConstructor(Type.NUM), Type.NUM, Type.NUM, 
+            Type.NUM);
     }
 
     
     
     @Override
     protected void exec(Stack<Literal> stack, Namespace ns, NumberLiteral first,
-            NumberLiteral second, NumberLiteral third, Position resultPos)
-            throws ASTTraversalException {
+            NumberLiteral second, NumberLiteral third, Position resultPos, 
+            Visitor execVisitor) throws ASTTraversalException {
         
         switch (this.getOp()) {
         case DOTDOT:

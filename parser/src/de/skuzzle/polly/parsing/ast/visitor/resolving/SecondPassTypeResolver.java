@@ -8,7 +8,7 @@ import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.ProductTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
-import de.skuzzle.polly.parsing.ast.declarations.types.TypeVar;
+import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
@@ -18,8 +18,6 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 
 class SecondPassTypeResolver extends AbstractTypeResolver {
 
-    private final boolean DO_NOT_UNIFY = false;
-    private final boolean DO_UNIFY = true;
     
     
     
@@ -66,7 +64,7 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         
         for (final Expression exp : list.getContent()) {
             exp.visit(this);
-            list.getUnique().isUnifiableWith(exp.getUnique(), DO_UNIFY);
+            Type.unify(list.getUnique(), exp.getUnique());
         }
         
         this.afterListLiteral(list);
@@ -81,13 +79,20 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
     
     
     @Override
+    public void beforeAssignment(Assignment assign) throws ASTTraversalException {
+        this.applyType(assign, assign.getExpression());
+    }
+    
+    
+    
+    @Override
     public void visitCall(Call call) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
         
         this.beforeCall(call);
-        final Type t = call.typeResolved() ? call.getUnique() : TypeVar.create();
+        final Type t = call.typeResolved() ? call.getUnique() : Type.newTypeVar();
         
         MapTypeConstructor mtc = null;
         boolean uniqueMatch = false;
@@ -99,11 +104,8 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
             final MapTypeConstructor tmp = new MapTypeConstructor(s, t);
             
             for (final Type lhsType : call.getLhs().getTypes()) {
-                uniqueMatch = lhsType.isUnifiableWith(tmp, DO_NOT_UNIFY);
-                if (uniqueMatch) {
-                    lhsType.isUnifiableWith(tmp, DO_UNIFY);
-                    mtc = (MapTypeConstructor) lhsType;
-                }
+                uniqueMatch = Type.unify(lhsType, tmp);
+                mtc = uniqueMatch ? tmp : mtc;
             }
         }
         

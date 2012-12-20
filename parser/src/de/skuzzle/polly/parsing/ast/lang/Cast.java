@@ -8,13 +8,14 @@ import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
+import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.ProductTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
-import de.skuzzle.polly.parsing.types.FunctionType;
-import de.skuzzle.polly.parsing.types.Type;
 import de.skuzzle.polly.parsing.util.Stack;
 
 
@@ -34,6 +35,8 @@ public class Cast extends Operator {
         Position.NONE, "$param");
 
     
+    private final Type operandType;
+    
     /**
      * Creates a new Casting operator.
      * 
@@ -43,6 +46,7 @@ public class Cast extends Operator {
      */
     public Cast(OpType operator, Type target) {
         super(operator, target);
+        this.operandType = Type.newTypeVar();
     }
     
     
@@ -54,7 +58,7 @@ public class Cast extends Operator {
         // on a function call, parameters are already executed to be a Literal
         final Literal operand = (Literal) ns.resolveVar(
             PARAM_NAME, 
-            Type.ANY).getExpression();
+            this.operandType).getExpression();
         
         stack.push(operand.castTo(this.getUnique()));
     }
@@ -65,10 +69,12 @@ public class Cast extends Operator {
     protected FunctionLiteral createFunction() {
         // create parameter that accepts any expression (Type.ANY)
         final Collection<Parameter> p = Arrays.asList(
-            new Parameter[] { new Parameter(Position.NONE, PARAM_NAME, Type.ANY) });
+            new Parameter[] { 
+                new Parameter(Position.NONE, PARAM_NAME, this.operandType) });
         
         final FunctionLiteral func = new FunctionLiteral(Position.NONE, p, this);
-        func.setUnique(new FunctionType(this.getUnique(), Parameter.asType(p)));
+        func.setUnique(new MapTypeConstructor(
+            new ProductTypeConstructor(this.operandType), this.getUnique()));
         func.setReturnType(this.getUnique());
         return func;
     }
@@ -79,7 +85,7 @@ public class Cast extends Operator {
     public Declaration createDeclaration() {
         final FunctionLiteral func = this.createFunction();
         final VarDeclaration vd = new VarDeclaration(
-            func.getPosition(), this.getUnique().getTypeName(), func);
+            func.getPosition(), this.getUnique().getName(), func);
         return vd;
     }
 
@@ -87,5 +93,5 @@ public class Cast extends Operator {
 
     @Override
     public void resolveType(Namespace ns, Visitor typeResolver)
-        throws ASTTraversalException { }
+        throws ASTTraversalException {}
 }

@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.skuzzle.polly.parsing.ast.Identifier;
-import de.skuzzle.polly.parsing.ast.declarations.TypeDeclaration;
-import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitable;
 import de.skuzzle.polly.tools.EqualsHelper;
 import de.skuzzle.polly.tools.Equatable;
@@ -54,10 +52,18 @@ public class Type implements Equatable, Serializable, Visitable<TypeVisitor> {
     }
     
     
+    
     public static boolean unify(Type m, Type n) {
-        final TypeUnifier tu = new TypeUnifier();
-        return tu.unify(m, n);
+        return unify(m, n, true);
     }
+    
+    
+    
+    public static boolean unify(Type m, Type n, boolean substitute) {
+        final TypeUnifier tu = new TypeUnifier();
+        return tu.unify(m, n, substitute);
+    }
+    
     
     
     private final Identifier name;
@@ -72,52 +78,6 @@ public class Type implements Equatable, Serializable, Visitable<TypeVisitor> {
         this.comparable = comparable;
         this.primitve = primitive;
         this.parent = null;
-    }
-    
-    
-    
-    public final TypeDeclaration declaration() {
-        return new TypeDeclaration(this.name, this);
-    }
-
-    
-    
-    protected void substituteTypeVar(TypeVar var, Type type) 
-        throws ASTTraversalException {}
-    
-    
-    
-    protected boolean canSubstitute(TypeVar var, Type type) {
-        return true;
-    }
-    
-
-    /**
-     * <p>Determines whether this type expression is unifiable with the given one. In 
-     * other terms, determines whether the given type is an <i>instance</i> of this type 
-     * expression.</p>
-     * 
-     * <p>If <code>unify</code> is <code>true</code>, and a {@link TypeVar} is hit on the 
-     * way of unifying sub types, and it was not already substituted, we have found a 
-     * proper substitute for that type variable. So
-     * from now, that particular variable represents the substituted type within this
-     * expressions. That means, that all other occurrences of that TypeVar in this
-     * type expression must be substituted as well. An error may arise here, if we hit
-     * on a TypeVar with the same name which has already been substituted with another
-     * type.</p>
-     * 
-     * @param other Type to unify with this.
-     * @param unify If true, all {@link TypeVar} instances in this type expression will
-     *          be substituted.
-     * @return <code>true</code> iff the given type expression is an instance of the 
-     *          type expression represented by this.
-     * @throws ASTTraversalException If attempting to substitute a TypeVar which has
-     *          already been substituted. 
-     */
-    public boolean isUnifiableWith(Type other, boolean unify) 
-            throws ASTTraversalException {
-        // this is a primitive, so its unifiable if other is a primitive too
-        return other.isPrimitve() && this.equals(other);  
     }
     
     

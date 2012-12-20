@@ -6,6 +6,9 @@ import java.util.Collection;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
+import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.ProductTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
@@ -13,16 +16,17 @@ import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.TypeResolver;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
-import de.skuzzle.polly.parsing.types.FunctionType;
-import de.skuzzle.polly.parsing.types.Type;
 import de.skuzzle.polly.parsing.util.Stack;
 
 
 public abstract class UnaryOperator<O extends Literal> extends Operator {
 
     private static final long serialVersionUID = 1L;
+    
+    
     protected final static ResolvableIdentifier PARAM_NAME = 
             new ResolvableIdentifier(Position.NONE, "$param");
+    
     private final Type operandType;
     
     
@@ -40,7 +44,9 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
             this.typeToParameter(this.operandType, PARAM_NAME)});
         
         final FunctionLiteral func = new FunctionLiteral(Position.NONE, p, this);
-        func.setUnique(new FunctionType(this.getUnique(), Parameter.asType(p)));
+        func.setUnique(
+            new MapTypeConstructor(new ProductTypeConstructor(this.operandType), 
+                this.getUnique()));
         func.setReturnType(this.getUnique());
         return func;
     }
@@ -51,7 +57,7 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
     public final void resolveType(Namespace ns, Visitor typeResolver)
             throws ASTTraversalException {
         final Expression param = ns.resolveVar(PARAM_NAME, 
-            Type.ANY).getExpression();
+            this.operandType).getExpression();
         
         this.resolve(param, ns, typeResolver);
     }
@@ -78,7 +84,7 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
     public void execute(Stack<Literal> stack, Namespace ns, Visitor execVisitor)
             throws ASTTraversalException {
         final O operand = (O) ns.resolveVar(PARAM_NAME, 
-            Type.ANY).getExpression();
+            this.operandType).getExpression();
         
         this.exec(stack, ns, operand, operand.getPosition());
     }

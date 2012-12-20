@@ -1,7 +1,6 @@
 package de.skuzzle.polly.parsing.ast.declarations.types;
 
 import de.skuzzle.polly.parsing.ast.Identifier;
-import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.tools.Equatable;
 
 
@@ -34,35 +33,6 @@ public class MapTypeConstructor extends Type {
         
         this.source = source;
         this.target = target;
-    }
-    
-    
-    
-    @Override
-    protected void substituteTypeVar(TypeVar var, Type type) 
-            throws ASTTraversalException {
-        this.source.substituteTypeVar(var, type);
-        this.target.substituteTypeVar(var, type);
-    }
-    
-    
-    
-    @Override
-    protected boolean canSubstitute(TypeVar var, Type type) {
-        return this.source.canSubstitute(var, type) && 
-            this.target.canSubstitute(var, type);
-    }
-    
-    
-    
-    @Override
-    public boolean isUnifiableWith(Type other, boolean unify) throws ASTTraversalException {
-        if (other instanceof MapTypeConstructor) {
-            final MapTypeConstructor mc = (MapTypeConstructor) other;
-            return this.source.isUnifiableWith(mc.source, unify) && 
-                this.target.isUnifiableWith(mc.target, unify);
-        }
-        return false;
     }
     
     

@@ -6,6 +6,9 @@ import java.util.Collection;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
+import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.ProductTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
@@ -13,8 +16,6 @@ import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.TypeResolver;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
-import de.skuzzle.polly.parsing.types.FunctionType;
-import de.skuzzle.polly.parsing.types.Type;
 import de.skuzzle.polly.parsing.util.Stack;
 
 
@@ -65,9 +66,9 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
         });
         
         final FunctionLiteral func = new FunctionLiteral(Position.NONE, p, this);
-        func.setUnique(new FunctionType(this.getUnique(), Arrays.asList(new Type[] {
-            this.left, 
-            this.right})));
+        final ProductTypeConstructor source = new ProductTypeConstructor(
+            this.left, this.right);
+        func.setUnique(new MapTypeConstructor(source, this.getUnique()));
         func.setReturnType(this.getUnique());
         
         return func;
@@ -81,12 +82,12 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
             Visitor execVisitor) throws ASTTraversalException {
         
         final L left = (L) ns.resolveVar(LEFT_PARAM_NAME, 
-            Type.ANY).getExpression();
+            this.left).getExpression();
         final R right = (R) ns.resolveVar(RIGHT_PARAM_NAME, 
-            Type.ANY).getExpression();
+            this.right).getExpression();
         
         this.exec(stack, ns, left, right, 
-            new Position(left.getPosition(), right.getPosition()));
+            new Position(left.getPosition(), right.getPosition()), execVisitor);
     }
     
     
@@ -95,9 +96,9 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
     public final void resolveType(Namespace ns, Visitor typeResolver)
             throws ASTTraversalException {
         final Expression left = ns.resolveVar(LEFT_PARAM_NAME, 
-            Type.ANY).getExpression();
+            this.left).getExpression();
         final Expression right = ns.resolveVar(RIGHT_PARAM_NAME, 
-            Type.ANY).getExpression();
+            this.right).getExpression();
         
         this.resolve(left, right, ns, typeResolver);
     }
@@ -128,8 +129,10 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
      * @param left Left operand of this operator.
      * @param right Right operand of this operator.
      * @param resultPos Position that can be used as position for the result literal.
+     * @param execVisitor Current execution visitor.
      * @throws ASTTraversalException If executing fails for any reason.
      */
     protected abstract void exec(Stack<Literal> stack, Namespace ns, 
-        L left, R right, Position resultPos) throws ASTTraversalException;
+        L left, R right, Position resultPos, Visitor execVisitor) 
+            throws ASTTraversalException;
 }

@@ -1,19 +1,12 @@
 package de.skuzzle.polly.parsing.ast.lang;
 
 
-import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.Token;
 import de.skuzzle.polly.parsing.TokenType;
-import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.FunctionParameter;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.ListParameter;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
-import de.skuzzle.polly.parsing.types.FunctionType;
-import de.skuzzle.polly.parsing.types.ListType;
-import de.skuzzle.polly.parsing.types.Type;
 
 /**
  * Superclass for all operators. Operators are represented as a normal function call and
@@ -34,10 +27,10 @@ public abstract class Operator extends Function {
      */
     public static enum OpType {
         // casting
-        STRING(Type.STRING.getTypeName().getId()),
-        NUMBER(Type.NUMBER.getTypeName().getId()),
-        DATE(Type.DATE.getTypeName().getId()),
-        TIMESPAN(Type.TIMESPAN.getTypeName().getId()),
+        STRING(Type.STRING.getName().getId()),
+        NUMBER(Type.NUM.getName().getId()),
+        DATE(Type.DATE.getName().getId()),
+        TIMESPAN(Type.TIMESPAN.getName().getId()),
         
         // math functions
         MIN("min"),
@@ -59,6 +52,10 @@ public abstract class Operator extends Function {
         TO_DEGREES("toDegrees"),
         TO_RADIANS("toRadians"),
         EXP("exp"),
+        
+        // functions
+        FOLD_LEFT("foldLeft"),
+        MAP("map"),
         
         ADD("+"),
         ADDWAVE("+~"),
@@ -206,30 +203,6 @@ public abstract class Operator extends Function {
         // restore saved type
         this.setUnique(t);
         return vd;
-    }
-    
-    
-    
-    /**
-     * Creates a new Parameter from a given type and name. Depending on the type, either
-     * a {@link ListParameter}, {@link FunctionParameter} or normal {@link Parameter} os
-     * returned.
-     * 
-     * @param type The parameters type.
-     * @param name The parameters name.
-     * @return A new parameter instance.
-     */
-    protected Parameter typeToParameter(Type type, ResolvableIdentifier name) {
-        if (type instanceof ListType) {
-            final ListType lt = (ListType) type;
-            return new ListParameter(Position.NONE, name, lt.getSubType());
-        } else if (type instanceof FunctionType) {
-            final FunctionType ft = (FunctionType) type;
-            return new FunctionParameter(Position.NONE, ft.getReturnType(), 
-                ft.getParameters(), name);
-        } else {
-            return new Parameter(Position.NONE, name, type);
-        }
     }
     
     

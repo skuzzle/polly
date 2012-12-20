@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,9 +36,9 @@ import de.skuzzle.polly.parsing.ast.lang.operators.UnaryArithmetic;
 import de.skuzzle.polly.parsing.ast.lang.operators.UnaryList;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Unparser;
-import de.skuzzle.polly.parsing.types.FunctionType;
 import de.skuzzle.polly.tools.streams.CopyTool;
 import de.skuzzle.polly.tools.strings.StringUtils;
+
 
 
 public class Namespace {
@@ -199,7 +198,11 @@ public class Namespace {
                 new ArrayList<Namespace.LevenshteinResult>();
         
         for(Namespace space = nspace; space != null; space = space.parent) {
-            for (final Declaration decl : space.decls) {
+            final List<Declaration> decls = space.decls.get(given);
+            if (decls == null) {
+                continue;
+            }
+            for (final Declaration decl : decls) {
                 
                 final String name = decl.getName().getId();
                 
@@ -246,7 +249,7 @@ public class Namespace {
             
             // casting ops
             GLOBAL.declare(new Cast(OpType.STRING, Type.STRING).createDeclaration());
-            GLOBAL.declare(new Cast(OpType.NUMBER, Type.NUMBER).createDeclaration());
+            GLOBAL.declare(new Cast(OpType.NUMBER, Type.NUM).createDeclaration());
             GLOBAL.declare(new Cast(OpType.DATE, Type.DATE).createDeclaration());
             
             // relational ops
@@ -549,8 +552,7 @@ public class Namespace {
      * in the given identifiers declaration attribute.</p>
      * 
      * @param name The name of the variable to resolve.
-     * @param signature The signature of the variable to resolve. Use {@link Type#ANY} 
-     *          if the signature should be ignored.
+     * @param signature The signature of the variable to resolve.
      * @return The resolved declaration or <code>null</code> if non was found.
      */
     public Declaration tryResolve(ResolvableIdentifier name, Type signature) {
@@ -561,7 +563,7 @@ public class Namespace {
             }
             for (Declaration decl : decls) {
                 
-                if (decl.getType().equals(signature)) {
+                if (Type.unify(signature, decl.getType(), false)) {
                     if (decl.mustCopy()) {
                         decl = CopyTool.copyOf(decl);
                     }
@@ -575,35 +577,7 @@ public class Namespace {
     
     
     
-    // TODO: comment
-    public List<VarDeclaration> resolveAll(ResolvableIdentifier name) 
-            throws DeclarationException {
-        
-        final List<VarDeclaration> result = new ArrayList<VarDeclaration>();
-        for(Namespace space = this; space != null; space = space.parent) {
-            final List<Declaration> decls = space.decls.get(name.getId());
-            if (decls == null) {
-                continue;
-            }
-            for (Declaration decl : decls) {
-                if (decl.getName().equals(name)) {
-                    result.add((VarDeclaration) decl);
-                }
-            }
-        }
-        
-        if (result.isEmpty()) {
-            final List<String> similar = findSimilar(name.getId(), this);
-            
-            throw new DeclarationException(name.getPosition(), 
-                "Unbekannte Variable: '" + name + "'", similar);
-        }
-        return result;
-    }
-    
-    
-    
-    public Set<Type> lookup(ResolvableIdentifier name) {
+    public Set<Type> lookup(ResolvableIdentifier name) throws DeclarationException {
         final Set<Type> result = new HashSet<Type>();
         for(Namespace space = this; space != null; space = space.parent) {
             final List<Declaration> decls = space.decls.get(name.getId());
@@ -615,6 +589,13 @@ public class Namespace {
                     result.add(decl.getType());
                 }
             }
+        }
+        
+        if (result.isEmpty()) {
+            final List<String> similar = findSimilar(name.getId(), this);
+            
+            throw new DeclarationException(name.getPosition(), 
+                "Unbekannte Variable: '" + name + "'", similar);
         }
         return result;
     }
@@ -655,22 +636,7 @@ public class Namespace {
     public VarDeclaration resolveVar(ResolvableIdentifier name, Type signature) 
             throws ASTTraversalException {
         final Declaration check = this.tryResolve(name, signature);
-        if (check == null && signature instanceof FunctionType) {
-            final FunctionType ft = (FunctionType) signature;
-            
-            throw new ASTTraversalException(name.getPosition(), 
-                "Keine Überladung von '" + name + "' mit der Signatur " + 
-                    ft.toString(false) + " gefunden");
-        } else if (check == null) {
-            final List<String> similar = findSimilar(name.getId(), this);
-            
-            throw new DeclarationException(name.getPosition(), 
-                "Unbekannte Variable: '" + name + "'", similar);
-        } else if (check instanceof VarDeclaration) {
-            return (VarDeclaration) check;
-        }
-        throw new ASTTraversalException(name.getPosition(), name.getId() + 
-            " ist keine Variable");
+        return (VarDeclaration) check;
     }
     
     
@@ -680,24 +646,26 @@ public class Namespace {
         final StringBuilder b = new StringBuilder();
         int level = 0;
         for(Namespace space = this; space != null; space = space.parent) {
-            final List<Declaration> copy = new ArrayList<Declaration>(space.decls);
-            Collections.sort(copy);
-            
-            b.append("Level: ");
-            b.append(level++);
-            b.append("\n");
-            for (final Declaration decl : copy) {
-                b.append("    '");
-                b.append(decl.getName());
-                b.append("'");
-                if (decl instanceof VarDeclaration) {
-                    final VarDeclaration vd = (VarDeclaration) decl;
-                    b.append(" = ");
-                    b.append(Unparser.toString(vd.getExpression()));
+            for (final List<Declaration> decls : space.decls.values()) {
+                final List<Declaration> copy = new ArrayList<Declaration>(decls);
+                Collections.sort(copy);
+                
+                b.append("Level: ");
+                b.append(level++);
+                b.append("\n");
+                for (final Declaration decl : copy) {
+                    b.append("    '");
+                    b.append(decl.getName());
+                    b.append("'");
+                    if (decl instanceof VarDeclaration) {
+                        final VarDeclaration vd = (VarDeclaration) decl;
+                        b.append(" = ");
+                        b.append(Unparser.toString(vd.getExpression()));
+                    }
+                    b.append(" [Type: ");
+                    b.append(decl.getType());
+                    b.append("]\n");
                 }
-                b.append(" [Type: ");
-                b.append(decl.getType());
-                b.append("]\n");
             }
         }
         return b.toString();

@@ -3,11 +3,12 @@ package de.skuzzle.polly.parsing.ast.lang.operators;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.ast.lang.BinaryOperator;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.parsing.types.Type;
+import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.parsing.util.Stack;
 
 /**
@@ -21,7 +22,7 @@ public class BinaryArithmetic extends BinaryOperator<NumberLiteral, NumberLitera
     private static final long serialVersionUID = 1L;
     
     public BinaryArithmetic(OpType id) {
-        super(id, Type.NUMBER, Type.NUMBER, Type.NUMBER);
+        super(id, Type.NUM, Type.NUM, Type.NUM);
     }
     
     
@@ -29,7 +30,7 @@ public class BinaryArithmetic extends BinaryOperator<NumberLiteral, NumberLitera
     @Override
     protected void exec(Stack<Literal> stack, Namespace ns,
             NumberLiteral left, NumberLiteral right, 
-            Position resultPos) throws ASTTraversalException {
+            Position resultPos, Visitor execVisitor) throws ASTTraversalException {
         
         switch (this.getOp()) {
         case ADD: 
