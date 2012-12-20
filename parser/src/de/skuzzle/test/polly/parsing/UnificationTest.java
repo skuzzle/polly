@@ -27,27 +27,26 @@ public class UnificationTest {
         
         types.add(
             new MapTypeConstructor(
-                new ProductTypeConstructor(
-                    Arrays.asList(new Type[] {Type.newTypeVar("A")})),
-                Type.newTypeVar("B")));
+                new ProductTypeConstructor(Type.newTypeVar("B")),
+                Type.newTypeVar("A")));
         
         final Type declared = new MapTypeConstructor(new ProductTypeConstructor(types), 
-            new ListTypeConstructor(Type.newTypeVar("B")));
+            new ListTypeConstructor(Type.newTypeVar("A")));
         
         
         final List<Type> types2 = new ArrayList<Type>();
         types2.add(new ListTypeConstructor(Type.NUM));
         
         types2.add(new MapTypeConstructor(
-            new ProductTypeConstructor(Arrays.asList(new Type[] {Type.NUM})), Type.NUM));
+            new ProductTypeConstructor(Type.NUM), Type.STRING));
         
         final Type actual = new MapTypeConstructor(new ProductTypeConstructor(types2), 
             Type.newTypeVar());
         
         System.out.println("Declared: " + declared);
         System.out.println("Actual:   " + actual);
-        System.out.println(Type.unify(declared, actual));
+        boolean unified = Type.unify(declared, actual);
         System.out.println("Unified:  " + declared);
-        System.out.println("done");
+        System.out.println(unified);
     }
 }
