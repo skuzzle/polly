@@ -8,9 +8,9 @@ import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.ExecutionVisitor;
 import de.skuzzle.polly.parsing.ast.visitor.ParentSetter;
-import de.skuzzle.polly.parsing.ast.visitor.TypeResolver;
 import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.parsing.ast.visitor.resolving.TypeResolver;
 
 
 /**
@@ -27,7 +27,7 @@ public class Evaluator {
     
     // TEST:
     public static void main(String[] args) throws IOException {
-        String testMe = ":foo (\\(Num x, Num y: x+y)->\\-) \\(Num x, Num y: x-y)->\\+";
+        String testMe = ":foo map({1,2,3}, \\-)";
         //testMe = ":foo if 3!=2 ? !{1,2,3} : {4,5,6}";
         final Evaluator eval = new Evaluator(testMe, "ISO-8859-1");
         File decls = new File("decls");
@@ -109,8 +109,7 @@ public class Evaluator {
             root.visit(parentSetter);
             
             // resolve types
-            final Visitor typeResolver = new TypeResolver(namespace);
-            root.visit(typeResolver);
+            TypeResolver.resolveAST(root, namespace);
             
             final Visitor executor = new ExecutionVisitor(namespace);
             root.visit(executor);

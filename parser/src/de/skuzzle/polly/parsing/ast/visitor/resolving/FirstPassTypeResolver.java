@@ -27,8 +27,9 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 
 
 class FirstPassTypeResolver extends AbstractTypeResolver {
-
-
+    
+    
+    
     public FirstPassTypeResolver(Namespace namespace) {
         super(namespace);
     }
@@ -95,6 +96,8 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         
         this.nspace = this.enter();
         for (final Parameter p : func.getFormal()) {
+            p.visit(this);
+            
             // Invariant: parameters always have a unique type
             final VarDeclaration vd = new VarDeclaration(p.getPosition(), p.getName(), 
                 new Empty(p.getUnique(), p.getPosition()));
@@ -163,7 +166,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
                 
                 done[i] = (indizes[i] + 1) == exp.getTypes().size();
                 allChecked &= done[i];
-                ++indizes[i];
+                indizes[i] = (indizes[i] + 1) % exp.getTypes().size();
                 ++i;
             }
             // one possible actual signature type
@@ -175,7 +178,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
                     continue;
                 }
                 final MapTypeConstructor mc = (MapTypeConstructor) s1;
-                if (s.equals(mc.getSource())) {
+                if (Type.unify(s, mc.getSource())) {
                     call.addType(mc.getTarget());
                 }
             }

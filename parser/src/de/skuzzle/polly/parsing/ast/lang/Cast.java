@@ -75,7 +75,6 @@ public class Cast extends Operator {
         final FunctionLiteral func = new FunctionLiteral(Position.NONE, p, this);
         func.setUnique(new MapTypeConstructor(
             new ProductTypeConstructor(this.operandType), this.getUnique()));
-        func.setReturnType(this.getUnique());
         return func;
     }
     

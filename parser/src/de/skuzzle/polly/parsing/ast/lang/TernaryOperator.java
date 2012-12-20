@@ -62,9 +62,6 @@ public abstract class TernaryOperator<FIRST extends Literal, SECOND extends Lite
                 this.first, 
                 this.second,
                 this.third), this.getUnique()));
-        
-        func.setReturnType(this.getUnique());
-        
         return func;
     }
     

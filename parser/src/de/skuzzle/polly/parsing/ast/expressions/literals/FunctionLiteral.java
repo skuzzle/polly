@@ -76,37 +76,6 @@ public class FunctionLiteral extends Literal {
     }
     
     
-    
-    private final Type createType(Type returnType, Collection<Parameter> formal) {
-        return new MapTypeConstructor(
-            new ProductTypeConstructor(Parameter.asType(this.formal)), returnType);
-    }
-    
-    
-    
-    /**
-     * Will always return a {@link MapTypeConstructor} created from current context 
-     * information of this literal.
-     * 
-     * @return an instance of {@link MapTypeConstructor}
-     */
-    @Override
-    public Type getUnique() {
-        return this.createType(this.returnType, this.formal);
-    }
-    
-    
-    
-    /**
-     * Updates return type information for this function.
-     * 
-     * @param type New return type.
-     */
-    public void setReturnType(Type type) {
-        this.returnType = type;
-    }
-    
-    
 
     @Override
     public String format(LiteralFormatter formatter) {

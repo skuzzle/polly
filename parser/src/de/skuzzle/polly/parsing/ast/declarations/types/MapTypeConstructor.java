@@ -50,6 +50,13 @@ public class MapTypeConstructor extends Type {
     
     
     @Override
+    public Class<?> getEquivalenceClass() {
+        return MapTypeConstructor.class;
+    }
+    
+    
+    
+    @Override
     public boolean actualEquals(Equatable o) {
         final MapTypeConstructor other = (MapTypeConstructor) o;
         return this.source.equals(other.source) && this.target.equals(other.target);

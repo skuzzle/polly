@@ -69,8 +69,6 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
         final ProductTypeConstructor source = new ProductTypeConstructor(
             this.left, this.right);
         func.setUnique(new MapTypeConstructor(source, this.getUnique()));
-        func.setReturnType(this.getUnique());
-        
         return func;
     }
     

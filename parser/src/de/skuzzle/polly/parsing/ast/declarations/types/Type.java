@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.skuzzle.polly.parsing.ast.Identifier;
+import de.skuzzle.polly.parsing.ast.declarations.TypeDeclaration;
 import de.skuzzle.polly.parsing.ast.visitor.Visitable;
 import de.skuzzle.polly.tools.EqualsHelper;
 import de.skuzzle.polly.tools.Equatable;
@@ -80,6 +81,11 @@ public class Type implements Equatable, Serializable, Visitable<TypeVisitor> {
         this.parent = null;
     }
     
+    
+    
+    public TypeDeclaration declaration() {
+        return new TypeDeclaration(this.getName(), this);
+    }
     
     
     public final boolean isPrimitve() {

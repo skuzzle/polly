@@ -47,7 +47,6 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
         func.setUnique(
             new MapTypeConstructor(new ProductTypeConstructor(this.operandType), 
                 this.getUnique()));
-        func.setReturnType(this.getUnique());
         return func;
     }
     

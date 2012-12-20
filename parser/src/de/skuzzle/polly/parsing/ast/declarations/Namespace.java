@@ -484,7 +484,7 @@ public class Namespace {
         final Map<String, List<Declaration>> decls = decl.isPublic() 
             ? GLOBAL.decls : this.decls;
         
-        List<Declaration> d = decls.get(decl.getName());
+        List<Declaration> d = decls.get(decl.getName().getId());
         if (d == null) {
             d = new ArrayList<Declaration>();
             decls.put(decl.getName().getId(), d);
@@ -499,7 +499,7 @@ public class Namespace {
             // * existing is a function and new is a variable
             // * exising is a variable and 
             
-            if (existing.getType().equals(decl.getType())) {
+            if (Type.unify(existing.getType(), decl.getType(), false)) {
                 if (!this.local) {
                     if (existing.isNative()) {
                         throw new ASTTraversalException(decl.getPosition(), 
@@ -646,13 +646,14 @@ public class Namespace {
         final StringBuilder b = new StringBuilder();
         int level = 0;
         for(Namespace space = this; space != null; space = space.parent) {
+            b.append("Level: ");
+            b.append(level++);
+            b.append("\n");
+            
             for (final List<Declaration> decls : space.decls.values()) {
                 final List<Declaration> copy = new ArrayList<Declaration>(decls);
                 Collections.sort(copy);
                 
-                b.append("Level: ");
-                b.append(level++);
-                b.append("\n");
                 for (final Declaration decl : copy) {
                     b.append("    '");
                     b.append(decl.getName());
