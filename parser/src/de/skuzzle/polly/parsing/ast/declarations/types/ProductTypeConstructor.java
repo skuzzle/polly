@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import de.skuzzle.polly.parsing.ast.Identifier;
-import de.skuzzle.polly.tools.Equatable;
 
 
 public class ProductTypeConstructor extends Type {
@@ -51,21 +50,6 @@ public class ProductTypeConstructor extends Type {
     
     public Collection<Type> getTypes() {
         return this.types;
-    }
-    
-    
-    
-    @Override
-    public Class<?> getEquivalenceClass() {
-        return ProductTypeConstructor.class;
-    }
-    
-    
-    
-    @Override
-    public boolean actualEquals(Equatable o) {
-        final ProductTypeConstructor other = (ProductTypeConstructor) o;
-        return this.types.equals(other.types);
     }
 
     

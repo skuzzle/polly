@@ -7,11 +7,9 @@ import java.util.Map;
 import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.declarations.TypeDeclaration;
 import de.skuzzle.polly.parsing.ast.visitor.Visitable;
-import de.skuzzle.polly.tools.EqualsHelper;
-import de.skuzzle.polly.tools.Equatable;
 
 
-public class Type implements Equatable, Serializable, Visitable<TypeVisitor> {
+public class Type implements Serializable, Visitable<TypeVisitor> {
     
     private static final long serialVersionUID = 1L;
     
@@ -108,21 +106,7 @@ public class Type implements Equatable, Serializable, Visitable<TypeVisitor> {
     
     @Override
     public final boolean equals(Object obj) {
-        return EqualsHelper.testEquality(this, obj);
-    }
-
-
-
-    @Override
-    public Class<?> getEquivalenceClass() {
-        return Type.class;
-    }
-
-
-
-    @Override
-    public boolean actualEquals(Equatable o) {
-        return false;
+        throw new UnsupportedOperationException("do not compare types using #equals()");
     }
     
     

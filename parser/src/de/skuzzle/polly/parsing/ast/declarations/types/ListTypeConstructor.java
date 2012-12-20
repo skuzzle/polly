@@ -2,7 +2,6 @@ package de.skuzzle.polly.parsing.ast.declarations.types;
 
 
 import de.skuzzle.polly.parsing.ast.Identifier;
-import de.skuzzle.polly.tools.Equatable;
 
 
 public class ListTypeConstructor extends Type {
@@ -24,21 +23,6 @@ public class ListTypeConstructor extends Type {
         return this.subType;
     }
 
-
-    
-    @Override
-    public Class<?> getEquivalenceClass() {
-        return ListTypeConstructor.class;
-    }
-
-
-
-    @Override
-    public boolean actualEquals(Equatable o) {
-        final ListTypeConstructor other = (ListTypeConstructor) o;
-        return this.subType.equals(other.subType);
-    }
-    
     
     
     @Override

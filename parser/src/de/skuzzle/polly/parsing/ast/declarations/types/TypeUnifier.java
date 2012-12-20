@@ -52,7 +52,7 @@ final class TypeUnifier {
         
         if (s == t) {
             return true;
-        } else if (s.isPrimitve() && t.isPrimitve() && s.equals(t)) {
+        } else if (s.isPrimitve() && t.isPrimitve() && s == t) {
             return true;
         } else if (s instanceof MapTypeConstructor && t instanceof MapTypeConstructor) {
             this.union(s, t);

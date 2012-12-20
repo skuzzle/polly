@@ -1,7 +1,6 @@
 package de.skuzzle.test.polly.parsing;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import java.util.List;
 
@@ -38,7 +37,7 @@ public class UnificationTest {
         types2.add(new ListTypeConstructor(Type.NUM));
         
         types2.add(new MapTypeConstructor(
-            new ProductTypeConstructor(Type.NUM), Type.STRING));
+            new ProductTypeConstructor(Type.NUM), Type.newTypeVar()));
         
         final Type actual = new MapTypeConstructor(new ProductTypeConstructor(types2), 
             Type.newTypeVar());

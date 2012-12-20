@@ -1,7 +1,6 @@
 package de.skuzzle.polly.parsing.ast.declarations.types;
 
 import de.skuzzle.polly.parsing.ast.Identifier;
-import de.skuzzle.polly.tools.Equatable;
 
 
 public class MapTypeConstructor extends Type {
@@ -47,21 +46,6 @@ public class MapTypeConstructor extends Type {
         return this.target;
     }
     
-    
-    
-    @Override
-    public Class<?> getEquivalenceClass() {
-        return MapTypeConstructor.class;
-    }
-    
-    
-    
-    @Override
-    public boolean actualEquals(Equatable o) {
-        final MapTypeConstructor other = (MapTypeConstructor) o;
-        return this.source.equals(other.source) && this.target.equals(other.target);
-    }
-
     
     
     @Override

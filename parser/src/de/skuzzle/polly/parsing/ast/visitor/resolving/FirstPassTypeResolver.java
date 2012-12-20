@@ -26,6 +26,14 @@ import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 
 
+/**
+ * This visitor resolves <b>all</b> possible types for an expression and stores them in
+ * each expression's <i>types</i> attribute. A Second pass type resolval is needed to 
+ * determine each expression's unique type.
+ * 
+ * @author Simon Taddiken
+ * @see SecondPassTypeResolver
+ */
 class FirstPassTypeResolver extends AbstractTypeResolver {
     
     
