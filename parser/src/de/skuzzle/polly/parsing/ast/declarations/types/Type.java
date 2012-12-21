@@ -81,6 +81,12 @@ public class Type implements Serializable, Visitable<TypeVisitor> {
     
     
     
+    Type getParent() {
+        return this.parent;
+    }
+    
+    
+    
     public TypeDeclaration declaration() {
         return new TypeDeclaration(this.getName(), this);
     }

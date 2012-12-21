@@ -1,5 +1,9 @@
 package de.skuzzle.test.polly.parsing;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 
 import java.util.List;
@@ -8,18 +12,21 @@ import de.skuzzle.polly.parsing.ast.declarations.types.ListTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.ProductTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
+import de.skuzzle.polly.parsing.ast.declarations.types.TypeGraphVisualizer;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.process.KillingProcessWatcher;
+import de.skuzzle.polly.process.ProcessExecutor;
 
 
 public class UnificationTest {
 
-    public static void main(String[] args) throws ASTTraversalException {
+    public static void main(String[] args) throws ASTTraversalException, IOException {
         test1();
     }
     
     
     
-    private static void test1() throws ASTTraversalException {
+    private static void test1() throws ASTTraversalException, IOException {
         final List<Type> types = new ArrayList<Type>();
         types.add(new ListTypeConstructor(Type.newTypeVar("B")));
         
@@ -47,5 +54,22 @@ public class UnificationTest {
         boolean unified = Type.unify(declared, actual);
         System.out.println("Unified:  " + declared);
         System.out.println(unified);
+        
+        toPdf(declared, "unified");
+    }
+    
+    
+    
+    private static void toPdf(Type root, String name) throws IOException {
+        TypeGraphVisualizer tgv = new TypeGraphVisualizer();
+        tgv.visualize(root, new PrintStream(name + ".dot"));
+        String dotPath = "C:\\Program Files (x86)\\Graphviz 2.28\\bin\\dot.exe";
+        ProcessExecutor pe = ProcessExecutor.getOsInstance(false);
+        pe.setExecuteIn(new File("C:\\Users\\Simon\\Documents\\Java\\polly\\parser"));
+        pe.addCommand(dotPath);
+        pe.addCommandsFromString("-Tpdf -o " + name + ".pdf");
+        pe.addCommand(name + ".dot");
+        pe.setProcessWatcher(new KillingProcessWatcher(10000, true));
+        pe.start();
     }
 }

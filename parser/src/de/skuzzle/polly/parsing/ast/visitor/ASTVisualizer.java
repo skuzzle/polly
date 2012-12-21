@@ -36,7 +36,6 @@ public class ASTVisualizer extends DepthFirstVisitor {
     private FileWriter outputStream;
     private Stack<Integer> stack;
     
-    
 
     public void toFile(String filename, Node root) throws IOException, 
             ASTTraversalException {

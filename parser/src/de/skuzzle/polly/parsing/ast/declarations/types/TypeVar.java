@@ -19,7 +19,19 @@ public class TypeVar extends Type {
     protected void setSubstitute(Type t) {
         this.substitute = t;
     }
+    
+    
+    
+    boolean isSubstituted() {
+        return this.substitute != null;
+    }
 
+    
+    
+    Type getSubstitute() {
+        return this.substitute;
+    }
+    
     
     
     @Override
