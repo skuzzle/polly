@@ -20,8 +20,10 @@ public class TimespanArithmetic extends BinaryOperator<TimespanLiteral, Timespan
 
     private static final long serialVersionUID = 1L;
     
+    
     public TimespanArithmetic(OpType id) {
-        super(id, Type.TIMESPAN, Type.TIMESPAN, Type.TIMESPAN);
+        super(id);
+        this.initTypes(Type.TIMESPAN, Type.TIMESPAN, Type.TIMESPAN);
     }
     
     

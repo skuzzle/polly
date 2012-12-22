@@ -74,7 +74,8 @@ public class BinaryDotDot extends BinaryOperator<NumberLiteral, NumberLiteral> {
 
     
     public BinaryDotDot() {
-        super(OpType.DOTDOT, new ListTypeConstructor(Type.NUM), Type.NUM, Type.NUM);
+        super(OpType.DOTDOT);
+        this.initTypes(new ListTypeConstructor(Type.NUM), Type.NUM, Type.NUM);
     }
     
     

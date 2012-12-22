@@ -16,6 +16,7 @@ public abstract class AbstractTypeResolver extends DepthFirstVisitor {
     protected final Typespace types;
     
     
+    
     public AbstractTypeResolver(Namespace namespace) {
         // create temporary namespace for executing user
         this.rootNs = namespace.enter(false);
@@ -85,6 +86,6 @@ public abstract class AbstractTypeResolver extends DepthFirstVisitor {
     
     
     protected void typeError(Expression exp) throws ASTTraversalException {
-        
+        throw new ASTTraversalException(exp.getPosition(), "Type error @ " + exp);
     }
 }

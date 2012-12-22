@@ -1,9 +1,18 @@
 package de.skuzzle.polly.parsing.ast.declarations.types;
 
+import java.util.HashSet;
+import java.util.Set;
+
 
 public class DefaultTypeVisitor implements TypeVisitor {
 
     protected boolean aborted;
+    private final Set<Type> visited;
+    
+    
+    public DefaultTypeVisitor() {
+        this.visited = new HashSet<Type>();
+    }
     
     public void abort() {
         this.aborted = true;
@@ -24,6 +33,7 @@ public class DefaultTypeVisitor implements TypeVisitor {
         }
         this.beforePrimitive(type);
         this.afterPrimitive(type);
+        this.visited.add(type);
     }
     
     
@@ -60,6 +70,7 @@ public class DefaultTypeVisitor implements TypeVisitor {
         }
         
         this.afterProduct(p);
+        this.visited.add(p);
     }
 
     
@@ -88,6 +99,7 @@ public class DefaultTypeVisitor implements TypeVisitor {
         }
         
         this.afterList(l);
+        this.visited.add(l);
     }
 
     
@@ -123,6 +135,7 @@ public class DefaultTypeVisitor implements TypeVisitor {
         }
         
         this.afterMap(m);
+        this.visited.add(m);
     }
 
     
@@ -148,6 +161,7 @@ public class DefaultTypeVisitor implements TypeVisitor {
         }
         
         this.afterVar(v);
+        this.visited.add(v);
     }
     
     
@@ -160,7 +174,7 @@ public class DefaultTypeVisitor implements TypeVisitor {
     
     @Override
     public void visitSubstitute(Type s) {
-        if (this.aborted) {
+        if (this.aborted || this.visited.contains(s)) {
             return;
         }
         
@@ -171,5 +185,6 @@ public class DefaultTypeVisitor implements TypeVisitor {
         }
         
         this.afterSubstitute(s);
+        this.visited.add(s);
     }
 }

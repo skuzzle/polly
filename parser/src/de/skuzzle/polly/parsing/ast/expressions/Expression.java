@@ -33,7 +33,7 @@ public abstract class Expression extends Node {
         super(position);
         this.unique = unique;
         this.types = new ArrayList<Type>();
-        if (!unique.equals(Type.UNKNOWN)) {
+        if (unique != Type.UNKNOWN) {
             this.types.add(unique);
         }
     }

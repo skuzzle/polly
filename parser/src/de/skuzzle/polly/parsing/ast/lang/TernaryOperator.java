@@ -14,8 +14,8 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.parsing.ast.visitor.TypeResolver;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.parsing.ast.visitor.resolving.TypeResolver;
 import de.skuzzle.polly.parsing.util.Stack;
 
 
@@ -32,18 +32,32 @@ public abstract class TernaryOperator<FIRST extends Literal, SECOND extends Lite
     private final static ResolvableIdentifier THIRD_PARAM_NAME =
         new ResolvableIdentifier(Position.NONE, "$third");
     
-    private final Type first;
-    private final Type second;
-    private final Type third;
+    private Type first;
+    private Type second;
+    private Type third;
     
     
     
-    public TernaryOperator(OpType id, Type resultType, Type first, Type second, 
-            Type third) {
-        super(id, resultType);
+    public TernaryOperator(OpType id) {
+        super(id);
+    }
+    
+    
+    
+    /**
+     * Initializes the result- and operand types for this operator.
+     * 
+     * @param resulType The result type of this operator.
+     * @param first Type of the first operand.
+     * @param second Type of the second operand.
+     * @param third Type of the third operand.
+     */
+    protected final void initTypes(Type resulType, Type first, Type second, Type third) {
+        this.setUnique(resulType);
         this.first = first;
         this.second = second;
         this.third = third;
+
     }
     
     

@@ -159,11 +159,9 @@ public abstract class Operator extends Function {
      * Creates a new operator.
      * 
      * @param op The operator type
-     * @param type The type of the value that this operator returns.
      */
-    public Operator(OpType op, Type type) {
+    public Operator(OpType op) {
         super(op.getId());
-        this.setUnique(type);
         this.op = op;
     }
     

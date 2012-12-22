@@ -6,8 +6,6 @@ import java.util.Collection;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Node;
-import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
-import de.skuzzle.polly.parsing.ast.declarations.types.ProductTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
@@ -22,11 +20,6 @@ public class FunctionLiteral extends Literal {
     
     private final ArrayList<Parameter> formal;
     private Expression expression;
-    
-    
-    // semantical edge will be resolved during type resolval.
-    private Type returnType;
-    
     
     
     public FunctionLiteral(Position position, Collection<Parameter> formal, 

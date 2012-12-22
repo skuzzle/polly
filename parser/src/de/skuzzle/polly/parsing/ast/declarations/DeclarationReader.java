@@ -14,7 +14,7 @@ import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.ExecutionVisitor;
-import de.skuzzle.polly.parsing.ast.visitor.TypeResolver;
+import de.skuzzle.polly.parsing.ast.visitor.resolving.TypeResolver;
 
 
 /**
@@ -60,9 +60,8 @@ public class DeclarationReader implements Closeable {
     private final String charset;
     private final LineNumberReader reader;
     private final File file;
-    private final TypeResolver typeResolver;
     private final ExecutionVisitor executor;
-    
+    private final Namespace nspace;
     
     
     public DeclarationReader(File file, String charset, Namespace nspace) 
@@ -70,7 +69,7 @@ public class DeclarationReader implements Closeable {
         this.charset = charset;
         this.file = file;
         this.reader = new LineNumberReader(new FileReader(file));
-        this.typeResolver = new TypeResolver(nspace);
+        this.nspace = nspace;
         this.executor = new ExecutionVisitor(nspace);
     }
     
@@ -115,7 +114,7 @@ public class DeclarationReader implements Closeable {
             }
             
             final Assignment assign = (Assignment) exp;
-            assign.visit(this.typeResolver);
+            TypeResolver.resolveAST(assign, this.nspace);
             assign.visit(this.executor);
             return true;
         } catch (ASTTraversalException e) {

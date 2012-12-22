@@ -4,6 +4,7 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.types.ListTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
+import de.skuzzle.polly.parsing.ast.declarations.types.TypeVar;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
@@ -18,9 +19,9 @@ public class ListIndex extends BinaryOperator<ListLiteral, NumberLiteral> {
     private static final long serialVersionUID = 1L;
     
     public ListIndex(OpType id) {
-        super(id, Type.newTypeVar("A"), new ListTypeConstructor(Type.newTypeVar("A")), 
-            Type.NUM);
-        
+        super(id);
+        final TypeVar a = Type.newTypeVar("A");
+        this.initTypes(a, new ListTypeConstructor(a), Type.NUM);
         this.setMustCopy(true);
     }
     

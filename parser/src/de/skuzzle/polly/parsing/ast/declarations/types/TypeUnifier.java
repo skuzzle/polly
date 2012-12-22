@@ -67,7 +67,11 @@ final class TypeUnifier {
             final ListTypeConstructor lc2 = (ListTypeConstructor) t;
             return this.unifyInternal(lc1.getSubType(), lc2.getSubType());
             
-        } else if (s instanceof ProductTypeConstructor && t instanceof ProductTypeConstructor) {
+        } else if (s instanceof ProductTypeConstructor && 
+                    t instanceof ProductTypeConstructor) {
+            
+            // CONSIDER: unify single type Products with simple types?
+            
             this.union(s, t);
             final ProductTypeConstructor pc1 = (ProductTypeConstructor) s;
             final ProductTypeConstructor pc2 = (ProductTypeConstructor) t;
@@ -144,10 +148,10 @@ final class TypeUnifier {
      * @param n Type to union.
      */
     private void union(Type m, Type n) {
-        Type rep_m = this.find(m);
-        Type rep_n = this.find(n);
+        final Type rep_m = this.find(m);
+        final Type rep_n = this.find(n);
         
-        int equiv = this.getEquivClass(m);
+        final int equiv = this.getEquivClass(m);
         
         if (!(rep_m instanceof TypeVar)) {
             this.classToType.put(equiv, rep_m);

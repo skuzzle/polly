@@ -5,7 +5,6 @@ import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
-import de.skuzzle.polly.parsing.types.Type;
 
 
 public class VarAccess extends Expression {
@@ -13,8 +12,6 @@ public class VarAccess extends Expression {
     private static final long serialVersionUID = 1L;
     
     private ResolvableIdentifier identifier;
-    private Type typeToResolve;
-    
     
     
     public VarAccess(Position position, ResolvableIdentifier identifier) {
@@ -23,7 +20,6 @@ public class VarAccess extends Expression {
             throw new NullPointerException("identifier is null");
         }
         this.identifier = identifier;
-        this.typeToResolve = Type.ANY;
     }
     
     
@@ -35,19 +31,6 @@ public class VarAccess extends Expression {
         } else {
             super.replaceChild(current, newChild);
         }
-    }
-
-    
-    
-    
-    public Type getTypeToResolve() {
-        return this.typeToResolve;
-    }
-    
-    
-    
-    public void setTypeToResolve(Type typeToResolve) {
-        this.typeToResolve = typeToResolve;
     }
     
     

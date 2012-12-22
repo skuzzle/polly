@@ -6,6 +6,7 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.types.ListTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
+import de.skuzzle.polly.parsing.ast.declarations.types.TypeVar;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.lang.UnaryOperator;
@@ -26,7 +27,9 @@ public class RandomListIndex extends UnaryOperator<ListLiteral> {
     
     
     public RandomListIndex(OpType op) {
-        super(op, Type.newTypeVar("A"), new ListTypeConstructor(Type.newTypeVar("A")));
+        super(op);
+        final TypeVar a = Type.newTypeVar("A");
+        this.initTypes(a, new ListTypeConstructor(a));
         this.setMustCopy(true);
     }
 

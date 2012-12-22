@@ -21,8 +21,10 @@ public class BinaryArithmetic extends BinaryOperator<NumberLiteral, NumberLitera
 
     private static final long serialVersionUID = 1L;
     
+    
     public BinaryArithmetic(OpType id) {
-        super(id, Type.NUM, Type.NUM, Type.NUM);
+        super(id);
+        this.initTypes(Type.NUM, Type.NUM, Type.NUM);
     }
     
     

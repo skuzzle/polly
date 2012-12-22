@@ -14,8 +14,8 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.parsing.ast.visitor.TypeResolver;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.parsing.ast.visitor.resolving.TypeResolver;
 import de.skuzzle.polly.parsing.util.Stack;
 
 
@@ -27,15 +27,24 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
     protected final static ResolvableIdentifier PARAM_NAME = 
             new ResolvableIdentifier(Position.NONE, "$param");
     
-    private final Type operandType;
+    private Type operandType;
     
     
-    
-    public UnaryOperator(OpType op, Type resultType, Type operandType) {
-        super(op, resultType);
-        this.operandType = operandType;
+    public UnaryOperator(OpType op) {
+        super(op);
     }
     
+    
+    
+    /**
+     * Initializes the result- and operand types for this operator.
+     * 
+     * @param resultType The type of the value that this operator returns.
+     * @param operandType Type of the operand.
+     */
+    protected final void initTypes(Type resultType, Type operandType) {
+        this.setUnique(resultType);
+    }
     
     
     @Override

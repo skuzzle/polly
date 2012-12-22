@@ -70,13 +70,13 @@ public class DotBuilder {
     
     
     public void printNodeWithEdgeTo(Object newNode, Object parent, String...attributes) {
-        this.printNode(newNode, attributes);
+        this.printLabel(newNode, false, attributes);
         this.edgeList.add(new Edge(newNode, parent));
     }
     
     
     
-    public void printNode(Object node, String...attributes) {
+    private void printLabel(Object node, boolean edge, String...attributes) {
         int orderNum;
         boolean fromMap = false;
         if (this.preorderMap.get(node) != null) {
@@ -102,12 +102,18 @@ public class DotBuilder {
         }
         this.out.println("}\"]");
         
-        if (!this.preorderStack.isEmpty()) {
+        if (edge && !this.preorderStack.isEmpty()) {
             this.emitEdge(this.preorderStack.peek(), orderNum);
         }
         if (!fromMap) {
             this.preorderStack.push(this.preorderNum);
         }
+    }
+    
+    
+    
+    public void printNode(Object node, String...attributes) {
+        this.printLabel(node, true, attributes);
     }
     
     

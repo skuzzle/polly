@@ -14,8 +14,8 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.parsing.ast.visitor.TypeResolver;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.parsing.ast.visitor.resolving.TypeResolver;
 import de.skuzzle.polly.parsing.util.Stack;
 
 
@@ -37,8 +37,8 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
     private final static ResolvableIdentifier RIGHT_PARAM_NAME =
             new ResolvableIdentifier(Position.NONE, "$right");
     
-    private final Type left;
-    private final Type right;
+    private Type left;
+    private Type right;
     
     
     
@@ -46,12 +46,22 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
      * Creates a new binary operator.
      * 
      * @param id The type of the operator.
+     */
+    public BinaryOperator(OpType id) {
+        super(id);
+    }
+    
+    
+    
+    /**
+     * Initializes the result- and operand types for this operator.
+     * 
      * @param resultType The type of the value that this operator returns.
      * @param left Type of the left operand.
      * @param right Type of the right operand.
      */
-    public BinaryOperator(OpType id, Type resultType, Type left, Type right) {
-        super(id, resultType);
+    protected final void initTypes(Type resultType, Type left, Type right) {
+        this.setUnique(resultType);
         this.left = left;
         this.right = right;
     }

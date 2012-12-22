@@ -1,18 +1,24 @@
 package de.skuzzle.polly.parsing.ast.declarations.types;
 
+import java.io.ObjectStreamException;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 import de.skuzzle.polly.parsing.ast.Identifier;
+import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.declarations.TypeDeclaration;
+import de.skuzzle.polly.parsing.ast.declarations.Typespace;
+import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitable;
 
 
 public class Type implements Serializable, Visitable<TypeVisitor> {
     
+    // XXX: static field order important!
+    
     private static final long serialVersionUID = 1L;
     
+    private static int varIds = 0;
+
     public final static Type NUM = new Type(new Identifier("Num"), true, true);
     public final static Type DATE = new Type(new Identifier("Date"), true, true);
     public final static Type TIMESPAN = new Type(new Identifier("Timespan"), true, true);
@@ -20,28 +26,21 @@ public class Type implements Serializable, Visitable<TypeVisitor> {
     public final static Type USER = new Type(new Identifier("User"), true, true);
     public final static Type STRING = new Type(new Identifier("String"), true, true);
     public final static Type BOOLEAN = new Type(new Identifier("Boolean"), true, true);
+    public final static Type HELP = new Type(new Identifier("Help"), true, true);
     public final static Type UNKNOWN = new Type(new Identifier("Unknown"), true, true);
     
-    
-    private final static Map<String, TypeVar> typeVars = new HashMap<String, TypeVar>();
-    private static int varIds = 0;
+    private final static Typespace TYPE_SPACE = new Typespace();
     
     
     
     public final static TypeVar newTypeVar() {
-        final Identifier id = new Identifier("$" + (varIds++));
-        return new TypeVar(id);
+        return newTypeVar("$" + (varIds++));
     }
     
     
     
     public final static TypeVar newTypeVar(Identifier name) {
-        TypeVar v = typeVars.get(name.getId());
-        if (v == null) {
-            v = new TypeVar(name);
-            typeVars.put(name.getId(), v);
-        }
-        return v;
+        return new TypeVar(name);
     }
     
     
@@ -111,13 +110,6 @@ public class Type implements Serializable, Visitable<TypeVisitor> {
     
     
     @Override
-    public final boolean equals(Object obj) {
-        throw new UnsupportedOperationException("do not compare types using #equals()");
-    }
-    
-    
-    
-    @Override
     public String toString() {
         return this.getName().getId();
     }
@@ -127,5 +119,16 @@ public class Type implements Serializable, Visitable<TypeVisitor> {
     @Override
     public void visit(TypeVisitor visitor) {
         visitor.visitPrimitive(this);
+    }
+    
+    
+    
+    public Object readResolve() throws ObjectStreamException {
+        // HACK to maintain unique instances of primitive types though serialization
+        try {
+            return TYPE_SPACE.resolveType(new ResolvableIdentifier(this.getName()));
+        } catch (ASTTraversalException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

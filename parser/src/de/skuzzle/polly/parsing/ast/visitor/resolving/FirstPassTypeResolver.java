@@ -16,6 +16,7 @@ import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Empty;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
+import de.skuzzle.polly.parsing.ast.expressions.Native;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
@@ -40,6 +41,13 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     
     public FirstPassTypeResolver(Namespace namespace) {
         super(namespace);
+    }
+    
+    
+    
+    @Override
+    public void beforeNative(Native hc) throws ASTTraversalException {
+        hc.resolveType(this.nspace, this);
     }
     
     

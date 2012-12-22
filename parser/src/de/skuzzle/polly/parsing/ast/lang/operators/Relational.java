@@ -3,6 +3,7 @@ package de.skuzzle.polly.parsing.ast.lang.operators;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
+import de.skuzzle.polly.parsing.ast.declarations.types.TypeVar;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.literals.BooleanLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
@@ -18,7 +19,9 @@ public class Relational extends BinaryOperator<Literal, Literal> {
     private static final long serialVersionUID = 1L;
     
     public Relational(OpType id) {
-        super(id, Type.BOOLEAN, Type.newTypeVar("A"), Type.newTypeVar("A"));
+        super(id);
+        final TypeVar a = Type.newTypeVar("A");
+        this.initTypes(Type.BOOLEAN, a, a);
     }
 
 

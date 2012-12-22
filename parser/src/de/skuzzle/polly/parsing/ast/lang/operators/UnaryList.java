@@ -7,6 +7,7 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.types.ListTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
+import de.skuzzle.polly.parsing.ast.declarations.types.TypeVar;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
@@ -22,9 +23,9 @@ public class UnaryList extends UnaryOperator<ListLiteral> {
     
     
     public UnaryList(OpType op) {
-        super(op, new ListTypeConstructor(Type.newTypeVar("A")), 
-            new ListTypeConstructor(Type.newTypeVar("A")));
-        
+        super(op);
+        final TypeVar a = Type.newTypeVar("A");
+        this.initTypes(new ListTypeConstructor(a), new ListTypeConstructor(a));
         this.setMustCopy(true);
     }
 

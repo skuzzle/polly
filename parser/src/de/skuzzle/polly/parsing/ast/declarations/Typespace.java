@@ -8,15 +8,16 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 
 public class Typespace extends Namespace {
 
-    private final static Typespace TYPES = new Typespace(null);
+    private final static Typespace TYPES;
     static {
         try {
-        TYPES.declare(Type.NUM.declaration());
-        TYPES.declare(Type.STRING.declaration());
-        TYPES.declare(Type.CHANNEL.declaration());
-        TYPES.declare(Type.DATE.declaration());
-        TYPES.declare(Type.TIMESPAN.declaration());
-        TYPES.declare(Type.USER.declaration());
+            TYPES = new Typespace(null);
+            TYPES.declare(Type.NUM.declaration());
+            TYPES.declare(Type.STRING.declaration());
+            TYPES.declare(Type.CHANNEL.declaration());
+            TYPES.declare(Type.DATE.declaration());
+            TYPES.declare(Type.TIMESPAN.declaration());
+            TYPES.declare(Type.USER.declaration());
         } catch (ASTTraversalException e) {
             throw new RuntimeException("impossibru", e);
         }

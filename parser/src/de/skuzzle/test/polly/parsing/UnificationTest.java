@@ -44,7 +44,7 @@ public class UnificationTest {
         types2.add(new ListTypeConstructor(Type.NUM));
         
         types2.add(new MapTypeConstructor(
-            new ProductTypeConstructor(Type.NUM), Type.newTypeVar()));
+            new ProductTypeConstructor(Type.NUM), Type.STRING));
         
         final Type actual = new MapTypeConstructor(new ProductTypeConstructor(types2), 
             Type.newTypeVar());

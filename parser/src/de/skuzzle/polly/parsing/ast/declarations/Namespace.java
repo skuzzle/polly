@@ -477,7 +477,7 @@ public class Namespace {
      *          already exists in this namespace.
      */
     public void declare(Declaration decl) throws ASTTraversalException {
-        if (decl.getType().equals(Type.UNKNOWN)) {
+        if (decl.getType() == Type.UNKNOWN) {
             throw new IllegalStateException(
                 "cannot declare variable with unresolved type: " + decl);
         }

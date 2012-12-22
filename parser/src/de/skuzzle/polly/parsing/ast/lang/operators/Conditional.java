@@ -3,6 +3,7 @@ package de.skuzzle.polly.parsing.ast.lang.operators;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
+import de.skuzzle.polly.parsing.ast.declarations.types.TypeVar;
 import de.skuzzle.polly.parsing.ast.expressions.literals.BooleanLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.lang.TernaryOperator;
@@ -23,9 +24,9 @@ public class Conditional extends TernaryOperator<BooleanLiteral, Literal, Litera
     private static final long serialVersionUID = 1L;
 
     public Conditional(OpType id) {
-        super(id, Type.newTypeVar("A"), Type.BOOLEAN, Type.newTypeVar("A"), 
-            Type.newTypeVar("A"));
-        
+        super(id);
+        final TypeVar a = Type.newTypeVar("A");
+        this.initTypes(a, Type.BOOLEAN, a, a);
         this.setMustCopy(true);
     }
     

@@ -1,8 +1,6 @@
 package de.skuzzle.polly.parsing.ast.visitor.resolving;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
@@ -11,6 +9,7 @@ import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
+import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
@@ -64,7 +63,9 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         
         for (final Expression exp : list.getContent()) {
             exp.visit(this);
-            Type.unify(list.getUnique(), exp.getUnique());
+            if (!Type.unify(list.getUnique(), exp.getUnique())) {
+                this.typeError(list);
+            }
         }
         
         this.afterListLiteral(list);
@@ -86,25 +87,32 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
     
     
     @Override
-    public void visitCall(Call call) throws ASTTraversalException {
-        if (this.aborted) {
-            return;
+    public void beforeCall(Call call) throws ASTTraversalException {
+        Type t;
+        if (!call.typeResolved()) {
+            if (call.getTypes().size() == 1) {
+                t = call.getTypes().get(0);
+            } else {
+                t = Type.newTypeVar();
+            }
+        } else {
+            t = call.getUnique();
         }
-        
-        this.beforeCall(call);
-        final Type t = call.typeResolved() ? call.getUnique() : Type.newTypeVar();
         
         MapTypeConstructor mtc = null;
         boolean uniqueMatch = false;
         for (final ProductTypeConstructor s : call.getSignatureTypes()) {
-            if (uniqueMatch) {
-                // Ambiguous types found
-                this.typeError(call);
-            }
             final MapTypeConstructor tmp = new MapTypeConstructor(s, t);
             
             for (final Type lhsType : call.getLhs().getTypes()) {
-                uniqueMatch = Type.unify(lhsType, tmp);
+                if (Type.unify(lhsType, tmp)) {
+                    if (uniqueMatch) {
+                        // Ambiguous types found
+                        this.typeError(call);
+                    } else {
+                        uniqueMatch = true;
+                    }
+                }
                 mtc = uniqueMatch ? tmp : mtc;
             }
         }
@@ -122,10 +130,12 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         for (final Expression exp : call.getParameters()) {
             exp.setUnique(uniqueIt.next());
         }
-        
-        call.getLhs().visit(this);
-
-        
-        this.afterCall(call);
+    }
+    
+    
+    
+    @Override
+    public void beforeAccess(NamespaceAccess access) throws ASTTraversalException {
+        this.applyType(access, access.getRhs());
     }
 }

@@ -45,7 +45,8 @@ public class Cast extends Operator {
      * @param target Target type to cast to.
      */
     public Cast(OpType operator, Type target) {
-        super(operator, target);
+        super(operator);
+        this.setUnique(target);
         this.operandType = Type.newTypeVar();
     }
     

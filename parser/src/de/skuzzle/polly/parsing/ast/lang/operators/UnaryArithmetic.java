@@ -15,7 +15,8 @@ public class UnaryArithmetic extends UnaryOperator<NumberLiteral> {
     private static final long serialVersionUID = 1L;
     
     public UnaryArithmetic(OpType op) {
-        super(op, Type.NUM, Type.NUM);
+        super(op);
+        this.initTypes(Type.NUM, Type.NUM);
     }
 
     
