@@ -20,8 +20,9 @@ public class MapTypeConstructor extends Type {
         return new Identifier(b.toString());
     }
 
-    private final ProductTypeConstructor source;
-    private final Type target;
+    
+    private ProductTypeConstructor source;
+    private Type target;
     
     
     
@@ -44,6 +45,25 @@ public class MapTypeConstructor extends Type {
     
     public Type getTarget() {
         return this.target;
+    }
+    
+    
+    
+    @Override
+    public Type fresh() {
+        // invariant: valid cast
+        this.source = (ProductTypeConstructor) this.source.fresh();
+        this.target = this.target.fresh();
+        return this;
+    }
+    
+    
+    
+    @Override
+    public Type substitute(TypeVar var, Type t) {
+        this.source = (ProductTypeConstructor) this.source.substitute(var, t);
+        this.target = this.target.substitute(var, t);
+        return this;
     }
     
     

@@ -40,8 +40,8 @@ public class FoldLeft extends TernaryOperator<ListLiteral, FunctionLiteral, Lite
         super(OpType.FOLD_LEFT);
         final TypeVar a = Type.newTypeVar("A");
         final TypeVar b = Type.newTypeVar("B");
-        this.initTypes(a, new ListTypeConstructor(a), 
-            new MapTypeConstructor(new ProductTypeConstructor(a, b), a), a);
+        this.initTypes(b, new ListTypeConstructor(a), 
+            new MapTypeConstructor(new ProductTypeConstructor(a, b), b), b);
     }
 
 

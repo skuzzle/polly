@@ -78,7 +78,7 @@ public class Call extends Expression {
     
     
     public ProductTypeConstructor createSignature() {
-        final Collection<Type> types = new ArrayList<Type>(this.parameters.size());
+        final List<Type> types = new ArrayList<Type>(this.parameters.size());
         for (final Expression exp : this.parameters) {
             types.add(exp.getUnique());
         }

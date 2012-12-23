@@ -7,37 +7,34 @@ public class TypeVar extends Type {
 
     private static final long serialVersionUID = 1L;
     
-    private Type substitute;
-    
+
     
     public TypeVar(Identifier name) {
         super(name, false, false);
     }
-    
-    
-    
-    protected void setSubstitute(Type t) {
-        this.substitute = t;
-    }
-    
-    
-    
-    boolean isSubstituted() {
-        return this.substitute != null;
-    }
 
     
     
-    Type getSubstitute() {
-        return this.substitute;
+    @Override
+    public Type fresh() {
+        return Type.newTypeVar();
+    }
+    
+    
+    
+    @Override
+    public Type substitute(TypeVar var, Type t) {
+        if (var == this) {
+            return t;
+        }
+        return this;
     }
     
     
     
     @Override
     public String toString() {
-        return this.substitute == null || this.substitute == this
-            ? this.getName().toString() : this.substitute.toString();
+        return this.getName().toString();
     }
     
     

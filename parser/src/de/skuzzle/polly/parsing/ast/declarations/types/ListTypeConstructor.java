@@ -8,7 +8,7 @@ public class ListTypeConstructor extends Type {
     
     private static final long serialVersionUID = 1L;
     
-    private final Type subType;
+    private Type subType;
 
     
     public ListTypeConstructor(Type subType) {
@@ -21,6 +21,22 @@ public class ListTypeConstructor extends Type {
     
     public Type getSubType() {
         return this.subType;
+    }
+    
+    
+    
+    @Override
+    public Type fresh() {
+        this.subType = this.subType.fresh();
+        return this;
+    }
+    
+    
+    
+    @Override
+    public Type substitute(TypeVar var, Type t) {
+        this.subType = this.subType.substitute(var, t);
+        return this;
     }
 
     

@@ -55,13 +55,6 @@ public class TypeGraphVisualizer extends DefaultTypeVisitor {
     
     
     @Override
-    public void beforeSubstitute(Type s) {
-        this.dotBuilder.printNode(s, s.getName().getId());
-    }
-    
-    
-    
-    @Override
     public void afterList(ListTypeConstructor l) {
         this.dotBuilder.pop(l);
     }
@@ -92,12 +85,5 @@ public class TypeGraphVisualizer extends DefaultTypeVisitor {
     @Override
     public void afterVar(TypeVar v) {
         this.dotBuilder.pop(v);
-    }
-    
-    
-    
-    @Override
-    public void afterSubstitute(Type s) {
-        this.dotBuilder.pop(s);
     }
 }

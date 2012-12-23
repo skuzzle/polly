@@ -264,6 +264,23 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
     
     
     
+    /**
+     * Replaces all {@link TypeVar TypeVars} in this type expression with new variables.
+     * 
+     * @return The modified type expression.
+     */
+    public Type fresh() {
+        return this;
+    }
+    
+    
+    
+    public Type substitute(TypeVar var, Type t) {
+        return this;
+    }
+    
+    
+    
     public Object readResolve() throws ObjectStreamException {
         if (this.isPrimitve()) {
             // HACK to maintain unique instances of primitive types though serialization

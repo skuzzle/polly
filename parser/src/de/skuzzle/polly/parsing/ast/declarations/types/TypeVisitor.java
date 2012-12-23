@@ -22,8 +22,4 @@ public interface TypeVisitor {
     public void beforeVar(TypeVar v);
     public void afterVar(TypeVar v);
     public void visitVar(TypeVar v);
-    
-    public void beforeSubstitute(Type s);
-    public void afterSubstitute(Type s);
-    public void visitSubstitute(Type s);
 }

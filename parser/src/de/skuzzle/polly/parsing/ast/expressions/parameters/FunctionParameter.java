@@ -2,6 +2,7 @@ package de.skuzzle.polly.parsing.ast.expressions.parameters;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
@@ -48,7 +49,7 @@ public class FunctionParameter extends Parameter {
      * @param sig Signature of the function that this parameter represents.
      * @param name Name of this parameter. 
      */
-    public FunctionParameter(Position position, Type returnType, Collection<Type> sig, 
+    public FunctionParameter(Position position, Type returnType, List<Type> sig, 
             ResolvableIdentifier name) {
         super(position, name, 
             new MapTypeConstructor(new ProductTypeConstructor(sig), returnType));

@@ -156,35 +156,8 @@ public class DefaultTypeVisitor implements TypeVisitor {
         if (this.aborted) {
             return;
         }
-        if (v.isSubstituted()) {
-            this.visitSubstitute(v.getSubstitute());
-        }
         
         this.afterVar(v);
         this.visited.add(v);
-    }
-    
-    
-    
-    @Override
-    public void beforeSubstitute(Type s) {}
-    
-    @Override
-    public void afterSubstitute(Type s) {}
-    
-    @Override
-    public void visitSubstitute(Type s) {
-        if (this.aborted || this.visited.contains(s)) {
-            return;
-        }
-        
-        this.beforeSubstitute(s);
-        
-        if (this.aborted) {
-            return;
-        }
-        
-        this.afterSubstitute(s);
-        this.visited.add(s);
     }
 }

@@ -67,6 +67,7 @@ public class ASTVisualizer extends DepthFirstVisitor {
     public void visitOperatorCall(OperatorCall call) throws ASTTraversalException {
         this.beforeOperatorCall(call);
         
+        call.getLhs().visit(this);
         for (final Expression exp : call.getParameters()) {
             exp.visit(this);
         }
@@ -78,7 +79,8 @@ public class ASTVisualizer extends DepthFirstVisitor {
 
     @Override
     public void beforeOperatorCall(OperatorCall call) throws ASTTraversalException {
-        this.printExpression("Op " + call.getOperator().getId(), call);
+        //this.printExpression("Op " + call.getOperator().getId(), call);
+        this.beforeCall(call);
     }
 
 
@@ -87,9 +89,9 @@ public class ASTVisualizer extends DepthFirstVisitor {
     public void beforeCall(Call call) throws ASTTraversalException {
         this.printExpression("Call", call);
     }
-
-
-
+    
+    
+    
     @Override
     public void beforeLiteral(Literal literal) throws ASTTraversalException {
         this.printExpression(literal.toString(), literal);

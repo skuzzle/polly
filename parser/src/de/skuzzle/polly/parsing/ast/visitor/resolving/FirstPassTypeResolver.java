@@ -189,7 +189,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
             
             // one possible actual signature type
             final ProductTypeConstructor s = new ProductTypeConstructor(types);
-            call.addSignatureType(s);
+            
             
             for (final Type s1 : call.getLhs().getTypes()) {
                 if (!(s1 instanceof MapTypeConstructor)) {
@@ -197,6 +197,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
                 }
                 final MapTypeConstructor mc = (MapTypeConstructor) s1;
                 if (Type.unify(s, mc.getSource())) {
+                    call.addSignatureType(s);
                     call.addType(mc.getTarget());
                 }
             }
@@ -225,7 +226,6 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         }
         
         this.beforeAccess(access);
-        
         
         if (!(access.getLhs() instanceof VarAccess)) {
             this.reportError(access.getLhs(), "Operand muss ein Bezeichner sein");

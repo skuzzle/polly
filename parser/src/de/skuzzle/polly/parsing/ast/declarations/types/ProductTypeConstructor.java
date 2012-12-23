@@ -3,6 +3,8 @@ package de.skuzzle.polly.parsing.ast.declarations.types;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 import de.skuzzle.polly.parsing.ast.Identifier;
 
@@ -28,10 +30,10 @@ public class ProductTypeConstructor extends Type implements Iterable<Type> {
     
     
     
-    private final Collection<Type> types;
+    private final List<Type> types;
     
     
-    public ProductTypeConstructor(Collection<Type> types) {
+    public ProductTypeConstructor(List<Type> types) {
         super(typeName(types), true, false);
         for (final Type t : types) {
             t.parent = this;
@@ -48,10 +50,33 @@ public class ProductTypeConstructor extends Type implements Iterable<Type> {
     
     
     
-    public Collection<Type> getTypes() {
+    public List<Type> getTypes() {
         return this.types;
     }
+    
+    
+    
+    @Override
+    public Type fresh() {
+        final ListIterator<Type> it = this.types.listIterator();
+        while (it.hasNext()) {
+            final Type t = it.next();
+            it.set(t.fresh());
+        }
+        return this;
+    }
 
+    
+    
+    @Override
+    public Type substitute(TypeVar var, Type t) {
+        final ListIterator<Type> it = this.types.listIterator();
+        while (it.hasNext()) {
+            final Type next = it.next();
+            it.set(next.substitute(var, t));
+        }
+        return this;
+    }
     
     
     @Override
