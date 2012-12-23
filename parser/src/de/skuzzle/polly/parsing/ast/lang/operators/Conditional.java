@@ -27,7 +27,6 @@ public class Conditional extends TernaryOperator<BooleanLiteral, Literal, Litera
         super(id);
         final TypeVar a = Type.newTypeVar("A");
         this.initTypes(a, Type.BOOLEAN, a, a);
-        this.setMustCopy(true);
     }
     
     

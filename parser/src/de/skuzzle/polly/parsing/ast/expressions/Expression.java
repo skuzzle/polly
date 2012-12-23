@@ -51,12 +51,28 @@ public abstract class Expression extends Node {
     
     
     
+    /**
+     * Gets a list of all possible types for this expression. You should never modify the
+     * returned list directly. Use {@link #addType(Type)} and 
+     * {@link #addTypes(Collection)} to add possible types to this list.
+     * 
+     * @return List of possible types of this expression.
+     */
     public List<Type> getTypes() {
         return this.types;
     }
     
     
     
+    /**
+     * Adds another type as possible type for this expression. If an instance of that 
+     * type is already contained in the type list, the latter call will be ignored.
+     * 
+     * <p>Trying to add another type after the unique type of this expression has been 
+     * resolved will cause an {@link IllegalArgumentException} to be thrown.</p>
+     * 
+     * @param type Possible type of this expression.
+     */
     public void addType(Type type) {
         if (this.typeResolved()) {
             throw new IllegalStateException(
@@ -69,6 +85,15 @@ public abstract class Expression extends Node {
     
     
     
+    /**
+     * Adds all the types from the given collection as possible type for this 
+     * expression. Types for which an instance already exists in this expression's type 
+     * list, will be ignored.
+     * 
+     * <p>This method simply calls {@link #addType(Type)} for each type in the given 
+     * collection.</p>
+     * @param types Types to add as possible type for this expression.
+     */
     public void addTypes(Collection<Type> types) {
         for (final Type type : types) {
             this.addType(type);
@@ -123,5 +148,12 @@ public abstract class Expression extends Node {
     public boolean actualEquals(Equatable o) {
         final Expression other = (Expression) o;
         return this.getUnique().equals(other.getUnique());
+    }
+    
+    
+    
+    @Override
+    public String toString() {
+        return "unique: " + this.unique + ", types: " + this.types;
     }
 }

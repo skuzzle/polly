@@ -171,7 +171,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         final int[] indizes = new int[call.getParameters().size()];
         final boolean done[] = new boolean[call.getParameters().size()];
         
-        // iterate all possible signatures
+        // combine all possible parameter types
         while (!allChecked) {
             allChecked = true;
             
@@ -185,6 +185,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
                 indizes[i] = (indizes[i] + 1) % exp.getTypes().size();
                 ++i;
             }
+            
             // one possible actual signature type
             final ProductTypeConstructor s = new ProductTypeConstructor(types);
             call.addSignatureType(s);

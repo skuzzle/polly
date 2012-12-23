@@ -7,6 +7,11 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 
 
+/**
+ * Represents the access of a variable.
+ * 
+ * @author Simon Taddiken
+ */
 public class VarAccess extends Expression {
 
     private static final long serialVersionUID = 1L;
@@ -35,6 +40,11 @@ public class VarAccess extends Expression {
     
     
     
+    /**
+     * Gets the name of the variable that is accessed.
+     * 
+     * @return The variables name.
+     */
     public ResolvableIdentifier getIdentifier() {
         return this.identifier;
     }
@@ -44,5 +54,12 @@ public class VarAccess extends Expression {
     @Override
     public void visit(Visitor visitor) throws ASTTraversalException {
         visitor.visitVarAccess(this);
+    }
+    
+    
+    
+    @Override
+    public String toString() {
+        return "[VarAccess: " + this.identifier + ", " + super.toString() + "]";
     }
 }

@@ -577,6 +577,15 @@ public class Namespace {
     
     
     
+    /**
+     * Looks up all possible declarations for the given identifier. Declarations on a 
+     * higher level are ignored if a declaration with identical type is found on a lower
+     * level.
+     * 
+     * @param name Variable name to resolve.
+     * @return A set of all declarations with matching names.
+     * @throws DeclarationException If no variable with matching name was found.
+     */
     public Set<Type> lookup(ResolvableIdentifier name) throws DeclarationException {
         final Set<Type> result = new HashSet<Type>();
         for(Namespace space = this; space != null; space = space.parent) {
@@ -584,9 +593,25 @@ public class Namespace {
             if (decls == null) {
                 continue;
             }
-            for (Declaration decl : decls) {
+            
+ignore:     for (Declaration decl : decls) {
                 if (decl.getName().equals(name)) {
+                    
+                    // check if we already found a declaration with the same type on a 
+                    // lower declaration level. If so, the current declaration will be
+                    // ignored. That will have the effect that declarations on lower 
+                    // levels override those on a higher level.
+                    for (final Type alreadyFound : result) {
+                        if (Type.unify(alreadyFound, decl.getType(), false)) {
+                            // continue with next declaration and ignore this one
+                            continue ignore;
+                        }
+                    }
+                    if (decl.mustCopy()) {
+                        decl = CopyTool.copyOf(decl);
+                    }
                     result.add(decl.getType());
+                    name.addDeclaration(decl);
                 }
             }
         }

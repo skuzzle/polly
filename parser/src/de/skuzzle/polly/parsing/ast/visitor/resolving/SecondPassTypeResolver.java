@@ -1,8 +1,11 @@
 package de.skuzzle.polly.parsing.ast.visitor.resolving;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 
 import de.skuzzle.polly.parsing.ast.Root;
+import de.skuzzle.polly.parsing.ast.declarations.types.ListTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.ProductTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
@@ -10,6 +13,7 @@ import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
+import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
@@ -31,7 +35,7 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         if (parent.getTypes().size() == 1 && !child.typeResolved()) {
             child.setUnique(parent.getTypes().get(0));
         } else {
-            this.typeError(parent);
+            this.reportError(parent, "Nicht eindeutiger Typ für Ausdruck.");
         }
     }
     
@@ -63,8 +67,9 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         
         for (final Expression exp : list.getContent()) {
             exp.visit(this);
-            if (!Type.unify(list.getUnique(), exp.getUnique())) {
-                this.typeError(list);
+            if (!Type.unify(list.getUnique(), new ListTypeConstructor(exp.getUnique()))) {
+                final ListTypeConstructor lt = (ListTypeConstructor) list.getUnique();
+                this.typeError(exp, lt.getSubType(), exp.getUnique());
             }
         }
         
@@ -87,7 +92,21 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
     
     
     @Override
+    public void beforeOperatorCall(OperatorCall call) throws ASTTraversalException {
+        this.beforeCall(call);
+    }
+    
+    
+    
+    @Override
     public void beforeCall(Call call) throws ASTTraversalException {
+        
+        // Either:
+        // * call's unique type is already resolved => that is the final result type
+        // * call has only one possible type => that is the final result type
+        // * call has multiple possible types => result type is a TypeVar and must be 
+        //       resolved.
+        
         Type t;
         if (!call.typeResolved()) {
             if (call.getTypes().size() == 1) {
@@ -99,34 +118,40 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
             t = call.getUnique();
         }
         
+        
+        // Unify the call's possible types against all possible actual signature types
+        // to find the one correct type. Multiple or no matches indicate errors.
         MapTypeConstructor mtc = null;
-        boolean uniqueMatch = false;
+        
+        // all call types that match a signature are stored in this list. If type 
+        // resolution was successful, it will contain a single type.
+        final Collection<Type> matched = new ArrayList<Type>();
         for (final ProductTypeConstructor s : call.getSignatureTypes()) {
             final MapTypeConstructor tmp = new MapTypeConstructor(s, t);
             
             for (final Type lhsType : call.getLhs().getTypes()) {
                 if (Type.unify(lhsType, tmp)) {
-                    if (uniqueMatch) {
-                        // Ambiguous types found
-                        this.typeError(call);
-                    } else {
-                        uniqueMatch = true;
-                    }
+                    mtc = tmp;
+                    matched.add(mtc);
                 }
-                mtc = uniqueMatch ? tmp : mtc;
             }
         }
         
-        if (!uniqueMatch) {
+        if (matched.isEmpty()) {
             // no matching type found
-            this.typeError(call);
+            this.reportError(call, 
+                "Keine passende Deklaration für den Aufruf gefunden");
+        } else if (matched.size() != 1) {
+            this.ambiguosCall(call, matched);
         }
 
         call.getLhs().setUnique(mtc);
         call.setUnique(t);
         
+        // Set unique types of the actual parameters according to the single resolved
+        // signature.
         // invariant: mtc.source.size == call.getParameters.size
-        final Iterator<Type> uniqueIt = mtc.getSource().getTypes().iterator();
+        final Iterator<Type> uniqueIt = mtc.getSource().iterator();
         for (final Expression exp : call.getParameters()) {
             exp.setUnique(uniqueIt.next());
         }

@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 
 import de.skuzzle.polly.parsing.Evaluator;
 import de.skuzzle.polly.parsing.Position;
@@ -104,12 +105,19 @@ public class Main {
                 System.out.println(e1.getMessage());
                 System.out.println("    " + cmd);
                 System.out.println("    " + e1.getPosition().errorIndicatorString());
+                
+                try {
+                    // HACK: wait a little to be sure stack trace in printed after sysout
+                    Thread.sleep(5);
+                } catch (InterruptedException e2) {
+                    throw new RuntimeException(e2);
+                }
                 e.printStackTrace();
             } else if (eval.getRoot() != null){
                 System.out.println(eval.getRoot().toString());
                 
                 final ASTVisualizer av = new ASTVisualizer();
-                av.toFile("lastAst.dot", eval.getRoot());
+                av.visualize(eval.getRoot(), new PrintStream("lastAst.dot"));
                 
                 ProcessExecutor pe = ProcessExecutor.getOsInstance(false);
                 pe.addCommand(DOT_PATH);

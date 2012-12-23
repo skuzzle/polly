@@ -1,9 +1,14 @@
 package de.skuzzle.polly.parsing.ast.visitor.resolving;
 
 
+import java.util.Collection;
+
+import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.Typespace;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
+import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.DepthFirstVisitor;
@@ -80,12 +85,29 @@ public abstract class AbstractTypeResolver extends DepthFirstVisitor {
      */
     protected void reportError(Node node, String error) 
             throws ASTTraversalException {
-        throw new ASTTraversalException(node.getPosition(), error);
+        this.reportError(node.getPosition(), error);
     }
     
     
     
-    protected void typeError(Expression exp) throws ASTTraversalException {
-        throw new ASTTraversalException(exp.getPosition(), "Type error @ " + exp);
+    protected void reportError(Position position, String error) 
+            throws ASTTraversalException {
+        throw new ASTTraversalException(position, error);
+    }
+    
+    
+    
+    protected void ambiguosCall(Call call, Collection<Type> types) 
+            throws ASTTraversalException {
+        this.reportError(call.getParameterPosition(), 
+            "Ambiguos call. Matching types: " + types);
+    }
+    
+    
+    
+    protected void typeError(Expression exp, Type expected, Type found) 
+            throws ASTTraversalException {
+        throw new ASTTraversalException(exp.getPosition(), "Typefehler. Erwartet: " + 
+            expected + ", gefunden: " + found);
     }
 }

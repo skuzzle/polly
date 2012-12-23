@@ -95,7 +95,7 @@ public class DotBuilder {
         
         final Iterator<String> it = ArrayIterator.get(attributes);
         while(it.hasNext()) {
-            this.out.print(it.next());
+            this.out.print(this.simpleEscape(it.next()));
             if (it.hasNext()) {
                 this.out.print("|");
             }
@@ -108,6 +108,14 @@ public class DotBuilder {
         if (!fromMap) {
             this.preorderStack.push(this.preorderNum);
         }
+    }
+    
+    
+    
+    private String simpleEscape(String s) {
+        s = s.replaceAll("<", "&lt;");
+        s = s.replaceAll(">", "&gt;");
+        return s;
     }
     
     

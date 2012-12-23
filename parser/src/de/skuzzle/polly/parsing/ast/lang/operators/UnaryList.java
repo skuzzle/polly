@@ -26,7 +26,6 @@ public class UnaryList extends UnaryOperator<ListLiteral> {
         super(op);
         final TypeVar a = Type.newTypeVar("A");
         this.initTypes(new ListTypeConstructor(a), new ListTypeConstructor(a));
-        this.setMustCopy(true);
     }
 
     

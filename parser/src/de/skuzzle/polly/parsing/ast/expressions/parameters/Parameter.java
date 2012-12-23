@@ -58,7 +58,6 @@ public class Parameter extends Expression {
         super(position, type);
         this.name = name;
         this.typeName = new ResolvableIdentifier(type.getName());
-        
     }
     
     

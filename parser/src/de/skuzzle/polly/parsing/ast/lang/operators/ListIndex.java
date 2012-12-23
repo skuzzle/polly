@@ -22,7 +22,6 @@ public class ListIndex extends BinaryOperator<ListLiteral, NumberLiteral> {
         super(id);
         final TypeVar a = Type.newTypeVar("A");
         this.initTypes(a, new ListTypeConstructor(a), Type.NUM);
-        this.setMustCopy(true);
     }
     
     

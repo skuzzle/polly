@@ -32,7 +32,6 @@ public abstract class Function extends Native {
 
     private static final long serialVersionUID = 1L;
     private final ResolvableIdentifier name;
-    private boolean mustCopy;
     
     
 
@@ -44,31 +43,6 @@ public abstract class Function extends Native {
     public Function(String name) {
         super(Type.UNKNOWN);
         this.name = new ResolvableIdentifier(Position.NONE, name);
-    }
-    
-    
-    
-    /**
-     * Sets whether the declaration created by {@link #createDeclaration()} for this 
-     * function must be copied when being resolved.
-     *  
-     * @param mustCopy Whether declarations to this function shall be copied when being 
-     *          resolved.
-     */
-    protected void setMustCopy(boolean mustCopy) {
-        this.mustCopy = mustCopy;
-    }
-    
-    
-    
-    /**
-     * Gets whether the declaration created by {@link #createDeclaration()} for this 
-     * function is set to 'mustCopy'.
-     *  
-     * @return Whether declarations to this function shall be copied when being resolved.
-     */
-    public boolean mustCopy() {
-        return this.mustCopy;
     }
     
     
@@ -89,7 +63,8 @@ public abstract class Function extends Native {
      * instance.</p>
      * 
      * <p>The created declaration will have the 'isPrimitive' flag set to true and the 
-     * 'mustCopy' flag set according to the value {@link #mustCopy()} returns.</p>
+     * 'mustCopy' flag set according to whether the function's type contains type 
+     * variables.</p>
      * 
      * @return A declaration for this function.
      */
@@ -98,7 +73,7 @@ public abstract class Function extends Native {
         final VarDeclaration vd = new VarDeclaration(func.getPosition(), this.name, func);
         this.setUnique(((MapTypeConstructor) func.getUnique()).getTarget());
         vd.setNative(true);
-        vd.setMustCopy(this.mustCopy());
+        vd.setMustCopy(Type.containsTypeVar(this.getUnique()));
         return vd;
     }
     
@@ -136,6 +111,5 @@ public abstract class Function extends Native {
 
     @Override
     public void resolveType(Namespace ns, Visitor typeResolver)
-        throws ASTTraversalException {
-    }
+        throws ASTTraversalException {}
 }

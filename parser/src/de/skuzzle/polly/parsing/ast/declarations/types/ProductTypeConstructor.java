@@ -7,7 +7,7 @@ import java.util.Iterator;
 import de.skuzzle.polly.parsing.ast.Identifier;
 
 
-public class ProductTypeConstructor extends Type {
+public class ProductTypeConstructor extends Type implements Iterable<Type> {
 
     private static final long serialVersionUID = 1L;
 
@@ -64,5 +64,12 @@ public class ProductTypeConstructor extends Type {
     @Override
     public void visit(TypeVisitor visitor) {
         visitor.visitProduct(this);
+    }
+
+
+
+    @Override
+    public Iterator<Type> iterator() {
+        return this.types.iterator();
     }
 }

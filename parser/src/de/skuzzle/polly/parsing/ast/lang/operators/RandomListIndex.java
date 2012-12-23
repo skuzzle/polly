@@ -30,7 +30,6 @@ public class RandomListIndex extends UnaryOperator<ListLiteral> {
         super(op);
         final TypeVar a = Type.newTypeVar("A");
         this.initTypes(a, new ListTypeConstructor(a));
-        this.setMustCopy(true);
     }
 
     

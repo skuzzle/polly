@@ -27,7 +27,7 @@ public class Evaluator {
     
     // TEST:
     public static void main(String[] args) throws IOException {
-        String testMe = ":foo map({1,2,3}, \\-)";
+        String testMe = ":foo map({1,2,\"3\"}, \\-)";
         //testMe = ":foo if 3!=2 ? !{1,2,3} : {4,5,6}";
         final Evaluator eval = new Evaluator(testMe, "ISO-8859-1");
         File decls = new File("decls");
@@ -111,8 +111,8 @@ public class Evaluator {
             // resolve types
             TypeResolver.resolveAST(root, namespace);
             
-            final Visitor executor = new ExecutionVisitor(namespace);
-            root.visit(executor);
+            //final Visitor executor = new ExecutionVisitor(namespace);
+            //root.visit(executor);
             
             this.lastResult = root;
         } catch (ASTTraversalException e) {

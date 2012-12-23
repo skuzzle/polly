@@ -43,7 +43,6 @@ public class Map extends BinaryOperator<ListLiteral, FunctionLiteral> {
         this.initTypes(new ListTypeConstructor(b), 
             new ListTypeConstructor(a), 
             new MapTypeConstructor(new ProductTypeConstructor(a), b));
-        this.setMustCopy(true);
     }
 
 

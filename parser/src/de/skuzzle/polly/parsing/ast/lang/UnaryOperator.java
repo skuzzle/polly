@@ -44,7 +44,9 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
      */
     protected final void initTypes(Type resultType, Type operandType) {
         this.setUnique(resultType);
+        this.operandType = operandType;
     }
+    
     
     
     @Override
