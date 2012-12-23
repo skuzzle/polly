@@ -94,11 +94,7 @@ public class Main {
             
             final Evaluator eval = new Evaluator(":result \">\" " + cmd, "ISO-8859-1");
             
-            try {
-                eval.evaluate(ns);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            eval.evaluate(ns);
             
             if (eval.errorOccurred()) {
                 final ASTTraversalException e = eval.getLastError();

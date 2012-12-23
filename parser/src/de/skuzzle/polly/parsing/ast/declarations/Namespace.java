@@ -23,6 +23,7 @@ import de.skuzzle.polly.parsing.ast.lang.Cast;
 import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
 import de.skuzzle.polly.parsing.ast.lang.functions.FoldLeft;
 import de.skuzzle.polly.parsing.ast.lang.operators.BinaryArithmetic;
+import de.skuzzle.polly.parsing.ast.lang.operators.BinaryBooleanArithmetic;
 import de.skuzzle.polly.parsing.ast.lang.operators.Conditional;
 import de.skuzzle.polly.parsing.ast.lang.operators.DateArithmetic;
 import de.skuzzle.polly.parsing.ast.lang.operators.DateTimespanArithmetic;
@@ -32,6 +33,7 @@ import de.skuzzle.polly.parsing.ast.lang.operators.Relational;
 import de.skuzzle.polly.parsing.ast.lang.operators.TernaryDotDot;
 import de.skuzzle.polly.parsing.ast.lang.operators.TimespanArithmetic;
 import de.skuzzle.polly.parsing.ast.lang.operators.UnaryArithmetic;
+import de.skuzzle.polly.parsing.ast.lang.operators.UnaryBooleanArithmetic;
 import de.skuzzle.polly.parsing.ast.lang.operators.UnaryList;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Unparser;
@@ -275,6 +277,15 @@ public class Namespace {
             GLOBAL.declare(new BinaryArithmetic(OpType.RADIX).createDeclaration());
             GLOBAL.declare(new BinaryArithmetic(OpType.MIN).createDeclaration());
             GLOBAL.declare(new BinaryArithmetic(OpType.MAX).createDeclaration());
+            GLOBAL.declare(new BinaryArithmetic(OpType.XOR).createDeclaration());
+            
+            // boolean arithmetic
+            GLOBAL.declare(new BinaryBooleanArithmetic(OpType.BOOLEAN_AND).createDeclaration());
+            GLOBAL.declare(new BinaryBooleanArithmetic(OpType.XOR).createDeclaration());
+            GLOBAL.declare(new BinaryBooleanArithmetic(OpType.BOOLEAN_OR).createDeclaration());
+            
+            // boolean unary
+            GLOBAL.declare(new UnaryBooleanArithmetic(OpType.EXCLAMATION).createDeclaration());
             
             // Arithmetic timespan and date binary ops
             GLOBAL.declare(new TimespanArithmetic(OpType.ADD).createDeclaration());
@@ -284,6 +295,7 @@ public class Namespace {
             GLOBAL.declare(new DateArithmetic(OpType.SUB).createDeclaration());
             
             // Arithmetic unary ops
+            GLOBAL.declare(new UnaryArithmetic(OpType.EXCLAMATION).createDeclaration());
             GLOBAL.declare(new UnaryArithmetic(OpType.SUB).createDeclaration());
             GLOBAL.declare(new UnaryArithmetic(OpType.LOG).createDeclaration());
             GLOBAL.declare(new UnaryArithmetic(OpType.LN).createDeclaration());

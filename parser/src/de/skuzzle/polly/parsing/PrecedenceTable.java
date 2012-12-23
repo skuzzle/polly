@@ -36,7 +36,6 @@ public class PrecedenceTable {
         this.add(PrecedenceLevel.DISJUNCTION, TokenType.BOOLEAN_OR);
         this.add(PrecedenceLevel.DISJUNCTION, TokenType.INT_OR);
         this.add(PrecedenceLevel.DISJUNCTION, TokenType.XOR);
-        this.add(PrecedenceLevel.DISJUNCTION, TokenType.INT_XOR);
         
         this.add(PrecedenceLevel.CONJUNCTION, TokenType.BOOLEAN_AND);
         this.add(PrecedenceLevel.CONJUNCTION, TokenType.INT_AND);

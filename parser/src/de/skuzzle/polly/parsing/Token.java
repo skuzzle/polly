@@ -97,18 +97,6 @@ public class Token implements Serializable, Equatable {
     
     
     
-    public boolean isUserLiteral() {
-        return this.type.isUserLiteral();
-    }
-    
-    
-    
-    public boolean isChannelLiteral() {
-        return this.type.isChannelLiteral();
-    }
-    
-    
-    
     public boolean matches(Token t) {
         return this.getType() == t.getType();
     }

@@ -7,6 +7,7 @@ import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.ast.lang.UnaryOperator;
+import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.util.Stack;
 
 
@@ -22,9 +23,12 @@ public class UnaryArithmetic extends UnaryOperator<NumberLiteral> {
     
     @Override
     protected void exec(Stack<Literal> stack, Namespace ns, NumberLiteral operand,
-            Position resultPos) {
+            Position resultPos) throws ASTTraversalException {
         
         switch (this.getOp()) {
+        case EXCLAMATION:
+            stack.push(new NumberLiteral(resultPos, (double) ~operand.isInteger()));
+            break;
         case SUB:
             stack.push(new NumberLiteral(resultPos, -operand.getValue()));
             break;

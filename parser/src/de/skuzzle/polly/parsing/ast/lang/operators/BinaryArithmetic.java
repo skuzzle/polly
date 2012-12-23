@@ -97,6 +97,10 @@ public class BinaryArithmetic extends BinaryOperator<NumberLiteral, NumberLitera
             stack.push(new NumberLiteral(resultPos, 
                 Math.max(left.getValue(), right.getValue())));
             break;
+        case XOR:
+            stack.push(new NumberLiteral(
+                resultPos, left.isInteger() ^ right.isInteger()));
+            break;
         default:
             this.invalidOperatorType(this.getOp());
         }

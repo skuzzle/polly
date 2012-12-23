@@ -23,7 +23,7 @@ public enum TokenType {
     POWER("^"), 
     BOOLEAN_AND("&&"), 
     BOOLEAN_OR("||"), 
-    XOR("   "), 
+    XOR("^^"), 
     GT(">"), 
     LT("<"), 
     LEFT_SHIFT("<<"),
@@ -35,7 +35,6 @@ public enum TokenType {
     ELT("<="),
     INT_AND("&"), 
     INT_OR("|"), 
-    INT_XOR(""), 
     DOTDOT(".."), 
     DOT("."),
     COMMA(","), 
@@ -75,155 +74,6 @@ public enum TokenType {
     
     private TokenType(String string) {
         this.string = string;
-    }
-    
-    
-    public boolean isChannelLiteral() {
-        switch (this) {
-            case CHANNEL:
-                return true;
-            default:
-                return false;
-        }
-    }
-    
-    
-    
-    public boolean isUserLiteral() {
-        switch (this) {
-            case USER:
-                return true;
-            default:
-                return false;
-        }
-    }
-    
-    
-    
-    public boolean isDisjunctionOperator() {
-        switch(this) {
-            case BOOLEAN_OR:
-            case INT_OR:
-            case XOR:
-            case INT_XOR:
-                return true;
-            default:
-                return false;
-        }
-    }
-    
-    
-    
-    public boolean isConjunctionOperator() {
-        switch(this) {
-            case BOOLEAN_AND:
-            case INT_AND:
-                return true;
-            default:
-                return false;
-        }
-    }
-    
-    
-    public boolean isExpressionOperator() {
-        switch (this) {
-            case ADD:
-            case ADDWAVE:
-            case SUB:
-            case WAVE:
-                return true;
-            default: 
-                return false;
-        }
-    }
-    
-    
-    
-    public boolean isTermOperator() {
-        switch (this) {
-            case MUL:
-            case DIV:
-            case INTDIV:
-            case MOD:
-                return true;
-            default:
-                return false;
-        }
-    }
-    
-    
-    
-    public boolean isFactorOperator() {
-        return this == POWER;
-    }
-    
-    
-    
-    public boolean isStringOperator() {
-        switch(this) {
-            case QUESTION:
-                return true;
-            default:
-                return false;
-        }
-    }
-    
-    
-    
-    public boolean isBooleanOperator() {
-        switch (this) {
-            case BOOLEAN_AND:
-            case BOOLEAN_OR:
-            case XOR:
-            case EXCLAMATION:
-                return true;
-            default:
-                return false;
-        }
-    }
-    
-    
-    
-    public boolean isNumericOperator() {
-        switch (this) {
-            case ADD:
-            case SUB:
-            case MUL:
-            case DIV:
-            case INTDIV:
-            case POWER:
-            case MOD:
-            case INT_AND:
-            case INT_OR:
-                return true;
-            default:
-                return false;
-        }
-    }
-    
-    
-    
-    public boolean isRelationalOperator() {
-        switch (this) {
-            case GT:
-            case LT: 
-            case EGT:
-            case ELT:
-                return true;
-            default: return false;
-        }
-    }
-    
-    
-    
-    public boolean isEqualityOperator() {
-        switch (this) {
-            case EQ:
-            case NEQ:
-                return true;
-            default:
-                return false;
-        }
     }
     
     

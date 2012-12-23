@@ -180,7 +180,7 @@ public class InputScanner extends AbstractTokenStream {
                 } else if (next == '$') {
                     return new Token(TokenType.DOLLAR, this.spanFrom(tokenStart),"$");
                 } else if (next == '^') {
-                    return new Token(TokenType.POWER, this.spanFrom(tokenStart), "^");
+                    state = 14;
                 } else if (next == '!') {
                     state = 2;
                 } else if (next == '(') {
@@ -364,7 +364,15 @@ public class InputScanner extends AbstractTokenStream {
                     this.pushBack(next);
                     final Token escaped= this.readToken();
                     return new EscapedToken(this.spanFrom(tokenStart), escaped);
-                    //return new Token(TokenType.INTDIV, this.spanFrom(tokenStart), "\\");
+                }
+            } else if (state == 14) {
+                int next = this.readChar();
+                
+                if (next == '^') {
+                    return new Token(TokenType.XOR, this.spanFrom(tokenStart), "^^");
+                } else {
+                    this.pushBack(next);
+                    return new Token(TokenType.POWER, this.spanFrom(tokenStart), "^");
                 }
             }
         }
