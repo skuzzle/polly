@@ -127,7 +127,8 @@ public class ASTVisualizer extends DepthFirstVisitor {
     
     @Override
     public void beforeIdentifier(Identifier identifier) throws ASTTraversalException {
-        this.dotBuilder.printNode(identifier, identifier.getPosition().toString());
+        this.dotBuilder.printNode(identifier, identifier.getId(),
+            identifier.getPosition().toString());
     }
     
     

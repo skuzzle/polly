@@ -62,7 +62,7 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
     public final static Type HELP = new Type(new Identifier("Help"), true, true);
     
     /** Type indicating that a concrete type has not been resolved for an expression. */
-    public final static Type UNKNOWN = new Type(new Identifier("Unknown"), true, true);
+    public final static Type UNKNOWN = new Type(new Identifier("UNKNOWN"), true, true);
     
     
     

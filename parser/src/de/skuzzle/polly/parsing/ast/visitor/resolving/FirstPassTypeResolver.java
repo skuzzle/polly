@@ -25,6 +25,7 @@ import de.skuzzle.polly.parsing.ast.expressions.parameters.FunctionParameter;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.ListParameter;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 
 
 /**
@@ -199,6 +200,12 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
                     call.addType(mc.getTarget());
                 }
             }
+        }
+        
+        if (call.getTypes().isEmpty()) {
+            this.reportError(call.getLhs(),
+                "Keine passende Deklaration für den Aufruf von " + 
+                Unparser.toString(call.getLhs()) + " gefunden");
         }
     }
     

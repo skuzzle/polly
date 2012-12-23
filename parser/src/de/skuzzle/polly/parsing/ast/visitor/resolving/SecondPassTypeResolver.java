@@ -14,9 +14,9 @@ import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
-import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 
 
 class SecondPassTypeResolver extends AbstractTypeResolver {
@@ -35,7 +35,7 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         if (parent.getTypes().size() == 1 && !child.typeResolved()) {
             child.setUnique(parent.getTypes().get(0));
         } else {
-            this.reportError(parent, "Nicht eindeutiger Typ für Ausdruck.");
+            this.reportError(parent, "Nicht eindeutiger Typ");
         }
     }
     
@@ -50,6 +50,10 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         
         for (final Expression exp : root.getExpressions()) {
             exp.visit(this);
+            // check whether unique type could have been resolved
+            if (!exp.typeResolved()) {
+                this.applyType(exp, exp);
+            }
         }
         
         this.afterRoot(root);
@@ -79,14 +83,15 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
     
     
     @Override
-    public void beforeVarAccess(VarAccess access) throws ASTTraversalException {
-    }
-    
-    
-    
-    @Override
     public void beforeAssignment(Assignment assign) throws ASTTraversalException {
         this.applyType(assign, assign.getExpression());
+    }
+    
+
+    
+    @Override
+    public void afterAssignment(Assignment assign) throws ASTTraversalException {
+        this.applyType(assign, assign);
     }
     
     
@@ -139,8 +144,9 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         
         if (matched.isEmpty()) {
             // no matching type found
-            this.reportError(call, 
-                "Keine passende Deklaration für den Aufruf gefunden");
+            this.reportError(call.getLhs(), 
+                "Keine passende Deklaration für den Aufruf von " + 
+                Unparser.toString(call.getLhs()) + " gefunden");
         } else if (matched.size() != 1) {
             this.ambiguosCall(call, matched);
         }

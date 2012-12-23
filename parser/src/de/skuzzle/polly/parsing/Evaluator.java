@@ -98,23 +98,22 @@ public class Evaluator {
     public void evaluate(Namespace namespace) throws IOException {
         try {
             final ExpInputParser parser = new ExpInputParser(this.input, this.encoding);
-            final Root root = parser.parse();
+            this.lastResult = parser.parse();
             
-            if (root == null) {
+            if (this.lastResult == null) {
                 return;
             }
             
             // set parent attributes for all nodes
             final Visitor parentSetter = new ParentSetter();
-            root.visit(parentSetter);
+            this.lastResult.visit(parentSetter);
             
             // resolve types
-            TypeResolver.resolveAST(root, namespace);
+            TypeResolver.resolveAST(this.lastResult, namespace);
             
             //final Visitor executor = new ExecutionVisitor(namespace);
             //root.visit(executor);
             
-            this.lastResult = root;
         } catch (ASTTraversalException e) {
             this.lastError = e;
         }
@@ -135,9 +134,9 @@ public class Evaluator {
     
     
     public Root getRoot() {
-        if (this.errorOccurred()) {
+        /*if (this.errorOccurred()) {
             throw new IllegalStateException("no valid result available");
-        }
+        }*/
         return this.lastResult;
     }
     
