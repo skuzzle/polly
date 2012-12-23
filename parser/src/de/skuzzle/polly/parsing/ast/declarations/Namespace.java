@@ -23,7 +23,6 @@ import de.skuzzle.polly.parsing.ast.lang.Cast;
 import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
 import de.skuzzle.polly.parsing.ast.lang.functions.FoldLeft;
 import de.skuzzle.polly.parsing.ast.lang.operators.BinaryArithmetic;
-import de.skuzzle.polly.parsing.ast.lang.operators.BinaryDotDot;
 import de.skuzzle.polly.parsing.ast.lang.operators.Conditional;
 import de.skuzzle.polly.parsing.ast.lang.operators.DateArithmetic;
 import de.skuzzle.polly.parsing.ast.lang.operators.DateTimespanArithmetic;
@@ -312,7 +311,6 @@ public class Namespace {
             
             // DOTDOT
             GLOBAL.declare(new TernaryDotDot().createDeclaration());
-            GLOBAL.declare(new BinaryDotDot().createDeclaration());
             
             // ternary ops
             GLOBAL.declare(new Conditional(OpType.IF).createDeclaration());

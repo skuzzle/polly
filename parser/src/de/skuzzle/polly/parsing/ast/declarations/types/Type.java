@@ -268,7 +268,6 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
         if (this.isPrimitve()) {
             // HACK to maintain unique instances of primitive types though serialization
             try {
-                System.out.println("yay i have been called: " + this.getName());
                 return TYPE_SPACE.resolveType(new ResolvableIdentifier(this.getName()));
             } catch (ASTTraversalException e) {
                 throw new RuntimeException(e);

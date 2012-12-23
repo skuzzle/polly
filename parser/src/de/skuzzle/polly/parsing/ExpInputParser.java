@@ -621,16 +621,15 @@ public class ExpInputParser {
             this.scanner.consume();
             
             final Expression endRange = this.parseUnary();
+            
+            // default step width of 1 (if dollar is ommitted)
+            Expression operand3 = new NumberLiteral(endRange.getPosition(), 1.0);
             if (this.scanner.match(TokenType.DOLLAR)) {
-                final Expression operand3 = this.parseUnary();
-                return OperatorCall.ternary(
-                    new Position(lhs.getPosition(), operand3.getPosition()), 
-                    OpType.fromToken(la), lhs, endRange, operand3);
-            } else {
-                return OperatorCall.binary(
-                    new Position(lhs.getPosition(), endRange.getPosition()), 
-                    OpType.fromToken(la), lhs, endRange);
+                operand3 = this.parseUnary();
             }
+            return OperatorCall.ternary(
+                new Position(lhs.getPosition(), operand3.getPosition()), 
+                OpType.fromToken(la), lhs, endRange, operand3);
         }
         return lhs;
     }
