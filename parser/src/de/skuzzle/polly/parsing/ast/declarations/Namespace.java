@@ -24,6 +24,7 @@ import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
 import de.skuzzle.polly.parsing.ast.lang.functions.FoldLeft;
 import de.skuzzle.polly.parsing.ast.lang.operators.BinaryArithmetic;
 import de.skuzzle.polly.parsing.ast.lang.operators.BinaryBooleanArithmetic;
+import de.skuzzle.polly.parsing.ast.lang.operators.BinaryStringArithmetic;
 import de.skuzzle.polly.parsing.ast.lang.operators.Conditional;
 import de.skuzzle.polly.parsing.ast.lang.operators.DateArithmetic;
 import de.skuzzle.polly.parsing.ast.lang.operators.DateTimespanArithmetic;
@@ -293,6 +294,9 @@ public class Namespace {
             GLOBAL.declare(new DateTimespanArithmetic(OpType.ADD).createDeclaration());
             GLOBAL.declare(new DateTimespanArithmetic(OpType.SUB).createDeclaration());
             GLOBAL.declare(new DateArithmetic(OpType.SUB).createDeclaration());
+            
+            // String operators
+            GLOBAL.declare(new BinaryStringArithmetic(OpType.ADD).createDeclaration());
             
             // Arithmetic unary ops
             GLOBAL.declare(new UnaryArithmetic(OpType.EXCLAMATION).createDeclaration());
