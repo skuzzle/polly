@@ -21,6 +21,13 @@ public class DateLiteral extends Literal {
     
     
     
+    protected DateLiteral(Position position, Date value, Type type) {
+        super(position, type);
+        this.value = value;
+    }
+    
+    
+    
     public Date getValue() {
         return this.value;
     }

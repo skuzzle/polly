@@ -9,9 +9,9 @@ public class ChannelLiteral extends StringLiteral {
 
     private static final long serialVersionUID = 1L;
     
+    
     public ChannelLiteral(Position position, String value) {
-        super(position, value);
-        this.setUnique(Type.CHANNEL);
+        super(position, value, Type.CHANNEL);
     }
 
     

@@ -135,6 +135,7 @@ public class ExecutionVisitor extends DepthFirstVisitor {
             executed.add(this.stack.pop());
         }
         final ListLiteral result = new ListLiteral(list.getPosition(), executed);
+        result.setUnique(list.getUnique());
         this.stack.push(result);
     }
     
@@ -241,10 +242,8 @@ public class ExecutionVisitor extends DepthFirstVisitor {
     @Override
     public void visitVarAccess(VarAccess access) throws ASTTraversalException {
         this.beforeVarAccess(access);
-        
-        final VarDeclaration vd = this.nspace.resolveVar(access.getIdentifier(), 
-            access.getTypeToResolve());
-                /*(VarDeclaration) access.getIdentifier().getDeclaration();*/
+
+        final VarDeclaration vd = (VarDeclaration) access.getIdentifier().getDeclaration();
         vd.getExpression().visit(this);
         
         this.afterVarAccess(access);

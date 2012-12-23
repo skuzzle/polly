@@ -14,6 +14,7 @@ import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
+import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Unparser;
@@ -71,7 +72,8 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         
         for (final Expression exp : list.getContent()) {
             exp.visit(this);
-            if (!Type.unify(list.getUnique(), new ListTypeConstructor(exp.getUnique()))) {
+            if (!Type.unify(list.getUnique(), 
+                    new ListTypeConstructor(exp.getUnique()), false)) {
                 final ListTypeConstructor lt = (ListTypeConstructor) list.getUnique();
                 this.typeError(exp, lt.getSubType(), exp.getUnique());
             }
@@ -99,6 +101,13 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
     @Override
     public void beforeOperatorCall(OperatorCall call) throws ASTTraversalException {
         this.beforeCall(call);
+    }
+    
+    
+    
+    @Override
+    public void afterVarAccess(VarAccess access) throws ASTTraversalException {
+        access.getIdentifier().setDeclaration(access.selectDeclaration());
     }
     
     

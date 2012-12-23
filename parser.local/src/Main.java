@@ -94,7 +94,11 @@ public class Main {
             
             final Evaluator eval = new Evaluator(":result \">\" " + cmd, "ISO-8859-1");
             
-            eval.evaluate(ns);
+            try {
+                eval.evaluate(ns);
+            } catch (Exception ad) {
+                ad.printStackTrace();
+            }
             
             if (eval.errorOccurred()) {
                 final ASTTraversalException e = eval.getLastError();
@@ -104,7 +108,7 @@ public class Main {
                     new ASTTraversalException(pos, e.getPlainMessage());
                 System.out.println(e1.getMessage());
                 System.out.println("    " + cmd);
-                System.out.println("    " + e1.getPosition().errorIndicatorString());
+                //System.out.println("    " + e1.getPosition().errorIndicatorString());
                 try {
                     // HACK: wait a little to be sure stack trace in printed after sysout
                     Thread.sleep(20);

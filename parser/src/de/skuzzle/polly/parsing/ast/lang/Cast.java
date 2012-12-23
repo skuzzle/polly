@@ -57,9 +57,7 @@ public class Cast extends Operator {
             throws ASTTraversalException {
         
         // on a function call, parameters are already executed to be a Literal
-        final Literal operand = (Literal) ns.resolveVar(
-            PARAM_NAME, 
-            this.operandType).getExpression();
+        final Literal operand = (Literal) ns.resolveHere(PARAM_NAME).getExpression();
         
         stack.push(operand.castTo(this.getUnique()));
     }

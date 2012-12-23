@@ -3,6 +3,9 @@ package de.skuzzle.polly.parsing.ast.expressions;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
+import de.skuzzle.polly.parsing.ast.declarations.Declaration;
+import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 
@@ -36,6 +39,19 @@ public class VarAccess extends Expression {
         } else {
             super.replaceChild(current, newChild);
         }
+    }
+    
+    
+    
+    public Declaration selectDeclaration() {
+        for (final Declaration decl : this.identifier.getDeclarations()) {
+            if (Type.unify(this.getUnique(), decl.getType(), false)) {
+                final VarDeclaration declX = (VarDeclaration) decl;
+                declX.getExpression().setUnique(this.getUnique());
+                return decl;
+            }
+        }
+        throw new IllegalStateException("no matchin decl");
     }
     
     

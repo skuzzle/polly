@@ -19,6 +19,13 @@ public class StringLiteral extends Literal {
     
     
     
+    protected StringLiteral(Position position, String value, Type type) {
+        super(position, type);
+        this.value = value;
+    }
+    
+    
+    
     public String getValue() {
         return this.value;
     }

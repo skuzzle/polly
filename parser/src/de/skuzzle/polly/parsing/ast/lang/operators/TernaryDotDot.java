@@ -70,9 +70,14 @@ public class TernaryDotDot extends
             values += s;
             start += Math.abs(s);
         }
-        return new ListLiteral(resultPos, content);
+        final ListLiteral ll = new ListLiteral(resultPos, content);
+        ll.addType(ll.getUnique());
+        ll.setUnique(new ListTypeConstructor(Type.NUM));
+        return ll;
     }
 
+    
+    
     public TernaryDotDot() {
         super(OpType.DOTDOT);
         this.initTypes(new ListTypeConstructor(Type.NUM), Type.NUM, Type.NUM, Type.NUM);

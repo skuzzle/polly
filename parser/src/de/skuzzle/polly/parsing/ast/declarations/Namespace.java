@@ -557,6 +557,20 @@ public class Namespace {
     
     
     
+    public VarDeclaration resolveHere(ResolvableIdentifier name) throws ASTTraversalException {
+        final List<Declaration> decls = this.decls.get(name.getId());
+        
+        if (decls == null || decls.isEmpty()) {
+            throw new ASTTraversalException(name.getPosition(), 
+                "Unbekannt: " + name.getId());
+        } else if (decls.size() != 1) {
+            throw new ASTTraversalException(name.getPosition(), "Ambiguos");
+        }
+        return (VarDeclaration) decls.get(0);
+    }
+    
+    
+    
     /**
      * <p>Tries to resolve a declaration with the given name and type. If 
      * none was found, <code>null</code> is returned. This will return the first

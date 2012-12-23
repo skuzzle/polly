@@ -66,9 +66,7 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
     @Override
     public final void resolveType(Namespace ns, Visitor typeResolver)
             throws ASTTraversalException {
-        final Expression param = ns.resolveVar(PARAM_NAME, 
-            this.operandType).getExpression();
-        
+        final Expression param = ns.resolveHere(PARAM_NAME).getExpression();
         this.resolve(param, ns, typeResolver);
     }
     
@@ -93,9 +91,7 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
     @SuppressWarnings("unchecked")
     public void execute(Stack<Literal> stack, Namespace ns, Visitor execVisitor)
             throws ASTTraversalException {
-        final O operand = (O) ns.resolveVar(PARAM_NAME, 
-            this.operandType).getExpression();
-        
+        final O operand = (O) ns.resolveHere(PARAM_NAME).getExpression();
         this.exec(stack, ns, operand, operand.getPosition());
     }
 

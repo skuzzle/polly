@@ -91,7 +91,7 @@ public abstract class Function extends Native {
     protected Parameter typeToParameter(Type type, ResolvableIdentifier name) {
         if (type instanceof ListTypeConstructor) {
             final ListTypeConstructor lt = (ListTypeConstructor) type;
-            return new ListParameter(Position.NONE, lt.getSubType());
+            return new ListParameter(Position.NONE, name, lt.getSubType());
         } else if (type instanceof MapTypeConstructor) {
             final MapTypeConstructor ft = (MapTypeConstructor) type;
             return new FunctionParameter(Position.NONE, ft.getTarget(), 

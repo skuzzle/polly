@@ -32,11 +32,11 @@ public class ListParameter extends Parameter {
      * Create a new ListParameter which' subtype is already known.
      * 
      * @param position Position of this Parameter.
+     * @param name name of the parameter.
      * @param subType Subtype of this parameter.
      */
-    public ListParameter(Position position, Type subType) {
-        super(position, new ResolvableIdentifier(position, subType.getName().getId()), 
-            new ListTypeConstructor(subType));
+    public ListParameter(Position position, ResolvableIdentifier name, Type subType) {
+        super(position, name, new ListTypeConstructor(subType));
     }
     
     

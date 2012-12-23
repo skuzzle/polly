@@ -89,10 +89,8 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
     public final void execute(Stack<Literal> stack, Namespace ns, 
             Visitor execVisitor) throws ASTTraversalException {
         
-        final L left = (L) ns.resolveVar(LEFT_PARAM_NAME, 
-            this.left).getExpression();
-        final R right = (R) ns.resolveVar(RIGHT_PARAM_NAME, 
-            this.right).getExpression();
+        final L left = (L) ns.resolveHere(LEFT_PARAM_NAME).getExpression();
+        final R right = (R) ns.resolveHere(RIGHT_PARAM_NAME).getExpression();
         
         this.exec(stack, ns, left, right, 
             new Position(left.getPosition(), right.getPosition()), execVisitor);
@@ -103,10 +101,8 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
     @Override
     public final void resolveType(Namespace ns, Visitor typeResolver)
             throws ASTTraversalException {
-        final Expression left = ns.resolveVar(LEFT_PARAM_NAME, 
-            this.left).getExpression();
-        final Expression right = ns.resolveVar(RIGHT_PARAM_NAME, 
-            this.right).getExpression();
+        final Expression left = ns.resolveHere(LEFT_PARAM_NAME).getExpression();
+        final Expression right = ns.resolveHere(RIGHT_PARAM_NAME).getExpression();
         
         this.resolve(left, right, ns, typeResolver);
     }

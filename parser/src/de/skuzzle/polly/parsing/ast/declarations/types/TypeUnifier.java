@@ -33,7 +33,7 @@ final class TypeUnifier {
      */
     public boolean unify(Type m, Type n, boolean substitute) {
         boolean result = this.unifyInternal(m, n);
-        if (result) {
+        if (result && substitute) {
             for (final Type t : this.typeToClass.keySet()) {
                 if (t instanceof TypeVar) {
                     final TypeVar tv = (TypeVar) t;

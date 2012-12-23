@@ -86,12 +86,9 @@ public abstract class TernaryOperator<FIRST extends Literal, SECOND extends Lite
     public final void execute(Stack<Literal> stack, Namespace ns, 
             Visitor execVisitor) throws ASTTraversalException {
         
-        final FIRST first = (FIRST) ns.resolveVar(FIRST_PARAM_NAME, 
-            this.first).getExpression();
-        final SECOND second = (SECOND) ns.resolveVar(SECOND_PARAM_NAME, 
-            this.second).getExpression();
-        final THIRD third = (THIRD) ns.resolveVar(THIRD_PARAM_NAME, 
-            this.third).getExpression();
+        final FIRST first = (FIRST) ns.resolveHere(FIRST_PARAM_NAME).getExpression();
+        final SECOND second = (SECOND) ns.resolveHere(SECOND_PARAM_NAME).getExpression();
+        final THIRD third = (THIRD) ns.resolveHere(THIRD_PARAM_NAME).getExpression();
         
         this.exec(stack, ns, first, second, third, 
             new Position(first.getPosition(), third.getPosition()), execVisitor);
@@ -119,12 +116,9 @@ public abstract class TernaryOperator<FIRST extends Literal, SECOND extends Lite
     @Override
     public final void resolveType(Namespace ns, Visitor typeResolver)
             throws ASTTraversalException {
-        final Expression first = ns.resolveVar(FIRST_PARAM_NAME, 
-            this.first).getExpression();
-        final Expression second = ns.resolveVar(SECOND_PARAM_NAME, 
-            this.second).getExpression();
-        final Expression third = ns.resolveVar(THIRD_PARAM_NAME, 
-            this.third).getExpression();
+        final Expression first = ns.resolveHere(FIRST_PARAM_NAME).getExpression();
+        final Expression second = ns.resolveHere(SECOND_PARAM_NAME).getExpression();
+        final Expression third = ns.resolveHere(THIRD_PARAM_NAME).getExpression();
         
         this.resolve(first, second, third, ns, typeResolver);
     }

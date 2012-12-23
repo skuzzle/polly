@@ -33,8 +33,7 @@ public class TimespanLiteral extends DateLiteral {
     
     
     public TimespanLiteral(Position position, int seconds) {
-        super(position, addSeconds(new Date(), seconds));
-        this.setUnique(Type.TIMESPAN);
+        super(position, addSeconds(new Date(), seconds), Type.TIMESPAN);
         this.seconds = seconds;
     }
     

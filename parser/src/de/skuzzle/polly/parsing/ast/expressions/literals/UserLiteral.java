@@ -9,8 +9,7 @@ public class UserLiteral extends StringLiteral {
     private static final long serialVersionUID = 1L;
     
     public UserLiteral(Position position, String value) {
-        super(position, value);
-        this.setUnique(Type.USER);
+        super(position, value, Type.USER);
     }
 
     

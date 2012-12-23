@@ -57,6 +57,17 @@ public class ResolvableIdentifier extends Identifier {
     
     
     /**
+     * Gets all possible declarations for this identifier.
+     * 
+     * @return The possible declarations.
+     */
+    public List<Declaration> getDeclarations() {
+        return this.decls;
+    }
+    
+    
+    
+    /**
      * Sets the declaration of this identifier.
      * 
      * @param decl The declaration.
