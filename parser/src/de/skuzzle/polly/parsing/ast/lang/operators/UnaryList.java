@@ -40,6 +40,8 @@ public class UnaryList extends UnaryOperator<ListLiteral> {
                 new ArrayList<Expression>(operand.getContent());
             final ListLiteral result = new ListLiteral(resultPos, tmp);
             Collections.reverse(tmp);
+            result.addTypes(operand.getTypes());
+            result.setUnique(operand.getUnique());
             stack.push(result);
             break;
         default:

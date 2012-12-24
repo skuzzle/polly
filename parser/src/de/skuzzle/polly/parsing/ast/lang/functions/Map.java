@@ -64,6 +64,6 @@ public class Map extends BinaryOperator<ListLiteral, FunctionLiteral> {
         }
         final ListLiteral ll = new ListLiteral(left.getPosition(), result);
         ll.setUnique(this.getUnique());
-        stack.push(new ListLiteral(left.getPosition(), result));
+        stack.push(ll);
     }
 }

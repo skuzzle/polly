@@ -1,5 +1,8 @@
 package de.skuzzle.polly.parsing.ast.expressions;
 
+import java.util.Collection;
+import java.util.List;
+
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
@@ -59,7 +62,28 @@ public class Braced extends Expression {
     }
     
     
+    
+    @Override
+    public void addType(Type type) {
+        this.expression.addType(type);
+    }
+    
+    
+    
+    @Override
+    public void addTypes(Collection<Type> types) {
+        this.expression.addTypes(types);
+    }
+    
+    
+    
+    @Override
+    public List<Type> getTypes() {
+        return this.expression.getTypes();
+    }
+    
 
+    
     @Override
     public void visit(Visitor visitor) throws ASTTraversalException {
         visitor.visitBraced(this);

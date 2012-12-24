@@ -30,7 +30,7 @@ import de.skuzzle.polly.parsing.util.Stack;
 
 public class ExecutionVisitor extends DepthFirstVisitor {
 
-    private final Stack<Literal> stack;
+    protected final Stack<Literal> stack;
     private Namespace nspace;
     private final Namespace rootNs;
     
@@ -224,6 +224,10 @@ public class ExecutionVisitor extends DepthFirstVisitor {
             // execute actual parameter
             actual.visit(this);
             
+            if (stack.size() == 0) {
+                System.out.println("wait here");
+            }
+            
             // declare result as local variable for this call
             final Expression result = this.stack.pop();
             final VarDeclaration local = 
@@ -243,7 +247,7 @@ public class ExecutionVisitor extends DepthFirstVisitor {
     public void visitVarAccess(VarAccess access) throws ASTTraversalException {
         this.beforeVarAccess(access);
 
-        final VarDeclaration vd = (VarDeclaration) access.getIdentifier().getDeclaration();
+        final VarDeclaration vd = this.nspace.resolveVar(access.getIdentifier(), access.getUnique());
         vd.getExpression().visit(this);
         
         this.afterVarAccess(access);
