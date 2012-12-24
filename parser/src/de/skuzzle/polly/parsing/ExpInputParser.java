@@ -69,7 +69,7 @@ import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
  *                | '\(' parameters ':' expr ')'               // lambda function literal
  *                | '{' exprList '}'                           // concrete list of expressions
  *                | DELETE '(' ID (',' ID)* ')'                // delete operator
- *                | IF expr '?' expr ':' expr                  // conditional operator
+ *                | IF expr ':' expr ':' expr                  // conditional operator
  *                | TRUE | FALSE                               // boolean literal
  *                | CHANNEL                                    // channel literal
  *                | USER                                       // user literal
@@ -728,7 +728,7 @@ public class ExpInputParser {
      *          | '\(' parameters ':' expr ')'          // lambda function literal
      *          | '{' exprList '}'                      // concrete list of expressions
      *          | DELETE '(' ID (',' ID)* ')'           // delete operator
-     *          | IF expr '?' expr ':' expr             // conditional operator
+     *          | IF expr ':' expr ':' expr             // conditional operator
      *          | TRUE | FALSE                          // boolean literal
      *          | CHANNEL                               // channel literal
      *          | USER                                  // user literal
@@ -834,7 +834,7 @@ public class ExpInputParser {
             final Expression condition = this.parseExpr();
             this.allowSingleWhiteSpace();
             
-            this.expect(TokenType.QUESTION);
+            this.expect(TokenType.COLON);
             this.allowSingleWhiteSpace();
             
             final Expression second = this.parseExpr();
