@@ -28,9 +28,6 @@ public class MapTypeConstructor extends Type {
     
     public MapTypeConstructor(ProductTypeConstructor source, Type target) {
         super(typeName(source, target), false, false);
-        source.parent = this;
-        target.parent = this;
-        
         this.source = source;
         this.target = target;
     }

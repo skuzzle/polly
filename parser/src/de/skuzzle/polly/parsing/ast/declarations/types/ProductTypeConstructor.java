@@ -35,9 +35,6 @@ public class ProductTypeConstructor extends Type implements Iterable<Type> {
     
     public ProductTypeConstructor(List<Type> types) {
         super(typeName(types), true, false);
-        for (final Type t : types) {
-            t.parent = this;
-        }
         this.types = types;
     }
     

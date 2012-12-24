@@ -7,7 +7,6 @@ import java.util.Map;
 
 import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
-import de.skuzzle.polly.parsing.ast.declarations.TypeDeclaration;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitable;
@@ -182,7 +181,6 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
     private final Identifier name;
     private final boolean comparable;
     private final boolean primitve;
-    protected Type parent;
     
     
     
@@ -190,35 +188,6 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
         this.name = name;
         this.comparable = comparable;
         this.primitve = primitive;
-        this.parent = null;
-    }
-    
-    
-    
-    /**
-     * Gets this types parent type. Will be <code>null</code> if this is the root of 
-     * a type expression.
-     * 
-     * @return The parent type.
-     */
-    Type getParent() {
-        return this.parent;
-    }
-    
-    
-    
-    /**
-     * Creates a {@link TypeDeclaration} for this primitive type. This may not be 
-     * called on derived subclasses (like type constructors or type variables).
-     * 
-     * @return A {@link TypeDeclaration} for this primitive type.
-     */
-    public final TypeDeclaration declaration() {
-        if (!this.isPrimitve()) {
-            throw new IllegalStateException(
-                "can not create declaration of none-primitive type");
-        }
-        return new TypeDeclaration(this.getName(), this);
     }
     
     

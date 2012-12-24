@@ -13,7 +13,6 @@ public class ListTypeConstructor extends Type {
     
     public ListTypeConstructor(Type subType) {
         super(new Identifier("List<" + subType.getName() +">"), true, false);
-        subType.parent = this;
         this.subType = subType;
     }
     
