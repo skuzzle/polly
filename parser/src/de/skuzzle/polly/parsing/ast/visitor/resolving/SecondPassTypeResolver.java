@@ -35,7 +35,7 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
             throws ASTTraversalException {
         if (parent.getTypes().size() == 1 && !child.typeResolved()) {
             child.setUnique(parent.getTypes().get(0));
-        } else {
+        } else if (!child.typeResolved()){
             this.reportError(parent, "Nicht eindeutiger Typ");
         }
     }
@@ -50,11 +50,11 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         this.beforeRoot(root);
         
         for (final Expression exp : root.getExpressions()) {
-            exp.visit(this);
             // check whether unique type could have been resolved
             if (!exp.typeResolved()) {
                 this.applyType(exp, exp);
             }
+            exp.visit(this);
         }
         
         this.afterRoot(root);

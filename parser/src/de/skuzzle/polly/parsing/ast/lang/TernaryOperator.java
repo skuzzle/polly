@@ -32,9 +32,9 @@ public abstract class TernaryOperator<FIRST extends Literal, SECOND extends Lite
     private final static ResolvableIdentifier THIRD_PARAM_NAME =
         new ResolvableIdentifier(Position.NONE, "$third");
     
-    private Type first;
-    private Type second;
-    private Type third;
+    protected Type first;
+    protected Type second;
+    protected Type third;
     
     
     
@@ -53,6 +53,7 @@ public abstract class TernaryOperator<FIRST extends Literal, SECOND extends Lite
      * @param third Type of the third operand.
      */
     protected final void initTypes(Type resulType, Type first, Type second, Type third) {
+        this.addType(resulType);
         this.setUnique(resulType);
         this.first = first;
         this.second = second;

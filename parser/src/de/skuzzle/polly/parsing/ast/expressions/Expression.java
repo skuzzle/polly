@@ -68,16 +68,10 @@ public abstract class Expression extends Node {
      * Adds another type as possible type for this expression. If an instance of that 
      * type is already contained in the type list, the latter call will be ignored.
      * 
-     * <p>Trying to add another type after the unique type of this expression has been 
-     * resolved will cause an {@link IllegalArgumentException} to be thrown.</p>
-     * 
      * @param type Possible type of this expression.
      */
     public void addType(Type type) {
-        if (this.typeResolved()) {
-            throw new IllegalStateException(
-                "can not add possile type because type was resolved");
-        } else if (this.types.contains(type)) {
+        if (this.types.contains(type)) {
             return;
         }
         this.types.add(type);

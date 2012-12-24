@@ -37,7 +37,9 @@ final class TypeUnifier {
             for (final Type t : this.typeToClass.keySet()) {
                 if (t instanceof TypeVar) {
                     final TypeVar tv = (TypeVar) t;
-                    m.substitute(tv, this.find(tv));
+                    Type representative = this.find(tv);
+                    m.substitute(tv, representative);
+                    n.substitute(tv, representative);
                 }
             }
         }

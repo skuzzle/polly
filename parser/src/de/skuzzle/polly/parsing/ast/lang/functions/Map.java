@@ -18,6 +18,7 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.lang.BinaryOperator;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.parsing.ast.visitor.resolving.TypeResolver;
 import de.skuzzle.polly.parsing.util.Stack;
 
 
@@ -56,10 +57,13 @@ public class Map extends BinaryOperator<ListLiteral, FunctionLiteral> {
         for (final Expression exp : left.getContent()) {
             final Call call = new Call(Position.NONE, right, 
                 Arrays.asList(new Expression[] {exp}), Position.NONE);
-            
+
+            TypeResolver.resolveAST(call, ns);
             call.visit(execVisitor);
             result.add(stack.pop());
         }
+        final ListLiteral ll = new ListLiteral(left.getPosition(), result);
+        ll.setUnique(this.getUnique());
         stack.push(new ListLiteral(left.getPosition(), result));
     }
 }

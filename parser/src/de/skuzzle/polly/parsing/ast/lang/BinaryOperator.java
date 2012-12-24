@@ -37,8 +37,8 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
     private final static ResolvableIdentifier RIGHT_PARAM_NAME =
             new ResolvableIdentifier(Position.NONE, "$right");
     
-    private Type left;
-    private Type right;
+    protected Type left;
+    protected Type right;
     
     
     
@@ -61,6 +61,7 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
      * @param right Type of the right operand.
      */
     protected final void initTypes(Type resultType, Type left, Type right) {
+        this.addType(resultType);
         this.setUnique(resultType);
         this.left = left;
         this.right = right;

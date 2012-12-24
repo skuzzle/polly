@@ -189,16 +189,16 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
             
             // one possible actual signature type
             final ProductTypeConstructor s = new ProductTypeConstructor(types);
-            
+            // one possible lhs type with unknown target type
+            final MapTypeConstructor p = new MapTypeConstructor(s, Type.newTypeVar());
             
             for (final Type s1 : call.getLhs().getTypes()) {
                 if (!(s1 instanceof MapTypeConstructor)) {
                     continue;
                 }
-                final MapTypeConstructor mc = (MapTypeConstructor) s1;
-                if (Type.unify(s, mc.getSource())) {
+                if (Type.unify(p, s1)) {
                     call.addSignatureType(s);
-                    call.addType(mc.getTarget());
+                    call.addType(p.getTarget());
                 }
             }
         }

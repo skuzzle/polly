@@ -27,7 +27,7 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
     protected final static ResolvableIdentifier PARAM_NAME = 
             new ResolvableIdentifier(Position.NONE, "$param");
     
-    private Type operandType;
+    protected Type operandType;
     
     
     public UnaryOperator(OpType op) {
@@ -43,6 +43,7 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
      * @param operandType Type of the operand.
      */
     protected final void initTypes(Type resultType, Type operandType) {
+        this.addType(resultType);
         this.setUnique(resultType);
         this.operandType = operandType;
     }
@@ -82,7 +83,6 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
      */
     protected void resolve(Expression param, Namespace ns, 
             Visitor typeResolver) throws ASTTraversalException {
-        // empty
     }
 
     

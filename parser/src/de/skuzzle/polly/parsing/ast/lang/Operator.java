@@ -6,7 +6,6 @@ import de.skuzzle.polly.parsing.TokenType;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
-import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 
 /**
  * Superclass for all operators. Operators are represented as a normal function call and
@@ -178,16 +177,6 @@ public abstract class Operator extends Function {
         return this.op;
     }
 
-    
-    
-    /**
-     * Creates a {@link FunctionLiteral} which represents this operator. Its parameters 
-     * musst correspond to the operators operand types.
-     * 
-     * @return A new FunctionLiteral.
-     */
-    protected abstract FunctionLiteral createFunction();
-    
     
     
     /**
