@@ -3,7 +3,12 @@ package de.skuzzle.polly.parsing.ast.declarations.types;
 import java.util.HashSet;
 import java.util.Set;
 
-
+/**
+ * Default {@link TypeVisitor} implementation. Traversal process can be aborted any time
+ * using {@link #abort()}.
+ * 
+ * @author Simon Taddiken
+ */
 public class DefaultTypeVisitor implements TypeVisitor {
 
     protected boolean aborted;
@@ -14,6 +19,12 @@ public class DefaultTypeVisitor implements TypeVisitor {
         this.visited = new HashSet<Type>();
     }
     
+    
+    
+    /**
+     * Aborts the current traversal process after the next <code>visitXXX</code> method
+     * finishes. 
+     */
     public void abort() {
         this.aborted = true;
     }

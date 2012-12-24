@@ -4,7 +4,11 @@ import java.io.PrintStream;
 
 import de.skuzzle.polly.parsing.util.DotBuilder;
 
-
+/**
+ * Class to create a simple dot output from any type expression.
+ * 
+ * @author Simon Taddiken
+ */
 public class TypeGraphVisualizer extends DefaultTypeVisitor {
 
     private DotBuilder dotBuilder;

@@ -22,6 +22,12 @@ final class TypeVarFinder extends DefaultTypeVisitor {
     }
     
     
+    
+    /** Not instantiable from outside */
+    public TypeVarFinder() {}
+    
+    
+    
     private boolean found;
     @Override
     public void beforeVar(TypeVar v) {

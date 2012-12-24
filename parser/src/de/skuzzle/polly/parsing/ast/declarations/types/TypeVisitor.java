@@ -1,6 +1,10 @@
 package de.skuzzle.polly.parsing.ast.declarations.types;
 
-
+/**
+ * Visitor interface which can be used to traverse {@link Type type expressions}.
+ * 
+ * @author Simon Taddiken
+ */
 public interface TypeVisitor {
 
     public void beforePrimitive(Type type);

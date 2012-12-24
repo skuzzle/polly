@@ -24,15 +24,7 @@ import de.skuzzle.polly.parsing.ast.visitor.resolving.TypeResolver;
  * @author Simon Taddiken
  */
 public class DeclarationReader implements Closeable {
-    
-    public static void main(String[] args) throws IOException {
-        DeclarationReader dr = new DeclarationReader(new File("decls/me.decl"), "ISO-8859-1", Namespace.forName("me"));
-        
-        dr.readAll();
-        dr.close();
-        
-        System.out.println(Namespace.forName("me").toString());
-    }
+
     
     
     /**
@@ -43,7 +35,8 @@ public class DeclarationReader implements Closeable {
      */
     private final class DeclarationParser extends ExpInputParser {
 
-        public DeclarationParser(String input, String charset) throws UnsupportedEncodingException {
+        public DeclarationParser(String input, String charset) 
+                throws UnsupportedEncodingException {
             super(input);
         }
         
@@ -64,6 +57,15 @@ public class DeclarationReader implements Closeable {
     private final Namespace nspace;
     
     
+    
+    /**
+     * Creates a new DeclarationReader.
+     * 
+     * @param file Input file to read the declarations from.
+     * @param charset Encoding name of that file.
+     * @param nspace The namespace where the read declarations are stored.
+     * @throws FileNotFoundException If <code>file</code> did not exist.
+     */
     public DeclarationReader(File file, String charset, Namespace nspace) 
             throws FileNotFoundException {
         this.charset = charset;

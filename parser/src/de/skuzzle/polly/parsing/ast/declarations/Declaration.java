@@ -33,34 +33,65 @@ public abstract class Declaration extends Node implements Comparable<Declaration
     
     
     
+    /**
+     * Whether the declaration will be copied when being resolved by a {@link Namespace}.
+     * 
+     * @return Whether declaration will be copied.
+     */
     public boolean mustCopy() {
         return this.mustCopy;
     }
 
 
     
+    /**
+     * Sets whether this declaration must be copied when being resolved.
+     * 
+     * @param mustCopy Whether this declaration must be copied when being resolved.
+     */
     public void setMustCopy(boolean mustCopy) {
         this.mustCopy = mustCopy;
     }
 
 
     
+    /**
+     * Gets the type of this declaration.
+     * 
+     * @return The type.
+     */
     public abstract Type getType();
     
     
     
+    /**
+     * Gets the name of this declaration.
+     * 
+     * @return The name.
+     */
     public Identifier getName() {
         return this.name;
     }
 
 
     
+    /**
+     * Gets whether this is a public declaration.
+     * 
+     * @return Whether this is a public declaration.
+     */
     public boolean isPublic() {
         return this.isPublic;
     }
 
 
     
+    /**
+     * Sets whether this is a public declaration. This will only have a practical effect
+     * when being set before this declaration is declared in a {@link Namespace}.
+     * 
+     * @param isPublic Whether this is a public declaration.
+     */
     public void setPublic(boolean isPublic) {
         this.isPublic = isPublic;
     }

@@ -8,7 +8,11 @@ import java.util.ListIterator;
 
 import de.skuzzle.polly.parsing.ast.Identifier;
 
-
+/**
+ * A product type represents the Cartesian product of a set of types.
+ * 
+ * @author Simon Taddiken
+ */
 public class ProductTypeConstructor extends Type implements Iterable<Type> {
 
     private static final long serialVersionUID = 1L;
@@ -33,6 +37,12 @@ public class ProductTypeConstructor extends Type implements Iterable<Type> {
     private final List<Type> types;
     
     
+    
+    /**
+     * Creates a new product type with the given types.
+     * 
+     * @param types List of types in this product.
+     */
     public ProductTypeConstructor(List<Type> types) {
         super(typeName(types), true, false);
         this.types = types;
@@ -41,12 +51,22 @@ public class ProductTypeConstructor extends Type implements Iterable<Type> {
     
     
     
+    /**
+     * Creates a new product type from the given array.
+     * 
+     * @param types Array of types in this product.
+     */
     public ProductTypeConstructor(Type...types) {
         this(Arrays.asList(types));
     }
     
     
     
+    /**
+     * Gets the types in this product.
+     * 
+     * @return The types.
+     */
     public List<Type> getTypes() {
         return this.types;
     }
@@ -74,6 +94,7 @@ public class ProductTypeConstructor extends Type implements Iterable<Type> {
         }
         return this;
     }
+    
     
     
     @Override

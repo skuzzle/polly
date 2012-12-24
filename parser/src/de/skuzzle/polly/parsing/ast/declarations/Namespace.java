@@ -43,10 +43,27 @@ import de.skuzzle.polly.tools.strings.StringUtils;
 
 
 
+/**
+ * <p>This class represents a hierarchical store for variable declarations. Every 
+ * namespace has a parent namespace, except the global namespace. Namespaces that are not 
+ * created with a parent will automatically have the global namespace as parent. The 
+ * global space contains all native operator and constant declarations that can be
+ * used.</p>
+ * 
+ * <p>For each variable name can be stored a list of declarations. Declarations with
+ * the same name must have distinct unique types. Resolving of a variable name will first
+ * search the current namespace and then all parent namespaces.</p>
+ * 
+ * <p>Namespaces can be obtained using any of the <code>forName</code> methods. The
+ * returned namespace instance will store all declared variables into a file with the
+ * name of the namespace.</p> 
+ * 
+ * @author Simon Taddiken
+ */
 public class Namespace {
     
     /** 
-     * Percentage of word length that will be used as levenshtein thresold in
+     * Percentage of word length that will be used as levenshtein threshold in
      * {@link #findSimilar(String, Namespace)}.
      */
     private final static float LEVENSHTEIN_THRESHOLD_PERCENT = 0.6f;
@@ -61,7 +78,12 @@ public class Namespace {
     
     
     
-    
+    /**
+     * Private namespace extension that will store the namespace's contents to file 
+     * whenever a new variable is declared.
+     * 
+     * @author Simon Taddiken
+     */
     private final static class StorableNamespace extends Namespace {
 
         private String fileName;
@@ -557,7 +579,17 @@ public class Namespace {
     
     
     
-    public VarDeclaration resolveHere(ResolvableIdentifier name) throws ASTTraversalException {
+    /**
+     * Resolves the declaration with the given name using only the current declaration
+     * level, disregarding all higher levels.
+     * 
+     * @param name Name of declaration to resolved.
+     * @return The resolved declaration.
+     * @throws ASTTraversalException If declaration does not exist or multiple 
+     *          declarations with that name exists in current level.
+     */
+    public VarDeclaration resolveHere(ResolvableIdentifier name) 
+            throws ASTTraversalException {
         final List<Declaration> decls = this.decls.get(name.getId());
         
         if (decls == null || decls.isEmpty()) {
@@ -583,7 +615,7 @@ public class Namespace {
      * @param signature The signature of the variable to resolve.
      * @return The resolved declaration or <code>null</code> if non was found.
      */
-    public Declaration tryResolve(ResolvableIdentifier name, Type signature) {
+    private Declaration tryResolve(ResolvableIdentifier name, Type signature) {
         for(Namespace space = this; space != null; space = space.parent) {
             final List<Declaration> decls = space.decls.get(name.getId());
             if (decls == null) {
@@ -656,36 +688,15 @@ ignore:     for (Declaration decl : decls) {
     
     
     /**
-     * Tries to resolve a declaration, disregarding the type of the declaration. This
-     * will resolve the first matching declaration in this or any parent namespace. This 
-     * method is equivalent to calling <code>tryResolve(name, Type.ANY)</code>.
+     * Resolves the declaration belonging to the given name. The declaration to resolve
+     * must match the given <code>signature</code>.
      * 
-     * @param name The name of the function to resolve.
-     * @return The resolved declaration or <code>null</code> if non was found.
-     * @see #tryResolve(ResolvableIdentifier, Type)
+     * @param name Name of declaration to resolve.
+     * @param signature Type of declaration to resolve.
+     * @return The resolved declaration.
+     * @throws ASTTraversalException If declaration with given name and type does not
+     *          exist in current namespace hierarchy.
      */
-    public Declaration tryResolve(ResolvableIdentifier name) {
-        for(Namespace space = this; space != null; space = space.parent) {
-            final List<Declaration> decls = space.decls.get(name.getId());
-            if (decls == null) {
-                continue;
-            }
-            for (Declaration decl : decls) {
-                
-                if (decl.getName().equals(name)) {
-                    if (decl.mustCopy()) {
-                        decl = CopyTool.copyOf(decl);
-                    }
-                    name.setDeclaration(decl);
-                    return decl;
-                }
-            }
-        }
-        return null;
-    }
-    
-    
-    
     public VarDeclaration resolveVar(ResolvableIdentifier name, Type signature) 
             throws ASTTraversalException {
         final Declaration check = this.tryResolve(name, signature);

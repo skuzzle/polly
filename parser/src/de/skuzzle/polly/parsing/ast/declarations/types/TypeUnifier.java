@@ -4,7 +4,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-
+/**
+ * Helper class to determine whether two types are structural equal and to resolve 
+ * type variable substitution. One instance of this class can only be used to unify
+ * one pair of types. So you need to create a new instance for each type pair to unify. 
+ * 
+ * @author Simon Taddiken
+ */
 final class TypeUnifier {
 
     private int classes;
@@ -12,6 +18,10 @@ final class TypeUnifier {
     private final Map<Integer, Type> classToType;
     
     
+    /**
+     * Creates a new TypeUnifier which can then be used to test for equality of one pair
+     * of types.
+     */
     public TypeUnifier() {
         this.typeToClass = new HashMap<Type, Integer>();
         this.classToType = new HashMap<Integer, Type>();

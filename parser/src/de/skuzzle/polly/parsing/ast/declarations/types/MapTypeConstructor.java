@@ -2,7 +2,12 @@ package de.skuzzle.polly.parsing.ast.declarations.types;
 
 import de.skuzzle.polly.parsing.ast.Identifier;
 
-
+/**
+ * Represents the type of a function. That is, a mapping from a product of types to 
+ * another type.
+ * 
+ * @author Simon Taddiken
+ */
 public class MapTypeConstructor extends Type {
     
     private static final long serialVersionUID = 1L;
@@ -26,6 +31,12 @@ public class MapTypeConstructor extends Type {
     
     
     
+    /**
+     * Creates a new mapping type.
+     * 
+     * @param source Sorce types.
+     * @param target Target type.
+     */
     public MapTypeConstructor(ProductTypeConstructor source, Type target) {
         super(typeName(source, target), false, false);
         this.source = source;
@@ -34,12 +45,22 @@ public class MapTypeConstructor extends Type {
     
     
     
+    /**
+     * Gets the source of this mapping type.
+     * 
+     * @return the source.
+     */
     public final ProductTypeConstructor getSource() {
         return this.source;
     }
     
     
     
+    /**
+     * Gets the target of this mapping type.
+     * 
+     * @return The target.
+     */
     public Type getTarget() {
         return this.target;
     }
