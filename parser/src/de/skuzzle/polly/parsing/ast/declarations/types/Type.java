@@ -2,11 +2,12 @@ package de.skuzzle.polly.parsing.ast.declarations.types;
 
 import java.io.ObjectStreamException;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.declarations.TypeDeclaration;
-import de.skuzzle.polly.parsing.ast.declarations.Typespace;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitable;
@@ -64,10 +65,37 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
     /** Type indicating that a concrete type has not been resolved for an expression. */
     public final static Type UNKNOWN = new Type(new Identifier("UNKNOWN"), true, true);
     
+    private final static Map<String, Type> primitives = new HashMap<String, Type>();
+    static {
+        primitives.put(NUM.getName().getId(), NUM);
+        primitives.put(DATE.getName().getId(), DATE);
+        primitives.put(TIMESPAN.getName().getId(), TIMESPAN);
+        primitives.put(CHANNEL.getName().getId(), CHANNEL);
+        primitives.put(USER.getName().getId(), USER);
+        primitives.put(STRING.getName().getId(), STRING);
+        primitives.put(BOOLEAN.getName().getId(), BOOLEAN);
+        primitives.put(HELP.getName().getId(), HELP);
+        primitives.put(UNKNOWN.getName().getId(), UNKNOWN);
+    }
     
     
-    private final static Typespace TYPE_SPACE = new Typespace();
     
+    /**
+     * Tries to resolve a primitive type with the given name.
+     * 
+     * @param name Name of the type to resolve.
+     * @return The resolved type.
+     * @throws ASTTraversalException If no type with the given name exists.
+     */
+    public final static Type resolve(ResolvableIdentifier name) 
+            throws ASTTraversalException {
+        final Type t = primitives.get(name.getId());
+        if (t == null) {
+            throw new ASTTraversalException(name.getPosition(), 
+                "Unbekannter Typ: " + name.getId());
+        }
+        return t;
+    }
     
     
     /**
@@ -275,6 +303,13 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
     
     
     
+    /**
+     * Substitutes all occurrences of the given type variable with the given type.
+     * 
+     * @param var Variable to substitute.
+     * @param t Type to substitute the variable with.
+     * @return Same type expression but with substituted type variable.
+     */
     public Type substitute(TypeVar var, Type t) {
         return this;
     }
@@ -285,7 +320,7 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
         if (this.isPrimitve()) {
             // HACK to maintain unique instances of primitive types though serialization
             try {
-                return TYPE_SPACE.resolveType(new ResolvableIdentifier(this.getName()));
+                return resolve(new ResolvableIdentifier(this.getName()));
             } catch (ASTTraversalException e) {
                 throw new RuntimeException(e);
             }

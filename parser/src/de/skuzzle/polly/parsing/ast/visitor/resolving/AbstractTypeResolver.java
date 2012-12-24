@@ -6,7 +6,6 @@ import java.util.Collection;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
-import de.skuzzle.polly.parsing.ast.declarations.Typespace;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
@@ -18,7 +17,6 @@ public abstract class AbstractTypeResolver extends DepthFirstVisitor {
     
     protected Namespace nspace;
     protected final Namespace rootNs;
-    protected final Typespace types;
     
     
     
@@ -26,7 +24,6 @@ public abstract class AbstractTypeResolver extends DepthFirstVisitor {
         // create temporary namespace for executing user
         this.rootNs = namespace.enter(false);
         this.nspace = this.rootNs;
-        this.types = new Typespace();
     }
     
     

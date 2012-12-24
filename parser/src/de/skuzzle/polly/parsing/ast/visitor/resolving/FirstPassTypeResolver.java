@@ -61,7 +61,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     @Override
     public void afterParameter(Parameter param) throws ASTTraversalException {
         if (!param.typeResolved()) {
-            param.setUnique(this.types.resolveType(param.getTypeName()));
+            param.setUnique(Type.resolve(param.getTypeName()));
         }
     }
     
@@ -71,7 +71,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     public void afterListParameter(ListParameter param) throws ASTTraversalException {
         if (!param.typeResolved()) {
             final Type t = new ListTypeConstructor(
-                this.types.resolveType(param.getTypeName()));
+                Type.resolve(param.getTypeName()));
             param.setUnique(t);
         }
     }
@@ -88,10 +88,10 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         this.beforeFunctionParameter(param);
         
         final Iterator<ResolvableIdentifier> types = param.getSignature().iterator();
-        final Type returnType = this.types.resolveType(types.next());
+        final Type returnType = Type.resolve(types.next());
         final List<Type> sig = new ArrayList<Type>(param.getSignature().size());
         while (types.hasNext()) {
-            sig.add(this.types.resolveType(types.next()));
+            sig.add(Type.resolve(types.next()));
         }
         
         param.setUnique(
