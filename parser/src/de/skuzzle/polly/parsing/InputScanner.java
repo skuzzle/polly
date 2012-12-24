@@ -215,7 +215,8 @@ public class InputScanner extends AbstractTokenStream {
                     state = 4;
                 } else {
                     this.pushBack(next);
-                    this.parseException("Ungültiges Symbol: '" + next + "'", tokenStart);
+                    this.parseException(
+                        "Ungültiges Symbol: '" + (char) next + "'", tokenStart);
                 }
                     
             } else if (state == 1) {
