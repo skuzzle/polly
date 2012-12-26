@@ -247,7 +247,8 @@ public class ExecutionVisitor extends DepthFirstVisitor {
     public void visitVarAccess(VarAccess access) throws ASTTraversalException {
         this.beforeVarAccess(access);
 
-        final VarDeclaration vd = this.nspace.resolveVar(access.getIdentifier(), access.getUnique());
+        final VarDeclaration vd = this.nspace.resolveVar(access.getIdentifier(), 
+            access.getUnique());
         vd.getExpression().visit(this);
         
         this.afterVarAccess(access);

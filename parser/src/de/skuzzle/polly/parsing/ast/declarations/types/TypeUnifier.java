@@ -37,19 +37,25 @@ final class TypeUnifier {
      *   
      * @param m Type to check.
      * @param n Type to check.
-     * @param substitute Whether TypeVars should be substituted if unification was 
-     *          successful.
+     * @param substituteLeft Whether TypeVars in the first type argument should be 
+     *          substituted if unification was successful.
+     * @param substituteRight Whether TypeVars in the second type argument should be 
+     *          substituted if unification was successful.
      * @return Whether both type expressions are structural equal.
      */
-    public boolean unify(Type m, Type n, boolean substitute) {
+    public boolean unify(Type m, Type n, boolean substituteLeft, boolean substituteRight) {
         boolean result = this.unifyInternal(m, n);
-        if (result && substitute) {
+        if (result && (substituteLeft || substituteRight)) {
             for (final Type t : this.typeToClass.keySet()) {
                 if (t instanceof TypeVar) {
                     final TypeVar tv = (TypeVar) t;
                     Type representative = this.find(tv);
-                    m.substitute(tv, representative);
-                    n.substitute(tv, representative);
+                    if (substituteLeft) {
+                        m.substitute(tv, representative);
+                    }
+                    if (substituteRight) {
+                        n.substitute(tv, representative);
+                    }
                 }
             }
         }

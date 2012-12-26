@@ -535,7 +535,7 @@ public class Namespace {
             // * existing is a function and new is a variable
             // * exising is a variable and 
             
-            if (Type.unify(existing.getType(), decl.getType(), false)) {
+            if (Type.unify(existing.getType(), decl.getType(), false, false)) {
                 if (!this.local) {
                     if (existing.isNative()) {
                         throw new ASTTraversalException(decl.getPosition(), 
@@ -623,7 +623,7 @@ public class Namespace {
             }
             for (Declaration decl : decls) {
                 
-                if (Type.unify(signature, decl.getType(), false)) {
+                if (Type.unify(signature, decl.getType(), false, false)) {
                     if (decl.mustCopy()) {
                         decl = CopyTool.copyOf(decl);
                     }
@@ -662,7 +662,7 @@ ignore:     for (Declaration decl : decls) {
                     // ignored. That will have the effect that declarations on lower 
                     // levels override those on a higher level.
                     for (final Type alreadyFound : result) {
-                        if (Type.unify(alreadyFound, decl.getType(), false)) {
+                        if (Type.unify(alreadyFound, decl.getType(), false, false)) {
                             // continue with next declaration and ignore this one
                             continue ignore;
                         }

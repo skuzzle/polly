@@ -73,7 +73,7 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         for (final Expression exp : list.getContent()) {
             exp.visit(this);
             if (!Type.unify(list.getUnique(), 
-                    new ListTypeConstructor(exp.getUnique()), false)) {
+                    new ListTypeConstructor(exp.getUnique()), false, false)) {
                 final ListTypeConstructor lt = (ListTypeConstructor) list.getUnique();
                 this.typeError(exp, lt.getSubType(), exp.getUnique());
             }
@@ -107,7 +107,6 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
     
     @Override
     public void afterVarAccess(VarAccess access) throws ASTTraversalException {
-        access.getIdentifier().setDeclaration(access.selectDeclaration());
     }
     
     

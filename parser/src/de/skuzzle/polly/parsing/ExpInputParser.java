@@ -12,6 +12,7 @@ import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
@@ -80,7 +81,7 @@ import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
  *            
  *   exprList    -> (expr (',' expr)*)?
  *   parameters  -> (parameter (',' parameter)*)?
- *   parameter   -> type ID
+ *   parameter   -> type? ID
  *   type        -> ID                                         // typename, parameter name
  *                | ID<ID>                                     // type name, subtype name, parameter name
  *                | '\(' ID (' ' ID)+ ')'                      // return type name, parameter type names, parameter name
@@ -955,7 +956,8 @@ public class ExpInputParser {
     
     /**
      * <pre>
-     * parameter -> id id             // simple parameter
+     * parameter -> id                // parameter with no explicit type
+     *            | id id             // simple parameter
      *            | id<id> id         // parameter with subtype (list)
      *            | '\(' id (' ' id)* ')' id   // function parameter
      * </pre>
@@ -1001,9 +1003,15 @@ public class ExpInputParser {
          } else {
              final ResolvableIdentifier typeName = 
                  new ResolvableIdentifier(this.expectIdentifier());
-             final ResolvableIdentifier name = new ResolvableIdentifier(
-                 this.expectIdentifier());
-             return new Parameter(this.scanner.spanFrom(la), typeName, name);
+             
+             if (this.scanner.lookAhead().matches(TokenType.IDENTIFIER)) {
+                 final ResolvableIdentifier name = new ResolvableIdentifier(
+                     this.expectIdentifier());    
+                 return new Parameter(this.scanner.spanFrom(la), typeName, name);
+             } else {
+                 return new Parameter(this.scanner.spanFrom(la), typeName, 
+                     Type.newTypeVar());
+             }
          }
     }
 }

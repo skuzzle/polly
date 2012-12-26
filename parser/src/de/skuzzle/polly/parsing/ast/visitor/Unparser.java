@@ -214,6 +214,12 @@ public class Unparser extends DepthFirstVisitor {
                 it.next().visit(this);
                 this.out.print(" : ");
                 it.next().visit(this);
+            } else if (call.getOperator() == OpType.DOTDOT) {
+                it.next().visit(this);
+                this.out.print("..");
+                it.next().visit(this);
+                this.out.print("$");
+                it.next().visit(this);
             }
         }
         this.afterOperatorCall(call);

@@ -156,7 +156,35 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
      * @return <code>true</code> iff both type expressions are structural equal.
      */
     public static boolean unify(Type m, Type n) {
-        return unify(m, n, true);
+        return unify(m, n, true, true);
+    }
+    
+    
+    
+    /**
+     * Tests for structural equality of the two given type expressions and on success,
+     * substitutes all type variables of the first type argument.
+     * 
+     * @param m Type to check.
+     * @param n Type to check.
+     * @return <code>true</code> iff both type expressions are structural equal.
+     */
+    public static boolean unifyLeft(Type m, Type n) {
+        return unify(m, n, true, false);
+    }
+    
+    
+    
+    /**
+     * Tests for structural equality of the two given type expressions and on success,
+     * substitutes all type variables of the second type argument.
+     * 
+     * @param m Type to check.
+     * @param n Type to check.
+     * @return <code>true</code> iff both type expressions are structural equal.
+     */
+    public static boolean unifyRight(Type m, Type n) {
+        return unify(m, n, false, true);
     }
     
     
@@ -167,13 +195,16 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
      * 
      * @param m Type to check.
      * @param n Type to check.
-     * @param substitute Whether type variables should be substituted with their resolved
-     *          match if both types are structural equal.
+     * @param substituteLeft Whether TypeVars in the first type argument should be 
+     *          substituted if unification was successful.
+     * @param substituteRight Whether TypeVars in the second type argument should be 
+     *          substituted if unification was successful.
      * @return <code>true</code> iff both type expressions are structural equal.
      */
-    public static boolean unify(Type m, Type n, boolean substitute) {
+    public static boolean unify(Type m, Type n, boolean substituteLeft, 
+            boolean substituteRight) {
         final TypeUnifier tu = new TypeUnifier();
-        return tu.unify(m, n, substitute);
+        return tu.unify(m, n, substituteLeft, substituteRight);
     }
     
     
@@ -256,7 +287,7 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
     @Override
     public boolean actualEquals(Equatable o) {
         final Type other = (Type) o;
-        return Type.unify(this, other, false);
+        return Type.unify(this, other, false, false);
     }
     
     

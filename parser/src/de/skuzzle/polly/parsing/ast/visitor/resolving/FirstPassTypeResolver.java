@@ -193,10 +193,8 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
             final MapTypeConstructor p = new MapTypeConstructor(s, Type.newTypeVar());
             
             for (final Type s1 : call.getLhs().getTypes()) {
-                if (!(s1 instanceof MapTypeConstructor)) {
-                    continue;
-                }
-                if (Type.unify(p, s1)) {
+                // HINT: do only substitute TypeVars in p
+                if (Type.unifyLeft(p, s1)) {
                     call.addSignatureType(s);
                     call.addType(p.getTarget());
                 }
