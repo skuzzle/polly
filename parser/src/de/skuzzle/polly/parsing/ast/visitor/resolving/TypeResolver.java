@@ -16,9 +16,6 @@ public final class TypeResolver {
         
         final SecondPassTypeResolver sptr = new SecondPassTypeResolver(fptr);
         root.visit(sptr);
-        
-//        final ExpSecondPassTypeResolver esptr = new ExpSecondPassTypeResolver(fptr);
-//        root.visit(esptr);
     }
     
     

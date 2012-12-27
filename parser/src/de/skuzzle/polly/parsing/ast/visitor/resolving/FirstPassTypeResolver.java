@@ -223,10 +223,10 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
                 if (unifier.isUnifiable()) {
                     unifier.substituteBoth();
                     
-                    p = (MapTypeConstructor) unifier.getFirst();
+                    MapTypeConstructor mtc = (MapTypeConstructor) unifier.getFirst();
                     
-                    call.addSignatureType(p.getSource());
-                    call.addType(p.getTarget());
+                    call.addSignatureType(mtc.getSource());
+                    call.addType(mtc.getTarget());
                     newLhsTypes.add(unifier.getFirst());
                 }
             }
