@@ -57,7 +57,9 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     @Override
     public void afterParameter(Parameter param) throws ASTTraversalException {
         if (!param.typeResolved()) {
-            param.setUnique(Type.resolve(param.getTypeName()));
+            final Type t = Type.resolve(param.getTypeName());
+            param.setUnique(t);
+            param.addType(t);
         }
     }
     
@@ -69,6 +71,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
             final Type t = new ListTypeConstructor(
                 Type.resolve(param.getTypeName()));
             param.setUnique(t);
+            param.addType(t);
         }
     }
     
@@ -92,7 +95,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         
         param.setUnique(
             new MapTypeConstructor(new ProductTypeConstructor(sig), returnType));
-        
+        param.addType(param.getUnique());
         this.afterFunctionParameter(param);
     }
     
@@ -119,10 +122,15 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         func.getExpression().visit(this);
         this.nspace = this.leave();
         
+        // resolve parameter's possible types by checking where they are used. Special
+        // treatment for native functions. They never "use" their formal parameters in the
+        // terms of semantics needed here. 
         for (final Parameter p : func.getFormal()) {
-            p.getTypes().clear();
-            for (final VarAccess va : p.getUsage()) {
-                p.addTypes(va.getTypes());
+            if (!p.getUsage().isEmpty()) {
+                p.getTypes().clear();
+                for (final VarAccess va : p.getUsage()) {
+                    p.addTypes(va.getTypes());
+                }
             }
         }
         

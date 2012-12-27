@@ -205,23 +205,6 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
     
     
     @Override
-    public void afterCall(Call call) throws ASTTraversalException {
-        final List<Type> types = new ArrayList<Type>(call.getParameters().size());
-        for (final Expression exp : call.getParameters()) {
-            types.add(exp.getUnique());
-        }
-        
-        final ProductTypeConstructor params = new ProductTypeConstructor(types);
-        final MapTypeConstructor mtc = (MapTypeConstructor) call.getLhs().getUnique();
-        
-        if (!Type.unify(mtc.getSource(), params)) {
-            this.typeError(call, mtc.getSource(), params);
-        }
-    }
-    
-    
-    
-    @Override
     public void beforeAccess(NamespaceAccess access) throws ASTTraversalException {
         this.applyType(access, access.getRhs());
     }
