@@ -79,9 +79,10 @@ public class MapTypeConstructor extends Type {
     
     @Override
     public Type substitute(TypeVar var, Type t) {
-        this.source = (ProductTypeConstructor) this.source.substitute(var, t);
-        this.target = this.target.substitute(var, t);
-        return this;
+        final ProductTypeConstructor source = 
+            (ProductTypeConstructor) this.source.substitute(var, t);
+        final Type target = this.target.substitute(var, t);
+        return new MapTypeConstructor(source, target);
     }
     
     

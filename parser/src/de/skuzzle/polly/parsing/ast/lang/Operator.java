@@ -4,7 +4,6 @@ package de.skuzzle.polly.parsing.ast.lang;
 import de.skuzzle.polly.parsing.Token;
 import de.skuzzle.polly.parsing.TokenType;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
-import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 
 /**
@@ -187,7 +186,7 @@ public abstract class Operator extends Function {
     public Declaration createDeclaration() {
         // HACK: save type, because it will be changed by call to super.createDeclaration
         final Type t = this.getUnique(); 
-        final VarDeclaration vd = (VarDeclaration) super.createDeclaration();
+        final Declaration vd = super.createDeclaration();
         
         // restore saved type
         this.setUnique(t);

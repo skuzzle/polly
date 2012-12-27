@@ -1,5 +1,6 @@
 package de.skuzzle.polly.parsing.ast.declarations.types;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -88,11 +89,12 @@ public class ProductTypeConstructor extends Type implements Iterable<Type> {
     @Override
     public Type substitute(TypeVar var, Type t) {
         final ListIterator<Type> it = this.types.listIterator();
+        final List<Type> substituted = new ArrayList<Type>(this.types.size());
         while (it.hasNext()) {
             final Type next = it.next();
-            it.set(next.substitute(var, t));
+            substituted.add(next.substitute(var, t));
         }
-        return this;
+        return new ProductTypeConstructor(substituted);
     }
     
     

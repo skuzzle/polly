@@ -4,7 +4,11 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
+import de.skuzzle.polly.parsing.ast.expressions.Expression;
+import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.lang.Function;
+import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.tools.Equatable;
 
 /**
@@ -15,7 +19,7 @@ import de.skuzzle.polly.tools.Equatable;
  *   
  * @author Simon Taddiken
  */
-public abstract class Declaration extends Node implements Comparable<Declaration> {
+public class Declaration extends Node implements Comparable<Declaration> {
 
     private static final long serialVersionUID = 1L;
     
@@ -24,11 +28,14 @@ public abstract class Declaration extends Node implements Comparable<Declaration
     private boolean isTemp;
     private boolean mustCopy;
     private boolean isNative;
+    private final Expression expression;
     
     
-    public Declaration(Position position, Identifier name) {
+    
+    public Declaration(Position position, Identifier name, Expression expression) {
         super(position);
         this.name = name;
+        this.expression = expression;
     }
     
     
@@ -53,16 +60,30 @@ public abstract class Declaration extends Node implements Comparable<Declaration
         this.mustCopy = mustCopy;
     }
 
-
+    
     
     /**
      * Gets the type of this declaration.
      * 
      * @return The type.
      */
-    public abstract Type getType();
+    public Type getType() {
+        return this.expression.getUnique();
+    }
     
     
+    
+    /**
+     * Gets the declared expression.
+     * 
+     * @return The expression.
+     */
+    public Expression getExpression() {
+        return this.expression;
+    }
+    
+    
+
     
     /**
      * Gets the name of this declaration.
@@ -159,5 +180,23 @@ public abstract class Declaration extends Node implements Comparable<Declaration
         
         return lengthComp != 0 ? lengthComp : 
             this.name.getId().compareTo(o.getName().getId());
+    }
+    
+    
+    
+    protected void onLookup(VarAccess access) {}
+    
+    
+    
+    @Override
+    public String toString() {
+        return this.name + " [Type: " + this.getType() + "]";
+    }
+
+
+
+    @Override
+    public void visit(Visitor visitor) throws ASTTraversalException {
+        visitor.visitDecl(this);
     }
 }

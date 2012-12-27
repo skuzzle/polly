@@ -4,7 +4,6 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
-import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.declarations.types.ListTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
@@ -70,7 +69,7 @@ public abstract class Function extends Native {
      */
     public Declaration createDeclaration() {
         final FunctionLiteral func = this.createFunction();
-        final VarDeclaration vd = new VarDeclaration(func.getPosition(), this.name, func);
+        final Declaration vd = new Declaration(func.getPosition(), this.name, func);
         this.setUnique(((MapTypeConstructor) func.getUnique()).getTarget());
         vd.setNative(true);
         vd.setMustCopy(Type.containsTypeVar(this.getUnique()));

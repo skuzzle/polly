@@ -5,12 +5,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
+import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
-import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.declarations.types.ListTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.ProductTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
+import de.skuzzle.polly.parsing.ast.declarations.types.TypeUnifier;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Empty;
@@ -51,11 +52,6 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         hc.resolveType(this.nspace, this);
     }
     
-    
-    
-    // ##########
-    // Paremeters
-    // ##########
     
     
     @Override
@@ -109,25 +105,50 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         }
         
         this.beforeFunctionLiteral(func);
-        final List<Type> parameters = new ArrayList<Type>();
         
+        // resolve parameter types
         this.nspace = this.enter();
         for (final Parameter p : func.getFormal()) {
             p.visit(this);
             
             // Invariant: parameters always have a unique type
-            final VarDeclaration vd = new VarDeclaration(p.getPosition(), p.getName(), 
-                new Empty(p.getUnique(), p.getPosition()));
-            this.nspace.declare(vd);
-            parameters.add(p.getUnique());
+            this.nspace.declare(p.getDeclaration());
         }
         
+        // resolve functions body type
         func.getExpression().visit(this);
         this.nspace = this.leave();
         
-        final ProductTypeConstructor source = new ProductTypeConstructor(parameters);
-        for (final Type target : func.getExpression().getTypes()) {
-            func.addType(new MapTypeConstructor(source, target));
+        for (final Parameter p : func.getFormal()) {
+            p.getTypes().clear();
+            for (final VarAccess va : p.getUsage()) {
+                p.addTypes(va.getTypes());
+            }
+        }
+        
+        boolean allChecked = false;
+        final int[] indizes = new int[func.getFormal().size()];
+        final boolean done[] = new boolean[func.getFormal().size()];
+        
+        
+        while (!allChecked) {
+            allChecked = true;
+            
+            final List<Type> types = new ArrayList<Type>();
+            int i = 0;
+            for (final Parameter p : func.getFormal()) {
+                types.add(p.getTypes().get(indizes[i]));
+                
+                done[i] = (indizes[i] + 1) == p.getTypes().size();
+                allChecked &= done[i];
+                indizes[i] = (indizes[i] + 1) % p.getTypes().size();
+                ++i;
+            }
+        
+            final ProductTypeConstructor source = new ProductTypeConstructor(types);
+            for (final Type target : func.getExpression().getTypes()) {
+                func.addType(new MapTypeConstructor(source, target));
+            }
         }
         
         this.afterFunctionLiteral(func);
@@ -149,7 +170,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     @Override
     public void afterAssignment(Assignment assign) throws ASTTraversalException {
         for (final Type t : assign.getExpression().getTypes()) {
-            final VarDeclaration vd = new VarDeclaration(assign.getName().getPosition(), 
+            final Declaration vd = new Declaration(assign.getName().getPosition(), 
                 assign.getName(), new Empty(t, assign.getExpression().getPosition()));
             this.nspace.declare(vd);
             
@@ -172,6 +193,8 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         final int[] indizes = new int[call.getParameters().size()];
         final boolean done[] = new boolean[call.getParameters().size()];
         
+        final List<Type> newLhsTypes = new ArrayList<Type>();
+        
         // combine all possible parameter types
         while (!allChecked) {
             allChecked = true;
@@ -190,17 +213,26 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
             // one possible actual signature type
             final ProductTypeConstructor s = new ProductTypeConstructor(types);
             // one possible lhs type with unknown target type
-            final MapTypeConstructor p = new MapTypeConstructor(s, Type.newTypeVar());
+            MapTypeConstructor p = new MapTypeConstructor(s, Type.newTypeVar());
             
-            for (final Type s1 : call.getLhs().getTypes()) {
+            
+            for (final Type lhsType : call.getLhs().getTypes()) {
+                
                 // HINT: do only substitute TypeVars in p
-                if (Type.unifyLeft(p, s1)) {
-                    call.addSignatureType(s);
+                final TypeUnifier unifier = new TypeUnifier(p, lhsType);
+                if (unifier.isUnifiable()) {
+                    unifier.substituteBoth();
+                    
+                    p = (MapTypeConstructor) unifier.getFirst();
+                    
+                    call.addSignatureType(p.getSource());
                     call.addType(p.getTarget());
+                    newLhsTypes.add(unifier.getFirst());
                 }
             }
         }
         
+        call.getLhs().setTypes(newLhsTypes);
         if (call.getTypes().isEmpty()) {
             this.reportError(call.getLhs(),
                 "Keine passende Deklaration für den Aufruf von " + 
@@ -212,7 +244,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     
     @Override
     public void beforeVarAccess(VarAccess access) throws ASTTraversalException {
-        access.addTypes(this.nspace.lookup(access.getIdentifier()));
+        access.addTypes(this.nspace.lookup(access));
     }
     
     

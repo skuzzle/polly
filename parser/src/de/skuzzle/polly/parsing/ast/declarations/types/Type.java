@@ -203,7 +203,7 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
      */
     public static boolean unify(Type m, Type n, boolean substituteLeft, 
             boolean substituteRight) {
-        final TypeUnifier tu = new TypeUnifier();
+        final TypeUnifier tu = new TypeUnifier(m, n);
         return tu.unify(m, n, substituteLeft, substituteRight);
     }
     

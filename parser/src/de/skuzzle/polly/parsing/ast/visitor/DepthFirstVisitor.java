@@ -3,7 +3,7 @@ package de.skuzzle.polly.parsing.ast.visitor;
 import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.Root;
-import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
+import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.Delete;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
@@ -143,12 +143,12 @@ public class DepthFirstVisitor extends VisitorAdapter {
     
 
     @Override
-    public void visitVarDecl(VarDeclaration decl) throws ASTTraversalException {
+    public void visitDecl(Declaration decl) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
-        this.beforeVarDecl(decl);
-        this.afterVarDecl(decl);
+        this.beforeDecl(decl);
+        this.afterDecl(decl);
     }
     
     
@@ -211,6 +211,9 @@ public class DepthFirstVisitor extends VisitorAdapter {
             return;
         }
         this.beforeFunctionLiteral(func);
+        for (final Parameter p : func.getFormal()) {
+            p.visit(this);
+        }
         func.getExpression().visit(this);
         this.afterFunctionLiteral(func);
     }

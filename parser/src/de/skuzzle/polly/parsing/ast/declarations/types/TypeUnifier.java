@@ -11,20 +11,83 @@ import java.util.Map;
  * 
  * @author Simon Taddiken
  */
-final class TypeUnifier {
+public final class TypeUnifier {
 
     private int classes;
     private final Map<Type, Integer> typeToClass;
     private final Map<Integer, Type> classToType;
+    private Type first;
+    private Type second;
+    
     
     
     /**
      * Creates a new TypeUnifier which can then be used to test for equality of one pair
      * of types.
+     * @param first First type to check.
+     * @param second Second type to check.
      */
-    public TypeUnifier() {
+    public TypeUnifier(Type first, Type second) {
         this.typeToClass = new HashMap<Type, Integer>();
         this.classToType = new HashMap<Integer, Type>();
+        this.first = first;
+        this.second = second;
+    }
+    
+    
+    
+    public Type getFirst() {
+        return this.first;
+    }
+    
+    
+    
+    public Type getSecond() {
+        return this.second;
+    }
+    
+    
+    
+    public boolean isUnifiable() {
+        return this.unify(this.first, this.second, false, false);
+    }
+    
+    
+    
+    public void substituteBoth() {
+        for (final Type t : this.typeToClass.keySet()) {
+            if (t instanceof TypeVar) {
+                final TypeVar tv = (TypeVar) t;
+                final Type representative = this.find(tv);
+                this.first = this.first.substitute(tv, representative);
+                this.second = this.second.substitute(tv, representative);
+            }
+        }
+    }
+    
+    
+    
+    public Type getSubstituteFirst() {
+        return this.substitute(this.first);
+    }
+    
+    
+    
+    public Type getSubstituteSecond() {
+        return this.substitute(this.second);
+    }
+    
+    
+    
+    private Type substitute(Type root) {
+        for (final Type t : this.typeToClass.keySet()) {
+            if (t instanceof TypeVar) {
+                final TypeVar tv = (TypeVar) t;
+                final Type representative = this.find(tv);
+                root = root.substitute(tv, representative);
+            }
+        }
+        return root;
     }
     
     

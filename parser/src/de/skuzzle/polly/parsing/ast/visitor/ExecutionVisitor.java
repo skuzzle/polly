@@ -8,8 +8,8 @@ import java.util.List;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.Root;
+import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
-import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.expressions.Delete;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
@@ -180,7 +180,7 @@ public class ExecutionVisitor extends DepthFirstVisitor {
         // result of assignment is the result of the assigned expression
         assign.getExpression().visit(this);
         
-        final VarDeclaration vd = new VarDeclaration(assign.getName().getPosition(), 
+        final Declaration vd = new Declaration(assign.getName().getPosition(), 
                 assign.getName(), this.stack.peek());
         vd.setPublic(assign.isPublic());
         vd.setTemp(assign.isTemp());
@@ -230,8 +230,8 @@ public class ExecutionVisitor extends DepthFirstVisitor {
             
             // declare result as local variable for this call
             final Expression result = this.stack.pop();
-            final VarDeclaration local = 
-                new VarDeclaration(actual.getPosition(), formal.getName(), result);
+            final Declaration local = 
+                new Declaration(actual.getPosition(), formal.getName(), result);
             this.nspace.declare(local);
         }
 
@@ -247,7 +247,8 @@ public class ExecutionVisitor extends DepthFirstVisitor {
     public void visitVarAccess(VarAccess access) throws ASTTraversalException {
         this.beforeVarAccess(access);
 
-        final VarDeclaration vd = this.nspace.resolveVar(access.getIdentifier(), 
+        final Declaration vd = this.nspace.tryResolve(
+            access.getIdentifier(), 
             access.getUnique());
         vd.getExpression().visit(this);
         

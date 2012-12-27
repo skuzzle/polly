@@ -2,7 +2,7 @@ package de.skuzzle.polly.parsing.ast.visitor;
 
 import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.Root;
-import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
+import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
@@ -121,7 +121,7 @@ public class ParentSetter extends DepthFirstVisitor {
     
     
     @Override
-    public void beforeVarDecl(VarDeclaration decl) throws ASTTraversalException {
+    public void beforeDecl(Declaration decl) throws ASTTraversalException {
         decl.getExpression().setParent(decl);
         decl.getName().setParent(decl);
     }

@@ -48,8 +48,8 @@ public class ListTypeConstructor extends Type {
     
     @Override
     public Type substitute(TypeVar var, Type t) {
-        this.subType = this.subType.substitute(var, t);
-        return this;
+        final Type subType = this.subType.substitute(var, t);
+        return new ListTypeConstructor(subType);
     }
 
     

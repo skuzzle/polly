@@ -30,6 +30,7 @@ public class UnaryBooleanArithmetic extends UnaryOperator<BooleanLiteral> {
         switch (this.getOp()) {
         case EXCLAMATION:
             stack.push(new BooleanLiteral(resultPos, !operand.getValue()));
+            break;
         default:
             this.invalidOperatorType(this.getOp());
         }

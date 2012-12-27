@@ -5,7 +5,7 @@ import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.Root;
-import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
+import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
@@ -51,14 +51,6 @@ public class ASTVisualizer extends DepthFirstVisitor {
             "Unique: " + exp.getUnique(), 
             "Types:\\n" + typesBuilder.toString(),
             exp.getPosition().toString());
-    }
-    
-    
-    
-    private void printParameter(Parameter param) {
-        this.dotBuilder.printNode(param, 
-            param.getName().getId(), 
-            "Unique: " + param.getUnique());
     }
     
     
@@ -151,14 +143,14 @@ public class ASTVisualizer extends DepthFirstVisitor {
     
     @Override
     public void beforeParameter(Parameter param) throws ASTTraversalException {
-        this.printParameter(param);
+        this.printExpression("Parameter: " + param.getName().getId(), param);
     }
     
     
     
     @Override
     public void beforeListParameter(ListParameter param) throws ASTTraversalException {
-        this.printParameter(param);
+        this.printExpression("Parameter: " + param.getName().getId(), param);
     }
     
     
@@ -166,7 +158,7 @@ public class ASTVisualizer extends DepthFirstVisitor {
     @Override
     public void beforeFunctionParameter(FunctionParameter param)
             throws ASTTraversalException {
-        this.printParameter(param);
+        this.printExpression("Parameter: " + param.getName().getId(), param);
     }
     
     
@@ -179,7 +171,7 @@ public class ASTVisualizer extends DepthFirstVisitor {
     
     
     @Override
-    public void beforeVarDecl(VarDeclaration decl) throws ASTTraversalException {
+    public void beforeDecl(Declaration decl) throws ASTTraversalException {
         this.dotBuilder.printNode(decl, 
             "Declaration: " + decl.getName().getId(),
             "Unique: " + decl.getType());
@@ -295,7 +287,7 @@ public class ASTVisualizer extends DepthFirstVisitor {
 
 
     @Override
-    public void afterVarDecl(VarDeclaration decl) throws ASTTraversalException {
+    public void afterDecl(Declaration decl) throws ASTTraversalException {
         this.dotBuilder.pop(decl);
     }
     

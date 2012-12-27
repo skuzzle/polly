@@ -18,6 +18,7 @@ import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
+import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.ast.lang.Cast;
 import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
@@ -100,11 +101,7 @@ public class Namespace {
         @Override
         public synchronized void declare(Declaration decl) throws ASTTraversalException {
             super.declare(decl);
-            if (!(decl instanceof VarDeclaration)) {
-                return;
-            }
-            final VarDeclaration vd = (VarDeclaration) decl;
-            if (vd.isPublic() || vd.isTemp() || vd.isNative()) {
+            if (decl.isPublic() || decl.isTemp() || decl.isNative()) {
                 return;
             }
             
@@ -143,13 +140,9 @@ public class Namespace {
                 final Unparser up = new Unparser(pw);
                 for (final List<Declaration> decls : this.decls.values()) {
                     for (final Declaration decl : decls) {
-                        if (!(decl instanceof VarDeclaration)) {
-                            continue;
-                        }
-                        final VarDeclaration vd = (VarDeclaration) decl;
-                        new Braced(vd.getExpression()).visit(up);
+                        new Braced(decl.getExpression()).visit(up);
                         pw.print("->");
-                        pw.println(vd.getName().getId());
+                        pw.println(decl.getName().getId());
                     }
                 }
             } catch (ASTTraversalException e) {
@@ -259,11 +252,11 @@ public class Namespace {
     static {
         try {
             
-            final VarDeclaration pi = new VarDeclaration(Position.NONE, 
+            final Declaration pi = new Declaration(Position.NONE, 
                 new Identifier(Position.NONE, "pi"), 
                 new NumberLiteral(Position.NONE, Math.PI));
             pi.setNative(true);
-            final VarDeclaration e = new VarDeclaration(Position.NONE, 
+            final Declaration e = new Declaration(Position.NONE, 
                 new Identifier(Position.NONE, "e"), 
                 new NumberLiteral(Position.NONE, Math.E));
             e.setNative(true);
@@ -588,7 +581,7 @@ public class Namespace {
      * @throws ASTTraversalException If declaration does not exist or multiple 
      *          declarations with that name exists in current level.
      */
-    public VarDeclaration resolveHere(ResolvableIdentifier name) 
+    public Declaration resolveHere(ResolvableIdentifier name) 
             throws ASTTraversalException {
         final List<Declaration> decls = this.decls.get(name.getId());
         
@@ -598,7 +591,7 @@ public class Namespace {
         } else if (decls.size() != 1) {
             throw new ASTTraversalException(name.getPosition(), "Ambiguos");
         }
-        return (VarDeclaration) decls.get(0);
+        return decls.get(0);
     }
     
     
@@ -615,7 +608,7 @@ public class Namespace {
      * @param signature The signature of the variable to resolve.
      * @return The resolved declaration or <code>null</code> if non was found.
      */
-    private Declaration tryResolve(ResolvableIdentifier name, Type signature) {
+    public Declaration tryResolve(ResolvableIdentifier name, Type signature) {
         for(Namespace space = this; space != null; space = space.parent) {
             final List<Declaration> decls = space.decls.get(name.getId());
             if (decls == null) {
@@ -642,11 +635,12 @@ public class Namespace {
      * higher level are ignored if a declaration with identical type is found on a lower
      * level.
      * 
-     * @param name Variable name to resolve.
+     * @param access VarAccess to resolve.
      * @return A set of all declarations with matching names.
      * @throws DeclarationException If no variable with matching name was found.
      */
-    public Set<Type> lookup(ResolvableIdentifier name) throws DeclarationException {
+    public Set<Type> lookup(VarAccess access) throws DeclarationException {
+        final ResolvableIdentifier name = access.getIdentifier();
         final Set<Type> result = new HashSet<Type>();
         for(Namespace space = this; space != null; space = space.parent) {
             final List<Declaration> decls = space.decls.get(name.getId());
@@ -672,6 +666,7 @@ ignore:     for (Declaration decl : decls) {
                     }
                     result.add(decl.getType());
                     name.addDeclaration(decl);
+                    decl.onLookup(access);
                 }
             }
         }
@@ -683,24 +678,6 @@ ignore:     for (Declaration decl : decls) {
                 "Unbekannte Variable: '" + name + "'", similar);
         }
         return result;
-    }
-    
-    
-    
-    /**
-     * Resolves the declaration belonging to the given name. The declaration to resolve
-     * must match the given <code>signature</code>.
-     * 
-     * @param name Name of declaration to resolve.
-     * @param signature Type of declaration to resolve.
-     * @return The resolved declaration.
-     * @throws ASTTraversalException If declaration with given name and type does not
-     *          exist in current namespace hierarchy.
-     */
-    public VarDeclaration resolveVar(ResolvableIdentifier name, Type signature) 
-            throws ASTTraversalException {
-        final Declaration check = this.tryResolve(name, signature);
-        return (VarDeclaration) check;
     }
     
     
@@ -722,11 +699,8 @@ ignore:     for (Declaration decl : decls) {
                     b.append("    '");
                     b.append(decl.getName());
                     b.append("'");
-                    if (decl instanceof VarDeclaration) {
-                        final VarDeclaration vd = (VarDeclaration) decl;
-                        b.append(" = ");
-                        b.append(Unparser.toString(vd.getExpression()));
-                    }
+                    b.append(" = ");
+                    b.append(Unparser.toString(decl.getExpression()));
                     b.append(" [Type: ");
                     b.append(decl.getType());
                     b.append("]\n");

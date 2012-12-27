@@ -7,8 +7,10 @@ import java.util.List;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
+import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
+import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.parsing.types.FunctionType;
@@ -44,6 +46,8 @@ public class Parameter extends Expression {
     
     private ResolvableIdentifier name;
     private ResolvableIdentifier typeName;
+    private final Declaration decl;
+    private final List<VarAccess> usage;
     
     
     
@@ -58,6 +62,15 @@ public class Parameter extends Expression {
         super(position, type);
         this.name = name;
         this.typeName = new ResolvableIdentifier(type.getName());
+        this.usage = new ArrayList<VarAccess>();
+        this.decl = new Declaration(this.getPosition(), this.getName(), this) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onLookup(VarAccess access) {
+                Parameter.this.usage.add(access);
+            }
+        };
     }
     
     
@@ -75,6 +88,29 @@ public class Parameter extends Expression {
         super(position);
         this.typeName = typeName;
         this.name = name;
+        this.usage = new ArrayList<VarAccess>();
+        this.decl = new Declaration(this.getPosition(), this.getName(), this) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onLookup(VarAccess access) {
+                Parameter.this.usage.add(access);
+            }
+        };
+        this.decl.setMustCopy(false);
+    }
+    
+    
+    
+    
+    public Declaration getDeclaration() {
+        return this.decl;
+    }
+    
+    
+    
+    public List<VarAccess> getUsage() {
+        return this.usage;
     }
     
     

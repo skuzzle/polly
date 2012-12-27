@@ -7,7 +7,6 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
-import de.skuzzle.polly.parsing.ast.declarations.VarDeclaration;
 import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.ProductTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
@@ -82,7 +81,7 @@ public class Cast extends Operator {
     @Override
     public Declaration createDeclaration() {
         final FunctionLiteral func = this.createFunction();
-        final VarDeclaration vd = new VarDeclaration(
+        final Declaration vd = new Declaration(
             func.getPosition(), this.getUnique().getName(), func);
         return vd;
     }

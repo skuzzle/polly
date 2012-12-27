@@ -93,6 +93,13 @@ public abstract class Expression extends Node {
             this.addType(type);
         }
     }
+    
+    
+    
+    public void setTypes(Collection<Type> types) {
+        this.types.clear();
+        this.addTypes(types);
+    }
 
     
     

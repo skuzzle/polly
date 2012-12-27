@@ -3,19 +3,23 @@ package de.skuzzle.polly.parsing.ast.visitor.resolving;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.types.ListTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.ProductTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
+import de.skuzzle.polly.parsing.ast.declarations.types.TypeUnifier;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
+import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
+import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 
@@ -58,6 +62,30 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         }
         
         this.afterRoot(root);
+    }
+    
+    
+    
+    @Override
+    public void visitFunctionLiteral(FunctionLiteral func) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        
+        this.beforeFunctionLiteral(func);
+        
+        func.getExpression().visit(this);
+        
+        final List<Type> types = new ArrayList<Type>(func.getFormal().size());
+        for (final Parameter p : func.getFormal()) {
+            types.add(p.getUnique());
+        }
+        final ProductTypeConstructor source = new ProductTypeConstructor(types);
+        final Type target = func.getExpression().getUnique();
+        
+        func.setUnique(new MapTypeConstructor(source, target));
+        
+        this.afterFunctionLiteral(func);
     }
     
     
@@ -139,12 +167,15 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         // all call types that match a signature are stored in this list. If type 
         // resolution was successful, it will contain a single type.
         final Collection<Type> matched = new ArrayList<Type>();
+        
         for (final ProductTypeConstructor s : call.getSignatureTypes()) {
             final MapTypeConstructor tmp = new MapTypeConstructor(s, t);
             
             for (final Type lhsType : call.getLhs().getTypes()) {
-                if (Type.unify(lhsType, tmp)) {
-                    mtc = tmp;
+                final TypeUnifier unifier = new TypeUnifier(lhsType, tmp);
+                if (unifier.isUnifiable()) {
+                    
+                    mtc = (MapTypeConstructor) unifier.getSubstituteSecond();
                     matched.add(mtc);
                 }
             }
@@ -168,6 +199,23 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         final Iterator<Type> uniqueIt = mtc.getSource().iterator();
         for (final Expression exp : call.getParameters()) {
             exp.setUnique(uniqueIt.next());
+        }
+    }
+    
+    
+    
+    @Override
+    public void afterCall(Call call) throws ASTTraversalException {
+        final List<Type> types = new ArrayList<Type>(call.getParameters().size());
+        for (final Expression exp : call.getParameters()) {
+            types.add(exp.getUnique());
+        }
+        
+        final ProductTypeConstructor params = new ProductTypeConstructor(types);
+        final MapTypeConstructor mtc = (MapTypeConstructor) call.getLhs().getUnique();
+        
+        if (!Type.unify(mtc.getSource(), params)) {
+            this.typeError(call, mtc.getSource(), params);
         }
     }
     
