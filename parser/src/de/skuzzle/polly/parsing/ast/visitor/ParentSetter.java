@@ -52,10 +52,7 @@ public class ParentSetter extends DepthFirstVisitor {
     @Override
     public void beforeCall(Call call) throws ASTTraversalException {
         call.getLhs().setParent(call);
-        call.getLhs().visit(this);
-        for (final Expression p : call.getParameters()) {
-            p.setParent(call);
-        }
+        call.getRhs().setParent(call);
     }
     
     

@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 
 import de.skuzzle.polly.parsing.Position;
-import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
@@ -111,19 +110,6 @@ public class Parameter extends Expression {
     
     public List<VarAccess> getUsage() {
         return this.usage;
-    }
-    
-    
-    
-    @Override
-    public <T extends Node> void replaceChild(T current, T newChild) {
-        if (current == this.name) {
-            this.name = (ResolvableIdentifier) newChild;
-        } else if (current == this.typeName) {
-            this.typeName = (ResolvableIdentifier) newChild;
-        } else {
-            super.replaceChild(current, newChild);
-        }
     }
 
     

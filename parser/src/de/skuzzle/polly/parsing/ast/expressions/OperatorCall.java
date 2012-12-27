@@ -1,10 +1,11 @@
 package de.skuzzle.polly.parsing.ast.expressions;
 
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.List;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
+import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
 import de.skuzzle.polly.parsing.ast.lang.Operator;
 import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
@@ -33,7 +34,7 @@ public class OperatorCall extends Call {
     public final static OperatorCall binary(Position position, OpType operator, 
             Expression left, Expression right) {
         return new OperatorCall(position, operator, 
-            Arrays.asList(new Expression[] {left, right}), false, position);
+            Arrays.asList(new Expression[] {left, right}), false);
     }
     
     
@@ -51,7 +52,7 @@ public class OperatorCall extends Call {
     public final static OperatorCall unary(Position position, OpType operator, 
             Expression operand, boolean postfix) {
         return new OperatorCall(position, operator, 
-            Arrays.asList(new Expression[] {operand}), postfix, position);
+            Arrays.asList(new Expression[] {operand}), postfix);
     }
     
     
@@ -69,8 +70,7 @@ public class OperatorCall extends Call {
     public final static OperatorCall ternary(Position position, OpType operator, 
             Expression operand1, Expression operand2, Expression operand3) {
         return new OperatorCall(position, operator, 
-            Arrays.asList(new Expression[] {operand1, operand2, operand3}), false, 
-            position);
+            Arrays.asList(new Expression[] {operand1, operand2, operand3}), false);
     }
     
     
@@ -89,14 +89,13 @@ public class OperatorCall extends Call {
      * @param postfix Whether this is a postfix operator. If <code>false</code>, this 
      *          operator is assumed to be prefix (only taken into account for unary 
      *          operators.)
-     * @param parameterPos Position that spans the actual parameters.
      */
     private OperatorCall(Position position, OpType operator, 
-            Collection<Expression> parameters, boolean postfix, Position parameterPos) {
+            List<Expression> parameters, boolean postfix) {
         super(position, 
             new VarAccess(position, new ResolvableIdentifier(position, 
                 operator.getId())),
-            parameters, parameterPos);
+            new ProductLiteral(position, parameters));
         this.operator = operator;
         this.postfix = postfix;
     }

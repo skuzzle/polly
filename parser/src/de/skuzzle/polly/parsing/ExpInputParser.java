@@ -27,6 +27,7 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.DateLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
+import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.StringLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.TimespanLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.UserLiteral;
@@ -678,14 +679,15 @@ public class ExpInputParser {
         
         final Token la = this.scanner.lookAhead();
         if (this.scanner.match(TokenType.OPENBR)) {
-            final Collection<Expression> params = this.parseExpressionList(
+            final List<Expression> params = this.parseExpressionList(
                 TokenType.CLOSEDBR);
-            
+            final ProductLiteral pl = new ProductLiteral(
+                this.scanner.spanFrom(la), params);
             this.expect(TokenType.CLOSEDBR);
             
             return new Call(
                 new Position(lhs.getPosition().getStart(), this.scanner.getStreamIndex()), 
-                lhs, params, this.scanner.spanFrom(la));
+                lhs, pl);
         }
         return lhs;
     }

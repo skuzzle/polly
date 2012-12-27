@@ -2,7 +2,6 @@ package de.skuzzle.polly.parsing.ast.visitor.resolving;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import de.skuzzle.polly.parsing.ast.Root;
@@ -24,9 +23,9 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 
 
+
 class SecondPassTypeResolver extends AbstractTypeResolver {
 
-    
     
     
     public SecondPassTypeResolver(FirstPassTypeResolver fptr) {
@@ -56,7 +55,7 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         for (final Expression exp : root.getExpressions()) {
             // check whether unique type could have been resolved
             if (!exp.typeResolved()) {
-                this.applyType(exp, exp);
+                //this.applyType(exp, exp);
             }
             exp.visit(this);
         }
@@ -109,6 +108,23 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         
         this.afterListLiteral(list);
     }
+    
+    
+    
+    /*@Override
+    public void visitProductLiteral(ProductLiteral product) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        
+        this.beforeProductLiteral(product);
+        
+        for (final Expression exp : product.getContent()) {
+            exp.visit(this);
+        }
+        
+        this.afterProductLiteral(product);
+    }*/
     
     
     
@@ -168,8 +184,9 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         // resolution was successful, it will contain a single type.
         final Collection<Type> matched = new ArrayList<Type>();
         
-        for (final ProductTypeConstructor s : call.getSignatureTypes()) {
-            final MapTypeConstructor tmp = new MapTypeConstructor(s, t);
+        for (final Type s : call.getRhs().getTypes()) {
+            final MapTypeConstructor tmp = new MapTypeConstructor(
+                (ProductTypeConstructor) s, t);
             
             for (final Type lhsType : call.getLhs().getTypes()) {
                 final TypeUnifier unifier = new TypeUnifier(lhsType, tmp);
@@ -190,16 +207,9 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
             this.ambiguosCall(call, matched);
         }
 
+        call.getRhs().setUnique(mtc.getSource());
         call.getLhs().setUnique(mtc);
         call.setUnique(t);
-        
-        // Set unique types of the actual parameters according to the single resolved
-        // signature.
-        // invariant: mtc.source.size == call.getParameters.size
-        final Iterator<Type> uniqueIt = mtc.getSource().iterator();
-        for (final Expression exp : call.getParameters()) {
-            exp.setUnique(uniqueIt.next());
-        }
     }
     
     

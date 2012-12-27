@@ -18,6 +18,7 @@ import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
+import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.FunctionParameter;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.ListParameter;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
@@ -53,26 +54,11 @@ public class ASTVisualizer extends DepthFirstVisitor {
             exp.getPosition().toString());
     }
     
-    
-    
-    @Override
-    public void visitOperatorCall(OperatorCall call) throws ASTTraversalException {
-        this.beforeOperatorCall(call);
-        
-        call.getLhs().visit(this);
-        for (final Expression exp : call.getParameters()) {
-            exp.visit(this);
-        }
-        
-        this.afterOperatorCall(call);
-    }
-    
 
 
     @Override
     public void beforeOperatorCall(OperatorCall call) throws ASTTraversalException {
-        //this.printExpression("Op " + call.getOperator().getId(), call);
-        this.beforeCall(call);
+        this.printExpression("OperatorCall: " + call.getOperator().getId(), call);
     }
 
 
@@ -87,6 +73,13 @@ public class ASTVisualizer extends DepthFirstVisitor {
     @Override
     public void beforeLiteral(Literal literal) throws ASTTraversalException {
         this.printExpression(literal.toString(), literal);
+    }
+    
+    
+    
+    @Override
+    public void beforeProductLiteral(ProductLiteral product) throws ASTTraversalException {
+        this.printExpression("Product", product);
     }
     
     
@@ -221,6 +214,13 @@ public class ASTVisualizer extends DepthFirstVisitor {
         this.dotBuilder.pop(func);
     }
 
+    
+    
+    @Override
+    public void afterProductLiteral(ProductLiteral product) throws ASTTraversalException {
+        this.dotBuilder.pop(product);
+    }
+    
 
 
     @Override

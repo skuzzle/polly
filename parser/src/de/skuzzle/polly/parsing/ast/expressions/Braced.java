@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.List;
 
 import de.skuzzle.polly.parsing.Position;
-import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
@@ -27,17 +26,6 @@ public class Braced extends Expression {
     public Braced(Expression braced) {
         super(braced.getPosition(), braced.getUnique());
         this.expression = braced;
-    }
-    
-    
-    
-    @Override
-    public <T extends Node> void replaceChild(T current, T newChild) {
-        if (current == this.expression) {
-            this.expression = (Expression) newChild;
-        } else {
-            super.replaceChild(current, newChild);
-        }
     }
     
     

@@ -96,7 +96,7 @@ public abstract class AbstractTypeResolver extends DepthFirstVisitor {
     
     protected void ambiguosCall(Call call, Collection<Type> types) 
             throws ASTTraversalException {
-        this.reportError(call.getParameterPosition(), 
+        this.reportError(call.getRhs(), 
             "Ambiguos call. Matching types: " + types);
     }
     

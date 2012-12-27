@@ -189,7 +189,7 @@ public class ExecutionVisitor extends DepthFirstVisitor {
         
         if (assign.getParent() != null) {
             // HACK: for assignments read from declaration file, parent will be null
-            assign.getParent().replaceChild(assign, assign.getExpression());
+            //assign.getParent().replaceChild(assign, assign.getExpression());
         }
         this.afterAssignment(assign);
     }
@@ -215,7 +215,7 @@ public class ExecutionVisitor extends DepthFirstVisitor {
         final FunctionLiteral func = (FunctionLiteral) this.stack.pop();
         
         this.enter();
-        final Iterator<Expression> actualIt = call.getParameters().iterator();
+        final Iterator<Expression> actualIt = call.getRhs().getContent().iterator();
         final Iterator<Parameter> formalIt = func.getFormal().iterator();
         while (formalIt.hasNext()) {
             final Parameter formal = formalIt.next();

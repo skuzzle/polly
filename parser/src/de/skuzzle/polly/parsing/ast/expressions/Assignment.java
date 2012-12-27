@@ -2,7 +2,6 @@ package de.skuzzle.polly.parsing.ast.expressions;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Identifier;
-import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 
@@ -51,19 +50,6 @@ public class Assignment extends Expression {
      */
     public Expression getExpression() {
         return this.expression;
-    }
-    
-    
-    
-    @Override
-    public <T extends Node> void replaceChild(T current, T newChild) {
-        if (current == this.expression) {
-            this.expression = (Expression) newChild;
-        } else if (current == this.name) {
-            this.name = (Identifier) newChild;
-        } else {
-            super.replaceChild(current, newChild);
-        }
     }
     
     

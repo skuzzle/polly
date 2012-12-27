@@ -22,6 +22,7 @@ import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
+import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.FunctionParameter;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.ListParameter;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
@@ -176,6 +177,35 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     
     
     @Override
+    public void afterProductLiteral(ProductLiteral product) throws ASTTraversalException {
+        boolean allChecked = false;
+        final int[] indizes = new int[product.getContent().size()];
+        final boolean done[] = new boolean[product.getContent().size()];
+        
+        // combine all possible parameter types
+        while (!allChecked) {
+            allChecked = true;
+            
+            final List<Type> types = new ArrayList<Type>();
+            int i = 0;
+            for (final Expression exp : product.getContent()) {
+                types.add(exp.getTypes().get(indizes[i]));
+                
+                done[i] = (indizes[i] + 1) == exp.getTypes().size();
+                allChecked &= done[i];
+                indizes[i] = (indizes[i] + 1) % exp.getTypes().size();
+                ++i;
+            }
+            
+            // one possible actual signature type
+            final ProductTypeConstructor s = new ProductTypeConstructor(types);
+            product.addType(s);
+        }
+    }
+    
+    
+    
+    @Override
     public void afterAssignment(Assignment assign) throws ASTTraversalException {
         for (final Type t : assign.getExpression().getTypes()) {
             final Declaration vd = new Declaration(assign.getName().getPosition(), 
@@ -197,50 +227,32 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     
     @Override
     public void afterCall(Call call) throws ASTTraversalException {
-        boolean allChecked = false;
-        final int[] indizes = new int[call.getParameters().size()];
-        final boolean done[] = new boolean[call.getParameters().size()];
-        
         final List<Type> newLhsTypes = new ArrayList<Type>();
+        final List<Type> newRhsTypes = new ArrayList<Type>();
         
-        // combine all possible parameter types
-        while (!allChecked) {
-            allChecked = true;
+        for (final Type rhsType : call.getRhs().getTypes()) {
             
-            final List<Type> types = new ArrayList<Type>();
-            int i = 0;
-            for (final Expression exp : call.getParameters()) {
-                types.add(exp.getTypes().get(indizes[i]));
-                
-                done[i] = (indizes[i] + 1) == exp.getTypes().size();
-                allChecked &= done[i];
-                indizes[i] = (indizes[i] + 1) % exp.getTypes().size();
-                ++i;
-            }
-            
-            // one possible actual signature type
-            final ProductTypeConstructor s = new ProductTypeConstructor(types);
-            // one possible lhs type with unknown target type
-            MapTypeConstructor p = new MapTypeConstructor(s, Type.newTypeVar());
-            
+            final ProductTypeConstructor s = (ProductTypeConstructor) rhsType;
+            final MapTypeConstructor possibleLhs = new MapTypeConstructor(s, 
+                Type.newTypeVar());
             
             for (final Type lhsType : call.getLhs().getTypes()) {
                 
-                // HINT: do only substitute TypeVars in p
-                final TypeUnifier unifier = new TypeUnifier(p, lhsType);
+                final TypeUnifier unifier = new TypeUnifier(possibleLhs, lhsType);
                 if (unifier.isUnifiable()) {
                     unifier.substituteBoth();
                     
-                    MapTypeConstructor mtc = (MapTypeConstructor) unifier.getFirst();
+                    final MapTypeConstructor mtc = (MapTypeConstructor) unifier.getFirst();
                     
-                    call.addSignatureType(mtc.getSource());
                     call.addType(mtc.getTarget());
                     newLhsTypes.add(unifier.getFirst());
+                    newRhsTypes.add(unifier.getSecond());
                 }
             }
         }
         
         call.getLhs().setTypes(newLhsTypes);
+        
         if (call.getTypes().isEmpty()) {
             this.reportError(call.getLhs(),
                 "Keine passende Deklaration für den Aufruf von " + 

@@ -68,23 +68,6 @@ public final class Root extends Node {
     
     
     @Override
-    public <T extends Node> void replaceChild(T current, T newChild) {
-        if (current == this.command) {
-            this.command = (Identifier) newChild;
-        } else {
-            for (int i = 0; i < this.expressions.size(); ++i) {
-                if (this.expressions.get(i) == current) {
-                    this.expressions.set(i, (Expression) newChild);
-                    return;
-                }
-            }
-            super.replaceChild(current, newChild);
-        }
-    }
-    
-    
-    
-    @Override
     public void visit(Visitor visitor) throws ASTTraversalException {
         visitor.visitRoot(this);
     }

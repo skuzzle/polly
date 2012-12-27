@@ -14,6 +14,7 @@ import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
+import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
 import de.skuzzle.polly.parsing.ast.lang.TernaryOperator;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
@@ -55,7 +56,8 @@ public class FoldLeft extends TernaryOperator<ListLiteral, FunctionLiteral, Lite
         Literal result = third;
         for (final Expression exp : first.getContent()) {
             final Call call = new Call(Position.NONE, second, 
-                Arrays.asList(new Expression[] {result, exp}), Position.NONE);
+                new ProductLiteral(Position.NONE, 
+                    Arrays.asList(new Expression[] {result, exp})));
             
             call.visit(execVisitor);
             result = stack.pop();

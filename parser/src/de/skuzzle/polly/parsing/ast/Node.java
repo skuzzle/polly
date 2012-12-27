@@ -99,19 +99,4 @@ public abstract class Node implements Visitable<Visitor>, Serializable, Equatabl
         final Node other = (Node) o;
         return this.position.equals(other.position);
     }
-    
-    
-    
-    /**
-     * Method to replace a child node of this node with the given node. Nodes may only
-     * be replaced by nodes of the same type. The default implementation will throw
-     * a {@link RuntimeException} to indicate a missing implementation of this method.
-     * 
-     * @param current Child to be replaced.
-     * @param newChild New child to replace the existing with.
-     */
-    public <T extends Node> void replaceChild(T current, T newChild) {
-        throw new RuntimeException("No such child to replace: " + 
-            current + " @ node " + this);
-    }
 }

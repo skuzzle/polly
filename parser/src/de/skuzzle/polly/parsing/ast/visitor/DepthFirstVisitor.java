@@ -16,6 +16,7 @@ import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
+import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.FunctionParameter;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.ListParameter;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
@@ -160,9 +161,7 @@ public class DepthFirstVisitor extends VisitorAdapter {
         }
         this.beforeCall(call);
         call.getLhs().visit(this);
-        for (final Expression exp : call.getParameters()) {
-            exp.visit(this);
-        }
+        call.getRhs().visit(this);
         this.afterCall(call);
     }
 
@@ -231,6 +230,20 @@ public class DepthFirstVisitor extends VisitorAdapter {
         }
         this.afterListLiteral(list);
     }
+    
+    
+    
+    @Override
+    public void visitProductLiteral(ProductLiteral product) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        this.beforeProductLiteral(product);
+        for (final Expression exp : product.getContent()) {
+            exp.visit(this);
+        }
+        this.afterProductLiteral(product);
+    }
 
 
     
@@ -241,9 +254,7 @@ public class DepthFirstVisitor extends VisitorAdapter {
         }
         this.beforeOperatorCall(call);
         call.getLhs().visit(this);
-        for (final Expression exp : call.getParameters()) {
-            exp.visit(this);
-        }
+        call.getRhs().visit(this);
         this.afterOperatorCall(call);
     }
     

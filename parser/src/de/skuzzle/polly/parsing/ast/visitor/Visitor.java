@@ -15,6 +15,7 @@ import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
+import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.FunctionParameter;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.ListParameter;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
@@ -155,6 +156,11 @@ public interface Visitor {
     public void afterListLiteral(ListLiteral list) throws ASTTraversalException;
     public void visitListLiteral(ListLiteral list) throws ASTTraversalException;
 
+    public void beforeProductLiteral(ProductLiteral product) throws ASTTraversalException;
+    public void afterProductLiteral(ProductLiteral product) throws ASTTraversalException;
+    public void visitProductLiteral(ProductLiteral product) throws ASTTraversalException;
+
+    
     public void beforeBraced(Braced braced) throws ASTTraversalException;
     public void afterBraced(Braced braced) throws ASTTraversalException;
     public void visitBraced(Braced braced) throws ASTTraversalException;

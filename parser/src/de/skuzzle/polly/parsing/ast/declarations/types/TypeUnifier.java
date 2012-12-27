@@ -79,7 +79,7 @@ public final class TypeUnifier {
     
     
     
-    private Type substitute(Type root) {
+    public Type substitute(Type root) {
         for (final Type t : this.typeToClass.keySet()) {
             if (t instanceof TypeVar) {
                 final TypeVar tv = (TypeVar) t;
