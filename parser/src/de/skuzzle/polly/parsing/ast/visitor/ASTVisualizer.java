@@ -22,18 +22,18 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.FunctionParameter;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.ListParameter;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
-import de.skuzzle.polly.parsing.util.DotBuilder;
+import de.skuzzle.polly.parsing.util.PreOrderDotBuilder;
 
 
 
 public class ASTVisualizer extends DepthFirstVisitor {
 
 
-    private DotBuilder dotBuilder;
+    private PreOrderDotBuilder dotBuilder;
     
     
     public void visualize(Node root, PrintStream out) throws ASTTraversalException {
-        this.dotBuilder = new DotBuilder(out, false);
+        this.dotBuilder = new PreOrderDotBuilder(out, false);
         root.visit(this);
         this.dotBuilder.finish();
     }

@@ -204,7 +204,7 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
                 "Keine passende Deklaration für den Aufruf von " + 
                 Unparser.toString(call.getLhs()) + " gefunden");
         } else if (matched.size() != 1) {
-            this.ambiguosCall(call, matched);
+            this.ambiguousCall(call, matched);
         }
 
         call.getRhs().setUnique(mtc.getSource());

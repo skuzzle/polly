@@ -2,7 +2,7 @@ package de.skuzzle.polly.parsing.ast.declarations.types;
 
 import java.io.PrintStream;
 
-import de.skuzzle.polly.parsing.util.DotBuilder;
+import de.skuzzle.polly.parsing.util.PreOrderDotBuilder;
 
 /**
  * Class to create a simple dot output from any type expression.
@@ -11,12 +11,12 @@ import de.skuzzle.polly.parsing.util.DotBuilder;
  */
 public class TypeGraphVisualizer extends DefaultTypeVisitor {
 
-    private DotBuilder dotBuilder;
+    private PreOrderDotBuilder dotBuilder;
     
     
     
     public void visualize(Type root, PrintStream out) {
-        this.dotBuilder = new DotBuilder(out, true);
+        this.dotBuilder = new PreOrderDotBuilder(out, true);
         root.visit(this);
         this.dotBuilder.finish();
     }

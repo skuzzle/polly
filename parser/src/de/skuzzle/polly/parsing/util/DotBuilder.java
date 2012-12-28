@@ -1,97 +1,48 @@
 package de.skuzzle.polly.parsing.util;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.tools.iterators.ArrayIterator;
 
 
 public class DotBuilder {
-    
-    private class Edge {
-        Object source;
-        Object target;
-        
-        public Edge(Object source, Object target) {
-            super();
-            this.source = source;
-            this.target = target;
-        }
-    }
 
-    private int preorderNum;
-    private final Stack<Integer> preorderStack;
-    private final List<Edge> edgeList;
-    private final Map<Object, Integer> preorderMap;
-    private final Set<Object> mustPop;
-    private final PrintStream out;
-    private final boolean directed;
+    protected final PrintStream out;
+    protected int nodeIdx;
+    protected final Map<Node, Integer> nodes;
     
     
-    public DotBuilder(PrintStream out, boolean directed) {
+    public DotBuilder(PrintStream out) {
         this.out = out;
-        this.directed = directed;
-        this.preorderStack = new LinkedStack<Integer>();
-        this.preorderMap = new HashMap<Object, Integer>();
-        this.edgeList = new ArrayList<Edge>();
-        this.mustPop = new HashSet<Object>();
-        
-        if (this.directed) {
-            this.out.println("digraph \"\"");
-        } else {
-            this.out.println("graph \"\"");
-        }
+        this.nodes = new HashMap<Node, Integer>();
+        this.out.println("graph \"name\"");
         this.out.println("{");
-        this.out.println("node [shape=box]");
-        this.out.println("graph[bgcolor=white, ordering=out]");
+        this.out.println("node [shape=Mrecord];");
+        this.out.println("graph[bgcolor=white, ordering=out, concentrate=true];");
     }
     
     
     
     public void finish() {
-        for (final Edge edge : this.edgeList) {
-            Integer source = this.preorderMap.get(edge.source);
-            Integer target = this.preorderMap.get(edge.target);
-            
-            if (source != null && target != null) {
-                this.emitEdge(source, target);
-            }
-        }
-        
         this.out.println("}");
     }
     
     
     
-    public void printNodeWithEdgeTo(Object newNode, Object parent, String...attributes) {
-        this.printLabel(newNode, false, attributes);
-        this.edgeList.add(new Edge(newNode, parent));
-    }
-    
-    
-    
-    private void printLabel(Object node, boolean edge, String...attributes) {
-        int orderNum;
-        boolean fromMap = false;
-        if (this.preorderMap.get(node) != null) {
-            orderNum = this.preorderMap.get(node);
-            fromMap = true;
-        } else {
-            ++this.preorderNum;
-            this.preorderMap.put(node, this.preorderNum);
-            orderNum = this.preorderNum;
-            this.mustPop.add(node);
+    public void printNode(Node node, String...attributes) {
+        Integer i = this.nodes.get(node);
+        if (i != null) {
+            return;
         }
-        
+        i = this.nodeIdx++;
+        this.nodes.put(node, i);
         this.out.print("n");
-        this.out.print(orderNum);
-        this.out.print("[shape=record, label=\"{");
+        this.out.print(i);
+        this.out.print("[shape=Mrecord, fontname=\"Consolas\", label=\"{");
         
         final Iterator<String> it = ArrayIterator.get(attributes);
         while(it.hasNext()) {
@@ -100,14 +51,41 @@ public class DotBuilder {
                 this.out.print("|");
             }
         }
-        this.out.println("}\"]");
         
-        if (edge && !this.preorderStack.isEmpty()) {
-            this.emitEdge(this.preorderStack.peek(), orderNum);
+        this.out.println("}\"];");
+    }
+    
+    
+    
+    public void printEdge(Node start, Node target, String label) {
+        this.printEdge(start, target, label, "solid", true);
+    }
+    
+    
+    
+    public void printEdge(Node start, Node target, String label, String style, 
+            boolean constraint) {
+        final Integer startIdx = this.nodes.get(start);
+        final Integer targetIdx = this.nodes.get(target);
+        
+        if (startIdx == null) {
+            throw new IllegalStateException("no start for node " + start);
+        } else if (targetIdx == null) {
+            throw new IllegalStateException("no target for node " + target);
         }
-        if (!fromMap) {
-            this.preorderStack.push(this.preorderNum);
-        }
+        
+        this.out.print("n");
+        this.out.print(startIdx);
+        this.out.print("--");
+        this.out.print("n");
+        this.out.print(targetIdx);
+        this.out.print(" [fontname=\"Consolas\", headport=n,tailport=s,constraint=");
+        this.out.print(constraint);
+        this.out.print(",label=\"");
+        this.out.print(label);
+        this.out.print("\", style=\"");
+        this.out.print(style);
+        this.out.println("\"];");
     }
     
     
@@ -116,34 +94,5 @@ public class DotBuilder {
         s = s.replaceAll("<", "&lt;");
         s = s.replaceAll(">", "&gt;");
         return s;
-    }
-    
-    
-    
-    public void printNode(Object node, String...attributes) {
-        this.printLabel(node, true, attributes);
-    }
-    
-    
-    
-    private void emitEdge(int source, int target) {
-        this.out.print("n");
-        this.out.print(source);
-        if (this.directed) {
-            this.out.print(" -> ");
-        } else {
-            this.out.print(" -- ");
-        }
-        this.out.print("n");
-        this.out.println(target);
-    }
-    
-    
-    
-    public void pop(Object node) {
-        if (this.mustPop.contains(node)) {
-            this.preorderStack.pop();
-            this.mustPop.remove(node);
-        }
     }
 }

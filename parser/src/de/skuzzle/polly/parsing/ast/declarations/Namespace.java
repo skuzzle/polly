@@ -499,6 +499,17 @@ public class Namespace {
     
     
     /**
+     * Gets all declarations of the current level.
+     * 
+     * @return Map of declarations.
+     */
+    public Map<String, List<Declaration>> getDeclarations() {
+        return this.decls;
+    }
+    
+    
+    
+    /**
      * Declares a new variable in this namespace.
      * 
      * @param decl The function to declare.

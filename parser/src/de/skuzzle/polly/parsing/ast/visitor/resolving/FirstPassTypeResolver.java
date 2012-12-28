@@ -242,16 +242,17 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
                 if (unifier.isUnifiable()) {
                     unifier.substituteBoth();
                     
-                    final MapTypeConstructor mtc = (MapTypeConstructor) unifier.getFirst();
+                    final MapTypeConstructor mtc = (MapTypeConstructor) unifier.getSecond();
                     
                     call.addType(mtc.getTarget());
-                    newLhsTypes.add(unifier.getFirst());
-                    newRhsTypes.add(unifier.getSecond());
+                    newLhsTypes.add(unifier.getSecond());
+                    newRhsTypes.add(mtc.getSource());
                 }
             }
         }
         
         call.getLhs().setTypes(newLhsTypes);
+        call.getRhs().setTypes(newRhsTypes);
         
         if (call.getTypes().isEmpty()) {
             this.reportError(call.getLhs(),

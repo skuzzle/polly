@@ -10,7 +10,7 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.DeclarationReader;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.parsing.ast.visitor.ASTVisualizer;
+import de.skuzzle.polly.parsing.ast.visitor.ExpASTVisualizer;
 import de.skuzzle.polly.process.KillingProcessWatcher;
 import de.skuzzle.polly.process.ProcessExecutor;
 
@@ -121,8 +121,8 @@ public class Main {
             if (eval.getRoot() != null){
                 System.out.println(eval.getRoot().toString());
                 
-                final ASTVisualizer av = new ASTVisualizer();
-                av.visualize(eval.getRoot(), new PrintStream("lastAst.dot"));
+                final ExpASTVisualizer av = new ExpASTVisualizer();
+                av.visualize(eval.getRoot(), new PrintStream("lastAst.dot"), ns);
                 
                 ProcessExecutor pe = ProcessExecutor.getOsInstance(false);
                 pe.addCommand(DOT_PATH);

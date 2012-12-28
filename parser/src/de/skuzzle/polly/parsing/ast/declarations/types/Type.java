@@ -38,25 +38,25 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
     
 
     /** Primitive type for Numbers. */
-    public final static Type NUM = new Type(new Identifier("Num"), true, true);
+    public final static Type NUM = new Type(new Identifier("num"), true, true);
     
     /** Primitive type for dates. */
-    public final static Type DATE = new Type(new Identifier("Date"), true, true);
+    public final static Type DATE = new Type(new Identifier("date"), true, true);
     
     /** Primitive type for timespans. */
-    public final static Type TIMESPAN = new Type(new Identifier("Timespan"), true, true);
+    public final static Type TIMESPAN = new Type(new Identifier("timespan"), true, true);
     
     /** Primitive type for channels. */
-    public final static Type CHANNEL = new Type(new Identifier("Channel"), true, true);
+    public final static Type CHANNEL = new Type(new Identifier("channel"), true, true);
     
     /** Primitive type for users. */
-    public final static Type USER = new Type(new Identifier("User"), true, true);
+    public final static Type USER = new Type(new Identifier("user"), true, true);
     
     /** Primitive type for strings. */
-    public final static Type STRING = new Type(new Identifier("String"), true, true);
+    public final static Type STRING = new Type(new Identifier("string"), true, true);
     
     /** Primitive type for booleans. */
-    public final static Type BOOLEAN = new Type(new Identifier("Boolean"), true, true);
+    public final static Type BOOLEAN = new Type(new Identifier("boolean"), true, true);
     
     /** Primitive type for help literals. */
     public final static Type HELP = new Type(new Identifier("Help"), true, true);
@@ -117,7 +117,7 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
      * @return A new {@link TypeVar}.
      */
     public final static TypeVar newTypeVar() {
-        return newTypeVar("$" + (varIds++));
+        return newTypeVar("T$" + (varIds++));
     }
     
     
