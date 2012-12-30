@@ -23,16 +23,9 @@ public class Braced extends Expression {
     
     
     
-    public Braced(Expression braced) {
-        super(braced.getPosition(), braced.getUnique());
+    public Braced(Position position, Expression braced) {
+        super(position, braced.getUnique());
         this.expression = braced;
-    }
-    
-    
-    
-    @Override
-    public Position getPosition() {
-        return this.expression.getPosition();
     }
     
     
@@ -59,7 +52,7 @@ public class Braced extends Expression {
     
     
     @Override
-    public void addTypes(Collection<Type> types) {
+    public void addTypes(Collection<? extends Type> types) {
         this.expression.addTypes(types);
     }
     

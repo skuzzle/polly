@@ -140,7 +140,8 @@ public class Namespace {
                 final Unparser up = new Unparser(pw);
                 for (final List<Declaration> decls : this.decls.values()) {
                     for (final Declaration decl : decls) {
-                        new Braced(decl.getExpression()).visit(up);
+                        new Braced(decl.getExpression().getPosition(), 
+                            decl.getExpression()).visit(up);
                         pw.print("->");
                         pw.println(decl.getName().getId());
                     }

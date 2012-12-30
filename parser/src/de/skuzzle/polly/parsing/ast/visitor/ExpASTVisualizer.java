@@ -7,6 +7,7 @@ import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
+import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
@@ -208,8 +209,28 @@ public class ExpASTVisualizer extends DepthFirstVisitor {
     @Override
     public void beforeVarAccess(VarAccess access) throws ASTTraversalException {
         this.dotBuilder.printExpression("VarAccess: " + access.getIdentifier(), access);
-        /*for (final Declaration decl : access.getIdentifier().getDeclarations()) {
-            this.dotBuilder.printUsage(access, decl);
-        }*/
+        for (final Declaration decl : access.getIdentifier().getDeclarations()) {
+            //this.dotBuilder.printUsage(access, decl);
+            this.dotBuilder.printNode(decl, "Declaration",  
+                "Name: " + decl.getName(), 
+                "Type: " + decl.getType(),
+                "Copy: " + decl.mustCopy());
+            //this.dotBuilder.printEdge(decl, access, "", "dotted", true);
+        }
+    }
+    
+    
+    
+    @Override
+    public void visitBraced(Braced braced) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        this.beforeBraced(braced);
+        this.dotBuilder.printExpression("Embraced", braced);
+        braced.getExpression().visit(this);
+        this.dotBuilder.printEdge(braced, braced.getExpression(), "");
+        
+        this.afterBraced(braced);
     }
 }

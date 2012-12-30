@@ -12,7 +12,6 @@ import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
-import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
@@ -34,6 +33,7 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.UserLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.FunctionParameter;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.ListParameter;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
+import de.skuzzle.polly.parsing.ast.expressions.parameters.TypeVarParameter;
 import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
 
 
@@ -764,7 +764,6 @@ public class ExpInputParser {
             
         case OPENBR:
             this.scanner.consume();
-            
             /*
              * Now we can ignore whitespaces until the matching closing brace is 
              * read.
@@ -773,10 +772,9 @@ public class ExpInputParser {
             
             exp = this.parseExpr();
             this.expect(TokenType.CLOSEDBR);
-            exp.setPosition(this.scanner.spanFrom(la));
             
             this.leaveExpression();
-            return new Braced(exp);
+            return new Braced(this.scanner.spanFrom(la), exp);
             
         case LAMBDA:
             this.scanner.consume();
@@ -1011,8 +1009,7 @@ public class ExpInputParser {
                      this.expectIdentifier());    
                  return new Parameter(this.scanner.spanFrom(la), typeName, name);
              } else {
-                 return new Parameter(this.scanner.spanFrom(la), typeName, 
-                     Type.newTypeVar());
+                 return new TypeVarParameter(this.scanner.spanFrom(la), typeName);
              }
          }
     }
