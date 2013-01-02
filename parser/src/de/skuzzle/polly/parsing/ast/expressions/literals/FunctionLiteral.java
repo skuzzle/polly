@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
@@ -17,14 +17,14 @@ public class FunctionLiteral extends Literal {
 
     private static final long serialVersionUID = 1L;
     
-    private final ArrayList<Parameter> formal;
+    private final ArrayList<Declaration> formal;
     private Expression expression;
     
     
-    public FunctionLiteral(Position position, Collection<Parameter> formal, 
+    public FunctionLiteral(Position position, Collection<Declaration> formal, 
             Expression expression) {
         super(position, Type.UNKNOWN);
-        this.formal = new ArrayList<Parameter>(formal);
+        this.formal = new ArrayList<Declaration>(formal);
         this.expression = expression;
     }
 
@@ -46,7 +46,7 @@ public class FunctionLiteral extends Literal {
      * 
      * @return Collection of formal parameters.
      */
-    public ArrayList<Parameter> getFormal() {
+    public ArrayList<Declaration> getFormal() {
         return this.formal;
     }
     

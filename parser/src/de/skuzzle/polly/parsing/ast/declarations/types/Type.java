@@ -5,10 +5,10 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
-import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitable;
 import de.skuzzle.polly.tools.EqualsHelper;
 import de.skuzzle.polly.tools.Equatable;
@@ -19,14 +19,9 @@ import de.skuzzle.polly.tools.Equatable;
  * {@link Expression Expressions}. Using type constructors, more complex type structures
  * can be created, for example product types, list types and mapping types.</p>
  * 
- * <p>To determine whether two types are structural equal, you may use 
- * {@link #unify(Type, Type)}. This method will also find the correct substitute for
- * all {@link TypeVar TypeVars} within the checked type expressions of they are 
- * unifiable.</p>
- * 
  * <p>Please note that in order to be able to unify two type expressions that contain
  * type variables (as represented by a {@link TypeVar}) both expressions must use the
- * same instance of an equal variable in order to be considered unifiable.</p>
+ * same instance for the same variable in order to be considered unifiable.</p>
  * 
  * @author Simon Taddiken
  */
@@ -65,6 +60,7 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
     public final static Type UNKNOWN = new Type(new Identifier("UNKNOWN"), true, true);
     
     private final static Map<String, Type> primitives = new HashMap<String, Type>();
+    private final static Map<String, Type> typeVars = new HashMap<String, Type>();
     static {
         primitives.put(NUM.getName().getId(), NUM);
         primitives.put(DATE.getName().getId(), DATE);
@@ -80,18 +76,20 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
     
     
     /**
-     * Tries to resolve a primitive type with the given name.
+     * Tries to resolve a primitive type with the given name. If no such type exists, a
+     * type variable with the given name is returned. 
      * 
      * @param name Name of the type to resolve.
      * @return The resolved type.
-     * @throws ASTTraversalException If no type with the given name exists.
      */
-    public final static Type resolve(ResolvableIdentifier name) 
-            throws ASTTraversalException {
-        final Type t = primitives.get(name.getId());
+    public final static Type resolve(ResolvableIdentifier name) {
+        Type t = primitives.get(name.getId());
         if (t == null) {
-            throw new ASTTraversalException(name.getPosition(), 
-                "Unbekannter Typ: " + name.getId());
+            t = typeVars.get(name.getId());
+            if (t == null) {
+                t = new TypeVar(name);
+                typeVars.put(name.getId(), t);
+            }
         }
         return t;
     }
@@ -109,6 +107,17 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
     
     
     
+    /**
+     * Gets an unique name for a new type variable.
+     * 
+     * @return Unique type variable name.
+     */
+    public final static Identifier nextTypeVarName() {
+        return new Identifier(Position.NONE, "T_" + (varIds++));
+    }
+    
+    
+    
     private static int varIds = 0;
     /**
      * Creates a new {@link TypeVar} with a name different from previous invocations of
@@ -117,7 +126,7 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
      * @return A new {@link TypeVar}.
      */
     public final static TypeVar newTypeVar() {
-        return newTypeVar("T$" + (varIds++));
+        return newTypeVar(nextTypeVarName());
     }
     
     
@@ -146,73 +155,9 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
     
     
     
-    /**
-     * Tests for structural equality of the two given type expressions and substitutes
-     * all {@link TypeVar TypeVars} with their resolved match if the expressions are
-     * considered equal.
-     * 
-     * @param m Type to check.
-     * @param n Type to check.
-     * @return <code>true</code> iff both type expressions are structural equal.
-     */
-    public static boolean unify(Type m, Type n) {
-        return unify(m, n, true, true);
-    }
-    
-    
-    
-    /**
-     * Tests for structural equality of the two given type expressions and on success,
-     * substitutes all type variables of the first type argument.
-     * 
-     * @param m Type to check.
-     * @param n Type to check.
-     * @return <code>true</code> iff both type expressions are structural equal.
-     */
-    public static boolean unifyLeft(Type m, Type n) {
-        return unify(m, n, true, false);
-    }
-    
-    
-    
-    /**
-     * Tests for structural equality of the two given type expressions and on success,
-     * substitutes all type variables of the second type argument.
-     * 
-     * @param m Type to check.
-     * @param n Type to check.
-     * @return <code>true</code> iff both type expressions are structural equal.
-     */
-    public static boolean unifyRight(Type m, Type n) {
-        return unify(m, n, false, true);
-    }
-    
-    
-    
-    /**
-     * Tests for structural equality of the two given type expressions and lets you 
-     * choose whether type variables should be resolved on success.
-     * 
-     * @param m Type to check.
-     * @param n Type to check.
-     * @param substituteLeft Whether TypeVars in the first type argument should be 
-     *          substituted if unification was successful.
-     * @param substituteRight Whether TypeVars in the second type argument should be 
-     *          substituted if unification was successful.
-     * @return <code>true</code> iff both type expressions are structural equal.
-     */
-    public static boolean unify(Type m, Type n, boolean substituteLeft, 
-            boolean substituteRight) {
-        final TypeUnifier tu = new TypeUnifier(m, n);
-        return tu.unify(m, n, substituteLeft, substituteRight);
-    }
-    
-    
-    
     private final Identifier name;
     private final boolean comparable;
     private final boolean primitve;
-    
     
     
     Type(Identifier name, boolean comparable, boolean primitive) {
@@ -286,32 +231,8 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
 
     @Override
     public boolean actualEquals(Equatable o) {
-        final Type other = (Type) o;
-        return Type.unify(this, other, false, false);
-    }
-    
-    
-    
-    /**
-     * Replaces all {@link TypeVar TypeVars} in this type expression with new variables.
-     * 
-     * @return The modified type expression.
-     */
-    public Type fresh() {
-        return this;
-    }
-    
-    
-    
-    /**
-     * Substitutes all occurrences of the given type variable with the given type.
-     * 
-     * @param var Variable to substitute.
-     * @param t Type to substitute the variable with.
-     * @return Same type expression but with substituted type variable.
-     */
-    public Type substitute(TypeVar var, Type t) {
-        return this;
+        // TODO HACK XXX FIXME: implement equals 
+        return o == this;
     }
     
     
@@ -319,11 +240,7 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
     public Object readResolve() throws ObjectStreamException {
         if (this.isPrimitve()) {
             // HACK to maintain unique instances of primitive types though serialization
-            try {
-                return resolve(new ResolvableIdentifier(this.getName()));
-            } catch (ASTTraversalException e) {
-                throw new RuntimeException(e);
-            }
+            return resolve(new ResolvableIdentifier(this.getName()));
         }
         return this;
     }

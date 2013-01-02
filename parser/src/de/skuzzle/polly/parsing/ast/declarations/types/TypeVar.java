@@ -22,29 +22,14 @@ public class TypeVar extends Type {
     public TypeVar(Identifier name) {
         super(name, false, false);
     }
-
-    
-    
-    @Override
-    public Type fresh() {
-        return Type.newTypeVar();
-    }
-    
-    
-    
-    @Override
-    public Type substitute(TypeVar var, Type t) {
-        if (var == this) {
-            return t;
-        }
-        return this;
-    }
     
     
     
     @Override
     public String toString() {
-        return this.getName().toString();
+        // XXX: append hash code to name to be able to distinguish between different 
+        //      instances with same name
+        return this.getName().toString() + "@" + (this.hashCode() % 1024);
     }
     
     

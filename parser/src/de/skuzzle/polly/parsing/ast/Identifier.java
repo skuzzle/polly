@@ -89,7 +89,7 @@ public class Identifier extends Node implements Equatable {
     
     @Override
     public String toString() {
-        return this.getId();
+        return this.wasEscaped ? "\\" + this.getId() : this.getId();
     }
 
 

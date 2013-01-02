@@ -5,10 +5,12 @@ import java.util.Collection;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
+import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.ProductTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
+import de.skuzzle.polly.parsing.ast.declarations.types.TypeUnifier;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
@@ -61,7 +63,7 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
      * @param right Type of the right operand.
      */
     protected final void initTypes(Type resultType, Type left, Type right) {
-        this.addType(resultType);
+        this.addType(resultType, new TypeUnifier());
         this.setUnique(resultType);
         this.left = left;
         this.right = right;
@@ -71,7 +73,7 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
     
     @Override
     protected FunctionLiteral createFunction() {
-        final Collection<Parameter> p = Arrays.asList(new Parameter[] {
+        final Collection<Declaration> p = Arrays.asList(new Declaration[] {
             this.typeToParameter(this.left, LEFT_PARAM_NAME),
             this.typeToParameter(this.right, RIGHT_PARAM_NAME)
         });
@@ -90,8 +92,8 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
     public final void execute(Stack<Literal> stack, Namespace ns, 
             Visitor execVisitor) throws ASTTraversalException {
         
-        final L left = (L) ns.resolveHere(LEFT_PARAM_NAME).getExpression();
-        final R right = (R) ns.resolveHere(RIGHT_PARAM_NAME).getExpression();
+        final L left = (L) ns.resolveFirst(LEFT_PARAM_NAME).getExpression();
+        final R right = (R) ns.resolveFirst(RIGHT_PARAM_NAME).getExpression();
         
         this.exec(stack, ns, left, right, 
             new Position(left.getPosition(), right.getPosition()), execVisitor);
@@ -102,8 +104,8 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
     @Override
     public final void resolveType(Namespace ns, Visitor typeResolver)
             throws ASTTraversalException {
-        final Expression left = ns.resolveHere(LEFT_PARAM_NAME).getExpression();
-        final Expression right = ns.resolveHere(RIGHT_PARAM_NAME).getExpression();
+        final Expression left = ns.resolveFirst(LEFT_PARAM_NAME).getExpression();
+        final Expression right = ns.resolveFirst(RIGHT_PARAM_NAME).getExpression();
         
         this.resolve(left, right, ns, typeResolver);
     }

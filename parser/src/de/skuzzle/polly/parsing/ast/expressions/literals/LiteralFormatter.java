@@ -5,8 +5,12 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.Iterator;
 
+import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
+import de.skuzzle.polly.parsing.ast.lang.Function;
+import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 import de.skuzzle.polly.parsing.util.TimeSpanFormat;
 import de.skuzzle.polly.tools.streams.StringBuilderWriter;
 import de.skuzzle.polly.tools.strings.IteratorPrinter;
@@ -94,10 +98,20 @@ public interface LiteralFormatter {
         public String formatFunction(FunctionLiteral functionLiteral) {
             final StringBuilder b = new StringBuilder();
             b.append("\\(");
-            b.append(functionLiteral.getExpression().getUnique().getName());
-            b.append(":");
-            IteratorPrinter.print(functionLiteral.getFormal(), ", ", 
-                    new PrintWriter(new StringBuilderWriter(b)));
+            final Iterator<Declaration> it = functionLiteral.getFormal().iterator();
+            while (it.hasNext()) {
+                final Declaration formal = it.next();
+                b.append(formal.getType().getName());
+                b.append(" ");
+                b.append(formal.getName());
+                if (it.hasNext()) {
+                    b.append(",");
+                }
+            }
+            if (!(functionLiteral.getExpression() instanceof Function)) {
+                b.append(":");
+                b.append(Unparser.toString(functionLiteral.getExpression(), this));
+            }
             b.append(")");
             return b.toString();
         }

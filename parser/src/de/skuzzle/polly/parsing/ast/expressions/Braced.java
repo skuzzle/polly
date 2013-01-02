@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
+import de.skuzzle.polly.parsing.ast.declarations.types.TypeUnifier;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 
@@ -45,15 +46,15 @@ public class Braced extends Expression {
     
     
     @Override
-    public void addType(Type type) {
-        this.expression.addType(type);
+    public void addType(Type type, TypeUnifier unifier) {
+        this.expression.addType(type, unifier);
     }
     
     
     
     @Override
-    public void addTypes(Collection<? extends Type> types) {
-        this.expression.addTypes(types);
+    public void addTypes(Collection<? extends Type> types, TypeUnifier unifier) {
+        this.expression.addTypes(types, unifier);
     }
     
     

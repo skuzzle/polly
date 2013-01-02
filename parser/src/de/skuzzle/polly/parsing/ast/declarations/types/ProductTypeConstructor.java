@@ -1,11 +1,9 @@
 package de.skuzzle.polly.parsing.ast.declarations.types;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import de.skuzzle.polly.parsing.ast.Identifier;
 
@@ -21,15 +19,15 @@ public class ProductTypeConstructor extends Type implements Iterable<Type> {
 
     private static Identifier typeName(Collection<Type> types) {
         final StringBuilder b = new StringBuilder();
-        b.append("(");
+        //b.append("(");
         final Iterator<Type> typeIt = types.iterator();
         while (typeIt.hasNext()) {
             b.append(typeIt.next().toString());
             if (typeIt.hasNext()) {
-                b.append(", ");
+                b.append(" ");
             }
         }
-        b.append(")");
+        //b.append(")");
         return new Identifier(b.toString());
     }
     
@@ -70,31 +68,6 @@ public class ProductTypeConstructor extends Type implements Iterable<Type> {
      */
     public List<Type> getTypes() {
         return this.types;
-    }
-    
-    
-    
-    @Override
-    public Type fresh() {
-        final ListIterator<Type> it = this.types.listIterator();
-        while (it.hasNext()) {
-            final Type t = it.next();
-            it.set(t.fresh());
-        }
-        return this;
-    }
-
-    
-    
-    @Override
-    public Type substitute(TypeVar var, Type t) {
-        final ListIterator<Type> it = this.types.listIterator();
-        final List<Type> substituted = new ArrayList<Type>(this.types.size());
-        while (it.hasNext()) {
-            final Type next = it.next();
-            substituted.add(next.substitute(var, t));
-        }
-        return new ProductTypeConstructor(substituted);
     }
     
     

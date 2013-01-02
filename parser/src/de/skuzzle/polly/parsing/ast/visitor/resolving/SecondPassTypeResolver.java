@@ -5,11 +5,10 @@ import java.util.Collection;
 import java.util.List;
 
 import de.skuzzle.polly.parsing.ast.Root;
-import de.skuzzle.polly.parsing.ast.declarations.types.ListTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.ProductTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
-import de.skuzzle.polly.parsing.ast.declarations.types.TypeUnifier;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
@@ -29,7 +28,7 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
     
     
     public SecondPassTypeResolver(FirstPassTypeResolver fptr) {
-        super(fptr.getCurrentNameSpace());
+        super(fptr.getCurrentNameSpace(), fptr.getUnifier());
     }
     
     
@@ -76,8 +75,8 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         func.getExpression().visit(this);
         
         final List<Type> types = new ArrayList<Type>(func.getFormal().size());
-        for (final Parameter p : func.getFormal()) {
-            types.add(p.getUnique());
+        for (final Declaration d : func.getFormal()) {
+            types.add(d.getType());
         }
         final ProductTypeConstructor source = new ProductTypeConstructor(types);
         final Type target = func.getExpression().getUnique();
@@ -97,13 +96,15 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         
         this.beforeListLiteral(list);
         
+        Type last = null;
         for (final Expression exp : list.getContent()) {
             exp.visit(this);
-            if (!Type.unify(list.getUnique(), 
-                    new ListTypeConstructor(exp.getUnique()), false, false)) {
-                final ListTypeConstructor lt = (ListTypeConstructor) list.getUnique();
-                this.typeError(exp, lt.getSubType(), exp.getUnique());
+            if (last != null) {
+                if (!this.unifier.unify(last, exp.getUnique())) {
+                    this.typeError(exp, last, exp.getUnique());
+                }
             }
+            last = this.unifier.substitute(exp.getUnique());
         }
         
         this.afterListLiteral(list);
@@ -176,10 +177,6 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         }
         
         
-        // Unify the call's possible types against all possible actual signature types
-        // to find the one correct type. Multiple or no matches indicate errors.
-        MapTypeConstructor mtc = null;
-        
         // all call types that match a signature are stored in this list. If type 
         // resolution was successful, it will contain a single type.
         final Collection<Type> matched = new ArrayList<Type>();
@@ -189,11 +186,8 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
                 (ProductTypeConstructor) s, t);
             
             for (final Type lhsType : call.getLhs().getTypes()) {
-                final TypeUnifier unifier = new TypeUnifier(lhsType, tmp);
-                if (unifier.isUnifiable()) {
-                    
-                    mtc = (MapTypeConstructor) unifier.getSubstituteSecond();
-                    matched.add(mtc);
+                if (this.unifier.unify(lhsType, tmp)) {
+                    matched.add(this.unifier.substitute(lhsType));
                 }
             }
         }
@@ -207,6 +201,8 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
             this.ambiguousCall(call, matched);
         }
 
+        final MapTypeConstructor mtc = (MapTypeConstructor) matched.iterator().next();
+        
         call.getRhs().setUnique(mtc.getSource());
         call.getLhs().setUnique(mtc);
         call.setUnique(t);

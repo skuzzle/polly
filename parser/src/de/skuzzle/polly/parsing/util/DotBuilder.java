@@ -7,6 +7,7 @@ import java.util.Map;
 
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.tools.iterators.ArrayIterator;
+import de.skuzzle.polly.tools.strings.StringUtils;
 
 
 public class DotBuilder {
@@ -89,10 +90,10 @@ public class DotBuilder {
     }
     
     
+    private final static char[] ESCAPES = {'?', '<', '>'};
+    private final static String[] REPLACEMENTS = {"\\?", "&lt;", "&gt;"};
     
     private String simpleEscape(String s) {
-        s = s.replaceAll("<", "&lt;");
-        s = s.replaceAll(">", "&gt;");
-        return s;
+        return StringUtils.replace(s, ESCAPES, REPLACEMENTS);
     }
 }

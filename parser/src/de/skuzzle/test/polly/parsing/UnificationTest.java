@@ -50,7 +50,7 @@ public class UnificationTest {
         
         System.out.println("Declared: " + declared);
         System.out.println("Actual:   " + actual);
-        boolean unified = Type.unify(declared, actual);
+        boolean unified = Type.isUnifiable(declared, actual);
         System.out.println("Unified:  " + declared);
         System.out.println(unified);
         

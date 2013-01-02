@@ -16,8 +16,6 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.FunctionParameter;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.ListParameter;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
 
 
@@ -65,20 +63,6 @@ public abstract class VisitorAdapter implements Visitor {
 
     @Override
     public void afterParameter(Parameter param) throws ASTTraversalException {}
-
-    @Override
-    public void beforeListParameter(ListParameter param) throws ASTTraversalException {}
-
-    @Override
-    public void afterListParameter(ListParameter param) throws ASTTraversalException {}
-
-    @Override
-    public void beforeFunctionParameter(FunctionParameter param)
-        throws ASTTraversalException {}
-
-    @Override
-    public void afterFunctionParameter(FunctionParameter param)
-        throws ASTTraversalException {}
 
     @Override
     public void beforeDecl(Declaration decl) throws ASTTraversalException {}

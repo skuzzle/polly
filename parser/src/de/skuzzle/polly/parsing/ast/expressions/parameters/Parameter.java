@@ -5,11 +5,11 @@ import java.util.Collection;
 import java.util.List;
 
 import de.skuzzle.polly.parsing.Position;
-import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
+import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
+import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
-import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.parsing.types.FunctionType;
@@ -43,10 +43,9 @@ public class Parameter extends Expression {
     
     
     
-    private ResolvableIdentifier name;
-    private ResolvableIdentifier typeName;
+    private Identifier name;
     private final Declaration decl;
-    private final List<VarAccess> usage;
+    private final ResolvableType type;
     
     
     
@@ -57,19 +56,12 @@ public class Parameter extends Expression {
      * @param name Name of the parameter.
      * @param type Type of the parameter.
      */
-    public Parameter(Position position, ResolvableIdentifier name, Type type) {
+    public Parameter(Position position, Identifier name, Type type) {
         super(position, type);
+        this.getTypes().clear();
         this.name = name;
-        this.typeName = new ResolvableIdentifier(type.getName());
-        this.usage = new ArrayList<VarAccess>();
-        this.decl = new Declaration(this.getPosition(), this.getName(), this) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onLookup(VarAccess access) {
-                Parameter.this.usage.add(access);
-            }
-        };
+        this.type = null;
+        this.decl = new Declaration(this.getPosition(), this.getName(), this);
     }
     
     
@@ -79,49 +71,39 @@ public class Parameter extends Expression {
      * checking.
      * 
      * @param position Position of the parameter in the input.
-     * @param typeName Name of the type. Actual type will be resolved using this name.
+     * @param type The resolvable type of this parameter.
      * @param name Name of the parameter.
      */
-    public Parameter(Position position, ResolvableIdentifier typeName, 
-            ResolvableIdentifier name) {
+    public Parameter(Position position, ResolvableType type, Identifier name) {
         super(position);
-        this.typeName = typeName;
+        this.type = type;
         this.name = name;
-        this.usage = new ArrayList<VarAccess>();
-        this.decl = new Declaration(this.getPosition(), this.getName(), this) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onLookup(VarAccess access) {
-                Parameter.this.usage.add(access);
-            }
-        };
+        this.decl = new Declaration(this.getPosition(), this.getName(), this);
         this.decl.setMustCopy(false);
     }
     
     
     
-    
-    public Declaration getDeclaration() {
-        return this.decl;
+    /**
+     * Gets the {@link ResolvableType} with which this parameter was declared. Will 
+     * return <code>null</code> if parameter was created with a concrete type using
+     * the constructor {@link #Parameter(Position, Identifier, Type)}.
+     * 
+     * @return The resolvable type of this parameter.
+     */
+    public ResolvableType getResolvabelType() {
+        return this.type;
     }
     
-    
-    
-    public List<VarAccess> getUsage() {
-        return this.usage;
-    }
-
     
     
     /**
-     * Gets the name of the type of this parameter. The actual type will be resolved
-     * during type checking.
+     * Gets a declaration for this parameter which can be stored in a {@link Namespace}.
      * 
-     * @return The type name of this parameter.
+     * @return Tha declaration.
      */
-    public ResolvableIdentifier getTypeName() {
-        return this.typeName;
+    public Declaration getDeclaration() {
+        return this.decl;
     }
     
 
@@ -131,7 +113,7 @@ public class Parameter extends Expression {
      * 
      * @return The parameter name.
      */
-    public ResolvableIdentifier getName() {
+    public Identifier getName() {
         return this.name;
     }
 
@@ -155,7 +137,6 @@ public class Parameter extends Expression {
     public boolean actualEquals(Equatable o) {
         final Parameter other = (Parameter) o;
         // compare names and typenames
-        return this.name.equals(other.name)
-            && this.getTypeName().equals(other.getTypeName());
+        return this.name.equals(other.name);
     }
 }

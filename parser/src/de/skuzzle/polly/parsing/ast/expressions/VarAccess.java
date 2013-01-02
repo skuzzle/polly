@@ -2,9 +2,6 @@ package de.skuzzle.polly.parsing.ast.expressions;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
-import de.skuzzle.polly.parsing.ast.declarations.Declaration;
-import de.skuzzle.polly.parsing.ast.declarations.types.Type;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 
@@ -38,18 +35,6 @@ public class VarAccess extends Expression {
      */
     public ResolvableIdentifier getIdentifier() {
         return this.identifier;
-    }
-    
-    
-    
-    @Override
-    public void setUnique(Type unique) {
-        super.setUnique(unique);
-        for (final Declaration d : this.identifier.getDeclarations()) {
-            if (d.getExpression() instanceof Parameter) {
-                d.getExpression().setUnique(unique);
-            }
-        }
     }
 
     

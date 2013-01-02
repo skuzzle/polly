@@ -5,10 +5,12 @@ import java.util.Collection;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
+import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.ProductTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
+import de.skuzzle.polly.parsing.ast.declarations.types.TypeUnifier;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
@@ -43,7 +45,7 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
      * @param operandType Type of the operand.
      */
     protected final void initTypes(Type resultType, Type operandType) {
-        this.addType(resultType);
+        this.addType(resultType, new TypeUnifier());
         this.setUnique(resultType);
         this.operandType = operandType;
     }
@@ -52,7 +54,7 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
     
     @Override
     protected FunctionLiteral createFunction() {
-        Collection<Parameter> p = Arrays.asList(new Parameter[] {
+        Collection<Declaration> p = Arrays.asList(new Declaration[] {
             this.typeToParameter(this.operandType, PARAM_NAME)});
         
         final FunctionLiteral func = new FunctionLiteral(Position.NONE, p, this);
@@ -67,7 +69,7 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
     @Override
     public final void resolveType(Namespace ns, Visitor typeResolver)
             throws ASTTraversalException {
-        final Expression param = ns.resolveHere(PARAM_NAME).getExpression();
+        final Expression param = ns.resolveFirst(PARAM_NAME).getExpression();
         this.resolve(param, ns, typeResolver);
     }
     
@@ -91,7 +93,7 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
     @SuppressWarnings("unchecked")
     public void execute(Stack<Literal> stack, Namespace ns, Visitor execVisitor)
             throws ASTTraversalException {
-        final O operand = (O) ns.resolveHere(PARAM_NAME).getExpression();
+        final O operand = (O) ns.resolveFirst(PARAM_NAME).getExpression();
         this.exec(stack, ns, operand, operand.getPosition());
     }
 

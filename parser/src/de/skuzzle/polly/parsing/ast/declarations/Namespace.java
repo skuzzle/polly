@@ -17,6 +17,7 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
+import de.skuzzle.polly.parsing.ast.declarations.types.TypeUnifier;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
@@ -69,7 +70,6 @@ public class Namespace {
      */
     private final static float LEVENSHTEIN_THRESHOLD_PERCENT = 0.6f;
     
-    
     public static File declarationFolder;
     public static synchronized void setDeclarationFolder(File declarationFolder) {
         Namespace.declarationFolder = declarationFolder;
@@ -99,8 +99,9 @@ public class Namespace {
         
         
         @Override
-        public synchronized void declare(Declaration decl) throws ASTTraversalException {
-            super.declare(decl);
+        public synchronized void declare(Declaration decl, TypeUnifier unifier) 
+                throws ASTTraversalException {
+            super.declare(decl, unifier);
             if (decl.isPublic() || decl.isTemp() || decl.isNative()) {
                 return;
             }
@@ -509,15 +510,28 @@ public class Namespace {
     }
     
     
+    /**
+     * Internal declare method for public declarations.
+     * 
+     * @param decl Declaration to add.
+     * @throws ASTTraversalException Should not happen here
+     */
+    private void declare(Declaration decl) throws ASTTraversalException {
+        this.declare(decl, new TypeUnifier());
+    }
+    
+    
     
     /**
      * Declares a new variable in this namespace.
      * 
      * @param decl The function to declare.
+     * @param unifier Current unification context.
      * @throws ASTTraversalException If a function with the same name and signature
      *          already exists in this namespace.
      */
-    public void declare(Declaration decl) throws ASTTraversalException {
+    public void declare(Declaration decl, TypeUnifier unifier) 
+            throws ASTTraversalException {
         if (decl.getType() == Type.UNKNOWN) {
             throw new IllegalStateException(
                 "cannot declare variable with unresolved type: " + decl);
@@ -540,7 +554,7 @@ public class Namespace {
             // * existing is a function and new is a variable
             // * exising is a variable and 
             
-            if (Type.unify(existing.getType(), decl.getType(), false, false)) {
+            if (unifier.canUnify(existing.getType(), decl.getType(), false)) {
                 if (!this.local) {
                     if (existing.isNative()) {
                         throw new ASTTraversalException(decl.getPosition(), 
@@ -585,25 +599,31 @@ public class Namespace {
     
     
     /**
-     * Resolves the declaration with the given name using only the current declaration
-     * level, disregarding all higher levels.
+     * Resolves the first declaration with the given name that is found. This will search
+     * all parent name spaces too and return when the first matching declaration was 
+     * found.
      * 
      * @param name Name of declaration to resolved.
      * @return The resolved declaration.
      * @throws ASTTraversalException If declaration does not exist or multiple 
      *          declarations with that name exists in current level.
      */
-    public Declaration resolveHere(ResolvableIdentifier name) 
+    public Declaration resolveFirst(ResolvableIdentifier name) 
             throws ASTTraversalException {
-        final List<Declaration> decls = this.decls.get(name.getId());
         
-        if (decls == null || decls.isEmpty()) {
-            throw new ASTTraversalException(name.getPosition(), 
-                "Unbekannt: " + name.getId());
-        } else if (decls.size() != 1) {
-            throw new ASTTraversalException(name.getPosition(), "Ambiguos");
+        for (Namespace space = this; space != null; space = space.parent) {
+            final List<Declaration> decls = space.decls.get(name.getId());
+        
+            if (decls == null || decls.isEmpty()) {
+                continue;
+            } else if (decls.size() != 1) {
+                throw new ASTTraversalException(name.getPosition(), "Ambiguous");
+            }
+            return decls.get(0);
         }
-        return decls.get(0);
+        
+        throw new ASTTraversalException(name.getPosition(), 
+            "Unbekannt: " + name.getId());
     }
     
     
@@ -618,9 +638,11 @@ public class Namespace {
      * 
      * @param name The name of the variable to resolve.
      * @param signature The signature of the variable to resolve.
+     * @param unifier Current unification context.
      * @return The resolved declaration or <code>null</code> if non was found.
      */
-    public Declaration tryResolve(ResolvableIdentifier name, Type signature) {
+    public Declaration tryResolve(ResolvableIdentifier name, Type signature, 
+            TypeUnifier unifier) {
         for(Namespace space = this; space != null; space = space.parent) {
             final List<Declaration> decls = space.decls.get(name.getId());
             if (decls == null) {
@@ -628,7 +650,7 @@ public class Namespace {
             }
             for (Declaration decl : decls) {
                 
-                if (Type.unify(signature, decl.getType(), false, false)) {
+                if (unifier.canUnify(signature, decl.getType(), false)) {
                     if (decl.mustCopy()) {
                         decl = CopyTool.copyOf(decl);
                     }
@@ -648,10 +670,12 @@ public class Namespace {
      * level.
      * 
      * @param access VarAccess to resolve.
+     * @param unifier Current type unification context.
      * @return A set of all declarations with matching names.
      * @throws DeclarationException If no variable with matching name was found.
      */
-    public Set<Type> lookup(VarAccess access) throws DeclarationException {
+    public Set<Type> lookup(VarAccess access, TypeUnifier unifier) 
+            throws DeclarationException {
         final ResolvableIdentifier name = access.getIdentifier();
         final Set<Type> result = new HashSet<Type>();
         for(Namespace space = this; space != null; space = space.parent) {
@@ -668,7 +692,7 @@ ignore:     for (Declaration decl : decls) {
                     // ignored. That will have the effect that declarations on lower 
                     // levels override those on a higher level.
                     for (final Type alreadyFound : result) {
-                        if (Type.unify(alreadyFound, decl.getType(), false, false)) {
+                        if (unifier.canUnify(alreadyFound, decl.getType(), false)) {
                             // continue with next declaration and ignore this one
                             continue ignore;
                         }

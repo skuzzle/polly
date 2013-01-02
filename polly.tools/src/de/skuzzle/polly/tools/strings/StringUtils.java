@@ -65,4 +65,32 @@ public final class StringUtils {
             b.append(" ");
         }
     }
+    
+    
+    
+    public static String replace(String original, char[] characters, 
+            String[] replacement) {
+        if (characters.length != replacement.length) {
+            throw new IllegalArgumentException("different array size");
+        }
+        final StringBuilder b = new StringBuilder(original.length() + 16);
+        for (int i = 0; i < original.length(); ++i) {
+            final char c = original.charAt(i);
+            boolean mustAppend = true;
+            
+            for (int j = 0; j < characters.length; ++j) {
+                final char c2 = characters[j];
+                if (c == c2) {
+                    b.append(replacement[j]);
+                    mustAppend = false;
+                    break;
+                }
+            }
+            
+            if (mustAppend) {
+                b.append(c);
+            }
+        }
+        return b.toString();
+    }
 }

@@ -4,15 +4,12 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
-import de.skuzzle.polly.parsing.ast.declarations.types.ListTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
+import de.skuzzle.polly.parsing.ast.expressions.Empty;
 import de.skuzzle.polly.parsing.ast.expressions.Native;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.FunctionParameter;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.ListParameter;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.parsing.util.Stack;
@@ -79,25 +76,15 @@ public abstract class Function extends Native {
     
     
     /**
-     * Creates a new Parameter from a given type and name. Depending on the type, either
-     * a {@link ListParameter}, {@link FunctionParameter} or normal {@link Parameter} os
-     * returned.
+     * Creates a new Parameter from a given type and name.
      * 
      * @param type The parameters type.
      * @param name The parameters name.
      * @return A new parameter instance.
      */
-    protected Parameter typeToParameter(Type type, ResolvableIdentifier name) {
-        if (type instanceof ListTypeConstructor) {
-            final ListTypeConstructor lt = (ListTypeConstructor) type;
-            return new ListParameter(Position.NONE, name, lt.getSubType());
-        } else if (type instanceof MapTypeConstructor) {
-            final MapTypeConstructor ft = (MapTypeConstructor) type;
-            return new FunctionParameter(Position.NONE, ft.getTarget(), 
-                ft.getSource().getTypes(), name);
-        } else {
-            return new Parameter(Position.NONE, name, type);
-        }
+    protected Declaration typeToParameter(Type type, ResolvableIdentifier name) {
+        return new Declaration(name.getPosition(), name, new Empty(type, 
+            name.getPosition()));
     }
 
 

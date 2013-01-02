@@ -1,5 +1,8 @@
 package de.skuzzle.polly.parsing.ast.declarations;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.Node;
@@ -29,6 +32,7 @@ public class Declaration extends Node implements Comparable<Declaration> {
     private boolean mustCopy;
     private boolean isNative;
     private final Expression expression;
+    private final Collection<VarAccess> usage;
     
     
     
@@ -36,6 +40,7 @@ public class Declaration extends Node implements Comparable<Declaration> {
         super(position);
         this.name = name;
         this.expression = expression;
+        this.usage = new ArrayList<VarAccess>();
     }
     
     
@@ -155,6 +160,16 @@ public class Declaration extends Node implements Comparable<Declaration> {
     
     
     
+    /**
+     * Gets all AST nodes that may have access to this declaration.
+     * 
+     * @return Collection of VarAccess's.
+     */
+    public Collection<VarAccess> getUsage() {
+        return this.usage;
+    }
+    
+    
     @Override
     public Class<?> getEquivalenceClass() {
         return Declaration.class;
@@ -184,7 +199,14 @@ public class Declaration extends Node implements Comparable<Declaration> {
     
     
     
-    protected void onLookup(VarAccess access) {}
+    /**
+     * Callback method which is called when a declaration is looked up.
+     * 
+     * @param access The {@link VarAccess} expression in the AST.
+     */
+    protected void onLookup(VarAccess access) {
+        this.usage.add(access);
+    }
     
     
     

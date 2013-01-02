@@ -31,13 +31,15 @@ literal     -> ID                                         // VarAccess
 
 exprList    -> (expr (',' expr)*)?
 parameters  -> (parameter (',' parameter)*)?
-parameter   -> type ID
-type        -> ID                                         // typename, parameter name
-             | ID<ID>                                     // type name, subtype name, parameter name
-             | '\(' ID (' ' ID)+ ')'                      // return type name, parameter type names, parameter name
+parameter   -> type ID                                    
+type        -> ID                                         // primitive type
+             | LIST '<' type '>'                          // list type
+             | '(' type (WS type)* '->' type ')'          // function type
+             | '?'                                        // type variable
              
 WS       -> ' ' | \t
 TEMP     -> 'temp'
+LIST     -> 'list'
 PUBLIC   -> 'public'
 IF       -> 'if'
 TRUE     -> 'true'

@@ -7,6 +7,7 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
+import de.skuzzle.polly.parsing.ast.declarations.types.TypeUnifier;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
@@ -17,6 +18,7 @@ public abstract class AbstractTypeResolver extends DepthFirstVisitor {
     
     protected Namespace nspace;
     protected final Namespace rootNs;
+    protected final TypeUnifier unifier;
     
     
     
@@ -24,6 +26,15 @@ public abstract class AbstractTypeResolver extends DepthFirstVisitor {
         // create temporary namespace for executing user
         this.rootNs = namespace.enter(false);
         this.nspace = this.rootNs;
+        this.unifier = new TypeUnifier();
+    }
+    
+    
+    
+    AbstractTypeResolver(Namespace namespace, TypeUnifier unifier) {
+        this.rootNs = namespace;
+        this.nspace = this.rootNs;
+        this.unifier = unifier;
     }
     
     
@@ -46,6 +57,17 @@ public abstract class AbstractTypeResolver extends DepthFirstVisitor {
      */
     public Namespace getRootNamespace() {
         return this.rootNs;
+    }
+    
+    
+    
+    /**
+     * Gets the currently used unification context.
+     * 
+     * @return Current type unification context.
+     */
+    public TypeUnifier getUnifier() {
+        return this.unifier;
     }
     
     

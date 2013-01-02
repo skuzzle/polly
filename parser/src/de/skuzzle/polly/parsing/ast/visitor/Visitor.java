@@ -16,8 +16,6 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.FunctionParameter;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.ListParameter;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
 
 /**
@@ -111,18 +109,6 @@ public interface Visitor {
     public void beforeParameter(Parameter param) throws ASTTraversalException;
     public void afterParameter(Parameter param) throws ASTTraversalException;
     public void visitParameter(Parameter param) throws ASTTraversalException;
-    
-    public void beforeListParameter(ListParameter param) throws ASTTraversalException;
-    public void afterListParameter(ListParameter param) throws ASTTraversalException;
-    public void visitListParameter(ListParameter param) throws ASTTraversalException;
-    
-    
-    public void beforeFunctionParameter(FunctionParameter param) 
-            throws ASTTraversalException;
-    public void afterFunctionParameter(FunctionParameter param) 
-            throws ASTTraversalException;
-    public void visitFunctionParameter(FunctionParameter param) 
-            throws ASTTraversalException;
     
     public void beforeDecl(Declaration decl) throws ASTTraversalException;
     public void afterDecl(Declaration decl) throws ASTTraversalException;

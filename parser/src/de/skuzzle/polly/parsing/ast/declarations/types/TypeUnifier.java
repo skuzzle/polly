@@ -1,8 +1,12 @@
 package de.skuzzle.polly.parsing.ast.declarations.types;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Helper class to determine whether two types are structural equal and to resolve 
@@ -16,109 +20,65 @@ public final class TypeUnifier {
     private int classes;
     private final Map<Type, Integer> typeToClass;
     private final Map<Integer, Type> classToType;
-    private Type first;
-    private Type second;
+    private final Map<Type, Type> substitutions;
     
     
     
     /**
      * Creates a new TypeUnifier which can then be used to test for equality of one pair
      * of types.
-     * @param first First type to check.
-     * @param second Second type to check.
      */
-    public TypeUnifier(Type first, Type second) {
+    public TypeUnifier() {
         this.typeToClass = new HashMap<Type, Integer>();
         this.classToType = new HashMap<Integer, Type>();
-        this.first = first;
-        this.second = second;
+        this.substitutions = new HashMap<Type, Type>();
     }
     
     
     
-    public Type getFirst() {
-        return this.first;
-    }
-    
-    
-    
-    public Type getSecond() {
-        return this.second;
-    }
-    
-    
-    
-    public boolean isUnifiable() {
-        return this.unify(this.first, this.second, false, false);
-    }
-    
-    
-    
-    public void substituteBoth() {
-        for (final Type t : this.typeToClass.keySet()) {
-            if (t instanceof TypeVar) {
-                final TypeVar tv = (TypeVar) t;
-                final Type representative = this.find(tv);
-                this.first = this.first.substitute(tv, representative);
-                this.second = this.second.substitute(tv, representative);
-            }
-        }
-    }
-    
-    
-    
-    public Type getSubstituteFirst() {
-        return this.substitute(this.first);
-    }
-    
-    
-    
-    public Type getSubstituteSecond() {
-        return this.substitute(this.second);
-    }
-    
-    
-    
-    public Type substitute(Type root) {
-        for (final Type t : this.typeToClass.keySet()) {
-            if (t instanceof TypeVar) {
-                final TypeVar tv = (TypeVar) t;
-                final Type representative = this.find(tv);
-                root = root.substitute(tv, representative);
-            }
-        }
-        return root;
+    public void removeMapping(Type type) {
+        this.substitutions.remove(type);
     }
     
     
     
     /**
-     * Tests for structural equality of the given type expressions. If 
-     * <code>n</code> is an instance of <code>m</code>, all {@link TypeVar TypeVars} could
-     * have been resolved. If so, all variables will be substituted with their resolved 
-     * best matching substitute and the method returns <code>true</code>.
-     *   
-     * @param m Type to check.
-     * @param n Type to check.
-     * @param substituteLeft Whether TypeVars in the first type argument should be 
-     *          substituted if unification was successful.
-     * @param substituteRight Whether TypeVars in the second type argument should be 
-     *          substituted if unification was successful.
-     * @return Whether both type expressions are structural equal.
+     * tests for structural equality of the given type expression in the context of this 
+     * unifier instance. On success, all found substitutions for variables will be 
+     * remembered.
+     * 
+     * @param first First type to check. 
+     * @param second Second type to check.
+     * @return Whether both type expressions are structurally equal.
      */
-    public boolean unify(Type m, Type n, boolean substituteLeft, boolean substituteRight) {
-        boolean result = this.unifyInternal(m, n);
-        if (result && (substituteLeft || substituteRight)) {
+    public boolean unify(Type first, Type second) {
+        return this.canUnify(first, second, true);
+    }
+    
+    
+    
+    /**
+     * Tests for structural equality of the given type expressions in the context of this
+     * unifier instance.
+     *  
+     * @param first First type to check. 
+     * @param second Second type to check.
+     * @param rememberSubstitutions Whether substitutions for type variables that are 
+     *          found during unification should be remembered.
+     * 
+     * @return Whether both type expressions are structurally equal.
+     */
+    public boolean canUnify(Type first, Type second, boolean rememberSubstitutions) {
+        this.classToType.clear();
+        this.typeToClass.clear();
+        for (final Entry<Type, Type> e : this.substitutions.entrySet()) {
+            this.union(e.getKey(), e.getValue());
+        }
+        boolean result = this.unifyInternal(first, second);
+        if (result && rememberSubstitutions) {
             for (final Type t : this.typeToClass.keySet()) {
                 if (t instanceof TypeVar) {
-                    final TypeVar tv = (TypeVar) t;
-                    Type representative = this.find(tv);
-                    if (substituteLeft) {
-                        m.substitute(tv, representative);
-                    }
-                    if (substituteRight) {
-                        n.substitute(tv, representative);
-                    }
+                    this.substitutions.put(t, this.find(t));
                 }
             }
         }
@@ -127,7 +87,111 @@ public final class TypeUnifier {
     
     
     
-    private boolean unifyInternal(Type m, Type n) {
+    /**
+     * Substitutes all known type variables in the given type expression and returns
+     * a new type expression.
+     * 
+     * @param t Root node for the substitution process.
+     * @return New type expression where all known variables were substituted. 
+     */
+    public Type substitute(Type t) {
+        if (t.isPrimitve()) {
+            return t;
+            
+        } else if (t instanceof TypeVar) {
+            Type t1 = this.substitutions.get(t);
+            return t1 == null ? t : t1;
+            
+        } else if (t instanceof MapTypeConstructor) {
+            final MapTypeConstructor mtc = (MapTypeConstructor) t;
+            return new MapTypeConstructor(
+                (ProductTypeConstructor) this.substitute(mtc.getSource()), 
+                this.substitute(mtc.getTarget()));
+            
+        } else if (t instanceof ListTypeConstructor) {
+            final ListTypeConstructor lt = (ListTypeConstructor) t;
+            return new ListTypeConstructor(this.substitute(lt.getSubType()));
+            
+        } else if (t instanceof ProductTypeConstructor) {
+            final ProductTypeConstructor ptc = (ProductTypeConstructor) t;
+            final List<Type> substituted = new ArrayList<Type>(ptc.getTypes().size());
+            for (final Type type : ptc.getTypes()) {
+                substituted.add(this.substitute(type));
+            }
+            return new ProductTypeConstructor(substituted);
+        }
+        throw new IllegalStateException("can not happen");
+    }
+    
+    
+    
+    /**
+     * Creates a new type expression which is structurally equal to the given one but 
+     * replaces all occurring type variables with new ones. Same variables will be
+     * replaced by the same new variable.
+     * 
+     * @param t Root of the type expression to "refresh".
+     * @return New refreshed type expression.
+     */
+    public Type fresh(Type t) {
+        return this.freshInternal(t, new HashMap<Type, Type>());
+    }
+    
+    
+    
+    /**
+     * Refreshes each type expression in the given collection with new type variables.
+     * 
+     * @param types Collection of type expressions to refresh.
+     * @return New Collection of refreshed types.
+     * @see #fresh(Type)
+     */
+    public List<Type> freshAll(Collection<Type> types) {
+        final List<Type> result = new ArrayList<Type>(types.size());
+        for (final Type t : types) {
+            result.add(this.fresh(t));
+        }
+        return result;
+    }
+    
+    
+    
+    private Type freshInternal(Type t, Map<Type, Type> map) {
+        if (t.isPrimitve()) {
+            return t;
+            
+        } else if (t instanceof TypeVar) {
+            Type t1 = map.get(t);
+            if (t1 == null) {
+                t1 = Type.newTypeVar();
+                map.put(t, t1);
+            }
+            return t1;
+            
+        } else if (t instanceof MapTypeConstructor) {
+            final MapTypeConstructor mtc = (MapTypeConstructor) t;
+            return new MapTypeConstructor(
+                (ProductTypeConstructor) this.freshInternal(mtc.getSource(), map), 
+                this.freshInternal(mtc.getTarget(), map));
+            
+        } else if (t instanceof ListTypeConstructor) {
+            final ListTypeConstructor lt = (ListTypeConstructor) t;
+            return new ListTypeConstructor(this.freshInternal(lt.getSubType(), map));
+            
+        } else if (t instanceof ProductTypeConstructor) {
+            final ProductTypeConstructor ptc = (ProductTypeConstructor) t;
+            final List<Type> substituted = new ArrayList<Type>(ptc.getTypes().size());
+            for (final Type type : ptc.getTypes()) {
+                substituted.add(this.freshInternal(type, map));
+            }
+            return new ProductTypeConstructor(substituted);
+        }
+        throw new IllegalStateException("can not happen");
+    }
+    
+    
+    
+    private final boolean unifyInternal(Type m, Type n) {
         final Type s = this.find(m);
         final Type t = this.find(n);
         
@@ -179,14 +243,18 @@ public final class TypeUnifier {
     
     
     /**
-     * Finds the representative of the equivalence class that <code>s</code> is in. If 
+     * <p>Finds the representative of the equivalence class that <code>s</code> is in. If 
      * <code>s</code> was not yet assigned to a equivalence class, it is made the 
-     * representative of a new class.
+     * representative of a new class.</p>
+     * 
+     * <p>For two type expressions <code>m,n</code> that are unifiable as determined by 
+     * {@link #canUnify(Type, Type, boolean)}, this method would also return the valid 
+     * substitution for any type variable occurring in <code>m</code> and <code>n</code>. 
      * 
      * @param s Type which' equivalence class's type will be resolved.
      * @return The representative type of the equivalence class that <code>s</code> is in.
      */
-    private Type find(Type s) {
+    public Type find(Type s) {
         final int cls = this.getEquivClass(s);
         Type representant = this.classToType.get(cls);
         if (representant == null) {
@@ -234,14 +302,27 @@ public final class TypeUnifier {
         
         final int equiv = this.getEquivClass(m);
         
-        if (!(rep_m instanceof TypeVar)) {
-            this.classToType.put(equiv, rep_m);
-            this.typeToClass.put(rep_m, equiv);
-            this.typeToClass.put(rep_n, equiv);
-        } else { //if (!(rep_n instanceof TypeVar)) {
-            this.classToType.put(equiv, rep_n);
-            this.typeToClass.put(rep_m, equiv);
-            this.typeToClass.put(rep_n, equiv);
-        }
+        final Type representative = rep_m instanceof TypeVar ? rep_n : rep_m;
+        final Type other = representative == rep_m ? rep_n : rep_m;
+        this.makeEquivalent(equiv, representative, other);
+    }
+    
+    
+    
+    /**
+     * Makes both given types equivalent, that is both gets assigned the given equivalence 
+     * class and the first type is made the new representative of the given class.
+     * 
+     * @param equivClass Equivalence class to put both types in.
+     * @param representative First type. Is also made the new representative of the 
+     *          equivalence class.
+     * @param other Second type to put in the equivalence class.
+     */
+    private final void makeEquivalent(int equivClass, Type representative, Type other) {
+        // make type the new representative of the given class
+        this.classToType.put(equivClass, representative);
+        // assign new equivalence class to both types
+        this.typeToClass.put(representative, equivClass);
+        this.typeToClass.put(other, equivClass);
     }
 }

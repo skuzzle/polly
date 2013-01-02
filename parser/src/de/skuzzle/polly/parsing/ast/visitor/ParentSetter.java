@@ -1,6 +1,5 @@
 package de.skuzzle.polly.parsing.ast.visitor;
 
-import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
@@ -11,8 +10,6 @@ import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.FunctionParameter;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.ListParameter;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
 
 /**
@@ -60,27 +57,9 @@ public class ParentSetter extends DepthFirstVisitor {
     @Override
     public void beforeFunctionLiteral(FunctionLiteral func) throws ASTTraversalException {
         func.getExpression().setParent(func);
-        for (final Parameter p : func.getFormal()) {
-            p.setParent(func);
+        for (final Declaration d : func.getFormal()) {
+            d.setParent(func);
         }
-    }
-    
-    
-    
-    @Override
-    public void beforeFunctionParameter(FunctionParameter param)
-            throws ASTTraversalException {
-        param.getName().setParent(param);
-        for (final Identifier id : param.getSignature()) {
-            id.setParent(param);
-        }
-    }
-    
-    
-    
-    @Override
-    public void beforeListParameter(ListParameter param) throws ASTTraversalException {
-        param.getTypeName().setParent(param);
     }
     
     
@@ -95,7 +74,6 @@ public class ParentSetter extends DepthFirstVisitor {
     @Override
     public void beforeParameter(Parameter param) throws ASTTraversalException {
         param.getName().setParent(param);
-        param.getTypeName().setParent(param);
     }
     
     

@@ -21,7 +21,7 @@ public class ListTypeConstructor extends Type {
      * @param subType Sub type of this list type.
      */
     public ListTypeConstructor(Type subType) {
-        super(new Identifier("List<" + subType.getName() +">"), true, false);
+        super(new Identifier("list<" + subType.getName() +">"), true, false);
         this.subType = subType;
     }
     
@@ -35,28 +35,12 @@ public class ListTypeConstructor extends Type {
     public Type getSubType() {
         return this.subType;
     }
-    
-    
-    
-    @Override
-    public Type fresh() {
-        this.subType = this.subType.fresh();
-        return this;
-    }
-    
-    
-    
-    @Override
-    public Type substitute(TypeVar var, Type t) {
-        final Type subType = this.subType.substitute(var, t);
-        return new ListTypeConstructor(subType);
-    }
 
     
     
     @Override
     public String toString() {
-        return "List<" + this.subType.toString() + ">";
+        return "list<" + this.subType.toString() + ">";
     }
     
     

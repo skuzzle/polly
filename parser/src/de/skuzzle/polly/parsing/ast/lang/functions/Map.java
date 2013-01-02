@@ -59,7 +59,7 @@ public class Map extends BinaryOperator<ListLiteral, FunctionLiteral> {
             final Call call = new Call(Position.NONE, right, 
                 new ProductLiteral(Position.NONE, Arrays.asList(new Expression[] {exp})));
 
-            TypeResolver.resolveAST(call, ns);
+            //TypeResolver.resolveAST(call, ns);
             call.visit(execVisitor);
             result.add(stack.pop());
         }

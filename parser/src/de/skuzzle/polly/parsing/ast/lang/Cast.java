@@ -2,6 +2,7 @@ package de.skuzzle.polly.parsing.ast.lang;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
@@ -56,7 +57,7 @@ public class Cast extends Operator {
             throws ASTTraversalException {
         
         // on a function call, parameters are already executed to be a Literal
-        final Literal operand = (Literal) ns.resolveHere(PARAM_NAME).getExpression();
+        final Literal operand = (Literal) ns.resolveFirst(PARAM_NAME).getExpression();
         
         stack.push(operand.castTo(this.getUnique()));
     }
@@ -66,9 +67,8 @@ public class Cast extends Operator {
     @Override
     protected FunctionLiteral createFunction() {
         // create parameter that accepts any expression (Type.ANY)
-        final Collection<Parameter> p = Arrays.asList(
-            new Parameter[] { 
-                new Parameter(Position.NONE, PARAM_NAME, this.operandType) });
+        final Collection<Declaration> p = Collections.singletonList(
+            this.typeToParameter(this.operandType, PARAM_NAME));
         
         final FunctionLiteral func = new FunctionLiteral(Position.NONE, p, this);
         func.setUnique(new MapTypeConstructor(

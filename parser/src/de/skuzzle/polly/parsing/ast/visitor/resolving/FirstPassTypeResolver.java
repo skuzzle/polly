@@ -1,17 +1,17 @@
 package de.skuzzle.polly.parsing.ast.visitor.resolving;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
-import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.types.ListTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.ProductTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
-import de.skuzzle.polly.parsing.ast.declarations.types.TypeUnifier;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Empty;
@@ -23,11 +23,11 @@ import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.FunctionParameter;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.ListParameter;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Unparser;
+import de.skuzzle.polly.parsing.util.Combinator;
+import de.skuzzle.polly.parsing.util.Combinator.CombinationCallBack;
 
 
 /**
@@ -56,109 +56,85 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     
     
     @Override
+    public void beforeDecl(Declaration decl) throws ASTTraversalException {
+        decl.getExpression().visit(this);
+    }
+    
+    
+    
+    @Override
     public void afterParameter(Parameter param) throws ASTTraversalException {
         if (!param.typeResolved()) {
-            final Type t = Type.resolve(param.getTypeName());
+            final Type t = param.getResolvabelType().resolve();
             param.setUnique(t);
-            param.addType(t);
         }
     }
     
     
     
     @Override
-    public void afterListParameter(ListParameter param) throws ASTTraversalException {
-        if (!param.typeResolved()) {
-            final Type t = new ListTypeConstructor(
-                Type.resolve(param.getTypeName()));
-            param.setUnique(t);
-            param.addType(t);
-        }
-    }
-    
-    
-    
-    @Override
-    public void visitFunctionParameter(FunctionParameter param)
+    public void visitFunctionLiteral(final FunctionLiteral func) 
             throws ASTTraversalException {
-        if (this.aborted || param.typeResolved()) {
-            return;
-        }
-        
-        this.beforeFunctionParameter(param);
-        
-        final Iterator<ResolvableIdentifier> types = param.getSignature().iterator();
-        final Type returnType = Type.resolve(types.next());
-        final List<Type> sig = new ArrayList<Type>(param.getSignature().size());
-        while (types.hasNext()) {
-            sig.add(Type.resolve(types.next()));
-        }
-        
-        param.setUnique(
-            new MapTypeConstructor(new ProductTypeConstructor(sig), returnType));
-        param.addType(param.getUnique());
-        this.afterFunctionParameter(param);
-    }
-    
-    
-    
-    @Override
-    public void visitFunctionLiteral(FunctionLiteral func) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
         
         this.beforeFunctionLiteral(func);
         
+        final List<Type> source = new ArrayList<Type>();
+        
         // resolve parameter types
-        this.nspace = this.enter();
-        for (final Parameter p : func.getFormal()) {
-            p.visit(this);
+        final Set<String> names = new HashSet<String>();
+        for (final Declaration d : func.getFormal()) {
+            if (!names.add(d.getName().getId())) {
+                this.reportError(d.getName(),
+                    "Doppelte Deklaration von '" + d.getName().getId() + "'");
+            }
+            d.visit(this);
+            source.add(d.getType());
             
             // Invariant: parameters always have a unique type
-            this.nspace.declare(p.getDeclaration());
+            //this.nspace.declare(d, this.unifier);
         }
         
-        // resolve functions body type
-        func.getExpression().visit(this);
-        this.nspace = this.leave();
+        final MapTypeConstructor possibleType = new MapTypeConstructor(
+            new ProductTypeConstructor(source), 
+            Type.newTypeVar());
         
-        // resolve parameter's possible types by checking where they are used. Special
-        // treatment for native functions. They never "use" their formal parameters in the
-        // terms of semantics needed here. 
-        for (final Parameter p : func.getFormal()) {
-            if (!p.getUsage().isEmpty()) {
-                p.getTypes().clear();
-                for (final VarAccess va : p.getUsage()) {
-                    p.addTypes(va.getTypes());
+        final List<Type> result = new ArrayList<Type>();
+        if (!func.getTypes().isEmpty()) {
+            for (final Type type : func.getTypes()) {
+                if (type instanceof MapTypeConstructor) {
+                    final MapTypeConstructor mtc = (MapTypeConstructor) type;
+                    final MapTypeConstructor fresh = (MapTypeConstructor) 
+                        this.unifier.fresh(possibleType);
+                    
+                    if (this.unifier.unify(fresh, mtc)) {
+                        
+                        final Iterator<Declaration> formal = func.getFormal().iterator();
+                        final Iterator<Type> sig = fresh.getSource().getTypes().iterator();
+                        
+                        this.enter();
+                        while (formal.hasNext()) {
+                            final Declaration f = formal.next();
+                            final Type t = this.unifier.substitute(sig.next());
+                            final Declaration d = new Declaration(f.getPosition(), 
+                                f.getName(), new Empty(t, f.getPosition()));
+                            
+                            this.nspace.declare(d, this.unifier);
+                        }
+                        try {
+                            func.getExpression().visit(this);
+                            result.add(this.unifier.substitute(mtc));
+                        } catch (ASTTraversalException e) {
+                            
+                        }
+                        this.leave();
+                    }
                 }
             }
         }
-        
-        boolean allChecked = false;
-        final int[] indizes = new int[func.getFormal().size()];
-        final boolean done[] = new boolean[func.getFormal().size()];
-        
-        
-        while (!allChecked) {
-            allChecked = true;
-            
-            final List<Type> types = new ArrayList<Type>();
-            int i = 0;
-            for (final Parameter p : func.getFormal()) {
-                types.add(p.getTypes().get(indizes[i]));
-                
-                done[i] = (indizes[i] + 1) == p.getTypes().size();
-                allChecked &= done[i];
-                indizes[i] = (indizes[i] + 1) % p.getTypes().size();
-                ++i;
-            }
-        
-            final ProductTypeConstructor source = new ProductTypeConstructor(types);
-            for (final Type target : func.getExpression().getTypes()) {
-                func.addType(new MapTypeConstructor(source, target));
-            }
-        }
+        func.setTypes(result, this.unifier);
         
         this.afterFunctionLiteral(func);
     }
@@ -167,9 +143,12 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     
     @Override
     public void afterListLiteral(ListLiteral list) throws ASTTraversalException {
+        if (list.getContent().isEmpty()) {
+            this.reportError(list, "Listen müssen mind. 1 Element enthalten.");
+        }
         for (final Expression exp : list.getContent()) {
             for (final Type t : exp.getTypes()) {
-                list.addType(new ListTypeConstructor(t));
+                list.addType(new ListTypeConstructor(t), this.unifier);
             }
         }
     }
@@ -177,30 +156,26 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     
     
     @Override
-    public void afterProductLiteral(ProductLiteral product) throws ASTTraversalException {
-        boolean allChecked = false;
-        final int[] indizes = new int[product.getContent().size()];
-        final boolean done[] = new boolean[product.getContent().size()];
+    public void afterProductLiteral(final ProductLiteral product) 
+            throws ASTTraversalException {
         
-        // combine all possible parameter types
-        while (!allChecked) {
-            allChecked = true;
-            
-            final List<Type> types = new ArrayList<Type>();
-            int i = 0;
-            for (final Expression exp : product.getContent()) {
-                types.add(exp.getTypes().get(indizes[i]));
-                
-                done[i] = (indizes[i] + 1) == exp.getTypes().size();
-                allChecked &= done[i];
-                indizes[i] = (indizes[i] + 1) % exp.getTypes().size();
-                ++i;
+        // Use combinator to create all combinations of possible types
+        final CombinationCallBack<Expression, Type> ccb = 
+            new CombinationCallBack<Expression, Type>() {
+
+            @Override
+            public List<Type> getSubList(Expression outer) {
+                return outer.getTypes();
             }
+
             
-            // one possible actual signature type
-            final ProductTypeConstructor s = new ProductTypeConstructor(types);
-            product.addType(s);
-        }
+            @Override
+            public void onNewCombination(List<Type> combination) {
+                product.addType(new ProductTypeConstructor(combination), unifier);
+            }
+        };
+        
+        Combinator.combine(product.getContent(), ccb);
     }
     
     
@@ -210,16 +185,54 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         for (final Type t : assign.getExpression().getTypes()) {
             final Declaration vd = new Declaration(assign.getName().getPosition(), 
                 assign.getName(), new Empty(t, assign.getExpression().getPosition()));
-            this.nspace.declare(vd);
+            this.nspace.declare(vd, this.unifier);
             
-            assign.addType(t);
+            assign.addType(t, this.unifier);
         }
     }
     
     
     
     @Override
-    public void afterOperatorCall(OperatorCall call) throws ASTTraversalException {
+    public void visitOperatorCall(OperatorCall call) throws ASTTraversalException {
+        this.visitCall(call);
+    }
+    
+
+    
+    @Override
+    public void visitCall(Call call) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        
+        this.beforeCall(call);
+        
+        call.getRhs().visit(this);
+        
+        for (final Type rhsType : call.getRhs().getTypes()) {
+            final MapTypeConstructor possibleLhs = new MapTypeConstructor(
+                (ProductTypeConstructor) rhsType, Type.newTypeVar());
+            
+            call.getLhs().addType(possibleLhs, this.unifier);
+        }
+        
+        call.getLhs().visit(this);
+        
+        for (final Type lhsType : call.getLhs().getTypes()) {
+            if (lhsType instanceof MapTypeConstructor) {
+                final MapTypeConstructor mtc = (MapTypeConstructor) 
+                    this.unifier.substitute(lhsType);
+                call.addType(mtc.getTarget(), this.unifier);
+            }
+        }
+        
+        
+        if (call.getTypes().isEmpty()) {
+            this.reportError(call.getRhs(),
+                "Keine passende Deklaration für den Aufruf von " + 
+                Unparser.toString(call.getLhs()) + " gefunden");
+        }
         this.afterCall(call);
     }
     
@@ -227,45 +240,64 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     
     @Override
     public void afterCall(Call call) throws ASTTraversalException {
-        final List<Type> newLhsTypes = new ArrayList<Type>();
+        
+        /*final List<Type> newLhsTypes = new ArrayList<Type>();
         final List<Type> newRhsTypes = new ArrayList<Type>();
         
         for (final Type rhsType : call.getRhs().getTypes()) {
-            
             final ProductTypeConstructor s = (ProductTypeConstructor) rhsType;
-            final MapTypeConstructor possibleLhs = new MapTypeConstructor(s, 
-                Type.newTypeVar());
             
             for (final Type lhsType : call.getLhs().getTypes()) {
+                final ProductTypeConstructor newRhs = 
+                    (ProductTypeConstructor) this.unifier.fresh(s);
+                final MapTypeConstructor possibleLhs = 
+                    new MapTypeConstructor(newRhs, 
+                    Type.newTypeVar());
                 
-                final TypeUnifier unifier = new TypeUnifier(possibleLhs, lhsType);
-                if (unifier.isUnifiable()) {
-                    unifier.substituteBoth();
+                if (this.unifier.canUnify(possibleLhs, lhsType)) {
+                    final MapTypeConstructor type = (MapTypeConstructor) 
+                        this.unifier.substitute(possibleLhs);
                     
-                    final MapTypeConstructor mtc = (MapTypeConstructor) unifier.getSecond();
-                    
-                    call.addType(mtc.getTarget());
-                    newLhsTypes.add(unifier.getSecond());
-                    newRhsTypes.add(mtc.getSource());
+                    call.addType(type.getTarget(), this.unifier);
+                    newLhsTypes.add(type);
+                    newRhsTypes.add(type.getSource());
                 }
             }
         }
         
-        call.getLhs().setTypes(newLhsTypes);
-        call.getRhs().setTypes(newRhsTypes);
+        call.getLhs().setTypes(newLhsTypes, this.unifier);
+        call.getRhs().setTypes(newRhsTypes, this.unifier);
         
         if (call.getTypes().isEmpty()) {
-            this.reportError(call.getLhs(),
+            this.reportError(call.getRhs(),
                 "Keine passende Deklaration für den Aufruf von " + 
                 Unparser.toString(call.getLhs()) + " gefunden");
-        }
+        }*/
     }
     
     
     
     @Override
     public void beforeVarAccess(VarAccess access) throws ASTTraversalException {
-        access.addTypes(this.nspace.lookup(access));
+        final List<Type> types = this.unifier.freshAll(
+            this.nspace.lookup(access, this.unifier));
+        
+        if (access.getTypes().isEmpty()) {
+            access.addTypes(types, this.unifier);
+            return;
+        }
+        
+        final List<Type> result = new ArrayList<Type>();
+        
+        for (final Type existing : access.getTypes()) {
+            for (final Type newType : types) {
+                if (this.unifier.unify(existing, newType)) {
+                    result.add(this.unifier.substitute(newType));
+                }
+            }
+        }
+        
+        access.setTypes(result, this.unifier);
     }
     
     
@@ -288,7 +320,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         access.getRhs().visit(this);
         this.nspace = last;
 
-        access.addTypes(access.getRhs().getTypes());
+        access.addTypes(access.getRhs().getTypes(), this.unifier);
         
         this.afterAccess(access);
     }

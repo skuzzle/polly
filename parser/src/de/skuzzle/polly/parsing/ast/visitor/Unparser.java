@@ -8,6 +8,7 @@ import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.Root;
+import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
@@ -21,8 +22,6 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.LiteralFormatter;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.FunctionParameter;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.ListParameter;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
 import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
 import de.skuzzle.polly.tools.streams.StringBuilderWriter;
@@ -32,8 +31,14 @@ import de.skuzzle.polly.tools.streams.StringBuilderWriter;
 public class Unparser extends DepthFirstVisitor {
     
     public static String toString(Node node) {
+        return toString(node, LiteralFormatter.DEFAULT);
+    }
+    
+    
+    
+    public static String toString(Node node, LiteralFormatter formatter) {
         final StringBuilderWriter sbw = new StringBuilderWriter();
-        final Unparser unp = new Unparser(new PrintWriter(sbw));
+        final Unparser unp = new Unparser(new PrintWriter(sbw), formatter);
         try {
             node.visit(unp);
         } catch (ASTTraversalException e) {
@@ -77,10 +82,19 @@ public class Unparser extends DepthFirstVisitor {
     
     
     @Override
+    public void beforeDecl(Declaration decl) throws ASTTraversalException {
+        decl.getType().getName().visit(this);
+        this.out.print(" ");
+        decl.getName().visit(this);
+    }
+    
+    
+    
+    @Override
     public void visitRoot(Root root) throws ASTTraversalException {
         this.beforeRoot(root);
         this.out.print(":");
-        this.out.print(root.getCommand());
+        root.getCommand().visit(this);
         
         if (!root.getExpressions().isEmpty()) {
             this.out.print(" ");
@@ -99,43 +113,40 @@ public class Unparser extends DepthFirstVisitor {
     
     @Override
     public void visitFunctionLiteral(FunctionLiteral func) throws ASTTraversalException {
-        this.beforeFunctionLiteral(func);
-        this.out.print("\\(");
-        final Iterator<Parameter> it = func.getFormal().iterator();
-        while (it.hasNext()) {
-            final Parameter formal = it.next();
-            formal.visit(this);
-            if (it.hasNext()) {
-                this.out.print(",");
-            }
+        if (this.aborted) {
+            return;
         }
-        this.out.print(":");
-        func.getExpression().visit(this);
-        this.out.print(")");
+        this.beforeFunctionLiteral(func);
+        
+        this.out.print(func.format(this.literalFormatter));
+        
         this.afterFunctionLiteral(func);
     }
     
     
     
     @Override
-    public void beforeLiteral(Literal literal) throws ASTTraversalException {
+    public void visitLiteral(Literal literal) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        this.beforeLiteral(literal);
         this.out.print(literal.format(this.literalFormatter));
+        this.afterLiteral(literal);
     }
     
     
     
     @Override
     public void visitListLiteral(ListLiteral list) throws ASTTraversalException {
-        this.beforeListLiteral(list);
-        this.out.print("{");
-        final Iterator<Expression> it = list.getContent().iterator();
-        while (it.hasNext()) {
-            it.next().visit(this);
-            if (it.hasNext()) {
-                this.out.print(",");
-            }
+        if (this.aborted) {
+            return;
         }
-        this.out.print("}");
+        this.beforeListLiteral(list);
+        
+        this.out.print(list.format(this.literalFormatter));
+        
+        this.afterListLiteral(list);
     }
     
     
@@ -167,46 +178,19 @@ public class Unparser extends DepthFirstVisitor {
     
     @Override
     public void beforeResolvable(ResolvableIdentifier id) throws ASTTraversalException {
-        if (id.wasEscaped()) {
-            this.out.print("\\");
-        }
-        this.out.print(id.getId());
+        this.beforeIdentifier(id);
     }
     
     
     
     @Override
     public void beforeParameter(Parameter param) throws ASTTraversalException {
-        param.getTypeName().visit(this);
-        this.out.print(" ");
-        param.getName().visit(this);
-    }
-    
-    
-    
-    @Override
-    public void beforeListParameter(ListParameter param) throws ASTTraversalException {
-        this.out.print("List<");
-        param.getUnique().getName().visit(this);
-        this.out.print("> ");
-        param.getName().visit(this);
-    }
-    
-    
-    
-    @Override
-    public void beforeFunctionParameter(FunctionParameter param)
-            throws ASTTraversalException {
-        this.out.print("\\(");
-        final Iterator<ResolvableIdentifier> it = param.getSignature().iterator();
-        while (it.hasNext()) {
-            final ResolvableIdentifier next = it.next();
-            next.visit(this);
-            if (it.hasNext()) {
-                this.out.print(" ");
-            }
+        if (param.getResolvabelType() != null) {
+            this.out.print(param.getResolvabelType().toString());
+        } else {
+            this.out.print(param.getUnique().getName().getId());
         }
-        this.out.print(") ");
+        this.out.print(" ");
         param.getName().visit(this);
     }
     
@@ -287,8 +271,9 @@ public class Unparser extends DepthFirstVisitor {
     
     @Override
     public void visitVarAccess(VarAccess access) throws ASTTraversalException {
-
+        this.beforeVarAccess(access);
         access.getIdentifier().visit(this);
+        this.afterVarAccess(access);
     }
     
     

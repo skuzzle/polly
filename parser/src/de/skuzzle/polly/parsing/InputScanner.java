@@ -137,6 +137,9 @@ public class InputScanner extends AbstractTokenStream {
                     if (!this.skipWhiteSpaces) {
                         this.pushBack(next);
                         state = 1;
+                    } else {
+                        // skipping whitespaces, so move token start
+                        ++tokenStart;
                     }
                     
                 } else if (InputScanner.isIdentifierStart(next)) {

@@ -5,10 +5,12 @@ import java.util.Collection;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
+import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.ProductTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
+import de.skuzzle.polly.parsing.ast.declarations.types.TypeUnifier;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
@@ -53,7 +55,7 @@ public abstract class TernaryOperator<FIRST extends Literal, SECOND extends Lite
      * @param third Type of the third operand.
      */
     protected final void initTypes(Type resulType, Type first, Type second, Type third) {
-        this.addType(resulType);
+        this.addType(resulType, new TypeUnifier());
         this.setUnique(resulType);
         this.first = first;
         this.second = second;
@@ -65,7 +67,7 @@ public abstract class TernaryOperator<FIRST extends Literal, SECOND extends Lite
     
     @Override
     protected FunctionLiteral createFunction() {
-        Collection<Parameter> p = Arrays.asList(new Parameter[] {
+        Collection<Declaration> p = Arrays.asList(new Declaration[] {
             this.typeToParameter(this.first, FIRST_PARAM_NAME),
             this.typeToParameter(this.second, SECOND_PARAM_NAME),
             this.typeToParameter(this.third, THIRD_PARAM_NAME),
@@ -87,9 +89,9 @@ public abstract class TernaryOperator<FIRST extends Literal, SECOND extends Lite
     public final void execute(Stack<Literal> stack, Namespace ns, 
             Visitor execVisitor) throws ASTTraversalException {
         
-        final FIRST first = (FIRST) ns.resolveHere(FIRST_PARAM_NAME).getExpression();
-        final SECOND second = (SECOND) ns.resolveHere(SECOND_PARAM_NAME).getExpression();
-        final THIRD third = (THIRD) ns.resolveHere(THIRD_PARAM_NAME).getExpression();
+        final FIRST first = (FIRST) ns.resolveFirst(FIRST_PARAM_NAME).getExpression();
+        final SECOND second = (SECOND) ns.resolveFirst(SECOND_PARAM_NAME).getExpression();
+        final THIRD third = (THIRD) ns.resolveFirst(THIRD_PARAM_NAME).getExpression();
         
         this.exec(stack, ns, first, second, third, 
             new Position(first.getPosition(), third.getPosition()), execVisitor);
@@ -117,9 +119,9 @@ public abstract class TernaryOperator<FIRST extends Literal, SECOND extends Lite
     @Override
     public final void resolveType(Namespace ns, Visitor typeResolver)
             throws ASTTraversalException {
-        final Expression first = ns.resolveHere(FIRST_PARAM_NAME).getExpression();
-        final Expression second = ns.resolveHere(SECOND_PARAM_NAME).getExpression();
-        final Expression third = ns.resolveHere(THIRD_PARAM_NAME).getExpression();
+        final Expression first = ns.resolveFirst(FIRST_PARAM_NAME).getExpression();
+        final Expression second = ns.resolveFirst(SECOND_PARAM_NAME).getExpression();
+        final Expression third = ns.resolveFirst(THIRD_PARAM_NAME).getExpression();
         
         this.resolve(first, second, third, ns, typeResolver);
     }

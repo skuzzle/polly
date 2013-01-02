@@ -68,26 +68,6 @@ public class MapTypeConstructor extends Type {
     
     
     @Override
-    public Type fresh() {
-        // invariant: valid cast
-        this.source = (ProductTypeConstructor) this.source.fresh();
-        this.target = this.target.fresh();
-        return this;
-    }
-    
-    
-    
-    @Override
-    public Type substitute(TypeVar var, Type t) {
-        final ProductTypeConstructor source = 
-            (ProductTypeConstructor) this.source.substitute(var, t);
-        final Type target = this.target.substitute(var, t);
-        return new MapTypeConstructor(source, target);
-    }
-    
-    
-    
-    @Override
     public String toString() {
         return typeName(this.source, this.target).toString();
     }

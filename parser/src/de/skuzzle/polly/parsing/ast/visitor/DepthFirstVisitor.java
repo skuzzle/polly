@@ -17,8 +17,6 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.FunctionParameter;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.ListParameter;
 import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
 
 /**
@@ -121,29 +119,6 @@ public class DepthFirstVisitor extends VisitorAdapter {
     
 
     @Override
-    public void visitListParameter(ListParameter param) throws ASTTraversalException {
-        if (this.aborted) {
-            return;
-        }
-        this.beforeListParameter(param);
-        this.afterListParameter(param);
-    }
-    
-    
-
-    @Override
-    public void visitFunctionParameter(FunctionParameter param) 
-            throws ASTTraversalException {
-        if (this.aborted) {
-            return;
-        }
-        this.beforeFunctionParameter(param);
-        this.afterFunctionParameter(param);
-    }
-
-    
-
-    @Override
     public void visitDecl(Declaration decl) throws ASTTraversalException {
         if (this.aborted) {
             return;
@@ -210,8 +185,8 @@ public class DepthFirstVisitor extends VisitorAdapter {
             return;
         }
         this.beforeFunctionLiteral(func);
-        for (final Parameter p : func.getFormal()) {
-            p.visit(this);
+        for (final Declaration d : func.getFormal()) {
+            d.visit(this);
         }
         func.getExpression().visit(this);
         this.afterFunctionLiteral(func);

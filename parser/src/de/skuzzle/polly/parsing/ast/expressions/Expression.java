@@ -7,6 +7,7 @@ import java.util.List;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
+import de.skuzzle.polly.parsing.ast.declarations.types.TypeUnifier;
 import de.skuzzle.polly.tools.Equatable;
 
 /**
@@ -53,8 +54,8 @@ public abstract class Expression extends Node {
     
     /**
      * Gets a list of all possible types for this expression. You should never modify the
-     * returned list directly. Use {@link #addType(Type)} and 
-     * {@link #addTypes(Collection)} to add possible types to this list.
+     * returned list directly. Use {@link #addType(Type, TypeUnifier)} and 
+     * {@link #addTypes(Collection, TypeUnifier)} to add possible types to this list.
      * 
      * @return List of possible types of this expression.
      */
@@ -69,10 +70,13 @@ public abstract class Expression extends Node {
      * type is already contained in the type list, the latter call will be ignored.
      * 
      * @param type Possible type of this expression.
+     * @param unifier Current unification context.
      */
-    public void addType(Type type) {
-        if (this.types.contains(type)) {
-            return;
+    public void addType(Type type, TypeUnifier unifier) {
+        for (final Type t : this.types) {
+            if (unifier.canUnify(t, type, false)) {
+                return;
+            }
         }
         this.types.add(type);
     }
@@ -84,21 +88,22 @@ public abstract class Expression extends Node {
      * expression. Types for which an instance already exists in this expression's type 
      * list, will be ignored.
      * 
-     * <p>This method simply calls {@link #addType(Type)} for each type in the given 
-     * collection.</p>
+     * <p>This method simply calls {@link #addType(Type, TypeUnifier)} for each type in 
+     * the given collection.</p>
      * @param types Types to add as possible type for this expression.
+     * @param unifier Current unification context.
      */
-    public void addTypes(Collection<Type> types) {
+    public void addTypes(Collection<? extends Type> types, TypeUnifier unifier) {
         for (final Type type : types) {
-            this.addType(type);
+            this.addType(type, unifier);
         }
     }
     
     
     
-    public void setTypes(Collection<Type> types) {
+    public void setTypes(Collection<Type> types, TypeUnifier unifier) {
         this.types.clear();
-        this.addTypes(types);
+        this.addTypes(types, unifier);
     }
 
     
