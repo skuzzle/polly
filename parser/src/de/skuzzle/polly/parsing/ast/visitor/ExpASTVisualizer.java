@@ -24,7 +24,6 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.StringLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.TimespanLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.UserLiteral;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
 import de.skuzzle.polly.parsing.util.ASTDotBuilder;
 
 
@@ -228,19 +227,7 @@ public class ExpASTVisualizer extends DepthFirstVisitor {
         
         this.afterFunctionLiteral(func);
     }
-    
-    
-    
-    @Override
-    public void visitParameter(Parameter param) throws ASTTraversalException {
-        if (this.aborted) {
-            return;
-        }
-        this.beforeParameter(param);
-        this.dotBuilder.printExpression("Name: " + param.getName(), param);
-        this.afterParameter(param);
-    }
-    
+
     
     
     @Override

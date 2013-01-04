@@ -10,7 +10,6 @@ import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
 
 /**
  * Visitor that sets the parent attribute for each node in the AST
@@ -67,13 +66,6 @@ public class ParentSetter extends DepthFirstVisitor {
     @Override
     public void beforeOperatorCall(OperatorCall call) throws ASTTraversalException {
         this.beforeCall(call);
-    }
-    
-    
-    
-    @Override
-    public void beforeParameter(Parameter param) throws ASTTraversalException {
-        param.getName().setParent(param);
     }
     
     

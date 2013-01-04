@@ -13,11 +13,15 @@ import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
+import de.skuzzle.polly.parsing.ast.declarations.types.ListTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.ProductTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
-import de.skuzzle.polly.parsing.ast.expressions.DeclarableNative;
 import de.skuzzle.polly.parsing.ast.expressions.Delete;
+import de.skuzzle.polly.parsing.ast.expressions.Empty;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
@@ -32,11 +36,6 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.StringLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.TimespanLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.UserLiteral;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.ResolvableFunctionType;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.ResolvableListType;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.ResolvablePrimitiveType;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.ResolvableType;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.ResolvableTypeVarType;
 import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
 
 
@@ -967,11 +966,11 @@ public class ExpInputParser {
      */
     protected Declaration parseParameter() throws ParseException {
         final Token la = this.scanner.lookAhead();
-        final ResolvableType type = this.parseType();
+        final Type type = this.parseType();
         final Identifier name = this.expectIdentifier();
         
         return new Declaration(this.scanner.spanFrom(la), name, 
-            new DeclarableNative(type));
+            new Empty(type, this.scanner.spanFrom(la)));
     }
     
     
@@ -986,11 +985,11 @@ public class ExpInputParser {
      * @return A resolvable type.
      * @throws ParseException If parsing fails.
      */
-    protected ResolvableType parseType() throws ParseException {
+    protected Type parseType() throws ParseException {
         final Token la = this.scanner.lookAhead();
         
         if (this.scanner.match(TokenType.OPENBR)) {
-            final List<ResolvableType> signature = new ArrayList<ResolvableType>();
+            final List<Type> signature = new ArrayList<Type>();
             final boolean skipWS = this.scanner.skipWhiteSpaces();
             this.scanner.setSkipWhiteSpaces(false);
             
@@ -1002,22 +1001,23 @@ public class ExpInputParser {
             this.scanner.setSkipWhiteSpaces(skipWS);
             this.allowSingleWhiteSpace();
             this.expect(TokenType.ASSIGNMENT);
-            final ResolvableType resultType = this.parseType();
+            final Type resultType = this.parseType();
             this.allowSingleWhiteSpace();
             
             this.expect(TokenType.CLOSEDBR);
-            return new ResolvableFunctionType(resultType, signature);
+            return new MapTypeConstructor(new ProductTypeConstructor(signature), 
+                resultType);
         } else if (this.scanner.match(TokenType.LIST)) {
             this.expect(TokenType.LT);
-            final ResolvableType subType = this.parseType();
+            final Type subType = this.parseType();
             this.expect(TokenType.GT);
-            return new ResolvableListType(subType);
+            return new ListTypeConstructor(subType);
         } else if (la.matches(TokenType.IDENTIFIER)) {
             final Identifier id = this.expectIdentifier();
-            return new ResolvablePrimitiveType(new ResolvableIdentifier(id));
+            return Type.resolve(new ResolvableIdentifier(id));
         } else {
             this.expect(TokenType.QUESTION);
-            return new ResolvableTypeVarType();
+            return Type.newTypeVar();
         }
     }
 }

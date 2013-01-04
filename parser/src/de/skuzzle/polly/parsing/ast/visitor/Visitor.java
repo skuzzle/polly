@@ -16,7 +16,6 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
 
 /**
  * The Visitor interface is used to traverse the AST in a customizable way.
@@ -105,10 +104,6 @@ public interface Visitor {
     public void beforeAssignment(Assignment assign) throws ASTTraversalException;
     public void afterAssignment(Assignment assign) throws ASTTraversalException;
     public void visitAssignment(Assignment assign) throws ASTTraversalException;
-    
-    public void beforeParameter(Parameter param) throws ASTTraversalException;
-    public void afterParameter(Parameter param) throws ASTTraversalException;
-    public void visitParameter(Parameter param) throws ASTTraversalException;
     
     public void beforeDecl(Declaration decl) throws ASTTraversalException;
     public void afterDecl(Declaration decl) throws ASTTraversalException;

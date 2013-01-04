@@ -22,7 +22,6 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.LiteralFormatter;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
 import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
 import de.skuzzle.polly.tools.streams.StringBuilderWriter;
 
@@ -179,19 +178,6 @@ public class Unparser extends DepthFirstVisitor {
     @Override
     public void beforeResolvable(ResolvableIdentifier id) throws ASTTraversalException {
         this.beforeIdentifier(id);
-    }
-    
-    
-    
-    @Override
-    public void beforeParameter(Parameter param) throws ASTTraversalException {
-        if (param.getResolvabelType() != null) {
-            this.out.print(param.getResolvabelType().toString());
-        } else {
-            this.out.print(param.getUnique().getName().getId());
-        }
-        this.out.print(" ");
-        param.getName().visit(this);
     }
     
     

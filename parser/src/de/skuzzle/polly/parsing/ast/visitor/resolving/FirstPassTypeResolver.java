@@ -23,7 +23,6 @@ import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 import de.skuzzle.polly.parsing.util.Combinator;
@@ -63,16 +62,6 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     
     
     @Override
-    public void afterParameter(Parameter param) throws ASTTraversalException {
-        if (!param.typeResolved()) {
-            final Type t = param.getResolvabelType().resolve();
-            param.setUnique(t);
-        }
-    }
-    
-    
-    
-    @Override
     public void visitFunctionLiteral(final FunctionLiteral func) 
             throws ASTTraversalException {
         if (this.aborted) {
@@ -84,6 +73,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         final List<Type> source = new ArrayList<Type>();
         
         // resolve parameter types
+        this.enter();
         final Set<String> names = new HashSet<String>();
         for (final Declaration d : func.getFormal()) {
             if (!names.add(d.getName().getId())) {
@@ -93,48 +83,20 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
             d.visit(this);
             source.add(d.getType());
             
-            // Invariant: parameters always have a unique type
-            //this.nspace.declare(d, this.unifier);
+            this.nspace.declare(d, this.unifier);
         }
         
         final MapTypeConstructor possibleType = new MapTypeConstructor(
             new ProductTypeConstructor(source), 
             Type.newTypeVar());
         
-        final List<Type> result = new ArrayList<Type>();
-        if (!func.getTypes().isEmpty()) {
-            for (final Type type : func.getTypes()) {
-                if (type instanceof MapTypeConstructor) {
-                    final MapTypeConstructor mtc = (MapTypeConstructor) type;
-                    final MapTypeConstructor fresh = (MapTypeConstructor) 
-                        this.unifier.fresh(possibleType);
-                    
-                    if (this.unifier.unify(fresh, mtc)) {
-                        
-                        final Iterator<Declaration> formal = func.getFormal().iterator();
-                        final Iterator<Type> sig = fresh.getSource().getTypes().iterator();
-                        
-                        this.enter();
-                        while (formal.hasNext()) {
-                            final Declaration f = formal.next();
-                            final Type t = this.unifier.substitute(sig.next());
-                            final Declaration d = new Declaration(f.getPosition(), 
-                                f.getName(), new Empty(t, f.getPosition()));
-                            
-                            this.nspace.declare(d, this.unifier);
-                        }
-                        try {
-                            func.getExpression().visit(this);
-                            result.add(this.unifier.substitute(mtc));
-                        } catch (ASTTraversalException e) {
-                            
-                        }
-                        this.leave();
-                    }
-                }
-            }
+        func.getExpression().visit(this);
+        this.leave();
+        
+        for (final Type type : func.getExpression().getTypes()) {
+            func.addType(new MapTypeConstructor(new ProductTypeConstructor(source), type), 
+                this.unifier);
         }
-        func.setTypes(result, this.unifier);
         
         this.afterFunctionLiteral(func);
     }
@@ -208,22 +170,29 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         
         this.beforeCall(call);
         
+        // resolve parameter types
         call.getRhs().visit(this);
         
+        final List<Type> possibleTypes = new ArrayList<Type>(
+            call.getRhs().getTypes().size());
         for (final Type rhsType : call.getRhs().getTypes()) {
             final MapTypeConstructor possibleLhs = new MapTypeConstructor(
                 (ProductTypeConstructor) rhsType, Type.newTypeVar());
             
-            call.getLhs().addType(possibleLhs, this.unifier);
+            possibleTypes.add(possibleLhs);
         }
         
+        // resolve called function's types
         call.getLhs().visit(this);
         
-        for (final Type lhsType : call.getLhs().getTypes()) {
-            if (lhsType instanceof MapTypeConstructor) {
-                final MapTypeConstructor mtc = (MapTypeConstructor) 
-                    this.unifier.substitute(lhsType);
-                call.addType(mtc.getTarget(), this.unifier);
+        // sort out all lhs types that do not match the rhs types
+        for (final Type possibleLhs : possibleTypes) {
+            for (final Type lhs : call.getLhs().getTypes()) {
+                if (this.unifier.unify(lhs, possibleLhs)) {
+                    final MapTypeConstructor mtc = (MapTypeConstructor) 
+                        this.unifier.substitute(lhs);
+                    call.addType(this.unifier.substitute(mtc.getTarget()), this.unifier);
+                }
             }
         }
         
@@ -282,7 +251,8 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         final List<Type> types = this.unifier.freshAll(
             this.nspace.lookup(access, this.unifier));
         
-        if (access.getTypes().isEmpty()) {
+        access.addTypes(types, this.unifier);
+        /*if (access.getTypes().isEmpty()) {
             access.addTypes(types, this.unifier);
             return;
         }
@@ -297,7 +267,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
             }
         }
         
-        access.setTypes(result, this.unifier);
+        access.setTypes(result, this.unifier);*/
     }
     
     

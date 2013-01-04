@@ -17,7 +17,6 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
 
 /**
  * {@link Visitor} implementation that traverses the AST in depth-first order. 
@@ -105,17 +104,6 @@ public class DepthFirstVisitor extends VisitorAdapter {
         this.afterAssignment(assign);
     }
 
-    
-
-    @Override
-    public void visitParameter(Parameter param) throws ASTTraversalException {
-        if (this.aborted) {
-            return;
-        }
-        this.beforeParameter(param);
-        this.afterParameter(param);
-    }
-    
     
 
     @Override

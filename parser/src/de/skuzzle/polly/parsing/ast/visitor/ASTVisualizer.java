@@ -19,7 +19,6 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
-import de.skuzzle.polly.parsing.ast.expressions.parameters.Parameter;
 import de.skuzzle.polly.parsing.util.PreOrderDotBuilder;
 
 
@@ -133,13 +132,6 @@ public class ASTVisualizer extends DepthFirstVisitor {
     
     
     @Override
-    public void beforeParameter(Parameter param) throws ASTTraversalException {
-        this.printExpression("Parameter: " + param.getName().getId(), param);
-    }
-    
-    
-    
-    @Override
     public void beforeDelete(Delete delete) throws ASTTraversalException {
         this.printExpression("Delete", delete);
     }
@@ -237,13 +229,6 @@ public class ASTVisualizer extends DepthFirstVisitor {
     @Override
     public void afterOperatorCall(OperatorCall call) throws ASTTraversalException {
         this.dotBuilder.pop(call);
-    }
-
-
-
-    @Override
-    public void afterParameter(Parameter param) throws ASTTraversalException {
-        this.dotBuilder.pop(param);
     }
 
 
