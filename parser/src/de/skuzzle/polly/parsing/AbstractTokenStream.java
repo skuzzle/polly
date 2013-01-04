@@ -27,92 +27,11 @@ import java.util.Queue;
  * <p>To implement {@link #readToken()} this class provides the 
  * methods {@link #readChar()} which reads exactly one char from 
  * the input and {@link #pushBack(int)} which can put a char back 
- * onto the stream so it will be read next. You may specify a {@link PushbackStrategy}
- * to change the behavior of the pushback method. The default strategy is LIFO (this
- * takes only effect when pushing back more than one character).</p>
+ * onto the stream so it will be read next.</p>
  * 
  * @author Simon
  */
 public abstract class AbstractTokenStream implements Iterable<Token> {
-    
-    public static abstract class PushbackStrategy<T> {
-        public abstract T pop(LinkedList<T> list);
-        public abstract void push(LinkedList<T> list, T value);
-        public abstract T peek(LinkedList<T> list);
-    }
-    
-    
-    
-    public final static PushbackStrategy<Integer> CHARACTER_LIFO = 
-        new PushbackStrategy<Integer>() {
-        @Override
-        public void push(LinkedList<Integer> list, Integer value) {
-            list.push(value);
-        }
-        @Override
-        public Integer pop(LinkedList<Integer> list) {
-            return list.pop();
-        }
-        @Override
-        public Integer peek(LinkedList<Integer> list) {
-            return list.peekFirst();
-        }
-    };
-    
-    
-    
-    public final static PushbackStrategy<Integer> CHARACTER_FIFO = 
-        new PushbackStrategy<Integer>() {
-        @Override
-        public void push(LinkedList<Integer> list, Integer value) {
-            list.add(value);
-        }
-        @Override
-        public Integer pop(LinkedList<Integer> list) {
-            return list.remove();
-        }
-        @Override
-        public Integer peek(LinkedList<Integer> list) {
-            return list.peekFirst();
-        }
-    };
-    
-    
-    
-    public final static PushbackStrategy<Token> TOKEN_LIFO = 
-        new PushbackStrategy<Token>() {
-        @Override
-        public void push(LinkedList<Token> list, Token value) {
-            list.push(value);
-        }
-        @Override
-        public Token pop(LinkedList<Token> list) {
-            return list.pop();
-        }
-        @Override
-        public Token peek(LinkedList<Token> list) {
-            return list.peekFirst();
-        }
-    };
-    
-    
-    
-    public final static PushbackStrategy<Token> TOKEN_FIFO = 
-        new PushbackStrategy<Token>() {
-        @Override
-        public void push(LinkedList<Token> list, Token value) {
-            list.add(value);
-        }
-        @Override
-        public Token pop(LinkedList<Token> list) {
-            return list.remove();
-        }
-        @Override
-        public Token peek(LinkedList<Token> list) {
-            return list.peekFirst();
-        }
-    };
-    
     
     
     /**
@@ -123,12 +42,12 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
     /**
      * The pushback buffer for characters
      */
-    protected LinkedList<Integer> pushbackBuffer;
+    protected Queue<Integer> pushbackBuffer;
     
     /**
      * Pushbackbuffer for tokens.
      */
-    protected LinkedList<Token> tokenBuffer;
+    protected Queue<Token> tokenBuffer;
     
     /**
      * States whether the end of the input has been reached.
@@ -144,16 +63,6 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
      * The current stream position.
      */
     protected int streamIndex;
-    
-    /**
-     * The strategy for pushing back characters.
-     */
-    protected PushbackStrategy<Integer> characterStrategy;
-    
-    /**
-     * The strategy for pushing back tokens.
-     */
-    protected PushbackStrategy<Token> tokenStrategy;
     
     /**
      * Stringbuilder holds the current lexem. Will be reseted upon calling 
@@ -186,8 +95,6 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
         this.reader = new BufferedReader(new InputStreamReader(inp, charset));
         this.pushbackBuffer = new LinkedList<Integer>();
         this.tokenBuffer = new LinkedList<Token>();
-        this.characterStrategy = AbstractTokenStream.CHARACTER_FIFO;
-        this.tokenStrategy = AbstractTokenStream.TOKEN_LIFO;
         this.currentLexem = new StringBuilder();
     }    
     
@@ -205,21 +112,7 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
         this.reader = new InputStreamReader(stream, charset);
         this.pushbackBuffer = new LinkedList<Integer>();
         this.tokenBuffer = new LinkedList<Token>();
-        this.characterStrategy = AbstractTokenStream.CHARACTER_FIFO;
-        this.tokenStrategy = AbstractTokenStream.TOKEN_FIFO;
         this.currentLexem = new StringBuilder();
-    }
-    
-    
-    
-    /**
-     * Sets the strategy for pushing back characters. Strategy may be hotswapped - 
-     * that is replacing the strategy during reading characters. 
-     * 
-     * @param strategy The strategy to set.
-     */
-    public void setCharacterStrategy(PushbackStrategy<Integer> strategy) {
-        this.characterStrategy = strategy;
     }
     
     
@@ -265,9 +158,9 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
      */
     public Token lookAhead() throws ParseException {
         if (this.tokenBuffer.isEmpty()) {
-            this.tokenStrategy.push(this.tokenBuffer, this.readToken());
+            this.tokenBuffer.add(this.readToken());
         }
-        return this.tokenStrategy.peek(this.tokenBuffer);
+        return this.tokenBuffer.peek();
     }
     
     
@@ -378,7 +271,7 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
      * @param t The character to be pushed back onto the input.
      */
     protected void pushBack(int t) {
-        this.characterStrategy.push(this.pushbackBuffer, t);
+        this.pushbackBuffer.add(t);
         this.eos = false;
         --this.streamIndex;
     }
@@ -387,13 +280,12 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
     
     /**
      * Pushes back one token. The pushedback token will be buffered and read by later
-     * calls of {@link #readToken()}. Depending what pushback strategy you set, the
-     * token may be read by the next call to {@link #readToken()} or at later time.
+     * calls of {@link #readToken()}. 
      * 
      * @param t The token to push back.
      */
     public void pushback(Token t) {
-        this.tokenStrategy.push(this.tokenBuffer, t);
+        this.tokenBuffer.add(t);
     }
 
     
@@ -417,7 +309,7 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
         boolean popped = false;
         
         if (!this.pushbackBuffer.isEmpty()) {
-            next = this.characterStrategy.pop(this.pushbackBuffer);
+            next = this.pushbackBuffer.poll();
             popped = true;
         } else {
             try {
@@ -492,7 +384,7 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
      */
     private Token nextToken() throws ParseException {
         if (!this.tokenBuffer.isEmpty()) {
-            return this.tokenStrategy.pop(this.tokenBuffer);
+            return this.tokenBuffer.poll();
         }
         
         return this.readToken();
