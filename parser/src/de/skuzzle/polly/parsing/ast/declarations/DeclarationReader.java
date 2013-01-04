@@ -43,8 +43,8 @@ public class DeclarationReader implements Closeable {
         
         
         @Override
-        public Expression parseExpr() throws ParseException {
-            return super.parseExpr();
+        public Expression parseAssignment() throws ParseException {
+            return super.parseAssignment();
         }
     }
     
@@ -110,7 +110,7 @@ public class DeclarationReader implements Closeable {
         
         final DeclarationParser p = new DeclarationParser(line, this.charset);
         try {
-            final Expression exp = p.parseExpr();
+            final Expression exp = p.parseAssignment();
             if (!(exp instanceof Assignment)) {
                 return true;
             }

@@ -42,12 +42,12 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
     /**
      * The pushback buffer for characters
      */
-    protected Queue<Integer> pushbackBuffer;
+    protected LinkedList<Integer> pushbackBuffer;
     
     /**
      * Pushbackbuffer for tokens.
      */
-    protected Queue<Token> tokenBuffer;
+    protected LinkedList<Token> tokenBuffer;
     
     /**
      * States whether the end of the input has been reached.
@@ -279,13 +279,28 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
     
     
     /**
-     * Pushes back one token. The pushedback token will be buffered and read by later
-     * calls of {@link #readToken()}. 
+     * Pushes back one token. The pushed back token will be buffered and read by later
+     * calls of {@link #readToken()}. The pushed back token will be appended to the head
+     * of the token pushback buffer. That means the next call to {@link #readToken()} will
+     * return the pushed back token.
      * 
      * @param t The token to push back.
      */
-    public void pushback(Token t) {
-        this.tokenBuffer.add(t);
+    public void pushBackFirst(Token t) {
+        this.tokenBuffer.addFirst(t);
+    }
+    
+    
+    
+    /**
+     * Pushes back one token. The pushed back token will be buffered and read by later 
+     * calls of {@link #readToken()}. The pushed back token will be appended to the tail
+     * of the token pushback buffer.
+     * 
+     * @param t Token to push back.
+     */
+    public void pushBackLast(Token t) {
+        this.tokenBuffer.addLast(t);
     }
 
     

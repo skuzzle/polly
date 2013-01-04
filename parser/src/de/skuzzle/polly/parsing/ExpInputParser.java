@@ -51,9 +51,9 @@ import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
  * some tweaks in the implementation that are not expressed in the following grammar.</p>
  * 
  * <pre>
- *   root        -> ':' ID (expr (WS expr)*)?                  // AST root with a WS separated list of expressions
+ *   root        -> ':' ID (assign (WS assign)*)?              // AST root with a WS separated list of expressions
  *   
- *   expr        -> relation '->' PUBLIC? TEMP? (ID | ESCAPED) // assignment of relation to identifier X
+ *   assign      -> relation '->' PUBLIC? TEMP? ID             // assignment of relation to identifier X
  *   relation    -> conjunction (REL_OP conjunction)*          // relation (<,>,<=,>=,==, !=)
  *   conjunction -> disjunction (CONJ_OP disjunction)*         // conjunction (||)
  *   disjunction -> secTerm (DISJ_OP secTerm)*                 // disjunction (&&)
@@ -68,21 +68,20 @@ import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
  *   call        -> access ( '(' parameters ')' )?
  *   access      -> literal ('.' literal )?                    // namespace access. left operand must be a single identifier (represented by a VarAccess)
  *   literal     -> ID                                         // VarAccess
- *                | ESCAPED                                    // token escape
- *                | '(' expr ')'                               // braced expression
- *                | '\(' parameters ':' expr ')'               // lambda function literal
+ *                | '(' relation ')'                           // braced expression
+ *                | '\(' parameters ':' relation ')'           // lambda function literal
  *                | '{' exprList '}'                           // concrete list of expressions
  *                | DELETE '(' ID (',' ID)* ')'                // delete operator
- *                | IF expr ':' expr ':' expr                  // conditional operator
+ *                | IF relation ':' relation ':' relation      // conditional operator
  *                | TRUE | FALSE                               // boolean literal
  *                | CHANNEL                                    // channel literal
  *                | USER                                       // user literal
  *                | STRING                                     // string literal
  *                | NUMBER                                     // number literal
- *                | DATETIME                                   // date literal
+ *                | DATETIME                                   // date liter
  *                | TIMESPAN                                   // timespan literal
  *            
- *   exprList    -> (expr (',' expr)*)?
+ *   exprList    -> (relation (',' relation)*)?
  *   parameters  -> (parameter (',' parameter)*)?
  *   parameter   -> type ID
  *   type        -> ID                                         // primitive type
@@ -104,7 +103,8 @@ import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
  *   DATE     -> [0-9]{1,2}\.[0-9]{1,2}\.[0-9]{4}
  *   TIME     -> [0-9]{1,2}:[0-9]{1,2}
  *   DATETIME -> TIME | DATE | DATE@TIME
- *   ID     -> [_a-zA-Z][_a-zA-Z0-9]+
+ *   ID       -> [_a-zA-Z][_a-zA-Z0-9]+
+ *             | '\' .                                         // any escaped token
  * </pre>
  * 
  * @author Simon Taddiken
@@ -312,7 +312,7 @@ public class ExpInputParser {
         final List<Expression> signature = new ArrayList<Expression>();
         if (this.scanner.match(TokenType.SEPERATOR)) {
             do {
-                final Expression next = this.parseExpr();
+                final Expression next = this.parseAssignment();
                 signature.add(next);
             } while (this.scanner.match(TokenType.SEPERATOR));
         }
@@ -330,13 +330,13 @@ public class ExpInputParser {
      * higher precedence level is returned. This is the root of all expressions and has 
      * thus lowest precedence level.
      * <pre>
-     * assign -> relation '->' (ID | ESCAPED)    // assignment of relation to identifier X
+     * assign -> relation '->'PUBLIC? TEMP? ID // assignment of relation to identifier X
      * </pre>
      * @return The parsed Assignment or the result of the next higher precedence level
      *          if no ASSIGN_OP was found.
      * @throws ParseException If parsing fails.
      */
-    protected Expression parseExpr() throws ParseException {
+    protected Expression parseAssignment() throws ParseException {
         final Expression lhs = this.parseRelation();
         
         if (this.scanner.match(TokenType.ASSIGNMENT)) {
@@ -730,11 +730,11 @@ public class ExpInputParser {
      * <pre>
      * literal -> ID                                    // VarAccess
      *          | ESCAPED                               // token escape
-     *          | '(' expr ')'                          // braced expression
-     *          | '\(' parameters ':' expr ')'          // lambda function literal
+     *          | '(' relation ')'                      // braced expression
+     *          | '\(' parameters ':' relation ')'      // lambda function literal
      *          | '{' exprList '}'                      // concrete list of expressions
      *          | DELETE '(' ID (',' ID)* ')'           // delete operator
-     *          | IF expr ':' expr ':' expr             // conditional operator
+     *          | IF expr ':' relation ':' relation     // conditional operator
      *          | TRUE | FALSE                          // boolean literal
      *          | CHANNEL                               // channel literal
      *          | USER                                  // user literal
@@ -773,7 +773,7 @@ public class ExpInputParser {
              */
             this.enterExpression();
             
-            exp = this.parseExpr();
+            exp = this.parseRelation();
             this.expect(TokenType.CLOSEDBR);
             
             this.leaveExpression();
@@ -788,7 +788,7 @@ public class ExpInputParser {
                 TokenType.COLON);
             this.expect(TokenType.COLON);
             
-            exp = this.parseExpr();
+            exp = this.parseRelation();
             
             this.expect(TokenType.CLOSEDBR);
             
@@ -835,19 +835,19 @@ public class ExpInputParser {
             this.scanner.consume();
             this.allowSingleWhiteSpace();
             
-            final Expression condition = this.parseExpr();
+            final Expression condition = this.parseRelation();
             this.allowSingleWhiteSpace();
             
             this.expect(TokenType.COLON);
             this.allowSingleWhiteSpace();
             
-            final Expression second = this.parseExpr();
+            final Expression second = this.parseRelation();
             
             this.allowSingleWhiteSpace();
             this.expect(TokenType.COLON);
             this.allowSingleWhiteSpace();
             
-            final Expression third = this.parseExpr();
+            final Expression third = this.parseRelation();
             
             return OperatorCall.ternary(this.scanner.spanFrom(la), OpType.IF, 
                 condition, second, third);
@@ -897,7 +897,7 @@ public class ExpInputParser {
      * 
      * <pre>
      * exprList -> end   // empty list
-     *           | expression (',' expression)*
+     *           | relation (',' relation)*
      * </pre>
      * @param end The token which should end the list. Only used to determine empty lists.
      * @return A collection of parsed expressions.
@@ -914,11 +914,11 @@ public class ExpInputParser {
         
         final List<Expression> result = new ArrayList<Expression>();
         
-        result.add(this.parseExpr());
+        result.add(this.parseRelation());
         
         while (this.scanner.match(TokenType.COMMA)) {
             this.allowSingleWhiteSpace();
-            result.add(this.parseExpr());
+            result.add(this.parseRelation());
         }
         return result;
     }
@@ -1013,11 +1013,19 @@ public class ExpInputParser {
             this.expect(TokenType.GT);
             return new ListTypeConstructor(subType);
         } else if (la.matches(TokenType.IDENTIFIER)) {
-            final Identifier id = this.expectIdentifier();
-            return Type.resolve(new ResolvableIdentifier(id));
+            final ResolvableIdentifier id = new ResolvableIdentifier(
+                this.expectIdentifier());
+            
+            final Token la2 = this.scanner.lookAhead();
+            
+            if (la2.matches(TokenType.IDENTIFIER)) {
+                return Type.resolve(id);
+            } else {
+                this.scanner.pushBackFirst(la);
+                return Type.newTypeVar();
+            }
         } else {
-            this.expect(TokenType.QUESTION);
-            return Type.newTypeVar();
+            throw new ParseException("Typ erwartet", la.getPosition());
         }
     }
 }

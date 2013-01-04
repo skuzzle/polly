@@ -1,6 +1,6 @@
-root        -> ':' ID (expr (WS expr)*)?                  // AST root with a WS separated list of expressions
+root        -> ':' ID (assign (WS assign)*)?                  // AST root with a WS separated list of expressions
 
-expr        -> relation '->' PUBLIC? TEMP? (ID | ESCAPED) // assignment of relation to identifier X
+assignment  -> relation '->' PUBLIC? TEMP? ID             // assignment of relation to identifier X
 relation    -> conjunction (REL_OP conjunction)*          // relation (<,>,<=,>=,==, !=)
 conjunction -> disjunction (CONJ_OP disjunction)*         // conjunction (||)
 disjunction -> secTerm (DISJ_OP secTerm)*                 // disjunction (&&)
@@ -15,12 +15,11 @@ unary       -> UNARY_OP unary                             // right-associative u
 call        -> access ( '(' parameters ')' )?
 access      -> literal ('.' literal)?                     // namespace access. left operand must be a single identifier (represented by a VarAccess)
 literal     -> ID                                         // VarAccess
-             | ESCAPED                                    // token escape
-             | '(' expr ')'                               // braced expression
-             | '\(' parameters ':' expr ')'               // lambda function literal
+             | '(' relation ')'                           // braced expression
+             | '\(' parameters ':' relation ')'           // lambda function literal
              | '{' exprList '}'                           // concrete list of expressions
              | DELETE '(' ID (',' ID)* ')'                // delete operator
-             | IF expr ':' expr ':' expr                  // conditional operator
+             | IF relation ':' relation ':' relation      // conditional operator
              | TRUE | FALSE                               // boolean literal
              | CHANNEL                                    // channel literal
              | USER                                       // user literal
@@ -29,7 +28,7 @@ literal     -> ID                                         // VarAccess
              | DATETIME                                   // date literal
              | TIMESPAN                                   // timespan literal
 
-exprList    -> (expr (',' expr)*)?
+exprList    -> (relation (',' relation)*)?
 parameters  -> (parameter (',' parameter)*)?
 parameter   -> type ID                                    
 type        -> ID                                         // primitive type
@@ -53,3 +52,4 @@ DATE     -> [0-9]{1,2}\.[0-9]{1,2}\.[0-9]{4}
 TIME     -> [0-9]{1,2}:[0-9]{1,2}
 DATETIME -> TIME | DATE | DATE '@' TIME
 ID     -> [_a-zA-Z][_a-zA-Z0-9]+
+        | '\' .                                           // escape sequence for any token
