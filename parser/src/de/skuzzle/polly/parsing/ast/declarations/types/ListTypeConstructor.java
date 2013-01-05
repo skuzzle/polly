@@ -27,6 +27,13 @@ public class ListTypeConstructor extends Type {
     
     
     
+    @Override
+    public Type subst(Substitution s) {
+        return new ListTypeConstructor(this.subType.subst(s));
+    }
+    
+    
+    
     /**
      * Gets this type's sub type.
      * 

@@ -7,6 +7,7 @@ import java.util.List;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
+import de.skuzzle.polly.parsing.ast.declarations.types.TypeResolvedCallBack;
 import de.skuzzle.polly.parsing.ast.declarations.types.TypeUnifier;
 import de.skuzzle.polly.tools.Equatable;
 
@@ -20,7 +21,8 @@ public abstract class Expression extends Node {
     private static final long serialVersionUID = 1L;
     
     private Type unique;
-    private List<Type> types;
+    private final List<Type> types;
+    private TypeResolvedCallBack callback;
     
     
     
@@ -42,6 +44,18 @@ public abstract class Expression extends Node {
     
     
     /**
+     * Sets a callback interface which will be notified whenever a possible type for this
+     * expression has been resolved.
+     * 
+     * @param trcb The callback to set.
+     */
+    public void setTypeResolvedCallBack(TypeResolvedCallBack trcb) {
+        this.callback = trcb;
+    }
+    
+    
+    
+    /**
      * Creates a new Expression with given {@link Position} and unknown type.
      * 
      * @param position Position within the input String of this expression.
@@ -49,7 +63,7 @@ public abstract class Expression extends Node {
     public Expression(Position position) {
         this(position, Type.UNKNOWN);
     }
-    
+
     
     
     /**
@@ -77,6 +91,9 @@ public abstract class Expression extends Node {
             if (unifier.canUnify(t, type, false)) {
                 return;
             }
+        }
+        if (this.callback != null) {
+            this.callback.typeResolved(type, unifier);
         }
         this.types.add(type);
     }

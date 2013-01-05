@@ -234,7 +234,7 @@ public class ExecutionVisitor extends DepthFirstVisitor {
             this.nspace.declare(local);
         }
 
-        func.getExpression().visit(this);
+        func.getBody().visit(this);
         this.leave();
         
         this.afterCall(call);

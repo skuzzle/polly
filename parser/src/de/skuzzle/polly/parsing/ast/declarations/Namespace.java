@@ -665,16 +665,17 @@ public class Namespace {
     
     
     /**
-     * Looks up all possible declarations for the given identifier. Declarations on a 
+     * Looks up all possible declared types for the given identifier. Declarations on a 
      * higher level are ignored if a declaration with identical type is found on a lower
-     * level.
+     * level. Additionally, this method replaces all type variables with fresh ones for 
+     * all declarations that are no formal parameter. 
      * 
      * @param access VarAccess to resolve.
      * @param unifier Current type unification context.
      * @return A set of all declarations with matching names.
      * @throws DeclarationException If no variable with matching name was found.
      */
-    public Set<Type> lookup(VarAccess access, TypeUnifier unifier) 
+    public Set<Type> lookupFresh(VarAccess access, TypeUnifier unifier) 
             throws DeclarationException {
         final ResolvableIdentifier name = access.getIdentifier();
         final Set<Type> result = new HashSet<Type>();
@@ -700,7 +701,11 @@ ignore:     for (Declaration decl : decls) {
                     if (decl.mustCopy()) {
                         decl = CopyTool.copyOf(decl);
                     }
-                    result.add(decl.getType());
+                    final Type fresh = decl.isParameter() 
+                        ? decl.getType() 
+                        : unifier.fresh(decl.getType());
+                        
+                    result.add(fresh);
                     name.addDeclaration(decl);
                     decl.onLookup(access);
                 }

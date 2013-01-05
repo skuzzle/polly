@@ -26,6 +26,13 @@ public class TypeVar extends Type {
     
     
     @Override
+    public Type subst(Substitution s) {
+        return s.getSubstitute(this);
+    }
+    
+    
+    
+    @Override
     public String toString() {
         // XXX: append hash code to name to be able to distinguish between different 
         //      instances with same name

@@ -108,9 +108,9 @@ public interface LiteralFormatter {
                     b.append(",");
                 }
             }
-            if (!(functionLiteral.getExpression() instanceof Function)) {
+            if (!(functionLiteral.getBody() instanceof Function)) {
                 b.append(":");
-                b.append(Unparser.toString(functionLiteral.getExpression(), this));
+                b.append(Unparser.toString(functionLiteral.getBody(), this));
             }
             b.append(")");
             return b.toString();

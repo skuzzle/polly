@@ -216,12 +216,12 @@ public class ExpASTVisualizer extends DepthFirstVisitor {
             param.visit(this);
             this.dotBuilder.printEdge(func, param, "param");
         }
-        func.getExpression().visit(this);
-        this.dotBuilder.printEdge(func, func.getExpression(), "body");
+        func.getBody().visit(this);
+        this.dotBuilder.printEdge(func, func.getBody(), "body");
         
         for (final Declaration param : func.getFormal()) {
             for (final VarAccess va : param.getUsage()) {
-                this.dotBuilder.printEdge(param, va, "", "dotted", false);
+                this.dotBuilder.printUsage(va, param);
             }
         }
         
@@ -253,10 +253,11 @@ public class ExpASTVisualizer extends DepthFirstVisitor {
     }
     
     
+    
     @Override
     public void beforeDecl(Declaration decl) throws ASTTraversalException {
         final StringBuilder b = new StringBuilder();
-        b.append("Possible usage:\\n");
+        b.append("Usage (by name):\\n");
         for (final VarAccess va : decl.getUsage()) {
             b.append(va.getPosition());
             b.append("\\n");

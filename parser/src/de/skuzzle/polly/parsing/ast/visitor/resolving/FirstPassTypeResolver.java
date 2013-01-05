@@ -2,7 +2,6 @@ package de.skuzzle.polly.parsing.ast.visitor.resolving;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -12,6 +11,8 @@ import de.skuzzle.polly.parsing.ast.declarations.types.ListTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.ProductTypeConstructor;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
+import de.skuzzle.polly.parsing.ast.declarations.types.TypeResolvedCallBack;
+import de.skuzzle.polly.parsing.ast.declarations.types.TypeUnifier;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Empty;
@@ -38,7 +39,6 @@ import de.skuzzle.polly.parsing.util.Combinator.CombinationCallBack;
  * @see SecondPassTypeResolver
  */
 class FirstPassTypeResolver extends AbstractTypeResolver {
-    
     
     
     public FirstPassTypeResolver(Namespace namespace) {
@@ -86,16 +86,27 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
             this.nspace.declare(d, this.unifier);
         }
         
-        final MapTypeConstructor possibleType = new MapTypeConstructor(
-            new ProductTypeConstructor(source), 
-            Type.newTypeVar());
+        // Whenever a type for the body of this function has been resolved, we have
+        // found proper substitutions for the function's parameters
+        func.getBody().setTypeResolvedCallBack(new TypeResolvedCallBack() {
+            
+            @Override
+            public void typeResolved(Type possibleType, TypeUnifier context) {
+                final Type t = new MapTypeConstructor(
+                    new ProductTypeConstructor(source), possibleType);
+                
+                func.addType(context.substitute(t), context);
+            }
+        });
         
-        func.getExpression().visit(this);
+        func.getBody().visit(this);
         this.leave();
         
-        for (final Type type : func.getExpression().getTypes()) {
-            func.addType(new MapTypeConstructor(new ProductTypeConstructor(source), type), 
-                this.unifier);
+        // check whether all formal parameters have been used
+        for (final Declaration d : func.getFormal()) {
+            if (d.isUnused()) {
+                this.reportError(d, "Unbenutzer Parameter: " + d.getName());
+            }
         }
         
         this.afterFunctionLiteral(func);
@@ -188,10 +199,12 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         // sort out all lhs types that do not match the rhs types
         for (final Type possibleLhs : possibleTypes) {
             for (final Type lhs : call.getLhs().getTypes()) {
-                if (this.unifier.unify(lhs, possibleLhs)) {
+                final TypeUnifier tmp = new TypeUnifier(this.unifier);
+                
+                if (tmp.unify(lhs, possibleLhs)) {
                     final MapTypeConstructor mtc = (MapTypeConstructor) 
-                        this.unifier.substitute(lhs);
-                    call.addType(this.unifier.substitute(mtc.getTarget()), this.unifier);
+                        tmp.substitute(lhs);
+                    call.addType(tmp.substitute(mtc.getTarget()), tmp);
                 }
             }
         }
@@ -248,26 +261,8 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     
     @Override
     public void beforeVarAccess(VarAccess access) throws ASTTraversalException {
-        final List<Type> types = this.unifier.freshAll(
-            this.nspace.lookup(access, this.unifier));
-        
+        final Set<Type> types = this.nspace.lookupFresh(access, this.unifier);
         access.addTypes(types, this.unifier);
-        /*if (access.getTypes().isEmpty()) {
-            access.addTypes(types, this.unifier);
-            return;
-        }
-        
-        final List<Type> result = new ArrayList<Type>();
-        
-        for (final Type existing : access.getTypes()) {
-            for (final Type newType : types) {
-                if (this.unifier.unify(existing, newType)) {
-                    result.add(this.unifier.substitute(newType));
-                }
-            }
-        }
-        
-        access.setTypes(result, this.unifier);*/
     }
     
     

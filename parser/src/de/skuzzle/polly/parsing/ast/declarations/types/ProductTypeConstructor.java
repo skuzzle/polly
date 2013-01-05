@@ -1,5 +1,6 @@
 package de.skuzzle.polly.parsing.ast.declarations.types;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -49,7 +50,6 @@ public class ProductTypeConstructor extends Type implements Iterable<Type> {
     
     
     
-    
     /**
      * Creates a new product type from the given array.
      * 
@@ -57,6 +57,17 @@ public class ProductTypeConstructor extends Type implements Iterable<Type> {
      */
     public ProductTypeConstructor(Type...types) {
         this(Arrays.asList(types));
+    }
+    
+    
+    
+    @Override
+    public Type subst(Substitution s) {
+        final List<Type> types = new ArrayList<Type>(this.types.size());
+        for (final Type t : this.types) {
+            types.add(t.subst(s));
+        }
+        return new ProductTypeConstructor(types);
     }
     
     

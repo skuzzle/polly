@@ -18,14 +18,14 @@ public class FunctionLiteral extends Literal {
     private static final long serialVersionUID = 1L;
     
     private final ArrayList<Declaration> formal;
-    private Expression expression;
+    private Expression body;
     
     
     public FunctionLiteral(Position position, Collection<Declaration> formal, 
-            Expression expression) {
+            Expression body) {
         super(position, Type.UNKNOWN);
         this.formal = new ArrayList<Declaration>(formal);
-        this.expression = expression;
+        this.body = body;
     }
 
     
@@ -35,8 +35,8 @@ public class FunctionLiteral extends Literal {
      * 
      * @return The expression.
      */
-    public Expression getExpression() {
-        return this.expression;
+    public Expression getBody() {
+        return this.body;
     }
     
     

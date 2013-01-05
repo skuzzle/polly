@@ -55,7 +55,7 @@ public class ParentSetter extends DepthFirstVisitor {
     
     @Override
     public void beforeFunctionLiteral(FunctionLiteral func) throws ASTTraversalException {
-        func.getExpression().setParent(func);
+        func.getBody().setParent(func);
         for (final Declaration d : func.getFormal()) {
             d.setParent(func);
         }

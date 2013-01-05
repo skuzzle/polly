@@ -45,6 +45,16 @@ public class MapTypeConstructor extends Type {
     
     
     
+    @Override
+    public Type subst(Substitution s) {
+        final ProductTypeConstructor source = 
+            (ProductTypeConstructor) this.source.subst(s);
+        final Type target = this.target.subst(s);
+        return new MapTypeConstructor(source, target);
+    }
+    
+    
+    
     /**
      * Gets the source of this mapping type.
      * 

@@ -85,9 +85,9 @@ public class ASTDotBuilder extends DotBuilder {
         this.out.print("n");
         this.out.print(startIdx);
         this.out.print("--");
-        this.out.print("structNS:n");
+        this.out.print("n");
         this.out.print(targetIdx);
-        this.out.print(" [fontname=\"Consolas\", constraint=false, label=\"");
+        this.out.print(" [fontname=\"Consolas\", constraint=false,dir=forward, arrowHead=\"open\", label=\"");
         this.out.print("");
         this.out.print("\", style=\"");
         this.out.print("dotted");

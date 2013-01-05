@@ -176,7 +176,7 @@ public class DepthFirstVisitor extends VisitorAdapter {
         for (final Declaration d : func.getFormal()) {
             d.visit(this);
         }
-        func.getExpression().visit(this);
+        func.getBody().visit(this);
         this.afterFunctionLiteral(func);
     }
 

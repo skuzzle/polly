@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+
 /**
  * Helper class to determine whether two types are structural equal and to resolve 
  * type variable substitution. One instance of this class can only be used to unify
@@ -32,6 +35,42 @@ public final class TypeUnifier {
         this.typeToClass = new HashMap<Type, Integer>();
         this.classToType = new HashMap<Integer, Type>();
         this.substitutions = new HashMap<Type, Type>();
+    }
+    
+    
+    
+    /**
+     * Creates a new TypeUnifier which will contain all substitutions from the other 
+     * unifier.
+     *  
+     * @param other Other type unifier.
+     */
+    public TypeUnifier(TypeUnifier other) {
+        this.typeToClass = new HashMap<Type, Integer>();
+        this.classToType = new HashMap<Integer, Type>();
+        this.substitutions = new HashMap<Type, Type>(other.substitutions);
+    }
+    
+    
+    
+    /**
+     * Puts all substitutions from the other TypeUnifier to the substitution map of 
+     * this unifier. If both unifiers have different substitutions for one variable,
+     * an {@link ASTTraversalException} is thrown.
+     * 
+     * @param other Type unifier which substitutions shall be added to this one.
+     * @throws ASTTraversalException 
+     */
+    public void join(TypeUnifier other) throws ASTTraversalException {
+        for (final Entry<Type, Type> e : other.substitutions.entrySet()) {
+            final Type check = this.substitutions.get(e.getKey());
+            if (check != null && check != e.getValue()) {
+                throw new ASTTraversalException(Position.NONE, 
+                    "inconsistent subsitution");
+            } else {
+                this.substitutions.put(e.getKey(), e.getValue());
+            }
+        }
     }
     
     

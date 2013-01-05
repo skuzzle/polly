@@ -34,7 +34,7 @@ parameter   -> type ID
 type        -> ID                                         // primitive type
              | LIST '<' type '>'                          // list type
              | '(' type (WS type)* '->' type ')'          // function type
-             | '?'                                        // type variable
+             | epsilon                                    // type variable
              
 WS       -> ' ' | \t
 TEMP     -> 'temp'

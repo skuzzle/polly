@@ -21,7 +21,6 @@ import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Delete;
-import de.skuzzle.polly.parsing.ast.expressions.Empty;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
@@ -40,7 +39,7 @@ import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
 
 
 /**
- * <p>This class provides recursive descent parsing for polly expressions and cann output
+ * <p>This class provides recursive descent parsing for polly expressions and can output
  * an abstract syntax tree for the parsed expression. The root of the AST is represented
  * by the class {@link Root}, all AST nodes are subclasses of {@link Node}.
  * Every AST node that is created by this parser gets assigned its actual 
@@ -969,8 +968,7 @@ public class ExpInputParser {
         final Type type = this.parseType();
         final Identifier name = this.expectIdentifier();
         
-        return new Declaration(this.scanner.spanFrom(la), name, 
-            new Empty(type, this.scanner.spanFrom(la)));
+        return new Declaration(this.scanner.spanFrom(la), name, type);
     }
     
     

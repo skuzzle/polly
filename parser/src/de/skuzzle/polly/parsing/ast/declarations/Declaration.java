@@ -7,6 +7,7 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
+import de.skuzzle.polly.parsing.ast.expressions.Empty;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.lang.Function;
@@ -31,6 +32,7 @@ public class Declaration extends Node implements Comparable<Declaration> {
     private boolean isTemp;
     private boolean mustCopy;
     private boolean isNative;
+    private final boolean isParameter;
     private final Expression expression;
     private final Collection<VarAccess> usage;
     
@@ -40,6 +42,24 @@ public class Declaration extends Node implements Comparable<Declaration> {
         super(position);
         this.name = name;
         this.expression = expression;
+        this.isParameter = false;
+        this.usage = new ArrayList<VarAccess>();
+    }
+    
+    
+    
+    /**
+     * Creates a new declaration which represents a formal parameter of a function.
+     * 
+     * @param position Position within the source.
+     * @param name Name of the parameter.
+     * @param type The declared type of the parameter.
+     */
+    public Declaration(Position position, Identifier name, Type type) {
+        super(position);
+        this.name = name;
+        this.expression = new Empty(type, position);
+        this.isParameter = true;
         this.usage = new ArrayList<VarAccess>();
     }
     
@@ -54,6 +74,17 @@ public class Declaration extends Node implements Comparable<Declaration> {
         return this.mustCopy;
     }
 
+
+    
+    /**
+     * Returns whether this declaration is accessed anywhere.
+     * 
+     * @return Whether this declaration is accessed anywhere.
+     */
+    public boolean isUnused() {
+        return this.usage.isEmpty();
+    }
+    
 
     
     /**
@@ -132,6 +163,17 @@ public class Declaration extends Node implements Comparable<Declaration> {
     
     public void setTemp(boolean isTemp) {
         this.isTemp = isTemp;
+    }
+    
+    
+    
+    /**
+     * Whether this is a declaration of a formal function parameter.
+     * 
+     * @return Whether this is a declaration of a formal function parameter.
+     */
+    public boolean isParameter() {
+        return this.isParameter;
     }
     
     

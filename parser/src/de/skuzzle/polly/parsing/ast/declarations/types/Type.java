@@ -2,8 +2,12 @@ package de.skuzzle.polly.parsing.ast.declarations.types;
 
 import java.io.ObjectStreamException;
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Identifier;
@@ -146,7 +150,7 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
     /**
      * Creates a {@link TypeVar} with given name.
      * 
-     * @param name The name of the tyoe variable.
+     * @param name The name of the type variable.
      * @return A new {@link TypeVar}.
      */
     public final static TypeVar newTypeVar(String name) {
@@ -160,10 +164,17 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
     private final boolean primitve;
     
     
+    
     Type(Identifier name, boolean comparable, boolean primitive) {
         this.name = name;
         this.comparable = comparable;
         this.primitve = primitive;
+    }
+    
+    
+    
+    public Type subst(Substitution s) {
+        return this;
     }
     
     

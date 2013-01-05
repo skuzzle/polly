@@ -71,16 +71,11 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         
         this.beforeFunctionLiteral(func);
         
-        func.getExpression().visit(this);
+        this.applyType(func, func);
         
-        final List<Type> types = new ArrayList<Type>(func.getFormal().size());
-        for (final Declaration d : func.getFormal()) {
-            types.add(d.getType());
-        }
-        final ProductTypeConstructor source = new ProductTypeConstructor(types);
-        final Type target = func.getExpression().getUnique();
-        
-        func.setUnique(new MapTypeConstructor(source, target));
+        final MapTypeConstructor mtc = (MapTypeConstructor) func.getUnique();
+        func.getBody().setUnique(mtc.getTarget());
+        func.getBody().visit(this);
         
         this.afterFunctionLiteral(func);
     }
