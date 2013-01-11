@@ -228,6 +228,7 @@ public class DateUtils {
      * @since 0.9.1
      */
     public static Date getDayDate(int day) {
+        day = ((day - 1) % 7) + 1;
         if (day < 1 || day > 7) {
             throw new IllegalArgumentException("invalid day of week: " + day);
         }
