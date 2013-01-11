@@ -1,6 +1,9 @@
 package de.skuzzle.polly.sdk.eventlistener;
 
+import java.util.Date;
+
 import de.skuzzle.polly.sdk.IrcManager;
+import de.skuzzle.polly.sdk.time.Time;
 
 /**
  * Base event class for all irc events.
@@ -12,6 +15,8 @@ import de.skuzzle.polly.sdk.IrcManager;
 public class IrcEvent {
 
     private IrcManager source;
+    private Date date;
+    
     
     
     /**
@@ -20,6 +25,19 @@ public class IrcEvent {
      */
     public IrcEvent(IrcManager source) {
         this.source = source;
+        this.date = Time.currentTime();
+    }
+    
+    
+    
+    /**
+     * Gets the date of when this event has been created.
+     * 
+     * @return Event date.
+     * @since 0.9.1
+     */
+    public Date getDate() {
+        return this.date;
     }
     
     
