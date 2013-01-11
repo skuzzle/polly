@@ -1,5 +1,8 @@
 package polly.linkexpander;
 
+import java.util.Set;
+import java.util.TreeSet;
+
 import polly.linkexpander.commands.LinkGrabberCommand;
 import polly.linkexpander.core.LinkGrabberManager;
 import polly.linkexpander.core.LinkGrabberMessageListener;
@@ -48,6 +51,17 @@ public class MyPlugin extends PollyPlugin {
         
         myPolly.web().addHttpAction(new GrabbedLinksHttpAction(myPolly, urlLinkGrabber));
         myPolly.web().addMenuUrl("LinkGrabber", "Links");
+    }
+    
+    
+    
+    @Override
+    public Set<String> getContainedPermissions() {
+        final TreeSet<String> result = new TreeSet<String>();
+        result.add(GRABBER_PERMISSION);
+        result.add(URL_GRABBER_PERMISSION);
+        result.addAll(super.getContainedPermissions());
+        return result;
     }
     
     
