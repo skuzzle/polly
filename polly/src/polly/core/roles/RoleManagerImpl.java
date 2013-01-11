@@ -96,6 +96,9 @@ public class RoleManagerImpl implements RoleManager {
             Role role = this.persistence.findSingle(
                     Role.class, Role.ROLE_BY_NAME, roleName);
             
+            if (role == null) {
+                return Collections.emptySet();
+            }
             return role.getPermissionNames();
         } finally {
             this.persistence.readUnlock();
