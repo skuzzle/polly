@@ -3,7 +3,7 @@ package polly.linkexpander;
 import polly.linkexpander.commands.LinkGrabberCommand;
 import polly.linkexpander.core.LinkGrabberManager;
 import polly.linkexpander.core.LinkGrabberMessageListener;
-import polly.linkexpander.core.grabbers.RxLinkGrabber;
+import polly.linkexpander.core.grabbers.PhpBBLinkGrabber;
 import polly.linkexpander.core.grabbers.YouTubeLinkGrabber;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
@@ -37,7 +37,7 @@ public class MyPlugin extends PollyPlugin {
         this.addCommand(new LinkGrabberCommand(myPolly, this.linkGrabberManager));
         
         this.linkGrabberManager.addLinkGrabber(new YouTubeLinkGrabber());
-        this.linkGrabberManager.addLinkGrabber(new RxLinkGrabber());
+        this.linkGrabberManager.addLinkGrabber(new PhpBBLinkGrabber());
         
         myPolly.irc().addMessageListener(this.linkGrabber);
     }
