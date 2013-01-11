@@ -7,12 +7,13 @@ import java.util.regex.Pattern;
 public class PhpBBLinkGrabber extends AbstractHttpRequestGrabber  {
     
     private final static Pattern LINK_PATTERN = Pattern.compile(
-        "(https?://)?(www\\.)?.+/forum/viewtopic.php?.*");
+        "\\S+/forum/viewtopic\\.php\\?\\S+");
     
     private final static Pattern TITLE_PATTERN = Pattern.compile(
         "<h2><a[^>]+>([^<]+)");
     
     private final static int  TITLE_GROUP = 1;
+    
     
     
     @Override
@@ -36,6 +37,6 @@ public class PhpBBLinkGrabber extends AbstractHttpRequestGrabber  {
     
     @Override
     public String getLink(String input, Matcher matcher) {
-        return input.substring(matcher.start(), matcher.end());
+        return new String(matcher.group());
     }
 }
