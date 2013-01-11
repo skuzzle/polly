@@ -6,6 +6,8 @@ import java.util.TreeSet;
 import polly.linkexpander.commands.LinkGrabberCommand;
 import polly.linkexpander.core.LinkGrabberManager;
 import polly.linkexpander.core.LinkGrabberMessageListener;
+import polly.linkexpander.core.grabbers.MemecenterLinkGrabber;
+import polly.linkexpander.core.grabbers.NineGagLinkGrabber;
 import polly.linkexpander.core.grabbers.PhpBBLinkGrabber;
 import polly.linkexpander.core.grabbers.URLLinkGrabber;
 import polly.linkexpander.core.grabbers.YouTubeLinkGrabber;
@@ -45,6 +47,8 @@ public class MyPlugin extends PollyPlugin {
         
         this.linkGrabberManager.addLinkGrabber(new YouTubeLinkGrabber());
         this.linkGrabberManager.addLinkGrabber(new PhpBBLinkGrabber());
+        this.linkGrabberManager.addLinkGrabber(new NineGagLinkGrabber());
+        this.linkGrabberManager.addLinkGrabber(new MemecenterLinkGrabber());
         
         final URLLinkGrabber urlLinkGrabber = new URLLinkGrabber();
         this.linkGrabberManager.addLinkGrabber(urlLinkGrabber);
