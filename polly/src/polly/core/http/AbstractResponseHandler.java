@@ -127,6 +127,9 @@ public abstract class AbstractResponseHandler implements HttpHandler {
         
         String sessionId = cookies.get("sessionid");
         HttpSession session = null;
+        
+        // if user occurred the first time, he gets assigned a session id. If he is 
+        // already known, we catch up on his existing id.
         if (sessionId == null) {
             session = this.webServer.newSession(t.getRemoteAddress().getAddress());
             t.getResponseHeaders().add("Set-Cookie", 
