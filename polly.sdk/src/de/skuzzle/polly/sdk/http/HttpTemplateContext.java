@@ -1,6 +1,8 @@
 package de.skuzzle.polly.sdk.http;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 
@@ -16,18 +18,32 @@ public class HttpTemplateContext {
 
     private String template;
     private Map<String, Object> context;
+    private Set<Cookie> cookies;
     
     
     
     public HttpTemplateContext(String template) {
         this.template = template;
         this.context = new TreeMap<String, Object>();
+        this.cookies = new HashSet<Cookie>();
     }
     
     
     
     public HttpTemplateContext() {
         this("");
+    }
+    
+    
+    
+    public Set<Cookie> getCookies() {
+        return this.cookies;
+    }
+    
+    
+    
+    public void setCookie(Cookie c) {
+        this.cookies.add(c);
     }
     
     

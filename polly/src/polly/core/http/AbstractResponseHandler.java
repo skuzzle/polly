@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,9 +19,11 @@ import polly.util.InputStreamCounter;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
+import de.skuzzle.polly.sdk.http.Cookie;
 import de.skuzzle.polly.sdk.http.HttpParameter;
 import de.skuzzle.polly.sdk.http.HttpSession;
 import de.skuzzle.polly.sdk.http.HttpParameter.ParameterType;
+import de.skuzzle.polly.sdk.time.Milliseconds;
 import de.skuzzle.polly.sdk.time.Time;
 
 
@@ -84,6 +89,25 @@ public abstract class AbstractResponseHandler implements HttpHandler {
     
     
     
+    protected Map<String, String> parseCookies(HttpExchange t) {
+        List<String> cookies = t.getRequestHeaders().get("Cookie");
+        if (cookies == null) {
+            return Collections.emptyMap();
+        }
+        final Map<String, String> result = new HashMap<String, String>();
+        for (final String cookie : cookies) {
+            final String[] s = cookie.split("=");
+            if (s.length != 2) {
+                logger.warn("Errornous cookie: " + cookie);
+                continue;
+            }
+            result.put(s[0], s[1]);
+        }
+        return result;
+    }
+    
+    
+    
     protected HttpManagerImpl webServer;
     protected TrafficCounter counter;
     
@@ -99,9 +123,26 @@ public abstract class AbstractResponseHandler implements HttpHandler {
     @Override
     public final void handle(HttpExchange t) throws IOException {
         this.webServer.cleanUpSessions();
-
-        HttpSession session = this.webServer.getSession(
-            t.getRemoteAddress().getAddress());
+        final Map<String, String> cookies = this.parseCookies(t);
+        
+        String sessionId = cookies.get("sessionid");
+        HttpSession session = null;
+        if (sessionId == null) {
+            session = this.webServer.newSession(t.getRemoteAddress().getAddress());
+            t.getResponseHeaders().add("Set-Cookie", 
+                new Cookie("sessionid", session.getId(), 
+                    Milliseconds.toSeconds(this.webServer.getSessionTimeOut())).toString());
+        } else {
+            session = this.webServer.findSession(sessionId);
+            
+            // CONSIDER: delete old cookie and create new one
+            if (session == null) {
+                session = this.webServer.newSession(t.getRemoteAddress().getAddress(), 
+                    sessionId);
+            }
+        }
+        session.setCookies(cookies);
+        
         long now = Time.currentTimeMillis();
         session.setLastAction(now);
         String uri = t.getRequestURI().toString();

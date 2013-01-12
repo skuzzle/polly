@@ -59,7 +59,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     private HttpServer server;
     private int port;
     private boolean running;
-    private Map<InetAddress, HttpSession> sessions;
+    private Map<String, HttpSession> idToSession;
     private EventProvider eventProvider;
     private Map<String, HttpAction> actions;
     private Map<String, List<String>> menu;
@@ -87,7 +87,6 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
         this.port = port;
         this.encoding = encoding;
         this.sessionTimeOut = sessionTimeOut;
-        this.sessions = new HashMap<InetAddress, HttpSession>();
         this.eventProvider = new SynchronousEventProvider();
         this.actions = new HashMap<String, HttpAction>();
         this.menu = new TreeMap<String, List<String>>();
@@ -96,6 +95,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
         this.counter = new TrafficCounter();
         this.expiredSessions = new LinkedRingBuffer<HttpSession>(EXPIRED_SESSION_BUFFER);
         this.memoryFileMap = new WeakHashMap<String, InputStream>();
+        this.idToSession = new HashMap<String, HttpSession>();
     }
     
     
@@ -186,8 +186,8 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
         if (this.server != null) {
             this.server.stop(5);
         }
-        synchronized (this.sessions) {
-            this.sessions.clear();
+        synchronized (this.idToSession) {
+            this.idToSession.clear();
         }
         this.running = false;
         this.server = null;
@@ -195,13 +195,20 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     
     
     
-    protected HttpSession getSession(InetAddress remoteIp) {
-        synchronized (this.sessions) {
-            HttpSession session = this.sessions.get(remoteIp);
-            if (session == null) {
-                session = new HttpSession(generateSessionId(remoteIp), remoteIp);
-                this.sessions.put(remoteIp, session);
-            }
+    HttpSession newSession(InetAddress remoteIp) {
+        synchronized (this.idToSession) {
+            HttpSession session = new HttpSession(generateSessionId(remoteIp), remoteIp);
+            this.idToSession.put(session.getId(), session);
+            return session;
+        }
+    }
+    
+    
+    
+    HttpSession newSession(InetAddress remoteIp, String id) {
+        synchronized (this.idToSession) {
+            HttpSession session = new HttpSession(id, remoteIp);
+            this.idToSession.put(session.getId(), session);
             return session;
         }
     }
@@ -210,21 +217,17 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     
     @Override
     public HttpSession findSession(String id) {
-        for (HttpSession session : this.sessions.values()) {
-            if (session.getId().equalsIgnoreCase(id)) {
-                return session;
-            }
-        }
-        return null;
+        HttpSession session = this.idToSession.get(id);
+        return session;
     }
     
     
     
     public void closeSession(HttpSession session) {
-        synchronized (this.sessions) {
+        synchronized (this.idToSession) {
             HttpSession copy = session.copy();
             session.setUser(null);
-            this.sessions.remove(session.getRemoteIp());
+            this.idToSession.remove(session.getId());
             this.expiredSessions.add(copy);
         }
     };
@@ -233,14 +236,14 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     
     @Override
     public void cleanUpSessions() {
-        synchronized (this.sessions) {
+        synchronized (this.idToSession) {
             if (++this.cacheCounter % this.cacheThreshold == 0) {
                 logger.debug("Cleaning session cache...");
-                Iterator<Entry<InetAddress, HttpSession>> it = 
-                        this.sessions.entrySet().iterator();
+                Iterator<Entry<String, HttpSession>> it = 
+                        this.idToSession.entrySet().iterator();
                         
                 while (it.hasNext()) {
-                    Entry<InetAddress, HttpSession> e = it.next();
+                    Entry<String, HttpSession> e = it.next();
                     long liveTime = 
                             Time.currentTimeMillis() - e.getValue().getLastAction();
                     boolean timedOut = liveTime > this.getSessionTimeOut();
@@ -364,7 +367,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
         c.put("now", Time.currentTimeMillis());
         c.put("timeout", this.getSessionTimeOut());
         c.put("errorThreshold", this.errorThreshold);
-        c.put("sessions", this.sessions);
+        c.put("sessions", this.idToSession);
         c.put("expiredSessions", this.expiredSessions);
         c.put("traffic", this.counter);
         c.put("server", this);
@@ -432,6 +435,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
 
 
 
+    @Override
     public int getSessionTimeOut() {
         return this.sessionTimeOut;
     }
@@ -443,7 +447,9 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
         synchronized (this.memoryFileMap) {
             this.memoryFileMap.clear();
         }
-        this.sessions.clear();
+        synchronized (this.idToSession) {
+            this.idToSession.clear();
+        }
         this.menu.clear();
         this.expiredSessions.clear();
         this.stopWebServer();

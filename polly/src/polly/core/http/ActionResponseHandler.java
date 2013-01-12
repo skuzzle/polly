@@ -6,7 +6,9 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -24,6 +26,7 @@ import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpParameter;
 import de.skuzzle.polly.sdk.http.HttpParameter.ParameterType;
+import de.skuzzle.polly.sdk.http.Cookie;
 import de.skuzzle.polly.sdk.http.HttpSession;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.http.HttpTemplateException;
@@ -137,10 +140,14 @@ public class ActionResponseHandler extends AbstractResponseHandler {
     private void respond(HttpTemplateContext c, HttpExchange t, HttpSession session) 
                 throws IOException {
         
-        t.sendResponseHeaders(200, 0);
         OutputStream out = null;
         try {
             out = t.getResponseBody();
+            if (!c.getCookies().isEmpty()) {
+                t.getResponseHeaders().add("Set-Cookie", 
+                    this.generateCookieString(c.getCookies()));
+            }
+            t.sendResponseHeaders(200, 0);
             this.generateTemplate(c, out, session);
         } catch (IOException e) {
             throw e;
@@ -150,6 +157,20 @@ public class ActionResponseHandler extends AbstractResponseHandler {
             t.close();
             out.close();
         }
+    }
+    
+    
+    
+    private String generateCookieString(Collection<Cookie> cookies) {
+        final StringBuilder b = new StringBuilder();
+        final Iterator<Cookie> it = cookies.iterator();
+        while (it.hasNext()) {
+            b.append(it.next().toString());
+            if (it.hasNext()) {
+                b.append(",");
+            }
+        }
+        return b.toString();
     }
     
     

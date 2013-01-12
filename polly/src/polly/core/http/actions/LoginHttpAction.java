@@ -47,12 +47,12 @@ public class LoginHttpAction extends HttpAction {
             if (u != null) {
                 if (u.checkPassword(password)) {
                     e.getSession().setUser(u);
-                    
                     logger.info("Successfull http login: " + u);
                     
                     String homePage = u.getAttribute(HttpManagerProvider.HOME_PAGE);
                     HttpEvent e1 = new HttpEvent(e.getSource(), e.getSession(), homePage);
-                    return e.getSource().executeAction(e1);
+                    HttpTemplateContext result = e.getSource().executeAction(e1);
+                    return result;
                 } else {
                     logger.warn("Invalid login attempt: " + userName);
                     e.throwTemplateException("Login Error", 

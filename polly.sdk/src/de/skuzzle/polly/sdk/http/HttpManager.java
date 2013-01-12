@@ -37,7 +37,7 @@ public interface HttpManager {
 
     public abstract File getPage(String name);
 
-    String getPublicHost();
+    public String getPublicHost();
 
     public abstract int getPort();
 
@@ -59,4 +59,5 @@ public interface HttpManager {
 
     public void putMemoryFile(String name, InputStream stream);
 
+    public int getSessionTimeOut();
 }

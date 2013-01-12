@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 
 import polly.core.http.HttpInterface;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.http.Cookie;
 import de.skuzzle.polly.sdk.http.HttpAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
@@ -28,6 +29,7 @@ public class LogoutHttpAction extends HttpAction {
             HttpTemplateContext context = new HttpTemplateContext(HttpInterface.PAGE_HOME);
             e.getSource().closeSession(e.getSession());
             
+            context.setCookie(new Cookie("sessionid", e.getSession().getId(), 0));
             return context;
         } else {
             e.throwTemplateException("You are not logged in", 

@@ -84,5 +84,17 @@ public final class Milliseconds {
     
     
     
+    /**
+     * Converts milliseconds into seconds with always rounding down the result.
+     * 
+     * @param ms Milliseconds to convert.
+     * @return Amount of seconds.
+     */
+    public static int toSeconds(int ms) {
+        return ms / 1000;
+    }
+    
+    
+    
     private Milliseconds() {}
 }

@@ -1,6 +1,7 @@
 package de.skuzzle.polly.sdk.http;
 
 import java.net.InetAddress;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -38,6 +39,7 @@ public class HttpSession extends AbstractDisposable {
     private User user;
     private String lastUri;
     private Map<String, Object> data;
+    private Map<String, String> cookies;
     private int trafficUp;
     private int trafficDown;
     
@@ -77,7 +79,32 @@ public class HttpSession extends AbstractDisposable {
         copy.lastUri = this.lastUri;
         copy.trafficUp = this.trafficUp;
         copy.trafficDown = this.trafficDown;
+        copy.cookies = new HashMap<String, String>();
         return copy;
+    }
+    
+    
+    
+    /**
+     * Sets the cookies that were sent from the client.
+     * 
+     * @param cookies Cookies from the client.
+     */
+    public void setCookies(Map<String, String> cookies) {
+        this.cookies = cookies;
+    }
+    
+    
+    
+    /**
+     * Returns the string value of the given cookie name or <code>null</code> if no such 
+     * cookie was send by the client.
+     * 
+     * @param name The name of the cookie.
+     * @return The value of the cookie or <code>null</code> if no such cookie exists.
+     */
+    public String getCookie(String name) {
+        return this.cookies.get(name);
     }
     
     
