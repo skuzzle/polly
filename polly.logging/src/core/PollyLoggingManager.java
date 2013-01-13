@@ -83,7 +83,7 @@ public class PollyLoggingManager extends AbstractDisposable {
     
     
     public LogEntry seenUser(String user) throws DatabaseException {
-        List<LogEntry> seen = this.preFilterQuery(LogEntry.USER_SSEN, user);
+        List<LogEntry> seen = this.preFilterQuery(LogEntry.USER_SSEN, 1, user);
         if (seen.isEmpty()) {
             return LogEntry.forUnknown(user);
         } else {
@@ -115,6 +115,22 @@ public class PollyLoggingManager extends AbstractDisposable {
             this.persistence.readUnlock();
         }
     }
+    
+    
+    
+    private List<LogEntry> preFilterQuery(String queryName, int limit, String...parameter) 
+        throws DatabaseException {
+    this.storeCache();
+    
+    try {
+        this.persistence.readLock();
+        return this.persistence.findList(LogEntry.class, queryName, limit,  
+             (Object[]) parameter);
+        
+    } finally {
+        this.persistence.readUnlock();
+    }
+}
     
     
     

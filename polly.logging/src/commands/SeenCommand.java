@@ -9,6 +9,7 @@ import core.LogFormatter;
 import core.PollyLoggingManager;
 import core.output.IrcLogOutput;
 import core.output.LogOutput;
+import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
@@ -18,11 +19,14 @@ import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
 import entities.LogEntry;
 
-public class SeenCommand extends AbstractLogCommand {
+public class SeenCommand extends Command {
+    
+    private PollyLoggingManager logManager;
     
     public SeenCommand(MyPolly polly, PollyLoggingManager logManager) 
             throws DuplicatedSignatureException {
-        super(polly, "seen", logManager);
+        super(polly, "seen");
+        this.logManager = logManager;
         this.createSignature("Zeigt an wann ein Benutzer das letzte mal gesehen wurde.", 
             MyPlugin.SEEN_PERMISSION,
             new Parameter("User", Types.USER));
