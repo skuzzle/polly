@@ -12,7 +12,7 @@ public class MessageRegexLogFilter implements LogFilter {
     
     
     public MessageRegexLogFilter(String pattern) {
-        this.pattern = Pattern.compile(pattern);
+        this.pattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
     }
     
     

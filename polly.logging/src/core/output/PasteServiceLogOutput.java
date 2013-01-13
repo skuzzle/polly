@@ -22,14 +22,16 @@ public class PasteServiceLogOutput extends AbstractLogOutput {
 
     
     @Override
-    public void outputLogs(IrcManager irc, String channel, List<LogEntry> logs,
+    public void outputLogs(IrcManager irc, String channel, 
+            List<LogEntry> logs, int unfilteredSize,
             LogFormatter formatter, FormatManager pollyFormat) {
         
         String logString = this.formatLogs(logs, formatter, pollyFormat);
         
         try {
             String pasteUrl = this.paster.paste(logString);
-            irc.sendMessage(channel, "Logs (" + logs.size() + " Ergebnisse): " + pasteUrl, this);
+            irc.sendMessage(channel, "Logs (" + logs.size() + "/" + unfilteredSize + 
+                " Ergebnisse): " + pasteUrl, this);
         } catch (Exception e) {
             irc.sendMessage(channel, "Fehler beim Hochladen der Logs", this);
         }

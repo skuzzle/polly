@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import core.filters.ChainedLogFilter;
+import core.filters.LimitFilter;
 import core.filters.LogFilter;
 import core.filters.SecurityLogFilter;
 import core.filters.UserRegexFilter;
@@ -68,62 +70,45 @@ public class PollyLoggingManager extends AbstractDisposable {
     
     
     public List<LogEntry> preFilterUser(String user) throws DatabaseException {
-        return this.preFilterUser(user, this.maxLogs);
+        return this.preFilterQuery(LogEntry.FIND_BY_USER, user);
     }
     
     
     
-    public List<LogEntry> preFilterUser(String user, int limit) throws DatabaseException {
-        return this.preFilterQuery(LogEntry.FIND_BY_USER, limit, user);
-    }
-    
-    
-    
-    public List<LogEntry> preFilterChannel(String channel) throws DatabaseException {
-        return this.preFilterChannel(channel, this.maxLogs);
-    }
-    
-    
-    public List<LogEntry> preFilterChannel(String channel, int limit) 
+    public List<LogEntry> preFilterChannel(String channel) 
             throws DatabaseException {
-        return this.preFilterQuery(LogEntry.FIND_BY_CHANNEL, limit, channel);
+        return this.preFilterQuery(LogEntry.FIND_BY_CHANNEL, channel);
     }
     
     
     
     public LogEntry seenUser(String user) throws DatabaseException {
-        List<LogEntry> seen = this.preFilterQuery(LogEntry.USER_SSEN, 1, user);
+        List<LogEntry> seen = this.preFilterQuery(LogEntry.USER_SSEN, user);
         if (seen.isEmpty()) {
             return LogEntry.forUnknown(user);
         } else {
             return seen.get(0);
         }
     }
+
     
     
     
-    public List<LogEntry> preFilterUserRegex(String userRegex) throws DatabaseException {
-        return this.preFilterUserRegex(userRegex, this.maxLogs);
-    }
-    
-    
-    
-    public List<LogEntry> preFilterUserRegex(String userRegex, int maxLogs) 
+    public List<LogEntry> filterUserRegex(String userRegex) 
             throws DatabaseException {
-        List<LogEntry> allEntries = this.preFilterQuery(LogEntry.ALL_LOG_ENTRIES, 
-            maxLogs );
+        List<LogEntry> allEntries = this.preFilterQuery(LogEntry.ALL_LOG_ENTRIES);
         return this.postFilter(allEntries, new UserRegexFilter(userRegex));
     }
     
     
 
-    private List<LogEntry> preFilterQuery(String queryName, int limit, String...parameter) 
+    private List<LogEntry> preFilterQuery(String queryName, String...parameter) 
             throws DatabaseException {
         this.storeCache();
         
         try {
             this.persistence.readLock();
-            return this.persistence.findList(LogEntry.class, queryName, limit, 
+            return this.persistence.findList(LogEntry.class, queryName,  
                  (Object[]) parameter);
             
         } finally {
@@ -141,7 +126,10 @@ public class PollyLoggingManager extends AbstractDisposable {
         
         // filter messages from channels that the executer is not on
         LogFilter security = new SecurityLogFilter(myPolly, executer);
-        logs = this.postFilter(logs, security);
+        LogFilter limitFilter = new LimitFilter(this.maxLogs);
+        LogFilter chained = new ChainedLogFilter(security, limitFilter);
+        int unfilteredSize = logs.size();
+        logs = this.postFilter(logs, chained);
         
         // the results are sorted by date, newest item on top. Reverse the order so
         // the items are printed in proper order
@@ -154,7 +142,7 @@ public class PollyLoggingManager extends AbstractDisposable {
                     this.pasteServiceManager.getRandomService());
         }
         
-        output.outputLogs(myPolly.irc(), channel, logs, logFormatter, 
+        output.outputLogs(myPolly.irc(), channel, logs, unfilteredSize, logFormatter, 
                 myPolly.formatting());
         // clear log list
         logs.clear();

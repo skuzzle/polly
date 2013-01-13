@@ -46,9 +46,9 @@ public class MyPlugin extends PollyPlugin {
     public final static String LOG_PASTE_TRESHOLD = "logPasteThreshold";
     public final static String LOG_MAX_LOGS       = "logMaxLogs";
     
-    public final static int DEFAULT_LOG_CACHE_SIZE = 100;
+    public final static int DEFAULT_LOG_CACHE_SIZE  = 100;
     public final static int DEFAULT_LOG_THRESHOLD   = 10;
-    public final static int DEFAULT_MAX_LOGS       = 100;
+    public final static int DEFAULT_MAX_LOGS        = 100;
     
     public final static String FORWARD_HIGHLIGHTS         = "FORWARD_HIGHLIGHTS";
     public final static String DEFAULT_FORWARD_HIGHLIGHTS = "false";

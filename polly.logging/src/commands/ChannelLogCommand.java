@@ -32,11 +32,6 @@ public class ChannelLogCommand extends AbstractLogCommand {
             MyPlugin.CHANNEL_LOG_PERMISSION,
             new Parameter("Channel", Types.CHANNEL), 
             new Parameter("Pattern", Types.STRING));
-        this.createSignature("Filtert Log Einträge eines Channels mit bestimmten Inhalt", 
-            MyPlugin.CHANNEL_LOG_PERMISSION,
-            new Parameter("Channel", Types.CHANNEL), 
-            new Parameter("Pattern", Types.STRING),
-            new Parameter("Limit", Types.NUMBER));
         this.createSignature("Filtert Log Einträge eines Channels mit bestimmten Inhalt " +
         		"die nicht älter sind als das angegebne Datum", 
     		MyPlugin.CHANNEL_LOG_PERMISSION,
@@ -71,17 +66,11 @@ public class ChannelLogCommand extends AbstractLogCommand {
         List<LogEntry> prefiltered = null;
         
         try {
-            
-            if (this.match(signature, 2)) {
-                prefiltered = this.logManager.preFilterChannel(
-                    c, (int) signature.getNumberValue(2));
-            } else {
-                prefiltered = this.logManager.preFilterChannel(c);
-            }
+            prefiltered = this.logManager.preFilterChannel(c);
 
-            if (this.match(signature, 3)) {
+            if (this.match(signature, 2)) {
                 filter.addFilter(new DateLogFilter(signature.getDateValue(2)));
-            } else if (this.match(signature, 4)) {
+            } else if (this.match(signature, 3)) {
                 filter.addFilter(new DateLogFilter(signature.getDateValue(2), 
                     signature.getDateValue(3)));
             }
@@ -99,6 +88,4 @@ public class ChannelLogCommand extends AbstractLogCommand {
         
         return false;
     }
-
-
 }

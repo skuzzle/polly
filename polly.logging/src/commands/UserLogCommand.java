@@ -71,17 +71,11 @@ public class UserLogCommand extends AbstractLogCommand {
         List<LogEntry> prefiltered = null;
         
         try {
-            
-            if (this.match(signature, 2)) {
-                prefiltered = this.logManager.preFilterUserRegex(
-                    user, (int) signature.getNumberValue(2));
-            } else {
-                prefiltered = this.logManager.preFilterUserRegex(user);
-            }
+            prefiltered = this.logManager.filterUserRegex(user);
 
-            if (this.match(signature, 3)) {
+            if (this.match(signature, 2)) {
                 filter.addFilter(new DateLogFilter(signature.getDateValue(2)));
-            } else if (this.match(signature, 4)) {
+            } else if (this.match(signature, 3)) {
                 filter.addFilter(new DateLogFilter(signature.getDateValue(2), 
                     signature.getDateValue(3)));
             }
@@ -99,6 +93,4 @@ public class UserLogCommand extends AbstractLogCommand {
         
         return false;
     }
-
-
 }

@@ -1,6 +1,5 @@
 package commands;
 
-import java.util.Collection;
 import java.util.Collections;
 
 import polly.logging.MyPlugin;
@@ -48,7 +47,7 @@ public class SeenCommand extends AbstractLogCommand {
                         le.getChannel(), le.getDate());
                 }
                 lo.outputLogs(this.getMyPolly().irc(), channel, 
-                    Collections.singletonList(le), lf, this.getMyPolly().formatting());
+                    Collections.singletonList(le), 1, lf, this.getMyPolly().formatting());
             } catch (Exception e) {
                 throw new CommandException(e);
             }

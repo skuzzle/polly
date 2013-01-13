@@ -12,5 +12,6 @@ import entities.LogEntry;
 public interface LogOutput {
 
     public abstract void outputLogs(IrcManager irc, String channel, 
-            List<LogEntry> logs, LogFormatter formatter, FormatManager pollyFormat);
+            List<LogEntry> logs, int unfilteredSize, LogFormatter formatter, 
+            FormatManager pollyFormat);
 }

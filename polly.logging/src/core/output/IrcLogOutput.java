@@ -14,7 +14,8 @@ public class IrcLogOutput implements LogOutput {
 
     
     @Override
-    public void outputLogs(IrcManager irc, String channel, List<LogEntry> logs,
+    public void outputLogs(IrcManager irc, String channel, 
+            List<LogEntry> logs, int unfilteredSize,
             LogFormatter formatter, FormatManager pollyFormat) {
 
         Iterator<LogEntry> it = logs.iterator();
