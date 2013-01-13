@@ -24,7 +24,7 @@ public class ChannelLogCommand extends AbstractLogCommand {
     
     public ChannelLogCommand(MyPolly polly, PollyLoggingManager logManager) 
                 throws DuplicatedSignatureException {
-        super(polly, "channellog", logManager);
+        super(polly, "log", logManager);
         this.createSignature("Filtert Log Einträge eines Channels", 
             MyPlugin.CHANNEL_LOG_PERMISSION,
             new Parameter("Channel", Types.CHANNEL));

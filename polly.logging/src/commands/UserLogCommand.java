@@ -24,7 +24,7 @@ public class UserLogCommand extends AbstractLogCommand {
 
     public UserLogCommand(MyPolly polly, PollyLoggingManager logManager) 
                 throws DuplicatedSignatureException {
-        super(polly, "userlog", logManager);
+        super(polly, "ulog", logManager);
         this.createSignature("Filtert Log Einträge eines Benutzers", 
             MyPlugin.USER_LOG_PERMISSION,
             new Parameter("Benutzername", Types.STRING));
