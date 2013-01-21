@@ -102,7 +102,7 @@ public class AddTrainCommand extends Command {
             if (te.getDuration() != 0) {
                 // HACK: this requires the Remind Plugin to be installed and running!
                 String command = ":remind \"Training für " + forUser +
-                        "abgeschlossen. Bisherige Kosten: " + bill.weightedSum() + " Cr.\" " + 
+                        " abgeschlossen. Bisherige Kosten: " + bill.weightedSum() + " Cr.\" " + 
                         (te.getDuration() / 1000) + "s";
                 this.getMyPolly().commands().executeString(
                         command, 
