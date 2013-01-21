@@ -124,8 +124,9 @@ public class TrainManagerV2 extends AbstractDisposable {
     
     
     
-    public void addTrain(TrainEntityV2 e) throws DatabaseException {
+    public TrainBillV2 addTrain(TrainEntityV2 e, User trainer) throws DatabaseException {
         this.persistence.atomicPersist(e);
+        return this.getBill(trainer, e.getForUser());
     }
     
     

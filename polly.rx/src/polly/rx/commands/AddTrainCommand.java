@@ -9,6 +9,7 @@ import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
+import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.model.User;
 
@@ -46,7 +47,7 @@ public class AddTrainCommand extends Command {
     
     @Override
     protected boolean executeOnBoth(User executer, String channel,
-        Signature signature) {
+        Signature signature) throws CommandException {
 
         double mod = 1.0;
         if (this.match(signature, 0)) {
@@ -92,25 +93,26 @@ public class AddTrainCommand extends Command {
     
     
     private void addTrain(User trainer, String channel, String forUser, 
-        String train, double mod) {
+        String train, double mod) throws CommandException {
         
         try {
             TrainEntityV2 te = TrainEntityV2.parseString(trainer.getId(), forUser, mod, train);
-            this.trainManager.addTrain(te);
+            final TrainBillV2 bill = this.trainManager.addTrain(te, trainer);
             
             if (te.getDuration() != 0) {
                 // HACK: this requires the Remind Plugin to be installed and running!
-                String command = ":remind \"Training abgeschlossen\" " + 
+                String command = ":remind \"Training für " + forUser +
+                        "abgeschlossen. Bisherige Kosten: " + bill.weightedSum() + "\" " + 
                         (te.getDuration() / 1000) + "s";
                 this.getMyPolly().commands().executeString(
                         command, 
                         trainer.getCurrentNickName(), 
                         true, trainer, this.getMyPolly().irc());
             }
-            this.reply(channel, "Posten gespeichert.");
+            this.reply(channel, "Posten gespeichert. Aktuelle Kosten: " + 
+                bill.weightedSum());
         } catch (Exception e) {
-            e.printStackTrace();
-            this.reply(channel, "Fehler beim Speichern.");
+            throw new CommandException("Fehler beim Speichern");
         }
     }
 }
