@@ -45,21 +45,21 @@ public class TrainManagerV2 extends AbstractDisposable {
     
     
     
-    public TrainBillV2 getClosedTrains(String forUser) {
+    public synchronized TrainBillV2 getClosedTrains(String forUser) {
         return new TrainBillV2(this.persistence.atomicRetrieveList(TrainEntityV2.class, 
                 TrainEntityV2.CLOSED_BY_USER, forUser));
     }
     
     
     
-    public TrainBillV2 getAllOpenTrains(String forUser) {
+    public synchronized TrainBillV2 getAllOpenTrains(String forUser) {
         return new TrainBillV2(this.persistence.atomicRetrieveList(TrainEntityV2.class, 
                 TrainEntityV2.OPEN_BY_USER, forUser));
     }
     
     
     
-    public TrainBillV2 getBill(User trainer, String forUser) {
+    public synchronized TrainBillV2 getBill(User trainer, String forUser) {
         List<TrainEntityV2> trains = this.persistence.atomicRetrieveList(
             TrainEntityV2.class, TrainEntityV2.OPEN_BY_USER_AND_TRAINER, 
             trainer.getId(), forUser);
@@ -69,14 +69,14 @@ public class TrainManagerV2 extends AbstractDisposable {
     
     
     
-    public TrainBillV2 getOpenTrains(User trainer) {
+    public synchronized TrainBillV2 getOpenTrains(User trainer) {
         return new TrainBillV2(this.persistence.atomicRetrieveList(
                 TrainEntityV2.class, TrainEntityV2.OPEN_BY_TRAINER, trainer.getId()));
         
     }
     
     
-    public TrainBillV2 getClosedTrains(User trainer) {
+    public synchronized TrainBillV2 getClosedTrains(User trainer) {
         return new TrainBillV2(this.persistence.atomicRetrieveList(
                 TrainEntityV2.class, TrainEntityV2.CLOSED_BY_TRAINER, trainer.getId()));
         
@@ -124,7 +124,7 @@ public class TrainManagerV2 extends AbstractDisposable {
     
     
     
-    public TrainBillV2 addTrain(TrainEntityV2 e, User trainer) throws DatabaseException {
+    public synchronized TrainBillV2 addTrain(TrainEntityV2 e, User trainer) throws DatabaseException {
         this.persistence.atomicPersist(e);
         return this.getBill(trainer, e.getForUser());
     }
