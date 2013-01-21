@@ -102,7 +102,7 @@ public class MyPlugin extends PollyPlugin {
         myPolly.irc().addMessageListener(this.highlightForwarder);
         
         myPolly.web().addMenuUrl("Logging", "Replay");
-        myPolly.web().addMenuUrl("Logging", "Search");
+        //myPolly.web().addMenuUrl("Logging", "Search");
         myPolly.web().addHttpAction(new ReplayHttpAction(myPolly, 
                 new DefaultLogFormatter(), this.logManager));
         myPolly.web().addHttpAction(new SearchHttpAction(myPolly));

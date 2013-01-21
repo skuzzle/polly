@@ -135,7 +135,7 @@ public class HttpManagerProvider extends AbstractProvider {
         
         logger.trace("Adding menu entries for default admin menu...");
         this.httpManager.addMenuUrl("Admin", "Users");
-        this.httpManager.addMenuUrl("Admin", "IRC");
+        //this.httpManager.addMenuUrl("Admin", "IRC");
         this.httpManager.addMenuUrl("Admin", "Logs");
         this.httpManager.addMenuUrl("Admin", "Roles");
         this.httpManager.addMenuUrl("Admin", "Sessions");
