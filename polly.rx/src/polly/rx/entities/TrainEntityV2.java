@@ -20,13 +20,13 @@ import de.skuzzle.polly.sdk.time.Time;
 @NamedQueries({
     @NamedQuery(
         name =  "OPEN_BY_USER_AND_TRAINER",
-        query = "SELECT t FROM TrainEntityV2 t WHERE t.trainerId = ?1 AND t.forUser = ?2 AND t.closed=FALSE"),
+        query = "SELECT t FROM TrainEntityV2 t WHERE t.trainerId = ?1 AND LOWER(t.forUser) = LOWER(?2) AND t.closed=FALSE"),
     @NamedQuery(
         name =  "OPEN_BY_USER",
-        query = "SELECT t FROM TrainEntityV2 t WHERE t.forUser = ?1 AND t.closed=FALSE"),
+        query = "SELECT t FROM TrainEntityV2 t WHERE LOWER(t.forUser) = LOWER(?1) AND t.closed=FALSE"),
     @NamedQuery(
         name =  "CLOSED_BY_USER",
-        query = "SELECT t FROM TrainEntityV2 t WHERE t.forUser = ?1 AND t.closed=true"),
+        query = "SELECT t FROM TrainEntityV2 t WHERE LOWER(t.forUser) = LOWER(?1) AND t.closed=true"),
     @NamedQuery(
             name =  "OPEN_BY_TRAINER",
             query = "SELECT t FROM TrainEntityV2 t WHERE t.trainerId = ?1 AND t.closed=false"),
@@ -35,7 +35,7 @@ import de.skuzzle.polly.sdk.time.Time;
             query = "SELECT t FROM TrainEntityV2 t WHERE t.trainerId = ?1 AND t.closed=true"),
     @NamedQuery(
         name =  "TRAINSV2_BY_USER",
-        query = "SELECT t FROM TrainEntityV2 t WHERE t.forUser = ?1")
+        query = "SELECT t FROM TrainEntityV2 t WHERE LOWER(t.forUser) = LOWER(?1)")
 })
 public class TrainEntityV2 {
     

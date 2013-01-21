@@ -64,7 +64,7 @@ public class TrainerHttpAction extends HttpAction {
                 double factor = Double.parseDouble(f);
                 TrainEntityV2 te = TrainEntityV2.parseString(
                     e.getSession().getUser().getId(), forUser, factor, paste);
-                this.trainManager.addTrain(te);
+                this.trainManager.addTrain(te, e.getSession().getUser());
             } catch (NumberFormatException e1) {
                 e.throwTemplateException("Invalid Factor", 
                         "Please enter a valid double number");
