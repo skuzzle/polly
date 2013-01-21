@@ -1,6 +1,8 @@
 package polly.rx.http;
 
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import polly.rx.MyPlugin;
@@ -102,9 +104,9 @@ public class TrainerHttpAction extends HttpAction {
         TrainSorter.sort(allOpen.getTrains(), openSortKey, openDesc);
         TrainSorter.sort(allClosed.getTrains(), closedSortKey, closedDesc);
         
-        Set<String> clients = new TreeSet<String>();
+        SortedMap<String, String> clients = new TreeMap<String, String>();
         for (TrainEntityV2 te : allOpen.getTrains()) {
-            clients.add(te.getForUser());
+            clients.put(te.getForUser().toLowerCase(), te.getForUser());
         }
         
         c.put("openDesc", openDesc);

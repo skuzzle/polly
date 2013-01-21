@@ -102,7 +102,7 @@ public class AddTrainCommand extends Command {
             if (te.getDuration() != 0) {
                 // HACK: this requires the Remind Plugin to be installed and running!
                 String command = ":remind \"Training für " + forUser +
-                        "abgeschlossen. Bisherige Kosten: " + bill.weightedSum() + "\" " + 
+                        "abgeschlossen. Bisherige Kosten: " + bill.weightedSum() + " Cr.\" " + 
                         (te.getDuration() / 1000) + "s";
                 this.getMyPolly().commands().executeString(
                         command, 
@@ -110,7 +110,7 @@ public class AddTrainCommand extends Command {
                         true, trainer, this.getMyPolly().irc());
             }
             this.reply(channel, "Posten gespeichert. Aktuelle Kosten: " + 
-                bill.weightedSum());
+                bill.weightedSum() + " Cr.");
         } catch (Exception e) {
             throw new CommandException("Fehler beim Speichern");
         }
