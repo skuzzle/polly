@@ -15,6 +15,7 @@ import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.UnknownAttributeException;
 import de.skuzzle.polly.sdk.model.User;
 import de.skuzzle.polly.sdk.time.Time;
+import entities.RemindEntity;
 
 public class SnoozeCommand extends AbstractRemindCommand {
 
@@ -41,9 +42,10 @@ public class SnoozeCommand extends AbstractRemindCommand {
             Date dueDate = signature.getDateValue(0);
             
             try {
-                this.remindManager.snooze(executer, dueDate);
+                RemindEntity re = this.remindManager.snooze(executer, dueDate);
                 this.reply(channel, "Erinnerung wurde verlängert. Jetzt fällig: " 
-                    + this.getMyPolly().formatting().formatDate(dueDate));
+                    + this.getMyPolly().formatting().formatDate(dueDate) + 
+                    " (ID: " + re.getId() + ")");
                 
             } catch (DatabaseException e) {
                 throw new CommandException(e);
@@ -55,9 +57,10 @@ public class SnoozeCommand extends AbstractRemindCommand {
                     executer.getAttribute(MyPlugin.SNOOZE_TIME));
                 Date dueDate = new Date(millis);
                 
-                this.remindManager.snooze(executer);
+                RemindEntity re = this.remindManager.snooze(executer);
                 this.reply(channel, "Erinnerung wurde verlängert. Jetzt fällig: " 
-                    + this.getMyPolly().formatting().formatDate(dueDate));
+                    + this.getMyPolly().formatting().formatDate(dueDate) +
+                    " (ID: " + re.getId() + ")");
                 
             } catch (UnknownAttributeException e) {
                 throw new CommandException(e);
