@@ -79,7 +79,7 @@ public class MailRemindCommand extends DelayedCommand {
             user.getName(), channel, dueDate, false, true);
 
         try {
-            this.remindManager.addRemind(re, true);
+            this.remindManager.addRemind(executer, re, true);
             this.reply(channel, "E-Mail Nachricht für " + user.getName() + 
                 " hinterlassen (ID: " + re.getId() + ")");
         } catch (DatabaseException e) {

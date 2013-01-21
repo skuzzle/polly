@@ -21,6 +21,7 @@ public class DeleteRemindCommand extends AbstractRemindCommand {
         this.createSignature("Löscht die Erinnerung mit der angegebenen Id", 
             MyPlugin.DELETE_REMIND_PERMISSION,
             new Parameter("Remind-ID", Types.NUMBER));
+        this.createSignature("Löscht den letzten Remind den du erstellt hast");
         this.setRegisteredOnly();
     }
     
@@ -35,6 +36,13 @@ public class DeleteRemindCommand extends AbstractRemindCommand {
             
             try {
                 this.remindManager.deleteRemind(executer, remindId);
+                this.reply(channel, "Erinnerung wurde gelöscht");
+            } catch (DatabaseException e) {
+                throw new CommandException(e);
+            }
+        } else if (this.match(signature, 1)) {
+            try {
+                this.remindManager.deleteRemind(executer);
                 this.reply(channel, "Erinnerung wurde gelöscht");
             } catch (DatabaseException e) {
                 throw new CommandException(e);

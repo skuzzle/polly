@@ -78,7 +78,7 @@ public class RemindCommand extends AbstractRemindCommand {
 
             RemindEntity remind = new RemindEntity(msg, fromUser, forUser, location, 
                     dueDate);
-            this.addRemind(remind, true);
+            this.addRemind(executer, remind, true);
             this.reply(channel, FORMATTER.format(remind, this.getMyPolly().formatting()));
             
         } else if (this.match(signature, 1)) {
@@ -91,7 +91,7 @@ public class RemindCommand extends AbstractRemindCommand {
             for (UserType ut : users) {
                 RemindEntity remind = new RemindEntity(msg, fromUser, ut.getValue(), 
                         location, dueDate);
-                this.addRemind(remind, true);
+                this.addRemind(executer, remind, true);
             }
             ListType tmp = (ListType) signature.getValue(0);
             this.reply(channel, "Erinnerungen für die Benutzer " + 
@@ -103,7 +103,7 @@ public class RemindCommand extends AbstractRemindCommand {
             
             RemindEntity remind = new RemindEntity(msg, executer.getCurrentNickName(), 
                     executer.getCurrentNickName(), channel, dueDate);
-            this.addRemind(remind, true);
+            this.addRemind(executer, remind, true);
             this.reply(channel, FORMATTER.format(remind, this.getMyPolly().formatting()));
         } else if (this.match(signature, 3)) {
             /*
@@ -118,7 +118,7 @@ public class RemindCommand extends AbstractRemindCommand {
 
             RemindEntity remind = new RemindEntity(msg, fromUser, forUser, forUser, 
                     dueDate);
-            this.addRemind(remind, true);
+            this.addRemind(executer, remind, true);
             this.reply(channel, FORMATTER.format(remind, this.getMyPolly().formatting()));
         } else  if (this.match(signature, 4)){
         	Date dueDate = signature.getDateValue(0);
@@ -131,7 +131,7 @@ public class RemindCommand extends AbstractRemindCommand {
             
             RemindEntity remind = new RemindEntity(msg, executer.getCurrentNickName(), 
                     executer.getCurrentNickName(), channel, dueDate);
-            this.addRemind(remind, true);
+            this.addRemind(executer, remind, true);
             this.reply(channel, FORMATTER.format(remind, this.getMyPolly().formatting()));
         } else if (this.match(signature, 5)) {
             String msg = "Reminder";
@@ -146,7 +146,7 @@ public class RemindCommand extends AbstractRemindCommand {
             Date dueDate = new Date(millis);
             RemindEntity remind = new RemindEntity(msg, executer.getCurrentNickName(), 
                     executer.getCurrentNickName(), channel, dueDate);
-            this.addRemind(remind, true);
+            this.addRemind(executer, remind, true);
             this.reply(channel, FORMATTER.format(remind, this.getMyPolly().formatting()));
         }
         return false;

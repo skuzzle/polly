@@ -9,6 +9,7 @@ import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
+import de.skuzzle.polly.sdk.model.User;
 import entities.RemindEntity;
 
 
@@ -43,10 +44,10 @@ public class AbstractRemindCommand extends Command {
     
     
     
-    protected void addRemind(RemindEntity remind, boolean schedule) 
+    protected void addRemind(User executer, RemindEntity remind, boolean schedule) 
             throws CommandException {
         try {
-            this.remindManager.addRemind(remind, schedule);
+            this.remindManager.addRemind(executer, remind, schedule);
         } catch (DatabaseException e) {
             throw new CommandException(e);
         }

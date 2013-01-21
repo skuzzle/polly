@@ -60,7 +60,7 @@ public class LeaveCommand extends AbstractRemindCommand {
             RemindEntity remind = new RemindEntity(msg, fromUser, forUser, location, 
                     Time.currentTime());
             remind.setIsMessage(true);
-            this.addRemind(remind, false);
+            this.addRemind(executer, remind, false);
             this.reply(channel, FORMATTER.format(remind, this.getMyPolly().formatting()));
             
         } else if (this.match(signature, 1)) {
@@ -73,7 +73,7 @@ public class LeaveCommand extends AbstractRemindCommand {
                 RemindEntity remind = new RemindEntity(msg, fromUser, ut.getValue(), 
                         location, Time.currentTime());
                 remind.setIsMessage(true);
-                this.addRemind(remind, false);
+                this.addRemind(executer, remind, false);
             }
             ListType tmp = (ListType) signature.getValue(0);
             this.reply(channel, "Erinnerungen für die Benutzer " + 
@@ -87,7 +87,7 @@ public class LeaveCommand extends AbstractRemindCommand {
             RemindEntity remind = new RemindEntity(msg, fromUser, forUser, forUser, 
                     Time.currentTime());
             remind.setIsMessage(true);
-            this.addRemind(remind, false);
+            this.addRemind(executer, remind, false);
             this.reply(channel, FORMATTER.format(remind, this.getMyPolly().formatting()));
             
         }

@@ -44,7 +44,7 @@ public class OnReturnCommand extends AbstractRemindCommand {
                     Time.currentTime());
             remind.setIsMessage(true);
             remind.setOnAction(true);
-            this.addRemind(remind, false);
+            this.addRemind(executer, remind, false);
             this.reply(channel, FORMATTER.format(remind, this.getMyPolly().formatting()));
         }
         

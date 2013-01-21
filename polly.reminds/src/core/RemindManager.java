@@ -66,7 +66,7 @@ public interface RemindManager extends Disposable {
     
     public abstract RemindDBWrapper getDatabaseWrapper();
 
-    public abstract void addRemind(RemindEntity remind, boolean schedule) 
+    public abstract void addRemind(User executer, RemindEntity remind, boolean schedule) 
             throws DatabaseException;
     
     public abstract void deleteRemind(int id) throws DatabaseException;
@@ -75,6 +75,8 @@ public interface RemindManager extends Disposable {
     
     public abstract void deleteRemind(User executor, int id) 
             throws CommandException, DatabaseException;
+    
+    public abstract void deleteRemind(User executor) throws DatabaseException;
     
     public abstract void deliverRemind(RemindEntity remind, boolean ignoreIdleStatus) 
             throws DatabaseException, EMailException;

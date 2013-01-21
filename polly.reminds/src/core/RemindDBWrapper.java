@@ -14,7 +14,7 @@ public interface RemindDBWrapper {
     public abstract void addRemind(RemindEntity remind) throws DatabaseException;
     
     public abstract RemindEntity getRemind(int id);
-
+    
     public abstract List<RemindEntity> getAllReminds();
     
     public abstract List<RemindEntity> getRemindsForUser(String forUser);

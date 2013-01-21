@@ -2,6 +2,7 @@ package core;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -46,6 +47,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     // XXX: special case for clum
     private final static RemindFormatter heidiFormat = new HeidiRemindFormatter();
     
+    private final Map<User, RemindEntity> lastReminds;
     
     private MailManager mails;
     private IrcManager irc;
@@ -63,6 +65,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     private Logger logger;
     
     
+    
     public RemindManagerImpl(MyPolly myPolly) {
         this.mails = myPolly.mails();
         this.irc = myPolly.irc();
@@ -70,6 +73,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         this.userManager = myPolly.users();
         this.formatter = myPolly.formatting();
         this.roleManager = myPolly.roles();
+        this.lastReminds = new HashMap<User, RemindEntity>();
         this.dbWrapper = new RemindDBWrapperImpl(myPolly.persistence());
         this.remindScheduler = new Timer("REMIND_SCHEDULER", true);
         this.scheduledReminds = new HashMap<Integer, RemindManager.RemindTask>();
@@ -93,10 +97,11 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     
     
     @Override
-    public synchronized void addRemind(final RemindEntity remind, boolean schedule) 
-                throws DatabaseException {
+    public synchronized void addRemind(User executor, final RemindEntity remind, 
+            boolean schedule) throws DatabaseException {
         logger.info("Adding " + remind + ", schedule: " + schedule);
         this.dbWrapper.addRemind(remind);
+        this.lastReminds.put(executor, remind);
         
         if (schedule) {
             this.scheduleRemind(remind);
@@ -128,6 +133,12 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         if (remind != null) {
             this.cancelScheduledRemind(remind.getId());
             this.dbWrapper.deleteRemind(remind);
+            Iterator<RemindEntity> it = this.lastReminds.values().iterator();
+            while(it.hasNext()) {
+                if (it.next() == remind) {
+                    it.remove();
+                }
+            }
         } else {
             logger.warn("tried to delete non-existent remind.");
         }
@@ -142,6 +153,17 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         RemindEntity remind = this.dbWrapper.getRemind(id);
         this.checkRemind(executor, remind, id);
         this.deleteRemind(remind);
+    }
+    
+    
+    
+    @Override
+    public void deleteRemind(User executor) throws DatabaseException {
+        final RemindEntity re = this.lastReminds.get(executor);
+        if (re == null) {
+            throw new DatabaseException("Keine Erinnerung vorhanden");
+        }
+        this.deleteRemind(re);
     }
     
     
@@ -205,7 +227,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
                     remind.getDueDate(), true);
                 
                 onAction.setIsMessage(true);
-                this.addRemind(onAction, false);
+                this.addRemind(forUser, onAction, false);
             }
         } else {
             RemindEntity message = new RemindEntity(remind.getMessage(), 
@@ -215,7 +237,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
                 remind.getDueDate());
             message.setWasRemind(true);
             message.setIsMessage(true);
-            this.addRemind(message, false);
+            this.addRemind(forUser, message, false);
         }
     }
     
@@ -298,7 +320,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
             // schedule this Remind for now so it will be delivered immediately.
             // if user is not online, it will automatically be delivered later
             // by the policy implemented in #deliverLater
-            this.addRemind(r, true);
+            this.addRemind(forUser, r, true);
         } else {
             String subject = String.format(SUBJECT, 
                 this.formatter.formatDate(remind.getDueDate()));
@@ -412,7 +434,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         }
         
         RemindEntity newRemind = existing.copyForNewDueDate(dueDate);
-        this.addRemind(newRemind, true);
+        this.addRemind(executor, newRemind, true);
         return newRemind;
     }
     
