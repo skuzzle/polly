@@ -119,29 +119,58 @@ public class ScoreBoardManager {
         final Date today = Time.currentTime();
         boolean zero = false;
         final PointSet points = new PointSet(color);
+        Point greatestLowerZero = null;
+        Point lowestGreaterZero = null;
+        
         for (final ScoreBoardEntry entry : entries) {
-            final int monthsBetween = DateUtils.monthsBetween(
-                today, entry.getDate());
-            final int monthsAgo =  X_LABELS - monthsBetween - 1; 
+            final int monthsAgo = this.getMonthsAgo(today, entry.getDate());
+            final double x = this.calcX(entry.getDate(), monthsAgo);
+            final Point p = new Point(x, entry.getPoints(), PointType.NONE);
+
+            if (x < 0.0 && (greatestLowerZero == null || greatestLowerZero.getX() < x)) {
+                greatestLowerZero = p;
+            }
+            if (x > 0.0 && (lowestGreaterZero == null || lowestGreaterZero.getX() > x)) {
+                lowestGreaterZero = p;
+            }
             
             zero |= monthsAgo == 0;
             if (monthsAgo < 0) {
                 // do not add points that are older than X_LABELS months
                 continue;
             }
-            final Calendar c = Calendar.getInstance();
-            c.setTime(entry.getDate());
-            final int dayInMonth = c.get(Calendar.DAY_OF_MONTH);
-            final int days = c.getActualMaximum(Calendar.DAY_OF_MONTH);
-            final double x = monthsAgo + (double) dayInMonth / (double) days; 
-            points.add(x, entry.getPoints(), PointType.NONE);
+            points.add(p);
         }
         if (!zero && Math.abs(
                     DateUtils.monthsBetween(today, oldest.getDate())) > X_LABELS) {
-            points.add(new Point(0.0, oldest.getPoints(), PointType.DOT));
+            
+            // interpolate correct y-axis intersection
+            double m = (lowestGreaterZero.getY() - greatestLowerZero.getY()) / 
+                    (lowestGreaterZero.getX() - greatestLowerZero.getX());
+            double y = m * (-lowestGreaterZero.getX()) + lowestGreaterZero.getY();
+            points.add(new Point(0.0, y, PointType.DOT));
         }
         points.setName(oldest.getVenadName());
         return points;
+    }
+    
+    
+    
+    private int getMonthsAgo(Date today, Date other) {
+        final int monthsBetween = DateUtils.monthsBetween(today, other);
+        final int monthsAgo =  X_LABELS - monthsBetween - 1;
+        return monthsAgo;
+    }
+    
+    
+    
+    private double calcX(Date d, int monthsAgo) {
+        final Calendar c = Calendar.getInstance();
+        c.setTime(d);
+        final int dayInMonth = c.get(Calendar.DAY_OF_MONTH);
+        final int days = c.getActualMaximum(Calendar.DAY_OF_MONTH);
+        final double x = monthsAgo + (double) dayInMonth / (double) days; 
+        return x;
     }
     
     
