@@ -188,7 +188,7 @@ public class InputParser extends AbstractParser<InputScanner> {
             }
             root = new Root(new CommandLiteral(la));
             
-        } catch (Exception e) {
+        } catch (ParseException e) {
             return null;
         }
         if (this.scanner.lookAhead().matches(TokenType.SEPERATOR)) {
