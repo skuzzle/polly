@@ -3,6 +3,7 @@ package de.skuzzle.polly.parsing.ast.expressions;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 
 /**
@@ -68,6 +69,14 @@ public class Assignment extends Expression {
     @Override
     public void visit(Visitor visitor) throws ASTTraversalException {
         visitor.visitAssignment(this);
+    }
+    
+    
+    
+    @Override
+    public Expression transform(Transformation transformation) 
+            throws ASTTraversalException {
+        return transformation.transformAssignment(this);
     }
     
     

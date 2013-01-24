@@ -2,7 +2,9 @@ package de.skuzzle.polly.parsing.ast.expressions.literals;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
+import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 
 
 public class StringLiteral extends Literal {
@@ -42,6 +44,14 @@ public class StringLiteral extends Literal {
     @Override
     public String format(LiteralFormatter formatter) {
         return formatter.formatString(this);
+    }
+    
+    
+    
+    @Override
+    public Expression transform(Transformation transformation) 
+            throws ASTTraversalException {
+        return transformation.transformString(this);
     }
     
     

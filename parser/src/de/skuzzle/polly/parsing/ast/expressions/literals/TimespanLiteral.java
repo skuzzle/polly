@@ -5,7 +5,9 @@ import java.util.Date;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
+import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 
 
 public class TimespanLiteral extends DateLiteral {
@@ -78,6 +80,13 @@ public class TimespanLiteral extends DateLiteral {
         }
     }
     
+    
+    
+    @Override
+    public Expression transform(Transformation transformation)
+            throws ASTTraversalException {
+        return transformation.transformTimeSpan(this);
+    }
     
     
     @Override

@@ -2,6 +2,7 @@ package de.skuzzle.polly.parsing.ast;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.tools.Equatable;
 
@@ -83,6 +84,13 @@ public class Identifier extends Node implements Equatable {
     @Override
     public void visit(Visitor visitor) throws ASTTraversalException {
         visitor.visitIdentifier(this);
+    }
+    
+    
+    
+    @Override
+    public Identifier transform(Transformation transformation) throws ASTTraversalException {
+        return transformation.transformIdentifier(this);
     }
     
     

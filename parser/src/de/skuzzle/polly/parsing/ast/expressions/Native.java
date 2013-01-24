@@ -7,6 +7,7 @@ import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.parsing.ast.visitor.resolving.TypeResolver;
 import de.skuzzle.polly.parsing.util.Stack;
@@ -77,5 +78,13 @@ public abstract class Native extends Expression {
     @Override
     public void visit(Visitor visitor) throws ASTTraversalException {
         visitor.visitNative(this);
+    }
+    
+    
+    
+    @Override
+    public Expression transform(Transformation transformation) 
+            throws ASTTraversalException {
+        return transformation.transformNative(this);
     }
 }

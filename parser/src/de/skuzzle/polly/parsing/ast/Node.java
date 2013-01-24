@@ -3,6 +3,8 @@ package de.skuzzle.polly.parsing.ast;
 import java.io.Serializable;
 
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 import de.skuzzle.polly.parsing.ast.visitor.Visitable;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.tools.EqualsHelper;
@@ -77,6 +79,19 @@ public abstract class Node implements Visitable<Visitor>, Serializable, Equatabl
     public void setPosition(Position position) {
         this.position = position;
     }
+    
+    
+    
+    /**
+     * Visitor-style method used to transform the AST. The actual {@link Transformation}
+     * implementation will decide for each node with what new node it will be replaced.
+     * 
+     * @param transformation The transformation to apply.
+     * @return The transformed AST.
+     * @throws ASTTraversalException Can be thrown during AST traversal.
+     */
+    public abstract Node transform(Transformation transformation) 
+        throws ASTTraversalException;
     
     
     

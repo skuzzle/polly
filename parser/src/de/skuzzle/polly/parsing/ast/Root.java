@@ -9,6 +9,7 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 import de.skuzzle.polly.tools.streams.StringBuilderWriter;
 import de.skuzzle.polly.tools.strings.IteratorPrinter;
@@ -64,12 +65,25 @@ public final class Root extends Node {
     public Identifier getCommand() {
         return this.command;
     }
+
+    
+
+    public void setCommand(Identifier command) {
+        this.command = command;
+    }
     
     
     
     @Override
     public void visit(Visitor visitor) throws ASTTraversalException {
         visitor.visitRoot(this);
+    }
+    
+    
+    
+    @Override
+    public Root transform(Transformation transformation) throws ASTTraversalException {
+        return transformation.transformRoot(this);
     }
 
 

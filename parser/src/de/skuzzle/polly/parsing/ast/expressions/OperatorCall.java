@@ -9,6 +9,7 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
 import de.skuzzle.polly.parsing.ast.lang.Operator;
 import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 
 
@@ -128,6 +129,14 @@ public class OperatorCall extends Call {
     @Override
     public void visit(Visitor visitor) throws ASTTraversalException {
         visitor.visitOperatorCall(this);
+    }
+    
+    
+    
+    @Override
+    public Expression transform(Transformation transformation)
+            throws ASTTraversalException {
+        return transformation.transformOperatorCall(this);
     }
     
     

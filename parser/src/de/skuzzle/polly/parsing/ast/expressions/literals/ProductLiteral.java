@@ -10,6 +10,7 @@ import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.declarations.types.TypeUnifier;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 
 
@@ -67,5 +68,13 @@ public class ProductLiteral extends ListLiteral {
     @Override
     public void visit(Visitor visitor) throws ASTTraversalException {
         visitor.visitProductLiteral(this);
+    }
+    
+    
+    
+    @Override
+    public Expression transform(Transformation transformation)
+            throws ASTTraversalException {
+        return transformation.transformProduct(this);
     }
 }

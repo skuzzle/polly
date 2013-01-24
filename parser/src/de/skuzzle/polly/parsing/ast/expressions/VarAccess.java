@@ -3,6 +3,7 @@ package de.skuzzle.polly.parsing.ast.expressions;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 
 
@@ -44,6 +45,12 @@ public class VarAccess extends Expression {
         visitor.visitVarAccess(this);
     }
     
+    
+    @Override
+    public Expression transform(Transformation transformation) 
+            throws ASTTraversalException {
+        return transformation.transformVarAccess(this);
+    }
     
     
     @Override

@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
 
@@ -62,6 +64,13 @@ public class FunctionLiteral extends Literal {
     @Override
     public void visit(Visitor visitor) throws ASTTraversalException {
         visitor.visitFunctionLiteral(this);
+    }
+    
+    
+    
+    @Override
+    public Node transform(Transformation transformation) throws ASTTraversalException {
+        return transformation.transformFunction(this);
     }
     
     
