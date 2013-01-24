@@ -302,6 +302,23 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
     public void pushBackLast(Token t) {
         this.tokenBuffer.addLast(t);
     }
+    
+    
+    
+    /**
+     * Consumes the next character only if it is the expected one.
+     * 
+     * @param c The expected character.
+     * @return Whether the next character is the expected one.
+     */
+    protected boolean nextIs(int c) {
+        final int next = this.readChar();
+        if (next == c) {
+            return true;
+        }
+        this.pushBack(next);
+        return false;
+    }
 
     
     
