@@ -58,9 +58,7 @@ public class ScoreBoardHttpAction extends HttpAction {
                     }
                     Collection<ScoreBoardEntry> ents = ScoreBoardParser.parse(paste, date);
                     
-                    for (ScoreBoardEntry ent : ents) {
-                        this.sbeManager.addEntry(ent);
-                    }
+                    this.sbeManager.addEntries(ents);
 
                     Collection<ScoreBoardEntry> allEntries = this.sbeManager.getEntries();
                     CSVExporter.exportToCSV(allEntries, 

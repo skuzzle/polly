@@ -156,6 +156,7 @@ public class ScoreBoardManager {
     
     
     
+
     private int getMonthsAgo(Date today, Date other) {
         final int monthsBetween = DateUtils.monthsBetween(today, other);
         final int monthsAgo =  X_LABELS - monthsBetween - 1;
@@ -171,6 +172,30 @@ public class ScoreBoardManager {
         final int days = c.getActualMaximum(Calendar.DAY_OF_MONTH);
         final double x = monthsAgo + (double) dayInMonth / (double) days; 
         return x;
+    }
+
+
+    
+    public void addEntries(Collection<ScoreBoardEntry> entries) throws DatabaseException {
+        try {
+            this.persistence.writeLock();
+            this.persistence.startTransaction();
+            
+            for (final ScoreBoardEntry entry : entries) {
+                final Collection<ScoreBoardEntry> existing = this.persistence.findList(
+                        ScoreBoardEntry.class, ScoreBoardEntry.SBE_BY_USER, 
+                        entry.getVenadName());
+                
+                for (final ScoreBoardEntry e : existing) {
+                    if (!DateUtils.isSameDay(e.getDate(), entry.getDate())) {
+                        this.persistence.persist(e);
+                    }
+                }
+            }
+            this.persistence.commitTransaction();
+        } finally {
+            this.persistence.writeUnlock();
+        }
     }
     
     
