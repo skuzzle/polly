@@ -66,6 +66,9 @@ public class BattleReportInfosHttpAction extends HttpAction {
         int minCrewXp = Integer.MAX_VALUE;
         int avgCrewXp = 0;
         
+        int maxWend = 0;
+        int minWend = Integer.MAX_VALUE;
+        
         for (BattleReportShip ship : ships) {
             pzDamage += ship.getPzDamage();
             maxPzDamage = Math.max(maxPzDamage, ship.getPzDamage());
@@ -82,6 +85,9 @@ public class BattleReportInfosHttpAction extends HttpAction {
             crewXp += ship.getCrewXp();
             maxCrewXp = Math.max(maxCrewXp, ship.getCrewXp());
             minCrewXp = Math.min(minCrewXp, ship.getCrewXp());
+            
+            maxWend = Math.max(maxWend, ship.getMaxWend());
+            minWend = Math.min(minWend, ship.getMaxWend());
         }
         
         avgPzDamage = pzDamage / ships.size();
@@ -105,6 +111,8 @@ public class BattleReportInfosHttpAction extends HttpAction {
         c.put("maxCrewXp" + postfix, maxCrewXp);
         c.put("minCrewXp" + postfix, minCrewXp);
         c.put("avgCrewXp" + postfix, avgCrewXp);
+        c.put("maxWend" + postfix, maxWend);
+        c.put("minWend" + postfix, minWend);
     }
 
 }

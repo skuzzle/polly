@@ -56,6 +56,9 @@
 #set ($minCrewXp = $minCrewXpAttacker)
 #set ($avgCrewXp = $avgCrewXpAttacker)
 
+#set ($maxWend = $maxWendAttacker)
+#set ($minWend = $minWendAttacker)
+
 #set ($ships = $report.getAttackerShips())
 #parse("webinterface/pages/helper/list_battlereportships_helper.html")
 
@@ -88,6 +91,9 @@
 #set ($maxCrewXp = $maxCrewXpDefender)
 #set ($minCrewXp = $minCrewXpDefender)
 #set ($avgCrewXp = $avgCrewXpDefender)
+
+#set ($maxWend = $maxWendDefender)
+#set ($minWend = $minWendDefender)
 
 #set ($ships = $report.getDefenderShips())
 #parse("webinterface/pages/helper/list_battlereportships_helper.html")

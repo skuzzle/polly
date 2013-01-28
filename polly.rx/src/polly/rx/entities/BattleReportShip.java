@@ -199,6 +199,12 @@ public class BattleReportShip {
     public int getSystems() {
         return this.systems;
     }
+    
+    
+    
+    public int getMaxWend() {
+        return this.systems - this.shields;
+    }
 
     
     

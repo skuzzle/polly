@@ -10,6 +10,8 @@
 ## $damageTotal 
 ## $xpCapi 
 ## $xpCrew
+## $maxWend
+## $minWend
 ## $ships 
 
 <h3>$name</h3>
@@ -50,6 +52,10 @@
 	<tr>
 		<th>PZ-Damage (min/avg/max)</th>
 		<td>$pzDamage ($minPzDamage / $avgPzDamage / $maxPzDamage)</td>
+	</tr>
+	<tr>
+		<th>Wend (max occurred / min occurred)</th>
+		<td>$maxWend / $minWend</td>
 	</tr>
 	<tr>
 		<th>Capi XP (min/avg/max)</th>
@@ -100,6 +106,7 @@ damage.
 		<th>Sc (Damage)</th>
 		<th>Pz (Damage)</th>
 		<th>Str (Damage)</th>
+		<th>Max Wend</th>
 	</tr>
 	#foreach ($ship in $ships)
 	<tr>
@@ -129,6 +136,7 @@ damage.
         #end
 		<td $bgc>$ship.getPz() ($ship.getPzDamage())</td>
 		<td>$ship.getStructure() ($ship.getStructureDamage())</td>
+		<td>$ship.getMaxWend()</td>
 	</tr>
 	#end
 </table>
