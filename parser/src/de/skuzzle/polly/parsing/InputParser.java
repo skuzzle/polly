@@ -188,6 +188,10 @@ public class InputParser extends AbstractParser<InputScanner> {
             }
             root = new Root(new CommandLiteral(la));
             
+            // HACK: smiley fix
+            if (root.getName().getCommandName().length() < 3) {
+                return null;
+            }
         } catch (ParseException e) {
             return null;
         }
