@@ -188,7 +188,7 @@ public class ScoreBoardManager {
                 
                 for (final ScoreBoardEntry e : existing) {
                     if (!DateUtils.isSameDay(e.getDate(), entry.getDate())) {
-                        this.persistence.persist(e);
+                        this.persistence.persist(entry);
                     }
                 }
             }
