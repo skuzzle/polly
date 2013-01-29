@@ -35,6 +35,7 @@ public class BattleReportInfosHttpAction extends HttpAction {
         BattleReport report = this.fleetDBManager.getReportById(id);       
         
         c.put("report", report);
+        c.put("fleetDBManager", this.fleetDBManager);
         this.prepareContext(report.getAttackerShips(), "Attacker", c);
         this.prepareContext(report.getDefenderShips(), "Defender", c);
 

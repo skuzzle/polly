@@ -113,7 +113,7 @@ damage.
     #set ( $scannedShip = $fleetDBManager.fleetScanShipById($ship.getRxId()) )
 	<tr>
 		<td>#if ($scannedShip)<a href="fleetship_info?shipId=$ship.getRxId()">$ship.getRxId()</a>#else $ship.getRxId()#end</td>
-		<td>#if ($scannedShip) $scannedShip.getOwner() #else Unbekannt #end</td>
+		<td>#if ($scannedShip)<a href="/query_scans?method=owner&query=$scannedShip.getOwner()"> $scannedShip.getOwner() #else Unbekannt #end</td>
 		<td>$ship.getName()</td>
 		<td>$ship.getCrewXp()</td>
 		<td>$ship.getCapi() ($ship.getCapiHp())</td>
