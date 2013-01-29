@@ -168,7 +168,7 @@ public class FleetDBManager {
     
     
     
-    private FleetScanShip fleetScanShipById(int rxId) {
+    public FleetScanShip fleetScanShipById(int rxId) {
         return this.persistence.findSingle(FleetScanShip.class, 
             FleetScanShip.BY_REVORIX_ID, rxId);
     }
