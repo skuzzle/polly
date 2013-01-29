@@ -188,7 +188,7 @@ public class ScoreBoardManager {
                 
                 boolean exists = false;
                 for (final ScoreBoardEntry e : existing) {
-                    exists |= !DateUtils.isSameDay(e.getDate(), entry.getDate());
+                    exists |= DateUtils.isSameDay(e.getDate(), entry.getDate());
                     if (exists) {
                         break;
                     }
