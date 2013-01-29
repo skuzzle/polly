@@ -48,8 +48,6 @@ public class BattleReportHttpAction extends HttpAction {
             }
             
             String report = e.getSource().escapeHtml(e.getProperty("paste"));
-            
-            System.out.println(report);
             try {
                 BattleReport br = BattleReportParser.parseReport(report, 
                     e.getSession().getUser());
@@ -66,6 +64,7 @@ public class BattleReportHttpAction extends HttpAction {
         TemplateContextHelper.prepareForReportsList(c, e.getSession(), allReports);
         HttpTemplateSortHelper.makeListSortable(c, e, "sortKey", "dir", "getDate");
         
+        c.put("fleetDBManager", this.fleetDBManager);
         return c;
     }
 

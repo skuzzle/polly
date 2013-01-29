@@ -96,6 +96,7 @@ damage.
 <table style="width: 100%">
 	<tr>
 		<th>Revorix ID</th>
+		<th>Besitzer</th>
 		<th>Name</th>
 		<th>Crew XP</th>
 		<th>Captain (HP)</th>
@@ -109,8 +110,10 @@ damage.
 		<th>Max Wend</th>
 	</tr>
 	#foreach ($ship in $ships)
+    #set ( $scannedShip = $fleetDBManager.fleetScanShipById($ship.getRxId()) )
 	<tr>
-		<td>$ship.getRxId()</td>
+		<td>#if ($scannedShip)<a href="fleetship_info?shipId=$ship.getRxId()">$ship.getRxId()</a>#else $ship.getRxId()#end</td>
+		<td>#if ($scannedShip) $scannedShip.getOwner() #else Unbekannt #end</td>
 		<td>$ship.getName()</td>
 		<td>$ship.getCrewXp()</td>
 		<td>$ship.getCapi() ($ship.getCapiHp())</td>
