@@ -39,7 +39,8 @@ public class AutoSnoozeRunLater extends RunLater {
                             RemindEntity re = remindManager.snooze(forUser);
                             ircManager.sendMessage(
                                 nick, "Erinnerung wurde verlängert. Jetzt fällig: " + 
-                                    formatter.formatDate(re.getDueDate()), this);
+                                    formatter.formatDate(re.getDueDate()) + 
+                                    " (ID: " + re.getId() + ")", this);
                         } catch (Exception e1) {
                             e1.printStackTrace();
                         }
