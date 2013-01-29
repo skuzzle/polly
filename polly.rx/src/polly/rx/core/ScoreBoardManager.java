@@ -186,10 +186,15 @@ public class ScoreBoardManager {
                         ScoreBoardEntry.class, ScoreBoardEntry.SBE_BY_USER, 
                         entry.getVenadName());
                 
+                boolean exists = false;
                 for (final ScoreBoardEntry e : existing) {
-                    if (!DateUtils.isSameDay(e.getDate(), entry.getDate())) {
-                        this.persistence.persist(entry);
+                    exists |= !DateUtils.isSameDay(e.getDate(), entry.getDate());
+                    if (exists) {
+                        break;
                     }
+                }
+                if (!exists) {
+                    this.persistence.persist(entry);
                 }
             }
             this.persistence.commitTransaction();
