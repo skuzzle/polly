@@ -2,6 +2,8 @@ package polly.core.http.actions;
 
 
 
+import org.apache.log4j.Logger;
+
 import polly.core.http.HttpInterface;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PersistenceManager;
@@ -18,6 +20,8 @@ import de.skuzzle.polly.sdk.roles.RoleManager;
 
 public class UserInfoPageHttpAction extends HttpAction {
 
+    private final static Logger logger = Logger.getLogger(UserInfoPageHttpAction.class
+        .getName());
     
     public UserInfoPageHttpAction(MyPolly myPolly) {
         super("/user_info", myPolly);
@@ -64,7 +68,7 @@ public class UserInfoPageHttpAction extends HttpAction {
                     this.myPolly.users().setAttributeFor(
                         u, attribute, e.getProperty(attribute));
                 } catch (Exception e1) {
-                    e1.printStackTrace();
+                    logger.error(e1);
                 }
             }
         } else if (action != null && action.equals("addRoleToUser")) {
