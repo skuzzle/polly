@@ -29,7 +29,7 @@ public class PasteServiceManagerProvider extends AbstractProvider {
         try {
             pasteManager.addService(new GBPasteService());
             pasteManager.addService(new NoPastePasteService());
-            pasteManager.addService(new PasteBinPasteService());
+            //pasteManager.addService(new PasteBinPasteService()); due to captcha deactivated
             pasteManager.addService(new PHCNPasteService());
             
             this.provideComponent(pasteManager);
