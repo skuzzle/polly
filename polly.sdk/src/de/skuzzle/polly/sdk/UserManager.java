@@ -119,17 +119,6 @@ public interface UserManager {
     
     
     /**
-     * Deletes a declared identifier from the users namespace. This method will have
-     * no effect of predefined functions or constants.
-     * 
-     * @param user The user for whom the declaration shall be removed.
-     * @param id The identifier of the declaration.
-     */
-    public abstract void deleteDeclaration(User user, String id);
-    
-    
-    
-    /**
      * Gets a set of all declared identifiers by the given user.
      * @param namespace The namespace which declarations shall be retrieved.
      * @return A set of strings containing the identifiers. This may be empty but not

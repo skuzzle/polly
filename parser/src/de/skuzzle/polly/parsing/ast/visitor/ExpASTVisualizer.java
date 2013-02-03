@@ -16,6 +16,7 @@ import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ChannelLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.DateLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
+import de.skuzzle.polly.parsing.ast.expressions.literals.HelpLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.LiteralFormatter;
@@ -90,6 +91,13 @@ public class ExpASTVisualizer extends DepthFirstVisitor {
             @Override
             public String formatChannel(ChannelLiteral channel) {
                 return DEFAULT.formatChannel(channel);
+            }
+
+
+
+            @Override
+            public String formatHelp(HelpLiteral helpLiteral) {
+                return DEFAULT.formatHelp(helpLiteral);
             }
         };
     }

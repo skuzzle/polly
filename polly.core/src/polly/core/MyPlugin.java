@@ -8,7 +8,6 @@ import commands.AliasCommand;
 import commands.CalendarCommand;
 import commands.ClumBombCommand;
 import commands.DefineCommand;
-import commands.DelVarCommand;
 import commands.DeleteUserCommand;
 import commands.DictCommand;
 import commands.DitoCommand;
@@ -245,7 +244,6 @@ public class MyPlugin extends PollyPlugin {
 
 		this.addCommand(new FooCommand(myPolly));
 		this.addCommand(new VarCommand(myPolly));
-		this.addCommand(new DelVarCommand(myPolly));
 		
 
 		//this.addCommand(new AddTopicCommand(myPolly, this.topicManager));

@@ -29,6 +29,8 @@ public interface LiteralFormatter {
         private final DateFormat DATE_FORMAT = new SimpleDateFormat(
             "HH:mm@dd.MM.yyyy");
         
+        
+        
         @Override
         public String formatNumberLiteral(NumberLiteral number) {
             final double val = number.getValue();
@@ -115,6 +117,13 @@ public interface LiteralFormatter {
             b.append(")");
             return b.toString();
         }
+
+
+
+        @Override
+        public String formatHelp(HelpLiteral helpLiteral) {
+            return "?";
+        }
     };
     
     
@@ -134,4 +143,6 @@ public interface LiteralFormatter {
     public String formatList(ListLiteral listLiteral);
 
     public String formatFunction(FunctionLiteral functionLiteral);
+
+    public String formatHelp(HelpLiteral helpLiteral);
 }

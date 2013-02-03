@@ -17,6 +17,7 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.BooleanLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ChannelLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.DateLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
+import de.skuzzle.polly.parsing.ast.expressions.literals.HelpLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
@@ -144,6 +145,13 @@ public class NullTransformation implements Transformation {
 
     @Override
     public Expression transformUser(UserLiteral userLiteral) throws ASTTraversalException {
+        return null;
+    }
+
+
+
+    @Override
+    public HelpLiteral transformHelp(HelpLiteral helpLiteral) {
         return null;
     }
 

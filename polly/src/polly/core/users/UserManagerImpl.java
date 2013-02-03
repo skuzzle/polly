@@ -1,6 +1,7 @@
 package polly.core.users;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,10 +18,9 @@ import org.apache.log4j.Logger;
 import polly.core.persistence.PersistenceManagerImpl;
 import polly.util.CaseInsensitiveStringKeyMap;
 
-import de.skuzzle.polly.parsing.Prepare;
-import de.skuzzle.polly.parsing.declarations.Declaration;
-import de.skuzzle.polly.parsing.declarations.Declarations;
-import de.skuzzle.polly.parsing.declarations.Namespace;
+import de.skuzzle.polly.parsing.ast.declarations.Declaration;
+import de.skuzzle.polly.parsing.ast.declarations.DeclarationReader;
+import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.UserManager;
@@ -65,6 +65,15 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     };
     
     
+    private final static FileFilter DECLARATION_FILTER = new FileFilter() {
+        
+        @Override
+        public boolean accept(File pathname) {
+            return pathname.getName().toLowerCase().endsWith(".decl");
+        }
+    };
+    
+    
     private PersistenceManagerImpl persistence;
 
     /**
@@ -74,7 +83,6 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     private File declarationCachePath;
     private Map<String, AttributeConstraint> constraints;
     private EventProvider eventProvider;
-    private Namespace namespace;
     private User admin;
     private boolean registeredStale;
     private List<User> registeredUsers;
@@ -94,53 +102,51 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
                 new CaseInsensitiveStringKeyMap<User>());
         this.declarationCachePath = new File(declarationCachePath);
         this.constraints = new HashMap<String, AttributeConstraint>();
-        this.namespace = new Namespace();
         try {
             if (!this.declarationCachePath.exists()) {
                 logger.warn("Declaration-cache directory does not exist. " +
                 		"Trying to create folder structure");
                 this.declarationCachePath.mkdirs();
             }
-			this.namespace.restore(new File(declarationCachePath));
+			readDeclarations(this.declarationCachePath);
+			
 		} catch (IOException e) {
 			logger.warn("No declarations restored", e);
 		}
-        Prepare.operators(this.namespace);
-        Prepare.namespaces(this.namespace);
-        Namespace.setTempVarLifeTime(tempVarLifeTime);
-        Namespace.setIgnoreUnknownIdentifiers(ignoreUnknownIdentifiers);
     }
     
     
     
-    public Namespace getNamespace() {
-        return this.namespace;
-    }
-    
-    
-
-    @Override
-    public void deleteDeclaration(User user, String id) {
-        Declarations d = this.namespace.getNamespaceFor(user.getName());
-        if (d == null) {
-            return;
+    private static void readDeclarations(File folder) throws IOException {
+        for (final File file : folder.listFiles(DECLARATION_FILTER)) {
+            DeclarationReader dr = null;
+            try {
+                final String nsName = file.getName().substring(
+                        0, file.getName().length() - 5);
+                Namespace ns = Namespace.forName(nsName);
+                dr = new DeclarationReader(file, "ISO-8859-1", ns);
+                dr.readAll();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (dr != null) {
+                    dr.close();
+                }
+            }
         }
-        d.remove(id);
     }
     
     
 
     @Override
     public synchronized Set<String> getDeclaredIdentifiers(String namespace) {
-        Declarations d = this.namespace.getNamespaceFor(namespace);
-        if (d == null) {
-            return Collections.emptySet();
-        }
-        
-        Set<Declaration> decls = d.getDeclarations();
-        Set<String> result = new HashSet<String>();
-        for (Declaration decl : decls) {
-            result.add(decl.toString());
+        final Namespace ns = Namespace.forName(namespace);
+
+        final Set<String> result = new HashSet<String>();
+        for (final List<Declaration> decls : ns.getDeclarations().values()) {
+            for (final Declaration decl : decls  ) {
+                result.add(decl.getName().getId());
+            }
         }
         return result;
     }
@@ -528,17 +534,9 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
 
     @Override
     protected void actualDispose() throws DisposingException {
-        logger.debug("Storing declaration cache to disk.");
-        try {
-            this.namespace.store(this.declarationCachePath);
-            this.namespace.dispose();
-        } catch (IOException e) {
-            logger.error("Error while storing namespaces",e);
-        }
         this.persistence = null;
         this.onlineCache.clear();
         this.onlineCache = null;
-        this.namespace = null;
     }
 
 

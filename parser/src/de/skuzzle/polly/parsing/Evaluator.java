@@ -2,6 +2,7 @@ package de.skuzzle.polly.parsing;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
@@ -95,7 +96,7 @@ public class Evaluator {
     
     
     
-    public void evaluate(Namespace namespace) throws IOException {
+    public void evaluate(Namespace namespace) throws UnsupportedEncodingException {
         try {
             final ExpInputParser parser = new ExpInputParser(this.input, this.encoding);
             this.lastResult = parser.parse();
