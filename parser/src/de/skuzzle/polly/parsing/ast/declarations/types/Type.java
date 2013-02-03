@@ -161,6 +161,10 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
         return unifier.tryUnify(left, right);
     }
     
+    public final static Substitution unify(Type left, Type right) {
+        return unifier.unify(left, right);
+    }
+    
     
     
     private final Identifier name;
@@ -173,6 +177,24 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
         this.name = name;
         this.comparable = comparable;
         this.primitve = primitive;
+    }
+    
+    
+    
+    public MapType mapTo(Type target) {
+        return new MapType(this, target);
+    }
+    
+    
+    
+    public MapType mapFrom(Type source) {
+        return new MapType(source, this);
+    }
+    
+    
+    
+    public ListType listOf() {
+        return new ListType(this);
     }
     
     

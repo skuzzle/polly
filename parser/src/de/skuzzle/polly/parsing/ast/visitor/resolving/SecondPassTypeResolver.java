@@ -2,12 +2,11 @@ package de.skuzzle.polly.parsing.ast.visitor.resolving;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import de.skuzzle.polly.parsing.ast.Root;
-import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.types.MapType;
 import de.skuzzle.polly.parsing.ast.declarations.types.ProductType;
+import de.skuzzle.polly.parsing.ast.declarations.types.Substitution;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
@@ -94,11 +93,11 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         for (final Expression exp : list.getContent()) {
             exp.visit(this);
             if (last != null) {
-                if (!this.unifier.unify(last, exp.getUnique())) {
+                if (!Type.tryUnify(last, exp.getUnique())) {
                     this.typeError(exp, last, exp.getUnique());
                 }
             }
-            last = this.unifier.substitute(exp.getUnique());
+            last = exp.getUnique();
         }
         
         this.afterListLiteral(list);
@@ -180,8 +179,9 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
                 (ProductType) s, t);
             
             for (final Type lhsType : call.getLhs().getTypes()) {
-                if (this.unifier.unify(lhsType, tmp)) {
-                    matched.add(this.unifier.substitute(lhsType));
+                final Substitution subst = Type.unify(lhsType, tmp);
+                if (subst != null) {
+                    matched.add(lhsType.subst(subst));
                 }
             }
         }

@@ -659,11 +659,10 @@ public class Namespace {
      * all declarations that are no formal parameter. 
      * 
      * @param access VarAccess to resolve.
-     * @param unifier Current type unification context.
      * @return A set of all declarations with matching names.
      * @throws DeclarationException If no variable with matching name was found.
      */
-    public Set<Type> lookupFresh(VarAccess access, TypeUnifier unifier) 
+    public Set<Type> lookupFresh(VarAccess access) 
             throws DeclarationException {
         final ResolvableIdentifier name = access.getIdentifier();
         final Set<Type> result = new HashSet<Type>();

@@ -10,9 +10,8 @@ import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.types.ListType;
 import de.skuzzle.polly.parsing.ast.declarations.types.MapType;
 import de.skuzzle.polly.parsing.ast.declarations.types.ProductType;
+import de.skuzzle.polly.parsing.ast.declarations.types.Substitution;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
-import de.skuzzle.polly.parsing.ast.declarations.types.TypeResolvedCallBack;
-import de.skuzzle.polly.parsing.ast.declarations.types.TypeUnifier;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Empty;
@@ -83,21 +82,8 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
             d.visit(this);
             source.add(d.getType());
             
-            this.nspace.declare(d, this.unifier);
+            this.nspace.declare(d);
         }
-        
-        // Whenever a type for the body of this function has been resolved, we have
-        // found proper substitutions for the function's parameters
-        func.getBody().setTypeResolvedCallBack(new TypeResolvedCallBack() {
-            
-            @Override
-            public void typeResolved(Type possibleType, TypeUnifier context) {
-                final Type t = new MapType(
-                    new ProductType(source), possibleType);
-                
-                func.addType(context.substitute(t), context);
-            }
-        });
         
         func.getBody().visit(this);
         this.leave();
@@ -121,7 +107,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         }
         for (final Expression exp : list.getContent()) {
             for (final Type t : exp.getTypes()) {
-                list.addType(new ListType(t), this.unifier);
+                list.addType(new ListType(t));
             }
         }
     }
@@ -144,7 +130,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
             
             @Override
             public void onNewCombination(List<Type> combination) {
-                product.addType(new ProductType(combination), unifier);
+                product.addType(new ProductType(combination));
             }
         };
         
@@ -158,9 +144,9 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         for (final Type t : assign.getExpression().getTypes()) {
             final Declaration vd = new Declaration(assign.getName().getPosition(), 
                 assign.getName(), new Empty(t, assign.getExpression().getPosition()));
-            this.nspace.declare(vd, this.unifier);
+            this.nspace.declare(vd);
             
-            assign.addType(t, this.unifier);
+            assign.addType(t);
         }
     }
     
@@ -187,10 +173,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         final List<Type> possibleTypes = new ArrayList<Type>(
             call.getRhs().getTypes().size());
         for (final Type rhsType : call.getRhs().getTypes()) {
-            final MapType possibleLhs = new MapType(
-                (ProductType) rhsType, Type.newTypeVar());
-            
-            possibleTypes.add(possibleLhs);
+            possibleTypes.add(rhsType.mapTo(Type.newTypeVar()));
         }
         
         // resolve called function's types
@@ -199,12 +182,10 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         // sort out all lhs types that do not match the rhs types
         for (final Type possibleLhs : possibleTypes) {
             for (final Type lhs : call.getLhs().getTypes()) {
-                final TypeUnifier tmp = new TypeUnifier(this.unifier);
-                
-                if (tmp.unify(lhs, possibleLhs)) {
-                    final MapType mtc = (MapType) 
-                        tmp.substitute(lhs);
-                    call.addType(tmp.substitute(mtc.getTarget()), tmp);
+                final Substitution subst = Type.unify(lhs, possibleLhs);
+                if (subst != null) {
+                    final MapType mtc = (MapType) lhs.subst(subst);
+                    call.addType(mtc.getTarget());
                 }
             }
         }
@@ -221,48 +202,9 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     
     
     @Override
-    public void afterCall(Call call) throws ASTTraversalException {
-        
-        /*final List<Type> newLhsTypes = new ArrayList<Type>();
-        final List<Type> newRhsTypes = new ArrayList<Type>();
-        
-        for (final Type rhsType : call.getRhs().getTypes()) {
-            final ProductTypeConstructor s = (ProductTypeConstructor) rhsType;
-            
-            for (final Type lhsType : call.getLhs().getTypes()) {
-                final ProductTypeConstructor newRhs = 
-                    (ProductTypeConstructor) this.unifier.fresh(s);
-                final MapTypeConstructor possibleLhs = 
-                    new MapTypeConstructor(newRhs, 
-                    Type.newTypeVar());
-                
-                if (this.unifier.canUnify(possibleLhs, lhsType)) {
-                    final MapTypeConstructor type = (MapTypeConstructor) 
-                        this.unifier.substitute(possibleLhs);
-                    
-                    call.addType(type.getTarget(), this.unifier);
-                    newLhsTypes.add(type);
-                    newRhsTypes.add(type.getSource());
-                }
-            }
-        }
-        
-        call.getLhs().setTypes(newLhsTypes, this.unifier);
-        call.getRhs().setTypes(newRhsTypes, this.unifier);
-        
-        if (call.getTypes().isEmpty()) {
-            this.reportError(call.getRhs(),
-                "Keine passende Deklaration für den Aufruf von " + 
-                Unparser.toString(call.getLhs()) + " gefunden");
-        }*/
-    }
-    
-    
-    
-    @Override
     public void beforeVarAccess(VarAccess access) throws ASTTraversalException {
-        final Set<Type> types = this.nspace.lookupFresh(access, this.unifier);
-        access.addTypes(types, this.unifier);
+        final Set<Type> types = this.nspace.lookupFresh(access);
+        access.addTypes(types);
     }
     
     
@@ -285,7 +227,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         access.getRhs().visit(this);
         this.nspace = last;
 
-        access.addTypes(access.getRhs().getTypes(), this.unifier);
+        access.addTypes(access.getRhs().getTypes());
         
         this.afterAccess(access);
     }
