@@ -18,7 +18,6 @@ import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.declarations.types.Substitution;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
-import de.skuzzle.polly.parsing.ast.declarations.types.TypeUnifier;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
@@ -625,18 +624,15 @@ public class Namespace {
      * 
      * @param name The name of the variable to resolve.
      * @param signature The signature of the variable to resolve.
-     * @param unifier Current unification context.
      * @return The resolved declaration or <code>null</code> if non was found.
      */
-    public Declaration tryResolve(ResolvableIdentifier name, Type signature, 
-            TypeUnifier unifier) {
+    public Declaration tryResolve(ResolvableIdentifier name, Type signature) {
         for(Namespace space = this; space != null; space = space.parent) {
             final List<Declaration> decls = space.decls.get(name.getId());
             if (decls == null) {
                 continue;
             }
             for (Declaration decl : decls) {
-                
                 if (Type.tryUnify(signature, decl.getType())) {
                     name.setDeclaration(decl);
                     return decl;

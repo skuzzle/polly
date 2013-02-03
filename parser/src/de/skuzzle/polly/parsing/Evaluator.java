@@ -111,8 +111,8 @@ public class Evaluator {
             // resolve types
             TypeResolver.resolveAST(this.lastResult, namespace);
             
-//            final Visitor executor = new DebugExecutionVisitor(namespace);
-//            this.lastResult.visit(executor);
+            final Visitor executor = new DebugExecutionVisitor(namespace);
+            this.lastResult.visit(executor);
             
         } catch (ASTTraversalException e) {
             this.lastError = e;

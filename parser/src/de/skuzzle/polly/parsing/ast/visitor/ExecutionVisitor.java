@@ -215,9 +215,9 @@ public class ExecutionVisitor extends DepthFirstVisitor {
         
         this.enter();
         final Iterator<Expression> actualIt = call.getRhs().getContent().iterator();
-        final Iterator<Parameter> formalIt = func.getFormal().iterator();
+        final Iterator<Declaration> formalIt = func.getFormal().iterator();
         while (formalIt.hasNext()) {
-            final Parameter formal = formalIt.next();
+            final Declaration formal = formalIt.next();
             final Expression actual = actualIt.next();
             
             // execute actual parameter
