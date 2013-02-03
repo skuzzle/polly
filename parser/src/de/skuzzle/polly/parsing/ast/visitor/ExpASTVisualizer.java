@@ -268,7 +268,6 @@ public class ExpASTVisualizer extends DepthFirstVisitor {
         this.dotBuilder.printNode(decl, "Declaration" + pos ,  
             "Name: " + decl.getName(), 
             "Type: " + decl.getType(),
-            "Copy: " + decl.mustCopy(),
             b.toString());
     }
     

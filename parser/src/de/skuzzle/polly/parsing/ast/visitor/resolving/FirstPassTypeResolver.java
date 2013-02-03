@@ -95,6 +95,10 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
             }
         }
         
+        for (final Type te : func.getBody().getTypes()) {
+            func.addType(new ProductType(source).mapTo(te));
+        }
+        
         this.afterFunctionLiteral(func);
     }
     

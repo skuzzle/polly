@@ -100,6 +100,12 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
             last = exp.getUnique();
         }
         
+        if (list.getTypes().size() == 1) {
+            list.setUnique(last.listOf());
+        } else {
+            this.reportError(list, "Uneindeutiger Listen Type");
+        }
+        
         this.afterListLiteral(list);
     }
     

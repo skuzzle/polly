@@ -69,7 +69,6 @@ public abstract class Function extends Native {
         final Declaration vd = new Declaration(func.getPosition(), this.name, func);
         this.setUnique(((MapType) func.getUnique()).getTarget());
         vd.setNative(true);
-        vd.setMustCopy(Type.containsTypeVar(this.getUnique()));
         return vd;
     }
     

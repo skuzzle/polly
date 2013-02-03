@@ -41,7 +41,6 @@ import de.skuzzle.polly.parsing.ast.lang.operators.UnaryBooleanArithmetic;
 import de.skuzzle.polly.parsing.ast.lang.operators.UnaryList;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Unparser;
-import de.skuzzle.polly.tools.streams.CopyTool;
 import de.skuzzle.polly.tools.strings.StringUtils;
 
 
@@ -639,9 +638,6 @@ public class Namespace {
             for (Declaration decl : decls) {
                 
                 if (Type.tryUnify(signature, decl.getType())) {
-                    if (decl.mustCopy()) {
-                        decl = CopyTool.copyOf(decl);
-                    }
                     name.setDeclaration(decl);
                     return decl;
                 }
@@ -685,13 +681,7 @@ ignore:     for (Declaration decl : decls) {
                             continue ignore;
                         }
                     }
-                    if (decl.mustCopy()) {
-                        decl = CopyTool.copyOf(decl);
-                    }
-                    final Type fresh = decl.isParameter() 
-                        ? decl.getType() 
-                        : decl.getType().subst(Substitution.fresh());
-                        
+                    final Type fresh = decl.getType().subst(Substitution.fresh());
                     result.add(fresh);
                     name.addDeclaration(decl);
                     decl.onLookup(access);

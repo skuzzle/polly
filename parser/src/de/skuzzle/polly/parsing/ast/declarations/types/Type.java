@@ -1,10 +1,10 @@
 package de.skuzzle.polly.parsing.ast.declarations.types;
 
-import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
@@ -77,19 +77,28 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
     
     /**
      * Tries to resolve a primitive type with the given name. If no such type exists, a
-     * type variable with the given name is returned. 
+     * type variable with the given name is returned (only if polymorph declarations are
+     * allowed). 
      * 
      * @param name Name of the type to resolve.
+     * @param allowPolymorph Whether polymorphic declarations are allowed.
      * @return The resolved type.
+     * @throws ParseException If polymorphic declarations are not allowed and the given
+     *          name does not denote a known type.
      */
-    public final static Type resolve(ResolvableIdentifier name) {
+    public final static Type resolve(ResolvableIdentifier name, boolean allowPolymorph) 
+            throws ParseException {
         Type t = primitives.get(name.getId());
-        if (t == null) {
+        if (t == null && allowPolymorph) {
             t = typeVars.get(name.getId());
             if (t == null) {
                 t = new TypeVar(name);
                 typeVars.put(name.getId(), t);
             }
+        } else if (!allowPolymorph) {
+            throw new ParseException(
+                "Typ erwartet (Polymorphe Funktionen sind deaktiviert)", 
+                name.getPosition());
         }
         return t;
     }
@@ -270,15 +279,5 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
     public boolean actualEquals(Equatable o) {
         // TODO HACK XXX FIXME: implement equals 
         return o == this;
-    }
-    
-    
-    
-    public Object readResolve() throws ObjectStreamException {
-        if (this.isPrimitve()) {
-            // HACK to maintain unique instances of primitive types though serialization
-            return resolve(new ResolvableIdentifier(this.getName()));
-        }
-        return this;
     }
 }

@@ -21,6 +21,7 @@ import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Delete;
+import de.skuzzle.polly.parsing.ast.expressions.Empty;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
@@ -110,9 +111,18 @@ import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
  */
 public class ExpInputParser {
     
-    
+    /**
+     * Whether escaping of tokens is enabled.
+     */
     public final static boolean ESCAPABLE = true;
     
+    
+    
+    /** 
+     * Whether user defined polymorphic functions are allowed. This is set to false
+     * because type checking is currently not able to handle this.
+     */
+    public final static boolean ALLOW_POLYMORPH_DECLARATIONS = false;
     
 
     private final PrecedenceTable operators;
@@ -968,7 +978,8 @@ public class ExpInputParser {
         final Type type = this.parseType();
         final Identifier name = this.expectIdentifier();
         
-        return new Declaration(this.scanner.spanFrom(la), name, type);
+        return new Declaration(this.scanner.spanFrom(la), name, 
+            new Empty(type, this.scanner.spanFrom(la)));
     }
     
     
@@ -1017,10 +1028,13 @@ public class ExpInputParser {
             final Token la2 = this.scanner.lookAhead();
             
             if (la2.matches(TokenType.IDENTIFIER)) {
-                return Type.resolve(id);
-            } else {
+                return Type.resolve(id, ALLOW_POLYMORPH_DECLARATIONS);
+            } else if (ALLOW_POLYMORPH_DECLARATIONS) {
                 this.scanner.pushBackFirst(la);
                 return Type.newTypeVar();
+            } else {
+                throw new ParseException("Typ erwartet (Polymorphe Funktionen sind deaktiviert)", 
+                    la.getPosition());
             }
         } else {
             throw new ParseException("Typ erwartet", la.getPosition());
