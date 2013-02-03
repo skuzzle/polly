@@ -16,7 +16,7 @@ public class InfoCommand extends Command {
 		super(polly, "info");
 		this.createSignature("Gibt Informationen über den angegebenen Befehl aus", 
 		    MyPlugin.INFO_PERMISSION,
-            new Parameter("Befehl", Types.COMMAND));
+            new Parameter("Befehl", Types.STRING));
 		this.createSignature("Gibt Informationen über den angegebenen Benutzer aus.", 
 		    MyPlugin.INFO_PERMISSION,
             new Parameter("User", Types.USER));
