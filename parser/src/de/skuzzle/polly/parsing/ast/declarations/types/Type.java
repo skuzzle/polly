@@ -2,12 +2,8 @@ package de.skuzzle.polly.parsing.ast.declarations.types;
 
 import java.io.ObjectStreamException;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Identifier;
@@ -155,6 +151,14 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
      */
     public final static TypeVar newTypeVar(String name) {
         return newTypeVar(new Identifier(name));
+    }
+    
+    
+    
+    private final static TypeUnifier unifier = new TypeUnifier();
+    
+    public final static boolean tryUnify(Type left, Type right) {
+        return unifier.tryUnify(left, right);
     }
     
     

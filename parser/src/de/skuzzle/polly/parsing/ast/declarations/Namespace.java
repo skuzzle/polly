@@ -16,6 +16,7 @@ import java.util.Set;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
+import de.skuzzle.polly.parsing.ast.declarations.types.Substitution;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.declarations.types.TypeUnifier;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
@@ -99,9 +100,9 @@ public class Namespace {
         
         
         @Override
-        public synchronized void declare(Declaration decl, TypeUnifier unifier) 
+        public synchronized void declare(Declaration decl) 
                 throws ASTTraversalException {
-            super.declare(decl, unifier);
+            super.declare(decl);
             if (decl.isPublic() || decl.isTemp() || decl.isNative()) {
                 return;
             }
@@ -508,30 +509,17 @@ public class Namespace {
     public Map<String, List<Declaration>> getDeclarations() {
         return this.decls;
     }
-    
-    
-    /**
-     * Internal declare method for public declarations.
-     * 
-     * @param decl Declaration to add.
-     * @throws ASTTraversalException Should not happen here
-     */
-    private void declare(Declaration decl) throws ASTTraversalException {
-        this.declare(decl, new TypeUnifier());
-    }
-    
+
     
     
     /**
      * Declares a new variable in this namespace.
      * 
      * @param decl The function to declare.
-     * @param unifier Current unification context.
      * @throws ASTTraversalException If a function with the same name and signature
      *          already exists in this namespace.
      */
-    public void declare(Declaration decl, TypeUnifier unifier) 
-            throws ASTTraversalException {
+    public void declare(Declaration decl) throws ASTTraversalException {
         if (decl.getType() == Type.UNKNOWN) {
             throw new IllegalStateException(
                 "cannot declare variable with unresolved type: " + decl);
@@ -554,7 +542,7 @@ public class Namespace {
             // * existing is a function and new is a variable
             // * exising is a variable and 
             
-            if (unifier.canUnify(existing.getType(), decl.getType(), false)) {
+            if (Type.tryUnify(existing.getType(), decl.getType())) {
                 if (!this.local) {
                     if (existing.isNative()) {
                         throw new ASTTraversalException(decl.getPosition(), 
@@ -650,7 +638,7 @@ public class Namespace {
             }
             for (Declaration decl : decls) {
                 
-                if (unifier.canUnify(signature, decl.getType(), false)) {
+                if (Type.tryUnify(signature, decl.getType())) {
                     if (decl.mustCopy()) {
                         decl = CopyTool.copyOf(decl);
                     }
@@ -693,7 +681,7 @@ ignore:     for (Declaration decl : decls) {
                     // ignored. That will have the effect that declarations on lower 
                     // levels override those on a higher level.
                     for (final Type alreadyFound : result) {
-                        if (unifier.canUnify(alreadyFound, decl.getType(), false)) {
+                        if (Type.tryUnify(alreadyFound, decl.getType())) {
                             // continue with next declaration and ignore this one
                             continue ignore;
                         }
@@ -703,7 +691,7 @@ ignore:     for (Declaration decl : decls) {
                     }
                     final Type fresh = decl.isParameter() 
                         ? decl.getType() 
-                        : unifier.fresh(decl.getType());
+                        : decl.getType().subst(Substitution.fresh());
                         
                     result.add(fresh);
                     name.addDeclaration(decl);

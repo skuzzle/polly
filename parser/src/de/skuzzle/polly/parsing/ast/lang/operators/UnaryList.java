@@ -5,9 +5,8 @@ import java.util.Collections;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
-import de.skuzzle.polly.parsing.ast.declarations.types.ListTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.ListType;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
-import de.skuzzle.polly.parsing.ast.declarations.types.TypeUnifier;
 import de.skuzzle.polly.parsing.ast.declarations.types.TypeVar;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
@@ -26,7 +25,7 @@ public class UnaryList extends UnaryOperator<ListLiteral> {
     public UnaryList(OpType op) {
         super(op);
         final TypeVar a = Type.newTypeVar("A");
-        this.initTypes(new ListTypeConstructor(a), new ListTypeConstructor(a));
+        this.initTypes(new ListType(a), new ListType(a));
     }
 
     
@@ -41,7 +40,7 @@ public class UnaryList extends UnaryOperator<ListLiteral> {
                 new ArrayList<Expression>(operand.getContent());
             final ListLiteral result = new ListLiteral(resultPos, tmp);
             Collections.reverse(tmp);
-            result.addTypes(operand.getTypes(), new TypeUnifier());
+            result.addTypes(operand.getTypes());
             result.setUnique(operand.getUnique());
             stack.push(result);
             break;

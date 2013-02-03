@@ -5,9 +5,8 @@ import java.util.List;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
-import de.skuzzle.polly.parsing.ast.declarations.types.ListTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.ListType;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
-import de.skuzzle.polly.parsing.ast.declarations.types.TypeUnifier;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
@@ -72,8 +71,8 @@ public class TernaryDotDot extends
             start += Math.abs(s);
         }
         final ListLiteral ll = new ListLiteral(resultPos, content);
-        ll.addType(ll.getUnique(), new TypeUnifier());
-        ll.setUnique(new ListTypeConstructor(Type.NUM));
+        ll.addType(ll.getUnique());
+        ll.setUnique(new ListType(Type.NUM));
         return ll;
     }
 
@@ -81,7 +80,7 @@ public class TernaryDotDot extends
     
     public TernaryDotDot() {
         super(OpType.DOTDOT);
-        this.initTypes(new ListTypeConstructor(Type.NUM), Type.NUM, Type.NUM, Type.NUM);
+        this.initTypes(new ListType(Type.NUM), Type.NUM, Type.NUM, Type.NUM);
     }
 
     

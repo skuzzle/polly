@@ -6,8 +6,8 @@ import java.util.List;
 
 import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
-import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
-import de.skuzzle.polly.parsing.ast.declarations.types.ProductTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.MapType;
+import de.skuzzle.polly.parsing.ast.declarations.types.ProductType;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
@@ -73,7 +73,7 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         
         this.applyType(func, func);
         
-        final MapTypeConstructor mtc = (MapTypeConstructor) func.getUnique();
+        final MapType mtc = (MapType) func.getUnique();
         func.getBody().setUnique(mtc.getTarget());
         func.getBody().visit(this);
         
@@ -176,8 +176,8 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         final Collection<Type> matched = new ArrayList<Type>();
         
         for (final Type s : call.getRhs().getTypes()) {
-            final MapTypeConstructor tmp = new MapTypeConstructor(
-                (ProductTypeConstructor) s, t);
+            final MapType tmp = new MapType(
+                (ProductType) s, t);
             
             for (final Type lhsType : call.getLhs().getTypes()) {
                 if (this.unifier.unify(lhsType, tmp)) {
@@ -195,7 +195,7 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
             this.ambiguousCall(call, matched);
         }
 
-        final MapTypeConstructor mtc = (MapTypeConstructor) matched.iterator().next();
+        final MapType mtc = (MapType) matched.iterator().next();
         
         call.getRhs().setUnique(mtc.getSource());
         call.getLhs().setUnique(mtc);

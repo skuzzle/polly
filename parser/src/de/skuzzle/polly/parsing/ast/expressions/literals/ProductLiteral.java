@@ -5,9 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import de.skuzzle.polly.parsing.Position;
-import de.skuzzle.polly.parsing.ast.declarations.types.ProductTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.ProductType;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
-import de.skuzzle.polly.parsing.ast.declarations.types.TypeUnifier;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Transformation;
@@ -27,11 +26,11 @@ public class ProductLiteral extends ListLiteral {
     
     @Override
     public void setUnique(Type unique) {
-        if (!(unique instanceof ProductTypeConstructor)) {
+        if (!(unique instanceof ProductType)) {
             throw new IllegalArgumentException("no product type");
         }
         super.setUnique(unique);
-        final ProductTypeConstructor ptc = (ProductTypeConstructor) unique;
+        final ProductType ptc = (ProductType) unique;
         final Iterator<Type> typeIt = ptc.getTypes().iterator();
         for (final Expression exp : this.getContent()) {
             exp.setUnique(typeIt.next());
@@ -41,26 +40,27 @@ public class ProductLiteral extends ListLiteral {
     
     
     @Override
-    public void addType(Type type, TypeUnifier unifier) {
-        if (!(type instanceof ProductTypeConstructor)) {
+    public boolean addType(Type type) {
+        if (!(type instanceof ProductType)) {
             throw new IllegalArgumentException("no product type");
         }
-        super.addType(type, unifier);
-        final ProductTypeConstructor ptc = (ProductTypeConstructor) type;
+        super.addType(type);
+        final ProductType ptc = (ProductType) type;
         final Iterator<Type> typeIt = ptc.getTypes().iterator();
         for (final Expression exp : this.getContent()) {
-            exp.addType(typeIt.next(), unifier);
+            exp.addType(typeIt.next());
         }
+        return true;
     }
     
     
     
     @Override
-    public void setTypes(Collection<Type> types, TypeUnifier unifier) {
+    public void setTypes(Collection<Type> types) {
         for (final Expression exp : this.getContent()) {
             exp.getTypes().clear();
         }
-        super.setTypes(types, unifier);
+        super.setTypes(types);
     }
     
     

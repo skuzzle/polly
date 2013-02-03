@@ -7,10 +7,9 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
-import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
-import de.skuzzle.polly.parsing.ast.declarations.types.ProductTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.MapType;
+import de.skuzzle.polly.parsing.ast.declarations.types.ProductType;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
-import de.skuzzle.polly.parsing.ast.declarations.types.TypeUnifier;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
@@ -54,7 +53,7 @@ public abstract class TernaryOperator<FIRST extends Literal, SECOND extends Lite
      * @param third Type of the third operand.
      */
     protected final void initTypes(Type resulType, Type first, Type second, Type third) {
-        this.addType(resulType, new TypeUnifier());
+        this.addType(resulType);
         this.setUnique(resulType);
         this.first = first;
         this.second = second;
@@ -74,7 +73,7 @@ public abstract class TernaryOperator<FIRST extends Literal, SECOND extends Lite
         
         final FunctionLiteral func = new FunctionLiteral(Position.NONE, p, this);
         func.setUnique(
-            new MapTypeConstructor(new ProductTypeConstructor(
+            new MapType(new ProductType(
                 this.first, 
                 this.second,
                 this.third), this.getUnique()));

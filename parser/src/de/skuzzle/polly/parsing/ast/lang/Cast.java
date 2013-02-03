@@ -7,8 +7,8 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
-import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
-import de.skuzzle.polly.parsing.ast.declarations.types.ProductTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.MapType;
+import de.skuzzle.polly.parsing.ast.declarations.types.ProductType;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
@@ -69,8 +69,8 @@ public class Cast extends Operator {
             this.typeToParameter(this.operandType, PARAM_NAME));
         
         final FunctionLiteral func = new FunctionLiteral(Position.NONE, p, this);
-        func.setUnique(new MapTypeConstructor(
-            new ProductTypeConstructor(this.operandType), this.getUnique()));
+        func.setUnique(new MapType(
+            new ProductType(this.operandType), this.getUnique()));
         return func;
     }
     

@@ -11,17 +11,17 @@ public interface TypeVisitor {
     public void afterPrimitive(Type type);
     public void visitPrimitive(Type type);
     
-    public void beforeProduct(ProductTypeConstructor p);
-    public void afterProduct(ProductTypeConstructor p);
-    public void visitProduct(ProductTypeConstructor p);
+    public void beforeProduct(ProductType p);
+    public void afterProduct(ProductType p);
+    public void visitProduct(ProductType p);
     
-    public void beforeList(ListTypeConstructor l);
-    public void afterList(ListTypeConstructor l);
-    public void visitList(ListTypeConstructor l);
+    public void beforeList(ListType l);
+    public void afterList(ListType l);
+    public void visitList(ListType l);
     
-    public void beforeMap(MapTypeConstructor m);
-    public void afterMap(MapTypeConstructor m);
-    public void visitMap(MapTypeConstructor m);
+    public void beforeMap(MapType m);
+    public void afterMap(MapType m);
+    public void visitMap(MapType m);
     
     public void beforeVar(TypeVar v);
     public void afterVar(TypeVar v);

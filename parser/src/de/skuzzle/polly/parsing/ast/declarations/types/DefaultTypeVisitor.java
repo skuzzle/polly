@@ -50,13 +50,13 @@ public class DefaultTypeVisitor implements TypeVisitor {
     
 
     @Override
-    public void beforeProduct(ProductTypeConstructor p) {}
+    public void beforeProduct(ProductType p) {}
 
     @Override
-    public void afterProduct(ProductTypeConstructor p) {}
+    public void afterProduct(ProductType p) {}
 
     @Override
-    public void visitProduct(ProductTypeConstructor p) {
+    public void visitProduct(ProductType p) {
         if (this.aborted) {
             return;
         }
@@ -87,13 +87,13 @@ public class DefaultTypeVisitor implements TypeVisitor {
     
     
     @Override
-    public void beforeList(ListTypeConstructor l) {}
+    public void beforeList(ListType l) {}
 
     @Override
-    public void afterList(ListTypeConstructor l) {}
+    public void afterList(ListType l) {}
 
     @Override
-    public void visitList(ListTypeConstructor l) {
+    public void visitList(ListType l) {
         if (this.aborted) {
             return;
         }
@@ -116,13 +116,13 @@ public class DefaultTypeVisitor implements TypeVisitor {
     
     
     @Override
-    public void beforeMap(MapTypeConstructor m) {}
+    public void beforeMap(MapType m) {}
 
     @Override
-    public void afterMap(MapTypeConstructor m) {}
+    public void afterMap(MapType m) {}
 
     @Override
-    public void visitMap(MapTypeConstructor m) {
+    public void visitMap(MapType m) {
         if (this.aborted) {
             return;
         }

@@ -4,7 +4,7 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
-import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.MapType;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Empty;
 import de.skuzzle.polly.parsing.ast.expressions.Native;
@@ -67,7 +67,7 @@ public abstract class Function extends Native {
     public Declaration createDeclaration() {
         final FunctionLiteral func = this.createFunction();
         final Declaration vd = new Declaration(func.getPosition(), this.name, func);
-        this.setUnique(((MapTypeConstructor) func.getUnique()).getTarget());
+        this.setUnique(((MapType) func.getUnique()).getTarget());
         vd.setNative(true);
         vd.setMustCopy(Type.containsTypeVar(this.getUnique()));
         return vd;

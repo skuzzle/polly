@@ -7,8 +7,6 @@ import java.util.List;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
-import de.skuzzle.polly.parsing.ast.declarations.types.TypeResolvedCallBack;
-import de.skuzzle.polly.parsing.ast.declarations.types.TypeUnifier;
 import de.skuzzle.polly.tools.Equatable;
 
 /**
@@ -22,7 +20,6 @@ public abstract class Expression extends Node {
     
     private Type unique;
     private final List<Type> types;
-    private TypeResolvedCallBack callback;
     
     
     
@@ -44,18 +41,6 @@ public abstract class Expression extends Node {
     
     
     /**
-     * Sets a callback interface which will be notified whenever a possible type for this
-     * expression has been resolved.
-     * 
-     * @param trcb The callback to set.
-     */
-    public void setTypeResolvedCallBack(TypeResolvedCallBack trcb) {
-        this.callback = trcb;
-    }
-    
-    
-    
-    /**
      * Creates a new Expression with given {@link Position} and unknown type.
      * 
      * @param position Position within the input String of this expression.
@@ -68,8 +53,8 @@ public abstract class Expression extends Node {
     
     /**
      * Gets a list of all possible types for this expression. You should never modify the
-     * returned list directly. Use {@link #addType(Type, TypeUnifier)} and 
-     * {@link #addTypes(Collection, TypeUnifier)} to add possible types to this list.
+     * returned list directly. Use {@link #addType(Type)} and 
+     * {@link #addTypes(Collection)} to add possible types to this list.
      * 
      * @return List of possible types of this expression.
      */
@@ -84,18 +69,15 @@ public abstract class Expression extends Node {
      * type is already contained in the type list, the latter call will be ignored.
      * 
      * @param type Possible type of this expression.
-     * @param unifier Current unification context.
+     * @return Whether the type has been added.
      */
-    public void addType(Type type, TypeUnifier unifier) {
+    public boolean addType(Type type) {
         for (final Type t : this.types) {
-            if (unifier.canUnify(t, type, false)) {
-                return;
+            if (Type.tryUnify(type, t)) {
+                return false;
             }
         }
-        if (this.callback != null) {
-            this.callback.typeResolved(type, unifier);
-        }
-        this.types.add(type);
+        return this.types.add(type);
     }
     
     
@@ -105,22 +87,21 @@ public abstract class Expression extends Node {
      * expression. Types for which an instance already exists in this expression's type 
      * list, will be ignored.
      * 
-     * <p>This method simply calls {@link #addType(Type, TypeUnifier)} for each type in 
+     * <p>This method simply calls {@link #addType(Type)} for each type in 
      * the given collection.</p>
      * @param types Types to add as possible type for this expression.
-     * @param unifier Current unification context.
      */
-    public void addTypes(Collection<? extends Type> types, TypeUnifier unifier) {
+    public void addTypes(Collection<? extends Type> types) {
         for (final Type type : types) {
-            this.addType(type, unifier);
+            this.addType(type);
         }
     }
     
     
     
-    public void setTypes(Collection<Type> types, TypeUnifier unifier) {
+    public void setTypes(Collection<Type> types) {
         this.types.clear();
-        this.addTypes(types, unifier);
+        this.addTypes(types);
     }
 
     

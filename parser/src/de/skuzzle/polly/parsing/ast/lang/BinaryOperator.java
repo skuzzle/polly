@@ -7,10 +7,9 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
-import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
-import de.skuzzle.polly.parsing.ast.declarations.types.ProductTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.MapType;
+import de.skuzzle.polly.parsing.ast.declarations.types.ProductType;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
-import de.skuzzle.polly.parsing.ast.declarations.types.TypeUnifier;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
@@ -62,7 +61,7 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
      * @param right Type of the right operand.
      */
     protected final void initTypes(Type resultType, Type left, Type right) {
-        this.addType(resultType, new TypeUnifier());
+        this.addType(resultType);
         this.setUnique(resultType);
         this.left = left;
         this.right = right;
@@ -78,9 +77,9 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
         });
         
         final FunctionLiteral func = new FunctionLiteral(Position.NONE, p, this);
-        final ProductTypeConstructor source = new ProductTypeConstructor(
+        final ProductType source = new ProductType(
             this.left, this.right);
-        func.setUnique(new MapTypeConstructor(source, this.getUnique()));
+        func.setUnique(new MapType(source, this.getUnique()));
         return func;
     }
     

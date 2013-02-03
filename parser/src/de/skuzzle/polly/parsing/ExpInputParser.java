@@ -13,9 +13,9 @@ import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
-import de.skuzzle.polly.parsing.ast.declarations.types.ListTypeConstructor;
-import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
-import de.skuzzle.polly.parsing.ast.declarations.types.ProductTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.ListType;
+import de.skuzzle.polly.parsing.ast.declarations.types.MapType;
+import de.skuzzle.polly.parsing.ast.declarations.types.ProductType;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
@@ -1003,13 +1003,13 @@ public class ExpInputParser {
             this.allowSingleWhiteSpace();
             
             this.expect(TokenType.CLOSEDBR);
-            return new MapTypeConstructor(new ProductTypeConstructor(signature), 
+            return new MapType(new ProductType(signature), 
                 resultType);
         } else if (this.scanner.match(TokenType.LIST)) {
             this.expect(TokenType.LT);
             final Type subType = this.parseType();
             this.expect(TokenType.GT);
-            return new ListTypeConstructor(subType);
+            return new ListType(subType);
         } else if (la.matches(TokenType.IDENTIFIER)) {
             final ResolvableIdentifier id = new ResolvableIdentifier(
                 this.expectIdentifier());

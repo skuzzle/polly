@@ -7,10 +7,9 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
-import de.skuzzle.polly.parsing.ast.declarations.types.MapTypeConstructor;
-import de.skuzzle.polly.parsing.ast.declarations.types.ProductTypeConstructor;
+import de.skuzzle.polly.parsing.ast.declarations.types.MapType;
+import de.skuzzle.polly.parsing.ast.declarations.types.ProductType;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
-import de.skuzzle.polly.parsing.ast.declarations.types.TypeUnifier;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
@@ -44,7 +43,7 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
      * @param operandType Type of the operand.
      */
     protected final void initTypes(Type resultType, Type operandType) {
-        this.addType(resultType, new TypeUnifier());
+        this.addType(resultType);
         this.setUnique(resultType);
         this.operandType = operandType;
     }
@@ -58,7 +57,7 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
         
         final FunctionLiteral func = new FunctionLiteral(Position.NONE, p, this);
         func.setUnique(
-            new MapTypeConstructor(new ProductTypeConstructor(this.operandType), 
+            new MapType(new ProductType(this.operandType), 
                 this.getUnique()));
         return func;
     }

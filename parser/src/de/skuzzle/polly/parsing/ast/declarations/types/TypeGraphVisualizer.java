@@ -24,7 +24,7 @@ public class TypeGraphVisualizer extends DefaultTypeVisitor {
     
     
     @Override
-    public void beforeList(ListTypeConstructor l) {
+    public void beforeList(ListType l) {
         this.dotBuilder.printNode(l, "List");
     }
     
@@ -38,14 +38,14 @@ public class TypeGraphVisualizer extends DefaultTypeVisitor {
     
     
     @Override
-    public void beforeMap(MapTypeConstructor m) {
+    public void beforeMap(MapType m) {
         this.dotBuilder.printNode(m, "Map");
     }
     
     
     
     @Override
-    public void beforeProduct(ProductTypeConstructor p) {
+    public void beforeProduct(ProductType p) {
         this.dotBuilder.printNode(p, "Product");
     }
     
@@ -59,7 +59,7 @@ public class TypeGraphVisualizer extends DefaultTypeVisitor {
     
     
     @Override
-    public void afterList(ListTypeConstructor l) {
+    public void afterList(ListType l) {
         this.dotBuilder.pop(l);
     }
     
@@ -73,14 +73,14 @@ public class TypeGraphVisualizer extends DefaultTypeVisitor {
     
     
     @Override
-    public void afterMap(MapTypeConstructor m) {
+    public void afterMap(MapType m) {
         this.dotBuilder.pop(m);
     }
     
     
     
     @Override
-    public void afterProduct(ProductTypeConstructor p) {
+    public void afterProduct(ProductType p) {
         this.dotBuilder.pop(p);
     }
     
