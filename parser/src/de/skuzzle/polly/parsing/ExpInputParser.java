@@ -30,6 +30,7 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.BooleanLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ChannelLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.DateLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
+import de.skuzzle.polly.parsing.ast.expressions.literals.HelpLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
@@ -80,6 +81,7 @@ import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
  *                | NUMBER                                     // number literal
  *                | DATETIME                                   // date liter
  *                | TIMESPAN                                   // timespan literal
+ *                | '?'                                        // HELP literal
  *            
  *   exprList    -> (relation (',' relation)*)?
  *   parameters  -> (parameter (',' parameter)*)?
@@ -743,6 +745,7 @@ public class ExpInputParser {
      *          | NUMBER                                // number literal
      *          | DATETIME                              // date literal
      *          | TIMESPAN                              // timespan literal
+     *          | '?'                                   // HELP literal
      * </pre>
      *  
      * @return The parsed expression.
@@ -883,6 +886,9 @@ public class ExpInputParser {
         case TIMESPAN:
             this.scanner.consume();
             return new TimespanLiteral(la.getPosition(), (int)la.getLongValue());
+        case QUESTION:
+            this.scanner.consume();
+            return new HelpLiteral(la.getPosition());
         default:
             this.expect(TokenType.LITERAL);
         }

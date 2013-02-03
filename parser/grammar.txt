@@ -27,6 +27,7 @@ literal     -> ID                                         // VarAccess
              | NUMBER                                     // number literal
              | DATETIME                                   // date literal
              | TIMESPAN                                   // timespan literal
+             | '?'                                        // HELP literal
 
 exprList    -> (relation (',' relation)*)?
 parameters  -> (parameter (',' parameter)*)?
