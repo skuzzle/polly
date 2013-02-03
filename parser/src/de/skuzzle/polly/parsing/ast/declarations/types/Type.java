@@ -95,7 +95,7 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
                 t = new TypeVar(name);
                 typeVars.put(name.getId(), t);
             }
-        } else if (!allowPolymorph) {
+        } else if (t == null && !allowPolymorph) {
             throw new ParseException(
                 "Typ erwartet (Polymorphe Funktionen sind deaktiviert)", 
                 name.getPosition());
