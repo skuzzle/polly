@@ -8,7 +8,7 @@ import de.skuzzle.polly.parsing.ast.Identifier;
  * 
  * @author Simon Taddiken
  */
-public class ListTypeConstructor extends Type {
+public class ListType extends Type {
     
     private static final long serialVersionUID = 1L;
     
@@ -20,7 +20,7 @@ public class ListTypeConstructor extends Type {
      * 
      * @param subType Sub type of this list type.
      */
-    public ListTypeConstructor(Type subType) {
+    public ListType(Type subType) {
         super(new Identifier("list<" + subType.getName() +">"), true, false);
         this.subType = subType;
     }
@@ -29,7 +29,7 @@ public class ListTypeConstructor extends Type {
     
     @Override
     public Type subst(Substitution s) {
-        return new ListTypeConstructor(this.subType.subst(s));
+        return new ListType(this.subType.subst(s));
     }
     
     

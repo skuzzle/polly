@@ -8,13 +8,13 @@ import de.skuzzle.polly.parsing.ast.Identifier;
  * 
  * @author Simon Taddiken
  */
-public class MapTypeConstructor extends Type {
+public class MapType extends Type {
     
     private static final long serialVersionUID = 1L;
 
 
 
-    private final static Identifier typeName(ProductTypeConstructor source, Type target) {
+    private final static Identifier typeName(Type source, Type target) {
         final StringBuilder b = new StringBuilder();
         b.append("(");
         b.append(source.toString());
@@ -26,7 +26,7 @@ public class MapTypeConstructor extends Type {
     }
 
     
-    private ProductTypeConstructor source;
+    private Type source;
     private Type target;
     
     
@@ -37,7 +37,7 @@ public class MapTypeConstructor extends Type {
      * @param source Sorce types.
      * @param target Target type.
      */
-    public MapTypeConstructor(ProductTypeConstructor source, Type target) {
+    public MapType(Type source, Type target) {
         super(typeName(source, target), false, false);
         this.source = source;
         this.target = target;
@@ -47,10 +47,9 @@ public class MapTypeConstructor extends Type {
     
     @Override
     public Type subst(Substitution s) {
-        final ProductTypeConstructor source = 
-            (ProductTypeConstructor) this.source.subst(s);
+        final Type source = this.source.subst(s);
         final Type target = this.target.subst(s);
-        return new MapTypeConstructor(source, target);
+        return new MapType(source, target);
     }
     
     
@@ -60,7 +59,7 @@ public class MapTypeConstructor extends Type {
      * 
      * @return the source.
      */
-    public final ProductTypeConstructor getSource() {
+    public final Type getSource() {
         return this.source;
     }
     
