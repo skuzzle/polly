@@ -69,6 +69,12 @@ public class Types {
      */
     public final static HelpType HELP = new HelpType();
     
+    /**
+     * Valueless type constant for the type Any
+     * @since 0.9 
+     */
+    public final static AnyType ANY = new AnyType();
+    
     
     
     private Types() {};
@@ -630,10 +636,12 @@ public class Types {
 		 * Creates a new ListType which holds the given values. The new ListTypes
 		 * subType is determined by the first element of the List of values.
 		 * 
+		 * If the values-list is empty, the subType of this ListType is {@link AnyType}.
 		 * @param values The elements of this ListType.
 		 */
 		public ListType(List<Types> values) {
 			this.elements = values;
+			this.subtype = new AnyType();
 			if (!this.elements.isEmpty()) {
 				this.subtype = this.elements.get(0);
 			}
@@ -732,6 +740,34 @@ public class Types {
 	
 	
 	/**
+	 * This class represents the Any type which has no value and is compatible to all
+	 * other types.
+	 * 
+	 * @author Simon
+     * @since zero day
+     * @version RC 1.0
+	 */
+	public static class AnyType extends Types {
+	    /**
+	     * Creates a new AnyType with no value. Mind: value will remain <code>null</code>.
+	     */
+	    protected AnyType() {}
+
+		@Override
+		public String toString() {
+			return "Any";
+		}
+		
+		
+		
+		public String getSample() {
+		    return "5.8";
+		};
+	}
+	
+	
+	
+	/**
 	 * This class represents the help parameter type "?"
 	 * 
 	 * @author Simon
@@ -768,7 +804,8 @@ public class Types {
 	
 	
 	/**
-	 * Checks if two types are compatible. 
+	 * Checks if two types are compatible. The {@link AnyType} is compatible with
+	 * every other type.
 	 * Two types are considered compatible if this type is assignable from the
 	 * other type (as determined by {@link Class#isAssignableFrom(Class)}).
 	 * 
@@ -779,6 +816,8 @@ public class Types {
 	public boolean check(Types other) {
 	    if (other == this) {
 	        return true;
+	    } else if (other instanceof AnyType || this instanceof AnyType) {
+			return true;
 		}
 		return this.getClass().isAssignableFrom(other.getClass());
 	}

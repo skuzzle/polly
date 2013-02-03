@@ -40,7 +40,7 @@
     <property name="includeJars" value="
         polly.tools.jar
         polly.parser.jar
-        polly.process.jar
+        de.skuzzle.polly.process.jar
     "/>
     
     <path id="buildpath">

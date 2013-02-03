@@ -24,6 +24,13 @@ public class ListLiteral extends Literal {
     
     
     
+    public ListLiteral(Position position, List<Expression> content, Type subType) {
+        this(position, content);
+        this.setUnique(subType.listOf());
+    }
+    
+    
+    
     public List<Expression> getContent() {
         return this.content;
     }

@@ -28,6 +28,7 @@ import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ChannelLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.DateLiteral;
@@ -325,9 +326,9 @@ public class CommandManagerImpl implements CommandManager {
         d.declare(new Declaration(Position.NONE, new Identifier("here"), 
             new ChannelLiteral(Position.NONE, channel)));
         d.declare(new Declaration(Position.NONE, new Identifier("all"), 
-            new ListLiteral(Position.NONE, channels)));
+            new ListLiteral(Position.NONE, channels, Type.CHANNEL)));
         d.declare(new Declaration(Position.NONE, new Identifier("each"), 
-            new ListLiteral(Position.NONE, users)));
+            new ListLiteral(Position.NONE, users, Type.USER)));
         
         int m = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
         d.declare(new Declaration(Position.NONE, new Identifier("morgen"), 
