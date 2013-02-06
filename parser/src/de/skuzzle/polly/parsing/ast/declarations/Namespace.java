@@ -21,6 +21,7 @@ import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
+import de.skuzzle.polly.parsing.ast.expressions.literals.StringLiteral;
 import de.skuzzle.polly.parsing.ast.lang.Cast;
 import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
 import de.skuzzle.polly.parsing.ast.lang.functions.FoldLeft;
@@ -64,10 +65,19 @@ import de.skuzzle.polly.tools.strings.StringUtils;
 public class Namespace {
     
     /** 
+     * Whether usage of unknown variables raises an error. If false, a String with the
+     * unknown identifier is created upon variable lookup.
+     */
+    public final static boolean REPORT_UNKNOWN_VARIABLES = false;
+    
+    
+    /** 
      * Percentage of word length that will be used as levenshtein threshold in
      * {@link #findSimilar(String, Namespace)}.
      */
     private final static float LEVENSHTEIN_THRESHOLD_PERCENT = 0.6f;
+    
+    
     
     public static File declarationFolder;
     public static synchronized void setDeclarationFolder(File declarationFolder) {
@@ -608,8 +618,13 @@ public class Namespace {
             return decls.get(0);
         }
         
-        throw new ASTTraversalException(name.getPosition(), 
-            "Unbekannt: " + name.getId());
+        if (REPORT_UNKNOWN_VARIABLES) {
+            throw new ASTTraversalException(name.getPosition(), 
+                    "Unbekannt: " + name.getId());
+        } else {
+            return new Declaration(name.getPosition(), name, 
+                new StringLiteral(name.getPosition(), name.getId()));
+        }
     }
     
     
@@ -639,7 +654,12 @@ public class Namespace {
                 }
             }
         }
-        return null;
+        if (REPORT_UNKNOWN_VARIABLES) {
+            return null;
+        } else {
+            return new Declaration(name.getPosition(), name, 
+                new StringLiteral(name.getPosition(), name.getId()));
+        }
     }
     
     
@@ -688,8 +708,12 @@ ignore:     for (Declaration decl : decls) {
         if (result.isEmpty()) {
             final List<String> similar = findSimilar(name.getId(), this);
             
-            throw new DeclarationException(name.getPosition(), 
-                "Unbekannte Variable: '" + name + "'", similar);
+            if (REPORT_UNKNOWN_VARIABLES) {
+                throw new DeclarationException(name.getPosition(), 
+                        "Unbekannte Variable: '" + name + "'", similar);
+            } else {
+                return Collections.singleton(Type.STRING);
+            }
         }
         return result;
     }
