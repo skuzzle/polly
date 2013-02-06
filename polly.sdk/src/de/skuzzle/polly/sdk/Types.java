@@ -76,7 +76,6 @@ public class Types {
     public final static AnyType ANY = new AnyType();
     
     
-    
     private Types() {};
     
     
@@ -173,36 +172,6 @@ public class Types {
 			}
 			return b.toString();
 		}
-	}
-	
-	
-	
-	public static class FractionType extends NumberType {
-	    
-	    private int numerator;
-	    private int denominator;
-	    private boolean isIllegal;
-	    
-	    public FractionType(int nominator, int denominator, double value, boolean illegal) {
-	        super(value);
-	        this.numerator = nominator;
-	        this.denominator = denominator;
-	        this.isIllegal = illegal;
-	    }
-	    
-	    
-	    
-	    @Override
-	    public String valueString(FormatManager formatter) {
-	        if (this.isIllegal) {
-	            return super.valueString(formatter);
-	        }
-	        if (denominator == 1) {
-	            return "" + this.numerator;
-	        } else {
-	            return "" + this.numerator + "/" + this.denominator; 
-	        }
-	    }
 	}
 	
 	
@@ -781,6 +750,19 @@ public class Types {
             return "?";
         }
         
+    }
+    
+    
+    
+    /**
+     * Placeholder class for probably to come function types which are already 
+     * supported by the parser.
+     * 
+     * @author Simon Taddiken
+     */
+    public static class FunctionType extends Types {
+        
+        public FunctionType() {}
     }
 	
     

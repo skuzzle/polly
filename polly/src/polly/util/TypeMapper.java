@@ -5,11 +5,13 @@ import java.util.List;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.types.ListType;
+import de.skuzzle.polly.parsing.ast.declarations.types.MapType;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.literals.BooleanLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ChannelLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.DateLiteral;
+import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.HelpLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
@@ -18,6 +20,7 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.StringLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.TimespanLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.UserLiteral;
 import de.skuzzle.polly.sdk.Types;
+import de.skuzzle.polly.sdk.Types.FunctionType;;
 
 /**
  * This class maps from parser literals and types to sdk types.
@@ -86,6 +89,8 @@ public class TypeMapper {
 		} else if (type instanceof ListType) {
 			ListType lt = (ListType) type;
 			return new Types.ListType(TypeMapper.typeToTypes(lt.getSubType()));
+		} else if (type instanceof MapType) {
+		    return new FunctionType();
 		}
 		
 		throw new IllegalArgumentException("Invalid type");
@@ -188,6 +193,8 @@ public class TypeMapper {
 				elements.add(TypeMapper.literalToTypes(lit));
 			}
 			return new Types.ListType(elements);
+		} else if (literal instanceof FunctionLiteral) {
+		    return new FunctionType();
 		}
 		
 		throw new IllegalArgumentException("Invalid type");
