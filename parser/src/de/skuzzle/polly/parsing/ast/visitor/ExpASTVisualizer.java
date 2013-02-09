@@ -3,6 +3,7 @@ package de.skuzzle.polly.parsing.ast.visitor;
 import java.io.PrintStream;
 
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
@@ -10,6 +11,7 @@ import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
+import de.skuzzle.polly.parsing.ast.expressions.Delete;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
@@ -306,5 +308,18 @@ public class ExpASTVisualizer extends DepthFirstVisitor {
         this.dotBuilder.printEdge(braced, braced.getExpression(), "");
         
         this.afterBraced(braced);
+    }
+    
+    
+    
+    @Override
+    public void visitDelete(Delete delete) throws ASTTraversalException {
+        this.beforeDelete(delete);
+        this.dotBuilder.printExpression("Delete", delete);
+        for (final Identifier id : delete.getIdentifiers()) {
+            this.dotBuilder.printNode(id, id.getId());
+            this.dotBuilder.printEdge(delete, id, "");
+        }
+        this.afterDelete(delete);
     }
 }
