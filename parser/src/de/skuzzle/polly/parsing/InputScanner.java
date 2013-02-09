@@ -72,7 +72,7 @@ public class InputScanner extends AbstractTokenStream {
     /**
      * Whether all consumed tokens are printed to the console
      */
-    public final static boolean DEBUG = true;
+    public final static boolean DEBUG = false;
     
     
 
