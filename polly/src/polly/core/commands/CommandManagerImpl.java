@@ -238,9 +238,11 @@ public class CommandManagerImpl implements CommandManager {
         try {
             Map<String, Types> constants = this.getCommandConstants(input);
             
-            Namespace ns = Namespace.forName(executor.getName());
-            this.createContext(channel, executor, ircManager, constants, ns);
-            root = this.parseMessage(input, ns);
+            final Namespace rootNs = Namespace.forName(executor.getName());
+            final Namespace workingNs = rootNs.enter(false);
+            
+            this.createContext(channel, executor, ircManager, constants, rootNs);
+            root = this.parseMessage(input, rootNs, workingNs);
         } catch (ParseException e) {
             // HACK: wrap exception into command exception, as ParseException is not 
             //       available in the sdk
@@ -285,7 +287,7 @@ public class CommandManagerImpl implements CommandManager {
 
 
 
-    private Root parseMessage(String message, Namespace namespace) 
+    private Root parseMessage(String message, Namespace rootNs, Namespace workingNs) 
         throws UnsupportedEncodingException, ASTTraversalException {
     
         Stopwatch watch = new MillisecondStopwatch();
@@ -294,7 +296,7 @@ public class CommandManagerImpl implements CommandManager {
         final Evaluator eval = new Evaluator(message.trim(), 
             this.encodingName);
 
-        eval.evaluate(namespace);
+        eval.evaluate(rootNs, workingNs);
 
         watch.stop();
         logger.trace("Parsing time: " + watch.getDifference() + "ms");

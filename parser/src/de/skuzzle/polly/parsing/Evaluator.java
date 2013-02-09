@@ -1,13 +1,13 @@
 package de.skuzzle.polly.parsing;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.DebugExecutionVisitor;
+import de.skuzzle.polly.parsing.ast.visitor.ExecutionVisitor;
 import de.skuzzle.polly.parsing.ast.visitor.ParentSetter;
 import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
@@ -26,50 +26,16 @@ import de.skuzzle.polly.parsing.ast.visitor.resolving.TypeResolver;
  */
 public class Evaluator {
     
-    // TEST:
-    public static void main(String[] args) throws IOException {
-        String testMe = ":foo map({1,2,\"3\"}, \\-)";
-        //testMe = ":foo if 3!=2 ? !{1,2,3} : {4,5,6}";
-        final Evaluator eval = new Evaluator(testMe, "ISO-8859-1");
-        File decls = new File("decls");
-        decls.mkdirs();
-        Namespace.setDeclarationFolder(decls);
-        
-        final Namespace ns = Namespace.forName("me");
-        
-        eval.evaluate(ns);
-        
-        if (eval.errorOccurred()) {
-            final ASTTraversalException e = eval.getLastError(); 
-            e.printStackTrace();
-            System.out.println(e.getMessage());
-            System.out.println(testMe);
-            System.out.println(e.getPosition().errorIndicatorString());
+    public final static boolean DEBUG_MODE = false;
+    
+    private final static ExecutionVisitor getExecutor(Namespace rootNs, 
+            Namespace workingNs) {
+        if (DEBUG_MODE) {
+            return new DebugExecutionVisitor(rootNs, workingNs);
         } else {
-            System.out.println(eval.getRoot());
-            System.out.println(eval.unparse());
-            System.out.println(ns.toString());
-        }
-        
-        String testMe2 = ":bloo map({1,2,3,4}, String)->a";
-        final Namespace other = Namespace.forName("other");
-        final Evaluator eval2 = new Evaluator(testMe2, "ISO-8859-1");
-        
-        eval2.evaluate(other);
-        
-        if (eval2.errorOccurred()) {
-            final ASTTraversalException e = eval2.getLastError(); 
-            e.printStackTrace();
-            System.out.println(e.getMessage());
-            System.out.println(testMe2);
-            System.out.println(e.getPosition().errorIndicatorString());
-        } else {
-            System.out.println(eval2.getRoot());
-            System.out.println(eval2.unparse());
+            return new ExecutionVisitor(rootNs, workingNs);
         }
     }
-    
-    
 
     private final String input;
     private final String encoding;
@@ -78,7 +44,10 @@ public class Evaluator {
     
     
     
-    public Evaluator(String input, String encoding) {
+    public Evaluator(String input, String encoding) throws UnsupportedEncodingException {
+        if (!Charset.isSupported(encoding)) {
+            throw new UnsupportedEncodingException(encoding);
+        }
         this.input = input;
         this.encoding = encoding;
     }
@@ -96,7 +65,16 @@ public class Evaluator {
     
     
     
-    public void evaluate(Namespace namespace) throws UnsupportedEncodingException {
+    /**
+     * Tries to evaluate the input that this instance was created with. Success of
+     * evaluation can be queried using {@link #errorOccurred()}. If an error occurred,
+     * the exception can be obtained using {@link #getLastError()}. If evaluation was
+     * successful, the result can be obtained using {@link #getRoot()}. 
+     * 
+     * @param rootNs The namespace to which ne declarations will be stored.
+     * @param workingNs The initial namespace to work with.
+     */
+    public void evaluate(Namespace rootNs, Namespace workingNs) {
         try {
             final ExpInputParser parser = new ExpInputParser(this.input, this.encoding);
             this.lastResult = parser.parse();
@@ -110,11 +88,13 @@ public class Evaluator {
             this.lastResult.visit(parentSetter);
             
             // resolve types
-            TypeResolver.resolveAST(this.lastResult, namespace);
+            TypeResolver.resolveAST(this.lastResult, rootNs);
             
-            final Visitor executor = new DebugExecutionVisitor(namespace);
+            final Visitor executor = getExecutor(rootNs, workingNs);
             this.lastResult.visit(executor);
             
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("This should not have happened", e);
         } catch (ASTTraversalException e) {
             this.lastError = e;
         }

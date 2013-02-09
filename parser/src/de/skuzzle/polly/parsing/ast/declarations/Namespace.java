@@ -117,7 +117,10 @@ public class Namespace {
             
             try {
                 this.store();
-            } catch (IOException ignore) {}
+            } catch (IOException ignore) {
+                throw new ASTTraversalException(decl.getPosition(), 
+                    "Deklaration konnte nicht gespeichert werden");
+            }
         }
         
         
@@ -259,7 +262,7 @@ public class Namespace {
      * This is the root namespace of all user namespaces. It contains all operator
      * declarations as well as public variable and function declarations made by users.
      */
-    private final static Namespace GLOBAL = new StorableNamespace("~global.decl", null);
+    private final static Namespace GLOBAL = new Namespace(null);
     static {
         try {
             
@@ -362,7 +365,7 @@ public class Namespace {
             GLOBAL.declare(new FoldLeft().createDeclaration());
             GLOBAL.declare(new de.skuzzle.polly.parsing.ast.lang.functions.Map().createDeclaration());
         } catch (ASTTraversalException e) {
-            e.printStackTrace();
+            throw new ExceptionInInitializerError(e);
         }
     }
     

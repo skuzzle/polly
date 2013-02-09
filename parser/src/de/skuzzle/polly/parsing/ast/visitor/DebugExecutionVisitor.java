@@ -15,8 +15,8 @@ public class DebugExecutionVisitor extends ExecutionVisitor {
     private int indent;
     
     
-    public DebugExecutionVisitor(Namespace namespace) {
-        super(namespace);
+    public DebugExecutionVisitor(Namespace rootNs, Namespace workingNs) {
+        super(rootNs, workingNs);
     }
     
     

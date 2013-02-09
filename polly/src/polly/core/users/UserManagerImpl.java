@@ -103,13 +103,15 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
         this.declarationCachePath = new File(declarationCachePath);
         this.constraints = new HashMap<String, AttributeConstraint>();
         try {
+            logger.info("Reading declarations...");
             if (!this.declarationCachePath.exists()) {
                 logger.warn("Declaration-cache directory does not exist. " +
                 		"Trying to create folder structure");
                 this.declarationCachePath.mkdirs();
             }
+            Namespace.setDeclarationFolder(this.declarationCachePath);
 			readDeclarations(this.declarationCachePath);
-			
+			logger.trace("done");
 		} catch (IOException e) {
 			logger.warn("No declarations restored", e);
 		}
@@ -123,7 +125,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
             try {
                 final String nsName = file.getName().substring(
                         0, file.getName().length() - 5);
-                Namespace ns = Namespace.forName(nsName);
+                final Namespace ns = Namespace.forName(nsName);
                 dr = new DeclarationReader(file, "ISO-8859-1", ns);
                 dr.readAll();
             } catch (IOException e) {

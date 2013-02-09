@@ -95,7 +95,7 @@ public class Main {
             final Evaluator eval = new Evaluator(":result \">\" " + cmd, "ISO-8859-1");
             
             try {
-                eval.evaluate(ns);
+                eval.evaluate(ns, ns);
             } catch (Exception ad) {
                 ad.printStackTrace();
             }

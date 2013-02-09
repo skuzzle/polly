@@ -14,6 +14,7 @@ import de.skuzzle.polly.parsing.ast.declarations.types.Substitution;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
+import de.skuzzle.polly.parsing.ast.expressions.Delete;
 import de.skuzzle.polly.parsing.ast.expressions.Empty;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
@@ -234,5 +235,13 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         access.addTypes(access.getRhs().getTypes());
         
         this.afterAccess(access);
+    }
+    
+    
+    
+    @Override
+    public void beforeDelete(Delete delete) throws ASTTraversalException {
+        delete.addType(Type.NUM);
+        delete.setUnique(Type.NUM);
     }
 }

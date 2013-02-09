@@ -151,6 +151,7 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
     
     @Override
     public void afterVarAccess(VarAccess access) throws ASTTraversalException {
+        this.applyType(access, access);
     }
     
     

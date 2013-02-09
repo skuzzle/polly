@@ -33,10 +33,10 @@ public class ExecutionVisitor extends DepthFirstVisitor {
     private Namespace nspace;
     private final Namespace rootNs;
     
-    public ExecutionVisitor(Namespace namespace) {
+    public ExecutionVisitor(Namespace rootNs, Namespace workingNs) {
         this.stack = new LinkedStack<Literal>();
-        this.nspace = namespace;
-        this.rootNs = namespace;
+        this.nspace = workingNs;
+        this.rootNs = rootNs;
     }
     
     
@@ -48,17 +48,6 @@ public class ExecutionVisitor extends DepthFirstVisitor {
      */
     public boolean hasResult() {
         return this.stack.size() == 1;
-    }
-    
-    
-    
-    /**
-     * Gets the result of the execution run of this visitor.
-     * 
-     * @return The executions result.
-     */
-    public Literal getResult() {
-        return this.stack.peek();
     }
     
     
@@ -186,10 +175,6 @@ public class ExecutionVisitor extends DepthFirstVisitor {
         
         this.rootNs.declare(vd);
         
-        if (assign.getParent() != null) {
-            // HACK: for assignments read from declaration file, parent will be null
-            //assign.getParent().replaceChild(assign, assign.getExpression());
-        }
         this.afterAssignment(assign);
     }
     
@@ -222,10 +207,6 @@ public class ExecutionVisitor extends DepthFirstVisitor {
             
             // execute actual parameter
             actual.visit(this);
-            
-            if (stack.size() == 0) {
-                System.out.println("wait here");
-            }
             
             // declare result as local variable for this call
             final Expression result = this.stack.pop();
