@@ -548,7 +548,7 @@ public class InputScanner extends AbstractTokenStream {
             if (state == 0) {
                 int next = this.readChar();
             
-                if (InputScanner.isIdentifierPart(next)) {
+                if (InputScanner.isIdentifierPart(next) || next == '[' || next == ']') {
                     lexem.appendCodePoint(next);
                 } else if (next == '-') {
                     state = 1;
@@ -561,7 +561,6 @@ public class InputScanner extends AbstractTokenStream {
                 int next = this.readChar();
                 
                 if (next == '>') {
-                    // XXX: this only works if pushback stategy is FIFO
                     this.pushBack('-');
                     this.pushBack('>');
                     return new Token(TokenType.USER, 
