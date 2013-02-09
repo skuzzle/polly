@@ -35,6 +35,7 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
             throws ASTTraversalException {
         if (parent.getTypes().size() == 1 && !child.typeResolved()) {
             child.setUnique(parent.getTypes().get(0));
+            parent.setUnique(child.getUnique());
         } else if (!child.typeResolved()){
             this.reportError(parent, "Nicht eindeutiger Typ");
         }
@@ -212,7 +213,9 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
     
     
     @Override
-    public void beforeAccess(NamespaceAccess access) throws ASTTraversalException {
+    public void visitAccess(NamespaceAccess access) throws ASTTraversalException {
+        this.beforeAccess(access);
         this.applyType(access, access.getRhs());
+        this.afterAccess(access);
     }
 }

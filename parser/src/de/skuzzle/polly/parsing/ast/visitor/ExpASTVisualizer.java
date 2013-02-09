@@ -11,6 +11,7 @@ import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
+import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ChannelLiteral;
@@ -251,6 +252,19 @@ public class ExpASTVisualizer extends DepthFirstVisitor {
         this.dotBuilder.printEdge(assign, assign.getExpression(), "expresion");
         this.dotBuilder.printEdge(assign, assign.getName(), "to");
         this.afterAssignment(assign);
+    }
+    
+    
+    
+    @Override
+    public void visitAccess(NamespaceAccess access) throws ASTTraversalException {
+        this.beforeAccess(access);
+        this.dotBuilder.printExpression("Namespace Access", access);
+        access.getLhs().visit(this);
+        access.getRhs().visit(this);
+        this.dotBuilder.printEdge(access, access.getLhs(), "LHS");
+        this.dotBuilder.printEdge(access, access.getRhs(), "RHS");
+        this.afterAccess(access);
     }
     
     

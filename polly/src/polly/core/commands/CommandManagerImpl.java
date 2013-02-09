@@ -241,7 +241,7 @@ public class CommandManagerImpl implements CommandManager {
             final Namespace rootNs = Namespace.forName(executor.getName());
             final Namespace workingNs = rootNs.enter(false);
             
-            this.createContext(channel, executor, ircManager, constants, rootNs);
+            this.createContext(channel, executor, ircManager, constants, workingNs);
             root = this.parseMessage(input, rootNs, workingNs);
         } catch (ParseException e) {
             // HACK: wrap exception into command exception, as ParseException is not 
