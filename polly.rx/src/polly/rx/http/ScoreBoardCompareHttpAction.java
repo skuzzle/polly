@@ -38,7 +38,9 @@ public class ScoreBoardCompareHttpAction extends HttpAction {
             e.throwTemplateException("Invalid request", "No venad names to compare");
         }
         final String[] venads = names.split(";");
-        final InputStream graph = this.sbeManager.createMultiGraph(venads);
+        final int maxMonths = 
+            Integer.parseInt(e.getSession().getUser().getAttribute(MyPlugin.MAX_MONTHS));
+        final InputStream graph = this.sbeManager.createMultiGraph(maxMonths, venads);
         final String memFileName = "compare" + ID_GENERATOR.getAndIncrement();
         e.getSource().putMemoryFile(memFileName, graph);
         

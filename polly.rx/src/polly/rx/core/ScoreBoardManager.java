@@ -27,8 +27,6 @@ import polly.rx.graphs.Point.PointType;
 
 public class ScoreBoardManager {
     
-    public final static int X_LABELS = 24;
-    
     private final static Color[] COLORS = {
         Color.RED, Color.BLUE, Color.BLACK, Color.GREEN, Color.PINK
     };
@@ -55,18 +53,18 @@ public class ScoreBoardManager {
     
     
     
-    public InputStream createGraph(List<ScoreBoardEntry> all) {
+    public InputStream createGraph(List<ScoreBoardEntry> all, int maxMonths) {
         if (all.isEmpty()) {
             return null;
         }
         Collections.sort(all, ScoreBoardEntry.BY_DATE);
         
         final ImageGraph g = new ImageGraph(700, 400, 2000, 30000, 2000);
-        g.setxLabels(this.createXLabels());
+        g.setxLabels(this.createXLabels(maxMonths));
         g.setDrawGridHorizontal(true);
         g.setDrawGridVertical(true);
         g.setConnect(true);
-        g.addPointSet(this.createPointSet(all, Color.RED));
+        g.addPointSet(this.createPointSet(all, Color.RED, maxMonths));
 
         
         g.updateImage();
@@ -75,9 +73,9 @@ public class ScoreBoardManager {
     
     
     
-    public InputStream createMultiGraph(String...names) {
+    public InputStream createMultiGraph(int maxMonths, String...names) {
         ImageGraph g = new ImageGraph(700, 400, 2000, 30000, 2000);
-        g.setxLabels(this.createXLabels());
+        g.setxLabels(this.createXLabels(maxMonths));
         g.setDrawGridHorizontal(true);
         g.setDrawGridVertical(true);
         g.setConnect(true);
@@ -87,7 +85,7 @@ public class ScoreBoardManager {
             final List<ScoreBoardEntry> entries = this.getEntries(names[i]);
             Collections.sort(entries, ScoreBoardEntry.BY_DATE);
             final Color next = COLORS[i];
-            final PointSet points = this.createPointSet(entries, next);
+            final PointSet points = this.createPointSet(entries, next, maxMonths);
             g.addPointSet(points);
         }
         
@@ -97,15 +95,15 @@ public class ScoreBoardManager {
     
     
     
-    private final String[] createXLabels() {
+    private final String[] createXLabels(int maxMonths) {
         final DateFormat df = new SimpleDateFormat("MMM yyyy");
         
-        String[] labels = new String[X_LABELS];
+        String[] labels = new String[maxMonths];
         final Date today = Time.currentTime();
-        for (int i = 0; i < X_LABELS; ++i) {
+        for (int i = 0; i < maxMonths; ++i) {
             final Calendar c = Calendar.getInstance();
             c.setTime(today);
-            c.add(Calendar.MONTH, -(X_LABELS - (i + 1)));
+            c.add(Calendar.MONTH, -(maxMonths - (i + 1)));
             labels[i] = df.format(c.getTime());
         }
         return labels;
@@ -113,7 +111,8 @@ public class ScoreBoardManager {
     
     
     
-    private PointSet createPointSet(List<ScoreBoardEntry> entries, Color color) {
+    private PointSet createPointSet(List<ScoreBoardEntry> entries, Color color, 
+            int maxMonths) {
         final ScoreBoardEntry oldest = entries.get(0);
         
         final Date today = Time.currentTime();
@@ -123,7 +122,7 @@ public class ScoreBoardManager {
         Point lowestGreaterZero = null;
         
         for (final ScoreBoardEntry entry : entries) {
-            final int monthsAgo = this.getMonthsAgo(today, entry.getDate());
+            final int monthsAgo = this.getMonthsAgo(today, entry.getDate(), maxMonths);
             final double x = this.calcX(entry.getDate(), monthsAgo);
             final Point p = new Point(x, entry.getPoints(), PointType.NONE);
 
@@ -142,7 +141,7 @@ public class ScoreBoardManager {
             points.add(p);
         }
         if (!zero && Math.abs(
-                    DateUtils.monthsBetween(today, oldest.getDate())) > X_LABELS) {
+                    DateUtils.monthsBetween(today, oldest.getDate())) > maxMonths) {
             
             // interpolate correct y-axis intersection
             double m = (lowestGreaterZero.getY() - greatestLowerZero.getY()) / 
@@ -157,9 +156,9 @@ public class ScoreBoardManager {
     
     
 
-    private int getMonthsAgo(Date today, Date other) {
+    private int getMonthsAgo(Date today, Date other, int maxMonths) {
         final int monthsBetween = DateUtils.monthsBetween(today, other);
-        final int monthsAgo =  X_LABELS - monthsBetween - 1;
+        final int monthsAgo =  maxMonths - monthsBetween - 1;
         return monthsAgo;
     }
     

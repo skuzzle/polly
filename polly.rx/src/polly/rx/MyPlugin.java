@@ -37,6 +37,7 @@ import polly.rx.http.ScoreBoardDetailsHttpAction;
 import polly.rx.http.TrainerHttpAction;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
+import de.skuzzle.polly.sdk.constraints.AttributeConstraint;
 import de.skuzzle.polly.sdk.constraints.Constraints;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
@@ -63,6 +64,8 @@ public class MyPlugin extends PollyPlugin {
     public final static String CRACKER_PERMISSION                = "polly.permission.CRACKER";
     public final static String VENAD    = "VENAD";
     public final static String CRACKER  = "CRACKER";
+    public final static String MAX_MONTHS = "MAX_MONTHTS";
+    
     
     private FleetDBManager fleetDBManager;
     private TrainManagerV2 trainManager;
@@ -193,6 +196,17 @@ public class MyPlugin extends PollyPlugin {
             this.getMyPolly().users().addAttribute(VENAD, "<unbekannt>");
             this.getMyPolly().users().addAttribute("AZ", "0", Constraints.INTEGER);
             this.getMyPolly().users().addAttribute(CRACKER, "0", Constraints.INTEGER);
+            this.getMyPolly().users().addAttribute(MAX_MONTHS, "24", new AttributeConstraint() {
+                @Override
+                public boolean accept(String value) {
+                    try {
+                        int i = Integer.parseInt(value);
+                        return i >= 2 && i <= 24;
+                    } catch (NumberFormatException e) {
+                        return false;
+                    }
+                }
+            });
         } catch (Exception ignore) {
             ignore.printStackTrace();
         }
