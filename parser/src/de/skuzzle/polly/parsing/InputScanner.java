@@ -100,6 +100,7 @@ public class InputScanner extends AbstractTokenStream {
         this.keywords.put("help", TokenType.QUESTION);
         this.keywords.put("if", TokenType.IF);
         this.keywords.put("del", TokenType.DELETE);
+        this.keywords.put("inspect", TokenType.INSPECT);
         this.keywords.put("list", TokenType.LIST);
         /* To avoid 1char identifiers "_" */
         this.keywords.put("_", TokenType.UNKNOWN);

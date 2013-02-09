@@ -17,6 +17,7 @@ import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Delete;
 import de.skuzzle.polly.parsing.ast.expressions.Empty;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
+import de.skuzzle.polly.parsing.ast.expressions.Inspect;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.Native;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
@@ -243,5 +244,18 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     public void beforeDelete(Delete delete) throws ASTTraversalException {
         delete.addType(Type.NUM);
         delete.setUnique(Type.NUM);
+    }
+    
+    
+    
+    @Override
+    public void beforeInspect(Inspect inspect) throws ASTTraversalException {
+        final Declaration decl = this.nspace.resolveFirst(inspect.getName());
+        if (decl == null) {
+            this.reportError(inspect.getName(), "Unbekannte Variable: " + 
+                inspect.getName());
+        }
+        inspect.setUnique(Type.STRING);
+        inspect.addType(Type.STRING);
     }
 }

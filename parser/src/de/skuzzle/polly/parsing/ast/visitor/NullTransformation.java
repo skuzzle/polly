@@ -9,6 +9,7 @@ import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Delete;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
+import de.skuzzle.polly.parsing.ast.expressions.Inspect;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.Native;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
@@ -155,4 +156,10 @@ public class NullTransformation implements Transformation {
         return null;
     }
 
+
+
+    @Override
+    public Inspect transformInspect(Inspect inspect) {
+        return null;
+    }
 }

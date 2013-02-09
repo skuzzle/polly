@@ -23,7 +23,7 @@ public class ProductType extends Type implements Iterable<Type> {
         //b.append("(");
         final Iterator<Type> typeIt = types.iterator();
         while (typeIt.hasNext()) {
-            b.append(typeIt.next().toString());
+            b.append(typeIt.next().getName().getId());
             if (typeIt.hasNext()) {
                 b.append(" ");
             }

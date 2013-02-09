@@ -14,6 +14,7 @@ import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Delete;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
+import de.skuzzle.polly.parsing.ast.expressions.Inspect;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
@@ -288,5 +289,19 @@ public class Unparser extends DepthFirstVisitor {
         }
         this.out.print(")");
         this.afterDelete(delete);
+    }
+    
+    
+    
+    @Override
+    public void beforeInspect(Inspect inspect) throws ASTTraversalException {
+        this.out.print("inspect(");
+    }
+    
+    
+    
+    @Override
+    public void afterInspect(Inspect inspect) throws ASTTraversalException {
+        this.out.print(")");
     }
 }

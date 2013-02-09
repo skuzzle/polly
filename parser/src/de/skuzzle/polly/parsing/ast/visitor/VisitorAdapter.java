@@ -8,6 +8,7 @@ import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Delete;
+import de.skuzzle.polly.parsing.ast.expressions.Inspect;
 import de.skuzzle.polly.parsing.ast.expressions.Native;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
@@ -125,4 +126,10 @@ public abstract class VisitorAdapter implements Visitor {
 
     @Override
     public void afterDelete(Delete delete) throws ASTTraversalException {}
+    
+    @Override
+    public void beforeInspect(Inspect inspect) throws ASTTraversalException {}
+    
+    @Override
+    public void afterInspect(Inspect inspect) throws ASTTraversalException {}
 }

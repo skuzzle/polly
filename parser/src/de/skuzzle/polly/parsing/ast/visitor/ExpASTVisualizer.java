@@ -13,6 +13,7 @@ import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Delete;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
+import de.skuzzle.polly.parsing.ast.expressions.Inspect;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
@@ -321,5 +322,16 @@ public class ExpASTVisualizer extends DepthFirstVisitor {
             this.dotBuilder.printEdge(delete, id, "");
         }
         this.afterDelete(delete);
+    }
+    
+    
+    
+    @Override
+    public void visitInspect(Inspect inspect) throws ASTTraversalException {
+        this.beforeInspect(inspect);
+        this.dotBuilder.printExpression("Inspect", inspect);
+        this.dotBuilder.printNode(inspect.getName(), inspect.getName().getId());
+        this.dotBuilder.printEdge(inspect, inspect.getName(), "");
+        this.afterInspect(inspect);
     }
 }

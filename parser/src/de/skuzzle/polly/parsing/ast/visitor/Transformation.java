@@ -9,6 +9,7 @@ import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Delete;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
+import de.skuzzle.polly.parsing.ast.expressions.Inspect;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.Native;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
@@ -71,5 +72,7 @@ public interface Transformation {
     Expression transformUser(UserLiteral userLiteral) throws ASTTraversalException;
 
     HelpLiteral transformHelp(HelpLiteral helpLiteral);
+
+    Inspect transformInspect(Inspect inspect);
 
 }

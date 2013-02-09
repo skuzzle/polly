@@ -68,6 +68,7 @@ public enum TokenType {
     TEMP("temp"), 
     ELSE("else"), 
     DELETE("del"), 
+    INSPECT("inspect"),
     ESCAPED("\\");
     
     private String string;

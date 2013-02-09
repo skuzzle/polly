@@ -23,6 +23,7 @@ import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Delete;
 import de.skuzzle.polly.parsing.ast.expressions.Empty;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
+import de.skuzzle.polly.parsing.ast.expressions.Inspect;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
@@ -73,6 +74,7 @@ import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
  *                | '\(' parameters ':' relation ')'           // lambda function literal
  *                | '{' exprList '}'                           // concrete list of expressions
  *                | DELETE '(' ID (',' ID)* ')'                // delete operator
+ *                | INSPECT (' ID ')'                          // inspect operator
  *                | IF relation ':' relation ':' relation      // conditional operator
  *                | TRUE | FALSE                               // boolean literal
  *                | CHANNEL                                    // channel literal
@@ -737,6 +739,7 @@ public class ExpInputParser {
      *          | '\(' parameters ':' relation ')'      // lambda function literal
      *          | '{' exprList '}'                      // concrete list of expressions
      *          | DELETE '(' ID (',' ID)* ')'           // delete operator
+     *          | INSPECT (' ID ')'                     // inspect operator
      *          | IF expr ':' relation ':' relation     // conditional operator
      *          | TRUE | FALSE                          // boolean literal
      *          | CHANNEL                               // channel literal
@@ -835,6 +838,14 @@ public class ExpInputParser {
             this.leaveExpression();
             
             return new Delete(this.scanner.spanFrom(la), ids);
+        case INSPECT:
+            this.scanner.consume();
+            this.expect(TokenType.OPENBR);
+            final ResolvableIdentifier name = new ResolvableIdentifier(
+                this.expectIdentifier());
+            this.expect(TokenType.CLOSEDBR);
+            return new Inspect(this.scanner.spanFrom(la), name);
+            
         case IF:
             this.scanner.consume();
             this.allowSingleWhiteSpace();

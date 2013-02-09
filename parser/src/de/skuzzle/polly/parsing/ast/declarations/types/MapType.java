@@ -17,9 +17,9 @@ public class MapType extends Type {
     private final static Identifier typeName(Type source, Type target) {
         final StringBuilder b = new StringBuilder();
         b.append("(");
-        b.append(source.toString());
+        b.append(source.getName().getId());
         b.append(" -> ");
-        b.append(target.toString());
+        b.append(target.getName().getId());
         b.append(")");
         
         return new Identifier(b.toString());

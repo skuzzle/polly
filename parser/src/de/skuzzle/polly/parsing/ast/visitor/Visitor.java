@@ -6,6 +6,7 @@ import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.Delete;
+import de.skuzzle.polly.parsing.ast.expressions.Inspect;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Native;
@@ -149,4 +150,8 @@ public interface Visitor {
     public void beforeDelete(Delete delete) throws ASTTraversalException;
     public void afterDelete(Delete delete) throws ASTTraversalException;
     public void visitDelete(Delete delete) throws ASTTraversalException;
+
+    public void beforeInspect(Inspect inspect) throws ASTTraversalException;
+    public void afterInspect(Inspect inspect) throws ASTTraversalException;
+    public void visitInspect(Inspect inspect) throws ASTTraversalException;
 }

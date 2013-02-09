@@ -6,6 +6,7 @@ import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.Delete;
+import de.skuzzle.polly.parsing.ast.expressions.Inspect;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Native;
@@ -245,5 +246,17 @@ public class DepthFirstVisitor extends VisitorAdapter {
             id.visit(this);
         }
         this.afterDelete(delete);
+    }
+    
+    
+    
+    @Override
+    public void visitInspect(Inspect inspect) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        this.beforeInspect(inspect);
+        inspect.getName().visit(this);
+        this.afterInspect(inspect);
     }
 }
