@@ -26,6 +26,9 @@
 *.ppk
 *.num
 *.declaration
+*.decl
+*.dot
+*.ico
 /libs/
 /plugins/
 /polly/cfg/mail.cfg
@@ -81,3 +84,6 @@
 /polly.rx/dist/
 /polly.rx/bin/
 /polly.rx/build/
+/parser.local/dist/
+/parser.local/bin/
+/parser.local/build/
