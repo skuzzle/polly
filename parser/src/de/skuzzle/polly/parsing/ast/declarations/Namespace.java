@@ -126,6 +126,18 @@ public class Namespace {
         
         
         @Override
+        protected void delete(Iterator<Declaration> it) {
+            super.delete(it);
+            try {
+                this.store();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        
+        
+        @Override
         public int delete(Identifier id) {
             final int i = super.delete(id);
             
@@ -544,39 +556,40 @@ public class Namespace {
             decls.put(decl.getName().getId(), d);
         }
         
-        // check if declaration exists in current namespace
-        final Iterator<Declaration> it = d.iterator();
-        while (it.hasNext()) {
-            final Declaration existing = it.next();
-                
-            // Existing declaration must be removed, if:
-            // * existing is a function and new is a variable
-            // * exising is a variable and 
-            
-            if (Type.tryUnify(existing.getType(), decl.getType())) {
-                if (!this.local) {
-                    if (existing.isNative()) {
-                        throw new ASTTraversalException(decl.getPosition(), 
-                            "Du kannst keine nativen Deklarationen " +
-                            "überschreiben. Deklaration '" + existing.getName() + 
-                            "' existiert bereits");
-                    }
-                    it.remove();
+        // overloading is only allowed for native declarations, so check if decl with that
+        // name already exists
+        if (!decl.isNative()) {
+            final Iterator<Declaration> it = d.iterator();
+            while (it.hasNext()) {
+                final Declaration existing = it.next();
+                if (existing.getName().getId().equals(decl.getName().getId())) {
+                    this.delete(it);
                 }
-            }
+            }            
         }
+                
         d.add(decl);
     }
     
     
     
+    protected void delete(Iterator<Declaration> it) {
+        it.remove();
+    }
+    
+    
+    
     /**
-     * Removes all declarations in this namespace with the given name.
+     * Removes all declarations in this namespace with the given name. Declarations from
+     * GLOBAL namespace can not be removed.
      * 
      * @param id Name of the declaration to delete.
      * @return How many declarations have been removed.
      */
     public int delete(Identifier id) {
+        if (this == GLOBAL) {
+            return 0;
+        }
         List<Declaration> decls = this.decls.get(id.getId());
         if (decls == null) {
             return 0;
