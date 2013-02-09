@@ -19,6 +19,7 @@ literal     -> ID                                         // VarAccess
              | '\(' parameters ':' relation ')'           // lambda function literal
              | '{' exprList '}'                           // concrete list of expressions
              | DELETE '(' ID (',' ID)* ')'                // delete operator
+             | INSPECT '(' ID ')'                         // inspect operator
              | IF relation ':' relation ':' relation      // conditional operator
              | TRUE | FALSE                               // boolean literal
              | CHANNEL                                    // channel literal
