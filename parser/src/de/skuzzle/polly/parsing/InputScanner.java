@@ -68,6 +68,13 @@ public class InputScanner extends AbstractTokenStream {
      * Note: The minimum value is always 2 (by nature)
      */
     public final static int MAX_RADIX = 35;
+    
+    /**
+     * Whether all consumed tokens are printed to the console
+     */
+    public final static boolean DEBUG = true;
+    
+    
 
     protected Map<String, TokenType> keywords;
     private boolean skipWhiteSpaces;
@@ -122,6 +129,16 @@ public class InputScanner extends AbstractTokenStream {
     
     @Override
     protected synchronized Token readToken() throws ParseException {
+        final Token next = this.readTokenInternal();
+        if (DEBUG) {
+            System.out.println(next.toString());
+        }
+        return next;
+    }
+    
+    
+    
+    protected final Token readTokenInternal() throws ParseException {
         int state = 0;
         int tokenStart = this.getStreamIndex();
         StringBuilder currentString = new StringBuilder();

@@ -4,7 +4,7 @@ import java.util.concurrent.ExecutorService;
 
 import org.apache.log4j.Logger;
 
-import de.skuzzle.polly.parsing.ParseException;
+import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.sdk.CommandManager;
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
 import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
@@ -80,8 +80,8 @@ public class MessageHandler implements MessageListener {
                     MessageHandler.this.commands.executeString(e.getMessage(), e
                         .getChannel(), isQuery, executor, e.getSource());
                 } catch(CommandException e1) {
-                    if (e1.getCause() instanceof ParseException) {
-                        ParseException e2 = (ParseException) e1.getCause();
+                    if (e1.getCause() instanceof ASTTraversalException) {
+                        ASTTraversalException e2 = (ASTTraversalException) e1.getCause();
                         MessageHandler.this.reportParseError(e, e2);
                     } else {
                         e.getSource().sendMessage(e.getChannel(), 
@@ -114,7 +114,7 @@ public class MessageHandler implements MessageListener {
     
     
     
-    private void reportParseError(MessageEvent e, ParseException ex) {
+    private void reportParseError(MessageEvent e, ASTTraversalException ex) {
         int detail = this.parseErrorDetails;
         if (detail == OFF) {
             return;
@@ -124,8 +124,8 @@ public class MessageHandler implements MessageListener {
             e.getSource().sendMessage(e.getChannel(), ex.getMessage());
         }
         if (detail > SIMPLE) {
-            e.getSource().sendMessage(e.getChannel(), 
-                ex.getPosition().mark(e.getMessage()));
+            String msg = ex.getPosition().mark(e.getMessage());
+            e.getSource().sendMessage(e.getChannel(), msg);
         }
     }
     

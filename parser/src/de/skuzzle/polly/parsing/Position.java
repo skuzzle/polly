@@ -170,7 +170,7 @@ public class Position implements Serializable, Equatable, Immutable {
         if (this.equals(Position.NONE)) {
             return original;
         } else if (this.start == this.end - 1 && this.start == original.length()) {
-            return "";
+            return " ";
         }
         return original.substring(this.end);
     }
@@ -187,7 +187,7 @@ public class Position implements Serializable, Equatable, Immutable {
     public String substring(String original) {
         if (this.equals(Position.NONE)) {
             return original;
-        } else if (this.start == this.end - 1 && this.start == original.length()) {
+        } else if (this.start == this.end - 1 && this.start == original.length() || this.getWidth() == 0) {
             return " ";
         }
         return original.substring(this.start, this.end);
@@ -216,7 +216,7 @@ public class Position implements Serializable, Equatable, Immutable {
     
     @Override
     public String toString() {
-        return (this.start + 1) + (this.getWidth() == 0 ? "" : "-" + (this.end + 1));
+        return (this.start + 1) + (this.getWidth() == 0 ? "" : "-" + (this.end));
     }
     
     
