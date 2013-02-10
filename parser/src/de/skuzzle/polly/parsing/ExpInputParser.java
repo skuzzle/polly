@@ -75,6 +75,7 @@ import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
  *                | '\(' parameters ':' relation ')'           // lambda function literal
  *                | '{' exprList '}'                           // concrete list of expressions
  *                | DELETE '(' PUBLIC? ID (',' PUBLIC? ID)* ')'// delete operator
+ *                | INSPECT '(' PUBLIC ID ')'                  // inspect for public
  *                | INSPECT (' ID ('.' ID)? ')'                // inspect operator
  *                | IF relation ':' relation ':' relation      // conditional operator
  *                | TRUE | FALSE                               // boolean literal
@@ -743,7 +744,8 @@ public class ExpInputParser {
      *          | '\(' parameters ':' relation ')'               // lambda function literal
      *          | '{' exprList '}'                               // concrete list of expressions
      *          | DELETE '(' PUBLIC? ID (',' PUBLIC? ID)* ')'    // delete operator
-     *          | INSPECT (' ID ('.' ID)? ')'                    // inspect operator
+     *          | INSPECT '(' PUBLIC ID ')'                      // inspect for public
+     *          | INSPECT '(' ID ('.' ID)? ')'                   // inspect operator
      *          | IF expr ':' relation ':' relation              // conditional operator
      *          | TRUE | FALSE                                   // boolean literal
      *          | CHANNEL                                        // channel literal
@@ -834,9 +836,6 @@ public class ExpInputParser {
             final List<DeleteableIdentifier> ids = new ArrayList<DeleteableIdentifier>();
             do {
                 boolean global = this.scanner.match(TokenType.PUBLIC);
-                if (global) {
-                    this.allowSingleWhiteSpace();
-                }
                 ids.add(new DeleteableIdentifier(this.expectIdentifier(), global));
             } while (this.scanner.match(TokenType.COMMA));
                 
@@ -848,12 +847,24 @@ public class ExpInputParser {
         case INSPECT:
             this.scanner.consume();
             this.expect(TokenType.OPENBR);
+            this.enterExpression();
+            
+            final Token glob = this.scanner.lookAhead();
+            final boolean global = this.scanner.match(TokenType.PUBLIC);
+            
             final ResolvableIdentifier name = new ResolvableIdentifier(
                 this.expectIdentifier());
             final VarAccess va1 = new VarAccess(name.getPosition(), name);
             Expression result = va1;
             
-            if (this.scanner.match(TokenType.DOT)) {
+            if (global) {
+                // syntactic sugar for global inspect
+                final ResolvableIdentifier name2 = new ResolvableIdentifier(
+                    glob.getPosition(), Namespace.PUBLIC_NAMESPACE_NAME);
+                final VarAccess va2 = new VarAccess(name2.getPosition(), name2);
+                result = new NamespaceAccess(this.scanner.spanFrom(la), va2, va1);
+                
+            } else if (this.scanner.match(TokenType.DOT)) {
                 final ResolvableIdentifier name2 = new ResolvableIdentifier(
                     this.expectIdentifier());
                 final VarAccess va2 = new VarAccess(name2.getPosition(), name2);
@@ -861,7 +872,8 @@ public class ExpInputParser {
                 result = new NamespaceAccess(this.scanner.spanFrom(la), va1, va2);
             }
             this.expect(TokenType.CLOSEDBR);
-            return new Inspect(this.scanner.spanFrom(la), result);
+            this.leaveExpression();
+            return new Inspect(this.scanner.spanFrom(la), result, global);
             
         case IF:
             this.scanner.consume();

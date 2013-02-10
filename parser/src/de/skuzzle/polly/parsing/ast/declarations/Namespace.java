@@ -78,6 +78,10 @@ public class Namespace {
     private final static float LEVENSHTEIN_THRESHOLD_PERCENT = 0.6f;
     
     
+    /** Name of the public namespace */
+    public final static String PUBLIC_NAMESPACE_NAME = "~public";
+    
+    
     
     public static File declarationFolder;
     public static synchronized void setDeclarationFolder(File declarationFolder) {
@@ -390,9 +394,14 @@ public class Namespace {
     /** Contains all user namespaces mapped to their user name */
     private final static Map<String, Namespace> ROOTS = new HashMap<String, Namespace>();
 
-    /** Namespace for public declarations. */
-    private final static Namespace PUBLIC = new StorableNamespace("~public.decl", NATIVE);
     
+    /** Namespace for public declarations. */
+    private final static Namespace PUBLIC = new StorableNamespace(PUBLIC_NAMESPACE_NAME + 
+        ".decl", NATIVE);
+    
+    static {
+        ROOTS.put(PUBLIC_NAMESPACE_NAME, PUBLIC);
+    }
     
     
     /**
@@ -428,9 +437,6 @@ public class Namespace {
      * @return The namespace.
      */
     public final static Namespace forName(String name) {
-        if (name.equals("~public")) {
-            return PUBLIC;
-        }
         Namespace check = ROOTS.get(name);
         if (check == null) {
             check = new StorableNamespace(name + ".decl", PUBLIC);

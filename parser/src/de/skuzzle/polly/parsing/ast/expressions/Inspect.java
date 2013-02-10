@@ -12,13 +12,21 @@ public class Inspect extends Expression {
     private static final long serialVersionUID = 1L;
     
     private final Expression access;
+    private final boolean global;
     
     
-    public Inspect(Position position, Expression access) {
+    public Inspect(Position position, Expression access, boolean global) {
         super(position);
         this.access = access;
+        this.global = global;
     }
 
+    
+    
+    public boolean isGlobal() {
+        return this.global;
+    }
+    
 
     
     public Expression getAccess() {
