@@ -28,6 +28,7 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.parsing.ast.visitor.DepthFirstVisitor;
 import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 import de.skuzzle.polly.parsing.util.Combinator;
 import de.skuzzle.polly.parsing.util.Combinator.CombinationCallBack;
@@ -148,11 +149,30 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     
     
     @Override
-    public void afterAssignment(Assignment assign) throws ASTTraversalException {
+    public void afterAssignment(final Assignment assign) throws ASTTraversalException {
         if (assign.isTemp()) {
             this.reportError(assign, 
                 "Temporäre Deklarationen werden (noch?) nicht unterstützt.");
         }
+        
+        // deep transitive recursion check
+        assign.getExpression().visit(new DepthFirstVisitor() {
+            @Override
+            public void beforeVarAccess(VarAccess access) throws ASTTraversalException {
+                final Collection<Declaration> decls = 
+                    nspace.lookupAll(access.getIdentifier());
+                
+                for (final Declaration decl : decls) {
+                    if (decl.getName().equals(assign.getName())) {
+                        reportError(access, "Rekursive Aufrufe sind nicht erlaubt");
+                    }
+                    if (!decl.isNative()) {
+                        decl.getExpression().visit(this);
+                    }
+                }
+            } 
+        });
+        
         for (final Type t : assign.getExpression().getTypes()) {
             final Declaration vd = new Declaration(assign.getName().getPosition(), 
                 assign.getName(), new Empty(t, assign.getExpression().getPosition()));
