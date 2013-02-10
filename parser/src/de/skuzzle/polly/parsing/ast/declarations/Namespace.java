@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -716,6 +717,28 @@ public class Namespace {
                 new StringLiteral(name.getPosition(), name.getId()));
         }
     }
+    
+    
+    
+    /**
+     * Looks up all declarations with the given name in this and all parent namespaces.
+     * 
+     * @param name The name to lookup.
+     * @return Collection of matching declarations.
+     */
+    public Collection<Declaration> lookupAll(ResolvableIdentifier name) {
+        final List<Declaration> result = new ArrayList<Declaration>();
+        
+        for(Namespace space = this; space != null; space = space.parent) {
+            final List<Declaration> decls = space.decls.get(name.getId());
+            if (decls == null) {
+                continue;
+            }
+            result.addAll(decls);
+        }
+        return result;
+    }
+    
     
     
     

@@ -11,6 +11,7 @@ import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
+import de.skuzzle.polly.parsing.ast.expressions.Inspect;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.OperatorCall;
 import de.skuzzle.polly.parsing.ast.expressions.VarAccess;
@@ -217,5 +218,14 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         this.beforeAccess(access);
         this.applyType(access, access.getRhs());
         this.afterAccess(access);
+    }
+    
+    
+    
+    @Override
+    public void visitInspect(Inspect inspect) throws ASTTraversalException {
+        this.beforeInspect(inspect);
+        // nothing to do here but prevent from executing super class visitInspect
+        this.afterInspect(inspect);
     }
 }

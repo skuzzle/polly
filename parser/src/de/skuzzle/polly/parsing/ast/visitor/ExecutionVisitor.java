@@ -1,6 +1,7 @@
 package de.skuzzle.polly.parsing.ast.visitor;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -284,15 +285,20 @@ public class ExecutionVisitor extends DepthFirstVisitor {
             throw new IllegalStateException("this should not be reachable");
         }
         
-        final Declaration decl = target.resolveFirst(var);
-        if (decl.isNative()) {
-            this.stack.push(new StringLiteral(var.getPosition(), 
-                "Type: " + decl.getType().getName()));
-        } else {
-            final String s = Unparser.toString(decl.getExpression()) + 
-                " (Type: " + decl.getType().getName() + ")";
-            this.stack.push(new StringLiteral(var.getPosition(), s));
+        final Collection<Declaration> decls = target.lookupAll(var);
+        final StringBuilder b = new StringBuilder();
+        for (final Declaration decl : decls) {
+            if (decl.isNative()) {
+                b.append("Type: " + decl.getType().getName());
+            } else {
+                final String s = Unparser.toString(decl.getExpression()) + 
+                    " (Type: " + decl.getType().getName() + ")";
+                b.append(s);
+            }
+            b.append("\n");
         }
+        this.stack.push(new StringLiteral(inspect.getPosition(), b.toString()));
+
         
         this.afterInspect(inspect);
     }

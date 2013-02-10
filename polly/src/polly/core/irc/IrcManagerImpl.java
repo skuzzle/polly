@@ -508,7 +508,10 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     
     @Override
     public void sendMessage(String channel, String message, Object source) {
-        this.messageScheduler.addMessage(channel, message, source);
+        final String[] lines = message.split("\n");
+        for (final String line : lines) {
+            this.messageScheduler.addMessage(channel, line, source);
+        }
         
         OwnMessageEvent e = new OwnMessageEvent(this, 
             new IrcUser(this.getNickname(), "", ""), channel, message, source);

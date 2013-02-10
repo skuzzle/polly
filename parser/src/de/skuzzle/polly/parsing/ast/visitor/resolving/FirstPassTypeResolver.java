@@ -1,6 +1,7 @@
 package de.skuzzle.polly.parsing.ast.visitor.resolving;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -281,8 +282,8 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
             throw new IllegalStateException("this should not be reachable");
         }
         
-        final Declaration decl = target.resolveFirst(var);
-        if (decl == null) {
+        final Collection<Declaration> decls = target.lookupAll(var);
+        if (decls.isEmpty()) {
             this.reportError(var, "Unbekannte Variable: " + var);
         }
         inspect.setUnique(Type.STRING);
