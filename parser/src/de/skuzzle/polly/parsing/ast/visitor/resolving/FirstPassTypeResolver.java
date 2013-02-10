@@ -230,6 +230,8 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         
         if (!(access.getLhs() instanceof VarAccess)) {
             this.reportError(access.getLhs(), "Operand muss ein Bezeichner sein");
+        } else if (!(access.getRhs() instanceof VarAccess)) {
+            this.reportError(access.getRhs(), "Operand muss ein Bezeichner sein");
         }
         
         final VarAccess va = (VarAccess) access.getLhs();
