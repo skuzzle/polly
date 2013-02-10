@@ -62,7 +62,9 @@ public class Sort extends BinaryOperator<ListLiteral, FunctionLiteral> {
         
         final List<Expression> copy = new ArrayList<Expression>(left.getContent());
         Collections.sort(copy, c);
-        stack.push(new ListLiteral(resultPos, copy));
+        final ListLiteral result = new ListLiteral(resultPos, copy);
+        result.setUnique(left.getUnique());
+        stack.push(result);
     }
 
 

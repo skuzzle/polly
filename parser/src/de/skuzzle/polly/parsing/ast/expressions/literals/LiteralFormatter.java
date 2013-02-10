@@ -87,7 +87,7 @@ public interface LiteralFormatter {
                 new StringProvider<Expression>() {
                     @Override
                     public String toString(Expression o) {
-                        return ((Literal)o).format(DEFAULT);
+                        return Unparser.toString(o);
                     }
             }, new PrintWriter(new StringBuilderWriter(b)));
             b.append("}");
