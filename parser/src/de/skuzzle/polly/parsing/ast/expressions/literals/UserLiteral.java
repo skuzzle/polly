@@ -25,6 +25,15 @@ public class UserLiteral extends StringLiteral {
     
     
     @Override
+    public Literal castTo(Type type) throws ASTTraversalException {
+        if (type == Type.STRING) {
+            return new StringLiteral(this.getPosition(), this.getValue());
+        }
+        return super.castTo(type);
+    }
+    
+    
+    @Override
     public Expression transform(Transformation transformation)
             throws ASTTraversalException {
         return transformation.transformUser(this);

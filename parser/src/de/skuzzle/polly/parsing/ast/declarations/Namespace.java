@@ -26,6 +26,7 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.StringLiteral;
 import de.skuzzle.polly.parsing.ast.lang.Cast;
 import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
 import de.skuzzle.polly.parsing.ast.lang.functions.FoldLeft;
+import de.skuzzle.polly.parsing.ast.lang.functions.Id;
 import de.skuzzle.polly.parsing.ast.lang.operators.BinaryArithmetic;
 import de.skuzzle.polly.parsing.ast.lang.operators.BinaryBooleanArithmetic;
 import de.skuzzle.polly.parsing.ast.lang.operators.BinaryStringArithmetic;
@@ -306,6 +307,9 @@ public class Namespace {
             NATIVE.declare(new Cast(OpType.STRING, Type.STRING).createDeclaration());
             NATIVE.declare(new Cast(OpType.NUMBER, Type.NUM).createDeclaration());
             NATIVE.declare(new Cast(OpType.DATE, Type.DATE).createDeclaration());
+            NATIVE.declare(new Cast(OpType.TIMESPAN, Type.TIMESPAN).createDeclaration());
+            NATIVE.declare(new Cast(OpType.CHANNEL, Type.CHANNEL).createDeclaration());
+            NATIVE.declare(new Cast(OpType.USER, Type.USER).createDeclaration());
             
             // relational ops
             NATIVE.declare(new Relational(OpType.EQ).createDeclaration());
@@ -384,10 +388,11 @@ public class Namespace {
             // ternary ops
             NATIVE.declare(new Conditional(OpType.IF).createDeclaration());
             
-            
             // FUNCTIONS
             NATIVE.declare(new FoldLeft().createDeclaration());
+            NATIVE.declare(new Id().createDeclaration());
             NATIVE.declare(new de.skuzzle.polly.parsing.ast.lang.functions.Map().createDeclaration());
+            
         } catch (ASTTraversalException e) {
             throw new ExceptionInInitializerError(e);
         }

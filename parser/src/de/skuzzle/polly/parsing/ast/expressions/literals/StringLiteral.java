@@ -62,6 +62,16 @@ public class StringLiteral extends Literal {
     
     
     @Override
+    public int compareTo(Literal o) {
+        if (o instanceof StringLiteral) {
+            final StringLiteral other = (StringLiteral) o;
+            return this.getValue().compareTo(other.getValue());
+        }
+        return super.compareTo(o);
+    }
+    
+    
+    @Override
     public String toString() {
         return this.value;
     }

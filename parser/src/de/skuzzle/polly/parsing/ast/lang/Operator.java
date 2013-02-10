@@ -29,6 +29,8 @@ public abstract class Operator extends Function {
         NUMBER(Type.NUM.getName().getId()),
         DATE(Type.DATE.getName().getId()),
         TIMESPAN(Type.TIMESPAN.getName().getId()),
+        CHANNEL(Type.CHANNEL.getName().getId()), 
+        USER(Type.USER.getName().getId()),
         
         // math functions
         MIN("min"),
@@ -52,8 +54,9 @@ public abstract class Operator extends Function {
         EXP("exp"),
         
         // functions
-        FOLD_LEFT("foldLeft"),
+        FOLD_LEFT("foldl"),
         MAP("map"),
+        ID("id"),
         
         ADD("+"),
         ADDWAVE("+~"),

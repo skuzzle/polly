@@ -75,6 +75,8 @@ public class TimespanLiteral extends DateLiteral {
     public Literal castTo(Type type) throws ASTTraversalException {
         if (type.equals(Type.DATE)) {
             return new DateLiteral(this.getPosition(), addToDate(new Date()));
+        } else if (type == Type.NUM) {
+            return new NumberLiteral(this.getPosition(), this.seconds * 1000);
         } else {
             return super.castTo(type);
         }

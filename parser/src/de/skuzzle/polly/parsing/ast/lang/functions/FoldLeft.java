@@ -4,8 +4,6 @@ import java.util.Arrays;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
-import de.skuzzle.polly.parsing.ast.declarations.types.ListType;
-import de.skuzzle.polly.parsing.ast.declarations.types.MapType;
 import de.skuzzle.polly.parsing.ast.declarations.types.ProductType;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.declarations.types.TypeVar;
@@ -41,8 +39,7 @@ public class FoldLeft extends TernaryOperator<ListLiteral, FunctionLiteral, Lite
         super(OpType.FOLD_LEFT);
         final TypeVar a = Type.newTypeVar("A");
         final TypeVar b = Type.newTypeVar("B");
-        this.initTypes(b, new ListType(a), 
-            new MapType(new ProductType(a, b), b), b);
+        this.initTypes(a, b.listOf(), a.mapFrom(new ProductType(a, b)), a);
     }
 
 
@@ -58,7 +55,7 @@ public class FoldLeft extends TernaryOperator<ListLiteral, FunctionLiteral, Lite
             final Call call = new Call(Position.NONE, second, 
                 new ProductLiteral(Position.NONE, 
                     Arrays.asList(new Expression[] {result, exp})));
-            
+        
             call.visit(execVisitor);
             result = stack.pop();
         }
