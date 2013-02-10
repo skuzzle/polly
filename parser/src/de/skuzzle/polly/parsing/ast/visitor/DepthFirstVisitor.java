@@ -256,7 +256,7 @@ public class DepthFirstVisitor extends VisitorAdapter {
             return;
         }
         this.beforeInspect(inspect);
-        inspect.getName().visit(this);
+        inspect.getAccess().visit(this);
         this.afterInspect(inspect);
     }
 }

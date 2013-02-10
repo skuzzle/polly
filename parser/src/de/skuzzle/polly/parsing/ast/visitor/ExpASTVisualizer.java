@@ -330,8 +330,8 @@ public class ExpASTVisualizer extends DepthFirstVisitor {
     public void visitInspect(Inspect inspect) throws ASTTraversalException {
         this.beforeInspect(inspect);
         this.dotBuilder.printExpression("Inspect", inspect);
-        this.dotBuilder.printNode(inspect.getName(), inspect.getName().getId());
-        this.dotBuilder.printEdge(inspect, inspect.getName(), "");
+        inspect.getAccess().visit(this);
+        this.dotBuilder.printEdge(inspect, inspect.getAccess(), "");
         this.afterInspect(inspect);
     }
 }

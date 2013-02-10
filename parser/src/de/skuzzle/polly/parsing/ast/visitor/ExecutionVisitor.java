@@ -6,11 +6,12 @@ import java.util.List;
 
 
 import de.skuzzle.polly.parsing.Position;
-import de.skuzzle.polly.parsing.ast.Identifier;
+import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.expressions.Delete;
+import de.skuzzle.polly.parsing.ast.expressions.Delete.DeleteableIdentifier;
 import de.skuzzle.polly.parsing.ast.expressions.Inspect;
 import de.skuzzle.polly.parsing.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
@@ -61,7 +62,7 @@ public class ExecutionVisitor extends DepthFirstVisitor {
      * @return The created namespace.
      */
     private Namespace enter() {
-        return this.nspace = this.nspace.enter(false);
+        return this.nspace = this.nspace.enter();
     }
     
     
@@ -247,8 +248,12 @@ public class ExecutionVisitor extends DepthFirstVisitor {
     public void visitDelete(Delete delete) throws ASTTraversalException {
         this.beforeDelete(delete);
         int i = 0;
-        for (final Identifier id: delete.getIdentifiers()) {
-            i += this.rootNs.delete(id);
+        for (final DeleteableIdentifier id: delete.getIdentifiers()) {
+            if (id.isGlobal()) {
+                i += Namespace.deletePublic(id);
+            } else {
+                i += this.rootNs.delete(id);
+            }
         }
         this.stack.push(new NumberLiteral(Position.NONE, i));
         this.afterDelete(delete);
@@ -260,14 +265,33 @@ public class ExecutionVisitor extends DepthFirstVisitor {
     public void visitInspect(Inspect inspect) throws ASTTraversalException {
         this.beforeInspect(inspect);
         
-        final Declaration decl = this.nspace.resolveFirst(inspect.getName());
+        Namespace target = null;
+        ResolvableIdentifier var = null;
+        
+        if (inspect.getAccess() instanceof VarAccess) {
+            final VarAccess va = (VarAccess) inspect.getAccess();
+            
+            target = this.nspace;
+            var = va.getIdentifier();
+            
+        } else if (inspect.getAccess() instanceof NamespaceAccess) {
+            final NamespaceAccess nsa = (NamespaceAccess) inspect.getAccess();
+            final VarAccess nsName = (VarAccess) nsa.getLhs();
+            
+            var = ((VarAccess) nsa.getRhs()).getIdentifier();
+            target = Namespace.forName(nsName.getIdentifier());
+        } else {
+            throw new IllegalStateException("this should not be reachable");
+        }
+        
+        final Declaration decl = target.resolveFirst(var);
         if (decl.isNative()) {
-            this.stack.push(new StringLiteral(inspect.getName().getPosition(), 
-                "Type: " + decl.getExpression().getUnique().getName()));
+            this.stack.push(new StringLiteral(var.getPosition(), 
+                "Type: " + decl.getType().getName()));
         } else {
             final String s = Unparser.toString(decl.getExpression()) + 
-                " (Type: " + decl.getExpression().getUnique().getName() + ")";
-            this.stack.push(new StringLiteral(inspect.getName().getPosition(), s));
+                " (Type: " + decl.getType().getName() + ")";
+            this.stack.push(new StringLiteral(var.getPosition(), s));
         }
         
         this.afterInspect(inspect);

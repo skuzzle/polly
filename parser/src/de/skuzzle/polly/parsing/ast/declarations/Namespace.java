@@ -409,6 +409,18 @@ public class Namespace {
     
     
     /**
+     * Deletes a declaration from PUBLIC namespace.
+     * 
+     * @param id Name of the declaration to delete.
+     * @return Number of deleted declarations.
+     */
+    public final static int deletePublic(Identifier id) {
+        return PUBLIC.delete(id);
+    }
+    
+    
+    
+    /**
      * Gets the toplevel namespace with the given name. If no namespace with that name
      * exists, it is created.
      * 
@@ -468,7 +480,6 @@ public class Namespace {
 
     protected final Map<String, List<Declaration>> decls;
     protected final Namespace parent;
-    protected boolean local;
     
     
     
@@ -524,12 +535,10 @@ public class Namespace {
     /**
      * Creates a new sub namespace of this one and returns it.
      * 
-     * @param local Whether the new namespace is used for local function parameters. 
      * @return The new namespace.
      */
-    public Namespace enter(boolean local) {
+    public Namespace enter() {
         final Namespace ns = new Namespace(this);
-        ns.local = local;
         return ns;
     }
     
@@ -778,10 +787,12 @@ ignore:     for (Declaration decl : decls) {
                     b.append(decl.getName());
                     b.append("'");
                     b.append(" = ");
-                    b.append(Unparser.toString(decl.getExpression()));
-                    b.append(" [Type: ");
+                    if (!decl.isNative()) {
+                        b.append(Unparser.toString(decl.getExpression()));
+                        b.append(" ");
+                    }
                     b.append(decl.getType());
-                    b.append("]\n");
+                    b.append("\n");
                 }
             }
         }

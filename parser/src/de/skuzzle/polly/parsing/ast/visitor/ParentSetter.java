@@ -109,6 +109,6 @@ public class ParentSetter extends DepthFirstVisitor {
     
     @Override
     public void beforeInspect(Inspect inspect) throws ASTTraversalException {
-        inspect.getName().setParent(inspect);
+        inspect.getAccess().setParent(inspect);
     }
 }

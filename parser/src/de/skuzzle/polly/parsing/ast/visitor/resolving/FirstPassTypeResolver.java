@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.declarations.types.ListType;
@@ -147,6 +148,10 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     
     @Override
     public void afterAssignment(Assignment assign) throws ASTTraversalException {
+        if (assign.isTemp()) {
+            this.reportError(assign, 
+                "Temporäre Deklarationen werden (noch?) nicht unterstützt.");
+        }
         for (final Type t : assign.getExpression().getTypes()) {
             final Declaration vd = new Declaration(assign.getName().getPosition(), 
                 assign.getName(), new Empty(t, assign.getExpression().getPosition()));
@@ -250,10 +255,33 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     
     @Override
     public void beforeInspect(Inspect inspect) throws ASTTraversalException {
-        final Declaration decl = this.nspace.resolveFirst(inspect.getName());
+        Namespace target = null;
+        ResolvableIdentifier var = null;
+        
+        if (inspect.getAccess() instanceof VarAccess) {
+            final VarAccess va = (VarAccess) inspect.getAccess();
+            
+            target = this.nspace;
+            var = va.getIdentifier();
+            
+        } else if (inspect.getAccess() instanceof NamespaceAccess) {
+            final NamespaceAccess nsa = (NamespaceAccess) inspect.getAccess();
+            final VarAccess nsName = (VarAccess) nsa.getLhs();
+            
+            if (!Namespace.exists(nsName.getIdentifier())) {
+                this.reportError(nsName, "Unbekannter Namespace: " + 
+                    nsName.getIdentifier());
+            }
+            
+            var = ((VarAccess) nsa.getRhs()).getIdentifier();
+            target = Namespace.forName(nsName.getIdentifier());
+        } else {
+            throw new IllegalStateException("this should not be reachable");
+        }
+        
+        final Declaration decl = target.resolveFirst(var);
         if (decl == null) {
-            this.reportError(inspect.getName(), "Unbekannte Variable: " + 
-                inspect.getName());
+            this.reportError(var, "Unbekannte Variable: " + var);
         }
         inspect.setUnique(Type.STRING);
         inspect.addType(Type.STRING);

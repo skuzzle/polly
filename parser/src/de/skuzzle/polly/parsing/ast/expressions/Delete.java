@@ -14,18 +14,41 @@ public class Delete extends Expression {
 
     private static final long serialVersionUID = 1L;
     
-    private final List<Identifier> ids;
+    public final static class DeleteableIdentifier extends Identifier {
+        
+        private static final long serialVersionUID = 1L;
+        
+        private final boolean global;
+        
+        public DeleteableIdentifier(Identifier id, boolean global) {
+            super(id.getPosition(), id.getId());
+            this.global = global;
+        }
+        
+        
+        
+        /**
+         * Whether identifier should be delete from PUBLIC namespace.
+         * 
+         * @return Whether identifier should be delete from PUBLIC namespace.
+         */
+        public boolean isGlobal() {
+            return this.global;
+        }
+    }
+    
+    private final List<DeleteableIdentifier> ids;
     
     
     
-    public Delete(Position position, List<Identifier> ids) {
+    public Delete(Position position, List<DeleteableIdentifier> ids) {
         super(position);
         this.ids = ids;
     }
 
     
     
-    public List<Identifier> getIdentifiers() {
+    public List<DeleteableIdentifier> getIdentifiers() {
         return this.ids;
     }
     

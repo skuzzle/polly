@@ -2,7 +2,6 @@ package de.skuzzle.polly.parsing.ast.expressions;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Node;
-import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 import de.skuzzle.polly.parsing.ast.visitor.Visitor;
@@ -12,18 +11,18 @@ public class Inspect extends Expression {
     
     private static final long serialVersionUID = 1L;
     
-    private final ResolvableIdentifier name;
+    private final Expression access;
     
     
-    public Inspect(Position position, ResolvableIdentifier name) {
+    public Inspect(Position position, Expression access) {
         super(position);
-        this.name = name;
+        this.access = access;
     }
 
 
     
-    public ResolvableIdentifier getName() {
-        return this.name;
+    public Expression getAccess() {
+        return this.access;
     }
     
     

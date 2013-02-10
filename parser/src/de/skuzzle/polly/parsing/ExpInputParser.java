@@ -21,6 +21,7 @@ import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Braced;
 import de.skuzzle.polly.parsing.ast.expressions.Call;
 import de.skuzzle.polly.parsing.ast.expressions.Delete;
+import de.skuzzle.polly.parsing.ast.expressions.Delete.DeleteableIdentifier;
 import de.skuzzle.polly.parsing.ast.expressions.Empty;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.Inspect;
@@ -73,8 +74,8 @@ import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
  *                | '(' relation ')'                           // braced expression
  *                | '\(' parameters ':' relation ')'           // lambda function literal
  *                | '{' exprList '}'                           // concrete list of expressions
- *                | DELETE '(' ID (',' ID)* ')'                // delete operator
- *                | INSPECT (' ID ')'                          // inspect operator
+ *                | DELETE '(' PUBLIC? ID (',' PUBLIC? ID)* ')'// delete operator
+ *                | INSPECT (' ID ('.' ID)? ')'                // inspect operator
  *                | IF relation ':' relation ':' relation      // conditional operator
  *                | TRUE | FALSE                               // boolean literal
  *                | CHANNEL                                    // channel literal
@@ -736,22 +737,22 @@ public class ExpInputParser {
      * a delete or if statement.
      * 
      * <pre>
-     * literal -> ID                                    // VarAccess
-     *          | ESCAPED                               // token escape
-     *          | '(' relation ')'                      // braced expression
-     *          | '\(' parameters ':' relation ')'      // lambda function literal
-     *          | '{' exprList '}'                      // concrete list of expressions
-     *          | DELETE '(' ID (',' ID)* ')'           // delete operator
-     *          | INSPECT (' ID ')'                     // inspect operator
-     *          | IF expr ':' relation ':' relation     // conditional operator
-     *          | TRUE | FALSE                          // boolean literal
-     *          | CHANNEL                               // channel literal
-     *          | USER                                  // user literal
-     *          | STRING                                // string literal
-     *          | NUMBER                                // number literal
-     *          | DATETIME                              // date literal
-     *          | TIMESPAN                              // timespan literal
-     *          | '?'                                   // HELP literal
+     * literal -> ID                                             // VarAccess
+     *          | ESCAPED                                        // token escape
+     *          | '(' relation ')'                               // braced expression
+     *          | '\(' parameters ':' relation ')'               // lambda function literal
+     *          | '{' exprList '}'                               // concrete list of expressions
+     *          | DELETE '(' PUBLIC? ID (',' PUBLIC? ID)* ')'    // delete operator
+     *          | INSPECT (' ID ('.' ID)? ')'                    // inspect operator
+     *          | IF expr ':' relation ':' relation              // conditional operator
+     *          | TRUE | FALSE                                   // boolean literal
+     *          | CHANNEL                                        // channel literal
+     *          | USER                                           // user literal
+     *          | STRING                                         // string literal
+     *          | NUMBER                                         // number literal
+     *          | DATETIME                                       // date literal
+     *          | TIMESPAN                                       // timespan literal
+     *          | '?'                                            // HELP literal
      * </pre>
      *  
      * @return The parsed expression.
@@ -830,24 +831,37 @@ public class ExpInputParser {
             this.expect(TokenType.OPENBR);
             this.enterExpression();
             
-            final List<Identifier> ids = new ArrayList<Identifier>();
-            ids.add(this.expectIdentifier());
-            
-            while (this.scanner.match(TokenType.COMMA)) {
-                ids.add(this.expectIdentifier());
-            }
-            
+            final List<DeleteableIdentifier> ids = new ArrayList<DeleteableIdentifier>();
+            do {
+                boolean global = this.scanner.match(TokenType.PUBLIC);
+                if (global) {
+                    this.allowSingleWhiteSpace();
+                }
+                ids.add(new DeleteableIdentifier(this.expectIdentifier(), global));
+            } while (this.scanner.match(TokenType.COMMA));
+                
             this.expect(TokenType.CLOSEDBR);
             this.leaveExpression();
             
             return new Delete(this.scanner.spanFrom(la), ids);
+            
         case INSPECT:
             this.scanner.consume();
             this.expect(TokenType.OPENBR);
             final ResolvableIdentifier name = new ResolvableIdentifier(
                 this.expectIdentifier());
+            final VarAccess va1 = new VarAccess(name.getPosition(), name);
+            Expression result = va1;
+            
+            if (this.scanner.match(TokenType.DOT)) {
+                final ResolvableIdentifier name2 = new ResolvableIdentifier(
+                    this.expectIdentifier());
+                final VarAccess va2 = new VarAccess(name2.getPosition(), name2);
+                
+                result = new NamespaceAccess(this.scanner.spanFrom(la), va1, va2);
+            }
             this.expect(TokenType.CLOSEDBR);
-            return new Inspect(this.scanner.spanFrom(la), name);
+            return new Inspect(this.scanner.spanFrom(la), result);
             
         case IF:
             this.scanner.consume();
