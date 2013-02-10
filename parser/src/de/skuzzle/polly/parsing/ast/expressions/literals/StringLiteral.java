@@ -36,6 +36,11 @@ public class StringLiteral extends Literal {
 
     @Override
     public Literal castTo(Type type) throws ASTTraversalException {
+        if (type == Type.CHANNEL) {
+            return new ChannelLiteral(this.getPosition(), this.value);
+        } else if (type == Type.USER) {
+            return new UserLiteral(this.getPosition(), this.value);
+        }
         return super.castTo(type);
     }
 
