@@ -81,6 +81,7 @@ public class Cast extends Operator {
         final FunctionLiteral func = this.createFunction();
         final Declaration vd = new Declaration(
             func.getPosition(), this.getUnique().getName(), func);
+        vd.setNative(true);
         return vd;
     }
 

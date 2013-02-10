@@ -345,9 +345,12 @@ public class ExpInputParser {
         final Expression lhs = this.parseRelation();
         
         if (this.scanner.match(TokenType.ASSIGNMENT)) {
+            this.allowSingleWhiteSpace();
             final boolean pblc = this.scanner.match(TokenType.PUBLIC);
+            this.allowSingleWhiteSpace();
             final boolean temp = this.scanner.match(TokenType.TEMP);
-
+            this.allowSingleWhiteSpace();
+            
             final Identifier id = this.expectIdentifier();
             
             return new Assignment(

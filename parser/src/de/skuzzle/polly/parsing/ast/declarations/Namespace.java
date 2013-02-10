@@ -47,10 +47,10 @@ import de.skuzzle.polly.tools.strings.StringUtils;
 
 /**
  * <p>This class represents a hierarchical store for variable declarations. Every 
- * namespace has a parent namespace, except the global namespace. Namespaces that are not 
- * created with a parent will automatically have the global namespace as parent. The 
- * global space contains all native operator and constant declarations that can be
- * used.</p>
+ * namespace has a parent namespace, except the NATIVE namespace. Namespaces that are not 
+ * created with a parent will automatically have the PUBLIC namespace as parent. The 
+ * NATIVE space contains all native operator and constant declarations that can be
+ * used, the PUBLIC space will contain declarations declared public.</p>
  * 
  * <p>For each variable name can be stored a list of declarations. Declarations with
  * the same name must have distinct unique types. Resolving of a variable name will first
@@ -90,7 +90,7 @@ public class Namespace {
     
     /**
      * Private namespace extension that will store the namespace's contents to file 
-     * whenever a new variable is declared.
+     * whenever a new variable is declared or deleted.
      * 
      * @author Simon Taddiken
      */
@@ -111,7 +111,7 @@ public class Namespace {
         public synchronized void declare(Declaration decl) 
                 throws ASTTraversalException {
             super.declare(decl);
-            if (decl.isPublic() || decl.isTemp() || decl.isNative()) {
+            if (decl.isTemp() || decl.isNative()) {
                 return;
             }
             
@@ -133,22 +133,6 @@ public class Namespace {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        
-        
-        
-        @Override
-        public int delete(Identifier id) {
-            final int i = super.delete(id);
-            
-            if (i != 0) {
-                try {
-                    this.store();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            return i;
         }
         
         
@@ -271,10 +255,30 @@ public class Namespace {
     
     
     /**
-     * This is the root namespace of all user namespaces. It contains all operator
-     * declarations as well as public variable and function declarations made by users.
+     * This is the root namespace of all user namespaces. It contains all operator and
+     * native function declarations.
      */
-    private final static Namespace GLOBAL = new Namespace(null);
+    private final static Namespace NATIVE = new Namespace(null) {
+        
+        @Override
+        public void declare(Declaration decl) throws ASTTraversalException {
+            if (!decl.isNative()) {
+                throw new IllegalArgumentException(
+                    "NATIVE namespace must only contain native declarations.");
+            }
+            super.declare(decl);
+        }
+        
+        
+        
+        @Override
+        protected void delete(Iterator<Declaration> it) {
+            throw new UnsupportedOperationException(
+                "can not delete from native namespace.");
+        }
+    };
+    
+    // initialize native declarations
     static {
         try {
             
@@ -287,95 +291,95 @@ public class Namespace {
                 new NumberLiteral(Position.NONE, Math.E));
             e.setNative(true);
             
-            GLOBAL.declare(pi);
-            GLOBAL.declare(e);
+            NATIVE.declare(pi);
+            NATIVE.declare(e);
             
             // casting ops
-            GLOBAL.declare(new Cast(OpType.STRING, Type.STRING).createDeclaration());
-            GLOBAL.declare(new Cast(OpType.NUMBER, Type.NUM).createDeclaration());
-            GLOBAL.declare(new Cast(OpType.DATE, Type.DATE).createDeclaration());
+            NATIVE.declare(new Cast(OpType.STRING, Type.STRING).createDeclaration());
+            NATIVE.declare(new Cast(OpType.NUMBER, Type.NUM).createDeclaration());
+            NATIVE.declare(new Cast(OpType.DATE, Type.DATE).createDeclaration());
             
             // relational ops
-            GLOBAL.declare(new Relational(OpType.EQ).createDeclaration());
-            GLOBAL.declare(new Relational(OpType.NEQ).createDeclaration());
-            GLOBAL.declare(new Relational(OpType.LT).createDeclaration());
-            GLOBAL.declare(new Relational(OpType.ELT).createDeclaration());
-            GLOBAL.declare(new Relational(OpType.GT).createDeclaration());
-            GLOBAL.declare(new Relational(OpType.EGT).createDeclaration());
+            NATIVE.declare(new Relational(OpType.EQ).createDeclaration());
+            NATIVE.declare(new Relational(OpType.NEQ).createDeclaration());
+            NATIVE.declare(new Relational(OpType.LT).createDeclaration());
+            NATIVE.declare(new Relational(OpType.ELT).createDeclaration());
+            NATIVE.declare(new Relational(OpType.GT).createDeclaration());
+            NATIVE.declare(new Relational(OpType.EGT).createDeclaration());
             
             // Arithmetic binary ops
-            GLOBAL.declare(new BinaryArithmetic(OpType.ADD).createDeclaration());
-            GLOBAL.declare(new BinaryArithmetic(OpType.SUB).createDeclaration());
-            GLOBAL.declare(new BinaryArithmetic(OpType.MUL).createDeclaration());
-            GLOBAL.declare(new BinaryArithmetic(OpType.DIV).createDeclaration());
-            GLOBAL.declare(new BinaryArithmetic(OpType.INTDIV).createDeclaration());
-            GLOBAL.declare(new BinaryArithmetic(OpType.INT_AND).createDeclaration());
-            GLOBAL.declare(new BinaryArithmetic(OpType.INT_OR).createDeclaration());
-            GLOBAL.declare(new BinaryArithmetic(OpType.MOD).createDeclaration());
-            GLOBAL.declare(new BinaryArithmetic(OpType.POWER).createDeclaration());
-            GLOBAL.declare(new BinaryArithmetic(OpType.LEFT_SHIFT).createDeclaration());
-            GLOBAL.declare(new BinaryArithmetic(OpType.RIGHT_SHIFT).createDeclaration());
-            GLOBAL.declare(new BinaryArithmetic(OpType.URIGHT_SHIFT).createDeclaration());
-            GLOBAL.declare(new BinaryArithmetic(OpType.RADIX).createDeclaration());
-            GLOBAL.declare(new BinaryArithmetic(OpType.MIN).createDeclaration());
-            GLOBAL.declare(new BinaryArithmetic(OpType.MAX).createDeclaration());
-            GLOBAL.declare(new BinaryArithmetic(OpType.XOR).createDeclaration());
+            NATIVE.declare(new BinaryArithmetic(OpType.ADD).createDeclaration());
+            NATIVE.declare(new BinaryArithmetic(OpType.SUB).createDeclaration());
+            NATIVE.declare(new BinaryArithmetic(OpType.MUL).createDeclaration());
+            NATIVE.declare(new BinaryArithmetic(OpType.DIV).createDeclaration());
+            NATIVE.declare(new BinaryArithmetic(OpType.INTDIV).createDeclaration());
+            NATIVE.declare(new BinaryArithmetic(OpType.INT_AND).createDeclaration());
+            NATIVE.declare(new BinaryArithmetic(OpType.INT_OR).createDeclaration());
+            NATIVE.declare(new BinaryArithmetic(OpType.MOD).createDeclaration());
+            NATIVE.declare(new BinaryArithmetic(OpType.POWER).createDeclaration());
+            NATIVE.declare(new BinaryArithmetic(OpType.LEFT_SHIFT).createDeclaration());
+            NATIVE.declare(new BinaryArithmetic(OpType.RIGHT_SHIFT).createDeclaration());
+            NATIVE.declare(new BinaryArithmetic(OpType.URIGHT_SHIFT).createDeclaration());
+            NATIVE.declare(new BinaryArithmetic(OpType.RADIX).createDeclaration());
+            NATIVE.declare(new BinaryArithmetic(OpType.MIN).createDeclaration());
+            NATIVE.declare(new BinaryArithmetic(OpType.MAX).createDeclaration());
+            NATIVE.declare(new BinaryArithmetic(OpType.XOR).createDeclaration());
             
             // boolean arithmetic
-            GLOBAL.declare(new BinaryBooleanArithmetic(OpType.BOOLEAN_AND).createDeclaration());
-            GLOBAL.declare(new BinaryBooleanArithmetic(OpType.XOR).createDeclaration());
-            GLOBAL.declare(new BinaryBooleanArithmetic(OpType.BOOLEAN_OR).createDeclaration());
+            NATIVE.declare(new BinaryBooleanArithmetic(OpType.BOOLEAN_AND).createDeclaration());
+            NATIVE.declare(new BinaryBooleanArithmetic(OpType.XOR).createDeclaration());
+            NATIVE.declare(new BinaryBooleanArithmetic(OpType.BOOLEAN_OR).createDeclaration());
             
             // boolean unary
-            GLOBAL.declare(new UnaryBooleanArithmetic(OpType.EXCLAMATION).createDeclaration());
+            NATIVE.declare(new UnaryBooleanArithmetic(OpType.EXCLAMATION).createDeclaration());
             
             // Arithmetic timespan and date binary ops
-            GLOBAL.declare(new TimespanArithmetic(OpType.ADD).createDeclaration());
-            GLOBAL.declare(new TimespanArithmetic(OpType.SUB).createDeclaration());
-            GLOBAL.declare(new DateTimespanArithmetic(OpType.ADD).createDeclaration());
-            GLOBAL.declare(new DateTimespanArithmetic(OpType.SUB).createDeclaration());
-            GLOBAL.declare(new DateArithmetic(OpType.SUB).createDeclaration());
+            NATIVE.declare(new TimespanArithmetic(OpType.ADD).createDeclaration());
+            NATIVE.declare(new TimespanArithmetic(OpType.SUB).createDeclaration());
+            NATIVE.declare(new DateTimespanArithmetic(OpType.ADD).createDeclaration());
+            NATIVE.declare(new DateTimespanArithmetic(OpType.SUB).createDeclaration());
+            NATIVE.declare(new DateArithmetic(OpType.SUB).createDeclaration());
             
             // String operators
-            GLOBAL.declare(new BinaryStringArithmetic(OpType.ADD).createDeclaration());
+            NATIVE.declare(new BinaryStringArithmetic(OpType.ADD).createDeclaration());
             
             // Arithmetic unary ops
-            GLOBAL.declare(new UnaryArithmetic(OpType.EXCLAMATION).createDeclaration());
-            GLOBAL.declare(new UnaryArithmetic(OpType.SUB).createDeclaration());
-            GLOBAL.declare(new UnaryArithmetic(OpType.LOG).createDeclaration());
-            GLOBAL.declare(new UnaryArithmetic(OpType.LN).createDeclaration());
-            GLOBAL.declare(new UnaryArithmetic(OpType.SQRT).createDeclaration());
-            GLOBAL.declare(new UnaryArithmetic(OpType.CEIL).createDeclaration());
-            GLOBAL.declare(new UnaryArithmetic(OpType.FLOOR).createDeclaration());
-            GLOBAL.declare(new UnaryArithmetic(OpType.ROUND).createDeclaration());
-            GLOBAL.declare(new UnaryArithmetic(OpType.SIG).createDeclaration());
-            GLOBAL.declare(new UnaryArithmetic(OpType.COS).createDeclaration());
-            GLOBAL.declare(new UnaryArithmetic(OpType.SIN).createDeclaration());
-            GLOBAL.declare(new UnaryArithmetic(OpType.TAN).createDeclaration());
-            GLOBAL.declare(new UnaryArithmetic(OpType.ACOS).createDeclaration());
-            GLOBAL.declare(new UnaryArithmetic(OpType.ATAN).createDeclaration());
-            GLOBAL.declare(new UnaryArithmetic(OpType.ASIN).createDeclaration());
-            GLOBAL.declare(new UnaryArithmetic(OpType.ABS).createDeclaration());
-            GLOBAL.declare(new UnaryArithmetic(OpType.TO_DEGREES).createDeclaration());
-            GLOBAL.declare(new UnaryArithmetic(OpType.TO_RADIANS).createDeclaration());
-            GLOBAL.declare(new UnaryArithmetic(OpType.EXP).createDeclaration());
+            NATIVE.declare(new UnaryArithmetic(OpType.EXCLAMATION).createDeclaration());
+            NATIVE.declare(new UnaryArithmetic(OpType.SUB).createDeclaration());
+            NATIVE.declare(new UnaryArithmetic(OpType.LOG).createDeclaration());
+            NATIVE.declare(new UnaryArithmetic(OpType.LN).createDeclaration());
+            NATIVE.declare(new UnaryArithmetic(OpType.SQRT).createDeclaration());
+            NATIVE.declare(new UnaryArithmetic(OpType.CEIL).createDeclaration());
+            NATIVE.declare(new UnaryArithmetic(OpType.FLOOR).createDeclaration());
+            NATIVE.declare(new UnaryArithmetic(OpType.ROUND).createDeclaration());
+            NATIVE.declare(new UnaryArithmetic(OpType.SIG).createDeclaration());
+            NATIVE.declare(new UnaryArithmetic(OpType.COS).createDeclaration());
+            NATIVE.declare(new UnaryArithmetic(OpType.SIN).createDeclaration());
+            NATIVE.declare(new UnaryArithmetic(OpType.TAN).createDeclaration());
+            NATIVE.declare(new UnaryArithmetic(OpType.ACOS).createDeclaration());
+            NATIVE.declare(new UnaryArithmetic(OpType.ATAN).createDeclaration());
+            NATIVE.declare(new UnaryArithmetic(OpType.ASIN).createDeclaration());
+            NATIVE.declare(new UnaryArithmetic(OpType.ABS).createDeclaration());
+            NATIVE.declare(new UnaryArithmetic(OpType.TO_DEGREES).createDeclaration());
+            NATIVE.declare(new UnaryArithmetic(OpType.TO_RADIANS).createDeclaration());
+            NATIVE.declare(new UnaryArithmetic(OpType.EXP).createDeclaration());
             
             // list unary op
-            GLOBAL.declare(new UnaryList(OpType.EXCLAMATION).createDeclaration());
-            GLOBAL.declare(new ListIndex(OpType.INDEX).createDeclaration());
-            GLOBAL.declare(new RandomListIndex(OpType.QUEST_EXCL).createDeclaration());
-            GLOBAL.declare(new RandomListIndex(OpType.QUESTION).createDeclaration());
+            NATIVE.declare(new UnaryList(OpType.EXCLAMATION).createDeclaration());
+            NATIVE.declare(new ListIndex(OpType.INDEX).createDeclaration());
+            NATIVE.declare(new RandomListIndex(OpType.QUEST_EXCL).createDeclaration());
+            NATIVE.declare(new RandomListIndex(OpType.QUESTION).createDeclaration());
             
             // DOTDOT
-            GLOBAL.declare(new TernaryDotDot().createDeclaration());
+            NATIVE.declare(new TernaryDotDot().createDeclaration());
             
             // ternary ops
-            GLOBAL.declare(new Conditional(OpType.IF).createDeclaration());
+            NATIVE.declare(new Conditional(OpType.IF).createDeclaration());
             
             
             // FUNCTIONS
-            GLOBAL.declare(new FoldLeft().createDeclaration());
-            GLOBAL.declare(new de.skuzzle.polly.parsing.ast.lang.functions.Map().createDeclaration());
+            NATIVE.declare(new FoldLeft().createDeclaration());
+            NATIVE.declare(new de.skuzzle.polly.parsing.ast.lang.functions.Map().createDeclaration());
         } catch (ASTTraversalException e) {
             throw new ExceptionInInitializerError(e);
         }
@@ -386,6 +390,22 @@ public class Namespace {
     /** Contains all user namespaces mapped to their user name */
     private final static Map<String, Namespace> ROOTS = new HashMap<String, Namespace>();
 
+    /** Namespace for public declarations. */
+    private final static Namespace PUBLIC = new StorableNamespace("~public.decl", NATIVE);
+    
+    
+    
+    /**
+     * Declares a variable in PUBLIC namespace.
+     * 
+     * @param decl The declaration to add.
+     * @throws ASTTraversalException If declaring fails.
+     */
+    public final static void declarePublic(Declaration decl) 
+            throws ASTTraversalException {
+        PUBLIC.declare(decl);
+    }
+    
     
     
     /**
@@ -396,12 +416,12 @@ public class Namespace {
      * @return The namespace.
      */
     public final static Namespace forName(String name) {
-        if (name.equals("~global")) {
-            return GLOBAL;
+        if (name.equals("~public")) {
+            return PUBLIC;
         }
         Namespace check = ROOTS.get(name);
         if (check == null) {
-            check = new StorableNamespace(name + ".decl", GLOBAL);
+            check = new StorableNamespace(name + ".decl", PUBLIC);
             ROOTS.put(name, check);
         }
         return check;
@@ -491,6 +511,9 @@ public class Namespace {
      * @return A new {@link Namespace}.
      */
     public Namespace derive(Namespace parent) {
+        if (parent == this) {
+            throw new IllegalArgumentException("namespace can not be its own parent");
+        }
         final Namespace result = new Namespace(parent);
         result.decls.putAll(this.decls);
         return result;
@@ -547,25 +570,30 @@ public class Namespace {
             throw new IllegalStateException(
                 "cannot declare variable with unresolved type: " + decl);
         }
-        final Map<String, List<Declaration>> decls = decl.isPublic() 
-            ? GLOBAL.decls : this.decls;
         
-        List<Declaration> d = decls.get(decl.getName().getId());
+        List<Declaration> d = this.decls.get(decl.getName().getId());
         if (d == null) {
             d = new ArrayList<Declaration>();
-            decls.put(decl.getName().getId(), d);
+            this.decls.put(decl.getName().getId(), d);
         }
         
         // overloading is only allowed for native declarations, so check if decl with that
         // name already exists
-        if (!decl.isNative()) {
-            final Iterator<Declaration> it = d.iterator();
-            while (it.hasNext()) {
-                final Declaration existing = it.next();
+        final Iterator<Declaration> it = d.iterator();
+        while (it.hasNext()) {
+            final Declaration existing = it.next();
+            
+            if (!decl.isNative()) {
                 if (existing.getName().getId().equals(decl.getName().getId())) {
                     this.delete(it);
                 }
-            }            
+            } else {
+                // native declarations can be overloaded, but must have distinct types
+                if (Type.tryUnify(decl.getType(), existing.getType())) {
+                    throw new ASTTraversalException(decl.getPosition(), 
+                        "Deklaration mit identischem Typ existiert bereits.");
+                }
+            }
         }
                 
         d.add(decl);
@@ -580,16 +608,12 @@ public class Namespace {
     
     
     /**
-     * Removes all declarations in this namespace with the given name. Declarations from
-     * GLOBAL namespace can not be removed.
+     * Removes all declarations in this namespace with the given name.
      * 
      * @param id Name of the declaration to delete.
      * @return How many declarations have been removed.
      */
     public int delete(Identifier id) {
-        if (this == GLOBAL) {
-            return 0;
-        }
         List<Declaration> decls = this.decls.get(id.getId());
         if (decls == null) {
             return 0;
@@ -601,7 +625,7 @@ public class Namespace {
             final Declaration d = it.next();
             
             if (!d.isNative()) {
-                it.remove();
+                this.delete(it);
                 ++i;
             }
         }

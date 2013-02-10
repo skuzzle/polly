@@ -175,7 +175,11 @@ public class ExecutionVisitor extends DepthFirstVisitor {
         vd.setPublic(assign.isPublic());
         vd.setTemp(assign.isTemp());
         
-        this.rootNs.declare(vd);
+        if (vd.isPublic()) {
+            Namespace.declarePublic(vd);
+        } else {
+            this.rootNs.declare(vd);
+        }
         
         this.afterAssignment(assign);
     }
