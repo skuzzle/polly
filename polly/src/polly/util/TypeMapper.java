@@ -47,10 +47,10 @@ public class TypeMapper {
 			return Type.DATE;
 		} else if (types instanceof Types.NumberType) {
 			return Type.NUM;
-		} else if (types instanceof Types.StringType) {
-			return Type.STRING;
 		} else if (types instanceof Types.UserType) {
 			return Type.USER;
+        } else if (types instanceof Types.StringType) {
+            return Type.STRING;
 		} else if (types instanceof Types.HelpType) {
 		    return Type.HELP;
 		} else if (types instanceof Types.ListType) {
@@ -124,13 +124,13 @@ public class TypeMapper {
 			Types.NumberType bt = (Types.NumberType) types;
 			return new NumberLiteral(Position.NONE, bt.getValue());
 			
-		} else if (types instanceof Types.StringType) {
-			Types.StringType bt = (Types.StringType) types;
-			return new StringLiteral(Position.NONE, bt.getValue());
-			
 		} else if (types instanceof Types.UserType) {
 			Types.UserType bt = (Types.UserType) types;
 			return new UserLiteral(Position.NONE, bt.getValue());
+			
+	     } else if (types instanceof Types.StringType) {
+            Types.StringType bt = (Types.StringType) types;
+            return new StringLiteral(Position.NONE, bt.getValue());
 			
 		} else if (types instanceof Types.HelpType) {
 		    return new HelpLiteral(Position.NONE);
@@ -175,14 +175,14 @@ public class TypeMapper {
 			NumberLiteral bl = (NumberLiteral) literal;
 			return new Types.NumberType(bl.getValue(), bl.getRadix());
 			
-		} else if (literal instanceof StringLiteral) {
-			StringLiteral bl = (StringLiteral) literal;
-			return new Types.StringType(bl.getValue());
-			
 		} else if (literal instanceof UserLiteral) {
 			UserLiteral bl = (UserLiteral) literal;
 			return new Types.UserType(bl.getValue());
-			
+            
+        } else if (literal instanceof StringLiteral) {
+            StringLiteral bl = (StringLiteral) literal;
+            return new Types.StringType(bl.getValue());
+            
 		} else if (literal instanceof HelpLiteral) {
 		    return Types.HELP;
 		    
