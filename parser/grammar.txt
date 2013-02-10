@@ -18,9 +18,9 @@ literal     -> ID                                         // VarAccess
              | '(' relation ')'                           // braced expression
              | '\(' parameters ':' relation ')'           // lambda function literal
              | '{' exprList '}'                           // concrete list of expressions
-             | DELETE '(' PUBLIC? ID (',' PUBLIC? ID)* ')'// delete operator
-             | INSPECT '(' PUBLIC ID ')'                  // inspect operator
-             | INSPECT '(' ID ('.' ID)? ')'               // inspect operator
+             | DELETE PUBLIC? ID (',' PUBLIC? ID)*        // delete operator
+             | INSPECT PUBLIC ID                          // inspect operator
+             | INSPECT ID ('.' ID)?                       // inspect operator
              | IF relation ':' relation ':' relation      // conditional operator
              | TRUE | FALSE                               // boolean literal
              | CHANNEL                                    // channel literal

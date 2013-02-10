@@ -239,7 +239,7 @@ public class CommandManagerImpl implements CommandManager {
             Map<String, Types> constants = this.getCommandConstants(input);
             
             final Namespace rootNs = Namespace.forName(executor.getName());
-            final Namespace workingNs = rootNs.enter(false);
+            final Namespace workingNs = rootNs.enter();
             
             this.createContext(channel, executor, ircManager, constants, workingNs);
             root = this.parseMessage(input, rootNs, workingNs);

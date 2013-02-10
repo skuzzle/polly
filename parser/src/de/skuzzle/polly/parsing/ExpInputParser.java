@@ -74,9 +74,9 @@ import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
  *                | '(' relation ')'                           // braced expression
  *                | '\(' parameters ':' relation ')'           // lambda function literal
  *                | '{' exprList '}'                           // concrete list of expressions
- *                | DELETE '(' PUBLIC? ID (',' PUBLIC? ID)* ')'// delete operator
- *                | INSPECT '(' PUBLIC ID ')'                  // inspect for public
- *                | INSPECT (' ID ('.' ID)? ')'                // inspect operator
+ *                | DELETE PUBLIC? ID (',' PUBLIC? ID)*        // delete operator
+ *                | INSPECT  PUBLIC ID                         // inspect for public
+ *                | INSPECT ID ('.' ID)?                       // inspect operator
  *                | IF relation ':' relation ':' relation      // conditional operator
  *                | TRUE | FALSE                               // boolean literal
  *                | CHANNEL                                    // channel literal
@@ -738,23 +738,23 @@ public class ExpInputParser {
      * a delete or if statement.
      * 
      * <pre>
-     * literal -> ID                                             // VarAccess
-     *          | ESCAPED                                        // token escape
-     *          | '(' relation ')'                               // braced expression
-     *          | '\(' parameters ':' relation ')'               // lambda function literal
-     *          | '{' exprList '}'                               // concrete list of expressions
-     *          | DELETE '(' PUBLIC? ID (',' PUBLIC? ID)* ')'    // delete operator
-     *          | INSPECT '(' PUBLIC ID ')'                      // inspect for public
-     *          | INSPECT '(' ID ('.' ID)? ')'                   // inspect operator
-     *          | IF expr ':' relation ':' relation              // conditional operator
-     *          | TRUE | FALSE                                   // boolean literal
-     *          | CHANNEL                                        // channel literal
-     *          | USER                                           // user literal
-     *          | STRING                                         // string literal
-     *          | NUMBER                                         // number literal
-     *          | DATETIME                                       // date literal
-     *          | TIMESPAN                                       // timespan literal
-     *          | '?'                                            // HELP literal
+     * literal -> ID                                       // VarAccess
+     *          | ESCAPED                                  // token escape
+     *          | '(' relation ')'                         // braced expression
+     *          | '\(' parameters ':' relation ')'         // lambda function literal
+     *          | '{' exprList '}'                         // concrete list of expressions
+     *          | DELETE PUBLIC? ID (',' PUBLIC? ID)*      // delete operator
+     *          | INSPECT PUBLIC ID                        // inspect for public
+     *          | INSPECT ID ('.' ID)?                     // inspect operator
+     *          | IF expr ':' relation ':' relation        // conditional operator
+     *          | TRUE | FALSE                             // boolean literal
+     *          | CHANNEL                                  // channel literal
+     *          | USER                                     // user literal
+     *          | STRING                                   // string literal
+     *          | NUMBER                                   // number literal
+     *          | DATETIME                                 // date literal
+     *          | TIMESPAN                                 // timespan literal
+     *          | '?'                                      // HELP literal
      * </pre>
      *  
      * @return The parsed expression.
@@ -830,27 +830,27 @@ public class ExpInputParser {
             
         case DELETE:
             this.scanner.consume();
-            this.expect(TokenType.OPENBR);
-            this.enterExpression();
+            this.allowSingleWhiteSpace();
             
             final List<DeleteableIdentifier> ids = new ArrayList<DeleteableIdentifier>();
             do {
                 boolean global = this.scanner.match(TokenType.PUBLIC);
+                if (global) {
+                    this.allowSingleWhiteSpace();
+                }
                 ids.add(new DeleteableIdentifier(this.expectIdentifier(), global));
             } while (this.scanner.match(TokenType.COMMA));
                 
-            this.expect(TokenType.CLOSEDBR);
-            this.leaveExpression();
             
             return new Delete(this.scanner.spanFrom(la), ids);
             
         case INSPECT:
             this.scanner.consume();
-            this.expect(TokenType.OPENBR);
-            this.enterExpression();
+            this.allowSingleWhiteSpace();
             
             final Token glob = this.scanner.lookAhead();
             final boolean global = this.scanner.match(TokenType.PUBLIC);
+            this.allowSingleWhiteSpace();
             
             final ResolvableIdentifier name = new ResolvableIdentifier(
                 this.expectIdentifier());
@@ -871,8 +871,6 @@ public class ExpInputParser {
                 
                 result = new NamespaceAccess(this.scanner.spanFrom(la), va1, va2);
             }
-            this.expect(TokenType.CLOSEDBR);
-            this.leaveExpression();
             return new Inspect(this.scanner.spanFrom(la), result, global);
             
         case IF:
