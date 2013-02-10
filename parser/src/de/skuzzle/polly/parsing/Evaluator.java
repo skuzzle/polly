@@ -88,7 +88,7 @@ public class Evaluator {
             this.lastResult.visit(parentSetter);
             
             // resolve types
-            TypeResolver.resolveAST(this.lastResult, rootNs);
+            TypeResolver.resolveAST(this.lastResult, workingNs);
             
             final Visitor executor = getExecutor(rootNs, workingNs);
             this.lastResult.visit(executor);

@@ -288,18 +288,18 @@ public class CommandManagerImpl implements CommandManager {
 
 
     private Root parseMessage(String message, Namespace rootNs, Namespace workingNs) 
-        throws UnsupportedEncodingException, ASTTraversalException {
+            throws UnsupportedEncodingException, ASTTraversalException {
     
-        Stopwatch watch = new MillisecondStopwatch();
+        final Stopwatch watch = new MillisecondStopwatch();
         watch.start();
         
-        final Evaluator eval = new Evaluator(message.trim(), 
-            this.encodingName);
-
+        final Evaluator eval = new Evaluator(message.trim(), this.encodingName);
         eval.evaluate(rootNs, workingNs);
 
         watch.stop();
-        logger.trace("Parsing time: " + watch.getDifference() + "ms");
+        if (eval.getRoot() != null) {
+            logger.trace("Parsing time: " + watch.getDifference() + "ms");
+        }
         
         final Root root = eval.getRoot();
         if (eval.errorOccurred()) {
