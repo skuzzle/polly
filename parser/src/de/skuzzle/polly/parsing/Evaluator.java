@@ -26,7 +26,7 @@ import de.skuzzle.polly.parsing.ast.visitor.resolving.TypeResolver;
  */
 public class Evaluator {
     
-    public final static boolean DEBUG_MODE = true;
+    public final static boolean DEBUG_MODE = false;
     
     private final static ExecutionVisitor getExecutor(Namespace rootNs, 
             Namespace workingNs) {

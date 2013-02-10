@@ -43,6 +43,17 @@ public class DateLiteral extends Literal {
         }
         return super.castTo(type);
     }
+    
+    
+    
+    @Override
+    public int compareTo(Literal o) {
+        if (o instanceof DateLiteral) {
+            final DateLiteral other = (DateLiteral) o;
+            return (int) (this.value.getTime() - other.value.getTime());
+        }
+        return super.compareTo(o);
+    }
 
     
     

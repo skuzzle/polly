@@ -91,6 +91,18 @@ public class TimespanLiteral extends DateLiteral {
     }
     
     
+    
+    @Override
+    public int compareTo(Literal o) {
+        if (o instanceof TimespanLiteral) {
+            final TimespanLiteral other = (TimespanLiteral) o;
+            return this.seconds - other.seconds;
+        }
+        return super.compareTo(o);
+    }
+    
+    
+    
     @Override
     public String toString() {
         return LiteralFormatter.DEFAULT.formatTimespan(this);
