@@ -25,8 +25,10 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.StringLiteral;
 import de.skuzzle.polly.parsing.ast.lang.Cast;
 import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
+import de.skuzzle.polly.parsing.ast.lang.functions.Comp;
 import de.skuzzle.polly.parsing.ast.lang.functions.FoldLeft;
 import de.skuzzle.polly.parsing.ast.lang.functions.Id;
+import de.skuzzle.polly.parsing.ast.lang.functions.Sort;
 import de.skuzzle.polly.parsing.ast.lang.operators.BinaryArithmetic;
 import de.skuzzle.polly.parsing.ast.lang.operators.BinaryBooleanArithmetic;
 import de.skuzzle.polly.parsing.ast.lang.operators.BinaryStringArithmetic;
@@ -392,6 +394,8 @@ public class Namespace {
             NATIVE.declare(new FoldLeft().createDeclaration());
             NATIVE.declare(new Id().createDeclaration());
             NATIVE.declare(new de.skuzzle.polly.parsing.ast.lang.functions.Map().createDeclaration());
+            NATIVE.declare(new Comp().createDeclaration());
+            NATIVE.declare(new Sort().createDeclaration());
             
         } catch (ASTTraversalException e) {
             throw new ExceptionInInitializerError(e);

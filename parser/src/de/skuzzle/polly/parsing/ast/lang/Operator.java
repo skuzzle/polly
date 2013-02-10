@@ -57,6 +57,8 @@ public abstract class Operator extends Function {
         FOLD_LEFT("foldl"),
         MAP("map"),
         ID("id"),
+        COMP("comp"),
+        SORT("sort"),
         
         ADD("+"),
         ADDWAVE("+~"),
