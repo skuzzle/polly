@@ -289,12 +289,13 @@ public class ExecutionVisitor extends DepthFirstVisitor {
         final StringBuilder b = new StringBuilder();
         for (final Declaration decl : decls) {
             if (decl.isNative()) {
-                b.append("Type: " + decl.getType().getName());
+                b.append("Native");
+            } else if (decl.getExpression() instanceof FunctionLiteral) {
+                b.append("Funktion: " + Unparser.toString(decl.getExpression()));
             } else {
-                final String s = Unparser.toString(decl.getExpression()) + 
-                    " (Type: " + decl.getType().getName() + ")";
-                b.append(s);
+                b.append("Wert: " + Unparser.toString(decl.getExpression()));
             }
+            b.append(". Type: " + decl.getType().getName());
             b.append("\n");
         }
         this.stack.push(new StringLiteral(inspect.getPosition(), b.toString()));

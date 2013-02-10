@@ -157,6 +157,9 @@ public class Namespace {
                         new Braced(decl.getExpression().getPosition(), 
                             decl.getExpression()).visit(up);
                         pw.print("->");
+                        if (decl.getName().wasEscaped()) {
+                            pw.print("\\");
+                        }
                         pw.println(decl.getName().getId());
                     }
                 }
