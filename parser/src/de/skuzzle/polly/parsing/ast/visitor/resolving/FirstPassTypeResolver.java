@@ -211,6 +211,19 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         // resolve called function's types
         call.getLhs().visit(this);
         
+        boolean hasMapType = false;
+        for (final Type type : call.getLhs().getTypes()) {
+            hasMapType |= type instanceof MapType;
+        }
+        if (!hasMapType) {
+            this.reportError(call.getLhs(), "Unbekannte Funktion: " + 
+                Unparser.toString(call.getLhs()));
+        }
+        
+        if (call.getLhs().getTypes().isEmpty()) {
+            this.reportError(call.getLhs(), "Funktion nicht gefunden");
+        }
+        
         // sort out all lhs types that do not match the rhs types
         for (final Type possibleLhs : possibleTypes) {
             for (final Type lhs : call.getLhs().getTypes()) {
@@ -256,6 +269,10 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         }
         
         final VarAccess va = (VarAccess) access.getLhs();
+        if (!Namespace.exists(va.getIdentifier())) {
+            this.reportError(access.getLhs(), 
+                "Unbekannter Namespace: " + va.getIdentifier());
+        }
         final Namespace last = this.nspace;
         this.nspace = Namespace.forName(va.getIdentifier()).derive(this.nspace);
         access.getRhs().visit(this);
