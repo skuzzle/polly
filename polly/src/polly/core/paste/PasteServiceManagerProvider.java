@@ -4,7 +4,6 @@ import de.skuzzle.polly.sdk.exceptions.PasteException;
 import polly.core.paste.services.GBPasteService;
 import polly.core.paste.services.NoPastePasteService;
 import polly.core.paste.services.PHCNPasteService;
-import polly.core.paste.services.PasteBinPasteService;
 import polly.moduleloader.AbstractProvider;
 import polly.moduleloader.ModuleLoader;
 import polly.moduleloader.SetupException;
