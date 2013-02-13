@@ -10,6 +10,14 @@
     <property name="ant.build.javac.source" value="1.6"/>
     <property name="ant.build.javac.target" value="1.6"/>
     
+    
+    <!-- 
+        builds the local parser project and copies the dist jar to the libs folder
+    -->
+    <target name="parser.local" depends="tools, process, parser">
+        <ant dir="parser.local" target="${mode}" inheritAll="false"/>
+    </target>
+    
 	
     <!-- 
         builds the porat project and copies the dist jar to the libs folder
@@ -175,7 +183,8 @@
     -->
     <target name="all" depends="tools,sdk,process,installer,
                                 parser,plugins,network,moduleloader,
-                                configuration, pircbot, polly, porat"/>
+                                configuration, pircbot, parser.local,
+                                polly, porat"/>
 
     
     
@@ -199,6 +208,7 @@
         <ant dir="polly.porat" target="clean" inheritAll="false"/>
         <ant dir="polly.linkexpander" target="clean" inheritAll="false"/>
         <ant dir="polly.rx" target="clean" inheritAll="false"/>
+        <ant dir="parser.local" target="clean" inheritAll="false"/>
         
         <delete file="${lib.dir}/polly.parser.jar"/>
         <delete file="${lib.dir}/de.skuzzle.polly.sdk.jar"/>
@@ -230,6 +240,9 @@
             <param name="mode" value="build"/>
         </antcall>
         <antcall target="process" inheritAll="true" inheritRefs="true">
+            <param name="mode" value="build"/>
+        </antcall>
+        <antcall target="parser.local" inheritAll="true" inheritRefs="true">
             <param name="mode" value="build"/>
         </antcall>
         <antcall target="plugins" inheritAll="true" inheritRefs="true">
@@ -268,6 +281,9 @@
         <antcall target="process" inheritAll="true" inheritRefs="true">
             <param name="mode" value="dist_no_clean"/>
         </antcall>
+        <antcall target="parser.local" inheritAll="true" inheritRefs="true">
+            <param name="mode" value="dist_no_clean"/>
+        </antcall>
         <antcall target="plugins" inheritAll="true" inheritRefs="true">
             <param name="mode" value="dist_no_clean"/>
         </antcall>
@@ -296,6 +312,7 @@
         <ant dir="moduleloader" target="eclipse" inheritAll="false"/>
         <ant dir="polly.process" target="eclipse" inheritAll="false"/>
         <ant dir="parser" target="eclipse" inheritAll="false"/>
+        <ant dir="parser.local" target="eclipse" inheritAll="false"/>
         <ant dir="installer" target="eclipse" inheritAll="false"/>
         <ant dir="polly.core" target="eclipse" inheritAll="false"/>
         <ant dir="polly.logging" target="eclipse" inheritAll="false"/>

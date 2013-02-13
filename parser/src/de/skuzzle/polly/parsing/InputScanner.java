@@ -1,6 +1,6 @@
 package de.skuzzle.polly.parsing;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -68,19 +68,27 @@ public class InputScanner extends AbstractTokenStream {
      * Note: The minimum value is always 2 (by nature)
      */
     public final static int MAX_RADIX = 35;
+    
+    /**
+     * Whether all consumed tokens are printed to the console
+     */
+    public final static boolean DEBUG = false;
+    
+    
 
     protected Map<String, TokenType> keywords;
     private boolean skipWhiteSpaces;
     
-    public InputScanner(String stream) throws UnsupportedEncodingException {
+    
+    
+    public InputScanner(String stream) {
         super(stream);
         this.prepareKeywords();
     }
     
     
     
-    public InputScanner(String stream, String charset) 
-        throws UnsupportedEncodingException {
+    public InputScanner(String stream, Charset charset) {
         super(stream, charset);
         this.prepareKeywords();
     }
@@ -98,6 +106,9 @@ public class InputScanner extends AbstractTokenStream {
         this.keywords.put("temp", TokenType.TEMP);
         this.keywords.put("help", TokenType.QUESTION);
         this.keywords.put("if", TokenType.IF);
+        this.keywords.put("del", TokenType.DELETE);
+        this.keywords.put("inspect", TokenType.INSPECT);
+        this.keywords.put("list", TokenType.LIST);
         /* To avoid 1char identifiers "_" */
         this.keywords.put("_", TokenType.UNKNOWN);
     }
@@ -118,6 +129,16 @@ public class InputScanner extends AbstractTokenStream {
     
     @Override
     protected synchronized Token readToken() throws ParseException {
+        final Token next = this.readTokenInternal();
+        if (DEBUG) {
+            System.out.println(next.toString());
+        }
+        return next;
+    }
+    
+    
+    
+    protected final Token readTokenInternal() throws ParseException {
         int state = 0;
         int tokenStart = this.getStreamIndex();
         StringBuilder currentString = new StringBuilder();
@@ -134,6 +155,9 @@ public class InputScanner extends AbstractTokenStream {
                     if (!this.skipWhiteSpaces) {
                         this.pushBack(next);
                         state = 1;
+                    } else {
+                        // skipping whitespaces, so move token start
+                        ++tokenStart;
                     }
                     
                 } else if (InputScanner.isIdentifierStart(next)) {
@@ -171,13 +195,13 @@ public class InputScanner extends AbstractTokenStream {
                 } else if (next == '/') {
                     return new Token(TokenType.DIV, this.spanFrom(tokenStart), "/");
                 } else if (next == '\\') {
-                    return new Token(TokenType.INTDIV, this.spanFrom(tokenStart), "\\");
+                    state = 13;
                 } else if (next == '%') {
                     return new Token(TokenType.MOD, this.spanFrom(tokenStart), "%");
                 } else if (next == '$') {
                     return new Token(TokenType.DOLLAR, this.spanFrom(tokenStart),"$");
                 } else if (next == '^') {
-                    return new Token(TokenType.POWER, this.spanFrom(tokenStart), "^");
+                    state = 14;
                 } else if (next == '!') {
                     state = 2;
                 } else if (next == '(') {
@@ -203,9 +227,7 @@ public class InputScanner extends AbstractTokenStream {
                 } else if (next == '|') {
                     state = 6;
                 } else if (next == ':') {
-                	Token tmp = this.readIdentifier();
-                    return new Token(TokenType.COMMAND, this.spanFrom(tokenStart), 
-                    		tmp.getStringValue());
+                    return new Token(TokenType.COLON, this.spanFrom(tokenStart), ":");
                 } else if (next == '=') {
                     state = 5;
                 } else if (next == '<') {
@@ -214,7 +236,8 @@ public class InputScanner extends AbstractTokenStream {
                     state = 4;
                 } else {
                     this.pushBack(next);
-                    this.parseException("Ungültiges Symbol: '" + next + "'", tokenStart);
+                    this.parseException(
+                        "Ungültiges Symbol: '" + (char) next + "'", tokenStart);
                 }
                     
             } else if (state == 1) {
@@ -353,6 +376,25 @@ public class InputScanner extends AbstractTokenStream {
                 } else {
                     this.pushBack(next);
                     return new Token(TokenType.QUESTION, this.spanFrom(tokenStart), "?");
+                }
+            } else if (state == 13) {
+                int next = this.readChar();
+                
+                if (next == '(') {
+                    return new Token(TokenType.LAMBDA, this.spanFrom(tokenStart), "\\(");
+                } else {
+                    this.pushBack(next);
+                    final Token escaped= this.readToken();
+                    return new EscapedToken(this.spanFrom(tokenStart), escaped);
+                }
+            } else if (state == 14) {
+                int next = this.readChar();
+                
+                if (next == '^') {
+                    return new Token(TokenType.XOR, this.spanFrom(tokenStart), "^^");
+                } else {
+                    this.pushBack(next);
+                    return new Token(TokenType.POWER, this.spanFrom(tokenStart), "^");
                 }
             }
         }
@@ -524,7 +566,7 @@ public class InputScanner extends AbstractTokenStream {
             if (state == 0) {
                 int next = this.readChar();
             
-                if (InputScanner.isIdentifierPart(next)) {
+                if (InputScanner.isIdentifierPart(next) || next == '[' || next == ']') {
                     lexem.appendCodePoint(next);
                 } else if (next == '-') {
                     state = 1;
@@ -537,7 +579,6 @@ public class InputScanner extends AbstractTokenStream {
                 int next = this.readChar();
                 
                 if (next == '>') {
-                    // XXX: this only works if pushback stategy is FIFO
                     this.pushBack('-');
                     this.pushBack('>');
                     return new Token(TokenType.USER, 

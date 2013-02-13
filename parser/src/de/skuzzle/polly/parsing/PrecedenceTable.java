@@ -1,14 +1,19 @@
 package de.skuzzle.polly.parsing;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+/**
+ * This class maps token types which represent operators to a certain precedence level.
+ * 
+ * @author Simon Taddiken
+ */
 public class PrecedenceTable {
 
     public enum PrecedenceLevel {
-        RELATION, DISJUNCTION, CONJUNCTION, EXPRESSION, TERM, FACTOR, POSTFIX, DOTDOT, UNARY;
+        RELATION, DISJUNCTION, CONJUNCTION, SECTERM, TERM, FACTOR, POSTFIX, DOTDOT, UNARY;
     }
     
     private Map<PrecedenceLevel, Set<TokenType>> levels;
@@ -16,7 +21,7 @@ public class PrecedenceTable {
     
     
     public PrecedenceTable() {
-        this.levels = new HashMap<PrecedenceLevel, Set<TokenType>>();
+        this.levels = new EnumMap<PrecedenceLevel, Set<TokenType>>(PrecedenceLevel.class);
         for (PrecedenceLevel lvl : PrecedenceLevel.values()) {
             this.levels.put(lvl, new TreeSet<TokenType>());
         }
@@ -31,18 +36,17 @@ public class PrecedenceTable {
         this.add(PrecedenceLevel.DISJUNCTION, TokenType.BOOLEAN_OR);
         this.add(PrecedenceLevel.DISJUNCTION, TokenType.INT_OR);
         this.add(PrecedenceLevel.DISJUNCTION, TokenType.XOR);
-        this.add(PrecedenceLevel.DISJUNCTION, TokenType.INT_XOR);
         
         this.add(PrecedenceLevel.CONJUNCTION, TokenType.BOOLEAN_AND);
         this.add(PrecedenceLevel.CONJUNCTION, TokenType.INT_AND);
         
-        this.add(PrecedenceLevel.EXPRESSION, TokenType.ADD);
-        this.add(PrecedenceLevel.EXPRESSION, TokenType.ADDWAVE);
-        this.add(PrecedenceLevel.EXPRESSION, TokenType.SUB);
-        this.add(PrecedenceLevel.EXPRESSION, TokenType.WAVE);
-        this.add(PrecedenceLevel.EXPRESSION, TokenType.RIGHT_SHIFT);
-        this.add(PrecedenceLevel.EXPRESSION, TokenType.URIGHT_SHIFT);
-        this.add(PrecedenceLevel.EXPRESSION, TokenType.LEFT_SHIFT);
+        this.add(PrecedenceLevel.SECTERM, TokenType.ADD);
+        this.add(PrecedenceLevel.SECTERM, TokenType.ADDWAVE);
+        this.add(PrecedenceLevel.SECTERM, TokenType.SUB);
+        this.add(PrecedenceLevel.SECTERM, TokenType.WAVE);
+        this.add(PrecedenceLevel.SECTERM, TokenType.RIGHT_SHIFT);
+        this.add(PrecedenceLevel.SECTERM, TokenType.URIGHT_SHIFT);
+        this.add(PrecedenceLevel.SECTERM, TokenType.LEFT_SHIFT);
         
         // ISSUE 0000099: Add open brace and identifier to TERM precedence level so they
         //                are recognized as multiplications

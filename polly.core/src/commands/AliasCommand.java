@@ -22,7 +22,7 @@ public class AliasCommand extends Command {
             " angegebenen Befehl", 
             MyPlugin.ALIAS_PERMISSION,
             new Parameter("Alias", Types.STRING),
-            new Parameter("Befehl", Types.COMMAND));
+            new Parameter("Befehl", Types.STRING));
         this.setRegisteredOnly();
         this.setUserLevel(UserManager.ADMIN);
     }

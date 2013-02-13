@@ -2,37 +2,47 @@ package de.skuzzle.polly.parsing;
 
 import java.io.Serializable;
 
+
+import de.skuzzle.polly.tools.EqualsHelper;
+import de.skuzzle.polly.tools.Equatable;
+import de.skuzzle.polly.tools.Immutable;
+
 /**
  * Represents a span within a one-lined String. It consists of a inclusive 
- * start position and an inclusive end position.
- * 
- * This means that for a Position that spans one character, the start index equals 
- * the end index.
+ * start position and an exclusive end position.
  * 
  * For convenience, a Position has methods to retrieve substrings of a given String:
  * {@link #prefix(String)} which returns a String which consists of all characters 
  * berfore this Position.
  * {@link #substring(String)} which returns exactly the String which Position this
  * object represents and {@link #postfix(String)} which returns a String consisting of
- * all characters which follow of this span.   
+ * all characters which follow this span.   
  * 
  * @author Simon
  */
-public class Position implements Serializable {
+public class Position implements Serializable, Equatable, Immutable {
     
     private static final long serialVersionUID = 1L;
 
-    public final static Position EMPTY = new Position(0, 1);
+    /**
+     * A Position instance that represents no valid position within a String. Can be used
+     * for internally created AST Nodes, that have no matching representation within
+     * the input String.
+     */
+    public final static Position NONE = new Position(-1, -1);
     
-    private int start;
-    private int end;
+    
+    
+    private final int start;
+    private final int end;
+    
     
     
     /**
      * Creates a new Position Object with given start and end index.
      * 
      * @param start The inclusive start index of this Position.
-     * @param end The inclusive end index of this position.
+     * @param end The exclusive end index of this position.
      */
     public Position(int start, int end) {
         this.start = start;
@@ -88,8 +98,43 @@ public class Position implements Serializable {
     
     
     
+    /**
+     * Gets the count of characters that this position spans.
+     * 
+     * @return Character count between end and start position.
+     */
     public int getWidth() {
-        return this.end - this.start + 1;
+        return this.end - this.start;
+    }
+    
+    
+    
+    /**
+     * Gives a String which indicates this position. That means, the returned String will
+     * consist of spaces until the start position. There, a "^" will be printed to 
+     * indicate the beginning of this position. If {@link #getWidth()} is greater than
+     * 1, a second "^" will be printed at the end position. So the returned String will
+     * have the length <code>getWidth() > 1 ? this.getEnd() : this.getStart()</code>
+     * 
+     * @return A String indicating this position.
+     */
+    public String errorIndicatorString() {
+        if (this == Position.NONE) {
+            return "";
+        }
+        final StringBuilder b = new StringBuilder(this.end);
+        int i = 0;
+        for (; i < this.start; ++i) {
+            b.append(" ");
+        }
+        b.append("^");
+        if (this.getWidth() > 1) {
+            for (; i < this.end - 2; ++i) {
+                b.append("-");
+            }
+            b.append("^");
+        }
+        return b.toString();
     }
     
     
@@ -103,7 +148,9 @@ public class Position implements Serializable {
      * @throws IllegalArgumentException If the original String is too short.
      */
     public String prefix(String original) {
-        if (this.start > original.length()) {
+        if (this.equals(Position.NONE)) {
+            return original;
+        } else if (this.start > original.length()) {
             throw new IllegalArgumentException("Original String is too short!");
         }
         return original.substring(0, this.start);
@@ -111,20 +158,39 @@ public class Position implements Serializable {
     
     
     
+    /**
+     * Returns the postfix of the given string which consists of all characters that
+     * occur after this positions end index (including the character at the end index
+     * itself, because it is exclusive).
+     * 
+     * @param original The string to create the postfix from.
+     * @return A postfix of that string.
+     */
     public String postfix(String original) {
-        if (this.start == this.end && this.start == original.length()) {
-            return "";
+        if (this.equals(Position.NONE)) {
+            return original;
+        } else if (this.start == this.end - 1 && this.start == original.length()) {
+            return " ";
         }
-        return original.substring(this.end + 1);
+        return original.substring(this.end);
     }
     
     
     
+    /**
+     * Returns the substring of the given string that this position represents. If this
+     * is {@link Position#NONE}, the whole other string will be returned.
+     * 
+     * @param original The string to create the substring from.
+     * @return The substring.
+     */
     public String substring(String original) {
-        if (this.start == this.end && this.start == original.length()) {
+        if (this.equals(Position.NONE)) {
+            return original;
+        } else if (this.start == this.end - 1 && this.start == original.length() || this.getWidth() == 0) {
             return " ";
         }
-        return original.substring(this.start, this.end + 1);
+        return original.substring(this.start, this.end);
     }
     
     
@@ -150,10 +216,7 @@ public class Position implements Serializable {
     
     @Override
     public String toString() {
-        if (this.start == this.end) {
-            return Integer.toString(this.start);
-        }
-        return (this.start) + "-" + (this.end);
+        return (this.start + 1) + (this.getWidth() == 0 ? "" : "-" + (this.end + 1));
     }
     
     
@@ -167,26 +230,25 @@ public class Position implements Serializable {
         return result;
     }
 
+    
+    
+    @Override
+    public Class<?> getEquivalenceClass() {
+        return Position.class;
+    }
+    
 
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof Position)) {
-            return false;
-        }
-        Position other = (Position) obj;
-        if (this.end != other.end) {
-            return false;
-        }
-        if (this.start != other.start) {
-            return false;
-        }
-        return true;
+    public final boolean equals(Object obj) {
+        return EqualsHelper.testEquality(this, obj);
+    }
+    
+    
+    
+    @Override
+    public boolean actualEquals(Equatable o) {
+        final Position other = (Position) o;
+        return this.start == other.start && this.end == other.end;
     }
 }

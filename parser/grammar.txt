@@ -1,0 +1,58 @@
+root        -> ':' ID (assign (WS assign)*)?                  // AST root with a WS separated list of expressions
+
+assignment  -> relation '->' PUBLIC? TEMP? ID             // assignment of relation to identifier X
+relation    -> conjunction (REL_OP conjunction)*          // relation (<,>,<=,>=,==, !=)
+conjunction -> disjunction (CONJ_OP disjunction)*         // conjunction (||)
+disjunction -> secTerm (DISJ_OP secTerm)*                 // disjunction (&&)
+secTerm     -> term (SECTERM_OP term)*                    // plus minus
+term        -> factor (TERM_OP factor)*                   // multiplication and co
+factor      -> postfix (FACTOR_OP factor)?                // right-associative (power operator)
+postfix     -> autolist (POSTFIX_OP autolist)*            // postfix operator
+autolist    -> dotdot (';' dotdot)*                       // implicit list literal
+dotdot      -> unary ('..' unary ('$' unary)?)?           // range operator with optional step size
+unary       -> UNARY_OP unary                             // right-associative unary operator
+             | call
+call        -> access ( '(' parameters ')' )?
+access      -> literal ('.' literal)?                     // namespace access. left operand must be a single identifier (represented by a VarAccess)
+literal     -> ID                                         // VarAccess
+             | '(' relation ')'                           // braced expression
+             | '\(' parameters ':' relation ')'           // lambda function literal
+             | '{' exprList '}'                           // concrete list of expressions
+             | DELETE PUBLIC? ID (',' PUBLIC? ID)*        // delete operator
+             | INSPECT PUBLIC ID                          // inspect operator
+             | INSPECT ID ('.' ID)?                       // inspect operator
+             | IF relation ':' relation ':' relation      // conditional operator
+             | TRUE | FALSE                               // boolean literal
+             | CHANNEL                                    // channel literal
+             | USER                                       // user literal
+             | STRING                                     // string literal
+             | NUMBER                                     // number literal
+             | DATETIME                                   // date literal
+             | TIMESPAN                                   // timespan literal
+             | '?'                                        // HELP literal
+             | RADIX literal                              // radix operator
+
+exprList    -> (relation (',' relation)*)?
+parameters  -> (parameter (',' parameter)*)?
+parameter   -> type ID                                    
+type        -> ID                                         // primitive type
+             | LIST '<' type '>'                          // list type
+             | '(' type (WS type)* '->' type ')'          // function type
+             
+WS       -> ' ' | \t
+TEMP     -> 'temp'
+LIST     -> 'list'
+PUBLIC   -> 'public'
+IF       -> 'if'
+TRUE     -> 'true'
+FALSE    -> 'false'
+CHANNEL  -> '#' ID
+USER     -> '@' ID
+STRING   -> '"' .* '"'
+NUMBER   -> [0-9]*(\.[0-9]+([eE][0-9]+)?)?
+TIMESPAN -> ([0-9]+[ywdhms])+
+DATE     -> [0-9]{1,2}\.[0-9]{1,2}\.[0-9]{4}
+TIME     -> [0-9]{1,2}:[0-9]{1,2}
+DATETIME -> TIME | DATE | DATE '@' TIME
+ID     -> [_a-zA-Z][_a-zA-Z0-9]+
+        | '\' .                                           // escape sequence for any token

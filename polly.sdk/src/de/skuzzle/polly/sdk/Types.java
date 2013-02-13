@@ -28,12 +28,6 @@ public class Types {
     public final static UserType USER = new UserType();
     
     /**
-    * Valueless type constant for the type Command
-    * @since 0.9 
-    */
-    public final static CommandType COMMAND = new CommandType();
-    
-    /**
      * Valueless type constant for the type String
      * @since 0.9 
      */
@@ -80,7 +74,6 @@ public class Types {
      * @since 0.9 
      */
     public final static AnyType ANY = new AnyType();
-    
     
     
     private Types() {};
@@ -179,36 +172,6 @@ public class Types {
 			}
 			return b.toString();
 		}
-	}
-	
-	
-	
-	public static class FractionType extends NumberType {
-	    
-	    private int numerator;
-	    private int denominator;
-	    private boolean isIllegal;
-	    
-	    public FractionType(int nominator, int denominator, double value, boolean illegal) {
-	        super(value);
-	        this.numerator = nominator;
-	        this.denominator = denominator;
-	        this.isIllegal = illegal;
-	    }
-	    
-	    
-	    
-	    @Override
-	    public String valueString(FormatManager formatter) {
-	        if (this.isIllegal) {
-	            return super.valueString(formatter);
-	        }
-	        if (denominator == 1) {
-	            return "" + this.numerator;
-	        } else {
-	            return "" + this.numerator + "/" + this.denominator; 
-	        }
-	    }
 	}
 	
 	
@@ -623,76 +586,6 @@ public class Types {
 	
 	
 	
-	/**
-	 * This class represents a Command-type.
-	 * 
-	 * @author Simon
-     * @since zero day
-     * @version RC 1.0
-	 */
-	public static class CommandType extends Types {
-		private String value;
-		
-		/**
-		 * Creates a new Command-type with the given user name.
-		 * @param value The command name.
-		 */
-		public CommandType(String value) {
-			this.value = value;
-		}
-		/**
-		 * Creates a new Command-type with a default value. This may be used for
-		 * formal signature parameters.
-		 */
-		protected CommandType() {
-			this("");
-		}
-		
-		
-		
-		/**
-		 * Returns the command name.
-		 * @return the command name.
-		 */
-		public String getValue() {
-			return this.value;
-		}
-		
-		
-		
-		@Override
-		public String getSample() {
-		    return ":sample";
-		}
-		
-		
-		
-	    /**
-         * @return Returns this values String representation.
-         */
-        @Override
-        public String valueString(FormatManager formatter) {
-            return this.value;
-        }
-		
-		@Override
-		public String toString() {
-			return this.toString(false);
-		}
-		public String toString(boolean withValue) {
-			StringBuilder b = new StringBuilder();
-			b.append("Command");
-			if (withValue) {
-				b.append(" (");
-				b.append(this.value);
-				b.append(")");
-			}
-			return b.toString();
-		}
-	}
-	
-	
-	
 	
 	/**
 	 * This class represents a List of other types. It holds an element list of 
@@ -857,6 +750,19 @@ public class Types {
             return "?";
         }
         
+    }
+    
+    
+    
+    /**
+     * Placeholder class for probably to come function types which are already 
+     * supported by the parser.
+     * 
+     * @author Simon Taddiken
+     */
+    public static class FunctionType extends Types {
+        
+        public FunctionType() {}
     }
 	
     

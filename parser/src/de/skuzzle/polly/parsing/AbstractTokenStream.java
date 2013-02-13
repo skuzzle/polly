@@ -27,97 +27,11 @@ import java.util.Queue;
  * <p>To implement {@link #readToken()} this class provides the 
  * methods {@link #readChar()} which reads exactly one char from 
  * the input and {@link #pushBack(int)} which can put a char back 
- * onto the stream so it will be read next. You may specify a {@link PushbackStrategy}
- * to change the behavior of the pushback method. The default strategy is LIFO (this
- * takes only effect when pushing back more than one character).</p>
- * 
- * 
- * 
- * <p>Until now, this class only works for input strings encoded 
- * in ISO-8859-1.</p>
+ * onto the stream so it will be read next.</p>
  * 
  * @author Simon
  */
 public abstract class AbstractTokenStream implements Iterable<Token> {
-    
-    public static abstract class PushbackStrategy<T> {
-        public abstract T pop(LinkedList<T> list);
-        public abstract void push(LinkedList<T> list, T value);
-        public abstract T peek(LinkedList<T> list);
-    }
-    
-    
-    
-    public final static PushbackStrategy<Integer> CHARACTER_LIFO = 
-        new PushbackStrategy<Integer>() {
-        @Override
-        public void push(LinkedList<Integer> list, Integer value) {
-            list.push(value);
-        }
-        @Override
-        public Integer pop(LinkedList<Integer> list) {
-            return list.pop();
-        }
-        @Override
-        public Integer peek(LinkedList<Integer> list) {
-            return list.peekFirst();
-        }
-    };
-    
-    
-    
-    public final static PushbackStrategy<Integer> CHARACTER_FIFO = 
-        new PushbackStrategy<Integer>() {
-        @Override
-        public void push(LinkedList<Integer> list, Integer value) {
-            list.add(value);
-        }
-        @Override
-        public Integer pop(LinkedList<Integer> list) {
-            return list.remove();
-        }
-        @Override
-        public Integer peek(LinkedList<Integer> list) {
-            return list.peekFirst();
-        }
-    };
-    
-    
-    
-    public final static PushbackStrategy<Token> TOKEN_LIFO = 
-        new PushbackStrategy<Token>() {
-        @Override
-        public void push(LinkedList<Token> list, Token value) {
-            list.push(value);
-        }
-        @Override
-        public Token pop(LinkedList<Token> list) {
-            return list.pop();
-        }
-        @Override
-        public Token peek(LinkedList<Token> list) {
-            return list.peekFirst();
-        }
-    };
-    
-    
-    
-    public final static PushbackStrategy<Token> TOKEN_FIFO = 
-        new PushbackStrategy<Token>() {
-        @Override
-        public void push(LinkedList<Token> list, Token value) {
-            list.add(value);
-        }
-        @Override
-        public Token pop(LinkedList<Token> list) {
-            return list.remove();
-        }
-        @Override
-        public Token peek(LinkedList<Token> list) {
-            return list.peekFirst();
-        }
-    };
-    
     
     
     /**
@@ -151,17 +65,7 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
     protected int streamIndex;
     
     /**
-     * The strategy for pushing back characters.
-     */
-    protected PushbackStrategy<Integer> characterStrategy;
-    
-    /**
-     * The strategy for pushing back tokens.
-     */
-    protected PushbackStrategy<Token> tokenStrategy;
-    
-    /**
-     * Stringbuilder holds the current lexem. Will be resettet upon calling 
+     * Stringbuilder holds the current lexem. Will be reseted upon calling 
      * {@link #getLexem()}
      */
     protected StringBuilder currentLexem;
@@ -169,13 +73,13 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
     
     
     /**
-     * Creates a new TokenStream with the given String as input. 
-     * It assumes the String to be ISO-8859-1 encoded!
+     * Creates a new TokenStream with the given String as input. It will use the
+     * systems default charset.
+     * 
      * @param stream The String to scan for tokens.
-     * @throws UnsupportedEncodingException If the given encoding string is not supported.
      */
-    public AbstractTokenStream(String stream) throws UnsupportedEncodingException {      
-        this(stream, "ISO-8859-1");
+    public AbstractTokenStream(String stream) {      
+        this(stream, Charset.defaultCharset());
     }
     
     
@@ -184,19 +88,13 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
      * Creates a new TokenStream with the given String as input. 
      * 
      * @param stream The String to scan for tokens.
-     * @param charset The name of the charset in which the stream is encoded.
-     * @throws UnsupportedEncodingException If the given encoding string is not supported.
+     * @param charset The charset in which the stream is encoded.
      */
-    public AbstractTokenStream(String stream, String charset) 
-        throws UnsupportedEncodingException {      
-        InputStream inp = new ByteArrayInputStream(
-                stream.getBytes(Charset.forName(charset)));
-
+    public AbstractTokenStream(String stream, Charset charset) {      
+        InputStream inp = new ByteArrayInputStream(stream.getBytes(charset));
         this.reader = new BufferedReader(new InputStreamReader(inp, charset));
         this.pushbackBuffer = new LinkedList<Integer>();
         this.tokenBuffer = new LinkedList<Token>();
-        this.characterStrategy = AbstractTokenStream.CHARACTER_FIFO;
-        this.tokenStrategy = AbstractTokenStream.TOKEN_LIFO;
         this.currentLexem = new StringBuilder();
     }    
     
@@ -209,28 +107,12 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
      * @param stream The InputStream to scan for tokens.
      * @param charset The name of the charset in which the characters from the stream are
      *      encoded.
-     * @throws UnsupportedEncodingException If the provided charset is not supported.
      */
-    public AbstractTokenStream(InputStream stream, String charset) 
-            throws UnsupportedEncodingException {
+    public AbstractTokenStream(InputStream stream, Charset charset) {
         this.reader = new InputStreamReader(stream, charset);
         this.pushbackBuffer = new LinkedList<Integer>();
         this.tokenBuffer = new LinkedList<Token>();
-        this.characterStrategy = AbstractTokenStream.CHARACTER_FIFO;
-        this.tokenStrategy = AbstractTokenStream.TOKEN_FIFO;
         this.currentLexem = new StringBuilder();
-    }
-    
-    
-    
-    /**
-     * Sets the strategy for pushing back characters. Strategy may be hotswapped - 
-     * that is replacing the strategy during reading characters. 
-     * 
-     * @param strategy The strategy to set.
-     */
-    public void setCharacterStrategy(PushbackStrategy<Integer> strategy) {
-        this.characterStrategy = strategy;
     }
     
     
@@ -275,14 +157,10 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
      * @throws ParseException If no valid token could be read.
      */
     public Token lookAhead() throws ParseException {
-        /*if (this.lookahead == null) {
-            this.lookahead = this.nextToken();
-        }
-        return this.lookahead;*/
         if (this.tokenBuffer.isEmpty()) {
-            this.tokenStrategy.push(this.tokenBuffer, this.readToken());
+            this.tokenBuffer.add(this.readToken());
         }
-        return this.tokenStrategy.peek(this.tokenBuffer);
+        return this.tokenBuffer.peek();
     }
     
     
@@ -341,7 +219,8 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
      *      {@code start} until {@link #getStreamIndex()}. 
      */
     public Position spanFrom(int start) {
-        return new Position(start, this.getStreamIndex() - 1);
+        int endIdx = this.eos ? this.getStreamIndex() - 1 : this.getStreamIndex();
+        return new Position(start, endIdx);
     }
     
     
@@ -358,7 +237,22 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
      *        {@code token.getPosition.getStart()} until {@link #getStreamIndex()}. 
      */
     public Position spanFrom(Token token) {
-        return new Position(token.getPosition().getStart(), this.getStreamIndex() - 1);
+        return this.spanFrom(token.getPosition());
+    }
+    
+    
+    
+    /**
+     * Creates a new {@link Position} which spans from the beginning of the given 
+     * Position until the current stream index.
+     * 
+     * @param start Start position.
+     * @return A new Position representing the span from start until 
+     *          {@link #getStreamIndex()}
+     */
+    public Position spanFrom(Position start) {
+        int endIdx = this.eos ? this.getStreamIndex() - 1 : this.getStreamIndex();
+        return new Position(start.getStart(), endIdx);
     }
     
     
@@ -377,7 +271,7 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
      * @param t The character to be pushed back onto the input.
      */
     protected void pushBack(int t) {
-        this.characterStrategy.push(this.pushbackBuffer, t);
+        this.pushbackBuffer.add(t);
         this.eos = false;
         --this.streamIndex;
     }
@@ -385,14 +279,45 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
     
     
     /**
-     * Pushes back one token. The pushedback token will be buffered and read by later
-     * calls of {@link #readToken()}. Depending what pushback strategy you set, the
-     * token may be read by the next call to {@link #readToken()} or at later time.
+     * Pushes back one token. The pushed back token will be buffered and read by later
+     * calls of {@link #readToken()}. The pushed back token will be appended to the head
+     * of the token pushback buffer. That means the next call to {@link #readToken()} will
+     * return the pushed back token.
      * 
      * @param t The token to push back.
      */
-    public void pushback(Token t) {
-        this.tokenStrategy.push(this.tokenBuffer, t);
+    public void pushBackFirst(Token t) {
+        this.tokenBuffer.addFirst(t);
+    }
+    
+    
+    
+    /**
+     * Pushes back one token. The pushed back token will be buffered and read by later 
+     * calls of {@link #readToken()}. The pushed back token will be appended to the tail
+     * of the token pushback buffer.
+     * 
+     * @param t Token to push back.
+     */
+    public void pushBackLast(Token t) {
+        this.tokenBuffer.addLast(t);
+    }
+    
+    
+    
+    /**
+     * Consumes the next character only if it is the expected one.
+     * 
+     * @param c The expected character.
+     * @return Whether the next character is the expected one.
+     */
+    protected boolean nextIs(int c) {
+        final int next = this.readChar();
+        if (next == c) {
+            return true;
+        }
+        this.pushBack(next);
+        return false;
     }
 
     
@@ -408,11 +333,15 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
      *         of the input has been reached.
      */
     protected int readChar() {
+        if (this.eos) {
+            throw new IllegalStateException("end of stream reached");
+        }
+        
         int next;
         boolean popped = false;
         
         if (!this.pushbackBuffer.isEmpty()) {
-            next = this.characterStrategy.pop(this.pushbackBuffer);
+            next = this.pushbackBuffer.poll();
             popped = true;
         } else {
             try {
@@ -487,7 +416,7 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
      */
     private Token nextToken() throws ParseException {
         if (!this.tokenBuffer.isEmpty()) {
-            return this.tokenStrategy.pop(this.tokenBuffer);
+            return this.tokenBuffer.poll();
         }
         
         return this.readToken();
@@ -502,82 +431,6 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
      * @throws ParseException If no valid token could be read.
      */
     protected abstract Token readToken() throws ParseException;
-    
-    
-    
-    /**
-     * Determines if a character is valid to start an identifier. That is if
-     * its a '_' or it lies between 'A' and 'Z' or 'a' and 'z'.
-     * 
-     * @param token The character to check.
-     * @return {@code true} if the given character is valid for an identifier.
-     * @deprecated Use Character class method.
-     */
-    protected boolean canStartIdentifier(char token) {
-        return (token >= 'A' && token <= 'Z') 
-                || (token >= 'a' && token <= 'z')
-                || (token == '_');
-    }
-    
-    
-    
-    /**
-     * Determines if a character is valid for an identifier. That is if
-     * its a '_' or it lies between 'A' and 'Z' or 'a' and 'z' or is a number.
-     * 
-     * @param token The character to check.
-     * @return {@code true} if the given character is valid for an identifier.
-     * @deprecated Use Character class method.
-     */
-    protected boolean isIdentifierChar(char token) {
-        return this.canStartIdentifier(token) || this.canStartNumber(token);
-    }
-    
-    
-    
-    /**
-     * Determines if a character is a valid number. That is if it is either of the 
-     * following: {@code '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'}.
-     * @param token The character to check.
-     * @return {@code true} if the given character is a valid number.
-     * @deprecated Use Character class method.
-     */
-    protected boolean canStartNumber(char token) {
-        return token >= '0' && token <= '9';
-    }
-    
-
-    
-    /**
-     * Checks whether given character is a whitespace character. This is equivalent to
-     * {@code Character.isWhitespace(c)}
-     * 
-     * @param c The character to check.
-     * @return {@code true} if c is a whitespace character.
-     * @deprecated Use Character class method.
-     */
-    protected boolean isWhiteSpace(char c) {
-        return Character.isWhitespace(c);
-    }
-    
-    
-    
-    /**
-     * Converts a digit character to its corresponding integer value.
-     * That is exactly {@code token - '0'}.
-     *  
-     * @param token The character to convert.
-     * @return The integer representing the characters value.
-     * @throws IllegalArgumentException If the input character is no digit.
-     * @deprecated Use Character class method.
-     */
-    protected int toNumber(int token) {
-        if (!Character.isDigit(token)) {
-            throw new IllegalArgumentException(
-                    "Input must be a character between '0' and '9'");
-        }
-        return token - '0';
-    }
     
 
     
@@ -614,7 +467,7 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
         @Override
         public boolean hasNext() {
             return !AbstractTokenStream.this.eos && 
-                   !AbstractTokenStream.this.tokenBuffer.isEmpty();
+                   AbstractTokenStream.this.tokenBuffer.isEmpty();
         }
         
         

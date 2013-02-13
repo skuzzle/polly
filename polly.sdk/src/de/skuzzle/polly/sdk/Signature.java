@@ -9,7 +9,6 @@ import java.util.List;
 import de.skuzzle.polly.sdk.Types.AnyType;
 import de.skuzzle.polly.sdk.Types.BooleanType;
 import de.skuzzle.polly.sdk.Types.ChannelType;
-import de.skuzzle.polly.sdk.Types.CommandType;
 import de.skuzzle.polly.sdk.Types.DateType;
 import de.skuzzle.polly.sdk.Types.ListType;
 import de.skuzzle.polly.sdk.Types.NumberType;
@@ -202,7 +201,7 @@ public class Signature {
 	/**
 	 * This is a convenience method for accessing a string parameter. It returns the
 	 * String values for any of these types: {@link StringType}, {@link UserType},
-	 * {@link CommandType}, {@link BooleanType}, {@link NumberType} and 
+	 * , {@link BooleanType}, {@link NumberType} and 
 	 * {@link ChannelType}.
 	 * 
 	 * @param paramId The parameter whose value shall be resolved.
@@ -218,8 +217,6 @@ public class Signature {
 			return ((UserType) t).getValue();
 		} else if (t instanceof ChannelType) {
 			return ((ChannelType) t).getValue();
-		} else if (t instanceof CommandType) {
-			return ((CommandType) t).getValue();
 		} else if (t instanceof BooleanType) {
 		    return Boolean.toString(((BooleanType) t).getValue());
 		} else if (t instanceof NumberType) {

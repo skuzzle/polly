@@ -9,36 +9,33 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Queue;
 import java.util.Set;
-import java.util.Stack;
 
 
 import org.apache.log4j.Logger;
 
-import polly.core.users.UserManagerImpl;
 import polly.util.MillisecondStopwatch;
 import polly.util.Stopwatch;
 import polly.util.TypeMapper;
 
-import de.skuzzle.polly.parsing.AbstractParser;
+import de.skuzzle.polly.parsing.Evaluator;
 import de.skuzzle.polly.parsing.InputScanner;
 import de.skuzzle.polly.parsing.ParseException;
-import de.skuzzle.polly.parsing.PollyParserFactory;
-import de.skuzzle.polly.parsing.SyntaxMode;
+import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.Token;
 import de.skuzzle.polly.parsing.TokenType;
-import de.skuzzle.polly.parsing.declarations.Namespace;
-import de.skuzzle.polly.parsing.declarations.VarDeclaration;
-import de.skuzzle.polly.parsing.tree.Expression;
-import de.skuzzle.polly.parsing.tree.Root;
-import de.skuzzle.polly.parsing.tree.literals.ChannelLiteral;
-import de.skuzzle.polly.parsing.tree.literals.DateLiteral;
-import de.skuzzle.polly.parsing.tree.literals.IdentifierLiteral;
-import de.skuzzle.polly.parsing.tree.literals.ListLiteral;
-import de.skuzzle.polly.parsing.tree.literals.Literal;
-import de.skuzzle.polly.parsing.tree.literals.UserLiteral;
-import de.skuzzle.polly.parsing.types.Type;
+import de.skuzzle.polly.parsing.ast.Identifier;
+import de.skuzzle.polly.parsing.ast.Root;
+import de.skuzzle.polly.parsing.ast.declarations.Declaration;
+import de.skuzzle.polly.parsing.ast.declarations.Namespace;
+import de.skuzzle.polly.parsing.ast.declarations.types.Type;
+import de.skuzzle.polly.parsing.ast.expressions.Expression;
+import de.skuzzle.polly.parsing.ast.expressions.literals.ChannelLiteral;
+import de.skuzzle.polly.parsing.ast.expressions.literals.DateLiteral;
+import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
+import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
+import de.skuzzle.polly.parsing.ast.expressions.literals.UserLiteral;
+import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.CommandHistoryEntry;
 import de.skuzzle.polly.sdk.CommandManager;
@@ -101,7 +98,6 @@ public class CommandManagerImpl implements CommandManager {
 	private static Logger logger = Logger.getLogger(CommandManagerImpl.class.getName());
 	private Map<String, Command> commands;
 	private Set<String> ignoredCommands;
-	private UserManagerImpl userManager;
 	private String encodingName;
 	
 	
@@ -111,9 +107,7 @@ public class CommandManagerImpl implements CommandManager {
 	private Map<String, CommandHistoryEntry> cmdHistory;
 	
 	
-	public CommandManagerImpl(UserManagerImpl userManager, String encoding, 
-	        Configuration config) {
-	    this.userManager = userManager;
+	public CommandManagerImpl(String encoding, Configuration config) {
 	    this.encodingName = encoding;
 		this.commands = new HashMap<String, Command>();
 		this.ignoredCommands = new HashSet<String>(
@@ -240,28 +234,23 @@ public class CommandManagerImpl implements CommandManager {
         Stopwatch watch = new MillisecondStopwatch();
         watch.start();
         
-        Namespace copy = null;
         Root root = null;
         try {
             Map<String, Types> constants = this.getCommandConstants(input);
             
-            // get namespace and create copy for executor
-            Namespace ns = this.userManager.getNamespace();
-            copy = ns.copyFor(executor.getName());
-            copy.enter();
+            final Namespace rootNs = Namespace.forName(executor.getName());
+            final Namespace workingNs = rootNs.enter();
             
-            this.createContext(channel, executor, ircManager, constants, copy);
-            
-            root = this.parseMessage(input, copy);
+            this.createContext(channel, executor, ircManager, constants, workingNs);
+            root = this.parseMessage(input, rootNs, workingNs);
         } catch (ParseException e) {
             // HACK: wrap exception into command exception, as ParseException is not 
             //       available in the sdk
             throw new CommandException(e.getMessage(), e);
-        } finally {
-        	if (copy != null) {
-				copy.leave();
-        	}
-        }
+        } catch (ASTTraversalException e) {
+            // HACK: dito
+            throw new CommandException(e.getMessage(), e);
+        } 
         
         if (root == null) {
             return;
@@ -298,74 +287,62 @@ public class CommandManagerImpl implements CommandManager {
 
 
 
-    private Root parseMessage(String message, Namespace namespace) 
-        throws UnsupportedEncodingException, ParseException {
+    private Root parseMessage(String message, Namespace rootNs, Namespace workingNs) 
+            throws UnsupportedEncodingException, ASTTraversalException {
     
-        Stopwatch watch = new MillisecondStopwatch();
+        final Stopwatch watch = new MillisecondStopwatch();
         watch.start();
         
-        try {
-            AbstractParser<?> parser = PollyParserFactory.createParser(
-                    SyntaxMode.POLLY_CLASSIC);
-            
-            Root root = (Root) parser.parse(message.trim(), 
-                this.encodingName); 
-            
-            if (root == null) {
-                return null;
-            }
-        
-            logger.trace("Parsed input '" + message + "'");
-            root.contextCheck(namespace);
-            
-            logger.trace("Collapsing all parameters");
-            root.collapse(new Stack<Literal>(), namespace.getAnswers());
+        final Evaluator eval = new Evaluator(message.trim(), this.encodingName);
+        eval.evaluate(rootNs, workingNs);
 
-            watch.stop();
+        watch.stop();
+        if (eval.getRoot() != null) {
             logger.trace("Parsing time: " + watch.getDifference() + "ms");
-            
-            return root;
-        } catch (ParseException e) {
-            watch.stop();
-            logger.trace("Parsing time: " + watch.getDifference() + "ms");
-            throw e;
         }
+        
+        final Root root = eval.getRoot();
+        if (eval.errorOccurred()) {
+            throw eval.getLastError();
+        }
+        return root;
     }
     
     
     
     private void createContext(String channel, User user, IrcManager ircManager, 
-    		Map<String, Types> constants, Namespace d) throws ParseException {
+    		Map<String, Types> constants, Namespace d) throws ASTTraversalException {
         
         List<Expression> channels = new ArrayList<Expression>();
         for (String chan : ircManager.getChannels()) {
-            channels.add(new ChannelLiteral(chan));
+            channels.add(new ChannelLiteral(Position.NONE, chan));
         }
         
         // ISSUE: 0000008
         List<Expression> users = new ArrayList<Expression>();
         for (String u : ircManager.getChannelUser(channel)) {
-            users.add(new UserLiteral(u));
+            users.add(new UserLiteral(Position.NONE, u));
         }
-        d.addNormal(new VarDeclaration(new IdentifierLiteral("me"), 
-        		new UserLiteral(user.getCurrentNickName()), true));
-        d.addNormal(new VarDeclaration(new IdentifierLiteral("here"), 
-        		new ChannelLiteral(channel), true));
-        d.addNormal(new VarDeclaration(new IdentifierLiteral("all"), 
-        		new ListLiteral(channels, Type.CHANNEL), true));
-        d.addNormal(new VarDeclaration(new IdentifierLiteral("each"), 
-        		new ListLiteral(users, Type.USER), true));
-
+        d.declare(new Declaration(Position.NONE, new Identifier("me"), 
+            new UserLiteral(Position.NONE, user.getCurrentNickName())));
+        d.declare(new Declaration(Position.NONE, new Identifier("here"), 
+            new ChannelLiteral(Position.NONE, channel)));
+        d.declare(new Declaration(Position.NONE, new Identifier("all"), 
+            new ListLiteral(Position.NONE, channels, Type.CHANNEL)));
+        d.declare(new Declaration(Position.NONE, new Identifier("each"), 
+            new ListLiteral(Position.NONE, users, Type.USER)));
+        
         int m = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
-        d.addNormal(new VarDeclaration(new IdentifierLiteral("morgen"), 
-            new DateLiteral(DateUtils.getDayDate(m + 1)), true));
-        d.addNormal(new VarDeclaration(new IdentifierLiteral("übermorgen"), 
-            new DateLiteral(DateUtils.getDayDate(m + 2)), true));
+        d.declare(new Declaration(Position.NONE, new Identifier("morgen"), 
+            new DateLiteral(Position.NONE, DateUtils.getDayDate(m + 1))));
+        d.declare(new Declaration(Position.NONE, new Identifier("übermorgen"), 
+            new DateLiteral(Position.NONE, DateUtils.getDayDate(m + 2))));
+        
         
         int start = Calendar.MONDAY;
         for (String day : DAYS) {
-            d.addNormal(new VarDeclaration(new IdentifierLiteral(day), 
-                new DateLiteral(DateUtils.getDayDate(start++)), true));
+            d.declare(new Declaration(Position.NONE, new Identifier(day), 
+                new DateLiteral(Position.NONE, DateUtils.getDayDate(start++))));
         }
         
         /*logger.trace("    me     := " + user.getCurrentNickName());
@@ -378,19 +355,10 @@ public class CommandManagerImpl implements CommandManager {
             logger.trace("Command-specific constant names:");
             for (Entry<String, Types> e : constants.entrySet()) {
                 Literal l = TypeMapper.typesToLiteral(e.getValue());
-                d.addNormal(new VarDeclaration(new IdentifierLiteral(e.getKey()), l, 
-                    true));
+                d.declare(new Declaration(Position.NONE, 
+                    new Identifier(e.getKey()), l));
                 logger.trace("    " + e.getKey() + " := " + l.toString());
             }
-        }
-        
-        // add previous answers
-        int i = 1;
-        
-        Queue<Literal> answers = d.getAnswers();
-        for (Literal lit : answers) {
-            d.addNormal(
-                new VarDeclaration(new IdentifierLiteral("ans" + (i++)), lit, true));
         }
     }
     
@@ -401,7 +369,7 @@ public class CommandManagerImpl implements CommandManager {
         for (Literal lit : root.getResults()) {
             parameters.add(TypeMapper.literalToTypes(lit));
         }
-        return new Signature(root.getName().getCommandName(), -1, parameters);
+        return new Signature(root.getCommand().getId(), -1, parameters);
     }
 
 
