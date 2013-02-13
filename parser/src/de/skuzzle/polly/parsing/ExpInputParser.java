@@ -86,6 +86,7 @@ import de.skuzzle.polly.parsing.ast.lang.Operator.OpType;
  *                | DATETIME                                   // date liter
  *                | TIMESPAN                                   // timespan literal
  *                | '?'                                        // HELP literal
+ *                | RADIX literal                              // radix operator
  *            
  *   exprList    -> (relation (',' relation)*)?
  *   parameters  -> (parameter (',' parameter)*)?
@@ -755,6 +756,7 @@ public class ExpInputParser {
      *          | DATETIME                                 // date literal
      *          | TIMESPAN                                 // timespan literal
      *          | '?'                                      // HELP literal
+     *          | RADIX literal                            // radixed int
      * </pre>
      *  
      * @return The parsed expression.
@@ -927,6 +929,13 @@ public class ExpInputParser {
         case QUESTION:
             this.scanner.consume();
             return new HelpLiteral(la.getPosition());
+        case RADIX:
+            this.scanner.consume();
+            final NumberLiteral radix = new NumberLiteral(la.getPosition(), 
+                la.getLongValue());
+            final Expression rhs = this.parseLiteral();
+            return OperatorCall.binary(this.scanner.spanFrom(la), OpType.RADIX, 
+                radix, rhs);
         default:
             this.expect(TokenType.LITERAL);
         }

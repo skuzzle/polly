@@ -30,6 +30,7 @@ literal     -> ID                                         // VarAccess
              | DATETIME                                   // date literal
              | TIMESPAN                                   // timespan literal
              | '?'                                        // HELP literal
+             | RADIX literal                              // radix operator
 
 exprList    -> (relation (',' relation)*)?
 parameters  -> (parameter (',' parameter)*)?
