@@ -31,7 +31,7 @@ import de.skuzzle.polly.sdk.time.Time;
         query = "SELECT r FROM RemindEntity r WHERE r.forUser = ?1 AND " +
         		"r.isMessage = true")
 })
-public class RemindEntity {
+public class RemindEntity implements Comparable<RemindEntity> {
 
     @Id@GeneratedValue(strategy = GenerationType.TABLE)
     private int id;
@@ -210,5 +210,12 @@ public class RemindEntity {
     @Override
     public String toString() {
         return "REMIND " + this.id + " for " + this.getForUser();
+    }
+
+
+
+    @Override
+    public int compareTo(RemindEntity o) {
+        return this.dueDate.compareTo(o.dueDate);
     }
 }

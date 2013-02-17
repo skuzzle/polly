@@ -1,6 +1,7 @@
 package commands;
 
 
+import java.util.Collections;
 import java.util.List;
 
 import polly.reminds.MyPlugin;
@@ -66,6 +67,7 @@ public class MyRemindsCommand extends AbstractRemindCommand {
             if (reminds.isEmpty()) {
                 this.reply(executer, "Keine Erinnerungen für dich vorhanden.");
             }
+            Collections.sort(reminds);
             for (RemindEntity remind : reminds) {
                 this.reply(executer, FORMATTER.format(remind, 
                         this.getMyPolly().formatting()));
