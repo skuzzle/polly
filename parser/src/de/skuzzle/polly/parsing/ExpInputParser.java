@@ -659,7 +659,7 @@ public class ExpInputParser {
      * Parses an unary operator call.
      * <pre>
      * unary -> UNARY_OP unary    // right-associative unary operator
-              | call
+     *        | call
      * </pre>
      * @return A unary operator call or the expression returned by the next higher
      *          precedence level if no UNARY_OP was found.
