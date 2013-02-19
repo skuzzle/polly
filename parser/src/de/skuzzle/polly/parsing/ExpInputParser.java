@@ -297,9 +297,12 @@ public class ExpInputParser {
     protected Root parseRoot() throws ParseException {
         
         Root root = null;
-        Token la = this.scanner.lookAhead();
-        final Position start = la.getPosition();
+        Token la = null;
+        Position start = null;
         try {
+            la = this.scanner.lookAhead();
+            start = la.getPosition();
+            
             if (!this.scanner.match(TokenType.COLON)) {
                 return null;
             }
