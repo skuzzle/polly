@@ -1,6 +1,7 @@
 package de.skuzzle.polly.parsing.ast;
 
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.ast.visitor.ASTTraversal;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
@@ -82,8 +83,8 @@ public class Identifier extends Node implements Equatable {
 
 
     @Override
-    public void visit(ASTVisitor visitor) throws ASTTraversalException {
-        visitor.visit(this);
+    public boolean visit(ASTVisitor visitor) throws ASTTraversalException {
+        return visitor.visit(this);
     }
     
     
@@ -91,6 +92,14 @@ public class Identifier extends Node implements Equatable {
     @Override
     public Identifier transform(Transformation transformation) throws ASTTraversalException {
         return transformation.transformIdentifier(this);
+    }
+    
+    
+    
+    @Override
+    public boolean traverse(ASTTraversal visitor) throws ASTTraversalException {
+        return visitor.before(this) == ASTTraversal.CONTINUE && 
+            visitor.after(this) == ASTTraversal.CONTINUE;
     }
     
     

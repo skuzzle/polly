@@ -29,104 +29,172 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
 public abstract class VisitorAdapter implements ASTVisitor {
 
     @Override
-    public void before(Root root) throws ASTTraversalException {}
+    public int before(Root root) throws ASTTraversalException {
+        return CONTINUE;
+    }
 
     @Override
-    public void after(Root root) throws ASTTraversalException {}
+    public int after(Root root) throws ASTTraversalException {
+        return CONTINUE;
+    }
 
     @Override
-    public void before(Literal literal) throws ASTTraversalException {}
+    public int before(Literal literal) throws ASTTraversalException {
+        return CONTINUE;
+    }
 
     @Override
-    public void after(Literal literal) throws ASTTraversalException {}
+    public int after(Literal literal) throws ASTTraversalException {
+        return CONTINUE;
+    }
 
     @Override
-    public void before(Identifier identifier) throws ASTTraversalException {}
+    public int before(Identifier identifier) throws ASTTraversalException {
+        return CONTINUE;
+    }
 
     @Override
-    public void after(Identifier identifier) throws ASTTraversalException {}
+    public int after(Identifier identifier) throws ASTTraversalException {
+        return CONTINUE;
+    }
 
     @Override
-    public void before(ResolvableIdentifier id) throws ASTTraversalException {}
+    public int before(ResolvableIdentifier id) throws ASTTraversalException {
+        return CONTINUE;
+    }
 
     @Override
-    public void after(ResolvableIdentifier id) throws ASTTraversalException {}
+    public int after(ResolvableIdentifier id) throws ASTTraversalException {
+        return CONTINUE;
+    }
 
     @Override
-    public void before(Assignment assign) throws ASTTraversalException {}
+    public int before(Assignment assign) throws ASTTraversalException {
+        return CONTINUE;
+    }
 
     @Override
-    public void after(Assignment assign) throws ASTTraversalException {}
+    public int after(Assignment assign) throws ASTTraversalException {
+        return CONTINUE;
+    }
 
     @Override
-    public void before(Declaration decl) throws ASTTraversalException {}
+    public int before(Declaration decl) throws ASTTraversalException {
+        return CONTINUE;
+    }
 
     @Override
-    public void after(Declaration decl) throws ASTTraversalException {}
+    public int after(Declaration decl) throws ASTTraversalException {
+        return CONTINUE;
+    }
 
     @Override
-    public void before(Call call) throws ASTTraversalException {}
+    public int before(Call call) throws ASTTraversalException {
+        return CONTINUE;
+    }
 
     @Override
-    public void after(Call call) throws ASTTraversalException {}
+    public int after(Call call) throws ASTTraversalException {
+        return CONTINUE;
+    }
 
     @Override
-    public void before(OperatorCall call) throws ASTTraversalException {}
+    public int before(OperatorCall call) throws ASTTraversalException {
+        return CONTINUE;
+    }
 
     @Override
-    public void after(OperatorCall call) throws ASTTraversalException {}
+    public int after(OperatorCall call) throws ASTTraversalException {
+        return CONTINUE;
+    }
 
     @Override
-    public void before(Native hc) throws ASTTraversalException {}
+    public int before(Native hc) throws ASTTraversalException {
+        return CONTINUE;
+    }
 
     @Override
-    public void after(Native hc) throws ASTTraversalException {}
+    public int after(Native hc) throws ASTTraversalException {
+        return CONTINUE;
+    }
 
     @Override
-    public void before(NamespaceAccess access) throws ASTTraversalException {}
+    public int before(NamespaceAccess access) throws ASTTraversalException {
+        return CONTINUE;
+    }
 
     @Override
-    public void after(NamespaceAccess access) throws ASTTraversalException {}
+    public int after(NamespaceAccess access) throws ASTTraversalException {
+        return CONTINUE;
+    }
 
     @Override
-    public void before(VarAccess access) throws ASTTraversalException {}
+    public int before(VarAccess access) throws ASTTraversalException {
+        return CONTINUE;
+    }
 
     @Override
-    public void after(VarAccess access) throws ASTTraversalException {}
+    public int after(VarAccess access) throws ASTTraversalException {
+        return CONTINUE;
+    }
 
     @Override
-    public void before(FunctionLiteral func) throws ASTTraversalException {}
+    public int before(FunctionLiteral func) throws ASTTraversalException {
+        return CONTINUE;
+    }
 
     @Override
-    public void after(FunctionLiteral func) throws ASTTraversalException {}
+    public int after(FunctionLiteral func) throws ASTTraversalException {
+        return CONTINUE;
+    }
 
     @Override
-    public void before(ListLiteral list) throws ASTTraversalException {}
+    public int before(ListLiteral list) throws ASTTraversalException {
+        return CONTINUE;
+    }
 
     @Override
-    public void after(ListLiteral list) throws ASTTraversalException {}
+    public int after(ListLiteral list) throws ASTTraversalException {
+        return CONTINUE;
+    }
 
     @Override
-    public void before(ProductLiteral product) throws ASTTraversalException {}
+    public int before(ProductLiteral product) throws ASTTraversalException {
+        return CONTINUE;
+    }
     
     @Override
-    public void after(ProductLiteral product) throws ASTTraversalException {}
+    public int after(ProductLiteral product) throws ASTTraversalException {
+        return CONTINUE;
+    }
     
     @Override
-    public void before(Braced braced) throws ASTTraversalException {}
+    public int before(Braced braced) throws ASTTraversalException {
+        return CONTINUE;
+    }
 
     @Override
-    public void after(Braced braced) throws ASTTraversalException {}
+    public int after(Braced braced) throws ASTTraversalException {
+        return CONTINUE;
+    }
 
     @Override
-    public void before(Delete delete) throws ASTTraversalException {}
+    public int before(Delete delete) throws ASTTraversalException {
+        return CONTINUE;
+    }
 
     @Override
-    public void after(Delete delete) throws ASTTraversalException {}
+    public int after(Delete delete) throws ASTTraversalException {
+        return CONTINUE;
+    }
     
     @Override
-    public void before(Inspect inspect) throws ASTTraversalException {}
+    public int before(Inspect inspect) throws ASTTraversalException {
+        return CONTINUE;
+    }
     
     @Override
-    public void after(Inspect inspect) throws ASTTraversalException {}
+    public int after(Inspect inspect) throws ASTTraversalException {
+        return CONTINUE;
+    }
 }

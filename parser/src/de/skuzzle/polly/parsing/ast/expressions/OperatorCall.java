@@ -127,8 +127,8 @@ public class OperatorCall extends Call {
     
     
     @Override
-    public void visit(ASTVisitor visitor) throws ASTTraversalException {
-        visitor.visit(this);
+    public boolean visit(ASTVisitor visitor) throws ASTTraversalException {
+        return visitor.visit(this);
     }
     
     

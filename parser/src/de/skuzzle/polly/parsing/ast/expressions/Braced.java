@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
+import de.skuzzle.polly.parsing.ast.visitor.ASTTraversal;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
@@ -67,8 +68,8 @@ public class Braced extends Expression {
 
     
     @Override
-    public void visit(ASTVisitor visitor) throws ASTTraversalException {
-        visitor.visit(this);
+    public boolean visit(ASTVisitor visitor) throws ASTTraversalException {
+        return visitor.visit(this);
     }
     
     
@@ -79,7 +80,21 @@ public class Braced extends Expression {
         return transformation.transformBraced(this);
     }
 
-
+    
+    
+    @Override
+    public boolean traverse(ASTTraversal visitor) throws ASTTraversalException {
+        switch (visitor.before(this)) {
+        case ASTTraversal.SKIP: return true;
+        case ASTTraversal.ABORT: return false;
+        }
+        if (!this.expression.traverse(visitor)) {
+            return false;
+        }
+        return visitor.after(this) == ASTTraversal.CONTINUE;
+    }
+    
+    
     
     public Expression getExpression() {
         return this.expression;

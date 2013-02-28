@@ -27,88 +27,99 @@ public class ParentSetter extends DepthFirstVisitor {
     
 
     @Override
-    public void before(NamespaceAccess access) throws ASTTraversalException {
+    public int before(NamespaceAccess access) throws ASTTraversalException {
         access.getLhs().setParent(access);
         access.getRhs().setParent(access);
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void before(Assignment assign) throws ASTTraversalException {
+    public int before(Assignment assign) throws ASTTraversalException {
         assign.getExpression().setParent(assign);
         assign.getName().setParent(assign);
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void before(Braced braced) throws ASTTraversalException {
+    public int before(Braced braced) throws ASTTraversalException {
         braced.getExpression().setParent(braced);
+        return CONTINUE;
     }
     
     
     @Override
-    public void before(Call call) throws ASTTraversalException {
+    public int before(Call call) throws ASTTraversalException {
         call.getLhs().setParent(call);
         call.getRhs().setParent(call);
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void before(FunctionLiteral func) throws ASTTraversalException {
+    public int before(FunctionLiteral func) throws ASTTraversalException {
         func.getBody().setParent(func);
         for (final Declaration d : func.getFormal()) {
             d.setParent(func);
         }
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void before(OperatorCall call) throws ASTTraversalException {
+    public int before(OperatorCall call) throws ASTTraversalException {
         this.before((Call)call);
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void before(Root root) throws ASTTraversalException {
+    public int before(Root root) throws ASTTraversalException {
         root.getCommand().setParent(root);
         for(final Expression exp : root.getExpressions()) {
             exp.setParent(root);
         }
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void before(VarAccess access) throws ASTTraversalException {
+    public int before(VarAccess access) throws ASTTraversalException {
         access.getIdentifier().setParent(access);
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void before(Declaration decl) throws ASTTraversalException {
+    public int before(Declaration decl) throws ASTTraversalException {
         decl.getExpression().setParent(decl);
         decl.getName().setParent(decl);
+        return CONTINUE;
     }
 
     
     
     @Override
-    public void before(Delete delete) throws ASTTraversalException {
+    public int before(Delete delete) throws ASTTraversalException {
         for (final Identifier id : delete.getIdentifiers()) {
             id.setParent(delete);
         }
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void before(Inspect inspect) throws ASTTraversalException {
+    public int before(Inspect inspect) throws ASTTraversalException {
         inspect.getAccess().setParent(inspect);
+        return CONTINUE;
     }
 }

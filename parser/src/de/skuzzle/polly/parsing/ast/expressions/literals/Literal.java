@@ -3,6 +3,7 @@ package de.skuzzle.polly.parsing.ast.expressions.literals;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
+import de.skuzzle.polly.parsing.ast.visitor.ASTTraversal;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
 
@@ -56,8 +57,16 @@ public abstract class Literal extends Expression implements Comparable<Literal> 
     
     
     @Override
-    public void visit(ASTVisitor visitor) throws ASTTraversalException {
-        visitor.visit(this);
+    public boolean visit(ASTVisitor visitor) throws ASTTraversalException {
+        return visitor.visit(this);
+    }
+    
+    
+    
+    @Override
+    public boolean traverse(ASTTraversal visitor) throws ASTTraversalException {
+        return visitor.before(this) == ASTTraversal.CONTINUE &&
+            visitor.after(this) == ASTTraversal.CONTINUE;
     }
     
     

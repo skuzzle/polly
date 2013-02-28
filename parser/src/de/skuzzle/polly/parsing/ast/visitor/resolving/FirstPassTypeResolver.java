@@ -52,27 +52,27 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     
     
     @Override
-    public void before(Native hc) throws ASTTraversalException {
+    public int before(Native hc) throws ASTTraversalException {
         hc.resolveType(this.nspace, this);
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void before(Declaration decl) throws ASTTraversalException {
+    public int before(Declaration decl) throws ASTTraversalException {
         decl.getExpression().visit(this);
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void visit(final FunctionLiteral func) 
-            throws ASTTraversalException {
-        if (this.aborted) {
-            return;
+    public boolean visit(final FunctionLiteral func) throws ASTTraversalException {
+        switch (this.before(func)) {
+        case SKIP: return true;
+        case ABORT: return false;
         }
-        
-        this.before(func);
         
         final List<Type> source = new ArrayList<Type>();
         
@@ -84,13 +84,17 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
                 this.reportError(d.getName(),
                     "Doppelte Deklaration von '" + d.getName().getId() + "'");
             }
-            d.visit(this);
+            if (!d.visit(this)) {
+                return false;
+            }
             source.add(d.getType());
             
             this.nspace.declare(d);
         }
         
-        func.getBody().visit(this);
+        if (!func.getBody().visit(this)) {
+            return false;
+        }
         this.leave();
         
         // check whether all formal parameters have been used
@@ -104,13 +108,13 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
             func.addType(new ProductType(source).mapTo(te));
         }
         
-        this.after(func);
+        return this.after(func) == CONTINUE;
     }
     
     
     
     @Override
-    public void after(ListLiteral list) throws ASTTraversalException {
+    public int after(ListLiteral list) throws ASTTraversalException {
         if (list.getContent().isEmpty()) {
             this.reportError(list, "Listen müssen mind. 1 Element enthalten.");
         }
@@ -119,12 +123,13 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
                 list.addType(new ListType(t));
             }
         }
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void after(final ProductLiteral product) throws ASTTraversalException {
+    public int after(final ProductLiteral product) throws ASTTraversalException {
         
         // Use combinator to create all combinations of possible types
         final CombinationCallBack<Expression, Type> ccb = 
@@ -143,12 +148,13 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         };
         
         Combinator.combine(product.getContent(), ccb);
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void after(final Assignment assign) throws ASTTraversalException {
+    public int after(final Assignment assign) throws ASTTraversalException {
         if (assign.isTemp()) {
             this.reportError(assign, 
                 "Temporäre Deklarationen werden (noch?) nicht unterstützt.");
@@ -157,7 +163,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         // deep transitive recursion check
         assign.getExpression().visit(new DepthFirstVisitor() {
             @Override
-            public void before(VarAccess access) throws ASTTraversalException {
+            public int before(VarAccess access) throws ASTTraversalException {
                 final Collection<Declaration> decls = 
                     nspace.lookupAll(access.getIdentifier());
                 
@@ -166,9 +172,12 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
                         reportError(access, "Rekursive Aufrufe sind nicht erlaubt");
                     }
                     if (!decl.isNative()) {
-                        decl.getExpression().visit(this);
+                        if (!decl.getExpression().visit(this)) {
+                            return ABORT;
+                        }
                     }
                 }
+                return CONTINUE;
             } 
         });
         
@@ -179,27 +188,29 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
             
             assign.addType(t);
         }
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void visit(OperatorCall call) throws ASTTraversalException {
-        this.visit((Call)call);
+    public boolean visit(OperatorCall call) throws ASTTraversalException {
+        return this.visit((Call)call);
     }
     
 
     
     @Override
-    public void visit(Call call) throws ASTTraversalException {
-        if (this.aborted) {
-            return;
+    public boolean visit(Call call) throws ASTTraversalException {
+        switch (this.before(call)) {
+        case SKIP: return true;
+        case ABORT: return false;
         }
         
-        this.before(call);
-        
         // resolve parameter types
-        call.getRhs().visit(this);
+        if (!call.getRhs().visit(this)) {
+            return false;
+        }
         
         final List<Type> possibleTypes = new ArrayList<Type>(
             call.getRhs().getTypes().size());
@@ -208,7 +219,9 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         }
         
         // resolve called function's types
-        call.getLhs().visit(this);
+        if (!call.getLhs().visit(this)) {
+            return false;
+        }
         
         boolean hasMapType = false;
         for (final Type type : call.getLhs().getTypes()) {
@@ -240,27 +253,26 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
                 "Keine passende Deklaration für den Aufruf von " + 
                 Unparser.toString(call.getLhs()) + " gefunden");
         }
-        this.after(call);
+        return this.after(call) == CONTINUE;
     }
     
     
     
     @Override
-    public void before(VarAccess access) throws ASTTraversalException {
+    public int before(VarAccess access) throws ASTTraversalException {
         final Set<Type> types = this.nspace.lookupFresh(access);
         access.addTypes(types);
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void visit(NamespaceAccess access) throws ASTTraversalException {
-        if (this.aborted) {
-            return;
-        }
-        
-        this.before(access);
-        
+    public boolean visit(NamespaceAccess access) throws ASTTraversalException {
+        switch (this.before(access)) {
+        case SKIP: return true;
+        case ABORT: return false;
+        }        
         if (!(access.getLhs() instanceof VarAccess)) {
             this.reportError(access.getLhs(), "Operand muss ein Bezeichner sein");
         } else if (!(access.getRhs() instanceof VarAccess)) {
@@ -274,26 +286,29 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         }
         final Namespace last = this.nspace;
         this.nspace = Namespace.forName(va.getIdentifier()).derive(this.nspace);
-        access.getRhs().visit(this);
+        if (!access.getRhs().visit(this)) {
+            return false;
+        }
         this.nspace = last;
 
         access.addTypes(access.getRhs().getTypes());
         
-        this.after(access);
+        return this.after(access) == CONTINUE;
     }
     
     
     
     @Override
-    public void before(Delete delete) throws ASTTraversalException {
+    public int before(Delete delete) throws ASTTraversalException {
         delete.addType(Type.NUM);
         delete.setUnique(Type.NUM);
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void before(Inspect inspect) throws ASTTraversalException {
+    public int before(Inspect inspect) throws ASTTraversalException {
         Namespace target = null;
         ResolvableIdentifier var = null;
         
@@ -324,5 +339,6 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         }
         inspect.setUnique(Type.STRING);
         inspect.addType(Type.STRING);
+        return CONTINUE;
     }
 }

@@ -51,49 +51,55 @@ public class DebugExecutionVisitor extends ExecutionVisitor {
     
     
     @Override
-    public void before(Call call) throws ASTTraversalException {
+    public int before(Call call) throws ASTTraversalException {
         this.println("Call: " + Unparser.toString(call.getLhs()));
         this.indent();
         this.println("Unique: " + call.getUnique());
         this.println("Position: " + call.getPosition());
         this.indent();
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void after(Call call) throws ASTTraversalException {
+    public int after(Call call) throws ASTTraversalException {
         this.println("Result: " + this.stack.peek());
         this.unindent();
         this.unindent();
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void before(ListLiteral list) throws ASTTraversalException {
+    public int before(ListLiteral list) throws ASTTraversalException {
         this.println("List:" + list.toString());
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void before(Literal literal) throws ASTTraversalException {
+    public int before(Literal literal) throws ASTTraversalException {
         this.println("Literal: " + literal.toString());
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void before(FunctionLiteral func) throws ASTTraversalException {
+    public int before(FunctionLiteral func) throws ASTTraversalException {
         this.println("Function: " + func.toString());
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void before(VarAccess access) throws ASTTraversalException {
+    public int before(VarAccess access) throws ASTTraversalException {
         this.println("Resolving: " + access.getIdentifier() + 
             ", type: " + access.getUnique());
+        return CONTINUE;
     }
 }

@@ -24,70 +24,80 @@ public class TypeGraphVisualizer extends DefaultTypeVisitor {
     
     
     @Override
-    public void before(ListType l) {
+    public int before(ListType l) {
         this.dotBuilder.printNode(l, "List");
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void before(Type type) {
+    public int before(Type type) {
         this.dotBuilder.printNode(type, type.getName().getId());
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void before(MapType m) {
+    public int before(MapType m) {
         this.dotBuilder.printNode(m, "Map");
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void before(ProductType p) {
+    public int before(ProductType p) {
         this.dotBuilder.printNode(p, "Product");
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void before(TypeVar v) {
+    public int before(TypeVar v) {
         this.dotBuilder.printNode(v, v.getName().getId());
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void after(ListType l) {
+    public int after(ListType l) {
         this.dotBuilder.pop(l);
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void after(Type type) {
+    public int after(Type type) {
         this.dotBuilder.pop(type);
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void after(MapType m) {
+    public int after(MapType m) {
         this.dotBuilder.pop(m);
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void after(ProductType p) {
+    public int after(ProductType p) {
         this.dotBuilder.pop(p);
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void after(TypeVar v) {
+    public int after(TypeVar v) {
         this.dotBuilder.pop(v);
+        return CONTINUE;
     }
 }

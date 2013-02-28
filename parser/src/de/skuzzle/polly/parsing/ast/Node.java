@@ -3,6 +3,7 @@ package de.skuzzle.polly.parsing.ast;
 import java.io.Serializable;
 
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.ast.visitor.ASTTraversal;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 import de.skuzzle.polly.parsing.ast.visitor.Visitable;
@@ -92,6 +93,21 @@ public abstract class Node implements Visitable<ASTVisitor>, Serializable, Equat
      */
     public abstract Node transform(Transformation transformation) 
         throws ASTTraversalException;
+
+    
+    
+    /**
+     * Uses an {@link ASTVisitor} to traverse the AST in depth first order. If you want
+     * to traverse the AST in different order, use the {@link #visit(ASTVisitor)} method.
+     * Traversal using this method never calls any of the <code>visit</code> methods
+     * of the {@link ASTVisitor} but only the <code>before</code> and <code>after</code>
+     * methods.
+     * 
+     * @param visitor Visitor to traverse the AST with.
+     * @return Whether traversal should continue;
+     * @throws ASTTraversalException If AST traversal fails.
+     */
+    public abstract boolean traverse(ASTTraversal visitor) throws ASTTraversalException;
     
     
     

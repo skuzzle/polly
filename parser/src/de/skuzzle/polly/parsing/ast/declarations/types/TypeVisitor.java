@@ -6,24 +6,29 @@ package de.skuzzle.polly.parsing.ast.declarations.types;
  * @author Simon Taddiken
  */
 public interface TypeVisitor {
+    public final static int ABORT = -1;
+    
+    public final static int CONTINUE = 0;
+    
+    public final static int SKIP = 1;
 
-    public void before(Type type);
-    public void after(Type type);
-    public void visit(Type type);
+    public int before(Type type);
+    public int after(Type type);
+    public boolean visit(Type type);
     
-    public void before(ProductType p);
-    public void after(ProductType p);
-    public void visit(ProductType p);
+    public int before(ProductType p);
+    public int after(ProductType p);
+    public boolean visit(ProductType p);
     
-    public void before(ListType l);
-    public void after(ListType l);
-    public void visit(ListType l);
+    public int before(ListType l);
+    public int after(ListType l);
+    public boolean visit(ListType l);
     
-    public void before(MapType m);
-    public void after(MapType m);
-    public void visit(MapType m);
+    public int before(MapType m);
+    public int after(MapType m);
+    public boolean visit(MapType m);
     
-    public void before(TypeVar v);
-    public void after(TypeVar v);
-    public void visit(TypeVar v);
+    public int before(TypeVar v);
+    public int after(TypeVar v);
+    public boolean visit(TypeVar v);
 }

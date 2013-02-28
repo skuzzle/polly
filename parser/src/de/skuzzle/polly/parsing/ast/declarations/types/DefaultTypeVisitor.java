@@ -32,143 +32,133 @@ public class DefaultTypeVisitor implements TypeVisitor {
     
     
     @Override
-    public void before(Type type) {}
+    public int before(Type type) {
+        return CONTINUE;
+    }
 
     @Override
-    public void after(Type type) {}
+    public int after(Type type) {
+        return CONTINUE;
+    }
 
     @Override
-    public void visit(Type type) {
-        if (this.aborted) {
-            return;
+    public boolean visit(Type type) {
+        switch (this.before(type)) {
+        case SKIP: return true;
+        case ABORT: return false;
         }
-        this.before(type);
-        this.after(type);
+        int after = this.after(type);
         this.visited.add(type);
+        return after == CONTINUE;
     }
     
     
 
     @Override
-    public void before(ProductType p) {}
+    public int before(ProductType p) {
+        return CONTINUE;
+    }
 
     @Override
-    public void after(ProductType p) {}
+    public int after(ProductType p) {
+        return CONTINUE;
+    }
 
     @Override
-    public void visit(ProductType p) {
-        if (this.aborted) {
-            return;
+    public boolean visit(ProductType p) {
+        switch (this.before(p)) {
+        case SKIP: return true;
+        case ABORT: return false;
         }
-        
-        this.before(p);
-        
-        if (this.aborted) {
-            return;
-        }
-        
         for (final Type t : p.getTypes()) {
-            t.visit(this);
-            
-            if (this.aborted) {
-                return;
+            if (!t.visit(this)) {
+                return false;
             }
-            
         }
-        
-        if (this.aborted) {
-            return;
-        }
-        
-        this.after(p);
+        int after = this.after(p);
         this.visited.add(p);
+        return after == CONTINUE;
     }
 
     
     
     @Override
-    public void before(ListType l) {}
+    public int before(ListType l) {
+        return CONTINUE;
+    }
 
     @Override
-    public void after(ListType l) {}
+    public int after(ListType l) {
+        return CONTINUE;
+    }
 
     @Override
-    public void visit(ListType l) {
-        if (this.aborted) {
-            return;
-        }
-        this.before(l);
-        
-        if (this.aborted) {
-            return;
+    public boolean visit(ListType l) {
+        switch (this.before(l)) {
+        case SKIP: return true;
+        case ABORT: return false;
         }
         
-        l.getSubType().visit(this);
-        
-        if (this.aborted) {
-            return;
+        if (!l.getSubType().visit(this)) {
+            return false;
         }
-        
-        this.after(l);
+        int after = this.after(l);
         this.visited.add(l);
+        return after == CONTINUE;
     }
 
     
     
     @Override
-    public void before(MapType m) {}
+    public int before(MapType m) {
+        return CONTINUE;
+    }
 
     @Override
-    public void after(MapType m) {}
+    public int after(MapType m) {
+        return CONTINUE;
+    }
 
     @Override
-    public void visit(MapType m) {
-        if (this.aborted) {
-            return;
+    public boolean visit(MapType m) {
+        switch (this.before(m)) {
+        case SKIP: return true;
+        case ABORT: return false;
         }
         
-        this.before(m);
-        
-        if (this.aborted) {
-            return;
+        if (!m.getSource().visit(this)) {
+            return false;
         }
         
-        m.getSource().visit(this);
-        
-        if (this.aborted) {
-            return;
+        if (!m.getTarget().visit(this)) {
+            return false;
         }
         
-        m.getTarget().visit(this);
-        
-        if (this.aborted) {
-            return;
-        }
-        
-        this.after(m);
+        int after = this.after(m);
         this.visited.add(m);
+        return after == CONTINUE;
     }
 
     
     
     @Override
-    public void before(TypeVar v) {}
+    public int before(TypeVar v) {
+        return CONTINUE;
+    }
     
     @Override
-    public void after(TypeVar v) {}
+    public int after(TypeVar v) {
+        return CONTINUE;
+    }
     
-    public void visit(TypeVar v) {
-        if (this.aborted) {
-            return;
+    public boolean visit(TypeVar v) {
+        switch (this.before(v)) {
+        case SKIP: return true;
+        case ABORT: return false;
         }
         
-        this.before(v);
-        
-        if (this.aborted) {
-            return;
-        }
-        
-        this.after(v);
+        int after = this.after(v);
         this.visited.add(v);
+        return after == CONTINUE;
     }
 }

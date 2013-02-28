@@ -42,7 +42,7 @@ public class TypeVar extends Type {
     
     
     @Override
-    public void visit(TypeVisitor visitor) {
-        visitor.visit(this);
+    public boolean visit(TypeVisitor visitor) {
+        return visitor.visit(this);
     }
 }

@@ -91,7 +91,7 @@ public class ResolvableIdentifier extends Identifier {
     
     
     @Override
-    public void visit(ASTVisitor visitor) throws ASTTraversalException {
-        visitor.visit(this);
+    public boolean visit(ASTVisitor visitor) throws ASTTraversalException {
+        return visitor.visit(this);
     }
 }

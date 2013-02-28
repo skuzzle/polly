@@ -255,8 +255,8 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
 
 
     @Override
-    public void visit(TypeVisitor visitor) {
-        visitor.visit(this);
+    public boolean visit(TypeVisitor visitor) {
+        return visitor.visit(this);
     }
     
     

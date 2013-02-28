@@ -8,6 +8,7 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.types.ProductType;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
+import de.skuzzle.polly.parsing.ast.visitor.ASTTraversal;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
@@ -66,15 +67,30 @@ public class ProductLiteral extends ListLiteral {
     
     
     @Override
-    public void visit(ASTVisitor visitor) throws ASTTraversalException {
-        visitor.visit(this);
+    public boolean visit(ASTVisitor visitor) throws ASTTraversalException {
+        return visitor.visit(this);
     }
-    
     
     
     @Override
     public Expression transform(Transformation transformation)
             throws ASTTraversalException {
         return transformation.transformProduct(this);
+    }
+    
+    
+    
+    @Override
+    public boolean traverse(ASTTraversal visitor) throws ASTTraversalException {
+        switch (visitor.before(this)) {
+        case ASTTraversal.SKIP: return true;
+        case ASTTraversal.ABORT: return false;
+        }
+        for (final Expression exp : this.getContent()) {
+            if (!exp.traverse(visitor)) {
+                return false;
+            }
+        }
+        return visitor.after(this) == ASTTraversal.CONTINUE;
     }
 }

@@ -9,6 +9,7 @@ import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
+import de.skuzzle.polly.parsing.ast.visitor.ASTTraversal;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 import de.skuzzle.polly.parsing.ast.visitor.Unparser;
@@ -62,8 +63,8 @@ public class FunctionLiteral extends Literal {
     
     
     @Override
-    public void visit(ASTVisitor visitor) throws ASTTraversalException {
-        visitor.visit(this);
+    public boolean visit(ASTVisitor visitor) throws ASTTraversalException {
+        return visitor.visit(this);
     }
     
     
@@ -71,6 +72,25 @@ public class FunctionLiteral extends Literal {
     @Override
     public Node transform(Transformation transformation) throws ASTTraversalException {
         return transformation.transformFunction(this);
+    }
+    
+    
+    
+    @Override
+    public boolean traverse(ASTTraversal visitor) throws ASTTraversalException {
+        switch (visitor.before(this)) {
+        case ASTTraversal.SKIP: return true;
+        case ASTTraversal.ABORT: return false;
+        }
+        for (final Declaration formal : this.formal) {
+            if (!formal.traverse(visitor)) {
+                return false;
+            }
+        }
+        if (!this.body.traverse(visitor)) {
+            return false;
+        }
+        return visitor.after(this) == ASTTraversal.CONTINUE;
     }
     
     

@@ -28,235 +28,230 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
  */
 public class DepthFirstVisitor extends VisitorAdapter {
     
-    /** Flag to determine if current traversal should be stopped */
-    protected boolean aborted;
-    
-    
-    
-    /**
-     * Aborts the current traversal process. All further <code>visitXXX</code> methods 
-     * will return immediately without traversing their children after <code>abort</code> 
-     * has been called. This behavior will be leveraged when overriding any of the 
-     * <code>visitXXX</code> methods and must thus be reimplemented by querying the 
-     * {@link #aborted} flag.
-     */
-    public void abort() {
-        this.aborted = true;
-    }
-
-    
     
     @Override
-    public void visit(Root root) throws ASTTraversalException {
-        if (this.aborted) {
-            return;
+    public boolean visit(Root root) throws ASTTraversalException {
+        switch (this.before(root)) {
+        case SKIP: return true;
+        case ABORT: return false;
         }
-        this.before(root);
         for (final Expression exp : root.getExpressions()) {
-            exp.visit(this);
+            if (!exp.visit(this)) {
+                return false;
+            }
         }
-        this.after(root);
+        return this.after(root) == CONTINUE;
     }
 
     
     
     @Override
-    public void visit(Literal literal) throws ASTTraversalException {
-        if (this.aborted) {
-            return;
-        }
-        this.before(literal);
-        this.after(literal);
+    public boolean visit(Literal literal) throws ASTTraversalException {
+        return this.before(literal) == CONTINUE && this.after(literal) == CONTINUE;
     }
 
     
     
     @Override
-    public void visit(Identifier identifier)  throws ASTTraversalException {
-        if (this.aborted) {
-            return;
-        }
-        this.before(identifier);
-        this.after(identifier);
+    public boolean visit(Identifier identifier)  throws ASTTraversalException {
+        return this.before(identifier) == CONTINUE && this.after(identifier) == CONTINUE;
     }
     
     
     
     @Override
-    public void visit(ResolvableIdentifier id) throws ASTTraversalException {
-        if (this.aborted) {
-            return;
-        }
-        this.before(id);
-        this.after(id);
+    public boolean visit(ResolvableIdentifier id) throws ASTTraversalException {
+        return this.before(id) == CONTINUE && this.after(id) == CONTINUE;
     }
     
     
     
     @Override
-    public void visit(Assignment assign) 
-            throws ASTTraversalException {
-        if (this.aborted) {
-            return;
+    public boolean visit(Assignment assign) throws ASTTraversalException {
+        switch (this.before(assign)) {
+        case SKIP: return true;
+        case ABORT: return false;
         }
-        this.before(assign);
-        assign.getExpression().visit(this);
-        assign.getName().visit(this);
-        this.after(assign);
+        if (!assign.getExpression().visit(this)) {
+            return false;
+        }
+        if (!assign.getName().visit(this)) {
+            return false;
+        }
+        return this.after(assign) == CONTINUE;
     }
 
     
 
     @Override
-    public void visit(Declaration decl) throws ASTTraversalException {
-        if (this.aborted) {
-            return;
-        }
-        this.before(decl);
-        this.after(decl);
+    public boolean visit(Declaration decl) throws ASTTraversalException {
+        return this.before(decl) == CONTINUE && this.after(decl) == CONTINUE;
     }
     
     
 
     @Override
-    public void visit(Call call) throws ASTTraversalException {
-        if (this.aborted) {
-            return;
+    public boolean visit(Call call) throws ASTTraversalException {
+        switch (this.before(call)) {
+        case SKIP: return true;
+        case ABORT: return false;
         }
-        this.before(call);
-        call.getLhs().visit(this);
-        call.getRhs().visit(this);
-        this.after(call);
+        if (!call.getLhs().visit(this)) {
+            return false;
+        }
+        if (!call.getRhs().visit(this)) {
+            return false;
+        }
+        return this.after(call) == CONTINUE;
     }
 
     
 
     @Override
-    public void visit(Native hc) throws ASTTraversalException {
-        if (this.aborted) {
-            return;
-        }
-        this.before(hc);
-        this.after(hc);
+    public boolean visit(Native hc) throws ASTTraversalException {
+        return this.before(hc) == CONTINUE && this.after(hc) == CONTINUE;    
     }
 
     
 
     @Override
-    public void visit(NamespaceAccess access) throws ASTTraversalException {
-        if (this.aborted) {
-            return;
+    public boolean visit(NamespaceAccess access) throws ASTTraversalException {
+        switch (this.before(access)) {
+        case SKIP: return true;
+        case ABORT: return false;
         }
-        this.before(access);
-        access.getLhs().visit(this);
-        access.getRhs().visit(this);
-        this.after(access);
+        if (!access.getLhs().visit(this)) {
+            return false;
+        }
+        if (!access.getRhs().visit(this)) {
+            return false;
+        }
+        return this.after(access) == CONTINUE;
     }
 
 
     
     @Override
-    public void visit(VarAccess access) throws ASTTraversalException {
-        if (this.aborted) {
-            return;
+    public boolean visit(VarAccess access) throws ASTTraversalException {
+        switch (this.before(access)) {
+        case SKIP: return true;
+        case ABORT: return false;
         }
-        this.before(access);
-        access.getIdentifier().visit(this);
-        this.after(access);
+        if (!access.getIdentifier().visit(this)) {
+            return false;
+        }
+        return this.after(access) == CONTINUE;
     }
 
 
     
     @Override
-    public void visit(FunctionLiteral func)
-            throws ASTTraversalException {
-        if (this.aborted) {
-            return;
+    public boolean visit(FunctionLiteral func) throws ASTTraversalException {
+        switch (this.before(func)) {
+        case SKIP: return true;
+        case ABORT: return false;
         }
-        this.before(func);
         for (final Declaration d : func.getFormal()) {
-            d.visit(this);
+            if (!d.visit(this)) {
+                return false;
+            }
         }
-        func.getBody().visit(this);
-        this.after(func);
+        if (!func.getBody().visit(this)) {
+            return false;
+        }
+        return this.after(func) == CONTINUE;
     }
 
 
     
     @Override
-    public void visit(ListLiteral list) throws ASTTraversalException {
-        if (this.aborted) {
-            return;
+    public boolean visit(ListLiteral list) throws ASTTraversalException {
+        switch (this.before(list)) {
+        case SKIP: return true;
+        case ABORT: return false;
         }
-        this.before(list);
         for (final Expression exp : list.getContent()) {
-            exp.visit(this);
+            if (!exp.visit(this)) {
+                return false;
+            }
         }
-        this.after(list);
+        return this.after(list) == CONTINUE;
     }
     
     
     
     @Override
-    public void visit(ProductLiteral product) throws ASTTraversalException {
-        if (this.aborted) {
-            return;
+    public boolean visit(ProductLiteral product) throws ASTTraversalException {
+        switch (this.before(product)) {
+        case SKIP: return true;
+        case ABORT: return false;
         }
-        this.before(product);
         for (final Expression exp : product.getContent()) {
-            exp.visit(this);
+            if (!exp.visit(this)) {
+                return false;
+            }
         }
-        this.after(product);
+        return this.after(product) == CONTINUE;
     }
 
 
     
     @Override
-    public void visit(OperatorCall call) throws ASTTraversalException {
-        if (this.aborted) {
-            return;
+    public boolean visit(OperatorCall call) throws ASTTraversalException {
+        switch (this.before(call)) {
+        case SKIP: return true;
+        case ABORT: return false;
         }
-        this.before(call);
-        call.getLhs().visit(this);
-        call.getRhs().visit(this);
-        this.after(call);
+        if (!call.getLhs().visit(this)) {
+            return false;
+        }
+        if (!call.getRhs().visit(this)) {
+            return false;
+        }
+        return this.after(call) == CONTINUE;
     }
     
     
     
     @Override
-    public void visit(Braced braced) throws ASTTraversalException {
-        if (this.aborted) {
-            return;
+    public boolean visit(Braced braced) throws ASTTraversalException {
+        switch (this.before(braced)) {
+        case SKIP: return true;
+        case ABORT: return false;
         }
-        this.before(braced);
-        braced.getExpression().visit(this);
-        this.after(braced);
+        if (!braced.getExpression().visit(this)) {
+            return false;
+        }
+        return this.after(braced) == CONTINUE;
     }
     
     
     
     @Override
-    public void visit(Delete delete) throws ASTTraversalException {
-        if (this.aborted) {
-            return;
+    public boolean visit(Delete delete) throws ASTTraversalException {
+        switch (this.before(delete)) {
+        case SKIP: return true;
+        case ABORT: return false;
         }
-        this.before(delete);
         for (final Identifier id : delete.getIdentifiers()) {
-            id.visit(this);
+            if (!id.visit(this)) {
+                return false;
+            }
         }
-        this.after(delete);
+        return this.after(delete) == CONTINUE;
     }
     
     
     
     @Override
-    public void visit(Inspect inspect) throws ASTTraversalException {
-        if (this.aborted) {
-            return;
+    public boolean visit(Inspect inspect) throws ASTTraversalException {
+        switch (this.before(inspect)) {
+        case SKIP: return true;
+        case ABORT: return false;
         }
-        this.before(inspect);
-        inspect.getAccess().visit(this);
-        this.after(inspect);
+        if (!inspect.getAccess().visit(this)) {
+            return false;
+        }
+        return this.after(inspect) == CONTINUE;
     }
 }

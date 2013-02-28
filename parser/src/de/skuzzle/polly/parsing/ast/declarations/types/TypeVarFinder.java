@@ -30,8 +30,8 @@ final class TypeVarFinder extends DefaultTypeVisitor {
     
     private boolean found;
     @Override
-    public void before(TypeVar v) {
+    public int before(TypeVar v) {
         this.found = true;
-        this.abort();
+        return ABORT;
     }
 }

@@ -45,55 +45,58 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
     
     
     @Override
-    public void visit(Root root) throws ASTTraversalException {
-        if (this.aborted) {
-            return;
+    public boolean visit(Root root) throws ASTTraversalException {
+        switch (this.before(root)) {
+        case SKIP: return true;
+        case ABORT: return false;
         }
-        this.before(root);
         
         for (final Expression exp : root.getExpressions()) {
             // check whether unique type could have been resolved
             if (!exp.typeResolved()) {
                 //this.applyType(exp, exp);
             }
-            exp.visit(this);
+            if (!exp.visit(this)) {
+                return false;
+            }
         }
         
-        this.after(root);
+        return this.after(root) == CONTINUE;
     }
     
     
     
     @Override
-    public void visit(FunctionLiteral func) throws ASTTraversalException {
-        if (this.aborted) {
-            return;
+    public boolean visit(FunctionLiteral func) throws ASTTraversalException {
+        switch (this.before(func)) {
+        case SKIP: return true;
+        case ABORT: return false;
         }
-        
-        this.before(func);
         
         this.applyType(func, func);
         
         final MapType mtc = (MapType) func.getUnique();
         func.getBody().setUnique(mtc.getTarget());
-        func.getBody().visit(this);
+        if (!func.getBody().visit(this)) {
+            return false;
+        }
         
-        this.after(func);
+        return this.after(func) == CONTINUE;
     }
     
     
     
     @Override
-    public void visit(ListLiteral list) throws ASTTraversalException {
-        if (this.aborted) {
-            return;
-        }
-        
-        this.before(list);
-        
+    public boolean visit(ListLiteral list) throws ASTTraversalException {
+        switch (this.before(list)) {
+        case SKIP: return true;
+        case ABORT: return false;
+        }        
         Type last = null;
         for (final Expression exp : list.getContent()) {
-            exp.visit(this);
+            if (!exp.visit(this)) {
+                return false;
+            }
             if (last != null) {
                 if (!Type.tryUnify(last, exp.getUnique())) {
                     this.typeError(exp, last, exp.getUnique());
@@ -108,7 +111,7 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
             this.reportError(list, "Uneindeutiger Listen Type");
         }
         
-        this.after(list);
+        return this.after(list) == CONTINUE;
     }
     
     
@@ -131,35 +134,39 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
     
     
     @Override
-    public void before(Assignment assign) throws ASTTraversalException {
+    public int before(Assignment assign) throws ASTTraversalException {
         this.applyType(assign, assign.getExpression());
+        return CONTINUE;
     }
     
 
     
     @Override
-    public void after(Assignment assign) throws ASTTraversalException {
+    public int after(Assignment assign) throws ASTTraversalException {
         this.applyType(assign, assign);
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void before(OperatorCall call) throws ASTTraversalException {
+    public int before(OperatorCall call) throws ASTTraversalException {
         this.before((Call) call);
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void after(VarAccess access) throws ASTTraversalException {
+    public int after(VarAccess access) throws ASTTraversalException {
         this.applyType(access, access);
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void before(Call call) throws ASTTraversalException {
+    public int before(Call call) throws ASTTraversalException {
         
         // Either:
         // * call's unique type is already resolved => that is the final result type
@@ -209,29 +216,26 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         call.getRhs().setUnique(mtc.getSource());
         call.getLhs().setUnique(mtc);
         call.setUnique(t);
+        return CONTINUE;
     }
     
     
     
     @Override
-    public void visit(NamespaceAccess access) throws ASTTraversalException {
-        if (this.aborted) {
-            return;
+    public boolean visit(NamespaceAccess access) throws ASTTraversalException {
+        switch (this.before(access)) {
+        case SKIP: return true;
+        case ABORT: return false;
         }
-        this.before(access);
         this.applyType(access, access.getRhs());
-        this.after(access);
+        return this.after(access) == CONTINUE;
     }
     
     
     
     @Override
-    public void visit(Inspect inspect) throws ASTTraversalException {
-        if (this.aborted) {
-            return;
-        }
-        this.before(inspect);
+    public boolean visit(Inspect inspect) throws ASTTraversalException {
         // nothing to do here but prevent from executing super class visitInspect
-        this.after(inspect);
+        return this.before(inspect) == CONTINUE && this.after(inspect) == CONTINUE;
     }
 }

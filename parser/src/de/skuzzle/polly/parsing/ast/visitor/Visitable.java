@@ -15,7 +15,8 @@ public interface Visitable<T> {
      * according to this nodes type.
      * 
      * @param visitor The visitor to callback.
+     * @return Whether traversal should continue.
      * @throws ASTTraversalException May be thrown to abort further traversal of the AST.
      */
-    public abstract void visit(T visitor) throws ASTTraversalException;
+    public abstract boolean visit(T visitor) throws ASTTraversalException;
 }
