@@ -11,6 +11,12 @@ import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
 
 
+/**
+ * Represents a list literal which consists of a list of expressions which all have the
+ * same types.
+ * 
+ * @author Simon Taddiken
+ */
 public class ListLiteral extends Literal {
     
     private static final long serialVersionUID = 1L;
@@ -18,6 +24,12 @@ public class ListLiteral extends Literal {
     private final List<Expression> content;
     
 
+    /**
+     * Creates a new ListLiteral.
+     * 
+     * @param position Position of this literal within the source.
+     * @param content List of expressions in this list literal.
+     */
     public ListLiteral(Position position, List<Expression> content) {
         super(position, Type.UNKNOWN);
         this.content = content;
@@ -25,6 +37,13 @@ public class ListLiteral extends Literal {
     
     
     
+    /**
+     * Creates a new ListLiteral for which the type of its content is already known.
+     * 
+     * @param position Position of this literal within the source.
+     * @param content List of expressions in this list literal.
+     * @param subType Type of all expressions in the list.
+     */
     public ListLiteral(Position position, List<Expression> content, Type subType) {
         this(position, content);
         this.setUnique(subType.listOf());
@@ -32,6 +51,11 @@ public class ListLiteral extends Literal {
     
     
     
+    /**
+     * Gets the content of this literal.
+     * 
+     * @return All expressions in this literal.
+     */
     public List<Expression> getContent() {
         return this.content;
     }

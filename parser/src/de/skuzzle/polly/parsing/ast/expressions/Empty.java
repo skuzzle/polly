@@ -11,11 +11,7 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
 
 /**
  * Expression that does nothing except to represent the type that has been set in the
- * Constructor.
- * 
- * It will be used to represent formal parameter types. Thus, if this instance 
- * represents a Function, it must pop one signature off the stack (if one exists) 
- * when being visited.
+ * Constructor. It will be used to represent formal parameter types. 
  * 
  * @author Simon Taddiken
  */
@@ -37,9 +33,10 @@ public class Empty extends Expression {
     }
     
     
+    
     @Override
     public Node transform(Transformation transformation) throws ASTTraversalException {
-        return null;
+        return this;
     }
     
     

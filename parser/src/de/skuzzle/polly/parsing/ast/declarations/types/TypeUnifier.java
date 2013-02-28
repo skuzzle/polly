@@ -23,8 +23,8 @@ public final class TypeUnifier {
     
     
     /**
-     * Creates a new TypeUnifier which can then be used to test for equality of one pair
-     * of types.
+     * Creates a new TypeUnifier which can then be used to test for equality of type
+     * expressions.
      */
     public TypeUnifier() {
         this.typeToClass = new HashMap<Type, Integer>();
@@ -33,6 +33,10 @@ public final class TypeUnifier {
     
     
     
+    /**
+     * Re-initializes this unifier. Needs to be done before unifying another set
+     * of type expressions.
+     */
     private final void init() {
         this.typeToClass.clear();
         this.classToType.clear();
@@ -47,7 +51,8 @@ public final class TypeUnifier {
      * 
      * @param first First type to check. 
      * @param second Second type to check.
-     * @return A substitution for the type variables in first and second.
+     * @return A substitution for the type variables in first and second or 
+     *          <code>null</code> if unification was not successful.
      */
     public Substitution unify(Type first, Type second) {
         this.init();

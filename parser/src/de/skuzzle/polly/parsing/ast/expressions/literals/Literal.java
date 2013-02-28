@@ -7,7 +7,12 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTTraversal;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
 
-
+/**
+ * Literals are the source code representations of {@link Type types}. They therefore hold
+ * one value of a certain type.
+ * 
+ * @author Simon Taddiken
+ */
 public abstract class Literal extends Expression implements Comparable<Literal> {
 
     private static final long serialVersionUID = 1L;

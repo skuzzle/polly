@@ -6,7 +6,11 @@ import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 
-
+/**
+ * Represents a number literal. Numbers are always floating point doubles.
+ * 
+ * @author Simon Taddiken
+ */
 public class NumberLiteral extends Literal {
 
     private static final long serialVersionUID = 1L;
@@ -15,7 +19,12 @@ public class NumberLiteral extends Literal {
     private int radix;
     
     
-    
+    /**
+     * Creates a new NumberLiteral.
+     * 
+     * @param position Position of this literal within the source.
+     * @param value Value of this literal.
+     */
     public NumberLiteral(Position position, double value) {
         super(position, Type.NUM);
         this.value = value;
@@ -24,12 +33,24 @@ public class NumberLiteral extends Literal {
     
     
     
+    /**
+     * Gets the radix of this number. Only suitable for integer numbers and will only
+     * be used when formatting this literal using {@link #format(LiteralFormatter)}.
+     * 
+     * @return The radix of this literal.
+     */
     public int getRadix() {
         return this.radix;
     }
     
     
     
+    /**
+     * Sets the radix for this literal. Only suitable for integer numbers and will only
+     * have effect on the output of {@link #format(LiteralFormatter)}.
+     * 
+     * @param radix The new radix for this number.
+     */
     public void setRadix(int radix) {
         this.radix = radix;
     }

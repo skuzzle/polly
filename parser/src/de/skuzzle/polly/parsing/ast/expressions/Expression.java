@@ -4,13 +4,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.sun.beans.TypeResolver;
+
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.tools.Equatable;
 
 /**
- * Super class for all expression Nodes in the AST.
+ * Super class for all expression Nodes in the AST. When types are resolved, every
+ * expression may get assigned several possible types (due to function overloading).
+ * In a second step, the {@link TypeResolver} tries to figure out a unique type for each
+ * expression. If this is not possible, a type error occurs.
  * 
  * @author Simon Taddiken
  */
@@ -99,6 +104,12 @@ public abstract class Expression extends Node {
     
     
     
+    /**
+     * Clears the current list of types, then adds every type of the given list using 
+     * {@link #addTypes(Collection)}.
+     * 
+     * @param types The new collection of types for this expression.
+     */
     public void setTypes(Collection<Type> types) {
         this.types.clear();
         this.addTypes(types);

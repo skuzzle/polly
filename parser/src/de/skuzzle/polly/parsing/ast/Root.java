@@ -69,6 +69,11 @@ public final class Root extends Node {
 
     
 
+    /**
+     * Sets the command named of this root.
+     * 
+     * @param command The command name.
+     */
     public void setCommand(Identifier command) {
         this.command = command;
     }

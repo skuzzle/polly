@@ -6,7 +6,12 @@ import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 
-
+/**
+ * Represents a boolean literal and can hold the values <code>true</code> or 
+ * <code>false</code>.
+ * 
+ * @author Simon Taddiken
+ */
 public class BooleanLiteral extends Literal {
     
     private static final long serialVersionUID = 1L;
@@ -14,6 +19,12 @@ public class BooleanLiteral extends Literal {
     private final boolean value;
     
 
+    /**
+     * Creates a new BooleanLiteral.
+     * 
+     * @param position The position of this literal within the source.
+     * @param value The value of this literal.
+     */
     public BooleanLiteral(Position position, boolean value) {
         super(position, Type.BOOLEAN);
         this.value = value;
@@ -21,6 +32,11 @@ public class BooleanLiteral extends Literal {
     
     
     
+    /**
+     * Gets this literal's value.
+     * 
+     * @return The value of this literal.
+     */
     public boolean getValue() {
         return this.value;
     }

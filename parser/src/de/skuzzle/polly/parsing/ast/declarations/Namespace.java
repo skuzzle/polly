@@ -119,7 +119,7 @@ public class Namespace {
         public synchronized void declare(Declaration decl) 
                 throws ASTTraversalException {
             super.declare(decl);
-            if (decl.isTemp() || decl.isNative()) {
+            if (decl.isNative()) {
                 return;
             }
             
@@ -145,6 +145,12 @@ public class Namespace {
         
         
         
+        /**
+         * Stores the content of this namespace (no parent namespaces) to a file
+         * in the folder set by {@link Namespace#setDeclarationFolder(File)}.
+         * 
+         * @throws IOException If storing of the namespace fails.
+         */
         public void store() throws IOException {
             if (declarationFolder == null) {
                 throw new IOException("declaration folder has not been set");
@@ -497,7 +503,10 @@ public class Namespace {
     
     
 
+    /** Declarations by name in this namespace */
     protected final Map<String, List<Declaration>> decls;
+    
+    /** Parent of this namespace. <code>null</code> for root namespace. */
     protected final Namespace parent;
     
     

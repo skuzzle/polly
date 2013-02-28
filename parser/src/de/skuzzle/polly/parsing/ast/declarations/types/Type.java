@@ -166,10 +166,29 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
     
     private final static TypeUnifier unifier = new TypeUnifier();
     
+    /**
+     * Tests whether the left type is an instance of the right type using unification.
+     * 
+     * @param left The left type expression.
+     * @param right The right type expression.
+     * @return Whether both types are unifiable.
+     */
     public final static boolean tryUnify(Type left, Type right) {
         return unifier.tryUnify(left, right);
     }
     
+    
+    
+    /**
+     * Tests whether the left type is an instance of the right type using unification. If
+     * successful, this method returns a {@link Substitution} for the occurring type
+     * variables in the given type expressions.
+     * 
+     * @param left The left type expression.
+     * @param right The right type expression.
+     * @return A {@link Substitution} instance if unification was successful, 
+     *          <code>null</code> otherwise.
+     */
     public final static Substitution unify(Type left, Type right) {
         return unifier.unify(left, right);
     }
@@ -181,7 +200,13 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
     private final boolean primitve;
     
     
-    
+    /**
+     * Creates a new simple type.
+     * 
+     * @param name String representation of the type as an {@link Identifier}.
+     * @param comparable Whether literals of this type are comparable.
+     * @param primitive Whether this represents a primitive type.
+     */
     Type(Identifier name, boolean comparable, boolean primitive) {
         this.name = name;
         this.comparable = comparable;
@@ -190,24 +215,50 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
     
     
     
+    /**
+     * Creates a mapping type expression from this one to the given target type 
+     * expression.
+     * 
+     * @param target The target (right side) of the mapping.
+     * @return A new mapping type expression
+     */
     public MapType mapTo(Type target) {
         return new MapType(this, target);
     }
     
     
     
+    /**
+     * Creates a mapping type from the given type expression to this one.
+     * 
+     * @param source The source (left side) of the mapping.
+     * @return A new mapping type expression.
+     */
     public MapType mapFrom(Type source) {
         return new MapType(source, this);
     }
     
     
     
+    /**
+     * Returns a new {@link ListType} expression with this type as a sub type.
+     * @return A new {@link ListType} expression.
+     */
     public ListType listOf() {
         return new ListType(this);
     }
     
     
     
+    /**
+     * Applies the given substitution to this type expression. This will create a new
+     * type expression where all type variables are substituted by the rules implemented
+     * in {@link Substitution#getSubstitute(TypeVar)}. Every other type expression
+     * (except primitive types) will be recreated.
+     * 
+     * @param s The substitution to apply.
+     * @return A new type expression.
+     */
     public Type subst(Substitution s) {
         return this;
     }
@@ -277,7 +328,8 @@ public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
 
     @Override
     public boolean actualEquals(Equatable o) {
-        // TODO HACK XXX FIXME: implement equals 
-        return o == this;
+        // Types are equal if they can be unified.
+        final Type other = (Type) o;
+        return tryUnify(this, other);
     }
 }

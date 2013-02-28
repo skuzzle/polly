@@ -2,12 +2,20 @@ package de.skuzzle.polly.parsing.ast.expressions;
 
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Node;
+import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversal;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
 
 
+/**
+ * Inspect statement that allows to read information of declarations from a 
+ * {@link Namespace}. As there are no real statements, this expression will return a
+ * string containing those information upon execution.
+ * 
+ * @author Simon Taddiken
+ */
 public class Inspect extends Expression {
     
     private static final long serialVersionUID = 1L;
@@ -16,6 +24,15 @@ public class Inspect extends Expression {
     private final boolean global;
     
     
+    /**
+     * Creates a new Inspect node.
+     * 
+     * @param position Source position of this expression.
+     * @param access Expression which either accesses a declaration directly or through
+     *          a preceded namespace.
+     * @param global Whether declaration information should be retrieved from global
+     *          namespace.
+     */
     public Inspect(Position position, Expression access, boolean global) {
         super(position);
         this.access = access;
@@ -24,12 +41,24 @@ public class Inspect extends Expression {
 
     
     
+    /**
+     * Gets whether declaration information should be retrieved from global
+     * namespace.
+     * 
+     * @return Whether declaration information should be retrieved from global
+     *          namespace.
+     */
     public boolean isGlobal() {
         return this.global;
     }
     
 
-    
+
+    /**
+     * Gets the expression that references the declaration to retrieve information for.
+     * 
+     * @return The expression to access the declaration.
+     */
     public Expression getAccess() {
         return this.access;
     }

@@ -6,12 +6,21 @@ import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 
-
+/**
+ * Represents a channel literal. Channels are identifiers preceded by '#'.
+ * @author Simon Taddiken
+ */
 public class ChannelLiteral extends StringLiteral {
 
     private static final long serialVersionUID = 1L;
     
     
+    /**
+     * Creates a new ChannelLiteral.
+     * 
+     * @param position The position of this literal within the source.
+     * @param value This literal's value (including '#').
+     */
     public ChannelLiteral(Position position, String value) {
         super(position, value, Type.CHANNEL);
     }

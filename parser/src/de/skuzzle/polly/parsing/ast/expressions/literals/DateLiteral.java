@@ -8,14 +8,23 @@ import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 
-
+/**
+ * Represents a date literal.
+ * 
+ * @author Simon Taddiken
+ */
 public class DateLiteral extends Literal {
 
     private static final long serialVersionUID = 1L;
     
     private final Date value;
     
-    
+    /**
+     * Creates a new DateLiteral.
+     * 
+     * @param position The position of this literal within the source.
+     * @param value The value of this literal.
+     */
     public DateLiteral(Position position, Date value) {
         super(position, Type.DATE);
         this.value = value;
@@ -23,6 +32,13 @@ public class DateLiteral extends Literal {
     
     
     
+    /**
+     * Custom constructor to create {@link TimespanLiteral TimespanLiterals}.
+     * 
+     * @param position The position of this literal within the source.
+     * @param value The value of this literal.
+     * @param type type of this literal.
+     */
     protected DateLiteral(Position position, Date value, Type type) {
         super(position, type);
         this.value = value;
@@ -30,6 +46,11 @@ public class DateLiteral extends Literal {
     
     
     
+    /**
+     * Gets this literal's value.
+     * 
+     * @return The value of this literal.
+     */
     public Date getValue() {
         return this.value;
     }

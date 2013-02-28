@@ -15,7 +15,9 @@ import de.skuzzle.polly.parsing.util.Stack;
 
 
 /**
- * This expression must be used for preprovided functionality for example operators.
+ * This expression must be used for pre-provided functionality, for example operators. It
+ * grants full compatibility of native implementations of operators and functions
+ * and user defined functions. 
  * 
  * @author Simon Taddiken
  */
@@ -49,7 +51,7 @@ public abstract class Native extends Expression {
     
     
     /**
-     * Executes this hardcoded expression. Execution of this expression may leave exactly
+     * Executes this native expression. Execution of this expression must leave exactly
      * one new literal of the same type as this expression on the stack.
      * 
      * @param stack The stack used for execution. 
@@ -64,8 +66,7 @@ public abstract class Native extends Expression {
     
     /**
      * Called by the {@link TypeResolver} when it hits an instance of this class during
-     * traversal of the AST. Can be used to perform some custom context checking. This 
-     * should set this expression's type to the type of the result of this expression.
+     * traversal of the AST. Can be used to perform some custom context checking.
      * 
      * @param ns Current {@link Namespace} during type resolval.
      * @param typeResolver The type resolver.

@@ -114,6 +114,7 @@ public class Declaration extends Node implements Comparable<Declaration> {
 
 
     
+    @Deprecated
     public boolean isTemp() {
         return this.isTemp;
     }

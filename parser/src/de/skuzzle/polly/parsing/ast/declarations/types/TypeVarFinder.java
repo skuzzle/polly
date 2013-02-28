@@ -24,7 +24,7 @@ final class TypeVarFinder extends DefaultTypeVisitor {
     
     
     /** Not instantiable from outside */
-    public TypeVarFinder() {}
+    private TypeVarFinder() {}
     
     
     

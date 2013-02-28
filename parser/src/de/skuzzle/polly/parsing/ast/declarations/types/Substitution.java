@@ -6,7 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-
+/**
+ * This class represents a mapping of type variables to other type expressions. 
+ * @author Simon Taddiken
+ */
 public class Substitution {
 
     /** Unmodifiable empty substitution. */
@@ -41,12 +44,20 @@ public class Substitution {
     
     
     
+    /**
+     * Creates a new substitution from the given mapping.
+     *  
+     * @param mappings Mappinf of type variables to type expressions.
+     */
     public Substitution(Map<TypeVar, Type> mappings) {
         this.mappings = mappings;
     }
     
     
     
+    /**
+     * Creates a new empty substutiton.
+     */
     public Substitution() {
         this(new HashMap<TypeVar, Type>());
     }

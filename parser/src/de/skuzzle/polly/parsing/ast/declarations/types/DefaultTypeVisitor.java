@@ -4,29 +4,17 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Default {@link TypeVisitor} implementation. Traversal process can be aborted any time
- * using {@link #abort()}.
+ * Default {@link TypeVisitor} implementation.
  * 
  * @author Simon Taddiken
  */
 public class DefaultTypeVisitor implements TypeVisitor {
 
-    protected boolean aborted;
     private final Set<Type> visited;
     
     
     public DefaultTypeVisitor() {
         this.visited = new HashSet<Type>();
-    }
-    
-    
-    
-    /**
-     * Aborts the current traversal process after the next <code>visitXXX</code> method
-     * finishes. 
-     */
-    public void abort() {
-        this.aborted = true;
     }
     
     

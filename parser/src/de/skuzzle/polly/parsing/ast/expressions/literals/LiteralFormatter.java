@@ -16,7 +16,12 @@ import de.skuzzle.polly.tools.streams.StringBuilderWriter;
 import de.skuzzle.polly.tools.strings.IteratorPrinter;
 import de.skuzzle.polly.tools.strings.IteratorPrinter.StringProvider;
 
-
+/**
+ * Visitor style interface to format literals into a string representation. It can be
+ * used in conjunction with {@link Literal#format(LiteralFormatter)}.
+ * 
+ * @author Simon Taddiken
+ */
 public interface LiteralFormatter {
     
     /**
@@ -127,22 +132,76 @@ public interface LiteralFormatter {
     };
     
     
-    
+    /**
+     * Formats a number literal to string.
+     * 
+     * @param number The literal to format.
+     * @return A String representation of that literal.
+     */
     public String formatNumberLiteral(NumberLiteral number);
     
+    
+    /**
+     * Formats a date literal to string.
+     * 
+     * @param date The literal to format.
+     * @return A String representation of that literal.
+     */
     public String formatDate(DateLiteral date);
     
+    /**
+     * Formats a timespan literal to string.
+     * 
+     * @param timespan The literal to format.
+     * @return A String representation of that literal.
+     */
     public String formatTimespan(TimespanLiteral timespan);
 
+    /**
+     * Formats a channel literal to string.
+     * 
+     * @param channel The literal to format.
+     * @return A String representation of that literal.
+     */
     public String formatChannel(ChannelLiteral channel);
     
+    /**
+     * Formats a string literal to string (yeah, funny ehh?).
+     * 
+     * @param string The literal to format.
+     * @return A String representation of that literal.
+     */
     public String formatString(StringLiteral string);
 
+    /**
+     * Formats a user literal to string.
+     * 
+     * @param user The literal to format.
+     * @return A String representation of that literal.
+     */
     public String formatUser(UserLiteral user);
 
+    /**
+     * Formats a list literal to string.
+     * 
+     * @param listLiteral The literal to format.
+     * @return A String representation of that literal.
+     */
     public String formatList(ListLiteral listLiteral);
 
+    /**
+     * Formats a function literal to string.
+     * 
+     * @param functionLiteral The literal to format.
+     * @return A String representation of that literal.
+     */
     public String formatFunction(FunctionLiteral functionLiteral);
 
+    /**
+     * Formats a help literal to string.
+     * 
+     * @param helpLiteral The literal to format.
+     * @return A String representation of that literal.
+     */
     public String formatHelp(HelpLiteral helpLiteral);
 }

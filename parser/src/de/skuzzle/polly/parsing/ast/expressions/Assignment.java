@@ -22,6 +22,15 @@ public class Assignment extends Expression {
     private final boolean isTemp;
     
     
+    /**
+     * Creates a new assignment.
+     * 
+     * @param position Source position of the assignment.
+     * @param expression Expression (left handed statement) that is assigned.
+     * @param name Name to which the expression is assigned.
+     * @param isPublic Whether this is a public declaration.
+     * @param isTemp Whether this is a temporary declaration.
+     */
     public Assignment(Position position, Expression expression, 
             Identifier name, boolean isPublic, boolean isTemp) {
         super(position);
@@ -33,12 +42,22 @@ public class Assignment extends Expression {
     
     
     
+    /**
+     * Whether this is a public declaration.
+     * 
+     * @return Whether this is a public declaration.
+     */
     public boolean isPublic() {
         return this.isPublic;
     }
     
     
     
+    /**
+     * Whether this is a temporary declaration.
+     * 
+     * @return Whether this is a temporary declaration.
+     */
     public boolean isTemp() {
         return this.isTemp;
     }

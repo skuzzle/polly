@@ -20,6 +20,12 @@ public class VarAccess extends Expression {
     private ResolvableIdentifier identifier;
     
     
+    /**
+     * Creates a new VarAccess expression.
+     * 
+     * @param position The position of this expression within the source.
+     * @param identifier The name of the variable to access.
+     */
     public VarAccess(Position position, ResolvableIdentifier identifier) {
         super(position);
         if (identifier == null) {

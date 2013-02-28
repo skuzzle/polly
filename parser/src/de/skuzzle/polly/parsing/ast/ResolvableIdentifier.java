@@ -23,7 +23,13 @@ public class ResolvableIdentifier extends Identifier {
     private final List<Declaration> decls;
     
     
-    
+    /**
+     * Creates a new ResolvableIdentifier.
+     * 
+     * @param position The source position of the identifier.
+     * @param id The identifier.
+     * @param wasEscaped Whether the identifier was created from an escaped token.
+     */
     public ResolvableIdentifier(Position position, String id, boolean wasEscaped) {
         super(position, id, wasEscaped);
         this.decls = new ArrayList<Declaration>();
@@ -31,6 +37,12 @@ public class ResolvableIdentifier extends Identifier {
     
     
     
+    /**
+     * Creates a new ResolvableIdentifier.
+     * 
+     * @param position The source position of the identifier.
+     * @param id The identifier.
+     */
     public ResolvableIdentifier(Position position, String id) {
         super(position, id);
         this.decls = new ArrayList<Declaration>();
@@ -38,6 +50,11 @@ public class ResolvableIdentifier extends Identifier {
     
     
     
+    /**
+     * Creates a new ResolvableIdentifier from an existing identifier.
+     * 
+     * @param id The identifier.
+     */
     public ResolvableIdentifier(Identifier id) {
         super(id.getPosition(), id.getId(), id.wasEscaped());
         this.decls = new ArrayList<Declaration>();

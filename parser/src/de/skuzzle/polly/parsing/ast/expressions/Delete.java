@@ -5,16 +5,33 @@ import java.util.List;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.Node;
+import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversal;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
 
 
+/**
+ * <p>Represents a delete statements. Those hold a list of 
+ * {@link DeleteableIdentifier DeleteableIdentifiers} that will be deleted upon 
+ * execution.</p>
+ * 
+ * <p>As we there are no real statements, this node will return the number of deleted 
+ * identifiers upon execution.</p>
+ * 
+ * @author Simon Taddiken
+ */
 public class Delete extends Expression {
 
     private static final long serialVersionUID = 1L;
-    
+   
+    /**
+     * Identifier extension which contains a declaration scope to determine from which
+     * {@link Namespace} a declaration of an identifier will be deleted. 
+     * 
+     * @author Simon Taddiken
+     */
     public final static class DeleteableIdentifier extends Identifier {
         
         private static final long serialVersionUID = 1L;
@@ -42,6 +59,11 @@ public class Delete extends Expression {
     
     
     
+    /**
+     * Creates a new delete statement.
+     * @param position
+     * @param ids
+     */
     public Delete(Position position, List<DeleteableIdentifier> ids) {
         super(position);
         this.ids = ids;
@@ -49,6 +71,12 @@ public class Delete extends Expression {
 
     
     
+    /**
+     * Gets a list of names that should be deleted from current or from public 
+     * {@link Namespace}.
+     * 
+     * @return A list of names.
+     */
     public List<DeleteableIdentifier> getIdentifiers() {
         return this.ids;
     }
@@ -75,6 +103,7 @@ public class Delete extends Expression {
         }
         return visitor.after(this) == ASTTraversal.CONTINUE;
     }
+    
     
     
     @Override

@@ -97,11 +97,8 @@ public abstract class Node implements Visitable<ASTVisitor>, Serializable, Equat
     
     
     /**
-     * Uses an {@link ASTVisitor} to traverse the AST in depth first order. If you want
+     * Uses an {@link ASTTraversal} to traverse the AST in depth first order. If you want
      * to traverse the AST in different order, use the {@link #visit(ASTVisitor)} method.
-     * Traversal using this method never calls any of the <code>visit</code> methods
-     * of the {@link ASTVisitor} but only the <code>before</code> and <code>after</code>
-     * methods.
      * 
      * @param visitor Visitor to traverse the AST with.
      * @return Whether traversal should continue;

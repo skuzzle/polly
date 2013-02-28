@@ -12,8 +12,7 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
 
 /**
  * Encapsulates another expression for the sole reason to represent that that expression
- * was entered in braces. All changes made to this expressions are delegated to the 
- * encapsulated expression.
+ * was entered in braces. 
  * 
  * @author Simon Taddiken
  */
@@ -25,6 +24,12 @@ public class Braced extends Expression {
     
     
     
+    /**
+     * Creates a new braced expression.
+     * 
+     * @param position Source position of this expression.
+     * @param braced The expression in braces.
+     */
     public Braced(Position position, Expression braced) {
         super(position, braced.getUnique());
         this.expression = braced;
@@ -96,6 +101,11 @@ public class Braced extends Expression {
     
     
     
+    /**
+     * Gets the encapsulated expression.
+     * 
+     * @return The expression that occurred in braces.
+     */
     public Expression getExpression() {
         return this.expression;
     }

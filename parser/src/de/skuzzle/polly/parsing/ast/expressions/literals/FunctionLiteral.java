@@ -15,7 +15,12 @@ import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 import de.skuzzle.polly.parsing.ast.visitor.Unparser;
 import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
 
-
+/**
+ * Represents a function literals. Those consists of a list of formal parameters
+ * and a function body.
+ * 
+ * @author Simon Taddiken
+ */
 public class FunctionLiteral extends Literal {
 
     private static final long serialVersionUID = 1L;
@@ -24,6 +29,13 @@ public class FunctionLiteral extends Literal {
     private Expression body;
     
     
+    /**
+     * Creates a new FunctionLiteral.
+     * 
+     * @param position Position of this literal within the source.
+     * @param formal List of formal parameters.
+     * @param body Body of this function.
+     */
     public FunctionLiteral(Position position, Collection<Declaration> formal, 
             Expression body) {
         super(position, Type.UNKNOWN);
