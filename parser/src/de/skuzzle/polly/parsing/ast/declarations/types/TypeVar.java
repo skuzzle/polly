@@ -43,6 +43,6 @@ public class TypeVar extends Type {
     
     @Override
     public void visit(TypeVisitor visitor) {
-        visitor.visitVar(this);
+        visitor.visit(this);
     }
 }

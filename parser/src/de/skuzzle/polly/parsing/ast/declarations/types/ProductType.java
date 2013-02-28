@@ -92,7 +92,7 @@ public class ProductType extends Type implements Iterable<Type> {
     
     @Override
     public void visit(TypeVisitor visitor) {
-        visitor.visitProduct(this);
+        visitor.visit(this);
     }
 
 

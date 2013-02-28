@@ -54,6 +54,6 @@ public class ListType extends Type {
     
     @Override
     public void visit(TypeVisitor visitor) {
-        visitor.visitList(this);
+        visitor.visit(this);
     }
 }

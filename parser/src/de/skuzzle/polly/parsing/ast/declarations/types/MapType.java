@@ -85,6 +85,6 @@ public class MapType extends Type {
     
     @Override
     public void visit(TypeVisitor visitor) {
-        visitor.visitMap(this);
+        visitor.visit(this);
     }
 }

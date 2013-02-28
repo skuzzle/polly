@@ -32,36 +32,36 @@ public class DefaultTypeVisitor implements TypeVisitor {
     
     
     @Override
-    public void beforePrimitive(Type type) {}
+    public void before(Type type) {}
 
     @Override
-    public void afterPrimitive(Type type) {}
+    public void after(Type type) {}
 
     @Override
-    public void visitPrimitive(Type type) {
+    public void visit(Type type) {
         if (this.aborted) {
             return;
         }
-        this.beforePrimitive(type);
-        this.afterPrimitive(type);
+        this.before(type);
+        this.after(type);
         this.visited.add(type);
     }
     
     
 
     @Override
-    public void beforeProduct(ProductType p) {}
+    public void before(ProductType p) {}
 
     @Override
-    public void afterProduct(ProductType p) {}
+    public void after(ProductType p) {}
 
     @Override
-    public void visitProduct(ProductType p) {
+    public void visit(ProductType p) {
         if (this.aborted) {
             return;
         }
         
-        this.beforeProduct(p);
+        this.before(p);
         
         if (this.aborted) {
             return;
@@ -80,24 +80,24 @@ public class DefaultTypeVisitor implements TypeVisitor {
             return;
         }
         
-        this.afterProduct(p);
+        this.after(p);
         this.visited.add(p);
     }
 
     
     
     @Override
-    public void beforeList(ListType l) {}
+    public void before(ListType l) {}
 
     @Override
-    public void afterList(ListType l) {}
+    public void after(ListType l) {}
 
     @Override
-    public void visitList(ListType l) {
+    public void visit(ListType l) {
         if (this.aborted) {
             return;
         }
-        this.beforeList(l);
+        this.before(l);
         
         if (this.aborted) {
             return;
@@ -109,25 +109,25 @@ public class DefaultTypeVisitor implements TypeVisitor {
             return;
         }
         
-        this.afterList(l);
+        this.after(l);
         this.visited.add(l);
     }
 
     
     
     @Override
-    public void beforeMap(MapType m) {}
+    public void before(MapType m) {}
 
     @Override
-    public void afterMap(MapType m) {}
+    public void after(MapType m) {}
 
     @Override
-    public void visitMap(MapType m) {
+    public void visit(MapType m) {
         if (this.aborted) {
             return;
         }
         
-        this.beforeMap(m);
+        this.before(m);
         
         if (this.aborted) {
             return;
@@ -145,30 +145,30 @@ public class DefaultTypeVisitor implements TypeVisitor {
             return;
         }
         
-        this.afterMap(m);
+        this.after(m);
         this.visited.add(m);
     }
 
     
     
     @Override
-    public void beforeVar(TypeVar v) {}
+    public void before(TypeVar v) {}
     
     @Override
-    public void afterVar(TypeVar v) {}
+    public void after(TypeVar v) {}
     
-    public void visitVar(TypeVar v) {
+    public void visit(TypeVar v) {
         if (this.aborted) {
             return;
         }
         
-        this.beforeVar(v);
+        this.before(v);
         
         if (this.aborted) {
             return;
         }
         
-        this.afterVar(v);
+        this.after(v);
         this.visited.add(v);
     }
 }

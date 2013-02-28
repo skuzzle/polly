@@ -7,23 +7,23 @@ package de.skuzzle.polly.parsing.ast.declarations.types;
  */
 public interface TypeVisitor {
 
-    public void beforePrimitive(Type type);
-    public void afterPrimitive(Type type);
-    public void visitPrimitive(Type type);
+    public void before(Type type);
+    public void after(Type type);
+    public void visit(Type type);
     
-    public void beforeProduct(ProductType p);
-    public void afterProduct(ProductType p);
-    public void visitProduct(ProductType p);
+    public void before(ProductType p);
+    public void after(ProductType p);
+    public void visit(ProductType p);
     
-    public void beforeList(ListType l);
-    public void afterList(ListType l);
-    public void visitList(ListType l);
+    public void before(ListType l);
+    public void after(ListType l);
+    public void visit(ListType l);
     
-    public void beforeMap(MapType m);
-    public void afterMap(MapType m);
-    public void visitMap(MapType m);
+    public void before(MapType m);
+    public void after(MapType m);
+    public void visit(MapType m);
     
-    public void beforeVar(TypeVar v);
-    public void afterVar(TypeVar v);
-    public void visitVar(TypeVar v);
+    public void before(TypeVar v);
+    public void after(TypeVar v);
+    public void visit(TypeVar v);
 }
