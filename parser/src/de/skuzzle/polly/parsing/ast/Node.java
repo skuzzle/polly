@@ -6,7 +6,7 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 import de.skuzzle.polly.parsing.ast.visitor.Visitable;
-import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
 import de.skuzzle.polly.tools.EqualsHelper;
 import de.skuzzle.polly.tools.Equatable;
 
@@ -16,7 +16,7 @@ import de.skuzzle.polly.tools.Equatable;
  *  
  * @author Simon Taddiken
  */
-public abstract class Node implements Visitable<Visitor>, Serializable, Equatable {
+public abstract class Node implements Visitable<ASTVisitor>, Serializable, Equatable {
     
     private static final long serialVersionUID = 1L;
     

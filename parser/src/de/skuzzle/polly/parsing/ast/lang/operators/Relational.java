@@ -9,7 +9,7 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.BooleanLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.lang.BinaryOperator;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
 import de.skuzzle.polly.parsing.util.Stack;
 
 
@@ -28,7 +28,7 @@ public class Relational extends BinaryOperator<Literal, Literal> {
 
     @Override
     protected void resolve(Expression left, Expression right, Namespace ns,
-            Visitor typeResolver) throws ASTTraversalException {
+            ASTVisitor typeResolver) throws ASTTraversalException {
 
         if (!left.getUnique().isComparable()) {
             throw new ASTTraversalException(left.getPosition(), 
@@ -40,7 +40,7 @@ public class Relational extends BinaryOperator<Literal, Literal> {
 
     @Override
     protected void exec(Stack<Literal> stack, Namespace ns, Literal left, Literal right,
-            Position resultPos, Visitor execVisitor) throws ASTTraversalException {
+            Position resultPos, ASTVisitor execVisitor) throws ASTTraversalException {
         
         final int comp = left.compareTo(right);
         switch (this.getOp()) {

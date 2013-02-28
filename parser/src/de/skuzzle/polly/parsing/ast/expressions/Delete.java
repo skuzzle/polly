@@ -7,7 +7,7 @@ import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Transformation;
-import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
 
 
 public class Delete extends Expression {
@@ -55,7 +55,7 @@ public class Delete extends Expression {
     
 
     @Override
-    public void visit(Visitor visitor) throws ASTTraversalException {
+    public void visit(ASTVisitor visitor) throws ASTTraversalException {
         visitor.visitDelete(this);
     }
     

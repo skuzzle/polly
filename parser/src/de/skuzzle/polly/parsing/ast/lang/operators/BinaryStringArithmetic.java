@@ -7,7 +7,7 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.StringLiteral;
 import de.skuzzle.polly.parsing.ast.lang.BinaryOperator;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
 import de.skuzzle.polly.parsing.util.Stack;
 
 
@@ -24,7 +24,7 @@ public class BinaryStringArithmetic extends BinaryOperator<StringLiteral, String
     
     @Override
     protected void exec(Stack<Literal> stack, Namespace ns, StringLiteral left,
-            StringLiteral right, Position resultPos, Visitor execVisitor)
+            StringLiteral right, Position resultPos, ASTVisitor execVisitor)
             throws ASTTraversalException {
         
         switch (this.getOp()) {

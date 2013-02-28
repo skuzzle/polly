@@ -7,7 +7,7 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.BooleanLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.lang.BinaryOperator;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
 import de.skuzzle.polly.parsing.util.Stack;
 
 
@@ -24,7 +24,7 @@ public class BinaryBooleanArithmetic extends BinaryOperator<BooleanLiteral, Bool
 
     @Override
     protected void exec(Stack<Literal> stack, Namespace ns, BooleanLiteral left,
-            BooleanLiteral right, Position resultPos, Visitor execVisitor)
+            BooleanLiteral right, Position resultPos, ASTVisitor execVisitor)
                 throws ASTTraversalException {
         
         switch (this.getOp()) {

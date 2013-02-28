@@ -12,7 +12,7 @@ import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 import de.skuzzle.polly.parsing.ast.visitor.Unparser;
-import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
 
 
 public class FunctionLiteral extends Literal {
@@ -62,7 +62,7 @@ public class FunctionLiteral extends Literal {
     
     
     @Override
-    public void visit(Visitor visitor) throws ASTTraversalException {
+    public void visit(ASTVisitor visitor) throws ASTTraversalException {
         visitor.visitFunctionLiteral(this);
     }
     

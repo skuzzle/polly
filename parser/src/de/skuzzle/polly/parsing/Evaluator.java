@@ -10,7 +10,7 @@ import de.skuzzle.polly.parsing.ast.visitor.DebugExecutionVisitor;
 import de.skuzzle.polly.parsing.ast.visitor.ExecutionVisitor;
 import de.skuzzle.polly.parsing.ast.visitor.ParentSetter;
 import de.skuzzle.polly.parsing.ast.visitor.Unparser;
-import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
 import de.skuzzle.polly.parsing.ast.visitor.resolving.TypeResolver;
 
 
@@ -84,13 +84,13 @@ public class Evaluator {
             }
             
             // set parent attributes for all nodes
-            final Visitor parentSetter = new ParentSetter();
+            final ASTVisitor parentSetter = new ParentSetter();
             this.lastResult.visit(parentSetter);
             
             // resolve types
             TypeResolver.resolveAST(this.lastResult, workingNs);
             
-            final Visitor executor = getExecutor(rootNs, workingNs);
+            final ASTVisitor executor = getExecutor(rootNs, workingNs);
             this.lastResult.visit(executor);
             
         } catch (UnsupportedEncodingException e) {

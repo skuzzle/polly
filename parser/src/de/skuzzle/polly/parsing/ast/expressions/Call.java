@@ -4,7 +4,7 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Transformation;
-import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
 
 
 public class Call extends Expression {
@@ -37,7 +37,7 @@ public class Call extends Expression {
     
     
     @Override
-    public void visit(Visitor visitor) throws ASTTraversalException {
+    public void visit(ASTVisitor visitor) throws ASTTraversalException {
         visitor.visitCall(this);
     }
     

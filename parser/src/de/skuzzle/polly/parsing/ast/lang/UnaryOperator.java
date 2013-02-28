@@ -14,7 +14,7 @@ import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
 import de.skuzzle.polly.parsing.ast.visitor.resolving.TypeResolver;
 import de.skuzzle.polly.parsing.util.Stack;
 
@@ -65,7 +65,7 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
     
     
     @Override
-    public final void resolveType(Namespace ns, Visitor typeResolver)
+    public final void resolveType(Namespace ns, ASTVisitor typeResolver)
             throws ASTTraversalException {
         final Expression param = ns.resolveFirst(PARAM_NAME).getExpression();
         this.resolve(param, ns, typeResolver);
@@ -82,14 +82,14 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
      * @throws ASTTraversalException If context checking fails.
      */
     protected void resolve(Expression param, Namespace ns, 
-            Visitor typeResolver) throws ASTTraversalException {
+            ASTVisitor typeResolver) throws ASTTraversalException {
     }
 
     
     
     @Override
     @SuppressWarnings("unchecked")
-    public void execute(Stack<Literal> stack, Namespace ns, Visitor execVisitor)
+    public void execute(Stack<Literal> stack, Namespace ns, ASTVisitor execVisitor)
             throws ASTTraversalException {
         final O operand = (O) ns.resolveFirst(PARAM_NAME).getExpression();
         this.exec(stack, ns, operand, operand.getPosition());

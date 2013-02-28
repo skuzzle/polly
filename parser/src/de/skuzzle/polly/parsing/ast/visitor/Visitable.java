@@ -10,7 +10,7 @@ package de.skuzzle.polly.parsing.ast.visitor;
 public interface Visitable<T> {
 
     /**
-     * Callback method when the AST is iterated with a {@link Visitor}. This method
+     * Callback method when the AST is iterated with a {@link ASTVisitor}. This method
      * must invoke the matching <code>visitXY</code> method on the passed visitor 
      * according to this nodes type.
      * 

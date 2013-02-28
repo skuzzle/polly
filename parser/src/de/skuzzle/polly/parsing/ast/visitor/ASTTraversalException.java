@@ -3,7 +3,7 @@ package de.skuzzle.polly.parsing.ast.visitor;
 import de.skuzzle.polly.parsing.Position;
 
 /**
- * This exception can be thrown by {@link Visitor}s to instantly abort the traversal 
+ * This exception can be thrown by {@link ASTVisitor}s to instantly abort the traversal 
  * process. It contains the source position of where the error occurred.
  * 
  * @author Simon Taddiken

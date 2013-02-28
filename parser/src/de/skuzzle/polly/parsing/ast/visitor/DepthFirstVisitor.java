@@ -20,7 +20,7 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
 
 /**
- * {@link Visitor} implementation that traverses the AST in depth-first order. 
+ * {@link ASTVisitor} implementation that traverses the AST in depth-first order. 
  * Implementation of <code>beforeXY</code> and <code>afterXY</code> methods is empty and
  * may be overridden by sub classes.
  * 

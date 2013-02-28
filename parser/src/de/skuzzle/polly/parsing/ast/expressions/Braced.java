@@ -7,7 +7,7 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Transformation;
-import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
 
 /**
  * Encapsulates another expression for the sole reason to represent that that expression
@@ -67,7 +67,7 @@ public class Braced extends Expression {
 
     
     @Override
-    public void visit(Visitor visitor) throws ASTTraversalException {
+    public void visit(ASTVisitor visitor) throws ASTTraversalException {
         visitor.visitBraced(this);
     }
     

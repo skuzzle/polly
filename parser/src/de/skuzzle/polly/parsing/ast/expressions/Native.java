@@ -8,7 +8,7 @@ import de.skuzzle.polly.parsing.ast.declarations.types.Type;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Transformation;
-import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
 import de.skuzzle.polly.parsing.ast.visitor.resolving.TypeResolver;
 import de.skuzzle.polly.parsing.util.Stack;
 
@@ -57,7 +57,7 @@ public abstract class Native extends Expression {
      * @throws ASTTraversalException If executing fails.
      */
     public abstract void execute(Stack<Literal> stack, Namespace ns, 
-            Visitor execVisitor) throws ASTTraversalException;
+            ASTVisitor execVisitor) throws ASTTraversalException;
     
     
     
@@ -70,13 +70,13 @@ public abstract class Native extends Expression {
      * @param typeResolver The type resolver.
      * @throws ASTTraversalException Can be thrown if context checking fails.
      */
-    public abstract void resolveType(Namespace ns, Visitor typeResolver) 
+    public abstract void resolveType(Namespace ns, ASTVisitor typeResolver) 
         throws ASTTraversalException;
     
     
     
     @Override
-    public void visit(Visitor visitor) throws ASTTraversalException {
+    public void visit(ASTVisitor visitor) throws ASTTraversalException {
         visitor.visitNative(this);
     }
     

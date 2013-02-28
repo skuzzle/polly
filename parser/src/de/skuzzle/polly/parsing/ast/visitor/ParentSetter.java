@@ -22,7 +22,7 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 public class ParentSetter extends DepthFirstVisitor {
     
     /** Convenience constant that holds an instance of this class */
-    public final static Visitor DEFAULT_INSTANCE = new ParentSetter();
+    public final static ASTVisitor DEFAULT_INSTANCE = new ParentSetter();
     
     
 

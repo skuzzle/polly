@@ -18,7 +18,7 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
 import de.skuzzle.polly.parsing.ast.lang.BinaryOperator;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
 import de.skuzzle.polly.parsing.util.Stack;
 
 
@@ -50,7 +50,7 @@ public class Map extends BinaryOperator<ListLiteral, FunctionLiteral> {
 
     @Override
     protected void exec(Stack<Literal> stack, Namespace ns, ListLiteral left,
-            FunctionLiteral right, Position resultPos, Visitor execVisitor) 
+            FunctionLiteral right, Position resultPos, ASTVisitor execVisitor) 
                 throws ASTTraversalException {
         
         final ArrayList<Expression> result = new ArrayList<Expression>();

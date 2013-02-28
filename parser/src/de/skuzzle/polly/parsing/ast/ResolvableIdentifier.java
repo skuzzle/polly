@@ -6,7 +6,7 @@ import java.util.List;
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
 
 /**
  * ResolvableIdentifers are identifiers that refer to declarations. The actual declaration
@@ -91,7 +91,7 @@ public class ResolvableIdentifier extends Identifier {
     
     
     @Override
-    public void visit(Visitor visitor) throws ASTTraversalException {
+    public void visit(ASTVisitor visitor) throws ASTTraversalException {
         visitor.visitResolvable(this);
     }
 }

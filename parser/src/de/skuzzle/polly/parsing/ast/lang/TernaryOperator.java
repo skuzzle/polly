@@ -14,7 +14,7 @@ import de.skuzzle.polly.parsing.ast.expressions.Expression;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
 import de.skuzzle.polly.parsing.ast.visitor.resolving.TypeResolver;
 import de.skuzzle.polly.parsing.util.Stack;
 
@@ -85,7 +85,7 @@ public abstract class TernaryOperator<FIRST extends Literal, SECOND extends Lite
     @Override
     @SuppressWarnings("unchecked")
     public final void execute(Stack<Literal> stack, Namespace ns, 
-            Visitor execVisitor) throws ASTTraversalException {
+            ASTVisitor execVisitor) throws ASTTraversalException {
         
         final FIRST first = (FIRST) ns.resolveFirst(FIRST_PARAM_NAME).getExpression();
         final SECOND second = (SECOND) ns.resolveFirst(SECOND_PARAM_NAME).getExpression();
@@ -109,13 +109,13 @@ public abstract class TernaryOperator<FIRST extends Literal, SECOND extends Lite
      * @throws ASTTraversalException If executing fails for any reason.
      */
     protected abstract void exec(Stack<Literal> stack, Namespace ns, 
-        FIRST first, SECOND second, THIRD third, Position resultPos, Visitor execVisitor) 
+        FIRST first, SECOND second, THIRD third, Position resultPos, ASTVisitor execVisitor) 
             throws ASTTraversalException;
     
     
     
     @Override
-    public final void resolveType(Namespace ns, Visitor typeResolver)
+    public final void resolveType(Namespace ns, ASTVisitor typeResolver)
             throws ASTTraversalException {
         final Expression first = ns.resolveFirst(FIRST_PARAM_NAME).getExpression();
         final Expression second = ns.resolveFirst(SECOND_PARAM_NAME).getExpression();
@@ -137,7 +137,7 @@ public abstract class TernaryOperator<FIRST extends Literal, SECOND extends Lite
      * @throws ASTTraversalException If context checking fails.
      */
     protected void resolve(Expression first, Expression second, Expression third, 
-            Namespace ns, Visitor typeResolver) throws ASTTraversalException {
+            Namespace ns, ASTVisitor typeResolver) throws ASTTraversalException {
         // empty
     }
 }

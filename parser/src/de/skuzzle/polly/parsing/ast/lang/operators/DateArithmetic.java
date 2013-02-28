@@ -8,7 +8,7 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.TimespanLiteral;
 import de.skuzzle.polly.parsing.ast.lang.BinaryOperator;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
 import de.skuzzle.polly.parsing.util.Stack;
 
 
@@ -25,7 +25,7 @@ public class DateArithmetic extends BinaryOperator<DateLiteral, DateLiteral>{
     
     @Override
     protected void exec(Stack<Literal> stack, Namespace ns, DateLiteral left,
-            DateLiteral right, Position resultPos, Visitor execVisitor) 
+            DateLiteral right, Position resultPos, ASTVisitor execVisitor) 
                 throws ASTTraversalException {
         
         switch (this.getOp()) {

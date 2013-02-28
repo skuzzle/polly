@@ -11,7 +11,7 @@ import de.skuzzle.polly.parsing.ast.expressions.Native;
 import de.skuzzle.polly.parsing.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
 import de.skuzzle.polly.parsing.util.Stack;
 
 
@@ -89,12 +89,12 @@ public abstract class Function extends Native {
 
 
     @Override
-    public void execute(Stack<Literal> stack, Namespace ns, Visitor execVisitor)
+    public void execute(Stack<Literal> stack, Namespace ns, ASTVisitor execVisitor)
         throws ASTTraversalException {}
 
 
 
     @Override
-    public void resolveType(Namespace ns, Visitor typeResolver)
+    public void resolveType(Namespace ns, ASTVisitor typeResolver)
         throws ASTTraversalException {}
 }

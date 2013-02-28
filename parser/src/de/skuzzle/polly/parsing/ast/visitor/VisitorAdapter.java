@@ -21,12 +21,12 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
 
 
 /**
- * Provides an abstract {@link Visitor} where all <code>beforeXYZ</code> and all 
+ * Provides an abstract {@link ASTVisitor} where all <code>beforeXYZ</code> and all 
  * <code>afterXYZ</code> methods are pre-implemented empty.
  * 
  * @author Simon Taddiken
  */
-public abstract class VisitorAdapter implements Visitor {
+public abstract class VisitorAdapter implements ASTVisitor {
 
     @Override
     public void beforeRoot(Root root) throws ASTTraversalException {}

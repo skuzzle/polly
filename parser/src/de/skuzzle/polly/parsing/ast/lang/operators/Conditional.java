@@ -8,7 +8,7 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.BooleanLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.lang.TernaryOperator;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
 import de.skuzzle.polly.parsing.util.Stack;
 
 
@@ -33,7 +33,7 @@ public class Conditional extends TernaryOperator<BooleanLiteral, Literal, Litera
     
     @Override
     protected void exec(Stack<Literal> stack, Namespace ns, BooleanLiteral first,
-            Literal second, Literal third, Position resultPos, Visitor execVisitor) 
+            Literal second, Literal third, Position resultPos, ASTVisitor execVisitor) 
                 throws ASTTraversalException {
         
         if (first.getValue()) {

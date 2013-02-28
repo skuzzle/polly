@@ -4,7 +4,7 @@ import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Transformation;
-import de.skuzzle.polly.parsing.ast.visitor.Visitor;
+import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
 
 /**
  * Assignments either declare new variables or new functions.
@@ -67,7 +67,7 @@ public class Assignment extends Expression {
     
 
     @Override
-    public void visit(Visitor visitor) throws ASTTraversalException {
+    public void visit(ASTVisitor visitor) throws ASTTraversalException {
         visitor.visitAssignment(this);
     }
     
