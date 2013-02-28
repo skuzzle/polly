@@ -399,7 +399,6 @@ public class InputScanner extends AbstractTokenStream {
             }
         }
         
-        this.parseException("Unbekannter Fehler", tokenStart);
         return new Token(TokenType.EOS, this.spanFrom(tokenStart));
     }
     

@@ -2,8 +2,10 @@ package de.skuzzle.polly.parsing;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 
@@ -31,7 +33,7 @@ import java.util.Queue;
  * 
  * @author Simon
  */
-public abstract class AbstractTokenStream implements Iterable<Token> {
+public abstract class AbstractTokenStream implements Iterable<Token>, TokenStream {
     
     
     /**
@@ -70,6 +72,13 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
      */
     protected StringBuilder currentLexem;
     
+    /** Holds all tokens in order they have been consumed. */
+    protected final List<Token> consumedTokens;
+    
+    protected int tokenIndex;
+
+    protected int mark;
+    
     
     
     /**
@@ -96,6 +105,8 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
         this.pushbackBuffer = new LinkedList<Integer>();
         this.tokenBuffer = new LinkedList<Token>();
         this.currentLexem = new StringBuilder();
+        this.consumedTokens = new ArrayList<Token>();
+        this.mark = -1;
     }    
     
     
@@ -113,17 +124,73 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
         this.pushbackBuffer = new LinkedList<Integer>();
         this.tokenBuffer = new LinkedList<Token>();
         this.currentLexem = new StringBuilder();
+        this.consumedTokens = new ArrayList<Token>();
+        this.mark = -1;
     }
     
     
     
     /**
-     * Consumes the next token only if it has the expected type.
+     * Gets a {@link TokenStream} view of all consumed tokens. The last token returned
+     * by this stream will always have the type {@link TokenType#EOS}.
      * 
-     * @param type The {@link TokenType} you expect the next token to be.
-     * @return {@code true} if the consumed token has the expected type.
-     * @throws ParseException If no valid token could be read.
+     * @return A TokenStream that can read all tokens that already have been consumed.
      */
+    public TokenStream consumed() {
+        return new TokenStream() {
+            
+            private int i = 0;
+            
+            @Override
+            public boolean match(Token token) throws ParseException {
+                return this.match(token.getType());
+            }
+            
+            
+            
+            @Override
+            public boolean match(TokenType type) throws ParseException {
+                final TokenType compare = this.indexExists(this.i + 1) 
+                    ? TokenType.EOS : 
+                        consumedTokens.get(this.i + 1).getType();
+                if (compare == type) {
+                    ++this.i;
+                    return true;
+                }
+                return false;
+            }
+            
+            
+            
+            @Override
+            public Token lookAhead() throws ParseException {
+                if (!this.indexExists(this.i + 1)) {
+                    return new Token(TokenType.EOS, Position.NONE);
+                }
+                return consumedTokens.get(this.i + 1);
+            }
+            
+            
+            
+            @Override
+            public void consume() throws ParseException {
+                ++this.i;
+            }
+            
+            
+            
+            private boolean indexExists(int index) {
+                return index < consumedTokens.size();
+            }
+        };
+    }
+    
+    
+    
+    /* (non-Javadoc)
+     * @see de.skuzzle.polly.parsing.TokenStream#match(de.skuzzle.polly.parsing.TokenType)
+     */
+    @Override
     public boolean match(TokenType type) throws ParseException {
         if (this.lookAhead().matches(type)) {
             this.consume();
@@ -134,31 +201,23 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
     
     
     
-    /**
-     * Consumes the next token and checks whether it has the same type as the given
-     * token.
-     * 
-     * @param token The token (in most cases this is the current lookahead token).
-     * @return {@code true} if the consumed token has the expected type.
-     * @throws ParseException If no valid token could be read.
+    /* (non-Javadoc)
+     * @see de.skuzzle.polly.parsing.TokenStream#match(de.skuzzle.polly.parsing.Token)
      */
+    @Override
     public boolean match(Token token) throws ParseException {
         return this.match(token.getType());
     }
 
     
     
-    /**
-     * Returns the next token without consuming it. That means:
-     * 
-     * {@code Token la = lookAhead() => match(la.getType()) == true}. 
-     * @return The next token which will be consumed calling 
-     *      {@link #match(TokenType)} or {@link #consume()}. 
-     * @throws ParseException If no valid token could be read.
+    /* (non-Javadoc)
+     * @see de.skuzzle.polly.parsing.TokenStream#lookAhead()
      */
+    @Override
     public Token lookAhead() throws ParseException {
         if (this.tokenBuffer.isEmpty()) {
-            this.tokenBuffer.add(this.readToken());
+            this.tokenBuffer.add(this.nextToken());
         }
         return this.tokenBuffer.peek();
     }
@@ -190,10 +249,10 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
     
     
     
-    /**
-     * Consumes the next token without returning it.
-     * @throws ParseException If no valid token could be read.
+    /* (non-Javadoc)
+     * @see de.skuzzle.polly.parsing.TokenStream#consume()
      */
+    @Override
     public void consume() throws ParseException {
         this.nextToken();
     }
@@ -403,6 +462,46 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
         
         return la;
     }
+    
+    
+    
+    /**
+     * <p>Remembers the current position within the token stream. The token stream can
+     * be reset to this mark by using {@link #reset(boolean, boolean)}. Doing so will 
+     * cause the token to where the stream has been reseted to be the next token returned 
+     * by <code>nextToken()</code> and any other methods that would return a token.</p>
+     * 
+     * <p>Note: If there are tokens in the pushback buffer, those will be returned
+     * until pushback buffer is empty. That is why you may choose to clear the
+     * buffer here.</p>
+     * 
+     */
+    public void mark() {
+        this.mark = this.tokenIndex;
+    }
+    
+    
+    
+    /**
+     * Resets this stream to the mark set by {@link #mark()}. If the token buffer is 
+     * empty, the token that the stream was reset to will be the next one to be read.
+     * If the token buffer contains tokens, they will be read first until it is empty.
+     * 
+     * @param removeMark Whether the mark should be removed.
+     * @param clearBuffer Whether the token buffer should be cleared.
+     */
+    public void reset(boolean removeMark, boolean clearBuffer) {
+        if (this.mark == -1) {
+            throw new IllegalStateException("no mark available");
+        }
+        this.tokenIndex = this.mark;
+        if (removeMark) {
+            this.mark = -1;
+        }
+        if (clearBuffer) {
+            this.tokenBuffer.clear();
+        }
+    }
 
     
     
@@ -418,8 +517,15 @@ public abstract class AbstractTokenStream implements Iterable<Token> {
         if (!this.tokenBuffer.isEmpty()) {
             return this.tokenBuffer.poll();
         }
-        
-        return this.readToken();
+        final Token next;
+        if (this.tokenIndex < this.consumedTokens.size()) {
+            next = this.consumedTokens.get(this.tokenIndex);
+        } else {
+            next = this.readToken();
+            this.consumedTokens.add(next);
+        }
+        ++this.tokenIndex;
+        return next;
     }
     
     
