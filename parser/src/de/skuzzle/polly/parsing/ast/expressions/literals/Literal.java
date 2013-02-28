@@ -57,7 +57,7 @@ public abstract class Literal extends Expression implements Comparable<Literal> 
     
     @Override
     public void visit(ASTVisitor visitor) throws ASTTraversalException {
-        visitor.visitLiteral(this);
+        visitor.visit(this);
     }
     
     

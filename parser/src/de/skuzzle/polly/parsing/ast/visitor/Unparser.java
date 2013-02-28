@@ -69,21 +69,21 @@ public class Unparser extends DepthFirstVisitor {
     
     
     @Override
-    public void beforeBraced(Braced braced) throws ASTTraversalException {
+    public void before(Braced braced) throws ASTTraversalException {
         this.out.print("(");
     }
     
     
     
     @Override
-    public void afterBraced(Braced braced) throws ASTTraversalException {
+    public void after(Braced braced) throws ASTTraversalException {
         this.out.print(")");
     }
     
     
     
     @Override
-    public void beforeDecl(Declaration decl) throws ASTTraversalException {
+    public void before(Declaration decl) throws ASTTraversalException {
         decl.getType().getName().visit(this);
         this.out.print(" ");
         decl.getName().visit(this);
@@ -92,8 +92,11 @@ public class Unparser extends DepthFirstVisitor {
     
     
     @Override
-    public void visitRoot(Root root) throws ASTTraversalException {
-        this.beforeRoot(root);
+    public void visit(Root root) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        this.before(root);
         this.out.print(":");
         root.getCommand().visit(this);
         
@@ -107,54 +110,58 @@ public class Unparser extends DepthFirstVisitor {
                 }
             }
         }
-        this.afterRoot(root);
+        this.after(root);
     }
     
     
     
     @Override
-    public void visitFunctionLiteral(FunctionLiteral func) throws ASTTraversalException {
+    public void visit(FunctionLiteral func) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
-        this.beforeFunctionLiteral(func);
+        this.before(func);
         
         this.out.print(func.format(this.literalFormatter));
         
-        this.afterFunctionLiteral(func);
+        this.after(func);
     }
     
     
     
     @Override
-    public void visitLiteral(Literal literal) throws ASTTraversalException {
+    public void visit(Literal literal) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
-        this.beforeLiteral(literal);
+        this.before(literal);
         this.out.print(literal.format(this.literalFormatter));
-        this.afterLiteral(literal);
+        this.after(literal);
     }
     
     
     
     @Override
-    public void visitListLiteral(ListLiteral list) throws ASTTraversalException {
+    public void visit(ListLiteral list) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
-        this.beforeListLiteral(list);
+        this.before(list);
         
         this.out.print(list.format(this.literalFormatter));
         
-        this.afterListLiteral(list);
+        this.after(list);
     }
     
     
     
     @Override
-    public void visitProductLiteral(ProductLiteral product) throws ASTTraversalException {
-        this.beforeProductLiteral(product);
+    public void visit(ProductLiteral product) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        this.before(product);
+        
         final Iterator<Expression> it = product.getContent().iterator();
         while (it.hasNext()) {
             it.next().visit(this);
@@ -162,13 +169,13 @@ public class Unparser extends DepthFirstVisitor {
                 this.out.print(",");
             }
         }
-        this.afterProductLiteral(product);
+        this.after(product);
     }
     
     
     
     @Override
-    public void beforeIdentifier(Identifier identifier) throws ASTTraversalException {
+    public void before(Identifier identifier) throws ASTTraversalException {
         if (identifier.wasEscaped()) {
             this.out.print("\\");
         }
@@ -178,15 +185,18 @@ public class Unparser extends DepthFirstVisitor {
     
     
     @Override
-    public void beforeResolvable(ResolvableIdentifier id) throws ASTTraversalException {
-        this.beforeIdentifier(id);
+    public void before(ResolvableIdentifier id) throws ASTTraversalException {
+        this.before((Identifier) id);
     }
     
     
     
     @Override
-    public void visitOperatorCall(OperatorCall call) throws ASTTraversalException {
-        this.beforeOperatorCall(call);
+    public void visit(OperatorCall call) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        this.before(call);
         
         final List<Expression> content = call.getRhs().getContent();
         final Iterator<Expression> it = content.iterator();
@@ -227,59 +237,76 @@ public class Unparser extends DepthFirstVisitor {
                 it.next().visit(this);
             }
         }
-        this.afterOperatorCall(call);
+        this.after(call);
     }
     
     
     
     @Override
-    public void visitCall(Call call) throws ASTTraversalException {
-        this.beforeCall(call);
+    public void visit(Call call) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        this.before(call);
         
         call.getLhs().visit(this);
         this.out.print("(");
         call.getRhs().visit(this);
         this.out.print(")");
         
-        this.afterCall(call);
+        this.after(call);
     }
     
     
     
     @Override
-    public void visitAccess(NamespaceAccess access) throws ASTTraversalException {
-        this.beforeAccess(access);
+    public void visit(NamespaceAccess access) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        this.before(access);
         access.getLhs().visit(this);
         this.out.print(".");
         access.getRhs().visit(this);
-        this.afterAccess(access);
+        this.after(access);
     }
     
     
     
     @Override
-    public void visitVarAccess(VarAccess access) throws ASTTraversalException {
-        this.beforeVarAccess(access);
+    public void visit(VarAccess access) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        this.before(access);
         access.getIdentifier().visit(this);
-        this.afterVarAccess(access);
+        this.after(access);
     }
     
     
     
     @Override
-    public void visitAssignment(Assignment assign) throws ASTTraversalException {
-        this.beforeAssignment(assign);
+    public void visit(Assignment assign) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        
+        this.before(assign);
         assign.getExpression().visit(this);
         this.out.print("->");
         assign.getName().visit(this);
-        this.afterAssignment(assign);
+        this.after(assign);
     }
 
     
     
     @Override
-    public void visitDelete(Delete delete) throws ASTTraversalException {
-        this.beforeDelete(delete);
+    public void visit(Delete delete) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        this.before(delete);
+        
         this.out.print("del(");
         final Iterator<DeleteableIdentifier> it = delete.getIdentifiers().iterator();
         while (it.hasNext()) {
@@ -293,20 +320,20 @@ public class Unparser extends DepthFirstVisitor {
             }
         }
         this.out.print(")");
-        this.afterDelete(delete);
+        this.after(delete);
     }
     
     
     
     @Override
-    public void beforeInspect(Inspect inspect) throws ASTTraversalException {
+    public void before(Inspect inspect) throws ASTTraversalException {
         this.out.print("inspect(");
     }
     
     
     
     @Override
-    public void afterInspect(Inspect inspect) throws ASTTraversalException {
+    public void after(Inspect inspect) throws ASTTraversalException {
         this.out.print(")");
     }
 }

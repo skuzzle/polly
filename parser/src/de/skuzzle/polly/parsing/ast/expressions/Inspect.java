@@ -37,7 +37,7 @@ public class Inspect extends Expression {
 
     @Override
     public void visit(ASTVisitor visitor) throws ASTTraversalException {
-        visitor.visitInspect(this);
+        visitor.visit(this);
     }
     
     

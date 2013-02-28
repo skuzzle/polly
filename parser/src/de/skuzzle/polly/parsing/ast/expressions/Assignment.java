@@ -68,7 +68,7 @@ public class Assignment extends Expression {
 
     @Override
     public void visit(ASTVisitor visitor) throws ASTTraversalException {
-        visitor.visitAssignment(this);
+        visitor.visit(this);
     }
     
     

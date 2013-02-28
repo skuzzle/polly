@@ -208,7 +208,7 @@ public class Declaration extends Node implements Comparable<Declaration> {
 
     @Override
     public void visit(ASTVisitor visitor) throws ASTTraversalException {
-        visitor.visitDecl(this);
+        visitor.visit(this);
     }
     
     

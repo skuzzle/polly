@@ -42,7 +42,7 @@ public class VarAccess extends Expression {
     
     @Override
     public void visit(ASTVisitor visitor) throws ASTTraversalException {
-        visitor.visitVarAccess(this);
+        visitor.visit(this);
     }
     
     

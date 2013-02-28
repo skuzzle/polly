@@ -63,7 +63,7 @@ public class FunctionLiteral extends Literal {
     
     @Override
     public void visit(ASTVisitor visitor) throws ASTTraversalException {
-        visitor.visitFunctionLiteral(this);
+        visitor.visit(this);
     }
     
     

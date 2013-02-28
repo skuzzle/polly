@@ -83,7 +83,7 @@ public class Identifier extends Node implements Equatable {
 
     @Override
     public void visit(ASTVisitor visitor) throws ASTTraversalException {
-        visitor.visitIdentifier(this);
+        visitor.visit(this);
     }
     
     

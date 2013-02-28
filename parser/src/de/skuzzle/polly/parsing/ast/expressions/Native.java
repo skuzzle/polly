@@ -77,7 +77,7 @@ public abstract class Native extends Expression {
     
     @Override
     public void visit(ASTVisitor visitor) throws ASTTraversalException {
-        visitor.visitNative(this);
+        visitor.visit(this);
     }
     
     

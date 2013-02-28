@@ -119,11 +119,11 @@ public class ExpASTVisualizer extends DepthFirstVisitor {
     
     
     @Override
-    public void visitRoot(Root root) throws ASTTraversalException {
+    public void visit(Root root) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
-        this.beforeRoot(root);
+        this.before(root);
         this.dotBuilder.printNode(root, "Root", root.getPosition().toString());
         this.dotBuilder.printNode(root.getCommand(), "Name: " + root.getCommand(), 
                 root.getCommand().getPosition().toString());
@@ -132,53 +132,53 @@ public class ExpASTVisualizer extends DepthFirstVisitor {
             exp.visit(this);
             this.dotBuilder.printEdge(root, exp, Unparser.toString(exp, this.formatter));
         }
-        this.afterRoot(root);
+        this.after(root);
     }
     
     
     
     @Override
-    public void visitCall(Call call) throws ASTTraversalException {
+    public void visit(Call call) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
         
-        this.beforeCall(call);
+        this.before(call);
         this.dotBuilder.printExpression("Call", call);
         call.getLhs().visit(this);
         call.getRhs().visit(this);
         
         this.dotBuilder.printEdge(call, call.getLhs(), Unparser.toString(call.getLhs(), this.formatter));
         this.dotBuilder.printEdge(call, call.getRhs(), Unparser.toString(call.getRhs(), this.formatter));
-        this.afterCall(call);
+        this.after(call);
     }
     
     
     
     @Override
-    public void visitOperatorCall(OperatorCall call) throws ASTTraversalException {
+    public void visit(OperatorCall call) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
         
-        this.beforeOperatorCall(call);
+        this.before(call);
         this.dotBuilder.printExpression("OpCall: " + call.getOperator().getId(), call);
         call.getLhs().visit(this);
         call.getRhs().visit(this);
         
         this.dotBuilder.printEdge(call, call.getLhs(), Unparser.toString(call.getLhs(), this.formatter));
         this.dotBuilder.printEdge(call, call.getRhs(), Unparser.toString(call.getRhs(), this.formatter));
-        this.afterCall(call);
+        this.after(call);
     }
     
     
     
     @Override
-    public void visitListLiteral(ListLiteral list) throws ASTTraversalException {
+    public void visit(ListLiteral list) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
-        this.beforeListLiteral(list);
+        this.before(list);
         this.dotBuilder.printExpression("List", list);
         
         int i = 0;
@@ -186,24 +186,29 @@ public class ExpASTVisualizer extends DepthFirstVisitor {
             exp.visit(this);
             this.dotBuilder.printEdge(list, exp, "" + (i++));
         }
-        this.afterListLiteral(list);
+        this.after(list);
     }
     
     
     
     @Override
-    public void visitLiteral(Literal literal) throws ASTTraversalException {
-        this.dotBuilder.printExpression(literal.toString(), literal);
-    }
-    
-    
-    
-    @Override
-    public void visitProductLiteral(ProductLiteral product) throws ASTTraversalException {
+    public void visit(Literal literal) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
-        this.beforeProductLiteral(product);
+        this.before(literal);
+        this.dotBuilder.printExpression(literal.toString(), literal);
+        this.after(literal);
+    }
+    
+    
+    
+    @Override
+    public void visit(ProductLiteral product) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        this.before(product);
         this.dotBuilder.printExpression("Product", product);
         
         int i = 0;
@@ -211,17 +216,17 @@ public class ExpASTVisualizer extends DepthFirstVisitor {
             exp.visit(this);
             this.dotBuilder.printEdge(product, exp, "" + (i++));
         }
-        this.afterProductLiteral(product);
+        this.after(product);
     }
     
     
     
     @Override
-    public void visitFunctionLiteral(FunctionLiteral func) throws ASTTraversalException {
+    public void visit(FunctionLiteral func) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
-        this.beforeFunctionLiteral(func);
+        this.before(func);
         
         this.dotBuilder.printExpression("Function", func);
         for (final Declaration param : func.getFormal()) {
@@ -237,50 +242,55 @@ public class ExpASTVisualizer extends DepthFirstVisitor {
             }
         }
         
-        this.afterFunctionLiteral(func);
+        this.after(func);
     }
 
     
     
     @Override
-    public void visitAssignment(Assignment assign) throws ASTTraversalException {
+    public void visit(Assignment assign) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
-        this.beforeAssignment(assign);
+        this.before(assign);
         this.dotBuilder.printExpression("Assignment", assign);
         assign.getExpression().visit(this);
         this.dotBuilder.printNode(assign.getName(), "Name: " + assign.getName(), 
             assign.getName().getPosition().toString());
         this.dotBuilder.printEdge(assign, assign.getExpression(), "expresion");
         this.dotBuilder.printEdge(assign, assign.getName(), "to");
-        this.afterAssignment(assign);
+        this.after(assign);
     }
     
     
     
     @Override
-    public void visitAccess(NamespaceAccess access) throws ASTTraversalException {
-        this.beforeAccess(access);
+    public void visit(NamespaceAccess access) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        this.before(access);
+        
         this.dotBuilder.printExpression("Namespace Access", access);
         access.getLhs().visit(this);
         access.getRhs().visit(this);
         this.dotBuilder.printEdge(access, access.getLhs(), "LHS");
         this.dotBuilder.printEdge(access, access.getRhs(), "RHS");
-        this.afterAccess(access);
+        
+        this.after(access);
     }
     
     
     
     @Override
-    public void beforeVarAccess(VarAccess access) throws ASTTraversalException {
+    public void before(VarAccess access) throws ASTTraversalException {
         this.dotBuilder.printExpression("VarAccess: " + access.getIdentifier(), access);
     }
     
     
     
     @Override
-    public void beforeDecl(Declaration decl) throws ASTTraversalException {
+    public void before(Declaration decl) throws ASTTraversalException {
         final StringBuilder b = new StringBuilder();
         b.append("Usage (by name):\\n");
         for (final VarAccess va : decl.getUsage()) {
@@ -299,39 +309,45 @@ public class ExpASTVisualizer extends DepthFirstVisitor {
     
     
     @Override
-    public void visitBraced(Braced braced) throws ASTTraversalException {
+    public void visit(Braced braced) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
-        this.beforeBraced(braced);
+        this.before(braced);
         this.dotBuilder.printExpression("Embraced", braced);
         braced.getExpression().visit(this);
         this.dotBuilder.printEdge(braced, braced.getExpression(), "");
         
-        this.afterBraced(braced);
+        this.after(braced);
     }
     
     
     
     @Override
-    public void visitDelete(Delete delete) throws ASTTraversalException {
-        this.beforeDelete(delete);
+    public void visit(Delete delete) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        this.before(delete);
         this.dotBuilder.printExpression("Delete", delete);
         for (final Identifier id : delete.getIdentifiers()) {
             this.dotBuilder.printNode(id, id.getId());
             this.dotBuilder.printEdge(delete, id, "");
         }
-        this.afterDelete(delete);
+        this.after(delete);
     }
     
     
     
     @Override
-    public void visitInspect(Inspect inspect) throws ASTTraversalException {
-        this.beforeInspect(inspect);
+    public void visit(Inspect inspect) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        this.before(inspect);
         this.dotBuilder.printExpression("Inspect", inspect);
         inspect.getAccess().visit(this);
         this.dotBuilder.printEdge(inspect, inspect.getAccess(), "");
-        this.afterInspect(inspect);
+        this.after(inspect);
     }
 }

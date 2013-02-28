@@ -27,7 +27,7 @@ public class ParentSetter extends DepthFirstVisitor {
     
 
     @Override
-    public void beforeAccess(NamespaceAccess access) throws ASTTraversalException {
+    public void before(NamespaceAccess access) throws ASTTraversalException {
         access.getLhs().setParent(access);
         access.getRhs().setParent(access);
     }
@@ -35,7 +35,7 @@ public class ParentSetter extends DepthFirstVisitor {
     
     
     @Override
-    public void beforeAssignment(Assignment assign) throws ASTTraversalException {
+    public void before(Assignment assign) throws ASTTraversalException {
         assign.getExpression().setParent(assign);
         assign.getName().setParent(assign);
     }
@@ -43,13 +43,13 @@ public class ParentSetter extends DepthFirstVisitor {
     
     
     @Override
-    public void beforeBraced(Braced braced) throws ASTTraversalException {
+    public void before(Braced braced) throws ASTTraversalException {
         braced.getExpression().setParent(braced);
     }
     
     
     @Override
-    public void beforeCall(Call call) throws ASTTraversalException {
+    public void before(Call call) throws ASTTraversalException {
         call.getLhs().setParent(call);
         call.getRhs().setParent(call);
     }
@@ -57,7 +57,7 @@ public class ParentSetter extends DepthFirstVisitor {
     
     
     @Override
-    public void beforeFunctionLiteral(FunctionLiteral func) throws ASTTraversalException {
+    public void before(FunctionLiteral func) throws ASTTraversalException {
         func.getBody().setParent(func);
         for (final Declaration d : func.getFormal()) {
             d.setParent(func);
@@ -67,14 +67,14 @@ public class ParentSetter extends DepthFirstVisitor {
     
     
     @Override
-    public void beforeOperatorCall(OperatorCall call) throws ASTTraversalException {
-        this.beforeCall(call);
+    public void before(OperatorCall call) throws ASTTraversalException {
+        this.before((Call)call);
     }
     
     
     
     @Override
-    public void beforeRoot(Root root) throws ASTTraversalException {
+    public void before(Root root) throws ASTTraversalException {
         root.getCommand().setParent(root);
         for(final Expression exp : root.getExpressions()) {
             exp.setParent(root);
@@ -84,14 +84,14 @@ public class ParentSetter extends DepthFirstVisitor {
     
     
     @Override
-    public void beforeVarAccess(VarAccess access) throws ASTTraversalException {
+    public void before(VarAccess access) throws ASTTraversalException {
         access.getIdentifier().setParent(access);
     }
     
     
     
     @Override
-    public void beforeDecl(Declaration decl) throws ASTTraversalException {
+    public void before(Declaration decl) throws ASTTraversalException {
         decl.getExpression().setParent(decl);
         decl.getName().setParent(decl);
     }
@@ -99,7 +99,7 @@ public class ParentSetter extends DepthFirstVisitor {
     
     
     @Override
-    public void beforeDelete(Delete delete) throws ASTTraversalException {
+    public void before(Delete delete) throws ASTTraversalException {
         for (final Identifier id : delete.getIdentifiers()) {
             id.setParent(delete);
         }
@@ -108,7 +108,7 @@ public class ParentSetter extends DepthFirstVisitor {
     
     
     @Override
-    public void beforeInspect(Inspect inspect) throws ASTTraversalException {
+    public void before(Inspect inspect) throws ASTTraversalException {
         inspect.getAccess().setParent(inspect);
     }
 }

@@ -38,7 +38,7 @@ public class Call extends Expression {
     
     @Override
     public void visit(ASTVisitor visitor) throws ASTTraversalException {
-        visitor.visitCall(this);
+        visitor.visit(this);
     }
     
     

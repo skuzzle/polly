@@ -47,216 +47,216 @@ public class DepthFirstVisitor extends VisitorAdapter {
     
     
     @Override
-    public void visitRoot(Root root) throws ASTTraversalException {
+    public void visit(Root root) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
-        this.beforeRoot(root);
+        this.before(root);
         for (final Expression exp : root.getExpressions()) {
             exp.visit(this);
         }
-        this.afterRoot(root);
+        this.after(root);
     }
 
     
     
     @Override
-    public void visitLiteral(Literal literal) throws ASTTraversalException {
+    public void visit(Literal literal) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
-        this.beforeLiteral(literal);
-        this.afterLiteral(literal);
+        this.before(literal);
+        this.after(literal);
     }
 
     
     
     @Override
-    public void visitIdentifier(Identifier identifier)  throws ASTTraversalException {
+    public void visit(Identifier identifier)  throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
-        this.beforeIdentifier(identifier);
-        this.afterIdentifier(identifier);
+        this.before(identifier);
+        this.after(identifier);
     }
     
     
     
     @Override
-    public void visitResolvable(ResolvableIdentifier id) throws ASTTraversalException {
+    public void visit(ResolvableIdentifier id) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
-        this.beforeResolvable(id);
-        this.afterResolvable(id);
+        this.before(id);
+        this.after(id);
     }
     
     
     
     @Override
-    public void visitAssignment(Assignment assign) 
+    public void visit(Assignment assign) 
             throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
-        this.beforeAssignment(assign);
+        this.before(assign);
         assign.getExpression().visit(this);
         assign.getName().visit(this);
-        this.afterAssignment(assign);
+        this.after(assign);
     }
 
     
 
     @Override
-    public void visitDecl(Declaration decl) throws ASTTraversalException {
+    public void visit(Declaration decl) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
-        this.beforeDecl(decl);
-        this.afterDecl(decl);
+        this.before(decl);
+        this.after(decl);
     }
     
     
 
     @Override
-    public void visitCall(Call call) throws ASTTraversalException {
+    public void visit(Call call) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
-        this.beforeCall(call);
+        this.before(call);
         call.getLhs().visit(this);
         call.getRhs().visit(this);
-        this.afterCall(call);
+        this.after(call);
     }
 
     
 
     @Override
-    public void visitNative(Native hc) throws ASTTraversalException {
+    public void visit(Native hc) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
-        this.beforeNative(hc);
-        this.afterNative(hc);
+        this.before(hc);
+        this.after(hc);
     }
 
     
 
     @Override
-    public void visitAccess(NamespaceAccess access) throws ASTTraversalException {
+    public void visit(NamespaceAccess access) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
-        this.beforeAccess(access);
+        this.before(access);
         access.getLhs().visit(this);
         access.getRhs().visit(this);
-        this.afterAccess(access);
+        this.after(access);
     }
 
 
     
     @Override
-    public void visitVarAccess(VarAccess access) throws ASTTraversalException {
+    public void visit(VarAccess access) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
-        this.beforeVarAccess(access);
+        this.before(access);
         access.getIdentifier().visit(this);
-        this.afterVarAccess(access);
+        this.after(access);
     }
 
 
     
     @Override
-    public void visitFunctionLiteral(FunctionLiteral func)
+    public void visit(FunctionLiteral func)
             throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
-        this.beforeFunctionLiteral(func);
+        this.before(func);
         for (final Declaration d : func.getFormal()) {
             d.visit(this);
         }
         func.getBody().visit(this);
-        this.afterFunctionLiteral(func);
+        this.after(func);
     }
 
 
     
     @Override
-    public void visitListLiteral(ListLiteral list) throws ASTTraversalException {
+    public void visit(ListLiteral list) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
-        this.beforeListLiteral(list);
+        this.before(list);
         for (final Expression exp : list.getContent()) {
             exp.visit(this);
         }
-        this.afterListLiteral(list);
+        this.after(list);
     }
     
     
     
     @Override
-    public void visitProductLiteral(ProductLiteral product) throws ASTTraversalException {
+    public void visit(ProductLiteral product) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
-        this.beforeProductLiteral(product);
+        this.before(product);
         for (final Expression exp : product.getContent()) {
             exp.visit(this);
         }
-        this.afterProductLiteral(product);
+        this.after(product);
     }
 
 
     
     @Override
-    public void visitOperatorCall(OperatorCall call) throws ASTTraversalException {
+    public void visit(OperatorCall call) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
-        this.beforeOperatorCall(call);
+        this.before(call);
         call.getLhs().visit(this);
         call.getRhs().visit(this);
-        this.afterOperatorCall(call);
+        this.after(call);
     }
     
     
     
     @Override
-    public void visitBraced(Braced braced) throws ASTTraversalException {
+    public void visit(Braced braced) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
-        this.beforeBraced(braced);
+        this.before(braced);
         braced.getExpression().visit(this);
-        this.afterBraced(braced);
+        this.after(braced);
     }
     
     
     
     @Override
-    public void visitDelete(Delete delete) throws ASTTraversalException {
+    public void visit(Delete delete) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
-        this.beforeDelete(delete);
+        this.before(delete);
         for (final Identifier id : delete.getIdentifiers()) {
             id.visit(this);
         }
-        this.afterDelete(delete);
+        this.after(delete);
     }
     
     
     
     @Override
-    public void visitInspect(Inspect inspect) throws ASTTraversalException {
+    public void visit(Inspect inspect) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
-        this.beforeInspect(inspect);
+        this.before(inspect);
         inspect.getAccess().visit(this);
-        this.afterInspect(inspect);
+        this.after(inspect);
     }
 }

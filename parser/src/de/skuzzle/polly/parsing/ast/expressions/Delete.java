@@ -56,7 +56,7 @@ public class Delete extends Expression {
 
     @Override
     public void visit(ASTVisitor visitor) throws ASTTraversalException {
-        visitor.visitDelete(this);
+        visitor.visit(this);
     }
     
     

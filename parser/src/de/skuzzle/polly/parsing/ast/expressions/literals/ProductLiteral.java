@@ -67,7 +67,7 @@ public class ProductLiteral extends ListLiteral {
     
     @Override
     public void visit(ASTVisitor visitor) throws ASTTraversalException {
-        visitor.visitProductLiteral(this);
+        visitor.visit(this);
     }
     
     

@@ -53,7 +53,7 @@ public class ListLiteral extends Literal {
     
     @Override
     public void visit(ASTVisitor visitor) throws ASTTraversalException {
-        visitor.visitListLiteral(this);
+        visitor.visit(this);
     }
     
     

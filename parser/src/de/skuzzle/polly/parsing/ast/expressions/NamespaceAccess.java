@@ -37,7 +37,7 @@ public class NamespaceAccess extends Expression {
     
     @Override
     public void visit(ASTVisitor visitor) throws ASTTraversalException {
-        visitor.visitAccess(this);
+        visitor.visit(this);
     }
     
     

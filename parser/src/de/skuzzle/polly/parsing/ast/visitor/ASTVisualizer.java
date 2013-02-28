@@ -54,63 +54,63 @@ public class ASTVisualizer extends DepthFirstVisitor {
 
 
     @Override
-    public void beforeOperatorCall(OperatorCall call) throws ASTTraversalException {
+    public void before(OperatorCall call) throws ASTTraversalException {
         this.printExpression("OperatorCall: " + call.getOperator().getId(), call);
     }
 
 
 
     @Override
-    public void beforeCall(Call call) throws ASTTraversalException {
+    public void before(Call call) throws ASTTraversalException {
         this.printExpression("Call", call);
     }
     
     
     
     @Override
-    public void beforeLiteral(Literal literal) throws ASTTraversalException {
+    public void before(Literal literal) throws ASTTraversalException {
         this.printExpression(literal.toString(), literal);
     }
     
     
     
     @Override
-    public void beforeProductLiteral(ProductLiteral product) throws ASTTraversalException {
+    public void before(ProductLiteral product) throws ASTTraversalException {
         this.printExpression("Product", product);
     }
     
     
     
     @Override
-    public void beforeAccess(NamespaceAccess access) throws ASTTraversalException {
+    public void before(NamespaceAccess access) throws ASTTraversalException {
         this.printExpression("Access", access);
     }
     
     
     
     @Override
-    public void beforeAssignment(Assignment assign) throws ASTTraversalException {
+    public void before(Assignment assign) throws ASTTraversalException {
         this.printExpression("Assignment", assign);
     }
     
     
     
     @Override
-    public void beforeFunctionLiteral(FunctionLiteral func) throws ASTTraversalException {
+    public void before(FunctionLiteral func) throws ASTTraversalException {
         this.printExpression("Function", func);
     }
     
     
     
     @Override
-    public void beforeNative(Native hc) throws ASTTraversalException {
+    public void before(Native hc) throws ASTTraversalException {
         this.printExpression("Native", hc);
     }
     
     
     
     @Override
-    public void beforeIdentifier(Identifier identifier) throws ASTTraversalException {
+    public void before(Identifier identifier) throws ASTTraversalException {
         this.dotBuilder.printNode(identifier, identifier.getId(),
             identifier.getPosition().toString());
     }
@@ -118,28 +118,28 @@ public class ASTVisualizer extends DepthFirstVisitor {
     
     
     @Override
-    public void beforeListLiteral(ListLiteral list) throws ASTTraversalException {
+    public void before(ListLiteral list) throws ASTTraversalException {
         this.printExpression("List", list);
     }
     
     
     
     @Override
-    public void beforeResolvable(ResolvableIdentifier id) throws ASTTraversalException {
+    public void before(ResolvableIdentifier id) throws ASTTraversalException {
         this.dotBuilder.printNode(id.getId(), id.getPosition().toString());
     }
     
     
     
     @Override
-    public void beforeDelete(Delete delete) throws ASTTraversalException {
+    public void before(Delete delete) throws ASTTraversalException {
         this.printExpression("Delete", delete);
     }
     
     
     
     @Override
-    public void beforeDecl(Declaration decl) throws ASTTraversalException {
+    public void before(Declaration decl) throws ASTTraversalException {
         this.dotBuilder.printNode(decl, 
             "Declaration: " + decl.getName().getId(),
             "Unique: " + decl.getType());
@@ -148,121 +148,121 @@ public class ASTVisualizer extends DepthFirstVisitor {
     
     
     @Override
-    public void beforeRoot(Root root) throws ASTTraversalException {
+    public void before(Root root) throws ASTTraversalException {
         this.dotBuilder.printNode(root, "Root", root.getPosition().toString());
     }
     
     
     
     @Override
-    public void visitVarAccess(VarAccess access) throws ASTTraversalException {
-        this.beforeVarAccess(access);
+    public void visit(VarAccess access) throws ASTTraversalException {
+        this.before(access);
         this.printExpression("VarAccess: " + access.getIdentifier().getId(), access);
-        this.afterVarAccess(access);
+        this.before(access);
     }
     
     
     
     @Override
-    public void afterAccess(NamespaceAccess access) throws ASTTraversalException {
+    public void after(NamespaceAccess access) throws ASTTraversalException {
         this.dotBuilder.pop(access);
     }
 
 
 
     @Override
-    public void afterAssignment(Assignment assign) throws ASTTraversalException {
+    public void after(Assignment assign) throws ASTTraversalException {
         this.dotBuilder.pop(assign);
     }
 
 
 
     @Override
-    public void afterCall(Call call) throws ASTTraversalException {
+    public void after(Call call) throws ASTTraversalException {
         this.dotBuilder.pop(call);
     }
     
     
 
     @Override
-    public void afterFunctionLiteral(FunctionLiteral func) throws ASTTraversalException {
+    public void after(FunctionLiteral func) throws ASTTraversalException {
         this.dotBuilder.pop(func);
     }
 
     
     
     @Override
-    public void afterProductLiteral(ProductLiteral product) throws ASTTraversalException {
+    public void after(ProductLiteral product) throws ASTTraversalException {
         this.dotBuilder.pop(product);
     }
     
 
 
     @Override
-    public void afterNative(Native nat) throws ASTTraversalException {
+    public void after(Native nat) throws ASTTraversalException {
         this.dotBuilder.pop(nat);
     }
 
 
 
     @Override
-    public void afterIdentifier(Identifier identifier) throws ASTTraversalException {
+    public void after(Identifier identifier) throws ASTTraversalException {
         this.dotBuilder.pop(identifier);
     }
 
 
 
     @Override
-    public void afterListLiteral(ListLiteral list) throws ASTTraversalException {
+    public void after(ListLiteral list) throws ASTTraversalException {
         this.dotBuilder.pop(list);
     }
 
 
 
     @Override
-    public void afterLiteral(Literal literal) throws ASTTraversalException {
+    public void after(Literal literal) throws ASTTraversalException {
         this.dotBuilder.pop(literal);
     }
 
 
 
     @Override
-    public void afterOperatorCall(OperatorCall call) throws ASTTraversalException {
+    public void after(OperatorCall call) throws ASTTraversalException {
         this.dotBuilder.pop(call);
     }
 
 
 
     @Override
-    public void afterResolvable(ResolvableIdentifier id) throws ASTTraversalException {
+    public void after(ResolvableIdentifier id) throws ASTTraversalException {
         this.dotBuilder.pop(id);
     }
 
 
 
     @Override
-    public void afterRoot(Root root) throws ASTTraversalException {
+    public void after(Root root) throws ASTTraversalException {
         this.dotBuilder.pop(root);
     }
 
 
 
     @Override
-    public void afterVarAccess(VarAccess access) throws ASTTraversalException {
+    public void after(VarAccess access) throws ASTTraversalException {
         this.dotBuilder.pop(access);
     }
 
 
 
     @Override
-    public void afterDecl(Declaration decl) throws ASTTraversalException {
+    public void after(Declaration decl) throws ASTTraversalException {
         this.dotBuilder.pop(decl);
     }
     
     
     
     @Override
-    public void afterDelete(Delete delete) throws ASTTraversalException {
+    public void after(Delete delete) throws ASTTraversalException {
         this.dotBuilder.pop(delete);
     }
 }

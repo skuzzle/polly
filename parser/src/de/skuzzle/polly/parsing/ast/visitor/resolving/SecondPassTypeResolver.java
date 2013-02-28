@@ -45,11 +45,11 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
     
     
     @Override
-    public void visitRoot(Root root) throws ASTTraversalException {
+    public void visit(Root root) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
-        this.beforeRoot(root);
+        this.before(root);
         
         for (final Expression exp : root.getExpressions()) {
             // check whether unique type could have been resolved
@@ -59,18 +59,18 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
             exp.visit(this);
         }
         
-        this.afterRoot(root);
+        this.after(root);
     }
     
     
     
     @Override
-    public void visitFunctionLiteral(FunctionLiteral func) throws ASTTraversalException {
+    public void visit(FunctionLiteral func) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
         
-        this.beforeFunctionLiteral(func);
+        this.before(func);
         
         this.applyType(func, func);
         
@@ -78,18 +78,18 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         func.getBody().setUnique(mtc.getTarget());
         func.getBody().visit(this);
         
-        this.afterFunctionLiteral(func);
+        this.after(func);
     }
     
     
     
     @Override
-    public void visitListLiteral(ListLiteral list) throws ASTTraversalException {
+    public void visit(ListLiteral list) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
         
-        this.beforeListLiteral(list);
+        this.before(list);
         
         Type last = null;
         for (final Expression exp : list.getContent()) {
@@ -108,7 +108,7 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
             this.reportError(list, "Uneindeutiger Listen Type");
         }
         
-        this.afterListLiteral(list);
+        this.after(list);
     }
     
     
@@ -131,35 +131,35 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
     
     
     @Override
-    public void beforeAssignment(Assignment assign) throws ASTTraversalException {
+    public void before(Assignment assign) throws ASTTraversalException {
         this.applyType(assign, assign.getExpression());
     }
     
 
     
     @Override
-    public void afterAssignment(Assignment assign) throws ASTTraversalException {
+    public void after(Assignment assign) throws ASTTraversalException {
         this.applyType(assign, assign);
     }
     
     
     
     @Override
-    public void beforeOperatorCall(OperatorCall call) throws ASTTraversalException {
-        this.beforeCall(call);
+    public void before(OperatorCall call) throws ASTTraversalException {
+        this.before((Call) call);
     }
     
     
     
     @Override
-    public void afterVarAccess(VarAccess access) throws ASTTraversalException {
+    public void after(VarAccess access) throws ASTTraversalException {
         this.applyType(access, access);
     }
     
     
     
     @Override
-    public void beforeCall(Call call) throws ASTTraversalException {
+    public void before(Call call) throws ASTTraversalException {
         
         // Either:
         // * call's unique type is already resolved => that is the final result type
@@ -214,18 +214,24 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
     
     
     @Override
-    public void visitAccess(NamespaceAccess access) throws ASTTraversalException {
-        this.beforeAccess(access);
+    public void visit(NamespaceAccess access) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        this.before(access);
         this.applyType(access, access.getRhs());
-        this.afterAccess(access);
+        this.after(access);
     }
     
     
     
     @Override
-    public void visitInspect(Inspect inspect) throws ASTTraversalException {
-        this.beforeInspect(inspect);
+    public void visit(Inspect inspect) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        this.before(inspect);
         // nothing to do here but prevent from executing super class visitInspect
-        this.afterInspect(inspect);
+        this.after(inspect);
     }
 }

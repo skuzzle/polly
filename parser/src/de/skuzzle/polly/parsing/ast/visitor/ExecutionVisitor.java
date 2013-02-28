@@ -80,8 +80,8 @@ public class ExecutionVisitor extends DepthFirstVisitor {
     
     
     @Override
-    public void visitRoot(Root root) throws ASTTraversalException {
-        this.beforeRoot(root);
+    public void visit(Root root) throws ASTTraversalException {
+        this.before(root);
         
         final List<Literal> results = 
             new ArrayList<Literal>(root.getExpressions().size());
@@ -92,31 +92,36 @@ public class ExecutionVisitor extends DepthFirstVisitor {
         }
         root.setResults(results);
         
-        this.afterRoot(root);
+        this.after(root);
     }
     
     
     
     @Override
-    public void visitLiteral(Literal literal) throws ASTTraversalException {
-        this.beforeLiteral(literal);
+    public void visit(Literal literal) throws ASTTraversalException {
+        this.before(literal);
         this.stack.push(literal);
-        this.afterLiteral(literal);
+        this.after(literal);
     }
     
     
     
     @Override
-    public void visitFunctionLiteral(FunctionLiteral func) throws ASTTraversalException {
-        this.beforeFunctionLiteral(func);
+    public void visit(FunctionLiteral func) throws ASTTraversalException {
+        this.before(func);
         this.stack.push(func);
-        this.afterFunctionLiteral(func);
+        this.after(func);
     }
     
     
     
     @Override
-    public void visitListLiteral(ListLiteral list) throws ASTTraversalException {
+    public void visit(ListLiteral list) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        this.before(list);
+        
         // create collection of executed list content
         final List<Expression> executed = new ArrayList<Expression>(
                 list.getContent().size());
@@ -129,13 +134,17 @@ public class ExecutionVisitor extends DepthFirstVisitor {
         final ListLiteral result = new ListLiteral(list.getPosition(), executed);
         result.setUnique(list.getUnique());
         this.stack.push(result);
+        this.after(list);
     }
     
     
     
     @Override
-    public void visitAccess(NamespaceAccess access) throws ASTTraversalException {
-        this.beforeAccess(access);
+    public void visit(NamespaceAccess access) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        this.before(access);
         
         // store current ns and switch to new one
         final Namespace backup = this.nspace;
@@ -150,24 +159,29 @@ public class ExecutionVisitor extends DepthFirstVisitor {
         access.getRhs().visit(this);
         this.nspace = backup;
         
-        this.afterAccess(access);
+        this.after(access);
     }
     
     
     
     @Override
-    public void visitNative(Native hc) throws ASTTraversalException {
-        this.beforeNative(hc);
+    public void visit(Native hc) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        this.before(hc);
         hc.execute(this.stack, this.nspace, this);
-        this.afterNative(hc);
+        this.after(hc);
     }
     
     
     
     @Override
-    public void visitAssignment(Assignment assign) 
-            throws ASTTraversalException {
-        this.beforeAssignment(assign);
+    public void visit(Assignment assign) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        this.before(assign);
         
         // result of assignment is the result of the assigned expression
         assign.getExpression().visit(this);
@@ -183,23 +197,29 @@ public class ExecutionVisitor extends DepthFirstVisitor {
             this.rootNs.declare(vd);
         }
         
-        this.afterAssignment(assign);
+        this.after(assign);
     }
     
     
     
     @Override
-    public void visitOperatorCall(OperatorCall call) throws ASTTraversalException {
-        this.beforeOperatorCall(call);
-        this.visitCall(call);
-        this.afterOperatorCall(call);
+    public void visit(OperatorCall call) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        this.before(call);
+        this.visit((Call) call);
+        this.after(call);
     }
     
     
     
     @Override
-    public void visitCall(Call call) throws ASTTraversalException {
-        this.beforeCall(call);
+    public void visit(Call call) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        this.before(call);
         
         // this will push the function call onto the stack
         call.getLhs().visit(this);
@@ -226,28 +246,34 @@ public class ExecutionVisitor extends DepthFirstVisitor {
         func.getBody().visit(this);
         this.leave();
         
-        this.afterCall(call);
+        this.after(call);
     }
     
     
     
     @Override
-    public void visitVarAccess(VarAccess access) throws ASTTraversalException {
-        this.beforeVarAccess(access);
+    public void visit(VarAccess access) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        this.before(access);
 
         final Declaration vd = this.nspace.tryResolve(
             access.getIdentifier(), 
             access.getUnique());
         vd.getExpression().visit(this);
         
-        this.afterVarAccess(access);
+        this.after(access);
     }
     
     
 
     @Override
-    public void visitDelete(Delete delete) throws ASTTraversalException {
-        this.beforeDelete(delete);
+    public void visit(Delete delete) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        this.before(delete);
         int i = 0;
         for (final DeleteableIdentifier id: delete.getIdentifiers()) {
             if (id.isGlobal()) {
@@ -257,14 +283,17 @@ public class ExecutionVisitor extends DepthFirstVisitor {
             }
         }
         this.stack.push(new NumberLiteral(Position.NONE, i));
-        this.afterDelete(delete);
+        this.after(delete);
     }
     
     
     
     @Override
-    public void visitInspect(Inspect inspect) throws ASTTraversalException {
-        this.beforeInspect(inspect);
+    public void visit(Inspect inspect) throws ASTTraversalException {
+        if (this.aborted) {
+            return;
+        }
+        this.before(inspect);
         
         Namespace target = null;
         ResolvableIdentifier var = null;
@@ -300,7 +329,6 @@ public class ExecutionVisitor extends DepthFirstVisitor {
         }
         this.stack.push(new StringLiteral(inspect.getPosition(), b.toString()));
 
-        
-        this.afterInspect(inspect);
+        this.after(inspect);
     }
 }

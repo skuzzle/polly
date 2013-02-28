@@ -68,7 +68,7 @@ public class Braced extends Expression {
     
     @Override
     public void visit(ASTVisitor visitor) throws ASTTraversalException {
-        visitor.visitBraced(this);
+        visitor.visit(this);
     }
     
     

@@ -76,7 +76,7 @@ public final class Root extends Node {
     
     @Override
     public void visit(ASTVisitor visitor) throws ASTTraversalException {
-        visitor.visitRoot(this);
+        visitor.visit(this);
     }
     
     

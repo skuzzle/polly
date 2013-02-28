@@ -52,27 +52,27 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     
     
     @Override
-    public void beforeNative(Native hc) throws ASTTraversalException {
+    public void before(Native hc) throws ASTTraversalException {
         hc.resolveType(this.nspace, this);
     }
     
     
     
     @Override
-    public void beforeDecl(Declaration decl) throws ASTTraversalException {
+    public void before(Declaration decl) throws ASTTraversalException {
         decl.getExpression().visit(this);
     }
     
     
     
     @Override
-    public void visitFunctionLiteral(final FunctionLiteral func) 
+    public void visit(final FunctionLiteral func) 
             throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
         
-        this.beforeFunctionLiteral(func);
+        this.before(func);
         
         final List<Type> source = new ArrayList<Type>();
         
@@ -104,13 +104,13 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
             func.addType(new ProductType(source).mapTo(te));
         }
         
-        this.afterFunctionLiteral(func);
+        this.after(func);
     }
     
     
     
     @Override
-    public void afterListLiteral(ListLiteral list) throws ASTTraversalException {
+    public void after(ListLiteral list) throws ASTTraversalException {
         if (list.getContent().isEmpty()) {
             this.reportError(list, "Listen müssen mind. 1 Element enthalten.");
         }
@@ -124,8 +124,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     
     
     @Override
-    public void afterProductLiteral(final ProductLiteral product) 
-            throws ASTTraversalException {
+    public void after(final ProductLiteral product) throws ASTTraversalException {
         
         // Use combinator to create all combinations of possible types
         final CombinationCallBack<Expression, Type> ccb = 
@@ -149,7 +148,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     
     
     @Override
-    public void afterAssignment(final Assignment assign) throws ASTTraversalException {
+    public void after(final Assignment assign) throws ASTTraversalException {
         if (assign.isTemp()) {
             this.reportError(assign, 
                 "Temporäre Deklarationen werden (noch?) nicht unterstützt.");
@@ -158,7 +157,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         // deep transitive recursion check
         assign.getExpression().visit(new DepthFirstVisitor() {
             @Override
-            public void beforeVarAccess(VarAccess access) throws ASTTraversalException {
+            public void before(VarAccess access) throws ASTTraversalException {
                 final Collection<Declaration> decls = 
                     nspace.lookupAll(access.getIdentifier());
                 
@@ -185,19 +184,19 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     
     
     @Override
-    public void visitOperatorCall(OperatorCall call) throws ASTTraversalException {
-        this.visitCall(call);
+    public void visit(OperatorCall call) throws ASTTraversalException {
+        this.visit((Call)call);
     }
     
 
     
     @Override
-    public void visitCall(Call call) throws ASTTraversalException {
+    public void visit(Call call) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
         
-        this.beforeCall(call);
+        this.before(call);
         
         // resolve parameter types
         call.getRhs().visit(this);
@@ -241,13 +240,13 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
                 "Keine passende Deklaration für den Aufruf von " + 
                 Unparser.toString(call.getLhs()) + " gefunden");
         }
-        this.afterCall(call);
+        this.after(call);
     }
     
     
     
     @Override
-    public void beforeVarAccess(VarAccess access) throws ASTTraversalException {
+    public void before(VarAccess access) throws ASTTraversalException {
         final Set<Type> types = this.nspace.lookupFresh(access);
         access.addTypes(types);
     }
@@ -255,12 +254,12 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     
     
     @Override
-    public void visitAccess(NamespaceAccess access) throws ASTTraversalException {
+    public void visit(NamespaceAccess access) throws ASTTraversalException {
         if (this.aborted) {
             return;
         }
         
-        this.beforeAccess(access);
+        this.before(access);
         
         if (!(access.getLhs() instanceof VarAccess)) {
             this.reportError(access.getLhs(), "Operand muss ein Bezeichner sein");
@@ -280,13 +279,13 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
 
         access.addTypes(access.getRhs().getTypes());
         
-        this.afterAccess(access);
+        this.after(access);
     }
     
     
     
     @Override
-    public void beforeDelete(Delete delete) throws ASTTraversalException {
+    public void before(Delete delete) throws ASTTraversalException {
         delete.addType(Type.NUM);
         delete.setUnique(Type.NUM);
     }
@@ -294,7 +293,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     
     
     @Override
-    public void beforeInspect(Inspect inspect) throws ASTTraversalException {
+    public void before(Inspect inspect) throws ASTTraversalException {
         Namespace target = null;
         ResolvableIdentifier var = null;
         
