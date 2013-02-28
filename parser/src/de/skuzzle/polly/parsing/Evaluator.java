@@ -76,7 +76,7 @@ public class Evaluator {
      */
     public void evaluate(Namespace rootNs, Namespace workingNs) {
         try {
-            final ExpInputParser parser = new ExpInputParser(this.input, this.encoding);
+            final InputParser parser = new InputParser(this.input, this.encoding);
             this.lastResult = parser.parse();
             
             if (this.lastResult == null) {

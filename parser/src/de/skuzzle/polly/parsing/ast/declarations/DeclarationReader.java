@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.UnsupportedEncodingException;
 
-import de.skuzzle.polly.parsing.ExpInputParser;
+import de.skuzzle.polly.parsing.InputParser;
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.ast.expressions.Assignment;
 import de.skuzzle.polly.parsing.ast.expressions.Expression;
@@ -33,7 +33,7 @@ public class DeclarationReader implements Closeable {
      * 
      * @author Simon Taddiken
      */
-    private final class DeclarationParser extends ExpInputParser {
+    private final class DeclarationParser extends InputParser {
 
         public DeclarationParser(String input, String charset) 
                 throws UnsupportedEncodingException {
