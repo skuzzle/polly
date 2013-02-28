@@ -207,13 +207,11 @@ public class InputParser {
      * 
      * @param expected The token that was expected but not found.
      * @param found The token which was found instead.
-     * @throws ParseException Always thrown.
+     * @throws SyntaxException Always thrown.
      */
     protected void unexpectedToken(TokenType expected, Token found) 
-            throws ParseException {
-        throw new ParseException("Unerwartetes Symbol: '" + found.toString(false, false) + 
-                "'. Erwartet: '" + expected.toString() + "'", 
-                this.scanner.spanFrom(found));
+            throws SyntaxException {
+        throw new SyntaxException(expected, found, this.scanner.spanFrom(found));
     }
     
     
