@@ -4,7 +4,7 @@ import de.skuzzle.polly.parsing.AbstractTokenStream;
 import de.skuzzle.polly.parsing.InputScanner;
 
 
-public class AbstractScannerTest {
+public abstract class AbstractScannerTest {
 
     /**
      * Creates a new AbstractTokenStream instance for the given input.

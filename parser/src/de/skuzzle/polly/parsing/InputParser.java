@@ -196,7 +196,7 @@ public class InputParser {
      * @return The parsed AST root.
      * @throws ParseException If the string was not well formatted.
      */
-    protected Root parse() throws ParseException {
+    public Root parse() throws ParseException {
         return this.parseRoot();
     }
 
@@ -839,6 +839,7 @@ public class InputParser {
             
             final List<DeleteableIdentifier> ids = new ArrayList<DeleteableIdentifier>();
             do {
+                this.allowSingleWhiteSpace();
                 boolean global = this.scanner.match(TokenType.PUBLIC);
                 if (global) {
                     this.allowSingleWhiteSpace();
