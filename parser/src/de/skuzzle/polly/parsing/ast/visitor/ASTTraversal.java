@@ -25,10 +25,24 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
  */
 public interface ASTTraversal {
     
+    /** 
+     * Return value for <code>before</code> and <code>after</code> methods. Traversal 
+     * will be stopped.
+     */
     public final static int ABORT = -1;
 
+    
+    /** 
+     * Return value for <code>before</code> and <code>after</code> methods. Traversal 
+     * will continue.
+     */
     public final static int CONTINUE = 0;
     
+    /** 
+     * Return value for <code>before</code>methods. Traversal will skip the current
+     * sub tree. If returned by any of the <code>after</code> methods, traversal will
+     * be stopped as if returning {@link #ABORT}.
+     */
     public final static int SKIP = 1;
     
     

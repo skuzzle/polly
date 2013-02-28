@@ -6,12 +6,28 @@ package de.skuzzle.polly.parsing.ast.declarations.types;
  * @author Simon Taddiken
  */
 public interface TypeVisitor {
+    /** 
+     * Return value for <code>before</code> and <code>after</code> methods. Traversal 
+     * will be stopped.
+     */
     public final static int ABORT = -1;
+
     
+    /** 
+     * Return value for <code>before</code> and <code>after</code> methods. Traversal 
+     * will continue.
+     */
     public final static int CONTINUE = 0;
     
+    /** 
+     * Return value for <code>before</code>methods. Traversal will skip the current
+     * sub tree. If returned by any of the <code>after</code> methods, traversal will
+     * be stopped as if returning {@link #ABORT}.
+     */
     public final static int SKIP = 1;
 
+    
+    
     public int before(Type type);
     public int after(Type type);
     public boolean visit(Type type);
