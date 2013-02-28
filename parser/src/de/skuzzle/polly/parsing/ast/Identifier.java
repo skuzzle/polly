@@ -15,8 +15,6 @@ import de.skuzzle.polly.tools.Equatable;
  * @author Simon Taddiken
  */
 public class Identifier extends Node implements Equatable {
-
-    private static final long serialVersionUID = 1L;
     
     private final String id;
     private final boolean wasEscaped;

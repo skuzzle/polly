@@ -14,8 +14,6 @@ import de.skuzzle.polly.parsing.util.Stack;
 
 public class DateTimespanArithmetic extends BinaryOperator<DateLiteral, TimespanLiteral>{
 
-    private static final long serialVersionUID = 1L;
-    
     public DateTimespanArithmetic(OpType id) {
         super(id);
         this.initTypes(Type.DATE, Type.DATE, Type.TIMESPAN);

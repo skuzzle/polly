@@ -13,9 +13,6 @@ import de.skuzzle.polly.parsing.ast.visitor.Transformation;
  */
 public class HelpLiteral extends Literal {
 
-    private static final long serialVersionUID = 1L;
-
-
     /**
      * Creates a new HelpLiteral.
      * 

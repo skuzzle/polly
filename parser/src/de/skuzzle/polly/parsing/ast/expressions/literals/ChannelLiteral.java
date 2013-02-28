@@ -11,9 +11,6 @@ import de.skuzzle.polly.parsing.ast.visitor.Transformation;
  * @author Simon Taddiken
  */
 public class ChannelLiteral extends StringLiteral {
-
-    private static final long serialVersionUID = 1L;
-    
     
     /**
      * Creates a new ChannelLiteral.

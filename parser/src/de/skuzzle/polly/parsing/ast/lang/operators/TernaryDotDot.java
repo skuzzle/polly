@@ -20,9 +20,6 @@ import de.skuzzle.polly.parsing.util.Stack;
 public class TernaryDotDot extends 
         TernaryOperator<NumberLiteral, NumberLiteral, NumberLiteral> {
 
-    private static final long serialVersionUID = 1L;
-    
-    
     /** Maximum size for generated ListLiterals */
     public final static int MAX_LIST_SIZE = 10000;
     

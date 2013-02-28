@@ -12,10 +12,6 @@ import de.skuzzle.polly.parsing.util.Stack;
 
 public class UnaryBooleanArithmetic extends UnaryOperator<BooleanLiteral> {
     
-    private static final long serialVersionUID = 1L;
-
-
-
     public UnaryBooleanArithmetic(OpType opType) {
         super(opType);
         this.initTypes(Type.BOOLEAN, Type.BOOLEAN);

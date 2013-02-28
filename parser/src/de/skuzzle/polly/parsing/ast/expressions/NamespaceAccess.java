@@ -15,8 +15,6 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
  * @author Simon Taddiken
  */
 public class NamespaceAccess extends Expression {
-
-    private static final long serialVersionUID = 1L;
     
     private Expression lhs;
     private Expression rhs;

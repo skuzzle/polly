@@ -33,9 +33,6 @@ import de.skuzzle.polly.parsing.util.Stack;
  */
 public class Map extends BinaryOperator<ListLiteral, FunctionLiteral> {
 
-    private static final long serialVersionUID = 1L;
-    
-    
     public Map() {
         super(OpType.MAP);
         

@@ -23,8 +23,6 @@ import de.skuzzle.polly.parsing.util.Stack;
  */
 public abstract class Native extends Expression {
     
-    private static final long serialVersionUID = 1L;
-    
     private final static AtomicInteger PARAM_ID = new AtomicInteger();
     
     

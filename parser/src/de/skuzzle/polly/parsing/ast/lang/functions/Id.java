@@ -13,8 +13,6 @@ import de.skuzzle.polly.parsing.util.Stack;
 
 public class Id extends UnaryOperator<Literal> {
 
-    private static final long serialVersionUID = 1L;
-    
     public Id() {
         super(OpType.ID);
         final TypeVar tv = Type.newTypeVar("A");

@@ -26,7 +26,6 @@ import de.skuzzle.polly.parsing.util.Stack;
  */
 public abstract class Function extends Native {
 
-    private static final long serialVersionUID = 1L;
     private final ResolvableIdentifier name;
     
     

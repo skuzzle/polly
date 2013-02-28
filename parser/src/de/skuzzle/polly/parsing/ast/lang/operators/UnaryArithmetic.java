@@ -13,8 +13,6 @@ import de.skuzzle.polly.parsing.util.Stack;
 
 public class UnaryArithmetic extends UnaryOperator<NumberLiteral> {
 
-    private static final long serialVersionUID = 1L;
-    
     public UnaryArithmetic(OpType op) {
         super(op);
         this.initTypes(Type.NUM, Type.NUM);

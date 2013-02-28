@@ -15,9 +15,6 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
 
 
 public class ProductLiteral extends ListLiteral {
-
-    private static final long serialVersionUID = 1L;
-    
     
     public ProductLiteral(Position position, List<Expression> content) {
         super(position, content);

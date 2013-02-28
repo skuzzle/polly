@@ -32,8 +32,6 @@ import de.skuzzle.polly.parsing.util.Stack;
  */
 public class FoldLeft extends TernaryOperator<ListLiteral, FunctionLiteral, Literal> {
 
-    private static final long serialVersionUID = 1L;
-    
     
     public FoldLeft() {
         super(OpType.FOLD_LEFT);

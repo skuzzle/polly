@@ -22,8 +22,6 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
  * @author Simon Taddiken
  */
 public class FunctionLiteral extends Literal {
-
-    private static final long serialVersionUID = 1L;
     
     private final ArrayList<Declaration> formal;
     private Expression body;

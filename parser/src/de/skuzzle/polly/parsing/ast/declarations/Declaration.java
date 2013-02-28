@@ -25,8 +25,6 @@ import de.skuzzle.polly.tools.Equatable;
  * @author Simon Taddiken
  */
 public class Declaration extends Node implements Comparable<Declaration> {
-
-    private static final long serialVersionUID = 1L;
     
     private final Identifier name;
     private boolean isPublic;

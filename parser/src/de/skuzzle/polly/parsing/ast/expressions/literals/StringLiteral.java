@@ -8,8 +8,6 @@ import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 
 
 public class StringLiteral extends Literal {
-
-    private static final long serialVersionUID = 1L;
     
     private final String value;
     

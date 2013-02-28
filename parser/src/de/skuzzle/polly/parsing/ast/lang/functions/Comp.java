@@ -14,9 +14,6 @@ import de.skuzzle.polly.parsing.util.Stack;
 
 public class Comp extends BinaryOperator<Literal, Literal> {
 
-    private static final long serialVersionUID = 1L;
-
-    
     public Comp() {
         super(OpType.COMP);
         final TypeVar tv = Type.newTypeVar("A");

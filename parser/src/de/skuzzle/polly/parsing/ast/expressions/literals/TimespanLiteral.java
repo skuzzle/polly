@@ -12,9 +12,6 @@ import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 
 public class TimespanLiteral extends DateLiteral {
     
-    private static final long serialVersionUID = 1L;
-    
-    
     /**
      * Adds a given amount of seconds to a given date.
      * 

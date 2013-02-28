@@ -1,7 +1,5 @@
 package de.skuzzle.polly.parsing.ast;
 
-import java.io.Serializable;
-
 import de.skuzzle.polly.parsing.Position;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversal;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
@@ -17,9 +15,7 @@ import de.skuzzle.polly.tools.Equatable;
  *  
  * @author Simon Taddiken
  */
-public abstract class Node implements Visitable<ASTVisitor>, Serializable, Equatable {
-    
-    private static final long serialVersionUID = 1L;
+public abstract class Node implements Visitable<ASTVisitor>, Equatable {
     
     private Node parent;
     private Position position;

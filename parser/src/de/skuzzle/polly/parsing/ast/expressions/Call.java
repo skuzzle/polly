@@ -16,8 +16,6 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
  */
 public class Call extends Expression {
     
-    private static final long serialVersionUID = 1L;
-    
     private Expression lhs;
     private final ProductLiteral rhs;
     

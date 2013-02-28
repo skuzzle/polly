@@ -23,8 +23,6 @@ import de.skuzzle.polly.parsing.util.Stack;
 public abstract class TernaryOperator<FIRST extends Literal, SECOND extends Literal, 
         THIRD extends Literal> extends Operator {
 
-    private static final long serialVersionUID = 1L;
-    
     private final static ResolvableIdentifier FIRST_PARAM_NAME = 
             new ResolvableIdentifier(Position.NONE, "$first");
     private final static ResolvableIdentifier SECOND_PARAM_NAME =

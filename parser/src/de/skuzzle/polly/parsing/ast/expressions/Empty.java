@@ -16,9 +16,6 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
  * @author Simon Taddiken
  */
 public class Empty extends Expression {
-
-    private static final long serialVersionUID = 1L;
-
     
 
     public Empty(Type type, Position position) {

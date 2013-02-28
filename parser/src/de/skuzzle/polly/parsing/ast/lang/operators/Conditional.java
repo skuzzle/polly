@@ -21,8 +21,6 @@ import de.skuzzle.polly.parsing.util.Stack;
  */
 public class Conditional extends TernaryOperator<BooleanLiteral, Literal, Literal>{
 
-    private static final long serialVersionUID = 1L;
-
     public Conditional(OpType id) {
         super(id);
         final TypeVar a = Type.newTypeVar("A");

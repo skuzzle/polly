@@ -21,7 +21,6 @@ import de.skuzzle.polly.parsing.util.Stack;
  */
 public class RandomListIndex extends UnaryOperator<ListLiteral> {
 
-    private static final long serialVersionUID = 1L;
     private final static Random RANDOM = new Random();
     
     

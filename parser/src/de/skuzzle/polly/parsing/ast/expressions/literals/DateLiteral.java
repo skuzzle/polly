@@ -14,8 +14,6 @@ import de.skuzzle.polly.parsing.ast.visitor.Transformation;
  * @author Simon Taddiken
  */
 public class DateLiteral extends Literal {
-
-    private static final long serialVersionUID = 1L;
     
     private final Date value;
     

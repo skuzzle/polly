@@ -13,8 +13,6 @@ import de.skuzzle.polly.parsing.util.Stack;
 
 public class BinaryStringArithmetic extends BinaryOperator<StringLiteral, StringLiteral> {
 
-    private static final long serialVersionUID = 1L;
-
     public BinaryStringArithmetic(OpType id) {
         super(id);
         this.initTypes(Type.STRING, Type.STRING, Type.STRING);

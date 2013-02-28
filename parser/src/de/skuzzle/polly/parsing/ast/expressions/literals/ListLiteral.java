@@ -19,8 +19,6 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
  */
 public class ListLiteral extends Literal {
     
-    private static final long serialVersionUID = 1L;
-    
     private final List<Expression> content;
     
 

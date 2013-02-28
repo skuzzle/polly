@@ -13,8 +13,6 @@ import de.skuzzle.polly.parsing.util.Stack;
 
 public class BinaryBooleanArithmetic extends BinaryOperator<BooleanLiteral, BooleanLiteral> {
 
-    private static final long serialVersionUID = 1L;
-
     public BinaryBooleanArithmetic(OpType id) {
         super(id);
         this.initTypes(Type.BOOLEAN, Type.BOOLEAN, Type.BOOLEAN);

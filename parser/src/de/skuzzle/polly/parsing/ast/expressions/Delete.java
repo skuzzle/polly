@@ -23,8 +23,6 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
  * @author Simon Taddiken
  */
 public class Delete extends Expression {
-
-    private static final long serialVersionUID = 1L;
    
     /**
      * Identifier extension which contains a declaration scope to determine from which
@@ -33,8 +31,6 @@ public class Delete extends Expression {
      * @author Simon Taddiken
      */
     public final static class DeleteableIdentifier extends Identifier {
-        
-        private static final long serialVersionUID = 1L;
         
         private final boolean global;
         

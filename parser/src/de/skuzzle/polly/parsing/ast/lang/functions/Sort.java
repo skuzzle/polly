@@ -26,8 +26,6 @@ import de.skuzzle.polly.parsing.util.Stack;
 
 public class Sort extends BinaryOperator<ListLiteral, FunctionLiteral> {
 
-    private static final long serialVersionUID = 1L;
-    
     public Sort() {
         super(OpType.SORT);
         final TypeVar tv = Type.newTypeVar("A");

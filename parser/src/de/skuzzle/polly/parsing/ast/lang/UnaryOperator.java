@@ -21,9 +21,6 @@ import de.skuzzle.polly.parsing.util.Stack;
 
 public abstract class UnaryOperator<O extends Literal> extends Operator {
 
-    private static final long serialVersionUID = 1L;
-    
-    
     protected final static ResolvableIdentifier PARAM_NAME = 
             new ResolvableIdentifier(Position.NONE, "$param");
     

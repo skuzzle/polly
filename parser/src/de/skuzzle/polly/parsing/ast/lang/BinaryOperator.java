@@ -30,8 +30,6 @@ import de.skuzzle.polly.parsing.util.Stack;
 public abstract class BinaryOperator<L extends Literal, R extends Literal> 
         extends Operator {
 
-    private static final long serialVersionUID = 1L;
-    
     private final static ResolvableIdentifier LEFT_PARAM_NAME = 
             new ResolvableIdentifier(Position.NONE, "$left");
     private final static ResolvableIdentifier RIGHT_PARAM_NAME =

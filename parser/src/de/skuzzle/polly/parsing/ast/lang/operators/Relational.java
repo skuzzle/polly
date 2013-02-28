@@ -15,8 +15,6 @@ import de.skuzzle.polly.parsing.util.Stack;
 
 
 public class Relational extends BinaryOperator<Literal, Literal> {
-
-    private static final long serialVersionUID = 1L;
     
     public Relational(OpType id) {
         super(id);

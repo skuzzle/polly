@@ -16,8 +16,6 @@ import de.skuzzle.polly.parsing.ast.declarations.types.Type;
  */
 public abstract class Operator extends Function {
     
-    private static final long serialVersionUID = 1L;
-    
     /**
      * All possible operator types and their string representation.
      * 

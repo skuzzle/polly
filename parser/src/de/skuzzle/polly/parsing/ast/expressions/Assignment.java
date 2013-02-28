@@ -13,8 +13,6 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
  * @author Simon Taddiken
  */
 public class Assignment extends Expression {
-
-    private static final long serialVersionUID = 1L;
     
     private Expression expression;
     private Identifier name;

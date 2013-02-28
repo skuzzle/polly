@@ -14,8 +14,6 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
  * @author Simon Taddiken
  */
 public abstract class Literal extends Expression implements Comparable<Literal> {
-
-    private static final long serialVersionUID = 1L;
     
     /**
      * Creates a new Literal with given {@link Position} and {@link Type}.

@@ -13,8 +13,6 @@ import de.skuzzle.polly.parsing.ast.visitor.Transformation;
  */
 public class NumberLiteral extends Literal {
 
-    private static final long serialVersionUID = 1L;
-    
     private final double value;
     private int radix;
     

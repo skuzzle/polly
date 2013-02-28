@@ -21,8 +21,6 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
  */
 public class OperatorCall extends Call {
     
-    private static final long serialVersionUID = 1L;
-    
     /**
      * Creates a new OperatorCall to a binary expression which has two operands.
      * 

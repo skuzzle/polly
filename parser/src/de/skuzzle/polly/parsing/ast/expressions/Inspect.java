@@ -18,8 +18,6 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
  */
 public class Inspect extends Expression {
     
-    private static final long serialVersionUID = 1L;
-    
     private final Expression access;
     private final boolean global;
     

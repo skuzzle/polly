@@ -21,8 +21,6 @@ import de.skuzzle.polly.tools.Equatable;
  */
 public abstract class Expression extends Node {
 
-    private static final long serialVersionUID = 1L;
-    
     private Type unique;
     private final List<Type> types;
     
