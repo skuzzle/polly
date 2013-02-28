@@ -1073,7 +1073,8 @@ public class InputParser {
             
             return Type.resolve(id, false);
         } else {
-            throw new ParseException("Typ erwartet", la.getPosition());
+            this.unexpectedToken(TokenType.IDENTIFIER, la);
+            return null; /* not reachable */
         }
     }
 }
