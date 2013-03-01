@@ -3,9 +3,10 @@ package de.skuzzle.polly.core.parser;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.skuzzle.polly.core.parser.PrecedenceTable.PrecedenceLevel;
 import de.skuzzle.polly.core.parser.ast.Identifier;
@@ -241,7 +242,41 @@ public class InputParser {
     
     
     
-    private List<SyntaxException> problems = new ArrayList<SyntaxException>();
+    private final Map<String, Type> typeCache = new HashMap<String, Type>();
+    
+    private Identifier missingIdentifier(Position position) {
+        return new Identifier(position, "$missing_" + (this.missingId++));
+    }
+    
+    
+    
+    /**
+     * Tries to look up a primitive type by name. If no such type exists, a new
+     * temporary type with the requested name is created and stored in a cache. The
+     * next time a type with the same name is requested, that cached type will
+     * be returned.
+     * 
+     * @param name Type name to resolve.
+     * @return The resolved type.
+     */
+    private Type lookupType(Identifier name) {
+        Type result = Type.resolve(name, false);
+        if (result == null) {
+            result = this.typeCache.get(name.getId());
+        }
+        if (result == null) {
+            name = this.missingIdentifier(name.getPosition());
+            result = new MissingType(name);
+            this.typeCache.put(name.getId(), result);
+            this.problems.add(new ParseException("Unbekannter Typ: " + name, 
+                name.getPosition()));
+        }
+        return result;
+    }
+    
+    
+    
+    private List<ParseException> problems = new ArrayList<ParseException>();
     
     private int missingId;
     
@@ -274,7 +309,7 @@ public class InputParser {
             this.problems.add(new SyntaxException(TokenType.IDENTIFIER, la, 
                 this.scanner.spanFrom(la)));
             this.scanner.pushBackFirst(la);
-            return new Identifier(la.getPosition(), "$missing" + (missingId++));
+            return this.missingIdentifier(la.getPosition());
         }
         this.scanner.consume();
         return new Identifier(la.getPosition(), la.getStringValue());
@@ -1129,10 +1164,7 @@ public class InputParser {
             this.expect(TokenType.GT);
             return new ListType(subType);
         } else if (la.matches(TokenType.IDENTIFIER)) {
-            final ResolvableIdentifier id = new ResolvableIdentifier(
-                this.expectIdentifier());
-            
-            return Type.resolve(id, false);
+            return this.lookupType(this.expectIdentifier());
         } else {
             this.unexpectedToken(TokenType.IDENTIFIER, la);
             return null; /* not reachable */

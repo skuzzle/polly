@@ -78,12 +78,10 @@ public class Type implements Visitable<TypeVisitor>, Equatable {
      * 
      * @param name Name of the type to resolve.
      * @param allowPolymorph Whether polymorphic declarations are allowed.
-     * @return The resolved type.
-     * @throws ParseException If polymorphic declarations are not allowed and the given
-     *          name does not denote a known type.
+     * @return The resolved type or <code>null</code> if polymorphic types are not 
+     *          allowed and not type with given name exists.
      */
-    public final static Type resolve(ResolvableIdentifier name, boolean allowPolymorph) 
-            throws ParseException {
+    public final static Type resolve(Identifier name, boolean allowPolymorph) {
         Type t = primitives.get(name.getId());
         if (t == null && allowPolymorph) {
             t = typeVars.get(name.getId());
@@ -92,9 +90,7 @@ public class Type implements Visitable<TypeVisitor>, Equatable {
                 typeVars.put(name.getId(), t);
             }
         } else if (t == null && !allowPolymorph) {
-            throw new ParseException(
-                "Typ erwartet (Polymorphe Funktionen sind deaktiviert)", 
-                name.getPosition());
+            return null;
         }
         return t;
     }
