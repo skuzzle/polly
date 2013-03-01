@@ -100,7 +100,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         // check whether all formal parameters have been used
         for (final Declaration d : func.getFormal()) {
             if (d.isUnused()) {
-                this.reportError(d, "Unbenutzer Parameter: " + d.getName());
+                // this.reportError(d, "Unbenutzer Parameter: " + d.getName());
             }
         }
         
