@@ -57,11 +57,6 @@ public abstract class AbstractTokenStream implements Iterable<Token>, TokenStrea
     protected boolean eos;
     
     /**
-     * Lookahead buffer.
-     */
-    protected Token lookahead;
-    
-    /**
      * The current stream position.
      */
     protected int streamIndex;
