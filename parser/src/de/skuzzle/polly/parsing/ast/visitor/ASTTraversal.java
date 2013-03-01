@@ -1,6 +1,7 @@
 package de.skuzzle.polly.parsing.ast.visitor;
 
 import de.skuzzle.polly.parsing.ast.Identifier;
+import de.skuzzle.polly.parsing.ast.Node;
 import de.skuzzle.polly.parsing.ast.ResolvableIdentifier;
 import de.skuzzle.polly.parsing.ast.Root;
 import de.skuzzle.polly.parsing.ast.declarations.Declaration;
@@ -19,7 +20,8 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.ProductLiteral;
 
 /**
- * Defines methods for depth first traversal of an AST.
+ * Defines methods for depth first traversal of an AST using 
+ * {@link Node#traverse(ASTTraversal)}.
  * 
  * @author Simon Taddiken
  */
