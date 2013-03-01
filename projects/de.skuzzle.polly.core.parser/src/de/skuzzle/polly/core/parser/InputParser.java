@@ -243,6 +243,7 @@ public class InputParser {
     
     private List<SyntaxException> problems = new ArrayList<SyntaxException>();
     
+    private int missingId;
     
     protected Problem createProblem(TokenType expected, Token found) {
         final SyntaxException se = new SyntaxException(expected, found, 
@@ -273,7 +274,7 @@ public class InputParser {
             this.problems.add(new SyntaxException(TokenType.IDENTIFIER, la, 
                 this.scanner.spanFrom(la)));
             this.scanner.pushBackFirst(la);
-            return new Identifier(la.getPosition(), "$error");
+            return new Identifier(la.getPosition(), "$missing" + (missingId++));
         }
         this.scanner.consume();
         return new Identifier(la.getPosition(), la.getStringValue());

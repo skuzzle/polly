@@ -27,7 +27,6 @@ public final class Root extends Node {
     private List<Literal> results;
     
     
-    
     /**
      * Creates a new Root Node with given {@link Position} and a collection of parsed
      * expressions.
