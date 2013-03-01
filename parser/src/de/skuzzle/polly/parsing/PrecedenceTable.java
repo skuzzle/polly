@@ -44,7 +44,7 @@ public class PrecedenceTable {
         this.add(PrecedenceLevel.SECTERM, TokenType.ADDWAVE);
         this.add(PrecedenceLevel.SECTERM, TokenType.SUB);
         this.add(PrecedenceLevel.SECTERM, TokenType.WAVE);
-        this.add(PrecedenceLevel.SECTERM, TokenType.RIGHT_SHIFT);
+        this.add(PrecedenceLevel.SECTERM, TokenType.GT); // ISSUE #12: parser makes effort to recognize a rightshift here
         this.add(PrecedenceLevel.SECTERM, TokenType.URIGHT_SHIFT);
         this.add(PrecedenceLevel.SECTERM, TokenType.LEFT_SHIFT);
         

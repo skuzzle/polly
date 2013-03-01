@@ -208,4 +208,22 @@ public class SyntaxTest extends AbstractParserTest {
         final InputParser parser = this.obtain(input);
         parser.parse();
     }
+    
+    
+    
+    @Test
+    public void parseTest23() throws ParseException {
+        final String input = ":foo if 5<3 : 5 : 4 10<5";
+        final InputParser parser = this.obtain(input);
+        parser.parse();
+    }
+    
+    
+    
+    @Test
+    public void parseTest24() throws ParseException {
+        final String input = ":foo 1>>3";
+        final InputParser parser = this.obtain(input);
+        parser.parse();
+    }
 }

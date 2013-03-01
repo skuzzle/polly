@@ -233,7 +233,8 @@ public class InputScanner extends AbstractTokenStream {
                 } else if (next == '<') {
                     state = 3;
                 } else if (next == '>') {
-                    state = 4;
+                    return new Token(TokenType.GT, this.spanFrom(tokenStart), ">");
+                    // state = 4;
                 } else {
                     this.pushBack(next);
                     this.parseException(

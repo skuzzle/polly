@@ -382,6 +382,11 @@ public class InputParser {
         while (this.operators.match(la, PrecedenceLevel.RELATION)) {
             this.scanner.consume();
             
+            // ISSUE #12: this was a right shift
+            if (la.matches(TokenType.GT) && this.scanner.lookAhead().matches(TokenType.GT)) {
+                return expr;
+            }
+            
             final Expression rhs = this.parseConjunction();
             
             expr = OperatorCall.binary(
@@ -468,6 +473,12 @@ public class InputParser {
         Token la = this.scanner.lookAhead();
         while (this.operators.match(la, PrecedenceLevel.SECTERM)) {
             this.scanner.consume();
+            
+            // ISSUE #12: this is a right shift
+            if (la.matches(TokenType.GT) && this.scanner.lookAhead().matches(TokenType.GT)) {
+                this.scanner.consume();
+                la = new Token(TokenType.RIGHT_SHIFT, this.scanner.spanFrom(la));
+            }
             
             final Expression rhs = this.parseTerm();
             
