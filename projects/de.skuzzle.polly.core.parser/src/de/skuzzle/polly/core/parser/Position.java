@@ -20,7 +20,8 @@ import de.skuzzle.polly.tools.Immutable;
  * 
  * @author Simon
  */
-public class Position implements Serializable, Equatable, Immutable {
+public class Position implements Serializable, Equatable, Immutable, 
+        Comparable<Position> {
     
     private static final long serialVersionUID = 1L;
 
@@ -250,5 +251,16 @@ public class Position implements Serializable, Equatable, Immutable {
     public boolean actualEquals(Equatable o) {
         final Position other = (Position) o;
         return this.start == other.start && this.end == other.end;
+    }
+
+
+
+    @Override
+    public int compareTo(Position o) {
+        int r = this.start - o.start;
+        if (r == 0) {
+            r = this.end - o.end;
+        }
+        return r;
     }
 }

@@ -39,15 +39,18 @@ public class Evaluator {
 
     private final String input;
     private final String encoding;
+    private final ProblemReporter reporter;
     private Root lastResult;
     private ASTTraversalException lastError;
     
     
     
-    public Evaluator(String input, String encoding) throws UnsupportedEncodingException {
+    public Evaluator(String input, String encoding, ProblemReporter reporter) 
+            throws UnsupportedEncodingException {
         if (!Charset.isSupported(encoding)) {
             throw new UnsupportedEncodingException(encoding);
         }
+        this.reporter = reporter;
         this.input = input;
         this.encoding = encoding;
     }
@@ -76,7 +79,8 @@ public class Evaluator {
      */
     public void evaluate(Namespace rootNs, Namespace workingNs) {
         try {
-            final InputParser parser = new InputParser(this.input, this.encoding);
+            final InputParser parser = new InputParser(this.input, this.encoding, 
+                this.reporter);
             this.lastResult = parser.parse();
             
             if (this.lastResult == null) {

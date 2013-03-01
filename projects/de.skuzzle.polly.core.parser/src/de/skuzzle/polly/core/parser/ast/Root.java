@@ -25,6 +25,8 @@ public final class Root extends Node {
     private final ArrayList<Expression> expressions;
     private Identifier command;
     private List<Literal> results;
+    private final boolean hasProblems;
+    
     
     
     /**
@@ -34,12 +36,25 @@ public final class Root extends Node {
      * @param position The Node's position.
      * @param command Name of the parsed command.
      * @param expressions Collection of parsed expressions.
+     * @param hasProblems Whether the AST contains {@link Problem} nodes.
      */
     public Root(Position position, Identifier command, 
-            Collection<Expression> expressions) {
+            Collection<Expression> expressions, boolean hasProblems) {
         super(position);
         this.command = command;
         this.expressions = new ArrayList<Expression>(expressions);
+        this.hasProblems = hasProblems;
+    }
+    
+    
+    
+    /**
+     * Whether this AST contains problem nodes.
+     * 
+     * @return Whether this AST contains problem nodes.
+     */
+    public boolean hasProblems() {
+        return this.hasProblems;
     }
     
     

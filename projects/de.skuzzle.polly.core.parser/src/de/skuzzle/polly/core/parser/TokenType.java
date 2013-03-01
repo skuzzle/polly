@@ -58,7 +58,7 @@ public enum TokenType {
     OPENCURLBR("{"), 
     CLOSEDCURLBR("}"), 
     INDEX("Indizierung"),
-    KEYWORD("Schlï¿½sselwort"),
+    KEYWORD("Schlüsselwort"),
     UNKNOWN("Unbekanntes Zeichen"),
     COMMAND("Befehl"),
     POLLY("Polly"),
@@ -69,7 +69,8 @@ public enum TokenType {
     ELSE("else"), 
     DELETE("del"), 
     INSPECT("inspect"),
-    ESCAPED("\\");
+    ESCAPED("\\"), 
+    ERROR("Ungültiges Symbol");
     
     private String string;
     

@@ -37,7 +37,7 @@ public class DeclarationReader implements Closeable {
 
         public DeclarationParser(String input, String charset) 
                 throws UnsupportedEncodingException {
-            super(input);
+            super(input, new SimpleProblemReporter());
         }
         
         
@@ -116,7 +116,7 @@ public class DeclarationReader implements Closeable {
             }
             
             final Assignment assign = (Assignment) exp;
-            TypeResolver.resolveAST(assign, this.nspace);
+            TypeResolver.resolveAST(assign, this.nspace, new SimpleProblemReporter());
             assign.visit(this.executor);
             return true;
         } catch (ASTTraversalException e) {

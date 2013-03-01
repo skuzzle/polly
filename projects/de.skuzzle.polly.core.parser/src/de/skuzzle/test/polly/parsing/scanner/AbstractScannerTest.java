@@ -15,6 +15,6 @@ public abstract class AbstractScannerTest {
      * @return New token stream.
      */
     protected AbstractTokenStream obtain(String input) {
-        return new InputScanner(input);
+        return new InputScanner(input, new SimpleProblemReporter());
     }
 }

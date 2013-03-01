@@ -14,6 +14,6 @@ import de.skuzzle.polly.core.parser.InputParser;
 public abstract class AbstractParserTest {
 
     public InputParser obtain(String input) {
-        return new InputParser(input);
+        return new InputParser(input, new SimpleProblemReporter());
     }
 }

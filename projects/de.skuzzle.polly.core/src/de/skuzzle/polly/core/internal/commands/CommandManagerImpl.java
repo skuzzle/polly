@@ -293,7 +293,8 @@ public class CommandManagerImpl implements CommandManager {
         final Stopwatch watch = new MillisecondStopwatch();
         watch.start();
         
-        final Evaluator eval = new Evaluator(message.trim(), this.encodingName);
+        final Evaluator eval = new Evaluator(message.trim(), this.encodingName, 
+            new SimpleProblemReporter());
         eval.evaluate(rootNs, workingNs);
 
         watch.stop();
@@ -376,7 +377,7 @@ public class CommandManagerImpl implements CommandManager {
     
     private Map<String, Types> getCommandConstants(String input) {
         try {
-            InputScanner s = new InputScanner(input);
+            InputScanner s = new InputScanner(input, new SimpleProblemReporter());
             Token id = s.lookAhead();
             if (!id.matches(TokenType.COMMAND)) {
                 return null;

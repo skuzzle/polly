@@ -27,7 +27,7 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
     
     
     public SecondPassTypeResolver(FirstPassTypeResolver fptr) {
-        super(fptr.getCurrentNameSpace(), fptr.getUnifier());
+        super(fptr.getCurrentNameSpace(), fptr.reporter);
     }
     
     

@@ -18,23 +18,14 @@ public abstract class AbstractTypeResolver extends DepthFirstVisitor {
     
     protected Namespace nspace;
     protected final Namespace rootNs;
-    protected final TypeUnifier unifier;
+    protected final ProblemReporter reporter;
     
     
-    
-    public AbstractTypeResolver(Namespace namespace) {
+    public AbstractTypeResolver(Namespace namespace, ProblemReporter reporter) {
         // create temporary namespace for executing user
         this.rootNs = namespace.enter();
         this.nspace = this.rootNs;
-        this.unifier = new TypeUnifier();
-    }
-    
-    
-    
-    AbstractTypeResolver(Namespace namespace, TypeUnifier unifier) {
-        this.rootNs = namespace;
-        this.nspace = this.rootNs;
-        this.unifier = unifier;
+        this.reporter = reporter;
     }
     
     
@@ -57,17 +48,6 @@ public abstract class AbstractTypeResolver extends DepthFirstVisitor {
      */
     public Namespace getRootNamespace() {
         return this.rootNs;
-    }
-    
-    
-    
-    /**
-     * Gets the currently used unification context.
-     * 
-     * @return Current type unification context.
-     */
-    public TypeUnifier getUnifier() {
-        return this.unifier;
     }
     
     
@@ -111,7 +91,7 @@ public abstract class AbstractTypeResolver extends DepthFirstVisitor {
     
     protected void reportError(Position position, String error) 
             throws ASTTraversalException {
-        throw new ASTTraversalException(position, error);
+        this.reporter.semanticProblem(error, position);
     }
     
     
@@ -126,7 +106,7 @@ public abstract class AbstractTypeResolver extends DepthFirstVisitor {
     
     protected void typeError(Expression exp, Type expected, Type found) 
             throws ASTTraversalException {
-        throw new ASTTraversalException(exp.getPosition(), "Typefehler. Erwartet: " + 
-            expected + ", gefunden: " + found);
+        
+        this.reporter.typeProblem(expected, found, exp.getPosition());
     }
 }

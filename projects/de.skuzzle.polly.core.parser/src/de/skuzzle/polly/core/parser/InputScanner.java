@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import de.skuzzle.polly.parsing.problems.ProblemReporter;
+
 
 
 /*
@@ -78,19 +80,34 @@ public class InputScanner extends AbstractTokenStream {
 
     protected Map<String, TokenType> keywords;
     private boolean skipWhiteSpaces;
+    private final ProblemReporter reporter;
     
     
     
-    public InputScanner(String stream) {
+    public InputScanner(String stream, ProblemReporter reporter) {
         super(stream);
+        this.reporter = reporter;
         this.prepareKeywords();
     }
     
     
     
-    public InputScanner(String stream, Charset charset) {
+    public InputScanner(String stream, Charset charset, ProblemReporter reporter) {
         super(stream, charset);
+        this.reporter = reporter;
         this.prepareKeywords();
+    }
+    
+    
+    
+    
+    /**
+     * Gets the {@link ProblemReporter} of this scanner.
+     * 
+     * @return The ProblemReporter used by this scanner.
+     */
+    public ProblemReporter getReporter() {
+        return this.reporter;
     }
     
     
@@ -115,12 +132,22 @@ public class InputScanner extends AbstractTokenStream {
     
     
     
+    /**
+     * Sets whether whitespaces are currently being skipped.
+     * 
+     * @param value Whether whitespaces should be skipped.
+     */
     public void setSkipWhiteSpaces(boolean value) {
         this.skipWhiteSpaces = value;
     }
     
     
     
+    /**
+     * Gets whether whitespaces are currently being skipped.
+     * 
+     * @return Whether whitespaces are currently being skipped.
+     */
     public boolean skipWhiteSpaces() {
         return this.skipWhiteSpaces;
     }
@@ -435,7 +462,8 @@ public class InputScanner extends AbstractTokenStream {
                     this.pushBack(next);
                     state = 2;
                 } else {
-                    this.parseException("missing radix specification for 0x: Operator", 
+                    return this.parseException(
+                        "missing radix specification for 0x: Operator", 
                         tokenStart);
                 }
             } else if (state == 2) {
@@ -446,7 +474,7 @@ public class InputScanner extends AbstractTokenStream {
                 } else if (next == ':') {
                     
                     if (radix > Character.MAX_RADIX) {
-                        this.parseException("Invalid Radix: " + radix, tokenStart);
+                        return this.parseException("Invalid Radix: " + radix, tokenStart);
                     }
                     
                     return new Token(TokenType.RADIX, this.spanFrom(tokenStart), radix);
@@ -454,8 +482,7 @@ public class InputScanner extends AbstractTokenStream {
             }
         }
         
-        this.parseException("invalid 0x: operator", tokenStart);
-        return null;
+        return this.parseException("invalid 0x: operator", tokenStart);
     }
     
     
@@ -481,7 +508,7 @@ public class InputScanner extends AbstractTokenStream {
                     state = 1;
                 } else {
                     this.pushBack(next);
-                    this.parseException("Invalid String literal!", tokenStart);
+                    return this.parseException("Invalid String literal!", tokenStart);
                 }
             } else if (state == 1) {
                 int next = this.readChar();
@@ -503,8 +530,7 @@ public class InputScanner extends AbstractTokenStream {
         }
         
         this.pushBack(-1);
-        this.parseException("Nicht geschlossenes String-Literal", tokenStart);
-        return null; /* unreachable */
+        return this.parseException("Nicht geschlossenes String-Literal", tokenStart);
     }
     
     
@@ -547,8 +573,8 @@ public class InputScanner extends AbstractTokenStream {
             }
         }
         
-        this.parseException("Ungültiges Channel-Literal: " + lexem.toString(), tokenStart);
-        return null;
+        return this.parseException("Ungültiges Channel-Literal: " + lexem.toString(), 
+            tokenStart);
     }
     
     
@@ -591,8 +617,8 @@ public class InputScanner extends AbstractTokenStream {
             }
         }
         
-        this.parseException("Ungültiges User-Literal: " + lexem.toString(), tokenStart);
-        return null;
+        return this.parseException("Ungültiges User-Literal: " + lexem.toString(), 
+            tokenStart);
     }
     
     
@@ -624,7 +650,7 @@ public class InputScanner extends AbstractTokenStream {
                     state = 1;
                     lexem.appendCodePoint(next);
                 } else {
-                    this.parseException("Invalid Identifier", tokenStart);
+                    return this.parseException("Ungültiger Identifier", tokenStart);
                 }
             } else if (state == 1) {
                 int next = this.readChar();
@@ -642,8 +668,8 @@ public class InputScanner extends AbstractTokenStream {
             }
         }
         
-        this.parseException("Ungülltiger identifier: " + lexem.toString(), tokenStart);
-        return null;
+        return this.parseException("Ungülltiger identifier: " + lexem.toString(), 
+            tokenStart);
     }
     
     
@@ -662,8 +688,7 @@ public class InputScanner extends AbstractTokenStream {
         if (lookup == null) {
             return new Token(TokenType.IDENTIFIER, this.spanFrom(tokenStart), string);
         } else if (lookup == TokenType.UNKNOWN) {
-            this.parseException("Ungültiger Identifier: " + string, tokenStart);
-            return null; /* unreachable */
+            return this.parseException("Ungültiger Identifier: " + string, tokenStart);
         } else {
             return new Token(lookup, this.spanFrom(tokenStart));
         }
@@ -744,7 +769,7 @@ public class InputScanner extends AbstractTokenStream {
                     return new Token(TokenType.NUMBER, this.spanFrom(tokenStart), value);
                 } else {
                     this.pushBack(next);
-                    this.parseException("Fehlende Dezimalstellen", tokenStart);
+                    return this.parseException("Fehlende Dezimalstellen", tokenStart);
                 }
                 
             } else if (state == 3) {
@@ -791,7 +816,8 @@ public class InputScanner extends AbstractTokenStream {
                 // HACK: Need to ensure that at least on number has been read before 
                 //       reading on.
                 if (firstPart > 31 || secondPart > 12) {
-                    this.parseException("Ungülltiges DateTime-Literal", tokenStart);
+                    return this.parseException("Ungülltiges DateTime-Literal", 
+                        tokenStart);
                 }
                 
                 if (Character.isDigit(next)) {
@@ -811,7 +837,7 @@ public class InputScanner extends AbstractTokenStream {
                     state = 7;
                 } else {
                     this.pushBack(next);
-                    this.parseException("Ungültiges DateTime-Literal", tokenStart);
+                    return this.parseException("Ungültiges DateTime-Literal", tokenStart);
                 }
             } else if (state == 7) {
                 int next = this.readChar();
@@ -823,12 +849,13 @@ public class InputScanner extends AbstractTokenStream {
                     state = 8;
                 } else {
                     this.pushBack(next);
-                    this.parseException("Ungültiges Date-Time-Literal", tokenStart);
+                    return this.parseException("Ungültiges Date-Time-Literal", 
+                        tokenStart);
                 }
                 
             } else if (state == 8) {
                 if (thirdPart < 1900 || thirdPart > 9999) {
-                    this.parseException("Ungültiges DateTime-Literal", tokenStart);
+                    return this.parseException("Ungültiges DateTime-Literal", tokenStart);
                 }
                 
                 // CONSIDER ISSUE 0000115
@@ -852,7 +879,7 @@ public class InputScanner extends AbstractTokenStream {
                     state = 10;
                 } else {
                     this.pushBack(next);
-                    this.parseException("Ungültige Zahl", tokenStart);
+                    return this.parseException("Ungültige Zahl", tokenStart);
                 }
                 
             } else if (state == 10) {
@@ -865,7 +892,7 @@ public class InputScanner extends AbstractTokenStream {
                     
                     // HACK: Ensure that at least one number has been read
                     if (exp == 0.0) {
-                        this.parseException("Ungültige Zahl", tokenStart);
+                        return this.parseException("Ungültige Zahl", tokenStart);
                     }
                     value = value * Math.pow(10, exp * exp_sign);
                     return new Token(TokenType.NUMBER, this.spanFrom(tokenStart), value);
@@ -892,7 +919,8 @@ public class InputScanner extends AbstractTokenStream {
                 if (InputScanner.isTimeLiteralChar(next)) {
                     
                     if (odd.contains(next)) {
-                        this.parseException("Ungültiges DateTime-Literal", tokenStart);
+                        return this.parseException("Ungültiges DateTime-Literal", 
+                            tokenStart);
                     }
                     odd.add(next);
                     value += tmp * InputScanner.timeLiteralValue(next);
@@ -923,8 +951,7 @@ public class InputScanner extends AbstractTokenStream {
             }
         }
         
-        this.parseException("Ungültiges DateTime-Literal", tokenStart);
-        return null;
+        return this.parseException("Ungültiges DateTime-Literal", tokenStart);
     }
     
     
@@ -955,7 +982,7 @@ public class InputScanner extends AbstractTokenStream {
         int secondPart = 0;
         
         if (firstPart > 23) {
-            this.parseException("Ungültiges DateTime-Literal", tokenStart);
+            return this.parseException("Ungültiges DateTime-Literal", tokenStart);
         }
         
         while (!this.eos) {
@@ -971,7 +998,7 @@ public class InputScanner extends AbstractTokenStream {
                             (double) firstPart);
                 } else {
                     this.pushBack(next);
-                    this.parseException("Ungültiges DateTime-Literal", tokenStart);
+                    return this.parseException("Ungültiges DateTime-Literal", tokenStart);
                 }
             } else if (state == 1) {
                 int next = this.readChar();
@@ -983,7 +1010,7 @@ public class InputScanner extends AbstractTokenStream {
                 }
                 
                 if (secondPart > 59) {
-                    this.parseException("Ungültiges DateTime-Literal", tokenStart);
+                    return this.parseException("Ungültiges DateTime-Literal", tokenStart);
                 }
                 
                 Calendar c = Calendar.getInstance();
@@ -997,8 +1024,7 @@ public class InputScanner extends AbstractTokenStream {
             }
         }
         
-        this.parseException("Ungültiges DateTime-Literal", tokenStart);
-        return null;
+        return this.parseException("Ungültiges DateTime-Literal", tokenStart);
     }
     
     
@@ -1008,7 +1034,7 @@ public class InputScanner extends AbstractTokenStream {
         int state = 0;
         
         if (radix > Character.MAX_RADIX) {
-            this.parseException("Invalid Radix: " + radix, tokenStart);
+            return this.parseException("Invalid Radix: " + radix, tokenStart);
         }
         
         while (!this.eos) {
@@ -1019,7 +1045,7 @@ public class InputScanner extends AbstractTokenStream {
                     this.pushBack(next);
                     state = 1;
                 } else {
-                    this.parseException("Invalid Radix'ed Integer", tokenStart);
+                    return this.parseException("Invalid Radix'ed Integer", tokenStart);
                 }
             } else if (state == 1) {
                 int next = this.readChar();
@@ -1034,8 +1060,25 @@ public class InputScanner extends AbstractTokenStream {
             }
         }
         
-        this.parseException("Invalid Radix'ed Integer", tokenStart);
-        return null;
+        return this.parseException("Invalid Radix'ed Integer", tokenStart);
+    }
+    
+    
+    
+    /**
+     * Reports a lexical error to the {@link ProblemReporter} of this scanner.
+     * 
+     * @param errorMessage The parse error message.
+     * @param tokenStart The beginning of the errornous token.
+     * @return A token with type {@link TokenType#ERROR}
+     * @throws ParseException If the {@link ProblemReporter} only supports one
+     *          Problem.
+     */
+    protected Token parseException(String errorMessage, int tokenStart) 
+            throws ParseException {
+        final Position pos = this.spanFrom(tokenStart);
+        this.reporter.lexicalProblem(errorMessage, pos);
+        return new Token(TokenType.ERROR, pos);
     }
     
     

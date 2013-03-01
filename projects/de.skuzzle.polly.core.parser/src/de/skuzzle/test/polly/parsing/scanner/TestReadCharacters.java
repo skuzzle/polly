@@ -7,6 +7,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import de.skuzzle.polly.core.parser.InputScanner;
+import de.skuzzle.polly.parsing.problems.SimpleProblemReporter;
 
 /**
  * Tests some basic character reading.
@@ -20,7 +21,7 @@ public class TestReadCharacters extends AbstractScannerTest {
     private final class PublicTokenStream extends InputScanner {
         
         public PublicTokenStream(String input) {
-            super(input);
+            super(input, new SimpleProblemReporter());
         }
         
         

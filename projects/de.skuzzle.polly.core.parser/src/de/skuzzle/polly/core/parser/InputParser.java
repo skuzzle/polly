@@ -115,6 +115,12 @@ import de.skuzzle.polly.core.parser.ast.lang.Operator.OpType;
  *             | '\' .                                         // any escaped token
  * </pre>
  * 
+ * <p>This parser has simple support to report multiple problems during parsing. For 
+ * incomplete expressions, {@link Problem} nodes are inserted in the resulting AST. For
+ * missing types will be created temporary types and the same applies to missing 
+ * identifiers. Occurring problems will be reported to the outside using a 
+ * {@link ProblemReporter} instance.</p>
+ * 
  * @author Simon Taddiken
  */
 public class InputParser {
@@ -125,15 +131,29 @@ public class InputParser {
     public final static boolean ESCAPABLE = true;
 
     
-
-    private final PrecedenceTable operators;
+    
+    /** Operator precedence table */
+    protected final PrecedenceTable operators;
+    
+    /** Stack which contains closing token types for currently parsed sub expressions */
     private final Stack<TokenType> expressions;
+    
+    /** Scanner that reads tokens from the input */
     protected InputScanner scanner;
+    
+    /** Cache for missing type references */
+    private final Map<String, Type> typeCache = new HashMap<String, Type>();
+    
+    /** ID generator for missing identifiers */
+    private int missingId;
+    
+    private final ProblemReporter reporter;
     
     
     
     /**
      * Creates a new parser which will use the provided scanner to read the tokens from.
+     * It will use the same {@link ProblemReporter} as the provided scanner.
      * 
      * @param scanner The {@link InputScanner} which provides the token stream.
      */
@@ -141,6 +161,7 @@ public class InputParser {
         this.scanner = scanner;
         this.operators = new PrecedenceTable();
         this.expressions = new LinkedStack<TokenType>();
+        this.reporter = scanner.getReporter();
     }
     
     
@@ -150,11 +171,13 @@ public class InputParser {
      * encoding.
      * 
      * @param input The string to parse.
+     * @param reporter The ProblemReporter for this parser.
      */
-    public InputParser(String input) {
-        this.scanner = new InputScanner(input);
+    public InputParser(String input, ProblemReporter reporter) {
+        this.scanner = new InputScanner(input, reporter);
         this.operators = new PrecedenceTable();
         this.expressions = new LinkedStack<TokenType>();
+        this.reporter = reporter;
     }
     
     
@@ -165,13 +188,15 @@ public class InputParser {
      * 
      * @param input The string to parse.
      * @param encoding The charset name to use.
+     * @param reporter The ProblemReporter for this parser.
      * @throws UnsupportedEncodingException If the charset name was invalid.
      */
-    public InputParser(String input, String encoding) 
+    public InputParser(String input, String encoding, ProblemReporter reporter) 
             throws UnsupportedEncodingException {
-        this.scanner = new InputScanner(input, Charset.forName(encoding));
+        this.scanner = new InputScanner(input, Charset.forName(encoding), reporter);
         this.operators = new PrecedenceTable();
         this.expressions = new LinkedStack<TokenType>();
+        this.reporter = reporter;
     }
     
     
@@ -204,20 +229,6 @@ public class InputParser {
     public Root parse() throws ParseException {
         return this.parseRoot();
     }
-
-    
-    
-    /**
-     * Throws a {@link ParseException} indicating an unexpected token.
-     * 
-     * @param expected The token that was expected but not found.
-     * @param found The token which was found instead.
-     * @throws SyntaxException Always thrown.
-     */
-    protected void unexpectedToken(TokenType expected, Token found) 
-            throws SyntaxException {
-        throw new SyntaxException(expected, found, this.scanner.spanFrom(found));
-    }
     
     
     
@@ -233,7 +244,7 @@ public class InputParser {
         final Token la = this.scanner.lookAhead();
         if (la.getType() != expected) {
             this.scanner.consume();
-            this.problems.add(new SyntaxException(expected, la, this.scanner.spanFrom(la)));
+            this.reporter.syntaxProblem(expected, la, this.scanner.spanFrom(la));
             this.scanner.pushBackFirst(la);
         }
         this.scanner.consume();
@@ -242,8 +253,12 @@ public class InputParser {
     
     
     
-    private final Map<String, Type> typeCache = new HashMap<String, Type>();
-    
+    /**
+     * Creates a new {@link Identifier} with a generated name.
+     * 
+     * @param position Position of the generated identifier.
+     * @return A new identifier.
+     */
     private Identifier missingIdentifier(Position position) {
         return new Identifier(position, "$missing_" + (this.missingId++));
     }
@@ -258,8 +273,9 @@ public class InputParser {
      * 
      * @param name Type name to resolve.
      * @return The resolved type.
+     * @throws ParseException 
      */
-    private Type lookupType(Identifier name) {
+    private Type lookupType(Identifier name) throws ParseException {
         Type result = Type.resolve(name, false);
         if (result == null) {
             result = this.typeCache.get(name.getId());
@@ -268,22 +284,27 @@ public class InputParser {
             name = this.missingIdentifier(name.getPosition());
             result = new MissingType(name);
             this.typeCache.put(name.getId(), result);
-            this.problems.add(new ParseException("Unbekannter Typ: " + name, 
-                name.getPosition()));
+            this.reporter.syntaxProblem("Unbekannter Typ: " + name, name.getPosition());
         }
         return result;
     }
     
     
     
-    private List<ParseException> problems = new ArrayList<ParseException>();
-    
-    private int missingId;
-    
-    protected Problem createProblem(TokenType expected, Token found) {
-        final SyntaxException se = new SyntaxException(expected, found, 
-            this.scanner.spanFrom(found));
-        this.problems.add(se);
+
+    /**
+     * Creates a new {@link Problem} node and simultaneously reports the problem to 
+     * the {@link ProblemReporter} of this parser.
+     * 
+     * @param expected The expected token.
+     * @param found The token that occurred instead.
+     * @return A new {@link Problem} node.
+     * @throws ParseException Can be thrown by the ProblemReporter if it does not support
+     *          multiple problems.
+     */
+    protected Problem createProblem(TokenType expected, Token found) 
+            throws ParseException {
+        this.reporter.syntaxProblem(expected, found, this.scanner.spanFrom(found));
         return new Problem(this.scanner.spanFrom(found));
     }
     
@@ -306,8 +327,8 @@ public class InputParser {
                 true);
         } else if (!la.matches(TokenType.IDENTIFIER)) {
             this.scanner.consume();
-            this.problems.add(new SyntaxException(TokenType.IDENTIFIER, la, 
-                this.scanner.spanFrom(la)));
+            this.reporter.syntaxProblem(TokenType.IDENTIFIER, la, 
+                this.scanner.spanFrom(la));
             this.scanner.pushBackFirst(la);
             return this.missingIdentifier(la.getPosition());
         }
@@ -318,7 +339,7 @@ public class InputParser {
     
     
     /**
-     * Consumes a single whitespace of the next token is one. If not, nothing happens.
+     * Consumes a single whitespace if the next token is one. If not, nothing happens.
      * @throws ParseException If parsing fails.
      */
     protected void allowSingleWhiteSpace() throws ParseException {
@@ -399,9 +420,10 @@ public class InputParser {
             } while (this.scanner.match(TokenType.SEPERATOR));
         }
         
-        root = new Root(this.scanner.spanFrom(start), cmd, signature);
-        
         this.expect(TokenType.EOS);
+        root = new Root(this.scanner.spanFrom(start), cmd, signature, 
+            this.reporter.hasProblems());
+        
         return root;
     }
 
@@ -1163,7 +1185,7 @@ public class InputParser {
         } else if (la.matches(TokenType.IDENTIFIER)) {
             return this.lookupType(this.expectIdentifier());
         } else {
-            this.unexpectedToken(TokenType.IDENTIFIER, la);
+            this.expectIdentifier();
             return null; /* not reachable */
         }
     }

@@ -93,7 +93,8 @@ public class Main {
                 continue;
             }
             
-            final Evaluator eval = new Evaluator(":result \">\" " + cmd, "ISO-8859-1");
+            final Evaluator eval = new Evaluator(":result \">\" " + cmd, "ISO-8859-1", 
+                new SimpleProblemReporter());
             
             try {
                 eval.evaluate(ns, ns);

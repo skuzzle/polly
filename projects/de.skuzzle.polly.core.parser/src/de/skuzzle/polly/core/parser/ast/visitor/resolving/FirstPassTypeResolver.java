@@ -45,8 +45,8 @@ import de.skuzzle.polly.core.parser.util.Combinator.CombinationCallBack;
 class FirstPassTypeResolver extends AbstractTypeResolver {
     
     
-    public FirstPassTypeResolver(Namespace namespace) {
-        super(namespace);
+    public FirstPassTypeResolver(Namespace namespace, ProblemReporter reporter) {
+        super(namespace, reporter);
     }
     
     

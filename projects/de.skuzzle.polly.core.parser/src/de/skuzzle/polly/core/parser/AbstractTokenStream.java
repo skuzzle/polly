@@ -563,23 +563,7 @@ public abstract class AbstractTokenStream implements Iterable<Token>, TokenStrea
     protected abstract Token readToken() throws ParseException;
     
 
-    
-    /**
-     * Throws a {@link ParseException} with given message and position spanning from the
-     * given stream index to the current stream index.
-     * 
-     * @param errorMessage The parse error message.
-     * @param tokenStart The beginning of the errornous token.
-     * @throws ParseException is always thrown.
-     */
-    protected void parseException(String errorMessage, int tokenStart) 
-            throws ParseException {
-        Position pos = this.spanFrom(tokenStart);
-        throw new ParseException(errorMessage, pos);
-    }
-    
-    
-    
+
     private Iterator<Token> tokenIterator;
     
     @Override

@@ -8,10 +8,10 @@ import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 public final class TypeResolver {
 
     
-    public final static void resolveAST(Node root, Namespace namespace) 
-            throws ASTTraversalException {
+    public final static void resolveAST(Node root, Namespace namespace, 
+            ProblemReporter reporter) throws ASTTraversalException {
         
-        final FirstPassTypeResolver fptr = new FirstPassTypeResolver(namespace);
+        final FirstPassTypeResolver fptr = new FirstPassTypeResolver(namespace, reporter);
         root.visit(fptr);
         
         final SecondPassTypeResolver sptr = new SecondPassTypeResolver(fptr);
