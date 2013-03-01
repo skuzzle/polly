@@ -197,4 +197,14 @@ public abstract class VisitorAdapter implements ASTVisitor {
     public int after(Inspect inspect) throws ASTTraversalException {
         return CONTINUE;
     }
+    
+    @Override
+    public int before(Problem problem) throws ASTTraversalException {
+        return CONTINUE;
+    }
+    
+    @Override
+    public int after(Problem problem) throws ASTTraversalException {
+        return CONTINUE;
+    }
 }

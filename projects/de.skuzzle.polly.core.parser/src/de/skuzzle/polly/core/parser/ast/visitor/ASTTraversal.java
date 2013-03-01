@@ -131,5 +131,9 @@ public interface ASTTraversal {
 
     public abstract int before(Inspect inspect) throws ASTTraversalException;
     public abstract int after(Inspect inspect) throws ASTTraversalException;
-
+    
+    
+    
+    public abstract int before(Problem problem) throws ASTTraversalException;
+    public abstract int after(Problem problem) throws ASTTraversalException;
 }

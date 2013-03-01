@@ -2,7 +2,7 @@ package de.skuzzle.polly.core.parser;
 
 public enum TokenType {
     SEPERATOR("Leerzeichen"),
-    LITERAL("Literal"),                     /* only for debug output */
+    LITERAL("Ausdruck"),                     /* only for debug output */
     LIST("Liste"),
     CHANNEL("Channel"),   /* Channel literals */
     USER("User"),               /* User literals */

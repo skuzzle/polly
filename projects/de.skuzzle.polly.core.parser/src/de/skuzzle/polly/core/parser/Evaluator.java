@@ -84,14 +84,14 @@ public class Evaluator {
             }
             
             // set parent attributes for all nodes
-            final ASTVisitor parentSetter = new ParentSetter();
+            /*final ASTVisitor parentSetter = new ParentSetter();
             this.lastResult.visit(parentSetter);
             
             // resolve types
             TypeResolver.resolveAST(this.lastResult, workingNs);
             
             final ASTVisitor executor = getExecutor(rootNs, workingNs);
-            this.lastResult.visit(executor);
+            this.lastResult.visit(executor);*/
             
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("This should not have happened", e);

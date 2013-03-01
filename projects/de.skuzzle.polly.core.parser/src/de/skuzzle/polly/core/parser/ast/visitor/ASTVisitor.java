@@ -58,4 +58,6 @@ public interface ASTVisitor extends ASTTraversal {
     public boolean visit(Delete delete) throws ASTTraversalException;
 
     public boolean visit(Inspect inspect) throws ASTTraversalException;
+    
+    public boolean visit(Problem problem) throws ASTTraversalException;
 }

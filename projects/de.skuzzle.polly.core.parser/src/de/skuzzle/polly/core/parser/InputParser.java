@@ -3,6 +3,7 @@ package de.skuzzle.polly.core.parser;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -125,7 +126,7 @@ public class InputParser {
     
 
     private final PrecedenceTable operators;
-    private int openExpressions;
+    private final Stack<TokenType> expressions;
     protected InputScanner scanner;
     
     
@@ -138,6 +139,7 @@ public class InputParser {
     public InputParser(InputScanner scanner) {
         this.scanner = scanner;
         this.operators = new PrecedenceTable();
+        this.expressions = new LinkedStack<TokenType>();
     }
     
     
@@ -151,6 +153,7 @@ public class InputParser {
     public InputParser(String input) {
         this.scanner = new InputScanner(input);
         this.operators = new PrecedenceTable();
+        this.expressions = new LinkedStack<TokenType>();
     }
     
     
@@ -167,6 +170,7 @@ public class InputParser {
             throws UnsupportedEncodingException {
         this.scanner = new InputScanner(input, Charset.forName(encoding));
         this.operators = new PrecedenceTable();
+        this.expressions = new LinkedStack<TokenType>();
     }
     
     
@@ -225,13 +229,26 @@ public class InputParser {
      * @throws ParseException If the next token has not the expected type.
      */
     protected Token expect(TokenType expected) throws ParseException {
-        Token la = this.scanner.lookAhead();
+        final Token la = this.scanner.lookAhead();
         if (la.getType() != expected) {
             this.scanner.consume();
-            this.unexpectedToken(expected, la);
+            this.problems.add(new SyntaxException(expected, la, this.scanner.spanFrom(la)));
+            this.scanner.pushBackFirst(la);
         }
         this.scanner.consume();
         return la;
+    }
+    
+    
+    
+    private List<SyntaxException> problems = new ArrayList<SyntaxException>();
+    
+    
+    protected Problem createProblem(TokenType expected, Token found) {
+        final SyntaxException se = new SyntaxException(expected, found, 
+            this.scanner.spanFrom(found));
+        this.problems.add(se);
+        return new Problem(this.scanner.spanFrom(found));
     }
     
     
@@ -251,8 +268,14 @@ public class InputParser {
             final EscapedToken esc = (EscapedToken) la;
             return new Identifier(esc.getPosition(), esc.getEscaped().getStringValue(), 
                 true);
+        } else if (!la.matches(TokenType.IDENTIFIER)) {
+            this.scanner.consume();
+            this.problems.add(new SyntaxException(TokenType.IDENTIFIER, la, 
+                this.scanner.spanFrom(la)));
+            this.scanner.pushBackFirst(la);
+            return new Identifier(la.getPosition(), "$error");
         }
-        this.expect(TokenType.IDENTIFIER);
+        this.scanner.consume();
         return new Identifier(la.getPosition(), la.getStringValue());
     }
 
@@ -269,12 +292,26 @@ public class InputParser {
     
     
     /**
-     * Enters a new expression. If at least one epxression is "entered", the scanner will
-     * ignore whitespaces.
+     * Enters a new sub expression. If at least one expression is "entered", the scanner 
+     * will ignore whitespaces.
+     * @param end The tokentype that could close this sub expression.
      */
-    protected void enterExpression() {
-        ++this.openExpressions;
+    protected void enterExpression(TokenType end) {
+        this.expressions.push(end);
         this.scanner.setSkipWhiteSpaces(true);
+    }
+    
+    
+    
+    /**
+     * Determines whether we currently parse a subexpression (<=> whether whitespaces
+     * are skipped.
+     * 
+     * @return Whether we are currently parsing a subexpression where whitespaces are
+     *          allowed.
+     */
+    protected boolean inExpression() {
+        return !this.expressions.isEmpty();
     }
     
     
@@ -284,8 +321,8 @@ public class InputParser {
      * stop ignoring whitespaces.
      */
     protected void leaveExpression() {
-        --this.openExpressions;
-        if (this.openExpressions == 0) {
+        this.expressions.pop();
+        if (this.expressions.isEmpty()) {
             this.scanner.setSkipWhiteSpaces(false);
         }
     }
@@ -803,7 +840,7 @@ public class InputParser {
              * Now we can ignore whitespaces until the matching closing brace is 
              * read.
              */
-            this.enterExpression();
+            this.enterExpression(TokenType.CLOSEDBR);
             
             exp = this.parseRelation();
             this.expect(TokenType.CLOSEDBR);
@@ -814,7 +851,7 @@ public class InputParser {
         case LAMBDA:
             this.scanner.consume();
             
-            this.enterExpression();
+            this.enterExpression(TokenType.CLOSEDBR);
             
             final Collection<Declaration> formal = this.parseParameters(
                 TokenType.COLON);
@@ -834,7 +871,7 @@ public class InputParser {
         case OPENCURLBR:
             this.scanner.consume();
             
-            this.enterExpression();
+            this.enterExpression(TokenType.CLOSEDCURLBR);
             final List<Expression> elements = this.parseExpressionList(
                 TokenType.CLOSEDCURLBR);
             
@@ -917,6 +954,7 @@ public class InputParser {
         case TRUE:
             this.scanner.consume();
             return new BooleanLiteral(la.getPosition(), true);
+            
         case FALSE:
             this.scanner.consume();
             return new BooleanLiteral(la.getPosition(), false);
@@ -944,9 +982,11 @@ public class InputParser {
         case TIMESPAN:
             this.scanner.consume();
             return new TimespanLiteral(la.getPosition(), (int)la.getLongValue());
+            
         case QUESTION:
             this.scanner.consume();
             return new HelpLiteral(la.getPosition());
+            
         case RADIX:
             this.scanner.consume();
             final NumberLiteral radix = new NumberLiteral(la.getPosition(), 
@@ -954,11 +994,13 @@ public class InputParser {
             final Expression rhs = this.parseLiteral();
             return OperatorCall.binary(this.scanner.spanFrom(la), OpType.RADIX, 
                 radix, rhs);
+            
         default:
-            this.expect(TokenType.LITERAL);
+            return this.createProblem(TokenType.LITERAL, la);
+            //this.expect(TokenType.LITERAL);
         }
         
-        return null;
+        //return null;
     }
     
     
@@ -984,14 +1026,15 @@ public class InputParser {
             return new ArrayList<Expression>(0);
         }
         
+        this.enterExpression(end);
         final List<Expression> result = new ArrayList<Expression>();
-        
         result.add(this.parseRelation());
         
         while (this.scanner.match(TokenType.COMMA)) {
             this.allowSingleWhiteSpace();
             result.add(this.parseRelation());
         }
+        this.leaveExpression();
         return result;
     }
     
@@ -1009,13 +1052,14 @@ public class InputParser {
      * @return Collection of parsed formal parameters.
      * @throws ParseException If parsing fails.
      */
-    protected List<Declaration> parseParameters(TokenType end) throws ParseException {
+    protected List<Declaration> parseParameters(TokenType end) 
+            throws ParseException {
         if (this.scanner.lookAhead().matches(end)) {
             // empty list.
             return new ArrayList<Declaration>(0);
         }
         
-        this.enterExpression();
+        this.enterExpression(end);
         final List<Declaration> result = new ArrayList<Declaration>();
         result.add(this.parseParameter());
         

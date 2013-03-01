@@ -113,6 +113,13 @@ public class DepthFirstVisitor extends VisitorAdapter {
     }
 
     
+    
+    @Override
+    public boolean visit(Problem problem) throws ASTTraversalException {
+        return this.before(problem) == CONTINUE && this.after(problem) == CONTINUE;    
+    }
+    
+    
 
     @Override
     public boolean visit(NamespaceAccess access) throws ASTTraversalException {

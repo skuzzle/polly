@@ -3,6 +3,8 @@ package de.skuzzle.polly.core.parser;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -126,6 +128,17 @@ public abstract class AbstractTokenStream implements Iterable<Token>, TokenStrea
     
     
     /**
+     * Whether all characters have been read from the input.
+     * 
+     * @return Whether all characters have been read from the input.
+     */
+    public boolean eosReached() {
+        return this.eos;
+    }
+    
+    
+    
+    /**
      * Gets a {@link TokenStream} view of all consumed tokens. The last token returned
      * by this stream will always have the type {@link TokenType#EOS}.
      * 
@@ -230,9 +243,25 @@ public abstract class AbstractTokenStream implements Iterable<Token>, TokenStrea
      * @throws ParseException If an invalid token has been read while skipping.
      */
     public Token skipUntilNextIs(TokenType...types) throws ParseException {
+        return this.skipUntilNextIs(Arrays.asList(types));
+    }
+    
+    
+    
+    /**
+     * Consumes tokens until the next token to be consumed has 
+     * any of the given types or the end of the stream has been reached.
+     * 
+     * @param types Array of {@link TokenType}s to skip until.
+     * @return The Token to which this method has been skipped. 
+     *      That means that: 
+     *      {@code Token la = skipUntilNextIs(...) => la = this.lookAhead()}.
+     * @throws ParseException If an invalid token has been read while skipping.
+     */
+    public Token skipUntilNextIs(Collection<TokenType> types) throws ParseException {
         while (!this.eos) {
-            Token la = this.lookAhead();
-            for (TokenType type : types) {
+            final Token la = this.lookAhead();
+            for (final TokenType type : types) {
                 if (la.matches(type)) {
                     return la;
                 }

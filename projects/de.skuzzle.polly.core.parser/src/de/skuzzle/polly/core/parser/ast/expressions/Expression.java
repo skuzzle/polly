@@ -50,6 +50,17 @@ public abstract class Expression extends Node {
     public Expression(Position position) {
         this(position, Type.UNKNOWN);
     }
+    
+    
+    
+    /**
+     * Whether this is a problem node. Default value is <code>false</code>.
+     * 
+     * @return Whether this is a problem node.
+     */
+    public boolean isProblem() {
+        return false;
+    }
 
     
     

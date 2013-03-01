@@ -315,6 +315,14 @@ public class ExpASTVisualizer extends DepthFirstVisitor {
     
     
     @Override
+    public int before(Problem problem) throws ASTTraversalException {
+        this.dotBuilder.printExpression("Problem", problem);
+        return CONTINUE;
+    }
+    
+    
+    
+    @Override
     public int before(Declaration decl) throws ASTTraversalException {
         final StringBuilder b = new StringBuilder();
         b.append("Usage (by name):\\n");
