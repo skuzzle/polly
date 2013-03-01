@@ -15,9 +15,6 @@ import de.skuzzle.polly.parsing.ast.Identifier;
  */
 public class ProductType extends Type implements Iterable<Type> {
 
-    private static final long serialVersionUID = 1L;
-
-
     private static Identifier typeName(Collection<Type> types) {
         final StringBuilder b = new StringBuilder();
         //b.append("(");

@@ -1,6 +1,5 @@
 package de.skuzzle.polly.parsing.ast.declarations.types;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,12 +24,9 @@ import de.skuzzle.polly.tools.Equatable;
  * 
  * @author Simon Taddiken
  */
-public class Type implements Serializable, Visitable<TypeVisitor>, Equatable {
+public class Type implements Visitable<TypeVisitor>, Equatable {
     
     // XXX: static field order important!
-    
-    private static final long serialVersionUID = 1L;
-    
 
     /** Primitive type for Numbers. */
     public final static Type NUM = new Type(new Identifier("num"), true, true);

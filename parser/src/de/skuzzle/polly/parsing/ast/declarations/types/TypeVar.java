@@ -11,9 +11,6 @@ import de.skuzzle.polly.parsing.ast.Identifier;
  */
 public class TypeVar extends Type {
 
-    private static final long serialVersionUID = 1L;
-    
-
     /**
      * Creates a new TypeVar with the given name.
      * 

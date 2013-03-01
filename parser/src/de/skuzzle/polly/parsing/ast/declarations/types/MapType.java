@@ -10,10 +10,6 @@ import de.skuzzle.polly.parsing.ast.Identifier;
  */
 public class MapType extends Type {
     
-    private static final long serialVersionUID = 1L;
-
-
-
     private final static Identifier typeName(Type source, Type target) {
         final StringBuilder b = new StringBuilder();
         b.append("(");

@@ -10,8 +10,6 @@ import de.skuzzle.polly.parsing.ast.Identifier;
  */
 public class ListType extends Type {
     
-    private static final long serialVersionUID = 1L;
-    
     private Type subType;
 
     
