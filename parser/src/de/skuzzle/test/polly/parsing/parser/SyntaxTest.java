@@ -190,4 +190,22 @@ public class SyntaxTest extends AbstractParserTest {
         final InputParser parser = this.obtain(input);
         parser.parse();
     }
+    
+    
+    
+    @Test
+    public void parseTest21() throws ParseException {
+        final String input = ":foo \\( list<(num->num)> a: a)";
+        final InputParser parser = this.obtain(input);
+        parser.parse();
+    }
+    
+    
+    
+    @Test
+    public void parseTest22() throws ParseException {
+        final String input = ":foo \\( list<((string->string)->list<string>)> a: a)";
+        final InputParser parser = this.obtain(input);
+        parser.parse();
+    }
 }
