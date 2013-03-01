@@ -226,4 +226,13 @@ public class SyntaxTest extends AbstractParserTest {
         final InputParser parser = this.obtain(input);
         parser.parse();
     }
+    
+    
+    
+    @Test
+    public void parseTest25() throws ParseException {
+        final String input = ":foo 1>>>3";
+        final InputParser parser = this.obtain(input);
+        parser.parse();
+    }
 }

@@ -45,7 +45,7 @@ public class PrecedenceTable {
         this.add(PrecedenceLevel.SECTERM, TokenType.SUB);
         this.add(PrecedenceLevel.SECTERM, TokenType.WAVE);
         this.add(PrecedenceLevel.SECTERM, TokenType.GT); // ISSUE #12: parser makes effort to recognize a rightshift here
-        this.add(PrecedenceLevel.SECTERM, TokenType.URIGHT_SHIFT);
+        //this.add(PrecedenceLevel.SECTERM, TokenType.URIGHT_SHIFT);
         this.add(PrecedenceLevel.SECTERM, TokenType.LEFT_SHIFT);
         
         // ISSUE 0000099: Add open brace and identifier to TERM precedence level so they

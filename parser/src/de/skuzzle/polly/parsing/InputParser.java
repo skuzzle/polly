@@ -474,11 +474,16 @@ public class InputParser {
         while (this.operators.match(la, PrecedenceLevel.SECTERM)) {
             this.scanner.consume();
             
-            // ISSUE #12: this is a right shift
+            // ISSUE #12: this is a (unsigned) right shift
             if (la.matches(TokenType.GT) && this.scanner.lookAhead().matches(TokenType.GT)) {
                 this.scanner.consume();
-                la = new Token(TokenType.RIGHT_SHIFT, this.scanner.spanFrom(la));
+                if (this.scanner.match(TokenType.GT)) {
+                    la = new Token(TokenType.URIGHT_SHIFT, this.scanner.spanFrom(la));
+                } else {
+                    la = new Token(TokenType.RIGHT_SHIFT, this.scanner.spanFrom(la));
+                }
             }
+            
             
             final Expression rhs = this.parseTerm();
             
