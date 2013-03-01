@@ -1033,10 +1033,7 @@ public class InputParser {
             
         default:
             return this.createProblem(TokenType.LITERAL, la);
-            //this.expect(TokenType.LITERAL);
         }
-        
-        //return null;
     }
     
     
