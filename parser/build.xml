@@ -39,6 +39,7 @@
     -->
     <property name="includeJars" value="
         polly.tools.jar
+        junit-4.7.jar
     "/>
     
     <path id="buildpath">
@@ -48,7 +49,7 @@
     
     <path id="buildpath_eclipse">
         <fileset id="jars" dir="${lib.dir}" 
-            includes="${includeJars} junit.jar"
+            includes="${includeJars}"
             excludes="
                 polly.tools.jar"/>
     </path>
@@ -90,7 +91,7 @@
     <target name="build">
         <mkdir dir="${bin.dir}"/>
         <javac srcdir="${src.dir}" destdir="${bin.dir}" classpathref="buildpath" source="1.6" target="1.6" debug="off" encoding="iso-8859-1">
-            <exclude name="de/skuzzle/test/**"/>
+
         </javac>
     </target>
     
@@ -122,11 +123,36 @@
                 <attribute name="Implementation-Version" value="${version.num}"/>
                 <attribute name="Class-Path"             value="${classpath}"/>
             </manifest>
-            <fileset dir="${bin.dir}"/>
-            <fileset dir="${src.dir}"/>
+            <fileset dir="${bin.dir}">
+                <exclude name="de/skuzzle/test/**"/>
+            </fileset>
+            <fileset dir="${src.dir}">
+                <exclude name="de/skuzzle/test/**"/>
+            </fileset>
         </jar>
     </target>
+    
 
+    
+    <target name="test" depends="build">
+        <jar destfile="${dist.dir}/${ant.project.name}-tests.jar">
+            <fileset dir="${bin.dir}"/>
+        </jar>
+        <junit>
+            <classpath>
+                <pathelement path="${lib.dir}/junit-4.7.jar"/>
+                <pathelement path="${lib.dir}/polly.tools.jar"/>
+                <pathelement location="${dist.dir}/${ant.project.name}-tests.jar"/>
+            </classpath>
+            <formatter type="brief" usefile="false" />
+            <batchtest>
+                <fileset dir="${bin.dir}">
+                    <include name="de/skuzzle/test/**"/>
+                </fileset>
+            </batchtest>
+            
+        </junit>
+    </target>
     
     
     <!--

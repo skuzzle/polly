@@ -1,9 +1,11 @@
 package de.skuzzle.test.polly.parsing.scanner;
 
+import org.junit.Ignore;
+
 import de.skuzzle.polly.parsing.AbstractTokenStream;
 import de.skuzzle.polly.parsing.InputScanner;
 
-
+@Ignore
 public abstract class AbstractScannerTest {
 
     /**

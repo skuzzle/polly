@@ -3,6 +3,7 @@ package de.skuzzle.test.polly.parsing.scanner;
 
 import junit.framework.Assert;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.skuzzle.polly.parsing.InputScanner;
@@ -15,6 +16,7 @@ import de.skuzzle.polly.parsing.InputScanner;
 public class TestReadCharacters extends AbstractScannerTest {
     
     /** Changes visibility of character reading methods */
+    @Ignore
     private final class PublicTokenStream extends InputScanner {
         
         public PublicTokenStream(String input) {

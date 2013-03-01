@@ -1,5 +1,7 @@
 package de.skuzzle.test.polly.parsing.parser;
 
+import org.junit.Ignore;
+
 import de.skuzzle.polly.parsing.InputParser;
 
 
@@ -8,6 +10,7 @@ import de.skuzzle.polly.parsing.InputParser;
  * 
  * @author Simon Taddiken
  */
+@Ignore
 public abstract class AbstractParserTest {
 
     public InputParser obtain(String input) {
