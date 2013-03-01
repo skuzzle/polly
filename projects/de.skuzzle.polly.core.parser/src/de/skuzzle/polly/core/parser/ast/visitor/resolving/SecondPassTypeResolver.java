@@ -207,8 +207,10 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
             this.reportError(call.getLhs(), 
                 "Keine passende Deklaration für den Aufruf von " + 
                 Unparser.toString(call.getLhs()) + " gefunden");
+            return CONTINUE;
         } else if (matched.size() != 1) {
             this.ambiguousCall(call, matched);
+            return CONTINUE;
         }
 
         final MapType mtc = (MapType) matched.iterator().next();

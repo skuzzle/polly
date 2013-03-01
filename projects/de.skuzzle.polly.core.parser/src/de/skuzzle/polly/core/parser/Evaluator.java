@@ -88,14 +88,16 @@ public class Evaluator {
             }
             
             // set parent attributes for all nodes
-            /*final ASTVisitor parentSetter = new ParentSetter();
+            final ASTVisitor parentSetter = new ParentSetter();
             this.lastResult.visit(parentSetter);
             
             // resolve types
-            TypeResolver.resolveAST(this.lastResult, workingNs);
+            TypeResolver.resolveAST(this.lastResult, workingNs, this.reporter);
             
-            final ASTVisitor executor = getExecutor(rootNs, workingNs);
-            this.lastResult.visit(executor);*/
+            if (!this.reporter.hasProblems()) {
+                final ASTVisitor executor = getExecutor(rootNs, workingNs);
+                this.lastResult.visit(executor);
+            }
             
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("This should not have happened", e);
@@ -107,7 +109,7 @@ public class Evaluator {
     
     
     public boolean errorOccurred() {
-        return this.lastError != null;
+        return this.reporter.hasProblems();
     }
     
     

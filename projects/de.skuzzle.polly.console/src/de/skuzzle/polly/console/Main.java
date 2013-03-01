@@ -93,8 +93,9 @@ public class Main {
                 continue;
             }
             
+            final MultipleProblemReporter mpr = new MultipleProblemReporter();
             final Evaluator eval = new Evaluator(":result \">\" " + cmd, "ISO-8859-1", 
-                new SimpleProblemReporter());
+                mpr);
             
             try {
                 eval.evaluate(ns, ns);
@@ -103,25 +104,28 @@ public class Main {
             }
             
             if (eval.errorOccurred()) {
-                final ASTTraversalException e = eval.getLastError();
-                Position pos = new Position(e.getPosition().getStart() - 12, 
-                    e.getPosition().getEnd() - 12);
-                final ASTTraversalException e1 = 
-                    new ASTTraversalException(pos, e.getPlainMessage());
-                System.out.println(e1.getMessage());
+                
+                Position firstPos = mpr.problemPositions().iterator().next();
+                Position pos = new Position(firstPos.getStart() - 12, 
+                    firstPos.getEnd() - 12);
+
                 System.out.println("    " + cmd);
-                System.out.println("    " + e1.getPosition().errorIndicatorString());
-                try {
-                    // HACK: wait a little to be sure stack trace in printed after sysout
-                    Thread.sleep(20);
-                } catch (InterruptedException e2) {
-                    throw new RuntimeException(e2);
+                System.out.println("    " + pos.errorIndicatorString());
+                
+                for (final Problem problem : mpr.getProblems()) {
+                    System.out.println(problem.getMessage() + ". " + problem.getPosition());
+                    try {
+                        // HACK: wait a little to be sure stack trace in printed after sysout
+                        Thread.sleep(20);
+                    } catch (InterruptedException e2) {
+                        throw new RuntimeException(e2);
+                    }
                 }
-                e.printStackTrace();
+            } else {
+                System.out.println(eval.getRoot().toString());
             }
             
             if (eval.getRoot() != null){
-                System.out.println(eval.getRoot().toString());
                 
                 final ExpASTVisualizer av = new ExpASTVisualizer();
                 av.visualize(eval.getRoot(), new PrintStream("lastAst.dot"), ns);

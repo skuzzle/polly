@@ -1,6 +1,6 @@
 package de.skuzzle.polly.parsing.problems;
 
-import java.util.List;
+import java.util.Collection;
 
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Position;
@@ -24,7 +24,7 @@ public interface ProblemReporter {
      * 
      * @author Simon Taddiken
      */
-    public final static class Problem {
+    public final static class Problem implements Comparable<Problem> {
         protected final int type;
         protected final Position position;
         protected final String message;
@@ -32,7 +32,7 @@ public interface ProblemReporter {
         
         
         public Problem(int type, Position position, String message) {
-            if (type != LEXICAL || type != SYNTACTICAL || type != SEMATICAL) {
+            if (type != LEXICAL && type != SYNTACTICAL && type != SEMATICAL) {
                 throw new IllegalArgumentException("illegal problem type");
             }
             this.type = type;
@@ -75,6 +75,13 @@ public interface ProblemReporter {
         public String getMessage() {
             return this.message;
         }
+        
+        
+        
+        @Override
+        public int compareTo(Problem o) {
+            return this.position.compareTo(o.position);
+        }
     }
     
     
@@ -98,12 +105,12 @@ public interface ProblemReporter {
     public boolean hasProblems();
     
     /**
-     * Gets a list of all positions within the source where errors occurred. The 
-     * resulting list will be sorted.
+     * Gets a collection of all positions within the source where errors occurred. The 
+     * resulting collection will be sorted.
      * 
-     * @return List of problem locations.
+     * @return Collection of problem locations.
      */
-    public List<Position> problemPositions();
+    public Collection<Position> problemPositions();
     
     public void lexicalProblem(String problem, Position position) 
         throws ParseException;

@@ -8,7 +8,7 @@ import de.skuzzle.polly.parsing.ast.Identifier;
  * @author Simon Taddiken
  */
 public class MissingType extends Type {
-
+    
     public MissingType(Identifier name) {
         super(name, false, true);
     }

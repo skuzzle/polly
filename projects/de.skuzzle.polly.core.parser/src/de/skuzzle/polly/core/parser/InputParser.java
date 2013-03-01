@@ -281,10 +281,11 @@ public class InputParser {
             result = this.typeCache.get(name.getId());
         }
         if (result == null) {
+            String oldName = name.getId();
             name = this.missingIdentifier(name.getPosition());
             result = new MissingType(name);
             this.typeCache.put(name.getId(), result);
-            this.reporter.syntaxProblem("Unbekannter Typ: " + name, name.getPosition());
+            this.reporter.syntaxProblem("Unbekannter Typ: " + oldName, name.getPosition());
         }
         return result;
     }

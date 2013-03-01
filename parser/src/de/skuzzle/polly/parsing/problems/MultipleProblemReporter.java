@@ -1,8 +1,11 @@
 package de.skuzzle.polly.parsing.problems;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import de.skuzzle.polly.parsing.ParseException;
 import de.skuzzle.polly.parsing.Position;
@@ -18,12 +21,12 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
  */
 public class MultipleProblemReporter implements ProblemReporter {
 
-    private final List<Problem> problems;
+    private final SortedSet<Problem> problems;
     
     
     
     public MultipleProblemReporter() {
-        this.problems = new ArrayList<MultipleProblemReporter.Problem>();
+        this.problems = new TreeSet<MultipleProblemReporter.Problem>();
     }
     
     
@@ -33,7 +36,7 @@ public class MultipleProblemReporter implements ProblemReporter {
      * 
      * @return List of problems.
      */
-    public List<Problem> getProblems() {
+    public Collection<Problem> getProblems() {
         return this.problems;
     }
     
@@ -47,12 +50,11 @@ public class MultipleProblemReporter implements ProblemReporter {
     
     
     @Override
-    public List<Position> problemPositions() {
-        final List<Position> result = new ArrayList<Position>(this.problems.size());
+    public Collection<Position> problemPositions() {
+        final SortedSet<Position> result = new TreeSet<Position>();
         for (final Problem problem : this.problems) {
             result.add(problem.getPosition());
         }
-        Collections.sort(result);
         return result;
     }
     

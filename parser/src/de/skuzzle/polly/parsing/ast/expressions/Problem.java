@@ -1,7 +1,9 @@
 package de.skuzzle.polly.parsing.ast.expressions;
 
 import de.skuzzle.polly.parsing.Position;
+import de.skuzzle.polly.parsing.ast.Identifier;
 import de.skuzzle.polly.parsing.ast.Node;
+import de.skuzzle.polly.parsing.ast.declarations.types.MissingType;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversal;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
@@ -9,9 +11,12 @@ import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 
 
 public class Problem extends Expression {
-
+    
+    private static int id;
+    
     public Problem(Position position) {
-        super(position);
+        super(position, new MissingType(
+            new Identifier(position, "$problem_" + (id++))));
     }
     
     
