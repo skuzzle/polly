@@ -48,7 +48,7 @@
     
     <path id="buildpath_eclipse">
         <fileset id="jars" dir="${lib.dir}" 
-            includes="${includeJars}"
+            includes="${includeJars} junit.jar"
             excludes="
                 polly.tools.jar"/>
     </path>
