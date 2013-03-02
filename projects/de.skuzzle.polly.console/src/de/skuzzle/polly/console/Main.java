@@ -5,6 +5,14 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.TreeSet;
+
+import sun.security.krb5.internal.PAData;
 
 import de.skuzzle.polly.core.parser.Evaluator;
 import de.skuzzle.polly.core.parser.Position;
@@ -14,6 +22,7 @@ import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.ExpASTVisualizer;
 import de.skuzzle.polly.process.KillingProcessWatcher;
 import de.skuzzle.polly.process.ProcessExecutor;
+import de.skuzzle.polly.tools.strings.StringUtils;
 
 
 
@@ -29,6 +38,19 @@ public class Main {
         @Override
         public boolean accept(File pathname) {
             return pathname.getName().toLowerCase().endsWith(".decl");
+        }
+    };
+    
+    
+    private final static Comparator<Problem> PROBLEM_COMP = new Comparator<ProblemReporter.Problem>() {
+
+        @Override
+        public int compare(Problem o1, Problem o2) {
+            int r = o1.getType() - o2.getType();
+            if (r == 0) {
+                r = o1.getPosition().compareTo(o2.getPosition());
+            }
+            return r;
         }
     };
     
@@ -105,22 +127,12 @@ public class Main {
             
             if (eval.errorOccurred()) {
                 
-                Position firstPos = mpr.problemPositions().iterator().next();
-                Position pos = new Position(firstPos.getStart() - 12, 
-                    firstPos.getEnd() - 12);
-
                 System.out.println("    " + cmd);
-                System.out.println("    " + pos.errorIndicatorString());
-                
-                for (final Problem problem : mpr.getProblems()) {
-                    System.out.println(problem.getMessage() + ". " + problem.getPosition());
-                    try {
-                        // HACK: wait a little to be sure stack trace in printed after sysout
-                        Thread.sleep(20);
-                    } catch (InterruptedException e2) {
-                        throw new RuntimeException(e2);
-                    }
+                for (String indi : Position.indicatorStrings(mpr.problemPositions(), -12)) {
+                    System.out.println("    " + indi);
                 }
+                
+                formatProblems(mpr.getProblems(), -12);
             } else {
                 System.out.println(eval.getRoot().toString());
             }
@@ -137,6 +149,46 @@ public class Main {
                 pe.setProcessWatcher(new KillingProcessWatcher(10000, true));
                 pe.start();
             }
+        }
+    }
+    
+    
+    private static void formatProblems(Collection<Problem> problems, int offset) {
+        final String[] types = new String[3];
+        types[ProblemReporter.LEXICAL] = "Lexical";
+        types[ProblemReporter.SYNTACTICAL] = "Syntactical";
+        types[ProblemReporter.SEMATICAL] = "Semantical";
+        int longestType = "Syntactical".length();
+        int longestMsg = 0;
+        
+        for (final Problem problem : problems) {
+            longestMsg = Math.max(longestMsg, problem.getMessage().length());
+        }
+        
+        StringBuilder header = new StringBuilder();
+        header.append("Type");
+        StringUtils.padSpaces(longestType, header.length(), header);
+        header.append(" | Message");
+        StringUtils.padSpaces(6 + longestType + longestMsg, header.length(), header);
+        header.append(" | Position");
+        System.out.println(header.toString());
+        for (int i = 0; i < header.length(); ++i) {
+            System.out.print("-");
+        }
+        System.out.println();
+        
+        List<Problem> probs = new ArrayList<ProblemReporter.Problem>(problems);
+        Collections.sort(probs, PROBLEM_COMP);
+        for (final Problem problem : probs) {
+            final StringBuilder b = new StringBuilder();
+            b.append(types[problem.getType()]);
+            StringUtils.padSpaces(longestType, b.length(), b);
+            b.append(" | ");
+            b.append(problem.getMessage());
+            StringUtils.padSpaces(6 + longestType + longestMsg, b.length(), b);
+            b.append(" | ");
+            b.append(problem.getPosition().offset(offset).toString());
+            System.out.println(b.toString());
         }
     }
 }

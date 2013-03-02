@@ -32,14 +32,16 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
     
     
     
-    private void applyType(Expression parent, Expression child) 
+    private boolean applyType(Expression parent, Expression child) 
             throws ASTTraversalException {
         if (parent.getTypes().size() == 1 && !child.typeResolved()) {
             child.setUnique(parent.getTypes().get(0));
             parent.setUnique(child.getUnique());
-        } else if (!child.typeResolved()){
+            return true;
+        } else if (!child.typeResolved() && !this.reporter.hasProblems()) {
             this.reportError(parent, "Nicht eindeutiger Typ");
         }
+        return false;
     }
     
     
@@ -73,7 +75,9 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         case ABORT: return false;
         }
         
-        this.applyType(func, func);
+        if (!this.applyType(func, func)) {
+            return true;
+        }
         
         final MapType mtc = (MapType) func.getUnique();
         func.getBody().setUnique(mtc.getTarget());

@@ -12,7 +12,7 @@ import java.util.Map;
  * 
  * @author Simon Taddiken
  */
-public final class TypeUnifier {
+final class TypeUnifier {
     
     
 
@@ -85,6 +85,11 @@ public final class TypeUnifier {
         
         if (s == t) { // this also covers the case that both t and s are the same primitive
             return true;
+        } else if (s instanceof MissingType || t instanceof MissingType) {
+            // missing types are compatible to everything
+            this.union(s, t, subst);
+            return true;
+            
         } else if (s instanceof MapType && t instanceof MapType) {
             this.union(s, t, subst);
             final MapType mc1 = (MapType) s;

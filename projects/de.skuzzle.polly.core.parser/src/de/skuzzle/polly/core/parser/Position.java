@@ -1,7 +1,11 @@
 package de.skuzzle.polly.core.parser;
 
 import java.io.Serializable;
-
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.TreeSet;
 
 import de.skuzzle.polly.tools.EqualsHelper;
 import de.skuzzle.polly.tools.Equatable;
@@ -32,6 +36,53 @@ public class Position implements Serializable, Equatable, Immutable,
      */
     public final static Position NONE = new Position(-1, -1);
     
+    
+    
+    /**
+     * Creates a list of indicator strings from the given collection of positions. 
+     * Disjunct position will be placed in one line.
+     * 
+     * @param positions Collection of positions.
+     * @param offset Offset to add to each position before creating the string.
+     * @return A list of error indicator strings.
+     */
+    public static List<String> indicatorStrings(Collection<Position> positions, 
+            int offset) {
+        
+        final List<String> result = new ArrayList<String>(positions.size());
+        final TreeSet<Position> posis = new TreeSet<Position>(positions);
+        
+        while (!posis.isEmpty()) {
+            final Position next = posis.pollFirst();
+            final StringBuilder b = new StringBuilder();
+            b.append(next.offset(offset).errorIndicatorString());
+            
+            final Iterator<Position> it = posis.iterator();
+            while (it.hasNext()) {
+                final Position pos = it.next();
+                if (next.overlap(pos)) {
+                    break;
+                } else {
+                    final Position off = pos.offset(offset);
+                    while (b.length() < off.start) {
+                        b.append(" ");
+                    }
+                    b.append("^");
+                    if (off.getWidth() > 1) {
+                        while (b.length() < off.end - 1) {
+                            b.append("-");
+                        }
+                        b.append("^");
+                    }
+                    it.remove();
+                }
+            }
+            result.add(b.toString());
+        }
+        
+        return result;
+    }
+
     
     
     private final int start;
@@ -77,6 +128,62 @@ public class Position implements Serializable, Equatable, Immutable,
     public Position(Position left, Position right) {
         this(left.getStart(), right.getEnd());
     }
+    
+    
+    
+    /**
+     * Determines whether this position and the given represent overlapping string parts.
+     * 
+     * @param position Position to compare.
+     * @return If the positions overlap each other.
+     */
+    public boolean overlap(Position position) {
+        if (this.start < position.start) {
+            return this.end > position.start;
+        } else {
+            return position.end > this.start;
+        }
+    }
+    
+    
+    
+    /**
+     * Creates a new Position by adding the given offset to this position's start and 
+     * end.
+     * 
+     * @param offset The offset to end.
+     * @return A new position.
+     */
+    public Position offset(int offset) {
+        return new Position(this.start + offset, this.end + offset);
+    }
+    
+    
+    
+    /**
+     * Creates a new position spanning from the start of the given position to the end
+     * of this position.
+     * 
+     * @param start Start position.
+     * @return A new position.
+     */
+    public Position spanFrom(Position start) {
+        return new Position(start, this);
+    }
+    
+    
+    
+    /**
+     * Creates a new position spanning from the start of this position to the end of the
+     * given position.
+     * 
+     * @param end End position.
+     * @return A new position.
+     */
+    public Position spanTo(Position end) {
+        return new Position(this, end);
+    }
+    
     
     
     /**
