@@ -377,7 +377,7 @@ public class CommandManagerImpl implements CommandManager {
     
     private Map<String, Types> getCommandConstants(String input) {
         try {
-            InputScanner s = new InputScanner(input, new SimpleProblemReporter());
+            InputScanner s = new InputScanner(input);
             Token id = s.lookAhead();
             if (!id.matches(TokenType.COMMAND)) {
                 return null;
