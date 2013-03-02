@@ -156,12 +156,13 @@ public class InputParser {
      * It will use the same {@link ProblemReporter} as the provided scanner.
      * 
      * @param scanner The {@link InputScanner} which provides the token stream.
+     * @param reporter The ProblemReporter for this parser.
      */
-    public InputParser(InputScanner scanner) {
+    public InputParser(InputScanner scanner, ProblemReporter reporter) {
         this.scanner = scanner;
         this.operators = new PrecedenceTable();
         this.expressions = new LinkedStack<TokenType>();
-        this.reporter = scanner.getReporter();
+        this.reporter = reporter;
     }
     
     
@@ -174,7 +175,7 @@ public class InputParser {
      * @param reporter The ProblemReporter for this parser.
      */
     public InputParser(String input, ProblemReporter reporter) {
-        this.scanner = new InputScanner(input, reporter);
+        this.scanner = new InputScanner(input);
         this.operators = new PrecedenceTable();
         this.expressions = new LinkedStack<TokenType>();
         this.reporter = reporter;
@@ -193,7 +194,7 @@ public class InputParser {
      */
     public InputParser(String input, String encoding, ProblemReporter reporter) 
             throws UnsupportedEncodingException {
-        this.scanner = new InputScanner(input, Charset.forName(encoding), reporter);
+        this.scanner = new InputScanner(input, Charset.forName(encoding));
         this.operators = new PrecedenceTable();
         this.expressions = new LinkedStack<TokenType>();
         this.reporter = reporter;
@@ -228,27 +229,6 @@ public class InputParser {
      */
     public Root parse() throws ParseException {
         return this.parseRoot();
-    }
-    
-    
-    
-    /**
-     * Throws a {@link ParseException} if the not token has not the expected type. If the 
-     * next token is the expected one, it is consumed and returned.
-     * 
-     * @param expected Expected token type.
-     * @return The consumed expected token.
-     * @throws ParseException If the next token has not the expected type.
-     */
-    protected Token expect(TokenType expected) throws ParseException {
-        final Token la = this.scanner.lookAhead();
-        if (la.getType() != expected) {
-            this.scanner.consume();
-            this.reporter.syntaxProblem(expected, la, this.scanner.spanFrom(la));
-            this.scanner.pushBackFirst(la);
-        }
-        this.scanner.consume();
-        return la;
     }
     
     
@@ -290,41 +270,69 @@ public class InputParser {
     
     
     
-
     /**
-     * Creates a new {@link Problem} node and simultaneously reports the problem to 
-     * the {@link ProblemReporter} of this parser.
+     * Expects the next token to have the type <code>expected</code>. If the next token is
+     * the expected one, it is consumed. If the next token represents a lexical error or 
+     * has not the expected type, a problem is reported.
      * 
-     * @param expected The expected token.
-     * @param found The token that occurred instead.
-     * @return A new {@link Problem} node.
-     * @throws ParseException Can be thrown by the ProblemReporter if it does not support
-     *          multiple problems.
+     * <p>If a problem occurred and <code>insert</code> is <code>true</code>, this method
+     * pretends that the occurred token was the expected one and does not consume the
+     * token that occurred instead.</p>
+     * 
+     * <p>If <code>insert</code> is <code>false</code>, the token that occurred instead 
+     * of the expected one is consumed. This behaves like replacing the unexpected token
+     * with the expected.</p>
+     * 
+     * 
+     * @param expected Expected token type.
+     * @param insert Whether method should pretend that expected token occurred if it
+     *          does not.
+     * @throws ParseException If the next token has not the expected type.
      */
-    protected Problem createProblem(TokenType expected, Token found) 
-            throws ParseException {
-        this.reporter.syntaxProblem(expected, found, this.scanner.spanFrom(found));
-        return new Problem(this.scanner.spanFrom(found));
+    protected void expect(TokenType expected, boolean insert) throws ParseException {
+        final Token la = this.scanner.lookAhead();
+        if (la.matches(TokenType.ERROR)) {
+            // report lexical error
+            this.scanner.consume();
+            this.reporter.lexicalProblem(la.getStringValue(), la.getPosition());
+            if (!insert) {
+                this.scanner.pushBackFirst(la);
+            }
+        } else if (!la.matches(expected)) {
+            // report unexpected token
+            this.scanner.consume();
+            this.reporter.syntaxProblem(expected, la, this.scanner.spanFrom(la));
+            this.scanner.pushBackFirst(la);
+        }
+        if (!insert || la.matches(expected)) {
+            // consume if token should not be inserted or was the expected one
+            this.scanner.consume();
+        }
     }
     
     
     
     /**
-     * Expects the next token to be an {@link Identifier}. If not, a 
-     * {@link ParseException} is thrown. Otherwise, a new {@link Identifier} will be 
-     * created and returned. This method also recognizes escaped tokens as identifiers.
+     * Expects the next token to be an {@link Identifier}. If it is, it will be consumed
+     * and a new Identifier will be returned. If the next token represents a lexical
+     * error or is no identifier, a problem is reported.
      * 
      * @return An {@link Identifier} created from the next token.
      * @throws ParseException If the next token is no identifier.
      */
     protected Identifier expectIdentifier() throws ParseException {
         final Token la = this.scanner.lookAhead();
-        if (ESCAPABLE && la.matches(TokenType.ESCAPED)) {
+        if (la.matches(TokenType.ERROR)) {
+            // report lexical error
+            this.reporter.lexicalProblem(la.getStringValue(), la.getPosition());
+        } else if (ESCAPABLE && la.matches(TokenType.ESCAPED)) {
+            // create escaped identifier
             this.scanner.consume();
             final EscapedToken esc = (EscapedToken) la;
             return new Identifier(esc.getPosition(), esc.getEscaped().getStringValue(), 
                 true);
         } else if (!la.matches(TokenType.IDENTIFIER)) {
+            // report missing identifier
             this.scanner.consume();
             this.reporter.syntaxProblem(TokenType.IDENTIFIER, la, 
                 this.scanner.spanFrom(la));
@@ -419,7 +427,7 @@ public class InputParser {
             } while (this.scanner.match(TokenType.SEPERATOR));
         }
         
-        this.expect(TokenType.EOS);
+        this.expect(TokenType.EOS, false);
         root = new Root(this.scanner.spanFrom(start), cmd, signature, 
             this.reporter.hasProblems());
         
@@ -679,7 +687,7 @@ public class InputParser {
                     new Position(lhs.getPosition(), rhs.getPosition()), 
                     OpType.fromToken(la), lhs, rhs);
                 
-                this.expect(TokenType.CLOSEDSQBR);
+                this.expect(TokenType.CLOSEDSQBR, true);
             } else {
                 // ? or ?! operator
                 final Position endPos = this.scanner.spanFrom(la);
@@ -808,7 +816,7 @@ public class InputParser {
                 TokenType.CLOSEDBR);
             final ProductLiteral pl = new ProductLiteral(
                 this.scanner.spanFrom(la), params);
-            this.expect(TokenType.CLOSEDBR);
+            this.expect(TokenType.CLOSEDBR, true);
             
             return new Call(
                 new Position(lhs.getPosition().getStart(), this.scanner.getStreamIndex()), 
@@ -900,7 +908,7 @@ public class InputParser {
             this.enterExpression(TokenType.CLOSEDBR);
             
             exp = this.parseRelation();
-            this.expect(TokenType.CLOSEDBR);
+            this.expect(TokenType.CLOSEDBR, true);
             
             this.leaveExpression();
             return new Braced(this.scanner.spanFrom(la), exp);
@@ -912,11 +920,11 @@ public class InputParser {
             
             final Collection<Declaration> formal = this.parseParameters(
                 TokenType.COLON);
-            this.expect(TokenType.COLON);
+            this.expect(TokenType.COLON, true);
             
             exp = this.parseRelation();
             
-            this.expect(TokenType.CLOSEDBR);
+            this.expect(TokenType.CLOSEDBR, true);
             
             final FunctionLiteral func = new FunctionLiteral(
                 this.scanner.spanFrom(la), formal, exp);
@@ -932,7 +940,7 @@ public class InputParser {
             final List<Expression> elements = this.parseExpressionList(
                 TokenType.CLOSEDCURLBR);
             
-            this.expect(TokenType.CLOSEDCURLBR);
+            this.expect(TokenType.CLOSEDCURLBR, true);
             this.leaveExpression();
             
             final ListLiteral list = new ListLiteral(this.scanner.spanFrom(la), 
@@ -994,13 +1002,13 @@ public class InputParser {
             final Expression condition = this.parseRelation();
             this.allowSingleWhiteSpace();
             
-            this.expect(TokenType.COLON);
+            this.expect(TokenType.COLON, true);
             this.allowSingleWhiteSpace();
             
             final Expression second = this.parseRelation();
             
             this.allowSingleWhiteSpace();
-            this.expect(TokenType.COLON);
+            this.expect(TokenType.COLON, true);
             this.allowSingleWhiteSpace();
             
             final Expression third = this.parseRelation();
@@ -1053,7 +1061,8 @@ public class InputParser {
                 radix, rhs);
             
         default:
-            return this.createProblem(TokenType.LITERAL, la);
+            this.expect(TokenType.LITERAL, true);
+            return new Problem(this.scanner.spanFrom(la));
         }
     }
     
@@ -1169,17 +1178,17 @@ public class InputParser {
             
             this.scanner.setSkipWhiteSpaces(skipWS);
             this.allowSingleWhiteSpace();
-            this.expect(TokenType.ASSIGNMENT);
+            this.expect(TokenType.ASSIGNMENT, true);
             final Type resultType = this.parseType();
             this.allowSingleWhiteSpace();
             
-            this.expect(TokenType.CLOSEDBR);
+            this.expect(TokenType.CLOSEDBR, true);
             return new MapType(new ProductType(signature), 
                 resultType);
         } else if (this.scanner.match(TokenType.LIST)) {
-            this.expect(TokenType.LT);
+            this.expect(TokenType.LT, true);
             final Type subType = this.parseType();
-            this.expect(TokenType.GT);
+            this.expect(TokenType.GT, true);
             return new ListType(subType);
         } else if (la.matches(TokenType.IDENTIFIER)) {
             return this.lookupType(this.expectIdentifier());

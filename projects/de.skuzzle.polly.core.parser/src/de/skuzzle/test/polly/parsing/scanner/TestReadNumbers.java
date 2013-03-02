@@ -112,11 +112,11 @@ public class TestReadNumbers extends AbstractScannerTest {
     
     
     
-    @Test(expected = ParseException.class)
+    @Test
     public final void testReadNumber10() throws ParseException {
         final String input = "5m10h5h";
         final AbstractTokenStream scanner = this.obtain(input);
-        scanner.lookAhead();
+        Assert.assertTrue(scanner.match(TokenType.ERROR));
     }
     
     

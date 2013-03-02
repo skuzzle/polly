@@ -21,7 +21,7 @@ public class TestReadCharacters extends AbstractScannerTest {
     private final class PublicTokenStream extends InputScanner {
         
         public PublicTokenStream(String input) {
-            super(input, new SimpleProblemReporter());
+            super(input);
         }
         
         
