@@ -116,7 +116,7 @@ public class ConfigurationImpl implements Configuration {
         try {
             return this.readInt(name);
         } catch (Exception e) {
-            return 0;
+            return defaultValue;
         }
     }
 
