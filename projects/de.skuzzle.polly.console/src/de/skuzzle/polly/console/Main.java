@@ -10,9 +10,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.TreeSet;
-
-import sun.security.krb5.internal.PAData;
 
 import de.skuzzle.polly.core.parser.Evaluator;
 import de.skuzzle.polly.core.parser.Position;

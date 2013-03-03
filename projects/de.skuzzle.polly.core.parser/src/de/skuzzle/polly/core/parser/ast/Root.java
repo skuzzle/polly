@@ -146,6 +146,13 @@ public final class Root extends Node {
         if (this.results != null && !this.results.isEmpty()) {
             b.append(" ");
             IteratorPrinter.print(this.results, " ", 
+                new IteratorPrinter.StringProvider<Literal>() {
+
+                    @Override
+                    public String toString(Literal o) {
+                        return o.format(LiteralFormatter.DEFAULT);
+                    }
+                },
                 new PrintWriter(new StringBuilderWriter(b)));
         }
         return b.toString();
