@@ -271,6 +271,25 @@ public class InputParser {
     
     
     /**
+     * Reports a syntax error when an unexpected token is hit.
+     * 
+     * @param expected The token that was expected.
+     * @param actual The token that actually occurred.
+     * @throws ParseException
+     */
+    protected void reportExpected(TokenType expected, Token actual) 
+            throws ParseException {
+        if (actual.matches(TokenType.CLOSEDBR)) {
+            this.reporter.syntaxProblem("Fehlende öffnende Klammer", 
+                this.scanner.spanFrom(actual));
+        } else {
+            this.reporter.syntaxProblem(expected, actual, this.scanner.spanFrom(actual));
+        }
+    }
+    
+    
+    
+    /**
      * Expects the next token to have the type <code>expected</code>. If the next token is
      * the expected one, it is consumed. If the next token represents a lexical error or 
      * has not the expected type, a problem is reported.
@@ -287,7 +306,7 @@ public class InputParser {
      * @param expected Expected token type.
      * @param insert Whether method should pretend that expected token occurred if it
      *          does not.
-     * @throws ParseException If the next token has not the expected type.
+     * @throws ParseException If the ProblemRetporter does not support multiple problems.
      */
     protected void expect(TokenType expected, boolean insert) throws ParseException {
         final Token la = this.scanner.lookAhead();
@@ -301,7 +320,7 @@ public class InputParser {
         } else if (!la.matches(expected)) {
             // report unexpected token
             this.scanner.consume();
-            this.reporter.syntaxProblem(expected, la, this.scanner.spanFrom(la));
+            this.reportExpected(expected, la);
             this.scanner.pushBackFirst(la);
         }
         if (!insert || la.matches(expected)) {
@@ -334,8 +353,7 @@ public class InputParser {
         } else if (!la.matches(TokenType.IDENTIFIER)) {
             // report missing identifier
             this.scanner.consume();
-            this.reporter.syntaxProblem(TokenType.IDENTIFIER, la, 
-                this.scanner.spanFrom(la));
+            this.reportExpected(TokenType.IDENTIFIER, la);
             this.scanner.pushBackFirst(la);
             return this.missingIdentifier(la.getPosition());
         }
@@ -1164,8 +1182,6 @@ public class InputParser {
      * @throws ParseException If parsing fails.
      */
     protected Type parseType() throws ParseException {
-        final Token la = this.scanner.lookAhead();
-        
         if (this.scanner.match(TokenType.OPENBR)) {
             final List<Type> signature = new ArrayList<Type>();
             final boolean skipWS = this.scanner.skipWhiteSpaces();
@@ -1190,11 +1206,8 @@ public class InputParser {
             final Type subType = this.parseType();
             this.expect(TokenType.GT, true);
             return new ListType(subType);
-        } else if (la.matches(TokenType.IDENTIFIER)) {
-            return this.lookupType(this.expectIdentifier());
         } else {
-            this.expectIdentifier();
-            return null; /* not reachable */
+            return this.lookupType(this.expectIdentifier());
         }
     }
 }
