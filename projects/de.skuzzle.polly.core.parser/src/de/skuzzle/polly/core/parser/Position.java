@@ -34,7 +34,7 @@ public class Position implements Serializable, Equatable, Immutable,
      * for internally created AST Nodes, that have no matching representation within
      * the input String.
      */
-    public final static Position NONE = new Position(-1, -1);
+    public final static Position NONE = new Position(-1, 0);
     
     
     
@@ -97,6 +97,9 @@ public class Position implements Serializable, Equatable, Immutable,
      * @param end The exclusive end index of this position.
      */
     public Position(int start, int end) {
+        if (end - start == 0) {
+            throw new IllegalArgumentException("illegal range");
+        }
         this.start = start;
         this.end = end;
     }
@@ -324,7 +327,7 @@ public class Position implements Serializable, Equatable, Immutable,
     
     @Override
     public String toString() {
-        return (this.start + 1) + (this.getWidth() == 0 ? "" : "-" + (this.end + 1));
+        return (this.start + 1) + (this.getWidth() == 1 ? "" : "-" + (this.end + 1));
     }
     
     

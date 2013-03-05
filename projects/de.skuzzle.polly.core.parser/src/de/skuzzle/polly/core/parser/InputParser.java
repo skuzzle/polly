@@ -147,6 +147,7 @@ public class InputParser {
     /** ID generator for missing identifiers */
     private int missingId;
     
+    /** Used to report problems during parsing */
     private final ProblemReporter reporter;
     
     

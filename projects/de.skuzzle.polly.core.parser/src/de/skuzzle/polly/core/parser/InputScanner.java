@@ -160,7 +160,9 @@ public class InputScanner extends AbstractTokenStream {
                 int next = this.readChar();
                 
                 if (next == -1) {
-                    return new Token(TokenType.EOS, this.spanFrom(tokenStart));
+                    final Position pos = new Position(tokenStart, 
+                        this.getStreamIndex() + 2);
+                    return new Token(TokenType.EOS, pos);
                 }
                 
                 if (Character.isWhitespace(next)) {
@@ -719,7 +721,7 @@ public class InputScanner extends AbstractTokenStream {
         int secondPart = 0; // second part of a date (months)
         int thirdPart = 0;  // year-part of a date
         int tmp = 0;        // first part of a time, if read after a date
-        Token timeToken = new Token(TokenType.DATETIME, this.spanFrom(0), new Date());    
+        Token timeToken = null;//new Token(TokenType.DATETIME, this.spanFrom(0), new Date());    
         double dec = 1;
         double value = 0.0;
         double exp = 0.0;

@@ -72,8 +72,10 @@ public abstract class AbstractTokenStream implements Iterable<Token>, TokenStrea
     /** Holds all tokens in order they have been consumed. */
     protected final List<Token> consumedTokens;
     
+    /** Pointer which points to the last consumed token in {@link #consumedTokens}. */
     protected int tokenIndex;
 
+    /** Pointer for marking a position in {@link #consumedTokens}. */
     protected int mark;
     
     
@@ -239,11 +241,11 @@ public abstract class AbstractTokenStream implements Iterable<Token>, TokenStrea
      * @param types Array of {@link TokenType}s to skip until.
      * @return The Token to which this method has been skipped. 
      *      That means that: 
-     *      {@code Token la = skipUntilNextIs(...) => la = this.lookAhead()}.
+     *      {@code Token la = synchronize(...) => la = this.lookAhead()}.
      * @throws ParseException If an invalid token has been read while skipping.
      */
-    public Token skipUntilNextIs(TokenType...types) throws ParseException {
-        return this.skipUntilNextIs(Arrays.asList(types));
+    public Token synchronize(TokenType...types) throws ParseException {
+        return this.synchronize(Arrays.asList(types));
     }
     
     
@@ -255,16 +257,14 @@ public abstract class AbstractTokenStream implements Iterable<Token>, TokenStrea
      * @param types Array of {@link TokenType}s to skip until.
      * @return The Token to which this method has been skipped. 
      *      That means that: 
-     *      {@code Token la = skipUntilNextIs(...) => la = this.lookAhead()}.
+     *      {@code Token la = synchronize(...) => la = this.lookAhead()}.
      * @throws ParseException If an invalid token has been read while skipping.
      */
-    public Token skipUntilNextIs(Collection<TokenType> types) throws ParseException {
+    public Token synchronize(Collection<TokenType> types) throws ParseException {
         while (!this.eos) {
             final Token la = this.lookAhead();
-            for (final TokenType type : types) {
-                if (la.matches(type)) {
-                    return la;
-                }
+            if (types.contains(la.getType())) {
+                return la;
             }
             this.consume();
         }
@@ -334,7 +334,7 @@ public abstract class AbstractTokenStream implements Iterable<Token>, TokenStrea
      *          {@link #getStreamIndex()}
      */
     public Position spanFrom(Position start) {
-        int endIdx = this.eos ? this.getStreamIndex() - 1 : this.getStreamIndex();
+        int endIdx = this.eos ? this.getStreamIndex() : this.getStreamIndex();
         return new Position(start.getStart(), endIdx);
     }
     
@@ -343,11 +343,6 @@ public abstract class AbstractTokenStream implements Iterable<Token>, TokenStrea
     /**
      * <p>
      * Pushes one character back onto the input and decreases the streampointer by 1.
-     * </p>
-     * <p>
-     * The concrete behavior of this method depends on the currently set Pushback 
-     * strategy for characters. By default, pushing back and reading characters behaves
-     * like a stack.
      * </p>
      * 
      * <p>This method will always set {@link #eos} to {@code false}.</p>
@@ -362,10 +357,13 @@ public abstract class AbstractTokenStream implements Iterable<Token>, TokenStrea
     
     
     /**
-     * Pushes back one token. The pushed back token will be buffered and read by later
+     * <p>Pushes back one token. The pushed back token will be buffered and read by later
      * calls of {@link #readToken()}. The pushed back token will be appended to the head
      * of the token pushback buffer. That means the next call to {@link #readToken()} will
-     * return the pushed back token.
+     * return the pushed back token.</p>
+     * 
+     * <p>Pushed back tokens are, when consumed, never added to the list of consumed 
+     * tokens.</p> 
      * 
      * @param t The token to push back.
      */
@@ -376,9 +374,12 @@ public abstract class AbstractTokenStream implements Iterable<Token>, TokenStrea
     
     
     /**
-     * Pushes back one token. The pushed back token will be buffered and read by later 
+     * <p>Pushes back one token. The pushed back token will be buffered and read by later 
      * calls of {@link #readToken()}. The pushed back token will be appended to the tail
-     * of the token pushback buffer.
+     * of the token pushback buffer.</p>
+     * 
+     * <p>Pushed back tokens are, when consumed, never added to the list of consumed 
+     * tokens.</p>
      * 
      * @param t Token to push back.
      */
@@ -412,12 +413,12 @@ public abstract class AbstractTokenStream implements Iterable<Token>, TokenStrea
      * to {@code true}.
      * </p>
      * 
-     * @return The character that has been read from the input or {@code \0} if the end
+     * @return The character that has been read from the input or {@code -1} if the end
      *         of the input has been reached.
      */
     protected int readChar() {
         if (this.eos) {
-            throw new IllegalStateException("end of stream reached");
+            return -1;
         }
         
         int next;
@@ -493,12 +494,7 @@ public abstract class AbstractTokenStream implements Iterable<Token>, TokenStrea
      * <p>Remembers the current position within the token stream. The token stream can
      * be reset to this mark by using {@link #reset(boolean, boolean)}. Doing so will 
      * cause the token to where the stream has been reseted to be the next token returned 
-     * by <code>nextToken()</code> and any other methods that would return a token.</p>
-     * 
-     * <p>Note: If there are tokens in the pushback buffer, those will be returned
-     * until pushback buffer is empty. That is why you may choose to clear the
-     * buffer here.</p>
-     * 
+     * by <code>nextToken()</code> or any other methods that would return a token.</p>
      */
     public void mark() {
         this.mark = this.tokenIndex;
