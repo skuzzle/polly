@@ -702,11 +702,11 @@ public class InputParser {
                 // index operator
                 final Expression rhs = this.parseAutoList();
                 
-                lhs = OperatorCall.binary(
-                    new Position(lhs.getPosition(), rhs.getPosition()), 
-                    OpType.fromToken(la), lhs, rhs);
-                
                 this.expect(TokenType.CLOSEDSQBR, true);
+                
+                lhs = OperatorCall.binary(
+                    this.scanner.spanFrom(la), 
+                    OpType.fromToken(la), lhs, rhs);
             } else {
                 // ? or ?! operator
                 final Position endPos = this.scanner.spanFrom(la);
