@@ -74,7 +74,7 @@ public class InputScanner extends AbstractTokenStream {
     /**
      * Whether all consumed tokens are printed to the console
      */
-    public final static boolean DEBUG = false;
+    public final static boolean DEBUG = true;
     
     
 
@@ -161,7 +161,7 @@ public class InputScanner extends AbstractTokenStream {
                 
                 if (next == -1) {
                     final Position pos = new Position(tokenStart, 
-                        this.getStreamIndex() + 2);
+                        this.getStreamIndex());
                     return new Token(TokenType.EOS, pos);
                 }
                 

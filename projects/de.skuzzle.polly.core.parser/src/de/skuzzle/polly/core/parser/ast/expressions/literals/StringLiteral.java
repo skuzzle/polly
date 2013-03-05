@@ -69,8 +69,24 @@ public class StringLiteral extends Literal {
     }
     
     
+    
     @Override
     public String toString() {
         return this.value;
+    }
+    
+    
+    
+    @Override
+    public Class<?> getEquivalenceClass() {
+        return StringLiteral.class;
+    }
+    
+    
+    
+    @Override
+    public boolean actualEquals(Equatable o) {
+        final StringLiteral other = (StringLiteral) o;
+        return this.value.equals(other.value);
     }
 }

@@ -102,4 +102,19 @@ public class ListLiteral extends Literal {
         }
         return visitor.after(this) == ASTTraversal.CONTINUE;
     }
+    
+    
+    
+    @Override
+    public Class<?> getEquivalenceClass() {
+        return ListLiteral.class;
+    }
+    
+    
+    
+    @Override
+    public boolean actualEquals(Equatable o) {
+        final ListLiteral other = (ListLiteral) o;
+        return this.content.equals(other.content);
+    }
 }

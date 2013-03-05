@@ -88,4 +88,19 @@ public class DateLiteral extends Literal {
             throws ASTTraversalException {
         return transformation.transformDate(this);
     }
+    
+    
+    
+    @Override
+    public Class<?> getEquivalenceClass() {
+        return DateLiteral.class;
+    }
+    
+    
+    
+    @Override
+    public boolean actualEquals(Equatable o) {
+        final DateLiteral other = (DateLiteral) o;
+        return this.value.equals(other.value);
+    }
 }

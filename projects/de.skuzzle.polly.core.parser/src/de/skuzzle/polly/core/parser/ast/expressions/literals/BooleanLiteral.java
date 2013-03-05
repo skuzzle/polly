@@ -74,4 +74,19 @@ public class BooleanLiteral extends Literal {
             throws ASTTraversalException {
         return transformation.transformBoolean(this);
     }
+    
+    
+    
+    @Override
+    public Class<?> getEquivalenceClass() {
+        return BooleanLiteral.class;
+    }
+    
+    
+    
+    @Override
+    public boolean actualEquals(Equatable o) {
+        final BooleanLiteral other = (BooleanLiteral) o;
+        return this.value == other.value;
+    }
 }
