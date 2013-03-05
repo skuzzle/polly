@@ -74,7 +74,7 @@ public class InputScanner extends AbstractTokenStream {
     /**
      * Whether all consumed tokens are printed to the console
      */
-    public final static boolean DEBUG = true;
+    public final static boolean DEBUG = false;
     
     
 
@@ -412,7 +412,7 @@ public class InputScanner extends AbstractTokenStream {
             }
         }
         
-        return new Token(TokenType.EOS, this.spanFrom(tokenStart));
+        return new Token(TokenType.EOS, new Position(tokenStart - 1, tokenStart));
     }
     
     

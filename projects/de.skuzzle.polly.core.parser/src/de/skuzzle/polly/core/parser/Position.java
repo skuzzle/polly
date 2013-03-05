@@ -17,14 +17,14 @@ import de.skuzzle.polly.tools.Immutable;
  * 
  * For convenience, a Position has methods to retrieve substrings of a given String:
  * {@link #prefix(String)} which returns a String which consists of all characters 
- * berfore this Position.
+ * before this Position.
  * {@link #substring(String)} which returns exactly the String which Position this
  * object represents and {@link #postfix(String)} which returns a String consisting of
  * all characters which follow this span.   
  * 
  * @author Simon
  */
-public class Position implements Serializable, Equatable, Immutable, 
+public final class Position implements Serializable, Equatable, Immutable, 
         Comparable<Position> {
     
     private static final long serialVersionUID = 1L;
@@ -97,8 +97,9 @@ public class Position implements Serializable, Equatable, Immutable,
      * @param end The exclusive end index of this position.
      */
     public Position(int start, int end) {
-        if (end - start == 0) {
-            throw new IllegalArgumentException("illegal range");
+        if (start >= end) {
+            throw new IllegalArgumentException(
+                "start >= end (" + start + ">=" + end + ")");
         }
         this.start = start;
         this.end = end;
@@ -298,7 +299,7 @@ public class Position implements Serializable, Equatable, Immutable,
     public String substring(String original) {
         if (this.equals(Position.NONE)) {
             return original;
-        } else if (this.start == this.end - 1 && this.start == original.length() || this.getWidth() == 0) {
+        } else if (this.start == this.end - 1 && this.start == original.length()) {
             return " ";
         }
         return original.substring(this.start, this.end);

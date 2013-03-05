@@ -33,7 +33,6 @@ public class TestReadTokens extends AbstractScannerTest {
         
         Assert.assertTrue(scanner.match(TokenType.SEPERATOR));
         Assert.assertTrue(scanner.match(TokenType.EOS));
-        Assert.assertTrue(scanner.match(TokenType.EOS));
     }
     
     

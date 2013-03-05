@@ -183,8 +183,8 @@ public abstract class AbstractTokenStream implements Iterable<Token>, TokenStrea
             
             
             @Override
-            public void consume() throws ParseException {
-                ++this.i;
+            public Token consume() throws ParseException {
+                return consumedTokens.get(this.i++);
             }
             
             
@@ -277,8 +277,8 @@ public abstract class AbstractTokenStream implements Iterable<Token>, TokenStrea
      * @see de.skuzzle.polly.parsing.TokenStream#consume()
      */
     @Override
-    public void consume() throws ParseException {
-        this.nextToken();
+    public Token consume() throws ParseException {
+        return this.nextToken();
     }
     
     

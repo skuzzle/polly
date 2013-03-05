@@ -51,4 +51,18 @@ public class PositionTest {
         final Position pos2 = new Position(2, 4);
         Assert.assertFalse(pos1.equals(pos2));
     }
+    
+    
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void positionTest6() {
+        new Position(1, 1);
+    }
+    
+    
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void positionTest7() {
+        new Position(1, 0);
+    }
 }

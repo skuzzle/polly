@@ -38,9 +38,11 @@ public interface TokenStream {
 
 
     /**
-     * Consumes the next token without returning it.
+     * Consumes the next token.
+     * 
+     * @return The consumed token.
      * @throws ParseException If no valid token could be read.
      */
-    public abstract void consume() throws ParseException;
+    public abstract Token consume() throws ParseException;
 
 }
