@@ -34,7 +34,7 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
     
     private boolean applyType(Expression parent, Expression child) 
             throws ASTTraversalException {
-        if (parent.getTypes().size() == 1 && !child.typeResolved()) {
+        if (parent.getTypes().size() == 1) {
             child.setUnique(parent.getTypes().get(0));
             parent.setUnique(child.getUnique());
             return true;
