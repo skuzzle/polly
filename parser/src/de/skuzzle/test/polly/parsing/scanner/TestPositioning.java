@@ -68,4 +68,18 @@ public class TestPositioning extends AbstractScannerTest {
         Assert.assertEquals(scanner.consume().getPosition(), new Position(6, 22));
         Assert.assertEquals(scanner.consume().getPosition(), new Position(22, 23));
     }
+    
+    
+    
+    @Test
+    public void testPositioning6() throws ParseException {
+        final String input = ".45 1 .1456";
+        final AbstractTokenStream scanner = this.obtain(input);
+        Assert.assertEquals(scanner.consume().getPosition(), new Position(0, 3));
+        Assert.assertEquals(scanner.consume().getPosition(), new Position(3, 4));
+        Assert.assertEquals(scanner.consume().getPosition(), new Position(4, 5));
+        Assert.assertEquals(scanner.consume().getPosition(), new Position(5, 6));
+        Assert.assertEquals(scanner.consume().getPosition(), new Position(6, 11));
+        Assert.assertEquals(scanner.consume().getPosition(), new Position(11, 12));
+    }
 }
