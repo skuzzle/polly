@@ -31,4 +31,6 @@
 *.decl
 *.dot
 *.ico
+build.number
+publickey
 
