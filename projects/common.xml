@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="commons" basedir="." default="dist.debug">
+
+    <!-- 
+        The root directory of the polly project, relative to project dir 
+        (not relative to this file)
+    -->
+    <property name="root.dir"          value="../.."/>
+    
+    <!-- Current version name. -->
+    <property name="version.name"      value=" - beta"/>
+    
+    <!-- 
+        Beginning of version number. Third part will be constructed during dist. 
+    -->
+    <property name="version.num"       value="1.0."/>
+    
+    <!-- 
+        The output folder for compiled class files when compiling with no 
+        debug information. 
+    -->
+    <property name="build.release.dir" value="bin.release"/>
+    
+    <!-- 
+        The output folder for compiled class files when compiling with  
+        debug information. This will as well serve for the output folder for
+        eclipse.
+    -->
+    <property name="build.debug.dir"   value="bin"/>
+    
+    <!-- Directory which will contain the fully built projects. -->
+    <property name="build.dir"         value="${root.dir}/target"/>
+    
+    <!-- Directory which will contain the distributional build. -->
+    <property name="dist.dir" value="${build.dir}/${ant.project.name}"/>
+    
+    <!-- Folder to place dependency files for the jar build. -->
+    <property name="dist.lib.dir" value="${dist.dir}/lib"/>
+    
+    <!-- The source folder. -->
+    <property name="src.dir"           value="src"/>
+    
+    <!-- Folder for HTML JavaDoc output. -->
+    <property name="doc.dir"           value="doc"/>
+
+    <!-- Encoding of source files. -->
+    <property name="src.encoding"     value="ISO-8859-1"/>
+    
+    <!-- Dependency folder -->
+    <property name="lib.dir"          value="${root.dir}/dependency"/>
+    
+    <!-- Target java version for compiler. -->
+    <property name="java.version"     value="1.7"/>
+    
+    <!-- Additional classpath entry to add to MANIFEST file. -->
+    <property name="custom.classpath" value=""/>
+    
+    
+    
+    <!-- buildpath for javac -->
+    <path id="buildpath">
+        <fileset dir="${lib.dir}" includes="${dependencies}" 
+            id="dependencySet" erroronmissingdir="false"/>
+        <fileset dir="${build.dir}" includes="${dependencies.internal}"
+            id="dependencySetInternal" erroronmissingdir="false"/>
+    </path>
+    
+    
+    
+    <!-- Empty target which can be overridden to provide custom cleaning. -->
+    <target name="clean.custom"/>
+    
+    
+    
+    <!-- Cleans all build related files. -->
+    <target name="clean" depends="clean.custom">
+        <delete includeEmptyDirs="true">
+            <fileset dir="${build.release.dir}" includes="**/**" 
+                erroronmissingdir="false"/>
+            <fileset dir="${build.debug.dir}" includes="**/**"
+                erroronmissingdir="false"/>
+            <fileset dir="${dist.dir}" includes="**/**"
+                erroronmissingdir="false"/>
+            <fileset dir="${doc.dir}" includes="**/**"
+                erroronmissingdir="false"/>
+        </delete>
+    </target>
+    
+    
+    
+    <!-- Compiles a set of source files with debug information. -->
+    <target name="compile.debug">
+        <mkdir dir="${build.debug.dir}"/>
+        <javac srcdir="${src.dir}" 
+               destdir="${build.debug.dir}" 
+               classpathref="buildpath" 
+               source="1.6"
+               target="1.6" 
+               encoding="${src.encoding}"
+               debug="on" 
+               listfiles="true"
+			   includeAntRuntime="false"
+               fork="true"/>
+    </target>
+    
+    
+    
+    <!-- Compiles a set of source files with no debug information. -->
+    <target name="compile.release">
+        <mkdir dir="${build.release.dir}"/>
+        <javac srcdir="${src.dir}" 
+               destdir="${build.release.dir}" 
+               classpathref="buildpath" 
+               source="${java.version}" 
+               target="${java.version}" 
+               encoding="${src.encoding}"
+               debug="off" 
+			   includeAntRuntime="false"/>
+    </target>
+    
+    
+    
+    <!-- Creates JavaDoc HTML files for this project. -->
+    <target name="compile.javadoc">
+        <javadoc destdir="${doc.dir}" classpathref="buildpath" author="true"
+            version="true" use="true">
+            
+            <packageset dir="${src.dir}" defaultexcludes="true"/>
+            <link href="http://java.sun.com/javase/6/docs/api/"/>
+        </javadoc>
+    </target>
+    
+    
+    
+    <!-- Checks whether the dependencies are empty. -->
+    <target name="checkDependencies">
+        <pathconvert refid="dependencySet" property="dependencies.not.empty" 
+             setonempty="false"/>
+        <pathconvert refid="dependencySetInternal" 
+            property="dependencies.internal.not.empty" setonempty="false"/>
+        <condition property="dependencies.exists">
+            <and>
+                <isset property="dependencies.not.empty"/>
+                <isset property="dependencies.internal.not.empty"/>
+            </and>
+        </condition>
+    </target>
+    
+    
+    
+    <!-- 
+        Target which copies all needed dependencies to the build folder if
+        dependency set is not empty.
+    -->
+    <target name="copyDependencies" depends="checkDependencies" 
+            if="dependencies.exists">
+
+        <mkdir dir="${dist.lib.dir}"/>
+        <copy todir="${dist.lib.dir}" flatten="true">
+            <fileset dir="${lib.dir}" includes="${dependencies}"/>
+            <fileset dir="${build.dir}" includes="${dependencies.internal}"/>
+        </copy>
+    </target>
+    
+    
+    
+    <!-- Creates distribution files with debug information. -->
+    <target name="dist.debug" depends="compile.debug">
+        <property name="bin.dir" value="${build.debug.dir}"/>
+        <antcall target="distBin" inheritRefs="true"/>
+        <!--<antcall target="distDoc" inheritRefs="true"/>
+        <antcall target="distSrc" inheritRefs="true"/>-->
+    </target>
+    
+    
+    
+    <!-- Creates distribution files with no debug information. -->
+    <target name="dist.release" depends="compile.release">
+        <property name="bin.dir" value="${build.release.dir}"/>
+        <antcall target="distBin" inheritRefs="true"/>
+        <antcall target="distDoc" inheritRefs="true"/>
+        <antcall target="distSrc" inheritRefs="true"/>
+    </target>
+    
+    
+    
+    <!-- This target will be called before dist is executed. -->
+    <target name="preDist"></target>
+    
+    
+    
+    <!-- This target will be called after dist finished. -->
+    <target name="postDist"></target>
+    
+    
+    
+    <!--
+        Creates a jar and everything else needed to finally use the built 
+        project. This calls copyDependencies task, which can be overridden
+        to provide custom behavior.
+    -->
+    <target name="distBin" depends="copyDependencies">
+        <!-- Create version String. -->
+        <buildnumber/>
+        <property name="version" 
+            value="${version.num}${build.number}${version.name}"/>
+       
+        
+        <mkdir dir="${dist.dir}"/>
+        
+        <!-- call preDist. -->
+        <antcall target="preDist" inheritRefs="true"/>
+
+        <!-- 
+            create classpath for manifest. This creates the $jar.classpath
+            property.
+        -->
+        <manifestclasspath property="jar.classpath"
+                           jarfile="${dist.dir}/${jar.filename}.jar">
+            <classpath>
+                <fileset erroronmissingdir="false" dir="${dist.lib.dir}" 
+                    includes="${dependencies}"/>
+                <fileset erroronmissingdir="false" dir="${dist.lib.dir}" 
+                    includes="${dependencies.internal}"/>
+            </classpath>
+        </manifestclasspath>
+        
+        <!-- Create the jar file -->
+        <jar destfile="${dist.dir}/${jar.filename}.jar">
+            <manifest>
+                <attribute name="Main-Class"             value="${jar.main}"/>
+                <attribute name="Implementation-Title"   value="${jar.title}"/>
+                <attribute name="Implementation-Version" value="${version}"/>
+                <attribute name="Class-Path"            
+                           value="${custom.classpath} ${jar.classpath} "/>
+            </manifest>
+            <fileset dir="${bin.dir}"/>
+        </jar>
+        
+        <!-- call postDist. -->
+        <antcall target="postDist" inheritRefs="true"/>
+    </target>
+    
+    
+    
+    <!-- Creates a jar file with the documentation of this project. -->
+    <target name="distDoc" depends="compile.javadoc">
+        <mkdir dir="${dist.dir}"/>
+        <jar destfile="${dist.dir}/${jar.filename}-doc.jar">
+            <fileset dir="${doc.dir}"/>
+        </jar>
+    </target>
+    
+    
+    
+    <!-- Creates a jar file with the sourcecode of this project. -->
+    <target name="distSrc">
+        <mkdir dir="${dist.dir}"/>
+        <jar destfile="${dist.dir}/${jar.filename}-src.jar">
+            <fileset dir="${src.dir}"/>
+        </jar>
+    </target>
+</project>

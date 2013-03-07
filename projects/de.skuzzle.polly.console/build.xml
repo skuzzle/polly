@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="de.skuzzle.polly.console" basedir="." default="dist.debug">
+    
+    <!-- The name of the jar file created by the dist target. -->
+    <property name="jar.filename"      value="polly.console"/>
+    
+    <!-- Jar file title. -->
+    <property name="jar.title"         value="polly.console"/>
+    
+    <!-- The name of this projects main class. -->
+    <property name="jar.main"          value="Main"/>
+
+    <!-- 
+        Space-separated list of jar files relative to lib.dir to include 
+        in build-process
+    -->
+    <property name="dependencies" value="NONE"/>
+   
+    <!--
+        Space separated list of jar files relative to dist.dir to include
+        in build process.
+    -->
+    <property name="dependencies.internal" value="
+        **/polly.parser.jar
+        **/polly.process.jar
+    "/>
+    
+    
+    
+    <!-- Import all important build targets. -->
+    <import file="../common.xml" as="base"/>
+    
+    
+    
+    <!-- 
+        Buildpath for eclipse. This should exclude the libraries that will be
+        referenced as eclipse projects.
+    -->
+    <path id="buildpath.eclipse">
+        <fileset dir="${lib.dir}" 
+            includes="${dependencies}"
+            excludes=""/>
+    </path>
+
+    
+    
+    <!--
+        Creates eclipse project files for this ant file.
+        Requires ant task from http://ant-eclipse.sourceforge.net/
+    -->
+    <target name="eclipse">
+        <taskdef name="eclipse" classname="prantl.ant.eclipse.EclipseTask" />
+        <eclipse mode="java">
+            <project name="${ant.project.name}"/>
+            <classpath>
+                <source path="${src.dir}"/>
+                <source path="/de.skuzzle.polly.core.parser"/>
+                <source path="/de.skuzzle.polly.process"/>
+                <output path="${build.debug.dir}"/>
+                <library pathref="buildpath.eclipse"/>
+            </classpath>
+        </eclipse>
+    </target>
+</project>

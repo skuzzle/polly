@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="de.skuzzle.polly.plugin.rx" basedir="." default="dist.debug">
+    
+    <!-- The name of the jar file created by the dist target. -->
+    <property name="jar.filename"      value="polly.rx"/>
+    
+    <!-- Jar file title. -->
+    <property name="jar.title"         value="polly.rx"/>
+    
+    <!-- The name of this projects main class. -->
+    <property name="jar.main"          value="polly.rx.MyPlugin"/>
+
+    <!-- 
+        Space-separated list of jar files relative to lib.dir to include 
+        in build-process
+    -->
+    <property name="dependencies" value="
+        javax.persistence_2.0.3.v201010191057.jar
+    "/>
+    
+    <!--
+        Space separated list of jar files relative to build.dir to include
+        in build process.
+    -->
+    <property name="dependencies.internal" value="
+        **/polly.sdk.jar
+        **/polly.tools.jar
+    "/>
+   
+    
+    
+    <!-- Import all important build targets. -->
+    <import file="../plugin.xml" as="base1"/>
+    <import file="../common.xml" as="base"/>
+    
+    <!-- Name of this plugin -->
+    <property name="plugin.name" value="Polly Revorix Plugin"/>
+    
+    <!-- Description of this plugin -->
+    <property name="plugin.description" value="Polly Revorix Plugin"/>
+    
+    <!-- Developper name of this plugin -->
+    <property name="plugin.developper" value="Simon Taddiken"/>
+    
+    <!-- Version of this plugin -->
+    <property name="plugin.version" value="0.1"/>
+    
+    
+    
+    <!-- 
+        Buildpath for eclipse. This should exclude the libraries that will be
+        referenced as eclipse projects.
+    -->
+    <path id="buildpath.eclipse">
+        <fileset dir="${lib.dir}" includes="${dependencies}"/>
+    </path>
+
+    
+    
+    <!--
+        Creates eclipse project files for this ant file.
+        Requires ant task from http://ant-eclipse.sourceforge.net/
+    -->
+    <target name="eclipse">
+        <taskdef name="eclipse" classname="prantl.ant.eclipse.EclipseTask" />
+        <eclipse mode="java">
+            <project name="${ant.project.name}"/>
+            <classpath>
+                <source path="${src.dir}"/>
+                <source path="/de.skuzzle.polly.tools"/>
+                <source path="/de.skuzzle.polly.sdk"/>
+                <output path="${build.debug.dir}"/>
+                <library pathref="buildpath.eclipse"/>
+            </classpath>
+        </eclipse>
+    </target>
+</project>

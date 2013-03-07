@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="polly" basedir="." default="dist.debug">
+
+    <!-- Creates release files for all projects with debug information. -->
+    <target name="dist.debug">
+        <antcall target="all" inheritAll="true" inheritRefs="true">
+            <param name="target" value="dist.debug"/>
+        </antcall>
+    </target>
+
+    
+    
+    <!-- Calls clean target for all subprojects. -->
+    <target name="clean">
+        <antcall target="all" inheritAll="true" inheritRefs="true">
+            <param name="target" value="clean"/>
+        </antcall>
+    </target>
+    
+    
+    
+    <!-- Creates eclipse projects for all subprojects. -->
+    <target name="eclipse">
+        <antcall target="all" inheritAll="true" inheritRefs="true">
+            <param name="target" value="eclipse"/>
+        </antcall>
+    </target>
+    
+    
+    
+    <!-- 
+        Executes a target given by parameter $target for all projects in a
+        build order that respects all dependencies.
+    -->
+    <target name="all">
+        <ant dir="de.skuzzle.polly.sdk" target="${target}"/>
+        <ant dir="de.skuzzle.polly.tools" target="${target}"/>
+        <ant dir="de.skuzzle.polly.process" target="${target}"/>
+        <ant dir="de.skuzzle.polly.core.parser" target="${target}"/>
+        <ant dir="de.skuzzle.polly.core.moduleloader" target="${target}"/>
+        <ant dir="de.skuzzle.polly.core.pircbot" target="${target}"/>
+        <ant dir="de.skuzzle.polly.console" target="${target}"/>
+        
+        <antcall target="all.plugins" inheritAll="true" inheritRefs="true"/>
+        
+        <ant dir="de.skuzzle.polly.core" target="${target}"/>
+    </target>
+    
+    
+    
+    <!-- 
+        Executes a target given by parameter $target for all plugin projects in 
+        a build order that respects all dependencies.
+    -->
+    <target name="all.plugins">
+        <ant dir="de.skuzzle.polly.plugin.core" target="${target}"/>
+        <ant dir="de.skuzzle.polly.plugin.reminds" target="${target}"/>
+        <ant dir="de.skuzzle.polly.plugin.logging" target="${target}"/>
+        <ant dir="de.skuzzle.polly.plugin.rx" target="${target}"/>
+        <ant dir="de.skuzzle.polly.plugin.linkexpander" target="${target}"/>
+    </target>
+    
+    
+    
+    <target name="copyPlugins">
+        
+    </target>
+</project>
