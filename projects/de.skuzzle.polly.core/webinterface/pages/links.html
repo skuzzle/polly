@@ -1,0 +1,18 @@
+<h2>Grabbed IRC Links</h2>
+
+<table>
+<tr>
+    <th>Date</th>
+    <th>User</th>
+    <th>Channel</th>
+    <th>Link</th>
+</tr>
+#foreach ($e in $links)
+<tr>
+    <td>$myPolly.formatting().formatDate($e.getDate())</td>
+    <td>$e.getUser().getNickName()</td>
+    <td>$e.getChannel()</td>
+    <td><a href="$e.getMessage()">$e.getMessage()</a></td>
+</tr>
+#end
+</table>

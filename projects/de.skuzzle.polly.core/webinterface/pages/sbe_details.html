@@ -1,0 +1,49 @@
+#set ($dir = !$dir)
+
+<h2>Revorix Scoreboard Paster</h2>
+
+<h3>History of $venad</h3>
+<table style="width:auto;">
+    <tr>
+        <th>Zeitraum:</th>
+        <td>$myPolly.formatting().formatTimeSpanMs($span)</td>
+    </tr>
+    <tr>
+        <th>Punkte pro Tag:</th>
+        <td>$nformat.format($pointsPerDay) ($days Tage)</td>
+    </tr>
+</table>
+
+<img src="/memory:${venad}_graph"/>
+
+#if ($sortKey && $entries)
+    $sorter.sort($entries, $sortKey, $dir)
+#end
+
+<table>
+    <tr>
+        <th><a href="sbe_details?venad=$venad&sortKey=getRank&dir=$dir">Rank</a></th>
+        <th><a href="sbe_details?venad=$venad&sortKey=getVenadName&dir=$dir">Venad</a></th>
+        <th><a href="sbe_details?venad=$venad&sortKey=getClan&dir=$dir">Clan</a></th>
+        <th><a href="sbe_details?venad=$venad&sortKey=getPoints&dir=$dir">Points</a></th>
+        <th><a href="sbe_details?venad=$venad&sortKey=getDiffToPrevious&dir=$dir">Points to prev.</a></th>
+        <th><a href="sbe_details?venad=$venad&sortKey=getDaysToPrevious&dir=$dir">Days to prev.</a></th>
+        <th><a href="sbe_details?venad=$venad&sortKey=getDiscDerivative&dir=$dir">Derivative</a></th>
+        <th><a href="sbe_details?venad=$venad&sortKey=getDate&dir=$dir">Date</a></th>
+        <th>Action</th>
+    </tr>
+    #foreach($entry in $entries)
+    <tr>
+        <td>$entry.getRank()</td>
+        <td>$entry.getVenadName()</td>
+        <td>$entry.getClan()</td>
+        <td>$entry.getPoints()</td>
+        <td>$entry.getDiffToPrevious()</td>
+        <td>$entry.getDaysToPrevious()</td>
+        <td>$nformat.format($entry.getDiscDerivative())</td>
+        <td>$myPolly.formatting().formatDate($entry.getDate())</td>
+        <td><a href="/Scoreboard?action=delete&id=$entry.getId()">Delete</a></td>
+    </tr>
+    #end
+</table>
+

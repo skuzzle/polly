@@ -1,0 +1,99 @@
+<h2>Battlereport Infos<h2>
+
+<table style="width:auto">
+	<tr>
+		<th>Location</th>
+		<td>$report.getQuadrant() $report.getX(),$report.getY()</td>
+	</tr>
+	<tr>
+		<th>Tactic</th>
+		<td>$report.getTactic()</td>
+	</tr>
+</table>
+
+<h3>Drop</h3>
+<table>
+	<tr>
+	#foreach ($drop in $report.getDrop())
+		<th>$drop.getRessource()</th>
+	#end
+	</tr>
+	<tr>
+	#foreach ($drop in $report.getDrop())
+		<td>$drop.getAmount()</td>
+	#end
+	</tr>
+</table>
+<p><b>Artifact:</b> $report.hasArtifact()</p>
+
+#set ($name = "Attacker")
+#set ($fleetName = $report.getAttackerFleetName())
+#set ($venadName = $report.getAttackerVenadName())
+#set ($clanName = $report.getAttackerClan())
+#set ($kw = $report.getAttackerKw())
+#set ($bonus = $report.getAttackerBonus())
+#set ($xpmod = $report.getAttackerXpMod())
+#set ($repairTime = $report.getAttackerRepairTimeOffset())
+#set ($repairCosts = $report.getAttackerRepairCostOffset())
+
+#set ($pzDamage = $pzDamageAttacker)
+#set ($maxPzDamage = $maxPzDamageAttacker)
+#set ($minPzDamage = $minPzDamageAttacker)
+#set ($avgPzDamage = $avgPzDamageAttacker)
+
+#set ($shieldDamage = $shieldDamageAttacker)
+#set ($maxShieldDamage = $maxShieldDamageAttacker)
+#set ($minShieldDamage = $minShieldDamageAttacker)
+#set ($avgShieldDamage = $avgShieldDamageAttacker)
+
+#set ($capiXp = $capiXpAttacker)
+#set ($maxCapiXp = $maxCapiXpAttacker)
+#set ($minCapiXp = $minCapiXpAttacker)
+#set ($avgCapiXp = $avgCapiXpAttacker)
+
+#set ($crewXp = $crewXpAttacker)
+#set ($maxCrewXp = $maxCrewXpAttacker)
+#set ($minCrewXp = $minCrewXpAttacker)
+#set ($avgCrewXp = $avgCrewXpAttacker)
+
+#set ($maxWend = $maxWendAttacker)
+#set ($minWend = $minWendAttacker)
+
+#set ($ships = $report.getAttackerShips())
+#parse("webinterface/pages/helper/list_battlereportships_helper.html")
+
+#set ($name = "Defender")
+#set ($fleetName = $report.getDefenderFleetName())
+#set ($venadName = $report.getDefenderVenadName())
+#set ($clanName = $report.getDefenderClan())
+#set ($kw = $report.getDefenderKw())
+#set ($bonus = $report.getDefenderBonus())
+#set ($xpmod = $report.getDefenderXpMod())
+#set ($repairTime = $report.getDefenderRepairTimeOffset())
+#set ($repairCosts = $report.getDefenderRepairCostOffset())
+
+#set ($pzDamage = $pzDamageDefender)
+#set ($maxPzDamage = $maxPzDamageDefender)
+#set ($minPzDamage = $minPzDamageDefender)
+#set ($avgPzDamage = $avgPzDamageDefender)
+
+#set ($shieldDamage = $shieldDamageDefender)
+#set ($maxShieldDamage = $maxShieldDamageDefender)
+#set ($minShieldDamage = $minShieldDamageDefender)
+#set ($avgShieldDamage = $avgShieldDamageDefender)
+
+#set ($capiXp = $capiXpDefender)
+#set ($maxCapiXp = $maxCapiXpDefender)
+#set ($minCapiXp = $minCapiXpDefender)
+#set ($avgCapiXp = $avgCapiXpDefender)
+
+#set ($crewXp = $crewXpDefender)
+#set ($maxCrewXp = $maxCrewXpDefender)
+#set ($minCrewXp = $minCrewXpDefender)
+#set ($avgCrewXp = $avgCrewXpDefender)
+
+#set ($maxWend = $maxWendDefender)
+#set ($minWend = $minWendDefender)
+
+#set ($ships = $report.getDefenderShips())
+#parse("webinterface/pages/helper/list_battlereportships_helper.html")

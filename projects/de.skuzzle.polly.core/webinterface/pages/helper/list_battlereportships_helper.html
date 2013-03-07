@@ -1,0 +1,146 @@
+## Needed parameters:
+## $name - header name
+## $fleetName 
+## $venadName 
+## $clanName 
+## $kw 
+## $bonus 
+## $xpmod 
+## $damagePz 
+## $damageTotal 
+## $xpCapi 
+## $xpCrew
+## $maxWend
+## $minWend
+## $ships 
+
+<h3>$name</h3>
+<table style="width:auto">
+	<tr>
+		<th>Fleetname</th>
+		<td>$fleetName</td>
+	</tr>
+	<tr>
+		<th>Venadname</th>
+		<td>$venadName</td>
+	</tr>
+	<tr>
+		<th>Clan</th>
+		<td>$clanName</td>
+	</tr>
+	<tr>
+		<th>Kw</th>
+		<td>$kw</td>
+	</tr>
+	<tr>
+		<th>Bonus (Factor)</th>
+		<td>$bonus</td>
+	</tr>
+	<tr>
+		<th>Kw (Normalized)</th>
+		#set ($normalized = $kw/$bonus )
+		<td>$myPolly.formatting().formatNumber($normalized)</td>
+	</tr>
+	<tr>
+		<th>XP-Mod</th>
+		<td>$xpmod</td>
+	</tr>
+	<tr>
+		<th>Shield-Damage (min/avg/max)</th>
+		<td>$shieldDamage ($minShieldDamage / $avgShieldDamage / $maxShieldDamage)</td>
+	</tr>
+	<tr>
+		<th>PZ-Damage (min/avg/max)</th>
+		<td>$pzDamage ($minPzDamage / $avgPzDamage / $maxPzDamage)</td>
+	</tr>
+	<tr>
+		<th>Wend (max occurred / min occurred)</th>
+		<td>$maxWend / $minWend</td>
+	</tr>
+	<tr>
+		<th>Capi XP (min/avg/max)</th>
+		<td>$capiXp ($minCapiXp / $avgCapiXp / $maxCapiXp)</td>
+	</tr>
+	<tr>
+		<th>Crew XP (min/avg/max)</th>
+		<td>$crewXp ($minCrewXp / $avgCrewXp / $maxCrewXp)</td>
+	</tr>
+    <tr>
+        <th>Total repair cost offset</th>
+        <td>
+            <table>
+                <tr>
+                #foreach ($i in $repairCosts)
+                    <th>$!i.getRessource()</th>
+                #end
+                </tr>
+                <tr>
+                #foreach ($i in $repairCosts)
+                    <td>$!i.getAmount()</th>
+                #end
+                </tr>
+            </table>
+        </td>
+    </tr>
+	<tr>
+		<th>Max repair time offset</th>
+		<td>$myPolly.formatting().formatTimeSpan($repairTime)</td>
+	</tr>
+</table>
+
+#set ($dq = '"')
+<p style="font-size:x-small">
+Green cells are ships with minimal damage, red cells are ships with maximum
+damage.
+</p>
+<table style="width: 100%">
+	<tr>
+		<th>Revorix ID</th>
+		<th>Besitzer</th>
+		<th>Name</th>
+		<th>Crew XP</th>
+		<th>Captain (HP)</th>
+		<th>Captain XP</th>
+		<th>KW (T 100)</th>
+		<th>Max Wend</th>
+		<th>Aw (Damage)</th>
+		<th>Sc (Damage)</th>
+		<th>Pz (Damage)</th>
+		<th>Str (Damage)</th>
+		<th>Max Wend</th>
+	</tr>
+	#foreach ($ship in $ships)
+#set ( $scannedShip = $false )
+#set ( $scannedShip = $fleetDBManager.fleetScanShipById($ship.getRxId()) )
+	<tr>
+		<td>#if ($scannedShip)<a href="fleetship_info?shipId=$ship.getRxId()">$ship.getRxId()</a>#else $ship.getRxId()#end</td>
+		<td>#if ($scannedShip)<a href="/query_scans?method=owner&query=$scannedShip.getOwner()"> $scannedShip.getOwner() #else Unbekannt #end</td>
+		<td>$ship.getName()</td>
+		<td>$ship.getCrewXp()</td>
+		<td>$ship.getCapi() ($ship.getCapiHp())</td>
+		<td>$ship.getCapiXp()</td>
+#set( $defsum = $ship.getShields() + $ship.getPz() )
+#set( $tmp = $defsum * $ship.getAttack() )
+#set( $shipkw = $Math.round($Math.sqrt($tmp)))
+		<td>$myPolly.formatting().formatNumber($shipkw)</td>
+		<td>$ship.calcMaxWend()</td>
+		<td>$ship.getAttack() ($ship.getAwDamage())</td>
+        #set ($bgc = "")
+        #if ($ship.getShieldDamage() == $maxShieldDamage)
+            #set ($bgc = "style=${dq}background-color: red;${dq}")
+        #elseif ($ship.getShieldDamage() == $minShieldDamage)
+            #set ($bgc = "style=${dq}background-color: green;${dq}")
+        #end
+		<td $bgc>$ship.getShields() ($ship.getShieldDamage())</td>
+        #set ($bgc = "")
+        #if ($ship.getPzDamage() == $maxPzDamage)
+            #set ($bgc = "style=${dq}background-color: red;${dq}")
+        #elseif ($ship.getPzDamage() == $minPzDamage)
+            #set ($bgc = "style=${dq}background-color: green;${dq}")
+        #end
+		<td $bgc>$ship.getPz() ($ship.getPzDamage())</td>
+		<td>$ship.getStructure() ($ship.getStructureDamage())</td>
+		<td>$ship.getMaxWend()</td>
+	</tr>
+	#end
+</table>

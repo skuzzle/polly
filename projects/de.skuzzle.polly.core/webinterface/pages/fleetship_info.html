@@ -1,0 +1,54 @@
+<h2>Ship Info for $ship.getName()</h2>
+<h3>Information</h3>
+<table>
+	<tr>
+		<th>Revorix Id</th>
+		<td>$ship.getRxId()</td>
+	</tr>
+	<tr>
+		<th>Techlevel</th>
+		<td>$ship.getTechlevel()</td>
+	</tr>
+	<tr>
+		<th>Owner</th>
+		<td><a href="/query_scans?method=owner&query=$ship.getOwner()">$ship.getOwner()</a></td>
+	</tr>
+	<tr>
+		<th>Clan</th>
+		<td><a href="/query_scans?method=clan&query=$ship.getOwnerClan()">$ship.getOwnerClan()</a></td>
+	</tr>
+	<tr>
+		<th>Name when first spotted</th>
+		<td>$ship.getNameWhenSpotted()</td>
+	</tr>
+</table>
+
+
+<h3>History</h3>
+<table>
+	<tr>
+		<th>#</th>
+		<th>Date</th>
+		<th>Changes</th>
+	</tr>
+	#set ($i = 1)
+	#foreach ($he in $ship.getHistory())
+	<tr>
+		<td>$i</td>
+		<td>$myPolly.formatting().formatDate($he.getDate())</td>
+		<td>
+		<ul>
+		#foreach ($change in $he.getChanges())
+			<li>$change</li>
+		#end
+		</ul>
+		</td>
+	</tr>
+	#set ($i = $i+1)
+	#end
+</table>
+
+<h3>Scans with this ship</h3>
+#set ($fleetScans = $scans)
+#set ($destination = "/fleetship_info?shipId=$ship.getRxId()")
+#parse ("webinterface/pages/helper/list_fleet_scans.html")

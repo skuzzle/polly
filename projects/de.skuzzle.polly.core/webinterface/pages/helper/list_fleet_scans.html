@@ -1,0 +1,38 @@
+#set ( $scanDesc = !$scanDesc )
+#if (!$hideTotal)<p>Total scans: $fleetScans.size()</p>#end
+<table>
+	<tr>
+		<th><a href="${destination}&scanSortKey=getDate&scanDesc=$scanDesc">Date</a></th>
+		<th><a href="${destination}&scanSortKey=getQuadrant&scanDesc=$scanDesc">Location</a></th>
+		<th><a href="${destination}&scanSortKey=getLocalSens&scanDesc=$scanDesc">Sens</a></th>
+		<th><a href="${destination}&scanSortKey=getOwnerName&scanDesc=$scanDesc">Owner</a></th>
+		<th><a href="${destination}&scanSortKey=getOwnerClan&scanDesc=$scanDesc">Clan</a></th>
+		<th><a href="${destination}&scanSortKey=getFleetName&scanDesc=$scanDesc">Fleet Name</a></th>
+		<th><a href="${destination}&scanSortKey=getFleetTag&scanDesc=$scanDesc">Fleet Tag</a></th>
+		<th><a href="${destination}&scanSortKey=getShipCount&scanDesc=$scanDesc">Ships</a></th>
+		<th>Action</th>
+	</tr>
+	
+	#if ($scanSortKey)
+		$sorter.sort($fleetScans, $scanSortKey, $scanDesc)
+	#end
+	#foreach ($scan in $fleetScans)
+	<tr>
+		<td>$myPolly.formatting().formatDate($scan.getDate())</td>
+		<td><a href="/query_scans?method=location&query=$scan.getQuadrant()">$scan.getQuadrant()</a> $scan.getX(),$scan.getY()</td>
+		<td>$scan.getLocalSens()</td>
+		<td><a href="/query_scans?method=owner&query=$scan.getOwnerName()">$scan.getOwnerName()</a></td>
+		<td><a href="/query_scans?method=clan&query=$scan.getOwnerClan()">$scan.getOwnerClan()</a></td>
+		<td><a href="fleetscan_info?id=$scan.getId()">$scan.getFleetName()</a></td>
+		<td>$scan.getFleetTag()</td>
+		<td>$scan.getShipCount()</td>
+		<td>
+			<form action="FleetScans" method="POST">
+			<input type="hidden" name="id" value="$scan.getId()"/>
+			<input type="hidden" name="action" value="delete"/>
+			<input type="submit" value="Delete" class="button"/>
+			</form>
+		</td>
+	</tr>
+	#end
+</table>
