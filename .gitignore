@@ -33,4 +33,5 @@
 *.ico
 build.number
 publickey
+package-list
 
