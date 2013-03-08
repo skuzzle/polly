@@ -8,7 +8,7 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.StringLiteral;
 import de.skuzzle.polly.parsing.ast.lang.BinaryOperator;
 import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
-import de.skuzzle.polly.parsing.util.Stack;
+import de.skuzzle.polly.tools.collections.Stack;
 
 
 public class BinaryStringArithmetic extends BinaryOperator<StringLiteral, StringLiteral> {

@@ -1,7 +1,9 @@
-package de.skuzzle.polly.parsing.util;
+package de.skuzzle.polly.tools.collections;
 
+import java.util.ConcurrentModificationException;
 import java.util.EmptyStackException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 
 /**
@@ -12,33 +14,39 @@ import java.util.Iterator;
  * @author Simon Taddiken
  * @param <T> Type for elements in this stack.
  */
-public class FixedSizeStack<T> implements Stack<T>{
+public class FixedSizeStack<T> implements Stack<T> {
+    
+    public static class StackOverflowException extends RuntimeException {
+        private static final long serialVersionUID = 1L;
+    }
 
     private final T[] stack;
     private int sp;
+    private int modcount;
     
     
     
     @SuppressWarnings("unchecked")
     public FixedSizeStack(int size) {
         this.stack = (T[]) new Object[size];
-        this.sp = -1;
+        this.sp = 0;
     }
     
     
     
     @Override
     public boolean isEmpty() {
-        return this.sp == -1;
+        return this.sp == 0;
     }
     
     
     
     @Override
     public void push(T t) {
-        if (this.sp + 1 == this.stack.length) {
+        if (this.sp == this.stack.length) {
             throw new StackOverflowException();
         }
+        ++this.modcount;
         this.stack[this.sp++] = t;
     }
     
@@ -49,25 +57,15 @@ public class FixedSizeStack<T> implements Stack<T>{
         if (this.isEmpty()) {
             throw new EmptyStackException();
         }
-        return this.stack[this.sp];
-    }
-    
-    
-    
-    public T peek(int n) {
-        if (this.sp - n < 0) {
-            throw new IllegalArgumentException("illegal peek value: " + n);
-        }
-        return this.stack[this.sp - n];
+        return this.stack[this.sp - 1];
     }
     
     
     
     @Override
     public T pop() {
-        final T t = this.peek();
-        --this.sp;
-        return t;
+        ++this.modcount;
+        return this.stack[--this.sp];
     }
     
     
@@ -94,15 +92,21 @@ public class FixedSizeStack<T> implements Stack<T>{
     public Iterator<T> iterator() {
         return new Iterator<T>() {
             private int i = sp;
-            
+            private int modc = modcount;
             
             @Override
             public boolean hasNext() {
-                return this.i != 0;
+                return this.i > 0;
             }
 
             @Override
             public T next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                if (modc != modcount) {
+                    throw new ConcurrentModificationException();
+                }
                 return stack[--i];
             }
 

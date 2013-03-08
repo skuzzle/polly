@@ -26,8 +26,8 @@ import de.skuzzle.polly.parsing.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.Literal;
 import de.skuzzle.polly.parsing.ast.expressions.literals.NumberLiteral;
 import de.skuzzle.polly.parsing.ast.expressions.literals.StringLiteral;
-import de.skuzzle.polly.parsing.util.LinkedStack;
-import de.skuzzle.polly.parsing.util.Stack;
+import de.skuzzle.polly.tools.collections.LinkedStack;
+import de.skuzzle.polly.tools.collections.Stack;
 
 
 

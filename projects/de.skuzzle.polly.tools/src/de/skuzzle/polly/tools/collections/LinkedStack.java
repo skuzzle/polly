@@ -1,4 +1,4 @@
-package de.skuzzle.polly.parsing.util;
+package de.skuzzle.polly.tools.collections;
 
 import java.util.EmptyStackException;
 import java.util.Iterator;

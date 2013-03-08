@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import de.skuzzle.polly.tools.collections.LinkedStack;
+import de.skuzzle.polly.tools.collections.Stack;
 import de.skuzzle.polly.tools.iterators.ArrayIterator;
 
 

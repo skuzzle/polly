@@ -11,7 +11,7 @@ import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.parsing.ast.visitor.Transformation;
 import de.skuzzle.polly.parsing.ast.visitor.ASTVisitor;
 import de.skuzzle.polly.parsing.ast.visitor.resolving.TypeResolver;
-import de.skuzzle.polly.parsing.util.Stack;
+import de.skuzzle.polly.tools.collections.Stack;
 
 
 /**
