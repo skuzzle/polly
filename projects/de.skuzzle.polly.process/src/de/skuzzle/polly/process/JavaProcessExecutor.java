@@ -1,7 +1,6 @@
 package de.skuzzle.polly.process;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,22 +14,20 @@ import java.util.List;
  * @author Simon
  * @see ProcessExecutor
  */
-public class JavaProcessExecutor {
+public final class JavaProcessExecutor {
 
-    public static void main(String[] args) throws IOException {
-        ProcessExecutor jpe = JavaProcessExecutor.getOsInstance(true);
-        jpe.setExecuteIn(new File("D:\\Dokumente\\Programmieren\\Java Workspace\\polly\\polly\\dist"));
-        jpe.addCommandsFromString("-jar polly.jar -u false -n pollyv2 -j #debugging");
-        System.out.println(jpe.toString());
-        
-        jpe.setInputHandler(new RedirectStreamHandler("REDIRECT_INPUT"));
-        jpe.start();
-        System.out.println("fertig");
-    }
-
-    
-    
-    public static ProcessExecutor getOsInstance(boolean runInConsole, List<String> commands) {
+    /**
+     * Gets a {@link ProcessExecutor} that will run <code>java</code> with the given 
+     * commandline commands.
+     * 
+     * @param runInConsole Whether java should b launched using a new console window.
+     *          Note: the behavior of this parameter is highly system dependent. See
+     *          {@link ProcessExecutor#ProcessExecutor(boolean)}.
+     * @param commands Commands to add to the created executor.
+     * @return The created ProcessExecutor.
+     */
+    public static ProcessExecutor getOsInstance(boolean runInConsole, 
+            List<String> commands) {
         File java = null;
         if (ProcessExecutor.IS_WINDOWS) {
             java = getJava("sun.boot.library.path", "javaw");
@@ -63,8 +60,10 @@ public class JavaProcessExecutor {
      * Creates a ProcessExecutor which will start a new JVM with the same arguments
      * as the current vm.
      * 
-     * @param runInConsole
-     * @return The {@link ProcessExecutor} instance.
+     * @param runInConsole Whether java should b launched using a new console window.
+     *          Note: the behavior of this parameter is highly system dependent. See
+     *          {@link ProcessExecutor#ProcessExecutor(boolean)}.
+     * @return The created {@link ProcessExecutor} instance.
      */
     public static ProcessExecutor getCurrentInstance(boolean runInConsole) {
         ProcessExecutor pe = JavaProcessExecutor.getOsInstance(runInConsole);
@@ -84,12 +83,10 @@ public class JavaProcessExecutor {
      * commands added to the resulting ProcessExecutor will be arguments for 
      * <code>java</code> or <code>javaw</code>.
      *  
-     * @param runInConsole This flag is system dependent. If set to false, the 
-     *          ProcessExecutor will create the new process running in background. If set 
-     *          to true on Windows machines, the ProcessExecutor opens a new Console 
-     *          window running the process. On Unix machines the executor creates a new 
-     *          shell process which then executes the command. 
-     * @return The {@link ProcessExecutor} instance.
+     * @param runInConsole Whether java should b launched using a new console window.
+     *          Note: the behavior of this parameter is highly system dependent. See
+     *          {@link ProcessExecutor#ProcessExecutor(boolean)}.
+     * @return The created {@link ProcessExecutor} instance.
      */
     public static ProcessExecutor getOsInstance(boolean runInConsole) {
         return JavaProcessExecutor.getOsInstance(runInConsole, new LinkedList<String>());

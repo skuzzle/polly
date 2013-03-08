@@ -10,11 +10,39 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-
+/**
+ * <p>This class handles the system dependent task of creating and interacting with 
+ * processes. It currently does not support MAC OS.</p>
+ * 
+ * <p>A concrete instance can be obtained using one of the static factory methods 
+ * {@link #getOsInstance(boolean)} or {@link #getOsInstance(boolean, List)}.</p>
+ * 
+ * <h2>StreamHandlers</h2>
+ * When a process is created, it is important to empty its standard out and standard
+ * error streams, as otherwise deadlocks may occur (as by the documentation of 
+ * {@link Process}). {@link StreamHandler StreamHandlers} are threads that asynchronously
+ * read data from the created processes to ensure that all buffers are emptied regularly.
+ * A StreamHandler instance can only be attached to a process before it is executed using
+ * {@link #setInputHandler(StreamHandler)} and {@link #setErrorHandler(StreamHandler)}. 
+ * If no StreamHandler is set, {@link SilentStreamHandler SilentStreamHandlers} are used
+ * by default.
+ * 
+ * <h2>ProcessWatchers</h2>
+ * A ProcessWatcher is, like a StreamHandler, a separate thread which is started along
+ * with executing a process. It will then be notified when the created process is 
+ * shutdown (or optionally a timeout expired).
+ * 
+ * @author Simon Taddiken
+ */
 public abstract class ProcessExecutor {
     
+    /** Determines whether we are running UNIX */
     public final static boolean IS_UNIX = ProcessExecutor.isUnix();
+    
+    /** Determines whether we are running on MAC OS */
     public final static boolean IS_MAC = ProcessExecutor.isMac();
+    
+    /** Determines whether we are running Windows */
     public final static boolean IS_WINDOWS = ProcessExecutor.isWindows();
     
     
@@ -35,6 +63,18 @@ public abstract class ProcessExecutor {
     
     
     
+    /**
+     * Creates a proper {@link ProcessExecutor} for the current OS. MAC OS is currently
+     * not supported.
+     * 
+     * @param runInConsole This flag is system dependent. If set to false, the 
+     *          ProcessExecutor will create the new process running in background. If set 
+     *          to true on Windows machines, the ProcessExecutor opens a new Console 
+     *          window running the process. On Unix machines the executor creates a new 
+     *          shell process which then executes the command. 
+     * @param commands List of commandline arguments for the created ProcessExecutor.
+     * @return A new ProcessExecutor instance.
+     */
     public static ProcessExecutor getOsInstance(boolean runInConsole, 
             List<String> commands) {
         
@@ -49,49 +89,28 @@ public abstract class ProcessExecutor {
     
     
     
+    /**
+     * Creates a proper {@link ProcessExecutor} for the current OS. MAC OS is currently
+     * not supported.
+     * 
+     * @param runInConsole This flag is system dependent. If set to false, the 
+     *          ProcessExecutor will create the new process running in background. If set 
+     *          to true on Windows machines, the ProcessExecutor opens a new Console 
+     *          window running the process. On Unix machines the executor creates a new 
+     *          shell process which then executes the command. 
+     * @return A new ProcessExecutor instance.
+     */
     public static ProcessExecutor getOsInstance(boolean runInConsole) {
         return ProcessExecutor.getOsInstance(runInConsole, new LinkedList<String>());
     }
     
     
     
-    public static void main(String[] args) throws IOException, InterruptedException {
-        ProcessExecutor pe = ProcessExecutor.getOsInstance(true);
-        System.out.println(System.getProperty("java.home"));
-        pe.setExecuteIn(new File("D:\\Dokumente\\Programmieren\\Java Workspace\\polly\\polly\\dist"));
-
-        pe.addCommand(System.getProperty("java.home") + "\\bin\\java.exe");
-        pe.addCommandsFromString("-jar polly.jar -u false -n pollyv2 -j #debugging");
-        //pe.addCommand("cmd");
-        //pe.addCommand("/c");
-        //pe.addCommand("dir");
-        
-        System.out.println(pe.toString());
-
-        /*pe.setProcessWatcher(new ProcessWatcher(30000) {
-            @Override
-            public void processExit(ProcessWrapper proc, int exitType) {
-                System.out.println("PROC EXITED");
-                
-                if (exitType == ProcessWatcher.EXIT_TYPE_TIMEOUT) {
-                    System.out.println("TIMEOUT!");
-                    System.out.println(
-                        ((BufferedStreamHandler) proc.getInputHandler()).getBuffer().toString());
-                } else if (exitType == ProcessWatcher.EXIT_TYPE_ERROR) {
-                    System.out.println("ERROR!");
-                } else {
-                    System.out.println("SUCCESS");
-                    System.out.println("CODE = " + proc.getProcess().exitValue());
-                }
-            }
-        });*/
-        pe.setInputHandler(new RedirectStreamHandler("INPUT"));
-        pe.start();
-    }
-
-    
-    
-    
+    /**
+     * ProcessExecutor implementation for Windows machines.
+     * 
+     * @author Simon Taddiken
+     */
     protected static class WindowsProcessExecutor extends ProcessExecutor {
         
         public WindowsProcessExecutor(boolean runInConsole, List<String> commands) {
@@ -136,6 +155,11 @@ public abstract class ProcessExecutor {
     
     
     
+    /**
+     * ProcessExecutor implementation for UNIX machines.
+     * 
+     * @author Simon Taddiken
+     */
     protected static class UnixProcessExecutor extends ProcessExecutor {
         private final static List<File> SHELLS = new ArrayList<File>();
         private final static List<String> SHELL_ARGS = new ArrayList<String>();
@@ -225,7 +249,14 @@ public abstract class ProcessExecutor {
     private final static Pattern PATTERN = Pattern.compile("[^\\s\"]+|(\"[^\"]+\")");
 
     
-    
+    /**
+     * 
+     * @param runInConsole This flag is system dependent. If set to false, the 
+     *          ProcessExecutor will create the new process running in background. If set 
+     *          to true on Windows machines, the ProcessExecutor opens a new Console 
+     *          window running the process. On Unix machines the executor creates a new 
+     *          shell process which then executes the command. 
+     */
     public ProcessExecutor(boolean runInConsole) {
         this.runInConsole = runInConsole;
         this.commands = new LinkedList<String>();
@@ -237,6 +268,12 @@ public abstract class ProcessExecutor {
     
     
     
+    /**
+     * Adds a single commandline argument to this executor.
+     * 
+     * @param cmd The command to add.
+     * @return This instance to enable setter chaining.
+     */
     public ProcessExecutor addCommand(String cmd) {
         this.commands.add(cmd);
         return this;
@@ -244,6 +281,12 @@ public abstract class ProcessExecutor {
     
     
     
+    /**
+     * Adds a list of commandline arguments to this executor.
+     * 
+     * @param cmds The commands to add.
+     * @return This instance to enable setter chaining.
+     */
     public ProcessExecutor addCommand(List<String> cmds) {
         for (String cmd : cmds) {
             this.addCommand(cmd);
@@ -253,6 +296,14 @@ public abstract class ProcessExecutor {
     
 
     
+    /**
+     * Parses the given string like a commandline tool would do. Parts wrapped in 
+     * quotes (") will form a single argument, otherwise, the string is splitted at
+     * whitespaces.
+     * 
+     * @param commandLine The string to parse.
+     * @return This instance to enable setter chaining.
+     */
     public ProcessExecutor addCommandsFromString(String commandLine) {
         this.addCommandsFromString(commandLine, this.commands);
         return this;
@@ -260,6 +311,12 @@ public abstract class ProcessExecutor {
     
     
     
+    /**
+     * Sets the working directory for the process to create.
+     *  
+     * @param executeIn The working directory.
+     * @return This instance to enable setter chaining.
+     */
     public ProcessExecutor setExecuteIn(File executeIn) {
         this.executeIn = executeIn;
         return this;
@@ -267,6 +324,12 @@ public abstract class ProcessExecutor {
     
     
     
+    /**
+     * Gets the working directory for the process to create. By default, this will be
+     * the directory from which the current JVM is run.
+     *  
+     * @return The working directory.
+     */
     public File getExecuteIn() {
         return this.executeIn;
     }
@@ -274,6 +337,13 @@ public abstract class ProcessExecutor {
     
     
     
+    /**
+     * Sets the {@link StreamHandler} that will read all the data from the created 
+     * process's standard output.
+     * 
+     * @param input Standard out StreamHandler.
+     * @return This instance to enable setter chaining.
+     */
     public ProcessExecutor setInputHandler(StreamHandler input) {
         this.input = input;
         return this;
@@ -281,18 +351,36 @@ public abstract class ProcessExecutor {
     
     
     
+    /**
+     * Gets the {@link StreamHandler} that will read all the data from the created
+     * process's standard output.
+     * @return The StreamHandler.
+     */
     public StreamHandler getInputHandler() {
         return this.input;
     }
     
     
     
+    
+    /**
+     * Gets the {@link StreamHandler} that will read all the data from the created
+     * process's standard error output.
+     * @return The StreamHandler.
+     */
     public StreamHandler getErrorHandler() {
         return this.error;
     }
     
     
     
+    /**
+     * Sets the {@link StreamHandler} that will read all the data from the created 
+     * process's standard error output.
+     * 
+     * @param error Standard out StreamHandler.
+     * @return This instance to enable setter chaining.
+     */
     public ProcessExecutor setErrorHandler(StreamHandler error) {
         this.error = error;
         return this;
@@ -300,6 +388,13 @@ public abstract class ProcessExecutor {
     
     
     
+    /**
+     * Sets a {@link ProcessWatcher} which will be notified when the create process is
+     * shutdown.
+     * 
+     * @param watcher The ProcessWatcher to set.
+     * @return This instance to enable setter chaining.
+     */
     public ProcessExecutor setProcessWatcher(ProcessWatcher watcher) {
         this.watcher = watcher;
         return this;
@@ -324,6 +419,17 @@ public abstract class ProcessExecutor {
     
     
     
+    /**
+     * <p>Starts the process using the parameters supplied by this class' setter methods.
+     * If no custom {@link StreamHandler StreamHandlers} was set, 
+     * {@link SilentStreamHandler} will be used by default. By default, no 
+     * {@link ProcessWatcher} will be attached if not set by 
+     * {@link #setProcessWatcher(ProcessWatcher)}.</p>
+     * 
+     * <p>Note: this method can only be invoked once on this instance.</p>
+     * @return A {@link ProcessWrapper} representing the created process.
+     * @throws IOException If creation of the process fails.
+     */
     public ProcessWrapper start() throws IOException {
         if (!this.valid) {
             throw new IllegalStateException("already started");
@@ -354,10 +460,24 @@ public abstract class ProcessExecutor {
     
     
     
+    /**
+     * System dependent method to start a process.
+     * 
+     * @param pb The {@link ProcessBuilder} that will be used to create the process.
+     * @return The created process.
+     * @throws IOException If creation of the process fails.
+     */
     protected abstract Process doStart(ProcessBuilder pb) throws IOException;
     
     
     
+    /**
+     * System dependent method to quote a commandline argument when it contains 
+     * whitespaces.
+     * 
+     * @param command The argument to escape.
+     * @return The escaped argument.
+     */
     protected String escapeCommand(String command) {
         return command;
     }
