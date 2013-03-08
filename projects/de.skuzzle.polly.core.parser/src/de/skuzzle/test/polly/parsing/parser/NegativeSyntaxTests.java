@@ -4,10 +4,10 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import de.skuzzle.polly.parsing.InputParser;
-import de.skuzzle.polly.parsing.ParseException;
-import de.skuzzle.polly.parsing.SyntaxException;
-import de.skuzzle.polly.parsing.TokenType;
+import de.skuzzle.polly.core.parser.InputParser;
+import de.skuzzle.polly.core.parser.ParseException;
+import de.skuzzle.polly.core.parser.SyntaxException;
+import de.skuzzle.polly.core.parser.TokenType;
 
 /**
  * Tests whether syntactical incorrect inputs are considered wrong.

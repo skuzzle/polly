@@ -3,8 +3,8 @@ package de.skuzzle.test.polly.parsing.parser;
 import org.junit.Test;
 
 import junit.framework.Assert;
-import de.skuzzle.polly.parsing.InputParser;
-import de.skuzzle.polly.parsing.ParseException;
+import de.skuzzle.polly.core.parser.InputParser;
+import de.skuzzle.polly.core.parser.ParseException;
 
 /**
  * Tests whether syntactically correct inputs are recognized correctly.

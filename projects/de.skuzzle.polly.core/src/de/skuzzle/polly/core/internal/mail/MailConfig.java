@@ -10,8 +10,8 @@ import org.apache.log4j.Level;
 import de.skuzzle.polly.core.configuration.ConfigurationImpl;
 import de.skuzzle.polly.core.configuration.ConfigurationProviderImpl;
 import de.skuzzle.polly.core.internal.mail.senders.MailSender;
+import de.skuzzle.polly.core.moduleloader.SetupException;
 
-import polly.moduleloader.SetupException;
 
 
 

@@ -4,10 +4,10 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import de.skuzzle.polly.parsing.AbstractTokenStream;
-import de.skuzzle.polly.parsing.ParseException;
-import de.skuzzle.polly.parsing.Token;
-import de.skuzzle.polly.parsing.TokenType;
+import de.skuzzle.polly.core.parser.AbstractTokenStream;
+import de.skuzzle.polly.core.parser.ParseException;
+import de.skuzzle.polly.core.parser.Token;
+import de.skuzzle.polly.core.parser.TokenType;
 
 /**
  * Tests to read several numbers from a scanner.

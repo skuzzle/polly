@@ -10,10 +10,11 @@ import java.lang.reflect.Constructor;
 
 import org.apache.log4j.Logger;
 
+import de.skuzzle.polly.core.moduleloader.ModuleLoader;
+import de.skuzzle.polly.core.moduleloader.SetupException;
 
 
-import polly.moduleloader.ModuleLoader;
-import polly.moduleloader.SetupException;
+
 
 
 public class ModuleBootstrapper {

@@ -8,16 +8,16 @@ import java.util.List;
 import de.skuzzle.polly.core.configuration.ConfigurationProviderImpl;
 import de.skuzzle.polly.core.internal.ModuleStates;
 import de.skuzzle.polly.core.internal.ShutdownManagerImpl;
+import de.skuzzle.polly.core.moduleloader.AbstractProvider;
+import de.skuzzle.polly.core.moduleloader.ModuleLoader;
+import de.skuzzle.polly.core.moduleloader.SetupException;
+import de.skuzzle.polly.core.moduleloader.annotations.Module;
+import de.skuzzle.polly.core.moduleloader.annotations.Provide;
+import de.skuzzle.polly.core.moduleloader.annotations.Require;
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.ConfigurationProvider;
 import de.skuzzle.polly.tools.events.EventProvider;
 
-import polly.moduleloader.AbstractProvider;
-import polly.moduleloader.ModuleLoader;
-import polly.moduleloader.SetupException;
-import polly.moduleloader.annotations.Module;
-import polly.moduleloader.annotations.Require;
-import polly.moduleloader.annotations.Provide;
 
 
 @Module(

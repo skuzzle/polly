@@ -2,8 +2,8 @@ package de.skuzzle.test.polly.parsing.scanner;
 
 import org.junit.Ignore;
 
-import de.skuzzle.polly.parsing.AbstractTokenStream;
-import de.skuzzle.polly.parsing.InputScanner;
+import de.skuzzle.polly.core.parser.AbstractTokenStream;
+import de.skuzzle.polly.core.parser.InputScanner;
 
 @Ignore
 public abstract class AbstractScannerTest {

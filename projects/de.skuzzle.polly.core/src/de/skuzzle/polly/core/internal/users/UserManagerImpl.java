@@ -17,10 +17,10 @@ import org.apache.log4j.Logger;
 
 
 import de.skuzzle.polly.core.internal.persistence.PersistenceManagerImpl;
+import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
+import de.skuzzle.polly.core.parser.ast.declarations.DeclarationReader;
+import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
 import de.skuzzle.polly.core.util.CaseInsensitiveStringKeyMap;
-import de.skuzzle.polly.parsing.ast.declarations.Declaration;
-import de.skuzzle.polly.parsing.ast.declarations.DeclarationReader;
-import de.skuzzle.polly.parsing.ast.declarations.Namespace;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.UserManager;

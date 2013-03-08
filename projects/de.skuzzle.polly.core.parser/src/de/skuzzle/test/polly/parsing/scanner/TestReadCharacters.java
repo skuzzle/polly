@@ -6,7 +6,7 @@ import junit.framework.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import de.skuzzle.polly.parsing.InputScanner;
+import de.skuzzle.polly.core.parser.InputScanner;
 
 /**
  * Tests some basic character reading.

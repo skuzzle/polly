@@ -1,13 +1,13 @@
 package de.skuzzle.polly.core.internal.formatting;
 
 import de.skuzzle.polly.core.configuration.ConfigurationProviderImpl;
+import de.skuzzle.polly.core.moduleloader.AbstractProvider;
+import de.skuzzle.polly.core.moduleloader.ModuleLoader;
+import de.skuzzle.polly.core.moduleloader.annotations.Module;
+import de.skuzzle.polly.core.moduleloader.annotations.Provide;
+import de.skuzzle.polly.core.moduleloader.annotations.Require;
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.ConfigurationProvider;
-import polly.moduleloader.AbstractProvider;
-import polly.moduleloader.ModuleLoader;
-import polly.moduleloader.annotations.Module;
-import polly.moduleloader.annotations.Require;
-import polly.moduleloader.annotations.Provide;;
 
 @Module(
     requires = 

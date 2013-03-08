@@ -12,14 +12,14 @@ import de.skuzzle.polly.core.internal.roles.Permission;
 import de.skuzzle.polly.core.internal.roles.Role;
 import de.skuzzle.polly.core.internal.users.Attribute;
 import de.skuzzle.polly.core.internal.users.User;
+import de.skuzzle.polly.core.moduleloader.AbstractProvider;
+import de.skuzzle.polly.core.moduleloader.ModuleLoader;
+import de.skuzzle.polly.core.moduleloader.SetupException;
+import de.skuzzle.polly.core.moduleloader.annotations.Module;
+import de.skuzzle.polly.core.moduleloader.annotations.Provide;
+import de.skuzzle.polly.core.moduleloader.annotations.Require;
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
-import polly.moduleloader.AbstractProvider;
-import polly.moduleloader.ModuleLoader;
-import polly.moduleloader.SetupException;
-import polly.moduleloader.annotations.Module;
-import polly.moduleloader.annotations.Require;
-import polly.moduleloader.annotations.Provide;
 
 @Module(
     requires = {

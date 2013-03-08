@@ -66,9 +66,12 @@
             <link href="http://java.sun.com/javase/6/docs/api/"/>
 
             <fileset dir="." defaultexcludes="true">
-                <include name="de.skuzzle.polly.**/src/**"/>
-                <exclude name="de.skuzzle.polly.**/src/META-INF/**"/>
-                <exclude name="de.skuzzle.polly.plugin**"/>
+                <include name="de.skuzzle.polly.core.moduleloader/src/**"/>
+                <include name="de.skuzzle.polly.core.parser/src/**"/>
+                <include name="de.skuzzle.polly.process/src/**"/>
+                <include name="de.skuzzle.polly.tools/src/**"/>
+                <include name="de.skuzzle.polly.sdk/src/**"/>
+
             </fileset>
         </javadoc>
     </target>

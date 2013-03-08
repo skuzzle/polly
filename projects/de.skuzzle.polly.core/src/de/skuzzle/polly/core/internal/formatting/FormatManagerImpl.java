@@ -10,7 +10,7 @@ import java.util.TimeZone;
 
 
 
-import de.skuzzle.polly.parsing.util.TimeSpanFormat;
+import de.skuzzle.polly.core.parser.util.TimeSpanFormat;
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.FormatManager;
 

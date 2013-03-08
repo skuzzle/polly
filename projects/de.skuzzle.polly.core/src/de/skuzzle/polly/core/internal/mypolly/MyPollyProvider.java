@@ -15,13 +15,13 @@ import de.skuzzle.polly.core.internal.persistence.PersistenceManagerImpl;
 import de.skuzzle.polly.core.internal.plugins.PluginManagerImpl;
 import de.skuzzle.polly.core.internal.roles.RoleManagerImpl;
 import de.skuzzle.polly.core.internal.users.UserManagerImpl;
+import de.skuzzle.polly.core.moduleloader.AbstractProvider;
+import de.skuzzle.polly.core.moduleloader.ModuleLoader;
+import de.skuzzle.polly.core.moduleloader.annotations.Module;
+import de.skuzzle.polly.core.moduleloader.annotations.Provide;
+import de.skuzzle.polly.core.moduleloader.annotations.Require;
 import de.skuzzle.polly.tools.events.EventProvider;
 
-import polly.moduleloader.AbstractProvider;
-import polly.moduleloader.ModuleLoader;
-import polly.moduleloader.annotations.Module;
-import polly.moduleloader.annotations.Require;
-import polly.moduleloader.annotations.Provide;;
 
 @Module(
     requires = { 

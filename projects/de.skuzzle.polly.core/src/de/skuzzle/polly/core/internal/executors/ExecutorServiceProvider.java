@@ -5,6 +5,11 @@ import java.util.concurrent.Executors;
 
 import de.skuzzle.polly.core.configuration.ConfigurationProviderImpl;
 import de.skuzzle.polly.core.internal.ShutdownManagerImpl;
+import de.skuzzle.polly.core.moduleloader.AbstractProvider;
+import de.skuzzle.polly.core.moduleloader.ModuleLoader;
+import de.skuzzle.polly.core.moduleloader.annotations.Module;
+import de.skuzzle.polly.core.moduleloader.annotations.Provide;
+import de.skuzzle.polly.core.moduleloader.annotations.Require;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
@@ -12,11 +17,6 @@ import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
 import de.skuzzle.polly.tools.events.AsynchronousEventProvider;
 import de.skuzzle.polly.tools.events.EventProvider;
 
-import polly.moduleloader.AbstractProvider;
-import polly.moduleloader.ModuleLoader;
-import polly.moduleloader.annotations.Module;
-import polly.moduleloader.annotations.Require;
-import polly.moduleloader.annotations.Provide;
 
 @Module(
     requires = { 

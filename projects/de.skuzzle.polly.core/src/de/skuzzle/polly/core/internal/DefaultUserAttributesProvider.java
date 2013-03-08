@@ -1,12 +1,12 @@
 package de.skuzzle.polly.core.internal;
 
 import de.skuzzle.polly.core.internal.users.UserManagerImpl;
+import de.skuzzle.polly.core.moduleloader.AbstractProvider;
+import de.skuzzle.polly.core.moduleloader.ModuleLoader;
+import de.skuzzle.polly.core.moduleloader.SetupException;
+import de.skuzzle.polly.core.moduleloader.annotations.Module;
+import de.skuzzle.polly.core.moduleloader.annotations.Require;
 import de.skuzzle.polly.sdk.constraints.Constraints;
-import polly.moduleloader.AbstractProvider;
-import polly.moduleloader.ModuleLoader;
-import polly.moduleloader.SetupException;
-import polly.moduleloader.annotations.Module;
-import polly.moduleloader.annotations.Require;
 
 @Module(
     requires = {

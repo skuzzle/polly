@@ -6,7 +6,7 @@ import org.apache.log4j.Logger;
 
 import de.skuzzle.polly.core.internal.users.User;
 import de.skuzzle.polly.core.internal.users.UserManagerImpl;
-import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.sdk.CommandManager;
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
 import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
