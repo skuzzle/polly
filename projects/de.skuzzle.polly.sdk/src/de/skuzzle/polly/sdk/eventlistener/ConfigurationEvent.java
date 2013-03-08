@@ -6,7 +6,6 @@ import de.skuzzle.polly.sdk.Configuration;
  * This event is raised when the configuration changes.
  * 
  * @author Simon
- * @0.8
  */
 public class ConfigurationEvent {
 
