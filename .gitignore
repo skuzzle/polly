@@ -31,7 +31,11 @@
 *.decl
 *.dot
 *.ico
+*.jar
+/projects/de.skuzzle.polly.core/bin/*.*
+/projects/de.skuzzle.polly.core/bin/SSLKeyStore
+/projects/de.skuzzle.polly.core/bin/pluginconfigs/*.*
 build.number
 publickey
 package-list
-
+persistence.xml
