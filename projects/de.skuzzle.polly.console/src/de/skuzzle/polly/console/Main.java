@@ -6,12 +6,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 
-import de.skuzzle.polly.parsing.Evaluator;
-import de.skuzzle.polly.parsing.Position;
-import de.skuzzle.polly.parsing.ast.declarations.DeclarationReader;
-import de.skuzzle.polly.parsing.ast.declarations.Namespace;
-import de.skuzzle.polly.parsing.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.parsing.ast.visitor.ExpASTVisualizer;
+import de.skuzzle.polly.core.parser.Evaluator;
+import de.skuzzle.polly.core.parser.Position;
+import de.skuzzle.polly.core.parser.ast.declarations.DeclarationReader;
+import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
+import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.core.parser.ast.visitor.ExpASTVisualizer;
 import de.skuzzle.polly.process.KillingProcessWatcher;
 import de.skuzzle.polly.process.ProcessExecutor;
 
