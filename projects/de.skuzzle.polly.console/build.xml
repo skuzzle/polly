@@ -8,7 +8,7 @@
     <property name="jar.title"         value="polly.console"/>
     
     <!-- The name of this projects main class. -->
-    <property name="jar.main"          value="Main"/>
+    <property name="jar.main"          value="de.skuzzle.polly.console.Main"/>
 
     <!-- 
         Space-separated list of jar files relative to lib.dir to include 
