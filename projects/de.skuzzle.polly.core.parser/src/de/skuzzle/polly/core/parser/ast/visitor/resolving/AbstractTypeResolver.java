@@ -7,11 +7,11 @@ import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.Node;
 import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
-import de.skuzzle.polly.core.parser.ast.declarations.types.TypeUnifier;
 import de.skuzzle.polly.core.parser.ast.expressions.Call;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.DepthFirstVisitor;
+import de.skuzzle.polly.core.parser.problems.ProblemReporter;
 
 
 public abstract class AbstractTypeResolver extends DepthFirstVisitor {

@@ -3,10 +3,8 @@ package de.skuzzle.polly.core.parser.ast.declarations.types;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.skuzzle.polly.core.parser.ParseException;
 import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.Identifier;
-import de.skuzzle.polly.core.parser.ast.ResolvableIdentifier;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
 import de.skuzzle.polly.core.parser.ast.visitor.Visitable;
 import de.skuzzle.polly.tools.EqualsHelper;

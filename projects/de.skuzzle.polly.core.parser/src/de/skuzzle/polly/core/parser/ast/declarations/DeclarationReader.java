@@ -15,6 +15,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.Expression;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.ExecutionVisitor;
 import de.skuzzle.polly.core.parser.ast.visitor.resolving.TypeResolver;
+import de.skuzzle.polly.core.parser.problems.SimpleProblemReporter;
 
 
 /**

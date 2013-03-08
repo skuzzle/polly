@@ -12,6 +12,7 @@ import de.skuzzle.polly.core.parser.ast.visitor.ExecutionVisitor;
 import de.skuzzle.polly.core.parser.ast.visitor.ParentSetter;
 import de.skuzzle.polly.core.parser.ast.visitor.Unparser;
 import de.skuzzle.polly.core.parser.ast.visitor.resolving.TypeResolver;
+import de.skuzzle.polly.core.parser.problems.ProblemReporter;
 
 
 /**

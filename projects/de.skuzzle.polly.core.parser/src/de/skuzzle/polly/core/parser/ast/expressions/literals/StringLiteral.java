@@ -5,6 +5,7 @@ import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.Transformation;
+import de.skuzzle.polly.tools.Equatable;
 
 
 public class StringLiteral extends Literal {

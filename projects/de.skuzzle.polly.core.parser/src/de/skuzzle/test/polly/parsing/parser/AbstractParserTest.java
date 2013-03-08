@@ -3,6 +3,7 @@ package de.skuzzle.test.polly.parsing.parser;
 import org.junit.Ignore;
 
 import de.skuzzle.polly.core.parser.InputParser;
+import de.skuzzle.polly.core.parser.problems.SimpleProblemReporter;
 
 
 /**

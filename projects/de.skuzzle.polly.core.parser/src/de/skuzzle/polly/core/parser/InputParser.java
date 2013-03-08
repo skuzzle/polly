@@ -17,6 +17,7 @@ import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
 import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
 import de.skuzzle.polly.core.parser.ast.declarations.types.ListType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.MapType;
+import de.skuzzle.polly.core.parser.ast.declarations.types.MissingType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.ProductType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
 import de.skuzzle.polly.core.parser.ast.expressions.Assignment;
@@ -42,6 +43,10 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.StringLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.TimespanLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.UserLiteral;
 import de.skuzzle.polly.core.parser.ast.lang.Operator.OpType;
+import de.skuzzle.polly.core.parser.problems.ProblemReporter;
+import de.skuzzle.polly.core.parser.ast.expressions.Problem;
+import de.skuzzle.polly.tools.collections.LinkedStack;
+import de.skuzzle.polly.tools.collections.Stack;
 
 
 /**

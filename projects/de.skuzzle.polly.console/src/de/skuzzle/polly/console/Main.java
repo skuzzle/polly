@@ -1,4 +1,5 @@
 package de.skuzzle.polly.console;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
@@ -17,6 +18,9 @@ import de.skuzzle.polly.core.parser.ast.declarations.DeclarationReader;
 import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.ExpASTVisualizer;
+import de.skuzzle.polly.core.parser.problems.MultipleProblemReporter;
+import de.skuzzle.polly.core.parser.problems.ProblemReporter;
+import de.skuzzle.polly.core.parser.problems.ProblemReporter.Problem;
 import de.skuzzle.polly.process.KillingProcessWatcher;
 import de.skuzzle.polly.process.ProcessExecutor;
 import de.skuzzle.polly.tools.strings.StringUtils;

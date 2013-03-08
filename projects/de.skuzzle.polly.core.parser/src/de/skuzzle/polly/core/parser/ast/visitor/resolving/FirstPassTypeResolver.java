@@ -30,6 +30,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.ProductLiteral;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.DepthFirstVisitor;
 import de.skuzzle.polly.core.parser.ast.visitor.Unparser;
+import de.skuzzle.polly.core.parser.problems.ProblemReporter;
 import de.skuzzle.polly.core.parser.util.Combinator;
 import de.skuzzle.polly.core.parser.util.Combinator.CombinationCallBack;
 

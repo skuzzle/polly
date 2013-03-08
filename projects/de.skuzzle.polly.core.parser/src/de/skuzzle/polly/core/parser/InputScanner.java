@@ -8,7 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import de.skuzzle.polly.parsing.problems.ProblemReporter;
+import de.skuzzle.polly.core.parser.problems.ProblemReporter;
+
 
 
 
