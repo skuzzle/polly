@@ -1,5 +1,6 @@
 package de.skuzzle.polly.tools.collections;
 
+import java.util.Collection;
 import java.util.EmptyStackException;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -15,9 +16,27 @@ public class LinkedStack<T> implements Stack<T> {
     private final LinkedList<T> backend;
     
     
-    
+    /**
+     * Creates a new empty LinkedStack.
+     */
     public LinkedStack() {
         this.backend = new LinkedList<T>();
+    }
+    
+    
+    
+    /**
+     * Creates a new LinkedStack by pushing all elements from the given collection onto 
+     * it. The elements will be pushed in order they are returned by the given 
+     * collection's iterator.
+     * 
+     * @param c Initial elements.
+     */
+    public LinkedStack(Collection<? extends T> c) {
+        this();
+        for (final T t : c) {
+            this.push(t);
+        }
     }
     
     

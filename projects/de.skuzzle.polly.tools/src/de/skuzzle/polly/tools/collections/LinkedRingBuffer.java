@@ -61,7 +61,11 @@ public class LinkedRingBuffer<T> implements Queue<T> {
 
     @Override
     public boolean addAll(Collection<? extends T> c) {
-        return this.q.addAll(c);
+        boolean modified = false;
+        for (final T t : c) {
+            modified |= this.add(t);
+        }
+        return modified;
     }
 
 

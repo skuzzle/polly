@@ -61,11 +61,25 @@ public class ArrayStack<T> implements Stack<T> {
     
     
     
+    /**
+     * Gets the element at position <code>i</code>.
+     * @param i The index of the stack element to retrieve.
+     * @return The element at the given position.
+     */
+    public T get(int i) {
+        if (i >= this.sp) {
+            throw new IndexOutOfBoundsException();
+        }
+        return this.stack[i];
+    }
+    
+    
+    
     @SuppressWarnings("unchecked")
     private void ensureCapacity(int needed) {
         if (this.stack.length == needed) {
             final T[] tmp = (T[]) new Object[this.stack.length * 2];
-            System.arraycopy(this.stack, 0, tmp, 0, this.stack.length);
+            System.arraycopy(this.stack, 0, tmp, 0, this.sp);
             this.stack = tmp;
         }
     }

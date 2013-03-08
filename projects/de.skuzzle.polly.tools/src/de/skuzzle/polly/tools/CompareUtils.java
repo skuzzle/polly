@@ -4,11 +4,16 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-
+/**
+ * This class provides static utilities for working with the {@link Comparator} and
+ * {@link Comparable} interfaces.
+ *  
+ * @author Simon Taddiken
+ */
 public final class CompareUtils {
     
     /**
-     * Comparator implementation that uses several internal comparators, that are 
+     * Comparator implementation that uses several internal comparators which are 
      * executed as long as the next comparator returns 0.
      * If all comparators return 0, 0 will be returned. Otherwise, the first result != 0
      * will be returned.
