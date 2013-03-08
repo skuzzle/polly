@@ -1,8 +1,8 @@
 package de.skuzzle.polly.tools;
 
 /**
- * <p>Interface which helps to override the {@link #equals(Object)} method according to 
- * its specified contract. This interface is based on the article 
+ * <p>Interface which helps to override the {@link Object#equals(Object)} method 
+ * according to its specified contract. This interface is based on the article 
  * <a href="http://www.drdobbs.com/jvm/java-qa-how-do-i-correctly-implement-th/184405053">
  * How Do I Correctly Implement the equals() Method?</a> by Tal Cohen (May 01, 2002) and
  * its related <a href="http://tal.forum2.org/equals">discussion page</a>.</p>

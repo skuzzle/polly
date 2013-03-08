@@ -17,7 +17,7 @@ public interface Constraints {
     
     /**
      * Constraints a value to a double.
-     * @See {@link DoubleConstraint}
+     * @see {@link DoubleConstraint}
      */
     public final static AttributeConstraint DOUBLE = new DoubleConstraint();
     
