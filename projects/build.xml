@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="polly" basedir="." default="dist.debug">
 
+    <!-- 
+        The root directory of the polly project, relative to this file
+    -->
+    <property name="root.dir"          value="../"/>
+
+    <!-- Directory which will contain the fully built projects. -->
+    <property name="build.dir"         value="${root.dir}/target"/>
+    
+    <!-- Output folder for combined java doc of all projects -->
+    <property name="combined.doc.dir"  value="${build.dir}/documentation"/>
+
+    <!-- Dependency folder -->
+    <property name="lib.dir"          value="${root.dir}/dependency"/>
+    
+    
+    
     <!-- Creates release files for all projects with debug information. -->
     <target name="dist.debug">
         <antcall target="all" inheritAll="true" inheritRefs="true">
@@ -27,23 +43,60 @@
     </target>
     
     
+    <path id="javadocpath">
+        <fileset dir="${lib.dir}"/>
+        <fileset dir="${build.dir}"/>
+    </path>
+    
+    
+    
+    <!-- Creates combined documentation of all core projects. -->
+    <target name="combinedDoc">
+        <delete dir="${combined.doc.dir}"/>
+        <mkdir dir="${combined.doc.dir}"/>
+
+        <javadoc 
+            destdir="${combined.doc.dir}" 
+            classpathref="javadocpath" 
+            author="true"
+            version="true" 
+            use="true"
+            useexternalfile="true">
+
+            <link href="http://java.sun.com/javase/6/docs/api/"/>
+
+            <fileset dir="." defaultexcludes="true">
+                <include name="de.skuzzle.polly.**/src/**"/>
+                <exclude name="de.skuzzle.polly.**/src/META-INF/**"/>
+                <exclude name="de.skuzzle.polly.plugin**"/>
+            </fileset>
+        </javadoc>
+    </target>
+    
+    
     
     <!-- 
         Executes a target given by parameter $target for all projects in a
         build order that respects all dependencies.
     -->
     <target name="all">
-        <ant dir="de.skuzzle.polly.sdk" target="${target}"/>
-        <ant dir="de.skuzzle.polly.tools" target="${target}"/>
-        <ant dir="de.skuzzle.polly.process" target="${target}"/>
-        <ant dir="de.skuzzle.polly.core.parser" target="${target}"/>
-        <ant dir="de.skuzzle.polly.core.moduleloader" target="${target}"/>
-        <ant dir="de.skuzzle.polly.core.pircbot" target="${target}"/>
-        <ant dir="de.skuzzle.polly.console" target="${target}"/>
+        <ant dir="de.skuzzle.polly.sdk" target="${target}" inheritAll="false"/>
+        <ant dir="de.skuzzle.polly.tools" target="${target}" 
+            inheritAll="false"/>
+        <ant dir="de.skuzzle.polly.process" target="${target}" 
+            inheritAll="false"/>
+        <ant dir="de.skuzzle.polly.core.parser" target="${target}" 
+            inheritAll="false"/>
+        <ant dir="de.skuzzle.polly.core.moduleloader" target="${target}" 
+            inheritAll="false"/>
+        <ant dir="de.skuzzle.polly.core.pircbot" target="${target}" 
+            inheritAll="false"/>
+        <ant dir="de.skuzzle.polly.console" target="${target}" 
+            inheritAll="false"/>
         
         <antcall target="all.plugins" inheritAll="true" inheritRefs="true"/>
         
-        <ant dir="de.skuzzle.polly.core" target="${target}"/>
+        <ant dir="de.skuzzle.polly.core" target="${target}" inheritAll="false"/>
     </target>
     
     
@@ -53,11 +106,11 @@
         a build order that respects all dependencies.
     -->
     <target name="all.plugins">
-        <ant dir="de.skuzzle.polly.plugin.core" target="${target}"/>
-        <ant dir="de.skuzzle.polly.plugin.reminds" target="${target}"/>
-        <ant dir="de.skuzzle.polly.plugin.logging" target="${target}"/>
-        <ant dir="de.skuzzle.polly.plugin.rx" target="${target}"/>
-        <ant dir="de.skuzzle.polly.plugin.linkexpander" target="${target}"/>
+        <ant dir="de.skuzzle.polly.plugin.core" target="${target}" inheritAll="false"/>
+        <ant dir="de.skuzzle.polly.plugin.reminds" target="${target}" inheritAll="false"/>
+        <ant dir="de.skuzzle.polly.plugin.logging" target="${target}" inheritAll="false"/>
+        <ant dir="de.skuzzle.polly.plugin.rx" target="${target}" inheritAll="false"/>
+        <ant dir="de.skuzzle.polly.plugin.linkexpander" target="${target}" inheritAll="false"/>
     </target>
     
     
