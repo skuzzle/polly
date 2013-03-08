@@ -5,13 +5,24 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
-
+/**
+ * Ringbuffer implementation which is backed by a {@link LinkedList}. The buffer has a
+ * fix capacity. When the capacity is reached, for each new element that is being added,
+ * the oldest existing element will be removed from the buffer.
+ * 
+ * @author Simon Taddiken
+ * @param <T> Types of elements in this buffer.
+ */
 public class LinkedRingBuffer<T> implements Queue<T> {
 
     private LinkedList<T> q;
     private int capacity;
 
-    
+    /**
+     * Creates a new LinkedRingBuffer with the given capacity.
+     * 
+     * @param capacity Capacity of this buffer.
+     */
     public LinkedRingBuffer(int capacity) {
         super();
         this.capacity = capacity;
@@ -20,6 +31,15 @@ public class LinkedRingBuffer<T> implements Queue<T> {
     
     
 
+    /**
+     * Creates a new LinkedRingBuffer with given capacity. The elements of the given
+     * collection are initially added to the new buffer. If the size of the given 
+     * collection is greater than the buffer's capacity, only the last 
+     * <code>capacity</code> elements will be added to the buffer.
+     * 
+     * @param c Collection to initially add to the buffer.
+     * @param capacity Capacity of this buffer.
+     */
     public LinkedRingBuffer(Collection<? extends T> c, int capacity) {
         this(capacity);
         this.addAll(c);
@@ -27,6 +47,12 @@ public class LinkedRingBuffer<T> implements Queue<T> {
     
     
     
+    /**
+     * Gets the capacity of this buffer. This is the maximum number of elements this 
+     * buffer can hold.
+     * 
+     * @return The capacity.
+     */
     public int getCapacity() {
         return this.capacity;
     }
