@@ -1,7 +1,7 @@
 package core.filters;
 
 import de.skuzzle.polly.sdk.MyPolly;
-import de.skuzzle.polly.sdk.model.User;
+import de.skuzzle.polly.sdk.User;
 import entities.LogEntry;
 
 

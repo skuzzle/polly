@@ -1,6 +1,6 @@
 package de.skuzzle.polly.sdk.exceptions;
 
-import de.skuzzle.polly.sdk.model.User;
+import de.skuzzle.polly.sdk.User;
 
 /**
  * <p>This exception is thrown if you try to add an user which already exists. It has

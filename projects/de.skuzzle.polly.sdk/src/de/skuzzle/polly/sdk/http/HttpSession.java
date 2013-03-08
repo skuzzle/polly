@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-import de.skuzzle.polly.sdk.model.User;
 import de.skuzzle.polly.sdk.time.Time;
 import de.skuzzle.polly.sdk.AbstractDisposable;
+import de.skuzzle.polly.sdk.User;
 
 
 /**

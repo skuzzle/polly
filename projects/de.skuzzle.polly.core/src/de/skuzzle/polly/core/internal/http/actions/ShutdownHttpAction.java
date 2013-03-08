@@ -1,13 +1,13 @@
 package de.skuzzle.polly.core.internal.http.actions;
 
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.http.HttpAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.http.HttpTemplateException;
-import de.skuzzle.polly.sdk.model.User;
 
 
 public class ShutdownHttpAction extends HttpAction {

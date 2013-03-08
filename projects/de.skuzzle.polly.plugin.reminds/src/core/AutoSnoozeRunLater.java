@@ -3,10 +3,10 @@ package core;
 import polly.reminds.MyPlugin;
 import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.IrcManager;
+import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.eventlistener.MessageAdapter;
 import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
-import de.skuzzle.polly.sdk.model.User;
 import de.skuzzle.polly.tools.concurrent.RunLater;
 import entities.RemindEntity;
 

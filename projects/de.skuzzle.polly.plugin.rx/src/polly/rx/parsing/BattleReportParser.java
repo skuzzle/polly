@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.skuzzle.polly.sdk.model.User;
+import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.tools.iterators.ArrayIterator;
 
 import polly.rx.entities.BattleReport;

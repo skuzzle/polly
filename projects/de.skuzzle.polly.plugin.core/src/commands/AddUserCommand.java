@@ -6,13 +6,13 @@ import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
+import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.Types.NumberType;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.InvalidUserNameException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
-import de.skuzzle.polly.sdk.model.User;
 
 public class AddUserCommand extends Command {
 

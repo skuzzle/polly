@@ -17,9 +17,9 @@ import core.output.PasteServiceLogOutput;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PersistenceManager;
+import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
-import de.skuzzle.polly.sdk.model.User;
 import de.skuzzle.polly.sdk.paste.PasteServiceManager;
 import entities.LogEntry;
 

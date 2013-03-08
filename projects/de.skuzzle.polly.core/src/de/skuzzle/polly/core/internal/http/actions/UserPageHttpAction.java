@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.skuzzle.polly.core.internal.http.HttpInterface;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.InvalidUserNameException;
@@ -15,7 +16,6 @@ import de.skuzzle.polly.sdk.http.AbstractAdminAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.http.HttpTemplateException;
-import de.skuzzle.polly.sdk.model.User;
 
 
 

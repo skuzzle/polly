@@ -93,7 +93,7 @@ public class UserManagerProvider extends AbstractProvider {
 
     @Override
     public void run() throws Exception {
-        de.skuzzle.polly.sdk.model.User admin = null;
+        de.skuzzle.polly.sdk.User admin = null;
         try {
             String adminName = this.userCfg.readString(Configuration.ADMIN_NAME); 
             logger.info("Creating default user with name '"

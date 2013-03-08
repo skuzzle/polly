@@ -37,7 +37,7 @@ import de.skuzzle.polly.sdk.time.Time;
         name  = "ALL_USERS", 
         query = "SELECT u FROM User u")
 })
-public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
+public class User implements de.skuzzle.polly.sdk.User, Serializable {
     
     private static final long serialVersionUID = 1L;
     
@@ -255,7 +255,7 @@ public class User implements de.skuzzle.polly.sdk.model.User, Serializable {
     
     
     @Override
-    public int compareTo(de.skuzzle.polly.sdk.model.User o) {
+    public int compareTo(de.skuzzle.polly.sdk.User o) {
         return o.getName().compareTo(this.getName());
     }
 }

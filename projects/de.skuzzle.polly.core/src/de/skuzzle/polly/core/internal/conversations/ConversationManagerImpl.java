@@ -19,11 +19,11 @@ import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.Conversation;
 import de.skuzzle.polly.sdk.ConversationManager;
 import de.skuzzle.polly.sdk.IrcManager;
+import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
 import de.skuzzle.polly.sdk.exceptions.ConversationException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
-import de.skuzzle.polly.sdk.model.User;
 import de.skuzzle.polly.sdk.time.Time;
 import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
 

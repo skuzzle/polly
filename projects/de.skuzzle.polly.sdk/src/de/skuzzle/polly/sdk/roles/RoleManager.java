@@ -3,10 +3,10 @@ package de.skuzzle.polly.sdk.roles;
 import java.util.Set;
 
 import de.skuzzle.polly.sdk.FormalSignature;
+import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.exceptions.RoleException;
-import de.skuzzle.polly.sdk.model.User;
 
 
 

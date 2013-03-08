@@ -27,8 +27,8 @@ import de.skuzzle.polly.sdk.Types.UserType;
  * execute.</p>
  * 
  * <p>The resolved signature gets passed to the 
- * {@link Command#executeOnChannel(de.skuzzle.polly.sdk.model.User, String, Signature)} or
- * {@link Command#executeOnQuery(de.skuzzle.polly.sdk.model.User, Signature)} method. 
+ * {@link Command#executeOnChannel(User, String, Signature)} or
+ * {@link Command#executeOnQuery(User, Signature)} method. 
  * The {@link Command} can distinguish the actual passed signatures by their id. The 
  * formal signatures are numbered consecutively in order of their creation beginning at 
  * 0.</p>

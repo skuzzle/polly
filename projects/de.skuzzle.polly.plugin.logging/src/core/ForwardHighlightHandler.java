@@ -15,13 +15,13 @@ import polly.logging.MyPlugin;
 import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.MailManager;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.eventlistener.MessageAdapter;
 import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.EMailException;
-import de.skuzzle.polly.sdk.model.User;
 import de.skuzzle.polly.sdk.time.Time;
 import entities.LogEntry;
 

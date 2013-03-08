@@ -1,7 +1,7 @@
 package de.skuzzle.polly.sdk.eventlistener;
 
+import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
-import de.skuzzle.polly.sdk.model.User;
 
 /**
  * This is the base event class for events raised by the {@link UserManager}.

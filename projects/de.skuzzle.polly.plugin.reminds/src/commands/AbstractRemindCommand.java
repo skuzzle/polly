@@ -7,9 +7,9 @@ import core.RemindManager;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
-import de.skuzzle.polly.sdk.model.User;
 import entities.RemindEntity;
 
 

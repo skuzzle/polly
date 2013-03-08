@@ -1,4 +1,4 @@
-package de.skuzzle.polly.sdk.model;
+package de.skuzzle.polly.sdk;
 
 import java.util.Set;
 

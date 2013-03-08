@@ -4,11 +4,11 @@ import java.util.Date;
 import java.util.TimerTask;
 
 import de.skuzzle.polly.sdk.Disposable;
+import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.EMailException;
-import de.skuzzle.polly.sdk.model.User;
 
 import entities.RemindEntity;
 

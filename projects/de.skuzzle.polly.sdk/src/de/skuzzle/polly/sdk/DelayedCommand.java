@@ -6,7 +6,6 @@ import java.util.Map;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
-import de.skuzzle.polly.sdk.model.User;
 import de.skuzzle.polly.sdk.time.Time;
 
 

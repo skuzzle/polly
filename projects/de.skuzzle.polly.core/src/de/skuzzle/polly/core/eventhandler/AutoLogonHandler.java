@@ -14,6 +14,7 @@ import de.skuzzle.polly.core.internal.DefaultUserAttributesProvider;
 import de.skuzzle.polly.core.internal.irc.IrcManagerImpl;
 import de.skuzzle.polly.core.internal.users.UserManagerImpl;
 import de.skuzzle.polly.sdk.AbstractDisposable;
+import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.eventlistener.ConnectionEvent;
 import de.skuzzle.polly.sdk.eventlistener.ConnectionListener;
 import de.skuzzle.polly.sdk.eventlistener.MessageAdapter;
@@ -27,7 +28,6 @@ import de.skuzzle.polly.sdk.eventlistener.UserSpottedListener;
 import de.skuzzle.polly.sdk.exceptions.AlreadySignedOnException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
-import de.skuzzle.polly.sdk.model.User;
 import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
 
 

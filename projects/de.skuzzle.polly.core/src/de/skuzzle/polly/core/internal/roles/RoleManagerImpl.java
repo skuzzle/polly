@@ -9,11 +9,11 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import de.skuzzle.polly.sdk.PersistenceManager;
+import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.WriteAction;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.exceptions.RoleException;
-import de.skuzzle.polly.sdk.model.User;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.roles.SecurityContainer;
 import de.skuzzle.polly.sdk.roles.SecurityObject;

@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
-import de.skuzzle.polly.sdk.model.User;
 
 
 

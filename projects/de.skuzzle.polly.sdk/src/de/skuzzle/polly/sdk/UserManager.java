@@ -14,7 +14,6 @@ import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.InvalidUserNameException;
 import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
-import de.skuzzle.polly.sdk.model.User;
 
 /**
  * <p>The UserManager manages several user related tasks such as adding and removing 

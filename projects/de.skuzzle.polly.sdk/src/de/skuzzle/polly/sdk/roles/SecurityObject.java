@@ -16,7 +16,7 @@ public interface SecurityObject {
     /**
      * <p>This reports all the required permissions to access this object. The result set
      * can be passed to the 
-     * {@link RoleManager#hasPermission(de.skuzzle.polly.sdk.model.User, Set)} Method.</p>
+     * {@link RoleManager#hasPermission(de.skuzzle.polly.sdk.User, Set)} Method.</p>
      * 
      * <p>The resulting set should be made readonly using 
      * {@link Collections#unmodifiableSet(Set)}</p>

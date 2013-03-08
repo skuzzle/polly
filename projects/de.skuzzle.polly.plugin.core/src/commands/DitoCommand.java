@@ -6,10 +6,10 @@ import de.skuzzle.polly.sdk.CommandHistoryEntry;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
+import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
-import de.skuzzle.polly.sdk.model.User;
 
 
 public class DitoCommand extends Command {

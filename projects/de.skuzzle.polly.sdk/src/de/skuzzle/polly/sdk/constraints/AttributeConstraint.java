@@ -14,7 +14,7 @@ public interface AttributeConstraint {
     /**
      * This method is called by polly before setting the attribute to value. When this
      * method returns <code>false</code>, the value can not be set and the method 
-     * {@link UserManager#setAttributeFor(de.skuzzle.polly.sdk.model.User, String, 
+     * {@link UserManager#setAttributeFor(de.skuzzle.polly.sdk.User, String, 
      * String)} will throw a {@link ConstraintException}.
      * 
      * @param value

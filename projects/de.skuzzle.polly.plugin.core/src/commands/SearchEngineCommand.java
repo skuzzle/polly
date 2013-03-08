@@ -3,7 +3,7 @@ package commands;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Signature;
-import de.skuzzle.polly.sdk.model.User;
+import de.skuzzle.polly.sdk.User;
 
 public abstract class SearchEngineCommand extends Command {
 

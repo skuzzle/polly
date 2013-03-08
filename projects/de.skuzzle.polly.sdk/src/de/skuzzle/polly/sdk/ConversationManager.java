@@ -2,7 +2,6 @@ package de.skuzzle.polly.sdk;
 
 
 import de.skuzzle.polly.sdk.exceptions.ConversationException;
-import de.skuzzle.polly.sdk.model.User;
 
 /**
  * <p>Manages the creation of {@link Conversation}. As conversations must be unique in 

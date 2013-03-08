@@ -12,8 +12,8 @@ import core.RemindManager;
 import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Signature;
+import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
-import de.skuzzle.polly.sdk.model.User;
 import entities.RemindEntity;
 
 public class MyRemindsCommand extends AbstractRemindCommand {
