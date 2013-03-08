@@ -41,7 +41,7 @@
     <property name="plugin.description" value="Polly Remind Plugin"/>
     
     <!-- Developper name of this plugin -->
-    <property name="plugin.developper" value="Simon Taddiken"/>
+    <property name="plugin.developer" value="Simon Taddiken"/>
     
     <!-- Version of this plugin -->
     <property name="plugin.version" value="0.1"/>
