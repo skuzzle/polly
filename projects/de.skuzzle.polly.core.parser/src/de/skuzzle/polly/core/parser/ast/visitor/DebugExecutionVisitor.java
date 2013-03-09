@@ -51,11 +51,11 @@ public class DebugExecutionVisitor extends ExecutionVisitor {
     
     
     @Override
-    public int before(Call call) throws ASTTraversalException {
-        this.println("Call: " + Unparser.toString(call.getLhs()));
+    public int before(Call node) throws ASTTraversalException {
+        this.println("Call: " + Unparser.toString(node.getLhs()));
         this.indent();
-        this.println("Unique: " + call.getUnique());
-        this.println("Position: " + call.getPosition());
+        this.println("Unique: " + node.getUnique());
+        this.println("Position: " + node.getPosition());
         this.indent();
         return CONTINUE;
     }
@@ -63,7 +63,7 @@ public class DebugExecutionVisitor extends ExecutionVisitor {
     
     
     @Override
-    public int after(Call call) throws ASTTraversalException {
+    public int after(Call node) throws ASTTraversalException {
         this.println("Result: " + this.stack.peek());
         this.unindent();
         this.unindent();
@@ -73,33 +73,33 @@ public class DebugExecutionVisitor extends ExecutionVisitor {
     
     
     @Override
-    public int before(ListLiteral list) throws ASTTraversalException {
-        this.println("List:" + list.toString());
+    public int before(ListLiteral node) throws ASTTraversalException {
+        this.println("List:" + node.toString());
         return CONTINUE;
     }
     
     
     
     @Override
-    public int before(Literal literal) throws ASTTraversalException {
-        this.println("Literal: " + literal.toString());
+    public int before(Literal node) throws ASTTraversalException {
+        this.println("Literal: " + node.toString());
         return CONTINUE;
     }
     
     
     
     @Override
-    public int before(FunctionLiteral func) throws ASTTraversalException {
-        this.println("Function: " + func.toString());
+    public int before(FunctionLiteral node) throws ASTTraversalException {
+        this.println("Function: " + node.toString());
         return CONTINUE;
     }
     
     
     
     @Override
-    public int before(VarAccess access) throws ASTTraversalException {
-        this.println("Resolving: " + access.getIdentifier() + 
-            ", type: " + access.getUnique());
+    public int before(VarAccess node) throws ASTTraversalException {
+        this.println("Resolving: " + node.getIdentifier() + 
+            ", type: " + node.getUnique());
         return CONTINUE;
     }
 }

@@ -47,13 +47,13 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
     
     
     @Override
-    public boolean visit(Root root) throws ASTTraversalException {
-        switch (this.before(root)) {
+    public boolean visit(Root node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }
         
-        for (final Expression exp : root.getExpressions()) {
+        for (final Expression exp : node.getExpressions()) {
             // check whether unique type could have been resolved
             if (!exp.typeResolved()) {
                 //this.applyType(exp, exp);
@@ -63,41 +63,42 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
             }
         }
         
-        return this.after(root) == CONTINUE;
+        return this.after(node) == CONTINUE;
     }
     
     
     
     @Override
-    public boolean visit(FunctionLiteral func) throws ASTTraversalException {
-        switch (this.before(func)) {
+    public boolean visit(FunctionLiteral node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }
         
-        if (!this.applyType(func, func)) {
+        if (!this.applyType(node, node)) {
             return true;
         }
+
         
-        final MapType mtc = (MapType) func.getUnique();
-        func.getBody().setUnique(mtc.getTarget());
-        if (!func.getBody().visit(this)) {
+        final MapType mtc = (MapType) node.getUnique();
+        node.getBody().setUnique(mtc.getTarget());
+        if (!node.getBody().visit(this)) {
             return false;
         }
         
-        return this.after(func) == CONTINUE;
+        return this.after(node) == CONTINUE;
     }
     
     
     
     @Override
-    public boolean visit(ListLiteral list) throws ASTTraversalException {
-        switch (this.before(list)) {
+    public boolean visit(ListLiteral node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }        
         Type last = null;
-        for (final Expression exp : list.getContent()) {
+        for (final Expression exp : node.getContent()) {
             if (!exp.visit(this)) {
                 return false;
             }
@@ -109,13 +110,13 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
             last = exp.getUnique();
         }
         
-        if (list.getTypes().size() == 1) {
-            list.setUnique(last.listOf());
+        if (node.getTypes().size() == 1) {
+            node.setUnique(last.listOf());
         } else {
-            this.reportError(list, "Uneindeutiger Listen Type");
+            this.reportError(node, "Uneindeutiger Listen Type");
         }
         
-        return this.after(list) == CONTINUE;
+        return this.after(node) == CONTINUE;
     }
     
     
@@ -138,39 +139,39 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
     
     
     @Override
-    public int before(Assignment assign) throws ASTTraversalException {
-        this.applyType(assign, assign.getExpression());
+    public int before(Assignment node) throws ASTTraversalException {
+        this.applyType(node, node.getExpression());
         return CONTINUE;
     }
     
 
     
     @Override
-    public int after(Assignment assign) throws ASTTraversalException {
-        this.applyType(assign, assign);
+    public int after(Assignment node) throws ASTTraversalException {
+        this.applyType(node, node);
         return CONTINUE;
     }
     
     
     
     @Override
-    public int before(OperatorCall call) throws ASTTraversalException {
-        this.before((Call) call);
+    public int before(OperatorCall node) throws ASTTraversalException {
+        this.before((Call) node);
         return CONTINUE;
     }
     
     
     
     @Override
-    public int after(VarAccess access) throws ASTTraversalException {
-        this.applyType(access, access);
+    public int after(VarAccess node) throws ASTTraversalException {
+        this.applyType(node, node);
         return CONTINUE;
     }
     
     
     
     @Override
-    public int before(Call call) throws ASTTraversalException {
+    public int before(Call node) throws ASTTraversalException {
         
         // Either:
         // * call's unique type is already resolved => that is the final result type
@@ -179,14 +180,14 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         //       resolved.
         
         Type t;
-        if (!call.typeResolved()) {
-            if (call.getTypes().size() == 1) {
-                t = call.getTypes().get(0);
+        if (!node.typeResolved()) {
+            if (node.getTypes().size() == 1) {
+                t = node.getTypes().get(0);
             } else {
                 t = Type.newTypeVar();
             }
         } else {
-            t = call.getUnique();
+            t = node.getUnique();
         }
         
         
@@ -194,11 +195,11 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         // resolution was successful, it will contain a single type.
         final Collection<Type> matched = new ArrayList<Type>();
         
-        for (final Type s : call.getRhs().getTypes()) {
+        for (final Type s : node.getRhs().getTypes()) {
             final MapType tmp = new MapType(
                 (ProductType) s, t);
             
-            for (final Type lhsType : call.getLhs().getTypes()) {
+            for (final Type lhsType : node.getLhs().getTypes()) {
                 final Substitution subst = Type.unify(lhsType, tmp);
                 if (subst != null) {
                     matched.add(lhsType.subst(subst));
@@ -208,40 +209,38 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         
         if (matched.isEmpty()) {
             // no matching type found
-            this.reportError(call.getLhs(), 
+            this.reportError(node.getLhs(), 
                 "Keine passende Deklaration für den Aufruf von " + 
-                Unparser.toString(call.getLhs()) + " gefunden");
-            return CONTINUE;
+                Unparser.toString(node.getLhs()) + " gefunden");
         } else if (matched.size() != 1) {
-            this.ambiguousCall(call, matched);
-            return CONTINUE;
+            this.ambiguousCall(node, matched);
         }
 
         final MapType mtc = (MapType) matched.iterator().next();
         
-        call.getRhs().setUnique(mtc.getSource());
-        call.getLhs().setUnique(mtc);
-        call.setUnique(t);
+        node.getRhs().setUnique(mtc.getSource());
+        node.getLhs().setUnique(mtc);
+        node.setUnique(t);
         return CONTINUE;
     }
     
     
     
     @Override
-    public boolean visit(NamespaceAccess access) throws ASTTraversalException {
-        switch (this.before(access)) {
+    public boolean visit(NamespaceAccess node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }
-        this.applyType(access, access.getRhs());
-        return this.after(access) == CONTINUE;
+        this.applyType(node, node.getRhs());
+        return this.after(node) == CONTINUE;
     }
     
     
     
     @Override
-    public boolean visit(Inspect inspect) throws ASTTraversalException {
+    public boolean visit(Inspect node) throws ASTTraversalException {
         // nothing to do here but prevent from executing super class visitInspect
-        return this.before(inspect) == CONTINUE && this.after(inspect) == CONTINUE;
+        return this.before(node) == CONTINUE && this.after(node) == CONTINUE;
     }
 }

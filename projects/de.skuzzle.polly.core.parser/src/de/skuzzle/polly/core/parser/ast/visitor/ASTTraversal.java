@@ -50,91 +50,90 @@ public interface ASTTraversal {
     
     
     
-    public abstract int before(Root root) throws ASTTraversalException;
-    public abstract int after(Root root) throws ASTTraversalException;
+    public abstract int before(Root node) throws ASTTraversalException;
+    public abstract int after(Root node) throws ASTTraversalException;
 
 
 
-    public abstract int before(Literal literal) throws ASTTraversalException;
-    public abstract int after(Literal literal) throws ASTTraversalException;
+    public abstract int before(Literal node) throws ASTTraversalException;
+    public abstract int after(Literal node) throws ASTTraversalException;
 
 
 
-    public abstract int before(Identifier identifier) throws ASTTraversalException;
-    public abstract int after(Identifier identifier) throws ASTTraversalException;
+    public abstract int before(Identifier node) throws ASTTraversalException;
+    public abstract int after(Identifier node) throws ASTTraversalException;
     
     
     
-    public abstract int before(ResolvableIdentifier id) throws ASTTraversalException;
-    public abstract int after(ResolvableIdentifier id) throws ASTTraversalException;
+    public abstract int before(ResolvableIdentifier node) throws ASTTraversalException;
+    public abstract int after(ResolvableIdentifier node) throws ASTTraversalException;
 
 
 
-    public abstract int before(Assignment assign) throws ASTTraversalException;
-    public abstract int after(Assignment assign) throws ASTTraversalException;
+    public abstract int before(Assignment node) throws ASTTraversalException;
+    public abstract int after(Assignment node) throws ASTTraversalException;
 
 
 
-    public abstract int before(Declaration decl) throws ASTTraversalException;
-    public abstract int after(Declaration decl) throws ASTTraversalException;
+    public abstract int before(Declaration node) throws ASTTraversalException;
+    public abstract int after(Declaration node) throws ASTTraversalException;
 
 
 
-    public abstract int before(Call call) throws ASTTraversalException;
-    public abstract int after(Call call) throws ASTTraversalException;
+    public abstract int before(Call node) throws ASTTraversalException;
+    public abstract int after(Call node) throws ASTTraversalException;
 
 
 
-    public abstract int before(OperatorCall call) throws ASTTraversalException;
-    public abstract int after(OperatorCall call) throws ASTTraversalException;
+    public abstract int before(OperatorCall node) throws ASTTraversalException;
+    public abstract int after(OperatorCall node) throws ASTTraversalException;
 
 
 
-    public abstract int before(Native nat) throws ASTTraversalException;
-    public abstract int after(Native nat) throws ASTTraversalException;
+    public abstract int before(Native node) throws ASTTraversalException;
+    public abstract int after(Native node) throws ASTTraversalException;
 
 
 
-    public abstract int before(NamespaceAccess access) throws ASTTraversalException;
-    public abstract int after(NamespaceAccess access) throws ASTTraversalException;
+    public abstract int before(NamespaceAccess node) throws ASTTraversalException;
+    public abstract int after(NamespaceAccess node) throws ASTTraversalException;
 
 
 
-    public abstract int before(VarAccess access) throws ASTTraversalException;
-    public abstract int after(VarAccess access) throws ASTTraversalException;
+    public abstract int before(VarAccess node) throws ASTTraversalException;
+    public abstract int after(VarAccess node) throws ASTTraversalException;
 
 
 
-    public abstract int before(FunctionLiteral func) throws ASTTraversalException;
-    public abstract int after(FunctionLiteral func) throws ASTTraversalException;
+    public abstract int before(FunctionLiteral node) throws ASTTraversalException;
+    public abstract int after(FunctionLiteral node) throws ASTTraversalException;
 
 
 
-    public abstract int before(ListLiteral list) throws ASTTraversalException;
-    public abstract int after(ListLiteral list) throws ASTTraversalException;
+    public abstract int before(ListLiteral node) throws ASTTraversalException;
+    public abstract int after(ListLiteral node) throws ASTTraversalException;
 
 
 
-    public abstract int before(ProductLiteral product) throws ASTTraversalException;
-    public abstract int after(ProductLiteral product) throws ASTTraversalException;
+    public abstract int before(ProductLiteral node) throws ASTTraversalException;
+    public abstract int after(ProductLiteral node) throws ASTTraversalException;
 
 
 
-    public abstract int before(Braced braced) throws ASTTraversalException;
-    public abstract int after(Braced braced) throws ASTTraversalException;
+    public abstract int before(Braced node) throws ASTTraversalException;
+    public abstract int after(Braced node) throws ASTTraversalException;
 
 
 
-    public abstract int before(Delete delete) throws ASTTraversalException;
-    public abstract int after(Delete delete) throws ASTTraversalException;
+    public abstract int before(Delete node) throws ASTTraversalException;
+    public abstract int after(Delete node) throws ASTTraversalException;
 
 
 
-    public abstract int before(Inspect inspect) throws ASTTraversalException;
-    public abstract int after(Inspect inspect) throws ASTTraversalException;
+    public abstract int before(Inspect node) throws ASTTraversalException;
+    public abstract int after(Inspect node) throws ASTTraversalException;
+
     
-    
-    
-    public abstract int before(Problem problem) throws ASTTraversalException;
-    public abstract int after(Problem problem) throws ASTTraversalException;
+    public abstract int before(Problem node) throws ASTTraversalException;
+    public abstract int after(Problem node) throws ASTTraversalException;
 }

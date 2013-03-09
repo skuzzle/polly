@@ -26,39 +26,39 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.ProductLiteral;
  */
 public interface ASTVisitor extends ASTTraversal {
 
-    public boolean visit(Root root) throws ASTTraversalException;
+    public boolean visit(Root node) throws ASTTraversalException;
     
-    public boolean visit(Literal literal) throws ASTTraversalException;
+    public boolean visit(Literal node) throws ASTTraversalException;
     
-    public boolean visit(Identifier identifier) throws ASTTraversalException;
+    public boolean visit(Identifier node) throws ASTTraversalException;
     
-    public boolean visit(ResolvableIdentifier id) throws ASTTraversalException;
+    public boolean visit(ResolvableIdentifier node) throws ASTTraversalException;
     
-    public boolean visit(Assignment assign) throws ASTTraversalException;
+    public boolean visit(Assignment node) throws ASTTraversalException;
     
-    public boolean visit(Declaration decl) throws ASTTraversalException;
+    public boolean visit(Declaration node) throws ASTTraversalException;
     
-    public boolean visit(Call call) throws ASTTraversalException;
+    public boolean visit(Call node) throws ASTTraversalException;
     
-    public boolean visit(OperatorCall call) throws ASTTraversalException;
+    public boolean visit(OperatorCall node) throws ASTTraversalException;
     
-    public boolean visit(Native nat) throws ASTTraversalException;
+    public boolean visit(Native node) throws ASTTraversalException;
     
-    public boolean visit(NamespaceAccess access) throws ASTTraversalException;
+    public boolean visit(NamespaceAccess node) throws ASTTraversalException;
     
-    public boolean visit(VarAccess access) throws ASTTraversalException;
+    public boolean visit(VarAccess node) throws ASTTraversalException;
     
-    public boolean visit(FunctionLiteral func) throws ASTTraversalException;
+    public boolean visit(FunctionLiteral node) throws ASTTraversalException;
     
-    public boolean visit(ListLiteral list) throws ASTTraversalException;
+    public boolean visit(ListLiteral node) throws ASTTraversalException;
 
-    public boolean visit(ProductLiteral product) throws ASTTraversalException;
+    public boolean visit(ProductLiteral node) throws ASTTraversalException;
 
-    public boolean visit(Braced braced) throws ASTTraversalException;
+    public boolean visit(Braced node) throws ASTTraversalException;
     
-    public boolean visit(Delete delete) throws ASTTraversalException;
+    public boolean visit(Delete node) throws ASTTraversalException;
 
-    public boolean visit(Inspect inspect) throws ASTTraversalException;
-    
-    public boolean visit(Problem problem) throws ASTTraversalException;
+    public boolean visit(Inspect node) throws ASTTraversalException;
+
+    public boolean visit(Problem node) throws ASTTraversalException;
 }
