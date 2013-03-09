@@ -31,6 +31,18 @@ public abstract class AbstractTypeResolver extends DepthFirstVisitor {
     
     
     
+    
+    /**
+     * Gets the {@link ProblemReporter} used by this type resolver.
+     * 
+     * @return The problem reporter.
+     */
+    public ProblemReporter getReporter() {
+        return this.reporter;
+    }
+    
+    
+    
     /**
      * Gets the currently used namespace.
      * 

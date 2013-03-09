@@ -10,6 +10,7 @@ import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversal;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTVisitor;
 import de.skuzzle.polly.core.parser.ast.visitor.Transformation;
+import de.skuzzle.polly.core.parser.ast.visitor.resolving.AbstractTypeResolver;
 import de.skuzzle.polly.core.parser.ast.visitor.resolving.TypeResolver;
 import de.skuzzle.polly.tools.collections.Stack;
 
@@ -70,7 +71,7 @@ public abstract class Native extends Expression {
      * @param typeResolver The type resolver.
      * @throws ASTTraversalException Can be thrown if context checking fails.
      */
-    public abstract void resolveType(Namespace ns, ASTVisitor typeResolver) 
+    public abstract void resolveType(Namespace ns, AbstractTypeResolver typeResolver) 
         throws ASTTraversalException;
     
     

@@ -10,6 +10,8 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.Literal;
 import de.skuzzle.polly.core.parser.ast.lang.BinaryOperator;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTVisitor;
+import de.skuzzle.polly.core.parser.ast.visitor.resolving.AbstractTypeResolver;
+import de.skuzzle.polly.core.parser.problems.Problems;
 import de.skuzzle.polly.tools.collections.Stack;
 
 
@@ -26,11 +28,11 @@ public class Relational extends BinaryOperator<Literal, Literal> {
 
     @Override
     protected void resolve(Expression left, Expression right, Namespace ns,
-            ASTVisitor typeResolver) throws ASTTraversalException {
+            AbstractTypeResolver typeResolver) throws ASTTraversalException {
 
         if (!left.getUnique().isComparable()) {
-            throw new ASTTraversalException(left.getPosition(), 
-                "Typ '" + left.getUnique() + "' definiert keine Ordnung");
+            typeResolver.getReporter().semanticProblem(Problems.NOT_ORDERED, 
+                left.getPosition(), left.getUnique());
         }
     }
     
