@@ -59,14 +59,22 @@ public class DepthFirstVisitor extends VisitorAdapter {
     
     @Override
     public boolean visit(Identifier node)  throws ASTTraversalException {
-        return this.before(node) != ABORT && this.after(node) == CONTINUE;
+        switch (this.before(node)) {
+        case SKIP: return true;
+        case ABORT: return false;
+        }
+        return this.after(node) == CONTINUE;
     }
     
     
     
     @Override
     public boolean visit(ResolvableIdentifier node) throws ASTTraversalException {
-        return this.before(node) != ABORT && this.after(node) == CONTINUE;
+        switch (this.before(node)) {
+        case SKIP: return true;
+        case ABORT: return false;
+        }
+        return this.after(node) == CONTINUE;
     }
     
     
@@ -90,7 +98,11 @@ public class DepthFirstVisitor extends VisitorAdapter {
 
     @Override
     public boolean visit(Declaration node) throws ASTTraversalException {
-        return this.before(node) != ABORT && this.after(node) == CONTINUE;
+        switch (this.before(node)) {
+        case SKIP: return true;
+        case ABORT: return false;
+        }
+        return this.after(node) == CONTINUE;
     }
     
     
@@ -114,7 +126,11 @@ public class DepthFirstVisitor extends VisitorAdapter {
 
     @Override
     public boolean visit(Native node) throws ASTTraversalException {
-        return this.before(node) != ABORT && this.after(node) == CONTINUE;    
+        switch (this.before(node)) {
+        case SKIP: return true;
+        case ABORT: return false;
+        }
+        return this.after(node) == CONTINUE;
     }
 
     

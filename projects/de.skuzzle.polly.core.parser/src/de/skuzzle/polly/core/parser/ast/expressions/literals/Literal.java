@@ -68,8 +68,11 @@ public abstract class Literal extends Expression implements Comparable<Literal> 
     
     @Override
     public boolean traverse(ASTTraversal visitor) throws ASTTraversalException {
-        return visitor.before(this) == ASTTraversal.CONTINUE &&
-            visitor.after(this) == ASTTraversal.CONTINUE;
+        switch (visitor.before(this)) {
+        case ASTTraversal.SKIP: return true;
+        case ASTTraversal.ABORT: return false;
+        }
+        return visitor.after(this) == ASTTraversal.CONTINUE;
     }
     
     

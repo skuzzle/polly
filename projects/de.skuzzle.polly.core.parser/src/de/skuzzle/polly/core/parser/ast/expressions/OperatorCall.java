@@ -8,6 +8,7 @@ import de.skuzzle.polly.core.parser.ast.ResolvableIdentifier;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.ProductLiteral;
 import de.skuzzle.polly.core.parser.ast.lang.Operator;
 import de.skuzzle.polly.core.parser.ast.lang.Operator.OpType;
+import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversal;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTVisitor;
 import de.skuzzle.polly.core.parser.ast.visitor.Transformation;
@@ -135,6 +136,22 @@ public class OperatorCall extends Call {
     public Expression transform(Transformation transformation)
             throws ASTTraversalException {
         return transformation.transformOperatorCall(this);
+    }
+    
+    
+    @Override
+    public boolean traverse(ASTTraversal visitor) throws ASTTraversalException {
+        switch (visitor.before(this)) {
+        case ASTTraversal.SKIP: return true;
+        case ASTTraversal.ABORT: return false;
+        }
+        if (!this.getLhs().traverse(visitor)) {
+            return false;
+        }
+        if (!this.getRhs().traverse(visitor)) {
+            return false;
+        }
+        return visitor.after(this) == ASTTraversal.CONTINUE;
     }
     
     

@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
+import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversal;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTVisitor;
 
@@ -108,5 +109,16 @@ public class ResolvableIdentifier extends Identifier {
     @Override
     public boolean visit(ASTVisitor visitor) throws ASTTraversalException {
         return visitor.visit(this);
+    }
+    
+    
+    
+    @Override
+    public boolean traverse(ASTTraversal visitor) throws ASTTraversalException {
+        switch (visitor.before(this)) {
+        case ASTTraversal.SKIP: return true;
+        case ASTTraversal.ABORT: return false;
+        }
+        return visitor.after(this) == ASTTraversal.CONTINUE;
     }
 }

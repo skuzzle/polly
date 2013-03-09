@@ -96,8 +96,11 @@ public class Identifier extends Node implements Equatable {
     
     @Override
     public boolean traverse(ASTTraversal visitor) throws ASTTraversalException {
-        return visitor.before(this) == ASTTraversal.CONTINUE && 
-            visitor.after(this) == ASTTraversal.CONTINUE;
+        switch (visitor.before(this)) {
+        case ASTTraversal.SKIP: return true;
+        case ASTTraversal.ABORT: return false;
+        }
+        return visitor.after(this) == ASTTraversal.CONTINUE;
     }
     
     
