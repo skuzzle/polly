@@ -7,11 +7,13 @@ import java.util.List;
 import java.util.Set;
 
 
+import de.skuzzle.polly.core.parser.ast.Identifier;
 import de.skuzzle.polly.core.parser.ast.ResolvableIdentifier;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
 import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
 import de.skuzzle.polly.core.parser.ast.declarations.types.ListType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.MapType;
+import de.skuzzle.polly.core.parser.ast.declarations.types.MissingType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.ProductType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Substitution;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
@@ -232,30 +234,30 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         if (!hasMapType) {
             this.reportError(node.getLhs(), Problems.NO_FUNCTION,
                 Unparser.toString(node.getLhs()));
-        }
-        
-        if (node.getLhs().getTypes().isEmpty()) {
+        } else if (node.getLhs().getTypes().isEmpty()) {
             this.reportError(node.getLhs(), Problems.UNKNOWN_FUNCTION, 
                 Unparser.toString(node.getLhs()));
-        }
-        
-        // sort out all lhs types that do not match the rhs types
-        for (final Type possibleLhs : possibleTypes) {
-            for (final Type lhs : node.getLhs().getTypes()) {
-                final Substitution subst = Type.unify(lhs, possibleLhs);
-                if (subst != null) {
-                    final MapType mtc = (MapType) lhs.subst(subst);
-                    node.addType(mtc.getTarget());
+        } else {
+            // sort out all lhs types that do not match the rhs types
+            for (final Type possibleLhs : possibleTypes) {
+                for (final Type lhs : node.getLhs().getTypes()) {
+                    final Substitution subst = Type.unify(lhs, possibleLhs);
+                    if (subst != null) {
+                        final MapType mtc = (MapType) lhs.subst(subst);
+                        node.addType(mtc.getTarget());
+                    }
                 }
             }
-        }
-        
-        
-        if (node.getTypes().isEmpty()) {
-            final String problem = node instanceof OperatorCall 
-                ? Problems.INCOMPATIBLE_OP 
-                : Problems.INCOMPATIBLE_CALL;
-            this.reportError(node.getLhs(), problem, Unparser.toString(node.getLhs()));
+            
+            
+            if (node.getTypes().isEmpty()) {
+                final String problem = node instanceof OperatorCall 
+                    ? Problems.INCOMPATIBLE_OP 
+                    : Problems.INCOMPATIBLE_CALL;
+                this.reportError(node.getLhs(), problem, 
+                    Unparser.toString(node.getLhs()));
+                node.addType(new MissingType(new Identifier("$compatibilty")));
+            }
         }
         return this.after(node) == CONTINUE;
     }

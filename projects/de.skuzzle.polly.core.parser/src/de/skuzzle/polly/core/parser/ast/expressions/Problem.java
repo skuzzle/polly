@@ -17,13 +17,14 @@ public class Problem extends Expression {
     public Problem(Position position) {
         super(position, new MissingType(
             new Identifier(position, "$problem_" + (id++))));
+        this.addType(this.getUnique());
     }
     
     
     
     @Override
     public boolean isProblem() {
-        return false;
+        return true;
     }
     
     
@@ -44,8 +45,11 @@ public class Problem extends Expression {
     
     @Override
     public boolean traverse(ASTTraversal visitor) throws ASTTraversalException {
-        return visitor.before(this) != ASTTraversal.ABORT 
-            && visitor.after(this) == ASTTraversal.CONTINUE;
+        switch (visitor.before(this)) {
+        case ASTTraversal.SKIP: return true;
+        case ASTTraversal.ABORT: return false;
+        }
+        return visitor.after(this) == ASTTraversal.CONTINUE;
     }
 
 }
