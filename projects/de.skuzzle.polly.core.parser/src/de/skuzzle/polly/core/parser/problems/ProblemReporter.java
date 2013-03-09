@@ -113,16 +113,16 @@ public interface ProblemReporter {
      */
     public Collection<Position> problemPositions();
     
-    public void lexicalProblem(String problem, Position position) 
-        throws ParseException;
+    public void lexicalProblem(String problem, Position position) throws ParseException;
 
-    public void syntaxProblem(String problem, Position position) 
+    public void syntaxProblem(String problem, Position position, Object...params) 
         throws ParseException;
     
     public void syntaxProblem(TokenType expected, Token occurred, 
         Position position) throws ParseException;
     
-    public void semanticProblem(String problem, Position position) throws ParseException;
+    public void semanticProblem(String problem, Position position, Object...params) 
+        throws ParseException;
     
     public void typeProblem(Type expected, Type occurred, Position position) 
         throws ASTTraversalException;

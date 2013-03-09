@@ -58,15 +58,18 @@ public class MultipleProblemReporter implements ProblemReporter {
     
 
     @Override
-    public void lexicalProblem(String problem, Position position) throws ParseException {
+    public void lexicalProblem(String problem, Position position) 
+            throws ParseException {
         this.problems.add(new Problem(LEXICAL, position, problem));
     }
 
     
     
     @Override
-    public void syntaxProblem(String problem, Position position) throws ParseException {
-        this.problems.add(new Problem(SYNTACTICAL, position, problem));
+    public void syntaxProblem(String problem, Position position, Object...params) 
+            throws ParseException {
+        this.problems.add(new Problem(SYNTACTICAL, position, 
+            Problems.format(problem, params)));
     }
     
     
@@ -74,16 +77,18 @@ public class MultipleProblemReporter implements ProblemReporter {
     @Override
     public void syntaxProblem(TokenType expected, Token occurred, Position position)
             throws ParseException {
-        this.problems.add(new Problem(SYNTACTICAL, position, "Unerwartetes Symbol: '" + 
-            occurred.toString(false, false) + 
-            "'. Erwartet: '" + expected.toString() + "'"));
+        this.problems.add(new Problem(SYNTACTICAL, position, 
+            Problems.format(Problems.UNEXPECTED_TOKEN, occurred.toString(false, false),
+                expected.toString())));
     }
     
     
 
     @Override
-    public void semanticProblem(String problem, Position position) throws ParseException {
-        this.problems.add(new Problem(SEMATICAL, position, problem));
+    public void semanticProblem(String problem, Position position, Object...params) 
+            throws ParseException {
+        this.problems.add(new Problem(SEMATICAL, position, 
+            Problems.format(problem, params)));
     }
 
     
@@ -91,8 +96,7 @@ public class MultipleProblemReporter implements ProblemReporter {
     @Override
     public void typeProblem(Type expected, Type occurred, Position position)
             throws ASTTraversalException {
-        this.problems.add(new Problem(SEMATICAL, position, "Typefehler. Erwartet: " + 
-            expected + ", gefunden: " + occurred));
+        this.problems.add(new Problem(SEMATICAL, position, 
+            Problems.format(Problems.TYPE_ERROR, expected.getName(), occurred.getName())));
     }
-
 }

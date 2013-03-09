@@ -78,9 +78,11 @@ public class Main {
     
 
     public static void main(String[] args) throws IOException, ASTTraversalException {
-        
-        Namespace.setDeclarationFolder(new File("decls"));
-        
+        final File declFolder = new File("decls");
+        if (!declFolder.exists()) {
+            declFolder.mkdirs();
+        }
+        Namespace.setDeclarationFolder(declFolder);
         readDeclarations();
         
         final BufferedReader r = new BufferedReader(new InputStreamReader(System.in));

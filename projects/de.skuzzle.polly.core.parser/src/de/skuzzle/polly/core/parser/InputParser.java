@@ -44,6 +44,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.TimespanLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.UserLiteral;
 import de.skuzzle.polly.core.parser.ast.lang.Operator.OpType;
 import de.skuzzle.polly.core.parser.problems.ProblemReporter;
+import de.skuzzle.polly.core.parser.problems.Problems;
 import de.skuzzle.polly.core.parser.ast.expressions.Problem;
 import de.skuzzle.polly.tools.collections.LinkedStack;
 import de.skuzzle.polly.tools.collections.Stack;
@@ -269,7 +270,8 @@ public class InputParser {
         if (result == null) {
             result = new MissingType(name);
             this.typeCache.put(name.getId(), result);
-            this.reporter.semanticProblem("Unbekannter Typ: " + name, name.getPosition());
+            this.reporter.semanticProblem(Problems.UNKNOWN_TYPE, name.getPosition(), 
+                name);
         }
         return result;
     }
@@ -286,7 +288,7 @@ public class InputParser {
     protected void reportExpected(TokenType expected, Token actual) 
             throws ParseException {
         if (actual.matches(TokenType.CLOSEDBR)) {
-            this.reporter.syntaxProblem("Fehlende öffnende Klammer", 
+            this.reporter.syntaxProblem(Problems.MISSING_OBR, 
                 this.scanner.spanFrom(actual));
         } else {
             this.reporter.syntaxProblem(expected, actual, this.scanner.spanFrom(actual));

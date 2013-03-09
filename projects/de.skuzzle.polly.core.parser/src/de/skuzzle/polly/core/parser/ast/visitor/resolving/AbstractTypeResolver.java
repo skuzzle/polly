@@ -12,6 +12,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.Expression;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.DepthFirstVisitor;
 import de.skuzzle.polly.core.parser.problems.ProblemReporter;
+import de.skuzzle.polly.core.parser.problems.Problems;
 
 
 public abstract class AbstractTypeResolver extends DepthFirstVisitor {
@@ -80,18 +81,19 @@ public abstract class AbstractTypeResolver extends DepthFirstVisitor {
      * 
      * @param node Node which position will be used for the {@link ASTTraversalException}.
      * @param error Error message.
+     * @param params Formatting objects.
      * @throws ASTTraversalException Will always be thrown.
      */
-    protected void reportError(Node node, String error) 
+    protected void reportError(Node node, String error, Object...params) 
             throws ASTTraversalException {
-        this.reportError(node.getPosition(), error);
+        this.reportError(node.getPosition(), error, params);
     }
     
     
     
-    protected void reportError(Position position, String error) 
+    protected void reportError(Position position, String error, Object...params) 
             throws ASTTraversalException {
-        this.reporter.semanticProblem(error, position);
+        this.reporter.semanticProblem(Problems.format(error, params), position);
     }
     
     

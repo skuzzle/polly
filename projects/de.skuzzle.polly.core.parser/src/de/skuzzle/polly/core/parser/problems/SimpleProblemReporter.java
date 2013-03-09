@@ -42,7 +42,8 @@ public class SimpleProblemReporter implements ProblemReporter {
     
     
     @Override
-    public void lexicalProblem(String problem, Position position) throws ParseException {
+    public void lexicalProblem(String problem, Position position) 
+            throws ParseException {
         this.problem = true;
         throw new ParseException(problem, position);
     }
@@ -50,9 +51,10 @@ public class SimpleProblemReporter implements ProblemReporter {
     
     
     @Override
-    public void syntaxProblem(String problem, Position position) throws ParseException {
+    public void syntaxProblem(String problem, Position position, Object...params) 
+            throws ParseException {
         this.problem = true;
-        throw new ParseException(problem, position);
+        throw new ParseException(Problems.format(problem, params), position);
     }
 
     
@@ -67,9 +69,10 @@ public class SimpleProblemReporter implements ProblemReporter {
     
     
     @Override
-    public void semanticProblem(String problem, Position position) throws ParseException {
+    public void semanticProblem(String problem, Position position, Object...params) 
+            throws ParseException {
         this.problem = true;
-        throw new ParseException(problem, position);
+        throw new ParseException(Problems.format(problem, params), position);
     }
 
     
@@ -78,8 +81,8 @@ public class SimpleProblemReporter implements ProblemReporter {
     public void typeProblem(Type expected, Type occurred, Position position)
             throws ASTTraversalException {
         this.problem = true;
-        throw new ASTTraversalException(position, "Typefehler. Erwartet: " + 
-            expected + ", gefunden: " + occurred);
+        throw new ASTTraversalException(position, 
+            Problems.format(Problems.TYPE_ERROR, expected, occurred));
     }
 
 }

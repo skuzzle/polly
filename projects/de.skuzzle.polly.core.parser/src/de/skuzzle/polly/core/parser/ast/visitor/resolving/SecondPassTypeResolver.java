@@ -19,6 +19,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.Unparser;
+import de.skuzzle.polly.core.parser.problems.Problems;
 
 
 
@@ -97,7 +98,13 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         case SKIP: return true;
         case ABORT: return false;
         }        
-        Type last = null;
+        
+        if (node.getContent().isEmpty()) {
+            // empty lists are not allowed. This is checked by FirstPassTypeResolver
+            return true;
+        }
+        
+        final Type last = node.getContent().iterator().next().getUnique();
         for (final Expression exp : node.getContent()) {
             if (!exp.visit(this)) {
                 return false;
@@ -107,13 +114,10 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
                     this.typeError(exp, last, exp.getUnique());
                 }
             }
-            last = exp.getUnique();
         }
         
         if (node.getTypes().size() == 1) {
             node.setUnique(last.listOf());
-        } else {
-            this.reportError(node, "Uneindeutiger Listen Type");
         }
         
         return this.after(node) == CONTINUE;
@@ -209,11 +213,14 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         
         if (matched.isEmpty()) {
             // no matching type found
-            this.reportError(node.getLhs(), 
-                "Keine passende Deklaration für den Aufruf von " + 
-                Unparser.toString(node.getLhs()) + " gefunden");
+            final String problem = node instanceof OperatorCall 
+                ? Problems.INCOMPATIBLE_OP 
+                : Problems.INCOMPATIBLE_CALL;
+            this.reportError(node.getLhs(), problem, Unparser.toString(node.getLhs()));
+            return CONTINUE;
         } else if (matched.size() != 1) {
             this.ambiguousCall(node, matched);
+            return CONTINUE;
         }
 
         final MapType mtc = (MapType) matched.iterator().next();
@@ -240,7 +247,11 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
     
     @Override
     public boolean visit(Inspect node) throws ASTTraversalException {
+        switch (this.before(node)) {
+        case SKIP: return true;
+        case ABORT: return false;
+        }
         // nothing to do here but prevent from executing super class visitInspect
-        return this.before(node) == CONTINUE && this.after(node) == CONTINUE;
+        return this.after(node) == CONTINUE;
     }
 }
