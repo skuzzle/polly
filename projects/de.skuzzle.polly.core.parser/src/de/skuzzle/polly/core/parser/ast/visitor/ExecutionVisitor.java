@@ -80,81 +80,81 @@ public class ExecutionVisitor extends DepthFirstVisitor {
     
     
     @Override
-    public boolean visit(Root root) throws ASTTraversalException {
-        switch (this.before(root)) {
+    public boolean visit(Root node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }
         
         final List<Literal> results = 
-            new ArrayList<Literal>(root.getExpressions().size());
+            new ArrayList<Literal>(node.getExpressions().size());
         
-        for (final Expression exp : root.getExpressions()) {
+        for (final Expression exp : node.getExpressions()) {
             if (!exp.visit(this)) {
                 return false;
             }
             results.add(this.stack.pop());
         }
-        root.setResults(results);
+        node.setResults(results);
         
-        return this.after(root) == CONTINUE;
+        return this.after(node) == CONTINUE;
     }
     
     
     
     @Override
-    public boolean visit(Literal literal) throws ASTTraversalException {
-        switch (this.before(literal)) {
+    public boolean visit(Literal node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }
-        this.stack.push(literal);
-        return this.after(literal) == CONTINUE;
+        this.stack.push(node);
+        return this.after(node) == CONTINUE;
     }
     
     
     
     @Override
-    public boolean visit(FunctionLiteral func) throws ASTTraversalException {
-        switch (this.before(func)) {
+    public boolean visit(FunctionLiteral node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }
-        this.stack.push(func);
-        return this.after(func) == CONTINUE;
+        this.stack.push(node);
+        return this.after(node) == CONTINUE;
     }
     
     
     
     @Override
-    public boolean visit(ListLiteral list) throws ASTTraversalException {
-        switch (this.before(list)) {
+    public boolean visit(ListLiteral node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }
         
         // create collection of executed list content
         final List<Expression> executed = new ArrayList<Expression>(
-                list.getContent().size());
+            node.getContent().size());
         
-        for (final Expression exp : list.getContent()) {
+        for (final Expression exp : node.getContent()) {
             // places executed expression on the stack
             if (!exp.visit(this)) {
                 return false;
             }
             executed.add(this.stack.pop());
         }
-        final ListLiteral result = new ListLiteral(list.getPosition(), executed);
-        result.setUnique(list.getUnique());
+        final ListLiteral result = new ListLiteral(node.getPosition(), executed);
+        result.setUnique(node.getUnique());
         this.stack.push(result);
-        return this.after(list) == CONTINUE;
+        return this.after(node) == CONTINUE;
     }
     
     
     
     @Override
-    public boolean visit(NamespaceAccess access) throws ASTTraversalException {
-        switch (this.before(access)) {
+    public boolean visit(NamespaceAccess node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }
@@ -165,48 +165,48 @@ public class ExecutionVisitor extends DepthFirstVisitor {
         // get namespace which is accessed here and has the current namespace as 
         // parent. 
         // lhs of access is guaranteed to be a VarAccess
-        final VarAccess va = (VarAccess) access.getLhs();
+        final VarAccess va = (VarAccess) node.getLhs();
         this.nspace = Namespace.forName(va.getIdentifier()).derive(this.nspace);
         
         // execute expression and restore old namespace
-        if (!access.getRhs().visit(this)) {
+        if (!node.getRhs().visit(this)) {
             return false;
         }
         this.nspace = backup;
         
-        return this.after(access) == CONTINUE;
+        return this.after(node) == CONTINUE;
     }
     
     
     
     @Override
-    public boolean visit(Native hc) throws ASTTraversalException {
-        switch (this.before(hc)) {
+    public boolean visit(Native node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }
-        hc.execute(this.stack, this.nspace, this);
-        return this.after(hc) == CONTINUE;
+        node.execute(this.stack, this.nspace, this);
+        return this.after(node) == CONTINUE;
     }
     
     
     
     @Override
-    public boolean visit(Assignment assign) throws ASTTraversalException {
-        switch (this.before(assign)) {
+    public boolean visit(Assignment node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }
         
         // result of assignment is the result of the assigned expression
-        if (!assign.getExpression().visit(this)) {
+        if (!node.getExpression().visit(this)) {
             return false;
         }
         
-        final Declaration vd = new Declaration(assign.getName().getPosition(), 
-                assign.getName(), this.stack.peek());
-        vd.setPublic(assign.isPublic());
-        vd.setTemp(assign.isTemp());
+        final Declaration vd = new Declaration(node.getName().getPosition(), 
+            node.getName(), this.stack.peek());
+        vd.setPublic(node.isPublic());
+        vd.setTemp(node.isTemp());
         
         if (vd.isPublic()) {
             Namespace.declarePublic(vd);
@@ -214,41 +214,41 @@ public class ExecutionVisitor extends DepthFirstVisitor {
             this.rootNs.declare(vd);
         }
         
-        return this.after(assign) == CONTINUE;
+        return this.after(node) == CONTINUE;
     }
     
     
     
     @Override
-    public boolean visit(OperatorCall call) throws ASTTraversalException {
-        switch (this.before(call)) {
+    public boolean visit(OperatorCall node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }
-        if (!this.visit((Call) call)) {
+        if (!this.visit((Call) node)) {
             return false;
         }
-        return this.after(call) == CONTINUE;
+        return this.after(node) == CONTINUE;
     }
     
     
     
     @Override
-    public boolean visit(Call call) throws ASTTraversalException {
-        switch (this.before(call)) {
+    public boolean visit(Call node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }
         
         // this will push the function call onto the stack
-        if (!call.getLhs().visit(this)) {
+        if (!node.getLhs().visit(this)) {
             return false;
         }
         
         final FunctionLiteral func = (FunctionLiteral) this.stack.pop();
         
         this.enter();
-        final Iterator<Expression> actualIt = call.getRhs().getContent().iterator();
+        final Iterator<Expression> actualIt = node.getRhs().getContent().iterator();
         final Iterator<Declaration> formalIt = func.getFormal().iterator();
         while (formalIt.hasNext()) {
             final Declaration formal = formalIt.next();
@@ -271,39 +271,39 @@ public class ExecutionVisitor extends DepthFirstVisitor {
         }
         this.leave();
         
-        return this.after(call) == CONTINUE;
+        return this.after(node) == CONTINUE;
     }
     
     
     
     @Override
-    public boolean visit(VarAccess access) throws ASTTraversalException {
-        switch (this.before(access)) {
+    public boolean visit(VarAccess node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }
 
         final Declaration vd = this.nspace.tryResolve(
-            access.getIdentifier(), 
-            access.getUnique());
+            node.getIdentifier(), 
+            node.getUnique());
         if (!vd.getExpression().visit(this)) {
             return false;
         }
         
-        return this.after(access) == CONTINUE;
+        return this.after(node) == CONTINUE;
     }
     
     
 
     @Override
-    public boolean visit(Delete delete) throws ASTTraversalException {
-        switch (this.before(delete)) {
+    public boolean visit(Delete node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }
         
         int i = 0;
-        for (final DeleteableIdentifier id: delete.getIdentifiers()) {
+        for (final DeleteableIdentifier id: node.getIdentifiers()) {
             if (id.isGlobal()) {
                 i += Namespace.deletePublic(id);
             } else {
@@ -311,14 +311,14 @@ public class ExecutionVisitor extends DepthFirstVisitor {
             }
         }
         this.stack.push(new NumberLiteral(Position.NONE, i));
-        return this.after(delete) == CONTINUE;
+        return this.after(node) == CONTINUE;
     }
     
     
     
     @Override
-    public boolean visit(Inspect inspect) throws ASTTraversalException {
-        switch (this.before(inspect)) {
+    public boolean visit(Inspect node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }
@@ -326,14 +326,14 @@ public class ExecutionVisitor extends DepthFirstVisitor {
         Namespace target = null;
         ResolvableIdentifier var = null;
         
-        if (inspect.getAccess() instanceof VarAccess) {
-            final VarAccess va = (VarAccess) inspect.getAccess();
+        if (node.getAccess() instanceof VarAccess) {
+            final VarAccess va = (VarAccess) node.getAccess();
             
             target = this.nspace;
             var = va.getIdentifier();
             
-        } else if (inspect.getAccess() instanceof NamespaceAccess) {
-            final NamespaceAccess nsa = (NamespaceAccess) inspect.getAccess();
+        } else if (node.getAccess() instanceof NamespaceAccess) {
+            final NamespaceAccess nsa = (NamespaceAccess) node.getAccess();
             final VarAccess nsName = (VarAccess) nsa.getLhs();
             
             var = ((VarAccess) nsa.getRhs()).getIdentifier();
@@ -355,8 +355,8 @@ public class ExecutionVisitor extends DepthFirstVisitor {
             b.append(". Type: " + decl.getType().getName());
             b.append("\n");
         }
-        this.stack.push(new StringLiteral(inspect.getPosition(), b.toString()));
+        this.stack.push(new StringLiteral(node.getPosition(), b.toString()));
 
-        return this.after(inspect) == CONTINUE;
+        return this.after(node) == CONTINUE;
     }
 }

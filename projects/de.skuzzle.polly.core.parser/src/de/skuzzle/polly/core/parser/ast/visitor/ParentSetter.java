@@ -27,44 +27,44 @@ public class ParentSetter extends DepthFirstVisitor {
     
 
     @Override
-    public int before(NamespaceAccess access) throws ASTTraversalException {
-        access.getLhs().setParent(access);
-        access.getRhs().setParent(access);
+    public int before(NamespaceAccess node) throws ASTTraversalException {
+        node.getLhs().setParent(node);
+        node.getRhs().setParent(node);
         return CONTINUE;
     }
     
     
     
     @Override
-    public int before(Assignment assign) throws ASTTraversalException {
-        assign.getExpression().setParent(assign);
-        assign.getName().setParent(assign);
+    public int before(Assignment node) throws ASTTraversalException {
+        node.getExpression().setParent(node);
+        node.getName().setParent(node);
         return CONTINUE;
     }
     
     
     
     @Override
-    public int before(Braced braced) throws ASTTraversalException {
-        braced.getExpression().setParent(braced);
+    public int before(Braced node) throws ASTTraversalException {
+        node.getExpression().setParent(node);
         return CONTINUE;
     }
     
     
     @Override
-    public int before(Call call) throws ASTTraversalException {
-        call.getLhs().setParent(call);
-        call.getRhs().setParent(call);
+    public int before(Call node) throws ASTTraversalException {
+        node.getLhs().setParent(node);
+        node.getRhs().setParent(node);
         return CONTINUE;
     }
     
     
     
     @Override
-    public int before(FunctionLiteral func) throws ASTTraversalException {
-        func.getBody().setParent(func);
-        for (final Declaration d : func.getFormal()) {
-            d.setParent(func);
+    public int before(FunctionLiteral node) throws ASTTraversalException {
+        node.getBody().setParent(node);
+        for (final Declaration d : node.getFormal()) {
+            d.setParent(node);
         }
         return CONTINUE;
     }
@@ -72,18 +72,18 @@ public class ParentSetter extends DepthFirstVisitor {
     
     
     @Override
-    public int before(OperatorCall call) throws ASTTraversalException {
-        this.before((Call)call);
+    public int before(OperatorCall node) throws ASTTraversalException {
+        this.before((Call) node);
         return CONTINUE;
     }
     
     
     
     @Override
-    public int before(Root root) throws ASTTraversalException {
-        root.getCommand().setParent(root);
-        for(final Expression exp : root.getExpressions()) {
-            exp.setParent(root);
+    public int before(Root node) throws ASTTraversalException {
+        node.getCommand().setParent(node);
+        for(final Expression exp : node.getExpressions()) {
+            exp.setParent(node);
         }
         return CONTINUE;
     }
@@ -91,26 +91,26 @@ public class ParentSetter extends DepthFirstVisitor {
     
     
     @Override
-    public int before(VarAccess access) throws ASTTraversalException {
-        access.getIdentifier().setParent(access);
+    public int before(VarAccess node) throws ASTTraversalException {
+        node.getIdentifier().setParent(node);
         return CONTINUE;
     }
     
     
     
     @Override
-    public int before(Declaration decl) throws ASTTraversalException {
-        decl.getExpression().setParent(decl);
-        decl.getName().setParent(decl);
+    public int before(Declaration node) throws ASTTraversalException {
+        node.getExpression().setParent(node);
+        node.getName().setParent(node);
         return CONTINUE;
     }
 
     
     
     @Override
-    public int before(Delete delete) throws ASTTraversalException {
-        for (final Identifier id : delete.getIdentifiers()) {
-            id.setParent(delete);
+    public int before(Delete node) throws ASTTraversalException {
+        for (final Identifier id : node.getIdentifiers()) {
+            id.setParent(node);
         }
         return CONTINUE;
     }
@@ -118,8 +118,8 @@ public class ParentSetter extends DepthFirstVisitor {
     
     
     @Override
-    public int before(Inspect inspect) throws ASTTraversalException {
-        inspect.getAccess().setParent(inspect);
+    public int before(Inspect node) throws ASTTraversalException {
+        node.getAccess().setParent(node);
         return CONTINUE;
     }
 }

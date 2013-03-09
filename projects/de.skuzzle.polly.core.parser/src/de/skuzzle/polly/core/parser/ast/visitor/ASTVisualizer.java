@@ -54,247 +54,247 @@ public class ASTVisualizer extends DepthFirstVisitor {
 
 
     @Override
-    public int before(OperatorCall call) throws ASTTraversalException {
-        this.printExpression("OperatorCall: " + call.getOperator().getId(), call);
+    public int before(OperatorCall node) throws ASTTraversalException {
+        this.printExpression("OperatorCall: " + node.getOperator().getId(), node);
         return CONTINUE;
     }
 
 
 
     @Override
-    public int before(Call call) throws ASTTraversalException {
-        this.printExpression("Call", call);
+    public int before(Call node) throws ASTTraversalException {
+        this.printExpression("Call", node);
         return CONTINUE;
     }
     
     
     
     @Override
-    public int before(Literal literal) throws ASTTraversalException {
-        this.printExpression(literal.toString(), literal);
+    public int before(Literal node) throws ASTTraversalException {
+        this.printExpression(node.toString(), node);
         return CONTINUE;
     }
     
     
     
     @Override
-    public int before(ProductLiteral product) throws ASTTraversalException {
-        this.printExpression("Product", product);
+    public int before(ProductLiteral node) throws ASTTraversalException {
+        this.printExpression("Product", node);
         return CONTINUE;
     }
     
     
     
     @Override
-    public int before(NamespaceAccess access) throws ASTTraversalException {
-        this.printExpression("Access", access);
+    public int before(NamespaceAccess node) throws ASTTraversalException {
+        this.printExpression("Access", node);
         return CONTINUE;
     }
     
     
     
     @Override
-    public int before(Assignment assign) throws ASTTraversalException {
-        this.printExpression("Assignment", assign);
+    public int before(Assignment node) throws ASTTraversalException {
+        this.printExpression("Assignment", node);
         return CONTINUE;
     }
     
     
     
     @Override
-    public int before(FunctionLiteral func) throws ASTTraversalException {
-        this.printExpression("Function", func);
+    public int before(FunctionLiteral node) throws ASTTraversalException {
+        this.printExpression("Function", node);
         return CONTINUE;
     }
     
     
     
     @Override
-    public int before(Native hc) throws ASTTraversalException {
-        this.printExpression("Native", hc);
+    public int before(Native node) throws ASTTraversalException {
+        this.printExpression("Native", node);
         return CONTINUE;
     }
     
     
     
     @Override
-    public int before(Identifier identifier) throws ASTTraversalException {
-        this.dotBuilder.printNode(identifier, identifier.getId(),
-            identifier.getPosition().toString());
+    public int before(Identifier node) throws ASTTraversalException {
+        this.dotBuilder.printNode(node, node.getId(),
+            node.getPosition().toString());
         return CONTINUE;
     }
     
     
     
     @Override
-    public int before(ListLiteral list) throws ASTTraversalException {
-        this.printExpression("List", list);
+    public int before(ListLiteral node) throws ASTTraversalException {
+        this.printExpression("List", node);
         return CONTINUE;
     }
     
     
     
     @Override
-    public int before(ResolvableIdentifier id) throws ASTTraversalException {
-        this.dotBuilder.printNode(id.getId(), id.getPosition().toString());
+    public int before(ResolvableIdentifier node) throws ASTTraversalException {
+        this.dotBuilder.printNode(node.getId(), node.getPosition().toString());
         return CONTINUE;
     }
     
     
     
     @Override
-    public int before(Delete delete) throws ASTTraversalException {
-        this.printExpression("Delete", delete);
+    public int before(Delete node) throws ASTTraversalException {
+        this.printExpression("Delete", node);
         return CONTINUE;
     }
     
     
     
     @Override
-    public int before(Declaration decl) throws ASTTraversalException {
-        this.dotBuilder.printNode(decl, 
-            "Declaration: " + decl.getName().getId(),
-            "Unique: " + decl.getType());
+    public int before(Declaration node) throws ASTTraversalException {
+        this.dotBuilder.printNode(node, 
+            "Declaration: " + node.getName().getId(),
+            "Unique: " + node.getType());
         return CONTINUE;
     }
     
     
     
     @Override
-    public int before(Root root) throws ASTTraversalException {
-        this.dotBuilder.printNode(root, "Root", root.getPosition().toString());
+    public int before(Root node) throws ASTTraversalException {
+        this.dotBuilder.printNode(node, "Root", node.getPosition().toString());
         return CONTINUE;
     }
     
     
     
     @Override
-    public boolean visit(VarAccess access) throws ASTTraversalException {
-        switch (this.before(access)) {
+    public boolean visit(VarAccess node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }
-        this.printExpression("VarAccess: " + access.getIdentifier().getId(), access);
-        return this.before(access) == CONTINUE;
+        this.printExpression("VarAccess: " + node.getIdentifier().getId(), node);
+        return this.before(node) == CONTINUE;
     }
     
     
     
     @Override
-    public int after(NamespaceAccess access) throws ASTTraversalException {
-        this.dotBuilder.pop(access);
+    public int after(NamespaceAccess node) throws ASTTraversalException {
+        this.dotBuilder.pop(node);
         return CONTINUE;
     }
 
 
 
     @Override
-    public int after(Assignment assign) throws ASTTraversalException {
-        this.dotBuilder.pop(assign);
+    public int after(Assignment node) throws ASTTraversalException {
+        this.dotBuilder.pop(node);
         return CONTINUE;
     }
 
 
 
     @Override
-    public int after(Call call) throws ASTTraversalException {
-        this.dotBuilder.pop(call);
-        return CONTINUE;
-    }
-    
-    
-
-    @Override
-    public int after(FunctionLiteral func) throws ASTTraversalException {
-        this.dotBuilder.pop(func);
-        return CONTINUE;
-    }
-
-    
-    
-    @Override
-    public int after(ProductLiteral product) throws ASTTraversalException {
-        this.dotBuilder.pop(product);
-        return CONTINUE;
-    }
-    
-
-
-    @Override
-    public int after(Native nat) throws ASTTraversalException {
-        this.dotBuilder.pop(nat);
-        return CONTINUE;
-    }
-
-
-
-    @Override
-    public int after(Identifier identifier) throws ASTTraversalException {
-        this.dotBuilder.pop(identifier);
-        return CONTINUE;
-    }
-
-
-
-    @Override
-    public int after(ListLiteral list) throws ASTTraversalException {
-        this.dotBuilder.pop(list);
-        return CONTINUE;
-    }
-
-
-
-    @Override
-    public int after(Literal literal) throws ASTTraversalException {
-        this.dotBuilder.pop(literal);
-        return CONTINUE;
-    }
-
-
-
-    @Override
-    public int after(OperatorCall call) throws ASTTraversalException {
-        this.dotBuilder.pop(call);
-        return CONTINUE;
-    }
-
-
-
-    @Override
-    public int after(ResolvableIdentifier id) throws ASTTraversalException {
-        this.dotBuilder.pop(id);
-        return CONTINUE;
-    }
-
-
-
-    @Override
-    public int after(Root root) throws ASTTraversalException {
-        this.dotBuilder.pop(root);
-        return CONTINUE;
-    }
-
-
-
-    @Override
-    public int after(VarAccess access) throws ASTTraversalException {
-        this.dotBuilder.pop(access);
-        return CONTINUE;
-    }
-
-
-
-    @Override
-    public int after(Declaration decl) throws ASTTraversalException {
-        this.dotBuilder.pop(decl);
+    public int after(Call node) throws ASTTraversalException {
+        this.dotBuilder.pop(node);
         return CONTINUE;
     }
     
     
+
+    @Override
+    public int after(FunctionLiteral node) throws ASTTraversalException {
+        this.dotBuilder.pop(node);
+        return CONTINUE;
+    }
+
+    
     
     @Override
-    public int after(Delete delete) throws ASTTraversalException {
-        this.dotBuilder.pop(delete);
+    public int after(ProductLiteral node) throws ASTTraversalException {
+        this.dotBuilder.pop(node);
+        return CONTINUE;
+    }
+    
+
+
+    @Override
+    public int after(Native node) throws ASTTraversalException {
+        this.dotBuilder.pop(node);
+        return CONTINUE;
+    }
+
+
+
+    @Override
+    public int after(Identifier node) throws ASTTraversalException {
+        this.dotBuilder.pop(node);
+        return CONTINUE;
+    }
+
+
+
+    @Override
+    public int after(ListLiteral node) throws ASTTraversalException {
+        this.dotBuilder.pop(node);
+        return CONTINUE;
+    }
+
+
+
+    @Override
+    public int after(Literal node) throws ASTTraversalException {
+        this.dotBuilder.pop(node);
+        return CONTINUE;
+    }
+
+
+
+    @Override
+    public int after(OperatorCall node) throws ASTTraversalException {
+        this.dotBuilder.pop(node);
+        return CONTINUE;
+    }
+
+
+
+    @Override
+    public int after(ResolvableIdentifier node) throws ASTTraversalException {
+        this.dotBuilder.pop(node);
+        return CONTINUE;
+    }
+
+
+
+    @Override
+    public int after(Root node) throws ASTTraversalException {
+        this.dotBuilder.pop(node);
+        return CONTINUE;
+    }
+
+
+
+    @Override
+    public int after(VarAccess node) throws ASTTraversalException {
+        this.dotBuilder.pop(node);
+        return CONTINUE;
+    }
+
+
+
+    @Override
+    public int after(Declaration node) throws ASTTraversalException {
+        this.dotBuilder.pop(node);
+        return CONTINUE;
+    }
+    
+    
+    
+    @Override
+    public int after(Delete node) throws ASTTraversalException {
+        this.dotBuilder.pop(node);
         return CONTINUE;
     }
 }

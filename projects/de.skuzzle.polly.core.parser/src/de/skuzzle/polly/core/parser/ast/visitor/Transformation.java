@@ -29,50 +29,49 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.UserLiteral;
 
 public interface Transformation {
 
-    Identifier transformIdentifier(Identifier identifier) throws ASTTraversalException;
+    Identifier transformIdentifier(Identifier node) throws ASTTraversalException;
 
-    Root transformRoot(Root root) throws ASTTraversalException;
+    Root transformRoot(Root node) throws ASTTraversalException;
 
-    Declaration transformDeclaration(Declaration declaration) throws ASTTraversalException;
+    Declaration transformDeclaration(Declaration node) throws ASTTraversalException;
 
-    Expression transformAssignment(Assignment assignment) throws ASTTraversalException;
+    Expression transformAssignment(Assignment node) throws ASTTraversalException;
 
-    Expression transformBraced(Braced braced) throws ASTTraversalException;
+    Expression transformBraced(Braced node) throws ASTTraversalException;
 
-    Expression transformCall(Call call) throws ASTTraversalException;
+    Expression transformCall(Call node) throws ASTTraversalException;
 
-    Node transformDelete(Delete delete) throws ASTTraversalException;
+    Node transformDelete(Delete node) throws ASTTraversalException;
 
-    Expression transformAccess(NamespaceAccess namespaceAccess) throws ASTTraversalException;
+    Expression transformAccess(NamespaceAccess node) throws ASTTraversalException;
 
-    Expression transformNative(Native native1) throws ASTTraversalException;
+    Expression transformNative(Native node) throws ASTTraversalException;
 
-    Expression transformOperatorCall(OperatorCall operatorCall) throws ASTTraversalException;
+    Expression transformOperatorCall(OperatorCall node) throws ASTTraversalException;
 
-    Expression transformVarAccess(VarAccess varAccess) throws ASTTraversalException;
+    Expression transformVarAccess(VarAccess node) throws ASTTraversalException;
 
-    Expression transformBoolean(BooleanLiteral booleanLiteral);
+    Expression transformBoolean(BooleanLiteral node);
 
-    Expression transformString(ChannelLiteral channelLiteral) throws ASTTraversalException;
+    Expression transformString(ChannelLiteral node) throws ASTTraversalException;
 
-    Expression transformDate(DateLiteral dateLiteral) throws ASTTraversalException;
+    Expression transformDate(DateLiteral node) throws ASTTraversalException;
 
-    Expression transformFunction(FunctionLiteral functionLiteral) throws ASTTraversalException;
+    Expression transformFunction(FunctionLiteral node) throws ASTTraversalException;
 
-    Expression transformList(ListLiteral listLiteral) throws ASTTraversalException;
+    Expression transformList(ListLiteral node) throws ASTTraversalException;
 
-    Expression transformNumber(NumberLiteral numberLiteral) throws ASTTraversalException;
+    Expression transformNumber(NumberLiteral node) throws ASTTraversalException;
 
-    Expression transformProduct(ProductLiteral productLiteral) throws ASTTraversalException;
+    Expression transformProduct(ProductLiteral node) throws ASTTraversalException;
 
-    Expression transformString(StringLiteral stringLiteral) throws ASTTraversalException;
+    Expression transformString(StringLiteral node) throws ASTTraversalException;
 
-    Expression transformTimeSpan(TimespanLiteral timespanLiteral) throws ASTTraversalException;
+    Expression transformTimeSpan(TimespanLiteral node) throws ASTTraversalException;
 
-    Expression transformUser(UserLiteral userLiteral) throws ASTTraversalException;
+    Expression transformUser(UserLiteral node) throws ASTTraversalException;
 
-    HelpLiteral transformHelp(HelpLiteral helpLiteral);
+    HelpLiteral transformHelp(HelpLiteral node);
 
-    Inspect transformInspect(Inspect inspect);
-
+    Inspect transformInspect(Inspect node);
 }

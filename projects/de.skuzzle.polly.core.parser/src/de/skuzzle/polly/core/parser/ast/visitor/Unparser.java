@@ -69,7 +69,7 @@ public class Unparser extends DepthFirstVisitor {
     
     
     @Override
-    public int before(Braced braced) throws ASTTraversalException {
+    public int before(Braced node) throws ASTTraversalException {
         this.out.print("(");
         return CONTINUE;
     }
@@ -77,7 +77,7 @@ public class Unparser extends DepthFirstVisitor {
     
     
     @Override
-    public int after(Braced braced) throws ASTTraversalException {
+    public int after(Braced node) throws ASTTraversalException {
         this.out.print(")");
         return CONTINUE;
     }
@@ -85,30 +85,30 @@ public class Unparser extends DepthFirstVisitor {
     
     
     @Override
-    public int before(Declaration decl) throws ASTTraversalException {
-        decl.getType().getName().visit(this);
+    public int before(Declaration node) throws ASTTraversalException {
+        node.getType().getName().visit(this);
         this.out.print(" ");
-        decl.getName().visit(this);
+        node.getName().visit(this);
         return CONTINUE;
     }
     
     
     
     @Override
-    public boolean visit(Root root) throws ASTTraversalException {
-        switch (this.before(root)) {
+    public boolean visit(Root node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }
         
         this.out.print(":");
-        if (!root.getCommand().visit(this)) {
+        if (!node.getCommand().visit(this)) {
             return false;
         }
         
-        if (!root.getExpressions().isEmpty()) {
+        if (!node.getExpressions().isEmpty()) {
             this.out.print(" ");
-            final Iterator<Expression> it = root.getExpressions().iterator();
+            final Iterator<Expression> it = node.getExpressions().iterator();
             while (it.hasNext()) {
                 if (!it.next().visit(this)) {
                     return false;
@@ -118,57 +118,57 @@ public class Unparser extends DepthFirstVisitor {
                 }
             }
         }
-        return this.after(root) == CONTINUE;
+        return this.after(node) == CONTINUE;
     }
     
     
     
     @Override
-    public boolean visit(FunctionLiteral func) throws ASTTraversalException {
-        switch (this.before(func)) {
+    public boolean visit(FunctionLiteral node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }
         
-        this.out.print(func.format(this.literalFormatter));
+        this.out.print(node.format(this.literalFormatter));
         
-        return this.after(func) == CONTINUE;
+        return this.after(node) == CONTINUE;
     }
     
     
     
     @Override
-    public boolean visit(Literal literal) throws ASTTraversalException {
-        switch (this.before(literal)) {
+    public boolean visit(Literal node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }
-        this.out.print(literal.format(this.literalFormatter));
-        return this.after(literal) == CONTINUE;
+        this.out.print(node.format(this.literalFormatter));
+        return this.after(node) == CONTINUE;
     }
     
     
     
     @Override
-    public boolean visit(ListLiteral list) throws ASTTraversalException {
-        switch (this.before(list)) {
+    public boolean visit(ListLiteral node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }        
-        this.out.print(list.format(this.literalFormatter));
+        this.out.print(node.format(this.literalFormatter));
         
-        return this.after(list) == CONTINUE;
+        return this.after(node) == CONTINUE;
     }
     
     
     
     @Override
-    public boolean visit(ProductLiteral product) throws ASTTraversalException {
-        switch (this.before(product)) {
+    public boolean visit(ProductLiteral node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }        
-        final Iterator<Expression> it = product.getContent().iterator();
+        final Iterator<Expression> it = node.getContent().iterator();
         while (it.hasNext()) {
             if (!it.next().visit(this)) {
                 return false;
@@ -177,55 +177,55 @@ public class Unparser extends DepthFirstVisitor {
                 this.out.print(",");
             }
         }
-        return this.after(product) == CONTINUE;
+        return this.after(node) == CONTINUE;
     }
     
     
     
     @Override
-    public int before(Identifier identifier) throws ASTTraversalException {
-        if (identifier.wasEscaped()) {
+    public int before(Identifier node) throws ASTTraversalException {
+        if (node.wasEscaped()) {
             this.out.print("\\");
         }
-        this.out.print(identifier.getId());
+        this.out.print(node.getId());
         return CONTINUE;
     }
     
     
     
     @Override
-    public int before(ResolvableIdentifier id) throws ASTTraversalException {
-        this.before((Identifier) id);
+    public int before(ResolvableIdentifier node) throws ASTTraversalException {
+        this.before((Identifier) node);
         return CONTINUE;
     }
     
     
     
     @Override
-    public boolean visit(OperatorCall call) throws ASTTraversalException {
-        switch (this.before(call)) {
+    public boolean visit(OperatorCall node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }
         
-        final List<Expression> content = call.getRhs().getContent();
+        final List<Expression> content = node.getRhs().getContent();
         final Iterator<Expression> it = content.iterator();
         
         if (content.size() == 1) {
-            if (call.isPostfix()) {
+            if (node.isPostfix()) {
                 if (!it.next().visit(this)) {
                     return false;
                 }
-                this.out.print(call.getOperator().getId());
+                this.out.print(node.getOperator().getId());
             } else {
-                this.out.print(call.getOperator().getId());
+                this.out.print(node.getOperator().getId());
                 if (!it.next().visit(this)) {
                     return false;
                 }
             }
         } else if (content.size() == 2) {
             // HACK: special treatment for certain operators
-            if (call.getOperator() == OpType.INDEX) {
+            if (node.getOperator() == OpType.INDEX) {
                 if (!it.next().visit(this)) {
                     return false;
                 }
@@ -238,13 +238,13 @@ public class Unparser extends DepthFirstVisitor {
                 if (!it.next().visit(this)) {
                     return false;
                 }
-                this.out.print(call.getOperator().getId());
+                this.out.print(node.getOperator().getId());
                 if (!it.next().visit(this)) {
                     return false;
                 }
             }
         } else if (content.size() == 3) {
-            if (call.getOperator() == OpType.IF) {
+            if (node.getOperator() == OpType.IF) {
                 this.out.print("if ");
                 if (!it.next().visit(this)) {
                     return false;
@@ -257,7 +257,7 @@ public class Unparser extends DepthFirstVisitor {
                 if (!it.next().visit(this)) {
                     return false;
                 }
-            } else if (call.getOperator() == OpType.DOTDOT) {
+            } else if (node.getOperator() == OpType.DOTDOT) {
                 if (!it.next().visit(this)) {
                     return false;
                 }
@@ -271,90 +271,90 @@ public class Unparser extends DepthFirstVisitor {
                 }
             }
         }
-        return this.after(call) == CONTINUE; 
+        return this.after(node) == CONTINUE; 
     }
     
     
     
     @Override
-    public boolean visit(Call call) throws ASTTraversalException {
-        switch (this.before(call)) {
+    public boolean visit(Call node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }
         
-        if (!call.getLhs().visit(this)) {
+        if (!node.getLhs().visit(this)) {
             return false;
         }
         this.out.print("(");
-        if (!call.getRhs().visit(this)) {
+        if (!node.getRhs().visit(this)) {
             return false;
         }
         this.out.print(")");
         
-        return this.after(call) == CONTINUE;
+        return this.after(node) == CONTINUE;
     }
     
     
     
     @Override
-    public boolean visit(NamespaceAccess access) throws ASTTraversalException {
-        switch (this.before(access)) {
+    public boolean visit(NamespaceAccess node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }
-        if (!access.getLhs().visit(this)) {
+        if (!node.getLhs().visit(this)) {
             return false;
         }
         this.out.print(".");
-        if (!access.getRhs().visit(this)) {
+        if (!node.getRhs().visit(this)) {
             return false;
         }
-        return this.after(access) == CONTINUE; 
+        return this.after(node) == CONTINUE; 
     }
     
     
     
     @Override
-    public boolean visit(VarAccess access) throws ASTTraversalException {
-        switch (this.before(access)) {
+    public boolean visit(VarAccess node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }
-        if (!access.getIdentifier().visit(this)) {
+        if (!node.getIdentifier().visit(this)) {
             return false;
         }
-        return this.after(access) == CONTINUE;
+        return this.after(node) == CONTINUE;
     }
     
     
     
     @Override
-    public boolean visit(Assignment assign) throws ASTTraversalException {
-        switch (this.before(assign)) {
+    public boolean visit(Assignment node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }
-        if (!assign.getExpression().visit(this)) {
+        if (!node.getExpression().visit(this)) {
             return false;
         }
         this.out.print("->");
-        if (!assign.getName().visit(this)) {
+        if (!node.getName().visit(this)) {
             return false;
         }
-        return this.after(assign) == CONTINUE; 
+        return this.after(node) == CONTINUE; 
     }
 
     
     
     @Override
-    public boolean visit(Delete delete) throws ASTTraversalException {
-        switch (this.before(delete)) {
+    public boolean visit(Delete node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }
         this.out.print("del(");
-        final Iterator<DeleteableIdentifier> it = delete.getIdentifiers().iterator();
+        final Iterator<DeleteableIdentifier> it = node.getIdentifiers().iterator();
         while (it.hasNext()) {
             final DeleteableIdentifier next = it.next();
             if (next.isGlobal()) {
@@ -368,13 +368,13 @@ public class Unparser extends DepthFirstVisitor {
             }
         }
         this.out.print(")");
-        return this.after(delete) == CONTINUE;
+        return this.after(node) == CONTINUE;
     }
     
     
     
     @Override
-    public int before(Inspect inspect) throws ASTTraversalException {
+    public int before(Inspect node) throws ASTTraversalException {
         this.out.print("inspect(");
         return CONTINUE;
     }
@@ -382,7 +382,7 @@ public class Unparser extends DepthFirstVisitor {
     
     
     @Override
-    public int after(Inspect inspect) throws ASTTraversalException {
+    public int after(Inspect node) throws ASTTraversalException {
         this.out.print(")");
         return CONTINUE;
     }

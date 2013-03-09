@@ -52,24 +52,24 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     
     
     @Override
-    public int before(Native hc) throws ASTTraversalException {
-        hc.resolveType(this.nspace, this);
+    public int before(Native node) throws ASTTraversalException {
+        node.resolveType(this.nspace, this);
         return CONTINUE;
     }
     
     
     
     @Override
-    public int before(Declaration decl) throws ASTTraversalException {
-        decl.getExpression().visit(this);
+    public int before(Declaration node) throws ASTTraversalException {
+        node.getExpression().visit(this);
         return CONTINUE;
     }
     
     
     
     @Override
-    public boolean visit(final FunctionLiteral func) throws ASTTraversalException {
-        switch (this.before(func)) {
+    public boolean visit(final FunctionLiteral node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }
@@ -79,7 +79,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         // resolve parameter types
         this.enter();
         final Set<String> names = new HashSet<String>();
-        for (final Declaration d : func.getFormal()) {
+        for (final Declaration d : node.getFormal()) {
             if (!names.add(d.getName().getId())) {
                 this.reportError(d.getName(),
                     "Doppelte Deklaration von '" + d.getName().getId() + "'");
@@ -92,35 +92,35 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
             this.nspace.declare(d);
         }
         
-        if (!func.getBody().visit(this)) {
+        if (!node.getBody().visit(this)) {
             return false;
         }
         this.leave();
         
         // check whether all formal parameters have been used
-        for (final Declaration d : func.getFormal()) {
+        for (final Declaration d : node.getFormal()) {
             if (d.isUnused()) {
                 this.reportError(d, "Unbenutzer Parameter: " + d.getName());
             }
         }
         
-        for (final Type te : func.getBody().getTypes()) {
-            func.addType(new ProductType(source).mapTo(te));
+        for (final Type te : node.getBody().getTypes()) {
+            node.addType(new ProductType(source).mapTo(te));
         }
         
-        return this.after(func) == CONTINUE;
+        return this.after(node) == CONTINUE;
     }
     
     
     
     @Override
-    public int after(ListLiteral list) throws ASTTraversalException {
-        if (list.getContent().isEmpty()) {
-            this.reportError(list, "Listen müssen mind. 1 Element enthalten.");
+    public int after(ListLiteral node) throws ASTTraversalException {
+        if (node.getContent().isEmpty()) {
+            this.reportError(node, "Listen müssen mind. 1 Element enthalten.");
         }
-        for (final Expression exp : list.getContent()) {
+        for (final Expression exp : node.getContent()) {
             for (final Type t : exp.getTypes()) {
-                list.addType(new ListType(t));
+                node.addType(new ListType(t));
             }
         }
         return CONTINUE;
@@ -129,7 +129,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     
     
     @Override
-    public int after(final ProductLiteral product) throws ASTTraversalException {
+    public int after(final ProductLiteral node) throws ASTTraversalException {
         
         // Use combinator to create all combinations of possible types
         final CombinationCallBack<Expression, Type> ccb = 
@@ -143,32 +143,32 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
             
             @Override
             public void onNewCombination(List<Type> combination) {
-                product.addType(new ProductType(combination));
+                node.addType(new ProductType(combination));
             }
         };
         
-        Combinator.combine(product.getContent(), ccb);
+        Combinator.combine(node.getContent(), ccb);
         return CONTINUE;
     }
     
     
     
     @Override
-    public int after(final Assignment assign) throws ASTTraversalException {
-        if (assign.isTemp()) {
-            this.reportError(assign, 
+    public int after(final Assignment node) throws ASTTraversalException {
+        if (node.isTemp()) {
+            this.reportError(node, 
                 "Temporäre Deklarationen werden (noch?) nicht unterstützt.");
         }
         
         // deep transitive recursion check
-        assign.getExpression().visit(new DepthFirstVisitor() {
+        node.getExpression().visit(new DepthFirstVisitor() {
             @Override
             public int before(VarAccess access) throws ASTTraversalException {
                 final Collection<Declaration> decls = 
                     nspace.lookupAll(access.getIdentifier());
                 
                 for (final Declaration decl : decls) {
-                    if (decl.getName().equals(assign.getName())) {
+                    if (decl.getName().equals(node.getName())) {
                         reportError(access, "Rekursive Aufrufe sind nicht erlaubt");
                     }
                     if (!decl.isNative()) {
@@ -181,12 +181,12 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
             } 
         });
         
-        for (final Type t : assign.getExpression().getTypes()) {
-            final Declaration vd = new Declaration(assign.getName().getPosition(), 
-                assign.getName(), new Empty(t, assign.getExpression().getPosition()));
+        for (final Type t : node.getExpression().getTypes()) {
+            final Declaration vd = new Declaration(node.getName().getPosition(), 
+                node.getName(), new Empty(t, node.getExpression().getPosition()));
             this.nspace.declare(vd);
             
-            assign.addType(t);
+            node.addType(t);
         }
         return CONTINUE;
     }
@@ -194,132 +194,132 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     
     
     @Override
-    public boolean visit(OperatorCall call) throws ASTTraversalException {
-        return this.visit((Call)call);
+    public boolean visit(OperatorCall node) throws ASTTraversalException {
+        return this.visit((Call) node);
     }
     
 
     
     @Override
-    public boolean visit(Call call) throws ASTTraversalException {
-        switch (this.before(call)) {
+    public boolean visit(Call node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }
         
         // resolve parameter types
-        if (!call.getRhs().visit(this)) {
+        if (!node.getRhs().visit(this)) {
             return false;
         }
         
         final List<Type> possibleTypes = new ArrayList<Type>(
-            call.getRhs().getTypes().size());
-        for (final Type rhsType : call.getRhs().getTypes()) {
+            node.getRhs().getTypes().size());
+        for (final Type rhsType : node.getRhs().getTypes()) {
             possibleTypes.add(rhsType.mapTo(Type.newTypeVar()));
         }
         
         // resolve called function's types
-        if (!call.getLhs().visit(this)) {
+        if (!node.getLhs().visit(this)) {
             return false;
         }
         
         boolean hasMapType = false;
-        for (final Type type : call.getLhs().getTypes()) {
+        for (final Type type : node.getLhs().getTypes()) {
             hasMapType |= type instanceof MapType;
         }
         if (!hasMapType) {
-            this.reportError(call.getLhs(), "Unbekannte Funktion: " + 
-                Unparser.toString(call.getLhs()));
+            this.reportError(node.getLhs(), "Unbekannte Funktion: " + 
+                Unparser.toString(node.getLhs()));
         }
         
-        if (call.getLhs().getTypes().isEmpty()) {
-            this.reportError(call.getLhs(), "Funktion nicht gefunden");
+        if (node.getLhs().getTypes().isEmpty()) {
+            this.reportError(node.getLhs(), "Funktion nicht gefunden");
         }
         
         // sort out all lhs types that do not match the rhs types
         for (final Type possibleLhs : possibleTypes) {
-            for (final Type lhs : call.getLhs().getTypes()) {
+            for (final Type lhs : node.getLhs().getTypes()) {
                 final Substitution subst = Type.unify(lhs, possibleLhs);
                 if (subst != null) {
                     final MapType mtc = (MapType) lhs.subst(subst);
-                    call.addType(mtc.getTarget());
+                    node.addType(mtc.getTarget());
                 }
             }
         }
         
         
-        if (call.getTypes().isEmpty()) {
-            this.reportError(call.getRhs(),
+        if (node.getTypes().isEmpty()) {
+            this.reportError(node.getRhs(),
                 "Keine passende Deklaration für den Aufruf von " + 
-                Unparser.toString(call.getLhs()) + " gefunden");
+                Unparser.toString(node.getLhs()) + " gefunden");
         }
-        return this.after(call) == CONTINUE;
+        return this.after(node) == CONTINUE;
     }
     
     
     
     @Override
-    public int before(VarAccess access) throws ASTTraversalException {
-        final Set<Type> types = this.nspace.lookupFresh(access);
-        access.addTypes(types);
+    public int before(VarAccess node) throws ASTTraversalException {
+        final Set<Type> types = this.nspace.lookupFresh(node);
+        node.addTypes(types);
         return CONTINUE;
     }
     
     
     
     @Override
-    public boolean visit(NamespaceAccess access) throws ASTTraversalException {
-        switch (this.before(access)) {
+    public boolean visit(NamespaceAccess node) throws ASTTraversalException {
+        switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
         }        
-        if (!(access.getLhs() instanceof VarAccess)) {
-            this.reportError(access.getLhs(), "Operand muss ein Bezeichner sein");
-        } else if (!(access.getRhs() instanceof VarAccess)) {
-            this.reportError(access.getRhs(), "Operand muss ein Bezeichner sein");
+        if (!(node.getLhs() instanceof VarAccess)) {
+            this.reportError(node.getLhs(), "Operand muss ein Bezeichner sein");
+        } else if (!(node.getRhs() instanceof VarAccess)) {
+            this.reportError(node.getRhs(), "Operand muss ein Bezeichner sein");
         }
         
-        final VarAccess va = (VarAccess) access.getLhs();
+        final VarAccess va = (VarAccess) node.getLhs();
         if (!Namespace.exists(va.getIdentifier())) {
-            this.reportError(access.getLhs(), 
+            this.reportError(node.getLhs(), 
                 "Unbekannter Namespace: " + va.getIdentifier());
         }
         final Namespace last = this.nspace;
         this.nspace = Namespace.forName(va.getIdentifier()).derive(this.nspace);
-        if (!access.getRhs().visit(this)) {
+        if (!node.getRhs().visit(this)) {
             return false;
         }
         this.nspace = last;
 
-        access.addTypes(access.getRhs().getTypes());
+        node.addTypes(node.getRhs().getTypes());
         
-        return this.after(access) == CONTINUE;
+        return this.after(node) == CONTINUE;
     }
     
     
     
     @Override
-    public int before(Delete delete) throws ASTTraversalException {
-        delete.addType(Type.NUM);
-        delete.setUnique(Type.NUM);
+    public int before(Delete node) throws ASTTraversalException {
+        node.addType(Type.NUM);
+        node.setUnique(Type.NUM);
         return CONTINUE;
     }
     
     
     
     @Override
-    public int before(Inspect inspect) throws ASTTraversalException {
+    public int before(Inspect node) throws ASTTraversalException {
         Namespace target = null;
         ResolvableIdentifier var = null;
         
-        if (inspect.getAccess() instanceof VarAccess) {
-            final VarAccess va = (VarAccess) inspect.getAccess();
+        if (node.getAccess() instanceof VarAccess) {
+            final VarAccess va = (VarAccess) node.getAccess();
             
             target = this.nspace;
             var = va.getIdentifier();
             
-        } else if (inspect.getAccess() instanceof NamespaceAccess) {
-            final NamespaceAccess nsa = (NamespaceAccess) inspect.getAccess();
+        } else if (node.getAccess() instanceof NamespaceAccess) {
+            final NamespaceAccess nsa = (NamespaceAccess) node.getAccess();
             final VarAccess nsName = (VarAccess) nsa.getLhs();
             
             if (!Namespace.exists(nsName.getIdentifier())) {
@@ -337,8 +337,8 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         if (decls.isEmpty()) {
             this.reportError(var, "Unbekannte Variable: " + var);
         }
-        inspect.setUnique(Type.STRING);
-        inspect.addType(Type.STRING);
+        node.setUnique(Type.STRING);
+        node.addType(Type.STRING);
         return CONTINUE;
     }
 }
