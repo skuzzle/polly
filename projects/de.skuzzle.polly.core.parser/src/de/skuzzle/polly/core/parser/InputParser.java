@@ -287,12 +287,12 @@ public class InputParser {
      */
     protected void reportExpected(TokenType expected, Token actual) 
             throws ParseException {
-        if (actual.matches(TokenType.CLOSEDBR)) {
+        /*if (actual.matches(TokenType.CLOSEDBR)) {
             this.reporter.syntaxProblem(Problems.MISSING_OBR, 
                 this.scanner.spanFrom(actual));
-        } else {
+        } else {*/
             this.reporter.syntaxProblem(expected, actual, this.scanner.spanFrom(actual));
-        }
+        //}
     }
     
     

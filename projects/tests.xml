@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="tests" basedir="." default="dist.debug">
+
+    <!-- buildpath for unit tests -->
+    <path id="tests.buildpath">
+        <fileset dir="${lib.dir}" includes="${dependencies}" 
+            id="dependencySet" erroronmissingdir="false"/>
+        <fileset dir="${build.dir}" includes="${dependencies.internal}"
+            id="dependencySetInternal" erroronmissingdir="false"/>
+        <pathelement location="${build.debug.dir}"/>
+    </path>
+
+    
+    
+    <!-- Target to run all unit tests that exist in src.dir -->
+    <target name="tests" depends="compile.debug">
+        <junit printsummary="yes">
+            <classpath refid="tests.buildpath"/>
+            <formatter type="brief" usefile="false"/>
+            <batchtest haltonfailure="yes">
+                <fileset dir="${src.dir}" includes="**/*.java"/>
+            </batchtest>
+        </junit>
+    </target>
+</project>

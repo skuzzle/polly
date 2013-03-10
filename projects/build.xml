@@ -115,10 +115,4 @@
         <ant dir="de.skuzzle.polly.plugin.rx" target="${target}" inheritAll="false"/>
         <ant dir="de.skuzzle.polly.plugin.linkexpander" target="${target}" inheritAll="false"/>
     </target>
-    
-    
-    
-    <target name="copyPlugins">
-        
-    </target>
 </project>

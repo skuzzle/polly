@@ -1,4 +1,4 @@
-package de.skuzzle.test.polly.parsing;
+package de.skuzzle.polly.test.core.parser;
 
 import org.junit.Test;
 
