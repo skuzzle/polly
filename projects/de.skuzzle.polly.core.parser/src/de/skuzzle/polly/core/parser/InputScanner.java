@@ -157,13 +157,13 @@ public class InputScanner extends AbstractTokenStream {
         int tokenStart = this.getStreamIndex();
         StringBuilder currentString = new StringBuilder();
         
-        while (!this.eos) {
+        while (!this.eos()) {
             if (state == 0) {
                 int next = this.readChar();
                 
                 if (next == -1) {
                     final Position pos = new Position(tokenStart, 
-                        this.getStreamIndex());
+                        this.getStreamIndex() + 1);
                     return new Token(TokenType.EOS, pos);
                 }
                 
@@ -341,7 +341,7 @@ public class InputScanner extends AbstractTokenStream {
                 if (next == '.') {
                     return new Token(TokenType.DOTDOT, this.spanFrom(tokenStart), "..");
                 } else if (Character.isDigit(next)) {
-                    this.pushBack('0');
+                    this.pushBackArtificial('0');
                     this.pushBack('.');
                     this.pushBack(next);
                     return this.readNumber();
@@ -434,7 +434,7 @@ public class InputScanner extends AbstractTokenStream {
         int state = 0;
         int radix = 0;
         
-        while (!this.eos) {
+        while (!this.eos()) {
             if (state == 0) {
                 int next = this.readChar();
                 
@@ -492,7 +492,7 @@ public class InputScanner extends AbstractTokenStream {
         int state = 0;
         Token escapeError = null;
         
-        while (!this.eos) {
+        while (!this.eos()) {
             if (state == 0) {
                 int next = this.readChar();
                 
@@ -541,7 +541,7 @@ public class InputScanner extends AbstractTokenStream {
     private boolean readEscapeSequence(StringBuilder lexem) throws ParseException {
         // -1 to include the '\' which was consumed by #readString()
 
-        while (!this.eos) {
+        while (!this.eos()) {
             int next = this.readChar();
             
             if (next == '"') {
@@ -564,7 +564,7 @@ public class InputScanner extends AbstractTokenStream {
         int tokenStart = this.getStreamIndex();
         StringBuilder lexem = new StringBuilder();
 
-        while (!this.eos) {
+        while (!this.eos()) {
             int next = this.readChar();
         
             if (InputScanner.isIdentifierPart(next) || next == '-') {
@@ -591,7 +591,7 @@ public class InputScanner extends AbstractTokenStream {
         // Userliterals can contain "-" which interferes with a following assignment
         // operator. This is now fixed by a special treatment with a lookahead to check
         // if an assignment operator is following.
-        while (!this.eos) {
+        while (!this.eos()) {
             if (state == 0) {
                 int next = this.readChar();
             
@@ -645,7 +645,7 @@ public class InputScanner extends AbstractTokenStream {
         // Fixed by adding state 0, which expects an identifier-start-character and then
         // switches to state 1 which expects identifier-part-characters.
         
-        while (!this.eos) {
+        while (!this.eos()) {
             if (state == 0) {
                 int next = this.readChar();
                 
@@ -739,7 +739,7 @@ public class InputScanner extends AbstractTokenStream {
         double exp_sign = 1.0;
 
         
-        while (!this.eos) {
+        while (!this.eos()) {
             if (state == 0) {
                 int next = this.readChar();
                 if (Character.isDigit(next)) {
@@ -919,7 +919,7 @@ public class InputScanner extends AbstractTokenStream {
         int tmp = value;
         value = 0;
         
-        while (!this.eos) {
+        while (!this.eos()) {
             if (state == 0) {
                 int next = this.readChar();
                 
@@ -995,7 +995,7 @@ public class InputScanner extends AbstractTokenStream {
                 tokenStart);
         }
         
-        while (!this.eos) {
+        while (!this.eos()) {
             if (state == 0) {
                 int next = this.readChar();
                 
@@ -1051,7 +1051,7 @@ public class InputScanner extends AbstractTokenStream {
                 tokenStart);
         }
         
-        while (!this.eos) {
+        while (!this.eos()) {
             if (state == 0) {
                 int next = this.readChar();
                 

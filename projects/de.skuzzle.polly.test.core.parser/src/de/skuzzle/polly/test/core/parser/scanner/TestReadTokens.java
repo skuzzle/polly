@@ -119,7 +119,8 @@ public class TestReadTokens extends AbstractScannerTest {
         int i = 0;
         final Iterator<Token> it = scanner.iterator();
         while (it.hasNext()) {
-            Assert.assertTrue(it.next().matches(expected[i++]));
+            final Token next = it.next();
+            Assert.assertTrue(next.matches(expected[i++]));
         }
     }
 }
