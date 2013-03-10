@@ -454,7 +454,7 @@ public class InputScanner extends AbstractTokenStream {
                 } else {
                     return this.parseException(
                         Problems.format(Problems.MISSING_RADIX),
-                        tokenStart);
+                            tokenStart, next);
                 }
             } else if (state == 2) {
                 int next = this.readChar();
