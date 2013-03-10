@@ -84,7 +84,7 @@ public abstract class Operator extends Function {
         POWER("^"), 
         QUESTION("?"), 
         QUEST_EXCL("?!"), 
-        RADIX("#"), 
+        RADIX("0x:"), 
         RIGHT_SHIFT(">>"), 
         URIGHT_SHIFT(">>>"), 
         WAVE("~"), 
