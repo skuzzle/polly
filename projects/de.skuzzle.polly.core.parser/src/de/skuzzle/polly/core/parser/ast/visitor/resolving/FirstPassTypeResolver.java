@@ -174,6 +174,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
                 for (final Declaration decl : decls) {
                     if (decl.getName().equals(node.getName())) {
                         reportError(access, Problems.RECURSIVE_CALL);
+                        return ABORT;
                     }
                     if (!decl.isNative()) {
                         if (!decl.getExpression().visit(this)) {
