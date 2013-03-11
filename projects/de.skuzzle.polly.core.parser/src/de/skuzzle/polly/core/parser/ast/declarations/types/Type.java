@@ -94,6 +94,7 @@ public class Type implements Visitable<TypeVisitor>, Equatable {
     }
     
     
+    
     /**
      * Checks whether the given type expression contains a type variable.
      * 
