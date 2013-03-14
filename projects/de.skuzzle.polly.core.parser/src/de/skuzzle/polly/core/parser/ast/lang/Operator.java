@@ -51,12 +51,13 @@ public abstract class Operator extends Function {
         TO_RADIANS("toRadians"),
         EXP("exp"),
         
-        // functions
+        // further functions
         FOLD_LEFT("foldl"),
         MAP("map"),
         ID("id"),
         COMP("comp"),
         SORT("sort"),
+        DAY("day"),
         
         ADD("+"),
         ADDWAVE("+~"),

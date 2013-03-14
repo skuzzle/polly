@@ -26,6 +26,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.StringLiteral;
 import de.skuzzle.polly.core.parser.ast.lang.Cast;
 import de.skuzzle.polly.core.parser.ast.lang.Operator.OpType;
 import de.skuzzle.polly.core.parser.ast.lang.functions.Comp;
+import de.skuzzle.polly.core.parser.ast.lang.functions.Day;
 import de.skuzzle.polly.core.parser.ast.lang.functions.FoldLeft;
 import de.skuzzle.polly.core.parser.ast.lang.functions.Id;
 import de.skuzzle.polly.core.parser.ast.lang.functions.Sort;
@@ -402,6 +403,7 @@ public class Namespace {
             NATIVE.declare(new de.skuzzle.polly.core.parser.ast.lang.functions.Map().createDeclaration());
             NATIVE.declare(new Comp().createDeclaration());
             NATIVE.declare(new Sort().createDeclaration());
+            NATIVE.declare(new Day().createDeclaration());
             
         } catch (ASTTraversalException e) {
             throw new ExceptionInInitializerError(e);
