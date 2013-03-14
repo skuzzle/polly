@@ -241,7 +241,13 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
             for (final Type lhs : node.getLhs().getTypes()) {
                 final Substitution subst = Type.unify(lhs, possibleLhs);
                 if (subst != null) {
-                    final MapType mtc = (MapType) lhs.subst(subst);
+                    // construct new type with the argument types of lhs, and 
+                    // result type of rhs
+                    final MapType lhsMap = (MapType) lhs;
+                    final MapType plhsMap = (MapType) possibleLhs;
+                    
+                    final MapType mtc = (MapType) plhsMap.getSource().mapTo(
+                        lhsMap.getTarget()).subst(subst);
                     node.addType(mtc.getTarget());
                 }
             }

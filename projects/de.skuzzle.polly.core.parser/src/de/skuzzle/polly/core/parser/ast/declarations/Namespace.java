@@ -628,10 +628,10 @@ public class Namespace {
                 }
             } else {
                 // native declarations can be overloaded, but must have distinct types
-                if (Type.tryUnify(decl.getType(), existing.getType())) {
+                /*if (Type.tryUnify(decl.getType(), existing.getType())) {
                     throw new ASTTraversalException(decl.getPosition(), 
                         "Deklaration mit identischem Typ existiert bereits.");
-                }
+                }*/
             }
         }
                 
@@ -795,7 +795,7 @@ ignore:     for (Declaration decl : decls) {
                     for (final Type alreadyFound : result) {
                         if (Type.tryUnify(alreadyFound, decl.getType())) {
                             // continue with next declaration and ignore this one
-                            continue ignore;
+                            //continue ignore;
                         }
                     }
                     final Type fresh = decl.getType().subst(Substitution.fresh());
