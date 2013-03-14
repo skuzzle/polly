@@ -32,7 +32,8 @@ public class StringIndex extends BinaryOperator<StringLiteral, NumberLiteral> {
             
             if (index < 0 || index >= left.getValue().length()) {
                 // TODO: report problem
-                throw new ASTTraversalException(resultPos, "Index ausserhalb des gültigen Bereichs: " + index);
+                throw new ASTTraversalException(resultPos, 
+                    "Index ausserhalb des gültigen Bereichs: " + index);
             }
             
             stack.push(new StringLiteral(resultPos, "" + left.getValue().charAt(index)));

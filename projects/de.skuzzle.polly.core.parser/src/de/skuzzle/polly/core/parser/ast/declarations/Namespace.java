@@ -39,6 +39,8 @@ import de.skuzzle.polly.core.parser.ast.lang.operators.DateTimespanArithmetic;
 import de.skuzzle.polly.core.parser.ast.lang.operators.ListIndex;
 import de.skuzzle.polly.core.parser.ast.lang.operators.RandomListIndex;
 import de.skuzzle.polly.core.parser.ast.lang.operators.Relational;
+import de.skuzzle.polly.core.parser.ast.lang.operators.ReverseList;
+import de.skuzzle.polly.core.parser.ast.lang.operators.ReverseString;
 import de.skuzzle.polly.core.parser.ast.lang.operators.StringIndex;
 import de.skuzzle.polly.core.parser.ast.lang.operators.TernaryDotDot;
 import de.skuzzle.polly.core.parser.ast.lang.operators.TimespanArithmetic;
@@ -365,6 +367,7 @@ public class Namespace {
             // String operators
             NATIVE.declare(new BinaryStringArithmetic(OpType.ADD).createDeclaration());
             NATIVE.declare(new StringIndex().createDeclaration());
+            NATIVE.declare(new ReverseString().createDeclaration());
             
             // Arithmetic unary ops
             NATIVE.declare(new UnaryArithmetic(OpType.EXCLAMATION).createDeclaration());
@@ -392,6 +395,7 @@ public class Namespace {
             NATIVE.declare(new ListIndex(OpType.INDEX).createDeclaration());
             NATIVE.declare(new RandomListIndex(OpType.QUEST_EXCL).createDeclaration());
             NATIVE.declare(new RandomListIndex(OpType.QUESTION).createDeclaration());
+            NATIVE.declare(new ReverseList().createDeclaration());
             
             // DOTDOT
             NATIVE.declare(new TernaryDotDot().createDeclaration());
