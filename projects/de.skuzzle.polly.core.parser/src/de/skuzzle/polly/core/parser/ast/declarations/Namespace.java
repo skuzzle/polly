@@ -39,6 +39,7 @@ import de.skuzzle.polly.core.parser.ast.lang.operators.DateTimespanArithmetic;
 import de.skuzzle.polly.core.parser.ast.lang.operators.ListIndex;
 import de.skuzzle.polly.core.parser.ast.lang.operators.RandomListIndex;
 import de.skuzzle.polly.core.parser.ast.lang.operators.Relational;
+import de.skuzzle.polly.core.parser.ast.lang.operators.StringIndex;
 import de.skuzzle.polly.core.parser.ast.lang.operators.TernaryDotDot;
 import de.skuzzle.polly.core.parser.ast.lang.operators.TimespanArithmetic;
 import de.skuzzle.polly.core.parser.ast.lang.operators.UnaryArithmetic;
@@ -363,6 +364,7 @@ public class Namespace {
             
             // String operators
             NATIVE.declare(new BinaryStringArithmetic(OpType.ADD).createDeclaration());
+            NATIVE.declare(new StringIndex().createDeclaration());
             
             // Arithmetic unary ops
             NATIVE.declare(new UnaryArithmetic(OpType.EXCLAMATION).createDeclaration());
