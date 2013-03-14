@@ -55,8 +55,7 @@ public class TypeMapper {
 		    return Type.HELP;
 		} else if (types instanceof Types.ListType) {
 			Types.ListType lt = (Types.ListType) types;
-			return new ListType(
-			    TypeMapper.typesToType(lt.getElementType()));
+			return TypeMapper.typesToType(lt.getElementType()).listOf();
 		}
 		
 		throw new IllegalArgumentException("Invalid type");
