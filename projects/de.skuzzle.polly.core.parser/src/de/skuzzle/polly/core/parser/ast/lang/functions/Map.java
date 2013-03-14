@@ -5,8 +5,6 @@ import java.util.Arrays;
 
 import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
-import de.skuzzle.polly.core.parser.ast.declarations.types.ListType;
-import de.skuzzle.polly.core.parser.ast.declarations.types.MapType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.ProductType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
 import de.skuzzle.polly.core.parser.ast.declarations.types.TypeVar;
@@ -38,9 +36,9 @@ public class Map extends BinaryOperator<ListLiteral, FunctionLiteral> {
         
         final TypeVar a = Type.newTypeVar("A");
         final TypeVar b = Type.newTypeVar("B");
-        this.initTypes(new ListType(b), 
-            new ListType(a), 
-            new MapType(new ProductType(a), b));
+        this.initTypes(b.listOf(), 
+            a.listOf(), 
+            new ProductType(a).mapTo(b));
     }
 
 

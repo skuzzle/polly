@@ -9,7 +9,6 @@ import java.util.Set;
 import de.skuzzle.polly.core.parser.ast.ResolvableIdentifier;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
 import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
-import de.skuzzle.polly.core.parser.ast.declarations.types.ListType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.MapType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.ProductType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Substitution;
@@ -120,7 +119,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         }
         for (final Expression exp : node.getContent()) {
             for (final Type t : exp.getTypes()) {
-                node.addType(new ListType(t));
+                node.addType(t.listOf());
             }
         }
         return CONTINUE;

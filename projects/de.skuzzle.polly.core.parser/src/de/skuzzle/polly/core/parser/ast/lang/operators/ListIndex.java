@@ -2,7 +2,6 @@ package de.skuzzle.polly.core.parser.ast.lang.operators;
 
 import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
-import de.skuzzle.polly.core.parser.ast.declarations.types.ListType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
 import de.skuzzle.polly.core.parser.ast.declarations.types.TypeVar;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.ListLiteral;
@@ -19,7 +18,7 @@ public class ListIndex extends BinaryOperator<ListLiteral, NumberLiteral> {
     public ListIndex(OpType id) {
         super(id);
         final TypeVar a = Type.newTypeVar("A");
-        this.initTypes(a, new ListType(a), Type.NUM);
+        this.initTypes(a, a.listOf(), Type.NUM);
     }
     
     

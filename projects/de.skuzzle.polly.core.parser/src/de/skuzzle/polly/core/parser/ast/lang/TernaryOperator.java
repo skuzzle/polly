@@ -7,7 +7,6 @@ import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.ResolvableIdentifier;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
 import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
-import de.skuzzle.polly.core.parser.ast.declarations.types.MapType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.ProductType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
@@ -71,10 +70,10 @@ public abstract class TernaryOperator<FIRST extends Literal, SECOND extends Lite
         
         final FunctionLiteral func = new FunctionLiteral(Position.NONE, p, this);
         func.setUnique(
-            new MapType(new ProductType(
+            new ProductType(
                 this.first, 
                 this.second,
-                this.third), this.getUnique()));
+                this.third).mapTo(this.getUnique()));
         return func;
     }
     

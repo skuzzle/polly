@@ -5,7 +5,6 @@ import java.util.Collection;
 
 import de.skuzzle.polly.core.parser.ast.Root;
 import de.skuzzle.polly.core.parser.ast.declarations.types.MapType;
-import de.skuzzle.polly.core.parser.ast.declarations.types.ProductType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Substitution;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
 import de.skuzzle.polly.core.parser.ast.expressions.Assignment;
@@ -191,8 +190,7 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         final Collection<Type> matched = new ArrayList<Type>();
         
         for (final Type s : node.getRhs().getTypes()) {
-            final MapType tmp = new MapType(
-                (ProductType) s, t);
+            final MapType tmp = s.mapTo(t);
             
             for (final Type lhsType : node.getLhs().getTypes()) {
                 final Substitution subst = Type.unify(lhsType, tmp);

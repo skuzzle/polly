@@ -33,7 +33,7 @@ public class MapType extends Type {
      * @param source Sorce types.
      * @param target Target type.
      */
-    public MapType(Type source, Type target) {
+    MapType(Type source, Type target) {
         super(typeName(source, target), false, false);
         this.source = source;
         this.target = target;

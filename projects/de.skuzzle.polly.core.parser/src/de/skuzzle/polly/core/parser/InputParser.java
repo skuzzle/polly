@@ -13,8 +13,6 @@ import de.skuzzle.polly.core.parser.ast.ResolvableIdentifier;
 import de.skuzzle.polly.core.parser.ast.Root;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
 import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
-import de.skuzzle.polly.core.parser.ast.declarations.types.ListType;
-import de.skuzzle.polly.core.parser.ast.declarations.types.MapType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.ProductType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
 import de.skuzzle.polly.core.parser.ast.expressions.Assignment;
@@ -1076,13 +1074,12 @@ public class InputParser {
             this.allowSingleWhiteSpace();
             
             this.expect(TokenType.CLOSEDBR);
-            return new MapType(new ProductType(signature), 
-                resultType);
+            return new ProductType(signature).mapTo(resultType);
         } else if (this.scanner.match(TokenType.LIST)) {
             this.expect(TokenType.LT);
             final Type subType = this.parseType();
             this.expect(TokenType.GT);
-            return new ListType(subType);
+            return subType.listOf();
         } else if (la.matches(TokenType.IDENTIFIER)) {
             final ResolvableIdentifier id = new ResolvableIdentifier(
                 this.expectIdentifier());

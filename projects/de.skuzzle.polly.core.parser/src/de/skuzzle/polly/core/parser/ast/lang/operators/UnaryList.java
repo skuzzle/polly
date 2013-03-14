@@ -5,7 +5,6 @@ import java.util.Collections;
 
 import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
-import de.skuzzle.polly.core.parser.ast.declarations.types.ListType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
 import de.skuzzle.polly.core.parser.ast.declarations.types.TypeVar;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
@@ -21,7 +20,7 @@ public class UnaryList extends UnaryOperator<ListLiteral> {
     public UnaryList(OpType op) {
         super(op);
         final TypeVar a = Type.newTypeVar("A");
-        this.initTypes(new ListType(a), new ListType(a));
+        this.initTypes(a.listOf(), a.listOf());
     }
 
     
