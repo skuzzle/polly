@@ -341,6 +341,14 @@ public class Type implements Visitable<TypeVisitor>, Equatable {
     
     
     @Override
+    public int hashCode() {
+        // hashcode by identity is explicitly wanted with types.
+        return super.hashCode();
+    }
+    
+    
+    
+    @Override
     public final boolean equals(Object obj) {
         return EqualsHelper.testEquality(this, obj);
     }
