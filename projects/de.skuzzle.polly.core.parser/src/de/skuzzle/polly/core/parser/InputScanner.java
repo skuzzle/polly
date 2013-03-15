@@ -67,7 +67,7 @@ public class InputScanner extends AbstractTokenStream {
      * 
      * Note: The minimum value is always 2 (by nature)
      */
-    public final static int MAX_RADIX = 35;
+    public final static int MAX_RADIX = Character.MAX_RADIX;
     
     
 
