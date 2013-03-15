@@ -69,11 +69,6 @@ public class InputScanner extends AbstractTokenStream {
      */
     public final static int MAX_RADIX = 35;
     
-    /**
-     * Whether all consumed tokens are printed to the console
-     */
-    public final static boolean DEBUG = false;
-    
     
 
     protected Map<String, TokenType> keywords;
@@ -130,7 +125,7 @@ public class InputScanner extends AbstractTokenStream {
     @Override
     protected synchronized Token readToken() throws ParseException {
         final Token next = this.readTokenInternal();
-        if (DEBUG) {
+        if (ParserProperties.should(ParserProperties.ENABLE_SCANNER_DEBUGGING)) {
             System.out.println(next.toString());
         }
         return next;

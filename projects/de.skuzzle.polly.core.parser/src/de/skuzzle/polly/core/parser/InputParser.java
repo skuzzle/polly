@@ -115,12 +115,6 @@ import de.skuzzle.polly.core.parser.ast.lang.Operator.OpType;
  */
 public class InputParser {
     
-    /**
-     * Whether escaping of tokens is enabled.
-     */
-    public final static boolean ESCAPABLE = true;
-
-    
 
     private final PrecedenceTable operators;
     private int openExpressions;
@@ -244,7 +238,9 @@ public class InputParser {
      */
     protected Identifier expectIdentifier() throws ParseException {
         final Token la = this.scanner.lookAhead();
-        if (ESCAPABLE && la.matches(TokenType.ESCAPED)) {
+        if (ParserProperties.should(ParserProperties.ENABLE_TOKEN_ESCAPING) && 
+                la.matches(TokenType.ESCAPED)) {
+            
             this.scanner.consume();
             final EscapedToken esc = (EscapedToken) la;
             return new Identifier(esc.getPosition(), esc.getEscaped().getStringValue(), 

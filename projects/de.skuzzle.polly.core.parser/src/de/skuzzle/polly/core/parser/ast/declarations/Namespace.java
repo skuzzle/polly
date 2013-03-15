@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 
+import de.skuzzle.polly.core.parser.ParserProperties;
 import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.Identifier;
 import de.skuzzle.polly.core.parser.ast.ResolvableIdentifier;
@@ -71,13 +72,6 @@ import de.skuzzle.polly.tools.strings.StringUtils;
  * @author Simon Taddiken
  */
 public class Namespace {
-    
-    /** 
-     * Whether usage of unknown variables raises an error. If false, a String with the
-     * unknown identifier is created upon variable lookup.
-     */
-    public final static boolean REPORT_UNKNOWN_VARIABLES = false;
-    
     
     /** 
      * Percentage of word length that will be used as levenshtein threshold in
@@ -703,7 +697,7 @@ public class Namespace {
             return decls.get(0);
         }
         
-        if (REPORT_UNKNOWN_VARIABLES) {
+        if (ParserProperties.should(ParserProperties.REPORT_UNKNOWN_VARIABLES)) {
             throw new ASTTraversalException(name.getPosition(), 
                     "Unbekannt: " + name.getId());
         } else {
@@ -739,7 +733,7 @@ public class Namespace {
                 }
             }
         }
-        if (REPORT_UNKNOWN_VARIABLES) {
+        if (ParserProperties.should(ParserProperties.REPORT_UNKNOWN_VARIABLES)) {
             return null;
         } else {
             return new Declaration(name.getPosition(), name, 
@@ -815,7 +809,7 @@ ignore:     for (Declaration decl : decls) {
         if (result.isEmpty()) {
             final List<String> similar = findSimilar(name.getId(), this);
             
-            if (REPORT_UNKNOWN_VARIABLES) {
+            if (ParserProperties.should(ParserProperties.REPORT_UNKNOWN_VARIABLES)) {
                 throw new DeclarationException(name.getPosition(), 
                         "Unbekannte Variable: '" + name + "'", similar);
             } else {
