@@ -792,12 +792,12 @@ public class Namespace {
                     // lower declaration level. If so, the current declaration will be
                     // ignored. That will have the effect that declarations on lower 
                     // levels override those on a higher level.
-                    for (final Type alreadyFound : result) {
+                    /*for (final Type alreadyFound : result) {
                         if (Type.tryUnify(alreadyFound, decl.getType())) {
                             // continue with next declaration and ignore this one
                             //continue ignore;
                         }
-                    }
+                    }*/
                     final Type fresh = decl.getType().subst(Substitution.fresh());
                     result.add(fresh);
                     name.addDeclaration(decl);
