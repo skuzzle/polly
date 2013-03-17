@@ -23,7 +23,7 @@ public final class Problems {
     // Lexical errors
     public final static String ILLEGAL_SYMBOL = "Ungültiges Symbol: %s";
     public final static String MISSING_RADIX = "Fehlende Radix Angabe für 0x: Operator";
-    public final static String HIGH_RADIX = "Angegebener Radix %i ist zu groß (max: %i)";
+    public final static String HIGH_RADIX = "Angegebener Radix %d ist zu groß (max: %d)";
     public final static String INVALID_0X = "Ungültiger '0x:' Operator.";
     public final static String INVALID_STRING = "Ungültiger String-Literal.";
     public final static String INVALID_ESCAPE = "Ungültige escape-Sequenz: %s";

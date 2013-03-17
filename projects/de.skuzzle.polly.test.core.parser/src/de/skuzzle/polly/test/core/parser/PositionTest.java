@@ -66,4 +66,69 @@ public class PositionTest {
     public void positionTest7() {
         new Position(1, 0);
     }
+    
+    
+    
+    @Test
+    public void positionTest8() {
+        final Position start = new Position(0, 1);
+        final Position span = start.spanTo(new Position(3, 4));
+        Assert.assertEquals(new Position(0, 4), span);
+    }
+    
+    
+    
+    @Test
+    public void positionTest9() {
+        final Position end = new Position(3, 4);
+        final Position span = end.spanFrom(new Position(0, 1));
+        Assert.assertEquals(new Position(0, 4), span);
+    }
+    
+    
+    
+    @Test
+    public void positionTest10() {
+        final Position pos = new Position(0, 1);
+        Assert.assertEquals(new Position(3, 4), pos.offset(3));
+    }
+    
+    
+    
+    @Test
+    public void positionTest11() {
+        final Position pos1 = new Position(0, 1);
+        final Position pos2 = new Position(0, 1);
+        Assert.assertEquals(0, pos1.compareTo(pos2));
+    }
+    
+    
+    
+    @Test
+    public void positionTest12() {
+        final Position pos1 = new Position(0, 1);
+        final Position pos2 = new Position(0, 2);
+        Assert.assertTrue(pos1.compareTo(pos2) < 0);
+        Assert.assertTrue(pos2.compareTo(pos1) >= 0);
+    }
+    
+    
+    
+    @Test
+    public void positionTest13() {
+        final Position pos1 = new Position(0, 1);
+        final Position pos2 = new Position(1, 2);
+        Assert.assertTrue(pos1.compareTo(pos2) < 0);
+        Assert.assertTrue(pos2.compareTo(pos1) >= 0);
+    }
+    
+    
+    
+    @Test
+    public void positionTest14() {
+        final Position pos1 = new Position(2, 5);
+        final Position pos2 = new Position(0, 2);
+        Assert.assertTrue(pos1.compareTo(pos2) > 0);
+        Assert.assertTrue(pos2.compareTo(pos1) <= 0);
+    }
 }

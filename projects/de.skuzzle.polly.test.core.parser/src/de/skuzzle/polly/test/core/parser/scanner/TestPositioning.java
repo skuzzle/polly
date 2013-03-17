@@ -92,4 +92,14 @@ public class TestPositioning extends AbstractScannerTest {
         final AbstractTokenStream scanner = this.obtain(input);
         Assert.assertEquals(scanner.consume().getPosition(), new Position(0, 5));
     }
+    
+    
+    
+    @Test
+    public void testPositioning8() throws ParseException {
+        final String input = "$";
+        final AbstractTokenStream scanner = this.obtain(input);
+        Assert.assertEquals(scanner.consume().getPosition(), new Position(0, 1));
+        Assert.assertEquals(scanner.consume().getPosition(), new Position(1, 2));
+    }
 }

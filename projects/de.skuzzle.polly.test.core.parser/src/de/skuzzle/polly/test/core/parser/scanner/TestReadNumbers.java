@@ -128,4 +128,78 @@ public class TestReadNumbers extends AbstractScannerTest {
         final Token la = scanner.lookAhead();
         Assert.assertTrue(la.getType() == TokenType.TIMESPAN);
     }
+    
+    
+    
+    @Test
+    public final void testReadNumber12() throws ParseException {
+        final String input = "1e3 1E3 1.23e3";
+        final AbstractTokenStream scanner = this.obtain(input);
+        Token la = scanner.consume();
+        Assert.assertTrue(la.getType() == TokenType.NUMBER);
+        Assert.assertTrue(Double.compare(la.getFloatValue(), 1000.0) == 0);
+        scanner.consume();
+        la = scanner.consume();
+        Assert.assertTrue(la.getType() == TokenType.NUMBER);
+        Assert.assertTrue(Double.compare(la.getFloatValue(), 1000.0) == 0);
+        scanner.consume();
+        la = scanner.consume();
+        Assert.assertTrue(la.getType() == TokenType.NUMBER);
+        Assert.assertTrue(Double.compare(la.getFloatValue(), 1230.0) == 0);
+    }
+    
+    
+    
+    @Test
+    public final void testReadNumber13() throws ParseException {
+        final String input = "1.5..2.5";
+        final AbstractTokenStream scanner = this.obtain(input);
+        Token la = scanner.consume();
+        Assert.assertTrue(la.getType() == TokenType.NUMBER);
+        Assert.assertTrue(la.getFloatValue() == 1.5);
+        Assert.assertTrue(scanner.match(TokenType.DOTDOT));
+        la = scanner.consume();
+        Assert.assertTrue(la.getType() == TokenType.NUMBER);
+        Assert.assertTrue(la.getFloatValue() == 2.5);
+    }
+    
+    
+    
+    @Test
+    public final void testReadNumber14() throws ParseException {
+        final String input = "1.";
+        final AbstractTokenStream scanner = this.obtain(input);
+        Token la = scanner.consume();
+        Assert.assertTrue(la.getType() == TokenType.ERROR);
+    }
+    
+    
+    
+    @Test
+    public final void testReadNumber15() throws ParseException {
+        final String input = "0x";
+        final AbstractTokenStream scanner = this.obtain(input);
+        Token la = scanner.consume();
+        Assert.assertTrue(la.getType() == TokenType.ERROR);
+    }
+    
+    
+    
+    @Test
+    public final void testReadNumber16() throws ParseException {
+        final String input = "0x44:";
+        final AbstractTokenStream scanner = this.obtain(input);
+        Token la = scanner.consume();
+        Assert.assertTrue(la.getType() == TokenType.ERROR);
+    }
+    
+    
+    
+    @Test
+    public final void testReadNumber17() throws ParseException {
+        final String input = "0x44";
+        final AbstractTokenStream scanner = this.obtain(input);
+        Token la = scanner.consume();
+        Assert.assertTrue(la.getType() == TokenType.ERROR);
+    }
 }

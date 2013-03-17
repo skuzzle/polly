@@ -249,12 +249,11 @@ public class InputScanner extends AbstractTokenStream {
                 } else if (next == '<') {
                     state = 3;
                 } else if (next == '>') {
-                    return new Token(TokenType.GT, this.spanFrom(tokenStart), ">");
-                    // state = 4;
+                    state = 4;
                 } else {
                     return this.parseException(
                         Problems.format(Problems.ILLEGAL_SYMBOL, (char) next),
-                        tokenStart, next);
+                        tokenStart);
                 }
                     
             } else if (state == 1) {
@@ -297,8 +296,6 @@ public class InputScanner extends AbstractTokenStream {
                 
                 if (next == '=') {
                     return new Token(TokenType.EGT, this.spanFrom(tokenStart), ">=");
-                } else if (next == '>') {
-                    state = 11;
                 } else {
                     this.pushBack(next);
                     return new Token(TokenType.GT, this.spanFrom(tokenStart), ">");
@@ -374,17 +371,6 @@ public class InputScanner extends AbstractTokenStream {
                     this.pushBack(next);
                     return new Token(TokenType.SUB, this.spanFrom(tokenStart), "-");
                 }
-            } else if (state == 11) {
-                int next = this.readChar();
-                
-                if (next == '>') {
-                    return new Token(
-                        TokenType.URIGHT_SHIFT, this.spanFrom(tokenStart), ">>>");
-                } else {
-                    this.pushBack(next);
-                    return new Token(
-                        TokenType.RIGHT_SHIFT, this.spanFrom(tokenStart), ">>");
-                }
             } else if (state == 12) {
                 int next = this.readChar();
                 
@@ -414,6 +400,8 @@ public class InputScanner extends AbstractTokenStream {
                     this.pushBack(next);
                     return new Token(TokenType.POWER, this.spanFrom(tokenStart), "^");
                 }
+            } else {
+                throw new IllegalStateException("unhandled state: " + state);
             }
         }
         
@@ -465,7 +453,8 @@ public class InputScanner extends AbstractTokenStream {
                     
                     if (radix > Character.MAX_RADIX) {
                         return this.parseException(
-                            Problems.format(Problems.HIGH_RADIX, radix, Character.MAX_RADIX),
+                            Problems.format(Problems.HIGH_RADIX, radix, 
+                                Character.MAX_RADIX),
                             tokenStart);
                     }
                     
@@ -742,6 +731,7 @@ public class InputScanner extends AbstractTokenStream {
         while (!this.eos()) {
             if (state == 0) {
                 int next = this.readChar();
+                
                 if (Character.isDigit(next)) {
                     value = value * 10 + Character.digit(next, 10);
                     firstPart = firstPart * 10 + Character.digit(next, 10);
