@@ -50,7 +50,7 @@
     <property name="lib.dir"          value="${root.dir}/dependency"/>
     
     <!-- Target java version for compiler. -->
-    <property name="target.version"   value="1.6"/>
+    <property name="target.version"   value="1.7"/>
     
     <!-- Additional classpath entry to add to MANIFEST file. -->
     <property name="custom.classpath" value=""/>
@@ -90,7 +90,6 @@
     
     <!-- Compiles a set of source files with debug information. -->
     <target name="compile.debug">
-        <echo message="${java.version}"/>
         <mkdir dir="${build.debug.dir}"/>
         <javac srcdir="${src.dir}" 
                destdir="${build.debug.dir}" 
