@@ -251,7 +251,5 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         }
         // nothing to do here but prevent from executing super class visitInspect
         return this.after(node) == CONTINUE;
-        // nothing to do here but prevent from executing super class visitInspect
-        return this.before(node) == CONTINUE && this.after(node) == CONTINUE;
     }
 }

@@ -257,14 +257,13 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         }
             
             
-            if (node.getTypes().isEmpty()) {
-                final String problem = node instanceof OperatorCall 
-                    ? Problems.INCOMPATIBLE_OP 
-                    : Problems.INCOMPATIBLE_CALL;
-                this.reportError(node.getLhs(), problem, 
-                    Unparser.toString(node.getLhs()));
-                node.addType(new MissingType(new Identifier("$compatibilty")));
-            }
+        if (node.getTypes().isEmpty()) {
+            final String problem = node instanceof OperatorCall 
+                ? Problems.INCOMPATIBLE_OP 
+                : Problems.INCOMPATIBLE_CALL;
+            this.reportError(node.getLhs(), problem, 
+                Unparser.toString(node.getLhs()));
+            node.addType(new MissingType(new Identifier("$compatibilty")));
         }
         return this.after(node) == CONTINUE;
     }

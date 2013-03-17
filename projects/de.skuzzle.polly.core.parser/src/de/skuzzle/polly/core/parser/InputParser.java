@@ -15,6 +15,7 @@ import de.skuzzle.polly.core.parser.ast.ResolvableIdentifier;
 import de.skuzzle.polly.core.parser.ast.Root;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
 import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
+import de.skuzzle.polly.core.parser.ast.declarations.types.MissingType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.ProductType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
 import de.skuzzle.polly.core.parser.ast.expressions.Assignment;
@@ -342,12 +343,9 @@ public class InputParser {
         if (la.matches(TokenType.ERROR)) {
             // report lexical error
             this.reporter.lexicalProblem(la.getStringValue(), la.getPosition());
-        } else if (ESCAPABLE && la.matches(TokenType.ESCAPED)) {
-            // create escaped identifier
-
-        if (ParserProperties.should(ParserProperties.ENABLE_TOKEN_ESCAPING) && 
+        } else if (ParserProperties.should(ParserProperties.ENABLE_TOKEN_ESCAPING) && 
                 la.matches(TokenType.ESCAPED)) {
-            
+            // create escaped identifier
             this.scanner.consume();
             final EscapedToken esc = (EscapedToken) la;
             return new Identifier(esc.getPosition(), esc.getEscaped().getStringValue(), 
@@ -1200,12 +1198,8 @@ public class InputParser {
             this.expect(TokenType.ASSIGNMENT, true);
             final Type resultType = this.parseType();
             this.allowSingleWhiteSpace();
-            
-            this.expect(TokenType.CLOSEDBR, true);
-            return new MapType(new ProductType(signature), 
-                resultType);
 
-            this.expect(TokenType.CLOSEDBR);
+            this.expect(TokenType.CLOSEDBR, true);
             return new ProductType(signature).mapTo(resultType);
 
         } else if (this.scanner.match(TokenType.LIST)) {
@@ -1213,16 +1207,7 @@ public class InputParser {
             final Type subType = this.parseType();
 
             this.expect(TokenType.GT, true);
-            return new ListType(subType);
-
-            this.expect(TokenType.GT);
             return subType.listOf();
-        } else if (la.matches(TokenType.IDENTIFIER)) {
-            final ResolvableIdentifier id = new ResolvableIdentifier(
-                this.expectIdentifier());
-            
-            return Type.resolve(id, false);
-
         } else {
             return this.lookupType(this.expectIdentifier());
         }

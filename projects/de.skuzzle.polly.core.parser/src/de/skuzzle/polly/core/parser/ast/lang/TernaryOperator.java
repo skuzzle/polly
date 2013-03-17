@@ -89,9 +89,12 @@ public abstract class TernaryOperator<FIRST extends Literal, SECOND extends Lite
         final SECOND second = (SECOND) ns.resolveFirst(SECOND_PARAM_NAME).getExpression();
         final THIRD third = (THIRD) ns.resolveFirst(THIRD_PARAM_NAME).getExpression();
         
-        this.exec(stack, ns, first, second, third, 
-            new Position(first.getPosition(), third.getPosition()), execVisitor);
+        final Position resultPos = Position.correctSpan(first.getPosition(), 
+            second.getPosition(), third.getPosition());
+        
+        this.exec(stack, ns, first, second, third, resultPos, execVisitor);
     }
+    
     
     
     /**

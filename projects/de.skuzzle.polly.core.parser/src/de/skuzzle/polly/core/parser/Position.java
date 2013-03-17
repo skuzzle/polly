@@ -2,6 +2,7 @@ package de.skuzzle.polly.core.parser;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -28,7 +29,29 @@ public final class Position implements Serializable, Equatable, Immutable,
         Comparable<Position> {
     
     private static final long serialVersionUID = 1L;
+    
+    
+    /**
+     * Creates a position that spans from the lower of the given positions to the greater 
+     * of the given positions.
+     * 
+     * @param pos Array of positions.
+     * @return A new position that spans from the start of the lowest position to the end 
+     *          of the greatest position. 
+     */
+    public final static Position correctSpan(Position...pos) {
+        if (pos.length == 0) {
+            throw new IllegalArgumentException("zero length array");
+        }
+        Arrays.sort(pos);
+        if (pos[0] == Position.NONE || pos[pos.length - 1] == Position.NONE) {
+            return Position.NONE;
+        }
+        return new Position(pos[0], pos[pos.length - 1]);
+    }
+    
 
+    
     /**
      * A Position instance that represents no valid position within a String. Can be used
      * for internally created AST Nodes, that have no matching representation within

@@ -91,8 +91,10 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
         final L left = (L) ns.resolveFirst(LEFT_PARAM_NAME).getExpression();
         final R right = (R) ns.resolveFirst(RIGHT_PARAM_NAME).getExpression();
         
-        this.exec(stack, ns, left, right, 
-            new Position(left.getPosition(), right.getPosition()), execVisitor);
+        final Position resultPos = Position.correctSpan(left.getPosition(), 
+            right.getPosition());
+        
+        this.exec(stack, ns, left, right, resultPos, execVisitor);
     }
     
     
