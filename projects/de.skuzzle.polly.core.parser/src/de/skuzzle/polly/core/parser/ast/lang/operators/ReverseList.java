@@ -2,6 +2,8 @@ package de.skuzzle.polly.core.parser.ast.lang.operators;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+
 
 import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
@@ -15,29 +17,27 @@ import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.tools.collections.Stack;
 
 
-public class UnaryList extends UnaryOperator<ListLiteral> {
+public class ReverseList extends UnaryOperator<ListLiteral> {
 
-    public UnaryList(OpType op) {
-        super(op);
-        final TypeVar a = Type.newTypeVar("A");
+    public ReverseList() {
+        super(OpType.EXCLAMATION);
+        final TypeVar a = Type.newTypeVar();
         this.initTypes(a.listOf(), a.listOf());
     }
 
-    
-    
     @Override
     protected void exec(Stack<Literal> stack, Namespace ns, ListLiteral operand,
             Position resultPos) throws ASTTraversalException {
         
         switch (this.getOp()) {
         case EXCLAMATION:
-            final ArrayList<Expression> tmp = 
-                new ArrayList<Expression>(operand.getContent());
-            final ListLiteral result = new ListLiteral(resultPos, tmp);
-            Collections.reverse(tmp);
-            result.addTypes(operand.getTypes());
-            result.setUnique(operand.getUnique());
-            stack.push(result);
+            final List<Expression> op = new ArrayList<Expression>(operand.getContent());
+            Collections.reverse(op);
+            final ListLiteral r = new ListLiteral(resultPos, op);
+            r.setUnique(operand.getUnique());
+            r.setTypes(operand.getTypes());
+            stack.push(r);
+            
             break;
         default:
             this.invalidOperatorType(this.getOp());

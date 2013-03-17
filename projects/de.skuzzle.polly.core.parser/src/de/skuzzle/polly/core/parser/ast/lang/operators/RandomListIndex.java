@@ -4,7 +4,6 @@ import java.util.Random;
 
 import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
-import de.skuzzle.polly.core.parser.ast.declarations.types.ListType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
 import de.skuzzle.polly.core.parser.ast.declarations.types.TypeVar;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.ListLiteral;
@@ -28,7 +27,7 @@ public class RandomListIndex extends UnaryOperator<ListLiteral> {
     public RandomListIndex(OpType op) {
         super(op);
         final TypeVar a = Type.newTypeVar("A");
-        this.initTypes(a, new ListType(a));
+        this.initTypes(a, a.listOf());
     }
 
     

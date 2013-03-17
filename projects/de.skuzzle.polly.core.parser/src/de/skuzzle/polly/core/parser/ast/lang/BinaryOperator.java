@@ -7,7 +7,6 @@ import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.ResolvableIdentifier;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
 import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
-import de.skuzzle.polly.core.parser.ast.declarations.types.MapType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.ProductType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
@@ -78,7 +77,7 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
         final FunctionLiteral func = new FunctionLiteral(Position.NONE, p, this);
         final ProductType source = new ProductType(
             this.left, this.right);
-        func.setUnique(new MapType(source, this.getUnique()));
+        func.setUnique(source.mapTo(this.getUnique()));
         return func;
     }
     

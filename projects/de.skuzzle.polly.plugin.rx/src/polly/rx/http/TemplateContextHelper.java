@@ -61,7 +61,9 @@ public class TemplateContextHelper {
     
     public final static String FILTER_SETTINGS = "FILTER_SETTINGS";
 
-    public final static DateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
+    public final static DateFormat getDateFormat() {
+        return new SimpleDateFormat("dd.MM.yyyy");
+    }
     
     public final static void prepareForReportsList(HttpTemplateContext c, 
         HttpSession httpSession, List<BattleReport> reports) {
@@ -165,7 +167,7 @@ public class TemplateContextHelper {
         c.put("dropSum", dropSum);
         c.put("dropMax", dropMax);
         c.put("dropMin", dropMin);
-        c.put("dateFormat", DATE_FORMAT);
+        c.put("dateFormat", getDateFormat());
         c.put("allReports", reports);
     }
     

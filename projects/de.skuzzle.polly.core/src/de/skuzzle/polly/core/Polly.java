@@ -148,6 +148,10 @@ public class Polly {
             e.printStackTrace();
         }
         
+        if (pollyCfg == null) {
+            return;
+        }
+        
         logger.info("");
         logger.info("");
         logger.info("");

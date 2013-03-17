@@ -52,8 +52,23 @@ public class Point implements Comparable<Point> {
     public String toString() {
         return "[x=" + this.x + ", y=" + this.y + "]";
     }
-    
-    
+
+
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        long temp;
+        temp = Double.doubleToLongBits(this.x);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(this.y);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
+
+
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

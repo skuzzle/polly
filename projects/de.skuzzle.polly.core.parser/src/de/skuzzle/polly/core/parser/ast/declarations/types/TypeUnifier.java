@@ -83,7 +83,7 @@ final class TypeUnifier {
         final Type s = this.find(m);
         final Type t = this.find(n);
         
-        if (s == t) { // this also covers the case that both t and s are the same primitive
+        if (s.isA(t)) {
             return true;
         } else if (s instanceof MissingType || t instanceof MissingType) {
             // missing types are compatible to everything

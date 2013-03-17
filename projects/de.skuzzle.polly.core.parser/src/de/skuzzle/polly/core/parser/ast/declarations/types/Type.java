@@ -33,13 +33,28 @@ public class Type implements Visitable<TypeVisitor>, Equatable {
     public final static Type DATE = new Type(new Identifier("date"), true, true);
     
     /** Primitive type for timespans. */
-    public final static Type TIMESPAN = new Type(new Identifier("timespan"), true, true);
+    public final static Type TIMESPAN = new Type(new Identifier("timespan"), true, true) {
+        @Override
+        boolean isA(Type other) {
+            return other == this || other == DATE;
+        }
+    };
     
     /** Primitive type for channels. */
-    public final static Type CHANNEL = new Type(new Identifier("channel"), true, true);
+    public final static Type CHANNEL = new Type(new Identifier("channel"), true, true) {
+        @Override
+        boolean isA(Type other) {
+            return other == this || other == STRING;
+        }
+    };
     
     /** Primitive type for users. */
-    public final static Type USER = new Type(new Identifier("user"), true, true);
+    public final static Type USER = new Type(new Identifier("user"), true, true) {
+        @Override
+        boolean isA(Type other) {
+            return other == this || other == STRING;
+        }
+    };
     
     /** Primitive type for strings. */
     public final static Type STRING = new Type(new Identifier("string"), true, true);
@@ -52,6 +67,8 @@ public class Type implements Visitable<TypeVisitor>, Equatable {
     
     /** Type indicating that a concrete type has not been resolved for an expression. */
     public final static Type UNKNOWN = new Type(new Identifier("UNKNOWN"), true, true);
+    
+    
     
     private final static Map<String, Type> primitives = new HashMap<String, Type>();
     private final static Map<String, Type> typeVars = new HashMap<String, Type>();
@@ -191,6 +208,7 @@ public class Type implements Visitable<TypeVisitor>, Equatable {
     private final boolean primitve;
     
     
+    
     /**
      * Creates a new simple type.
      * 
@@ -215,6 +233,19 @@ public class Type implements Visitable<TypeVisitor>, Equatable {
      */
     public MapType mapTo(Type target) {
         return new MapType(this, target);
+    }
+    
+    
+    
+    /**
+     * Calculates inheritance compatibility for primitive types. Returns 
+     * <code>true</code> if this type is a sub type of the given.
+     * 
+     * @param other Type to check.
+     * @return Whether this type is a sub type of the given other one.
+     */
+    boolean isA(Type other) {
+        return other == this;
     }
     
     
@@ -299,6 +330,14 @@ public class Type implements Visitable<TypeVisitor>, Equatable {
     @Override
     public boolean visit(TypeVisitor visitor) {
         return visitor.visit(this);
+    }
+    
+    
+    
+    @Override
+    public int hashCode() {
+        // hashcode by identity is explicitly wanted with types.
+        return super.hashCode();
     }
     
     

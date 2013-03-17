@@ -11,7 +11,6 @@ import de.skuzzle.polly.core.parser.ast.Identifier;
 import de.skuzzle.polly.core.parser.ast.ResolvableIdentifier;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
 import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
-import de.skuzzle.polly.core.parser.ast.declarations.types.ListType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.MapType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.MissingType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.ProductType;
@@ -124,7 +123,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         }
         for (final Expression exp : node.getContent()) {
             for (final Type t : exp.getTypes()) {
-                node.addType(new ListType(t));
+                node.addType(t.listOf());
             }
         }
         return CONTINUE;
@@ -244,11 +243,18 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
                 for (final Type lhs : node.getLhs().getTypes()) {
                     final Substitution subst = Type.unify(lhs, possibleLhs);
                     if (subst != null) {
-                        final MapType mtc = (MapType) lhs.subst(subst);
+                        // construct new type with the argument types of lhs, and 
+                        // result type of rhs
+                        final MapType lhsMap = (MapType) lhs;
+                        final MapType plhsMap = (MapType) possibleLhs;
+                    
+                        final MapType mtc = (MapType) plhsMap.getSource().mapTo(
+                            lhsMap.getTarget()).subst(subst);
                         node.addType(mtc.getTarget());
-                    }
+                    }  
                 }
             }
+        }
             
             
             if (node.getTypes().isEmpty()) {

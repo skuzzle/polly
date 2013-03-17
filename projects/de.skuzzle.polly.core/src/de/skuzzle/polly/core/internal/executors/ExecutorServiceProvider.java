@@ -14,8 +14,8 @@ import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
-import de.skuzzle.polly.tools.events.AsynchronousEventProvider;
 import de.skuzzle.polly.tools.events.EventProvider;
+import de.skuzzle.polly.tools.events.EventProviders;
 
 
 @Module(
@@ -43,7 +43,8 @@ public class ExecutorServiceProvider extends AbstractProvider {
         ExecutorService eventThreadPool = Executors.newFixedThreadPool(
             pollyCfg.readInt(Configuration.EVENT_THREADS),
             new ThreadFactoryBuilder("EVENT_THREAD_%n%"));
-        final EventProvider eventProvider = new AsynchronousEventProvider(eventThreadPool);
+        final EventProvider eventProvider = EventProviders.newAsynchronousEventProvider(
+            eventThreadPool);
 
         final ExecutorService commandExecutor = Executors.newFixedThreadPool(
             pollyCfg.readInt(Configuration.EXECUTION_THREADS), 

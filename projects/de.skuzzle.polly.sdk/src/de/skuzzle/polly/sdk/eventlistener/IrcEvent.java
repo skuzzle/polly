@@ -4,6 +4,7 @@ import java.util.Date;
 
 import de.skuzzle.polly.sdk.IrcManager;
 import de.skuzzle.polly.sdk.time.Time;
+import de.skuzzle.polly.tools.events.Event;
 
 /**
  * Base event class for all irc events.
@@ -12,9 +13,8 @@ import de.skuzzle.polly.sdk.time.Time;
  * @since zero day
  * @version RC 1.0
  */
-public class IrcEvent {
+public class IrcEvent extends Event<IrcManager> {
 
-    private IrcManager source;
     private Date date;
     
     
@@ -24,7 +24,7 @@ public class IrcEvent {
      * @param source The source IrcManager.
      */
     public IrcEvent(IrcManager source) {
-        this.source = source;
+        super(source);
         this.date = Time.currentTime();
     }
     
@@ -38,15 +38,5 @@ public class IrcEvent {
      */
     public Date getDate() {
         return this.date;
-    }
-    
-    
-    
-    /**
-     * Gets the source {@link IrcManager}.
-     * @return The IrcManager.
-     */
-    public IrcManager getSource() {
-        return this.source;
     }
 }

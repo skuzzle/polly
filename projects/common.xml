@@ -50,7 +50,7 @@
     <property name="lib.dir"          value="${root.dir}/dependency"/>
     
     <!-- Target java version for compiler. -->
-    <property name="java.version"     value="1.7"/>
+    <property name="target.version"   value="1.7"/>
     
     <!-- Additional classpath entry to add to MANIFEST file. -->
     <property name="custom.classpath" value=""/>
@@ -74,6 +74,7 @@
     
     <!-- Cleans all build related files. -->
     <target name="clean" depends="clean.custom">
+        <echo message="Clean ${jar.title}" />
         <delete includeEmptyDirs="true">
             <fileset dir="${build.release.dir}" includes="**/**" 
                 erroronmissingdir="false"/>
@@ -90,12 +91,13 @@
     
     <!-- Compiles a set of source files with debug information. -->
     <target name="compile.debug">
+        <echo message="Compile ${jar.title}" />
         <mkdir dir="${build.debug.dir}"/>
         <javac srcdir="${src.dir}" 
                destdir="${build.debug.dir}" 
                classpathref="buildpath" 
-               source="1.6"
-               target="1.6" 
+               source="${target.version}"
+               target="${target.version}" 
                encoding="${src.encoding}"
                debug="on" 
                listfiles="true"
@@ -107,12 +109,13 @@
     
     <!-- Compiles a set of source files with no debug information. -->
     <target name="compile.release">
+        <echo message="Compile ${jar.title}" />
         <mkdir dir="${build.release.dir}"/>
         <javac srcdir="${src.dir}" 
                destdir="${build.release.dir}" 
                classpathref="buildpath" 
-               source="${java.version}" 
-               target="${java.version}" 
+               source="${target.version}" 
+               target="${target.version}" 
                encoding="${src.encoding}"
                debug="off" 
 			   includeAntRuntime="false"/>
@@ -122,6 +125,7 @@
     
     <!-- Creates JavaDoc HTML files for this project. -->
     <target name="compile.javadoc">
+        <echo message="Compile JavaDoc ${jar.title}" />
         <javadoc destdir="${doc.dir}" classpathref="buildpath" author="true"
             version="true" use="true">
             
@@ -166,6 +170,7 @@
     
     <!-- Creates distribution files with debug information. -->
     <target name="dist.debug" depends="compile.debug">
+    	<echo message="Dist ${jar.title}" />
         <property name="bin.dir" value="${build.debug.dir}"/>
         <antcall target="distBin" inheritRefs="true"/>
         <!--<antcall target="distDoc" inheritRefs="true"/>
@@ -176,6 +181,7 @@
     
     <!-- Creates distribution files with no debug information. -->
     <target name="dist.release" depends="compile.release">
+    	<echo message="Dist ${jar.title}" />
         <property name="bin.dir" value="${build.release.dir}"/>
         <antcall target="distBin" inheritRefs="true"/>
         <antcall target="distDoc" inheritRefs="true"/>

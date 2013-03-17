@@ -18,7 +18,7 @@ public class ListType extends Type {
      * 
      * @param subType Sub type of this list type.
      */
-    public ListType(Type subType) {
+    ListType(Type subType) {
         super(new Identifier("list<" + subType.getName().getId() +">"), 
             subType.isComparable(), false);
         this.subType = subType;

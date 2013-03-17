@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 
+import de.skuzzle.polly.core.parser.ParserProperties;
 import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.Identifier;
 import de.skuzzle.polly.core.parser.ast.ResolvableIdentifier;
@@ -26,6 +27,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.StringLiteral;
 import de.skuzzle.polly.core.parser.ast.lang.Cast;
 import de.skuzzle.polly.core.parser.ast.lang.Operator.OpType;
 import de.skuzzle.polly.core.parser.ast.lang.functions.Comp;
+import de.skuzzle.polly.core.parser.ast.lang.functions.Day;
 import de.skuzzle.polly.core.parser.ast.lang.functions.FoldLeft;
 import de.skuzzle.polly.core.parser.ast.lang.functions.Id;
 import de.skuzzle.polly.core.parser.ast.lang.functions.Sort;
@@ -38,6 +40,9 @@ import de.skuzzle.polly.core.parser.ast.lang.operators.DateTimespanArithmetic;
 import de.skuzzle.polly.core.parser.ast.lang.operators.ListIndex;
 import de.skuzzle.polly.core.parser.ast.lang.operators.RandomListIndex;
 import de.skuzzle.polly.core.parser.ast.lang.operators.Relational;
+import de.skuzzle.polly.core.parser.ast.lang.operators.ReverseList;
+import de.skuzzle.polly.core.parser.ast.lang.operators.ReverseString;
+import de.skuzzle.polly.core.parser.ast.lang.operators.StringIndex;
 import de.skuzzle.polly.core.parser.ast.lang.operators.TernaryDotDot;
 import de.skuzzle.polly.core.parser.ast.lang.operators.TimespanArithmetic;
 import de.skuzzle.polly.core.parser.ast.lang.operators.UnaryArithmetic;
@@ -67,13 +72,6 @@ import de.skuzzle.polly.tools.strings.StringUtils;
  * @author Simon Taddiken
  */
 public class Namespace {
-    
-    /** 
-     * Whether usage of unknown variables raises an error. If false, a String with the
-     * unknown identifier is created upon variable lookup.
-     */
-    public final static boolean REPORT_UNKNOWN_VARIABLES = false;
-    
     
     /** 
      * Percentage of word length that will be used as levenshtein threshold in
@@ -362,6 +360,8 @@ public class Namespace {
             
             // String operators
             NATIVE.declare(new BinaryStringArithmetic(OpType.ADD).createDeclaration());
+            NATIVE.declare(new StringIndex().createDeclaration());
+            NATIVE.declare(new ReverseString().createDeclaration());
             
             // Arithmetic unary ops
             NATIVE.declare(new UnaryArithmetic(OpType.EXCLAMATION).createDeclaration());
@@ -389,6 +389,7 @@ public class Namespace {
             NATIVE.declare(new ListIndex(OpType.INDEX).createDeclaration());
             NATIVE.declare(new RandomListIndex(OpType.QUEST_EXCL).createDeclaration());
             NATIVE.declare(new RandomListIndex(OpType.QUESTION).createDeclaration());
+            NATIVE.declare(new ReverseList().createDeclaration());
             
             // DOTDOT
             NATIVE.declare(new TernaryDotDot().createDeclaration());
@@ -402,6 +403,7 @@ public class Namespace {
             NATIVE.declare(new de.skuzzle.polly.core.parser.ast.lang.functions.Map().createDeclaration());
             NATIVE.declare(new Comp().createDeclaration());
             NATIVE.declare(new Sort().createDeclaration());
+            NATIVE.declare(new Day().createDeclaration());
             
         } catch (ASTTraversalException e) {
             throw new ExceptionInInitializerError(e);
@@ -626,10 +628,10 @@ public class Namespace {
                 }
             } else {
                 // native declarations can be overloaded, but must have distinct types
-                if (Type.tryUnify(decl.getType(), existing.getType())) {
+                /*if (Type.tryUnify(decl.getType(), existing.getType())) {
                     throw new ASTTraversalException(decl.getPosition(), 
                         "Deklaration mit identischem Typ existiert bereits.");
-                }
+                }*/
             }
         }
                 
@@ -695,7 +697,7 @@ public class Namespace {
             return decls.get(0);
         }
         
-        if (REPORT_UNKNOWN_VARIABLES) {
+        if (ParserProperties.should(ParserProperties.REPORT_UNKNOWN_VARIABLES)) {
             throw new ASTTraversalException(name.getPosition(), 
                     "Unbekannt: " + name.getId());
         } else {
@@ -731,7 +733,7 @@ public class Namespace {
                 }
             }
         }
-        if (REPORT_UNKNOWN_VARIABLES) {
+        if (ParserProperties.should(ParserProperties.REPORT_UNKNOWN_VARIABLES)) {
             return null;
         } else {
             return new Declaration(name.getPosition(), name, 
@@ -783,19 +785,19 @@ public class Namespace {
                 continue;
             }
             
-ignore:     for (Declaration decl : decls) {
+            for (Declaration decl : decls) {
                 if (decl.getName().equals(name)) {
                     
                     // check if we already found a declaration with the same type on a 
                     // lower declaration level. If so, the current declaration will be
                     // ignored. That will have the effect that declarations on lower 
                     // levels override those on a higher level.
-                    for (final Type alreadyFound : result) {
+                    /*for (final Type alreadyFound : result) {
                         if (Type.tryUnify(alreadyFound, decl.getType())) {
                             // continue with next declaration and ignore this one
-                            continue ignore;
+                            //continue ignore;
                         }
-                    }
+                    }*/
                     final Type fresh = decl.getType().subst(Substitution.fresh());
                     result.add(fresh);
                     name.addDeclaration(decl);
@@ -807,7 +809,7 @@ ignore:     for (Declaration decl : decls) {
         if (result.isEmpty()) {
             final List<String> similar = findSimilar(name.getId(), this);
             
-            if (REPORT_UNKNOWN_VARIABLES) {
+            if (ParserProperties.should(ParserProperties.REPORT_UNKNOWN_VARIABLES)) {
                 throw new DeclarationException(name.getPosition(), 
                         "Unbekannte Variable: '" + name + "'", similar);
             } else {

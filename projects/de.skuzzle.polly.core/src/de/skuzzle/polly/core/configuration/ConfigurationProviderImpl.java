@@ -18,8 +18,8 @@ import de.skuzzle.polly.sdk.eventlistener.ConfigurationEvent;
 import de.skuzzle.polly.sdk.eventlistener.ConfigurationListener;
 import de.skuzzle.polly.tools.events.Dispatchable;
 import de.skuzzle.polly.tools.events.EventProvider;
+import de.skuzzle.polly.tools.events.EventProviders;
 import de.skuzzle.polly.tools.events.Listeners;
-import de.skuzzle.polly.tools.events.SynchronousEventProvider;
 
 
 public class ConfigurationProviderImpl implements ConfigurationProvider {
@@ -51,7 +51,7 @@ public class ConfigurationProviderImpl implements ConfigurationProvider {
         this.configDir = configDir;
         this.pluginConfigDir = new File(configDir, "pluginconfigs");
         this.cfgCache = new WeakHashMap<File, ConfigurationImpl>();
-        this.eventProvider = new SynchronousEventProvider();
+        this.eventProvider = EventProviders.newDefaultEventProvider();
     }
     
     

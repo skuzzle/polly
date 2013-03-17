@@ -76,6 +76,7 @@ public final class CompareUtils {
      * @param comps The list of comparators to use.
      * @return A comparator instance.
      */
+    @SafeVarargs
     public final static <T> Comparator<T> multiComparator(Comparator<T>... comps) {
         return new MultiComparator<T>(Arrays.asList(comps));
     }

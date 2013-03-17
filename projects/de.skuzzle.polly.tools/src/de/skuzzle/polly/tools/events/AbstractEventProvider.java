@@ -6,7 +6,11 @@ import java.util.EventListener;
 import javax.swing.event.EventListenerList;
 
 
-
+/**
+ * Implementation of basic {@link EventProvider} methods.
+ * 
+ * @author Simon
+ */
 public abstract class AbstractEventProvider implements EventProvider {
     
     protected EventListenerList listeners;
@@ -46,7 +50,4 @@ public abstract class AbstractEventProvider implements EventProvider {
             this.listeners.remove(listenerClass, listener);
         }
     }
-    
-    
-    
 }
