@@ -75,7 +75,7 @@ public abstract class Expression extends Node {
      */
     public boolean addType(Type type) {
         for (final Type t : this.types) {
-            if (Type.tryUnify(type, t)) {
+            if (Type.tryUnify(t, type)) {
                 return false;
             }
         }
