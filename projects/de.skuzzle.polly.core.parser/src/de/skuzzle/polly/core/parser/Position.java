@@ -1,6 +1,5 @@
 package de.skuzzle.polly.core.parser;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,10 +24,8 @@ import de.skuzzle.polly.tools.Immutable;
  * 
  * @author Simon
  */
-public final class Position implements Serializable, Equatable, Immutable, 
+public final class Position implements Equatable, Immutable, 
         Comparable<Position> {
-    
-    private static final long serialVersionUID = 1L;
     
     
     /**
