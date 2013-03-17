@@ -842,6 +842,9 @@ public class InputScanner extends AbstractTokenStream {
                     tmp = tmp * 10 + Character.digit(next, 10);
                 } else if (next == ':') {
                     timeToken = this.readTime(tmp, tokenStart, false);
+                    if (timeToken.matches(TokenType.ERROR)) {
+                        return timeToken;
+                    }
                     state = 8;
                 } else {
                     return this.parseException(Problems.format(Problems.INVALID_DATE_TIME), 
@@ -897,8 +900,7 @@ public class InputScanner extends AbstractTokenStream {
             } // state
         } // while
         
-        this.parseException("Is this even reachable?", tokenStart);
-        return null; /* unreachable */
+        throw new IllegalStateException("should not be reachable");
     }
     
     
@@ -1065,6 +1067,7 @@ public class InputScanner extends AbstractTokenStream {
             }
         }
         
+        // not reachable
         return this.parseException(Problems.format(Problems.INVALID_RADIXED_INT), 
             tokenStart);
     }
