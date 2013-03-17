@@ -24,6 +24,7 @@
     -->
     <property name="dependencies.internal" value="
         **/polly.sdk.jar
+        **/polly.tools.jar
     "/>
    
     
@@ -67,6 +68,7 @@
             <classpath>
                 <source path="${src.dir}"/>
                 <source path="/de.skuzzle.polly.sdk"/>
+                <source path="/de.skuzzle.polly.tools"/>
                 <output path="${build.debug.dir}"/>
                 <library pathref="buildpath.eclipse"/>
             </classpath>

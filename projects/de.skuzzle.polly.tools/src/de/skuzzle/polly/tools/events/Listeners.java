@@ -6,7 +6,14 @@ import java.util.EventListener;
 import java.util.Iterator;
 import java.util.List;
 
-
+/**
+ * Collection class for {@link EventListener}s. Despite being a normal collection, this 
+ * class knows what kind of listeners it contains and is thus able to remove a certain
+ * listener from its parent {@link EventProvider}.
+ * 
+ * @author Simon
+ * @param <T> Type of listeners that are contained in this collection.
+ */
 public class Listeners<T extends EventListener> implements Collection<T> {
 
     private final List<T> backend;

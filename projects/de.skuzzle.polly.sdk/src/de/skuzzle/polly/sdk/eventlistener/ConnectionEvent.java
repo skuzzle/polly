@@ -1,7 +1,5 @@
 package de.skuzzle.polly.sdk.eventlistener;
 
-import java.util.EventObject;
-
 import de.skuzzle.polly.sdk.IrcManager;
 
 /**
@@ -11,9 +9,7 @@ import de.skuzzle.polly.sdk.IrcManager;
  * @author Simon
  * @since 0.6.1
  */
-public class ConnectionEvent extends EventObject {
-
-    private static final long serialVersionUID = 1L;
+public class ConnectionEvent extends IrcEvent {
     
     private boolean regularLost;
     
@@ -24,7 +20,7 @@ public class ConnectionEvent extends EventObject {
      * 
      * @param source The source of this event.
      */
-    public ConnectionEvent(Object source) {
+    public ConnectionEvent(IrcManager source) {
         this(source, false);
     }
 
@@ -38,7 +34,7 @@ public class ConnectionEvent extends EventObject {
      * @param regularLost <code>true</code> if the connection got lost due to a regular
      *          shutdown.
      */
-    public ConnectionEvent(Object source, boolean regularLost) {
+    public ConnectionEvent(IrcManager source, boolean regularLost) {
         super(source);
         this.regularLost = regularLost;
     }

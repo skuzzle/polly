@@ -3,6 +3,8 @@ package de.skuzzle.polly.sdk.http;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.skuzzle.polly.tools.events.Event;
+
 
 /**
  * HttpEvents are raised whenever a user accesses a polly web page. It contains the
@@ -13,9 +15,8 @@ import java.util.Map;
  * @author Simon
  * @since 0.9.1
  */
-public class HttpEvent {
+public class HttpEvent extends Event<HttpManager> {
 
-    private HttpManager source;
     private HttpSession session;
     private Map<String, HttpParameter> properties;
     private String requestUri;
@@ -30,7 +31,7 @@ public class HttpEvent {
      * @param requestUri The uri that was requested.
      */
     public HttpEvent(HttpManager source, HttpSession session, String requestUri) {
-        this.source = source;
+        super(source);
         this.session = session;
         this.requestUri = requestUri;
         this.properties = new HashMap<String, HttpParameter>();
@@ -71,17 +72,6 @@ public class HttpEvent {
      */
     public Map<String, HttpParameter> getProperties() {
         return this.properties;
-    }
-    
-    
-    
-    /**
-     * Gets the Httpmanager instance.
-     * 
-     * @return The HttpManager instance.
-     */
-    public HttpManager getSource() {
-        return this.source;
     }
     
     

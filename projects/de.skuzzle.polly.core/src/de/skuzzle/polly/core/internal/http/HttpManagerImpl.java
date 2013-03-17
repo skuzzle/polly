@@ -43,8 +43,8 @@ import de.skuzzle.polly.tools.collections.LinkedRingBuffer;
 import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
 import de.skuzzle.polly.tools.events.Dispatchable;
 import de.skuzzle.polly.tools.events.EventProvider;
+import de.skuzzle.polly.tools.events.EventProviders;
 import de.skuzzle.polly.tools.events.Listeners;
-import de.skuzzle.polly.tools.events.SynchronousEventProvider;
 
 
 
@@ -87,7 +87,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
         this.port = port;
         this.encoding = encoding;
         this.sessionTimeOut = sessionTimeOut;
-        this.eventProvider = new SynchronousEventProvider();
+        this.eventProvider = EventProviders.newDefaultEventProvider();
         this.actions = new HashMap<String, HttpAction>();
         this.menu = new TreeMap<String, List<String>>();
         this.cacheThreshold = cacheTreshold;

@@ -10,9 +10,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * 
  * @author Simon
- * @version 27.07.2011 ae73250
  */
-public class AsynchronousEventProvider extends AbstractEventProvider {
+class AsynchronousEventProvider extends AbstractEventProvider {
     
     protected ExecutorService dispatchPool;
     

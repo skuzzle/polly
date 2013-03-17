@@ -2,6 +2,7 @@ package de.skuzzle.polly.sdk.eventlistener;
 
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
+import de.skuzzle.polly.tools.events.Event;
 
 /**
  * This is the base event class for events raised by the {@link UserManager}.
@@ -9,10 +10,8 @@ import de.skuzzle.polly.sdk.UserManager;
  * @author Simon
  * @since Beta 0.6
  */
-public class UserEvent  {
+public class UserEvent extends Event<UserManager> {
 
-    private UserManager source;
-    
     private User user;
     
     private boolean autologoff;
@@ -36,18 +35,9 @@ public class UserEvent  {
      * @param autologoff Whether this event was an autologoff.
      */
     public UserEvent(UserManager source, User user, boolean autologoff) {
-        this.source = source;
+        super(source);
         this.user = user;
         this.autologoff = autologoff;
-    }
-    
-    
-    /**
-     * Gets the source of this event.
-     * @return The source {@link UserManager}.
-     */
-    public UserManager getSource() {
-        return this.source;
     }
     
     

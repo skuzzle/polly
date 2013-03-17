@@ -2,7 +2,7 @@ package de.skuzzle.polly.tools.events;
 
 
 
-public class SynchronousEventProvider extends AbstractEventProvider {
+class SynchronousEventProvider extends AbstractEventProvider {
 
     @Override
     public void dispatchEvent(Dispatchable<?, ?> d) {

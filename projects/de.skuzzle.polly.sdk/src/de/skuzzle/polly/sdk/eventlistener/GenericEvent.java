@@ -1,17 +1,17 @@
 package de.skuzzle.polly.sdk.eventlistener;
 
+import de.skuzzle.polly.tools.events.Event;
 
-public class GenericEvent {
 
-    private Object source;
+public class GenericEvent extends Event<Object> {
+
     private String type;
     private Object data;
     
     
     
     public GenericEvent(Object source, String type, Object data) {
-        super();
-        this.source = source;
+        super(source);
         this.type = type;
         this.data = data;
     }
@@ -21,13 +21,6 @@ public class GenericEvent {
     
     public Object getData() {
         return this.data;
-    }
-    
-    
-    
-    
-    public Object getSource() {
-        return this.source;
     }
     
     

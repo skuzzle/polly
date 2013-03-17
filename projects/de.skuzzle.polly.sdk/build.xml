@@ -20,7 +20,9 @@
         Space separated list of jar files relative to dist.dir to include
         in build process.
     -->
-    <property name="dependencies.internal" value="NONE"/>
+    <property name="dependencies.internal" value="
+        **/polly.tools.jar
+    "/>
    
     
     
@@ -51,6 +53,7 @@
             <project name="${ant.project.name}"/>
             <classpath>
                 <source path="${src.dir}"/>
+                <source path="/de.skuzzle.polly.tools"/>
                 <output path="${build.debug.dir}"/>
                 <library pathref="buildpath.eclipse"/>
             </classpath>
