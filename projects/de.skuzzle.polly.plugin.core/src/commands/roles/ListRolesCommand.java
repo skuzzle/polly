@@ -50,6 +50,8 @@ public class ListRolesCommand extends Command {
             roles = this.getMyPolly().roles().getRoles(user);
         } else if (this.match(signature, 1)) {
             roles = this.getMyPolly().roles().getRoles();
+        } else {
+            throw new IllegalStateException("wrong signature passed to command");
         }
         
         

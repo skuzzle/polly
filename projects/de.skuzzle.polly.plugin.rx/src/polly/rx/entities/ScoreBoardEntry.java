@@ -110,7 +110,9 @@ public class ScoreBoardEntry implements CSVExportable {
     public final static String ALL_SBE_DISTINCT = "ALL_SBE_DISTINCT";
     public final static String SBE_BY_USER = "SBE_BY_USER";
     
-    public final static DateFormat CSV_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
+    public final static DateFormat getCSVDateFormat() {
+        return new SimpleDateFormat("dd.MM.yyyy");
+    }
     
     @Id@GeneratedValue(strategy = GenerationType.TABLE)
     private int id;
@@ -260,7 +262,7 @@ public class ScoreBoardEntry implements CSVExportable {
 
     @Override
     public void printCSVLine(PrintWriter writer, String separator) {
-        writer.print(CSV_DATE_FORMAT.format(this.date));
+        writer.print(getCSVDateFormat().format(this.date));
         writer.print(separator);
         writer.print(this.rank);
         writer.print(separator);

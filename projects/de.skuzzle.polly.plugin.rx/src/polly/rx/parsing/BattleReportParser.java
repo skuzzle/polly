@@ -77,9 +77,8 @@ public class BattleReportParser {
     private final static int ID_GROUP = 33;
     
     
-    private final static DateFormat DATE_FORMAT;
-    static {
-        DATE_FORMAT = new SimpleDateFormat("HH:mm dd-MM-yyyy");
+    private final static DateFormat getDateFormat() {
+        return new SimpleDateFormat("HH:mm dd-MM-yyyy");
     }
     
     
@@ -105,7 +104,7 @@ public class BattleReportParser {
         // KB date
         Date date = null;
         try {
-            date = DATE_FORMAT.parse(it.next());
+            date = getDateFormat().parse(it.next());
         } catch (Exception e) {
             throw new ParseException();
         }

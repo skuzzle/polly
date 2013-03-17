@@ -33,7 +33,7 @@ public final class Time {
     
     
     
-    private final static void scheduleEventTimer() {
+    private synchronized final static void scheduleEventTimer() {
         if (future != null) {
             future.cancel(false);
         }

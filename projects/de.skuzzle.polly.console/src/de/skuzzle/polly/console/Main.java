@@ -73,6 +73,9 @@ public class Main {
             System.out.print(nsName + " > ");
             final String cmd = r.readLine();
             
+            if (cmd == null) {
+                continue;
+            }
             if (cmd.equals(":q")) {
                 return;
             } else if (cmd.startsWith(":ns")) {

@@ -155,7 +155,9 @@ public class ActionResponseHandler extends AbstractResponseHandler {
             logger.error("Error while sending http response", e);
         } finally {
             t.close();
-            out.close();
+            if (out != null) {
+                out.close();
+            }
         }
     }
     

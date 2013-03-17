@@ -148,9 +148,20 @@ public class PointSet implements Set<Point>{
     public <T> T[] toArray(T[] a) {
         return this.backend.toArray(a);
     }
-    
-    
-    
+
+
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.backend == null) ? 0 : this.backend.hashCode());
+        result = prime * result + ((this.color == null) ? 0 : this.color.hashCode());
+        return result;
+    }
+
+
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

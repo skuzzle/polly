@@ -785,7 +785,7 @@ public class Namespace {
                 continue;
             }
             
-ignore:     for (Declaration decl : decls) {
+            for (Declaration decl : decls) {
                 if (decl.getName().equals(name)) {
                     
                     // check if we already found a declaration with the same type on a 

@@ -19,7 +19,7 @@ public class AnyDayFilter extends BattleReportFilter {
     
     @Override
     public String toString() {
-        return "Same day as: " + TemplateContextHelper.DATE_FORMAT.format(this.base);
+        return "Same day as: " + TemplateContextHelper.getDateFormat().format(this.base);
     }
     
     
