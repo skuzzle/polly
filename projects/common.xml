@@ -50,7 +50,7 @@
     <property name="lib.dir"          value="${root.dir}/dependency"/>
     
     <!-- Target java version for compiler. -->
-    <property name="java.version"     value="1.7"/>
+    <property name="java.version"     value="1.6"/>
     
     <!-- Additional classpath entry to add to MANIFEST file. -->
     <property name="custom.classpath" value=""/>
@@ -94,8 +94,8 @@
         <javac srcdir="${src.dir}" 
                destdir="${build.debug.dir}" 
                classpathref="buildpath" 
-               source="1.6"
-               target="1.6" 
+               source="${java.version}"
+               target="${java.version}" 
                encoding="${src.encoding}"
                debug="on" 
                listfiles="true"
