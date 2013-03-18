@@ -1,4 +1,4 @@
-#Polly - Java 1.6 IRC Framework
+#Polly - Java 1.7 IRC Framework
 
 Polly is an open source IRC bot available under GNU General Public License 
 (GPLv3). See the GPLv3.txt in this directory for detailed licensing information.
@@ -25,7 +25,7 @@ a pretty huge SDK framework which grants access to many further polly features.
 * context-free syntax which provides many (many!) syntactical features to
   use with any command. To mention just a few: the parser supports 
   list-types, operator overloads, custom variables and functions based on
-  different namespaces, and many more.
+  different namespaces, basic lambda calculus and many more.
 * Extensible command system to provide irc commands using dynamically loaded
   plugins.
 * Each irc command can have multiple signatures based on the types supported
@@ -51,13 +51,29 @@ everything you could ever need to build polly. One key feature is, that the
 build script even generates eclipse projects for you, so that you are ready to
 start after a few seconds.
 
-The polly plugin SDK is fully documented and the latest JavaDoc can be found
-at http://www.polly.skuzzle.de/sdk/doc/ (*)
+Polly's build system is based on Apache Ant which comes shipped with checking 
+out the polly repository. There is no need to install additional software. 
 
-Please visit the Wiki pages to see how to build and how to setup polly. You can
-get furhter help by visiting the author in #tal-der-ahnungslosen on 
-irc.euirc.net 
+Steps to get working with polly:
+* check out the repository
+* goto `projects` directory
+* run `build.bat`
+* run `projects.bat`
+* in Eclipse, select `File -> Import -> Existing Projects into Workspace`,
+  click `browse`, goto `projects` directory, hit `enter`. Now, select all 
+  listed polly projects to import.
 
+All eclipse projects now reference all the dependent polly projects in the 
+same workspace, so that code changes in one sub project are automatically 
+reflected to all other projects. However, this does not apply to polly plugins. 
+If you modify a plugin, you would still have to run the `build` script in the 
+plugin's project directory, because plugins are loaded dynamically from their 
+jar files when launching polly.
+
+You may now want to modify some settings in `de.skuzzle.polly.core/cfg`. When 
+done, you can launch polly by running the main class 
+`de.skuzzle.polly.core.PollyBootstrapper`.
+  
 ## Third party sources
 Polly currently uses several third party sources and libraries for which I
 would like to thank the authors. 
@@ -89,4 +105,5 @@ project, there currently exists no release that is considered "stable".
 Nevertheless, polly is used every day by a rather small group of people on the 
 euIRC making irc life a bit more comfortable for everyone :).
 
-Visit polly in #tal-der-ahnungslosen on irc.euirc.net!
+Visit polly in #tal-der-ahnungslosen on irc.euirc.net or follow @PollyProject 
+on Twitter!
