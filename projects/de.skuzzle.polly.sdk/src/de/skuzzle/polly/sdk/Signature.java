@@ -32,7 +32,12 @@ import de.skuzzle.polly.sdk.Types.UserType;
  * The {@link Command} can distinguish the actual passed signatures by their id. The 
  * formal signatures are numbered consecutively in order of their creation beginning at 
  * 0.</p>
- *  
+ * 
+ * <p>Canonical signatures are those, that only have parameters of distinct types. If
+ * a command has registered a canonical signature, it does not matter in which order the
+ * user provides the parameters when calling the command, as they are being automatically
+ * reordered to match the formal signature.</p>
+ * 
  * @author Simon
  * @since zero day
  * @version RC 1.0
@@ -241,6 +246,7 @@ public class Signature {
 	}
 	
 	
+	
 	/**
 	 * This is a convenience method for accessing list parameters. It returns a list
 	 * with the ListTypes elements.
@@ -260,7 +266,6 @@ public class Signature {
 
 		return result;
 	}
-	
 	
 	
 	

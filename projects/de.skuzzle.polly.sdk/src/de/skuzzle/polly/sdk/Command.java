@@ -27,7 +27,8 @@ import de.skuzzle.polly.sdk.roles.SecurityObject;
  * <p>A command has a reference to all of its formal signatures. Add new formal signatures
  * for a command via {@link #createSignature(String, Parameter...)} or 
  * {@link #createSignature(String, String, Parameter...)}. Upon execution of a command, 
- * the actual signature is passed.</p>
+ * the actual signature is passed. Please see {@link Signature} to find out how signatures
+ * are actually being matched.</p>
  * 
  * This is an example of creating an own command:
  * <pre>
@@ -79,8 +80,8 @@ import de.skuzzle.polly.sdk.roles.SecurityObject;
  * {@link #setHelpText(String)}.</p>
  * 
  * <p>Commands are subject to pollys role based security system. Thus a command reports
- * its require permissions using {@link #getRequiredPermission()}. The default 
- * implementation return a Set containing only one element. If this command is set to be
+ * its required permissions using {@link #getRequiredPermission()}. The default 
+ * implementation returns a Set containing only one element. If this command is set to be
  * executable by only registered users, the set will contain the permission 
  * {@link RoleManager#REGISTERED_PERMISSION}, otherwise it will contain 
  * {@link RoleManager#NONE_PERMISSION} and will thus be executable by everyone.</p>
@@ -274,7 +275,7 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 	
 	
 	/**
-	 * Gets a readonly list of all signatures for this command.
+	 * Gets a readomly list of all signatures for this command.
 	 * @return A list of all formal signatures of this command.
 	 */
 	public List<FormalSignature> getSignatures() {
