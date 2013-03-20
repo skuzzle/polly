@@ -79,6 +79,8 @@ public abstract class AbstractProvider implements Provider {
             this.setup();
         } catch (SetupException e) {
             if (this.crucial) {
+                logger.error("Error while setup of crucial module '" + 
+                    this.getName() + "'", e);
                 throw e;
             }
             logger.error(
