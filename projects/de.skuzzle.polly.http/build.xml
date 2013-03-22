@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="de.skuzzle.polly.http" basedir="." default="dist.debug">
+    
+    <!-- The name of the jar file created by the dist target. -->
+    <property name="jar.filename"      value="polly.http"/>
+    
+    <!-- Jar file title. -->
+    <property name="jar.title"         value="polly.http"/>
+    
+    <!-- The name of this projects main class. -->
+    <property name="jar.main"          value=""/>
+
+    <!-- 
+        Space-separated list of jar files relative to lib.dir to include 
+        in build-process
+    -->
+    <property name="dependencies" value="
+        velocity-1.7.jar
+        commons-collections-3.2.1.jar
+        commons-lang-2.4.jar
+    "/>
+    
+    <!--
+        Space separated list of jar files relative to build.dir to include
+        in build process.
+    -->
+    <property name="dependencies.internal" value="
+        **/polly.tools.jar
+    "/>
+   
+    
+    
+    <!-- Import all important build targets. -->
+    <import file="../common.xml" as="base"/>
+    
+    
+    
+    <!-- 
+        Buildpath for eclipse. This should exclude the libraries that will be
+        referenced as eclipse projects.
+    -->
+    <path id="buildpath.eclipse">
+        <fileset dir="${lib.dir}" includes="${dependencies}"/>
+    </path>
+
+    
+    
+    <!--
+        Creates eclipse project files for this ant file.
+        Requires ant task from http://ant-eclipse.sourceforge.net/
+    -->
+    <target name="eclipse">
+        <taskdef name="eclipse" classname="prantl.ant.eclipse.EclipseTask" />
+        <eclipse mode="java">
+            <project name="${ant.project.name}"/>
+            <classpath>
+                <source path="${src.dir}"/>
+                <source path="/de.skuzzle.polly.tools"/>
+                <output path="${build.debug.dir}"/>
+                <library pathref="buildpath.eclipse"/>
+            </classpath>
+        </eclipse>
+    </target>
+</project>
