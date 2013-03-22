@@ -36,7 +36,6 @@ import java.util.regex.Pattern;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-import de.skuzzle.polly.http.api.DefaultCookie;
 import de.skuzzle.polly.http.api.HttpCookie;
 import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.http.api.HttpEventHandler;
@@ -219,7 +218,7 @@ class BasicEventHandler implements HttpHandler {
                 this.server.getSessionType() == HttpServer.SESSION_TYPE_COOKIE) {
                 
                 // if this is a temporary session, add a cookie with the new session id
-                cookies.add(new DefaultCookie(HttpServerImpl.SESSION_ID_NAME, 
+                cookies.add(new HttpCookie(HttpServerImpl.SESSION_ID_NAME, 
                     httpEvent.getSession().getId(), this.server.sessionLiveTime()));
             }
             

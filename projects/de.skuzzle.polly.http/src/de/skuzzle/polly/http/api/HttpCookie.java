@@ -18,14 +18,59 @@
  */
 package de.skuzzle.polly.http.api;
 
+import de.skuzzle.polly.http.api.answers.HttpAnswer;
 
-public interface HttpCookie {
 
-    public String getDomain();
+/**
+ * A cookie is a key-value pair which is stored at the client side. To send
+ * such a cookie to a client, it must simply be included in the 
+ * {@link HttpAnswer} returned by your {@link HttpEventHandler}.
+ * 
+ * @author Simon Taddiken
+ */
+public class HttpCookie {
     
-    public String getName();
+    private final String name;
+    private final String value;
+    private final String domain;
+    private final int maxAge;
     
-    public String getValue();
     
-    public int getMaxAge();
+    
+    public HttpCookie(String name, String value, String domain, int maxAge) {
+        this.name = name;
+        this.value = value;
+        this.domain = domain;
+        this.maxAge = maxAge;
+    }
+
+
+
+    public HttpCookie(String name, String value, int maxAge) {
+        this(name, value, null, maxAge);
+    }
+    
+    
+    
+    public String getDomain() {
+        return this.domain;
+    }
+    
+    
+
+    public String getName() {
+        return this.name;
+    }
+
+    
+    
+    public String getValue() {
+        return this.value;
+    }
+
+    
+    
+    public int getMaxAge() {
+        return this.maxAge;
+    }
 }

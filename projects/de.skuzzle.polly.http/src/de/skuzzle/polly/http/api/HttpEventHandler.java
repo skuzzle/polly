@@ -19,9 +19,36 @@
 package de.skuzzle.polly.http.api;
 
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
+import de.skuzzle.polly.http.api.answers.HttpAnswers;
 
-
+/**
+ * HttpEventHandlers need to be registered with a {@link HttpServer} and may
+ * be used to respond to certain {@link HttpEvent HttpEvents}.
+ * 
+ * <p>Once registered, the handler will be notified about an HttpEvent and
+ * may create a {@link HttpAnswer} to reply to it. However, the event handlers
+ * are chained in a way that after the first registered handler created a suitable
+ * answer, all further handlers are not notified about that particular event.</p>
+ * 
+ * @author Simon Taddiken
+ */
 public interface HttpEventHandler {
     
+    /**
+     * Tries to handle the provided {@link HttpEvent}. If the event can be handled, this
+     * method must return a proper {@link HttpAnswer} which defines how data is sent back
+     * to the client. If this handler can not handle the event, you may return 
+     * <code>null</code> or throw a {@link HttpException}. If you do so, the 
+     * {@link HttpServer} asks the next registered handler to handle the event.
+     * 
+     * <p><code>HttpAnswers</code> can easily be created using the {@link HttpAnswers}
+     * utility class.</p>
+     * 
+     * @param e The HttpEvent to handle.
+     * @return The HttpAnswer as response to the provided event, or <code>null</code> if
+     *          further event handlers should be notified about the event.
+     * @throws HttpException If an error occurred upon handling the event. In this case
+     *          the server will try the next registered handler.
+     */
     public HttpAnswer handleHttpEvent(HttpEvent e) throws HttpException;
 }

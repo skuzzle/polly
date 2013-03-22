@@ -18,7 +18,12 @@
  */
 package de.skuzzle.polly.http.api;
 
-
+/**
+ * can be thrown by a {@link HttpEventHandler} if it was an error occurred while 
+ * trying to handle the event.
+ * 
+ * @author Simon Taddiken
+ */
 public class HttpException extends Exception {
 
     private static final long serialVersionUID = 1L;
