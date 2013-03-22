@@ -49,7 +49,8 @@ public interface HttpServer {
     /**
      * Registers the given handler which then might be notified about new http events.
      * The handler is not notified if another handler which was registered earlier 
-     * can successfully handle the event.
+     * can successfully handle the event. See {@link HttpEventHandler} for details on how
+     * handler chaining works.
      * 
      * @param handler The event handler to register.
      */

@@ -172,8 +172,9 @@ class BasicEventHandler implements HttpHandler {
     
     @Override
     public void handle(HttpExchange t) throws IOException {
-        
-        final List<HttpEventHandler> handlers = this.server.getHandlers();
+        // copy list to avoid synchronization
+        final List<HttpEventHandler> handlers = new ArrayList<>(
+            this.server.getHandlers());
         final HttpEvent httpEvent = this.createEvent(t);
         final HttpSession session = httpEvent.getSession();
         final TrafficInformationImpl ti = 
@@ -190,20 +191,18 @@ class BasicEventHandler implements HttpHandler {
         }
         
         // handle the event
-        for (final HttpEventHandler handler : handlers) {
-            HttpAnswer answer = null;
-            try {
-                answer = handler.handleHttpEvent(httpEvent);
-            } catch (HttpException e) {
-                e.printStackTrace();
-                // just skip this handler and pretend he was not able
-                // to handle the event.
-            }
-            
+        final Iterator<HttpEventHandler> it = handlers.iterator();
+        final HttpEventHandler chain = new HttpEventHandlerChain(it);
+        HttpAnswer answer;
+        try {
+            answer = chain.handleHttpEvent(httpEvent, chain);
             if (answer != null) {
                 this.handleAnswer(answer, t, httpEvent);
                 return;
             }
+        } catch (HttpException e) {
+            // consume and send "file not found" below
+            e.printStackTrace();
         }
         
         // event could not be handled

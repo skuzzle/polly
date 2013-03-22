@@ -26,9 +26,8 @@ import de.skuzzle.polly.http.api.answers.HttpAnswers;
  * be used to respond to certain {@link HttpEvent HttpEvents}.
  * 
  * <p>Once registered, the handler will be notified about an HttpEvent and
- * may create a {@link HttpAnswer} to reply to it. However, the event handlers
- * are chained in a way that after the first registered handler created a suitable
- * answer, all further handlers are not notified about that particular event.</p>
+ * may create a {@link HttpAnswer} to reply to it. If your handler decides not to
+ * handle that event, it can simply pass it to the next registered handler.</p>
  * 
  * @author Simon Taddiken
  */
@@ -37,18 +36,40 @@ public interface HttpEventHandler {
     /**
      * Tries to handle the provided {@link HttpEvent}. If the event can be handled, this
      * method must return a proper {@link HttpAnswer} which defines how data is sent back
-     * to the client. If this handler can not handle the event, you may return 
-     * <code>null</code> or throw a {@link HttpException}. If you do so, the 
-     * {@link HttpServer} asks the next registered handler to handle the event.
+     * to the client. If this handler can not handle the event, you should return the
+     * result of the next handler by calling <code>next.handleHttpEvent(e, next)</code>.
+     * However if you do not want the other handlers to be notified about this event, 
+     * you may simply return <code>null</code> to abort event handling right now.
+     * 
+     * <p>For example:</p>
+     * <pre>
+     * public void handleEvent(HttpEvent e, HttpEventHandler next) throws HttpException {
+     *     if (e.get("foo") != null) {
+     *         // handle the event by creating an answer right here
+     *         return HttpAnswers.createStringAnswer("bar");
+     *     } else if (e.post("bar") != null) {
+     *         // 'consume' this event, no other handlers are notified about it
+     *         return null;
+     *     } else {
+     *         // use the next handler to handle this event
+     *         return next.handleEvent(e, next);
+     *     }
+     * }
+     * </pre>
      * 
      * <p><code>HttpAnswers</code> can easily be created using the {@link HttpAnswers}
      * utility class.</p>
      * 
      * @param e The HttpEvent to handle.
-     * @return The HttpAnswer as response to the provided event, or <code>null</code> if
-     *          further event handlers should be notified about the event.
+     * @param next The next handler in the servers handler chain. Each invocation of 
+     *          its <code>handleEvent</code> method will be delegated to the next handler
+     *          in the chain until all have been notified. In that case, it will return
+     *          <code>null</code>.
+     * @return The HttpAnswer as response to the provided event, or <code>null</code> to
+     *          abort handling of this event.
      * @throws HttpException If an error occurred upon handling the event. In this case
      *          the server will try the next registered handler.
      */
-    public HttpAnswer handleHttpEvent(HttpEvent e) throws HttpException;
+    public HttpAnswer handleHttpEvent(HttpEvent e, HttpEventHandler next) 
+        throws HttpException;
 }

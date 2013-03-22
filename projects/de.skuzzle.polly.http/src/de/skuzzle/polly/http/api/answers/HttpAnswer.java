@@ -72,7 +72,7 @@ import de.skuzzle.polly.http.api.HttpServer;
  * }
  * </pre>
  * 
- * Now follows a {@link HttpAnswerHandler} for this new type of HttpAnswer:
+ * <p>Now follows a {@link HttpAnswerHandler} for this new type of HttpAnswer:</p>
  * <pre>
  * public class StringAnswerHandler implements HttpAnswerHandler {
  *     public void handleAnswer(HttpAnswer answer, HttpEvent e, OutputStream out) 
@@ -84,8 +84,8 @@ import de.skuzzle.polly.http.api.HttpServer;
  *     }
  * }
  * </pre>
- * This handler must now be registered with the {@link HttpServer} so that it actually
- * can handle the new type of answers:
+ * <p>This handler must now be registered with the {@link HttpServer} so that it actually
+ * can handle the new type of answers:</p>
  * <pre>server.registerHandler(SimpleStringAnswer.class, new StringAnswerHandler());</pre>
  * 
  * @author Simon Taddiken
