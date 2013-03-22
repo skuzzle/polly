@@ -27,24 +27,32 @@ import de.skuzzle.polly.http.api.TrafficInformation;
 
 class HttpSessionImpl implements HttpSession {
 
+    private final HttpServerImpl server;
     private final String id;
     private final long timestamp;
     private final int type;
     private final Map<String, Object> attached;
     private final TrafficInformation trafficInfo;
+    private long blockStamp;
+    private long blockTime;
     
     
     
-    public HttpSessionImpl(String id, int type) {
+    public HttpSessionImpl(HttpServerImpl server, String id, int type) {
         if (type != SESSION_TYPE_COOKIE && type != SESSION_TYPE_TEMPORARY) {
             throw new IllegalArgumentException("illegal session type");
         }
         
+        this.server = server;
         this.id = id;
         this.timestamp = System.currentTimeMillis();
         this.type = type;
         this.attached = new HashMap<>();
         this.trafficInfo = new TrafficInformationImpl();
+        
+        // make sure session is initially unblocked
+        this.blockStamp = System.currentTimeMillis() - 1;
+        this.blockTime = 0;
     }
     
     
@@ -101,5 +109,35 @@ class HttpSessionImpl implements HttpSession {
     @Override
     public TrafficInformation getTrafficInfo() {
         return this.trafficInfo;
+    }
+
+
+
+    @Override
+    public void kill() {
+        this.server.killSession(this);
+    }
+
+
+
+    @Override
+    public synchronized void block(int milliseconds) {
+        this.blockTime = milliseconds < 0 ? Long.MAX_VALUE : milliseconds;
+        this.blockStamp = System.currentTimeMillis();
+    }
+
+
+
+    @Override
+    public synchronized void unblock() {
+        this.blockTime = 0;
+    }
+
+
+
+    @Override
+    public synchronized boolean isBlocked() {
+        long timeBlocked = System.currentTimeMillis() - this.blockStamp;
+        return timeBlocked >= this.blockTime;
     }
 }

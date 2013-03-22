@@ -40,4 +40,12 @@ public interface HttpSession {
     public void getAttached(String key);
     
     public TrafficInformation getTrafficInfo();
+    
+    public void kill();
+    
+    public void block(int milliseconds);
+    
+    public void unblock();
+    
+    public boolean isBlocked();
 }

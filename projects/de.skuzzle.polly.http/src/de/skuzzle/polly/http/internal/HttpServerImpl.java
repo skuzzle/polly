@@ -179,12 +179,12 @@ class HttpServerImpl implements HttpServer {
                 // create temporary session. So next time the client sends something,
                 // it will have an id assigned
                 id = this.createSessionId(t.getRemoteAddress());
-                return new HttpSessionImpl(id, HttpSession.SESSION_TYPE_TEMPORARY);
+                return new HttpSessionImpl(this, id, HttpSession.SESSION_TYPE_TEMPORARY);
             }
 
             HttpSessionImpl session = this.idToSession.get(id);
             if (session == null) {
-                session = new HttpSessionImpl(id, HttpSession.SESSION_TYPE_COOKIE);
+                session = new HttpSessionImpl(this, id, HttpSession.SESSION_TYPE_COOKIE);
                 this.idToSession.put(id, session);
             }
             return session;
@@ -198,10 +198,28 @@ class HttpServerImpl implements HttpServer {
             HttpSessionImpl session = this.ipToSession.get(ip);
             if (session == null) {
                 final String id = this.createSessionId(ip);
-                session = new HttpSessionImpl(id, SESSION_TYPE_IP);
+                session = new HttpSessionImpl(this, id, SESSION_TYPE_IP);
                 this.ipToSession.put(ip, session);
             }
             return session;
+        }
+    }
+    
+    
+    
+    void killSession(HttpSessionImpl session) {
+        session.block(-1);
+        switch (this.getSessionType()) {
+        case SESSION_TYPE_COOKIE:
+        case SESSION_TYPE_GET:
+            synchronized (this.idToSession) {
+                this.idToSession.values().remove(session);
+            }
+            break;
+        case SESSION_TYPE_IP:
+            synchronized (this.ipToSession) {
+                this.ipToSession.remove(session);
+            }
         }
     }
 }

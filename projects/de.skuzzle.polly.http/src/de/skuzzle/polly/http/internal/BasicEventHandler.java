@@ -91,7 +91,8 @@ class BasicEventHandler implements HttpHandler {
 
 
 
-    private final void parsePostParameters(HttpExchange t, Map<String, String> result) throws IOException {
+    private final void parsePostParameters(HttpExchange t, Map<String, String> result) 
+            throws IOException {
         BufferedReader r = null;
         try {
             r = new BufferedReader(new InputStreamReader(t.getRequestBody()));
@@ -181,6 +182,12 @@ class BasicEventHandler implements HttpHandler {
         // set stream to count incoming traffic
         final CountingInputStream in = new CountingInputStream(t.getRequestBody(), ti);
         t.setStreams(in, null);
+        
+        if (session.isBlocked()) {
+            this.handleAnswer(
+                HttpAnswers.createStringAnswer("Your session is temporarely blocked"), 
+                t, httpEvent);
+        }
         
         // handle the event
         for (final HttpEventHandler handler : handlers) {
