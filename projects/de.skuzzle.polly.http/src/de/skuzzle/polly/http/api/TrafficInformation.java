@@ -18,10 +18,24 @@
  */
 package de.skuzzle.polly.http.api;
 
-
+/**
+ * This encapsulates traffic information for a {@link HttpSession}.
+ * 
+ * @author Simon Taddiken
+ */
 public interface TrafficInformation {
 
+    /**
+     * Gets the amount of data (in bytes) that was sent towards the client.
+     * 
+     * @return Bytes sent towards a client.
+     */
     public int getUpload();
     
+    /**
+     * Gets the amount of data (in bytes) that was sent to us from a client.
+     * 
+     * @return Bytes sent from a client.
+     */
     public int getDownload();
 }

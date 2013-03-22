@@ -23,6 +23,7 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.sun.net.httpserver.HttpExchange;
 
@@ -101,12 +102,27 @@ class HttpEventImpl implements HttpEvent {
                 this.cookies.size());
             
             this.combinedParameters.putAll(this.cookies);
-            this.combinedParameters.putAll(this.get);
-            this.combinedParameters.putAll(this.post);
+            join(this.combinedParameters, this.get);
+            join(this.combinedParameters, this.post);
             this.combinedParameters = Collections.unmodifiableMap(
                 this.combinedParameters);
         }
         return this.combinedParameters;
+        }
+    }
+    
+    
+    
+    private final static void join(Map<String, String> target, 
+            Map<String, String> source) {
+        for (final Entry<String, String> se : source.entrySet()) {
+            String targetValue = target.get(se.getKey());
+            if (targetValue != null && !targetValue.contains(se.getValue())) {
+                targetValue = targetValue + ";" + se.getValue();
+            } else {
+                targetValue = se.getValue();
+            }
+            target.put(se.getKey(), targetValue);
         }
     }
     

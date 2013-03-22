@@ -22,24 +22,96 @@ import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.Map;
 
-
+/**
+ * A HttpEvent occurs if the {@link HttpServer} receives any http request from a 
+ * remote client. This event then carries all the information about the request. You
+ * can react on events by 
+ * {@link HttpServer#registerHttpEventHandler(HttpEventHandler) registering} a 
+ * {@link HttpEventHandler} with your {@link HttpServer}.
+ * 
+ * <p>Along with an event comes the {@link HttpSession http session}. A session is a 
+ * unique object that persists over multiple connections from the same client.</p>
+ * 
+ * @author Simon Taddiken
+ * @see HttpServer
+ */
 public interface HttpEvent {
 
+    /**
+     * Gets the {@link HttpServer} which received the event.
+     * 
+     * @return The HttpServer.
+     */
     public HttpServer getSource();
     
+    /**
+     * Gets the requested URI.
+     * 
+     * @return The requested URI.
+     */
     public URI getRequestURI();
     
+    /**
+     * Gets the ip address of the client that sent this request.
+     * 
+     * @return The client's ip address.
+     */
     public InetSocketAddress getClientIP();
     
+    /**
+     * Gets the value of a parameter in a GET request. If multiple values are assigned
+     * to this key, they will be ';' separated in the result string. If no value is 
+     * associated with the given key, <code>null</code> is returned.
+     * 
+     * @param key Name of the GET parameter.
+     * @return The value associated with that key, or <code>null</code>.
+     */
     public String get(String key);
     
+    /**
+     * Gets the value of a parameter in a POST request. If multiple values are assigned
+     * to this key, they will be ';' separated in the result string. If no value is 
+     * associated with the given key, <code>null</code> is returned.
+     * 
+     * @param key Name of the POST parameter.
+     * @return The value associated with that key, or <code>null</code>.
+     */
     public String post(String key);
     
+    /**
+     * Gets a map view of all parameters in this request. The result is a map which 
+     * contains all associations of keys to values from the cookies, the GET and the 
+     * POST parameters. Note that the result will be read-only. 
+     * 
+     * <p>If a key occurs twice, the associated values will be joined into a single 
+     * string by separating them by ';'. The so created result will only contain 
+     * distinct values, the order in which they occurr in the string is undefined.</p>
+     * 
+     * @return Map view of all parameters associated with this request.
+     */
     public Map<String, String> parameterMap();
     
+    /**
+     * Gets a map view of all provided POST parameters of this request. Note the the
+     * result is read-only.
+     * 
+     * @return Read-only map of all POST parameters.
+     */
     public Map<String, String> postMap();
     
+    /**
+     * Gets a map view of all provided GET parameters of this request. Note the the
+     * result is read-only.
+     * 
+     * @return Read-only map of all GET parameters.
+     */
     public Map<String, String> getMap();
     
+    /**
+     * Gets the session that belongs to this request. This is a unique object which 
+     * persists over different requests from the same client.
+     * 
+     * @return The session of this event.
+     */
     public HttpSession getSession();
 }
