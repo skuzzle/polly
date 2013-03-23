@@ -85,7 +85,7 @@ public interface HttpEvent {
      * 
      * <p>If a key occurs twice, the associated values will be joined into a single 
      * string by separating them by ';'. The so created result will only contain 
-     * distinct values, the order in which they occurr in the string is undefined.</p>
+     * distinct values, the order in which they occur in the string is undefined.</p>
      * 
      * @return Map view of all parameters associated with this request.
      */
@@ -106,6 +106,19 @@ public interface HttpEvent {
      * @return Read-only map of all GET parameters.
      */
     public Map<String, String> getMap();
+    
+    /**
+     * Gets a map view of both GET and POST parameters provided by this request. The 
+     * resulting map contains all associations from the GET and the POST parameters. Note 
+     * that the result will be read only. 
+     * 
+     * <p>If a key occurs twice, the associated values will be joined into a single 
+     * string by separating them by ';'. The so created result will only contain 
+     * distinct values, the order in which they occur in the string is undefined.</p>
+     * 
+     * @return Read-only map of GET and POST parameters.
+     */
+    public Map<String, String> postGetMap();
     
     /**
      * Gets the session that belongs to this request. This is a unique object which 

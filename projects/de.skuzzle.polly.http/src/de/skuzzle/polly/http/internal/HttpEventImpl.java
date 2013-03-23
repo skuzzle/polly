@@ -42,6 +42,7 @@ class HttpEventImpl implements HttpEvent {
     private final Map<String, String> get;
     private final Map<String, String> post;
     private Map<String, String> combinedParameters;
+    private Map<String, String> postGet;
     
     
     
@@ -108,6 +109,23 @@ class HttpEventImpl implements HttpEvent {
                 this.combinedParameters);
         }
         return this.combinedParameters;
+        }
+    }
+    
+    
+    
+    @Override
+    public Map<String, String> postGetMap() {
+        synchronized (this) {
+        if (this.postGet == null) {
+            this.postGet = new HashMap<>(this.get.size() + this.post.size());
+            
+            this.postGet.putAll(this.get);
+            join(this.postGet, this.post);
+            this.postGet = Collections.unmodifiableMap(
+                this.postGet);
+        }
+        return this.postGet;
         }
     }
     
