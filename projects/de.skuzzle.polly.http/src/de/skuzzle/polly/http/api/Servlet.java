@@ -47,6 +47,43 @@ import de.skuzzle.polly.http.api.answers.HttpAnswer;
  * servlet by overriding {@link #accept(HttpEvent)}. By default, all events are 
  * accepted.</p>
  * 
+ * <p>Consider a servlet with mode GET and action key "action":</p>
+ * <pre>
+ * public class MyServlet extends Servlet {
+ * 
+ *     private Map&lt;String, String&gt; entries = new HashMap&lt;&gt;();
+ * 
+ *     public MyServlet() {
+ *        super(Mode.GET, "action");
+ *     }
+ *     
+ *     &#64;HandlesAction("delEntry")
+ *     private HttpAnswer deleteEntry(HttpEvent e) {
+ *         if (e.get("name") == null) {
+ *             return HttpAnswers.createStringAnswer("'name' parameter missing.);
+ *         }
+ *         this.entries.remove(e.get("name"));
+ *         return HttpAnswers.createStringAnswer("'name' has been removed);
+ *     }
+ *     
+ *     &#64;HandlesAction("addEntry")
+ *     private HttpAnser addEntry(HttpEvent e) {
+ *         if (e.get("name") == null || e.get("value") == null) {
+ *             return HttpAnswers.createStringAnswer("required parameter missing");
+ *         }
+ *         this.entries.put(e.get("name"), e.get("value"));
+ *         return HttpAnswers.createStringAnswer("entry has been added");
+ *     }
+ *     
+ *     // ...
+ * }
+ * </pre>
+ * 
+ * <p>Now, if a HttpEvent with the following request URI occurs, the addEntry() method 
+ * would be called: <code>/bla?action=addEntry&amp;name=foo&amp;value=bar</code><br/>
+ * Of course you should also validate whether all required parameters a provided in the
+ * http event before using them.</p> 
+ * 
  * @author Simon Taddiken
  * @see HandlesAction
  */
