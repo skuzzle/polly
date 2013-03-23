@@ -20,6 +20,7 @@ package de.skuzzle.polly.http.internal;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -30,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.sun.net.httpserver.HttpExchange;
 
@@ -56,6 +59,9 @@ class HttpServerImpl implements HttpServer {
     private final Set<String> extensionWhitelist;
     private final AnswerHandlerMap handler;
     
+    private com.sun.net.httpserver.HttpServer server;
+    
+    private boolean isrunning;
     
     
     public HttpServerImpl() {
@@ -69,6 +75,54 @@ class HttpServerImpl implements HttpServer {
         // default handler
         this.registerHandler(HttpBinaryAnswer.class, new SimpleBinaryAnswerHandler());
         this.registerHandler(HttpTemplateAnswer.class, new TemplateAnswerHandler());
+    }
+    
+    
+    
+    @Override
+    public boolean isRunning() {
+        return this.isrunning;
+    }
+    
+    
+    
+    @Override
+    public void start(int port) throws IOException {
+        this.start(port, Executors.newCachedThreadPool());
+    }
+    
+    
+    
+    @Override
+    public void start(int port, ExecutorService service) throws IOException {
+        if (this.isRunning()) {
+            throw new IllegalStateException("server already running");
+        }
+        
+        this.server = com.sun.net.httpserver.HttpServer.create(
+            new InetSocketAddress(port), 5);
+        this.server.setExecutor(service);
+        this.server.createContext("/", new BasicEventHandler(this));
+        this.server.start();
+        this.isrunning = true;
+    }
+    
+    
+    
+    @Override
+    public void shutdown(int timeout) {
+        if (!this.isRunning()) {
+            throw new IllegalStateException("server not running");
+        }
+        this.server.stop(timeout);
+        synchronized (this.idToSession) {
+            this.idToSession.clear();
+        }
+        synchronized (this.ipToSession) {
+            this.idToSession.clear();
+        }
+        this.server = null;
+        this.isrunning = false;
     }
     
     

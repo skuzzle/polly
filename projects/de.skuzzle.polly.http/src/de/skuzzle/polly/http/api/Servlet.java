@@ -125,6 +125,12 @@ public abstract class Servlet implements HttpEventHandler {
     
     
     
+    /**
+     * Determines which parameters of a HttpEvent are used to determine the name of the
+     * action to execute.
+     * 
+     * @return The mode.
+     */
     public Mode getMode() {
         return this.mode;
     }
@@ -187,7 +193,8 @@ public abstract class Servlet implements HttpEventHandler {
                 if (ex.length > 1 || 
                     (ex.length == 1 && !HttpException.class.isAssignableFrom(ex[0]))) {
                     
-                    throw new IllegalArgumentException("handler throws illegal exception");
+                    throw new IllegalArgumentException(
+                        "handler throws illegal exception");
                 }
                 
                 mtd.setAccessible(true);
@@ -261,9 +268,41 @@ public abstract class Servlet implements HttpEventHandler {
         }
     }
     
+    
+    
+    /**
+     * <p>This method is called when a {@link HttpEvent} was accepted to be executed by
+     * this servlet, but no action is specified for the value of this servlet's
+     * action key.</p>
+     * 
+     * <p>Using this method you can then provide a proper HttpAnswer for that exceptional
+     * case.</p>
+     * 
+     * @param event The HttpEvent.
+     * @param actionName Name of the action that was requested but has no handler 
+     *          registered.
+     * @param next HttpEventHandler chain. Call this object's handleEvent() method
+     *          to reach execution of the event to the next handler in the chain.
+     * @return The HttpAnswer as response to the provided event.
+     * @throws HttpException If further handling of the event should be aborted.
+     */
     protected abstract HttpAnswer noActionAnswer(HttpEvent event, 
         String actionName, HttpEventHandler next) throws HttpException;
 
+    
+    
+    /**
+     * This method is callen when a event handler for an action throws a HttpException 
+     * when being executed. Using this method you can then provide a proper HttpAnswer 
+     * for those exceptional cases.</p>
+     * 
+     * @param event The HttpEvent.
+     * @param e The exception that occurred during execution of the action.
+     * @param next HttpEventHandler chain. Call this object's handleEvent() method
+     *          to reach execution of the event to the next handler in the chain.
+     * @return The HttpAnswer as response to the provided event.
+     * @throws HttpException If further handling of the event should be aborted.
+     */
     protected abstract HttpAnswer exceptionAnswer(HttpEvent event, 
         HttpException e, HttpEventHandler next) throws HttpException;
 }
