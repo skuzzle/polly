@@ -344,6 +344,27 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         this.recent = e;
         this.sendRawCommand("MODE " + e.getNickName() + " " + e.getModes());
     }
+	
+	
+	
+	@Override
+	public void reconnect() throws IOException {
+	    this.disconnect();
+	    final long ts = System.currentTimeMillis();
+	    while (this.isConnected() && System.currentTimeMillis() - ts < 5000);
+	    
+	    if (this.isConnected()) {
+	        throw new IOException("could not disconnect");
+	    }
+	    try {
+            this.connect(this.recent);
+        } catch (NickAlreadyInUseException e) {
+            e.printStackTrace();
+            throw new IOException(e);
+        } catch (IrcException e) {
+            throw new IOException(e);
+        }
+	}
     
     
 

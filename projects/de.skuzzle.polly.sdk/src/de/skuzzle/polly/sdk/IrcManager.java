@@ -1,5 +1,6 @@
 package de.skuzzle.polly.sdk;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -79,6 +80,14 @@ public interface IrcManager {
 	 * Closes the irc connection. 
 	 */
 	public abstract void disconnect();
+	
+	
+	/**
+	 * Closes the current irc connection, logs off all users, then reconnects to the irc
+	 * and joins all default channels.
+	 * @throws IOException If reconnecting fails.
+	 */
+	public abstract void reconnect() throws IOException;
 
 	
 	
@@ -210,6 +219,7 @@ public interface IrcManager {
 	 * @param message The message to send.
 	 */
 	public abstract void sendMessage(String channel, String message);
+	
 	
 	
 	/**
