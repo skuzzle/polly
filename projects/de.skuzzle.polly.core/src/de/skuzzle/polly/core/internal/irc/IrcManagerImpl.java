@@ -115,6 +115,8 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
             IrcUser user = new IrcUser(nickName, login, hostname);
             ChannelEvent e = new ChannelEvent(IrcManagerImpl.this, user, channel);
             
+            this.checkUserLost(channel, user);
+            
             // XXX: not sure if this makes sense or not
             IrcManagerImpl.this.topics.remove(channel);
             IrcManagerImpl.this.firePart(e);
