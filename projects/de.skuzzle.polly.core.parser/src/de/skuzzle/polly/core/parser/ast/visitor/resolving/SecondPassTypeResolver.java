@@ -193,7 +193,7 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
             final MapType tmp = s.mapTo(t);
             
             for (final Type lhsType : node.getLhs().getTypes()) {
-                final Substitution subst = Type.unify(lhsType, tmp);
+                final Substitution subst = Type.unify(tmp, lhsType);
                 if (subst != null) {
                     matched.add(lhsType.subst(subst));
                 }
