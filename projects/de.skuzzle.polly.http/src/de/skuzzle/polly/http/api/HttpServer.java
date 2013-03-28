@@ -21,7 +21,6 @@ package de.skuzzle.polly.http.api;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.concurrent.ExecutorService;
 
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswerHandler;
@@ -46,25 +45,12 @@ public interface HttpServer {
     public boolean isRunning();
     
     /**
-     * Starts the http server on the specified port if it is not already running using 
-     * the provided {@link ExecutorService} as threading strategy. If the server is 
-     * already running, an {@link IllegalStateException} will be thrown.
+     * Starts the http server using the {@link ServerFactory} supplied to this class. 
+     * If the server is already running, an {@link IllegalStateException} will be thrown.
      * 
-     * @param port The port for the server.
-     * @param service ExecutorService used to create thread for event handling.
      * @throws IOException If running the server fails.
      */
-    public void start(int port, ExecutorService service) throws IOException;
-    
-    /**
-     * Starts the http server on the specified port if it is not already running using a
-     * default threading strategy. If the server is already running, an
-     * {@link IllegalStateException} will be thrown.
-     * 
-     * @param port The port for the server.
-     * @throws IOException If running the server fails.
-     */
-    public void start(int port) throws IOException;
+    public void start() throws IOException;
     
     /**
      * Stops the server if it is currently running and clears all active sessions. If the 

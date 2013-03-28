@@ -172,9 +172,12 @@ class BasicEventHandler implements HttpHandler {
     
     @Override
     public void handle(HttpExchange t) throws IOException {
-        // copy list to avoid synchronization
-        final List<HttpEventHandler> handlers = new ArrayList<>(
-            this.server.getHandlers());
+        // copy list to avoid further synchronization
+        final List<HttpEventHandler> handlers;
+        synchronized (this.server.getHandlers()) {
+            handlers = new ArrayList<>(this.server.getHandlers());
+        }
+        
         final HttpEvent httpEvent = this.createEvent(t);
         final HttpSession session = httpEvent.getSession();
         final TrafficInformationImpl ti = 

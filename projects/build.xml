@@ -70,6 +70,7 @@
                 <include name="de.skuzzle.polly.core.parser/src/**"/>
                 <include name="de.skuzzle.polly.process/src/**"/>
                 <include name="de.skuzzle.polly.tools/src/**"/>
+                <include name="de.skuzzle.polly.http/src/**"/>
                 <include name="de.skuzzle.polly.sdk/src/**"/>
 
             </fileset>
@@ -86,6 +87,7 @@
         <ant dir="de.skuzzle.polly.tools" target="${target}" 
             inheritAll="false"/>
         <ant dir="de.skuzzle.polly.sdk" target="${target}" inheritAll="false"/>
+        <ant dir="de.skuzzle.polly.http" target="${target}" inheritAll="false"/>
         <ant dir="de.skuzzle.polly.process" target="${target}" 
             inheritAll="false"/>
         <ant dir="de.skuzzle.polly.core.parser" target="${target}" 

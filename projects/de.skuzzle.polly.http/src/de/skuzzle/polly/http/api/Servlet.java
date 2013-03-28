@@ -101,7 +101,7 @@ public abstract class Servlet implements HttpEventHandler {
         
         
         
-        public HttpAnswer execute(HttpEvent e) throws HttpException {
+        private final HttpAnswer execute(HttpEvent e) throws HttpException {
             try {
                 final HttpAnswer a = (HttpAnswer) this.handler.invoke(this.carrier, e);
                 return a;
@@ -130,14 +130,24 @@ public abstract class Servlet implements HttpEventHandler {
      * @author Simon Taddiken
      */
     public enum Mode {
-        POST, GET, BOTH;
+        /** Use POST parameters*/
+        POST, 
+        /** Use GET parameters */
+        GET, 
+        /** Use POST and GET parameters*/
+        BOTH;
     }
     
     
     
+    /** Current parameter retrieving mode */
     protected final Mode mode;
+    
+    /** Name of the key in the parameter map which identifies the action */
     protected final String actionKey;
-    protected final Map<String, ReflectionServletAction> actionMap;
+    
+    private final Map<String, ReflectionServletAction> actionMap;
+    
     
     
     /**

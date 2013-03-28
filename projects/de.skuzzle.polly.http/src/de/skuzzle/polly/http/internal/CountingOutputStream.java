@@ -22,11 +22,25 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import de.skuzzle.polly.http.api.TrafficInformation;
 
+/**
+ * {@link OutputStream} wrapper which counts all written bytes and updates a 
+ * {@link TrafficInformation} instance.
+ * 
+ * @author Simon Taddiken
+ */
 class CountingOutputStream extends FilterOutputStream {
 
-    private final TrafficInformationImpl trafficInfo;
+    /** The updated TrafficInformation */
+    protected final TrafficInformationImpl trafficInfo;
     
+    /**
+     * Creates a new CountingOutputStream.
+     * 
+     * @param out The wrapped OutputStream.
+     * @param trafficInfo TrafficInformation that are updated when data is written.
+     */
     public CountingOutputStream(OutputStream out, TrafficInformationImpl trafficInfo) {
         super(out);
         this.trafficInfo = trafficInfo;

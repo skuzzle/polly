@@ -22,11 +22,25 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import de.skuzzle.polly.http.api.TrafficInformation;
 
+/**
+ * {@link InputStream} wrapper which counts all read bytes and updates a 
+ * {@link TrafficInformation} instance.
+ * 
+ * @author Simon Taddiken
+ */
 class CountingInputStream extends FilterInputStream {
 
-    private final TrafficInformationImpl trafficInfo;
+    /** The updated TrafficInformation */
+    protected final TrafficInformationImpl trafficInfo;
     
+    /**
+     * Creates a new {@link CountingInputStream}.
+     * 
+     * @param in The wrapped InputStream.
+     * @param trafficInfo TrafficInformation that are updated when data is read.
+     */
     public CountingInputStream(InputStream in, TrafficInformationImpl trafficInfo) {
         super(in);
         this.trafficInfo = trafficInfo;

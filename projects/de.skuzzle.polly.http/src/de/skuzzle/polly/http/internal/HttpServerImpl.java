@@ -31,14 +31,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import com.sun.net.httpserver.HttpExchange;
 
 import de.skuzzle.polly.http.api.HttpEventHandler;
 import de.skuzzle.polly.http.api.HttpServer;
 import de.skuzzle.polly.http.api.HttpSession;
+import de.skuzzle.polly.http.api.ServerFactory;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswerHandler;
 import de.skuzzle.polly.http.api.answers.HttpBinaryAnswer;
@@ -58,19 +57,21 @@ class HttpServerImpl implements HttpServer {
     private final List<File> roots;
     private final Set<String> extensionWhitelist;
     private final AnswerHandlerMap handler;
+    private final ServerFactory factory;
     
     private com.sun.net.httpserver.HttpServer server;
     
     private boolean isrunning;
     
     
-    public HttpServerImpl() {
+    public HttpServerImpl(ServerFactory factory) {
         this.handlers = new ArrayList<>();
         this.ipToSession = new HashMap<>();
         this.idToSession = new HashMap<>();
         this.extensionWhitelist = new HashSet<>();
         this.handler = new AnswerHandlerMap();
         this.roots = new ArrayList<>();
+        this.factory = factory;
         
         // default handler
         this.registerHandler(HttpBinaryAnswer.class, new SimpleBinaryAnswerHandler());
@@ -87,21 +88,12 @@ class HttpServerImpl implements HttpServer {
     
     
     @Override
-    public void start(int port) throws IOException {
-        this.start(port, Executors.newCachedThreadPool());
-    }
-    
-    
-    
-    @Override
-    public void start(int port, ExecutorService service) throws IOException {
+    public void start() throws IOException {
         if (this.isRunning()) {
             throw new IllegalStateException("server already running");
         }
         
-        this.server = com.sun.net.httpserver.HttpServer.create(
-            new InetSocketAddress(port), 5);
-        this.server.setExecutor(service);
+        this.server = this.factory.create();
         this.server.createContext("/", new BasicEventHandler(this));
         this.server.start();
         this.isrunning = true;
