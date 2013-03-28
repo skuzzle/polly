@@ -95,6 +95,10 @@ public class BinaryArithmetic extends BinaryOperator<NumberLiteral, NumberLitera
             stack.push(new NumberLiteral(
                 resultPos, left.isInteger() ^ right.isInteger()));
             break;
+        case ATAN2:
+            stack.push(new NumberLiteral(resultPos, 
+                Math.atan2(left.getValue(), right.getValue())));
+            break;
         default:
             this.invalidOperatorType(this.getOp());
         }
