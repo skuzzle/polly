@@ -1,6 +1,8 @@
 package de.skuzzle.polly.core.parser.ast.declarations.types;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import de.skuzzle.polly.core.parser.ParseException;
@@ -8,6 +10,7 @@ import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.Identifier;
 import de.skuzzle.polly.core.parser.ast.ResolvableIdentifier;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
+import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.Visitable;
 import de.skuzzle.polly.tools.EqualsHelper;
 import de.skuzzle.polly.tools.Equatable;
@@ -24,7 +27,7 @@ import de.skuzzle.polly.tools.Equatable;
  * 
  * @author Simon Taddiken
  */
-public class Type implements Visitable<TypeVisitor>, Equatable {
+public class Type implements Visitable<TypeVisitor>, Equatable, Comparable<Type> {
     
     // XXX: static field order important!
 
@@ -32,13 +35,25 @@ public class Type implements Visitable<TypeVisitor>, Equatable {
     public final static Type NUM = new Type(new Identifier("num"), true, true);
     
     /** Primitive type for dates. */
-    public final static Type DATE = new Type(new Identifier("date"), true, true);
+    public final static Type DATE = new Type(new Identifier("date"), true, true) {
+        @Override
+        public int compareTo(Type o) {
+            if (o == DATE || !o.isPrimitve()) return 0;
+            return -o.compareTo(this);
+        }
+    };
     
     /** Primitive type for timespans. */
     public final static Type TIMESPAN = new Type(new Identifier("timespan"), true, true) {
         @Override
         boolean isA(Type other) {
             return other == this || other == DATE;
+        }
+        
+        @Override
+        public int compareTo(Type o) {
+            if (o == DATE) return 1;
+            return o == this ? 0 : -1;
         }
     };
     
@@ -48,6 +63,12 @@ public class Type implements Visitable<TypeVisitor>, Equatable {
         boolean isA(Type other) {
             return other == this || other == STRING;
         }
+        
+        @Override
+        public int compareTo(Type o) {
+            if (o == STRING) return 1;
+            return o == this ? 0 : -1;
+        }
     };
     
     /** Primitive type for users. */
@@ -56,10 +77,22 @@ public class Type implements Visitable<TypeVisitor>, Equatable {
         boolean isA(Type other) {
             return other == this || other == STRING;
         }
+        
+        @Override
+        public int compareTo(Type o) {
+            if (o == DATE) return 1;
+            return o == this ? 0 : -1;
+        }
     };
     
     /** Primitive type for strings. */
-    public final static Type STRING = new Type(new Identifier("string"), true, true);
+    public final static Type STRING = new Type(new Identifier("string"), true, true) {
+        @Override
+        public int compareTo(Type o) {
+            if (o == STRING || !o.isPrimitve()) return 0;
+            return -o.compareTo(this);
+        }
+    };
     
     /** Primitive type for booleans. */
     public final static Type BOOLEAN = new Type(new Identifier("boolean"), true, true);
@@ -84,6 +117,44 @@ public class Type implements Visitable<TypeVisitor>, Equatable {
         primitives.put(BOOLEAN.getName().getId(), BOOLEAN);
         primitives.put(HELP.getName().getId(), HELP);
         primitives.put(UNKNOWN.getName().getId(), UNKNOWN);
+    }
+    
+    
+    
+    /**
+     * Chooses the map type with the most specific signature from the given collection
+     * of types. This requires that all types in the given collection must be unifiable
+     * in the first place. If not, this method will throw an 
+     * {@link ASTTraversalException}. This method proceeds to compare the source types of
+     * each map type with the next one in the collection, choosing the one that is more 
+     * specific, then going on with then next element and so on. A primitive is more
+     * specific than another, if it extends the other. When comparing products, the
+     * one with the most more specific entries is chosen over the other one.
+     *  
+     * @param types Collection of {@link MapType MapTypes} from which the most specific
+     *          should be chosen.
+     * @param errorPos The position to report an error at if one occurs (see below)
+     * @return The considered most specific type within the given collection.
+     * @throws ASTTraversalException If the elements in the collection are not unifiable
+     *          with each other.
+     */
+    public static MapType getMostSpecific(Collection<MapType> types, Position errorPos) 
+            throws ASTTraversalException {
+
+        assert !types.isEmpty();
+        final Iterator<MapType> it = types.iterator();
+        MapType result = it.next();
+        while (it.hasNext()) {
+            final MapType next = it.next();
+            if (!tryUnify(result.getSource(), next.getSource()) && 
+                !tryUnify(next.getSource(), result.getSource())) {
+                
+                throw new ASTTraversalException(errorPos, 
+                    "Methodenaufruf mit nicht-eindeutigem Parametertyp");
+            }
+            result = result.compareTo(next) >= 0 ? result :next;
+        }
+        return result;
     }
     
     
@@ -178,8 +249,6 @@ public class Type implements Visitable<TypeVisitor>, Equatable {
     
     
     
-    private final static TypeUnifier unifier = new TypeUnifier();
-    
     /**
      * Tests whether the left type is an instance of the right type using unification.
      * 
@@ -188,7 +257,21 @@ public class Type implements Visitable<TypeVisitor>, Equatable {
      * @return Whether both types are unifiable.
      */
     public final static boolean tryUnify(Type left, Type right) {
-        return unifier.tryUnify(left, right);
+        return new TypeUnifier(true).tryUnify(left, right);
+    }
+    
+    
+    
+    /**
+     * Tests whether both types are superficially unifiable, not taking inheritance of
+     * primitive types into account.
+     * 
+     * @param first The left type expression.
+     * @param second The right type expression.
+     * @return Whether both types are unifiable.
+     */
+    public final static boolean tryUnifyNoInheritance(Type first, Type second) {
+        return new TypeUnifier(false).tryUnify(first, second);
     }
     
     
@@ -204,7 +287,7 @@ public class Type implements Visitable<TypeVisitor>, Equatable {
      *          <code>null</code> otherwise.
      */
     public final static Substitution unify(Type left, Type right) {
-        return unifier.unify(left, right);
+        return new TypeUnifier(true).unify(left, right);
     }
     
     
@@ -367,5 +450,12 @@ public class Type implements Visitable<TypeVisitor>, Equatable {
         // Types are equal if they can be unified.
         final Type other = (Type) o;
         return tryUnify(this, other);
+    }
+    
+    
+    
+    @Override
+    public int compareTo(Type o) {
+        return 0;
     }
 }

@@ -18,7 +18,7 @@ public abstract class AbstractTypeResolver extends DepthFirstVisitor {
     
     protected Namespace nspace;
     protected final Namespace rootNs;
-    protected final TypeUnifier unifier;
+    private final TypeUnifier unifier;
     
     
     
@@ -26,7 +26,7 @@ public abstract class AbstractTypeResolver extends DepthFirstVisitor {
         // create temporary namespace for executing user
         this.rootNs = namespace.enter();
         this.nspace = this.rootNs;
-        this.unifier = new TypeUnifier();
+        this.unifier = new TypeUnifier(true);
     }
     
     

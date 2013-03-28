@@ -98,4 +98,30 @@ public class ProductType extends Type implements Iterable<Type> {
     public Iterator<Type> iterator() {
         return this.types.iterator();
     }
+    
+    
+    
+    @Override
+    public int compareTo(Type o) {
+        if (!(o instanceof ProductType)) {
+            throw new IllegalArgumentException("types can not be compared");
+        }
+        final ProductType other = (ProductType) o;
+        assert this.types.size() == other.types.size();
+        final Iterator<Type> thisIt = this.iterator();
+        final Iterator<Type> otherIt = other.iterator();
+        int thisI = 0;
+        int otherI = 0;
+        while (thisIt.hasNext()) {
+            final Type thisNext = thisIt.next();
+            final Type otherNext = otherIt.next();
+            final int c = thisNext.compareTo(otherNext);
+            if (c < 0) {
+                ++otherI;
+            } else if (c > 0) {
+                ++thisI;
+            }
+        }
+        return thisI - otherI;
+    }
 }

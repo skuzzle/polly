@@ -17,6 +17,7 @@ public final class TypeUnifier {
     
 
     private int classes;
+    private final boolean subTypeIncl;
     private final Map<Type, Integer> typeToClass;
     private final Map<Integer, Type> classToType;
     
@@ -25,8 +26,11 @@ public final class TypeUnifier {
     /**
      * Creates a new TypeUnifier which can then be used to test for equality of type
      * expressions.
+     * @param subTypeIncl Whether sub type inclusion should be checked when comparing
+     *          primitives.
      */
-    public TypeUnifier() {
+    public TypeUnifier(boolean subTypeIncl) {
+        this.subTypeIncl = subTypeIncl;
         this.typeToClass = new HashMap<Type, Integer>();
         this.classToType = new HashMap<Integer, Type>();
     }
@@ -83,7 +87,7 @@ public final class TypeUnifier {
         final Type s = this.find(m);
         final Type t = this.find(n);
         
-        if (s.isA(t)) {
+        if (this.subTypeIncl && s.isA(t) || s == t) {
             return true;
         } else if (s instanceof MapType && t instanceof MapType) {
             this.union(s, t, subst);

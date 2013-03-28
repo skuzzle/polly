@@ -55,4 +55,15 @@ public class ListType extends Type {
     public boolean visit(TypeVisitor visitor) {
         return visitor.visit(this);
     }
+    
+    
+    
+    @Override
+    public int compareTo(Type o) {
+        if (!(o instanceof ListType)) {
+            throw new IllegalArgumentException("types can not be compared");
+        }
+        final ListType other = (ListType) o;
+        return this.subType.compareTo(other.subType);
+    }
 }

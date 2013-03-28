@@ -83,4 +83,15 @@ public class MapType extends Type {
     public boolean visit(TypeVisitor visitor) {
         return visitor.visit(this);
     }
+    
+    
+    
+    @Override
+    public int compareTo(Type o) {
+        if (!(o instanceof MapType)) {
+            throw new IllegalArgumentException("types can not be compared");
+        }
+        final MapType other = (MapType) o;
+        return this.source.compareTo(other.source);
+    }
 }

@@ -187,7 +187,7 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         
         // all call types that match a signature are stored in this list. If type 
         // resolution was successful, it will contain a single type.
-        final Collection<Type> matched = new ArrayList<Type>();
+        final Collection<MapType> matched = new ArrayList<MapType>();
         
         for (final Type s : node.getRhs().getTypes()) {
             final MapType tmp = s.mapTo(t);
@@ -195,21 +195,25 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
             for (final Type lhsType : node.getLhs().getTypes()) {
                 final Substitution subst = Type.unify(tmp, lhsType);
                 if (subst != null) {
-                    matched.add(lhsType.subst(subst));
+                    // safe cast because unification was successful
+                    // and lhs must be a MapType
+                    matched.add((MapType) lhsType.subst(subst));
                 }
             }
         }
         
+        MapType mtc = null;
         if (matched.isEmpty()) {
             // no matching type found
             this.reportError(node.getLhs(), 
                 "Keine passende Deklaration für den Aufruf von " + 
                 Unparser.toString(node.getLhs()) + " gefunden");
         } else if (matched.size() != 1) {
-            this.ambiguousCall(node, matched);
+            mtc = (MapType) Type.getMostSpecific(matched, node.getPosition());
+        } else {
+            mtc = (MapType) matched.iterator().next();
         }
 
-        final MapType mtc = (MapType) matched.iterator().next();
         
         node.getRhs().setUnique(mtc.getSource());
         node.getLhs().setUnique(mtc);
