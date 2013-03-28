@@ -8,7 +8,7 @@
     <property name="jar.title"         value="polly"/>
     
     <!-- The name of this projects main class. -->
-    <property name="jar.main"          value="polly.PollyBootstrapper"/>
+    <property name="jar.main"          value="de.skuzzle.polly.core.PollyBootstrapper"/>
 
     <!-- 
         Space-separated list of jar files relative to lib.dir to include 
