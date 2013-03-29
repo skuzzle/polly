@@ -176,7 +176,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         logger.info("Trying to deliver " + remind + " for " + forUser);
         try {
             if (remind.isMail()) {
-                this.deliverNowMail(remind, forUser);
+                this.deliverNowMail(remind, forUser, false);
             } else {
                 logger.trace("Remind is to be delivered in IRC. Checking user state");
                 boolean idle = this.isIdle(forUser) && checkIdleStatus;
@@ -211,10 +211,10 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         if (asMail && wasIdle) {
             // user was idle and wanted email notification
             this.deliverNowIrc(remind, forUser, online);
-            this.deliverNowMail(remind, forUser);
+            this.deliverNowMail(remind, forUser, wasIdle);
         } else if (asMail) {
             // user was offline and wanted email
-            this.deliverNowMail(remind, forUser);
+            this.deliverNowMail(remind, forUser, wasIdle);
         } else if (wasIdle) {
             // user was online and wanted no email notification: notify now and when he 
             // returns
@@ -302,7 +302,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     
     
     @Override
-    public void deliverNowMail(RemindEntity remind, User forUser) 
+    public void deliverNowMail(RemindEntity remind, User forUser, boolean wasIdle) 
                 throws DatabaseException, EMailException {
         logger.trace("Delivering " + remind + " now as mail");
         
@@ -325,8 +325,18 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
             String subject = String.format(SUBJECT, 
                 this.formatter.formatDate(remind.getDueDate()));
             String message = MAIL_FORMAT.format(remind, this.formatter);
-        
-            this.mails.sendMail(mail, subject, message);
+            
+            // if user was online, wait for reaction before sending remind as mail
+            if (wasIdle) {
+                new MailRunLater(forUser, 
+                    this.irc, 
+                    this.mails, 
+                    subject, 
+                    message, 
+                    mail).start();
+            } else {
+                this.mails.sendMail(mail, subject, message);
+            }
         }
     }
 

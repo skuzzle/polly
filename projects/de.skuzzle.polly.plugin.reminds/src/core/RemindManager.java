@@ -86,7 +86,7 @@ public interface RemindManager extends Disposable {
     
     public abstract void deliverNowIrc(RemindEntity remind, User forUser, boolean online);
     
-    public abstract void deliverNowMail(RemindEntity remind, User forUser) 
+    public abstract void deliverNowMail(RemindEntity remind, User forUser, boolean wasIdle) 
             throws DatabaseException, EMailException;
     
     public abstract void scheduleRemind(RemindEntity remind);
