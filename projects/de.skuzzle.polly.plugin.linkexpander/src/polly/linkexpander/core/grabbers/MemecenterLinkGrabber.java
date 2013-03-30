@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 public class MemecenterLinkGrabber extends AbstractHttpRequestGrabber {
     
     private final static Pattern LINK_PATTERN = Pattern.compile(
-        "(http://)?www.memecenter.com/fun/\\S+");
+        "(https?://)?www.memecenter.com/fun/\\S+");
     
     private final static Pattern TITLE_PATTERN = Pattern.compile(
         "<title>([^<]+)</title>");

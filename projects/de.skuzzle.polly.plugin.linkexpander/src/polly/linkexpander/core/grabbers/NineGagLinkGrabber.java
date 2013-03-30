@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 public class NineGagLinkGrabber extends AbstractHttpRequestGrabber {
     
     private final static Pattern LINK_PATTERN = Pattern.compile(
-        "http://9gag.com/gag/\\d+");
+        "https?://9gag.com/gag/\\d+");
     
     private final static Pattern TITLE_PATTERN = Pattern.compile(
         "<title>([^<]+)</title>");
