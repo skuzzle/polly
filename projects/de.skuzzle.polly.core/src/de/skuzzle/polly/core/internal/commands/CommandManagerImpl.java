@@ -387,8 +387,9 @@ public class CommandManagerImpl implements CommandManager {
             Command cmd = this.getCommand(id.getStringValue());
             
             logger.trace("Renewing command-specific constants");
-            cmd.renewConstants();
-            return cmd.getConstants();
+            final Map<String, Types> constants = new HashMap<>();
+            cmd.renewConstants(constants);
+            return constants;
         } catch (Exception e) {
             return null;
         }

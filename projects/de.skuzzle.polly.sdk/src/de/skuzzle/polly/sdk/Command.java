@@ -706,49 +706,14 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 	
 	
 	/**
-	 * <p>Registers the given Type including its  value as a constant that can be used in
-	 * any parameter of this command when executing it. The constant is only valid while 
-	 * parsing this command and becomes invalid after execution.</p>
+	 * This method does nothing in its default implementation. It can be overridden to 
+	 * provide some command specific constants before actually evaluating a polly 
+	 * expression.
 	 * 
-	 * <p>Before parsing of your command, polly will query your command for its 
-	 * registered constants (calling {@link #renewConstants()} and 
-	 * {@link #getConstants()}). After execution of the command, the constant map will be
-	 * cleared.</p> 
-	 * 
-	 * @param name The name of the constant. Must be a valid polly identifier, otherwise
-	 *             it won't be usable.
-	 * @param type The constant to register.
+	 * @param map Map that can be filled with custom variables. 
 	 * @since 0.7
 	 */
-	public void registerConstant(String name, Types type) {
-	    this.constants.put(name, type);
-	}
-	
-	
-	
-	/**
-	 * This method does nothing in its default implementation. It will be called by 
-	 * polly before parsing the complete command, so that you can use 
-	 * {@link #registerConstant(String, Types)} when overriding this method to
-	 * provide command sepcific constants.
-	 * 
-	 * @since 0.7
-	 */
-	public void renewConstants() { }
-	
-	
-	
-	/**
-	 * Gets a list of registered constants. This will be cleared after execution of your 
-	 * command, so you must implement {@link #renewConstants()} to provide fresh
-	 * constants upon every execution of your command.
-	 * 
-	 * @return A map of all registered constants.
-	 * @since 0.7
-	 */
-	public final Map<String, Types> getConstants() {
-	    return this.constants;
-	}
+	public void renewConstants(Map<String, Types> map) { }
 	
 	
 	
