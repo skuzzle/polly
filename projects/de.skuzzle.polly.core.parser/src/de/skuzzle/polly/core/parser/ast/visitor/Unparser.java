@@ -28,15 +28,40 @@ import de.skuzzle.polly.core.parser.ast.lang.Operator.OpType;
 import de.skuzzle.polly.tools.streams.StringBuilderWriter;
 
 
-
+/**
+ * The unparser traverses the AST to re-generate the string that the AST was created from.
+ * If using the default literal formatter, the generated string is guaranteed to be 
+ * parseable again. If the AST was not transformed in any way, the resulting string will
+ * be syntactical equal (disregarding whitespaces) to the string that the AST was created
+ * from.
+ * 
+ * @author Simon Taddiken
+ */
 public class Unparser extends DepthFirstVisitor {
     
+    /**
+     * Formats an AST (or just a sub tree) into a string using a 
+     * {@link LiteralFormatter#DEFAULT default literal formatter}. This string is 
+     * guaranteed to be parseable as a valid polly command again. 
+     * 
+     * @param node AST node to format.
+     * @return The formatted string.
+     */
     public static String toString(Node node) {
         return toString(node, LiteralFormatter.DEFAULT);
     }
     
     
     
+    /**
+     * Formats an AST (or just a sub tree) into a string using a custom 
+     * {@link LiteralFormatter}. Depending on the output of this formatter, the resulting
+     * string might not bot parseable again as a valid polly command.
+     * 
+     * @param node AST node to format.
+     * @param formatter Formatter to format occurring literals with. 
+     * @return The formatted string.
+     */
     public static String toString(Node node, LiteralFormatter formatter) {
         final StringBuilderWriter sbw = new StringBuilderWriter();
         final Unparser unp = new Unparser(new PrintWriter(sbw), formatter);
@@ -55,6 +80,12 @@ public class Unparser extends DepthFirstVisitor {
     
 
     
+    /**
+     * Creates a new Unparser.
+     * 
+     * @param out Writer to write the output to.
+     * @param formatter Formatter to format occuring literals with.
+     */
     public Unparser(PrintWriter out, LiteralFormatter formatter) {
         this.out = out;
         this.literalFormatter = formatter;
@@ -62,6 +93,10 @@ public class Unparser extends DepthFirstVisitor {
     
     
     
+    /**
+     * Creates a new Unparser which uses a default literal formatter.
+     * @param out Writer ti write the outpu to.
+     */
     public Unparser(PrintWriter out) {
         this(out, LiteralFormatter.DEFAULT);
     }

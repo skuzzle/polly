@@ -13,6 +13,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.Inspect;
 import de.skuzzle.polly.core.parser.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.core.parser.ast.expressions.Native;
 import de.skuzzle.polly.core.parser.ast.expressions.OperatorCall;
+import de.skuzzle.polly.core.parser.ast.expressions.Problem;
 import de.skuzzle.polly.core.parser.ast.expressions.VarAccess;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.ListLiteral;
@@ -132,4 +133,7 @@ public interface ASTTraversal {
     public abstract int before(Inspect node) throws ASTTraversalException;
     public abstract int after(Inspect node) throws ASTTraversalException;
 
+    
+    public abstract int before(Problem node) throws ASTTraversalException;
+    public abstract int after(Problem node) throws ASTTraversalException;
 }

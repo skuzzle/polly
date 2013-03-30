@@ -1,4 +1,4 @@
-package de.skuzzle.test.polly.parsing.scanner;
+package de.skuzzle.polly.test.core.parser.scanner;
 
 
 import junit.framework.Assert;
@@ -42,6 +42,13 @@ public class TestReadCharacters extends AbstractScannerTest {
         public void pushBack(int t) {
             super.pushBack(t);
         }
+        
+        
+        
+        @Override
+        public void pushBackArtificial(int c) {
+            super.pushBackArtificial(c);
+        }
     }
     
     
@@ -72,8 +79,8 @@ public class TestReadCharacters extends AbstractScannerTest {
         final String input = "1234";
         final PublicTokenStream scanner = this.obtain(input);
         Assert.assertTrue(scanner.nextIs('1'));
-        scanner.pushBack('5');
-        scanner.pushBack('6');
+        scanner.pushBackArtificial('5');
+        scanner.pushBackArtificial('6');
         Assert.assertTrue(scanner.nextIs('5'));
         Assert.assertTrue(scanner.nextIs('6'));
         Assert.assertTrue(scanner.nextIs('2'));
@@ -97,7 +104,7 @@ public class TestReadCharacters extends AbstractScannerTest {
     public void testReadCharacters4() {
         final String input = "";
         final PublicTokenStream scanner = this.obtain(input);
-        scanner.pushBack('a');
+        scanner.pushBackArtificial('a');
         Assert.assertTrue(scanner.nextIs('a'));
         Assert.assertTrue(scanner.nextIs(-1));
     }

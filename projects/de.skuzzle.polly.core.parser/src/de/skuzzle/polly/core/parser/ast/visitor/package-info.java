@@ -1,5 +1,5 @@
 /**
- * Defines classes to traverse an AST in well-defined or custom order. 
+ * Defines classes to traverse an AST in pre-defined or custom order. 
  * 
  * @author Simon
  */

@@ -1,5 +1,7 @@
 package de.skuzzle.polly.core.parser;
 
+import de.skuzzle.polly.core.parser.problems.Problems;
+
 /**
  * Exception indicating a syntax error during parsing.
  * 
@@ -21,8 +23,8 @@ public class SyntaxException extends ParseException {
      * @param position Position of this error.
      */
     public SyntaxException(TokenType expected, Token found, Position position) {
-        super("Unerwartetes Symbol: '" + found.toString(false, false) + 
-            "'. Erwartet: '" + expected.toString() + "'", position);
+        super(Problems.format(Problems.UNEXPECTED_TOKEN, 
+            found.toString(false, false), expected.toString()), position);
         this.expected = expected;
         this.found = found;
     }

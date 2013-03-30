@@ -22,6 +22,8 @@
         <antcall target="all" inheritAll="true" inheritRefs="true">
             <param name="target" value="dist.debug"/>
         </antcall>
+        
+        <antcall target="all.tests" inheritAll="true" inheritRefs="true"/>
     </target>
 
     
@@ -120,7 +122,9 @@
     
     
     
-    <target name="copyPlugins">
-        
+    <!-- Runs tests for all test projects. -->
+    <target name="all.tests">
+        <ant dir="de.skuzzle.polly.test.core.parser" target="tests" 
+            inheritAll="false"/>
     </target>
 </project>

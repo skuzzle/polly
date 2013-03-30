@@ -18,6 +18,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.Unparser;
+import de.skuzzle.polly.core.parser.problems.Problems;
 
 
 
@@ -26,19 +27,21 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
     
     
     public SecondPassTypeResolver(FirstPassTypeResolver fptr) {
-        super(fptr.getCurrentNameSpace(), fptr.getUnifier());
+        super(fptr.getCurrentNameSpace(), fptr.reporter);
     }
     
     
     
-    private void applyType(Expression parent, Expression child) 
+    private boolean applyType(Expression parent, Expression child) 
             throws ASTTraversalException {
-        if (parent.getTypes().size() == 1 && !child.typeResolved()) {
+        if (parent.getTypes().size() == 1) {
             child.setUnique(parent.getTypes().get(0));
             parent.setUnique(child.getUnique());
-        } else if (!child.typeResolved()){
+            return true;
+        } else if (!child.typeResolved() && !this.reporter.hasProblems()) {
             this.reportError(parent, "Nicht eindeutiger Typ");
         }
+        return false;
     }
     
     
@@ -72,7 +75,10 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         case ABORT: return false;
         }
         
-        this.applyType(node, node);
+        if (!this.applyType(node, node)) {
+            return true;
+        }
+
         
         final MapType mtc = (MapType) node.getUnique();
         node.getBody().setUnique(mtc.getTarget());
@@ -91,7 +97,13 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         case SKIP: return true;
         case ABORT: return false;
         }        
-        Type last = null;
+        
+        if (node.getContent().isEmpty()) {
+            // empty lists are not allowed. This is checked by FirstPassTypeResolver
+            return true;
+        }
+        
+        final Type last = node.getContent().iterator().next().getUnique();
         for (final Expression exp : node.getContent()) {
             if (!exp.visit(this)) {
                 return false;
@@ -101,13 +113,10 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
                     this.typeError(exp, last, exp.getUnique());
                 }
             }
-            last = exp.getUnique();
         }
         
         if (node.getTypes().size() == 1) {
             node.setUnique(last.listOf());
-        } else {
-            this.reportError(node, "Uneindeutiger Listen Type");
         }
         
         return this.after(node) == CONTINUE;
@@ -205,13 +214,17 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         MapType mtc = null;
         if (matched.isEmpty()) {
             // no matching type found
-            this.reportError(node.getLhs(), 
-                "Keine passende Deklaration für den Aufruf von " + 
-                Unparser.toString(node.getLhs()) + " gefunden");
+            final String problem = node instanceof OperatorCall 
+                ? Problems.INCOMPATIBLE_OP 
+                : Problems.INCOMPATIBLE_CALL;
+            this.reportError(node.getLhs(), problem, Unparser.toString(node.getLhs()));
+            return CONTINUE;
         } else if (matched.size() != 1) {
             mtc = (MapType) Type.getMostSpecific(matched, node.getPosition());
         } else {
             mtc = (MapType) matched.iterator().next();
+            this.ambiguousCall(node, matched);
+            return CONTINUE;
         }
 
         
@@ -237,7 +250,11 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
     
     @Override
     public boolean visit(Inspect node) throws ASTTraversalException {
+        switch (this.before(node)) {
+        case SKIP: return true;
+        case ABORT: return false;
+        }
         // nothing to do here but prevent from executing super class visitInspect
-        return this.before(node) == CONTINUE && this.after(node) == CONTINUE;
+        return this.after(node) == CONTINUE;
     }
 }

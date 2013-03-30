@@ -15,6 +15,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.Expression;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.ExecutionVisitor;
 import de.skuzzle.polly.core.parser.ast.visitor.resolving.TypeResolver;
+import de.skuzzle.polly.core.parser.problems.SimpleProblemReporter;
 
 
 /**
@@ -37,7 +38,7 @@ public class DeclarationReader implements Closeable {
 
         public DeclarationParser(String input, String charset) 
                 throws UnsupportedEncodingException {
-            super(input);
+            super(input, new SimpleProblemReporter());
         }
         
         
@@ -116,7 +117,7 @@ public class DeclarationReader implements Closeable {
             }
             
             final Assignment assign = (Assignment) exp;
-            TypeResolver.resolveAST(assign, this.nspace);
+            TypeResolver.resolveAST(assign, this.nspace, new SimpleProblemReporter());
             assign.visit(this.executor);
             return true;
         } catch (ASTTraversalException e) {

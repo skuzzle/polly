@@ -80,10 +80,4 @@ public class Cast extends Operator {
         vd.setNative(true);
         return vd;
     }
-
-
-
-    @Override
-    public void resolveType(Namespace ns, ASTVisitor typeResolver)
-        throws ASTTraversalException {}
 }

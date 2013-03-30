@@ -1,5 +1,6 @@
 package de.skuzzle.polly.core.parser;
 
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
@@ -79,5 +80,9 @@ public class PrecedenceTable {
     
     public void add(PrecedenceLevel level, TokenType t) {
         this.levels.get(level).add(t);
+    }
+    
+    public Collection<TokenType> getLevel(PrecedenceLevel level) {
+        return this.levels.get(level);
     }
 }

@@ -7,6 +7,7 @@ import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.Transformation;
+import de.skuzzle.polly.tools.Equatable;
 
 /**
  * Represents a date literal.
@@ -87,5 +88,20 @@ public class DateLiteral extends Literal {
     public Expression transform(Transformation transformation) 
             throws ASTTraversalException {
         return transformation.transformDate(this);
+    }
+    
+    
+    
+    @Override
+    public Class<?> getEquivalenceClass() {
+        return DateLiteral.class;
+    }
+    
+    
+    
+    @Override
+    public boolean actualEquals(Equatable o) {
+        final DateLiteral other = (DateLiteral) o;
+        return this.value.equals(other.value);
     }
 }

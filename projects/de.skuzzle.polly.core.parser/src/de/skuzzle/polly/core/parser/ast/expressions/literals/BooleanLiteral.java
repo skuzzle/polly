@@ -5,6 +5,7 @@ import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.Transformation;
+import de.skuzzle.polly.tools.Equatable;
 
 /**
  * Represents a boolean literal and can hold the values <code>true</code> or 
@@ -73,5 +74,20 @@ public class BooleanLiteral extends Literal {
     public Expression transform(Transformation transformation) 
             throws ASTTraversalException {
         return transformation.transformBoolean(this);
+    }
+    
+    
+    
+    @Override
+    public Class<?> getEquivalenceClass() {
+        return BooleanLiteral.class;
+    }
+    
+    
+    
+    @Override
+    public boolean actualEquals(Equatable o) {
+        final BooleanLiteral other = (BooleanLiteral) o;
+        return this.value == other.value;
     }
 }

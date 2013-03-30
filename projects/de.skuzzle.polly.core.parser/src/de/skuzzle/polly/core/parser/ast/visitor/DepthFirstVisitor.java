@@ -13,6 +13,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.Inspect;
 import de.skuzzle.polly.core.parser.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.core.parser.ast.expressions.Native;
 import de.skuzzle.polly.core.parser.ast.expressions.OperatorCall;
+import de.skuzzle.polly.core.parser.ast.expressions.Problem;
 import de.skuzzle.polly.core.parser.ast.expressions.VarAccess;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.ListLiteral;
@@ -132,6 +133,13 @@ public class DepthFirstVisitor extends VisitorAdapter {
         return this.after(node) == CONTINUE;
     }
 
+    
+    
+    @Override
+    public boolean visit(Problem problem) throws ASTTraversalException {
+        return this.before(problem) == CONTINUE && this.after(problem) == CONTINUE;    
+    }
+    
     
 
     @Override

@@ -23,6 +23,7 @@
     <property name="dependencies.internal" value="
         **/polly.parser.jar
         **/polly.process.jar
+        **/polly.tools.jar
     "/>
     
     
@@ -56,6 +57,7 @@
                 <source path="${src.dir}"/>
                 <source path="/de.skuzzle.polly.core.parser"/>
                 <source path="/de.skuzzle.polly.process"/>
+                <source path="/de.skuzzle.polly.tools"/>
                 <output path="${build.debug.dir}"/>
                 <library pathref="buildpath.eclipse"/>
             </classpath>

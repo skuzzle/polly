@@ -6,10 +6,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+
+import de.skuzzle.polly.core.parser.ast.Identifier;
 import de.skuzzle.polly.core.parser.ast.ResolvableIdentifier;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
 import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
 import de.skuzzle.polly.core.parser.ast.declarations.types.MapType;
+import de.skuzzle.polly.core.parser.ast.declarations.types.MissingType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.ProductType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Substitution;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
@@ -29,6 +32,8 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.ProductLiteral;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.DepthFirstVisitor;
 import de.skuzzle.polly.core.parser.ast.visitor.Unparser;
+import de.skuzzle.polly.core.parser.problems.ProblemReporter;
+import de.skuzzle.polly.core.parser.problems.Problems;
 import de.skuzzle.polly.core.parser.util.Combinator;
 import de.skuzzle.polly.core.parser.util.Combinator.CombinationCallBack;
 
@@ -44,8 +49,8 @@ import de.skuzzle.polly.core.parser.util.Combinator.CombinationCallBack;
 class FirstPassTypeResolver extends AbstractTypeResolver {
     
     
-    public FirstPassTypeResolver(Namespace namespace) {
-        super(namespace);
+    public FirstPassTypeResolver(Namespace namespace, ProblemReporter reporter) {
+        super(namespace, reporter);
     }
     
     
@@ -80,8 +85,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         final Set<String> names = new HashSet<String>();
         for (final Declaration d : node.getFormal()) {
             if (!names.add(d.getName().getId())) {
-                this.reportError(d.getName(),
-                    "Doppelte Deklaration von '" + d.getName().getId() + "'");
+                this.reportError(d.getName(), Problems.DUPLICATED_DECL, d.getName());
             }
             if (!d.visit(this)) {
                 return false;
@@ -99,7 +103,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         // check whether all formal parameters have been used
         for (final Declaration d : node.getFormal()) {
             if (d.isUnused()) {
-                this.reportError(d, "Unbenutzer Parameter: " + d.getName());
+                // this.reportError(d, "Unbenutzer Parameter: " + d.getName());
             }
         }
         
@@ -115,7 +119,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     @Override
     public int after(ListLiteral node) throws ASTTraversalException {
         if (node.getContent().isEmpty()) {
-            this.reportError(node, "Listen müssen mind. 1 Element enthalten.");
+            this.reportError(node, Problems.EMPTY_LIST);
         }
         for (final Expression exp : node.getContent()) {
             for (final Type t : exp.getTypes()) {
@@ -168,7 +172,8 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
                 
                 for (final Declaration decl : decls) {
                     if (decl.getName().equals(node.getName())) {
-                        reportError(access, "Rekursive Aufrufe sind nicht erlaubt");
+                        reportError(access, Problems.RECURSIVE_CALL);
+                        return ABORT;
                     }
                     if (!decl.isNative()) {
                         if (!decl.getExpression().visit(this)) {
@@ -227,36 +232,38 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
             hasMapType |= type instanceof MapType;
         }
         if (!hasMapType) {
-            this.reportError(node.getLhs(), "Unbekannte Funktion: " + 
+            this.reportError(node.getLhs(), Problems.NO_FUNCTION,
                 Unparser.toString(node.getLhs()));
-        }
-        
-        if (node.getLhs().getTypes().isEmpty()) {
-            this.reportError(node.getLhs(), "Funktion nicht gefunden");
-        }
-        
-        // sort out all lhs types that do not match the rhs types
-        for (final Type possibleLhs : possibleTypes) {
-            for (final Type lhs : node.getLhs().getTypes()) {
-                final Substitution subst = Type.unify(lhs, possibleLhs);
-                if (subst != null) {
-                    // construct new type with the argument types of lhs, and 
-                    // result type of rhs
-                    final MapType lhsMap = (MapType) lhs;
-                    final MapType plhsMap = (MapType) possibleLhs;
+        } else if (node.getLhs().getTypes().isEmpty()) {
+            this.reportError(node.getLhs(), Problems.UNKNOWN_FUNCTION, 
+                Unparser.toString(node.getLhs()));
+        } else {
+            // sort out all lhs types that do not match the rhs types
+            for (final Type possibleLhs : possibleTypes) {
+                for (final Type lhs : node.getLhs().getTypes()) {
+                    final Substitution subst = Type.unify(lhs, possibleLhs);
+                    if (subst != null) {
+                        // construct new type with the argument types of lhs, and 
+                        // result type of rhs
+                        final MapType lhsMap = (MapType) lhs;
+                        final MapType plhsMap = (MapType) possibleLhs;
                     
-                    final MapType mtc = (MapType) plhsMap.getSource().mapTo(
-                        lhsMap.getTarget()).subst(subst);
-                    node.addType(mtc.getTarget());
+                        final MapType mtc = (MapType) plhsMap.getSource().mapTo(
+                            lhsMap.getTarget()).subst(subst);
+                        node.addType(mtc.getTarget());
+                    }  
                 }
             }
         }
-        
-        
+            
+            
         if (node.getTypes().isEmpty()) {
-            this.reportError(node.getRhs(),
-                "Keine passende Deklaration für den Aufruf von " + 
-                Unparser.toString(node.getLhs()) + " gefunden");
+            final String problem = node instanceof OperatorCall 
+                ? Problems.INCOMPATIBLE_OP 
+                : Problems.INCOMPATIBLE_CALL;
+            this.reportError(node.getLhs(), problem, 
+                Unparser.toString(node.getLhs()));
+            node.addType(new MissingType(new Identifier("$compatibilty")));
         }
         return this.after(node) == CONTINUE;
     }
@@ -279,15 +286,14 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         case ABORT: return false;
         }        
         if (!(node.getLhs() instanceof VarAccess)) {
-            this.reportError(node.getLhs(), "Operand muss ein Bezeichner sein");
+            this.reportError(node.getLhs(), Problems.ILLEGAL_NS_ACCESS);
         } else if (!(node.getRhs() instanceof VarAccess)) {
-            this.reportError(node.getRhs(), "Operand muss ein Bezeichner sein");
+            this.reportError(node.getRhs(), Problems.ILLEGAL_NS_ACCESS);
         }
         
         final VarAccess va = (VarAccess) node.getLhs();
         if (!Namespace.exists(va.getIdentifier())) {
-            this.reportError(node.getLhs(), 
-                "Unbekannter Namespace: " + va.getIdentifier());
+            this.reportError(node.getLhs(), Problems.UNKNOWN_NS, va.getIdentifier());
         }
         final Namespace last = this.nspace;
         this.nspace = Namespace.forName(va.getIdentifier()).derive(this.nspace);
@@ -328,8 +334,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
             final VarAccess nsName = (VarAccess) nsa.getLhs();
             
             if (!Namespace.exists(nsName.getIdentifier())) {
-                this.reportError(nsName, "Unbekannter Namespace: " + 
-                    nsName.getIdentifier());
+                this.reportError(nsName, Problems.UNKNOWN_NS, nsName.getIdentifier());
             }
             
             var = ((VarAccess) nsa.getRhs()).getIdentifier();
@@ -340,7 +345,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         
         final Collection<Declaration> decls = target.lookupAll(var);
         if (decls.isEmpty()) {
-            this.reportError(var, "Unbekannte Variable: " + var);
+            this.reportError(var, Problems.UNKNOWN_VAR, var.getId());
         }
         node.setUnique(Type.STRING);
         node.addType(Type.STRING);

@@ -7,34 +7,38 @@ import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.Node;
 import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
-import de.skuzzle.polly.core.parser.ast.declarations.types.TypeUnifier;
 import de.skuzzle.polly.core.parser.ast.expressions.Call;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.DepthFirstVisitor;
+import de.skuzzle.polly.core.parser.problems.ProblemReporter;
+import de.skuzzle.polly.core.parser.problems.Problems;
 
 
 public abstract class AbstractTypeResolver extends DepthFirstVisitor {
     
     protected Namespace nspace;
     protected final Namespace rootNs;
-    private final TypeUnifier unifier;
+    protected final ProblemReporter reporter;
     
     
-    
-    public AbstractTypeResolver(Namespace namespace) {
+    public AbstractTypeResolver(Namespace namespace, ProblemReporter reporter) {
         // create temporary namespace for executing user
         this.rootNs = namespace.enter();
         this.nspace = this.rootNs;
-        this.unifier = new TypeUnifier(true);
+        this.reporter = reporter;
     }
     
     
     
-    AbstractTypeResolver(Namespace namespace, TypeUnifier unifier) {
-        this.rootNs = namespace;
-        this.nspace = this.rootNs;
-        this.unifier = unifier;
+    
+    /**
+     * Gets the {@link ProblemReporter} used by this type resolver.
+     * 
+     * @return The problem reporter.
+     */
+    public ProblemReporter getReporter() {
+        return this.reporter;
     }
     
     
@@ -57,17 +61,6 @@ public abstract class AbstractTypeResolver extends DepthFirstVisitor {
      */
     public Namespace getRootNamespace() {
         return this.rootNs;
-    }
-    
-    
-    
-    /**
-     * Gets the currently used unification context.
-     * 
-     * @return Current type unification context.
-     */
-    public TypeUnifier getUnifier() {
-        return this.unifier;
     }
     
     
@@ -100,18 +93,19 @@ public abstract class AbstractTypeResolver extends DepthFirstVisitor {
      * 
      * @param node Node which position will be used for the {@link ASTTraversalException}.
      * @param error Error message.
+     * @param params Formatting objects.
      * @throws ASTTraversalException Will always be thrown.
      */
-    protected void reportError(Node node, String error) 
+    protected void reportError(Node node, String error, Object...params) 
             throws ASTTraversalException {
-        this.reportError(node.getPosition(), error);
+        this.reportError(node.getPosition(), error, params);
     }
     
     
     
-    protected void reportError(Position position, String error) 
+    protected void reportError(Position position, String error, Object...params) 
             throws ASTTraversalException {
-        throw new ASTTraversalException(position, error);
+        this.reporter.semanticProblem(Problems.format(error, params), position);
     }
     
     
@@ -126,7 +120,7 @@ public abstract class AbstractTypeResolver extends DepthFirstVisitor {
     
     protected void typeError(Expression exp, Type expected, Type found) 
             throws ASTTraversalException {
-        throw new ASTTraversalException(exp.getPosition(), "Typefehler. Erwartet: " + 
-            expected + ", gefunden: " + found);
+        
+        this.reporter.typeProblem(expected, found, exp.getPosition());
     }
 }

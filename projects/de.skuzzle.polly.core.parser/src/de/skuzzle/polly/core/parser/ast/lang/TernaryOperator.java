@@ -14,6 +14,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.Literal;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTVisitor;
+import de.skuzzle.polly.core.parser.ast.visitor.resolving.AbstractTypeResolver;
 import de.skuzzle.polly.core.parser.ast.visitor.resolving.TypeResolver;
 import de.skuzzle.polly.tools.collections.Stack;
 
@@ -88,9 +89,12 @@ public abstract class TernaryOperator<FIRST extends Literal, SECOND extends Lite
         final SECOND second = (SECOND) ns.resolveFirst(SECOND_PARAM_NAME).getExpression();
         final THIRD third = (THIRD) ns.resolveFirst(THIRD_PARAM_NAME).getExpression();
         
-        this.exec(stack, ns, first, second, third, 
-            new Position(first.getPosition(), third.getPosition()), execVisitor);
+        final Position resultPos = Position.correctSpan(first.getPosition(), 
+            second.getPosition(), third.getPosition());
+        
+        this.exec(stack, ns, first, second, third, resultPos, execVisitor);
     }
+    
     
     
     /**
@@ -112,7 +116,7 @@ public abstract class TernaryOperator<FIRST extends Literal, SECOND extends Lite
     
     
     @Override
-    public final void resolveType(Namespace ns, ASTVisitor typeResolver)
+    public final void resolveType(Namespace ns, AbstractTypeResolver typeResolver)
             throws ASTTraversalException {
         final Expression first = ns.resolveFirst(FIRST_PARAM_NAME).getExpression();
         final Expression second = ns.resolveFirst(SECOND_PARAM_NAME).getExpression();
@@ -134,7 +138,8 @@ public abstract class TernaryOperator<FIRST extends Literal, SECOND extends Lite
      * @throws ASTTraversalException If context checking fails.
      */
     protected void resolve(Expression first, Expression second, Expression third, 
-            Namespace ns, ASTVisitor typeResolver) throws ASTTraversalException {
+            Namespace ns, AbstractTypeResolver typeResolver) 
+                throws ASTTraversalException {
         // empty
     }
 }

@@ -4,7 +4,9 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.skuzzle.polly.core.parser.PrecedenceTable.PrecedenceLevel;
 import de.skuzzle.polly.core.parser.ast.Identifier;
@@ -13,6 +15,7 @@ import de.skuzzle.polly.core.parser.ast.ResolvableIdentifier;
 import de.skuzzle.polly.core.parser.ast.Root;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
 import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
+import de.skuzzle.polly.core.parser.ast.declarations.types.MissingType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.ProductType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
 import de.skuzzle.polly.core.parser.ast.expressions.Assignment;
@@ -38,6 +41,11 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.StringLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.TimespanLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.UserLiteral;
 import de.skuzzle.polly.core.parser.ast.lang.Operator.OpType;
+import de.skuzzle.polly.core.parser.problems.ProblemReporter;
+import de.skuzzle.polly.core.parser.problems.Problems;
+import de.skuzzle.polly.core.parser.ast.expressions.Problem;
+import de.skuzzle.polly.tools.collections.LinkedStack;
+import de.skuzzle.polly.tools.collections.Stack;
 
 
 /**
@@ -111,25 +119,48 @@ import de.skuzzle.polly.core.parser.ast.lang.Operator.OpType;
  *             | '\' .                                         // any escaped token
  * </pre>
  * 
+ * <p>This parser has simple support to report multiple problems during parsing. For 
+ * incomplete expressions, {@link Problem} nodes are inserted in the resulting AST. For
+ * missing types will be created temporary types and the same applies to missing 
+ * identifiers. Occurring problems will be reported to the outside using a 
+ * {@link ProblemReporter} instance.</p>
+ * 
  * @author Simon Taddiken
  */
 public class InputParser {
-    
 
-    private final PrecedenceTable operators;
-    private int openExpressions;
+    /** Operator precedence table */
+    protected final PrecedenceTable operators;
+    
+    /** Stack which contains closing token types for currently parsed sub expressions */
+    private final Stack<TokenType> expressions;
+    
+    /** Scanner that reads tokens from the input */
     protected InputScanner scanner;
+    
+    /** Cache for missing type references */
+    private final Map<String, Type> typeCache = new HashMap<String, Type>();
+    
+    /** ID generator for missing identifiers */
+    private int missingId;
+    
+    /** Used to report problems during parsing */
+    private final ProblemReporter reporter;
     
     
     
     /**
      * Creates a new parser which will use the provided scanner to read the tokens from.
+     * It will use the same {@link ProblemReporter} as the provided scanner.
      * 
      * @param scanner The {@link InputScanner} which provides the token stream.
+     * @param reporter The ProblemReporter for this parser.
      */
-    public InputParser(InputScanner scanner) {
+    public InputParser(InputScanner scanner, ProblemReporter reporter) {
         this.scanner = scanner;
         this.operators = new PrecedenceTable();
+        this.expressions = new LinkedStack<TokenType>();
+        this.reporter = reporter;
     }
     
     
@@ -139,10 +170,13 @@ public class InputParser {
      * encoding.
      * 
      * @param input The string to parse.
+     * @param reporter The ProblemReporter for this parser.
      */
-    public InputParser(String input) {
+    public InputParser(String input, ProblemReporter reporter) {
         this.scanner = new InputScanner(input);
         this.operators = new PrecedenceTable();
+        this.expressions = new LinkedStack<TokenType>();
+        this.reporter = reporter;
     }
     
     
@@ -153,12 +187,15 @@ public class InputParser {
      * 
      * @param input The string to parse.
      * @param encoding The charset name to use.
+     * @param reporter The ProblemReporter for this parser.
      * @throws UnsupportedEncodingException If the charset name was invalid.
      */
-    public InputParser(String input, String encoding) 
+    public InputParser(String input, String encoding, ProblemReporter reporter) 
             throws UnsupportedEncodingException {
         this.scanner = new InputScanner(input, Charset.forName(encoding));
         this.operators = new PrecedenceTable();
+        this.expressions = new LinkedStack<TokenType>();
+        this.reporter = reporter;
     }
     
     
@@ -191,69 +228,143 @@ public class InputParser {
     public Root parse() throws ParseException {
         return this.parseRoot();
     }
-
+    
     
     
     /**
-     * Throws a {@link ParseException} indicating an unexpected token.
+     * Creates a new {@link Identifier} with a generated name.
      * 
-     * @param expected The token that was expected but not found.
-     * @param found The token which was found instead.
-     * @throws SyntaxException Always thrown.
+     * @param position Position of the generated identifier.
+     * @return A new identifier.
      */
-    protected void unexpectedToken(TokenType expected, Token found) 
-            throws SyntaxException {
-        throw new SyntaxException(expected, found, this.scanner.spanFrom(found));
+    private Identifier missingIdentifier(Position position) {
+        return new Identifier(position, "$missing_" + (this.missingId++));
     }
     
     
     
     /**
-     * Throws a {@link ParseException} if the not token has not the expected type. If the 
-     * next token is the expected one, it is consumed and returned.
+     * Tries to look up a primitive type by name. If no such type exists, a new
+     * temporary type with the requested name is created and stored in a cache. The
+     * next time a type with the same name is requested, that cached type will
+     * be returned.
+     * 
+     * @param name Type name to resolve.
+     * @return The resolved type.
+     * @throws ParseException 
+     */
+    private Type lookupType(Identifier name) throws ParseException {
+        Type result = Type.resolve(name, false);
+        if (result == null) {
+            result = this.typeCache.get(name.getId());
+        }
+        if (result == null) {
+            result = new MissingType(name);
+            this.typeCache.put(name.getId(), result);
+            this.reporter.semanticProblem(Problems.UNKNOWN_TYPE, name.getPosition(), 
+                name);
+        }
+        return result;
+    }
+    
+    
+    
+    /**
+     * Reports a syntax error when an unexpected token is hit.
+     * 
+     * @param expected The token that was expected.
+     * @param actual The token that actually occurred.
+     * @throws ParseException
+     */
+    protected void reportExpected(TokenType expected, Token actual) 
+            throws ParseException {
+        /*if (actual.matches(TokenType.CLOSEDBR)) {
+            this.reporter.syntaxProblem(Problems.MISSING_OBR, 
+                this.scanner.spanFrom(actual));
+        } else {*/
+            this.reporter.syntaxProblem(expected, actual, this.scanner.spanFrom(actual));
+        //}
+    }
+    
+    
+    
+    /**
+     * Expects the next token to have the type <code>expected</code>. If the next token is
+     * the expected one, it is consumed. If the next token represents a lexical error or 
+     * has not the expected type, a problem is reported.
+     * 
+     * <p>If a problem occurred and <code>insert</code> is <code>true</code>, this method
+     * pretends that the occurred token was the expected one and does not consume the
+     * token that occurred instead.</p>
+     * 
+     * <p>If <code>insert</code> is <code>false</code>, the token that occurred instead 
+     * of the expected one is consumed. This behaves like replacing the unexpected token
+     * with the expected.</p>
+     * 
      * 
      * @param expected Expected token type.
-     * @return The consumed expected token.
-     * @throws ParseException If the next token has not the expected type.
+     * @param insert Whether method should pretend that expected token occurred if it
+     *          does not.
+     * @throws ParseException If the ProblemRetporter does not support multiple problems.
      */
-    protected Token expect(TokenType expected) throws ParseException {
-        Token la = this.scanner.lookAhead();
-        if (la.getType() != expected) {
+    protected void expect(TokenType expected, boolean insert) throws ParseException {
+        final Token la = this.scanner.lookAhead();
+        if (la.matches(TokenType.ERROR)) {
+            // report lexical error
             this.scanner.consume();
-            this.unexpectedToken(expected, la);
+            this.reporter.lexicalProblem(la.getStringValue(), la.getPosition());
+            if (!insert) {
+                this.scanner.pushBackFirst(la);
+            }
+        } else if (!la.matches(expected)) {
+            // report unexpected token
+            this.scanner.consume();
+            this.reportExpected(expected, la);
+            this.scanner.pushBackFirst(la);
         }
-        this.scanner.consume();
-        return la;
+        if (!insert || la.matches(expected)) {
+            // consume if token should not be inserted or was the expected one
+            this.scanner.consume();
+        }
     }
     
     
     
     /**
-     * Expects the next token to be an {@link Identifier}. If not, a 
-     * {@link ParseException} is thrown. Otherwise, a new {@link Identifier} will be 
-     * created and returned. This method also recognizes escaped tokens as identifiers.
+     * Expects the next token to be an {@link Identifier}. If it is, it will be consumed
+     * and a new Identifier will be returned. If the next token represents a lexical
+     * error or is no identifier, a problem is reported.
      * 
      * @return An {@link Identifier} created from the next token.
      * @throws ParseException If the next token is no identifier.
      */
     protected Identifier expectIdentifier() throws ParseException {
         final Token la = this.scanner.lookAhead();
-        if (ParserProperties.should(ParserProperties.ENABLE_TOKEN_ESCAPING) && 
+        if (la.matches(TokenType.ERROR)) {
+            // report lexical error
+            this.reporter.lexicalProblem(la.getStringValue(), la.getPosition());
+        } else if (ParserProperties.should(ParserProperties.ENABLE_TOKEN_ESCAPING) && 
                 la.matches(TokenType.ESCAPED)) {
-            
+            // create escaped identifier
             this.scanner.consume();
             final EscapedToken esc = (EscapedToken) la;
             return new Identifier(esc.getPosition(), esc.getEscaped().getStringValue(), 
                 true);
+        } else if (!la.matches(TokenType.IDENTIFIER)) {
+            // report missing identifier
+            this.scanner.consume();
+            this.reportExpected(TokenType.IDENTIFIER, la);
+            this.scanner.pushBackFirst(la);
+            return this.missingIdentifier(la.getPosition());
         }
-        this.expect(TokenType.IDENTIFIER);
+        this.scanner.consume();
         return new Identifier(la.getPosition(), la.getStringValue());
     }
 
     
     
     /**
-     * Consumes a single whitespace of the next token is one. If not, nothing happens.
+     * Consumes a single whitespace if the next token is one. If not, nothing happens.
      * @throws ParseException If parsing fails.
      */
     protected void allowSingleWhiteSpace() throws ParseException {
@@ -263,12 +374,26 @@ public class InputParser {
     
     
     /**
-     * Enters a new expression. If at least one epxression is "entered", the scanner will
-     * ignore whitespaces.
+     * Enters a new sub expression. If at least one expression is "entered", the scanner 
+     * will ignore whitespaces.
+     * @param end The tokentype that could close this sub expression.
      */
-    protected void enterExpression() {
-        ++this.openExpressions;
+    protected void enterExpression(TokenType end) {
+        this.expressions.push(end);
         this.scanner.setSkipWhiteSpaces(true);
+    }
+    
+    
+    
+    /**
+     * Determines whether we currently parse a subexpression (<=> whether whitespaces
+     * are skipped.
+     * 
+     * @return Whether we are currently parsing a subexpression where whitespaces are
+     *          allowed.
+     */
+    protected boolean inExpression() {
+        return !this.expressions.isEmpty();
     }
     
     
@@ -278,8 +403,8 @@ public class InputParser {
      * stop ignoring whitespaces.
      */
     protected void leaveExpression() {
-        --this.openExpressions;
-        if (this.openExpressions == 0) {
+        this.expressions.pop();
+        if (this.expressions.isEmpty()) {
             this.scanner.setSkipWhiteSpaces(false);
         }
     }
@@ -320,9 +445,10 @@ public class InputParser {
             } while (this.scanner.match(TokenType.SEPERATOR));
         }
         
-        root = new Root(this.scanner.spanFrom(start), cmd, signature);
+        this.expect(TokenType.EOS, false);
+        root = new Root(this.scanner.spanFrom(start), cmd, signature, 
+            this.reporter.hasProblems());
         
-        this.expect(TokenType.EOS);
         return root;
     }
 
@@ -575,11 +701,11 @@ public class InputParser {
                 // index operator
                 final Expression rhs = this.parseAutoList();
                 
-                lhs = OperatorCall.binary(
-                    new Position(lhs.getPosition(), rhs.getPosition()), 
-                    OpType.fromToken(la), lhs, rhs);
+                this.expect(TokenType.CLOSEDSQBR, true);
                 
-                this.expect(TokenType.CLOSEDSQBR);
+                lhs = OperatorCall.binary(
+                    this.scanner.spanFrom(la), 
+                    OpType.fromToken(la), lhs, rhs);
             } else {
                 // ? or ?! operator
                 final Position endPos = this.scanner.spanFrom(la);
@@ -592,6 +718,8 @@ public class InputParser {
         
         return lhs;
     }
+    
+    
     
     /**
      * Parses an implicit list literal.
@@ -624,7 +752,6 @@ public class InputParser {
         
         return lhs;
     }
-    
     
     
     
@@ -708,7 +835,7 @@ public class InputParser {
                 TokenType.CLOSEDBR);
             final ProductLiteral pl = new ProductLiteral(
                 this.scanner.spanFrom(la), params);
-            this.expect(TokenType.CLOSEDBR);
+            this.expect(TokenType.CLOSEDBR, true);
             
             return new Call(
                 new Position(lhs.getPosition().getStart(), this.scanner.getStreamIndex()), 
@@ -797,10 +924,10 @@ public class InputParser {
              * Now we can ignore whitespaces until the matching closing brace is 
              * read.
              */
-            this.enterExpression();
+            this.enterExpression(TokenType.CLOSEDBR);
             
             exp = this.parseRelation();
-            this.expect(TokenType.CLOSEDBR);
+            this.expect(TokenType.CLOSEDBR, true);
             
             this.leaveExpression();
             return new Braced(this.scanner.spanFrom(la), exp);
@@ -808,15 +935,15 @@ public class InputParser {
         case LAMBDA:
             this.scanner.consume();
             
-            this.enterExpression();
+            this.enterExpression(TokenType.CLOSEDBR);
             
             final Collection<Declaration> formal = this.parseParameters(
                 TokenType.COLON);
-            this.expect(TokenType.COLON);
+            this.expect(TokenType.COLON, true);
             
             exp = this.parseRelation();
             
-            this.expect(TokenType.CLOSEDBR);
+            this.expect(TokenType.CLOSEDBR, true);
             
             final FunctionLiteral func = new FunctionLiteral(
                 this.scanner.spanFrom(la), formal, exp);
@@ -828,11 +955,11 @@ public class InputParser {
         case OPENCURLBR:
             this.scanner.consume();
             
-            this.enterExpression();
+            this.enterExpression(TokenType.CLOSEDCURLBR);
             final List<Expression> elements = this.parseExpressionList(
                 TokenType.CLOSEDCURLBR);
             
-            this.expect(TokenType.CLOSEDCURLBR);
+            this.expect(TokenType.CLOSEDCURLBR, true);
             this.leaveExpression();
             
             final ListLiteral list = new ListLiteral(this.scanner.spanFrom(la), 
@@ -894,13 +1021,13 @@ public class InputParser {
             final Expression condition = this.parseRelation();
             this.allowSingleWhiteSpace();
             
-            this.expect(TokenType.COLON);
+            this.expect(TokenType.COLON, true);
             this.allowSingleWhiteSpace();
             
             final Expression second = this.parseRelation();
             
             this.allowSingleWhiteSpace();
-            this.expect(TokenType.COLON);
+            this.expect(TokenType.COLON, true);
             this.allowSingleWhiteSpace();
             
             final Expression third = this.parseRelation();
@@ -911,6 +1038,7 @@ public class InputParser {
         case TRUE:
             this.scanner.consume();
             return new BooleanLiteral(la.getPosition(), true);
+            
         case FALSE:
             this.scanner.consume();
             return new BooleanLiteral(la.getPosition(), false);
@@ -938,9 +1066,11 @@ public class InputParser {
         case TIMESPAN:
             this.scanner.consume();
             return new TimespanLiteral(la.getPosition(), (int)la.getLongValue());
+            
         case QUESTION:
             this.scanner.consume();
             return new HelpLiteral(la.getPosition());
+            
         case RADIX:
             this.scanner.consume();
             final NumberLiteral radix = new NumberLiteral(la.getPosition(), 
@@ -948,11 +1078,11 @@ public class InputParser {
             final Expression rhs = this.parseLiteral();
             return OperatorCall.binary(this.scanner.spanFrom(la), OpType.RADIX, 
                 radix, rhs);
+            
         default:
-            this.expect(TokenType.LITERAL);
+            this.expect(TokenType.LITERAL, true);
+            return new Problem(this.scanner.spanFrom(la));
         }
-        
-        return null;
     }
     
     
@@ -978,14 +1108,15 @@ public class InputParser {
             return new ArrayList<Expression>(0);
         }
         
+        this.enterExpression(end);
         final List<Expression> result = new ArrayList<Expression>();
-        
         result.add(this.parseRelation());
         
         while (this.scanner.match(TokenType.COMMA)) {
             this.allowSingleWhiteSpace();
             result.add(this.parseRelation());
         }
+        this.leaveExpression();
         return result;
     }
     
@@ -1003,13 +1134,14 @@ public class InputParser {
      * @return Collection of parsed formal parameters.
      * @throws ParseException If parsing fails.
      */
-    protected List<Declaration> parseParameters(TokenType end) throws ParseException {
+    protected List<Declaration> parseParameters(TokenType end) 
+            throws ParseException {
         if (this.scanner.lookAhead().matches(end)) {
             // empty list.
             return new ArrayList<Declaration>(0);
         }
         
-        this.enterExpression();
+        this.enterExpression(end);
         final List<Declaration> result = new ArrayList<Declaration>();
         result.add(this.parseParameter());
         
@@ -1051,8 +1183,6 @@ public class InputParser {
      * @throws ParseException If parsing fails.
      */
     protected Type parseType() throws ParseException {
-        final Token la = this.scanner.lookAhead();
-        
         if (this.scanner.match(TokenType.OPENBR)) {
             final List<Type> signature = new ArrayList<Type>();
             final boolean skipWS = this.scanner.skipWhiteSpaces();
@@ -1065,25 +1195,21 @@ public class InputParser {
             
             this.scanner.setSkipWhiteSpaces(skipWS);
             this.allowSingleWhiteSpace();
-            this.expect(TokenType.ASSIGNMENT);
+            this.expect(TokenType.ASSIGNMENT, true);
             final Type resultType = this.parseType();
             this.allowSingleWhiteSpace();
-            
-            this.expect(TokenType.CLOSEDBR);
+
+            this.expect(TokenType.CLOSEDBR, true);
             return new ProductType(signature).mapTo(resultType);
+
         } else if (this.scanner.match(TokenType.LIST)) {
-            this.expect(TokenType.LT);
+            this.expect(TokenType.LT, true);
             final Type subType = this.parseType();
-            this.expect(TokenType.GT);
+
+            this.expect(TokenType.GT, true);
             return subType.listOf();
-        } else if (la.matches(TokenType.IDENTIFIER)) {
-            final ResolvableIdentifier id = new ResolvableIdentifier(
-                this.expectIdentifier());
-            
-            return Type.resolve(id, false);
         } else {
-            this.unexpectedToken(TokenType.IDENTIFIER, la);
-            return null; /* not reachable */
+            return this.lookupType(this.expectIdentifier());
         }
     }
 }

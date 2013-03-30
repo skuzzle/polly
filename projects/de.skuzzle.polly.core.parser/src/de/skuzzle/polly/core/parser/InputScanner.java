@@ -8,6 +8,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import de.skuzzle.polly.core.parser.problems.ProblemReporter;
+import de.skuzzle.polly.core.parser.problems.Problems;
+
+
 
 
 /*
@@ -110,12 +114,22 @@ public class InputScanner extends AbstractTokenStream {
     
     
     
+    /**
+     * Sets whether whitespaces are currently being skipped.
+     * 
+     * @param value Whether whitespaces should be skipped.
+     */
     public void setSkipWhiteSpaces(boolean value) {
         this.skipWhiteSpaces = value;
     }
     
     
     
+    /**
+     * Gets whether whitespaces are currently being skipped.
+     * 
+     * @return Whether whitespaces are currently being skipped.
+     */
     public boolean skipWhiteSpaces() {
         return this.skipWhiteSpaces;
     }
@@ -138,12 +152,14 @@ public class InputScanner extends AbstractTokenStream {
         int tokenStart = this.getStreamIndex();
         StringBuilder currentString = new StringBuilder();
         
-        while (!this.eos) {
+        while (!this.eos()) {
             if (state == 0) {
                 int next = this.readChar();
                 
                 if (next == -1) {
-                    return new Token(TokenType.EOS, this.spanFrom(tokenStart));
+                    final Position pos = new Position(tokenStart, 
+                        this.getStreamIndex() + 1);
+                    return new Token(TokenType.EOS, pos);
                 }
                 
                 if (Character.isWhitespace(next)) {
@@ -228,12 +244,11 @@ public class InputScanner extends AbstractTokenStream {
                 } else if (next == '<') {
                     state = 3;
                 } else if (next == '>') {
-                    return new Token(TokenType.GT, this.spanFrom(tokenStart), ">");
-                    // state = 4;
+                    state = 4;
                 } else {
-                    this.pushBack(next);
-                    this.parseException(
-                        "Ungültiges Symbol: '" + (char) next + "'", tokenStart);
+                    return this.parseException(
+                        Problems.format(Problems.ILLEGAL_SYMBOL, (char) next),
+                        tokenStart);
                 }
                     
             } else if (state == 1) {
@@ -276,8 +291,6 @@ public class InputScanner extends AbstractTokenStream {
                 
                 if (next == '=') {
                     return new Token(TokenType.EGT, this.spanFrom(tokenStart), ">=");
-                } else if (next == '>') {
-                    state = 11;
                 } else {
                     this.pushBack(next);
                     return new Token(TokenType.GT, this.spanFrom(tokenStart), ">");
@@ -289,8 +302,9 @@ public class InputScanner extends AbstractTokenStream {
                 if (next == '=') {
                     return new Token(TokenType.EQ, this.spanFrom(tokenStart), "==");
                 } else {
-                    this.pushBack(next);
-                    this.parseException("Ungültiges Symbol: '='", tokenStart);
+                    return this.parseException(
+                        Problems.format(Problems.ILLEGAL_SYMBOL, (char) next),
+                        tokenStart, next);
                 }
                 
             } else if (state == 6) {
@@ -319,7 +333,7 @@ public class InputScanner extends AbstractTokenStream {
                 if (next == '.') {
                     return new Token(TokenType.DOTDOT, this.spanFrom(tokenStart), "..");
                 } else if (Character.isDigit(next)) {
-                    this.pushBack('0');
+                    this.pushBackArtificial('0');
                     this.pushBack('.');
                     this.pushBack(next);
                     return this.readNumber();
@@ -352,17 +366,6 @@ public class InputScanner extends AbstractTokenStream {
                     this.pushBack(next);
                     return new Token(TokenType.SUB, this.spanFrom(tokenStart), "-");
                 }
-            } else if (state == 11) {
-                int next = this.readChar();
-                
-                if (next == '>') {
-                    return new Token(
-                        TokenType.URIGHT_SHIFT, this.spanFrom(tokenStart), ">>>");
-                } else {
-                    this.pushBack(next);
-                    return new Token(
-                        TokenType.RIGHT_SHIFT, this.spanFrom(tokenStart), ">>");
-                }
             } else if (state == 12) {
                 int next = this.readChar();
                 
@@ -380,7 +383,7 @@ public class InputScanner extends AbstractTokenStream {
                     return new Token(TokenType.LAMBDA, this.spanFrom(tokenStart), "\\(");
                 } else {
                     this.pushBack(next);
-                    final Token escaped= this.readToken();
+                    final Token escaped = this.readToken();
                     return new EscapedToken(this.spanFrom(tokenStart), escaped);
                 }
             } else if (state == 14) {
@@ -392,10 +395,12 @@ public class InputScanner extends AbstractTokenStream {
                     this.pushBack(next);
                     return new Token(TokenType.POWER, this.spanFrom(tokenStart), "^");
                 }
+            } else {
+                throw new IllegalStateException("unhandled state: " + state);
             }
         }
         
-        return new Token(TokenType.EOS, this.spanFrom(tokenStart));
+        return new Token(TokenType.EOS, new Position(tokenStart - 1, tokenStart));
     }
     
     
@@ -412,7 +417,7 @@ public class InputScanner extends AbstractTokenStream {
         int state = 0;
         int radix = 0;
         
-        while (!this.eos) {
+        while (!this.eos()) {
             if (state == 0) {
                 int next = this.readChar();
                 
@@ -430,8 +435,9 @@ public class InputScanner extends AbstractTokenStream {
                     this.pushBack(next);
                     state = 2;
                 } else {
-                    this.parseException("missing radix specification for 0x: Operator", 
-                        tokenStart);
+                    return this.parseException(
+                        Problems.format(Problems.MISSING_RADIX),
+                            tokenStart, next);
                 }
             } else if (state == 2) {
                 int next = this.readChar();
@@ -441,7 +447,10 @@ public class InputScanner extends AbstractTokenStream {
                 } else if (next == ':') {
                     
                     if (radix > Character.MAX_RADIX) {
-                        this.parseException("Invalid Radix: " + radix, tokenStart);
+                        return this.parseException(
+                            Problems.format(Problems.HIGH_RADIX, radix, 
+                                Character.MAX_RADIX),
+                            tokenStart);
                     }
                     
                     return new Token(TokenType.RADIX, this.spanFrom(tokenStart), radix);
@@ -449,8 +458,7 @@ public class InputScanner extends AbstractTokenStream {
             }
         }
         
-        this.parseException("invalid 0x: operator", tokenStart);
-        return null;
+        return this.parseException(Problems.format(Problems.INVALID_0X), tokenStart);
     }
     
     
@@ -466,8 +474,9 @@ public class InputScanner extends AbstractTokenStream {
         int tokenStart = this.getStreamIndex();
         StringBuilder lexem = new StringBuilder();
         int state = 0;
+        Token escapeError = null;
         
-        while (!this.eos) {
+        while (!this.eos()) {
             if (state == 0) {
                 int next = this.readChar();
                 
@@ -475,16 +484,26 @@ public class InputScanner extends AbstractTokenStream {
                     //lexem.append(next);   //do not append quotes to string literal 
                     state = 1;
                 } else {
-                    this.pushBack(next);
-                    this.parseException("Invalid String literal!", tokenStart);
+                    return this.parseException(Problems.format(Problems.INVALID_STRING), 
+                        tokenStart, next);
                 }
             } else if (state == 1) {
+                int start = this.getStreamIndex();
                 int next = this.readChar();
                 
                 if (next == '\\') {
-                    this.readEscapeSequence(lexem);
+                    
+                    if (!this.readEscapeSequence(lexem)) {
+                        next = this.readChar();
+                        
+                        escapeError = this.parseException(
+                            Problems.format(Problems.INVALID_ESCAPE, (char) next), start);
+                    }
                 } else if (next == '"') {
                     //lexem.append(next);   //see above
+                    if (escapeError != null) {
+                        return escapeError;
+                    }
                     return new Token(TokenType.STRING, this.spanFrom(tokenStart), 
                             lexem.toString());
                 } else if (next == -1) {
@@ -498,30 +517,29 @@ public class InputScanner extends AbstractTokenStream {
         }
         
         this.pushBack(-1);
-        this.parseException("Nicht geschlossenes String-Literal", tokenStart);
-        return null; /* unreachable */
+        return this.parseException(Problems.format(Problems.UNCLOSED_STRING), tokenStart);
     }
     
     
     
-    private void readEscapeSequence(StringBuilder lexem) throws ParseException {
+    private boolean readEscapeSequence(StringBuilder lexem) throws ParseException {
         // -1 to include the '\' which was consumed by #readString()
-        int tokenStart = this.getStreamIndex() - 1;
 
-        while (!this.eos) {
+        while (!this.eos()) {
             int next = this.readChar();
             
             if (next == '"') {
                 lexem.append('"');
-                return;
+                return true;
             } else if (next == '\\') {
                 lexem.append('\\');
-                return;
+                return true;
             } else {
-                this.parseException("Ungültige-Escape Sequenz: '\\" + (char) next + "'",
-                    tokenStart);
+                this.pushBack(next);
+                return false;
             }
         }
+        return false;
     }
     
     
@@ -530,7 +548,7 @@ public class InputScanner extends AbstractTokenStream {
         int tokenStart = this.getStreamIndex();
         StringBuilder lexem = new StringBuilder();
 
-        while (!this.eos) {
+        while (!this.eos()) {
             int next = this.readChar();
         
             if (InputScanner.isIdentifierPart(next) || next == '-') {
@@ -542,8 +560,8 @@ public class InputScanner extends AbstractTokenStream {
             }
         }
         
-        this.parseException("Ungültiges Channel-Literal: " + lexem.toString(), tokenStart);
-        return null;
+        return this.parseException(Problems.format(Problems.INVALID_CHANNEL, lexem), 
+            tokenStart);
     }
     
     
@@ -557,7 +575,7 @@ public class InputScanner extends AbstractTokenStream {
         // Userliterals can contain "-" which interferes with a following assignment
         // operator. This is now fixed by a special treatment with a lookahead to check
         // if an assignment operator is following.
-        while (!this.eos) {
+        while (!this.eos()) {
             if (state == 0) {
                 int next = this.readChar();
             
@@ -586,8 +604,8 @@ public class InputScanner extends AbstractTokenStream {
             }
         }
         
-        this.parseException("Ungültiges User-Literal: " + lexem.toString(), tokenStart);
-        return null;
+        return this.parseException(Problems.format(Problems.INVALID_USER, lexem), 
+            tokenStart);
     }
     
     
@@ -611,7 +629,7 @@ public class InputScanner extends AbstractTokenStream {
         // Fixed by adding state 0, which expects an identifier-start-character and then
         // switches to state 1 which expects identifier-part-characters.
         
-        while (!this.eos) {
+        while (!this.eos()) {
             if (state == 0) {
                 int next = this.readChar();
                 
@@ -619,7 +637,8 @@ public class InputScanner extends AbstractTokenStream {
                     state = 1;
                     lexem.appendCodePoint(next);
                 } else {
-                    this.parseException("Invalid Identifier", tokenStart);
+                    return this.parseException(Problems.format(Problems.INVALID_IDENTIFIER), 
+                        tokenStart);
                 }
             } else if (state == 1) {
                 int next = this.readChar();
@@ -637,8 +656,8 @@ public class InputScanner extends AbstractTokenStream {
             }
         }
         
-        this.parseException("Ungülltiger identifier: " + lexem.toString(), tokenStart);
-        return null;
+        return this.parseException(Problems.format(Problems.INVALID_IDENTIFIER2, lexem), 
+            tokenStart);
     }
     
     
@@ -657,8 +676,9 @@ public class InputScanner extends AbstractTokenStream {
         if (lookup == null) {
             return new Token(TokenType.IDENTIFIER, this.spanFrom(tokenStart), string);
         } else if (lookup == TokenType.UNKNOWN) {
-            this.parseException("Ungültiger Identifier: " + string, tokenStart);
-            return null; /* unreachable */
+            return this.parseException(
+                Problems.format(Problems.INVALID_IDENTIFIER2, string), 
+                tokenStart);
         } else {
             return new Token(lookup, this.spanFrom(tokenStart));
         }
@@ -696,16 +716,17 @@ public class InputScanner extends AbstractTokenStream {
         int secondPart = 0; // second part of a date (months)
         int thirdPart = 0;  // year-part of a date
         int tmp = 0;        // first part of a time, if read after a date
-        Token timeToken = new Token(TokenType.DATETIME, this.spanFrom(0), new Date());    
+        Token timeToken = null;//new Token(TokenType.DATETIME, this.spanFrom(0), new Date());    
         double dec = 1;
         double value = 0.0;
         double exp = 0.0;
         double exp_sign = 1.0;
 
         
-        while (!this.eos) {
+        while (!this.eos()) {
             if (state == 0) {
                 int next = this.readChar();
+                
                 if (Character.isDigit(next)) {
                     value = value * 10 + Character.digit(next, 10);
                     firstPart = firstPart * 10 + Character.digit(next, 10);
@@ -738,8 +759,8 @@ public class InputScanner extends AbstractTokenStream {
                     this.pushBack('.');
                     return new Token(TokenType.NUMBER, this.spanFrom(tokenStart), value);
                 } else {
-                    this.pushBack(next);
-                    this.parseException("Fehlende Dezimalstellen", tokenStart);
+                    return this.parseException(Problems.format(Problems.MISSING_DECIMALS), 
+                        tokenStart, next);
                 }
                 
             } else if (state == 3) {
@@ -786,7 +807,8 @@ public class InputScanner extends AbstractTokenStream {
                 // HACK: Need to ensure that at least on number has been read before 
                 //       reading on.
                 if (firstPart > 31 || secondPart > 12) {
-                    this.parseException("Ungülltiges DateTime-Literal", tokenStart);
+                    return this.parseException(Problems.format(Problems.INVALID_DATE_TIME), 
+                        tokenStart);
                 }
                 
                 if (Character.isDigit(next)) {
@@ -805,8 +827,8 @@ public class InputScanner extends AbstractTokenStream {
                     this.pushBack(next);
                     state = 7;
                 } else {
-                    this.pushBack(next);
-                    this.parseException("Ungültiges DateTime-Literal", tokenStart);
+                    return this.parseException(Problems.format(Problems.INVALID_DATE_TIME), 
+                        tokenStart, next);
                 }
             } else if (state == 7) {
                 int next = this.readChar();
@@ -815,15 +837,19 @@ public class InputScanner extends AbstractTokenStream {
                     tmp = tmp * 10 + Character.digit(next, 10);
                 } else if (next == ':') {
                     timeToken = this.readTime(tmp, tokenStart, false);
+                    if (timeToken.matches(TokenType.ERROR)) {
+                        return timeToken;
+                    }
                     state = 8;
                 } else {
-                    this.pushBack(next);
-                    this.parseException("Ungültiges Date-Time-Literal", tokenStart);
+                    return this.parseException(Problems.format(Problems.INVALID_DATE_TIME), 
+                        tokenStart, next);
                 }
                 
             } else if (state == 8) {
                 if (thirdPart < 1900 || thirdPart > 9999) {
-                    this.parseException("Ungültiges DateTime-Literal", tokenStart);
+                    return this.parseException(Problems.format(Problems.INVALID_DATE_TIME), 
+                        tokenStart);
                 }
                 
                 // CONSIDER ISSUE 0000115
@@ -846,8 +872,8 @@ public class InputScanner extends AbstractTokenStream {
                     exp_sign = 1.0;
                     state = 10;
                 } else {
-                    this.pushBack(next);
-                    this.parseException("Ungültige Zahl", tokenStart);
+                    return this.parseException(Problems.format(Problems.INVALID_NUMBER), 
+                        tokenStart, next);
                 }
                 
             } else if (state == 10) {
@@ -860,7 +886,8 @@ public class InputScanner extends AbstractTokenStream {
                     
                     // HACK: Ensure that at least one number has been read
                     if (exp == 0.0) {
-                        this.parseException("Ungültige Zahl", tokenStart);
+                        return this.parseException(
+                            Problems.format(Problems.INVALID_NUMBER), tokenStart);
                     }
                     value = value * Math.pow(10, exp * exp_sign);
                     return new Token(TokenType.NUMBER, this.spanFrom(tokenStart), value);
@@ -868,8 +895,7 @@ public class InputScanner extends AbstractTokenStream {
             } // state
         } // while
         
-        this.parseException("Is this even reachable?", tokenStart);
-        return null; /* unreachable */
+        throw new IllegalStateException("should not be reachable");
     }
     
     
@@ -880,14 +906,16 @@ public class InputScanner extends AbstractTokenStream {
         int tmp = value;
         value = 0;
         
-        while (!this.eos) {
+        while (!this.eos()) {
             if (state == 0) {
                 int next = this.readChar();
                 
                 if (InputScanner.isTimeLiteralChar(next)) {
                     
                     if (odd.contains(next)) {
-                        this.parseException("Ungültiges DateTime-Literal", tokenStart);
+                        return this.parseException(
+                            Problems.format(Problems.INVALID_DATE_TIME), 
+                            tokenStart);
                     }
                     odd.add(next);
                     value += tmp * InputScanner.timeLiteralValue(next);
@@ -918,8 +946,8 @@ public class InputScanner extends AbstractTokenStream {
             }
         }
         
-        this.parseException("Ungültiges DateTime-Literal", tokenStart);
-        return null;
+        return this.parseException(Problems.format(Problems.INVALID_DATE_TIME), 
+            tokenStart);
     }
     
     
@@ -950,10 +978,11 @@ public class InputScanner extends AbstractTokenStream {
         int secondPart = 0;
         
         if (firstPart > 23) {
-            this.parseException("Ungültiges DateTime-Literal", tokenStart);
+            return this.parseException(Problems.format(Problems.INVALID_DATE_TIME), 
+                tokenStart);
         }
         
-        while (!this.eos) {
+        while (!this.eos()) {
             if (state == 0) {
                 int next = this.readChar();
                 
@@ -965,8 +994,8 @@ public class InputScanner extends AbstractTokenStream {
                     return new Token(TokenType.NUMBER, this.spanFrom(tokenStart), 
                             (double) firstPart);
                 } else {
-                    this.pushBack(next);
-                    this.parseException("Ungültiges DateTime-Literal", tokenStart);
+                    return this.parseException(
+                        Problems.format(Problems.INVALID_DATE_TIME), tokenStart, next);
                 }
             } else if (state == 1) {
                 int next = this.readChar();
@@ -978,7 +1007,8 @@ public class InputScanner extends AbstractTokenStream {
                 }
                 
                 if (secondPart > 59) {
-                    this.parseException("Ungültiges DateTime-Literal", tokenStart);
+                    return this.parseException(
+                        Problems.format(Problems.INVALID_DATE_TIME), tokenStart);
                 }
                 
                 Calendar c = Calendar.getInstance();
@@ -992,8 +1022,8 @@ public class InputScanner extends AbstractTokenStream {
             }
         }
         
-        this.parseException("Ungültiges DateTime-Literal", tokenStart);
-        return null;
+        return this.parseException(Problems.format(Problems.INVALID_DATE_TIME), 
+            tokenStart);
     }
     
     
@@ -1003,10 +1033,12 @@ public class InputScanner extends AbstractTokenStream {
         int state = 0;
         
         if (radix > Character.MAX_RADIX) {
-            this.parseException("Invalid Radix: " + radix, tokenStart);
+            return this.parseException(
+                Problems.format(Problems.HIGH_RADIX, radix, Character.MAX_RADIX), 
+                tokenStart);
         }
         
-        while (!this.eos) {
+        while (!this.eos()) {
             if (state == 0) {
                 int next = this.readChar();
                 
@@ -1014,7 +1046,8 @@ public class InputScanner extends AbstractTokenStream {
                     this.pushBack(next);
                     state = 1;
                 } else {
-                    this.parseException("Invalid Radix'ed Integer", tokenStart);
+                    return this.parseException(
+                        Problems.format(Problems.INVALID_RADIXED_INT), tokenStart);
                 }
             } else if (state == 1) {
                 int next = this.readChar();
@@ -1029,8 +1062,36 @@ public class InputScanner extends AbstractTokenStream {
             }
         }
         
-        this.parseException("Invalid Radix'ed Integer", tokenStart);
-        return null;
+        // not reachable
+        return this.parseException(Problems.format(Problems.INVALID_RADIXED_INT), 
+            tokenStart);
+    }
+    
+    
+    
+    /**
+     * Reports a lexical error to the {@link ProblemReporter} of this scanner.
+     * 
+     * @param errorMessage The parse error message.
+     * @param tokenStart The beginning of the errornous token.
+     * @return A token with type {@link TokenType#ERROR}
+     * @throws ParseException If the {@link ProblemReporter} only supports one
+     *          Problem.
+     */
+    protected Token parseException(String errorMessage, int tokenStart) 
+            throws ParseException {
+        final Position pos = this.spanFrom(tokenStart);
+        return new Token(TokenType.ERROR, pos, errorMessage);
+    }
+    
+    
+    
+    protected Token parseException(String errorMessage, int tokenStart, int next) 
+            throws ParseException {
+        this.pushBack(next);
+        final Position pos = this.spanFrom(tokenStart);
+        this.readChar();
+        return new Token(TokenType.ERROR, pos, errorMessage);
     }
     
     

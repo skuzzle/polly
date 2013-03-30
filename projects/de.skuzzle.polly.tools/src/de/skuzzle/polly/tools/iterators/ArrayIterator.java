@@ -49,6 +49,8 @@ public class ArrayIterator<T> implements Iterable<T>, Iterator<T> {
             throw new IllegalArgumentException("end > length");
         } else if (start < 0) {
             throw new IllegalArgumentException("start < 0");
+        } else if (start > end) {
+            throw new IllegalArgumentException("start > end");
         }
         this.array = array;
         this.start = start;

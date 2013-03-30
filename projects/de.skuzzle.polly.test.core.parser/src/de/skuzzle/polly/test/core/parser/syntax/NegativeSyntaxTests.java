@@ -1,4 +1,4 @@
-package de.skuzzle.test.polly.parsing.parser;
+package de.skuzzle.polly.test.core.parser.syntax;
 
 import junit.framework.Assert;
 

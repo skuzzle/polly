@@ -14,6 +14,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.Literal;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTVisitor;
+import de.skuzzle.polly.core.parser.ast.visitor.resolving.AbstractTypeResolver;
 import de.skuzzle.polly.core.parser.ast.visitor.resolving.TypeResolver;
 import de.skuzzle.polly.tools.collections.Stack;
 
@@ -90,14 +91,16 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
         final L left = (L) ns.resolveFirst(LEFT_PARAM_NAME).getExpression();
         final R right = (R) ns.resolveFirst(RIGHT_PARAM_NAME).getExpression();
         
-        this.exec(stack, ns, left, right, 
-            new Position(left.getPosition(), right.getPosition()), execVisitor);
+        final Position resultPos = Position.correctSpan(left.getPosition(), 
+            right.getPosition());
+        
+        this.exec(stack, ns, left, right, resultPos, execVisitor);
     }
     
     
     
     @Override
-    public final void resolveType(Namespace ns, ASTVisitor typeResolver)
+    public final void resolveType(Namespace ns, AbstractTypeResolver typeResolver)
             throws ASTTraversalException {
         final Expression left = ns.resolveFirst(LEFT_PARAM_NAME).getExpression();
         final Expression right = ns.resolveFirst(RIGHT_PARAM_NAME).getExpression();
@@ -117,7 +120,7 @@ public abstract class BinaryOperator<L extends Literal, R extends Literal>
      * @throws ASTTraversalException If context checking fails.
      */
     protected void resolve(Expression left, Expression right, Namespace ns, 
-            ASTVisitor typeResolver) throws ASTTraversalException {
+        AbstractTypeResolver typeResolver) throws ASTTraversalException {
         // empty
     }
     

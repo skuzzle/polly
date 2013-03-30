@@ -12,6 +12,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.Inspect;
 import de.skuzzle.polly.core.parser.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.core.parser.ast.expressions.Native;
 import de.skuzzle.polly.core.parser.ast.expressions.OperatorCall;
+import de.skuzzle.polly.core.parser.ast.expressions.Problem;
 import de.skuzzle.polly.core.parser.ast.expressions.VarAccess;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.ListLiteral;
@@ -58,4 +59,6 @@ public interface ASTVisitor extends ASTTraversal {
     public boolean visit(Delete node) throws ASTTraversalException;
 
     public boolean visit(Inspect node) throws ASTTraversalException;
+
+    public boolean visit(Problem node) throws ASTTraversalException;
 }

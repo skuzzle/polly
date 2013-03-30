@@ -14,6 +14,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.Literal;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTVisitor;
+import de.skuzzle.polly.core.parser.ast.visitor.resolving.AbstractTypeResolver;
 import de.skuzzle.polly.core.parser.ast.visitor.resolving.TypeResolver;
 import de.skuzzle.polly.tools.collections.Stack;
 
@@ -60,7 +61,7 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
     
     
     @Override
-    public final void resolveType(Namespace ns, ASTVisitor typeResolver)
+    public final void resolveType(Namespace ns, AbstractTypeResolver typeResolver)
             throws ASTTraversalException {
         final Expression param = ns.resolveFirst(PARAM_NAME).getExpression();
         this.resolve(param, ns, typeResolver);
@@ -77,7 +78,7 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
      * @throws ASTTraversalException If context checking fails.
      */
     protected void resolve(Expression param, Namespace ns, 
-            ASTVisitor typeResolver) throws ASTTraversalException {
+            AbstractTypeResolver typeResolver) throws ASTTraversalException {
     }
 
     

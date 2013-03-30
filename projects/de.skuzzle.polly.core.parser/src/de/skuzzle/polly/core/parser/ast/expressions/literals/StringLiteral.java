@@ -5,6 +5,7 @@ import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.Transformation;
+import de.skuzzle.polly.tools.Equatable;
 
 
 public class StringLiteral extends Literal {
@@ -69,8 +70,24 @@ public class StringLiteral extends Literal {
     }
     
     
+    
     @Override
     public String toString() {
         return this.value;
+    }
+    
+    
+    
+    @Override
+    public Class<?> getEquivalenceClass() {
+        return StringLiteral.class;
+    }
+    
+    
+    
+    @Override
+    public boolean actualEquals(Equatable o) {
+        final StringLiteral other = (StringLiteral) o;
+        return this.value.equals(other.value);
     }
 }

@@ -5,10 +5,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import de.skuzzle.polly.core.parser.ParseException;
 import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.Identifier;
-import de.skuzzle.polly.core.parser.ast.ResolvableIdentifier;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.Visitable;
@@ -166,12 +164,10 @@ public class Type implements Visitable<TypeVisitor>, Equatable, Comparable<Type>
      * 
      * @param name Name of the type to resolve.
      * @param allowPolymorph Whether polymorphic declarations are allowed.
-     * @return The resolved type.
-     * @throws ParseException If polymorphic declarations are not allowed and the given
-     *          name does not denote a known type.
+     * @return The resolved type or <code>null</code> if polymorphic types are not 
+     *          allowed and not type with given name exists.
      */
-    public final static Type resolve(ResolvableIdentifier name, boolean allowPolymorph) 
-            throws ParseException {
+    public final static Type resolve(Identifier name, boolean allowPolymorph) {
         Type t = primitives.get(name.getId());
         if (t == null && allowPolymorph) {
             t = typeVars.get(name.getId());
@@ -180,9 +176,7 @@ public class Type implements Visitable<TypeVisitor>, Equatable, Comparable<Type>
                 typeVars.put(name.getId(), t);
             }
         } else if (t == null && !allowPolymorph) {
-            throw new ParseException(
-                "Typ erwartet (Polymorphe Funktionen sind deaktiviert)", 
-                name.getPosition());
+            return null;
         }
         return t;
     }

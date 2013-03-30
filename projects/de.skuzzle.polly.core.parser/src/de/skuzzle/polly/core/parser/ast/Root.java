@@ -7,7 +7,9 @@ import java.util.List;
 
 import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
+import de.skuzzle.polly.core.parser.ast.expressions.Problem;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.Literal;
+import de.skuzzle.polly.core.parser.ast.expressions.literals.LiteralFormatter;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversal;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTVisitor;
@@ -25,6 +27,7 @@ public final class Root extends Node {
     private final ArrayList<Expression> expressions;
     private Identifier command;
     private List<Literal> results;
+    private final boolean hasProblems;
     
     
     
@@ -35,12 +38,25 @@ public final class Root extends Node {
      * @param position The Node's position.
      * @param command Name of the parsed command.
      * @param expressions Collection of parsed expressions.
+     * @param hasProblems Whether the AST contains {@link Problem} nodes.
      */
     public Root(Position position, Identifier command, 
-            Collection<Expression> expressions) {
+            Collection<Expression> expressions, boolean hasProblems) {
         super(position);
         this.command = command;
         this.expressions = new ArrayList<Expression>(expressions);
+        this.hasProblems = hasProblems;
+    }
+    
+    
+    
+    /**
+     * Whether this AST contains problem nodes.
+     * 
+     * @return Whether this AST contains problem nodes.
+     */
+    public boolean hasProblems() {
+        return this.hasProblems;
     }
     
     
@@ -132,6 +148,13 @@ public final class Root extends Node {
         if (this.results != null && !this.results.isEmpty()) {
             b.append(" ");
             IteratorPrinter.print(this.results, " ", 
+                new IteratorPrinter.StringProvider<Literal>() {
+
+                    @Override
+                    public String toString(Literal o) {
+                        return o.format(LiteralFormatter.DEFAULT);
+                    }
+                },
                 new PrintWriter(new StringBuilderWriter(b)));
         }
         return b.toString();

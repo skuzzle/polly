@@ -16,6 +16,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.Expression;
 import de.skuzzle.polly.core.parser.ast.expressions.Inspect;
 import de.skuzzle.polly.core.parser.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.core.parser.ast.expressions.OperatorCall;
+import de.skuzzle.polly.core.parser.ast.expressions.Problem;
 import de.skuzzle.polly.core.parser.ast.expressions.VarAccess;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.ChannelLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.DateLiteral;
@@ -309,6 +310,14 @@ public class ExpASTVisualizer extends DepthFirstVisitor {
     @Override
     public int before(VarAccess node) throws ASTTraversalException {
         this.dotBuilder.printExpression("VarAccess: " + node.getIdentifier(), node);
+        return CONTINUE;
+    }
+    
+    
+    
+    @Override
+    public int before(Problem node) throws ASTTraversalException {
+        this.dotBuilder.printExpression("PROBLEM", node);
         return CONTINUE;
     }
     

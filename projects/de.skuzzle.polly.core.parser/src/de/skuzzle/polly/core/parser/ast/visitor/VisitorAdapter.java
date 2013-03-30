@@ -12,6 +12,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.Inspect;
 import de.skuzzle.polly.core.parser.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.core.parser.ast.expressions.Native;
 import de.skuzzle.polly.core.parser.ast.expressions.OperatorCall;
+import de.skuzzle.polly.core.parser.ast.expressions.Problem;
 import de.skuzzle.polly.core.parser.ast.expressions.VarAccess;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.ListLiteral;
@@ -195,6 +196,16 @@ public abstract class VisitorAdapter implements ASTVisitor {
     
     @Override
     public int after(Inspect node) throws ASTTraversalException {
+        return CONTINUE;
+    }
+    
+    @Override
+    public int before(Problem problem) throws ASTTraversalException {
+        return CONTINUE;
+    }
+    
+    @Override
+    public int after(Problem problem) throws ASTTraversalException {
         return CONTINUE;
     }
 }

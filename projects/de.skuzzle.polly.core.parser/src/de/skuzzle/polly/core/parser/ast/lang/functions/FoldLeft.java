@@ -50,8 +50,8 @@ public class FoldLeft extends TernaryOperator<ListLiteral, FunctionLiteral, Lite
         
         Literal result = third;
         for (final Expression exp : first.getContent()) {
-            final Call call = new Call(Position.NONE, second, 
-                new ProductLiteral(Position.NONE, 
+            final Call call = new Call(resultPos, second, 
+                new ProductLiteral(resultPos, 
                     Arrays.asList(new Expression[] {result, exp})));
         
             call.visit(execVisitor);

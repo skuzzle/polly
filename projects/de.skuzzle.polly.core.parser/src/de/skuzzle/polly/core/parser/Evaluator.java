@@ -12,6 +12,7 @@ import de.skuzzle.polly.core.parser.ast.visitor.ExecutionVisitor;
 import de.skuzzle.polly.core.parser.ast.visitor.ParentSetter;
 import de.skuzzle.polly.core.parser.ast.visitor.Unparser;
 import de.skuzzle.polly.core.parser.ast.visitor.resolving.TypeResolver;
+import de.skuzzle.polly.core.parser.problems.ProblemReporter;
 
 
 /**
@@ -39,15 +40,18 @@ public class Evaluator {
 
     private final String input;
     private final String encoding;
+    private final ProblemReporter reporter;
     private Root lastResult;
     private ASTTraversalException lastError;
     
     
     
-    public Evaluator(String input, String encoding) throws UnsupportedEncodingException {
+    public Evaluator(String input, String encoding, ProblemReporter reporter) 
+            throws UnsupportedEncodingException {
         if (!Charset.isSupported(encoding)) {
             throw new UnsupportedEncodingException(encoding);
         }
+        this.reporter = reporter;
         this.input = input;
         this.encoding = encoding;
     }
@@ -76,7 +80,8 @@ public class Evaluator {
      */
     public void evaluate(Namespace rootNs, Namespace workingNs) {
         try {
-            final InputParser parser = new InputParser(this.input, this.encoding);
+            final InputParser parser = new InputParser(this.input, this.encoding, 
+                this.reporter);
             this.lastResult = parser.parse();
             
             if (this.lastResult == null) {
@@ -88,10 +93,12 @@ public class Evaluator {
             this.lastResult.visit(parentSetter);
             
             // resolve types
-            TypeResolver.resolveAST(this.lastResult, workingNs);
+            TypeResolver.resolveAST(this.lastResult, workingNs, this.reporter);
             
-            final ASTVisitor executor = getExecutor(rootNs, workingNs);
-            this.lastResult.visit(executor);
+            if (!this.reporter.hasProblems()) {
+                final ASTVisitor executor = getExecutor(rootNs, workingNs);
+                this.lastResult.visit(executor);
+            }
             
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("This should not have happened", e);
@@ -103,7 +110,7 @@ public class Evaluator {
     
     
     public boolean errorOccurred() {
-        return this.lastError != null;
+        return this.reporter.hasProblems();
     }
     
     

@@ -5,6 +5,7 @@ import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.Transformation;
+import de.skuzzle.polly.tools.Equatable;
 
 /**
  * Represents a number literal. Numbers are always floating point doubles.
@@ -173,17 +174,33 @@ public class NumberLiteral extends Literal {
 
     
     
+    @Override
     public int compareTo(Literal o) {
         if (o instanceof NumberLiteral) {
             return Double.compare(this.value, ((NumberLiteral) o).value);
         }
         return super.compareTo(o);
-    };
+    }
     
     
     
     @Override
     public String toString() {
         return Double.toString(this.value);
-    };
+    }
+    
+    
+    
+    @Override
+    public Class<?> getEquivalenceClass() {
+        return NumberLiteral.class;
+    }
+    
+    
+    
+    @Override
+    public boolean actualEquals(Equatable o) {
+        final NumberLiteral other = (NumberLiteral) o;
+        return Double.compare(this.value, other.value) == 0;
+    }
 }
