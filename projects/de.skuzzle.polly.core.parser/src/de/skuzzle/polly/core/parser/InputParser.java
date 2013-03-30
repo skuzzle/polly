@@ -96,10 +96,11 @@ import de.skuzzle.polly.tools.collections.Stack;
  *            
  *   exprList    -> (relation (',' relation)*)?
  *   parameters  -> (parameter (',' parameter)*)?
- *   parameter   -> type ID
+ *   parameter   -> type? ID
  *   type        -> ID                                         // primitive type
  *                | LIST '&lt;' type '&gt;'                    // list type
  *                | '(' type (WS type)* '->' type ')'          // function type
+ *                | '?'
  *                
  *   WS       -> ' ' | \t
  *   TEMP     -> 'temp'
@@ -247,22 +248,28 @@ public class InputParser {
      * Tries to look up a primitive type by name. If no such type exists, a new
      * temporary type with the requested name is created and stored in a cache. The
      * next time a type with the same name is requested, that cached type will
-     * be returned.
+     * be returned. If polymorphism is allowed by {@link ParserProperties}, this method
+     * will create and cache a type variable of the passed identifiers name.
      * 
      * @param name Type name to resolve.
      * @return The resolved type.
      * @throws ParseException 
      */
     private Type lookupType(Identifier name) throws ParseException {
-        Type result = Type.resolve(name, false);
+        Type result = Type.resolve(name);
         if (result == null) {
             result = this.typeCache.get(name.getId());
-        }
-        if (result == null) {
-            result = new MissingType(name);
+            
+            if (result == null 
+                && ParserProperties.should(ParserProperties.ALLOW_POLYMORPHIC_DECLS)) {
+                
+                result = Type.newTypeVar(name);
+            } else if (result == null) {
+                result = new MissingType(name);
+                this.reporter.semanticProblem(Problems.UNKNOWN_TYPE, name.getPosition(), 
+                    name);
+            }
             this.typeCache.put(name.getId(), result);
-            this.reporter.semanticProblem(Problems.UNKNOWN_TYPE, name.getPosition(), 
-                name);
         }
         return result;
     }
@@ -1157,15 +1164,32 @@ public class InputParser {
     
     /**
      * <pre>
-     * parameter -> type ID
+     * parameter -> type? ID
      * </pre>
      * @return The parsed parameter.
      * @throws ParseException If parsing fails.
      */
     protected Declaration parseParameter() throws ParseException {
+        final Type type;
+        final Identifier name;
         final Token la = this.scanner.lookAhead();
-        final Type type = this.parseType();
-        final Identifier name = this.expectIdentifier();
+        if (la.matches(TokenType.IDENTIFIER)) {
+            this.scanner.consume();
+            
+            final Token la2 = this.scanner.lookAhead();
+            if (la2.matches(TokenType.IDENTIFIER)) {
+                // ID ID
+                type = this.lookupType(new Identifier(la.getPosition(), 
+                    la.getStringValue()));
+                name = this.expectIdentifier();
+            } else {
+                type = Type.newTypeVar();
+                name = new Identifier(la.getPosition(), la.getStringValue());
+            }
+        } else {
+            type = this.parseType();
+            name = this.expectIdentifier();
+        }
         
         return new Declaration(this.scanner.spanFrom(la), name, 
             new Empty(type, this.scanner.spanFrom(la)));
@@ -1178,6 +1202,7 @@ public class InputParser {
      * type -> ID                                  // primitive type
      *       | LIST '&lt;' type '&gt;'             // list type
      *       | '(' type (WS type)* '->' type ')'   // function type
+     *       | '?'
      * </pre>
      * @return A resolvable type.
      * @throws ParseException If parsing fails.

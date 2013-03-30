@@ -155,26 +155,15 @@ public class Type implements Visitable<TypeVisitor>, Equatable, Comparable<Type>
     
     
     /**
-     * Tries to resolve a primitive type with the given name. If no such type exists, a
-     * type variable with the given name is returned (only if polymorph declarations are
-     * allowed). 
+     * Tries to resolve a primitive type with the given name. If no such type exists,
+     * <code>null</code> is returned.
      * 
      * @param name Name of the type to resolve.
-     * @param allowPolymorph Whether polymorphic declarations are allowed.
      * @return The resolved type or <code>null</code> if polymorphic types are not 
      *          allowed and not type with given name exists.
      */
-    public final static Type resolve(Identifier name, boolean allowPolymorph) {
-        Type t = primitives.get(name.getId());
-        if (t == null && allowPolymorph) {
-            t = typeVars.get(name.getId());
-            if (t == null) {
-                t = new TypeVar(name);
-                typeVars.put(name.getId(), t);
-            }
-        } else if (t == null && !allowPolymorph) {
-            return null;
-        }
+    public final static Type resolve(Identifier name) {
+        final Type t = primitives.get(name.getId());
         return t;
     }
     
