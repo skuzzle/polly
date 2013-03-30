@@ -257,7 +257,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
             for (final Type possibleLhs : possibleTypes) {
                 
                 for (final Type lhs : node.getLhs().getTypes()) {
-                    final Substitution subst = Type.unify(lhs, possibleLhs);
+                    final Substitution subst = Type.unify(possibleLhs, lhs);
                     if (subst != null) {
                         // construct new type with the argument types of lhs, and 
                         // result type of rhs
