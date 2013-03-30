@@ -131,13 +131,11 @@ public class Type implements Visitable<TypeVisitor>, Equatable, Comparable<Type>
      *  
      * @param types Collection of {@link MapType MapTypes} from which the most specific
      *          should be chosen.
-     * @param errorPos The position to report an error at if one occurs (see below)
-     * @return The considered most specific type within the given collection.
-     * @throws ASTTraversalException If the elements in the collection are not unifiable
-     *          with each other.
+     * @return The considered most specific type within the given collection, or 
+     *          <code>null</code> if the collection contains a type which is not unifiable
+     *          with any of the other types.
      */
-    public static MapType getMostSpecific(Collection<MapType> types, Position errorPos) 
-            throws ASTTraversalException {
+    public static MapType getMostSpecific(Collection<MapType> types) {
 
         assert !types.isEmpty();
         final Iterator<MapType> it = types.iterator();
@@ -147,8 +145,7 @@ public class Type implements Visitable<TypeVisitor>, Equatable, Comparable<Type>
             if (!tryUnify(result.getSource(), next.getSource()) && 
                 !tryUnify(next.getSource(), result.getSource())) {
                 
-                throw new ASTTraversalException(errorPos, 
-                    "Methodenaufruf mit nicht-eindeutigem Parametertyp");
+                return null;
             }
             result = result.compareTo(next) >= 0 ? result :next;
         }

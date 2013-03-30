@@ -59,5 +59,6 @@ public final class Problems {
     public final static String TYPE_ERROR = "Typefehler. Erwartet: %s, gefunden: %s.";
     public final static String UNKNOWN_TYPE = "Unbekannter Typ: %s.";
     public final static String NOT_ORDERED = "Type %s definiert keine Ordnung.";
+    public static final String AMBIGUOUS_CALL = "Nicht eindeutiger Funktionsaufruf.";
     
 }

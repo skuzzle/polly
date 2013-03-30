@@ -220,11 +220,13 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
             this.reportError(node.getLhs(), problem, Unparser.toString(node.getLhs()));
             return CONTINUE;
         } else if (matched.size() != 1) {
-            mtc = (MapType) Type.getMostSpecific(matched, node.getPosition());
+            mtc = Type.getMostSpecific(matched);
+            if (mtc == null) {
+                this.reportError(node, Problems.AMBIGUOUS_CALL);
+                return CONTINUE;
+            }
         } else {
             mtc = (MapType) matched.iterator().next();
-            this.ambiguousCall(node, matched);
-            return CONTINUE;
         }
 
         
