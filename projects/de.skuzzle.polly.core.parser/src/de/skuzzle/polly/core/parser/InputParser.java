@@ -1208,6 +1208,9 @@ public class InputParser {
 
             this.expect(TokenType.GT, true);
             return subType.listOf();
+        } else if (ParserProperties.should(ParserProperties.ALLOW_POLYMORPHIC_DECLS) 
+                && this.scanner.match(TokenType.QUESTION)) {
+            return Type.newTypeVar();
         } else {
             return this.lookupType(this.expectIdentifier());
         }

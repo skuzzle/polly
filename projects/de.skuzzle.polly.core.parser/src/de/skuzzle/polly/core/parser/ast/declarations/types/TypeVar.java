@@ -11,6 +11,8 @@ import de.skuzzle.polly.core.parser.ast.Identifier;
  */
 public class TypeVar extends Type {
 
+    protected TypeVar source;
+    
     /**
      * Creates a new TypeVar with the given name.
      * 
@@ -31,9 +33,10 @@ public class TypeVar extends Type {
     
     @Override
     public String toString() {
-        // XXX: append hash code to name to be able to distinguish between different 
-        //      instances with same name
-        return this.getName().toString() + "@" + (this.hashCode() % 1024);
+        if (this.source != null && this.source != this) {
+            return this.getName().toString() + " [" + this.source.toString() + "]";
+        }
+        return this.getName().toString();
     }
     
     

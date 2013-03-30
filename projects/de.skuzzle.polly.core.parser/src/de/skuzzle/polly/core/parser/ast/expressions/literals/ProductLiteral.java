@@ -6,6 +6,7 @@ import java.util.List;
 
 import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.declarations.types.ProductType;
+import de.skuzzle.polly.core.parser.ast.declarations.types.Substitution;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversal;
@@ -51,6 +52,20 @@ public class ProductLiteral extends ListLiteral {
         return true;
     }
     
+    
+    @Override
+    public boolean addType(Type type, Substitution constraint) {
+        if (!(type instanceof ProductType)) {
+            throw new IllegalArgumentException("no product type");
+        }
+        super.addType(type, constraint);
+        final ProductType ptc = (ProductType) type;
+        final Iterator<Type> typeIt = ptc.getTypes().iterator();
+        for (final Expression exp : this.getContent()) {
+            exp.addType(typeIt.next(), constraint);
+        }
+        return true;
+    }
     
     
     @Override

@@ -3,6 +3,7 @@ package de.skuzzle.polly.core.parser.ast.visitor.resolving;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -100,15 +101,15 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         }
         this.leave();
         
-        // check whether all formal parameters have been used
-        for (final Declaration d : node.getFormal()) {
-            if (d.isUnused()) {
-                // this.reportError(d, "Unbenutzer Parameter: " + d.getName());
-            }
-        }
-        
         for (final Type te : node.getBody().getTypes()) {
-            node.addType(new ProductType(source).mapTo(te));
+            if (node.getBody().hasConstraint(te)) {
+                final Substitution constraint = node.getBody().getConstraint(te);
+                
+                final Type t = new ProductType(source).mapTo(te).subst(constraint.toSource());
+                node.addType(t);
+            } else {
+                node.addType(new ProductType(source).mapTo(te));
+            }
         }
         
         return this.after(node) == CONTINUE;
@@ -123,7 +124,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         }
         for (final Expression exp : node.getContent()) {
             for (final Type t : exp.getTypes()) {
-                node.addType(t.listOf());
+                node.addType(t.listOf(), exp.getConstraint(t));
             }
         }
         return CONTINUE;
@@ -146,7 +147,21 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
             
             @Override
             public void onNewCombination(List<Type> combination) {
-                node.addType(new ProductType(combination));
+                final ProductType prod = new ProductType(combination);
+                
+                final Iterator<Expression> contIt = node.getContent().iterator();
+                final Iterator<Type> typeIt = prod.getTypes().iterator();
+                
+                // join constraints of product
+                Substitution s = new Substitution();
+                while (typeIt.hasNext()) {
+                    final Expression nextExp = contIt.next();
+                    final Type nextType = typeIt.next();
+                    final Substitution constraint = nextExp.getConstraint(nextType);
+                    s = s.join(constraint);
+                }
+                
+                node.addType(prod, s);
             }
         };
         
@@ -190,7 +205,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
                 node.getName(), new Empty(t, node.getExpression().getPosition()));
             this.nspace.declare(vd);
             
-            node.addType(t);
+            node.addType(t, node.getExpression().getConstraint(t));
         }
         return CONTINUE;
     }
@@ -240,6 +255,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         } else {
             // sort out all lhs types that do not match the rhs types
             for (final Type possibleLhs : possibleTypes) {
+                
                 for (final Type lhs : node.getLhs().getTypes()) {
                     final Substitution subst = Type.unify(lhs, possibleLhs);
                     if (subst != null) {
@@ -248,9 +264,12 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
                         final MapType lhsMap = (MapType) lhs;
                         final MapType plhsMap = (MapType) possibleLhs;
                     
+                        final Substitution constraint = node.getRhs().getConstraint(
+                            plhsMap.getSource());
+                        
                         final MapType mtc = (MapType) plhsMap.getSource().mapTo(
                             lhsMap.getTarget()).subst(subst);
-                        node.addType(mtc.getTarget());
+                        node.addType(mtc.getTarget(), subst.join(constraint));
                     }  
                 }
             }
@@ -263,7 +282,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
                 : Problems.INCOMPATIBLE_CALL;
             this.reportError(node.getLhs(), problem, 
                 Unparser.toString(node.getLhs()));
-            node.addType(new MissingType(new Identifier("$compatibilty")));
+            node.addType(new MissingType(new Identifier("$compatibilty")), null);
         }
         return this.after(node) == CONTINUE;
     }
@@ -311,7 +330,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     
     @Override
     public int before(Delete node) throws ASTTraversalException {
-        node.addType(Type.NUM);
+        node.addType(Type.NUM, null);
         node.setUnique(Type.NUM);
         return CONTINUE;
     }
@@ -348,7 +367,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
             this.reportError(var, Problems.UNKNOWN_VAR, var.getId());
         }
         node.setUnique(Type.STRING);
-        node.addType(Type.STRING);
+        node.addType(Type.STRING, null);
         return CONTINUE;
     }
 }

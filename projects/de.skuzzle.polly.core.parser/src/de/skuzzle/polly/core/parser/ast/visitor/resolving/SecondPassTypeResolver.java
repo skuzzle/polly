@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import de.skuzzle.polly.core.parser.ast.Root;
+import de.skuzzle.polly.core.parser.ast.declarations.types.ListType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.MapType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Substitution;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
@@ -32,16 +33,15 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
     
     
     
-    private boolean applyType(Expression parent, Expression child) 
+    private boolean applyType(Expression child) 
             throws ASTTraversalException {
-        if (parent.getTypes().size() == 1) {
-            child.setUnique(parent.getTypes().get(0));
-            parent.setUnique(child.getUnique());
+        if (child.getTypes().size() == 1 && !child.typeResolved()) {
+            child.setUnique(child.getTypes().get(0));
             return true;
         } else if (!child.typeResolved() && !this.reporter.hasProblems()) {
-            this.reportError(parent, "Nicht eindeutiger Typ");
+            this.reportError(child, "Nicht eindeutiger Typ");
         }
-        return false;
+        return child.typeResolved();
     }
     
     
@@ -75,8 +75,8 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         case ABORT: return false;
         }
         
-        if (!this.applyType(node, node)) {
-            return true;
+        if (!this.applyType(node)) {
+            return false;
         }
 
         
@@ -103,20 +103,17 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
             return true;
         }
         
-        final Type last = node.getContent().iterator().next().getUnique();
+        if (!this.applyType(node)) {
+            return false;
+        }
+        
+        final Type expected = ((ListType) node.getUnique()).getSubType();
+        
         for (final Expression exp : node.getContent()) {
+            exp.setUnique(expected);
             if (!exp.visit(this)) {
                 return false;
             }
-            if (last != null) {
-                if (!Type.tryUnify(last, exp.getUnique())) {
-                    this.typeError(exp, last, exp.getUnique());
-                }
-            }
-        }
-        
-        if (node.getTypes().size() == 1) {
-            node.setUnique(last.listOf());
         }
         
         return this.after(node) == CONTINUE;
@@ -140,19 +137,20 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
     }*/
     
     
-    
     @Override
-    public int before(Assignment node) throws ASTTraversalException {
-        this.applyType(node, node.getExpression());
-        return CONTINUE;
-    }
-    
-
-    
-    @Override
-    public int after(Assignment node) throws ASTTraversalException {
-        this.applyType(node, node);
-        return CONTINUE;
+    public boolean visit(Assignment node) throws ASTTraversalException {
+        switch (this.before(node)) {
+        case SKIP: return true;
+        case ABORT: return false;
+        }
+        
+        if (!this.applyType(node)) {
+            return false;
+        }
+        if (!node.getExpression().visit(this)) {
+            return false;
+        }
+        return this.after(node) == CONTINUE;
     }
     
     
@@ -167,7 +165,7 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
     
     @Override
     public int after(VarAccess node) throws ASTTraversalException {
-        this.applyType(node, node);
+        this.applyType(node);
         return CONTINUE;
     }
     
@@ -244,7 +242,12 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         case SKIP: return true;
         case ABORT: return false;
         }
-        this.applyType(node, node.getRhs());
+        if (!this.applyType(node)) {
+            return false;
+        }
+        if (!node.getRhs().visit(this)) {
+            return false;
+        }
         return this.after(node) == CONTINUE;
     }
     

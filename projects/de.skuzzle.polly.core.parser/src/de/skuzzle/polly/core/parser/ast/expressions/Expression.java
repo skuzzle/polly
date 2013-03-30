@@ -2,10 +2,13 @@ package de.skuzzle.polly.core.parser.ast.expressions;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.Node;
+import de.skuzzle.polly.core.parser.ast.declarations.types.Substitution;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
 import de.skuzzle.polly.core.parser.ast.visitor.resolving.TypeResolver;
 import de.skuzzle.polly.tools.Equatable;
@@ -22,6 +25,7 @@ public abstract class Expression extends Node {
 
     private Type unique;
     private final List<Type> types;
+    private final Map<Type, Substitution> constraints;
     
     
     
@@ -35,6 +39,7 @@ public abstract class Expression extends Node {
         super(position);
         this.unique = unique;
         this.types = new ArrayList<Type>();
+        this.constraints = new HashMap<Type, Substitution>();
         if (unique != Type.UNKNOWN) {
             this.types.add(unique);
         }
@@ -85,12 +90,31 @@ public abstract class Expression extends Node {
      * @return Whether the type has been added.
      */
     public boolean addType(Type type) {
+        return this.addType(type, null);
+    }
+    
+    
+    
+    public boolean addType(Type type, Substitution constraint) {
         for (final Type t : this.types) {
             if (Type.tryUnifyNoInheritance(type, t)) {
                 return false;
             }
         }
-        return this.types.add(type);
+        this.types.add(type);
+        this.constraints.put(type, constraint);
+        return true;
+    }
+    
+    
+    
+    public boolean hasConstraint(Type type) {
+        return this.constraints.get(type) != null;
+    }
+    
+    
+    public Substitution getConstraint(Type type) {
+        return this.constraints.get(type);
     }
     
     

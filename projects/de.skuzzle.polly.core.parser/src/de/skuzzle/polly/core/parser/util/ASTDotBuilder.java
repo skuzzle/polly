@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
 import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
+import de.skuzzle.polly.core.parser.ast.declarations.types.Substitution;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
 import de.skuzzle.polly.core.parser.ast.expressions.VarAccess;
@@ -100,6 +101,11 @@ public class ASTDotBuilder extends DotBuilder {
         final StringBuilder typesBuilder = new StringBuilder();
         for (final Type t : exp.getTypes()) {
             typesBuilder.append(t);
+            if (exp.hasConstraint(t)) {
+                final Substitution constraint = exp.getConstraint(t);
+                typesBuilder.append(" ");
+                typesBuilder.append(constraint.map().entrySet().toString());
+            }
             typesBuilder.append("\\n");
         }
         this.printNode(exp, 

@@ -30,6 +30,7 @@ public class Substitution {
                 Type te = this.mappings.get(v);
                 if (te == null) {
                     te = Type.newTypeVar();
+                    ((TypeVar) te).source = v;
                     this.mappings.put(v, te);
                 }
                 return te;
@@ -37,8 +38,8 @@ public class Substitution {
         };
     }
     
-    
 
+    
     /** Substitution mappings in this instance */
     protected final Map<TypeVar, Type> mappings;
     
@@ -83,6 +84,29 @@ public class Substitution {
     
     
     
+    public Substitution toSource() {
+        final Substitution result = new Substitution(
+            new HashMap<TypeVar, Type>());
+        for (final Entry<TypeVar, Type> e : this.mappings.entrySet()) {
+            if (e.getKey().source != null) {
+                result.mappings.put(e.getKey().source, e.getValue());
+            }
+        }
+        return result;
+    }
+    
+    
+    public Substitution join(Substitution s) {
+        final Substitution result = new Substitution(
+            new HashMap<TypeVar, Type>());
+        result.mappings.putAll(this.mappings);
+        if (s != null) {
+            result.mappings.putAll(s.mappings);
+        }
+        return result;
+    }
+    
+    
     /**
      * Gets the substitute type for the given type variable. If this set contains no
      * substitution for the passed variable, the variable itself is returned.
@@ -94,5 +118,16 @@ public class Substitution {
     protected Type getSubstitute(TypeVar v) {
         final Type t = this.mappings.get(v);
         return t == null ? v : t;
+    }
+    
+    
+    
+    /**
+     * Gets a read-only map view of the substitution mappings.
+     * 
+     * @return Map of substitutions.
+     */
+    public Map<TypeVar, Type> map() {
+        return Collections.unmodifiableMap(this.mappings);
     }
 }
