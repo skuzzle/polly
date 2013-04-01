@@ -4,7 +4,6 @@ import java.util.List;
 
 import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.Identifier;
-import de.skuzzle.polly.core.parser.ast.Node;
 import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversal;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
@@ -48,6 +47,14 @@ public class Delete extends Expression {
          */
         public boolean isGlobal() {
             return this.global;
+        }
+        
+        
+        
+        @Override
+        public Identifier transform(Transformation transformation)
+                throws ASTTraversalException {
+            return transformation.transformIdentifier(this);
         }
     }
     
@@ -103,7 +110,8 @@ public class Delete extends Expression {
     
     
     @Override
-    public Node transform(Transformation transformation) throws ASTTraversalException {
+    public Expression transform(Transformation transformation) 
+            throws ASTTraversalException {
         return transformation.transformDelete(this);
     }
 }

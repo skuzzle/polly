@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import de.skuzzle.polly.core.parser.Position;
-import de.skuzzle.polly.core.parser.ast.Node;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
@@ -81,7 +80,8 @@ public class FunctionLiteral extends Literal {
     
     
     @Override
-    public Node transform(Transformation transformation) throws ASTTraversalException {
+    public Expression transform(Transformation transformation) 
+            throws ASTTraversalException {
         return transformation.transformFunction(this);
     }
     

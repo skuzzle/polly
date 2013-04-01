@@ -1,7 +1,6 @@
 package de.skuzzle.polly.core.parser.ast.expressions;
 
 import de.skuzzle.polly.core.parser.Position;
-import de.skuzzle.polly.core.parser.ast.Node;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversal;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
@@ -32,7 +31,8 @@ public class Empty extends Expression {
     
     
     @Override
-    public Node transform(Transformation transformation) throws ASTTraversalException {
+    public Expression transform(Transformation transformation) 
+            throws ASTTraversalException {
         return this;
     }
     

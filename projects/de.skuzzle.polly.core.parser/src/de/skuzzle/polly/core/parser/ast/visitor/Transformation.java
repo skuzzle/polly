@@ -1,13 +1,14 @@
 package de.skuzzle.polly.core.parser.ast.visitor;
 
 import de.skuzzle.polly.core.parser.ast.Identifier;
-import de.skuzzle.polly.core.parser.ast.Node;
+import de.skuzzle.polly.core.parser.ast.ResolvableIdentifier;
 import de.skuzzle.polly.core.parser.ast.Root;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
 import de.skuzzle.polly.core.parser.ast.expressions.Assignment;
 import de.skuzzle.polly.core.parser.ast.expressions.Braced;
 import de.skuzzle.polly.core.parser.ast.expressions.Call;
 import de.skuzzle.polly.core.parser.ast.expressions.Delete;
+import de.skuzzle.polly.core.parser.ast.expressions.Delete.DeleteableIdentifier;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
 import de.skuzzle.polly.core.parser.ast.expressions.Inspect;
 import de.skuzzle.polly.core.parser.ast.expressions.NamespaceAccess;
@@ -30,7 +31,12 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.UserLiteral;
 public interface Transformation {
 
     Identifier transformIdentifier(Identifier node) throws ASTTraversalException;
+    
+    ResolvableIdentifier transformIdentifier(ResolvableIdentifier node) 
+        throws ASTTraversalException;
 
+    DeleteableIdentifier transformIdentifier(DeleteableIdentifier deleteableIdentifier);
+    
     Root transformRoot(Root node) throws ASTTraversalException;
 
     Declaration transformDeclaration(Declaration node) throws ASTTraversalException;
@@ -41,7 +47,7 @@ public interface Transformation {
 
     Expression transformCall(Call node) throws ASTTraversalException;
 
-    Node transformDelete(Delete node) throws ASTTraversalException;
+    Expression transformDelete(Delete node) throws ASTTraversalException;
 
     Expression transformAccess(NamespaceAccess node) throws ASTTraversalException;
 
@@ -63,7 +69,7 @@ public interface Transformation {
 
     Expression transformNumber(NumberLiteral node) throws ASTTraversalException;
 
-    Expression transformProduct(ProductLiteral node) throws ASTTraversalException;
+    ProductLiteral transformProduct(ProductLiteral node) throws ASTTraversalException;
 
     Expression transformString(StringLiteral node) throws ASTTraversalException;
 
@@ -71,7 +77,9 @@ public interface Transformation {
 
     Expression transformUser(UserLiteral node) throws ASTTraversalException;
 
-    HelpLiteral transformHelp(HelpLiteral node);
+    HelpLiteral transformHelp(HelpLiteral node) throws ASTTraversalException;
 
-    Inspect transformInspect(Inspect node);
+    Inspect transformInspect(Inspect node) throws ASTTraversalException;
+
+    
 }

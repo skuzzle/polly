@@ -8,6 +8,7 @@ import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversal;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTVisitor;
+import de.skuzzle.polly.core.parser.ast.visitor.Transformation;
 
 /**
  * ResolvableIdentifers are identifiers that refer to declarations. The actual declaration
@@ -120,5 +121,13 @@ public class ResolvableIdentifier extends Identifier {
         case ASTTraversal.ABORT: return false;
         }
         return visitor.after(this) == ASTTraversal.CONTINUE;
+    }
+    
+    
+    
+    @Override
+    public ResolvableIdentifier transform(Transformation transformation)
+            throws ASTTraversalException {
+        return transformation.transformIdentifier(this);
     }
 }

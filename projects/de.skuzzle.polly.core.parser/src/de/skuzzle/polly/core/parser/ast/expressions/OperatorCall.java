@@ -90,7 +90,7 @@ public class OperatorCall extends Call {
      *          operator is assumed to be prefix (only taken into account for unary 
      *          operators.)
      */
-    private OperatorCall(Position position, OpType operator, 
+    public OperatorCall(Position position, OpType operator, 
             List<Expression> parameters, boolean postfix) {
         super(position, 
             new VarAccess(position, new ResolvableIdentifier(position, 

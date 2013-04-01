@@ -85,7 +85,7 @@ public class ProductLiteral extends ListLiteral {
     
     
     @Override
-    public Expression transform(Transformation transformation)
+    public ProductLiteral transform(Transformation transformation)
             throws ASTTraversalException {
         return transformation.transformProduct(this);
     }

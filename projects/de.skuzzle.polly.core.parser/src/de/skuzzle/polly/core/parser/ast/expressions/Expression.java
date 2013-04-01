@@ -10,6 +10,8 @@ import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.Node;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Substitution;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
+import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.core.parser.ast.visitor.Transformation;
 import de.skuzzle.polly.core.parser.ast.visitor.resolving.TypeResolver;
 import de.skuzzle.polly.tools.Equatable;
 
@@ -113,6 +115,7 @@ public abstract class Expression extends Node {
     }
     
     
+    
     public Substitution getConstraint(Type type) {
         return this.constraints.get(type);
     }
@@ -203,4 +206,10 @@ public abstract class Expression extends Node {
     public String toString() {
         return "unique: " + this.unique + ", types: " + this.types;
     }
+    
+    
+    
+    @Override
+    public abstract Expression transform(Transformation transformation) 
+        throws ASTTraversalException;
 }
