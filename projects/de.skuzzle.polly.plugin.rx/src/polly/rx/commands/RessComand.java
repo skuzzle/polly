@@ -1,6 +1,11 @@
 package polly.rx.commands;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 
 import polly.rx.MyPlugin;
@@ -46,7 +51,16 @@ public class RessComand extends Command {
     @Override
     public void renewConstants(Map<String, Types> map) {
         map.putAll(this.rpgrabber.getPrices());
-        map.put("date", new Types.DateType(this.rpgrabber.getlastRefreshDate()));
+        
+        final SortedMap<String, Types> smap = new TreeMap<String, Types>(map);
+        final List<Types> types = new ArrayList<Types>();
+        for (final Entry<String, Types> e : smap.entrySet()) {
+            types.add(new Types.StringType(e.getKey() + ":" + e.getValue().valueString(
+                this.getMyPolly().formatting())));
+        }
+        final Types.ListType lt = new Types.ListType(types);
+        map.put("all", lt);
+        map.put("time", new Types.DateType(this.rpgrabber.getlastRefreshDate()));
     }
     
     

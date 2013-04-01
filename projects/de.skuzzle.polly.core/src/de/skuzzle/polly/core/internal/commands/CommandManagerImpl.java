@@ -329,8 +329,8 @@ public class CommandManagerImpl implements CommandManager {
             new UserLiteral(Position.NONE, user.getCurrentNickName())));
         d.declare(new Declaration(Position.NONE, new Identifier("here"), 
             new ChannelLiteral(Position.NONE, channel)));
-        d.declare(new Declaration(Position.NONE, new Identifier("all"), 
-            new ListLiteral(Position.NONE, channels, Type.CHANNEL)));
+        //d.declare(new Declaration(Position.NONE, new Identifier("all"), 
+        //    new ListLiteral(Position.NONE, channels, Type.CHANNEL)));
         d.declare(new Declaration(Position.NONE, new Identifier("each"), 
             new ListLiteral(Position.NONE, users, Type.USER)));
         

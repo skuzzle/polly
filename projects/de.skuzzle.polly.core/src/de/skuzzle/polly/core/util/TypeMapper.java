@@ -137,10 +137,15 @@ public class TypeMapper {
 		} else if (types instanceof Types.ListType) {
 			Types.ListType lt = (Types.ListType) types;
 			ArrayList<Expression> elements = new ArrayList<Expression>();
+			Types unique = null;
 			for (Types t : lt.getElements()) {
 				elements.add(TypeMapper.typesToLiteral(t));
+				unique = t;
 			}
-			return new ListLiteral(Position.NONE, elements);
+			final ListLiteral ll = new ListLiteral(Position.NONE, elements);
+			ll.setUnique(TypeMapper.typesToType(unique).listOf());
+			
+			return ll;
 		}
 		
 		throw new IllegalArgumentException("Invalid type");
