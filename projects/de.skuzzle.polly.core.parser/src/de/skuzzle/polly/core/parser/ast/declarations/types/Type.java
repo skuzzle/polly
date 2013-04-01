@@ -104,7 +104,6 @@ public class Type implements Visitable<TypeVisitor>, Equatable, Comparable<Type>
     
     
     private final static Map<String, Type> primitives = new HashMap<String, Type>();
-    private final static Map<String, Type> typeVars = new HashMap<String, Type>();
     static {
         primitives.put(NUM.getName().getId(), NUM);
         primitives.put(DATE.getName().getId(), DATE);
