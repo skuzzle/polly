@@ -14,6 +14,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.Literal;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTVisitor;
+import de.skuzzle.polly.core.parser.ast.visitor.ExecutionVisitor;
 import de.skuzzle.polly.core.parser.ast.visitor.resolving.AbstractTypeResolver;
 import de.skuzzle.polly.core.parser.ast.visitor.resolving.TypeResolver;
 import de.skuzzle.polly.tools.collections.Stack;
@@ -83,7 +84,7 @@ public abstract class TernaryOperator<FIRST extends Literal, SECOND extends Lite
     @Override
     @SuppressWarnings("unchecked")
     public final void execute(Stack<Literal> stack, Namespace ns, 
-            ASTVisitor execVisitor) throws ASTTraversalException {
+        ExecutionVisitor execVisitor) throws ASTTraversalException {
         
         final FIRST first = (FIRST) ns.resolveFirst(FIRST_PARAM_NAME).getExpression();
         final SECOND second = (SECOND) ns.resolveFirst(SECOND_PARAM_NAME).getExpression();

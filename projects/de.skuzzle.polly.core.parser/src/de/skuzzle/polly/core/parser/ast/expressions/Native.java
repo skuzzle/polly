@@ -9,6 +9,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.Literal;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversal;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTVisitor;
+import de.skuzzle.polly.core.parser.ast.visitor.ExecutionVisitor;
 import de.skuzzle.polly.core.parser.ast.visitor.Transformation;
 import de.skuzzle.polly.core.parser.ast.visitor.resolving.AbstractTypeResolver;
 import de.skuzzle.polly.core.parser.ast.visitor.resolving.TypeResolver;
@@ -59,7 +60,7 @@ public abstract class Native extends Expression {
      * @throws ASTTraversalException If executing fails.
      */
     public abstract void execute(Stack<Literal> stack, Namespace ns, 
-            ASTVisitor execVisitor) throws ASTTraversalException;
+        ExecutionVisitor execVisitor) throws ASTTraversalException;
     
     
     

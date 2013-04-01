@@ -27,14 +27,12 @@ import de.skuzzle.polly.core.parser.problems.ProblemReporter;
  */
 public class Evaluator {
     
-    public final static boolean DEBUG_MODE = false;
-    
     private final static ExecutionVisitor getExecutor(Namespace rootNs, 
-            Namespace workingNs) {
-        if (DEBUG_MODE) {
-            return new DebugExecutionVisitor(rootNs, workingNs);
+            Namespace workingNs, ProblemReporter reporter) {
+        if (ParserProperties.should(ParserProperties.ENABLE_EXECUTION_DEBUGGING)) {
+            return new DebugExecutionVisitor(rootNs, workingNs, reporter);
         } else {
-            return new ExecutionVisitor(rootNs, workingNs);
+            return new ExecutionVisitor(rootNs, workingNs, reporter);
         }
     }
 
@@ -96,7 +94,7 @@ public class Evaluator {
             TypeResolver.resolveAST(this.lastResult, workingNs, this.reporter);
             
             if (!this.reporter.hasProblems()) {
-                final ASTVisitor executor = getExecutor(rootNs, workingNs);
+                final ASTVisitor executor = getExecutor(rootNs, workingNs, this.reporter);
                 this.lastResult.visit(executor);
             }
             

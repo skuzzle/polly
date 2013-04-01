@@ -3,6 +3,7 @@ package de.skuzzle.polly.core.parser.ast.lang.functions;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+
 import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
 import de.skuzzle.polly.core.parser.ast.declarations.types.ProductType;
@@ -16,7 +17,8 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.Literal;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.ProductLiteral;
 import de.skuzzle.polly.core.parser.ast.lang.BinaryOperator;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.core.parser.ast.visitor.ASTVisitor;
+import de.skuzzle.polly.core.parser.ast.visitor.ExecutionVisitor;
+import de.skuzzle.polly.core.parser.ast.visitor.resolving.TypeResolver;
 import de.skuzzle.polly.tools.collections.Stack;
 
 
@@ -41,11 +43,11 @@ public class Map extends BinaryOperator<ListLiteral, FunctionLiteral> {
             new ProductType(a).mapTo(b));
     }
 
-
+    
 
     @Override
     protected void exec(Stack<Literal> stack, Namespace ns, ListLiteral left,
-            FunctionLiteral right, Position resultPos, ASTVisitor execVisitor) 
+            FunctionLiteral right, Position resultPos, ExecutionVisitor execVisitor) 
                 throws ASTTraversalException {
         
         final ArrayList<Expression> result = new ArrayList<Expression>();
@@ -53,7 +55,7 @@ public class Map extends BinaryOperator<ListLiteral, FunctionLiteral> {
             final Call call = new Call(Position.NONE, right, 
                 new ProductLiteral(Position.NONE, Arrays.asList(new Expression[] {exp})));
 
-            //TypeResolver.resolveAST(call, ns);
+            TypeResolver.resolveAST(call, ns, execVisitor.getReporter());
             call.visit(execVisitor);
             result.add(stack.pop());
         }

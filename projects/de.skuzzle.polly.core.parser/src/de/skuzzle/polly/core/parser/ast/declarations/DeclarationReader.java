@@ -73,7 +73,7 @@ public class DeclarationReader implements Closeable {
         this.file = file;
         this.reader = new LineNumberReader(new FileReader(file));
         this.nspace = nspace;
-        this.executor = new ExecutionVisitor(nspace, nspace);
+        this.executor = new ExecutionVisitor(nspace, nspace, new SimpleProblemReporter());
     }
     
     

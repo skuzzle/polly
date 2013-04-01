@@ -6,6 +6,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.VarAccess;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.Literal;
+import de.skuzzle.polly.core.parser.problems.ProblemReporter;
 
 
 public class DebugExecutionVisitor extends ExecutionVisitor {
@@ -15,8 +16,9 @@ public class DebugExecutionVisitor extends ExecutionVisitor {
     private int indent;
     
     
-    public DebugExecutionVisitor(Namespace rootNs, Namespace workingNs) {
-        super(rootNs, workingNs);
+    public DebugExecutionVisitor(Namespace rootNs, Namespace workingNs, 
+            ProblemReporter reporter) {
+        super(rootNs, workingNs, reporter);
     }
     
     

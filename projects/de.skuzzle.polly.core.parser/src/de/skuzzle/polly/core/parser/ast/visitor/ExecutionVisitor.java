@@ -26,6 +26,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.Literal;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.NumberLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.StringLiteral;
+import de.skuzzle.polly.core.parser.problems.ProblemReporter;
 import de.skuzzle.polly.tools.collections.LinkedStack;
 import de.skuzzle.polly.tools.collections.Stack;
 
@@ -36,12 +37,24 @@ public class ExecutionVisitor extends DepthFirstVisitor {
     protected final Stack<Literal> stack;
     private Namespace nspace;
     private final Namespace rootNs;
+    private final ProblemReporter reporter;
     
-    public ExecutionVisitor(Namespace rootNs, Namespace workingNs) {
+    
+    
+    public ExecutionVisitor(Namespace rootNs, Namespace workingNs, 
+            ProblemReporter reporter) {
         this.stack = new LinkedStack<Literal>();
         this.nspace = workingNs;
         this.rootNs = rootNs;
+        this.reporter = reporter;
     }
+    
+    
+    
+    public ProblemReporter getReporter() {
+        return this.reporter;
+    }
+    
     
     
     
@@ -62,7 +75,7 @@ public class ExecutionVisitor extends DepthFirstVisitor {
      * 
      * @return The created namespace.
      */
-    private Namespace enter() {
+    public Namespace enter() {
         return this.nspace = this.nspace.enter();
     }
     
@@ -73,7 +86,7 @@ public class ExecutionVisitor extends DepthFirstVisitor {
      * 
      * @return The parent of the former current namespace.
      */
-    private Namespace leave() {
+    public Namespace leave() {
         return this.nspace = this.nspace.getParent();
     }
     
@@ -283,7 +296,8 @@ public class ExecutionVisitor extends DepthFirstVisitor {
         case ABORT: return false;
         }
 
-        final Declaration vd = this.nspace.tryResolve(
+        final Declaration vd = //node.getIdentifier().getDeclaration();
+            this.nspace.tryResolve(
             node.getIdentifier(), 
             node.getUnique());
         if (!vd.getExpression().visit(this)) {

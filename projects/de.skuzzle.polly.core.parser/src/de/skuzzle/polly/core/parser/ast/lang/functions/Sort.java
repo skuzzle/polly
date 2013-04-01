@@ -20,7 +20,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.NumberLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.ProductLiteral;
 import de.skuzzle.polly.core.parser.ast.lang.BinaryOperator;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.core.parser.ast.visitor.ASTVisitor;
+import de.skuzzle.polly.core.parser.ast.visitor.ExecutionVisitor;
 import de.skuzzle.polly.tools.collections.Stack;
 
 
@@ -37,7 +37,7 @@ public class Sort extends BinaryOperator<ListLiteral, FunctionLiteral> {
     @Override
     protected void exec(final Stack<Literal> stack, Namespace ns, ListLiteral left,
             final FunctionLiteral right, final Position resultPos, 
-            final ASTVisitor execVisitor) throws ASTTraversalException {
+            final ExecutionVisitor execVisitor) throws ASTTraversalException {
         
         final Comparator<Expression> c = new Comparator<Expression>() {
 

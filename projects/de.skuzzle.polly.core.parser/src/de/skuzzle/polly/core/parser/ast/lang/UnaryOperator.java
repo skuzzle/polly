@@ -13,7 +13,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.Expression;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.Literal;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.core.parser.ast.visitor.ASTVisitor;
+import de.skuzzle.polly.core.parser.ast.visitor.ExecutionVisitor;
 import de.skuzzle.polly.core.parser.ast.visitor.resolving.AbstractTypeResolver;
 import de.skuzzle.polly.core.parser.ast.visitor.resolving.TypeResolver;
 import de.skuzzle.polly.tools.collections.Stack;
@@ -85,7 +85,7 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
     
     @Override
     @SuppressWarnings("unchecked")
-    public void execute(Stack<Literal> stack, Namespace ns, ASTVisitor execVisitor)
+    public void execute(Stack<Literal> stack, Namespace ns, ExecutionVisitor execVisitor)
             throws ASTTraversalException {
         final O operand = (O) ns.resolveFirst(PARAM_NAME).getExpression();
         this.exec(stack, ns, operand, operand.getPosition());

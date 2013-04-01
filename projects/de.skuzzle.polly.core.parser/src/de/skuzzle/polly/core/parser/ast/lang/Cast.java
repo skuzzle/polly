@@ -12,7 +12,7 @@ import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.Literal;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.core.parser.ast.visitor.ASTVisitor;
+import de.skuzzle.polly.core.parser.ast.visitor.ExecutionVisitor;
 import de.skuzzle.polly.tools.collections.Stack;
 
 
@@ -48,7 +48,7 @@ public class Cast extends Operator {
     
 
     @Override
-    public void execute(Stack<Literal> stack, Namespace ns, ASTVisitor execVisitor)
+    public void execute(Stack<Literal> stack, Namespace ns, ExecutionVisitor execVisitor)
             throws ASTTraversalException {
         
         // on a function call, parameters are already executed to be a Literal

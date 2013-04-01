@@ -60,5 +60,6 @@ public final class Problems {
     public final static String UNKNOWN_TYPE = "Unbekannter Typ: %s.";
     public final static String NOT_ORDERED = "Type %s definiert keine Ordnung.";
     public static final String AMBIGUOUS_CALL = "Nicht eindeutiger Funktionsaufruf.";
+    public static final String ASSIGNMENT_NOT_ALLOWED = "Polymorphe Ausdrücke können nicht gespeichert werden.";;
     
 }

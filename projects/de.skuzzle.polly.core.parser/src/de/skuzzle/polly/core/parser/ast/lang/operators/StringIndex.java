@@ -8,7 +8,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.NumberLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.StringLiteral;
 import de.skuzzle.polly.core.parser.ast.lang.BinaryOperator;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.core.parser.ast.visitor.ASTVisitor;
+import de.skuzzle.polly.core.parser.ast.visitor.ExecutionVisitor;
 import de.skuzzle.polly.tools.collections.Stack;
 
 
@@ -23,7 +23,7 @@ public class StringIndex extends BinaryOperator<StringLiteral, NumberLiteral> {
 
     @Override
     protected void exec(Stack<Literal> stack, Namespace ns, StringLiteral left,
-            NumberLiteral right, Position resultPos, ASTVisitor execVisitor)
+            NumberLiteral right, Position resultPos, ExecutionVisitor execVisitor)
                 throws ASTTraversalException {
         
         switch (this.getOp()) {

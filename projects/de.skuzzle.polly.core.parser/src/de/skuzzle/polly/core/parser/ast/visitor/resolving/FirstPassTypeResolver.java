@@ -105,13 +105,13 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
             if (node.getBody().hasConstraint(te)) {
                 final Substitution constraint = node.getBody().getConstraint(te);
                 
-                final Type t = new ProductType(source).mapTo(te).subst(constraint.toSource());
+                final Type t = new ProductType(source).mapTo(te).subst(
+                    constraint.toSource());
                 node.addType(t);
             } else {
                 node.addType(new ProductType(source).mapTo(te));
             }
         }
-        
         return this.after(node) == CONTINUE;
     }
     

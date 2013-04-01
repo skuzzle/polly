@@ -2,12 +2,16 @@ package de.skuzzle.polly.core.parser.ast.visitor.resolving;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
+import de.skuzzle.polly.core.parser.ParserProperties;
 import de.skuzzle.polly.core.parser.ast.Root;
+import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
 import de.skuzzle.polly.core.parser.ast.declarations.types.ListType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.MapType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Substitution;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
+import de.skuzzle.polly.core.parser.ast.declarations.types.TypeVar;
 import de.skuzzle.polly.core.parser.ast.expressions.Assignment;
 import de.skuzzle.polly.core.parser.ast.expressions.Call;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
@@ -142,6 +146,23 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         switch (this.before(node)) {
         case SKIP: return true;
         case ABORT: return false;
+        }
+        
+        
+        if (ParserProperties.should(ParserProperties.ALLOW_POLYMORPHIC_DECLS)) {
+            if (node.getExpression() instanceof FunctionLiteral) {
+                final FunctionLiteral fun = (FunctionLiteral) node.getExpression();
+                final List<Type> types = new ArrayList<>(fun.getFormal().size());
+                boolean ispoly = false;
+                for (final Declaration d : fun.getFormal()) {
+                    ispoly |= d.getType() instanceof TypeVar;
+                    types.add(d.getType());
+                }
+                
+                if (ispoly) {
+                    this.reportError(node, Problems.ASSIGNMENT_NOT_ALLOWED);
+                }
+            }
         }
         
         if (!this.applyType(node)) {

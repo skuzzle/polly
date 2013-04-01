@@ -26,11 +26,14 @@ public class ParserProperties {
     
     /** Whether all read tokens should be printed to std out. */
     public final static String ENABLE_SCANNER_DEBUGGING = "scannerDebugging";
-    
+
+    /** Whether execution debuggin should be enabled. */
+    public static final String ENABLE_EXECUTION_DEBUGGING = null;
     
     
     /** Stores the parser properties. */
     private final static Map<String, String> properties;
+
     static {
         // init with default settings
         properties = new HashMap<String, String>();
@@ -38,6 +41,7 @@ public class ParserProperties {
         properties.put(ALLOW_POLYMORPHIC_DECLS, Boolean.TRUE.toString());
         properties.put(ENABLE_TOKEN_ESCAPING, Boolean.TRUE.toString());
         properties.put(ENABLE_SCANNER_DEBUGGING, Boolean.FALSE.toString());
+        properties.put(ENABLE_EXECUTION_DEBUGGING, Boolean.FALSE.toString());
     }
     
     
