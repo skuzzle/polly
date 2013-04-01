@@ -99,6 +99,18 @@ public interface ProblemReporter {
     
     
     /**
+     * Creates a new sub problem reporter which error messages are clipped by the given 
+     * position.
+     * 
+     * @param clipping Position clipping.
+     * @return A new problem reporter.
+     * @see Position#clip(Position)
+     */
+    public ProblemReporter subReporter(Position clipping);
+    
+    
+    
+    /**
      * Whether at least one problem has been reported.
      * 
      * @return Whether at least one problem has been reported.

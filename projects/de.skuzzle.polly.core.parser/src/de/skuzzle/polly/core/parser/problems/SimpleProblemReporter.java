@@ -21,7 +21,31 @@ public class SimpleProblemReporter implements ProblemReporter {
 
     private boolean problem;
     private Position position;
+    private final Position clipping;
     
+    
+    public SimpleProblemReporter() {
+        this(null);
+    }
+    
+
+    
+    private SimpleProblemReporter(Position clipping) {
+        this.clipping = clipping;
+    }
+    
+    
+    
+    private Position clip(Position pos) {
+        return this.clipping == null ? pos : pos.clip(this.clipping);
+    }
+    
+    
+    
+    @Override
+    public ProblemReporter subReporter(Position clipping) {
+        return new SimpleProblemReporter(clipping);
+    }
     
     
     @Override
@@ -45,7 +69,7 @@ public class SimpleProblemReporter implements ProblemReporter {
     public void lexicalProblem(String problem, Position position) 
             throws ParseException {
         this.problem = true;
-        throw new ParseException(problem, position);
+        throw new ParseException(problem, this.clip(position));
     }
 
     
@@ -54,7 +78,7 @@ public class SimpleProblemReporter implements ProblemReporter {
     public void syntaxProblem(String problem, Position position, Object...params) 
             throws ParseException {
         this.problem = true;
-        throw new ParseException(Problems.format(problem, params), position);
+        throw new ParseException(Problems.format(problem, params), this.clip(position));
     }
 
     
@@ -63,7 +87,7 @@ public class SimpleProblemReporter implements ProblemReporter {
     public void syntaxProblem(TokenType expected, Token occurred, Position position)
             throws ParseException {
         this.problem = true;
-        throw new SyntaxException(expected, occurred, position);
+        throw new SyntaxException(expected, occurred, this.clip(position));
     }
 
     
@@ -72,7 +96,7 @@ public class SimpleProblemReporter implements ProblemReporter {
     public void semanticProblem(String problem, Position position, Object...params) 
             throws ParseException {
         this.problem = true;
-        throw new ParseException(Problems.format(problem, params), position);
+        throw new ParseException(Problems.format(problem, params), this.clip(position));
     }
 
     
@@ -81,7 +105,7 @@ public class SimpleProblemReporter implements ProblemReporter {
     public void typeProblem(Type expected, Type occurred, Position position)
             throws ASTTraversalException {
         this.problem = true;
-        throw new ASTTraversalException(position, 
+        throw new ASTTraversalException(this.clip(position), 
             Problems.format(Problems.TYPE_ERROR, expected, occurred));
     }
 

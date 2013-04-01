@@ -19,11 +19,32 @@ import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 public class MultipleProblemReporter implements ProblemReporter {
 
     private final SortedSet<Problem> problems;
-    
+    private final Position clipping;
     
     
     public MultipleProblemReporter() {
-        this.problems = new TreeSet<MultipleProblemReporter.Problem>();
+        this(new TreeSet<MultipleProblemReporter.Problem>(), null);
+        
+    }
+    
+    
+    
+    private MultipleProblemReporter(SortedSet<Problem> problems, Position clipping) {
+        this.problems = problems;
+        this.clipping = clipping;
+    }
+    
+    
+    
+    private Position clip(Position pos) {
+        return this.clipping == null ? pos : pos.clip(this.clipping);
+    }
+    
+    
+    
+    @Override
+    public ProblemReporter subReporter(Position clipping) {
+        return new MultipleProblemReporter(this.problems, clipping);
     }
     
     
@@ -60,7 +81,7 @@ public class MultipleProblemReporter implements ProblemReporter {
     @Override
     public void lexicalProblem(String problem, Position position) 
             throws ParseException {
-        this.problems.add(new Problem(LEXICAL, position, problem));
+        this.problems.add(new Problem(LEXICAL, this.clip(position), problem));
     }
 
     
@@ -68,7 +89,7 @@ public class MultipleProblemReporter implements ProblemReporter {
     @Override
     public void syntaxProblem(String problem, Position position, Object...params) 
             throws ParseException {
-        this.problems.add(new Problem(SYNTACTICAL, position, 
+        this.problems.add(new Problem(SYNTACTICAL, this.clip(position), 
             Problems.format(problem, params)));
     }
     
@@ -77,7 +98,7 @@ public class MultipleProblemReporter implements ProblemReporter {
     @Override
     public void syntaxProblem(TokenType expected, Token occurred, Position position)
             throws ParseException {
-        this.problems.add(new Problem(SYNTACTICAL, position, 
+        this.problems.add(new Problem(SYNTACTICAL, this.clip(position), 
             Problems.format(Problems.UNEXPECTED_TOKEN, occurred.toString(false, false),
                 expected.toString())));
     }
@@ -87,7 +108,7 @@ public class MultipleProblemReporter implements ProblemReporter {
     @Override
     public void semanticProblem(String problem, Position position, Object...params) 
             throws ParseException {
-        this.problems.add(new Problem(SEMATICAL, position, 
+        this.problems.add(new Problem(SEMATICAL, this.clip(position), 
             Problems.format(problem, params)));
     }
 
@@ -96,7 +117,7 @@ public class MultipleProblemReporter implements ProblemReporter {
     @Override
     public void typeProblem(Type expected, Type occurred, Position position)
             throws ASTTraversalException {
-        this.problems.add(new Problem(SEMATICAL, position, 
+        this.problems.add(new Problem(SEMATICAL, this.clip(position), 
             Problems.format(Problems.TYPE_ERROR, expected.getName(), occurred.getName())));
     }
 }
