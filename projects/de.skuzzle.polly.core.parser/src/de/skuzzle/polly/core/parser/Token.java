@@ -147,10 +147,13 @@ public class Token implements Serializable, Equatable {
         StringBuilder result = new StringBuilder(15);
         String value = this.stringValue;
         switch (this.type) {
-            default:    
             case DATETIME:
                 value = this.dateValue.toString();
                 break;
+            case NUMBER:
+                value = "" + this.floatValue;
+                break;
+            default:    
         }
         
         result.append(this.type.toString());
