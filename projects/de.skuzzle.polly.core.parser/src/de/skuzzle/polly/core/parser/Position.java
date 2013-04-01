@@ -156,6 +156,39 @@ public final class Position implements Equatable, Immutable,
     
     
     /**
+     * Creates a new position by clipping this position to the given position if 
+     * necessary. That means the resulting position starts at 
+     * <code>max(this.start, other.start)</code> and ends at 
+     * <code>min(this.end, other.end)</code>.
+     * 
+     * @param other Position to clip this to.
+     * @return A new clipped position.
+     */
+    public Position clip(Position other) {
+        return this.clip(other.start, other.end);
+    }
+    
+    
+    
+    /**
+     * Creates a new position by clipping this position to the given start and end value
+     * if necessary. That means the resulting position starts at 
+     * <code>max(this.start, start)</code> and ends at 
+     * <code>min(this.end, end)</code>.
+     * 
+     * @param start Minimum starting position.
+     * @param end  Maximum ending position.
+     * @return A new clipped position.
+     */
+    public Position clip(int start, int end) {
+        start = Math.max(start, this.start);
+        end = Math.min(end, this.end);
+        return new Position(start, end);
+    }
+    
+    
+    
+    /**
      * Determines whether this position and the given represent overlapping string parts.
      * 
      * @param position Position to compare.
