@@ -55,6 +55,7 @@ public class FooCommand extends Command {
     @Override
     public void renewConstants(Map<String, Types> map) {
         map.putAll(this.rpgrabber.getPrices());
+        map.put("ress", new Types.DateType(this.rpgrabber.getlastRefreshDate()));
     }
     
     

@@ -4,6 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +20,7 @@ public class ResourcePriceGrabber {
 
     
     private String ts;
+    private Date lastRefreshDate;
     private Map<String, Types> prices;
     private int refreshCounter;
     private final int refreshThreshold;
@@ -42,6 +47,12 @@ public class ResourcePriceGrabber {
     
     
     
+    public synchronized Date getlastRefreshDate() {
+        return this.lastRefreshDate;
+    }
+    
+    
+    
     private void refresh() throws IOException {
         final URL url = new URL(API_URL);
         BufferedReader r = null;
@@ -62,6 +73,8 @@ public class ResourcePriceGrabber {
                         return;
                     }
                     this.ts = line;
+                    final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    this.lastRefreshDate = df.parse(line.split(";")[1]);
                 case 5: break;
                 default:
                     final String[] parts = line.split(";");
@@ -71,6 +84,9 @@ public class ResourcePriceGrabber {
                 }
             }
             this.prices = result;
+            
+        } catch (ParseException e) {
+            throw new IOException(e);
         } finally {
             if (r != null) {
                 r.close();
