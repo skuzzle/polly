@@ -1,5 +1,7 @@
 package commands;
 
+import java.util.Map;
+
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -36,9 +38,9 @@ public class SetAttributeCommand extends Command {
     
     
     @Override
-    public void renewConstants() {
-        this.registerConstant("true", new Types.BooleanType(true));
-        this.registerConstant("false", new Types.BooleanType(false));
+    public void renewConstants(Map<String, Types> map) {
+        map.put("true", new Types.BooleanType(true));
+        map.put("false", new Types.BooleanType(false));
     }
     
     

@@ -1,5 +1,7 @@
 package commands;
 
+import java.util.Map;
+
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -47,11 +49,11 @@ public class AddUserCommand extends Command {
     
     
     @Override
-    public void renewConstants() {
-        this.registerConstant("ADMIN", new NumberType(UserManager.ADMIN));
-        this.registerConstant("MEMBER", new NumberType(UserManager.MEMBER));
-        this.registerConstant("REG", new NumberType(UserManager.REGISTERED));
-        this.registerConstant("UNKNOWN", new NumberType(UserManager.UNKNOWN));
+    public void renewConstants(Map<String, Types> map) {
+        map.put("ADMIN", new NumberType(UserManager.ADMIN));
+        map.put("MEMBER", new NumberType(UserManager.MEMBER));
+        map.put("REG", new NumberType(UserManager.REGISTERED));
+        map.put("UNKNOWN", new NumberType(UserManager.UNKNOWN));
     }
     
     
