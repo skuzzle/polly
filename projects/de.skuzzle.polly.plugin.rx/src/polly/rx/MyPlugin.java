@@ -10,6 +10,7 @@ import polly.rx.commands.DeliverTrainCommand;
 import polly.rx.commands.IPCommand;
 import polly.rx.commands.MyTrainsCommand;
 import polly.rx.commands.MyVenadCommand;
+import polly.rx.commands.RessComand;
 import polly.rx.commands.VenadCommand;
 import polly.rx.core.FleetDBManager;
 import polly.rx.core.ScoreBoardManager;
@@ -54,6 +55,7 @@ public class MyPlugin extends PollyPlugin {
     public final static String TRAINER_ROLE       = "polly.roles.TRAINER";
     public final static String SBE_MANAGER_ROLE   = "polly.roles.SBE_MANAGER";
     
+    public final static String RESSOURCES_PERMISSION             = "polly.permission.RESSOURCES";
     public final static String ADD_TRAIN_PERMISSION              = "polly.permission.ADD_TRAIN";
     public final static String DELIVER_TRAIN_PERMISSION          = "polly.permission.DELIVER_TRAIN";
     public final static String MYTRAINS_PERMISSION               = "polly.permission.MY_TRAINS";
@@ -94,6 +96,7 @@ public class MyPlugin extends PollyPlugin {
         this.addCommand(new MyVenadCommand(myPolly));
         this.addCommand(new IPCommand(myPolly));
         this.addCommand(new CrackerCommand(myPolly));
+        this.addCommand(new RessComand(myPolly));
         
         myPolly.web().addMenuUrl("Revorix", "MyTrains");
         myPolly.web().addMenuUrl("Revorix", "Trainer");

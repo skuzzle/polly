@@ -2,7 +2,8 @@ package commands;
 
 import java.util.Map;
 
-import core.ResourcePriceGrabber;
+import polly.rx.core.ResourcePriceGrabber;
+
 
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.FormatManager;
@@ -17,11 +18,6 @@ import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 
 public class FooCommand extends Command {
 
-    private final int REFRESH_THRESHOLD = 10;
-    
-    private final ResourcePriceGrabber rpgrabber;
-    
-    
     public FooCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "foo");
         this.createSignature("Foo-Befehl mit einem Parameter.", 
@@ -36,8 +32,6 @@ public class FooCommand extends Command {
         this.createSignature("Foo-Befehl mit 0 Parametern.");
         this.setHelpText("Dieser Befehl nimmt jede art von Parametern entgegen, " +
         		"wertet ihn aus und gibt das Ergebnis zurück.");
-        
-        this.rpgrabber = new ResourcePriceGrabber(REFRESH_THRESHOLD);
     }
 
     
@@ -48,14 +42,6 @@ public class FooCommand extends Command {
         
         this.reply(channel, this.execute(signature));
         return false;
-    }
-    
-    
-    
-    @Override
-    public void renewConstants(Map<String, Types> map) {
-        map.putAll(this.rpgrabber.getPrices());
-        map.put("ress", new Types.DateType(this.rpgrabber.getlastRefreshDate()));
     }
     
     
