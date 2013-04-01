@@ -28,7 +28,7 @@ public class ParserProperties {
     public final static String ENABLE_SCANNER_DEBUGGING = "scannerDebugging";
 
     /** Whether execution debuggin should be enabled. */
-    public static final String ENABLE_EXECUTION_DEBUGGING = null;
+    public static final String ENABLE_EXECUTION_DEBUGGING = "execDebugging";
     
     
     /** Stores the parser properties. */
