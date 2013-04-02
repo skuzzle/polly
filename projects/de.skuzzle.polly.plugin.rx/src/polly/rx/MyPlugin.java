@@ -158,6 +158,7 @@ public class MyPlugin extends PollyPlugin {
         result.add(FleetDBManager.VIEW_BATTLE_REPORT_PERMISSION);
         result.add(FleetDBManager.VIEW_FLEET_SCAN_PERMISSION);
         result.add(FleetDBManager.DELETE_FLEET_SCAN_PERMISSION);
+        result.add(RESSOURCES_PERMISSION);
         result.add(SBE_PERMISSION);
         result.add(CRACKER_PERMISSION);
         result.addAll(super.getContainedPermissions());

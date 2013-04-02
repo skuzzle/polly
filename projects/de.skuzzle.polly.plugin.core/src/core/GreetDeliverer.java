@@ -22,6 +22,7 @@ public class GreetDeliverer implements UserListener {
                 myPolly.commands().executeString(greet, e.getUser().getCurrentNickName(), 
                     true, e.getUser(), this.myPolly.irc());
             } catch (Exception e1) {
+                e1.printStackTrace();
                 this.myPolly.irc().sendMessage(e.getUser().getCurrentNickName(), 
                     greet, this);
             }
