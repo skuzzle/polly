@@ -245,6 +245,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         boolean hasMapType = false;
         for (final Type type : node.getLhs().getTypes()) {
             hasMapType |= type instanceof MapType;
+            if (hasMapType) break;
         }
         if (!hasMapType) {
             this.reportError(node.getLhs(), Problems.NO_FUNCTION,
