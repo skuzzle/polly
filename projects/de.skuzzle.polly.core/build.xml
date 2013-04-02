@@ -62,7 +62,7 @@
     <!-- Override empty default target. Copy additional folders. -->
     <target name="preDist">
         <!-- Copy plugins from their build folder here -->
-        <copy todir="${plugin.dir}" flatten="true">
+        <copy todir="${plugin.dir}" flatten="true" overwrite="true">
             <fileset dir="${build.dir}">
                 <include name="de.skuzzle.polly.plugin.**/*.jar"/>
                 <exclude name="de.skuzzle.polly.plugin.**/*-src.jar"/>
