@@ -359,6 +359,9 @@ public class ExecutionVisitor extends DepthFirstVisitor {
         final Collection<Declaration> decls = target.lookupAll(var);
         final StringBuilder b = new StringBuilder();
         for (final Declaration decl : decls) {
+            if (decl.isPublic()) {
+                b.append("(public) ");
+            }
             if (decl.isNative()) {
                 b.append("Native");
             } else if (decl.getExpression() instanceof FunctionLiteral) {
