@@ -3,9 +3,7 @@ package polly.rx.commands;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 
 
 import polly.rx.MyPlugin;
@@ -27,8 +25,8 @@ public class RessComand extends Command {
     private final ResourcePriceGrabber rpgrabber;
     
     
-    public RessComand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "ress");
+    public RessComand(MyPolly myPolly) throws DuplicatedSignatureException {
+        super(myPolly, "ress");
         this.createSignature("Rechnen mit aktuellen Resourcenpreisen", 
             MyPlugin.RESSOURCES_PERMISSION,
             new Parameter("Ausdruck", Types.ANY));
@@ -43,18 +41,17 @@ public class RessComand extends Command {
             new Parameter("Ausdruck", Types.ANY));
         this.setHelpText("Rechnen mit aktuellen Resourcenpreisen");
         this.setRegisteredOnly(true);
-        this.rpgrabber = new ResourcePriceGrabber(REFRESH_THRESHOLD);
+        this.rpgrabber = new ResourcePriceGrabber(REFRESH_THRESHOLD, myPolly);
     }
 
     
     
     @Override
     public void renewConstants(Map<String, Types> map) {
-        map.putAll(this.rpgrabber.getPrices());
-        
-        final SortedMap<String, Types> smap = new TreeMap<String, Types>(map);
+        final Map<String, Types> prices = this.rpgrabber.getPrices();
+        map.putAll(prices);
         final List<Types> types = new ArrayList<Types>();
-        for (final Entry<String, Types> e : smap.entrySet()) {
+        for (final Entry<String, Types> e : prices.entrySet()) {
             types.add(new Types.StringType(e.getKey() + ":" + e.getValue().valueString(
                 this.getMyPolly().formatting())));
         }

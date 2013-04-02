@@ -8,13 +8,19 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
+import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Types;
+import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
+import de.skuzzle.polly.sdk.http.HttpAction;
+import de.skuzzle.polly.sdk.http.HttpEvent;
+import de.skuzzle.polly.sdk.http.HttpTemplateContext;
+import de.skuzzle.polly.sdk.http.HttpTemplateException;
 
 
-public class ResourcePriceGrabber {
+public class ResourcePriceGrabber extends HttpAction {
 
     private final static String API_URL = "http://qzone.servebbs.net/pollyPriceDaily.php";
 
@@ -27,9 +33,20 @@ public class ResourcePriceGrabber {
     
     
     
-    public ResourcePriceGrabber(int refreshThreshold) {
+    public ResourcePriceGrabber(int refreshThreshold, MyPolly myPolly) {
+        super("/priceDaily", myPolly);
         this.refreshThreshold = refreshThreshold;
         this.refreshCounter = refreshThreshold;
+    }
+    
+    
+    
+    @Override
+    public HttpTemplateContext execute(HttpEvent e) throws HttpTemplateException,
+            InsufficientRightsException {
+        
+        
+        return null;
     }
     
     
@@ -60,7 +77,7 @@ public class ResourcePriceGrabber {
             r = new BufferedReader(new InputStreamReader(url.openStream()));
             String line = null;
             int i = 0;
-            final Map<String, Types> result = new HashMap<String, Types>();
+            final Map<String, Types> result = new LinkedHashMap<String, Types>();
             while ((line = r.readLine()) != null) {
                 ++i;
                 switch (i) {
