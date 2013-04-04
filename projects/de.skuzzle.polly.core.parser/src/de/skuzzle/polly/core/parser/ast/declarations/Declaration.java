@@ -30,18 +30,37 @@ public class Declaration extends Node implements Comparable<Declaration> {
     private boolean isPublic;
     private boolean isTemp;
     private boolean isNative;
+    private boolean isLocal;
     private final Expression expression;
     private final Collection<VarAccess> usage;
     
     
     
     public Declaration(Position position, Identifier name, Expression expression) {
+        this(position, name, expression, false);
+    }
+    
+    
+    
+    public Declaration(Position position, Identifier name, Expression expression, 
+            boolean local) {
         super(position);
         this.name = name;
         this.expression = expression;
         this.usage = new ArrayList<VarAccess>();
+        this.isLocal = local;
     }
     
+    
+    
+    /**
+     * Whether this declarations belongs to a formal parameter of a function
+     * 
+     * @return Whether this is a local declaration.
+     */
+    public boolean isLocal() {
+        return this.isLocal;
+    }
     
     
     /**

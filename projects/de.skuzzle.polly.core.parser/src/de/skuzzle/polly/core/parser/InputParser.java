@@ -1228,6 +1228,10 @@ public class InputParser {
             this.allowSingleWhiteSpace();
 
             this.expect(TokenType.CLOSEDBR, true);
+            
+            if (signature.isEmpty()) {
+                signature.add(Type.VOID);
+            }
             return new ProductType(signature).mapTo(resultType);
 
         } else if (this.scanner.match(TokenType.LIST)) {

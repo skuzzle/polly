@@ -37,7 +37,9 @@ public class SimpleProblemReporter implements ProblemReporter {
     
     
     private Position clip(Position pos) {
-        return this.clipping == null ? pos : pos.clip(this.clipping);
+        return this.clipping == null 
+            ? pos 
+            : (pos.isInside(this.clipping) ? pos : this.clipping);
     }
     
     
@@ -46,6 +48,7 @@ public class SimpleProblemReporter implements ProblemReporter {
     public ProblemReporter subReporter(Position clipping) {
         return new SimpleProblemReporter(clipping);
     }
+    
     
     
     @Override

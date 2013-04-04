@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 
+import de.skuzzle.polly.core.parser.ParseException;
 import de.skuzzle.polly.core.parser.ParserProperties;
 import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.Identifier;
@@ -50,6 +51,8 @@ import de.skuzzle.polly.core.parser.ast.lang.operators.UnaryBooleanArithmetic;
 import de.skuzzle.polly.core.parser.ast.lang.operators.UnaryList;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.Unparser;
+import de.skuzzle.polly.core.parser.problems.ProblemReporter;
+import de.skuzzle.polly.core.parser.problems.Problems;
 import de.skuzzle.polly.tools.strings.StringUtils;
 
 
@@ -737,8 +740,10 @@ public class Namespace {
         if (ParserProperties.should(ParserProperties.REPORT_UNKNOWN_VARIABLES)) {
             return null;
         } else {
-            return new Declaration(name.getPosition(), name, 
+            final Declaration result = new Declaration(name.getPosition(), name, 
                 new StringLiteral(name.getPosition(), name.getId()));
+            name.setDeclaration(result);
+            return result;
         }
     }
     
@@ -773,11 +778,13 @@ public class Namespace {
      * all declarations that are no formal parameter. 
      * 
      * @param access VarAccess to resolve.
+     * @param reporter Problem reporter to use when variable does not exist.
      * @return A set of all declarations with matching names.
      * @throws DeclarationException If no variable with matching name was found.
+     * @throws ParseException May be thrown by problem reporter.
      */
-    public Set<Type> lookupFresh(VarAccess access) 
-            throws DeclarationException {
+    public Set<Type> lookupFresh(VarAccess access, ProblemReporter reporter) 
+            throws DeclarationException, ParseException {
         final ResolvableIdentifier name = access.getIdentifier();
         final Set<Type> result = new HashSet<Type>();
         for(Namespace space = this; space != null; space = space.parent) {
@@ -808,11 +815,9 @@ public class Namespace {
         }
         
         if (result.isEmpty()) {
-            final List<String> similar = findSimilar(name.getId(), this);
-            
             if (ParserProperties.should(ParserProperties.REPORT_UNKNOWN_VARIABLES)) {
-                throw new DeclarationException(name.getPosition(), 
-                        "Unbekannte Variable: '" + name + "'", similar);
+                reporter.semanticProblem(Problems.UNKNOWN_VAR, access.getPosition(), 
+                    access.getIdentifier().getId());
             } else {
                 return Collections.singleton(Type.STRING);
             }

@@ -101,6 +101,10 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         }
         this.leave();
         
+        if (source.isEmpty()) {
+            source.add(Type.VOID);
+        }
+        
         for (final Type te : node.getBody().getTypes()) {
             if (node.getBody().hasConstraint(te)) {
                 final Substitution constraint = node.getBody().getConstraint(te);
@@ -135,6 +139,11 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     @Override
     public int after(final ProductLiteral node) throws ASTTraversalException {
         
+        if (node.getContent().isEmpty()) {
+            node.addType(new ProductType(Type.VOID));
+            return CONTINUE;
+        }
+        
         // Use combinator to create all combinations of possible types
         final CombinationCallBack<Expression, Type> ccb = 
             new CombinationCallBack<Expression, Type>() {
@@ -166,6 +175,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
         };
         
         Combinator.combine(node.getContent(), ccb);
+        
         return CONTINUE;
     }
     
@@ -292,7 +302,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     
     @Override
     public int before(VarAccess node) throws ASTTraversalException {
-        final Set<Type> types = this.nspace.lookupFresh(node);
+        final Set<Type> types = this.nspace.lookupFresh(node, this.reporter);
         node.addTypes(types);
         return CONTINUE;
     }

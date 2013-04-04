@@ -92,6 +92,9 @@ public class Type implements Visitable<TypeVisitor>, Equatable, Comparable<Type>
         }
     };
     
+    /** Void type. */
+    public final static Type VOID = new Type(new Identifier("void"), true, true);
+    
     /** Primitive type for booleans. */
     public final static Type BOOLEAN = new Type(new Identifier("boolean"), true, true);
     
@@ -113,6 +116,7 @@ public class Type implements Visitable<TypeVisitor>, Equatable, Comparable<Type>
         primitives.put(STRING.getName().getId(), STRING);
         primitives.put(BOOLEAN.getName().getId(), BOOLEAN);
         primitives.put(HELP.getName().getId(), HELP);
+        primitives.put(VOID.getName().getId(), VOID);
         primitives.put(UNKNOWN.getName().getId(), UNKNOWN);
     }
     

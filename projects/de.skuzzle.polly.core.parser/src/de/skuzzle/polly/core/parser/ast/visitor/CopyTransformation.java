@@ -46,6 +46,14 @@ public class CopyTransformation implements Transformation {
         return result;
     }
 
+    
+    
+    private <T extends Expression> T applyTypes(Expression source, T copy) {
+        copy.setUnique(source.getUnique());
+        copy.setTypes(source.getTypes());
+        return copy;
+    }
+    
 
 
     @Override
@@ -77,38 +85,53 @@ public class CopyTransformation implements Transformation {
 
     @Override
     public Expression transformAssignment(Assignment node) throws ASTTraversalException {
-        return new Assignment(node.getPosition(), node.getExpression().transform(this),
-            node.getName().transform(this), node.isPublic(), node.isTemp());
+        return this.applyTypes(node, 
+            new Assignment(
+                node.getPosition(), 
+                node.getExpression().transform(this),
+                node.getName().transform(this), 
+                node.isPublic(), 
+                node.isTemp()));
     }
 
 
 
     @Override
     public Expression transformBraced(Braced node) throws ASTTraversalException {
-        return new Braced(node.getPosition(), node.getExpression().transform(this));
+        return this.applyTypes(node, 
+            new Braced(node.getPosition(), 
+                node.getExpression().transform(this)));
     }
 
 
 
     @Override
     public Expression transformCall(Call node) throws ASTTraversalException {
-        return new Call(node.getPosition(), node.getLhs().transform(this), node.getRhs()
-            .transform(this));
+        return this.applyTypes(node, 
+            new Call(
+                node.getPosition(), 
+                node.getLhs().transform(this), 
+                node.getRhs().transform(this)));
     }
 
 
 
     @Override
     public Expression transformDelete(Delete node) throws ASTTraversalException {
-        return new Delete(node.getPosition(), this.transformList(node.getIdentifiers()));
+        return this.applyTypes(node, 
+            new Delete(node.getPosition(), 
+            this.transformList(node.getIdentifiers())));
     }
 
 
 
     @Override
     public Expression transformAccess(NamespaceAccess node) throws ASTTraversalException {
-        return new NamespaceAccess(node.getPosition(), node.getLhs().transform(this),
-            node.getRhs().transform(this));
+        return this.applyTypes(node, 
+            new NamespaceAccess(
+                node.getPosition(), 
+                node.getLhs().transform(this),
+                node.getRhs().transform(this)));
     }
 
 
@@ -123,17 +146,24 @@ public class CopyTransformation implements Transformation {
 
     @Override
     public Expression transformOperatorCall(OperatorCall node)
-        throws ASTTraversalException {
+            throws ASTTraversalException {
 
-        return new OperatorCall(node.getPosition(), node.getOperator(), node.getRhs()
-            .getContent(), node.isPostfix());
+        return this.applyTypes(node, 
+            new OperatorCall(
+                node.getPosition(), 
+                node.getOperator(), 
+                node.getRhs().transform(this).getContent(), 
+                node.isPostfix()));
     }
 
 
 
     @Override
     public Expression transformVarAccess(VarAccess node) throws ASTTraversalException {
-        return new VarAccess(node.getPosition(), node.getIdentifier().transform(this));
+        return this.applyTypes(node, 
+            new VarAccess(
+                node.getPosition(), 
+                node.getIdentifier().transform(this)));
     }
 
 
@@ -161,17 +191,23 @@ public class CopyTransformation implements Transformation {
 
     @Override
     public Expression transformFunction(FunctionLiteral node)
-        throws ASTTraversalException {
-        return new FunctionLiteral(node.getPosition(), this.transformList(node
-            .getFormal()), node.getBody().transform(this));
+            throws ASTTraversalException {
+        return this.applyTypes(node, 
+            new FunctionLiteral(
+                node.getPosition(), 
+                this.transformList(node.getFormal()), 
+                node.getBody().transform(this)));
     }
 
 
 
     @Override
     public Expression transformList(ListLiteral node) throws ASTTraversalException {
-        return new ListLiteral(node.getPosition(), this.transformList(node.getContent()), 
-            node.getUnique());
+        return this.applyTypes(node, 
+            new ListLiteral(
+                node.getPosition(), 
+                this.transformList(node.getContent()), 
+                node.getUnique()));
     }
 
 
@@ -186,8 +222,10 @@ public class CopyTransformation implements Transformation {
     @Override
     public ProductLiteral transformProduct(ProductLiteral node) 
             throws ASTTraversalException {
-        return new ProductLiteral(node.getPosition(), 
-            this.transformList(node.getContent()));
+        return this.applyTypes(node, 
+            new ProductLiteral(
+                node.getPosition(), 
+                this.transformList(node.getContent())));
     }
 
 

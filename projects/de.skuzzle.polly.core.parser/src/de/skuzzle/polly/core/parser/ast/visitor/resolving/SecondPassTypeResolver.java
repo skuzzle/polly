@@ -2,6 +2,7 @@ package de.skuzzle.polly.core.parser.ast.visitor.resolving;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import de.skuzzle.polly.core.parser.ParserProperties;
@@ -9,11 +10,12 @@ import de.skuzzle.polly.core.parser.ast.Root;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
 import de.skuzzle.polly.core.parser.ast.declarations.types.ListType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.MapType;
+import de.skuzzle.polly.core.parser.ast.declarations.types.ProductType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Substitution;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
-import de.skuzzle.polly.core.parser.ast.declarations.types.TypeVar;
 import de.skuzzle.polly.core.parser.ast.expressions.Assignment;
 import de.skuzzle.polly.core.parser.ast.expressions.Call;
+import de.skuzzle.polly.core.parser.ast.expressions.Empty;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
 import de.skuzzle.polly.core.parser.ast.expressions.Inspect;
 import de.skuzzle.polly.core.parser.ast.expressions.NamespaceAccess;
@@ -21,7 +23,10 @@ import de.skuzzle.polly.core.parser.ast.expressions.OperatorCall;
 import de.skuzzle.polly.core.parser.ast.expressions.VarAccess;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.ListLiteral;
+import de.skuzzle.polly.core.parser.ast.expressions.literals.ProductLiteral;
+import de.skuzzle.polly.core.parser.ast.visitor.ASTRewrite;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.core.parser.ast.visitor.CopyTransformation;
 import de.skuzzle.polly.core.parser.ast.visitor.Unparser;
 import de.skuzzle.polly.core.parser.problems.Problems;
 
@@ -29,10 +34,18 @@ import de.skuzzle.polly.core.parser.problems.Problems;
 
 class SecondPassTypeResolver extends AbstractTypeResolver {
 
+    private final ASTRewrite rewrite;
     
     
     public SecondPassTypeResolver(FirstPassTypeResolver fptr) {
         super(fptr.getCurrentNameSpace(), fptr.reporter);
+        this.rewrite = new ASTRewrite();
+    }
+    
+    
+    
+    public ASTRewrite getRewrite() {
+        return this.rewrite;
     }
     
     
@@ -46,6 +59,24 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
             this.reportError(child, "Nicht eindeutiger Typ");
         }
         return child.typeResolved();
+    }
+    
+    
+    
+    private boolean propagateDown(Expression target, Type type) 
+            throws ASTTraversalException {
+        Type last = null;
+        boolean matches = false;
+        for (final Type t : target.getTypes()) {
+            last = t;
+            matches |= Type.tryUnify(t, type);
+        }
+        if (!matches) {
+            this.typeError(target, type, last);
+            return false;
+        }
+        target.setUnique(type);
+        return true;
     }
     
     
@@ -82,13 +113,22 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         if (!this.applyType(node)) {
             return false;
         }
-
+        
+        this.enter();
         
         final MapType mtc = (MapType) node.getUnique();
-        node.getBody().setUnique(mtc.getTarget());
-        if (!node.getBody().visit(this)) {
+        final Iterator<Type> typeIt = ((ProductType) mtc.getSource()).getTypes().iterator();
+        for (final Declaration formal : node.getFormal()) {
+            this.nspace.declare(new Declaration(formal.getPosition(), formal.getName(), 
+                new Empty(typeIt.next(), formal.getPosition()), true));
+        }
+        if (!this.propagateDown(node.getBody(), mtc.getTarget()) || 
+            !node.getBody().visit(this)) {
+            
             return false;
         }
+        
+        this.leave();
         
         return this.after(node) == CONTINUE;
     }
@@ -114,8 +154,7 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         final Type expected = ((ListType) node.getUnique()).getSubType();
         
         for (final Expression exp : node.getContent()) {
-            exp.setUnique(expected);
-            if (!exp.visit(this)) {
+            if (!this.propagateDown(exp, expected) || !exp.visit(this)) {
                 return false;
             }
         }
@@ -125,20 +164,37 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
     
     
     
-    /*@Override
-    public void visitProductLiteral(ProductLiteral product) throws ASTTraversalException {
-        if (this.aborted) {
-            return;
+    @Override
+    public boolean visit(ProductLiteral node) throws ASTTraversalException {
+        switch (this.before(node)) {
+        case SKIP: return true;
+        case ABORT: return false;
         }
         
-        this.beforeProductLiteral(product);
-        
-        for (final Expression exp : product.getContent()) {
-            exp.visit(this);
+        if (!this.applyType(node)) {
+            return false;
+        }
+        if (node.getContent().isEmpty()) {
+            node.setUnique(new ProductType(Type.VOID));
+            return true;
         }
         
-        this.afterProductLiteral(product);
-    }*/
+        final ProductType t = (ProductType) node.getUnique();
+        final Iterator<Type> typeIt = t.getTypes().iterator();
+        final Iterator<Expression> expIt = node.getContent().iterator();
+        
+        while (typeIt.hasNext()) {
+            final Expression exp = expIt.next();
+            final Type type = typeIt.next();
+            
+            if (!this.propagateDown(exp, type) || !exp.visit(this)) {
+                return false;
+            }
+        }
+        
+        return this.after(node) == CONTINUE;
+    }
+    
     
     
     @Override
@@ -155,20 +211,21 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
                 final List<Type> types = new ArrayList<>(fun.getFormal().size());
                 boolean ispoly = false;
                 for (final Declaration d : fun.getFormal()) {
-                    ispoly |= d.getType() instanceof TypeVar;
+                    ispoly |= Type.containsTypeVar(d.getType());
                     types.add(d.getType());
                 }
                 
                 if (ispoly) {
                     this.reportError(node, Problems.ASSIGNMENT_NOT_ALLOWED);
+                    return false;
                 }
             }
         }
         
-        if (!this.applyType(node)) {
-            return false;
-        }
-        if (!node.getExpression().visit(this)) {
+        if (!this.applyType(node) || 
+            !this.propagateDown(node.getExpression(), node.getUnique()) || 
+            !node.getExpression().visit(this)) {
+            
             return false;
         }
         return this.after(node) == CONTINUE;
@@ -178,15 +235,40 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
     
     @Override
     public int before(OperatorCall node) throws ASTTraversalException {
-        this.before((Call) node);
-        return CONTINUE;
+        return this.before((Call) node);
     }
     
     
     
     @Override
-    public int after(VarAccess node) throws ASTTraversalException {
+    public int before(VarAccess node) throws ASTTraversalException {
         this.applyType(node);
+        
+        if (node.getParent() instanceof Call) {
+            // this is LHS of a call, so we must infer type of the accessed variable in
+            // context of that call
+            final Call parent = (Call) node.getParent();
+            
+            final Declaration target = this.nspace.tryResolve(node.getIdentifier(), 
+                node.getUnique());
+            
+            // no need for native declarations
+            if (target.isNative()) {
+                return CONTINUE;
+            }
+            
+            // construct temporary copy that can be used to determine the type
+            final Expression copy = target.getExpression().transform(new CopyTransformation());
+            final ProductLiteral rhsCopy = parent.getRhs().transform(new CopyTransformation());
+            final Call newCall = new Call(node.getPosition(), copy, rhsCopy);
+            TypeResolver.resolveAST(newCall, this.nspace, 
+                this.reporter.subReporter(node.getPosition()));
+            
+            // create fake declaration
+            final Declaration decl = new Declaration(node.getPosition(), 
+                node.getIdentifier(), newCall.getLhs());
+            node.getIdentifier().setDeclaration(decl);
+        }
         return CONTINUE;
     }
     
@@ -263,10 +345,10 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         case SKIP: return true;
         case ABORT: return false;
         }
-        if (!this.applyType(node)) {
-            return false;
-        }
-        if (!node.getRhs().visit(this)) {
+        if (!this.applyType(node) || 
+            this.propagateDown(node.getRhs(), node.getUnique()) || 
+            !node.getRhs().visit(this)) {
+            
             return false;
         }
         return this.after(node) == CONTINUE;

@@ -22,6 +22,7 @@ public class MultipleProblemReporter implements ProblemReporter {
     private final Position clipping;
     
     
+    
     public MultipleProblemReporter() {
         this(new TreeSet<MultipleProblemReporter.Problem>(), null);
         
@@ -37,7 +38,7 @@ public class MultipleProblemReporter implements ProblemReporter {
     
     
     private Position clip(Position pos) {
-        return this.clipping == null ? pos : pos.clip(this.clipping);
+        return this.clipping == null ? pos : (pos.isInside(clipping) ? pos : clipping);
     }
     
     

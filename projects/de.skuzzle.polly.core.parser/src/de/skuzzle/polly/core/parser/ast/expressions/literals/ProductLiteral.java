@@ -20,12 +20,15 @@ public class ProductLiteral extends ListLiteral {
     public ProductLiteral(Position position, List<Expression> content) {
         super(position, content);
     }
-
+    
     
     
     @Override
     public void setUnique(Type unique) {
-        if (!(unique instanceof ProductType)) {
+        if (unique == Type.UNKNOWN) {
+            super.setUnique(unique);
+            return;
+        } else if (!(unique instanceof ProductType)) {
             throw new IllegalArgumentException("no product type");
         }
         super.setUnique(unique);
@@ -66,6 +69,7 @@ public class ProductLiteral extends ListLiteral {
         }
         return true;
     }
+    
     
     
     @Override

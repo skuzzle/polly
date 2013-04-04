@@ -14,6 +14,7 @@ import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
 import de.skuzzle.polly.core.parser.ast.expressions.Assignment;
 import de.skuzzle.polly.core.parser.ast.expressions.Call;
 import de.skuzzle.polly.core.parser.ast.expressions.Delete;
+import de.skuzzle.polly.core.parser.ast.expressions.Empty;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
 import de.skuzzle.polly.core.parser.ast.expressions.Inspect;
 import de.skuzzle.polly.core.parser.ast.expressions.NamespaceAccess;
@@ -275,7 +276,7 @@ public class ExecutionVisitor extends DepthFirstVisitor {
             // declare result as local variable for this call
             final Expression result = this.stack.pop();
             final Declaration local = 
-                new Declaration(actual.getPosition(), formal.getName(), result);
+                new Declaration(actual.getPosition(), formal.getName(), result, true);
             this.nspace.declare(local);
         }
 
@@ -296,10 +297,13 @@ public class ExecutionVisitor extends DepthFirstVisitor {
         case ABORT: return false;
         }
 
-        final Declaration vd = //node.getIdentifier().getDeclaration();
-            this.nspace.tryResolve(
-            node.getIdentifier(), 
-            node.getUnique());
+        Declaration vd = node.getIdentifier().getDeclaration();
+        if (vd == null || vd.isLocal() || vd.getExpression() instanceof Empty) {
+            vd = this.nspace.tryResolve(
+                node.getIdentifier(), 
+                node.getUnique());
+        }
+        
         if (!vd.getExpression().visit(this)) {
             return false;
         }
