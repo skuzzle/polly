@@ -20,7 +20,7 @@ import de.skuzzle.polly.tools.Equatable;
  */
 public class ListLiteral extends Literal {
     
-    private final List<Expression> content;
+    private List<Expression> content;
     
 
     /**
@@ -59,6 +59,17 @@ public class ListLiteral extends Literal {
         return this.content;
     }
 
+    
+    
+    /**
+     * Sets the content of this literal.
+     * 
+     * @param content New exprssion list.
+     */
+    public void setContent(List<Expression> content) {
+        this.content = content;
+    }
+    
     
     
     @Override

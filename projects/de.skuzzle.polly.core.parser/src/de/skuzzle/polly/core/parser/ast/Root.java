@@ -24,7 +24,7 @@ import de.skuzzle.polly.tools.strings.IteratorPrinter;
  */
 public final class Root extends Node {
 
-    private final ArrayList<Expression> expressions;
+    private ArrayList<Expression> expressions;
     private Identifier command;
     private List<Literal> results;
     private final boolean hasProblems;
@@ -47,6 +47,22 @@ public final class Root extends Node {
         this.expressions = new ArrayList<Expression>(expressions);
         this.hasProblems = hasProblems;
     }
+    
+    
+    
+    /**
+     * Sets the expressions of this root.
+     * 
+     * @param expressions The new expressions.
+     */
+    public void setExpressions(List<Expression> expressions) {
+        if (expressions instanceof ArrayList) {
+            this.expressions = (ArrayList<Expression>) expressions;
+        } else {
+            this.expressions = new ArrayList<Expression>(expressions);
+        }
+    }
+    
     
     
     

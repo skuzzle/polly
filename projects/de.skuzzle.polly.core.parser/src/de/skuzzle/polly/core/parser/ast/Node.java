@@ -4,6 +4,7 @@ import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversal;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTVisitor;
+import de.skuzzle.polly.core.parser.ast.visitor.ParentSetter;
 import de.skuzzle.polly.core.parser.ast.visitor.Transformation;
 import de.skuzzle.polly.core.parser.ast.visitor.Visitable;
 import de.skuzzle.polly.tools.EqualsHelper;
@@ -29,6 +30,18 @@ public abstract class Node implements Visitable<ASTVisitor>, Equatable {
      */
     public Node(Position position) {
         this.position = position;
+    }
+    
+    
+    /**
+     * Updates all parent edges of the subtree represented by this node. This requires
+     * traversal of the whole subtree.
+     * @return Reference to this node (intended for chaining methods).
+     * @throws ASTTraversalException If traversal of the subtree fails for any reason.
+     */
+    public Node updateParents() throws ASTTraversalException {
+        this.visit(new ParentSetter());
+        return this;
     }
     
     

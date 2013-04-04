@@ -3,6 +3,7 @@ package de.skuzzle.polly.core.parser.ast.expressions.literals;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
@@ -22,7 +23,7 @@ import de.skuzzle.polly.core.parser.ast.visitor.Unparser;
  */
 public class FunctionLiteral extends Literal {
     
-    private final ArrayList<Declaration> formal;
+    private ArrayList<Declaration> formal;
     private Expression body;
     
     
@@ -55,12 +56,39 @@ public class FunctionLiteral extends Literal {
     
     
     /**
+     * Sets the {@link Expression} which represents the body of this function.
+     * 
+     * @param body The new body.
+     */
+    public void setBody(Expression body) {
+        this.body = body;
+    }
+    
+    
+    
+    /**
      * Gets the declared formal parameters of this function.
      * 
      * @return Collection of formal parameters.
      */
     public ArrayList<Declaration> getFormal() {
         return this.formal;
+    }
+    
+    
+    
+    /**
+     * Sets the list of declaration which represent the formal parameter of this
+     * function.
+     * 
+     * @param formal New list of formal parameters.
+     */
+    public void setFormal(List<Declaration> formal) {
+        if (formal instanceof ArrayList) {
+            this.formal = (ArrayList<Declaration>) formal;
+        } else {
+            this.formal = new ArrayList<Declaration>(formal);
+        }
     }
     
     

@@ -183,6 +183,9 @@ public final class Position implements Equatable, Immutable,
     public Position clip(int start, int end) {
         start = Math.max(start, this.start);
         end = Math.min(end, this.end);
+        if (start == end) {
+            ++end;
+        }
         return new Position(start, end);
     }
     
@@ -200,6 +203,18 @@ public final class Position implements Equatable, Immutable,
         } else {
             return position.end > this.start;
         }
+    }
+    
+    
+    
+    /**
+     * Returns whether this position is completely inside the other position.
+     * 
+     * @param other The other position.
+     * @return Whether this position is inside the other one.
+     */
+    public boolean isInside(Position other) {
+        return this.start >= other.start && this.end <= other.end;
     }
     
     
