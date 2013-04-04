@@ -253,7 +253,7 @@ public class CommandManagerImpl implements CommandManager {
             throw new CommandException(e.getMessage(), e);
         } 
         
-        if (root == null) {
+        if (root == null || root.hasProblems()) {
             return;
         }
         Signature sig = this.createSignature(root);
