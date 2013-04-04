@@ -17,7 +17,7 @@ import de.skuzzle.polly.core.parser.ast.visitor.Transformation;
 public class Call extends Expression {
     
     private Expression lhs;
-    private final ProductLiteral rhs;
+    private ProductLiteral rhs;
     
     
     
@@ -45,6 +45,17 @@ public class Call extends Expression {
     public Expression getLhs() {
         return this.lhs;
     }
+    
+    
+    
+    /**
+     * Sets the left hand side expression of this call.
+     * 
+     * @param lhs New called expression.
+     */
+    public void setLhs(Expression lhs) {
+        this.lhs = lhs;
+    }
 
     
     
@@ -55,6 +66,17 @@ public class Call extends Expression {
      */
     public ProductLiteral getRhs() {
         return this.rhs;
+    }
+    
+    
+    
+    /**
+     * Sets the right hand side of this call (the actual parameters of this call).
+     * 
+     * @param rhs The new actual parameters.
+     */
+    public void setRhs(ProductLiteral rhs) {
+        this.rhs = rhs;
     }
     
     

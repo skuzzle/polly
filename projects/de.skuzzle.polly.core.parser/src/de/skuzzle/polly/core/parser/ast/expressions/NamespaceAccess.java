@@ -50,6 +50,17 @@ public class NamespaceAccess extends Expression {
     
     
     /**
+     * Sets the left hand side of this expression (the namespace being accessed).
+     * 
+     * @param lhs The expression which represents the namespace being accessed.
+     */
+    public void setLhs(Expression lhs) {
+        this.lhs = lhs;
+    }
+    
+    
+    
+    /**
      * Gets the right handed side of this expression (variable in the namespace being 
      * accessed).
      * 
@@ -57,6 +68,18 @@ public class NamespaceAccess extends Expression {
      */
     public Expression getRhs() {
         return this.rhs;
+    }
+    
+    
+    
+    /**
+     * Sets the right hand side of this expression (variable that is being accessed in the
+     * context of the namespace represented by the LHS of this expression.
+     * 
+     * @param rhs The expression which represents the variable being accessed.
+     */
+    public void setRhs(Expression rhs) {
+        this.rhs = rhs;
     }
 
     

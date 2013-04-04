@@ -70,6 +70,16 @@ public class Braced extends Expression {
     
 
     
+    /**
+     * Sets the expression in parenthesis.
+     * 
+     * @param expression The braced expression.
+     */
+    public void setExpression(Expression expression) {
+        this.expression = expression;
+    }
+    
+    
     @Override
     public boolean visit(ASTVisitor visitor) throws ASTTraversalException {
         return visitor.visit(this);

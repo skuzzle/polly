@@ -45,6 +45,17 @@ public class VarAccess extends Expression {
 
     
     
+    /**
+     * Sets the name of the variable that is accessed.
+     * 
+     * @param identifier The variable name.
+     */
+    public void setIdentifier(ResolvableIdentifier identifier) {
+        this.identifier = identifier;
+    }
+    
+    
+    
     @Override
     public boolean visit(ASTVisitor visitor) throws ASTTraversalException {
         return visitor.visit(this);

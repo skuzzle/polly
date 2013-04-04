@@ -74,12 +74,34 @@ public class Assignment extends Expression {
     
     
     /**
+     * Sets the expression to be assigned.
+     * 
+     * @param expression The expression to assign.
+     */
+    public void setExpression(Expression expression) {
+        this.expression = expression;
+    }
+    
+    
+    
+    /**
      * Gets the name as which the expression should be stored.
      * 
      * @return The name.
      */
     public Identifier getName() {
         return this.name;
+    }
+    
+    
+    
+    /**
+     * Sets the name that the expression is assigned to.
+     * 
+     * @param name The new name.
+     */
+    public void setName(Identifier name) {
+        this.name = name;
     }
     
     
