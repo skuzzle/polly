@@ -20,7 +20,14 @@ public class TimeSpanFormat {
     
 
     public String format(long seconds) {
+        if (seconds == 0) {
+            return "0s";
+        }
         StringBuilder result = new StringBuilder(20);
+        if (seconds < 0) {
+            result.append("-");
+            seconds = -seconds;
+        }
         
         long years = this.yearPart(seconds);
         long days = this.dayPart(seconds);
