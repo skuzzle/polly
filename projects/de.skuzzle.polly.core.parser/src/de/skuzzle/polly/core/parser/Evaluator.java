@@ -90,11 +90,14 @@ public class Evaluator {
             final ASTVisitor parentSetter = new ParentSetter();
             this.lastResult.visit(parentSetter);
             
+            final ProblemReporter reporter = this.reporter.subReporter(
+                this.lastResult.getPosition());
+            
             // resolve types
-            TypeResolver.resolveAST(this.lastResult, workingNs, this.reporter);
+            TypeResolver.resolveAST(this.lastResult, workingNs, reporter);
             
             if (!this.reporter.hasProblems()) {
-                final ASTVisitor executor = getExecutor(rootNs, workingNs, this.reporter);
+                final ASTVisitor executor = getExecutor(rootNs, workingNs, reporter);
                 this.lastResult.visit(executor);
             }
             
