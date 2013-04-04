@@ -99,7 +99,7 @@ import de.skuzzle.polly.tools.collections.Stack;
  *   parameter   -> type? ID
  *   type        -> ID                                         // primitive type
  *                | LIST '&lt;' type '&gt;'                    // list type
- *                | '(' type (WS type)* '->' type ')'          // function type
+ *                | '(' (type (WS type)*)? '->' type ')'       // function type
  *                | '?'
  *                
  *   WS       -> ' ' | \t
@@ -1199,9 +1199,9 @@ public class InputParser {
     
     /**
      * <pre>
-     * type -> ID                                  // primitive type
-     *       | LIST '&lt;' type '&gt;'             // list type
-     *       | '(' type (WS type)* '->' type ')'   // function type
+     * type -> ID                                     // primitive type
+     *       | LIST '&lt;' type '&gt;'                // list type
+     *       | '(' (type (WS type)*)? '->' type ')'   // function type
      *       | '?'
      * </pre>
      * @return A resolvable type.
@@ -1214,6 +1214,9 @@ public class InputParser {
             this.scanner.setSkipWhiteSpaces(false);
             
             do {
+                if (scanner.lookAhead().matches(TokenType.ASSIGNMENT)) {
+                    break;
+                }
                 signature.add(this.parseType());
             } while (this.scanner.match(TokenType.SEPERATOR) &&
                 !this.scanner.lookAhead().matches(TokenType.ASSIGNMENT));

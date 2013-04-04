@@ -37,7 +37,7 @@ parameters  -> (parameter (',' parameter)*)?
 parameter   -> type? ID                                    
 type        -> ID                                         // primitive type or type var
              | LIST '<' type '>'                          // list type
-             | '(' type (WS type)* '->' type ')'          // function type
+             | '(' (type (WS type)*)? '->' type ')'       // function type
              | '?'                                        // inferred type
              
 WS       -> ' ' | \t
