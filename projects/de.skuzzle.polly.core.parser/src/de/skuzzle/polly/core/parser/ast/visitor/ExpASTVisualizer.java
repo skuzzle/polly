@@ -2,6 +2,8 @@ package de.skuzzle.polly.core.parser.ast.visitor;
 
 import java.io.PrintStream;
 
+import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
+
 import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.Identifier;
 import de.skuzzle.polly.core.parser.ast.Node;
@@ -12,6 +14,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.Assignment;
 import de.skuzzle.polly.core.parser.ast.expressions.Braced;
 import de.skuzzle.polly.core.parser.ast.expressions.Call;
 import de.skuzzle.polly.core.parser.ast.expressions.Delete;
+import de.skuzzle.polly.core.parser.ast.expressions.Empty;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
 import de.skuzzle.polly.core.parser.ast.expressions.Inspect;
 import de.skuzzle.polly.core.parser.ast.expressions.NamespaceAccess;
@@ -310,6 +313,13 @@ public class ExpASTVisualizer extends DepthFirstVisitor {
     @Override
     public int before(VarAccess node) throws ASTTraversalException {
         this.dotBuilder.printExpression("VarAccess: " + node.getIdentifier(), node);
+        final Declaration vd = node.getIdentifier().getDeclaration();
+        if (vd != null && !vd.isLocal() && !vd.isNative() && 
+                !(vd.getExpression() instanceof Empty)) {
+            
+            vd.getExpression().visit(this);
+            this.dotBuilder.printEdge(node, vd.getExpression(), "");
+        }
         return CONTINUE;
     }
     

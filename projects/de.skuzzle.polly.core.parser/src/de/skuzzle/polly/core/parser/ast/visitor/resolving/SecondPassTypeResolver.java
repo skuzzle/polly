@@ -2,10 +2,12 @@ package de.skuzzle.polly.core.parser.ast.visitor.resolving;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import de.skuzzle.polly.core.parser.ParserProperties;
+import de.skuzzle.polly.core.parser.ast.Node;
 import de.skuzzle.polly.core.parser.ast.Root;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
 import de.skuzzle.polly.core.parser.ast.declarations.types.ListType;
@@ -23,10 +25,12 @@ import de.skuzzle.polly.core.parser.ast.expressions.OperatorCall;
 import de.skuzzle.polly.core.parser.ast.expressions.VarAccess;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.ListLiteral;
+import de.skuzzle.polly.core.parser.ast.expressions.literals.Literal;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.ProductLiteral;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTRewrite;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.CopyTransformation;
+import de.skuzzle.polly.core.parser.ast.visitor.ForEachTraversal;
 import de.skuzzle.polly.core.parser.ast.visitor.Unparser;
 import de.skuzzle.polly.core.parser.problems.Problems;
 
@@ -207,6 +211,10 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         
         if (ParserProperties.should(ParserProperties.ALLOW_POLYMORPHIC_DECLS)) {
             if (node.getExpression() instanceof FunctionLiteral) {
+                // if we have a polymorphic declaration, we do not want to use its
+                // current type (which would be bound to this context) but its generic
+                // declared type instead.
+                
                 final FunctionLiteral fun = (FunctionLiteral) node.getExpression();
                 final List<Type> types = new ArrayList<>(fun.getFormal().size());
                 boolean ispoly = false;
@@ -216,8 +224,10 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
                 }
                 
                 if (ispoly) {
-                    this.reportError(node, Problems.ASSIGNMENT_NOT_ALLOWED);
-                    return false;
+                    final Type signature = new ProductType(types).mapTo(Type.newTypeVar());
+                    node.setUnique(signature);
+                    this.propagateDown(node.getExpression(), signature);
+                    return true;
                 }
             }
         }
@@ -261,8 +271,29 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
             final Expression copy = target.getExpression().transform(new CopyTransformation());
             final ProductLiteral rhsCopy = parent.getRhs().transform(new CopyTransformation());
             final Call newCall = new Call(node.getPosition(), copy, rhsCopy);
+            // reset all types
+            copy.traverse(new ForEachTraversal() {
+                @Override
+                protected int beforeEach(Node node) {
+                    if (node instanceof Literal) {
+                        // preserve literal's types
+                    } else if (node instanceof Expression) {
+                        final Expression exp = (Expression) node;
+                        exp.setUnique(Type.UNKNOWN);
+                        exp.setTypes(Collections.<Type>emptyList());
+                    }
+                    return CONTINUE;
+                }
+            });
+            
+            // resolve new types in current context
             TypeResolver.resolveAST(newCall, this.nspace, 
                 this.reporter.subReporter(node.getPosition()));
+            
+            final Substitution s = Type.unify(newCall.getLhs().getUnique(), 
+                node.getUnique());
+            
+            node.setUnique(node.getUnique().subst(s));
             
             // create fake declaration
             final Declaration decl = new Declaration(node.getPosition(), 
