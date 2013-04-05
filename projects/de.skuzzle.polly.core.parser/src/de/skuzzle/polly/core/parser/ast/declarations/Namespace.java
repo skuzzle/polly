@@ -49,6 +49,7 @@ import de.skuzzle.polly.core.parser.ast.lang.operators.TimespanArithmetic;
 import de.skuzzle.polly.core.parser.ast.lang.operators.UnaryArithmetic;
 import de.skuzzle.polly.core.parser.ast.lang.operators.UnaryBooleanArithmetic;
 import de.skuzzle.polly.core.parser.ast.lang.operators.UnaryList;
+import de.skuzzle.polly.core.parser.ast.lang.operators.UnaryTimespan;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.Unparser;
 import de.skuzzle.polly.core.parser.problems.ProblemReporter;
@@ -361,6 +362,7 @@ public class Namespace {
             NATIVE.declare(new DateTimespanArithmetic(OpType.ADD).createDeclaration());
             NATIVE.declare(new DateTimespanArithmetic(OpType.SUB).createDeclaration());
             NATIVE.declare(new DateArithmetic(OpType.SUB).createDeclaration());
+            NATIVE.declare(new UnaryTimespan().createDeclaration());
             
             // String operators
             NATIVE.declare(new BinaryStringArithmetic(OpType.ADD).createDeclaration());
