@@ -46,6 +46,7 @@ public abstract class Operator extends Function {
         ASIN("asin"),
         ATAN("atan"),
         ATAN2("atan2"),
+        HYPOT("hypot"),
         ACOS("acos"),
         ABS("abs"),
         TO_DEGREES("toDegrees"),

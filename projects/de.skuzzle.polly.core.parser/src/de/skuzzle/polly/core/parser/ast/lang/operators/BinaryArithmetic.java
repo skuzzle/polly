@@ -99,6 +99,10 @@ public class BinaryArithmetic extends BinaryOperator<NumberLiteral, NumberLitera
             stack.push(new NumberLiteral(resultPos, 
                 Math.atan2(left.getValue(), right.getValue())));
             break;
+        case HYPOT:
+            stack.push(new NumberLiteral(resultPos, 
+                    Math.hypot(left.getValue(), right.getValue())));
+            break;
         default:
             this.invalidOperatorType(this.getOp());
         }

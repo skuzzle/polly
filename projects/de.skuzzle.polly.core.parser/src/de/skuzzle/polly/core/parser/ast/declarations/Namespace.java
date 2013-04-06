@@ -347,6 +347,7 @@ public class Namespace {
             NATIVE.declare(new BinaryArithmetic(OpType.MAX).createDeclaration());
             NATIVE.declare(new BinaryArithmetic(OpType.XOR).createDeclaration());
             NATIVE.declare(new BinaryArithmetic(OpType.ATAN2).createDeclaration());
+            NATIVE.declare(new BinaryArithmetic(OpType.HYPOT).createDeclaration());
             
             // boolean arithmetic
             NATIVE.declare(new BinaryBooleanArithmetic(OpType.BOOLEAN_AND).createDeclaration());
