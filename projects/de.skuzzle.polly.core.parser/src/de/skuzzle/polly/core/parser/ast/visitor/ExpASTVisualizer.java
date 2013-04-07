@@ -1,8 +1,9 @@
 package de.skuzzle.polly.core.parser.ast.visitor;
 
 import java.io.PrintStream;
-
-import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.Identifier;
@@ -312,8 +313,29 @@ public class ExpASTVisualizer extends DepthFirstVisitor {
     
     @Override
     public int before(VarAccess node) throws ASTTraversalException {
-        this.dotBuilder.printExpression("VarAccess: " + node.getIdentifier(), node);
+        final StringBuilder b = new StringBuilder();
         final Declaration vd = node.getIdentifier().getDeclaration();
+        
+        b.append("VarAccess: ");
+        b.append(node.getIdentifier());
+        if(vd != null) {
+            final List<String> attributes = new ArrayList<String>(5);
+            if (vd.isLocal()) attributes.add("local");
+            if (vd.isNative()) attributes.add("native");
+            if (vd.isPublic()) attributes.add("public");
+            b.append(" (");
+            final Iterator<String> it = attributes.iterator();
+            while (it.hasNext()) {
+                b.append(it.next());
+                if (it.hasNext()) {
+                    b.append(", ");
+                }
+            }
+            b.append(")");
+        }
+        
+        
+        this.dotBuilder.printExpression(b.toString(), node);
         if (vd != null && !vd.isLocal() && !vd.isNative() && 
                 !(vd.getExpression() instanceof Empty)) {
             
