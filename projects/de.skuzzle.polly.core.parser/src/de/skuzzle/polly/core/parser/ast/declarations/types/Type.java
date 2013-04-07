@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import de.skuzzle.polly.core.parser.ParserProperties;
 import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.Identifier;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
@@ -139,7 +140,6 @@ public class Type implements Visitable<TypeVisitor>, Equatable, Comparable<Type>
      *          with any of the other types.
      */
     public static MapType getMostSpecific(Collection<MapType> types) {
-
         assert !types.isEmpty();
         final Iterator<MapType> it = types.iterator();
         MapType result = it.next();
@@ -240,7 +240,9 @@ public class Type implements Visitable<TypeVisitor>, Equatable, Comparable<Type>
      * @return Whether both types are unifiable.
      */
     public final static boolean tryUnify(Type left, Type right) {
-        return new TypeUnifier(true).tryUnify(left, right);
+        final boolean subtyping = 
+            ParserProperties.should(ParserProperties.ALLOW_SUBTYPING);
+        return new TypeUnifier(subtyping).tryUnify(left, right);
     }
     
     
@@ -270,7 +272,9 @@ public class Type implements Visitable<TypeVisitor>, Equatable, Comparable<Type>
      *          <code>null</code> otherwise.
      */
     public final static Substitution unify(Type left, Type right) {
-        return new TypeUnifier(true).unify(left, right);
+        final boolean subtyping = 
+            ParserProperties.should(ParserProperties.ALLOW_SUBTYPING);
+        return new TypeUnifier(subtyping).unify(left, right);
     }
     
     
@@ -292,6 +296,21 @@ public class Type implements Visitable<TypeVisitor>, Equatable, Comparable<Type>
         this.name = name;
         this.comparable = comparable;
         this.primitve = primitive;
+    }
+    
+    
+    
+    /**
+     * Creates a new product type which starts with this type followed by the types given
+     * as parameter.
+     * @param others Types to form a product with.
+     * @return A new product type.
+     */
+    public ProductType productWith(Type...others) {
+        final Type[] types = new Type[others.length + 1];
+        types[0] = this;
+        System.arraycopy(others, 0, types, 1, others.length);
+        return new ProductType(types);
     }
     
     

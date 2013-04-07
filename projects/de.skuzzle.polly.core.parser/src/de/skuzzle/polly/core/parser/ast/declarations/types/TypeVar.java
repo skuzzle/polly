@@ -11,7 +11,12 @@ import de.skuzzle.polly.core.parser.ast.Identifier;
  */
 public class TypeVar extends Type {
 
-    protected TypeVar source;
+    /** 
+     * Source if this variable if this one was created by a 'fresh' operation.
+     * @see Substitution#fresh()
+     * @see #subst(Substitution) 
+     */
+    TypeVar source;
     
     /**
      * Creates a new TypeVar with the given name.

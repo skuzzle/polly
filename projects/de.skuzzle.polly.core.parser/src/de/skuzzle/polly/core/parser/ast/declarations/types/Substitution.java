@@ -19,7 +19,9 @@ public class Substitution {
     
     
     /** 
-     * Creates a substitution that will replace all variables with new ones.
+     * Creates a substitution that will replace all variables in the type expression 
+     * it is applied to with new ones. The newly created variables get a reference to
+     * the variables they were created from.
      * 
      * @return A new substitution.
      */
@@ -48,7 +50,7 @@ public class Substitution {
     /**
      * Creates a new substitution from the given mapping.
      *  
-     * @param mappings Mappinf of type variables to type expressions.
+     * @param mappings Mapping of type variables to type expressions.
      */
     public Substitution(Map<TypeVar, Type> mappings) {
         this.mappings = mappings;
@@ -57,7 +59,7 @@ public class Substitution {
     
     
     /**
-     * Creates a new empty substutiton.
+     * Creates a new empty substitution.
      */
     public Substitution() {
         this(new HashMap<TypeVar, Type>());
@@ -84,6 +86,14 @@ public class Substitution {
     
     
     
+    /**
+     * Creates a substitution which maps all variables in this substitution to their 
+     * source variable. A variable has a source, if it was created from another one during
+     * a 'fresh' operation. Variables that have no source, will be excluded from this
+     * operation.
+     * 
+     * @return A new substitution.
+     */
     public Substitution toSource() {
         final Substitution result = new Substitution(
             new HashMap<TypeVar, Type>());
@@ -96,6 +106,15 @@ public class Substitution {
     }
     
     
+    
+    /**
+     * Creates a new substitution by joining this one with the given one. If a mapping for
+     * the same variable exists in both substitutions, the result will contain the 
+     * mapping from the given substitution.
+     * 
+     * @param s Substitution to join this one with, may be <code>null</code>.
+     * @return A new substitution with mappings from both this and the given substitution.
+     */
     public Substitution join(Substitution s) {
         final Substitution result = new Substitution(
             new HashMap<TypeVar, Type>());
@@ -105,6 +124,7 @@ public class Substitution {
         }
         return result;
     }
+    
     
     
     /**

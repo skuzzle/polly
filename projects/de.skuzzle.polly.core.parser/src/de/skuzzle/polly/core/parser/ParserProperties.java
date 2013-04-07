@@ -21,6 +21,9 @@ public class ParserProperties {
      */
     public final static String ALLOW_POLYMORPHIC_DECLS = "allowPolymorphic";
     
+    /** Whether subtyping should be taken into account while unifying types. */
+    public final static String ALLOW_SUBTYPING = "allowSubtyping";
+    
     /** Whether the parser should accept escaped tokens as identifiers. */
     public final static String ENABLE_TOKEN_ESCAPING = "enableEscaping";
     
@@ -39,6 +42,7 @@ public class ParserProperties {
         properties = new HashMap<String, String>();
         properties.put(REPORT_UNKNOWN_VARIABLES, Boolean.FALSE.toString());
         properties.put(ALLOW_POLYMORPHIC_DECLS, Boolean.TRUE.toString());
+        properties.put(ALLOW_POLYMORPHIC_DECLS, Boolean.FALSE.toString());
         properties.put(ENABLE_TOKEN_ESCAPING, Boolean.TRUE.toString());
         properties.put(ENABLE_SCANNER_DEBUGGING, Boolean.FALSE.toString());
         properties.put(ENABLE_EXECUTION_DEBUGGING, Boolean.FALSE.toString());

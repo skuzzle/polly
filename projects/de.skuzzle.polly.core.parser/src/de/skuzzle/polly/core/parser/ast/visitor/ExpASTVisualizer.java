@@ -245,7 +245,7 @@ public class ExpASTVisualizer extends DepthFirstVisitor {
         case ABORT: return false;
         }
         
-        this.dotBuilder.printExpression("Function", node);
+        this.dotBuilder.printFunction(node);
         for (final Declaration param : node.getFormal()) {
             if (!param.visit(this)) {
                 return false;

@@ -1,14 +1,17 @@
 package de.skuzzle.polly.core.parser.util;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
 import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
+import de.skuzzle.polly.core.parser.ast.declarations.types.ProductType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Substitution;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
 import de.skuzzle.polly.core.parser.ast.expressions.VarAccess;
+import de.skuzzle.polly.core.parser.ast.expressions.literals.FunctionLiteral;
 
 
 public class ASTDotBuilder extends DotBuilder {
@@ -93,6 +96,33 @@ public class ASTDotBuilder extends DotBuilder {
         this.out.print("\", style=\"");
         this.out.print("dotted");
         this.out.println("\"];");
+    }
+    
+    
+    
+    public void printFunction(FunctionLiteral fun) {
+        final StringBuilder typesBuilder = new StringBuilder();
+        final List<Type> types = new ArrayList<Type>(fun.getFormal().size());
+        for (final Declaration decl : fun.getFormal()) {
+            types.add(decl.getType());
+        }
+        final Type signature = new ProductType(types);
+        
+        for (final Type t : fun.getTypes()) {
+            typesBuilder.append(t);
+            if (fun.hasConstraint(t)) {
+                final Substitution constraint = fun.getConstraint(t);
+                typesBuilder.append(" ");
+                typesBuilder.append(constraint.map().entrySet().toString());
+            }
+            typesBuilder.append("\\n");
+        }
+        this.printNode(fun, 
+            "Function",
+            "Unique: " + fun.getUnique(),
+            "Formal: " + signature.getName(),
+            "Types:\\n" + typesBuilder.toString(),
+            fun.getPosition().toString()); 
     }
     
     

@@ -73,7 +73,7 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         boolean matches = false;
         for (final Type t : target.getTypes()) {
             last = t;
-            matches |= Type.tryUnify(t, type);
+            matches |= Type.tryUnify(type, t);
         }
         if (!matches) {
             this.typeError(target, type, last);
@@ -325,13 +325,22 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
             t = node.getUnique();
         }
         
+        // check if node has a constraint on that return type
+        final Substitution constraint = node.getConstraint(t);
+        
         
         // all call types that match a signature are stored in this list. If type 
         // resolution was successful, it will contain a single type.
         final Collection<MapType> matched = new ArrayList<MapType>();
         
         for (final Type s : node.getRhs().getTypes()) {
-            final MapType tmp = s.mapTo(t);
+            MapType tmp = s.mapTo(t);
+
+            // if the result type has constraints, those must be applied to the possible 
+            // unique type so that they are obeyed
+            if (constraint != null) {
+                tmp = (MapType) tmp.subst(constraint);
+            }
             
             for (final Type lhsType : node.getLhs().getTypes()) {
                 final Substitution subst = Type.unify(tmp, lhsType);
@@ -364,7 +373,7 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         
         node.getRhs().setUnique(mtc.getSource());
         node.getLhs().setUnique(mtc);
-        node.setUnique(t);
+        node.setUnique(mtc.getTarget());
         return CONTINUE;
     }
     
