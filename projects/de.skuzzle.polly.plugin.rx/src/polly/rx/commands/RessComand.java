@@ -39,7 +39,10 @@ public class RessComand extends Command {
             new Parameter("Ausdruck", Types.ANY),
             new Parameter("Ausdruck", Types.ANY),
             new Parameter("Ausdruck", Types.ANY));
-        this.setHelpText("Rechnen mit aktuellen Resourcenpreisen");
+        this.setHelpText("Rechnen mit aktuellen Resourcenpreisen. Namen der Resourcen " +
+        		"können als Variablen benutzt werden " +
+        		"(cr, nrg, rek, erz, org, synth, fe, lm, sm, em, rad, es,eg,iso). " +
+        		"Z.b. :ress 5*iso 10*es");
         this.setRegisteredOnly(true);
         this.rpgrabber = new ResourcePriceGrabber(REFRESH_THRESHOLD, myPolly);
     }
