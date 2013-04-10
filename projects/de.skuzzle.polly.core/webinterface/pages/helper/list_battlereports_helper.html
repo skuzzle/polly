@@ -224,9 +224,12 @@
 		<th><a href="$target&sortKey=hasArtifact&dir=$dir">Artifact</a></th>
 		<th><a href="$target&sortKey=getDate&dir=$dir">Date</a></th>
 	</tr>
+    #set ($i = 0)
 	#foreach ($report in $reports)
+        #set ($i = $i+1)
 	<tr>
         <td><input type="checkbox" value="$report.getId()" name="selectRP"/></td>
+        <td>$i</td>
 		<td><a href="battlereport_info?id=$report.getId()">$report.getId()</a></td>
 		<td><a href="filter_reports?action=addFilter&filterKey=LOCATION_FILTER&param=$report.getQuadrant()">$report.getQuadrant()</a> $report.getX(),$report.getY()</td>
 		<td><a href="filter_reports?action=addFilter&filterKey=ATTACKER_FILTER&param=$report.getAttackerVenadName()">$report.getAttackerVenadName()</a></td>
