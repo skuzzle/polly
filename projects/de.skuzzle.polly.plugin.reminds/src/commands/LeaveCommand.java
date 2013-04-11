@@ -58,7 +58,7 @@ public class LeaveCommand extends AbstractRemindCommand {
             String forUser = signature.getStringValue(0);
 
             RemindEntity remind = new RemindEntity(msg, fromUser, forUser, location, 
-                    Time.currentTime());
+                    Time.currentTime(), Time.currentTime());
             remind.setIsMessage(true);
             this.addRemind(executer, remind, false);
             this.reply(channel, FORMATTER.format(remind, this.getMyPolly().formatting()));
@@ -71,7 +71,7 @@ public class LeaveCommand extends AbstractRemindCommand {
             List<UserType> users = signature.getListValue(UserType.class, 0);
             for (UserType ut : users) {
                 RemindEntity remind = new RemindEntity(msg, fromUser, ut.getValue(), 
-                        location, Time.currentTime());
+                        location, Time.currentTime(), Time.currentTime());
                 remind.setIsMessage(true);
                 this.addRemind(executer, remind, false);
             }
@@ -85,7 +85,7 @@ public class LeaveCommand extends AbstractRemindCommand {
             String forUser = signature.getStringValue(0);
             
             RemindEntity remind = new RemindEntity(msg, fromUser, forUser, forUser, 
-                    Time.currentTime());
+                    Time.currentTime(), Time.currentTime());
             remind.setIsMessage(true);
             this.addRemind(executer, remind, false);
             this.reply(channel, FORMATTER.format(remind, this.getMyPolly().formatting()));

@@ -15,6 +15,7 @@ import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
+import de.skuzzle.polly.sdk.time.Time;
 import entities.RemindEntity;
 
 
@@ -76,7 +77,7 @@ public class MailRemindCommand extends DelayedCommand {
 
         
         RemindEntity re = new RemindEntity(message, executer.getName(), 
-            user.getName(), channel, dueDate, false, true);
+            user.getName(), channel, dueDate, false, true, Time.currentTime());
 
         try {
             this.remindManager.addRemind(executer, re, true);

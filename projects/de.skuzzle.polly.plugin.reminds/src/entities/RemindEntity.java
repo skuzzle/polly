@@ -67,24 +67,25 @@ public class RemindEntity implements Comparable<RemindEntity> {
     
     
     public RemindEntity(String message, String fromUser, String forUser, 
-            String onChannel, Date dueDate) {
-        this(message, fromUser, forUser, onChannel, dueDate, false, false);
+            String onChannel, Date dueDate, Date leaveDate) {
+        this(message, fromUser, forUser, onChannel, dueDate, false, false, leaveDate);
     }
     
     public RemindEntity(String message, String fromUser, String forUser, 
-        String onChannel, Date dueDate, boolean onAction) {
-        this(message, fromUser, forUser, onChannel, dueDate, onAction, false);
+        String onChannel, Date dueDate, boolean onAction, Date leaveDate) {
+        this(message, fromUser, forUser, onChannel, dueDate, onAction, false, leaveDate);
     }
     
     
     public RemindEntity(String message, String fromUser, String forUser, 
-            String onChannel, Date dueDate, boolean onAction, boolean isMail) {
+            String onChannel, Date dueDate, boolean onAction, boolean isMail, 
+            Date leaveDate) {
         this.message = message;
         this.fromUser = fromUser;
         this.forUser = forUser;
         this.dueDate = dueDate;
         this.onChannel = onChannel;
-        this.leaveDate = Time.currentTime();
+        this.leaveDate = leaveDate;
         this.onAction = onAction;
         this.isMail = isMail;
     }
@@ -200,7 +201,7 @@ public class RemindEntity implements Comparable<RemindEntity> {
     
     public RemindEntity copyForNewDueDate(Date newDueDate) {
         RemindEntity copy = new RemindEntity(this.message, this.fromUser, this.forUser, 
-                this.onChannel, newDueDate);
+                this.onChannel, newDueDate, this.leaveDate);
         copy.leaveDate = Time.currentTime();
         return copy;
     }

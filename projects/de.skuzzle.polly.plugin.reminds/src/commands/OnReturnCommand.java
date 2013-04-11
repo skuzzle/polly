@@ -41,7 +41,7 @@ public class OnReturnCommand extends AbstractRemindCommand {
             String forUser = signature.getStringValue(0);
 
             RemindEntity remind = new RemindEntity(msg, fromUser, forUser, channel, 
-                    Time.currentTime());
+                    Time.currentTime(), Time.currentTime());
             remind.setIsMessage(true);
             remind.setOnAction(true);
             this.addRemind(executer, remind, false);

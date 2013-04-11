@@ -224,7 +224,8 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
                     remind.getFromUser(), 
                     remind.getForUser(), 
                     remind.getOnChannel(), 
-                    remind.getDueDate(), true);
+                    remind.getDueDate(), true,
+                    remind.getLeaveDate());
                 
                 onAction.setIsMessage(true);
                 this.addRemind(forUser, onAction, false);
@@ -234,7 +235,8 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
                 remind.getFromUser(), 
                 remind.getForUser(), 
                 remind.getOnChannel(), 
-                remind.getDueDate());
+                remind.getDueDate(),
+                remind.getLeaveDate());
             message.setWasRemind(true);
             message.setIsMessage(true);
             this.addRemind(forUser, message, false);
@@ -316,6 +318,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
                 this.irc.getNickname(), 
                 remind.getFromUser(), 
                 remind.getFromUser(),
+                Time.currentTime(),
                 Time.currentTime());
             // schedule this Remind for now so it will be delivered immediately.
             // if user is not online, it will automatically be delivered later
