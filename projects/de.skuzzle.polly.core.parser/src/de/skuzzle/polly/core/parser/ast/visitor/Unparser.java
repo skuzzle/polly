@@ -95,7 +95,7 @@ public class Unparser extends DepthFirstVisitor {
     
     /**
      * Creates a new Unparser which uses a default literal formatter.
-     * @param out Writer ti write the outpu to.
+     * @param out Writer to write the output to.
      */
     public Unparser(PrintWriter out) {
         this(out, LiteralFormatter.DEFAULT);

@@ -6,6 +6,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
+import java.util.Locale;
 
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
@@ -29,21 +30,21 @@ public interface LiteralFormatter {
      */
     public LiteralFormatter DEFAULT = new LiteralFormatter() {
         
-        private final NumberFormat NUMBER_FORMAT = new DecimalFormat("0.######");
         private final TimeSpanFormat TIMESPAN_FORMAT = new TimeSpanFormat(false);
         private final DateFormat DATE_FORMAT = new SimpleDateFormat(
             "HH:mm@dd.MM.yyyy");
         
-        
-        
         @Override
         public String formatNumberLiteral(NumberLiteral number) {
+            final DecimalFormat df = (DecimalFormat) NumberFormat.getInstance(
+                    Locale.ENGLISH);
+            df.applyPattern("0.#####");
             final double val = number.getValue();
             if (Math.round(val) == val) {
                 int intVal = (int) val;
                 return Integer.toString(intVal, number.getRadix());
             }
-            return NUMBER_FORMAT.format(val);
+            return df.format(val);
         }
         
         

@@ -168,6 +168,9 @@ public class Namespace {
                         new Braced(decl.getExpression().getPosition(), 
                             decl.getExpression()).visit(up);
                         pw.print("->");
+                        if (decl.isPublic()) {
+                            pw.print("public ");
+                        }
                         if (decl.getName().wasEscaped()) {
                             pw.print("\\");
                         }
