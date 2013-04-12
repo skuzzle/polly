@@ -14,9 +14,11 @@ public final class TypeResolver {
         
         final FirstPassTypeResolver fptr = new FirstPassTypeResolver(namespace, reporter);
         root.visit(fptr);
-        
-        final SecondPassTypeResolver sptr = new SecondPassTypeResolver(fptr);
-        root.visit(sptr);
+
+        if (!reporter.hasProblems()) {
+            final SecondPassTypeResolver sptr = new SecondPassTypeResolver(fptr);
+            root.visit(sptr);
+        }
     }
     
     

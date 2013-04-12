@@ -42,7 +42,7 @@ public class ParserProperties {
         properties = new HashMap<String, String>();
         properties.put(REPORT_UNKNOWN_VARIABLES, Boolean.FALSE.toString());
         properties.put(ALLOW_POLYMORPHIC_DECLS, Boolean.TRUE.toString());
-        properties.put(ALLOW_POLYMORPHIC_DECLS, Boolean.FALSE.toString());
+        properties.put(ALLOW_SUBTYPING, Boolean.FALSE.toString());
         properties.put(ENABLE_TOKEN_ESCAPING, Boolean.TRUE.toString());
         properties.put(ENABLE_SCANNER_DEBUGGING, Boolean.FALSE.toString());
         properties.put(ENABLE_EXECUTION_DEBUGGING, Boolean.FALSE.toString());

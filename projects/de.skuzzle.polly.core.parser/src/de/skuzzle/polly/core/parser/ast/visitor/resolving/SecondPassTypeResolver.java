@@ -292,8 +292,9 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
             
             final Substitution s = Type.unify(newCall.getLhs().getUnique(), 
                 node.getUnique());
-            
+            //final MapType unique = (MapType) node.getUnique().subst(s);
             node.setUnique(node.getUnique().subst(s));
+            //parent.setUnique(unique.getTarget());
             
             // create fake declaration
             final Declaration decl = new Declaration(node.getPosition(), 

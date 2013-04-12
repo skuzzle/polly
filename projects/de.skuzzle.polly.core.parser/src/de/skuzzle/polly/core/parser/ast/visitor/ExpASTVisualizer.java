@@ -158,8 +158,10 @@ public class ExpASTVisualizer extends DepthFirstVisitor {
             return false;
         }
         
-        this.dotBuilder.printEdge(node, node.getLhs(), Unparser.toString(node.getLhs(), this.formatter));
-        this.dotBuilder.printEdge(node, node.getRhs(), Unparser.toString(node.getRhs(), this.formatter));
+        this.dotBuilder.printEdge(node, node.getLhs(), Unparser.toString(node.getLhs(), 
+            this.formatter));
+        this.dotBuilder.printEdge(node, node.getRhs(), Unparser.toString(node.getRhs(), 
+            this.formatter));
         return this.after(node) == CONTINUE;
     }
     
@@ -179,8 +181,10 @@ public class ExpASTVisualizer extends DepthFirstVisitor {
             return false;
         }
         
-        this.dotBuilder.printEdge(node, node.getLhs(), Unparser.toString(node.getLhs(), this.formatter));
-        this.dotBuilder.printEdge(node, node.getRhs(), Unparser.toString(node.getRhs(), this.formatter));
+        this.dotBuilder.printEdge(node, node.getLhs(), Unparser.toString(node.getLhs(), 
+            this.formatter));
+        this.dotBuilder.printEdge(node, node.getRhs(), Unparser.toString(node.getRhs(), 
+            this.formatter));
         return this.after(node) == CONTINUE;
     }
     
@@ -323,15 +327,18 @@ public class ExpASTVisualizer extends DepthFirstVisitor {
             if (vd.isLocal()) attributes.add("local");
             if (vd.isNative()) attributes.add("native");
             if (vd.isPublic()) attributes.add("public");
-            b.append(" (");
-            final Iterator<String> it = attributes.iterator();
-            while (it.hasNext()) {
-                b.append(it.next());
-                if (it.hasNext()) {
-                    b.append(", ");
+            
+            if (!attributes.isEmpty()) {
+                b.append(" (");
+                final Iterator<String> it = attributes.iterator();
+                while (it.hasNext()) {
+                    b.append(it.next());
+                    if (it.hasNext()) {
+                        b.append(", ");
+                    }
                 }
+                b.append(")");
             }
-            b.append(")");
         }
         
         
