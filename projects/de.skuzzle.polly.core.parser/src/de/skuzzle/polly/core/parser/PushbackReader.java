@@ -143,9 +143,9 @@ public class PushbackReader extends FilterReader {
     
     private void pushback(int c, boolean artificial) {
         artificial |= c == -1;
-        if (!artificial && (this.position == 0 || this.eos)) {
-            throw new IllegalStateException("illegal artificial pushback");
-        }
+        //if (!artificial && (this.position == 0 || this.eos)) {
+            //throw new IllegalStateException("illegal artificial pushback");
+        //}
         this.buffer.add(new Pushback(c, artificial));
         this.position -= artificial ? 0 : 1;
         this.eos = artificial ? this.eos : false;

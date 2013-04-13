@@ -124,30 +124,6 @@ public class PushbackReaderTest {
     
     
     
-    @Test(expected = IllegalStateException.class)
-    public void testReader6() throws IOException {
-        final String input = "abc";
-        final PushbackReader reader = this.obtain(input);
-        // non-artificial pushback at beginning
-        reader.pushback('a');
-    }
-    
-    
-    
-    @Test(expected = IllegalStateException.class)
-    public void testReader7() throws IOException {
-        final String input = "a";
-        final PushbackReader reader = this.obtain(input);
-        reader.read();
-        reader.read();
-        Assert.assertTrue(reader.eos());
-        
-        // non-artificial pushback beyond eos
-        reader.pushback('a');
-    }
-    
-    
-    
     @Test
     public void testReader8() throws IOException {
         final String input = "a";
