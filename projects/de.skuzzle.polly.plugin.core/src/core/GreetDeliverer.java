@@ -18,9 +18,16 @@ public class GreetDeliverer implements UserListener {
     public void userSignedOn(UserEvent e) {
         String greet = e.getUser().getAttribute(MyPlugin.GREETING);
         if (greet != null) {
+            // try to execute command. this either fails by exception or by returning
+            // false. In that case, just deliver the plain greeting.
             try {
-                myPolly.commands().executeString(greet, e.getUser().getCurrentNickName(), 
-                    true, e.getUser(), this.myPolly.irc());
+                if (!myPolly.commands().executeString(greet, 
+                        e.getUser().getCurrentNickName(), true, e.getUser(), 
+                        this.myPolly.irc())) {
+                    
+                    this.myPolly.irc().sendMessage(e.getUser().getCurrentNickName(), 
+                            greet, this);
+                }
             } catch (Exception e1) {
                 e1.printStackTrace();
                 this.myPolly.irc().sendMessage(e.getUser().getCurrentNickName(), 

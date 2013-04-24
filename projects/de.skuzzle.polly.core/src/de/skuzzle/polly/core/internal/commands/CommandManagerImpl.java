@@ -227,7 +227,7 @@ public class CommandManagerImpl implements CommandManager {
 	
 	
 	@Override
-    public void executeString(String input, String channel, boolean inQuery, 
+    public boolean executeString(String input, String channel, boolean inQuery, 
             User executor, IrcManager ircManager) 
                 throws UnsupportedEncodingException, 
                        UnknownSignatureException, InsufficientRightsException, 
@@ -254,7 +254,7 @@ public class CommandManagerImpl implements CommandManager {
         } 
         
         if (root == null || root.hasProblems()) {
-            return;
+            return false;
         }
         Signature sig = this.createSignature(root);
         
@@ -274,6 +274,7 @@ public class CommandManagerImpl implements CommandManager {
             watch.stop();
             logger.trace("Execution time: " + watch.getDifference() + "ms");
         }
+        return true;
 	}
 	
 	

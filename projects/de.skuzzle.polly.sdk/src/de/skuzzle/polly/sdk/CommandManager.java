@@ -138,6 +138,7 @@ public interface CommandManager {
 	 * @param executor The executing user.
 	 * @param ircManager The current irc manager isntance. Used to determine context 
 	 *             information for the parser.
+	 * @return Whether the command has been executed.
 	 * @throws UnsupportedEncodingException If the parser encounters an unknown encoding.
 	 *             This will rarely happen.
 	 * @throws UnknownSignatureException The command that should be executed has no 
@@ -147,7 +148,7 @@ public interface CommandManager {
 	 *             or an error occured during execution of the command.                          
 	 * @throws UnknownCommandException If there is no command with that name.
 	 */
-	public abstract void executeString(String input, String channel, boolean inQuery, 
+	public abstract boolean executeString(String input, String channel, boolean inQuery, 
 	    User executor, IrcManager ircManager) 
 	                    throws UnsupportedEncodingException, 
                                UnknownSignatureException, InsufficientRightsException, 
