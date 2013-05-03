@@ -10,6 +10,7 @@ import de.skuzzle.polly.core.parser.ParserProperties;
 import de.skuzzle.polly.core.parser.ast.Node;
 import de.skuzzle.polly.core.parser.ast.Root;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
+import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
 import de.skuzzle.polly.core.parser.ast.declarations.types.ListType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.MapType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.ProductType;
@@ -32,6 +33,7 @@ import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.CopyTransformation;
 import de.skuzzle.polly.core.parser.ast.visitor.ForEachTraversal;
 import de.skuzzle.polly.core.parser.ast.visitor.Unparser;
+import de.skuzzle.polly.core.parser.problems.ProblemReporter;
 import de.skuzzle.polly.core.parser.problems.Problems;
 
 
@@ -41,8 +43,8 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
     private final ASTRewrite rewrite;
     
     
-    public SecondPassTypeResolver(FirstPassTypeResolver fptr) {
-        super(fptr.getCurrentNameSpace(), fptr.reporter);
+    public SecondPassTypeResolver(Namespace nspace, ProblemReporter reporter) {
+        super(nspace, reporter);
         this.rewrite = new ASTRewrite();
     }
     
@@ -287,14 +289,27 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
             });
             
             // resolve new types in current context
-            TypeResolver.resolveAST(newCall, this.nspace, 
+            final FirstPassTypeResolver fptr = new FirstPassTypeResolver(this.nspace, 
                 this.reporter.subReporter(node.getPosition()));
+            newCall.visit(fptr);
+            
+            if (node.getUnique() instanceof MapType) {
+                final MapType mapUnique = (MapType) node.getUnique();
+                copy.setUnique(mapUnique);
+                newCall.setUnique(mapUnique.getTarget());
+            } else {
+                copy.setUnique(node.getUnique());
+            }
+            final SecondPassTypeResolver sptr = new SecondPassTypeResolver(this.nspace, 
+                this.reporter.subReporter(node.getPosition()));
+            newCall.visit(sptr);
             
             final Substitution s = Type.unify(newCall.getLhs().getUnique(), 
                 node.getUnique());
-            //final MapType unique = (MapType) node.getUnique().subst(s);
+            
             node.setUnique(node.getUnique().subst(s));
-            //parent.setUnique(unique.getTarget());
+            newCall.setUnique(newCall.getUnique().subst(s));
+            parent.setUnique(newCall.getUnique());
             
             // create fake declaration
             final Declaration decl = new Declaration(node.getPosition(), 
