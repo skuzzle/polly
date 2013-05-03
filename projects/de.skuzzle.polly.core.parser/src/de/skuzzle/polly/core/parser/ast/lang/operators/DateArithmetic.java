@@ -1,5 +1,7 @@
 package de.skuzzle.polly.core.parser.ast.lang.operators;
 
+import java.util.Calendar;
+
 import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
@@ -28,8 +30,17 @@ public class DateArithmetic extends BinaryOperator<DateLiteral, DateLiteral>{
         
         switch (this.getOp()) {
         case SUB:
-            stack.push(new TimespanLiteral(resultPos, 
-                (int)((left.getValue().getTime() - right.getValue().getTime())) / 1000));
+            // Timezone aware date subtraction
+            // (http://user.xmission.com/~goodhill/dates/deltaDates.html)
+            final Calendar l = Calendar.getInstance();
+            l.setTime(left.getValue());
+            final Calendar r = Calendar.getInstance();
+            r.setTime(right.getValue());
+            long endl = r.getTimeInMillis() + r.getTimeZone().getOffset(r.getTimeInMillis());
+            long startl = l.getTimeInMillis() + l.getTimeZone().getOffset(l.getTimeInMillis());
+            long seconds = (startl - endl) / 1000;
+            
+            stack.push(new TimespanLiteral(resultPos, (int) seconds));
             break;
         default:
             this.invalidOperatorType(this.getOp());    

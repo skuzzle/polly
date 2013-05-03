@@ -817,6 +817,12 @@ public class InputScanner extends AbstractTokenStream {
                     state = 6;
                 } else {
                     this.pushBack(next);
+                    Calendar c = Calendar.getInstance();
+                    c.set(Calendar.DAY_OF_MONTH, firstPart);
+                    c.set(Calendar.MONTH, secondPart);
+                    c.set(Calendar.YEAR, thirdPart);
+                    timeToken = new Token(TokenType.DATETIME, this.spanFrom(tokenStart), 
+                        c.getTime());
                     state = 8;
                 }                
 
