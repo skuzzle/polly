@@ -105,5 +105,5 @@ project, there currently exists no release that is considered "stable".
 Nevertheless, polly is used every day by a rather small group of people on the 
 euIRC making irc life a bit more comfortable for everyone :).
 
-Visit polly in #tal-der-ahnungslosen on irc.euirc.net or follow @PollyProject 
+Visit polly in #pollyisawesome on irc.euirc.net or follow @PollyProject 
 on Twitter!
