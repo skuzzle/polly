@@ -42,14 +42,16 @@ public class Relational extends BinaryOperator<Literal, Literal> {
     protected void exec(Stack<Literal> stack, Namespace ns, Literal left, Literal right,
             Position resultPos, ExecutionVisitor execVisitor) throws ASTTraversalException {
         
+        if (this.getOp() == OpType.EQ) {
+            stack.push(new BooleanLiteral(resultPos, left.equals(right)));
+            return;
+        } else if (this.getOp() == OpType.NEQ) {
+            stack.push(new BooleanLiteral(resultPos, !left.equals(right)));
+            return;
+        }
+        
         final int comp = left.compareTo(right);
         switch (this.getOp()) {
-        case EQ:
-            stack.push(new BooleanLiteral(resultPos, comp == 0));
-            break;
-        case NEQ:
-            stack.push(new BooleanLiteral(resultPos, comp != 0));
-            break;
         case LT:
             stack.push(new BooleanLiteral(resultPos, comp < 0));
             break;
