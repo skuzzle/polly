@@ -60,7 +60,7 @@ public abstract class Operator extends Function {
         COMP("comp"),
         SORT("sort"),
         DAY("day"),
-        TRANSPOSE("trans"),
+        TRANSPOSE("^T"),
         
         ADD("+"),
         ADDWAVE("+~"),
