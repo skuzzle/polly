@@ -391,6 +391,8 @@ public class InputScanner extends AbstractTokenStream {
                 
                 if (next == '^') {
                     return new Token(TokenType.XOR, this.spanFrom(tokenStart), "^^");
+                } else if (next == 'T') {
+                    return new Token(TokenType.TRANSPOSE, this.spanFrom(tokenStart), "^T");
                 } else {
                     this.pushBack(next);
                     return new Token(TokenType.POWER, this.spanFrom(tokenStart), "^");

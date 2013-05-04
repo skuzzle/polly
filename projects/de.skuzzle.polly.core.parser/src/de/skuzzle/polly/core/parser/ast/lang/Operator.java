@@ -60,6 +60,7 @@ public abstract class Operator extends Function {
         COMP("comp"),
         SORT("sort"),
         DAY("day"),
+        TRANSPOSE("trans"),
         
         ADD("+"),
         ADDWAVE("+~"),
@@ -147,6 +148,7 @@ public abstract class Operator extends Function {
             case WAVE:        return OpType.WAVE;
             case OPENSQBR:    return OpType.INDEX;
             case IF:          return OpType.IF;
+            case TRANSPOSE:   return OpType.TRANSPOSE;
             default:
                 throw new IllegalArgumentException("not a valid operator token: " + 
                     token);

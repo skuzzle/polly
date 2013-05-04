@@ -70,6 +70,7 @@ public enum TokenType {
     DELETE("del"), 
     INSPECT("inspect"),
     ESCAPED("\\"), 
+    TRANSPOSE("^T"),
     ERROR("Ungültiges Symbol");
     
     private String string;

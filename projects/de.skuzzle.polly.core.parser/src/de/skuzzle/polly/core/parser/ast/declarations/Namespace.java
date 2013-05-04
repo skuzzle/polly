@@ -46,6 +46,7 @@ import de.skuzzle.polly.core.parser.ast.lang.operators.ReverseString;
 import de.skuzzle.polly.core.parser.ast.lang.operators.StringIndex;
 import de.skuzzle.polly.core.parser.ast.lang.operators.TernaryDotDot;
 import de.skuzzle.polly.core.parser.ast.lang.operators.TimespanArithmetic;
+import de.skuzzle.polly.core.parser.ast.lang.operators.TransposeOperator;
 import de.skuzzle.polly.core.parser.ast.lang.operators.UnaryArithmetic;
 import de.skuzzle.polly.core.parser.ast.lang.operators.UnaryBooleanArithmetic;
 import de.skuzzle.polly.core.parser.ast.lang.operators.UnaryList;
@@ -414,6 +415,7 @@ public class Namespace {
             NATIVE.declare(new Comp().createDeclaration());
             NATIVE.declare(new Sort().createDeclaration());
             NATIVE.declare(new Day().createDeclaration());
+            NATIVE.declare(new TransposeOperator().createDeclaration());
             
         } catch (ASTTraversalException e) {
             throw new ExceptionInInitializerError(e);
