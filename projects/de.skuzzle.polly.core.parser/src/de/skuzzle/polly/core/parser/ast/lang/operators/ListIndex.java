@@ -10,6 +10,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.NumberLiteral;
 import de.skuzzle.polly.core.parser.ast.lang.BinaryOperator;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.ExecutionVisitor;
+import de.skuzzle.polly.core.parser.problems.Problems;
 import de.skuzzle.polly.tools.collections.Stack;
 
 
@@ -30,12 +31,12 @@ public class ListIndex extends BinaryOperator<ListLiteral, NumberLiteral> {
         
         switch (this.getOp()) {
         case INDEX:
-            final int index = right.isInteger();
+            final int index = right.isInteger(execVisitor.getReporter());
             
             if (index < 0 || index >= left.getContent().size()) {
                 // TODO: report problem
-                throw new ASTTraversalException(resultPos, 
-                    "Index ausserhalb des gültigen Bereichs: " + index);
+                execVisitor.getReporter().runtimeProblem(Problems.INDEX_OUT_OF_BOUNDS, 
+                    resultPos, index);
             }
             
             stack.push((Literal) left.getContent().get(index));

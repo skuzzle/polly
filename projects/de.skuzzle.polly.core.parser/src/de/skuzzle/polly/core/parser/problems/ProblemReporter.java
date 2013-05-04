@@ -33,7 +33,8 @@ public interface ProblemReporter {
         
         
         public Problem(int type, Position position, String message) {
-            if (type != LEXICAL && type != SYNTACTICAL && type != SEMATICAL) {
+            if (type != LEXICAL && type != SYNTACTICAL && type != SEMATICAL && 
+                    type != RUNTIME) {
                 throw new IllegalArgumentException("illegal problem type");
             }
             this.type = type;
@@ -96,6 +97,9 @@ public interface ProblemReporter {
     /** Constant representing semantical problems */
     public final static int SEMATICAL = 2;
     
+    /** Constant representing runtime errors */
+    public final static int RUNTIME = 3;
+    
     
     
     /**
@@ -137,5 +141,8 @@ public interface ProblemReporter {
         throws ParseException;
     
     public void typeProblem(Type expected, Type occurred, Position position) 
+        throws ASTTraversalException;
+    
+    public void runtimeProblem(String problem, Position position, Object...params)
         throws ASTTraversalException;
 }

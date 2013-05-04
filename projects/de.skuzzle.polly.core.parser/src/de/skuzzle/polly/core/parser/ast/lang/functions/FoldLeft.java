@@ -15,7 +15,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.Literal;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.ProductLiteral;
 import de.skuzzle.polly.core.parser.ast.lang.TernaryOperator;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.core.parser.ast.visitor.ASTVisitor;
+import de.skuzzle.polly.core.parser.ast.visitor.ExecutionVisitor;
 import de.skuzzle.polly.tools.collections.Stack;
 
 
@@ -44,8 +44,8 @@ public class FoldLeft extends TernaryOperator<ListLiteral, FunctionLiteral, Lite
 
     @Override
     protected void exec(Stack<Literal> stack, Namespace ns, ListLiteral first,
-            FunctionLiteral second, Literal third, Position resultPos, ASTVisitor execVisitor) 
-            throws ASTTraversalException {
+            FunctionLiteral second, Literal third, Position resultPos, 
+            ExecutionVisitor execVisitor) throws ASTTraversalException {
 
         
         Literal result = third;

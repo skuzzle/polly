@@ -10,6 +10,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.Literal;
 import de.skuzzle.polly.core.parser.ast.lang.UnaryOperator;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.core.parser.ast.visitor.ExecutionVisitor;
 import de.skuzzle.polly.tools.collections.Stack;
 
 
@@ -34,7 +35,7 @@ public class RandomListIndex extends UnaryOperator<ListLiteral> {
 
     @Override
     protected void exec(Stack<Literal> stack, Namespace ns, ListLiteral operand,
-            Position resultPos) throws ASTTraversalException {
+            Position resultPos, ExecutionVisitor execVisitor) throws ASTTraversalException {
 
         int i;
         switch (this.getOp()) {

@@ -88,7 +88,7 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
     public void execute(Stack<Literal> stack, Namespace ns, ExecutionVisitor execVisitor)
             throws ASTTraversalException {
         final O operand = (O) ns.resolveFirst(PARAM_NAME).getExpression();
-        this.exec(stack, ns, operand, operand.getPosition());
+        this.exec(stack, ns, operand, operand.getPosition(), execVisitor);
     }
 
     
@@ -100,8 +100,10 @@ public abstract class UnaryOperator<O extends Literal> extends Operator {
      * @param ns The current execution namespace.
      * @param operand Operand literal of this operator.
      * @param resultPos Position that can be used as position for the result literal.
+     * @param execVisitor The visitor that is responsible for the execution of the AST.
      * @throws ASTTraversalException If executing fails for any reason.
      */
     protected abstract void exec(Stack<Literal> stack, Namespace ns, 
-        O operand, Position resultPos) throws ASTTraversalException;
+        O operand, Position resultPos, ExecutionVisitor execVisitor) 
+            throws ASTTraversalException;
 }

@@ -9,6 +9,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.NumberLiteral;
 import de.skuzzle.polly.core.parser.ast.lang.BinaryOperator;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.ExecutionVisitor;
+import de.skuzzle.polly.core.parser.problems.ProblemReporter;
 import de.skuzzle.polly.tools.collections.Stack;
 
 /**
@@ -31,6 +32,7 @@ public class BinaryArithmetic extends BinaryOperator<NumberLiteral, NumberLitera
             NumberLiteral left, NumberLiteral right, 
             Position resultPos, ExecutionVisitor execVisitor) throws ASTTraversalException {
         
+        final ProblemReporter reporter = execVisitor.getReporter();
         switch (this.getOp()) {
         case ADD: 
             stack.push(new NumberLiteral(resultPos, left.getValue() + right.getValue()));
@@ -42,41 +44,41 @@ public class BinaryArithmetic extends BinaryOperator<NumberLiteral, NumberLitera
             stack.push(new NumberLiteral(resultPos, left.getValue() * right.getValue()));
             break;
         case DIV:
-            right.nonZero();
+            right.nonZero(reporter);
             stack.push(new NumberLiteral(resultPos, left.getValue() / right.getValue()));
             break;
         case INTDIV:
-            right.nonZero();
+            right.nonZero(reporter);
             // XXX: implicit conversion
             stack.push(new NumberLiteral(resultPos, 
                 Math.ceil(left.getValue()) / Math.ceil(right.getValue())));
             break;
         case MOD:
-            int r = right.nonZeroInteger();
-            int l = (left.isInteger()  + r) % r;
+            int r = right.nonZeroInteger(reporter);
+            int l = (left.isInteger(reporter)  + r) % r;
             stack.push(new NumberLiteral(resultPos, l));
         case INT_AND:
             stack.push(new NumberLiteral(resultPos, 
-                left.isInteger() & right.isInteger()));
+                left.isInteger(reporter) & right.isInteger(reporter)));
             break;
         case INT_OR:
             stack.push(new NumberLiteral(resultPos, 
-                left.isInteger() | right.isInteger()));
+                left.isInteger(reporter) | right.isInteger(reporter)));
             break;
         case LEFT_SHIFT:
             stack.push(new NumberLiteral(resultPos,
-                    left.isInteger() << right.isInteger()));
+                    left.isInteger(reporter) << right.isInteger(reporter)));
             break;
         case RIGHT_SHIFT:
             stack.push(new NumberLiteral(resultPos,
-                left.isInteger() >> right.isInteger()));
+                left.isInteger(reporter) >> right.isInteger(reporter)));
             break;
         case URIGHT_SHIFT:
             stack.push(new NumberLiteral(resultPos,
-                left.isInteger() >>> right.isInteger()));
+                left.isInteger(reporter) >>> right.isInteger(reporter)));
             break;
         case RADIX:
-            right.setRadix(left.isInteger());
+            right.setRadix(left.isInteger(reporter));
             stack.push(right);
             break;
         case POWER:
@@ -93,7 +95,7 @@ public class BinaryArithmetic extends BinaryOperator<NumberLiteral, NumberLitera
             break;
         case XOR:
             stack.push(new NumberLiteral(
-                resultPos, left.isInteger() ^ right.isInteger()));
+                resultPos, left.isInteger(reporter) ^ right.isInteger(reporter)));
             break;
         case ATAN2:
             stack.push(new NumberLiteral(resultPos, 

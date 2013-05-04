@@ -7,6 +7,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.BooleanLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.Literal;
 import de.skuzzle.polly.core.parser.ast.lang.UnaryOperator;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.core.parser.ast.visitor.ExecutionVisitor;
 import de.skuzzle.polly.tools.collections.Stack;
 
 
@@ -21,7 +22,7 @@ public class UnaryBooleanArithmetic extends UnaryOperator<BooleanLiteral> {
 
     @Override
     protected void exec(Stack<Literal> stack, Namespace ns, BooleanLiteral operand,
-            Position resultPos) throws ASTTraversalException {
+            Position resultPos, ExecutionVisitor execVisitor) throws ASTTraversalException {
         
         switch (this.getOp()) {
         case EXCLAMATION:

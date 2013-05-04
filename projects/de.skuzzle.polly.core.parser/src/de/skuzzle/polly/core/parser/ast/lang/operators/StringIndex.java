@@ -9,6 +9,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.StringLiteral;
 import de.skuzzle.polly.core.parser.ast.lang.BinaryOperator;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.ExecutionVisitor;
+import de.skuzzle.polly.core.parser.problems.Problems;
 import de.skuzzle.polly.tools.collections.Stack;
 
 
@@ -28,12 +29,11 @@ public class StringIndex extends BinaryOperator<StringLiteral, NumberLiteral> {
         
         switch (this.getOp()) {
         case INDEX:
-            int index = right.isInteger();
+            int index = right.isInteger(execVisitor.getReporter());
             
             if (index < 0 || index >= left.getValue().length()) {
-                // TODO: report problem
-                throw new ASTTraversalException(resultPos, 
-                    "Index ausserhalb des gültigen Bereichs: " + index);
+                execVisitor.getReporter().runtimeProblem(Problems.INDEX_OUT_OF_BOUNDS, 
+                    resultPos, index);
             }
             
             stack.push(new StringLiteral(resultPos, "" + left.getValue().charAt(index)));

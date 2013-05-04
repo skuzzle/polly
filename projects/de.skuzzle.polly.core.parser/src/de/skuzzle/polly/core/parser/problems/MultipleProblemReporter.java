@@ -121,4 +121,13 @@ public class MultipleProblemReporter implements ProblemReporter {
         this.problems.add(new Problem(SEMATICAL, this.clip(position), 
             Problems.format(Problems.TYPE_ERROR, expected.getName(), occurred.getName())));
     }
+    
+    
+    
+    @Override
+    public void runtimeProblem(String problem, Position position, Object... params)
+            throws ASTTraversalException {
+        this.problems.add(new Problem(RUNTIME, this.clip(position),
+            Problems.format(problem, params)));
+    }
 }

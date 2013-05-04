@@ -5,6 +5,8 @@ import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.Transformation;
+import de.skuzzle.polly.core.parser.problems.ProblemReporter;
+import de.skuzzle.polly.core.parser.problems.Problems;
 import de.skuzzle.polly.tools.Equatable;
 
 /**
@@ -72,11 +74,12 @@ public class NumberLiteral extends Literal {
      * {@link ASTTraversalException} will be thrown. The exception uses this literal's
      * position.
      * 
+     * @param reporter Error reporter which will report the assertion error.
      * @return This literal's value as integer.
      * @throws ASTTraversalException If {@link #getValue()} returns 0.
      */
-    public int isInteger() throws ASTTraversalException {
-        return this.isInteger(this.getPosition());
+    public int isInteger(ProblemReporter reporter) throws ASTTraversalException {
+        return this.isInteger(this.getPosition(), reporter);
     }
     
     
@@ -86,13 +89,14 @@ public class NumberLiteral extends Literal {
      * {@link ASTTraversalException} will be thrown.
      * 
      * @param pos Position that will be reported in the thrown exception.
+     * @param reporter Error reporter which will report the assertion error.
      * @return This literal's value as integer.
      * @throws ASTTraversalException If {@link #getValue()} returns 0.
      */
-    public int isInteger(Position pos) throws ASTTraversalException {
+    public int isInteger(Position pos, ProblemReporter reporter) 
+            throws ASTTraversalException {
         if (Math.round(this.getValue()) != this.getValue()) {
-            throw new ASTTraversalException(pos, "'" + this.getValue() + 
-                "' ist keine Ganzzahl"); 
+            reporter.runtimeProblem(Problems.INTEGER_REQUIRED, pos);
         }
         return (int) Math.round(this.getValue());
     }
@@ -103,12 +107,13 @@ public class NumberLiteral extends Literal {
      * Asserts that this literal's value is non zero and integer. If not, an 
      * {@link ASTTraversalException} will be thrown. The exception uses this literal's
      * position.
+     * @param reporter Error reporter which will report the assertion error.
      * @return This literal's value as returned by {@link #getValue()}.
      * @throws ASTTraversalException If {@link #getValue()} returns 0.
      */
-    public int nonZeroInteger() throws ASTTraversalException {
-        this.nonZero();
-        return this.isInteger();
+    public int nonZeroInteger(ProblemReporter reporter) throws ASTTraversalException {
+        this.nonZero(reporter);
+        return this.isInteger(reporter);
     }
     
     
@@ -118,13 +123,15 @@ public class NumberLiteral extends Literal {
      * an {@link ASTTraversalException} will be thrown.
      * 
      * @param pos Position that will be reported in the thrown exception.
+     * @param reporter Error reporter which will report the assertion error.
      * @return This literal's value as returned by {@link #getValue()}.
      * @throws ASTTraversalException If {@link #getValue()} returns 0 or the value
      *          is no integer.
      */
-    public int nonZeroInteger(Position pos) throws ASTTraversalException {
-        this.nonZero(pos);
-        return this.isInteger(pos);
+    public int nonZeroInteger(Position pos, ProblemReporter reporter) 
+            throws ASTTraversalException {
+        this.nonZero(pos, reporter);
+        return this.isInteger(pos, reporter);
     }
     
     
@@ -133,11 +140,12 @@ public class NumberLiteral extends Literal {
      * Asserts that this literal's value is non zero. If it is zero, an 
      * {@link ASTTraversalException} exception is thrown. The exception uses the position
      * of this literal.
+     * @param reporter Error reporter which will report the assertion error.
      * @return This literal's value as returned by {@link #getValue()}.
      * @throws ASTTraversalException If {@link #getValue()} returns 0.
      */
-    public double nonZero() throws ASTTraversalException {
-        return this.nonZero(this.getPosition());
+    public double nonZero(ProblemReporter reporter) throws ASTTraversalException {
+        return this.nonZero(this.getPosition(), reporter);
     }
     
     
@@ -147,12 +155,14 @@ public class NumberLiteral extends Literal {
      * {@link ASTTraversalException} exception is thrown. 
      * 
      * @param pos Position that will be reported in the thrown exception.
+     * @param reporter Error reporter which will report the assertion error.
      * @return This literal's value as returned by {@link #getValue()}.
      * @throws ASTTraversalException If {@link #getValue()} returns 0.
      */
-    public double nonZero(Position pos) throws ASTTraversalException {
+    public double nonZero(Position pos, ProblemReporter reporter) 
+            throws ASTTraversalException {
         if (this.getValue() == 0.0) {
-            throw new ASTTraversalException(pos, "Division durch 0");
+            reporter.runtimeProblem(Problems.DIVISION_BY_ZERO, pos);
         }
         
         return this.getValue();

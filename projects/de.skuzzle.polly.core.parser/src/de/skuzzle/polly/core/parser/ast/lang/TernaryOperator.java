@@ -13,7 +13,6 @@ import de.skuzzle.polly.core.parser.ast.expressions.Expression;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.Literal;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
-import de.skuzzle.polly.core.parser.ast.visitor.ASTVisitor;
 import de.skuzzle.polly.core.parser.ast.visitor.ExecutionVisitor;
 import de.skuzzle.polly.core.parser.ast.visitor.resolving.AbstractTypeResolver;
 import de.skuzzle.polly.core.parser.ast.visitor.resolving.TypeResolver;
@@ -111,8 +110,8 @@ public abstract class TernaryOperator<FIRST extends Literal, SECOND extends Lite
      * @throws ASTTraversalException If executing fails for any reason.
      */
     protected abstract void exec(Stack<Literal> stack, Namespace ns, 
-        FIRST first, SECOND second, THIRD third, Position resultPos, ASTVisitor execVisitor) 
-            throws ASTTraversalException;
+        FIRST first, SECOND second, THIRD third, Position resultPos, 
+        ExecutionVisitor execVisitor) throws ASTTraversalException;
     
     
     

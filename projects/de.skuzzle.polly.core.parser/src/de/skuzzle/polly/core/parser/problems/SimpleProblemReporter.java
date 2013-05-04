@@ -112,4 +112,13 @@ public class SimpleProblemReporter implements ProblemReporter {
             Problems.format(Problems.TYPE_ERROR, expected, occurred));
     }
 
+    
+    
+    @Override
+    public void runtimeProblem(String problem, Position position, Object... params)
+        throws ASTTraversalException {
+        this.problem = true;
+        throw new ASTTraversalException(this.clip(position), 
+            Problems.format(problem, params));
+    }
 }

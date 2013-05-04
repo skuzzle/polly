@@ -160,10 +160,11 @@ public class Main {
     
     
     private static void formatProblems(Collection<Problem> problems, int offset) {
-        final String[] types = new String[3];
+        final String[] types = new String[4];
         types[ProblemReporter.LEXICAL] = "Lexical";
         types[ProblemReporter.SYNTACTICAL] = "Syntactical";
         types[ProblemReporter.SEMATICAL] = "Semantical";
+        types[ProblemReporter.RUNTIME] = "Runtime";
         int longestType = "Syntactical".length();
         int longestMsg = 0;
         

@@ -11,6 +11,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.Literal;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.StringLiteral;
 import de.skuzzle.polly.core.parser.ast.lang.UnaryOperator;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.core.parser.ast.visitor.ExecutionVisitor;
 import de.skuzzle.polly.tools.collections.Stack;
 
 
@@ -26,7 +27,7 @@ public class Day extends UnaryOperator<DateLiteral> {
     
     @Override
     protected void exec(Stack<Literal> stack, Namespace ns, DateLiteral operand,
-            Position resultPos) throws ASTTraversalException {
+            Position resultPos, ExecutionVisitor execVisitor) throws ASTTraversalException {
         
         switch (this.getOp()) {
         case DAY:
