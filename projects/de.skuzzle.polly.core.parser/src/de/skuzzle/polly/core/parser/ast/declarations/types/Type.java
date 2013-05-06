@@ -300,6 +300,44 @@ public class Type implements Visitable<TypeVisitor>, Equatable, Comparable<Type>
     
     
     
+    
+    /**
+     * Tries to cast this type into a ProductType. This will obviously fail if this is
+     * no product type. This method is used to avoid verbose constructs like 
+     * <code>((ProductType) x).something</code>.
+     * @return This type as a ProductType
+     */
+    public ProductType asProduct() {
+        return (ProductType) this;
+    }
+    
+    
+    
+    
+    /**
+     * Tries to cast this type into a MapType. This will obviously fail if this is
+     * no map type. This method is used to avoid verbose constructs like 
+     * <code>((MapType) x).something</code>.
+     * @return This type as a MapType
+     */
+    public MapType asMap() {
+        return (MapType) this;
+    }
+    
+    
+    
+    /**
+     * Tries to cast this type into a ListType. This will obviously fail if this is
+     * no list type. This method is used to avoid verbose constructs like 
+     * <code>((ListType) x).something</code>.
+     * @return This type as a ListType
+     */
+    public ListType asList() {
+        return (ListType) this;
+    }
+    
+    
+    
     /**
      * Creates a new product type which starts with this type followed by the types given
      * as parameter.
@@ -330,7 +368,9 @@ public class Type implements Visitable<TypeVisitor>, Equatable, Comparable<Type>
     
     /**
      * Calculates inheritance compatibility for primitive types. Returns 
-     * <code>true</code> if this type is a sub type of the given.
+     * <code>true</code> if this type is a sub type of the given. The result of this
+     * method is influenced by the parser setting 
+     * {@link ParserProperties#ALLOW_SUBTYPING}.
      * 
      * @param other Type to check.
      * @return Whether this type is a sub type of the given other one.
@@ -367,7 +407,7 @@ public class Type implements Visitable<TypeVisitor>, Equatable, Comparable<Type>
      * Applies the given substitution to this type expression. This will create a new
      * type expression where all type variables are substituted by the rules implemented
      * in {@link Substitution#getSubstitute(TypeVar)}. Every other type expression
-     * (except primitive types) will be recreated.
+     * (except primitive types) will be replaced with new instances of the same kind.
      * 
      * @param s The substitution to apply.
      * @return A new type expression.
