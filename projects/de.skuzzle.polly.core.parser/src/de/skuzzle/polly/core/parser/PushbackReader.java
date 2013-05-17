@@ -6,9 +6,9 @@ import java.io.Reader;
 import java.util.LinkedList;
 
 /**
- * <p>Reader implementations that allows to push back characters into the stream and 
+ * <p>Reader implementation that allows to push back characters into the stream and 
  * provides position tracking. In order to be able to properly track positions of pushed 
- * back characters, this stream distinguishes between normal push backs and artificial 
+ * back characters, this stream distinguishes between normal push backs and invisible 
  * push backs. Also note that this stream uses a FIFO buffer for pushed back
  * characters.</p>
  * 
@@ -25,11 +25,11 @@ import java.util.LinkedList;
  * position of the stream is not modified, as for each character that was read another 
  * one was pushed back.</p>
  * 
- * <p>Artificial push backs may be used to insert characters that do not occur in the
+ * <p>Invisible push backs may be used to insert characters that do not occur in the
  * original stream and should thus not modify the position of the stream.</p>
  * <pre>
  * void insert(PushbackReader reader, int c) {
- *     reader.pushbackArtificial(c);
+ *     reader.pushbackInvisible(c);
  * }
  * </pre>
  * <p>The next call to read() yields the pushed back character, but as long as no further
@@ -42,23 +42,33 @@ import java.util.LinkedList;
  */
 public class PushbackReader extends FilterReader {
 
-    private final static class Pushback {
-        private final int character;
-        private final boolean artificial;
+    /** Byte code representing the EOS 'char' */
+    public final static int EOS = -1;
+    
+    
+    protected final static class Pushback {
+        protected final int character;
+        protected final boolean invisible;
         
-        public Pushback(int character, boolean artificial) {
+        public Pushback(int character, boolean invisible) {
             super();
             this.character = character;
-            this.artificial = artificial;
+            this.invisible = invisible;
         }
     }
     
     
     
     private final LinkedList<Pushback> buffer;
-    private int position;
-    private boolean eos;
-    private boolean wasArtificial;
+    
+    /** current position within the underlying stream */
+    protected int position;
+    
+    /** whether all characters from the underlying stream have been read */
+    protected boolean eos;
+    
+    /** Whether the last read character was invisible */
+    protected boolean wasInvisible;
     
     
     
@@ -86,9 +96,6 @@ public class PushbackReader extends FilterReader {
      * <p>Gets the current index within the original input. Position will be updated by 
      * calls to {@link #read()} and push back actions.</p>
      * 
-     * <p>Return value of this method is semantically the number of characters that have 
-     * been read from the original stream.</p>
-     * 
      * @return The current index within the input.
      */
     public int getPosition() {
@@ -103,7 +110,7 @@ public class PushbackReader extends FilterReader {
      * 
      * @param c The character to push back.
      */
-    public void pushbackArtificial(int c) {
+    public void pushbackInvisible(int c) {
         this.pushback(c, true);
     }
     
@@ -111,17 +118,10 @@ public class PushbackReader extends FilterReader {
     
     /**
      * <p>Pushes back a character into this streams FIFO buffer and decreases the current 
-     * stream position by 1. This method can only be used if previously a characters has 
-     * been read from the stream. The rule is, that for each call to {@link #read()} which
-     * read a non-artificial character, you are allowed to push back one character.</p>
+     * stream position by 1. The actual stream position will never be below zero.</p>
      * 
-     * <p>Whether the last read character was an artificial can be determined with
-     * {@link #wasArtificial()}.</p>
-     * 
-     * <p>If you push back more characters than actually have been read so far, proper 
-     * position tracking can no longer be guaranteed. Also, if you try to push back a 
-     * character at the beginning of the stream or after the last character has been 
-     * read, this method will throw an {@link IllegalStateException}.</p>
+     * <p>Whether the last read character was an invisible can be determined with
+     * {@link #wasInvisible()}.</p>
      * 
      * @param c The character to push back.
      */
@@ -132,23 +132,21 @@ public class PushbackReader extends FilterReader {
     
     
     /**
-     * Whether the last call to {@link #read()} yielded an artificial character.
-     * @return Whether the last call to {@link #read()} yielded an artificial character.
+     * Whether the last call to {@link #read()} yielded an invisible character.
+     * @return Whether the last call to {@link #read()} yielded an invisible character.
      */
-    public boolean wasArtificial() {
-        return this.wasArtificial;
+    public boolean wasInvisible() {
+        return this.wasInvisible;
     }
     
     
     
-    private void pushback(int c, boolean artificial) {
-        artificial |= c == -1;
-        //if (!artificial && (this.position == 0 || this.eos)) {
-            //throw new IllegalStateException("illegal artificial pushback");
-        //}
-        this.buffer.add(new Pushback(c, artificial));
-        this.position -= artificial ? 0 : 1;
-        this.eos = artificial ? this.eos : false;
+    private void pushback(int c, boolean invisible) {
+        invisible |= c == EOS;
+        this.buffer.add(new Pushback(c, invisible));
+        this.position = invisible ? 
+            this.position : 
+            Math.max(this.position - 1, 0);
     }
 
     
@@ -158,7 +156,7 @@ public class PushbackReader extends FilterReader {
      * Reads the next character. If the push back buffer is empty, a character is read
      * from the underlying reader and position of this stream is increased by 1.
      * If there is a character in the push back buffer, it is removed. Position will only 
-     * be increased if that character was not pushed artificial.
+     * be increased if that character was not pushed invisible.
      *  
      * @return The next character.
      * @throws IOException If an I/O error occurred.
@@ -168,12 +166,12 @@ public class PushbackReader extends FilterReader {
             final int next = super.read();
             this.eos = next == -1;
             this.position += this.eos ? 0 : 1;
-            this.wasArtificial = false;
+            this.wasInvisible = false;
             return next;
         } else {
             final Pushback pb = this.buffer.poll();
-            this.position += pb.artificial ? 0 : 1;
-            this.wasArtificial = pb.artificial;
+            this.position += pb.invisible ? 0 : 1;
+            this.wasInvisible = pb.invisible;
             return pb.character;
         }
     }

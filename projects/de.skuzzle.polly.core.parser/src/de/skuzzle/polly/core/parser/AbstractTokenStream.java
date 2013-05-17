@@ -337,7 +337,7 @@ public abstract class AbstractTokenStream implements Iterable<Token>, TokenStrea
     
     
     protected void pushBackArtificial(int c) {
-        this.reader.pushbackArtificial(c);
+        this.reader.pushbackInvisible(c);
     }
     
     

@@ -71,7 +71,7 @@ public class PushbackReaderTest {
         final String input = "abc";
         final PushbackReader reader = this.obtain(input);
         
-        reader.pushbackArtificial('d');
+        reader.pushbackInvisible('d');
         Assert.assertEquals(0, reader.getPosition());
         Assert.assertEquals('d', reader.read());
         Assert.assertEquals(0, reader.getPosition());
@@ -90,8 +90,8 @@ public class PushbackReaderTest {
         final String input = "abc";
         final PushbackReader reader = this.obtain(input);
         
-        reader.pushbackArtificial('d');
-        reader.pushbackArtificial('e');
+        reader.pushbackInvisible('d');
+        reader.pushbackInvisible('e');
         Assert.assertEquals(0, reader.getPosition());
         Assert.assertEquals('d', reader.read());
         Assert.assertEquals(0, reader.getPosition());
@@ -117,7 +117,7 @@ public class PushbackReaderTest {
         Assert.assertEquals('c', reader.read());
         Assert.assertEquals(-1, reader.read());
         Assert.assertTrue(reader.eos());
-        reader.pushbackArtificial('d');
+        reader.pushbackInvisible('d');
         Assert.assertFalse(reader.eos());
         Assert.assertEquals(3, reader.getPosition());
     }
@@ -132,7 +132,7 @@ public class PushbackReaderTest {
         reader.read();
         Assert.assertTrue(reader.eos());
         
-        reader.pushbackArtificial('a');
+        reader.pushbackInvisible('a');
         Assert.assertFalse(reader.eos());
         Assert.assertEquals('a', reader.read());
         Assert.assertEquals(-1, reader.read());
@@ -145,7 +145,7 @@ public class PushbackReaderTest {
     public void testReader9() throws IOException {
         final String input = "a";
         final PushbackReader reader = this.obtain(input);
-        reader.pushbackArtificial('b');
+        reader.pushbackInvisible('b');
         reader.read();
         reader.read();
         reader.read();
@@ -168,7 +168,7 @@ public class PushbackReaderTest {
     public void testReader11() throws IOException {
         final String input = "";
         final PushbackReader reader = this.obtain(input);
-        reader.pushbackArtificial('a');
+        reader.pushbackInvisible('a');
         Assert.assertEquals('a', reader.read());
         Assert.assertEquals(-1, reader.read());
         Assert.assertTrue(reader.eos());
