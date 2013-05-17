@@ -10,7 +10,6 @@ import java.util.Map;
 
 import de.skuzzle.polly.core.parser.PrecedenceTable.PrecedenceLevel;
 import de.skuzzle.polly.core.parser.ast.Identifier;
-import de.skuzzle.polly.core.parser.ast.Node;
 import de.skuzzle.polly.core.parser.ast.ResolvableIdentifier;
 import de.skuzzle.polly.core.parser.ast.Root;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;

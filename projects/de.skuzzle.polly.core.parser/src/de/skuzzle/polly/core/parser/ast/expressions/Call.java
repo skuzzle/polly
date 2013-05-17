@@ -1,7 +1,6 @@
 package de.skuzzle.polly.core.parser.ast.expressions;
 
 import de.skuzzle.polly.core.parser.Position;
-import de.skuzzle.polly.core.parser.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.ProductLiteral;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversal;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;

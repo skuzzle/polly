@@ -8,8 +8,6 @@ import java.util.Map;
 import de.skuzzle.polly.core.parser.ParserProperties;
 import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.Identifier;
-import de.skuzzle.polly.core.parser.ast.expressions.Expression;
-import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.ast.visitor.Visitable;
 import de.skuzzle.polly.tools.EqualsHelper;
 import de.skuzzle.polly.tools.Equatable;
@@ -300,7 +298,6 @@ public class Type implements Visitable<TypeVisitor>, Equatable, Comparable<Type>
     
     
     
-    
     /**
      * Tries to cast this type into a ProductType. This will obviously fail if this is
      * no product type. This method is used to avoid verbose constructs like 
@@ -310,7 +307,6 @@ public class Type implements Visitable<TypeVisitor>, Equatable, Comparable<Type>
     public ProductType asProduct() {
         return (ProductType) this;
     }
-    
     
     
     

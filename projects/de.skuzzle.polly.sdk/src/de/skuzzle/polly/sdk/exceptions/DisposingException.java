@@ -1,7 +1,5 @@
 package de.skuzzle.polly.sdk.exceptions;
 
-import de.skuzzle.polly.sdk.Disposable;
-
 
 
 /**

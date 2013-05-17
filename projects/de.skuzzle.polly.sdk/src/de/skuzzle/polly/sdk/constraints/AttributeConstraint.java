@@ -1,7 +1,5 @@
 package de.skuzzle.polly.sdk.constraints;
 
-import de.skuzzle.polly.sdk.UserManager;
-import de.skuzzle.polly.sdk.exceptions.ConstraintException;
 
 /**
  * AttributeConstraints are used to constraint an user attribute to certain values.

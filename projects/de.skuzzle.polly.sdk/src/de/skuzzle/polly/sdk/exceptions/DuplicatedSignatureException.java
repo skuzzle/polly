@@ -1,7 +1,5 @@
 package de.skuzzle.polly.sdk.exceptions;
 
-import de.skuzzle.polly.sdk.CommandManager;
-
 /**
  * This exception is thrown by the {@link CommandManager} upon registering a signature
  * for a command that already exists.

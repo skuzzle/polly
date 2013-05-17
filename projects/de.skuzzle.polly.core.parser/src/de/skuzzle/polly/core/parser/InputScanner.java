@@ -2,13 +2,11 @@ package de.skuzzle.polly.core.parser;
 
 import java.nio.charset.Charset;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import de.skuzzle.polly.core.parser.problems.ProblemReporter;
 import de.skuzzle.polly.core.parser.problems.Problems;
 
 

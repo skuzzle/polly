@@ -7,7 +7,6 @@ import java.util.List;
 
 import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
-import de.skuzzle.polly.core.parser.ast.expressions.Problem;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.Literal;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.LiteralFormatter;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversal;

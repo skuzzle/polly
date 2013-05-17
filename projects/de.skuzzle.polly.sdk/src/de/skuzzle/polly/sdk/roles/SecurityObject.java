@@ -1,6 +1,5 @@
 package de.skuzzle.polly.sdk.roles;
 
-import java.util.Collections;
 import java.util.Set;
 
 /**

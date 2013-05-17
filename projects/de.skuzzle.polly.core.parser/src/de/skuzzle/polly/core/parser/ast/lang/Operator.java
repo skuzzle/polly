@@ -2,7 +2,6 @@ package de.skuzzle.polly.core.parser.ast.lang;
 
 
 import de.skuzzle.polly.core.parser.Token;
-import de.skuzzle.polly.core.parser.TokenType;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
 

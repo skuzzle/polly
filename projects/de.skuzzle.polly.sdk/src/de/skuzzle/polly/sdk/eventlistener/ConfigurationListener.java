@@ -2,7 +2,6 @@ package de.skuzzle.polly.sdk.eventlistener;
 
 import java.util.EventListener;
 
-import de.skuzzle.polly.sdk.Configuration;
 
 /**
  * This listener listens for configuration changes to happen and can be registered

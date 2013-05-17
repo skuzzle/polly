@@ -1,7 +1,6 @@
 package de.skuzzle.polly.core.parser.ast.visitor;
 
 import de.skuzzle.polly.core.parser.ast.Identifier;
-import de.skuzzle.polly.core.parser.ast.Node;
 import de.skuzzle.polly.core.parser.ast.ResolvableIdentifier;
 import de.skuzzle.polly.core.parser.ast.Root;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;

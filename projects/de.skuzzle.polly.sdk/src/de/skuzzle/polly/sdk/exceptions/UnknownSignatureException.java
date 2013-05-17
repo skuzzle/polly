@@ -1,6 +1,5 @@
 package de.skuzzle.polly.sdk.exceptions;
 
-import de.skuzzle.polly.sdk.CommandManager;
 import de.skuzzle.polly.sdk.Signature;
 
 /**

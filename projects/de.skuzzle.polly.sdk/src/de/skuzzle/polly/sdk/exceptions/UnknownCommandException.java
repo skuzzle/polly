@@ -1,7 +1,5 @@
 package de.skuzzle.polly.sdk.exceptions;
 
-import de.skuzzle.polly.sdk.CommandManager;
-
 /**
  * This exception is thrown by the {@link CommandManager} if it tries to access a command
  * that does not exist.

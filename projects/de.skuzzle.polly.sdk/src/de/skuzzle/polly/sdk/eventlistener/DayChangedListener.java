@@ -1,7 +1,5 @@
 package de.skuzzle.polly.sdk.eventlistener;
 
-import de.skuzzle.polly.sdk.time.Time;
-
 /**
  * This listener is used by the {@link Time} class and will be notified when the
  * day changes.

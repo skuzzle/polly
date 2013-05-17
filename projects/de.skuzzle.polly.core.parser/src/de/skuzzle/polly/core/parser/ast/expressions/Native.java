@@ -12,7 +12,6 @@ import de.skuzzle.polly.core.parser.ast.visitor.ASTVisitor;
 import de.skuzzle.polly.core.parser.ast.visitor.ExecutionVisitor;
 import de.skuzzle.polly.core.parser.ast.visitor.Transformation;
 import de.skuzzle.polly.core.parser.ast.visitor.resolving.AbstractTypeResolver;
-import de.skuzzle.polly.core.parser.ast.visitor.resolving.TypeResolver;
 import de.skuzzle.polly.tools.collections.Stack;
 
 
