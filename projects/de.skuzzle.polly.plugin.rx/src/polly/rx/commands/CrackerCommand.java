@@ -49,8 +49,8 @@ public class CrackerCommand extends DelayedCommand {
                 }
             }
             int crackers = this.incCracker(user, CRACKER_INC);
-            this.reply(channel, "Danke für den Cracker! Das war der " + crackers + 
-                    ". Cracker für " + executer.getName());
+            this.reply(channel, "Danke fï¿½r den Cracker! Das war der " + crackers + 
+                    ". Cracker von " + executer.getName());
         } catch (DatabaseException e) {
            throw new CommandException(e); 
         }
