@@ -63,6 +63,7 @@ public class Relational extends BinaryOperator<Literal, Literal> {
             break;
         case EGT:
             stack.push(new BooleanLiteral(resultPos, comp >= 0));
+            break;
         default:
             this.invalidOperatorType(this.getOp());
         }
