@@ -7,7 +7,7 @@ import de.skuzzle.polly.tools.EqualsHelper;
 import de.skuzzle.polly.tools.Equatable;
 
 
-public class Token implements Serializable, Equatable {
+public class Token implements Serializable, Equatable, Location {
     
     private static final long serialVersionUID = 1L;
     
@@ -91,6 +91,8 @@ public class Token implements Serializable, Equatable {
     }
     
     
+    
+    @Override
     public Position getPosition() {
         return this.position;
     }

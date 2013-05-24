@@ -1,5 +1,6 @@
 package de.skuzzle.polly.core.parser.ast;
 
+import de.skuzzle.polly.core.parser.Location;
 import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversal;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
@@ -16,7 +17,7 @@ import de.skuzzle.polly.tools.Equatable;
  *  
  * @author Simon Taddiken
  */
-public abstract class Node implements Visitable<ASTVisitor>, Equatable {
+public abstract class Node implements Visitable<ASTVisitor>, Equatable, Location {
     
     private Node parent;
     private Position position;
@@ -68,12 +69,8 @@ public abstract class Node implements Visitable<ASTVisitor>, Equatable {
     }
     
     
-    
-    /**
-     * Gets the position of this Node.
-     * 
-     * @return The nodes position.
-     */
+
+    @Override
     public Position getPosition() {
         return this.position;
     }

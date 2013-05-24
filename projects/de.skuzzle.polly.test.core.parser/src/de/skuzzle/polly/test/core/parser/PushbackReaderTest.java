@@ -173,4 +173,129 @@ public class PushbackReaderTest {
         Assert.assertEquals(-1, reader.read());
         Assert.assertTrue(reader.eos());
     }
+    
+    
+    
+    @Test
+    public void testReader12() throws IOException {
+        final String input = "a\nb\rc";
+        final PushbackReader reader = this.obtain(input);
+        Assert.assertEquals(0, reader.getLineNumber());
+        Assert.assertEquals(0, reader.getCol());
+        
+        Assert.assertEquals('a', reader.read());
+        Assert.assertEquals(1, reader.getCol());
+        
+        Assert.assertEquals('\n', reader.read());
+        Assert.assertEquals(1, reader.getLineNumber());
+        Assert.assertEquals(0, reader.getCol());
+        Assert.assertEquals(1, reader.getCols(0));
+        
+        Assert.assertEquals('b', reader.read());
+        Assert.assertEquals(1, reader.getCol());
+        
+        Assert.assertEquals('\n', reader.read());
+        Assert.assertEquals(2, reader.getLineNumber());
+        Assert.assertEquals(0, reader.getCol());
+        Assert.assertEquals(1, reader.getCols(1));
+        
+        Assert.assertEquals('c', reader.read());
+        
+        Assert.assertEquals(-1, reader.read());
+        Assert.assertTrue(reader.eos());
+    }
+    
+    
+    
+    @Test
+    public void testReader13() throws IOException {
+        final String input = "\n";
+        final PushbackReader reader = this.obtain(input);
+        int line = reader.getLineNumber();
+        int col = reader.getCol();
+        int c = reader.read();
+        int lineAfter = reader.getLineNumber();
+        int colAfter = reader.getCol();
+        
+        reader.pushback(c);
+        Assert.assertEquals(line, reader.getLineNumber());
+        Assert.assertEquals(col, reader.getCol());
+        
+        Assert.assertEquals(c, reader.read());
+        Assert.assertEquals(lineAfter, reader.getLineNumber());
+        Assert.assertEquals(colAfter, reader.getCol());
+        Assert.assertEquals(0, reader.getCols(0));
+    }
+    
+    
+    
+    @Test
+    public void testReader14() throws IOException {
+        final String input = "a\ncd";
+        final PushbackReader reader = this.obtain(input);
+        reader.pushbackInvisible('b');
+        Assert.assertEquals(0, reader.getLineNumber());
+        Assert.assertEquals(0, reader.getCol());
+        
+        int c = reader.read();
+        Assert.assertEquals(c, 'b');
+        Assert.assertEquals(0, reader.getLineNumber());
+        Assert.assertEquals(0, reader.getCol());
+        
+        Assert.assertEquals('a', reader.read());
+        Assert.assertEquals('\n', reader.read());
+        Assert.assertEquals(1, reader.getLineNumber());
+        
+        reader.pushbackInvisible('\n');
+        Assert.assertEquals('\n', reader.read());
+        Assert.assertEquals(1, reader.getLineNumber());
+        Assert.assertEquals('c', reader.read());
+        Assert.assertEquals(1, reader.getLineNumber());
+        Assert.assertEquals(1, reader.getCol());
+        Assert.assertEquals('d', reader.read());
+        Assert.assertEquals(-1, reader.read());
+        
+        Assert.assertEquals(1, reader.getCols(0));
+        Assert.assertEquals(2, reader.getCols(1));
+    }
+    
+    
+    
+    @Test
+    public void testReader15() throws IOException {
+        final String input = "abcd\ncd";
+        final PushbackReader reader = this.obtain(input);
+        Assert.assertEquals('a', reader.read());
+        Assert.assertEquals('b', reader.read());
+        Assert.assertEquals('c', reader.read());
+        Assert.assertEquals('d', reader.read());
+        Assert.assertEquals('\n', reader.read());
+        Assert.assertEquals(1, reader.getLineNumber());
+        Assert.assertEquals(0, reader.getCol());
+        
+        reader.pushback('\n');
+        Assert.assertEquals(0, reader.getLineNumber());
+        Assert.assertEquals(4, reader.getCol());
+    }
+    
+    
+    
+    @Test
+    public void testReader16() throws IOException {
+        final String input = "abcd\ncd";
+        final PushbackReader reader = this.obtain(input);
+        Assert.assertEquals('a', reader.read());
+        Assert.assertEquals('b', reader.read());
+        Assert.assertEquals('c', reader.read());
+        Assert.assertEquals('d', reader.read());
+        reader.pushback('x');
+        Assert.assertEquals('x', reader.read());
+        Assert.assertEquals('\n', reader.read());
+        Assert.assertEquals(1, reader.getLineNumber());
+        Assert.assertEquals(0, reader.getCol());
+        
+        reader.pushback('\n');
+        Assert.assertEquals(0, reader.getLineNumber());
+        Assert.assertEquals(4, reader.getCol());
+    }
 }

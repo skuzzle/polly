@@ -1,6 +1,5 @@
 package de.skuzzle.polly.core.parser;
 
-import java.io.FilterReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.LinkedList;
@@ -12,7 +11,7 @@ import java.util.LinkedList;
  * push backs. Also note that this stream uses a FIFO buffer for pushed back
  * characters.</p>
  * 
- * <p>A normal push back may only be used if previously a character has been read from
+ * <p>A normal push back should only be used if previously a character has been read from
  * the stream. This may be used to replace the next character with another or to simply
  * push back a character that was read by mistake. The following sample replaces the
  * next character with another one:</p>
@@ -23,24 +22,27 @@ import java.util.LinkedList;
  * </pre>
  * <p>The next call to read() yields the pushed back character <code>c</code>. The 
  * position of the stream is not modified, as for each character that was read another 
- * one was pushed back.</p>
+ * one was pushed back. Pushing back a newline character sets the column index to the 
+ * length of the previous column and decreases the line number by one. Please note 
+ * that pushed back characters never modify the length of a line. Thus 
+ * {@link #getCols(int)} always represent the physical length of the line.</p>
  * 
  * <p>Invisible push backs may be used to insert characters that do not occur in the
- * original stream and should thus not modify the position of the stream.</p>
+ * original stream and will thus not modify the position of the stream.</p>
  * <pre>
  * void insert(PushbackReader reader, int c) {
  *     reader.pushbackInvisible(c);
  * }
  * </pre>
- * <p>The next call to read() yields the pushed back character, but as long as no further
- * characters are read from the original stream, this streams position will not change.
+ * <p>The code above will not modify the current position. Furthermore, the position is
+ * not modified by {@link #read()} when the read character is invisible.
  * </p>
  * 
  * <p>This reader does not support mark()/reset().</p>
  *  
  * @author Simon Taddiken
  */
-public class PushbackReader extends FilterReader {
+public class PushbackReader extends PositioningReader {
 
     /** Byte code representing the EOS 'char' */
     public final static int EOS = -1;
@@ -49,11 +51,15 @@ public class PushbackReader extends FilterReader {
     protected final static class Pushback {
         protected final int character;
         protected final boolean invisible;
+        protected final int line;
+        protected final int col;
         
-        public Pushback(int character, boolean invisible) {
+        public Pushback(int character, boolean invisible, int line, int col) {
             super();
             this.character = character;
             this.invisible = invisible;
+            this.line = line;
+            this.col = col;
         }
     }
     
@@ -69,7 +75,6 @@ public class PushbackReader extends FilterReader {
     
     /** Whether the last read character was invisible */
     protected boolean wasInvisible;
-    
     
     
     public PushbackReader(Reader backend) {
@@ -143,10 +148,19 @@ public class PushbackReader extends FilterReader {
     
     private void pushback(int c, boolean invisible) {
         invisible |= c == EOS;
-        this.buffer.add(new Pushback(c, invisible));
+        int line = this.getLineNumber();
+        int col = this.getCol();
+        // pushing back a visible new line char decreases current line number
+        if (c == '\n' && !invisible) {
+            line -= 1;
+            col = this.getCols(line);
+            this.setLineNumber(line);
+            this.setCol(col);
+        }
+        this.buffer.add(new Pushback(c, invisible, this.getLineNumber(), this.getCol()));
         this.position = invisible ? 
             this.position : 
-            Math.max(this.position - 1, 0);
+            Math.max(this.position - 1, 0); // position should not be < 0
     }
 
     
@@ -164,12 +178,18 @@ public class PushbackReader extends FilterReader {
     public int read() throws IOException {
         if (this.buffer.isEmpty()) {
             final int next = super.read();
-            this.eos = next == -1;
+            this.eos = next == EOS;
             this.position += this.eos ? 0 : 1;
             this.wasInvisible = false;
             return next;
         } else {
             final Pushback pb = this.buffer.poll();
+            if (pb.character == '\n' && !pb.invisible) {
+                this.setCol(0);
+                this.setLineNumber(this.getLineNumber() + 1);
+            } else if (!pb.invisible) {
+                this.setCol(pb.col);
+            }
             this.position += pb.invisible ? 0 : 1;
             this.wasInvisible = pb.invisible;
             return pb.character;
