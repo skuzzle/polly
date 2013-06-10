@@ -34,6 +34,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.Literal;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.UserLiteral;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.core.parser.problems.SimpleProblemReporter;
+import de.skuzzle.polly.core.parser.problems.SimpleProblemReporterV2;
 import de.skuzzle.polly.core.util.MillisecondStopwatch;
 import de.skuzzle.polly.core.util.Stopwatch;
 import de.skuzzle.polly.core.util.TypeMapper;
@@ -296,7 +297,7 @@ public class CommandManagerImpl implements CommandManager {
         watch.start();
         
         final Evaluator eval = new Evaluator(message.trim(), this.encodingName, 
-            new SimpleProblemReporter());
+            new SimpleProblemReporterV2());
         eval.evaluate(rootNs, workingNs);
 
         watch.stop();

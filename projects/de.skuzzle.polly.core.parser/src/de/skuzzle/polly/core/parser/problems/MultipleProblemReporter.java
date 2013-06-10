@@ -18,8 +18,8 @@ import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
  */
 public class MultipleProblemReporter implements ProblemReporter {
 
-    private final SortedSet<Problem> problems;
-    private final Position clipping;
+    protected final SortedSet<Problem> problems;
+    protected final Position clipping;
     
     
     
@@ -30,14 +30,14 @@ public class MultipleProblemReporter implements ProblemReporter {
     
     
     
-    private MultipleProblemReporter(SortedSet<Problem> problems, Position clipping) {
+    protected MultipleProblemReporter(SortedSet<Problem> problems, Position clipping) {
         this.problems = problems;
         this.clipping = clipping;
     }
     
     
     
-    private Position clip(Position pos) {
+    protected Position clip(Position pos) {
         return this.clipping == null ? pos : (pos.isInside(clipping) ? pos : clipping);
     }
     

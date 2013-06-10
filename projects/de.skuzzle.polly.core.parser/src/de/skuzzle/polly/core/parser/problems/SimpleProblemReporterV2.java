@@ -1,7 +1,6 @@
 package de.skuzzle.polly.core.parser.problems;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.SortedSet;
 
 import de.skuzzle.polly.core.parser.ParseException;
 import de.skuzzle.polly.core.parser.Position;
@@ -11,113 +10,74 @@ import de.skuzzle.polly.core.parser.TokenType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 
-/**
- * Simple problem reporter that does not support multiple problems. Instead, it throws
- * an exception upon the first problem that occurrs.
- * 
- * @author Simon Taddiken
- */
-public class SimpleProblemReporter implements ProblemReporter {
 
-    private boolean problem;
-    private Position position;
-    private final Position clipping;
-    
-    
-    public SimpleProblemReporter() {
-        this(null);
-    }
-    
+public class SimpleProblemReporterV2 extends MultipleProblemReporter {
 
     
-    private SimpleProblemReporter(Position clipping) {
-        this.clipping = clipping;
+    public SimpleProblemReporterV2() {
+        super();
     }
     
     
-    
-    protected Position clip(Position pos) {
-        return this.clipping == null 
-            ? pos 
-            : (pos.isInside(this.clipping) ? pos : this.clipping);
+    private SimpleProblemReporterV2(SortedSet<Problem> problems, Position position) {
+        super(problems, position);
     }
     
     
     
     @Override
     public ProblemReporter subReporter(Position clipping) {
-        return new SimpleProblemReporter(clipping);
+        return new SimpleProblemReporterV2(this.problems, clipping);
     }
     
-    
-    
     @Override
-    public boolean hasProblems() {
-        return this.problem;
-    }
-
-    
-    
-    @Override
-    public List<Position> problemPositions() {
-        if (this.hasProblems()) {
-            return Collections.singletonList(this.position);
-        }
-        return Collections.emptyList();
-    }
-
-    
-    
-    @Override
-    public void lexicalProblem(String problem, Position position) 
-            throws ParseException {
-        this.problem = true;
+    public void lexicalProblem(String problem, Position position) throws ParseException {
+        super.lexicalProblem(problem, position);
         throw new ParseException(problem, this.clip(position));
     }
-
+    
     
     
     @Override
-    public void syntaxProblem(String problem, Position position, Object...params) 
+    public void syntaxProblem(String problem, Position position, Object... params)
             throws ParseException {
-        this.problem = true;
+        super.syntaxProblem(problem, position, params);
         throw new ParseException(Problems.format(problem, params), this.clip(position));
     }
-
+    
     
     
     @Override
     public void syntaxProblem(TokenType expected, Token occurred, Position position)
             throws ParseException {
-        this.problem = true;
+        super.syntaxProblem(expected, occurred, position);
         throw new SyntaxException(expected, occurred, this.clip(position));
     }
-
+    
     
     
     @Override
-    public void semanticProblem(String problem, Position position, Object...params) 
+    public void semanticProblem(String problem, Position position, Object... params)
             throws ParseException {
-        this.problem = true;
         throw new ParseException(Problems.format(problem, params), this.clip(position));
     }
-
+    
     
     
     @Override
     public void typeProblem(Type expected, Type occurred, Position position)
             throws ASTTraversalException {
-        this.problem = true;
+        super.typeProblem(expected, occurred, position);
         throw new ASTTraversalException(this.clip(position), 
             Problems.format(Problems.TYPE_ERROR, expected, occurred));
     }
-
+    
     
     
     @Override
     public void runtimeProblem(String problem, Position position, Object... params)
-        throws ASTTraversalException {
-        this.problem = true;
+            throws ASTTraversalException {
+        super.runtimeProblem(problem, position, params);
         throw new ASTTraversalException(this.clip(position), 
             Problems.format(problem, params));
     }
