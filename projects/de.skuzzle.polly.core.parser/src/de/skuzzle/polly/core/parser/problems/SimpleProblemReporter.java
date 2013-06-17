@@ -59,6 +59,7 @@ public class SimpleProblemReporter extends MultipleProblemReporter {
     @Override
     public void semanticProblem(String problem, Position position, Object... params)
             throws ParseException {
+        super.semanticProblem(problem, position, params);
         throw new ParseException(Problems.format(problem, params), this.clip(position));
     }
     
