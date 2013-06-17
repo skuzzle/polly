@@ -30,6 +30,8 @@ public class SimpleProblemReporter extends MultipleProblemReporter {
         return new SimpleProblemReporter(this.problems, clipping);
     }
     
+    
+    
     @Override
     public void lexicalProblem(String problem, Position position) throws ParseException {
         super.lexicalProblem(problem, position);
