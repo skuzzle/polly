@@ -320,6 +320,8 @@ public class InputScanner extends AbstractTokenStream {
                 
                 if (next == '&') {
                     return new Token(TokenType.BOOLEAN_AND, this.spanFrom(tokenStart), "&&");
+                } else if (next == '|') {
+                    return new Token(TokenType.AND_OR, this.spanFrom(tokenStart), "&|");
                 } else {
                     this.pushBack(next);
                     return new Token(TokenType.INT_AND, this.spanFrom(tokenStart), "&");

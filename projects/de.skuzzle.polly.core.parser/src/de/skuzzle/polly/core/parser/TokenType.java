@@ -23,6 +23,7 @@ public enum TokenType {
     POWER("^"), 
     BOOLEAN_AND("&&"), 
     BOOLEAN_OR("||"), 
+    AND_OR("&|"),
     XOR("^^"), 
     GT(">"), 
     LT("<"), 

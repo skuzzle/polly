@@ -68,6 +68,7 @@ public abstract class Operator extends Function {
         DIV("/"), 
         BOOLEAN_AND("&&"), 
         BOOLEAN_OR("||"), 
+        AND_OR("&|"),
         XOR("^^"),
         DOLLAR("$"), 
         DOTDOT(".."), 
@@ -119,6 +120,7 @@ public abstract class Operator extends Function {
             case ADDWAVE:     return OpType.ADDWAVE;
             case BOOLEAN_AND: return OpType.BOOLEAN_AND;
             case BOOLEAN_OR:  return OpType.BOOLEAN_OR;
+            case AND_OR:      return OpType.AND_OR;
             case XOR:         return OpType.XOR;
             case DIV:         return OpType.DIV;
             case DOLLAR:      return OpType.DOLLAR;
