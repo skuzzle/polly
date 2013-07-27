@@ -53,7 +53,7 @@ public class TrainEntityV3 {
     public final static String CLOSED_BY_USER = "CLOSED_BY_USER";
     public final static String CLOSED_BY_TRAINER = "CLOSED_BY_TRAINER";
     public final static String OPEN_BY_TRAINER = "OPEN_BY_TRAINER";
-    public final static String ALL = "ALL_TE2";
+    public final static String ALL = "ALL_TE3";
     
     
     public static TrainEntityV3 parseString(int trainerId, String forUser, double factor, 
