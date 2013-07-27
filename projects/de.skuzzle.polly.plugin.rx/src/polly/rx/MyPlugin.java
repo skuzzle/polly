@@ -24,6 +24,8 @@ import polly.rx.entities.FleetScanShip;
 import polly.rx.entities.ScoreBoardEntry;
 import polly.rx.entities.TrainEntity;
 import polly.rx.entities.TrainEntityV2;
+import polly.rx.entities.TrainEntityV3;
+import polly.rx.entities.V2ToV3TrainEntityConverter;
 import polly.rx.http.BattleReportHttpAction;
 import polly.rx.http.BattleReportInfosHttpAction;
 import polly.rx.http.BattleReportFilterHttpAction;
@@ -87,6 +89,10 @@ public class MyPlugin extends PollyPlugin {
         this.trainManager = new TrainManagerV2(myPolly);
         this.getMyPolly().persistence().registerEntity(TrainEntity.class);
         this.getMyPolly().persistence().registerEntity(TrainEntityV2.class);
+        this.getMyPolly().persistence().registerEntity(TrainEntityV3.class);
+        
+        this.getMyPolly().persistence().registerEntityConverter(
+            new V2ToV3TrainEntityConverter());
         
         this.addCommand(new AddTrainCommand(myPolly, this.trainManager));
         this.addCommand(new CloseTrainCommand(myPolly, this.trainManager));

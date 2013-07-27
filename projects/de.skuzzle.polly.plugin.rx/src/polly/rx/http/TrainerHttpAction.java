@@ -8,7 +8,7 @@ import polly.rx.core.TrainBillV2;
 import polly.rx.core.TrainManagerV2;
 import polly.rx.core.TrainSorter;
 import polly.rx.core.TrainSorter.SortKey;
-import polly.rx.entities.TrainEntityV2;
+import polly.rx.entities.TrainEntityV3;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
@@ -62,7 +62,7 @@ public class TrainerHttpAction extends HttpAction {
             
             try {
                 double factor = Double.parseDouble(f);
-                TrainEntityV2 te = TrainEntityV2.parseString(
+                TrainEntityV3 te = TrainEntityV3.parseString(
                     e.getSession().getUser().getId(), forUser, factor, paste);
                 this.trainManager.addTrain(te, e.getSession().getUser());
             } catch (NumberFormatException e1) {
@@ -103,7 +103,7 @@ public class TrainerHttpAction extends HttpAction {
         TrainSorter.sort(allClosed.getTrains(), closedSortKey, closedDesc);
         
         SortedMap<String, String> clients = new TreeMap<String, String>();
-        for (TrainEntityV2 te : allOpen.getTrains()) {
+        for (TrainEntityV3 te : allOpen.getTrains()) {
             clients.put(te.getForUser().toLowerCase(), te.getForUser());
         }
         

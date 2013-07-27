@@ -50,20 +50,26 @@ public class EntityConverterManagerImpl {
     
     
     private void runConverter(EntityConverter ec) {
+        logger.trace("Retrieving list of old entities...");
         List<Object> olds = ec.getOldEntities(this.persistence);
         List<Object> converted = new ArrayList<Object>(olds.size());
         
+        logger.trace("Converting " + olds.size() + " entities...");
         for (Object old : olds) {
             converted.add(ec.convertEntity(old));
         }
         
+        logger.trace("Persisting list of converted entities...");
         this.persistence.persistList(converted);
-        ec.deleteOldEntities(this.persistence);
+        
+        logger.trace("Deleting old entities (optional operation, may have no effect)...");
+        ec.deleteOldEntities(olds, this.persistence);
     }
 
 
 
     public void addConverter(EntityConverter ec) {
+        logger.info("Registered entity converter:" + ec);
         this.converters.add(ec);
     }
 }

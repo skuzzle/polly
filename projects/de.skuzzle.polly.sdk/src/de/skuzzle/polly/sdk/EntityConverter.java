@@ -52,7 +52,9 @@ public interface EntityConverter {
      * manager, as synchronization is done automatically when polly executes this 
      * entity converter.</p>
      * 
+     * @param olds Collection of the old entities that exists in the database.
      * @param persistence A PersistenceManager instance to remove the old entities with.
      */
-    public abstract void deleteOldEntities(PersistenceManager persistence);
+    public abstract void deleteOldEntities(List<Object> olds, 
+        PersistenceManager persistence);
 }

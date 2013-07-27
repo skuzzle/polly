@@ -2,23 +2,23 @@ package polly.rx.core;
 
 import java.util.List;
 
-import polly.rx.entities.TrainEntityV2;
+import polly.rx.entities.TrainEntityV3;
 
 
 
 public class TrainBillV2 {
 
-    private List<TrainEntityV2> trains;
+    private List<TrainEntityV3> trains;
     
     
     
-    public TrainBillV2(List<TrainEntityV2> trains) {
+    public TrainBillV2(List<TrainEntityV3> trains) {
         this.trains = trains;
     }
     
     
     
-    public List<TrainEntityV2> getTrains() {
+    public List<TrainEntityV3> getTrains() {
         return this.trains;
     }
     
@@ -30,7 +30,7 @@ public class TrainBillV2 {
     public synchronized int weightedSum() {
         if (this.weightedSumCache == -1) {
             this.weightedSumCache = 0;
-            for (TrainEntityV2 train : this.trains) {
+            for (TrainEntityV3 train : this.trains) {
                 this.weightedSumCache += train.getCosts() * train.getFactor();
             }
         }
@@ -42,7 +42,7 @@ public class TrainBillV2 {
     public synchronized int sum() {
         if (this.sumCache == -1) {
             this.sumCache = 0;
-            for (TrainEntityV2 train : this.trains) {
+            for (TrainEntityV3 train : this.trains) {
                 this.sumCache += train.getCosts();
             }
         }
@@ -64,7 +64,7 @@ public class TrainBillV2 {
     
     
     public void closeBill() {
-        for (TrainEntityV2 train : this.trains) {
+        for (TrainEntityV3 train : this.trains) {
             train.setClosed(true);
         }
     }

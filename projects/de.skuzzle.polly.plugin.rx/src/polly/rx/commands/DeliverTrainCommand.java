@@ -3,7 +3,7 @@ package polly.rx.commands;
 import polly.rx.MyPlugin;
 import polly.rx.core.TrainBillV2;
 import polly.rx.core.TrainManagerV2;
-import polly.rx.entities.TrainEntityV2;
+import polly.rx.entities.TrainEntityV3;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -49,7 +49,7 @@ public class DeliverTrainCommand extends Command {
             deliverTo = signature.getStringValue(1);
         }
         TrainBillV2 bill = this.trainManager.getBill(executer, userName);
-        for (TrainEntityV2 train : bill.getTrains()) {
+        for (TrainEntityV3 train : bill.getTrains()) {
             this.reply(deliverTo, train.format(this.getMyPolly().formatting()));
         }
         this.reply(deliverTo, "=========================");

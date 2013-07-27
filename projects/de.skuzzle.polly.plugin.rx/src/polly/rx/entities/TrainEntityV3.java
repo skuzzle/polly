@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -16,38 +17,95 @@ import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.time.Time;
 
 @Entity
-@NamedQuery(name = "ALLV2", query = "SELECT t FROM TrainEntityV2 t")
-public class TrainEntityV2 {
+@NamedQueries({
+    @NamedQuery(
+        name =  "OPEN_BY_USER_AND_TRAINER",
+        query = "SELECT t FROM TrainEntityV3 t WHERE t.trainerId = ?1 AND LOWER(t.forUser) = LOWER(?2) AND t.closed=FALSE"),
+    @NamedQuery(
+        name =  "OPEN_BY_USER",
+        query = "SELECT t FROM TrainEntityV3 t WHERE LOWER(t.forUser) = LOWER(?1) AND t.closed=FALSE"),
+    @NamedQuery(
+        name =  "CLOSED_BY_USER",
+        query = "SELECT t FROM TrainEntityV3 t WHERE LOWER(t.forUser) = LOWER(?1) AND t.closed=true"),
+    @NamedQuery(
+        name =  "OPEN_BY_TRAINER",
+        query = "SELECT t FROM TrainEntityV3 t WHERE t.trainerId = ?1 AND t.closed=false"),
+    @NamedQuery(
+        name =  "CLOSED_BY_TRAINER",
+        query = "SELECT t FROM TrainEntityV3 t WHERE t.trainerId = ?1 AND t.closed=true"),
+    @NamedQuery(
+        name =  "TRAINSV2_BY_USER",
+        query = "SELECT t FROM TrainEntityV3 t WHERE LOWER(t.forUser) = LOWER(?1)"),
+    @NamedQuery(
+        name =  "ALL_TE3",
+        query = "SELECT t FROM TrainEntityV3 t")
+})
+public class TrainEntityV3 {
     
+    public static void main(String[] args) {
+        final String test = "intensives Techlimit Training (14)     737358 Cr.  9:07:00";
+        TrainEntityV3 te = TrainEntityV3.parseString(0, "me", 1.0, test);
+        System.out.println(te);
+    }
     
     public final static String OPEN_BY_USER_AND_TRAINER = "OPEN_BY_USER_AND_TRAINER";
     public final static String OPEN_BY_USER = "OPEN_BY_USER";
     public final static String CLOSED_BY_USER = "CLOSED_BY_USER";
     public final static String CLOSED_BY_TRAINER = "CLOSED_BY_TRAINER";
     public final static String OPEN_BY_TRAINER = "OPEN_BY_TRAINER";
-    public final static String ALL = "ALLV2";
+    public final static String ALL = "ALL_TE2";
     
     
-    public static TrainEntityV2 parseString(int trainerId, String forUser, double factor, 
+    public static TrainEntityV3 parseString(int trainerId, String forUser, double factor, 
             String trainString) {
-        /*
-         * Parts:
-         * [0] First part of train type
-         * [1] Second part of train type
-         * [2] costs
-         * [3] "Cr."
-         * [4] duration
-         */
-        String[] parts = trainString.split("\\s+", 5);
-        if (parts.length != 5) {
+        
+        final String[] parts = trainString.split("\\s+", 7);
+        if (parts.length == 6) {
+            /*
+             * Parts:
+             * [0] First part of train type
+             * [1] Second part of train type
+             * [2] Current value
+             * [3] costs
+             * [4] "Cr."
+             * [5] duration
+             */
+            final TrainType type = TrainType.parse(parts[0]);
+            
+            // stripp off braces
+            final int current = Integer.parseInt(
+                parts[2].substring(1, parts[2].length() - 1));
+            final int costs = Integer.parseInt(parts[3]);
+            final Date now = Time.currentTime();
+            final Date finished = parseDuration(parts[5]);
+            return new TrainEntityV3(trainerId, forUser, type, factor, costs, now, 
+                finished, current);
+        } else if (parts.length == 7) {
+            /*
+             * Parts:
+             * [0] First part of train type
+             * [1] Second part of train type
+             * [2] Third part of train type
+             * [3] Current value
+             * [4] costs
+             * [5] "Cr."
+             * [6] duration
+             */
+            final TrainType type = TrainType.parse(parts[0] + " " + parts[1]);
+            
+            // stripp off braces
+            final int current = Integer.parseInt(
+                parts[3].substring(1, parts[3].length() - 1));
+            final int costs = Integer.parseInt(parts[4]);
+            final Date now = Time.currentTime();
+            final Date finished = parseDuration(parts[6]);
+            return new TrainEntityV3(trainerId, forUser, type, factor, costs, now, 
+                finished, current);
+        } else {
             throw new IllegalArgumentException("ungültiges TrainEntity");
         }
-        TrainType type = TrainType.parse(parts[0]);
-        int costs = Integer.parseInt(parts[2]);
-        Date now = Time.currentTime();
-        Date finished = parseDuration(parts[4]);
-        return new TrainEntityV2(trainerId, forUser, type, factor, costs, now, finished);
     }
+    
     
     
     private final static Pattern PATTERN = 
@@ -99,15 +157,16 @@ public class TrainEntityV2 {
 
     private boolean closed;
     
+    private int currentValue;
     
     
     
-    public TrainEntityV2() {}
+    public TrainEntityV3() {}
     
     
     
-    public TrainEntityV2(int trainerId, String forUser, TrainType type, double factor,
-        int costs, Date trainStart, Date trainFinished) {
+    public TrainEntityV3(int trainerId, String forUser, TrainType type, double factor,
+        int costs, Date trainStart, Date trainFinished, int current) {
         super();
         this.trainerId = trainerId;
         this.forUser = forUser;
@@ -116,6 +175,7 @@ public class TrainEntityV2 {
         this.costs = costs;
         this.trainStart = trainStart;
         this.trainFinished = trainFinished;
+        this.currentValue = current;
     }
     
     
@@ -168,6 +228,12 @@ public class TrainEntityV2 {
     
     
     
+    public int getCurrentValue() {
+        return this.currentValue;
+    }
+    
+    
+    
     public boolean isClosed() {
         return this.closed;
     }
@@ -195,10 +261,12 @@ public class TrainEntityV2 {
         b.append(this.id);
         b.append(") ");
         b.append(this.type.toString());
-        b.append(" ");
+        b.append(" (");
+        b.append(this.currentValue);
+        b.append(" ) ");
         double costs = this.costs;
         
-        if (this.factor != 1.0f) {
+        if (this.factor != 1.0) {
             costs = this.costs * this.factor;
         }
         b.append(costs);
@@ -219,8 +287,8 @@ public class TrainEntityV2 {
     
     @Override
     public String toString() {
-        return "[Trainer: " + this.trainerId + ", " + this.type + " " + this.costs + 
-            " Cr. Finish: " + this.trainFinished + "]";
+        return "[Trainer: " + this.trainerId + ", Current:" + this.currentValue + ", " + 
+            this.type + " " + this.costs + " Cr. Finish: " + this.trainFinished + "]";
     }
 }
 

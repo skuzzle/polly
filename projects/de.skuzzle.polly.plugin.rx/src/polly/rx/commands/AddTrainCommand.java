@@ -3,7 +3,7 @@ package polly.rx.commands;
 import polly.rx.core.TrainBillV2;
 import polly.rx.core.TrainManagerV2;
 import polly.rx.MyPlugin;
-import polly.rx.entities.TrainEntityV2;
+import polly.rx.entities.TrainEntityV3;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -81,7 +81,7 @@ public class AddTrainCommand extends Command {
     
     private void outputTrain(boolean detailed, TrainBillV2 bill, String channel) {
         if (detailed) {
-            for (TrainEntityV2 train : bill.getTrains()) {
+            for (TrainEntityV3 train : bill.getTrains()) {
                 this.reply(channel, train.format(this.getMyPolly().formatting()));
             }
             this.reply(channel, "=========================");
@@ -96,7 +96,7 @@ public class AddTrainCommand extends Command {
         String train, double mod) throws CommandException {
         
         try {
-            TrainEntityV2 te = TrainEntityV2.parseString(trainer.getId(), forUser, mod, train);
+            TrainEntityV3 te = TrainEntityV3.parseString(trainer.getId(), forUser, mod, train);
             final TrainBillV2 bill = this.trainManager.addTrain(te, trainer);
             
             if (te.getDuration() != 0) {
