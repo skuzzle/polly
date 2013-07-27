@@ -258,11 +258,8 @@ public class TrainEntityV3 {
         b.append(" (");
         b.append(this.currentValue);
         b.append(") ");
-        double costs = this.costs;
+        double costs = this.costs * this.factor;
         
-        if (this.factor != 1.0) {
-            costs = this.costs * this.factor;
-        }
         b.append(costs);
         b.append(" Cr.");
         if (this.factor != 1.0) {
