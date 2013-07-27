@@ -77,9 +77,9 @@ public abstract class SimpleMultiPageView<T> extends HttpAction {
         
         final String pageAction = e.getProperty(PAGE);
         if (REL_PAGE_LEFT.equals(pageAction) && currentPage > 0) {
-            --currentPage;
+            currentPage = Math.max(0, currentPage - 1);
         } else if (REL_PAGE_RIGHT.equals(pageAction) && currentPage < pc - 1) {
-            ++currentPage;
+            currentPage = Math.min(pc - 1, currentPage + 1);
         } else if (FIRST_PAGE.equals(pageAction)) {
             currentPage = 0;
         } else if (LAST_PAGE.equals(pageAction)) {
