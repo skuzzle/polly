@@ -42,12 +42,6 @@ import de.skuzzle.polly.sdk.time.Time;
 })
 public class TrainEntityV3 {
     
-    public static void main(String[] args) {
-        final String test = "intensives Techlimit Training (14)     737358 Cr.  9:07:00";
-        TrainEntityV3 te = TrainEntityV3.parseString(0, "me", 1.0, test);
-        System.out.println(te);
-    }
-    
     public final static String OPEN_BY_USER_AND_TRAINER = "OPEN_BY_USER_AND_TRAINER";
     public final static String OPEN_BY_USER = "OPEN_BY_USER";
     public final static String CLOSED_BY_USER = "CLOSED_BY_USER";
