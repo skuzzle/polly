@@ -280,12 +280,42 @@ public interface PersistenceManager {
     
     
     /**
+     * Retrieves a whole list of entities from the database using a named query.
+     * 
+     * @param type The entities type.
+     * @param query The name of the named query. The query may only use numbered 
+     *      parameters. 
+     * @param params The parameter values for the query in order they appear in the
+     *      query string.
+     * @param first Number of the first entry to retrieve.
+     * @param limit The maximum amount of entities to retrieve.
+     * @return A list of entities matching the query. The list may be empty if no
+     *      entity was found.
+     * @since 0.9.1
+     */
+    public <T> List<T> findList(Class<T> type, String query, int first, int limit, 
+        Object...params);
+        
+    
+    
+    /**
      * Executes a native SQL-query.
      * 
      * @param query The query String in SQL syntax to execute.
      * @since 0.6.1
      */
-    public abstract void executeNativeQuery(String query);
+    public abstract void executeUpdateQuery(String query);
+    
+    
+    
+    /**
+     * Executes the provided SQL-query and returns the single result yielded by the 
+     * query.
+     * 
+     * @param query The query String in SQL syntax to execute.
+     * @return The result of the query
+     */
+    public abstract <T> T executeSingleResult(String query);
     
     
     

@@ -239,11 +239,20 @@ public class PersistenceManagerImpl extends AbstractDisposable implements
 
 
     @Override
-    public void executeNativeQuery(String query) {
+    public void executeUpdateQuery(String query) {
         Query q = this.em.createNativeQuery(query);
         q.executeUpdate();
     }
 
+    
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T executeSingleResult(String query) {
+        final Query q = this.em.createNativeQuery(query);
+        return (T) q.getSingleResult();
+    }
+    
 
 
     @SuppressWarnings("unchecked")
@@ -260,6 +269,25 @@ public class PersistenceManagerImpl extends AbstractDisposable implements
             q.setParameter(i++, param);
         }
 
+        return q.getResultList();
+    }
+    
+    
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> List<T> findList(Class<T> type, String query, int first, int limit, 
+        Object...params) {
+        logger.trace("Executing named query '" + query + "'. Parameters: "
+            + Arrays.toString(params) + ", first: " + first + ", limit:" + limit);
+        
+        final Query q = this.em.createNamedQuery(query);
+        q.setFirstResult(first);
+        q.setMaxResults(limit);
+        int i = 1;
+        for (Object param : params) {
+            q.setParameter(i++, param);
+        }
         return q.getResultList();
     }
 

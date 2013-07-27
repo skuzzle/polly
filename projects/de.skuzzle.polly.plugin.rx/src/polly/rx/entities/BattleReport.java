@@ -60,6 +60,10 @@ import polly.rx.core.SumQuery;
     @NamedQuery(
         name = "BY_USER_ID",
         query = "SELECT rp FROM BattleReport rp WHERE rp.submitterId = ?1"
+    ),
+    @NamedQuery(
+        name = "REPORT_COUNT",
+        query = "SELECT COUNT(br) FROM BattleReport br"
     )
 })
 public class BattleReport {
@@ -70,7 +74,7 @@ public class BattleReport {
     public static final String WITH_CLAN = "WITH_CLAN";
     public static final String BY_LOCATION = "BY_LOCATION";
     public static final String BY_USER_ID = "BY_USER_ID";
-    
+    public static final String REPORT_COUNT = "REPORT_COUNT";
     
     
     public final static BattleReport switchAttacker(BattleReport report) {

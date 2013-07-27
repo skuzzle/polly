@@ -275,6 +275,26 @@ public class FleetDBManager {
             }
         });
     }
+    
+    
+    
+    public int getBattleReportCount() {
+        final Number n = this.persistence.findSingle(
+            Number.class, BattleReport.REPORT_COUNT);
+        return n.intValue();
+    }
+    
+    
+    
+    public List<BattleReport> battleReportRange(int first, int max) {
+        try {
+            this.persistence.readLock();
+            return this.persistence.findList(BattleReport.class, BattleReport.ALL_REPORTS, 
+                first, max, new Object[0]);
+        } finally {
+            this.persistence.readUnlock();
+        }
+    }
 
 
 

@@ -202,9 +202,9 @@
 #end
 
 
-<h3>Reports ($!reports.size())</h3>
+<h3>Reports ($!reports.size())</h3><a name="$anchor"></a>
 <p style="font-size:xx-small; font-weight:bold">(Click Id for detailed info)</p>
-
+#parse("webinterface/pages/helper/page_navigation.html")
 <form action="filter_reports" method="POST">
 <input type="hidden" name="action" value="idSelect"/>
 <input type="submit" value="Statistic for selected" name="select" class="button"/>
@@ -248,3 +248,4 @@
 <input type="submit" value="Statistic for selected" name="select" class="button"/>
 <input type="submit" value="Delete selected" name="delete" class="button"/>
 </form>
+#parse("webinterface/pages/helper/page_navigation.html")

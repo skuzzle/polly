@@ -10,12 +10,12 @@ import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
-import de.skuzzle.polly.sdk.http.HttpAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
 import de.skuzzle.polly.sdk.http.HttpSession;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.http.HttpTemplateException;
 import de.skuzzle.polly.sdk.http.HttpTemplateSortHelper;
+import de.skuzzle.polly.sdk.http.SimpleMultiPageView;
 import polly.rx.core.FleetDBManager;
 import polly.rx.core.filter.AnyVenadFilter;
 import polly.rx.core.filter.BattleReportFilterSettings;
@@ -35,7 +35,7 @@ import polly.rx.entities.BattleTactic;
 
 
 
-public class BattleReportFilterHttpAction extends HttpAction {
+public class BattleReportFilterHttpAction extends SimpleMultiPageView<BattleReport> {
     
     
     private String dateFormat;
@@ -44,7 +44,7 @@ public class BattleReportFilterHttpAction extends HttpAction {
     
 
     public BattleReportFilterHttpAction(MyPolly myPolly, FleetDBManager fleetDBManager) {
-        super("/filter_reports", myPolly);
+        super("/filter_reports", myPolly, new BattleReportDataSource(fleetDBManager));
         this.requirePermission(FleetDBManager.VIEW_BATTLE_REPORT_PERMISSION);
         this.fleetDBManager = fleetDBManager;
         
@@ -56,13 +56,13 @@ public class BattleReportFilterHttpAction extends HttpAction {
     
     
     @Override
-    public HttpTemplateContext execute(HttpEvent e) throws HttpTemplateException, 
-            InsufficientRightsException {
+    protected HttpTemplateContext createContext(HttpEvent e)
+            throws HttpTemplateException, InsufficientRightsException {
         
         BattleReportFilterSettings settings = 
-                (BattleReportFilterSettings) e.getSession().get(
-                    TemplateContextHelper.FILTER_SETTINGS);
-        
+            (BattleReportFilterSettings) e.getSession().get(
+                TemplateContextHelper.FILTER_SETTINGS);
+    
         if (settings == null) {
             settings = new BattleReportFilterSettings();
             e.getSession().putDtata(TemplateContextHelper.FILTER_SETTINGS, settings);
@@ -163,13 +163,18 @@ public class BattleReportFilterHttpAction extends HttpAction {
             }
         }
         
-        
-        List<BattleReport> reports = this.fleetDBManager.getAllReports();
         HttpTemplateContext c = new HttpTemplateContext("pages/query_reports.html");
-        TemplateContextHelper.prepareForReportsList(c, e.getSession(), reports);
-        HttpTemplateSortHelper.makeListSortable(c, e, "sortKey", "dir", "getDate");
-        
         return c;
+    }
+    
+    
+    
+    @Override
+    protected void postProcess(List<BattleReport> sublist, HttpTemplateContext c,
+        HttpEvent e) throws HttpTemplateException, InsufficientRightsException {
+        
+        TemplateContextHelper.prepareForReportsList(c, e.getSession(), sublist);
+        HttpTemplateSortHelper.makeListSortable(c, e, "sortKey", "dir", "getDate");
     }
     
     

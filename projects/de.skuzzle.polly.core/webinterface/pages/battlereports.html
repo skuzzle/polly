@@ -1,7 +1,8 @@
 <h2>Post Battlereport</h2>
 <a href="/add_report">Add new report</a>
 
-#set($reports = $allReports)
+#set($reports = $data)
 #set($totalDrop = $dropSum)
 #set($target = "Kampfberichte?igonre=")
+#set($anchor = "reports")
 #parse("webinterface/pages/helper/list_battlereports_helper.html")

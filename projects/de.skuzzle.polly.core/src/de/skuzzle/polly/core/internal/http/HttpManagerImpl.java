@@ -304,6 +304,7 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
             }
         }
         this.putRootContext(actionContext, e.getSession());
+        actionContext.put("currentPage", action.getName());
         actionContext.put(HttpInterface.CONTENT, 
                 this.getPage(actionContext.getTemplate()).getPath());
         
