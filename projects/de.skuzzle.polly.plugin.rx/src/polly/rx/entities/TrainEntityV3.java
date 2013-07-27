@@ -257,7 +257,7 @@ public class TrainEntityV3 {
         b.append(this.type.toString());
         b.append(" (");
         b.append(this.currentValue);
-        b.append(" ) ");
+        b.append(") ");
         double costs = this.costs;
         
         if (this.factor != 1.0) {
