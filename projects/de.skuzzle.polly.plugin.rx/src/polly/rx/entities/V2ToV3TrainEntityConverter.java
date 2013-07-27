@@ -21,9 +21,13 @@ public class V2ToV3TrainEntityConverter implements EntityConverter {
     @Override
     public Object convertEntity(Object old) {
         final TrainEntityV2 v2Entity = (TrainEntityV2) old;
-        return new TrainEntityV3(v2Entity.getTrainerId(), v2Entity.getForUser(), 
+        final TrainEntityV3 v3EntityV3 = new TrainEntityV3(
+            v2Entity.getTrainerId(), v2Entity.getForUser(), 
             v2Entity.getType(), v2Entity.getFactor(), v2Entity.getCosts(), 
             v2Entity.getTrainStart(), v2Entity.getTrainFinished(), 0);
+        
+        v3EntityV3.setClosed(v2Entity.isClosed());
+        return v3EntityV3;
     }
 
     

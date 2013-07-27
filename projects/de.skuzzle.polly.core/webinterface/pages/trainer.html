@@ -30,6 +30,7 @@ Sorted: <a href="Trainer?openSortKey=NONE&openDesc=false">$openSortKey</a>
     <tr>
         <th><a href="Trainer?openSortKey=BY_USER&openDesc=$openDesc&closedSortKey=$closedSortKey">For User</a></th>
         <th><a href="Trainer?openSortKey=BY_TYPE&openDesc=$openDesc&closedSortKey=$closedSortKey">Type</a></th>
+        <th>Current Value</th>
         <th><a href="Trainer?openSortKey=BY_FACTOR&openDesc=$openDesc&closedSortKey=$closedSortKey">Factor</a></th>
         <th><a href="Trainer?openSortKey=BY_COSTS&openDesc=$openDesc&closedSortKey=$closedSortKey">Costs</a></th>
         <th><a href="Trainer?openSortKey=BY_WEIGHTED&openDesc=$openDesc&closedSortKey=$closedSortKey">Weighted Costs</a></th>
@@ -42,6 +43,7 @@ Sorted: <a href="Trainer?openSortKey=NONE&openDesc=false">$openSortKey</a>
     <tr>
         <td>$train.getForUser()</td>
         <td>$train.getType()</td>
+        <td>$train.getCurrentValue()</td>
         <td>$myPolly.formatting().formatNumber($train.getFactor())</td>
         <td>$train.getCosts()</td>
         #set ( $weighted = $train.getFactor()*$train.getCosts() )
@@ -98,6 +100,7 @@ Sorted: <a href="Trainer?closedSortKey=NONE&closedDesc=false">$closedSortKey</a>
     <tr>
         <th><a href="Trainer?closedSortKey=BY_USER&closedDesc=$closedDesc&openSortKey=$openSortKey">For User</a></th>
         <th><a href="Trainer?closedSortKey=BY_TYPE&closedDesc=$closedDesc&openSortKey=$openSortKey">Type</a></th>
+        <th>Current Value</th>
         <th><a href="Trainer?closedSortKey=BY_FACTOR&closedDesc=$closedDesc&openSortKey=$openSortKey">Factor</a></th>
         <th><a href="Trainer?closedSortKey=BY_COSTS&closedDesc=$closedDesc&openSortKey=$openSortKey">Costs</a></th>
         <th><a href="Trainer?closedSortKey=BY_WEIGHTED&closedDesc=$closedDesc&openSortKey=$openSortKey">Weighted Costs</a></th>
@@ -109,6 +112,7 @@ Sorted: <a href="Trainer?closedSortKey=NONE&closedDesc=false">$closedSortKey</a>
     <tr>
         <td>$train.getForUser()</td>
         <td>$train.getType()</td>
+        <td>$train.getCurrentValue()</td>
         <td>$myPolly.formatting().formatNumber($train.getFactor())</td>
         <td>$train.getCosts()</td>
         #set ( $weighted = $train.getFactor()*$train.getCosts() )
