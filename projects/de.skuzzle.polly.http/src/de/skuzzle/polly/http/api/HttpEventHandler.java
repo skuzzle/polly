@@ -19,7 +19,6 @@
 package de.skuzzle.polly.http.api;
 
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
-import de.skuzzle.polly.http.api.answers.HttpAnswers;
 
 /**
  * HttpEventHandlers need to be registered with a {@link HttpServer} and may

@@ -24,8 +24,6 @@ import java.io.IOException;
 
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswerHandler;
-import de.skuzzle.polly.http.api.answers.HttpBinaryAnswer;
-import de.skuzzle.polly.http.api.answers.HttpTemplateAnswer;
 
 
 

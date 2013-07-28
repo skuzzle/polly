@@ -22,8 +22,6 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import de.skuzzle.polly.http.api.TrafficInformation;
-
 /**
  * {@link OutputStream} wrapper which counts all written bytes and updates a 
  * {@link TrafficInformation} instance.
@@ -58,7 +56,7 @@ class CountingOutputStream extends FilterOutputStream {
     @Override
     public synchronized void write(byte[] b, int off, int len) throws IOException {
         this.trafficInfo.updateUpload(len);
-        this.out.write(b, off, len);
+        super.write(b, off, len);
     }
     
     
@@ -66,6 +64,6 @@ class CountingOutputStream extends FilterOutputStream {
     @Override
     public synchronized void write(int b) throws IOException {
         this.trafficInfo.updateUpload(1);
-        this.out.write(b);
+        super.write(b);
     }
 }

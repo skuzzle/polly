@@ -21,10 +21,7 @@ package de.skuzzle.polly.http.api.answers;
 import java.io.IOException;
 import java.io.OutputStream;
 
-
 import de.skuzzle.polly.http.api.HttpEvent;
-import de.skuzzle.polly.http.api.HttpEventHandler;
-import de.skuzzle.polly.http.api.HttpServer;
 
 
 /**

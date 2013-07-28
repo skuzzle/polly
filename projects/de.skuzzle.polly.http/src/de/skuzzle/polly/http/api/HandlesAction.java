@@ -24,8 +24,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import de.skuzzle.polly.http.api.answers.HttpAnswer;
-
 /**
  * This annotation is used in conjunction with {@link Servlet http servlets}. Methods
  * can be annotated to define event handlers for actions that the servlet was called with.

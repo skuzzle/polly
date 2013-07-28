@@ -46,7 +46,7 @@ public final class HttpAnswers {
     
     
     /**
-     * Creates a answer which simply sends back the provided string to the client. After
+     * Creates an answer which simply sends back the provided string to the client. After
      * calling this method, you may call <code>getCookies().add(...)</code> on the 
      * result to add some cookies that should be set at the client.
      * 
@@ -83,7 +83,7 @@ public final class HttpAnswers {
     
     
     /**
-     * Creates a answer which sends back the specified relative file to the client. Note
+     * Creates an answer which sends back the specified relative file to the client. Note
      * that the specified path must be relative to any of the server's web root 
      * directories, otherwise this method will throw a {@link FileNotFoundException}.
      * After calling this method, you may call <code>getCookies().add(...)</code> on the 

@@ -20,10 +20,6 @@ package de.skuzzle.polly.http.api.answers;
 
 import java.util.Map;
 
-import com.sun.net.httpserver.HttpHandler;
-
-import de.skuzzle.polly.http.api.HttpServer;
-
 /**
  * <p>This type of answer can be used to render velocity templates and send the result 
  * back to the client. All that needs to be done is to specify a path to the template

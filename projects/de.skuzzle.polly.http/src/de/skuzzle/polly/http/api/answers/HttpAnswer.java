@@ -21,9 +21,6 @@ package de.skuzzle.polly.http.api.answers;
 import java.util.Collection;
 
 import de.skuzzle.polly.http.api.HttpCookie;
-import de.skuzzle.polly.http.api.HttpEvent;
-import de.skuzzle.polly.http.api.HttpEventHandler;
-import de.skuzzle.polly.http.api.HttpServer;
 
 /**
  * <p>A HttpAnswer defines the result of a handled {@link HttpEvent} and must be returned

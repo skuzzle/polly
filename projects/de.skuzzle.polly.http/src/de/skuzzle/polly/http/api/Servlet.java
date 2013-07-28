@@ -339,7 +339,7 @@ public abstract class Servlet implements HttpEventHandler {
     
     
     /**
-     * This method is callen when a event handler for an action throws a HttpException 
+     * This method is called when an event handler for an action throws a HttpException 
      * when being executed. Using this method you can then provide a proper HttpAnswer 
      * for those exceptional cases.</p>
      * 

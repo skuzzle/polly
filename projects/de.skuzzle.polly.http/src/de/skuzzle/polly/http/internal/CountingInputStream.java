@@ -22,8 +22,6 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import de.skuzzle.polly.http.api.TrafficInformation;
-
 /**
  * {@link InputStream} wrapper which counts all read bytes and updates a 
  * {@link TrafficInformation} instance.
@@ -66,7 +64,7 @@ class CountingInputStream extends FilterInputStream {
     @Override
     public synchronized int read(byte[] b, int off, int len) throws IOException {
         final int read = super.read(b, off, len);
-        this.trafficInfo.updateDownload(len);
+        this.trafficInfo.updateDownload(read);
         return read;
     }
 }

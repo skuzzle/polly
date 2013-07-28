@@ -18,7 +18,6 @@
  */
 package de.skuzzle.polly.http.api;
 
-import de.skuzzle.polly.http.api.answers.HttpAnswer;
 
 
 /**

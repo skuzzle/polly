@@ -21,8 +21,6 @@ package de.skuzzle.polly.http.api.answers;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import com.sun.net.httpserver.HttpHandler;
-
 /**
  * <p>Most basic {@link HttpAnswer} subtype which is able to send binary data back to the
  * client. Instances of this type can automatically be handled by the server, so that
