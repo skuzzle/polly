@@ -1,9 +1,17 @@
-package de.skuzzle.polly.core.parser.ast.declarations.types;
+package de.skuzzle.polly.core.parser.ast.declarations.types.unification;
 
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import de.skuzzle.polly.core.parser.ast.declarations.types.ListType;
+import de.skuzzle.polly.core.parser.ast.declarations.types.MapType;
+import de.skuzzle.polly.core.parser.ast.declarations.types.MissingType;
+import de.skuzzle.polly.core.parser.ast.declarations.types.ProductType;
+import de.skuzzle.polly.core.parser.ast.declarations.types.Substitution;
+import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
+import de.skuzzle.polly.core.parser.ast.declarations.types.TypeVar;
 
 
 /**
@@ -12,7 +20,7 @@ import java.util.Map;
  * 
  * @author Simon Taddiken
  */
-final class TypeUnifier {
+final class HashMapTypeUnifier implements Unifier {
     
     
 
@@ -29,7 +37,7 @@ final class TypeUnifier {
      * @param subTypeIncl Whether sub type inclusion should be checked when comparing
      *          primitives.
      */
-    public TypeUnifier(boolean subTypeIncl) {
+    public HashMapTypeUnifier(boolean subTypeIncl) {
         this.subTypeIncl = subTypeIncl;
         this.typeToClass = new HashMap<Type, Integer>();
         this.classToType = new HashMap<Integer, Type>();
@@ -58,6 +66,7 @@ final class TypeUnifier {
      * @return A substitution for the type variables in first and second or 
      *          <code>null</code> if unification was not successful.
      */
+    @Override
     public Substitution unify(Type first, Type second) {
         this.init();
         final Map<TypeVar, Type> subst = new HashMap<TypeVar, Type>();
@@ -76,6 +85,7 @@ final class TypeUnifier {
      * @param second Second type.
      * @return Whether the first type is an instance of the second type
      */
+    @Override
     public boolean tryUnify(Type first, Type second) {
         this.init();
         return this.unifyInternal(first, second, new HashMap<TypeVar, Type>());

@@ -8,6 +8,8 @@ import java.util.Map;
 import de.skuzzle.polly.core.parser.ParserProperties;
 import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.Identifier;
+import de.skuzzle.polly.core.parser.ast.declarations.types.unification.Unifier;
+import de.skuzzle.polly.core.parser.ast.declarations.types.unification.Unifiers;
 import de.skuzzle.polly.core.parser.ast.visitor.Visitable;
 import de.skuzzle.polly.tools.EqualsHelper;
 import de.skuzzle.polly.tools.Equatable;
@@ -43,7 +45,7 @@ public class Type implements Visitable<TypeVisitor>, Equatable, Comparable<Type>
     /** Primitive type for timespans. */
     public final static Type TIMESPAN = new Type(new Identifier("timespan"), true, true) {
         @Override
-        boolean isA(Type other) {
+        public  boolean isA(Type other) {
             return other == this || other == DATE;
         }
         
@@ -57,7 +59,7 @@ public class Type implements Visitable<TypeVisitor>, Equatable, Comparable<Type>
     /** Primitive type for channels. */
     public final static Type CHANNEL = new Type(new Identifier("channel"), true, true) {
         @Override
-        boolean isA(Type other) {
+        public boolean isA(Type other) {
             return other == this || other == STRING;
         }
         
@@ -71,7 +73,7 @@ public class Type implements Visitable<TypeVisitor>, Equatable, Comparable<Type>
     /** Primitive type for users. */
     public final static Type USER = new Type(new Identifier("user"), true, true) {
         @Override
-        boolean isA(Type other) {
+        public boolean isA(Type other) {
             return other == this || other == STRING;
         }
         
@@ -240,7 +242,7 @@ public class Type implements Visitable<TypeVisitor>, Equatable, Comparable<Type>
     public final static boolean tryUnify(Type left, Type right) {
         final boolean subtyping = 
             ParserProperties.should(ParserProperties.ALLOW_SUBTYPING);
-        return new TypeUnifier(subtyping).tryUnify(left, right);
+        return getUnifier(subtyping).tryUnify(left, right);
     }
     
     
@@ -254,7 +256,7 @@ public class Type implements Visitable<TypeVisitor>, Equatable, Comparable<Type>
      * @return Whether both types are unifiable.
      */
     public final static boolean tryUnifyNoInheritance(Type first, Type second) {
-        return new TypeUnifier(false).tryUnify(first, second);
+        return getUnifier(false).tryUnify(first, second);
     }
     
     
@@ -272,7 +274,14 @@ public class Type implements Visitable<TypeVisitor>, Equatable, Comparable<Type>
     public final static Substitution unify(Type left, Type right) {
         final boolean subtyping = 
             ParserProperties.should(ParserProperties.ALLOW_SUBTYPING);
-        return new TypeUnifier(subtyping).unify(left, right);
+        return getUnifier(subtyping).unify(left, right);
+    }
+    
+    
+    
+    
+    private final static Unifier getUnifier(boolean subtyping) {
+        return Unifiers.newDefault(subtyping);
     }
     
     
@@ -371,7 +380,7 @@ public class Type implements Visitable<TypeVisitor>, Equatable, Comparable<Type>
      * @param other Type to check.
      * @return Whether this type is a sub type of the given other one.
      */
-    boolean isA(Type other) {
+    public boolean isA(Type other) {
         return other == this;
     }
     
