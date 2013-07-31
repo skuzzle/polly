@@ -443,6 +443,12 @@ public class InputParser {
             new Position(start.getStart(), la.getPosition().getEnd()),
             la.getStringValue());
         
+        // min length hack to ignore smilies
+        if (cmd.getId().length() < ParserProperties.getInt(
+            ParserProperties.COMMAND_MIN_LENGTH)) {
+            return null;
+        }
+        
         final List<Expression> signature = new ArrayList<Expression>();
         if (this.scanner.match(TokenType.SEPERATOR)) {
             do {

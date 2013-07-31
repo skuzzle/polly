@@ -33,6 +33,9 @@ public class ParserProperties {
     /** Whether execution debuggin should be enabled. */
     public static final String ENABLE_EXECUTION_DEBUGGING = "execDebugging";
     
+    /** Minimum length of a command name */
+    public final static String COMMAND_MIN_LENGTH = "commandMinLength";
+    
     
     /** Stores the parser properties. */
     private final static Map<String, String> properties;
@@ -46,6 +49,7 @@ public class ParserProperties {
         properties.put(ENABLE_TOKEN_ESCAPING, Boolean.TRUE.toString());
         properties.put(ENABLE_SCANNER_DEBUGGING, Boolean.FALSE.toString());
         properties.put(ENABLE_EXECUTION_DEBUGGING, Boolean.FALSE.toString());
+        properties.put(COMMAND_MIN_LENGTH, "3");
     }
     
     
@@ -69,6 +73,12 @@ public class ParserProperties {
             throw new IllegalArgumentException(
                 "property '" + property + "' is no boolean");
         }
+    }
+    
+    
+    
+    public final static int getInt(String property) {
+        return Integer.parseInt(properties.get(property));
     }
     
     
