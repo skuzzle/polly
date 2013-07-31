@@ -199,9 +199,11 @@ public class FleetScanShip {
         }
         
         if (!this.owner.equals(other.owner)) {
-            historyEntry.getChanges().add("Spotted with different owner: " + other.owner);
+            historyEntry.getChanges().add("Spotted with different owner: " + 
+                other.owner + " (former owner: " + this.owner);
             this.owner = other.owner;
         }
+        
         if (!this.ownerClan.equals(other.ownerClan)) {
             historyEntry.getChanges().add("Owner changed clan from '" + this.ownerClan + 
                 "' to '" + other.ownerClan + "'");
