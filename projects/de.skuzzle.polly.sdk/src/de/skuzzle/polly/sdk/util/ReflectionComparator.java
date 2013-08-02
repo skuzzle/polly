@@ -69,30 +69,30 @@ public class ReflectionComparator implements Comparator<Object>{
     @SuppressWarnings("unchecked")
     @Override
     public int compare(Object o1, Object o2) {
-            try {
-                Method getter1 = o1.getClass().getMethod(this.field);
-                Method getter2 = o2.getClass().getMethod(this.field);
-                
-                Comparable<Object> result1 = (Comparable<Object>) getter1.invoke(o1);
-                Comparable<Object> result2 = (Comparable<Object>) getter2.invoke(o2);
-                
-                if (this.desc) {
-                    return result2.compareTo(result1);
-                } else {
-                    return result1.compareTo(result2);
-                }
-            } catch (NoSuchMethodException e) {
-                throw new CompareException("Specified getter '" + 
-            this.field + "' does not exist", e);
-            } catch (SecurityException e) {
-                throw new CompareException(e);
-            } catch (IllegalAccessException e) {
-                throw new CompareException(e);
-            } catch (IllegalArgumentException e) {
-                throw new CompareException(e);
-            } catch (InvocationTargetException e) {
-                throw new CompareException(e);
+        try {
+            Method getter1 = o1.getClass().getMethod(this.field);
+            Method getter2 = o2.getClass().getMethod(this.field);
+            
+            Comparable<Object> result1 = (Comparable<Object>) getter1.invoke(o1);
+            Comparable<Object> result2 = (Comparable<Object>) getter2.invoke(o2);
+            
+            if (this.desc) {
+                return result2.compareTo(result1);
+            } else {
+                return result1.compareTo(result2);
             }
+        } catch (NoSuchMethodException e) {
+            throw new CompareException("Specified getter '" + 
+        this.field + "' does not exist", e);
+        } catch (SecurityException e) {
+            throw new CompareException(e);
+        } catch (IllegalAccessException e) {
+            throw new CompareException(e);
+        } catch (IllegalArgumentException e) {
+            throw new CompareException(e);
+        } catch (InvocationTargetException e) {
+            throw new CompareException(e);
+        }
     }
 
 }
