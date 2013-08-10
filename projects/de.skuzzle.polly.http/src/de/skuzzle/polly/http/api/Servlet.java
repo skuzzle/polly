@@ -234,7 +234,7 @@ public abstract class Servlet implements HttpEventHandler {
                 if (!(mtd.getParameterTypes().length == 1 && 
                     HttpEvent.class.isAssignableFrom(mtd.getParameterTypes()[0]))) {
                     
-                    throw new IllegalArgumentException("handler has illegal return type");
+                    throw new IllegalArgumentException("handler has illegal signature");
                 }
                 final Class<?>[] ex = mtd.getExceptionTypes();
                 if (ex.length > 1 || 
