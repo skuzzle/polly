@@ -51,7 +51,7 @@ public class BinaryArithmetic extends BinaryOperator<NumberLiteral, NumberLitera
             right.nonZero(reporter);
             // XXX: implicit conversion
             stack.push(new NumberLiteral(resultPos, 
-                Math.ceil(left.getValue()) / Math.ceil(right.getValue())));
+                Math.floor(left.getValue() / right.getValue())));
             break;
         case MOD:
             int r = right.nonZeroInteger(reporter);
