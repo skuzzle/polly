@@ -43,7 +43,14 @@ public class MemoryFileResponseHandler extends FileResponseHandler {
                 t.sendResponseHeaders(404, 0);
                 t.close();
             } else {
-                this.respond(in, t, session);
+                synchronized (in) {
+                    try {
+                        in.mark(Integer.MAX_VALUE);
+                        this.respond(in, t, session);
+                    } finally {
+                        in.reset();
+                    }
+                }
             }
         }
     }

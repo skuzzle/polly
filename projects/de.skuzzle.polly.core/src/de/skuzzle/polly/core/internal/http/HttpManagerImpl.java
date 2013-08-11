@@ -144,6 +144,9 @@ public class HttpManagerImpl extends AbstractDisposable implements HttpManager {
     @Override
     public void putMemoryFile(String name, InputStream stream) {
         synchronized (this.memoryFileMap) {
+            if (!stream.markSupported()) {
+                throw new IllegalArgumentException("stream does not support mark/reset");
+            }
             this.memoryFileMap.put(name, stream);
         }
     }

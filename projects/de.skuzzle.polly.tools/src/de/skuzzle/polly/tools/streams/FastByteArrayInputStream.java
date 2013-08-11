@@ -14,9 +14,10 @@ import java.io.InputStream;
  */
 public class FastByteArrayInputStream extends InputStream {
 
-    protected byte[] buffer;
+    protected final byte[] buffer;
+    protected final int size;
     protected int pos;
-    protected int size;
+    private int mark;
     
     
     
@@ -43,6 +44,7 @@ public class FastByteArrayInputStream extends InputStream {
         this.size = size;
         this.buffer = buffer;
         this.pos = 0;
+        this.mark = -1;
     }
     
     
@@ -79,6 +81,30 @@ public class FastByteArrayInputStream extends InputStream {
         }
         this.pos += n;
         return n;
+    }
+    
+    
+    
+    @Override
+    public boolean markSupported() {
+        return true;
+    }
+    
+    
+    
+    @Override
+    public synchronized void mark(int readlimit) {
+        this.mark = this.pos;
+    }
+    
+    
+    
+    @Override
+    public synchronized void reset() throws IOException {
+        if (this.mark == -1) {
+            throw new IOException("mark not set");
+        }
+        this.pos = this.mark;
     }
     
     
