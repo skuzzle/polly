@@ -330,6 +330,9 @@ public class Graph {
         case DOT:
             g.drawOval(x - 2, y - 2, 4, 4);
             break;
+        case BOX:
+            g.drawRect(x - 2, y - 2, 4, 4);
+            break;
         default:
             break;
         }

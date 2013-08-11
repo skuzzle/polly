@@ -5,7 +5,7 @@ public class Point implements Comparable<Point> {
 
     
     public enum PointType {
-        X, DOT, NONE;
+        X, DOT, BOX, NONE;
     }
     
     private final double x;

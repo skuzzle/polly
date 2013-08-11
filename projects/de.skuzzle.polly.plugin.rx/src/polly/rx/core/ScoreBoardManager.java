@@ -115,6 +115,15 @@ public class ScoreBoardManager {
             int maxMonths) {
         final ScoreBoardEntry oldest = entries.get(0);
         
+        if (entries.size() == 1) {
+            final PointSet result = new PointSet();
+            final int monthsAgo = this.getMonthsAgo(Time.currentTime(), oldest.getDate(), 
+                maxMonths);
+            final double x = this.calcX(oldest.getDate(), monthsAgo);
+            result.add(x, oldest.getPoints(), PointType.BOX);
+            return result;
+        }
+        
         final Date today = Time.currentTime();
         boolean zero = false;
         final PointSet points = new PointSet(color);
@@ -140,7 +149,7 @@ public class ScoreBoardManager {
             }
             points.add(p);
         }
-        if (!zero && Math.abs(
+        if (entries.size() > 1 && !zero && Math.abs(
                     DateUtils.monthsBetween(today, oldest.getDate())) > maxMonths) {
             
             // interpolate correct y-axis intersection
