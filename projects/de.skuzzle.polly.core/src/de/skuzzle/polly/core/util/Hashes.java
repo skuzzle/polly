@@ -8,6 +8,9 @@ import java.security.NoSuchAlgorithmException;
 public class Hashes {
 
     public static String md5(String s) {
+        if (s == null) {
+            s = "";
+        }
         String result = "";
         try {
             MessageDigest m = MessageDigest.getInstance("MD5");

@@ -34,6 +34,7 @@ import polly.rx.http.FleetScanInfoHttpAction;
 import polly.rx.http.FleetShipInfoHttpAction;
 import polly.rx.http.FleetScanHttpAction;
 import polly.rx.http.MyTrainsHttpAction;
+import polly.rx.http.PostScoreboardHttpAction;
 import polly.rx.http.QueryOwnerHttpAction;
 import polly.rx.http.ScoreBoardCompareHttpAction;
 import polly.rx.http.ScoreBoardHttpAction;
@@ -146,6 +147,7 @@ public class MyPlugin extends PollyPlugin {
         myPolly.web().addHttpAction(new ScoreBoardHttpAction(myPolly, this.sbeManager));
         myPolly.web().addHttpAction(new ScoreBoardDetailsHttpAction(myPolly, this.sbeManager));
         myPolly.web().addHttpAction(new ScoreBoardCompareHttpAction(myPolly, this.sbeManager));
+        myPolly.web().addHttpAction(new PostScoreboardHttpAction(myPolly, this.sbeManager));
     }
     
     

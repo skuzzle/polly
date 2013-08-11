@@ -183,6 +183,9 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     @Override
     public User getUser(String registeredName) {
+        if (registeredName == null) {
+            return null;
+        }
         try {
             this.persistence.readLock();
             return this.persistence.findSingle(User.class, 
