@@ -52,7 +52,6 @@ public class ImageGraph extends Graph {
         try {
             fileOut = new FileOutputStream("test.png");
             ImageIO.write(this.image, "png", out);
-            ImageIO.write(this.image, "png", fileOut);
         } catch (IOException e1) {
             e1.printStackTrace();
         } finally {
