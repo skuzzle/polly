@@ -6,6 +6,7 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -187,25 +188,34 @@ public class ScoreBoardManager {
     public void addEntries(Collection<ScoreBoardEntry> entries) throws DatabaseException {
         try {
             this.persistence.writeLock();
-            this.persistence.startTransaction();
+            final List<ScoreBoardEntry> toAdd = new ArrayList<>(50);
             
             for (final ScoreBoardEntry entry : entries) {
                 final Collection<ScoreBoardEntry> existing = this.persistence.findList(
-                        ScoreBoardEntry.class, ScoreBoardEntry.SBE_BY_USER, 
-                        entry.getVenadName());
+                        ScoreBoardEntry.class, ScoreBoardEntry.SBE_BY_USER,
+                        new Object[] { entry.getVenadName() });
                 
                 boolean exists = false;
                 for (final ScoreBoardEntry e : existing) {
-                    exists |= DateUtils.isSameDay(e.getDate(), entry.getDate());
-                    if (exists) {
+                    // skip entry if it is from same day and has identical points
+                    final boolean skip = e.getPoints() == entry.getPoints() && 
+                        DateUtils.isSameDay(e.getDate(), entry.getDate());
+                    exists |= skip;
+                    if (skip) {
                         break;
                     }
                 }
+                
                 if (!exists) {
-                    this.persistence.persist(entry);
+                    toAdd.add(entry);
                 }
             }
-            this.persistence.commitTransaction();
+            
+            if (!toAdd.isEmpty()) {
+                this.persistence.startTransaction();
+                this.persistence.persistList(toAdd);
+                this.persistence.commitTransaction();
+            }
         } finally {
             this.persistence.writeUnlock();
         }
