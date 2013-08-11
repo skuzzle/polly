@@ -607,8 +607,7 @@ public class InputParser {
             this.scanner.consume();
             
             // ISSUE #12: this is a (unsigned) right shift
-            if (la.matches(TokenType.GT) && this.scanner.lookAhead().matches(TokenType.GT)) {
-                this.scanner.consume();
+            if (la.matches(TokenType.GT) && this.scanner.match(TokenType.GT)) {
                 if (this.scanner.match(TokenType.GT)) {
                     la = new Token(TokenType.URIGHT_SHIFT, this.scanner.spanFrom(la));
                 } else {
