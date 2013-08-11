@@ -202,7 +202,7 @@ public class InputScanner extends AbstractTokenStream {
                 } else if (next == '*') {
                     return new Token(TokenType.MUL, this.spanFrom(tokenStart), "*");
                 } else if (next == '/') {
-                    return new Token(TokenType.DIV, this.spanFrom(tokenStart), "/");
+                    state = 15;
                 } else if (next == '\\') {
                     state = 13;
                 } else if (next == '%') {
@@ -396,6 +396,15 @@ public class InputScanner extends AbstractTokenStream {
                 } else {
                     this.pushBack(next);
                     return new Token(TokenType.POWER, this.spanFrom(tokenStart), "^");
+                }
+            } else if (state == 15) {
+                int next = this.readChar();
+                
+                if (next == '/') {
+                    return new Token(TokenType.INTDIV, this.spanFrom(tokenStart), "//");
+                } else {
+                    this.pushBack(next);
+                    return new Token(TokenType.DIV, this.spanFrom(tokenStart), "/");
                 }
             } else {
                 throw new IllegalStateException("unhandled state: " + state);
