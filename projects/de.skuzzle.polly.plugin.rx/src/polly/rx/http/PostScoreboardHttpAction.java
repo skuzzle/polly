@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 
+import polly.rx.MyPlugin;
 import polly.rx.core.ScoreBoardManager;
 import polly.rx.entities.ScoreBoardEntry;
 import polly.rx.parsing.ScoreBoardParser;
@@ -44,6 +45,9 @@ public class PostScoreboardHttpAction extends HttpAction {
             
             final User puser = this.getMyPolly().users().getUser(user);
             if (puser == null || !puser.checkPassword(pw)) {
+                throw new InsufficientRightsException(this);
+            } else if (!this.getMyPolly().roles().hasPermission(puser, 
+                    MyPlugin.SBE_PERMISSION)) {
                 throw new InsufficientRightsException(this);
             }
             
