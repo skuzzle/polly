@@ -55,8 +55,9 @@ public class BinaryArithmetic extends BinaryOperator<NumberLiteral, NumberLitera
             break;
         case MOD:
             int r = right.nonZeroInteger(reporter);
-            int l = (left.isInteger(reporter)  + r) % r;
+            int l = Math.abs(left.isInteger(reporter)) % Math.abs(r);
             stack.push(new NumberLiteral(resultPos, l));
+            break;
         case INT_AND:
             stack.push(new NumberLiteral(resultPos, 
                 left.isInteger(reporter) & right.isInteger(reporter)));
