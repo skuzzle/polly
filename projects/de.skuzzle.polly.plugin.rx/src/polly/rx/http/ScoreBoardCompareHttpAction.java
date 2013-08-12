@@ -67,7 +67,7 @@ public class ScoreBoardCompareHttpAction extends HttpAction {
         e.getSource().putMemoryFile(memFileName, graph);
         
         final List<Integer> monthValues = new ArrayList<>(12);
-        for (int i = 4; i < 24; i += 2) {
+        for (int i = 4; i <= 24; i += 2) {
             monthValues.add(i);
         }
         c.put("monthValues", monthValues);

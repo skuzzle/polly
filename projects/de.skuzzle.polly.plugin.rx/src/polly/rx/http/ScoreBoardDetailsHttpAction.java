@@ -97,7 +97,7 @@ public class ScoreBoardDetailsHttpAction extends HttpAction {
             c, e, "sortKey", "dir", "getDate");
         
         final List<Integer> monthValues = new ArrayList<>(12);
-        for (int i = 4; i < 24; i += 2) {
+        for (int i = 4; i <= 24; i += 2) {
             monthValues.add(i);
         }
         c.put("monthValues", monthValues);
