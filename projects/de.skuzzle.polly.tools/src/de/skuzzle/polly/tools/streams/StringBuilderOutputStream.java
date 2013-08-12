@@ -1,7 +1,6 @@
 package de.skuzzle.polly.tools.streams;
 
 import java.io.OutputStream;
-import java.io.PrintStream;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;

@@ -1,6 +1,5 @@
 package de.skuzzle.polly.tools.streams;
 
-import java.io.StringWriter;
 import java.io.Writer;
 
 /**
