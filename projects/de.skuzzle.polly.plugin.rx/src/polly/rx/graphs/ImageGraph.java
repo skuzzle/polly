@@ -19,8 +19,8 @@ public class ImageGraph extends Graph {
     
     
     
-    public ImageGraph(int width, int height, String scaleName, int minY, int maxY, int stepY) {
-        super(width, height, scaleName, minY, maxY, stepY);
+    public ImageGraph(int width, int height) {
+        super(width, height);
         this.image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         
     }

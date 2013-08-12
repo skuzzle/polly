@@ -36,6 +36,12 @@ public class ScoreBoardDetailsHttpAction extends HttpAction {
             InsufficientRightsException {
         HttpTemplateContext c = new HttpTemplateContext("pages/sbe_details.html");
         
+        final String action = e.getProperty("action");
+        if (action != null && action.equals("setMM")) {
+            final String mm = e.getProperty("maxMonths");
+            e.getSession().putDtata("maxMonths", mm);
+        }
+        
         String venadName = e.getProperty("venad");
         
         List<ScoreBoardEntry> entries = this.sbeManager.getEntries(venadName);
@@ -44,10 +50,20 @@ public class ScoreBoardDetailsHttpAction extends HttpAction {
         
         ScoreBoardEntry oldest = entries.iterator().next();
         ScoreBoardEntry youngest = entries.get(entries.size() - 1);
-        final int maxMonths = 
-            Integer.parseInt(e.getSession().getUser().getAttribute(MyPlugin.MAX_MONTHS));
+        
+        final String mm = (String) e.getSession().get("maxMonths");
+        int maxMonths;
+        if (mm != null) {
+            maxMonths = Integer.parseInt(mm);
+        } else {
+            maxMonths = Integer.parseInt(e.getSession().getUser().getAttribute(
+                MyPlugin.MAX_MONTHS));
+        }
+        maxMonths = Math.max(Math.min(maxMonths, 24), 4);
+        
         InputStream graph = this.sbeManager.createLatestGraph(entries, maxMonths);
         e.getSource().putMemoryFile(venadName + "_graph", graph);
+
         
         // calculate discrete derivative
         if (entries.size() > 1) {

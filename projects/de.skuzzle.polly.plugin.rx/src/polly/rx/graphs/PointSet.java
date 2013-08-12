@@ -16,7 +16,8 @@ public class PointSet implements Set<Point> {
     private String name;
     private boolean connect;
     private float strength;
-
+    private YScale scale;
+    
 
 
     public PointSet() {
@@ -33,6 +34,18 @@ public class PointSet implements Set<Point> {
     }
 
 
+    
+    public void setScale(YScale scale) {
+        this.scale = scale;
+    }
+    
+    
+    
+    public YScale getScale() {
+        return this.scale;
+    }
+    
+    
 
     public void setStrength(float strength) {
         this.strength = strength;

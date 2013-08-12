@@ -14,6 +14,26 @@
     </tr>
 </table>
 
+<h3>Diagram</h3>
+<form action="sbe_details?venad=$venad" method="POST">
+    <input type="hidden" name="action" value="setMM"/>
+    <label for="selectMonths">Select number of months to display:</label>
+    <select id="selectMonths" name="maxMonths" size="1">
+        <option value="4">4</option>
+        <option value="6">6</option>
+        <option value="8">8</option>
+        <option value="10">10</option>
+        <option value="12">12</option>
+        <option value="14">14</option>
+        <option value="16">16</option>
+        <option value="18">16</option>
+        <option value="20">20</option>
+        <option value="22">22</option>
+        <option value="24">24</option>
+    </select>
+    
+    <input type="submit" class="button" value="Set"/>
+</form>
 <img src="/memory:${venad}_graph"/>
 
 #if ($sortKey && $entries)

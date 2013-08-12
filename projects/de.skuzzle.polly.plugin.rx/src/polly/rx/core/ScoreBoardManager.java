@@ -14,17 +14,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import polly.rx.entities.ScoreBoardEntry;
+import polly.rx.graphs.HighlightArea;
+import polly.rx.graphs.ImageGraph;
+import polly.rx.graphs.Point;
+import polly.rx.graphs.Point.PointType;
+import polly.rx.graphs.PointSet;
+import polly.rx.graphs.YScale;
 import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.WriteAction;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.time.DateUtils;
 import de.skuzzle.polly.sdk.time.Time;
-import polly.rx.entities.ScoreBoardEntry;
-import polly.rx.graphs.HighlightArea;
-import polly.rx.graphs.ImageGraph;
-import polly.rx.graphs.Point;
-import polly.rx.graphs.PointSet;
-import polly.rx.graphs.Point.PointType;
 
 
 public class ScoreBoardManager {
@@ -62,25 +63,36 @@ public class ScoreBoardManager {
         }
         Collections.sort(all, ScoreBoardEntry.BY_DATE);
         
-        final ImageGraph g = new ImageGraph(700, 400, "Points", 2000, 35000, 2000);
+        //final YScale pointScale = new YScale("Points", 6000, 30000, 2000);
+        
+        final ImageGraph g = new ImageGraph(850, 500);
         g.setxLabels(this.createXLabels(maxMonths));
         g.setDrawGridVertical(true);
-        final PointSet left = new PointSet(Color.RED);
-        left.setConnect(true);
         
         
-        final PointSet right = new PointSet(new Color(0, 0, 255, 128));
-        right.setConnect(true);
+        final PointSet points = new PointSet(Color.RED);
+        points.setConnect(true);
+        points.setStrength(1.5f);
         
-        final Point lowest = this.createPointSet(all, maxMonths, left, right);
-        left.setName("Points");
-        left.setStrength(2.f);
+        final PointSet rank = new PointSet(new Color(0, 0, 255, 128));
+        rank.setConnect(true);
         
-        g.addLeftPointSet(left);
-        g.addRightPointSet(right);
-        g.setRight(right.calculateScale("Rank", 10));
+        final Point lowest = this.createPointSet(all, maxMonths, points, rank);
         
-        g.getLeft().setDrawGrid(true);
+        final YScale pointScale = points.calculateScale("Points", 10);
+        final YScale rankScale = rank.calculateScale("Rank", 10);
+        
+        points.setScale(pointScale);
+        rank.setScale(rankScale);
+        
+        points.setName("Points");
+        
+        g.addPointSet(points);
+        g.addPointSet(rank);
+        
+        g.setLeftScale(pointScale);
+        g.setRightScale(rankScale);
+        g.getLeftScale().setDrawGrid(true);
         
         if (lowest != null) {
             g.addHighlightArea(new HighlightArea("Interpolated", 0, lowest.getX(), 
@@ -94,12 +106,13 @@ public class ScoreBoardManager {
     
     
     public InputStream createMultiGraph(int maxMonths, String...names) {
-        ImageGraph g = new ImageGraph(700, 400, "Points", 2000, 35000, 2000);
+        ImageGraph g = new ImageGraph(850, 500);
+        
         g.setxLabels(this.createXLabels(maxMonths));
-        g.getLeft().setDrawGrid(true);
+
         
         g.setDrawGridVertical(true);
-
+        final PointSet common = new PointSet(); // just for calculating common scale
         int max = Math.min(COLORS.length, names.length);
         for (int i = 0; i < max; ++i) {
             final List<ScoreBoardEntry> entries = this.getEntries(names[i]);
@@ -108,9 +121,16 @@ public class ScoreBoardManager {
             final PointSet left = new PointSet(next);
             left.setConnect(true);
             this.createPointSet(entries, maxMonths, left, new PointSet());
-            g.addLeftPointSet(left);
+            common.addAll(left);
+            g.addPointSet(left);
         }
         
+        final YScale pointScale = common.calculateScale("Points", 10);
+        pointScale.setDrawGrid(true);
+        for (final PointSet ps : g.getData()) {
+            ps.setScale(pointScale);
+        }
+        g.setLeftScale(pointScale);
         g.updateImage();
         return g.getBytes();
     }
@@ -169,6 +189,7 @@ public class ScoreBoardManager {
                 // do not add points that are older than X_LABELS months
                 continue;
             }
+            
             right.add(rank);
             left.add(points);
         }
@@ -180,7 +201,8 @@ public class ScoreBoardManager {
             double m = (lowestGreaterZeroPoints.getY() - greatestLowerZeroPoints.getY()) / 
                     (lowestGreaterZeroPoints.getX() - greatestLowerZeroPoints.getX());
             double y = m * (-lowestGreaterZeroPoints.getX()) + lowestGreaterZeroPoints.getY();
-            left.add(new Point(0.0, y, PointType.DOT));
+            final Point zero = new Point(0.0, y, PointType.DOT); 
+            left.add(zero);
             left.remove(lowestGreaterZeroPoints);
             left.add(new Point(lowestGreaterZeroPoints.getX(), 
                 lowestGreaterZeroPoints.getY(), PointType.X));

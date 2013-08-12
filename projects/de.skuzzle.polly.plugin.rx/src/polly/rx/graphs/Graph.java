@@ -32,7 +32,7 @@ public class Graph {
             public void run() {
                 JFrame frame = new JFrame();
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                final ImageGraph graph = new ImageGraph(600, 400, "Points", 2000, 30000, 2000);
+                final ImageGraph graph = new ImageGraph(600, 400);
                 
                 String[] label = new String[24];
                 for (int i = 0; i < label.length; ++i) {
@@ -44,8 +44,8 @@ public class Graph {
                 final PointSet set2 = new PointSet(Color.BLUE);
                 set2.setName("Blau");
                 set.setColor(Color.RED);
-                graph.addLeftPointSet(set);
-                graph.addLeftPointSet(set2);
+                graph.addPointSet(set);
+                graph.addPointSet(set2);
                 graph.setxLabels(label);
                 graph.setDrawGridVertical(true);
                 
@@ -71,16 +71,15 @@ public class Graph {
                 test.add(1, 2500, PointType.DOT);
                 test.add(1, 3000, PointType.DOT);
                 test.add(1, 6000, PointType.DOT);
-                graph.addLeftPointSet(test);
+                graph.addPointSet(test);
                 
-                graph.setRight(new YScale("Just a test", 0, 200, 20));
+                graph.setRightScale(new YScale("Just a test", 0, 200, 20));
                 PointSet rightSet = new PointSet(Color.BLACK);
                 for (int i = 0; i < 24; ++i) {
                     rightSet.add(i, Math.random() * 200, PointType.BOX);
                 }
                 rightSet.setConnect(true);
                 rightSet.setConnectColor(Color.LIGHT_GRAY);
-                graph.addRightPointSet(rightSet);
                 
                 graph.addHighlightArea(new HighlightArea("Test", 2, 5, new Color(0, 0, 0, 20)));
                 
@@ -99,20 +98,17 @@ public class Graph {
     private final int width;
     private final int height;
     private boolean drawGridVertical;
-    private final Collection<PointSet> leftScaleData;
-    private final Collection<PointSet> rightScaleData;
+    private final Collection<PointSet> data;
     private final Collection<HighlightArea> highlights;
-    private final YScale left;
+    private YScale left;
     private YScale right;
     
     
     
-    public Graph(int width, int height, String scaleName, int minY, int maxY, int stepY) {
+    public Graph(int width, int height) {
         this.width = width;
         this.height = height;
-        this.left = new YScale(scaleName, minY, maxY, stepY);
-        this.leftScaleData = new ArrayList<PointSet>();
-        this.rightScaleData = new ArrayList<PointSet>();
+        this.data = new ArrayList<PointSet>();
         this.highlights = new ArrayList<HighlightArea>();
     }
     
@@ -124,13 +120,25 @@ public class Graph {
     
     
     
-    public YScale getLeft() {
+    public YScale getLeftScale() {
         return this.left;
     }
     
     
     
-    public void setRight(YScale right) {
+    public void setLeftScale(YScale left) {
+        this.left = left;
+    }
+    
+    
+    
+    public YScale getRightScale() {
+        return this.right;
+    }
+    
+    
+    
+    public void setRightScale(YScale right) {
         this.right = right;
     }
     
@@ -172,22 +180,23 @@ public class Graph {
 
 
     
-    public void addLeftPointSet(PointSet pointSet) {
-        this.leftScaleData.add(pointSet);
+    public void addPointSet(PointSet pointSet) {
+        this.data.add(pointSet);
     }
     
     
     
-    public void addRightPointSet(PointSet pointSet) {
-        this.rightScaleData.add(pointSet);
+    public Collection<PointSet> getData() {
+        return this.data;
     }
-
+    
 
     
     private void drawScale(YScale scale, Graphics2D g, int actualHeight, 
             int actualWidth, int xOffset, boolean left, int yLabelWidth) {
         
-        final int steps = (scale.getMax() - scale.getMin()) / scale.getStep() ;
+        final int steps = (int) Math.round(
+            (scale.getMax() - scale.getMin()) / (double) scale.getStep());
         final double yScale = (double)actualHeight / (double)steps;
         final FontMetrics m = g.getFontMetrics();
         
@@ -284,19 +293,19 @@ public class Graph {
         if (this.left != null) {
             this.drawScale(this.left, g, actualHeight, actualWidth, 0, 
                 true, (int)leftYLabelWidth);
-            this.drawPoints(g, this.leftScaleData, this.left, actualHeight, xScale);
         }
         
         if (this.right != null) {
             this.drawScale(this.right, g, actualHeight, actualWidth, 
                 actualWidth, false, (int)rightYLabelWidth);
-            
-            this.drawPoints(g, this.rightScaleData, this.right, actualHeight, xScale);
         } else {
             final int x = actualWidth;// - (int) rightYLabelWidth;
             g.setColor(Color.BLACK);
             g.drawLine(x, 0, x, -actualHeight);
         }
+        
+        this.drawPoints(g, this.data, actualHeight, xScale);
+        
         g.setColor(Color.BLACK);
         g.drawLine(0, -actualHeight, actualWidth, -actualHeight);
         this.drawLegend(g, actualWidth);
@@ -305,13 +314,15 @@ public class Graph {
     
     
     
-    private void drawPoints(Graphics2D g, Collection<PointSet> pointSets, YScale yScale, 
+    private void drawPoints(Graphics2D g, Collection<PointSet> pointSets,
             int actualHeight, double xScale) {
         
-        double scale = (double)actualHeight / (yScale.getMax() - yScale.getMin());
         final Stroke reset = g.getStroke();
         
         for (final PointSet points : pointSets) {
+            YScale yScale = points.getScale();
+            double scale = (double)actualHeight / (yScale.getMax() - yScale.getMin());
+            
             boolean first = true;
             int lastX = 0;
             int lastY = 0;
@@ -368,18 +379,15 @@ public class Graph {
     private void drawLegend(Graphics2D g, int actualWidth) {
         final FontMetrics m = g.getFontMetrics(); 
         double width = 0.0;
-        final Collection<PointSet> all = new ArrayList<PointSet>(this.leftScaleData);
-        all.addAll(this.rightScaleData);
         
-        for (final PointSet points : all) {
+        for (final PointSet points : this.data) {
             width = Math.max(width, m.stringWidth(points.getName()));
         }
-        
         
         final int legendX = (int) Math.round(actualWidth - (width + 30.0));
         int legendY = -20;
 
-        for (final PointSet points : all) {
+        for (final PointSet points : this.data) {
             if (!points.getName().equals("")) {
                 g.setColor(points.getColor());
                 g.fillRect(legendX, legendY, 10, 10);
