@@ -58,15 +58,15 @@ public class RankCommand extends Command {
             double pointsPerDay = (double) pointDiff / (double)days;
 
             final StringBuilder b = new StringBuilder();
-            b.append("Punkte: ");
+            b.append("Rang: ");
+            b.append(youngest.getRank());
+            b.append(", Punkte: ");
             b.append(youngest.getPoints());
             b.append(" (");
             b.append(this.getMyPolly().formatting().formatNumber(pointsPerDay));
             b.append(" pro Tag innerhalb von ");
             b.append(this.getMyPolly().formatting().formatTimeSpanMs(diff));
-            b.append("), Rang: ");
-            b.append(youngest.getRank());
-            b.append(", Daten vom ");
+            b.append("), Daten vom: ");
             b.append(this.getMyPolly().formatting().formatDate(youngest.getDate()));
 
             this.reply(channel, b.toString());
