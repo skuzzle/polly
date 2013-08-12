@@ -11,6 +11,7 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.TreeSet;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -100,6 +101,7 @@ public class Graph {
     private boolean drawGridVertical;
     private final Collection<PointSet> data;
     private final Collection<HighlightArea> highlights;
+    private final Collection<NamedPoint> rawPoints;
     private YScale left;
     private YScale right;
     
@@ -110,6 +112,7 @@ public class Graph {
         this.height = height;
         this.data = new ArrayList<PointSet>();
         this.highlights = new ArrayList<HighlightArea>();
+        this.rawPoints = new TreeSet<NamedPoint>();
     }
     
     
@@ -190,6 +193,11 @@ public class Graph {
         return this.data;
     }
     
+    
+    
+    public Collection<NamedPoint> getRawPointsFromLastDraw() {
+        return this.rawPoints;
+    }
 
     
     private void drawScale(YScale scale, Graphics2D g, int actualHeight, 
@@ -304,7 +312,7 @@ public class Graph {
             g.drawLine(x, 0, x, -actualHeight);
         }
         
-        this.drawPoints(g, this.data, actualHeight, xScale);
+        this.drawPoints(g, this.data, actualHeight, zeroX, zeroY, xScale);
         
         g.setColor(Color.BLACK);
         g.drawLine(0, -actualHeight, actualWidth, -actualHeight);
@@ -315,10 +323,11 @@ public class Graph {
     
     
     private void drawPoints(Graphics2D g, Collection<PointSet> pointSets,
-            int actualHeight, double xScale) {
+            int actualHeight, int zeroX, int zeroY, double xScale) {
         
         final Stroke reset = g.getStroke();
         
+        this.rawPoints.clear();
         for (final PointSet points : pointSets) {
             YScale yScale = points.getScale();
             double scale = (double)actualHeight / (yScale.getMax() - yScale.getMin());
@@ -340,9 +349,14 @@ public class Graph {
                     g.drawLine(lastX, lastY, x, y);
                     g.setStroke(reset);
                 }
+                
                 first = false;
                 g.setColor(points.getColor());
                 drawPoint(g, x, y, p.getType());
+                
+                // retranslate
+                this.rawPoints.add(new NamedPoint(points.getName() + ": " + p.getY(), 
+                    x + zeroX, y + zeroY, PointType.NONE));
                 lastX = x;
                 lastY = y;
             }

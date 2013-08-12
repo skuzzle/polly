@@ -4,7 +4,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -48,20 +47,10 @@ public class ImageGraph extends Graph {
     
     public InputStream getBytes() {
         final FastByteArrayOutputStream out = new FastByteArrayOutputStream();
-        FileOutputStream fileOut = null;
         try {
-            fileOut = new FileOutputStream("test.png");
             ImageIO.write(this.image, "png", out);
         } catch (IOException e1) {
             e1.printStackTrace();
-        } finally {
-            if (fileOut != null) {
-                try {
-                    fileOut.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
         
         return out.getInputStreamForBuffer();

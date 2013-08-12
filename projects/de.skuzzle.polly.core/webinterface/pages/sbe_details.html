@@ -34,7 +34,17 @@
     
     <input type="submit" class="button" value="Set"/>
 </form>
-<img src="/memory:${venad}_graph"/>
+<img id="graph" src="/memory:${venad}_graph" usemap="#pointmap"/>
+<map name="pointmap">
+    #foreach($np in $allPoints)
+        #set ($x1 = $np.getIntX() - 2)
+        #set ($x2 = $np.getIntX() + 2)
+        #set ($y1 = $np.getIntY() - 2)
+        #set ($y2 = $np.getIntY() + 2)
+        <area shape="rect" coords="$x1,$y1,$x2,$y2" alt="$np.getName()" 
+            title="$np.getName()" href="/">
+    #end
+</map>
 
 #if ($sortKey && $entries)
     $sorter.sort($entries, $sortKey, $dir)

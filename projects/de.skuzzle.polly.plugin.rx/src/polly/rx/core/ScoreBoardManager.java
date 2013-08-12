@@ -17,6 +17,7 @@ import java.util.Locale;
 import polly.rx.entities.ScoreBoardEntry;
 import polly.rx.graphs.HighlightArea;
 import polly.rx.graphs.ImageGraph;
+import polly.rx.graphs.NamedPoint;
 import polly.rx.graphs.Point;
 import polly.rx.graphs.Point.PointType;
 import polly.rx.graphs.PointSet;
@@ -57,7 +58,8 @@ public class ScoreBoardManager {
     
     
     
-    public InputStream createLatestGraph(List<ScoreBoardEntry> all, int maxMonths) {
+    public InputStream createLatestGraph(List<ScoreBoardEntry> all, int maxMonths, 
+            Collection<NamedPoint> allPoints) {
         if (all.isEmpty()) {
             return null;
         }
@@ -105,6 +107,7 @@ public class ScoreBoardManager {
         }
         
         g.updateImage();
+        allPoints.addAll(g.getRawPointsFromLastDraw());
         return g.getBytes();
     }
     
@@ -130,7 +133,10 @@ public class ScoreBoardManager {
             g.addPointSet(left);
         }
         
-        final YScale pointScale = common.calculateScale("Points", 10);
+        YScale pointScale = common.calculateScale("Points", 10);
+        if (pointScale == null) {
+            pointScale = new YScale("Points", 6000, 30000, 2000);
+        }
         pointScale.setDrawGrid(true);
         for (final PointSet ps : g.getData()) {
             ps.setScale(pointScale);
@@ -178,8 +184,8 @@ public class ScoreBoardManager {
             final int monthsAgo = this.getMonthsAgo(today, entry.getDate(), maxMonths);
             
             final double x = this.calcX(entry.getDate(), monthsAgo);
-            final Point points = new Point(x, entry.getPoints(), PointType.NONE);
-            final Point rank = new Point(x, entry.getRank(), PointType.NONE);
+            final Point points = new Point(x, entry.getPoints(), PointType.BOX);
+            final Point rank = new Point(x, entry.getRank(), PointType.BOX);
             
             if (x < 0.0 && (greatestLowerZeroPoints == null || greatestLowerZeroPoints.getX() < x)) {
                 greatestLowerZeroPoints = points;
@@ -208,17 +214,11 @@ public class ScoreBoardManager {
             double y = m * (-lowestGreaterZeroPoints.getX()) + lowestGreaterZeroPoints.getY();
             final Point zero = new Point(0.0, y, PointType.DOT); 
             left.add(zero);
-            left.remove(lowestGreaterZeroPoints);
-            left.add(new Point(lowestGreaterZeroPoints.getX(), 
-                lowestGreaterZeroPoints.getY(), PointType.X));
             
             m = (lowestGreaterZeroRank.getY() - greatestLowerZeroRank.getY()) / 
                 (lowestGreaterZeroRank.getX() - greatestLowerZeroRank.getX());
             y = m * (-lowestGreaterZeroRank.getX()) + lowestGreaterZeroRank.getY();
             right.add(new Point(0, y, PointType.DOT));
-            right.remove(lowestGreaterZeroRank);
-            right.add(new Point(lowestGreaterZeroRank.getX(), 
-                lowestGreaterZeroRank.getY(), PointType.X));
         }
         
         left.setName(oldest.getVenadName());

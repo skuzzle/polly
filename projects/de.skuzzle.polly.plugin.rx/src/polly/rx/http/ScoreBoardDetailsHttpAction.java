@@ -1,12 +1,15 @@
 package polly.rx.http;
 
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.TreeSet;
 
 import polly.rx.MyPlugin;
 import polly.rx.core.ScoreBoardManager;
 import polly.rx.entities.ScoreBoardEntry;
+import polly.rx.graphs.NamedPoint;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.http.HttpAction;
@@ -61,7 +64,9 @@ public class ScoreBoardDetailsHttpAction extends HttpAction {
         }
         maxMonths = Math.max(Math.min(maxMonths, 24), 4);
         
-        InputStream graph = this.sbeManager.createLatestGraph(entries, maxMonths);
+        final Collection<NamedPoint> allPoints = new TreeSet<NamedPoint>();
+        InputStream graph = this.sbeManager.createLatestGraph(entries, 
+            maxMonths, allPoints);
         e.getSource().putMemoryFile(venadName + "_graph", graph);
 
         
@@ -91,6 +96,7 @@ public class ScoreBoardDetailsHttpAction extends HttpAction {
             c, e, "sortKey", "dir", "getDate");
         
         c.put("entries", entries);
+        c.put("allPoints", allPoints);
         c.put("venad", e.getSource().escapeHtml(venadName));
         c.put("span", diff);
         c.put("days", days);
