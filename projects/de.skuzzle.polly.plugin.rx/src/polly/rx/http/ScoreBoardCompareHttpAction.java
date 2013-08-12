@@ -1,10 +1,14 @@
 package polly.rx.http;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import polly.rx.MyPlugin;
 import polly.rx.core.ScoreBoardManager;
+import polly.rx.graphs.NamedPoint;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.http.HttpAction;
@@ -56,9 +60,19 @@ public class ScoreBoardCompareHttpAction extends HttpAction {
         }
         maxMonths = Math.max(Math.min(maxMonths, 24), 4);
         
-        final InputStream graph = this.sbeManager.createMultiGraph(maxMonths, venads);
+        final Collection<NamedPoint> allPoints = new ArrayList<>();
+        final InputStream graph = this.sbeManager.createMultiGraph(
+            maxMonths, allPoints, venads);
         final String memFileName = "compare" + ID_GENERATOR.getAndIncrement();
         e.getSource().putMemoryFile(memFileName, graph);
+        
+        final List<Integer> monthValues = new ArrayList<>(12);
+        for (int i = 4; i < 24; i += 2) {
+            monthValues.add(i);
+        }
+        c.put("monthValues", monthValues);
+        c.put("maxMonths", maxMonths);
+        c.put("allPoints", allPoints);
         c.put("names", names);
         c.put("fileName", memFileName);
         

@@ -102,7 +102,7 @@ public class ScoreBoardManager {
         g.getLeftScale().setDrawGrid(true);
         
         if (lowest != null) {
-            g.addHighlightArea(new HighlightArea("Interpolated", 0, lowest.getX(), 
+            g.addHighlightArea(new HighlightArea("", 0, lowest.getX(), 
                 new Color(0, 0, 0, 20)));
         }
         
@@ -113,7 +113,8 @@ public class ScoreBoardManager {
     
     
     
-    public InputStream createMultiGraph(int maxMonths, String...names) {
+    public InputStream createMultiGraph(int maxMonths, Collection<NamedPoint> allPoints, 
+            String...names) {
         ImageGraph g = new ImageGraph(850, 500);
         
         g.setxLabels(this.createXLabels(maxMonths));
@@ -143,6 +144,7 @@ public class ScoreBoardManager {
         }
         g.setLeftScale(pointScale);
         g.updateImage();
+        allPoints.addAll(g.getRawPointsFromLastDraw());
         return g.getBytes();
     }
     
@@ -184,8 +186,8 @@ public class ScoreBoardManager {
             final int monthsAgo = this.getMonthsAgo(today, entry.getDate(), maxMonths);
             
             final double x = this.calcX(entry.getDate(), monthsAgo);
-            final Point points = new Point(x, entry.getPoints(), PointType.BOX);
-            final Point rank = new Point(x, entry.getRank(), PointType.BOX);
+            final Point points = new Point(x, entry.getPoints(), PointType.NONE);
+            final Point rank = new Point(x, entry.getRank(), PointType.NONE);
             
             if (x < 0.0 && (greatestLowerZeroPoints == null || greatestLowerZeroPoints.getX() < x)) {
                 greatestLowerZeroPoints = points;

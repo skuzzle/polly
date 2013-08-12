@@ -2,6 +2,7 @@ package de.skuzzle.polly.core.internal.http;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -36,7 +37,10 @@ public class MemoryFileResponseHandler extends FileResponseHandler {
         String name = requestUri.substring(this.prefix.length());
         synchronized (this.memoryFiles) {
             InputStream in = this.memoryFiles.get(name);
-            
+            t.getResponseHeaders().put("Cache-Control", 
+                Arrays.asList("no-store", "max-age=0"));
+            t.getResponseHeaders().put("Expires", 
+                Arrays.asList("Fri, 30 Oct 1998 14:19:41 GMT"));
             if (in == null) {
                 logger.warn("Requested memory file does not exist: " + name);
                 session.increaseErrorCounter();

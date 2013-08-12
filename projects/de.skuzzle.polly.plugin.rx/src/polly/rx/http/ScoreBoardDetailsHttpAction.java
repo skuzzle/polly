@@ -1,6 +1,7 @@
 package polly.rx.http;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -67,7 +68,7 @@ public class ScoreBoardDetailsHttpAction extends HttpAction {
         final Collection<NamedPoint> allPoints = new TreeSet<NamedPoint>();
         InputStream graph = this.sbeManager.createLatestGraph(entries, 
             maxMonths, allPoints);
-        e.getSource().putMemoryFile(venadName + "_graph", graph);
+        e.getSource().putMemoryFile(venadName + "_graph_" + maxMonths, graph);
 
         
         // calculate discrete derivative
@@ -95,8 +96,14 @@ public class ScoreBoardDetailsHttpAction extends HttpAction {
         HttpTemplateSortHelper.makeListSortable(
             c, e, "sortKey", "dir", "getDate");
         
-        c.put("entries", entries);
+        final List<Integer> monthValues = new ArrayList<>(12);
+        for (int i = 4; i < 24; i += 2) {
+            monthValues.add(i);
+        }
+        c.put("monthValues", monthValues);
+        c.put("maxMonths", maxMonths);
         c.put("allPoints", allPoints);
+        c.put("entries", entries);
         c.put("venad", e.getSource().escapeHtml(venadName));
         c.put("span", diff);
         c.put("days", days);

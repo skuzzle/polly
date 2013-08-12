@@ -132,3 +132,7 @@ body {
 #advert {
     font-size: small;
 }
+
+.lihover:hover {
+    border: 2px solid black;
+}
