@@ -71,7 +71,7 @@ public final class Milliseconds {
     
     
     /**
-     * Converts milliseconds into days with always rounding up the result. that means 
+     * Converts milliseconds into days with always rounding up the result. That means 
      * a started day will count as a whole one.
      * 
      * @param ms Milliseconds to convert.
@@ -80,6 +80,19 @@ public final class Milliseconds {
     public final static long toDays(long ms) {
         double tmp = (double) ms / (1000.0 * 60.0 * 60.0 * 24.0);
         return (long) Math.ceil(tmp);
+    }
+    
+    
+    
+    /**
+     * Converts milliseconds into days with only considering fully passed 24h hours.
+     * 
+     * @param ms Milliseconds to convert.
+     * @return Amount of days.
+     */
+    public final static long toFullDays(long ms) {
+        double tmp = (double) ms / (1000.0 * 60.0 * 60.0 * 24.0);
+        return (long) Math.floor(tmp);
     }
     
     

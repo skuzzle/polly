@@ -48,6 +48,7 @@ class UnionFindItem<E> {
     }
     
     
+    
     public UnionFindItem<E> mergeInto(UnionFindItem<E> other) {
         final UnionFindItem<E> myRoot = this.compress();
         final UnionFindItem<E> otherRoot = other.compress();

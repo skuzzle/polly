@@ -20,6 +20,7 @@ import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.time.DateUtils;
 import de.skuzzle.polly.sdk.time.Time;
 import polly.rx.entities.ScoreBoardEntry;
+import polly.rx.graphs.HighlightArea;
 import polly.rx.graphs.ImageGraph;
 import polly.rx.graphs.Point;
 import polly.rx.graphs.PointSet;
@@ -54,19 +55,37 @@ public class ScoreBoardManager {
     
     
     
-    public InputStream createGraph(List<ScoreBoardEntry> all, int maxMonths) {
+    
+    public InputStream createLatestGraph(List<ScoreBoardEntry> all, int maxMonths) {
         if (all.isEmpty()) {
             return null;
         }
         Collections.sort(all, ScoreBoardEntry.BY_DATE);
         
-        final ImageGraph g = new ImageGraph(700, 400, 2000, 30000, 2000);
+        final ImageGraph g = new ImageGraph(700, 400, "Points", 2000, 35000, 2000);
         g.setxLabels(this.createXLabels(maxMonths));
-        g.setDrawGridHorizontal(true);
         g.setDrawGridVertical(true);
-        g.setConnect(true);
-        g.addPointSet(this.createPointSet(all, Color.RED, maxMonths));
-
+        final PointSet left = new PointSet(Color.RED);
+        left.setConnect(true);
+        
+        
+        final PointSet right = new PointSet(new Color(0, 0, 255, 128));
+        right.setConnect(true);
+        
+        final Point lowest = this.createPointSet(all, maxMonths, left, right);
+        left.setName("Points");
+        left.setStrength(2.f);
+        
+        g.addLeftPointSet(left);
+        g.addRightPointSet(right);
+        g.setRight(right.calculateScale("Rank", 10));
+        
+        g.getLeft().setDrawGrid(true);
+        
+        if (lowest != null) {
+            g.addHighlightArea(new HighlightArea("Interpolated", 0, lowest.getX(), 
+                new Color(0, 0, 0, 20)));
+        }
         
         g.updateImage();
         return g.getBytes();
@@ -75,19 +94,21 @@ public class ScoreBoardManager {
     
     
     public InputStream createMultiGraph(int maxMonths, String...names) {
-        ImageGraph g = new ImageGraph(700, 400, 2000, 30000, 2000);
+        ImageGraph g = new ImageGraph(700, 400, "Points", 2000, 35000, 2000);
         g.setxLabels(this.createXLabels(maxMonths));
-        g.setDrawGridHorizontal(true);
+        g.getLeft().setDrawGrid(true);
+        
         g.setDrawGridVertical(true);
-        g.setConnect(true);
 
         int max = Math.min(COLORS.length, names.length);
         for (int i = 0; i < max; ++i) {
             final List<ScoreBoardEntry> entries = this.getEntries(names[i]);
             Collections.sort(entries, ScoreBoardEntry.BY_DATE);
             final Color next = COLORS[i];
-            final PointSet points = this.createPointSet(entries, next, maxMonths);
-            g.addPointSet(points);
+            final PointSet left = new PointSet(next);
+            left.setConnect(true);
+            this.createPointSet(entries, maxMonths, left, new PointSet());
+            g.addLeftPointSet(left);
         }
         
         g.updateImage();
@@ -104,7 +125,7 @@ public class ScoreBoardManager {
         for (int i = 0; i < maxMonths; ++i) {
             final Calendar c = Calendar.getInstance();
             c.setTime(today);
-            c.add(Calendar.MONTH, -(maxMonths - (i + 1)));
+            c.add(Calendar.MONTH, -(maxMonths - (i + 2)));
             labels[i] = df.format(c.getTime());
         }
         return labels;
@@ -112,55 +133,73 @@ public class ScoreBoardManager {
     
     
     
-    private PointSet createPointSet(List<ScoreBoardEntry> entries, Color color, 
-            int maxMonths) {
-        final ScoreBoardEntry oldest = entries.get(0);
+    private Point createPointSet(List<ScoreBoardEntry> entries,
+            int maxMonths, PointSet left, PointSet right) {
         
-        if (entries.size() == 1) {
-            final PointSet result = new PointSet();
-            final int monthsAgo = this.getMonthsAgo(Time.currentTime(), oldest.getDate(), 
-                maxMonths);
-            final double x = this.calcX(oldest.getDate(), monthsAgo);
-            result.add(x, oldest.getPoints(), PointType.BOX);
-            return result;
+        if (entries.size() < 2) {
+            return null;
         }
+        
+        final ScoreBoardEntry oldest = entries.get(0);
         
         final Date today = Time.currentTime();
         boolean zero = false;
-        final PointSet points = new PointSet(color);
-        Point greatestLowerZero = null;
-        Point lowestGreaterZero = null;
+        Point greatestLowerZeroPoints = null;
+        Point lowestGreaterZeroPoints = null;
+        
+        Point greatestLowerZeroRank = null;
+        Point lowestGreaterZeroRank = null;
         
         for (final ScoreBoardEntry entry : entries) {
             final int monthsAgo = this.getMonthsAgo(today, entry.getDate(), maxMonths);
+            
             final double x = this.calcX(entry.getDate(), monthsAgo);
-            final Point p = new Point(x, entry.getPoints(), PointType.NONE);
+            final Point points = new Point(x, entry.getPoints(), PointType.NONE);
+            final Point rank = new Point(x, entry.getRank(), PointType.NONE);
+            
+            if (x < 0.0 && (greatestLowerZeroPoints == null || greatestLowerZeroPoints.getX() < x)) {
+                greatestLowerZeroPoints = points;
+                greatestLowerZeroRank = rank;
+            }
+            if (x > 0.0 && (lowestGreaterZeroPoints == null || lowestGreaterZeroPoints.getX() > x)) {
+                lowestGreaterZeroPoints = points;
+                lowestGreaterZeroRank = rank;
+            }
 
-            if (x < 0.0 && (greatestLowerZero == null || greatestLowerZero.getX() < x)) {
-                greatestLowerZero = p;
-            }
-            if (x > 0.0 && (lowestGreaterZero == null || lowestGreaterZero.getX() > x)) {
-                lowestGreaterZero = p;
-            }
             
             zero |= monthsAgo == 0;
             if (monthsAgo < 0) {
                 // do not add points that are older than X_LABELS months
                 continue;
             }
-            points.add(p);
+            right.add(rank);
+            left.add(points);
         }
+        
         if (entries.size() > 1 && !zero && Math.abs(
                     DateUtils.monthsBetween(today, oldest.getDate())) > maxMonths) {
             
-            // interpolate correct y-axis intersection
-            double m = (lowestGreaterZero.getY() - greatestLowerZero.getY()) / 
-                    (lowestGreaterZero.getX() - greatestLowerZero.getX());
-            double y = m * (-lowestGreaterZero.getX()) + lowestGreaterZero.getY();
-            points.add(new Point(0.0, y, PointType.DOT));
+            // interpolate correct y-axis intersection for points
+            double m = (lowestGreaterZeroPoints.getY() - greatestLowerZeroPoints.getY()) / 
+                    (lowestGreaterZeroPoints.getX() - greatestLowerZeroPoints.getX());
+            double y = m * (-lowestGreaterZeroPoints.getX()) + lowestGreaterZeroPoints.getY();
+            left.add(new Point(0.0, y, PointType.DOT));
+            left.remove(lowestGreaterZeroPoints);
+            left.add(new Point(lowestGreaterZeroPoints.getX(), 
+                lowestGreaterZeroPoints.getY(), PointType.X));
+            
+            m = (lowestGreaterZeroRank.getY() - greatestLowerZeroRank.getY()) / 
+                (lowestGreaterZeroRank.getX() - greatestLowerZeroRank.getX());
+            y = m * (-lowestGreaterZeroRank.getX()) + lowestGreaterZeroRank.getY();
+            right.add(new Point(0, y, PointType.DOT));
+            right.remove(lowestGreaterZeroRank);
+            right.add(new Point(lowestGreaterZeroRank.getX(), 
+                lowestGreaterZeroRank.getY(), PointType.X));
         }
-        points.setName(oldest.getVenadName());
-        return points;
+        
+        left.setName(oldest.getVenadName());
+        right.setName("Rank");
+        return lowestGreaterZeroPoints;
     }
     
     
@@ -179,7 +218,7 @@ public class ScoreBoardManager {
         c.setTime(d);
         final int dayInMonth = c.get(Calendar.DAY_OF_MONTH);
         final int days = c.getActualMaximum(Calendar.DAY_OF_MONTH);
-        final double x = monthsAgo + (double) dayInMonth / (double) days; 
+        final double x = (monthsAgo - 1) + (double) dayInMonth / (double) days; 
         return x;
     }
 

@@ -46,7 +46,7 @@ public class ScoreBoardDetailsHttpAction extends HttpAction {
         ScoreBoardEntry youngest = entries.get(entries.size() - 1);
         final int maxMonths = 
             Integer.parseInt(e.getSession().getUser().getAttribute(MyPlugin.MAX_MONTHS));
-        InputStream graph = this.sbeManager.createGraph(entries, maxMonths);
+        InputStream graph = this.sbeManager.createLatestGraph(entries, maxMonths);
         e.getSource().putMemoryFile(venadName + "_graph", graph);
         
         // calculate discrete derivative

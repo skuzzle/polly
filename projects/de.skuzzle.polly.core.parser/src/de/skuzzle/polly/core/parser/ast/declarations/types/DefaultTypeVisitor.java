@@ -37,7 +37,7 @@ public class DefaultTypeVisitor implements TypeVisitor {
         }
         int after = this.after(type);
         this.visited.add(type);
-        return after == CONTINUE;
+        return after != ABORT;
     }
     
     
@@ -65,7 +65,7 @@ public class DefaultTypeVisitor implements TypeVisitor {
         }
         int after = this.after(p);
         this.visited.add(p);
-        return after == CONTINUE;
+        return after != ABORT;
     }
 
     
@@ -92,7 +92,7 @@ public class DefaultTypeVisitor implements TypeVisitor {
         }
         int after = this.after(l);
         this.visited.add(l);
-        return after == CONTINUE;
+        return after != ABORT;
     }
 
     
@@ -124,7 +124,7 @@ public class DefaultTypeVisitor implements TypeVisitor {
         
         int after = this.after(m);
         this.visited.add(m);
-        return after == CONTINUE;
+        return after != ABORT;
     }
 
     
@@ -147,6 +147,6 @@ public class DefaultTypeVisitor implements TypeVisitor {
         
         int after = this.after(v);
         this.visited.add(v);
-        return after == CONTINUE;
+        return after != ABORT;
     }
 }

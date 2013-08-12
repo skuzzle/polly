@@ -65,7 +65,7 @@ public class ScoreBoardEntry implements CSVExportable {
         
         for (ScoreBoardEntry e : entries) {
             if (name != null && !name.equals(e.getVenadName())) {
-                if (tmp.isEmpty()) {
+                if (tmp.isEmpty()) { // ?????
                     tmp.clear();
                     continue;
                 }
@@ -85,7 +85,7 @@ public class ScoreBoardEntry implements CSVExportable {
                 
                 long diff = Math.abs(
                         youngest.getDate().getTime() - oldest.getDate().getTime());
-                long days = Milliseconds.toDays(diff);
+                long days = Milliseconds.toFullDays(diff);
                 int pointDiff = youngest.getPoints() - oldest.getPoints();
                 
                 double pointsPerDay = Double.NaN;

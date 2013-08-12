@@ -6,6 +6,7 @@ import java.util.Map;
 
 import de.skuzzle.polly.core.parser.ast.declarations.types.ListType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.MapType;
+import de.skuzzle.polly.core.parser.ast.declarations.types.MissingType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.ProductType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Substitution;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
@@ -76,6 +77,11 @@ class UnionFindTypeUnifier implements Unifier {
         if (this.subTypeIncl && s.getValue().isA(t.getValue()) || 
                 s.getValue() == t.getValue()) {
             return true;
+            
+        } else if (s.getValue() instanceof MissingType || t.getValue() instanceof MissingType) {
+            this.union(s, t, subst);
+            return true;
+            
         } else if (s.getValue() instanceof MapType && t.getValue() instanceof MapType) {
             this.union(s, t, subst);
             final MapType mc1 = (MapType) s.getValue();
@@ -83,12 +89,14 @@ class UnionFindTypeUnifier implements Unifier {
             
             return this.unifyInternal(mc1.getSource(), mc2.getSource(), subst) &&
                 this.unifyInternal(mc1.getTarget(), mc2.getTarget(), subst);
+            
         } else if (s.getValue() instanceof ListType && t.getValue() instanceof ListType) {
             this.union(s, t, subst);
             final ListType l1 = (ListType) s.getValue();
             final ListType l2 = (ListType) t.getValue();
             
             return this.unifyInternal(l1.getSubType(), l2.getSubType(), subst);
+            
         } else if (s.getValue() instanceof ProductType && t.getValue() instanceof ProductType) {
             this.union(s, t, subst);
             final ProductType p1 = (ProductType) s.getValue();
@@ -104,6 +112,7 @@ class UnionFindTypeUnifier implements Unifier {
                 }
             }
             return true;
+            
         } else if (s.getValue() instanceof TypeVar || t.getValue() instanceof TypeVar) {
             this.union(s, t, subst);
             return true;

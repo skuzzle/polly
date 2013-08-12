@@ -293,16 +293,16 @@ public class DateUtils {
         // from: http://www.coderanch.com/t/381676/java/java/number-months-dates-java
         Calendar cal = Calendar.getInstance();
         cal.setTime(minuend);
-        int minuendMonth = cal.get(Calendar.MONTH);
+        int minuendMonth = cal.get(Calendar.MONTH) + 1;
         int minuendYear = cal.get(Calendar.YEAR);
         cal.setTime(subtrahend);
-        int subtrahendMonth = cal.get(Calendar.MONTH);
+        int subtrahendMonth = cal.get(Calendar.MONTH) + 1;
         int subtrahendYear = cal.get(Calendar.YEAR);
 
         // the following will work okay for Gregorian but will not
         // work correctly in a Calendar where the number of months
         // in a year is not constant
-        return ((minuendYear - subtrahendYear) * cal.getMaximum(Calendar.MONTH))
+        return ((minuendYear - subtrahendYear) * (cal.getMaximum(Calendar.MONTH) + 1))
             + (minuendMonth - subtrahendMonth);
     }
 }
