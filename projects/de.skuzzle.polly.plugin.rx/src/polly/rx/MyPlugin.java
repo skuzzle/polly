@@ -10,6 +10,7 @@ import polly.rx.commands.DeliverTrainCommand;
 import polly.rx.commands.IPCommand;
 import polly.rx.commands.MyTrainsCommand;
 import polly.rx.commands.MyVenadCommand;
+import polly.rx.commands.RankCommand;
 import polly.rx.commands.RessComand;
 import polly.rx.commands.VenadCommand;
 import polly.rx.core.FleetDBManager;
@@ -68,6 +69,7 @@ public class MyPlugin extends PollyPlugin {
     public final static String IP_PERMISSION                     = "polly.permission.IP";
     public final static String SBE_PERMISSION                    = "polly.permission.SBE";
     public final static String CRACKER_PERMISSION                = "polly.permission.CRACKER";
+    public final static String RANK_PERMISSION                = "polly.permission.RANK";
     public final static String VENAD    = "VENAD";
     public final static String CRACKER  = "CRACKER";
     public final static String MAX_MONTHS = "MAX_MONTHTS";
@@ -105,6 +107,7 @@ public class MyPlugin extends PollyPlugin {
         this.addCommand(new IPCommand(myPolly));
         this.addCommand(new CrackerCommand(myPolly));
         this.addCommand(new RessComand(myPolly));
+        
         
         myPolly.web().addMenuUrl("Revorix", "MyTrains");
         myPolly.web().addMenuUrl("Revorix", "Trainer");
@@ -148,6 +151,7 @@ public class MyPlugin extends PollyPlugin {
         myPolly.web().addHttpAction(new ScoreBoardDetailsHttpAction(myPolly, this.sbeManager));
         myPolly.web().addHttpAction(new ScoreBoardCompareHttpAction(myPolly, this.sbeManager));
         myPolly.web().addHttpAction(new PostScoreboardHttpAction(myPolly, this.sbeManager));
+        this.addCommand(new RankCommand(myPolly, this.sbeManager));
     }
     
     
@@ -169,6 +173,7 @@ public class MyPlugin extends PollyPlugin {
         result.add(FleetDBManager.VIEW_BATTLE_REPORT_PERMISSION);
         result.add(FleetDBManager.VIEW_FLEET_SCAN_PERMISSION);
         result.add(FleetDBManager.DELETE_FLEET_SCAN_PERMISSION);
+        result.add(RANK_PERMISSION);
         result.add(RESSOURCES_PERMISSION);
         result.add(SBE_PERMISSION);
         result.add(CRACKER_PERMISSION);
@@ -197,6 +202,7 @@ public class MyPlugin extends PollyPlugin {
         
         roleManager.createRole(SBE_MANAGER_ROLE);
         roleManager.assignPermission(SBE_MANAGER_ROLE, SBE_PERMISSION);
+        roleManager.assignPermission(SBE_MANAGER_ROLE, RANK_PERMISSION);
         
         roleManager.assignPermission(RoleManager.DEFAULT_ROLE, IP_PERMISSION);
         roleManager.assignPermission(RoleManager.DEFAULT_ROLE, CRACKER_PERMISSION);
