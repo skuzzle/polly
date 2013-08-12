@@ -353,6 +353,9 @@ public class Graph {
             
             g.fillRect(xmin, -(int)actualHeight, xmax - xmin, (int) actualHeight);
             
+            if (nameWidth > 0.5 * (xmax - xmin)) {
+                continue;
+            }
             g.setColor(Color.BLACK);
             int stringX = xmin + (xmax - xmin) / 2 - nameWidth / 2;
             g.drawString(ha.getName(), stringX, 

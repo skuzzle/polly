@@ -143,7 +143,6 @@ public class ScoreBoardManager {
         final ScoreBoardEntry oldest = entries.get(0);
         
         final Date today = Time.currentTime();
-        boolean zero = false;
         Point greatestLowerZeroPoints = null;
         Point lowestGreaterZeroPoints = null;
         
@@ -166,9 +165,7 @@ public class ScoreBoardManager {
                 lowestGreaterZeroRank = rank;
             }
 
-            
-            zero |= monthsAgo == 0;
-            if (monthsAgo < 0) {
+            if (monthsAgo <= 0) {
                 // do not add points that are older than X_LABELS months
                 continue;
             }
@@ -176,7 +173,7 @@ public class ScoreBoardManager {
             left.add(points);
         }
         
-        if (entries.size() > 1 && !zero && Math.abs(
+        if (entries.size() > 1 && Math.abs(
                     DateUtils.monthsBetween(today, oldest.getDate())) > maxMonths) {
             
             // interpolate correct y-axis intersection for points
