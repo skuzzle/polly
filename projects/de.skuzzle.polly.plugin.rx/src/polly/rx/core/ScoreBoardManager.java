@@ -79,9 +79,14 @@ public class ScoreBoardManager {
         
         final Point lowest = this.createPointSet(all, maxMonths, points, rank);
         
-        final YScale pointScale = points.calculateScale("Points", 10);
-        final YScale rankScale = rank.calculateScale("Rank", 10);
-        
+        YScale pointScale = points.calculateScale("Points", 10);
+        if (pointScale == null) {
+            pointScale = new YScale("Points", 2000, 30000, 2000);
+        }
+        YScale rankScale = rank.calculateScale("Rank", 10);
+        if (rankScale == null) {
+            rankScale = new YScale("Rank", 0, 1000, 10);
+        }
         points.setScale(pointScale);
         rank.setScale(rankScale);
         
@@ -194,7 +199,7 @@ public class ScoreBoardManager {
             left.add(points);
         }
         
-        if (entries.size() > 1 && Math.abs(
+        if (lowestGreaterZeroPoints != null && greatestLowerZeroPoints != null && Math.abs(
                     DateUtils.monthsBetween(today, oldest.getDate())) > maxMonths) {
             
             // interpolate correct y-axis intersection for points

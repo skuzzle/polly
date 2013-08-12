@@ -60,6 +60,11 @@ public class PointSet implements Set<Point> {
 
 
     public YScale calculateScale(String name, int steps) {
+        if (this.isEmpty()) {
+            // HACK: ???
+            return null;
+        }
+        
         final Point first = this.iterator().next();
         double min = first.getY();
         double max = first.getY();
