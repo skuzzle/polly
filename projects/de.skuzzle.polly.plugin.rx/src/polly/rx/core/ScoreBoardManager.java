@@ -173,6 +173,8 @@ public class ScoreBoardManager {
             return null;
         }
         
+        final DateFormat df = new SimpleDateFormat("dd.MM.yyyy");
+        
         final ScoreBoardEntry oldest = entries.get(0);
         
         final Date today = Time.currentTime();
@@ -186,8 +188,13 @@ public class ScoreBoardManager {
             final int monthsAgo = this.getMonthsAgo(today, entry.getDate(), maxMonths);
             
             final double x = this.calcX(entry.getDate(), monthsAgo);
-            final Point points = new Point(x, entry.getPoints(), PointType.NONE);
-            final Point rank = new Point(x, entry.getRank(), PointType.NONE);
+            final Point points = new NamedPoint(
+                "Date: " + df.format(entry.getDate()) + ", Points: " + entry.getPoints(),
+                x, entry.getPoints(), PointType.NONE);
+            
+            final Point rank = new NamedPoint(
+                "Date: " + df.format(entry.getDate()) + ", Rank: " + entry.getRank(),
+                x, entry.getRank(), PointType.NONE);
             
             if (x < 0.0 && (greatestLowerZeroPoints == null || greatestLowerZeroPoints.getX() < x)) {
                 greatestLowerZeroPoints = points;

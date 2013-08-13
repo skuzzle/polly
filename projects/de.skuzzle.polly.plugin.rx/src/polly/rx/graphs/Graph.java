@@ -198,6 +198,7 @@ public class Graph {
     public Collection<NamedPoint> getRawPointsFromLastDraw() {
         return this.rawPoints;
     }
+    
 
     
     private void drawScale(YScale scale, Graphics2D g, int actualHeight, 
@@ -355,8 +356,13 @@ public class Graph {
                 drawPoint(g, x, y, p.getType());
                 
                 // retranslate
-                this.rawPoints.add(new NamedPoint(points.getName() + ": " + p.getY(), 
-                    x + zeroX, y + zeroY, PointType.NONE));
+                if (p instanceof NamedPoint) {
+                    this.rawPoints.add(new NamedPoint(((NamedPoint) p).getName(), 
+                        x + zeroX, y + zeroY, PointType.NONE));
+                } else {
+                    this.rawPoints.add(new NamedPoint(points.getName() + ": " + p.getY(), 
+                        x + zeroX, y + zeroY, PointType.NONE));
+                }
                 lastX = x;
                 lastY = y;
             }

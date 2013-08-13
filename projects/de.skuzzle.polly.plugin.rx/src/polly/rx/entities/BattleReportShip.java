@@ -105,7 +105,7 @@ public class BattleReportShip {
     private final static double FE_FACTOR_PZ = 0.150401;
     private final static double LM_FACTOR_PZ = 0.084333;
     private final static double SM_FACTOR_PZ = 0.054408;
-    private final static double REPAIR_TIME_FACTOR_PZ = 18.0;
+    private final static double REPAIR_TIME_FACTOR_PZ = 18.0; // in pz / seconds
     
     
     
