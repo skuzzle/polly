@@ -1,4 +1,4 @@
-package polly.rx.http;
+package polly.rx.http.battlereports;
 
 import java.util.List;
 

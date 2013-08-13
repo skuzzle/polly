@@ -1,4 +1,4 @@
-package polly.rx.http;
+package polly.rx.http.battlereports;
 
 import polly.rx.core.FleetDBManager;
 import polly.rx.entities.BattleReport;

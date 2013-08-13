@@ -29,7 +29,7 @@ import polly.rx.core.SumQuery;
 @NamedQueries({
     @NamedQuery(
         name = "ALL_REPORTS",
-        query= "SELECT rp FROM BattleReport rp"
+        query= "SELECT rp FROM BattleReport rp ORDER BY rp.date DESC"
     ),
     @NamedQuery(
         name = "UNIQUE_CHECK",
@@ -46,20 +46,20 @@ import polly.rx.core.SumQuery;
     @NamedQuery(
         name = "WITH_NAME",
         query = "SELECT rp FROM BattleReport rp WHERE rp.attackerVenadName = ?1 OR " +
-            "rp.defenderVenadName = ?1"
+            "rp.defenderVenadName = ?1 ORDER BY rp.date DESC"
     ),
     @NamedQuery(
         name = "WITH_CLAN",
         query = "SELECT rp FROM BattleReport rp WHERE rp.attackerClan = ?1 OR " +
-            "rp.defenderClan = ?1"
+            "rp.defenderClan = ?1  ORDER BY rp.date DESC"
     ),
     @NamedQuery(
         name = "BY_LOCATION",
-        query = "SELECT rp FROM BattleReport rp WHERE rp.quadrant = ?1"
+        query = "SELECT rp FROM BattleReport rp WHERE rp.quadrant = ?1 ORDER BY rp.date DESC"
     ),
     @NamedQuery(
         name = "BY_USER_ID",
-        query = "SELECT rp FROM BattleReport rp WHERE rp.submitterId = ?1"
+        query = "SELECT rp FROM BattleReport rp WHERE rp.submitterId = ?1 ORDER BY rp.date DESC"
     ),
     @NamedQuery(
         name = "REPORT_COUNT",

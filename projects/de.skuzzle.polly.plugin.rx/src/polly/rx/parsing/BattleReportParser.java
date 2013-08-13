@@ -106,7 +106,7 @@ public class BattleReportParser {
         try {
             date = getDateFormat().parse(it.next());
         } catch (Exception e) {
-            throw new ParseException();
+            throw new ParseException("invalid date: " + it.previous());
         }
         
         // KB drop
@@ -130,7 +130,7 @@ public class BattleReportParser {
         String tmp = it.next();
         Matcher where = WHERE_PATTERN.matcher(tmp);
         if (!where.find()) {
-            throw new ParseException();
+            throw new ParseException("Invalid Quadrant specification: " + tmp);
         }
         
         String quadrant = RegexUtils.substr(tmp, where, QUADRANT_GROUP);
@@ -147,7 +147,7 @@ public class BattleReportParser {
         tmp = kbheader.toString();
         Matcher header = HEADER_PATTERN.matcher(tmp);
         if (!header.find()) {
-            throw new ParseException();
+            throw new ParseException("Invalid header");
         }
         BattleTactic tactic = BattleTactic.parseTactic(
             RegexUtils.substr(tmp, header, TACTIC_GROUP));
@@ -166,7 +166,7 @@ public class BattleReportParser {
         tmp = it.next();
         Matcher fleet = FLEET_NAME_PATTERN.matcher(tmp);
         if (!fleet.find()) {
-            throw new ParseException();
+            throw new ParseException("Expected attacker fleet name: " + tmp);
         }
         
         String attackerVenad = RegexUtils.substr(tmp, fleet, VENAD_NAME_GROUP);
@@ -188,7 +188,7 @@ public class BattleReportParser {
         tmp = it.next();
         fleet = FLEET_NAME_PATTERN.matcher(tmp);
         if (!fleet.find()) {
-            throw new ParseException();
+            throw new ParseException("Expected defender fleet name:" + tmp);
         }
         String defenderVenad = RegexUtils.substr(tmp, fleet, VENAD_NAME_GROUP);
         String defenderFleetName = RegexUtils.substr(tmp, fleet, FLEET_NAME_GROUP);
@@ -201,7 +201,7 @@ public class BattleReportParser {
         List<BattleReportShip> attackerShips = parseShips(b.toString());
         
         if (attackerShips.isEmpty()) {
-            throw new ParseException();
+            throw new ParseException("No attacker ships");
         }
         
         b = new StringBuilder();
@@ -212,7 +212,7 @@ public class BattleReportParser {
         List<BattleReportShip> defenderShips = parseShips(b.toString());
         
         if (defenderShips.isEmpty()) {
-            throw new ParseException();
+            throw new ParseException("No defender ships");
         }
         
         return new BattleReport(submitter.getId(), quadrant, x, y, drops, artifact, date, 

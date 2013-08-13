@@ -1,4 +1,4 @@
-package polly.rx.http;
+package polly.rx.http.battlereports;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -6,6 +6,22 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import polly.rx.core.FleetDBManager;
+import polly.rx.core.filter.AnyDayFilter;
+import polly.rx.core.filter.AnyVenadFilter;
+import polly.rx.core.filter.AttackerClanFilter;
+import polly.rx.core.filter.AttackerFilter;
+import polly.rx.core.filter.BattleReportFilter;
+import polly.rx.core.filter.BattleReportFilterSettings;
+import polly.rx.core.filter.DefenderClanFilter;
+import polly.rx.core.filter.DefenderFilter;
+import polly.rx.core.filter.HasArtifactFilter;
+import polly.rx.core.filter.IdListFilter;
+import polly.rx.core.filter.LocationFilter;
+import polly.rx.core.filter.TacticFilter;
+import polly.rx.entities.BattleReport;
+import polly.rx.entities.BattleTactic;
+import polly.rx.http.TemplateContextHelper;
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
@@ -15,40 +31,18 @@ import de.skuzzle.polly.sdk.http.HttpSession;
 import de.skuzzle.polly.sdk.http.HttpTemplateContext;
 import de.skuzzle.polly.sdk.http.HttpTemplateException;
 import de.skuzzle.polly.sdk.http.HttpTemplateSortHelper;
-import de.skuzzle.polly.sdk.http.SimpleMultiPageView;
-import polly.rx.core.FleetDBManager;
-import polly.rx.core.filter.AnyVenadFilter;
-import polly.rx.core.filter.BattleReportFilterSettings;
-import polly.rx.core.filter.BattleReportFilter;
-import polly.rx.core.filter.AnyDayFilter;
-import polly.rx.core.filter.AttackerFilter;
-import polly.rx.core.filter.DefenderFilter;
-import polly.rx.core.filter.AttackerClanFilter;
-import polly.rx.core.filter.DefenderClanFilter;
-import polly.rx.core.filter.LocationFilter;
-import polly.rx.core.filter.HasArtifactFilter;
-import polly.rx.core.filter.TacticFilter;
-import polly.rx.core.filter.IdListFilter;
-
-import polly.rx.entities.BattleReport;
-import polly.rx.entities.BattleTactic;
-import polly.rx.http.battlereports.BattleReportDataSource;
 
 
 
-public class BattleReportFilterHttpAction extends SimpleMultiPageView<BattleReport> {
+public class BattleReportFilterHttpAction extends FilteredBattleReportView {
     
     
     private String dateFormat;
-    private FleetDBManager fleetDBManager;
-    
     
 
     public BattleReportFilterHttpAction(MyPolly myPolly, FleetDBManager fleetDBManager) {
-        super("/filter_reports", myPolly, new BattleReportDataSource(fleetDBManager));
+        super("/filter_reports", myPolly, fleetDBManager);
         this.requirePermission(FleetDBManager.VIEW_BATTLE_REPORT_PERMISSION);
-        this.fleetDBManager = fleetDBManager;
-        
         
         Configuration cfg = myPolly.configuration().getRootConfiguration();
         this.dateFormat = cfg.readString(Configuration.DATE_FORMAT);

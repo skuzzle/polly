@@ -1,10 +1,17 @@
 <p>
-    <a href="$currentPage?page=firstPage#$anchor" >&lt;&lt;</a>
-    <a href="$currentPage?page=absPage&idx=$prevIdx#$anchor">&lt;</a>
+#if ($isFirstPage)
+    &lt;&lt; &lt; 
+#else
+    <a href="$currentPage?page=firstPage#$anchor" >&lt;&lt;</a> 
+    <a href="$currentPage?page=absPage&idx=$prevIdx#$anchor">&lt;</a>   
+#end
     Page $pageIdx of $pageCount
+#if ($isLastPage)
+    &gt; &gt;&gt;
+#else
     <a href="$currentPage?page=absPage&idx=$pageIdx#$anchor">&gt;</a>
     <a href="$currentPage?page=lastPage#$anchor">&gt;&gt;</a>
-    
+#end
     Page size: 
     <a href="$currentPage?setPageSize=20">20</a>
     <a href="$currentPage?setPageSize=40">40</a>

@@ -31,6 +31,12 @@ public abstract class SimpleMultiPageView<T> extends HttpAction {
     
     
     
+    protected String getSessionPageKey() {
+        return this.getName();
+    }
+    
+    
+    
     protected abstract HttpTemplateContext createContext(HttpEvent e) 
         throws HttpTemplateException, InsufficientRightsException;
     
@@ -42,7 +48,7 @@ public abstract class SimpleMultiPageView<T> extends HttpAction {
         
         final HttpTemplateContext c = this.createContext(e);
         
-        final String pageSizeKey = this.getName() + "$pageSize";
+        final String pageSizeKey = this.getSessionPageKey() + "$pageSize";
         int pageSize;
         if (e.getSession().get(pageSizeKey) == null) {
             pageSize = DEFAULT_PAGE_SIZE;
@@ -65,7 +71,7 @@ public abstract class SimpleMultiPageView<T> extends HttpAction {
         final int size = this.source.getDataCount();
         final int pc = (int) Math.ceil((float) size / pageSize);
         
-        final String currentPageKey = this.getName() + "$currentPage";
+        final String currentPageKey = this.getSessionPageKey() + "$currentPage";
         
         int currentPage;
         if (e.getSession().get(currentPageKey) == null) {
