@@ -1,5 +1,6 @@
 package de.skuzzle.polly.sdk.http;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.skuzzle.polly.sdk.MyPolly;
@@ -58,7 +59,7 @@ public abstract class SimpleMultiPageView<T> extends HttpAction {
         
         // check for page size modifiaction
         final String pageSizeAction = e.getProperty("setPageSize");
-        if ("showAll".equals(pageSizeAction)) {
+        if ("ShowAll".equals(pageSizeAction)) {
             pageSize = this.source.getDataCount();
         } else if (pageSizeAction != null) {
             pageSize = Integer.parseInt(pageSizeAction);
@@ -100,6 +101,9 @@ public abstract class SimpleMultiPageView<T> extends HttpAction {
             }
         }
         
+        // current page may not be greater than max pages
+        currentPage = Math.min(currentPage, pc - 1);
+        
         e.getSession().putDtata(currentPageKey, currentPage);
         
         final int firstIdx = currentPage * pageSize;
@@ -110,6 +114,8 @@ public abstract class SimpleMultiPageView<T> extends HttpAction {
         c.put("pageIdx", currentPage + 1);
         c.put("data", sublist);
         c.put("pageCount", pc);
+        c.put("pageSize", pageSize);
+        c.put("pageSizes", this.pageSizes(20, 100));
         c.put("isFirstPage", currentPage == 0);
         c.put("isLastPage", currentPage == pc - 1);
         
@@ -117,6 +123,16 @@ public abstract class SimpleMultiPageView<T> extends HttpAction {
         return c;
     }
     
+    
+    
+    private List<String> pageSizes(int delta, int max) {
+        final List<String> result = new ArrayList<>();
+        for(int i = delta; i <= max; i += delta) {
+            result.add("" + i);
+        }
+        result.add("ShowAll");
+        return result;
+    }
     
     
     protected void postProcess(List<T> sublist, HttpTemplateContext c, HttpEvent e) 
