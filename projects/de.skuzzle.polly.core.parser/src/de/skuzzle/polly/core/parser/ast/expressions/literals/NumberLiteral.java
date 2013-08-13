@@ -195,6 +195,17 @@ public class NumberLiteral extends Literal {
     
     
     @Override
+    public Literal castTo(Type type) throws ASTTraversalException {
+        if (type.equals(Type.TIMESPAN)) {
+            // treat this number as milliseconds
+            return new TimespanLiteral(this.getPosition(), (int)(this.getValue() / 1000));
+        }
+        return super.castTo(type);
+    }
+    
+    
+    
+    @Override
     public String toString() {
         return Double.toString(this.value);
     }
