@@ -6,6 +6,7 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -41,6 +42,9 @@ public class ScoreBoardManager {
         ((DecimalFormat) NUMBER_FORMAT).applyPattern("0.00");
     }
 
+    
+    private final static int AVERAGE_ELEMENTS = 10;
+    
     private PersistenceManager persistence;
     
     
@@ -65,8 +69,6 @@ public class ScoreBoardManager {
         }
         Collections.sort(all, ScoreBoardEntry.BY_DATE);
         
-        //final YScale pointScale = new YScale("Points", 6000, 30000, 2000);
-        
         final ImageGraph g = new ImageGraph(850, 500);
         g.setxLabels(this.createXLabels(maxMonths));
         g.setDrawGridVertical(true);
@@ -74,12 +76,22 @@ public class ScoreBoardManager {
         
         final PointSet points = new PointSet(Color.RED);
         points.setConnect(true);
-        points.setStrength(1.5f);
+        points.setStrength(2f);
         
         final PointSet rank = new PointSet(new Color(0, 0, 255, 128));
         rank.setConnect(true);
+        rank.setStrength(2f);
         
-        final Point lowest = this.createPointSet(all, maxMonths, points, rank);
+        final PointSet averagePoints = new PointSet(Color.RED);
+        averagePoints.setConnect(true);
+        averagePoints.setName("Avg. points over prev. " + AVERAGE_ELEMENTS + " entries");
+        
+        final PointSet averageRank = new PointSet(new Color(0, 0, 255, 128));
+        averageRank.setConnect(true);
+        averageRank.setName("Avg. rank over prev. " + AVERAGE_ELEMENTS + " entries");
+        
+        final Point lowest = this.createPointSet(all, maxMonths, points, rank, 
+            averagePoints, averageRank);
         
         YScale pointScale = points.calculateScale("Points", 10);
         if (pointScale == null) {
@@ -89,13 +101,18 @@ public class ScoreBoardManager {
         if (rankScale == null) {
             rankScale = new YScale("Rank", 0, 1000, 10);
         }
+        
         points.setScale(pointScale);
+        averagePoints.setScale(pointScale);
         rank.setScale(rankScale);
+        averageRank.setScale(rankScale);
         
         points.setName("Points");
         
         g.addPointSet(points);
         g.addPointSet(rank);
+//        g.addPointSet(averagePoints);
+//        g.addPointSet(averageRank);
         
         g.setLeftScale(pointScale);
         g.setRightScale(rankScale);
@@ -129,7 +146,8 @@ public class ScoreBoardManager {
             final Color next = COLORS[i];
             final PointSet left = new PointSet(next);
             left.setConnect(true);
-            this.createPointSet(entries, maxMonths, left, new PointSet());
+            this.createPointSet(entries, maxMonths, left, new PointSet(), new PointSet(), 
+                new PointSet());
             common.addAll(left);
             g.addPointSet(left);
         }
@@ -167,7 +185,8 @@ public class ScoreBoardManager {
     
     
     private Point createPointSet(List<ScoreBoardEntry> entries,
-            int maxMonths, PointSet left, PointSet right) {
+            int maxMonths, PointSet left, PointSet right, PointSet averagePoints, 
+            PointSet averageRank) {
         
         if (entries.size() < 2) {
             return null;
@@ -184,6 +203,8 @@ public class ScoreBoardManager {
         Point greatestLowerZeroRank = null;
         Point lowestGreaterZeroRank = null;
         
+        final ArrayDeque<Point> pointQueue = new ArrayDeque<>(AVERAGE_ELEMENTS);
+        
         for (final ScoreBoardEntry entry : entries) {
             final int monthsAgo = this.getMonthsAgo(today, entry.getDate(), maxMonths);
             
@@ -195,6 +216,7 @@ public class ScoreBoardManager {
             final Point rank = new NamedPoint(
                 "Date: " + df.format(entry.getDate()) + ", Rank: " + entry.getRank(),
                 x, entry.getRank(), PointType.NONE);
+            
             
             if (x < 0.0 && (greatestLowerZeroPoints == null || greatestLowerZeroPoints.getX() < x)) {
                 greatestLowerZeroPoints = points;
@@ -209,7 +231,6 @@ public class ScoreBoardManager {
                 // do not add points that are older than X_LABELS months
                 continue;
             }
-            
             right.add(rank);
             left.add(points);
         }
@@ -230,9 +251,39 @@ public class ScoreBoardManager {
             right.add(new Point(0, y, PointType.DOT));
         }
         
+        for (final Point p : left) {
+            if (pointQueue.size() == AVERAGE_ELEMENTS) {
+                Point avg = this.calcAverage(pointQueue, pointQueue.size());
+                averagePoints.add(avg);
+                pointQueue.poll();
+            }
+            pointQueue.add(p);
+        }
+        pointQueue.clear();
+        for (final Point p : right) {
+            if (pointQueue.size() == AVERAGE_ELEMENTS) {
+                Point avg = this.calcAverage(pointQueue, pointQueue.size());
+                averageRank.add(avg);
+                pointQueue.poll();
+            }
+            pointQueue.add(p);
+        }
+        
         left.setName(oldest.getVenadName());
         right.setName("Rank");
         return lowestGreaterZeroPoints;
+    }
+    
+    
+    
+    private Point calcAverage(Iterable<Point> iterable, int size) {
+        double xsum = 0;
+        double ysum = 0;
+        for (Point p : iterable) {
+            xsum = p.getX();
+            ysum += p.getY();
+        }
+        return new Point(xsum, ysum / size, PointType.NONE);
     }
     
     
