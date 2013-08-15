@@ -1,5 +1,7 @@
 package polly.rx.http.battlereports;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +24,8 @@ public class AddBattleReportAction extends HttpAction {
 
     private final FleetDBManager fleetDBManager;
     private final static int PZ_WARNING = 2500;
+    private final static int KW_WARNING = 2500;
+    
     
     
     public AddBattleReportAction(MyPolly myPolly, FleetDBManager fleetDBManager) {
@@ -38,7 +42,11 @@ public class AddBattleReportAction extends HttpAction {
         final HttpTemplateContext c = new HttpTemplateContext("pages/add_report.html");
         final String action = e.getProperty("action");
         
+        final NumberFormat nf = new DecimalFormat("#");
+        
         c.put("warning", PZ_WARNING);
+        c.put("kwWarning", KW_WARNING);
+        
         if (action != null && action.equals("postReport")) {
             if (!this.getMyPolly().roles().hasPermission(e.getSession().getUser(), 
                     FleetDBManager.ADD_BATTLE_REPORT_PERMISSION)) {
@@ -54,31 +62,49 @@ public class AddBattleReportAction extends HttpAction {
                 this.fleetDBManager.addBattleReport(br);
                 
                 
-                final String w = e.getProperty("warning");
-                int warning = PZ_WARNING;
+                String w = e.getProperty("warning");
+                int pzWarning = PZ_WARNING;
                 if (w != null) {
-                    warning = Integer.parseInt(w);
+                    pzWarning = Integer.parseInt(w);
                 }
                 
-                final String fleetName = br.getTactic() == BattleTactic.ALIEN
-                    ? br.getDefenderFleetName()
-                    : br.getAttackerFleetName();
+                w = e.getProperty("kwWarning");
+                int kwWarning = KW_WARNING;
+                if (w != null) {
+                    kwWarning = Integer.parseInt(w);
+                }
+                
+                
+                final String fleetName;
+                final List<BattleReportShip> source;
+                final double ownKw;
+                final double opponentKw;
+                if (br.getTactic() == BattleTactic.ALIEN) {
+                    fleetName = br.getDefenderFleetName();
+                    source = br.getDefenderShips();
+                    ownKw = br.getDefenderKw();
+                    opponentKw = br.getAttackerKw();
+                } else {
+                    fleetName = br.getAttackerFleetName();
+                    source = br.getAttackerShips();
+                    opponentKw = br.getDefenderKw();
+                    ownKw = br.getAttackerKw();
+                }
                     
                 final List<BattleReportShip> damaged = new ArrayList<>();
-                final List<BattleReportShip> source = 
-                    br.getTactic() == BattleTactic.ALIEN 
-                    ? br.getDefenderShips() 
-                    : br.getAttackerShips();
-                    
+                final double kwDiff = ownKw - opponentKw;
                 for (final BattleReportShip ship : source) {
-                    if (ship.getCurrentPz() <= warning) {
+                    if (ship.getCurrentPz() <= pzWarning) {
                         damaged.add(ship);
                     }
                 }
                 
+                c.put("warnKw", kwDiff <= kwWarning);
+                c.put("kwWarning", kwWarning);
+                c.put("kwDiff", nf.format(kwDiff));
                 c.put("fleetName", fleetName);
                 c.put("damaged", damaged);
-                c.put("warning", warning);
+                c.put("warning", pzWarning);
             } catch (ParseException e1) {
                 e.throwTemplateException(e1);
             } catch (DatabaseException e1) {
