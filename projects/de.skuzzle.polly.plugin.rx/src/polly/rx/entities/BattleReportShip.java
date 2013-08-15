@@ -47,6 +47,9 @@ public class BattleReportShip {
     
     private int shieldDamage;
     
+    @Transient
+    private transient int currentPz;
+    
     private int pzDamage;
     
     private int structureDamage;
@@ -64,14 +67,14 @@ public class BattleReportShip {
     
     
     public BattleReportShip() {
-        this(0, "", "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        this(0, "", "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     }
     
     
 
     public BattleReportShip(int rxId, String name, String capi, int attack,
         int shields, int pz, int structure, int minCrew, int maxCrew,
-        int systems, int capiXp, int crewXp, int shieldDamage, int pzDamage,
+        int systems, int capiXp, int crewXp, int shieldDamage, int currentPz, int pzDamage,
         int structureDamage, int systemsDamage, int hp, int hpDamage, int awDamage, 
         int crewDamage) {
         
@@ -81,6 +84,7 @@ public class BattleReportShip {
         this.capi = capi;
         this.attack = attack;
         this.shields = shields;
+        this.currentPz = currentPz;
         this.pz = pz;
         this.structure = structure;
         this.minCrew = minCrew;
@@ -140,6 +144,12 @@ public class BattleReportShip {
         return this.repairTimeOffset;
     }
 
+    
+    
+    public int getCurrentPz() {
+        return this.currentPz;
+    }
+    
     
     
     public int getRxId() {

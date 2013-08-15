@@ -1,6 +1,24 @@
 <h2>Post Battlereport</h2>
 <form action="add_report" method="POST">
+    <label for="warning">Low pz warning:</label>
+    <input type="text" value="$warning" name="warning"/>
 	<textarea name="paste" style="width:100%;height:200px"></textarea>
 	<input type="hidden" name="action" value="postReport"/><br/>
 	<input type="submit" value="Submit" class="button"/>
 </form>
+
+#if ($damaged)
+<h3>PZ Warnings for $fleetName:</h3>
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Current PZ</th>
+    </tr>
+    #foreach ($ship in $damaged)
+    <tr>
+        <td>$ship.getName()</td>
+        <td>$ship.getCurrentPz() / $ship.getPz()</td>
+    </tr>
+    #end
+</table>
+#end

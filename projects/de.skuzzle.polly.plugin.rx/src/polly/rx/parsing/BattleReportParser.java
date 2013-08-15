@@ -68,6 +68,7 @@ public class BattleReportParser {
     private final static int MAX_CREW_GROUP = 17;
     private final static int CREW_DMG_GROUP = 19;
     private final static int XP_CREW_GROUP = 20;
+    private final static int CURRENT_PZ_GROUP = 21;
     private final static int PZ_GROUP = 22;
     private final static int PZ_DMG_GROUP = 24;
     private final static int SYSTEMS_GROUP = 26;
@@ -249,6 +250,7 @@ public class BattleReportParser {
             int xpCapi = RegexUtils.subint(paste, ships, XP_CAPI_GROUP);
             int xpCrew = RegexUtils.subint(paste, ships, XP_CREW_GROUP);
             int pz = RegexUtils.subint(paste, ships, PZ_GROUP);
+            int currentPz = RegexUtils.subint(paste, ships, CURRENT_PZ_GROUP);
             int pzDmg = RegexUtils.subint(paste, ships, PZ_DMG_GROUP);
             int systems = RegexUtils.subint(paste, ships, SYSTEMS_GROUP);
             int systemsDmg = RegexUtils.subint(paste, ships, SYSTEMS_DMG_GROUP);
@@ -258,7 +260,7 @@ public class BattleReportParser {
             
             BattleReportShip ship = new BattleReportShip(rxId, shipName, capiName, aw, 
                 shields, pz, structure, minCrew, maxCrew, systems, xpCapi, xpCrew, 
-                shieldsDmg, pzDmg, structureDmg, systemsDmg, hp, hpDmg, awDmg, crewDmg);
+                shieldsDmg, currentPz, pzDmg, structureDmg, systemsDmg, hp, hpDmg, awDmg, crewDmg);
             System.out.println(ship);
             result.add(ship);
         }
