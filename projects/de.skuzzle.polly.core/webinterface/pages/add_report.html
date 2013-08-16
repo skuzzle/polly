@@ -13,7 +13,11 @@
 <h3>Caution: KW difference: $kwDiff &lt;= $kwWarning</h3>
 #end
 
-#set ($empty = !$damaged.isEmpty())
+#if ($minPz)
+<p>Minimum PZ value: $minPz</p>
+#end
+
+#set ($empty = $damged && !$damaged.isEmpty())
 #if ($empty)
 <h3>PZ Warnings for $fleetName:</h3>
 <table>

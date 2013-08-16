@@ -77,28 +77,25 @@ public class AddBattleReportAction extends HttpAction {
                 
                 final String fleetName;
                 final List<BattleReportShip> source;
-                final double ownKw;
-                final double opponentKw;
                 if (br.getTactic() == BattleTactic.ALIEN) {
                     fleetName = br.getDefenderFleetName();
                     source = br.getDefenderShips();
-                    ownKw = br.getDefenderKw();
-                    opponentKw = br.getAttackerKw();
                 } else {
                     fleetName = br.getAttackerFleetName();
                     source = br.getAttackerShips();
-                    opponentKw = br.getDefenderKw();
-                    ownKw = br.getAttackerKw();
                 }
                     
                 final List<BattleReportShip> damaged = new ArrayList<>();
-                final double kwDiff = ownKw - opponentKw;
+                final double kwDiff = Math.abs(br.getAttackerKw() - br.getDefenderKw());
+                int minPz = Integer.MAX_VALUE;
                 for (final BattleReportShip ship : source) {
+                    minPz = Math.min(minPz, ship.getCurrentPz());
                     if (ship.getCurrentPz() <= pzWarning) {
                         damaged.add(ship);
                     }
                 }
                 
+                c.put("minPz", minPz);
                 c.put("warnKw", kwDiff <= kwWarning);
                 c.put("kwWarning", kwWarning);
                 c.put("kwDiff", nf.format(kwDiff));
