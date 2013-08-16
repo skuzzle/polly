@@ -41,15 +41,18 @@ class HttpEventImpl implements HttpEvent {
     private final Map<String, String> cookies;
     private final Map<String, String> get;
     private final Map<String, String> post;
+    private final RequestMode mode;
     private Map<String, String> combinedParameters;
     private Map<String, String> postGet;
     
     
     
-    public HttpEventImpl(HttpServer source, HttpExchange t, HttpSession session, 
-        Map<String, String> cookies, Map<String, String> get, Map<String, String> post) {
+    public HttpEventImpl(HttpServer source, RequestMode mode, HttpExchange t, 
+        HttpSession session, Map<String, String> cookies, Map<String, String> get, 
+        Map<String, String> post) {
         
         this.source = source;
+        this.mode = mode;
         this.requestUri = t.getRequestURI();
         this.clientIp = t.getRemoteAddress();
         this.session = session;
@@ -64,6 +67,13 @@ class HttpEventImpl implements HttpEvent {
     @Override
     public HttpServer getSource() {
         return this.source;
+    }
+    
+    
+    
+    @Override
+    public RequestMode getMode() {
+        return this.mode;
     }
     
     
@@ -110,6 +120,18 @@ class HttpEventImpl implements HttpEvent {
                 this.combinedParameters);
         }
         return this.combinedParameters;
+        }
+    }
+    
+    
+    
+    @Override
+    public Map<String, String> parameterMap(RequestMode mode) {
+        switch (mode) {
+        case GET: return this.getMap();
+        case POST: return this.postMap();
+        default:
+            throw new IllegalStateException("unknown mode");
         }
     }
     

@@ -38,6 +38,7 @@ import com.sun.net.httpserver.HttpHandler;
 
 import de.skuzzle.polly.http.api.HttpCookie;
 import de.skuzzle.polly.http.api.HttpEvent;
+import de.skuzzle.polly.http.api.HttpEvent.RequestMode;
 import de.skuzzle.polly.http.api.HttpEventHandler;
 import de.skuzzle.polly.http.api.HttpException;
 import de.skuzzle.polly.http.api.HttpServer;
@@ -134,6 +135,7 @@ class BasicEventHandler implements HttpHandler {
         final Map<String, String> get = new HashMap<>();
         final Map<String, String> post = new HashMap<>();
         
+        
         // extract GET parameters
         if (requestUri.contains("?")) {
             final String[] parts = requestUri.split("\\?", 2);
@@ -163,7 +165,15 @@ class BasicEventHandler implements HttpHandler {
                 this.server.getSessionType());
         }
         
-        final HttpEvent event = new HttpEventImpl(this.server, t, session, cookies, 
+        final RequestMode mode;
+        final String m = t.getRequestMethod().toLowerCase();
+        if (m.equals("get")) {
+            mode = RequestMode.GET;
+        } else {
+            mode = RequestMode.POST;
+        }
+        
+        final HttpEvent event = new HttpEventImpl(this.server, mode, t, session, cookies, 
             get, post);
         return event;
     }

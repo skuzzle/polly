@@ -36,6 +36,16 @@ import java.util.Map;
  * @see HttpServer
  */
 public interface HttpEvent {
+    
+    /**
+     * Simple HTTP request mode.
+     * @author Simon Taddiken
+     */
+    public enum RequestMode {
+        GET, POST;
+    }
+    
+    
 
     /**
      * Gets the {@link HttpServer} which received the event.
@@ -43,6 +53,13 @@ public interface HttpEvent {
      * @return The HttpServer.
      */
     public HttpServer getSource();
+    
+    /**
+     * Gets the mode of this event.
+     * 
+     * @return Whether this is a POST or GET event.
+     */
+    public RequestMode getMode();
     
     /**
      * Gets the requested URI.
@@ -92,7 +109,16 @@ public interface HttpEvent {
     public Map<String, String> parameterMap();
     
     /**
-     * Gets a map view of all provided POST parameters of this request. Note the the
+     * Gets a map view of either the post or get parameters in this request. Note that 
+     * the result is read-only.
+     * 
+     * @param mode Request type of parameters to retrieve.
+     * @return Read-only map of parameters.
+     */
+    public Map<String, String> parameterMap(RequestMode mode);
+    
+    /**
+     * Gets a map view of all provided POST parameters of this request. Note that the
      * result is read-only.
      * 
      * @return Read-only map of all POST parameters.
@@ -100,7 +126,7 @@ public interface HttpEvent {
     public Map<String, String> postMap();
     
     /**
-     * Gets a map view of all provided GET parameters of this request. Note the the
+     * Gets a map view of all provided GET parameters of this request. Note that the
      * result is read-only.
      * 
      * @return Read-only map of all GET parameters.
