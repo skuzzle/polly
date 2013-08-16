@@ -18,10 +18,12 @@
  */
 package de.skuzzle.polly.http.internal;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +38,7 @@ import de.skuzzle.polly.http.api.answers.HttpAnswerHandler;
 import de.skuzzle.polly.http.api.answers.HttpTemplateAnswer;
 
 
-class TemplateAnswerHandler implements HttpAnswerHandler {
+class TemplateAnswerHandler extends HttpAnswerHandler {
 
     @Override
     public void handleAnswer(HttpAnswer answer, HttpEvent e, OutputStream out) 
@@ -57,8 +59,9 @@ class TemplateAnswerHandler implements HttpAnswerHandler {
         template.getAnswer(mappings);
         
         final VelocityContext c = new VelocityContext(mappings);
-        final OutputStreamWriter w = new OutputStreamWriter(out);
+        final Writer w = new BufferedWriter(new OutputStreamWriter(out));
         temp.merge(c, w);
+        w.flush();
     }
 
 }

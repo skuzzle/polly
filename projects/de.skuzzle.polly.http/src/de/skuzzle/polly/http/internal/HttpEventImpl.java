@@ -36,6 +36,7 @@ class HttpEventImpl implements HttpEvent {
 
     private final HttpServer source;
     private final URI requestUri;
+    private final String plainUri;
     private final InetSocketAddress clientIp;
     private final HttpSession session;
     private final Map<String, String> cookies;
@@ -48,12 +49,13 @@ class HttpEventImpl implements HttpEvent {
     
     
     public HttpEventImpl(HttpServer source, RequestMode mode, HttpExchange t, 
-        HttpSession session, Map<String, String> cookies, Map<String, String> get, 
-        Map<String, String> post) {
+        String plainUri, HttpSession session, Map<String, String> cookies, 
+        Map<String, String> get, Map<String, String> post) {
         
         this.source = source;
         this.mode = mode;
         this.requestUri = t.getRequestURI();
+        this.plainUri = plainUri;
         this.clientIp = t.getRemoteAddress();
         this.session = session;
         
@@ -83,6 +85,13 @@ class HttpEventImpl implements HttpEvent {
         return this.requestUri;
     }
 
+    
+    
+    @Override
+    public String getPlainUri() {
+        return this.plainUri;
+    }
+    
     
     
     @Override

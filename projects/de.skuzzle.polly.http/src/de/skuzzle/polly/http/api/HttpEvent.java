@@ -69,6 +69,13 @@ public interface HttpEvent {
     public URI getRequestURI();
     
     /**
+     * Gets the requested URI as String and without any GET parameters.
+     * 
+     * @return The requested URI without get parameters.
+     */
+    public String getPlainUri();
+    
+    /**
      * Gets the ip address of the client that sent this request.
      * 
      * @return The client's ip address.

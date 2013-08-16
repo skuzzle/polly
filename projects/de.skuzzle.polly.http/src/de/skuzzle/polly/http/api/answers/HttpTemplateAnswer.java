@@ -36,8 +36,14 @@ import java.util.Map;
  * 
  * @author Simon Taddiken
  */
-public interface HttpTemplateAnswer extends HttpAnswer {
+public abstract class HttpTemplateAnswer extends AbstractHttpAnswer {
 
+    public HttpTemplateAnswer(int responseCode) {
+        super(responseCode);
+    }
+
+    
+    
     /**
      * Returns a relative path to the velocity template file that should be rendered. The 
      * returned path must be relative to any of the {@link HttpServer HttpServer's} web 
@@ -45,7 +51,7 @@ public interface HttpTemplateAnswer extends HttpAnswer {
      * 
      * @return relative template file path.
      */
-    public String getRelativeTemplatePath();
+    public abstract String getRelativeTemplatePath();
     
     /**
      * This method must fill the provided map with own velocity context mappings for the 
@@ -53,5 +59,5 @@ public interface HttpTemplateAnswer extends HttpAnswer {
      * 
      * @param mappings Result map for velocity context.
      */
-    public void getAnswer(Map<String, Object> mappings);
+    public abstract void getAnswer(Map<String, Object> mappings);
 }

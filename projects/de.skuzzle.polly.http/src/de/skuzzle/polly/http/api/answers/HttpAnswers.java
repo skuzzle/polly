@@ -18,6 +18,7 @@
  */
 package de.skuzzle.polly.http.api.answers;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -25,12 +26,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.io.Writer;
+import java.util.HashMap;
 import java.util.Map;
 
-import de.skuzzle.polly.http.api.HttpCookie;
 import de.skuzzle.polly.http.api.HttpServer;
 
 
@@ -54,28 +53,12 @@ public final class HttpAnswers {
      * @return An answer that sends back the specified string. 
      */
     public final static HttpAnswer createStringAnswer(final String message) {
-        return new HttpBinaryAnswer() {
-            
-            final List<HttpCookie> cookies = new ArrayList<>();
-            
-            @Override
-            public int getResponseCode() {
-                return 200;
-            }
-            
-            
-            
-            @Override
-            public Collection<HttpCookie> getCookies() {
-                return this.cookies;
-            }
-            
-            
-            
+        return new HttpBinaryAnswer(200) {
             @Override
             public void getAnswer(OutputStream out) throws IOException {
-                final OutputStreamWriter w = new OutputStreamWriter(out);
+                final Writer w = new BufferedWriter(new OutputStreamWriter(out));
                 w.write(message);
+                w.flush();
             }
         };
     }
@@ -101,24 +84,7 @@ public final class HttpAnswers {
         // check whether file exists
         final File dest = server.resolveRelativeFile(relativePath);
         
-        return new HttpBinaryAnswer() {
-            final List<HttpCookie> cookies = new ArrayList<>();
-            
-            
-            @Override
-            public int getResponseCode() {
-                return 200;
-            }
-            
-            
-            
-            @Override
-            public Collection<HttpCookie> getCookies() {
-                return this.cookies;
-            }
-            
-            
-            
+        return new HttpBinaryAnswer(200) {
             @Override
             public void getAnswer(OutputStream out) throws IOException {
                 InputStream in = null;
@@ -139,6 +105,22 @@ public final class HttpAnswers {
             }
         };
     }
+    
+    
+    
+    public final static HttpAnswer createTemplateAnswer(String relativeTemplatePath, 
+            Object...context) {
+        
+        if (context.length % 2 != 0) {
+            throw new IllegalArgumentException("length % 2 != 0");
+        }
+        final Map<String, Object> c = new HashMap<>(context.length);
+        for (int i = 0; i < context.length; i += 2) {
+            c.put((String) context[i], context[i + 1]);
+        }
+        
+        return createTemplateAnswer(relativeTemplatePath, c);
+    }
 
 
 
@@ -146,24 +128,7 @@ public final class HttpAnswers {
             final String relativeTemplatePath, 
             final Map<String, Object> context) {
         
-        return new HttpTemplateAnswer() {
-            
-            private final List<HttpCookie> cookies = new ArrayList<>();
-            
-            
-            @Override
-            public int getResponseCode() {
-                return 200;
-            }
-            
-            
-            
-            @Override
-            public Collection<HttpCookie> getCookies() {
-                return this.cookies;
-            }
-            
-            
+        return new HttpTemplateAnswer(200) {
             
             @Override
             public String getRelativeTemplatePath() {

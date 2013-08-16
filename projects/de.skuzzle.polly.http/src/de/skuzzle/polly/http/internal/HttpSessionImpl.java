@@ -33,7 +33,11 @@ class HttpSessionImpl implements HttpSession {
     private final int type;
     private final Map<String, Object> attached;
     private final TrafficInformation trafficInfo;
+    
+    /** Timestamp at which blocking the session started */
     private long blockStamp;
+    
+    /** Time in ms how long this session should be blocked */
     private long blockTime;
     
     
@@ -51,7 +55,7 @@ class HttpSessionImpl implements HttpSession {
         this.trafficInfo = new TrafficInformationImpl();
         
         // make sure session is initially unblocked
-        this.blockStamp = System.currentTimeMillis() - 1;
+        this.blockStamp = Long.MAX_VALUE;
         this.blockTime = 0;
     }
     

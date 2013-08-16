@@ -43,9 +43,9 @@ import de.skuzzle.polly.http.api.HttpEventHandler;
 import de.skuzzle.polly.http.api.HttpException;
 import de.skuzzle.polly.http.api.HttpServer;
 import de.skuzzle.polly.http.api.HttpSession;
+import de.skuzzle.polly.http.api.answers.DefaultAnswers;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswerHandler;
-import de.skuzzle.polly.http.api.answers.HttpAnswers;
 
 
 
@@ -137,10 +137,16 @@ class BasicEventHandler implements HttpHandler {
         
         
         // extract GET parameters
-        if (requestUri.contains("?")) {
+        final int questIdx = requestUri.indexOf('?');
+        final String plainUri;
+        if (questIdx != -1) {
             final String[] parts = requestUri.split("\\?", 2);
             this.parseParameters(parts[1], get);
+            plainUri = requestUri.substring(0, questIdx);
+        } else {
+            plainUri = requestUri;
         }
+        
         // extract POST parameters
         this.parsePostParameters(t, post);
 
@@ -173,8 +179,8 @@ class BasicEventHandler implements HttpHandler {
             mode = RequestMode.POST;
         }
         
-        final HttpEvent event = new HttpEventImpl(this.server, mode, t, session, cookies, 
-            get, post);
+        final HttpEvent event = new HttpEventImpl(this.server, mode, t, plainUri, 
+            session, cookies, get, post);
         return event;
     }
     
@@ -198,9 +204,8 @@ class BasicEventHandler implements HttpHandler {
         t.setStreams(in, null);
         
         if (session.isBlocked()) {
-            this.handleAnswer(
-                HttpAnswers.createStringAnswer("Your session is temporarely blocked"), 
-                t, httpEvent);
+            this.handleAnswer(DefaultAnswers.SESSION_BLOCKED, t, httpEvent);
+            return;
         }
         
         // handle the event
@@ -219,8 +224,7 @@ class BasicEventHandler implements HttpHandler {
         }
         
         // event could not be handled
-        this.handleAnswer(HttpAnswers.createStringAnswer("File not found"), 
-            t, httpEvent);
+        this.handleAnswer(DefaultAnswers.FILE_NOT_FOUND, t, httpEvent);
     }
 
     
@@ -245,6 +249,8 @@ class BasicEventHandler implements HttpHandler {
                 t.getResponseHeaders().add("Set-Cookie", 
                     this.generateCookieString(answer));
             }
+            
+            t.getResponseHeaders().putAll(answer.getResponseHeaders());
             t.sendResponseHeaders(answer.getResponseCode(), 0);
             
             // set stream to count outgoing traffic
@@ -259,8 +265,9 @@ class BasicEventHandler implements HttpHandler {
             final HttpAnswerHandler handler = this.server.getHandler(answer);
             if (handler == null) {
                 // TODO: react
+                throw new RuntimeException("no handler");
             }
-            handler.handleAnswer(answer, httpEvent, out);
+            handler.handleAnswer(answer, httpEvent, t.getResponseBody());
         } finally {
             t.close();
         }

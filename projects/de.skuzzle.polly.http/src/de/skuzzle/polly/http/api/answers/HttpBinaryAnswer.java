@@ -31,13 +31,19 @@ import java.io.OutputStream;
  * 
  * @author Simon Taddiken
  */
-public interface HttpBinaryAnswer extends HttpAnswer {
+public abstract class HttpBinaryAnswer extends AbstractHttpAnswer {
 
+    public HttpBinaryAnswer(int responseCode) {
+        super(responseCode);
+    }
+
+    
+    
     /**
      * Sends binary data back to the client.
      * 
      * @param out Stream to write into the response body to send data to the client.
      * @throws IOException If writing into the stream fails.
      */
-    public void getAnswer(OutputStream out) throws IOException;
+    public abstract void getAnswer(OutputStream out) throws IOException;
 }

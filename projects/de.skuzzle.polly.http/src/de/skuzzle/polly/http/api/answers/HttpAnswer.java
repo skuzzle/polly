@@ -19,6 +19,8 @@
 package de.skuzzle.polly.http.api.answers;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import de.skuzzle.polly.http.api.HttpCookie;
 
@@ -88,14 +90,21 @@ import de.skuzzle.polly.http.api.HttpCookie;
  * @author Simon Taddiken
  * @see HttpAnswerHandler
  */
-public interface HttpAnswer {
+public abstract class HttpAnswer {
     
     /**
      * Gets the http response code of this answer.
      * 
      * @return The response code.
      */
-    public int getResponseCode();
+    public abstract int getResponseCode();
+    
+    /**
+     * Gets the response header map.
+     * 
+     * @return The response headers to be sent to the client.
+     */
+    public abstract Map<String, List<String>> getResponseHeaders();
     
     /**
      * Gets a collection of {@link HttpCookie cookies} which will be set on the client
@@ -103,5 +112,5 @@ public interface HttpAnswer {
      * 
      * @return Collection of cookies to set at the client.
      */
-    public Collection<HttpCookie> getCookies();
+    public abstract Collection<HttpCookie> getCookies();
 }

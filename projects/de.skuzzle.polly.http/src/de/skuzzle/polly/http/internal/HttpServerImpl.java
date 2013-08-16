@@ -58,6 +58,9 @@ class HttpServerImpl implements HttpServer {
     private final Set<String> extensionWhitelist;
     private final AnswerHandlerMap handler;
     private final ServerFactory factory;
+    private int sessionType;
+    private int sessionLiveTime;
+    
     
     private com.sun.net.httpserver.HttpServer server;
     
@@ -72,6 +75,7 @@ class HttpServerImpl implements HttpServer {
         this.handler = new AnswerHandlerMap();
         this.roots = new ArrayList<>();
         this.factory = factory;
+        this.sessionType = SESSION_TYPE_COOKIE;
         
         // default handler
         this.registerHandler(HttpBinaryAnswer.class, new SimpleBinaryAnswerHandler());
@@ -121,7 +125,8 @@ class HttpServerImpl implements HttpServer {
     
     @Override
     public HttpAnswerHandler getHandler(HttpAnswer answer) {
-        return this.handler.resolve(answer.getClass());
+        final Class<?> cls = answer.getClass();
+        return this.handler.resolve(cls);
     }
     
     
@@ -166,7 +171,9 @@ class HttpServerImpl implements HttpServer {
                     continue;
                 }
             }
-            
+            if (!dest.exists()) {
+                continue;
+            }
             return dest;
         }
         }
@@ -197,16 +204,30 @@ class HttpServerImpl implements HttpServer {
 
     @Override
     public int getSessionType() {
-        return 0;
+        return this.sessionType;
+    }
+    
+    
+    
+    @Override
+    public void setSessionType(int sessionType) {
+        this.sessionType = sessionType;
     }
     
     
     
     @Override
     public int sessionLiveTime() {
-        return 0;
+        return this.sessionLiveTime;
     }
 
+    
+    
+    @Override
+    public void setSessionLiveTime(int sessionLiveTime) {
+        this.sessionLiveTime = sessionLiveTime;
+    }
+    
     
 
     private final String createSessionId(InetSocketAddress ip) {

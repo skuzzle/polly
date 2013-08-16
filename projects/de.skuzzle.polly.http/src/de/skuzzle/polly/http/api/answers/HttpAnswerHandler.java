@@ -43,8 +43,8 @@ import de.skuzzle.polly.http.api.HttpEvent;
  * @author Simon Taddiken
  * @see HttpAnswer
  */
-public interface HttpAnswerHandler {
+public abstract class HttpAnswerHandler {
 
-    public void handleAnswer(HttpAnswer answer, HttpEvent e, OutputStream out) 
+    public abstract void handleAnswer(HttpAnswer answer, HttpEvent e, OutputStream out) 
         throws IOException;
 }
