@@ -16,15 +16,15 @@
  * You should have received a copy of the GNU General Public License along 
  * with Polly HTTP API. If not, see http://www.gnu.org/licenses/.
  */
-package de.skuzzle.polly.http.internal;
+package de.skuzzle.polly.http.api;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.sun.net.httpserver.HttpServer;
 
-import de.skuzzle.polly.http.api.ServerFactory;
 
 
 public class DefaultServerFactory implements ServerFactory {
@@ -40,6 +40,13 @@ public class DefaultServerFactory implements ServerFactory {
     }
     
     
+    
+    public DefaultServerFactory(int port) {
+        this(port, Executors.newCachedThreadPool());
+    }
+    
+    
+    
     @Override
     public HttpServer create() throws IOException {
         com.sun.net.httpserver.HttpServer server = 
@@ -48,5 +55,4 @@ public class DefaultServerFactory implements ServerFactory {
         server.setExecutor(this.executor);
         return server;
     }
-
 }

@@ -30,6 +30,7 @@ public class AbstractHttpAnswer extends HttpAnswer {
     }
 
     
+    
     @Override
     public Map<String, List<String>> getResponseHeaders() {
         return this.headers;
@@ -38,7 +39,27 @@ public class AbstractHttpAnswer extends HttpAnswer {
     
     
     @Override
+    public HttpAnswer addHeader(String name, String value) {
+        List<String> values = this.headers.get(name);
+        if (values == null) {
+            values = new ArrayList<String>();
+            this.headers.put(name, values);
+        }
+        values.add(value);
+        return this;
+    }
+    
+    
+    
+    @Override
     public Collection<HttpCookie> getCookies() {
         return this.cookies;
+    }
+    
+    
+    @Override
+    public HttpAnswer addCookie(HttpCookie cookie) {
+        this.cookies.add(cookie);
+        return this;
     }
 }

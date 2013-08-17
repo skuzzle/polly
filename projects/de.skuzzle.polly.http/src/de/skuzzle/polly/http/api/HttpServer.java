@@ -58,7 +58,23 @@ public interface HttpServer {
      */
     public void shutdown(int timeout);
     
+    /**
+     * Gets how sessions of this server are managed. Either of 
+     * {@link #SESSION_TYPE_COOKIE}, {@link #SESSION_TYPE_GET} or 
+     * {@link #SESSION_TYPE_IP}.
+     * 
+     * @return The current session type.
+     */
     public int getSessionType();
+    
+    /**
+     * Sets how sessions are managed by this server. Either of 
+     * {@link #SESSION_TYPE_COOKIE}, {@link #SESSION_TYPE_GET} or 
+     * {@link #SESSION_TYPE_IP}.
+     * 
+     * @param sessionType The new session type.
+     */
+    public void setSessionType(int sessionType);
     
     /**
      * Time in milliseconds after which a session should expire.
@@ -66,6 +82,14 @@ public interface HttpServer {
      * @return The session expiration time.
      */
     public int sessionLiveTime();
+    
+    /**
+     * Sets the time in milliseconds of how long sessions may stay alive before they
+     * expired.
+     * 
+     * @param liveTime New session live time.
+     */
+    public void setSessionLiveTime(int liveTime);
     
     /**
      * Registers the given handler which then might be notified about new http events.

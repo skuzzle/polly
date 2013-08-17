@@ -113,4 +113,9 @@ public abstract class HttpAnswer {
      * @return Collection of cookies to set at the client.
      */
     public abstract Collection<HttpCookie> getCookies();
+    
+    
+    public abstract HttpAnswer addHeader(String name, String value);
+
+    public abstract HttpAnswer addCookie(HttpCookie cookie);
 }

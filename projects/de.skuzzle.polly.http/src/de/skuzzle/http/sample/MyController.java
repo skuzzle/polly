@@ -1,11 +1,11 @@
 package de.skuzzle.http.sample;
 
 import java.io.FileNotFoundException;
-import java.util.List;
 
 import de.skuzzle.polly.http.api.Controller;
 import de.skuzzle.polly.http.api.Get;
 import de.skuzzle.polly.http.api.Param;
+import de.skuzzle.polly.http.api.Post;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
 
@@ -19,33 +19,25 @@ public class MyController extends Controller {
     }
 
     
-    
-    @Get("/testIt")
-    public HttpAnswer test(
+    @Post("/login")
+    public HttpAnswer login(
         @Param("name") String name, 
-        @Param(value = "list", typeHint = String.class) List<String> list) {
-     
-        return HttpAnswers.createStringAnswer("Name was " + name + ", value: " + list.toString() + 
-            ", session id:" + this.getEvent().getSession().getId());
-    }
-    
-    
-    
-    @Get("/sum")
-    public HttpAnswer sum(
-        @Param(value = "values", typeHint = Integer.class) List<Integer> numbers) {
+        @Param("pw") String password) throws FileNotFoundException {
         
-        int sum = 0;
-        for (Integer i : numbers) {
-            sum += i;
-        }
-        return HttpAnswers.createStringAnswer("Sum is: " + sum);
+        this.getEvent().getSession().attach("user", name);
+        return HttpAnswers.createTemplateAnswer("index.tmpl", 
+            "header", "Hello",
+            "title", "Polly Webinterface v2",
+            "user", name,
+            "sessionId", this.getEvent().getSession().getId());
     }
-    
     
     
     @Get("/")
     public HttpAnswer index() throws FileNotFoundException {
-        return HttpAnswers.createTemplateAnswer("index.html", "header", "Hello");
+        return HttpAnswers.createTemplateAnswer("index.tmpl", 
+            "header", "Hello",
+            "title", "Polly Webinterface v2",
+            "sessionId", this.getEvent().getSession().getId());
     }
 }

@@ -23,7 +23,7 @@ public class FileHttpEventHandler implements HttpEventHandler {
     @Override
     public HttpAnswer handleHttpEvent(HttpEvent e, HttpEventHandler next)
             throws HttpException {
-        
+        System.out.println(e.getRequestURI());
         if (!e.getPlainUri().startsWith(this.uriPrefix)) {
             return next.handleHttpEvent(e, next);
         }

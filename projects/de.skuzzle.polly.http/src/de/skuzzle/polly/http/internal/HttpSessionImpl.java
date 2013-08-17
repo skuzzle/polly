@@ -104,8 +104,8 @@ class HttpSessionImpl implements HttpSession {
     
     
     @Override
-    public void getAttached(String key) {
-        this.attached.get(key);
+    public Object getAttached(String key) {
+        return this.attached.get(key);
     }
     
     

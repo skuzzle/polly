@@ -242,12 +242,12 @@ class BasicEventHandler implements HttpHandler {
                 
                 // if this is a temporary session, add a cookie with the new session id
                 cookies.add(new HttpCookie(HttpServerImpl.SESSION_ID_NAME, 
-                    httpEvent.getSession().getId(), this.server.sessionLiveTime()));
+                    httpEvent.getSession().getId(), this.server.sessionLiveTime() * 1000));
             }
             
             if (!cookies.isEmpty()) {
                 t.getResponseHeaders().add("Set-Cookie", 
-                    this.generateCookieString(answer));
+                    this.generateCookieString(cookies));
             }
             
             t.getResponseHeaders().putAll(answer.getResponseHeaders());
@@ -275,9 +275,9 @@ class BasicEventHandler implements HttpHandler {
     
     
     
-    private final String generateCookieString(HttpAnswer answer) {
+    private final String generateCookieString(Collection<HttpCookie> cookies) {
         final StringBuilder b = new StringBuilder();
-        final Iterator<HttpCookie> it = answer.getCookies().iterator();
+        final Iterator<HttpCookie> it = cookies.iterator();
         while (it.hasNext()) {
             final HttpCookie next = it.next();
             

@@ -47,7 +47,7 @@ public interface HttpSession {
     
     public boolean isAttached(String key);
     
-    public void getAttached(String key);
+    public Object getAttached(String key);
     
     /**
      * Gets information on how much bytes has been sent and received over this session.

@@ -246,11 +246,15 @@ class HttpServerImpl implements HttpServer {
                 // create temporary session. So next time the client sends something,
                 // it will have an id assigned
                 id = this.createSessionId(t.getRemoteAddress());
-                return new HttpSessionImpl(this, id, HttpSession.SESSION_TYPE_TEMPORARY);
+                
+                final HttpSessionImpl temp = new HttpSessionImpl(
+                    this, id, HttpSession.SESSION_TYPE_TEMPORARY);
+                this.idToSession.put(id, temp);
+                return temp;
             }
 
             HttpSessionImpl session = this.idToSession.get(id);
-            if (session == null) {
+            if (session == null || session.getType() == HttpSession.SESSION_TYPE_TEMPORARY) {
                 session = new HttpSessionImpl(this, id, HttpSession.SESSION_TYPE_COOKIE);
                 this.idToSession.put(id, session);
             }
