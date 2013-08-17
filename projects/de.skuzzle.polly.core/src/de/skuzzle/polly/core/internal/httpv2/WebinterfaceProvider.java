@@ -66,6 +66,7 @@ public class WebinterfaceProvider extends AbstractProvider {
         this.server.setSessionLiveTime(sessionTimeout);
         this.server.setSessionType(HttpServer.SESSION_TYPE_COOKIE);
         this.server.addWebRoot(new File("webv2"));
+        this.server.registerHandler(GsonHttpAnswer.class, new GsonHttpAnswerHandler());
         
         ShutdownManagerImpl sm = this.requireNow(ShutdownManagerImpl.class, true);
         sm.addDisposable(new Disposable() {

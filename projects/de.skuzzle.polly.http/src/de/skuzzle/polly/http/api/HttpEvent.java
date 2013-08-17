@@ -20,6 +20,7 @@ package de.skuzzle.polly.http.api;
 
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -45,6 +46,13 @@ public interface HttpEvent {
         GET, POST;
     }
     
+    
+    /**
+     * Gets the time of when this event was created.
+     * 
+     * @return Event creation time.
+     */
+    public Date getEventTime() ;
     
 
     /**

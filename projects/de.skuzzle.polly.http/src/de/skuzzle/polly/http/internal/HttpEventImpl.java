@@ -21,6 +21,7 @@ package de.skuzzle.polly.http.internal;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -45,7 +46,7 @@ class HttpEventImpl implements HttpEvent {
     private final RequestMode mode;
     private Map<String, String> combinedParameters;
     private Map<String, String> postGet;
-    
+    private final Date creationTime;
     
     
     public HttpEventImpl(HttpServer source, RequestMode mode, HttpExchange t, 
@@ -62,6 +63,15 @@ class HttpEventImpl implements HttpEvent {
         this.cookies = Collections.unmodifiableMap(cookies);
         this.get = Collections.unmodifiableMap(get);
         this.post = Collections.unmodifiableMap(post);
+        
+        this.creationTime = new Date();
+    }
+    
+    
+    
+    @Override
+    public Date getEventTime() {
+        return this.creationTime;
     }
     
     

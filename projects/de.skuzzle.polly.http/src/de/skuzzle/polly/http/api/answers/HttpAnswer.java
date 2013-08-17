@@ -114,7 +114,7 @@ public abstract class HttpAnswer {
      */
     public abstract Collection<HttpCookie> getCookies();
     
-    public abstract HttpAnswer redirect(String url);
+    public abstract HttpAnswer redirectTo(String url);
     
     public abstract HttpAnswer addHeader(String name, String value);
 

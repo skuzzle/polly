@@ -5,10 +5,15 @@
 </head>
 <body>
     <div id="header">
-        $session.getId(), $session.getType()
+        <div id="github">
+            <a href="https://github.com/skuzzle/polly">
+                <img src="files/img/gh.png" height="32" width="32" alt="GitHub" 
+                    title="Visit on GitHub"/></a>
+        </div>
+        
         <div id="info">
             #if($user)
-            Logged in as $user.getName(), <a href="/logoutx">Logout</a>
+            Logged in as $user.getName() <form style="display:inline" action="/logoutx" method="get"><input type="submit" value="Logout"/></form>
             #else
             <form action="/login" method="post">
                 <label for="name">Login:</label>
@@ -42,7 +47,7 @@
     </div>
     
     <div id="footer">
-        Polly Webinterface v2. Copyright 2013 Simon Taddiken
+        Execution time: ${executionTime}ms. Polly Webinterface v2. Copyright 2013 Simon Taddiken
     </div>
 </body>
 </html>

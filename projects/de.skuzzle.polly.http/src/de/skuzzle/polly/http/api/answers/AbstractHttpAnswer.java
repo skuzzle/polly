@@ -39,7 +39,7 @@ public class AbstractHttpAnswer extends HttpAnswer {
     
     
     @Override
-    public HttpAnswer redirect(String url) {
+    public HttpAnswer redirectTo(String url) {
         this.responseCode = 303;
         this.addHeader("Location", url);
         return this;

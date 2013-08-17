@@ -1,6 +1,7 @@
 package de.skuzzle.polly.core.internal.httpv2;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -54,6 +55,8 @@ public abstract class PollyController extends Controller {
             - this.getMyPolly().getStartTime().getTime());
         c.put("startTime", this.getMyPolly().getStartTime());
         c.put("sessionTimeOut", this.getEvent().getSource().sessionLiveTime());
+        c.put("executionTime", 
+            new Date().getTime() - this.getEvent().getEventTime().getTime());
         return c;
     }
 
