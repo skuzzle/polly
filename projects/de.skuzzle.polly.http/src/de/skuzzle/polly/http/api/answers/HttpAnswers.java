@@ -49,11 +49,29 @@ public final class HttpAnswers {
      * calling this method, you may call <code>getCookies().add(...)</code> on the 
      * result to add some cookies that should be set at the client.
      * 
+     * <p>The response code of this answer is 200</p>
+     * 
      * @param message The string to send as response body.
      * @return An answer that sends back the specified string. 
      */
     public final static HttpAnswer createStringAnswer(final String message) {
-        return new HttpBinaryAnswer(200) {
+        return createStringAnswer(200, message);
+    }
+    
+    
+    
+    /**
+     * Creates an answer which simply sends back the provided string to the client. After
+     * calling this method, you may call <code>getCookies().add(...)</code> on the 
+     * result to add some cookies that should be set at the client.
+     * 
+     * @param responseCode HTTP response code of this answer
+     * @param message The string to send as response body.
+     * @return An answer that sends back the specified string. 
+     */
+    public final static HttpAnswer createStringAnswer(int responseCode, 
+            final String message) {
+        return new HttpBinaryAnswer(responseCode) {
             @Override
             public void getAnswer(OutputStream out) throws IOException {
                 final Writer w = new BufferedWriter(new OutputStreamWriter(out));
@@ -72,6 +90,8 @@ public final class HttpAnswers {
      * After calling this method, you may call <code>getCookies().add(...)</code> on the 
      * result to add some cookies that should be set at the client.
      * 
+     * <p>The response code of this answer is 200</p>
+     * 
      * @param relativePath Relative path to the file which is to be sent.
      * @param server HttpServer instance which is used to resolve the relative file.
      * @return An answer instance for sending a file.
@@ -81,10 +101,33 @@ public final class HttpAnswers {
     public final static HttpAnswer createFileAnswer(final String relativePath, 
             HttpServer server) throws FileNotFoundException {
     
+        return createFileAnswer(200, relativePath, server);
+    }
+    
+    
+    
+    
+    /**
+     * Creates an answer which sends back the specified relative file to the client. Note
+     * that the specified path must be relative to any of the server's web root 
+     * directories, otherwise this method will throw a {@link FileNotFoundException}.
+     * After calling this method, you may call <code>getCookies().add(...)</code> on the 
+     * result to add some cookies that should be set at the client.
+     * 
+     * @param responseCode HTTP response code for this answer.
+     * @param relativePath Relative path to the file which is to be sent.
+     * @param server HttpServer instance which is used to resolve the relative file.
+     * @return An answer instance for sending a file.
+     * @throws FileNotFoundException If the file could not be resolved using
+     *          {@link HttpServer#resolveRelativeFile(String)}.
+     */
+    public final static HttpAnswer createFileAnswer(int responseCode, 
+        final String relativePath, HttpServer server) throws FileNotFoundException {
+    
         // check whether file exists
         final File dest = server.resolveRelativeFile(relativePath);
         
-        return new HttpBinaryAnswer(200) {
+        return new HttpBinaryAnswer(responseCode) {
             @Override
             public void getAnswer(OutputStream out) throws IOException {
                 InputStream in = null;
@@ -128,7 +171,16 @@ public final class HttpAnswers {
             final String relativeTemplatePath, 
             final Map<String, Object> context) {
         
-        return new HttpTemplateAnswer(200) {
+        return createTemplateAnswer(200, relativeTemplatePath, context);
+    }
+    
+    
+    
+    public final static HttpAnswer createTemplateAnswer(int responseCode,
+        final String relativeTemplatePath, 
+        final Map<String, Object> context) {
+    
+        return new HttpTemplateAnswer(responseCode) {
             
             @Override
             public String getRelativeTemplatePath() {

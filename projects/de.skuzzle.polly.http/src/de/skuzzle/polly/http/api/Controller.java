@@ -70,6 +70,12 @@ public abstract class Controller {
     
     
     
+    protected HttpSession getSession() {
+        return this.getEvent().getSession();
+    }
+    
+    
+    
     /**
      * This method is intended to create an exact copy of this controller. It will be
      * used by {@link #bind(HttpEvent)}.

@@ -242,7 +242,7 @@ class BasicEventHandler implements HttpHandler {
                 
                 // if this is a temporary session, add a cookie with the new session id
                 cookies.add(new HttpCookie(HttpServerImpl.SESSION_ID_NAME, 
-                    httpEvent.getSession().getId(), this.server.sessionLiveTime() * 1000));
+                    httpEvent.getSession().getId(), this.server.sessionLiveTime() / 1000));
             }
             
             if (!cookies.isEmpty()) {

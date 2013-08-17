@@ -11,7 +11,7 @@ import de.skuzzle.polly.http.api.HttpCookie;
 
 public class AbstractHttpAnswer extends HttpAnswer {
 
-    private final int responseCode;
+    private int responseCode;
     private final Map<String, List<String>> headers;
     private final List<HttpCookie> cookies;
     
@@ -39,6 +39,15 @@ public class AbstractHttpAnswer extends HttpAnswer {
     
     
     @Override
+    public HttpAnswer redirect(String url) {
+        this.responseCode = 303;
+        this.addHeader("Location", url);
+        return this;
+    }
+    
+    
+    
+    @Override
     public HttpAnswer addHeader(String name, String value) {
         List<String> values = this.headers.get(name);
         if (values == null) {
@@ -57,9 +66,17 @@ public class AbstractHttpAnswer extends HttpAnswer {
     }
     
     
+    
     @Override
     public HttpAnswer addCookie(HttpCookie cookie) {
         this.cookies.add(cookie);
         return this;
+    }
+    
+    
+    
+    @Override
+    public HttpAnswer addCookie(String name, String value, int maxAge) {
+        return this.addCookie(new HttpCookie(name, value, maxAge));
     }
 }

@@ -29,6 +29,8 @@ import de.skuzzle.polly.http.api.answers.HttpAnswerHandler;
 
 public interface HttpServer {
     
+    public final static String SESSION_ID_NAME = "sessionID";
+    
     public final static int SESSION_TYPE_COOKIE = 0;
     
     public final static int SESSION_TYPE_IP = 1;

@@ -37,7 +37,7 @@
     <property name="plugin.name" value="Polly Linkexpander Plugin"/>
     
     <!-- Description of this plugin -->
-    <property name="plugin.description" value="Polly Linkexpander Plugin"/>
+    <property name="plugin.description" value="Collects links from IRC channels and provides titles for several posted pages"/>
     
     <!-- Developper name of this plugin -->
     <property name="plugin.developer" value="Simon Taddiken"/>

@@ -84,28 +84,36 @@ class HttpSessionImpl implements HttpSession {
     
     @Override
     public void attach(String key, Object item) {
-        this.attached.put(key, item);
+        synchronized (this.attached) {
+            this.attached.put(key, item);
+        }
     }
     
     
 
     @Override
     public void detach(String key) {
-        this.attached.remove(key);
+        synchronized (this.attached) {
+            this.attached.remove(key);
+        }
     }
     
     
 
     @Override
     public boolean isAttached(String key) {
-        return this.attached.containsKey(key);
+        synchronized (this.attached) {
+            return this.attached.containsKey(key);
+        }
     }
 
     
     
     @Override
     public Object getAttached(String key) {
-        return this.attached.get(key);
+        synchronized (this.attached) {
+            return this.attached.get(key);
+        }
     }
     
     
@@ -141,7 +149,8 @@ class HttpSessionImpl implements HttpSession {
 
     @Override
     public synchronized boolean isBlocked() {
-        long timeBlocked = System.currentTimeMillis() - this.blockStamp;
-        return timeBlocked >= this.blockTime;
+        return false;
+//        long timeBlocked = System.currentTimeMillis() - this.blockStamp;
+//        return timeBlocked >= this.blockTime;
     }
 }

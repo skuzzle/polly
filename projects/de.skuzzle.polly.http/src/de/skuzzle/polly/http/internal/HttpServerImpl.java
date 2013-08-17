@@ -47,8 +47,6 @@ import de.skuzzle.polly.http.api.answers.HttpTemplateAnswer;
 
 class HttpServerImpl implements HttpServer {
     
-    final static String SESSION_ID_NAME = "sessionID";
-    
     private final static Random RANDOM = new Random();
     
     private final List<HttpEventHandler> handlers;
@@ -240,16 +238,22 @@ class HttpServerImpl implements HttpServer {
     
     HttpSessionImpl byID(HttpExchange t, Map<String, String> parameters) {
         synchronized (this.idToSession) {
+            // id sent with the cookie or get parameters
             String id = parameters.get(SESSION_ID_NAME);
+            
             if (id == null) {
                 // No session id was sent, so client did not get one until now.
                 // create temporary session. So next time the client sends something,
                 // it will have an id assigned
                 id = this.createSessionId(t.getRemoteAddress());
                 
+                // this session will causes the cookie to be sent
                 final HttpSessionImpl temp = new HttpSessionImpl(
                     this, id, HttpSession.SESSION_TYPE_TEMPORARY);
-                this.idToSession.put(id, temp);
+                
+                // further requests will get this session assigned
+                this.idToSession.put(id, new HttpSessionImpl(
+                    this, id, HttpSession.SESSION_TYPE_COOKIE));
                 return temp;
             }
 
@@ -284,7 +288,7 @@ class HttpServerImpl implements HttpServer {
         case SESSION_TYPE_COOKIE:
         case SESSION_TYPE_GET:
             synchronized (this.idToSession) {
-                this.idToSession.values().remove(session);
+                this.idToSession.remove(session.getId());
             }
             break;
         case SESSION_TYPE_IP:

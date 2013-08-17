@@ -37,7 +37,7 @@
     <property name="plugin.name" value="Polly Core Plugin"/>
     
     <!-- Description of this plugin -->
-    <property name="plugin.description" value="Polly Core Plugin"/>
+    <property name="plugin.description" value="Provides polly core functionality"/>
     
     <!-- Developper name of this plugin -->
     <property name="plugin.developer" value="Simon Taddiken"/>

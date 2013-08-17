@@ -43,25 +43,31 @@ class TemplateAnswerHandler extends HttpAnswerHandler {
     @Override
     public void handleAnswer(HttpAnswer answer, HttpEvent e, OutputStream out) 
             throws IOException {
-        final HttpTemplateAnswer template = (HttpTemplateAnswer) answer;
         
-        // try to resolve template file and init velocity
-        final File templateFile = e.getSource().resolveRelativeFile(
-            template.getRelativeTemplatePath());
-        
-        final VelocityEngine ve = new VelocityEngine();
-        ve.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, 
-            templateFile.getParent());
-        ve.init();
-        final Template temp = ve.getTemplate(templateFile.getName());
-        
-        final Map<String, Object> mappings = new HashMap<>();
-        template.getAnswer(mappings);
-        
-        final VelocityContext c = new VelocityContext(mappings);
-        final Writer w = new BufferedWriter(new OutputStreamWriter(out));
-        temp.merge(c, w);
-        w.flush();
+        try {
+            final HttpTemplateAnswer template = (HttpTemplateAnswer) answer;
+            
+            // try to resolve template file and init velocity
+            final File templateFile = e.getSource().resolveRelativeFile(
+                template.getRelativeTemplatePath());
+            
+            final VelocityEngine ve = new VelocityEngine();
+            ve.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, 
+                templateFile.getParent());
+            ve.init();
+            final Template temp = ve.getTemplate(templateFile.getName());
+            
+            final Map<String, Object> mappings = new HashMap<>();
+            template.getAnswer(mappings);
+            
+            final VelocityContext c = new VelocityContext(mappings);
+            final Writer w = new BufferedWriter(new OutputStreamWriter(out));
+            temp.merge(c, w);
+            w.flush();
+        } catch (Exception e1) {
+            e1.printStackTrace();
+            throw e1;
+        }
     }
 
 }

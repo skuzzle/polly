@@ -1,0 +1,48 @@
+<html>
+<head>
+    <title>Polly Webinterface v2</title>
+    <link rel="stylesheet" type="text/css" href="files/style.css" />
+</head>
+<body>
+    <div id="header">
+        $session.getId(), $session.getType()
+        <div id="info">
+            #if($user)
+            Logged in as $user.getName(), <a href="/logoutx">Logout</a>
+            #else
+            <form action="/login" method="post">
+                <label for="name">Login:</label>
+                <input type="text" name="name"/>
+                <label for="pw">Password:</label>
+                <input type="password" name="pw"/>
+                <input type="submit" value="Login"/>
+            </form>
+            #end
+        </div>
+        
+        <h1><a href="/">Polly Webinterface v2</a></h1>
+    </div>
+
+    <ul id="nav">
+        #foreach ($me in $menu)
+        <li><a href="$me.getUrl()">$me.getName()</a></li>
+        #end
+    </ul>
+    
+    #if($subNav)
+    <div style="background: height:25px;font-size:small; font-weight:bold;padding-left:40px; padding-top:3px;">
+        SubNav:
+    </div>
+    #end
+    
+    <div id="content">
+    #if ($content)
+    #parse($content)
+    #end
+    </div>
+    
+    <div id="footer">
+        Polly Webinterface v2. Copyright 2013 Simon Taddiken
+    </div>
+</body>
+</html>
