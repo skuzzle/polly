@@ -24,9 +24,12 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -49,8 +52,10 @@ class HttpServerImpl implements HttpServer {
     
     private final static Random RANDOM = new Random();
     
-    private final List<HttpEventHandler> handlers;
+    private final Map<String, List<HttpEventHandler>> handlers;
     private final Map<InetSocketAddress, HttpSessionImpl> ipToSession;
+    private final Map<InetSocketAddress, HttpSessionImpl> pending;
+    
     private final Map<String, HttpSessionImpl> idToSession;
     private final List<File> roots;
     private final Set<String> extensionWhitelist;
@@ -66,18 +71,19 @@ class HttpServerImpl implements HttpServer {
     
     
     public HttpServerImpl(ServerFactory factory) {
-        this.handlers = new ArrayList<>();
+        this.handlers = new URLMap<>();
         this.ipToSession = new HashMap<>();
         this.idToSession = new HashMap<>();
         this.extensionWhitelist = new HashSet<>();
+        this.pending = new HashMap<>();
         this.handler = new AnswerHandlerMap();
         this.roots = new ArrayList<>();
         this.factory = factory;
         this.sessionType = SESSION_TYPE_COOKIE;
         
         // default handler
-        this.registerHandler(HttpBinaryAnswer.class, new SimpleBinaryAnswerHandler());
-        this.registerHandler(HttpTemplateAnswer.class, new TemplateAnswerHandler());
+        this.addAnswerHandler(HttpBinaryAnswer.class, new SimpleBinaryAnswerHandler());
+        this.addAnswerHandler(HttpTemplateAnswer.class, new TemplateAnswerHandler());
     }
     
     
@@ -129,7 +135,7 @@ class HttpServerImpl implements HttpServer {
     
     
     
-    public void registerHandler(Class<?> answerType, HttpAnswerHandler handler) {
+    public void addAnswerHandler(Class<?> answerType, HttpAnswerHandler handler) {
         this.handler.registerHandler(answerType, handler);
     }
     
@@ -148,6 +154,10 @@ class HttpServerImpl implements HttpServer {
         for (final File root : this.roots) {
             final File dest = new File(root, path);
             
+            if (!dest.exists()) {
+                continue;
+            }
+            
             final Path request = dest.toPath().normalize();
             final Path rootPath = root.toPath().normalize();
             final String absRequest = request.toString().toLowerCase();
@@ -163,7 +173,7 @@ class HttpServerImpl implements HttpServer {
                     continue;
                 }
                 
-                final String ext = absRequest.substring(i);
+                final String ext = absRequest.substring(i).toLowerCase();
                 if (!this.extensionWhitelist.contains(ext)) {
                     // file has no whitelisted extension
                     continue;
@@ -181,21 +191,30 @@ class HttpServerImpl implements HttpServer {
     
 
     @Override
-    public void registerHttpEventHandler(HttpEventHandler handler) {
-        this.handlers.add(handler);
+    public void addHttpEventHandler(String url, HttpEventHandler handler) {
+        List<HttpEventHandler> handlers = this.handlers.get(url);
+        if (handlers == null) {
+            handlers = new ArrayList<>();
+            this.handlers.put(url, handlers);
+        }
+        handlers.add(handler);
     }
 
     
     
     @Override
-    public void unregisterHttpEventHandler(HttpEventHandler handler) {
-        this.handlers.remove(handler);
+    public void removeHttpEventHandler(String url, HttpEventHandler handler) {
+        final List<HttpEventHandler> handlers = this.handlers.get(url);
+        if (handlers == null) {
+            return;
+        }
+        handlers.remove(handlers);
     }
 
     
     
-    List<HttpEventHandler> getHandlers() {
-        return Collections.unmodifiableList(this.handlers);
+    Map<String, List<HttpEventHandler>> getHandlers() {
+        return Collections.unmodifiableMap(this.handlers);
     }
 
 
@@ -236,32 +255,38 @@ class HttpServerImpl implements HttpServer {
     
     
     
-    HttpSessionImpl byID(HttpExchange t, Map<String, String> parameters) {
+    
+    Map<InetSocketAddress, HttpSessionImpl> getTempStorage() {
+        return this.pending;
+    }
+    
+    
+    
+    synchronized HttpSessionImpl byID(HttpExchange t, Map<String, String> parameters) {
         synchronized (this.idToSession) {
             // id sent with the cookie or get parameters
             String id = parameters.get(SESSION_ID_NAME);
             
             if (id == null) {
-                // No session id was sent, so client did not get one until now.
-                // create temporary session. So next time the client sends something,
-                // it will have an id assigned
+                
+                // client sent no id
                 id = this.createSessionId(t.getRemoteAddress());
                 
-                // this session will causes the cookie to be sent
                 final HttpSessionImpl temp = new HttpSessionImpl(
-                    this, id, HttpSession.SESSION_TYPE_TEMPORARY);
+                    this, id);
                 
-                // further requests will get this session assigned
-                this.idToSession.put(id, new HttpSessionImpl(
-                    this, id, HttpSession.SESSION_TYPE_COOKIE));
+                temp.setPending(true);
+                this.idToSession.put(id, temp);
                 return temp;
             }
 
+            // client sent an id, so it can be removed from pending ones
             HttpSessionImpl session = this.idToSession.get(id);
-            if (session == null || session.getType() == HttpSession.SESSION_TYPE_TEMPORARY) {
-                session = new HttpSessionImpl(this, id, HttpSession.SESSION_TYPE_COOKIE);
+            if (session == null) {
+                session = new HttpSessionImpl(this, id);
                 this.idToSession.put(id, session);
             }
+            session.setPending(false);
             return session;
         }
     }
@@ -273,7 +298,7 @@ class HttpServerImpl implements HttpServer {
             HttpSessionImpl session = this.ipToSession.get(ip);
             if (session == null) {
                 final String id = this.createSessionId(ip);
-                session = new HttpSessionImpl(this, id, SESSION_TYPE_IP);
+                session = new HttpSessionImpl(this, id);
                 this.ipToSession.put(ip, session);
             }
             return session;
@@ -282,7 +307,31 @@ class HttpServerImpl implements HttpServer {
     
     
     
-    void killSession(HttpSessionImpl session) {
+    void cleanSessions() {
+        final Date now = new Date();
+        if (this.getSessionType() == SESSION_TYPE_COOKIE) {
+            synchronized (this.idToSession) {
+                final Iterator<HttpSessionImpl> it = this.idToSession.values().iterator();
+                while (it.hasNext()) {
+                    final HttpSessionImpl session = it.next();
+                    
+                    final Date exp = session.getExpirationDate() == null 
+                        ? new Date(session.getTimestamp()) 
+                        : session.getExpirationDate();
+                        
+                    if (session.shouldKill() || 
+                            now.getTime() - exp.getTime() > this.sessionLiveTime) {
+                        session.clearData();
+                        it.remove();
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    
+    synchronized void killSession(HttpSessionImpl session) {
         session.block(-1);
         switch (this.getSessionType()) {
         case SESSION_TYPE_COOKIE:
@@ -294,6 +343,50 @@ class HttpServerImpl implements HttpServer {
         case SESSION_TYPE_IP:
             synchronized (this.ipToSession) {
                 this.ipToSession.remove(session);
+            }
+        }
+    }
+    
+    
+    
+    @Override
+    public Collection<HttpSession> getSessions() {
+        final Collection<HttpSession> result = new ArrayList<>();
+        switch (this.getSessionType()) {
+        case SESSION_TYPE_COOKIE:
+        case SESSION_TYPE_GET:
+            synchronized (this.idToSession) {
+                result.addAll(this.idToSession.values());
+            }
+            break;
+        case SESSION_TYPE_IP:
+            synchronized (this.ipToSession) {
+                result.addAll(this.ipToSession.values());
+            }
+        }
+        return Collections.unmodifiableCollection(result);
+    }
+    
+    
+    
+    @Override
+    public HttpSession findSession(String id) {
+        switch (this.getSessionType()) {
+        case SESSION_TYPE_COOKIE:
+        case SESSION_TYPE_GET:
+            synchronized (this.idToSession) {
+                return this.idToSession.get(id);
+            }
+            
+        default:
+        case SESSION_TYPE_IP:
+            synchronized (this.ipToSession) {
+                for (final HttpSessionImpl session : this.ipToSession.values()) {
+                    if (session.getId().equals(id)) {
+                        return session;
+                    }
+                }
+                return null;
             }
         }
     }

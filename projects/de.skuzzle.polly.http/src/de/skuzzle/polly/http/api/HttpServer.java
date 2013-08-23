@@ -21,6 +21,7 @@ package de.skuzzle.polly.http.api;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Collection;
 
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswerHandler;
@@ -29,6 +30,7 @@ import de.skuzzle.polly.http.api.answers.HttpAnswerHandler;
 
 public interface HttpServer {
     
+    /** Name of the cookie or GET parameter for the session id */
     public final static String SESSION_ID_NAME = "sessionID";
     
     public final static int SESSION_TYPE_COOKIE = 0;
@@ -94,21 +96,31 @@ public interface HttpServer {
     public void setSessionLiveTime(int liveTime);
     
     /**
-     * Registers the given handler which then might be notified about new http events.
-     * The handler is not notified if another handler which was registered earlier 
-     * can successfully handle the event. See {@link HttpEventHandler} for details on how
-     * handler chaining works.
+     * Finds a session with the provided ID. Will return <code>null</code> if no such 
+     * ID exists.
      * 
+     * @param id ID of the session to retrieve.
+     * @return The session or <code>null</code>.
+     */
+    public HttpSession findSession(String id);
+    
+    /**
+     * Registers the given handler which then might be notified about new http events if
+     * the specified URL is requested by a client. Note that multiple handlers can be 
+     * assigned to an URL.
+     * 
+     * @param url URL to call in order to raise the registered event.
      * @param handler The event handler to register.
      */
-    public void registerHttpEventHandler(HttpEventHandler handler);
+    public void addHttpEventHandler(String url, HttpEventHandler handler);
     
     /**
      * Removes the given handler.
      * 
+     * @param url URL to remove the handler from.
      * @param handler The handler to remove.
      */
-    public void unregisterHttpEventHandler(HttpEventHandler handler);
+    public void removeHttpEventHandler(String url, HttpEventHandler handler);
     
     /**
      * <p>Adds the given directory as a root directory. If files are to be provided over
@@ -142,7 +154,7 @@ public interface HttpServer {
      * tries to find a handler for any of the answer's super types. If still none could 
      * be found, <code>null</code> is returned.</p>
      * 
-     * <p>Custom answer handler can be provided using <code>registerHandler()</code>
+     * <p>Custom answer handler can be provided using <code>addAnswerHandler()</code>
      * method. By default, handlers for {@link HttpTemplateAnswer} and 
      * {@link HttpBinaryAnswer} exist.</p>
      *  
@@ -161,5 +173,11 @@ public interface HttpServer {
      *          {@link HttpAnswer}.
      * @param handler The handler which can handle answers of the given type.
      */
-    public void registerHandler(Class<?> answerType, HttpAnswerHandler handler);
+    public void addAnswerHandler(Class<?> answerType, HttpAnswerHandler handler);
+    
+    /**
+     * Gets a read-only collection of all current sessions.
+     * @return Collection of sessions.
+     */
+    public Collection<HttpSession> getSessions();
 }

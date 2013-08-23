@@ -18,6 +18,8 @@
  */
 package de.skuzzle.polly.http.api;
 
+import java.util.Objects;
+
 
 
 /**
@@ -32,6 +34,7 @@ public class HttpCookie {
     private final String name;
     private final String value;
     private final String domain;
+    private final String path;
     private final int maxAge;
     
     
@@ -41,6 +44,7 @@ public class HttpCookie {
         this.value = value;
         this.domain = domain;
         this.maxAge = maxAge;
+        this.path = "/";
     }
 
 
@@ -71,5 +75,45 @@ public class HttpCookie {
     
     public int getMaxAge() {
         return this.maxAge;
+    }
+    
+    
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.name);
+    }
+    
+    
+    
+    @Override
+    public boolean equals(Object obj) {
+        return obj == this || obj != null &&
+            obj instanceof HttpCookie &&
+            ((HttpCookie) obj).name.equals(this.name);
+    }
+    
+    
+    
+    /**
+     * Generates a HTTP response header entry for this cookie.
+     * 
+     * @return This cookie formatted to a response header string.
+     */
+    @Override
+    public String toString() {
+        final StringBuilder b = new StringBuilder();
+        b.append(this.getName());
+        b.append("=");
+        b.append(this.getValue());
+        b.append(";Version=1;Max-Age=");
+        b.append(this.getMaxAge());
+        b.append(";Path=");
+        b.append(this.path);
+        if (this.domain != null) {
+            b.append(";Domain=");
+            b.append(this.domain);
+        }
+        return b.toString();
     }
 }

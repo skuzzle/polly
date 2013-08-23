@@ -24,6 +24,8 @@ import de.skuzzle.polly.sdk.ConfigurationProvider;
 import de.skuzzle.polly.sdk.Disposable;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
+import de.skuzzle.polly.sdk.httpv2.HttpManagerV2;
+import de.skuzzle.polly.sdk.httpv2.MenuEntry;
 
 @Module(
     requires = {
@@ -66,7 +68,7 @@ public class WebinterfaceProvider extends AbstractProvider {
         this.server.setSessionLiveTime(sessionTimeout);
         this.server.setSessionType(HttpServer.SESSION_TYPE_COOKIE);
         this.server.addWebRoot(new File("webv2"));
-        this.server.registerHandler(GsonHttpAnswer.class, new GsonHttpAnswerHandler());
+        this.server.addAnswerHandler(GsonHttpAnswer.class, new GsonHttpAnswerHandler());
         
         ShutdownManagerImpl sm = this.requireNow(ShutdownManagerImpl.class, true);
         sm.addDisposable(new Disposable() {
@@ -84,7 +86,9 @@ public class WebinterfaceProvider extends AbstractProvider {
             }
         });
         
-        this.httpManager = new HttpManagerV2Impl();
+        this.httpManager = new HttpManagerV2Impl(this.server);
+        this.httpManager.addMenuEntry(new MenuEntry("Administration", "/admin", 
+            HttpManagerV2.HTTP_ADMIN_PERMISSION));
         this.provideComponent(this.httpManager);
         
     }
@@ -96,7 +100,11 @@ public class WebinterfaceProvider extends AbstractProvider {
         final MyPolly myPolly = this.requireNow(MyPollyImpl.class, false);
         
         this.server.addController(new IndexController(myPolly, this.httpManager));
-        this.server.registerHttpEventHandler(new FileHttpEventHandler("/files", true));
+        this.server.addController(new SessionController(myPolly, this.httpManager));
+        this.httpManager.addMenuEntry(new MenuEntry("Sessions", "sessions", HttpManagerV2.HTTP_ADMIN_PERMISSION));
+        
+        this.server.addHttpEventHandler("/files", new FileHttpEventHandler(false));
+        
         
         this.server.start();
     }

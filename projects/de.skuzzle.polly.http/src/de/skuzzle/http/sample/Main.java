@@ -27,7 +27,7 @@ public class Main {
         final MyController mc = new MyController();
         hss.addController(mc);
         
-        hss.registerHttpEventHandler(new FileHttpEventHandler("/files", false));
+        hss.addHttpEventHandler("/files", new FileHttpEventHandler(false));
         hss.start();
     }
 }

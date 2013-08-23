@@ -18,12 +18,12 @@
  */
 package de.skuzzle.polly.http.api;
 
+import java.util.Collection;
+import java.util.Date;
+import java.util.Map;
+
 
 public interface HttpSession {
-    
-    public final static int SESSION_TYPE_TEMPORARY = 0;
-    
-    public final static int SESSION_TYPE_COOKIE = 1;
     
     /**
      * Gets a timestamp of when this session was created.
@@ -32,7 +32,16 @@ public interface HttpSession {
      */
     public long getTimestamp();
     
-    public int getType();
+    /**
+     * Sets the expiration date of this session. If this session was assigned an 
+     * expiration date using this method, it will be removed by the server at the next
+     * request after the assigned date. If it has no expiration date set, the server will
+     * remove the session automatically after a configurable amount of time.
+     * 
+     * @param d The new expiration date of this session.
+     * @see HttpServer#setSessionLiveTime(int)
+     */
+    public void setExpirationDate(Date d);
     
     /**
      * Gets the unique id of this session.
@@ -41,11 +50,17 @@ public interface HttpSession {
      */
     public String getId();
 
-    public void attach(String key, Object item);
+    /**
+     * Attaches an abitrary object to this session.
+     * 
+     * @param key Key for the object.
+     * @param item The object to attach.
+     */
+    public void set(String key, Object item);
     
     public void detach(String key);
     
-    public boolean isAttached(String key);
+    public boolean isSet(String key);
     
     public Object getAttached(String key);
     
@@ -56,7 +71,10 @@ public interface HttpSession {
      */
     public TrafficInformation getTrafficInfo();
     
-    
+    /**
+     * Kills this session. The next time a request is sent over this
+     * connection, the cookie (if any) on the client side will be removed. 
+     */
     public void kill();
     
     /**
@@ -93,4 +111,17 @@ public interface HttpSession {
      * @see #unblock()
      */
     public boolean isBlocked();
+
+    /**
+     * Gets a collection of the last few HTTP events that were raised by this session.
+     * 
+     * @return Collection of http events.
+     */
+    public Collection<HttpEvent> getEvents();
+    
+    /**
+     * Gets a read-only map of all attached objects.
+     * @return Map of objects attached to this session.
+     */
+    public Map<String, Object> getAttached();
 }

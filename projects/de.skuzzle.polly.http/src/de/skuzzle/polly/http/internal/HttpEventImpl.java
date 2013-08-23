@@ -26,8 +26,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.sun.net.httpserver.HttpExchange;
-
 import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.http.api.HttpServer;
 import de.skuzzle.polly.http.api.HttpSession;
@@ -35,7 +33,7 @@ import de.skuzzle.polly.http.api.HttpSession;
 
 class HttpEventImpl implements HttpEvent {
 
-    private final HttpServer source;
+    private final transient HttpServer source;
     private final URI requestUri;
     private final String plainUri;
     private final InetSocketAddress clientIp;
@@ -49,15 +47,16 @@ class HttpEventImpl implements HttpEvent {
     private final Date creationTime;
     
     
-    public HttpEventImpl(HttpServer source, RequestMode mode, HttpExchange t, 
+    public HttpEventImpl(HttpServer source, RequestMode mode, URI requestURI, 
+        InetSocketAddress remoteAddress,
         String plainUri, HttpSession session, Map<String, String> cookies, 
         Map<String, String> get, Map<String, String> post) {
         
         this.source = source;
         this.mode = mode;
-        this.requestUri = t.getRequestURI();
+        this.requestUri = requestURI;
         this.plainUri = plainUri;
-        this.clientIp = t.getRemoteAddress();
+        this.clientIp = remoteAddress;
         this.session = session;
         
         this.cookies = Collections.unmodifiableMap(cookies);
@@ -65,6 +64,14 @@ class HttpEventImpl implements HttpEvent {
         this.post = Collections.unmodifiableMap(post);
         
         this.creationTime = new Date();
+    }
+    
+    
+    
+    
+    public HttpEventImpl copy() {
+        return new HttpEventImpl(this.source, this.mode, this.requestUri, this.clientIp,
+            this.plainUri, null, this.cookies, this.get, this.post);
     }
     
     

@@ -1,7 +1,34 @@
 <html>
 <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Polly Webinterface v2</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="files/pure.js"></script>
+    <script>   
+        #if ($user)
+        var timer;
+        function updateTimeleft() {
+            $.get('api/sessionTime', function(data) {
+                    var d = JSON.parse(data);
+                    if (d.logout) {
+                        $("#timeLeft").html("Session invalid");
+                        clearInterval(timer);
+                        location.reload();
+                    } else {
+                        $("#timeLeft").html(d.timeLeft);
+                    }
+                }
+            );
+        };
+        
+        $("document").ready(updateTimeleft);
+        
+        
+        timer = setInterval(updateTimeleft, 300000); // update every 5 minutes
+        #end
+    </script>
     <link rel="stylesheet" type="text/css" href="files/style.css" />
+    $!headerHook
 </head>
 <body>
     <div id="header">
@@ -13,14 +40,14 @@
         
         <div id="info">
             #if($user)
-            Logged in as $user.getName() <form style="display:inline" action="/logoutx" method="get"><input type="submit" value="Logout"/></form>
+            Hi <b>$user.getName()</b>, <a href="/logoutx" title="Logout now">logout</a> in <span id="timeLeft"></span> <a href="#"><img src="files/img/gear_in.png" width="20" height="20" alt="Settings" title="Settings"/></a>
             #else
-            <form action="/login" method="post">
+            <form action="/login" method="post" id="loginForm">
                 <label for="name">Login:</label>
-                <input type="text" name="name"/>
+                <input type="text" name="name" id="loginName"/>
                 <label for="pw">Password:</label>
-                <input type="password" name="pw"/>
-                <input type="submit" value="Login"/>
+                <input type="password" name="pw" id="loginPw"/>
+                <input type="submit" value="Login" id="login" />
             </form>
             #end
         </div>
@@ -30,7 +57,9 @@
 
     <ul id="nav">
         #foreach ($me in $menu)
+        #if ($myPolly.roles().canAccess($user, $me))
         <li><a href="$me.getUrl()">$me.getName()</a></li>
+        #end
         #end
     </ul>
     

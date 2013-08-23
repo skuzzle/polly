@@ -24,7 +24,7 @@ public class MyController extends Controller {
         @Param("name") String name, 
         @Param("pw") String password) throws FileNotFoundException {
         
-        this.getEvent().getSession().attach("user", name);
+        this.getEvent().getSession().set("user", name);
         return HttpAnswers.createTemplateAnswer("index.tmpl", 
             "header", "Hello",
             "title", "Polly Webinterface v2",

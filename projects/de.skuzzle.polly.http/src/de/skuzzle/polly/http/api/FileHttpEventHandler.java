@@ -8,13 +8,11 @@ import de.skuzzle.polly.http.api.answers.HttpAnswers;
 
 public class FileHttpEventHandler implements HttpEventHandler {
 
-    private final String uriPrefix;
     private final boolean executeFollowers;
     
     
     
-    public FileHttpEventHandler(String uriPrefix, boolean executeFollowers) {
-        this.uriPrefix = uriPrefix;
+    public FileHttpEventHandler(boolean executeFollowers) {
         this.executeFollowers = executeFollowers;
     }
     
@@ -24,9 +22,6 @@ public class FileHttpEventHandler implements HttpEventHandler {
     public HttpAnswer handleHttpEvent(HttpEvent e, HttpEventHandler next)
             throws HttpException {
         System.out.println(e.getRequestURI());
-        if (!e.getPlainUri().startsWith(this.uriPrefix)) {
-            return next.handleHttpEvent(e, next);
-        }
         
         HttpAnswer backup = null;
         if (this.executeFollowers) {
@@ -34,7 +29,9 @@ public class FileHttpEventHandler implements HttpEventHandler {
         }
         
         try {
-            return HttpAnswers.createFileAnswer(e.getPlainUri(), e.getSource());
+            return HttpAnswers.createFileAnswer(e.getPlainUri(), e.getSource())
+                .addHeader("Cache-Control", "max-age=86400")      // valid for 24h
+                .addHeader("Cache-Control", "must-revalidate");   // obey my rules!
         } catch (FileNotFoundException e1) {
             if (backup != null) {
                 return backup;

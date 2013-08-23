@@ -26,6 +26,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -42,7 +43,6 @@ import de.skuzzle.polly.http.api.HttpEvent.RequestMode;
 import de.skuzzle.polly.http.api.HttpEventHandler;
 import de.skuzzle.polly.http.api.HttpException;
 import de.skuzzle.polly.http.api.HttpServer;
-import de.skuzzle.polly.http.api.HttpSession;
 import de.skuzzle.polly.http.api.answers.DefaultAnswers;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswerHandler;
@@ -130,7 +130,7 @@ class BasicEventHandler implements HttpHandler {
     
     
     
-    private final HttpEvent createEvent(HttpExchange t) throws IOException {
+    private final HttpEventImpl createEvent(HttpExchange t) throws IOException {
         final String requestUri = t.getRequestURI().toString();
         final Map<String, String> get = new HashMap<>();
         final Map<String, String> post = new HashMap<>();
@@ -179,8 +179,8 @@ class BasicEventHandler implements HttpHandler {
             mode = RequestMode.POST;
         }
         
-        final HttpEvent event = new HttpEventImpl(this.server, mode, t, plainUri, 
-            session, cookies, get, post);
+        final HttpEventImpl event = new HttpEventImpl(this.server, mode, t.getRequestURI(), 
+            t.getRemoteAddress(), plainUri, session, cookies, get, post);
         return event;
     }
     
@@ -188,14 +188,15 @@ class BasicEventHandler implements HttpHandler {
     
     @Override
     public void handle(HttpExchange t) throws IOException {
-        // copy list to avoid further synchronization
-        final List<HttpEventHandler> handlers;
-        synchronized (this.server.getHandlers()) {
-            handlers = new ArrayList<>(this.server.getHandlers());
-        }
         
-        final HttpEvent httpEvent = this.createEvent(t);
-        final HttpSession session = httpEvent.getSession();
+        this.server.cleanSessions();
+        
+        // copy list to avoid further synchronization
+        final HttpEventImpl httpEvent = this.createEvent(t);
+        final HttpSessionImpl session = (HttpSessionImpl) httpEvent.getSession();
+        session.addEvent(httpEvent.copy());
+        session.setLastAction(new Date());
+        
         final TrafficInformationImpl ti = 
             (TrafficInformationImpl) session.getTrafficInfo();
         
@@ -209,11 +210,23 @@ class BasicEventHandler implements HttpHandler {
         }
         
         // handle the event
-        final Iterator<HttpEventHandler> it = handlers.iterator();
+        final List<HttpEventHandler> handler;
+        synchronized (this.server.getHandlers()) {
+            handler = new ArrayList<>(
+                this.server.getHandlers().get(httpEvent.getPlainUri()));
+        }
+        
+        if (handler == null || handler.isEmpty()) {
+            this.handleAnswer(DefaultAnswers.FILE_NOT_FOUND, t, httpEvent);
+            return;
+        }
+
+        final Iterator<HttpEventHandler> it = handler.iterator();
+        final HttpEventHandler first = it.next();
         final HttpEventHandler chain = new HttpEventHandlerChain(it);
         HttpAnswer answer;
         try {
-            answer = chain.handleHttpEvent(httpEvent, chain);
+            answer = first.handleHttpEvent(httpEvent, chain);
             if (answer != null) {
                 this.handleAnswer(answer, t, httpEvent);
                 return;
@@ -237,12 +250,19 @@ class BasicEventHandler implements HttpHandler {
             // add cookies as response header
             final Collection<HttpCookie> cookies = new ArrayList<>(answer.getCookies());
             
-            if (httpEvent.getSession().getType() == HttpSession.SESSION_TYPE_TEMPORARY &&
-                this.server.getSessionType() == HttpServer.SESSION_TYPE_COOKIE) {
+            final HttpSessionImpl session = (HttpSessionImpl) httpEvent.getSession();
+            if (this.server.getSessionType() == HttpServer.SESSION_TYPE_COOKIE && 
+                    session.isPending()) {
                 
-                // if this is a temporary session, add a cookie with the new session id
+                session.setPending(false);
+                // we must send a new session cookie
                 cookies.add(new HttpCookie(HttpServerImpl.SESSION_ID_NAME, 
-                    httpEvent.getSession().getId(), this.server.sessionLiveTime() / 1000));
+                    session.getId(), this.server.sessionLiveTime() / 1000));
+            } else if (session.shouldKill()) {
+                // send cookie with max age 0 to remove it at client side
+                cookies.add(new HttpCookie(HttpServer.SESSION_ID_NAME, 
+                    session.getId(), 0));
+                this.server.killSession(session);
             }
             
             if (!cookies.isEmpty()) {
@@ -254,7 +274,6 @@ class BasicEventHandler implements HttpHandler {
             t.sendResponseHeaders(answer.getResponseCode(), 0);
             
             // set stream to count outgoing traffic
-            final HttpSession session = httpEvent.getSession();
             final TrafficInformationImpl ti = 
                 (TrafficInformationImpl) session.getTrafficInfo();
             final CountingOutputStream out = new CountingOutputStream(
@@ -278,18 +297,10 @@ class BasicEventHandler implements HttpHandler {
     private final String generateCookieString(Collection<HttpCookie> cookies) {
         final StringBuilder b = new StringBuilder();
         final Iterator<HttpCookie> it = cookies.iterator();
+        
         while (it.hasNext()) {
             final HttpCookie next = it.next();
-            
-            b.append(next.getName());
-            b.append("=");
-            b.append(next.getValue());
-            b.append(";Version=1;Max-Age=");
-            b.append(next.getMaxAge());
-            if (next.getDomain() != null) {
-                b.append(";Domain=");
-                b.append(next.getDomain());
-            }
+            b.append(next.toString());
             
             if (it.hasNext()) {
                 b.append(",");

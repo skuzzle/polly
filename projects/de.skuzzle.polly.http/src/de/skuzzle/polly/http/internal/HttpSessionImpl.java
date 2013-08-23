@@ -18,21 +18,31 @@
  */
 package de.skuzzle.polly.http.internal;
 
+import java.util.ArrayDeque;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Queue;
 
+import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.http.api.HttpSession;
 import de.skuzzle.polly.http.api.TrafficInformation;
 
 
 class HttpSessionImpl implements HttpSession {
+    
+    private final static int EVENTS_TO_BUFFER = 10;
 
-    private final HttpServerImpl server;
+    private final transient HttpServerImpl server;
     private final String id;
     private final long timestamp;
-    private final int type;
     private final Map<String, Object> attached;
     private final TrafficInformation trafficInfo;
+    private final Queue<HttpEvent> events;
+    private Date lastAction;
+    private boolean doKill;
     
     /** Timestamp at which blocking the session started */
     private long blockStamp;
@@ -41,22 +51,81 @@ class HttpSessionImpl implements HttpSession {
     private long blockTime;
     
     
+    private Date expirationDate;
+    private boolean pending;
     
-    public HttpSessionImpl(HttpServerImpl server, String id, int type) {
-        if (type != SESSION_TYPE_COOKIE && type != SESSION_TYPE_TEMPORARY) {
-            throw new IllegalArgumentException("illegal session type");
-        }
+
+    
+    
+    public HttpSessionImpl(HttpServerImpl server, String id) {
         
         this.server = server;
         this.id = id;
         this.timestamp = System.currentTimeMillis();
-        this.type = type;
         this.attached = new HashMap<>();
         this.trafficInfo = new TrafficInformationImpl();
-        
+        this.events = new ArrayDeque<>();
         // make sure session is initially unblocked
         this.blockStamp = Long.MAX_VALUE;
         this.blockTime = 0;
+    }
+    
+    
+    
+    
+    public void setPending(boolean pending) {
+        this.pending = pending;
+    }
+    
+    
+    
+    public boolean isPending() {
+        return this.pending;
+    }
+    
+    
+    
+    void clearData() {
+        synchronized (this.attached) {
+            this.attached.clear();
+        }
+    }
+    
+    
+    
+    
+    void setLastAction(Date lastAction) {
+        this.lastAction = lastAction;
+    }
+    
+    
+    
+    public Date getLastAction() {
+        return this.lastAction;
+    }
+    
+    
+    
+    void addEvent(HttpEvent event) {
+        synchronized (this.events) {
+            this.events.add(event);
+            if (this.events.size() == EVENTS_TO_BUFFER) {
+                this.events.poll();
+            }
+        }
+    }
+    
+    
+    
+    boolean shouldKill() {
+        return this.doKill;
+    }
+    
+    
+    
+    @Override
+    public Collection<HttpEvent> getEvents() {
+        return Collections.unmodifiableCollection(this.events);
     }
     
     
@@ -69,21 +138,27 @@ class HttpSessionImpl implements HttpSession {
     
     
     @Override
+    public void setExpirationDate(Date d) {
+        this.expirationDate = d;
+    }
+
+    
+    
+    public Date getExpirationDate() {
+        return this.expirationDate;
+    }
+    
+    
+    
+    @Override
     public long getTimestamp() {
         return this.timestamp;
     }
     
     
-
-    @Override
-    public int getType() {
-        return this.type;
-    }
-
-    
     
     @Override
-    public void attach(String key, Object item) {
+    public void set(String key, Object item) {
         synchronized (this.attached) {
             this.attached.put(key, item);
         }
@@ -101,7 +176,7 @@ class HttpSessionImpl implements HttpSession {
     
 
     @Override
-    public boolean isAttached(String key) {
+    public boolean isSet(String key) {
         synchronized (this.attached) {
             return this.attached.containsKey(key);
         }
@@ -117,7 +192,14 @@ class HttpSessionImpl implements HttpSession {
     }
     
     
+    
+    @Override
+    public Map<String, Object> getAttached() {
+        return Collections.unmodifiableMap(this.attached);
+    }
+    
 
+    
     @Override
     public TrafficInformation getTrafficInfo() {
         return this.trafficInfo;
@@ -127,7 +209,7 @@ class HttpSessionImpl implements HttpSession {
 
     @Override
     public void kill() {
-        this.server.killSession(this);
+        this.doKill = true;
     }
 
 

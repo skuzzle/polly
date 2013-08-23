@@ -30,7 +30,8 @@ import java.util.Map;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
+import org.apache.velocity.runtime.resource.loader.FileResourceLoader;
 
 import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
@@ -52,8 +53,8 @@ class TemplateAnswerHandler extends HttpAnswerHandler {
                 template.getRelativeTemplatePath());
             
             final VelocityEngine ve = new VelocityEngine();
-            ve.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, 
-                templateFile.getParent());
+            this.prepare(ve, templateFile.getParent());
+            
             ve.init();
             final Template temp = ve.getTemplate(templateFile.getName());
             
@@ -68,6 +69,14 @@ class TemplateAnswerHandler extends HttpAnswerHandler {
             e1.printStackTrace();
             throw e1;
         }
+    }
+    
+    
+    
+    protected void prepare(VelocityEngine ve, String templatePath) {
+        ve.setProperty("file.resource.loader.description", "Velocity File Resource Loader");
+        ve.setProperty("file.resource.loader.class", FileResourceLoader.class.getName());
+        ve.setProperty("file.resource.loader.path", templatePath);
     }
 
 }

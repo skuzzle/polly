@@ -7,13 +7,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.naming.InsufficientResourcesException;
-
 import de.skuzzle.polly.http.api.Controller;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.User;
+import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.httpv2.HttpManagerV2;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.time.Time;
@@ -81,13 +80,13 @@ public abstract class PollyController extends Controller {
 
 
     protected void requirePermissions(String... permissions)
-        throws InsufficientResourcesException {
+            throws InsufficientRightsException {
         final User u = this.getSessionUser();
         final RoleManager rm = this.myPolly.roles();
         final Set<String> p = new HashSet<>(Arrays.asList(permissions));
 
         if (!rm.hasPermission(u, p)) {
-            throw new InsufficientResourcesException();
+            throw new InsufficientRightsException();
         }
     }
 }

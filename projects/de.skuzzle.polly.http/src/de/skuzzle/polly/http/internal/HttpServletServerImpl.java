@@ -24,16 +24,16 @@ class HttpServletServerImpl extends HttpServerImpl implements HttpServletServer 
     public HttpServletServerImpl(ServerFactory factory) {
         super(factory);
         this.paramHandler = new ArrayList<ParameterHandler>();
-        this.registerParameterHandler(NativeHandlers.INTEGER);
-        this.registerParameterHandler(NativeHandlers.STRING);
-        this.registerParameterHandler(NativeHandlers.STRING_LIST);
-        this.registerParameterHandler(NativeHandlers.INT_LIST);
+        this.addParameterHandler(NativeHandlers.INTEGER);
+        this.addParameterHandler(NativeHandlers.STRING);
+        this.addParameterHandler(NativeHandlers.STRING_LIST);
+        this.addParameterHandler(NativeHandlers.INT_LIST);
     }
     
     
 
     @Override
-    public void registerParameterHandler(ParameterHandler handler) {
+    public void addParameterHandler(ParameterHandler handler) {
         this.paramHandler.add(handler);
     }
     
@@ -49,7 +49,7 @@ class HttpServletServerImpl extends HttpServerImpl implements HttpServletServer 
     private void findRequestHandlers(Controller carrier, Class<?> cls) {
         for (final Method mtd : cls.getMethods()) {
             final RequestMode mode;
-            final String url;
+            String url;
             if (mtd.isAnnotationPresent(Get.class)) {
                 mode = RequestMode.GET;
                 url = mtd.getAnnotation(Get.class).value();
@@ -90,10 +90,14 @@ class HttpServletServerImpl extends HttpServerImpl implements HttpServletServer 
                 }
             }
             
+            
+            if (!url.startsWith("/")) {
+                url = "/" + url;
+            }
             boolean isStatic = Modifier.isStatic(mtd.getModifiers());
             final ReflectionHttpHandler rhh = new ReflectionHttpHandler(
                 mode, url, isStatic ? null : carrier, mtd, this);
-            this.registerHttpEventHandler(rhh);
+            this.addHttpEventHandler(url, rhh);
         }
     }
     

@@ -45,6 +45,38 @@ public abstract class HttpTemplateAnswer extends AbstractHttpAnswer {
     
     
     /**
+     * Creates a new chained template answer. It will use the template path of the answer
+     * this method was invoked on. The context created by {@link #getAnswer(Map)} will 
+     * contain all key-value pairs from this and the passed context. Also, headers and 
+     * cookies from both answer will be merged.
+     * 
+     * @param other The template answer to chain to this answer.
+     * @return A new HttpTemplateAnswer
+     */
+    public HttpTemplateAnswer chain(final HttpTemplateAnswer other) {
+        final HttpTemplateAnswer result = new HttpTemplateAnswer(this.getResponseCode()) {
+            
+            @Override
+            public String getRelativeTemplatePath() {
+                return HttpTemplateAnswer.this.getRelativeTemplatePath();
+            }
+            
+            
+            
+            @Override
+            public void getAnswer(Map<String, Object> mappings) {
+                HttpTemplateAnswer.this.getAnswer(mappings);
+                other.getAnswer(mappings);
+            }
+        };
+        result.getCookies().addAll(this.getCookies());
+        result.getCookies().addAll(other.getCookies());
+        result.getResponseHeaders().putAll(other.getResponseHeaders());
+        return result;
+    }
+    
+    
+    /**
      * Returns a relative path to the velocity template file that should be rendered. The 
      * returned path must be relative to any of the {@link HttpServer HttpServer's} web 
      * root directories.
