@@ -30,13 +30,13 @@ public class SessionController extends PollyController {
 
     
     
-    @Get("/sessions")
+    @Get("/content/sessions")
     public HttpAnswer index() throws InsufficientRightsException {
         this.requirePermissions(HttpManagerV2.HTTP_ADMIN_PERMISSION);
-        final Map<String, Object> c = this.createContext("templates/sessions/sessions.html");
+        final Map<String, Object> c = this.createContext();
         c.put("allSessions", this.getHttpManager().getServer().getSessions());
         
-        return this.makeAnswer(c);
+        return HttpAnswers.createTemplateAnswer("templates/sessions/sessions.html", c);
     }
     
     

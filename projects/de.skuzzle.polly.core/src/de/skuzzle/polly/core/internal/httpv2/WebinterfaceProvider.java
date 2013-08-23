@@ -87,8 +87,6 @@ public class WebinterfaceProvider extends AbstractProvider {
         });
         
         this.httpManager = new HttpManagerV2Impl(this.server);
-        this.httpManager.addMenuEntry(new MenuEntry("Administration", "/admin", 
-            HttpManagerV2.HTTP_ADMIN_PERMISSION));
         this.provideComponent(this.httpManager);
         
     }
@@ -101,10 +99,10 @@ public class WebinterfaceProvider extends AbstractProvider {
         
         this.server.addController(new IndexController(myPolly, this.httpManager));
         this.server.addController(new SessionController(myPolly, this.httpManager));
-        this.httpManager.addMenuEntry(new MenuEntry("Sessions", "sessions", HttpManagerV2.HTTP_ADMIN_PERMISSION));
+        this.httpManager.addMenuEntry(new MenuEntry("Status", "content/status"));
+        this.httpManager.addMenuEntry(new MenuEntry("Sessions", "content/sessions"));
         
         this.server.addHttpEventHandler("/files", new FileHttpEventHandler(false));
-        
         
         this.server.start();
     }

@@ -43,9 +43,8 @@ public abstract class PollyController extends Controller {
 
 
 
-    protected Map<String, Object> createContext(String contentTemplate) {
+    protected Map<String, Object> createContext() {
         final Map<String, Object> c = new HashMap<String, Object>();
-        c.put("content", contentTemplate);
         c.put("myPolly", this.myPolly);
         c.put("user", this.getSessionUser());
         c.put("session", this.getSession());
@@ -62,13 +61,13 @@ public abstract class PollyController extends Controller {
 
 
     protected HttpAnswer makeAnswer(Map<String, Object> context) {
-        return HttpAnswers.createTemplateAnswer("index.tmpl", context);
+        return HttpAnswers.createTemplateAnswer("index.html", context);
     }
 
 
 
     protected HttpAnswer makeAnswer(int responseCode, Map<String, Object> context) {
-        return HttpAnswers.createTemplateAnswer(responseCode, "index.tmpl", context);
+        return HttpAnswers.createTemplateAnswer(responseCode, "index.html", context);
     }
 
 

@@ -1,0 +1,94 @@
+<script>   
+    function updateEvents(sessionId) {
+        $("#" + sessionId + "_reload").fadeIn('fast');
+        $.get("/api/getEvents?id=" + sessionId, function(data) {
+            // clear table
+            $("#" + sessionId + "_events > tbody").empty();
+            $("#" + sessionId + "_events > tbody").html(data);
+            $("#" + sessionId + "_reload").fadeOut('fast');
+        });
+    }
+</script>
+
+<h2>Sessions</h2>
+
+#foreach ($ss in $allSessions)
+<table style="margin-bottom: 5px">
+    <tr>
+        <td style="width:5%"><a href="#$ss.getId()" name="$ss.getId()" onclick="$('#$ss.getId()').fadeToggle('fast')"><img src="files/img/bullet_arrow_down.png"></a></td>
+        <td style="width:25%">ID: $ss.getId()</td>
+        <td style="width:30%">User: $!ss.getAttached("user")</td>
+        <td>Last action: $myPolly.formatting().formatDate($ss.getLastAction())</td>
+    </tr>
+</table>
+<div style="display:none; border: 1px solid #00bb00; padding: 10px; margin-bottom: 5px; font-size:small" id="$ss.getId()" style="margin-left: 20px">
+    
+<h3><a 
+    href="#${ss.getId()}_general" 
+    name="${ss.getId()}_general" 
+    onclick="$('#${ss.getId()}_general').fadeToggle('fast')">General</a>
+</h3>
+<table id="${ss.getId()}_general" style="display:none">
+    <tr>
+        <td>Session:</td>
+        <td>$ss.getId()</td>
+    </tr>
+    <tr>
+        <td>User:</td>
+        <td>$!ss.getAttached("user")</td>
+    </tr>
+    <tr>
+        <td>Started:</td>
+        <td>$myPolly.formatting().formatDate($ss.getTimestamp())</td>
+    </tr>
+    <tr>
+        <td>Expires:</td>
+        <td>$myPolly.formatting().formatDate($ss.getExpirationDate())
+    </tr>
+</table>
+
+
+
+<h3><a 
+    href="#${ss.getId()}_attributes" 
+    name="${ss.getId()}_attributes" 
+    onclick="$('#${ss.getId()}_attributes').fadeToggle('fast')">Attributes</a>
+</h3>
+<table id="${ss.getId()}_attributes" style="display:none">
+    <tr>
+        <th>Key</th>
+        <th>Value</th>
+    </tr>
+    #foreach ($entry in $ss.getAttached().entrySet())
+    <tr>
+        <td>$entry.getKey()</td>
+        <td>$entry.getValue()</td>
+    </tr>
+    #end
+</table>
+
+<h3><a 
+    href="#${ss.getId()}_events" 
+    name="${ss.getId()}_avents" 
+    onclick="$('#${ss.getId()}_events').fadeToggle('fast')">Events</a> 
+    <img style="display:none;" id="$ss.getId()_reload" src="files/img/reload.gif"/>
+</h3>
+
+<table id="${ss.getId()}_events" style="display:none" >
+    <thead>
+    <tr>
+        <th>Time</th>
+        <th>Method</th>
+        <th>Client IP</th>
+        <th>URL</th>
+        <th>Attributes</th>
+        <th><a href="#" onclick="updateEvents('$ss.getId()')">Update</a></th>
+    </tr>
+    </thead>
+    <tbody>
+    #parse("session.events.html")
+    </tbody>
+</table>
+
+</div>
+#end
