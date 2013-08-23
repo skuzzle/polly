@@ -215,6 +215,7 @@ public class User implements de.skuzzle.polly.sdk.User, Serializable {
     }
     
     
+    
     @Override
     public long getLastIdleTime() {
         return this.lastIdleTimeStamp;

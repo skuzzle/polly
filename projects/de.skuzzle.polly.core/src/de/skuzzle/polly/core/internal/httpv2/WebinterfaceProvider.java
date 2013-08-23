@@ -24,7 +24,6 @@ import de.skuzzle.polly.sdk.ConfigurationProvider;
 import de.skuzzle.polly.sdk.Disposable;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
-import de.skuzzle.polly.sdk.httpv2.HttpManagerV2;
 import de.skuzzle.polly.sdk.httpv2.MenuEntry;
 
 @Module(
@@ -99,8 +98,11 @@ public class WebinterfaceProvider extends AbstractProvider {
         
         this.server.addController(new IndexController(myPolly, this.httpManager));
         this.server.addController(new SessionController(myPolly, this.httpManager));
+        this.server.addController(new UserController(myPolly, this.httpManager));
+        
         this.httpManager.addMenuEntry(new MenuEntry("Status", "content/status"));
         this.httpManager.addMenuEntry(new MenuEntry("Sessions", "content/sessions"));
+        this.httpManager.addMenuEntry(new MenuEntry("Users", "content/users"));
         
         this.server.addHttpEventHandler("/files", new FileHttpEventHandler(false));
         
