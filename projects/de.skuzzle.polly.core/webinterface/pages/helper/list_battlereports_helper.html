@@ -235,10 +235,10 @@
 		<td><a href="filter_reports?action=addFilter&filterKey=LOCATION_FILTER&param=$report.getQuadrant()">$report.getQuadrant()</a> $report.getX(),$report.getY()</td>
 		<td><a href="filter_reports?action=addFilter&filterKey=ATTACKER_FILTER&param=$report.getAttackerVenadName()">$report.getAttackerVenadName()</a></td>
 		<td><a href="filter_reports?action=addFilter&filterKey=ATTACKER_CLAN_FILTER&param=$report.getAttackerClan()">$!report.getAttackerClan()</a></td>
-		<td>$myPolly.formatting().formatNumber($report.getAttackerKw()) / $myPolly.formatting().formatNumber($report.getAttackerXpMod())</td>
+		<td>$myPolly.formatting().formatNumber($report.getAttackerKwNormalized()) / $myPolly.formatting().formatNumber($report.getAttackerXpMod())</td>
 		<td><a href="filter_reports?action=addFilter&filterKey=DEFENDER_FILTER&param=$report.getDefenderVenadName()">$report.getDefenderVenadName()</a></td>
 		<td><a href="filter_reports?action=addFilter&filterKey=DEFENDER_CLAN_FILTER&param==$report.getDefenderClan()">$!report.getDefenderClan()</a></td>
-		<td>$myPolly.formatting().formatNumber($report.getDefenderKw()) / $myPolly.formatting().formatNumber($report.getDefenderXpMod())</td>
+		<td>$myPolly.formatting().formatNumber($report.getDefenderKwNormalized()) / $myPolly.formatting().formatNumber($report.getDefenderXpMod())</td>
 		<td><a href="filter_reports?action=addFilter&filterKey=TACTIC_FILTER&param=$report.getTactic()">$report.getTactic()</a></td>
 		<td><a href="filter_reports?action=addFilter&filterKey=HAS_ARTIFACT_FILTER">$report.hasArtifact()</a></td>
 		<td><a href="filter_reports?action=addFilter&filterKey=DATE_FILTER&param=$myPolly.formatting().formatDate($report.getDate())">$myPolly.formatting().formatDate($report.getDate())</a></td>

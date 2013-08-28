@@ -338,6 +338,12 @@ public class BattleReport {
     public double getAttackerKw() {
         return this.attackerKw;
     }
+    
+    
+    
+    public double getAttackerKwNormalized() {
+        return this.attackerKw * this.attackerBonus;
+    }
 
 
     
@@ -349,6 +355,12 @@ public class BattleReport {
     
     public double getDefenderKw() {
         return this.defenderKw;
+    }
+    
+    
+    
+    public double getDefenderKwNormalized() {
+        return this.defenderKw * this.defenderBonus;
     }
 
 
