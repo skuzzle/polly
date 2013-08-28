@@ -49,7 +49,7 @@ public class ParserProperties {
         properties.put(ENABLE_TOKEN_ESCAPING, Boolean.TRUE.toString());
         properties.put(ENABLE_SCANNER_DEBUGGING, Boolean.FALSE.toString());
         properties.put(ENABLE_EXECUTION_DEBUGGING, Boolean.FALSE.toString());
-        properties.put(COMMAND_MIN_LENGTH, "3");
+        properties.put(COMMAND_MIN_LENGTH, "2");
     }
     
     

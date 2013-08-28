@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 import de.skuzzle.polly.core.parser.Evaluator;
 import de.skuzzle.polly.core.parser.InputScanner;
 import de.skuzzle.polly.core.parser.ParseException;
+import de.skuzzle.polly.core.parser.ParserProperties;
 import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.Token;
 import de.skuzzle.polly.core.parser.TokenType;
@@ -56,7 +57,6 @@ import de.skuzzle.polly.sdk.time.DateUtils;
 
 public class CommandManagerImpl implements CommandManager {
     
-    private final static int MIN_COMMAND_NAME_LENGTH = 2;
     
     private class HistoryEntryImpl implements CommandHistoryEntry {
         private Command command;
@@ -131,7 +131,7 @@ public class CommandManagerImpl implements CommandManager {
 	@Override
 	public synchronized void registerCommand(String as, Command cmd) 
 	        throws DuplicatedSignatureException {
-        if (as.length() < MIN_COMMAND_NAME_LENGTH) {
+        if (as.length() < ParserProperties.getInt(ParserProperties.COMMAND_MIN_LENGTH)) {
             throw new IllegalArgumentException(
                     "Too short commandname: " + as);
         }

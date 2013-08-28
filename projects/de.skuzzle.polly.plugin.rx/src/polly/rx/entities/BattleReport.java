@@ -342,7 +342,7 @@ public class BattleReport {
     
     
     public double getAttackerKwNormalized() {
-        return this.attackerKw * this.attackerBonus;
+        return this.attackerKw / this.attackerBonus;
     }
 
 
@@ -360,7 +360,7 @@ public class BattleReport {
     
     
     public double getDefenderKwNormalized() {
-        return this.defenderKw * this.defenderBonus;
+        return this.defenderKw / this.defenderBonus;
     }
 
 
