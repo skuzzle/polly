@@ -1,6 +1,7 @@
 package de.skuzzle.polly.core.internal.httpv2;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -18,10 +19,12 @@ import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.httpv2.HttpManagerV2;
 import de.skuzzle.polly.sdk.httpv2.MenuEntry;
+import de.skuzzle.polly.sdk.time.Milliseconds;
 
 
 public class IndexController extends PollyController {
 
+    private final static String STYLE_SHEET_NAME = "style.css";
     
     public IndexController(MyPolly myPolly, HttpManagerV2 httpManager) {
         super(myPolly, httpManager);
@@ -33,6 +36,14 @@ public class IndexController extends PollyController {
     protected Controller createInstance() {
         return new IndexController(this.getMyPolly(), this.getHttpManager());
     }
+    
+    
+    
+    @Get(STYLE_SHEET_NAME)
+    public HttpAnswer getCSS() {
+        return HttpAnswers.createTemplateAnswer(STYLE_SHEET_NAME, Collections.emptyMap());
+    }
+    
 
     
     
@@ -76,7 +87,7 @@ public class IndexController extends PollyController {
             // cookie to renew the session time out to count it from login time
             final HttpCookie renewTimeout = new HttpCookie(
                 HttpServer.SESSION_ID_NAME, this.getSession().getId(), 
-                this.getServer().sessionLiveTime() / 1000); 
+                Milliseconds.toSeconds(this.getServer().sessionLiveTime()));
             
             final LoginResult result = new LoginResult(true, "content/status", name);
             
@@ -92,6 +103,9 @@ public class IndexController extends PollyController {
         
         return new GsonHttpAnswer(200, new LoginResult(false, "", ""));
     }
+    
+    
+    
     
     
     
@@ -127,6 +141,9 @@ public class IndexController extends PollyController {
             return new GsonHttpAnswer(200, new SessionTimeResult("", "", false));
         }
     }
+    
+    
+    
     
     
     

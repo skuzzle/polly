@@ -1,0 +1,8 @@
+<ul id="menu">
+    #foreach ($me in $menu)
+    #if ($myPolly.roles().canAccess($user, $me))
+        <li><a href="#" onclick="updateContent('$me.getUrl()')">$me.getName()</a></li>
+    #end
+    #end
+    <li id="working">Refreshing...<img style="vertical-align:middle;" src="files/img/reload.gif"/></li>
+</ul>

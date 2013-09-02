@@ -25,7 +25,6 @@ public class GsonHttpAnswerHandler extends HttpAnswerHandler {
             
             final Gson gson = new GsonBuilder().setPrettyPrinting().create();
             final Writer w = new OutputStreamWriter(new BufferedOutputStream(out));
-            final String json = gson.toJson(gsonAnswer.getValue());
             w.write(gson.toJson(gsonAnswer.getValue()));
             w.flush();
             
