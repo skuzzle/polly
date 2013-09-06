@@ -39,8 +39,6 @@ public class FileHttpEventHandler implements HttpEventHandler {
     @Override
     public HttpAnswer handleHttpEvent(HttpEvent e, HttpEventHandler next)
             throws HttpException {
-        System.out.println(e.getRequestURI());
-        
         HttpAnswer backup = null;
         if (this.executeFollowers) {
             backup = next.handleHttpEvent(e, next);
