@@ -25,6 +25,7 @@
         in build process.
     -->
     <property name="dependencies.internal" value="
+        **/polly.http.annotations.jar
     "/>
    
     
@@ -54,6 +55,7 @@
             <project name="${ant.project.name}"/>
             <classpath>
                 <source path="${src.dir}"/>
+                <source path="/de.skuzzle.polly.http.annotations"/>
                 <output path="${build.debug.dir}"/>
                 <library pathref="buildpath.eclipse"/>
             </classpath>

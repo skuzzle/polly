@@ -1,32 +1,33 @@
 package de.skuzzle.polly.core.internal.httpv2;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
+import de.skuzzle.polly.http.annotations.Get;
+import de.skuzzle.polly.http.annotations.Param;
+import de.skuzzle.polly.http.annotations.Post;
+import de.skuzzle.polly.http.annotations.RequestHandler;
+import de.skuzzle.polly.http.annotations.OnRegister;
+import de.skuzzle.polly.http.api.AlternativeAnswerException;
 import de.skuzzle.polly.http.api.Controller;
-import de.skuzzle.polly.http.api.Get;
 import de.skuzzle.polly.http.api.HttpCookie;
 import de.skuzzle.polly.http.api.HttpServer;
-import de.skuzzle.polly.http.api.Param;
-import de.skuzzle.polly.http.api.Post;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
-import de.skuzzle.polly.sdk.httpv2.HttpManagerV2;
-import de.skuzzle.polly.sdk.httpv2.MenuEntry;
+import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
+import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.time.Milliseconds;
 
-
+@RequestHandler("IndexRequests")
 public class IndexController extends PollyController {
 
-    private final static String STYLE_SHEET_NAME = "style.css";
     
-    public IndexController(MyPolly myPolly, HttpManagerV2 httpManager) {
+    
+    public IndexController(MyPolly myPolly, WebinterfaceManager httpManager) {
         super(myPolly, httpManager);
     }
     
@@ -41,7 +42,8 @@ public class IndexController extends PollyController {
     
     @Get(STYLE_SHEET_NAME)
     public HttpAnswer getCSS() {
-        return HttpAnswers.createTemplateAnswer(STYLE_SHEET_NAME, Collections.emptyMap());
+        return HttpAnswers.createTemplateAnswer(STYLE_SHEET_NAME, 
+            new HashMap<String, Object>());
     }
     
 
@@ -51,14 +53,12 @@ public class IndexController extends PollyController {
         public boolean success;
         public String contentPage;
         public String userName;
-        public final List<MenuEntry> menu;
         
         public LoginResult(boolean success, String contentPage, String userName) {
             super();
             this.success = success;
             this.contentPage = contentPage;
             this.userName = userName;
-            this.menu = new ArrayList<>();
         }
     }
     
@@ -76,10 +76,8 @@ public class IndexController extends PollyController {
         
         if (user != null && user.checkPassword(pw)) {
             this.getSession().set("user", user);
-            final Map<String, Object> c = this.createContext();
-            
-            c.put("user", user);
             this.getSession().set("loginTime", new Date());
+            
             final Date now = new Date();
             this.getSession().setExpirationDate(
                 new Date(now.getTime() + this.getServer().getSessionType()));
@@ -90,14 +88,6 @@ public class IndexController extends PollyController {
                 Milliseconds.toSeconds(this.getServer().sessionLiveTime()));
             
             final LoginResult result = new LoginResult(true, "content/status", name);
-            
-            // get menu entries that the user is allowed to access
-            for (final MenuEntry e : this.getHttpManager().getMenuEntries()) {
-                if (this.getMyPolly().roles().canAccess(user, e)) {
-                    result.menu.add(e);
-                }
-            }
-            
             return new GsonHttpAnswer(200, result).addCookie(renewTimeout);
         }
         
@@ -112,10 +102,10 @@ public class IndexController extends PollyController {
     public final static class SessionTimeResult {
         public final String timeLeft;
         public final boolean loggedIn;
-        public final String name;
+        public final String userName;
         public SessionTimeResult(String name, String timeLeft, boolean loggedIn) {
             super();
-            this.name = name;
+            this.userName = name;
             this.timeLeft = timeLeft;
             this.loggedIn = loggedIn;
         }
@@ -124,14 +114,14 @@ public class IndexController extends PollyController {
     
     
     @Get("/api/checkLogin")
-    public HttpAnswer getSessionTime() {
+    public HttpAnswer checkLogin() {
         final User user = this.getSessionUser();
         if (user != null) {
             final long now = new Date().getTime();
             final long start = ((Date) this.getSession().getAttached("loginTime")).getTime();
             final long diff = now - start;
             long tl = this.getServer().sessionLiveTime() - diff;
-            //tl = (int) Math.ceil(tl / (double) 60000) * 60000; // round to minutes
+            tl = (int) Math.ceil(tl / (double) 60000) * 60000; // round to minutes
             
             final Object result = new SessionTimeResult(user.getName(), 
                 this.getMyPolly().formatting().formatTimeSpanMs(tl), true);
@@ -140,16 +130,6 @@ public class IndexController extends PollyController {
         } else {
             return new GsonHttpAnswer(200, new SessionTimeResult("", "", false));
         }
-    }
-    
-    
-    
-    
-    
-    
-    @Get("api/updateMenu")
-    public HttpAnswer getMenu() {
-        return HttpAnswers.createTemplateAnswer("index.menu.html", this.createContext());
     }
     
 
@@ -162,20 +142,28 @@ public class IndexController extends PollyController {
         this.getSession().kill();
         return HttpAnswers.createStringAnswer("").redirectTo("/");
     }
-    
-    
-    
-    @Get("content/status")
-    public HttpAnswer status() {
-        return HttpAnswers.createTemplateAnswer("templates/home/home.html", 
-            this.createContext());
-    }
 
     
     
-    @Get("/")
+    @Get(value = "/", name = "Home")
+    @OnRegister({ WebinterfaceManager.ADD_MENU_ENTRY, "General", 
+        "Shows your polly home page" 
+    })
     public HttpAnswer index() {
-        final Map<String, Object> c = this.createContext();
+        final Map<String, Object> c = this.createContext("templatesv2/home.html");
         return this.makeAnswer(c);
+    }
+    
+    
+    
+    @Get(value = "/pages/status", name = "Status")
+    @OnRegister({WebinterfaceManager.ADD_MENU_ENTRY, 
+        "Admin",
+        "Shows polly status information", 
+        RoleManager.ADMIN_PERMISSION
+    })
+    public HttpAnswer statusPage() throws AlternativeAnswerException {
+        this.requirePermissions(RoleManager.ADMIN_PERMISSION);
+        return this.makeAnswer(this.createContext("templatesv2/status.html"));
     }
 }

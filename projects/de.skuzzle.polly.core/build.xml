@@ -34,6 +34,7 @@
     <property name="dependencies.internal" value="
         **/polly.moduleloader.jar
         **/polly.http.jar
+        **/polly.http.annotations.jar
         **/polly.parser.jar
         **/polly.pircbot.jar
         **/polly.process.jar
@@ -106,6 +107,7 @@
                 <source path="${cfg.dir}"/>
                 <source path="/de.skuzzle.polly.core.moduleloader"/>
                 <source path="/de.skuzzle.polly.http"/>
+                <source path="/de.skuzzle.polly.http.annotations"/>
                 <source path="/de.skuzzle.polly.core.parser"/>
                 <source path="/de.skuzzle.polly.core.pircbot"/>
                 <source path="/de.skuzzle.polly.process"/>

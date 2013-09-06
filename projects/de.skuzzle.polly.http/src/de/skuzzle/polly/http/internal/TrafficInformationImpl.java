@@ -23,17 +23,31 @@ import de.skuzzle.polly.http.api.TrafficInformation;
 
 class TrafficInformationImpl implements TrafficInformation {
 
+    private final TrafficInformationImpl parent;
+    
     private int upload;
     private int download;
 
     
+    
+    public TrafficInformationImpl(TrafficInformationImpl parent) {
+        this.parent = parent;
+    }
+    
+    
     public synchronized void updateUpload(int bytes) {
+        if (this.parent != null) {
+            this.parent.updateUpload(bytes);
+        }
         this.upload += bytes;
     }
     
     
     
     public synchronized void updateDownload(int bytes) {
+        if (this.parent != null) {
+            this.parent.updateDownload(bytes);
+        }
         this.download += bytes;
     }
     

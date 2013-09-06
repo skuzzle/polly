@@ -37,8 +37,8 @@ import java.util.regex.Pattern;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
+import de.skuzzle.polly.http.api.AlternativeAnswerException;
 import de.skuzzle.polly.http.api.HttpCookie;
-import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.http.api.HttpEvent.RequestMode;
 import de.skuzzle.polly.http.api.HttpEventHandler;
 import de.skuzzle.polly.http.api.HttpException;
@@ -188,11 +188,12 @@ class BasicEventHandler implements HttpHandler {
     
     @Override
     public void handle(HttpExchange t) throws IOException {
-        
+
         this.server.cleanSessions();
-        
         // copy list to avoid further synchronization
         final HttpEventImpl httpEvent = this.createEvent(t);
+        this.server.fireOnRequest(httpEvent);
+        
         final HttpSessionImpl session = (HttpSessionImpl) httpEvent.getSession();
         session.addEvent(httpEvent.copy());
         session.setLastAction(new Date());
@@ -231,6 +232,9 @@ class BasicEventHandler implements HttpHandler {
                 this.handleAnswer(answer, t, httpEvent);
                 return;
             }
+        } catch (AlternativeAnswerException e) {
+            this.handleAnswer(e.getAnswer(), t, httpEvent);
+            return;
         } catch (HttpException e) {
             // consume and send "file not found" below
             e.printStackTrace();
@@ -243,14 +247,36 @@ class BasicEventHandler implements HttpHandler {
     
     
     private final void handleAnswer(HttpAnswer answer, HttpExchange t, 
-            HttpEvent httpEvent) throws IOException {
-        assert answer != null : "Answer must not be null";
+            final HttpEventImpl httpEvent) throws IOException {
         
+        
+        final HttpSessionImpl session = (HttpSessionImpl) httpEvent.getSession();
+        
+        // set stream to count outgoing traffic and report whether it was closed
+        final TrafficInformationImpl ti = 
+            (TrafficInformationImpl) session.getTrafficInfo();
+        final CountingOutputStream out = new CountingOutputStream(
+            t.getResponseBody(), ti) {
+            
+            @Override
+            public void close() throws IOException {
+                super.close();
+                httpEvent.fireOnClose();
+            }
+        };
+        t.setStreams(null, out);
+        
+        
+        // null answer means to discard this event
+        if (answer == null) {
+            t.close();
+            return;
+        }
+
         try {
             // add cookies as response header
             final Collection<HttpCookie> cookies = new ArrayList<>(answer.getCookies());
-            
-            final HttpSessionImpl session = (HttpSessionImpl) httpEvent.getSession();
+
             if (this.server.getSessionType() == HttpServer.SESSION_TYPE_COOKIE && 
                     session.isPending()) {
                 
@@ -272,13 +298,6 @@ class BasicEventHandler implements HttpHandler {
             
             t.getResponseHeaders().putAll(answer.getResponseHeaders());
             t.sendResponseHeaders(answer.getResponseCode(), 0);
-            
-            // set stream to count outgoing traffic
-            final TrafficInformationImpl ti = 
-                (TrafficInformationImpl) session.getTrafficInfo();
-            final CountingOutputStream out = new CountingOutputStream(
-                t.getResponseBody(), ti);
-            t.setStreams(null, out);
             
             // handle different types of answers
             final HttpAnswerHandler handler = this.server.getHandler(answer);

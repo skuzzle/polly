@@ -1,0 +1,18 @@
+<div class="highlight contentBox">
+#if (!$user)
+#CONTENT_HEADER("Home")
+<div class="content">
+<p>
+    Welcome to the new polly webinterface! Login to gain access to all available
+    functionality.
+</p>
+#else
+#CONTENT_HEADER("Welcome $user.getName()")
+<div class="content">
+<p>
+    At this point, there should probably some useful information or functions be
+    exposed
+</p>
+#end
+</div>
+</div>

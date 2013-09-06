@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.file.Path;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,12 +33,15 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
 
 import com.sun.net.httpserver.HttpExchange;
 
+import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.http.api.HttpEventHandler;
+import de.skuzzle.polly.http.api.HttpEventListener;
 import de.skuzzle.polly.http.api.HttpServer;
 import de.skuzzle.polly.http.api.HttpSession;
 import de.skuzzle.polly.http.api.ServerFactory;
@@ -51,10 +55,12 @@ import de.skuzzle.polly.http.api.answers.HttpTemplateAnswer;
 class HttpServerImpl implements HttpServer {
     
     private final static Random RANDOM = new Random();
-    
+
     private final Map<String, List<HttpEventHandler>> handlers;
     private final Map<InetSocketAddress, HttpSessionImpl> ipToSession;
     private final Map<InetSocketAddress, HttpSessionImpl> pending;
+    private final Collection<HttpEventListener> httpListeners;
+    private final Queue<HttpSession> sessionHistory;
     
     private final Map<String, HttpSessionImpl> idToSession;
     private final List<File> roots;
@@ -63,6 +69,8 @@ class HttpServerImpl implements HttpServer {
     private final ServerFactory factory;
     private int sessionType;
     private int sessionLiveTime;
+    private final TrafficInformationImpl traffic;
+    
     
     
     private com.sun.net.httpserver.HttpServer server;
@@ -71,6 +79,8 @@ class HttpServerImpl implements HttpServer {
     
     
     public HttpServerImpl(ServerFactory factory) {
+        this.traffic = new TrafficInformationImpl(null);
+        this.sessionHistory = new ArrayDeque<>();
         this.handlers = new URLMap<>();
         this.ipToSession = new HashMap<>();
         this.idToSession = new HashMap<>();
@@ -80,10 +90,30 @@ class HttpServerImpl implements HttpServer {
         this.roots = new ArrayList<>();
         this.factory = factory;
         this.sessionType = SESSION_TYPE_COOKIE;
+        this.httpListeners = new ArrayList<>();
         
         // default handler
         this.addAnswerHandler(HttpBinaryAnswer.class, new SimpleBinaryAnswerHandler());
         this.addAnswerHandler(HttpTemplateAnswer.class, new TemplateAnswerHandler());
+    }
+    
+    
+    
+    /**
+     * Creates a new {@link TrafficInformationImpl} which will also update the cumulative
+     * traffic information of this server.
+     * 
+     * @return A new {@link TrafficInformationImpl} instance.
+     */
+    TrafficInformationImpl newTrafficInformation() {
+        return new TrafficInformationImpl(this.traffic);
+    }
+    
+    
+    
+    @Override
+    public TrafficInformationImpl getTraffic() {
+        return this.traffic;
     }
     
     
@@ -128,6 +158,13 @@ class HttpServerImpl implements HttpServer {
     
     
     @Override
+    public Collection<HttpSession> getSessionHistory() {
+        return this.sessionHistory;
+    }
+    
+    
+    
+    @Override
     public HttpAnswerHandler getHandler(HttpAnswer answer) {
         final Class<?> cls = answer.getClass();
         return this.handler.resolve(cls);
@@ -135,8 +172,30 @@ class HttpServerImpl implements HttpServer {
     
     
     
+    @Override
+    public void addHttpEventListener(HttpEventListener listener) {
+        this.httpListeners.add(listener);
+    }
+    
+    
+    
+    @Override
+    public void removeHttpEventListener(HttpEventListener listener) {
+        this.httpListeners.remove(listener);
+    }
+    
+    
+    
+    @Override
     public void addAnswerHandler(Class<?> answerType, HttpAnswerHandler handler) {
         this.handler.registerHandler(answerType, handler);
+    }
+    
+    
+    
+    @Override
+    public Collection<String> getURLs() {
+        return this.handlers.keySet();
     }
     
     
@@ -307,6 +366,17 @@ class HttpServerImpl implements HttpServer {
     
     
     
+    private void rememberSession(HttpSession session) {
+        synchronized (this.sessionHistory) {
+            this.sessionHistory.add(session);
+            if (this.sessionHistory.size() > SESSION_HISTORY_SIZE) {
+                this.sessionHistory.poll();
+            }
+        }
+    }
+    
+    
+    
     void cleanSessions() {
         final Date now = new Date();
         if (this.getSessionType() == SESSION_TYPE_COOKIE) {
@@ -321,8 +391,8 @@ class HttpServerImpl implements HttpServer {
                         
                     if (session.shouldKill() || 
                             now.getTime() - exp.getTime() > this.sessionLiveTime) {
-                        session.clearData();
                         it.remove();
+                        this.rememberSession(session);
                     }
                 }
             }
@@ -345,6 +415,7 @@ class HttpServerImpl implements HttpServer {
                 this.ipToSession.remove(session);
             }
         }
+        this.rememberSession(session);
     }
     
     
@@ -390,4 +461,20 @@ class HttpServerImpl implements HttpServer {
             }
         }
     }
+    
+    
+    
+    void fireOnRequest(HttpEvent e) {
+        for (final HttpEventListener listener : this.httpListeners) {
+            listener.onRequest(e);
+        }
+    }
+    
+    
+    
+    void fireOnRequestHandled(HttpEvent e) {
+        for (final HttpEventListener listener : this.httpListeners) {
+            listener.onRequestHandled(e);
+        }
+    }    
 }

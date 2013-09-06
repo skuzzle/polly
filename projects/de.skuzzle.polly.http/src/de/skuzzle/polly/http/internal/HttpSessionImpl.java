@@ -19,12 +19,11 @@
 package de.skuzzle.polly.http.internal;
 
 import java.util.ArrayDeque;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Queue;
 
 import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.http.api.HttpSession;
@@ -33,14 +32,14 @@ import de.skuzzle.polly.http.api.TrafficInformation;
 
 class HttpSessionImpl implements HttpSession {
     
-    private final static int EVENTS_TO_BUFFER = 10;
+    private final static int EVENTS_TO_BUFFER = 20;
 
     private final transient HttpServerImpl server;
     private final String id;
     private final long timestamp;
     private final Map<String, Object> attached;
     private final TrafficInformation trafficInfo;
-    private final Queue<HttpEvent> events;
+    private final Deque<HttpEvent> events;
     private Date lastAction;
     private boolean doKill;
     
@@ -58,12 +57,11 @@ class HttpSessionImpl implements HttpSession {
     
     
     public HttpSessionImpl(HttpServerImpl server, String id) {
-        
         this.server = server;
         this.id = id;
         this.timestamp = System.currentTimeMillis();
         this.attached = new HashMap<>();
-        this.trafficInfo = new TrafficInformationImpl();
+        this.trafficInfo = server.newTrafficInformation();
         this.events = new ArrayDeque<>();
         // make sure session is initially unblocked
         this.blockStamp = Long.MAX_VALUE;
@@ -100,12 +98,18 @@ class HttpSessionImpl implements HttpSession {
     
     
     
-    public Date getLastAction() {
+    @Override
+    public Date getLastActionDate() {
         return this.lastAction;
     }
     
     
     
+    /**
+     * Adds an event to this session's event history. If the history grows bigger than
+     * {@link #EVENTS_TO_BUFFER}, the eldest entry will be removed from the history.
+     * @param event Event to remember.
+     */
     void addEvent(HttpEvent event) {
         synchronized (this.events) {
             this.events.add(event);
@@ -117,6 +121,10 @@ class HttpSessionImpl implements HttpSession {
     
     
     
+    /**
+     * Determiens whether this session is marked to be killed.
+     * @return Whether this session should be killed upon next action
+     */
     boolean shouldKill() {
         return this.doKill;
     }
@@ -124,8 +132,8 @@ class HttpSessionImpl implements HttpSession {
     
     
     @Override
-    public Collection<HttpEvent> getEvents() {
-        return Collections.unmodifiableCollection(this.events);
+    public Deque<HttpEvent> getEvents() {
+        return this.events;
     }
     
     
@@ -144,6 +152,7 @@ class HttpSessionImpl implements HttpSession {
 
     
     
+    @Override
     public Date getExpirationDate() {
         return this.expirationDate;
     }

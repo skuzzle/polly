@@ -47,6 +47,12 @@ public interface HttpEvent {
     }
     
     
+    public interface Listener {
+        public void action(HttpEvent event);
+    }
+    
+    
+    
     /**
      * Gets the time of when this event was created.
      * 
@@ -168,4 +174,7 @@ public interface HttpEvent {
      * @return The session of this event.
      */
     public HttpSession getSession();
+    
+    
+    public void onClose(Listener listener);
 }

@@ -1,0 +1,176 @@
+<script>
+    function showHistory(id) {
+        $("#history_" + id).fadeToggle();
+        updateHistory(id);
+    }
+    function updateHistory(id) {
+        showProgress();
+        $.get("${PAGE_LISTSESSIONS}?id=" + id, function(data) {
+            stopProgress();
+            $("#history_" + id).html(data);
+        });
+    }
+    function showAttached(id) {
+        $("#attached_" + id).fadeToggle();
+    }
+    function detach(id, key) {
+        showProgress();
+        $.get("${PAGE_DETACHITEM}?id="+id+"&key="+key, function(data) {
+            stopProgress();
+            if (data != "success") {
+                notify("Detaching item failed", true);
+            } else {
+                notify("Detach successful", true);
+            }
+        });
+    }
+    function killSession(id) {
+        showProgress();
+        $.get("${PAGE_KILLSESSION}?id="+id, function(data) {
+            stopProgress();
+            if (data != "success") {
+                notify("Killing failed", true);
+            } else {
+                notify("Session killed", true);
+            }
+        });
+    }
+</script>
+
+<div class="highlight contentBox">
+    #CONTENT_HEADER ("Overall traffic")
+    <div class="content">
+        <table>
+            <tr>
+                <th>Sent to clients</th>
+                <th>Received from clients</th>
+            </tr>
+            <tr>
+                <td>$myPolly.formatting().formatBytes($httpServer.getTraffic().getUpload())</td>
+                <td>$myPolly.formatting().formatBytes($httpServer.getTraffic().getDownload())</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="highlight contentBox">
+    #CONTENT_HEADER ("Sessions with valid log in")
+    <div class="content">
+    <table>
+        <tr>
+            <th>User</th>
+            <th>Id</th>
+            <th>Client Ip</th>
+            <th>Expires</th>
+            <th>Last action</th>
+            <th>Sent</th>
+            <th>Received</th>
+            <th>Events</th>
+            <th>Values</th>
+            <th>Action</th>
+        </tr>
+    #foreach ($ss in $allSessions)
+    #if ($ss.getAttached("user"))
+        <tr>
+            <td>$ss.getAttached("user")</td>
+            <td>$ss.getId()</td>
+            <td>$ss.getEvents().iterator().next().getClientIP()</td>
+            <td>$myPolly.formatting().formatDate($ss.getExpirationDate())</td>
+            <td>$myPolly.formatting().formatDate($ss.getLastActionDate())</td>
+            <td>$myPolly.formatting().formatBytes($ss.getTrafficInfo().getUpload())</td>
+            <td>$myPolly.formatting().formatBytes($ss.getTrafficInfo().getDownload())</td>
+            <td style="text-align:right">
+                    <a href="#" onclick="showHistory('$ss.getId()')">Toggle</a>
+                    <a href="#" onclick="updateHistory('$ss.getId()')">Update</a>
+                <ul id="history_$ss.getId()" style="list-style-type:none; display: none; text-align: left">
+                </ul>
+            </td>
+            <td style="text-align:right">
+                <a href="#" onclick="showAttached('$ss.getId()')">Toggle</a>
+                <ul id="attached_${ss.getId()}" style="list-style-type:none; display: none; text-align: left">
+                   #foreach($ee in $ss.getAttached().entrySet())
+                   <li><b>$ee.getKey()</b> : <em>$ee.getValue()</em> <a href="#" onclick="detach('$ss.getId()', 'ee.getKey()')">Remove</a></li>
+                   #end
+                </ul>
+            </td>
+            <td><a href="#" onclick="killSession('$ss.getId()')">Kill</a>
+        </tr>
+        #end
+    #end
+    </table>
+    </div>
+</div>
+
+<div class="highlight contentBox">
+    #CONTENT_HEADER ("Sessions with no login")
+    <div class="content">
+        <table>
+            <tr>
+                <th>Id</th>
+                <th>Client Ip</th>
+                <th>Expires</th>
+                <th>Last action</th>
+                <th>Sent</th>
+                <th>Received</th>
+                <th>Events</th>
+                <th>Values</th>
+                <th>Action</th>
+            </tr>
+            #foreach ($ss in $allSessions)
+            #if (!$ss.getAttached("user"))
+            <tr>
+                <td>$ss.getId()</td>
+                <td>$ss.getEvents().iterator().next().getClientIP()</td>
+                <td>$myPolly.formatting().formatDate($ss.getExpirationDate())</td>
+                <td>$myPolly.formatting().formatDate($ss.getLastActionDate())</td>
+                <td>$myPolly.formatting().formatBytes($ss.getTrafficInfo().getUpload())</td>
+                <td>$myPolly.formatting().formatBytes($ss.getTrafficInfo().getDownload())</td>
+                <td style="text-align:right">
+                    <a href="#" onclick="showHistory('$ss.getId()')">Toggle</a>
+                    <a href="#" onclick="updateHistory('$ss.getId()')">Update</a>
+                    <ul id="history_$ss.getId()" style="list-style-type:none; display: none; text-align: left">
+                    </ul>
+                </td>
+                <td style="text-align:right">
+                    <a href="#" onclick="showAttached('$ss.getId()')">Toggle</a>
+                    <ul id="attached_${ss.getId()}" style="list-style-type:none; display: none; text-align: left">
+                        #foreach($ee in $ss.getAttached().entrySet())
+                        <li><b>$ee.getKey()</b> : <em>$ee.getValue()</em> <a href="#" onclick="detach('$ss.getId()', 'ee.getKey()')">Remove</a></li>
+                        #end
+                    </ul>
+                </td>
+                <td><a href="#" onclick="killSession('$ss.getId()')">Kill</a>
+                </tr>
+                #end
+                #end
+            </table>
+    </div>
+</div>
+
+<div class="highlight contentBox">
+    #CONTENT_HEADER ("Outdated sessions")
+    <div class="content">
+        <table>
+            <tr>
+                <th>User</th>
+                <th>Id</th>
+                <th>Client Ip</th>
+                <th>Expired</th>
+                <th>Last action</th>
+                <th>Sent to</th>
+                <th>Received from</th>
+            </tr>
+            #foreach ($ss in $httpServer.getSessionHistory())
+            <tr>
+                <td>$!ss.getAttached("user")</td>
+                <td>$ss.getId()</td>
+                <td>$ss.getEvents().iterator().next().getClientIP()</td>
+                <td>$myPolly.formatting().formatDate($ss.getExpirationDate())</td>
+                <td>$myPolly.formatting().formatDate($ss.getLastActionDate())</td>
+                <td>$myPolly.formatting().formatBytes($ss.getTrafficInfo().getUpload())</td>
+                <td>$myPolly.formatting().formatBytes($ss.getTrafficInfo().getDownload())</td>
+            </tr>
+            #end
+        </table>
+    </div>
+</div>

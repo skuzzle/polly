@@ -1,0 +1,102 @@
+<div class="highlight contentBox">
+    #CONTENT_HEADER ("Add new user <a id=""toggleAddUser"" href=""#"">Show</a>")
+    
+    <div id="addUserContent" class="content" style="display: none;">
+        <form id="addUserForm" method="post">
+            <table>
+                <tr>
+                    <td><label for="newName">User name:</label></td>
+                    <td><input type="text" class="textbox" name="newName"/></td>
+                </tr>
+                <tr>
+                    <td><label for="newName">Password:</label></td>
+                    <td><input type="password" class="textbox" name="newPassword"/></td>
+                </tr>                
+                <tr>
+                    <td><label for="initialRoles">Initial roles (multiple selection):</label></td>
+                    <td>            
+                        <select class="select" multiple name="initialRoles">
+                        #foreach ($role in $myPolly.roles().getRoles()) <option>$role</option>#end
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="validation" colspan="2"></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><input id="submitUser" type="submit" value="Add user"/></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        updateUserList();
+        $("#submitUser").click(function(event) {
+            event.preventDefault();
+            addUser();
+        });
+        $("#toggleAddUser").click(function() {
+            $("#addUserContent").fadeToggle(400);
+        });
+    });
+    
+    function updateUserList() {
+        showProgress();
+        $.get("$PAGE_LISTUSERS", function(data) {
+            $("#userList").empty();
+            $("#userList").html(data);
+            stopProgress();
+        });
+    }
+    
+    function addUser() {
+        var isValid = true;
+        $("#addUserForm input, select").map(function() { 
+            if (this.value == "") {
+                isValid = false;
+            }
+            return this; 
+        });
+        
+        if (!isValid) {
+            $("#addUserForm .validation").text("Please fill out all required fields");
+            $("#addUserForm .validation").fadeIn();
+            return;
+        } else {
+            $("#addUserForm .validation").fadeOut();
+        }
+        showProgress();
+        $.post("$PAGE_ADDUSER", $("#addUserForm").serialize(), function(data) {
+            var result = JSON.parse(data);
+            $("#addUserForm .validation").text(result.message);
+            $("#addUserForm .validation").fadeIn();
+            if (result.success) {
+                updateUserList();
+            }
+            stopProgress();
+        });
+    }
+    
+    function deleteUser(id) {
+        showProgress();
+        $.get("$PAGE_DELETEUSER?id="+id, function(data) {
+            var result = JSON.parse(data);
+            alert(result.message);
+            if (result.success) {
+                updateUserList()
+            }
+            stopProgress();
+        });
+    }
+</script>
+
+<div class="highlight contentBox">
+    #CONTENT_HEADER ("Registered Users <a href=""#"" onclick=""updateUserList()"">Update</a>")
+    <div class="content">
+    <table id="userList">
+    </table>
+    </div>
+</div>

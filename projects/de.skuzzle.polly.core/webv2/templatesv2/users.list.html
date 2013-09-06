@@ -1,0 +1,23 @@
+<tr>
+    <th>Id</th>
+    <th>Name</th>
+    <th>Nickname</th>
+    <th>Idle?</th>
+    <th>Last IRC action</th>
+    <th>IRC Login</th>
+    <th>Action</th>
+</tr>
+#foreach ($u in $users) 
+<tr>
+    <td>$u.getId()</td>
+    <td>#if ($u.isPollyAdmin())<b>$u.getName()</b> #else $u.getName()#end</td>
+    <td>$!u.getCurrentNickName()</td>
+    <td>#if ($u.isIdle()) Idle #end</td>
+    <td>#if ($u.getLastMessageTime() != 0) $myPolly.formatting().formatDate( $u.getLastMessageTime() ) #end</td>
+    <td>#if ($u.getLoginTime() != 0) $myPolly.formatting().formatDate( $u.getLoginTime() ) #end</td>
+    <td>
+        <a href="#" title="Edit User"><img src="/files/imgv2/user_edit.png" height="20" width="20" onclick="updateUserContent('content/editUser?name=$u.getName()')"/></a> 
+        #if (!$u.isPollyAdmin())<a href="#" title="Delete User" onclick="deleteUser('$u.getId()')"><img src="/files/imgv2/user_delete.png" height="20" width="20"/></a> #end
+    </td>
+</tr>
+#end

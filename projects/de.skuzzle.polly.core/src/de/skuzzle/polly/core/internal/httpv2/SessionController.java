@@ -2,22 +2,24 @@ package de.skuzzle.polly.core.internal.httpv2;
 
 import java.util.Map;
 
+import de.skuzzle.polly.http.annotations.Get;
+import de.skuzzle.polly.http.annotations.OnRegister;
+import de.skuzzle.polly.http.annotations.Param;
+import de.skuzzle.polly.http.api.AlternativeAnswerException;
 import de.skuzzle.polly.http.api.Controller;
-import de.skuzzle.polly.http.api.Get;
 import de.skuzzle.polly.http.api.HttpSession;
-import de.skuzzle.polly.http.api.Param;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.sdk.MyPolly;
-import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
-import de.skuzzle.polly.sdk.httpv2.HttpManagerV2;
+import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
+import de.skuzzle.polly.sdk.roles.RoleManager;
 
 
 public class SessionController extends PollyController {
 
     
     
-    public SessionController(MyPolly myPolly, HttpManagerV2 httpManager) {
+    public SessionController(MyPolly myPolly, WebinterfaceManager httpManager) {
         super(myPolly, httpManager);
     }
     
@@ -30,25 +32,59 @@ public class SessionController extends PollyController {
 
     
     
-    @Get("/content/sessions")
-    public HttpAnswer index() throws InsufficientRightsException {
-        this.requirePermissions(HttpManagerV2.HTTP_ADMIN_PERMISSION);
-        final Map<String, Object> c = this.createContext();
+    @Get(value = "/pages/sessions", name = "Sessions")
+    @OnRegister({
+        WebinterfaceManager.ADD_MENU_ENTRY, 
+        "Admin", "List and manage currently active HTTP sessions",
+        RoleManager.ADMIN_PERMISSION
+    })
+    public HttpAnswer sessions() throws AlternativeAnswerException {
+        this.requirePermissions(RoleManager.ADMIN_PERMISSION);
+        final Map<String, Object> c = this.createContext("templatesv2/sessions.html");
         c.put("allSessions", this.getHttpManager().getServer().getSessions());
         
-        return HttpAnswers.createTemplateAnswer("templates/sessions/sessions.html", c);
+        return this.makeAnswer(c);
+    }
+    
+    
+    
+    @Get("/api/killSession")
+    public HttpAnswer killSession(@Param("id") String id) {
+        final HttpSession session = this.getServer().findSession(id);
+        if (session != null) {
+            session.kill();
+            return HttpAnswers.createStringAnswer("success");
+        }
+        return HttpAnswers.createStringAnswer("fail");
+    }
+    
+    
+    @Get("/api/detach")
+    public HttpAnswer detachItem(@Param("id") String id, @Param("key") String key) {
+        final HttpSession session = this.getServer().findSession(id);
+        if (session != null) {
+            session.detach(key);
+            return HttpAnswers.createStringAnswer("success");
+        }
+        return HttpAnswers.createStringAnswer("fail");
     }
     
     
     
     @Get("/api/getEvents")
     public HttpAnswer listSessions(@Param("id") String id) 
-            throws InsufficientRightsException {
-        this.requirePermissions(HttpManagerV2.HTTP_ADMIN_PERMISSION);
+            throws AlternativeAnswerException {
+        
+        if (!this.getMyPolly().roles().hasPermission(
+                this.getSessionUser(), RoleManager.ADMIN_PERMISSION)) {
+            
+            return HttpAnswers.createStringAnswer("Required permission: " + 
+                RoleManager.ADMIN_PERMISSION);
+        }
         
         final HttpSession session = this.getServer().findSession(id);
         
-        return HttpAnswers.createTemplateAnswer("templates/sessions/session.events.html", 
+        return HttpAnswers.createTemplateAnswer("templatesv2/session.events.html", 
             "myPolly", this.getMyPolly(),
             "ss", session);
     }

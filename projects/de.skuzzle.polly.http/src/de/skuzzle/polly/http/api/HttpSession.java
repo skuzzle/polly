@@ -18,8 +18,8 @@
  */
 package de.skuzzle.polly.http.api;
 
-import java.util.Collection;
 import java.util.Date;
+import java.util.Deque;
 import java.util.Map;
 
 
@@ -117,11 +117,24 @@ public interface HttpSession {
      * 
      * @return Collection of http events.
      */
-    public Collection<HttpEvent> getEvents();
+    public Deque<HttpEvent> getEvents();
     
     /**
      * Gets a read-only map of all attached objects.
      * @return Map of objects attached to this session.
      */
     public Map<String, Object> getAttached();
+
+    /**
+     * Gets the expiration date of this session.
+     * 
+     * @return The expiration date.
+     */
+    public Date getExpirationDate();
+    
+    /**
+     * Gets the date of the last event which was raised by this session.
+     * @return The last action date.
+     */
+    public Date getLastActionDate();
 }

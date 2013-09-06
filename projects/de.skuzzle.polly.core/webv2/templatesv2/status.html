@@ -1,0 +1,70 @@
+<div class="contentBox">
+    <table>
+        <thead>
+            <tr>
+                <th colspan="2">Status</th>
+            </tr>
+        </thead>
+        <tr>
+            <td><b>Version: </b></td>
+            <td>$!myPolly.getPollyVersion()</td>
+        </tr>   
+        <tr>
+            <td><b>Running since: </b></td>
+            <td>$myPolly.formatting().formatDate($startTime)</td>
+        </tr>   
+        <tr>
+            <td><b>Uptime: </b></td>
+            <td>$myPolly.formatting().formatTimeSpanMs($uptime)</td>
+        </tr>
+        <tr>
+            <td><b>Active plugins: </b></td>
+            <td>$myPolly.plugins().loadedPlugins().size()</td>
+        </tr>   
+        <tr>
+            <td><b>HTTP Session live time: </b></td>
+            <td>$myPolly.formatting().formatTimeSpanMs($sessionTimeOut)</td>
+        </tr>
+        <tr>
+            <td><b>HTTP Session ID: </b></td>
+            <td>$session.getId()</td>
+        </tr>
+        <tr>
+            <td><b>Current channels: </b></td>
+            <td>#foreach($channel in $myPolly.irc().getChannels()) $channel #end</td>
+        </tr>
+        <tr>
+            <td><b>Registered users: </b></td>
+            <td>$myPolly.users().getRegisteredUsers().size()</td>
+        </tr>
+        <tr>
+            <td><b>Logged in IRC users: </b></td>
+            <td>$myPolly.users().getOnlineUsers().size()</td>
+        </tr>
+        <tr>
+            <td><b>Available IRC commands: </b></td>
+            <td>$myPolly.commands().getRegisteredCommands().size()</td>
+        </tr>
+    </table>
+</div>
+    
+<div class="contentBox">
+    <table>
+        <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Developer</th>
+        </tr>
+        #set ($i = 0)
+        #foreach($plugin in $myPolly.plugins().loadedPlugins())
+        #set ($i = $i+1)
+        <tr>
+            <td>$i</td>
+            <td>$plugin.getName()</td>
+            <td>$plugin.getDescription()</td>
+            <td>$plugin.getDeveloper()</td>
+        </tr>
+        #end 
+    </table>
+</div>

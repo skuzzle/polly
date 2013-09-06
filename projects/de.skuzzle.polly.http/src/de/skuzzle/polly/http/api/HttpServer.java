@@ -39,6 +39,10 @@ public interface HttpServer {
     
     public final static int SESSION_TYPE_GET = 2;
 
+    public static final int SESSION_HISTORY_SIZE = 20;
+    
+
+    
     /**
      * Determines whether the server is currently running.
      * 
@@ -123,6 +127,31 @@ public interface HttpServer {
     public void removeHttpEventHandler(String url, HttpEventHandler handler);
     
     /**
+     * Adds a listener which gets notified on every incoming {@link HttpEvent}.
+     * @param listener Listener to add.
+     */
+    public void addHttpEventListener(HttpEventListener listener);
+    
+    /**
+     * Removes a listener.
+     * @param listener The listener to remove.
+     */
+    public void removeHttpEventListener(HttpEventListener listener);
+    
+    /**
+     * Gets a collection of all URLs for which a handler exists.
+     * @return Collection of all available URLs on this server.
+     */
+    public Collection<String> getURLs();
+    
+    /**
+     * Gets a collection of previous sessions that already have been invalidated.
+     * 
+     * @return Collection of outdated sessions.
+     */
+    public Collection<HttpSession> getSessionHistory();
+    
+    /**
      * <p>Adds the given directory as a root directory. If files are to be provided over
      * http, they must be absolutely relative to any of the root directories that are 
      * registered with this method. This ensures that no files are sent that exist 
@@ -180,4 +209,11 @@ public interface HttpServer {
      * @return Collection of sessions.
      */
     public Collection<HttpSession> getSessions();
+
+    /**
+     * Gets the overall traffic information for this server instance.
+     * 
+     * @return The overall traffic information.
+     */
+    public TrafficInformation getTraffic();
 }

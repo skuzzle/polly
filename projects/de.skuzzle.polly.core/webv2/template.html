@@ -1,44 +1,66 @@
 <html>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Polly Webinterface v2</title>
-    <link rel="stylesheet" type="text/css" href="template.css" />
+    <link rel="stylesheet" type="text/css" href="$PAGE_GETCSS" />
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="http://code.jquery.com/color/jquery.color-2.1.2.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.min.js"></script>
+    <script src="/files/script/styles.js"></script>
     <script>
-        $(document).ready(function() {
-            var hover = false;
-            var timer;
-            $(".showContent").mouseleave(function() {
-                timer = setTimeout(function() {
-                    if (!hover) {
-                        $("#menuContent").fadeOut(150);
-                        $(".showContent").css({borderBottom: '3px solid transparent'});
-                    }
-                }, 150);
-            });
-            
-            $(".showContent").mouseenter(function() {
-                hover = false;
-                $("#menuContent").fadeIn(150);
-                $(".showContent").css({borderBottom: '3px solid #3333ff'});
+        // set by template engine to determine whether user is logged in
+        var LOGGED_IN = #if ($user) true #else false #end;
 
+        // interval in ms in which to check whether user is still logged in
+        var CHECK_LOGGED_IN_INTERVAL = 60000;
+        
+        // time in ms of how long notifications are shown
+        var NOTIFICATION_TIME = 5000;
+        
+        // warning will be displayed if this amount of time is left until auto logout
+        var LOGOUT_TIMEOUT_WARNING = "1m";
+
+        
+        // array of menu descriptions
+        var DESCRIPTIONS = {
+        #foreach ($mc in $menu)
+            #foreach ($me in $mc.getContent())
+            "$me.hashCode()":"$me.getDescription()",
+            #end
+        #end
+        };
+        
+
+        $(document).ready(function() {
+            $("#content").fadeIn(1000);
+            
+            // Login and Logout buttons
+            $("#performLogin").click(function(event) {
+                event.preventDefault();
+                performLogin();
             });
-            $("#menuContent").mouseenter(function() {
-                hover = true;
-            });
-            $("#menuContent").mouseleave(function() {
-                $(".showContent").css({borderBottom: '3px solid transparent'});
-                $("#menuContent").fadeOut(150);
-                clearTimer(timer);
+            $("#performLogout").click(function(event) {
+                event.preventDefault();
+                performLogout();
             });
             
-            $(".menuEntry").mouseenter(function() {
-                $("#menuDescription").fadeIn();
-            });
-            $(".menuEntry").mouseleave(function() {
-                $("#menuDescription").hide();
-            });
+            
+            
+            // check current login status regularly
+            if (LOGGED_IN) {
+                // check one time now
+                checkLoggedInState();
+                var checkLoginTimer = setInterval(function() {
+                    checkLoggedInState();
+                }, CHECK_LOGGED_IN_INTERVAL);
+            }
         });
         
+        
+        
+        // Displays the progress indicator until stopProgress() has been called.
+        // Those calls can be stacked, which means that calling showProgress()
+        // n times requires to call stopProgress() n times in order for the
+        // progress indicator to vanish.
         var dots = "";
         var progressCalls = 0;
         var dotTimer;
@@ -57,6 +79,11 @@
             ++progressCalls;
         }
         
+        
+        
+        // Hides the progress indicator. Must be called for each time 
+        // showProgress has been called in order for the progress indicator
+        // to be hidden.
         function stopProgress() {
             progressCalls = Math.max(0, progressCalls - 1);
             if (progressCalls == 0) {
@@ -65,65 +92,140 @@
                 $("#progress").text("");               
             }
         }
+
+        
+        
+        // Sends logout command to the server and reloads the page.
+        function performLogout() {
+            showProgress();
+            $.get("$PAGE_LOGOUT", function(data) {
+                location.reload();
+            });
+        }
+        
+        
+        
+        // Check whether user is still logged in and display a warning either
+        // if auto logout is upcoming or already happened.
+        function checkLoggedInState() {
+            $.get("$PAGE_CHECKLOGIN", function(data) {
+                var result = JSON.parse(data);
+                if (result.loggedIn) {
+                    $("#timeleft").text("Logout in " + result.timeLeft);
+                    if (result.timeLeft == LOGOUT_TIMEOUT_WARNING) {
+                        notify("Warning, upcoming auto logout", true);
+                    }
+                } else if (LOGGED_IN) {
+                    $("#top ul").hide();
+                    $("#login").fadeIn('fast');
+                    notify("You have been logged out", false);
+                    
+                    // ## disable login check
+                    clearInterval(checkLoginTimer);
+                }
+            })
+        }
+
+        
+        
+        // Performs the login process by validating form input and sending login
+        // information to the server. If login fails a notification is 
+        // displayed, otherwise the page is reloaded
+        function performLogin() {
+            var isValid = true;
+            $("#loginForm input").map(function() { 
+                if (this.value == "") {
+                    isValid = false;
+                }
+                return this; 
+            });
+            
+            if (!isValid) {
+                notify("Enter name <em>and</em> password", true);
+                return;
+            }
+            
+            showProgress();
+            $.post("$PAGE_LOGIN", $("#loginForm").serialize(), function(data) {
+                var result = JSON.parse(data);
+                if (result.success) {
+                    location.reload();
+                } else {
+                    notify("Login failed", true);
+                }
+                stopProgress();
+            });
+        }
+        
+        
+        
+        // Shows a notification in the upper right edge which can optionally be 
+        // removed after certain time. Creating a new notification will always
+        // remove an existing one
+        var notificationTimer;
+        function notify(message, useTimeout) {
+            if (notificationTimer) {
+                clearTimeout(notificationTimer);
+            }
+            $("#notification").html(message);
+            $("#notification").fadeIn();
+            if (useTimeout) {
+                notificationTimer = setTimeout(function() {
+                    $("#notification").fadeOut();
+                }, NOTIFICATION_TIME);
+            }
+        }
     </script>
 <body>
     <div id="top">
-        <span class="copyRight">Response time: <em>13ms</em>. Copyright 2013 Simon Taddiken</span>
-        <div id="login">
-            <form>
-                <input class="textbox loginInput" type="text" name="login" placeholder=" Name"/>
+        <span class="copyRight">
+            Response time: <em>${executionTime}ms</em>. 
+            #if ($myPolly.getPollyVersion()) 
+                Polly v. $myPolly.getPollyVersion(). 
+            #else 
+                <b>Development</b>. 
+            #end 
+            Copyright 2013 Simon Taddiken
+        </span>
+        <div id="login" #if ($user) style="display: none" #end>
+            <form id="loginForm" method="post">
+                <input class="textbox loginInput" type="text" name="name" placeholder=" Name"/>
                 <input class="textbox loginInput" type="password" name="pw" placeholder=" Password"/>
-                <input class="button" type="submit" value="Login"/>
+                <input id="performLogin" class="button" type="submit" value="Login"/>
             </form>
         </div>
-        <ul>
-            <li><a href="#" title="Logout">Logout</a></li>
-            <li><a href="#" title="Edit your settings">C0mb4t</a></li>
-            <li>2h 34m</li>
+        <ul #if (!$user) style="display: none" #end>
+            <li class="loginStatus"><a id="performLogout" href="/" title="Logout">Logout</a></li>
+            <li class="loginStatus"><a href="#" title="Edit your settings">$user.getName()</a></li>
+            #foreach ($me in $topMenu)
+                #if ($myPolly.roles().canAccess($user, $me))
+                    <li class="loginStatus">#if ($me.getUrl()) <a href="$me.getUrl()">$me.getName()</a> #else $me.getName() #end</li>
+                #end
+            #end
+            <li id="timeleft"></li>
         </ul>
-        
     </div>
     
     <div id="menuContent">
+        #foreach ($mc in $menu)
+        #if ($mc.mustRender($user, $myPolly.roles()))
         <div class="menuGroup">
-            <h2>Admin</h2>
+            <h2>$mc.getName()</h2>
             <ul>
-                <li><a class="menuEntry" href="#">User</a></li>
-                <li><a class="menuEntry" href="#">Sessions</a></li>
-                <li><a class="menuEntry" href="#">Roles</a></li>
-                <li><a class="menuEntry" href="#">Roles</a></li>
+            #foreach ($me in $mc.getContent())
+            <li><a id="$me.hashCode()" href="$me.getUrl()" class="menuEntry">$me.getName()</a></li>
+            #end
             </ul>
         </div>
-        <div class="menuGroup">
-            <h2></h2>
-            <ul>
-                <li><a class="menuEntry" href="#">User</a></li>
-                <li><a class="menuEntry" href="#">Sessions</a></li>
-                <li><a class="menuEntry" href="#">Roles</a></li>
-            </ul>
-        </div>
-        <div class="menuGroup">
-            <h2>Revorix</h2>
-            <ul>
-                <li><a class="menuEntry" href="#">Battlereports</a></li>
-                <li><a class="menuEntry" href="#">Scoreboard</a></li>
-                <li><a class="menuEntry" href="#">Training</a></li>
-            </ul>
-        </div>
-        <div class="menuGroup">
-            <h2>Linkgrabber</h2>
-            <ul>
-                <li><a class="menuEntry" href="#">Links</a></li>
-            </ul>
-        </div>
-        <div id="menuDescription">
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. 
-        </div>
+        #end
+        #end
+        <div id="menuDescription"></div>
     </div>
     
     <div id="header">
+        <div id="notification"></div>
         <div id="headerContent">
-            <h1><a href="#">Polly Webinterface v2</a></h1>
+            <h1><a href="$PAGE_HOME">Polly Webinterface v2</a></h1>
             <a href="https://twitter.com/ProjectPolly" class="twitter" title="Polly on Twitter"></a>
             <a href="https://github.com/skuzzle/polly" class="github" title="Polly on GitHub"></a>
         </div>
@@ -131,239 +233,16 @@ Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod 
     
     <div id="heading">
         <span id="progress"></span>
-        <a href="#" class="showContent">Go</a>
+        #if ($user)
+            <a href="#" class="showContent">Menu</a>
+        #end
     </div>
     
     <div id="content">
-        
-        <div class="contentBox highlight">            
-            <div class="contentBoxHeader">Test</div>
-            <p>Just som text <a href="#" onclick="showProgress()">inc</a> <a href="#" onclick="stopProgress()">dec</a></p>
-        </div>
-        
-        <div class="contentBox">
-
-            <table>
-                <tr>
-                    <th>Foo</th>
-                    <th>Bar</th>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-                <tr>
-                    <td>blabla</td>
-                    <td>blabla</td>
-                </tr>
-
-            </table>
-                
-        </div>
+        #macro( CONTENT_HEADER $title)
+        <div class="contentBoxHeader">$title</div>
+        #end
+        #parse($content)
     </div>
 </body>
 </html>

@@ -2,6 +2,7 @@ package de.skuzzle.polly.core.internal.httpv2;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import de.skuzzle.polly.core.configuration.ConfigurationProviderImpl;
 import de.skuzzle.polly.core.internal.ModuleStates;
@@ -13,6 +14,8 @@ import de.skuzzle.polly.core.moduleloader.SetupException;
 import de.skuzzle.polly.core.moduleloader.annotations.Module;
 import de.skuzzle.polly.core.moduleloader.annotations.Provide;
 import de.skuzzle.polly.core.moduleloader.annotations.Require;
+import de.skuzzle.polly.http.api.AddHandlerListener;
+import de.skuzzle.polly.http.api.Controller;
 import de.skuzzle.polly.http.api.DefaultServerFactory;
 import de.skuzzle.polly.http.api.FileHttpEventHandler;
 import de.skuzzle.polly.http.api.HttpServer;
@@ -24,7 +27,11 @@ import de.skuzzle.polly.sdk.ConfigurationProvider;
 import de.skuzzle.polly.sdk.Disposable;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
+import de.skuzzle.polly.sdk.httpv2.MenuCategory;
 import de.skuzzle.polly.sdk.httpv2.MenuEntry;
+import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
+import de.skuzzle.polly.sdk.roles.RoleManager;
+import de.skuzzle.polly.sdk.time.Milliseconds;
 
 @Module(
     requires = {
@@ -39,7 +46,7 @@ public class WebinterfaceProvider extends AbstractProvider {
     public final static String HTTP_CONFIG = "http.cfg";
     private Configuration serverCfg;
     private HttpServletServer server;
-    private HttpManagerV2Impl httpManager;
+    private HttpManagerV2Impl webinterface;
     
     
     public WebinterfaceProvider(ModuleLoader loader) {
@@ -60,7 +67,7 @@ public class WebinterfaceProvider extends AbstractProvider {
         }
         
         int port = 81; //this.serverCfg.readInt(Configuration.HTTP_PORT);
-        int sessionTimeout = this.serverCfg.readInt(Configuration.HTTP_SESSION_TIMEOUT);
+        int sessionTimeout = (int) Milliseconds.fromMinutes(60);//this.serverCfg.readInt(Configuration.HTTP_SESSION_TIMEOUT);
         
         final ServerFactory sf = new DefaultServerFactory(port);
         this.server = HttpServerCreator.createServletServer(sf);
@@ -85,8 +92,31 @@ public class WebinterfaceProvider extends AbstractProvider {
             }
         });
         
-        this.httpManager = new HttpManagerV2Impl(this.server);
-        this.provideComponent(this.httpManager);
+        this.webinterface = new HttpManagerV2Impl(this.server);
+
+        // Automatically collect all menu entries
+        this.server.addAddHandlerListener(new AddHandlerListener() {
+            @Override
+            public void handlerAdded(Controller c, String url, String name, String[] values) {
+                if (values.length < 1 || !values[0].equals(WebinterfaceManager.ADD_MENU_ENTRY)) {
+                    return;
+                } else if (values.length < 2) {
+                    throw new RuntimeException("missing parameters");
+                }
+                
+                final String category = values[1];
+                final String description = values[2];
+                final String[] permissions;
+                if (values.length == 3) {
+                    permissions = new String[0];
+                } else {
+                    permissions = Arrays.copyOfRange(values, 3, values.length);
+                }
+                webinterface.addMenuEntry(category, 
+                    new MenuEntry(name, url, description, permissions));
+            }
+        });
+        this.provideComponent(this.webinterface);
         
     }
     
@@ -96,13 +126,17 @@ public class WebinterfaceProvider extends AbstractProvider {
     public void run() throws Exception {
         final MyPolly myPolly = this.requireNow(MyPollyImpl.class, false);
         
-        this.server.addController(new IndexController(myPolly, this.httpManager));
-        this.server.addController(new SessionController(myPolly, this.httpManager));
-        this.server.addController(new UserController(myPolly, this.httpManager));
+        this.server.addController(new IndexController(myPolly, this.webinterface));
+        this.server.addController(new SessionController(myPolly, this.webinterface));
+        this.server.addController(new UserController(myPolly, this.webinterface));
         
-        this.httpManager.addMenuEntry(new MenuEntry("Status", "content/status"));
-        this.httpManager.addMenuEntry(new MenuEntry("Sessions", "content/sessions"));
-        this.httpManager.addMenuEntry(new MenuEntry("Users", "content/users"));
+        /*this.webinterface.addCategory(new MenuCategory("").addEntry(new MenuEntry("Home", "/", "Shows your polly home page")));
+        
+        this.webinterface.addCategory(new MenuCategory("Admin"));
+        this.webinterface.addMenuEntry("Admin", new MenuEntry("Status", "/pages/status", "Shows polly status information", RoleManager.ADMIN_PERMISSION));
+        this.webinterface.addMenuEntry("Admin", new MenuEntry("Users", "#", "Polly user management. Add, delete and edit users.", RoleManager.ADMIN_PERMISSION));
+        this.webinterface.addMenuEntry("Admin", new MenuEntry("Sessions", "#", "List and manage currently active http sessions", RoleManager.ADMIN_PERMISSION));
+        this.webinterface.addMenuEntry("Admin", new MenuEntry("Roles", "#", "Polly permission and role management", RoleManager.ADMIN_PERMISSION));*/
         
         this.server.addHttpEventHandler("/files", new FileHttpEventHandler(false));
         
