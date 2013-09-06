@@ -48,6 +48,7 @@ class HttpEventImpl implements HttpEvent {
     private Map<String, String> postGet;
     private final Date creationTime;
     private final List<Listener> closeListener;
+    private boolean discarded;
     
     
     
@@ -224,6 +225,20 @@ class HttpEventImpl implements HttpEvent {
     @Override
     public void onClose(Listener listener) {
         this.closeListener.add(listener);
+    }
+    
+    
+    
+    public void discard() {
+        // note: this method is implemented anonymously in BasicEventHandler
+        this.discarded = true;
+    }
+    
+    
+    
+    @Override
+    public boolean isDiscarded() {
+        return this.discarded;
     }
     
     

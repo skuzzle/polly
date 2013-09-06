@@ -28,7 +28,10 @@ import java.util.Map;
  * remote client. This event then carries all the information about the request. You
  * can react on events by 
  * {@link HttpServer#registerHttpEventHandler(HttpEventHandler) registering} a 
- * {@link HttpEventHandler} with your {@link HttpServer}.
+ * {@link HttpEventHandler} with your {@link HttpServer}. The server can create exactly
+ * one answer which is sent back to the client per incoming event. If you chose to 
+ * {@link #discard() discard} an event, the server will not generate any answer and will
+ * simply kill the current connection to the client.
  * 
  * <p>Along with an event comes the {@link HttpSession http session}. A session is a 
  * unique object that persists over multiple connections from the same client.</p>
@@ -175,6 +178,28 @@ public interface HttpEvent {
      */
     public HttpSession getSession();
     
+    /**
+     * Discards this event. That is, its current connection to the client will be 
+     * closed. If discarded during a {@link HttpAnswer} is processed, the process will
+     * fail. Discarding an event will not always raise a close event.
+     */
+    public void discard();
     
+    
+    /**
+     * Whether {@link #discard()} was called for this event. Any further processing of
+     * this event is likely to fail if this method returns <code>true</code>.
+     * @return Whether this event was discarded.
+     */
+    public boolean isDiscarded();
+    
+    
+    /**
+     * Registers a listener which will be notified when the server sent an answer to this
+     * event to the client is then closed in a natural manner. Discarding an event is no
+     * natural manner and may thus not necessarily raise an 'onClose' event.
+     * 
+     * @param listener The listener to register.
+     */
     public void onClose(Listener listener);
 }

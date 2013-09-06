@@ -20,7 +20,12 @@ package de.skuzzle.polly.http.api;
 
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 
-
+/**
+ * This exception can be thrown within any {@link HttpEventHandler}. It will then stop
+ * the delegation of the current event chain and the server will sent the 
+ * {@link HttpAnswer} carried by this exception.
+ * @author Simon Taddiken
+ */
 public class AlternativeAnswerException extends HttpException {
 
     private static final long serialVersionUID = 1L;

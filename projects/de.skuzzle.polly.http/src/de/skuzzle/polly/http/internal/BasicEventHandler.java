@@ -130,7 +130,7 @@ class BasicEventHandler implements HttpHandler {
     
     
     
-    private final HttpEventImpl createEvent(HttpExchange t) throws IOException {
+    private final HttpEventImpl createEvent(final HttpExchange t) throws IOException {
         final String requestUri = t.getRequestURI().toString();
         final Map<String, String> get = new HashMap<>();
         final Map<String, String> post = new HashMap<>();
@@ -179,8 +179,15 @@ class BasicEventHandler implements HttpHandler {
             mode = RequestMode.POST;
         }
         
-        final HttpEventImpl event = new HttpEventImpl(this.server, mode, t.getRequestURI(), 
-            t.getRemoteAddress(), plainUri, session, cookies, get, post);
+        final HttpEventImpl event = new HttpEventImpl(this.server, mode, 
+            t.getRequestURI(), t.getRemoteAddress(), plainUri, session, cookies, 
+            get, post) {
+            
+            public void discard() {
+                super.discard();
+                t.close();
+            }
+        };
         return event;
     }
     
@@ -249,6 +256,10 @@ class BasicEventHandler implements HttpHandler {
     private final void handleAnswer(HttpAnswer answer, HttpExchange t, 
             final HttpEventImpl httpEvent) throws IOException {
         
+        if (httpEvent.isDiscarded()) {
+            // nothing to do here if already discarded
+            return;
+        }
         
         final HttpSessionImpl session = (HttpSessionImpl) httpEvent.getSession();
         
@@ -297,15 +308,18 @@ class BasicEventHandler implements HttpHandler {
             }
             
             t.getResponseHeaders().putAll(answer.getResponseHeaders());
-            t.sendResponseHeaders(answer.getResponseCode(), 0);
             
-            // handle different types of answers
-            final HttpAnswerHandler handler = this.server.getHandler(answer);
-            if (handler == null) {
-                // TODO: react
-                throw new RuntimeException("no handler");
+            if (!httpEvent.isDiscarded()) {
+                t.sendResponseHeaders(answer.getResponseCode(), 0);
+                
+                // handle different types of answers
+                final HttpAnswerHandler handler = this.server.getHandler(answer);
+                if (handler == null) {
+                    // TODO: react
+                    throw new RuntimeException("no handler");
+                }
+                handler.handleAnswer(answer, httpEvent, t.getResponseBody());
             }
-            handler.handleAnswer(answer, httpEvent, t.getResponseBody());
         } finally {
             t.close();
         }
