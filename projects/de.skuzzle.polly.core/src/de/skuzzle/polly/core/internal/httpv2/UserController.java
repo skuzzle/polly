@@ -94,12 +94,12 @@ public class UserController extends PollyController {
         if (!this.getMyPolly().roles().hasPermission(
             this.getSessionUser(), RoleManager.ADMIN_PERMISSION)) {
         
-            return HttpAnswers.createStringAnswer("Required permission: " + 
+            return HttpAnswers.newStringAnswer("Required permission: " + 
                 RoleManager.ADMIN_PERMISSION);
         }
         final Map<String, Object> c = this.createContext("");
         c.put("users", this.getMyPolly().users().getRegisteredUsers());
-        return HttpAnswers.createTemplateAnswer("templatesv2/users.list.html", c);
+        return HttpAnswers.newTemplateAnswer("templatesv2/users.list.html", c);
     }
     
     
@@ -166,15 +166,15 @@ public class UserController extends PollyController {
         
         final User u = this.getMyPolly().users().getUser(user);
         if (u == null) {
-            return HttpAnswers.createStringAnswer("fail");
+            return HttpAnswers.newStringAnswer("fail");
         }
         
         try {
             this.getMyPolly().users().setAttributeFor(u, attribute, value);
         } catch (Exception e) {
             e.printStackTrace();
-            return HttpAnswers.createStringAnswer("fail");
+            return HttpAnswers.newStringAnswer("fail");
         }
-        return HttpAnswers.createStringAnswer("success");
+        return HttpAnswers.newStringAnswer("success");
     }
 }

@@ -27,7 +27,7 @@ import de.skuzzle.polly.http.api.answers.HttpAnswerHandler;
 import de.skuzzle.polly.http.api.answers.HttpBinaryAnswer;
 
 
-public class SimpleBinaryAnswerHandler extends HttpAnswerHandler {
+class BinaryAnswerHandler extends HttpAnswerHandler {
 
     @Override
     public void handleAnswer(HttpAnswer answer, HttpEvent e, OutputStream out)

@@ -40,7 +40,7 @@ import java.util.Set;
 import com.sun.net.httpserver.HttpExchange;
 
 import de.skuzzle.polly.http.api.HttpEvent;
-import de.skuzzle.polly.http.api.HttpEventHandler;
+import de.skuzzle.polly.http.api.handler.HttpEventHandler;
 import de.skuzzle.polly.http.api.HttpEventListener;
 import de.skuzzle.polly.http.api.HttpServer;
 import de.skuzzle.polly.http.api.HttpSession;
@@ -93,7 +93,7 @@ class HttpServerImpl implements HttpServer {
         this.httpListeners = new ArrayList<>();
         
         // default handler
-        this.addAnswerHandler(HttpBinaryAnswer.class, new SimpleBinaryAnswerHandler());
+        this.addAnswerHandler(HttpBinaryAnswer.class, new BinaryAnswerHandler());
         this.addAnswerHandler(HttpTemplateAnswer.class, new TemplateAnswerHandler());
     }
     
@@ -469,12 +469,4 @@ class HttpServerImpl implements HttpServer {
             listener.onRequest(e);
         }
     }
-    
-    
-    
-    void fireOnRequestHandled(HttpEvent e) {
-        for (final HttpEventListener listener : this.httpListeners) {
-            listener.onRequestHandled(e);
-        }
-    }    
 }

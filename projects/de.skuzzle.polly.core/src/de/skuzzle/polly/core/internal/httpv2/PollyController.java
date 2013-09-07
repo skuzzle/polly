@@ -80,13 +80,13 @@ public abstract class PollyController extends Controller {
 
 
     protected HttpAnswer makeAnswer(Map<String, Object> context) {
-        return HttpAnswers.createTemplateAnswer("template.html", context);
+        return HttpAnswers.newTemplateAnswer("template.html", context);
     }
 
 
 
     protected HttpAnswer makeAnswer(int responseCode, Map<String, Object> context) {
-        return HttpAnswers.createTemplateAnswer(responseCode, "template.html", context);
+        return HttpAnswers.newTemplateAnswer(responseCode, "template.html", context);
     }
 
 

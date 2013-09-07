@@ -25,7 +25,7 @@ import java.lang.reflect.Method;
 import de.skuzzle.polly.http.api.Controller;
 import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.http.api.HttpEvent.RequestMode;
-import de.skuzzle.polly.http.api.HttpEventHandler;
+import de.skuzzle.polly.http.api.handler.HttpEventHandler;
 import de.skuzzle.polly.http.api.HttpException;
 import de.skuzzle.polly.http.annotations.Param;
 import de.skuzzle.polly.http.api.ParameterHandler;
@@ -81,7 +81,7 @@ class ReflectionHttpHandler implements HttpEventHandler {
             // value associated with that key in the current request 
             final String sValue = e.parameterMap(this.mode).get(key.value());
             if (sValue == null) {
-                return HttpAnswers.createStringAnswer("missing parameter: " + 
+                return HttpAnswers.newStringAnswer("missing parameter: " + 
                     key.value());
             }
             

@@ -42,7 +42,7 @@ public class IndexController extends PollyController {
     
     @Get(STYLE_SHEET_NAME)
     public HttpAnswer getCSS() {
-        return HttpAnswers.createTemplateAnswer(STYLE_SHEET_NAME, 
+        return HttpAnswers.newTemplateAnswer(STYLE_SHEET_NAME, 
             new HashMap<String, Object>());
     }
     
@@ -140,7 +140,7 @@ public class IndexController extends PollyController {
     public HttpAnswer logout() {
         this.getSession().detach("user");
         this.getSession().kill();
-        return HttpAnswers.createStringAnswer("").redirectTo("/");
+        return HttpAnswers.newStringAnswer("").redirectTo("/");
     }
 
     

@@ -25,6 +25,7 @@ import java.util.Collection;
 
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswerHandler;
+import de.skuzzle.polly.http.api.handler.HttpEventHandler;
 
 
 

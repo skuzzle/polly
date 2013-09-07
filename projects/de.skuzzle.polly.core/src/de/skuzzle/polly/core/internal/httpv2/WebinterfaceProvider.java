@@ -17,20 +17,18 @@ import de.skuzzle.polly.core.moduleloader.annotations.Require;
 import de.skuzzle.polly.http.api.AddHandlerListener;
 import de.skuzzle.polly.http.api.Controller;
 import de.skuzzle.polly.http.api.DefaultServerFactory;
-import de.skuzzle.polly.http.api.FileHttpEventHandler;
 import de.skuzzle.polly.http.api.HttpServer;
 import de.skuzzle.polly.http.api.HttpServletServer;
 import de.skuzzle.polly.http.api.ServerFactory;
+import de.skuzzle.polly.http.api.handler.DirectoryEventHandler;
 import de.skuzzle.polly.http.internal.HttpServerCreator;
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.ConfigurationProvider;
 import de.skuzzle.polly.sdk.Disposable;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
-import de.skuzzle.polly.sdk.httpv2.MenuCategory;
 import de.skuzzle.polly.sdk.httpv2.MenuEntry;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
-import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.time.Milliseconds;
 
 @Module(
@@ -130,15 +128,8 @@ public class WebinterfaceProvider extends AbstractProvider {
         this.server.addController(new SessionController(myPolly, this.webinterface));
         this.server.addController(new UserController(myPolly, this.webinterface));
         
-        /*this.webinterface.addCategory(new MenuCategory("").addEntry(new MenuEntry("Home", "/", "Shows your polly home page")));
-        
-        this.webinterface.addCategory(new MenuCategory("Admin"));
-        this.webinterface.addMenuEntry("Admin", new MenuEntry("Status", "/pages/status", "Shows polly status information", RoleManager.ADMIN_PERMISSION));
-        this.webinterface.addMenuEntry("Admin", new MenuEntry("Users", "#", "Polly user management. Add, delete and edit users.", RoleManager.ADMIN_PERMISSION));
-        this.webinterface.addMenuEntry("Admin", new MenuEntry("Sessions", "#", "List and manage currently active http sessions", RoleManager.ADMIN_PERMISSION));
-        this.webinterface.addMenuEntry("Admin", new MenuEntry("Roles", "#", "Polly permission and role management", RoleManager.ADMIN_PERMISSION));*/
-        
-        this.server.addHttpEventHandler("/files", new FileHttpEventHandler(false));
+        this.server.addHttpEventHandler("/files", 
+            new DirectoryEventHandler("/files", false));
         
         this.server.start();
     }

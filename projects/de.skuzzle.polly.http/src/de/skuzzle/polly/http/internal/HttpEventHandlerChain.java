@@ -21,7 +21,7 @@ package de.skuzzle.polly.http.internal;
 import java.util.Iterator;
 
 import de.skuzzle.polly.http.api.HttpEvent;
-import de.skuzzle.polly.http.api.HttpEventHandler;
+import de.skuzzle.polly.http.api.handler.HttpEventHandler;
 import de.skuzzle.polly.http.api.HttpException;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 

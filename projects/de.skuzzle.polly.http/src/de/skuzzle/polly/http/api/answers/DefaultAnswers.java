@@ -31,11 +31,11 @@ public class DefaultAnswers {
      * could handle the request. 
      */
     public static HttpAnswer FILE_NOT_FOUND = 
-        HttpAnswers.createStringAnswer("File not found");
+        HttpAnswers.newStringAnswer("File not found");
     
     /** Answer if blocked session performed a request */
     public static HttpAnswer SESSION_BLOCKED = 
-        HttpAnswers.createStringAnswer("Your session is blocked");
+        HttpAnswers.newStringAnswer("Your session is blocked");
     
     
     

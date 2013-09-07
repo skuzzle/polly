@@ -16,8 +16,10 @@
  * You should have received a copy of the GNU General Public License along 
  * with Polly HTTP API. If not, see http://www.gnu.org/licenses/.
  */
-package de.skuzzle.polly.http.api;
+package de.skuzzle.polly.http.api.handler;
 
+import de.skuzzle.polly.http.api.HttpEvent;
+import de.skuzzle.polly.http.api.HttpException;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 
 /**

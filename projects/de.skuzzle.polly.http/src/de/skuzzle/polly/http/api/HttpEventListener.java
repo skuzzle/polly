@@ -18,10 +18,22 @@
  */
 package de.skuzzle.polly.http.api;
 
-
+/**
+ * In contrast to {@link HttpEventHandler HttpEventHandlers}, a HttpEventListener only 
+ * gets notified about incoming http events. It is not registered for events to a 
+ * particular URL and can not produce an answer to be sent to the client. The 
+ * {@link #onRequest(HttpEvent)} method will be called before the incoming event was 
+ * passed to any handlers. 
+ * 
+ * @author Simon Taddiken
+ */
 public interface HttpEventListener {
 
+    /**
+     * This method will be called for any incoming http event if this listener was 
+     * registered to a {@link HttpServer}.
+     * 
+     * @param e The incoming event.
+     */
     public void onRequest(HttpEvent e);
-    
-    public void onRequestHandled(HttpEvent e);
 }

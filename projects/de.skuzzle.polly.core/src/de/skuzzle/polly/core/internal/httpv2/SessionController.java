@@ -53,9 +53,9 @@ public class SessionController extends PollyController {
         final HttpSession session = this.getServer().findSession(id);
         if (session != null) {
             session.kill();
-            return HttpAnswers.createStringAnswer("success");
+            return HttpAnswers.newStringAnswer("success");
         }
-        return HttpAnswers.createStringAnswer("fail");
+        return HttpAnswers.newStringAnswer("fail");
     }
     
     
@@ -64,9 +64,9 @@ public class SessionController extends PollyController {
         final HttpSession session = this.getServer().findSession(id);
         if (session != null) {
             session.detach(key);
-            return HttpAnswers.createStringAnswer("success");
+            return HttpAnswers.newStringAnswer("success");
         }
-        return HttpAnswers.createStringAnswer("fail");
+        return HttpAnswers.newStringAnswer("fail");
     }
     
     
@@ -78,13 +78,13 @@ public class SessionController extends PollyController {
         if (!this.getMyPolly().roles().hasPermission(
                 this.getSessionUser(), RoleManager.ADMIN_PERMISSION)) {
             
-            return HttpAnswers.createStringAnswer("Required permission: " + 
+            return HttpAnswers.newStringAnswer("Required permission: " + 
                 RoleManager.ADMIN_PERMISSION);
         }
         
         final HttpSession session = this.getServer().findSession(id);
         
-        return HttpAnswers.createTemplateAnswer("templatesv2/session.events.html", 
+        return HttpAnswers.newTemplateAnswer("templatesv2/session.events.html", 
             "myPolly", this.getMyPolly(),
             "ss", session);
     }
