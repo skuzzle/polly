@@ -18,7 +18,6 @@
  */
 package de.skuzzle.polly.http.api.answers;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,7 +43,7 @@ public class HttpFileAnswer extends HttpBinaryAnswer {
     public final static int BUFFER_SIZE = 1024;
     
     /** The file that will be sent */
-    private final File dest;
+    private final ResolvedFile dest;
     
     
     
@@ -56,7 +55,7 @@ public class HttpFileAnswer extends HttpBinaryAnswer {
     
     public HttpFileAnswer(int responseCode, ResolvedFile file) {
         super(responseCode);
-        this.dest = file.getFile();
+        this.dest = file;
     }
 
     
@@ -65,7 +64,7 @@ public class HttpFileAnswer extends HttpBinaryAnswer {
     public void getAnswer(OutputStream out) throws IOException {
         InputStream in = null;
         try {
-            in = new FileInputStream(this.dest);
+            in = new FileInputStream(this.dest.getFile());
             final byte[] buffer = new byte[BUFFER_SIZE];
             int read = in.read(buffer, 0, buffer.length);
             

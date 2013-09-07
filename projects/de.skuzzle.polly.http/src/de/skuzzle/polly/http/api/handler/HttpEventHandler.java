@@ -44,7 +44,8 @@ public interface HttpEventHandler {
      * 
      * <p>For example:</p>
      * <pre>
-     * public void handleEvent(HttpEvent e, HttpEventHandler next) throws HttpException {
+     * public void handleEvent(String registered, HttpEvent e, HttpEventHandler next) 
+     *          throws HttpException {
      *     if (e.get("foo") != null) {
      *         // handle the event by creating an answer right here
      *         return HttpAnswers.createStringAnswer("bar");
@@ -61,6 +62,8 @@ public interface HttpEventHandler {
      * <p><code>HttpAnswers</code> can easily be created using the {@link HttpAnswers}
      * utility class.</p>
      * 
+     * @param registered The Path string for which this handler was registered with the 
+     *          server.
      * @param e The HttpEvent to handle.
      * @param next The next handler in the servers handler chain. Each invocation of 
      *          its <code>handleEvent</code> method will be delegated to the next handler
@@ -71,6 +74,6 @@ public interface HttpEventHandler {
      * @throws HttpException If an error occurred upon handling the event. In this case
      *          the server will try the next registered handler.
      */
-    public HttpAnswer handleHttpEvent(HttpEvent e, HttpEventHandler next) 
-        throws HttpException;
+    public HttpAnswer handleHttpEvent(String registered, HttpEvent e, 
+            HttpEventHandler next) throws HttpException;
 }

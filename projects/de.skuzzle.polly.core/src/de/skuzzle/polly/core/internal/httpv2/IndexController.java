@@ -11,6 +11,7 @@ import de.skuzzle.polly.http.annotations.RequestHandler;
 import de.skuzzle.polly.http.annotations.OnRegister;
 import de.skuzzle.polly.http.api.AlternativeAnswerException;
 import de.skuzzle.polly.http.api.Controller;
+import de.skuzzle.polly.http.api.LazyResolvedFile;
 import de.skuzzle.polly.http.api.HttpCookie;
 import de.skuzzle.polly.http.api.HttpServer;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
@@ -27,22 +28,25 @@ public class IndexController extends PollyController {
 
     
     
-    public IndexController(MyPolly myPolly, WebinterfaceManager httpManager) {
-        super(myPolly, httpManager);
+    public IndexController(MyPolly myPolly, String rootDir, 
+            WebinterfaceManager httpManager) {
+        super(myPolly, rootDir, httpManager);
     }
     
     
     
     @Override
     protected Controller createInstance() {
-        return new IndexController(this.getMyPolly(), this.getHttpManager());
+        return new IndexController(this.getMyPolly(), this.getRootDir(), 
+            this.getHttpManager());
     }
     
     
     
     @Get(STYLE_SHEET_NAME)
     public HttpAnswer getCSS() {
-        return HttpAnswers.newTemplateAnswer(STYLE_SHEET_NAME, 
+        return HttpAnswers.newTemplateAnswer(
+            new LazyResolvedFile(this.getRootDir(), STYLE_SHEET_NAME), 
             new HashMap<String, Object>());
     }
     

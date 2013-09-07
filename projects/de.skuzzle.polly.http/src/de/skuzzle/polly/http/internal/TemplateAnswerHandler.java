@@ -48,8 +48,7 @@ class TemplateAnswerHandler extends HttpAnswerHandler {
             final HttpTemplateAnswer template = (HttpTemplateAnswer) answer;
             
             // try to resolve template file and init velocity
-            final File templateFile = e.getSource().resolveRelativeFile(
-                template.getRelativeTemplatePath());
+            final File templateFile = template.getRelativeTemplatePath().getFile();
             
             final VelocityEngine ve = new VelocityEngine();
             this.prepare(ve, templateFile.getParent());

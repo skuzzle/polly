@@ -23,7 +23,9 @@ import java.io.FileNotFoundException;
 import java.nio.file.Path;
 
 /**
- * Default {@link FileResolver} implementation.
+ * Default {@link FileResolver} implementation. The {@link ResolvedFile files} resolved 
+ * by this class will never throw an IOException when their 
+ * {@link ResolvedFile#getFile() getFile()} method is called.
  * 
  * @author Simon Taddiken
  */

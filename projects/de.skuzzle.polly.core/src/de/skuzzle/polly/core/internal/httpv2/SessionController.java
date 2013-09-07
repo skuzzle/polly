@@ -19,15 +19,17 @@ public class SessionController extends PollyController {
 
     
     
-    public SessionController(MyPolly myPolly, WebinterfaceManager httpManager) {
-        super(myPolly, httpManager);
+    public SessionController(MyPolly myPolly, String rootDir, 
+            WebinterfaceManager httpManager) {
+        super(myPolly, rootDir, httpManager);
     }
     
     
 
     @Override
     protected Controller createInstance() {
-        return new SessionController(this.getMyPolly(), this.getHttpManager());
+        return new SessionController(this.getMyPolly(), this.getRootDir(), 
+            this.getHttpManager());
     }
 
     
@@ -84,7 +86,8 @@ public class SessionController extends PollyController {
         
         final HttpSession session = this.getServer().findSession(id);
         
-        return HttpAnswers.newTemplateAnswer("templatesv2/session.events.html", 
+        return HttpAnswers.newTemplateAnswer(
+            this.resolveFile("templatesv2/session.events.html"),
             "myPolly", this.getMyPolly(),
             "ss", session);
     }

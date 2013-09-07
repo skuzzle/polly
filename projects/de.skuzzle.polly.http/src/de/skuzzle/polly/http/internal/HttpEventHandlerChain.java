@@ -38,12 +38,11 @@ final class HttpEventHandlerChain implements HttpEventHandler {
     
     
     @Override
-    public HttpAnswer handleHttpEvent(HttpEvent e, HttpEventHandler chain) 
-            throws HttpException {
+    public HttpAnswer handleHttpEvent(String registered, HttpEvent e, 
+            HttpEventHandler chain) throws HttpException {
         if (this.it.hasNext()) {
-            return this.it.next().handleHttpEvent(e, this);
+            return this.it.next().handleHttpEvent(registered, e, this);
         }
         return null;
     }
-
 }

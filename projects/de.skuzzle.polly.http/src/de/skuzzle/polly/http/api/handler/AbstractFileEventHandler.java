@@ -77,18 +77,18 @@ abstract class AbstractFileEventHandler implements HttpEventHandler {
 
 
     @Override
-    public final HttpAnswer handleHttpEvent(HttpEvent e, HttpEventHandler next)
-            throws HttpException {
+    public final HttpAnswer handleHttpEvent(String registered, HttpEvent e, 
+            HttpEventHandler next) throws HttpException {
         
         final HttpAnswer backup;
         if (this.executeFollowers) {
-            backup = next.handleHttpEvent(e, next);
+            backup = next.handleHttpEvent(registered, e, next);
         } else {
             backup = null;
         }
         
         try {
-            final HttpAnswer answer = this.handleHttpEvent(e);
+            final HttpAnswer answer = this.handleHttpEvent(registered, e);
             if (answer != null) {
                 answer.addHeader("Cache-Control", "max-age=" + this.maxAge);
             }
@@ -105,6 +105,6 @@ abstract class AbstractFileEventHandler implements HttpEventHandler {
     
     
     
-    protected abstract HttpAnswer handleHttpEvent(HttpEvent e) 
+    protected abstract HttpAnswer handleHttpEvent(String registered, HttpEvent e) 
             throws FileNotFoundException, HttpException;      
 }

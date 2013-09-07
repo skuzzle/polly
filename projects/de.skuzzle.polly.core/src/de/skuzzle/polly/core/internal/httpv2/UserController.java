@@ -9,6 +9,7 @@ import de.skuzzle.polly.http.annotations.Param;
 import de.skuzzle.polly.http.annotations.Post;
 import de.skuzzle.polly.http.api.AlternativeAnswerException;
 import de.skuzzle.polly.http.api.Controller;
+import de.skuzzle.polly.http.api.LazyResolvedFile;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -25,15 +26,17 @@ import de.skuzzle.polly.sdk.roles.RoleManager;
 
 public class UserController extends PollyController {
 
-    public UserController(MyPolly myPolly, WebinterfaceManager httpManager) {
-        super(myPolly, httpManager);
+    public UserController(MyPolly myPolly, String rootDir, 
+            WebinterfaceManager httpManager) {
+        super(myPolly, rootDir, httpManager);
     }
 
     
     
     @Override
     protected Controller createInstance() {
-        return new UserController(this.getMyPolly(), this.getHttpManager());
+        return new UserController(this.getMyPolly(), 
+            this.getRootDir(), this.getHttpManager());
     }
     
     
@@ -99,7 +102,8 @@ public class UserController extends PollyController {
         }
         final Map<String, Object> c = this.createContext("");
         c.put("users", this.getMyPolly().users().getRegisteredUsers());
-        return HttpAnswers.newTemplateAnswer("templatesv2/users.list.html", c);
+        return HttpAnswers.newTemplateAnswer(
+            new LazyResolvedFile(this.getRootDir(), "templatesv2/users.list.html"), c);
     }
     
     

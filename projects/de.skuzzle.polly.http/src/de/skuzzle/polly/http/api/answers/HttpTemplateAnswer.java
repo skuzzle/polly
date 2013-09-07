@@ -20,6 +20,8 @@ package de.skuzzle.polly.http.api.answers;
 
 import java.util.Map;
 
+import de.skuzzle.polly.http.api.ResolvedFile;
+
 /**
  * <p>This type of answer can be used to render velocity templates and send the result 
  * back to the client. All that needs to be done is to specify a path to the template
@@ -27,10 +29,6 @@ import java.util.Map;
  * can automatically be handled by the server, so that there is no need to provide your 
  * own {@link HttpHandler} if you implement this interface (unless you need special 
  * treatment for your implementation).</p>
- * 
- * <p>The path to the template file must be relative to any of the 
- * {@link HttpServer HttpServer's} web roots in order for this answer to being 
- * successfully handled.</p>
  * 
  * <p>You can obtain concrete instances of this interface using {@link HttpAnswers}.</p>
  * 
@@ -57,7 +55,7 @@ public abstract class HttpTemplateAnswer extends AbstractHttpAnswer {
         final HttpTemplateAnswer result = new HttpTemplateAnswer(this.getResponseCode()) {
             
             @Override
-            public String getRelativeTemplatePath() {
+            public ResolvedFile getRelativeTemplatePath() {
                 return HttpTemplateAnswer.this.getRelativeTemplatePath();
             }
             
@@ -83,7 +81,7 @@ public abstract class HttpTemplateAnswer extends AbstractHttpAnswer {
      * 
      * @return relative template file path.
      */
-    public abstract String getRelativeTemplatePath();
+    public abstract ResolvedFile getRelativeTemplatePath();
     
     /**
      * This method must fill the provided map with own velocity context mappings for the 

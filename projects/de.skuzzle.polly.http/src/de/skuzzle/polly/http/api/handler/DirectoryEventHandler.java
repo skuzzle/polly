@@ -43,11 +43,12 @@ public class DirectoryEventHandler extends AbstractFileEventHandler {
 
 
     @Override
-    protected HttpAnswer handleHttpEvent(HttpEvent e) throws FileNotFoundException,
-        HttpException {
+    protected HttpAnswer handleHttpEvent(String registered, HttpEvent e) 
+            throws FileNotFoundException, HttpException {
 
+        final String url = e.getPlainUri().substring(registered.length());
         final FileResolver fr = new DefaultFileResolver();
-        final ResolvedFile target = fr.resolve(this.rootDirectory, e.getPlainUri());
+        final ResolvedFile target = fr.resolve(this.rootDirectory, url);
 
         final HttpAnswer answer = new HttpFileAnswer(this.responseCode, target);
         return answer;

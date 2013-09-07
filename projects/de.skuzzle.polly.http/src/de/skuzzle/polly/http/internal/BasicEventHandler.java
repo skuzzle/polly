@@ -219,9 +219,11 @@ class BasicEventHandler implements HttpHandler {
         
         // handle the event
         final List<HttpEventHandler> handler;
+        final String registered;
         synchronized (this.server.getHandlers()) {
+            registered = this.server.getHandlers().findKey(httpEvent.getPlainUri());
             handler = new ArrayList<>(
-                this.server.getHandlers().get(httpEvent.getPlainUri()));
+                this.server.getHandlers().get(registered));
         }
         
         if (handler == null || handler.isEmpty()) {
@@ -234,7 +236,7 @@ class BasicEventHandler implements HttpHandler {
         final HttpEventHandler chain = new HttpEventHandlerChain(it);
         HttpAnswer answer;
         try {
-            answer = first.handleHttpEvent(httpEvent, chain);
+            answer = first.handleHttpEvent(registered, httpEvent, chain);
             if (answer != null) {
                 this.handleAnswer(answer, t, httpEvent);
                 return;

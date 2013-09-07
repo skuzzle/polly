@@ -18,29 +18,23 @@
  */
 package de.skuzzle.polly.http.internal;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
-import java.util.Set;
 
 import com.sun.net.httpserver.HttpExchange;
 
 import de.skuzzle.polly.http.api.HttpEvent;
-import de.skuzzle.polly.http.api.handler.HttpEventHandler;
 import de.skuzzle.polly.http.api.HttpEventListener;
 import de.skuzzle.polly.http.api.HttpServer;
 import de.skuzzle.polly.http.api.HttpSession;
@@ -49,6 +43,7 @@ import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswerHandler;
 import de.skuzzle.polly.http.api.answers.HttpBinaryAnswer;
 import de.skuzzle.polly.http.api.answers.HttpTemplateAnswer;
+import de.skuzzle.polly.http.api.handler.HttpEventHandler;
 
 
 
@@ -56,15 +51,13 @@ class HttpServerImpl implements HttpServer {
     
     private final static Random RANDOM = new Random();
 
-    private final Map<String, List<HttpEventHandler>> handlers;
+    private final URLMap<List<HttpEventHandler>> handlers;
     private final Map<InetSocketAddress, HttpSessionImpl> ipToSession;
     private final Map<InetSocketAddress, HttpSessionImpl> pending;
     private final Collection<HttpEventListener> httpListeners;
     private final Queue<HttpSession> sessionHistory;
     
     private final Map<String, HttpSessionImpl> idToSession;
-    private final List<File> roots;
-    private final Set<String> extensionWhitelist;
     private final AnswerHandlerMap handler;
     private final ServerFactory factory;
     private int sessionType;
@@ -84,10 +77,8 @@ class HttpServerImpl implements HttpServer {
         this.handlers = new URLMap<>();
         this.ipToSession = new HashMap<>();
         this.idToSession = new HashMap<>();
-        this.extensionWhitelist = new HashSet<>();
         this.pending = new HashMap<>();
         this.handler = new AnswerHandlerMap();
-        this.roots = new ArrayList<>();
         this.factory = factory;
         this.sessionType = SESSION_TYPE_COOKIE;
         this.httpListeners = new ArrayList<>();
@@ -199,58 +190,10 @@ class HttpServerImpl implements HttpServer {
     }
     
     
-    
-    @Override
-    public void addWebRoot(File file) {
-        this.roots.add(file);
-    }
-    
-    
-    
-    @Override
-    public File resolveRelativeFile(String path) throws FileNotFoundException {
-        synchronized (this.roots) {
-        for (final File root : this.roots) {
-            final File dest = new File(root, path);
-            
-            if (!dest.exists()) {
-                continue;
-            }
-            
-            final Path request = dest.toPath().normalize();
-            final Path rootPath = root.toPath().normalize();
-            final String absRequest = request.toString().toLowerCase();
-            final String absRoot = rootPath.toString().toLowerCase();
-            
-            if (!absRequest.startsWith(absRoot)) {
-                // skip this file because it is not relative to the template root
-                continue;
-            } else if (!this.extensionWhitelist.isEmpty()) {
-                int i = absRequest.lastIndexOf(".");
-                if (i == -1) {
-                    // file has no whitelisted extension
-                    continue;
-                }
-                
-                final String ext = absRequest.substring(i).toLowerCase();
-                if (!this.extensionWhitelist.contains(ext)) {
-                    // file has no whitelisted extension
-                    continue;
-                }
-            }
-            if (!dest.exists()) {
-                continue;
-            }
-            return dest;
-        }
-        }
-        throw new FileNotFoundException(path);
-    }
-    
-    
 
     @Override
     public void addHttpEventHandler(String url, HttpEventHandler handler) {
+        url = url.startsWith("/") ?  url : "/" + url;
         List<HttpEventHandler> handlers = this.handlers.get(url);
         if (handlers == null) {
             handlers = new ArrayList<>();
@@ -272,8 +215,8 @@ class HttpServerImpl implements HttpServer {
 
     
     
-    Map<String, List<HttpEventHandler>> getHandlers() {
-        return Collections.unmodifiableMap(this.handlers);
+    URLMap<List<HttpEventHandler>> getHandlers() {
+        return this.handlers;
     }
 
 

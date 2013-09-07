@@ -18,8 +18,6 @@
  */
 package de.skuzzle.polly.http.api;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 
@@ -151,32 +149,6 @@ public interface HttpServer {
      * @return Collection of outdated sessions.
      */
     public Collection<HttpSession> getSessionHistory();
-    
-    /**
-     * <p>Adds the given directory as a root directory. If files are to be provided over
-     * http, they must be absolutely relative to any of the root directories that are 
-     * registered with this method. This ensures that no files are sent that exist 
-     * outside a directory which is intended to contain web files.</p>
-     * 
-     * @param directory The directory to add as web root.
-     * @see #resolveRelativeFile(String)
-     */
-    public void addWebRoot(File directory);
-
-    /**
-     * <p>Resolves a file by its relative path. This searches all registered web root
-     * directories for a file with the given relative path. The first so found file 
-     * will be returned.</p>
-     * 
-     * <p>This method takes care that the given path does not reference files outside 
-     * a web root directory using '..'.</p>
-     * 
-     * @param path Path to a file relative to any of the registered root directories.
-     * @return The resolved file.
-     * @throws FileNotFoundException If the specified file does not exist or could not
-     *          be resolved because it's outside a web root directory.
-     */
-    public File resolveRelativeFile(String path) throws FileNotFoundException;
 
     /**
      * <p>This method will resolve a suitable {@link HttpAnswerHandler} for the given 

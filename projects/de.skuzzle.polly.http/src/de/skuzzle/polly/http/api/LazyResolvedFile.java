@@ -18,10 +18,28 @@
  */
 package de.skuzzle.polly.http.api;
 
+import java.io.File;
+import java.io.IOException;
 
 
-public interface ParameterHandler {
-    public abstract Object parse(String value) throws HttpException;
+public class LazyResolvedFile implements ResolvedFile {
+
+    private final String rootDir;
+    private final String relativeFile;
     
-    public abstract boolean canHandle(Class<?> type, Class<?> typeVar);
+
+    
+    public LazyResolvedFile(String rootDir, String relativeFile) {
+        this.rootDir = rootDir;
+        this.relativeFile = relativeFile;
+    }
+    
+    
+    
+    @Override
+    public File getFile() throws IOException {
+        return new DefaultFileResolver().resolve(
+            this.rootDir, this.relativeFile).getFile();
+    }
+
 }

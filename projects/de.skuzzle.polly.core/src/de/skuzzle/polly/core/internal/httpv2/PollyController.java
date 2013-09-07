@@ -7,8 +7,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import de.skuzzle.polly.http.api.Controller;
 import de.skuzzle.polly.http.api.AlternativeAnswerException;
+import de.skuzzle.polly.http.api.Controller;
+import de.skuzzle.polly.http.api.LazyResolvedFile;
+import de.skuzzle.polly.http.api.ResolvedFile;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -24,14 +26,22 @@ public abstract class PollyController extends Controller {
     
     
     private final MyPolly myPolly;
+    private final String rootDir;
     private final WebinterfaceManager httpManager;
 
 
-
-    public PollyController(MyPolly myPolly, WebinterfaceManager httpManager) {
+    public PollyController(MyPolly myPolly, String rootDir, 
+            WebinterfaceManager httpManager) {
         this.myPolly = myPolly;
+        this.rootDir = rootDir;
         this.httpManager = httpManager;
         this.setHandlerPrefix(PAGE_PREFIX);
+    }
+    
+    
+    
+    public String getRootDir() {
+        return this.rootDir;
     }
     
     
@@ -80,13 +90,17 @@ public abstract class PollyController extends Controller {
 
 
     protected HttpAnswer makeAnswer(Map<String, Object> context) {
-        return HttpAnswers.newTemplateAnswer("template.html", context);
+        return HttpAnswers.newTemplateAnswer(
+            new LazyResolvedFile(this.rootDir, "template.html"),
+            context);
     }
 
 
 
     protected HttpAnswer makeAnswer(int responseCode, Map<String, Object> context) {
-        return HttpAnswers.newTemplateAnswer(responseCode, "template.html", context);
+        return HttpAnswers.newTemplateAnswer(responseCode, 
+            new LazyResolvedFile(this.rootDir, "template.html"), 
+            context);
     }
 
 
@@ -104,10 +118,17 @@ public abstract class PollyController extends Controller {
         final Set<String> p = new HashSet<>(Arrays.asList(permissions));
 
         if (!rm.hasPermission(u, p)) {
-            final Map<String, Object> c = this.createContext("templatesv2/no_permission.html");
+            final Map<String, Object> c = this.createContext(
+                "templatesv2/no_permission.html");
             c.put("permissions", p);
             c.put("resource", this.getEvent().getPlainUri());
             throw new AlternativeAnswerException(this.makeAnswer(c));
         }
+    }
+    
+    
+    
+    protected ResolvedFile resolveFile(String file) {
+        return new LazyResolvedFile(this.rootDir, file);
     }
 }

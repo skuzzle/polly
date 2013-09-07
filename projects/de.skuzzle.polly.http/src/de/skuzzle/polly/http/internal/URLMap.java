@@ -8,13 +8,8 @@ class URLMap<T> extends HashMap<String, T> {
     private static final long serialVersionUID = 1L;
 
     
-    public URLMap() {
-    }
     
-    
-    
-    @Override
-    public T get(Object path) {
+    public String findKey(String path) {
         String key = (String) path;
         T result = null;
         int i = key.length();
@@ -25,6 +20,14 @@ class URLMap<T> extends HashMap<String, T> {
             result = super.get(key);
             i = key.lastIndexOf('/');
         } while (result == null && i != -1);
-        return result;
+        return key;
+    }
+    
+    
+    
+    @Override
+    public T get(Object path) {
+        assert path instanceof String;
+        return super.get(path);
     }
 }

@@ -41,7 +41,7 @@ public class SingleFileEventHandler extends AbstractFileEventHandler {
 
     
     @Override
-    protected HttpAnswer handleHttpEvent(HttpEvent e) 
+    protected HttpAnswer handleHttpEvent(String registered, HttpEvent e) 
             throws FileNotFoundException, HttpException {
         
         return new HttpFileAnswer(this.responseCode, this.file);

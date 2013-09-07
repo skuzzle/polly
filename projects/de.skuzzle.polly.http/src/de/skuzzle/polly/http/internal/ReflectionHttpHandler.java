@@ -54,12 +54,12 @@ class ReflectionHttpHandler implements HttpEventHandler {
     
     
     @Override
-    public HttpAnswer handleHttpEvent(HttpEvent e, HttpEventHandler next)
-            throws HttpException {
+    public HttpAnswer handleHttpEvent(String registered, HttpEvent e, 
+            HttpEventHandler next) throws HttpException {
         
         if (e.getMode() != this.mode || 
                 !e.getPlainUri().equals(this.uri)) {
-            return next.handleHttpEvent(e, next);
+            return next.handleHttpEvent(registered, e, next);
         }
         
         

@@ -1,6 +1,5 @@
 package de.skuzzle.polly.core.internal.httpv2;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -71,7 +70,6 @@ public class WebinterfaceProvider extends AbstractProvider {
         this.server = HttpServerCreator.createServletServer(sf);
         this.server.setSessionLiveTime(sessionTimeout);
         this.server.setSessionType(HttpServer.SESSION_TYPE_COOKIE);
-        this.server.addWebRoot(new File("webv2"));
         this.server.addAnswerHandler(GsonHttpAnswer.class, new GsonHttpAnswerHandler());
         
         ShutdownManagerImpl sm = this.requireNow(ShutdownManagerImpl.class, true);
@@ -124,12 +122,12 @@ public class WebinterfaceProvider extends AbstractProvider {
     public void run() throws Exception {
         final MyPolly myPolly = this.requireNow(MyPollyImpl.class, false);
         
-        this.server.addController(new IndexController(myPolly, this.webinterface));
-        this.server.addController(new SessionController(myPolly, this.webinterface));
-        this.server.addController(new UserController(myPolly, this.webinterface));
+        this.server.addController(new IndexController(myPolly, "webv2", this.webinterface));
+        this.server.addController(new SessionController(myPolly, "webv2", this.webinterface));
+        this.server.addController(new UserController(myPolly, "webv2", this.webinterface));
         
         this.server.addHttpEventHandler("/files", 
-            new DirectoryEventHandler("/files", false));
+            new DirectoryEventHandler("webv2/files", false));
         
         this.server.start();
     }

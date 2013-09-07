@@ -62,6 +62,11 @@ import java.util.Map;
  * automatically call the annotated methods if a <tt>POST</tt> request to their URL
  * occurs.
  * 
+ * <p>Controllers report all their registered URLs mapped to a suitable handler name 
+ * preceded by a configurable prefix. This prefix can be set using 
+ * {@link #setHandlerPrefix(String)}, the map can be obtained by {@link #getMyHandlers()}.
+ * </p>
+ * 
  * @author Simon Taddiken
  */
 public abstract class Controller {
