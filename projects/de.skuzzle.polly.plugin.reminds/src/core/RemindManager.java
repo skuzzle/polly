@@ -133,4 +133,6 @@ public interface RemindManager extends Disposable {
     public abstract void rescheduleAll();
     
     public abstract boolean isStale(String forUser);
+
+    RemindEntity getLastRemind(User user);
 }

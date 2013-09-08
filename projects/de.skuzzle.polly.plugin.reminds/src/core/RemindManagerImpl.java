@@ -97,6 +97,13 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     
     
     @Override
+    public synchronized RemindEntity getLastRemind(User user) {
+        return this.lastReminds.get(user);
+    }
+    
+    
+    
+    @Override
     public synchronized void addRemind(User executor, final RemindEntity remind, 
             boolean schedule) throws DatabaseException {
         logger.info("Adding " + remind + ", schedule: " + schedule);

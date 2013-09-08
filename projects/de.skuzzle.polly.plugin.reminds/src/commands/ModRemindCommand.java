@@ -35,6 +35,17 @@ public class ModRemindCommand extends AbstractRemindCommand {
             new Parameter("Remind-Id", Types.NUMBER), 
             new Parameter("Nachricht", Types.STRING), 
             new Parameter("Meue Zeit", Types.DATE));
+        
+        this.createSignature("Ändert das Datum des letzten Reminds", 
+            MyPlugin.MODIFY_REMIND_PERMISSION,
+            new Parameter("Nachricht", Types.STRING));
+        this.createSignature("Ändert die Nachricht des letzten Reminds", 
+            MyPlugin.MODIFY_REMIND_PERMISSION,
+            new Parameter("Nachricht", Types.STRING));
+        this.createSignature("Ändert Nachricht und Datum des letzten Reminds",
+            MyPlugin.MODIFY_REMIND_PERMISSION,
+            new Parameter("Nachricht", Types.STRING), 
+            new Parameter("Meue Zeit", Types.DATE));
         this.setHelpText("Mit diesem Befehl können bestehende Reminds modifiziert " +
         		"werden. Zum rausfinden der ID eines Reminds benutze :myreminds");
         this.setRegisteredOnly();
@@ -45,6 +56,35 @@ public class ModRemindCommand extends AbstractRemindCommand {
     @Override
     protected boolean executeOnBoth(User executer, String channel,
             Signature signature) throws CommandException {
+        
+        if (signature.getId() >= 3) {
+            final RemindEntity re = this.remindManager.getLastRemind(executer);
+            
+            if (re == null) {
+                throw new CommandException("Kein letztes Remind vorhanden");
+            }
+            
+            Date dueDate = re.getDueDate();
+            String msg = re.getMessage();
+            
+            if (this.match(signature, 3)) {
+                dueDate = signature.getDateValue(0);
+            } else if (this.match(signature, 4)) {
+                msg = signature.getStringValue(0);
+            } else if (this.match(signature, 5)) {
+                msg = signature.getStringValue(0);
+                dueDate = signature.getDateValue(1);
+            }
+            
+            try {
+                this.remindManager.modifyRemind(executer, re.getId(), dueDate, msg);
+                this.reply(channel, "Remind erfolgreich aktualisiert");
+                return false;
+            } catch (DatabaseException e) {
+                throw new CommandException(e);
+            }
+        }
+
         
         int id = (int) signature.getNumberValue(0);
         RemindEntity remind = this.remindManager.getDatabaseWrapper().getRemind(id);
