@@ -15,14 +15,26 @@ import java.util.regex.Matcher;
 
 import org.apache.log4j.Logger;
 
-
 import de.skuzzle.polly.core.internal.persistence.PersistenceManagerImpl;
+import de.skuzzle.polly.core.parser.InputParser;
+import de.skuzzle.polly.core.parser.InputScanner;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
 import de.skuzzle.polly.core.parser.ast.declarations.DeclarationReader;
 import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
+import de.skuzzle.polly.core.parser.ast.expressions.Expression;
+import de.skuzzle.polly.core.parser.ast.expressions.literals.Literal;
+import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.core.parser.ast.visitor.ExecutionVisitor;
+import de.skuzzle.polly.core.parser.ast.visitor.ParentSetter;
+import de.skuzzle.polly.core.parser.ast.visitor.resolving.TypeResolver;
+import de.skuzzle.polly.core.parser.problems.ProblemReporter;
+import de.skuzzle.polly.core.parser.problems.SimpleProblemReporter;
 import de.skuzzle.polly.core.util.CaseInsensitiveStringKeyMap;
+import de.skuzzle.polly.core.util.TypeMapper;
 import de.skuzzle.polly.sdk.AbstractDisposable;
+import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.PersistenceManager;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.WriteAction;
@@ -57,10 +69,9 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     private static Logger logger = Logger.getLogger(UserManagerImpl.class.getName());
     
     private final static AttributeConstraint NO_CONSTRAINT = new AttributeConstraint() {
-        
         @Override
-        public boolean accept(String value) {
-            return value.length() < MAX_ATTRIBUTE_VALUE_LENGTH;
+        public boolean accept(Types value) {
+            return true;
         }
     };
     
@@ -89,12 +100,16 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     private boolean attributesStale;
     private List<Attribute> allAttributes;
     private RoleManager roleManager;
+    private final FormatManager formatter;
+    
     
     
     public UserManagerImpl(PersistenceManagerImpl persistence, 
             String declarationCachePath, int tempVarLifeTime,
             boolean ignoreUnknownIdentifiers, EventProvider eventProvider, 
-            RoleManager roleManager) {
+            RoleManager roleManager,
+            FormatManager formatter) {
+        this.formatter = formatter;
         this.eventProvider = eventProvider;
         this.persistence = persistence;
         this.roleManager = roleManager;
@@ -176,7 +191,14 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     @Override
     public User getUser(int id) {
-        return this.persistence.atomicRetrieveSingle(de.skuzzle.polly.core.internal.users.User.class, id);
+        de.skuzzle.polly.core.internal.users.User result = 
+            (de.skuzzle.polly.core.internal.users.User)  this.persistence.atomicRetrieveSingle(
+            de.skuzzle.polly.core.internal.users.User.class, id);
+        
+        if (result != null) {
+            result.setUserManager(this);
+        }
+        return result;
     }
 
     
@@ -188,8 +210,15 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
         }
         try {
             this.persistence.readLock();
-            return this.persistence.findSingle(User.class, 
+            final de.skuzzle.polly.core.internal.users.User result = 
+                this.persistence.findSingle(
+                    de.skuzzle.polly.core.internal.users.User.class,
                     "USER_BY_NAME", registeredName);
+            
+                if (result != null) {
+                    result.setUserManager(this);
+                }
+                return result;
         } finally {
             this.persistence.readUnlock();
         }
@@ -396,10 +425,17 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     
     @Override
-    public List<User> getRegisteredUsers() {
+    public synchronized List<User> getRegisteredUsers() {
         if (this.registeredStale || this.registeredUsers == null) {
-            this.registeredUsers = this.persistence.atomicRetrieveList(User.class, 
-                de.skuzzle.polly.core.internal.users.User.ALL_USERS);
+            final List<de.skuzzle.polly.core.internal.users.User> all = 
+                this.persistence.atomicRetrieveList(
+                    de.skuzzle.polly.core.internal.users.User.class, 
+                    de.skuzzle.polly.core.internal.users.User.ALL_USERS);
+            
+            for (final de.skuzzle.polly.core.internal.users.User u : all) {
+                u.setUserManager(this);
+            }
+            this.registeredUsers = new ArrayList<User>(all);
             this.registeredStale = false;
         }
         return this.registeredUsers;
@@ -430,6 +466,24 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
                 Attribute.ALL_ATTRIBUTES);
         }
         return this.allAttributes;
+    }
+    
+    
+    
+    public void resetAllAttributes() {
+        try {
+            this.persistence.writeLock();
+            final List<Attribute> attributes = this.getAllAttributes();
+            
+            for (final Attribute attr : attributes) {
+                this.removeAttribute(attr.getName());
+            }
+        } catch (DatabaseException e) {
+            // TODO: todo
+            e.printStackTrace();
+        } finally {
+            this.persistence.writeUnlock();
+        }
     }
     
     
@@ -471,7 +525,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     
     @Override
-    public String setAttributeFor(final User user, final String attribute, 
+    public String setAttributeFor(User executor, final User user, final String attribute, 
             String value) throws DatabaseException, ConstraintException {
         logger.trace("Trying to set attribute '" + attribute + "' to value '" + 
             value + "'");
@@ -486,9 +540,11 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
             value = attr.getDefaultValue();
         }
         
-        final String valueCopy = value;
-        AttributeConstraint constraint = this.constraints.get(attribute.toLowerCase());
-        if (!constraint.accept(value)) {
+        final Types valueCopy = this.parseValue(executor, value);
+        final AttributeConstraint constraint = this.constraints.get(
+            attribute.toLowerCase());
+        
+        if (!constraint.accept(valueCopy)) {
             throw new ConstraintException("'" + value + 
                 "' ist kein gültiger Wert für das Attribut '" + attribute + "'");
         }
@@ -497,12 +553,52 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
             
             @Override
             public void performUpdate(PersistenceManager persistence) {
-                ((de.skuzzle.polly.core.internal.users.User) user).setAttribute(attribute, valueCopy);
+                ((de.skuzzle.polly.core.internal.users.User) user).setAttribute(
+                    attribute, valueCopy);
             }
         });
         return value;
     }
 
+    
+    
+    public FormatManager getPersistenceFormatter() {
+        return this.formatter;
+    }
+    
+    
+    
+    Types parseValue(User executor, String value) {
+        if (executor == null) {
+            // use admin as namespace if no executor is specified.
+            executor = this.admin;
+        }
+        
+        final ProblemReporter reporter = new SimpleProblemReporter();
+        final InputScanner is = new InputScanner(value);
+        final InputParser ip = new InputParser(is, reporter);
+        is.setSkipWhiteSpaces(true);
+        
+        try {
+            final Expression exp = ip.parseSingleExpression();
+            exp.visit(new ParentSetter());
+            
+            final String nsName = executor.getCurrentNickName() == null 
+                ? executor.getName() 
+                : executor.getCurrentNickName(); 
+            final Namespace ns = Namespace.forName(nsName);
+            final ExecutionVisitor exec = new ExecutionVisitor(ns, ns, reporter);
+            // resolve types
+            TypeResolver.resolveAST(exp, ns, reporter);
+            
+            exp.visit(exec);
+            final Literal result = exec.getSingleResult();
+            return TypeMapper.literalToTypes(result);
+        } catch (ASTTraversalException e) {
+            // ignore the exception, just use plain value which was submitted
+            return new Types.StringType(value);
+        }
+    }
 
 
     @Override
@@ -552,7 +648,9 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
 
     @Override
     public User createUser(String name, String password) {
-        de.skuzzle.polly.core.internal.users.User result = new de.skuzzle.polly.core.internal.users.User(name, password);
+        de.skuzzle.polly.core.internal.users.User result = 
+            new de.skuzzle.polly.core.internal.users.User(name, password);
+        result.setUserManager(this);
         for (Attribute att : this.getAllAttributes()) {
             result.getAttributes().put(att.getName(), att.getDefaultValue());
         }

@@ -9,11 +9,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
-
 import de.skuzzle.polly.core.internal.DefaultUserAttributesProvider;
 import de.skuzzle.polly.core.internal.irc.IrcManagerImpl;
 import de.skuzzle.polly.core.internal.users.UserManagerImpl;
 import de.skuzzle.polly.sdk.AbstractDisposable;
+import de.skuzzle.polly.sdk.Types.BooleanType;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.eventlistener.ConnectionEvent;
 import de.skuzzle.polly.sdk.eventlistener.ConnectionListener;
@@ -175,8 +175,9 @@ public class AutoLogonHandler extends AbstractDisposable
     
     private boolean userExists(String name) {
         User user = this.userManager.getUser(name);
-        return user != null && 
-            user.getAttribute(DefaultUserAttributesProvider.AUTO_LOGON).equalsIgnoreCase("true");
+        final BooleanType bool = (BooleanType) 
+            user.getAttribute(DefaultUserAttributesProvider.AUTO_LOGON);
+        return user != null && bool.getValue();
     }
     
     

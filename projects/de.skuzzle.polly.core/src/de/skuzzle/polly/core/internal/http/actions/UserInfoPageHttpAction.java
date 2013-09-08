@@ -65,7 +65,7 @@ public class UserInfoPageHttpAction extends HttpAction {
             }
             for (String attribute : u.getAttributeNames()) {
                 try {
-                    this.myPolly.users().setAttributeFor(
+                    this.myPolly.users().setAttributeFor(e.getSession().getUser(),
                         u, attribute, e.getProperty(attribute));
                 } catch (Exception e1) {
                     logger.error(e1);

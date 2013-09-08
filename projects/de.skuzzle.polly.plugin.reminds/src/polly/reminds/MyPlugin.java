@@ -15,12 +15,10 @@ import commands.MyRemindsCommand;
 import commands.OnReturnCommand;
 import commands.RemindCommand;
 import commands.SnoozeCommand;
-
 import core.DeliverRemindHandler;
 import core.RemindManager;
 import core.RemindManagerImpl;
 import core.RemindTraceNickchangeHandler;
-
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
 import de.skuzzle.polly.sdk.User;
@@ -32,6 +30,7 @@ import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
 import de.skuzzle.polly.sdk.exceptions.RoleException;
 import de.skuzzle.polly.sdk.roles.RoleManager;
+import de.skuzzle.polly.sdk.time.Milliseconds;
 import entities.RemindEntity;
 
 
@@ -62,13 +61,13 @@ public class MyPlugin extends PollyPlugin {
     public final static String MESSAGE_FORMAT_VALUE = "@%r%: %m%. (Hinterlassen von: %s% am %ld%)";
     
     public final static String SNOOZE_TIME          = "SNOOZE_TIME";
-    public final static String SNOOZE_DEFAULT_VALUE = "60000";
+    public final static String SNOOZE_DEFAULT_VALUE = "10m";
     
     public final static String USE_SNOOZE_TIME       = "USE_SNOOZE_TIME";
     public final static String USE_SNOOZE_TIME_VALUE = "false";
     
     public final static String DEFAULT_REMIND_TIME = "DEFAULT_REMIND_TIME";
-    public final static String DEFAULT_REMIND_TIME_VALUE = "600000";
+    public final static String DEFAULT_REMIND_TIME_VALUE = "10m";
     
     public final static String DEFAULT_MSG       = "REMIND_DEFAULT_MSG";
     public final static String DEFAULT_MSG_VALUE = "Reminder!";
@@ -181,6 +180,7 @@ public class MyPlugin extends PollyPlugin {
     }
     
     
+    
     @Override
     public void onLoad() {
         logger.info("Scheduling all reminds...");
@@ -191,18 +191,19 @@ public class MyPlugin extends PollyPlugin {
             
             users.addAttribute(REMIND_FORMAT_NAME, REMIND_FORMAT_VALUE);
             users.addAttribute(MESSAGE_FORMAT_NAME, MESSAGE_FORMAT_VALUE);
-            users.addAttribute(SNOOZE_TIME, SNOOZE_DEFAULT_VALUE, Constraints.INTEGER);
+            users.addAttribute(SNOOZE_TIME, SNOOZE_DEFAULT_VALUE, Constraints.TIMESPAN);
             users.addAttribute(DEFAULT_MSG, DEFAULT_MSG_VALUE);
             users.addAttribute(EMAIL, DEFAULT_EMAIL, Constraints.MAILADDRESS);
             users.addAttribute(LEAVE_AS_MAIL, DEFAULT_LEAVE_AS_MAIL, Constraints.BOOLEAN);
-            users.addAttribute(REMIND_IDLE_TIME, "" + User.IDLE_AFTER, 
-                Constraints.INTEGER);
+            users.addAttribute(REMIND_IDLE_TIME, 
+                "" + Milliseconds.toSeconds(User.IDLE_AFTER) + "s", 
+                Constraints.TIMESPAN);
             users.addAttribute(REMIND_TRACK_NICKCHANGE, DEFAULT_REMIND_TRACK_NICKCHANGE, 
                 Constraints.BOOLEAN);
             users.addAttribute(REMIND_DOUBLE_DELIVERY, DEFAULT_REMIND_DOUBLE_DELIVERY, 
                 Constraints.BOOLEAN);
             users.addAttribute(DEFAULT_REMIND_TIME, DEFAULT_REMIND_TIME_VALUE, 
-                Constraints.INTEGER);
+                Constraints.TIMESPAN);
             users.addAttribute(AUTO_SNOOZE, AUTO_SNOOZE_VALUE, Constraints.BOOLEAN);
             users.addAttribute(AUTO_SNOOZE_INDICATOR, AUTO_SNOOZE_INDICATOR_VALUE);
             users.addAttribute(USE_SNOOZE_TIME, USE_SNOOZE_TIME_VALUE, 

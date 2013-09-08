@@ -43,6 +43,8 @@ import polly.rx.http.battlereports.BattleReportHttpAction;
 import polly.rx.http.battlereports.BattleReportInfosHttpAction;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
+import de.skuzzle.polly.sdk.Types;
+import de.skuzzle.polly.sdk.Types.NumberType;
 import de.skuzzle.polly.sdk.constraints.AttributeConstraint;
 import de.skuzzle.polly.sdk.constraints.Constraints;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
@@ -215,17 +217,17 @@ public class MyPlugin extends PollyPlugin {
     public void onLoad() throws PluginException {
         try {
             this.getMyPolly().users().addAttribute(VENAD, "<unbekannt>");
-            this.getMyPolly().users().addAttribute("AZ", "0", Constraints.INTEGER);
             this.getMyPolly().users().addAttribute(CRACKER, "0", Constraints.INTEGER);
             this.getMyPolly().users().addAttribute(MAX_MONTHS, "24", new AttributeConstraint() {
                 @Override
-                public boolean accept(String value) {
-                    try {
-                        int i = Integer.parseInt(value);
-                        return i >= 2 && i <= 24;
-                    } catch (NumberFormatException e) {
-                        return false;
+                public boolean accept(Types value) {
+                    if (value instanceof NumberType) {
+                        final NumberType nt = (NumberType) value;
+                        return nt.isInteger() && 
+                            nt.getValue() > 2.0 && 
+                            nt.getValue() <= 24.0;
                     }
+                    return false;
                 }
             });
         } catch (Exception ignore) {

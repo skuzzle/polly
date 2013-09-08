@@ -9,15 +9,16 @@ import java.util.Timer;
 
 import org.apache.log4j.Logger;
 
-
 import polly.reminds.MyPlugin;
-
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.IrcManager;
 import de.skuzzle.polly.sdk.MailManager;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PersistenceManager;
+import de.skuzzle.polly.sdk.Types.BooleanType;
+import de.skuzzle.polly.sdk.Types.StringType;
+import de.skuzzle.polly.sdk.Types.TimespanType;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.WriteAction;
@@ -291,7 +292,8 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         } else if (forUser.getAttribute(MyPlugin.AUTO_SNOOZE).equals("false")) {
             return;
         }
-        String indicator = forUser.getAttribute(MyPlugin.AUTO_SNOOZE_INDICATOR);
+        String indicator = ((StringType) forUser.getAttribute(
+            MyPlugin.AUTO_SNOOZE_INDICATOR)).getValue();
         this.irc.sendMessage(forUser.getCurrentNickName(), 
             "Auto Snooze aktiv. Schreibe '" + indicator + 
             "' um deine letzte Erinnerung zu verlängern.", this);
@@ -308,7 +310,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
                 throws DatabaseException, EMailException {
         logger.trace("Delivering " + remind + " now as mail");
         
-        String mail = forUser.getAttribute(MyPlugin.EMAIL);
+        String mail = ((StringType) forUser.getAttribute(MyPlugin.EMAIL)).getValue();
         if (mail.equals(MyPlugin.DEFAULT_EMAIL)) {
             logger.warn("Destination user has no valid email address set");
             RemindEntity r = new RemindEntity(
@@ -393,11 +395,13 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
             this.sleeping.put(remind.getForUser(), remind);
         }
         // get sleep time:
-        int sleepTime = Integer.parseInt(forUser.getAttribute(MyPlugin.SNOOZE_TIME));
+        final TimespanType sleepTime = (TimespanType) 
+            forUser.getAttribute(MyPlugin.SNOOZE_TIME);
+        
         logger.trace("Snooze time for " + forUser + ": " + sleepTime);
-        if (sleepTime > 0) {
+        if (sleepTime.getSpan() > 0) {
             SleepTask task = new SleepTask(this, remind.getForUser());
-            this.remindScheduler.schedule(task, sleepTime);
+            this.remindScheduler.schedule(task, sleepTime.getSpan() * 1000);
         }
     }
     
@@ -457,13 +461,14 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     public RemindEntity snooze(User executor) throws DatabaseException,
             CommandException {
         
-        boolean useSnoozeTime = executor.getAttribute(
-            MyPlugin.USE_SNOOZE_TIME).equals("true");
+        boolean useSnoozeTime = ((BooleanType) executor.getAttribute(
+            MyPlugin.USE_SNOOZE_TIME)).getValue();
+        
         if (useSnoozeTime) {
-            int defaultRemindTime = Integer.parseInt(
-                executor.getAttribute(MyPlugin.DEFAULT_REMIND_TIME));
+            TimespanType defaultRemindTime = (TimespanType) 
+                executor.getAttribute(MyPlugin.DEFAULT_REMIND_TIME);
             return this.snooze(executor, 
-                new Date(Time.currentTimeMillis() + defaultRemindTime));
+                new Date(Time.currentTimeMillis() + defaultRemindTime.getSpan() * 1000));
         } else {
             return this.snooze(executor, null);
         }
@@ -517,7 +522,8 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
             return special;
         }
         
-        String pattern = user.getAttribute(MyPlugin.REMIND_FORMAT_NAME);
+        final String pattern = ((StringType) 
+            user.getAttribute(MyPlugin.REMIND_FORMAT_NAME)).getValue();
         if (pattern == null) {
             return DEFAULT_FORMAT;
         }
@@ -528,8 +534,9 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
 
     @Override
     public boolean isIdle(User user) {
-        long lastMsg = Long.parseLong(user.getAttribute(MyPlugin.REMIND_IDLE_TIME));
-        return Time.currentTimeMillis() - user.getLastMessageTime() > lastMsg;
+        final TimespanType remindIdleTime = (TimespanType) 
+            user.getAttribute(MyPlugin.REMIND_IDLE_TIME); 
+        return Time.currentTimeMillis() - user.getLastMessageTime() > remindIdleTime.getSpan() * 1000;
     }
     
     

@@ -22,8 +22,11 @@ import javax.persistence.Transient;
 
 
 
+
+
 import de.skuzzle.polly.core.internal.roles.Role;
 import de.skuzzle.polly.core.util.Hashes;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.exceptions.UnknownAttributeException;
 import de.skuzzle.polly.sdk.time.Time;
 
@@ -80,6 +83,8 @@ public class User implements de.skuzzle.polly.sdk.User, Serializable {
     @Transient
     private boolean isPollyAdmin;
     
+    @Transient
+    private UserManagerImpl userManager;
     
     User() {
         this("", "");
@@ -96,6 +101,12 @@ public class User implements de.skuzzle.polly.sdk.User, Serializable {
         this.lastIdleTimeStamp = Time.currentTimeMillis();
     }
     
+    
+    
+    public User setUserManager(UserManagerImpl userManager) {
+        this.userManager = userManager;
+        return this;
+    }
     
     
     public int getId() {
@@ -183,20 +194,21 @@ public class User implements de.skuzzle.polly.sdk.User, Serializable {
 
     
     @Override
-    public String getAttribute(String name) {
+    public Types getAttribute(String name) {
         if (!this.attributes.containsKey(name)) {
             throw new UnknownAttributeException(name);
         }
-        return this.attributes.get(name);
+        return this.userManager.parseValue(null, this.attributes.get(name));
     }
     
     
     
-    public void setAttribute(String name, String value) {
+    void setAttribute(String name, Types value) {
         if (!this.attributes.containsKey(name)) {
             throw new UnknownAttributeException(name);
         }
-        this.attributes.put(name, value);
+        this.attributes.put(name, value.valueString(
+            this.userManager.getPersistenceFormatter()));
     }
     
     

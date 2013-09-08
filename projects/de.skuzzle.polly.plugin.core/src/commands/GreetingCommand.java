@@ -28,13 +28,14 @@ public class GreetingCommand extends Command {
     
     @Override
     protected boolean executeOnBoth(final User executer, String channel,
-        Signature signature) throws CommandException {
+            Signature signature) throws CommandException {
         
         if (this.match(signature, 0)) {
             final String greet = signature.getStringValue(0);
             
             try {
-                getMyPolly().users().setAttributeFor(executer, MyPlugin.GREETING, greet);
+                getMyPolly().users().setAttributeFor(executer, executer, 
+                    MyPlugin.GREETING, greet);
                 
                 this.reply(channel, "Gruﬂnachricht gespeichert.");
             } catch (DatabaseException e) {

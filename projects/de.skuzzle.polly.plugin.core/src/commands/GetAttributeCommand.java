@@ -58,7 +58,8 @@ public class GetAttributeCommand extends Command {
         }
         
         try {
-            this.reply(channel, "Attributwert: " + dest.getAttribute(attribute));
+            this.reply(channel, "Attributwert: " + 
+                dest.getAttribute(attribute).valueString(this.getMyPolly().formatting()));
         } catch (UnknownAttributeException e) {
             throw new CommandException("Unbekanntes Attribut: " + attribute);
         }

@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import de.skuzzle.polly.core.internal.http.HttpInterface;
 import de.skuzzle.polly.core.internal.http.HttpManagerProvider;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Types.StringType;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
@@ -49,7 +50,8 @@ public class LoginHttpAction extends HttpAction {
                     e.getSession().setUser(u);
                     logger.info("Successfull http login: " + u);
                     
-                    String homePage = u.getAttribute(HttpManagerProvider.HOME_PAGE);
+                    String homePage = ((StringType) 
+                        u.getAttribute(HttpManagerProvider.HOME_PAGE)).getValue();
                     HttpEvent e1 = new HttpEvent(e.getSource(), e.getSession(), homePage);
                     HttpTemplateContext result = e.getSource().executeAction(e1);
                     return result;

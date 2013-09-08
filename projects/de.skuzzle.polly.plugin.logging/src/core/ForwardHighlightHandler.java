@@ -8,13 +8,11 @@ import java.util.List;
 import java.util.Map;
 
 import core.filters.DateLogFilter;
-
 import polly.logging.MyPlugin;
-
-
 import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.MailManager;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Types.StringType;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.eventlistener.MessageAdapter;
@@ -76,7 +74,7 @@ public class ForwardHighlightHandler extends MessageAdapter {
             }
             
             try {
-                String mail = this.user.getAttribute("EMAIL");
+                String mail = ((StringType) this.user.getAttribute("EMAIL")).getValue();
                 
                 List<LogEntry> prefiltered = logManager.preFilterChannel(
                     e.getChannel());
@@ -183,7 +181,7 @@ public class ForwardHighlightHandler extends MessageAdapter {
                 continue;
             }
             
-            String mail = user.getAttribute("EMAIL");
+            String mail = ((StringType) user.getAttribute("EMAIL")).getValue();
             
             // forward if user is idle, wants forward and has a mail address set
             boolean fwd = user.isIdle() &&

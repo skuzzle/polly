@@ -1,5 +1,8 @@
 package de.skuzzle.polly.sdk.constraints;
 
+import de.skuzzle.polly.sdk.Types;
+import de.skuzzle.polly.sdk.Types.NumberType;
+
 /**
  * <p>This constraint only accepts strings that are formatted as integers.</p>
  * 
@@ -15,12 +18,7 @@ public class IntegerConstraint implements AttributeConstraint {
     
     
     @Override
-    public boolean accept(String value) {
-        try {
-            Integer.parseInt(value);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
+    public boolean accept(Types value) {
+        return value instanceof Types.NumberType && ((NumberType) value).isInteger();
     }
 }

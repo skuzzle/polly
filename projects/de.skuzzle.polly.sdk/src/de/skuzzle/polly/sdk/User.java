@@ -30,7 +30,7 @@ public interface User extends Comparable<User> {
     
     public abstract Set<String> getAttributeNames();
     
-    public abstract String getAttribute(String name);
+    public abstract Types getAttribute(String name);
     
     public abstract boolean isIdle();
     
@@ -39,7 +39,6 @@ public interface User extends Comparable<User> {
     public abstract void setLastMessageTime(long lastIdleTime);
     
     public abstract long getLastIdleTime();
-    
     
     public abstract long getLoginTime();
 

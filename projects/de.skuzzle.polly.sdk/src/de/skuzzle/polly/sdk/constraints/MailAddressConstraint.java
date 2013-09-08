@@ -3,6 +3,9 @@ package de.skuzzle.polly.sdk.constraints;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import de.skuzzle.polly.sdk.Types;
+import de.skuzzle.polly.sdk.Types.StringType;
+
 
 /**
  * <p>This constraint only accepts email addresses formed like the pattern 
@@ -26,9 +29,13 @@ public class MailAddressConstraint implements AttributeConstraint {
     MailAddressConstraint() {}
     
     @Override
-    public boolean accept(String value) {
-        Matcher m = MAIL_PATTERN.matcher(value);
-        return m.matches();
+    public boolean accept(Types value) {
+        if (value instanceof StringType) {
+            final StringType st = (StringType) value;
+            final Matcher m = MAIL_PATTERN.matcher(st.getValue());
+            return m.matches();
+        }
+        return false;
     }
 
 }

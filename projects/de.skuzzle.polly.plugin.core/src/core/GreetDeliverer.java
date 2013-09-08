@@ -3,6 +3,7 @@ package core;
 
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Types.StringType;
 import de.skuzzle.polly.sdk.eventlistener.UserEvent;
 import de.skuzzle.polly.sdk.eventlistener.UserListener;
 
@@ -16,22 +17,22 @@ public class GreetDeliverer implements UserListener {
 
     @Override
     public void userSignedOn(UserEvent e) {
-        String greet = e.getUser().getAttribute(MyPlugin.GREETING);
+        final StringType greet = (StringType) e.getUser().getAttribute(MyPlugin.GREETING);
         if (greet != null) {
             // try to execute command. this either fails by exception or by returning
             // false. In that case, just deliver the plain greeting.
             try {
-                if (!myPolly.commands().executeString(greet, 
+                if (!this.myPolly.commands().executeString(greet.getValue(), 
                         e.getUser().getCurrentNickName(), true, e.getUser(), 
                         this.myPolly.irc())) {
                     
                     this.myPolly.irc().sendMessage(e.getUser().getCurrentNickName(), 
-                            greet, this);
+                            greet.getValue(), this);
                 }
             } catch (Exception e1) {
                 e1.printStackTrace();
                 this.myPolly.irc().sendMessage(e.getUser().getCurrentNickName(), 
-                    greet, this);
+                    greet.getValue(), this);
             }
         }
     }

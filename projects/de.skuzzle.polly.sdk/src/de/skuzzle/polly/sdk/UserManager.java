@@ -318,6 +318,7 @@ public interface UserManager {
 	 * value matches the constraint given for that attribute. If so, the new value will 
 	 * be stored.
 	 * 
+	 * @param executor The user who initiated the action of setting the attribute's value.
 	 * @param user The user for which the attribute should be set.
 	 * @param attribute The attributes name.
 	 * @param value The new value for this attribute.
@@ -326,7 +327,7 @@ public interface UserManager {
 	 *             attribute.
 	 * @throws DatabaseException If storing the new attribute fails for any reason.
 	 */
-    String setAttributeFor(User user, String attribute, String value)
+    String setAttributeFor(User executor, User user, String attribute, String value)
         throws DatabaseException, ConstraintException;
 	
 	
@@ -347,5 +348,4 @@ public interface UserManager {
      * @since 0.6
      */
 	public void removeUserListener(UserListener listener);
-
 }

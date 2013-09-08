@@ -12,6 +12,7 @@ import polly.rx.core.ScoreBoardManager;
 import polly.rx.entities.ScoreBoardEntry;
 import polly.rx.graphs.NamedPoint;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Types.NumberType;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.http.HttpAction;
 import de.skuzzle.polly.sdk.http.HttpEvent;
@@ -60,8 +61,8 @@ public class ScoreBoardDetailsHttpAction extends HttpAction {
         if (mm != null) {
             maxMonths = Integer.parseInt(mm);
         } else {
-            maxMonths = Integer.parseInt(e.getSession().getUser().getAttribute(
-                MyPlugin.MAX_MONTHS));
+            maxMonths = (int) ((NumberType) e.getSession().getUser().getAttribute(
+                MyPlugin.MAX_MONTHS)).getValue(); 
         }
         maxMonths = Math.max(Math.min(maxMonths, 24), 4);
         

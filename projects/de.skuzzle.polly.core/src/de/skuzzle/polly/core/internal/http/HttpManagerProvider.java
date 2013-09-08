@@ -28,6 +28,7 @@ import de.skuzzle.polly.core.moduleloader.annotations.Require;
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.ConfigurationProvider;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.constraints.AttributeConstraint;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 
@@ -98,12 +99,16 @@ public class HttpManagerProvider extends AbstractProvider {
     
     @Override
     public void run() throws Exception {
+        final MyPolly myPolly = this.requireNow(MyPollyImpl.class, false);
+        // HACK: this avoids cyclic dependency
+        this.httpManager.setMyPolly(myPolly);
+        
         
         // Add HOME_PAGE attribute
         AttributeConstraint constraint = new AttributeConstraint() {
             @Override
-            public boolean accept(String value) {
-                return httpManager.actionExists(value);
+            public boolean accept(Types value) {
+                return httpManager.actionExists(value.valueString(myPolly.formatting()));
             }
         };
         
@@ -118,9 +123,8 @@ public class HttpManagerProvider extends AbstractProvider {
         }
         
         
-        MyPolly myPolly = this.requireNow(MyPollyImpl.class, false);
-        // HACK: this avoids cyclic dependency
-        this.httpManager.setMyPolly(myPolly);
+        
+
         
         logger.trace("Adding default http actions...");
         this.httpManager.addHttpAction(new RootHttpAction(myPolly));

@@ -103,8 +103,8 @@ public final class Milliseconds {
      * @param ms Milliseconds to convert.
      * @return Amount of seconds.
      */
-    public static int toSeconds(int ms) {
-        return ms / 1000;
+    public static int toSeconds(long ms) {
+        return (int) (ms / 1000);
     }
     
     

@@ -3,6 +3,7 @@ package core;
 import polly.reminds.MyPlugin;
 import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.IrcManager;
+import de.skuzzle.polly.sdk.Types.StringType;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.eventlistener.MessageAdapter;
 import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
@@ -29,8 +30,8 @@ public class AutoSnoozeRunLater extends RunLater {
             @Override
             public void privateMessage(MessageEvent e) {
                 final String nick = forUser.getCurrentNickName();
-                final String indicator = forUser.getAttribute(
-                        MyPlugin.AUTO_SNOOZE_INDICATOR);
+                final String indicator = ((StringType) forUser.getAttribute(
+                        MyPlugin.AUTO_SNOOZE_INDICATOR)).getValue();
                 
                 if (e.getUser().getNickName().equals(nick)) {
                     AutoSnoozeRunLater.this.stop();

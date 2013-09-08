@@ -6,14 +6,15 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import polly.reminds.MyPlugin;
-
 import core.RemindManager;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
+import de.skuzzle.polly.sdk.Types.StringType;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.Types.ListType;
+import de.skuzzle.polly.sdk.Types.TimespanType;
 import de.skuzzle.polly.sdk.Types.UserType;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
@@ -124,7 +125,9 @@ public class RemindCommand extends AbstractRemindCommand {
         	Date dueDate = signature.getDateValue(0);
         	String msg = "Reminder";
         	try {
-                msg = executer.getAttribute(MyPlugin.DEFAULT_MSG);
+                msg = ((StringType) 
+                    executer.getAttribute(MyPlugin.DEFAULT_MSG)).getValue();
+                
             } catch (UnknownAttributeException e) {
                 throw new CommandException(e);
             }
@@ -137,9 +140,13 @@ public class RemindCommand extends AbstractRemindCommand {
             String msg = "Reminder";
             long millis = Time.currentTimeMillis();
             try {
-                msg = executer.getAttribute(MyPlugin.DEFAULT_MSG);
-                millis += Long.parseLong(
-                    executer.getAttribute(MyPlugin.DEFAULT_REMIND_TIME));
+                msg = ((StringType) 
+                    executer.getAttribute(MyPlugin.DEFAULT_MSG)).getValue();
+                
+                final TimespanType tst = (TimespanType) executer.getAttribute(
+                    MyPlugin.DEFAULT_REMIND_TIME); 
+                
+                millis += tst.getSpan() * 1000;
             } catch (UnknownAttributeException e) {
                 throw new CommandException(e);
             }

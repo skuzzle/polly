@@ -6,6 +6,7 @@ import java.io.IOException;
 import de.skuzzle.polly.core.configuration.ConfigurationProviderImpl;
 import de.skuzzle.polly.core.internal.ModuleStates;
 import de.skuzzle.polly.core.internal.ShutdownManagerImpl;
+import de.skuzzle.polly.core.internal.formatting.FormatManagerImpl;
 import de.skuzzle.polly.core.internal.persistence.PersistenceManagerImpl;
 import de.skuzzle.polly.core.internal.roles.RoleManagerImpl;
 import de.skuzzle.polly.core.moduleloader.AbstractProvider;
@@ -29,6 +30,7 @@ import de.skuzzle.polly.tools.events.EventProvider;
         @Require(component = EventProvider.class),
         @Require(component = PersistenceManagerImpl.class),
         @Require(component = RoleManagerImpl.class),
+        @Require(component = FormatManagerImpl.class),
         @Require(state = ModuleStates.PERSISTENCE_READY),
         @Require(state = ModuleStates.ROLES_READY)
     },
@@ -46,6 +48,9 @@ public class UserManagerProvider extends AbstractProvider {
     private UserManagerImpl userManager;
     private RoleManagerImpl roleManager;
     private Configuration userCfg;
+    private FormatManagerImpl formatter;
+    
+    
 
     public UserManagerProvider(ModuleLoader loader) {
         super("USER_MANAGER_PROVIDER", loader, true);
@@ -59,6 +64,7 @@ public class UserManagerProvider extends AbstractProvider {
         this.persistenceManager = this.requireNow(PersistenceManagerImpl.class, true);
         this.shutdownManager = this.requireNow(ShutdownManagerImpl.class, true);
         this.roleManager = this.requireNow(RoleManagerImpl.class, true);
+        this.formatter = this.requireNow(FormatManagerImpl.class, true);
     }
 
 
@@ -83,7 +89,8 @@ public class UserManagerProvider extends AbstractProvider {
             tempVarLifeTime, 
             ignoreUnknownIdentifiers, 
             this.eventProvider, 
-            this.roleManager);
+            this.roleManager,
+            this.formatter);
         
         this.provideComponent(this.userManager);
         this.shutdownManager.addDisposable(this.userManager);
@@ -103,6 +110,7 @@ public class UserManagerProvider extends AbstractProvider {
             admin.setHashedPassword(this.userCfg.readString(
                 Configuration.ADMIN_PASSWORD_HASH));
             this.userManager.addUser(admin);
+
         } catch (UserExistsException e) {
             admin = e.getUser();
             logger.debug("Default user already existed.");
@@ -116,6 +124,9 @@ public class UserManagerProvider extends AbstractProvider {
                 this.roleManager.assignRole(admin, RoleManager.ADMIN_ROLE);
             }
         }
+        
+        // XXX: remove this !!
+        //this.userManager.resetAllAttributes();
     }
 
     

@@ -3,13 +3,13 @@ package commands;
 import java.util.Date;
 
 import polly.reminds.MyPlugin;
-
 import core.RemindManager;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
+import de.skuzzle.polly.sdk.Types.TimespanType;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
@@ -53,8 +53,9 @@ public class SnoozeCommand extends AbstractRemindCommand {
         } else if (this.match(signature, 1)) {
             try {
                 long millis = Time.currentTimeMillis();
-                millis += Long.parseLong(
-                    executer.getAttribute(MyPlugin.SNOOZE_TIME));
+                final TimespanType ts = (TimespanType) 
+                    executer.getAttribute(MyPlugin.SNOOZE_TIME);
+                millis += ts.getSpan() * 1000;
                 Date dueDate = new Date(millis);
                 
                 RemindEntity re = this.remindManager.snooze(executer);
