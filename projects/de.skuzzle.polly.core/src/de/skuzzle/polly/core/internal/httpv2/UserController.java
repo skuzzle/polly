@@ -3,6 +3,20 @@ package de.skuzzle.polly.core.internal.httpv2;
 import java.util.List;
 import java.util.Map;
 
+import de.skuzzle.polly.core.parser.Evaluator;
+import de.skuzzle.polly.core.parser.InputParser;
+import de.skuzzle.polly.core.parser.InputScanner;
+import de.skuzzle.polly.core.parser.ParseException;
+import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
+import de.skuzzle.polly.core.parser.ast.expressions.Expression;
+import de.skuzzle.polly.core.parser.ast.expressions.literals.Literal;
+import de.skuzzle.polly.core.parser.ast.expressions.literals.LiteralFormatter;
+import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.core.parser.ast.visitor.ExecutionVisitor;
+import de.skuzzle.polly.core.parser.ast.visitor.ParentSetter;
+import de.skuzzle.polly.core.parser.ast.visitor.resolving.TypeResolver;
+import de.skuzzle.polly.core.parser.problems.ProblemReporter;
+import de.skuzzle.polly.core.parser.problems.SimpleProblemReporter;
 import de.skuzzle.polly.http.annotations.Get;
 import de.skuzzle.polly.http.annotations.OnRegister;
 import de.skuzzle.polly.http.annotations.Param;
@@ -26,6 +40,7 @@ import de.skuzzle.polly.sdk.exceptions.UserExistsException;
 import de.skuzzle.polly.sdk.httpv2.PollyController;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.roles.RoleManager;
+import de.skuzzle.polly.tools.streams.FastByteArrayInputStream;
 
 
 public class UserController extends PollyController {
@@ -64,12 +79,17 @@ public class UserController extends PollyController {
     @Get("pages/editUser")
     public HttpAnswer editUser(@Param("userId") int id) 
             throws AlternativeAnswerException {
-        this.requirePermissions(RoleManager.ADMIN_PERMISSION);
+        
         final User user = this.getMyPolly().users().getUser(id);
         
         if (user == null) {
             // TODO: 
         }
+        
+        if (this.getSessionUser() != user) {
+            this.requirePermissions(RoleManager.ADMIN_PERMISSION);
+        }
+        
         final Map<String, Object> c = this.createContext("templatesv2/edit.user.html");
         c.put("editUser", user);
         return this.makeAnswer(c);
@@ -208,15 +228,40 @@ public class UserController extends PollyController {
             throws AlternativeAnswerException {
         
         this.requirePermissions(RoleManager.ADMIN_PERMISSION);
+        final User user = this.getSessionUser();
         
-        final User u = this.getMyPolly().users().getUser(userId);
-        if (u == null) {
+        final User target = this.getMyPolly().users().getUser(userId);
+        if (target == null) {
             return new GsonHttpAnswer(200, 
                 new SuccessResult(false, "User does not exist"));
         }
         try {
+            final ProblemReporter reporter = new SimpleProblemReporter();
+            final InputScanner is = new InputScanner(value);
+            final InputParser ip = new InputParser(is, reporter);
+            is.setSkipWhiteSpaces(true);
+            
+            try {
+                final Expression exp = ip.parseSingleExpression();
+                exp.visit(new ParentSetter());
+                
+                final String nsName = user.getCurrentNickName() == null 
+                    ? user.getName() 
+                    : user.getCurrentNickName(); 
+                final Namespace ns = Namespace.forName(nsName);
+                final ExecutionVisitor executor = new ExecutionVisitor(ns, ns, reporter);
+                // resolve types
+                TypeResolver.resolveAST(exp, ns, reporter);
+                
+                exp.visit(executor);
+                final Literal result = executor.getSingleResult();
+                value = result.format(LiteralFormatter.DEFAULT);
+            } catch (ASTTraversalException e) {
+                // ignore the exception, just use plain value which was submitted
+            }
+            
             final String newValue = this.getMyPolly().users().setAttributeFor(
-                u, attribute, value);
+                target, attribute, value);
             
             return new GsonHttpAnswer(200, 
                 new SetAttributeResult(true, 

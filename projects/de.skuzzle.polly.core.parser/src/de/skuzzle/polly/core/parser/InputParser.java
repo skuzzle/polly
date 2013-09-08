@@ -232,6 +232,17 @@ public class InputParser {
     
     
     /**
+     * Parses a single polly expression with no assignments and command prefix.
+     * 
+     * @return The parsed AST expression.
+     * @throws ParseException If the string was not well formatted.
+     */
+    public Expression parseSingleExpression() throws ParseException {
+        return this.parseRelation();
+    }
+    
+    
+    /**
      * Creates a new {@link Identifier} with a generated name.
      * 
      * @param position Position of the generated identifier.

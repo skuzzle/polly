@@ -8,7 +8,6 @@ import de.skuzzle.polly.http.annotations.Get;
 import de.skuzzle.polly.http.annotations.OnRegister;
 import de.skuzzle.polly.http.annotations.Param;
 import de.skuzzle.polly.http.annotations.Post;
-import de.skuzzle.polly.http.annotations.RequestHandler;
 import de.skuzzle.polly.http.api.AlternativeAnswerException;
 import de.skuzzle.polly.http.api.Controller;
 import de.skuzzle.polly.http.api.HttpCookie;
@@ -23,7 +22,6 @@ import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.time.Milliseconds;
 
-@RequestHandler("IndexRequests")
 public class IndexController extends PollyController {
 
     
