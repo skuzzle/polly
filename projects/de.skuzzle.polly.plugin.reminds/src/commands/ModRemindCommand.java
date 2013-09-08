@@ -4,7 +4,6 @@ package commands;
 import java.util.Date;
 
 import polly.reminds.MyPlugin;
-
 import core.RemindManager;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -38,7 +37,7 @@ public class ModRemindCommand extends AbstractRemindCommand {
         
         this.createSignature("Ändert das Datum des letzten Reminds", 
             MyPlugin.MODIFY_REMIND_PERMISSION,
-            new Parameter("Nachricht", Types.STRING));
+            new Parameter("Nachricht", Types.DATE));
         this.createSignature("Ändert die Nachricht des letzten Reminds", 
             MyPlugin.MODIFY_REMIND_PERMISSION,
             new Parameter("Nachricht", Types.STRING));
