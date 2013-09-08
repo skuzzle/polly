@@ -196,7 +196,7 @@
         </div>
         <ul #if (!$user) style="display: none" #end>
             <li class="loginStatus"><a id="performLogout" href="/" title="Logout">Logout</a></li>
-            <li class="loginStatus"><a href="#" title="Edit your settings">$user.getName()</a></li>
+            <li class="loginStatus"><a href="/pages/editUser?userId=$user.getId()" title="Edit your settings">$user.getName()</a></li>
             #foreach ($me in $topMenu)
                 #if ($myPolly.roles().canAccess($user, $me))
                     <li class="loginStatus">#if ($me.getUrl()) <a href="$me.getUrl()">$me.getName()</a> #else $me.getName() #end</li>

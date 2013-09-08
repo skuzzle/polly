@@ -13,13 +13,17 @@ import de.skuzzle.polly.http.api.LazyResolvedFile;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
+import de.skuzzle.polly.sdk.WriteAction;
+import de.skuzzle.polly.sdk.exceptions.ConstraintException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.InvalidUserNameException;
 import de.skuzzle.polly.sdk.exceptions.RoleException;
 import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
+import de.skuzzle.polly.sdk.httpv2.PollyController;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 
@@ -54,13 +58,29 @@ public class UserController extends PollyController {
         c.put("users", this.getMyPolly().users().getRegisteredUsers());
         return this.makeAnswer(c);
     }
+    
+    
+    
+    @Get("pages/editUser")
+    public HttpAnswer editUser(@Param("userId") int id) 
+            throws AlternativeAnswerException {
+        this.requirePermissions(RoleManager.ADMIN_PERMISSION);
+        final User user = this.getMyPolly().users().getUser(id);
+        
+        if (user == null) {
+            // TODO: 
+        }
+        final Map<String, Object> c = this.createContext("templatesv2/edit.user.html");
+        c.put("editUser", user);
+        return this.makeAnswer(c);
+    }
 
     
     
-    public final class DeleteUserResult {
+    public static class SuccessResult {
         public final boolean success;
         public final String message;
-        public DeleteUserResult(boolean success, String message) {
+        public SuccessResult(boolean success, String message) {
             super();
             this.success = success;
             this.message = message;
@@ -74,20 +94,20 @@ public class UserController extends PollyController {
      
         if (user == null) {
             return new GsonHttpAnswer(200, 
-                new DeleteUserResult(false, "No user with id '" + id +"'"));
+                new SuccessResult(false, "No user with id '" + id +"'"));
         }
         
         try {
             um.deleteUser(user);
         } catch (UnknownUserException e) {
             return new GsonHttpAnswer(200, 
-                new DeleteUserResult(false, "Unknown user"));
+                new SuccessResult(false, "Unknown user"));
         } catch (DatabaseException e) {
             return new GsonHttpAnswer(200, 
-                new DeleteUserResult(false, "Database exception while deleting user"));
+                new SuccessResult(false, "Database exception while deleting user"));
         }
         return new GsonHttpAnswer(200, 
-            new DeleteUserResult(true, user.getName() + " has been deleted"));
+            new SuccessResult(true, user.getName() + " has been deleted"));
     }
     
     
@@ -108,23 +128,33 @@ public class UserController extends PollyController {
     
     
     
-    @Get("api/getUser")
-    public HttpAnswer getUser(@Param("name") String name) {
-        final User u = this.getMyPolly().users().getUser(name);
-        return new GsonHttpAnswer(200, u);
-    }
-    
-    
-    
-    public class AddUserResult {
-        public boolean success;
-        public final String message;
-        public AddUserResult(boolean success, String message) {
-            super();
-            this.success = success;
-            this.message = message;
+    @Post("api/setPassword")
+    public HttpAnswer setPassword(
+        @Param("userId") int userId,
+        @Param("newPassword") final String newPassword, 
+        @Param("retype") String retype) throws DatabaseException {
+        
+        final User user = this.getMyPolly().users().getUser(userId);
+        
+        if (user == null) {
+            return new GsonHttpAnswer(200, 
+                new SuccessResult(false, "User does not exist"));
+        } else if (!newPassword.equals(retype)) {
+            return new GsonHttpAnswer(200, 
+                new SuccessResult(false, "Password and retype mismatch"));
+        } else {
+            this.getMyPolly().persistence().atomicWriteOperation(new WriteAction() {
+                
+                @Override
+                public void performUpdate(PersistenceManager persistence) {
+                    user.setPassword(newPassword);
+                }
+            });
+            return new GsonHttpAnswer(200, new SuccessResult(true, "Password changed"));
         }
     }
+    
+    
     
     
     @Post("/api/addUser")
@@ -142,43 +172,124 @@ public class UserController extends PollyController {
                 rm.assignRole(newUser, roleName);
             }
         } catch (InvalidUserNameException e) {
-            return new GsonHttpAnswer(200, new AddUserResult(false, "Username has invalid format"));
+            return new GsonHttpAnswer(200, 
+                new SuccessResult(false, "Username has invalid format"));
         } catch (UserExistsException e) {
-            return new GsonHttpAnswer(200, new AddUserResult(false, "Username already exists"));
+            return new GsonHttpAnswer(200, 
+                new SuccessResult(false, "Username already exists"));
         } catch (DatabaseException e) {
-            return new GsonHttpAnswer(200, new AddUserResult(false, "Database error while storing new user"));
+            return new GsonHttpAnswer(200, 
+                new SuccessResult(false, "Database error while storing new user"));
         } catch (RoleException e) {
-            return new GsonHttpAnswer(200, new AddUserResult(false, "Error while assigning initial roles"));
+            return new GsonHttpAnswer(200, 
+                new SuccessResult(false, "Error while assigning initial roles"));
         }
-        return new GsonHttpAnswer(200, new AddUserResult(true, "User '" + name + "' added."));
+        return new GsonHttpAnswer(200, 
+            new SuccessResult(true, "User '" + name + "' added."));
     }
     
     
-    public final static class SetAttributeResult {
-        
-    }
     
+    public final static class SetAttributeResult extends SuccessResult {
+        public String newValue;
+
+        public SetAttributeResult(boolean success, String msg, String newValue) {
+            super(success, msg);
+            this.newValue = newValue;
+        }
+    }
     
     
     @Get("api/setAttribute")
     public HttpAnswer setAttribute(
-        @Param("user") String user,
+        @Param("userId") int userId,
         @Param("attribute") String attribute, 
-        @Param("value") String value) throws AlternativeAnswerException {
+        @Param(value = "value", treatEmpty = true, ifEmptyValue = "") String value) 
+            throws AlternativeAnswerException {
         
         this.requirePermissions(RoleManager.ADMIN_PERMISSION);
         
-        final User u = this.getMyPolly().users().getUser(user);
+        final User u = this.getMyPolly().users().getUser(userId);
         if (u == null) {
-            return HttpAnswers.newStringAnswer("fail");
+            return new GsonHttpAnswer(200, 
+                new SuccessResult(false, "User does not exist"));
         }
-        
         try {
-            this.getMyPolly().users().setAttributeFor(u, attribute, value);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return HttpAnswers.newStringAnswer("fail");
+            final String newValue = this.getMyPolly().users().setAttributeFor(
+                u, attribute, value);
+            
+            return new GsonHttpAnswer(200, 
+                new SetAttributeResult(true, 
+                    value + " is not a valid value for " + attribute, newValue));            
+        } catch (DatabaseException e) {
+            return new GsonHttpAnswer(200, 
+                new SuccessResult(false, 
+                    "Error while persisting new attribute value"));
+        } catch (ConstraintException e) {
+            return new GsonHttpAnswer(200, 
+                new SuccessResult(false, 
+                    value + " is not a valid value for " + attribute));
         }
-        return HttpAnswers.newStringAnswer("success");
+    }
+    
+    
+    
+    @Get("api/addRole")
+    public HttpAnswer addRole(
+        @Param("userId") int userId, 
+        @Param("role") String role) throws AlternativeAnswerException {
+
+        this.requirePermissions(RoleManager.ADMIN_PERMISSION);
+        
+        final User target = this.getMyPolly().users().getUser(userId);
+        
+        if (target == null) {
+            return new GsonHttpAnswer(200, 
+                new SuccessResult(false, "User does not exist"));
+        } else {
+            try {
+                this.getMyPolly().roles().assignRole(target, role);
+                return new GsonHttpAnswer(200, new SuccessResult(true, 
+                    "Role has been added"));
+            } catch (RoleException e) {
+                return new GsonHttpAnswer(200, 
+                    new SuccessResult(false, e.getMessage()));
+            } catch (DatabaseException e) {
+                return new GsonHttpAnswer(200, new SuccessResult(false, 
+                    "Database error while assigning role to user"));
+            }
+        }
+    }
+    
+    
+    
+    @Get("api/removeRole")
+    public HttpAnswer removeRole(
+        @Param("userId") int userId, 
+        @Param("role") String role) throws AlternativeAnswerException {
+
+        this.requirePermissions(RoleManager.ADMIN_PERMISSION);
+        final User target = this.getMyPolly().users().getUser(userId);
+        
+        if (target == null) {
+            return new GsonHttpAnswer(200, 
+                new SuccessResult(false, "User does not exist"));
+        } else {
+            try {
+                if (target.isPollyAdmin() && role.equals(RoleManager.ADMIN_ROLE)) {
+                    return new GsonHttpAnswer(200, new SuccessResult(false, 
+                        "Can not remove admin role from polly main admin"));
+                }
+                this.getMyPolly().roles().removeRole(target, role);
+                return new GsonHttpAnswer(200, new SuccessResult(true, 
+                    "Role has been removed"));
+            } catch (RoleException e) {
+                return new GsonHttpAnswer(200, 
+                    new SuccessResult(false, e.getMessage()));
+            } catch (DatabaseException e) {
+                return new GsonHttpAnswer(200, new SuccessResult(false, 
+                    "Database error while assigning role to user"));
+            }
+        }
     }
 }

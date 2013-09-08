@@ -79,10 +79,14 @@ class ReflectionHttpHandler implements HttpEventHandler {
             }
             
             // value associated with that key in the current request 
-            final String sValue = e.parameterMap(this.mode).get(key.value());
+            String sValue = e.parameterMap(this.mode).get(key.value());
             if (sValue == null) {
-                return HttpAnswers.newStringAnswer("missing parameter: " + 
-                    key.value());
+                if (key.treatEmpty()) {
+                    sValue = key.ifEmptyValue();
+                } else {
+                    return HttpAnswers.newStringAnswer("missing parameter: " + 
+                        key.value());
+                }
             }
             
             final Class<?> type = this.handler.getParameterTypes()[i];

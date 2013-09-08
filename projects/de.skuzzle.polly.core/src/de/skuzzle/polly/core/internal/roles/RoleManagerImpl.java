@@ -90,6 +90,13 @@ public class RoleManagerImpl implements RoleManager {
     
     
     @Override
+    public boolean hasRole(User user, String role) {
+        return this.getRoles(user).contains(role);
+    }
+    
+    
+    
+    @Override
     public Set<String> getPermissions(String roleName) {
         try {
             this.persistence.readLock();

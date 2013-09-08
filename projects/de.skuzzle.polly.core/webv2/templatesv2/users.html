@@ -80,7 +80,11 @@
         });
     }
     
-    function deleteUser(id) {
+    function deleteUser(id, name) {
+    var result = confirm("Really delete user '" + name + "'?");
+        if (!result) {
+            return;
+        }
         showProgress();
         $.get("$PAGE_DELETEUSER?id="+id, function(data) {
             var result = JSON.parse(data);

@@ -1,4 +1,4 @@
-package de.skuzzle.polly.core.internal.httpv2;
+package de.skuzzle.polly.sdk.httpv2;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -15,7 +15,6 @@ import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.User;
-import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.time.Time;
 

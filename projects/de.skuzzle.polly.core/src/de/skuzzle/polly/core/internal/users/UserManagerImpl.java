@@ -471,7 +471,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     
     @Override
-    public void setAttributeFor(final User user, final String attribute, 
+    public String setAttributeFor(final User user, final String attribute, 
             String value) throws DatabaseException, ConstraintException {
         logger.trace("Trying to set attribute '" + attribute + "' to value '" + 
             value + "'");
@@ -500,6 +500,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
                 ((de.skuzzle.polly.core.internal.users.User) user).setAttribute(attribute, valueCopy);
             }
         });
+        return value;
     }
 
 

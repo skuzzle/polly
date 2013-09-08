@@ -95,6 +95,16 @@ public interface RoleManager {
     public abstract Set<String> getRoles(User user);
     
     
+    /**
+     * Determines whether the given user has the given role.
+     * 
+     * @param user The user to check.
+     * @param role The role to check.
+     * @return Whether the user has the role assigned.
+     */
+    public abstract boolean hasRole(User user, String role);
+    
+    
     
     /**
      * <p>Creates a new role with the given name. Role names must be unique. If you

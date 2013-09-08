@@ -28,4 +28,6 @@ import java.lang.annotation.Target;
 public @interface Param {
     String value();
     Class<?> typeHint() default Void.class;
+    boolean treatEmpty() default false;
+    String ifEmptyValue() default "";
 }

@@ -321,11 +321,12 @@ public interface UserManager {
 	 * @param user The user for which the attribute should be set.
 	 * @param attribute The attributes name.
 	 * @param value The new value for this attribute.
-	 * @throws DatabaseException If the value doesnt match the constraint for this
+	 * @return The new value of the attribute.
+	 * @throws ConstraintException If the value doesn't match the constraint for this
 	 *             attribute.
-	 * @throws ConstraintException If storing the new attribute fails for any reason.
+	 * @throws DatabaseException If storing the new attribute fails for any reason.
 	 */
-    void setAttributeFor(User user, String attribute, String value)
+    String setAttributeFor(User user, String attribute, String value)
         throws DatabaseException, ConstraintException;
 	
 	

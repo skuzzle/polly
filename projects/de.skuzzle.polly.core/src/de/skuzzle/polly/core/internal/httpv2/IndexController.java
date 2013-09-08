@@ -5,13 +5,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.skuzzle.polly.http.annotations.Get;
+import de.skuzzle.polly.http.annotations.OnRegister;
 import de.skuzzle.polly.http.annotations.Param;
 import de.skuzzle.polly.http.annotations.Post;
 import de.skuzzle.polly.http.annotations.RequestHandler;
-import de.skuzzle.polly.http.annotations.OnRegister;
 import de.skuzzle.polly.http.api.AlternativeAnswerException;
 import de.skuzzle.polly.http.api.Controller;
-import de.skuzzle.polly.http.api.LazyResolvedFile;
 import de.skuzzle.polly.http.api.HttpCookie;
 import de.skuzzle.polly.http.api.HttpServer;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
@@ -19,6 +18,7 @@ import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
+import de.skuzzle.polly.sdk.httpv2.PollyController;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.time.Milliseconds;
@@ -46,7 +46,7 @@ public class IndexController extends PollyController {
     @Get(STYLE_SHEET_NAME)
     public HttpAnswer getCSS() {
         return HttpAnswers.newTemplateAnswer(
-            new LazyResolvedFile(this.getRootDir(), STYLE_SHEET_NAME), 
+            this.resolveFile(STYLE_SHEET_NAME),
             new HashMap<String, Object>());
     }
     
