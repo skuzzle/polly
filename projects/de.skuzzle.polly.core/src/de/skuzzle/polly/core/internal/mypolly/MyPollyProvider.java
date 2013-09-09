@@ -14,6 +14,7 @@ import de.skuzzle.polly.core.internal.paste.PasteServiceManagerImpl;
 import de.skuzzle.polly.core.internal.persistence.PersistenceManagerImpl;
 import de.skuzzle.polly.core.internal.plugins.PluginManagerImpl;
 import de.skuzzle.polly.core.internal.roles.RoleManagerImpl;
+import de.skuzzle.polly.core.internal.runonce.RunOnceManagerImpl;
 import de.skuzzle.polly.core.internal.users.UserManagerImpl;
 import de.skuzzle.polly.core.moduleloader.AbstractProvider;
 import de.skuzzle.polly.core.moduleloader.ModuleLoader;
@@ -39,6 +40,7 @@ import de.skuzzle.polly.tools.events.EventProvider;
         @Require(component = ExecutorService.class),
         @Require(component = MailManagerImpl.class),
         @Require(component = RoleManagerImpl.class),
+        @Require(component = RunOnceManagerImpl.class),
         @Require(component = HttpManagerImpl.class)
     },
     provides = 
@@ -58,6 +60,7 @@ public class MyPollyProvider extends AbstractProvider {
     private MailManagerImpl mailManager;
     private RoleManagerImpl roleManager;
     private HttpManagerImpl httpManager;
+    private RunOnceManagerImpl runOnceManager;
     private EventProvider eventProvider;
     
     
@@ -83,6 +86,7 @@ public class MyPollyProvider extends AbstractProvider {
         this.mailManager = this.requireNow(MailManagerImpl.class, true);
         this.roleManager = this.requireNow(RoleManagerImpl.class, true);
         this.httpManager = this.requireNow(HttpManagerImpl.class, true);
+        this.runOnceManager = this.requireNow(RunOnceManagerImpl.class, true);
         this.eventProvider = this.requireNow(EventProvider.class, true);
     }
     
@@ -104,6 +108,7 @@ public class MyPollyProvider extends AbstractProvider {
             this.mailManager,
             this.roleManager,
             this.httpManager,
+            this.runOnceManager,
             this.eventProvider);
         this.provideComponent(myPolly);
     }

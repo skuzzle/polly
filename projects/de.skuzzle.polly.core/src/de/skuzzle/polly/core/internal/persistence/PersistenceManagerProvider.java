@@ -10,8 +10,7 @@ import de.skuzzle.polly.core.internal.ShutdownManagerImpl;
 import de.skuzzle.polly.core.internal.plugins.PluginManagerImpl;
 import de.skuzzle.polly.core.internal.roles.Permission;
 import de.skuzzle.polly.core.internal.roles.Role;
-import de.skuzzle.polly.core.internal.users.Attribute;
-import de.skuzzle.polly.core.internal.users.User;
+import de.skuzzle.polly.core.internal.users.UserImpl;
 import de.skuzzle.polly.core.moduleloader.AbstractProvider;
 import de.skuzzle.polly.core.moduleloader.ModuleLoader;
 import de.skuzzle.polly.core.moduleloader.SetupException;
@@ -84,8 +83,7 @@ public class PersistenceManagerProvider extends AbstractProvider {
                 this.pluginManager,
                 Polly.PLUGIN_FOLDER);
         
-        this.persistenceManager.registerEntity(User.class);
-        this.persistenceManager.registerEntity(Attribute.class);
+        this.persistenceManager.registerEntity(UserImpl.class);
         this.persistenceManager.registerEntity(Permission.class);
         this.persistenceManager.registerEntity(Role.class);
                

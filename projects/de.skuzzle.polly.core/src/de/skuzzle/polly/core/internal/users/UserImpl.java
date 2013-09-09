@@ -31,7 +31,7 @@ import de.skuzzle.polly.sdk.exceptions.UnknownAttributeException;
 import de.skuzzle.polly.sdk.time.Time;
 
 
-@Entity
+@Entity(name = "User")
 @NamedQueries({
     @NamedQuery(
         name  = "USER_BY_NAME", 
@@ -40,7 +40,7 @@ import de.skuzzle.polly.sdk.time.Time;
         name  = "ALL_USERS", 
         query = "SELECT u FROM User u")
 })
-public class User implements de.skuzzle.polly.sdk.User, Serializable {
+public class UserImpl implements de.skuzzle.polly.sdk.User, Serializable {
     
     private static final long serialVersionUID = 1L;
     
@@ -86,13 +86,13 @@ public class User implements de.skuzzle.polly.sdk.User, Serializable {
     @Transient
     private UserManagerImpl userManager;
     
-    User() {
+    UserImpl() {
         this("", "");
     }
     
     
     
-    User(String name, String password) {
+    UserImpl(String name, String password) {
         this.name = name;
         this.password = Hashes.md5(password);
         this.attributes = new HashMap<String, String>();
@@ -103,7 +103,7 @@ public class User implements de.skuzzle.polly.sdk.User, Serializable {
     
     
     
-    public User setUserManager(UserManagerImpl userManager) {
+    public UserImpl setUserManager(UserManagerImpl userManager) {
         this.userManager = userManager;
         return this;
     }

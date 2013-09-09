@@ -52,9 +52,9 @@ import commands.roles.RemovePermissionCommand;
 import commands.roles.RemoveRoleCommand;
 import core.GreetDeliverer;
 import core.JoinTimeCollector;
-
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
@@ -249,7 +249,8 @@ public class MyPlugin extends PollyPlugin {
 	@Override
 	public void onLoad() {
 	    try {
-	        this.getMyPolly().users().addAttribute(GREETING, "");
+	        this.getMyPolly().users().addAttribute(GREETING, Types.STRING, 
+	            "Set a greeting which polly delivers you each time you log in", "Core");
 	    } catch (Exception ignore) {
 	        ignore.printStackTrace();
 	    }

@@ -9,12 +9,10 @@ import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
-import de.skuzzle.polly.sdk.Types.TimespanType;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.UnknownAttributeException;
-import de.skuzzle.polly.sdk.time.Time;
 import entities.RemindEntity;
 
 public class SnoozeCommand extends AbstractRemindCommand {
@@ -27,7 +25,9 @@ public class SnoozeCommand extends AbstractRemindCommand {
             MyPlugin.SNOOZE_PERMISSION,
             new Parameter("Neue Zeit", Types.DATE));
         this.createSignature(
-            "Verlängert die Erinnerung die dir zuletzt zugestellt wurde.");
+            "Verlängert die Erinnerung die dir zuletzt zugestellt wurde. "
+            + "Wenn USE_SNOOZE_TIME false ist, wird die Erinnerung um ihre eigene "
+            + "Laufzeit verlängert, ansonsten um DEFAULT_REMIND_TIME");
         this.setRegisteredOnly();
         this.setHelpText("Verlängert Erinnerungen");
     }
@@ -52,15 +52,9 @@ public class SnoozeCommand extends AbstractRemindCommand {
             }
         } else if (this.match(signature, 1)) {
             try {
-                long millis = Time.currentTimeMillis();
-                final TimespanType ts = (TimespanType) 
-                    executer.getAttribute(MyPlugin.SNOOZE_TIME);
-                millis += ts.getSpan() * 1000;
-                Date dueDate = new Date(millis);
-                
                 RemindEntity re = this.remindManager.snooze(executer);
                 this.reply(channel, "Erinnerung wurde verlängert. Jetzt fällig: " 
-                    + this.getMyPolly().formatting().formatDate(dueDate) +
+                    + this.getMyPolly().formatting().formatDate(re.getDueDate()) +
                     " (ID: " + re.getId() + ")");
                 
             } catch (UnknownAttributeException e) {

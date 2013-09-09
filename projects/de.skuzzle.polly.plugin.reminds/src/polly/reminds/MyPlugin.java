@@ -21,8 +21,11 @@ import core.RemindManagerImpl;
 import core.RemindTraceNickchangeHandler;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
+import de.skuzzle.polly.sdk.Types;
+import de.skuzzle.polly.sdk.Types.StringType;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
+import de.skuzzle.polly.sdk.Types.TimespanType;
 import de.skuzzle.polly.sdk.constraints.Constraints;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
@@ -55,40 +58,44 @@ public class MyPlugin extends PollyPlugin {
     public final static String TOGGLE_MAIL_PERMISSION   = "polly.permission.TOGGLE_MAIL";
 
     public final static String REMIND_FORMAT_NAME  = "REMIND_FORMAT";
-    public final static String REMIND_FORMAT_VALUE = "@%r%: %m%. (Hinterlassen von: %s% am %ld%)";
+    public final static StringType REMIND_FORMAT_VALUE = new Types.StringType(
+        "@%r%: %m%. (Hinterlassen von: %s% am %ld%)");
     
     public final static String MESSAGE_FORMAT_NAME  = "MESSAGE_FORMAT";
-    public final static String MESSAGE_FORMAT_VALUE = "@%r%: %m%. (Hinterlassen von: %s% am %ld%)";
+    public final static Types MESSAGE_FORMAT_VALUE = new Types.StringType(
+        "@%r%: %m%. (Hinterlassen von: %s% am %ld%)");
     
     public final static String SNOOZE_TIME          = "SNOOZE_TIME";
-    public final static String SNOOZE_DEFAULT_VALUE = "10m";
+    public final static TimespanType SNOOZE_DEFAULT_VALUE = new Types.TimespanType(
+        Milliseconds.fromMinutes(10) / 1000);
     
     public final static String USE_SNOOZE_TIME       = "USE_SNOOZE_TIME";
-    public final static String USE_SNOOZE_TIME_VALUE = "false";
+    public final static Types USE_SNOOZE_TIME_VALUE  = new Types.BooleanType(false);
     
     public final static String DEFAULT_REMIND_TIME = "DEFAULT_REMIND_TIME";
-    public final static String DEFAULT_REMIND_TIME_VALUE = "10m";
+    public final static TimespanType DEFAULT_REMIND_TIME_VALUE = new Types.TimespanType(
+        Milliseconds.fromMinutes(10) / 1000);
     
     public final static String DEFAULT_MSG       = "REMIND_DEFAULT_MSG";
-    public final static String DEFAULT_MSG_VALUE = "Reminder!";
+    public final static Types DEFAULT_MSG_VALUE  = new Types.StringType("Reminder!");
 	
 	public final static String EMAIL         = "EMAIL";
-	public final static String DEFAULT_EMAIL = "none";
+	public final static Types DEFAULT_EMAIL = new Types.StringType("none");
 	
 	public final static String LEAVE_AS_MAIL         = "LEAVE_AS_MAIL";
-	public final static String DEFAULT_LEAVE_AS_MAIL = "false";
+	public final static Types DEFAULT_LEAVE_AS_MAIL  = new Types.BooleanType(false);
 	
 	public final static String REMIND_TRACK_NICKCHANGE         = "REMIND_TRACK_NICKCHANGE";
-	public final static String DEFAULT_REMIND_TRACK_NICKCHANGE = "true";
+	public final static Types DEFAULT_REMIND_TRACK_NICKCHANGE  = new Types.BooleanType(false);
 	
 	public final static String REMIND_DOUBLE_DELIVERY         = "REMIND_DOUBLE_DELIVERY";
-	public final static String DEFAULT_REMIND_DOUBLE_DELIVERY = "false";
+	public final static Types DEFAULT_REMIND_DOUBLE_DELIVERY = new Types.BooleanType(false);
 	
-	public final static String AUTO_SNOOZE = "AUTO_SNOOZE";
-	public final static String AUTO_SNOOZE_VALUE = "false";
+	public final static String AUTO_SNOOZE      = "AUTO_SNOOZE";
+	public final static Types AUTO_SNOOZE_VALUE = new Types.BooleanType(false);
 	
-	public final static String AUTO_SNOOZE_INDICATOR = "AUTO_SNOOZE_INDICATOR";
-	public final static String AUTO_SNOOZE_INDICATOR_VALUE = "k";
+	public final static String AUTO_SNOOZE_INDICATOR      = "AUTO_SNOOZE_INDICATOR";
+	public final static Types AUTO_SNOOZE_INDICATOR_VALUE = new Types.StringType("k");
 	
 	public final static String REMIND_IDLE_TIME = "REMIND_IDLE_TIME";
     
@@ -188,25 +195,50 @@ public class MyPlugin extends PollyPlugin {
         
         try {
             UserManager users = this.getMyPolly().users();
+            final String category = "Reminds";
             
-            users.addAttribute(REMIND_FORMAT_NAME, REMIND_FORMAT_VALUE);
-            users.addAttribute(MESSAGE_FORMAT_NAME, MESSAGE_FORMAT_VALUE);
-            users.addAttribute(SNOOZE_TIME, SNOOZE_DEFAULT_VALUE, Constraints.TIMESPAN);
-            users.addAttribute(DEFAULT_MSG, DEFAULT_MSG_VALUE);
-            users.addAttribute(EMAIL, DEFAULT_EMAIL, Constraints.MAILADDRESS);
-            users.addAttribute(LEAVE_AS_MAIL, DEFAULT_LEAVE_AS_MAIL, Constraints.BOOLEAN);
-            users.addAttribute(REMIND_IDLE_TIME, 
-                "" + Milliseconds.toSeconds(User.IDLE_AFTER) + "s", 
+            users.addAttribute(REMIND_FORMAT_NAME, REMIND_FORMAT_VALUE, 
+                "Set the format for your remind messages. Valid patterns are: "
+                + "%m = message, %s = sender, %r = receiver, %d = duedate, %l = "
+                + "leave date, %c = channel, %id = id", category);
+            users.addAttribute(MESSAGE_FORMAT_NAME, MESSAGE_FORMAT_VALUE,
+                "Set the format for your leave messages. Valid patterns are: "
+                + "%m = message, %s = sender, %r = receiver, %d = duedate, %l = "
+                + "leave date, %c = channel, %id = id", category);
+            
+            users.addAttribute(SNOOZE_TIME, SNOOZE_DEFAULT_VALUE, 
+                "Set the timespan in which you may put your reminds to snooze. "
+                + "If the time has passed, the remind will be deleted. Set to 0 if you "
+                + "want your reminds snoozable forever", category,
                 Constraints.TIMESPAN);
-            users.addAttribute(REMIND_TRACK_NICKCHANGE, DEFAULT_REMIND_TRACK_NICKCHANGE, 
-                Constraints.BOOLEAN);
+            users.addAttribute(DEFAULT_MSG, DEFAULT_MSG_VALUE, 
+                "Remind default message:", category);
+            users.addAttribute(EMAIL, DEFAULT_EMAIL, "Set your e-mail address", category, 
+                Constraints.MAILADDRESS);
+            users.addAttribute(LEAVE_AS_MAIL, DEFAULT_LEAVE_AS_MAIL,
+                "Set whether polly should send you a mail if you are not available in IRC",
+                category, Constraints.BOOLEAN);
+            users.addAttribute(REMIND_IDLE_TIME, new TimespanType(User.IDLE_AFTER / 1000),
+                "Set the time after which polly should consider you being 'idle'",
+                category, Constraints.TIMESPAN);
+            users.addAttribute(REMIND_TRACK_NICKCHANGE, DEFAULT_REMIND_TRACK_NICKCHANGE,
+                "Deliver your reminds to your new nickname if you change your nick?",
+                category, Constraints.BOOLEAN);
             users.addAttribute(REMIND_DOUBLE_DELIVERY, DEFAULT_REMIND_DOUBLE_DELIVERY, 
+                "Deliver your remind when you are idle AND when you return? "
+                + "If false, remind will always be delivered instantly",
+                category, Constraints.BOOLEAN);
+            users.addAttribute(DEFAULT_REMIND_TIME, DEFAULT_REMIND_TIME_VALUE,
+                "Set default time span for new reminds", category, Constraints.TIMESPAN);
+            users.addAttribute(AUTO_SNOOZE, AUTO_SNOOZE_VALUE, 
+                "Enable auto snooze? If enabled, reminds can be snoozed by sending a "
+                + "single character in query", category,
                 Constraints.BOOLEAN);
-            users.addAttribute(DEFAULT_REMIND_TIME, DEFAULT_REMIND_TIME_VALUE, 
-                Constraints.TIMESPAN);
-            users.addAttribute(AUTO_SNOOZE, AUTO_SNOOZE_VALUE, Constraints.BOOLEAN);
-            users.addAttribute(AUTO_SNOOZE_INDICATOR, AUTO_SNOOZE_INDICATOR_VALUE);
+            users.addAttribute(AUTO_SNOOZE_INDICATOR, AUTO_SNOOZE_INDICATOR_VALUE,
+                "String to send to trigger auto snooze.", category);
             users.addAttribute(USE_SNOOZE_TIME, USE_SNOOZE_TIME_VALUE, 
+                "Always use your default remind time when snoozing a remind with "
+                + "no date parameter?", category,
                 Constraints.BOOLEAN);
         } catch (DatabaseException e) {
             e.printStackTrace();

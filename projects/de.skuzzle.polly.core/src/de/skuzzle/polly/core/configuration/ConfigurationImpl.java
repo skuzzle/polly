@@ -3,6 +3,7 @@ package de.skuzzle.polly.core.configuration;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +15,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
-
 
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.ConfigurationValidator;
@@ -54,6 +54,12 @@ public class ConfigurationImpl implements Configuration {
             ConfigurationImpl defaults) {
         this(parent);
         this.properties.putAll(defaults.properties);
+    }
+    
+    
+    
+    public void store() throws FileNotFoundException, IOException {
+        this.properties.store(new FileOutputStream(this.cfgFile), "");
     }
     
     

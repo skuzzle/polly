@@ -309,6 +309,7 @@ label {
 .contentBox .content{
     padding-left: 10px;
     padding-right: 10px;
+    padding-bottom: 10px;
     font-size: x-small;
 }
 

@@ -216,9 +216,17 @@ public class MyPlugin extends PollyPlugin {
     @Override
     public void onLoad() throws PluginException {
         try {
-            this.getMyPolly().users().addAttribute(VENAD, "<unbekannt>");
-            this.getMyPolly().users().addAttribute(CRACKER, "0", Constraints.INTEGER);
-            this.getMyPolly().users().addAttribute(MAX_MONTHS, "24", new AttributeConstraint() {
+            final String category = "Revorix";
+            this.getMyPolly().users().addAttribute(VENAD, 
+                new Types.StringType("<unbekannt>"), "Set your revorix Venad name", 
+                category);
+            this.getMyPolly().users().addAttribute(CRACKER, new Types.NumberType(0.0),
+                "Your polly crackers. Do not edit this if you are fair!", category,
+                Constraints.INTEGER);
+            this.getMyPolly().users().addAttribute(MAX_MONTHS, 
+                new Types.NumberType(24.0), 
+                "Maximum number of months to display in scoreboard graphic", category, 
+                new AttributeConstraint() {
                 @Override
                 public boolean accept(Types value) {
                     if (value instanceof NumberType) {

@@ -2,7 +2,6 @@ package de.skuzzle.polly.core.internal.mypolly;
 
 import java.util.Date;
 
-
 import de.skuzzle.polly.core.Polly;
 import de.skuzzle.polly.core.configuration.ConfigurationProviderImpl;
 import de.skuzzle.polly.core.internal.ShutdownManagerImpl;
@@ -16,6 +15,7 @@ import de.skuzzle.polly.core.internal.paste.PasteServiceManagerImpl;
 import de.skuzzle.polly.core.internal.persistence.PersistenceManagerImpl;
 import de.skuzzle.polly.core.internal.plugins.PluginManagerImpl;
 import de.skuzzle.polly.core.internal.roles.RoleManagerImpl;
+import de.skuzzle.polly.core.internal.runonce.RunOnceManagerImpl;
 import de.skuzzle.polly.core.internal.users.UserManagerImpl;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.CommandManager;
@@ -28,6 +28,7 @@ import de.skuzzle.polly.sdk.MailManager;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.PluginManager;
+import de.skuzzle.polly.sdk.RunOnceManager;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.UtilityManager;
 import de.skuzzle.polly.sdk.eventlistener.GenericEvent;
@@ -64,6 +65,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 	private MailManagerImpl mailManager;
 	private RoleManagerImpl roleManager;
 	private HttpManagerImpl httpManager;
+	private RunOnceManagerImpl runOnceManager;
 	private EventProvider eventProvider;
 	
 	
@@ -80,6 +82,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 			MailManagerImpl mailManager,
 			RoleManagerImpl roleManager,
 			HttpManagerImpl httpManager,
+			RunOnceManagerImpl runOnceManager,
 			EventProvider eventProvider) {
 	    
 		this.commandManager = cmdMngr;
@@ -96,6 +99,14 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 		this.mailManager = mailManager;
 		this.roleManager = roleManager;
 		this.httpManager = httpManager;
+		this.runOnceManager = runOnceManager;
+	}
+	
+	
+	
+	@Override
+	public RunOnceManager runOnce() {
+	    return this.runOnceManager;
 	}
 	
 	

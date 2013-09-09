@@ -216,4 +216,12 @@ public interface MyPolly {
      * @since 0.9.1
      */
     public abstract void fireGenericEvent(GenericEvent e);
+
+
+
+    /**
+     * Provides ability to run actions only once within polly's live time.
+     * @return A {@link RunOnceManager} instance.
+     */
+    public abstract RunOnceManager runOnce();
 }

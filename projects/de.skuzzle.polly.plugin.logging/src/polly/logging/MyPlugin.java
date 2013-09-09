@@ -10,7 +10,6 @@ import commands.ChannelLogCommand;
 import commands.ReplayCommand;
 import commands.SeenCommand;
 import commands.UserLogCommand;
-
 import core.DefaultLogFormatter;
 import core.ForwardHighlightHandler;
 import core.IrcLogCollector;
@@ -19,6 +18,7 @@ import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.ConfigurationProvider;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.constraints.Constraints;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
@@ -51,7 +51,7 @@ public class MyPlugin extends PollyPlugin {
     public final static int DEFAULT_MAX_LOGS        = 100;
     
     public final static String FORWARD_HIGHLIGHTS         = "FORWARD_HIGHLIGHTS";
-    public final static String DEFAULT_FORWARD_HIGHLIGHTS = "false";
+    public final static Types DEFAULT_FORWARD_HIGHLIGHTS  = new Types.BooleanType(false);
     
     private IrcLogCollector logCollector;
     private PollyLoggingManager logManager;
@@ -114,7 +114,9 @@ public class MyPlugin extends PollyPlugin {
     public void onLoad() {
         try {
             this.getMyPolly().users().addAttribute(FORWARD_HIGHLIGHTS, 
-                DEFAULT_FORWARD_HIGHLIGHTS, Constraints.BOOLEAN);
+                DEFAULT_FORWARD_HIGHLIGHTS, 
+                "Send an email if polly notices that your nickname is mentioned", 
+                "Logging", Constraints.BOOLEAN);
         } catch (DatabaseException e) {
             e.printStackTrace();
         }

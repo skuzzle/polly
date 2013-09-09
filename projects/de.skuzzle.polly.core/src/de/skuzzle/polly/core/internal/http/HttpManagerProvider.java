@@ -18,7 +18,6 @@ import de.skuzzle.polly.core.internal.http.actions.ShutdownHttpAction;
 import de.skuzzle.polly.core.internal.http.actions.UserInfoPageHttpAction;
 import de.skuzzle.polly.core.internal.http.actions.UserPageHttpAction;
 import de.skuzzle.polly.core.internal.mypolly.MyPollyImpl;
-import de.skuzzle.polly.core.internal.users.UserManagerImpl;
 import de.skuzzle.polly.core.moduleloader.AbstractProvider;
 import de.skuzzle.polly.core.moduleloader.ModuleLoader;
 import de.skuzzle.polly.core.moduleloader.SetupException;
@@ -28,9 +27,6 @@ import de.skuzzle.polly.core.moduleloader.annotations.Require;
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.ConfigurationProvider;
 import de.skuzzle.polly.sdk.MyPolly;
-import de.skuzzle.polly.sdk.Types;
-import de.skuzzle.polly.sdk.constraints.AttributeConstraint;
-import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 
 
 
@@ -103,28 +99,6 @@ public class HttpManagerProvider extends AbstractProvider {
         // HACK: this avoids cyclic dependency
         this.httpManager.setMyPolly(myPolly);
         
-        
-        // Add HOME_PAGE attribute
-        AttributeConstraint constraint = new AttributeConstraint() {
-            @Override
-            public boolean accept(Types value) {
-                return httpManager.actionExists(value.valueString(myPolly.formatting()));
-            }
-        };
-        
-        
-        UserManagerImpl userManager = this.requireNow(UserManagerImpl.class, false);
-        try {
-            logger.trace("Trying to add HOME_PAGE Attribute");
-            userManager.addAttribute(HOME_PAGE, "/", constraint);
-            logger.trace("Done");
-        } catch (DatabaseException e) {
-            logger.warn("ignored exception", e);
-        }
-        
-        
-        
-
         
         logger.trace("Adding default http actions...");
         this.httpManager.addHttpAction(new RootHttpAction(myPolly));

@@ -43,7 +43,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     private final static long AUTO_SNOOZE_WAIT_TIME = Milliseconds.fromMinutes(5);
     
     public final static RemindFormatter DEFAULT_FORMAT = 
-        PatternRemindFormatter.forPattern(MyPlugin.REMIND_FORMAT_VALUE);
+        PatternRemindFormatter.forPattern(MyPlugin.REMIND_FORMAT_VALUE.getValue());
     
     // XXX: special case for clum
     private final static RemindFormatter heidiFormat = new HeidiRemindFormatter();
@@ -203,9 +203,11 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     public void deliverLater(final RemindEntity remind, User forUser, boolean wasIdle, 
                 boolean online) throws DatabaseException, EMailException {
         logger.trace("Delivering later. Checking if remind schould be delivered as mail");
-        boolean asMail = forUser.getAttribute(MyPlugin.LEAVE_AS_MAIL).equals("true");
-        boolean doubleDelivery = forUser.getAttribute(
-                MyPlugin.REMIND_DOUBLE_DELIVERY).equals("true");
+        boolean asMail = ((BooleanType) forUser.getAttribute(
+            MyPlugin.LEAVE_AS_MAIL)).getValue();
+        boolean doubleDelivery = ((BooleanType) forUser.getAttribute(
+                MyPlugin.REMIND_DOUBLE_DELIVERY)).getValue();
+        
         logger.trace("As Mail: " + asMail);
         logger.trace("Double-delivery: " + doubleDelivery);
         
@@ -287,9 +289,12 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     
     
     private final void checkTriggerAutoSnooze(User forUser) {
+        final BooleanType autoSnooze = (BooleanType) forUser.getAttribute(
+            MyPlugin.AUTO_SNOOZE);
+        
         if (!this.userManager.isSignedOn(forUser)) {
             return;
-        } else if (forUser.getAttribute(MyPlugin.AUTO_SNOOZE).equals("false")) {
+        } else if (!autoSnooze.getValue()) {
             return;
         }
         String indicator = ((StringType) forUser.getAttribute(
@@ -603,7 +608,10 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     public void traceNickChange(IrcUser oldUser, final IrcUser newUser) {
         logger.trace("tracing nickchange " + oldUser + " -> " + newUser);
         User oldForUser = this.getUser(oldUser.getNickName());
-        if (oldForUser.getAttribute(MyPlugin.REMIND_TRACK_NICKCHANGE).equals("false")) {
+        final BooleanType track = (BooleanType) oldForUser.getAttribute(
+            MyPlugin.REMIND_TRACK_NICKCHANGE); 
+        
+        if (!track.getValue()) {
             logger.trace("User doesnt want this nickchange to be tracked");
             return;
         }

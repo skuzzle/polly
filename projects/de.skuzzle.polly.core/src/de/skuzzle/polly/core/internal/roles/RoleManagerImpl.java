@@ -81,7 +81,7 @@ public class RoleManagerImpl implements RoleManager {
     @Override
     public Set<String> getRoles(User user) {
         Set<String> result = new HashSet<String>();
-        for (Role role : ((de.skuzzle.polly.core.internal.users.User)user).getRoles()) {
+        for (Role role : ((de.skuzzle.polly.core.internal.users.UserImpl)user).getRoles()) {
             result.add(role.getName());
         }
         return Collections.unmodifiableSet(result);
@@ -196,13 +196,13 @@ public class RoleManagerImpl implements RoleManager {
             }
             
             List<User> allUsers = this.persistence.findList(
-                    User.class, de.skuzzle.polly.core.internal.users.User.ALL_USERS);
+                    User.class, de.skuzzle.polly.core.internal.users.UserImpl.ALL_USERS);
             logger.debug("Deleting role: '" + roleName + "'");
             this.persistence.startTransaction();
             this.persistence.remove(role);
             logger.trace("Removing role from all users.");
             for (User user : allUsers) {
-                de.skuzzle.polly.core.internal.users.User puser = (de.skuzzle.polly.core.internal.users.User) user;
+                de.skuzzle.polly.core.internal.users.UserImpl puser = (de.skuzzle.polly.core.internal.users.UserImpl) user;
                 puser.getRoles().remove(role);
             }
             this.persistence.commitTransaction();
@@ -386,7 +386,7 @@ public class RoleManagerImpl implements RoleManager {
             this.persistence.atomicWriteOperation(new WriteAction() {
                 @Override
                 public void performUpdate(PersistenceManager persistence) {
-                    ((de.skuzzle.polly.core.internal.users.User)user).getRoles().add(role);
+                    ((de.skuzzle.polly.core.internal.users.UserImpl)user).getRoles().add(role);
                 }
             });
         }
@@ -404,7 +404,7 @@ public class RoleManagerImpl implements RoleManager {
             this.persistence.atomicWriteOperation(new WriteAction() {
                 @Override
                 public void performUpdate(PersistenceManager persistence) {
-                    ((de.skuzzle.polly.core.internal.users.User)user).getRoles().remove(new Role(roleName));
+                    ((de.skuzzle.polly.core.internal.users.UserImpl)user).getRoles().remove(new Role(roleName));
                 }
             });
         }
@@ -419,7 +419,7 @@ public class RoleManagerImpl implements RoleManager {
         } else if (user == null) {
             return false;
         }
-        de.skuzzle.polly.core.internal.users.User puser = (de.skuzzle.polly.core.internal.users.User) user;
+        de.skuzzle.polly.core.internal.users.UserImpl puser = (de.skuzzle.polly.core.internal.users.UserImpl) user;
         
         synchronized (SYNC) {
             for (Role role : puser.getRoles()) {

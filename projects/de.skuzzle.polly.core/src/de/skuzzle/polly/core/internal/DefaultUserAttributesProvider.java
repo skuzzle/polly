@@ -6,6 +6,7 @@ import de.skuzzle.polly.core.moduleloader.ModuleLoader;
 import de.skuzzle.polly.core.moduleloader.SetupException;
 import de.skuzzle.polly.core.moduleloader.annotations.Module;
 import de.skuzzle.polly.core.moduleloader.annotations.Require;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.constraints.Constraints;
 
 @Module(
@@ -17,7 +18,9 @@ import de.skuzzle.polly.sdk.constraints.Constraints;
 public class DefaultUserAttributesProvider extends AbstractProvider {
     
     public final static String AUTO_LOGON = "AUTO_LOGON"; 
-
+    public final static String AUTO_LOGON_DESCRIPTION = 
+        "Enable nickserv based auto logon in IRC";
+    
     public DefaultUserAttributesProvider(ModuleLoader loader) {
         super("DEFAULT_ATTRIBUTES_PROVIDER", loader, false);
     }
@@ -29,7 +32,8 @@ public class DefaultUserAttributesProvider extends AbstractProvider {
         UserManagerImpl userManager = this.requireNow(UserManagerImpl.class, false);
         
         try {
-            userManager.addAttribute(AUTO_LOGON, "true", Constraints.BOOLEAN);
+            userManager.addAttribute(AUTO_LOGON, new Types.BooleanType(true), 
+                AUTO_LOGON_DESCRIPTION, "Core", Constraints.BOOLEAN);
         } catch (Exception e) {
             throw new SetupException(e);
         }
