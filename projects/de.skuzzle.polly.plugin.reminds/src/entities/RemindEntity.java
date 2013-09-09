@@ -1,5 +1,6 @@
 package entities;
 
+import java.util.Comparator;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -32,6 +33,14 @@ import de.skuzzle.polly.sdk.time.Time;
         		"r.isMessage = true")
 })
 public class RemindEntity implements Comparable<RemindEntity> {
+
+    public static final Comparator<RemindEntity> BY_DUE_DATE = new Comparator<RemindEntity>() {
+
+        @Override
+        public int compare(RemindEntity re1, RemindEntity re2) {
+            return re1.getDueDate().compareTo(re2.getDueDate());
+        }
+    };
 
     @Id@GeneratedValue(strategy = GenerationType.TABLE)
     private int id;

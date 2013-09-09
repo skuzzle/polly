@@ -1,17 +1,29 @@
 package http;
 
-import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import polly.reminds.MyPlugin;
 import core.RemindManager;
 import de.skuzzle.polly.http.annotations.Get;
 import de.skuzzle.polly.http.annotations.OnRegister;
+import de.skuzzle.polly.http.annotations.Param;
 import de.skuzzle.polly.http.api.AlternativeAnswerException;
 import de.skuzzle.polly.http.api.Controller;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
+import de.skuzzle.polly.http.api.answers.HttpResourceAnswer;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Types;
+import de.skuzzle.polly.sdk.Types.DateType;
+import de.skuzzle.polly.sdk.exceptions.CommandException;
+import de.skuzzle.polly.sdk.exceptions.DatabaseException;
+import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
 import de.skuzzle.polly.sdk.httpv2.PollyController;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
+import de.skuzzle.polly.sdk.roles.RoleManager;
+import entities.RemindEntity;
 
 
 public class RemindHttpController extends PollyController {
@@ -29,6 +41,14 @@ public class RemindHttpController extends PollyController {
     protected Controller createInstance() {
         return new RemindHttpController(this.getMyPolly(), this.rm);
     }
+    
+    
+    
+    @Get("/http/view/files")
+    public HttpAnswer getFile() {
+        final ClassLoader cl = this.getClass().getClassLoader();
+        return new HttpResourceAnswer(200, cl, this.getEvent().getPlainUri());
+    }
 
     
     
@@ -41,7 +61,89 @@ public class RemindHttpController extends PollyController {
     })
     public HttpAnswer remindOverview() throws AlternativeAnswerException {
         this.requirePermissions(MyPlugin.REMIND_PERMISSION);
-        return this.makeAnswer(this.createContext("http/view/remind.overview.html"));
+        final Map<String, Object> c = this.createContext("http/view/remind.overview.html");
+        
+        final List<RemindEntity> userReminds = 
+            this.rm.getDatabaseWrapper().getMyRemindsForUser(
+                this.getSessionUser().getName());
+        
+        Collections.sort(userReminds, RemindEntity.BY_DUE_DATE);
+        c.put("userReminds", userReminds);
+
+        final List<RemindEntity> allReminds;
+        if (this.getMyPolly().roles().hasPermission(this.getSessionUser(), 
+                RoleManager.ADMIN_PERMISSION)) {
+            allReminds = this.rm.getDatabaseWrapper().getAllReminds();
+        } else {
+            allReminds = new ArrayList<>();
+        }
+        Collections.sort(allReminds, RemindEntity.BY_DUE_DATE);
+        c.put("allReminds", allReminds);
+        
+        c.put("snoozable", this.rm.getSnoozabledRemind(this.getSessionUser().getName()));
+        c.put("lastRemind", this.rm.getLastRemind(this.getSessionUser()));
+        
+        return this.makeAnswer(c);
     }
     
+    
+    
+    @Get("/api/cancelRemind")
+    public HttpAnswer cancelRemind(@Param("remindId") int id) {
+        try {
+            this.rm.deleteRemind(id);
+            return new GsonHttpAnswer(200, 
+                new SuccessResult(true, "Remind has been deleted"));
+        } catch (DatabaseException e) {
+            return new GsonHttpAnswer(200, 
+                new SuccessResult(false, "Database exception while deleting remind"));
+        }
+    }
+    
+    
+    
+    
+    public static class ModifyRemindResult extends SuccessResult {
+        public final String dueDate;
+        public final String remindMessage;
+        
+        
+        public ModifyRemindResult(String dueDate, String remindMessage) {
+            super(true, "");
+            this.dueDate = dueDate;
+            this.remindMessage = remindMessage;
+        }
+    }
+    
+    @Get("/api/modifyRemind")
+    public HttpAnswer modifyRemind(
+        @Param("remindId") int id, 
+        @Param(value = "message", treatEmpty = true) String message, 
+        @Param(value = "dueDate", treatEmpty =  true) String dueDate) {
+        
+        Types dd = this.getMyPolly().parse(dueDate);
+        if (!(dd instanceof DateType)) {
+            // invalid date submitted, do not change
+            dd = null;
+        }
+        if (message.equals("")) {
+            message = null; // no message submitted, do not change
+        }
+        
+        try {
+            final RemindEntity re = this.rm.modifyRemind(
+                this.getSessionUser(), 
+                id, 
+                dd == null ? null : ((DateType) dd).getValue(), 
+                message);
+            
+            return new GsonHttpAnswer(200, 
+                new ModifyRemindResult(
+                    this.getMyPolly().formatting().formatDate(re.getDueDate()), message));
+        } catch (CommandException e) {
+            return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
+        } catch (DatabaseException e) {
+            return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
+        }
+    }
 }

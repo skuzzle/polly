@@ -28,4 +28,5 @@ import java.lang.annotation.Target;
 public @interface Post {
     public String value();
     public String name() default "";
+    public boolean matchExactly() default false;
 }

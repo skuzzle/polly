@@ -17,6 +17,18 @@ import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.time.Time;
 
 public abstract class PollyController extends Controller {
+    
+    public static class SuccessResult {
+        public final boolean success;
+        public final String message;
+        public SuccessResult(boolean success, String message) {
+            super();
+            this.success = success;
+            this.message = message;
+        }
+    }
+    
+    
 
     protected final static String STYLE_SHEET_NAME = "template.css";
     protected final static String PAGE_PREFIX = "PAGE_";

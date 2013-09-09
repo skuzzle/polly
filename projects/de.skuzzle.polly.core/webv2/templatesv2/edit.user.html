@@ -80,7 +80,7 @@
         id="inp_$attribute.getName()"
         type="checkbox" 
         name="$attribute.getName()" 
-        value="$editUser.getAttribute($attribute.getName()).valueString($myPolly.formatting())" #if ($tt.getValue()) checked #end/>
+        value="$editUser.getAttribute($attribute.getName()).valueString($myPolly.formatting())" #if ($tt.getValue()) checked #end />
     </td>
     #else
     <td><input 
@@ -88,7 +88,7 @@
         class="textbox" style="width: 100%;" id="inp_$attribute.getName()" 
         type="text" 
         name="$attribute.getName()" 
-        value="$editUser.getAttribute($attribute.getName()).valueString($myPolly.formatting())">
+        value="$editUser.getAttribute($attribute.getName()).valueString($myPolly.formatting())"/>
     </td>
     
     #end
@@ -103,7 +103,6 @@
     <table style="table-layout: fixed;">
         <thead>
             <tr>
-                <th style="width:20%">Name</th>
                 <th style="width:35%">Setting</th>
                 <th>Value</th>
                 <th style="width:15%">Action</th>
@@ -112,8 +111,7 @@
         <tbody>
             #foreach ($attribute in $entry.getValue())
             <tr>
-                <td><b>$attribute.getName()</b></td>
-                <td>$attribute.getDescription()</td>
+                <td><b>$attribute.getName()</b> $attribute.getDescription()</td>
                 #EDIT_CONTROL($attribute $editUser.getAttribute($attribute.getName()))
                 <td><input 
                         class="button" 

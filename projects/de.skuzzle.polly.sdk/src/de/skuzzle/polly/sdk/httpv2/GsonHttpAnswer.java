@@ -1,4 +1,4 @@
-package de.skuzzle.polly.core.internal.httpv2;
+package de.skuzzle.polly.sdk.httpv2;
 
 import de.skuzzle.polly.http.api.answers.AbstractHttpAnswer;
 

@@ -26,7 +26,7 @@
         debug information. This will as well serve for the output folder for
         eclipse.
     -->
-    <property name="build.debug.dir"   value="bin"/>
+    <property name="build.debug.dir"   value="bin.debug"/>
     
     <!-- Directory which will contain the fully built projects. -->
     <property name="build.dir"         value="${root.dir}/target"/>

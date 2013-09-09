@@ -98,6 +98,13 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     
     
     @Override
+    public synchronized RemindEntity getLastRemind(User user) {
+        return this.lastReminds.get(user);
+    }
+    
+    
+    
+    @Override
     public synchronized void addRemind(User executor, final RemindEntity remind, 
             boolean schedule) throws DatabaseException {
         logger.info("Adding " + remind + ", schedule: " + schedule);
@@ -477,7 +484,15 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         } else {
             return this.snooze(executor, null);
         }
-        
+    }
+    
+    
+    
+    @Override
+    public RemindEntity getSnoozabledRemind(String name) {
+        synchronized (this.sleeping) {
+            return this.sleeping.get(name);
+        }
     }
     
     
@@ -561,7 +576,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     
     
     @Override
-    public void modifyRemind(User executor, int id, final Date dueDate, final String msg)
+    public RemindEntity modifyRemind(User executor, int id, final Date dueDate, final String msg)
             throws CommandException, DatabaseException {
         logger.trace("User " + executor + " requested to modify remind with id " + id);
         final RemindEntity remind = this.dbWrapper.getRemind(id);
@@ -571,11 +586,16 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
         this.persistence.atomicWriteOperation(new WriteAction() {
             @Override
             public void performUpdate(PersistenceManager persistence) {
-                remind.setDueDate(dueDate);
-                remind.setMessage(msg);
+                if (dueDate != null) {
+                    remind.setDueDate(dueDate);
+                }
+                if (msg != null) {
+                    remind.setMessage(msg);
+                }
             }
         });
-        this.scheduleRemind(remind, dueDate);
+        this.scheduleRemind(remind, dueDate == null ? remind.getDueDate() : dueDate);
+        return remind;
     }
     
     

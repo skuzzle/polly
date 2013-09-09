@@ -30,6 +30,7 @@ import de.skuzzle.polly.sdk.ConfigurationProvider;
 import de.skuzzle.polly.sdk.Disposable;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
+import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
 import de.skuzzle.polly.sdk.httpv2.MenuEntry;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.time.Milliseconds;

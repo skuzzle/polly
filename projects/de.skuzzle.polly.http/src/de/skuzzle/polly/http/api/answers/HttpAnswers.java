@@ -26,8 +26,6 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.skuzzle.polly.http.api.ResolvedFile;
-
 
 
 /**
@@ -81,13 +79,13 @@ public final class HttpAnswers {
     
     
     @SuppressWarnings("unchecked")
-    public final static HttpAnswer newTemplateAnswer(ResolvedFile relativeTemplatePath, 
+    public final static HttpAnswer newTemplateAnswer(String relativeTemplatePath, 
             Object...context) {
         
         if (context.length == 1 && context[0] instanceof Map) {
             // little help for the compiler
             return newTemplateAnswer(relativeTemplatePath, 
-                (Map<String, Object>)context[0]);
+                (Map<String, Object>) context[0]);
         }
         
         if (context.length % 2 != 0) {

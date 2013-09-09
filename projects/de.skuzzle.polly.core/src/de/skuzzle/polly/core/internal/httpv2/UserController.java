@@ -22,6 +22,7 @@ import de.skuzzle.polly.sdk.exceptions.InvalidUserNameException;
 import de.skuzzle.polly.sdk.exceptions.RoleException;
 import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
+import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
 import de.skuzzle.polly.sdk.httpv2.PollyController;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.roles.RoleManager;
@@ -78,16 +79,6 @@ public class UserController extends PollyController {
     }
 
     
-    
-    public static class SuccessResult {
-        public final boolean success;
-        public final String message;
-        public SuccessResult(boolean success, String message) {
-            super();
-            this.success = success;
-            this.message = message;
-        }
-    }
     
     @Get("/api/deleteUser")
     public HttpAnswer deleteUser(@Param("id") int id) {

@@ -233,4 +233,13 @@ public interface MyPolly {
      * @return The {@link WebinterfaceManager} instance.
      */
     public abstract WebinterfaceManager webInterface();
+
+
+    
+    /**
+     * Parses the provided string as a single polly expression and outputs the result.
+     * @param value The string to parse.
+     * @return The result.
+     */
+    public Types parse(String value);
 }

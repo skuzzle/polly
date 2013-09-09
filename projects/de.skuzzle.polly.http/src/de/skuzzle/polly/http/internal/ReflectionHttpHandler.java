@@ -40,10 +40,12 @@ class ReflectionHttpHandler implements HttpEventHandler {
     private final RequestMode mode;
     private final Controller carrier;
     private final HttpServletServerImpl parent;
+    private final boolean matchExactly;
     
     
     public ReflectionHttpHandler(RequestMode mode, String uri, Controller carrier, 
-            Method handler, HttpServletServerImpl parent) {
+            Method handler, HttpServletServerImpl parent, boolean matchExactly) {
+        this.matchExactly = matchExactly;
         this.mode = mode;
         this.carrier = carrier;
         this.uri = uri;
@@ -58,7 +60,7 @@ class ReflectionHttpHandler implements HttpEventHandler {
             HttpEventHandler next) throws HttpException {
         
         if (e.getMode() != this.mode || 
-                !e.getPlainUri().equals(this.uri)) {
+                this.matchExactly && !e.getPlainUri().equals(this.uri)) {
             return next.handleHttpEvent(registered, e, next);
         }
         
@@ -99,7 +101,7 @@ class ReflectionHttpHandler implements HttpEventHandler {
         
         // execute the function
         try {
-            final Controller copy = this.carrier.bind(e);
+            final Controller copy = this.carrier.bind(registered, e);
             return (HttpAnswer) this.handler.invoke(copy, params);
         } catch (InvocationTargetException e1) {
             if (e1.getTargetException() instanceof HttpException) {

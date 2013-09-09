@@ -10,4 +10,5 @@ import java.lang.annotation.Target;
 public @interface Get {
     public String value();
     public String name() default "";
+    public boolean matchExactly() default false;
 }

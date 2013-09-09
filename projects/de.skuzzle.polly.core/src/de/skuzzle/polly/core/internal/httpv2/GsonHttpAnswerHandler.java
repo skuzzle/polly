@@ -12,6 +12,7 @@ import com.google.gson.GsonBuilder;
 import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswerHandler;
+import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
 
 
 public class GsonHttpAnswerHandler extends HttpAnswerHandler {

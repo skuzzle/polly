@@ -74,12 +74,24 @@ public abstract class Controller {
     private HttpEvent event;
     private Map<String, String> myHandlers;
     private String handlerPrefix;
+    private String registeredUrl;
     
     
     
     public Controller() {
         this.handlerPrefix = "";
         this.myHandlers = new HashMap<>();
+    }
+    
+    
+    
+    /**
+     * Gets the URL for which the called handler was registered.
+     * 
+     * @return The registered URL.
+     */
+    public String getRegisteredUrl() {
+        return this.registeredUrl;
     }
     
     
@@ -160,12 +172,14 @@ public abstract class Controller {
     /**
      * Creates a copy of this controller and binds it to the provided {@link HttpEvent}.
      * 
+     * @param The URL with which the handler was registered.
      * @param e The event.
      * @return A new instance of this controller.
      */
-    public final Controller bind(HttpEvent e) {
+    public final Controller bind(String registered, HttpEvent e) {
         final Controller result = this.createInstance();
         result.event = e;
+        result.registeredUrl = registered;
         result.myHandlers = this.myHandlers;
         return result;
     }

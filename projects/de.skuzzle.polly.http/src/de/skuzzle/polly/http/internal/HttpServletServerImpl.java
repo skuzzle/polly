@@ -100,14 +100,17 @@ class HttpServletServerImpl extends HttpServerImpl implements HttpServletServer 
             final RequestMode mode;
             String url;
             String name;
+            boolean matchExcatly;
             if (mtd.isAnnotationPresent(Get.class)) {
                 mode = RequestMode.GET;
                 url = mtd.getAnnotation(Get.class).value();
                 name = mtd.getAnnotation(Get.class).name();
+                matchExcatly = mtd.getAnnotation(Get.class).matchExactly();
             } else if (mtd.isAnnotationPresent(Post.class)) {
                 mode = RequestMode.POST;
                 url = mtd.getAnnotation(Post.class).value();
                 name = mtd.getAnnotation(Post.class).name();
+                matchExcatly = mtd.getAnnotation(Post.class).matchExactly();
             } else {
                 continue;
             }
@@ -151,7 +154,7 @@ class HttpServletServerImpl extends HttpServerImpl implements HttpServletServer 
             }
             boolean isStatic = Modifier.isStatic(mtd.getModifiers());
             final ReflectionHttpHandler rhh = new ReflectionHttpHandler(
-                mode, url, isStatic ? null : carrier, mtd, this);
+                mode, url, isStatic ? null : carrier, mtd, this, matchExcatly);
             this.addHttpEventHandler(url, rhh);
             
             
