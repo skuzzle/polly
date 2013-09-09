@@ -9,6 +9,7 @@ import de.skuzzle.polly.core.internal.commands.CommandManagerImpl;
 import de.skuzzle.polly.core.internal.conversations.ConversationManagerImpl;
 import de.skuzzle.polly.core.internal.formatting.FormatManagerImpl;
 import de.skuzzle.polly.core.internal.http.HttpManagerImpl;
+import de.skuzzle.polly.core.internal.httpv2.WebInterfaceManagerImpl;
 import de.skuzzle.polly.core.internal.irc.IrcManagerImpl;
 import de.skuzzle.polly.core.internal.mail.MailManagerImpl;
 import de.skuzzle.polly.core.internal.paste.PasteServiceManagerImpl;
@@ -35,6 +36,7 @@ import de.skuzzle.polly.sdk.eventlistener.GenericEvent;
 import de.skuzzle.polly.sdk.eventlistener.GenericListener;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.http.HttpManager;
+import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.paste.PasteServiceManager;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.time.Time;
@@ -65,6 +67,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 	private MailManagerImpl mailManager;
 	private RoleManagerImpl roleManager;
 	private HttpManagerImpl httpManager;
+	private WebInterfaceManagerImpl webInterfaceManager;
 	private RunOnceManagerImpl runOnceManager;
 	private EventProvider eventProvider;
 	
@@ -82,6 +85,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 			MailManagerImpl mailManager,
 			RoleManagerImpl roleManager,
 			HttpManagerImpl httpManager,
+			WebInterfaceManagerImpl webInterfaceManager,
 			RunOnceManagerImpl runOnceManager,
 			EventProvider eventProvider) {
 	    
@@ -99,7 +103,15 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 		this.mailManager = mailManager;
 		this.roleManager = roleManager;
 		this.httpManager = httpManager;
+		this.webInterfaceManager = webInterfaceManager;
 		this.runOnceManager = runOnceManager;
+	}
+	
+	
+	
+	@Override
+	public WebinterfaceManager webInterface() {
+	    return this.webInterfaceManager;
 	}
 	
 	

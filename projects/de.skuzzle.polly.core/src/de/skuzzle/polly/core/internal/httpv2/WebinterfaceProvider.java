@@ -3,10 +3,12 @@ package de.skuzzle.polly.core.internal.httpv2;
 import java.io.IOException;
 import java.util.Arrays;
 
+import de.skuzzle.polly.core.Polly;
 import de.skuzzle.polly.core.configuration.ConfigurationProviderImpl;
 import de.skuzzle.polly.core.internal.ModuleStates;
 import de.skuzzle.polly.core.internal.ShutdownManagerImpl;
 import de.skuzzle.polly.core.internal.mypolly.MyPollyImpl;
+import de.skuzzle.polly.core.internal.plugins.PluginManagerImpl;
 import de.skuzzle.polly.core.moduleloader.AbstractProvider;
 import de.skuzzle.polly.core.moduleloader.ModuleLoader;
 import de.skuzzle.polly.core.moduleloader.SetupException;
@@ -19,6 +21,8 @@ import de.skuzzle.polly.http.api.DefaultServerFactory;
 import de.skuzzle.polly.http.api.HttpServer;
 import de.skuzzle.polly.http.api.HttpServletServer;
 import de.skuzzle.polly.http.api.ServerFactory;
+import de.skuzzle.polly.http.api.answers.HttpAnswerHandler;
+import de.skuzzle.polly.http.api.answers.HttpTemplateAnswer;
 import de.skuzzle.polly.http.api.handler.DirectoryEventHandler;
 import de.skuzzle.polly.http.internal.HttpServerCreator;
 import de.skuzzle.polly.sdk.Configuration;
@@ -34,16 +38,18 @@ import de.skuzzle.polly.sdk.time.Milliseconds;
     requires = {
         @Require(component = ConfigurationProviderImpl.class),
         @Require(component = ShutdownManagerImpl.class),
-        @Require(state = ModuleStates.PERSISTENCE_READY)
+        @Require(component = PluginManagerImpl.class),
+        @Require(state = ModuleStates.PERSISTENCE_READY),
+        @Require(state = ModuleStates.PLUGINS_READY)
     },
-    provides = @Provide(component = HttpManagerV2Impl.class)
+    provides = @Provide(component = WebInterfaceManagerImpl.class)
 )
 public class WebinterfaceProvider extends AbstractProvider {
     
     public final static String HTTP_CONFIG = "http.cfg";
     private Configuration serverCfg;
     private HttpServletServer server;
-    private HttpManagerV2Impl webinterface;
+    private WebInterfaceManagerImpl webinterface;
     
     
     public WebinterfaceProvider(ModuleLoader loader) {
@@ -70,7 +76,8 @@ public class WebinterfaceProvider extends AbstractProvider {
         this.server = HttpServerCreator.createServletServer(sf);
         this.server.setSessionLiveTime(sessionTimeout);
         this.server.setSessionType(HttpServer.SESSION_TYPE_COOKIE);
-        this.server.addAnswerHandler(GsonHttpAnswer.class, new GsonHttpAnswerHandler());
+        this.server.setAnswerHandler(GsonHttpAnswer.class, new GsonHttpAnswerHandler());
+        
         
         ShutdownManagerImpl sm = this.requireNow(ShutdownManagerImpl.class, true);
         sm.addDisposable(new Disposable() {
@@ -88,7 +95,7 @@ public class WebinterfaceProvider extends AbstractProvider {
             }
         });
         
-        this.webinterface = new HttpManagerV2Impl(this.server);
+        this.webinterface = new WebInterfaceManagerImpl(this.server, "webv2");
 
         // Automatically collect all menu entries
         this.server.addAddHandlerListener(new AddHandlerListener() {
@@ -122,9 +129,20 @@ public class WebinterfaceProvider extends AbstractProvider {
     public void run() throws Exception {
         final MyPolly myPolly = this.requireNow(MyPollyImpl.class, false);
         
-        this.server.addController(new IndexController(myPolly, "webv2", this.webinterface));
-        this.server.addController(new SessionController(myPolly, "webv2", this.webinterface));
-        this.server.addController(new UserController(myPolly, "webv2", this.webinterface));
+        this.server.addController(new IndexController(myPolly));
+        this.server.addController(new SessionController(myPolly));
+        this.server.addController(new UserController(myPolly));
+        
+        
+        
+        // replace the default template answer handler
+        final PluginManagerImpl pluginManager = this.requireNow(
+                PluginManagerImpl.class, true);
+        
+        final HttpAnswerHandler replace = new PollyTemplateAnswerHandler(
+                Polly.PLUGIN_FOLDER, pluginManager.loadedPlugins());
+        this.server.setAnswerHandler(HttpTemplateAnswer.class, replace);
+        
         
         this.server.addHttpEventHandler("/files", 
             new DirectoryEventHandler("webv2/files", false));

@@ -5,6 +5,7 @@ import java.util.Date;
 import de.skuzzle.polly.sdk.eventlistener.GenericEvent;
 import de.skuzzle.polly.sdk.eventlistener.GenericListener;
 import de.skuzzle.polly.sdk.http.HttpManager;
+import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.paste.PasteServiceManager;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 
@@ -224,4 +225,12 @@ public interface MyPolly {
      * @return A {@link RunOnceManager} instance.
      */
     public abstract RunOnceManager runOnce();
+
+
+    
+    /**
+     * Access polly's web interface. 
+     * @return The {@link WebinterfaceManager} instance.
+     */
+    public abstract WebinterfaceManager webInterface();
 }

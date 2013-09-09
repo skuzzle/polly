@@ -8,6 +8,7 @@ import de.skuzzle.polly.core.internal.commands.CommandManagerImpl;
 import de.skuzzle.polly.core.internal.conversations.ConversationManagerImpl;
 import de.skuzzle.polly.core.internal.formatting.FormatManagerImpl;
 import de.skuzzle.polly.core.internal.http.HttpManagerImpl;
+import de.skuzzle.polly.core.internal.httpv2.WebInterfaceManagerImpl;
 import de.skuzzle.polly.core.internal.irc.IrcManagerImpl;
 import de.skuzzle.polly.core.internal.mail.MailManagerImpl;
 import de.skuzzle.polly.core.internal.paste.PasteServiceManagerImpl;
@@ -41,7 +42,8 @@ import de.skuzzle.polly.tools.events.EventProvider;
         @Require(component = MailManagerImpl.class),
         @Require(component = RoleManagerImpl.class),
         @Require(component = RunOnceManagerImpl.class),
-        @Require(component = HttpManagerImpl.class)
+        @Require(component = HttpManagerImpl.class),
+        @Require(component = WebInterfaceManagerImpl.class),
     },
     provides = 
         @Provide(component = MyPollyImpl.class))
@@ -60,6 +62,7 @@ public class MyPollyProvider extends AbstractProvider {
     private MailManagerImpl mailManager;
     private RoleManagerImpl roleManager;
     private HttpManagerImpl httpManager;
+    private WebInterfaceManagerImpl webInterface;
     private RunOnceManagerImpl runOnceManager;
     private EventProvider eventProvider;
     
@@ -86,6 +89,7 @@ public class MyPollyProvider extends AbstractProvider {
         this.mailManager = this.requireNow(MailManagerImpl.class, true);
         this.roleManager = this.requireNow(RoleManagerImpl.class, true);
         this.httpManager = this.requireNow(HttpManagerImpl.class, true);
+        this.webInterface = this.requireNow(WebInterfaceManagerImpl.class, true);
         this.runOnceManager = this.requireNow(RunOnceManagerImpl.class, true);
         this.eventProvider = this.requireNow(EventProvider.class, true);
     }
@@ -108,6 +112,7 @@ public class MyPollyProvider extends AbstractProvider {
             this.mailManager,
             this.roleManager,
             this.httpManager,
+            this.webInterface,
             this.runOnceManager,
             this.eventProvider);
         this.provideComponent(myPolly);
@@ -128,6 +133,8 @@ public class MyPollyProvider extends AbstractProvider {
         this.shutdownManager = null;
         this.pasteManager = null;
         this.mailManager = null;
+        this.httpManager = null;
+        this.webInterface = null;
         this.eventProvider = null;
         super.dispose();
     }

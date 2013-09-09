@@ -1,6 +1,9 @@
 package polly.reminds;
 
 
+import http.RemindHttpController;
+
+import java.io.File;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -19,6 +22,7 @@ import core.DeliverRemindHandler;
 import core.RemindManager;
 import core.RemindManagerImpl;
 import core.RemindTraceNickchangeHandler;
+import de.skuzzle.polly.http.api.Controller;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
 import de.skuzzle.polly.sdk.Types;
@@ -134,6 +138,9 @@ public class MyPlugin extends PollyPlugin {
         this.addCommand(new ModRemindCommand(myPolly, this.remindManager));
         this.addCommand(new MailRemindCommand(myPolly, this.remindManager));
         this.addCommand(new ToggleMailCommand(myPolly, this.remindManager));
+        
+        final Controller ctrl = new RemindHttpController(myPolly, this.remindManager);
+        this.getMyPolly().webInterface().getServer().addController(ctrl);
     }
     
     
@@ -190,6 +197,7 @@ public class MyPlugin extends PollyPlugin {
     
     @Override
     public void onLoad() {
+        
         logger.info("Scheduling all reminds...");
         this.remindManager.rescheduleAll();
         

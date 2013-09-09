@@ -65,7 +65,10 @@ public class PluginManagerImpl extends AbstractDisposable implements PluginManag
         
         String mainClass = pluginCfg.readString(Plugin.ENTRY_POINT);
         String fileName = pluginCfg.readString(Plugin.JAR_FILE);
-        File jarFile = new File(propertyFile.getParent(), fileName);
+        
+        final String pluginFolderName = fileName.substring(0, fileName.lastIndexOf('.'));
+        final File pluginFolder = new File(propertyFile.getParent(), pluginFolderName);
+        final File jarFile = new File(propertyFile.getParent(), fileName);
 
         PollyPlugin pluginInstance = null;
         try {
@@ -75,6 +78,11 @@ public class PluginManagerImpl extends AbstractDisposable implements PluginManag
             pluginCfg.setPluginInstance(pluginInstance);
             pluginCfg.setLoader((PluginClassLoader) clazz.getClassLoader());
             pluginInstance.setPluginState(PluginState.LOADED);
+            
+            if (!pluginFolder.exists()) {
+                pluginFolder.mkdirs();
+            }
+            pluginInstance.setPluginFolder(pluginFolder);
             this.addPlugin(pluginCfg);
             logger.info("Plugin from " + propertyFile.getName() + "' loaded.");
         } catch (Exception e) {

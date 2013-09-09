@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along 
  * with Polly HTTP API. If not, see http://www.gnu.org/licenses/.
  */
-package de.skuzzle.polly.http.internal;
+package de.skuzzle.polly.http.api.handler;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -37,8 +37,13 @@ import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswerHandler;
 import de.skuzzle.polly.http.api.answers.HttpTemplateAnswer;
 
-
-class TemplateAnswerHandler extends HttpAnswerHandler {
+/**
+ * Default handler for all subclasses of {@link HttpTemplateAnswer}. This handler
+ * is automatically registered with the servlet server upon creation.
+ * 
+ * @author Simon Taddiken
+ */
+public class TemplateAnswerHandler extends HttpAnswerHandler {
 
     @Override
     public void handleAnswer(HttpAnswer answer, HttpEvent e, OutputStream out) 
@@ -48,13 +53,11 @@ class TemplateAnswerHandler extends HttpAnswerHandler {
             final HttpTemplateAnswer template = (HttpTemplateAnswer) answer;
             
             // try to resolve template file and init velocity
-            final File templateFile = template.getRelativeTemplatePath().getFile();
-            
             final VelocityEngine ve = new VelocityEngine();
-            this.prepare(ve, templateFile.getParent());
+            this.prepare(ve, template.getName());
             
             ve.init();
-            final Template temp = ve.getTemplate(templateFile.getName());
+            final Template temp = ve.getTemplate(template.getName());
             
             final Map<String, Object> mappings = new HashMap<>();
             template.getAnswer(mappings);
@@ -71,10 +74,16 @@ class TemplateAnswerHandler extends HttpAnswerHandler {
     
     
     
-    protected void prepare(VelocityEngine ve, String templatePath) {
+    /**
+     * Prepares the velocity engine to render the requested template.
+     * 
+     * @param ve The velocity engine.
+     * @param templatePath The requested template path
+     */
+    protected void prepare(VelocityEngine ve, String templateFile) {
         ve.setProperty("file.resource.loader.description", "Velocity File Resource Loader");
         ve.setProperty("file.resource.loader.class", FileResourceLoader.class.getName());
-        ve.setProperty("file.resource.loader.path", templatePath);
+        ve.setProperty("file.resource.loader.path", 
+            new File(templateFile).getParent().toString());
     }
-
 }

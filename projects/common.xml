@@ -55,7 +55,13 @@
     <!-- Additional classpath entry to add to MANIFEST file. -->
     <property name="custom.classpath" value=""/>
     
-    
+    <!-- Resources to include from src.dir -->
+    <property name="resource.includes" value="
+        **/*.html 
+        **/*.js 
+        **/*.png 
+        **/*.css
+    "/>
     
     <!-- buildpath for javac -->
     <path id="buildpath">
@@ -105,6 +111,9 @@
 
             <compilerarg value="-proc:none"/>
         </javac>
+        <copy todir="${build.debug.dir}">
+            <fileset dir="${src.dir}" includes="${resource.includes}"/>
+        </copy>
     </target>
     
     
@@ -124,6 +133,9 @@
 
             <compilerarg value="-proc:none"/>
         </javac>
+        <copy todir="${build.release.dir}">
+            <fileset dir="${src.dir}" includes="${resource.includes}"/>
+        </copy>
     </target>
     
     
@@ -245,7 +257,7 @@
                 <attribute name="Class-Path"            
                            value="${custom.classpath} ${jar.classpath} "/>
             </manifest>
-            <fileset dir="${bin.dir}"/>
+            <fileset dir="${bin.dir}" includes="**/*.class ${resource.includes}"/>
         </jar>
         
         <!-- call postDist. -->

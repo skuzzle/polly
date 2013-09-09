@@ -168,6 +168,8 @@ public class Polly {
         logger.info("Version info: " + version);
         logger.info("Java Version: " + System.getProperty("java.version"));
         logger.info("Java Home: " + System.getProperty("java.home"));
+        logger.info("Classpath: \n    " + System.getProperty("java.class.path").replace(
+            File.pathSeparator, "\n    "));
 
 
         /*

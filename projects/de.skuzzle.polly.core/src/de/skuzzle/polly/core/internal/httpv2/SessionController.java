@@ -1,5 +1,6 @@
 package de.skuzzle.polly.core.internal.httpv2;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import de.skuzzle.polly.http.annotations.Get;
@@ -20,17 +21,15 @@ public class SessionController extends PollyController {
 
     
     
-    public SessionController(MyPolly myPolly, String rootDir, 
-            WebinterfaceManager httpManager) {
-        super(myPolly, rootDir, httpManager);
+    public SessionController(MyPolly myPolly) {
+        super(myPolly);
     }
     
     
 
     @Override
     protected Controller createInstance() {
-        return new SessionController(this.getMyPolly(), this.getRootDir(), 
-            this.getHttpManager());
+        return new SessionController(this.getMyPolly());
     }
 
     
@@ -44,7 +43,7 @@ public class SessionController extends PollyController {
     public HttpAnswer sessions() throws AlternativeAnswerException {
         this.requirePermissions(RoleManager.ADMIN_PERMISSION);
         final Map<String, Object> c = this.createContext("templatesv2/sessions.html");
-        c.put("allSessions", this.getHttpManager().getServer().getSessions());
+        c.put("allSessions", this.getMyPolly().webInterface().getServer().getSessions());
         
         return this.makeAnswer(c);
     }
@@ -86,10 +85,10 @@ public class SessionController extends PollyController {
         }
         
         final HttpSession session = this.getServer().findSession(id);
+        final Map<String, Object> c = new HashMap<>();
+        c.put("myPolly", this.getMyPolly());
+        c.put("ss", session);
         
-        return HttpAnswers.newTemplateAnswer(
-            this.resolveFile("templatesv2/session.events.html"),
-            "myPolly", this.getMyPolly(),
-            "ss", session);
+        return HttpAnswers.newTemplateAnswer("templatesv2/session.events.html", c);
     }
 }

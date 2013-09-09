@@ -104,7 +104,7 @@ public final class HttpAnswers {
 
 
     public final static HttpAnswer newTemplateAnswer(
-            final ResolvedFile relativeTemplatePath, 
+            final String relativeTemplatePath, 
             final Map<String, Object> context) {
         
         return newTemplateAnswer(200, relativeTemplatePath, context);
@@ -113,13 +113,13 @@ public final class HttpAnswers {
     
     
     public final static HttpAnswer newTemplateAnswer(int responseCode,
-        final ResolvedFile relativeTemplatePath, 
+        final String relativeTemplatePath, 
         final Map<String, Object> context) {
     
         return new HttpTemplateAnswer(responseCode) {
             
             @Override
-            public ResolvedFile getRelativeTemplatePath() {
+            public String getName() {
                 return relativeTemplatePath;
             }
             

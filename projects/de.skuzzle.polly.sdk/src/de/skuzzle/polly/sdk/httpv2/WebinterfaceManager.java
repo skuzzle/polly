@@ -24,4 +24,6 @@ public interface WebinterfaceManager {
     public void addLoginHook(HttpHook hook);
     
     public void addLogoutHook(HttpHook hook);
+    
+    public String getWebRoot();
 }

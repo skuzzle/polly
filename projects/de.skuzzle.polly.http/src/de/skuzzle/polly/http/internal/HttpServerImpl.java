@@ -43,7 +43,9 @@ import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswerHandler;
 import de.skuzzle.polly.http.api.answers.HttpBinaryAnswer;
 import de.skuzzle.polly.http.api.answers.HttpTemplateAnswer;
+import de.skuzzle.polly.http.api.handler.BinaryAnswerHandler;
 import de.skuzzle.polly.http.api.handler.HttpEventHandler;
+import de.skuzzle.polly.http.api.handler.TemplateAnswerHandler;
 
 
 
@@ -84,8 +86,8 @@ class HttpServerImpl implements HttpServer {
         this.httpListeners = new ArrayList<>();
         
         // default handler
-        this.addAnswerHandler(HttpBinaryAnswer.class, new BinaryAnswerHandler());
-        this.addAnswerHandler(HttpTemplateAnswer.class, new TemplateAnswerHandler());
+        this.setAnswerHandler(HttpBinaryAnswer.class, new BinaryAnswerHandler());
+        this.setAnswerHandler(HttpTemplateAnswer.class, new TemplateAnswerHandler());
     }
     
     
@@ -178,7 +180,7 @@ class HttpServerImpl implements HttpServer {
     
     
     @Override
-    public void addAnswerHandler(Class<?> answerType, HttpAnswerHandler handler) {
+    public void setAnswerHandler(Class<?> answerType, HttpAnswerHandler handler) {
         this.handler.registerHandler(answerType, handler);
     }
     

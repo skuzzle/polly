@@ -46,9 +46,12 @@
    
     <!-- Configuration directory. -->
     <property name="cfg.dir" value="cfg"/>
-        
+
+    <!-- Web root directory -->
+    <property name="web.dir" value="webv2"/>
+    
     <!-- Override custom classpath property. -->
-    <property name="custom.classpath" value="${cfg.dir}/"/>
+    <property name="custom.classpath" value="${cfg.dir}/ ${web.dir}/"/>
         
     <!-- Webinterface directory. -->
     <property name="web.dir" value="webinterface"/>

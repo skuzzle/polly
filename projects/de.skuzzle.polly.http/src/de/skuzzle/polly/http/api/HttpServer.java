@@ -175,7 +175,7 @@ public interface HttpServer {
      *          {@link HttpAnswer}.
      * @param handler The handler which can handle answers of the given type.
      */
-    public void addAnswerHandler(Class<?> answerType, HttpAnswerHandler handler);
+    public void setAnswerHandler(Class<?> answerType, HttpAnswerHandler handler);
     
     /**
      * Gets a read-only collection of all current sessions.

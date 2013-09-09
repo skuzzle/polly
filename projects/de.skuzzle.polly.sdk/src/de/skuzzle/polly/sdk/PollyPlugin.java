@@ -1,5 +1,6 @@
 package de.skuzzle.polly.sdk;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,9 +38,10 @@ public abstract class PollyPlugin extends AbstractDisposable
 	private List<Command> commands;
 	private CompositeDisposable disposables;
 	private PluginState state = PluginState.NOT_LOADED;
-	
+	private File pluginFolder;
 	
 
+	
 	/**
 	 * This is the main entry point procedure of your plugin. When extending this class
 	 * for your own plugin, you need to provide a constructor with only a MyPolly 
@@ -56,6 +58,31 @@ public abstract class PollyPlugin extends AbstractDisposable
 		this.myPolly = myPolly;
 	}
 	
+	
+	
+	
+	/**
+	 * Sets the path to a folder from which this plugin can read custom files like 
+	 * web interface templates. This method will be called by polly, do not call it 
+	 * your self!
+	 * @param pluginFolder The folder for this plugin.
+	 */
+    public void setPluginFolder(File pluginFolder) {
+        this.pluginFolder = pluginFolder;
+    }
+    
+    
+    
+    
+    /**
+     * Gets the plugin folder for this plugin.
+     * 
+     * @return The folder to store arbitrary files for this plugin.
+     */
+    public File getPluginFolder() {
+        return this.pluginFolder;
+    }
+    
 	
 	
 	/**

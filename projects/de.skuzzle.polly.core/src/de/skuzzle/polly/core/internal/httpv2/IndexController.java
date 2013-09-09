@@ -26,17 +26,15 @@ public class IndexController extends PollyController {
 
     
     
-    public IndexController(MyPolly myPolly, String rootDir, 
-            WebinterfaceManager httpManager) {
-        super(myPolly, rootDir, httpManager);
+    public IndexController(MyPolly myPolly) {
+        super(myPolly);
     }
     
     
     
     @Override
     protected Controller createInstance() {
-        return new IndexController(this.getMyPolly(), this.getRootDir(), 
-            this.getHttpManager());
+        return new IndexController(this.getMyPolly());
     }
     
     
@@ -44,8 +42,7 @@ public class IndexController extends PollyController {
     @Get(STYLE_SHEET_NAME)
     public HttpAnswer getCSS() {
         return HttpAnswers.newTemplateAnswer(
-            this.resolveFile(STYLE_SHEET_NAME),
-            new HashMap<String, Object>());
+            STYLE_SHEET_NAME, new HashMap<String, Object>());
     }
     
 

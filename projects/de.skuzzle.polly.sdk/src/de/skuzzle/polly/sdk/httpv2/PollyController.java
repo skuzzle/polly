@@ -9,8 +9,6 @@ import java.util.Set;
 
 import de.skuzzle.polly.http.api.AlternativeAnswerException;
 import de.skuzzle.polly.http.api.Controller;
-import de.skuzzle.polly.http.api.LazyResolvedFile;
-import de.skuzzle.polly.http.api.ResolvedFile;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -25,22 +23,11 @@ public abstract class PollyController extends Controller {
     
     
     private final MyPolly myPolly;
-    private final String rootDir;
-    private final WebinterfaceManager httpManager;
 
 
-    public PollyController(MyPolly myPolly, String rootDir, 
-            WebinterfaceManager httpManager) {
+    public PollyController(MyPolly myPolly) {
         this.myPolly = myPolly;
-        this.rootDir = rootDir;
-        this.httpManager = httpManager;
         this.setHandlerPrefix(PAGE_PREFIX);
-    }
-    
-    
-    
-    public String getRootDir() {
-        return this.rootDir;
     }
     
     
@@ -60,12 +47,6 @@ public abstract class PollyController extends Controller {
 
 
 
-    protected WebinterfaceManager getHttpManager() {
-        return this.httpManager;
-    }
-
-
-
     protected Map<String, Object> createContext(String content) {
         final Map<String, Object> c = new HashMap<String, Object>();
         
@@ -73,8 +54,8 @@ public abstract class PollyController extends Controller {
         c.put("httpServer", this.getServer());
         c.put("user", this.getSessionUser());
         c.put("session", this.getSession());
-        c.put("menu", this.httpManager.getMenuCategories());
-        c.put("topMenu", this.httpManager.getTopMenuEntries());
+        c.put("menu", this.myPolly.webInterface().getMenuCategories());
+        c.put("topMenu", this.myPolly.webInterface().getTopMenuEntries());
         c.put("uptime", Time.currentTimeMillis()
             - this.getMyPolly().getStartTime().getTime());
         c.put("startTime", this.getMyPolly().getStartTime());
@@ -89,17 +70,13 @@ public abstract class PollyController extends Controller {
 
 
     protected HttpAnswer makeAnswer(Map<String, Object> context) {
-        return HttpAnswers.newTemplateAnswer(
-            new LazyResolvedFile(this.rootDir, "template.html"),
-            context);
+        return HttpAnswers.newTemplateAnswer("template.html", context);
     }
 
 
 
     protected HttpAnswer makeAnswer(int responseCode, Map<String, Object> context) {
-        return HttpAnswers.newTemplateAnswer(responseCode, 
-            new LazyResolvedFile(this.rootDir, "template.html"), 
-            context);
+        return HttpAnswers.newTemplateAnswer(responseCode, "template.html", context);
     }
 
 
@@ -123,11 +100,5 @@ public abstract class PollyController extends Controller {
             c.put("resource", this.getEvent().getPlainUri());
             throw new AlternativeAnswerException(this.makeAnswer(c));
         }
-    }
-    
-    
-    
-    protected ResolvedFile resolveFile(String file) {
-        return new LazyResolvedFile(this.rootDir, file);
     }
 }

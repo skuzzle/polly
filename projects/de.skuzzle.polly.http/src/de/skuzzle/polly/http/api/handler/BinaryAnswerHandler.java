@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along 
  * with Polly HTTP API. If not, see http://www.gnu.org/licenses/.
  */
-package de.skuzzle.polly.http.internal;
+package de.skuzzle.polly.http.api.handler;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -27,7 +27,13 @@ import de.skuzzle.polly.http.api.answers.HttpAnswerHandler;
 import de.skuzzle.polly.http.api.answers.HttpBinaryAnswer;
 
 
-class BinaryAnswerHandler extends HttpAnswerHandler {
+/**
+ * Default handler for all subclasses of {@link HttpBinaryAnswer}. This handler
+ * is automatically registered with the servlet server upon creation.
+ * 
+ * @author Simon Taddiken
+ */
+public class BinaryAnswerHandler extends HttpAnswerHandler {
 
     @Override
     public void handleAnswer(HttpAnswer answer, HttpEvent e, OutputStream out)
