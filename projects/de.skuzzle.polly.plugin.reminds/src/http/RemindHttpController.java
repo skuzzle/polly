@@ -79,10 +79,10 @@ public class RemindHttpController extends PollyController {
         }
         Collections.sort(allReminds, RemindEntity.BY_DUE_DATE);
         c.put("allReminds", allReminds);
-        
         c.put("snoozable", this.rm.getSnoozabledRemind(this.getSessionUser().getName()));
         c.put("lastRemind", this.rm.getLastRemind(this.getSessionUser()));
-        
+        c.put("defaultRemindTime", this.getSessionUser().getAttribute(
+            MyPlugin.DEFAULT_REMIND_TIME).valueString(this.getMyPolly().formatting()));
         return this.makeAnswer(c);
     }
     
@@ -100,6 +100,58 @@ public class RemindHttpController extends PollyController {
         }
     }
     
+    
+    
+    @Get("/api/discardSnooze")
+    public HttpAnswer discardSnooze() {
+        this.rm.cancelSleep(this.getSessionUser().getName());
+        return new GsonHttpAnswer(200, new SuccessResult(true, ""));
+    }
+    
+    
+    
+    public static class ToggleRemindResult extends SuccessResult {
+        public final boolean isMail;
+        public ToggleRemindResult(boolean isMail) {
+            super(true, "");
+            this.isMail = isMail;
+        }    
+    }
+    
+    
+    
+    @Get("/api/toggleRemind")
+    public HttpAnswer toggleRemind(@Param("remindId") int id) {
+        try {
+            final RemindEntity re = this.rm.toggleIsMail(getSessionUser(), id);
+            return new GsonHttpAnswer(200, new ToggleRemindResult(re.isMail()));
+        } catch (DatabaseException e) {
+            return new GsonHttpAnswer(200, 
+                new SuccessResult(false, "Database exception while toggling remind"));
+        } catch (CommandException e) {
+            return new GsonHttpAnswer(200, 
+                new SuccessResult(false, e.getMessage()));
+        }
+    }
+    
+    
+    
+    @Get("/api/setSnooze")
+    public HttpAnswer setSnooze(
+        @Param(value = "timespan", treatEmpty = true, ifEmptyValue = "") String expression) {
+        final Types parsed = this.getMyPolly().parse(expression);
+        if (!(parsed instanceof DateType)) {
+            return new GsonHttpAnswer(200, 
+                new SuccessResult(false, "Input yielded no valid date"));
+        }
+        final DateType target = (DateType) parsed;
+        try {
+            this.rm.snooze(this.getSessionUser(), target.getValue());
+            return new GsonHttpAnswer(200, new SuccessResult(true, ""));
+        } catch (CommandException | DatabaseException e) {
+            return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
+        }
+    }
     
     
     

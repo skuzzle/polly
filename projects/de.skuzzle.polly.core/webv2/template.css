@@ -262,7 +262,14 @@ label {
     padding: 8px;
     direction: ltr;
     width: 25px;
+    display: block;
 }
+
+#calculate {
+	float: right;
+    padding: 4px;
+}
+
 #headerContent {
     padding-top: 40px;
 }

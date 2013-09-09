@@ -43,7 +43,19 @@
                 performLogout();
             });
             
-            
+            // calculate polly expression
+            $("#calculate_polly").keydown(function (event) {
+            	if (event.which == 13) {
+            		var expr = encodeURIComponent($(this).val());
+            		showProgress();
+            		$.get("$PAGE_CALCULATEEXPRESSION?expr="+expr, function(data) {
+            			var result = JSON.parse(data);
+            			$("#calculate_polly").val(result.message);
+            			$("#calculate_polly").select();
+            			stopProgress();
+            		});
+            	}
+            });
             
             // check current login status regularly
             if (LOGGED_IN) {
@@ -66,7 +78,6 @@
         var dotTimer;
         function showProgress() {
             if (progressCalls == 0) {
-                $("#progress").show();
                 dots = "";
                 dotTimer = setInterval(function() {
                     dots += ".";
@@ -87,7 +98,6 @@
         function stopProgress() {
             progressCalls = Math.max(0, progressCalls - 1);
             if (progressCalls == 0) {
-                $("#progress").fadeOut('slow');
                 clearInterval(dotTimer);
                 $("#progress").text("");               
             }
@@ -233,6 +243,12 @@
     
     <div id="heading">
         <span id="progress"></span>
+        <span id="calculate">
+            <input 
+                id="calculate_polly" 
+                type="text" class="textbox" placeholder="Enter any polly expression here"
+            />
+        </span>
         #if ($user)
             <a href="#" class="showContent">Menu</a>
         #end

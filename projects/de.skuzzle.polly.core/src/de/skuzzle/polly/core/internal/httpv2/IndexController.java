@@ -15,6 +15,7 @@ import de.skuzzle.polly.http.api.HttpServer;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
@@ -152,6 +153,18 @@ public class IndexController extends PollyController {
     public HttpAnswer index() {
         final Map<String, Object> c = this.createContext("templatesv2/home.html");
         return this.makeAnswer(c);
+    }
+    
+    
+    
+    
+    @Get("/api/calculateExpression")
+    public HttpAnswer calculateExpression(
+            @Param(value = "expr", treatEmpty = true) String expression) {
+        
+        final Types result = this.getMyPolly().parse(expression);
+        return new GsonHttpAnswer(200, 
+            new SuccessResult(true, result.valueString(this.getMyPolly().formatting())));
     }
     
     
