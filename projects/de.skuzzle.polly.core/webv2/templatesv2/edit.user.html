@@ -1,0 +1,276 @@
+
+#set ($isSelf = $user == $editUser)
+#set ($isAdmin = $myPolly.roles().hasPermission($user, "polly.permissions.ADMIN"))
+#set ($editable = $isSelf || $isAdmin)
+
+#if (!$editable)
+<div class="highlight contentBox">
+    #CONTENT_HEADER ("Change password for: $editUser.getName()  <a id=""toggleChangePw"" href=""#"">Show</a>")
+    <div class="content">
+    <p>Whut?</p>
+    </div>
+</div>
+#else
+
+<div class="highlight contentBox">
+    #CONTENT_HEADER ("Change password for: $editUser.getName()  <a id=""toggleChangePw"" href=""#"">Show</a>")
+    <div id="changePw" class="content">
+        <form id="changePwForm">
+            <input type="hidden" name="userId" value="$editUser.getId()"/>
+        <table>
+            <tr>
+                <td><label for="newPassword">New password:</label></td>
+                <td><input type="password" class="textbox" name="newPassword" id="newPassword"/></td>
+            </tr>
+            <tr>
+                <td><label for="retype">Retype password:</label></td>
+                <td><input type="password" class="textbox" name="retype" id="retype"/></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td id="validateRetype" style="color:red">&nbsp;</td>
+            </tr>
+            <tr>
+                <td><input id="submitChangePw" type="submit" class="button" value="Set password" disabled/></td>
+                <td></td>
+            </tr>
+        </table>
+        </form>
+    </div>
+</div>
+
+
+<div class="highlight contentBox">
+    #CONTENT_HEADER ("Roles <a id=""toggleEditRoles"" href=""#"">Show</a>")
+    <div id="editRoles" class="content">
+        <table style="table-layout: fixed">
+        #if ($isAdmin)
+            <tr>
+                <th>Role name</th>
+                <th style="width:15%">Action</th>
+            </tr>
+            #foreach ($role in $myPolly.roles().getRoles())
+                #set($escRole = $role.replace(".", "_"))
+            <tr>
+                <td id="$escRole" style="font-weight: #if ($myPolly.roles().hasRole($editUser, $role)) bold #else normal #end">$role</td>
+                <td>
+                    <input id="remove_${escRole}" type="button" class="button" value="Remove Role" onclick="removeRole('$role')" #if (!$myPolly.roles().hasRole($editUser, $role)) style="display:none" #end />
+                    <input id="add_${escRole}" type="button" class="button" value="Assign Role" onclick="addRole('$role')" #if ($myPolly.roles().hasRole($editUser, $role)) style="display:none" #end />
+                </td>
+            </tr>
+            #end
+        #else
+            <tr>
+                <th>Role name</th>
+            </tr>
+            #foreach ($role in $myPolly.roles().getRoles())
+            #set($escRole = $role.replace(".", "_"))
+            <tr>
+                <td id="$escRole" style="font-weight: #if ($myPolly.roles().hasRole($editUser, $role)) bold #else normal #end">$role</td>
+            </tr>
+            #end
+        #end
+        </table>
+    </div>
+</div>
+
+#macro ( EDIT_CONTROL $attribute $tt )
+    #if ($tt.toString() == "Boolean")
+    <td><input 
+        id="inp_$attribute.getName()"
+        type="checkbox" 
+        name="$attribute.getName()" 
+        value="$editUser.getAttribute($attribute.getName()).valueString($myPolly.formatting())" #if ($tt.getValue()) checked #end/>
+    </td>
+    #else
+    <td><input 
+        id="inp_$attribute.getName()"
+        class="textbox" style="width: 100%;" id="inp_$attribute.getName()" 
+        type="text" 
+        name="$attribute.getName()" 
+        value="$editUser.getAttribute($attribute.getName()).valueString($myPolly.formatting())">
+    </td>
+    
+    #end
+#end
+
+#foreach($entry in $myPolly.users().getAllAttributes().entrySet())
+<div class="highlight contentBox">
+    #CONTENT_HEADER ("Settings: $entry.getKey()")
+    <p class="content">You may enter any valid polly expression which produces a value of suitable type for the attribute you want to set.</p>
+    <div class="content">
+
+    <table style="table-layout: fixed;">
+        <thead>
+            <tr>
+                <th style="width:20%">Name</th>
+                <th style="width:35%">Setting</th>
+                <th>Value</th>
+                <th style="width:15%">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            #foreach ($attribute in $entry.getValue())
+            <tr>
+                <td><b>$attribute.getName()</b></td>
+                <td>$attribute.getDescription()</td>
+                #EDIT_CONTROL($attribute $editUser.getAttribute($attribute.getName()))
+                <td><input 
+                        class="button" 
+                        id="submit_$attribute.getName()" 
+                        type="button" 
+                        value="Set" 
+                        onclick="setAttr('$attribute.getName()', '$editUser.getAttribute($attribute.getName()).valueString($myPolly.formatting())', false)"/> 
+                    <input 
+                        class="button" 
+                        id="submit_default_$attribute.getName()" 
+                        type="button" 
+                        value="Default" 
+                        onclick="setAttr('$attribute.getName()', '$editUser.getAttribute($attribute.getName())', true)"/>
+                    <span id="status_$attribute.getName()"></span>
+                </td>
+            </tr>
+            #end
+        </tbody>
+    </table>
+    </div>
+</div>
+#end
+
+
+#end
+<script>
+    $(document).ready(function() {
+        $("#toggleChangePw").click(toggleChangePw);
+        $("#toggleEditSettings").click(toggleEditSettings);
+        $("#toggleEditRoles").click(toggleEditRoles);
+        $("#newPassword").bind('input propertychange', validateRetypeMatch);
+        $("#retype").bind('input propertychange', validateRetypeMatch);
+        $("#submitChangePw").click(setPassword);
+    });
+    
+    function toggleChangePw() {
+        $("#changePw").fadeToggle(400);
+    }    
+    function toggleEditSettings() {
+        $("#editSettings").fadeToggle(400);
+    }
+    function toggleEditRoles() {
+        $("#editRoles").fadeToggle(400);
+    }
+    function validateRetypeMatch() {
+        var pw = $("#newPassword").val();
+        var retype = $("#retype").val();
+
+        if (pw == "") {
+            $("#validateRetype").text("Password must not be empty");
+            $("#validateRetype").css({color: "red"});
+            $(submitChangePw).attr("disabled", "disabled");
+            return false;
+        } else if (retype != pw) {
+            $("#validateRetype").text("Passwords do not match");
+            $("#validateRetype").css({color: "red"});
+            $(submitChangePw).attr("disabled", "disabled");
+            return false;
+        } else {
+            $("#validateRetype").text("Password is OK");
+            $("#validateRetype").css({color: "green"});
+            $(submitChangePw).removeAttr("disabled");
+            return true;
+        }
+    }
+    function setPassword(e) {
+        e.preventDefault();
+        var pw = $("#newPassword").val();
+        var retype = $("#retype").val();
+        
+        if (!validateRetypeMatch()) {
+            return;
+        }
+        showProgress();
+        $.post("$PAGE_SETPASSWORD", 
+                $("#changePwForm").serialize(), function(data) {
+            var result = JSON.parse(data);
+            
+            if (result.success) {
+                $("#validateRetype").css({color: "green"});
+                $("#newPassword").val("");
+                $("#retype").val("");
+            } else {
+                $("#validateRetype").css({color: "red"});
+            }
+            $("#validateRetype").text(result.message);
+            stopProgress();
+        });
+    }
+    function addRole(role) {
+        showProgress();
+        var escRole = role.replace(/\./g, "_");
+        $.get("$PAGE_ADDROLE?userId=$editUser.getId()&role="+role, function(data) {
+            var result = JSON.parse(data);
+            if (result.success) {
+                $("#" + escRole).css({fontWeight:"bold"});
+                $("#add_" + escRole).fadeOut(function() {;
+                    $("#remove_" + escRole).fadeIn();
+                });
+            } else {
+                alert(result.message);
+            }
+            stopProgress();
+        });
+    }
+    function removeRole(role) {
+        var escRole = role.replace(/\./g, "_");
+        showProgress();
+        $.get("$PAGE_REMOVEROLE?userId=$editUser.getId()&role="+role, function(data) {
+            var result = JSON.parse(data);
+            if (result.success) {
+                $("#" + escRole).css({fontWeight:"normal"});
+                $("#remove_" + escRole).fadeOut(function() {
+                    $("#add_" + escRole).fadeIn();
+                });
+            } else {
+                alert(result.message);
+            }
+            
+            stopProgress();
+        });
+    }
+    function setAttr(attribute, currentVal, def) {
+        var val;
+        if (def) {
+            val = "%default%";
+        } else {
+            var inp = $("#inp_" + attribute);
+
+            if (inp.attr("type") == "checkbox") {
+                val = inp.prop("checked") ? true : false;
+            } else {
+                val = $("#inp_" + attribute).val();
+            }
+        }
+        val = encodeURIComponent(val);
+        
+        showProgress();
+        $.get("$PAGE_SETATTRIBUTE?userId=$editUser.getId()&attribute="+attribute+"&value="+val,function(data) {
+            var result = JSON.parse(data);
+            if (!result.success) {
+                alert(result.message);
+                $("#inp_" + attribute).val(currentVal);
+                $("#status_" + attribute).css({color: "red"});
+                $("#status_" + attribute).text("fail");
+                $("#status_" + attribute).fadeIn(2000, function() {
+                    $("#status_" + attribute).fadeOut(2000);
+                });
+            } else {
+                $("#inp_" + attribute).val(result.newValue);
+                $("#status_" + attribute).css({color: "green"});
+                $("#status_" + attribute).text("Ok");
+                $("#status_" + attribute).fadeIn(2000, function() {
+                    $("#status_" + attribute).fadeOut(2000);
+                });
+            }
+            stopProgress();
+        });
+    }
+</script>
