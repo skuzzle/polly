@@ -486,11 +486,12 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     public void resetAllAttributes() {
         try {
             this.persistence.writeLock();
-            final List<AttributeImpl> attributes = 
-                this.persistence.atomicRetrieveList(AttributeImpl.class, 
-                    AttributeImpl.ALL_ATTRIBUTES);
+            final List<de.skuzzle.polly.core.internal.users.Attribute> attributes = 
+                this.persistence.atomicRetrieveList(
+                    de.skuzzle.polly.core.internal.users.Attribute.class, 
+                    de.skuzzle.polly.core.internal.users.Attribute.ALL_ATTRIBUTES);
             
-            for (final Attribute attr : attributes) {
+            for (final de.skuzzle.polly.core.internal.users.Attribute attr : attributes) {
                 this.removeAttribute(attr.getName());
             }
         } catch (DatabaseException e) {
