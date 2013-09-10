@@ -41,6 +41,7 @@ import polly.rx.http.battlereports.AddBattleReportAction;
 import polly.rx.http.battlereports.BattleReportFilterHttpAction;
 import polly.rx.http.battlereports.BattleReportHttpAction;
 import polly.rx.http.battlereports.BattleReportInfosHttpAction;
+import polly.rx.http.battlereports.QzoneBattleReporter;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
 import de.skuzzle.polly.sdk.constraints.AttributeConstraint;
@@ -151,6 +152,7 @@ public class MyPlugin extends PollyPlugin {
         myPolly.web().addHttpAction(new ScoreBoardDetailsHttpAction(myPolly, this.sbeManager));
         myPolly.web().addHttpAction(new ScoreBoardCompareHttpAction(myPolly, this.sbeManager));
         myPolly.web().addHttpAction(new PostScoreboardHttpAction(myPolly, this.sbeManager));
+        myPolly.web().addHttpAction(new QzoneBattleReporter(myPolly, this.fleetDBManager));
         this.addCommand(new RankCommand(myPolly, this.sbeManager));
     }
     
