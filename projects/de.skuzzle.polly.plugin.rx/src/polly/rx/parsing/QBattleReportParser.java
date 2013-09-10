@@ -58,9 +58,7 @@ public class QBattleReportParser {
                 throw new ParseException("Misformatted date");
             }
             
-            s.nextLine();
-            s.nextLine();
-            s.nextLine();
+            s.skip("\\D+");
             
             // drop
             final List<BattleDrop> drop = new ArrayList<>(RxRessource.values().length);
