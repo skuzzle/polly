@@ -23,11 +23,11 @@ public class BattleReportParser {
     
     private final static Pattern NUBER_PATTERN = Pattern.compile("\\d+"); 
     
-    private final static Pattern WHERE_PATTERN = Pattern.compile(
+    final static Pattern WHERE_PATTERN = Pattern.compile(
         "Gefecht bei (.*) (\\d+),(\\d+)");
-    private final static int QUADRANT_GROUP = 1;
-    private final static int X_GROUP = 2;
-    private final static int Y_GROUP = 3;
+    final static int QUADRANT_GROUP = 1;
+    final static int X_GROUP = 2;
+    final static int Y_GROUP = 3;
     
     
     private final static Pattern HEADER_PATTERN = Pattern.compile(
