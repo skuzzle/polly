@@ -1,0 +1,300 @@
+ 13:49 09-09-2013
+
+Zurückgelassene Ressourcen
+
+0
+0
+0
+0
+1005
+1295
+0
+1387
+845
+89
+100
+0
+40
+0
+1 Artefakt(e) erbeutet
+
+
+Gefecht bei Pegasos 5,13
+
+Die Angreifer waren siegreich
+GefechtstaktikRaubzug 
+
+
+Bonus Angreifer1%
+Bonus Verteidiger4%
+
+
+Kampfwert Angreifer/XP-Mod
+108735.37/0.72
+Kampfwert Verteidiger/XP-Mod
+78260/1
+
+Angreifer Flotte: -Spark- (qzone[Loki])
+Begleitschiff (LXI) Celesto
+Vice Venad Commander Gottlieb Pretorius
+
+Angriffswert207 / 207(-200)
+Captain45 / 45XPs59
+
+Schild2135 / 3084(-949)
+Crew106 / 132XPs30
+
+Panzerung10570 / 11820(-445)
+Systeme4815 / 4815
+
+Struktur1277 / 1277ID:12995750
+Begleitschiff (LXI) Devoras
+Vice Venad Commander Franz Martin Kilbourne
+
+Angriffswert203 / 203
+Captain44 / 44XPs15
+
+Schild1633 / 3072(-1439)
+Crew106 / 132XPs8
+
+Panzerung11488 / 11906(-37)
+Systeme4796 / 4796
+
+Struktur1274 / 1274ID:12923911
+Begleitschiff (LXI) Dyker
+Vice Venad Commander Laurina DeVink
+
+Angriffswert205 / 205
+Captain44 / 44XPs64
+
+Schild2126 / 3016(-890)
+Crew106 / 132XPs32
+
+Panzerung10714 / 11834(-494)
+Systeme4784 / 4784
+
+Struktur1267 / 1267ID:13076836
+Begleitschiff (LXI) Gendis
+Vice Venad Commander Regina Castoriadis
+
+Angriffswert205 / 205
+Captain42 / 42XPs23
+
+Schild1611 / 3100(-1489)
+Crew106 / 132XPs11
+
+Panzerung11017 / 12070(-108)
+Systeme4858 / 4858
+
+Struktur1269 / 1269ID:12944517
+Begleitschiff (LXI) Nemje
+Vice Venad Commander Dirk Strobach
+
+Angriffswert202 / 202
+Captain44 / 44XPs27
+
+Schild2046 / 3078(-1032)
+Crew106 / 132XPs14
+
+Panzerung11489 / 12011(-152)
+Systeme4813 / 4813
+
+Struktur1267 / 1267ID:12884993
+Begleitschiff (LXI) Nemku
+Vice Venad Commander Derik Spurrier
+
+Angriffswert206 / 206
+Captain44 / 44XPs34
+
+Schild1739 / 3099(-1360)
+Crew106 / 132XPs17
+
+Panzerung11207 / 11731(-216)
+Systeme4833 / 4833
+
+Struktur1274 / 1274ID:12906600
+Begleitschiff (LXI) Retoxan
+Vice Venad Commander Lene Gesink
+
+Angriffswert206 / 206
+Captain42 / 42XPs55
+
+Schild2064 / 3058(-994)
+Crew106 / 132XPs28
+
+Panzerung10909 / 11761(-408)
+Systeme4810 / 4810
+
+Struktur1245 / 1245ID:13011183
+Begleitschiff (LXI) Xuserion
+Vice Venad Commander Louis Carlsen
+
+Angriffswert203 / 203
+Captain42 / 42XPs34
+
+Schild2124 / 3083(-959)
+Crew106 / 132XPs17
+
+Panzerung11101 / 11911(-213)
+Systeme4798 / 4798
+
+Struktur1289 / 1289ID:12755251
+Kommandoschiff (LXI) Resiasi
+Vice Venad Commander Karl Markus Kettner
+
+Angriffswert74 / 74
+Captain47 / 47XPs20
+
+Schild796 / 2050(-1254)
+Crew111 / 138XPs10
+
+Panzerung11721 / 12153(-79)
+Systeme3763 / 3763
+
+Struktur1014 / 1014ID:13121849
+Kreuzer (IX) Isseek
+Vice Venad Commander Evelin Jackob
+
+Angriffswert16743 / 16743
+Captain41 / 41XPs25
+
+Schild1812 / 2869(-1057)
+Crew322 / 352XPs13
+
+Panzerung11545 / 12053(-132)
+Systeme4417 / 4417
+
+Struktur1182 / 1182ID:12676886
+Kreuzer (IX) Nemku
+Vice Venad Commander Reiner Rispel
+
+Angriffswert16601 / 16601
+Captain45 / 45XPs56
+
+Schild2321 / 2904(-583)
+Crew322 / 352XPs28
+
+Panzerung11366 / 12165(-414)
+Systeme4433 / 4433
+
+Struktur1199 / 1199ID:12693753
+Kreuzer (IX) Venagradan
+Vice Venad Commander Charlotte Zubiri
+
+Angriffswert16034 / 16034
+Captain42 / 42XPs49
+
+Schild2039 / 2828(-789)
+Crew322 / 352XPs25
+
+Panzerung11028 / 11933(-354)
+Systeme4336 / 4336
+
+Struktur1164 / 1164ID:12719122
+Kreuzer (IX) Xontralika
+Vice Venad Commander Adalia Compte
+
+Angriffswert16583 / 16583
+Captain45 / 45XPs31
+
+Schild1914 / 2910(-996)
+Crew322 / 352XPs15
+
+Panzerung11477 / 11894(-182)
+Systeme4434 / 4434
+
+Struktur1177 / 1177ID:12686037
+Transportschiff (LXI) Belenga
+Vice Venad Commander Raik Rilke
+
+Angriffswert208 / 208
+Captain42 / 42XPs27
+
+Schild1708 / 2881(-1173)
+Crew128 / 150XPs13
+
+Panzerung11118 / 11760(-146)
+Systeme4437 / 4437
+
+Struktur1205 / 1205ID:12591153
+Transportschiff (LXI) Besirok
+Vice Venad Commander Devin Bessel
+
+Angriffswert206 / 206
+Captain44 / 44XPs53
+
+Schild1753 / 2902(-1149)
+Crew128 / 150XPs27
+
+Panzerung10602 / 11867(-391)
+Systeme4462 / 4462
+
+Struktur1211 / 1211ID:12638239
+Transportschiff (LXI) Gotoga
+Vice Venad Commander Francisco Wittler
+
+Angriffswert204 / 204
+Captain42 / 42XPs35
+
+Schild2081 / 2890(-809)
+Crew128 / 150XPs18
+
+Panzerung11579 / 11943(-225)
+Systeme4442 / 4442
+
+Struktur1238 / 1238ID:12533826
+Transportschiff (LXI) Quadresto
+Vice Venad Commander Elke Hohl
+
+Angriffswert206 / 206
+Captain42 / 42XPs27
+
+Schild1479 / 2920(-1441)
+Crew128 / 150XPs14
+
+Panzerung11287 / 12045(-148)
+Systeme4478 / 4478
+
+Struktur1210 / 1210ID:12672882
+Transportschiff (LXI) Rewor
+Vice Venad Commander Fernando Risler
+
+Angriffswert206 / 206
+Captain42 / 42XPs32
+
+Schild2012 / 2853(-841)
+Crew128 / 150XPs16
+
+Panzerung10935 / 12008(-198)
+Systeme4395 / 4395
+
+Struktur1202 / 1202ID:12558131
+Verteidiger Flotte: Reg-Nr. 257 (Zarin'wan)
+ Resssat
+Chief Space Guard Captain
+
+Angriffswert35000 / 35000
+Captain18 / 18
+XPs262
+
+Schild19431 / 31000(-11569)
+Crew81 / 81XPs131
+
+Panzerung3883 / 4000(-117)
+Systeme32787 / 32787
+
+Struktur750 / 750
+ Resssat
+Lt. Commander 2nd Class Captain
+
+Angriffswert35000 / 35000
+Captain23 / 23
+XPs595
+
+Schild21651 / 31000(-9349)
+Crew81 / 81XPs297
+
+Panzerung1663 / 4000(-2337)
+Systeme32787 / 32787
+
+Struktur750 / 750
