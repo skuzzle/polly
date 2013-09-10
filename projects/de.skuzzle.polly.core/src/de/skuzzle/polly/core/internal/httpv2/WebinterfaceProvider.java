@@ -2,6 +2,7 @@ package de.skuzzle.polly.core.internal.httpv2;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Comparator;
 
 import de.skuzzle.polly.core.Polly;
 import de.skuzzle.polly.core.configuration.ConfigurationProviderImpl;
@@ -18,19 +19,28 @@ import de.skuzzle.polly.core.moduleloader.annotations.Require;
 import de.skuzzle.polly.http.api.AddHandlerListener;
 import de.skuzzle.polly.http.api.Controller;
 import de.skuzzle.polly.http.api.DefaultServerFactory;
+import de.skuzzle.polly.http.api.HttpEvent;
+import de.skuzzle.polly.http.api.HttpException;
 import de.skuzzle.polly.http.api.HttpServer;
 import de.skuzzle.polly.http.api.HttpServletServer;
 import de.skuzzle.polly.http.api.ServerFactory;
+import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswerHandler;
+import de.skuzzle.polly.http.api.answers.HttpResourceAnswer;
 import de.skuzzle.polly.http.api.answers.HttpTemplateAnswer;
 import de.skuzzle.polly.http.api.handler.DirectoryEventHandler;
+import de.skuzzle.polly.http.api.handler.HttpEventHandler;
+import de.skuzzle.polly.http.api.handler.SingleFileEventHandler;
 import de.skuzzle.polly.http.internal.HttpServerCreator;
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.ConfigurationProvider;
 import de.skuzzle.polly.sdk.Disposable;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
+import de.skuzzle.polly.sdk.httpv2.HtmlTable;
+import de.skuzzle.polly.sdk.httpv2.HtmlTable.Header;
 import de.skuzzle.polly.sdk.httpv2.MenuEntry;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.time.Milliseconds;
@@ -133,7 +143,7 @@ public class WebinterfaceProvider extends AbstractProvider {
         this.server.addController(new IndexController(myPolly));
         this.server.addController(new SessionController(myPolly));
         this.server.addController(new UserController(myPolly));
-        
+        UserController.createUserTable(myPolly);
         
         
         // replace the default template answer handler
@@ -148,6 +158,14 @@ public class WebinterfaceProvider extends AbstractProvider {
         this.server.addHttpEventHandler("/files", 
             new DirectoryEventHandler("webv2/files", false));
         
+        final ClassLoader cl = this.getClass().getClassLoader();
+        this.server.addHttpEventHandler("/de/skuzzle/polly/sdk/httpv2", new HttpEventHandler() {
+            @Override
+            public HttpAnswer handleHttpEvent(String registered, HttpEvent e,
+                    HttpEventHandler next) throws HttpException {
+                return new HttpResourceAnswer(200, cl, e.getPlainUri());
+            }
+        });  
         this.server.start();
     }
 }

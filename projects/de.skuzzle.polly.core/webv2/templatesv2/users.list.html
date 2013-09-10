@@ -1,13 +1,7 @@
-<tr>
-    <th>Id</th>
-    <th>Name</th>
-    <th>Nickname</th>
-    <th>Idle?</th>
-    <th>Last IRC action</th>
-    <th>IRC Login</th>
-    <th>Action</th>
-</tr>
-#foreach ($u in $users) 
+#parse ("de/skuzzle/polly/sdk/httpv2/table_helper.html")
+
+#SORTABLE_TABLE ($tId, $baseUrl, $header, $settings)
+#foreach ($u in $data) 
 <tr>
     <td>$u.getId()</td>
     <td>#if ($u.isPollyAdmin())<b>$u.getName()</b> #else $u.getName()#end</td>

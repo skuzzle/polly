@@ -31,9 +31,9 @@
     </div>
 </div>
 
+
 <script>
     $(document).ready(function() {
-        updateUserList();
         $("#submitUser").click(function(event) {
             event.preventDefault();
             addUser();
@@ -42,15 +42,6 @@
             $("#addUserContent").fadeToggle(400);
         });
     });
-    
-    function updateUserList() {
-        showProgress();
-        $.get("$PAGE_LISTUSERS", function(data) {
-            $("#userList").empty();
-            $("#userList").html(data);
-            stopProgress();
-        });
-    }
     
     function addUser() {
         var isValid = true;
@@ -74,7 +65,7 @@
             $("#addUserForm .validation").text(result.message);
             $("#addUserForm .validation").fadeIn();
             if (result.success) {
-                updateUserList();
+            	loadTable('/api/allUsers', 'userList');
             }
             stopProgress();
         });
@@ -95,10 +86,15 @@
             stopProgress();
         });
     }
+    
+
+    $(document).ready(function() {
+        loadTable('/api/allUsers', 'userList');
+    });
 </script>
 
 <div class="highlight contentBox">
-    #CONTENT_HEADER ("Registered Users <a href=""#"" onclick=""updateUserList()"">Update</a>")
+    #CONTENT_HEADER ("Registered Users <a href=""#"" onclick=""loadTable('/api/allUsers', 'userList')"">Update</a>")
     <div class="content">
     <table id="userList">
     </table>

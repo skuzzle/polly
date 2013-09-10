@@ -10,7 +10,6 @@ import de.skuzzle.polly.http.annotations.Post;
 import de.skuzzle.polly.http.api.AlternativeAnswerException;
 import de.skuzzle.polly.http.api.Controller;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
-import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PersistenceManager;
 import de.skuzzle.polly.sdk.User;
@@ -23,12 +22,33 @@ import de.skuzzle.polly.sdk.exceptions.RoleException;
 import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
 import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
+import de.skuzzle.polly.sdk.httpv2.HtmlTable;
+import de.skuzzle.polly.sdk.httpv2.HtmlTable.Header;
 import de.skuzzle.polly.sdk.httpv2.PollyController;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 
 
 public class UserController extends PollyController {
+    
+    
+    public static void createUserTable(MyPolly myPolly) {
+        final UserDataSource source = new UserDataSource(myPolly.users());
+        final UserFilter filter = new UserFilter();
+        
+        final HtmlTable<User> table = new HtmlTable<>(
+            "userList", "templatesv2/users.list.html", source, filter)
+            .addHeader("Id", User.BY_ID)
+            .addHeader("Name", User.BY_NAME)
+            .addHeader("Nickname", User.BY_NICKNAME)
+            .addHeader("Idle?", User.BY_ISIDLE)
+            .addHeader("Last IRC action", User.BY_LAST_ACTION)
+            .addHeader("IRC Login", User.BY_LOGIN)
+            .addHeader("Action", false, null);
+        
+        table.getBaseContext().put("myPolly", myPolly);
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/allUsers", table);
+    }
 
     public UserController(MyPolly myPolly) {
         super(myPolly);
@@ -56,6 +76,14 @@ public class UserController extends PollyController {
         c.put("users", this.getMyPolly().users().getRegisteredUsers());
         return this.makeAnswer(c);
     }
+    
+    
+    
+    @Get("/pages/tableTest")
+    public HttpAnswer tableTest() {
+        return this.makeAnswer(this.createContext("templatesv2/table_sample.html"));
+    }
+    
     
     
     
@@ -105,7 +133,7 @@ public class UserController extends PollyController {
     
     
     
-    @Get("/api/listUsers")
+    /*@Get("/api/listUsers")
     public HttpAnswer listUsers() {
         if (!this.getMyPolly().roles().hasPermission(
             this.getSessionUser(), RoleManager.ADMIN_PERMISSION)) {
@@ -116,7 +144,7 @@ public class UserController extends PollyController {
         final Map<String, Object> c = this.createContext("");
         c.put("users", this.getMyPolly().users().getRegisteredUsers());
         return HttpAnswers.newTemplateAnswer("templatesv2/users.list.html", c);
-    }
+    }*/
     
     
     
