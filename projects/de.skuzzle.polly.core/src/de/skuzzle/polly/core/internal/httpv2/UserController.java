@@ -22,8 +22,7 @@ import de.skuzzle.polly.sdk.exceptions.RoleException;
 import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
 import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
-import de.skuzzle.polly.sdk.httpv2.HtmlTable;
-import de.skuzzle.polly.sdk.httpv2.HtmlTable.Header;
+import de.skuzzle.polly.sdk.httpv2.html.HtmlTable;
 import de.skuzzle.polly.sdk.httpv2.PollyController;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.roles.RoleManager;
@@ -33,18 +32,8 @@ public class UserController extends PollyController {
     
     
     public static void createUserTable(MyPolly myPolly) {
-        final UserDataSource source = new UserDataSource(myPolly.users());
-        final UserFilter filter = new UserFilter();
-        
-        final HtmlTable<User> table = new HtmlTable<>(
-            "userList", "templatesv2/users.list.html", source, filter)
-            .addHeader("Id", User.BY_ID)
-            .addHeader("Name", User.BY_NAME)
-            .addHeader("Nickname", User.BY_NICKNAME)
-            .addHeader("Idle?", User.BY_ISIDLE)
-            .addHeader("Last IRC action", User.BY_LAST_ACTION)
-            .addHeader("IRC Login", User.BY_LOGIN)
-            .addHeader("Action", false, null);
+        final HtmlTable<User> table = new HtmlTable<>("userList", 
+            "templatesv2/users.list.html", new UserDataSource(myPolly.users()));
         
         table.getBaseContext().put("myPolly", myPolly);
         myPolly.webInterface().getServer().addHttpEventHandler("/api/allUsers", table);

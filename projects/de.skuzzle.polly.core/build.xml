@@ -108,6 +108,7 @@
             <classpath>
                 <source path="${src.dir}"/>
                 <source path="${cfg.dir}"/>
+                <source path="${web.dir}"/>
                 <source path="/de.skuzzle.polly.core.moduleloader"/>
                 <source path="/de.skuzzle.polly.http"/>
                 <source path="/de.skuzzle.polly.http.annotations"/>
