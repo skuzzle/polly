@@ -27,7 +27,6 @@ import java.util.Map;
 
 import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.http.api.HttpSession;
-import de.skuzzle.polly.http.api.TrafficInformation;
 
 
 class HttpSessionImpl implements HttpSession {
@@ -38,7 +37,7 @@ class HttpSessionImpl implements HttpSession {
     private final String id;
     private final long timestamp;
     private final Map<String, Object> attached;
-    private final TrafficInformation trafficInfo;
+    private final TrafficInformationImpl trafficInfo;
     private final Deque<HttpEvent> events;
     private Date lastAction;
     private boolean doKill;
@@ -210,7 +209,7 @@ class HttpSessionImpl implements HttpSession {
 
     
     @Override
-    public TrafficInformation getTrafficInfo() {
+    public TrafficInformationImpl getTrafficInfo() {
         return this.trafficInfo;
     }
 

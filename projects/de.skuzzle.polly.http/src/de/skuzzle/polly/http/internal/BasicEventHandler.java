@@ -136,6 +136,13 @@ class BasicEventHandler implements HttpHandler {
         final Map<String, String> post = new HashMap<>();
         
         
+        // set stream to count incoming traffic
+        final TrafficInformationImpl temporary = new TrafficInformationImpl(null);
+        final CountingInputStream in = new CountingInputStream(
+            t.getRequestBody(), temporary);
+        t.setStreams(in, null);
+        
+        
         // extract GET parameters
         final int questIdx = requestUri.indexOf('?');
         final String plainUri;
@@ -179,6 +186,10 @@ class BasicEventHandler implements HttpHandler {
             mode = RequestMode.POST;
         }
         
+        // as session is resolved now, update the session's traffic
+        final TrafficInformationImpl ti = session.getTrafficInfo();
+        ti.updateFrom(temporary);
+        
         final HttpEventImpl event = new HttpEventImpl(this.server, mode, 
             t.getRequestURI(), t.getRemoteAddress(), plainUri, session, cookies, 
             get, post) {
@@ -204,13 +215,6 @@ class BasicEventHandler implements HttpHandler {
         final HttpSessionImpl session = (HttpSessionImpl) httpEvent.getSession();
         session.addEvent(httpEvent.copy());
         session.setLastAction(new Date());
-        
-        final TrafficInformationImpl ti = 
-            (TrafficInformationImpl) session.getTrafficInfo();
-        
-        // set stream to count incoming traffic
-        final CountingInputStream in = new CountingInputStream(t.getRequestBody(), ti);
-        t.setStreams(in, null);
         
         if (session.isBlocked()) {
             this.handleAnswer(DefaultAnswers.SESSION_BLOCKED, t, httpEvent);
@@ -266,8 +270,7 @@ class BasicEventHandler implements HttpHandler {
         final HttpSessionImpl session = (HttpSessionImpl) httpEvent.getSession();
         
         // set stream to count outgoing traffic and report whether it was closed
-        final TrafficInformationImpl ti = 
-            (TrafficInformationImpl) session.getTrafficInfo();
+        final TrafficInformationImpl ti = session.getTrafficInfo();
         final CountingOutputStream out = new CountingOutputStream(
             t.getResponseBody(), ti) {
             

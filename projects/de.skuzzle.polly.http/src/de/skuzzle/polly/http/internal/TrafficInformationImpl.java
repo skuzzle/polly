@@ -35,6 +35,14 @@ class TrafficInformationImpl implements TrafficInformation {
     }
     
     
+    
+    void updateFrom(TrafficInformationImpl other) {
+        this.updateDownload(other.download);
+        this.updateUpload(other.upload);
+    }
+    
+    
+    
     public synchronized void updateUpload(int bytes) {
         if (this.parent != null) {
             this.parent.updateUpload(bytes);
