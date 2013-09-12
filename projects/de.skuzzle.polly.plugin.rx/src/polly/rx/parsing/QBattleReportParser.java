@@ -44,6 +44,8 @@ public class QBattleReportParser {
     
     
     public static BattleReport parse(String report, int submitterId) throws ParseException {
+        System.out.println(report);
+        
         try (Scanner s = new Scanner(report)) {
             final Pattern delimiter = s.delimiter();
             
@@ -58,7 +60,7 @@ public class QBattleReportParser {
                 throw new ParseException("Misformatted date");
             }
             
-            s.skip("\\D+");
+            s.skip("\\D*");
             
             // drop
             final List<BattleDrop> drop = new ArrayList<>(RxRessource.values().length);
@@ -145,6 +147,7 @@ public class QBattleReportParser {
             
             final List<BattleReportShip> defenderShips = new ArrayList<>(50);
             s.useDelimiter(delimiter);
+            
             while (s.hasNext()) {
                 s.useDelimiter(delimiter);
                 final BattleReportShip ship = findShip(s);
@@ -227,7 +230,9 @@ public class QBattleReportParser {
             s.useDelimiter("\\D+");
             id = s.nextInt();
         }
-        s.nextLine();
+        if (s.hasNextLine()) {
+            s.nextLine();
+        }
         
         return new BattleReportShip(id, 
             shipName, 
