@@ -1,9 +1,11 @@
 package de.skuzzle.polly.core.internal.httpv2;
 
+import java.util.Date;
 import java.util.List;
 
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
+import de.skuzzle.polly.sdk.httpv2.SuccessResult;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLTableModel;
 
 
@@ -33,14 +35,20 @@ public class UserDataSource implements HTMLTableModel<User> {
         switch (column) {
         case 0: return element.getId();
         case 1: return element.getName();
-        case 2: return element.getCurrentNickName() == null ? "" : element.getCurrentNickName();
+        case 2: return element.getCurrentNickName();
         case 3: return element.isIdle();
-        case 4: return element.getLastMessageTime();
-        case 5: return element.getLoginTime();
+        case 4: return new Date(element.getLastMessageTime());
+        case 5: return new Date(element.getLoginTime());
         default: return "";
         }
     }
 
+    @Override
+    public SuccessResult setCellValue(int column, String value) {
+        System.out.println(value);
+        return new SuccessResult(true, "");
+    }
+    
     @Override
     public List<User> getData() {
         return this.um.getRegisteredUsers();
@@ -54,5 +62,23 @@ public class UserDataSource implements HTMLTableModel<User> {
     @Override
     public boolean isSortable(int column) {
         return column < 6;
+    }
+
+    @Override
+    public boolean isEditable(int column) {
+        return true;
+    }
+    
+    @Override
+    public Class<?> getColumnClass(int column) {
+        switch (column) {
+        case 0:
+        case 1: 
+        case 2: return String.class;
+        case 3: return Boolean.class;
+        case 4:
+        case 5: return Date.class;
+        default: return Object.class;
+        }
     }
 }

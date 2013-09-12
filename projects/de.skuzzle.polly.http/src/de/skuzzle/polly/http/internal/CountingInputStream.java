@@ -64,7 +64,7 @@ class CountingInputStream extends FilterInputStream {
     
     @Override
     public synchronized int read(byte[] b, int off, int len) throws IOException {
-        final int read = super.read(b, off, len);
+         final int read = super.read(b, off, len);
         this.trafficInfo.updateDownload(Math.max(0, read));
         return read;
     }
