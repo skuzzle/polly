@@ -2,6 +2,7 @@ package polly.reminds;
 
 
 import http.RemindHttpController;
+import http.RemindTableModel;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -35,6 +36,8 @@ import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
 import de.skuzzle.polly.sdk.exceptions.RoleException;
+import de.skuzzle.polly.sdk.httpv2.html.HTMLTable;
+import de.skuzzle.polly.sdk.httpv2.html.HTMLTableModel;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.time.Milliseconds;
 import entities.RemindEntity;
@@ -140,6 +143,10 @@ public class MyPlugin extends PollyPlugin {
         
         final Controller ctrl = new RemindHttpController(myPolly, this.remindManager);
         this.getMyPolly().webInterface().getServer().addController(ctrl);
+        
+        final HTMLTableModel<RemindEntity> model = new RemindTableModel(this.remindManager);
+        final HTMLTable<RemindEntity> remindTable = new HTMLTable<>("reminds", model);
+        this.getMyPolly().webInterface().getServer().addHttpEventHandler("/api/allReminds", remindTable);
     }
     
     

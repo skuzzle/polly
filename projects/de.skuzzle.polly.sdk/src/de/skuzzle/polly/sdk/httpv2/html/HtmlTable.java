@@ -216,7 +216,6 @@ public class HTMLTable<T> implements HttpEventHandler {
     
     
     private final String tableId;
-    private final String template;
     private final Map<String, Object> baseContext;
     private HTMLTableModel<T> model;
     private HTMLColumnSorter<T> colSorter;
@@ -225,9 +224,8 @@ public class HTMLTable<T> implements HttpEventHandler {
     private final Map<Class<?>, CellRenderer> renderers;
     
     
-    public HTMLTable(String tableId, String template, HTMLTableModel<T> model) {
+    public HTMLTable(String tableId, HTMLTableModel<T> model) {
         this.tableId = tableId;
-        this.template = template;
         this.baseContext = new HashMap<>();
         this.model = model;
         this.colSorter = new DefaultColumnSorter<>();
@@ -341,7 +339,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         c.put("indexMap", fr.indexMap);
         c.put("table", this);
         c.putAll(this.baseContext);
-        return HttpAnswers.newTemplateAnswer(this.template, c);
+        return HttpAnswers.newTemplateAnswer("de/skuzzle/polly/sdk/httpv2/table.html", c);
     }
     
     

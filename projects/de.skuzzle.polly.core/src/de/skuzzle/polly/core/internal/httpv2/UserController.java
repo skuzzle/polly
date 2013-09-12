@@ -34,7 +34,7 @@ public class UserController extends PollyController {
     
     public static void createUserTable(MyPolly myPolly) {
         final HTMLTable<User> table = new HTMLTable<>("userList", 
-            "templatesv2/users.list.html", new UserDataSource(myPolly.users()));
+            new UserDataSource(myPolly.users()));
         
         table.getBaseContext().put("myPolly", myPolly);
         myPolly.webInterface().getServer().addHttpEventHandler("/api/allUsers", table);

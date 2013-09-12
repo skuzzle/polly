@@ -1,0 +1,312 @@
+
+
+
+#if ($snoozable)
+<div class="highlight contentBox" id="showSnooze">
+    #CONTENT_HEADER ("Snoozable Remind for you")
+    <div class="content">
+    <table style="table-layout: fixed;">
+        <tr>
+            <th>From</th>
+            <th style="width: 30%">Message</th>
+            <th>Left</th>
+            <th style="width: 50%">Snooze</th>
+        </tr>
+        
+        <tr>
+            <td>$snoozable.getFromUser()</td>
+            <td>$snoozable.getMessage()</td>
+            <td>$myPolly.formatting().formatDate($snoozable.getLeaveDate())</td>
+            <td>
+                <input 
+                    type="text" 
+                    class="textbox" 
+                    id="snooze_input"
+                    placeholder="Insert polly date expression" 
+                 />
+                <input type="button" class="button" value="Set" onclick="setInputSnooze()"/>
+                <input type="button" class="button" value="$defaultRemindTime" onclick="setSnooze('$defaultRemindTime')"/>
+                <input type="button" class="button" value="Discard" onclick="discardSnooze()"/>
+            </td>
+            
+        </tr>
+    </table>
+    </div>
+</div>
+#end
+
+<script>
+function setInputSnooze() {
+	var expression = encodeURIComponent($("#snooze_input").val())
+	setSnooze(expression);
+}
+function setSnooze(timespan) {
+	$.get("$PAGE_SETSNOOZE?timespan="+timespan, function(data) {
+		var result = JSON.parse(data);
+		if (!result.success) {
+			$("#snooze_input").val(result.message);
+			$("#snooze_input").select();
+		} else {
+            $("#showSnooze").fadeOut();
+            location.reload();
+		}
+	});
+};
+function discardSnooze() {
+	showProgress();
+	$.get("$PAGE_DISCARDSNOOZE", function(data) {
+		var result = JSON.parse(data);
+		if (result.success) {
+			$("#showSnooze").fadeOut();
+		}
+		stopProgress();
+	});
+}
+</script>
+
+
+
+<div class="highlight contentBox">
+    #CONTENT_HEADER ("Reminds for- or from you")
+    
+    <div class="content">
+    #if (!$userReminds.isEmpty())
+    <table style="table-layout: fixed;">
+        #TABLE_HEAD
+        #foreach ($remind in $userReminds)
+            #SINGLE_REMIND ( $remind )
+        #end
+    </table>
+    #else
+    <p>There are currently no reminds scheduled in this view.</p>
+    #end
+    </div>
+</div>
+
+
+
+#if (!$allReminds.isEmpty())
+<div class="highlight contentBox">
+    #CONTENT_HEADER ("Admin View - All Reminds")
+    
+    <div class="content">
+        <table style="table-layout: fixed;">
+            #TABLE_HEAD
+            #foreach ($remind in $allReminds)
+                ## DO only add reminds that are not for our self
+                #if (!$remind.getForUser().equals($user.getName()))
+                #SINGLE_REMIND ( $remind )
+                #end
+            #end
+        </table>
+    </div>
+</div>
+#end
+
+
+
+## Print Remind table header
+#macro (TABLE_HEAD)
+<tr>
+    <th>Id</th>
+    <th style="width: 20%">Message</th>
+    <th style="width: 20%">Due</th>
+    <th>Left</th>
+    <th>Type</th>
+    <th>For</th>
+    <th>From</th>
+    <th style="width: 15%">Action</th>
+</tr>
+#end
+
+
+
+## Prints table row for single remind
+#macro (SINGLE_REMIND $remind)
+<tr id="tr_$remind.getId()">
+    <td>$remind.getId()</td>
+    <td>
+        <span id="edit_message_$remind.getId()" style="display:none">
+            <input 
+                type="text" 
+                class="textbox edit_message" 
+                value="$remind.getMessage()"
+                remindId="$remind.getId()"
+                style="width:90%"
+            /> 
+            <a 
+                href="#" 
+                title="Submit changes" 
+                onclick="modifyMessage($remind.getId())"><img src="/http/view/files/tick.png" height="16" width="16" style="vertical-align:middle">
+            </a>
+        </span>
+        <span id="show_message_$remind.getId()">
+            <span id="message_value_$remind.getId()">$remind.getMessage()</span> 
+            <a 
+                href="#" 
+                title="Edit message" 
+                onclick="editMessage($remind.getId())"><img src="/http/view/files/edit.png" height="16" width="16" style="vertical-align:middle">
+            </a>
+        </span>
+    </td>
+    <td>
+        <span id="edit_dueDate_$remind.getId()" style="display:none">
+            <input 
+                type="text" 
+                class="textbox edit_dueDate" 
+                value="$myPolly.formatting().formatDate($remind.getDueDate())"
+                remindId="$remind.getId()"
+                style="width:85%"
+                placeholder="Enter polly date expression"
+            /> 
+            <a 
+                href="#" 
+                onclick="modifyDueDate($remind.getId())"><img src="/http/view/files/tick.png" height="16" width="16" style="vertical-align:middle">
+            </a>
+        </span>
+        <span id="show_dueDate_$remind.getId()">
+            <span id="dueDate_value_$remind.getId()">$myPolly.formatting().formatDate($remind.getDueDate())</span> 
+            <a href="#" title="Edit Due date" onclick="editDueDate($remind.getId())"><img src="/http/view/files/date_edit.png" height="16" width="16" style="vertical-align:middle"></a>
+        </span>
+    </td>
+    <td>$myPolly.formatting().formatDate($remind.getLeaveDate())</td>
+    <td id="type_$remind.getId()">
+        #if ($remind.isMail()) 
+            Mail 
+        #elseif ($remind.isOnAction()) 
+            On Action 
+        #elseif ($remind.isMessage()) 
+            Message  
+         #else 
+            Remind 
+         #end
+    </td>
+    <td>$remind.getForUser()</td>
+    <td>$remind.getFromUser()</td>
+    <td>
+        <input type="button" class="button" id="delete_$remind.getId()" value="Cancel" onclick="cancelRemind($remind.getId())" title="Delete remind"/>
+        <input type="button" class="button" id="toggle_$remind.getId()" value="Toggle" onclick="toggleRemind($remind.getId())" title="Toggle between Mail and IRC delivery"/>
+    </td>
+</tr>
+#end
+
+
+<script>
+$(document).ready(function() {
+	$(".edit_message").keyup(function(event) {
+		var id = $(this).attr("remindId");
+		if (event.which == 13) {
+			modifyMessage(id);
+		}
+	});
+    $(".edit_message").focusout(function() {
+    	var id = $(this).attr("remindId");
+    	setTimeout(function() {
+	        $("#edit_message_"+id).fadeOut(100, function() {
+	            $("#show_message_"+id).fadeIn(100);
+	        });
+    	}, 300);
+    });
+    $(".edit_dueDate").keyup(function(event) {
+        var id = $(this).attr("remindId");
+        if (event.which == 13) {
+            modifyDueDate(id);
+        }
+    });
+    $(".edit_dueDate").focusout(function() {
+    	var id = $(this).attr("remindId");
+        setTimeout(function() {
+	        $("#edit_dueDate_"+id).fadeOut(100, function() {
+	            $("#show_dueDate_"+id).fadeIn(100);
+	        });
+        }, 300);
+    });
+});
+
+
+
+
+function editMessage(id) {
+	$("#edit_message_"+id+" input").focus();
+	$("#show_message_"+id).fadeOut(100, function() {
+    	$("#edit_message_"+id).fadeIn(100, function() {
+   		    $("#edit_message_"+id+" input").select();
+    	});
+	});
+}
+function modifyMessage(id) {
+	var message = encodeURIComponent($("#edit_message_"+id+" input").val());
+    showProgress();
+    $.get("$PAGE_MODIFYREMIND?remindId="+id+"&message="+message, function(data) {
+        var result = JSON.parse(data);
+        if (!result.success) {
+            alert(result.message);
+        } else {
+            $("#edit_message_"+id+" input").val(result.remindMessage);
+            $("#message_value_"+id).text(result.remindMessage);
+            $("#edit_message_"+id).fadeOut(100, function() {
+            	$("#show_message_"+id).fadeIn(100);
+            })
+        }
+        stopProgress();
+    });
+}
+
+
+
+function editDueDate(id) {
+    $("#show_dueDate_"+id).fadeOut(100, function() {
+        $("#edit_dueDate_"+id).fadeIn(100, function() {
+       	   $("#edit_dueDate_"+id+" input").val("");
+       	   $("#edit_dueDate_"+id+" input").select();
+       	   $("#edit_dueDate_"+id+" input").focus();
+        });
+        
+    });
+}
+function modifyDueDate(id) {
+    var dueDate = encodeURIComponent($("#edit_dueDate_"+id+" input").val());
+    showProgress();
+    $.get("$PAGE_MODIFYREMIND?remindId="+id+"&dueDate="+dueDate, function(data) {
+        var result = JSON.parse(data);
+        if (!result.success) {
+            alert(result.message);
+        } else {
+            $("#edit_dueDate_"+id+" input").val(result.dueDate);
+            $("#dueDate_value_"+id).text(result.dueDate);
+            $("#edit_dueDate_"+id).fadeOut(100, function() {
+                $("#show_dueDate_"+id).fadeIn(100);
+            })
+        }
+        stopProgress();
+    });
+}
+function cancelRemind(id) {
+    showProgress();
+    $.get("$PAGE_CANCELREMIND?remindId="+id, function(data) {
+    	var result = JSON.parse(data);
+    	if (result.success) {
+    		$("#tr_"+id).remove();
+    	} else {
+    		alert(result.message);
+    	}
+   		stopProgress();
+    });
+}
+function toggleRemind(id) {
+	showProgress();
+	$.get("$PAGE_TOGGLEREMIND?remindId="+id, function(data) {
+		var result = JSON.parse(data);
+		if (result.success) {
+			if (result.isMail) {
+				$("#type_"+id).text("Mail");
+			} else {
+				$("#type_"+id).text("Remind");
+			}
+		} else {
+			alert(result.message);
+		}
+		stopProgress();
+	});
+}
+</script>
