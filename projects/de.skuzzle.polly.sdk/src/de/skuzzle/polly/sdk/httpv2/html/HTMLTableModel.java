@@ -13,7 +13,7 @@ public interface HTMLTableModel<T> {
     
     public boolean isEditable(int column);
     
-    public SuccessResult setCellValue(int column, String value);
+    public SuccessResult setCellValue(int column, int row, String value);
     
     public String getHeader(int column);
     

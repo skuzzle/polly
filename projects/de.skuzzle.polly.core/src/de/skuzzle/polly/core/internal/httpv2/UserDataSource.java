@@ -44,8 +44,11 @@ public class UserDataSource implements HTMLTableModel<User> {
     }
 
     @Override
-    public SuccessResult setCellValue(int column, String value) {
-        System.out.println(value);
+    public SuccessResult setCellValue(int column, int row, String value) {
+        final User usr = this.getData().get(row);
+        System.out.println("User to edit: " + usr.getName());
+        System.out.println("Edit col: " + column);
+        System.out.println("Edit row: " + row);
         return new SuccessResult(true, "");
     }
     
@@ -66,7 +69,7 @@ public class UserDataSource implements HTMLTableModel<User> {
 
     @Override
     public boolean isEditable(int column) {
-        return true;
+        return false;
     }
     
     @Override

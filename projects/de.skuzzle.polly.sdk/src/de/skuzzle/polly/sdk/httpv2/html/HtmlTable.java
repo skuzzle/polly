@@ -28,35 +28,35 @@ public class HTMLTable<T> implements HttpEventHandler {
     
     public static class BooleanCellEditor implements CellEditor {
         @Override
-        public HTMLInput renderEditorCell(Object cellContent, boolean forFilter) {
+        public HTMLElement renderEditorCell(Object cellContent, boolean forFilter) {
             
             if (forFilter) {
                 // if filter, cellContent is the filter string!
                 final String f = (String) cellContent;
                 
                 final String name = "opt_" + (int) (Math.random() * 1000);
-                final HTMLInput all = new HTMLInput()
+                final HTMLElement all = new HTMLElement("input")
                     .attr("type", "radio")
                     .attr("name", name)
                     .attr("class", "filter_input")
                     .attr("value", "")
                     .content("All");
                     
-                final HTMLInput selected = new HTMLInput()
+                final HTMLElement selected = new HTMLElement("input")
                     .attr("type", "radio")
                     .attr("name", name)
                     .attr("class", "filter_input")
                     .attr("value", "true")
                     .content("true");
                 
-                final HTMLInput unselected = new HTMLInput()
+                final HTMLElement unselected = new HTMLElement("input")
                     .attr("type", "radio")
                     .attr("name", name)
                     .attr("class", "filter_input")
                     .attr("value", "false")
                     .content("false");
                 
-                final HTMLInput checked;
+                final HTMLElement checked;
                 if (f.equals("")) {
                     checked = all;
                 } else if (f.equals("true")) {
@@ -67,7 +67,7 @@ public class HTMLTable<T> implements HttpEventHandler {
                 checked.attr("checked");
                 return new HTMLInputGroup().add(all).add(selected).add(unselected);
             }
-            final HTMLInput in = new HTMLInput().attr("type", "checkbox");
+            final HTMLElement in = new HTMLElement("input").attr("type", "checkbox");
             if (cellContent != null && (Boolean) cellContent) {
                 in.attr("checked");
             }
@@ -96,11 +96,14 @@ public class HTMLTable<T> implements HttpEventHandler {
     
     public static class TextCellEditor implements CellEditor {
         @Override
-        public HTMLInput renderEditorCell(Object cellContent, boolean forFilter) {
+        public HTMLElement renderEditorCell(Object cellContent, boolean forFilter) {
             final String cls = forFilter ? "textbox filter_input" : "textbox edit_input";
             final String content = cellContent == null ? "" : cellContent.toString();
-            return new HTMLInput().attr("type", "text").attr("class", cls)
-                .attr("style", "width: 85%").attr("value", content);
+            return new HTMLElement("input")
+                .attr("type", "text")
+                .attr("class", cls)
+                .attr("style", "width: 85%")
+                .attr("value", content);
         }
         
         
@@ -149,10 +152,12 @@ public class HTMLTable<T> implements HttpEventHandler {
 
     private final static String SORT_COLUMN = "sort";
     private final static String SET_PAGE = "page";
+    private final static String SET_PAGE_SIZE = "pageSize";
     private final static String FILTER_VAL = "filterVal";
     private final static String FILTER_COL = "filterCol";
     private final static String SET_VALUE = "setValue";
     private final static String COLUMN = "col";
+    private final static String ROW = "row";
     
     private final static int DEFAULT_PAGE_SIZE = 10;
     
@@ -198,6 +203,18 @@ public class HTMLTable<T> implements HttpEventHandler {
     
     
     
+    private class FilterResult {
+        private final List<T> data;
+        private final Map<T, Integer> indexMap;
+        public FilterResult(List<T> data, Map<T, Integer> indexMap) {
+            super();
+            this.data = data;
+            this.indexMap = indexMap;
+        }
+    }
+    
+    
+    
     private final String tableId;
     private final String template;
     private final Map<String, Object> baseContext;
@@ -215,6 +232,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         this.model = model;
         this.colSorter = new DefaultColumnSorter<>();
         this.filter = new DefaultColumnFilter();
+        
         this.editors = new HashMap<>();
         this.editors.put(String.class, new TextCellEditor());
         this.editors.put(Object.class, new TextCellEditor());
@@ -299,12 +317,16 @@ public class HTMLTable<T> implements HttpEventHandler {
         } else if (e.get(SET_VALUE) != null) {
             final String value = e.get(SET_VALUE);
             final int col = Integer.parseInt(e.get(COLUMN));
+            final int row = Integer.parseInt(e.get(ROW));
             
-            return new GsonHttpAnswer(200, this.model.setCellValue(col, value));
+            return new GsonHttpAnswer(200, this.model.setCellValue(col, row, value));
+        } else if (e.get(SET_PAGE_SIZE) != null) {
+            final int pageSize = Integer.parseInt(e.get(SET_PAGE_SIZE));
+            settings.pageSize = pageSize;
         }
         
         // get filtered elements
-        final List<T> elements = this.getFilteredElements(settings);
+        final FilterResult fr = this.getFilteredElements(settings);
         
         final Map<String, Object> c = new HashMap<>();
         c.put("settings", settings);
@@ -315,7 +337,8 @@ public class HTMLTable<T> implements HttpEventHandler {
         c.put("editors", this.editors);
         c.put("baseUrl", registered);
         c.put("tId", this.tableId);
-        c.put("data", elements);
+        c.put("data", fr.data);
+        c.put("indexMap", fr.indexMap);
         c.put("table", this);
         c.putAll(this.baseContext);
         return HttpAnswers.newTemplateAnswer(this.template, c);
@@ -323,13 +346,19 @@ public class HTMLTable<T> implements HttpEventHandler {
     
     
     
-    private List<T> getFilteredElements(TableSettings s) {
+    private FilterResult getFilteredElements(TableSettings s) {
         
         // first: filter full data
         final int colCount = this.model.getColumnCount();
         final List<T> data = this.model.getData();
+        final Map<T, Integer> idxMap = new HashMap<>(data.size());
         List<T> result = new ArrayList<>(data.size());
+        
+        int originalIdx = -1;
         outer: for (final T element : data) {
+            ++originalIdx; // index of current element in the original data
+            
+            
             for (int i = 0; i < colCount; ++i) {
                 final String colFilter = s.filter[i];
                 if (!this.model.isFilterable(i) || colFilter.equals("")) {
@@ -342,12 +371,15 @@ public class HTMLTable<T> implements HttpEventHandler {
                     continue outer;
                 }
             }
+            
             // all filters applied, each accepted the element
+            // map index witihn the filetered- to index in the full colletion
+            idxMap.put(element, originalIdx); 
             result.add(element);
         }
         
         if (result.isEmpty()) {
-            return result;
+            return new FilterResult(result, idxMap);
         }
         
         // get view port based on filtered data
@@ -365,6 +397,6 @@ public class HTMLTable<T> implements HttpEventHandler {
                 Collections.sort(result, new DirectedComparator<>(s.getOrder(), c));
             }
         }
-        return result;
+        return new FilterResult(result, idxMap);
     }
 }

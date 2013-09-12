@@ -5,32 +5,34 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 
-public class HTMLInput {
+public class HTMLElement {
 
     private final Map<String, String> attributes;
     private String content;
+    private final String tag;
     
     
-    public HTMLInput() {
+    public HTMLElement(String tag) {
+        this.tag = tag;
         this.attributes = new HashMap<>();
     }
     
     
     
-    public HTMLInput attr(String name, String val) {
+    public HTMLElement attr(String name, String val) {
         this.attributes.put(name, val);
         return this;
     }
     
     
     
-    public HTMLInput attr(String name) {
+    public HTMLElement attr(String name) {
         return this.attr(name, null);
     }
     
     
     
-    public HTMLInput content(String content) {
+    public HTMLElement content(String content) {
         this.content = content;
         return this;
     }
@@ -40,7 +42,9 @@ public class HTMLInput {
     @Override
     public String toString() {
         final StringBuilder b = new StringBuilder();
-        b.append("<input ");
+        b.append("<");
+        b.append(this.tag);
+        b.append(" ");
         for (final Entry<String, String> e : this.attributes.entrySet()) {
             b.append (e.getKey());
             b.append(" ");
@@ -53,7 +57,9 @@ public class HTMLInput {
         if (this.content != null) {
             b.append(">");
             b.append(this.content);
-            b.append("</input>");
+            b.append("</");
+            b.append(this.tag);
+            b.append(">");
         } else {
             b.append("/>");
         }
