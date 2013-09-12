@@ -22,7 +22,7 @@ import de.skuzzle.polly.sdk.util.DirectedComparator;
 import de.skuzzle.polly.sdk.util.DirectedComparator.SortOrder;
 
 
-public class HtmlTable<T> implements HttpEventHandler {
+public class HTMLTable<T> implements HttpEventHandler {
     
     
     
@@ -208,7 +208,7 @@ public class HtmlTable<T> implements HttpEventHandler {
     private final Map<Class<?>, CellRenderer> renderers;
     
     
-    public HtmlTable(String tableId, String template, HTMLTableModel<T> model) {
+    public HTMLTable(String tableId, String template, HTMLTableModel<T> model) {
         this.tableId = tableId;
         this.template = template;
         this.baseContext = new HashMap<>();

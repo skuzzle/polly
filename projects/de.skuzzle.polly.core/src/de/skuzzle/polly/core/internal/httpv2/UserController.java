@@ -22,7 +22,7 @@ import de.skuzzle.polly.sdk.exceptions.RoleException;
 import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
 import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
-import de.skuzzle.polly.sdk.httpv2.html.HtmlTable;
+import de.skuzzle.polly.sdk.httpv2.html.HTMLTable;
 import de.skuzzle.polly.sdk.httpv2.PollyController;
 import de.skuzzle.polly.sdk.httpv2.SuccessResult;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
@@ -33,7 +33,7 @@ public class UserController extends PollyController {
     
     
     public static void createUserTable(MyPolly myPolly) {
-        final HtmlTable<User> table = new HtmlTable<>("userList", 
+        final HTMLTable<User> table = new HTMLTable<>("userList", 
             "templatesv2/users.list.html", new UserDataSource(myPolly.users()));
         
         table.getBaseContext().put("myPolly", myPolly);
