@@ -129,6 +129,11 @@ public class AutoLogonHandler extends AbstractDisposable
 
     @Override
     public void userSpotted(SpotEvent e) {
+        final String forUser = e.getUser().getNickName();
+        if (this.userExists(forUser)) {
+            // try instant login if user just spotted 
+            this.ircManager.sendRawCommand("NICKSERV STATUS " + forUser);
+        }
         this.scheduleAutoLogon(e.getUser().getNickName());
     }
 
