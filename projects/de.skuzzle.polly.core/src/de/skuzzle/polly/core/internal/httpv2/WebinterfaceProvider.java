@@ -2,7 +2,8 @@ package de.skuzzle.polly.core.internal.httpv2;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Comparator;
+
+import org.apache.log4j.Logger;
 
 import de.skuzzle.polly.core.Polly;
 import de.skuzzle.polly.core.configuration.ConfigurationProviderImpl;
@@ -20,6 +21,7 @@ import de.skuzzle.polly.http.api.AddHandlerListener;
 import de.skuzzle.polly.http.api.Controller;
 import de.skuzzle.polly.http.api.DefaultServerFactory;
 import de.skuzzle.polly.http.api.HttpEvent;
+import de.skuzzle.polly.http.api.HttpEventListener;
 import de.skuzzle.polly.http.api.HttpException;
 import de.skuzzle.polly.http.api.HttpServer;
 import de.skuzzle.polly.http.api.HttpServletServer;
@@ -30,7 +32,6 @@ import de.skuzzle.polly.http.api.answers.HttpResourceAnswer;
 import de.skuzzle.polly.http.api.answers.HttpTemplateAnswer;
 import de.skuzzle.polly.http.api.handler.DirectoryEventHandler;
 import de.skuzzle.polly.http.api.handler.HttpEventHandler;
-import de.skuzzle.polly.http.api.handler.SingleFileEventHandler;
 import de.skuzzle.polly.http.internal.HttpServerCreator;
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.ConfigurationProvider;
@@ -53,6 +54,9 @@ import de.skuzzle.polly.sdk.time.Milliseconds;
     provides = @Provide(component = WebInterfaceManagerImpl.class)
 )
 public class WebinterfaceProvider extends AbstractProvider {
+    
+    private final static Logger logger = Logger.getLogger(WebinterfaceProvider.class
+        .getName());
     
     public final static String HTTP_CONFIG = "http.cfg";
     private Configuration serverCfg;
@@ -85,7 +89,15 @@ public class WebinterfaceProvider extends AbstractProvider {
         this.server.setSessionLiveTime(sessionTimeout);
         this.server.setSessionType(HttpServer.SESSION_TYPE_COOKIE);
         this.server.setAnswerHandler(GsonHttpAnswer.class, new GsonHttpAnswerHandler());
-        
+        this.server.addHttpEventListener(new HttpEventListener() {
+            
+            @Override
+            public void onRequest(HttpEvent e) {
+                logger.debug("HTTP: " + e.getMode() + " " + 
+                    e.getRequestURI().toString() + " [ip: " + e.getClientIP() + ", " + 
+                        e.getSession().getAttached("user") + " ]");
+            }
+        });
         
         ShutdownManagerImpl sm = this.requireNow(ShutdownManagerImpl.class, true);
         sm.addDisposable(new Disposable() {
@@ -127,6 +139,7 @@ public class WebinterfaceProvider extends AbstractProvider {
                     new MenuEntry(name, url, description, permissions));
             }
         });
+        
         this.provideComponent(this.webinterface);
         
     }

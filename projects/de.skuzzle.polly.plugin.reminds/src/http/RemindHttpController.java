@@ -24,6 +24,7 @@ import de.skuzzle.polly.sdk.httpv2.PollyController;
 import de.skuzzle.polly.sdk.httpv2.SuccessResult;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.roles.RoleManager;
+import de.skuzzle.polly.sdk.time.Milliseconds;
 import entities.RemindEntity;
 
 
@@ -64,23 +65,20 @@ public class RemindHttpController extends PollyController {
         this.requirePermissions(MyPlugin.REMIND_PERMISSION);
         final Map<String, Object> c = this.createContext("http/view/remind.overview.html");
         
-        final List<RemindEntity> userReminds = 
-            this.rm.getDatabaseWrapper().getMyRemindsForUser(
-                this.getSessionUser().getName());
+        final RemindEntity snoozable = this.rm.getSnoozabledRemind(
+            this.getSessionUser().getName());
         
-        Collections.sort(userReminds, RemindEntity.BY_DUE_DATE);
-        c.put("userReminds", userReminds);
-
-        final List<RemindEntity> allReminds;
-        if (this.getMyPolly().roles().hasPermission(this.getSessionUser(), 
-                RoleManager.ADMIN_PERMISSION)) {
-            allReminds = this.rm.getDatabaseWrapper().getAllReminds();
+        // remind run time in seconds
+        final long rt;
+        if (snoozable != null) {
+            rt = Milliseconds.toSeconds(
+                snoozable.getDueDate().getTime() - snoozable.getLeaveDate().getTime());
         } else {
-            allReminds = new ArrayList<>();
+            rt = 0;
         }
-        Collections.sort(allReminds, RemindEntity.BY_DUE_DATE);
-        c.put("allReminds", allReminds);
-        c.put("snoozable", this.rm.getSnoozabledRemind(this.getSessionUser().getName()));
+
+        c.put("runtime", this.getMyPolly().formatting().formatTimeSpan(rt));
+        c.put("snoozable", snoozable);
         c.put("lastRemind", this.rm.getLastRemind(this.getSessionUser()));
         c.put("defaultRemindTime", this.getSessionUser().getAttribute(
             MyPlugin.DEFAULT_REMIND_TIME).valueString(this.getMyPolly().formatting()));

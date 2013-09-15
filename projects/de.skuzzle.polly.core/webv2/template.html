@@ -193,6 +193,7 @@
     <div id="top">
         <span class="copyRight">
             Response time: <em>${executionTime}ms</em>. 
+            Download: <em>$myPolly.formatting().formatBytes($session.getTrafficInfo().getUpload())</em>.
             #if ($myPolly.getPollyVersion()) 
                 Polly v. $myPolly.getPollyVersion(). 
             #else 
