@@ -1,0 +1,119 @@
+#macro (PAGE_NAV $id $baseUrl $model $settings)
+#set ($pageCount = $settings.getPageCount() - 1)
+#set ($prev = $settings.getPage() - 1)
+#set ($next = $settings.getPage() + 1)
+
+<tr>
+    <th colspan="$model.getColumnCount()">
+    <a href="#" onclick="loadTable('$baseUrl', '$id')">Reload</a>
+    Pages: 
+    #if ($settings.getPage() == 0)
+        <b>First</b> &lt;
+    #else
+        <a href="#" onclick="setPageRequest('$baseUrl', '$id', '0')">First</a>
+        <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$prev')">&lt;</a>
+    #end
+    #foreach ($page in [0..$pageCount])
+        #set($viewPage = $page + 1) 
+        #if ($page == $settings.getPage())
+            <b>$viewPage</b>
+        #else
+            <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$page')">$viewPage</a>
+        #end
+    #end
+    #if ($settings.getPage() == $pageCount)
+         &gt; <b>Last</b>
+    #else
+        <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$next')">&gt;</a>
+        <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$pageCount')">Last</a>
+    #end
+        
+        <img id="update_$id" style="float:right; display: none;"src="/de/skuzzle/polly/sdk/httpv2/html/loading.gif"/>
+        <span baseUrl="$baseUrl" class="select_pageSize" style="float:right">Page size: 
+            <select size="1">
+            #foreach ($ps in [1..10])
+            #set($value = $ps*10)
+            <option value="$value" #if ($value == $settings.getPageSize()) selected #end>$value</option>
+            #end
+            </select>
+        </span>
+    </th>
+</tr>
+#end
+
+
+
+## Macro to create a sort- and filterable table
+#macro (SORTABLE_TABLE $id $baseUrl $model $filter $editors $settings)
+#set ($colCount = $model.getColumnCount() - 1)
+<thead>
+#PAGE_NAV ($id, $baseUrl, $model, $settings)
+<tr>
+#foreach ($col in [0..$colCount])
+    <th>
+     #if ($model.isSortable($col)) 
+         <a href="#" title="Sort by $model.getHeader($col)" onclick="sortTableRequest('$baseUrl', '$id', $col)">
+     #end
+
+     #if ($col == $settings.getSortCol())
+         #if ($settings.getOrder() == "ASCENDING")
+             <img src="/de/skuzzle/polly/sdk/httpv2/html/sort_ascending.png" style="vertical-align:middle" width="16" height="16"/>
+         #elseif ($settings.getOrder() == "DESCENDING")
+             <img src="/de/skuzzle/polly/sdk/httpv2/html/sort_descending.png" style="vertical-align:middle" width="16" height="16"/>
+         #end
+     #end
+    
+     $model.getHeader($col)
+
+     #if ($model.isSortable($col)) 
+         </a>
+     #end
+    </th>
+#end
+</tr>
+<tr baseUrl="$baseUrl">
+    #foreach ($col in [0..$colCount])
+    <td col="$col">
+        #if ($model.isFilterable($col))
+            #set($editor = $editors.get($model.getColumnClass($col)))
+            $editor.renderEditorCell($settings.filter[$col], true)
+        #else
+            <span style="color: #cccccc">No Filter</span>
+        #end 
+    </td>
+    #end
+</tr>
+</thead>
+
+## BODY:
+
+#foreach ($element in $data)
+#set ($row = $indexMap.get($element))
+
+<tr baseUrl="$baseUrl" row="$row">
+    #foreach ($col in [0..$colCount])
+    <td col="$col">
+        #set ($renderer = $renderers.get($model.getColumnClass($col)))
+        <span id="${tId}_${col}_${row}_value">
+            <span id="${tId}_${col}_${row}_valueX">$renderer.renderCellContent($col, $model.getCellValue($col, $element))</span>
+        #if ($model.isEditable($col))
+            #set($editor = $editors.get($model.getColumnClass($col)))
+            <a class="showEditor" href="#" title="Edit $model.getHeader($col)">$editor.getEditIndicator()</a>
+        </span>
+        <span id="${tId}_${col}_${row}_editor" class="edit">$editor.renderEditorCell($model.getCellValue($col, $element), false)
+            <a class="submitEditor" href="#" title="Submit changes"><img src="/de/skuzzle/polly/sdk/httpv2/html/tick.png" style="vertical-align:middle" width="16" height="16"/></a>
+        </span>
+        #else
+        </span>
+        #end
+    </td>
+    #end
+</tr>
+#end
+
+#PAGE_NAV ($tId, $baseUrl, $tableModel, $settings)
+#end
+
+
+
+#SORTABLE_TABLE ($tId, $baseUrl, $tableModel, $filter, $editors, $settings)
