@@ -3,13 +3,13 @@ package de.skuzzle.polly.core.internal.httpv2;
 import java.util.Date;
 import java.util.List;
 
+import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
-import de.skuzzle.polly.sdk.httpv2.SuccessResult;
-import de.skuzzle.polly.sdk.httpv2.html.HTMLTableModel;
+import de.skuzzle.polly.sdk.httpv2.html.AbstractHTMLTableModel;
 
 
-public class UserDataSource implements HTMLTableModel<User> {
+public class UserDataSource extends AbstractHTMLTableModel<User> {
 
     private final static String[] COLUMNS = {
         "Id", "Name", "Nickname", "Is Idle", "Last IRC action", "IRC login", "Action"};
@@ -42,18 +42,9 @@ public class UserDataSource implements HTMLTableModel<User> {
         default: return "";
         }
     }
-
-    @Override
-    public SuccessResult setCellValue(int column, int row, String value) {
-        final User usr = this.getData().get(row);
-        System.out.println("User to edit: " + usr.getName());
-        System.out.println("Edit col: " + column);
-        System.out.println("Edit row: " + row);
-        return new SuccessResult(true, "");
-    }
     
     @Override
-    public List<User> getData() {
+    public List<User> getData(HttpEvent e) {
         return this.um.getRegisteredUsers();
     }
 

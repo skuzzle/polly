@@ -1,11 +1,16 @@
 package de.skuzzle.polly.sdk.httpv2.html;
 
 import java.util.List;
+import java.util.Map;
 
+import de.skuzzle.polly.http.api.HttpEvent;
+import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.httpv2.SuccessResult;
+import de.skuzzle.polly.sdk.roles.SecurityObject;
 
 
-public interface HTMLTableModel<T> {
+public interface HTMLTableModel<T> extends SecurityObject {
 
     public boolean isFilterable(int column);
     
@@ -13,7 +18,8 @@ public interface HTMLTableModel<T> {
     
     public boolean isEditable(int column);
     
-    public SuccessResult setCellValue(int column, int row, String value);
+    public SuccessResult setCellValue(int column, T element, String value, User executor, 
+        MyPolly myPolly);
     
     public String getHeader(int column);
     
@@ -21,7 +27,9 @@ public interface HTMLTableModel<T> {
     
     public Object getCellValue(int column, T element);
     
-    public List<T> getData();
+    public Map<String, String> getRequestParameters(HttpEvent e);
+    
+    public List<T> getData(HttpEvent e);
     
     public Class<?> getColumnClass(int column);
 }

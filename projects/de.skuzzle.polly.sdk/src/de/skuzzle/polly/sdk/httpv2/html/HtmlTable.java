@@ -10,16 +10,22 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import de.skuzzle.polly.http.api.AlternativeAnswerException;
 import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.http.api.HttpException;
 import de.skuzzle.polly.http.api.HttpSession;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.http.api.handler.HttpEventHandler;
+import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
+import de.skuzzle.polly.sdk.httpv2.SuccessResult;
 import de.skuzzle.polly.sdk.util.DirectedComparator;
 import de.skuzzle.polly.sdk.util.DirectedComparator.SortOrder;
+import de.skuzzle.polly.tools.math.MathUtil;
 
 
 public class HTMLTable<T> implements HttpEventHandler {
@@ -88,7 +94,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         
         @Override
         public String getEditIndicator() {
-            return "<img src=\"/http/view/files/date_edit.png\" height=\"16\" width=\"16\" style=\"vertical-align:middle\"/>";
+            return "<img src=\"/de/skuzzle/polly/sdk/httpv2/html/date_edit.png\" height=\"16\" width=\"16\" style=\"vertical-align:middle\"/>";
         }
     }
     
@@ -111,7 +117,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         @Override
         public String getEditIndicator() {
             return 
-                "<img src=\"/http/view/files/edit.png\" height=\"16\" width=\"16\" style=\"vertical-align:middle\"/>";
+                "<img src=\"/de/skuzzle/polly/sdk/httpv2/html/edit.png\" height=\"16\" width=\"16\" style=\"vertical-align:middle\"/>";
         }
     }
     
@@ -129,11 +135,14 @@ public class HTMLTable<T> implements HttpEventHandler {
     public static class DateCellRenderer implements CellRenderer {
         @Override
         public String renderCellContent(int column, Object cellValue) {
-            final DateFormat df = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy");
-            return df.format((Date) cellValue);
+            final Date date = (Date) cellValue;
+            if (date.getTime() == 0) {
+                return "";
+            } else {
+                final DateFormat df = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy");
+                return df.format((Date) cellValue);
+            }
         }
-        
-        
     }
     
     
@@ -145,6 +154,27 @@ public class HTMLTable<T> implements HttpEventHandler {
                 .renderEditorCell(cellValue, false).attr("disabled").toString();
         }
         
+    }
+    
+    
+    
+    
+    
+    private final static String makeUrl(String baseUrl, Map<String, String> param) {
+        String append = "&";
+        if (!baseUrl.contains("?")) {
+            append = "?";
+        }
+        final StringBuilder b = new StringBuilder(baseUrl.length());
+        b.append(baseUrl);
+        for (final Entry<String, String> e : param.entrySet()) {
+            b.append(append);
+            b.append(e.getKey());
+            b.append("=");
+            b.append(e.getValue());
+            append = "&";
+        }
+        return b.toString();
     }
     
     
@@ -222,9 +252,12 @@ public class HTMLTable<T> implements HttpEventHandler {
     private HTMLColumnFilter filter;
     private final Map<Class<?>, CellEditor> editors;
     private final Map<Class<?>, CellRenderer> renderers;
+    private final MyPolly myPolly;
     
     
-    public HTMLTable(String tableId, HTMLTableModel<T> model) {
+    
+    public HTMLTable(String tableId, HTMLTableModel<T> model, MyPolly myPolly) {
+        this.myPolly = myPolly;
         this.tableId = tableId;
         this.baseContext = new HashMap<>();
         this.model = model;
@@ -246,14 +279,14 @@ public class HTMLTable<T> implements HttpEventHandler {
     
     
     
-    public void setColumnModel(HTMLColumnSorter<T> colModel) {
+    public void setColumnSorter(HTMLColumnSorter<T> colModel) {
         this.colSorter = colModel;
     }
     
     
     
     
-    public HTMLColumnSorter<T> getColumnModel() {
+    public HTMLColumnSorter<T> getColumnSorter() {
         return this.colSorter;
     }
     
@@ -271,6 +304,13 @@ public class HTMLTable<T> implements HttpEventHandler {
         
         // current settings for requesting user
         final HttpSession s = e.getSession();
+        final User user = (User) s.getAttached("user");
+        if (!this.myPolly.roles().canAccess(user, this.model)) {
+            throw new AlternativeAnswerException(
+                HttpAnswers.newStringAnswer("<tr><th colspan=\"" + 
+                    this.model.getColumnCount() + "\">Permission denied</th></tr>"));
+        }
+        
         
         final String settingsKey = "SETTINGS_"+registered;
         final TableSettings settings;
@@ -287,6 +327,11 @@ public class HTMLTable<T> implements HttpEventHandler {
                 s.set(settingsKey, settings);
             }
         }
+        
+        
+        // get all elements from model once per request
+        final List<T> allData = this.model.getData(e);
+        
         
         
         // this is a sorting request
@@ -316,15 +361,18 @@ public class HTMLTable<T> implements HttpEventHandler {
             final String value = e.get(SET_VALUE);
             final int col = Integer.parseInt(e.get(COLUMN));
             final int row = Integer.parseInt(e.get(ROW));
+            final T element = allData.get(row);
+            final SuccessResult r = this.model.setCellValue(col, element, 
+                value, user, this.myPolly);
             
-            return new GsonHttpAnswer(200, this.model.setCellValue(col, row, value));
+            return new GsonHttpAnswer(200, r);
         } else if (e.get(SET_PAGE_SIZE) != null) {
             final int pageSize = Integer.parseInt(e.get(SET_PAGE_SIZE));
             settings.pageSize = pageSize;
         }
         
         // get filtered elements
-        final FilterResult fr = this.getFilteredElements(settings);
+        final FilterResult fr = this.getFilteredElements(settings, allData, e);
         
         final Map<String, Object> c = new HashMap<>();
         c.put("settings", settings);
@@ -333,27 +381,29 @@ public class HTMLTable<T> implements HttpEventHandler {
         c.put("renderers", this.renderers);
         c.put("filter", this.filter);
         c.put("editors", this.editors);
-        c.put("baseUrl", registered);
+        c.put("baseUrl", makeUrl(registered, this.model.getRequestParameters(e)));
         c.put("tId", this.tableId);
         c.put("data", fr.data);
         c.put("indexMap", fr.indexMap);
-        c.put("table", this);
+        c.put("requestParams", this.model.getRequestParameters(e));
         c.putAll(this.baseContext);
-        return HttpAnswers.newTemplateAnswer("de/skuzzle/polly/sdk/httpv2/table.html", c);
+        return HttpAnswers.newTemplateAnswer("de/skuzzle/polly/sdk/httpv2/html/table.html", c);
     }
     
     
     
-    private FilterResult getFilteredElements(TableSettings s) {
+    private FilterResult getFilteredElements(TableSettings s, List<T> data, 
+            HttpEvent e) {
         
         // first: filter full data
         final int colCount = this.model.getColumnCount();
-        final List<T> data = this.model.getData();
         final Map<T, Integer> idxMap = new HashMap<>(data.size());
         List<T> result = new ArrayList<>(data.size());
         
         int originalIdx = -1;
-        outer: for (final T element : data) {
+        
+        outer: 
+        for (final T element : data) {
             ++originalIdx; // index of current element in the original data
             
             
@@ -371,7 +421,7 @@ public class HTMLTable<T> implements HttpEventHandler {
             }
             
             // all filters applied, each accepted the element
-            // map index witihn the filetered- to index in the full colletion
+            // map index within the filtered- to index in the full collection
             idxMap.put(element, originalIdx); 
             result.add(element);
         }
@@ -382,9 +432,9 @@ public class HTMLTable<T> implements HttpEventHandler {
         
         // get view port based on filtered data
         s.pageCount = (int) Math.ceil(result.size() / (double) s.pageSize);
-        s.page = Math.max(0, Math.min(s.page, s.pageCount - 1));
-        int firstIdx = s.page * s.pageSize;
-        int lastIdx = Math.min(result.size(), firstIdx + s.pageSize);
+        s.page = MathUtil.limit(s.page, 0, Math.max(s.pageCount - 1, 0));
+        final int firstIdx = s.page * s.pageSize;
+        final int lastIdx = Math.min(result.size(), firstIdx + s.pageSize);
         result = result.subList(firstIdx, lastIdx);
         
         // sort view port

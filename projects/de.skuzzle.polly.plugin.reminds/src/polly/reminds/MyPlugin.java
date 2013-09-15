@@ -1,8 +1,9 @@
 package polly.reminds;
 
 
+import http.AllRemindsTableModel;
 import http.RemindHttpController;
-import http.RemindTableModel;
+import http.MyRemindTableModel;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -144,9 +145,14 @@ public class MyPlugin extends PollyPlugin {
         final Controller ctrl = new RemindHttpController(myPolly, this.remindManager);
         this.getMyPolly().webInterface().getServer().addController(ctrl);
         
-        final HTMLTableModel<RemindEntity> model = new RemindTableModel(this.remindManager);
-        final HTMLTable<RemindEntity> remindTable = new HTMLTable<>("reminds", model);
-        this.getMyPolly().webInterface().getServer().addHttpEventHandler("/api/allReminds", remindTable);
+        final HTMLTableModel<RemindEntity> myRemindsModel = new MyRemindTableModel(this.remindManager);
+        final HTMLTable<RemindEntity> myRemindsTable = new HTMLTable<>("myReminds", myRemindsModel, myPolly);
+        
+        final HTMLTableModel<RemindEntity> allRemindsModel = new AllRemindsTableModel(this.remindManager);
+        final HTMLTable<RemindEntity> allRemindsTable = new HTMLTable<>("allReminds", allRemindsModel, myPolly);
+        
+        this.getMyPolly().webInterface().getServer().addHttpEventHandler("/api/myReminds", myRemindsTable);
+        this.getMyPolly().webInterface().getServer().addHttpEventHandler("/api/allReminds", allRemindsTable);
     }
     
     
