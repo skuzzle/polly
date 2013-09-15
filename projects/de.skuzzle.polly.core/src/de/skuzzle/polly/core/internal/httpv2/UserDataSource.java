@@ -7,6 +7,8 @@ import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.httpv2.html.AbstractHTMLTableModel;
+import de.skuzzle.polly.sdk.httpv2.html.HTMLElement;
+import de.skuzzle.polly.sdk.httpv2.html.HTMLElementGroup;
 
 
 public class UserDataSource extends AbstractHTMLTableModel<User> {
@@ -39,6 +41,25 @@ public class UserDataSource extends AbstractHTMLTableModel<User> {
         case 3: return element.isIdle();
         case 4: return new Date(element.getLastMessageTime());
         case 5: return new Date(element.getLoginTime());
+        case 6: return new HTMLElementGroup().add(
+            new HTMLElement("a")
+            .attr("href", "/pages/editUser?userId="+element.getId())
+            .content( new HTMLElement("img")
+                .attr("src", "/files/imgv2/user_edit.png")
+                .attr("width", "20")
+                .attr("height", "20").toString()
+            ).attr("title", "Edit " + element.getName()))
+            .add(
+                new HTMLElement("a")
+                .attr("href", "#")
+                .attr("onclick", "deleteUser(" + element.getId() + ", '" + element.getName() + "')")
+                .content( new HTMLElement("img")
+                    .attr("src", "/files/imgv2/user_delete.png")
+                    .attr("width", "20")
+                    .attr("height", "20").toString()
+                ).attr("title", "Delete " + element.getName())
+            );
+            
         default: return "";
         }
     }

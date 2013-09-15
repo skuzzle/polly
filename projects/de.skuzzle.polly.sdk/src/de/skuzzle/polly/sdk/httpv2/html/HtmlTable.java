@@ -71,7 +71,7 @@ public class HTMLTable<T> implements HttpEventHandler {
                     checked = unselected;
                 }
                 checked.attr("checked");
-                return new HTMLInputGroup().add(all).add(selected).add(unselected);
+                return new HTMLElementGroup().add(all).add(selected).add(unselected);
             }
             final HTMLElement in = new HTMLElement("input").attr("type", "checkbox");
             if (cellContent != null && (Boolean) cellContent) {

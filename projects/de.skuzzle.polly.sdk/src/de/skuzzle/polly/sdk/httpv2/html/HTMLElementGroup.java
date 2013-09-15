@@ -4,18 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class HTMLInputGroup extends HTMLElement {
+public class HTMLElementGroup extends HTMLElement {
 
     private final List<HTMLElement> group;
     
     
-    public HTMLInputGroup() {
+    public HTMLElementGroup() {
         super("");
         this.group = new ArrayList<>();
     }
     
     
-    public HTMLInputGroup add(HTMLElement input) {
+    public HTMLElementGroup add(HTMLElement input) {
         this.group.add(input);
         return this;
     }
