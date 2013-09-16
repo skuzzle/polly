@@ -235,11 +235,13 @@ public class HTMLTable<T> implements HttpEventHandler {
     
     private class FilterResult {
         private final List<T> data;
+        private final int filteredSize;
         private final Map<T, Integer> indexMap;
-        public FilterResult(List<T> data, Map<T, Integer> indexMap) {
+        public FilterResult(List<T> data, Map<T, Integer> indexMap, int filteredSize) {
             super();
             this.data = data;
             this.indexMap = indexMap;
+            this.filteredSize = filteredSize;
         }
     }
     
@@ -288,6 +290,13 @@ public class HTMLTable<T> implements HttpEventHandler {
     
     public HTMLColumnSorter<T> getColumnSorter() {
         return this.colSorter;
+    }
+    
+    
+    
+    
+    public void setFilter(HTMLColumnFilter filter) {
+        this.filter = filter;
     }
     
     
@@ -374,6 +383,10 @@ public class HTMLTable<T> implements HttpEventHandler {
         // get filtered elements
         final FilterResult fr = this.getFilteredElements(settings, allData, e);
         
+        // some page calculations
+        final int minPage = Math.max(0, settings.page - 3);
+        final int maxPage = Math.max(0, Math.min(settings.pageCount - 1, Math.max(settings.page + 3, 6)));
+        
         final Map<String, Object> c = new HashMap<>();
         c.put("settings", settings);
         c.put("tableModel", this.model);
@@ -386,6 +399,10 @@ public class HTMLTable<T> implements HttpEventHandler {
         c.put("data", fr.data);
         c.put("indexMap", fr.indexMap);
         c.put("requestParams", this.model.getRequestParameters(e));
+        c.put("minPage", minPage);
+        c.put("maxPage", maxPage);
+        c.put("all", allData.size());
+        c.put("filteredSize", fr.filteredSize);
         c.putAll(this.baseContext);
         return HttpAnswers.newTemplateAnswer("de/skuzzle/polly/sdk/httpv2/html/table.html", c);
     }
@@ -395,7 +412,7 @@ public class HTMLTable<T> implements HttpEventHandler {
     private FilterResult getFilteredElements(TableSettings s, List<T> data, 
             HttpEvent e) {
         
-        // first: filter full data
+        // filter full data
         final int colCount = this.model.getColumnCount();
         final Map<T, Integer> idxMap = new HashMap<>(data.size());
         List<T> result = new ArrayList<>(data.size());
@@ -427,8 +444,21 @@ public class HTMLTable<T> implements HttpEventHandler {
         }
         
         if (result.isEmpty()) {
-            return new FilterResult(result, idxMap);
+            return new FilterResult(result, idxMap, 0);
         }
+        
+        
+        // sort view port
+        if (s.sortCol != -1 && this.model.isSortable(s.sortCol)) {
+            if (s.order[s.sortCol] != SortOrder.UNDEFINED) {
+                final Comparator<? super T> c = this.colSorter.getComparator(
+                    s.sortCol, this.model);
+                Collections.sort(data, new DirectedComparator<>(s.getOrder(), c));
+            }
+        }
+        
+        
+        int filteredSize = result.size();
         
         // get view port based on filtered data
         s.pageCount = (int) Math.ceil(result.size() / (double) s.pageSize);
@@ -436,15 +466,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         final int firstIdx = s.page * s.pageSize;
         final int lastIdx = Math.min(result.size(), firstIdx + s.pageSize);
         result = result.subList(firstIdx, lastIdx);
-        
-        // sort view port
-        if (s.sortCol != -1 && this.model.isSortable(s.sortCol)) {
-            if (s.order[s.sortCol] != SortOrder.UNDEFINED) {
-                final Comparator<? super T> c = this.colSorter.getComparator(
-                    s.sortCol, this.model);
-                Collections.sort(result, new DirectedComparator<>(s.getOrder(), c));
-            }
-        }
-        return new FilterResult(result, idxMap);
+
+        return new FilterResult(result, idxMap, filteredSize);
     }
 }

@@ -13,7 +13,8 @@
         <a href="#" onclick="setPageRequest('$baseUrl', '$id', '0')">First</a>
         <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$prev')">&lt;</a>
     #end
-    #foreach ($page in [0..$pageCount])
+    
+    #foreach ($page in [$minPage..$maxPage])
         #set($viewPage = $page + 1) 
         #if ($page == $settings.getPage())
             <b>$viewPage</b>
@@ -27,8 +28,12 @@
         <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$next')">&gt;</a>
         <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$pageCount')">Last</a>
     #end
+    
+    #set ($first = $settings.getPage() * $settings.getPageSize())
+    #set ($last = $first + $data.size())
+    <span style="font-weight: normal">(Showing $first - $last of $filteredSize / $all elements)</span>
         
-        <img id="update_$id" style="float:right; display: none;"src="/de/skuzzle/polly/sdk/httpv2/html/loading.gif"/>
+        <img id="update_$id" style="float:right; display: none;" src="/de/skuzzle/polly/sdk/httpv2/html/loading.gif"/>
         <span baseUrl="$baseUrl" class="select_pageSize" style="float:right">Page size: 
             <select size="1">
             #foreach ($ps in [1..10])

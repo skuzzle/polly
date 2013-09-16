@@ -2,15 +2,15 @@ package polly.reminds;
 
 
 import http.AllRemindsTableModel;
-import http.RemindHttpController;
 import http.MyRemindTableModel;
+import http.RemindHttpController;
+import http.RemindTableFilter;
 
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 
-import commands.ToggleMailCommand;
 import commands.DeleteRemindCommand;
 import commands.LeaveCommand;
 import commands.MailRemindCommand;
@@ -19,6 +19,8 @@ import commands.MyRemindsCommand;
 import commands.OnReturnCommand;
 import commands.RemindCommand;
 import commands.SnoozeCommand;
+import commands.ToggleMailCommand;
+
 import core.DeliverRemindHandler;
 import core.RemindManager;
 import core.RemindManagerImpl;
@@ -28,15 +30,16 @@ import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.Types.StringType;
+import de.skuzzle.polly.sdk.Types.TimespanType;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
-import de.skuzzle.polly.sdk.Types.TimespanType;
 import de.skuzzle.polly.sdk.constraints.Constraints;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
 import de.skuzzle.polly.sdk.exceptions.RoleException;
+import de.skuzzle.polly.sdk.httpv2.html.HTMLColumnFilter;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLTable;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLTableModel;
 import de.skuzzle.polly.sdk.roles.RoleManager;
@@ -144,12 +147,17 @@ public class MyPlugin extends PollyPlugin {
         
         final Controller ctrl = new RemindHttpController(myPolly, this.remindManager);
         this.getMyPolly().webInterface().getServer().addController(ctrl);
+
+        // set up remind tables
+        final HTMLColumnFilter filter = new RemindTableFilter(myPolly);
         
         final HTMLTableModel<RemindEntity> myRemindsModel = new MyRemindTableModel(this.remindManager);
-        final HTMLTable<RemindEntity> myRemindsTable = new HTMLTable<>("myReminds", myRemindsModel, myPolly);
-        
         final HTMLTableModel<RemindEntity> allRemindsModel = new AllRemindsTableModel(this.remindManager);
+        
+        final HTMLTable<RemindEntity> myRemindsTable = new HTMLTable<>("myReminds", myRemindsModel, myPolly);
         final HTMLTable<RemindEntity> allRemindsTable = new HTMLTable<>("allReminds", allRemindsModel, myPolly);
+        myRemindsTable.setFilter(filter);
+        allRemindsTable.setFilter(filter);
         
         this.getMyPolly().webInterface().getServer().addHttpEventHandler("/api/myReminds", myRemindsTable);
         this.getMyPolly().webInterface().getServer().addHttpEventHandler("/api/allReminds", allRemindsTable);

@@ -13,7 +13,6 @@ import core.filters.UserRegexFilter;
 import core.output.IrcLogOutput;
 import core.output.LogOutput;
 import core.output.PasteServiceLogOutput;
-
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PersistenceManager;
@@ -98,6 +97,17 @@ public class PollyLoggingManager extends AbstractDisposable {
             throws DatabaseException {
         List<LogEntry> allEntries = this.preFilterQuery(LogEntry.ALL_LOG_ENTRIES);
         return this.postFilter(allEntries, new UserRegexFilter(userRegex));
+    }
+    
+    
+    
+    public List<LogEntry> getAllEntries() {
+        try {
+            return this.preFilterQuery(LogEntry.ALL_LOG_ENTRIES);
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
     
     

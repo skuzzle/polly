@@ -1,6 +1,9 @@
 package polly.logging;
 
 
+import http.AllDayFilter;
+import http.LogEntryTableModel;
+import http.LoggingController;
 import http.SearchHttpAction;
 import http.ReplayHttpAction;
 
@@ -26,6 +29,8 @@ import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
 import de.skuzzle.polly.sdk.exceptions.RoleException;
+import de.skuzzle.polly.sdk.httpv2.html.HTMLTable;
+import de.skuzzle.polly.sdk.httpv2.html.HTMLTableModel;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import entities.LogEntry;
 
@@ -106,6 +111,15 @@ public class MyPlugin extends PollyPlugin {
         myPolly.web().addHttpAction(new ReplayHttpAction(myPolly, 
                 new DefaultLogFormatter(), this.logManager));
         myPolly.web().addHttpAction(new SearchHttpAction(myPolly));
+        
+        
+        myPolly.webInterface().getServer().addController(new LoggingController(myPolly, logManager));
+        final HTMLTableModel<LogEntry> model = new LogEntryTableModel(logManager, myPolly);
+        
+        final HTMLTable<LogEntry> logTable = new HTMLTable<LogEntry>("allLogs", model, myPolly);
+        logTable.setFilter(new AllDayFilter(myPolly));
+        
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/allLogs", logTable);
     }
     
     
