@@ -27,7 +27,9 @@
     -->
     <property name="build.debug.dir"   value="bin.debug"/>
     
-   
+    <!-- Eclipse build directory -->
+    <property name="build.eclipse.dir" value="bin"/>
+    
     <!-- Directory which will contain the fully built projects. -->
     <property name="build.dir"         value="${root.dir}/target"/>
     

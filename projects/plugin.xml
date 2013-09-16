@@ -23,6 +23,16 @@
     </target>
     
     
+    
+    <!-- Distribution target for eclipse builds -->
+    <target name="dist.eclipse">
+        <echo message="Dist eclipse ${jar.title}"/>
+        <property name="bin.dir" value="${build.eclipse.dir}"/>
+        <antcall target="distBin" inheritRefs="true"/>
+    </target>
+    
+    
+    
     <!-- 
         Overrides default target from common.xml.
         Copies this plugin to the core project's plugin folder
@@ -30,8 +40,8 @@
     <target name="postDist">
         <copy todir="${core.plugins.dir}" overwrite="true">
             <fileset dir="${dist.dir}" includes="
-            ${jar.filename}.jar
-            ${jar.filename}.properties"/>
+                ${jar.filename}.jar
+                ${jar.filename}.properties"/>
         </copy>
     </target>
 </project>
