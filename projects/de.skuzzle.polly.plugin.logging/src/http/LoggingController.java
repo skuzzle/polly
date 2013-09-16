@@ -13,12 +13,14 @@ import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 public class LoggingController extends PollyController {
 
     private final PollyLoggingManager lm;
-    
-    
+
+
+
     public LoggingController(MyPolly myPolly, PollyLoggingManager lm) {
         super(myPolly);
         this.lm = lm;
     }
+
 
 
     @Override
@@ -26,17 +28,21 @@ public class LoggingController extends PollyController {
         return new LoggingController(this.getMyPolly(), this.lm);
     }
 
-    
-    
-    @Get(value = "/pages/showLogs", name = "Show logs")
-    @OnRegister({
-        WebinterfaceManager.ADD_MENU_ENTRY,
-        "Logging",
-        "List IRC logs",
-        MyPlugin.CHANNEL_LOG_PERMISSION
-    })
+
+
+    @Get(value = "/pages/showLogs", name = "Search logs")
+    @OnRegister({ WebinterfaceManager.ADD_MENU_ENTRY, "Logging", "List IRC logs",
+            MyPlugin.CHANNEL_LOG_PERMISSION })
     public HttpAnswer loggingPage() {
         return this.makeAnswer(this.createContext("/http/view/logs.overview.html"));
     }
 
+
+
+    @Get(value = "/pages/replay", name = "Replay")
+    @OnRegister({ WebinterfaceManager.ADD_MENU_ENTRY, "Logging",
+            "Replay of missed IRC messages", MyPlugin.REPLAY_PERMISSION })
+    public HttpAnswer replayPage() {
+        return this.makeAnswer(this.createContext("/http/view/replay.overview.html"));
+    }
 }

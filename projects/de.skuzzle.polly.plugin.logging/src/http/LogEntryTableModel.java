@@ -17,8 +17,8 @@ public class LogEntryTableModel extends AbstractHTMLTableModel<LogEntry> {
     private final static String[] COLUMNS = { "Date", "Channel", "User", "Type", "Message" };
 
     public final static String RESULT_KEY = "logSearchResults";
-    private final PollyLoggingManager lm;
-    private final MyPolly myPolly;
+    protected final PollyLoggingManager lm;
+    protected final MyPolly myPolly;
 
 
     public LogEntryTableModel(PollyLoggingManager lm, MyPolly myPolly) {

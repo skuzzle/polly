@@ -4,6 +4,7 @@ package polly.logging;
 import http.AllDayFilter;
 import http.LogEntryTableModel;
 import http.LoggingController;
+import http.ReplayTableModel;
 import http.SearchHttpAction;
 import http.ReplayHttpAction;
 
@@ -114,12 +115,18 @@ public class MyPlugin extends PollyPlugin {
         
         
         myPolly.webInterface().getServer().addController(new LoggingController(myPolly, logManager));
+        
         final HTMLTableModel<LogEntry> model = new LogEntryTableModel(logManager, myPolly);
+        final HTMLTableModel<LogEntry> replayModel = new ReplayTableModel(logManager, myPolly);
         
         final HTMLTable<LogEntry> logTable = new HTMLTable<LogEntry>("allLogs", model, myPolly);
+        final HTMLTable<LogEntry> replayTable = new HTMLTable<LogEntry>("replay", replayModel, myPolly);
+        
         logTable.setFilter(new AllDayFilter(myPolly));
+        replayTable.setFilter(new AllDayFilter(myPolly));
         
         myPolly.webInterface().getServer().addHttpEventHandler("/api/allLogs", logTable);
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/replay", replayTable);
     }
     
     
