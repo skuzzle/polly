@@ -76,41 +76,6 @@ public interface HttpSession {
      * connection, the cookie (if any) on the client side will be removed. 
      */
     public void kill();
-    
-    /**
-     * <p>Blocks this session for the given amount of milliseconds. 
-     * {@link HttpEvent HttpEvents} incoming over a blocked session will not be handled
-     * by the {@link HttpServer HttpServers} event handlers. Instead a simple message
-     * will be sent back saying that the connection is currently blocked.</p>
-     * 
-     * <p>Blocking and unblocking sessions is thread-safe.</p>
-     * 
-     * @param milliseconds Time of how long the session should be blocked. Specify a 
-     *          negative value if you want to block until its manually unblocked.
-     * @see #unblock()
-     * @see #isBlocked()
-     */
-    public void block(int milliseconds);
-    
-    /**
-     * Unblocks the session right now. If it is not blocked, calling this method will
-     * have no effect.
-     * 
-     * <p>Blocking and unblocking sessions is thread-safe.</p>
-     * 
-     * @see #block(int)
-     * @see #isBlocked()
-     */
-    public void unblock();
-    
-    /**
-     * Determines whether this session is currently blocked.
-     * 
-     * @return Whether the session is currently blocked.
-     * @see #block(int)
-     * @see #unblock()
-     */
-    public boolean isBlocked();
 
     /**
      * Gets a collection of the last few HTTP events that were raised by this session.

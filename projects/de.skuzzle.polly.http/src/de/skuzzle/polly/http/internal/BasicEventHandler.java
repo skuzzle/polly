@@ -216,11 +216,6 @@ class BasicEventHandler implements HttpHandler {
         session.addEvent(httpEvent.copy());
         session.setLastAction(new Date());
         
-        if (session.isBlocked()) {
-            this.handleAnswer(DefaultAnswers.SESSION_BLOCKED, t, httpEvent);
-            return;
-        }
-        
         // handle the event
         final List<HttpEventHandler> handler;
         final String registered;

@@ -33,11 +33,6 @@ public class DefaultAnswers {
     public static HttpAnswer FILE_NOT_FOUND = 
         HttpAnswers.newStringAnswer("File not found");
     
-    /** Answer if blocked session performed a request */
-    public static HttpAnswer SESSION_BLOCKED = 
-        HttpAnswers.newStringAnswer("Your session is blocked");
-    
-    
     
     private DefaultAnswers() {
     }

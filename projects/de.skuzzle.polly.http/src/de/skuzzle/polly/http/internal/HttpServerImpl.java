@@ -347,7 +347,6 @@ class HttpServerImpl implements HttpServer {
     
     
     synchronized void killSession(HttpSessionImpl session) {
-        session.block(-1);
         switch (this.getSessionType()) {
         case SESSION_TYPE_COOKIE:
         case SESSION_TYPE_GET:
