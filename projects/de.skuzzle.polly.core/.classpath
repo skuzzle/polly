@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="cfg"/>
+	<classpathentry kind="src" path="webv2"/>
+	<classpathentry kind="src" path="/de.skuzzle.polly.core.moduleloader"/>
+	<classpathentry kind="src" path="/de.skuzzle.polly.http"/>
+	<classpathentry kind="src" path="/de.skuzzle.polly.http.annotations"/>
+	<classpathentry kind="src" path="/de.skuzzle.polly.core.parser"/>
+	<classpathentry kind="src" path="/de.skuzzle.polly.core.pircbot"/>
+	<classpathentry kind="src" path="/de.skuzzle.polly.process"/>
+	<classpathentry kind="src" path="/de.skuzzle.polly.sdk"/>
+	<classpathentry kind="src" path="/de.skuzzle.polly.tools"/>
+	<classpathentry kind="lib" path="C:/Users/Simon/Documents/Java/polly/dependency/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Simon/Documents/Java/polly/dependency/commons-lang-2.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Simon/Documents/Java/polly/dependency/eclipselink.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Simon/Documents/Java/polly/dependency/gson-2.2.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Simon/Documents/Java/polly/dependency/hsqldb.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Simon/Documents/Java/polly/dependency/javax.persistence_2.0.3.v201010191057.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Simon/Documents/Java/polly/dependency/log4j-1.2.16.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Simon/Documents/Java/polly/dependency/mail.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Simon/Documents/Java/polly/dependency/mysql-connector-java-5.1.17-bin.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Simon/Documents/Java/polly/dependency/velocity-1.7.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
