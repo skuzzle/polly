@@ -23,11 +23,11 @@
     
     <!-- 
         The output folder for compiled class files when compiling with  
-        debug information. This will as well serve for the output folder for
-        eclipse.
+        debug information.
     -->
     <property name="build.debug.dir"   value="bin.debug"/>
     
+   
     <!-- Directory which will contain the fully built projects. -->
     <property name="build.dir"         value="${root.dir}/target"/>
     
@@ -61,6 +61,8 @@
         **/*.js 
         **/*.png 
         **/*.css
+        **/*.gif
+        **/*.jpg
     "/>
     
     <!-- buildpath for javac -->
