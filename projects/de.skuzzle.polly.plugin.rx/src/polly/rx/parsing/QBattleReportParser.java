@@ -13,6 +13,7 @@ import java.util.Locale;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
+import de.skuzzle.polly.sdk.time.Time;
 import polly.rx.entities.BattleDrop;
 import polly.rx.entities.BattleReport;
 import polly.rx.entities.BattleReportShip;
@@ -22,19 +23,20 @@ import polly.rx.entities.RxRessource;
 
 public class QBattleReportParser {
     
-    
+    // TEST
     public static void main(String[] args) throws IOException, ParseException {
-        final InputStream is = QBattleReportParser.class.getResourceAsStream("gmdump.txt");
-        final BufferedReader r = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-        final StringBuilder b = new StringBuilder();
-        String line = null;
-        while ((line = r.readLine()) != null) {
-            b.append(line);
-            b.append("\n");
+        final String fileName =  "liveKB.txt";
+        try (InputStream is = QBattleReportParser.class.getResourceAsStream(fileName)) {
+            final BufferedReader r = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+            final StringBuilder b = new StringBuilder();
+            String line = null;
+            while ((line = r.readLine()) != null) {
+                b.append(line);
+                b.append("\n");
+            }
+            
+            parse(b.toString(), 0);
         }
-        
-        parse(b.toString(), 0);
-        r.close();
     }
     
     
@@ -53,11 +55,13 @@ public class QBattleReportParser {
             
             // date
             final DateFormat df = getDateFormat();
-            final Date date;
+            Date date;
             try {
                 date = df.parse(s.nextLine().trim());
             } catch (java.text.ParseException e) {
-                throw new ParseException("Misformatted date");
+                // ignore, use system date and go on
+                date = Time.currentTime();
+                //throw new ParseException("Misformatted date");
             }
             
             s.skip("\\D*");
@@ -79,10 +83,14 @@ public class QBattleReportParser {
             }
             
             if (!s.next().equals("Gefecht") || !s.next().equals("bei")) {
-                throw new ParseException("'Gefecht bei expected'");
+                throw new ParseException("'Gefecht bei' expected");
             }
             
-            final String quadrant = s.next();
+            String quadrant = s.findInLine("\\D+");
+            if (quadrant == null) {
+                throw new ParseException("Error while parsing quadrant name");
+            }
+            quadrant = quadrant.trim();
             s.useDelimiter(",|\\s+");
             final int x = s.nextInt();
             final int y = s.nextInt();
