@@ -45,6 +45,9 @@ public class ChannelLogCommand extends AbstractLogCommand {
             new Parameter("Pattern", Types.STRING), 
             new Parameter("Von", Types.DATE),
             new Parameter("Bis", Types.DATE));
+        this.createSignature("Filtert Log Einträge des aktuellen channels", 
+            new Parameter("Pattern", Types.STRING));
+        this.createSignature("Zeigt Log Einträge des aktuellen channels");
     }
     
     
@@ -53,12 +56,23 @@ public class ChannelLogCommand extends AbstractLogCommand {
     protected boolean executeOnBoth(User executer, String channel,
             Signature signature) throws CommandException {
         
+        // HACK HACK
+        String chan = channel;
+        if (signature.getId() < 4) {
+            // all signatures except 4 and 5 have channel as the first parameter
+            chan = signature.getStringValue(0);
+        }
+        
         ChainedLogFilter filter = new ChainedLogFilter(new AnyLogFilter());
-        String c = signature.getStringValue(0);
 
         // All signatures except the first have a message pattern
-        if (signature.getId() > 0) {
-            String pattern = signature.getStringValue(1);
+        if (signature.getId() > 0 && signature.getId() < 5) {
+            int paramIdx = 1;
+            if (signature.getId() == 4) {
+                // signature 4 has pattern as first parameter
+                paramIdx = 0;
+            }
+            String pattern = signature.getStringValue(paramIdx);
             filter.addFilter(new MessageRegexLogFilter(pattern));
         }
         
@@ -66,7 +80,7 @@ public class ChannelLogCommand extends AbstractLogCommand {
         List<LogEntry> prefiltered = null;
         
         try {
-            prefiltered = this.logManager.preFilterChannel(c);
+            prefiltered = this.logManager.preFilterChannel(chan);
 
             if (this.match(signature, 2)) {
                 filter.addFilter(new DateLogFilter(signature.getDateValue(2)));
