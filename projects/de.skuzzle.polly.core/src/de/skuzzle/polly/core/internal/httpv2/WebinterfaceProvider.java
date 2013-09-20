@@ -82,7 +82,7 @@ public class WebinterfaceProvider extends AbstractProvider {
         }
         
         int port = 81; //this.serverCfg.readInt(Configuration.HTTP_PORT);
-        int sessionTimeout = (int) Milliseconds.fromMinutes(60);//this.serverCfg.readInt(Configuration.HTTP_SESSION_TIMEOUT);
+        int sessionTimeout = (int) Milliseconds.fromHours(24);//this.serverCfg.readInt(Configuration.HTTP_SESSION_TIMEOUT);
         
         final ServerFactory sf = new DefaultServerFactory(port);
         this.server = HttpServerCreator.createServletServer(sf);
