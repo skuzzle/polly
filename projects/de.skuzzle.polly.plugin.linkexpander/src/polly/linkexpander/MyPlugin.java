@@ -75,7 +75,7 @@ public class MyPlugin extends PollyPlugin {
             throws RoleException, DatabaseException {
         
         roleManager.assignPermission(RoleManager.ADMIN_ROLE, GRABBER_PERMISSION);
-        roleManager.assignPermission(RoleManager.ADMIN_PERMISSION, URL_GRABBER_PERMISSION);
+        roleManager.assignPermission(RoleManager.ADMIN_ROLE, URL_GRABBER_PERMISSION);
     }
 
     
