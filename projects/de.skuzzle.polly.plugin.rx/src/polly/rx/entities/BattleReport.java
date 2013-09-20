@@ -44,6 +44,19 @@ import polly.rx.core.SumQuery;
             "rp.date = ?8"
     ),
     @NamedQuery(
+        name = "UNIQUE_CHECK_NO_DATE",
+        query = "SELECT rp FROM BattleReport rp WHERE " + 
+            "rp.quadrant = ?1 AND " + 
+            "rp.x = ?2 AND " + 
+            "rp.y = ?3 AND " +
+            "rp.attackerVenadName = ?4 AND " +
+            "rp.defenderVenadName = ?5 AND " +
+            "rp.attackerFleetName = ?6 AND " +
+            "rp.defenderFleetName = ?7 AND " +
+            "rp.attackerKw = ?8 AND " +
+            "rp.defenderKw = ?9"
+    ),
+    @NamedQuery(
         name = "WITH_NAME",
         query = "SELECT rp FROM BattleReport rp WHERE rp.attackerVenadName = ?1 OR " +
             "rp.defenderVenadName = ?1 ORDER BY rp.date DESC"
@@ -70,6 +83,7 @@ public class BattleReport {
 
     public static final String ALL_REPORTS = "ALL_REPORTS";
     public static final String UNIQUE_CHECK = "UNIQUE_CHECK";
+    public static final String UNIQUE_CHECK_NO_DATE = "UNIQUE_CHECK_NO_DATE";
     public static final String WITH_NAME = "WITH_NAME";
     public static final String WITH_CLAN = "WITH_CLAN";
     public static final String BY_LOCATION = "BY_LOCATION";
@@ -157,6 +171,9 @@ public class BattleReport {
     @Transient
     private transient int attackerRepairTimeOffset;
     
+    @Transient
+    private transient boolean noDate;
+    
     
     
     public BattleReport() {
@@ -203,6 +220,15 @@ public class BattleReport {
     }
     
     
+    
+    public void setNoDate(boolean noDate) {
+        this.noDate = noDate;
+    }
+    
+    
+    public boolean isNoDate() {
+        return this.noDate;
+    }
     
     public int getId() {
         return this.id;

@@ -57,15 +57,30 @@ public class FleetDBManager {
             throws DatabaseException {
         try {
             this.persistence.readLock();
-            BattleReport rp = this.persistence.findSingle(
-                BattleReport.class, BattleReport.UNIQUE_CHECK, 
-                report.getQuadrant(), 
-                report.getX(), report.getY(), 
-                report.getAttackerVenadName(),
-                report.getDefenderVenadName(),
-                report.getAttackerFleetName(),
-                report.getDefenderFleetName(),
-                report.getDate());
+            // HACK: better not use date for unique check
+            final BattleReport rp;
+            //if (report.isNoDate()) {
+                rp = this.persistence.findSingle(
+                    BattleReport.class, BattleReport.UNIQUE_CHECK_NO_DATE, 
+                    report.getQuadrant(), 
+                    report.getX(), report.getY(), 
+                    report.getAttackerVenadName(),
+                    report.getDefenderVenadName(),
+                    report.getAttackerFleetName(),
+                    report.getDefenderFleetName(),
+                    report.getAttackerKw(),
+                    report.getDefenderKw()); 
+            /*} else {
+                rp = this.persistence.findSingle(
+                    BattleReport.class, BattleReport.UNIQUE_CHECK, 
+                    report.getQuadrant(), 
+                    report.getX(), report.getY(), 
+                    report.getAttackerVenadName(),
+                    report.getDefenderVenadName(),
+                    report.getAttackerFleetName(),
+                    report.getDefenderFleetName(),
+                    report.getDate());
+            }*/
             
             if (rp != null) {
                 throw new DatabaseException(

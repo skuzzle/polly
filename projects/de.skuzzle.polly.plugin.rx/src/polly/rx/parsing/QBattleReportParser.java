@@ -13,6 +13,7 @@ import java.util.Locale;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
+import de.skuzzle.polly.sdk.time.Milliseconds;
 import de.skuzzle.polly.sdk.time.Time;
 import polly.rx.entities.BattleDrop;
 import polly.rx.entities.BattleReport;
@@ -55,13 +56,17 @@ public class QBattleReportParser {
             
             // date
             final DateFormat df = getDateFormat();
+            boolean noDate = false;
             Date date;
             try {
                 date = df.parse(s.nextLine().trim());
+                // round to minutes
+                long d = date.getTime() / Milliseconds.fromMinutes(1) * Milliseconds.fromMinutes(1);
+                date = new Date(d);
             } catch (java.text.ParseException e) {
                 // ignore, use system date and go on
                 date = Time.currentTime();
-                //throw new ParseException("Misformatted date");
+                noDate = true;
             }
             
             s.skip("\\D*");
@@ -162,7 +167,7 @@ public class QBattleReportParser {
                 defenderShips.add(ship);
                 System.out.println(ship);
             }
-            return new BattleReport(
+            final BattleReport br = new BattleReport(
                 submitterId, 
                 quadrant, 
                 x, 
@@ -185,6 +190,8 @@ public class QBattleReportParser {
                 defenderClan, 
                 attackerShips, 
                 defenderShips);
+            br.setNoDate(noDate);
+            return br;
         }
     }
     
