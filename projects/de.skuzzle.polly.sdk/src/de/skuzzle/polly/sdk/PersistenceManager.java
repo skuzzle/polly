@@ -98,7 +98,14 @@ import de.skuzzle.polly.sdk.exceptions.DatabaseException;
  * @version RC 1.0
  */
 public interface PersistenceManager {
+    
+    public interface UnlockCloseable extends AutoCloseable {
+        @Override
+        public void close();
+    }
 
+    
+    
     /**
      * <p>Registers an entity class to polly. This method must register all entities
      * you want to use during initiation of your plugin, that is during execution
@@ -121,8 +128,11 @@ public interface PersistenceManager {
      * 
      * <p>You must(!) release this lock after reading via {@link #readUnlock()}, otherwise
      * you will run whole polly into a deadlock.</p>
+     * 
+     * @return An AutoClosable instance so this method can be used within a 
+     *          try-resources block.
      */
-    public abstract void readLock();
+    public UnlockCloseable readLock();
     
     
     
@@ -141,8 +151,10 @@ public interface PersistenceManager {
      * 
      * <p>You must(!) release this lock after writing you values via 
      * {@link #writeUnlock()}, otherwise you will run whole polly into a deadlock.</p>
+     * @return An AutoClosable instance so this method can be used within a 
+     *          try-resources block.
      */
-    public abstract void writeLock();
+    public abstract UnlockCloseable writeLock();
     
     
     

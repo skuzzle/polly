@@ -27,8 +27,29 @@ import de.skuzzle.polly.sdk.exceptions.DisposingException;
  * @version 27.07.2011 ae73250
  */
 public class PersistenceManagerImpl extends AbstractDisposable implements
-    PersistenceManager {
+        PersistenceManager {
+    
+    
+    private final UnlockCloseable readUnlockCloseable = new UnlockCloseable() {
+        
+        @Override
+        public void close() {
+            PersistenceManagerImpl.this.readUnlock();
+        }
+    };
+    
+    
+    
+    private final UnlockCloseable writeUnlockCloseable = new UnlockCloseable() {
+        
+        @Override
+        public void close() {
+            PersistenceManagerImpl.this.writeUnlock();
+        }
+    };
+    
 
+    
     private static Logger logger = Logger
         .getLogger(PersistenceManagerImpl.class.getName());
     private static ReentrantReadWriteLock crossLocker = new ReentrantReadWriteLock();
@@ -124,10 +145,11 @@ public class PersistenceManagerImpl extends AbstractDisposable implements
 
 
     @Override
-    public void readLock() {
+    public UnlockCloseable readLock() {
         logger.trace("Acquiring read lock...");
         crossLocker.readLock().lock();
         logger.trace("Got readlock.");
+        return this.readUnlockCloseable;
     }
 
 
@@ -141,10 +163,11 @@ public class PersistenceManagerImpl extends AbstractDisposable implements
 
 
     @Override
-    public void writeLock() {
+    public UnlockCloseable writeLock() {
         logger.trace("Acquiring write lock...");
         crossLocker.writeLock().lock();
         logger.trace("got write lock.");
+        return this.writeUnlockCloseable;
     }
 
 

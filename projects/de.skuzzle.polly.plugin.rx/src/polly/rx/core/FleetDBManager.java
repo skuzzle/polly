@@ -8,8 +8,8 @@ import polly.rx.entities.BattleReport;
 import polly.rx.entities.FleetScan;
 import polly.rx.entities.FleetScanHistoryEntry;
 import polly.rx.entities.FleetScanShip;
-
 import de.skuzzle.polly.sdk.PersistenceManager;
+import de.skuzzle.polly.sdk.PersistenceManager.UnlockCloseable;
 import de.skuzzle.polly.sdk.WriteAction;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 
@@ -170,14 +170,16 @@ public class FleetDBManager {
     
     
     public FleetScanShip getShipByRevorixId(int rxId) {
-        return this.persistence.findSingle(
-            FleetScanShip.class, FleetScanShip.BY_REVORIX_ID, rxId);
+        try (UnlockCloseable c = this.persistence.readLock()) {
+            return this.persistence.findSingle(
+                FleetScanShip.class, FleetScanShip.BY_REVORIX_ID, rxId);
+        }
     }
     
     
     
     public List<FleetScan> getScanWithShip(int rxId) {
-        return this.persistence.findList(
+        return this.persistence.atomicRetrieveList(
             FleetScan.class, FleetScan.CONTAINING_SHIP, new Object[] { rxId } );
     }
     
@@ -225,14 +227,11 @@ public class FleetDBManager {
     
     public List<BattleReport> getReportByIdList(Integer...ids) {
         List<BattleReport> result = new ArrayList<BattleReport>(ids.length);
-        try {
-            this.persistence.readLock();
+        try (UnlockCloseable c = this.persistence.readLock()) {
             for (int id : ids) {
                 BattleReport rp = this.persistence.find(BattleReport.class, id);
                 result.add(rp);
             }
-        } finally {
-            this.persistence.readUnlock();
         }
         return result;
     }
@@ -262,7 +261,6 @@ public class FleetDBManager {
     
     public void deleteReportByIdList(final Integer...ids) throws DatabaseException {
         this.persistence.atomicWriteOperation(new WriteAction() {
-            
             @Override
             public void performUpdate(PersistenceManager persistence) {
                 List<BattleReport> deleteMe = getReportByIdList(ids);
@@ -277,7 +275,6 @@ public class FleetDBManager {
         final BattleReport report = this.getReportById(id);
         
         this.persistence.atomicWriteOperation(new WriteAction() {
-            
             @Override
             public void performUpdate(PersistenceManager persistence) {
                 persistence.removeList(report.getDrop());
@@ -294,20 +291,19 @@ public class FleetDBManager {
     
     
     public int getBattleReportCount() {
-        final Number n = this.persistence.findSingle(
-            Number.class, BattleReport.REPORT_COUNT);
-        return n.intValue();
+        try (UnlockCloseable c = this.persistence.readLock()) {
+            final Number n = this.persistence.findSingle(
+                Number.class, BattleReport.REPORT_COUNT);
+            return n.intValue();
+        }
     }
     
     
     
     public List<BattleReport> battleReportRange(int first, int max) {
-        try {
-            this.persistence.readLock();
+        try (UnlockCloseable c = this.persistence.readLock()) {
             return this.persistence.findList(BattleReport.class, BattleReport.ALL_REPORTS, 
                 first, max, new Object[0]);
-        } finally {
-            this.persistence.readUnlock();
         }
     }
 
