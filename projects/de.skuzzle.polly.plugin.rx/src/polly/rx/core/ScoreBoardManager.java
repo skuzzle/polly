@@ -23,8 +23,11 @@ import polly.rx.graphs.Point;
 import polly.rx.graphs.Point.PointType;
 import polly.rx.graphs.PointSet;
 import polly.rx.graphs.YScale;
-import de.skuzzle.polly.sdk.PersistenceManager;
-import de.skuzzle.polly.sdk.WriteAction;
+import de.skuzzle.polly.sdk.PersistenceManagerV2;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Atomic;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Param;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Read;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Write;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.time.DateUtils;
 import de.skuzzle.polly.sdk.time.Time;
@@ -45,11 +48,11 @@ public class ScoreBoardManager {
     
     private final static int AVERAGE_ELEMENTS = 10;
     
-    private PersistenceManager persistence;
+    private PersistenceManagerV2 persistence;
     
     
     
-    public ScoreBoardManager(PersistenceManager persistence) {
+    public ScoreBoardManager(PersistenceManagerV2 persistence) {
         this.persistence = persistence;
     }
     
@@ -309,14 +312,14 @@ public class ScoreBoardManager {
 
     
     public void addEntries(Collection<ScoreBoardEntry> entries) throws DatabaseException {
-        try {
-            this.persistence.writeLock();
+        try (final Write w = this.persistence.write()) {
+            final Read r = w.read();
             final List<ScoreBoardEntry> toAdd = new ArrayList<>(50);
             
             for (final ScoreBoardEntry entry : entries) {
-                final Collection<ScoreBoardEntry> existing = this.persistence.findList(
+                final Collection<ScoreBoardEntry> existing = r.findList(
                         ScoreBoardEntry.class, ScoreBoardEntry.SBE_BY_USER,
-                        new Object[] { entry.getVenadName() });
+                        new Param(entry.getVenadName()));
                 
                 boolean exists = false;
                 for (final ScoreBoardEntry e : existing) {
@@ -335,12 +338,8 @@ public class ScoreBoardManager {
             }
             
             if (!toAdd.isEmpty()) {
-                this.persistence.startTransaction();
-                this.persistence.persistList(toAdd);
-                this.persistence.commitTransaction();
+                w.all(toAdd);
             }
-        } finally {
-            this.persistence.writeUnlock();
         }
     }
     
@@ -357,40 +356,41 @@ public class ScoreBoardManager {
             }
         }
         
-        this.persistence.atomicWriteOperation(new WriteAction() {
+        this.persistence.writeAtomic(new Atomic() {
             @Override
-            public void performUpdate(PersistenceManager persistence) {
-                persistence.persist(entry);
+            public void perform(Write write) {
+                write.single(entry);
             }
         });
     }
     
     
     
-    public void deleteEntry(int id) throws DatabaseException {
-        ScoreBoardEntry sbe = this.persistence.atomicRetrieveSingle(
-            ScoreBoardEntry.class, id);
-        
-        if (sbe == null) { 
-            return;
-        }
-        
-        this.persistence.atomicRemove(sbe);
+    public void deleteEntry(final int id) throws DatabaseException {
+        this.persistence.writeAtomic(new Atomic() {
+            @Override
+            public void perform(Write write) throws DatabaseException {
+                final ScoreBoardEntry sbe = write.read().find(ScoreBoardEntry.class, id);
+                if (sbe == null) {
+                    return;
+                }
+                write.remove(sbe);
+            }
+        });
     }
     
     
     
     
     public List<ScoreBoardEntry> getEntries(String venad) {
-        return this.persistence.atomicRetrieveList(ScoreBoardEntry.class, 
-            ScoreBoardEntry.SBE_BY_USER, venad);
+        return this.persistence.atomic().findList(ScoreBoardEntry.class, 
+            ScoreBoardEntry.SBE_BY_USER, new Param(venad));
     }
     
     
     
     public List<ScoreBoardEntry> getEntries() {
-        return this.persistence.atomicRetrieveList(ScoreBoardEntry.class, 
+        return this.persistence.atomic().findList(ScoreBoardEntry.class, 
             ScoreBoardEntry.ALL_SBE_DISTINCT);
     }
-    
 }

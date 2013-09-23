@@ -7,6 +7,7 @@ import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.User;
+import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import entities.TopicEntity;
 
@@ -31,7 +32,7 @@ public class AddTopicCommand extends Command {
     
     @Override
     protected void executeOnChannel(User executer, String channel,
-            Signature signature) {
+            Signature signature) throws CommandException {
         if (this.match(signature, 0)) {
             Date dueDate = signature.getDateValue(0);
             String pattern = signature.getStringValue(1);

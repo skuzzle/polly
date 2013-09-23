@@ -15,13 +15,14 @@ import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.IrcManager;
 import de.skuzzle.polly.sdk.MailManager;
 import de.skuzzle.polly.sdk.MyPolly;
-import de.skuzzle.polly.sdk.PersistenceManager;
+import de.skuzzle.polly.sdk.PersistenceManagerV2;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Atomic;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Write;
 import de.skuzzle.polly.sdk.Types.BooleanType;
 import de.skuzzle.polly.sdk.Types.StringType;
 import de.skuzzle.polly.sdk.Types.TimespanType;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
-import de.skuzzle.polly.sdk.WriteAction;
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
@@ -52,7 +53,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     
     private MailManager mails;
     private IrcManager irc;
-    private PersistenceManager persistence;
+    private PersistenceManagerV2 persistence;
     private UserManager userManager;
     private RoleManager roleManager;
     private Timer remindScheduler;
@@ -500,14 +501,14 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     @Override
     public RemindEntity toggleIsMail(User executor, int id)
             throws DatabaseException, CommandException {
-        final RemindEntity remind = this.persistence.atomicRetrieveSingle(
+        final RemindEntity remind = this.persistence.atomic().find(
             RemindEntity.class, id);
         
         logger.trace("Toggeling delivery of " + remind);
         this.checkRemind(executor, remind, id);
-        this.persistence.atomicWriteOperation(new WriteAction() {
+        this.persistence.writeAtomic(new Atomic() {
             @Override
-            public void performUpdate(PersistenceManager persistence) {
+            public void perform(Write write) {
                 remind.setIsMail(!remind.isMail());
             }
         });
@@ -583,9 +584,9 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     
         this.checkRemind(executor, remind, id);
         this.cancelScheduledRemind(id);
-        this.persistence.atomicWriteOperation(new WriteAction() {
+        this.persistence.writeAtomic(new Atomic() {
             @Override
-            public void performUpdate(PersistenceManager persistence) {
+            public void perform(Write write) {
                 if (dueDate != null) {
                     remind.setDueDate(dueDate);
                 }
@@ -654,10 +655,9 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
                 return;
             }
             
-            this.persistence.atomicWriteOperation(new WriteAction() {
-                
+            this.persistence.writeAtomic(new Atomic() {
                 @Override
-                public void performUpdate(PersistenceManager persistence) {
+                public void perform(Write write) {
                     for (RemindEntity remind : reminds) {
                         remind.setForUser(newUser.getNickName());
                     }

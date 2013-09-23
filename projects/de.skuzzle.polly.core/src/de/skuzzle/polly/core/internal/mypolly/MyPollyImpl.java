@@ -16,7 +16,7 @@ import de.skuzzle.polly.core.internal.httpv2.WebInterfaceManagerImpl;
 import de.skuzzle.polly.core.internal.irc.IrcManagerImpl;
 import de.skuzzle.polly.core.internal.mail.MailManagerImpl;
 import de.skuzzle.polly.core.internal.paste.PasteServiceManagerImpl;
-import de.skuzzle.polly.core.internal.persistence.PersistenceManagerImpl;
+import de.skuzzle.polly.core.internal.persistence.PersistenceManagerV2Impl;
 import de.skuzzle.polly.core.internal.plugins.PluginManagerImpl;
 import de.skuzzle.polly.core.internal.roles.RoleManagerImpl;
 import de.skuzzle.polly.core.internal.runonce.RunOnceManagerImpl;
@@ -46,7 +46,7 @@ import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.IrcManager;
 import de.skuzzle.polly.sdk.MailManager;
 import de.skuzzle.polly.sdk.MyPolly;
-import de.skuzzle.polly.sdk.PersistenceManager;
+import de.skuzzle.polly.sdk.PersistenceManagerV2;
 import de.skuzzle.polly.sdk.PluginManager;
 import de.skuzzle.polly.sdk.RunOnceManager;
 import de.skuzzle.polly.sdk.Types;
@@ -85,7 +85,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 	private IrcManagerImpl ircManager;
 	private PluginManagerImpl pluginManager;
 	private ConfigurationProviderImpl configProvider;
-	private PersistenceManagerImpl persistence;
+	private PersistenceManagerV2Impl persistence;
 	private UserManagerImpl userManager;
 	private FormatManagerImpl formatManager;
 	private ConversationManagerImpl conversationManager;
@@ -104,7 +104,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 	        IrcManagerImpl ircMngr, 
 			PluginManagerImpl plgnMngr, 
 			ConfigurationProviderImpl configProviderImpl, 
-			PersistenceManagerImpl pMngr,
+			PersistenceManagerV2Impl pMngr,
 			UserManagerImpl usrMngr,
 			FormatManagerImpl fmtMngr,
 			ConversationManagerImpl convMngr,
@@ -223,7 +223,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 	
 	
 	@Override
-	public PersistenceManager persistence() {
+	public PersistenceManagerV2 persistence() {
 		return this.persistence;
 	}
 

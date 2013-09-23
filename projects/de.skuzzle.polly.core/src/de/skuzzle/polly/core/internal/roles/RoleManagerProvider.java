@@ -2,7 +2,7 @@ package de.skuzzle.polly.core.internal.roles;
 
 
 import de.skuzzle.polly.core.internal.ModuleStates;
-import de.skuzzle.polly.core.internal.persistence.PersistenceManagerImpl;
+import de.skuzzle.polly.core.internal.persistence.PersistenceManagerV2Impl;
 import de.skuzzle.polly.core.moduleloader.AbstractProvider;
 import de.skuzzle.polly.core.moduleloader.ModuleLoader;
 import de.skuzzle.polly.core.moduleloader.SetupException;
@@ -13,7 +13,7 @@ import de.skuzzle.polly.sdk.roles.RoleManager;
 
 @Module(
     requires = {
-        @Require(component = PersistenceManagerImpl.class),
+        @Require(component = PersistenceManagerV2Impl.class),
         @Require(state = ModuleStates.PERSISTENCE_READY)
     },
     provides = {
@@ -33,8 +33,8 @@ public class RoleManagerProvider extends AbstractProvider {
 
     @Override
     public void setup() throws SetupException {
-        PersistenceManagerImpl persistence = 
-                this.requireNow(PersistenceManagerImpl.class, true);
+        PersistenceManagerV2Impl persistence = 
+                this.requireNow(PersistenceManagerV2Impl.class, true);
         
         this.roleManager = new RoleManagerImpl(persistence);
         

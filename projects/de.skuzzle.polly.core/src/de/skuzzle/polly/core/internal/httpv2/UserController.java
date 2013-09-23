@@ -11,10 +11,10 @@ import de.skuzzle.polly.http.api.AlternativeAnswerException;
 import de.skuzzle.polly.http.api.Controller;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.sdk.MyPolly;
-import de.skuzzle.polly.sdk.PersistenceManager;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Atomic;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Write;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
-import de.skuzzle.polly.sdk.WriteAction;
 import de.skuzzle.polly.sdk.exceptions.ConstraintException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.InvalidUserNameException;
@@ -22,10 +22,10 @@ import de.skuzzle.polly.sdk.exceptions.RoleException;
 import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
 import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
-import de.skuzzle.polly.sdk.httpv2.html.HTMLTable;
 import de.skuzzle.polly.sdk.httpv2.PollyController;
 import de.skuzzle.polly.sdk.httpv2.SuccessResult;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
+import de.skuzzle.polly.sdk.httpv2.html.HTMLTable;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 
 
@@ -153,10 +153,10 @@ public class UserController extends PollyController {
             return new GsonHttpAnswer(200, 
                 new SuccessResult(false, "Password and retype mismatch"));
         } else {
-            this.getMyPolly().persistence().atomicWriteOperation(new WriteAction() {
+            this.getMyPolly().persistence().writeAtomic(new Atomic() {
                 
                 @Override
-                public void performUpdate(PersistenceManager persistence) {
+                public void perform(Write write) {
                     user.setPassword(newPassword);
                 }
             });

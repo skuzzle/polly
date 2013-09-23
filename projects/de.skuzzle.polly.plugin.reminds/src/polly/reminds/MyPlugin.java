@@ -274,16 +274,4 @@ public class MyPlugin extends PollyPlugin {
         
         this.assignListeners();
     }
-    
-    
-    
-    @Override
-    public void uninstall() {
-        try {
-            this.getMyPolly().persistence().dropTable("REMINDENTITY");
-        } catch (DatabaseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
 }

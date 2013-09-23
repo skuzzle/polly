@@ -64,7 +64,7 @@ public interface MyPolly {
 	 * Gets the PersistenceManager which is the interface to the Polly Persistence API.
 	 * @return The persistenceManager.
 	 */
-	public abstract PersistenceManager persistence();
+	public abstract PersistenceManagerV2 persistence();
 	
 	
 	

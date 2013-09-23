@@ -3,13 +3,14 @@ package polly.rx.core;
 import java.util.List;
 
 import polly.rx.entities.TrainEntityV3;
-
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.MyPolly;
-import de.skuzzle.polly.sdk.PersistenceManager;
+import de.skuzzle.polly.sdk.PersistenceManagerV2;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Atomic;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Param;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Write;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
-import de.skuzzle.polly.sdk.WriteAction;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
@@ -22,7 +23,7 @@ import de.skuzzle.polly.sdk.exceptions.DisposingException;
  */
 public class TrainManagerV2 extends AbstractDisposable {
 
-    private PersistenceManager persistence;
+    private PersistenceManagerV2 persistence;
     private UserManager userManager;
     
     
@@ -46,23 +47,23 @@ public class TrainManagerV2 extends AbstractDisposable {
     
     
     public synchronized TrainBillV2 getClosedTrains(String forUser) {
-        return new TrainBillV2(this.persistence.atomicRetrieveList(TrainEntityV3.class, 
-                TrainEntityV3.CLOSED_BY_USER, forUser));
+        return new TrainBillV2(this.persistence.atomic().findList(TrainEntityV3.class, 
+                TrainEntityV3.CLOSED_BY_USER, new Param(forUser)));
     }
     
     
     
     public synchronized TrainBillV2 getAllOpenTrains(String forUser) {
-        return new TrainBillV2(this.persistence.atomicRetrieveList(TrainEntityV3.class, 
-                TrainEntityV3.OPEN_BY_USER, forUser));
+        return new TrainBillV2(this.persistence.atomic().findList(TrainEntityV3.class, 
+                TrainEntityV3.OPEN_BY_USER, new Param(forUser)));
     }
     
     
     
     public synchronized TrainBillV2 getBill(User trainer, String forUser) {
-        List<TrainEntityV3> trains = this.persistence.atomicRetrieveList(
+        List<TrainEntityV3> trains = this.persistence.atomic().findList(
             TrainEntityV3.class, TrainEntityV3.OPEN_BY_USER_AND_TRAINER, 
-            trainer.getId(), forUser);
+            new Param(trainer.getId(), forUser));
         
         return new TrainBillV2(trains);
     }
@@ -70,25 +71,26 @@ public class TrainManagerV2 extends AbstractDisposable {
     
     
     public synchronized TrainBillV2 getOpenTrains(User trainer) {
-        return new TrainBillV2(this.persistence.atomicRetrieveList(
-                TrainEntityV3.class, TrainEntityV3.OPEN_BY_TRAINER, trainer.getId()));
+        return new TrainBillV2(this.persistence.atomic().findList(
+                TrainEntityV3.class, TrainEntityV3.OPEN_BY_TRAINER, 
+                new Param(trainer.getId())));
         
     }
     
     
     public synchronized TrainBillV2 getClosedTrains(User trainer) {
-        return new TrainBillV2(this.persistence.atomicRetrieveList(
-                TrainEntityV3.class, TrainEntityV3.CLOSED_BY_TRAINER, trainer.getId()));
+        return new TrainBillV2(this.persistence.atomic().findList(
+                TrainEntityV3.class, TrainEntityV3.CLOSED_BY_TRAINER, 
+                new Param(trainer.getId())));
         
     }
     
     
     
     public void closeOpenTrains(final TrainBillV2 bill) throws DatabaseException {
-        this.persistence.atomicWriteOperation(new WriteAction() {
-            
+        this.persistence.writeAtomic(new Atomic() {
             @Override
-            public void performUpdate(PersistenceManager persistence) {
+            public void perform(Write write) {
                 bill.closeBill();
             }
         });
@@ -104,7 +106,7 @@ public class TrainManagerV2 extends AbstractDisposable {
     
     public void closeOpenTrain(User trainer, final int id) 
                 throws DatabaseException, CommandException {
-        final TrainEntityV3 te = this.persistence.atomicRetrieveSingle(
+        final TrainEntityV3 te = this.persistence.atomic().find(
                 TrainEntityV3.class, id);
 
         if (te == null) {
@@ -113,10 +115,9 @@ public class TrainManagerV2 extends AbstractDisposable {
             throw new CommandException("Ungültige Trainer Id");
         }
         
-        this.persistence.atomicWriteOperation(new WriteAction() {
-            
+        this.persistence.writeAtomic(new Atomic() {
             @Override
-            public void performUpdate(PersistenceManager persistence) {
+            public void perform(Write write) {
                 te.setClosed(true);
             }
         });
@@ -124,21 +125,31 @@ public class TrainManagerV2 extends AbstractDisposable {
     
     
     
-    public synchronized TrainBillV2 addTrain(TrainEntityV3 e, User trainer) throws DatabaseException {
-        this.persistence.atomicPersist(e);
+    public synchronized TrainBillV2 addTrain(final TrainEntityV3 e, User trainer) 
+            throws DatabaseException {
+        this.persistence.writeAtomic(new Atomic() {
+            @Override
+            public void perform(Write write) throws DatabaseException {
+                write.single(e);
+            }
+        });
         return this.getBill(trainer, e.getForUser());
     }
     
     
     
     public void deleteTrain(final int id) throws DatabaseException, CommandException {
-        final TrainEntityV3 te = this.persistence.atomicRetrieveSingle(
-            TrainEntityV3.class, id);
+        final TrainEntityV3 te = this.persistence.atomic().find(TrainEntityV3.class, id);
 
         if (te == null) {
             throw new CommandException("Ungültiger Train-Id");
         }
-        persistence.atomicRemove(te);
+        this.persistence.writeAtomic(new Atomic() {
+            @Override
+            public void perform(Write write) throws DatabaseException {
+                write.remove(te);
+            }
+        });
     }
     
     

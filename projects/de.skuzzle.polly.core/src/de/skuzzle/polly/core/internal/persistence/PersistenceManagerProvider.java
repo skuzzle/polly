@@ -28,7 +28,7 @@ import de.skuzzle.polly.sdk.exceptions.DatabaseException;
         @Require(state = ModuleStates.PLUGINS_READY)
     },
     provides = {
-        @Provide(component = PersistenceManagerImpl.class),
+        @Provide(component = PersistenceManagerV2Impl.class),
         @Provide(state = ModuleStates.PERSISTENCE_READY)
     })
 public class PersistenceManagerProvider extends AbstractProvider {
@@ -37,10 +37,11 @@ public class PersistenceManagerProvider extends AbstractProvider {
     
     
     private PluginManagerImpl pluginManager;
-    private PersistenceManagerImpl persistenceManager;
+    private PersistenceManagerV2Impl persistenceManager;
     private ShutdownManagerImpl shutdownManager;
     private XmlCreator xmlCreator;
     private Configuration persistenceCfg;
+    
     
     
     public PersistenceManagerProvider(ModuleLoader loader) {
@@ -67,7 +68,7 @@ public class PersistenceManagerProvider extends AbstractProvider {
             throw new SetupException(e);
         }
         
-        this.persistenceManager = new PersistenceManagerImpl();
+        this.persistenceManager = new PersistenceManagerV2Impl();
         this.provideComponent(this.persistenceManager);
         
         DatabaseProperties dp = new DatabaseProperties(

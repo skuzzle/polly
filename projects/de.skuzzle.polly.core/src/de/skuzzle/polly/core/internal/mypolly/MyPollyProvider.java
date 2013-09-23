@@ -12,7 +12,7 @@ import de.skuzzle.polly.core.internal.httpv2.WebInterfaceManagerImpl;
 import de.skuzzle.polly.core.internal.irc.IrcManagerImpl;
 import de.skuzzle.polly.core.internal.mail.MailManagerImpl;
 import de.skuzzle.polly.core.internal.paste.PasteServiceManagerImpl;
-import de.skuzzle.polly.core.internal.persistence.PersistenceManagerImpl;
+import de.skuzzle.polly.core.internal.persistence.PersistenceManagerV2Impl;
 import de.skuzzle.polly.core.internal.plugins.PluginManagerImpl;
 import de.skuzzle.polly.core.internal.roles.RoleManagerImpl;
 import de.skuzzle.polly.core.internal.runonce.RunOnceManagerImpl;
@@ -31,7 +31,7 @@ import de.skuzzle.polly.tools.events.EventProvider;
         @Require(component = IrcManagerImpl.class),
         @Require(component = PluginManagerImpl.class),
         @Require(component = ConfigurationProviderImpl.class),
-        @Require(component = PersistenceManagerImpl.class),
+        @Require(component = PersistenceManagerV2Impl.class),
         @Require(component = FormatManagerImpl.class),
         @Require(component = ConversationManagerImpl.class),
         @Require(component = EventProvider.class),
@@ -53,7 +53,7 @@ public class MyPollyProvider extends AbstractProvider {
     private IrcManagerImpl ircManager;
     private PluginManagerImpl pluginManager;
     private ConfigurationProviderImpl config;
-    private PersistenceManagerImpl persistencemanager;
+    private PersistenceManagerV2Impl persistencemanager;
     private UserManagerImpl userManager;
     private FormatManagerImpl formatManager;
     private ConversationManagerImpl conversationManager;
@@ -80,7 +80,7 @@ public class MyPollyProvider extends AbstractProvider {
         this.ircManager = this.requireNow(IrcManagerImpl.class, true);
         this.pluginManager = this.requireNow(PluginManagerImpl.class, true);
         this.config = this.requireNow(ConfigurationProviderImpl.class, true);
-        this.persistencemanager = this.requireNow(PersistenceManagerImpl.class, true);
+        this.persistencemanager = this.requireNow(PersistenceManagerV2Impl.class, true);
         this.userManager = this.requireNow(UserManagerImpl.class, true);
         this.formatManager = this.requireNow(FormatManagerImpl.class, true);
         this.conversationManager = this.requireNow(ConversationManagerImpl.class, true);

@@ -8,9 +8,11 @@ import polly.rx.entities.BattleReport;
 import polly.rx.entities.FleetScan;
 import polly.rx.entities.FleetScanHistoryEntry;
 import polly.rx.entities.FleetScanShip;
-
-import de.skuzzle.polly.sdk.PersistenceManager;
-import de.skuzzle.polly.sdk.WriteAction;
+import de.skuzzle.polly.sdk.PersistenceManagerV2;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Atomic;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Param;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Read;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Write;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 
 
@@ -25,11 +27,11 @@ public class FleetDBManager {
     public static final String DELETE_FLEET_SCAN_PERMISSION = "plly.permission.DELETE_FLEET_SCAN";
     
     
-    private PersistenceManager persistence;
+    private final PersistenceManagerV2 persistence;
     
     
     
-    public FleetDBManager(PersistenceManager persistence) {
+    public FleetDBManager(PersistenceManagerV2 persistence) {
         this.persistence = persistence;
     }
     
@@ -38,13 +40,13 @@ public class FleetDBManager {
     public void cleanInvalidBattleReports() throws DatabaseException {
         final List<BattleReport> allReports = this.getAllReports();
         
-        this.persistence.atomicWriteOperation(new WriteAction() {
+        this.persistence.writeAtomic(new Atomic() {
             @Override
-            public void performUpdate(PersistenceManager persistence) {
+            public void perform(Write write) {
                 for (BattleReport report : allReports) {
                     if (report.getDefenderShips().isEmpty() || 
                             report.getAttackerShips().isEmpty()) {
-                        persistence.remove(report);
+                        write.remove(report);
                     }
                 }
             }
@@ -53,29 +55,29 @@ public class FleetDBManager {
     
     
     
-    public synchronized void addBattleReport(BattleReport report) 
+    public synchronized void addBattleReport(final BattleReport report) 
             throws DatabaseException {
-        try {
-            this.persistence.readLock();
-            BattleReport rp = this.persistence.findSingle(
-                BattleReport.class, BattleReport.UNIQUE_CHECK, 
-                report.getQuadrant(), 
-                report.getX(), report.getY(), 
-                report.getAttackerVenadName(),
-                report.getDefenderVenadName(),
-                report.getAttackerFleetName(),
-                report.getDefenderFleetName(),
-                report.getDate());
-            
-            if (rp != null) {
-                throw new DatabaseException(
-                    "It seems like this Battlereport already exists.");
+        this.persistence.writeAtomic(new Atomic() {
+            @Override
+            public void perform(Write write) throws DatabaseException {
+                final BattleReport rp = write.read().findSingle(
+                    BattleReport.class, BattleReport.UNIQUE_CHECK, new Param(
+                    report.getQuadrant(), 
+                    report.getX(), report.getY(), 
+                    report.getAttackerVenadName(),
+                    report.getDefenderVenadName(),
+                    report.getAttackerFleetName(),
+                    report.getDefenderFleetName(),
+                    report.getDate()));
+                
+                if (rp != null) {
+                    throw new DatabaseException(
+                        "It seems like this Battlereport already exists.");
+                }
+                
+                write.single(report);
             }
-        } finally {
-            this.persistence.readUnlock();
-        }
-        
-        this.persistence.atomicPersist(report);
+        });
     }
     
     
@@ -84,11 +86,9 @@ public class FleetDBManager {
         final FleetScan scan = this.getScanById(scanId);
         final List<FleetScanShip> deleteMe = new LinkedList<FleetScanShip>();
         
-        this.persistence.atomicWriteOperation(new WriteAction() {
-            
+        this.persistence.writeAtomic(new Atomic() {
             @Override
-            public void performUpdate(PersistenceManager persistence) {
-        
+            public void perform(Write write) {
                 // only remove ships that do not belong to another scan
                 for (FleetScanShip ship : scan.getShips()) {
                     List<FleetScan> other = getScanWithShip(ship.getRxId());
@@ -100,11 +100,10 @@ public class FleetDBManager {
                         ship.getHistory().add(e);
                     }
                 }
-        
 
                 scan.getShips().clear();
-                persistence.removeList(deleteMe);
-                persistence.remove(scan);
+                write.removeAll(deleteMe);
+                write.remove(scan);
             }
         });
     }
@@ -112,10 +111,9 @@ public class FleetDBManager {
     
     
     public void addFleetScan(final FleetScan scan) throws DatabaseException {
-        this.persistence.atomicWriteOperation(new WriteAction() {
-            
+        this.persistence.writeAtomic(new Atomic() {
             @Override
-            public void performUpdate(PersistenceManager persistence) {
+            public void perform(Write write) {
                 List<FleetScanShip> newShips = new ArrayList<FleetScanShip>(
                     scan.getShips().size());
                 
@@ -133,7 +131,7 @@ public class FleetDBManager {
                 }
                 
                 scan.setShips(newShips);
-                persistence.persist(scan);
+                write.single(scan);
             }
         });
     }
@@ -141,55 +139,54 @@ public class FleetDBManager {
     
     
     public List<FleetScanShip> getShipsByOwner(String ownerName) {
-        return this.persistence.atomicRetrieveList(FleetScanShip.class, 
-            FleetScanShip.BY_OWNER, ownerName);
+        return this.persistence.atomic().findList(FleetScanShip.class, 
+            FleetScanShip.BY_OWNER, new Param(ownerName));
     }
     
     
     
     public List<FleetScan> getScansWithOwner(String ownerName) {
-        return this.persistence.atomicRetrieveList(FleetScan.class, 
-            FleetScan.CONTAINING_OWNER, ownerName);
+        return this.persistence.atomic().findList(FleetScan.class, 
+            FleetScan.CONTAINING_OWNER, new Param(ownerName));
     }
     
     
     
     public FleetScanShip getShipByRevorixId(int rxId) {
-        return this.persistence.findSingle(
-            FleetScanShip.class, FleetScanShip.BY_REVORIX_ID, rxId);
+        return this.persistence.atomic().findSingle(
+            FleetScanShip.class, FleetScanShip.BY_REVORIX_ID, new Param(rxId));
     }
     
     
     
     public List<FleetScan> getScanWithShip(int rxId) {
-        return this.persistence.findList(
-            FleetScan.class, FleetScan.CONTAINING_SHIP, new Object[] { rxId } );
+        return this.persistence.atomic().findList(
+            FleetScan.class, FleetScan.CONTAINING_SHIP, new Param(rxId));
     }
     
     
     
     public FleetScanShip fleetScanShipById(int rxId) {
-        return this.persistence.findSingle(FleetScanShip.class, 
-            FleetScanShip.BY_REVORIX_ID, rxId);
+        return this.persistence.atomic().findSingle(FleetScanShip.class, 
+            FleetScanShip.BY_REVORIX_ID, new Param(rxId));
     }
     
     
     
     public List<FleetScan> getAllScans() {
-        return this.persistence.atomicRetrieveList(FleetScan.class, 
-            FleetScan.ALL_SCANS);
+        return this.persistence.atomic().findList(FleetScan.class, FleetScan.ALL_SCANS);
     }
     
     
     
     public List<BattleReport> getAllReports() {
-        return this.persistence.atomicRetrieveList(BattleReport.class, 
+        return this.persistence.atomic().findList(BattleReport.class, 
             BattleReport.ALL_REPORTS);
     }
     
     
     public List<FleetScanShip> getAllScannedShips() {
-        return this.persistence.atomicRetrieveList(FleetScanShip.class, 
+        return this.persistence.atomic().findList(FleetScanShip.class, 
             FleetScanShip.All_SHIPS);
     }
     
@@ -197,27 +194,24 @@ public class FleetDBManager {
     
     
     public BattleReport getReportById(int id) {
-        return this.persistence.atomicRetrieveSingle(BattleReport.class, id);
+        return this.persistence.atomic().find(BattleReport.class, id);
     }
     
     
     
     public FleetScan getScanById(int id) {
-        return this.persistence.atomicRetrieveSingle(FleetScan.class, id);
+        return this.persistence.atomic().find(FleetScan.class, id);
     }
     
     
     
     public List<BattleReport> getReportByIdList(Integer...ids) {
         List<BattleReport> result = new ArrayList<BattleReport>(ids.length);
-        try {
-            this.persistence.readLock();
+        try (final Read r = this.persistence.read()) {
             for (int id : ids) {
-                BattleReport rp = this.persistence.find(BattleReport.class, id);
+                BattleReport rp = r.find(BattleReport.class, id);
                 result.add(rp);
             }
-        } finally {
-            this.persistence.readUnlock();
         }
         return result;
     }
@@ -225,33 +219,33 @@ public class FleetDBManager {
     
     
     public List<BattleReport> getReportsWithVenad(String venad) {
-        return this.persistence.atomicRetrieveList(BattleReport.class, 
-            BattleReport.WITH_NAME, venad);
+        return this.persistence.atomic().findList(BattleReport.class, 
+            BattleReport.WITH_NAME, new Param(venad));
     }
     
     
     
     public List<BattleReport> getReportsWithClan(String clan) {
-        return this.persistence.atomicRetrieveList(BattleReport.class, 
-            BattleReport.WITH_CLAN, clan);
+        return this.persistence.atomic().findList(BattleReport.class, 
+            BattleReport.WITH_CLAN, new Param(clan));
     }
     
     
     
     public List<BattleReport> getReportsByLocation(String location) {
-        return this.persistence.atomicRetrieveList(BattleReport.class, 
-            BattleReport.BY_LOCATION, location);
+        return this.persistence.atomic().findList(BattleReport.class, 
+            BattleReport.BY_LOCATION, new Param(location));
     }
     
     
     
     public void deleteReportByIdList(final Integer...ids) throws DatabaseException {
-        this.persistence.atomicWriteOperation(new WriteAction() {
+        this.persistence.writeAtomic(new Atomic() {
             
             @Override
-            public void performUpdate(PersistenceManager persistence) {
-                List<BattleReport> deleteMe = getReportByIdList(ids);
-                persistence.removeList(deleteMe);
+            public void perform(Write write) {
+                final List<BattleReport> deleteMe = getReportByIdList(ids);
+                write.removeAll(deleteMe);
             }
         });
     }
@@ -261,17 +255,16 @@ public class FleetDBManager {
     public void deleteReportById(int id) throws DatabaseException {
         final BattleReport report = this.getReportById(id);
         
-        this.persistence.atomicWriteOperation(new WriteAction() {
-            
+        this.persistence.writeAtomic(new Atomic() {
             @Override
-            public void performUpdate(PersistenceManager persistence) {
-                persistence.removeList(report.getDrop());
-                persistence.removeList(report.getAttackerShips());
-                persistence.removeList(report.getDefenderShips());
+            public void perform(Write write) {
+                write.removeAll(report.getDrop());
+                write.removeAll(report.getAttackerShips());
+                write.removeAll(report.getDefenderShips());
                 report.getDrop().clear();
                 report.getAttackerShips().clear();
                 report.getDefenderShips().clear();
-                persistence.remove(report);
+                write.remove(report);
             }
         });
     }
@@ -279,7 +272,7 @@ public class FleetDBManager {
     
     
     public int getBattleReportCount() {
-        final Number n = this.persistence.findSingle(
+        final Number n = this.persistence.atomic().findSingle(
             Number.class, BattleReport.REPORT_COUNT);
         return n.intValue();
     }
@@ -287,49 +280,42 @@ public class FleetDBManager {
     
     
     public List<BattleReport> battleReportRange(int first, int max) {
-        try {
-            this.persistence.readLock();
-            return this.persistence.findList(BattleReport.class, BattleReport.ALL_REPORTS, 
-                first, max, new Object[0]);
-        } finally {
-            this.persistence.readUnlock();
-        }
+        return this.persistence.atomic().findList(BattleReport.class, 
+            BattleReport.ALL_REPORTS, first, max, new Param(0));
     }
 
 
 
     public List<FleetScan> getScansWithClan(String clanName) {
-        return this.persistence.atomicRetrieveList(FleetScan.class, 
-            FleetScan.SCANS_BY_CLAN, clanName);
+        return this.persistence.atomic().findList(FleetScan.class, 
+            FleetScan.SCANS_BY_CLAN, new Param(clanName));
     }
 
 
 
     public List<FleetScanShip> getShipsByClan(String clanName) {
-        return this.persistence.atomicRetrieveList(FleetScanShip.class, 
-            FleetScanShip.SHIPS_BY_CLAN, clanName);
+        return this.persistence.atomic().findList(FleetScanShip.class, 
+            FleetScanShip.SHIPS_BY_CLAN, new Param(clanName));
     }
 
 
 
     public List<FleetScan> getScansWithLocation(String quadrant) {
-        return this.persistence.atomicRetrieveList(FleetScan.class, 
-            FleetScan.SCANS_BY_LOCATION, quadrant);
+        return this.persistence.atomic().findList(FleetScan.class, 
+            FleetScan.SCANS_BY_LOCATION, new Param(quadrant));
     }
 
 
 
     public List<FleetScanShip> getShipsWithLocation(String quadrant) {
-        return this.persistence.atomicRetrieveList(FleetScanShip.class, 
-            FleetScanShip.SHIPS_BY_LOCATION, quadrant, "%" + quadrant + "%");
+        return this.persistence.atomic().findList(FleetScanShip.class, 
+            FleetScanShip.SHIPS_BY_LOCATION, new Param(quadrant, "%" + quadrant + "%"));
     }
 
 
 
     public List<BattleReport> getReportByUserId(int id) {
-        return this.persistence.atomicRetrieveList(
-            BattleReport.class, BattleReport.BY_USER_ID, id);
+        return this.persistence.atomic().findList(
+            BattleReport.class, BattleReport.BY_USER_ID, new Param(id));
     }
-    
-    
 }

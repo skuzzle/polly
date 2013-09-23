@@ -6,7 +6,8 @@ import org.apache.log4j.Logger;
 
 import de.skuzzle.polly.core.internal.http.HttpInterface;
 import de.skuzzle.polly.sdk.MyPolly;
-import de.skuzzle.polly.sdk.PersistenceManager;
+import de.skuzzle.polly.sdk.PersistenceManagerV2;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Write;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.RoleException;
@@ -119,16 +120,11 @@ public class UserInfoPageHttpAction extends HttpAction {
                         "Password must not be empty");
             }
             
-            PersistenceManager persistence = this.getMyPolly().persistence();
-            try {
-                persistence.writeLock();
-                persistence.startTransaction();
+            final PersistenceManagerV2 persistence = this.getMyPolly().persistence();
+            try (final Write w = persistence.write()) {
                 u.setPassword(newPassword);
-                persistence.commitTransaction();
             } catch (DatabaseException e1) {
                 e.throwTemplateException(e1);
-            } finally {
-                persistence.writeUnlock();
             }
             
         }

@@ -7,7 +7,7 @@ import de.skuzzle.polly.core.configuration.ConfigurationProviderImpl;
 import de.skuzzle.polly.core.internal.ModuleStates;
 import de.skuzzle.polly.core.internal.ShutdownManagerImpl;
 import de.skuzzle.polly.core.internal.formatting.FormatManagerImpl;
-import de.skuzzle.polly.core.internal.persistence.PersistenceManagerImpl;
+import de.skuzzle.polly.core.internal.persistence.PersistenceManagerV2Impl;
 import de.skuzzle.polly.core.internal.roles.RoleManagerImpl;
 import de.skuzzle.polly.core.internal.runonce.RunOnceManagerImpl;
 import de.skuzzle.polly.core.moduleloader.AbstractProvider;
@@ -29,7 +29,7 @@ import de.skuzzle.polly.tools.events.EventProvider;
         @Require(component = ConfigurationProviderImpl.class),
         @Require(component = ShutdownManagerImpl.class),
         @Require(component = EventProvider.class),
-        @Require(component = PersistenceManagerImpl.class),
+        @Require(component = PersistenceManagerV2Impl.class),
         @Require(component = RoleManagerImpl.class),
         @Require(component = FormatManagerImpl.class),
         @Require(component = RunOnceManagerImpl.class),
@@ -44,7 +44,7 @@ public class UserManagerProvider extends AbstractProvider {
     
     public final static String USER_CONFIG = "user.cfg";
 
-    private PersistenceManagerImpl persistenceManager;
+    private PersistenceManagerV2Impl persistenceManager;
     private EventProvider eventProvider;
     private ShutdownManagerImpl shutdownManager;
     private UserManagerImpl userManager;
@@ -64,7 +64,7 @@ public class UserManagerProvider extends AbstractProvider {
     @Override
     public void beforeSetup() {
         this.eventProvider = this.requireNow(EventProvider.class, true);
-        this.persistenceManager = this.requireNow(PersistenceManagerImpl.class, true);
+        this.persistenceManager = this.requireNow(PersistenceManagerV2Impl.class, true);
         this.shutdownManager = this.requireNow(ShutdownManagerImpl.class, true);
         this.roleManager = this.requireNow(RoleManagerImpl.class, true);
         this.runOnceManager = this.requireNow(RunOnceManagerImpl.class, true);

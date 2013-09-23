@@ -10,7 +10,12 @@ import java.util.TimerTask;
 
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.MyPolly;
-import de.skuzzle.polly.sdk.PersistenceManager;
+import de.skuzzle.polly.sdk.PersistenceManagerV2;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Atomic;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Param;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Read;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Write;
+import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import entities.TopicEntity;
@@ -28,7 +33,7 @@ public class TopicManager extends AbstractDisposable {
     private Timer topicTimer;
     private Map<String, TopicEntity> topics;
     private MyPolly myPolly;
-    private PersistenceManager persistence;
+    private PersistenceManagerV2 persistence;
     private TopicFormatter formatter;
     
     
@@ -57,66 +62,56 @@ public class TopicManager extends AbstractDisposable {
     
     
     public void loadAll() {
-        try {
-            this.persistence.readLock();
-            List<TopicEntity> topics = this.persistence.findList(TopicEntity.class, 
-                    "ALL_TOPICS");
+        try (final Read r = this.persistence.read()) {
+            List<TopicEntity> topics = r.findList(TopicEntity.class, "ALL_TOPICS");
             for (TopicEntity topic : topics) {
                 this.topics.put(topic.getChannel(), topic);
             }
-        } finally {
-            this.persistence.readUnlock();
         }
     }
     
     
     
-    public void addTopicTask(TopicEntity entity) {
+    public void addTopicTask(final TopicEntity entity) throws CommandException {
         if (this.topics.containsKey(entity.getChannel())) {
             return;
         }
         try {
-            this.persistence.writeLock();
-            this.persistence.startTransaction();
-            this.persistence.persist(entity);
-            this.persistence.commitTransaction();
-            this.topics.put(entity.getChannel(), entity);
-            this.myPolly.irc().setTopic(entity.getChannel(), 
-                    this.formatter.formatTopic(entity));
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            this.persistence.writeUnlock();
+            this.persistence.writeAtomic(new Atomic() {
+                @Override
+                public void perform(Write write) {
+                    write.single(entity);
+                    topics.put(entity.getChannel(), entity);
+                    myPolly.irc().setTopic(entity.getChannel(), formatter.formatTopic(entity));
+                }
+            });
+        } catch (DatabaseException e) {
+            throw new CommandException(e);
         }
     }
     
     
     
     public List<TopicEntity> topicsForUser(String nickName) {
-        try {
-            this.persistence.readLock();
-            return this.persistence.findList(TopicEntity.class, 
-                    "TOPICS_FOR_USER", nickName);
-        } finally {
-            this.persistence.readUnlock();
-        }
+        return this.persistence.atomic().findList(TopicEntity.class, 
+                    "TOPICS_FOR_USER", new Param(nickName));
     }
     
     
     
     public void deleteTopicTask(String channel) throws DatabaseException {
-        TopicEntity entity = this.topics.get(channel);
+        final TopicEntity entity = this.topics.get(channel);
         if (entity != null) {
             this.topics.remove(channel);
-            try {
-                this.persistence.writeLock();
-                TopicEntity t = this.persistence.find(TopicEntity.class, entity.getId());
-                this.persistence.startTransaction();
-                this.persistence.remove(t);
-                this.persistence.commitTransaction();
-            } finally {
-                this.persistence.writeUnlock();
-            }
+            this.persistence.writeAtomic(new Atomic() {
+                
+                @Override
+                public void perform(Write write) {
+                    final TopicEntity t = write.read().find(TopicEntity.class, 
+                        entity.getId());
+                    write.remove(t);
+                }
+            });
         }
     }
 

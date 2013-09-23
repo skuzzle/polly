@@ -15,7 +15,7 @@ import java.util.regex.Matcher;
 
 import org.apache.log4j.Logger;
 
-import de.skuzzle.polly.core.internal.persistence.PersistenceManagerImpl;
+import de.skuzzle.polly.core.internal.persistence.PersistenceManagerV2Impl;
 import de.skuzzle.polly.core.parser.InputParser;
 import de.skuzzle.polly.core.parser.InputScanner;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
@@ -34,11 +34,13 @@ import de.skuzzle.polly.core.util.TypeMapper;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.Attribute;
 import de.skuzzle.polly.sdk.FormatManager;
-import de.skuzzle.polly.sdk.PersistenceManager;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Atomic;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Param;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Write;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
-import de.skuzzle.polly.sdk.WriteAction;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Read;
 import de.skuzzle.polly.sdk.constraints.AttributeConstraint;
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
 import de.skuzzle.polly.sdk.eventlistener.UserEvent;
@@ -86,7 +88,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     };
     
     
-    private PersistenceManagerImpl persistence;
+    private PersistenceManagerV2Impl persistence;
 
     /**
      * Stores the currently signed on users. Key: the nickname in lower case.
@@ -105,7 +107,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     
     
-    public UserManagerImpl(PersistenceManagerImpl persistence, 
+    public UserManagerImpl(PersistenceManagerV2Impl persistence, 
             String declarationCachePath, int tempVarLifeTime,
             boolean ignoreUnknownIdentifiers, EventProvider eventProvider, 
             RoleManager roleManager,
@@ -192,9 +194,8 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     @Override
     public User getUser(int id) {
-        de.skuzzle.polly.core.internal.users.UserImpl result = 
-            (de.skuzzle.polly.core.internal.users.UserImpl)  this.persistence.atomicRetrieveSingle(
-            de.skuzzle.polly.core.internal.users.UserImpl.class, id);
+        UserImpl result = 
+            (UserImpl) this.persistence.atomic().find(UserImpl.class, id);
         
         if (result != null) {
             result.setUserManager(this);
@@ -209,37 +210,32 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
         if (registeredName == null) {
             return null;
         }
-        try {
-            this.persistence.readLock();
-            final de.skuzzle.polly.core.internal.users.UserImpl result = 
-                this.persistence.findSingle(
-                    de.skuzzle.polly.core.internal.users.UserImpl.class,
-                    "USER_BY_NAME", registeredName);
+        try (final Read r = this.persistence.read()) {
+            final UserImpl result = r.findSingle(UserImpl.class,
+                    "USER_BY_NAME", new Param(registeredName));
             
                 if (result != null) {
                     result.setUserManager(this);
                 }
                 return result;
-        } finally {
-            this.persistence.readUnlock();
         }
     }
     
     
 
     @Override
-    public User updateUser(User old, User updated) {
+    public User updateUser(final User old, final User updated) {
         try {
-            this.persistence.writeLock();
-            this.persistence.startTransaction();
-            old.setHashedPassword(updated.getHashedPassword());
-            this.persistence.commitTransaction();
-            logger.info("User '" + old + "' updated to '" + updated + "'");
+            this.persistence.writeAtomic(new Atomic() {
+                @Override
+                public void perform(Write write) throws DatabaseException {
+                    old.setHashedPassword(updated.getHashedPassword());
+                }
+            });
         } catch (DatabaseException e) {
             e.printStackTrace();
-        } finally {
-            this.persistence.writeUnlock();
         }
+        logger.info("User '" + old + "' updated to '" + updated + "'");
         return old;
     }
     
@@ -254,18 +250,15 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
         }
         
         
-        try {
-            this.persistence.writeLock();
-            User check = this.persistence.findSingle(User.class, "USER_BY_NAME", 
-                    user.getName());
+        try (final Write w = this.persistence.write()) {
+            User check = w.read().findSingle(User.class, "USER_BY_NAME", 
+                    new Param(user.getName()));
             
             if (check != null) {
                 logger.trace("User already exists.");
                 throw new UserExistsException(check);
             }
-            this.persistence.startTransaction();
-            this.persistence.persist(user);
-            this.persistence.commitTransaction();
+            w.single(user);
             this.registeredStale = true;
             
             // Assign registered role to new user.
@@ -276,8 +269,6 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
             }
             
             logger.info("Added user " + user);
-        } finally {
-            this.persistence.writeUnlock();
         }
     }
     
@@ -294,18 +285,17 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     
     @Override
-    public void deleteUser(User user) throws DatabaseException {
-        try {
-            this.persistence.writeLock();
-            this.logoff(user);
-            this.persistence.startTransaction();
-            this.persistence.remove(user);
-            this.persistence.commitTransaction();
-            this.registeredStale = true;
-            logger.info("Deleted user " + user);
-        } finally {
-            this.persistence.writeUnlock();
-        }
+    public void deleteUser(final User user) throws DatabaseException {
+        this.persistence.writeAtomic(new Atomic() {
+            
+            @Override
+            public void perform(Write write) throws DatabaseException {
+                logoff(user);
+                write.remove(user);
+            }
+        });
+        this.registeredStale = true;
+        logger.info("Deleted user " + user);
     }
 
     
@@ -327,7 +317,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
             logger.info("Irc User " + from + " successfully logged in as " + 
                     registeredName);
             
-            ((de.skuzzle.polly.core.internal.users.UserImpl) user).setLoginTime(Time.currentTimeMillis());
+            ((UserImpl) user).setLoginTime(Time.currentTimeMillis());
             UserEvent e = new UserEvent(this, user);
             this.fireUserSignedOn(e);
             return user;
@@ -355,7 +345,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
         logger.info("Irc User " + from + " successfully logged in as " + 
                 from);
         
-        ((de.skuzzle.polly.core.internal.users.UserImpl) user).setLoginTime(Time.currentTimeMillis());
+        ((UserImpl) user).setLoginTime(Time.currentTimeMillis());
         UserEvent e = new UserEvent(this, user);
         this.fireUserSignedOn(e);
         return user;
@@ -429,9 +419,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     public synchronized List<User> getRegisteredUsers() {
         if (this.registeredStale || this.registeredUsers == null) {
             final List<de.skuzzle.polly.core.internal.users.UserImpl> all = 
-                this.persistence.atomicRetrieveList(
-                    de.skuzzle.polly.core.internal.users.UserImpl.class, 
-                    de.skuzzle.polly.core.internal.users.UserImpl.ALL_USERS);
+                this.persistence.atomic().findList(UserImpl.class, UserImpl.ALL_USERS);
             
             for (final de.skuzzle.polly.core.internal.users.UserImpl u : all) {
                 u.setUserManager(this);
@@ -464,7 +452,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     @Override
     public synchronized Map<String, List<Attribute>> getAllAttributes() {
         if (this.attributesStale || this.allAttributes == null) {
-            this.allAttributes = this.persistence.atomicRetrieveList(AttributeImpl.class, 
+            this.allAttributes = this.persistence.atomic().findList(AttributeImpl.class, 
                 AttributeImpl.ALL_ATTRIBUTES);
         }
         final Map<String, List<Attribute>> result = 
@@ -485,20 +473,21 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     public void resetAllAttributes() {
         try {
-            this.persistence.writeLock();
-            final List<de.skuzzle.polly.core.internal.users.Attribute> attributes = 
-                this.persistence.atomicRetrieveList(
-                    de.skuzzle.polly.core.internal.users.Attribute.class, 
-                    de.skuzzle.polly.core.internal.users.Attribute.ALL_ATTRIBUTES);
-            
-            for (final de.skuzzle.polly.core.internal.users.Attribute attr : attributes) {
-                this.removeAttribute(attr.getName());
-            }
+            this.persistence.writeAtomic(new Atomic() {
+                @Override
+                public void perform(Write write) throws DatabaseException {
+                    final List<de.skuzzle.polly.core.internal.users.Attribute> attributes = 
+                        write.read().findList(
+                            de.skuzzle.polly.core.internal.users.Attribute.class, 
+                            de.skuzzle.polly.core.internal.users.Attribute.ALL_ATTRIBUTES);
+                    
+                    for (final de.skuzzle.polly.core.internal.users.Attribute attr : attributes) {
+                        removeAttribute(attr.getName());
+                    }
+                }
+            });
         } catch (DatabaseException e) {
-            // TODO: todo
-            e.printStackTrace();
-        } finally {
-            this.persistence.writeUnlock();
+            logger.error("", e);
         }
     }
     
@@ -506,43 +495,41 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     @Override
     public void addAttribute(final String name, final Types defaultValue, 
-            final String description, String category, AttributeConstraint constraint) 
+            final String description, final String category, 
+            final AttributeConstraint constraint) 
                 throws DatabaseException {
         
-        try {
-            this.persistence.writeLock();
-            this.constraints.put(name.toLowerCase(), constraint);
-
-            final AttributeImpl check = this.persistence.findSingle(AttributeImpl.class, 
-                    AttributeImpl.ATTRIBUTE_BY_NAME, name);
-            
-            if (check != null) {
-                logger.trace("Tried to add an attribute that already existed: " + name + 
-                        ". Existing attribute: " + check);
-                return;
+        this.persistence.writeAtomic(new Atomic() {
+            @Override
+            public void perform(Write write) throws DatabaseException {
+                
+                constraints.put(name.toLowerCase(), constraint);
+                final AttributeImpl check = write.read().findSingle(AttributeImpl.class, 
+                        AttributeImpl.ATTRIBUTE_BY_NAME, new Param(name));
+                
+                if (check != null) {
+                    logger.trace("Tried to add an attribute that already existed: " + name + 
+                            ". Existing attribute: " + check);
+                    return;
+                }
+                
+                final String sDefaultValue = defaultValue.valueString(
+                    getPersistenceFormatter());
+                
+                final AttributeImpl att = new AttributeImpl(name, sDefaultValue, 
+                    description, category);
+                
+                final List<User> all = getRegisteredUsers();
+                write.single(att);
+                logger.trace("Adding new attribute to each user.");
+                for (User user : all) {
+                    final UserImpl u = (UserImpl) user;
+                    u.getAttributes().put(name, sDefaultValue);
+                }
+                logger.info("Attribute " + att + " added.");
             }
-            
-            final String sDefaultValue = defaultValue.valueString(
-                this.getPersistenceFormatter());
-            
-            final AttributeImpl att = new AttributeImpl(name, sDefaultValue, 
-                description, category);
-            
-            final List<User> all = this.getRegisteredUsers();
-            this.persistence.startTransaction();
-            this.persistence.persist(att);
-            
-            logger.trace("Adding new attribute to each user.");
-            for (User user : all) {
-                final UserImpl u = (UserImpl) user;
-                u.getAttributes().put(name, sDefaultValue);
-            }
-            this.persistence.commitTransaction();
-            this.attributesStale = true;
-            logger.info("Attribute " + att + " added.");
-        } finally {
-            this.persistence.writeUnlock();
-        }
+        });
+        this.attributesStale = true;
     }
     
     
@@ -557,8 +544,8 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
         user.getAttribute(attribute);
         
         if (value.equalsIgnoreCase("%default%")) {
-            Attribute attr = this.persistence.findSingle(Attribute.class, 
-                AttributeImpl.ATTRIBUTE_BY_NAME, attribute);
+            Attribute attr = this.persistence.atomic().findSingle(Attribute.class, 
+                AttributeImpl.ATTRIBUTE_BY_NAME, new Param(attribute));
             
             value = attr.getDefaultValue();
         }
@@ -572,10 +559,9 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
                 "' ist kein gültiger Wert für das Attribut '" + attribute + "'");
         }
         
-        this.persistence.atomicWriteOperation(new WriteAction() {
-            
+        this.persistence.writeAtomic(new Atomic() {
             @Override
-            public void performUpdate(PersistenceManager persistence) {
+            public void perform(Write write) {
                 ((UserImpl) user).setAttribute(attribute, valueCopy);
             }
         });
@@ -634,28 +620,23 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
 
     @Override
     public void removeAttribute(String name) throws DatabaseException {
-        try {
-            this.persistence.writeLock();
-            List<User> all = this.persistence.findList(User.class, "ALL_USERS");
-            Attribute att = this.persistence.findSingle(
-                    Attribute.class, AttributeImpl.ATTRIBUTE_BY_NAME, name);
+        try (final Write w = this.persistence.write()) {
+            List<User> all = w.read().findList(User.class, "ALL_USERS");
+            final Attribute att = w.read().findSingle(
+                    Attribute.class, AttributeImpl.ATTRIBUTE_BY_NAME, new Param(name));
             
             if (att == null) {
                 throw new UnknownAttributeException(name);
             }
             
-            this.persistence.startTransaction();
             logger.trace("Removing attribute from all users.");
             for (User user : all) {
                 final UserImpl u = (UserImpl) user;
                 u.getAttributes().remove(name);
             }
-            this.persistence.remove(att);
-            this.persistence.commitTransaction();
+            w.remove(att);
             this.constraints.remove(name);
             logger.info("Attribute " + att + " removed.");
-        } finally {
-            this.persistence.writeUnlock();
         }
     }
 
@@ -674,7 +655,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     public User createUser(String name, String password) {
         final UserImpl result = new UserImpl(name, password);
         result.setUserManager(this);
-        final List<AttributeImpl> all = this.persistence.atomicRetrieveList(
+        final List<AttributeImpl> all = this.persistence.atomic().findList(
             AttributeImpl.class, AttributeImpl.ALL_ATTRIBUTES);
         
         for (Attribute att : all) {
