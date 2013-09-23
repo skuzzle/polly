@@ -10,8 +10,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.skuzzle.polly.sdk.User;
+import de.skuzzle.polly.sdk.time.Milliseconds;
 import de.skuzzle.polly.tools.iterators.ArrayIterator;
-
 import polly.rx.entities.BattleReport;
 import polly.rx.entities.BattleDrop;
 import polly.rx.entities.BattleReportShip;
@@ -106,6 +106,9 @@ public class BattleReportParser {
         Date date = null;
         try {
             date = getDateFormat().parse(it.next());
+            // round to minutes
+            long d = date.getTime() / Milliseconds.fromMinutes(1) * Milliseconds.fromMinutes(1);
+            date = new Date(d);
         } catch (Exception e) {
             throw new ParseException("invalid date: " + it.previous());
         }

@@ -104,7 +104,7 @@ public class QBattleReportParser {
             while (s.findInLine("Gefechtstaktik") == null) {
                 s.nextLine();
             }
-            final BattleTactic tactic = BattleTactic.parseTactic(s.next());
+            final BattleTactic tactic = BattleTactic.parseTactic(s.nextLine().trim());
             s.skip("\\s+Bonus Angreifer");
             s.useDelimiter("%");
             final double attackerBonus = 1.0 + (s.nextInt() / 100.0);
