@@ -453,7 +453,7 @@ public class HTMLTable<T> implements HttpEventHandler {
             if (s.order[s.sortCol] != SortOrder.UNDEFINED) {
                 final Comparator<? super T> c = this.colSorter.getComparator(
                     s.sortCol, this.model);
-                Collections.sort(data, new DirectedComparator<>(s.getOrder(), c));
+                Collections.sort(result, new DirectedComparator<>(s.getOrder(), c));
             }
         }
         
