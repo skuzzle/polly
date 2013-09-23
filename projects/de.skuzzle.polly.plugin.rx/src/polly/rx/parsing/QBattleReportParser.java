@@ -153,7 +153,7 @@ public class QBattleReportParser {
             String defenderClan = "";
             i = defenderName.indexOf("[");
             if (i != -1) {
-                attackerClan = defenderName.substring(i + 1, defenderName.length() - 1);
+                defenderClan = defenderName.substring(i + 1, defenderName.length() - 1);
                 defenderName = defenderName.substring(0, defenderName.length() - defenderClan.length() - 2);
             }
             
