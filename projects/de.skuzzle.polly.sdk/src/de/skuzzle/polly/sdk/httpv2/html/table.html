@@ -18,7 +18,7 @@
 	    #foreach ($page in [$minPage..$maxPage])
 	        #set($viewPage = $page + 1) 
 	        #if ($page == $settings.getPage())
-	            <b>$viewPage</b>
+	            <b style="text-decoration:underline">$viewPage</b>
 	        #else
 	            <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$page')" title="Goto page $viewPage">$viewPage</a>
 	        #end
