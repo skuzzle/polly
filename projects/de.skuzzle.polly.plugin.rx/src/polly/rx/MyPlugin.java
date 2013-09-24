@@ -41,6 +41,10 @@ import polly.rx.http.battlereports.AddBattleReportAction;
 import polly.rx.http.battlereports.BattleReportFilterHttpAction;
 import polly.rx.http.battlereports.BattleReportHttpAction;
 import polly.rx.http.battlereports.BattleReportInfosHttpAction;
+import polly.rx.httpv2.FleetScanShipTableModel;
+import polly.rx.httpv2.FleetScanTableModel;
+import polly.rx.httpv2.FleetScansWithShipModel;
+import polly.rx.httpv2.RXController;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
 import de.skuzzle.polly.sdk.Types;
@@ -53,6 +57,9 @@ import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
 import de.skuzzle.polly.sdk.exceptions.PluginException;
 import de.skuzzle.polly.sdk.exceptions.RoleException;
+import de.skuzzle.polly.sdk.httpv2.MenuCategory;
+import de.skuzzle.polly.sdk.httpv2.html.HTMLTable;
+import de.skuzzle.polly.sdk.httpv2.html.HTMLTableModel;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 
 
@@ -154,6 +161,26 @@ public class MyPlugin extends PollyPlugin {
         myPolly.web().addHttpAction(new ScoreBoardCompareHttpAction(myPolly, this.sbeManager));
         myPolly.web().addHttpAction(new PostScoreboardHttpAction(myPolly, this.sbeManager));
         this.addCommand(new RankCommand(myPolly, this.sbeManager));
+        
+        
+        
+        
+        
+        myPolly.webInterface().addCategory(new MenuCategory(0, "Revorix"));
+        myPolly.webInterface().getServer().addController(new RXController(myPolly, fleetDBManager));
+        
+        final HTMLTableModel<FleetScan> scanModel = new FleetScanTableModel(fleetDBManager);
+        final HTMLTable<FleetScan> fleetScanTable = new HTMLTable<FleetScan>("fleetScans", scanModel, myPolly);
+        
+        final HTMLTableModel<FleetScanShip> scanShipModel = new FleetScanShipTableModel(fleetDBManager);
+        final HTMLTable<FleetScanShip> fleetScanShipTable = new HTMLTable<FleetScanShip>("ships", scanShipModel, myPolly);
+        
+        final HTMLTableModel<FleetScan> scansWithShip = new FleetScansWithShipModel(fleetDBManager);
+        final HTMLTable<FleetScan> scansWithShipTable = new HTMLTable<FleetScan>("scansWithShip", scansWithShip, myPolly);
+        
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/allFleetScans", fleetScanTable);
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/allFleetScanShips", fleetScanShipTable);
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/scansWithShip", scansWithShipTable);
     }
     
     
