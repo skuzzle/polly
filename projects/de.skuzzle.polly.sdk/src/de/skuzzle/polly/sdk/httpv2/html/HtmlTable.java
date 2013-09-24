@@ -455,6 +455,14 @@ public class HTMLTable<T> implements HttpEventHandler {
         final Map<T, Integer> idxMap = new HashMap<>(data.size());
         List<T> result = new ArrayList<>(data.size());
         
+        // preprocess filters: parse each filter string
+        final Object[] filters = new Object[s.filter.length];
+        for (int i = 0; i < filters.length; ++i) {
+            if (this.model.isFilterable(i) && !s.filter[i].equals("")) {
+                filters[i] = this.filter.getAcceptor(i).parseFilter(s.filter[i]);
+            }
+        }
+        
         int originalIdx = -1;
         
         outer: 
@@ -463,8 +471,8 @@ public class HTMLTable<T> implements HttpEventHandler {
             
             
             for (int i = 0; i < colCount; ++i) {
-                final String colFilter = s.filter[i];
-                if (!this.model.isFilterable(i) || colFilter.equals("")) {
+                final Object colFilter = filters[i];
+                if (colFilter == null) {
                     // skip empty filter or non filterable column
                     continue;
                 }
