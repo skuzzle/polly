@@ -1,6 +1,7 @@
 package de.skuzzle.polly.core.internal.httpv2;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,9 +67,6 @@ public class WebInterfaceManagerImpl implements WebinterfaceManager {
 
     @Override
     public void addMenuEntry(String category, MenuEntry me) {
-        if (!this.categories.containsKey(category)) {
-            this.categories.put(category, new MenuCategory(category));
-        }
         this.categories.get(category).getContent().add(me);
     }
 
@@ -76,7 +74,9 @@ public class WebInterfaceManagerImpl implements WebinterfaceManager {
 
     @Override
     public List<MenuCategory> getMenuCategories() {
-        return new ArrayList<>(this.categories.values());
+        final List<MenuCategory> result = new ArrayList<>(this.categories.values());
+        Collections.sort(result);
+        return result;
     }
 
 

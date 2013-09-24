@@ -20,7 +20,6 @@ import commands.OnReturnCommand;
 import commands.RemindCommand;
 import commands.SnoozeCommand;
 import commands.ToggleMailCommand;
-
 import core.DeliverRemindHandler;
 import core.RemindManager;
 import core.RemindManagerImpl;
@@ -39,6 +38,7 @@ import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
 import de.skuzzle.polly.sdk.exceptions.RoleException;
+import de.skuzzle.polly.sdk.httpv2.MenuCategory;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLColumnFilter;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLTable;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLTableModel;
@@ -145,6 +145,8 @@ public class MyPlugin extends PollyPlugin {
         this.addCommand(new MailRemindCommand(myPolly, this.remindManager));
         this.addCommand(new ToggleMailCommand(myPolly, this.remindManager));
         
+        
+        myPolly.webInterface().addCategory(new MenuCategory(1, "Reminds"));
         final Controller ctrl = new RemindHttpController(myPolly, this.remindManager);
         this.getMyPolly().webInterface().getServer().addController(ctrl);
 

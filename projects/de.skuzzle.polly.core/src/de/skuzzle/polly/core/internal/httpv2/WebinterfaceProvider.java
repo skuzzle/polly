@@ -39,6 +39,7 @@ import de.skuzzle.polly.sdk.Disposable;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
+import de.skuzzle.polly.sdk.httpv2.MenuCategory;
 import de.skuzzle.polly.sdk.httpv2.MenuEntry;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.time.Milliseconds;
@@ -150,6 +151,8 @@ public class WebinterfaceProvider extends AbstractProvider {
     public void run() throws Exception {
         final MyPolly myPolly = this.requireNow(MyPollyImpl.class, false);
         
+        this.webinterface.addCategory(new MenuCategory(Integer.MAX_VALUE, "Admin"));
+        this.webinterface.addCategory(new MenuCategory(-100, "General"));
         this.server.addController(new IndexController(myPolly));
         this.server.addController(new SessionController(myPolly));
         this.server.addController(new UserController(myPolly));

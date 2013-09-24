@@ -30,6 +30,7 @@ import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
 import de.skuzzle.polly.sdk.exceptions.RoleException;
+import de.skuzzle.polly.sdk.httpv2.MenuCategory;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLTable;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLTableModel;
 import de.skuzzle.polly.sdk.roles.RoleManager;
@@ -114,6 +115,7 @@ public class MyPlugin extends PollyPlugin {
         myPolly.web().addHttpAction(new SearchHttpAction(myPolly));
         
         
+        myPolly.webInterface().addCategory(new MenuCategory(1, "Logging"));
         myPolly.webInterface().getServer().addController(new LoggingController(myPolly, logManager));
         
         final HTMLTableModel<LogEntry> model = new LogEntryTableModel(logManager, myPolly);

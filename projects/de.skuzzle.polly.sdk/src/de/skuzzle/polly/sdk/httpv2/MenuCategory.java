@@ -7,13 +7,15 @@ import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 
 
-public class MenuCategory {
+public class MenuCategory implements Comparable<MenuCategory> {
 
+    private final int sortId;
     private final String name;
     private final List<MenuEntry> content;
     
     
-    public MenuCategory(String name) {
+    public MenuCategory(int sortId, String name) {
+        this.sortId = sortId;
         this.name = name;
         this.content = new ArrayList<>();
     }
@@ -46,5 +48,12 @@ public class MenuCategory {
             }
         }
         return false;
+    }
+
+
+
+    @Override
+    public int compareTo(MenuCategory o) {
+        return this.sortId - o.sortId;
     }
 }
