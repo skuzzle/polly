@@ -511,7 +511,10 @@ public class HTMLTable<T> implements HttpEventHandler {
         s.page = MathUtil.limit(s.page, 0, Math.max(s.pageCount - 1, 0));
         final int firstIdx = s.page * s.pageSize;
         final int lastIdx = Math.min(result.size(), firstIdx + s.pageSize);
-        result = result.subList(firstIdx, lastIdx);
+        
+        // Always copy the list to save memory. Resulting list is only 'pageSize' 
+        // element big
+        result = new ArrayList<T>(result.subList(firstIdx, lastIdx));
 
         return new FilterResult(result, idxMap, filteredSize);
     }
