@@ -178,6 +178,10 @@ public class IndexController extends PollyController {
     })
     public HttpAnswer statusPage() throws AlternativeAnswerException {
         this.requirePermissions(RoleManager.ADMIN_PERMISSION);
-        return this.makeAnswer(this.createContext("templatesv2/status.html"));
+        final Map<String, Object> c = this.createContext("templatesv2/status.html");
+        c.put("maxMemory", Runtime.getRuntime().maxMemory());
+        c.put("totalMemory", Runtime.getRuntime().totalMemory());
+        c.put("freeMemory", Runtime.getRuntime().freeMemory());
+        return this.makeAnswer(c);
     }
 }

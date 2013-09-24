@@ -45,6 +45,18 @@
             <td><b>Available IRC commands: </b></td>
             <td>$myPolly.commands().getRegisteredCommands().size()</td>
         </tr>
+        <tr>
+            <td><b>Max Memory: </b></td>
+            <td>$myPolly.formatting().formatBytes($maxMemory)</td>
+        </tr>
+        <tr>
+            <td><b>Total Memory: </b></td>
+            <td>$myPolly.formatting().formatBytes($totalMemory)</td>
+        </tr>
+        <tr>
+            <td><b>Free Memory: </b></td>
+            <td>$myPolly.formatting().formatBytes($freeMemory)</td>
+        </tr>
     </table>
 </div>
     
