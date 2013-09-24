@@ -146,6 +146,7 @@ public class HTMLTable<T> implements HttpEventHandler {
     }
     
     
+    
     public static class BooleanCellRenderer implements CellRenderer {
 
         @Override
@@ -190,6 +191,8 @@ public class HTMLTable<T> implements HttpEventHandler {
     private final static String ROW = "row";
     
     private final static int DEFAULT_PAGE_SIZE = 10;
+    
+    
     
     public static class TableSettings {
         private int sortCol;
@@ -338,13 +341,9 @@ public class HTMLTable<T> implements HttpEventHandler {
         }
         
         
-        // get all elements from model once per request
-        final List<T> allData = this.model.getData(e);
-        
-        
-        
-        // this is a sorting request
+        List<T> allData = null; 
         if (e.get(SORT_COLUMN) != null) {
+            // this is a sorting request
             // column for which to sort
             final int newSortCol = Integer.parseInt(e.get(SORT_COLUMN));
             if (newSortCol < 0 || newSortCol >= this.model.getColumnCount()) {
@@ -370,6 +369,8 @@ public class HTMLTable<T> implements HttpEventHandler {
             final String value = e.get(SET_VALUE);
             final int col = Integer.parseInt(e.get(COLUMN));
             final int row = Integer.parseInt(e.get(ROW));
+            
+            allData = this.model.getData(e);
             final T element = allData.get(row);
             final SuccessResult r = this.model.setCellValue(col, element, 
                 value, user, this.myPolly);
@@ -380,10 +381,47 @@ public class HTMLTable<T> implements HttpEventHandler {
             settings.pageSize = pageSize;
         }
         
+        
+        
+        if (this.model.isFilterOnly()) {
+            // data should only be loaded if a filter is active
+            boolean hasFilter = false;
+            for (final String filter : settings.filter) {
+                hasFilter |= !filter.equals("");
+            }
+            if (!hasFilter) {
+                // no filter is active and this is no filter request
+                final FilterResult fr = new FilterResult(new ArrayList<T>(), 
+                    new HashMap<T, Integer>(), 0);
+                final Map<String, Object> c = this.createContext(settings, 
+                    registered, fr, e, new ArrayList<T>());
+                c.put("noFilter", true);
+                return HttpAnswers.newTemplateAnswer(
+                        "de/skuzzle/polly/sdk/httpv2/html/table.html", c);
+            }
+        }
+        
+        
+        
+        if (allData == null) {
+            allData = this.model.getData(e);
+        }
+        
+        
+        
         // get filtered elements
         final FilterResult fr = this.getFilteredElements(settings, allData, e);
         
-        // some page calculations
+        final Map<String, Object> c = this.createContext(settings, 
+            registered, fr, e, allData);
+        return HttpAnswers.newTemplateAnswer(
+                "de/skuzzle/polly/sdk/httpv2/html/table.html", c);
+    }
+    
+    
+    
+    private Map<String, Object> createContext(TableSettings settings, String registered, 
+            FilterResult fr, HttpEvent e, List<T> allData) {
         final int minPage = Math.max(0, settings.page - 3);
         final int maxPage = Math.max(0, Math.min(settings.pageCount - 1, Math.max(settings.page + 3, 6)));
         
@@ -404,7 +442,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         c.put("all", allData.size());
         c.put("filteredSize", fr.filteredSize);
         c.putAll(this.baseContext);
-        return HttpAnswers.newTemplateAnswer("de/skuzzle/polly/sdk/httpv2/html/table.html", c);
+        return c;
     }
     
     

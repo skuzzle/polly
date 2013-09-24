@@ -32,4 +32,6 @@ public interface HTMLTableModel<T> extends SecurityObject {
     public List<T> getData(HttpEvent e);
     
     public Class<?> getColumnClass(int column);
+    
+    public boolean isFilterOnly();
 }

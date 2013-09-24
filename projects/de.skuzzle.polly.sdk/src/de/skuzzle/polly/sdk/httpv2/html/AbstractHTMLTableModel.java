@@ -39,7 +39,14 @@ public abstract class AbstractHTMLTableModel<T> implements HTMLTableModel<T> {
         return false;
     }
 
+    
+    
+    @Override
+    public boolean isFilterOnly() {
+        return false;
+    }
 
+    
 
     @Override
     public SuccessResult setCellValue(int column, T element, String value, 

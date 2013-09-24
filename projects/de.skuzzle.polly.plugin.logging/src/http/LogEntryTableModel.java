@@ -53,6 +53,13 @@ public class LogEntryTableModel extends AbstractHTMLTableModel<LogEntry> {
     public int getColumnCount() {
         return COLUMNS.length;
     }
+    
+    
+    
+    @Override
+    public boolean isFilterOnly() {
+        return true;
+    }
 
 
 

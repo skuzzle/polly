@@ -6,32 +6,36 @@
 <tr>
     <th colspan="$model.getColumnCount()">
     <a href="#" onclick="loadTable('$baseUrl', '$id')">Reload</a>
-    Pages: 
-    #if ($settings.getPage() == 0)
-        <b>First</b> &lt;
-    #else
-        <a href="#" onclick="setPageRequest('$baseUrl', '$id', '0')" title="Goto first page">First</a>
-        <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$prev')" title="Goto previous page">&lt;</a>
-    #end
-    
-    #foreach ($page in [$minPage..$maxPage])
-        #set($viewPage = $page + 1) 
-        #if ($page == $settings.getPage())
-            <b>$viewPage</b>
-        #else
-            <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$page')" title="Goto page $viewPage">$viewPage</a>
-        #end
-    #end
-    #if ($settings.getPage() == $pageCount)
-         &gt; <b>Last</b>
-    #else
-        <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$next')" title="Goto next page">&gt;</a>
-        <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$pageCount')" title="Goto last page ($settings.getPageCount())">Last</a>
+    #if (!$noFilter)
+	    Pages: 
+	    #if ($settings.getPage() == 0)
+	        <b>First</b> &lt;
+	    #else
+	        <a href="#" onclick="setPageRequest('$baseUrl', '$id', '0')" title="Goto first page">First</a>
+	        <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$prev')" title="Goto previous page">&lt;</a>
+	    #end
+	    
+	    #foreach ($page in [$minPage..$maxPage])
+	        #set($viewPage = $page + 1) 
+	        #if ($page == $settings.getPage())
+	            <b>$viewPage</b>
+	        #else
+	            <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$page')" title="Goto page $viewPage">$viewPage</a>
+	        #end
+	    #end
+	    #if ($settings.getPage() == $pageCount)
+	         &gt; <b>Last</b>
+	    #else
+	        <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$next')" title="Goto next page">&gt;</a>
+	        <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$pageCount')" title="Goto last page ($settings.getPageCount())">Last</a>
+	    #end
     #end
     
     #set ($first = $settings.getPage() * $settings.getPageSize() + 1)
     #set ($last = $first + $data.size() - 1)
+    #if (!$noFilter)
     <span style="font-weight: normal">(Showing $first - $last of $filteredSize / $all elements)</span>
+    #end
         
         <img id="update_$id" style="float:right; display: none;" src="/de/skuzzle/polly/sdk/httpv2/html/loading.gif"/>
         <span baseUrl="$baseUrl" class="select_pageSize" style="float:right">Page size: 
@@ -77,6 +81,10 @@
     </th>
 #end
 </tr>
+
+
+
+## Filter Row
 <tr baseUrl="$baseUrl">
     #foreach ($col in [0..$colCount])
     <td col="$col">
@@ -91,35 +99,43 @@
 </tr>
 </thead>
 
+
+
 ## BODY:
 
-#foreach ($element in $data)
-#set ($row = $indexMap.get($element))
+#if ($noFilter)
+    <tr>
+        <td colspan="$model.getColumnCount()"><b>Please select at least one filter criteria</b></a></td>
+    </tr>
+#else
 
-<tr baseUrl="$baseUrl" row="$row">
-    #foreach ($col in [0..$colCount])
-    <td col="$col">
-        #set ($renderer = $renderers.get($model.getColumnClass($col)))
-        <span id="${tId}_${col}_${row}_value">
-            <span id="${tId}_${col}_${row}_valueX">$renderer.renderCellContent($col, $model.getCellValue($col, $element))</span>
-        #if ($model.isEditable($col))
-            #set($editor = $editors.get($model.getColumnClass($col)))
-            <a class="showEditor" href="#" title="Edit $model.getHeader($col)">$editor.getEditIndicator()</a>
-        </span>
-        <span id="${tId}_${col}_${row}_editor" class="edit">$editor.renderEditorCell($model.getCellValue($col, $element), false)
-            <a class="submitEditor" href="#" title="Submit changes"><img src="/de/skuzzle/polly/sdk/httpv2/html/tick.png" style="vertical-align:middle" width="16" height="16"/></a>
-        </span>
-        #else
-        </span>
-        #end
-    </td>
-    #end
-</tr>
+	#foreach ($element in $data)
+	#set ($row = $indexMap.get($element))
+	
+	<tr baseUrl="$baseUrl" row="$row">
+	    #foreach ($col in [0..$colCount])
+	    <td col="$col">
+	        #set ($renderer = $renderers.get($model.getColumnClass($col)))
+	        <span id="${tId}_${col}_${row}_value">
+	            <span id="${tId}_${col}_${row}_valueX">$renderer.renderCellContent($col, $model.getCellValue($col, $element))</span>
+	        #if ($model.isEditable($col))
+	            #set($editor = $editors.get($model.getColumnClass($col)))
+	            <a class="showEditor" href="#" title="Edit $model.getHeader($col)">$editor.getEditIndicator()</a>
+	        </span>
+	        <span id="${tId}_${col}_${row}_editor" class="edit">$editor.renderEditorCell($model.getCellValue($col, $element), false)
+	            <a class="submitEditor" href="#" title="Submit changes"><img src="/de/skuzzle/polly/sdk/httpv2/html/tick.png" style="vertical-align:middle" width="16" height="16"/></a>
+	        </span>
+	        #else
+	        </span>
+	        #end
+	    </td>
+	    #end
+	</tr>
+	#end
+	
+	#PAGE_NAV ($tId, $baseUrl, $tableModel, $settings)
+	#end
 #end
-
-#PAGE_NAV ($tId, $baseUrl, $tableModel, $settings)
-#end
-
 
 
 #SORTABLE_TABLE ($tId, $baseUrl, $tableModel, $filter, $editors, $settings)

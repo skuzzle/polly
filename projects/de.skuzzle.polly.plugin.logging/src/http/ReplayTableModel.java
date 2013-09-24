@@ -25,6 +25,13 @@ public class ReplayTableModel extends LogEntryTableModel {
     
     
     @Override
+    public boolean isFilterOnly() {
+        return false;
+    }
+    
+    
+    
+    @Override
     public List<LogEntry> getData(HttpEvent e) {
         final User u = (User) e.getSession().getAttached("user");
 
