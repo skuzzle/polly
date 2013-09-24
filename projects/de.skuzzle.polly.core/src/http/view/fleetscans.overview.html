@@ -1,0 +1,15 @@
+<div class="highlight contentBox">
+    #CONTENT_HEADER ("All Fleet Scans")
+    
+    <div class="content">
+        <table id="fleetScans">
+        </table>
+    </div>
+    
+</div>
+
+<script>
+$(document).ready(function() {
+	loadTable("/api/allFleetScans", "fleetScans");
+});
+</script>
