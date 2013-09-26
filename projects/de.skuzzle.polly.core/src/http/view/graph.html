@@ -1,0 +1,36 @@
+<style>
+.lihover:hover {
+    border: 2px solid black;
+}
+</style>
+
+<div class="graphContainer">
+<a href="/api/imageFromSession?imgName=$imgName">Link to image</a>
+<ul id="data_$venad" style="
+        list-style: none; 
+        background: url('/api/imageFromSession?imgName=$imgName') no-repeat 0 0;
+        position: relative;
+        width: 850px;
+        height: 500px;
+        margin: 0px;
+        padding: 0px;">
+    #foreach($np in $allPoints)
+        #set ($left = $np.getIntX() - 4)
+        #set ($top = $np.getIntY() - 3)
+    <li style="
+        border: none; 
+        position: absolute;
+        top: ${top}px;
+        left: ${left}px;
+        width: 6px;
+        height: 5px;">
+            <a class="lihover" href="#" style="
+                display: block; 
+                height: 100%; 
+                text-indet:-9000px;" 
+                alt="$np.getName()" title="$np.getName()"/>
+            </a>
+    </li>
+    #end
+</ul>
+</div>
