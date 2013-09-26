@@ -15,7 +15,7 @@ public class FleetScanShipTableModel extends AbstractHTMLTableModel<FleetScanShi
     };
 
     
-    private final FleetDBManager fleetDB;
+    protected final FleetDBManager fleetDB;
 
 
 

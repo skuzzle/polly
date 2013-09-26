@@ -45,6 +45,8 @@ import polly.rx.httpv2.FleetScanShipTableModel;
 import polly.rx.httpv2.FleetScanTableModel;
 import polly.rx.httpv2.FleetScansWithShipModel;
 import polly.rx.httpv2.RXController;
+import polly.rx.httpv2.ScoreboardTableModel;
+import polly.rx.httpv2.ShipsForScanTableModel;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
 import de.skuzzle.polly.sdk.Types;
@@ -167,7 +169,7 @@ public class MyPlugin extends PollyPlugin {
         
         
         myPolly.webInterface().addCategory(new MenuCategory(0, "Revorix"));
-        myPolly.webInterface().getServer().addController(new RXController(myPolly, fleetDBManager));
+        myPolly.webInterface().getServer().addController(new RXController(myPolly, fleetDBManager, sbeManager));
         
         final HTMLTableModel<FleetScan> scanModel = new FleetScanTableModel(fleetDBManager);
         final HTMLTable<FleetScan> fleetScanTable = new HTMLTable<FleetScan>("fleetScans", scanModel, myPolly);
@@ -178,9 +180,17 @@ public class MyPlugin extends PollyPlugin {
         final HTMLTableModel<FleetScan> scansWithShip = new FleetScansWithShipModel(fleetDBManager);
         final HTMLTable<FleetScan> scansWithShipTable = new HTMLTable<FleetScan>("scansWithShip", scansWithShip, myPolly);
         
+        final HTMLTableModel<FleetScanShip> shipsForScanModel = new ShipsForScanTableModel(fleetDBManager);
+        final HTMLTable<FleetScanShip> shipsForScanTable = new HTMLTable<FleetScanShip>("ships", shipsForScanModel, myPolly);
+        
+        final HTMLTableModel<ScoreBoardEntry> scoreboard = new ScoreboardTableModel(sbeManager);
+        final HTMLTable<ScoreBoardEntry> scoreboardTable = new HTMLTable<ScoreBoardEntry>("scoreboard", scoreboard, myPolly);
+        
         myPolly.webInterface().getServer().addHttpEventHandler("/api/allFleetScans", fleetScanTable);
         myPolly.webInterface().getServer().addHttpEventHandler("/api/allFleetScanShips", fleetScanShipTable);
         myPolly.webInterface().getServer().addHttpEventHandler("/api/scansWithShip", scansWithShipTable);
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/shipsForScan", shipsForScanTable);
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/scoreboard", scoreboardTable);
     }
     
     

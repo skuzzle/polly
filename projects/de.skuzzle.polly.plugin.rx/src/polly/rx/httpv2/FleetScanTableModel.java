@@ -7,6 +7,7 @@ import polly.rx.core.FleetDBManager;
 import polly.rx.entities.FleetScan;
 import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.sdk.httpv2.html.AbstractHTMLTableModel;
+import de.skuzzle.polly.sdk.httpv2.html.HTMLElement;
 
 public class FleetScanTableModel extends AbstractHTMLTableModel<FleetScan> {
 
@@ -55,11 +56,13 @@ public class FleetScanTableModel extends AbstractHTMLTableModel<FleetScan> {
     public Object getCellValue(int column, FleetScan element) {
         switch (column) {
         case 0: return element.getDate();
-        case 1: return element.getQuadrant();
+        case 1: return element.getQuadrant() + " " + element.getX() + ", " + element.getY();
         case 2: return element.getLocalSens();
         case 3: return element.getOwnerName();
         case 4: return element.getOwnerClan();
-        case 5: return element.getFleetName();
+        case 5: return new HTMLElement("a")
+            .attr("href", "/pages/fleetScanDetails?scanId="+element.getId())
+            .content(element.getFleetName());
         case 6: return element.getFleetTag();
         case 7: return element.getShipCount();
         default: return "";

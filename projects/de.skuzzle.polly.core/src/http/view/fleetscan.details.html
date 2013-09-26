@@ -1,15 +1,55 @@
 <div class="highlight contentBox">
-    #CONTENT_HEADER ("All Scanned Ships")
-    <p class="content">Click the ship's ID or name to view more information</p>
+    #CONTENT_HEADER ("Fleet: $scan.getFleetName()")
     <div class="content">
-        <table id="ships">
+        <table>
+        <tr>
+            <td><b>Date:</b>
+            <td>$myPolly.formatting().formatDate($scan.getDate())</td>
+        </tr>
+        <tr>
+            <td><b>Sens:</b>
+            <td>$scan.getLocalSens()</td>
+        </tr>
+        <tr>
+            <td><b>Fleet name:</b>
+            <td>$scan.getFleetName()</td>
+        </tr>
+        <tr>
+            <td><b>Owner name:</b>
+            <td>$scan.getOwnerName()</td>
+        </tr>
+        <tr>
+            <td><b>Owner clan:</b>
+            <td>$scan.getOwnerClan()</td>
+        </tr>
+        <tr>
+            <td><b>Fleet tag:</b>
+            <td>$scan.getFleetTag()</td>
+        </tr>
+        <tr>
+            <td><b>Location:</b>
+            <td>$scan.getQuadrant() $scan.getX(), $scan.getY()</td>
+        </tr>
         </table>
     </div>
-    
+</div>
+
+#if ($scan.getMetaData() != "")
+<div class="highlight contentBox">
+    #CONTENT_HEADER ("Meta Information")
+    <p class="content">$scan.getMetaData()</p>
+</div>
+#end
+
+<div class="highlight contentBox">
+    #CONTENT_HEADER ("Contained ships")
+    <div class="content">
+        <table id="ships"></table>
+    </div>
 </div>
 
 <script>
 $(document).ready(function() {
-	loadTable("/api/allFleetScanShips", "ships");
+	loadTable("/api/shipsForScan?SCAN_ID=$scan.getId()", "ships");
 });
 </script>

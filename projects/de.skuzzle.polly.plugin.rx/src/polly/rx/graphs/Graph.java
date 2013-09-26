@@ -272,7 +272,7 @@ public class Graph {
         final int actualWidth = this.width - zeroX - (int) Math.round(rightYLabelWidth);
         final int actualHeight = this.height - (int)xLabelWidth - 20;
 
-        g.setBackground(Color.WHITE);
+        g.setBackground(new Color(244, 244, 244));
         g.clearRect(0, 0, this.width, this.height);
         g.setColor(Color.BLACK);
         

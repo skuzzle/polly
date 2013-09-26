@@ -1,0 +1,58 @@
+#if (!$compareList.getEntries().isEmpty())
+<div class="highlight contentBox">
+    #CONTENT_HEADER ("Compare list")
+    <div class="content">
+    <table>
+    <tr>
+        <th>Venad</th>
+        <th>Action</th>
+    </tr>
+    #foreach ($v in $compareList.getEntries())
+    <tr>
+        <td>$v</td>
+        <td>
+            <input 
+                type="button" 
+                class="button" 
+                value="Remove" 
+                onclick="removeFromCompare('$v')"
+            />
+        </td>
+    </tr>
+    #end
+    <tr>
+        <td></td>
+        <td>
+            <form method="get" action="$PAGE_COMPARE">
+                <input type="submit" class="button"  value="Compare"/>
+            </form>
+        </td>
+    </tr>
+    </table>
+    </div>
+</div>
+#end
+<div class="highlight contentBox">
+    #CONTENT_HEADER ("Scoreboard entries")
+    <div class="content">
+        <table id="scoreboard">
+        </table>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+	loadTable("/api/scoreboard", "scoreboard");
+});
+
+function addToCompare(name) {
+	$.get("$PAGE_ADDTOCOMPARE?venadName="+name, function(data) {
+		location.reload();
+	});
+}
+function removeFromCompare(name) {
+    $.get("$PAGE_REMOVEFROMCOMPARE?venadName="+name, function(data) {
+        location.reload();
+    });	
+}
+</script>

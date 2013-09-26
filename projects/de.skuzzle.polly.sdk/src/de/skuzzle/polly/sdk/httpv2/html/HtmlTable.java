@@ -1,6 +1,8 @@
 package de.skuzzle.polly.sdk.httpv2.html;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -154,6 +156,17 @@ public class HTMLTable<T> implements HttpEventHandler {
             return new BooleanCellEditor()
                 .renderEditorCell(cellValue, false).attr("disabled").toString();
         }
+    }
+    
+    
+    
+    public static class DoubleCellRenderer implements CellRenderer {
+
+        @Override
+        public String renderCellContent(int column, Object cellValue) {
+            final NumberFormat nf = new DecimalFormat("0.###");
+            return nf.format((Double) cellValue);
+        }
         
     }
     
@@ -280,6 +293,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         this.renderers.put(String.class, new ToStringCellRenderer());
         this.renderers.put(Date.class, new DateCellRenderer());
         this.renderers.put(Boolean.class, new BooleanCellRenderer());
+        this.renderers.put(Double.class, new DoubleCellRenderer());
     }
     
     
