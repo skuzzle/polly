@@ -524,7 +524,7 @@ public class Types {
 	 * @author Simon
 	 * @since Beta 0.2
 	 */
-	public static class TimespanType extends DateType {
+	public static class TimespanType extends DateType implements Comparable<TimespanType> {
 	    private long span;
 	    
 	    /**
@@ -582,6 +582,11 @@ public class Types {
 	    public String toString() {
 	        return "Timespan";
 	    }
+
+        @Override
+        public int compareTo(TimespanType obj) {
+            return (int) (this.span - obj.span);
+        }
 	}
 	
 	
