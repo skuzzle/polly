@@ -6,8 +6,11 @@ import java.util.List;
 import polly.rx.core.ScoreBoardManager;
 import polly.rx.entities.ScoreBoardEntry;
 import de.skuzzle.polly.http.api.HttpEvent;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.httpv2.html.AbstractHTMLTableModel;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLElement;
+import de.skuzzle.polly.sdk.httpv2.html.HTMLElementGroup;
+import de.skuzzle.polly.sdk.time.Milliseconds;
 
 public class ScoreboardTableModel extends AbstractHTMLTableModel<ScoreBoardEntry> {
 
@@ -58,14 +61,21 @@ public class ScoreboardTableModel extends AbstractHTMLTableModel<ScoreBoardEntry
         case 2: return element.getClan();
         case 3: return element.getPoints();
         case 4: return element.getPointsPerDay();
-        case 5:
+        case 5: return new Types.TimespanType(Milliseconds.toSeconds(element.getSpan()));
         case 6: return element.getEntries();
         case 7: return element.getDate();
-        case 8: return new HTMLElement("input")
-            .attr("type", "button")
-            .attr("class", "button")
-            .attr("value", "Compare")
-            .attr("onclick", "addToCompare('" + element.getVenadName() + "')");
+        case 8: return new HTMLElementGroup().add(
+            new HTMLElement("a").href("#").content(
+                    new HTMLElement("img").src("/polly/rx/httpv2/view/chart_curve_add.png")
+                    .attr("width", "20").attr("height", "20")
+                    .toString()).title("Compare")
+                    .attr("onclick", "addToCompare('" + element.getVenadName() + "')")
+            ).add(
+            new HTMLElement("a").href("TODO").content(
+                new HTMLElement("img").src("/polly/rx/httpv2/view/chart_curve.png")
+                    .attr("width", "20").attr("height", "20")
+                .toString()).title("View details")
+            );
         default: return "";
         }
     }
@@ -76,6 +86,7 @@ public class ScoreboardTableModel extends AbstractHTMLTableModel<ScoreBoardEntry
     public Class<?> getColumnClass(int column) {
         switch (column) {
         case 4: return Double.class;
+        case 5: return Types.class;
         case 7: return Date.class;
         default:
             return super.getColumnClass(column);

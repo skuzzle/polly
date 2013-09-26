@@ -21,7 +21,9 @@ import de.skuzzle.polly.http.api.HttpSession;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.http.api.handler.HttpEventHandler;
+import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
 import de.skuzzle.polly.sdk.httpv2.SuccessResult;
@@ -172,6 +174,28 @@ public class HTMLTable<T> implements HttpEventHandler {
     
     
     
+    public static class TypesCellRenderer implements CellRenderer {
+        
+        private final FormatManager formatter;
+        
+        
+        public TypesCellRenderer(FormatManager formatter) {
+            this.formatter = formatter;
+        }
+        
+        
+        
+        @Override
+        public String renderCellContent(int column, Object cellValue) {
+            if (cellValue == null || !(cellValue instanceof Types)) {
+                return "";
+            }
+            final Types t = (Types) cellValue;
+            return t.valueString(this.formatter);
+        }
+    }
+    
+    
     
     
     private final static String makeUrl(String baseUrl, Map<String, String> param) {
@@ -294,6 +318,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         this.renderers.put(Date.class, new DateCellRenderer());
         this.renderers.put(Boolean.class, new BooleanCellRenderer());
         this.renderers.put(Double.class, new DoubleCellRenderer());
+        this.renderers.put(Types.class, new TypesCellRenderer(myPolly.formatting()));
     }
     
     

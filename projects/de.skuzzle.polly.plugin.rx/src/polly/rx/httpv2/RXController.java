@@ -1,5 +1,6 @@
 package polly.rx.httpv2;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,10 +25,12 @@ import de.skuzzle.polly.http.api.Controller;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.http.api.answers.HttpInputStreamAnswer;
+import de.skuzzle.polly.http.api.answers.HttpResourceAnswer;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.httpv2.PollyController;
 import de.skuzzle.polly.sdk.httpv2.SuccessResult;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
+import de.skuzzle.polly.tools.streams.FastByteArrayInputStream;
 
 
 public class RXController extends PollyController {
@@ -188,20 +191,48 @@ public class RXController extends PollyController {
     
     
     
-    @Get("/api/imageForVenad")
-    public HttpAnswer imageForVenad(@Param("venadName") String name) 
+    @Get("/api/graphForVenad")
+    public HttpAnswer graphForVenad(@Param("venadName") String name) 
                 throws AlternativeAnswerException {
         this.requirePermissions(MyPlugin.SBE_PERMISSION);
         
         final List<ScoreBoardEntry> entries = this.sbManager.getEntries(name);
         Collections.sort(entries, ScoreBoardEntry.BY_DATE);
-        /*final ScoreBoardEntry oldest = entries.get(0);
-        final ScoreBoardEntry youngest = entries.get(entries.size() - 1);*/
-        
+        final ScoreBoardEntry oldest = entries.get(0);
+        final ScoreBoardEntry youngest = entries.get(entries.size() - 1);        
         
         final Collection<NamedPoint> allPoints = new ArrayList<>();
         final InputStream graph = this.sbManager.createLatestGraph(entries, 24, 
                 allPoints);
-        return new HttpInputStreamAnswer(200, graph);
+        graph.mark(Integer.MAX_VALUE);
+        
+        this.getSession().set("graph_" + name, graph);
+        final Map<String, Object> c = this.createContext("");
+        c.put("allPoints", allPoints);
+        c.put("venad", name);
+        c.put("imgName", "graph_" + name);
+        return HttpAnswers.newTemplateAnswer("/http/view/graph.html", c);
+    }
+    
+    
+    
+    @Get("/api/imageFromSession")
+    public HttpAnswer imageFromSession(@Param("imgName") String imgName) 
+            throws AlternativeAnswerException, IOException {
+        this.requirePermissions(MyPlugin.SBE_PERMISSION);
+        final FastByteArrayInputStream in = (FastByteArrayInputStream) 
+                this.getSession().getAttached(imgName);
+        synchronized (in) {
+            in.reset();
+        }
+        return new HttpInputStreamAnswer(200, in);
+    }
+    
+    
+    
+    @Get("/polly/rx/httpv2/view")
+    public HttpAnswer getFile() {
+        final ClassLoader cl = this.getClass().getClassLoader();
+        return new HttpResourceAnswer(200, cl, this.getEvent().getPlainUri());
     }
 }

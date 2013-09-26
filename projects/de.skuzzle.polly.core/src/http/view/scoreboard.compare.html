@@ -8,8 +8,19 @@
 #foreach ($v in $compareList.getEntries())
 <div class="highlight contentBox">
     #CONTENT_HEADER ("Venad: $v")
-    <div class="content">
-        <img src="$PAGE_IMAGEFORVENAD?venadName=$v"/>
-    </div>
+    <div id="$v" class="content"></div>
 </div>
 #end
+
+<script>
+$(document).ready(function() {
+	#foreach ($v in $compareList.getEntries())
+	loadGraph('$v', 24);
+	#end
+});
+function loadGraph(venad, maxMonths) {
+	$.get("$PAGE_GRAPHFORVENAD?venadName="+venad, function(data) {
+	    	$("#" + venad).html(data);
+	});
+}
+</script>
