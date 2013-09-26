@@ -1,6 +1,15 @@
 <div class="highlight contentBox">
-    #CONTENT_HEADER ("Compare venads")
+    #CONTENT_HEADER ("Compare View")
     <div class="content">
         <img src="$PAGE_COMPAREIMAGE"/>
     </div>
 </div>
+
+#foreach ($v in $compareList.getEntries())
+<div class="highlight contentBox">
+    #CONTENT_HEADER ("Venad: $v")
+    <div class="content">
+        <img src="$PAGE_IMAGEFORVENAD?venadName=$v"/>
+    </div>
+</div>
+#end

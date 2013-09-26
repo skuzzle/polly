@@ -3,7 +3,9 @@ package polly.rx.httpv2;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,6 +14,7 @@ import polly.rx.core.FleetDBManager;
 import polly.rx.core.ScoreBoardManager;
 import polly.rx.entities.FleetScan;
 import polly.rx.entities.FleetScanShip;
+import polly.rx.entities.ScoreBoardEntry;
 import polly.rx.graphs.NamedPoint;
 import de.skuzzle.polly.http.annotations.Get;
 import de.skuzzle.polly.http.annotations.OnRegister;
@@ -163,6 +166,8 @@ public class RXController extends PollyController {
     public HttpAnswer compare() throws AlternativeAnswerException {
         this.requirePermissions(MyPlugin.SBE_PERMISSION);
         final Map<String, Object> c = this.createContext("http/view/scoreboard.compare.html");
+        CompareList cl = (CompareList) this.getSession().getAttached("COMPARE_LIST");
+        c.put("compareList", cl);
         return this.makeAnswer(c);
     }
     
@@ -178,6 +183,25 @@ public class RXController extends PollyController {
         final Collection<NamedPoint> allPoints = new ArrayList<>();
         final InputStream graph = this.sbManager.createMultiGraph(24, allPoints, 
                 cl.getEntries().toArray(new String[0]));
+        return new HttpInputStreamAnswer(200, graph);
+    }
+    
+    
+    
+    @Get("/api/imageForVenad")
+    public HttpAnswer imageForVenad(@Param("venadName") String name) 
+                throws AlternativeAnswerException {
+        this.requirePermissions(MyPlugin.SBE_PERMISSION);
+        
+        final List<ScoreBoardEntry> entries = this.sbManager.getEntries(name);
+        Collections.sort(entries, ScoreBoardEntry.BY_DATE);
+        /*final ScoreBoardEntry oldest = entries.get(0);
+        final ScoreBoardEntry youngest = entries.get(entries.size() - 1);*/
+        
+        
+        final Collection<NamedPoint> allPoints = new ArrayList<>();
+        final InputStream graph = this.sbManager.createLatestGraph(entries, 24, 
+                allPoints);
         return new HttpInputStreamAnswer(200, graph);
     }
 }
