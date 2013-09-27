@@ -90,6 +90,7 @@ public class CompositeDisposable extends LinkedList<Disposable> implements Dispo
                 continue; 
             }
             try {
+                System.out.println("Disposing: " + disp.toString());
                 disp.dispose();
             } catch (Exception e) {
                 error = e;

@@ -5,6 +5,15 @@
 </style>
 
 <div class="graphContainer">
+Select months to display:
+<select id="selectMonths_$venad.hashCode()" size="1" 
+    onchange="selectMM('$PAGE_GRAPHFORVENAD', '$venad.hashCode()', '$venad')">
+    #foreach ($month in [2..12])
+    #set ($m = $month * 2)
+    #set ($selected = $m == $maxMonths)
+    <option value="$m" #if ($selected) selected #end>$m</option>
+    #end
+</select>
 <a href="/api/imageFromSession?imgName=$imgName">Link to image</a>
 <ul id="data_$venad" style="
         list-style: none; 

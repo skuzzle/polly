@@ -113,6 +113,13 @@ public class RXController extends PollyController {
         public Set<String> getEntries() {
             return this.entries;
         }
+        
+        
+        
+        @Override
+        public String toString() {
+            return this.entries.toString();
+        }
     }
     
     
@@ -165,12 +172,23 @@ public class RXController extends PollyController {
     
     
     
-    @Get("/pages/compare")
+    @Get("/pages/score/compare")
     public HttpAnswer compare() throws AlternativeAnswerException {
         this.requirePermissions(MyPlugin.SBE_PERMISSION);
         final Map<String, Object> c = this.createContext("http/view/scoreboard.compare.html");
         CompareList cl = (CompareList) this.getSession().getAttached("COMPARE_LIST");
         c.put("compareList", cl);
+        return this.makeAnswer(c);
+    }
+    
+    
+    
+    @Get("/pages/score/details")
+    public HttpAnswer venadDetails(@Param("venadName") String name) 
+            throws AlternativeAnswerException {
+        this.requirePermissions(MyPlugin.SBE_PERMISSION);
+        final Map<String, Object> c = this.createContext("/http/view/scoreboard.details.html");
+        c.put("venad", name);
         return this.makeAnswer(c);
     }
     
@@ -192,25 +210,25 @@ public class RXController extends PollyController {
     
     
     @Get("/api/graphForVenad")
-    public HttpAnswer graphForVenad(@Param("venadName") String name) 
-                throws AlternativeAnswerException {
+    public HttpAnswer graphForVenad(@Param("venadName") String name, 
+            @Param("maxMonth") int maxMonths) throws AlternativeAnswerException {
         this.requirePermissions(MyPlugin.SBE_PERMISSION);
         
         final List<ScoreBoardEntry> entries = this.sbManager.getEntries(name);
         Collections.sort(entries, ScoreBoardEntry.BY_DATE);
-        final ScoreBoardEntry oldest = entries.get(0);
-        final ScoreBoardEntry youngest = entries.get(entries.size() - 1);        
         
         final Collection<NamedPoint> allPoints = new ArrayList<>();
-        final InputStream graph = this.sbManager.createLatestGraph(entries, 24, 
+        final InputStream graph = this.sbManager.createLatestGraph(entries, maxMonths, 
                 allPoints);
         graph.mark(Integer.MAX_VALUE);
         
-        this.getSession().set("graph_" + name, graph);
+        final String imgName = "graph_" + name + "_mm_" + maxMonths; 
+        this.getSession().set(imgName, graph);
         final Map<String, Object> c = this.createContext("");
         c.put("allPoints", allPoints);
         c.put("venad", name);
-        c.put("imgName", "graph_" + name);
+        c.put("imgName", imgName);
+        c.put("maxMonths", maxMonths);
         return HttpAnswers.newTemplateAnswer("/http/view/graph.html", c);
     }
     

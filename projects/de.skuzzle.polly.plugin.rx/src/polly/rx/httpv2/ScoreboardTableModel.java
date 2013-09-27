@@ -64,14 +64,16 @@ public class ScoreboardTableModel extends AbstractHTMLTableModel<ScoreBoardEntry
         case 5: return new Types.TimespanType(Milliseconds.toSeconds(element.getSpan()));
         case 6: return element.getEntries();
         case 7: return element.getDate();
-        case 8: return new HTMLElementGroup().add(
+        case 8: 
+            final String v = element.getVenadName();
+            return new HTMLElementGroup().add(
             new HTMLElement("a").href("#").content(
                     new HTMLElement("img").src("/polly/rx/httpv2/view/chart_curve_add.png")
                     .attr("width", "20").attr("height", "20")
                     .toString()).title("Compare")
-                    .attr("onclick", "addToCompare('" + element.getVenadName() + "')")
+                    .attr("onclick", "addToCompare('" + v.hashCode() + "', '" + v + "')")
             ).add(
-            new HTMLElement("a").href("TODO").content(
+            new HTMLElement("a").href("/pages/score/details?venadName=" + v).content(
                 new HTMLElement("img").src("/polly/rx/httpv2/view/chart_curve.png")
                     .attr("width", "20").attr("height", "20")
                 .toString()).title("View details")

@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 public class DefaultColumnFilter implements HTMLColumnFilter {
     
     
-    public final Acceptor REGEX_ACCEPTOR = new Acceptor() {
+    public final static Acceptor REGEX_ACCEPTOR = new Acceptor() {
         
 
         @Override

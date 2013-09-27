@@ -1,37 +1,19 @@
-#if (!$compareList.getEntries().isEmpty())
-<div class="highlight contentBox">
+<div id="compListContainer" class="highlight contentBox" #if ($compareList.getEntries().isEmpty()) style="display:none" #end>
     #CONTENT_HEADER ("Compare list")
     <div class="content">
-    <table>
-    <tr>
-        <th>Venad</th>
-        <th>Action</th>
-    </tr>
+    
+    <div id="compList">
     #foreach ($v in $compareList.getEntries())
-    <tr>
-        <td>$v</td>
-        <td>
-            <input 
-                type="button" 
-                class="button" 
-                value="Remove" 
-                onclick="removeFromCompare('$v')"
-            />
-        </td>
-    </tr>
+    <input id="$v.hashCode()" type="button" class="button" value="$v" title="Click to remove" onclick="removeFromCompare('$v.hashCode()', '$v')"/>
     #end
-    <tr>
-        <td></td>
-        <td>
-            <form method="get" action="$PAGE_COMPARE">
-                <input type="submit" class="button"  value="Compare"/>
-            </form>
-        </td>
-    </tr>
-    </table>
+    </div>
+    
+    <form method="get" action="$PAGE_COMPARE">
+        <input type="submit" class="button"  value="Compare" title="Compare selected"/>
+    </form>
     </div>
 </div>
-#end
+
 <div class="highlight contentBox">
     #CONTENT_HEADER ("Scoreboard entries")
     <div class="content">
@@ -45,14 +27,18 @@ $(document).ready(function() {
 	loadTable("/api/scoreboard", "scoreboard");
 });
 
-function addToCompare(name) {
+function addToCompare(hash, name) {
 	$.get("$PAGE_ADDTOCOMPARE?venadName="+name, function(data) {
-		location.reload();
+		var inp = '<input id="' + hash + '" ' + 
+		   'type="button" class="button" value="' + name + '" title="Click to remove" ' + 
+		   'onclick="removeFromCompare(' + "'" + hash + "', '" + name + "'" + ')"/>';
+		$("#compList").append(inp);
+		$("#compListContainer").show();
 	});
 }
-function removeFromCompare(name) {
+function removeFromCompare(hash, name) {
     $.get("$PAGE_REMOVEFROMCOMPARE?venadName="+name, function(data) {
-        location.reload();
+    	$("#" + hash).remove();
     });	
 }
 </script>

@@ -36,6 +36,12 @@ public class HTMLElement {
         this.content = content;
         return this;
     }
+    
+    
+    
+    public HTMLElement content(HTMLElement nested) {
+        return this.content(nested.toString());
+    }
 
 
 
@@ -65,6 +71,12 @@ public class HTMLElement {
 
     public HTMLElement src(String src) {
         return this.attr("src", src);
+    }
+    
+    
+    
+    public HTMLElement id(String id) {
+        return this.attr("id", id);
     }
 
 

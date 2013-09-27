@@ -8,19 +8,15 @@
 #foreach ($v in $compareList.getEntries())
 <div class="highlight contentBox">
     #CONTENT_HEADER ("Venad: $v")
-    <div id="$v" class="content"></div>
+    <div id="$v.hashCode()" class="content"></div>
 </div>
 #end
 
+<script src="/polly/rx/httpv2/view/graph.js"></script>
 <script>
 $(document).ready(function() {
 	#foreach ($v in $compareList.getEntries())
-	loadGraph('$v', 24);
+	loadGraph('$PAGE_GRAPHFORVENAD', '$v.hashCode()', '$v', 12);
 	#end
 });
-function loadGraph(venad, maxMonths) {
-	$.get("$PAGE_GRAPHFORVENAD?venadName="+venad, function(data) {
-	    	$("#" + venad).html(data);
-	});
-}
 </script>
