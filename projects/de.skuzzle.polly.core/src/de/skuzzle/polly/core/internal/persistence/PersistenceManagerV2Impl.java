@@ -409,6 +409,10 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
 
 
     private void startTransaction() {
+        logger.trace("Acquiring write lock...");
+        this.locker.writeLock().lock();
+        
+        logger.trace("Got write lock.");
         logger.debug("Starting transaction...");
         this.activeTransaction = this.em.getTransaction();
         this.activeTransaction.begin();
@@ -419,13 +423,14 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
 
     private void commitTransaction() throws DatabaseException {
         logger.debug("Committing transaction...");
-        EntityTransaction tx = this.activeTransaction;
+        final EntityTransaction tx = this.activeTransaction;
         if (tx == null) {
             throw new DatabaseException("No transaction active.");
         }
 
         try {
             tx.commit();
+            logger.debug("Transaction finished successful");
         } catch (Exception e) {
             logger.error("Committing transaction failed.", e);
             if (tx != null && tx.isActive()) {
@@ -438,8 +443,10 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
                 }
             }
             throw new DatabaseException("Transaction failed", e);
+        } finally {
+            logger.trace("Writelock released");
+            locker.writeLock().unlock();
         }
-        logger.debug("Transaction finished successful");
     }
 
     
@@ -450,6 +457,7 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
     }
 
 
+    
     @Override
     public Read read() {
         logger.trace("Acquiring read lock...");
@@ -476,20 +484,12 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
 
     @Override
     public Write write() {
-        logger.trace("Acquiring write lock...");
-        this.locker.writeLock().lock();
         this.startTransaction();
-        logger.trace("Got write lock.");
         
         return new WriteImpl() {
             @Override
             public void close() throws DatabaseException {
-                try {
-                    commitTransaction();
-                } finally {
-                    logger.trace("Writelock released");
-                    locker.writeLock().unlock();
-                }
+                commitTransaction();
             }
         };
     }
