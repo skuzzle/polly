@@ -260,16 +260,15 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
             }
             w.single(user);
             this.registeredStale = true;
-            
-            // Assign registered role to new user.
-            try {
-                this.roleManager.assignRole(user, RoleManager.DEFAULT_ROLE);
-            } catch (RoleException ignore) {
-                logger.warn("Ignoring RoleException", ignore);
-            }
-            
-            logger.info("Added user " + user);
         }
+        // Assign registered role to new user.
+        try {
+            this.roleManager.assignRole(user, RoleManager.DEFAULT_ROLE);
+        } catch (RoleException ignore) {
+            logger.warn("Ignoring RoleException", ignore);
+        }
+        
+        logger.info("Added user " + user);
     }
     
     
