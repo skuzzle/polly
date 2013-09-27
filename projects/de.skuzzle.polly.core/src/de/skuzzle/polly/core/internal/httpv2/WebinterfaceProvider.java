@@ -2,6 +2,8 @@ package de.skuzzle.polly.core.internal.httpv2;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
 
@@ -43,6 +45,7 @@ import de.skuzzle.polly.sdk.httpv2.MenuCategory;
 import de.skuzzle.polly.sdk.httpv2.MenuEntry;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.time.Milliseconds;
+import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
 
 @Module(
     requires = {
@@ -85,7 +88,10 @@ public class WebinterfaceProvider extends AbstractProvider {
         int port = 81; //this.serverCfg.readInt(Configuration.HTTP_PORT);
         int sessionTimeout = (int) Milliseconds.fromHours(24);//this.serverCfg.readInt(Configuration.HTTP_SESSION_TIMEOUT);
         
-        final ServerFactory sf = new DefaultServerFactory(port);
+        final ExecutorService executor = Executors.newFixedThreadPool(5, 
+                new ThreadFactoryBuilder("HTTP_%n%"));
+        
+        final ServerFactory sf = new DefaultServerFactory(port, executor);
         this.server = HttpServerCreator.createServletServer(sf);
         this.server.setSessionLiveTime(sessionTimeout);
         this.server.setSessionType(HttpServer.SESSION_TYPE_COOKIE);
@@ -112,7 +118,7 @@ public class WebinterfaceProvider extends AbstractProvider {
             
             @Override
             public void dispose() throws DisposingException {
-                server.shutdown(1000);
+                server.shutdown(5);
             }
         });
         
@@ -142,7 +148,6 @@ public class WebinterfaceProvider extends AbstractProvider {
         });
         
         this.provideComponent(this.webinterface);
-        
     }
     
     

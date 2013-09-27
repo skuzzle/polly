@@ -89,7 +89,7 @@
                 <a href="#" onclick="showAttached('$ss.getId()')">Toggle</a>
                 <ul id="attached_${ss.getId()}" style="list-style-type:none; display: none; text-align: left">
                    #foreach($ee in $ss.getAttached().entrySet())
-                   <li><b>$ee.getKey()</b> : <em>$ee.getValue()</em> <a href="#" onclick="detach('$ss.getId()', 'ee.getKey()')">Remove</a></li>
+                   <li><b>$ee.getKey()</b> : <em>$ee.getValue()</em> <a href="#" onclick="detach('$ss.getId()', '$ee.getKey()')">Remove</a></li>
                    #end
                 </ul>
             </td>

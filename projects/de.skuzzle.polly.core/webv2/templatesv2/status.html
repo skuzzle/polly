@@ -57,8 +57,26 @@
             <td><b>Free Memory: </b></td>
             <td>$myPolly.formatting().formatBytes($freeMemory)</td>
         </tr>
+        <tr>
+            <td colspan="2"><a href="$PAGE_RUNGC">Run Garbage Collector</a></td>
+        </tr>
+        <tr>
+            <td colspan="2"><a href="#" onclick="performShutdown('false')">Shutdown</a></td>
+        </tr>
+        <tr>
+            <td colspan="2"><a href="#" onclick="performShutdown('true')">Restart</a></td>
+        </tr>
     </table>
 </div>
+
+<script>
+function performShutdown(restart) {
+	var url = "$PAGE_SHUTDOWNPOLLY?restart="+restart;
+	$.get(url, function(data) {
+		alert(data);
+	})
+}
+</script>
     
 <div class="contentBox">
     <table>

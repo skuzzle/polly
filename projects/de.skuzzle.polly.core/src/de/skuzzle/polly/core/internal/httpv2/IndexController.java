@@ -24,6 +24,7 @@ import de.skuzzle.polly.sdk.httpv2.SuccessResult;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.time.Milliseconds;
+import de.skuzzle.polly.tools.concurrent.RunLater;
 
 public class IndexController extends PollyController {
 
@@ -184,4 +185,39 @@ public class IndexController extends PollyController {
         c.put("freeMemory", Runtime.getRuntime().freeMemory());
         return this.makeAnswer(c);
     }
+    
+    
+    
+    @Get("/api/runGC")
+    public HttpAnswer runGC() throws AlternativeAnswerException {
+        this.requirePermissions(RoleManager.ADMIN_PERMISSION);
+        System.gc();
+        return HttpAnswers.newStringAnswer("").redirectTo("/pages/status");
+    }
+    
+    
+    
+    @Get("/api/shutdown")
+    public HttpAnswer shutdownPolly(@Param("restart") final Boolean restart) 
+            throws AlternativeAnswerException {
+        this.requirePermissions(RoleManager.ADMIN_PERMISSION);
+        final int shutdownTimeSeconds = 10;
+        new RunLater("SHUTDOWN_TIMER", Milliseconds.fromSeconds(shutdownTimeSeconds)) {
+            @Override
+            public void run() {
+                if (restart) {
+                    getMyPolly().shutdownManager().restart();
+                } else {
+                    getMyPolly().shutdownManager().shutdown();
+                }
+            }
+        }.start();
+        final String s = restart ? "Restart" : "Shutdown";
+        return HttpAnswers.newStringAnswer(s + " in " + 
+                shutdownTimeSeconds + " seconds");
+    }
+    
+    
+    
+    
 }

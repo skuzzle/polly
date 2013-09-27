@@ -27,6 +27,23 @@ import de.skuzzle.polly.http.api.ParameterHandler;
 
 
 class NativeHandlers {
+    
+    public final static ParameterHandler BOOLEAN = new ParameterHandler() {
+        
+        @Override
+        public Object parse(String value) throws HttpException {
+            return Boolean.parseBoolean(value);
+        }
+        
+        
+        
+        @Override
+        public boolean canHandle(Class<?> type, Class<?> typeVar) {
+            return Boolean.class.isAssignableFrom(type);
+        }
+    };
+    
+    
 
     public final static ParameterHandler STRING = new ParameterHandler() {
         @Override

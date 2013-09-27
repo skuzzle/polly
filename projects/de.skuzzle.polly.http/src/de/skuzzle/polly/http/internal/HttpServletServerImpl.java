@@ -52,6 +52,7 @@ class HttpServletServerImpl extends HttpServerImpl implements HttpServletServer 
         this.paramHandler = new ArrayList<ParameterHandler>();
         this.addHandlerListener = new ArrayList<>();
         this.handledUrls = new HashMap<>();
+        this.addParameterHandler(NativeHandlers.BOOLEAN);
         this.addParameterHandler(NativeHandlers.INTEGER);
         this.addParameterHandler(NativeHandlers.STRING);
         this.addParameterHandler(NativeHandlers.STRING_LIST);
