@@ -17,9 +17,11 @@ import polly.rx.entities.FleetScan;
 import polly.rx.entities.FleetScanShip;
 import polly.rx.entities.ScoreBoardEntry;
 import polly.rx.graphs.NamedPoint;
+import polly.rx.parsing.ScoreBoardParser;
 import de.skuzzle.polly.http.annotations.Get;
 import de.skuzzle.polly.http.annotations.OnRegister;
 import de.skuzzle.polly.http.annotations.Param;
+import de.skuzzle.polly.http.annotations.Post;
 import de.skuzzle.polly.http.api.AlternativeAnswerException;
 import de.skuzzle.polly.http.api.Controller;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
@@ -30,6 +32,7 @@ import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.httpv2.PollyController;
 import de.skuzzle.polly.sdk.httpv2.SuccessResult;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
+import de.skuzzle.polly.sdk.time.Time;
 import de.skuzzle.polly.tools.streams.FastByteArrayInputStream;
 
 
@@ -254,5 +257,22 @@ public class RXController extends PollyController {
     public HttpAnswer getFile() {
         final ClassLoader cl = this.getClass().getClassLoader();
         return new HttpResourceAnswer(200, cl, this.getEvent().getPlainUri());
+    }
+    
+    
+    
+    @Post("/api/postScoreboard")
+    public HttpAnswer postScoreboard(@Param("input") String input) 
+            throws AlternativeAnswerException {
+        this.requirePermissions(MyPlugin.SBE_PERMISSION);
+        
+        try {
+            final Collection<ScoreBoardEntry> entries = 
+                    ScoreBoardParser.parse(input, Time.currentTime());
+            this.sbManager.addEntries(entries);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return HttpAnswers.newStringAnswer("").redirectTo("/pages/scoreboard");
     }
 }

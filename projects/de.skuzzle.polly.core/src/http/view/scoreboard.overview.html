@@ -1,3 +1,13 @@
+<div class="highlight contentBox">
+    #CONTENT_HEADER ("Post new Entry")
+    <div class="content">
+    <form id="paste">
+        <textarea name="input" style="width:100%; height: 200px"></textarea>
+        <input class="button" type="button" value="Submit" onclick="submitSB()"/>
+    </form>
+    </div>
+</div>
+
 <div id="compListContainer" class="highlight contentBox" #if ($compareList.getEntries().isEmpty()) style="display:none" #end>
     #CONTENT_HEADER ("Compare list")
     <div class="content">
@@ -40,5 +50,12 @@ function removeFromCompare(hash, name) {
     $.get("$PAGE_REMOVEFROMCOMPARE?venadName="+name, function(data) {
     	$("#" + hash).remove();
     });	
+}
+function submitSB() {
+	showProgress();
+	$.post("$PAGE_POSTSCOREBOARD", $("#paste").serialize(), function(data) {
+		$("#paste textarea").val("");
+		location.reload();
+	});
 }
 </script>
