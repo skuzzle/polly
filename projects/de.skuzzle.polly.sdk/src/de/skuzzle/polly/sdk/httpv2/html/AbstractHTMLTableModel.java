@@ -8,6 +8,7 @@ import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.httpv2.SuccessResult;
+import de.skuzzle.polly.sdk.util.DirectedComparator.SortOrder;
 
 public abstract class AbstractHTMLTableModel<T> implements HTMLTableModel<T> {
 
@@ -66,5 +67,19 @@ public abstract class AbstractHTMLTableModel<T> implements HTMLTableModel<T> {
     @Override
     public Map<String, String> getRequestParameters(HttpEvent e) {
         return Collections.emptyMap();
+    }
+    
+    
+    
+    @Override
+    public int getDefaultSortColumn() {
+        return -1;
+    }
+    
+    
+    
+    @Override
+    public SortOrder getDefaultSortOrder() {
+        return SortOrder.UNDEFINED;
     }
 }

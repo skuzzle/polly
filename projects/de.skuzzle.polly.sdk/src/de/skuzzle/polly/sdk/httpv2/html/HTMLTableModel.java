@@ -8,6 +8,7 @@ import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.httpv2.SuccessResult;
 import de.skuzzle.polly.sdk.roles.SecurityObject;
+import de.skuzzle.polly.sdk.util.DirectedComparator.SortOrder;
 
 
 public interface HTMLTableModel<T> extends SecurityObject {
@@ -34,4 +35,8 @@ public interface HTMLTableModel<T> extends SecurityObject {
     public Class<?> getColumnClass(int column);
     
     public boolean isFilterOnly();
+    
+    public SortOrder getDefaultSortOrder();
+    
+    public int getDefaultSortColumn();
 }

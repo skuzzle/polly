@@ -370,11 +370,14 @@ public class HTMLTable<T> implements HttpEventHandler {
                 settings = (TableSettings) s.getAttached(settingsKey);
             } else {
                 settings = new TableSettings();
-                settings.sortCol = -1;
+                settings.sortCol = this.model.getDefaultSortColumn();
                 settings.filter = new String[this.model.getColumnCount()];
                 settings.order = new SortOrder[this.model.getColumnCount()];
                 Arrays.fill(settings.filter, "");
                 Arrays.fill(settings.order, SortOrder.UNDEFINED);
+                if (settings.sortCol != -1) {
+                    settings.order[settings.sortCol] = this.model.getDefaultSortOrder();
+                }
                 s.set(settingsKey, settings);
             }
         }
