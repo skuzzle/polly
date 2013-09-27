@@ -8,12 +8,12 @@
     <property name="root.dir"          value="../.."/>
     
     <!-- Current version name. -->
-    <property name="version.name"      value=" - beta"/>
+    <property name="version.name"      value=" - Perky Parrot"/>
     
     <!-- 
         Beginning of version number. Third part will be constructed during dist. 
     -->
-    <property name="version.num"       value="1.0."/>
+    <property name="version.num"       value="0.9."/>
     
     <!-- 
         The output folder for compiled class files when compiling with no 
