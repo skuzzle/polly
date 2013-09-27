@@ -45,6 +45,7 @@ import polly.rx.httpv2.FleetScanShipTableModel;
 import polly.rx.httpv2.FleetScanTableModel;
 import polly.rx.httpv2.FleetScansWithShipModel;
 import polly.rx.httpv2.RXController;
+import polly.rx.httpv2.ScoreboardDetailModel;
 import polly.rx.httpv2.ScoreboardTableModel;
 import polly.rx.httpv2.ShipsForScanTableModel;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -186,11 +187,15 @@ public class MyPlugin extends PollyPlugin {
         final HTMLTableModel<ScoreBoardEntry> scoreboard = new ScoreboardTableModel(sbeManager);
         final HTMLTable<ScoreBoardEntry> scoreboardTable = new HTMLTable<ScoreBoardEntry>("scoreboard", scoreboard, myPolly);
         
+        final HTMLTableModel<ScoreBoardEntry> scoreboardDetail = new ScoreboardDetailModel(sbeManager);
+        final HTMLTable<ScoreBoardEntry> scoreboardDetailTable = new HTMLTable<>("entries", scoreboardDetail, myPolly);
+        
         myPolly.webInterface().getServer().addHttpEventHandler("/api/allFleetScans", fleetScanTable);
         myPolly.webInterface().getServer().addHttpEventHandler("/api/allFleetScanShips", fleetScanShipTable);
         myPolly.webInterface().getServer().addHttpEventHandler("/api/scansWithShip", scansWithShipTable);
         myPolly.webInterface().getServer().addHttpEventHandler("/api/shipsForScan", shipsForScanTable);
         myPolly.webInterface().getServer().addHttpEventHandler("/api/scoreboard", scoreboardTable);
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/scoreboardDetail", scoreboardDetailTable);
     }
     
     
