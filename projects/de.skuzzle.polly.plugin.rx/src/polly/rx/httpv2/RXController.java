@@ -57,7 +57,8 @@ public class RXController extends PollyController {
     @Get(value = "/pages/fleetScanPage", name = "Fleet Scans")
     @OnRegister({ WebinterfaceManager.ADD_MENU_ENTRY, "Revorix", "List all fleet scans",
         FleetDBManager.VIEW_FLEET_SCAN_PERMISSION })
-    public HttpAnswer fleetScanPage() {
+    public HttpAnswer fleetScanPage() throws AlternativeAnswerException {
+        this.requirePermissions(FleetDBManager.VIEW_FLEET_SCAN_PERMISSION);
         return this.makeAnswer(this.createContext("http/view/fleetscans.overview.html"));
     }
     
@@ -159,7 +160,8 @@ public class RXController extends PollyController {
     @Get(value = "/pages/scoreboard", name = "Scoreboard")
     @OnRegister({ WebinterfaceManager.ADD_MENU_ENTRY, "Revorix", "View and manage posted scoreboard entries",
         MyPlugin.SBE_PERMISSION })
-    public HttpAnswer scoreboardPage() {
+    public HttpAnswer scoreboardPage() throws AlternativeAnswerException {
+        this.requirePermissions(MyPlugin.SBE_PERMISSION);
         final Map<String, Object> c = this.createContext("http/view/scoreboard.overview.html");
         CompareList cl = (CompareList) this.getSession().getAttached("COMPARE_LIST");
         if (cl == null) {
