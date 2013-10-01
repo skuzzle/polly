@@ -10,6 +10,7 @@ import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.httpv2.html.AbstractHTMLTableModel;
 import de.skuzzle.polly.sdk.roles.RoleManager;
+import de.skuzzle.polly.sdk.util.DirectedComparator.SortOrder;
 import entities.LogEntry;
 
 public class LogEntryTableModel extends AbstractHTMLTableModel<LogEntry> {
@@ -106,5 +107,18 @@ public class LogEntryTableModel extends AbstractHTMLTableModel<LogEntry> {
             logs = this.lm.postFilter(logs, new SecurityLogFilter(this.myPolly, executor));
         }
         return logs;
+    }
+    
+    
+    @Override
+    public int getDefaultSortColumn() {
+        return 0;
+    }
+    
+    
+    
+    @Override
+    public SortOrder getDefaultSortOrder() {
+        return SortOrder.DESCENDING;
     }
 }
