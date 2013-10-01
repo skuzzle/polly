@@ -4,6 +4,7 @@ import polly.logging.MyPlugin;
 import core.PollyLoggingManager;
 import de.skuzzle.polly.http.annotations.Get;
 import de.skuzzle.polly.http.annotations.OnRegister;
+import de.skuzzle.polly.http.api.AlternativeAnswerException;
 import de.skuzzle.polly.http.api.Controller;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -33,7 +34,8 @@ public class LoggingController extends PollyController {
     @Get(value = "/pages/showLogs", name = "Search logs")
     @OnRegister({ WebinterfaceManager.ADD_MENU_ENTRY, "Logging", "List IRC logs",
             MyPlugin.CHANNEL_LOG_PERMISSION })
-    public HttpAnswer loggingPage() {
+    public HttpAnswer loggingPage() throws AlternativeAnswerException {
+        this.requirePermissions(MyPlugin.CHANNEL_LOG_PERMISSION);
         return this.makeAnswer(this.createContext("/http/view/logs.overview.html"));
     }
 
@@ -42,7 +44,8 @@ public class LoggingController extends PollyController {
     @Get(value = "/pages/replay", name = "Replay")
     @OnRegister({ WebinterfaceManager.ADD_MENU_ENTRY, "Logging",
             "Replay of missed IRC messages", MyPlugin.REPLAY_PERMISSION })
-    public HttpAnswer replayPage() {
+    public HttpAnswer replayPage() throws AlternativeAnswerException {
+        this.requirePermissions(MyPlugin.REPLAY_PERMISSION);
         return this.makeAnswer(this.createContext("/http/view/replay.overview.html"));
     }
 }
