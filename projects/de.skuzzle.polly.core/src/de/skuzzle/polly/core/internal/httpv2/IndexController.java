@@ -216,8 +216,4 @@ public class IndexController extends PollyController {
         return HttpAnswers.newStringAnswer(s + " in " + 
                 shutdownTimeSeconds + " seconds");
     }
-    
-    
-    
-    
 }

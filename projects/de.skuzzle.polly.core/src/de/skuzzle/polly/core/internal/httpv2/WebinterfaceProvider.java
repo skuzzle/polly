@@ -1,5 +1,6 @@
 package de.skuzzle.polly.core.internal.httpv2;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
@@ -91,7 +92,18 @@ public class WebinterfaceProvider extends AbstractProvider {
         final ExecutorService executor = Executors.newFixedThreadPool(5, 
                 new ThreadFactoryBuilder("HTTP_%n%"));
         
-        final ServerFactory sf = new DefaultServerFactory(port, executor);
+        final ServerFactory sf;
+        final boolean useSSL = this.serverCfg.readBoolean("useSSL");
+        
+        if (useSSL) {
+            final String keyStorePath = this.serverCfg.readString("keyStore");
+            final String keyStorePW = this.serverCfg.readString("keyStorePW");
+            final String keyPW = this.serverCfg.readString("keyPW");
+            this.initKeyStore(keyStorePath, keyStorePW);
+            sf = new SSLServerFactory(port, executor, keyStorePath, keyStorePW, keyPW);
+        } else {
+            sf = new DefaultServerFactory(port, executor);
+        }
         this.server = HttpServerCreator.createServletServer(sf);
         this.server.setSessionLiveTime(sessionTimeout);
         this.server.setSessionType(HttpServer.SESSION_TYPE_COOKIE);
@@ -149,6 +161,16 @@ public class WebinterfaceProvider extends AbstractProvider {
         
         this.provideComponent(this.webinterface);
     }
+    
+    
+    
+    private void initKeyStore(String keyStoreFileName, String password) {
+        final File keyStoreFile = new File(keyStoreFileName).getAbsoluteFile();
+        
+        System.setProperty("javax.net.ssl.keyStore", keyStoreFile.getPath());
+        System.setProperty("javax.net.ssl.keyStorePassword", password);
+    }
+    
     
     
     
