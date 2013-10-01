@@ -199,17 +199,27 @@ public class RXController extends PollyController {
     
     
     
-    @Get("/api/compareImage")
-    public HttpAnswer compareImage() throws AlternativeAnswerException {
+    @Get("/api/graphCompare")
+    public HttpAnswer graphCompare(@Param("maxMonth") int maxMonths) 
+            throws AlternativeAnswerException {
         this.requirePermissions(MyPlugin.SBE_PERMISSION);
         CompareList cl = (CompareList) this.getSession().getAttached("COMPARE_LIST");
         if (cl == null) {
-            return HttpAnswers.newStringAnswer("").redirectTo("/pages/scoreboard");
+            return HttpAnswers.newStringAnswer("");
         }
         final Collection<NamedPoint> allPoints = new ArrayList<>();
-        final InputStream graph = this.sbManager.createMultiGraph(24, allPoints, 
+        final InputStream graph = this.sbManager.createMultiGraph(maxMonths, allPoints, 
                 cl.getEntries().toArray(new String[0]));
-        return new HttpInputStreamAnswer(200, graph);
+        graph.mark(Integer.MAX_VALUE);
+        
+        final String imgName = "graph_compare" + "_mm_" + maxMonths; 
+        this.getSession().set(imgName, graph);
+        final Map<String, Object> c = this.createContext("");
+        c.put("allPoints", allPoints);
+        c.put("imgName", imgName);
+        c.put("maxMonths", maxMonths);
+        c.put("isCompare", true);
+        return HttpAnswers.newTemplateAnswer("/http/view/graph.html", c);
     }
     
     
