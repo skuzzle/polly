@@ -96,9 +96,9 @@ public class WebinterfaceProvider extends AbstractProvider {
         final boolean useSSL = this.serverCfg.readBoolean("useSSL");
         
         if (useSSL) {
-            final String keyStorePath = this.serverCfg.readString("keyStore");
-            final String keyStorePW = this.serverCfg.readString("keyStorePW");
-            final String keyPW = this.serverCfg.readString("keyPW");
+            final String keyStorePath = this.serverCfg.readString(Configuration.KEYSTORE_FILE);
+            final String keyStorePW = this.serverCfg.readString(Configuration.KEYSTORE_PASSWORD);
+            final String keyPW = this.serverCfg.readString(Configuration.KEY_PASSWORD);
             this.initKeyStore(keyStorePath, keyStorePW);
             sf = new SSLServerFactory(port, executor, keyStorePath, keyStorePW, keyPW);
         } else {
