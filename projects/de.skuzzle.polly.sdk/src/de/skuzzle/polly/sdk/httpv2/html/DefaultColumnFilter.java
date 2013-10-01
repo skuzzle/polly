@@ -21,8 +21,12 @@ public class DefaultColumnFilter implements HTMLColumnFilter {
 
         @Override
         public Object parseFilter(String filter) {
-            return Pattern.compile(".*" + filter + ".*", 
+            try {
+                return Pattern.compile(".*" + filter + ".*", 
                     Pattern.CASE_INSENSITIVE);
+            } catch (Exception e) {
+                return Pattern.compile(".*");
+            }
         }
     }; 
     
