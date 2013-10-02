@@ -177,6 +177,17 @@ public class RXController extends PollyController {
     
     
     
+    @Get(value = "/pages/reports", name = "Battlereports")
+    @OnRegister({ WebinterfaceManager.ADD_MENU_ENTRY, "Revorix", "View statistics about battle reports",
+        FleetDBManager.VIEW_BATTLE_REPORT_PERMISSION })
+    public HttpAnswer reportsPage() throws AlternativeAnswerException {
+        this.requirePermissions(FleetDBManager.VIEW_BATTLE_REPORT_PERMISSION);
+        final Map<String, Object> c = this.createContext("http/view/battlereports.overview.html");
+        return this.makeAnswer(c);
+    }
+    
+    
+    
     @Get("/pages/score/compare")
     public HttpAnswer compare() throws AlternativeAnswerException {
         this.requirePermissions(MyPlugin.SBE_PERMISSION);

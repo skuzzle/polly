@@ -16,9 +16,9 @@ import polly.rx.commands.VenadCommand;
 import polly.rx.core.FleetDBManager;
 import polly.rx.core.ScoreBoardManager;
 import polly.rx.core.TrainManagerV2;
+import polly.rx.entities.BattleDrop;
 import polly.rx.entities.BattleReport;
 import polly.rx.entities.BattleReportShip;
-import polly.rx.entities.BattleDrop;
 import polly.rx.entities.FleetScan;
 import polly.rx.entities.FleetScanHistoryEntry;
 import polly.rx.entities.FleetScanShip;
@@ -27,20 +27,21 @@ import polly.rx.entities.TrainEntity;
 import polly.rx.entities.TrainEntityV2;
 import polly.rx.entities.TrainEntityV3;
 import polly.rx.entities.V2ToV3TrainEntityConverter;
+import polly.rx.http.FleetScanHttpAction;
 import polly.rx.http.FleetScanInfoHttpAction;
 import polly.rx.http.FleetShipInfoHttpAction;
-import polly.rx.http.FleetScanHttpAction;
 import polly.rx.http.MyTrainsHttpAction;
 import polly.rx.http.PostScoreboardHttpAction;
 import polly.rx.http.QueryOwnerHttpAction;
 import polly.rx.http.ScoreBoardCompareHttpAction;
-import polly.rx.http.ScoreBoardHttpAction;
 import polly.rx.http.ScoreBoardDetailsHttpAction;
+import polly.rx.http.ScoreBoardHttpAction;
 import polly.rx.http.TrainerHttpAction;
 import polly.rx.http.battlereports.AddBattleReportAction;
 import polly.rx.http.battlereports.BattleReportFilterHttpAction;
 import polly.rx.http.battlereports.BattleReportHttpAction;
 import polly.rx.http.battlereports.BattleReportInfosHttpAction;
+import polly.rx.httpv2.BattleReportModel;
 import polly.rx.httpv2.FleetScanShipTableModel;
 import polly.rx.httpv2.FleetScanTableModel;
 import polly.rx.httpv2.FleetScansWithShipModel;
@@ -190,12 +191,17 @@ public class MyPlugin extends PollyPlugin {
         final HTMLTableModel<ScoreBoardEntry> scoreboardDetail = new ScoreboardDetailModel(sbeManager);
         final HTMLTable<ScoreBoardEntry> scoreboardDetailTable = new HTMLTable<>("entries", scoreboardDetail, myPolly);
         
+        final HTMLTableModel<BattleReport> reportModel = new BattleReportModel(fleetDBManager);
+        final HTMLTable<BattleReport> reportTabble = new HTMLTable<BattleReport>("reports", reportModel, myPolly);
+        
+        
         myPolly.webInterface().getServer().addHttpEventHandler("/api/allFleetScans", fleetScanTable);
         myPolly.webInterface().getServer().addHttpEventHandler("/api/allFleetScanShips", fleetScanShipTable);
         myPolly.webInterface().getServer().addHttpEventHandler("/api/scansWithShip", scansWithShipTable);
         myPolly.webInterface().getServer().addHttpEventHandler("/api/shipsForScan", shipsForScanTable);
         myPolly.webInterface().getServer().addHttpEventHandler("/api/scoreboard", scoreboardTable);
         myPolly.webInterface().getServer().addHttpEventHandler("/api/scoreboardDetail", scoreboardDetailTable);
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/allReports", reportTabble);
     }
     
     
