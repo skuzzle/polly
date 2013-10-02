@@ -42,15 +42,18 @@ function filterClick(event) {
 }
 function loadTable(url, id) {
     var tId = "#" + id;
+    showProgress();
     $("#update_"+id).show();
     try {
 	    $.get(url, function(data) {
 			$(tId).html(data);
 			tableEvents();
 			$("#update_"+id).hide();
+			stopProgress();
 	    });
     } catch(err) {
     	$("#update_"+id).hide();
+    	stopProgress();
     	alert("Error while loading table contents");
     }
 }
