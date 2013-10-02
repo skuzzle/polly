@@ -1,6 +1,7 @@
 package de.skuzzle.polly.sdk.httpv2.html;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,11 +13,25 @@ import de.skuzzle.polly.sdk.util.DirectedComparator.SortOrder;
 
 public abstract class AbstractHTMLTableModel<T> implements HTMLTableModel<T> {
 
+    private final Set<String> permissions;
+    
 
+    
+    public AbstractHTMLTableModel() {
+        this.permissions = new HashSet<>();
+    }
 
+    
+    
+    protected void requirePermission(String permission) {
+        this.permissions.add(permission);
+    }
+    
+    
+    
     @Override
     public Set<String> getRequiredPermission() {
-        return Collections.emptySet();
+        return this.permissions;
     }
 
 
