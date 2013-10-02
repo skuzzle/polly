@@ -295,6 +295,7 @@ public class HTMLTable<T> implements HttpEventHandler {
     private final Map<Class<?>, CellEditor> editors;
     private final Map<Class<?>, CellRenderer> renderers;
     private final MyPolly myPolly;
+    private final List<HTMLModelListener<T>> listeners;
     
     
     
@@ -304,7 +305,8 @@ public class HTMLTable<T> implements HttpEventHandler {
         this.baseContext = new HashMap<>();
         this.model = model;
         this.colSorter = new DefaultColumnSorter<>();
-        this.filter = new DefaultColumnFilter();
+        this.filter = new DefaultTypeFilter(model, myPolly);
+        this.listeners = new ArrayList<>();
         
         this.editors = new HashMap<>();
         this.editors.put(String.class, new TextCellEditor());
@@ -319,6 +321,26 @@ public class HTMLTable<T> implements HttpEventHandler {
         this.renderers.put(Boolean.class, new BooleanCellRenderer());
         this.renderers.put(Double.class, new DoubleCellRenderer());
         this.renderers.put(Types.class, new TypesCellRenderer(myPolly.formatting()));
+    }
+    
+    
+    
+    private void fireDataProcessed(List<T> result) {
+        for (final HTMLModelListener<T> listener : this.listeners) {
+            listener.onDataProcessed(this.model, result);
+        }
+    }
+    
+    
+    
+    public void addModelListener(HTMLModelListener<T> listener) {
+        this.listeners.add(listener);
+    }
+    
+    
+    
+    public void removeModelListener(HTMLModelListener<T> listener) {
+        this.listeners.remove(listener);
     }
     
     
@@ -453,6 +475,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         
         // get filtered elements
         final FilterResult fr = this.getFilteredElements(settings, allData, e);
+        this.fireDataProcessed(fr.data);
         
         final Map<String, Object> c = this.createContext(settings, 
             registered, fr, e, allData);
