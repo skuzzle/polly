@@ -29,7 +29,7 @@ public interface EventProvider {
      * Removes a listener. It will only be removed for the specified listener class and
      * can thus still be registered with this event provider if it was added for
      * further listener classes. The listener will no longer receive events represented
-     * byt the given listener class.
+     * by the given listener class.
      *  
      * @param listenerClass The class representing the event(s) for which the listener
      *          should be removed.
