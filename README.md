@@ -47,28 +47,25 @@ information (*)
 
 ## Getting started
 Your first steps using polly are very simple, as the repository comes with 
-everything you could ever need to build polly. One key feature is, that the 
-build script even generates eclipse projects for you, so that you are ready to
-start after a few seconds.
-
+everything you could ever need to build polly. 
 Polly's build system is based on Apache Ant which comes shipped with checking 
 out the polly repository. There is no need to install additional software. 
+For each polly sub project there exists an eclipse project which can easily be
+imported:
 
 Steps to get working with polly:
 * check out the repository
 * goto `projects` directory
 * run `build.bat`
-* run `projects.bat`
 * in Eclipse, select `File -> Import -> Existing Projects into Workspace`,
   click `browse`, goto `projects` directory, hit `enter`. Now, select all 
   listed polly projects to import.
 
 All eclipse projects now reference all the dependent polly projects in the 
 same workspace, so that code changes in one sub project are automatically 
-reflected to all other projects. However, this does not apply to polly plugins. 
-If you modify a plugin, you would still have to run the `build` script in the 
-plugin's project directory, because plugins are loaded dynamically from their 
-jar files when launching polly.
+reflected to all other projects. When modifying a plugin project, eclipse will 
+call the ant script which recreates the plugin's jar and copy it to the correct 
+location so it can be used instantly when relaunching polly from the debugger.
 
 You may now want to modify some settings in `de.skuzzle.polly.core/cfg`. When 
 done, you can launch polly by running the main class 
@@ -91,6 +88,10 @@ would like to thank the authors.
   foundation are. Polly uses Apache Velocity to create HTML pages from templates 
   and log4j for debug logging.
   URL: http://www.apache.org/
+  
+* The current web interface uses Google's Gson API to serialize objects into 
+  JSON format.
+  URL: http://code.google.com/p/google-gson/
   
 * By default, polly uses the lightweight SQL database HSQLDB 
   (http://hsqldb.org/) in conjunction with the eclipse link JPA 
