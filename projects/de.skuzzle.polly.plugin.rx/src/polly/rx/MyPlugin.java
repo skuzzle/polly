@@ -50,6 +50,7 @@ import polly.rx.httpv2.RXController;
 import polly.rx.httpv2.ScoreboardDetailModel;
 import polly.rx.httpv2.ScoreboardTableModel;
 import polly.rx.httpv2.ShipsForScanTableModel;
+import polly.rx.httpv2.StatisticsGatherer;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
 import de.skuzzle.polly.sdk.Types;
@@ -195,7 +196,8 @@ public class MyPlugin extends PollyPlugin {
         
         final HTMLTableModel<BattleReport> reportModel = new BattleReportModel(fleetDBManager);
         final HTMLTable<BattleReport> reportTabble = new HTMLTable<BattleReport>("reports", reportModel, myPolly);
-        
+        final StatisticsGatherer statsGatherer = new StatisticsGatherer();
+        reportTabble.addModelListener(statsGatherer);
         
         myPolly.webInterface().getServer().addHttpEventHandler("/api/allFleetScans", fleetScanTable);
         myPolly.webInterface().getServer().addHttpEventHandler("/api/allFleetScanShips", fleetScanShipTable);

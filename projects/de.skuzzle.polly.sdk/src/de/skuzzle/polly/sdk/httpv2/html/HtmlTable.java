@@ -274,12 +274,15 @@ public class HTMLTable<T> implements HttpEventHandler {
     
     
     private class FilterResult {
-        private final List<T> data;
+        private final List<T> sided;
+        private final List<T> unsided;
         private final int filteredSize;
         private final Map<T, Integer> indexMap;
-        public FilterResult(List<T> data, Map<T, Integer> indexMap, int filteredSize) {
+        public FilterResult(List<T> sided, List<T> unsided, 
+                Map<T, Integer> indexMap, int filteredSize) {
             super();
-            this.data = data;
+            this.sided = sided;
+            this.unsided = unsided;
             this.indexMap = indexMap;
             this.filteredSize = filteredSize;
         }
@@ -325,9 +328,9 @@ public class HTMLTable<T> implements HttpEventHandler {
     
     
     
-    private void fireDataProcessed(List<T> result) {
+    private void fireDataProcessed(List<T> result, HttpEvent e) {
         for (final HTMLModelListener<T> listener : this.listeners) {
-            listener.onDataProcessed(this.model, result);
+            listener.onDataProcessed(this.model, result, e);
         }
     }
     
@@ -456,7 +459,8 @@ public class HTMLTable<T> implements HttpEventHandler {
             if (!hasFilter) {
                 // no filter is active and this is no filter request
                 final FilterResult fr = new FilterResult(new ArrayList<T>(), 
-                    new HashMap<T, Integer>(), 0);
+                        new ArrayList<T>(), new HashMap<T, Integer>(), 0);
+                
                 final Map<String, Object> c = this.createContext(settings, 
                     registered, fr, e, new ArrayList<T>());
                 c.put("noFilter", true);
@@ -475,7 +479,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         
         // get filtered elements
         final FilterResult fr = this.getFilteredElements(settings, allData, e);
-        this.fireDataProcessed(fr.data);
+        this.fireDataProcessed(fr.unsided, e);
         
         final Map<String, Object> c = this.createContext(settings, 
             registered, fr, e, allData);
@@ -499,7 +503,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         c.put("editors", this.editors);
         c.put("baseUrl", makeUrl(registered, this.model.getRequestParameters(e)));
         c.put("tId", this.tableId);
-        c.put("data", fr.data);
+        c.put("data", fr.sided);
         c.put("indexMap", fr.indexMap);
         c.put("requestParams", this.model.getRequestParameters(e));
         c.put("minPage", minPage);
@@ -518,7 +522,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         // filter full data
         final int colCount = this.model.getColumnCount();
         final Map<T, Integer> idxMap = new HashMap<>(data.size());
-        List<T> result = new ArrayList<>(data.size());
+        final List<T> unsided = new ArrayList<>(data.size());
         
         // preprocess filters: parse each filter string
         final Object[] filters = new Object[s.filter.length];
@@ -551,11 +555,11 @@ public class HTMLTable<T> implements HttpEventHandler {
             // all filters applied, each accepted the element
             // map index within the filtered- to index in the full collection
             idxMap.put(element, originalIdx); 
-            result.add(element);
+            unsided.add(element);
         }
         
-        if (result.isEmpty()) {
-            return new FilterResult(result, idxMap, 0);
+        if (unsided.isEmpty()) {
+            return new FilterResult(unsided, unsided, idxMap, 0);
         }
         
         
@@ -564,23 +568,23 @@ public class HTMLTable<T> implements HttpEventHandler {
             if (s.order[s.sortCol] != SortOrder.UNDEFINED) {
                 final Comparator<? super T> c = this.colSorter.getComparator(
                     s.sortCol, this.model);
-                Collections.sort(result, new DirectedComparator<>(s.getOrder(), c));
+                Collections.sort(unsided, new DirectedComparator<>(s.getOrder(), c));
             }
         }
         
         
-        int filteredSize = result.size();
+        int filteredSize = unsided.size();
         
         // get view port based on filtered data
-        s.pageCount = (int) Math.ceil(result.size() / (double) s.pageSize);
+        s.pageCount = (int) Math.ceil(unsided.size() / (double) s.pageSize);
         s.page = MathUtil.limit(s.page, 0, Math.max(s.pageCount - 1, 0));
         final int firstIdx = s.page * s.pageSize;
-        final int lastIdx = Math.min(result.size(), firstIdx + s.pageSize);
+        final int lastIdx = Math.min(unsided.size(), firstIdx + s.pageSize);
         
         // Always copy the list to save memory. Resulting list is only 'pageSize' 
         // element big
-        result = new ArrayList<T>(result.subList(firstIdx, lastIdx));
+        final List<T> sided = new ArrayList<T>(unsided.subList(firstIdx, lastIdx));
 
-        return new FilterResult(result, idxMap, filteredSize);
+        return new FilterResult(sided, unsided, idxMap, filteredSize);
     }
 }

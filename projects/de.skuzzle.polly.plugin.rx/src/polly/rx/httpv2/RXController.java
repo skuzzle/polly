@@ -2,6 +2,7 @@ package polly.rx.httpv2;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,6 +19,7 @@ import polly.rx.entities.FleetScan;
 import polly.rx.entities.FleetScanShip;
 import polly.rx.entities.ScoreBoardEntry;
 import polly.rx.graphs.NamedPoint;
+import polly.rx.httpv2.StatisticsGatherer.BattleReportStatistics;
 import polly.rx.parsing.ParseException;
 import polly.rx.parsing.QBattleReportParser;
 import polly.rx.parsing.ScoreBoardParser;
@@ -326,5 +328,57 @@ public class RXController extends PollyController {
             return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
         }
         return new GsonHttpAnswer(200, new SuccessResult(true, "Report added"));
+    }
+    
+    
+    
+    @Get("/api/deleteReport")
+    public HttpAnswer deleteReport(@Param("reportId") int id) 
+            throws DatabaseException, AlternativeAnswerException {
+        this.requirePermissions(FleetDBManager.DELETE_BATTLE_REPORT_PERMISSION);
+        this.fleetDb.deleteReportById(id);
+        return new GsonHttpAnswer(200, new SuccessResult(true, ""));
+    }
+    
+    
+    
+    @Get("/api/battlereportStatistics")
+    public HttpAnswer battleReportStatistics() {
+        final User user = this.getSessionUser();
+        final String STATISTIC_KEY = "BR_STATS_" + user.getName();
+        BattleReportStatistics stats = 
+                (BattleReportStatistics) this.getSession().getAttached(STATISTIC_KEY);
+        
+        if (stats == null) {
+            stats = new BattleReportStatistics();
+        }
+        
+        synchronized (stats) {
+            final DecimalFormat df = new DecimalFormat("0.##");
+            final Map<String, Object> c = this.createContext("");
+            c.put("df", df);
+            c.put("capiXpSumAttacker", stats.capiXpSumAttacker);
+            c.put("crewXpSumAttacker", stats.crewXpSumAttacker);
+            c.put("capiXpSumDefender", stats.capiXpSumDefender);
+            c.put("crewXpSumDefender", stats.crewXpSumDefender);
+            c.put("pzDamageAttacker", stats.pzDamageAttacker);
+            c.put("pzDamageDefender", stats.pzDamageDefender);
+            c.put("repairTimeAttacker", stats.repairTimeAttacker);
+            c.put("repairTimeDefender", stats.repairTimeDefender);
+            c.put("repairCostDefender", stats.repairCostDefender);
+            c.put("repairCostAttacker", stats.repairCostAttacker);
+            c.put("kwAttacker", stats.kwAttacker);
+            c.put("kwDefender", stats.kwDefender);
+            
+            c.put("artifacts", stats.artifacts);
+            c.put("chance", stats.artifactChance * 100.0);
+            
+            c.put("dropSum", stats.dropSum);
+            c.put("dropMax", stats.dropMax);
+            c.put("dropMin", stats.dropMin);
+            c.put("reportSize", stats.reportSize);
+            return HttpAnswers.newTemplateAnswer(
+                    "/http/view/battlereports.statistics.html", c);
+        }
     }
 }

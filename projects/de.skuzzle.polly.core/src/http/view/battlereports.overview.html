@@ -1,14 +1,42 @@
 <div class="highlight contentBox">
+    #CONTENT_HEADER ("Statistics for shown reports")
+    <p class="content highlight" style="text-align:center;padding:0px;margin:10px;">
+        <b>How To:</b> Adjust filter settings below, then click 
+        <input type="button" class="button" value="Reload" onclick="loadStats()"/>
+        to recalculate statistics for the shown reports.
+    </p>
+    <div class="content" style="display:none" id="statistics"></div>
+</div>
+<div class="highlight contentBox">
     #CONTENT_HEADER ("All Battlereports")
     <div class="content">
         <table id="reports">
         </table>
     </div>
-    
 </div>
 
 <script>
 $(document).ready(function() {
 	loadTable("/api/allReports", "reports");
+	loadStats();
 });
+
+function loadStats() {
+    showProgress();
+    $.get("/api/battlereportStatistics", function(data) {
+        $("#statistics").html(data);
+        $("#statistics").fadeIn();
+        stopProgress();
+    });
+}
+
+function deleteReport(id) {
+	var del = confirm("Really delete this report?");
+	if (!del) {
+		return;
+	}
+	$.get("$PAGE_DELETEREPORT?reportId="+id, function(data) {
+		location.reload();
+	})
+}
 </script>

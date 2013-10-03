@@ -7,6 +7,7 @@ import polly.rx.core.FleetDBManager;
 import polly.rx.entities.BattleReport;
 import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.sdk.httpv2.html.AbstractHTMLTableModel;
+import de.skuzzle.polly.sdk.httpv2.html.HTMLElement;
 
 
 public class BattleReportModel extends AbstractHTMLTableModel<BattleReport> {
@@ -14,7 +15,7 @@ public class BattleReportModel extends AbstractHTMLTableModel<BattleReport> {
     private final static String[] COLUMNS = {
         "Quadrant", "Att.", "Att. Clan", "Att. KW (normalized)", "Att. XP-Mod",
         "Def.", "Def. Clan", "Def. KW (normalized)",  "Def. XP-Mod", 
-        "Tactic", "Artifact", "Date"
+        "Tactic", "Artifact", "Date", "Action"
     };
     
     protected final FleetDBManager fleetDb;
@@ -53,6 +54,7 @@ public class BattleReportModel extends AbstractHTMLTableModel<BattleReport> {
     }
     
     
+    
     @Override
     public Object getCellValue(int column, BattleReport element) {
         switch (column) {
@@ -68,6 +70,9 @@ public class BattleReportModel extends AbstractHTMLTableModel<BattleReport> {
         case 9: return element.getTactic();
         case 10: return element.hasArtifact();
         case 11: return element.getDate();
+        case 12: return new HTMLElement("input")
+            .type("button").attr("class", "button").value("Delete")
+            .attr("onclick", "deleteReport(" + element.getId() + ")");
         default: return "";
         }
     }
