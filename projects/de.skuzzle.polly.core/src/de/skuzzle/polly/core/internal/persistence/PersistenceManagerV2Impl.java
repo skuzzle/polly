@@ -151,8 +151,8 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
 
         
         
-        @SuppressWarnings("unchecked")
         @Override
+        @SuppressWarnings("unchecked")
         public <T> List<T> findList(Class<T> type, String query, int limit,
                 Param params) {
             logger.trace("Executing named query '" + query + "'. Parameters: "
@@ -370,7 +370,7 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
 
 
     
-    public EntityList getEntities() {
+    EntityList getEntities() {
         return this.entities;
     }
 
@@ -391,7 +391,7 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
     
     
     
-    public void runAllEntityConverters() throws DatabaseException {
+    void runAllEntityConverters() throws DatabaseException {
         this.entityConverter.convertAll();
     }
     

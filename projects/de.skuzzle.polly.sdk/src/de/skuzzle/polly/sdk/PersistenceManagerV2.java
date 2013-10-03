@@ -140,22 +140,126 @@ public interface PersistenceManagerV2 {
     
     public interface Read extends AutoCloseable {
         
+        /**
+         * Finds an entity using its primary key.
+         * 
+         * Usage:
+         * <pre>
+         *  find(Employee.class, employeeId);
+         * </pre>
+         * @param type The entities type.
+         * @param key The primary key of the entity to find.
+         * @return The found entity or <code>null</code> of the primary key was not found.
+         */
         public <T> T find(Class<T> type, Object key);
         
+        /**
+         * Retrieves a whole list of entities from the database using a named query.
+         * 
+         * @param type The entities type.
+         * @param query The name of the named query. The query may only use numbered 
+         *      parameters. 
+         * @return A list of entities matching the query. The list may be empty if no
+         *      entity was found.
+         */
         public <T> List<T> findList(Class<T> type, String query);
+        
+        /**
+         * Retrieves a whole list of entities from the database using a named query.
+         * 
+         * @param type The entities type.
+         * @param query The name of the named query. The query may only use numbered 
+         *      parameters. 
+         * @param params The parameter values for the query in order they appear in the
+         *      query string.
+         * @return A list of entities matching the query. The list may be empty if no
+         *      entity was found.
+         */
         public <T> List<T> findList(Class<T> type, String query, Param params);
         
+        /**
+         * Retrieves a whole list of entities from the database using a named query.
+         * 
+         * @param type The entities type.
+         * @param query The name of the named query. The query may only use numbered 
+         *      parameters. 
+         * @param limit The maximum amount of entities to retrieve.
+         * @return A list of entities matching the query. The list may be empty if no
+         *      entity was found.
+         */
         public <T> List<T> findList(Class<T> type, String query, int limit);
+        
+        /**
+         * Retrieves a whole list of entities from the database using a named query.
+         * 
+         * @param type The entities type.
+         * @param query The name of the named query. The query may only use numbered 
+         *      parameters. 
+         * @param limit The maximum amount of entities to retrieve.
+         * @param params The parameter values for the query in order they appear in the
+         *      query string.
+         * @return A list of entities matching the query. The list may be empty if no
+         *      entity was found.
+         */
         public <T> List<T> findList(Class<T> type, String query, int limit, 
             Param params);
         
+        /**
+         * Retrieves a whole list of entities from the database using a named query.
+         * 
+         * @param type The entities type.
+         * @param query The name of the named query. The query may only use numbered 
+         *      parameters. 
+         * @param first Number of the first entry to retrieve.
+         * @param limit The maximum amount of entities to retrieve.
+         * @return A list of entities matching the query. The list may be empty if no
+         *      entity was found.
+         */
         public <T> List<T> findList(Class<T> type, String query, int first, int limit);
+        
+        /**
+         * Retrieves a whole list of entities from the database using a named query.
+         * 
+         * @param type The entities type.
+         * @param query The name of the named query. The query may only use numbered 
+         *      parameters. 
+         * @param first Number of the first entry to retrieve.
+         * @param limit The maximum amount of entities to retrieve.
+         * @param params The parameter values for the query in order they appear in the
+         *      query string.
+         * @return A list of entities matching the query. The list may be empty if no
+         *      entity was found.
+         */
         public <T> List<T> findList(Class<T> type, String query, int first, int limit,
             Param params);
         
+        /**
+         * Finds a single entity using a named query. This method may throw an 
+         * Exception if the query returns more than one item.
+         * 
+         * @param type The entities type.
+         * @param query The name of the named query. The query may only use numbered 
+         *      parameters. 
+         * @return The entity found or <code>null</code> if it was not found.
+         */
         public <T> T findSingle(Class<T> type, String query);
+        
+        /**
+         * Finds a single entity using a named query. This method may throw an 
+         * Exception if the query returns more than one item.
+         * 
+         * @param type The entities type.
+         * @param query The name of the named query. The query may only use numbered 
+         *      parameters. 
+         * @param params The parameter values for the query in order they appear in the
+         *      query string.
+         * @return The entity found or <code>null</code> if it was not found.
+         */
         public <T> T findSingle(Class<T> type, String query, Param params);
         
+        /**
+         * Closes this Read instance and releases all database locks.
+         */
         @Override
         public void close();
     }
