@@ -61,14 +61,15 @@ public class FleetDBManager {
             @Override
             public void perform(Write write) throws DatabaseException {
                 final BattleReport rp = write.read().findSingle(
-                    BattleReport.class, BattleReport.UNIQUE_CHECK, new Param(
+                    BattleReport.class, BattleReport.UNIQUE_CHECK_NO_DATE, new Param(
                     report.getQuadrant(), 
                     report.getX(), report.getY(), 
                     report.getAttackerVenadName(),
                     report.getDefenderVenadName(),
                     report.getAttackerFleetName(),
                     report.getDefenderFleetName(),
-                    report.getDate()));
+                    report.getAttackerKw(),
+                    report.getDefenderKw()));
                 
                 if (rp != null) {
                     throw new DatabaseException(

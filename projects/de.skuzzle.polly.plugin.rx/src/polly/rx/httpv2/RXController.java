@@ -13,10 +13,13 @@ import java.util.Set;
 import polly.rx.MyPlugin;
 import polly.rx.core.FleetDBManager;
 import polly.rx.core.ScoreBoardManager;
+import polly.rx.entities.BattleReport;
 import polly.rx.entities.FleetScan;
 import polly.rx.entities.FleetScanShip;
 import polly.rx.entities.ScoreBoardEntry;
 import polly.rx.graphs.NamedPoint;
+import polly.rx.parsing.ParseException;
+import polly.rx.parsing.QBattleReportParser;
 import polly.rx.parsing.ScoreBoardParser;
 import de.skuzzle.polly.http.annotations.Get;
 import de.skuzzle.polly.http.annotations.OnRegister;
@@ -29,6 +32,9 @@ import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.http.api.answers.HttpInputStreamAnswer;
 import de.skuzzle.polly.http.api.answers.HttpResourceAnswer;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.User;
+import de.skuzzle.polly.sdk.exceptions.DatabaseException;
+import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
 import de.skuzzle.polly.sdk.httpv2.PollyController;
 import de.skuzzle.polly.sdk.httpv2.SuccessResult;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
@@ -295,5 +301,30 @@ public class RXController extends PollyController {
             e.printStackTrace();
         }
         return HttpAnswers.newStringAnswer("").redirectTo("/pages/scoreboard");
+    }
+    
+    
+    
+    @Post("/postQReport")
+    public HttpAnswer postQReport(
+            @Param("user") String user, 
+            @Param("pw") String pw, 
+            @Param("action") String action,
+            @Param("report") String report) {
+        
+        final User u = this.getMyPolly().users().getUser(user);
+        if (user == null || !u.checkPassword(pw)) {
+            return new GsonHttpAnswer(200, new SuccessResult(false, "Illegal login"));
+        } else if (!this.getMyPolly().roles().hasPermission(u, FleetDBManager.ADD_BATTLE_REPORT_PERMISSION)) {
+            return new GsonHttpAnswer(200, new SuccessResult(false, "No permission"));
+        }
+        
+        try {
+            final BattleReport br = QBattleReportParser.parse(report, u.getId());
+            this.fleetDb.addBattleReport(br);
+        } catch (ParseException | DatabaseException e) {
+            return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
+        }
+        return new GsonHttpAnswer(200, new SuccessResult(true, "Report added"));
     }
 }
