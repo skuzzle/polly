@@ -32,6 +32,8 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import com.sun.net.httpserver.HttpExchange;
 
 import de.skuzzle.polly.http.api.HttpEvent;
@@ -412,5 +414,11 @@ class HttpServerImpl implements HttpServer {
         for (final HttpEventListener listener : this.httpListeners) {
             listener.onRequest(e);
         }
+    }
+    
+    
+    @Override
+    public String esc(String s) {
+        return StringEscapeUtils.escapeHtml(s);
     }
 }

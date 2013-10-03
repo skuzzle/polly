@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.http.api.HttpServer;
 import de.skuzzle.polly.http.api.HttpSession;
@@ -132,10 +134,24 @@ class HttpEventImpl implements HttpEvent {
     
     
     @Override
+    public String getEscaped(String key) {
+        return StringEscapeUtils.escapeHtml(this.get.get(key));
+    }
+    
+    
+    
+    @Override
     public String post(String key) {
         return this.post.get(key);
     }
 
+    
+    
+    @Override
+    public String postEscaped(String key) {
+        return StringEscapeUtils.escapeHtml(this.post.get(key));
+    }
+    
     
     
     @Override

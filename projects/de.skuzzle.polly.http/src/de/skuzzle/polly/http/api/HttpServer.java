@@ -189,4 +189,11 @@ public interface HttpServer {
      * @return The overall traffic information.
      */
     public TrafficInformation getTraffic();
+
+    /**
+     * Escape HTML characters occurring in the provided string. 
+     * @param s The string to escape.
+     * @return
+     */
+    public String esc(String s);
 }

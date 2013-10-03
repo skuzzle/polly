@@ -110,6 +110,16 @@ public interface HttpEvent {
     public String get(String key);
     
     /**
+     * Gets the escaped value of a parameter in a GET request. If multiple values are 
+     * assigned to this key, they will be ';' separated in the result string. If no value 
+     * is associated with the given key, <code>null</code> is returned.
+     * 
+     * @param key Name of the GET parameter.
+     * @return The value associated with that key, or <code>null</code>.
+     */
+    public String getEscaped(String key);
+    
+    /**
      * Gets the value of a parameter in a POST request. If multiple values are assigned
      * to this key, they will be ';' separated in the result string. If no value is 
      * associated with the given key, <code>null</code> is returned.
@@ -118,6 +128,16 @@ public interface HttpEvent {
      * @return The value associated with that key, or <code>null</code>.
      */
     public String post(String key);
+    
+    /**
+     * Gets the escaped value of a parameter in a POST request. If multiple values are 
+     * assigned to this key, they will be ';' separated in the result string. If no value 
+     * is associated with the given key, <code>null</code> is returned.
+     * 
+     * @param key Name of the POST parameter.
+     * @return The value associated with that key, or <code>null</code>.
+     */
+    public String postEscaped(String key);
     
     /**
      * Gets a map view of all parameters in this request. The result is a map which 
