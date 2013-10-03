@@ -128,9 +128,22 @@ public class HTMLTable<T> implements HttpEventHandler {
     
     
     public static class ToStringCellRenderer implements CellRenderer {
+        private final boolean escape;
+        
+        
+        public ToStringCellRenderer(boolean escape) {
+            this.escape = escape;
+        }
+        
         @Override
         public String renderCellContent(int column, Object cellValue) {
-            return cellValue == null ? "" : cellValue.toString();
+            if (cellValue == null) {
+                return "";
+            } else {
+                return this.escape 
+                        ? Escape.html(cellValue.toString()) 
+                        : cellValue.toString();
+            }
         }
     }
     
@@ -191,7 +204,7 @@ public class HTMLTable<T> implements HttpEventHandler {
                 return "";
             }
             final Types t = (Types) cellValue;
-            return t.valueString(this.formatter);
+            return Escape.html(t.valueString(this.formatter));
         }
     }
     
@@ -318,8 +331,8 @@ public class HTMLTable<T> implements HttpEventHandler {
         this.editors.put(Date.class, new DateCellEditor());
         
         this.renderers = new HashMap<>();
-        this.renderers.put(Object.class, new ToStringCellRenderer());
-        this.renderers.put(String.class, new ToStringCellRenderer());
+        this.renderers.put(Object.class, new ToStringCellRenderer(false));
+        this.renderers.put(String.class, new ToStringCellRenderer(true));
         this.renderers.put(Date.class, new DateCellRenderer());
         this.renderers.put(Boolean.class, new BooleanCellRenderer());
         this.renderers.put(Double.class, new DoubleCellRenderer());

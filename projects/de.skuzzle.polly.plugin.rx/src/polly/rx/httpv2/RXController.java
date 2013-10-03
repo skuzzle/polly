@@ -72,7 +72,8 @@ public class RXController extends PollyController {
         FleetDBManager.VIEW_FLEET_SCAN_PERMISSION })
     public HttpAnswer fleetScanPage() throws AlternativeAnswerException {
         this.requirePermissions(FleetDBManager.VIEW_FLEET_SCAN_PERMISSION);
-        return this.makeAnswer(this.createContext("http/view/fleetscans.overview.html"));
+        return this.makeAnswer(this.createContext(
+                "polly/rx/httpv2/view/fleetscans.overview.html"));
     }
     
     
@@ -83,7 +84,7 @@ public class RXController extends PollyController {
         this.requirePermissions(FleetDBManager.VIEW_FLEET_SCAN_PERMISSION);
         final FleetScan scan = this.fleetDb.getScanById(scanId);
         final Map<String, Object> c = this.createContext(
-                "http/view/fleetscan.details.html");
+                "polly/rx/httpv2/view/fleetscan.details.html");
         c.put("scan", scan);
         return this.makeAnswer(c);
     }
@@ -95,7 +96,7 @@ public class RXController extends PollyController {
         FleetDBManager.VIEW_FLEET_SCAN_PERMISSION })
     public HttpAnswer fleetScanShipsPage() throws AlternativeAnswerException {
         this.requirePermissions(FleetDBManager.VIEW_FLEET_SCAN_PERMISSION);
-        return this.makeAnswer(this.createContext("http/view/scanships.overview.html"));
+        return this.makeAnswer(this.createContext("polly/rx/httpv2/view/scanships.overview.html"));
     }
     
     
@@ -105,7 +106,7 @@ public class RXController extends PollyController {
             throws AlternativeAnswerException {
         this.requirePermissions(FleetDBManager.VIEW_FLEET_SCAN_PERMISSION);
         final FleetScanShip ship = this.fleetDb.getShipByRevorixId(id);
-        final Map<String, Object> c = this.createContext("http/view/scanship.details.html");
+        final Map<String, Object> c = this.createContext("polly/rx/httpv2/view/scanship.details.html");
         c.put("ship", ship);
         return this.makeAnswer(c);
     }
@@ -175,7 +176,7 @@ public class RXController extends PollyController {
         MyPlugin.SBE_PERMISSION })
     public HttpAnswer scoreboardPage() throws AlternativeAnswerException {
         this.requirePermissions(MyPlugin.SBE_PERMISSION);
-        final Map<String, Object> c = this.createContext("http/view/scoreboard.overview.html");
+        final Map<String, Object> c = this.createContext("polly/rx/httpv2/view/scoreboard.overview.html");
         CompareList cl = (CompareList) this.getSession().getAttached("COMPARE_LIST");
         if (cl == null) {
             cl = new CompareList();
@@ -192,7 +193,8 @@ public class RXController extends PollyController {
         FleetDBManager.VIEW_BATTLE_REPORT_PERMISSION })
     public HttpAnswer reportsPage() throws AlternativeAnswerException {
         this.requirePermissions(FleetDBManager.VIEW_BATTLE_REPORT_PERMISSION);
-        final Map<String, Object> c = this.createContext("http/view/battlereports.overview.html");
+        final Map<String, Object> c = this.createContext(
+                "polly/rx/httpv2/view/battlereports.overview.html");
         return this.makeAnswer(c);
     }
     
@@ -201,7 +203,8 @@ public class RXController extends PollyController {
     @Get("/pages/score/compare")
     public HttpAnswer compare() throws AlternativeAnswerException {
         this.requirePermissions(MyPlugin.SBE_PERMISSION);
-        final Map<String, Object> c = this.createContext("http/view/scoreboard.compare.html");
+        final Map<String, Object> c = this.createContext(
+                "polly/rx/httpv2/view/scoreboard.compare.html");
         CompareList cl = (CompareList) this.getSession().getAttached("COMPARE_LIST");
         c.put("compareList", cl);
         return this.makeAnswer(c);
@@ -213,7 +216,8 @@ public class RXController extends PollyController {
     public HttpAnswer venadDetails(@Param("venadName") String name) 
             throws AlternativeAnswerException {
         this.requirePermissions(MyPlugin.SBE_PERMISSION);
-        final Map<String, Object> c = this.createContext("/http/view/scoreboard.details.html");
+        final Map<String, Object> c = this.createContext(
+                "polly/rx/httpv2/view/scoreboard.details.html");
         c.put("venad", name);
         return this.makeAnswer(c);
     }
@@ -263,7 +267,7 @@ public class RXController extends PollyController {
         c.put("imgName", imgName);
         c.put("maxMonths", maxMonths);
         c.put("isCompare", true);
-        return HttpAnswers.newTemplateAnswer("/http/view/graph.html", c);
+        return HttpAnswers.newTemplateAnswer("polly/rx/httpv2/view/graph.html", c);
     }
     
     
@@ -288,7 +292,7 @@ public class RXController extends PollyController {
         c.put("venad", name);
         c.put("imgName", imgName);
         c.put("maxMonths", maxMonths);
-        return HttpAnswers.newTemplateAnswer("/http/view/graph.html", c);
+        return HttpAnswers.newTemplateAnswer("polly/rx/httpv2/view/graph.html", c);
     }
     
     
@@ -359,7 +363,8 @@ public class RXController extends PollyController {
         final User u = this.getMyPolly().users().getUser(user);
         if (user == null || !u.checkPassword(pw)) {
             return new GsonHttpAnswer(200, new SuccessResult(false, "Illegal login"));
-        } else if (!this.getMyPolly().roles().hasPermission(u, FleetDBManager.ADD_BATTLE_REPORT_PERMISSION)) {
+        } else if (!this.getMyPolly().roles().hasPermission(u, 
+                    FleetDBManager.ADD_BATTLE_REPORT_PERMISSION)) {
             return new GsonHttpAnswer(200, new SuccessResult(false, "No permission"));
         }
         
@@ -420,7 +425,7 @@ public class RXController extends PollyController {
             c.put("dropMin", stats.dropMin);
             c.put("reportSize", stats.reportSize);
             return HttpAnswers.newTemplateAnswer(
-                    "/http/view/battlereports.statistics.html", c);
+                    "polly/rx/httpv2/view/battlereports.statistics.html", c);
         }
     }
 }

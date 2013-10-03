@@ -112,6 +112,7 @@ public class MyPlugin extends PollyPlugin {
         
         
         this.fleetDBManager = new FleetDBManager(myPolly.persistence());
+        this.sbeManager = new ScoreBoardManager(myPolly.persistence());
         
         myPolly.persistence().registerEntity(BattleReport.class);
         myPolly.persistence().registerEntity(BattleReportShip.class);

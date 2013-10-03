@@ -127,8 +127,8 @@ public class MyRemindTableModel extends AbstractHTMLTableModel<RemindEntity> {
         case 3: return Date.class;
         case 4:
         case 5:
-        case 6:
-        case 7: return String.class;
+        case 6: return String.class;
+        case 7: 
         default: return Object.class;
         }
     }

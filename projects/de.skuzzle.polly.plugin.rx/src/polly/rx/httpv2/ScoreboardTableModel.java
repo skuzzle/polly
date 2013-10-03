@@ -69,14 +69,13 @@ public class ScoreboardTableModel extends AbstractHTMLTableModel<ScoreBoardEntry
             return new HTMLElementGroup().add(
             new HTMLElement("a").href("#").content(
                     new HTMLElement("img").src("/polly/rx/httpv2/view/chart_curve_add.png")
-                    .attr("width", "20").attr("height", "20")
-                    .toString()).title("Compare")
+                    .attr("width", "20").attr("height", "20"))
+                    .title("Compare")
                     .attr("onclick", "addToCompare('" + v.hashCode() + "', '" + v + "')")
             ).add(
             new HTMLElement("a").href("/pages/score/details?venadName=" + v).content(
                 new HTMLElement("img").src("/polly/rx/httpv2/view/chart_curve.png")
-                    .attr("width", "20").attr("height", "20")
-                .toString()).title("View details")
+                    .attr("width", "20").attr("height", "20")).title("View details")
             );
         default: return "";
         }
