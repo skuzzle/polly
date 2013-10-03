@@ -33,7 +33,7 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
         public int artifacts = 0;
         public int repairTimeAttacker = 0;
         public int repairTimeDefender = 0;
-        public int reportSize = 0;
+        public double reportSize = 0; // as double for auto casting when calculating avg
         public double artifactChance = 0.0;
     }
     

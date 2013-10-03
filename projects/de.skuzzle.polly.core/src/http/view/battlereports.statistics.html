@@ -22,7 +22,7 @@
     <tr>
     #foreach ($drop in $dropSum)
 #set ($ratio = $drop.getAmount()/$reportSize)
-        <td style="text-align:center;">$!ratio</td>
+        <td style="text-align:center;">$df.format($!ratio)</td>
     #end
         <td style="text-align:center">$df.format($chance)%</td>
     </tr>
