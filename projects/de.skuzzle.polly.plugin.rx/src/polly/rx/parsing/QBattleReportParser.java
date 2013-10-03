@@ -13,13 +13,13 @@ import java.util.Locale;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
-import de.skuzzle.polly.sdk.time.Milliseconds;
-import de.skuzzle.polly.sdk.time.Time;
 import polly.rx.entities.BattleDrop;
 import polly.rx.entities.BattleReport;
 import polly.rx.entities.BattleReportShip;
 import polly.rx.entities.BattleTactic;
 import polly.rx.entities.RxRessource;
+import de.skuzzle.polly.sdk.time.Milliseconds;
+import de.skuzzle.polly.sdk.time.Time;
 
 
 public class QBattleReportParser {
@@ -56,7 +56,6 @@ public class QBattleReportParser {
             
             // date
             final DateFormat df = getDateFormat();
-            boolean noDate = false;
             Date date;
             try {
                 date = df.parse(s.nextLine().trim());
@@ -66,7 +65,6 @@ public class QBattleReportParser {
             } catch (java.text.ParseException e) {
                 // ignore, use system date and go on
                 date = Time.currentTime();
-                noDate = true;
             }
             
             s.skip("\\D*");
@@ -190,7 +188,6 @@ public class QBattleReportParser {
                 defenderClan, 
                 attackerShips, 
                 defenderShips);
-            br.setNoDate(noDate);
             return br;
         }
     }

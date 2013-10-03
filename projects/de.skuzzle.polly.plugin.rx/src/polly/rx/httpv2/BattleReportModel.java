@@ -8,6 +8,7 @@ import polly.rx.entities.BattleReport;
 import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.sdk.httpv2.html.AbstractHTMLTableModel;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLElement;
+import de.skuzzle.polly.sdk.util.DirectedComparator.SortOrder;
 
 
 public class BattleReportModel extends AbstractHTMLTableModel<BattleReport> {
@@ -96,6 +97,20 @@ public class BattleReportModel extends AbstractHTMLTableModel<BattleReport> {
         case 11: return Date.class;
         default: return Object.class;
         }
+    }
+    
+    
+    
+    @Override
+    public int getDefaultSortColumn() {
+        return 11;
+    }
+    
+    
+    
+    @Override
+    public SortOrder getDefaultSortOrder() {
+        return SortOrder.DESCENDING;
     }
     
     

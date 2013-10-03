@@ -11,7 +11,6 @@ public class ThreadFactoryBuilder implements ThreadFactory {
     private String name;
     private int threadNum;
     private int priority;
-    private boolean daemon;
     private UncaughtExceptionHandler exceptionHandler;
     private boolean daemon;
     
@@ -46,12 +45,7 @@ public class ThreadFactoryBuilder implements ThreadFactory {
         this.exceptionHandler = h;
         return this;
     }
-    
-    
-    public ThreadFactoryBuilder setDaemon(boolean daemon) {
-        this.daemon = daemon;
-        return this;
-    }
+
     
     
     @Override

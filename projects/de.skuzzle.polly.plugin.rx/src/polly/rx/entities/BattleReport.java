@@ -44,18 +44,18 @@ import polly.rx.core.SumQuery;
             "rp.date = ?8"
     ),
     @NamedQuery(
-        name = "UNIQUE_CHECK_NO_DATE",
-        query = "SELECT rp FROM BattleReport rp WHERE " + 
-            "rp.quadrant = ?1 AND " + 
-            "rp.x = ?2 AND " + 
-            "rp.y = ?3 AND " +
-            "rp.attackerVenadName = ?4 AND " +
-            "rp.defenderVenadName = ?5 AND " +
-            "rp.attackerFleetName = ?6 AND " +
-            "rp.defenderFleetName = ?7 AND " +
-            "rp.attackerKw = ?8 AND " +
-            "rp.defenderKw = ?9"
-    ),
+            name = "UNIQUE_CHECK_NO_DATE",
+            query = "SELECT rp FROM BattleReport rp WHERE " + 
+                "rp.quadrant = ?1 AND " + 
+                "rp.x = ?2 AND " + 
+                "rp.y = ?3 AND " +
+                "rp.attackerVenadName = ?4 AND " +
+                "rp.defenderVenadName = ?5 AND " +
+                "rp.attackerFleetName = ?6 AND " +
+                "rp.defenderFleetName = ?7 AND " +
+                "rp.attackerKw = ?8 AND " +
+                "rp.defenderKw = ?9"
+        ),
     @NamedQuery(
         name = "WITH_NAME",
         query = "SELECT rp FROM BattleReport rp WHERE rp.attackerVenadName = ?1 OR " +
@@ -171,9 +171,6 @@ public class BattleReport {
     @Transient
     private transient int attackerRepairTimeOffset;
     
-    @Transient
-    private transient boolean noDate;
-    
     
     
     public BattleReport() {
@@ -220,15 +217,6 @@ public class BattleReport {
     }
     
     
-    
-    public void setNoDate(boolean noDate) {
-        this.noDate = noDate;
-    }
-    
-    
-    public boolean isNoDate() {
-        return this.noDate;
-    }
     
     public int getId() {
         return this.id;
@@ -364,12 +352,6 @@ public class BattleReport {
     public double getAttackerKw() {
         return this.attackerKw;
     }
-    
-    
-    
-    public double getAttackerKwNormalized() {
-        return this.attackerKw / this.attackerBonus;
-    }
 
 
     
@@ -381,12 +363,6 @@ public class BattleReport {
     
     public double getDefenderKw() {
         return this.defenderKw;
-    }
-    
-    
-    
-    public double getDefenderKwNormalized() {
-        return this.defenderKw / this.defenderBonus;
     }
 
 
