@@ -44,7 +44,7 @@ import polly.rx.http.battlereports.BattleReportInfosHttpAction;
 import polly.rx.httpv2.BattleReportModel;
 import polly.rx.httpv2.FleetScanShipTableModel;
 import polly.rx.httpv2.FleetScanTableModel;
-import polly.rx.httpv2.FleetScansWithShipModel;
+import polly.rx.http.battlereports.QzoneBattleReporter;
 import polly.rx.httpv2.RXController;
 import polly.rx.httpv2.ScoreboardDetailModel;
 import polly.rx.httpv2.ScoreboardTableModel;
@@ -164,6 +164,7 @@ public class MyPlugin extends PollyPlugin {
         myPolly.web().addHttpAction(new ScoreBoardDetailsHttpAction(myPolly, this.sbeManager));
         myPolly.web().addHttpAction(new ScoreBoardCompareHttpAction(myPolly, this.sbeManager));
         myPolly.web().addHttpAction(new PostScoreboardHttpAction(myPolly, this.sbeManager));
+        myPolly.web().addHttpAction(new QzoneBattleReporter(myPolly, this.fleetDBManager));
         this.addCommand(new RankCommand(myPolly, this.sbeManager));
         
         
