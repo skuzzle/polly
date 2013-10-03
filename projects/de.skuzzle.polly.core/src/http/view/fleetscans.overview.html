@@ -5,11 +5,47 @@
         <table id="fleetScans">
         </table>
     </div>
+</div>
+
+<div class="highlight contentBox">
+    #CONTENT_HEADER ("Post Fleet Scans")
+    <div class="content">
+    <form id="postScan">
+    <table>
+    <tr><td><label for="scan">Paste</label></td></tr>
+    <tr><td><textarea name="scan" style="width: 100%; height:250px" class="textbox"></textarea></td></tr>
     
+    <tr><td>
+        <label for="quadrant">Quadrant:</label>
+        <input type="text" class="textbox" name="quadrant"/>
+        <label for="x">X:</label>
+        <input type="text" class="textbox" style="width:50px"; name="x"/>
+        <label for="y">Y:</label>
+        <input type="text" class="textbox" style="width:50px" name="y"/>
+    </td></tr>
+    <tr><td><label for="meta">Meta Information</label></td></tr>
+    <tr><td><textarea name="meta" style="width: 100%; height:100px" class="textbox"></textarea></td></tr>
+    <tr><td><input type="button" class="button" value="Submit Scan" onclick="submitScan()"/></td></tr>
+    </table>
+    </form>
+    </div>
 </div>
 
 <script>
 $(document).ready(function() {
 	loadTable("/api/allFleetScans", "fleetScans");
 });
+
+function submitScan() {
+    $.post("$PAGE_POSTFLEETSCAN", $("#postScan").serialize(), function(data) {
+        var result = JSON.parse(data);
+        if (!result.success) {
+            alert(result.message);
+            $("#postScan textarea").select();
+        } else {
+            $("#postScan textarea").val("");
+            location.reload();
+        }
+    })
+}
 </script>

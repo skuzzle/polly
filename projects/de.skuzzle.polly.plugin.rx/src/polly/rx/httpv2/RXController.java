@@ -21,6 +21,7 @@ import polly.rx.entities.ScoreBoardEntry;
 import polly.rx.graphs.NamedPoint;
 import polly.rx.httpv2.StatisticsGatherer.BattleReportStatistics;
 import polly.rx.parsing.BattleReportParser;
+import polly.rx.parsing.FleetScanParser;
 import polly.rx.parsing.ParseException;
 import polly.rx.parsing.QBattleReportParser;
 import polly.rx.parsing.ScoreBoardParser;
@@ -219,6 +220,29 @@ public class RXController extends PollyController {
     
     
     
+    @Post("/api/postFleetScan")
+    public HttpAnswer postFleetScan(
+            @Param("scan") String scan,
+            @Param("quadrant") String quadrant,
+            @Param("x") int x,
+            @Param("y") int y,
+            @Param(value = "meta", treatEmpty = true) String meta) 
+                    throws AlternativeAnswerException {
+        
+        this.requirePermissions(FleetDBManager.ADD_FLEET_SCAN_PERMISSION);
+        
+        try {
+            final FleetScan fs = FleetScanParser.parseFleetScan(
+                    scan, quadrant, x, y, meta);
+            this.fleetDb.addFleetScan(fs);
+        } catch (ParseException | DatabaseException e) {
+            return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
+        }
+        return new GsonHttpAnswer(200, new SuccessResult(true, "Scan added"));
+    }
+    
+    
+    
     @Get("/api/graphCompare")
     public HttpAnswer graphCompare(@Param("maxMonth") int maxMonths) 
             throws AlternativeAnswerException {
@@ -372,7 +396,7 @@ public class RXController extends PollyController {
         }
         
         synchronized (stats) {
-            final DecimalFormat df = new DecimalFormat("0.##");
+            final DecimalFormat df = new DecimalFormat("#.##");
             final Map<String, Object> c = this.createContext("");
             c.put("df", df);
             c.put("capiXpSumAttacker", stats.capiXpSumAttacker);
