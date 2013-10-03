@@ -113,8 +113,10 @@ public class WebinterfaceProvider extends AbstractProvider {
             @Override
             public void onRequest(HttpEvent e) {
                 logger.debug("HTTP: " + e.getMode() + " " + 
-                    e.getRequestURI().toString() + " [ip: " + e.getClientIP() + ", " + 
-                        e.getSession().getAttached("user") + " ]");
+                    e.getRequestURI().toString() + 
+                    " [ip: " + e.getClientIP() + ", " + 
+                    e.getSession().getAttached("user") + "], " + 
+                    e.parameterMap());
             }
         });
         
