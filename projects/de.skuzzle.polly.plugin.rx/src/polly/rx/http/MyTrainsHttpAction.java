@@ -1,4 +1,4 @@
-package polly.rx.http;
+/*package polly.rx.http;
 
 
 import polly.rx.MyPlugin;
@@ -58,3 +58,4 @@ public class MyTrainsHttpAction extends HttpAction {
         return c;
     }
 }
+*/

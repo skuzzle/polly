@@ -11,6 +11,7 @@ public class ThreadFactoryBuilder implements ThreadFactory {
     private String name;
     private int threadNum;
     private int priority;
+    private boolean daemon;
     private UncaughtExceptionHandler exceptionHandler;
     private boolean daemon;
     
@@ -47,6 +48,11 @@ public class ThreadFactoryBuilder implements ThreadFactory {
     }
     
     
+    public ThreadFactoryBuilder setDaemon(boolean daemon) {
+        this.daemon = daemon;
+        return this;
+    }
+    
     
     @Override
     public Thread newThread(Runnable r) {
@@ -55,6 +61,7 @@ public class ThreadFactoryBuilder implements ThreadFactory {
         final Thread result = new Thread(r, name);
         result.setDaemon(this.daemon);
         result.setPriority(this.priority);
+        result.setDaemon(this.daemon);
         if (this.exceptionHandler != null) {
             result.setUncaughtExceptionHandler(this.exceptionHandler);
         }

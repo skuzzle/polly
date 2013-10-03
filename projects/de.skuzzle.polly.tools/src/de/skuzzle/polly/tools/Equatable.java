@@ -7,7 +7,7 @@ package de.skuzzle.polly.tools;
  * How Do I Correctly Implement the equals() Method?</a> by Tal Cohen (May 01, 2002) and
  * its related <a href="http://tal.forum2.org/equals">discussion page</a>.</p>
  *  
- * <p>Classes the implement this interfaces, can implement the 
+ * <p>Classes that implement this interfaces, can implement the 
  * equals method using {@link EqualsHelper}:</p>
  * 
  * <pre>
@@ -18,7 +18,7 @@ package de.skuzzle.polly.tools;
  * </pre>
  * 
  * This is a sample implementation, which would not allow the implementing class to be 
- * equal to an instance of any of its superclasses:
+ * equal to an instance of any of its super classes:
  * 
  * <pre>
  * public class Point implements Equatable {

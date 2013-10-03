@@ -8,12 +8,12 @@
     <property name="root.dir"          value="../.."/>
     
     <!-- Current version name. -->
-    <property name="version.name"      value=" - beta"/>
+    <property name="version.name"      value=" - Perky Parrot"/>
     
     <!-- 
         Beginning of version number. Third part will be constructed during dist. 
     -->
-    <property name="version.num"       value="1.0."/>
+    <property name="version.num"       value="0.9."/>
     
     <!-- 
         The output folder for compiled class files when compiling with no 
@@ -23,10 +23,12 @@
     
     <!-- 
         The output folder for compiled class files when compiling with  
-        debug information. This will as well serve for the output folder for
-        eclipse.
+        debug information.
     -->
-    <property name="build.debug.dir"   value="bin"/>
+    <property name="build.debug.dir"   value="bin.debug"/>
+    
+    <!-- Eclipse build directory -->
+    <property name="build.eclipse.dir" value="bin"/>
     
     <!-- Directory which will contain the fully built projects. -->
     <property name="build.dir"         value="${root.dir}/target"/>
@@ -55,7 +57,15 @@
     <!-- Additional classpath entry to add to MANIFEST file. -->
     <property name="custom.classpath" value=""/>
     
-    
+    <!-- Resources to include from src.dir -->
+    <property name="resource.includes" value="
+        **/*.html 
+        **/*.js 
+        **/*.png 
+        **/*.css
+        **/*.gif
+        **/*.jpg
+    "/>
     
     <!-- buildpath for javac -->
     <path id="buildpath">
@@ -101,8 +111,13 @@
                encoding="${src.encoding}"
                debug="on" 
                listfiles="true"
-			   includeAntRuntime="false"
-               fork="true"/>
+			   includeAntRuntime="false">
+
+            <compilerarg value="-proc:none"/>
+        </javac>
+        <copy todir="${build.debug.dir}">
+            <fileset dir="${src.dir}" includes="${resource.includes}"/>
+        </copy>
     </target>
     
     
@@ -118,7 +133,13 @@
                target="${target.version}" 
                encoding="${src.encoding}"
                debug="off" 
-			   includeAntRuntime="false"/>
+			   includeAntRuntime="false">
+
+            <compilerarg value="-proc:none"/>
+        </javac>
+        <copy todir="${build.release.dir}">
+            <fileset dir="${src.dir}" includes="${resource.includes}"/>
+        </copy>
     </target>
     
     
@@ -240,7 +261,7 @@
                 <attribute name="Class-Path"            
                            value="${custom.classpath} ${jar.classpath} "/>
             </manifest>
-            <fileset dir="${bin.dir}"/>
+            <fileset dir="${bin.dir}" includes="**/*.class ${resource.includes}"/>
         </jar>
         
         <!-- call postDist. -->

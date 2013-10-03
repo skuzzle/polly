@@ -1,8 +1,9 @@
 package de.skuzzle.polly.core.internal.persistence;
 
 import de.skuzzle.polly.sdk.EntityConverter;
-import de.skuzzle.polly.sdk.PersistenceManager;
-import de.skuzzle.polly.sdk.WriteAction;
+import de.skuzzle.polly.sdk.PersistenceManagerV2;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Atomic;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Write;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 
 import java.util.ArrayList;
@@ -19,11 +20,11 @@ public class EntityConverterManagerImpl {
     
     
     private List<EntityConverter> converters;
-    private PersistenceManager persistence;
+    private PersistenceManagerV2 persistence;
     
     
     
-    public EntityConverterManagerImpl(PersistenceManager persistence) {
+    public EntityConverterManagerImpl(PersistenceManagerV2 persistence) {
         this.persistence = persistence;
         this.converters = new LinkedList<EntityConverter>();
     }
@@ -32,13 +33,13 @@ public class EntityConverterManagerImpl {
     
     public void convertAll() throws DatabaseException {
         // CONSIDER: One transaction for each converter?
-        this.persistence.atomicWriteOperation(new WriteAction() {
+        this.persistence.writeAtomic(new Atomic() {
             @Override
-            public void performUpdate(PersistenceManager persistence) {
+            public void perform(Write write) {
                 for (EntityConverter ec : converters) {
                     try {
                         logger.info("Running Entity Converter: " + ec);
-                        runConverter(ec);
+                        runConverter(ec, write);
                     } catch (Exception e) {
                         logger.error("Error while converting entities", e);
                     }
@@ -49,9 +50,9 @@ public class EntityConverterManagerImpl {
     
     
     
-    private void runConverter(EntityConverter ec) {
+    private void runConverter(EntityConverter ec, Write write) {
         logger.trace("Retrieving list of old entities...");
-        List<Object> olds = ec.getOldEntities(this.persistence);
+        List<Object> olds = ec.getOldEntities(write.read());
         List<Object> converted = new ArrayList<Object>(olds.size());
         
         logger.trace("Converting " + olds.size() + " entities...");
@@ -60,10 +61,10 @@ public class EntityConverterManagerImpl {
         }
         
         logger.trace("Persisting list of converted entities...");
-        this.persistence.persistList(converted);
+        write.all(converted);
         
         logger.trace("Deleting old entities (optional operation, may have no effect)...");
-        ec.deleteOldEntities(olds, this.persistence);
+        ec.deleteOldEntities(olds, write);
     }
 
 

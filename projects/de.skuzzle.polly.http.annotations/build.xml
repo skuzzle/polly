@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="de.skuzzle.polly.http.annotations" basedir="." default="dist.debug">
+    
+    <!-- The name of the jar file created by the dist target. -->
+    <property name="jar.filename"      value="polly.http.annotations"/>
+    
+    <!-- Jar file title. -->
+    <property name="jar.title"         value="polly.http.annotations"/>
+    
+    <!-- The name of this projects main class. -->
+    <property name="jar.main"          value=""/>
+
+    <!-- 
+        Space-separated list of jar files relative to lib.dir to include 
+        in build-process
+    -->
+    <property name="dependencies" value="NONE"/>
+    
+    <!--
+        Space separated list of jar files relative to build.dir to include
+        in build process.
+    -->
+    <property name="dependencies.internal" value="NONE"/>
+   
+    
+    
+    <!-- Import all important build targets. -->
+    <import file="../common.xml" as="base"/>
+</project>

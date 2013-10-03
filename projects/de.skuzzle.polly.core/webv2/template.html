@@ -1,0 +1,268 @@
+<html>
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Polly Webinterface v2</title>
+    <link rel="stylesheet" type="text/css" href="$PAGE_GETCSS" />
+    <script src="/de/skuzzle/polly/sdk/httpv2/html/table.js"></script>
+    <script src="/files/script/jquery.min.js"></script>
+    <script src="/files/script/jquery.color-2.1.2.min.js"></script>
+    <script src="/files/script/jquery-ui.min.js"></script>
+    <script src="/files/script/styles.js"></script>
+    <script>
+        // set by template engine to determine whether user is logged in
+        var LOGGED_IN = #if ($user) true #else false #end;
+
+        // interval in ms in which to check whether user is still logged in
+        var CHECK_LOGGED_IN_INTERVAL = 60000;
+        
+        // time in ms of how long notifications are shown
+        var NOTIFICATION_TIME = 5000;
+        
+        // warning will be displayed if this amount of time is left until auto logout
+        var LOGOUT_TIMEOUT_WARNING = "1m";
+
+        
+        // array of menu descriptions
+        var DESCRIPTIONS = {
+        #foreach ($mc in $menu)
+            #foreach ($me in $mc.getContent())
+            "$me.hashCode()":"$me.getDescription()",
+            #end
+        #end
+        };
+        
+
+        $(document).ready(function() {
+            $("#content").fadeIn(1000);
+            
+            // Login and Logout buttons
+            $("#performLogin").click(function(event) {
+                event.preventDefault();
+                performLogin();
+            });
+            $("#performLogout").click(function(event) {
+                event.preventDefault();
+                performLogout();
+            });
+            
+            // calculate polly expression
+            $("#calculate_polly").keydown(function (event) {
+            	if (event.which == 13) {
+            		var expr = encodeURIComponent($(this).val());
+            		showProgress();
+            		$.get("$PAGE_CALCULATEEXPRESSION?expr="+expr, function(data) {
+            			var result = JSON.parse(data);
+            			$("#calculate_polly").val(result.message);
+            			$("#calculate_polly").select();
+            			stopProgress();
+            		});
+            	}
+            });
+            
+            // check current login status regularly
+            if (LOGGED_IN) {
+                // check one time now
+                checkLoggedInState();
+                var checkLoginTimer = setInterval(function() {
+                    checkLoggedInState();
+                }, CHECK_LOGGED_IN_INTERVAL);
+            }
+        });
+        
+        
+        
+        // Displays the progress indicator until stopProgress() has been called.
+        // Those calls can be stacked, which means that calling showProgress()
+        // n times requires to call stopProgress() n times in order for the
+        // progress indicator to vanish.
+        var dots = "";
+        var progressCalls = 0;
+        var dotTimer;
+        function showProgress() {
+            if (progressCalls == 0) {
+                dots = "";
+                dotTimer = setInterval(function() {
+                    dots += ".";
+                    if (dots == ".....") {
+                        dots = ".";
+                    }
+                    $("#progress").text(dots);
+                }, 300);
+            }
+            ++progressCalls;
+        }
+        
+        
+        
+        // Hides the progress indicator. Must be called for each time 
+        // showProgress has been called in order for the progress indicator
+        // to be hidden.
+        function stopProgress() {
+            progressCalls = Math.max(0, progressCalls - 1);
+            if (progressCalls == 0) {
+                clearInterval(dotTimer);
+                $("#progress").text("");               
+            }
+        }
+
+        
+        
+        // Sends logout command to the server and reloads the page.
+        function performLogout() {
+            showProgress();
+            $.get("$PAGE_LOGOUT", function(data) {
+                location.reload();
+            });
+        }
+        
+        
+        
+        // Check whether user is still logged in and display a warning either
+        // if auto logout is upcoming or already happened.
+        function checkLoggedInState() {
+            $.get("$PAGE_CHECKLOGIN", function(data) {
+                var result = JSON.parse(data);
+                if (result.loggedIn) {
+                    $("#timeleft").text("Logout in " + result.timeLeft);
+                    if (result.timeLeft == LOGOUT_TIMEOUT_WARNING) {
+                        notify("Warning, upcoming auto logout", true);
+                    }
+                } else if (LOGGED_IN) {
+                    $("#top ul").hide();
+                    $("#login").fadeIn('fast');
+                    notify("You have been logged out", false);
+                    
+                    // ## disable login check
+                    clearInterval(checkLoginTimer);
+                }
+            })
+        }
+
+        
+        
+        // Performs the login process by validating form input and sending login
+        // information to the server. If login fails a notification is 
+        // displayed, otherwise the page is reloaded
+        function performLogin() {
+            var isValid = true;
+            $("#loginForm input").map(function() { 
+                if (this.value == "") {
+                    isValid = false;
+                }
+                return this; 
+            });
+            
+            if (!isValid) {
+                notify("Enter name <em>and</em> password", true);
+                return;
+            }
+            
+            showProgress();
+            $.post("$PAGE_LOGIN", $("#loginForm").serialize(), function(data) {
+                var result = JSON.parse(data);
+                if (result.success) {
+                    location.reload();
+                } else {
+                    notify("Login failed", true);
+                }
+                stopProgress();
+            });
+        }
+        
+        
+        
+        // Shows a notification in the upper right edge which can optionally be 
+        // removed after certain time. Creating a new notification will always
+        // remove an existing one
+        var notificationTimer;
+        function notify(message, useTimeout) {
+            if (notificationTimer) {
+                clearTimeout(notificationTimer);
+            }
+            $("#notification").html(message);
+            $("#notification").fadeIn();
+            if (useTimeout) {
+                notificationTimer = setTimeout(function() {
+                    $("#notification").fadeOut();
+                }, NOTIFICATION_TIME);
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="top">
+        <span class="copyRight">
+            <b>To you:</b> <em>$myPolly.formatting().formatBytes($session.getTrafficInfo().getUpload())</em>,
+            <b>From you:</b> <em>$myPolly.formatting().formatBytes($session.getTrafficInfo().getDownload())</em>.
+            #if ($myPolly.getPollyVersion()) 
+                Polly v. $myPolly.getPollyVersion(). 
+            #else 
+                <b>Development</b>. 
+            #end 
+            Copyright 2013 Simon Taddiken
+        </span>
+        <div id="login" #if ($user) style="display: none" #end>
+            <form id="loginForm" method="post">
+                <input class="textbox loginInput" type="text" name="name" placeholder=" Name"/>
+                <input class="textbox loginInput" type="password" name="pw" placeholder=" Password"/>
+                <input id="performLogin" class="button" type="submit" value="Login"/>
+            </form>
+        </div>
+        <ul #if (!$user) style="display: none" #end>
+            <li class="loginStatus"><a id="performLogout" href="/" title="Logout">Logout</a></li>
+            <li class="loginStatus"><a href="/pages/editUser?userId=$user.getId()" title="Edit your settings">$user.getName()</a></li>
+            #foreach ($me in $topMenu)
+                #if ($myPolly.roles().canAccess($user, $me))
+                    <li class="loginStatus">#if ($me.getUrl()) <a href="$me.getUrl()">$me.getName()</a> #else $me.getName() #end</li>
+                #end
+            #end
+            <li id="timeleft"></li>
+        </ul>
+    </div>
+    
+    <div id="menuContent">
+        #foreach ($mc in $menu)
+        #if ($mc.mustRender($user, $myPolly.roles()))
+        <div class="menuGroup">
+            <h2>$mc.getName()</h2>
+            <ul>
+            #foreach ($me in $mc.getContent())
+            <li><a id="$me.hashCode()" href="$me.getUrl()" class="menuEntry">$me.getName()</a></li>
+            #end
+            </ul>
+        </div>
+        #end
+        #end
+        <div id="menuDescription"></div>
+    </div>
+    
+    <div id="header">
+        <div id="notification"></div>
+        <div id="headerContent">
+            <h1><a href="$PAGE_HOME">Polly Webinterface v2</a></h1>
+            <a href="https://twitter.com/ProjectPolly" class="twitter" title="Polly on Twitter"></a>
+            <a href="https://github.com/skuzzle/polly" class="github" title="Polly on GitHub"></a>
+        </div>
+    </div>
+    
+    <div id="heading">
+        <span id="progress"></span>
+        <span id="calculate">
+            <input 
+                id="calculate_polly" 
+                type="text" class="textbox" placeholder="Enter any polly expression here"
+            />
+        </span>
+        #if ($user)
+            <a href="#" class="showContent">Menu</a>
+        #end
+    </div>
+    
+    <div id="content">
+        #macro( CONTENT_HEADER $title)
+        <div class="contentBoxHeader">$title</div>
+        #end
+        #parse($content)
+    </div>
+</body>
+</html>

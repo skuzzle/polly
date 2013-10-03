@@ -139,6 +139,7 @@ public class QBattleReportParser {
                 s.useDelimiter(delimiter);
                 final BattleReportShip ship = findShip(s);
                 attackerShips.add(ship);
+                System.out.println(ship);
             }
 
             
@@ -164,6 +165,7 @@ public class QBattleReportParser {
                 s.useDelimiter(delimiter);
                 final BattleReportShip ship = findShip(s);
                 defenderShips.add(ship);
+                System.out.println(ship);
             }
             final BattleReport br = new BattleReport(
                 submitterId, 

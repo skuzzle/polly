@@ -1,5 +1,8 @@
 package de.skuzzle.polly.sdk.constraints;
 
+import de.skuzzle.polly.sdk.Types;
+import de.skuzzle.polly.sdk.Types.NumberType;
+
 
 /**
  * <p>This constraint only accepts strings that are formatted as doubles.</p>
@@ -15,13 +18,7 @@ public class DoubleConstraint implements AttributeConstraint {
     DoubleConstraint() {}
     
     @Override
-    public boolean accept(String value) {
-        try {
-            Double.parseDouble(value);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
+    public boolean accept(Types value) {
+        return value instanceof NumberType;
     }
-
 }

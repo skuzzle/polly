@@ -1,0 +1,16 @@
+
+<a id="userOverview" href="#" onclick="updateUserContent('api/listUsers')">Overview</a> | <a id="userAdd" href="#" onclick="updateUserContent('content/addUserInput')">Add User</a>
+
+<div id="userContent">
+    #parse("listUsers.html")
+</div>
+
+<script>
+    function updateUserContent(url) {
+        $.get(url, function(data) {
+            $("#userContent").html(data);
+        });
+    }
+    
+
+</script>

@@ -2,6 +2,9 @@ package de.skuzzle.polly.sdk;
 
 import java.util.List;
 
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Read;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Write;
+
 
 /**
  * <p>Use this class in conjunction with 
@@ -24,10 +27,10 @@ public interface EntityConverter {
      * manager, as synchronization is done automatically when polly executes this 
      * entity converter.</p>
      * 
-     * @param persistence A PersistenceManager instance to retrieve the old entities with.
+     * @param read Read access to the database.
      * @return A list of old entities.
      */
-    public abstract List<Object> getOldEntities(PersistenceManager persistence);
+    public abstract List<Object> getOldEntities(Read read);
     
     
     
@@ -53,8 +56,7 @@ public interface EntityConverter {
      * entity converter.</p>
      * 
      * @param olds Collection of the old entities that exists in the database.
-     * @param persistence A PersistenceManager instance to remove the old entities with.
+     * @param write Write access to the database.
      */
-    public abstract void deleteOldEntities(List<Object> olds, 
-        PersistenceManager persistence);
+    public abstract void deleteOldEntities(List<Object> olds, Write write);
 }

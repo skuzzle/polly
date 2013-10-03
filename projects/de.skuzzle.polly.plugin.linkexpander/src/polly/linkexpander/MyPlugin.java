@@ -11,7 +11,6 @@ import polly.linkexpander.core.grabbers.NineGagLinkGrabber;
 import polly.linkexpander.core.grabbers.PhpBBLinkGrabber;
 import polly.linkexpander.core.grabbers.URLLinkGrabber;
 import polly.linkexpander.core.grabbers.YouTubeLinkGrabber;
-import polly.linkexpander.http.GrabbedLinksHttpAction;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
@@ -52,9 +51,6 @@ public class MyPlugin extends PollyPlugin {
         
         final URLLinkGrabber urlLinkGrabber = new URLLinkGrabber();
         this.linkGrabberManager.addLinkGrabber(urlLinkGrabber);
-        
-        myPolly.web().addHttpAction(new GrabbedLinksHttpAction(myPolly, urlLinkGrabber));
-        myPolly.web().addMenuUrl("LinkGrabber", "Links");
     }
     
     

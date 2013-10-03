@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="plugins.commons" basedir="." default="dist.debug">
+    
+    <!-- Path of the core eclipse project -->
+    <property name="core.dir" value="../de.skuzzle.polly.core"/>
+    
+    <!-- Path of the plugins folder within the core eclipse project -->
+    <property name="core.plugins.dir" value="${core.dir}/plugins" />
 
     <!--
         Overrides default target from common.xml
         Creates the <name>.properties file for this plugin
     -->  
     <target name="preDist">
-        <propertyfile file="${dist.dir}/${ant.project.name}.properties">
+        <propertyfile file="${dist.dir}/${jar.filename}.properties">
             <entry key="jarfile"     value="${jar.filename}.jar"/>
             <entry key="name"        value="${plugin.name}"/>
             <entry key="description" value="${plugin.description}"/>
@@ -14,5 +20,28 @@
             <entry key="version"     value="${plugin.version}"/>
             <entry key="entrypoint"  value="${jar.main}"/>
         </propertyfile>
+    </target>
+    
+    
+    
+    <!-- Distribution target for eclipse builds -->
+    <target name="dist.eclipse">
+        <echo message="Dist eclipse ${jar.title}"/>
+        <property name="bin.dir" value="${build.eclipse.dir}"/>
+        <antcall target="distBin" inheritRefs="true"/>
+    </target>
+    
+    
+    
+    <!-- 
+        Overrides default target from common.xml.
+        Copies this plugin to the core project's plugin folder
+    -->
+    <target name="postDist">
+        <copy todir="${core.plugins.dir}" overwrite="true">
+            <fileset dir="${dist.dir}" includes="
+                ${jar.filename}.jar
+                ${jar.filename}.properties"/>
+        </copy>
     </target>
 </project>

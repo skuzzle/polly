@@ -24,6 +24,7 @@
         mysql-connector-java-5.1.17-bin.jar
         velocity-1.7.jar
         hsqldb.jar
+        gson-2.2.4.jar
     "/>
     
     <!--
@@ -32,6 +33,8 @@
     -->
     <property name="dependencies.internal" value="
         **/polly.moduleloader.jar
+        **/polly.http.jar
+        **/polly.http.annotations.jar
         **/polly.parser.jar
         **/polly.pircbot.jar
         **/polly.process.jar
@@ -43,9 +46,12 @@
    
     <!-- Configuration directory. -->
     <property name="cfg.dir" value="cfg"/>
-        
+
+    <!-- Web root directory -->
+    <property name="web.dir" value="webv2"/>
+    
     <!-- Override custom classpath property. -->
-    <property name="custom.classpath" value="${cfg.dir}/"/>
+    <property name="custom.classpath" value="${cfg.dir}/ ${web.dir}/"/>
         
     <!-- Webinterface directory. -->
     <property name="web.dir" value="webinterface"/>
@@ -77,40 +83,5 @@
             <fileset dir="." includes="${web.dir}/**"/>
             <fileset dir="." includes="${plugin.dir}/**"/>
         </copy>
-    </target>
-    
-    
-    
-    <!-- 
-        Buildpath for eclipse. This should exclude the libraries that will be
-        referenced as eclipse projects.
-    -->
-    <path id="buildpath.eclipse">
-        <fileset dir="${lib.dir}" includes="${dependencies}"/>
-    </path>
-
-    
-    
-    <!--
-        Creates eclipse project files for this ant file.
-        Requires ant task from http://ant-eclipse.sourceforge.net/
-    -->
-    <target name="eclipse">
-        <taskdef name="eclipse" classname="prantl.ant.eclipse.EclipseTask" />
-        <eclipse mode="java">
-            <project name="${ant.project.name}"/>
-            <classpath>
-                <source path="${src.dir}"/>
-                <source path="${cfg.dir}"/>
-                <source path="/de.skuzzle.polly.core.moduleloader"/>
-                <source path="/de.skuzzle.polly.core.parser"/>
-                <source path="/de.skuzzle.polly.core.pircbot"/>
-                <source path="/de.skuzzle.polly.process"/>
-                <source path="/de.skuzzle.polly.sdk"/>
-                <source path="/de.skuzzle.polly.tools"/>
-                <output path="${build.debug.dir}"/>
-                <library pathref="buildpath.eclipse"/>
-            </classpath>
-        </eclipse>
     </target>
 </project>

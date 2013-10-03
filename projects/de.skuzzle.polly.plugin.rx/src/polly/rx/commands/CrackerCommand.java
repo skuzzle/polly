@@ -6,6 +6,7 @@ import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
+import de.skuzzle.polly.sdk.Types.NumberType;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.ConstraintException;
@@ -48,8 +49,8 @@ public class CrackerCommand extends DelayedCommand {
                     throw new CommandException("Unbekannter Benutzer: " + name);
                 }
             }
-            int crackers = this.incCracker(user, CRACKER_INC);
-            this.reply(channel, "Danke fï¿½r den Cracker! Das war der " + crackers + 
+            int crackers = this.incCracker(executer, user, CRACKER_INC);
+            this.reply(channel, "Danke für den Cracker! Das war der " + crackers + 
                     ". Cracker von " + executer.getName());
         } catch (DatabaseException e) {
            throw new CommandException(e); 
@@ -60,16 +61,16 @@ public class CrackerCommand extends DelayedCommand {
     
     
     
-    private int incCracker(User user, int amount) throws DatabaseException {
-        int crackers = Integer.parseInt(user.getAttribute(MyPlugin.CRACKER));
+    private int incCracker(User executor, User user, int amount) 
+            throws DatabaseException {
+        int crackers = (int) ((NumberType) user.getAttribute(MyPlugin.CRACKER)).getValue();
         crackers += amount;
         try {
-            this.getMyPolly().users().setAttributeFor(user, MyPlugin.CRACKER, 
+            this.getMyPolly().users().setAttributeFor(executor, user, MyPlugin.CRACKER, 
                 Integer.toString(crackers));
         } catch (ConstraintException e) {
             throw new RuntimeException("this was thought to be impossibru to happen", e);
         }
         return crackers;
     }
-
 }

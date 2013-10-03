@@ -1,0 +1,817 @@
+
+C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http>call ..\..\tools\build\apache-ant-1.8.2\bin\ant -v -d       
+Apache Ant(TM) version 1.8.2 compiled on December 20 2010
+Trying the default build file: build.xml
+Buildfile: C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml
+Adding reference: ant.PropertyHelper
+Detected Java version: 1.7 in: C:\Program Files\Java\jdk1.7.0_03\jre
+Detected OS: Windows 7
+Adding reference: ant.ComponentHelper
+Setting ro project property: ant.file -> C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml
+Setting ro project property: ant.file.type -> file
+Adding reference: ant.projectHelper
+Adding reference: ant.parsing.context
+Adding reference: ant.targets
+parsing buildfile C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml with URI = file:/C:/Users/Simon/Documents/Java/polly/projects/de.skuzzle.polly.http/build.xml
+Setting ro project property: ant.project.name -> de.skuzzle.polly.http
+Adding reference: de.skuzzle.polly.http
+Setting ro project property: ant.project.default-target -> dist.debug
+Setting ro project property: ant.file.de.skuzzle.polly.http -> C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml
+Setting ro project property: ant.file.type.de.skuzzle.polly.http -> file
+Project base dir set to: C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http
+ +Target: 
+ +Target: eclipse
+Adding reference: ant.LocalProperties
+parsing buildfile jar:file:/C:/Users/Simon/Documents/Java/polly/tools/build/apache-ant-1.8.2/lib/ant.jar!/org/apache/tools/ant/antlib.xml with URI = jar:file:/C:/Users/Simon/Documents/Java/polly/tools/build/apache-ant-1.8.2/lib/ant.jar!/org/apache/tools/ant/antlib.xml from a zip file
+Setting project property: jar.filename -> polly.http
+Setting project property: jar.title -> polly.http
+Setting project property: jar.main -> 
+Setting project property: dependencies ->          velocity-1.7.jar         commons-collections-3.2.1.jar         commons-lang-2.4.jar     
+Setting project property: dependencies.internal ->          **/polly.http.annotations.jar     
+Importing file C:\Users\Simon\Documents\Java\polly\projects\common.xml from C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml
+Overriding previous definition of reference to ant.projectHelper
+Adding reference: ant.projectHelper
+parsing buildfile C:\Users\Simon\Documents\Java\polly\projects\common.xml with URI = file:/C:/Users/Simon/Documents/Java/polly/projects/common.xml
+Setting ro project property: ant.file.commons -> C:\Users\Simon\Documents\Java\polly\projects\common.xml
+Setting ro project property: ant.file.type.commons -> file
+ +Target: clean.custom
+ +Target: base.clean.custom
+ +Target: clean
+ +Target: base.clean
+ +Target: compile.debug
+ +Target: base.compile.debug
+ +Target: compile.release
+ +Target: base.compile.release
+ +Target: compile.javadoc
+ +Target: base.compile.javadoc
+ +Target: checkDependencies
+ +Target: base.checkDependencies
+ +Target: copyDependencies
+ +Target: base.copyDependencies
+ +Target: dist.debug
+ +Target: base.dist.debug
+ +Target: dist.release
+ +Target: base.dist.release
+ +Target: preDist
+ +Target: base.preDist
+ +Target: postDist
+ +Target: base.postDist
+ +Target: distBin
+ +Target: base.distBin
+ +Target: distDoc
+ +Target: base.distDoc
+ +Target: distSrc
+ +Target: base.distSrc
+Setting project property: root.dir -> ../..
+Setting project property: version.name ->  - beta
+Setting project property: version.num -> 1.0.
+Setting project property: build.release.dir -> bin.release
+Setting project property: build.debug.dir -> bin
+Setting project property: build.dir -> ../../target
+Setting project property: dist.dir -> ../../target/de.skuzzle.polly.http
+Setting project property: dist.lib.dir -> ../../target/de.skuzzle.polly.http/lib
+Setting project property: src.dir -> src
+Setting project property: doc.dir -> doc
+Setting project property: src.encoding -> ISO-8859-1
+Setting project property: lib.dir -> ../../dependency
+Setting project property: target.version -> 1.7
+Setting project property: custom.classpath -> 
+Adding reference: buildpath
+Adding reference: dependencySet
+Adding reference: dependencySetInternal
+Overriding previous definition of reference to ant.projectHelper
+Adding reference: ant.projectHelper
+Adding reference: buildpath.eclipse
+Setting ro project property: ant.project.invoked-targets -> dist.debug
+Attempting to create object of type org.apache.tools.ant.helper.DefaultExecutor
+Adding reference: ant.executor
+Build sequence for target(s) `dist.debug' is [clean.custom, clean, compile.debug, dist.debug]
+Complete build sequence is [clean.custom, clean, compile.debug, dist.debug, checkDependencies, copyDependencies, distBin, compile.release, base.dist.release, base.compile.release, base.preDist, base.distBin, base.clean.custom, base.postDist, compile.javadoc, distDoc, base.copyDependencies, dist.release, base.compile.javadoc, base.distDoc, base.compile.debug, base.checkDependencies, base.clean, distSrc, eclipse, postDist, base.dist.debug, base.distSrc, preDist, ]
+
+clean.custom:
+
+clean:
+     [echo] Clean polly.http
+fileset: Setup scanner in dir C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\bin with patternSet{ includes: [**/**] excludes: [] }
+fileset: Setup scanner in dir C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http with patternSet{ includes: [**/**] excludes: [] }
+   [delete] Deleting C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http\lib\commons-collections-3.2.1.jar
+   [delete] Deleting C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http\lib\commons-lang-2.4.jar
+   [delete] Deleting C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http\lib\polly.http.annotations.jar
+   [delete] Deleting C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http\lib\velocity-1.7.jar
+   [delete] Deleting C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http\polly.http.jar
+   [delete] Deleting C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\bin
+   [delete] Deleting C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http\lib
+   [delete] Deleting C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http
+
+compile.debug:
+     [echo] Compile polly.http
+    [mkdir] Created dir: C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\bin
+fileset: Setup scanner in dir C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src with patternSet{ includes: [] excludes: [] }
+    [javac] de\skuzzle\polly\http\api\AlternativeAnswerException.java added as de\skuzzle\polly\http\api\AlternativeAnswerException.class doesn't exist.
+    [javac] de\skuzzle\polly\http\api\Controller.java added as de\skuzzle\polly\http\api\Controller.class doesn't exist.
+    [javac] de\skuzzle\polly\http\api\DefaultServerFactory.java added as de\skuzzle\polly\http\api\DefaultServerFactory.class doesn't exist.
+    [javac] de\skuzzle\polly\http\api\FileHttpEventHandler.java added as de\skuzzle\polly\http\api\FileHttpEventHandler.class doesn't exist.
+    [javac] de\skuzzle\polly\http\api\HttpCookie.java added as de\skuzzle\polly\http\api\HttpCookie.class doesn't exist.
+    [javac] de\skuzzle\polly\http\api\HttpEvent.java added as de\skuzzle\polly\http\api\HttpEvent.class doesn't exist.
+    [javac] de\skuzzle\polly\http\api\HttpEventHandler.java added as de\skuzzle\polly\http\api\HttpEventHandler.class doesn't exist.
+    [javac] de\skuzzle\polly\http\api\HttpEventListener.java added as de\skuzzle\polly\http\api\HttpEventListener.class doesn't exist.
+    [javac] de\skuzzle\polly\http\api\HttpException.java added as de\skuzzle\polly\http\api\HttpException.class doesn't exist.
+    [javac] de\skuzzle\polly\http\api\HttpServer.java added as de\skuzzle\polly\http\api\HttpServer.class doesn't exist.
+    [javac] de\skuzzle\polly\http\api\HttpServletServer.java added as de\skuzzle\polly\http\api\HttpServletServer.class doesn't exist.
+    [javac] de\skuzzle\polly\http\api\HttpSession.java added as de\skuzzle\polly\http\api\HttpSession.class doesn't exist.
+    [javac] de\skuzzle\polly\http\api\ParameterHandler.java added as de\skuzzle\polly\http\api\ParameterHandler.class doesn't exist.
+    [javac] de\skuzzle\polly\http\api\ServerFactory.java added as de\skuzzle\polly\http\api\ServerFactory.class doesn't exist.
+    [javac] de\skuzzle\polly\http\api\TrafficInformation.java added as de\skuzzle\polly\http\api\TrafficInformation.class doesn't exist.
+    [javac] de\skuzzle\polly\http\api\answers\AbstractHttpAnswer.java added as de\skuzzle\polly\http\api\answers\AbstractHttpAnswer.class doesn't exist.
+    [javac] de\skuzzle\polly\http\api\answers\DefaultAnswers.java added as de\skuzzle\polly\http\api\answers\DefaultAnswers.class doesn't exist.
+    [javac] de\skuzzle\polly\http\api\answers\HttpAnswer.java added as de\skuzzle\polly\http\api\answers\HttpAnswer.class doesn't exist.
+    [javac] de\skuzzle\polly\http\api\answers\HttpAnswerHandler.java added as de\skuzzle\polly\http\api\answers\HttpAnswerHandler.class doesn't exist.
+    [javac] de\skuzzle\polly\http\api\answers\HttpAnswers.java added as de\skuzzle\polly\http\api\answers\HttpAnswers.class doesn't exist.
+    [javac] de\skuzzle\polly\http\api\answers\HttpBinaryAnswer.java added as de\skuzzle\polly\http\api\answers\HttpBinaryAnswer.class doesn't exist.
+    [javac] de\skuzzle\polly\http\api\answers\HttpTemplateAnswer.java added as de\skuzzle\polly\http\api\answers\HttpTemplateAnswer.class doesn't exist.
+    [javac] de\skuzzle\polly\http\internal\AnswerHandlerMap.java added as de\skuzzle\polly\http\internal\AnswerHandlerMap.class doesn't exist.
+    [javac] de\skuzzle\polly\http\internal\BasicEventHandler.java added as de\skuzzle\polly\http\internal\BasicEventHandler.class doesn't exist.
+    [javac] de\skuzzle\polly\http\internal\CountingInputStream.java added as de\skuzzle\polly\http\internal\CountingInputStream.class doesn't exist.
+    [javac] de\skuzzle\polly\http\internal\CountingOutputStream.java added as de\skuzzle\polly\http\internal\CountingOutputStream.class doesn't exist.
+    [javac] de\skuzzle\polly\http\internal\HttpEventHandlerChain.java added as de\skuzzle\polly\http\internal\HttpEventHandlerChain.class doesn't exist.
+    [javac] de\skuzzle\polly\http\internal\HttpEventImpl.java added as de\skuzzle\polly\http\internal\HttpEventImpl.class doesn't exist.
+    [javac] de\skuzzle\polly\http\internal\HttpServerCreator.java added as de\skuzzle\polly\http\internal\HttpServerCreator.class doesn't exist.
+    [javac] de\skuzzle\polly\http\internal\HttpServerImpl.java added as de\skuzzle\polly\http\internal\HttpServerImpl.class doesn't exist.
+    [javac] de\skuzzle\polly\http\internal\HttpServletServerImpl.java added as de\skuzzle\polly\http\internal\HttpServletServerImpl.class doesn't exist.
+    [javac] de\skuzzle\polly\http\internal\HttpSessionImpl.java added as de\skuzzle\polly\http\internal\HttpSessionImpl.class doesn't exist.
+    [javac] de\skuzzle\polly\http\internal\NativeHandlers.java added as de\skuzzle\polly\http\internal\NativeHandlers.class doesn't exist.
+    [javac] de\skuzzle\polly\http\internal\ReflectionHttpHandler.java added as de\skuzzle\polly\http\internal\ReflectionHttpHandler.class doesn't exist.
+    [javac] de\skuzzle\polly\http\internal\SimpleBinaryAnswerHandler.java added as de\skuzzle\polly\http\internal\SimpleBinaryAnswerHandler.class doesn't exist.
+    [javac] de\skuzzle\polly\http\internal\TemplateAnswerHandler.java added as de\skuzzle\polly\http\internal\TemplateAnswerHandler.class doesn't exist.
+    [javac] de\skuzzle\polly\http\internal\TrafficInformationImpl.java added as de\skuzzle\polly\http\internal\TrafficInformationImpl.class doesn't exist.
+    [javac] de\skuzzle\polly\http\internal\URLMap.java added as de\skuzzle\polly\http\internal\URLMap.class doesn't exist.
+    [javac] Compiling 38 source files to C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\bin
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\AlternativeAnswerException.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\Controller.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\DefaultServerFactory.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\FileHttpEventHandler.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpCookie.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpEvent.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpEventHandler.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpEventListener.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpException.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpServer.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpServletServer.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpSession.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\ParameterHandler.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\ServerFactory.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\TrafficInformation.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\answers\AbstractHttpAnswer.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\answers\DefaultAnswers.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\answers\HttpAnswer.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\answers\HttpAnswerHandler.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\answers\HttpAnswers.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\answers\HttpBinaryAnswer.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\answers\HttpTemplateAnswer.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\AnswerHandlerMap.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\BasicEventHandler.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\CountingInputStream.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\CountingOutputStream.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\HttpEventHandlerChain.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\HttpEventImpl.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\HttpServerCreator.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\HttpServerImpl.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\HttpServletServerImpl.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\HttpSessionImpl.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\NativeHandlers.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\ReflectionHttpHandler.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\SimpleBinaryAnswerHandler.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\TemplateAnswerHandler.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\TrafficInformationImpl.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\URLMap.java
+    [javac] Using modern compiler
+fileset: Setup scanner in dir C:\Users\Simon\Documents\Java\polly\dependency with patternSet{ includes: [velocity-1.7.jar, commons-collections-3.2.1.jar, commons-lang-2.4.jar] excludes: [] }
+fileset: Setup scanner in dir C:\Users\Simon\Documents\Java\polly\target with patternSet{ includes: [**/polly.http.annotations.jar] excludes: [] }
+    [javac] Compilation arguments:
+    [javac] '-d'
+    [javac] 'C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\bin'
+    [javac] '-classpath'
+    [javac] 'C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\bin;C:\Users\Simon\Documents\Java\polly\dependency\commons-collections-3.2.1.jar;C:\Users\Simon\Documents\Java\polly\dependency\commons-lang-2.4.jar;C:\Users\Simon\Documents\Java\polly\dependency\velocity-1.7.jar;C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http.annotations\polly.http.annotations.jar'
+    [javac] '-sourcepath'
+    [javac] 'C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src'
+    [javac] '-target'
+    [javac] '1.7'
+    [javac] '-encoding'
+    [javac] 'ISO-8859-1'
+    [javac] '-g'
+    [javac] '-source'
+    [javac] '1.7'
+    [javac] 
+    [javac] The ' characters around the executable and arguments are
+    [javac] not part of the command.
+    [javac] Files to be compiled:
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\AlternativeAnswerException.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\Controller.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\DefaultServerFactory.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\FileHttpEventHandler.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpCookie.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpEvent.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpEventHandler.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpEventListener.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpException.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpServer.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpServletServer.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpSession.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\ParameterHandler.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\ServerFactory.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\TrafficInformation.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\answers\AbstractHttpAnswer.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\answers\DefaultAnswers.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\answers\HttpAnswer.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\answers\HttpAnswerHandler.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\answers\HttpAnswers.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\answers\HttpBinaryAnswer.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\answers\HttpTemplateAnswer.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\AnswerHandlerMap.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\BasicEventHandler.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\CountingInputStream.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\CountingOutputStream.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\HttpEventHandlerChain.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\HttpEventImpl.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\HttpServerCreator.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\HttpServerImpl.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\HttpServletServerImpl.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\HttpSessionImpl.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\NativeHandlers.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\ReflectionHttpHandler.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\SimpleBinaryAnswerHandler.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\TemplateAnswerHandler.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\TrafficInformationImpl.java
+    [javac]     C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\URLMap.java
+
+dist.debug:
+     [echo] Dist polly.http
+Setting project property: bin.dir -> bin
+Setting ro project property: ant.file.type.commons -> file
+Setting ro project property: ant.file -> C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml
+Setting ro project property: ant.file.commons -> C:\Users\Simon\Documents\Java\polly\projects\common.xml
+Setting ro project property: ant.project.invoked-targets -> dist.debug
+Setting ro project property: ant.file.de.skuzzle.polly.http -> C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml
+Setting ro project property: ant.file.type -> file
+Setting ro project property: ant.project.default-target -> dist.debug
+Setting ro project property: ant.file.type.de.skuzzle.polly.http -> file
+Setting ro project property: ant.project.name -> de.skuzzle.polly.http
+Setting project property: doc.dir -> doc
+Setting project property: ant.version -> Apache Ant(TM) version 1.8.2 compiled on December 20 2010
+Setting project property: dist.dir -> ../../target/de.skuzzle.polly.http
+Setting project property: sun.jnu.encoding -> Cp1252
+Setting project property: java.endorsed.dirs -> C:\Program Files\Java\jdk1.7.0_03\jre\lib\endorsed
+Setting project property: java.version -> 1.7.0_03
+Setting project property: java.awt.graphicsenv -> sun.awt.Win32GraphicsEnvironment
+Setting project property: sun.java.launcher -> SUN_STANDARD
+Setting project property: sun.io.unicode.encoding -> UnicodeLittle
+Setting project property: java.runtime.name -> Java(TM) SE Runtime Environment
+Setting project property: user.country -> DE
+Setting project property: java.specification.version -> 1.7
+Setting project property: user.dir -> C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http
+Setting project property: java.io.tmpdir -> C:\Users\Simon\AppData\Local\Temp\
+Setting project property: dependencies ->          velocity-1.7.jar         commons-collections-3.2.1.jar         commons-lang-2.4.jar     
+Setting project property: user.script -> 
+Setting project property: sun.java.command -> org.apache.tools.ant.launch.Launcher -v -d
+Setting project property: awt.toolkit -> sun.awt.windows.WToolkit
+Setting project property: user.variant -> 
+Setting project property: java.class.version -> 51.0
+Setting project property: sun.cpu.endian -> little
+Setting project property: sun.arch.data.model -> 64
+Setting project property: build.debug.dir -> bin
+Setting project property: java.class.path -> C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\bin\..\lib\ant-launcher.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-antlr.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-apache-bcel.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-apache-bsf.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-apache-log4j.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-apache-oro.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-apache-regexp.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-apache-resolver.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-apache-xalan2.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-commons-logging.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-commons-net.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-jai.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-javamail.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-jdepend.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-jmf.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-jsch.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-junit.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-junit4.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-launcher.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-netrexx.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-swing.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-testutil.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant.jar;C:\Program Files\Java\jdk1.7.0_03\lib\tools.jar
+Setting project property: dist.lib.dir -> ../../target/de.skuzzle.polly.http/lib
+Setting project property: src.dir -> src
+Setting project property: java.vm.specification.name -> Java Virtual Machine Specification
+Setting project property: sun.os.patch.level -> Service Pack 1
+Setting project property: user.language -> de
+Setting project property: java.library.path -> C:\Program Files\Java\jdk1.7.0_03\bin;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;D:\cygwin\bin;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\Intel\OpenCL SDK\2.0\bin\x86;C:\Program Files (x86)\Intel\OpenCL SDK\2.0\bin\x64;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files\Java\jdk1.7.0_03\bin;C:\Program Files (x86)\Graphviz 2.28\bin;C:\Program Files (x86)\Windows Kits\8.0\Windows Performance Toolkit\;C:\Program Files\Microsoft SQL Server\110\Tools\Binn\;C:\Program Files\TortoiseSVN\bin;C:\Program Files (x86)\apache-ant-1.8.2\bin;D:\Dokumente\Uni\PI1-2012_13\Download_Tool\dist;C:\Program Files (x86)\apache-maven-3.0.4\bin;D:\opencv\build\x86\vc11\bin;C:\Program Files\TortoiseGit\bin;C:\Program Files (x86)\MikTeX\miktex\bin\;.
+Setting project property: java.vm.specification.version -> 1.7
+Setting project property: ant.core.lib -> C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant.jar
+Setting project property: java.runtime.version -> 1.7.0_03-b05
+Setting project property: java.vm.specification.vendor -> Oracle Corporation
+Setting project property: java.vendor.url -> http://java.oracle.com/
+Setting project property: os.arch -> amd64
+Setting project property: os.version -> 6.1
+Setting project property: java.specification.name -> Java Platform API Specification
+Setting project property: line.separator -> 
+Setting project property: java.vm.version -> 22.1-b02
+Setting project property: lib.dir -> ../../dependency
+Setting project property: sun.cpu.isalist -> amd64
+Setting project property: root.dir -> ../..
+Setting project property: java.specification.vendor -> Oracle Corporation
+Setting project property: ant.library.dir -> C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib
+Setting project property: jar.main -> 
+Setting project property: jar.filename -> polly.http
+Setting project property: user.home -> C:\Users\Simon
+Setting project property: dependencies.internal ->          **/polly.http.annotations.jar     
+Setting project property: java.vm.info -> mixed mode
+Setting project property: build.dir -> ../../target
+Setting project property: bin.dir -> bin
+Setting project property: java.ext.dirs -> C:\Program Files\Java\jdk1.7.0_03\jre\lib\ext;C:\Windows\Sun\Java\lib\ext
+Setting project property: ant.home -> C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\bin\..
+Setting project property: build.release.dir -> bin.release
+Setting project property: target.version -> 1.7
+Setting project property: os.name -> Windows 7
+Setting project property: custom.classpath -> 
+Setting project property: java.vendor.url.bug -> http://bugreport.sun.com/bugreport/
+Setting project property: sun.boot.class.path -> C:\Program Files\Java\jdk1.7.0_03\jre\lib\resources.jar;C:\Program Files\Java\jdk1.7.0_03\jre\lib\rt.jar;C:\Program Files\Java\jdk1.7.0_03\jre\lib\sunrsasign.jar;C:\Program Files\Java\jdk1.7.0_03\jre\lib\jsse.jar;C:\Program Files\Java\jdk1.7.0_03\jre\lib\jce.jar;C:\Program Files\Java\jdk1.7.0_03\jre\lib\charsets.jar;C:\Program Files\Java\jdk1.7.0_03\jre\classes
+Setting project property: user.timezone -> 
+Setting project property: java.vm.name -> Java HotSpot(TM) 64-Bit Server VM
+Setting project property: src.encoding -> ISO-8859-1
+Setting project property: jar.title -> polly.http
+Setting project property: java.vm.vendor -> Oracle Corporation
+Setting project property: path.separator -> ;
+Setting project property: java.awt.printerjob -> sun.awt.windows.WPrinterJob
+Setting project property: sun.management.compiler -> HotSpot 64-Bit Tiered Compilers
+Setting project property: file.separator -> \
+Setting project property: sun.desktop -> windows
+Setting project property: java.vendor -> Oracle Corporation
+Setting project property: file.encoding.pkg -> sun.io
+Setting project property: version.name ->  - beta
+Setting project property: java.home -> C:\Program Files\Java\jdk1.7.0_03\jre
+Setting project property: sun.boot.library.path -> C:\Program Files\Java\jdk1.7.0_03\jre\bin
+Setting project property: file.encoding -> Cp1252
+Setting project property: user.name -> Simon
+Setting project property: version.num -> 1.0.
+Project base dir set to: C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http
+  [antcall] calling target(s) [distBin] in build file C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml
+Setting ro project property: ant.file -> C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml
+Adding reference: ant.projectHelper
+Adding reference: ant.parsing.context
+Adding reference: ant.targets
+parsing buildfile C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml with URI = file:/C:/Users/Simon/Documents/Java/polly/projects/de.skuzzle.polly.http/build.xml
+Setting ro project property: ant.project.name -> de.skuzzle.polly.http
+Adding reference: de.skuzzle.polly.http
+Setting ro project property: ant.project.default-target -> dist.debug
+Setting ro project property: ant.file.de.skuzzle.polly.http -> C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml
+Setting ro project property: ant.file.type.de.skuzzle.polly.http -> file
+Project base dir set to: C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http
+ +Target: 
+ +Target: eclipse
+Adding reference: ant.LocalProperties
+Override ignored for property "jar.filename"
+Override ignored for property "jar.title"
+Override ignored for property "jar.main"
+Override ignored for property "dependencies"
+Override ignored for property "dependencies.internal"
+Importing file C:\Users\Simon\Documents\Java\polly\projects\common.xml from C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml
+Overriding previous definition of reference to ant.projectHelper
+Adding reference: ant.projectHelper
+parsing buildfile C:\Users\Simon\Documents\Java\polly\projects\common.xml with URI = file:/C:/Users/Simon/Documents/Java/polly/projects/common.xml
+Setting ro project property: ant.file.commons -> C:\Users\Simon\Documents\Java\polly\projects\common.xml
+Setting ro project property: ant.file.type.commons -> file
+ +Target: clean.custom
+ +Target: base.clean.custom
+ +Target: clean
+ +Target: base.clean
+ +Target: compile.debug
+ +Target: base.compile.debug
+ +Target: compile.release
+ +Target: base.compile.release
+ +Target: compile.javadoc
+ +Target: base.compile.javadoc
+ +Target: checkDependencies
+ +Target: base.checkDependencies
+ +Target: copyDependencies
+ +Target: base.copyDependencies
+ +Target: dist.debug
+ +Target: base.dist.debug
+ +Target: dist.release
+ +Target: base.dist.release
+ +Target: preDist
+ +Target: base.preDist
+ +Target: postDist
+ +Target: base.postDist
+ +Target: distBin
+ +Target: base.distBin
+ +Target: distDoc
+ +Target: base.distDoc
+ +Target: distSrc
+ +Target: base.distSrc
+Override ignored for property "root.dir"
+Override ignored for property "version.name"
+Override ignored for property "version.num"
+Override ignored for property "build.release.dir"
+Override ignored for property "build.debug.dir"
+Override ignored for property "build.dir"
+Override ignored for property "dist.dir"
+Override ignored for property "dist.lib.dir"
+Override ignored for property "src.dir"
+Override ignored for property "doc.dir"
+Override ignored for property "src.encoding"
+Override ignored for property "lib.dir"
+Override ignored for property "target.version"
+Override ignored for property "custom.classpath"
+Adding reference: buildpath
+Adding reference: dependencySet
+Adding reference: dependencySetInternal
+Overriding previous definition of reference to ant.projectHelper
+Adding reference: ant.projectHelper
+Adding reference: buildpath.eclipse
+Build sequence for target(s) `distBin' is [checkDependencies, copyDependencies, distBin]
+Complete build sequence is [checkDependencies, copyDependencies, distBin, clean.custom, clean, compile.release, base.dist.release, base.compile.release, base.preDist, base.distBin, base.clean.custom, base.postDist, compile.javadoc, distDoc, base.copyDependencies, dist.release, base.compile.javadoc, base.distDoc, base.compile.debug, base.checkDependencies, compile.debug, base.clean, distSrc, eclipse, dist.debug, postDist, base.dist.debug, base.distSrc, preDist, ]
+  [antcall] Entering C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml...
+Setting ro project property: ant.project.invoked-targets -> distBin
+Build sequence for target(s) `distBin' is [checkDependencies, copyDependencies, distBin]
+Complete build sequence is [checkDependencies, copyDependencies, distBin, clean.custom, clean, compile.release, base.dist.release, base.compile.release, base.preDist, base.distBin, base.clean.custom, base.postDist, compile.javadoc, distDoc, base.copyDependencies, dist.release, base.compile.javadoc, base.distDoc, base.compile.debug, base.checkDependencies, compile.debug, base.clean, distSrc, eclipse, dist.debug, postDist, base.dist.debug, base.distSrc, preDist, ]
+
+checkDependencies:
+fileset: Setup scanner in dir C:\Users\Simon\Documents\Java\polly\dependency with patternSet{ includes: [velocity-1.7.jar, commons-collections-3.2.1.jar, commons-lang-2.4.jar] excludes: [] }
+[pathconvert] Set property dependencies.not.empty = C:\Users\Simon\Documents\Java\polly\dependency\commons-collections-3.2.1.jar;C:\Users\Simon\Documents\Java\polly\dependency\commons-lang-2.4.jar;C:\Users\Simon\Documents\Java\polly\dependency\velocity-1.7.jar
+Setting project property: dependencies.not.empty -> C:\Users\Simon\Documents\Java\polly\dependency\commons-collections-3.2.1.jar;C:\Users\Simon\Documents\Java\polly\dependency\commons-lang-2.4.jar;C:\Users\Simon\Documents\Java\polly\dependency\velocity-1.7.jar
+fileset: Setup scanner in dir C:\Users\Simon\Documents\Java\polly\target with patternSet{ includes: [**/polly.http.annotations.jar] excludes: [] }
+[pathconvert] Set property dependencies.internal.not.empty = C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http.annotations\polly.http.annotations.jar
+Setting project property: dependencies.internal.not.empty -> C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http.annotations\polly.http.annotations.jar
+Class org.apache.tools.ant.taskdefs.condition.And loaded from parent loader (parentFirst)
+Class org.apache.tools.ant.types.resources.selectors.And loaded from parent loader (parentFirst)
+Class org.apache.tools.ant.taskdefs.condition.IsSet loaded from parent loader (parentFirst)
+Condition true; setting dependencies.exists to true
+Setting project property: dependencies.exists -> true
+
+copyDependencies:
+    [mkdir] Created dir: C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http\lib
+fileset: Setup scanner in dir C:\Users\Simon\Documents\Java\polly\dependency with patternSet{ includes: [velocity-1.7.jar, commons-collections-3.2.1.jar, commons-lang-2.4.jar] excludes: [] }
+fileset: Setup scanner in dir C:\Users\Simon\Documents\Java\polly\target with patternSet{ includes: [**/polly.http.annotations.jar] excludes: [] }
+     [copy] de.skuzzle.polly.http.annotations\polly.http.annotations.jar added as polly.http.annotations.jar doesn't exist.
+     [copy] No sources found.
+     [copy] commons-collections-3.2.1.jar added as commons-collections-3.2.1.jar doesn't exist.
+     [copy] commons-lang-2.4.jar added as commons-lang-2.4.jar doesn't exist.
+     [copy] velocity-1.7.jar added as velocity-1.7.jar doesn't exist.
+     [copy] No sources found.
+     [copy] Copying 4 files to C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http\lib
+     [copy] Copying C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http.annotations\polly.http.annotations.jar to C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http\lib\polly.http.annotations.jar
+     [copy] Copying C:\Users\Simon\Documents\Java\polly\dependency\commons-collections-3.2.1.jar to C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http\lib\commons-collections-3.2.1.jar
+     [copy] Copying C:\Users\Simon\Documents\Java\polly\dependency\commons-lang-2.4.jar to C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http\lib\commons-lang-2.4.jar
+     [copy] Copying C:\Users\Simon\Documents\Java\polly\dependency\velocity-1.7.jar to C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http\lib\velocity-1.7.jar
+
+distBin:
+Setting project property: build.number -> 215
+Setting project property: version -> 1.0.215 - beta
+    [mkdir] Skipping C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http because it already exists.
+Setting ro project property: ant.file.type.commons -> file
+Setting ro project property: ant.file -> C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml
+Setting ro project property: ant.file.commons -> C:\Users\Simon\Documents\Java\polly\projects\common.xml
+Setting ro project property: ant.project.invoked-targets -> distBin
+Setting ro project property: ant.file.de.skuzzle.polly.http -> C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml
+Setting ro project property: ant.file.type -> file
+Setting ro project property: ant.project.default-target -> dist.debug
+Setting ro project property: ant.file.type.de.skuzzle.polly.http -> file
+Setting ro project property: ant.project.name -> de.skuzzle.polly.http
+Setting project property: java.class.path -> C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\bin\..\lib\ant-launcher.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-antlr.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-apache-bcel.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-apache-bsf.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-apache-log4j.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-apache-oro.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-apache-regexp.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-apache-resolver.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-apache-xalan2.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-commons-logging.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-commons-net.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-jai.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-javamail.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-jdepend.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-jmf.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-jsch.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-junit.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-junit4.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-launcher.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-netrexx.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-swing.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-testutil.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant.jar;C:\Program Files\Java\jdk1.7.0_03\lib\tools.jar
+Setting project property: user.name -> Simon
+Setting project property: java.runtime.name -> Java(TM) SE Runtime Environment
+Setting project property: sun.desktop -> windows
+Setting project property: custom.classpath -> 
+Setting project property: java.vendor -> Oracle Corporation
+Setting project property: line.separator -> 
+Setting project property: java.class.version -> 51.0
+Setting project property: ant.version -> Apache Ant(TM) version 1.8.2 compiled on December 20 2010
+Setting project property: os.arch -> amd64
+Setting project property: sun.java.launcher -> SUN_STANDARD
+Setting project property: sun.cpu.endian -> little
+Setting project property: java.endorsed.dirs -> C:\Program Files\Java\jdk1.7.0_03\jre\lib\endorsed
+Setting project property: sun.management.compiler -> HotSpot 64-Bit Tiered Compilers
+Setting project property: java.vm.specification.name -> Java Virtual Machine Specification
+Setting project property: src.encoding -> ISO-8859-1
+Setting project property: dist.dir -> ../../target/de.skuzzle.polly.http
+Setting project property: java.library.path -> C:\Program Files\Java\jdk1.7.0_03\bin;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;D:\cygwin\bin;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\Intel\OpenCL SDK\2.0\bin\x86;C:\Program Files (x86)\Intel\OpenCL SDK\2.0\bin\x64;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files\Java\jdk1.7.0_03\bin;C:\Program Files (x86)\Graphviz 2.28\bin;C:\Program Files (x86)\Windows Kits\8.0\Windows Performance Toolkit\;C:\Program Files\Microsoft SQL Server\110\Tools\Binn\;C:\Program Files\TortoiseSVN\bin;C:\Program Files (x86)\apache-ant-1.8.2\bin;D:\Dokumente\Uni\PI1-2012_13\Download_Tool\dist;C:\Program Files (x86)\apache-maven-3.0.4\bin;D:\opencv\build\x86\vc11\bin;C:\Program Files\TortoiseGit\bin;C:\Program Files (x86)\MikTeX\miktex\bin\;.
+Setting project property: user.home -> C:\Users\Simon
+Setting project property: jar.title -> polly.http
+Setting project property: java.io.tmpdir -> C:\Users\Simon\AppData\Local\Temp\
+Setting project property: file.encoding -> Cp1252
+Setting project property: java.ext.dirs -> C:\Program Files\Java\jdk1.7.0_03\jre\lib\ext;C:\Windows\Sun\Java\lib\ext
+Setting project property: src.dir -> src
+Setting project property: target.version -> 1.7
+Setting project property: java.specification.version -> 1.7
+Setting project property: java.awt.printerjob -> sun.awt.windows.WPrinterJob
+Setting project property: java.vm.version -> 22.1-b02
+Setting project property: os.name -> Windows 7
+Setting project property: jar.main -> 
+Setting project property: java.home -> C:\Program Files\Java\jdk1.7.0_03\jre
+Setting project property: user.country -> DE
+Setting project property: sun.java.command -> org.apache.tools.ant.launch.Launcher -v -d
+Setting project property: dependencies ->          velocity-1.7.jar         commons-collections-3.2.1.jar         commons-lang-2.4.jar     
+Setting project property: java.vendor.url.bug -> http://bugreport.sun.com/bugreport/
+Setting project property: build.release.dir -> bin.release
+Setting project property: sun.arch.data.model -> 64
+Setting project property: ant.library.dir -> C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib
+Setting project property: file.separator -> \
+Setting project property: awt.toolkit -> sun.awt.windows.WToolkit
+Setting project property: bin.dir -> bin
+Setting project property: user.script -> 
+Setting project property: user.variant -> 
+Setting project property: dist.lib.dir -> ../../target/de.skuzzle.polly.http/lib
+Setting project property: java.runtime.version -> 1.7.0_03-b05
+Setting project property: build.number -> 215
+Setting project property: version -> 1.0.215 - beta
+Setting project property: java.vendor.url -> http://java.oracle.com/
+Setting project property: sun.os.patch.level -> Service Pack 1
+Setting project property: build.debug.dir -> bin
+Setting project property: ant.home -> C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\bin\..
+Setting project property: sun.cpu.isalist -> amd64
+Setting project property: jar.filename -> polly.http
+Setting project property: os.version -> 6.1
+Setting project property: java.version -> 1.7.0_03
+Setting project property: dependencies.internal ->          **/polly.http.annotations.jar     
+Setting project property: dependencies.exists -> true
+Setting project property: build.dir -> ../../target
+Setting project property: java.specification.vendor -> Oracle Corporation
+Setting project property: file.encoding.pkg -> sun.io
+Setting project property: sun.io.unicode.encoding -> UnicodeLittle
+Setting project property: sun.boot.library.path -> C:\Program Files\Java\jdk1.7.0_03\jre\bin
+Setting project property: version.name ->  - beta
+Setting project property: user.timezone -> 
+Setting project property: user.language -> de
+Setting project property: version.num -> 1.0.
+Setting project property: doc.dir -> doc
+Setting project property: java.specification.name -> Java Platform API Specification
+Setting project property: lib.dir -> ../../dependency
+Setting project property: dependencies.internal.not.empty -> C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http.annotations\polly.http.annotations.jar
+Setting project property: sun.jnu.encoding -> Cp1252
+Setting project property: root.dir -> ../..
+Setting project property: java.awt.graphicsenv -> sun.awt.Win32GraphicsEnvironment
+Setting project property: java.vm.specification.version -> 1.7
+Setting project property: user.dir -> C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http
+Setting project property: ant.core.lib -> C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant.jar
+Setting project property: sun.boot.class.path -> C:\Program Files\Java\jdk1.7.0_03\jre\lib\resources.jar;C:\Program Files\Java\jdk1.7.0_03\jre\lib\rt.jar;C:\Program Files\Java\jdk1.7.0_03\jre\lib\sunrsasign.jar;C:\Program Files\Java\jdk1.7.0_03\jre\lib\jsse.jar;C:\Program Files\Java\jdk1.7.0_03\jre\lib\jce.jar;C:\Program Files\Java\jdk1.7.0_03\jre\lib\charsets.jar;C:\Program Files\Java\jdk1.7.0_03\jre\classes
+Setting project property: java.vm.vendor -> Oracle Corporation
+Setting project property: dependencies.not.empty -> C:\Users\Simon\Documents\Java\polly\dependency\commons-collections-3.2.1.jar;C:\Users\Simon\Documents\Java\polly\dependency\commons-lang-2.4.jar;C:\Users\Simon\Documents\Java\polly\dependency\velocity-1.7.jar
+Setting project property: java.vm.info -> mixed mode
+Setting project property: path.separator -> ;
+Setting project property: java.vm.name -> Java HotSpot(TM) 64-Bit Server VM
+Setting project property: java.vm.specification.vendor -> Oracle Corporation
+Project base dir set to: C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http
+  [antcall] calling target(s) [preDist] in build file C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml
+Setting ro project property: ant.file -> C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml
+Adding reference: ant.projectHelper
+Adding reference: ant.parsing.context
+Adding reference: ant.targets
+parsing buildfile C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml with URI = file:/C:/Users/Simon/Documents/Java/polly/projects/de.skuzzle.polly.http/build.xml
+Setting ro project property: ant.project.name -> de.skuzzle.polly.http
+Adding reference: de.skuzzle.polly.http
+Setting ro project property: ant.project.default-target -> dist.debug
+Setting ro project property: ant.file.de.skuzzle.polly.http -> C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml
+Setting ro project property: ant.file.type.de.skuzzle.polly.http -> file
+Project base dir set to: C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http
+ +Target: 
+ +Target: eclipse
+Adding reference: ant.LocalProperties
+Override ignored for property "jar.filename"
+Override ignored for property "jar.title"
+Override ignored for property "jar.main"
+Override ignored for property "dependencies"
+Override ignored for property "dependencies.internal"
+Importing file C:\Users\Simon\Documents\Java\polly\projects\common.xml from C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml
+Overriding previous definition of reference to ant.projectHelper
+Adding reference: ant.projectHelper
+parsing buildfile C:\Users\Simon\Documents\Java\polly\projects\common.xml with URI = file:/C:/Users/Simon/Documents/Java/polly/projects/common.xml
+Setting ro project property: ant.file.commons -> C:\Users\Simon\Documents\Java\polly\projects\common.xml
+Setting ro project property: ant.file.type.commons -> file
+ +Target: clean.custom
+ +Target: base.clean.custom
+ +Target: clean
+ +Target: base.clean
+ +Target: compile.debug
+ +Target: base.compile.debug
+ +Target: compile.release
+ +Target: base.compile.release
+ +Target: compile.javadoc
+ +Target: base.compile.javadoc
+ +Target: checkDependencies
+ +Target: base.checkDependencies
+ +Target: copyDependencies
+ +Target: base.copyDependencies
+ +Target: dist.debug
+ +Target: base.dist.debug
+ +Target: dist.release
+ +Target: base.dist.release
+ +Target: preDist
+ +Target: base.preDist
+ +Target: postDist
+ +Target: base.postDist
+ +Target: distBin
+ +Target: base.distBin
+ +Target: distDoc
+ +Target: base.distDoc
+ +Target: distSrc
+ +Target: base.distSrc
+Override ignored for property "root.dir"
+Override ignored for property "version.name"
+Override ignored for property "version.num"
+Override ignored for property "build.release.dir"
+Override ignored for property "build.debug.dir"
+Override ignored for property "build.dir"
+Override ignored for property "dist.dir"
+Override ignored for property "dist.lib.dir"
+Override ignored for property "src.dir"
+Override ignored for property "doc.dir"
+Override ignored for property "src.encoding"
+Override ignored for property "lib.dir"
+Override ignored for property "target.version"
+Override ignored for property "custom.classpath"
+Adding reference: buildpath
+Adding reference: dependencySet
+Adding reference: dependencySetInternal
+Overriding previous definition of reference to ant.projectHelper
+Adding reference: ant.projectHelper
+Adding reference: buildpath.eclipse
+Build sequence for target(s) `preDist' is [preDist]
+Complete build sequence is [preDist, checkDependencies, copyDependencies, distBin, clean.custom, clean, compile.release, base.dist.release, base.compile.release, base.preDist, base.distBin, base.clean.custom, base.postDist, compile.javadoc, distDoc, base.copyDependencies, dist.release, base.compile.javadoc, base.distDoc, base.compile.debug, base.checkDependencies, compile.debug, base.clean, distSrc, eclipse, dist.debug, postDist, base.dist.debug, base.distSrc, ]
+  [antcall] Entering C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml...
+Setting ro project property: ant.project.invoked-targets -> preDist
+Build sequence for target(s) `preDist' is [preDist]
+Complete build sequence is [preDist, checkDependencies, copyDependencies, distBin, clean.custom, clean, compile.release, base.dist.release, base.compile.release, base.preDist, base.distBin, base.clean.custom, base.postDist, compile.javadoc, distDoc, base.copyDependencies, dist.release, base.compile.javadoc, base.distDoc, base.compile.debug, base.checkDependencies, compile.debug, base.clean, distSrc, eclipse, dist.debug, postDist, base.dist.debug, base.distSrc, ]
+
+preDist:
+  [antcall] Exiting C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml.
+fileset: Setup scanner in dir C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http\lib with patternSet{ includes: [velocity-1.7.jar, commons-collections-3.2.1.jar, commons-lang-2.4.jar] excludes: [] }
+fileset: Setup scanner in dir C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http\lib with patternSet{ includes: [**/polly.http.annotations.jar] excludes: [] }
+Setting project property: jar.classpath -> lib/commons-collections-3.2.1.jar lib/commons-lang-2.4.jar lib/velocity-1.7.jar lib/polly.http.annotations.jar
+fileset: Setup scanner in dir C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\bin with patternSet{ includes: [] excludes: [] }
+      [jar] Building MANIFEST-only jar: C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http\polly.http.jar
+      [jar] adding directory META-INF/
+      [jar] adding entry META-INF/MANIFEST.MF
+      [jar] No Implementation-Vendor set.
+      [jar] Location: C:\Users\Simon\Documents\Java\polly\projects\common.xml:235: 
+Setting ro project property: ant.file.type.commons -> file
+Setting ro project property: ant.file -> C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml
+Setting ro project property: ant.file.commons -> C:\Users\Simon\Documents\Java\polly\projects\common.xml
+Setting ro project property: ant.project.invoked-targets -> distBin
+Setting ro project property: ant.file.de.skuzzle.polly.http -> C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml
+Setting ro project property: ant.file.type -> file
+Setting ro project property: ant.project.default-target -> dist.debug
+Setting ro project property: ant.file.type.de.skuzzle.polly.http -> file
+Setting ro project property: ant.project.name -> de.skuzzle.polly.http
+Setting project property: java.vm.version -> 22.1-b02
+Setting project property: build.debug.dir -> bin
+Setting project property: ant.library.dir -> C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib
+Setting project property: ant.version -> Apache Ant(TM) version 1.8.2 compiled on December 20 2010
+Setting project property: java.vm.vendor -> Oracle Corporation
+Setting project property: java.vendor.url -> http://java.oracle.com/
+Setting project property: path.separator -> ;
+Setting project property: file.encoding.pkg -> sun.io
+Setting project property: sun.os.patch.level -> Service Pack 1
+Setting project property: user.script -> 
+Setting project property: sun.java.launcher -> SUN_STANDARD
+Setting project property: java.vm.specification.name -> Java Virtual Machine Specification
+Setting project property: java.io.tmpdir -> C:\Users\Simon\AppData\Local\Temp\
+Setting project property: dependencies.internal.not.empty -> C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http.annotations\polly.http.annotations.jar
+Setting project property: version.name ->  - beta
+Setting project property: java.vm.specification.vendor -> Oracle Corporation
+Setting project property: custom.classpath -> 
+Setting project property: build.dir -> ../../target
+Setting project property: sun.jnu.encoding -> Cp1252
+Setting project property: jar.classpath -> lib/commons-collections-3.2.1.jar lib/commons-lang-2.4.jar lib/velocity-1.7.jar lib/polly.http.annotations.jar
+Setting project property: dependencies ->          velocity-1.7.jar         commons-collections-3.2.1.jar         commons-lang-2.4.jar     
+Setting project property: java.class.version -> 51.0
+Setting project property: java.specification.name -> Java Platform API Specification
+Setting project property: sun.management.compiler -> HotSpot 64-Bit Tiered Compilers
+Setting project property: user.home -> C:\Users\Simon
+Setting project property: java.specification.version -> 1.7
+Setting project property: file.encoding -> Cp1252
+Setting project property: user.name -> Simon
+Setting project property: src.encoding -> ISO-8859-1
+Setting project property: java.vm.specification.version -> 1.7
+Setting project property: sun.java.command -> org.apache.tools.ant.launch.Launcher -v -d
+Setting project property: java.home -> C:\Program Files\Java\jdk1.7.0_03\jre
+Setting project property: sun.arch.data.model -> 64
+Setting project property: java.specification.vendor -> Oracle Corporation
+Setting project property: user.language -> de
+Setting project property: dependencies.exists -> true
+Setting project property: java.version -> 1.7.0_03
+Setting project property: java.ext.dirs -> C:\Program Files\Java\jdk1.7.0_03\jre\lib\ext;C:\Windows\Sun\Java\lib\ext
+Setting project property: dependencies.not.empty -> C:\Users\Simon\Documents\Java\polly\dependency\commons-collections-3.2.1.jar;C:\Users\Simon\Documents\Java\polly\dependency\commons-lang-2.4.jar;C:\Users\Simon\Documents\Java\polly\dependency\velocity-1.7.jar
+Setting project property: sun.io.unicode.encoding -> UnicodeLittle
+Setting project property: version -> 1.0.215 - beta
+Setting project property: sun.cpu.isalist -> amd64
+Setting project property: dependencies.internal ->          **/polly.http.annotations.jar     
+Setting project property: build.release.dir -> bin.release
+Setting project property: java.runtime.name -> Java(TM) SE Runtime Environment
+Setting project property: sun.boot.library.path -> C:\Program Files\Java\jdk1.7.0_03\jre\bin
+Setting project property: dist.lib.dir -> ../../target/de.skuzzle.polly.http/lib
+Setting project property: java.vm.name -> Java HotSpot(TM) 64-Bit Server VM
+Setting project property: bin.dir -> bin
+Setting project property: user.country -> DE
+Setting project property: user.dir -> C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http
+Setting project property: java.runtime.version -> 1.7.0_03-b05
+Setting project property: java.awt.graphicsenv -> sun.awt.Win32GraphicsEnvironment
+Setting project property: os.arch -> amd64
+Setting project property: java.endorsed.dirs -> C:\Program Files\Java\jdk1.7.0_03\jre\lib\endorsed
+Setting project property: doc.dir -> doc
+Setting project property: ant.core.lib -> C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant.jar
+Setting project property: line.separator -> 
+Setting project property: user.variant -> 
+Setting project property: os.name -> Windows 7
+Setting project property: version.num -> 1.0.
+Setting project property: ant.home -> C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\bin\..
+Setting project property: jar.filename -> polly.http
+Setting project property: jar.title -> polly.http
+Setting project property: java.library.path -> C:\Program Files\Java\jdk1.7.0_03\bin;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;D:\cygwin\bin;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\Intel\OpenCL SDK\2.0\bin\x86;C:\Program Files (x86)\Intel\OpenCL SDK\2.0\bin\x64;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files\Java\jdk1.7.0_03\bin;C:\Program Files (x86)\Graphviz 2.28\bin;C:\Program Files (x86)\Windows Kits\8.0\Windows Performance Toolkit\;C:\Program Files\Microsoft SQL Server\110\Tools\Binn\;C:\Program Files\TortoiseSVN\bin;C:\Program Files (x86)\apache-ant-1.8.2\bin;D:\Dokumente\Uni\PI1-2012_13\Download_Tool\dist;C:\Program Files (x86)\apache-maven-3.0.4\bin;D:\opencv\build\x86\vc11\bin;C:\Program Files\TortoiseGit\bin;C:\Program Files (x86)\MikTeX\miktex\bin\;.
+Setting project property: lib.dir -> ../../dependency
+Setting project property: os.version -> 6.1
+Setting project property: dist.dir -> ../../target/de.skuzzle.polly.http
+Setting project property: root.dir -> ../..
+Setting project property: user.timezone -> 
+Setting project property: java.awt.printerjob -> sun.awt.windows.WPrinterJob
+Setting project property: java.class.path -> C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\bin\..\lib\ant-launcher.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-antlr.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-apache-bcel.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-apache-bsf.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-apache-log4j.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-apache-oro.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-apache-regexp.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-apache-resolver.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-apache-xalan2.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-commons-logging.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-commons-net.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-jai.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-javamail.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-jdepend.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-jmf.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-jsch.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-junit.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-junit4.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-launcher.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-netrexx.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-swing.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant-testutil.jar;C:\Users\Simon\Documents\Java\polly\tools\build\apache-ant-1.8.2\lib\ant.jar;C:\Program Files\Java\jdk1.7.0_03\lib\tools.jar
+Setting project property: build.number -> 215
+Setting project property: awt.toolkit -> sun.awt.windows.WToolkit
+Setting project property: java.vm.info -> mixed mode
+Setting project property: sun.boot.class.path -> C:\Program Files\Java\jdk1.7.0_03\jre\lib\resources.jar;C:\Program Files\Java\jdk1.7.0_03\jre\lib\rt.jar;C:\Program Files\Java\jdk1.7.0_03\jre\lib\sunrsasign.jar;C:\Program Files\Java\jdk1.7.0_03\jre\lib\jsse.jar;C:\Program Files\Java\jdk1.7.0_03\jre\lib\jce.jar;C:\Program Files\Java\jdk1.7.0_03\jre\lib\charsets.jar;C:\Program Files\Java\jdk1.7.0_03\jre\classes
+Setting project property: java.vendor -> Oracle Corporation
+Setting project property: file.separator -> \
+Setting project property: jar.main -> 
+Setting project property: src.dir -> src
+Setting project property: java.vendor.url.bug -> http://bugreport.sun.com/bugreport/
+Setting project property: target.version -> 1.7
+Setting project property: sun.cpu.endian -> little
+Setting project property: sun.desktop -> windows
+Project base dir set to: C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http
+  [antcall] calling target(s) [postDist] in build file C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml
+Setting ro project property: ant.file -> C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml
+Adding reference: ant.projectHelper
+Adding reference: ant.parsing.context
+Adding reference: ant.targets
+parsing buildfile C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml with URI = file:/C:/Users/Simon/Documents/Java/polly/projects/de.skuzzle.polly.http/build.xml
+Setting ro project property: ant.project.name -> de.skuzzle.polly.http
+Adding reference: de.skuzzle.polly.http
+Setting ro project property: ant.project.default-target -> dist.debug
+Setting ro project property: ant.file.de.skuzzle.polly.http -> C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml
+Setting ro project property: ant.file.type.de.skuzzle.polly.http -> file
+Project base dir set to: C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http
+ +Target: 
+ +Target: eclipse
+Adding reference: ant.LocalProperties
+Override ignored for property "jar.filename"
+Override ignored for property "jar.title"
+Override ignored for property "jar.main"
+Override ignored for property "dependencies"
+Override ignored for property "dependencies.internal"
+Importing file C:\Users\Simon\Documents\Java\polly\projects\common.xml from C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml
+Overriding previous definition of reference to ant.projectHelper
+Adding reference: ant.projectHelper
+parsing buildfile C:\Users\Simon\Documents\Java\polly\projects\common.xml with URI = file:/C:/Users/Simon/Documents/Java/polly/projects/common.xml
+Setting ro project property: ant.file.commons -> C:\Users\Simon\Documents\Java\polly\projects\common.xml
+Setting ro project property: ant.file.type.commons -> file
+ +Target: clean.custom
+ +Target: base.clean.custom
+ +Target: clean
+ +Target: base.clean
+ +Target: compile.debug
+ +Target: base.compile.debug
+ +Target: compile.release
+ +Target: base.compile.release
+ +Target: compile.javadoc
+ +Target: base.compile.javadoc
+ +Target: checkDependencies
+ +Target: base.checkDependencies
+ +Target: copyDependencies
+ +Target: base.copyDependencies
+ +Target: dist.debug
+ +Target: base.dist.debug
+ +Target: dist.release
+ +Target: base.dist.release
+ +Target: preDist
+ +Target: base.preDist
+ +Target: postDist
+ +Target: base.postDist
+ +Target: distBin
+ +Target: base.distBin
+ +Target: distDoc
+ +Target: base.distDoc
+ +Target: distSrc
+ +Target: base.distSrc
+Override ignored for property "root.dir"
+Override ignored for property "version.name"
+Override ignored for property "version.num"
+Override ignored for property "build.release.dir"
+Override ignored for property "build.debug.dir"
+Override ignored for property "build.dir"
+Override ignored for property "dist.dir"
+Override ignored for property "dist.lib.dir"
+Override ignored for property "src.dir"
+Override ignored for property "doc.dir"
+Override ignored for property "src.encoding"
+Override ignored for property "lib.dir"
+Override ignored for property "target.version"
+Override ignored for property "custom.classpath"
+Adding reference: buildpath
+Adding reference: dependencySet
+Adding reference: dependencySetInternal
+Overriding previous definition of reference to ant.projectHelper
+Adding reference: ant.projectHelper
+Adding reference: buildpath.eclipse
+Build sequence for target(s) `postDist' is [postDist]
+Complete build sequence is [postDist, checkDependencies, copyDependencies, distBin, clean.custom, clean, compile.release, base.dist.release, base.compile.release, base.preDist, base.distBin, base.clean.custom, base.postDist, compile.javadoc, distDoc, base.copyDependencies, dist.release, base.compile.javadoc, base.distDoc, base.compile.debug, base.checkDependencies, compile.debug, base.clean, distSrc, eclipse, dist.debug, base.dist.debug, base.distSrc, preDist, ]
+  [antcall] Entering C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml...
+Setting ro project property: ant.project.invoked-targets -> postDist
+Build sequence for target(s) `postDist' is [postDist]
+Complete build sequence is [postDist, checkDependencies, copyDependencies, distBin, clean.custom, clean, compile.release, base.dist.release, base.compile.release, base.preDist, base.distBin, base.clean.custom, base.postDist, compile.javadoc, distDoc, base.copyDependencies, dist.release, base.compile.javadoc, base.distDoc, base.compile.debug, base.checkDependencies, compile.debug, base.clean, distSrc, eclipse, dist.debug, base.dist.debug, base.distSrc, preDist, ]
+
+postDist:
+  [antcall] Exiting C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml.
+  [antcall] Exiting C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml.
+
+BUILD SUCCESSFUL
+Total time: 0 seconds

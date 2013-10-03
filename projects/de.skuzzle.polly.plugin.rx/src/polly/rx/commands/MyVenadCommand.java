@@ -32,7 +32,8 @@ public class MyVenadCommand extends Command {
             String vname = signature.getStringValue(0);
             
             try {
-                this.getMyPolly().users().setAttributeFor(executer, "VENAD", vname);
+                this.getMyPolly().users().setAttributeFor(executer, executer, 
+                    "VENAD", vname);
                 this.reply(channel, "Venadname gespeichert.");
             } catch (DatabaseException e) {
                 this.reply(channel, "Interner Datenbankfehler.");

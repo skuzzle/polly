@@ -18,23 +18,24 @@
  */
 package de.skuzzle.polly.http.internal;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.file.Path;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Random;
-import java.util.Set;
 
 import com.sun.net.httpserver.HttpExchange;
 
-import de.skuzzle.polly.http.api.HttpEventHandler;
+import de.skuzzle.polly.http.api.HttpEvent;
+import de.skuzzle.polly.http.api.HttpEventListener;
 import de.skuzzle.polly.http.api.HttpServer;
 import de.skuzzle.polly.http.api.HttpSession;
 import de.skuzzle.polly.http.api.ServerFactory;
@@ -42,24 +43,29 @@ import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswerHandler;
 import de.skuzzle.polly.http.api.answers.HttpBinaryAnswer;
 import de.skuzzle.polly.http.api.answers.HttpTemplateAnswer;
+import de.skuzzle.polly.http.api.handler.BinaryAnswerHandler;
+import de.skuzzle.polly.http.api.handler.HttpEventHandler;
+import de.skuzzle.polly.http.api.handler.TemplateAnswerHandler;
 
 
 
 class HttpServerImpl implements HttpServer {
     
-    final static String SESSION_ID_NAME = "sessionID";
-    
     private final static Random RANDOM = new Random();
-    
-    private final List<HttpEventHandler> handlers;
+
+    private final URLMap<List<HttpEventHandler>> handlers;
     private final Map<InetSocketAddress, HttpSessionImpl> ipToSession;
+    private final Map<InetSocketAddress, HttpSessionImpl> pending;
+    private final Collection<HttpEventListener> httpListeners;
+    private final Queue<HttpSession> sessionHistory;
+    
     private final Map<String, HttpSessionImpl> idToSession;
-    private final List<File> roots;
-    private final Set<String> extensionWhitelist;
     private final AnswerHandlerMap handler;
     private final ServerFactory factory;
     private int sessionType;
     private int sessionLiveTime;
+    private final TrafficInformationImpl traffic;
+    
     
     
     private com.sun.net.httpserver.HttpServer server;
@@ -68,18 +74,39 @@ class HttpServerImpl implements HttpServer {
     
     
     public HttpServerImpl(ServerFactory factory) {
-        this.handlers = new ArrayList<>();
+        this.traffic = new TrafficInformationImpl(null);
+        this.sessionHistory = new ArrayDeque<>();
+        this.handlers = new URLMap<>();
         this.ipToSession = new HashMap<>();
         this.idToSession = new HashMap<>();
-        this.extensionWhitelist = new HashSet<>();
+        this.pending = new HashMap<>();
         this.handler = new AnswerHandlerMap();
-        this.roots = new ArrayList<>();
         this.factory = factory;
         this.sessionType = SESSION_TYPE_COOKIE;
+        this.httpListeners = new ArrayList<>();
         
         // default handler
-        this.registerHandler(HttpBinaryAnswer.class, new SimpleBinaryAnswerHandler());
-        this.registerHandler(HttpTemplateAnswer.class, new TemplateAnswerHandler());
+        this.setAnswerHandler(HttpBinaryAnswer.class, new BinaryAnswerHandler());
+        this.setAnswerHandler(HttpTemplateAnswer.class, new TemplateAnswerHandler());
+    }
+    
+    
+    
+    /**
+     * Creates a new {@link TrafficInformationImpl} which will also update the cumulative
+     * traffic information of this server.
+     * 
+     * @return A new {@link TrafficInformationImpl} instance.
+     */
+    TrafficInformationImpl newTrafficInformation() {
+        return new TrafficInformationImpl(this.traffic);
+    }
+    
+    
+    
+    @Override
+    public TrafficInformationImpl getTraffic() {
+        return this.traffic;
     }
     
     
@@ -124,6 +151,13 @@ class HttpServerImpl implements HttpServer {
     
     
     @Override
+    public Collection<HttpSession> getSessionHistory() {
+        return this.sessionHistory;
+    }
+    
+    
+    
+    @Override
     public HttpAnswerHandler getHandler(HttpAnswer answer) {
         final Class<?> cls = answer.getClass();
         return this.handler.resolve(cls);
@@ -131,73 +165,60 @@ class HttpServerImpl implements HttpServer {
     
     
     
-    public void registerHandler(Class<?> answerType, HttpAnswerHandler handler) {
+    @Override
+    public void addHttpEventListener(HttpEventListener listener) {
+        this.httpListeners.add(listener);
+    }
+    
+    
+    
+    @Override
+    public void removeHttpEventListener(HttpEventListener listener) {
+        this.httpListeners.remove(listener);
+    }
+    
+    
+    
+    @Override
+    public void setAnswerHandler(Class<?> answerType, HttpAnswerHandler handler) {
         this.handler.registerHandler(answerType, handler);
     }
     
     
     
     @Override
-    public void addWebRoot(File file) {
-        this.roots.add(file);
+    public Collection<String> getURLs() {
+        return this.handlers.keySet();
     }
     
     
-    
+
     @Override
-    public File resolveRelativeFile(String path) throws FileNotFoundException {
-        synchronized (this.roots) {
-        for (final File root : this.roots) {
-            final File dest = new File(root, path);
-            
-            final Path request = dest.toPath().normalize();
-            final Path rootPath = root.toPath().normalize();
-            final String absRequest = request.toString().toLowerCase();
-            final String absRoot = rootPath.toString().toLowerCase();
-            
-            if (!absRequest.startsWith(absRoot)) {
-                // skip this file because it is not relative to the template root
-                continue;
-            } else if (!this.extensionWhitelist.isEmpty()) {
-                int i = absRequest.lastIndexOf(".");
-                if (i == -1) {
-                    // file has no whitelisted extension
-                    continue;
-                }
-                
-                final String ext = absRequest.substring(i);
-                if (!this.extensionWhitelist.contains(ext)) {
-                    // file has no whitelisted extension
-                    continue;
-                }
-            }
-            if (!dest.exists()) {
-                continue;
-            }
-            return dest;
+    public void addHttpEventHandler(String url, HttpEventHandler handler) {
+        url = url.startsWith("/") ?  url : "/" + url;
+        List<HttpEventHandler> handlers = this.handlers.get(url);
+        if (handlers == null) {
+            handlers = new ArrayList<>();
+            this.handlers.put(url, handlers);
         }
+        handlers.add(handler);
+    }
+
+    
+    
+    @Override
+    public void removeHttpEventHandler(String url, HttpEventHandler handler) {
+        final List<HttpEventHandler> handlers = this.handlers.get(url);
+        if (handlers == null) {
+            return;
         }
-        throw new FileNotFoundException(path);
-    }
-    
-    
-
-    @Override
-    public void registerHttpEventHandler(HttpEventHandler handler) {
-        this.handlers.add(handler);
+        handlers.remove(handlers);
     }
 
     
     
-    @Override
-    public void unregisterHttpEventHandler(HttpEventHandler handler) {
-        this.handlers.remove(handler);
-    }
-
-    
-    
-    List<HttpEventHandler> getHandlers() {
-        return Collections.unmodifiableList(this.handlers);
+    URLMap<List<HttpEventHandler>> getHandlers() {
+        return this.handlers;
     }
 
 
@@ -238,26 +259,38 @@ class HttpServerImpl implements HttpServer {
     
     
     
-    HttpSessionImpl byID(HttpExchange t, Map<String, String> parameters) {
+    
+    Map<InetSocketAddress, HttpSessionImpl> getTempStorage() {
+        return this.pending;
+    }
+    
+    
+    
+    synchronized HttpSessionImpl byID(HttpExchange t, Map<String, String> parameters) {
         synchronized (this.idToSession) {
+            // id sent with the cookie or get parameters
             String id = parameters.get(SESSION_ID_NAME);
+            
             if (id == null) {
-                // No session id was sent, so client did not get one until now.
-                // create temporary session. So next time the client sends something,
-                // it will have an id assigned
+                
+                // client sent no id
                 id = this.createSessionId(t.getRemoteAddress());
                 
                 final HttpSessionImpl temp = new HttpSessionImpl(
-                    this, id, HttpSession.SESSION_TYPE_TEMPORARY);
+                    this, id);
+                
+                temp.setPending(true);
                 this.idToSession.put(id, temp);
                 return temp;
             }
 
+            // client sent an id, so it can be removed from pending ones
             HttpSessionImpl session = this.idToSession.get(id);
-            if (session == null || session.getType() == HttpSession.SESSION_TYPE_TEMPORARY) {
-                session = new HttpSessionImpl(this, id, HttpSession.SESSION_TYPE_COOKIE);
+            if (session == null) {
+                session = new HttpSessionImpl(this, id);
                 this.idToSession.put(id, session);
             }
+            session.setPending(false);
             return session;
         }
     }
@@ -269,7 +302,7 @@ class HttpServerImpl implements HttpServer {
             HttpSessionImpl session = this.ipToSession.get(ip);
             if (session == null) {
                 final String id = this.createSessionId(ip);
-                session = new HttpSessionImpl(this, id, SESSION_TYPE_IP);
+                session = new HttpSessionImpl(this, id);
                 this.ipToSession.put(ip, session);
             }
             return session;
@@ -278,19 +311,106 @@ class HttpServerImpl implements HttpServer {
     
     
     
-    void killSession(HttpSessionImpl session) {
-        session.block(-1);
+    private void rememberSession(HttpSession session) {
+        synchronized (this.sessionHistory) {
+            this.sessionHistory.add(session);
+            if (this.sessionHistory.size() > SESSION_HISTORY_SIZE) {
+                this.sessionHistory.poll();
+            }
+        }
+    }
+    
+    
+    
+    void cleanSessions() {
+        final Date now = new Date();
+        if (this.getSessionType() == SESSION_TYPE_COOKIE) {
+            synchronized (this.idToSession) {
+                final Iterator<HttpSessionImpl> it = this.idToSession.values().iterator();
+                while (it.hasNext()) {
+                    final HttpSessionImpl session = it.next();
+                    
+                    final Date exp = session.getExpirationDate() == null 
+                        ? new Date(session.getTimestamp()) 
+                        : session.getExpirationDate();
+                        
+                    if (session.shouldKill() || 
+                            now.getTime() - exp.getTime() > this.sessionLiveTime) {
+                        it.remove();
+                        this.rememberSession(session);
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    
+    synchronized void killSession(HttpSessionImpl session) {
         switch (this.getSessionType()) {
         case SESSION_TYPE_COOKIE:
         case SESSION_TYPE_GET:
             synchronized (this.idToSession) {
-                this.idToSession.values().remove(session);
+                this.idToSession.remove(session.getId());
             }
             break;
         case SESSION_TYPE_IP:
             synchronized (this.ipToSession) {
                 this.ipToSession.remove(session);
             }
+        }
+        this.rememberSession(session);
+    }
+    
+    
+    
+    @Override
+    public Collection<HttpSession> getSessions() {
+        final Collection<HttpSession> result = new ArrayList<>();
+        switch (this.getSessionType()) {
+        case SESSION_TYPE_COOKIE:
+        case SESSION_TYPE_GET:
+            synchronized (this.idToSession) {
+                result.addAll(this.idToSession.values());
+            }
+            break;
+        case SESSION_TYPE_IP:
+            synchronized (this.ipToSession) {
+                result.addAll(this.ipToSession.values());
+            }
+        }
+        return Collections.unmodifiableCollection(result);
+    }
+    
+    
+    
+    @Override
+    public HttpSession findSession(String id) {
+        switch (this.getSessionType()) {
+        case SESSION_TYPE_COOKIE:
+        case SESSION_TYPE_GET:
+            synchronized (this.idToSession) {
+                return this.idToSession.get(id);
+            }
+            
+        default:
+        case SESSION_TYPE_IP:
+            synchronized (this.ipToSession) {
+                for (final HttpSessionImpl session : this.ipToSession.values()) {
+                    if (session.getId().equals(id)) {
+                        return session;
+                    }
+                }
+                return null;
+            }
+        }
+    }
+    
+    
+    
+    void fireOnRequest(HttpEvent e) {
+        for (final HttpEventListener listener : this.httpListeners) {
+            listener.onRequest(e);
         }
     }
 }

@@ -51,23 +51,25 @@ public class SetAttributeCommand extends Command {
         if (this.match(signature, 0)) {
             String user = signature.getStringValue(0);
             final String attribute = signature.getStringValue(1);
-            final String value = signature.getStringValue(2);
+            final Types value = signature.getValue(1);
             
             final User dest = this.getMyPolly().users().getUser(user);
-            this.setAttribute(dest, user, attribute, value, channel);
+            this.setAttribute(executer, dest, user, attribute, 
+                value.valueString(this.getMyPolly().formatting()), channel);
+            
         } else if (this.match(signature, 1)) {
             final String attribute = signature.getStringValue(0);
-            final String value = signature.getStringValue(1);
+            final Types value = signature.getValue(1);
             
-            this.setAttribute(executer, executer.getName(), attribute, value, 
-                channel);
+            this.setAttribute(executer, executer, executer.getName(), attribute, 
+                value.valueString(this.getMyPolly().formatting()), channel);
         }
         return false;
     }
     
     
     
-    private void setAttribute(User dest, String userName, String attribute, 
+    private void setAttribute(User executor, User dest, String userName, String attribute, 
             String value, String channel) throws CommandException {
         
         if (dest == null) {
@@ -81,7 +83,7 @@ public class SetAttributeCommand extends Command {
         }
         
         try {
-            this.getMyPolly().users().setAttributeFor(dest, attribute, value);
+            this.getMyPolly().users().setAttributeFor(executor, dest, attribute, value);
             this.reply(channel, "Neuer Wert wurde gespeichert.");
         } catch (DatabaseException e) {
             throw new CommandException(e);
@@ -89,5 +91,4 @@ public class SetAttributeCommand extends Command {
             throw new CommandException(e.getMessage());
         }
     }
-
 }

@@ -1,8 +1,30 @@
+/*
+ * Copyright 2013 Simon Taddiken
+ *
+ * This file is part of Polly HTTP API.
+ *
+ * Polly HTTP API is free software: you can redistribute it and/or modify 
+ * it under the terms of the GNU General Public License as published by 
+ * the Free Software Foundation, either version 3 of the License, or (at 
+ * your option) any later version.
+ *
+ * Polly HTTP API is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for 
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along 
+ * with Polly HTTP API. If not, see http://www.gnu.org/licenses/.
+ */
 package de.skuzzle.polly.http.api;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <p>Controllers are used in conjunction with 
- * {@link HttpServletServer HttpServletServers}. They provided annotated handler methods 
+ * {@link HttpServletServer HttpServletServers}. They provide annotated handler methods 
  * for various {@link HttpEvent HttpEvents}. This is a quick example for a Controller 
  * which may handle a user database:</p>
  * 
@@ -40,12 +62,60 @@ package de.skuzzle.polly.http.api;
  * automatically call the annotated methods if a <tt>POST</tt> request to their URL
  * occurs.
  * 
+ * <p>Controllers report all their registered URLs mapped to a suitable handler name 
+ * preceded by a configurable prefix. This prefix can be set using 
+ * {@link #setHandlerPrefix(String)}, the map can be obtained by {@link #getMyHandlers()}.
+ * </p>
+ * 
  * @author Simon Taddiken
  */
 public abstract class Controller {
 
     private HttpEvent event;
-
+    private Map<String, String> myHandlers;
+    private String handlerPrefix;
+    private String registeredUrl;
+    
+    
+    
+    public Controller() {
+        this.handlerPrefix = "";
+        this.myHandlers = new HashMap<>();
+    }
+    
+    
+    
+    /**
+     * Gets the URL for which the called handler was registered.
+     * 
+     * @return The registered URL.
+     */
+    public String getRegisteredUrl() {
+        return this.registeredUrl;
+    }
+    
+    
+    
+    public void setHandlerPrefix(String handlerPrefix) {
+        this.handlerPrefix = handlerPrefix;
+    }
+    
+    
+    
+    
+    public String getHandlerPrefix() {
+        return this.handlerPrefix;
+    }
+    
+    
+    
+    public void putHandledURL(Map<String, String> target, String handlerName, 
+            String url) {
+        target.put(this.handlerPrefix + handlerName, url);
+        this.myHandlers.put(this.handlerPrefix + handlerName, url);
+    }
+    
+    
     
     /**
      * Gets the currently handled HttpEvent.
@@ -64,8 +134,27 @@ public abstract class Controller {
      * 
      * @return The HttpServer instance.
      */
-    protected final HttpServer getServer() {
-        return this.getEvent().getSource();
+    protected final HttpServletServer getServer() {
+        return (HttpServletServer) this.getEvent().getSource();
+    }
+    
+    
+    
+    protected HttpSession getSession() {
+        return this.getEvent().getSession();
+    }
+    
+    
+    
+    /**
+     * Gets a map which contains as values all request URLs that are handled by this 
+     * controller. The key for each URL will be the name of the method which is annotated
+     * to handle it optionally preceded by a prefix which can be configured in 
+     * {@link HttpServletServer}.
+     * @return URL map of this controller.
+     */
+    public Map<String, String> getMyHandlers() {
+        return Collections.unmodifiableMap(this.myHandlers);
     }
     
     
@@ -83,12 +172,15 @@ public abstract class Controller {
     /**
      * Creates a copy of this controller and binds it to the provided {@link HttpEvent}.
      * 
+     * @param The URL with which the handler was registered.
      * @param e The event.
      * @return A new instance of this controller.
      */
-    public final Controller bind(HttpEvent e) {
-        Controller result = this.createInstance();
+    public final Controller bind(String registered, HttpEvent e) {
+        final Controller result = this.createInstance();
         result.event = e;
+        result.registeredUrl = registered;
+        result.myHandlers = this.myHandlers;
         return result;
     }
 }

@@ -4,15 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.skuzzle.polly.sdk.EntityConverter;
-import de.skuzzle.polly.sdk.PersistenceManager;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Read;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Write;
 
 
 public class V2ToV3TrainEntityConverter implements EntityConverter {
 
     @Override
-    public List<Object> getOldEntities(PersistenceManager persistence) {
+    public List<Object> getOldEntities(Read read) {
         final List<Object> result = new ArrayList<Object>();
-        result.addAll(persistence.findList(TrainEntityV2.class, TrainEntityV2.ALL));
+        result.addAll(read.findList(TrainEntityV2.class, TrainEntityV2.ALL));
         return result;
     }
     
@@ -33,8 +34,8 @@ public class V2ToV3TrainEntityConverter implements EntityConverter {
     
     
     @Override
-    public void deleteOldEntities(List<Object> olds, PersistenceManager persistence) {
-        persistence.removeList(olds);
+    public void deleteOldEntities(List<Object> olds, Write write) {
+        write.removeAll(olds);
     }
     
     

@@ -58,6 +58,16 @@ public class ExecutionVisitor extends DepthFirstVisitor {
     
     
     
+    /**
+     * Gets the top most element on the stack. Will throw an exception if there is no 
+     * unique result available.
+     * @return The result of the execution.
+     */
+    public Literal getSingleResult() {
+        return this.stack.peek();
+    }
+    
+    
     
     /**
      * Determines whether we have a unique result (e.g. stack has only one element).

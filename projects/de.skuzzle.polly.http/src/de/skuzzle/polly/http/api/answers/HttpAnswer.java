@@ -114,8 +114,11 @@ public abstract class HttpAnswer {
      */
     public abstract Collection<HttpCookie> getCookies();
     
+    public abstract HttpAnswer redirectTo(String url);
     
     public abstract HttpAnswer addHeader(String name, String value);
 
     public abstract HttpAnswer addCookie(HttpCookie cookie);
+    
+    public abstract HttpAnswer addCookie(String name, String value, int maxAge);
 }

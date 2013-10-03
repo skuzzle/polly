@@ -1,3 +1,21 @@
+/*
+ * Copyright 2013 Simon Taddiken
+ *
+ * This file is part of Polly HTTP API.
+ *
+ * Polly HTTP API is free software: you can redistribute it and/or modify 
+ * it under the terms of the GNU General Public License as published by 
+ * the Free Software Foundation, either version 3 of the License, or (at 
+ * your option) any later version.
+ *
+ * Polly HTTP API is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for 
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along 
+ * with Polly HTTP API. If not, see http://www.gnu.org/licenses/.
+ */
 package de.skuzzle.polly.http.internal;
 
 import java.lang.annotation.Annotation;
@@ -7,9 +25,9 @@ import java.lang.reflect.Method;
 import de.skuzzle.polly.http.api.Controller;
 import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.http.api.HttpEvent.RequestMode;
-import de.skuzzle.polly.http.api.HttpEventHandler;
+import de.skuzzle.polly.http.api.handler.HttpEventHandler;
 import de.skuzzle.polly.http.api.HttpException;
-import de.skuzzle.polly.http.api.Param;
+import de.skuzzle.polly.http.annotations.Param;
 import de.skuzzle.polly.http.api.ParameterHandler;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
@@ -22,10 +40,12 @@ class ReflectionHttpHandler implements HttpEventHandler {
     private final RequestMode mode;
     private final Controller carrier;
     private final HttpServletServerImpl parent;
+    private final boolean matchExactly;
     
     
     public ReflectionHttpHandler(RequestMode mode, String uri, Controller carrier, 
-            Method handler, HttpServletServerImpl parent) {
+            Method handler, HttpServletServerImpl parent, boolean matchExactly) {
+        this.matchExactly = matchExactly;
         this.mode = mode;
         this.carrier = carrier;
         this.uri = uri;
@@ -36,12 +56,12 @@ class ReflectionHttpHandler implements HttpEventHandler {
     
     
     @Override
-    public HttpAnswer handleHttpEvent(HttpEvent e, HttpEventHandler next)
-            throws HttpException {
+    public HttpAnswer handleHttpEvent(String registered, HttpEvent e, 
+            HttpEventHandler next) throws HttpException {
         
         if (e.getMode() != this.mode || 
-                !e.getPlainUri().equals(this.uri)) {
-            return next.handleHttpEvent(e, next);
+                this.matchExactly && !e.getPlainUri().equals(this.uri)) {
+            return next.handleHttpEvent(registered, e, next);
         }
         
         
@@ -61,10 +81,14 @@ class ReflectionHttpHandler implements HttpEventHandler {
             }
             
             // value associated with that key in the current request 
-            final String sValue = e.parameterMap(this.mode).get(key.value());
+            String sValue = e.parameterMap(this.mode).get(key.value());
             if (sValue == null) {
-                return HttpAnswers.createStringAnswer("missing parameter: " + 
-                    key.value());
+                if (key.treatEmpty()) {
+                    sValue = key.ifEmptyValue();
+                } else {
+                    return HttpAnswers.newStringAnswer("missing parameter: " + 
+                        key.value());
+                }
             }
             
             final Class<?> type = this.handler.getParameterTypes()[i];
@@ -77,9 +101,12 @@ class ReflectionHttpHandler implements HttpEventHandler {
         
         // execute the function
         try {
-            final Controller copy = this.carrier.bind(e);
+            final Controller copy = this.carrier.bind(registered, e);
             return (HttpAnswer) this.handler.invoke(copy, params);
         } catch (InvocationTargetException e1) {
+            if (e1.getTargetException() instanceof HttpException) {
+                throw (HttpException) e1.getTargetException();
+            }
             throw new HttpException(e1.getTargetException());
         } catch (Exception e1) {
             throw new HttpException(e1);

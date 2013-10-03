@@ -55,7 +55,7 @@ class CountingOutputStream extends FilterOutputStream {
     
     @Override
     public synchronized void write(byte[] b, int off, int len) throws IOException {
-        this.trafficInfo.updateUpload(len);
+        this.trafficInfo.updateUpload(Math.max(0, len));
         super.write(b, off, len);
     }
     

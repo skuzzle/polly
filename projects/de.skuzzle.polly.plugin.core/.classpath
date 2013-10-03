@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="/de.skuzzle.polly.sdk"/>
+	<classpathentry kind="src" path="/de.skuzzle.polly.tools"/>
+	<classpathentry kind="lib" path="C:/Users/Simon/Documents/Java/polly/dependency/javax.persistence_2.0.3.v201010191057.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/de.skuzzle.polly.http"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

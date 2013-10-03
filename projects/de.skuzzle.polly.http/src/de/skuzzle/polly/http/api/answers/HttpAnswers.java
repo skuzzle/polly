@@ -19,18 +19,13 @@
 package de.skuzzle.polly.http.api.answers;
 
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.skuzzle.polly.http.api.HttpServer;
 
 
 /**
@@ -49,11 +44,29 @@ public final class HttpAnswers {
      * calling this method, you may call <code>getCookies().add(...)</code> on the 
      * result to add some cookies that should be set at the client.
      * 
+     * <p>The response code of this answer is 200</p>
+     * 
      * @param message The string to send as response body.
      * @return An answer that sends back the specified string. 
      */
-    public final static HttpAnswer createStringAnswer(final String message) {
-        return new HttpBinaryAnswer(200) {
+    public final static HttpAnswer newStringAnswer(final String message) {
+        return newStringAnswer(200, message);
+    }
+    
+    
+    
+    /**
+     * Creates an answer which simply sends back the provided string to the client. After
+     * calling this method, you may call <code>getCookies().add(...)</code> on the 
+     * result to add some cookies that should be set at the client.
+     * 
+     * @param responseCode HTTP response code of this answer
+     * @param message The string to send as response body.
+     * @return An answer that sends back the specified string. 
+     */
+    public final static HttpAnswer newStringAnswer(int responseCode, 
+            final String message) {
+        return new HttpBinaryAnswer(responseCode) {
             @Override
             public void getAnswer(OutputStream out) throws IOException {
                 final Writer w = new BufferedWriter(new OutputStreamWriter(out));
@@ -65,51 +78,15 @@ public final class HttpAnswers {
     
     
     
-    /**
-     * Creates an answer which sends back the specified relative file to the client. Note
-     * that the specified path must be relative to any of the server's web root 
-     * directories, otherwise this method will throw a {@link FileNotFoundException}.
-     * After calling this method, you may call <code>getCookies().add(...)</code> on the 
-     * result to add some cookies that should be set at the client.
-     * 
-     * @param relativePath Relative path to the file which is to be sent.
-     * @param server HttpServer instance which is used to resolve the relative file.
-     * @return An answer instance for sending a file.
-     * @throws FileNotFoundException If the file could not be resolved using
-     *          {@link HttpServer#resolveRelativeFile(String)}.
-     */
-    public final static HttpAnswer createFileAnswer(final String relativePath, 
-            HttpServer server) throws FileNotFoundException {
-    
-        // check whether file exists
-        final File dest = server.resolveRelativeFile(relativePath);
-        
-        return new HttpBinaryAnswer(200) {
-            @Override
-            public void getAnswer(OutputStream out) throws IOException {
-                InputStream in = null;
-                try {
-                    in = new FileInputStream(dest);
-                    final byte[] buffer = new byte[1024];
-                    int read = in.read(buffer, 0, buffer.length);
-                    
-                    while (read != -1) {
-                        out.write(buffer, 0, read);
-                        read = in.read(buffer, 0, buffer.length);
-                    }
-                } finally {
-                    if (in != null) {
-                        in.close();
-                    }
-                }
-            }
-        };
-    }
-    
-    
-    
-    public final static HttpAnswer createTemplateAnswer(String relativeTemplatePath, 
+    @SuppressWarnings("unchecked")
+    public final static HttpAnswer newTemplateAnswer(String relativeTemplatePath, 
             Object...context) {
+        
+        if (context.length == 1 && context[0] instanceof Map) {
+            // little help for the compiler
+            return newTemplateAnswer(relativeTemplatePath, 
+                (Map<String, Object>) context[0]);
+        }
         
         if (context.length % 2 != 0) {
             throw new IllegalArgumentException("length % 2 != 0");
@@ -119,19 +96,28 @@ public final class HttpAnswers {
             c.put((String) context[i], context[i + 1]);
         }
         
-        return createTemplateAnswer(relativeTemplatePath, c);
+        return newTemplateAnswer(relativeTemplatePath, c);
     }
 
 
 
-    public final static HttpAnswer createTemplateAnswer(
+    public final static HttpAnswer newTemplateAnswer(
             final String relativeTemplatePath, 
             final Map<String, Object> context) {
         
-        return new HttpTemplateAnswer(200) {
+        return newTemplateAnswer(200, relativeTemplatePath, context);
+    }
+    
+    
+    
+    public final static HttpAnswer newTemplateAnswer(int responseCode,
+        final String relativeTemplatePath, 
+        final Map<String, Object> context) {
+    
+        return new HttpTemplateAnswer(responseCode) {
             
             @Override
-            public String getRelativeTemplatePath() {
+            public String getName() {
                 return relativeTemplatePath;
             }
             

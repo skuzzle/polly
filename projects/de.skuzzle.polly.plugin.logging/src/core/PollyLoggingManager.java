@@ -13,10 +13,12 @@ import core.filters.UserRegexFilter;
 import core.output.IrcLogOutput;
 import core.output.LogOutput;
 import core.output.PasteServiceLogOutput;
-
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.MyPolly;
-import de.skuzzle.polly.sdk.PersistenceManager;
+import de.skuzzle.polly.sdk.PersistenceManagerV2;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Atomic;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Param;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Write;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
@@ -26,7 +28,7 @@ import entities.LogEntry;
 
 public class PollyLoggingManager extends AbstractDisposable {
     
-    private PersistenceManager persistence;
+    private PersistenceManagerV2 persistence;
     private PasteServiceManager pasteServiceManager;
     
     private List<LogEntry> cache;
@@ -101,35 +103,32 @@ public class PollyLoggingManager extends AbstractDisposable {
     }
     
     
+    
+    public List<LogEntry> getAllEntries() {
+        try {
+            return this.preFilterQuery(LogEntry.ALL_LOG_ENTRIES);
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+    
+    
 
     private List<LogEntry> preFilterQuery(String queryName, String...parameter) 
             throws DatabaseException {
         this.storeCache();
-        
-        try {
-            this.persistence.readLock();
-            return this.persistence.findList(LogEntry.class, queryName,  
-                 (Object[]) parameter);
-            
-        } finally {
-            this.persistence.readUnlock();
-        }
+        return this.persistence.atomic().findList(LogEntry.class, queryName,  
+             new Param(parameter));
     }
     
     
     
     private List<LogEntry> preFilterQuery(String queryName, int limit, String...parameter) 
         throws DatabaseException {
-    this.storeCache();
-    
-    try {
-        this.persistence.readLock();
-        return this.persistence.findList(LogEntry.class, queryName, limit,  
-             (Object[]) parameter);
-        
-    } finally {
-        this.persistence.readUnlock();
-    }
+        this.storeCache();
+        return this.persistence.atomic().findList(LogEntry.class, queryName, limit,
+            new Param(parameter));
 }
     
     
@@ -200,7 +199,12 @@ public class PollyLoggingManager extends AbstractDisposable {
                 return;
             }
 
-            this.persistence.atomicPersistList(this.cache);
+            this.persistence.writeAtomic(new Atomic() {
+                @Override
+                public void perform(Write write) {
+                    write.all(cache);
+                }
+            });
             this.cache.clear();
         }
     }

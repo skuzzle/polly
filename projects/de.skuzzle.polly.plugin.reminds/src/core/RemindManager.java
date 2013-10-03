@@ -9,7 +9,6 @@ import de.skuzzle.polly.sdk.eventlistener.IrcUser;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.EMailException;
-
 import entities.RemindEntity;
 
 
@@ -120,7 +119,7 @@ public interface RemindManager extends Disposable {
     
     public abstract boolean isOnActionAvailable(String forUser);
     
-    public abstract void modifyRemind(User executor, int id, final Date dueDate, 
+    public abstract RemindEntity modifyRemind(User executor, int id, final Date dueDate, 
         final String msg) throws CommandException, DatabaseException;
     
     public abstract boolean canEdit(User user, RemindEntity remind);
@@ -135,4 +134,6 @@ public interface RemindManager extends Disposable {
     public abstract boolean isStale(String forUser);
 
     RemindEntity getLastRemind(User user);
+
+    public abstract RemindEntity getSnoozabledRemind(String userName);
 }

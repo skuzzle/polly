@@ -3,10 +3,13 @@ package commands;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
-import de.skuzzle.polly.sdk.PersistenceManager;
+import de.skuzzle.polly.sdk.PersistenceManagerV2;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Atomic;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Write;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
+import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 
@@ -45,10 +48,11 @@ public class SetMyPasswordCommand extends Command {
     
     
     @Override
-    protected void executeOnQuery(User executer, Signature signature) {
+    protected void executeOnQuery(final User executer, Signature signature) 
+            throws CommandException {
         if (this.match(signature, 0)) {
             String oldPw = signature.getStringValue(0);
-            String newPw = signature.getStringValue(1);
+            final String newPw = signature.getStringValue(1);
             
             if (!executer.checkPassword(oldPw)) {
                 this.reply(executer, "Das aktuelle Passwort stimmt nicht mit dem " +
@@ -56,17 +60,17 @@ public class SetMyPasswordCommand extends Command {
                 return;
             }
             
-            PersistenceManager persistence = this.getMyPolly().persistence();
+            final PersistenceManagerV2 persistence = this.getMyPolly().persistence();
             try {
-                persistence.writeLock();
-                persistence.startTransaction();
-                executer.setPassword(newPw);
-                persistence.commitTransaction();
-                this.reply(executer, "Dein Passwort wurde erfolgreich geändert.");
+                persistence.writeAtomic(new Atomic() {
+                    
+                    @Override
+                    public void perform(Write write) {
+                        executer.setPassword(newPw);
+                    }
+                });
             } catch (DatabaseException e) {
-                this.reply(executer, "Interner Datenbankfehler.");
-            } finally {
-                persistence.writeUnlock();
+                throw new CommandException(e);
             }
         }
     }

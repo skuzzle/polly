@@ -1,8 +1,10 @@
 package polly.logging;
 
 
-import http.SearchHttpAction;
-import http.ReplayHttpAction;
+import http.AllDayFilter;
+import http.LogEntryTableModel;
+import http.LoggingController;
+import http.ReplayTableModel;
 
 import java.io.IOException;
 
@@ -11,7 +13,6 @@ import commands.ReplayCommand;
 import commands.SeenCommand;
 import commands.UserLogCommand;
 
-import core.DefaultLogFormatter;
 import core.ForwardHighlightHandler;
 import core.IrcLogCollector;
 import core.PollyLoggingManager;
@@ -19,6 +20,7 @@ import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.ConfigurationProvider;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.constraints.Constraints;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
@@ -26,6 +28,9 @@ import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
 import de.skuzzle.polly.sdk.exceptions.RoleException;
+import de.skuzzle.polly.sdk.httpv2.MenuCategory;
+import de.skuzzle.polly.sdk.httpv2.html.HTMLTable;
+import de.skuzzle.polly.sdk.httpv2.html.HTMLTableModel;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import entities.LogEntry;
 
@@ -51,7 +56,7 @@ public class MyPlugin extends PollyPlugin {
     public final static int DEFAULT_MAX_LOGS        = 100;
     
     public final static String FORWARD_HIGHLIGHTS         = "FORWARD_HIGHLIGHTS";
-    public final static String DEFAULT_FORWARD_HIGHLIGHTS = "false";
+    public final static Types DEFAULT_FORWARD_HIGHLIGHTS  = new Types.BooleanType(false);
     
     private IrcLogCollector logCollector;
     private PollyLoggingManager logManager;
@@ -101,11 +106,21 @@ public class MyPlugin extends PollyPlugin {
         this.highlightForwarder = new ForwardHighlightHandler(myPolly, this.logManager);
         myPolly.irc().addMessageListener(this.highlightForwarder);
         
-        myPolly.web().addMenuUrl("Logging", "Replay");
-        //myPolly.web().addMenuUrl("Logging", "Search");
-        myPolly.web().addHttpAction(new ReplayHttpAction(myPolly, 
-                new DefaultLogFormatter(), this.logManager));
-        myPolly.web().addHttpAction(new SearchHttpAction(myPolly));
+        
+        myPolly.webInterface().addCategory(new MenuCategory(1, "Logging"));
+        myPolly.webInterface().getServer().addController(new LoggingController(myPolly, logManager));
+        
+        final HTMLTableModel<LogEntry> model = new LogEntryTableModel(logManager, myPolly);
+        final HTMLTableModel<LogEntry> replayModel = new ReplayTableModel(logManager, myPolly);
+        
+        final HTMLTable<LogEntry> logTable = new HTMLTable<LogEntry>("allLogs", model, myPolly);
+        final HTMLTable<LogEntry> replayTable = new HTMLTable<LogEntry>("replay", replayModel, myPolly);
+        
+        logTable.setFilter(new AllDayFilter(myPolly));
+        replayTable.setFilter(new AllDayFilter(myPolly));
+        
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/allLogs", logTable);
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/replay", replayTable);
     }
     
     
@@ -114,7 +129,9 @@ public class MyPlugin extends PollyPlugin {
     public void onLoad() {
         try {
             this.getMyPolly().users().addAttribute(FORWARD_HIGHLIGHTS, 
-                DEFAULT_FORWARD_HIGHLIGHTS, Constraints.BOOLEAN);
+                DEFAULT_FORWARD_HIGHLIGHTS, 
+                "Send an email if polly notices that your nickname is mentioned", 
+                "Logging", Constraints.BOOLEAN);
         } catch (DatabaseException e) {
             e.printStackTrace();
         }

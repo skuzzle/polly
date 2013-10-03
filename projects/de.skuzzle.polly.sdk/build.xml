@@ -22,41 +22,11 @@
     -->
     <property name="dependencies.internal" value="
         **/polly.tools.jar
+        **/polly.http.jar
     "/>
    
     
     
     <!-- Import all important build targets. -->
     <import file="../common.xml" as="base"/>
-    
-    
-    
-    <!-- 
-        Buildpath for eclipse. This should exclude the libraries that will be
-        referenced as eclipse projects.
-    -->
-    <path id="buildpath.eclipse">
-        <fileset dir="${lib.dir}" 
-            includes="${dependencies}"
-            excludes=""/>
-    </path>
-
-    
-    
-    <!--
-        Creates eclipse project files for this ant file.
-        Requires ant task from http://ant-eclipse.sourceforge.net/
-    -->
-    <target name="eclipse">
-        <taskdef name="eclipse" classname="prantl.ant.eclipse.EclipseTask" />
-        <eclipse mode="java">
-            <project name="${ant.project.name}"/>
-            <classpath>
-                <source path="${src.dir}"/>
-                <source path="/de.skuzzle.polly.tools"/>
-                <output path="${build.debug.dir}"/>
-                <library pathref="buildpath.eclipse"/>
-            </classpath>
-        </eclipse>
-    </target>
 </project>

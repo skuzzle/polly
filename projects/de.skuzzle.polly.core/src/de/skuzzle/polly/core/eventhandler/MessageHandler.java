@@ -4,7 +4,7 @@ import java.util.concurrent.ExecutorService;
 
 import org.apache.log4j.Logger;
 
-import de.skuzzle.polly.core.internal.users.User;
+import de.skuzzle.polly.core.internal.users.UserImpl;
 import de.skuzzle.polly.core.internal.users.UserManagerImpl;
 import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
 import de.skuzzle.polly.sdk.CommandManager;
@@ -70,7 +70,7 @@ public class MessageHandler implements MessageListener {
     
     
     private void execute(final MessageEvent e, final boolean isQuery) {
-        final de.skuzzle.polly.core.internal.users.User executor = this.getUser(e.getUser());
+        final de.skuzzle.polly.core.internal.users.UserImpl executor = this.getUser(e.getUser());
         executor.setLastMessageTime(System.currentTimeMillis());
         
         Runnable command = new Runnable() {
@@ -131,10 +131,10 @@ public class MessageHandler implements MessageListener {
     
     
     
-    private de.skuzzle.polly.core.internal.users.User getUser(IrcUser user) {
-        de.skuzzle.polly.core.internal.users.User u = (de.skuzzle.polly.core.internal.users.User) this.userManager.getUser(user);
+    private de.skuzzle.polly.core.internal.users.UserImpl getUser(IrcUser user) {
+        de.skuzzle.polly.core.internal.users.UserImpl u = (de.skuzzle.polly.core.internal.users.UserImpl) this.userManager.getUser(user);
         if (u == null) {
-            u = (User) this.userManager.createUser("~UNKNOWN", "blabla");
+            u = (UserImpl) this.userManager.createUser("~UNKNOWN", "blabla");
             u.setCurrentNickName(user.getNickName());
         }
         return u;

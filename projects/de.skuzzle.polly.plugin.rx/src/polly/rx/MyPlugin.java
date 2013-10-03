@@ -16,9 +16,9 @@ import polly.rx.commands.VenadCommand;
 import polly.rx.core.FleetDBManager;
 import polly.rx.core.ScoreBoardManager;
 import polly.rx.core.TrainManagerV2;
+import polly.rx.entities.BattleDrop;
 import polly.rx.entities.BattleReport;
 import polly.rx.entities.BattleReportShip;
-import polly.rx.entities.BattleDrop;
 import polly.rx.entities.FleetScan;
 import polly.rx.entities.FleetScanHistoryEntry;
 import polly.rx.entities.FleetScanShip;
@@ -27,23 +27,19 @@ import polly.rx.entities.TrainEntity;
 import polly.rx.entities.TrainEntityV2;
 import polly.rx.entities.TrainEntityV3;
 import polly.rx.entities.V2ToV3TrainEntityConverter;
-import polly.rx.http.FleetScanInfoHttpAction;
-import polly.rx.http.FleetShipInfoHttpAction;
-import polly.rx.http.FleetScanHttpAction;
-import polly.rx.http.MyTrainsHttpAction;
-import polly.rx.http.PostScoreboardHttpAction;
-import polly.rx.http.QueryOwnerHttpAction;
-import polly.rx.http.ScoreBoardCompareHttpAction;
-import polly.rx.http.ScoreBoardHttpAction;
-import polly.rx.http.ScoreBoardDetailsHttpAction;
-import polly.rx.http.TrainerHttpAction;
-import polly.rx.http.battlereports.AddBattleReportAction;
-import polly.rx.http.battlereports.BattleReportFilterHttpAction;
-import polly.rx.http.battlereports.BattleReportHttpAction;
-import polly.rx.http.battlereports.BattleReportInfosHttpAction;
-import polly.rx.http.battlereports.QzoneBattleReporter;
+import polly.rx.httpv2.BattleReportModel;
+import polly.rx.httpv2.FleetScanShipTableModel;
+import polly.rx.httpv2.FleetScanTableModel;
+import polly.rx.httpv2.FleetScansWithShipModel;
+import polly.rx.httpv2.RXController;
+import polly.rx.httpv2.ScoreboardDetailModel;
+import polly.rx.httpv2.ScoreboardTableModel;
+import polly.rx.httpv2.ShipsForScanTableModel;
+import polly.rx.httpv2.StatisticsGatherer;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
+import de.skuzzle.polly.sdk.Types;
+import de.skuzzle.polly.sdk.Types.NumberType;
 import de.skuzzle.polly.sdk.constraints.AttributeConstraint;
 import de.skuzzle.polly.sdk.constraints.Constraints;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
@@ -52,6 +48,9 @@ import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
 import de.skuzzle.polly.sdk.exceptions.PluginException;
 import de.skuzzle.polly.sdk.exceptions.RoleException;
+import de.skuzzle.polly.sdk.httpv2.MenuCategory;
+import de.skuzzle.polly.sdk.httpv2.html.HTMLTable;
+import de.skuzzle.polly.sdk.httpv2.html.HTMLTableModel;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 
 
@@ -109,13 +108,6 @@ public class MyPlugin extends PollyPlugin {
         this.addCommand(new CrackerCommand(myPolly));
         this.addCommand(new RessComand(myPolly));
         
-        
-        myPolly.web().addMenuUrl("Revorix", "MyTrains");
-        myPolly.web().addMenuUrl("Revorix", "Trainer");
-        
-        myPolly.web().addHttpAction(new MyTrainsHttpAction(myPolly, this.trainManager));
-        myPolly.web().addHttpAction(new TrainerHttpAction(myPolly, this.trainManager));
-        
         /* fleet db related */
         
         
@@ -127,33 +119,42 @@ public class MyPlugin extends PollyPlugin {
         myPolly.persistence().registerEntity(FleetScan.class);
         myPolly.persistence().registerEntity(FleetScanHistoryEntry.class);
         myPolly.persistence().registerEntity(FleetScanShip.class);
-        
-        myPolly.web().addHttpAction(new BattleReportInfosHttpAction(
-            myPolly, this.fleetDBManager));
-        myPolly.web().addHttpAction(new BattleReportHttpAction(
-            myPolly, this.fleetDBManager));
-        myPolly.web().addHttpAction(new BattleReportFilterHttpAction(
-            myPolly, this.fleetDBManager));
-        myPolly.web().addHttpAction(new AddBattleReportAction(
-            myPolly, this.fleetDBManager));
-        myPolly.web().addMenuUrl("Revorix", "Kampfberichte");
-        
-        
-        myPolly.web().addMenuUrl("Revorix", "FleetScans");
-        myPolly.web().addHttpAction(new FleetScanHttpAction(myPolly, this.fleetDBManager));
-        myPolly.web().addHttpAction(new FleetShipInfoHttpAction(myPolly, this.fleetDBManager));
-        myPolly.web().addHttpAction(new FleetScanInfoHttpAction(myPolly, this.fleetDBManager));
-        myPolly.web().addHttpAction(new QueryOwnerHttpAction(myPolly, this.fleetDBManager));
-        
-        myPolly.persistence().registerEntity(ScoreBoardEntry.class);
-        this.sbeManager = new ScoreBoardManager(myPolly.persistence());
-        myPolly.web().addMenuUrl("Revorix", "Scoreboard");
-        myPolly.web().addHttpAction(new ScoreBoardHttpAction(myPolly, this.sbeManager));
-        myPolly.web().addHttpAction(new ScoreBoardDetailsHttpAction(myPolly, this.sbeManager));
-        myPolly.web().addHttpAction(new ScoreBoardCompareHttpAction(myPolly, this.sbeManager));
-        myPolly.web().addHttpAction(new PostScoreboardHttpAction(myPolly, this.sbeManager));
-        myPolly.web().addHttpAction(new QzoneBattleReporter(myPolly, this.fleetDBManager));
         this.addCommand(new RankCommand(myPolly, this.sbeManager));
+        
+        
+        myPolly.webInterface().addCategory(new MenuCategory(0, "Revorix"));
+        myPolly.webInterface().getServer().addController(new RXController(myPolly, fleetDBManager, sbeManager));
+        
+        final HTMLTableModel<FleetScan> scanModel = new FleetScanTableModel(fleetDBManager);
+        final HTMLTable<FleetScan> fleetScanTable = new HTMLTable<FleetScan>("fleetScans", scanModel, myPolly);
+        
+        final HTMLTableModel<FleetScanShip> scanShipModel = new FleetScanShipTableModel(fleetDBManager);
+        final HTMLTable<FleetScanShip> fleetScanShipTable = new HTMLTable<FleetScanShip>("ships", scanShipModel, myPolly);
+        
+        final HTMLTableModel<FleetScan> scansWithShip = new FleetScansWithShipModel(fleetDBManager);
+        final HTMLTable<FleetScan> scansWithShipTable = new HTMLTable<FleetScan>("scansWithShip", scansWithShip, myPolly);
+        
+        final HTMLTableModel<FleetScanShip> shipsForScanModel = new ShipsForScanTableModel(fleetDBManager);
+        final HTMLTable<FleetScanShip> shipsForScanTable = new HTMLTable<FleetScanShip>("ships", shipsForScanModel, myPolly);
+        
+        final HTMLTableModel<ScoreBoardEntry> scoreboard = new ScoreboardTableModel(sbeManager);
+        final HTMLTable<ScoreBoardEntry> scoreboardTable = new HTMLTable<ScoreBoardEntry>("scoreboard", scoreboard, myPolly);
+        
+        final HTMLTableModel<ScoreBoardEntry> scoreboardDetail = new ScoreboardDetailModel(sbeManager);
+        final HTMLTable<ScoreBoardEntry> scoreboardDetailTable = new HTMLTable<>("entries", scoreboardDetail, myPolly);
+        
+        final HTMLTableModel<BattleReport> reportModel = new BattleReportModel(fleetDBManager);
+        final HTMLTable<BattleReport> reportTabble = new HTMLTable<BattleReport>("reports", reportModel, myPolly);
+        final StatisticsGatherer statsGatherer = new StatisticsGatherer();
+        reportTabble.addModelListener(statsGatherer);
+        
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/allFleetScans", fleetScanTable);
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/allFleetScanShips", fleetScanShipTable);
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/scansWithShip", scansWithShipTable);
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/shipsForScan", shipsForScanTable);
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/scoreboard", scoreboardTable);
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/scoreboardDetail", scoreboardDetailTable);
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/allReports", reportTabble);
     }
     
     
@@ -216,18 +217,26 @@ public class MyPlugin extends PollyPlugin {
     @Override
     public void onLoad() throws PluginException {
         try {
-            this.getMyPolly().users().addAttribute(VENAD, "<unbekannt>");
-            this.getMyPolly().users().addAttribute("AZ", "0", Constraints.INTEGER);
-            this.getMyPolly().users().addAttribute(CRACKER, "0", Constraints.INTEGER);
-            this.getMyPolly().users().addAttribute(MAX_MONTHS, "24", new AttributeConstraint() {
+            final String category = "Revorix";
+            this.getMyPolly().users().addAttribute(VENAD, 
+                new Types.StringType("<unbekannt>"), "Set your revorix Venad name", 
+                category);
+            this.getMyPolly().users().addAttribute(CRACKER, new Types.NumberType(0.0),
+                "Your polly crackers. Do not edit this if you are fair!", category,
+                Constraints.INTEGER);
+            this.getMyPolly().users().addAttribute(MAX_MONTHS, 
+                new Types.NumberType(24.0), 
+                "Maximum number of months to display in scoreboard graphic", category, 
+                new AttributeConstraint() {
                 @Override
-                public boolean accept(String value) {
-                    try {
-                        int i = Integer.parseInt(value);
-                        return i >= 2 && i <= 24;
-                    } catch (NumberFormatException e) {
-                        return false;
+                public boolean accept(Types value) {
+                    if (value instanceof NumberType) {
+                        final NumberType nt = (NumberType) value;
+                        return nt.isInteger() && 
+                            nt.getValue() > 2.0 && 
+                            nt.getValue() <= 24.0;
                     }
+                    return false;
                 }
             });
         } catch (Exception ignore) {

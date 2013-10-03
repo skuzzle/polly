@@ -9,18 +9,20 @@ import java.util.Timer;
 
 import org.apache.log4j.Logger;
 
-
 import polly.reminds.MyPlugin;
-
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.IrcManager;
 import de.skuzzle.polly.sdk.MailManager;
 import de.skuzzle.polly.sdk.MyPolly;
-import de.skuzzle.polly.sdk.PersistenceManager;
+import de.skuzzle.polly.sdk.PersistenceManagerV2;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Atomic;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Write;
+import de.skuzzle.polly.sdk.Types.BooleanType;
+import de.skuzzle.polly.sdk.Types.StringType;
+import de.skuzzle.polly.sdk.Types.TimespanType;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
-import de.skuzzle.polly.sdk.WriteAction;
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
@@ -42,7 +44,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     private final static long AUTO_SNOOZE_WAIT_TIME = Milliseconds.fromMinutes(5);
     
     public final static RemindFormatter DEFAULT_FORMAT = 
-        PatternRemindFormatter.forPattern(MyPlugin.REMIND_FORMAT_VALUE);
+        PatternRemindFormatter.forPattern(MyPlugin.REMIND_FORMAT_VALUE.getValue());
     
     // XXX: special case for clum
     private final static RemindFormatter heidiFormat = new HeidiRemindFormatter();
@@ -51,7 +53,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     
     private MailManager mails;
     private IrcManager irc;
-    private PersistenceManager persistence;
+    private PersistenceManagerV2 persistence;
     private UserManager userManager;
     private RoleManager roleManager;
     private Timer remindScheduler;
@@ -209,9 +211,11 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     public void deliverLater(final RemindEntity remind, User forUser, boolean wasIdle, 
                 boolean online) throws DatabaseException, EMailException {
         logger.trace("Delivering later. Checking if remind schould be delivered as mail");
-        boolean asMail = forUser.getAttribute(MyPlugin.LEAVE_AS_MAIL).equals("true");
-        boolean doubleDelivery = forUser.getAttribute(
-                MyPlugin.REMIND_DOUBLE_DELIVERY).equals("true");
+        boolean asMail = ((BooleanType) forUser.getAttribute(
+            MyPlugin.LEAVE_AS_MAIL)).getValue();
+        boolean doubleDelivery = ((BooleanType) forUser.getAttribute(
+                MyPlugin.REMIND_DOUBLE_DELIVERY)).getValue();
+        
         logger.trace("As Mail: " + asMail);
         logger.trace("Double-delivery: " + doubleDelivery);
         
@@ -293,12 +297,16 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     
     
     private final void checkTriggerAutoSnooze(User forUser) {
+        final BooleanType autoSnooze = (BooleanType) forUser.getAttribute(
+            MyPlugin.AUTO_SNOOZE);
+        
         if (!this.userManager.isSignedOn(forUser)) {
             return;
-        } else if (forUser.getAttribute(MyPlugin.AUTO_SNOOZE).equals("false")) {
+        } else if (!autoSnooze.getValue()) {
             return;
         }
-        String indicator = forUser.getAttribute(MyPlugin.AUTO_SNOOZE_INDICATOR);
+        String indicator = ((StringType) forUser.getAttribute(
+            MyPlugin.AUTO_SNOOZE_INDICATOR)).getValue();
         this.irc.sendMessage(forUser.getCurrentNickName(), 
             "Auto Snooze aktiv. Schreibe '" + indicator + 
             "' um deine letzte Erinnerung zu verlängern.", this);
@@ -315,7 +323,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
                 throws DatabaseException, EMailException {
         logger.trace("Delivering " + remind + " now as mail");
         
-        String mail = forUser.getAttribute(MyPlugin.EMAIL);
+        String mail = ((StringType) forUser.getAttribute(MyPlugin.EMAIL)).getValue();
         if (mail.equals(MyPlugin.DEFAULT_EMAIL)) {
             logger.warn("Destination user has no valid email address set");
             RemindEntity r = new RemindEntity(
@@ -400,11 +408,13 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
             this.sleeping.put(remind.getForUser(), remind);
         }
         // get sleep time:
-        int sleepTime = Integer.parseInt(forUser.getAttribute(MyPlugin.SNOOZE_TIME));
+        final TimespanType sleepTime = (TimespanType) 
+            forUser.getAttribute(MyPlugin.SNOOZE_TIME);
+        
         logger.trace("Snooze time for " + forUser + ": " + sleepTime);
-        if (sleepTime > 0) {
+        if (sleepTime.getSpan() > 0) {
             SleepTask task = new SleepTask(this, remind.getForUser());
-            this.remindScheduler.schedule(task, sleepTime);
+            this.remindScheduler.schedule(task, sleepTime.getSpan() * 1000);
         }
     }
     
@@ -464,17 +474,26 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     public RemindEntity snooze(User executor) throws DatabaseException,
             CommandException {
         
-        boolean useSnoozeTime = executor.getAttribute(
-            MyPlugin.USE_SNOOZE_TIME).equals("true");
+        boolean useSnoozeTime = ((BooleanType) executor.getAttribute(
+            MyPlugin.USE_SNOOZE_TIME)).getValue();
+        
         if (useSnoozeTime) {
-            int defaultRemindTime = Integer.parseInt(
-                executor.getAttribute(MyPlugin.DEFAULT_REMIND_TIME));
+            TimespanType defaultRemindTime = (TimespanType) 
+                executor.getAttribute(MyPlugin.DEFAULT_REMIND_TIME);
             return this.snooze(executor, 
-                new Date(Time.currentTimeMillis() + defaultRemindTime));
+                new Date(Time.currentTimeMillis() + defaultRemindTime.getSpan() * 1000));
         } else {
             return this.snooze(executor, null);
         }
-        
+    }
+    
+    
+    
+    @Override
+    public RemindEntity getSnoozabledRemind(String name) {
+        synchronized (this.sleeping) {
+            return this.sleeping.get(name);
+        }
     }
     
     
@@ -482,14 +501,14 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     @Override
     public RemindEntity toggleIsMail(User executor, int id)
             throws DatabaseException, CommandException {
-        final RemindEntity remind = this.persistence.atomicRetrieveSingle(
+        final RemindEntity remind = this.persistence.atomic().find(
             RemindEntity.class, id);
         
         logger.trace("Toggeling delivery of " + remind);
         this.checkRemind(executor, remind, id);
-        this.persistence.atomicWriteOperation(new WriteAction() {
+        this.persistence.writeAtomic(new Atomic() {
             @Override
-            public void performUpdate(PersistenceManager persistence) {
+            public void perform(Write write) {
                 remind.setIsMail(!remind.isMail());
             }
         });
@@ -524,7 +543,8 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
             return special;
         }
         
-        String pattern = user.getAttribute(MyPlugin.REMIND_FORMAT_NAME);
+        final String pattern = ((StringType) 
+            user.getAttribute(MyPlugin.REMIND_FORMAT_NAME)).getValue();
         if (pattern == null) {
             return DEFAULT_FORMAT;
         }
@@ -535,8 +555,9 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
 
     @Override
     public boolean isIdle(User user) {
-        long lastMsg = Long.parseLong(user.getAttribute(MyPlugin.REMIND_IDLE_TIME));
-        return Time.currentTimeMillis() - user.getLastMessageTime() > lastMsg;
+        final TimespanType remindIdleTime = (TimespanType) 
+            user.getAttribute(MyPlugin.REMIND_IDLE_TIME); 
+        return Time.currentTimeMillis() - user.getLastMessageTime() > remindIdleTime.getSpan() * 1000;
     }
     
     
@@ -556,21 +577,26 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     
     
     @Override
-    public void modifyRemind(User executor, int id, final Date dueDate, final String msg)
+    public RemindEntity modifyRemind(User executor, int id, final Date dueDate, final String msg)
             throws CommandException, DatabaseException {
         logger.trace("User " + executor + " requested to modify remind with id " + id);
         final RemindEntity remind = this.dbWrapper.getRemind(id);
     
         this.checkRemind(executor, remind, id);
         this.cancelScheduledRemind(id);
-        this.persistence.atomicWriteOperation(new WriteAction() {
+        this.persistence.writeAtomic(new Atomic() {
             @Override
-            public void performUpdate(PersistenceManager persistence) {
-                remind.setDueDate(dueDate);
-                remind.setMessage(msg);
+            public void perform(Write write) {
+                if (dueDate != null) {
+                    remind.setDueDate(dueDate);
+                }
+                if (msg != null) {
+                    remind.setMessage(msg);
+                }
             }
         });
-        this.scheduleRemind(remind, dueDate);
+        this.scheduleRemind(remind, dueDate == null ? remind.getDueDate() : dueDate);
+        return remind;
     }
     
     
@@ -603,7 +629,10 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
     public void traceNickChange(IrcUser oldUser, final IrcUser newUser) {
         logger.trace("tracing nickchange " + oldUser + " -> " + newUser);
         User oldForUser = this.getUser(oldUser.getNickName());
-        if (oldForUser.getAttribute(MyPlugin.REMIND_TRACK_NICKCHANGE).equals("false")) {
+        final BooleanType track = (BooleanType) oldForUser.getAttribute(
+            MyPlugin.REMIND_TRACK_NICKCHANGE); 
+        
+        if (!track.getValue()) {
             logger.trace("User doesnt want this nickchange to be tracked");
             return;
         }
@@ -626,10 +655,9 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
                 return;
             }
             
-            this.persistence.atomicWriteOperation(new WriteAction() {
-                
+            this.persistence.writeAtomic(new Atomic() {
                 @Override
-                public void performUpdate(PersistenceManager persistence) {
+                public void perform(Write write) {
                     for (RemindEntity remind : reminds) {
                         remind.setForUser(newUser.getNickName());
                     }

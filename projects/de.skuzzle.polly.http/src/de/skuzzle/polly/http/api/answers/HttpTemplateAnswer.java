@@ -28,10 +28,6 @@ import java.util.Map;
  * own {@link HttpHandler} if you implement this interface (unless you need special 
  * treatment for your implementation).</p>
  * 
- * <p>The path to the template file must be relative to any of the 
- * {@link HttpServer HttpServer's} web roots in order for this answer to being 
- * successfully handled.</p>
- * 
  * <p>You can obtain concrete instances of this interface using {@link HttpAnswers}.</p>
  * 
  * @author Simon Taddiken
@@ -45,13 +41,43 @@ public abstract class HttpTemplateAnswer extends AbstractHttpAnswer {
     
     
     /**
-     * Returns a relative path to the velocity template file that should be rendered. The 
-     * returned path must be relative to any of the {@link HttpServer HttpServer's} web 
-     * root directories.
+     * Creates a new chained template answer. It will use the template path of the answer
+     * this method was invoked on. The context created by {@link #getAnswer(Map)} will 
+     * contain all key-value pairs from this and the passed context. Also, headers and 
+     * cookies from both answer will be merged.
+     * 
+     * @param other The template answer to chain to this answer.
+     * @return A new HttpTemplateAnswer
+     */
+    public HttpTemplateAnswer chain(final HttpTemplateAnswer other) {
+        final HttpTemplateAnswer result = new HttpTemplateAnswer(this.getResponseCode()) {
+            
+            @Override
+            public String getName() {
+                return HttpTemplateAnswer.this.getName();
+            }
+            
+            
+            
+            @Override
+            public void getAnswer(Map<String, Object> mappings) {
+                HttpTemplateAnswer.this.getAnswer(mappings);
+                other.getAnswer(mappings);
+            }
+        };
+        result.getCookies().addAll(this.getCookies());
+        result.getCookies().addAll(other.getCookies());
+        result.getResponseHeaders().putAll(other.getResponseHeaders());
+        return result;
+    }
+    
+    
+    /**
+     * Returns a relative path to the velocity template file that should be rendered.
      * 
      * @return relative template file path.
      */
-    public abstract String getRelativeTemplatePath();
+    public abstract String getName();
     
     /**
      * This method must fill the provided map with own velocity context mappings for the 

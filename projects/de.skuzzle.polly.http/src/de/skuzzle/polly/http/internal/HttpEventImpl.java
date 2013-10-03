@@ -20,12 +20,13 @@ package de.skuzzle.polly.http.internal;
 
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import com.sun.net.httpserver.HttpExchange;
 
 import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.http.api.HttpServer;
@@ -34,7 +35,7 @@ import de.skuzzle.polly.http.api.HttpSession;
 
 class HttpEventImpl implements HttpEvent {
 
-    private final HttpServer source;
+    private final transient HttpServer source;
     private final URI requestUri;
     private final String plainUri;
     private final InetSocketAddress clientIp;
@@ -45,23 +46,45 @@ class HttpEventImpl implements HttpEvent {
     private final RequestMode mode;
     private Map<String, String> combinedParameters;
     private Map<String, String> postGet;
+    private final Date creationTime;
+    private final List<Listener> closeListener;
+    private boolean discarded;
     
     
     
-    public HttpEventImpl(HttpServer source, RequestMode mode, HttpExchange t, 
+    public HttpEventImpl(HttpServer source, RequestMode mode, URI requestURI, 
+        InetSocketAddress remoteAddress,
         String plainUri, HttpSession session, Map<String, String> cookies, 
         Map<String, String> get, Map<String, String> post) {
         
         this.source = source;
         this.mode = mode;
-        this.requestUri = t.getRequestURI();
+        this.requestUri = requestURI;
         this.plainUri = plainUri;
-        this.clientIp = t.getRemoteAddress();
+        this.clientIp = remoteAddress;
         this.session = session;
         
         this.cookies = Collections.unmodifiableMap(cookies);
         this.get = Collections.unmodifiableMap(get);
         this.post = Collections.unmodifiableMap(post);
+        this.closeListener = new ArrayList<>();
+        
+        this.creationTime = new Date();
+    }
+    
+    
+    
+    
+    public HttpEventImpl copy() {
+        return new HttpEventImpl(this.source, this.mode, this.requestUri, this.clientIp,
+            this.plainUri, null, this.cookies, this.get, this.post);
+    }
+    
+    
+    
+    @Override
+    public Date getEventTime() {
+        return this.creationTime;
     }
     
     
@@ -195,5 +218,34 @@ class HttpEventImpl implements HttpEvent {
     @Override
     public HttpSession getSession() {
         return this.session;
-    }    
+    }
+    
+    
+    
+    @Override
+    public void onClose(Listener listener) {
+        this.closeListener.add(listener);
+    }
+    
+    
+    
+    public void discard() {
+        // note: this method is implemented anonymously in BasicEventHandler
+        this.discarded = true;
+    }
+    
+    
+    
+    @Override
+    public boolean isDiscarded() {
+        return this.discarded;
+    }
+    
+    
+    
+    void fireOnClose() {
+        for (final Listener listener : this.closeListener) {
+            listener.action(this);
+        }
+    }
 }

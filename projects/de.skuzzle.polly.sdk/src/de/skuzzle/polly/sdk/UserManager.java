@@ -2,6 +2,7 @@ package de.skuzzle.polly.sdk;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -270,10 +271,12 @@ public interface UserManager {
 	 * @param name the new attributes name.
 	 * @param defaultValue The default value for the new attribute. This value will be 
 	 *     assigned to each user.
+	 * @param description Descriptive string for this attribute.
+     * @param category Category for grouping attributes.
 	 * @throws DatabaseException If storing the new attribute fails for any reason.
 	 */
-	public abstract void addAttribute(String name, String defaultValue) 
-	        throws DatabaseException;
+	public abstract void addAttribute(String name, Types defaultValue, 
+	        String description, String category) throws DatabaseException;
 	
 	
 	
@@ -293,12 +296,14 @@ public interface UserManager {
      * @param name the new attributes name.
      * @param defaultValue The default value for the new attribute. This value will be 
      *     assigned to each user.
+     * @param description Descriptive string for this attribute.
+     * @param category Category for grouping attributes.
      * @param constraint {@link AttributeConstraint} instance which limits possible values
      *          for the new attribute.
      * @throws DatabaseException If storing the new attribute fails for any reason.
      */
-    void addAttribute(String name, String defaultValue,
-        AttributeConstraint constraint) throws DatabaseException;
+    void addAttribute(String name, Types defaultValue, String description, 
+        String category, AttributeConstraint constraint) throws DatabaseException;
     
     
 	
@@ -318,14 +323,16 @@ public interface UserManager {
 	 * value matches the constraint given for that attribute. If so, the new value will 
 	 * be stored.
 	 * 
+	 * @param executor The user who initiated the action of setting the attribute's value.
 	 * @param user The user for which the attribute should be set.
 	 * @param attribute The attributes name.
 	 * @param value The new value for this attribute.
-	 * @throws DatabaseException If the value doesnt match the constraint for this
+	 * @return The new value of the attribute.
+	 * @throws ConstraintException If the value doesn't match the constraint for this
 	 *             attribute.
-	 * @throws ConstraintException If storing the new attribute fails for any reason.
+	 * @throws DatabaseException If storing the new attribute fails for any reason.
 	 */
-    void setAttributeFor(User user, String attribute, String value)
+    String setAttributeFor(User executor, User user, String attribute, String value)
         throws DatabaseException, ConstraintException;
 	
 	
@@ -347,4 +354,12 @@ public interface UserManager {
      */
 	public void removeUserListener(UserListener listener);
 
+
+	
+	/**
+	 * Gets all existing user attributes mapped to their categories.
+	 * 
+	 * @return Map of categories to user attributes.
+	 */
+    Map<String, List<Attribute>> getAllAttributes();
 }

@@ -1,0 +1,371 @@
+* {
+    padding: 0px;
+    margin: 0px;
+    font-family: Verdana, Arial
+}
+
+
+body {
+    /*background: url(files/imgv2/content_back.png) repeat-x fixed;*/
+}
+
+
+#top {
+    background: url(files/imgv2/top.png) repeat-x;
+    width: 100%;
+    height: 30px;
+}
+
+#top .copyRight {
+    font-size: x-small;
+    float: left;
+    padding: 8px;
+    color: #555555;
+}
+
+a.showContent {
+    font-weight:bold;
+    padding-top: 3px;
+    color: black;
+    text-decoration: none;
+    font-size: small;
+    width: 40px;
+    height: 19px;
+    display: block;
+    text-align: center;
+    border-bottom: 3px solid transparent;
+}
+
+a.showContent:hover {
+    border-bottom: 3px solid #3333ff;
+}
+
+
+
+
+#top ul {
+    list-style-type: none;
+    margin-right: 10px;
+}
+
+#top ul li {
+    float: right;
+    padding-top: 5px;
+    display: block;
+    height: 23px;
+    margin-right: 20px;
+    font-size: small;
+    color: #aaaaaa
+}
+
+#top ul li a {
+    display: block;
+    height: 23px;
+    text-decoration: none;
+    color: black;
+    border-bottom: 3px solid transparent;
+}
+
+
+#userMenuUl {
+    list-style-type: none;
+    display: none;
+}
+#userMenuUl li {
+    display: block;
+    float: none;
+    background: url(files/imgv2/content_back.png) repeat-x;
+}
+
+#login {
+    float: right;
+    padding-top: 2px;
+    margin-right: 10px;
+}
+
+label {
+    font-weight: bold;
+}
+.textbox {
+    border: 1px solid #cccccc;
+    width: 250px;
+}
+
+.select {
+    border: 1px solid #cccccc;
+    width: 250px;
+}
+
+.select:hover {
+    border: 1px solid #999999;
+}
+
+.textbox:hover {
+    border: 1px solid #999999;
+}
+
+.button {
+
+}
+
+.loginInput {
+    width: 100px;
+}
+
+#header {
+    background: url(files/imgv2/header.png) ;
+    width: 100%;
+    height: 120px;
+}
+
+#header h1 {
+    color: white;
+    font-family: Arial;
+    font-variant: small-caps;
+    float: left;
+    margin-left: 25px;
+    letter-spacing: 3px;
+}
+
+#header a {
+    color: white;
+    text-decoration: none;
+}
+#header img {
+    vertical-align: middle;
+    margin-right: 20px;
+}
+
+#header #notification {
+    float: right;
+    margin-right: 20px;
+    background: url(files/imgv2/notification.png) no-repeat;
+    display: none;
+    font-size: x-small;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 15px;
+    width: 200px;
+    height: 25px;
+    color: black;
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+}
+
+#notification img {
+    padding-right: 2px;
+    padding-left: 5px;
+}
+
+#menucontent {
+    position: absolute;
+    top: 30px;
+    left: 0;
+    display: none;
+    background: url(files/imgv2/nav_back.png) fixed;
+    width: 100%;
+    height: 120px;
+    color: white;
+}
+
+.menuGroup {
+    float: left;
+    margin: 5px;
+    margin-left: 30px;
+    height: 111px;
+}
+
+#menuDescription {
+    float: left;
+    font-size: x-small;
+    letter-spacing:0.1em; 
+    max-height: 80px;
+    max-width: 350px;
+    padding: 20px;
+    text-align: justify;
+    display: none;
+}
+
+.menuGroup ul {
+    list-style-type: none;
+    font-size: small;
+}
+
+.menuGroup ul li {
+    display: block;
+    height: 20px;
+    width: 100%;
+}
+
+.menuGroup ul li a {
+    display: block;
+    height: 20px;
+    text-decoration: none;
+    color: white;
+    padding-left: 5px;
+    border-left: 3px solid transparent;
+    letter-spacing:0.1em; 
+}
+
+.menuGroup ul li a:hover {
+    border-left: 3px solid white;
+}
+
+.menuGroup h2 {
+    font-size: small;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 3px;
+    height: 25px;
+    color: #aaaaaa;
+    font-variant: small-caps;
+    text-align: left;
+    border-left: 3px solid transparent;
+}
+
+.github {
+    background: url(files/imgv2/github.png) no-repeat;
+    display: block;
+    float: right;
+    width: 70px;
+    height: 70px; 
+    border-bottom: 3px solid transparent;
+    margin-right: 25px;
+}
+
+
+.twitter {
+    background: url(files/imgv2/twitter.png) no-repeat;
+    display: block;
+    float: right;
+    width: 70px;
+    height: 70px; 
+    border-bottom: 3px solid transparent;
+    margin-right: 25px;
+}
+
+
+
+#heading {
+    font-weight: bold; 
+    padding-left: 10px;
+    font-size: small; 
+    height: 25px; 
+    background: url(files/imgv2/top.png) repeat-x; 
+    border-bottom: 1px solid #cccccc;
+    font-variant: small-caps;
+}
+
+#progress {
+    float: right;
+    padding: 8px;
+    direction: ltr;
+    width: 25px;
+    display: block;
+}
+
+#calculate {
+	float: right;
+    padding: 4px;
+}
+
+#headerContent {
+    padding-top: 40px;
+}
+
+#content {
+    padding: 2px;
+    display: none;
+}
+
+#content h1,h2,h3,h4 {
+    font-variant: small-caps;
+}
+
+.contentBox {
+    margin-top: 5px;
+    margin-bottom: 20px;
+    margin-left: 30px;
+    margin-right: 30px;
+    padding-bottom: 10px;
+}
+
+.contentBox a {
+    text-decoration: none;
+}
+.contentBox a:hover {
+    text-decoration: underline;
+}
+
+.contentBoxHeader {
+    background: url(files/imgv2/top.png) repeat-x;
+    display: block;
+    border-bottom: 1px solid #cccccc;
+    font-size: small;
+    font-weight: bold;
+    padding: 5px;
+    margin-bottom: 5px;
+}
+
+.contentBoxHeader a {
+    font-size: x-small;
+    color: blue;
+    font-weight: normal;
+}
+.contentBox .content{
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    font-size: x-small;
+}
+
+.highlight {
+    background: url(files/imgv2/content_box.png) repeat;
+    border: 1px solid #cccccc;
+}
+
+#content table {
+    border-collapse: collapse;
+    font-size: x-small;
+    width: 100%;
+    text-align: left;
+    border: 1px solid #cccccc;
+    background: url(files/imgv2/content_box.png) repeat;
+}
+
+
+.highlight table {
+    background: none;
+}
+
+
+#content th {
+    background: url(files/imgv2/top.png) repeat-x;
+    border: 1px solid #cccccc;
+    padding: 5px;
+    text-align: left;
+    max-height: 25px;
+    height: 25px;
+    overflow: scroll;
+}
+
+
+#content td {
+    padding: 5px;
+    text-align: left;
+}
+
+#content tr {
+    padding: 5px;
+    text-align: left;
+}
+
+#content tr:hover {
+    background: url(files/imgv2/content_box.png) repeat;
+}
+
+.validation {
+    display: none;
+    color: red;
+}

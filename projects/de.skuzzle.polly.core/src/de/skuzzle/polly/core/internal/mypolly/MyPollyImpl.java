@@ -1,7 +1,9 @@
 package de.skuzzle.polly.core.internal.mypolly;
 
+import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.log4j.Logger;
 
 import de.skuzzle.polly.core.Polly;
 import de.skuzzle.polly.core.configuration.ConfigurationProviderImpl;
@@ -9,14 +11,31 @@ import de.skuzzle.polly.core.internal.ShutdownManagerImpl;
 import de.skuzzle.polly.core.internal.commands.CommandManagerImpl;
 import de.skuzzle.polly.core.internal.conversations.ConversationManagerImpl;
 import de.skuzzle.polly.core.internal.formatting.FormatManagerImpl;
-import de.skuzzle.polly.core.internal.http.HttpManagerImpl;
+import de.skuzzle.polly.core.internal.httpv2.WebInterfaceManagerImpl;
 import de.skuzzle.polly.core.internal.irc.IrcManagerImpl;
 import de.skuzzle.polly.core.internal.mail.MailManagerImpl;
 import de.skuzzle.polly.core.internal.paste.PasteServiceManagerImpl;
-import de.skuzzle.polly.core.internal.persistence.PersistenceManagerImpl;
+import de.skuzzle.polly.core.internal.persistence.PersistenceManagerV2Impl;
 import de.skuzzle.polly.core.internal.plugins.PluginManagerImpl;
 import de.skuzzle.polly.core.internal.roles.RoleManagerImpl;
+import de.skuzzle.polly.core.internal.runonce.RunOnceManagerImpl;
 import de.skuzzle.polly.core.internal.users.UserManagerImpl;
+import de.skuzzle.polly.core.parser.InputParser;
+import de.skuzzle.polly.core.parser.InputScanner;
+import de.skuzzle.polly.core.parser.Position;
+import de.skuzzle.polly.core.parser.ast.Identifier;
+import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
+import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
+import de.skuzzle.polly.core.parser.ast.expressions.Expression;
+import de.skuzzle.polly.core.parser.ast.expressions.literals.DateLiteral;
+import de.skuzzle.polly.core.parser.ast.expressions.literals.Literal;
+import de.skuzzle.polly.core.parser.ast.visitor.ASTTraversalException;
+import de.skuzzle.polly.core.parser.ast.visitor.ExecutionVisitor;
+import de.skuzzle.polly.core.parser.ast.visitor.ParentSetter;
+import de.skuzzle.polly.core.parser.ast.visitor.resolving.TypeResolver;
+import de.skuzzle.polly.core.parser.problems.ProblemReporter;
+import de.skuzzle.polly.core.parser.problems.SimpleProblemReporter;
+import de.skuzzle.polly.core.util.TypeMapper;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.CommandManager;
 import de.skuzzle.polly.sdk.Configuration;
@@ -26,16 +45,20 @@ import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.IrcManager;
 import de.skuzzle.polly.sdk.MailManager;
 import de.skuzzle.polly.sdk.MyPolly;
-import de.skuzzle.polly.sdk.PersistenceManager;
+import de.skuzzle.polly.sdk.PersistenceManagerV2;
 import de.skuzzle.polly.sdk.PluginManager;
+import de.skuzzle.polly.sdk.RunOnceManager;
+import de.skuzzle.polly.sdk.Types;
+import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.UtilityManager;
 import de.skuzzle.polly.sdk.eventlistener.GenericEvent;
 import de.skuzzle.polly.sdk.eventlistener.GenericListener;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
-import de.skuzzle.polly.sdk.http.HttpManager;
+import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.paste.PasteServiceManager;
 import de.skuzzle.polly.sdk.roles.RoleManager;
+import de.skuzzle.polly.sdk.time.DateUtils;
 import de.skuzzle.polly.sdk.time.Time;
 import de.skuzzle.polly.tools.events.Dispatchable;
 import de.skuzzle.polly.tools.events.EventProvider;
@@ -50,11 +73,17 @@ import de.skuzzle.polly.tools.events.Listeners;
  */
 public class MyPollyImpl extends AbstractDisposable implements MyPolly {
     
+    private final static Logger logger = Logger.getLogger(MyPollyImpl.class.getName());
+    
+    private final static String[] DAYS = {"montag", "dienstag", "mittwoch", 
+        "donnerstag", "freitag", "samstag", "sonntag"};
+    
+    
 	private CommandManagerImpl commandManager;
 	private IrcManagerImpl ircManager;
 	private PluginManagerImpl pluginManager;
 	private ConfigurationProviderImpl configProvider;
-	private PersistenceManagerImpl persistence;
+	private PersistenceManagerV2Impl persistence;
 	private UserManagerImpl userManager;
 	private FormatManagerImpl formatManager;
 	private ConversationManagerImpl conversationManager;
@@ -63,7 +92,8 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 	private PasteServiceManagerImpl pasteManager;
 	private MailManagerImpl mailManager;
 	private RoleManagerImpl roleManager;
-	private HttpManagerImpl httpManager;
+	private WebInterfaceManagerImpl webInterfaceManager;
+	private RunOnceManagerImpl runOnceManager;
 	private EventProvider eventProvider;
 	
 	
@@ -71,7 +101,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 	        IrcManagerImpl ircMngr, 
 			PluginManagerImpl plgnMngr, 
 			ConfigurationProviderImpl configProviderImpl, 
-			PersistenceManagerImpl pMngr,
+			PersistenceManagerV2Impl pMngr,
 			UserManagerImpl usrMngr,
 			FormatManagerImpl fmtMngr,
 			ConversationManagerImpl convMngr,
@@ -79,7 +109,8 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 			PasteServiceManagerImpl pasteManager,
 			MailManagerImpl mailManager,
 			RoleManagerImpl roleManager,
-			HttpManagerImpl httpManager,
+			WebInterfaceManagerImpl webInterfaceManager,
+			RunOnceManagerImpl runOnceManager,
 			EventProvider eventProvider) {
 	    
 		this.commandManager = cmdMngr;
@@ -95,7 +126,73 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 		this.startTime = Time.currentTime();
 		this.mailManager = mailManager;
 		this.roleManager = roleManager;
-		this.httpManager = httpManager;
+		this.webInterfaceManager = webInterfaceManager;
+		this.runOnceManager = runOnceManager;
+	}
+	
+	
+	
+	@Override
+	public Types parse(String value) {
+        final User executor = this.users().getAdmin();
+        
+        final ProblemReporter reporter = new SimpleProblemReporter();
+        final InputScanner is = new InputScanner(value);
+        final InputParser ip = new InputParser(is, reporter);
+        is.setSkipWhiteSpaces(true);
+        
+        try {
+            final Expression exp = ip.parseSingleExpression();
+            exp.visit(new ParentSetter());
+            
+            final String nsName = executor.getCurrentNickName() == null 
+                ? executor.getName() 
+                : executor.getCurrentNickName(); 
+                
+
+            final Namespace ns = Namespace.forName(nsName);
+            final Namespace workingNs = ns.enter();
+            
+            
+            int m = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+            workingNs.declare(new Declaration(Position.NONE, new Identifier("morgen"), 
+                new DateLiteral(Position.NONE, DateUtils.getDayDate(m + 1))));
+            workingNs.declare(new Declaration(Position.NONE, new Identifier("übermorgen"), 
+                new DateLiteral(Position.NONE, DateUtils.getDayDate(m + 2))));
+            
+            
+            int start = Calendar.MONDAY;
+            for (String day : DAYS) {
+                workingNs.declare(new Declaration(Position.NONE, new Identifier(day), 
+                    new DateLiteral(Position.NONE, DateUtils.getDayDate(start++))));
+            }
+            
+            
+            // resolve types
+            TypeResolver.resolveAST(exp, workingNs, reporter);
+            
+            final ExecutionVisitor exec = new ExecutionVisitor(ns, workingNs, reporter);
+            exp.visit(exec);
+            final Literal result = exec.getSingleResult();
+            return TypeMapper.literalToTypes(result);
+        } catch (ASTTraversalException e) {
+            logger.warn("", e);
+            // ignore the exception, just use plain value which was submitted
+            return new Types.StringType(value);
+        }
+	}
+	
+	
+	@Override
+	public WebinterfaceManager webInterface() {
+	    return this.webInterfaceManager;
+	}
+	
+	
+	
+	@Override
+	public RunOnceManager runOnce() {
+	    return this.runOnceManager;
 	}
 	
 	
@@ -115,13 +212,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 	
 	
 	@Override
-	public HttpManager web() {
-	    return this.httpManager;
-	}
-	
-	
-	@Override
-	public PersistenceManager persistence() {
+	public PersistenceManagerV2 persistence() {
 		return this.persistence;
 	}
 

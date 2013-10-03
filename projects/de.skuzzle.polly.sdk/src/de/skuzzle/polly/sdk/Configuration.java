@@ -278,7 +278,13 @@ public interface Configuration {
      * Password of the keystore file.
      * @since 0.7
      */
-    public final static String KEYSTORE_PASSWORD = "keyStorePassword";
+    public final static String KEYSTORE_PASSWORD = "keyStorePW";
+    
+    /**
+     * Password for the certificate
+     * @since 0.9
+     */
+    public final static String KEY_PASSWORD = "keyPW";
     
     /**
      * The lifetime for temporary variables in milliseconds.

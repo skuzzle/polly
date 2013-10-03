@@ -10,8 +10,7 @@ import de.skuzzle.polly.core.internal.ShutdownManagerImpl;
 import de.skuzzle.polly.core.internal.plugins.PluginManagerImpl;
 import de.skuzzle.polly.core.internal.roles.Permission;
 import de.skuzzle.polly.core.internal.roles.Role;
-import de.skuzzle.polly.core.internal.users.Attribute;
-import de.skuzzle.polly.core.internal.users.User;
+import de.skuzzle.polly.core.internal.users.UserImpl;
 import de.skuzzle.polly.core.moduleloader.AbstractProvider;
 import de.skuzzle.polly.core.moduleloader.ModuleLoader;
 import de.skuzzle.polly.core.moduleloader.SetupException;
@@ -29,7 +28,7 @@ import de.skuzzle.polly.sdk.exceptions.DatabaseException;
         @Require(state = ModuleStates.PLUGINS_READY)
     },
     provides = {
-        @Provide(component = PersistenceManagerImpl.class),
+        @Provide(component = PersistenceManagerV2Impl.class),
         @Provide(state = ModuleStates.PERSISTENCE_READY)
     })
 public class PersistenceManagerProvider extends AbstractProvider {
@@ -38,10 +37,11 @@ public class PersistenceManagerProvider extends AbstractProvider {
     
     
     private PluginManagerImpl pluginManager;
-    private PersistenceManagerImpl persistenceManager;
+    private PersistenceManagerV2Impl persistenceManager;
     private ShutdownManagerImpl shutdownManager;
     private XmlCreator xmlCreator;
     private Configuration persistenceCfg;
+    
     
     
     public PersistenceManagerProvider(ModuleLoader loader) {
@@ -68,7 +68,7 @@ public class PersistenceManagerProvider extends AbstractProvider {
             throw new SetupException(e);
         }
         
-        this.persistenceManager = new PersistenceManagerImpl();
+        this.persistenceManager = new PersistenceManagerV2Impl();
         this.provideComponent(this.persistenceManager);
         
         DatabaseProperties dp = new DatabaseProperties(
@@ -84,8 +84,7 @@ public class PersistenceManagerProvider extends AbstractProvider {
                 this.pluginManager,
                 Polly.PLUGIN_FOLDER);
         
-        this.persistenceManager.registerEntity(User.class);
-        this.persistenceManager.registerEntity(Attribute.class);
+        this.persistenceManager.registerEntity(UserImpl.class);
         this.persistenceManager.registerEntity(Permission.class);
         this.persistenceManager.registerEntity(Role.class);
                

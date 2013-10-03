@@ -4,7 +4,7 @@ import java.util.Date;
 
 import de.skuzzle.polly.sdk.eventlistener.GenericEvent;
 import de.skuzzle.polly.sdk.eventlistener.GenericListener;
-import de.skuzzle.polly.sdk.http.HttpManager;
+import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.paste.PasteServiceManager;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 
@@ -63,7 +63,7 @@ public interface MyPolly {
 	 * Gets the PersistenceManager which is the interface to the Polly Persistence API.
 	 * @return The persistenceManager.
 	 */
-	public abstract PersistenceManager persistence();
+	public abstract PersistenceManagerV2 persistence();
 	
 	
 	
@@ -174,17 +174,6 @@ public interface MyPolly {
 	 * @since 0.9
 	 */
 	public abstract MailManager mails();
-
-
-
-	
-	/**
-	 * Gets a HTTPManager implementation to access pollys webinterface.
-	 * 
-	 * @return A HttpManager instance.
-	 * @since 0.9.1
-	 */
-    public abstract HttpManager web();
     
     
     
@@ -216,4 +205,29 @@ public interface MyPolly {
      * @since 0.9.1
      */
     public abstract void fireGenericEvent(GenericEvent e);
+
+
+
+    /**
+     * Provides ability to run actions only once within polly's live time.
+     * @return A {@link RunOnceManager} instance.
+     */
+    public abstract RunOnceManager runOnce();
+
+
+    
+    /**
+     * Access polly's web interface. 
+     * @return The {@link WebinterfaceManager} instance.
+     */
+    public abstract WebinterfaceManager webInterface();
+
+
+    
+    /**
+     * Parses the provided string as a single polly expression and outputs the result.
+     * @param value The string to parse.
+     * @return The result.
+     */
+    public Types parse(String value);
 }

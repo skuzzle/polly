@@ -8,9 +8,13 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import de.skuzzle.polly.sdk.PersistenceManager;
+import de.skuzzle.polly.core.internal.users.UserImpl;
+import de.skuzzle.polly.sdk.PersistenceManagerV2;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Atomic;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Param;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Read;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Write;
 import de.skuzzle.polly.sdk.User;
-import de.skuzzle.polly.sdk.WriteAction;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.exceptions.RoleException;
@@ -26,13 +30,13 @@ public class RoleManagerImpl implements RoleManager {
     
     private final static Object SYNC = new Object();
     
-    private PersistenceManager persistence;
+    private PersistenceManagerV2 persistence;
     private boolean rolesStale;
     private Set<String> allRoles;
     
     
     
-    public RoleManagerImpl(PersistenceManager persistence) {
+    public RoleManagerImpl(PersistenceManagerV2 persistence) {
         this.persistence = persistence;
     }
     
@@ -49,13 +53,8 @@ public class RoleManagerImpl implements RoleManager {
 
     @Override
     public boolean permissionExists(String permissionName) {
-        try {
-            this.persistence.readLock();
-            return this.persistence.findSingle(Permission.class, 
-                Permission.PERMISSION_BY_NAME, permissionName) != null;
-        } finally {
-            this.persistence.readUnlock();
-        }
+        return this.persistence.atomic().findSingle(Permission.class, 
+            Permission.PERMISSION_BY_NAME, new Param(permissionName)) != null;
     }
 
     
@@ -64,7 +63,7 @@ public class RoleManagerImpl implements RoleManager {
     public Set<String> getRoles() {
         synchronized(SYNC) {
             if (this.rolesStale || this.allRoles == null) {
-                List<Role> roles = this.persistence.atomicRetrieveList(
+                List<Role> roles = this.persistence.atomic().findList(
                     Role.class, Role.ALL_ROLES);
                 this.allRoles = new HashSet<String>(roles.size());
                 for (Role role : roles) {
@@ -81,7 +80,7 @@ public class RoleManagerImpl implements RoleManager {
     @Override
     public Set<String> getRoles(User user) {
         Set<String> result = new HashSet<String>();
-        for (Role role : ((de.skuzzle.polly.core.internal.users.User)user).getRoles()) {
+        for (Role role : ((de.skuzzle.polly.core.internal.users.UserImpl)user).getRoles()) {
             result.add(role.getName());
         }
         return Collections.unmodifiableSet(result);
@@ -90,18 +89,22 @@ public class RoleManagerImpl implements RoleManager {
     
     
     @Override
+    public boolean hasRole(User user, String role) {
+        return this.getRoles(user).contains(role);
+    }
+    
+    
+    
+    @Override
     public Set<String> getPermissions(String roleName) {
-        try {
-            this.persistence.readLock();
-            Role role = this.persistence.findSingle(
-                    Role.class, Role.ROLE_BY_NAME, roleName);
+        try (final Read r = this.persistence.read()) {
+            Role role = r.findSingle(
+                    Role.class, Role.ROLE_BY_NAME, new Param(roleName));
             
             if (role == null) {
                 return Collections.emptySet();
             }
             return role.getPermissionNames();
-        } finally {
-            this.persistence.readUnlock();
         }
     }
     
@@ -111,97 +114,82 @@ public class RoleManagerImpl implements RoleManager {
     public void createRole(final String newRoleName) 
                 throws DatabaseException {
         synchronized(SYNC) {
-            try {
-                this.persistence.writeLock();
-                    final Role role = 
-                        this.persistence.findSingle(
-                            Role.class, Role.ROLE_BY_NAME, newRoleName);
+            this.persistence.writeAtomic(new Atomic() {
+                @Override
+                public void perform(Write write) throws DatabaseException {
+                    final Role role = write.read().findSingle(Role.class, 
+                        Role.ROLE_BY_NAME, new Param(newRoleName));
                     
                     if (role != null) {
                         return;
                     }
-
+                    
                     logger.info("Creating new Role: '" + newRoleName + "'");
-                    this.persistence.startTransaction();
-                    this.persistence.persist(new Role(newRoleName));
-                    this.persistence.commitTransaction();
-                    this.rolesStale = true;
-            } finally {
-                this.persistence.writeUnlock();
-            }
+                    write.single(new Role(newRoleName));
+                }
+            });
+            this.rolesStale = true;
         }
     }
     
     
 
     @Override
-    public void createRole(String baseRoleName, String newRoleName) 
+    public void createRole(final String baseRoleName, final String newRoleName) 
                 throws RoleException, DatabaseException {
         synchronized (SYNC) {
-            try {
-                this.persistence.writeLock();
-                final Role role = 
-                    this.persistence.findSingle
-                    (Role.class, Role.ROLE_BY_NAME, newRoleName);
+            try (final Write write = this.persistence.write()) {
+                final Role role = write.read().findSingle(Role.class, 
+                    Role.ROLE_BY_NAME, new Param(newRoleName));
                 
                 if (role != null) {
                     return;
                 }
                 
-                Role baseRole = 
-                    this.persistence.findSingle(
-                        Role.class, Role.ROLE_BY_NAME, baseRoleName);
+                final Role baseRole = write.read().findSingle(Role.class, 
+                    Role.ROLE_BY_NAME, new Param(baseRoleName));
                 
                 if (baseRole == null) {
                     throw new RoleException("Unknown base role: '" + baseRoleName + "'");
                 }
-                
                 logger.info("Creating new Role: '" + newRoleName + "' from base role '" + 
-                        baseRoleName + "'");
-                
-                this.persistence.startTransaction();
-                this.persistence.persist(new Role(newRoleName, 
-                        new HashSet<Permission>(baseRole.getPermissions())));
-                this.persistence.commitTransaction();
-                this.rolesStale = true;
-            } finally {
-                this.persistence.writeUnlock();
+                    baseRoleName + "'");
+                write.single(new Role(newRoleName, 
+                    new HashSet<>(baseRole.getPermissions())));
             }
+            this.rolesStale = true;
         }
     }
     
     
     
     @Override
-    public void deleteRole(String roleName) throws RoleException, DatabaseException {
+    public void deleteRole(final String roleName) 
+            throws RoleException, DatabaseException {
         if (roleName.equals(ADMIN_ROLE) || roleName.equals(DEFAULT_ROLE)) {
             throw new RoleException("Default roles cant be deleted");
         }
-        
-        try {
-            this.persistence.writeLock();
-            
-            Role role = this.persistence.findSingle(
-                    Role.class, Role.ROLE_BY_NAME, roleName);
-            
-            if (role == null) {
-                return;
+        this.persistence.writeAtomic(new Atomic() {
+            @Override
+            public void perform(Write write) throws DatabaseException {
+                final Role role = write.read().findSingle(Role.class, Role.ROLE_BY_NAME, 
+                    new Param(roleName));
+                
+                if (role == null) {
+                    return;
+                }
+                
+                final List<User> allUsers = write.read().findList(User.class, 
+                    UserImpl.ALL_USERS);
+                logger.debug("Deleting role: '" + roleName + "'");
+                write.remove(role);
+                
+                for (User user : allUsers) {
+                    UserImpl puser = (UserImpl) user;
+                    puser.getRoles().remove(role);
+                }
             }
-            
-            List<User> allUsers = this.persistence.findList(
-                    User.class, de.skuzzle.polly.core.internal.users.User.ALL_USERS);
-            logger.debug("Deleting role: '" + roleName + "'");
-            this.persistence.startTransaction();
-            this.persistence.remove(role);
-            logger.trace("Removing role from all users.");
-            for (User user : allUsers) {
-                de.skuzzle.polly.core.internal.users.User puser = (de.skuzzle.polly.core.internal.users.User) user;
-                puser.getRoles().remove(role);
-            }
-            this.persistence.commitTransaction();
-        } finally {
-            this.persistence.writeUnlock();
-        }
+        });
     }
     
     
@@ -211,7 +199,12 @@ public class RoleManagerImpl implements RoleManager {
         synchronized(SYNC) {
             if (!permissionExists(permission)) {
                 logger.debug("Registering permission: '" + permission + "'");
-                this.persistence.atomicPersist(new Permission(permission));
+                this.persistence.writeAtomic(new Atomic() {
+                    @Override
+                    public void perform(Write write) throws DatabaseException {
+                        write.single(new Permission(permission));
+                    }
+                });
             }
         }
     }
@@ -222,13 +215,13 @@ public class RoleManagerImpl implements RoleManager {
     public void registerPermissions(final Set<String> permissions) 
                 throws DatabaseException {
         synchronized(SYNC) {
-            this.persistence.atomicWriteOperation(new WriteAction() {
+            this.persistence.writeAtomic(new Atomic() {
                 @Override
-                public void performUpdate(PersistenceManager persistence) {
+                public void perform(Write write) {
                     for (String perm : permissions) {
                         if (!permissionExists(perm)) {
                             logger.debug("Registering permission: '" + perm + "'");
-                            persistence.persist(new Permission(perm));
+                            write.single(new Permission(perm));
                         }
                     }
                 }
@@ -251,32 +244,27 @@ public class RoleManagerImpl implements RoleManager {
                 throws DatabaseException, RoleException {
         
         synchronized(SYNC) {
-            final Role role = 
-                this.persistence.findSingle(Role.class, Role.ROLE_BY_NAME, roleName);
-        
-            if (role == null) {
-                throw new RoleException("Unknown role: " + roleName);
-            }
-            
-            final Permission perm = this.persistence.findSingle(Permission.class, 
-                    Permission.PERMISSION_BY_NAME, permission);
-            
-            if (perm == null) {
-                throw new RoleException("Unknown permission: " + permission);
-            }
-            
-            // TODO: add permission to admin role
-            logger.debug("Assigning permission '" + 
-                    permission + "' to role '" + roleName + "'");
-            
-            this.persistence.atomicWriteOperation(new WriteAction() {
+            try (final Write write = this.persistence.write()) {
+                final Role role = 
+                    write.read().findSingle(Role.class, Role.ROLE_BY_NAME, 
+                        new Param(roleName));
                 
-                @Override
-                public void performUpdate(PersistenceManager persistence) {
-                    role.getPermissions().add(perm);
-                    role.setStale(true); // this updates the permission name string set
+                if (role == null) {
+                    throw new RoleException("Unknown role: " + roleName);
                 }
-            });
+                final Permission perm = write.read().findSingle(Permission.class, 
+                    Permission.PERMISSION_BY_NAME, new Param(permission));
+                
+                if (perm == null) {
+                    throw new RoleException("Unknown permission: " + permission);
+                }
+                // TODO: add permission to admin role
+                logger.debug("Assigning permission '" + 
+                    permission + "' to role '" + roleName + "'");
+                
+                role.getPermissions().add(perm);
+                role.setStale(true); // this updates the permission name string set
+            }
         }
     }
     
@@ -287,34 +275,31 @@ public class RoleManagerImpl implements RoleManager {
                 throws RoleException, DatabaseException {
         
         synchronized(SYNC) {
-            final Role role = 
-                this.persistence.findSingle(Role.class, Role.ROLE_BY_NAME, roleName);
+            try (final Write write = this.persistence.write()) {
+                final Role role = write.read().findSingle(Role.class, 
+                    Role.ROLE_BY_NAME, new Param(roleName));
         
-            if (role == null) {
-                throw new RoleException("Unknown role: " + roleName);
-            }
-            
-            final List<Permission> perms = new ArrayList<Permission>(permissions.size());
-            for (String permission : permissions) {
-                Permission perm = this.persistence.findSingle(Permission.class, 
-                    Permission.PERMISSION_BY_NAME, permission);
-                if (perm == null) {
-                    throw new RoleException("Unknown permission: '" + permission + "'");
+                if (role == null) {
+                    throw new RoleException("Unknown role: " + roleName);
                 }
-                perms.add(perm);
-            }
             
-            // TODO: add permission to admin role
-            logger.debug("Assigning permission '" + 
-                permissions + "' to role '" + roleName + "'");
-            this.persistence.atomicWriteOperation(new WriteAction() {
-                
-                @Override
-                public void performUpdate(PersistenceManager persistence) {
-                    role.getPermissions().addAll(perms);
-                    role.setStale(true); // this updates the permission name string set
+                final List<Permission> perms = new ArrayList<Permission>(permissions.size());
+                for (String permission : permissions) {
+                    final Permission perm = write.read().findSingle(Permission.class, 
+                        Permission.PERMISSION_BY_NAME, new Param(permission));
+                    if (perm == null) {
+                        throw new RoleException(
+                            "Unknown permission: '" + permission + "'");
+                    }
+                    perms.add(perm);
                 }
-            });
+            
+                // TODO: add permission to admin role
+                logger.debug("Assigning permission '" + 
+                    permissions + "' to role '" + roleName + "'");
+                role.getPermissions().addAll(perms);
+                role.setStale(true); // this updates the permission name string set
+            }
         }
     }
     
@@ -332,31 +317,26 @@ public class RoleManagerImpl implements RoleManager {
     public synchronized void removePermission(final String roleName, 
             final String permission) throws RoleException, DatabaseException {
         synchronized(SYNC) {
-            final Role role = 
-                    this.persistence.findSingle(Role.class, Role.ROLE_BY_NAME, roleName);
-            
-            if (role == null) {
-                throw new RoleException("Unknown role: " + roleName);
-            }
-            
-            final Permission perm = this.persistence.findSingle(Permission.class, 
-                Permission.PERMISSION_BY_NAME, permission);
-            
-            if (perm == null) {
-                return;
-            }
-            
-            logger.debug("Removing permission '" + 
-                permission + "' from role '" + roleName + "'");
-            
-            this.persistence.atomicWriteOperation(new WriteAction() {
+            try (final Write write = this.persistence.write()) {
+                final Role role = write.read().findSingle(Role.class, Role.ROLE_BY_NAME, 
+                    new Param(roleName));
                 
-                @Override
-                public void performUpdate(PersistenceManager persistence) {
-                    role.getPermissions().remove(perm);
-                    role.setStale(true);
+                if (role == null) {
+                    throw new RoleException("Unknown role: " + roleName);
                 }
-            });
+                
+                final Permission perm = write.read().findSingle(Permission.class, 
+                    Permission.PERMISSION_BY_NAME, new Param(permission));
+                
+                if (perm == null) {
+                    return;
+                }
+                
+                logger.debug("Removing permission '" + 
+                    permission + "' from role '" + roleName + "'");
+                role.getPermissions().remove(perm);
+                role.setStale(true);
+            }
         }
     }
     
@@ -366,22 +346,19 @@ public class RoleManagerImpl implements RoleManager {
     public synchronized void assignRole(final User user, final String roleName) 
             throws RoleException, DatabaseException {
         synchronized (SYNC) {
-            final Role role = 
-                this.persistence.findSingle(Role.class, Role.ROLE_BY_NAME, roleName);
-        
-            if (role == null) {
-                throw new RoleException("Unknown role: " + roleName);
-            }
+            try (final Write w = this.persistence.write()) {
+                final Role role = w.read().findSingle(Role.class, Role.ROLE_BY_NAME, 
+                    new Param(roleName));
             
-            logger.debug("Assigning role '" + 
-                roleName + "' to user '" + user + "'");
-            
-            this.persistence.atomicWriteOperation(new WriteAction() {
-                @Override
-                public void performUpdate(PersistenceManager persistence) {
-                    ((de.skuzzle.polly.core.internal.users.User)user).getRoles().add(role);
+                if (role == null) {
+                    throw new RoleException("Unknown role: " + roleName);
                 }
-            });
+                
+                logger.debug("Assigning role '" + 
+                    roleName + "' to user '" + user + "'");
+                
+                ((UserImpl) user).getRoles().add(role);
+            }
         }
     }
     
@@ -394,10 +371,10 @@ public class RoleManagerImpl implements RoleManager {
         synchronized (SYNC) {
             logger.debug("Removing role '" + 
                 roleName + "' from user '" + user + "'");
-            this.persistence.atomicWriteOperation(new WriteAction() {
+            this.persistence.writeAtomic(new Atomic() {
                 @Override
-                public void performUpdate(PersistenceManager persistence) {
-                    ((de.skuzzle.polly.core.internal.users.User)user).getRoles().remove(new Role(roleName));
+                public void perform(Write write) {
+                    ((UserImpl) user).getRoles().remove(new Role(roleName));
                 }
             });
         }
@@ -412,7 +389,7 @@ public class RoleManagerImpl implements RoleManager {
         } else if (user == null) {
             return false;
         }
-        de.skuzzle.polly.core.internal.users.User puser = (de.skuzzle.polly.core.internal.users.User) user;
+        de.skuzzle.polly.core.internal.users.UserImpl puser = (de.skuzzle.polly.core.internal.users.UserImpl) user;
         
         synchronized (SYNC) {
             for (Role role : puser.getRoles()) {

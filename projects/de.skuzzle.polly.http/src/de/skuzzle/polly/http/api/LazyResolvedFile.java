@@ -1,0 +1,45 @@
+/*
+ * Copyright 2013 Simon Taddiken
+ *
+ * This file is part of Polly HTTP API.
+ *
+ * Polly HTTP API is free software: you can redistribute it and/or modify 
+ * it under the terms of the GNU General Public License as published by 
+ * the Free Software Foundation, either version 3 of the License, or (at 
+ * your option) any later version.
+ *
+ * Polly HTTP API is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for 
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along 
+ * with Polly HTTP API. If not, see http://www.gnu.org/licenses/.
+ */
+package de.skuzzle.polly.http.api;
+
+import java.io.File;
+import java.io.IOException;
+
+
+public class LazyResolvedFile implements ResolvedFile {
+
+    private final String rootDir;
+    private final String relativeFile;
+    
+
+    
+    public LazyResolvedFile(String rootDir, String relativeFile) {
+        this.rootDir = rootDir;
+        this.relativeFile = relativeFile;
+    }
+    
+    
+    
+    @Override
+    public File getFile() throws IOException {
+        return new DefaultFileResolver().resolve(
+            this.rootDir, this.relativeFile).getFile();
+    }
+
+}

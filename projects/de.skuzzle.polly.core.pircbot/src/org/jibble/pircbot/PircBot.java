@@ -118,7 +118,6 @@ public abstract class PircBot implements ReplyConstants, PircBotLogger {
      * @throws IrcException if the server would not let us join it.
      * @throws NickAlreadyInUseException if our nick is already in use on the server.
      */
-    @SuppressWarnings("resource")
     public final synchronized void connect(String hostname, int port, String password) throws IOException, IrcException, NickAlreadyInUseException {
 
         _server = hostname;

@@ -1,5 +1,7 @@
 package de.skuzzle.polly.sdk.constraints;
 
+import de.skuzzle.polly.sdk.Types;
+
 
 /**
  * AttributeConstraints are used to constraint an user attribute to certain values.
@@ -21,5 +23,5 @@ public interface AttributeConstraint {
      *          Whether the value matches this constraint and can thus be set for
      *          the attribute.
      */
-    public abstract boolean accept(String value);
+    public abstract boolean accept(Types type);
 }

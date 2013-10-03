@@ -26,6 +26,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -36,13 +37,12 @@ import java.util.regex.Pattern;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
+import de.skuzzle.polly.http.api.AlternativeAnswerException;
 import de.skuzzle.polly.http.api.HttpCookie;
-import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.http.api.HttpEvent.RequestMode;
-import de.skuzzle.polly.http.api.HttpEventHandler;
+import de.skuzzle.polly.http.api.handler.HttpEventHandler;
 import de.skuzzle.polly.http.api.HttpException;
 import de.skuzzle.polly.http.api.HttpServer;
-import de.skuzzle.polly.http.api.HttpSession;
 import de.skuzzle.polly.http.api.answers.DefaultAnswers;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswerHandler;
@@ -96,7 +96,7 @@ class BasicEventHandler implements HttpHandler {
             throws IOException {
         BufferedReader r = null;
         try {
-            r = new BufferedReader(new InputStreamReader(t.getRequestBody()));
+            r = new BufferedReader(new InputStreamReader(t.getRequestBody(), "ISO-8859-1"));
             String line = null;
             while ((line = r.readLine()) != null) {
                 if (!line.equals("")) {
@@ -130,10 +130,17 @@ class BasicEventHandler implements HttpHandler {
     
     
     
-    private final HttpEvent createEvent(HttpExchange t) throws IOException {
+    private final HttpEventImpl createEvent(final HttpExchange t) throws IOException {
         final String requestUri = t.getRequestURI().toString();
         final Map<String, String> get = new HashMap<>();
         final Map<String, String> post = new HashMap<>();
+        
+        
+        // set stream to count incoming traffic
+        final TrafficInformationImpl temporary = new TrafficInformationImpl(null);
+        final CountingInputStream in = new CountingInputStream(
+            t.getRequestBody(), temporary);
+        t.setStreams(in, null);
         
         
         // extract GET parameters
@@ -179,8 +186,19 @@ class BasicEventHandler implements HttpHandler {
             mode = RequestMode.POST;
         }
         
-        final HttpEvent event = new HttpEventImpl(this.server, mode, t, plainUri, 
-            session, cookies, get, post);
+        // as session is resolved now, update the session's traffic
+        final TrafficInformationImpl ti = session.getTrafficInfo();
+        ti.updateFrom(temporary);
+        
+        final HttpEventImpl event = new HttpEventImpl(this.server, mode, 
+            t.getRequestURI(), t.getRemoteAddress(), plainUri, session, cookies, 
+            get, post) {
+            
+            public void discard() {
+                super.discard();
+                t.close();
+            }
+        };
         return event;
     }
     
@@ -188,36 +206,43 @@ class BasicEventHandler implements HttpHandler {
     
     @Override
     public void handle(HttpExchange t) throws IOException {
+
+        this.server.cleanSessions();
         // copy list to avoid further synchronization
-        final List<HttpEventHandler> handlers;
-        synchronized (this.server.getHandlers()) {
-            handlers = new ArrayList<>(this.server.getHandlers());
-        }
+        final HttpEventImpl httpEvent = this.createEvent(t);
+        this.server.fireOnRequest(httpEvent);
         
-        final HttpEvent httpEvent = this.createEvent(t);
-        final HttpSession session = httpEvent.getSession();
-        final TrafficInformationImpl ti = 
-            (TrafficInformationImpl) session.getTrafficInfo();
-        
-        // set stream to count incoming traffic
-        final CountingInputStream in = new CountingInputStream(t.getRequestBody(), ti);
-        t.setStreams(in, null);
-        
-        if (session.isBlocked()) {
-            this.handleAnswer(DefaultAnswers.SESSION_BLOCKED, t, httpEvent);
-            return;
-        }
+        final HttpSessionImpl session = (HttpSessionImpl) httpEvent.getSession();
+        session.addEvent(httpEvent.copy());
+        session.setLastAction(new Date());
         
         // handle the event
-        final Iterator<HttpEventHandler> it = handlers.iterator();
+        final List<HttpEventHandler> handler;
+        final String registered;
+        synchronized (this.server.getHandlers()) {
+            registered = this.server.getHandlers().findKey(httpEvent.getPlainUri());
+            handler = new ArrayList<>(
+                this.server.getHandlers().get(registered));
+        }
+        
+        if (handler == null || handler.isEmpty()) {
+            this.handleAnswer(DefaultAnswers.FILE_NOT_FOUND, t, httpEvent);
+            return;
+        }
+
+        final Iterator<HttpEventHandler> it = handler.iterator();
+        final HttpEventHandler first = it.next();
         final HttpEventHandler chain = new HttpEventHandlerChain(it);
         HttpAnswer answer;
         try {
-            answer = chain.handleHttpEvent(httpEvent, chain);
+            answer = first.handleHttpEvent(registered, httpEvent, chain);
             if (answer != null) {
                 this.handleAnswer(answer, t, httpEvent);
                 return;
             }
+        } catch (AlternativeAnswerException e) {
+            this.handleAnswer(e.getAnswer(), t, httpEvent);
+            return;
         } catch (HttpException e) {
             // consume and send "file not found" below
             e.printStackTrace();
@@ -230,19 +255,51 @@ class BasicEventHandler implements HttpHandler {
     
     
     private final void handleAnswer(HttpAnswer answer, HttpExchange t, 
-            HttpEvent httpEvent) throws IOException {
-        assert answer != null : "Answer must not be null";
+            final HttpEventImpl httpEvent) throws IOException {
         
+        if (httpEvent.isDiscarded()) {
+            // nothing to do here if already discarded
+            return;
+        }
+        
+        final HttpSessionImpl session = (HttpSessionImpl) httpEvent.getSession();
+        
+        // set stream to count outgoing traffic and report whether it was closed
+        final TrafficInformationImpl ti = session.getTrafficInfo();
+        final CountingOutputStream out = new CountingOutputStream(
+            t.getResponseBody(), ti) {
+            
+            @Override
+            public void close() throws IOException {
+                super.close();
+                httpEvent.fireOnClose();
+            }
+        };
+        t.setStreams(null, out);
+        
+        
+        // null answer means to discard this event
+        if (answer == null) {
+            t.close();
+            return;
+        }
+
         try {
             // add cookies as response header
             final Collection<HttpCookie> cookies = new ArrayList<>(answer.getCookies());
-            
-            if (httpEvent.getSession().getType() == HttpSession.SESSION_TYPE_TEMPORARY &&
-                this.server.getSessionType() == HttpServer.SESSION_TYPE_COOKIE) {
+
+            if (this.server.getSessionType() == HttpServer.SESSION_TYPE_COOKIE && 
+                    session.isPending()) {
                 
-                // if this is a temporary session, add a cookie with the new session id
+                session.setPending(false);
+                // we must send a new session cookie
                 cookies.add(new HttpCookie(HttpServerImpl.SESSION_ID_NAME, 
-                    httpEvent.getSession().getId(), this.server.sessionLiveTime() * 1000));
+                    session.getId(), this.server.sessionLiveTime() / 1000));
+            } else if (session.shouldKill()) {
+                // send cookie with max age 0 to remove it at client side
+                cookies.add(new HttpCookie(HttpServer.SESSION_ID_NAME, 
+                    session.getId(), 0));
+                this.server.killSession(session);
             }
             
             if (!cookies.isEmpty()) {
@@ -251,23 +308,18 @@ class BasicEventHandler implements HttpHandler {
             }
             
             t.getResponseHeaders().putAll(answer.getResponseHeaders());
-            t.sendResponseHeaders(answer.getResponseCode(), 0);
             
-            // set stream to count outgoing traffic
-            final HttpSession session = httpEvent.getSession();
-            final TrafficInformationImpl ti = 
-                (TrafficInformationImpl) session.getTrafficInfo();
-            final CountingOutputStream out = new CountingOutputStream(
-                t.getResponseBody(), ti);
-            t.setStreams(null, out);
-            
-            // handle different types of answers
-            final HttpAnswerHandler handler = this.server.getHandler(answer);
-            if (handler == null) {
-                // TODO: react
-                throw new RuntimeException("no handler");
+            if (!httpEvent.isDiscarded()) {
+                t.sendResponseHeaders(answer.getResponseCode(), 0);
+                
+                // handle different types of answers
+                final HttpAnswerHandler handler = this.server.getHandler(answer);
+                if (handler == null) {
+                    // TODO: react
+                    throw new RuntimeException("no handler");
+                }
+                handler.handleAnswer(answer, httpEvent, t.getResponseBody());
             }
-            handler.handleAnswer(answer, httpEvent, t.getResponseBody());
         } finally {
             t.close();
         }
@@ -278,18 +330,10 @@ class BasicEventHandler implements HttpHandler {
     private final String generateCookieString(Collection<HttpCookie> cookies) {
         final StringBuilder b = new StringBuilder();
         final Iterator<HttpCookie> it = cookies.iterator();
+        
         while (it.hasNext()) {
             final HttpCookie next = it.next();
-            
-            b.append(next.getName());
-            b.append("=");
-            b.append(next.getValue());
-            b.append(";Version=1;Max-Age=");
-            b.append(next.getMaxAge());
-            if (next.getDomain() != null) {
-                b.append(";Domain=");
-                b.append(next.getDomain());
-            }
+            b.append(next.toString());
             
             if (it.hasNext()) {
                 b.append(",");

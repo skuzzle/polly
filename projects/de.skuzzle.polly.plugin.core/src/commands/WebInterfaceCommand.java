@@ -30,23 +30,23 @@ public class WebInterfaceCommand extends Command {
     protected boolean executeOnBoth(User executer, String channel,
             Signature signature) throws CommandException, InsufficientRightsException {
         
-        String url = "http://" + this.getMyPolly().web().getPublicHost() + ":" + 
-            this.getMyPolly().web().getPort();
+        String url = "http://" + this.getMyPolly().webInterface().getPublicHost() + ":" + 
+            this.getMyPolly().webInterface().getPort();
         
         if (this.match(signature, 0)) {
-            if (this.getMyPolly().web().isRunning()) {
+            if (this.getMyPolly().webInterface().getServer().isRunning()) {
                 this.reply(channel, "Polly Webinterface: " + url);
             } else {
                 this.reply(channel, "Webinterface ist zurzeit abgeschaltet.");
             }
         } else if (this.match(signature, 1)) {
             boolean newState = signature.getBooleanValue(0);
-            if (this.getMyPolly().web().isRunning() && !newState) {
-                this.getMyPolly().web().stopWebServer();
+            if (this.getMyPolly().webInterface().getServer().isRunning() && !newState) {
+                this.getMyPolly().webInterface().getServer().shutdown(0);
                 this.reply(channel, "Webserver abgeschaltet");
-            } else if (!this.getMyPolly().web().isRunning() && newState) {
+            } else if (!this.getMyPolly().webInterface().getServer().isRunning() && newState) {
                 try {
-                    this.getMyPolly().web().startWebServer();
+                    this.getMyPolly().webInterface().getServer().start();
                     this.reply(channel, "Webserver angeschaltet. URL: " + url);
                 } catch (IOException e) {
                     throw new CommandException(e);

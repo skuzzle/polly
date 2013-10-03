@@ -109,6 +109,14 @@ public class ConfigurationProviderImpl implements ConfigurationProvider {
     
     
     
+    public Configuration createConfiguration(String name) throws IOException {
+        final File target = new File(this.configDir, name);
+        target.createNewFile();
+        return this.open(name);
+    }
+    
+    
+    
     @Override
     public Configuration getRootConfiguration() {
         return this.rootCfg;

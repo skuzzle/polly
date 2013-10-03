@@ -111,4 +111,11 @@ public class FastByteArrayInputStream extends InputStream {
     
     @Override
     public void close()  {}
+    
+    
+    
+    @Override
+    public String toString() {
+        return "FastByteArrayInput, size: " + this.size;
+    }
 }

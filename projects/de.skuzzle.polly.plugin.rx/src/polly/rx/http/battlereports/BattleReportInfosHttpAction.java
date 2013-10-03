@@ -1,4 +1,4 @@
-package polly.rx.http.battlereports;
+/*package polly.rx.http.battlereports;
 
 import java.util.List;
 
@@ -117,3 +117,4 @@ public class BattleReportInfosHttpAction extends HttpAction {
     }
 
 }
+*/

@@ -1,0 +1,224 @@
+
+C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http>call ant -lib ../../tools/build/ant-eclipse-1.0-jvm1.2.jar -k      
+
+C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http>call ..\..\tools\build\apache-ant-1.8.2\bin\ant -lib ../../tools/build/ant-eclipse-1.0-jvm1.2.jar -k      
+Buildfile: C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\build.xml
+
+clean.custom:
+
+clean:
+     [echo] Clean polly.http
+
+compile.debug:
+     [echo] Compile polly.http
+    [mkdir] Created dir: C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\bin
+    [javac] Compiling 38 source files to C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\bin
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\AlternativeAnswerException.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\Controller.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\DefaultServerFactory.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\FileHttpEventHandler.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpCookie.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpEvent.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpEventHandler.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpEventListener.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpException.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpServer.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpServletServer.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpSession.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\ParameterHandler.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\ServerFactory.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\TrafficInformation.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\answers\AbstractHttpAnswer.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\answers\DefaultAnswers.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\answers\HttpAnswer.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\answers\HttpAnswerHandler.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\answers\HttpAnswers.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\answers\HttpBinaryAnswer.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\answers\HttpTemplateAnswer.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\AnswerHandlerMap.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\BasicEventHandler.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\CountingInputStream.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\CountingOutputStream.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\HttpEventHandlerChain.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\HttpEventImpl.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\HttpServerCreator.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\HttpServerImpl.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\HttpServletServerImpl.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\HttpSessionImpl.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\NativeHandlers.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\ReflectionHttpHandler.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\SimpleBinaryAnswerHandler.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\TemplateAnswerHandler.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\TrafficInformationImpl.java
+    [javac] C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\URLMap.java
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\AlternativeAnswerException.java]]
+    [javac] [parsing completed 10ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\Controller.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\DefaultServerFactory.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\FileHttpEventHandler.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpCookie.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpEvent.java]]
+    [javac] [parsing completed 10ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpEventHandler.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpEventListener.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpException.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpServer.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpServletServer.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\HttpSession.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\ParameterHandler.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\ServerFactory.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\TrafficInformation.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\answers\AbstractHttpAnswer.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\answers\DefaultAnswers.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\answers\HttpAnswer.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\answers\HttpAnswerHandler.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\answers\HttpAnswers.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\answers\HttpBinaryAnswer.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\api\answers\HttpTemplateAnswer.java]]
+    [javac] [parsing completed 10ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\AnswerHandlerMap.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\BasicEventHandler.java]]
+    [javac] [parsing completed 10ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\CountingInputStream.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\CountingOutputStream.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\HttpEventHandlerChain.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\HttpEventImpl.java]]
+    [javac] [parsing completed 10ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\HttpServerCreator.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\HttpServerImpl.java]]
+    [javac] [parsing completed 10ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\HttpServletServerImpl.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\HttpSessionImpl.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\NativeHandlers.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\ReflectionHttpHandler.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\SimpleBinaryAnswerHandler.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\TemplateAnswerHandler.java]]
+    [javac] [parsing completed 10ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\TrafficInformationImpl.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [parsing started RegularFileObject[C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src\de\skuzzle\polly\http\internal\URLMap.java]]
+    [javac] [parsing completed 0ms]
+    [javac] [search path for source files: C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\src]
+    [javac] [search path for class files: C:\Program Files\Java\jdk1.7.0_03\jre\lib\resources.jar,C:\Program Files\Java\jdk1.7.0_03\jre\lib\rt.jar,C:\Program Files\Java\jdk1.7.0_03\jre\lib\sunrsasign.jar,C:\Program Files\Java\jdk1.7.0_03\jre\lib\jsse.jar,C:\Program Files\Java\jdk1.7.0_03\jre\lib\jce.jar,C:\Program Files\Java\jdk1.7.0_03\jre\lib\charsets.jar,C:\Program Files\Java\jdk1.7.0_03\jre\classes,C:\Program Files\Java\jdk1.7.0_03\jre\lib\ext\dnsns.jar,C:\Program Files\Java\jdk1.7.0_03\jre\lib\ext\localedata.jar,C:\Program Files\Java\jdk1.7.0_03\jre\lib\ext\sunec.jar,C:\Program Files\Java\jdk1.7.0_03\jre\lib\ext\sunjce_provider.jar,C:\Program Files\Java\jdk1.7.0_03\jre\lib\ext\sunmscapi.jar,C:\Program Files\Java\jdk1.7.0_03\jre\lib\ext\zipfs.jar,C:\Users\Simon\Documents\Java\polly\projects\de.skuzzle.polly.http\bin,C:\Users\Simon\Documents\Java\polly\dependency\commons-collections-3.2.1.jar,C:\Users\Simon\Documents\Java\polly\dependency\commons-lang-2.4.jar,C:\Users\Simon\Documents\Java\polly\dependency\velocity-1.7.jar,C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http.annotations\polly.http.annotations.jar]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/lang/Exception.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/lang/Throwable.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/io/Serializable.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/lang/Object.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/util/Collection.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/util/List.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/util/Map.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/lang/String.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/util/Objects.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/net/InetSocketAddress.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/net/URI.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/util/Date.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/io/File.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/io/FileNotFoundException.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/io/IOException.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/lang/Enum.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/lang/Comparable.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/io/OutputStream.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/lang/Class.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/util/concurrent/ExecutorService.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/util/concurrent/Executors.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/com/sun/net/httpserver/HttpServer.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/util/ArrayList.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/util/HashMap.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/util/HashSet.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/util/Set.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/io/BufferedWriter.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/io/FileInputStream.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/io/InputStream.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/io/OutputStreamWriter.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/io/Writer.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/io/BufferedReader.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/io/InputStreamReader.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/io/UnsupportedEncodingException.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/net/URLDecoder.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/util/Collections.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/util/Iterator.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/util/regex/Matcher.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/util/regex/Pattern.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/com/sun/net/httpserver/HttpExchange.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/com/sun/net/httpserver/HttpHandler.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/nio/file/Path.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/util/Random.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/util/Map$Entry.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/util/ArrayDeque.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/util/Queue.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/io/FilterInputStream.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/io/Closeable.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/lang/AutoCloseable.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/io/FilterOutputStream.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/io/Flushable.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/lang/annotation/Annotation.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/lang/reflect/Method.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/lang/reflect/Modifier.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http.annotations\polly.http.annotations.jar(de/skuzzle/polly/http/annotations/Get.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http.annotations\polly.http.annotations.jar(de/skuzzle/polly/http/annotations/Param.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http.annotations\polly.http.annotations.jar(de/skuzzle/polly/http/annotations/Post.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/util/Arrays.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/lang/reflect/InvocationTargetException.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Users\Simon\Documents\Java\polly\dependency\velocity-1.7.jar(org/apache/velocity/Template.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Users\Simon\Documents\Java\polly\dependency\velocity-1.7.jar(org/apache/velocity/VelocityContext.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Users\Simon\Documents\Java\polly\dependency\velocity-1.7.jar(org/apache/velocity/app/VelocityEngine.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Users\Simon\Documents\Java\polly\dependency\velocity-1.7.jar(org/apache/velocity/runtime/resource/loader/FileResourceLoader.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/lang/Cloneable.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/util/AbstractMap.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/lang/Override.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/lang/annotation/Retention.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/lang/annotation/RetentionPolicy.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/lang/annotation/Target.class)]]
+    [javac] [loading ZipFileIndexFileObject[C:\Program Files\Java\jdk1.7.0_03\lib\ct.sym(META-INF/sym/rt.jar/java/lang/annotation/ElementType.class)]]
+    [javac] Round 1:
+    [javac] 	input files: {de.skuzzle.polly.http.api.AlternativeAnswerException, de.skuzzle.polly.http.api.Controller, de.skuzzle.polly.http.api.DefaultServerFactory, de.skuzzle.polly.http.api.FileHttpEventHandler, de.skuzzle.polly.http.api.HttpCookie, de.skuzzle.polly.http.api.HttpEvent, de.skuzzle.polly.http.api.HttpEventHandler, de.skuzzle.polly.http.api.HttpEventListener, de.skuzzle.polly.http.api.HttpException, de.skuzzle.polly.http.api.HttpServer, de.skuzzle.polly.http.api.HttpServletServer, de.skuzzle.polly.http.api.HttpSession, de.skuzzle.polly.http.api.ParameterHandler, de.skuzzle.polly.http.api.ServerFactory, de.skuzzle.polly.http.api.TrafficInformation, de.skuzzle.polly.http.api.answers.AbstractHttpAnswer, de.skuzzle.polly.http.api.answers.DefaultAnswers, de.skuzzle.polly.http.api.answers.HttpAnswer, de.skuzzle.polly.http.api.answers.HttpAnswerHandler, de.skuzzle.polly.http.api.answers.HttpAnswers, de.skuzzle.polly.http.api.answers.HttpBinaryAnswer, de.skuzzle.polly.http.api.answers.HttpTemplateAnswer, de.skuzzle.polly.http.internal.AnswerHandlerMap, de.skuzzle.polly.http.internal.BasicEventHandler, de.skuzzle.polly.http.internal.CountingInputStream, de.skuzzle.polly.http.internal.CountingOutputStream, de.skuzzle.polly.http.internal.HttpEventHandlerChain, de.skuzzle.polly.http.internal.HttpEventImpl, de.skuzzle.polly.http.internal.HttpServerCreator, de.skuzzle.polly.http.internal.HttpServerImpl, de.skuzzle.polly.http.internal.HttpServletServerImpl, de.skuzzle.polly.http.internal.HttpSessionImpl, de.skuzzle.polly.http.internal.NativeHandlers, de.skuzzle.polly.http.internal.ReflectionHttpHandler, de.skuzzle.polly.http.internal.SimpleBinaryAnswerHandler, de.skuzzle.polly.http.internal.TemplateAnswerHandler, de.skuzzle.polly.http.internal.TrafficInformationImpl, de.skuzzle.polly.http.internal.URLMap}
+    [javac] 	annotations: [java.lang.Override]
+    [javac] 	last round: false
+
+dist.debug:
+     [echo] Dist polly.http
+
+checkDependencies:
+
+copyDependencies:
+    [mkdir] Created dir: C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http\lib
+     [copy] Copying 4 files to C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http\lib
+
+distBin:
+
+preDist:
+      [jar] Building MANIFEST-only jar: C:\Users\Simon\Documents\Java\polly\target\de.skuzzle.polly.http\polly.http.jar
+
+postDist:
+
+BUILD SUCCESSFUL
+Total time: 0 seconds

@@ -1,0 +1,3 @@
+#foreach($ev in $ss.getEvents().descendingIterator())
+<li title="Parameters: $ev.parameterMap()">$myPolly.formatting().formatDate($ev.getEventTime()) $ev.getMode() <a href="$ev.getPlainUri()">$ev.getPlainUri()</a></li>
+#end

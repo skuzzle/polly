@@ -113,6 +113,7 @@ public abstract class AbstractProvider implements Provider {
             this.beforeRun();
             this.run();
         } catch (Exception e) {
+            e.printStackTrace();
             if (this.isCrucial()) {
                 throw e;
             }

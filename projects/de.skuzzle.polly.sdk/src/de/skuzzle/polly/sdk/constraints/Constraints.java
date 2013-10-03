@@ -32,4 +32,9 @@ public interface Constraints {
      * @see MailAddressConstraint
      */
     public final static AttributeConstraint MAILADDRESS = new MailAddressConstraint();
+    
+    /**
+     * Constraints a value to a timespan
+     */
+    public final static AttributeConstraint TIMESPAN = new TimespanConstraint();
 }
