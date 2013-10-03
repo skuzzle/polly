@@ -136,7 +136,8 @@ public class WebinterfaceProvider extends AbstractProvider {
             }
         });
         
-        this.webinterface = new WebInterfaceManagerImpl(this.server, "webv2");
+        this.webinterface = new WebInterfaceManagerImpl(this.server, "webv2", 
+                this.serverCfg.readString(Configuration.HTTP_PUBLIC_HOST), port);
 
         // Automatically collect all menu entries
         this.server.addAddHandlerListener(new AddHandlerListener() {

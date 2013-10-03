@@ -27,24 +27,9 @@ import polly.rx.entities.TrainEntity;
 import polly.rx.entities.TrainEntityV2;
 import polly.rx.entities.TrainEntityV3;
 import polly.rx.entities.V2ToV3TrainEntityConverter;
-import polly.rx.http.FleetScanHttpAction;
-import polly.rx.http.FleetScanInfoHttpAction;
-import polly.rx.http.FleetShipInfoHttpAction;
-import polly.rx.http.MyTrainsHttpAction;
-import polly.rx.http.PostScoreboardHttpAction;
-import polly.rx.http.QueryOwnerHttpAction;
-import polly.rx.http.ScoreBoardCompareHttpAction;
-import polly.rx.http.ScoreBoardDetailsHttpAction;
-import polly.rx.http.ScoreBoardHttpAction;
-import polly.rx.http.TrainerHttpAction;
-import polly.rx.http.battlereports.AddBattleReportAction;
-import polly.rx.http.battlereports.BattleReportFilterHttpAction;
-import polly.rx.http.battlereports.BattleReportHttpAction;
-import polly.rx.http.battlereports.BattleReportInfosHttpAction;
 import polly.rx.httpv2.BattleReportModel;
 import polly.rx.httpv2.FleetScanShipTableModel;
 import polly.rx.httpv2.FleetScanTableModel;
-import polly.rx.http.battlereports.QzoneBattleReporter;
 import polly.rx.httpv2.FleetScansWithShipModel;
 import polly.rx.httpv2.RXController;
 import polly.rx.httpv2.ScoreboardDetailModel;
@@ -123,13 +108,6 @@ public class MyPlugin extends PollyPlugin {
         this.addCommand(new CrackerCommand(myPolly));
         this.addCommand(new RessComand(myPolly));
         
-        
-        myPolly.web().addMenuUrl("Revorix", "MyTrains");
-        myPolly.web().addMenuUrl("Revorix", "Trainer");
-        
-        myPolly.web().addHttpAction(new MyTrainsHttpAction(myPolly, this.trainManager));
-        myPolly.web().addHttpAction(new TrainerHttpAction(myPolly, this.trainManager));
-        
         /* fleet db related */
         
         
@@ -141,36 +119,7 @@ public class MyPlugin extends PollyPlugin {
         myPolly.persistence().registerEntity(FleetScan.class);
         myPolly.persistence().registerEntity(FleetScanHistoryEntry.class);
         myPolly.persistence().registerEntity(FleetScanShip.class);
-        
-        myPolly.web().addHttpAction(new BattleReportInfosHttpAction(
-            myPolly, this.fleetDBManager));
-        myPolly.web().addHttpAction(new BattleReportHttpAction(
-            myPolly, this.fleetDBManager));
-        myPolly.web().addHttpAction(new BattleReportFilterHttpAction(
-            myPolly, this.fleetDBManager));
-        myPolly.web().addHttpAction(new AddBattleReportAction(
-            myPolly, this.fleetDBManager));
-        myPolly.web().addMenuUrl("Revorix", "Kampfberichte");
-        
-        
-        myPolly.web().addMenuUrl("Revorix", "FleetScans");
-        myPolly.web().addHttpAction(new FleetScanHttpAction(myPolly, this.fleetDBManager));
-        myPolly.web().addHttpAction(new FleetShipInfoHttpAction(myPolly, this.fleetDBManager));
-        myPolly.web().addHttpAction(new FleetScanInfoHttpAction(myPolly, this.fleetDBManager));
-        myPolly.web().addHttpAction(new QueryOwnerHttpAction(myPolly, this.fleetDBManager));
-        
-        myPolly.persistence().registerEntity(ScoreBoardEntry.class);
-        this.sbeManager = new ScoreBoardManager(myPolly.persistence());
-        myPolly.web().addMenuUrl("Revorix", "Scoreboard");
-        myPolly.web().addHttpAction(new ScoreBoardHttpAction(myPolly, this.sbeManager));
-        myPolly.web().addHttpAction(new ScoreBoardDetailsHttpAction(myPolly, this.sbeManager));
-        myPolly.web().addHttpAction(new ScoreBoardCompareHttpAction(myPolly, this.sbeManager));
-        myPolly.web().addHttpAction(new PostScoreboardHttpAction(myPolly, this.sbeManager));
-        myPolly.web().addHttpAction(new QzoneBattleReporter(myPolly, this.fleetDBManager));
         this.addCommand(new RankCommand(myPolly, this.sbeManager));
-        
-        
-        
         
         
         myPolly.webInterface().addCategory(new MenuCategory(0, "Revorix"));

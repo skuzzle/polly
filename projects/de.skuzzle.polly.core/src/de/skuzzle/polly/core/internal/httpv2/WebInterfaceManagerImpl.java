@@ -8,9 +8,9 @@ import java.util.Map;
 
 import de.skuzzle.polly.http.api.HttpServletServer;
 import de.skuzzle.polly.sdk.httpv2.HttpHook;
-import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.httpv2.MenuCategory;
 import de.skuzzle.polly.sdk.httpv2.MenuEntry;
+import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 
 public class WebInterfaceManagerImpl implements WebinterfaceManager {
 
@@ -18,11 +18,16 @@ public class WebInterfaceManagerImpl implements WebinterfaceManager {
     private final HttpServletServer server;
     private final List<MenuEntry> topMenu;
     private final String webRoot;
+    private final String publicHost;
+    private final int port;
 
 
 
-    public WebInterfaceManagerImpl(HttpServletServer server, String webRoot) {
+    public WebInterfaceManagerImpl(HttpServletServer server, String webRoot, 
+            String publicHost, int port) {
+        this.port = port;
         this.webRoot = webRoot;
+        this.publicHost = publicHost;
         this.server = server;
         this.topMenu = new ArrayList<>();
         this.categories = new HashMap<String, MenuCategory>();
@@ -91,4 +96,17 @@ public class WebInterfaceManagerImpl implements WebinterfaceManager {
     public void addLogoutHook(HttpHook hook) {
     }
 
+
+
+    @Override
+    public String getPublicHost() {
+        return this.publicHost;
+    }
+    
+    
+    
+    @Override
+    public int getPort() {
+        return this.port;
+    }
 }

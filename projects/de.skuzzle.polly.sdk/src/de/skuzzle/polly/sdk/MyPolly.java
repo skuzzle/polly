@@ -4,7 +4,6 @@ import java.util.Date;
 
 import de.skuzzle.polly.sdk.eventlistener.GenericEvent;
 import de.skuzzle.polly.sdk.eventlistener.GenericListener;
-import de.skuzzle.polly.sdk.http.HttpManager;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.paste.PasteServiceManager;
 import de.skuzzle.polly.sdk.roles.RoleManager;
@@ -175,17 +174,6 @@ public interface MyPolly {
 	 * @since 0.9
 	 */
 	public abstract MailManager mails();
-
-
-
-	
-	/**
-	 * Gets a HTTPManager implementation to access pollys webinterface.
-	 * 
-	 * @return A HttpManager instance.
-	 * @since 0.9.1
-	 */
-    public abstract HttpManager web();
     
     
     

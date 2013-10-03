@@ -13,14 +13,9 @@ import java.util.Map;
 
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Types;
-import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
-import de.skuzzle.polly.sdk.http.HttpAction;
-import de.skuzzle.polly.sdk.http.HttpEvent;
-import de.skuzzle.polly.sdk.http.HttpTemplateContext;
-import de.skuzzle.polly.sdk.http.HttpTemplateException;
 
 
-public class ResourcePriceGrabber extends HttpAction {
+public class ResourcePriceGrabber {
 
     private final static String API_URL = "http://qzone.servebbs.net/pollyPriceDaily.php";
 
@@ -34,19 +29,8 @@ public class ResourcePriceGrabber extends HttpAction {
     
     
     public ResourcePriceGrabber(int refreshThreshold, MyPolly myPolly) {
-        super("/priceDaily", myPolly);
         this.refreshThreshold = refreshThreshold;
         this.refreshCounter = refreshThreshold;
-    }
-    
-    
-    
-    @Override
-    public HttpTemplateContext execute(HttpEvent e) throws HttpTemplateException,
-            InsufficientRightsException {
-        
-        
-        return null;
     }
     
     

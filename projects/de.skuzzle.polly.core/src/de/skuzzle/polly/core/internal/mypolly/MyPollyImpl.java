@@ -11,7 +11,6 @@ import de.skuzzle.polly.core.internal.ShutdownManagerImpl;
 import de.skuzzle.polly.core.internal.commands.CommandManagerImpl;
 import de.skuzzle.polly.core.internal.conversations.ConversationManagerImpl;
 import de.skuzzle.polly.core.internal.formatting.FormatManagerImpl;
-import de.skuzzle.polly.core.internal.http.HttpManagerImpl;
 import de.skuzzle.polly.core.internal.httpv2.WebInterfaceManagerImpl;
 import de.skuzzle.polly.core.internal.irc.IrcManagerImpl;
 import de.skuzzle.polly.core.internal.mail.MailManagerImpl;
@@ -56,7 +55,6 @@ import de.skuzzle.polly.sdk.UtilityManager;
 import de.skuzzle.polly.sdk.eventlistener.GenericEvent;
 import de.skuzzle.polly.sdk.eventlistener.GenericListener;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
-import de.skuzzle.polly.sdk.http.HttpManager;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.paste.PasteServiceManager;
 import de.skuzzle.polly.sdk.roles.RoleManager;
@@ -94,7 +92,6 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 	private PasteServiceManagerImpl pasteManager;
 	private MailManagerImpl mailManager;
 	private RoleManagerImpl roleManager;
-	private HttpManagerImpl httpManager;
 	private WebInterfaceManagerImpl webInterfaceManager;
 	private RunOnceManagerImpl runOnceManager;
 	private EventProvider eventProvider;
@@ -112,7 +109,6 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 			PasteServiceManagerImpl pasteManager,
 			MailManagerImpl mailManager,
 			RoleManagerImpl roleManager,
-			HttpManagerImpl httpManager,
 			WebInterfaceManagerImpl webInterfaceManager,
 			RunOnceManagerImpl runOnceManager,
 			EventProvider eventProvider) {
@@ -130,7 +126,6 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 		this.startTime = Time.currentTime();
 		this.mailManager = mailManager;
 		this.roleManager = roleManager;
-		this.httpManager = httpManager;
 		this.webInterfaceManager = webInterfaceManager;
 		this.runOnceManager = runOnceManager;
 	}
@@ -214,12 +209,6 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 		return Polly.class.getPackage().getImplementationVersion();
 	}
 
-	
-	
-	@Override
-	public HttpManager web() {
-	    return this.httpManager;
-	}
 	
 	
 	@Override

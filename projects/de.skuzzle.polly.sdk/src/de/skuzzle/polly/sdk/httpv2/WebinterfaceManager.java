@@ -26,4 +26,12 @@ public interface WebinterfaceManager {
     public void addLogoutHook(HttpHook hook);
     
     public String getWebRoot();
+
+    public String getPublicHost();
+    
+    /**
+     * Gets the port on which the webinterface server is listening
+     * @return The port
+     */
+    public int getPort();
 }

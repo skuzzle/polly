@@ -24,6 +24,7 @@
     -->
     <property name="dependencies.internal" value="
         **/polly.sdk.jar
+        **/polly.http.jar
         **/polly.tools.jar
     "/>
    

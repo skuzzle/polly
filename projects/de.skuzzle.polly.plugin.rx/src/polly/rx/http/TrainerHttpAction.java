@@ -1,4 +1,4 @@
-package polly.rx.http;
+/*package polly.rx.http;
 
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -117,5 +117,5 @@ public class TrainerHttpAction extends HttpAction {
         c.put("trainManager", this.trainManager);
         return c;
     }
-
 }
+*/
