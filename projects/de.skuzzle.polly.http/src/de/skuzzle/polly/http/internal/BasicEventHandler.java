@@ -96,7 +96,7 @@ class BasicEventHandler implements HttpHandler {
             throws IOException {
         BufferedReader r = null;
         try {
-            r = new BufferedReader(new InputStreamReader(t.getRequestBody()));
+            r = new BufferedReader(new InputStreamReader(t.getRequestBody(), "ISO-8859-1"));
             String line = null;
             while ((line = r.readLine()) != null) {
                 if (!line.equals("")) {
