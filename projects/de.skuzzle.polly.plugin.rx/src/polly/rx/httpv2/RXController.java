@@ -20,6 +20,7 @@ import polly.rx.entities.FleetScanShip;
 import polly.rx.entities.ScoreBoardEntry;
 import polly.rx.graphs.NamedPoint;
 import polly.rx.httpv2.StatisticsGatherer.BattleReportStatistics;
+import polly.rx.parsing.BattleReportParser;
 import polly.rx.parsing.ParseException;
 import polly.rx.parsing.QBattleReportParser;
 import polly.rx.parsing.ScoreBoardParser;
@@ -303,6 +304,23 @@ public class RXController extends PollyController {
             e.printStackTrace();
         }
         return HttpAnswers.newStringAnswer("").redirectTo("/pages/scoreboard");
+    }
+    
+    
+    
+    @Post("/api/postReport")
+    public HttpAnswer postReport(@Param("report") String report) 
+            throws AlternativeAnswerException {
+        this.requirePermissions(FleetDBManager.ADD_BATTLE_REPORT_PERMISSION);
+        try {
+            final BattleReport br = BattleReportParser.parseReport(report, 
+                    this.getSessionUser());
+            
+            this.fleetDb.addBattleReport(br);
+        } catch (ParseException | DatabaseException e) {
+            return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
+        }
+        return new GsonHttpAnswer(200, new SuccessResult(true, "Report added"));
     }
     
     

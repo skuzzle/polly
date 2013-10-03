@@ -43,14 +43,14 @@ public class BattleReportModel extends AbstractHTMLTableModel<BattleReport> {
     
     @Override
     public boolean isFilterable(int column) {
-        return true;
+        return column < 12;
     }
     
     
     
     @Override
     public boolean isSortable(int column) {
-        return true;
+        return column < 12;
     }
     
     
