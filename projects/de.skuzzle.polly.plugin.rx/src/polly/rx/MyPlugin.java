@@ -45,6 +45,7 @@ import polly.rx.httpv2.BattleReportModel;
 import polly.rx.httpv2.FleetScanShipTableModel;
 import polly.rx.httpv2.FleetScanTableModel;
 import polly.rx.http.battlereports.QzoneBattleReporter;
+import polly.rx.httpv2.FleetScansWithShipModel;
 import polly.rx.httpv2.RXController;
 import polly.rx.httpv2.ScoreboardDetailModel;
 import polly.rx.httpv2.ScoreboardTableModel;
