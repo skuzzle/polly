@@ -15,6 +15,7 @@ public class ShipsForScanTableModel extends FleetScanShipTableModel {
     
     public ShipsForScanTableModel(FleetDBManager fleetDb) {
         super(fleetDb);
+        this.requirePermission(FleetDBManager.VIEW_FLEET_SCAN_PERMISSION);
     }
 
     

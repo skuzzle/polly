@@ -21,6 +21,7 @@ public class FleetScanShipTableModel extends AbstractHTMLTableModel<FleetScanShi
 
     public FleetScanShipTableModel(FleetDBManager fleetDB) {
         this.fleetDB = fleetDB;
+        this.requirePermission(FleetDBManager.VIEW_FLEET_SCAN_PERMISSION);
     }
 
 

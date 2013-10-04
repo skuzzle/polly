@@ -24,6 +24,7 @@ public class BattleReportModel extends AbstractHTMLTableModel<BattleReport> {
     
     public BattleReportModel(FleetDBManager fleetDb) {
         this.fleetDb = fleetDb;
+        this.requirePermission(FleetDBManager.VIEW_BATTLE_REPORT_PERMISSION);
     }
     
     

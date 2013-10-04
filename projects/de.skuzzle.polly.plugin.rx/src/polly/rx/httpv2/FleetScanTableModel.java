@@ -20,6 +20,7 @@ public class FleetScanTableModel extends AbstractHTMLTableModel<FleetScan> {
 
     public FleetScanTableModel(FleetDBManager fleetDb) {
         this.fleetDb = fleetDb;
+        this.requirePermission(FleetDBManager.VIEW_FLEET_SCAN_PERMISSION);
     }
 
 

@@ -3,6 +3,7 @@ package polly.rx.httpv2;
 import java.util.Date;
 import java.util.List;
 
+import polly.rx.MyPlugin;
 import polly.rx.core.ScoreBoardManager;
 import polly.rx.entities.ScoreBoardEntry;
 import de.skuzzle.polly.http.api.HttpEvent;
@@ -23,6 +24,7 @@ public class ScoreboardTableModel extends AbstractHTMLTableModel<ScoreBoardEntry
     
     public ScoreboardTableModel(ScoreBoardManager sbManager) {
         this.sbManager = sbManager;
+        this.requirePermission(MyPlugin.SBE_PERMISSION);
     }
     
 

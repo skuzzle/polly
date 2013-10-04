@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import polly.rx.MyPlugin;
 import polly.rx.core.ScoreBoardManager;
 import polly.rx.entities.ScoreBoardEntry;
 import de.skuzzle.polly.http.api.HttpEvent;
@@ -21,6 +22,7 @@ public class ScoreboardDetailModel extends ScoreboardTableModel {
 
     public ScoreboardDetailModel(ScoreBoardManager sbManager) {
         super(sbManager);
+        this.requirePermission(MyPlugin.SBE_PERMISSION);
     }
     
     
