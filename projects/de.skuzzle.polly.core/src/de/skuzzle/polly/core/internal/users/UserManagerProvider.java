@@ -130,9 +130,6 @@ public class UserManagerProvider extends AbstractProvider {
                 this.roleManager.assignRole(admin, RoleManager.ADMIN_ROLE);
             }
         }
-        
-        // VERSION management: must reset all user attributes once
-        this.runOnceManager.registerAction(new ResetAllAttributes(this.userManager));
     }
 
     

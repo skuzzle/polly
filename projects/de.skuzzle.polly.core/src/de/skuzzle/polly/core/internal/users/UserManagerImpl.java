@@ -470,28 +470,6 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     
     
-    public void resetAllAttributes() {
-        try {
-            this.persistence.writeAtomic(new Atomic() {
-                @Override
-                public void perform(Write write) throws DatabaseException {
-                    final List<de.skuzzle.polly.core.internal.users.Attribute> attributes = 
-                        write.read().findList(
-                            de.skuzzle.polly.core.internal.users.Attribute.class, 
-                            de.skuzzle.polly.core.internal.users.Attribute.ALL_ATTRIBUTES);
-                    
-                    for (final de.skuzzle.polly.core.internal.users.Attribute attr : attributes) {
-                        removeAttribute(attr.getName());
-                    }
-                }
-            });
-        } catch (DatabaseException e) {
-            logger.error("", e);
-        }
-    }
-    
-    
-    
     @Override
     public void addAttribute(final String name, final Types defaultValue, 
             final String description, final String category, 

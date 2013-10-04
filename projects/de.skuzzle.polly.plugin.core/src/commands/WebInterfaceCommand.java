@@ -3,6 +3,7 @@ package commands;
 import java.io.IOException;
 
 import de.skuzzle.polly.sdk.Command;
+import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
@@ -29,9 +30,19 @@ public class WebInterfaceCommand extends Command {
     @Override
     protected boolean executeOnBoth(User executer, String channel,
             Signature signature) throws CommandException, InsufficientRightsException {
+        boolean ssl = false;
+        try {
+            ssl = this.getMyPolly().configuration().open("http.cfg").readBoolean(
+                    Configuration.HTTP_USE_SSL);
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
         
-        String url = "http://" + this.getMyPolly().webInterface().getPublicHost() + ":" + 
-            this.getMyPolly().webInterface().getPort();
+        final int port = this.getMyPolly().webInterface().getPort();
+        String url = "http" + (ssl ? "s" : "");
+        url += "://" + this.getMyPolly().webInterface().getPublicHost();
+        url += port == 80 ? "" : ":" + port;
+        
         
         if (this.match(signature, 0)) {
             if (this.getMyPolly().webInterface().getServer().isRunning()) {

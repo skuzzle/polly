@@ -45,7 +45,6 @@ import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
 import de.skuzzle.polly.sdk.httpv2.MenuCategory;
 import de.skuzzle.polly.sdk.httpv2.MenuEntry;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
-import de.skuzzle.polly.sdk.time.Milliseconds;
 import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
 
 @Module(
@@ -86,14 +85,14 @@ public class WebinterfaceProvider extends AbstractProvider {
             throw new SetupException(e);
         }
         
-        int port = 81; //this.serverCfg.readInt(Configuration.HTTP_PORT);
-        int sessionTimeout = (int) Milliseconds.fromHours(24);//this.serverCfg.readInt(Configuration.HTTP_SESSION_TIMEOUT);
+        int port = this.serverCfg.readInt(Configuration.HTTP_PORT);
+        int sessionTimeout = this.serverCfg.readInt(Configuration.HTTP_SESSION_TIMEOUT);
         
         final ExecutorService executor = Executors.newFixedThreadPool(5, 
                 new ThreadFactoryBuilder("HTTP_%n%"));
         
         final ServerFactory sf;
-        final boolean useSSL = this.serverCfg.readBoolean("useSSL");
+        final boolean useSSL = this.serverCfg.readBoolean(Configuration.HTTP_USE_SSL);
         
         if (useSSL) {
             final String keyStorePath = this.serverCfg.readString(Configuration.KEYSTORE_FILE);

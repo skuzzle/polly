@@ -378,6 +378,11 @@ public interface Configuration {
      * nickserv identification.
      */
     public static final String JOIN_ON_CONNECT = "joinOnConnect";
+
+    /**
+     * Whether the webserver should use SSL
+     */
+    public static final String HTTP_USE_SSL = "useSSL";
     
     
     
