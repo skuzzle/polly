@@ -42,7 +42,7 @@ public class WebInterfaceCommand extends Command {
         boolean appendPort = ssl && port != 443 || !ssl && port != 80;
         String url = "http" + (ssl ? "s" : "");
         url += "://" + this.getMyPolly().webInterface().getPublicHost();
-        url += appendPort ? "" : ":" + port;
+        url += appendPort ? port : "";
         
         
         if (this.match(signature, 0)) {
