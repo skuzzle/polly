@@ -1,0 +1,21 @@
+<div class="highlight contentBox">
+    #CONTENT_HEADER ("Compare View")
+    <div id="compare" class="content"></div>
+</div>
+
+#foreach ($v in $compareList.getEntries())
+<div class="highlight contentBox">
+    #CONTENT_HEADER ("Venad: $v")
+    <div id="$v.hashCode()" class="content"></div>
+</div>
+#end
+
+<script src="/polly/rx/httpv2/view/graph.js"></script>
+<script>
+$(document).ready(function() {
+	loadGraphCompare("$PAGE_GRAPHCOMPARE", "compare", 12);
+	#foreach ($v in $compareList.getEntries())
+	loadGraph('$PAGE_GRAPHFORVENAD', '$v.hashCode()', '$v', 12);
+	#end
+});
+</script>

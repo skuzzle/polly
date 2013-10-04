@@ -1,0 +1,61 @@
+<div class="highlight contentBox">
+    #CONTENT_HEADER ("Post new Entry")
+    <div class="content">
+    <form id="paste">
+        <textarea name="input" style="width:100%; height: 200px"></textarea>
+        <input class="button" type="button" value="Submit" onclick="submitSB()"/>
+    </form>
+    </div>
+</div>
+
+<div id="compListContainer" class="highlight contentBox" #if ($compareList.getEntries().isEmpty()) style="display:none" #end>
+    #CONTENT_HEADER ("Compare list")
+    <div class="content">
+    
+    <div id="compList">
+    #foreach ($v in $compareList.getEntries())
+    <input id="$v.hashCode()" type="button" class="button" value="$v" title="Click to remove" onclick="removeFromCompare('$v.hashCode()', '$v')"/>
+    #end
+    </div>
+    
+    <form method="get" action="$PAGE_COMPARE">
+        <input type="submit" class="button"  value="Compare" title="Compare selected"/>
+    </form>
+    </div>
+</div>
+
+<div class="highlight contentBox">
+    #CONTENT_HEADER ("Scoreboard entries")
+    <div class="content">
+        <table id="scoreboard">
+        </table>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+	loadTable("/api/scoreboard", "scoreboard");
+});
+
+function addToCompare(hash, name) {
+	$.get("$PAGE_ADDTOCOMPARE?venadName="+name, function(data) {
+		var inp = '<input id="' + hash + '" ' + 
+		   'type="button" class="button" value="' + name + '" title="Click to remove" ' + 
+		   'onclick="removeFromCompare(' + "'" + hash + "', '" + name + "'" + ')"/>';
+		$("#compList").append(inp);
+		$("#compListContainer").show();
+	});
+}
+function removeFromCompare(hash, name) {
+    $.get("$PAGE_REMOVEFROMCOMPARE?venadName="+name, function(data) {
+    	$("#" + hash).remove();
+    });	
+}
+function submitSB() {
+	showProgress();
+	$.post("$PAGE_POSTSCOREBOARD", $("#paste").serialize(), function(data) {
+		$("#paste textarea").val("");
+		location.reload();
+	});
+}
+</script>
