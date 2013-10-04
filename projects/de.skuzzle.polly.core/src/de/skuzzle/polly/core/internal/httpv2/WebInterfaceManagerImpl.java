@@ -20,12 +20,13 @@ public class WebInterfaceManagerImpl implements WebinterfaceManager {
     private final String webRoot;
     private final String publicHost;
     private final int port;
-
+    private final boolean ssl;
 
 
     public WebInterfaceManagerImpl(HttpServletServer server, String webRoot, 
-            String publicHost, int port) {
+            String publicHost, int port, boolean ssl) {
         this.port = port;
+        this.ssl = ssl;
         this.webRoot = webRoot;
         this.publicHost = publicHost;
         this.server = server;
@@ -108,5 +109,11 @@ public class WebInterfaceManagerImpl implements WebinterfaceManager {
     @Override
     public int getPort() {
         return this.port;
+    }
+    
+    
+    @Override
+    public boolean isSSL() {
+        return this.ssl;
     }
 }
