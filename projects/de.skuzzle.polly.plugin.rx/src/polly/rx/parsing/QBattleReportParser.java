@@ -47,8 +47,6 @@ public class QBattleReportParser {
     
     
     public static BattleReport parse(String report, int submitterId) throws ParseException {
-        System.out.println(report);
-        
         try (Scanner s = new Scanner(report)) {
             final Pattern delimiter = s.delimiter();
             
@@ -137,7 +135,6 @@ public class QBattleReportParser {
                 s.useDelimiter(delimiter);
                 final BattleReportShip ship = findShip(s);
                 attackerShips.add(ship);
-                System.out.println(ship);
             }
 
             
@@ -163,7 +160,6 @@ public class QBattleReportParser {
                 s.useDelimiter(delimiter);
                 final BattleReportShip ship = findShip(s);
                 defenderShips.add(ship);
-                System.out.println(ship);
             }
             final BattleReport br = new BattleReport(
                 submitterId, 
