@@ -180,9 +180,12 @@ public class AutoLogonHandler extends AbstractDisposable
     
     private boolean userExists(String name) {
         User user = this.userManager.getUser(name);
+        if (user == null) {
+            return false;
+        }
         final BooleanType bool = (BooleanType) 
             user.getAttribute(DefaultUserAttributesProvider.AUTO_LOGON);
-        return user != null && bool.getValue();
+        return bool.getValue();
     }
     
     

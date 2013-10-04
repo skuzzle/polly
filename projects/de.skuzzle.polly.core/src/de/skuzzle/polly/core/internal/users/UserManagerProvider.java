@@ -9,7 +9,6 @@ import de.skuzzle.polly.core.internal.ShutdownManagerImpl;
 import de.skuzzle.polly.core.internal.formatting.FormatManagerImpl;
 import de.skuzzle.polly.core.internal.persistence.PersistenceManagerV2Impl;
 import de.skuzzle.polly.core.internal.roles.RoleManagerImpl;
-import de.skuzzle.polly.core.internal.runonce.RunOnceManagerImpl;
 import de.skuzzle.polly.core.moduleloader.AbstractProvider;
 import de.skuzzle.polly.core.moduleloader.ModuleLoader;
 import de.skuzzle.polly.core.moduleloader.SetupException;
@@ -32,7 +31,6 @@ import de.skuzzle.polly.tools.events.EventProvider;
         @Require(component = PersistenceManagerV2Impl.class),
         @Require(component = RoleManagerImpl.class),
         @Require(component = FormatManagerImpl.class),
-        @Require(component = RunOnceManagerImpl.class),
         @Require(state = ModuleStates.PERSISTENCE_READY),
         @Require(state = ModuleStates.ROLES_READY)
     },
@@ -50,7 +48,6 @@ public class UserManagerProvider extends AbstractProvider {
     private UserManagerImpl userManager;
     private RoleManagerImpl roleManager;
     private Configuration userCfg;
-    private RunOnceManagerImpl runOnceManager;
     private FormatManagerImpl formatter;
     
     
@@ -67,7 +64,6 @@ public class UserManagerProvider extends AbstractProvider {
         this.persistenceManager = this.requireNow(PersistenceManagerV2Impl.class, true);
         this.shutdownManager = this.requireNow(ShutdownManagerImpl.class, true);
         this.roleManager = this.requireNow(RoleManagerImpl.class, true);
-        this.runOnceManager = this.requireNow(RunOnceManagerImpl.class, true);
         this.formatter = this.requireNow(FormatManagerImpl.class, true);
     }
 
@@ -140,7 +136,6 @@ public class UserManagerProvider extends AbstractProvider {
         this.eventProvider = null;
         this.persistenceManager = null;
         this.shutdownManager = null;
-        this.runOnceManager = null;
         this.userManager = null;
         super.dispose();
     }
