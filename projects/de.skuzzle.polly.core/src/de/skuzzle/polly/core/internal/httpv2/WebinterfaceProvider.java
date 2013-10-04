@@ -88,7 +88,7 @@ public class WebinterfaceProvider extends AbstractProvider {
         int port = this.serverCfg.readInt(Configuration.HTTP_PORT);
         int sessionTimeout = this.serverCfg.readInt(Configuration.HTTP_SESSION_TIMEOUT);
         
-        final ExecutorService executor = Executors.newFixedThreadPool(5, 
+        final ExecutorService executor = Executors.newFixedThreadPool(15, 
                 new ThreadFactoryBuilder("HTTP_%n%"));
         
         final ServerFactory sf;
