@@ -6,6 +6,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -336,6 +337,33 @@ public class RXController extends PollyController {
     
     
     
+    @Post("/postScoreboard")
+    public HttpAnswer postScoreboardExt(
+            @Param("user") String user, 
+            @Param("pw") String pw,
+            @Param("paste") String paste) throws AlternativeAnswerException {
+        
+        final User u = this.getMyPolly().users().getUser(user);
+        if (u == null || !u.checkPassword(pw)) {
+            return new GsonHttpAnswer(200, new SuccessResult(false, "Illegal login"));
+        } else if (!this.getMyPolly().roles().hasPermission(u, MyPlugin.SBE_PERMISSION)) {
+            return new GsonHttpAnswer(200, new SuccessResult(false, "No permission"));
+        }
+        
+        try {
+            final Collection<ScoreBoardEntry> entries =
+                    ScoreBoardParser.parse(paste, Time.currentTime());
+            this.sbManager.addEntries(entries);
+            return new GsonHttpAnswer(200, new SuccessResult(true, entries.size() + 
+                    " entries sent to polly"));
+        } catch (ParseException | DatabaseException e) {
+            return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
+        }
+        
+    }
+    
+    
+    
     @Post("/api/postReport")
     public HttpAnswer postReport(@Param("report") String report) 
             throws AlternativeAnswerException {
@@ -357,11 +385,10 @@ public class RXController extends PollyController {
     public HttpAnswer postQReport(
             @Param("user") String user, 
             @Param("pw") String pw, 
-            @Param("action") String action,
             @Param("report") String report) {
         
         final User u = this.getMyPolly().users().getUser(user);
-        if (user == null || !u.checkPassword(pw)) {
+        if (u == null || !u.checkPassword(pw)) {
             return new GsonHttpAnswer(200, new SuccessResult(false, "Illegal login"));
         } else if (!this.getMyPolly().roles().hasPermission(u, 
                     FleetDBManager.ADD_BATTLE_REPORT_PERMISSION)) {
@@ -427,5 +454,40 @@ public class RXController extends PollyController {
             return HttpAnswers.newTemplateAnswer(
                     "polly/rx/httpv2/view/battlereports.statistics.html", c);
         }
+    }
+    
+    
+    
+    @Get("/GM/scrapescoreboarddata.user.js")
+    public HttpAnswer installScoreboard() 
+            throws AlternativeAnswerException {
+        this.requirePermissions(MyPlugin.SBE_PERMISSION);
+        final String prefix = this.getMyPolly().webInterface().isSSL() 
+                ? "https://" : "http://";
+        final String host = prefix + this.getMyPolly().webInterface().getPublicHost() + 
+                ":" + this.getMyPolly().webInterface().getPort();
+        
+        final Map<String, String> c = new HashMap<String, String>();
+        c.put("host", host);
+        return HttpAnswers.newTemplateAnswer(
+                "polly/rx/httpv2/view/scrapescoreboarddata.user.js", c);
+    }
+    
+    
+    
+    @Get("/GM/kbreport.user.js")
+    public HttpAnswer installLiveKB() 
+            throws AlternativeAnswerException {
+        this.requirePermissions(FleetDBManager.ADD_BATTLE_REPORT_PERMISSION);
+        final String prefix = this.getMyPolly().webInterface().isSSL() 
+                ? "https://" : "http://";
+        final String host = prefix + this.getMyPolly().webInterface().getPublicHost() + 
+                ":" + this.getMyPolly().webInterface().getPort();
+        
+        final Map<String, String> c = new HashMap<String, String>();
+        c.put("api", "/postQReport");
+        c.put("host", host);
+        return HttpAnswers.newTemplateAnswer(
+                "polly/rx/httpv2/view/kbreport.user.js", c);
     }
 }

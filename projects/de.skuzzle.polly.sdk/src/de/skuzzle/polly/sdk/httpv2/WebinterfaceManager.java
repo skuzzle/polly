@@ -34,4 +34,6 @@ public interface WebinterfaceManager {
      * @return The port
      */
     public int getPort();
+
+    public boolean isSSL();
 }
