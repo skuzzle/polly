@@ -39,9 +39,10 @@ public class WebInterfaceCommand extends Command {
         }
         
         final int port = this.getMyPolly().webInterface().getPort();
+        boolean appendPort = ssl && port != 443 || !ssl && port != 80;
         String url = "http" + (ssl ? "s" : "");
         url += "://" + this.getMyPolly().webInterface().getPublicHost();
-        url += port == 80 ? "" : ":" + port;
+        url += appendPort ? "" : ":" + port;
         
         
         if (this.match(signature, 0)) {
