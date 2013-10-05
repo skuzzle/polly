@@ -240,7 +240,7 @@ public class HTMLTable<T> implements HttpEventHandler {
     private final static String COLUMN = "col";
     private final static String ROW = "row";
     
-    private final static int DEFAULT_PAGE_SIZE = 10;
+    private final static int DEFAULT_PAGE_SIZE = 40;
     
     
     
