@@ -19,6 +19,7 @@ import polly.rx.core.ScoreBoardManager;
 import polly.rx.entities.AZEntry;
 import polly.rx.entities.BattleReport;
 import polly.rx.entities.BattleReportShip;
+import polly.rx.entities.BattleTactic;
 import polly.rx.entities.FleetScan;
 import polly.rx.entities.FleetScanShip;
 import polly.rx.entities.ScoreBoardEntry;
@@ -42,6 +43,7 @@ import de.skuzzle.polly.http.api.answers.HttpResourceAnswer;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.Types.BooleanType;
+import de.skuzzle.polly.sdk.Types.NumberType;
 import de.skuzzle.polly.sdk.Types.TimespanType;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
@@ -547,6 +549,18 @@ public class RXController extends PollyController {
     
     
     
+    public static class QReportResult extends SuccessResult {
+
+        public final String lowPzShips;
+        public final boolean lowPzWarning = true;
+        
+        public QReportResult(boolean success, String message, String lowPzShips) {
+            super(success, message);
+            this.lowPzShips = lowPzShips;
+        }
+    }
+    
+    
     @Post("/postQReport")
     public HttpAnswer postQReport(
             @Param("user") String user, 
@@ -565,6 +579,22 @@ public class RXController extends PollyController {
         try {
             final BattleReport br = QBattleReportParser.parse(report, u.getId());
             this.fleetDb.addBattleReport(br);
+            
+            final NumberType pzWarning = (NumberType) 
+                    u.getAttribute(MyPlugin.LOW_PZ_WARNING);
+            
+            List<BattleReportShip> lowPzShips = new ArrayList<>(40);
+            if (pzWarning.getValue() > 0.0) {
+                final List<BattleReportShip> ships = br.getTactic() == BattleTactic.ALIEN 
+                        ? br.getDefenderShips()
+                        : br.getAttackerShips();
+                        
+                for (final BattleReportShip ship : ships) {
+                    if (ship.getCurrentPz() < pzWarning.getValue()) {
+                        lowPzShips.add(ship);
+                    }
+                }
+            }
             
             if (isLive && u.getCurrentNickName() != null) {
                 final BooleanType autoRemind = (BooleanType) u.getAttribute(MyPlugin.AUTO_REMIND);
@@ -589,10 +619,25 @@ public class RXController extends PollyController {
                 }
             }
             
+            
+            if (!lowPzShips.isEmpty()) {
+                final StringBuilder b = new StringBuilder();
+                b.append("Ships below " + pzWarning.valueString(this.getMyPolly().formatting()));
+                b.append("pz:\n");
+                for (final BattleReportShip lowPz : lowPzShips) {
+                    b.append(lowPz.getName());
+                    b.append(" (");
+                    b.append(lowPz.getCurrentPz());
+                    b.append("pz)\n");
+                }
+                return new GsonHttpAnswer(200, 
+                        new QReportResult(true, "Report added", b.toString()));
+            }
+            
+            return new GsonHttpAnswer(200, new SuccessResult(true, "Report added"));            
         } catch (ParseException | DatabaseException e) {
             return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
         }
-        return new GsonHttpAnswer(200, new SuccessResult(true, "Report added"));
     }
     
     

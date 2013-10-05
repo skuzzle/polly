@@ -78,6 +78,7 @@ public class MyPlugin extends PollyPlugin {
     public final static String MAX_MONTHS = "MAX_MONTHTS";
     public final static String AUTO_REMIND = "AUTO_REMIND";
     public final static String AUTO_REMIND_AZ = "AUTO_REMIND_AZ";
+    public final static String LOW_PZ_WARNING = "LOW_PZ_WARNING";
     
     
     private FleetDBManager fleetDBManager;
@@ -265,7 +266,13 @@ public class MyPlugin extends PollyPlugin {
                     "Revorix");
             this.getMyPolly().users().addAttribute(AUTO_REMIND_AZ, 
                     new Types.TimespanType(840), "Revorix AZ time for auto reminds", 
-                    "Revorix");
+                    "Revorix", Constraints.TIMESPAN);
+            this.getMyPolly().users().addAttribute(LOW_PZ_WARNING, 
+                    new Types.NumberType(0.0), 
+                    "When using the live KB Greasemonkey script, your browser will show a "
+                    + "warning if one ship's PZ drops below this value. Set to 0 to "
+                    + "disable the warning", 
+                    "Revorix", Constraints.INTEGER);
         } catch (Exception ignore) {
             ignore.printStackTrace();
         }

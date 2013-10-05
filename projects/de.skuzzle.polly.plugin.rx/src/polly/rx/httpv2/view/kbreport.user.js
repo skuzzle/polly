@@ -51,6 +51,9 @@ function sendData(postData) {
         	//It seems like this Battlereport already exists
             var result = JSON.parse(response.responseText);
             printStatus(result.message);
+            if (result.lowPzWarning) {
+            	alert(result.lowPzShips);
+            }
         },
         ontimeout: function(response) {
             printStatus("Timeout while sending data!");
