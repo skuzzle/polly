@@ -195,20 +195,24 @@ public class UserImpl implements de.skuzzle.polly.sdk.User, Serializable {
     
     @Override
     public Types getAttribute(String name) {
-        if (!this.attributes.containsKey(name)) {
-            throw new UnknownAttributeException(name);
+        synchronized (this.attributes) {
+            if (!this.attributes.containsKey(name)) {
+                throw new UnknownAttributeException(name);
+            }
+            return this.userManager.parseValue(null, this.attributes.get(name));
         }
-        return this.userManager.parseValue(null, this.attributes.get(name));
     }
     
     
     
     void setAttribute(String name, Types value) {
-        if (!this.attributes.containsKey(name)) {
-            throw new UnknownAttributeException(name);
+        synchronized (this.attributes) {
+            if (!this.attributes.containsKey(name)) {
+                throw new UnknownAttributeException(name);
+            }
+            this.attributes.put(name, value.valueString(
+                    this.userManager.getPersistenceFormatter()));
         }
-        this.attributes.put(name, value.valueString(
-            this.userManager.getPersistenceFormatter()));
     }
     
     
