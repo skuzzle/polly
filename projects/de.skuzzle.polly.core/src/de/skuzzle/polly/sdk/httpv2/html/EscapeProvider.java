@@ -18,6 +18,8 @@ public class EscapeProvider extends AbstractProvider {
     
     @Override
     public void setup() throws SetupException {
+        // HACK: this is a hack to expose html escaping from apache
+        //       commons to all plugins with avoiding a new dependency 
         Escape.ESCAPER = new Escape.EscapeUtil() {
             @Override
             public String escape(String s) {

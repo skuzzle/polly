@@ -8,6 +8,7 @@ import polly.rx.entities.BattleReport;
 import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.sdk.httpv2.html.AbstractHTMLTableModel;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLElement;
+import de.skuzzle.polly.sdk.httpv2.html.HTMLElementGroup;
 import de.skuzzle.polly.sdk.util.DirectedComparator.SortOrder;
 
 
@@ -72,9 +73,26 @@ public class BattleReportModel extends AbstractHTMLTableModel<BattleReport> {
         case 9: return element.getTactic();
         case 10: return element.hasArtifact();
         case 11: return element.getDate();
-        case 12: return new HTMLElement("input")
-            .type("button").attr("class", "button").value("Delete")
-            .attr("onclick", "deleteReport(" + element.getId() + ")");
+        case 12:
+            final HTMLElementGroup result = new HTMLElementGroup();
+            final HTMLElement detailLink = new HTMLElement("a")
+                .href("/pages/reportDetails?reportId=" + element.getId())
+                .title("Report details");
+            final HTMLElement deleteLink = new HTMLElement("a")
+                .href("#").title("Delete report")
+                .attr("onclick", "deleteReport(" + element.getId() + ")");
+            
+            detailLink.content(
+                new HTMLElement("img")
+                    .src("/polly/rx/httpv2/view/report.png")
+                    .attr("width", "20").attr("height", "20"));
+
+            deleteLink.content(
+                new HTMLElement("img").src("/polly/rx/httpv2/view/report_delete.png")
+                    .attr("width", "20").attr("height", "20")
+            );
+            
+            return result.add(detailLink).add(deleteLink);
         default: return "";
         }
     }

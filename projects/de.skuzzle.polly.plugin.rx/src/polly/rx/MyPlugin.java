@@ -36,6 +36,7 @@ import polly.rx.httpv2.ScoreboardDetailModel;
 import polly.rx.httpv2.ScoreboardTableModel;
 import polly.rx.httpv2.ShipsForScanTableModel;
 import polly.rx.httpv2.StatisticsGatherer;
+import polly.rx.httpv2.view.BattleReportShipModell;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
 import de.skuzzle.polly.sdk.Types;
@@ -120,6 +121,7 @@ public class MyPlugin extends PollyPlugin {
         myPolly.persistence().registerEntity(FleetScan.class);
         myPolly.persistence().registerEntity(FleetScanHistoryEntry.class);
         myPolly.persistence().registerEntity(FleetScanShip.class);
+        myPolly.persistence().registerEntity(ScoreBoardEntry.class);
         this.addCommand(new RankCommand(myPolly, this.sbeManager));
         
         
@@ -149,6 +151,12 @@ public class MyPlugin extends PollyPlugin {
         final StatisticsGatherer statsGatherer = new StatisticsGatherer();
         reportTabble.addModelListener(statsGatherer);
         
+        
+        final HTMLTableModel<BattleReportShip> reportAttackerShipModel = new BattleReportShipModell(fleetDBManager, true);
+        final HTMLTableModel<BattleReportShip> reportDefenderShipModel = new BattleReportShipModell(fleetDBManager, false);
+        final HTMLTable<BattleReportShip> reportAttackerShipTable = new HTMLTable<>("attackerShips", reportAttackerShipModel, myPolly);
+        final HTMLTable<BattleReportShip> reportDefenderShipTable = new HTMLTable<>("defenderShips", reportDefenderShipModel, myPolly);
+        
         myPolly.webInterface().getServer().addHttpEventHandler("/api/allFleetScans", fleetScanTable);
         myPolly.webInterface().getServer().addHttpEventHandler("/api/allFleetScanShips", fleetScanShipTable);
         myPolly.webInterface().getServer().addHttpEventHandler("/api/scansWithShip", scansWithShipTable);
@@ -156,6 +164,9 @@ public class MyPlugin extends PollyPlugin {
         myPolly.webInterface().getServer().addHttpEventHandler("/api/scoreboard", scoreboardTable);
         myPolly.webInterface().getServer().addHttpEventHandler("/api/scoreboardDetail", scoreboardDetailTable);
         myPolly.webInterface().getServer().addHttpEventHandler("/api/allReports", reportTabble);
+        
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/reportAttackerShips", reportAttackerShipTable);
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/reportDefenderShips", reportDefenderShipTable);
     }
     
     

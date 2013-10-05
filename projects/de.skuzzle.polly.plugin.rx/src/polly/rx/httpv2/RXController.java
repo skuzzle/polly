@@ -16,6 +16,7 @@ import polly.rx.MyPlugin;
 import polly.rx.core.FleetDBManager;
 import polly.rx.core.ScoreBoardManager;
 import polly.rx.entities.BattleReport;
+import polly.rx.entities.BattleReportShip;
 import polly.rx.entities.FleetScan;
 import polly.rx.entities.FleetScanShip;
 import polly.rx.entities.ScoreBoardEntry;
@@ -364,6 +365,100 @@ public class RXController extends PollyController {
     
     
     
+    @Get("/pages/reportDetails")
+    public HttpAnswer reportDetails(@Param("reportId") int reportId) 
+            throws AlternativeAnswerException {
+        this.requirePermissions(FleetDBManager.VIEW_BATTLE_REPORT_PERMISSION);
+        
+        final BattleReport br = this.fleetDb.getReportById(reportId);
+        final Map<String, Object> c = this.createContext(
+                "polly/rx/httpv2/view/battlereports.details.html");
+        
+        c.put("report", br);
+        c.put("df", new DecimalFormat("0.##"));
+        c.put("fleetDb", this.fleetDb);
+        c.put("Math", Math.class);
+        this.prepareContext(br.getAttackerShips(), "Attacker", c);
+        this.prepareContext(br.getDefenderShips(), "Defender", c);
+        
+        return this.makeAnswer(c);
+    }
+    
+    
+    
+    private void prepareContext(List<BattleReportShip> ships, 
+            String postfix, Map<String, Object> c) {
+    
+        int pzDamage = 0;
+        int maxPzDamage = 0;
+        int minPzDamage = Integer.MAX_VALUE;
+        int avgPzDamage = 0;
+        
+        int shieldDamage = 0;
+        int maxShieldDamage = 0;
+        int minShieldDamage = Integer.MAX_VALUE;
+        int avgShieldDamage = 0;
+        
+        int capiXp = 0;
+        int maxCapiXp = 0;
+        int minCapiXp = Integer.MAX_VALUE;
+        int avgCapiXp = 0;
+        
+        int crewXp = 0;
+        int maxCrewXp = 0;
+        int minCrewXp = Integer.MAX_VALUE;
+        int avgCrewXp = 0;
+        
+        int maxWend = 0;
+        int minWend = Integer.MAX_VALUE;
+        
+        for (BattleReportShip ship : ships) {
+            pzDamage += ship.getPzDamage();
+            maxPzDamage = Math.max(maxPzDamage, ship.getPzDamage());
+            minPzDamage = Math.min(minPzDamage, ship.getPzDamage());
+            
+            shieldDamage += ship.getShieldDamage();
+            maxShieldDamage = Math.max(maxShieldDamage, ship.getShieldDamage());
+            minShieldDamage = Math.min(minShieldDamage, ship.getShieldDamage());
+            
+            capiXp += ship.getCapiXp();
+            maxCapiXp = Math.max(maxCapiXp, ship.getCapiXp());
+            minCapiXp = Math.min(minCapiXp, ship.getCapiXp());
+            
+            crewXp += ship.getCrewXp();
+            maxCrewXp = Math.max(maxCrewXp, ship.getCrewXp());
+            minCrewXp = Math.min(minCrewXp, ship.getCrewXp());
+            
+            maxWend = Math.max(maxWend, ship.getMaxWend());
+            minWend = Math.min(minWend, ship.getMaxWend());
+        }
+        
+        avgPzDamage = pzDamage / ships.size();
+        avgShieldDamage = shieldDamage / ships.size();
+        avgCapiXp = capiXp / ships.size();
+        avgCrewXp = crewXp / ships.size();
+        
+        c.put("pzDamage" + postfix, pzDamage);
+        c.put("maxPzDamage" + postfix, maxPzDamage);
+        c.put("minPzDamage" + postfix, minPzDamage);
+        c.put("avgPzDamage" + postfix, avgPzDamage);
+        c.put("shieldDamage" + postfix, shieldDamage);
+        c.put("maxShieldDamage" + postfix, maxShieldDamage);
+        c.put("minShieldDamage" + postfix, minShieldDamage);
+        c.put("avgShieldDamage" + postfix, avgShieldDamage);
+        c.put("capiXp" + postfix, capiXp);
+        c.put("maxCapiXp" + postfix, maxCapiXp);
+        c.put("minCapiXp" + postfix, minCapiXp);
+        c.put("avgCapiXp" + postfix, avgCapiXp);
+        c.put("crewXp" + postfix, crewXp);
+        c.put("maxCrewXp" + postfix, maxCrewXp);
+        c.put("minCrewXp" + postfix, minCrewXp);
+        c.put("avgCrewXp" + postfix, avgCrewXp);
+        c.put("maxWend" + postfix, maxWend);
+        c.put("minWend" + postfix, minWend);
+    }
+    
+    
     @Post("/api/postReport")
     public HttpAnswer postReport(@Param("report") String report) 
             throws AlternativeAnswerException {
@@ -409,7 +504,11 @@ public class RXController extends PollyController {
     @Get("/api/deleteReport")
     public HttpAnswer deleteReport(@Param("reportId") int id) 
             throws DatabaseException, AlternativeAnswerException {
-        this.requirePermissions(FleetDBManager.DELETE_BATTLE_REPORT_PERMISSION);
+        
+        if (!this.getMyPolly().roles().hasPermission(this.getSessionUser(), 
+                FleetDBManager.DELETE_BATTLE_REPORT_PERMISSION)) {
+            return new GsonHttpAnswer(200, new SuccessResult(false, "No permission"));
+        }
         this.fleetDb.deleteReportById(id);
         return new GsonHttpAnswer(200, new SuccessResult(true, ""));
     }

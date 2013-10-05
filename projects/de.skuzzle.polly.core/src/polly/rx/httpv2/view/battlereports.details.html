@@ -1,0 +1,121 @@
+<div class="highlight contentBox">
+    #CONTENT_HEADER ("Attacker Fleet")
+    <div class="content">
+#PRINT_FLEET(
+    "attackerShips",
+    $report.getAttackerFleetName(),
+    $report.getAttackerVenadName(),
+    $report.getAttackerClan(),
+    $report.getAttackerKw(),
+    $report.getAttackerBonus(),
+    $report.getAttackerXpMod(),
+    $shieldDamageAttacker,
+    $minShieldDamageAttacker,
+    $avgShieldDamageAttacker,
+    $maxShieldDamageAttacker,
+    $pzDamageAttacker,
+    $minPzDamageAttacker,
+    $avgPzDamageAttacker,
+    $maxPzDamageAttacker,
+    $minWendAttacker,
+    $maxWendAttacker,
+    $capiXpAttacker,
+    $minCapiXpAttacker,
+    $avgCapiXpAttacker,
+    $maxCapiXpAttacker,
+    $crewXpAttacker,
+    $minCrewXpAttacker,
+    $avgCrewXpAttacker,
+    $maxCrewXpAttacker)
+    </div>
+</div>
+
+<div class="highlight contentBox">
+    #CONTENT_HEADER ("Defender Fleet")
+    <div class="content">
+#PRINT_FLEET(
+    "defenderShips",
+    $report.getDefenderFleetName(),
+    $report.getDefenderVenadName(),
+    $report.getDefenderClan(),
+    $report.getDefenderKw(),
+    $report.getDefenderBonus(),
+    $report.getDefenderXpMod(),
+    $shieldDamageDefender,
+    $minShieldDamageDefender,
+    $avgShieldDamageDefender,
+    $maxShieldDamageDefender,
+    $pzDamageDefender,
+    $minPzDamageDefender,
+    $avgPzDamageDefender,
+    $maxPzDamageDefender,
+    $minWendDefender,
+    $maxWendDefender,
+    $capiXpDefender,
+    $minCapiXpDefender,
+    $avgCapiXpDefender,
+    $maxCapiXpDefender,
+    $crewXpDefender,
+    $minCrewXpDefender,
+    $avgCrewXpDefender,
+    $maxCrewXpDefender)
+    </div>
+</div>
+
+#macro (PRINT_FLEET $tId $fleet $venad $clan $kw $bonus $xpmod $shield $minShield $avgShield 
+    $maxShield $pz $minPz $avgPz $maxPz $minWend $maxWend $capiXp $capiXpMin $capiXpAvg 
+    $capiXpMax $crewXp $crewXpMin $crewXpAvg $crewXpMax)
+    
+<table>
+    <tr>
+    <td><b>Fleet name</b></td>
+    <td>$fleet</td>
+    </tr>
+    <tr>
+    <td><b>Venad</b></td>
+    <td>$venad</td>
+    </tr>
+    <tr>
+    <td><b>Clan</b></td>
+    <td>$clan</td>
+    </tr>
+    <tr>
+    <td><b>Kw / Kw normalized</b></td>
+    #set ($normalized = $kw/$bonus )
+    <td>$kw / $df.format($normalized)</td>
+    </tr>
+    <tr>
+    <td><b>XP-Mod</b></td>
+    <td>$xpmod</td>
+    </tr>
+    <tr>
+    <td><b>Shield damage (min/avg/max)</b></td>
+    <td>$shield ($minShield/$avgShield/$maxShield)</td>
+    </tr>
+    <tr>
+    <td><b>PZ damage (min/avg/max)</b></td>
+    <td>$pz ($minPz/$avgPz/$maxPz)</td>
+    </tr>
+    <tr>
+    <td><b>Wend (max occurred / min occurred)</b></td>
+    <td>$maxWend / $minWend</td>
+    </tr>
+    <tr>
+    <td><b>Capi Xp (min/avg/max)</b></td>
+    <td>$capiXp ($capiXpMin/$capiXpAvg/$capiXpMax)</td>
+    </tr>
+    <tr>
+    <td><b>Capi Xp (min/avg/max)</b></td>
+    <td>$crewXp ($crewXpMin/$crewXpAvg/$crewXpMax)</td>
+    </tr>
+</table>
+
+<table id="$tId" style="margin-top: 10px;"></table>
+#end
+
+<script>
+$(document).ready(function() {
+	loadTable("/api/reportAttackerShips?reportId=$report.getId()", "attackerShips");
+	loadTable("/api/reportDefenderShips?reportId=$report.getId()", "defenderShips");
+})
+</script>

@@ -44,8 +44,13 @@ function deleteReport(id) {
 		return;
 	}
 	$.get("$PAGE_DELETEREPORT?reportId="+id, function(data) {
-		location.reload();
-	})
+		var result = JSON.parse(data);
+		if (!result.success) {
+			alert(result.message);
+		} else {
+		    location.reload();
+		}
+	});
 }
 
 function submitReport() {

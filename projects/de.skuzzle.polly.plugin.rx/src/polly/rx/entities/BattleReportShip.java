@@ -288,4 +288,10 @@ public class BattleReportShip {
     public String toString() {
         return this.name;
     }
+
+
+
+    public double calculateKw() {
+        return Math.sqrt((this.pz + this.shields) * this.attack);
+    }
 }
