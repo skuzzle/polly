@@ -8,16 +8,25 @@
     </tr>
     <tr>
         <td><a href="$PAGE_INSTALLSCOREBOARD">Scoreboard Paster</a></td>
-        <td>Posts Revorix Scoreboard to polly</td>
+        <td>Posts Revorix scoreboard to polly</td>
     </tr>
     <tr>
         <td><a href="$PAGE_INSTALLLIVEKB">Battlereport Paster</a></td>
-        <td>Posts Reovix battle reports to polly. <br/>
+        <td>
+            Posts Reovix battle reports to polly. <br/>
             <b>Auto Remind HOWTO:</b> edit the installed
-            script and insert your polly login data, then 
+            script and insert your polly login data (this is important!), then 
             <a href="$PAGE_EDITUSER?userId=$user.getId()">edit</a> your user settings
-            to enable auto reminds. Auto Reminds only work if you are currently 
-            known to polly in IRC (i.e. you currently share at least one channel)</td>
+            to enable auto reminds. You may also configure different AZ values for 
+            different fleets <a href="$PAGE_CONFIGURE_AZ">here</a>.<br/> 
+            Auto Reminds only work if you are currently 
+            known to polly in IRC (i.e. you currently share at least one channel and you
+            are logged in).<br/><br/>
+            
+            This script is also capable of showing a warning if one ship drops below a 
+            certain pz value. This can also be configured on your 
+            <a href="$PAGE_EDITUSER?userId=$user.getId()">user page</a>.
+        </td>
     </tr>
     </table>
     </div>
