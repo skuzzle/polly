@@ -220,22 +220,6 @@
         </ul>
     </div>
     
-    <div id="menuContent">
-        #foreach ($mc in $menu)
-        #if ($mc.mustRender($user, $myPolly.roles()))
-        <div class="menuGroup">
-            <h2>$mc.getName()</h2>
-            <ul>
-            #foreach ($me in $mc.getContent())
-            <li><a id="$me.hashCode()" href="$me.getUrl()" class="menuEntry">$me.getName()</a></li>
-            #end
-            </ul>
-        </div>
-        #end
-        #end
-        <div id="menuDescription"></div>
-    </div>
-    
     <div id="header">
         <div id="notification"></div>
         <div id="headerContent">
@@ -253,9 +237,22 @@
                 type="text" class="textbox" placeholder="Enter any polly expression here"
             />
         </span>
-        #if ($user)
-            <a href="#" class="showContent">Menu</a>
+    </div>
+    
+    <div id="menuContent">
+        #foreach ($mc in $menu)
+        #if ($mc.mustRender($user, $myPolly.roles()))
+        <div class="menuGroup">
+            <h2>$mc.getName()</h2>
+            <ul>
+            #foreach ($me in $mc.getContent())
+            <li><a id="$me.hashCode()" href="$me.getUrl()" class="menuEntry">$me.getName()</a></li>
+            #end
+            </ul>
+        </div>
         #end
+        #end
+        <div id="menuDescription"></div>
     </div>
     
     <div id="content">

@@ -29,26 +29,20 @@ $(document).ready(function() {
     
     
     
-    // Header menu fade in
-    var hover = false;
-    var timer;
-    $(".showContent").mouseleave(function() {
-        timer = setTimeout(function() {
-            if (!hover) {
-                hideMenu();
-            }
-        }, 150);
-    });
-    $(".showContent").mouseenter(function() {
-        hover = false;
-        showMenu();
-    });
+    // Main menu fade in
+    var timer = setTimeout(function() {
+    	hideMenu();
+    }, 2000);
     $("#menuContent").mouseenter(function() {
-        hover = true;
+    	showMenu();
+    	if (timer) {
+    		clearTimeout(timer);
+    	}
     });
     $("#menuContent").mouseleave(function() {
-        hideMenu()
-        clearTimeout(timer);
+    	timer = setTimeout(function() {
+        	hideMenu();
+    	}, 300);
     });
     
     
@@ -58,11 +52,11 @@ $(document).ready(function() {
         var key = $(this).attr("id");
         var description = DESCRIPTIONS[key];
         $("#menuDescription").text(description);
-        $("#menuDescription").fadeIn();
+        $("#menuDescription").show();
     });
     $(".menuEntry").mouseleave(function() {
         var key = $(this).attr("id");
-        $("#menuDescription").hide();
+        $("#menuDescription").text("");
     });
     
     
@@ -82,12 +76,10 @@ $(document).ready(function() {
 
 // Shows the in-header menu by fading it in
 function showMenu() {
-    $("#menuContent").fadeIn(250);
-    $(".showContent").animate({borderBottomColor : '#3333ff'}, 250);
+    $("#menuContent").animate({left: "0px"}, 200);
 }
 
 // Hides the in-header menu by fading it out
 function hideMenu() {
-    $(".showContent").animate({borderBottomColor : 'transparent'}, 250);
-    $("#menuContent").fadeOut(250);
+	$("#menuContent").animate({left: "-185px"}, 200);
 }

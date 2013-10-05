@@ -1,7 +1,8 @@
 package de.skuzzle.polly.sdk.httpv2;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
 
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.roles.RoleManager;
@@ -11,13 +12,13 @@ public class MenuCategory implements Comparable<MenuCategory> {
 
     private final int sortId;
     private final String name;
-    private final List<MenuEntry> content;
+    private final Set<MenuEntry> content;
     
     
     public MenuCategory(int sortId, String name) {
         this.sortId = sortId;
         this.name = name;
-        this.content = new ArrayList<>();
+        this.content = new TreeSet<>();
     }
     
     
@@ -28,7 +29,7 @@ public class MenuCategory implements Comparable<MenuCategory> {
     
     
     
-    public List<MenuEntry> getContent() {
+    public Collection<MenuEntry> getContent() {
         return this.content;
     }
     

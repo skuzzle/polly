@@ -6,7 +6,7 @@ import java.util.Set;
 
 import de.skuzzle.polly.sdk.roles.SecurityObject;
 
-public class MenuEntry implements SecurityObject {
+public class MenuEntry implements SecurityObject, Comparable<MenuEntry> {
 
     private final String name;
     private final String url;
@@ -44,5 +44,12 @@ public class MenuEntry implements SecurityObject {
     @Override
     public Set<String> getRequiredPermission() {
         return this.permissions;
+    }
+
+
+
+    @Override
+    public int compareTo(MenuEntry other) {
+        return this.name.compareTo(other.name);
     }
 }
