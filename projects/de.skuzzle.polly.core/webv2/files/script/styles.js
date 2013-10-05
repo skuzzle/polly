@@ -30,9 +30,11 @@ $(document).ready(function() {
     
     
     // Main menu fade in
+    // hide the menu after 2seconds when the page was loaded
     var timer = setTimeout(function() {
     	hideMenu();
     }, 2000);
+    
     $("#menuContent").mouseenter(function() {
     	showMenu();
     	if (timer) {
