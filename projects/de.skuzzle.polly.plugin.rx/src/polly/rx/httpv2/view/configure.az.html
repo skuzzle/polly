@@ -1,0 +1,76 @@
+<div class="highlight contentBox">
+    #CONTENT_HEADER ("Configure AZ for Fleetnames")
+    <p class="content">
+        Here you may configure different AZ values for different fleet names. Those 
+        values will be used for the auto remind feature: If a live KB is posted, polly
+        will figure out the AZ of the attacker fleet and use this value to schedule
+        a new remind message for you. <b>Reminds will only be scheduled, if auto reminds are 
+        activated <a href="$PAGE_EDITUSER?userid=$user.getId()">here</a></b> 
+        (within the <em>Revorix</em> section).
+    </p>
+    <p class="content">
+        If you perform an attack with a fleet for which no AZ is configured, polly will
+        fall back to the AZ value configured 
+        <a href="$PAGE_EDITUSER?userid=$user.getId()">here</a> 
+        (within the <em>Revorix</em> section).
+    </p>
+    <div class="content">
+    <table>
+    <tr>
+        <td><label for="fleet">Fleet name:</label></td>
+        <td><input id="fleetName" name="fleet" type="text" class="textbox"/></td>
+    </tr>
+    <tr>
+        <td><label for="fleet">AZ:</label></td>
+        <td><input id="az" name="az" type="text" class="textbox" placeholder="14m"/></td>
+    </tr>
+    <tr>
+        <td><input type="submit" class="button" value="Add entry"
+            onclick="addAzEntry()"/></td>
+        <td></td>
+    </tr>
+    </table>
+    
+    <table style="margin-top: 10px;">
+    <tr>
+       <th>Fleet name</th>
+       <th>AZ</th>
+       <th>Action</th>
+    </tr>
+    #foreach ($e in $entries)
+    <tr>
+        <td>$e.getFleetName()</td>
+        <td>$e.getAz()</td>
+        <td><input type="button" class="button" value="Delete" 
+            onclick="deleteAzEntry($e.getId())"/>
+    </tr>
+    #end
+    </table>
+    </div>
+</div>
+
+<script>
+function addAzEntry() {
+	var fleetname = $("#fleetName").val();
+	var az = $("#az").val();
+	
+    $.get("$PAGE_ADDAZENTRY?fleet="+fleetname+"&az="+az, function(data) {
+        var result = JSON.parse(data);
+        if (result.success) {
+            location.reload();
+        } else {
+            alert(result.message);
+        }
+    });
+}
+function deleteAzEntry(id) {
+	$.get("$PAGE_DELETEAZENTRY?entryId="+id, function(data) {
+		var result = JSON.parse(data);
+		if (result.success) {
+			location.reload();
+		} else {
+			alert(result.message);
+		}
+	});
+}
+</script>
