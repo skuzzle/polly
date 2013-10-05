@@ -396,8 +396,8 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
 
     public PersistenceManagerV2Impl() {
         this.locker = new ReentrantReadWriteLock();
-        this.executor = Executors.newCachedThreadPool(new ThreadFactoryBuilder(
-            "PERSISTENCE_%n%"));
+        this.executor = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder(
+            "PERSISTENCE"));
         this.entities = new EntityList();
         this.entityConverter = new EntityConverterManagerImpl(this);
     }
