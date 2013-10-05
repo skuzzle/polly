@@ -70,7 +70,7 @@ public class BattleReportShipModell extends AbstractHTMLTableModel<BattleReportS
                 return element.getRxId();
             } else {
                 return new HTMLElement("a").href("/pages/scanShipDetails?shipId=" + 
-                        element.getRxId());
+                        element.getRxId()).content("" + element.getRxId());
             }
         }
         case 1: {
@@ -92,7 +92,7 @@ public class BattleReportShipModell extends AbstractHTMLTableModel<BattleReportS
         case 10: return element.getShields();
         case 11: return element.getShieldDamage();
         case 12: return element.getPz();
-        case 13: return element.getPz();
+        case 13: return element.getPzDamage();
         case 14: return element.getStructure();
         case 15: return element.getStructureDamage();
         default: return "";
