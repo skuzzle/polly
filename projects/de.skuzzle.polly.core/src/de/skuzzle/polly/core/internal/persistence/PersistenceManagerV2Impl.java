@@ -17,6 +17,8 @@ import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
 
+import de.skuzzle.polly.core.util.MillisecondStopwatch;
+import de.skuzzle.polly.core.util.Stopwatch;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.EntityConverter;
 import de.skuzzle.polly.sdk.PersistenceManagerV2;
@@ -33,7 +35,7 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
     
     
     private abstract class WriteImpl implements Write {
-
+        
         @Override
         public <T> Write all(Iterable<T> list) {
             for (final T element : list) {
@@ -89,7 +91,14 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
         @Override
         public <T> T find(Class<T> type, Object key) {
             logger.trace("Looking up primary key " + key + " in " + type.getName());
-            return em.find(type, key);
+            final Stopwatch watch = new MillisecondStopwatch();
+            watch.start();
+            try {
+                return em.find(type, key);
+            } finally {
+                long time = watch.stop();
+                logger.trace("Query time: " + time + "ms");
+            }
         }
 
 
@@ -105,17 +114,23 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
         @SuppressWarnings("unchecked")
         public <T> T findSingle(Class<T> type, String query, Param params) {
             logger.trace("Executing named query '" + query + "'. Parameters: " + params);
-
-            Query q = em.createNamedQuery(query);
-            int i = 1;
-            for (Object param : params.getParams()) {
-                q.setParameter(i++, param);
-            }
-
+            final Stopwatch watch = new MillisecondStopwatch();
+            watch.start();
             try {
-                return (T) q.getSingleResult();
-            } catch (NoResultException e) {
-                return null;
+                Query q = em.createNamedQuery(query);
+                int i = 1;
+                for (Object param : params.getParams()) {
+                    q.setParameter(i++, param);
+                }
+    
+                try {
+                    return (T) q.getSingleResult();
+                } catch (NoResultException e) {
+                    return null;
+                }
+            } finally {
+                long time = watch.stop();
+                logger.trace("Query time: " + time + "ms");
             }
         }
 
@@ -132,14 +147,20 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
         @SuppressWarnings("unchecked")
         public <T> List<T> findList(Class<T> type, String query, Param params) {
             logger.trace("Executing named query '" + query + "'. Parameters: " + params);
-
-            Query q = em.createNamedQuery(query);
-            int i = 1;
-            for (Object param : params.getParams()) {
-                q.setParameter(i++, param);
+            final Stopwatch watch = new MillisecondStopwatch();
+            watch.start();
+            try {
+                Query q = em.createNamedQuery(query);
+                int i = 1;
+                for (Object param : params.getParams()) {
+                    q.setParameter(i++, param);
+                }
+    
+                return q.getResultList();
+            } finally {
+                long time = watch.stop();
+                logger.trace("Query time: " + time + "ms");
             }
-
-            return q.getResultList();
         }
 
 
@@ -157,15 +178,22 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
                 Param params) {
             logger.trace("Executing named query '" + query + "'. Parameters: "
                 + params + ", limit: " + limit);
-
-            Query q = em.createNamedQuery(query);
-            q.setMaxResults(limit);
-            int i = 1;
-            for (Object param : params.getParams()) {
-                q.setParameter(i++, param);
+            final Stopwatch watch = new MillisecondStopwatch();
+            watch.start();
+            
+            try {
+                Query q = em.createNamedQuery(query);
+                q.setMaxResults(limit);
+                int i = 1;
+                for (Object param : params.getParams()) {
+                    q.setParameter(i++, param);
+                }
+    
+                return q.getResultList();
+            } finally {
+                long time = watch.stop();
+                logger.trace("Query time: " + time + "ms");
             }
-
-            return q.getResultList();
         }
 
 
@@ -183,15 +211,21 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
                 Param params) {
             logger.trace("Executing named query '" + query + "'. Parameters: "
                 + params + ", first: " + first + ", limit:" + limit);
-
-            final Query q = em.createNamedQuery(query);
-            q.setFirstResult(first);
-            q.setMaxResults(limit);
-            int i = 1;
-            for (Object param : params.getParams()) {
-                q.setParameter(i++, param);
+            final Stopwatch watch = new MillisecondStopwatch();
+            watch.start();
+            try {
+                final Query q = em.createNamedQuery(query);
+                q.setFirstResult(first);
+                q.setMaxResults(limit);
+                int i = 1;
+                for (Object param : params.getParams()) {
+                    q.setParameter(i++, param);
+                }
+                return q.getResultList();
+            } finally {
+                long time = watch.stop();
+                logger.trace("Query time: " + time + "ms");
             }
-            return q.getResultList();
         }
     }
     
@@ -408,6 +442,11 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
 
 
 
+    /**
+     * Starts a new transaction which can be used to add, modify or delete entities 
+     * within the database. In order to do this, a WriteLock is acquired so that no other
+     * thread can access the database while this transaction is active.
+     */
     private void startTransaction() {
         logger.trace("Acquiring write lock...");
         this.locker.writeLock().lock();
@@ -461,6 +500,9 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
     @Override
     public Read read() {
         logger.trace("Acquiring read lock...");
+        final Stopwatch watch = new MillisecondStopwatch();
+        watch.start();
+        
         this.locker.readLock().lock();
         logger.trace("Got read lock.");
         
@@ -469,6 +511,8 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
             public void close() {
                 logger.trace("Readlock released");
                 locker.readLock().unlock();
+                long time = watch.stop();
+                logger.trace("Read transaction time: " + time + "ms");
             }
         };
     }
@@ -484,12 +528,20 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
 
     @Override
     public Write write() {
+        final Stopwatch watch = new MillisecondStopwatch();
+        watch.start();
+        
         this.startTransaction();
         
         return new WriteImpl() {
             @Override
             public void close() throws DatabaseException {
-                commitTransaction();
+                try {
+                    commitTransaction();
+                } finally {
+                    long time = watch.stop();
+                    logger.trace("Write transaction time: " + time + "ms");
+                }
             }
         };
     }
@@ -605,7 +657,7 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
         logger.trace("Shutting down entity manager...");
         try {
             logger.trace("Waiting for all operations to end...");
-            this.locker.writeLock().lock();;
+            this.locker.writeLock().lock();
             if (this.em.isOpen()) {
                 try {
                     logger.trace("Sending SHUTDOWN command.");
