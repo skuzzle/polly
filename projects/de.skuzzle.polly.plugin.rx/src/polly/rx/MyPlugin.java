@@ -13,9 +13,11 @@ import polly.rx.commands.MyVenadCommand;
 import polly.rx.commands.RankCommand;
 import polly.rx.commands.RessComand;
 import polly.rx.commands.VenadCommand;
+import polly.rx.core.AZEntryManager;
 import polly.rx.core.FleetDBManager;
 import polly.rx.core.ScoreBoardManager;
 import polly.rx.core.TrainManagerV2;
+import polly.rx.entities.AZEntry;
 import polly.rx.entities.BattleDrop;
 import polly.rx.entities.BattleReport;
 import polly.rx.entities.BattleReportShip;
@@ -82,6 +84,7 @@ public class MyPlugin extends PollyPlugin {
     private TrainManagerV2 trainManager;
     private DailyGreeter dailyGreeter;
     private ScoreBoardManager sbeManager;
+    private AZEntryManager azManager;
     
     
     public MyPlugin(MyPolly myPolly) 
@@ -116,6 +119,7 @@ public class MyPlugin extends PollyPlugin {
         
         this.fleetDBManager = new FleetDBManager(myPolly.persistence());
         this.sbeManager = new ScoreBoardManager(myPolly.persistence());
+        this.azManager = new AZEntryManager(myPolly);
         
         myPolly.persistence().registerEntity(BattleReport.class);
         myPolly.persistence().registerEntity(BattleReportShip.class);
@@ -124,11 +128,13 @@ public class MyPlugin extends PollyPlugin {
         myPolly.persistence().registerEntity(FleetScanHistoryEntry.class);
         myPolly.persistence().registerEntity(FleetScanShip.class);
         myPolly.persistence().registerEntity(ScoreBoardEntry.class);
+        myPolly.persistence().registerEntity(AZEntry.class);
         this.addCommand(new RankCommand(myPolly, this.sbeManager));
         
         
         myPolly.webInterface().addCategory(new MenuCategory(0, "Revorix"));
-        myPolly.webInterface().getServer().addController(new RXController(myPolly, fleetDBManager, sbeManager));
+        myPolly.webInterface().getServer().addController(
+                new RXController(myPolly, fleetDBManager, sbeManager, azManager));
         
         final HTMLTableModel<FleetScan> scanModel = new FleetScanTableModel(fleetDBManager);
         final HTMLTable<FleetScan> fleetScanTable = new HTMLTable<FleetScan>("fleetScans", scanModel, myPolly);

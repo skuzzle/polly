@@ -13,8 +13,10 @@ import java.util.Map;
 import java.util.Set;
 
 import polly.rx.MyPlugin;
+import polly.rx.core.AZEntryManager;
 import polly.rx.core.FleetDBManager;
 import polly.rx.core.ScoreBoardManager;
+import polly.rx.entities.AZEntry;
 import polly.rx.entities.BattleReport;
 import polly.rx.entities.BattleReportShip;
 import polly.rx.entities.FleetScan;
@@ -38,6 +40,7 @@ import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.http.api.answers.HttpInputStreamAnswer;
 import de.skuzzle.polly.http.api.answers.HttpResourceAnswer;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.Types.BooleanType;
 import de.skuzzle.polly.sdk.Types.TimespanType;
 import de.skuzzle.polly.sdk.User;
@@ -55,10 +58,12 @@ public class RXController extends PollyController {
 
     private final FleetDBManager fleetDb;
     private final ScoreBoardManager sbManager;
+    private final AZEntryManager azManager;
     
     public RXController(MyPolly myPolly, FleetDBManager fleetDb, 
-                ScoreBoardManager sbManager) {
+                ScoreBoardManager sbManager, AZEntryManager azManager) {
         super(myPolly);
+        this.azManager = azManager;
         this.fleetDb = fleetDb;
         this.sbManager = sbManager;
     }
@@ -67,7 +72,8 @@ public class RXController extends PollyController {
 
     @Override
     protected Controller createInstance() {
-        return new RXController(this.getMyPolly(), this.fleetDb, this.sbManager);
+        return new RXController(this.getMyPolly(), this.fleetDb, this.sbManager, 
+                this.azManager);
     }
     
     
@@ -201,6 +207,55 @@ public class RXController extends PollyController {
         final Map<String, Object> c = this.createContext(
                 "polly/rx/httpv2/view/battlereports.overview.html");
         return this.makeAnswer(c);
+    }
+    
+    
+    
+    @Get(value = "/pages/configureAz", name = "Configure AZ")
+    @OnRegister({ WebinterfaceManager.ADD_MENU_ENTRY, "Revorix", "Configure AZ values per fleet name",
+        FleetDBManager.ADD_BATTLE_REPORT_PERMISSION })
+    public HttpAnswer configureAz() throws AlternativeAnswerException {
+        this.requirePermissions(FleetDBManager.ADD_BATTLE_REPORT_PERMISSION);
+        final User user = this.getSessionUser();
+        final List<AZEntry> entries = this.azManager.getEntries(user.getId());
+        
+        final Map<String, Object> c = this.createContext(
+                "polly/rx/httpv2/view/configure.az.html");
+        c.put("entries", entries);
+        return this.makeAnswer(c);
+    }
+    
+    
+    
+    @Get("/api/addAzEntry")
+    public HttpAnswer addAzEntry(@Param("fleet") String fleet, @Param("az") String az) 
+            throws AlternativeAnswerException, DatabaseException {
+        this.requirePermissions(FleetDBManager.ADD_BATTLE_REPORT_PERMISSION);
+        final User user = this.getSessionUser();
+        final Types t = this.getMyPolly().parse(az);
+        
+        if (!(t instanceof TimespanType)) {
+            return new GsonHttpAnswer(200, new SuccessResult(false, "Illegal AZ format"));
+        }
+        
+        this.azManager.addEntry(user.getId(), fleet, az);
+        return new GsonHttpAnswer(200, new SuccessResult(true, ""));
+    }
+    
+    
+    
+    @Get("/api/deleteAzEntry")
+    public HttpAnswer deleteAzEntry(@Param("entryId") int id) 
+            throws AlternativeAnswerException, DatabaseException {
+        this.requirePermissions(FleetDBManager.ADD_BATTLE_REPORT_PERMISSION);
+        final User user = this.getSessionUser();
+        
+        try {
+            this.azManager.deleteEntry(id, user.getId());
+            return new GsonHttpAnswer(200, new SuccessResult(true, ""));
+        } catch (DatabaseException e) {
+            return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
+        }
     }
     
     
@@ -474,6 +529,7 @@ public class RXController extends PollyController {
     }
     
     
+    
     @Post("/api/postReport")
     public HttpAnswer postReport(@Param("report") String report) 
             throws AlternativeAnswerException {
@@ -513,10 +569,16 @@ public class RXController extends PollyController {
             if (isLive && u.getCurrentNickName() != null) {
                 final BooleanType autoRemind = (BooleanType) u.getAttribute(MyPlugin.AUTO_REMIND);
                 if (autoRemind.getValue()) {
-                    final TimespanType ts = (TimespanType) u.getAttribute(MyPlugin.AUTO_REMIND_AZ);
-                    final String duration = ts.getSpan() + "s";
+                    
+                    // get AZ for attacker fleet. This will fall back to the default az
+                    // time if no time for given fleet is configured
+                    final TimespanType az = this.azManager.getAz(
+                            br.getAttackerFleetName(), u);
+                    
+                    final String duration = az.getSpan() + "s";
                     final String command = ":remind @" + 
-                            u.getCurrentNickName() + " " + duration + " \"Auto Remind!\"";
+                            u.getCurrentNickName() + " " + duration + 
+                            " \"Auto Remind: " + br.getAttackerFleetName() + "\"";
                     try {
                         this.getMyPolly().commands().executeString(command, 
                                 u.getCurrentNickName(), true, u, this.getMyPolly().irc());

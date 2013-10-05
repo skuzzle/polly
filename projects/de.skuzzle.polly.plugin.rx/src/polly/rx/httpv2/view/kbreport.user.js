@@ -7,7 +7,7 @@
 // @include		http://www.revorix.info/php/map_attack.php?fida=*
 // @grant       GM_xmlhttpRequest
 // @grant       GM_log
-// @version     0.3
+// @version     0.4
 // ==/UserScript==
 
 var verbose = true; // prints status message in table header
