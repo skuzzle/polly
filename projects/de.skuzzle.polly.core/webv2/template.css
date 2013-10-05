@@ -162,7 +162,7 @@ label {
     position: absolute;
     left: 0px;
     top: 176px;
-    background: #333333;
+    background: url(files/imgv2/menu.png) no-repeat #333333;
     width: 200px;
     color: white;
     z-index: 1000;

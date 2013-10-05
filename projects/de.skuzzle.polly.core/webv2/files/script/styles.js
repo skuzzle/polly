@@ -83,5 +83,5 @@ function showMenu() {
 
 // Hides the in-header menu by fading it out
 function hideMenu() {
-	$("#menuContent").animate({left: "-185px"}, 200);
+	$("#menuContent").animate({left: "-180px"}, 200);
 }
