@@ -57,10 +57,9 @@ public class FleetDBManager {
     
     public synchronized void addBattleReport(final BattleReport report) 
             throws DatabaseException {
-        this.persistence.writeAtomic(new Atomic() {
-            @Override
-            public void perform(Write write) throws DatabaseException {
-                final BattleReport rp = write.read().findSingle(
+        
+        try (final Read r = this.persistence.read()) {
+            final BattleReport rp = r.findSingle(
                     BattleReport.class, BattleReport.UNIQUE_CHECK_NO_DATE, new Param(
                     report.getQuadrant(), 
                     report.getX(), report.getY(), 
@@ -70,12 +69,16 @@ public class FleetDBManager {
                     report.getDefenderFleetName(),
                     report.getAttackerKw(),
                     report.getDefenderKw()));
-                
-                if (rp != null) {
-                    throw new DatabaseException(
+            
+            if (rp != null) {
+                throw new DatabaseException(
                         "It seems like this Battlereport already exists.");
-                }
-                
+            }
+        }
+        
+        this.persistence.writeAtomic(new Atomic() {
+            @Override
+            public void perform(Write write) throws DatabaseException {
                 write.single(report);
             }
         });
