@@ -46,6 +46,7 @@ import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
 import de.skuzzle.polly.sdk.httpv2.PollyController;
 import de.skuzzle.polly.sdk.httpv2.SuccessResult;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
+import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.time.Time;
 import de.skuzzle.polly.tools.streams.FastByteArrayInputStream;
 
@@ -199,6 +200,18 @@ public class RXController extends PollyController {
         this.requirePermissions(FleetDBManager.VIEW_BATTLE_REPORT_PERMISSION);
         final Map<String, Object> c = this.createContext(
                 "polly/rx/httpv2/view/battlereports.overview.html");
+        return this.makeAnswer(c);
+    }
+    
+    
+    
+    @Get(value = "/pages/gmScripts", name = "Greasemonkey")
+    @OnRegister({ WebinterfaceManager.ADD_MENU_ENTRY, "Revorix", "Revorix Greasemonkey scripts",
+        RoleManager.REGISTERED_PERMISSION })
+    public HttpAnswer gmScripts() throws AlternativeAnswerException {
+        this.requirePermissions(RoleManager.REGISTERED_PERMISSION);
+        final Map<String, Object> c = this.createContext(
+                "polly/rx/httpv2/view/gmscripts.html");
         return this.makeAnswer(c);
     }
     
