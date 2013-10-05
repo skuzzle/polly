@@ -311,11 +311,10 @@ public class ScoreBoardManager {
 
 
     
-    public void addEntries(Collection<ScoreBoardEntry> entries) throws DatabaseException {
-        try (final Write w = this.persistence.write()) {
-            final Read r = w.read();
-            final List<ScoreBoardEntry> toAdd = new ArrayList<>(50);
-            
+    public synchronized void addEntries(Collection<ScoreBoardEntry> entries) 
+            throws DatabaseException {
+        final List<ScoreBoardEntry> toAdd = new ArrayList<>(50);
+        try (final Read r = this.persistence.read()) {
             for (final ScoreBoardEntry entry : entries) {
                 final Collection<ScoreBoardEntry> existing = r.findList(
                         ScoreBoardEntry.class, ScoreBoardEntry.SBE_BY_USER,
@@ -336,8 +335,10 @@ public class ScoreBoardManager {
                     toAdd.add(entry);
                 }
             }
-            
-            if (!toAdd.isEmpty()) {
+        }
+        
+        if (!toAdd.isEmpty()) {
+            try (final Write w = this.persistence.write()) {
                 w.all(toAdd);
             }
         }
