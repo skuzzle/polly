@@ -99,7 +99,9 @@ public class UserController extends PollyController {
     
     
     @Get("/api/deleteUser")
-    public HttpAnswer deleteUser(@Param("id") int id) {
+    public HttpAnswer deleteUser(@Param("id") int id) throws AlternativeAnswerException {
+        this.requirePermissions(RoleManager.ADMIN_PERMISSION);
+        
         final UserManager um = this.getMyPolly().users();
         final User user = um.getUser(id);
      
@@ -142,11 +144,17 @@ public class UserController extends PollyController {
     public HttpAnswer setPassword(
         @Param("userId") int userId,
         @Param("newPassword") final String newPassword, 
-        @Param("retype") String retype) throws DatabaseException {
+        @Param("retype") String retype) throws DatabaseException, AlternativeAnswerException {
         
-        final User user = this.getMyPolly().users().getUser(userId);
+        final User user = this.getSessionUser();
+        if (user == null || user.getId() != userId) {
+            // session has no id OR session user is not the edited user:
+            // then you need admin permissions to edit the attributes
+            this.requirePermissions(RoleManager.ADMIN_PERMISSION);
+        }
         
-        if (user == null) {
+        final User target = this.getMyPolly().users().getUser(userId);
+        if (target == null) {
             return new GsonHttpAnswer(200, 
                 new SuccessResult(false, "User does not exist"));
         } else if (!newPassword.equals(retype)) {
@@ -157,7 +165,7 @@ public class UserController extends PollyController {
                 
                 @Override
                 public void perform(Write write) {
-                    user.setPassword(newPassword);
+                    target.setPassword(newPassword);
                 }
             });
             return new GsonHttpAnswer(200, new SuccessResult(true, "Password changed"));
@@ -171,7 +179,10 @@ public class UserController extends PollyController {
     public HttpAnswer addUser(
         @Param("newName") String name, 
         @Param("newPassword") String password, 
-        @Param(value = "initialRoles", typeHint = String.class) List<String> roles) {
+        @Param(value = "initialRoles", typeHint = String.class) List<String> roles) 
+                throws AlternativeAnswerException {
+        
+        this.requirePermissions(RoleManager.ADMIN_PERMISSION);
         
         final UserManager um = this.getMyPolly().users();
         final RoleManager rm = this.getMyPolly().roles();
@@ -217,8 +228,12 @@ public class UserController extends PollyController {
         @Param(value = "value", treatEmpty = true, ifEmptyValue = "") String value) 
             throws AlternativeAnswerException {
         
-        this.requirePermissions(RoleManager.ADMIN_PERMISSION);
         final User user = this.getSessionUser();
+        if (user == null || user.getId() != userId) {
+            // session has no id OR session user is not the edited user:
+            // then you need admin permissions to edit the attributes
+            this.requirePermissions(RoleManager.ADMIN_PERMISSION);
+        }
         
         final User target = this.getMyPolly().users().getUser(userId);
         if (target == null) {
