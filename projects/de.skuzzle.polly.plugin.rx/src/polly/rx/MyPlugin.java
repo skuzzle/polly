@@ -74,6 +74,8 @@ public class MyPlugin extends PollyPlugin {
     public final static String VENAD    = "VENAD";
     public final static String CRACKER  = "CRACKER";
     public final static String MAX_MONTHS = "MAX_MONTHTS";
+    public final static String AUTO_REMIND = "AUTO_REMIND";
+    public final static String AUTO_REMIND_AZ = "AUTO_REMIND_AZ";
     
     
     private FleetDBManager fleetDBManager;
@@ -251,6 +253,13 @@ public class MyPlugin extends PollyPlugin {
                     return false;
                 }
             });
+            this.getMyPolly().users().addAttribute(AUTO_REMIND, 
+                    new Types.BooleanType(false), 
+                    "When posting a live KB, polly will automatically set a remind for you", 
+                    "Revorix");
+            this.getMyPolly().users().addAttribute(AUTO_REMIND_AZ, 
+                    new Types.TimespanType(840), "Revorix AZ time for auto reminds", 
+                    "Revorix");
         } catch (Exception ignore) {
             ignore.printStackTrace();
         }

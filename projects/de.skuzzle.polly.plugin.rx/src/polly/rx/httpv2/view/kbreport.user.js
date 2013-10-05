@@ -43,7 +43,7 @@ function sendData(postData) {
         timeout: 5000,
         method: "POST",
         url: pollyUrl + pollyApi,
-        data: "user="+pollyUserName + "&pw="+pollyPassword + "&report=" + encodeURI(postData),
+        data: "user="+pollyUserName + "&pw="+pollyPassword + "&report=" + encodeURI(postData) + "&isLive="+isLiveKb,
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },

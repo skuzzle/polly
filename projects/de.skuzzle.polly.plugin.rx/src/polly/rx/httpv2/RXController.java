@@ -38,6 +38,8 @@ import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.http.api.answers.HttpInputStreamAnswer;
 import de.skuzzle.polly.http.api.answers.HttpResourceAnswer;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Types.BooleanType;
+import de.skuzzle.polly.sdk.Types.TimespanType;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
@@ -480,6 +482,7 @@ public class RXController extends PollyController {
     public HttpAnswer postQReport(
             @Param("user") String user, 
             @Param("pw") String pw, 
+            @Param(value = "isLive", treatEmpty = true, ifEmptyValue = "false") Boolean isLive,
             @Param("report") String report) {
         
         final User u = this.getMyPolly().users().getUser(user);
@@ -493,6 +496,24 @@ public class RXController extends PollyController {
         try {
             final BattleReport br = QBattleReportParser.parse(report, u.getId());
             this.fleetDb.addBattleReport(br);
+            
+            if (isLive && u.getCurrentNickName() != null) {
+                final BooleanType autoRemind = (BooleanType) u.getAttribute(MyPlugin.AUTO_REMIND);
+                if (autoRemind.getValue()) {
+                    final TimespanType ts = (TimespanType) u.getAttribute(MyPlugin.AUTO_REMIND_AZ);
+                    final String duration = ts.getSpan() + "s";
+                    final String command = ":remind @" + 
+                            u.getCurrentNickName() + " " + duration + " \"Auto Remind!\"";
+                    try {
+                        this.getMyPolly().commands().executeString(command, 
+                                u.getCurrentNickName(), true, u, this.getMyPolly().irc());
+                    } catch (Exception e) {
+                        // ignore
+                        e.printStackTrace();
+                    }
+                }
+            }
+            
         } catch (ParseException | DatabaseException e) {
             return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
         }
