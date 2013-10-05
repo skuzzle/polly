@@ -298,6 +298,7 @@ public interface PersistenceManagerV2 {
      * try (final Read read = persistence.read()) {
      *     final MyEntity me = read.find(MyEntity.class, 1);
      * }
+     * </pre>
      * This ensures that the lock created by this method is released correctly.
      * 
      * @return Read access to the database.
