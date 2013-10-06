@@ -25,10 +25,10 @@ import de.skuzzle.polly.core.moduleloader.ModuleLoader;
 import de.skuzzle.polly.core.moduleloader.SetupException;
 import de.skuzzle.polly.core.moduleloader.annotations.Module;
 import de.skuzzle.polly.core.moduleloader.annotations.Provide;
-import de.skuzzle.polly.core.util.FileUtil;
 import de.skuzzle.polly.core.util.ProxyClassLoader;
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.Version;
+import de.skuzzle.polly.tools.FileUtil;
 
 
 
