@@ -1,4 +1,4 @@
-package polly.rx.httpv2.view;
+package polly.rx.httpv2;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,8 +16,9 @@ import de.skuzzle.polly.sdk.httpv2.html.HTMLElement;
 public class BattleReportShipModell extends AbstractHTMLTableModel<BattleReportShip> {
 
     private final static String[] COLUMNS = {
-        "Rx Id", "Owner", "Name", "Crew Xp", "Captain", "HP", "Capi Xp", "KW (T100)", 
-        "Max Wend", "Aw", "Shield", "Shield Dmg", "Pz", "Pz Dmg", "Str", "Str Dmg"
+        "Rx Id", "Owner", "Type", "Class", "Name", "Crew Xp", "Captain", "HP", 
+        "Capi Xp", "KW (T100)", "Max Wend", "Aw", "Shield", "Shield Dmg", "Pz", "Pz Dmg", 
+        "Str", "Str Dmg"
     };
     
     protected final FleetDBManager fleetDb;
@@ -81,20 +82,22 @@ public class BattleReportShipModell extends AbstractHTMLTableModel<BattleReportS
                 return fss.getOwner();
             }
         }
-        case 2: return element.getName();
-        case 3: return element.getCrewXp();
-        case 4: return element.getCapi();
-        case 5: return element.getCapiHp();
-        case 6: return element.getCapiXp();
-        case 7: return element.calculateKw();
-        case 8: return element.getMaxWend();
-        case 9: return element.getAttack();
-        case 10: return element.getShields();
-        case 11: return element.getShieldDamage();
-        case 12: return element.getPz();
-        case 13: return element.getPzDamage();
-        case 14: return element.getStructure();
-        case 15: return element.getStructureDamage();
+        case 2: return element.getShipType();
+        case 3: return element.getShipClass();
+        case 4: return element.getSimpleName();
+        case 5: return element.getCrewXp();
+        case 6: return element.getCapi();
+        case 7: return element.getCapiHp();
+        case 8: return element.getCapiXp();
+        case 9: return element.calculateKw();
+        case 10: return element.getMaxWend();
+        case 11: return element.getAttack();
+        case 12: return element.getShields();
+        case 13: return element.getShieldDamage();
+        case 14: return element.getPz();
+        case 15: return element.getPzDamage();
+        case 16: return element.getStructure();
+        case 17: return element.getStructureDamage();
         default: return "";
         }
     }
@@ -104,7 +107,7 @@ public class BattleReportShipModell extends AbstractHTMLTableModel<BattleReportS
     @Override
     public Class<?> getColumnClass(int column) {
         switch (column) {
-        case 7: return Double.class;
+        case 9: return Double.class;
         default: return super.getColumnClass(column);
         }
     }

@@ -11,7 +11,7 @@ import javax.persistence.Transient;
 
 @Entity
 public class BattleReportShip {
-
+    
     @Id@GeneratedValue(strategy = GenerationType.TABLE)
     private int id;
     
@@ -63,6 +63,15 @@ public class BattleReportShip {
 
     @Transient
     private int repairTimeOffset;
+
+    @Transient
+    private transient ShipType shipType;
+
+    @Transient
+    private transient int shipClass;
+    
+    @Transient
+    private transient String simpleName;
     
     
     
@@ -124,12 +133,33 @@ public class BattleReportShip {
         this.repairCostOffset[5] = new BattleDrop(RxRessource.LM, (int)Math.round(LM_FACTOR_PZ * this.pzDamage));
         this.repairCostOffset[6] = new BattleDrop(RxRessource.SM, (int)Math.round(SM_FACTOR_PZ * this.pzDamage));
         this.repairTimeOffset = (int)Math.round(REPAIR_TIME_FACTOR_PZ * this.pzDamage);
+        this.shipType = ShipHelper.getShipType(this.name);
+        this.shipClass = ShipHelper.getShipClass(this.name);
+        this.simpleName = ShipHelper.getSimpleName(this.name);
     }
     
     
     
     public int getId() {
         return this.id;
+    }
+    
+    
+    
+    public ShipType getShipType() {
+        return this.shipType;
+    }
+
+
+
+    public int getShipClass() {
+        return this.shipClass;
+    }
+
+    
+    
+    public String getSimpleName() {
+        return this.simpleName;
     }
     
     

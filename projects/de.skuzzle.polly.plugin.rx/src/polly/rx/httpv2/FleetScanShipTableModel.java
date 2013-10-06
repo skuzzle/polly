@@ -11,7 +11,7 @@ import de.skuzzle.polly.sdk.httpv2.html.HTMLElement;
 public class FleetScanShipTableModel extends AbstractHTMLTableModel<FleetScanShip> {
 
     private final static String COLUMNS[] = {
-        "RX ID", "Name", "Techlevel", "Owner", "Changed Owner?", "Clan", "History"
+        "RX ID", "Type", "Class", "Name", "Techlevel", "Owner", "Changed Owner?", "Clan", "History"
     };
 
     
@@ -59,12 +59,14 @@ public class FleetScanShipTableModel extends AbstractHTMLTableModel<FleetScanShi
         final String href= "/pages/scanShipDetails?shipId=" + element.getRxId();
         switch (column) {
         case 0: return new HTMLElement("a").attr("href", href).content("" + element.getRxId());
-        case 1: return new HTMLElement("a").attr("href", href).content("" + element.getName());
-        case 2: return element.getTechlevel();
-        case 3: return element.getOwner();
-        case 4: return element.changedOwner();
-        case 5: return element.getOwnerClan();
-        case 6: return element.getHistorySize();
+        case 1: return element.getShipType();
+        case 2: return element.getShipClass();
+        case 3: return element.getSimpleName();
+        case 4: return element.getTechlevel();
+        case 5: return element.getOwner();
+        case 6: return element.changedOwner();
+        case 7: return element.getOwnerClan();
+        case 8: return element.getHistorySize();
         default: return "";
         }
     }
@@ -73,7 +75,7 @@ public class FleetScanShipTableModel extends AbstractHTMLTableModel<FleetScanShi
     
     @Override
     public Class<?> getColumnClass(int column) {
-        if (column == 4) {
+        if (column == 6) {
             return Boolean.class;
         }
         return super.getColumnClass(column);
