@@ -18,6 +18,7 @@ var pollyPassword = "TODO";
 var pollyUrl = "$host";
 var pollyApi = "$api";
 var isLiveKb = false;
+var sendTimeout = 10000;
 
 function log(message) {
 	if(consolelog) {
@@ -40,7 +41,7 @@ function sendData(postData) {
     log(postData);
     printStatus("Sending data...");
     GM_xmlhttpRequest({
-        timeout: 5000,
+        timeout: sendTimeout,
         method: "POST",
         url: pollyUrl + pollyApi,
         data: "user="+pollyUserName + "&pw="+pollyPassword + "&report=" + encodeURI(postData) + "&isLive="+isLiveKb,
