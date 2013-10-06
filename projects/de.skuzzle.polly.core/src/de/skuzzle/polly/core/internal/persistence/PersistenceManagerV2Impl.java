@@ -123,11 +123,9 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
                     q.setParameter(i++, param);
                 }
     
-                try {
-                    return (T) q.getSingleResult();
-                } catch (NoResultException e) {
-                    return null;
-                }
+                return (T) q.getSingleResult();
+            } catch (NoResultException e) {
+                return null;
             } finally {
                 long time = watch.stop();
                 logger.trace("Query time: " + time + "ms");
