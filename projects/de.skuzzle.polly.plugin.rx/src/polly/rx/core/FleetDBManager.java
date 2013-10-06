@@ -118,14 +118,16 @@ public class FleetDBManager {
         this.persistence.writeAtomic(new Atomic() {
             @Override
             public void perform(Write write) {
-                List<FleetScanShip> newShips = new ArrayList<FleetScanShip>(
+                final List<FleetScanShip> newShips = new ArrayList<FleetScanShip>(
                     scan.getShips().size());
+                final Read r = write.read();
                 
                 // try to find existing ships. If a ship is spotted twice, its
                 // dependent in the database will be updated with the new information
                 // found
                 for (FleetScanShip ship : scan.getShips()) {
-                    FleetScanShip found = fleetScanShipById(ship.getRxId());
+                    final FleetScanShip found = r.findSingle(FleetScanShip.class, 
+                            FleetScanShip.BY_REVORIX_ID, new Param(ship.getRxId()));
                     if (found != null) {
                         found.update(ship);
                         newShips.add(found);
