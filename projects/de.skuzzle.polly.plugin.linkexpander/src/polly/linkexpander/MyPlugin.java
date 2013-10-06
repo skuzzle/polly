@@ -25,7 +25,6 @@ import de.skuzzle.polly.sdk.roles.RoleManager;
 public class MyPlugin extends PollyPlugin {
 
     public final static String GRABBER_PERMISSION = "polly.permission.LINK_GRABBER";
-    public final static String URL_GRABBER_PERMISSION = "polly.permission.URL_GRABBER";
     
     
     private LinkGrabberManager linkGrabberManager;
@@ -59,7 +58,6 @@ public class MyPlugin extends PollyPlugin {
     public Set<String> getContainedPermissions() {
         final TreeSet<String> result = new TreeSet<String>();
         result.add(GRABBER_PERMISSION);
-        result.add(URL_GRABBER_PERMISSION);
         result.addAll(super.getContainedPermissions());
         return result;
     }
@@ -71,7 +69,6 @@ public class MyPlugin extends PollyPlugin {
             throws RoleException, DatabaseException {
         
         roleManager.assignPermission(RoleManager.ADMIN_ROLE, GRABBER_PERMISSION);
-        roleManager.assignPermission(RoleManager.ADMIN_ROLE, URL_GRABBER_PERMISSION);
     }
 
     
