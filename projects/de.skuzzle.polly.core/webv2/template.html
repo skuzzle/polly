@@ -21,6 +21,10 @@
         // warning will be displayed if this amount of time is left until auto logout
         var LOGOUT_TIMEOUT_WARNING = "1m";
 
+        // Interval timer which performs login checks
+        var checkLoginTimer;
+        
+        
         
         // array of menu descriptions
         var DESCRIPTIONS = {
@@ -63,7 +67,7 @@
             if (LOGGED_IN) {
                 // check one time now
                 checkLoggedInState();
-                var checkLoginTimer = setInterval(function() {
+                checkLoginTimer = setInterval(function() {
                     checkLoggedInState();
                 }, CHECK_LOGGED_IN_INTERVAL);
             }
@@ -132,6 +136,9 @@
                     $("#login").fadeIn('fast');
                     notify("You have been logged out", false);
                     
+                    // ## disable login check
+                    clearInterval(checkLoginTimer);
+                } else {
                     // ## disable login check
                     clearInterval(checkLoginTimer);
                 }
