@@ -1,0 +1,29 @@
+<div class="highlight contentBox">
+    #CONTENT_HEADER ("Add new Role")
+    <div class="content">
+    </div>
+</div>
+
+<div class="highlight contentBox">
+    #CONTENT_HEADER ("Roles")
+    <div class="content">
+    <table>
+    #foreach ($role in $roles)
+    <tr><th>$role</th><th>Remove</th></tr>
+    #foreach ($perm in $myPolly.roles().getPermissions($role))
+    <tr><td>$perm</td><td>Remove</td></tr>
+    #end
+    <tr>
+    <td>
+    <select id="perms_$role" name="permission">
+        #foreach ($permission in $allPerms)
+        <option>$permission</option>
+        #end
+    </select>
+    </td>
+    <td><input type="button" class="button" value="Add Permission"/></td>
+    </tr>
+    #end
+    </table>
+    </div>
+</div>

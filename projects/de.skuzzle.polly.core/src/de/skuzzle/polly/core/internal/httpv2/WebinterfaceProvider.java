@@ -1,6 +1,5 @@
 package de.skuzzle.polly.core.internal.httpv2;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
@@ -98,7 +97,6 @@ public class WebinterfaceProvider extends AbstractProvider {
             final String keyStorePath = this.serverCfg.readString(Configuration.KEYSTORE_FILE);
             final String keyStorePW = this.serverCfg.readString(Configuration.KEYSTORE_PASSWORD);
             final String keyPW = this.serverCfg.readString(Configuration.KEY_PASSWORD);
-            this.initKeyStore(keyStorePath, keyStorePW);
             sf = new SSLServerFactory(port, executor, keyStorePath, keyStorePW, keyPW);
         } else {
             sf = new DefaultServerFactory(port, executor);
@@ -166,16 +164,6 @@ public class WebinterfaceProvider extends AbstractProvider {
     
     
     
-    private void initKeyStore(String keyStoreFileName, String password) {
-        final File keyStoreFile = new File(keyStoreFileName).getAbsoluteFile();
-        
-        System.setProperty("javax.net.ssl.keyStore", keyStoreFile.getPath());
-        System.setProperty("javax.net.ssl.keyStorePassword", password);
-    }
-    
-    
-    
-    
     @Override
     public void run() throws Exception {
         final MyPolly myPolly = this.requireNow(MyPollyImpl.class, false);
@@ -185,6 +173,7 @@ public class WebinterfaceProvider extends AbstractProvider {
         this.server.addController(new IndexController(myPolly));
         this.server.addController(new SessionController(myPolly));
         this.server.addController(new UserController(myPolly));
+        this.server.addController(new RoleController(myPolly));
         UserController.createUserTable(myPolly);
         
         
