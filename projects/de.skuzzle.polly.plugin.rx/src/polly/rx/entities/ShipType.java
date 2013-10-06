@@ -28,6 +28,8 @@ public enum ShipType {
             return KREUZER;
         } else if (shipName.contains("b‰‰hhhh")) {
             return SCHLACHTKREUZER;
+        } else if (shipName.startsWith("Zerst")) {
+            return ZERRI;
         }
         for (final ShipType st : ShipType.values()) {
             if (shipName.startsWith(st.name)) {
