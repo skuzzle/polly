@@ -576,68 +576,75 @@ public class RXController extends PollyController {
             return new GsonHttpAnswer(200, new SuccessResult(false, "No permission"));
         }
         
+        final BattleReport br;
         try {
-            final BattleReport br = QBattleReportParser.parse(report, u.getId());
-            this.fleetDb.addBattleReport(br);
-            
-            final NumberType pzWarning = (NumberType) 
-                    u.getAttribute(MyPlugin.LOW_PZ_WARNING);
-            
-            List<BattleReportShip> lowPzShips = new ArrayList<>(40);
-            if (pzWarning.getValue() > 0.0) {
-                final List<BattleReportShip> ships = br.getTactic() == BattleTactic.ALIEN 
-                        ? br.getDefenderShips()
-                        : br.getAttackerShips();
-                        
-                for (final BattleReportShip ship : ships) {
-                    if (ship.getCurrentPz() < pzWarning.getValue()) {
-                        lowPzShips.add(ship);
-                    }
-                }
-            }
-            
-            if (isLive && u.getCurrentNickName() != null) {
-                final BooleanType autoRemind = (BooleanType) u.getAttribute(MyPlugin.AUTO_REMIND);
-                if (autoRemind.getValue()) {
-                    
-                    // get AZ for attacker fleet. This will fall back to the default az
-                    // time if no time for given fleet is configured
-                    final TimespanType az = this.azManager.getAz(
-                            br.getAttackerFleetName(), u);
-                    
-                    final String duration = az.getSpan() + "s";
-                    final String command = ":remind @" + 
-                            u.getCurrentNickName() + " " + duration + 
-                            " \"Auto Remind: " + br.getAttackerFleetName() + "\"";
-                    try {
-                        this.getMyPolly().commands().executeString(command, 
-                                u.getCurrentNickName(), true, u, this.getMyPolly().irc());
-                    } catch (Exception e) {
-                        // ignore
-                        e.printStackTrace();
-                    }
-                }
-            }
-            
-            
-            if (!lowPzShips.isEmpty()) {
-                final StringBuilder b = new StringBuilder();
-                b.append("Ships below " + pzWarning.valueString(this.getMyPolly().formatting()));
-                b.append("pz:\n");
-                for (final BattleReportShip lowPz : lowPzShips) {
-                    b.append(lowPz.getName());
-                    b.append(" (");
-                    b.append(lowPz.getCurrentPz());
-                    b.append("pz)\n");
-                }
-                return new GsonHttpAnswer(200, 
-                        new QReportResult(true, "Report added", b.toString()));
-            }
-            
-            return new GsonHttpAnswer(200, new SuccessResult(true, "Report added"));            
-        } catch (ParseException | DatabaseException e) {
+            br = QBattleReportParser.parse(report, u.getId());
+        } catch (ParseException e) {
             return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
         }
+        
+        final NumberType pzWarning = (NumberType) 
+                u.getAttribute(MyPlugin.LOW_PZ_WARNING);
+        
+        List<BattleReportShip> lowPzShips = new ArrayList<>(40);
+        if (pzWarning.getValue() > 0.0) {
+            final List<BattleReportShip> ships = br.getTactic() == BattleTactic.ALIEN 
+                    ? br.getDefenderShips()
+                    : br.getAttackerShips();
+                    
+            for (final BattleReportShip ship : ships) {
+                if (ship.getCurrentPz() < pzWarning.getValue()) {
+                    lowPzShips.add(ship);
+                }
+            }
+        }
+        
+        if (isLive && u.getCurrentNickName() != null) {
+            final BooleanType autoRemind = (BooleanType) u.getAttribute(MyPlugin.AUTO_REMIND);
+            if (autoRemind.getValue()) {
+                
+                // get AZ for attacker fleet. This will fall back to the default az
+                // time if no time for given fleet is configured
+                final TimespanType az = this.azManager.getAz(
+                        br.getAttackerFleetName(), u);
+                
+                final String duration = az.getSpan() + "s";
+                final String command = ":remind @" + 
+                        u.getCurrentNickName() + " " + duration + 
+                        " \"Auto Remind: " + br.getAttackerFleetName() + "\"";
+                try {
+                    this.getMyPolly().commands().executeString(command, 
+                            u.getCurrentNickName(), true, u, this.getMyPolly().irc());
+                } catch (Exception e) {
+                    // ignore
+                    e.printStackTrace();
+                }
+            }
+        }
+        
+        
+        String message = "Report added";
+        try {
+            this.fleetDb.addBattleReport(br);
+        } catch (DatabaseException e) {
+            message = e.getMessage();
+        }
+        
+        
+        if (!lowPzShips.isEmpty()) {
+            final StringBuilder b = new StringBuilder();
+            b.append("Ships below " + pzWarning.valueString(this.getMyPolly().formatting()));
+            b.append("pz:\n");
+            for (final BattleReportShip lowPz : lowPzShips) {
+                b.append(lowPz.getName());
+                b.append(" (");
+                b.append(lowPz.getCurrentPz());
+                b.append("pz)\n");
+            }
+            return new GsonHttpAnswer(200, 
+                    new QReportResult(true, message, b.toString()));
+        }
+        return new GsonHttpAnswer(200, new SuccessResult(true, message));            
     }
     
     
