@@ -51,7 +51,7 @@ public class SetAttributeCommand extends Command {
         if (this.match(signature, 0)) {
             String user = signature.getStringValue(0);
             final String attribute = signature.getStringValue(1);
-            final Types value = signature.getValue(1);
+            final Types value = signature.getValue(2);
             
             final User dest = this.getMyPolly().users().getUser(user);
             this.setAttribute(executer, dest, user, attribute, 
