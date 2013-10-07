@@ -76,7 +76,7 @@ public class FleetDBManager {
             }
         }
         
-        this.persistence.writeAtomic(new Atomic() {
+        this.persistence.writeAtomicParallel(new Atomic() {
             @Override
             public void perform(Write write) throws DatabaseException {
                 write.single(report);
@@ -115,7 +115,7 @@ public class FleetDBManager {
     
     
     public void addFleetScan(final FleetScan scan) throws DatabaseException {
-        this.persistence.writeAtomic(new Atomic() {
+        this.persistence.writeAtomicParallel(new Atomic() {
             @Override
             public void perform(Write write) {
                 final List<FleetScanShip> newShips = new ArrayList<FleetScanShip>(

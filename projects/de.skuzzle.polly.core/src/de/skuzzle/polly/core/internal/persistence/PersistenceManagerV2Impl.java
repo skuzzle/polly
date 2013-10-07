@@ -303,16 +303,10 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
     }
     
     
-    
-    private interface WriteRunnable {
-        public void run(Write write);
-    }
-    
-    
 
     private abstract class ParallelWriteImpl implements Write {
 
-        protected final Collection<WriteRunnable> actions;
+        protected final Collection<Atomic> actions;
 
 
 
@@ -324,9 +318,9 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
 
         @Override
         public <T> Write all(final Iterable<T> list) {
-            this.actions.add(new WriteRunnable() {
+            this.actions.add(new Atomic() {
                 @Override
-                public void run(Write write) {
+                public void perform(Write write) {
                     write.all(list);
                 }
             });
@@ -337,9 +331,9 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
 
         @Override
         public <T> Write single(final T obj) {
-            this.actions.add(new WriteRunnable() {
+            this.actions.add(new Atomic() {
                 @Override
-                public void run(Write write) {
+                public void perform(Write write) {
                     write.single(obj);
                 }
             });
@@ -350,9 +344,9 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
 
         @Override
         public <T> Write remove(final T obj) {
-            this.actions.add(new WriteRunnable() {
+            this.actions.add(new Atomic() {
                 @Override
-                public void run(Write write) {
+                public void perform(Write write) {
                     write.remove(obj);
                 }
             });
@@ -363,9 +357,9 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
 
         @Override
         public <T> Write removeAll(final Iterable<T> elements) {
-            this.actions.add(new WriteRunnable() {
+            this.actions.add(new Atomic() {
                 @Override
-                public void run(Write write) {
+                public void perform(Write write) {
                     write.all(elements);
                 }
             });
@@ -461,11 +455,12 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
     private void commitTransaction() throws DatabaseException {
         logger.debug("Committing transaction...");
         final EntityTransaction tx = this.activeTransaction;
-        if (tx == null) {
-            throw new DatabaseException("No transaction active.");
-        }
-
+        
         try {
+            if (tx == null) {
+                throw new DatabaseException("No transaction active.");
+            }
+            
             tx.commit();
             logger.debug("Transaction finished successful");
         } catch (Exception e) {
@@ -612,8 +607,8 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
             @Override
             public void close() {
                 try (final Write w = write()) {
-                    for (final WriteRunnable wr : actions) {
-                        wr.run(w);
+                    for (final Atomic wr : actions) {
+                        wr.perform(w);
                     }
                 } catch (DatabaseException e) {
                     cb.fail(e);
@@ -634,8 +629,8 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
                     @Override
                     public void run() {
                         try (final Write w = write()) {
-                            for (final WriteRunnable wr : actions) {
-                                wr.run(w);
+                            for (final Atomic wr : actions) {
+                                wr.perform(w);
                             }
                         } catch (DatabaseException e) {
                             cb.fail(e);
@@ -660,7 +655,7 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
                 try {
                     logger.trace("Sending SHUTDOWN command.");
                     this.startTransaction();
-                    Query q = this.em.createNativeQuery("SHUTDOWN");
+                    final Query q = this.em.createNativeQuery("SHUTDOWN");
                     q.executeUpdate();
                     this.commitTransaction();
                 } catch (Exception e) {
@@ -680,7 +675,7 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
         } catch (Exception e) {
             logger.fatal("Error while shutting down database.");
         } finally {
-            this.locker.writeLock().unlock();;
+            this.locker.writeLock().unlock();
         }
     }
 }
