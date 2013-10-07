@@ -20,6 +20,7 @@ import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
 import de.skuzzle.polly.core.parser.ast.directives.DelayDirective;
 import de.skuzzle.polly.core.parser.ast.directives.Directive;
 import de.skuzzle.polly.core.parser.ast.directives.ProblemDirective;
+import de.skuzzle.polly.core.parser.ast.directives.ReinterpretDirctive;
 import de.skuzzle.polly.core.parser.ast.expressions.Assignment;
 import de.skuzzle.polly.core.parser.ast.expressions.Braced;
 import de.skuzzle.polly.core.parser.ast.expressions.Call;
@@ -66,6 +67,7 @@ import de.skuzzle.polly.tools.collections.Stack;
  *   
  *   directives  -> directive (',' directive)*
  *   directive   -> DELAY secTerm
+ *                | REINTERPRET
  *   
  *   assign      -> relation '->' PUBLIC? TEMP? ID             // assignment of relation to identifier X
  *   relation    -> conjunction (REL_OP conjunction)*          // relation (<,>,<=,>=,==, !=)
@@ -533,6 +535,9 @@ public class InputParser {
             final Expression target = this.parseSecTerm();
             return new DelayDirective(this.scanner.spanFrom(la), target);
 
+        case REINTERPRET:
+            this.scanner.consume();
+            return new ReinterpretDirctive(this.scanner.spanFrom(la));
         default:
             this.expect(TokenType.DIRECTIVE, true);
             return new ProblemDirective(this.scanner.spanFrom(la));

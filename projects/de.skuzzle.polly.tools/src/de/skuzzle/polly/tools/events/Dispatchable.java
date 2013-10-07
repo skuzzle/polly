@@ -64,7 +64,7 @@ public abstract class Dispatchable<T extends EventListener, E extends Event<?>>
                 return;
             }
             this.dispatch(listener, this.event);
-            if (listener instanceof OneTimeEventListener) {
+            if (this.event.isHandled() && listener instanceof OneTimeEventListener) {
                 this.listeners.removeFromParent(listener);
             }
         }

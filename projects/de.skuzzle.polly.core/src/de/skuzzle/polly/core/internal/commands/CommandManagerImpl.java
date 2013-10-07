@@ -49,6 +49,8 @@ import de.skuzzle.polly.sdk.IrcManager;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
+import de.skuzzle.polly.sdk.eventlistener.MessageSendListener;
+import de.skuzzle.polly.sdk.eventlistener.OwnMessageEvent;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
@@ -96,6 +98,39 @@ public class CommandManagerImpl extends AbstractDisposable
             return this.name;
         }
     }
+    
+    
+    
+    private class ReinterpretListener implements MessageSendListener {
+
+        private final User executor;
+        private final Object source;
+        
+        
+        public ReinterpretListener(Object source, User executor) {
+            this.source = source;
+            this.executor = executor;
+        }
+        
+        
+        
+        @Override
+        public void messageSent(OwnMessageEvent e) {
+            if (e.getMessageSource() != this.source) {
+                return;
+            }
+            try {
+                executeString(e.getMessage(), e.getChannel(), e.inQuery(), 
+                        this.executor, e.getSource());
+                e.setHandled(true);
+            } catch (UnsupportedEncodingException | UnknownSignatureException
+                    | InsufficientRightsException | CommandException
+                    | UnknownCommandException e1) {
+                e.getSource().sendMessage(e.getChannel(), e.getMessage(), this);
+            }
+        }
+    }
+    
     
     
 	private final static String[] DAYS = {"montag", "dienstag", "mittwoch", 
@@ -266,7 +301,15 @@ public class CommandManagerImpl extends AbstractDisposable
         }
         final Signature sig = this.createSignature(root);
         final Command cmd = this.getCommand(sig);
-        try {           
+        try {
+            final boolean reinterpret = root.getDirectives().containsKey(
+                    TokenType.REINTERPRET);
+            
+            if (reinterpret) {
+                final ReinterpretListener l = new ReinterpretListener(cmd, executor);
+                ircManager.addMessageSendListener(l);
+            }
+            
             if (root.getDirectives().containsKey(TokenType.DELAY)) {
                 final DelayDirective delay = (DelayDirective) 
                         root.getDirectives().get(TokenType.DELAY);
