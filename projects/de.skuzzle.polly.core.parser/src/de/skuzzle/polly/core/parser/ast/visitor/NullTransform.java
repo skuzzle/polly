@@ -10,6 +10,9 @@ import de.skuzzle.polly.core.parser.ast.Node;
 import de.skuzzle.polly.core.parser.ast.ResolvableIdentifier;
 import de.skuzzle.polly.core.parser.ast.Root;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
+import de.skuzzle.polly.core.parser.ast.directives.DelayDirective;
+import de.skuzzle.polly.core.parser.ast.directives.Directive;
+import de.skuzzle.polly.core.parser.ast.directives.ProblemDirective;
 import de.skuzzle.polly.core.parser.ast.expressions.Assignment;
 import de.skuzzle.polly.core.parser.ast.expressions.Braced;
 import de.skuzzle.polly.core.parser.ast.expressions.Call;
@@ -248,6 +251,21 @@ public class NullTransform implements Transformation {
 
     @Override
     public Inspect transformInspect(Inspect node) throws ASTTraversalException {
+        return node;
+    }
+    
+    
+    
+    @Override
+    public Directive transform(DelayDirective node) throws ASTTraversalException {
+        node.setTargetTime(node.getTargetTime().transform(this));
+        return node;
+    }
+    
+    
+    
+    @Override
+    public Directive transform(ProblemDirective node) throws ASTTraversalException {
         return node;
     }
 }

@@ -106,6 +106,7 @@ public class InputScanner extends AbstractTokenStream {
         this.keywords.put("del", TokenType.DELETE);
         this.keywords.put("inspect", TokenType.INSPECT);
         this.keywords.put("list", TokenType.LIST);
+        this.keywords.put("delay", TokenType.DELAY);
         /* To avoid 1char identifiers "_" */
         this.keywords.put("_", TokenType.UNKNOWN);
     }

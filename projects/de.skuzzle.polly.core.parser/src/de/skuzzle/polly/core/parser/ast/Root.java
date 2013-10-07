@@ -4,8 +4,11 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import de.skuzzle.polly.core.parser.Position;
+import de.skuzzle.polly.core.parser.TokenType;
+import de.skuzzle.polly.core.parser.ast.directives.Directive;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.Literal;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.LiteralFormatter;
@@ -27,6 +30,7 @@ public final class Root extends Node {
     private Identifier command;
     private List<Literal> results;
     private final boolean hasProblems;
+    private final Map<TokenType, Directive> directives;
     
     
     
@@ -38,13 +42,16 @@ public final class Root extends Node {
      * @param command Name of the parsed command.
      * @param expressions Collection of parsed expressions.
      * @param hasProblems Whether the AST contains {@link Problem} nodes.
+     * @param directives List of directives
      */
     public Root(Position position, Identifier command, 
-            Collection<Expression> expressions, boolean hasProblems) {
+            Collection<Expression> expressions, boolean hasProblems, 
+            Map<TokenType, Directive> directives) {
         super(position);
         this.command = command;
         this.expressions = new ArrayList<Expression>(expressions);
         this.hasProblems = hasProblems;
+        this.directives = directives;
     }
     
     
@@ -109,6 +116,16 @@ public final class Root extends Node {
     
     
     
+    /**
+     * Gets a list of directives
+     * @return Directives
+     */
+    public Map<TokenType, Directive> getDirectives() {
+        return this.directives;
+    }
+    
+    
+    
     @Override
     public boolean visit(ASTVisitor visitor) throws ASTTraversalException {
         return visitor.visit(this);
@@ -135,6 +152,11 @@ public final class Root extends Node {
         }
         for (final Expression exp : this.expressions) {
             if (!exp.traverse(visitor)) {
+                return false;
+            }
+        }
+        for (final Directive dir : this.directives.values()) {
+            if (!dir.traverse(visitor)) {
                 return false;
             }
         }

@@ -11,6 +11,8 @@ import de.skuzzle.polly.core.parser.ast.Node;
 import de.skuzzle.polly.core.parser.ast.Root;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
 import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
+import de.skuzzle.polly.core.parser.ast.directives.DelayDirective;
+import de.skuzzle.polly.core.parser.ast.directives.Directive;
 import de.skuzzle.polly.core.parser.ast.expressions.Assignment;
 import de.skuzzle.polly.core.parser.ast.expressions.Braced;
 import de.skuzzle.polly.core.parser.ast.expressions.Call;
@@ -139,7 +141,23 @@ public class ExpASTVisualizer extends DepthFirstVisitor {
             }
             this.dotBuilder.printEdge(node, exp, Unparser.toString(exp, this.formatter));
         }
+        
+        for (final Directive dir : node.getDirectives().values()) {
+            if (!dir.visit(this)) {
+                return false;
+            }
+            this.dotBuilder.printEdge(node, dir, "Directive");
+        }
         return this.after(node) == CONTINUE;
+    }
+    
+    
+    
+    @Override
+    public int after(DelayDirective node) throws ASTTraversalException {
+        this.dotBuilder.printNode(node, "Delay Directive");
+        this.dotBuilder.printEdge(node, node.getTargetTime(), "target time");
+        return CONTINUE;
     }
     
     

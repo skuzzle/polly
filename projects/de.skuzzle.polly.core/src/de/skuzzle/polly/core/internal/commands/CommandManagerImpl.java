@@ -4,16 +4,17 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
-
 
 import de.skuzzle.polly.core.parser.Evaluator;
 import de.skuzzle.polly.core.parser.InputScanner;
@@ -27,6 +28,7 @@ import de.skuzzle.polly.core.parser.ast.Root;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
 import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
+import de.skuzzle.polly.core.parser.ast.directives.DelayDirective;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.ChannelLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.DateLiteral;
@@ -38,6 +40,7 @@ import de.skuzzle.polly.core.parser.problems.SimpleProblemReporter;
 import de.skuzzle.polly.core.util.MillisecondStopwatch;
 import de.skuzzle.polly.core.util.Stopwatch;
 import de.skuzzle.polly.core.util.TypeMapper;
+import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.CommandHistoryEntry;
 import de.skuzzle.polly.sdk.CommandManager;
@@ -47,6 +50,7 @@ import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
+import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.exceptions.UnknownCommandException;
@@ -55,7 +59,8 @@ import de.skuzzle.polly.sdk.time.DateUtils;
 
 
 
-public class CommandManagerImpl implements CommandManager {
+public class CommandManagerImpl extends AbstractDisposable 
+        implements CommandManager {
     
     
     private class HistoryEntryImpl implements CommandHistoryEntry {
@@ -100,6 +105,8 @@ public class CommandManagerImpl implements CommandManager {
 	private Map<String, Command> commands;
 	private Set<String> ignoredCommands;
 	private String encodingName;
+	private final Timer delayService;
+	
 	
 	
 	/**
@@ -115,6 +122,7 @@ public class CommandManagerImpl implements CommandManager {
 		        config.readStringList(Configuration.IGNORED_COMMANDS));
 		
 		this.cmdHistory = new HashMap<String, CommandHistoryEntry>();
+		this.delayService = new Timer(true);
 	}
 	
 	
@@ -227,8 +235,8 @@ public class CommandManagerImpl implements CommandManager {
 	
 	
 	@Override
-    public boolean executeString(String input, String channel, boolean inQuery, 
-            User executor, IrcManager ircManager) 
+    public boolean executeString(String input, final String channel, final boolean inQuery, 
+            final User executor, final IrcManager ircManager) 
                 throws UnsupportedEncodingException, 
                        UnknownSignatureException, InsufficientRightsException, 
                        CommandException, UnknownCommandException {
@@ -256,20 +264,48 @@ public class CommandManagerImpl implements CommandManager {
         if (root == null || root.hasProblems()) {
             return false;
         }
-        Signature sig = this.createSignature(root);
-        
-        Command cmd = this.getCommand(sig);
-        try {
-            logger.debug("Executing '" + cmd + "' on channel " + 
-                channel);
-            
-            cmd.doExecute(executor, channel, inQuery, sig);
-            synchronized (this.cmdHistory) {
-                if (cmd.trackInHistory()) {
-                    this.cmdHistory.put(channel, new HistoryEntryImpl(cmd, sig, 
-                        executor.getCurrentNickName()));
-                }
+        final Signature sig = this.createSignature(root);
+        final Command cmd = this.getCommand(sig);
+        try {           
+            if (root.getDirectives().containsKey(TokenType.DELAY)) {
+                final DelayDirective delay = (DelayDirective) 
+                        root.getDirectives().get(TokenType.DELAY);
+                
+                final Date target = delay.getResult().getValue();
+                logger.debug("Delaying execution of '" + cmd + "' until " + target);
+                this.delayService.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        logger.debug("Executing '" + cmd + "' on channel " + 
+                                channel);
+                        
+                        try {
+                            cmd.doExecute(executor, channel, inQuery, sig);
+                            synchronized (cmdHistory) {
+                                if (cmd.trackInHistory()) {
+                                    cmdHistory.put(channel, new HistoryEntryImpl(cmd, sig, 
+                                        executor.getCurrentNickName()));
+                                }
+                            }
+                        } catch (InsufficientRightsException | CommandException e) {
+                            ircManager.sendMessage(channel, e.getMessage(), this);
+                        }
+                    }
+                }, target);
+            } else {
+
+                logger.debug("Executing '" + cmd + "' on channel " + 
+                        channel);
+                    
+                    cmd.doExecute(executor, channel, inQuery, sig);
+                    synchronized (cmdHistory) {
+                        if (cmd.trackInHistory()) {
+                            cmdHistory.put(channel, new HistoryEntryImpl(cmd, sig, 
+                                executor.getCurrentNickName()));
+                        }
+                    }
             }
+            
         } finally {
             watch.stop();
             logger.trace("Execution time: " + watch.getDifference() + "ms");
@@ -397,5 +433,12 @@ public class CommandManagerImpl implements CommandManager {
         } catch (Exception e) {
             return null;
         }
+    }
+
+
+
+    @Override
+    protected void actualDispose() throws DisposingException {
+        this.delayService.cancel();
     }
 }

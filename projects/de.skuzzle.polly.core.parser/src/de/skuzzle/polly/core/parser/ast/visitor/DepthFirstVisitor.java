@@ -4,6 +4,9 @@ import de.skuzzle.polly.core.parser.ast.Identifier;
 import de.skuzzle.polly.core.parser.ast.ResolvableIdentifier;
 import de.skuzzle.polly.core.parser.ast.Root;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
+import de.skuzzle.polly.core.parser.ast.directives.DelayDirective;
+import de.skuzzle.polly.core.parser.ast.directives.Directive;
+import de.skuzzle.polly.core.parser.ast.directives.ProblemDirective;
 import de.skuzzle.polly.core.parser.ast.expressions.Assignment;
 import de.skuzzle.polly.core.parser.ast.expressions.Braced;
 import de.skuzzle.polly.core.parser.ast.expressions.Call;
@@ -38,6 +41,11 @@ public class DepthFirstVisitor extends VisitorAdapter {
         }
         for (final Expression exp : node.getExpressions()) {
             if (!exp.visit(this)) {
+                return false;
+            }
+        }
+        for (final Directive dir : node.getDirectives().values()) {
+            if (!dir.visit(this)) {
                 return false;
             }
         }
@@ -279,6 +287,32 @@ public class DepthFirstVisitor extends VisitorAdapter {
         }
         if (!node.getAccess().visit(this)) {
             return false;
+        }
+        return this.after(node) == CONTINUE;
+    }
+
+
+
+    @Override
+    public boolean visit(DelayDirective node) throws ASTTraversalException {
+        switch (this.before(node)) {
+        case SKIP: return true;
+        case ABORT: return false;
+        }
+        if (!node.getTargetTime().visit(this)) {
+            return false;
+        }
+        
+        return this.after(node) == CONTINUE;
+    }
+    
+    
+    
+    @Override
+    public boolean visit(ProblemDirective node) throws ASTTraversalException {
+        switch (this.before(node)) {
+        case SKIP: return true;
+        case ABORT: return false;
         }
         return this.after(node) == CONTINUE;
     }

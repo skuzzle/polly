@@ -4,6 +4,9 @@ import de.skuzzle.polly.core.parser.ast.Identifier;
 import de.skuzzle.polly.core.parser.ast.ResolvableIdentifier;
 import de.skuzzle.polly.core.parser.ast.Root;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
+import de.skuzzle.polly.core.parser.ast.directives.DelayDirective;
+import de.skuzzle.polly.core.parser.ast.directives.Directive;
+import de.skuzzle.polly.core.parser.ast.directives.ProblemDirective;
 import de.skuzzle.polly.core.parser.ast.expressions.Assignment;
 import de.skuzzle.polly.core.parser.ast.expressions.Braced;
 import de.skuzzle.polly.core.parser.ast.expressions.Call;
@@ -81,5 +84,7 @@ public interface Transformation {
 
     Inspect transformInspect(Inspect node) throws ASTTraversalException;
 
-    
+    Directive transform(DelayDirective node) throws ASTTraversalException;
+
+    Directive transform(ProblemDirective node) throws ASTTraversalException;
 }

@@ -5,12 +5,13 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-
 import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.ast.ResolvableIdentifier;
 import de.skuzzle.polly.core.parser.ast.Root;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
 import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
+import de.skuzzle.polly.core.parser.ast.directives.DelayDirective;
+import de.skuzzle.polly.core.parser.ast.directives.Directive;
 import de.skuzzle.polly.core.parser.ast.expressions.Assignment;
 import de.skuzzle.polly.core.parser.ast.expressions.Call;
 import de.skuzzle.polly.core.parser.ast.expressions.Delete;
@@ -22,6 +23,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.Native;
 import de.skuzzle.polly.core.parser.ast.expressions.OperatorCall;
 import de.skuzzle.polly.core.parser.ast.expressions.VarAccess;
 import de.skuzzle.polly.core.parser.ast.expressions.Delete.DeleteableIdentifier;
+import de.skuzzle.polly.core.parser.ast.expressions.literals.DateLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.FunctionLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.ListLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.Literal;
@@ -119,11 +121,27 @@ public class ExecutionVisitor extends DepthFirstVisitor {
             }
             results.add(this.stack.pop());
         }
+        
+        for (final Directive dir : node.getDirectives().values()) {
+            if (!dir.visit(this)) {
+                return false;
+            }
+        }
         node.setResults(results);
         
         return this.after(node) == CONTINUE;
     }
 
+    
+    
+    @Override
+    public int after(DelayDirective node) throws ASTTraversalException {
+        // there must be a timespan or date literal on the stack
+        final DateLiteral date = (DateLiteral) this.stack.pop();
+        node.setResult(date);
+        return CONTINUE;
+    }
+    
     
     
     @Override

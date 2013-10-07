@@ -4,6 +4,8 @@ import de.skuzzle.polly.core.parser.ast.Identifier;
 import de.skuzzle.polly.core.parser.ast.ResolvableIdentifier;
 import de.skuzzle.polly.core.parser.ast.Root;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
+import de.skuzzle.polly.core.parser.ast.directives.DelayDirective;
+import de.skuzzle.polly.core.parser.ast.directives.ProblemDirective;
 import de.skuzzle.polly.core.parser.ast.expressions.Assignment;
 import de.skuzzle.polly.core.parser.ast.expressions.Braced;
 import de.skuzzle.polly.core.parser.ast.expressions.Call;
@@ -135,4 +137,10 @@ public interface ASTTraversal {
     
     public abstract int before(Problem node) throws ASTTraversalException;
     public abstract int after(Problem node) throws ASTTraversalException;
+    
+    public abstract int before(DelayDirective node) throws ASTTraversalException;
+    public abstract int after(DelayDirective node) throws ASTTraversalException;
+    
+    public abstract int before(ProblemDirective node) throws ASTTraversalException;
+    public abstract int after(ProblemDirective node) throws ASTTraversalException;
 }

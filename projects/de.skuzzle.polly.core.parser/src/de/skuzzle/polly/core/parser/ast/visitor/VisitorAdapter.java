@@ -4,6 +4,8 @@ import de.skuzzle.polly.core.parser.ast.Identifier;
 import de.skuzzle.polly.core.parser.ast.ResolvableIdentifier;
 import de.skuzzle.polly.core.parser.ast.Root;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
+import de.skuzzle.polly.core.parser.ast.directives.DelayDirective;
+import de.skuzzle.polly.core.parser.ast.directives.ProblemDirective;
 import de.skuzzle.polly.core.parser.ast.expressions.Assignment;
 import de.skuzzle.polly.core.parser.ast.expressions.Braced;
 import de.skuzzle.polly.core.parser.ast.expressions.Call;
@@ -206,6 +208,26 @@ public abstract class VisitorAdapter implements ASTVisitor {
     
     @Override
     public int after(Problem problem) throws ASTTraversalException {
+        return CONTINUE;
+    }
+    
+    @Override
+    public int before(DelayDirective node) throws ASTTraversalException {
+        return CONTINUE;
+    }
+
+    @Override
+    public int after(DelayDirective node) throws ASTTraversalException {
+        return CONTINUE;
+    }
+    
+    @Override
+    public int before(ProblemDirective node) throws ASTTraversalException {
+        return CONTINUE;
+    }
+
+    @Override
+    public int after(ProblemDirective node) throws ASTTraversalException {
         return CONTINUE;
     }
 }

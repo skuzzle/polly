@@ -60,6 +60,8 @@ public final class Problems {
     public final static String UNKNOWN_TYPE = "Unbekannter Typ: %s";
     public final static String NOT_ORDERED = "Type %s definiert keine Ordnung";
     public static final String AMBIGUOUS_CALL = "Nicht eindeutiger Funktionsaufruf";
+    public static final String ILLEGAL_DELAY = "Delay Direktive braucht eine Zeitangabe";
+    public static final String DUPLICATED_DIRECTIVE = "Doppelte Direktive: %s";
  
     
     // Runtime errors

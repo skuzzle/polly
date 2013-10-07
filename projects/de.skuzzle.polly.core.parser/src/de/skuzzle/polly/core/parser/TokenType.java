@@ -72,7 +72,9 @@ public enum TokenType {
     INSPECT("inspect"),
     ESCAPED("\\"), 
     TRANSPOSE("^T"),
-    ERROR("Ungültiges Symbol");
+    ERROR("Ungültiges Symbol"), 
+    DELAY("delay"),
+    DIRECTIVE("directive"); // tagging type for error messages
     
     private String string;
     

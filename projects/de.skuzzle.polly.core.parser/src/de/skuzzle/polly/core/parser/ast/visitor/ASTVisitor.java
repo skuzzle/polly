@@ -4,6 +4,8 @@ import de.skuzzle.polly.core.parser.ast.Identifier;
 import de.skuzzle.polly.core.parser.ast.ResolvableIdentifier;
 import de.skuzzle.polly.core.parser.ast.Root;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
+import de.skuzzle.polly.core.parser.ast.directives.DelayDirective;
+import de.skuzzle.polly.core.parser.ast.directives.ProblemDirective;
 import de.skuzzle.polly.core.parser.ast.expressions.Assignment;
 import de.skuzzle.polly.core.parser.ast.expressions.Braced;
 import de.skuzzle.polly.core.parser.ast.expressions.Call;
@@ -61,4 +63,8 @@ public interface ASTVisitor extends ASTTraversal {
     public boolean visit(Inspect node) throws ASTTraversalException;
 
     public boolean visit(Problem node) throws ASTTraversalException;
+    
+    public boolean visit(DelayDirective node) throws ASTTraversalException;
+
+    public boolean visit(ProblemDirective node) throws ASTTraversalException;
 }

@@ -16,6 +16,8 @@ import de.skuzzle.polly.core.parser.ast.declarations.types.MapType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.ProductType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Substitution;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
+import de.skuzzle.polly.core.parser.ast.directives.DelayDirective;
+import de.skuzzle.polly.core.parser.ast.directives.Directive;
 import de.skuzzle.polly.core.parser.ast.expressions.Assignment;
 import de.skuzzle.polly.core.parser.ast.expressions.Call;
 import de.skuzzle.polly.core.parser.ast.expressions.Empty;
@@ -103,7 +105,11 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
                 return false;
             }
         }
-        
+        for (final Directive dir : node.getDirectives().values()) {
+            if (!dir.visit(this)) {
+                return false;
+            }
+        }
         return this.after(node) == CONTINUE;
     }
     
@@ -420,5 +426,17 @@ class SecondPassTypeResolver extends AbstractTypeResolver {
         }
         // nothing to do here but prevent from executing super class visitInspect
         return this.after(node) == CONTINUE;
+    }
+    
+    
+    
+    @Override
+    public int after(DelayDirective node) throws ASTTraversalException {
+        final Type t = node.getTargetTime().getUnique();
+        if (!Type.tryUnify(t, Type.DATE) && !Type.tryUnify(t, Type.TIMESPAN)) {
+            this.reporter.semanticProblem(Problems.ILLEGAL_DELAY, 
+                    node.getTargetTime().getPosition());
+        }
+        return CONTINUE;
     }
 }

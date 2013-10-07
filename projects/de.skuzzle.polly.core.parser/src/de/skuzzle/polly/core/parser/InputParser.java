@@ -17,17 +17,21 @@ import de.skuzzle.polly.core.parser.ast.declarations.Namespace;
 import de.skuzzle.polly.core.parser.ast.declarations.types.MissingType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.ProductType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
+import de.skuzzle.polly.core.parser.ast.directives.DelayDirective;
+import de.skuzzle.polly.core.parser.ast.directives.Directive;
+import de.skuzzle.polly.core.parser.ast.directives.ProblemDirective;
 import de.skuzzle.polly.core.parser.ast.expressions.Assignment;
 import de.skuzzle.polly.core.parser.ast.expressions.Braced;
 import de.skuzzle.polly.core.parser.ast.expressions.Call;
 import de.skuzzle.polly.core.parser.ast.expressions.Delete;
+import de.skuzzle.polly.core.parser.ast.expressions.Delete.DeleteableIdentifier;
 import de.skuzzle.polly.core.parser.ast.expressions.Empty;
 import de.skuzzle.polly.core.parser.ast.expressions.Expression;
 import de.skuzzle.polly.core.parser.ast.expressions.Inspect;
 import de.skuzzle.polly.core.parser.ast.expressions.NamespaceAccess;
 import de.skuzzle.polly.core.parser.ast.expressions.OperatorCall;
+import de.skuzzle.polly.core.parser.ast.expressions.Problem;
 import de.skuzzle.polly.core.parser.ast.expressions.VarAccess;
-import de.skuzzle.polly.core.parser.ast.expressions.Delete.DeleteableIdentifier;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.BooleanLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.ChannelLiteral;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.DateLiteral;
@@ -42,7 +46,6 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.UserLiteral;
 import de.skuzzle.polly.core.parser.ast.lang.Operator.OpType;
 import de.skuzzle.polly.core.parser.problems.ProblemReporter;
 import de.skuzzle.polly.core.parser.problems.Problems;
-import de.skuzzle.polly.core.parser.ast.expressions.Problem;
 import de.skuzzle.polly.tools.collections.LinkedStack;
 import de.skuzzle.polly.tools.collections.Stack;
 
@@ -471,11 +474,66 @@ public class InputParser {
             } while (this.scanner.match(TokenType.SEPERATOR));
         }
         
+        final Map<TokenType, Directive> directives = new HashMap<>();
+        if (this.scanner.match(TokenType.COMMA)) {
+            this.parseDirectives(directives);
+        }
+        
         this.expect(TokenType.EOS, false);
         root = new Root(this.scanner.spanFrom(start), cmd, signature, 
-            this.reporter.hasProblems());
+            this.reporter.hasProblems(), directives);
         
         return root;
+    }
+    
+    
+    
+    /**
+     * Parses a list of comma separated directives
+     * <pre>
+     * directives -> directive (',' directive)*
+     * </pre>
+     * @param directives List into which parsed directives are inserted
+     * @throws ParseException If parsing fails.
+     */
+    protected void parseDirectives(Map<TokenType, Directive> directives) throws ParseException {
+        do {
+            final Directive dir = this.parseDirective();
+            if (directives.containsKey(dir.getDirectiveType())) {
+                // directive already exists
+                this.reporter.semanticProblem(Problems.DUPLICATED_DIRECTIVE, 
+                        dir.getPosition(), dir.getDirectiveType());
+            } else {
+                directives.put(dir.getDirectiveType(), dir);
+            }
+            
+        } while (this.scanner.match(TokenType.COMMA));
+    }
+    
+    
+    
+    /**
+     * Parses a single directive
+     * <pre>
+     * directive -> DELAY ' ' secTerm
+     * </pre>
+     * @return The parsed directive
+     * @throws ParseException If parsing fails.
+     */
+    protected Directive parseDirective() throws ParseException {
+        final Token la = this.scanner.lookAhead();
+        
+        switch (la.getType()) {
+        case DELAY:
+            this.scanner.consume();
+            this.expect(TokenType.SEPERATOR, true);
+            final Expression target = this.parseSecTerm();
+            return new DelayDirective(this.scanner.spanFrom(la), target);
+
+        default:
+            this.expect(TokenType.DIRECTIVE, true);
+            return new ProblemDirective(this.scanner.spanFrom(la));
+        }
     }
 
     

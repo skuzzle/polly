@@ -9,6 +9,9 @@ import de.skuzzle.polly.core.parser.ast.Node;
 import de.skuzzle.polly.core.parser.ast.ResolvableIdentifier;
 import de.skuzzle.polly.core.parser.ast.Root;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
+import de.skuzzle.polly.core.parser.ast.directives.DelayDirective;
+import de.skuzzle.polly.core.parser.ast.directives.Directive;
+import de.skuzzle.polly.core.parser.ast.directives.ProblemDirective;
 import de.skuzzle.polly.core.parser.ast.expressions.Assignment;
 import de.skuzzle.polly.core.parser.ast.expressions.Braced;
 import de.skuzzle.polly.core.parser.ast.expressions.Call;
@@ -36,7 +39,7 @@ public class CopyTransformation implements Transformation {
 
     @SuppressWarnings("unchecked")
     private final <T extends Node> List<T> transformList(Collection<T> nodes)
-        throws ASTTraversalException {
+            throws ASTTraversalException {
         final List<T> result = new ArrayList<T>(nodes.size());
 
         for (final T node : nodes) {
@@ -66,7 +69,8 @@ public class CopyTransformation implements Transformation {
     @Override
     public Root transformRoot(Root node) throws ASTTraversalException {
         return new Root(node.getPosition(), node.getCommand().transform(this),
-            this.transformList(node.getExpressions()), node.hasProblems());
+            this.transformList(node.getExpressions()), node.hasProblems(), 
+            node.getDirectives()); // HACK: directives not copied!
     }
 
 
@@ -280,4 +284,22 @@ public class CopyTransformation implements Transformation {
     public DeleteableIdentifier transformIdentifier(DeleteableIdentifier node) {
         return new DeleteableIdentifier(node, node.isGlobal());
     }
+    
+    
+    
+    @Override
+    public Directive transform(DelayDirective node) throws ASTTraversalException {
+        return new DelayDirective(node.getPosition(), 
+                node.getTargetTime().transform(this));
+    }
+    
+    
+    
+    @Override
+    public Directive transform(ProblemDirective node) throws ASTTraversalException {
+        return new ProblemDirective(node.getPosition());
+    }
+    
+    
+    
 }

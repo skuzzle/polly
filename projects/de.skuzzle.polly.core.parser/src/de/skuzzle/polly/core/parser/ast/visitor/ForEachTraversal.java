@@ -5,6 +5,8 @@ import de.skuzzle.polly.core.parser.ast.Node;
 import de.skuzzle.polly.core.parser.ast.ResolvableIdentifier;
 import de.skuzzle.polly.core.parser.ast.Root;
 import de.skuzzle.polly.core.parser.ast.declarations.Declaration;
+import de.skuzzle.polly.core.parser.ast.directives.DelayDirective;
+import de.skuzzle.polly.core.parser.ast.directives.ProblemDirective;
 import de.skuzzle.polly.core.parser.ast.expressions.Assignment;
 import de.skuzzle.polly.core.parser.ast.expressions.Braced;
 import de.skuzzle.polly.core.parser.ast.expressions.Call;
@@ -298,6 +300,34 @@ public class ForEachTraversal implements ASTTraversal {
     
     @Override
     public int after(Problem node) throws ASTTraversalException {
+        return this.afterEach(node);
+    }
+    
+    
+    
+    @Override
+    public int before(DelayDirective node) throws ASTTraversalException {
+        return this.beforeEach(node);
+    }
+    
+
+    
+    @Override
+    public int after(DelayDirective node) throws ASTTraversalException {
+        return this.afterEach(node);
+    }
+    
+    
+    
+    @Override
+    public int before(ProblemDirective node) throws ASTTraversalException {
+        return this.beforeEach(node);
+    }
+    
+    
+    
+    @Override
+    public int after(ProblemDirective node) throws ASTTraversalException {
         return this.afterEach(node);
     }
 }
