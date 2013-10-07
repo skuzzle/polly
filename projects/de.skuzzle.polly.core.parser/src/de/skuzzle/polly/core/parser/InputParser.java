@@ -64,6 +64,9 @@ import de.skuzzle.polly.tools.collections.Stack;
  * <pre>
  *   root        -> ':' ID (assign (WS assign)*)?              // AST root with a WS separated list of expressions
  *   
+ *   directives  -> directive (',' directive)*
+ *   directive   -> DELAY secTerm
+ *   
  *   assign      -> relation '->' PUBLIC? TEMP? ID             // assignment of relation to identifier X
  *   relation    -> conjunction (REL_OP conjunction)*          // relation (<,>,<=,>=,==, !=)
  *   conjunction -> disjunction (CONJ_OP disjunction)*         // conjunction (||)
