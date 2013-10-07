@@ -222,7 +222,7 @@ public class FleetScanShip {
         if (!this.owner.equals(other.owner)) {
             historyEntry.getChanges().add(
                     "Spotted with different owner: " + other.owner + " (former owner: "
-                            + this.owner);
+                            + this.owner + ")");
             this.owner = other.owner;
         }
 
