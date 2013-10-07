@@ -521,6 +521,7 @@ public class InputParser {
      * Parses a single directive
      * <pre>
      * directive -> DELAY ' ' secTerm
+     *            | REINTERPRET
      * </pre>
      * @return The parsed directive
      * @throws ParseException If parsing fails.

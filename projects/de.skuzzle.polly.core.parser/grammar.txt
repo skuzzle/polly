@@ -2,6 +2,7 @@ root        -> ':' ID (assign (WS assign)*)? (',' directives)?  // AST root with
 
 directives  -> directive (',' directive)*
 directive   -> DELAY secTerm
+             | REINTERPRET
 
 assignment  -> relation '->' PUBLIC? TEMP? ID             // assignment of relation to identifier X
 relation    -> conjunction (REL_OP conjunction)*          // relation (<,>,<=,>=,==, !=)
