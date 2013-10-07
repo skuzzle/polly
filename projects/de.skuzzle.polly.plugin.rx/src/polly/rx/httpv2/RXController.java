@@ -29,6 +29,7 @@ import polly.rx.parsing.BattleReportParser;
 import polly.rx.parsing.FleetScanParser;
 import polly.rx.parsing.ParseException;
 import polly.rx.parsing.QBattleReportParser;
+import polly.rx.parsing.QFleetScanParser;
 import polly.rx.parsing.ScoreBoardParser;
 import de.skuzzle.polly.http.annotations.Get;
 import de.skuzzle.polly.http.annotations.OnRegister;
@@ -312,6 +313,23 @@ public class RXController extends PollyController {
         try {
             final FleetScan fs = FleetScanParser.parseFleetScan(
                     scan, quadrant, x, y, meta);
+            this.fleetDb.addFleetScan(fs);
+        } catch (ParseException | DatabaseException e) {
+            return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
+        }
+        return new GsonHttpAnswer(200, new SuccessResult(true, "Scan added"));
+    }
+    
+    
+    
+    @Post("/api/postQFleetScan")
+    public HttpAnswer postQFleetScan(@Param("scan") String scan) 
+            throws AlternativeAnswerException {
+        
+        this.requirePermissions(FleetDBManager.ADD_FLEET_SCAN_PERMISSION);
+        
+        try {
+            final FleetScan fs = QFleetScanParser.parseFleetScan(scan);
             this.fleetDb.addFleetScan(fs);
         } catch (ParseException | DatabaseException e) {
             return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));

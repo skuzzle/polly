@@ -2,6 +2,7 @@ package de.skuzzle.polly.tools;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -9,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -50,6 +52,32 @@ public class FileUtil {
     
 
     private FileUtil() {}
+    
+    
+
+    /**
+     * Reads all data from the provided {@link InputStream} into a String.
+     * @param in The stream to read the data from.
+     * @param cs The charset in which the input is encoded.
+     * @return The input as String.
+     * @throws IOException If an I/O error occurrs.
+     */
+    public static String readIntoString(InputStream in, String cs) throws IOException {
+        try (final BufferedReader r = new BufferedReader(new InputStreamReader(in, cs))) {
+            final StringBuilder b = new StringBuilder();
+            String line = r.readLine();
+            if (line != null) {
+                b.append(line);
+            }
+            line = r.readLine();
+            while (line != null) {
+                b.append("\n");
+                b.append(line);
+                line = r.readLine();
+            }
+            return b.toString();
+        }
+    }
     
     
     
