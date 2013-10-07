@@ -193,7 +193,9 @@ public abstract class PollyPlugin extends AbstractDisposable
 	 * installed.
 	 * 
 	 * @throws Exception Propagate any exception that occurs during uninstall process.
+	 * @deprecated This method will never be called by polly anymore.
 	 */
+	@Deprecated
 	public void uninstall() throws Exception {}
 
 	
