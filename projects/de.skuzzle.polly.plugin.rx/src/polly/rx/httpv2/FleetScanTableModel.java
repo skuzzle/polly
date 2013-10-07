@@ -8,6 +8,7 @@ import polly.rx.entities.FleetScan;
 import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.sdk.httpv2.html.AbstractHTMLTableModel;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLElement;
+import de.skuzzle.polly.sdk.util.DirectedComparator.SortOrder;
 
 public class FleetScanTableModel extends AbstractHTMLTableModel<FleetScan> {
 
@@ -80,6 +81,19 @@ public class FleetScanTableModel extends AbstractHTMLTableModel<FleetScan> {
         return super.getColumnClass(column);
     }
 
+    
+    
+    @Override
+    public int getDefaultSortColumn() {
+        return 0;
+    }
+    
+    
+
+    @Override
+    public SortOrder getDefaultSortOrder() {
+        return SortOrder.DESCENDING;
+    }
 
 
     @Override
