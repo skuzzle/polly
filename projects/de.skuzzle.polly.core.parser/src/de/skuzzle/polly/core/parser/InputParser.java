@@ -238,8 +238,11 @@ public class InputParser {
      * @throws ParseException If the string was not well formatted.
      */
     public Expression parseSingleExpression() throws ParseException {
-        return this.parseRelation();
+        final Expression result = this.parseRelation();
+        this.expect(TokenType.EOS, false);
+        return result;
     }
+    
     
     
     /**
