@@ -149,22 +149,6 @@ public class PluginManagerImpl extends AbstractDisposable implements PluginManag
     
     
     
-    public void uninstall(String pluginName) throws PluginException {
-        Plugin pluginCfg = this.pluginCache.get(pluginName);
-        if (pluginCfg != null) {
-            logger.info("Uninstalling plugin '" + pluginName + "'.");
-            try {
-                pluginCfg.getPluginInstance().uninstall();
-            } catch (Exception e) {
-                logger.error("Error while uninstalling plugin.", e);
-                throw new PluginException(e);
-            }
-            logger.info("Plugin successfully uninstalled.");
-        }
-    }
-    
-    
-    
     private void addPlugin(Plugin pluginCfg) {
         this.pluginCache.put(pluginCfg.readString(Plugin.PLUGIN_NAME), 
                 pluginCfg);
