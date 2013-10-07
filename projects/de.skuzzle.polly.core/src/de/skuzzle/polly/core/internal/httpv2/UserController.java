@@ -221,6 +221,7 @@ public class UserController extends PollyController {
     }
     
     
+    
     @Get("api/setAttribute")
     public HttpAnswer setAttribute(
         @Param("userId") int userId,
@@ -229,13 +230,13 @@ public class UserController extends PollyController {
             throws AlternativeAnswerException {
         
         final User user = this.getSessionUser();
-        if (user == null || user.getId() != userId) {
+        final User target = this.getMyPolly().users().getUser(userId);
+        if (user == null || user != target) {
             // session has no id OR session user is not the edited user:
             // then you need admin permissions to edit the attributes
             this.requirePermissions(RoleManager.ADMIN_PERMISSION);
         }
         
-        final User target = this.getMyPolly().users().getUser(userId);
         if (target == null) {
             return new GsonHttpAnswer(200, 
                 new SuccessResult(false, "User does not exist"));
@@ -245,8 +246,7 @@ public class UserController extends PollyController {
                 user, target, attribute, value);
             
             return new GsonHttpAnswer(200, 
-                new SetAttributeResult(true, 
-                    value + " is not a valid value for " + attribute, newValue));            
+                new SetAttributeResult(true, "", newValue));            
         } catch (DatabaseException e) {
             return new GsonHttpAnswer(200, 
                 new SuccessResult(false, 

@@ -512,8 +512,9 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     
     @Override
-    public String setAttributeFor(User executor, final User user, final String attribute, 
-            String value) throws DatabaseException, ConstraintException {
+    public synchronized String setAttributeFor(User executor, final User user, 
+            final String attribute, String value) 
+                    throws DatabaseException, ConstraintException {
         logger.trace("Trying to set attribute '" + attribute + "' to value '" + 
             value + "'");
         
