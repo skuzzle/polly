@@ -94,22 +94,27 @@ public class PluginManagerImpl extends AbstractDisposable implements PluginManag
 
     @Override
     public synchronized void unload(String pluginName) throws PluginException {
-
-    }
-    
-    
-    
-    private void unload(String pluginName, Iterator<Plugin> it) throws PluginException {
-        Plugin pluginCfg = this.pluginCache.get(pluginName);
+        final Plugin pluginCfg = this.pluginCache.get(pluginName);
         if (pluginCfg == null) {
             throw new PluginException("Plugin not loaded");
         }
-        
         try {
             this.pollyCl.removeLoader(pluginCfg.getLoader());
             pluginCfg.getPluginInstance().setPluginState(PluginState.NOT_LOADED);
             pluginCfg.dispose();
             logger.info("Plugin '" + pluginName + "' successfully unloaded.");
+        } catch (Exception e) {
+            logger.error("Error while unloading plugin: '" + pluginName + "'", e);
+        }
+    }
+    
+    
+    
+    private void unload(String pluginName, Iterator<Plugin> it) throws PluginException {
+        try {
+            this.unload(pluginName);
+        } catch (PluginException e) {
+            throw e;
         } catch (Exception e) {
             logger.error("Error while unloading plugin: '" + pluginName + "'", e);
         } finally {
