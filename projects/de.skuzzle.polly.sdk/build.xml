@@ -25,7 +25,8 @@
         **/polly.http.jar
     "/>
    
-    
+    <!-- SDK version number. Only obey major and minor part for API concerns -->
+    <property name="version.num"    value="1.0."/>
     
     <!-- Import all important build targets. -->
     <import file="../common.xml" as="base"/>
