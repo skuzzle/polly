@@ -4,13 +4,19 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.apache.log4j.Logger;
 
 
 public class ProxyClassLoader extends ClassLoader {
 
-    private List<PluginClassLoader> children;
+    private final static Logger logger = Logger.getLogger(ProxyClassLoader.class
+            .getName());
+    
+    private final List<PluginClassLoader> children;
     
     
     
@@ -22,6 +28,9 @@ public class ProxyClassLoader extends ClassLoader {
 
     public ProxyClassLoader(ClassLoader parent) {
         super(parent);
+        if (!registerAsParallelCapable()) {
+            logger.error("Failed to register ClassLoader as parallel capable");
+        }
         this.children = new LinkedList<PluginClassLoader>();
     }
     
@@ -79,13 +88,17 @@ public class ProxyClassLoader extends ClassLoader {
     
     
     @Override
-    protected synchronized Class<?> findClass(String name) throws ClassNotFoundException {
+    protected Class<?> findClass(String name) throws ClassNotFoundException {
+        final List<PluginClassLoader> children;
         synchronized (this.children) {
-            for (PluginClassLoader cl : this.children) {
-                try {
-                    return cl.findClass(name);
-                } catch (ClassNotFoundException ignore){};
-            }
+            // copy children to avoid further synchronization
+            children = new ArrayList<>(this.children);
+        }
+        
+        for (PluginClassLoader cl : children) {
+            try {
+                return cl.findClass(name);
+            } catch (ClassNotFoundException ignore){};
         }
         throw new ClassNotFoundException(name);
     }
@@ -93,13 +106,17 @@ public class ProxyClassLoader extends ClassLoader {
     
     
     @Override
-    protected synchronized URL findResource(String name) {
-        synchronized(this.children) {
-            for (PluginClassLoader cl : this.children) {
-                URL result = cl.findResource(name);
-                if (result != null) {
-                    return result;
-                }
+    protected URL findResource(String name) {
+        final List<PluginClassLoader> children;
+        synchronized (this.children) {
+            // copy children to avoid further synchronization
+            children = new ArrayList<>(this.children);
+        }
+        
+        for (PluginClassLoader cl : children) {
+            final URL result = cl.findResource(name);
+            if (result != null) {
+                return result;
             }
         }
         return null;

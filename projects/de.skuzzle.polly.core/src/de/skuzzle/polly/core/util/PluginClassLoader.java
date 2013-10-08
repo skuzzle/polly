@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
@@ -21,6 +22,8 @@ import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 
 import org.apache.log4j.Logger;
+
+import de.skuzzle.polly.tools.streams.FastByteArrayOutputStream;
 
 
 
@@ -81,12 +84,13 @@ public class PluginClassLoader extends SecureClassLoader implements Cloneable {
     private final static Logger logger = Logger
         .getLogger(PluginClassLoader.class.getName());
 
-    private JarFile jar;
-    private File file;
+    private final JarFile jar;
+    private final File file;
     private long jarLastModified;
-    private Map<String, byte[]> dependencyCache;
-    private Map<String, Class<?>> classCache;
+    private final Map<String, byte[]> dependencyCache;
+    private final Map<String, Class<?>> classCache;
 
+    
 
     public PluginClassLoader(File file) throws IOException {
         this(file, ClassLoader.getSystemClassLoader());
@@ -96,8 +100,11 @@ public class PluginClassLoader extends SecureClassLoader implements Cloneable {
 
     public PluginClassLoader(File file, ClassLoader parent) throws IOException {
         super(parent);
+        if (!registerAsParallelCapable()) {
+            logger.error("Failed to register ClassLoader as parallel capable");
+        }
         this.file = file;
-        this.dependencyCache = new HashMap<String, byte[]>();
+        this.dependencyCache = new WeakHashMap<String, byte[]>();
         this.classCache = new HashMap<String, Class<?>>();
         
         this.jar = new JarFile(this.file);
@@ -114,16 +121,16 @@ public class PluginClassLoader extends SecureClassLoader implements Cloneable {
         
         String path = name.replace('.', '/').concat(".class");
 
-        synchronized (this) {
+        synchronized (this.getClassLoadingLock(name)) {
             Class<?> cached = this.classCache.get(path);
             if (cached != null) {
                 return cached;
             }
             
-            byte[] data = this.getFile(this.jar, path);
-            if (data == null)
+            final byte[] data = this.getFile(this.jar, path);
+            if (data == null) {
                 throw new ClassNotFoundException();
-    
+            }
             cached = this.defineClass(name, data, 0, data.length);
             this.classCache.put(path, cached);
             return cached;
@@ -225,6 +232,7 @@ public class PluginClassLoader extends SecureClassLoader implements Cloneable {
     private byte[] getFile(JarFile jar, String className) {
         byte[] file = null;
         
+        synchronized (jar) {
         try {
             // try finding class in current jar
             ZipEntry entry = jar.getEntry(className);
@@ -234,12 +242,14 @@ public class PluginClassLoader extends SecureClassLoader implements Cloneable {
             }
             
             // try finding class in dependency cache
-            file = this.dependencyCache.get(className);
+            synchronized (this.dependencyCache) {
+                file = this.dependencyCache.get(className);
+            }
             if (file != null) {
                 return file;
             }
             
-            String[] classpath = this.readManifestClasspath(jar);
+            final String[] classpath = this.readManifestClasspath(jar);
             
             // now, try to find the path in our dependencies
             for (int i = 0; classpath != null && i < classpath.length && file == null; ++i) {
@@ -253,20 +263,24 @@ public class PluginClassLoader extends SecureClassLoader implements Cloneable {
                         // now try to find requested class in the dependency.
                         // We read the whole referenced dependency into our cache so 
                         // there is no need to open it again
-                        JarInputStream in = new JarInputStream(jar.getInputStream(entry));
+                        try (final JarInputStream in = new JarInputStream(
+                                jar.getInputStream(entry))) {
                         
-                        ZipEntry check = in.getNextEntry();
-                        while (check != null) {
-                            if (!check.isDirectory()) {
-                                // cache the file so we do not need to read this jar
-                                // file again
-                                byte[] tmp = readStream(in);
-                                this.dependencyCache.put(check.getName(), tmp);
-                                if (check.getName().equals(className)) {
-                                    file = tmp;
+                            ZipEntry check = in.getNextEntry();
+                            while (check != null) {
+                                if (!check.isDirectory()) {
+                                    // cache the file so we do not need to read this jar
+                                    // file again
+                                    byte[] tmp = readStream(in);
+                                    synchronized (this.dependencyCache) {
+                                        this.dependencyCache.put(check.getName(), tmp);
+                                    }
+                                    if (check.getName().equals(className)) {
+                                        file = tmp;
+                                    }
                                 }
+                                check = in.getNextEntry();
                             }
-                            check = in.getNextEntry();
                         }
                     } else if (cpEntry.endsWith(".class")) {
                         file = this.readSimpleEntry(jar, entry);
@@ -294,6 +308,7 @@ public class PluginClassLoader extends SecureClassLoader implements Cloneable {
             logger.error("", ignore);
             /* returning null */ 
         }
+        }
         
         return file;
     }
@@ -301,33 +316,18 @@ public class PluginClassLoader extends SecureClassLoader implements Cloneable {
     
     
     private static byte[] readStream(InputStream in) throws IOException {
-        byte[] buffer = new byte[1024];
-
-        int bytesRead = 0;
-        while (true) {
-            int byteReadThisTurn = in.read(buffer, bytesRead, 
-                buffer.length - bytesRead);
+        final int BUFFER_SIZE = 4048;
+        byte[] buffer = new byte[BUFFER_SIZE];
+        try (final FastByteArrayOutputStream out = new FastByteArrayOutputStream(BUFFER_SIZE)) {
+            int len = 0;
+            do {
+                len = in.read(buffer);
+                out.write(buffer, 0, len);
+            } while (len > 0);
             
-            if (byteReadThisTurn < 0) {
-                break;
-            }
-
-            bytesRead += byteReadThisTurn;
-
-            if (bytesRead >= buffer.length - 256) {
-                byte[] newBuffer = new byte[buffer.length * 2];
-                System.arraycopy(buffer, 0, newBuffer, 0, bytesRead);
-                buffer = newBuffer;
-            }
-        }
-
-        if (buffer.length == bytesRead) {
-            return buffer;
-        } else {
-            byte[] response = new byte[bytesRead];
-            System.arraycopy(buffer, 0, response, 0, bytesRead);
-
-            return response;
+            // shrink buffer to its actual size
+            out.shrink();
+            return out.getBuffer();
         }
     }
 
@@ -356,8 +356,6 @@ public class PluginClassLoader extends SecureClassLoader implements Cloneable {
     public void dispose() {
         this.classCache.clear();
         this.dependencyCache.clear();
-        this.classCache = null;
-        this.dependencyCache = null;
     }
     
     

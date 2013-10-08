@@ -45,6 +45,14 @@ public class FastByteArrayOutputStream extends OutputStream {
     
     
     
+    public void shrink() {
+        final byte[] target = new byte[this.size];
+        System.arraycopy(this.buffer, 0, target, 0, this.size);
+        this.buffer = target;
+    }
+    
+    
+    
     private void checkBuffer(int newSize) {
         newSize = newSize + this.size;
         if (newSize > this.buffer.length) {
