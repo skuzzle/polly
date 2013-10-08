@@ -79,7 +79,7 @@ public class ProxyClassLoader extends ClassLoader {
     
     
     @Override
-    protected Class<?> findClass(String name) throws ClassNotFoundException {
+    protected synchronized Class<?> findClass(String name) throws ClassNotFoundException {
         synchronized (this.children) {
             for (PluginClassLoader cl : this.children) {
                 try {
@@ -93,7 +93,7 @@ public class ProxyClassLoader extends ClassLoader {
     
     
     @Override
-    protected URL findResource(String name) {
+    protected synchronized URL findResource(String name) {
         synchronized(this.children) {
             for (PluginClassLoader cl : this.children) {
                 URL result = cl.findResource(name);

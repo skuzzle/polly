@@ -114,18 +114,20 @@ public class PluginClassLoader extends SecureClassLoader implements Cloneable {
         
         String path = name.replace('.', '/').concat(".class");
 
-        Class<?> cached = this.classCache.get(path);
-        if (cached != null) {
+        synchronized (this) {
+            Class<?> cached = this.classCache.get(path);
+            if (cached != null) {
+                return cached;
+            }
+            
+            byte[] data = this.getFile(this.jar, path);
+            if (data == null)
+                throw new ClassNotFoundException();
+    
+            cached = this.defineClass(name, data, 0, data.length);
+            this.classCache.put(path, cached);
             return cached;
         }
-        
-        byte[] data = this.getFile(this.jar, path);
-        if (data == null)
-            throw new ClassNotFoundException();
-
-        cached = this.defineClass(name, data, 0, data.length);
-        this.classCache.put(path, cached);
-        return cached;
     }
     
 
