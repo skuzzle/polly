@@ -36,7 +36,8 @@ public class VenadCommand extends Command {
                 return false;
             }
             
-            this.reply(channel, "Venad von " + userName + ": " + u.getAttribute("VENAD"));
+            this.reply(channel, "Venad von " + userName + ": " + 
+                    u.getAttribute("VENAD").valueString(this.getMyPolly().formatting()));
         }
         return false;
     }
