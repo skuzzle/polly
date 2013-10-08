@@ -58,6 +58,7 @@ import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.exceptions.UnknownCommandException;
 import de.skuzzle.polly.sdk.exceptions.UnknownSignatureException;
 import de.skuzzle.polly.sdk.time.DateUtils;
+import de.skuzzle.polly.tools.events.OneTimeEventListener;
 
 
 
@@ -101,15 +102,23 @@ public class CommandManagerImpl extends AbstractDisposable
     
     
     
-    private class ReinterpretListener implements MessageSendListener {
+    private class ReinterpretListener implements MessageSendListener, OneTimeEventListener {
 
         private final User executor;
         private final Object source;
+        private boolean done = false;
         
         
         public ReinterpretListener(Object source, User executor) {
             this.source = source;
             this.executor = executor;
+        }
+        
+        
+        
+        @Override
+        public boolean workDone() {
+            return this.done;
         }
         
         
@@ -122,7 +131,7 @@ public class CommandManagerImpl extends AbstractDisposable
             try {
                 executeString(e.getMessage(), e.getChannel(), e.inQuery(), 
                         this.executor, e.getSource());
-                e.setHandled(true);
+                this.done = true;
             } catch (UnsupportedEncodingException | UnknownSignatureException
                     | InsufficientRightsException | CommandException
                     | UnknownCommandException e1) {

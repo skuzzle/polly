@@ -8,4 +8,14 @@ import java.util.EventListener;
  * {@link EventProvider} it was registered at.
  * @author Simon
  */
-public interface OneTimeEventListener extends EventListener {}
+public interface OneTimeEventListener extends EventListener {
+    
+    /**
+     * This method specifies whether this listner's work is done and it should be 
+     * removed from its parent's {@link EventProvider} after the next time the listener
+     * was notified.
+     * @return Whether to remove this listener from its parent after next notification.
+     */
+    public boolean workDone();
+    
+}
