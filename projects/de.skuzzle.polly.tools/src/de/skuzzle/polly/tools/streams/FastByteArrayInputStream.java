@@ -36,6 +36,16 @@ public class FastByteArrayInputStream extends InputStream {
     
     /**
      * Creates a new FastByteArrayInputStream that reads from the given byte array.
+     * @param buffer The array to read bytes from.
+     */
+    public FastByteArrayInputStream(byte[] buffer) {
+        this(buffer, buffer.length);
+    }
+    
+    
+    
+    /**
+     * Creates a new FastByteArrayInputStream that reads from the given byte array.
      *
      * @param buffer The array to read bytes from.
      * @param size Upper bound to which bytes are read.

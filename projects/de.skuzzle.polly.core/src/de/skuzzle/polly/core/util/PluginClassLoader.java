@@ -1,6 +1,5 @@
 package de.skuzzle.polly.core.util;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -23,6 +22,7 @@ import java.util.zip.ZipEntry;
 
 import org.apache.log4j.Logger;
 
+import de.skuzzle.polly.tools.streams.FastByteArrayInputStream;
 import de.skuzzle.polly.tools.streams.FastByteArrayOutputStream;
 
 
@@ -42,7 +42,7 @@ public class PluginClassLoader extends SecureClassLoader implements Cloneable {
     
     private class BytesURLStreamHandler extends URLStreamHandler {
 
-        byte[] content;
+        private final byte[] content;
 
         public BytesURLStreamHandler(byte[] content) {
             this.content = content;
@@ -59,7 +59,7 @@ public class PluginClassLoader extends SecureClassLoader implements Cloneable {
     
     private class BytesURLConnection extends URLConnection {
 
-        protected byte[] content;
+        final protected byte[] content;
 
 
         public BytesURLConnection(URL url, byte[] content) {
@@ -74,7 +74,7 @@ public class PluginClassLoader extends SecureClassLoader implements Cloneable {
 
 
         public InputStream getInputStream() {
-            return new ByteArrayInputStream(this.content);
+            return new FastByteArrayInputStream(this.content);
         }
     }
     
@@ -83,7 +83,17 @@ public class PluginClassLoader extends SecureClassLoader implements Cloneable {
 
     private final static Logger logger = Logger
         .getLogger(PluginClassLoader.class.getName());
+    
+    
+    
+    /**
+     * Static object to synchronize on while loading classes and resources. This grants
+     * that only one plugin loader at a time may load a class.
+     */
+    private final static Object MUTEX = new Object();
 
+    
+    
     private final JarFile jar;
     private final File file;
     private long jarLastModified;
@@ -119,9 +129,9 @@ public class PluginClassLoader extends SecureClassLoader implements Cloneable {
             throw new ClassNotFoundException(name);
         }
         
-        String path = name.replace('.', '/').concat(".class");
+        final String path = name.replace('.', '/').concat(".class");
 
-        synchronized (this.getClassLoadingLock(name)) {
+        synchronized (MUTEX) {
             Class<?> cached = this.classCache.get(path);
             if (cached != null) {
                 return cached;
@@ -145,24 +155,21 @@ public class PluginClassLoader extends SecureClassLoader implements Cloneable {
             return null;
         }
         
-        synchronized (this) {
-            byte[] data = this.getFile(this.jar, name);
-            
-            if (data == null) {
-                return null;
-            }
-            try {
-                return this.getDataURL(name, data);
-            } catch (MalformedURLException e) {
-                return null;
-            }
+        final byte[] data = this.getFile(this.jar, name);
+        if (data == null) {
+            return null;
+        }
+        try {
+            return this.getDataURL(name, data);
+        } catch (MalformedURLException e) {
+            return null;
         }
     }
 
 
 
     protected URL getDataURL(String name, byte[] data)
-        throws MalformedURLException {
+            throws MalformedURLException {
         return new URL(null, this.file.toURI().toURL().toExternalForm() + '!'
             + name, new BytesURLStreamHandler(data));
     }
@@ -171,7 +178,7 @@ public class PluginClassLoader extends SecureClassLoader implements Cloneable {
 
     @Override
     protected Enumeration<URL> findResources(String name) {
-        URL url = this.findResource(name);
+        final URL url = this.findResource(name);
 
         if (url == null)
             return null;
@@ -210,8 +217,8 @@ public class PluginClassLoader extends SecureClassLoader implements Cloneable {
         if (mf == null) {
             return null;
         }
-        Attributes attribs = mf.getMainAttributes();
-        String classpath = attribs.getValue(Attributes.Name.CLASS_PATH);
+        final Attributes attribs = mf.getMainAttributes();
+        final String classpath = attribs.getValue(Attributes.Name.CLASS_PATH);
         if (classpath == null) {
             return null;
         }
@@ -222,7 +229,7 @@ public class PluginClassLoader extends SecureClassLoader implements Cloneable {
     
     
     private byte[] readSimpleEntry(JarFile jar, ZipEntry entry) throws IOException {
-        InputStream in = jar.getInputStream(entry);
+        final InputStream in = jar.getInputStream(entry);
         int size = (int) entry.getSize();
         return readStream(in, size);
     }
@@ -232,7 +239,6 @@ public class PluginClassLoader extends SecureClassLoader implements Cloneable {
     private byte[] getFile(JarFile jar, String className) {
         byte[] file = null;
         
-        synchronized (jar) {
         try {
             // try finding class in current jar
             ZipEntry entry = jar.getEntry(className);
@@ -307,7 +313,6 @@ public class PluginClassLoader extends SecureClassLoader implements Cloneable {
         } catch (IOException ignore) {
             logger.error("", ignore);
             /* returning null */ 
-        }
         }
         
         return file;
