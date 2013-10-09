@@ -1,43 +1,15 @@
 package de.skuzzle.polly.sdk.resources;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.ResourceBundle.Control;
-import sun.reflect.Reflection;
+import java.util.Set;
+
 
 /**
- * Manages internationalization of polly and its plugins. This class is based on Java's
- * {@link ResourceBundle ResourceBundles}. It is capable of reading resource property 
- * files for the {@link Locale} which is currently configured for polly. The 
- * <tt>Locale</tt> polly uses can be configured in <tt>polly.cfg</tt>.
- * 
- * <p>The {@link #get(String)} accesses the resource bundle for your plugin. Its 
- * recommended for your plugins to adapt to this structure when using 
- * internationalization:</p>
- * <ul>
- * <li>Create a <tt>Messages_&lt;locale&gt;.properties</tt> in the package of your 
- * {@link de.skuzzle.polly.sdk.PollyPlugin PollyPlugin} subclass for each locale you 
- * want to support</li>
- *  <li>Create a static constant in your PollyPlugin subclass referring to the resource 
- *  bundle: <tt>public final static String FAMILY = "my.plugin.Messages";</tt> where 
- *  <tt>my.plugin</tt> is the name of the package in which your properties file is 
- *  located</li>
- *  <li>Fill the properties file with key-value pairs of translated strings, for 
- *  example: <tt>my.command.description = Description text with placeholder: %s</tt></li>
- *  <li>In client code which is to be translated, use the following pattern to access 
- *  Strings from the resource bundle:
- *  <pre>
- *  private final static String DESC = "my.command.description";
- *  private final static PollyBundle MSG = Resources.get(MyPlugin.FAMILY);
- *  //...
- *  final String description = MSG.get(DESC, "test"); // "test" will be inserted for '%s' placeholder
- *  </pre>
- *  </li>
- * </ul>
- * 
- * Note that unlike Java's default behavior, polly supports reading those property files
- * in UTF-8 encoding.
- * 
  * @author Simon Taddiken
  * @since 1.1
  */
@@ -49,21 +21,46 @@ public class Resources {
     /** Reads property files in UTF-8 */
     private final static Control UTF8 = new UTF8Control();
     
+    /** Contains {@link Constants} subclasses which have already been initialized */
+    private static final Set<Class<? extends Constants>> initialized = new HashSet<>();
     
     
-    /**
-     * Gets the {@link PollyBundle} for the provided resource bundle family in the 
-     * current {@link #getLocale() polly locale}.
-     * 
-     * @param family Name of the resource bundle family to load.
-     * @return The PollyBundle to access translated Strings.
-     */
-    public static PollyBundle get(String family) {
-        final Class<?> caller = Reflection.getCallerClass();
-        final ClassLoader cl = caller.getClassLoader();
+    
+    private static PollyBundle get(String family, ClassLoader cl) {
         final ResourceBundle r = ResourceBundle.getBundle(
-                family, pollyLocale, cl, UTF8);
+                family, getLocale(), cl, UTF8);
         return new PollyBundle(r);
+    }
+    
+    
+    
+    public static void init(String family, Class<? extends Constants> constants) {
+        synchronized (initialized) {
+            if (!initialized.add(constants)) {
+                // have already been initialized
+                return;
+            }
+        }
+        
+        final PollyBundle bundle = get(family, constants.getClassLoader());
+        for (final Field f : constants.getFields()) {
+            f.setAccessible(true);
+            if (Modifier.isStatic(f.getModifiers()) && 
+                Modifier.isPublic(f.getModifiers()) && 
+                f.getType() == String.class) {
+                
+                // this is a public static string field, load value associated with the 
+                // field name from the resource bundle
+                final String value = bundle.get(f.getName());
+                try {
+                    f.set(null, value);
+                } catch (IllegalArgumentException | IllegalAccessException e) {
+                    throw new RuntimeException(
+                            "Resource initialization failed. Family: " + family + 
+                            ", name = " + f.getName() + ", value = " + value, e);
+                }
+            }
+        }
     }
     
     

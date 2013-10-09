@@ -6,8 +6,6 @@ import java.util.Map;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
-import de.skuzzle.polly.sdk.resources.PollyBundle;
-import de.skuzzle.polly.sdk.resources.Resources;
 import de.skuzzle.polly.sdk.time.Milliseconds;
 import de.skuzzle.polly.sdk.time.Time;
 
@@ -30,10 +28,7 @@ public abstract class DelayedCommand extends Command {
     private boolean quiet;
     private Map<User, Long> lastExecutions;
     
-    private final static String CANT_EXECUTE = "delayedcommand.cantexecute";
-    private final PollyBundle MSG = Resources.get(MyPolly.FAMILY);
-    
-    
+
     
     /**
      * Creates a new delayed Command. See the documentation of {@link Command} for 
@@ -190,7 +185,7 @@ public abstract class DelayedCommand extends Command {
         
         final long remaining = Milliseconds.toSeconds(this.delay - diff); 
         final String f = this.getMyPolly().formatting().formatTimeSpan(remaining);
-        throw new CommandException(MSG.get(CANT_EXECUTE, f));
+        throw new CommandException(Messages.bind(Messages.delayedCommandCantExecute, f));
     }
     
     

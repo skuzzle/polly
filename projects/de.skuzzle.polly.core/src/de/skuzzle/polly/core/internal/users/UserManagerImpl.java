@@ -354,7 +354,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     private void checkAlreadySignedOn(User user) throws AlreadySignedOnException {        
         if (this.onlineCache.containsKey(user.getCurrentNickName())) {
-            throw new AlreadySignedOnException(user.getName());
+            throw new AlreadySignedOnException(user);
         }
     }
 
@@ -534,7 +534,7 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
         
         if (!constraint.accept(valueCopy)) {
             throw new ConstraintException("'" + value + 
-                "' ist kein gültiger Wert für das Attribut '" + attribute + "'");
+                "' ist kein gï¿½ltiger Wert fï¿½r das Attribut '" + attribute + "'");
         }
         
         this.persistence.writeAtomic(new Atomic() {

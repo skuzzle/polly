@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-
+import polly.core.Messages;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -23,9 +23,9 @@ public class CalendarCommand extends Command {
 
     public CalendarCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "cal");
-        this.createSignature("Zeigt den Kalender für ein angegebenes Datum an.", 
-            new Parameter("Datum", Types.DATE));
-        this.setHelpText("Zeigt den Kalender für ein angegebenes Datum an.");
+        this.createSignature(Messages.calendarSig0Desc, 
+            new Parameter(Messages.calendarSig0Date, Types.DATE));
+        this.setHelpText(Messages.calendarHelp);
     }
     
     
@@ -73,7 +73,7 @@ public class CalendarCommand extends Command {
         lastMonth.add(Calendar.DAY_OF_MONTH, -diff(firstDay.get(Calendar.DAY_OF_WEEK)));
         
         SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy");
-        b.append("Kalender für: " + sdf.format(d) + "\n");
+        b.append("Kalender fï¿½r: " + sdf.format(d) + "\n");
         b.append("\u0002\u001fKW | Mo Di Mi Do Fr Sa So\n");
         
         System.out.println(lastMonth.getTime());

@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.Messages;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -15,18 +16,17 @@ public class FooCommand extends Command {
 
     public FooCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "foo");
-        this.createSignature("Foo-Befehl mit einem Parameter.", 
-            new Parameter("Irgendwas", Types.ANY));
-        this.createSignature("Foo-Befehl mit zwei Parametern.", 
-            new Parameter("Irgendwas", Types.ANY), 
-            new Parameter("Irgendwas", Types.ANY));
-        this.createSignature("Foo-Befehl mit drei Parametern", 
-            new Parameter("Irgendwas", Types.ANY), 
-            new Parameter("Irgendwas", Types.ANY), 
-            new Parameter("Irgendwas", Types.ANY));
-        this.createSignature("Foo-Befehl mit 0 Parametern.");
-        this.setHelpText("Dieser Befehl nimmt jede art von Parametern entgegen, " +
-        		"wertet ihn aus und gibt das Ergebnis zurück.");
+        this.createSignature(Messages.fooSig0Desc, 
+            new Parameter(Messages.fooSigParam, Types.ANY));
+        this.createSignature(Messages.fooSig1Desc, 
+            new Parameter(Messages.fooSigParam, Types.ANY), 
+            new Parameter(Messages.fooSigParam, Types.ANY));
+        this.createSignature(Messages.fooSig2Desc, 
+            new Parameter(Messages.fooSigParam, Types.ANY), 
+            new Parameter(Messages.fooSigParam, Types.ANY), 
+            new Parameter(Messages.fooSigParam, Types.ANY));
+        this.createSignature(Messages.fooSig3Desc);
+        this.setHelpText(Messages.fooHelp);
     }
 
     

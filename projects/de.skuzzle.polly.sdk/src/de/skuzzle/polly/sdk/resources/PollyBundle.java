@@ -16,6 +16,6 @@ public class PollyBundle {
     
     public String get(String key, Object...format) {
         final String s = this.wrapped.getString(key);
-        return String.format(s, format);
+        return s;
     }
 }

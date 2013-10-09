@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.Messages;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.CommandHistoryEntry;
@@ -16,11 +17,9 @@ public class DitoCommand extends Command {
 
     public DitoCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "dito");
-        this.createSignature("Führt den letzten Befehl der im aktuellen Channel " +
-        		"ausgeführt wurde erneut aus.",
+        this.createSignature(Messages.ditoSig0Desc,
         		MyPlugin.DITO_PERMISSION);
-        this.setHelpText("Führt den letzten Befehl der im aktuellen Channel " +
-                "ausgeführt wurde erneut aus.");
+        this.setHelpText(Messages.ditoHelp);
     }
     
     
@@ -34,7 +33,7 @@ public class DitoCommand extends Command {
                 this.getMyPolly().commands().getLastCommand(channel);
             
             if (che == null) {
-                this.reply(channel, "Nothing to do here");
+                this.reply(channel, Messages.ditoNoCommand);
             } else {
                 boolean qry = channel.equals(executer.getCurrentNickName());
                 

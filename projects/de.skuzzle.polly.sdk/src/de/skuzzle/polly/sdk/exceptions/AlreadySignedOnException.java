@@ -1,5 +1,7 @@
 package de.skuzzle.polly.sdk.exceptions;
 
+import de.skuzzle.polly.sdk.User;
+
 /**
  * 
  * @author Simon
@@ -9,13 +11,21 @@ public class AlreadySignedOnException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
-    public AlreadySignedOnException() {
+    private final User user;
+    
+    public AlreadySignedOnException(User user) {
         super();
+        this.user = user;
     }
 
-    public AlreadySignedOnException(String message) {
+    public AlreadySignedOnException(User user, String message) {
         super(message);
+        this.user = user;
     }
 
     
+    
+    public User getUser() {
+        return this.user;
+    }
 }

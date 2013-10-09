@@ -115,7 +115,7 @@ public class MyPlugin extends PollyPlugin {
 
 
     /** Resource bundle family */
-    public static final String FAMILY = "polly.core.Messages";
+    public static final String FAMILY = "polly.core.Translation";
 
     
     

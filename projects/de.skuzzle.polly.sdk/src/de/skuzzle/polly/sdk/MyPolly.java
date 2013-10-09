@@ -18,11 +18,6 @@ import de.skuzzle.polly.sdk.roles.RoleManager;
  * @version 27.07.2011 0366137
  */
 public interface MyPolly {
-    
-    /** ResourceBundle family for SDK translation */
-    static String FAMILY = "de.skuzzle.polly.sdk.Messages";
-    
-    
 
 	/**
 	 * Gets the currently used polly version.
