@@ -6,6 +6,9 @@ import java.util.Map;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
+import de.skuzzle.polly.sdk.resources.PollyBundle;
+import de.skuzzle.polly.sdk.resources.Resources;
+import de.skuzzle.polly.sdk.time.Milliseconds;
 import de.skuzzle.polly.sdk.time.Time;
 
 
@@ -26,6 +29,9 @@ public abstract class DelayedCommand extends Command {
     private int delay;
     private boolean quiet;
     private Map<User, Long> lastExecutions;
+    
+    private final static String CANT_EXECUTE = "delayedcommand.cantexecute";
+    private final PollyBundle MSG = Resources.get(MyPolly.FAMILY);
     
     
     
@@ -182,10 +188,9 @@ public abstract class DelayedCommand extends Command {
             return false;
         }
         
-        long remaining = (this.delay - diff) / 1000; 
-        String f = this.getMyPolly().formatting().formatTimeSpan(remaining);
-        throw new CommandException("Du kannst den Befehl erst in " + f + 
-                " wieder ausführen.");
+        final long remaining = Milliseconds.toSeconds(this.delay - diff); 
+        final String f = this.getMyPolly().formatting().formatTimeSpan(remaining);
+        throw new CommandException(MSG.get(CANT_EXECUTE, f));
     }
     
     

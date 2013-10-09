@@ -13,6 +13,8 @@ import de.skuzzle.polly.sdk.exceptions.ConversationException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
+import de.skuzzle.polly.sdk.resources.PollyBundle;
+import de.skuzzle.polly.sdk.resources.Resources;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.roles.SecurityContainer;
 import de.skuzzle.polly.sdk.roles.SecurityObject;
@@ -97,7 +99,7 @@ import de.skuzzle.polly.sdk.roles.SecurityObject;
 public abstract class Command extends AbstractDisposable implements Comparable<Command>, 
         SecurityContainer, SecurityObject {
     
-
+    
 	/**
 	 * This commands name.
 	 */
@@ -158,6 +160,16 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 	private Set<String> containedPermissions;
 
 	
+	// translation
+	
+	private final static String NO_DESC = "command.nodesc";
+	private final static String SIGNATURES = "command.signatures";
+	private final static String NO_SIGNATURE = "command.nosignature";
+	private final static String NO_SIGNATURE_ID = "command.nosignatureid";
+	private final static String SAMPLE = "command.sample";
+	
+    private final static PollyBundle MSG = Resources.get(MyPolly.FAMILY);
+	
 	
 	/**
 	 * Creates a new Command with the given MyPolly instance and command name.
@@ -168,8 +180,7 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 		this.commandName = commandName;
 		this.polly = polly;
 		this.signatures = new ArrayList<FormalSignature>();
-		this.userLevel = UserManager.UNKNOWN;
-		this.helpText = "Der Befehl '" + commandName + "' hat keine Beschreibung";
+		this.helpText = MSG.get(NO_DESC, commandName);
 		this.constants = new HashMap<String, Types>();
 		this.helpSignature0 = new FormalSignature(commandName, 0, "", 
 		    new Parameter("", Types.HELP));
@@ -213,9 +224,7 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 	public String getHelpText() {
 		String help = this.helpText.endsWith(".") 
 		    ? this.helpText + " " : this.helpText + ". ";
-		help += "Verfügbare Signaturen: " + this.signatures.size();
-		help += ". Gib ':" + this.commandName + " ? <nr>' ein, um weitere Informationen " +
-				"zu erhalten."; 
+		help += MSG.get(SIGNATURES, this.signatures.size(), this.commandName);
 		return help;
 	}
 	
@@ -268,8 +277,7 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 			FormalSignature fs = this.signatures.get(signatureId);
 			return fs.getHelp();
 		}
-		return "Keine Signatur-Infos für den Befehl '" + this.commandName + 
-			"' und Signatur " + signatureId;
+		return MSG.get(NO_SIGNATURE, this.commandName, signatureId);
 	}
 	
 	
@@ -381,12 +389,12 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 		} else if (signature.equals(this.helpSignature1)) {
 		    int num = (int) signature.getNumberValue(1);
 		    if (num < 0 || num >= this.signatures.size()) {
-		        this.reply(channel, "Kein Signatur mit der Id " + num);
+		        this.reply(channel, MSG.get(NO_SIGNATURE_ID, num));
 		        return;
 		    }
 		    this.reply(channel, this.getHelpText(num));
-		    this.reply(channel, "Beispiel: :" + this.commandName + " " + 
-		            this.signatures.get(num).getSample());
+		    this.reply(channel, 
+		            MSG.get(SAMPLE, this.commandName, this.signatures.get(num).getSample()));
 		    return;
 		}
 

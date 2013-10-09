@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import de.skuzzle.polly.sdk.resources.Resources;
+import de.skuzzle.polly.sdk.resources.PollyBundle;
 import de.skuzzle.polly.sdk.time.Time;
 
 /**
@@ -75,6 +77,9 @@ public class Types {
      */
     public final static AnyType ANY = new AnyType();
     
+    
+    private final static String STRING_SAMPLE = "type.string.sample";
+    private final static PollyBundle MSG = Resources.get(MyPolly.FAMILY);
     
     private Types() {};
     
@@ -273,8 +278,8 @@ public class Types {
 		
 		@Override
         public String getSample() {
-            return "\"Nur ein Beispiel\"";
-        };
+            return MSG.get(STRING_SAMPLE);
+        }
 		
 		
 		/**
@@ -636,8 +641,12 @@ public class Types {
 		
 		@Override
 		public String getSample() {
-		    return "{" + this.subtype.getSample() + "}"; 
-		};
+		    return "{" + 
+		            this.subtype.getSample() + "," + 
+		            this.subtype.getSample() 
+		            + "}"; 
+		}
+		
 		
 		
 		/**
