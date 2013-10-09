@@ -301,7 +301,9 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 	 * userlevel constants in {@link UserManager} or own values.
 	 * 
 	 * @param userLevel The new userlevel for this command.
+	 * @deprecated Userlevel has been replace by roles
 	 */
+	@Deprecated
 	public void setUserLevel(int userLevel) {
 	    this.userLevel = userLevel;
 	}
