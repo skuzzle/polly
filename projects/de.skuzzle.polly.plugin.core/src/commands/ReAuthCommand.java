@@ -1,6 +1,6 @@
 package commands;
 
-import polly.core.Messages;
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -17,13 +17,13 @@ public class ReAuthCommand extends Command {
 
     public ReAuthCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "reauth"); //$NON-NLS-1$
-        this.createSignature(Messages.reAuthSig0Desc,
+        this.createSignature(MSG.reAuthSig0Desc,
         		MyPlugin.SET_AND_IDENTIFY_PERMISSION);
-        this.createSignature(Messages.reAuthSig1Desc,
+        this.createSignature(MSG.reAuthSig1Desc,
             MyPlugin.SET_AND_IDENTIFY_PERMISSION,
-            new Parameter(Messages.reAuthSig1Join, Types.BOOLEAN));
+            new Parameter(MSG.reAuthSig1Join, Types.BOOLEAN));
         
-        this.setHelpText(Messages.reAuthHelp);
+        this.setHelpText(MSG.reAuthHelp);
     }
     
     

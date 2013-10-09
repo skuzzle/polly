@@ -1,6 +1,6 @@
 package commands;
 
-import polly.core.Messages;
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -11,10 +11,10 @@ public class DictCommand extends SearchEngineCommand {
 
     public DictCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "dict"); //$NON-NLS-1$
-        this.createSignature(Messages.dictSig0Desc, 
+        this.createSignature(MSG.dictSig0Desc, 
             MyPlugin.DICT_PERMISSION,
-            new Parameter(Messages.dictSig0Term, Types.STRING));
-        this.setHelpText(Messages.dictHelp);
+            new Parameter(MSG.dictSig0Term, Types.STRING));
+        this.setHelpText(MSG.dictHelp);
     }
 
     

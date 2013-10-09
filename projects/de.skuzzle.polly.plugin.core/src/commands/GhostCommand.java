@@ -1,6 +1,6 @@
 package commands;
 
-import polly.core.Messages;
+import polly.core.MSG;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -16,10 +16,10 @@ public class GhostCommand extends Command {
 
     public GhostCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "ghost"); //$NON-NLS-1$
-        this.createSignature(Messages.ghostSig0Desc, 
-            new Parameter(Messages.ghostSig0User, Types.USER), 
-            new Parameter(Messages.ghostSig0Password, Types.STRING));
-        this.setHelpText(Messages.ghostHelp);
+        this.createSignature(MSG.ghostSig0Desc, 
+            new Parameter(MSG.ghostSig0User, Types.USER), 
+            new Parameter(MSG.ghostSig0Password, Types.STRING));
+        this.setHelpText(MSG.ghostHelp);
         this.setQryCommand(true);
         
     }
@@ -37,7 +37,7 @@ public class GhostCommand extends Command {
     @Override
     protected void executeOnChannel(User executer, String channel,
         Signature signature) throws CommandException {
-        this.reply(channel, Messages.ghostQryOnly);
+        this.reply(channel, MSG.ghostQryOnly);
     }
     
     
@@ -51,13 +51,13 @@ public class GhostCommand extends Command {
             User user = this.getMyPolly().users().getUser(userName);
             
             if (user == null) {
-                this.reply(executer, Messages.bind(Messages.ghostNotLoggedIn, userName));
+                this.reply(executer, MSG.bind(MSG.ghostNotLoggedIn, userName));
             } else if (!user.checkPassword(pw)) {
-                this.reply(executer, Messages.wrongPassword);
+                this.reply(executer, MSG.wrongPassword);
             } else {
                 try {
                     this.getMyPolly().users().logoff(user);
-                    this.reply(executer, Messages.bind(Messages.ghostLoggedOut, 
+                    this.reply(executer, MSG.bind(MSG.ghostLoggedOut, 
                             user.getName()));
                 } catch (UnknownUserException e) {
                     throw new CommandException(e);

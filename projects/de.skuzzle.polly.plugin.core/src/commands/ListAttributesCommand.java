@@ -3,7 +3,7 @@ package commands;
 import java.util.Iterator;
 import java.util.Set;
 
-import polly.core.Messages;
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -17,9 +17,9 @@ public class ListAttributesCommand extends Command {
 
     public ListAttributesCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "listattr"); //$NON-NLS-1$
-        this.createSignature(Messages.listAttributesSig0Desc, 
+        this.createSignature(MSG.listAttributesSig0Desc, 
                 MyPlugin.LIST_ATTRIBUTES_PERMISSION);
-        this.setHelpText(Messages.listAttributesHelp);
+        this.setHelpText(MSG.listAttributesHelp);
     }
     
     

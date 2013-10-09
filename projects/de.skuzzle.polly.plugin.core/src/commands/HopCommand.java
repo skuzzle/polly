@@ -1,6 +1,6 @@
 package commands;
 
-import polly.core.Messages;
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -16,13 +16,13 @@ public class HopCommand extends Command {
 
     public HopCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "hop"); //$NON-NLS-1$
-        this.createSignature(Messages.hopSig0Desc,
+        this.createSignature(MSG.hopSig0Desc,
             MyPlugin.HOP_PERMISSION);
-        this.createSignature(Messages.hopSig1Desc,
+        this.createSignature(MSG.hopSig1Desc,
             MyPlugin.HOP_PERMISSION,
-            new Parameter(Messages.hopSig1Channel, Types.CHANNEL));
+            new Parameter(MSG.hopSig1Channel, Types.CHANNEL));
         this.setRegisteredOnly();
-        this.setHelpText(Messages.hopHelp);
+        this.setHelpText(MSG.hopHelp);
     }
 
     
@@ -50,7 +50,7 @@ public class HopCommand extends Command {
     @Override
     protected void executeOnQuery(User executer, Signature signature) {
         if (this.match(signature, 0)) {
-            this.reply(executer, Messages.hopSpecifyChannel);
+            this.reply(executer, MSG.hopSpecifyChannel);
         } else if (this.match(signature, 1)) {
             this.rejoin(signature.getStringValue(0));
         }
@@ -59,7 +59,7 @@ public class HopCommand extends Command {
     
     
     private void rejoin(String channel) {
-        this.getMyPolly().irc().partChannel(channel, Messages.hopPartMessage);
+        this.getMyPolly().irc().partChannel(channel, MSG.hopPartMessage);
         this.getMyPolly().irc().joinChannel(channel, ""); //$NON-NLS-1$
     }
 }

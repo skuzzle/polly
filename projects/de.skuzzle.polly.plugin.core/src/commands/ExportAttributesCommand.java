@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import polly.core.Messages;
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -23,12 +23,12 @@ public class ExportAttributesCommand extends Command {
     public ExportAttributesCommand(MyPolly polly) 
                 throws DuplicatedSignatureException {
         super(polly, "expattr"); //$NON-NLS-1$
-        this.createSignature(Messages.expAttributesSig0Desc, 
+        this.createSignature(MSG.expAttributesSig0Desc, 
             MyPlugin.EXPORT_ATTRIBUTES_PERMISSION);
-        this.createSignature(Messages.expAttributesSig1Desc,
+        this.createSignature(MSG.expAttributesSig1Desc,
             MyPlugin.EXPORT_USER_ATTRIBUTES_PERMISSION,
-            new Parameter(Messages.userName, Types.USER));
-        this.setHelpText(Messages.expAttributesHelp);
+            new Parameter(MSG.userName, Types.USER));
+        this.setHelpText(MSG.expAttributesHelp);
         this.setRegisteredOnly();
     }
     
@@ -42,8 +42,8 @@ public class ExportAttributesCommand extends Command {
         if (this.match(signature, 1)) {
             user = this.getMyPolly().users().getUser(signature.getStringValue(0));
             if (user == null) {
-                throw new CommandException(Messages.bind(
-                        Messages.unknownUser, signature.getStringValue(0)));
+                throw new CommandException(MSG.bind(
+                        MSG.unknownUser, signature.getStringValue(0)));
             }
         }
         this.reply(channel, this.export(user));

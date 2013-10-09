@@ -1,6 +1,6 @@
 package commands;
 
-import polly.core.Messages;
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -18,12 +18,12 @@ public class AddUserCommand extends Command {
     
     public AddUserCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "adduser"); //$NON-NLS-1$
-        this.createSignature(Messages.addUserSig0Desc, 
+        this.createSignature(MSG.addUserSig0Desc, 
             MyPlugin.ADD_USER_PERMISSION,
-            new Parameter(Messages.userName, Types.USER),
-            new Parameter(Messages.addUserSig0Password, Types.STRING));
+            new Parameter(MSG.userName, Types.USER),
+            new Parameter(MSG.addUserSig0Password, Types.STRING));
         this.setRegisteredOnly();
-        this.setHelpText(Messages.addUserHelp);
+        this.setHelpText(MSG.addUserHelp);
         this.setQryCommand(true);
     }
     
@@ -40,7 +40,7 @@ public class AddUserCommand extends Command {
     @Override
     protected void executeOnChannel(User executer, String channel,
             Signature signature) {
-        this.reply(channel, Messages.addUserQryOnly);
+        this.reply(channel, MSG.addUserQryOnly);
     }
     
     
@@ -54,13 +54,13 @@ public class AddUserCommand extends Command {
             
             try {
                 this.getMyPolly().users().addUser(userName, password);
-                this.reply(executer, Messages.bind(Messages.addUserSuccess, userName));
+                this.reply(executer, MSG.bind(MSG.addUserSuccess, userName));
             } catch (UserExistsException e) {
-                this.reply(executer, Messages.bind(Messages.addUserExists, userName));
+                this.reply(executer, MSG.bind(MSG.addUserExists, userName));
             } catch (DatabaseException e)  {
                 throw new CommandException(e);
             } catch (InvalidUserNameException e) {
-                this.reply(executer, Messages.bind(Messages.addUserInvalid, userName));
+                this.reply(executer, MSG.bind(MSG.addUserInvalid, userName));
             }
         }
     }

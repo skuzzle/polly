@@ -21,7 +21,7 @@ public abstract class SearchEngineCommand extends Command {
         
         if (this.match(signature, 0)) {
             String article = signature.getStringValue(0);
-            article = article.replaceAll(" ", "%20");
+            article = article.replaceAll(" ", "%20"); //$NON-NLS-1$ //$NON-NLS-2$
             this.reply(channel, this.getSearchLink(article));
         }
         return false;

@@ -1,6 +1,6 @@
 package commands;
 
-import polly.core.Messages;
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -18,11 +18,11 @@ public class DeleteUserCommand extends Command {
 
     public DeleteUserCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "deluser"); //$NON-NLS-1$
-        this.createSignature(Messages.deleteUserSig0Desc, 
+        this.createSignature(MSG.deleteUserSig0Desc, 
             MyPlugin.DELETE_USER_PERMISSION,
-            new Parameter(Messages.userName, Types.USER));
+            new Parameter(MSG.userName, Types.USER));
         this.setRegisteredOnly();
-        this.setHelpText(Messages.deleteUserHelp);
+        this.setHelpText(MSG.deleteUserHelp);
     }
 
     
@@ -37,12 +37,12 @@ public class DeleteUserCommand extends Command {
             
             User user = um.getUser(name);
             if (user == null) {
-                this.reply(channel, Messages.bind(Messages.unknownUser, name));
+                this.reply(channel, MSG.bind(MSG.unknownUser, name));
                 return false;
             }
             try {
                 this.getMyPolly().users().deleteUser(user);
-                this.reply(channel, Messages.bind(Messages.deleteUserSuccess, name));
+                this.reply(channel, MSG.bind(MSG.deleteUserSuccess, name));
             } catch (UnknownUserException ignore) {
                 // can not happen
                 ignore.printStackTrace();

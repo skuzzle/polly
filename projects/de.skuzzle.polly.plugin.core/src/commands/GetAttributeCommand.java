@@ -1,6 +1,6 @@
 package commands;
 
-import polly.core.Messages;
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -16,14 +16,14 @@ public class GetAttributeCommand extends Command {
 
     public GetAttributeCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "getattr"); //$NON-NLS-1$
-        this.createSignature(Messages.getAttributeSig0Desc, 
+        this.createSignature(MSG.getAttributeSig0Desc, 
     		MyPlugin.GET_USER_ATTRIBUTE_PERMISSION,
-            new Parameter(Messages.userName, Types.USER), 
-            new Parameter(Messages.getAttributeSigAttribute, Types.STRING));
-        this.createSignature(Messages.getAttributeSig1Desc, 
+            new Parameter(MSG.userName, Types.USER), 
+            new Parameter(MSG.getAttributeSigAttribute, Types.STRING));
+        this.createSignature(MSG.getAttributeSig1Desc, 
     		MyPlugin.GET_ATTRIBUTE_PERMISSION,
-    		new Parameter(Messages.getAttributeSigAttribute, Types.STRING));
-        this.setHelpText(Messages.getAttributeHelp);
+    		new Parameter(MSG.getAttributeSigAttribute, Types.STRING));
+        this.setHelpText(MSG.getAttributeHelp);
         this.setRegisteredOnly();
     }
 
@@ -52,15 +52,15 @@ public class GetAttributeCommand extends Command {
     private void getAttribute(User dest, String userName, String attribute, String channel) 
             throws CommandException {
         if (dest == null) {
-            throw new CommandException(Messages.bind(Messages.unknownUser, userName));
+            throw new CommandException(MSG.bind(MSG.unknownUser, userName));
         }
         
         try {
-            this.reply(channel, Messages.bind(Messages.getAttributeValue, 
+            this.reply(channel, MSG.bind(MSG.getAttributeValue, 
                 dest.getAttribute(attribute).valueString(this.getMyPolly().formatting())));
         } catch (UnknownAttributeException e) {
             throw new CommandException(
-                    Messages.bind(Messages.getAttributeUnknownAttr, attribute));
+                    MSG.bind(MSG.getAttributeUnknownAttr, attribute));
         }
     }
 }

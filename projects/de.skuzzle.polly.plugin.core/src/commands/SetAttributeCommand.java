@@ -1,7 +1,6 @@
 package commands;
 
-import java.util.Map;
-
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -19,29 +18,20 @@ import de.skuzzle.polly.sdk.exceptions.UnknownAttributeException;
 public class SetAttributeCommand extends Command {
 
     public SetAttributeCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "setattr");
-        this.createSignature("Setzt das Attribut des angegebenen Benutzers neu. " +
-        		"Diese Befehel ist nur für Admins", 
+        super(polly, "setattr"); //$NON-NLS-1$
+        this.createSignature(MSG.setAttributeSig0Desc, 
     		MyPlugin.SET_USER_ATTRIBUTE_PERMISSION,
-            new Parameter("User", Types.USER), 
-            new Parameter("Attributname", Types.STRING), 
-            new Parameter("Attributwert", Types.ANY));
-        this.createSignature("Setzt das Attribut auf den angegebenen Wert.",
+            new Parameter(MSG.setAttributeSig0User, Types.USER), 
+            new Parameter(MSG.setAttributeSig0Attr, Types.STRING), 
+            new Parameter(MSG.setAttributeSig0Value, Types.ANY));
+        this.createSignature(MSG.setAttributeSig1Desc,
             MyPlugin.SET_ATTRIBUTE_PERMISSION,
-            new Parameter("Attributname", Types.STRING), 
-            new Parameter("Attributwert", Types.ANY));
+            new Parameter(MSG.setAttributeSig1Attr, Types.STRING), 
+            new Parameter(MSG.setAttributSig1Value, Types.ANY));
         this.setRegisteredOnly();
-        this.setHelpText("Setzt ein Attribut auf den angegebenen Wert. Verfügbare " +
-        		"Attribute können mit :listattr angezeigt werden.");
+        this.setHelpText(MSG.setAttributeHelp);
     }
-    
-    
-    
-    @Override
-    public void renewConstants(Map<String, Types> map) {
-        map.put("true", new Types.BooleanType(true));
-        map.put("false", new Types.BooleanType(false));
-    }
+
     
     
     @Override
@@ -73,18 +63,18 @@ public class SetAttributeCommand extends Command {
             String value, String channel) throws CommandException {
         
         if (dest == null) {
-            throw new CommandException("Unbekannter Benutzer: " + userName);
+            throw new CommandException(MSG.bind(MSG.setAttributeUnknownUser, userName));
         } 
         
         try {
             dest.getAttribute(attribute);
         } catch (UnknownAttributeException e) {
-            throw new CommandException("Unbekanntes Attribut: " + attribute);
+            throw new CommandException(MSG.bind(MSG.setAttributeUnknownAttr, attribute));
         }
         
         try {
             this.getMyPolly().users().setAttributeFor(executor, dest, attribute, value);
-            this.reply(channel, "Neuer Wert wurde gespeichert.");
+            this.reply(channel, MSG.setAttributeSuccess);
         } catch (DatabaseException e) {
             throw new CommandException(e);
         } catch (ConstraintException e) {

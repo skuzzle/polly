@@ -1,6 +1,6 @@
 package commands;
 
-import polly.core.Messages;
+import polly.core.MSG;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -16,17 +16,17 @@ public class FooCommand extends Command {
 
     public FooCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "foo"); //$NON-NLS-1$
-        this.createSignature(Messages.fooSig0Desc, 
-            new Parameter(Messages.fooSigParam, Types.ANY));
-        this.createSignature(Messages.fooSig1Desc, 
-            new Parameter(Messages.fooSigParam, Types.ANY), 
-            new Parameter(Messages.fooSigParam, Types.ANY));
-        this.createSignature(Messages.fooSig2Desc, 
-            new Parameter(Messages.fooSigParam, Types.ANY), 
-            new Parameter(Messages.fooSigParam, Types.ANY), 
-            new Parameter(Messages.fooSigParam, Types.ANY));
-        this.createSignature(Messages.fooSig3Desc);
-        this.setHelpText(Messages.fooHelp);
+        this.createSignature(MSG.fooSig0Desc, 
+            new Parameter(MSG.fooSigParam, Types.ANY));
+        this.createSignature(MSG.fooSig1Desc, 
+            new Parameter(MSG.fooSigParam, Types.ANY), 
+            new Parameter(MSG.fooSigParam, Types.ANY));
+        this.createSignature(MSG.fooSig2Desc, 
+            new Parameter(MSG.fooSigParam, Types.ANY), 
+            new Parameter(MSG.fooSigParam, Types.ANY), 
+            new Parameter(MSG.fooSigParam, Types.ANY));
+        this.createSignature(MSG.fooSig3Desc);
+        this.setHelpText(MSG.fooHelp);
     }
 
     

@@ -1,6 +1,6 @@
 package commands;
 
-import polly.core.Messages;
+import polly.core.MSG;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Types;
@@ -10,9 +10,9 @@ public class LmgtfyCommand extends SearchEngineCommand {
 
     public LmgtfyCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "lmgtfy"); //$NON-NLS-1$
-        this.createSignature(Messages.lmgtfySig0Desc, 
-            new Parameter(Messages.lmgtfySig0Term, Types.STRING));
-        this.setHelpText(Messages.lmgtfyHelp);
+        this.createSignature(MSG.lmgtfySig0Desc, 
+            new Parameter(MSG.lmgtfySig0Term, Types.STRING));
+        this.setHelpText(MSG.lmgtfyHelp);
     }
 
 

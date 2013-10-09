@@ -1,6 +1,6 @@
 package commands;
 
-import polly.core.Messages;
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -15,11 +15,11 @@ public class RawIrcCommand extends Command {
 
     public RawIrcCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "raw"); //$NON-NLS-1$
-        this.createSignature(Messages.rawSig0Desc, 
+        this.createSignature(MSG.rawSig0Desc, 
                 MyPlugin.RAW_IRC_PERMISSION,
-                new Parameter(Messages.rawSig0Cmd, Types.STRING));
+                new Parameter(MSG.rawSig0Cmd, Types.STRING));
         this.setRegisteredOnly();
-        this.setHelpText(Messages.rawHelp);
+        this.setHelpText(MSG.rawHelp);
     }
 
     

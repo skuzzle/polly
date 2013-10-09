@@ -3,7 +3,7 @@ package commands;
 import java.io.IOException;
 
 import core.util.WikiReader;
-import polly.core.Messages;
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.DelayedCommand;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -22,10 +22,10 @@ public class DefineCommand extends DelayedCommand {
     
     public DefineCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "define", 10000); //$NON-NLS-1$
-        this.createSignature(Messages.defineSig0Desc,
+        this.createSignature(MSG.defineSig0Desc,
             MyPlugin.DEFINE_PERMISSION,
-            new Parameter(Messages.defineSig0Term, Types.STRING));
-        this.setHelpText(Messages.defineHelp);
+            new Parameter(MSG.defineSig0Term, Types.STRING));
+        this.setHelpText(MSG.defineHelp);
     }
     
     
@@ -41,10 +41,10 @@ public class DefineCommand extends DelayedCommand {
             
             try {
                 this.reply(channel, wr.readFirstParagraph(article, lang));
-                this.reply(channel, Messages.bind(Messages.defineMoreInfo, 
+                this.reply(channel, MSG.bind(MSG.defineMoreInfo, 
                         wr.getWikiLink(article, lang)));
             } catch (IOException e) {
-                throw new CommandException(Messages.bind(Messages.defineError, article));
+                throw new CommandException(MSG.bind(MSG.defineError, article));
             }
         }
         return false;

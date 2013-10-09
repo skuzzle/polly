@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import polly.core.Messages;
+import polly.core.MSG;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -23,9 +23,9 @@ public class CalendarCommand extends Command {
 
     public CalendarCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "cal"); //$NON-NLS-1$
-        this.createSignature(Messages.calendarSig0Desc, 
-            new Parameter(Messages.calendarSig0Date, Types.DATE));
-        this.setHelpText(Messages.calendarHelp);
+        this.createSignature(MSG.calendarSig0Desc, 
+            new Parameter(MSG.calendarSig0Date, Types.DATE));
+        this.setHelpText(MSG.calendarHelp);
     }
     
     
@@ -73,7 +73,7 @@ public class CalendarCommand extends Command {
         lastMonth.add(Calendar.DAY_OF_MONTH, -diff(firstDay.get(Calendar.DAY_OF_WEEK)));
         
         SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy"); //$NON-NLS-1$
-        b.append(Messages.bind(Messages.calendarFor, sdf.format(d)));
+        b.append(MSG.bind(MSG.calendarFor, sdf.format(d)));
         b.append("\n"); //$NON-NLS-1$
         b.append("\u0002\u001fKW | Mo Di Mi Do Fr Sa So\n"); //$NON-NLS-1$
         

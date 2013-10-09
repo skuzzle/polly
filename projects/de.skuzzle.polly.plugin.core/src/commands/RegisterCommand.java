@@ -1,6 +1,6 @@
 package commands;
 
-import polly.core.Messages;
+import polly.core.MSG;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -19,9 +19,9 @@ public class RegisterCommand extends Command {
 
     public RegisterCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "register"); //$NON-NLS-1$
-        this.createSignature(Messages.registerSig0Desc, 
-    		new Parameter(Messages.registerSig0Password, Types.STRING));
-        this.setHelpText(Messages.registerHelp);
+        this.createSignature(MSG.registerSig0Desc, 
+    		new Parameter(MSG.registerSig0Password, Types.STRING));
+        this.setHelpText(MSG.registerHelp);
         this.setQryCommand(true);
     }
     
@@ -38,7 +38,7 @@ public class RegisterCommand extends Command {
     @Override
     protected void executeOnChannel(User executer, String channel,
             Signature signature) {
-        this.reply(channel, Messages.registerQryWarning);
+        this.reply(channel, MSG.registerQryWarning);
     }
     
     
@@ -46,7 +46,7 @@ public class RegisterCommand extends Command {
     @Override
     protected void executeOnQuery(User executer, Signature signature) throws CommandException {
         if (this.getMyPolly().users().isSignedOn(executer)) {
-            this.reply(executer, Messages.registerAlreadySignedOn);
+            this.reply(executer, MSG.registerAlreadySignedOn);
             return;
         }
         
@@ -59,15 +59,15 @@ public class RegisterCommand extends Command {
         try {
             this.getMyPolly().users().addUser(
                     userName, password);
-            this.reply(executer, Messages.bind(
-                    Messages.registerSuccess, userName, password));
+            this.reply(executer, MSG.bind(
+                    MSG.registerSuccess, userName, password));
         } catch (UserExistsException e) {
-            this.reply(executer, Messages.bind(Messages.registerAlreadyExists, userName));
+            this.reply(executer, MSG.bind(MSG.registerAlreadyExists, userName));
         } catch (DatabaseException e) {
             e.printStackTrace();
             throw new CommandException(e);
         } catch (InvalidUserNameException e) {
-            this.reply(executer, Messages.bind(Messages.registerInvalidName, userName));
+            this.reply(executer, MSG.bind(MSG.registerInvalidName, userName));
         }
     }
 }

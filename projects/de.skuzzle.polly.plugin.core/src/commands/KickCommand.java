@@ -2,7 +2,7 @@ package commands;
 
 import java.util.List;
 
-import polly.core.Messages;
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -17,29 +17,29 @@ public class KickCommand extends Command {
 
 	public KickCommand(MyPolly polly) throws DuplicatedSignatureException {
 		super(polly, "kick"); //$NON-NLS-1$
-		this.createSignature(Messages.kickSig0Desc, 
+		this.createSignature(MSG.kickSig0Desc, 
 		    MyPlugin.KICK_PERMISSION,
-				new Parameter(Messages.kickSig0User, Types.USER));
-		this.createSignature(Messages.kickSig1Desc,
+				new Parameter(MSG.kickSig0User, Types.USER));
+		this.createSignature(MSG.kickSig1Desc,
 				MyPlugin.KICK_PERMISSION,
-				new Parameter(Messages.kickSig1User, Types.USER), 
-				new Parameter(Messages.kickSig1Reason, Types.STRING));
-		this.createSignature(Messages.kickSig2Desc,
+				new Parameter(MSG.kickSig1User, Types.USER), 
+				new Parameter(MSG.kickSig1Reason, Types.STRING));
+		this.createSignature(MSG.kickSig2Desc,
 		    MyPlugin.KICK_PERMISSION,
-				new Parameter(Messages.kickSig2Channel, Types.CHANNEL), 
-				new Parameter(Messages.kickSig2User, Types.USER));	
-		this.createSignature(Messages.kickSig3Desc,
+				new Parameter(MSG.kickSig2Channel, Types.CHANNEL), 
+				new Parameter(MSG.kickSig2User, Types.USER));	
+		this.createSignature(MSG.kickSig3Desc,
 				MyPlugin.KICK_PERMISSION,
-				new Parameter(Messages.kickSig3Channel, Types.CHANNEL), 
-				new Parameter(Messages.kickSig3User, Types.USER), 
-				new Parameter(Messages.kickSig3Reason, Types.STRING));	
-		this.createSignature(Messages.kickSig4Desc, 
-		    new Parameter(Messages.kickSig4Users, new Types.ListType(Types.USER)));
-        this.createSignature(Messages.kickSig5Desc, 
-            new Parameter(Messages.kickSig5Users, new Types.ListType(Types.USER)),
-            new Parameter(Messages.kickSig5Channel, Types.CHANNEL));
+				new Parameter(MSG.kickSig3Channel, Types.CHANNEL), 
+				new Parameter(MSG.kickSig3User, Types.USER), 
+				new Parameter(MSG.kickSig3Reason, Types.STRING));	
+		this.createSignature(MSG.kickSig4Desc, 
+		    new Parameter(MSG.kickSig4Users, new Types.ListType(Types.USER)));
+        this.createSignature(MSG.kickSig5Desc, 
+            new Parameter(MSG.kickSig5Users, new Types.ListType(Types.USER)),
+            new Parameter(MSG.kickSig5Channel, Types.CHANNEL));
 		this.setRegisteredOnly();
-		this.setHelpText(Messages.kickHelp);
+		this.setHelpText(MSG.kickHelp);
 	}
 	
 	

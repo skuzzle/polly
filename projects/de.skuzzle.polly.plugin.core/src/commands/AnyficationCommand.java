@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import polly.core.Messages;
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.DelayedCommand;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -35,14 +35,14 @@ public class AnyficationCommand extends DelayedCommand {
     
     public AnyficationCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "anyfication", DELAY); //$NON-NLS-1$
-        this.createSignature(Messages.anyficationSig0Desc, 
+        this.createSignature(MSG.anyficationSig0Desc, 
             MyPlugin.ANYFICATION_PERMISSION,
-            new Parameter(Messages.anyficationSig0Prefix, Types.STRING));
-        this.createSignature(Messages.anyficationSig1Desc,
+            new Parameter(MSG.anyficationSig0Prefix, Types.STRING));
+        this.createSignature(MSG.anyficationSig1Desc,
             MyPlugin.ANYFICATION_PERMISSION,
-            new Parameter(Messages.anyficationSig1Prefix, Types.STRING), 
-            new Parameter(Messages.anyficationSig1Timespan, Types.TIMESPAN));
-        this.setHelpText(Messages.anyficationHelp);
+            new Parameter(MSG.anyficationSig1Prefix, Types.STRING), 
+            new Parameter(MSG.anyficationSig1Timespan, Types.TIMESPAN));
+        this.setHelpText(MSG.anyficationHelp);
         this.anyficationTimer = new Timer("LORDIFICATION_TIMER", true); //$NON-NLS-1$
         this.channels = new HashSet<String>();
     }
@@ -79,7 +79,7 @@ public class AnyficationCommand extends DelayedCommand {
                 b.append(", "); //$NON-NLS-1$
             }
         }
-        final String info = Messages.bind(Messages.anyficationInfo, 
+        final String info = MSG.bind(MSG.anyficationInfo, 
                 this.getMyPolly().formatting().formatTimeSpan(timeSpan / 1000));
         b.append(": "); //$NON-NLS-1$
         b.append(info);
@@ -96,7 +96,7 @@ public class AnyficationCommand extends DelayedCommand {
                 List<String> users = getMyPolly().irc().getChannelUser(chan);
                 for (String user : users) {
                     if (!user.startsWith(prefix)) {
-                        getMyPolly().irc().kick(chan, user, Messages.anyficationFail);
+                        getMyPolly().irc().kick(chan, user, MSG.anyficationFail);
                     }
                 }
                 getMyPolly().irc().setAndIdentifyDefaultNickname();

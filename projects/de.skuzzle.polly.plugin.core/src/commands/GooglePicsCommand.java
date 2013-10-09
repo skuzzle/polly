@@ -1,6 +1,6 @@
 package commands;
 
-import polly.core.Messages;
+import polly.core.MSG;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Types;
@@ -11,9 +11,9 @@ public class GooglePicsCommand extends SearchEngineCommand {
 
     public GooglePicsCommand(MyPolly myPolly) throws DuplicatedSignatureException {
         super(myPolly, "pix"); //$NON-NLS-1$
-        this.createSignature(Messages.pixSig0Desc, 
-            new Parameter(Messages.pixSig0Term, Types.STRING));
-        this.setHelpText(Messages.pixHelp);
+        this.createSignature(MSG.pixSig0Desc, 
+            new Parameter(MSG.pixSig0Term, Types.STRING));
+        this.setHelpText(MSG.pixHelp);
     }
     
 

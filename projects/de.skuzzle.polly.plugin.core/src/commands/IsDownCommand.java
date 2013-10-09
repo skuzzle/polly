@@ -6,7 +6,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
 
-import polly.core.Messages;
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -24,14 +24,14 @@ public class IsDownCommand extends Command {
 
     public IsDownCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "isdown"); //$NON-NLS-1$
-        this.createSignature(Messages.isDownSig0Desc, 
+        this.createSignature(MSG.isDownSig0Desc, 
     		MyPlugin.ISDOWN_PERMISSION,
-    		new Parameter(Messages.isDownSig0Url, Types.STRING));
-        this.createSignature(Messages.isDownSig1Desc, 
+    		new Parameter(MSG.isDownSig0Url, Types.STRING));
+        this.createSignature(MSG.isDownSig1Desc, 
     		MyPlugin.ISDOWN_PERMISSION,
-    		new Parameter(Messages.isDownSig1Url, Types.STRING),
-    		new Parameter(Messages.isDownSig1Timeout, Types.NUMBER));
-        this.setHelpText(Messages.isDownHelp);
+    		new Parameter(MSG.isDownSig1Url, Types.STRING),
+    		new Parameter(MSG.isDownSig1Timeout, Types.NUMBER));
+        this.setHelpText(MSG.isDownHelp);
     }
     
     
@@ -53,14 +53,14 @@ public class IsDownCommand extends Command {
             URLConnection c = u.openConnection();
             c.setConnectTimeout(timeout);
             c.connect();
-            this.reply(channel, Messages.bind(Messages.isDownReachable, url));
+            this.reply(channel, MSG.bind(MSG.isDownReachable, url));
         } catch (MalformedURLException e) {
-            this.reply(channel, Messages.bind(Messages.isDownInvalidUrl, url));
+            this.reply(channel, MSG.bind(MSG.isDownInvalidUrl, url));
         } catch (UnknownHostException e) {
-            this.reply(channel, Messages.bind(Messages.isDownUnknownHost, url));
+            this.reply(channel, MSG.bind(MSG.isDownUnknownHost, url));
         } catch (IOException e) {
             e.printStackTrace();
-            this.reply(channel, Messages.bind(Messages.isDownNotReachable, url));
+            this.reply(channel, MSG.bind(MSG.isDownNotReachable, url));
         }
         return false;
     }

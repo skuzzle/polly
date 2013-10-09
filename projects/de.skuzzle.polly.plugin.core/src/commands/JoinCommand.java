@@ -3,7 +3,7 @@ package commands;
 import java.util.Collections;
 import java.util.List;
 
-import polly.core.Messages;
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -20,18 +20,18 @@ public class JoinCommand extends Command {
     
     public JoinCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "join"); //$NON-NLS-1$
-        this.createSignature(Messages.joinSig0Desc, 
+        this.createSignature(MSG.joinSig0Desc, 
             MyPlugin.JOIN_PERMISSION,
-                new Parameter(Messages.joinSig0Channel, Types.CHANNEL));
-        this.createSignature(Messages.joinSig1Desc,
+                new Parameter(MSG.joinSig0Channel, Types.CHANNEL));
+        this.createSignature(MSG.joinSig1Desc,
             MyPlugin.JOIN_PERMISSION,
-                new Parameter(Messages.joinSig1Channels, new ListType(Types.CHANNEL)));
-        this.createSignature(Messages.joinSig2Desc,
+                new Parameter(MSG.joinSig1Channels, new ListType(Types.CHANNEL)));
+        this.createSignature(MSG.joinSig2Desc,
             MyPlugin.JOIN_PERMISSION,
-            new Parameter(Messages.joinSig2Channel, Types.CHANNEL),
-            new Parameter(Messages.joinSig2Password, Types.STRING));
+            new Parameter(MSG.joinSig2Channel, Types.CHANNEL),
+            new Parameter(MSG.joinSig2Password, Types.STRING));
         this.setRegisteredOnly();
-        this.setHelpText(Messages.joinHelp);
+        this.setHelpText(MSG.joinHelp);
     }
     
     

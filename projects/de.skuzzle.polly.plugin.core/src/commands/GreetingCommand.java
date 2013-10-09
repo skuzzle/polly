@@ -1,6 +1,6 @@
 package commands;
 
-import polly.core.Messages;
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -18,9 +18,9 @@ public class GreetingCommand extends Command {
 
     public GreetingCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "greeting"); //$NON-NLS-1$
-        this.createSignature(Messages.greetingSig0Desc, 
-            new Parameter(Messages.greetingSig0Greeting, Types.STRING));
-        this.setHelpText(Messages.greetingHelp);
+        this.createSignature(MSG.greetingSig0Desc, 
+            new Parameter(MSG.greetingSig0Greeting, Types.STRING));
+        this.setHelpText(MSG.greetingHelp);
         this.setRegisteredOnly();
     }
 
@@ -36,7 +36,7 @@ public class GreetingCommand extends Command {
             try {
                 getMyPolly().users().setAttributeFor(executer, executer, 
                     MyPlugin.GREETING, greet);
-                this.reply(channel, Messages.greetingStored);
+                this.reply(channel, MSG.greetingStored);
             } catch (DatabaseException e) {
                 throw new CommandException(e);
             } catch (ConstraintException e) {

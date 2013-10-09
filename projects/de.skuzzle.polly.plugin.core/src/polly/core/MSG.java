@@ -4,9 +4,9 @@ import de.skuzzle.polly.sdk.resources.Constants;
 import de.skuzzle.polly.sdk.resources.Resources;
 
 
-public class Messages extends Constants {
+public class MSG extends Constants {
     
-    private final static String FAMILY = "polly.core.Translation";
+    private final static String FAMILY = "polly.core.Translation"; //$NON-NLS-1$
     
     // General Strings
     public static String unknownUser;
@@ -230,8 +230,36 @@ public class Messages extends Constants {
     public static String registerAlreadyExists;
     public static String registerInvalidName;
     
+    // Restart Command
+    public static String restartHelp;
+    public static String restartSig0Desc;
+    public static String restartSig1Desc;
+    public static String restartSig1Params;
+    
+    // SetAttribute Command
+    public static String setAttributeHelp;
+    public static String setAttributeSig0Desc;
+    public static String setAttributeSig0User;
+    public static String setAttributeSig0Attr;
+    public static String setAttributeSig0Value;
+    public static String setAttributeSig1Desc;
+    public static String setAttributeSig1Attr;
+    public static String setAttributSig1Value;
+    public static String setAttributeUnknownUser;
+    public static String setAttributeUnknownAttr;
+    public static String setAttributeSuccess;
+    
+    // SetMyPassword Command
+    public static String setMyPwHelp;
+    public static String setMyPwSig0Desc;
+    public static String setMyPwSig0CurrentPw;
+    public static String setMyPwSig0NewPw;
+    public static String setMyPwQryWarning;
+    public static String setMyPwMismatch;
+    
+    
     
     static {
-        Resources.init(FAMILY, Messages.class);
+        Resources.init(FAMILY, MSG.class);
     }
 }

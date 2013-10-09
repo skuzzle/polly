@@ -1,6 +1,6 @@
 package commands;
 
-import polly.core.Messages;
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -16,13 +16,13 @@ public class PartCommand extends Command {
 
     public PartCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "part"); //$NON-NLS-1$
-        this.createSignature(Messages.partSig0Desc, 
+        this.createSignature(MSG.partSig0Desc, 
             MyPlugin.PART_PERMISSION);
-        this.createSignature(Messages.partSig1Desc,
+        this.createSignature(MSG.partSig1Desc,
                 MyPlugin.PART_PERMISSION,
-                new Parameter(Messages.partSig1Channel, Types.CHANNEL));
+                new Parameter(MSG.partSig1Channel, Types.CHANNEL));
         this.setRegisteredOnly();
-        this.setHelpText(Messages.partHelp);
+        this.setHelpText(MSG.partHelp);
     }
     
     
@@ -50,7 +50,7 @@ public class PartCommand extends Command {
     @Override
     protected void executeOnQuery(User executer, Signature signature) {
         if (this.match(signature, 0)) {
-            this.reply(executer, Messages.partSpecifyChannel);
+            this.reply(executer, MSG.partSpecifyChannel);
         } else if (this.match(signature, 1)) {
             this.part(signature.getStringValue(0));
         }
@@ -59,6 +59,6 @@ public class PartCommand extends Command {
     
     
     private void part(String channel) {
-        this.getMyPolly().irc().partChannel(channel, Messages.partMessage);
+        this.getMyPolly().irc().partChannel(channel, MSG.partMessage);
     }
 }
