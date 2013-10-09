@@ -1,5 +1,6 @@
 package de.skuzzle.polly.sdk.resources;
 
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 
@@ -14,8 +15,17 @@ public class PollyBundle {
 
     
     
-    public String get(String key, Object...format) {
-        final String s = this.wrapped.getString(key);
-        return s;
+    public String get(String key) {
+        while (true) {
+            try {
+                final String newKey = this.wrapped.getString(key);
+                if (key.equals(newKey)) {
+                    return key;
+                }
+                key = newKey;
+            } catch (MissingResourceException e) {
+                return key;
+            }
+        }
     }
 }
