@@ -13,7 +13,7 @@ import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 public class ClumBombCommand extends Command {
 
 	public ClumBombCommand(MyPolly polly) throws DuplicatedSignatureException {
-		super(polly, "clumbomb");
+		super(polly, "clumbomb"); //$NON-NLS-1$
 		this.createSignature(Messages.clumBombSig0Desc, 
 		    MyPlugin.CLUMBOMB_PERMISSION,
 		    new Parameter(Messages.userName,Types.USER), 

@@ -34,7 +34,7 @@ public class AnyficationCommand extends DelayedCommand {
     
     
     public AnyficationCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "anyfication", DELAY);
+        super(polly, "anyfication", DELAY); //$NON-NLS-1$
         this.createSignature(Messages.anyficationSig0Desc, 
             MyPlugin.ANYFICATION_PERMISSION,
             new Parameter(Messages.anyficationSig0Prefix, Types.STRING));
@@ -43,7 +43,7 @@ public class AnyficationCommand extends DelayedCommand {
             new Parameter(Messages.anyficationSig1Prefix, Types.STRING), 
             new Parameter(Messages.anyficationSig1Timespan, Types.TIMESPAN));
         this.setHelpText(Messages.anyficationHelp);
-        this.anyficationTimer = new Timer("LORDIFICATION_TIMER", true);
+        this.anyficationTimer = new Timer("LORDIFICATION_TIMER", true); //$NON-NLS-1$
         this.channels = new HashSet<String>();
     }
     
@@ -76,15 +76,15 @@ public class AnyficationCommand extends DelayedCommand {
         while (it.hasNext()) {
             b.append(it.next());
             if (it.hasNext()) {
-                b.append(", ");
+                b.append(", "); //$NON-NLS-1$
             }
         }
         final String info = Messages.bind(Messages.anyficationInfo, 
                 this.getMyPolly().formatting().formatTimeSpan(timeSpan / 1000));
-        b.append(": ");
+        b.append(": "); //$NON-NLS-1$
         b.append(info);
         this.reply(channel, b.toString());
-        this.getMyPolly().irc().setNickname(prefix + "-Polly");
+        this.getMyPolly().irc().setNickname(prefix + "-Polly"); //$NON-NLS-1$
         
         this.channels.add(channel);
         this.anyficationTimer.schedule(new TimerTask() {

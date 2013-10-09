@@ -15,7 +15,7 @@ import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
 public class GhostCommand extends Command {
 
     public GhostCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "ghost");
+        super(polly, "ghost"); //$NON-NLS-1$
         this.createSignature(Messages.ghostSig0Desc, 
             new Parameter(Messages.ghostSig0User, Types.USER), 
             new Parameter(Messages.ghostSig0Password, Types.STRING));
@@ -28,7 +28,7 @@ public class GhostCommand extends Command {
     
     @Override
     protected boolean executeOnBoth(User executer, String channel,
-        Signature signature) throws CommandException {
+            Signature signature) throws CommandException {
         return true;
     }
     
@@ -63,7 +63,6 @@ public class GhostCommand extends Command {
                     throw new CommandException(e);
                 }
             }
-            
         }
     };
 }

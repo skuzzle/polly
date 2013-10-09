@@ -17,7 +17,7 @@ import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 public class GreetingCommand extends Command {
 
     public GreetingCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "greeting");
+        super(polly, "greeting"); //$NON-NLS-1$
         this.createSignature(Messages.greetingSig0Desc, 
             new Parameter(Messages.greetingSig0Greeting, Types.STRING));
         this.setHelpText(Messages.greetingHelp);

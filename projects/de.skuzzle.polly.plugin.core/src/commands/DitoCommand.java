@@ -16,7 +16,7 @@ import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 public class DitoCommand extends Command {
 
     public DitoCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "dito");
+        super(polly, "dito"); //$NON-NLS-1$
         this.createSignature(Messages.ditoSig0Desc,
         		MyPlugin.DITO_PERMISSION);
         this.setHelpText(Messages.ditoHelp);

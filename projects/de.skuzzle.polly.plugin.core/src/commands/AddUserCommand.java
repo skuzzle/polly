@@ -17,7 +17,7 @@ import de.skuzzle.polly.sdk.exceptions.UserExistsException;
 public class AddUserCommand extends Command {
     
     public AddUserCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "adduser");
+        super(polly, "adduser"); //$NON-NLS-1$
         this.createSignature(Messages.addUserSig0Desc, 
             MyPlugin.ADD_USER_PERMISSION,
             new Parameter(Messages.userName, Types.USER),

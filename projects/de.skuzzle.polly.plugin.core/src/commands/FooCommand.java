@@ -15,7 +15,7 @@ import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 public class FooCommand extends Command {
 
     public FooCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "foo");
+        super(polly, "foo"); //$NON-NLS-1$
         this.createSignature(Messages.fooSig0Desc, 
             new Parameter(Messages.fooSigParam, Types.ANY));
         this.createSignature(Messages.fooSig1Desc, 
@@ -49,15 +49,15 @@ public class FooCommand extends Command {
         } else if (this.match(signature, 1)) {
             Types t1 = signature.getValue(0);
             Types t2 = signature.getValue(1);
-            return t1.valueString(fm) + " " + t2.valueString(fm);
+            return t1.valueString(fm) + " " + t2.valueString(fm); //$NON-NLS-1$
         } else if (this.match(signature, 2)) {
             Types t1 = signature.getValue(0);
             Types t2 = signature.getValue(1);
             Types t3 = signature.getValue(2);
-            return t1.valueString(fm) + " " + t2.valueString(fm) + " " + 
+            return t1.valueString(fm) + " " + t2.valueString(fm) + " " +  //$NON-NLS-1$ //$NON-NLS-2$
                     t3.valueString(fm);
         }
         // unreachable
-        return "";
+        return ""; //$NON-NLS-1$
     }
 }

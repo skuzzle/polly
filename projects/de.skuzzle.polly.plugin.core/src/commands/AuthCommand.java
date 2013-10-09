@@ -16,7 +16,7 @@ import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
 public class AuthCommand extends Command {
     
     public AuthCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "auth");
+        super(polly, "auth"); //$NON-NLS-1$
         this.createSignature(Messages.authSig0Desc, 
             new Parameter(Messages.userName, Types.USER),
             new Parameter(Messages.authSigPassword, Types.STRING));
@@ -47,8 +47,8 @@ public class AuthCommand extends Command {
     
     @Override
     protected void executeOnQuery(User executer, Signature signature) {
-        String userName = "";
-        String password = "";
+        String userName = ""; //$NON-NLS-1$
+        String password = ""; //$NON-NLS-1$
         if (this.match(signature, 0)) {
             userName = signature.getStringValue(0);
             password = signature.getStringValue(1);

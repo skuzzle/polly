@@ -22,7 +22,7 @@ public class ExportAttributesCommand extends Command {
 
     public ExportAttributesCommand(MyPolly polly) 
                 throws DuplicatedSignatureException {
-        super(polly, "expattr");
+        super(polly, "expattr"); //$NON-NLS-1$
         this.createSignature(Messages.expAttributesSig0Desc, 
             MyPlugin.EXPORT_ATTRIBUTES_PERMISSION);
         this.createSignature(Messages.expAttributesSig1Desc,
@@ -58,11 +58,11 @@ public class ExportAttributesCommand extends Command {
         List<String> names = new ArrayList<String>(user.getAttributeNames());
         Collections.sort(names);
         for (String att : names) {
-            b.append(":setattr \"");
+            b.append(":setattr \""); //$NON-NLS-1$
             b.append(att);
-            b.append("\" \"");
+            b.append("\" \""); //$NON-NLS-1$
             b.append(user.getAttribute(att));
-            b.append("\"\n");
+            b.append("\"\n"); //$NON-NLS-1$
         }
         
         try {

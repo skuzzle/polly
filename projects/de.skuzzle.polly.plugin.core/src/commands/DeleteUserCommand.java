@@ -17,7 +17,7 @@ import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
 public class DeleteUserCommand extends Command {
 
     public DeleteUserCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "deluser");
+        super(polly, "deluser"); //$NON-NLS-1$
         this.createSignature(Messages.deleteUserSig0Desc, 
             MyPlugin.DELETE_USER_PERMISSION,
             new Parameter(Messages.userName, Types.USER));

@@ -10,7 +10,7 @@ import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 public class GooglePicsCommand extends SearchEngineCommand {
 
     public GooglePicsCommand(MyPolly myPolly) throws DuplicatedSignatureException {
-        super(myPolly, "pix");
+        super(myPolly, "pix"); //$NON-NLS-1$
         this.createSignature(Messages.pixSig0Desc, 
             new Parameter(Messages.pixSig0Term, Types.STRING));
         this.setHelpText(Messages.pixHelp);
@@ -20,7 +20,7 @@ public class GooglePicsCommand extends SearchEngineCommand {
     
     @Override
     protected String getSearchLink(String key) {
-        key = key.replace(" ", "+");
-        return "https://www.google.com/search?q=" + key + "&tbm=isch";
+        key = key.replace(" ", "+"); //$NON-NLS-1$ //$NON-NLS-2$
+        return "https://www.google.com/search?q=" + key + "&tbm=isch"; //$NON-NLS-1$ //$NON-NLS-2$
     }
 }

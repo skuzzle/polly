@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.Messages;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -13,55 +14,45 @@ import de.skuzzle.polly.sdk.exceptions.UnknownCommandException;
 public class InfoCommand extends Command {
 
 	public InfoCommand(MyPolly polly) throws DuplicatedSignatureException {
-		super(polly, "info");
-		this.createSignature("Gibt Informationen über den angegebenen Befehl aus", 
+		super(polly, "info"); //$NON-NLS-1$
+		this.createSignature(Messages.infoSig0Desc, 
 		    MyPlugin.INFO_PERMISSION,
-            new Parameter("Befehl", Types.STRING));
-		this.createSignature("Gibt Informationen über den angegebenen Benutzer aus.", 
+            new Parameter(Messages.infoSig0Command, Types.STRING));
+		this.createSignature(Messages.infoSig1Desc, 
 		    MyPlugin.INFO_PERMISSION,
-            new Parameter("User", Types.USER));
-		this.setHelpText("Gibt Informationen über andere Befehle oder " +
-				"Benutzer aus.");
+            new Parameter(Messages.infoSig1User, Types.USER));
+		this.setHelpText(Messages.infoHelp);
 	}
 
 	
 	
 	@Override
 	protected boolean executeOnBoth(User executer, String channel, Signature signature) {
-        StringBuilder b = new StringBuilder();
-
 	    if (this.match(signature, 0)) {
-	        String s = signature.getStringValue(0);
+	        final String s = signature.getStringValue(0);
 
 	        try {
-	            Command cmd = this.getMyPolly().commands().getCommand(s);
+	            final Command cmd = this.getMyPolly().commands().getCommand(s);
 
-	            b.append("Signaturen: ");
-	            b.append(cmd.getSignatures().size());
-	            b.append(", User-Level: ");
-	            b.append(cmd.getUserLevel());
-	            b.append(", nur Registrierte: ");
-	            b.append(cmd.isRegisteredOnly() ? "ja" : "nein");
-	            b.append(", Beschreibung: ");
-	            b.append(cmd.getHelpText());
-	            this.reply(channel, b.toString());
+	            final String result = Messages.bind(Messages.infoCommandInfo, 
+	                    cmd.getSignatures().size(),
+	                    cmd.isRegisteredOnly(),
+	                    cmd.getHelpText());
+	            this.reply(channel, result);
 		    } catch (UnknownCommandException e) {
-		        this.reply(channel, "Befehl '" + s + "' existiert nicht.");
+		        this.reply(channel, Messages.bind(Messages.infoUnknownCommand, s));
 		    }
 		} else if (this.match(signature, 1)) {
 		    String u = signature.getStringValue(0);
 		    User user = this.getMyPolly().users().getUser(u);
 		    
 		    if (user == null) {
-		        this.reply(channel, "Benutzer '" + u + "' existiert nicht.");
+		        this.reply(channel, Messages.bind(Messages.infoUnknownUser, u));
 		        return false;
 		    }
-		    
-		    b.append("Name: ");
-		    b.append(u);
-		    b.append(", aktueller Nickname: ");
-		    b.append(user.getCurrentNickName());
-		    this.reply(channel, b.toString());
+		    final String result = Messages.bind(Messages.infoUserInfo, 
+		            u, user.getCurrentNickName());
+		    this.reply(channel, result);
 		}
 		
 		return false;

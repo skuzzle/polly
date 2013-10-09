@@ -15,7 +15,7 @@ import de.skuzzle.polly.sdk.exceptions.UnknownAttributeException;
 public class GetAttributeCommand extends Command {
 
     public GetAttributeCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "getattr");
+        super(polly, "getattr"); //$NON-NLS-1$
         this.createSignature(Messages.getAttributeSig0Desc, 
     		MyPlugin.GET_USER_ATTRIBUTE_PERMISSION,
             new Parameter(Messages.userName, Types.USER), 

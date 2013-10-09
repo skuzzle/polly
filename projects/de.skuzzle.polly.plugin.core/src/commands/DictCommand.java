@@ -10,7 +10,7 @@ import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 public class DictCommand extends SearchEngineCommand {
 
     public DictCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "dict");
+        super(polly, "dict"); //$NON-NLS-1$
         this.createSignature(Messages.dictSig0Desc, 
             MyPlugin.DICT_PERMISSION,
             new Parameter(Messages.dictSig0Term, Types.STRING));
@@ -21,6 +21,6 @@ public class DictCommand extends SearchEngineCommand {
     
     @Override
     protected String getSearchLink(String key) {
-        return "http://www.dict.cc/?s=" + key;
+        return "http://www.dict.cc/?s=" + key; //$NON-NLS-1$
     }
 }

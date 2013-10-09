@@ -21,7 +21,7 @@ public class DefineCommand extends DelayedCommand {
 
     
     public DefineCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "define", 10000);
+        super(polly, "define", 10000); //$NON-NLS-1$
         this.createSignature(Messages.defineSig0Desc,
             MyPlugin.DEFINE_PERMISSION,
             new Parameter(Messages.defineSig0Term, Types.STRING));
@@ -49,6 +49,4 @@ public class DefineCommand extends DelayedCommand {
         }
         return false;
     }
-    
-    
 }

@@ -16,7 +16,7 @@ public class AddTopicCommand extends Command {
     private TopicManager topicManager;
     
     public AddTopicCommand(MyPolly polly, TopicManager topicManager) throws DuplicatedSignatureException {
-        super(polly, "topic");
+        super(polly, "topic"); //$NON-NLS-1$
         this.topicManager = topicManager;
         //this.createSignature("Setzt", new DateType(), new StringType(), new StringType());
     }
