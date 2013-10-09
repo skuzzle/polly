@@ -65,6 +65,7 @@
         **/*.css
         **/*.gif
         **/*.jpg
+        **/*.properties
     "/>
     
     <!-- buildpath for javac -->

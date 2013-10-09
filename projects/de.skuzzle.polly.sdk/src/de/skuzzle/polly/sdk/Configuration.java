@@ -385,6 +385,13 @@ public interface Configuration {
     public static final String HTTP_USE_SSL = "useSSL";
     
     
+    /** 
+     * The key which refers to the locale to use by polly.
+     * @since 1.1
+     */
+    public final static String LOCALE = "locale";
+    
+    
     
 	/**
 	 * <p>Stores a property with given name and value. If a property with the same name
