@@ -16,7 +16,7 @@ public class ClumBombCommand extends Command {
 		super(polly, "clumbomb");
 		this.createSignature(Messages.clumBombSig0Desc, 
 		    MyPlugin.CLUMBOMB_PERMISSION,
-		    new Parameter(Messages.clumBombSig0User,Types.USER), 
+		    new Parameter(Messages.userName,Types.USER), 
 		    new Parameter(Messages.clumBombSig0Amount, Types.NUMBER));
 		this.setRegisteredOnly();
 		this.setHelpText(Messages.clumBombHelp);

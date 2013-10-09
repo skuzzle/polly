@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.Messages;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -15,11 +16,10 @@ public class GhostCommand extends Command {
 
     public GhostCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "ghost");
-        this.createSignature("Loggt den angegebenen Benutzer aus.", 
-            new Parameter("User", Types.USER), 
-            new Parameter("Passwort", Types.STRING));
-        this.setHelpText("Mit diesem Befehl kannst du einen Benutzer bei polly " +
-        		"ausloggen. Gib dafür den Benutzer und sein Passwort an");
+        this.createSignature(Messages.ghostSig0Desc, 
+            new Parameter(Messages.ghostSig0User, Types.USER), 
+            new Parameter(Messages.ghostSig0Password, Types.STRING));
+        this.setHelpText(Messages.ghostHelp);
         this.setQryCommand(true);
         
     }
@@ -37,7 +37,7 @@ public class GhostCommand extends Command {
     @Override
     protected void executeOnChannel(User executer, String channel,
         Signature signature) throws CommandException {
-        this.reply(channel, "Nur per Query möglich!");
+        this.reply(channel, Messages.ghostQryOnly);
     }
     
     
@@ -51,16 +51,16 @@ public class GhostCommand extends Command {
             User user = this.getMyPolly().users().getUser(userName);
             
             if (user == null) {
-                this.reply(executer, "Benutzer '" + userName + "' ist nicht angemeldet");
+                this.reply(executer, Messages.bind(Messages.ghostNotLoggedIn, userName));
             } else if (!user.checkPassword(pw)) {
-                this.reply(executer, "Das angegebene Passwort ist falsch");
+                this.reply(executer, Messages.wrongPassword);
             } else {
                 try {
                     this.getMyPolly().users().logoff(user);
-                    this.reply(executer, "Benutzer '" + userName + "' wurde ausgeloggt");
+                    this.reply(executer, Messages.bind(Messages.ghostLoggedOut, 
+                            user.getName()));
                 } catch (UnknownUserException e) {
-                    throw new CommandException(
-                        "Unerwarteter Fehler: " + e.getMessage(), e);
+                    throw new CommandException(e);
                 }
             }
             

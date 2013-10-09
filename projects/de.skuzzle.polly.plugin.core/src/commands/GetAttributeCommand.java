@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.Messages;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -15,17 +16,14 @@ public class GetAttributeCommand extends Command {
 
     public GetAttributeCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "getattr");
-        this.createSignature("Liest den Wert eines Attributes eine Benutzers aus. " +
-        		"Dieser Befehl ist nur für Admins", 
+        this.createSignature(Messages.getAttributeSig0Desc, 
     		MyPlugin.GET_USER_ATTRIBUTE_PERMISSION,
-            new Parameter("Benutzer", Types.USER), 
-            new Parameter("Attributename", Types.STRING));
-        this.createSignature("Liest ein Attribute des Benutzers aus, der den Befehl " +
-        		"ausführt.", 
+            new Parameter(Messages.userName, Types.USER), 
+            new Parameter(Messages.getAttributeSigAttribute, Types.STRING));
+        this.createSignature(Messages.getAttributeSig1Desc, 
     		MyPlugin.GET_ATTRIBUTE_PERMISSION,
-    		new Parameter("Attributname", Types.STRING));
-        this.setHelpText("Liest Benutzer-Attribute aus. Verfügbare Attribute können " +
-        		"mit :listattr angezeigt werden.");
+    		new Parameter(Messages.getAttributeSigAttribute, Types.STRING));
+        this.setHelpText(Messages.getAttributeHelp);
         this.setRegisteredOnly();
     }
 
@@ -54,14 +52,15 @@ public class GetAttributeCommand extends Command {
     private void getAttribute(User dest, String userName, String attribute, String channel) 
             throws CommandException {
         if (dest == null) {
-            throw new CommandException("Unbekannter Benutzer: " + userName);
+            throw new CommandException(Messages.bind(Messages.unknownUser, userName));
         }
         
         try {
-            this.reply(channel, "Attributwert: " + 
-                dest.getAttribute(attribute).valueString(this.getMyPolly().formatting()));
+            this.reply(channel, Messages.bind(Messages.getAttributeValue, 
+                dest.getAttribute(attribute).valueString(this.getMyPolly().formatting())));
         } catch (UnknownAttributeException e) {
-            throw new CommandException("Unbekanntes Attribut: " + attribute);
+            throw new CommandException(
+                    Messages.bind(Messages.getAttributeUnknownAttr, attribute));
         }
     }
 }

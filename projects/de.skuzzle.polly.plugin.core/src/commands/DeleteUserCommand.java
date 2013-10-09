@@ -20,7 +20,7 @@ public class DeleteUserCommand extends Command {
         super(polly, "deluser");
         this.createSignature(Messages.deleteUserSig0Desc, 
             MyPlugin.DELETE_USER_PERMISSION,
-            new Parameter(Messages.deleteUserSig0User, Types.USER));
+            new Parameter(Messages.userName, Types.USER));
         this.setRegisteredOnly();
         this.setHelpText(Messages.deleteUserHelp);
     }
@@ -37,7 +37,7 @@ public class DeleteUserCommand extends Command {
             
             User user = um.getUser(name);
             if (user == null) {
-                this.reply(channel, Messages.bind(Messages.deleteUserUnknown, name));
+                this.reply(channel, Messages.bind(Messages.unknownUser, name));
                 return false;
             }
             try {

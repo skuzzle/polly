@@ -18,7 +18,7 @@ public class AuthCommand extends Command {
     public AuthCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "auth");
         this.createSignature(Messages.authSig0Desc, 
-            new Parameter(Messages.authSigUserName, Types.USER),
+            new Parameter(Messages.userName, Types.USER),
             new Parameter(Messages.authSigPassword, Types.STRING));
         this.createSignature(Messages.authSig1Desc, 
             new Parameter(Messages.authSigPassword, Types.STRING));
@@ -67,7 +67,7 @@ public class AuthCommand extends Command {
             }
             this.reply(executer, Messages.authSuccess);
         } catch (UnknownUserException e) {
-            this.reply(executer, Messages.bind(Messages.authUnknown, userName));
+            this.reply(executer, Messages.bind(Messages.unknownUser, userName));
         } catch (AlreadySignedOnException e) {
             this.reply(executer, Messages.bind(Messages.authAlreadySignedOn, 
                     e.getUser().getCurrentNickName()));

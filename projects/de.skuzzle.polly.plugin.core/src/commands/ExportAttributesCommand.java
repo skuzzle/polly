@@ -27,7 +27,7 @@ public class ExportAttributesCommand extends Command {
             MyPlugin.EXPORT_ATTRIBUTES_PERMISSION);
         this.createSignature(Messages.expAttributesSig1Desc,
             MyPlugin.EXPORT_USER_ATTRIBUTES_PERMISSION,
-            new Parameter(Messages.expAttributesSig1User, Types.USER));
+            new Parameter(Messages.userName, Types.USER));
         this.setHelpText(Messages.expAttributesHelp);
         this.setRegisteredOnly();
     }
@@ -43,7 +43,7 @@ public class ExportAttributesCommand extends Command {
             user = this.getMyPolly().users().getUser(signature.getStringValue(0));
             if (user == null) {
                 throw new CommandException(Messages.bind(
-                        Messages.expAttributesUnknown, signature.getStringValue(0)));
+                        Messages.unknownUser, signature.getStringValue(0)));
             }
         }
         this.reply(channel, this.export(user));

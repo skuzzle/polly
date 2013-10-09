@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.Messages;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -17,10 +18,9 @@ public class GreetingCommand extends Command {
 
     public GreetingCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "greeting");
-        this.createSignature("Erstellt eine Begrüßung.", 
-            new Parameter("Grußnachricht", Types.STRING));
-        this.setHelpText("Eine Begrüßung wird dir zugestellt sobald du dich bei polly " +
-        		"anmeldest");
+        this.createSignature(Messages.greetingSig0Desc, 
+            new Parameter(Messages.greetingSig0Greeting, Types.STRING));
+        this.setHelpText(Messages.greetingHelp);
         this.setRegisteredOnly();
     }
 
@@ -36,15 +36,13 @@ public class GreetingCommand extends Command {
             try {
                 getMyPolly().users().setAttributeFor(executer, executer, 
                     MyPlugin.GREETING, greet);
-                
-                this.reply(channel, "Grußnachricht gespeichert.");
+                this.reply(channel, Messages.greetingStored);
             } catch (DatabaseException e) {
                 throw new CommandException(e);
             } catch (ConstraintException e) {
-                this.reply(channel, "Wert konnte nicht gesetzt werden.");
+                throw new CommandException(e);
             }
         }
-        
         return false;
     }
 }
