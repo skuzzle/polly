@@ -2,7 +2,6 @@ package polly.core;
 
 
 import commands.AddUserCommand;
-import commands.AliasCommand;
 import commands.CalendarCommand;
 import commands.ClumBombCommand;
 import commands.DefineCommand;
@@ -114,6 +113,11 @@ public class MyPlugin extends PollyPlugin {
     public final static String SET_AND_IDENTIFY_PERMISSION       = "polly.permission.SET_AND_IDENTIFY";
     public final static String GREETING = "GREETING";
 
+
+    /** Resource bundle family */
+    public static final String FAMILY = "polly.core.Messages";
+
+    
     
     private GreetDeliverer greetDeliverer;
     private JoinTimeCollector joinTimeCollector;
@@ -179,7 +183,6 @@ public class MyPlugin extends PollyPlugin {
         this.getMyPolly().users().addUserListener(this.greetDeliverer);
         this.addCommand(new GreetingCommand(myPolly));
         
-        this.addCommand(new AliasCommand(myPolly));
 		this.addCommand(new InfoCommand(myPolly));
 		this.addCommand(new QuitCommand(myPolly));
 		this.addCommand(new JoinCommand(myPolly));

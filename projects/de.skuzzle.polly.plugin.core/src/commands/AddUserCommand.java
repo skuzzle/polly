@@ -8,25 +8,40 @@ import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
+import de.skuzzle.polly.sdk.Types.NumberType;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
-import de.skuzzle.polly.sdk.Types.NumberType;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.InvalidUserNameException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
+import de.skuzzle.polly.sdk.resources.PollyBundle;
+import de.skuzzle.polly.sdk.resources.Resources;
 
 public class AddUserCommand extends Command {
+    
+    private final String HELP = "add.user.help";
+    private final String SIG0_DESC = "add.user.sig0.desc";
+    private final String SIG0_PARAM0 = "add.user.sig0.username";
+    private final String SIG0_PARAM1 = "add.user.sig0.password";
+    private final String QRY_ONLY = "add.user.qryonly";
+    private final String SUCCESS = "add.user.success";
+    private final String EXISTS = "add.user.exists";
+    private final String INVALID = "add.user.invalid";
+    private final String FAIL = "add.user.fail";
+    
+    
+    private final static PollyBundle MSG = Resources.get(MyPlugin.FAMILY);
 
+    
     public AddUserCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "adduser");
-        this.createSignature("Fügt einen neuen User hinzu.", 
+        this.createSignature(MSG.get(SIG0_DESC), 
             MyPlugin.ADD_USER_PERMISSION,
-            new Parameter("Username", Types.USER),
-            new Parameter("Passwort", Types.STRING));
+            new Parameter(MSG.get(SIG0_PARAM0), Types.USER),
+            new Parameter(MSG.get(SIG0_PARAM1), Types.STRING));
         this.setRegisteredOnly();
-        this.setUserLevel(UserManager.ADMIN);
-        this.setHelpText("Befehl zum registrieren neuer Benutzer bei Polly.");
+        this.setHelpText(MSG.get(HELP));
         this.setQryCommand(true);
     }
     
@@ -43,7 +58,7 @@ public class AddUserCommand extends Command {
     @Override
     protected void executeOnChannel(User executer, String channel,
             Signature signature) {
-        this.reply(channel, "Dieser Befehl kann nur im Query ausgeführt werden.");
+        this.reply(channel, MSG.get(QRY_ONLY));
     }
     
     
@@ -66,13 +81,13 @@ public class AddUserCommand extends Command {
             
             try {
                 this.getMyPolly().users().addUser(userName, password);
-                this.reply(executer, "Benutzer '" + userName + "' angelegt.");
+                this.reply(executer, MSG.get(SUCCESS, userName));
             } catch (UserExistsException e) {
-                this.reply(executer, "Benutzer '" + userName + "' existiert bereits.");
+                this.reply(executer, MSG.get(EXISTS, userName));
             } catch (DatabaseException e)  {
-                this.reply(executer, "Interner Datenbankfehler: " + e.getMessage());
+                this.reply(executer, MSG.get(FAIL));
             } catch (InvalidUserNameException e) {
-                this.reply(executer, "'" + userName + "' is no valid user name");
+                this.reply(executer, MSG.get(INVALID, userName));
             }
         }
     }
