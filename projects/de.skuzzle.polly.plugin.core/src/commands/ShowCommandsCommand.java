@@ -4,16 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Signature;
-import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
-import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
-import de.skuzzle.polly.sdk.Types.NumberType;
 
 
 
@@ -21,24 +17,14 @@ public class ShowCommandsCommand extends Command {
 
     public ShowCommandsCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "cmds");
-        this.createSignature("Zeigt alle für dich ausführbaren Befehle an.");
-        this.setHelpText("Listet die verfügbaren Befehle auf.");
+        this.createSignature("Zeigt alle fï¿½r dich ausfï¿½hrbaren Befehle an.");
+        this.setHelpText("Listet die verfï¿½gbaren Befehle auf.");
     }
     
     
     
     private boolean canExecute(User user, Command cmd) {
         return this.getMyPolly().roles().canAccess(user, cmd);
-    }
-    
-    
-    
-    @Override
-    public void renewConstants(Map<String, Types> map) {
-        map.put("ADMIN", new NumberType(UserManager.ADMIN));
-        map.put("MEMBER", new NumberType(UserManager.MEMBER));
-        map.put("REG", new NumberType(UserManager.REGISTERED));
-        map.put("UNKNOWN", new NumberType(UserManager.UNKNOWN));
     }
     
     
@@ -68,7 +54,7 @@ public class ShowCommandsCommand extends Command {
             }
         }
         
-        this.reply(channel, "Verfügbare Befehle: " + b.toString());
+        this.reply(channel, "Verfï¿½gbare Befehle: " + b.toString());
         return false;
     }
 

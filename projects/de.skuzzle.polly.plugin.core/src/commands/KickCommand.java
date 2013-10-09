@@ -8,9 +8,8 @@ import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
-import de.skuzzle.polly.sdk.User;
-import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.Types.UserType;
+import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 
 public class KickCommand extends Command {
@@ -41,7 +40,6 @@ public class KickCommand extends Command {
             new Parameter("Userliste", new Types.ListType(Types.USER)),
             new Parameter("Channel", Types.CHANNEL));
 		this.setRegisteredOnly();
-		this.setUserLevel(UserManager.ADMIN);
 		this.setHelpText("Befehl zum Kicken von Benutzern.");
 	}
 	

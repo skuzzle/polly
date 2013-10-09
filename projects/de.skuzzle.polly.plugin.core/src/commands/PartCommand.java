@@ -7,7 +7,6 @@ import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
-import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 
 
@@ -16,13 +15,12 @@ public class PartCommand extends Command {
 
     public PartCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "part");
-        this.createSignature("Polly verlässt den aktuellen Channel", 
+        this.createSignature("Polly verlï¿½sst den aktuellen Channel", 
             MyPlugin.PART_PERMISSION);
-        this.createSignature("Polly verlässt den angegebenen Channel.",
+        this.createSignature("Polly verlï¿½sst den angegebenen Channel.",
                 MyPlugin.PART_PERMISSION,
                 new Parameter("Channel", Types.CHANNEL));
         this.setRegisteredOnly();
-        this.setUserLevel(UserManager.ADMIN);
         this.setHelpText("Befehl um einen Channel zu verlassen.");
     }
     

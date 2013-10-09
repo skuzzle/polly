@@ -7,14 +7,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import polly.core.MyPlugin;
-
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
-import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 
@@ -36,7 +34,6 @@ public class UsersCommand extends Command {
     		new Parameter("Pattern", Types.STRING), 
     		new Parameter("Logged In Only", Types.BOOLEAN));
         this.setRegisteredOnly();
-        this.setUserLevel(UserManager.ADMIN);
     }
 
     

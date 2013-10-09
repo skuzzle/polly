@@ -6,7 +6,6 @@ import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
-import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.InvalidUserNameException;
@@ -18,11 +17,10 @@ public class RegisterCommand extends Command {
 
     public RegisterCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "register");
-        this.createSignature("Gib dein gewünschtes Passwort ein. Als Benutzername wird " +
+        this.createSignature("Gib dein gewï¿½nschtes Passwort ein. Als Benutzername wird " +
         		"dein aktueller Nickname genutzt", 
     		new Parameter("Passwort", Types.STRING));
         this.setHelpText("Befehl um dich bei Polly zu registrieren.");
-        this.setUserLevel(UserManager.UNKNOWN);
         this.setQryCommand(true);
     }
     
@@ -39,8 +37,8 @@ public class RegisterCommand extends Command {
     @Override
     protected void executeOnChannel(User executer, String channel,
             Signature signature) {
-        this.reply(channel, "Dieser Befehl ist nur im Query ausführbar. Zudem solltest " +
-        		"du jetzt ein anderes Passwort wählen.");
+        this.reply(channel, "Dieser Befehl ist nur im Query ausfï¿½hrbar. Zudem solltest " +
+        		"du jetzt ein anderes Passwort wï¿½hlen.");
     }
     
     

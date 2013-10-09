@@ -7,7 +7,6 @@ import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
-import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 
@@ -20,7 +19,6 @@ public class RawIrcCommand extends Command {
                 new Parameter("Befehl", Types.STRING));
         this.setRegisteredOnly();
         this.setHelpText("Dieser Befehl sendet einen Befehl direkt an den IRC Server");
-        this.setUserLevel(UserManager.ADMIN);
     }
 
     

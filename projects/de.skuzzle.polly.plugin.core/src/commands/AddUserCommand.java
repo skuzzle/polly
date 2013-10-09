@@ -1,16 +1,12 @@
 package commands;
 
-import java.util.Map;
-
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
-import de.skuzzle.polly.sdk.Types.NumberType;
 import de.skuzzle.polly.sdk.User;
-import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.InvalidUserNameException;
@@ -59,16 +55,6 @@ public class AddUserCommand extends Command {
     protected void executeOnChannel(User executer, String channel,
             Signature signature) {
         this.reply(channel, MSG.get(QRY_ONLY));
-    }
-    
-    
-    
-    @Override
-    public void renewConstants(Map<String, Types> map) {
-        map.put("ADMIN", new NumberType(UserManager.ADMIN));
-        map.put("MEMBER", new NumberType(UserManager.MEMBER));
-        map.put("REG", new NumberType(UserManager.REGISTERED));
-        map.put("UNKNOWN", new NumberType(UserManager.UNKNOWN));
     }
     
     

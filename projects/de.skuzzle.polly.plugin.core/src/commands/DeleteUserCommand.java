@@ -16,12 +16,11 @@ public class DeleteUserCommand extends Command {
 
     public DeleteUserCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "deluser");
-        this.createSignature("Löscht den angegebenen Benutzer.", 
+        this.createSignature("Lï¿½scht den angegebenen Benutzer.", 
             MyPlugin.DELETE_USER_PERMISSION,
             new Parameter("User", Types.USER));
         this.setRegisteredOnly();
-        this.setUserLevel(UserManager.ADMIN);
-        this.setHelpText("Befehl zum Löschen von Benutzern.");
+        this.setHelpText("Befehl zum Lï¿½schen von Benutzern.");
     }
 
     
@@ -41,7 +40,7 @@ public class DeleteUserCommand extends Command {
             }
             try {
                 this.getMyPolly().users().deleteUser(user);
-                this.reply(channel, "Benutzer '" + name + "' wurde gelöscht.");
+                this.reply(channel, "Benutzer '" + name + "' wurde gelï¿½scht.");
             } catch (UnknownUserException ignore) {
                 // can not happen
                 ignore.printStackTrace();

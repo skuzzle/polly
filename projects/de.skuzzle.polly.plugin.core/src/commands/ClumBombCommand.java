@@ -7,7 +7,6 @@ import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
-import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 
 public class ClumBombCommand extends Command {
@@ -19,7 +18,6 @@ public class ClumBombCommand extends Command {
 		    new Parameter("Benutzer",Types.USER), 
 		    new Parameter("Anzahl", Types.NUMBER));
 		this.setRegisteredOnly();
-		this.setUserLevel(UserManager.MEMBER);
 	}
 
 	

@@ -7,7 +7,6 @@ import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
-import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 
@@ -23,7 +22,6 @@ public class RestartCommand extends Command {
             new Parameter("Parameter", Types.STRING));
         this.setHelpText("Startet polly neu.");
         this.setRegisteredOnly();
-        this.setUserLevel(UserManager.ADMIN);
     }
     
     

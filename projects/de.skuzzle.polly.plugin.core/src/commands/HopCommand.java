@@ -7,7 +7,6 @@ import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
-import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 
 
@@ -22,7 +21,6 @@ public class HopCommand extends Command {
             MyPlugin.HOP_PERMISSION,
             new Parameter("Channel", Types.CHANNEL));
         this.setRegisteredOnly();
-        this.setUserLevel(UserManager.ADMIN);
         this.setHelpText("Befehl zum rejoinen von channels.");
     }
 

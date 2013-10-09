@@ -9,7 +9,6 @@ import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
-import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 
@@ -30,7 +29,6 @@ public class QuitCommand extends Command {
                 MyPlugin.QUIT_PERMISSION,
                 new Parameter("Quit-Message", Types.STRING));
         this.setRegisteredOnly();
-        this.setUserLevel(UserManager.ADMIN);
         this.setHelpText("Befehl zum Beenden von Polly.");
     }
 
@@ -40,7 +38,7 @@ public class QuitCommand extends Command {
     protected boolean executeOnBoth(User executer, String channel,
             Signature signature) throws CommandException {
 
-        String message = "*krächz* *krächz* *krächz*";
+        String message = "*krï¿½chz* *krï¿½chz* *krï¿½chz*";
         if (this.match(signature, 1)) {
             message = signature.getStringValue(0);
         }
