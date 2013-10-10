@@ -28,6 +28,7 @@ import de.skuzzle.polly.core.moduleloader.annotations.Provide;
 import de.skuzzle.polly.core.util.ProxyClassLoader;
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.Version;
+import de.skuzzle.polly.sdk.resources.LocaleProvider;
 
 
 
@@ -113,11 +114,6 @@ public class Polly {
 
 
     public Polly(String[] args, ProxyClassLoader parentCl) {
-        if (!this.lockInstance(new File("polly.lck"))) { //$NON-NLS-1$
-            System.out.println(MSG.alreadyRunning);
-            return;
-        }
-        
         ConfigurationProviderImpl configurationProvider = 
             new ConfigurationProviderImpl(new File(CONFIG_DIR));
         
@@ -127,6 +123,17 @@ public class Polly {
                     ConfigurationProviderImpl.NOP_VALIDATOR);
             PropertyConfigurator.configure(
                 pollyCfg.readString(Configuration.LOG_CONFIG_FILE));
+            
+            // initialize Locale as early as possible
+            LocaleProvider.initLocale(pollyCfg);
+            
+            
+            if (!this.lockInstance(new File("polly.lck"))) { //$NON-NLS-1$
+                System.out.println(MSG.alreadyRunning);
+                return;
+            }
+            
+            
         } catch (FileNotFoundException e) {
             System.out.println(MSG.bind(MSG.configError, 
                     MSG.bind(MSG.configErrorReason1, CONFIG_FILE_NAME)));
