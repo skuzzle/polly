@@ -2,8 +2,8 @@ package commands;
 
 import java.util.List;
 
+import polly.logging.MSG;
 import polly.logging.MyPlugin;
-
 import core.PollyLoggingManager;
 import core.filters.AnyLogFilter;
 import core.filters.ChainedLogFilter;
@@ -24,30 +24,28 @@ public class ChannelLogCommand extends AbstractLogCommand {
     
     public ChannelLogCommand(MyPolly polly, PollyLoggingManager logManager) 
                 throws DuplicatedSignatureException {
-        super(polly, "log", logManager);
-        this.createSignature("Filtert Log Einträge eines Channels", 
+        super(polly, "log", logManager); //$NON-NLS-1$
+        this.createSignature(MSG.logSig0Desc, 
             MyPlugin.CHANNEL_LOG_PERMISSION,
-            new Parameter("Channel", Types.CHANNEL));
-        this.createSignature("Filtert Log Einträge eines Channels mit bestimmten Inhalt", 
+            new Parameter(MSG.logSig0Channel, Types.CHANNEL));
+        this.createSignature(MSG.logSig1Desc, 
             MyPlugin.CHANNEL_LOG_PERMISSION,
-            new Parameter("Channel", Types.CHANNEL), 
-            new Parameter("Pattern", Types.STRING));
-        this.createSignature("Filtert Log Einträge eines Channels mit bestimmten Inhalt " +
-        		"die nicht älter sind als das angegebne Datum", 
+            new Parameter(MSG.logSig1Channel, Types.CHANNEL), 
+            new Parameter(MSG.logSig1Pattern, Types.STRING));
+        this.createSignature(MSG.logSig2Desc, 
     		MyPlugin.CHANNEL_LOG_PERMISSION,
-            new Parameter("Channel", Types.CHANNEL),
-            new Parameter("Pattern", Types.STRING), 
-            new Parameter("Datum", Types.DATE));
-        this.createSignature("Filtert Log Einträge eines Channels mit bestimmten Inhalt " +
-        		"die zweichen den Angegebenen Zeitpunkten liegen",
+            new Parameter(MSG.logSig2Channel, Types.CHANNEL),
+            new Parameter(MSG.logSig2Pattern, Types.STRING), 
+            new Parameter(MSG.logSig2Date, Types.DATE));
+        this.createSignature(MSG.logSig3Desc,
     		MyPlugin.CHANNEL_LOG_PERMISSION,
-            new Parameter("Channel", Types.CHANNEL),
-            new Parameter("Pattern", Types.STRING), 
-            new Parameter("Von", Types.DATE),
-            new Parameter("Bis", Types.DATE));
-        this.createSignature("Filtert Log Einträge des aktuellen channels", 
-            new Parameter("Pattern", Types.STRING));
-        this.createSignature("Zeigt Log Einträge des aktuellen channels");
+            new Parameter(MSG.logSig3Channel, Types.CHANNEL),
+            new Parameter(MSG.logSig3Pattern, Types.STRING), 
+            new Parameter(MSG.logSig3From, Types.DATE),
+            new Parameter(MSG.logSig3To, Types.DATE));
+        this.createSignature(MSG.logSig4Desc, 
+            new Parameter(MSG.logSig4Pattern, Types.STRING));
+        this.createSignature(MSG.logSig5Desc);
     }
     
     

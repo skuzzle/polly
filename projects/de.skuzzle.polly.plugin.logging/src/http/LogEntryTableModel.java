@@ -3,11 +3,13 @@ package http;
 import java.util.Date;
 import java.util.List;
 
+import polly.logging.MSG;
 import core.PollyLoggingManager;
 import core.filters.SecurityLogFilter;
 import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.User;
+import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.httpv2.html.AbstractHTMLTableModel;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.util.DirectedComparator.SortOrder;
@@ -15,9 +17,15 @@ import entities.LogEntry;
 
 public class LogEntryTableModel extends AbstractHTMLTableModel<LogEntry> {
 
-    private final static String[] COLUMNS = { "Date", "Channel", "User", "Type", "Message" };
+    private final static String[] COLUMNS = { 
+        MSG.logTableDateCol, 
+        MSG.logTableChannelCol, 
+        MSG.logTableUserCol, 
+        MSG.logTableTypeCol, 
+        MSG.logTableMessageCol
+    };
 
-    public final static String RESULT_KEY = "logSearchResults";
+    public final static String RESULT_KEY = "logSearchResults"; //$NON-NLS-1$
     protected final PollyLoggingManager lm;
     protected final MyPolly myPolly;
 
@@ -73,15 +81,15 @@ public class LogEntryTableModel extends AbstractHTMLTableModel<LogEntry> {
         case 3:
             switch (element.getType()) {
             default:
-            case LogEntry.TYPE_JOIN: return "Join";
-            case LogEntry.TYPE_NICKCHANGE: return "Nickchange";
-            case LogEntry.TYPE_MESSAGE: return "Message";
-            case LogEntry.TYPE_PART: return "Part";
-            case LogEntry.TYPE_QUIT: return "Quit";
+            case LogEntry.TYPE_JOIN: return MSG.logEntryTypeJoin;
+            case LogEntry.TYPE_NICKCHANGE: return MSG.logEntryTypeNickchange;
+            case LogEntry.TYPE_MESSAGE: return MSG.logEntryTypeMessage; 
+            case LogEntry.TYPE_PART: return MSG.logEntryTypePart;
+            case LogEntry.TYPE_QUIT: return MSG.logEntryTypeQuit;
             }
         case 4: return element.getMessage();
         default:
-            return "";
+            return ""; //$NON-NLS-1$
         }
     }
 
@@ -101,7 +109,7 @@ public class LogEntryTableModel extends AbstractHTMLTableModel<LogEntry> {
 
     @Override
     public List<LogEntry> getData(HttpEvent e) {
-        final User executor = (User) e.getSession().getAttached("user");
+        final User executor = (User) e.getSession().getAttached(WebinterfaceManager.USER);
         List<LogEntry> logs = this.lm.getAllEntries();
         if (!this.myPolly.roles().hasPermission(executor, RoleManager.ADMIN_PERMISSION)) {
             logs = this.lm.postFilter(logs, new SecurityLogFilter(this.myPolly, executor));

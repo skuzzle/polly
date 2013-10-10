@@ -27,7 +27,15 @@ import de.skuzzle.polly.sdk.time.Milliseconds;
 import de.skuzzle.polly.tools.concurrent.RunLater;
 
 public class IndexController extends PollyController {
-
+    
+    
+    private final static String ADMIN_CATEGORY_KEY = "indexAdminCategory";
+    private final static String GENERAL_CATEGORY_KEY = "indexGeneralCategory";
+    private final static String HOME_NAME_KEY = "indexHomePage";
+    private final static String HOME_DESC_KEY = "indexHomeDesc";
+    private final static String STATUS_NAME_KEY = "indexStatusPage";
+    private final static String STATUS_DESC_KEY = "indexStatusDesc";
+    
     
     
     public IndexController(MyPolly myPolly) {
@@ -141,16 +149,19 @@ public class IndexController extends PollyController {
     
     @Get("/api/logout")
     public HttpAnswer logout() {
-        this.getSession().detach("user");
+        this.getSession().detach(WebinterfaceManager.USER);
         this.getSession().kill();
         return HttpAnswers.newStringAnswer("").redirectTo("/");
     }
 
     
     
-    @Get(value = "/", name = "Home")
-    @OnRegister({ WebinterfaceManager.ADD_MENU_ENTRY, "General", 
-        "Shows your polly home page" 
+    @Get(value = "/", name = HOME_NAME_KEY)
+    @OnRegister({ 
+        WebinterfaceManager.ADD_MENU_ENTRY, 
+        MSG.FAMILY,
+        GENERAL_CATEGORY_KEY, 
+        HOME_DESC_KEY
     })
     public HttpAnswer index() {
         final Map<String, Object> c = this.createContext("templatesv2/home.html");
@@ -171,10 +182,12 @@ public class IndexController extends PollyController {
     
     
     
-    @Get(value = "/pages/status", name = "Status")
-    @OnRegister({WebinterfaceManager.ADD_MENU_ENTRY, 
-        "Admin",
-        "Shows polly status information", 
+    @Get(value = "/pages/status", name = STATUS_NAME_KEY)
+    @OnRegister({
+        WebinterfaceManager.ADD_MENU_ENTRY, 
+        MSG.FAMILY,
+        ADMIN_CATEGORY_KEY,
+        STATUS_DESC_KEY, 
         RoleManager.ADMIN_PERMISSION
     })
     public HttpAnswer statusPage() throws AlternativeAnswerException {

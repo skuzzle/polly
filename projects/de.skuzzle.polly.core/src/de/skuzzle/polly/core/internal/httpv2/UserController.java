@@ -31,6 +31,9 @@ import de.skuzzle.polly.sdk.roles.RoleManager;
 
 public class UserController extends PollyController {
     
+    private final static String ADMIN_CATEGORY_KEY = "userAdminCategory";
+    private final static String USER_NAME_KEY = "userManagerPage";
+    private final static String USER_DESC_KEY = "userManagerDesc";
     
     public static void createUserTable(MyPolly myPolly) {
         final HTMLTable<User> table = new HTMLTable<>("userList", 
@@ -53,11 +56,12 @@ public class UserController extends PollyController {
     
     
     
-    @Get(value = "pages/users", name = "User Manager")
+    @Get(value = "pages/users", name = USER_NAME_KEY)
     @OnRegister({
         WebinterfaceManager.ADD_MENU_ENTRY,
-        "Admin",
-        "List, modify, add and delete polly user accounts.",
+        MSG.FAMILY,
+        ADMIN_CATEGORY_KEY,
+        USER_DESC_KEY,
         RoleManager.ADMIN_PERMISSION
     })
     public HttpAnswer users() throws AlternativeAnswerException {

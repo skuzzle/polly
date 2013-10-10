@@ -19,6 +19,9 @@ import de.skuzzle.polly.sdk.roles.RoleManager;
 
 public class SessionController extends PollyController {
 
+    private final static String ADMIN_CATEGORY_KEY = "sessionAdminCategory"; //$NON-NLS-1$
+    private final static String SESSION_NAME_KEY = "sessionManagerPage"; //$NON-NLS-1$
+    private final static String SESSION_DESC_KEY = "sessionManagerDesc"; //$NON-NLS-1$
     
     
     public SessionController(MyPolly myPolly) {
@@ -34,10 +37,12 @@ public class SessionController extends PollyController {
 
     
     
-    @Get(value = "/pages/sessions", name = "Sessions")
+    @Get(value = "/pages/sessions", name = SESSION_NAME_KEY)
     @OnRegister({
         WebinterfaceManager.ADD_MENU_ENTRY, 
-        "Admin", "List and manage currently active HTTP sessions",
+        MSG.FAMILY,
+        ADMIN_CATEGORY_KEY,
+        SESSION_DESC_KEY,
         RoleManager.ADMIN_PERMISSION
     })
     public HttpAnswer sessions() throws AlternativeAnswerException {

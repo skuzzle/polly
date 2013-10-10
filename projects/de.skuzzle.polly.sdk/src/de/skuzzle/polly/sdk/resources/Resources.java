@@ -8,6 +8,8 @@ import java.util.ResourceBundle;
 import java.util.ResourceBundle.Control;
 import java.util.Set;
 
+import sun.reflect.Reflection;
+
 
 /**
  * @author Simon Taddiken
@@ -26,7 +28,14 @@ public class Resources {
     
     
     
-    private static PollyBundle get(String family, ClassLoader cl) {
+    public static PollyBundle get(String family) {
+        final Class<?> caller = Reflection.getCallerClass();
+        return get(family, caller.getClassLoader());
+    }
+    
+    
+    
+    public static PollyBundle get(String family, ClassLoader cl) {
         final ResourceBundle r = ResourceBundle.getBundle(
                 family, getLocale(), cl, UTF8);
         return new PollyBundle(r);
@@ -44,11 +53,12 @@ public class Resources {
         
         final PollyBundle bundle = get(family, constants.getClassLoader());
         for (final Field f : constants.getFields()) {
-            f.setAccessible(true);
             if (Modifier.isStatic(f.getModifiers()) && 
-                Modifier.isPublic(f.getModifiers()) && 
+                Modifier.isPublic(f.getModifiers()) &&
+                !Modifier.isFinal(f.getModifiers()) && 
                 f.getType() == String.class) {
                 
+                f.setAccessible(true);
                 // this is a public static string field, load value associated with the 
                 // field name from the resource bundle
                 final String value = bundle.get(f.getName());

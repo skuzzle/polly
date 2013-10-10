@@ -7,6 +7,8 @@ import de.skuzzle.polly.http.api.HttpServletServer;
 
 public interface WebinterfaceManager {
     
+    public final static String USER = "user";
+    
     public final static String ADD_MENU_ENTRY = "ADD_MENU_ENTRY";
     
     public void addTopMenuEntry(MenuEntry me);

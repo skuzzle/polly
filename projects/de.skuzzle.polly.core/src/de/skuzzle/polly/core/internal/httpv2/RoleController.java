@@ -17,7 +17,9 @@ import de.skuzzle.polly.sdk.roles.RoleManager;
 
 public class RoleController extends PollyController {
 
-    
+    private final static String ADMIN_CATEGORY_KEY = "roleAdminCategory";
+    private final static String ROLE_NAME_KEY = "roleManagerPage";
+    private final static String ROLE_DESC_KEY = "roleManagerDesc";
     
     public RoleController(MyPolly myPolly) {
         super(myPolly);
@@ -32,11 +34,12 @@ public class RoleController extends PollyController {
     
     
     
-    @Get(value = "pages/rolws", name = "Role Manager")
+    @Get(value = "pages/roles", name = ROLE_NAME_KEY)
     @OnRegister({
         WebinterfaceManager.ADD_MENU_ENTRY,
-        "Admin",
-        "Manage polly roles and permissions",
+        MSG.FAMILY,
+        ADMIN_CATEGORY_KEY,
+        ROLE_DESC_KEY,
         RoleManager.ADMIN_PERMISSION
     })
     public HttpAnswer roles() throws AlternativeAnswerException {

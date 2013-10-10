@@ -29,7 +29,7 @@ public class IrcLogCollector implements
         try {
             this.logManager.logMessage(LogEntry.forNickChange(
                     e.getOldUser().getNickName(), 
-                    e.toString(), "", Time.currentTime()));
+                    e.toString(), "", Time.currentTime())); //$NON-NLS-1$
         } catch (DatabaseException e1) {
             this.onDatabaseException(e1);
         }
@@ -41,7 +41,7 @@ public class IrcLogCollector implements
     public void quited(QuitEvent e) {
         try {
             this.logManager.logMessage(LogEntry.forQuit(
-                        e.getUser().getNickName(), e.toString(), "", Time.currentTime()));
+                        e.getUser().getNickName(), e.toString(), "", Time.currentTime())); //$NON-NLS-1$
         } catch (DatabaseException e1) {
             this.onDatabaseException(e1);
         }
@@ -53,7 +53,7 @@ public class IrcLogCollector implements
     public void channelJoined(ChannelEvent e) {
         try {
             this.logManager.logMessage(LogEntry.forJoin(
-                        e.getUser().getNickName(),"*** JOIN " + e.toString(), 
+                        e.getUser().getNickName(),"*** JOIN " + e.toString(),  //$NON-NLS-1$
                         e.getChannel(), Time.currentTime()));
         } catch (DatabaseException e1) {
             this.onDatabaseException(e1);
@@ -66,7 +66,7 @@ public class IrcLogCollector implements
     public void channelParted(ChannelEvent e) {
         try {
             this.logManager.logMessage(LogEntry.forPart(
-                        e.getUser().getNickName(), "*** PART " + e.toString(), 
+                        e.getUser().getNickName(), "*** PART " + e.toString(),  //$NON-NLS-1$
                         e.getChannel(), Time.currentTime()));
         } catch (DatabaseException e1) {
             this.onDatabaseException(e1);
