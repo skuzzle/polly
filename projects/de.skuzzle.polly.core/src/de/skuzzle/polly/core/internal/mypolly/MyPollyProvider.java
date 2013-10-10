@@ -66,7 +66,7 @@ public class MyPollyProvider extends AbstractProvider {
     
     
     public MyPollyProvider(ModuleLoader loader) {
-        super("MYPOLLY_PROVIDER", loader, true);
+        super("MYPOLLY_PROVIDER", loader, true); //$NON-NLS-1$
     }
     
     
