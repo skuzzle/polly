@@ -28,4 +28,13 @@ public class PollyBundle {
             }
         }
     }
+    
+    
+    
+    public String get(String key, String obj1, String...obj2) {
+        final Object[] objs = new Object[obj2.length + 1];
+        objs[0] = obj1;
+        System.arraycopy(obj2, 0, objs, 1, obj2.length);
+        return String.format(this.get(key), objs);
+    }
 }

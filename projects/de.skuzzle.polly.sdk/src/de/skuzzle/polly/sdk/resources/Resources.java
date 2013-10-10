@@ -66,8 +66,8 @@ public class Resources {
                     f.set(null, value);
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     throw new RuntimeException(
-                            "Resource initialization failed. Family: " + family + 
-                            ", name = " + f.getName() + ", value = " + value, e);
+                            "Resource initialization failed. Family: " + family +  //$NON-NLS-1$
+                            ", name = " + f.getName() + ", value = " + value, e); //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }
         }

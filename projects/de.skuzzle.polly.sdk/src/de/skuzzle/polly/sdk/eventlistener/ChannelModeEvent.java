@@ -79,12 +79,12 @@ public class ChannelModeEvent extends ChannelEvent {
     public ChannelModeEvent(IrcManager source, IrcUser user, String channel, 
             String mode) {
         super(source, user, channel);
-        String[] parts = mode.split(" ", 2);
+        String[] parts = mode.split(" ", 2); //$NON-NLS-1$
         this.mode = parts[0];
         if (parts.length == 1) {
             this.parameters = new String[0];
         } else if (parts.length == 2) {
-            this.parameters = parts[1].split(" ");
+            this.parameters = parts[1].split(" "); //$NON-NLS-1$
         }
     }
     

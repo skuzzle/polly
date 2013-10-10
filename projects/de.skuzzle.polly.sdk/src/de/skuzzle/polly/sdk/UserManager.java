@@ -43,7 +43,7 @@ public interface UserManager {
      * @since 0.9.1
      */
     public final static Pattern USER_NAME_PATTERN = 
-            Pattern.compile("[^\\d-][\\w\\d-_\\[\\]{}\\\\`^\\.]+");
+            Pattern.compile("[^\\d-][\\w\\d-_\\[\\]{}\\\\`^\\.]+"); //$NON-NLS-1$
     
     /**
      * Maximum length of attribute parameter values.

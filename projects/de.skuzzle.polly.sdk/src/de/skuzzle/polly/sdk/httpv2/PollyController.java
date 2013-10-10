@@ -18,8 +18,8 @@ import de.skuzzle.polly.sdk.time.Time;
 public abstract class PollyController extends Controller {
     
 
-    protected final static String STYLE_SHEET_NAME = "template.css";
-    protected final static String PAGE_PREFIX = "PAGE_";
+    protected final static String STYLE_SHEET_NAME = "template.css"; //$NON-NLS-1$
+    protected final static String PAGE_PREFIX = "PAGE_"; //$NON-NLS-1$
     
     
     private final MyPolly myPolly;
@@ -35,7 +35,7 @@ public abstract class PollyController extends Controller {
     @Override
     public void putHandledURL(Map<String, String> target, String handlerName,
             String url) {
-        handlerName = handlerName.replaceAll("\\s+", "_").toUpperCase();
+        handlerName = handlerName.replaceAll("\\s+", "_").toUpperCase(); //$NON-NLS-1$ //$NON-NLS-2$
         super.putHandledURL(target, handlerName, url);
     }
 
@@ -50,18 +50,18 @@ public abstract class PollyController extends Controller {
     protected Map<String, Object> createContext(String content) {
         final Map<String, Object> c = new HashMap<String, Object>();
         
-        c.put("myPolly", this.myPolly);
-        c.put("httpServer", this.getServer());
-        c.put("user", this.getSessionUser());
-        c.put("session", this.getSession());
-        c.put("menu", this.myPolly.webInterface().getMenuCategories());
-        c.put("topMenu", this.myPolly.webInterface().getTopMenuEntries());
-        c.put("uptime", Time.currentTimeMillis()
+        c.put("myPolly", this.myPolly); //$NON-NLS-1$
+        c.put("httpServer", this.getServer()); //$NON-NLS-1$
+        c.put("user", this.getSessionUser()); //$NON-NLS-1$
+        c.put("session", this.getSession()); //$NON-NLS-1$
+        c.put("menu", this.myPolly.webInterface().getMenuCategories()); //$NON-NLS-1$
+        c.put("topMenu", this.myPolly.webInterface().getTopMenuEntries()); //$NON-NLS-1$
+        c.put("uptime", Time.currentTimeMillis() //$NON-NLS-1$
             - this.getMyPolly().getStartTime().getTime());
-        c.put("startTime", this.getMyPolly().getStartTime());
-        c.put("sessionTimeOut", this.getEvent().getSource().sessionLiveTime());
-        c.put("content", content);
-        c.put("executionTime", 
+        c.put("startTime", this.getMyPolly().getStartTime()); //$NON-NLS-1$
+        c.put("sessionTimeOut", this.getEvent().getSource().sessionLiveTime()); //$NON-NLS-1$
+        c.put("content", content); //$NON-NLS-1$
+        c.put("executionTime",  //$NON-NLS-1$
             Time.currentTimeMillis() - this.getEvent().getEventTime().getTime());
         c.putAll(this.getServer().getHandledUrls());
         return c;
@@ -70,19 +70,19 @@ public abstract class PollyController extends Controller {
 
 
     protected HttpAnswer makeAnswer(Map<String, Object> context) {
-        return HttpAnswers.newTemplateAnswer("template.html", context);
+        return HttpAnswers.newTemplateAnswer("template.html", context); //$NON-NLS-1$
     }
 
 
 
     protected HttpAnswer makeAnswer(int responseCode, Map<String, Object> context) {
-        return HttpAnswers.newTemplateAnswer(responseCode, "template.html", context);
+        return HttpAnswers.newTemplateAnswer(responseCode, "template.html", context); //$NON-NLS-1$
     }
 
 
 
     protected final User getSessionUser() {
-        return (User) this.getSession().getAttached("user");
+        return (User) this.getSession().getAttached(WebinterfaceManager.USER);
     }
 
 
@@ -95,9 +95,9 @@ public abstract class PollyController extends Controller {
 
         if (!rm.hasPermission(u, p)) {
             final Map<String, Object> c = this.createContext(
-                "templatesv2/no_permission.html");
-            c.put("permissions", p);
-            c.put("resource", this.getEvent().getPlainUri());
+                "templatesv2/no_permission.html"); //$NON-NLS-1$
+            c.put("permissions", p); //$NON-NLS-1$
+            c.put("resource", this.getEvent().getPlainUri()); //$NON-NLS-1$
             throw new AlternativeAnswerException(this.makeAnswer(c));
         }
     }

@@ -227,7 +227,7 @@ public class Signature {
 		} else if (t instanceof NumberType) {
 		    return Double.toString(((NumberType) t).getValue());
 		}
-		throw new IllegalArgumentException("No String-type parameter");
+		throw new IllegalArgumentException("No String-type parameter"); //$NON-NLS-1$
 	}
 	
 	
@@ -399,18 +399,18 @@ public class Signature {
     @Override
 	public String toString() {
 		StringBuilder b = new StringBuilder();
-		b.append(":");
+		b.append(":"); //$NON-NLS-1$
 		b.append(this.getName());
 		if (this.parameters.isEmpty()) {
 			return b.toString();
 		}
 		
-		b.append(" ");
+		b.append(" "); //$NON-NLS-1$
 		Iterator<Types> it = this.parameters.iterator();
 		while (it.hasNext()) {
 			b.append(it.next().toString());
 			if (it.hasNext()) {
-				b.append(" ");
+				b.append(" "); //$NON-NLS-1$
 			}
 		}
 		return b.toString();

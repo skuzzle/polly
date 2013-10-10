@@ -12,7 +12,7 @@ public class DefaultColumnFilter implements HTMLColumnFilter {
         @Override
         public boolean accept(Object filter, Object cellValue) {
             final String comp = cellValue == null 
-                ? "" : cellValue.toString().toLowerCase();
+                ? "" : cellValue.toString().toLowerCase(); //$NON-NLS-1$
             final Pattern p = (Pattern) filter;
             return p.matcher(comp).matches();
         }
@@ -22,10 +22,10 @@ public class DefaultColumnFilter implements HTMLColumnFilter {
         @Override
         public Object parseFilter(String filter) {
             try {
-                return Pattern.compile(".*" + filter + ".*", 
+                return Pattern.compile(".*" + filter + ".*",  //$NON-NLS-1$ //$NON-NLS-2$
                     Pattern.CASE_INSENSITIVE);
             } catch (Exception e) {
-                return Pattern.compile(".*");
+                return Pattern.compile(".*"); //$NON-NLS-1$
             }
         }
     }; 

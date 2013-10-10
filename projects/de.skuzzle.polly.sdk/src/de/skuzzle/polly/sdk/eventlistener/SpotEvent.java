@@ -40,7 +40,7 @@ public class SpotEvent extends ChannelEvent {
      * @param e The quit event that caused this is event.
      */
     public SpotEvent(QuitEvent e) {
-        super(e.getSource(), e.getUser(), "");
+        super(e.getSource(), e.getUser(), ""); //$NON-NLS-1$
         this.type = USER_QUIT;
         this.quitEvent = e;
     }

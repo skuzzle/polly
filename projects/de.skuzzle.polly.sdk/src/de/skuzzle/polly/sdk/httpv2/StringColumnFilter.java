@@ -12,8 +12,8 @@ public abstract class StringColumnFilter<T> implements ColumnFilter<T> {
     public boolean accept(String[] filterString, T element) {
         boolean result = true;
         for (int i = 0; i < filterString.length; ++i) {
-            if (!filterString[i].equals("")) {
-                final Pattern p = Pattern.compile(".*" + filterString + ".*", 
+            if (!filterString[i].equals("")) { //$NON-NLS-1$
+                final Pattern p = Pattern.compile(".*" + filterString + ".*",  //$NON-NLS-1$ //$NON-NLS-2$
                     Pattern.CASE_INSENSITIVE);
                 
                 final Object value = this.getCellValue(i, element);

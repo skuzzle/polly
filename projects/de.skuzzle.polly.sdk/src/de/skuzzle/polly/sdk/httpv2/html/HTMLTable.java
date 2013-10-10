@@ -2,7 +2,6 @@ package de.skuzzle.polly.sdk.httpv2.html;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,11 +21,15 @@ import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.http.api.handler.HttpEventHandler;
 import de.skuzzle.polly.sdk.FormatManager;
+import de.skuzzle.polly.sdk.Messages;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
 import de.skuzzle.polly.sdk.httpv2.SuccessResult;
+import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
+import de.skuzzle.polly.sdk.resources.PollyBundle;
+import de.skuzzle.polly.sdk.resources.Resources;
 import de.skuzzle.polly.sdk.util.DirectedComparator;
 import de.skuzzle.polly.sdk.util.DirectedComparator.SortOrder;
 import de.skuzzle.polly.tools.math.MathUtil;
@@ -44,42 +47,42 @@ public class HTMLTable<T> implements HttpEventHandler {
                 // if filter, cellContent is the filter string!
                 final String f = (String) cellContent;
                 
-                final String name = "opt_" + (int) (Math.random() * 1000);
-                final HTMLElement all = new HTMLElement("input")
-                    .attr("type", "radio")
-                    .attr("name", name)
-                    .attr("class", "filter_input")
-                    .attr("value", "")
-                    .content("All");
+                final String name = "opt_" + (int) (Math.random() * 1000); //$NON-NLS-1$
+                final HTMLElement all = new HTMLElement("input") //$NON-NLS-1$
+                    .attr("type", "radio") //$NON-NLS-1$ //$NON-NLS-2$
+                    .attr("name", name) //$NON-NLS-1$
+                    .attr("class", "filter_input") //$NON-NLS-1$ //$NON-NLS-2$
+                    .attr("value", "") //$NON-NLS-1$ //$NON-NLS-2$
+                    .content("All"); //$NON-NLS-1$
                     
-                final HTMLElement selected = new HTMLElement("input")
-                    .attr("type", "radio")
-                    .attr("name", name)
-                    .attr("class", "filter_input")
-                    .attr("value", "true")
-                    .content("true");
+                final HTMLElement selected = new HTMLElement("input") //$NON-NLS-1$
+                    .attr("type", "radio") //$NON-NLS-1$ //$NON-NLS-2$
+                    .attr("name", name) //$NON-NLS-1$
+                    .attr("class", "filter_input") //$NON-NLS-1$ //$NON-NLS-2$
+                    .attr("value", "true") //$NON-NLS-1$ //$NON-NLS-2$
+                    .content("true"); //$NON-NLS-1$
                 
-                final HTMLElement unselected = new HTMLElement("input")
-                    .attr("type", "radio")
-                    .attr("name", name)
-                    .attr("class", "filter_input")
-                    .attr("value", "false")
-                    .content("false");
+                final HTMLElement unselected = new HTMLElement("input") //$NON-NLS-1$
+                    .attr("type", "radio") //$NON-NLS-1$ //$NON-NLS-2$
+                    .attr("name", name) //$NON-NLS-1$
+                    .attr("class", "filter_input") //$NON-NLS-1$ //$NON-NLS-2$
+                    .attr("value", "false") //$NON-NLS-1$ //$NON-NLS-2$
+                    .content("false"); //$NON-NLS-1$
                 
                 final HTMLElement checked;
-                if (f.equals("")) {
+                if (f.equals("")) { //$NON-NLS-1$
                     checked = all;
-                } else if (f.equals("true")) {
+                } else if (f.equals("true")) { //$NON-NLS-1$
                     checked = selected;
                 } else {
                     checked = unselected;
                 }
-                checked.attr("checked");
+                checked.attr("checked"); //$NON-NLS-1$
                 return new HTMLElementGroup().add(all).add(selected).add(unselected);
             }
-            final HTMLElement in = new HTMLElement("input").attr("type", "checkbox");
+            final HTMLElement in = new HTMLElement("input").attr("type", "checkbox"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             if (cellContent != null && (Boolean) cellContent) {
-                in.attr("checked");
+                in.attr("checked"); //$NON-NLS-1$
             }
             return in;
         }
@@ -88,7 +91,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         
         @Override
         public String getEditIndicator() {
-            return "";
+            return ""; //$NON-NLS-1$
         }
     }
     
@@ -98,7 +101,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         
         @Override
         public String getEditIndicator() {
-            return "<img src=\"/de/skuzzle/polly/sdk/httpv2/html/date_edit.png\" height=\"16\" width=\"16\" style=\"vertical-align:middle\"/>";
+            return "<img src=\"/de/skuzzle/polly/sdk/httpv2/html/date_edit.png\" height=\"16\" width=\"16\" style=\"vertical-align:middle\"/>"; //$NON-NLS-1$
         }
     }
     
@@ -107,13 +110,13 @@ public class HTMLTable<T> implements HttpEventHandler {
     public static class TextCellEditor implements CellEditor {
         @Override
         public HTMLElement renderEditorCell(Object cellContent, boolean forFilter) {
-            final String cls = forFilter ? "textbox filter_input" : "textbox edit_input";
-            final String content = cellContent == null ? "" : cellContent.toString();
-            return new HTMLElement("input")
-                .attr("type", "text")
-                .attr("class", cls)
-                .attr("style", "width: 85%")
-                .attr("value", content);
+            final String cls = forFilter ? "textbox filter_input" : "textbox edit_input"; //$NON-NLS-1$ //$NON-NLS-2$
+            final String content = cellContent == null ? "" : cellContent.toString(); //$NON-NLS-1$
+            return new HTMLElement("input") //$NON-NLS-1$
+                .attr("type", "text") //$NON-NLS-1$ //$NON-NLS-2$
+                .attr("class", cls) //$NON-NLS-1$
+                .attr("style", "width: 85%") //$NON-NLS-1$ //$NON-NLS-2$
+                .attr("value", content); //$NON-NLS-1$
         }
         
         
@@ -121,7 +124,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         @Override
         public String getEditIndicator() {
             return 
-                "<img src=\"/de/skuzzle/polly/sdk/httpv2/html/edit.png\" height=\"16\" width=\"16\" style=\"vertical-align:middle\"/>";
+                "<img src=\"/de/skuzzle/polly/sdk/httpv2/html/edit.png\" height=\"16\" width=\"16\" style=\"vertical-align:middle\"/>"; //$NON-NLS-1$
         }
     }
     
@@ -138,7 +141,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         @Override
         public String renderCellContent(int column, Object cellValue) {
             if (cellValue == null) {
-                return "";
+                return ""; //$NON-NLS-1$
             } else {
                 return this.escape 
                         ? Escape.html(cellValue.toString()) 
@@ -154,9 +157,9 @@ public class HTMLTable<T> implements HttpEventHandler {
         public String renderCellContent(int column, Object cellValue) {
             final Date date = (Date) cellValue;
             if (date.getTime() == 0) {
-                return "";
+                return ""; //$NON-NLS-1$
             } else {
-                final DateFormat df = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy");
+                final DateFormat df = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy"); //$NON-NLS-1$
                 return df.format((Date) cellValue);
             }
         }
@@ -169,7 +172,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         @Override
         public String renderCellContent(int column, Object cellValue) {
             return new BooleanCellEditor()
-                .renderEditorCell(cellValue, false).attr("disabled").toString();
+                .renderEditorCell(cellValue, false).attr("disabled").toString(); //$NON-NLS-1$
         }
     }
     
@@ -179,7 +182,7 @@ public class HTMLTable<T> implements HttpEventHandler {
 
         @Override
         public String renderCellContent(int column, Object cellValue) {
-            final NumberFormat nf = new DecimalFormat("0.###");
+            final DecimalFormat nf = new DecimalFormat("0.##"); //$NON-NLS-1$
             return nf.format((Double) cellValue);
         }
         
@@ -201,7 +204,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         @Override
         public String renderCellContent(int column, Object cellValue) {
             if (cellValue == null || !(cellValue instanceof Types)) {
-                return "";
+                return ""; //$NON-NLS-1$
             }
             final Types t = (Types) cellValue;
             return Escape.html(t.valueString(this.formatter));
@@ -212,18 +215,18 @@ public class HTMLTable<T> implements HttpEventHandler {
     
     
     private final static String makeUrl(String baseUrl, Map<String, String> param) {
-        String append = "&";
-        if (!baseUrl.contains("?")) {
-            append = "?";
+        String append = "&"; //$NON-NLS-1$
+        if (!baseUrl.contains("?")) { //$NON-NLS-1$
+            append = "?"; //$NON-NLS-1$
         }
         final StringBuilder b = new StringBuilder(baseUrl.length());
         b.append(baseUrl);
         for (final Entry<String, String> e : param.entrySet()) {
             b.append(append);
             b.append(e.getKey());
-            b.append("=");
+            b.append("="); //$NON-NLS-1$
             b.append(e.getValue());
-            append = "&";
+            append = "&"; //$NON-NLS-1$
         }
         return b.toString();
     }
@@ -231,14 +234,14 @@ public class HTMLTable<T> implements HttpEventHandler {
     
     
 
-    private final static String SORT_COLUMN = "sort";
-    private final static String SET_PAGE = "page";
-    private final static String SET_PAGE_SIZE = "pageSize";
-    private final static String FILTER_VAL = "filterVal";
-    private final static String FILTER_COL = "filterCol";
-    private final static String SET_VALUE = "setValue";
-    private final static String COLUMN = "col";
-    private final static String ROW = "row";
+    private final static String SORT_COLUMN = "sort"; //$NON-NLS-1$
+    private final static String SET_PAGE = "page"; //$NON-NLS-1$
+    private final static String SET_PAGE_SIZE = "pageSize"; //$NON-NLS-1$
+    private final static String FILTER_VAL = "filterVal"; //$NON-NLS-1$
+    private final static String FILTER_COL = "filterCol"; //$NON-NLS-1$
+    private final static String SET_VALUE = "setValue"; //$NON-NLS-1$
+    private final static String COLUMN = "col"; //$NON-NLS-1$
+    private final static String ROW = "row"; //$NON-NLS-1$
     
     private final static int DEFAULT_PAGE_SIZE = 40;
     
@@ -275,12 +278,12 @@ public class HTMLTable<T> implements HttpEventHandler {
         }
         @Override
         public String toString() {
-            return "[sortCol: " + this.sortCol + 
-                ", page: " + this.page + 
-                ", pageCount: " + this.pageCount + 
-                ", pageSize: " + this.pageSize + 
-                ", sortOrder: " + Arrays.toString(this.order) + 
-                ", filter: " + Arrays.toString(this.filter) + "]";
+            return "[sortCol: " + this.sortCol +  //$NON-NLS-1$
+                ", page: " + this.page +  //$NON-NLS-1$
+                ", pageCount: " + this.pageCount +  //$NON-NLS-1$
+                ", pageSize: " + this.pageSize +  //$NON-NLS-1$
+                ", sortOrder: " + Arrays.toString(this.order) +  //$NON-NLS-1$
+                ", filter: " + Arrays.toString(this.filter) + "]"; //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
     
@@ -393,15 +396,16 @@ public class HTMLTable<T> implements HttpEventHandler {
         
         // current settings for requesting user
         final HttpSession s = e.getSession();
-        final User user = (User) s.getAttached("user");
+        final User user = (User) s.getAttached(WebinterfaceManager.USER);
         if (!this.myPolly.roles().canAccess(user, this.model)) {
+            final String permDenied = Messages.htmlTablePermDenied;
             throw new AlternativeAnswerException(
-                HttpAnswers.newStringAnswer("<tr><th colspan=\"" + 
-                    this.model.getColumnCount() + "\">Permission denied</th></tr>"));
+                HttpAnswers.newStringAnswer("<tr><th colspan=\"" +  //$NON-NLS-1$
+                    this.model.getColumnCount() + "\">" + permDenied + "</th></tr>")); //$NON-NLS-1$ //$NON-NLS-2$
         }
         
         
-        final String settingsKey = "SETTINGS_"+registered;
+        final String settingsKey = "SETTINGS_"+registered; //$NON-NLS-1$
         final TableSettings settings;
         synchronized (s) {
             if (s.isSet(settingsKey)) {
@@ -411,7 +415,7 @@ public class HTMLTable<T> implements HttpEventHandler {
                 settings.sortCol = this.model.getDefaultSortColumn();
                 settings.filter = new String[this.model.getColumnCount()];
                 settings.order = new SortOrder[this.model.getColumnCount()];
-                Arrays.fill(settings.filter, "");
+                Arrays.fill(settings.filter, ""); //$NON-NLS-1$
                 Arrays.fill(settings.order, SortOrder.UNDEFINED);
                 if (settings.sortCol != -1) {
                     settings.order[settings.sortCol] = this.model.getDefaultSortOrder();
@@ -441,7 +445,7 @@ public class HTMLTable<T> implements HttpEventHandler {
                 // TODO: error
             }
             final String filterVal = e.get(FILTER_VAL);
-            settings.filter[filterCol] = filterVal == null ? "" : filterVal;
+            settings.filter[filterCol] = filterVal == null ? "" : filterVal; //$NON-NLS-1$
         } else if (e.get(SET_PAGE) != null) {
             final int page = Integer.parseInt(e.get(SET_PAGE));
             settings.page = page;
@@ -467,7 +471,7 @@ public class HTMLTable<T> implements HttpEventHandler {
             // data should only be loaded if a filter is active
             boolean hasFilter = false;
             for (final String filter : settings.filter) {
-                hasFilter |= !filter.equals("");
+                hasFilter |= !filter.equals(""); //$NON-NLS-1$
             }
             if (!hasFilter) {
                 // no filter is active and this is no filter request
@@ -476,9 +480,9 @@ public class HTMLTable<T> implements HttpEventHandler {
                 
                 final Map<String, Object> c = this.createContext(settings, 
                     registered, fr, e, new ArrayList<T>());
-                c.put("noFilter", true);
+                c.put("noFilter", true); //$NON-NLS-1$
                 return HttpAnswers.newTemplateAnswer(
-                        "de/skuzzle/polly/sdk/httpv2/html/table.html", c);
+                        "de/skuzzle/polly/sdk/httpv2/html/table.html", c); //$NON-NLS-1$
             }
         }
         
@@ -497,7 +501,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         final Map<String, Object> c = this.createContext(settings, 
             registered, fr, e, allData);
         return HttpAnswers.newTemplateAnswer(
-                "de/skuzzle/polly/sdk/httpv2/html/table.html", c);
+                "de/skuzzle/polly/sdk/httpv2/html/table.html", c); //$NON-NLS-1$
     }
     
     
@@ -507,22 +511,24 @@ public class HTMLTable<T> implements HttpEventHandler {
         final int minPage = Math.max(0, settings.page - 3);
         final int maxPage = Math.max(0, Math.min(settings.pageCount - 1, Math.max(settings.page + 3, 6)));
         
+        final PollyBundle pb = Resources.get(Messages.FAMILY);
         final Map<String, Object> c = new HashMap<>();
-        c.put("settings", settings);
-        c.put("tableModel", this.model);
-        c.put("colSorter", this.colSorter);
-        c.put("renderers", this.renderers);
-        c.put("filter", this.filter);
-        c.put("editors", this.editors);
-        c.put("baseUrl", makeUrl(registered, this.model.getRequestParameters(e)));
-        c.put("tId", this.tableId);
-        c.put("data", fr.sided);
-        c.put("indexMap", fr.indexMap);
-        c.put("requestParams", this.model.getRequestParameters(e));
-        c.put("minPage", minPage);
-        c.put("maxPage", maxPage);
-        c.put("all", allData.size());
-        c.put("filteredSize", fr.filteredSize);
+        c.put("settings", settings); //$NON-NLS-1$
+        c.put("tableModel", this.model); //$NON-NLS-1$
+        c.put("colSorter", this.colSorter); //$NON-NLS-1$
+        c.put("renderers", this.renderers); //$NON-NLS-1$
+        c.put("filter", this.filter); //$NON-NLS-1$
+        c.put("editors", this.editors); //$NON-NLS-1$
+        c.put("baseUrl", makeUrl(registered, this.model.getRequestParameters(e))); //$NON-NLS-1$
+        c.put("tId", this.tableId); //$NON-NLS-1$
+        c.put("data", fr.sided); //$NON-NLS-1$
+        c.put("indexMap", fr.indexMap); //$NON-NLS-1$
+        c.put("requestParams", this.model.getRequestParameters(e)); //$NON-NLS-1$
+        c.put("minPage", minPage); //$NON-NLS-1$
+        c.put("maxPage", maxPage); //$NON-NLS-1$
+        c.put("all", allData.size()); //$NON-NLS-1$
+        c.put("filteredSize", fr.filteredSize); //$NON-NLS-1$
+        c.put("MSG", pb); //$NON-NLS-1$
         c.putAll(this.baseContext);
         return c;
     }
@@ -540,7 +546,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         // preprocess filters: parse each filter string
         final Object[] filters = new Object[s.filter.length];
         for (int i = 0; i < filters.length; ++i) {
-            if (this.model.isFilterable(i) && !s.filter[i].equals("")) {
+            if (this.model.isFilterable(i) && !s.filter[i].equals("")) { //$NON-NLS-1$
                 filters[i] = this.filter.getAcceptor(i).parseFilter(s.filter[i]);
             }
         }

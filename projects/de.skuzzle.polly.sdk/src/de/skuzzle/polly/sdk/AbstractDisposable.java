@@ -54,7 +54,7 @@ public abstract class AbstractDisposable implements Disposable {
     @Override
     public final synchronized void dispose() throws DisposingException {
         if (this.isDisposed()) {
-            throw new IllegalStateException("already disposed.");
+            throw new IllegalStateException("already disposed."); //$NON-NLS-1$
         }
         this.disposed = true;
         try {

@@ -170,11 +170,11 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 		this.signatures = new ArrayList<FormalSignature>();
 		this.helpText = Messages.bind(Messages.commandNoDescription, commandName);
 		this.constants = new HashMap<String, Types>();
-		this.helpSignature0 = new FormalSignature(commandName, 0, "", 
-		    new Parameter("", Types.HELP));
-		this.helpSignature1 = new FormalSignature(commandName, 0, "", 
-		    new Parameter("", Types.HELP), 
-		    new Parameter("", Types.NUMBER));
+		this.helpSignature0 = new FormalSignature(commandName, 0, "",  //$NON-NLS-1$
+		    new Parameter("", Types.HELP)); //$NON-NLS-1$
+		this.helpSignature1 = new FormalSignature(commandName, 0, "",  //$NON-NLS-1$
+		    new Parameter("", Types.HELP),  //$NON-NLS-1$
+		    new Parameter("", Types.NUMBER)); //$NON-NLS-1$
 		this.containedPermissions = new HashSet<String>();
 	}
 	
@@ -210,8 +210,8 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 	 * @return A help text for this command.
 	 */
 	public String getHelpText() {
-		String help = this.helpText.endsWith(".") 
-		    ? this.helpText + " " : this.helpText + ". ";
+		String help = this.helpText.endsWith(".")  //$NON-NLS-1$
+		    ? this.helpText + " " : this.helpText + ". "; //$NON-NLS-1$ //$NON-NLS-2$
 		help += Messages.bind(Messages.commandSignatures, this.signatures.size(), 
 		        this.commandName);
 		return help;
@@ -740,17 +740,17 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 	    result.append(this.commandName);
 	    
 	    if (this.isRegisteredOnly() || this.isQryCommand()) {
-	        result.append("(");
+	        result.append("("); //$NON-NLS-1$
 	        if (this.registeredOnly) {
-	            result.append("R");
+	            result.append("R"); //$NON-NLS-1$
 	        } 
 	        if (this.isQryCommand()) {
 	            if (this.isRegisteredOnly()) {
-	                result.append(",");
+	                result.append(","); //$NON-NLS-1$
 	            }
-	            result.append("qry");
+	            result.append("qry"); //$NON-NLS-1$
 	        }
-	        result.append(")");
+	        result.append(")"); //$NON-NLS-1$
 	    }
 	    return result.toString();
 	}

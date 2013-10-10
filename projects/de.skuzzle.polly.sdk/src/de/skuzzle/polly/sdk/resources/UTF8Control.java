@@ -18,7 +18,7 @@ class UTF8Control extends Control {
                     throws IllegalAccessException, InstantiationException, IOException {
         // The below is a copy of the default implementation.
         final String bundleName = toBundleName(baseName, locale);
-        final String resourceName = toResourceName(bundleName, "properties");
+        final String resourceName = toResourceName(bundleName, "properties"); //$NON-NLS-1$
         ResourceBundle bundle = null;
         InputStream stream = null;
         if (reload) {
@@ -37,7 +37,7 @@ class UTF8Control extends Control {
             try {
                 // Only this line is changed to make it to read properties files as UTF-8.
                 bundle = new PropertyResourceBundle(
-                        new InputStreamReader(stream, "UTF-8"));
+                        new InputStreamReader(stream, "UTF-8")); //$NON-NLS-1$
             } finally {
                 stream.close();
             }

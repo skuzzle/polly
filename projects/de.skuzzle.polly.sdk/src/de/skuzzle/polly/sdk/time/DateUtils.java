@@ -230,7 +230,7 @@ public class DateUtils {
     public static Date getDayDate(int day) {
         day = ((day - 1) % 7) + 1;
         if (day < 1 || day > 7) {
-            throw new IllegalArgumentException("invalid day of week: " + day);
+            throw new IllegalArgumentException("invalid day of week: " + day); //$NON-NLS-1$
         }
         Calendar c = Calendar.getInstance();
         int today = c.get(Calendar.DAY_OF_WEEK);

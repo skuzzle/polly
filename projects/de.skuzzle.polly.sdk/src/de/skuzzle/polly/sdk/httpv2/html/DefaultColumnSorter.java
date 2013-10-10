@@ -22,10 +22,10 @@ public class DefaultColumnSorter<T> implements HTMLColumnSorter<T> {
                     return c1.compareTo(c2);
                 } else {
                     if (val1 == null) {
-                        val1 = "";
+                        val1 = ""; //$NON-NLS-1$
                     }
                     if (val2 == null) {
-                        val2 = "";
+                        val2 = ""; //$NON-NLS-1$
                     }
                     return val1.toString().compareToIgnoreCase(val2.toString());
                 }

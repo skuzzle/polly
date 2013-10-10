@@ -56,6 +56,6 @@ public class Parameter {
      */
     @Override
     public String toString() {
-        return this.name + " (" + this.type.toString() + ")";
+        return this.name + " (" + this.type.toString() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
     };
 }

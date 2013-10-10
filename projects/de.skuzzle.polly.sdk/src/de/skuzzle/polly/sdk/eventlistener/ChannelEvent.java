@@ -68,9 +68,8 @@ public class ChannelEvent extends IrcEvent {
     @Override
     public String toString() {
     	if (this.inQuery()) {
-    		return "*** QUERY " + this.user;
+    		return "*** QUERY " + this.user; //$NON-NLS-1$
     	}
-        return this.channel + " " + this.user;
+        return this.channel + " " + this.user; //$NON-NLS-1$
     }
-
 }
