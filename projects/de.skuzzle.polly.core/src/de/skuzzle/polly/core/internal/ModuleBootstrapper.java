@@ -35,13 +35,14 @@ public class ModuleBootstrapper {
     private static void parseConfig(File modules, ModuleLoader loader) 
                 throws IOException, SetupException {
         if (!modules.exists()) {
-            throw new FileNotFoundException("Module definition not found: " + modules);
+            throw new FileNotFoundException(
+                    MSG.bind(MSG.moduleDefinitionNotFound, modules));
         }
         
         
         BufferedReader input = null;
         try {
-            logger.info("Reading modules cfg from " + modules);
+            logger.info("Reading modules cfg from " + modules); //$NON-NLS-1$
             input = new BufferedReader(
                 new InputStreamReader(new FileInputStream(modules)));
             
@@ -50,17 +51,17 @@ public class ModuleBootstrapper {
             while ((module = input.readLine()) != null) {
                 module = module.trim();
                 try {
-                    if (module.startsWith("include ")) {
-                        String[] parts = module.split(" ", 2);
+                    if (module.startsWith("include ")) { //$NON-NLS-1$
+                        String[] parts = module.split(" ", 2); //$NON-NLS-1$
                         File parent = modules.getParentFile();
                         parseConfig(new File(parent, parts[1]), loader);
                         continue;
                     } 
-                    if (module.startsWith("#") || module.startsWith("//") || module.equals("")) {
+                    if (module.startsWith("#") || module.startsWith("//") || module.equals("")) {  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
                         // skip comments
                         continue;
                     }
-                    logger.debug("Searching class for module '" + module + "'");
+                    logger.debug("Searching class for module '" + module + "'"); //$NON-NLS-1$ //$NON-NLS-2$
                     Class<?> cls = Class.forName(module);
                     Constructor<?> ctor = cls.getConstructor(ModuleLoader.class);
                     ctor.newInstance(loader);

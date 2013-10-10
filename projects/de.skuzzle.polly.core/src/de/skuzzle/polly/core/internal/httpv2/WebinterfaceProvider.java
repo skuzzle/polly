@@ -63,14 +63,14 @@ public class WebinterfaceProvider extends AbstractProvider {
     private final static Logger logger = Logger.getLogger(WebinterfaceProvider.class
         .getName());
     
-    public final static String HTTP_CONFIG = "http.cfg";
+    public final static String HTTP_CONFIG = "http.cfg"; //$NON-NLS-1$
     private Configuration serverCfg;
     private HttpServletServer server;
     private WebInterfaceManagerImpl webinterface;
     
     
     public WebinterfaceProvider(ModuleLoader loader) {
-        super("WEBINTERFACE_PROVIDER", loader, false);
+        super("WEBINTERFACE_PROVIDER", loader, false); //$NON-NLS-1$
     }
 
     
@@ -90,7 +90,7 @@ public class WebinterfaceProvider extends AbstractProvider {
         int sessionTimeout = this.serverCfg.readInt(Configuration.HTTP_SESSION_TIMEOUT);
         
         final ExecutorService executor = Executors.newFixedThreadPool(15, 
-                new ThreadFactoryBuilder("HTTP_%n%"));
+                new ThreadFactoryBuilder("HTTP_%n%")); //$NON-NLS-1$
         
         final ServerFactory sf;
         final boolean useSSL = this.serverCfg.readBoolean(Configuration.HTTP_USE_SSL);
@@ -111,10 +111,10 @@ public class WebinterfaceProvider extends AbstractProvider {
             
             @Override
             public void onRequest(HttpEvent e) {
-                logger.debug("HTTP: " + e.getMode() + " " + 
+                logger.debug("HTTP: " + e.getMode() + " " +  //$NON-NLS-1$ //$NON-NLS-2$
                     e.getRequestURI().toString() + 
-                    " [ip: " + e.getClientIP() + ", " + 
-                    e.getSession().getAttached("user") + "], " + 
+                    " [ip: " + e.getClientIP() + ", " +  //$NON-NLS-1$ //$NON-NLS-2$
+                    e.getSession().getAttached("user") + "], " +  //$NON-NLS-1$ //$NON-NLS-2$
                     e.parameterMap());
             }
         });
@@ -145,7 +145,7 @@ public class WebinterfaceProvider extends AbstractProvider {
                 if (values.length < 1 || !values[0].equals(WebinterfaceManager.ADD_MENU_ENTRY)) {
                     return;
                 } else if (values.length < 4) {
-                    logger.error("Ignoring 'ADD_MENU_EVENT' beacause of missing parameters");
+                    logger.error("Ignoring 'ADD_MENU_EVENT' beacause of missing parameters"); //$NON-NLS-1$
                     return;
                 }
                 

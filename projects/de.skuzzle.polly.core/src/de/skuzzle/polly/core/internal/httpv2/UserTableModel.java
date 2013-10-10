@@ -11,27 +11,41 @@ import de.skuzzle.polly.sdk.httpv2.html.HTMLElement;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLElementGroup;
 
 
-public class UserDataSource extends AbstractHTMLTableModel<User> {
+public class UserTableModel extends AbstractHTMLTableModel<User> {
 
     private final static String[] COLUMNS = {
-        "Id", "Name", "Nickname", "Is Idle", "Last IRC action", "IRC login", "Action"};
+        MSG.userTableColId, 
+        MSG.userTableColName, 
+        MSG.userTableColNick, 
+        MSG.userTableColIdle, 
+        MSG.userTableColLastAction, 
+        MSG.userTableColLogin, 
+        MSG.userTableColAction
+    };
+    
     
     private final UserManager um;
     
-    public UserDataSource(UserManager um) {
+    public UserTableModel(UserManager um) {
         this.um = um;
     }
 
+    
+    
     @Override
     public String getHeader(int column) {
         return COLUMNS[column];
     }
 
+    
+    
     @Override
     public int getColumnCount() {
         return COLUMNS.length;
     }
 
+    
+    
     @Override
     public Object getCellValue(int column, User element) {
         switch (column) {
@@ -42,47 +56,57 @@ public class UserDataSource extends AbstractHTMLTableModel<User> {
         case 4: return new Date(element.getLastMessageTime());
         case 5: return new Date(element.getLoginTime());
         case 6: return new HTMLElementGroup().add(
-            new HTMLElement("a")
-            .attr("href", "/pages/editUser?userId="+element.getId())
-            .content( new HTMLElement("img")
-                .attr("src", "/files/imgv2/user_edit.png")
-                .attr("width", "20")
-                .attr("height", "20").toString()
-            ).attr("title", "Edit " + element.getName()))
+            new HTMLElement("a") //$NON-NLS-1$
+            .attr("href", UserController.PAGE_EDIT_USER + "?userId="+element.getId()) //$NON-NLS-1$ //$NON-NLS-2$
+            .content( new HTMLElement("img") //$NON-NLS-1$
+                .attr("src", "/files/imgv2/user_edit.png") //$NON-NLS-1$ //$NON-NLS-2$
+                .attr("width", "20") //$NON-NLS-1$ //$NON-NLS-2$
+                .attr("height", "20").toString() //$NON-NLS-1$ //$NON-NLS-2$
+            ).attr("title", MSG.bind(MSG.userTableEditTitle, element.getName()))) //$NON-NLS-1$
             .add(
-                new HTMLElement("a")
-                .attr("href", "#")
-                .attr("onclick", "deleteUser(" + element.getId() + ", '" + element.getName() + "')")
-                .content( new HTMLElement("img")
-                    .attr("src", "/files/imgv2/user_delete.png")
-                    .attr("width", "20")
-                    .attr("height", "20").toString()
-                ).attr("title", "Delete " + element.getName())
+                new HTMLElement("a") //$NON-NLS-1$
+                .attr("href", "#") //$NON-NLS-1$ //$NON-NLS-2$
+                .attr("onclick", "deleteUser(" + element.getId() + ", '" + element.getName() + "')") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                .content( new HTMLElement("img") //$NON-NLS-1$
+                    .attr("src", "/files/imgv2/user_delete.png") //$NON-NLS-1$ //$NON-NLS-2$
+                    .attr("width", "20") //$NON-NLS-1$ //$NON-NLS-2$
+                    .attr("height", "20").toString() //$NON-NLS-1$ //$NON-NLS-2$
+                ).attr("title", MSG.bind(MSG.userTableDeleteTitle, element.getName())) //$NON-NLS-1$
             );
             
-        default: return "";
+        default: return ""; //$NON-NLS-1$
         }
     }
+    
+    
     
     @Override
     public List<User> getData(HttpEvent e) {
         return this.um.getRegisteredUsers();
     }
 
+    
+    
     @Override
     public boolean isFilterable(int column) {
         return column < 6;
     }
+    
+    
 
     @Override
     public boolean isSortable(int column) {
         return column < 6;
     }
+    
+    
 
     @Override
     public boolean isEditable(int column) {
         return false;
     }
+    
+    
     
     @Override
     public Class<?> getColumnClass(int column) {

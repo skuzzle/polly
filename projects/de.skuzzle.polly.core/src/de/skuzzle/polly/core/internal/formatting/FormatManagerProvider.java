@@ -19,7 +19,7 @@ public class FormatManagerProvider extends AbstractProvider {
 
 
     public FormatManagerProvider(ModuleLoader loader) {
-        super("FORMAT_MANAGER_PROVIDER", loader, true);
+        super("FORMAT_MANAGER_PROVIDER", loader, true); //$NON-NLS-1$
     }
 
     

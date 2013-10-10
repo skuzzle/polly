@@ -17,9 +17,12 @@ import de.skuzzle.polly.sdk.roles.RoleManager;
 
 public class RoleController extends PollyController {
 
-    private final static String ADMIN_CATEGORY_KEY = "roleAdminCategory";
-    private final static String ROLE_NAME_KEY = "roleManagerPage";
-    private final static String ROLE_DESC_KEY = "roleManagerDesc";
+    private final static String ADMIN_CATEGORY_KEY = "roleAdminCategory"; //$NON-NLS-1$
+    private final static String ROLE_NAME_KEY = "roleManagerPage"; //$NON-NLS-1$
+    private final static String ROLE_DESC_KEY = "roleManagerDesc"; //$NON-NLS-1$
+    
+    public final static String PAGE_ROLE_MANAGER = "pages/roles"; //$NON-NLS-1$
+    public final static String CONTENT_ROLE_MANAGER = "/http/view/roles.html"; //$NON-NLS-1$
     
     public RoleController(MyPolly myPolly) {
         super(myPolly);
@@ -34,7 +37,7 @@ public class RoleController extends PollyController {
     
     
     
-    @Get(value = "pages/roles", name = ROLE_NAME_KEY)
+    @Get(value = PAGE_ROLE_MANAGER, name = ROLE_NAME_KEY)
     @OnRegister({
         WebinterfaceManager.ADD_MENU_ENTRY,
         MSG.FAMILY,
@@ -44,13 +47,13 @@ public class RoleController extends PollyController {
     })
     public HttpAnswer roles() throws AlternativeAnswerException {
         this.requirePermissions(RoleManager.ADMIN_PERMISSION);
-        final Map<String, Object> c = this.createContext("/http/view/roles.html");
-        c.put("roles", this.getMyPolly().roles().getRoles());
+        final Map<String, Object> c = this.createContext(CONTENT_ROLE_MANAGER);
+        c.put("roles", this.getMyPolly().roles().getRoles()); //$NON-NLS-1$
         Set<String> allPerms = new TreeSet<String>();
         for (String role : this.getMyPolly().roles().getRoles()) {
             allPerms.addAll(this.getMyPolly().roles().getPermissions(role));
         }
-        c.put("allPerms", allPerms);
+        c.put("allPerms", allPerms); //$NON-NLS-1$
         return this.makeAnswer(c);
     }
 }

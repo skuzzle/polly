@@ -29,7 +29,7 @@ public class ExecutorServiceProvider extends AbstractProvider {
 
     
     public ExecutorServiceProvider(ModuleLoader loader) {
-        super("EXECUTOR_SERVICE_PROVIDER", loader, true);
+        super("EXECUTOR_SERVICE_PROVIDER", loader, true); //$NON-NLS-1$
     }
 
 
@@ -42,14 +42,13 @@ public class ExecutorServiceProvider extends AbstractProvider {
 
         ExecutorService eventThreadPool = Executors.newFixedThreadPool(
             pollyCfg.readInt(Configuration.EVENT_THREADS),
-            new ThreadFactoryBuilder("EVENT_THREAD_%n%"));
+            new ThreadFactoryBuilder("EVENT_THREAD_%n%")); //$NON-NLS-1$
         final EventProvider eventProvider = EventProviders.newAsynchronousEventProvider(
             eventThreadPool);
 
         final ExecutorService commandExecutor = Executors.newFixedThreadPool(
             pollyCfg.readInt(Configuration.EXECUTION_THREADS), 
-            new ThreadFactoryBuilder(
-            "EXECUTION_THREAD_%n%"));
+            new ThreadFactoryBuilder("EXECUTION_THREAD_%n%")); //$NON-NLS-1$
 
         this.provideComponentAs(EventProvider.class, eventProvider);
         this.provideComponentAs(ExecutorService.class, commandExecutor);

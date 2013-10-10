@@ -14,7 +14,7 @@ import de.skuzzle.polly.core.moduleloader.annotations.Require;
 public class ConversationManagerProvider extends AbstractProvider {
 
     public ConversationManagerProvider(ModuleLoader loader) {
-        super("CONVERSATION_MANAGER_PROVIDER", loader, true);
+        super("CONVERSATION_MANAGER_PROVIDER", loader, true); //$NON-NLS-1$
     }
     
     

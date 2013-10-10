@@ -17,12 +17,11 @@ import de.skuzzle.polly.sdk.constraints.Constraints;
 )
 public class DefaultUserAttributesProvider extends AbstractProvider {
     
-    public final static String AUTO_LOGON = "AUTO_LOGON"; 
-    public final static String AUTO_LOGON_DESCRIPTION = 
-        "Enable nickserv based auto logon in IRC";
+    public final static String AUTO_LOGON = "AUTO_LOGON";  //$NON-NLS-1$
+    public final static String AUTO_LOGON_DESCRIPTION = MSG.autoLogonDescription;
     
     public DefaultUserAttributesProvider(ModuleLoader loader) {
-        super("DEFAULT_ATTRIBUTES_PROVIDER", loader, false);
+        super("DEFAULT_ATTRIBUTES_PROVIDER", loader, false); //$NON-NLS-1$
     }
 
     
@@ -33,7 +32,7 @@ public class DefaultUserAttributesProvider extends AbstractProvider {
         
         try {
             userManager.addAttribute(AUTO_LOGON, new Types.BooleanType(true), 
-                AUTO_LOGON_DESCRIPTION, "Core", Constraints.BOOLEAN);
+                AUTO_LOGON_DESCRIPTION, "Core", Constraints.BOOLEAN); //$NON-NLS-1$
         } catch (Exception e) {
             throw new SetupException(e);
         }
