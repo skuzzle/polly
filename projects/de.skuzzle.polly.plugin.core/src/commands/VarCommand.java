@@ -3,8 +3,8 @@ package commands;
 import java.util.Iterator;
 import java.util.Set;
 
+import polly.core.MSG;
 import polly.core.MyPlugin;
-
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -16,16 +16,16 @@ import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 public class VarCommand extends Command {
 
     public VarCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "var");
-        this.createSignature("Zeigt die Deklarationen des ausführenden Benutzers an",
+        super(polly, "var"); //$NON-NLS-1$
+        this.createSignature(MSG.varSig0Desc,
             MyPlugin.LIST_VARS_PERMISSION);
-        this.createSignature("Zeigt die Deklarationen des angegebenen Namespaces an.",
+        this.createSignature(MSG.varSig1Desc,
             MyPlugin.LIST_VARS_PERMISSION,
-            new Parameter("Namespace", Types.STRING));
-        this.createSignature("Zeigt die Deklarationen des angegebenen Benutzers an.",
+            new Parameter(MSG.varSig1Namespace, Types.STRING));
+        this.createSignature(MSG.varSig2Desc,
             MyPlugin.LIST_VARS_PERMISSION,
-            new Parameter("User", Types.USER));
-        this.setHelpText("Listet die verfügbaren Variablen für einen Benutzer auf.");
+            new Parameter(MSG.varSig2User, Types.USER));
+        this.setHelpText(MSG.varHelp);
     }
     
     
@@ -40,12 +40,12 @@ public class VarCommand extends Command {
         }
         StringBuilder b = new StringBuilder();
         Set<String> d = this.getMyPolly().users().getDeclaredIdentifiers(ns);
-        b.append("Deklarationen: ");
+        b.append(MSG.varDeclarations);
         Iterator<String> it = d.iterator();
         while (it.hasNext()) {
             b.append(it.next());
             if (it.hasNext()) {
-                b.append(", ");
+                b.append(", "); //$NON-NLS-1$
             }
         }
         this.reply(channel, b.toString());

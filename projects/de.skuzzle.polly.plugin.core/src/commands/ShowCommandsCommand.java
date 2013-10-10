@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import polly.core.MSG;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Signature;
@@ -16,9 +17,9 @@ import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 public class ShowCommandsCommand extends Command {
 
     public ShowCommandsCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "cmds");
-        this.createSignature("Zeigt alle f�r dich ausf�hrbaren Befehle an.");
-        this.setHelpText("Listet die verf�gbaren Befehle auf.");
+        super(polly, "cmds"); //$NON-NLS-1$
+        this.createSignature(MSG.showCmdsSig0Desc);
+        this.setHelpText(MSG.showCmdsHelp);
     }
     
     
@@ -50,11 +51,11 @@ public class ShowCommandsCommand extends Command {
             Command cmd = it.next();
             b.append(cmd.toString());
             if (it.hasNext()) {
-                b.append(", ");
+                b.append(", "); //$NON-NLS-1$
             }
         }
         
-        this.reply(channel, "Verf�gbare Befehle: " + b.toString());
+        this.reply(channel, MSG.bind(MSG.showCmdsAvailable, b.toString()));
         return false;
     }
 

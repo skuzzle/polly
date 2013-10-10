@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -21,19 +22,18 @@ public class UsersCommand extends Command {
 
     
     public UsersCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "users");
-        this.createSignature("Listet alle registrierten Benutzer auf",
+        super(polly, "users"); //$NON-NLS-1$
+        this.createSignature(MSG.usersSig0Desc,
             MyPlugin.LIST_USERS_PERMISSION);
-        this.createSignature("Listet alle registrierten Benutzer auf, deren Name auf " +
-        		"das angegebene Pattern passt", 
+        this.createSignature(MSG.usersSig1Desc,
         		MyPlugin.LIST_USERS_PERMISSION,
-    		new Parameter("Pattern", Types.STRING));
-        this.createSignature("Listet alle registrierten Benutzer auf, deren Name auf " +
-        		"das angegebene Pattern passt",
+    		new Parameter(MSG.usersSig1Pattern, Types.STRING));
+        this.createSignature(MSG.usersSig2Desc,
     		MyPlugin.LIST_USERS_PERMISSION,
-    		new Parameter("Pattern", Types.STRING), 
-    		new Parameter("Logged In Only", Types.BOOLEAN));
+    		new Parameter(MSG.usersSig2Pattern, Types.STRING), 
+    		new Parameter(MSG.usersSig2LoggedInOnly, Types.BOOLEAN));
         this.setRegisteredOnly();
+        this.setHelpText(MSG.usersHelp);
     }
 
     
@@ -42,7 +42,7 @@ public class UsersCommand extends Command {
     protected boolean executeOnBoth(User executer, String channel,
         Signature signature) throws CommandException {
         
-        String pattern =".*";
+        String pattern =".*"; //$NON-NLS-1$
         boolean loggedInOnly = false;
         
         if (this.match(signature, 1)) {
@@ -64,7 +64,7 @@ public class UsersCommand extends Command {
             
             Matcher m1 = p.matcher(current.getName().toLowerCase());
             String cNick = current.getCurrentNickName();
-            cNick = cNick == null ? "" : cNick.toLowerCase();
+            cNick = cNick == null ? "" : cNick.toLowerCase(); //$NON-NLS-1$
             Matcher m2 = p.matcher(cNick);
             
             if (m1.matches() || m2.matches()) {
@@ -74,19 +74,19 @@ public class UsersCommand extends Command {
 
                 b.append(current.getName());
                 if (this.getMyPolly().users().isSignedOn(current)) {
-                    b.append(" (");
+                    b.append(" ("); //$NON-NLS-1$
                     b.append(current.getCurrentNickName());
-                    b.append(")");
+                    b.append(")"); //$NON-NLS-1$
                 }
                 
                 if (it.hasNext()) {
-                    b.append(", ");
+                    b.append(", "); //$NON-NLS-1$
                 }
             }
         }
         
         if (users.isEmpty()) {
-            b.append("Keine Benutzer registriert");
+            b.append(MSG.usersNoUsers);
         }
         
         this.reply(channel, b.toString());

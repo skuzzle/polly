@@ -2,8 +2,8 @@ package commands.roles;
 
 import java.util.Iterator;
 
+import polly.core.MSG;
 import polly.core.MyPlugin;
-
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -20,13 +20,13 @@ public class ListPermissionsCommand extends Command {
     
     
     public ListPermissionsCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "listpermissions");
+        super(polly, "listpermissions"); //$NON-NLS-1$
         this.createSignature(
-            "Listet alle Berechtigungen einer Rolle auf.",
+            MSG.listPermSig0Desc,
             MyPlugin.LIST_PERMISSIONS_PERMISSION,
-            new Parameter("Rolle", Types.STRING));
+            new Parameter(MSG.listPermSig0Name, Types.STRING));
         
-        this.setHelpText("Listet alle Berechtigungen einer Rolle auf");
+        this.setHelpText(MSG.listPermHelp);
     }
 
     
@@ -39,7 +39,7 @@ public class ListPermissionsCommand extends Command {
             String roleName = signature.getStringValue(0);
             
             if (!this.getMyPolly().roles().roleExists(roleName)) {
-                throw new CommandException("Unbekannte Rolle: " + roleName);
+                throw new CommandException(MSG.bind(MSG.listPermUnknownRole, roleName));
             }
             
             StringBuilder result = new StringBuilder();
@@ -49,7 +49,7 @@ public class ListPermissionsCommand extends Command {
             while (it.hasNext()) {
                 result.append(it.next());
                 if (it.hasNext()) {
-                    result.append(", ");
+                    result.append(", "); //$NON-NLS-1$
                 }
             }
             this.reply(channel, result.toString());
