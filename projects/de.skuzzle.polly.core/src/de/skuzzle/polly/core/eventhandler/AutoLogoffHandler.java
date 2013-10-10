@@ -32,11 +32,10 @@ public class AutoLogoffHandler implements UserSpottedListener, ConnectionListene
     @Override
     public void userLost(SpotEvent e) {
         if (this.userManager.isSignedOn(e.getUser())) {
-            logger.warn("Auto logoff for user: " + e.getUser());
+            logger.warn("Auto logoff for user: " + e.getUser()); //$NON-NLS-1$
             if (e.getType() != SpotEvent.USER_QUIT) {
                 this.ircManager.sendMessage(e.getUser().getNickName(), 
-                    "Du wurdest automatisch ausgeloggt weil du den letzten " +
-                    "gemeinsamen Channel verlassen hast.", this);
+                    MSG.autoLogoff, this);
             }
             this.userManager.logoff(e.getUser(), true);
         }

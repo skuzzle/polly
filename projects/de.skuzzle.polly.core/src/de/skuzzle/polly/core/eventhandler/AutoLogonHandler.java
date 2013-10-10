@@ -69,7 +69,7 @@ public class AutoLogonHandler extends AbstractDisposable
             synchronized (scheduledLogons) {
                 if (scheduledLogons.containsKey(this.forUser)) {
                     scheduledLogons.remove(this.forUser);
-                    ircManager.sendRawCommand("NICKSERV STATUS " + this.forUser);
+                    ircManager.sendRawCommand("NICKSERV STATUS " + this.forUser); //$NON-NLS-1$
                 }
             }
         }
@@ -80,23 +80,23 @@ public class AutoLogonHandler extends AbstractDisposable
     private MessageAdapter autoSignOnHandler = new MessageAdapter() {
         @Override
         public void noticeMessage(MessageEvent e) {
-            if (!e.getUser().getNickName().equalsIgnoreCase("nickserv")) {
+            if (!e.getUser().getNickName().equalsIgnoreCase("nickserv")) { //$NON-NLS-1$
                 return;
             }
-            String[] parts = e.getMessage().split(" ");
+            String[] parts = e.getMessage().split(" "); //$NON-NLS-1$
             if (parts.length != 3 || 
-                    !parts[0].equalsIgnoreCase("status") || 
-                    !parts[2].equals("3")) {
+                    !parts[0].equalsIgnoreCase("status") ||  //$NON-NLS-1$
+                    !parts[2].equals("3")) { //$NON-NLS-1$
                 return;
             }
             String forUser = parts[1];
             try {
                 userManager.logonWithoutPassword(forUser);
             } catch (AlreadySignedOnException e1) {
-                logger.trace("User logged in while waiting for auto logon");
+                logger.trace("User logged in while waiting for auto logon"); //$NON-NLS-1$
             } catch (UnknownUserException e1) {
-                logger.error("Error while auto logon. User '" + forUser + 
-                    "' unknown", e1);
+                logger.error("Error while auto logon. User '" + forUser +  //$NON-NLS-1$
+                    "' unknown", e1); //$NON-NLS-1$
             }
         }
     };
@@ -120,7 +120,7 @@ public class AutoLogonHandler extends AbstractDisposable
         this.ircManager = ircManager;
         this.userManager = userManager;
         this.autoLogonExecutor = Executors.newScheduledThreadPool(1, 
-                new ThreadFactoryBuilder("LOGON"));
+                new ThreadFactoryBuilder("LOGON")); //$NON-NLS-1$
         this.scheduledLogons = new HashMap<String, AutoLogonRunnable>();
         this.autoLoginTime = autoLoginTime;
     }
@@ -132,7 +132,7 @@ public class AutoLogonHandler extends AbstractDisposable
         final String forUser = e.getUser().getNickName();
         if (this.userExists(forUser)) {
             // try instant login if user just spotted 
-            this.ircManager.sendRawCommand("NICKSERV STATUS " + forUser);
+            this.ircManager.sendRawCommand("NICKSERV STATUS " + forUser); //$NON-NLS-1$
         }
         this.scheduleAutoLogon(e.getUser().getNickName());
     }
@@ -152,7 +152,7 @@ public class AutoLogonHandler extends AbstractDisposable
             if (alr != null) {
                 alr.cancel();
                 this.scheduledLogons.remove(e.getOldUser().getNickName());
-                logger.debug("Auto logon for " + e.getOldUser() + " canceled");
+                logger.debug("Auto logon for " + e.getOldUser() + " canceled"); //$NON-NLS-1$ //$NON-NLS-2$
             }
             
             User u = this.userManager.getUser(e.getNewUser().getNickName());
@@ -171,7 +171,7 @@ public class AutoLogonHandler extends AbstractDisposable
                 this.scheduledLogons.put(forUser, runMe);
                 this.autoLogonExecutor.schedule(runMe, this.autoLoginTime, 
                         TimeUnit.MILLISECONDS);
-                logger.debug("Auto logon for " + forUser + " scheduled");
+                logger.debug("Auto logon for " + forUser + " scheduled"); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
     }
@@ -195,7 +195,7 @@ public class AutoLogonHandler extends AbstractDisposable
         synchronized (this.scheduledLogons) {
             AutoLogonRunnable alr = this.scheduledLogons.get(e.getUser().getName());
             if (alr != null) {
-                logger.trace("Removing scheduled auto logon for user " + 
+                logger.trace("Removing scheduled auto logon for user " +  //$NON-NLS-1$
                     e.getUser().getName());
                 alr.cancel();
                 this.scheduledLogons.remove(e.getUser().getName());

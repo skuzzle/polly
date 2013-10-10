@@ -18,9 +18,6 @@ import de.skuzzle.polly.sdk.exceptions.UnknownSignatureException;
 
 
 
-
-
-
 public class MessageHandler implements MessageListener {
     
     private final static int OFF = 0;
@@ -85,26 +82,26 @@ public class MessageHandler implements MessageListener {
                         MessageHandler.this.reportParseError(e, e2);
                     } else {
                         e.getSource().sendMessage(e.getChannel(), 
-                            "Fehler beim Ausführen des Befehls: " + e1.getMessage());
+                            MSG.bind(MSG.cmdExecError, e1.getMessage()), this);
                     }
-                    logger.debug("", e1);
+                    logger.debug("", e1); //$NON-NLS-1$
                 } catch (UnknownCommandException e1) {
                     if (reportUnknownCommand) {
-                        e.getSource().sendMessage(e.getChannel(), "Unbekannter Befehl: " + 
-                            e1.getMessage());
+                        e.getSource().sendMessage(e.getChannel(), 
+                                MSG.bind(MSG.cmdUnknown, e.getMessage()), this);
                     }
                 } catch (UnknownSignatureException e1) {
-                    e.getSource().sendMessage(e.getChannel(), "Unbekannte Signatur: " + 
-                            e1.getSignature().toString());
-                } catch (InsufficientRightsException e1) {
-                    e.getSource().sendMessage(e.getChannel(), "Du kannst den Befehl '" + 
-                            e1.getObject() + "' nicht ausführen. Benötigte Rechte: " + 
-                            e1.getObject().getRequiredPermission());
-                } catch (Exception e1) {
-                    logger.error("Exception while executing command: " + 
-                            e1.getMessage(), e1);
                     e.getSource().sendMessage(e.getChannel(), 
-                            "Interner Fehler beim Ausführen des Befehls.");
+                            MSG.bind(MSG.cmdUnknownSignature, e1.getSignature().toString()), 
+                            this);
+                } catch (InsufficientRightsException e1) {
+                    e.getSource().sendMessage(e.getChannel(), 
+                            MSG.bind(MSG.cmdInsufficientRights, e1.getObject(), 
+                                    e1.getObject().getRequiredPermission()), this);
+                } catch (Exception e1) {
+                    logger.error("Exception while executing command: " +  //$NON-NLS-1$
+                            e1.getMessage(), e1);
+                    e.getSource().sendMessage(e.getChannel(), MSG.cmdInternalError, this);
                 }
             }
         };
@@ -132,9 +129,9 @@ public class MessageHandler implements MessageListener {
     
     
     private de.skuzzle.polly.core.internal.users.UserImpl getUser(IrcUser user) {
-        de.skuzzle.polly.core.internal.users.UserImpl u = (de.skuzzle.polly.core.internal.users.UserImpl) this.userManager.getUser(user);
+        UserImpl u = (UserImpl) this.userManager.getUser(user);
         if (u == null) {
-            u = (UserImpl) this.userManager.createUser("~UNKNOWN", "blabla");
+            u = (UserImpl) this.userManager.createUser("~UNKNOWN", "blabla");  //$NON-NLS-1$//$NON-NLS-2$
             u.setCurrentNickName(user.getNickName());
         }
         return u;

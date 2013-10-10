@@ -49,7 +49,7 @@ public class ConfigurationProviderImpl implements ConfigurationProvider {
     
     public ConfigurationProviderImpl(File configDir) {
         this.configDir = configDir;
-        this.pluginConfigDir = new File(configDir, "pluginconfigs");
+        this.pluginConfigDir = new File(configDir, "pluginconfigs"); //$NON-NLS-1$
         this.cfgCache = new WeakHashMap<File, ConfigurationImpl>();
         this.eventProvider = EventProviders.newDefaultEventProvider();
     }
@@ -60,7 +60,7 @@ public class ConfigurationProviderImpl implements ConfigurationProvider {
             ConfigurationValidator validator) 
                     throws FileNotFoundException, IOException, ConfigurationException {
         
-        logger.trace("Trying to locate '" + cfgName + "'");
+        logger.trace("Trying to locate '" + cfgName + "'"); //$NON-NLS-1$ //$NON-NLS-2$
         File cfgFile = this.searchFor(cfgName);
         ConfigurationImpl cached = this.cfgCache.get(cfgFile.getCanonicalFile());
         if (cached == null) {
@@ -68,13 +68,13 @@ public class ConfigurationProviderImpl implements ConfigurationProvider {
             validator.validate(cached);
             cached.setValidator(validator);
             this.cfgCache.put(cfgFile.getCanonicalFile(), cached);
-            logger.info("Loaded configuration into memory\n" + cached.toString());
+            logger.info("Loaded configuration into memory\n" + cached.toString()); //$NON-NLS-1$
         } else {
-            logger.trace("Configuration restored from cache");
+            logger.trace("Configuration restored from cache"); //$NON-NLS-1$
         }
         
         if (isRoot) {
-            logger.info("Setting new root configuration");
+            logger.info("Setting new root configuration"); //$NON-NLS-1$
             this.rootCfg = cached;
         }
         return cached;

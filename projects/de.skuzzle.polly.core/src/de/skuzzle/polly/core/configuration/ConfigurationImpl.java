@@ -59,7 +59,7 @@ public class ConfigurationImpl implements Configuration {
     
     
     public void store() throws FileNotFoundException, IOException {
-        this.properties.store(new FileOutputStream(this.cfgFile), "");
+        this.properties.store(new FileOutputStream(this.cfgFile), ""); //$NON-NLS-1$
     }
     
     
@@ -88,7 +88,7 @@ public class ConfigurationImpl implements Configuration {
     public <T> void setProperty(String name, T value) {
         this.properties.setProperty(name, value.toString());
         if (parent == null) {
-            logger.warn("Tried to dispatch a ConfigurationEvent, but no parent was set!");
+            logger.warn("Tried to dispatch a ConfigurationEvent, but no parent was set!"); //$NON-NLS-1$
         } else {
             this.parent.fireConfigurationChanged(new ConfigurationEvent(this));
         }
@@ -131,7 +131,7 @@ public class ConfigurationImpl implements Configuration {
     @Override
     public boolean readBoolean(String name) {
         final String tmp = this.readString(name);
-        return tmp != null && tmp.equals("true");
+        return tmp != null && Boolean.parseBoolean(tmp);
     }
     
     
@@ -143,7 +143,7 @@ public class ConfigurationImpl implements Configuration {
         if (prop == null) {
             return new LinkedList<String>();
         }
-        String[] list = prop.split(",");
+        String[] list = prop.split(","); //$NON-NLS-1$
         return Arrays.asList(list);
     }
     
@@ -155,7 +155,7 @@ public class ConfigurationImpl implements Configuration {
         if (prop == null) {
             return new LinkedList<Integer>();
         }
-        String[] parts = prop.split(",");
+        String[] parts = prop.split(","); //$NON-NLS-1$
         ArrayList<Integer> result = new ArrayList<Integer>(parts.length);
         for (String s : parts) {
             result.add(Integer.parseInt(s));
@@ -179,15 +179,15 @@ public class ConfigurationImpl implements Configuration {
         if (this.cfgFile != null) {
             b.append(this.cfgFile.getAbsolutePath());
         } else {
-            b.append("Memory Configuration");
+            b.append("Memory Configuration"); //$NON-NLS-1$
         }
         b.append(System.lineSeparator());
         
         for (Entry<Object, Object> e : sorted.entrySet()) {
-            b.append("    ");
+            b.append("    "); //$NON-NLS-1$
             b.append(e.getKey().toString());
             this.padSpaces(maxLength, e.getKey().toString().length(), b);
-            b.append(" = ");
+            b.append(" = "); //$NON-NLS-1$
             b.append(e.getValue().toString());
             b.append(System.lineSeparator());
         }
@@ -203,7 +203,7 @@ public class ConfigurationImpl implements Configuration {
             return;
         }
         for (int i = 0; i < spaces; ++i) {
-            b.append(" ");
+            b.append(" "); //$NON-NLS-1$
         }
     }
 }
