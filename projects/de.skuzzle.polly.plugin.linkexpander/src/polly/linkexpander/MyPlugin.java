@@ -24,7 +24,7 @@ import de.skuzzle.polly.sdk.roles.RoleManager;
 
 public class MyPlugin extends PollyPlugin {
 
-    public final static String GRABBER_PERMISSION = "polly.permission.LINK_GRABBER";
+    public final static String GRABBER_PERMISSION = "polly.permission.LINK_GRABBER"; //$NON-NLS-1$
     
     
     private LinkGrabberManager linkGrabberManager;

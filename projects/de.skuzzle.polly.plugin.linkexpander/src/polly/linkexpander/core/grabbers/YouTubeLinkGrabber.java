@@ -9,10 +9,10 @@ public class YouTubeLinkGrabber extends AbstractHttpRequestGrabber {
     
     
     private final static Pattern LINK_PATTERN = Pattern.compile(
-            "(https?://www\\.youtube\\.com/watch\\?.*v=\\S+)");
+            "(https?://www\\.youtube\\.com/watch\\?.*v=\\S+)"); //$NON-NLS-1$
     
     private final static Pattern META_PATTERN = Pattern.compile(
-        "<meta\\s+name=\"title\"\\s+content=\"([^\"]+)\">");
+        "<meta\\s+name=\"title\"\\s+content=\"([^\"]+)\">"); //$NON-NLS-1$
     
     private static final int REQUEST_URL_GROUP = 1;
     private static final int TITLE_GROUP = 1;

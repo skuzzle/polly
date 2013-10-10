@@ -52,7 +52,7 @@ public class LinkGrabberManager {
                 String r = grabber.processMatch(e, m);
                 if (r != null) {
                     e.getSource().sendMessage(e.getChannel(), r + 
-                        " (" + grabber.getLink(e.getMessage(), m) + ")", this);
+                        " (" + grabber.getLink(e.getMessage(), m) + ")", this); //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }
         }

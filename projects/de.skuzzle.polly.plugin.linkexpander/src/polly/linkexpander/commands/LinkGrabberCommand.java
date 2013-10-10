@@ -1,5 +1,6 @@
 package polly.linkexpander.commands;
 
+import polly.linkexpander.MSG;
 import polly.linkexpander.MyPlugin;
 import polly.linkexpander.core.LinkGrabberManager;
 import de.skuzzle.polly.sdk.Command;
@@ -19,12 +20,12 @@ public class LinkGrabberCommand extends Command {
     
     public LinkGrabberCommand(MyPolly polly, LinkGrabberManager grabber) 
             throws DuplicatedSignatureException {
-        super(polly, "grabber");
+        super(polly, "grabber"); //$NON-NLS-1$
         this.grabber = grabber;
         
-        this.createSignature("Schaltet den Linkgrabber ein/aus", 
+        this.createSignature(MSG.linkGrabberSig0Desc, 
             MyPlugin.GRABBER_PERMISSION,
-            new Parameter("Status", Types.BOOLEAN));
+            new Parameter(MSG.linkGrabberSig0Status, Types.BOOLEAN));
     }
 
     
@@ -35,9 +36,10 @@ public class LinkGrabberCommand extends Command {
         
         if (this.match(signature, 0)) {
             this.grabber.setEnabled(signature.getBooleanValue(0));
-            String state = this.grabber.isEnabled() ? "an" : "aus";
+            String state = this.grabber.isEnabled() ? 
+                    MSG.linkGrabberOn : MSG.linkGrabberOff;
             
-            this.reply(channel, "Linkgrabber Status: " + state);
+            this.reply(channel, MSG.bind(MSG.linkGrabberStatus, state));
         }
         
         return false;
