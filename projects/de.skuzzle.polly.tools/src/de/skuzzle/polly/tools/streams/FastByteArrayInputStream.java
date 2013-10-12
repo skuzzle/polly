@@ -103,14 +103,14 @@ public class FastByteArrayInputStream extends InputStream {
     
     
     @Override
-    public synchronized void mark(int readlimit) {
+    public void mark(int readlimit) {
         this.mark = this.pos;
     }
     
     
     
     @Override
-    public synchronized void reset() throws IOException {
+    public void reset() throws IOException {
         if (this.mark == -1) {
             throw new IOException("mark not set");
         }
