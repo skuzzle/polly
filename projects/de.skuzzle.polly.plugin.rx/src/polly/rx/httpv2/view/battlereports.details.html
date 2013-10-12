@@ -1,4 +1,21 @@
 <div class="highlight contentBox">
+    #CONTENT_HEADER ("Drop")
+    <table>
+    <tr>
+    #foreach ($i in [1..14])
+        <th style="text-align: center"><img src="/polly/rx/httpv2/view/r${i}.gif"/></th>
+    #end
+    </tr>
+    <tr>
+    #foreach ($drop in $report.getDrop())
+        <td>$drop.getAmount()</td>    
+    #end
+    </tr>
+    </table>
+   </div>
+</div>
+
+<div class="highlight contentBox">
     #CONTENT_HEADER ("Attacker Fleet")
     <div class="content">
 #PRINT_FLEET(
