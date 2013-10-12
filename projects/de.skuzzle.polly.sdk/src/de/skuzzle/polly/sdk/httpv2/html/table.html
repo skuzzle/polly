@@ -5,14 +5,14 @@
 
 <tr>
     <th colspan="$model.getColumnCount()">
-    <a href="#" onclick="loadTable('$baseUrl', '$id')">$MSG.get("tableReload")</a>
+    <a href="#" onclick="loadTable('$baseUrl', '$id')">$MSG.tableReload</a>
     #if (!$noFilter)
-	    $MSG.get("tablePages"): 
+	    $MSG.tablePages: 
 	    #if ($settings.getPage() == 0)
-	        <b>$MSG.get("tableGotoFirst")</b> &lt;
+	        <b>$MSG.tableGotoFirst</b> &lt;
 	    #else
-	        <a href="#" onclick="setPageRequest('$baseUrl', '$id', '0')" title="$MSG.get('tableGotoFirstTitle')">$MSG.get('tableGotoFirst')</a>
-	        <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$prev')" title=${MSG.get("tableGotoPreviousTitle")}>&lt;</a>
+	        <a href="#" onclick="setPageRequest('$baseUrl', '$id', '0')" title="$MSG.tableGotoFirstTitle">$MSG.tableGotoFirst</a>
+	        <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$prev')" title="$MSG.tableGotoPreviousTitle">&lt;</a>
 	    #end
 	    
 	    #foreach ($page in [$minPage..$maxPage])
@@ -24,10 +24,10 @@
 	        #end
 	    #end
 	    #if ($settings.getPage() == $pageCount)
-	         &gt; <b>$MSG.get('tableGotoLast')</b>
+	         &gt; <b>$MSG.tableGotoLast</b>
 	    #else
-	        <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$next')" title="$MSG.get('tableGotoNextTitle')">&gt;</a>
-	        <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$pageCount')" title="$MSG.get('tableGotoLastTitle', "$settings.getPageCount()")">$MSG.get('tableGotoLast')</a>
+	        <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$next')" title="$MSG.tableGotoNextTitle">&gt;</a>
+	        <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$pageCount')" title="$MSG.get('tableGotoLastTitle', "$settings.getPageCount()")">$MSG.tableGotoLast</a>
 	    #end
     #end
     
@@ -38,7 +38,7 @@
     #end
         
         <img id="update_$id" style="float:right; display: none;" src="/de/skuzzle/polly/sdk/httpv2/html/loading.gif"/>
-        <span baseUrl="$baseUrl" class="select_pageSize" style="float:right">$MSG.get("tablePageSize"):
+        <span baseUrl="$baseUrl" class="select_pageSize" style="float:right">$MSG.tablePageSize:
             <select size="1">
             #foreach ($ps in [1..10])
             #set($value = $ps*10)

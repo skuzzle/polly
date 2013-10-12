@@ -144,7 +144,7 @@ public class HTMLTable<T> implements HttpEventHandler {
                 return ""; //$NON-NLS-1$
             } else {
                 return this.escape 
-                        ? Escape.html(cellValue.toString()) 
+                        ? HTMLTools.html(cellValue.toString()) 
                         : cellValue.toString();
             }
         }
@@ -207,7 +207,7 @@ public class HTMLTable<T> implements HttpEventHandler {
                 return ""; //$NON-NLS-1$
             }
             final Types t = (Types) cellValue;
-            return Escape.html(t.valueString(this.formatter));
+            return HTMLTools.html(t.valueString(this.formatter));
         }
     }
     
@@ -513,6 +513,8 @@ public class HTMLTable<T> implements HttpEventHandler {
         
         final PollyBundle pb = Resources.get(Messages.FAMILY);
         final Map<String, Object> c = new HashMap<>();
+        
+        HTMLTools.gainFieldAccess(c, Messages.class, "MSG"); //$NON-NLS-1$
         c.put("settings", settings); //$NON-NLS-1$
         c.put("tableModel", this.model); //$NON-NLS-1$
         c.put("colSorter", this.colSorter); //$NON-NLS-1$
@@ -528,7 +530,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         c.put("maxPage", maxPage); //$NON-NLS-1$
         c.put("all", allData.size()); //$NON-NLS-1$
         c.put("filteredSize", fr.filteredSize); //$NON-NLS-1$
-        c.put("MSG", pb); //$NON-NLS-1$
+        //c.put("MSG", pb); //$NON-NLS-1$
         c.putAll(this.baseContext);
         return c;
     }
