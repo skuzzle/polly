@@ -66,7 +66,9 @@ public class SessionController extends PollyController {
     
     
     @Get(API_KILL_SESSION)
-    public HttpAnswer killSession(@Param("id") String id) {
+    public HttpAnswer killSession(@Param("id") String id) 
+            throws AlternativeAnswerException {
+        this.requirePermissions(RoleManager.ADMIN_PERMISSION);
         final HttpSession session = this.getServer().findSession(id);
         if (session != null) {
             session.kill();
@@ -78,7 +80,9 @@ public class SessionController extends PollyController {
     
     
     @Get(API_DETACH)
-    public HttpAnswer detachItem(@Param("id") String id, @Param("key") String key) {
+    public HttpAnswer detachItem(@Param("id") String id, @Param("key") String key) 
+            throws AlternativeAnswerException {
+        this.requirePermissions(RoleManager.ADMIN_PERMISSION);
         final HttpSession session = this.getServer().findSession(id);
         if (session != null) {
             session.detach(key);

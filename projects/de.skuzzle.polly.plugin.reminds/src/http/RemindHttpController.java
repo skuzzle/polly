@@ -84,21 +84,27 @@ public class RemindHttpController extends PollyController {
     
     
     @Get("/api/cancelRemind")
-    public HttpAnswer cancelRemind(@Param("remindId") int id) {
+    public HttpAnswer cancelRemind(@Param("remindId") int id) 
+            throws AlternativeAnswerException {
+        this.requirePermissions(MyPlugin.REMIND_PERMISSION);
         try {
-            this.rm.deleteRemind(id);
+            
+            this.rm.deleteRemind(this.getSessionUser(), id);
             return new GsonHttpAnswer(200, 
                 new SuccessResult(true, "Remind has been deleted"));
         } catch (DatabaseException e) {
             return new GsonHttpAnswer(200, 
                 new SuccessResult(false, "Database exception while deleting remind"));
+        } catch (CommandException e) {
+            return new GsonHttpAnswer(200, e.getMessage());
         }
     }
     
     
     
     @Get("/api/discardSnooze")
-    public HttpAnswer discardSnooze() {
+    public HttpAnswer discardSnooze() throws AlternativeAnswerException {
+        this.requirePermissions(MyPlugin.REMIND_PERMISSION);
         this.rm.cancelSleep(this.getSessionUser().getName());
         return new GsonHttpAnswer(200, new SuccessResult(true, ""));
     }
@@ -116,7 +122,9 @@ public class RemindHttpController extends PollyController {
     
     
     @Get("/api/toggleRemind")
-    public HttpAnswer toggleRemind(@Param("remindId") int id) {
+    public HttpAnswer toggleRemind(@Param("remindId") int id) 
+            throws AlternativeAnswerException {
+        this.requirePermissions(MyPlugin.REMIND_PERMISSION);
         try {
             final RemindEntity re = this.rm.toggleIsMail(getSessionUser(), id);
             return new GsonHttpAnswer(200, new ToggleRemindResult(re.isMail()));
@@ -133,8 +141,11 @@ public class RemindHttpController extends PollyController {
     
     @Get("/api/setSnooze")
     public HttpAnswer setSnooze(
-        @Param(value = "timespan", treatEmpty = true, ifEmptyValue = "") String expression) {
-        final Types parsed = this.getMyPolly().parse(expression);
+        @Param(value = "timespan", treatEmpty = true, ifEmptyValue = "") String exp) 
+                throws AlternativeAnswerException {
+        
+        this.requirePermissions(MyPlugin.REMIND_PERMISSION);
+        final Types parsed = this.getMyPolly().parse(exp);
         if (!(parsed instanceof DateType)) {
             return new GsonHttpAnswer(200, 
                 new SuccessResult(false, "Input yielded no valid date"));
@@ -166,8 +177,10 @@ public class RemindHttpController extends PollyController {
     public HttpAnswer modifyRemind(
         @Param("remindId") int id, 
         @Param(value = "message", treatEmpty = true) String message, 
-        @Param(value = "dueDate", treatEmpty =  true) String dueDate) {
+        @Param(value = "dueDate", treatEmpty =  true) String dueDate) 
+                throws AlternativeAnswerException {
         
+        this.requirePermissions(MyPlugin.REMIND_PERMISSION);
         Types dd = this.getMyPolly().parse(dueDate);
         if (!(dd instanceof DateType)) {
             // invalid date submitted, do not change
