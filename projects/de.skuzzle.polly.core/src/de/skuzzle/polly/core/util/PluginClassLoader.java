@@ -1,5 +1,6 @@
 package de.skuzzle.polly.core.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -74,7 +75,7 @@ public class PluginClassLoader extends SecureClassLoader implements Cloneable {
 
 
         public InputStream getInputStream() {
-            return new FastByteArrayInputStream(this.content);
+            return new ByteArrayInputStream(this.content);
         }
     }
     
