@@ -34,7 +34,7 @@
     #set ($first = $settings.getPage() * $settings.getPageSize() + 1)
     #set ($last = $first + $data.size() - 1)
     #if (!$noFilter)
-    <span style="font-weight: normal">($MSG.get('tableElementInfo', "$first", "$last", "$filteredSize", "$all"))</span>
+    <span style="font-weight: normal">($Messages.bind($MSG.tableElementInfo, $first, $last, $filteredSize, $all))</span>
     #end
         
         <img id="update_$id" style="float:right; display: none;" src="/de/skuzzle/polly/sdk/httpv2/html/loading.gif"/>

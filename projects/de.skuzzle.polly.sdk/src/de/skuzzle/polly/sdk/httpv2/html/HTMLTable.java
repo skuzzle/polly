@@ -28,8 +28,7 @@ import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
 import de.skuzzle.polly.sdk.httpv2.SuccessResult;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
-import de.skuzzle.polly.sdk.resources.PollyBundle;
-import de.skuzzle.polly.sdk.resources.Resources;
+import de.skuzzle.polly.sdk.resources.Constants;
 import de.skuzzle.polly.sdk.util.DirectedComparator;
 import de.skuzzle.polly.sdk.util.DirectedComparator.SortOrder;
 import de.skuzzle.polly.tools.math.MathUtil;
@@ -511,10 +510,9 @@ public class HTMLTable<T> implements HttpEventHandler {
         final int minPage = Math.max(0, settings.page - 3);
         final int maxPage = Math.max(0, Math.min(settings.pageCount - 1, Math.max(settings.page + 3, 6)));
         
-        final PollyBundle pb = Resources.get(Messages.FAMILY);
         final Map<String, Object> c = new HashMap<>();
-        
         HTMLTools.gainFieldAccess(c, Messages.class, "MSG"); //$NON-NLS-1$
+        c.put("Messages", Constants.class); //$NON-NLS-1$
         c.put("settings", settings); //$NON-NLS-1$
         c.put("tableModel", this.model); //$NON-NLS-1$
         c.put("colSorter", this.colSorter); //$NON-NLS-1$
