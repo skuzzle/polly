@@ -2,6 +2,7 @@ package commands;
 
 import java.util.Date;
 
+import polly.reminds.MSG;
 import polly.reminds.MyPlugin;
 import core.RemindManager;
 import de.skuzzle.polly.sdk.DelayedCommand;
@@ -25,24 +26,22 @@ public class MailRemindCommand extends DelayedCommand {
     
     public MailRemindCommand(MyPolly polly, RemindManager manager) 
                 throws DuplicatedSignatureException {
-        super(polly, "mremind", 30000);
+        super(polly, "mremind", 30000); //$NON-NLS-1$
         this.remindManager = manager;
-        this.createSignature("Sendet eine Erinnerung zur angegebenen Zeit an den " +
-        		"angegebenen User", 
+        this.createSignature(MSG.mremindSig0Desc, 
     		MyPlugin.MAIL_REMIND_PERMISSION,
-    		new Parameter("User", Types.USER), 
-    		new Parameter("Datum", Types.DATE), 
-    		new Parameter("Nachricht", Types.STRING));
-        this.createSignature("Sendet eine Erinngerung zur angegebenen Zeit an dich",
+    		new Parameter(MSG.mremindSig0User, Types.USER), 
+    		new Parameter(MSG.mremindSig0Date, Types.DATE), 
+    		new Parameter(MSG.mremindSig0Message, Types.STRING));
+        this.createSignature(MSG.mremindSig1Desc,
             MyPlugin.MAIL_REMIND_PERMISSION,
-            new Parameter("Datum", Types.DATE),
-            new Parameter("Nachricht", Types.STRING));
-        this.createSignature("Sendet eine Erinnerung mit Standardtext zur angegebenen " +
-        		"Zeit an dich.", 
+            new Parameter(MSG.mremindSig1Date, Types.DATE),
+            new Parameter(MSG.mremindSig1Message, Types.STRING));
+        this.createSignature(MSG.mremindSig2Desc, 
     		MyPlugin.MAIL_REMIND_PERMISSION,
-    		new Parameter("Datum", Types.DATE));
+    		new Parameter(MSG.mremindSig2Date, Types.DATE));
         
-        this.setHelpText("Speichert Erinnerungen die per Mail zugestellt werden.");
+        this.setHelpText(MSG.mremindHelp);
         this.setRegisteredOnly();
     }
     
@@ -54,7 +53,7 @@ public class MailRemindCommand extends DelayedCommand {
         
         User user = null;
         Date dueDate = null;
-        String message = "";
+        String message = ""; //$NON-NLS-1$
         if (this.match(signature, 0)) {
             user = this.getMyPolly().users().getUser(signature.getStringValue(0));
             dueDate = signature.getDateValue(1);
@@ -70,8 +69,8 @@ public class MailRemindCommand extends DelayedCommand {
         }
         
         if (user == null) {
-            this.reply(channel, "Unbekannter Benutzer: " + 
-                signature.getStringValue(0));
+            this.reply(channel, 
+                    MSG.bind(MSG.mremindUnknownUser, signature.getStringValue(0)));
             return false;
         }
 
@@ -81,8 +80,7 @@ public class MailRemindCommand extends DelayedCommand {
 
         try {
             this.remindManager.addRemind(executer, re, true);
-            this.reply(channel, "E-Mail Nachricht für " + user.getName() + 
-                " hinterlassen (ID: " + re.getId() + ")");
+            this.reply(channel, MSG.bind(MSG.mremindSuccess, user.getName(), re.getId()));
         } catch (DatabaseException e) {
             throw new CommandException(e);
         }

@@ -1,7 +1,7 @@
 package commands;
 
+import polly.reminds.MSG;
 import polly.reminds.MyPlugin;
-
 import core.RemindManager;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -18,15 +18,13 @@ public class OnReturnCommand extends AbstractRemindCommand {
 
     public OnReturnCommand(MyPolly polly, RemindManager manager) 
             throws DuplicatedSignatureException {
-        super(polly, manager, "onreturn");
-        this.createSignature("Hinterlässt eine Nachricht für einen Benutzer die " +
-        		"zugestellt wird wenn dieser wieder im IRC aktiv ist", 
+        super(polly, manager, "onreturn"); //$NON-NLS-1$
+        this.createSignature(MSG.onReturnSig0Desc, 
     		MyPlugin.ON_RETURN_PERMISSION,
-    		new Parameter("User", Types.USER), 
-    		new Parameter("Nachricht", Types.STRING));
+    		new Parameter(MSG.onReturnSig0User, Types.USER), 
+    		new Parameter(MSG.onReturnSig0Message, Types.STRING));
         this.setRegisteredOnly();
-        this.setHelpText("Dieser Befehl hinterlässt Nachrichten die zugestellt werden, " +
-        		"sobald der Benutzer wieder im IRC aktiv ist.");
+        this.setHelpText(MSG.onReturnHelp);
     }
     
     

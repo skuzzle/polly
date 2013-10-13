@@ -3,6 +3,7 @@ package commands;
 
 import java.util.Date;
 
+import polly.reminds.MSG;
 import polly.reminds.MyPlugin;
 import core.RemindManager;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -20,33 +21,31 @@ public class ModRemindCommand extends AbstractRemindCommand {
 
     public ModRemindCommand(MyPolly polly, RemindManager manager) 
             throws DuplicatedSignatureException {
-        super(polly, manager, "modr");
-        this.createSignature("Ändert das Datum des Reminds mit der angegebenen ID",
+        super(polly, manager, "modr"); //$NON-NLS-1$
+        this.createSignature(MSG.modRemindSig0Desc,
             MyPlugin.MODIFY_REMIND_PERMISSION,
-            new Parameter("Remind-Id", Types.NUMBER), 
-            new Parameter("Neue Zeit", Types.DATE));
-        this.createSignature("Ändert die Nachricht des angegebenen Reminds", 
+            new Parameter(MSG.modRemindSig0Id, Types.NUMBER), 
+            new Parameter(MSG.modRemindSig0NewTime, Types.DATE));
+        this.createSignature(MSG.modRemindSig1Desc, 
             MyPlugin.MODIFY_REMIND_PERMISSION,
-            new Parameter("Remind-Id", Types.NUMBER), 
-            new Parameter("Nachricht", Types.STRING));
-        this.createSignature("Ändert Nachricht und Datum des angegebenen Reminds",
+            new Parameter(MSG.modRemindSig1Id, Types.NUMBER), 
+            new Parameter(MSG.modRemindSig1Message, Types.STRING));
+        this.createSignature(MSG.modRemindSig2Desc,
             MyPlugin.MODIFY_REMIND_PERMISSION,
-            new Parameter("Remind-Id", Types.NUMBER), 
-            new Parameter("Nachricht", Types.STRING), 
-            new Parameter("Meue Zeit", Types.DATE));
-        
-        this.createSignature("Ändert das Datum des letzten Reminds", 
+            new Parameter(MSG.modRemindSig2Id, Types.NUMBER), 
+            new Parameter(MSG.modRemindSig2Message, Types.STRING), 
+            new Parameter(MSG.modRemindSig2NewTime, Types.DATE));
+        this.createSignature(MSG.modRemindSig3Desc, 
             MyPlugin.MODIFY_REMIND_PERMISSION,
-            new Parameter("Nachricht", Types.DATE));
-        this.createSignature("Ändert die Nachricht des letzten Reminds", 
+            new Parameter(MSG.modRemindSig3NewTime, Types.DATE));
+        this.createSignature(MSG.modRemindSig4Desc, 
             MyPlugin.MODIFY_REMIND_PERMISSION,
-            new Parameter("Nachricht", Types.STRING));
-        this.createSignature("Ändert Nachricht und Datum des letzten Reminds",
+            new Parameter(MSG.modRemindSig4Message, Types.STRING));
+        this.createSignature(MSG.modRemindSig5Desc,
             MyPlugin.MODIFY_REMIND_PERMISSION,
-            new Parameter("Nachricht", Types.STRING), 
-            new Parameter("Meue Zeit", Types.DATE));
-        this.setHelpText("Mit diesem Befehl können bestehende Reminds modifiziert " +
-        		"werden. Zum rausfinden der ID eines Reminds benutze :myreminds");
+            new Parameter(MSG.modRemindSig5Message, Types.STRING), 
+            new Parameter(MSG.modRemindSig5NewTime, Types.DATE));
+        this.setHelpText(MSG.modRemindHelp);
         this.setRegisteredOnly();
     }
     
@@ -60,7 +59,7 @@ public class ModRemindCommand extends AbstractRemindCommand {
             final RemindEntity re = this.remindManager.getLastRemind(executer);
             
             if (re == null) {
-                throw new CommandException("Kein letztes Remind vorhanden");
+                throw new CommandException(MSG.modRemindNoRemind);
             }
             
             Date dueDate = re.getDueDate();
@@ -77,7 +76,7 @@ public class ModRemindCommand extends AbstractRemindCommand {
             
             try {
                 this.remindManager.modifyRemind(executer, re.getId(), dueDate, msg);
-                this.reply(channel, "Remind erfolgreich aktualisiert");
+                this.reply(channel, MSG.modRemindSuccess);
                 return false;
             } catch (DatabaseException e) {
                 throw new CommandException(e);
@@ -102,7 +101,7 @@ public class ModRemindCommand extends AbstractRemindCommand {
         
         try {
             this.remindManager.modifyRemind(executer, id, dueDate, message);
-            this.reply(channel, "Remind erfolgreich aktualisiert");
+            this.reply(channel, MSG.modRemindSuccess);
         } catch (DatabaseException e) {
             throw new CommandException(e);
         }

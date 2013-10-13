@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import polly.reminds.MSG;
 import polly.reminds.MyPlugin;
 import core.RemindManager;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -30,38 +31,34 @@ public class RemindCommand extends AbstractRemindCommand {
 
 	public RemindCommand(MyPolly myPolly, RemindManager remindManager) 
             throws DuplicatedSignatureException {
-        super(myPolly, remindManager, "remind");
-        this.createSignature("Erinnert den Benutzer zu einer angegebenen Zeit im " +
-                "angegebenen Channel an etwas.", 
+        super(myPolly, remindManager, "remind"); //$NON-NLS-1$
+        this.createSignature(MSG.remindCmdSig0Desc, 
             MyPlugin.REMIND_PERMISSION,
-            new Parameter("User", Types.USER), 
-            new Parameter("Channel", Types.CHANNEL), 
-            new Parameter("Zeit", Types.DATE), 
-            new Parameter("Nachricht", Types.STRING));
-        this.createSignature("Erinnert eine Liste von Benutzern zu einer angegebenen " +
-                "Zeit an etwas.",
+            new Parameter(MSG.remindCmdSig0User, Types.USER), 
+            new Parameter(MSG.remindCmdSig0Channel, Types.CHANNEL), 
+            new Parameter(MSG.remindCmdSig0Time, Types.DATE), 
+            new Parameter(MSG.remindCmdSig0Message, Types.STRING));
+        this.createSignature(MSG.remindCmdSig1Desc,
             MyPlugin.REMIND_PERMISSION,
-            new Parameter("Benutzerliste", new ListType(Types.USER)), 
-            new Parameter("Channel", Types.CHANNEL), 
-            new Parameter("Zeit", Types.DATE), 
-            new Parameter("Nachricht", Types.STRING));
-        this.createSignature("Erinnert dich zu einer bestimmten Zeit an etwas.",
+            new Parameter(MSG.remindCmdSig1Users, new ListType(Types.USER)), 
+            new Parameter(MSG.remindCmdSig1Channel, Types.CHANNEL), 
+            new Parameter(MSG.remindCmdSig1Time, Types.DATE), 
+            new Parameter(MSG.remindCmdSig1Message, Types.STRING));
+        this.createSignature(MSG.remindCmdSig2Desc,
             MyPlugin.REMIND_PERMISSION,
-            new Parameter("Zeit", Types.DATE), 
-            new Parameter("Nachricht", Types.STRING));
-        this.createSignature("Erinnert den angegebenen Benutzer per Query an etwas.",
+            new Parameter(MSG.remindCmdSig2Time, Types.DATE), 
+            new Parameter(MSG.remindCmdSig2Message, Types.STRING));
+        this.createSignature(MSG.remindCmdSig3Desc,
             MyPlugin.REMIND_PERMISSION,
-            new Parameter("User", Types.USER), 
-            new Parameter("Zeit", Types.DATE), 
-            new Parameter("Nachricht", Types.STRING));
-        this.createSignature("Erinnert dich zu einer bestimmten Zeit mit einer " +
-        		"Standardmeldung.",
+            new Parameter(MSG.remindCmdSig3User, Types.USER), 
+            new Parameter(MSG.remindCmdSig3Time, Types.DATE), 
+            new Parameter(MSG.remindCmdSig3Message, Types.STRING));
+        this.createSignature(MSG.remindCmdSig4Desc,
     		MyPlugin.REMIND_PERMISSION,
-    		new Parameter("Zeit", Types.DATE));
-        this.createSignature(
-            "Erinnert dich nach einer bestimmten Zeit mit einer Standardmeldung.");
+    		new Parameter(MSG.remindCmdSig4Time, Types.DATE));
+        this.createSignature(MSG.remindCmdSig5Desc);
         this.setRegisteredOnly();
-        this.setHelpText("Hinterlässt Erinnerungen für Benutzer.");
+        this.setHelpText(MSG.remindCmdHelp);
     }
 	
     
@@ -95,8 +92,8 @@ public class RemindCommand extends AbstractRemindCommand {
                 this.addRemind(executer, remind, true);
             }
             ListType tmp = (ListType) signature.getValue(0);
-            this.reply(channel, "Erinnerungen für die Benutzer " + 
-                    tmp.valueString(this.getMyPolly().formatting()) + " hinzugefügt.");
+            this.reply(channel, MSG.bind(MSG.remindCmdMultipleUsersSuccess, 
+                    tmp.valueString(this.getMyPolly().formatting())));
             
         } else if (this.match(signature, 2)) {
             Date dueDate = signature.getDateValue(0);
@@ -123,7 +120,7 @@ public class RemindCommand extends AbstractRemindCommand {
             this.reply(channel, FORMATTER.format(remind, this.getMyPolly().formatting()));
         } else  if (this.match(signature, 4)){
         	Date dueDate = signature.getDateValue(0);
-        	String msg = "Reminder";
+        	final String msg;
         	try {
                 msg = ((StringType) 
                     executer.getAttribute(MyPlugin.DEFAULT_MSG)).getValue();
@@ -137,7 +134,7 @@ public class RemindCommand extends AbstractRemindCommand {
             this.addRemind(executer, remind, true);
             this.reply(channel, FORMATTER.format(remind, this.getMyPolly().formatting()));
         } else if (this.match(signature, 5)) {
-            String msg = "Reminder";
+            final String msg;
             long millis = Time.currentTimeMillis();
             try {
                 msg = ((StringType) 

@@ -1,9 +1,9 @@
 package commands;
 
 
+import polly.reminds.MSG;
 import core.RemindFormatter;
 import core.RemindManager;
-
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -23,14 +23,18 @@ public class AbstractRemindCommand extends Command {
         @Override
         protected String formatRemind(RemindEntity remind, FormatManager formatter) {
             // ISSUE: 0000032, fixed
-            return "Erinnerung für " + remind.getForUser() + " gespeichert. (Fällig: " + 
-                formatter.formatDate(remind.getDueDate()) + ", Id: " + remind.getId() + ")";
+            return MSG.bind(MSG.abstractRemindCommandRemindFormat, 
+                    remind.getForUser(), 
+                    formatter.formatDate(remind.getDueDate()), 
+                    remind.getId());
         }
         
         @Override
         protected String formatMessage(RemindEntity remind, FormatManager formatter) {
-            return "Nachricht für " + remind.getForUser() + " hinterlassen. (Id: " + 
-                remind.getId() + ")";
+            return MSG.bind(MSG.abstractRemindCommandMessageFormat, 
+                    remind.getForUser(), 
+                    formatter.formatDate(remind.getDueDate()), 
+                    remind.getId());
         }
     };
     

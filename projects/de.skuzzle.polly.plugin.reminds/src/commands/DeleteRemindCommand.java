@@ -1,5 +1,6 @@
 package commands;
 
+import polly.reminds.MSG;
 import polly.reminds.MyPlugin;
 import core.RemindManager;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -17,12 +18,13 @@ public class DeleteRemindCommand extends AbstractRemindCommand {
     
     public DeleteRemindCommand(MyPolly polly, RemindManager manager) 
             throws DuplicatedSignatureException {
-        super(polly, manager, "delremind");
-        this.createSignature("Löscht die Erinnerung mit der angegebenen Id", 
+        super(polly, manager, "delremind"); //$NON-NLS-1$
+        this.createSignature(MSG.delRemindSig0Desc, 
             MyPlugin.DELETE_REMIND_PERMISSION,
-            new Parameter("Remind-ID", Types.NUMBER));
-        this.createSignature("Löscht den letzten Remind den du erstellt hast");
+            new Parameter(MSG.delRemindSig0Id, Types.NUMBER));
+        this.createSignature(MSG.delRemindSig1Desc);
         this.setRegisteredOnly();
+        this.setHelpText(MSG.delRemindHelp);
     }
     
     
@@ -36,14 +38,14 @@ public class DeleteRemindCommand extends AbstractRemindCommand {
             
             try {
                 this.remindManager.deleteRemind(executer, remindId);
-                this.reply(channel, "Erinnerung wurde gelöscht");
+                this.reply(channel, MSG.delRemindSuccess);
             } catch (DatabaseException e) {
                 throw new CommandException(e);
             }
         } else if (this.match(signature, 1)) {
             try {
                 this.remindManager.deleteRemind(executer);
-                this.reply(channel, "Erinnerung wurde gelöscht");
+                this.reply(channel, MSG.delRemindSuccess);
             } catch (DatabaseException e) {
                 throw new CommandException(e);
             }
