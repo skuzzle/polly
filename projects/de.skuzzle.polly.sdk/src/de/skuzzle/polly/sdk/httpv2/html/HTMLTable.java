@@ -52,21 +52,21 @@ public class HTMLTable<T> implements HttpEventHandler {
                     .attr("name", name) //$NON-NLS-1$
                     .attr("class", "filter_input") //$NON-NLS-1$ //$NON-NLS-2$
                     .attr("value", "") //$NON-NLS-1$ //$NON-NLS-2$
-                    .content("All"); //$NON-NLS-1$
+                    .content(Messages.tableFilterAll);
                     
                 final HTMLElement selected = new HTMLElement("input") //$NON-NLS-1$
                     .attr("type", "radio") //$NON-NLS-1$ //$NON-NLS-2$
                     .attr("name", name) //$NON-NLS-1$
                     .attr("class", "filter_input") //$NON-NLS-1$ //$NON-NLS-2$
                     .attr("value", "true") //$NON-NLS-1$ //$NON-NLS-2$
-                    .content("true"); //$NON-NLS-1$
+                    .content(Messages.tableFilterTrue);
                 
                 final HTMLElement unselected = new HTMLElement("input") //$NON-NLS-1$
                     .attr("type", "radio") //$NON-NLS-1$ //$NON-NLS-2$
                     .attr("name", name) //$NON-NLS-1$
                     .attr("class", "filter_input") //$NON-NLS-1$ //$NON-NLS-2$
                     .attr("value", "false") //$NON-NLS-1$ //$NON-NLS-2$
-                    .content("false"); //$NON-NLS-1$
+                    .content(Messages.tableFilterFalse);
                 
                 final HTMLElement checked;
                 if (f.equals("")) { //$NON-NLS-1$

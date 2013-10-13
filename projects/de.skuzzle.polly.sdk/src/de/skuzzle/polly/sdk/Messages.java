@@ -42,7 +42,9 @@ public class Messages extends Constants {
     public static String tableSelectCriteria;
     public static String tableEditTitle;
     public static String tableSubmitEditTitle;
-    
+    public static String tableFilterAll;
+    public static String tableFilterTrue;
+    public static String tableFilterFalse;
     
     static {
         Resources.init(FAMILY, Messages.class);
