@@ -1,0 +1,40 @@
+Ophiuchus Bla X:2 Y:3
+
+
+Lokale Sensorstärke: 97Tarnwert der maximal erfassbaren Schiffe: 97
+
+
+Flotten Daten
+DarkestForces
+Xamand[Loki]
+
+
+Gescannte Schiffe
+NameTechlevelBesitzer
+     Begleitschiff (LII)
+     Yeniga (ID:11283142)17
+     Xamand[Loki]
+     Begleitschiff (LVII)
+     Fatenga (ID:12442782)17
+     Xamand[Loki]
+     Frachtschiff (LXX)
+     Ferankanil (ID:12841729)18
+     Xamand[Loki]
+     Frachtschiff (LXX)
+     Muldramit (ID:12679552)18
+     Xamand[Loki]
+     Kommandoschiff (XXXVII)
+     Ceihop (ID:11230389)21
+     Xamand[Loki]
+     Kreuzer (IV)
+     Xason (ID:11207929)21
+     Xamand[Loki]
+     Tankschiff (LV)
+     Nagaron (ID:10207297)16
+     Xamand[Loki]
+     Tankschiff (LXVIII)
+     Probonax (ID:12444965)18
+     Xamand[Loki]
+     Zerstörer (XXII)
+     Sergeon (ID:8736201)18
+     Xamand[Loki]
