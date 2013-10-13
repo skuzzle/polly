@@ -24,7 +24,7 @@ public class MailRunLater extends RunLater implements MessageListener {
     
     public MailRunLater(User user, IrcManager irc, MailManager mails, String subject, 
             String message, String receiver) {
-        super("MAIL_DELAY_" + user.getName(), DELAY);
+        super("MAIL_DELAY_" + user.getName(), DELAY); //$NON-NLS-1$
         this.user = user;
         this.irc = irc;
         this.mails = mails;;

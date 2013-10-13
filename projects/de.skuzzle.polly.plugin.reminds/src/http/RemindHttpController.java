@@ -2,6 +2,7 @@ package http;
 
 import java.util.Map;
 
+import polly.reminds.MSG;
 import polly.reminds.MyPlugin;
 import core.RemindManager;
 import de.skuzzle.polly.http.annotations.Get;
@@ -20,12 +21,30 @@ import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
 import de.skuzzle.polly.sdk.httpv2.PollyController;
 import de.skuzzle.polly.sdk.httpv2.SuccessResult;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
+import de.skuzzle.polly.sdk.httpv2.html.HTMLTools;
 import de.skuzzle.polly.sdk.time.Milliseconds;
 import entities.RemindEntity;
 
 
 public class RemindHttpController extends PollyController {
+    
+    private final static String FILES = "/http/view/files"; //$NON-NLS-1$
+    
+    private final static String REMIND_CATEGORY_KEY = "httpRemindCategory"; //$NON-NLS-1$
+    private final static String PAGE_REMINDS_DESC_KEY = "httpRemindMngrDesc"; //$NON-NLS-1$
+    private final static String PAGE_REMINDS_NAME_KEY = "httpRemindMngrName"; //$NON-NLS-1$
+    
+    public final static String PAGE_REMINDS = "/pages/remindOverview"; //$NON-NLS-1$
+    private final static String PAGE_REMINDS_CONTENT = "http/view/remind.overview.html"; //$NON-NLS-1$
 
+    public static final String API_CANCEL_REMIND = "/api/cancelRemind"; //$NON-NLS-1$
+    public static final String API_DISCARD_SNOOZE = "/api/discardSnooze"; //$NON-NLS-1$
+    public static final String API_TOGGLE_REMIND = "/api/toggleRemind"; //$NON-NLS-1$
+    public static final String API_SET_SNOOZE = "/api/setSnooze"; //$NON-NLS-1$
+    public static final String API_MODIFY_REMIND = "/api/modifyRemind"; //$NON-NLS-1$
+    
+
+    
     private final RemindManager rm;
     
     public RemindHttpController(MyPolly myPolly, RemindManager rm) {
@@ -42,7 +61,16 @@ public class RemindHttpController extends PollyController {
     
     
     
-    @Get("/http/view/files")
+    @Override
+    protected Map<String, Object> createContext(String content) {
+        final Map<String, Object> c = super.createContext(content);
+        HTMLTools.gainFieldAccess(c, MSG.class, "MSG"); //$NON-NLS-1$
+        return c;
+    }
+    
+    
+    
+    @Get(FILES)
     public HttpAnswer getFile() {
         final ClassLoader cl = this.getClass().getClassLoader();
         return new HttpResourceAnswer(200, cl, this.getEvent().getPlainUri());
@@ -50,16 +78,17 @@ public class RemindHttpController extends PollyController {
 
     
     
-    @Get(value = "/pages/remindOverview", name = "Overview")
+    @Get(value = PAGE_REMINDS, name = PAGE_REMINDS_NAME_KEY)
     @OnRegister({
         WebinterfaceManager.ADD_MENU_ENTRY,
-        "Reminds",
-        "List, modify, add and delete your reminds",
+        MSG.FAMILY,
+        REMIND_CATEGORY_KEY,
+        PAGE_REMINDS_DESC_KEY,
         MyPlugin.REMIND_PERMISSION
     })
     public HttpAnswer remindOverview() throws AlternativeAnswerException {
         this.requirePermissions(MyPlugin.REMIND_PERMISSION);
-        final Map<String, Object> c = this.createContext("http/view/remind.overview.html");
+        final Map<String, Object> c = this.createContext(PAGE_REMINDS_CONTENT);
         
         final RemindEntity snoozable = this.rm.getSnoozabledRemind(
             this.getSessionUser().getName());
@@ -73,17 +102,17 @@ public class RemindHttpController extends PollyController {
             rt = 0;
         }
 
-        c.put("runtime", this.getMyPolly().formatting().formatTimeSpan(rt));
-        c.put("snoozable", snoozable);
-        c.put("lastRemind", this.rm.getLastRemind(this.getSessionUser()));
-        c.put("defaultRemindTime", this.getSessionUser().getAttribute(
+        c.put("runtime", this.getMyPolly().formatting().formatTimeSpan(rt)); //$NON-NLS-1$
+        c.put("snoozable", snoozable); //$NON-NLS-1$
+        c.put("lastRemind", this.rm.getLastRemind(this.getSessionUser())); //$NON-NLS-1$
+        c.put("defaultRemindTime", this.getSessionUser().getAttribute( //$NON-NLS-1$
             MyPlugin.DEFAULT_REMIND_TIME).valueString(this.getMyPolly().formatting()));
         return this.makeAnswer(c);
     }
     
     
     
-    @Get("/api/cancelRemind")
+    @Get(API_CANCEL_REMIND)
     public HttpAnswer cancelRemind(@Param("remindId") int id) 
             throws AlternativeAnswerException {
         this.requirePermissions(MyPlugin.REMIND_PERMISSION);
@@ -91,10 +120,10 @@ public class RemindHttpController extends PollyController {
             
             this.rm.deleteRemind(this.getSessionUser(), id);
             return new GsonHttpAnswer(200, 
-                new SuccessResult(true, "Remind has been deleted"));
+                new SuccessResult(true, MSG.httpRemindMngrCancelSuccess));
         } catch (DatabaseException e) {
             return new GsonHttpAnswer(200, 
-                new SuccessResult(false, "Database exception while deleting remind"));
+                new SuccessResult(false, MSG.httpRemindMngrDatabaseFail));
         } catch (CommandException e) {
             return new GsonHttpAnswer(200, e.getMessage());
         }
@@ -102,11 +131,11 @@ public class RemindHttpController extends PollyController {
     
     
     
-    @Get("/api/discardSnooze")
+    @Get(API_DISCARD_SNOOZE)
     public HttpAnswer discardSnooze() throws AlternativeAnswerException {
         this.requirePermissions(MyPlugin.REMIND_PERMISSION);
         this.rm.cancelSleep(this.getSessionUser().getName());
-        return new GsonHttpAnswer(200, new SuccessResult(true, ""));
+        return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
     }
     
     
@@ -114,14 +143,14 @@ public class RemindHttpController extends PollyController {
     public static class ToggleRemindResult extends SuccessResult {
         public final boolean isMail;
         public ToggleRemindResult(boolean isMail) {
-            super(true, "");
+            super(true, ""); //$NON-NLS-1$
             this.isMail = isMail;
         }    
     }
     
     
     
-    @Get("/api/toggleRemind")
+    @Get(API_TOGGLE_REMIND)
     public HttpAnswer toggleRemind(@Param("remindId") int id) 
             throws AlternativeAnswerException {
         this.requirePermissions(MyPlugin.REMIND_PERMISSION);
@@ -130,7 +159,7 @@ public class RemindHttpController extends PollyController {
             return new GsonHttpAnswer(200, new ToggleRemindResult(re.isMail()));
         } catch (DatabaseException e) {
             return new GsonHttpAnswer(200, 
-                new SuccessResult(false, "Database exception while toggling remind"));
+                new SuccessResult(false, MSG.httpRemindMngrDatabaseFail));
         } catch (CommandException e) {
             return new GsonHttpAnswer(200, 
                 new SuccessResult(false, e.getMessage()));
@@ -139,7 +168,7 @@ public class RemindHttpController extends PollyController {
     
     
     
-    @Get("/api/setSnooze")
+    @Get(API_SET_SNOOZE)
     public HttpAnswer setSnooze(
         @Param(value = "timespan", treatEmpty = true, ifEmptyValue = "") String exp) 
                 throws AlternativeAnswerException {
@@ -148,14 +177,17 @@ public class RemindHttpController extends PollyController {
         final Types parsed = this.getMyPolly().parse(exp);
         if (!(parsed instanceof DateType)) {
             return new GsonHttpAnswer(200, 
-                new SuccessResult(false, "Input yielded no valid date"));
+                new SuccessResult(false, MSG.httpRemindMngrNoValidDate));
         }
         final DateType target = (DateType) parsed;
         try {
             this.rm.snooze(this.getSessionUser(), target.getValue());
-            return new GsonHttpAnswer(200, new SuccessResult(true, ""));
-        } catch (CommandException | DatabaseException e) {
+            return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
+        } catch (CommandException e) {
             return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
+        } catch (DatabaseException e) {
+            return new GsonHttpAnswer(200, 
+                    new SuccessResult(false, MSG.httpRemindMngrDatabaseFail));
         }
     }
     
@@ -167,13 +199,13 @@ public class RemindHttpController extends PollyController {
         
         
         public ModifyRemindResult(String dueDate, String remindMessage) {
-            super(true, "");
+            super(true, ""); //$NON-NLS-1$
             this.dueDate = dueDate;
             this.remindMessage = remindMessage;
         }
     }
     
-    @Get("/api/modifyRemind")
+    @Get(API_MODIFY_REMIND)
     public HttpAnswer modifyRemind(
         @Param("remindId") int id, 
         @Param(value = "message", treatEmpty = true) String message, 
@@ -186,7 +218,7 @@ public class RemindHttpController extends PollyController {
             // invalid date submitted, do not change
             dd = null;
         }
-        if (message.equals("")) {
+        if (message.equals("")) { //$NON-NLS-1$
             message = null; // no message submitted, do not change
         }
         
@@ -203,7 +235,8 @@ public class RemindHttpController extends PollyController {
         } catch (CommandException e) {
             return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
         } catch (DatabaseException e) {
-            return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
+            return new GsonHttpAnswer(200, 
+                    new SuccessResult(false, MSG.httpRemindMngrDatabaseFail));
         }
     }
 }

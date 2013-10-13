@@ -55,7 +55,8 @@ public class RemindDBWrapperImpl implements RemindDBWrapper {
 
     @Override
     public List<RemindEntity> getAllReminds() {
-        return this.persistence.atomic().findList(RemindEntity.class, "ALL_REMINDS");
+        return this.persistence.atomic().findList(RemindEntity.class, 
+                RemindEntity.ALL_REMINDS);
     }
 
     
@@ -63,7 +64,7 @@ public class RemindDBWrapperImpl implements RemindDBWrapper {
     @Override
     public List<RemindEntity> getRemindsForUser(String forUser) {
         return this.persistence.atomic().findList(
-                RemindEntity.class, "REMIND_FOR_USER", new Param(forUser));
+                RemindEntity.class, RemindEntity.REMIND_FOR_USER, new Param(forUser));
     }
 
 
@@ -71,14 +72,15 @@ public class RemindDBWrapperImpl implements RemindDBWrapper {
     @Override
     public List<RemindEntity> getMyRemindsForUser(String nickName) {
         return this.persistence.atomic().findList(
-                RemindEntity.class, "MY_REMIND_FOR_USER", new Param(nickName));
+                RemindEntity.class, RemindEntity.MY_REMIND_FOR_USER, new Param(nickName));
     }
 
 
     
     @Override
     public List<RemindEntity> getUndeliveredReminds(String forUser) {
-        return this.persistence.atomic().findList(RemindEntity.class, "UNDELIVERED_FOR_USER", 
+        return this.persistence.atomic().findList(RemindEntity.class, 
+                RemindEntity.UNDELIVERED_FOR_USER, 
                 new Param(forUser));
     }
 }

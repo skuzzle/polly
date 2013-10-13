@@ -6,7 +6,7 @@ import de.skuzzle.polly.sdk.resources.Resources;
 
 public class MSG extends Constants {
     
-    private final static String FAMILY = "polly.reminds.Translation"; //$NON-NLS-1$
+    public final static String FAMILY = "polly.reminds.Translation"; //$NON-NLS-1$
     
     // MyPlugin
     public static String remindFormatValue;
@@ -123,6 +123,74 @@ public class MSG extends Constants {
     public static String remindCmdSig4Time;
     public static String remindCmdSig5Desc;
     public static String remindCmdMultipleUsersSuccess;
+    
+    // SnoozeCommand
+    public static String snoozeHelp;
+    public static String snoozeSig0Desc;
+    public static String snoozeSig0NewTime;
+    public static String snoozeSig1Desc;
+    public static String snoozeSuccess;
+    
+    // ToggleMailCommand
+    public static String toggleHelp;
+    public static String toggleSig0Desc;
+    public static String toggleSig0Id;
+    public static String toggleToMail;
+    public static String toggleToIrc;
+    
+    // AutoSnoozeRunLater
+    public static String autoSnoozeOff;
+    
+    // HeidiRemindFormatter
+    public static String heidiNickNames;
+    
+    // MailRemindFormatter
+    public static String mailRemindFormatterMessage;
+    
+    // RemindManagerImpl
+    public static String remindMngrSubject;
+    public static String remindMngrNoRemind;
+    public static String remindMngrDelivered;
+    public static String remindMngrAutoSnoozeActive;
+    public static String remindMngrMailFail;
+    public static String remindMngrNoSnooze;
+    public static String remindMngrNoRemindWithId;
+    public static String remindMngrNoPermission;
+    
+    // RemindTableModel
+    public static String remindTableModelColId;
+    public static String remindTableModelColMessage;
+    public static String remindTableModelColDue;
+    public static String remindTableModelColLeft;
+    public static String remindTableModelColType;
+    public static String remindTableModelColFor;
+    public static String remindTableModelColFrom;
+    public static String remindTableModelColAction; 
+    public static String remindTableModelCancel;
+    public static String remindTableModelInvalidDate;
+    
+    // RemindController
+    public static String httpRemindCategory;
+    public static String httpRemindMngrName;
+    public static String httpRemindMngrDesc;
+    public static String httpRemindMngrCancelSuccess;
+    public static String httpRemindMngrDatabaseFail;
+    public static String httpRemindMngrNoValidDate;
+    
+    // HTML
+    public static String htmlSnoozeCaption;
+    public static String htmlFrom;
+    public static String htmlMessage;
+    public static String htmlLeft;
+    public static String htmlSnooze;
+    public static String htmlYourRemindsCaption;
+    public static String htmlAdminViewCaption;
+    public static String htmlSnoozeByExpression;
+    public static String htmlSnoozeByRuntime;
+    public static String htmlSnoozeByDefault;
+    public static String htmlSnoozeDiscard;
+    public static String htmlPlaceHolder;
+    public static String htmlOk;
     
     
     static {
