@@ -2,6 +2,7 @@ package polly.rx.commands;
 
 import polly.rx.core.TrainBillV2;
 import polly.rx.core.TrainManagerV2;
+import polly.rx.MSG;
 import polly.rx.MyPlugin;
 import polly.rx.entities.TrainEntityV3;
 import de.skuzzle.polly.sdk.Command;
@@ -12,6 +13,7 @@ import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
+import de.skuzzle.polly.sdk.time.Milliseconds;
 
 
 public class AddTrainCommand extends Command {
@@ -21,24 +23,24 @@ public class AddTrainCommand extends Command {
     public AddTrainCommand(MyPolly polly, TrainManagerV2 trainManager) 
             throws DuplicatedSignatureException {
         
-        super(polly, "train");
-        this.createSignature("Fügt ein neues Training zur Rechnung des Benutzers hinzu.", 
+        super(polly, "train"); //$NON-NLS-1$
+        this.createSignature(MSG.addTrainSig0Desc, 
             MyPlugin.ADD_TRAIN_PERMISSION,
-            new Parameter("Benutzer", Types.USER),
-            new Parameter("Rechnung", Types.STRING));
-        this.createSignature("Zeigt die offene Rechnungssumme für einen Benutzer an.",
+            new Parameter(MSG.addTrainSig0User, Types.USER),
+            new Parameter(MSG.addTrainSig0Bill, Types.STRING));
+        this.createSignature(MSG.addTrainSig1Desc,
             MyPlugin.ADD_TRAIN_PERMISSION,
-            new Parameter("Benutzer", Types.USER),
-            new Parameter("Details?", Types.BOOLEAN));
-        this.createSignature("Fügt ein neues Training zur Rechnung des Benutzers hinzu.",
+            new Parameter(MSG.addTrainSig1User, Types.USER),
+            new Parameter(MSG.addTrainSig1Details, Types.BOOLEAN));
+        this.createSignature(MSG.addTrainSig2Desc,
             MyPlugin.ADD_TRAIN_PERMISSION,
-            new Parameter("Benutzer", Types.USER),
-            new Parameter("Rechnung", Types.STRING),
-            new Parameter("Faktor", Types.NUMBER));
-        this.createSignature("Zeigt die offene Rechnungssumme für einen Benutzer an.",
+            new Parameter(MSG.addTrainSig2User, Types.USER),
+            new Parameter(MSG.addTrainSig2Bill, Types.STRING),
+            new Parameter(MSG.addTrainSig2Weight, Types.NUMBER));
+        this.createSignature(MSG.addTrainSig3Desc,
             MyPlugin.ADD_TRAIN_PERMISSION,
-            new Parameter("Benutzer", Types.USER));
-        this.setHelpText("Befehl zum Verwalten von Capi Trainings.");
+            new Parameter(MSG.addTrainSig3User, Types.USER));
+        this.setHelpText(MSG.addTrainHelp);
         this.setRegisteredOnly();
         this.trainManager = trainManager;
     }
@@ -84,7 +86,7 @@ public class AddTrainCommand extends Command {
             for (TrainEntityV3 train : bill.getTrains()) {
                 this.reply(channel, train.format(this.getMyPolly().formatting()));
             }
-            this.reply(channel, "=========================");
+            this.reply(channel, "========================="); //$NON-NLS-1$
         }
         
         this.reply(channel, bill.toString());
@@ -101,18 +103,16 @@ public class AddTrainCommand extends Command {
             
             if (te.getDuration() != 0) {
                 // HACK: this requires the Remind Plugin to be installed and running!
-                String command = ":remind \"Training für " + forUser +
-                        " abgeschlossen. Bisherige Kosten: " + bill.weightedSum() + " Cr.\" " + 
-                        (te.getDuration() / 1000) + "s";
+                final String command = MSG.bind(MSG.addTrainRemind, 
+                        bill.weightedSum(), Milliseconds.toSeconds(te.getDuration()));
                 this.getMyPolly().commands().executeString(
                         command, 
                         trainer.getCurrentNickName(), 
                         true, trainer, this.getMyPolly().irc());
             }
-            this.reply(channel, "Posten gespeichert. Aktuelle Kosten: " + 
-                bill.weightedSum() + " Cr.");
+            this.reply(channel, MSG.bind(MSG.addTrainSuccess, bill.weightedSum()));
         } catch (Exception e) {
-            throw new CommandException("Fehler beim Speichern");
+            throw new CommandException(MSG.addTrainFail);
         }
     }
 }

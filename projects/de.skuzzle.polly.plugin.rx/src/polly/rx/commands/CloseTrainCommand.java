@@ -1,5 +1,6 @@
 package polly.rx.commands;
 
+import polly.rx.MSG;
 import polly.rx.MyPlugin;
 import polly.rx.core.TrainManagerV2;
 import de.skuzzle.polly.sdk.Command;
@@ -19,16 +20,15 @@ public class CloseTrainCommand extends Command {
     
     public CloseTrainCommand(MyPolly polly, TrainManagerV2 trainManager) 
             throws DuplicatedSignatureException {
-        super(polly, "closetrain");
-        this.createSignature("Schliesst alle offenen Rechnungen für den angegebenen " +
-            "Benutzer.", 
+        super(polly, "closetrain"); //$NON-NLS-1$
+        this.createSignature(MSG.closeTrainSig0Desc, 
             MyPlugin.CLOSE_TRAIN_PERMISSION,
-            new Parameter("User", Types.USER));
-        this.createSignature("Schliesst einzelnen Trainposten.", 
+            new Parameter(MSG.closeTrainSig0User, Types.USER));
+        this.createSignature(MSG.closeTrainSig1Desc, 
             MyPlugin.CLOSE_TRAIN_PERMISSION,
-            new Parameter("Train Id", Types.NUMBER));
+            new Parameter(MSG.closeTrainSig1Id, Types.NUMBER));
         this.setRegisteredOnly();
-        this.setHelpText("Schliesst offene Capitrain Rechnungen.");
+        this.setHelpText(MSG.closeTrainHelp);
         this.trainManager = trainManager;
     }
 
@@ -42,18 +42,18 @@ public class CloseTrainCommand extends Command {
             String userName = signature.getStringValue(0);
             try {
                 this.trainManager.closeOpenTrains(executer, userName);
-                this.reply(channel, "Alle offenen Rechnungen für '" + userName + 
-                    "' geschlossen.");
+                this.reply(channel, MSG.bind(MSG.closeTrainSuccessAll, userName));
+                
             } catch (DatabaseException e) {
-                this.reply(channel, "Interner Datenbankfehler!");
+                throw new CommandException(e);
             }
         } else if (this.match(signature, 1)) {
             int id = (int) signature.getNumberValue(0);
             try {
                 this.trainManager.closeOpenTrain(executer, id);
-                this.reply(channel, "Posten mit der Id '" + id + " ' geschlossen.");
+                this.reply(channel, MSG.bind(MSG.closeTrainSuccessSingle, id));
             } catch (DatabaseException e) {
-                this.reply(channel, "Interner Datenbankfehler!");
+                throw new CommandException(e);
             }
         }
         return false;

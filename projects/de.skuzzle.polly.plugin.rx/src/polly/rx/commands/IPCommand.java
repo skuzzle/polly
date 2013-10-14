@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
+import polly.rx.MSG;
 import polly.rx.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -22,7 +23,7 @@ import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 public class IPCommand extends Command {
 
     private final static String REQUEST_URL = 
-        "http://rx.eggsberde.de/polly/ip.php?venad=";
+        "http://rx.eggsberde.de/polly/ip.php?venad="; //$NON-NLS-1$
     
     private final static int CLAN = 1;
     private final static int QUAD = 2;
@@ -33,13 +34,11 @@ public class IPCommand extends Command {
     
     
     public IPCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "ip");
-        this.createSignature("Zeigt die Position des individuellen Portals des " +
-        		"angegebenen Venads an.", 
+        super(polly, "ip"); //$NON-NLS-1$
+        this.createSignature(MSG.ipSig0Desc, 
         		MyPlugin.IP_PERMISSION, 
-        		new Parameter("Venad Name", Types.STRING));
-        this.setHelpText("Zeigt die Position des individuellen Portals des " +
-            "angegebenen Venads an.");
+        		new Parameter(MSG.ipSig0Venad, Types.STRING));
+        this.setHelpText(MSG.ipHelp);
         this.setRegisteredOnly();
     }
 
@@ -55,37 +54,28 @@ public class IPCommand extends Command {
             try {
                 URL url = new URL(REQUEST_URL + venad);
                 URLConnection c = url.openConnection();
-                r = new BufferedReader(new InputStreamReader(c.getInputStream(), "UTF-8"));
+                r = new BufferedReader(new InputStreamReader(c.getInputStream(), "UTF-8")); //$NON-NLS-1$
 
                 String line = r.readLine();
                 if (line == null) {
-                    throw new CommandException("Fehler beim Lesen der Serverantwort");
-                } else if (line.equals("nix")) {
-                    this.reply(channel, 
-                        "Keine Informationen für den angegebenen Venad vorhanden");
+                    throw new CommandException(MSG.ipInvalidAnswer);
+                } else if (line.equals("nix")) { //$NON-NLS-1$
+                    this.reply(channel, MSG.ipNoIp);
                     return false;
                 }
                 
-                String[] parts = line.split(";");
-                StringBuilder b = new StringBuilder();
-                b.append("IP von ");
-                b.append(venad);
-                if (!parts[CLAN].equals("")) {
-                    b.append("[");
-                    b.append(parts[CLAN]);
-                    b.append("]");
+                String[] parts = line.split(";"); //$NON-NLS-1$
+                final String result;
+                if (!parts[CLAN].equals("")) { //$NON-NLS-1$
+                    result = MSG.bind(MSG.ipResultWithClan, venad, parts[CLAN], 
+                            parts[QUAD], parts[X], parts[Y], parts[DATE]);
+                } else {
+                    result = MSG.bind(MSG.ipResult, venad, parts[QUAD], parts[X], 
+                            parts[Y], parts[DATE]);
                 }
-                b.append(": ");
-                b.append(parts[QUAD]);
-                b.append(" ");
-                b.append(parts[X]);
-                b.append(",");
-                b.append(parts[Y]);
-                b.append(" (");
-                b.append(parts[DATE]);
-                b.append(")");
+                    
                 
-                this.reply(channel, b.toString());
+                this.reply(channel, result);
             } catch (MalformedURLException e) {
                 throw new CommandException(e);
             } catch (IOException e) {

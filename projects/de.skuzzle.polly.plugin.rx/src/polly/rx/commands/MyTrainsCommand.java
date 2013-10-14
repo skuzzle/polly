@@ -1,5 +1,6 @@
 package polly.rx.commands;
 
+import polly.rx.MSG;
 import polly.rx.MyPlugin;
 import polly.rx.core.TrainBillV2;
 import polly.rx.core.TrainManagerV2;
@@ -20,17 +21,14 @@ public class MyTrainsCommand extends Command {
 
     public MyTrainsCommand(MyPolly polly, TrainManagerV2 trainManager) 
             throws DuplicatedSignatureException {
-        super(polly, "mytrains");
-        this.createSignature("Listet die offene Capitrain Rechnung für einen " +
-        		"Benutzer auf.", MyPlugin.MYTRAINS_PERMISSION,
-        		new Parameter("Trainer-Name", Types.USER));
-        this.createSignature("Listet eine detaillierte Capitrainrechnung für einen " +
-        		"Benutzer auf", 
+        super(polly, "mytrains"); //$NON-NLS-1$
+        this.createSignature(MSG.myTrainsSig0Desc, MyPlugin.MYTRAINS_PERMISSION,
+        		new Parameter(MSG.myTrainsSig0Trainer, Types.USER));
+        this.createSignature(MSG.myTrainsSig1Desc, 
         		MyPlugin.MYTRAINS_PERMISSION,
-    		new Parameter("Trainer-Name", Types.USER),
-    		new Parameter("Details", Types.BOOLEAN));
-        this.setHelpText("Listet die offene Capitrain Rechnung für einen " +
-                "Benutzer auf.");
+    		new Parameter(MSG.myTrainsSig1Trainer, Types.USER),
+    		new Parameter(MSG.myTrainsSig1Details, Types.BOOLEAN));
+        this.setHelpText(MSG.myTrainsHelp);
         this.trainManager = trainManager;
     }
     
@@ -62,7 +60,7 @@ public class MyTrainsCommand extends Command {
             for (TrainEntityV3 train : b.getTrains()) {
                 this.reply(channel, train.format(this.getMyPolly().formatting()));
             }
-            this.reply(channel, "=========================");
+            this.reply(channel, "========================="); //$NON-NLS-1$
         }
         this.reply(channel, b.toString());
     }

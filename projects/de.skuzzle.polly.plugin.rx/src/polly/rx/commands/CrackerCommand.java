@@ -1,5 +1,6 @@
 package polly.rx.commands;
 
+import polly.rx.MSG;
 import polly.rx.MyPlugin;
 import de.skuzzle.polly.sdk.DelayedCommand;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -24,12 +25,11 @@ public class CrackerCommand extends DelayedCommand {
     
     
     public CrackerCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "cracker", CRACKER_DELAY);
-        this.createSignature("Gibt polly einen Cracker");
-        this.createSignature("Gibt polly einen Cracker und rechnet ihn dem angegebenen " +
-        		"User an", 
-        		new Parameter("User", Types.USER));
-        this.setHelpText("Gibt polly einen Cracker");
+        super(polly, "cracker", CRACKER_DELAY); //$NON-NLS-1$
+        this.createSignature(MSG.crackerSig0Desc);
+        this.createSignature(MSG.crackerSig1Desc, 
+        		new Parameter(MSG.crackerSig1User, Types.USER));
+        this.setHelpText(MSG.crackerHelp);
         this.setRegisteredOnly();
     }
     
@@ -46,12 +46,12 @@ public class CrackerCommand extends DelayedCommand {
                 user = this.getMyPolly().users().getUser(name);
                 
                 if (user == null) {
-                    throw new CommandException("Unbekannter Benutzer: " + name);
+                    throw new CommandException(MSG.bind(MSG.crackerUnknownUser, name));
                 }
             }
             int crackers = this.incCracker(executer, user, CRACKER_INC);
-            this.reply(channel, "Danke für den Cracker! Das war der " + crackers + 
-                    ". Cracker von " + executer.getName());
+            this.reply(channel, MSG.bind(MSG.crackerSuccess, 
+                    crackers, executer.getName()));
         } catch (DatabaseException e) {
            throw new CommandException(e); 
         }
@@ -69,7 +69,7 @@ public class CrackerCommand extends DelayedCommand {
             this.getMyPolly().users().setAttributeFor(executor, user, MyPlugin.CRACKER, 
                 Integer.toString(crackers));
         } catch (ConstraintException e) {
-            throw new RuntimeException("this was thought to be impossibru to happen", e);
+            throw new RuntimeException("this was thought to be impossibru to happen", e); //$NON-NLS-1$
         }
         return crackers;
     }
