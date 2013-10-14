@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import polly.rx.MSG;
 import polly.rx.entities.BattleReport;
 import polly.rx.entities.FleetScan;
 import polly.rx.entities.FleetScanHistoryEntry;
@@ -19,12 +20,12 @@ import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 public class FleetDBManager {
 
     
-    public final static String ADD_FLEET_SCAN_PERMISSION = "polly.permission.ADD_FLEET_SCAN";
-    public final static String VIEW_FLEET_SCAN_PERMISSION = "polly.permission.VIEW_FLEET_SCAN";
-    public final static String ADD_BATTLE_REPORT_PERMISSION = "polly.permission.ADD_BATTLE_REPORT";
-    public final static String VIEW_BATTLE_REPORT_PERMISSION = "polly.permission.VIEW_BATTLE_REPORT";
-    public final static String DELETE_BATTLE_REPORT_PERMISSION = "polly.permission.DELETE_BATTLE_REPORT";
-    public static final String DELETE_FLEET_SCAN_PERMISSION = "plly.permission.DELETE_FLEET_SCAN";
+    public final static String ADD_FLEET_SCAN_PERMISSION = "polly.permission.ADD_FLEET_SCAN"; //$NON-NLS-1$
+    public final static String VIEW_FLEET_SCAN_PERMISSION = "polly.permission.VIEW_FLEET_SCAN"; //$NON-NLS-1$
+    public final static String ADD_BATTLE_REPORT_PERMISSION = "polly.permission.ADD_BATTLE_REPORT"; //$NON-NLS-1$
+    public final static String VIEW_BATTLE_REPORT_PERMISSION = "polly.permission.VIEW_BATTLE_REPORT"; //$NON-NLS-1$
+    public final static String DELETE_BATTLE_REPORT_PERMISSION = "polly.permission.DELETE_BATTLE_REPORT"; //$NON-NLS-1$
+    public static final String DELETE_FLEET_SCAN_PERMISSION = "plly.permission.DELETE_FLEET_SCAN"; //$NON-NLS-1$
     
     
     private final PersistenceManagerV2 persistence;
@@ -71,8 +72,7 @@ public class FleetDBManager {
                     report.getDefenderKw()));
             
             if (rp != null) {
-                throw new DatabaseException(
-                        "It seems like this Battlereport already exists.");
+                throw new DatabaseException(MSG.fleetDbReportExists);
             }
         }
         
@@ -100,7 +100,7 @@ public class FleetDBManager {
                         deleteMe.add(ship);
                     } else {
                         FleetScanHistoryEntry e = new FleetScanHistoryEntry();
-                        e.getChanges().add("Deleted Fleet Scan that contained this ship");
+                        e.getChanges().add(MSG.fleetDbDeletedScanWithShip);
                         ship.getHistory().add(e);
                     }
                 }
@@ -193,7 +193,7 @@ public class FleetDBManager {
     
     public List<FleetScanShip> getAllScannedShips() {
         return this.persistence.atomic().findList(FleetScanShip.class, 
-            FleetScanShip.All_SHIPS);
+            FleetScanShip.ALL_SHIPS);
     }
     
     
@@ -315,7 +315,7 @@ public class FleetDBManager {
 
     public List<FleetScanShip> getShipsWithLocation(String quadrant) {
         return this.persistence.atomic().findList(FleetScanShip.class, 
-            FleetScanShip.SHIPS_BY_LOCATION, new Param(quadrant, "%" + quadrant + "%"));
+            FleetScanShip.SHIPS_BY_LOCATION, new Param(quadrant, "%" + quadrant + "%")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
 

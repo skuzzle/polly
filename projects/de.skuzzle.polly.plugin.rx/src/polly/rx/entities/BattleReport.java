@@ -28,11 +28,11 @@ import polly.rx.core.SumQuery;
 @Entity
 @NamedQueries({
     @NamedQuery(
-        name = "ALL_REPORTS",
+        name = BattleReport.ALL_REPORTS,
         query= "SELECT rp FROM BattleReport rp ORDER BY rp.date DESC"
     ),
     @NamedQuery(
-        name = "UNIQUE_CHECK",
+        name = BattleReport.UNIQUE_CHECK,
         query = "SELECT rp FROM BattleReport rp WHERE " + 
             "rp.quadrant = ?1 AND " + 
             "rp.x = ?2 AND " + 
@@ -44,7 +44,7 @@ import polly.rx.core.SumQuery;
             "rp.date = ?8"
     ),
     @NamedQuery(
-            name = "UNIQUE_CHECK_NO_DATE",
+            name = BattleReport.UNIQUE_CHECK_NO_DATE,
             query = "SELECT rp FROM BattleReport rp WHERE " + 
                 "rp.quadrant = ?1 AND " + 
                 "rp.x = ?2 AND " + 
@@ -57,38 +57,38 @@ import polly.rx.core.SumQuery;
                 "rp.defenderKw = ?9"
         ),
     @NamedQuery(
-        name = "WITH_NAME",
+        name = BattleReport.WITH_NAME,
         query = "SELECT rp FROM BattleReport rp WHERE rp.attackerVenadName = ?1 OR " +
             "rp.defenderVenadName = ?1 ORDER BY rp.date DESC"
     ),
     @NamedQuery(
-        name = "WITH_CLAN",
+        name = BattleReport.WITH_CLAN,
         query = "SELECT rp FROM BattleReport rp WHERE rp.attackerClan = ?1 OR " +
             "rp.defenderClan = ?1  ORDER BY rp.date DESC"
     ),
     @NamedQuery(
-        name = "BY_LOCATION",
+        name = BattleReport.BY_LOCATION,
         query = "SELECT rp FROM BattleReport rp WHERE rp.quadrant = ?1 ORDER BY rp.date DESC"
     ),
     @NamedQuery(
-        name = "BY_USER_ID",
+        name = BattleReport.BY_USER_ID,
         query = "SELECT rp FROM BattleReport rp WHERE rp.submitterId = ?1 ORDER BY rp.date DESC"
     ),
     @NamedQuery(
-        name = "REPORT_COUNT",
+        name = BattleReport.REPORT_COUNT,
         query = "SELECT COUNT(br) FROM BattleReport br"
     )
 })
 public class BattleReport {
 
-    public static final String ALL_REPORTS = "ALL_REPORTS";
-    public static final String UNIQUE_CHECK = "UNIQUE_CHECK";
-    public static final String UNIQUE_CHECK_NO_DATE = "UNIQUE_CHECK_NO_DATE";
-    public static final String WITH_NAME = "WITH_NAME";
-    public static final String WITH_CLAN = "WITH_CLAN";
-    public static final String BY_LOCATION = "BY_LOCATION";
-    public static final String BY_USER_ID = "BY_USER_ID";
-    public static final String REPORT_COUNT = "REPORT_COUNT";
+    public static final String ALL_REPORTS = "ALL_REPORTS"; //$NON-NLS-1$
+    public static final String UNIQUE_CHECK = "UNIQUE_CHECK"; //$NON-NLS-1$
+    public static final String UNIQUE_CHECK_NO_DATE = "UNIQUE_CHECK_NO_DATE"; //$NON-NLS-1$
+    public static final String WITH_NAME = "WITH_NAME"; //$NON-NLS-1$
+    public static final String WITH_CLAN = "WITH_CLAN"; //$NON-NLS-1$
+    public static final String BY_LOCATION = "BY_LOCATION"; //$NON-NLS-1$
+    public static final String BY_USER_ID = "BY_USER_ID"; //$NON-NLS-1$
+    public static final String REPORT_COUNT = "REPORT_COUNT"; //$NON-NLS-1$
     
     
     public final static BattleReport switchAttacker(BattleReport report) {
@@ -174,9 +174,9 @@ public class BattleReport {
     
     
     public BattleReport() {
-        this(0, "", 0, 0, new LinkedList<BattleDrop>(), false, Time.currentTime(), 
+        this(0, "", 0, 0, new LinkedList<BattleDrop>(), false, Time.currentTime(),  //$NON-NLS-1$
             BattleTactic.NORMAL, 
-            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, "", "", "", "", "", "",
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, "", "", "", "", "", "",      //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$//$NON-NLS-6$
             new LinkedList<BattleReportShip>(), new LinkedList<BattleReportShip>());
     }
     

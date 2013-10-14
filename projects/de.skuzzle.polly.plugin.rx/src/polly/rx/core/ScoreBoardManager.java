@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import polly.rx.MSG;
 import polly.rx.entities.ScoreBoardEntry;
 import polly.rx.graphs.HighlightArea;
 import polly.rx.graphs.ImageGraph;
@@ -42,7 +43,7 @@ public class ScoreBoardManager {
     public final static NumberFormat NUMBER_FORMAT = DecimalFormat.getInstance(
             Locale.ENGLISH);
     static {
-        ((DecimalFormat) NUMBER_FORMAT).applyPattern("0.00");
+        ((DecimalFormat) NUMBER_FORMAT).applyPattern("0.00"); //$NON-NLS-1$
     }
 
     
@@ -87,22 +88,21 @@ public class ScoreBoardManager {
         
         final PointSet averagePoints = new PointSet(Color.RED);
         averagePoints.setConnect(true);
-        averagePoints.setName("Avg. points over prev. " + AVERAGE_ELEMENTS + " entries");
+        averagePoints.setName(MSG.bind(MSG.scoreboardAvgPoints, AVERAGE_ELEMENTS));
         
         final PointSet averageRank = new PointSet(new Color(0, 0, 255, 128));
         averageRank.setConnect(true);
-        averageRank.setName("Avg. rank over prev. " + AVERAGE_ELEMENTS + " entries");
-        
+        averageRank.setName(MSG.bind(MSG.scoreboardAvgRank, AVERAGE_ELEMENTS));
         final Point lowest = this.createPointSet(all, maxMonths, points, rank, 
             averagePoints, averageRank);
         
-        YScale pointScale = points.calculateScale("Points", 10);
+        YScale pointScale = points.calculateScale(MSG.scoreboardPoints, 10);
         if (pointScale == null) {
-            pointScale = new YScale("Points", 2000, 30000, 2000);
+            pointScale = new YScale(MSG.scoreboardPoints, 2000, 30000, 2000);
         }
-        YScale rankScale = rank.calculateScale("Rank", 10);
+        YScale rankScale = rank.calculateScale(MSG.scoreboardRank, 10);
         if (rankScale == null) {
-            rankScale = new YScale("Rank", 0, 1000, 10);
+            rankScale = new YScale(MSG.scoreboardRank, 0, 1000, 10);
         }
         
         points.setScale(pointScale);
@@ -110,7 +110,7 @@ public class ScoreBoardManager {
         rank.setScale(rankScale);
         averageRank.setScale(rankScale);
         
-        points.setName("Points");
+        points.setName(MSG.scoreboardPoints);
         
         g.addPointSet(points);
         g.addPointSet(rank);
@@ -122,7 +122,7 @@ public class ScoreBoardManager {
         g.getLeftScale().setDrawGrid(true);
         
         if (lowest != null) {
-            g.addHighlightArea(new HighlightArea("", 0, lowest.getX(), 
+            g.addHighlightArea(new HighlightArea("", 0, lowest.getX(),  //$NON-NLS-1$
                 new Color(0, 0, 0, 20)));
         }
         
@@ -155,9 +155,9 @@ public class ScoreBoardManager {
             g.addPointSet(left);
         }
         
-        YScale pointScale = common.calculateScale("Points", 10);
+        YScale pointScale = common.calculateScale(MSG.scoreboardPoints, 10);
         if (pointScale == null) {
-            pointScale = new YScale("Points", 6000, 30000, 2000);
+            pointScale = new YScale(MSG.scoreboardPoints, 6000, 30000, 2000);
         }
         pointScale.setDrawGrid(true);
         for (final PointSet ps : g.getData()) {
@@ -172,7 +172,7 @@ public class ScoreBoardManager {
     
     
     private final String[] createXLabels(int maxMonths) {
-        final DateFormat df = new SimpleDateFormat("MMM yyyy");
+        final DateFormat df = new SimpleDateFormat("MMM yyyy"); //$NON-NLS-1$
         
         String[] labels = new String[maxMonths];
         final Date today = Time.currentTime();
@@ -195,7 +195,7 @@ public class ScoreBoardManager {
             return null;
         }
         
-        final DateFormat df = new SimpleDateFormat("dd.MM.yyyy");
+        final DateFormat df = new SimpleDateFormat("dd.MM.yyyy"); //$NON-NLS-1$
         
         final ScoreBoardEntry oldest = entries.get(0);
         
@@ -213,11 +213,11 @@ public class ScoreBoardManager {
             
             final double x = this.calcX(entry.getDate(), monthsAgo);
             final Point points = new NamedPoint(
-                "Date: " + df.format(entry.getDate()) + ", Points: " + entry.getPoints(),
+                MSG.bind(MSG.scoreboardDatePoints, df.format(entry.getDate()), entry.getPoints()),
                 x, entry.getPoints(), PointType.NONE);
             
             final Point rank = new NamedPoint(
-                "Date: " + df.format(entry.getDate()) + ", Rank: " + entry.getRank(),
+                MSG.bind(MSG.scoreboardDateRank, df.format(entry.getDate()), entry.getPoints()),
                 x, entry.getRank(), PointType.NONE);
             
             
@@ -273,7 +273,7 @@ public class ScoreBoardManager {
         }
         
         left.setName(oldest.getVenadName());
-        right.setName("Rank");
+        right.setName(MSG.scoreboardRank);
         return lowestGreaterZeroPoints;
     }
     

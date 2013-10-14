@@ -13,47 +13,50 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import polly.rx.MSG;
 import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.time.Time;
 
 @Entity
 @NamedQueries({
     @NamedQuery(
-        name =  "OPEN_BY_USER_AND_TRAINER",
+        name =  TrainEntityV3.OPEN_BY_USER_AND_TRAINER,
         query = "SELECT t FROM TrainEntityV3 t WHERE t.trainerId = ?1 AND LOWER(t.forUser) = LOWER(?2) AND t.closed=FALSE"),
     @NamedQuery(
-        name =  "OPEN_BY_USER",
+        name =  TrainEntityV3.OPEN_BY_USER,
         query = "SELECT t FROM TrainEntityV3 t WHERE LOWER(t.forUser) = LOWER(?1) AND t.closed=FALSE"),
     @NamedQuery(
-        name =  "CLOSED_BY_USER",
+        name =  TrainEntityV3.CLOSED_BY_USER,
         query = "SELECT t FROM TrainEntityV3 t WHERE LOWER(t.forUser) = LOWER(?1) AND t.closed=true"),
     @NamedQuery(
-        name =  "OPEN_BY_TRAINER",
+        name =  TrainEntityV3.OPEN_BY_TRAINER,
         query = "SELECT t FROM TrainEntityV3 t WHERE t.trainerId = ?1 AND t.closed=false"),
     @NamedQuery(
-        name =  "CLOSED_BY_TRAINER",
+        name =  TrainEntityV3.CLOSED_BY_TRAINER,
         query = "SELECT t FROM TrainEntityV3 t WHERE t.trainerId = ?1 AND t.closed=true"),
     @NamedQuery(
-        name =  "TRAINSV2_BY_USER",
+        name =  TrainEntityV3.TRAINSV2_BY_USER,
         query = "SELECT t FROM TrainEntityV3 t WHERE LOWER(t.forUser) = LOWER(?1)"),
     @NamedQuery(
-        name =  "ALL_TE3",
+        name =  TrainEntityV3.ALL_TE3,
         query = "SELECT t FROM TrainEntityV3 t")
 })
 public class TrainEntityV3 {
     
-    public final static String OPEN_BY_USER_AND_TRAINER = "OPEN_BY_USER_AND_TRAINER";
-    public final static String OPEN_BY_USER = "OPEN_BY_USER";
-    public final static String CLOSED_BY_USER = "CLOSED_BY_USER";
-    public final static String CLOSED_BY_TRAINER = "CLOSED_BY_TRAINER";
-    public final static String OPEN_BY_TRAINER = "OPEN_BY_TRAINER";
-    public final static String ALL = "ALL_TE3";
+    public final static String OPEN_BY_USER_AND_TRAINER = "OPEN_BY_USER_AND_TRAINER"; //$NON-NLS-1$
+    public final static String OPEN_BY_USER = "OPEN_BY_USER"; //$NON-NLS-1$
+    public final static String CLOSED_BY_USER = "CLOSED_BY_USER"; //$NON-NLS-1$
+    public final static String CLOSED_BY_TRAINER = "CLOSED_BY_TRAINER"; //$NON-NLS-1$
+    public final static String OPEN_BY_TRAINER = "OPEN_BY_TRAINER"; //$NON-NLS-1$
+    public final static String ALL_TE3 = "ALL_TE3"; //$NON-NLS-1$
+    public final static String TRAINSV2_BY_USER = "TRAINSV2_BY_USER"; //$NON-NLS-1$
+    
     
     
     public static TrainEntityV3 parseString(int trainerId, String forUser, double factor, 
             String trainString) {
         
-        final String[] parts = trainString.split("\\s+", 7);
+        final String[] parts = trainString.split("\\s+", 7); //$NON-NLS-1$
         if (parts.length == 6) {
             /*
              * Parts:
@@ -85,7 +88,7 @@ public class TrainEntityV3 {
              * [5] "Cr."
              * [6] duration
              */
-            final TrainType type = TrainType.parse(parts[0] + " " + parts[1]);
+            final TrainType type = TrainType.parse(parts[0] + " " + parts[1]); //$NON-NLS-1$
             
             // stripp off braces
             final int current = Integer.parseInt(
@@ -96,14 +99,15 @@ public class TrainEntityV3 {
             return new TrainEntityV3(trainerId, forUser, type, factor, costs, now, 
                 finished, current);
         } else {
-            throw new IllegalArgumentException("ungültiges TrainEntity");
+            throw new IllegalArgumentException(
+                    MSG.bind(MSG.trainEntityMisformatted, trainString));
         }
     }
     
     
     
     private final static Pattern PATTERN = 
-            Pattern.compile("((\\d) Tage )?(\\d{1,2}):(\\d{1,2}):(\\d{1,2})");
+            Pattern.compile("((\\d) Tage )?(\\d{1,2}):(\\d{1,2}):(\\d{1,2})"); //$NON-NLS-1$
     
     private static Date parseDuration(String duration) {
         Matcher m = PATTERN.matcher(duration);
@@ -250,36 +254,34 @@ public class TrainEntityV3 {
     
     
     public String format(FormatManager formatter) {
-        StringBuilder b = new StringBuilder();
-        b.append("(");
-        b.append(this.id);
-        b.append(") ");
-        b.append(this.type.toString());
-        b.append(" (");
-        b.append(this.currentValue);
-        b.append(") ");
+        final String result;
         double costs = this.costs * this.factor;
-        
-        b.append(costs);
-        b.append(" Cr.");
-        if (this.factor != 1.0) {
-            b.append(" (");
-            b.append(this.costs);
-            b.append(" x ");
-            b.append(this.factor);
-            b.append(")");
+        if (this.factor == 1.0) {
+            result = MSG.bind(MSG.trainEntityFormatWithFactor, 
+                    this.id, 
+                    this.type.toString(), 
+                    this.currentValue, 
+                    costs, 
+                    this.costs,
+                    this.factor, 
+                    formatter.formatTimeSpanMs(this.getDuration()));
+        } else {
+            result = MSG.bind(MSG.trainEntityFormatWithoutFactor, 
+                    this.id, 
+                    this.type.toString(), 
+                    this.currentValue, 
+                    costs, 
+                    formatter.formatTimeSpanMs(this.getDuration()));
         }
-        b.append(" Dauer: ");
-        b.append(formatter.formatTimeSpan(this.getDuration() / 1000));
-        return b.toString();
+        return result;
     }
 
 
     
     @Override
     public String toString() {
-        return "[Trainer: " + this.trainerId + ", Current:" + this.currentValue + ", " + 
-            this.type + " " + this.costs + " Cr. Finish: " + this.trainFinished + "]";
+        return "[Trainer: " + this.trainerId + ", Current:" + this.currentValue + ", " +  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            this.type + " " + this.costs + " Cr. Finish: " + this.trainFinished + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 }
 

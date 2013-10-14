@@ -92,7 +92,7 @@ public class BattleReportParser {
         try {
             return parseReportHelper(paste, submitter);
         } catch (Exception e) {
-            throw new ParseException("ungültiger Kampfbericht");
+            throw new ParseException("ungï¿½ltiger Kampfbericht");
         }
     }
     
@@ -120,7 +120,7 @@ public class BattleReportParser {
         int i = 0;
         while (numbers.find()) {
             int amount = Integer.parseInt(numbers.group());
-            RxRessource r = RxRessource.byOrdinal(i++);
+            RxRessource r = RxRessource.values()[i++];
             drops.add(new BattleDrop(r, amount));
         }
         

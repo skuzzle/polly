@@ -22,7 +22,7 @@ public class BattleDrop {
     
     public final static void sumUp(BattleDrop[] result, BattleDrop[] values) {
         if (result.length != values.length) {
-            throw new RuntimeException("dimension mismatch");
+            throw new RuntimeException("dimension mismatch"); //$NON-NLS-1$
         }
         
         for (int i = 0; i < result.length; ++i) {
@@ -76,6 +76,6 @@ public class BattleDrop {
     
     @Override
     public String toString() {
-        return this.ressource + " " + this.amount;
+        return this.ressource + " " + this.amount; //$NON-NLS-1$
     }
 }

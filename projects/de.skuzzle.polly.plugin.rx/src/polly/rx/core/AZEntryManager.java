@@ -2,6 +2,7 @@ package polly.rx.core;
 
 import java.util.List;
 
+import polly.rx.MSG;
 import polly.rx.MyPlugin;
 import polly.rx.entities.AZEntry;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -41,7 +42,7 @@ public class AZEntryManager {
             
             if (e != null) {
                 if (e.getByUserId() != byUserId) {
-                    throw new DatabaseException("Can't delete entries of other users");
+                    throw new DatabaseException(MSG.azEntryCantDeleteOther);
                 }
                 w.remove(e);
             }

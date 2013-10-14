@@ -2,6 +2,7 @@ package polly.rx.core;
 
 import java.util.List;
 
+import polly.rx.MSG;
 import polly.rx.entities.TrainEntityV3;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -110,9 +111,9 @@ public class TrainManagerV2 extends AbstractDisposable {
                 TrainEntityV3.class, id);
 
         if (te == null) {
-            throw new CommandException("Ungültige Train-Id");
+            throw new CommandException(MSG.trainManagerInvalidTrainId);
         } else if (te.getTrainerId() != trainer.getId()) {
-            throw new CommandException("Ungültige Trainer Id");
+            throw new CommandException(MSG.trainManagerInvalidTrainerId);
         }
         
         this.persistence.writeAtomic(new Atomic() {
@@ -142,7 +143,7 @@ public class TrainManagerV2 extends AbstractDisposable {
         final TrainEntityV3 te = this.persistence.atomic().find(TrainEntityV3.class, id);
 
         if (te == null) {
-            throw new CommandException("Ungültiger Train-Id");
+            throw new CommandException(MSG.trainManagerInvalidTrainId);
         }
         this.persistence.writeAtomic(new Atomic() {
             @Override

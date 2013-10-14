@@ -92,6 +92,89 @@ public class MSG extends Constants {
     public static String venadUnknownUser;
     public static String venadSuccess;
 
+    // AZEntryManager
+    public static String azEntryCantDeleteOther;
+
+    // FleetDbManager
+    public static String fleetDbReportExists;
+    public static String fleetDbDeletedScanWithShip;
+
+    // ScoreboardManager
+    public static String scoreboardAvgPoints;
+    public static String scoreboardAvgRank;
+    public static String scoreboardPoints;
+    public static String scoreboardRank;
+    public static String scoreboardDatePoints;
+    public static String scoreboardDateRank;
+
+    // TrainBillV2
+    public static String billNoOpen;
+    public static String billOpen;
+
+ // TrainManagerV2
+    public static String trainManagerInvalidTrainId;
+    public static String trainManagerInvalidTrainerId;
+    
+    
+ // BattleTactic
+    public static String tacticNormal;
+    public static String tacticRaubzug;
+    public static String tacticMachtDemo;
+    public static String tacticTPT;
+    public static String tacticSchnitt;
+    public static String tacticNahkampf;
+    public static String tacticSystem;
+    public static String tacticAusweich;
+    public static String tacticTT;
+    public static String tacticZange;
+    public static String tacticAbgesichert;
+    public static String tacticSondierung;
+    public static String tacticFern;
+    public static String tacticMultivektor;
+    public static String tacticKonzentriert;
+    public static String tacticVertreiben;
+    public static String tacticKralle;
+    public static String tacticSichel;
+    public static String tacticHitAndRun;
+    public static String tacticHinterhalt;
+    public static String tacticSturm;
+    public static String tacticDauerbeschuss;
+    public static String tacticAlien;
+
+ // FleetScanShip
+    public static String scanShipSpotFirstTime;
+    public static String scanShipSpotted;
+    public static String scanShipNameChanged;
+    public static String scanShipOwnerChanged;
+    public static String scanShipOwnerChangedIndicator;
+    public static String scanShipOwnerChangedClan;
+
+ // TrainEntity
+    public static String trainEntityMisformatted;
+    public static String trainEntityFormatWithFactor;
+    public static String trainEntityFormatWithoutFactor;
+    
+ // TrainType
+    public static String trainTypeIntelligence;
+    public static String trainTypeBody;
+    public static String trainTypeCommando;
+    public static String trainTypeModule;
+    public static String trainTypeCrew;
+    public static String trainTypeTech;
+    public static String trainTypePayment;
+    public static String trainTypeExtendedIntelligence;
+    public static String trainTypeExtendedBody;
+    public static String trainTypeExtendedCommand;
+    public static String trainTypeExtendedModule;
+    public static String trainTypeExtendedCrew;
+    public static String trainTypeExtendedTech;
+    public static String trainTypeIntensiveIntelligence;
+    public static String trainTypeIntensiveBody;
+    public static String trainTypeIntensiveCommand;
+    public static String trainTypeIntensiveModule;
+    public static String trainTypeIntensiveCrew;
+    public static String trainTypeIntensiveTech;
+
     static {
         Resources.init(FAMILY, MSG.class);
     }

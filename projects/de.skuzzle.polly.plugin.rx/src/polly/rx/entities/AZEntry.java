@@ -20,8 +20,8 @@ import javax.persistence.NamedQuery;
 })
 public class AZEntry {
     
-    public final static String AZ_ENTRY_BY_USER = "AZ_ENTRY_BY_USER";
-    public final static String AZ_ENTRY_BY_FLEET_AND_USER = "AZ_ENTRY_BY_FLEET_AND_USER";
+    public final static String AZ_ENTRY_BY_USER = "AZ_ENTRY_BY_USER"; //$NON-NLS-1$
+    public final static String AZ_ENTRY_BY_FLEET_AND_USER = "AZ_ENTRY_BY_FLEET_AND_USER"; //$NON-NLS-1$
     
     @Id@GeneratedValue(strategy = GenerationType.TABLE)
     private int id;
@@ -34,7 +34,7 @@ public class AZEntry {
     
     
     public AZEntry() {
-        this(1, "", "");
+        this(1, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     

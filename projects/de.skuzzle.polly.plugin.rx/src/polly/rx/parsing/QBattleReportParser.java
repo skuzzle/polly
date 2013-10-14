@@ -70,7 +70,7 @@ public class QBattleReportParser {
             // drop
             final List<BattleDrop> drop = new ArrayList<>(RxRessource.values().length);
             for (int i = 0; i < RxRessource.values().length; ++i) {
-                final RxRessource res = RxRessource.byOrdinal(i);
+                final RxRessource res = RxRessource.values()[i];
                 if (!s.hasNextInt()) {
                     throw new ParseException("resource expected: " + res);
                 }

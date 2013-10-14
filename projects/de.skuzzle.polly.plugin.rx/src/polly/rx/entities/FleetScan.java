@@ -21,34 +21,34 @@ import de.skuzzle.polly.sdk.time.Time;
 @Entity
 @NamedQueries({
     @NamedQuery(
-        name = "ALL_SCANS",
+        name = FleetScan.ALL_SCANS,
         query= "SELECT scan FROM FleetScan scan"
     ),
     @NamedQuery(
-        name = "CONTAINING_SHIP",
+        name = FleetScan.CONTAINING_SHIP,
         query = "SELECT scan From FleetScan scan, IN(scan.ships) ship WHERE ship.rxId = ?1"
     ),
     @NamedQuery(
-        name = "CONTAINING_OWNER",
+        name = FleetScan.CONTAINING_OWNER,
         query = "SELECT DISTINCT scan FROM FleetScan scan, IN(scan.ships) ship WHERE ship.owner = ?1"
     ),
     @NamedQuery(
-        name = "SCANS_BY_CLAN",
+        name = FleetScan.SCANS_BY_CLAN,
         query = "SELECT DISTINCT scan FROM FleetScan scan, IN(scan.ships) ship WHERE scan.ownerClan = ?1 OR ship.ownerClan = ?1"
     ),
     @NamedQuery(
-        name = "SCANS_BY_LOCATION",
+        name = FleetScan.SCANS_BY_LOCATION,
         query = "SELECT DISTINCT scan FROM FleetScan scan WHERE scan.quadrant = ?1"
     )
     
 })
 public class FleetScan {
 
-    public final static String ALL_SCANS = "ALL_SCANS";
-    public final static String CONTAINING_SHIP = "CONTAINING_SHIP";
-    public final static String CONTAINING_OWNER = "CONTAINING_OWNER";
-    public final static String SCANS_BY_CLAN = "SCANS_BY_CLAN";
-    public final static String SCANS_BY_LOCATION = "SCANS_BY_LOCATION";
+    public final static String ALL_SCANS = "ALL_SCANS"; //$NON-NLS-1$
+    public final static String CONTAINING_SHIP = "CONTAINING_SHIP"; //$NON-NLS-1$
+    public final static String CONTAINING_OWNER = "CONTAINING_OWNER"; //$NON-NLS-1$
+    public final static String SCANS_BY_CLAN = "SCANS_BY_CLAN"; //$NON-NLS-1$
+    public final static String SCANS_BY_LOCATION = "SCANS_BY_LOCATION"; //$NON-NLS-1$
     
     
     @Id@GeneratedValue(strategy = GenerationType.TABLE)
@@ -81,7 +81,7 @@ public class FleetScan {
     
     
     public FleetScan() {
-        this(0, "", "", "", "", new LinkedList<FleetScanShip>(), "", 0, 0, "");
+        this(0, "", "", "", "", new LinkedList<FleetScanShip>(), "", 0, 0, ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
     }
     
     

@@ -2,6 +2,7 @@ package polly.rx.core;
 
 import java.util.List;
 
+import polly.rx.MSG;
 import polly.rx.entities.TrainEntityV3;
 
 
@@ -54,10 +55,9 @@ public class TrainBillV2 {
     @Override
     public String toString() {
         if (this.trains.isEmpty()) {
-            return "Keine offene Rechnung.";
+            return MSG.billNoOpen;
         } else {
-            return "Rechnung für " + this.trains.size() + " Trainings: " + 
-                this.weightedSum() + " Cr.";
+            return MSG.bind(MSG.billOpen, this.trains.size(), this.weightedSum());
         }
     }
     
