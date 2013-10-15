@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import polly.rx.MSG;
 import polly.rx.MyPlugin;
 import polly.rx.core.AZEntryManager;
 import polly.rx.core.FleetDBManager;
@@ -58,7 +59,80 @@ import de.skuzzle.polly.tools.streams.FastByteArrayInputStream;
 
 
 public class RXController extends PollyController {
+    
+    public final static String PAGE_FLEET_SCAN_MANAGER = "/pages/fleetScanPage"; //$NON-NLS-1$
+    public final static String PAGE_FLEET_SCAN_DETAILS = "/pages/fleetScanDetails"; //$NON-NLS-1$
+    public final static String PAGE_FLEET_SCAN_SHIPS = "/pages/fleetScanShips"; //$NON-NLS-1$
+    public final static String PAGE_SCAN_SHIP_DETAILS = "/pages/scanShipDetails"; //$NON-NLS-1$
+    public final static String PAGE_SCOREBOARD = "/pages/scoreboard"; //$NON-NLS-1$
+    public final static String PAGE_REPORTS = "/pages/reports"; //$NON-NLS-1$
+    public final static String PAGE_CONFIGURE_AZ = "/pages/configureAz"; //$NON-NLS-1$
+    public final static String PAGE_GM_SCRIPTS = "/pages/gmScripts"; //$NON-NLS-1$
+    public final static String PAGE_COMPARE_SCORES = "/pages/score/compare"; //$NON-NLS-1$
+    public final static String PAGE_SCORE_DETAILS = "/pages/score/details"; //$NON-NLS-1$
+    public final static String PAGE_REPORT_DETAILS = "/pages/reportDetails"; //$NON-NLS-1$
+    
+    
+    public final static String API_ADD_TO_COMPARE = "/api/addToCompare"; //$NON-NLS-1$
+    public final static String API_REMOVE_FROM_COMPARE = "/api/removeFromCompare"; //$NON-NLS-1$
+    public final static String API_ADD_AZ_ENTRY = "/api/addAzEntry"; //$NON-NLS-1$
+    public final static String API_DELETE_AZ_ENTRY = "/api/deleteAzEntry"; //$NON-NLS-1$
+    public final static String API_POST_FLEET_SCAN = "/api/postFleetScan"; //$NON-NLS-1$
+    public final static String API_POST_QFLEET_SCAN = "/api/postQFleetScan"; //$NON-NLS-1$
+    public final static String API_GRAPH_COMPARE = "/api/graphCompare"; //$NON-NLS-1$
+    public final static String API_GRAPH_FOR_VENAD = "/api/graphForVenad"; //$NON-NLS-1$
+    public final static String API_IMAGE_FROM_SESSION = "/api/imageFromSession"; //$NON-NLS-1$
+    public final static String API_POST_SCOREBOARD = "/api/postScoreboard"; //$NON-NLS-1$
+    public final static String API_POST_REPORT = "/api/postReport"; //$NON-NLS-1$
+    public final static String API_POST_QREPORT = "/postQReport"; //$NON-NLS-1$
+    public final static String API_DELETE_REPORT = "/api/deleteReport"; //$NON-NLS-1$
+    public final static String API_REPORT_STATISTICS = "/api/battlereportStatistics"; //$NON-NLS-1$
 
+    public final static String GM_SCRAPE_SCOREBOARD = "/GM/scrapescoreboarddata.user.js"; //$NON-NLS-1$
+    public final static String GM_KB_REPORT = "/GM/kbreport.user.js"; //$NON-NLS-1$
+    
+    public final static String FILES_VIEW = "/polly/rx/httpv2/view"; //$NON-NLS-1$
+    
+    
+    private final static String CONTENT_FLEET_SCAN_MANAGER = "polly/rx/httpv2/view/fleetscans.overview.html"; //$NON-NLS-1$
+    private final static String CONTENT_FLEET_SCAN_DETAILS = "polly/rx/httpv2/view/fleetscan.details.html"; //$NON-NLS-1$
+    private final static String CONTENT_FLEET_SCAN_SHIPS = "polly/rx/httpv2/view/scanships.overview.html"; //$NON-NLS-1$
+    private final static String CONTENT_SCAN_SHIP_DETAILS = "polly/rx/httpv2/view/scanship.details.html"; //$NON-NLS-1$
+    private final static String CONTENT_SCOREBOARD = "polly/rx/httpv2/view/scoreboard.overview.html"; //$NON-NLS-1$
+    private final static String CONTENT_REPORTS = "polly/rx/httpv2/view/battlereports.overview.html"; //$NON-NLS-1$
+    private final static String CONTENT_CONFIG_AZ = "polly/rx/httpv2/view/configure.az.html"; //$NON-NLS-1$
+    private final static String CONTENT_GM_SCRIPTS = "polly/rx/httpv2/view/gmscripts.html"; //$NON-NLS-1$
+    private final static String CONTENT_COMPARE_SCORES = "polly/rx/httpv2/view/scoreboard.compare.html"; //$NON-NLS-1$
+    private final static String CONTENT_SCORE_DETAILS = "polly/rx/httpv2/view/scoreboard.details.html"; //$NON-NLS-1$
+    private final static String CONTENT_GRAPH_COMPARE = "polly/rx/httpv2/view/graph.html"; //$NON-NLS-1$
+    private final static String CONTENT_GRAPH_FOR_VENAD = "polly/rx/httpv2/view/graph.html"; //$NON-NLS-1$
+    private final static String CONTENT_REPORT_DETAILS = "polly/rx/httpv2/view/battlereports.details.html"; //$NON-NLS-1$
+    private final static String CONTENT_REPORT_STATISTICS = "polly/rx/httpv2/view/battlereports.statistics.html"; //$NON-NLS-1$
+    private final static String CONTENT_SCRAPE_SCOREBOARD = "polly/rx/httpv2/view/scrapescoreboarddata.user.js"; //$NON-NLS-1$
+    private final static String CONTENT_KB_REPORT = "polly/rx/httpv2/view/kbreport.user.js"; //$NON-NLS-1$
+    
+    
+    private final static String REVORIX_CATEGORY_KEY = "httpRxCategory"; //$NON-NLS-1$
+    private final static String FLEET_SCAN_NAME_KEY = "httpFleetScanMngr"; //$NON-NLS-1$
+    private final static String FLEET_SCAN_DESC_KEY = "httpFleetScanMngrDesc"; //$NON-NLS-1$
+    private final static String SCANNED_SHIPS_NAME_KEY = "httpScannedShips"; //$NON-NLS-1$
+    private final static String SCANNED_SHIPS_DESC_KEY = "httpScannedShipsDesc"; //$NON-NLS-1$
+    private final static String SCOREBOARD_NAME_KEY = "httpScoreboardMngr"; //$NON-NLS-1$
+    private final static String SCOREBOARD_DESC_KEY = "httpScoreboardMngrDesc"; //$NON-NLS-1$
+    private final static String REPORTS_NAME_KEY = "httpReportsMngr"; //$NON-NLS-1$
+    private final static String REPORTS_DESC_KEY = "httpReportsMngrDesc"; //$NON-NLS-1$
+    private final static String CONFIG_AZ_NAME_KEY = "httpAzMngr"; //$NON-NLS-1$
+    private final static String CONFIG_AZ_DESC_KEY = "httpAzMngrDesc"; //$NON-NLS-1$
+    private final static String GM_SCRIPT_NAME_KEY = "httpGmScripts"; //$NON-NLS-1$
+    private final static String GM_SCRIPT_DESC_KEY = "httpGmScriptsDesc"; //$NON-NLS-1$
+    
+    
+                    
+    private final static String COMPARE_LIST_KEY = "COMPARE_LIST"; //$NON-NLS-1$
+    private final static String MULTI_GRAPH_PREFIX = "graph_compare_mm_"; //$NON-NLS-1$
+    private final static String SINGLE_GRAPH_PREFIX = "graph_"; //$NON-NLS-1$
+    private final static String STATS_PREFIX = "BR_STATS_"; //$NON-NLS-1$
+    
     private final FleetDBManager fleetDb;
     private final ScoreBoardManager sbManager;
     private final AZEntryManager azManager;
@@ -81,47 +155,54 @@ public class RXController extends PollyController {
     
     
     
-    @Get(value = "/pages/fleetScanPage", name = "Fleet Scans")
-    @OnRegister({ WebinterfaceManager.ADD_MENU_ENTRY, "Revorix", "List all fleet scans",
+    @Get(value = PAGE_FLEET_SCAN_MANAGER, name = FLEET_SCAN_NAME_KEY)
+    @OnRegister({ 
+        WebinterfaceManager.ADD_MENU_ENTRY, 
+        MSG.FAMILY,
+        REVORIX_CATEGORY_KEY, 
+        FLEET_SCAN_DESC_KEY,
         FleetDBManager.VIEW_FLEET_SCAN_PERMISSION })
     public HttpAnswer fleetScanPage() throws AlternativeAnswerException {
         this.requirePermissions(FleetDBManager.VIEW_FLEET_SCAN_PERMISSION);
-        return this.makeAnswer(this.createContext(
-                "polly/rx/httpv2/view/fleetscans.overview.html"));
+        return this.makeAnswer(this.createContext(CONTENT_FLEET_SCAN_MANAGER));
     }
     
     
     
-    @Get("/pages/fleetScanDetails")
+    @Get(PAGE_FLEET_SCAN_DETAILS)
     public HttpAnswer fleetScanDetailsPage(@Param("scanId") int scanId) 
                 throws AlternativeAnswerException {
         this.requirePermissions(FleetDBManager.VIEW_FLEET_SCAN_PERMISSION);
         final FleetScan scan = this.fleetDb.getScanById(scanId);
         final Map<String, Object> c = this.createContext(
-                "polly/rx/httpv2/view/fleetscan.details.html");
-        c.put("scan", scan);
+                CONTENT_FLEET_SCAN_DETAILS);
+        c.put("scan", scan); //$NON-NLS-1$
         return this.makeAnswer(c);
     }
     
     
     
-    @Get(value = "/pages/fleetScanShips", name = "Scanned Ships")
-    @OnRegister({ WebinterfaceManager.ADD_MENU_ENTRY, "Revorix", "List all scanned  ships",
+    @Get(value = PAGE_FLEET_SCAN_SHIPS, name = SCANNED_SHIPS_NAME_KEY)
+    @OnRegister({
+        WebinterfaceManager.ADD_MENU_ENTRY, 
+        MSG.FAMILY,
+        REVORIX_CATEGORY_KEY, 
+        SCANNED_SHIPS_DESC_KEY,
         FleetDBManager.VIEW_FLEET_SCAN_PERMISSION })
     public HttpAnswer fleetScanShipsPage() throws AlternativeAnswerException {
         this.requirePermissions(FleetDBManager.VIEW_FLEET_SCAN_PERMISSION);
-        return this.makeAnswer(this.createContext("polly/rx/httpv2/view/scanships.overview.html"));
+        return this.makeAnswer(this.createContext(CONTENT_FLEET_SCAN_SHIPS));
     }
     
     
     
-    @Get("/pages/scanShipDetails")
+    @Get(PAGE_SCAN_SHIP_DETAILS)
     public HttpAnswer scanShipDetails(@Param("shipId") int id) 
             throws AlternativeAnswerException {
         this.requirePermissions(FleetDBManager.VIEW_FLEET_SCAN_PERMISSION);
         final FleetScanShip ship = this.fleetDb.getShipByRevorixId(id);
-        final Map<String, Object> c = this.createContext("polly/rx/httpv2/view/scanship.details.html");
-        c.put("ship", ship);
+        final Map<String, Object> c = this.createContext(CONTENT_SCAN_SHIP_DETAILS);
+        c.put("ship", ship); //$NON-NLS-1$
         return this.makeAnswer(c);
     }
     
@@ -133,7 +214,7 @@ public class RXController extends PollyController {
         
         
         public CompareList() {
-            super(true, "");
+            super(true, ""); //$NON-NLS-1$
             this.entries = new HashSet<>();
         }
         
@@ -153,84 +234,94 @@ public class RXController extends PollyController {
     
     
     
-    @Get("/api/addToCompare")
+    @Get(API_ADD_TO_COMPARE)
     public HttpAnswer addToCompare(@Param("venadName") String name) 
                 throws AlternativeAnswerException {
         this.requirePermissions(MyPlugin.SBE_PERMISSION);
-        CompareList cl = (CompareList) this.getSession().getAttached("COMPARE_LIST");
+        CompareList cl = (CompareList) this.getSession().getAttached(COMPARE_LIST_KEY);
         if (cl == null) {
             cl = new CompareList();
-            this.getSession().set("COMPARE_LIST", cl);
+            this.getSession().set(COMPARE_LIST_KEY, cl);
         }
         synchronized (cl) {
             cl.getEntries().add(name);
         }
-        return HttpAnswers.newStringAnswer("").redirectTo("/pages/scoreboard");
+        return HttpAnswers.newRedirectAnswer(PAGE_SCOREBOARD);
     }
     
     
     
-    @Get("/api/removeFromCompare")
+    @Get(API_REMOVE_FROM_COMPARE)
     public HttpAnswer removeFromCompare(@Param("venadName") String name) 
             throws AlternativeAnswerException {
         this.requirePermissions(MyPlugin.SBE_PERMISSION);
-        CompareList cl = (CompareList) this.getSession().getAttached("COMPARE_LIST");
+        CompareList cl = (CompareList) this.getSession().getAttached(COMPARE_LIST_KEY);
         if (cl != null) {
             synchronized (cl) {
                 cl.getEntries().remove(name);
             }
         }
-        return HttpAnswers.newStringAnswer("").redirectTo("/pages/scoreboard");
+        return HttpAnswers.newRedirectAnswer(PAGE_SCOREBOARD);
     }
     
     
     
-    @Get(value = "/pages/scoreboard", name = "Scoreboard")
-    @OnRegister({ WebinterfaceManager.ADD_MENU_ENTRY, "Revorix", "View and manage posted scoreboard entries",
+    @Get(value = PAGE_SCOREBOARD, name = SCOREBOARD_NAME_KEY)
+    @OnRegister({ 
+        WebinterfaceManager.ADD_MENU_ENTRY, 
+        MSG.FAMILY,
+        REVORIX_CATEGORY_KEY, 
+        SCOREBOARD_DESC_KEY,
         MyPlugin.SBE_PERMISSION })
     public HttpAnswer scoreboardPage() throws AlternativeAnswerException {
         this.requirePermissions(MyPlugin.SBE_PERMISSION);
-        final Map<String, Object> c = this.createContext("polly/rx/httpv2/view/scoreboard.overview.html");
-        CompareList cl = (CompareList) this.getSession().getAttached("COMPARE_LIST");
+        final Map<String, Object> c = this.createContext(CONTENT_SCOREBOARD);
+        CompareList cl = (CompareList) this.getSession().getAttached(COMPARE_LIST_KEY);
         if (cl == null) {
             cl = new CompareList();
-            this.getSession().set("COMPARE_LIST", cl);
+            this.getSession().set(COMPARE_LIST_KEY, cl);
         }
-        c.put("compareList", cl);
+        c.put("compareList", cl); //$NON-NLS-1$
         return this.makeAnswer(c);
     }
     
     
     
-    @Get(value = "/pages/reports", name = "Battlereports")
-    @OnRegister({ WebinterfaceManager.ADD_MENU_ENTRY, "Revorix", "View statistics about battle reports",
+    @Get(value = PAGE_REPORTS, name = REPORTS_NAME_KEY)
+    @OnRegister({ 
+        WebinterfaceManager.ADD_MENU_ENTRY,
+        MSG.FAMILY,
+        REVORIX_CATEGORY_KEY, 
+        REPORTS_DESC_KEY,
         FleetDBManager.VIEW_BATTLE_REPORT_PERMISSION })
     public HttpAnswer reportsPage() throws AlternativeAnswerException {
         this.requirePermissions(FleetDBManager.VIEW_BATTLE_REPORT_PERMISSION);
-        final Map<String, Object> c = this.createContext(
-                "polly/rx/httpv2/view/battlereports.overview.html");
+        final Map<String, Object> c = this.createContext(CONTENT_REPORTS);
         return this.makeAnswer(c);
     }
     
     
     
-    @Get(value = "/pages/configureAz", name = "Configure AZ")
-    @OnRegister({ WebinterfaceManager.ADD_MENU_ENTRY, "Revorix", "Configure AZ values per fleet name",
+    @Get(value = PAGE_CONFIGURE_AZ, name = CONFIG_AZ_NAME_KEY)
+    @OnRegister({ 
+        WebinterfaceManager.ADD_MENU_ENTRY, 
+        MSG.FAMILY,
+        REVORIX_CATEGORY_KEY, 
+        CONFIG_AZ_DESC_KEY,
         FleetDBManager.ADD_BATTLE_REPORT_PERMISSION })
     public HttpAnswer configureAz() throws AlternativeAnswerException {
         this.requirePermissions(FleetDBManager.ADD_BATTLE_REPORT_PERMISSION);
         final User user = this.getSessionUser();
         final List<AZEntry> entries = this.azManager.getEntries(user.getId());
         
-        final Map<String, Object> c = this.createContext(
-                "polly/rx/httpv2/view/configure.az.html");
-        c.put("entries", entries);
+        final Map<String, Object> c = this.createContext(CONTENT_CONFIG_AZ);
+        c.put("entries", entries); //$NON-NLS-1$
         return this.makeAnswer(c);
     }
     
     
     
-    @Get("/api/addAzEntry")
+    @Get(API_ADD_AZ_ENTRY)
     public HttpAnswer addAzEntry(@Param("fleet") String fleet, @Param("az") String az) 
             throws AlternativeAnswerException, DatabaseException {
         this.requirePermissions(FleetDBManager.ADD_BATTLE_REPORT_PERMISSION);
@@ -238,16 +329,17 @@ public class RXController extends PollyController {
         final Types t = this.getMyPolly().parse(az);
         
         if (!(t instanceof TimespanType)) {
-            return new GsonHttpAnswer(200, new SuccessResult(false, "Illegal AZ format"));
+            return new GsonHttpAnswer(200, 
+                    new SuccessResult(false, MSG.httpAddAzIllegalFormat));
         }
         
         this.azManager.addEntry(user.getId(), fleet, az);
-        return new GsonHttpAnswer(200, new SuccessResult(true, ""));
+        return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
     }
     
     
     
-    @Get("/api/deleteAzEntry")
+    @Get(API_DELETE_AZ_ENTRY)
     public HttpAnswer deleteAzEntry(@Param("entryId") int id) 
             throws AlternativeAnswerException, DatabaseException {
         this.requirePermissions(FleetDBManager.ADD_BATTLE_REPORT_PERMISSION);
@@ -255,7 +347,7 @@ public class RXController extends PollyController {
         
         try {
             this.azManager.deleteEntry(id, user.getId());
-            return new GsonHttpAnswer(200, new SuccessResult(true, ""));
+            return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
         } catch (DatabaseException e) {
             return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
         }
@@ -263,43 +355,44 @@ public class RXController extends PollyController {
     
     
     
-    @Get(value = "/pages/gmScripts", name = "Greasemonkey")
-    @OnRegister({ WebinterfaceManager.ADD_MENU_ENTRY, "Revorix", "Revorix Greasemonkey scripts",
+    @Get(value = PAGE_GM_SCRIPTS, name = GM_SCRIPT_NAME_KEY)
+    @OnRegister({ 
+        WebinterfaceManager.ADD_MENU_ENTRY,
+        MSG.FAMILY,
+        REVORIX_CATEGORY_KEY,
+        GM_SCRIPT_DESC_KEY,
         RoleManager.REGISTERED_PERMISSION })
     public HttpAnswer gmScripts() throws AlternativeAnswerException {
         this.requirePermissions(RoleManager.REGISTERED_PERMISSION);
-        final Map<String, Object> c = this.createContext(
-                "polly/rx/httpv2/view/gmscripts.html");
+        final Map<String, Object> c = this.createContext(CONTENT_GM_SCRIPTS);
         return this.makeAnswer(c);
     }
     
     
     
-    @Get("/pages/score/compare")
+    @Get(PAGE_COMPARE_SCORES)
     public HttpAnswer compare() throws AlternativeAnswerException {
         this.requirePermissions(MyPlugin.SBE_PERMISSION);
-        final Map<String, Object> c = this.createContext(
-                "polly/rx/httpv2/view/scoreboard.compare.html");
-        CompareList cl = (CompareList) this.getSession().getAttached("COMPARE_LIST");
-        c.put("compareList", cl);
+        final Map<String, Object> c = this.createContext(CONTENT_COMPARE_SCORES);
+        CompareList cl = (CompareList) this.getSession().getAttached(COMPARE_LIST_KEY);
+        c.put("compareList", cl); //$NON-NLS-1$
         return this.makeAnswer(c);
     }
     
     
     
-    @Get("/pages/score/details")
+    @Get(PAGE_SCORE_DETAILS)
     public HttpAnswer venadDetails(@Param("venadName") String name) 
             throws AlternativeAnswerException {
         this.requirePermissions(MyPlugin.SBE_PERMISSION);
-        final Map<String, Object> c = this.createContext(
-                "polly/rx/httpv2/view/scoreboard.details.html");
-        c.put("venad", name);
+        final Map<String, Object> c = this.createContext(CONTENT_SCORE_DETAILS);
+        c.put("venad", name); //$NON-NLS-1$
         return this.makeAnswer(c);
     }
     
     
     
-    @Post("/api/postFleetScan")
+    @Post(API_POST_FLEET_SCAN)
     public HttpAnswer postFleetScan(
             @Param("scan") String scan,
             @Param("quadrant") String quadrant,
@@ -317,15 +410,16 @@ public class RXController extends PollyController {
         } catch (ParseException | DatabaseException e) {
             return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
         }
-        return new GsonHttpAnswer(200, new SuccessResult(true, "Scan added"));
+        return new GsonHttpAnswer(200, new SuccessResult(true, MSG.httpPostScanSuccess));
     }
     
     
     
-    @Post("/api/postQFleetScan")
+    @Post(API_POST_QFLEET_SCAN)
     public HttpAnswer postQFleetScan(@Param("scan") String scan) 
             throws AlternativeAnswerException {
         
+         // TODO: check permissions
         this.requirePermissions(FleetDBManager.ADD_FLEET_SCAN_PERMISSION);
         
         try {
@@ -334,37 +428,37 @@ public class RXController extends PollyController {
         } catch (ParseException | DatabaseException e) {
             return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
         }
-        return new GsonHttpAnswer(200, new SuccessResult(true, "Scan added"));
+        return new GsonHttpAnswer(200, new SuccessResult(true, MSG.httpPostScanSuccess));
     }
     
     
-    
-    @Get("/api/graphCompare")
+            
+    @Get(API_GRAPH_COMPARE)
     public HttpAnswer graphCompare(@Param("maxMonth") int maxMonths) 
             throws AlternativeAnswerException {
         this.requirePermissions(MyPlugin.SBE_PERMISSION);
-        CompareList cl = (CompareList) this.getSession().getAttached("COMPARE_LIST");
+        CompareList cl = (CompareList) this.getSession().getAttached(COMPARE_LIST_KEY);
         if (cl == null) {
-            return HttpAnswers.newStringAnswer("");
+            return HttpAnswers.newStringAnswer(""); //$NON-NLS-1$
         }
         final Collection<NamedPoint> allPoints = new ArrayList<>();
         final InputStream graph = this.sbManager.createMultiGraph(maxMonths, allPoints, 
                 cl.getEntries().toArray(new String[0]));
         graph.mark(Integer.MAX_VALUE);
         
-        final String imgName = "graph_compare" + "_mm_" + maxMonths; 
+        final String imgName = MULTI_GRAPH_PREFIX + maxMonths; 
         this.getSession().set(imgName, graph);
-        final Map<String, Object> c = this.createContext("");
-        c.put("allPoints", allPoints);
-        c.put("imgName", imgName);
-        c.put("maxMonths", maxMonths);
-        c.put("isCompare", true);
-        return HttpAnswers.newTemplateAnswer("polly/rx/httpv2/view/graph.html", c);
+        final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
+        c.put("allPoints", allPoints); //$NON-NLS-1$
+        c.put("imgName", imgName); //$NON-NLS-1$
+        c.put("maxMonths", maxMonths); //$NON-NLS-1$
+        c.put("isCompare", true); //$NON-NLS-1$
+        return HttpAnswers.newTemplateAnswer(CONTENT_GRAPH_COMPARE, c);
     }
     
     
     
-    @Get("/api/graphForVenad")
+    @Get(API_GRAPH_FOR_VENAD)
     public HttpAnswer graphForVenad(@Param("venadName") String name, 
             @Param("maxMonth") int maxMonths) throws AlternativeAnswerException {
         this.requirePermissions(MyPlugin.SBE_PERMISSION);
@@ -377,19 +471,20 @@ public class RXController extends PollyController {
                 allPoints);
         graph.mark(Integer.MAX_VALUE);
         
-        final String imgName = "graph_" + name + "_mm_" + maxMonths; 
+        final String imgName = SINGLE_GRAPH_PREFIX + name + maxMonths; 
         this.getSession().set(imgName, graph);
-        final Map<String, Object> c = this.createContext("");
-        c.put("allPoints", allPoints);
-        c.put("venad", name);
-        c.put("imgName", imgName);
-        c.put("maxMonths", maxMonths);
-        return HttpAnswers.newTemplateAnswer("polly/rx/httpv2/view/graph.html", c);
+        final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
+        c.put("allPoints", allPoints); //$NON-NLS-1$
+        c.put("venad", name); //$NON-NLS-1$
+        c.put("imgName", imgName); //$NON-NLS-1$
+        c.put("maxMonths", maxMonths); //$NON-NLS-1$
+        return HttpAnswers.newTemplateAnswer(CONTENT_GRAPH_FOR_VENAD, c);
     }
     
     
     
-    @Get("/api/imageFromSession")
+    
+    @Get(API_IMAGE_FROM_SESSION)
     public HttpAnswer imageFromSession(@Param("imgName") String imgName) 
             throws AlternativeAnswerException, IOException {
         this.requirePermissions(MyPlugin.SBE_PERMISSION);
@@ -403,7 +498,7 @@ public class RXController extends PollyController {
     
     
     
-    @Get("/polly/rx/httpv2/view")
+    @Get(FILES_VIEW)
     public HttpAnswer getFile() {
         final ClassLoader cl = this.getClass().getClassLoader();
         return new HttpResourceAnswer(200, cl, this.getEvent().getPlainUri());
@@ -411,7 +506,7 @@ public class RXController extends PollyController {
     
     
     
-    @Post("/api/postScoreboard")
+    @Post(API_POST_SCOREBOARD)
     public HttpAnswer postScoreboard(@Param("input") String input) 
             throws AlternativeAnswerException {
         this.requirePermissions(MyPlugin.SBE_PERMISSION);
@@ -423,12 +518,12 @@ public class RXController extends PollyController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return HttpAnswers.newStringAnswer("").redirectTo("/pages/scoreboard");
+        return HttpAnswers.newRedirectAnswer(PAGE_SCOREBOARD);
     }
     
     
     
-    @Post("/postScoreboard")
+    @Post(API_POST_SCOREBOARD)
     public HttpAnswer postScoreboardExt(
             @Param("user") String user, 
             @Param("pw") String pw,
@@ -436,17 +531,20 @@ public class RXController extends PollyController {
         
         final User u = this.getMyPolly().users().getUser(user);
         if (u == null || !u.checkPassword(pw)) {
-            return new GsonHttpAnswer(200, new SuccessResult(false, "Illegal login"));
+            return new GsonHttpAnswer(200, 
+                    new SuccessResult(false, MSG.httpIllegalLogin));
         } else if (!this.getMyPolly().roles().hasPermission(u, MyPlugin.SBE_PERMISSION)) {
-            return new GsonHttpAnswer(200, new SuccessResult(false, "No permission"));
+            return new GsonHttpAnswer(200, 
+                    new SuccessResult(false, MSG.httpNoPermission));
         }
         
         try {
             final Collection<ScoreBoardEntry> entries =
                     ScoreBoardParser.parse(paste, Time.currentTime());
             this.sbManager.addEntries(entries);
-            return new GsonHttpAnswer(200, new SuccessResult(true, entries.size() + 
-                    " entries sent to polly"));
+            return new GsonHttpAnswer(200, 
+                    new SuccessResult(true, 
+                            MSG.bind(MSG.httpPostScoreboardSuccess, entries.size())));
         } catch (ParseException | DatabaseException e) {
             return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
         }
@@ -455,21 +553,20 @@ public class RXController extends PollyController {
     
     
     
-    @Get("/pages/reportDetails")
+    @Get(PAGE_REPORT_DETAILS)
     public HttpAnswer reportDetails(@Param("reportId") int reportId) 
             throws AlternativeAnswerException {
         this.requirePermissions(FleetDBManager.VIEW_BATTLE_REPORT_PERMISSION);
         
         final BattleReport br = this.fleetDb.getReportById(reportId);
-        final Map<String, Object> c = this.createContext(
-                "polly/rx/httpv2/view/battlereports.details.html");
+        final Map<String, Object> c = this.createContext(CONTENT_REPORT_DETAILS);
         
-        c.put("report", br);
-        c.put("df", new DecimalFormat("0.##"));
-        c.put("fleetDb", this.fleetDb);
-        c.put("Math", Math.class);
-        this.prepareContext(br.getAttackerShips(), "Attacker", c);
-        this.prepareContext(br.getDefenderShips(), "Defender", c);
+        c.put("report", br); //$NON-NLS-1$
+        c.put("df", new DecimalFormat("0.##"));  //$NON-NLS-1$//$NON-NLS-2$
+        c.put("fleetDb", this.fleetDb); //$NON-NLS-1$
+        c.put("Math", Math.class); //$NON-NLS-1$
+        this.prepareContext(br.getAttackerShips(), "Attacker", c); //$NON-NLS-1$
+        this.prepareContext(br.getDefenderShips(), "Defender", c); //$NON-NLS-1$
         
         return this.makeAnswer(c);
     }
@@ -528,29 +625,29 @@ public class RXController extends PollyController {
         avgCapiXp = capiXp / ships.size();
         avgCrewXp = crewXp / ships.size();
         
-        c.put("pzDamage" + postfix, pzDamage);
-        c.put("maxPzDamage" + postfix, maxPzDamage);
-        c.put("minPzDamage" + postfix, minPzDamage);
-        c.put("avgPzDamage" + postfix, avgPzDamage);
-        c.put("shieldDamage" + postfix, shieldDamage);
-        c.put("maxShieldDamage" + postfix, maxShieldDamage);
-        c.put("minShieldDamage" + postfix, minShieldDamage);
-        c.put("avgShieldDamage" + postfix, avgShieldDamage);
-        c.put("capiXp" + postfix, capiXp);
-        c.put("maxCapiXp" + postfix, maxCapiXp);
-        c.put("minCapiXp" + postfix, minCapiXp);
-        c.put("avgCapiXp" + postfix, avgCapiXp);
-        c.put("crewXp" + postfix, crewXp);
-        c.put("maxCrewXp" + postfix, maxCrewXp);
-        c.put("minCrewXp" + postfix, minCrewXp);
-        c.put("avgCrewXp" + postfix, avgCrewXp);
-        c.put("maxWend" + postfix, maxWend);
-        c.put("minWend" + postfix, minWend);
+        c.put("pzDamage" + postfix, pzDamage); //$NON-NLS-1$
+        c.put("maxPzDamage" + postfix, maxPzDamage); //$NON-NLS-1$
+        c.put("minPzDamage" + postfix, minPzDamage); //$NON-NLS-1$
+        c.put("avgPzDamage" + postfix, avgPzDamage); //$NON-NLS-1$
+        c.put("shieldDamage" + postfix, shieldDamage); //$NON-NLS-1$
+        c.put("maxShieldDamage" + postfix, maxShieldDamage); //$NON-NLS-1$
+        c.put("minShieldDamage" + postfix, minShieldDamage); //$NON-NLS-1$
+        c.put("avgShieldDamage" + postfix, avgShieldDamage); //$NON-NLS-1$
+        c.put("capiXp" + postfix, capiXp); //$NON-NLS-1$
+        c.put("maxCapiXp" + postfix, maxCapiXp); //$NON-NLS-1$
+        c.put("minCapiXp" + postfix, minCapiXp); //$NON-NLS-1$
+        c.put("avgCapiXp" + postfix, avgCapiXp); //$NON-NLS-1$
+        c.put("crewXp" + postfix, crewXp); //$NON-NLS-1$
+        c.put("maxCrewXp" + postfix, maxCrewXp); //$NON-NLS-1$
+        c.put("minCrewXp" + postfix, minCrewXp); //$NON-NLS-1$
+        c.put("avgCrewXp" + postfix, avgCrewXp); //$NON-NLS-1$
+        c.put("maxWend" + postfix, maxWend); //$NON-NLS-1$
+        c.put("minWend" + postfix, minWend); //$NON-NLS-1$
     }
     
     
     
-    @Post("/api/postReport")
+    @Post(API_POST_REPORT)
     public HttpAnswer postReport(@Param("report") String report) 
             throws AlternativeAnswerException {
         this.requirePermissions(FleetDBManager.ADD_BATTLE_REPORT_PERMISSION);
@@ -562,7 +659,8 @@ public class RXController extends PollyController {
         } catch (ParseException | DatabaseException e) {
             return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
         }
-        return new GsonHttpAnswer(200, new SuccessResult(true, "Report added"));
+        return new GsonHttpAnswer(200, 
+                new SuccessResult(true, MSG.httpPostReportSuccess));
     }
     
     
@@ -579,7 +677,8 @@ public class RXController extends PollyController {
     }
     
     
-    @Post("/postQReport")
+    
+    @Post(API_POST_QREPORT)
     public HttpAnswer postQReport(
             @Param("user") String user, 
             @Param("pw") String pw, 
@@ -588,10 +687,12 @@ public class RXController extends PollyController {
         
         final User u = this.getMyPolly().users().getUser(user);
         if (u == null || !u.checkPassword(pw)) {
-            return new GsonHttpAnswer(200, new SuccessResult(false, "Illegal login"));
+            return new GsonHttpAnswer(200, 
+                    new SuccessResult(false, MSG.httpIllegalLogin));
         } else if (!this.getMyPolly().roles().hasPermission(u, 
                     FleetDBManager.ADD_BATTLE_REPORT_PERMISSION)) {
-            return new GsonHttpAnswer(200, new SuccessResult(false, "No permission"));
+            return new GsonHttpAnswer(200, 
+                    new SuccessResult(false, MSG.httpNoPermission));
         }
         
         final BattleReport br;
@@ -626,10 +727,10 @@ public class RXController extends PollyController {
                 final TimespanType az = this.azManager.getAz(
                         br.getAttackerFleetName(), u);
                 
-                final String duration = az.getSpan() + "s";
-                final String command = ":remind @" + 
-                        u.getCurrentNickName() + " " + duration + 
-                        " \"Auto Remind: " + br.getAttackerFleetName() + "\"";
+                final String duration = az.getSpan() + "s"; //$NON-NLS-1$
+                final String command = MSG.bind(MSG.httpAutoRemindCommand, 
+                        u.getCurrentNickName(), duration, br.getAttackerFleetName());;
+                
                 try {
                     this.getMyPolly().commands().executeString(command, 
                             u.getCurrentNickName(), true, u, this.getMyPolly().irc());
@@ -641,7 +742,7 @@ public class RXController extends PollyController {
         }
         
         
-        String message = "Report added";
+        String message = MSG.httpPostReportSuccess;
         try {
             this.fleetDb.addBattleReport(br);
         } catch (DatabaseException e) {
@@ -651,13 +752,14 @@ public class RXController extends PollyController {
         
         if (!lowPzShips.isEmpty()) {
             final StringBuilder b = new StringBuilder();
-            b.append("Ships below " + pzWarning.valueString(this.getMyPolly().formatting()));
-            b.append("pz:\n");
+            b.append(MSG.bind(MSG.httpShipsBelow, 
+                    pzWarning.valueString(this.getMyPolly().formatting())));
+            b.append("\n"); //$NON-NLS-1$
             for (final BattleReportShip lowPz : lowPzShips) {
                 b.append(lowPz.getName());
-                b.append(" (");
+                b.append(" ("); //$NON-NLS-1$
                 b.append(lowPz.getCurrentPz());
-                b.append("pz)\n");
+                b.append("pz)\n"); //$NON-NLS-1$
             }
             return new GsonHttpAnswer(200, 
                     new QReportResult(true, message, b.toString()));
@@ -667,24 +769,25 @@ public class RXController extends PollyController {
     
     
     
-    @Get("/api/deleteReport")
+    @Get(API_DELETE_REPORT)
     public HttpAnswer deleteReport(@Param("reportId") int id) 
             throws DatabaseException, AlternativeAnswerException {
         
         if (!this.getMyPolly().roles().hasPermission(this.getSessionUser(), 
                 FleetDBManager.DELETE_BATTLE_REPORT_PERMISSION)) {
-            return new GsonHttpAnswer(200, new SuccessResult(false, "No permission"));
+            return new GsonHttpAnswer(200, 
+                    new SuccessResult(false, MSG.httpNoPermission));
         }
         this.fleetDb.deleteReportById(id);
-        return new GsonHttpAnswer(200, new SuccessResult(true, ""));
+        return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
     }
     
+
     
-    
-    @Get("/api/battlereportStatistics")
+    @Get(API_REPORT_STATISTICS)
     public HttpAnswer battleReportStatistics() {
         final User user = this.getSessionUser();
-        final String STATISTIC_KEY = "BR_STATS_" + user.getName();
+        final String STATISTIC_KEY = STATS_PREFIX + user.getName();
         BattleReportStatistics stats = 
                 (BattleReportStatistics) this.getSession().getAttached(STATISTIC_KEY);
         
@@ -693,66 +796,63 @@ public class RXController extends PollyController {
         }
         
         synchronized (stats) {
-            final DecimalFormat df = new DecimalFormat("#.##");
-            final Map<String, Object> c = this.createContext("");
-            c.put("df", df);
-            c.put("capiXpSumAttacker", stats.capiXpSumAttacker);
-            c.put("crewXpSumAttacker", stats.crewXpSumAttacker);
-            c.put("capiXpSumDefender", stats.capiXpSumDefender);
-            c.put("crewXpSumDefender", stats.crewXpSumDefender);
-            c.put("pzDamageAttacker", stats.pzDamageAttacker);
-            c.put("pzDamageDefender", stats.pzDamageDefender);
-            c.put("repairTimeAttacker", stats.repairTimeAttacker);
-            c.put("repairTimeDefender", stats.repairTimeDefender);
-            c.put("repairCostDefender", stats.repairCostDefender);
-            c.put("repairCostAttacker", stats.repairCostAttacker);
-            c.put("kwAttacker", stats.kwAttacker);
-            c.put("kwDefender", stats.kwDefender);
+            final DecimalFormat df = new DecimalFormat("#.##"); //$NON-NLS-1$
+            final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
+            c.put("df", df); //$NON-NLS-1$
+            c.put("capiXpSumAttacker", stats.capiXpSumAttacker); //$NON-NLS-1$
+            c.put("crewXpSumAttacker", stats.crewXpSumAttacker); //$NON-NLS-1$
+            c.put("capiXpSumDefender", stats.capiXpSumDefender); //$NON-NLS-1$
+            c.put("crewXpSumDefender", stats.crewXpSumDefender); //$NON-NLS-1$
+            c.put("pzDamageAttacker", stats.pzDamageAttacker); //$NON-NLS-1$
+            c.put("pzDamageDefender", stats.pzDamageDefender); //$NON-NLS-1$
+            c.put("repairTimeAttacker", stats.repairTimeAttacker); //$NON-NLS-1$
+            c.put("repairTimeDefender", stats.repairTimeDefender); //$NON-NLS-1$
+            c.put("repairCostDefender", stats.repairCostDefender); //$NON-NLS-1$
+            c.put("repairCostAttacker", stats.repairCostAttacker); //$NON-NLS-1$
+            c.put("kwAttacker", stats.kwAttacker); //$NON-NLS-1$
+            c.put("kwDefender", stats.kwDefender); //$NON-NLS-1$
             
-            c.put("artifacts", stats.artifacts);
-            c.put("chance", stats.artifactChance * 100.0);
+            c.put("artifacts", stats.artifacts); //$NON-NLS-1$
+            c.put("chance", stats.artifactChance * 100.0); //$NON-NLS-1$
             
-            c.put("dropSum", stats.dropSum);
-            c.put("dropMax", stats.dropMax);
-            c.put("dropMin", stats.dropMin);
-            c.put("reportSize", stats.reportSize);
-            return HttpAnswers.newTemplateAnswer(
-                    "polly/rx/httpv2/view/battlereports.statistics.html", c);
+            c.put("dropSum", stats.dropSum); //$NON-NLS-1$
+            c.put("dropMax", stats.dropMax); //$NON-NLS-1$
+            c.put("dropMin", stats.dropMin); //$NON-NLS-1$
+            c.put("reportSize", stats.reportSize); //$NON-NLS-1$
+            return HttpAnswers.newTemplateAnswer(CONTENT_REPORT_STATISTICS, c);
         }
     }
     
     
     
-    @Get("/GM/scrapescoreboarddata.user.js")
+    @Get(GM_SCRAPE_SCOREBOARD)
     public HttpAnswer installScoreboard() 
             throws AlternativeAnswerException {
         this.requirePermissions(MyPlugin.SBE_PERMISSION);
         final String prefix = this.getMyPolly().webInterface().isSSL() 
-                ? "https://" : "http://";
+                ? "https://" : "http://"; //$NON-NLS-1$ //$NON-NLS-2$
         final String host = prefix + this.getMyPolly().webInterface().getPublicHost() + 
-                ":" + this.getMyPolly().webInterface().getPort();
+                ":" + this.getMyPolly().webInterface().getPort(); //$NON-NLS-1$
         
         final Map<String, String> c = new HashMap<String, String>();
-        c.put("host", host);
-        return HttpAnswers.newTemplateAnswer(
-                "polly/rx/httpv2/view/scrapescoreboarddata.user.js", c);
+        c.put("host", host); //$NON-NLS-1$
+        return HttpAnswers.newTemplateAnswer(CONTENT_SCRAPE_SCOREBOARD, c);
     }
     
     
     
-    @Get("/GM/kbreport.user.js")
+    @Get(GM_KB_REPORT)
     public HttpAnswer installLiveKB() 
             throws AlternativeAnswerException {
         this.requirePermissions(FleetDBManager.ADD_BATTLE_REPORT_PERMISSION);
         final String prefix = this.getMyPolly().webInterface().isSSL() 
-                ? "https://" : "http://";
+                ? "https://" : "http://"; //$NON-NLS-1$ //$NON-NLS-2$
         final String host = prefix + this.getMyPolly().webInterface().getPublicHost() + 
-                ":" + this.getMyPolly().webInterface().getPort();
+                ":" + this.getMyPolly().webInterface().getPort(); //$NON-NLS-1$
         
         final Map<String, String> c = new HashMap<String, String>();
-        c.put("api", "/postQReport");
-        c.put("host", host);
-        return HttpAnswers.newTemplateAnswer(
-                "polly/rx/httpv2/view/kbreport.user.js", c);
+        c.put("api", API_POST_QREPORT); //$NON-NLS-1$
+        c.put("host", host); //$NON-NLS-1$
+        return HttpAnswers.newTemplateAnswer(CONTENT_KB_REPORT, c);
     }
 }

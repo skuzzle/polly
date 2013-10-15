@@ -5,7 +5,7 @@ import de.skuzzle.polly.sdk.resources.Resources;
 
 public class MSG extends Constants {
 
-    private final static String FAMILY = "polly.rx.Translation"; //$NON-NLS-1$
+    public final static String FAMILY = "polly.rx.Translation"; //$NON-NLS-1$
 
     // AddTrainCommand
     public static String addTrainHelp;
@@ -111,12 +111,11 @@ public class MSG extends Constants {
     public static String billNoOpen;
     public static String billOpen;
 
- // TrainManagerV2
+    // TrainManagerV2
     public static String trainManagerInvalidTrainId;
     public static String trainManagerInvalidTrainerId;
-    
-    
- // BattleTactic
+
+    // BattleTactic
     public static String tacticNormal;
     public static String tacticRaubzug;
     public static String tacticMachtDemo;
@@ -141,7 +140,7 @@ public class MSG extends Constants {
     public static String tacticDauerbeschuss;
     public static String tacticAlien;
 
- // FleetScanShip
+    // FleetScanShip
     public static String scanShipSpotFirstTime;
     public static String scanShipSpotted;
     public static String scanShipNameChanged;
@@ -149,12 +148,12 @@ public class MSG extends Constants {
     public static String scanShipOwnerChangedIndicator;
     public static String scanShipOwnerChangedClan;
 
- // TrainEntity
+    // TrainEntity
     public static String trainEntityMisformatted;
     public static String trainEntityFormatWithFactor;
     public static String trainEntityFormatWithoutFactor;
-    
- // TrainType
+
+    // TrainType
     public static String trainTypeIntelligence;
     public static String trainTypeBody;
     public static String trainTypeCommando;
@@ -174,6 +173,37 @@ public class MSG extends Constants {
     public static String trainTypeIntensiveModule;
     public static String trainTypeIntensiveCrew;
     public static String trainTypeIntensiveTech;
+
+    // DailyGreeter
+    public static String greeterGreetings;
+    
+ // BattleReportModel
+    public static String reportModelColumns;
+    public static String reportModelDetailTitle;
+    public static String reportModelDeleteTitle;
+
+ // RXController
+    public static String httpRxCategory;
+    public static String httpFleetScanMngr;
+    public static String httpFleetScanMngrDesc;
+    public static String httpScannedShips;
+    public static String httpScannedShipsDesc;
+    public static String httpScoreboardMngr;
+    public static String httpScoreboardMngrDesc;
+    public static String httpReportsMngr;
+    public static String httpReportsMngrDesc;
+    public static String httpAzMngr;
+    public static String httpAzMngrDesc;
+    public static String httpAddAzIllegalFormat;
+    public static String httpGmScripts;
+    public static String httpGmScriptsDesc;
+    public static String httpPostScanSuccess;
+    public static String httpIllegalLogin;
+    public static String httpNoPermission;
+    public static String httpPostScoreboardSuccess;
+    public static String httpPostReportSuccess;
+    public static String httpAutoRemindCommand;
+    public static String httpShipsBelow;
 
     static {
         Resources.init(FAMILY, MSG.class);

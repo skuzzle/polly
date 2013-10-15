@@ -3,6 +3,7 @@ package polly.rx.httpv2;
 import java.util.Date;
 import java.util.List;
 
+import polly.rx.MSG;
 import polly.rx.core.FleetDBManager;
 import polly.rx.entities.BattleReport;
 import de.skuzzle.polly.http.api.HttpEvent;
@@ -14,11 +15,10 @@ import de.skuzzle.polly.sdk.util.DirectedComparator.SortOrder;
 
 public class BattleReportModel extends AbstractHTMLTableModel<BattleReport> {
 
-    private final static String[] COLUMNS = {
-        "Quadrant", "Att.", "Att. Clan", "Att. KW (normalized)", "Att. XP-Mod",
-        "Def.", "Def. Clan", "Def. KW (normalized)",  "Def. XP-Mod", 
-        "Tactic", "Artifact", "Date", "Action"
-    };
+    private static final String REPORT_DETAILS_PNG = "/polly/rx/httpv2/view/report.png"; //$NON-NLS-1$
+    private final static String DELETE_REPORT_PNG = "/polly/rx/httpv2/view/report_delete.png"; //$NON-NLS-1$
+
+    private final static String[] COLUMNS = MSG.reportModelColumns.split(","); //$NON-NLS-1$
     
     protected final FleetDBManager fleetDb;
     
@@ -75,25 +75,25 @@ public class BattleReportModel extends AbstractHTMLTableModel<BattleReport> {
         case 11: return element.getDate();
         case 12:
             final HTMLElementGroup result = new HTMLElementGroup();
-            final HTMLElement detailLink = new HTMLElement("a")
-                .href("/pages/reportDetails?reportId=" + element.getId())
-                .title("Report details");
-            final HTMLElement deleteLink = new HTMLElement("a")
-                .href("#").title("Delete report")
-                .attr("onclick", "deleteReport(" + element.getId() + ")");
+            final HTMLElement detailLink = new HTMLElement("a") //$NON-NLS-1$
+                .href(RXController.PAGE_REPORT_DETAILS + "?reportId=" + element.getId()) //$NON-NLS-1$
+                .title(MSG.reportModelDetailTitle);
+            final HTMLElement deleteLink = new HTMLElement("a") //$NON-NLS-1$
+                .href("#").title(MSG.reportModelDeleteTitle) //$NON-NLS-1$
+                .attr("onclick", "deleteReport(" + element.getId() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             
             detailLink.content(
-                new HTMLElement("img")
-                    .src("/polly/rx/httpv2/view/report.png")
-                    .attr("width", "20").attr("height", "20"));
+                new HTMLElement("img") //$NON-NLS-1$
+                    .src(REPORT_DETAILS_PNG)
+                    .attr("width", "20").attr("height", "20")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
             deleteLink.content(
-                new HTMLElement("img").src("/polly/rx/httpv2/view/report_delete.png")
-                    .attr("width", "20").attr("height", "20")
+                new HTMLElement("img").src(DELETE_REPORT_PNG) //$NON-NLS-1$
+                    .attr("width", "20").attr("height", "20") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             );
             
             return result.add(detailLink).add(deleteLink);
-        default: return "";
+        default: return ""; //$NON-NLS-1$
         }
     }
     
