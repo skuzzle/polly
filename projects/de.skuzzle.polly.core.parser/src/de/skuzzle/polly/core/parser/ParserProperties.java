@@ -13,28 +13,28 @@ public class ParserProperties {
     /** 
      * Whether unknown variables should be reported (true) or treated as string (false). 
      */
-    public final static String REPORT_UNKNOWN_VARIABLES = "reportUnknown";
+    public final static String REPORT_UNKNOWN_VARIABLES = "reportUnknown"; //$NON-NLS-1$
     
     /**
      * Whether the parser should accept polymorphic declarations (declarations with no
      * type explicitly specified).
      */
-    public final static String ALLOW_POLYMORPHIC_DECLS = "allowPolymorphic";
+    public final static String ALLOW_POLYMORPHIC_DECLS = "allowPolymorphic"; //$NON-NLS-1$
     
     /** Whether subtyping should be taken into account while unifying types. */
-    public final static String ALLOW_SUBTYPING = "allowSubtyping";
+    public final static String ALLOW_SUBTYPING = "allowSubtyping"; //$NON-NLS-1$
     
     /** Whether the parser should accept escaped tokens as identifiers. */
-    public final static String ENABLE_TOKEN_ESCAPING = "enableEscaping";
+    public final static String ENABLE_TOKEN_ESCAPING = "enableEscaping"; //$NON-NLS-1$
     
     /** Whether all read tokens should be printed to std out. */
-    public final static String ENABLE_SCANNER_DEBUGGING = "scannerDebugging";
+    public final static String ENABLE_SCANNER_DEBUGGING = "scannerDebugging"; //$NON-NLS-1$
 
     /** Whether execution debuggin should be enabled. */
-    public static final String ENABLE_EXECUTION_DEBUGGING = "execDebugging";
+    public static final String ENABLE_EXECUTION_DEBUGGING = "execDebugging"; //$NON-NLS-1$
     
     /** Minimum length of a command name */
-    public final static String COMMAND_MIN_LENGTH = "commandMinLength";
+    public final static String COMMAND_MIN_LENGTH = "commandMinLength"; //$NON-NLS-1$
     
     
     /** Stores the parser properties. */
@@ -49,7 +49,7 @@ public class ParserProperties {
         properties.put(ENABLE_TOKEN_ESCAPING, Boolean.TRUE.toString());
         properties.put(ENABLE_SCANNER_DEBUGGING, Boolean.FALSE.toString());
         properties.put(ENABLE_EXECUTION_DEBUGGING, Boolean.FALSE.toString());
-        properties.put(COMMAND_MIN_LENGTH, "2");
+        properties.put(COMMAND_MIN_LENGTH, "2"); //$NON-NLS-1$
     }
     
     
@@ -64,14 +64,14 @@ public class ParserProperties {
     public final static boolean should(String property) {
         final String value = properties.get(property);
         if (value == null) {
-            throw new NullPointerException("property '" + property + "' not assigned");
+            throw new NullPointerException("property '" + property + "' not assigned"); //$NON-NLS-1$ //$NON-NLS-2$
         } else if (value.equals(Boolean.TRUE.toString())) {
             return true;
         } else if (value.equals(Boolean.FALSE.toString())) {
             return false;
         } else {
             throw new IllegalArgumentException(
-                "property '" + property + "' is no boolean");
+                "property '" + property + "' is no boolean"); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
     

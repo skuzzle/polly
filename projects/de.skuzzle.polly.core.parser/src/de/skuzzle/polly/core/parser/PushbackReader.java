@@ -251,13 +251,13 @@ public class PushbackReader extends PositioningReader {
     
     @Override
     public void mark(int readAheadLimit) throws IOException {
-        throw new IOException("mark not supported");
+        throw new IOException("mark not supported"); //$NON-NLS-1$
     }
     
     
     
     @Override
     public void reset() throws IOException {
-        throw new IOException("reset not supported");
+        throw new IOException("reset not supported"); //$NON-NLS-1$
     }
 }

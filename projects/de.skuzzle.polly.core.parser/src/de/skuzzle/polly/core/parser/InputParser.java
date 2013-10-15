@@ -260,7 +260,7 @@ public class InputParser {
      * @return A new identifier.
      */
     private Identifier missingIdentifier(Position position) {
-        return new Identifier(position, "$missing_" + (this.missingId++));
+        return new Identifier(position, "$missing_" + (this.missingId++)); //$NON-NLS-1$
     }
     
     

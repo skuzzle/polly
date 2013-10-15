@@ -102,7 +102,7 @@ public class Evaluator {
             }
             
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("This should not have happened", e);
+            throw new RuntimeException("This should not have happened", e); //$NON-NLS-1$
         } catch (ASTTraversalException e) {
             e.printStackTrace();
             this.lastError = e;

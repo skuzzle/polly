@@ -38,7 +38,7 @@ public final class Position implements Equatable, Immutable,
      */
     public final static Position correctSpan(Position...pos) {
         if (pos.length == 0) {
-            throw new IllegalArgumentException("zero length array");
+            throw new IllegalArgumentException("zero length array"); //$NON-NLS-1$
         }
         Arrays.sort(pos);
         if (pos[0] == Position.NONE || pos[pos.length - 1] == Position.NONE) {
@@ -85,14 +85,14 @@ public final class Position implements Equatable, Immutable,
                 } else {
                     final Position off = pos.offset(offset);
                     while (b.length() < off.start) {
-                        b.append(" ");
+                        b.append(" "); //$NON-NLS-1$
                     }
-                    b.append("^");
+                    b.append("^"); //$NON-NLS-1$
                     if (off.getWidth() > 1) {
                         while (b.length() < off.end - 1) {
-                            b.append("-");
+                            b.append("-"); //$NON-NLS-1$
                         }
-                        b.append("^");
+                        b.append("^"); //$NON-NLS-1$
                     }
                     it.remove();
                 }
@@ -119,7 +119,7 @@ public final class Position implements Equatable, Immutable,
     public Position(int start, int end) {
         if (start >= end) {
             throw new IllegalArgumentException(
-                "start >= end (" + start + ">=" + end + ")");
+                "start >= end (" + start + ">=" + end + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
         this.start = start;
         this.end = end;
@@ -300,19 +300,19 @@ public final class Position implements Equatable, Immutable,
      */
     public String errorIndicatorString() {
         if (this == Position.NONE) {
-            return "";
+            return ""; //$NON-NLS-1$
         }
         final StringBuilder b = new StringBuilder(this.end);
         int i = 0;
         for (; i < this.start; ++i) {
-            b.append(" ");
+            b.append(" "); //$NON-NLS-1$
         }
-        b.append("^");
+        b.append("^"); //$NON-NLS-1$
         if (this.getWidth() > 1) {
             for (; i < this.end - 2; ++i) {
-                b.append("-");
+                b.append("-"); //$NON-NLS-1$
             }
-            b.append("^");
+            b.append("^"); //$NON-NLS-1$
         }
         return b.toString();
     }
@@ -331,7 +331,7 @@ public final class Position implements Equatable, Immutable,
         if (this.equals(Position.NONE)) {
             return original;
         } else if (this.start > original.length()) {
-            throw new IllegalArgumentException("Original String is too short!");
+            throw new IllegalArgumentException("Original String is too short!"); //$NON-NLS-1$
         }
         return original.substring(0, this.start);
     }
@@ -350,7 +350,7 @@ public final class Position implements Equatable, Immutable,
         if (this.equals(Position.NONE)) {
             return original;
         } else if (this.start == this.end - 1 && this.start == original.length()) {
-            return " ";
+            return " "; //$NON-NLS-1$
         }
         return original.substring(this.end);
     }
@@ -368,7 +368,7 @@ public final class Position implements Equatable, Immutable,
         if (this.equals(Position.NONE)) {
             return original;
         } else if (this.start == this.end - 1 && this.start == original.length()) {
-            return " ";
+            return " "; //$NON-NLS-1$
         }
         return original.substring(this.start, this.end);
     }
@@ -376,7 +376,7 @@ public final class Position implements Equatable, Immutable,
     
     
     public String mark(String original) {
-        return this.mark(original, "4\u001F", "\u001F");
+        return this.mark(original, "4\u001F", "\u001F"); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     
@@ -396,7 +396,7 @@ public final class Position implements Equatable, Immutable,
     
     @Override
     public String toString() {
-        return (this.start + 1) + (this.getWidth() == 1 ? "" : "-" + (this.end + 1));
+        return (this.start + 1) + (this.getWidth() == 1 ? "" : "-" + (this.end + 1)); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     
