@@ -17,6 +17,7 @@ import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
 
+import sun.reflect.Reflection;
 import de.skuzzle.polly.core.util.MillisecondStopwatch;
 import de.skuzzle.polly.core.util.Stopwatch;
 import de.skuzzle.polly.sdk.AbstractDisposable;
@@ -95,6 +96,9 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
             watch.start();
             try {
                 return em.find(type, key);
+            } catch (Exception e) {
+                logger.error("", e);
+                throw e;
             } finally {
                 long time = watch.stop();
                 logger.trace("Query time: " + time + "ms");
@@ -126,6 +130,9 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
                 return (T) q.getSingleResult();
             } catch (NoResultException e) {
                 return null;
+            } catch (Exception e) {
+                logger.error("", e);
+                throw e;
             } finally {
                 long time = watch.stop();
                 logger.trace("Query time: " + time + "ms");
@@ -155,6 +162,9 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
                 }
     
                 return q.getResultList();
+            } catch (Exception e) {
+                logger.error("", e);
+                throw e;
             } finally {
                 long time = watch.stop();
                 logger.trace("Query time: " + time + "ms");
@@ -188,6 +198,9 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
                 }
     
                 return q.getResultList();
+            } catch (Exception e) {
+                logger.error("", e);
+                throw e;
             } finally {
                 long time = watch.stop();
                 logger.trace("Query time: " + time + "ms");
@@ -220,6 +233,9 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
                     q.setParameter(i++, param);
                 }
                 return q.getResultList();
+            } catch (Exception e) {
+                logger.error("", e);
+                throw e;
             } finally {
                 long time = watch.stop();
                 logger.trace("Query time: " + time + "ms");
