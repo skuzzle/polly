@@ -2,6 +2,7 @@ package polly.rx.httpv2;
 
 import java.util.List;
 
+import polly.rx.MSG;
 import polly.rx.core.FleetDBManager;
 import polly.rx.entities.FleetScanShip;
 import de.skuzzle.polly.http.api.HttpEvent;
@@ -10,9 +11,7 @@ import de.skuzzle.polly.sdk.httpv2.html.HTMLElement;
 
 public class FleetScanShipTableModel extends AbstractHTMLTableModel<FleetScanShip> {
 
-    private final static String COLUMNS[] = {
-        "RX ID", "Type", "Class", "Name", "Techlevel", "Owner", "Changed Owner?", "Clan", "History"
-    };
+    private final static String COLUMNS[] = MSG.scanShipModelColumns.split(","); //$NON-NLS-1$
 
     
     protected final FleetDBManager fleetDB;
@@ -56,9 +55,10 @@ public class FleetScanShipTableModel extends AbstractHTMLTableModel<FleetScanShi
     
     @Override
     public Object getCellValue(int column, FleetScanShip element) {
-        final String href= "/pages/scanShipDetails?shipId=" + element.getRxId();
+        final String href= RXController.PAGE_SCAN_SHIP_DETAILS + 
+                "?shipId=" + element.getRxId(); //$NON-NLS-1$
         switch (column) {
-        case 0: return new HTMLElement("a").attr("href", href).content("" + element.getRxId());
+        case 0: return new HTMLElement("a").attr("href", href).content("" + element.getRxId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         case 1: return element.getShipType();
         case 2: return element.getShipClass();
         case 3: return element.getSimpleName();
@@ -67,7 +67,7 @@ public class FleetScanShipTableModel extends AbstractHTMLTableModel<FleetScanShi
         case 6: return element.changedOwner();
         case 7: return element.getOwnerClan();
         case 8: return element.getHistorySize();
-        default: return "";
+        default: return ""; //$NON-NLS-1$
         }
     }
 

@@ -53,6 +53,7 @@ import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
 import de.skuzzle.polly.sdk.httpv2.PollyController;
 import de.skuzzle.polly.sdk.httpv2.SuccessResult;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
+import de.skuzzle.polly.sdk.httpv2.html.HTMLTools;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.time.Time;
 import de.skuzzle.polly.tools.streams.FastByteArrayInputStream;
@@ -131,7 +132,7 @@ public class RXController extends PollyController {
     private final static String COMPARE_LIST_KEY = "COMPARE_LIST"; //$NON-NLS-1$
     private final static String MULTI_GRAPH_PREFIX = "graph_compare_mm_"; //$NON-NLS-1$
     private final static String SINGLE_GRAPH_PREFIX = "graph_"; //$NON-NLS-1$
-    private final static String STATS_PREFIX = "BR_STATS_"; //$NON-NLS-1$
+    public final static String STATS_PREFIX = "BR_STATS_"; //$NON-NLS-1$
     
     private final FleetDBManager fleetDb;
     private final ScoreBoardManager sbManager;
@@ -153,6 +154,14 @@ public class RXController extends PollyController {
                 this.azManager);
     }
     
+    
+    
+    @Override
+    protected Map<String, Object> createContext(String content) {
+        final Map<String, Object> c = super.createContext(content);
+        HTMLTools.gainFieldAccess(c, MSG.class, "MSG"); //$NON-NLS-1$
+        return c;
+    }
     
     
     @Get(value = PAGE_FLEET_SCAN_MANAGER, name = FLEET_SCAN_NAME_KEY)

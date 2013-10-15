@@ -3,6 +3,7 @@ package polly.rx.httpv2;
 import java.util.Date;
 import java.util.List;
 
+import polly.rx.MSG;
 import polly.rx.MyPlugin;
 import polly.rx.core.ScoreBoardManager;
 import polly.rx.entities.ScoreBoardEntry;
@@ -15,9 +16,11 @@ import de.skuzzle.polly.sdk.time.Milliseconds;
 
 public class ScoreboardTableModel extends AbstractHTMLTableModel<ScoreBoardEntry> {
 
-    private final static String[] COLUMNS = { "Rank", "Venad", "Clan", "Points",
-            "Points/day", "Timespan", "Entries", "Date", "Action" };
+    private final static String[] COLUMNS = MSG.scoreboardModelColumns.split(","); //$NON-NLS-1$
 
+    private final static String ADD_PNG = "/polly/rx/httpv2/view/chart_curve_add.png"; //$NON-NLS-1$
+    private final static String CHART_CURVE_PNG = "/polly/rx/httpv2/view/chart_curve.png"; //$NON-NLS-1$
+    
 
     protected final ScoreBoardManager sbManager;
     
@@ -27,11 +30,13 @@ public class ScoreboardTableModel extends AbstractHTMLTableModel<ScoreBoardEntry
         this.requirePermission(MyPlugin.SBE_PERMISSION);
     }
     
+    
 
     @Override
     public boolean isFilterable(int column) {
         return column < 8;
     }
+    
     
     
     @Override
@@ -69,17 +74,17 @@ public class ScoreboardTableModel extends AbstractHTMLTableModel<ScoreBoardEntry
         case 8: 
             final String v = element.getVenadName();
             return new HTMLElementGroup().add(
-            new HTMLElement("a").href("#").content(
-                    new HTMLElement("img").src("/polly/rx/httpv2/view/chart_curve_add.png")
-                    .attr("width", "20").attr("height", "20"))
-                    .title("Compare")
-                    .attr("onclick", "addToCompare('" + v.hashCode() + "', '" + v + "')")
+            new HTMLElement("a").href("#").content( //$NON-NLS-1$ //$NON-NLS-2$
+                    new HTMLElement("img").src(ADD_PNG) //$NON-NLS-1$
+                    .attr("width", "20").attr("height", "20")) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                    .title(MSG.scoreboardModelCompareTitle)
+                    .attr("onclick", "addToCompare('" + v.hashCode() + "', '" + v + "')") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             ).add(
-            new HTMLElement("a").href("/pages/score/details?venadName=" + v).content(
-                new HTMLElement("img").src("/polly/rx/httpv2/view/chart_curve.png")
-                    .attr("width", "20").attr("height", "20")).title("View details")
+            new HTMLElement("a").href(RXController.PAGE_SCORE_DETAILS + "?venadName=" + v).content( //$NON-NLS-1$ //$NON-NLS-2$
+                new HTMLElement("img").src(CHART_CURVE_PNG) //$NON-NLS-1$
+                    .attr("width", "20").attr("height", "20")).title(MSG.scoreboardModelDetailsTitle) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             );
-        default: return "";
+        default: return ""; //$NON-NLS-1$
         }
     }
 

@@ -27,7 +27,7 @@ import polly.rx.entities.FleetScanShip;
 import polly.rx.entities.ScoreBoardEntry;
 import polly.rx.entities.TrainEntityV3;
 import polly.rx.httpv2.BattleReportModel;
-import polly.rx.httpv2.BattleReportShipModell;
+import polly.rx.httpv2.BattleReportShipModel;
 import polly.rx.httpv2.FleetScanShipTableModel;
 import polly.rx.httpv2.FleetScanTableModel;
 import polly.rx.httpv2.FleetScansWithShipModel;
@@ -153,8 +153,8 @@ public class MyPlugin extends PollyPlugin {
         reportTabble.addModelListener(statsGatherer);
         
         
-        final HTMLTableModel<BattleReportShip> reportAttackerShipModel = new BattleReportShipModell(fleetDBManager, true);
-        final HTMLTableModel<BattleReportShip> reportDefenderShipModel = new BattleReportShipModell(fleetDBManager, false);
+        final HTMLTableModel<BattleReportShip> reportAttackerShipModel = new BattleReportShipModel(fleetDBManager, true);
+        final HTMLTableModel<BattleReportShip> reportDefenderShipModel = new BattleReportShipModel(fleetDBManager, false);
         final HTMLTable<BattleReportShip> reportAttackerShipTable = new HTMLTable<>("attackerShips", reportAttackerShipModel, myPolly);
         final HTMLTable<BattleReportShip> reportDefenderShipTable = new HTMLTable<>("defenderShips", reportDefenderShipModel, myPolly);
         

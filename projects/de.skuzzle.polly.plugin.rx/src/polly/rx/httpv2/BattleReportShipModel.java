@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import polly.rx.MSG;
 import polly.rx.core.FleetDBManager;
 import polly.rx.entities.BattleReport;
 import polly.rx.entities.BattleReportShip;
@@ -13,20 +14,18 @@ import de.skuzzle.polly.sdk.httpv2.html.AbstractHTMLTableModel;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLElement;
 
 
-public class BattleReportShipModell extends AbstractHTMLTableModel<BattleReportShip> {
+public class BattleReportShipModel extends AbstractHTMLTableModel<BattleReportShip> {
 
-    private final static String[] COLUMNS = {
-        "Rx Id", "Owner", "Type", "Class", "Name", "Crew Xp", "Captain", "HP", 
-        "Capi Xp", "KW (T100)", "Max Wend", "Aw", "Shield", "Shield Dmg", "Pz", "Pz Dmg", 
-        "Str", "Str Dmg"
-    };
+    private final static String[] COLUMNS = MSG.reportShipModelColumns.split(","); //$NON-NLS-1$
+    
+    private final static String REPORT_ID = "reportId"; //$NON-NLS-1$
     
     protected final FleetDBManager fleetDb;
     protected final boolean attacker;
     
     
     
-    public BattleReportShipModell(FleetDBManager fleetDb, boolean attacker) {
+    public BattleReportShipModel(FleetDBManager fleetDb, boolean attacker) {
         this.fleetDb = fleetDb;
         this.attacker = attacker;
         this.requirePermission(FleetDBManager.VIEW_BATTLE_REPORT_PERMISSION);
@@ -70,14 +69,14 @@ public class BattleReportShipModell extends AbstractHTMLTableModel<BattleReportS
             if (fss == null) {
                 return element.getRxId();
             } else {
-                return new HTMLElement("a").href("/pages/scanShipDetails?shipId=" + 
-                        element.getRxId()).content("" + element.getRxId());
+                return new HTMLElement("a").href(RXController.PAGE_SCAN_SHIP_DETAILS +  //$NON-NLS-1$
+                        "shipId=" + element.getRxId()).content("" + element.getRxId()); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
         case 1: {
             final FleetScanShip fss = this.fleetDb.fleetScanShipById(element.getRxId());
             if (fss == null) {
-                return "Unknown";
+                return MSG.reportShipModelUnknown;
             } else {
                 return fss.getOwner();
             }
@@ -98,7 +97,7 @@ public class BattleReportShipModell extends AbstractHTMLTableModel<BattleReportS
         case 15: return element.getPzDamage();
         case 16: return element.getStructure();
         case 17: return element.getStructureDamage();
-        default: return "";
+        default: return ""; //$NON-NLS-1$
         }
     }
     
@@ -117,7 +116,7 @@ public class BattleReportShipModell extends AbstractHTMLTableModel<BattleReportS
     @Override
     public Map<String, String> getRequestParameters(HttpEvent e) {
         final Map<String, String> result = new HashMap<String, String>();
-        result.put("reportId", e.get("reportId"));
+        result.put(REPORT_ID, e.get(REPORT_ID));
         return result;
     }
     
@@ -125,7 +124,7 @@ public class BattleReportShipModell extends AbstractHTMLTableModel<BattleReportS
 
     @Override
     public List<BattleReportShip> getData(HttpEvent e) {
-        final int reportId = Integer.parseInt(e.get("reportId"));
+        final int reportId = Integer.parseInt(e.get(REPORT_ID));
         final BattleReport br = this.fleetDb.getReportById(reportId);
         if (this.attacker) {
             return br.getAttackerShips();

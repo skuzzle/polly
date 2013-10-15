@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import polly.rx.MSG;
 import polly.rx.MyPlugin;
 import polly.rx.core.ScoreBoardManager;
 import polly.rx.entities.ScoreBoardEntry;
@@ -15,10 +16,8 @@ import de.skuzzle.polly.sdk.util.DirectedComparator.SortOrder;
 
 public class ScoreboardDetailModel extends ScoreboardTableModel {
 
-    private final static String[] COLUMNS = { "Rank", "Venad", "Clan", "Points",
-            "Points to prev.", "Days to prev.", "Derivative", "Date" };
-
-
+    private final static String[] COLUMNS = MSG.scoreboardDetailModelColumns.split(","); //$NON-NLS-1$
+    private final static String VENAD_NAME = "venadName"; //$NON-NLS-1$
 
     public ScoreboardDetailModel(ScoreBoardManager sbManager) {
         super(sbManager);
@@ -38,7 +37,7 @@ public class ScoreboardDetailModel extends ScoreboardTableModel {
         case 5: return element.getDaysToPrevious();
         case 6: return element.getDiscDerivative();
         case 7: return element.getDate();
-        default: return "";
+        default: return ""; //$NON-NLS-1$
         }
     }
 
@@ -72,7 +71,7 @@ public class ScoreboardDetailModel extends ScoreboardTableModel {
     @Override
     public Map<String, String> getRequestParameters(HttpEvent e) {
         final Map<String, String> result = new HashMap<String, String>();
-        result.put("venadName", e.get("venadName"));
+        result.put(VENAD_NAME, e.get(VENAD_NAME));
         return result;
     }
 
@@ -94,7 +93,7 @@ public class ScoreboardDetailModel extends ScoreboardTableModel {
 
     @Override
     public List<ScoreBoardEntry> getData(HttpEvent e) {
-        final String venad = e.get("venadName");
+        final String venad = e.get(VENAD_NAME);
         final List<ScoreBoardEntry> entries = this.sbManager.getEntries(venad);
         Collections.sort(entries, ScoreBoardEntry.BY_DATE);
 

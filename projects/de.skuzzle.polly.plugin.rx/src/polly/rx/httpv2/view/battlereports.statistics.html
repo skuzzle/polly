@@ -1,13 +1,13 @@
-<h3 style="margin-bottom:5px;">Statistics for $reportSize reports</h3>
+<h3 style="margin-bottom:5px;">$Constants.bind($MSG.htmlReportStatsHeader, $reportSize)</h3>
 <table>
     <tr>
     #foreach ($i in [1..14])
         <th style="text-align: center"><img src="/polly/rx/httpv2/view/r${i}.gif"/></th>
     #end
-    <th style="text-align:center">Artifacts</th>
+    <th style="text-align:center">$MSG.htmlReportStatsArtifacts</th>
     </tr>
     <tr>
-        <th colspan="15">Total drop</th>
+        <th colspan="15">$MSG.htmlReportStatsTotalDrop</th>
     </tr>
     <tr>
     #foreach ($drop in $dropSum)
@@ -16,8 +16,8 @@
         <td style="text-align:center">$artifacts</td>
     </tr>
     <tr>
-        <th colspan="14">Average drop</th>
-        <th style="text-align:center">Chance</th>
+        <th colspan="14">$MSG.htmlReportStatsAvgDrop</th>
+        <th style="text-align:center">$MSG.htmlReportStatsChance</th>
     </tr>
     <tr>
     #foreach ($drop in $dropSum)
@@ -27,7 +27,7 @@
         <td style="text-align:center">$df.format($chance)%</td>
     </tr>
     <tr>
-        <th colspan="15">Max drop</th>
+        <th colspan="15">$MSG.htmlReportStatsMaxDrop</th>
     </tr>
     <tr>
     #foreach ($drop in $dropMax)
@@ -36,7 +36,7 @@
         <td style="text-align:center">--</td>
     </tr>
     <tr>
-        <th colspan="15">Min drop</th>
+        <th colspan="15">$MSG.htmlReportStatsMinDrop</th>
     </tr>
     <tr>
     #foreach ($drop in $dropMin)
@@ -46,76 +46,33 @@
     </tr>
 </table>
 
-<h3 style="margin-bottom:5px;margin-top:5px">Attacker</h3>
-<p><b>Note:</b> On Alien Attacks, your fleet is always considered the attacker for these statistics</p>
-<table style="width:auto">
-    <tr>
-        <td><b>Average attacker KW</b></td>
-        <td style="text-align:right;">$df.format($kwAttacker)</td>
-    </tr>
-    <tr>
-        <td><b>Total attacker Captain XP</b></td>
-        <td style="text-align:right;">$!capiXpSumAttacker</td>
-    </tr>
-    <tr>
-        <td><b>Total attacker Crew XP</b></td>
-        <td style="text-align:right;">$!crewXpSumAttacker</td>
-    </tr>
-    <tr>
-        <td><b>Total attacker PZ damage</b></td>
-        <td style="text-align:right;">$!pzDamageAttacker</td>
-    </tr>
-    <tr>
-        <td><b>Total attacker repair time</b></td>
-        <td style="text-align:right;">$myPolly.formatting().formatTimeSpan($repairTimeAttacker)</td>
-    </tr>
-    <tr>
-        <td><b>Total attacker repair costs</b></td>
-        <td>
-            <table>
-                <tr>
-                <th style="text-align:center"><img src="/polly/rx/httpv2/view/r1.gif"/></th>
-                <th style="text-align:center"><img src="/polly/rx/httpv2/view/r2.gif"/></th>
-                <th style="text-align:center"><img src="/polly/rx/httpv2/view/r5.gif"/></th>
-                <th style="text-align:center"><img src="/polly/rx/httpv2/view/r6.gif"/></th>
-                <th style="text-align:center"><img src="/polly/rx/httpv2/view/r7.gif"/></th>
-                <th style="text-align:center"><img src="/polly/rx/httpv2/view/r8.gif"/></th>
-                <th style="text-align:center"><img src="/polly/rx/httpv2/view/r9.gif"/></th>
-                </tr>
-                <tr>
-                #foreach ($i in $repairCostAttacker)
-                    <td style="text-align:center">$!i.getAmount()</th>
-                #end
-                </tr>
-            </table>
-        </td>
-    </tr>
-</table>
 
-<h3 style="margin-bottom:5px;margin-top:5px">Defender</h3>
+#macro (PRINT_STATS $caption $avgKw $attackerXp $crewXp $pzDmg $repairTime $repairCost)
+<h3 style="margin-bottom:5px;margin-top:5px">$caption</h3>
+<p><b>$MSG.htmlReportStatsNote:</b> $MSG.htmlReportStatsNoteAlienAttacks</p>
 <table style="width:auto">
     <tr>
-        <td><b>Average defender KW</b></td>
-        <td style="text-align:right;">$df.format($kwDefender)</td>
+        <td><b>$MSG.htmlReportStatsAvgKw</b></td>
+        <td style="text-align:right;">$df.format($avgKw)</td>
     </tr>
     <tr>
-        <td><b>Total defender Captain XP</b></td>
-        <td style="text-align:right;">$!capiXpSumDefender</td>
+        <td><b>$MSG.htmlReportStatsCapiXp</b></td>
+        <td style="text-align:right;">$!attackerXp</td>
     </tr>
     <tr>
-        <td><b>Total defender Crew XP</b></td>
-        <td style="text-align:right;">$!crewXpSumDefender</td>
+        <td><b>$MSG.htmlReportStatsCrewXp</b></td>
+        <td style="text-align:right;">$!crewXp</td>
     </tr>
     <tr>
-        <td><b>Total defender PZ damage</b></td>
-        <td style="text-align:right;">$!pzDamageDefender</td>
+        <td><b>$MSG.htmlReportStatsPzDmg</b></td>
+        <td style="text-align:right;">$!pzDmg</td>
     </tr>
     <tr>
-        <td><b>Total defender repair time</b></td>
-        <td style="text-align:right;">$myPolly.formatting().formatTimeSpan($repairTimeDefender)</td>
+        <td><b>$MSG.htmlReportStatsRepairTime</b></td>
+        <td style="text-align:right;">$myPolly.formatting().formatTimeSpan($repairTime)</td>
     </tr>
     <tr>
-        <td><b>Total defender repair costs</b></td>
+        <td><b>$MSG.htmlReportStatsRepairCosts</b></td>
         <td>
             <table>
                 <tr>
@@ -128,7 +85,7 @@
                 <th style="text-align:center"><img src="/polly/rx/httpv2/view/r9.gif"/></th>
                 </tr>
                 <tr>
-                #foreach ($i in $repairCostDefender)
+                #foreach ($i in $repairCost)
                     <td style="text-align:center">$!i.getAmount()</th>
                 #end
                 </tr>
@@ -136,3 +93,20 @@
         </td>
     </tr>
 </table>
+#end
+
+#PRINT_STATS($MSG.htmlAttackerFleet, 
+    $kwAttacker, 
+    $capiXpSumAttacker, 
+    $crewXpSumAttacker, 
+    $pzDamageAttacker, 
+    $repairTimeAttacker, 
+    $repairCostAttacker)
+
+#PRINT_STATS($MSG.htmlDefenderFleet, 
+    $kwDefender, 
+    $capiXpSumDefender, 
+    $crewXpSumDefender, 
+    $pzDamageDefender, 
+    $repairTimeDefender, 
+    $repairCostDefender)

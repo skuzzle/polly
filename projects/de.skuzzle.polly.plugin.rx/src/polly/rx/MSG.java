@@ -205,6 +205,63 @@ public class MSG extends Constants {
     public static String httpAutoRemindCommand;
     public static String httpShipsBelow;
 
+    // BattleReportShipModel
+    public static String reportShipModelColumns;
+    public static String reportShipModelUnknown;
+    
+    // FleetScanShipTableModel
+    public static String scanShipModelColumns;
+    
+ // FleetScanTableModel
+    public static String scanModelColumns;
+    
+ // ScoreboardDetailModel
+    public static String scoreboardDetailModelColumns;
+    
+ // ScoreboardTableModel
+    public static String scoreboardModelColumns;
+    public static String scoreboardModelCompareTitle;
+    public static String scoreboardModelDetailsTitle;
+
+ // HTML
+    public static String htmlDrop;
+    public static String htmlAttackerFleet;
+    public static String htmlDefednerFleet;
+    public static String htmlFleetName;
+    public static String htmlVenad;
+    public static String htmlClan;
+    public static String htmlKw;
+    public static String htmlBonus;
+    public static String htmlXPMod;
+    public static String htmlShieldDmg;
+    public static String htmlPzDmg;
+    public static String htmlWend;
+    public static String htmlCapiXp;
+    public static String htmlCrewXp;
+    public static String htmlStatisticCaption;
+    public static String htmlStatisticHowTo;
+    public static String htmlStatisticAdjust;
+    public static String htmlStatisticReload;
+    public static String htmlAllReportsCaption;
+    public static String htmlPostReportCaption;
+    public static String htmlPostReportSubmit;
+    public static String htmlPostDeleteConfirm;
+    public static String htmlReportStatsHeader;
+    public static String htmlReportStatsArtifacts;
+    public static String htmlReportStatsTotalDrop;
+    public static String htmlReportStatsAvgDrop;
+    public static String htmlReportStatsChance;
+    public static String htmlReportStatsMaxDrop;
+    public static String htmlReportStatsMinDrop;
+    public static String htmlReportStatsAvgKw;
+    public static String htmlReportStatsCapiXp;
+    public static String htmlReportStatsCrewXp;
+    public static String htmlReportStatsPzDmg;
+    public static String htmlReportStatsRepairTime;
+    public static String htmlReportStatsRepairCosts;
+    public static String htmlReportStatsNote;
+    public static String htmlReportStatsNoteAlienAttacks;
+
     static {
         Resources.init(FAMILY, MSG.class);
     }
