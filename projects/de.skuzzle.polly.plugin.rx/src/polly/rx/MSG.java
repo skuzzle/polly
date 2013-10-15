@@ -176,13 +176,13 @@ public class MSG extends Constants {
 
     // DailyGreeter
     public static String greeterGreetings;
-    
- // BattleReportModel
+
+    // BattleReportModel
     public static String reportModelColumns;
     public static String reportModelDetailTitle;
     public static String reportModelDeleteTitle;
 
- // RXController
+    // RXController
     public static String httpRxCategory;
     public static String httpFleetScanMngr;
     public static String httpFleetScanMngrDesc;
@@ -208,22 +208,22 @@ public class MSG extends Constants {
     // BattleReportShipModel
     public static String reportShipModelColumns;
     public static String reportShipModelUnknown;
-    
+
     // FleetScanShipTableModel
     public static String scanShipModelColumns;
-    
- // FleetScanTableModel
+
+    // FleetScanTableModel
     public static String scanModelColumns;
-    
- // ScoreboardDetailModel
+
+    // ScoreboardDetailModel
     public static String scoreboardDetailModelColumns;
-    
- // ScoreboardTableModel
+
+    // ScoreboardTableModel
     public static String scoreboardModelColumns;
     public static String scoreboardModelCompareTitle;
     public static String scoreboardModelDetailsTitle;
 
- // HTML
+    // HTML
     public static String htmlDrop;
     public static String htmlAttackerFleet;
     public static String htmlDefenderFleet;
@@ -323,6 +323,32 @@ public class MSG extends Constants {
     public static String htmlScoreboardOverviewCompare;
     public static String htmlScoreboardOverviewCompareTitle;
     public static String htmlScoreboardOverviewEntries;
+
+    // BattleReportParser
+    public static String reportParserInvalid;
+    public static String reportParserInvalidDate;
+    public static String reportParserInvalidLocation;
+    public static String reportParserInvalidHeader;
+    public static String reportParserExpectedAttackerFleet;
+    public static String reportParserExpectedDefenderFleet;
+    public static String reportParserNoAttackerShips;
+    public static String reportParserNoDefenderShips;
+
+    // FleetScanParser
+    public static String fleetScanParserInvalid;
+
+    // QReportParser
+    public static String qreportParserResourceExpected;
+    public static String qreportParserAttackAtExpected;
+    public static String qreportParserInvalidLocation;
+    public static String qreportParserFailedToParseAttr;
+
+    // MyPlugin
+    public static String pluginVenadDesc;
+    public static String pluginCrackerDesc;
+    public static String pluginAutoRemindDesc;
+    public static String pluginAutoRemindAzDesc;
+    public static String pluginLowPzWarningDesc;
 
     static {
         Resources.init(FAMILY, MSG.class);

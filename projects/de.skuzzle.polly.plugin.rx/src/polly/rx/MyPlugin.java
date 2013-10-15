@@ -39,8 +39,6 @@ import polly.rx.httpv2.StatisticsGatherer;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
 import de.skuzzle.polly.sdk.Types;
-import de.skuzzle.polly.sdk.Types.NumberType;
-import de.skuzzle.polly.sdk.constraints.AttributeConstraint;
 import de.skuzzle.polly.sdk.constraints.Constraints;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
@@ -56,26 +54,27 @@ import de.skuzzle.polly.sdk.roles.RoleManager;
 
 public class MyPlugin extends PollyPlugin {
 
-    public final static String FLEET_MANAGER_ROLE = "polly.roles.FLEET_MANAGER";
-    public final static String TRAINER_ROLE       = "polly.roles.TRAINER";
-    public final static String SBE_MANAGER_ROLE   = "polly.roles.SBE_MANAGER";
+    public final static String FLEET_MANAGER_ROLE = "polly.roles.FLEET_MANAGER"; //$NON-NLS-1$
+    public final static String TRAINER_ROLE       = "polly.roles.TRAINER"; //$NON-NLS-1$
+    public final static String SBE_MANAGER_ROLE   = "polly.roles.SBE_MANAGER"; //$NON-NLS-1$
     
-    public final static String RESSOURCES_PERMISSION             = "polly.permission.RESSOURCES";
-    public final static String ADD_TRAIN_PERMISSION              = "polly.permission.ADD_TRAIN";
-    public final static String DELIVER_TRAIN_PERMISSION          = "polly.permission.DELIVER_TRAIN";
-    public final static String MYTRAINS_PERMISSION               = "polly.permission.MY_TRAINS";
-    public final static String MY_VENAD_PERMISSION               = "polly.permission.MY_VENAD";
-    public final static String CLOSE_TRAIN_PERMISSION            = "polly.permission.CLOSE_TRAIN";
-    public final static String IP_PERMISSION                     = "polly.permission.IP";
-    public final static String SBE_PERMISSION                    = "polly.permission.SBE";
-    public final static String CRACKER_PERMISSION                = "polly.permission.CRACKER";
-    public final static String RANK_PERMISSION                = "polly.permission.RANK";
-    public final static String VENAD    = "VENAD";
-    public final static String CRACKER  = "CRACKER";
-    public final static String MAX_MONTHS = "MAX_MONTHTS";
-    public final static String AUTO_REMIND = "AUTO_REMIND";
-    public final static String AUTO_REMIND_AZ = "AUTO_REMIND_AZ";
-    public final static String LOW_PZ_WARNING = "LOW_PZ_WARNING";
+    public final static String RESSOURCES_PERMISSION             = "polly.permission.RESSOURCES"; //$NON-NLS-1$
+    public final static String ADD_TRAIN_PERMISSION              = "polly.permission.ADD_TRAIN"; //$NON-NLS-1$
+    public final static String DELIVER_TRAIN_PERMISSION          = "polly.permission.DELIVER_TRAIN"; //$NON-NLS-1$
+    public final static String MYTRAINS_PERMISSION               = "polly.permission.MY_TRAINS"; //$NON-NLS-1$
+    public final static String MY_VENAD_PERMISSION               = "polly.permission.MY_VENAD"; //$NON-NLS-1$
+    public final static String CLOSE_TRAIN_PERMISSION            = "polly.permission.CLOSE_TRAIN"; //$NON-NLS-1$
+    public final static String IP_PERMISSION                     = "polly.permission.IP"; //$NON-NLS-1$
+    public final static String SBE_PERMISSION                    = "polly.permission.SBE"; //$NON-NLS-1$
+    public final static String CRACKER_PERMISSION                = "polly.permission.CRACKER"; //$NON-NLS-1$
+    public final static String RANK_PERMISSION                   = "polly.permission.RANK"; //$NON-NLS-1$
+    public final static String VENAD    = "VENAD"; //$NON-NLS-1$
+    public final static String CRACKER  = "CRACKER"; //$NON-NLS-1$
+    public final static String MAX_MONTHS = "MAX_MONTHTS"; //$NON-NLS-1$
+    public final static String AUTO_REMIND = "AUTO_REMIND"; //$NON-NLS-1$
+    public final static String AUTO_REMIND_AZ = "AUTO_REMIND_AZ"; //$NON-NLS-1$
+    public final static String LOW_PZ_WARNING = "LOW_PZ_WARNING"; //$NON-NLS-1$
+    private static final String VENAD_DEFAULT = "<unbekannt>"; //$NON-NLS-1$
     
     
     private FleetDBManager fleetDBManager;
@@ -125,49 +124,49 @@ public class MyPlugin extends PollyPlugin {
         this.addCommand(new RankCommand(myPolly, this.sbeManager));
         
         
-        myPolly.webInterface().addCategory(new MenuCategory(0, "Revorix"));
+        myPolly.webInterface().addCategory(new MenuCategory(0, MSG.httpRxCategory));
         myPolly.webInterface().getServer().addController(
                 new RXController(myPolly, fleetDBManager, sbeManager, azManager));
         
         final HTMLTableModel<FleetScan> scanModel = new FleetScanTableModel(fleetDBManager);
-        final HTMLTable<FleetScan> fleetScanTable = new HTMLTable<FleetScan>("fleetScans", scanModel, myPolly);
+        final HTMLTable<FleetScan> fleetScanTable = new HTMLTable<FleetScan>("fleetScans", scanModel, myPolly); //$NON-NLS-1$
         
         final HTMLTableModel<FleetScanShip> scanShipModel = new FleetScanShipTableModel(fleetDBManager);
-        final HTMLTable<FleetScanShip> fleetScanShipTable = new HTMLTable<FleetScanShip>("ships", scanShipModel, myPolly);
+        final HTMLTable<FleetScanShip> fleetScanShipTable = new HTMLTable<FleetScanShip>("ships", scanShipModel, myPolly); //$NON-NLS-1$
         
         final HTMLTableModel<FleetScan> scansWithShip = new FleetScansWithShipModel(fleetDBManager);
-        final HTMLTable<FleetScan> scansWithShipTable = new HTMLTable<FleetScan>("scansWithShip", scansWithShip, myPolly);
+        final HTMLTable<FleetScan> scansWithShipTable = new HTMLTable<FleetScan>("scansWithShip", scansWithShip, myPolly); //$NON-NLS-1$
         
         final HTMLTableModel<FleetScanShip> shipsForScanModel = new ShipsForScanTableModel(fleetDBManager);
-        final HTMLTable<FleetScanShip> shipsForScanTable = new HTMLTable<FleetScanShip>("ships", shipsForScanModel, myPolly);
+        final HTMLTable<FleetScanShip> shipsForScanTable = new HTMLTable<FleetScanShip>("ships", shipsForScanModel, myPolly); //$NON-NLS-1$
         
         final HTMLTableModel<ScoreBoardEntry> scoreboard = new ScoreboardTableModel(sbeManager);
-        final HTMLTable<ScoreBoardEntry> scoreboardTable = new HTMLTable<ScoreBoardEntry>("scoreboard", scoreboard, myPolly);
+        final HTMLTable<ScoreBoardEntry> scoreboardTable = new HTMLTable<ScoreBoardEntry>("scoreboard", scoreboard, myPolly); //$NON-NLS-1$
         
         final HTMLTableModel<ScoreBoardEntry> scoreboardDetail = new ScoreboardDetailModel(sbeManager);
-        final HTMLTable<ScoreBoardEntry> scoreboardDetailTable = new HTMLTable<>("entries", scoreboardDetail, myPolly);
+        final HTMLTable<ScoreBoardEntry> scoreboardDetailTable = new HTMLTable<>("entries", scoreboardDetail, myPolly); //$NON-NLS-1$
         
         final HTMLTableModel<BattleReport> reportModel = new BattleReportModel(fleetDBManager);
-        final HTMLTable<BattleReport> reportTabble = new HTMLTable<BattleReport>("reports", reportModel, myPolly);
+        final HTMLTable<BattleReport> reportTabble = new HTMLTable<BattleReport>("reports", reportModel, myPolly); //$NON-NLS-1$
         final StatisticsGatherer statsGatherer = new StatisticsGatherer();
         reportTabble.addModelListener(statsGatherer);
         
         
         final HTMLTableModel<BattleReportShip> reportAttackerShipModel = new BattleReportShipModel(fleetDBManager, true);
         final HTMLTableModel<BattleReportShip> reportDefenderShipModel = new BattleReportShipModel(fleetDBManager, false);
-        final HTMLTable<BattleReportShip> reportAttackerShipTable = new HTMLTable<>("attackerShips", reportAttackerShipModel, myPolly);
-        final HTMLTable<BattleReportShip> reportDefenderShipTable = new HTMLTable<>("defenderShips", reportDefenderShipModel, myPolly);
+        final HTMLTable<BattleReportShip> reportAttackerShipTable = new HTMLTable<>("attackerShips", reportAttackerShipModel, myPolly); //$NON-NLS-1$
+        final HTMLTable<BattleReportShip> reportDefenderShipTable = new HTMLTable<>("defenderShips", reportDefenderShipModel, myPolly); //$NON-NLS-1$
         
-        myPolly.webInterface().getServer().addHttpEventHandler("/api/allFleetScans", fleetScanTable);
-        myPolly.webInterface().getServer().addHttpEventHandler("/api/allFleetScanShips", fleetScanShipTable);
-        myPolly.webInterface().getServer().addHttpEventHandler("/api/scansWithShip", scansWithShipTable);
-        myPolly.webInterface().getServer().addHttpEventHandler("/api/shipsForScan", shipsForScanTable);
-        myPolly.webInterface().getServer().addHttpEventHandler("/api/scoreboard", scoreboardTable);
-        myPolly.webInterface().getServer().addHttpEventHandler("/api/scoreboardDetail", scoreboardDetailTable);
-        myPolly.webInterface().getServer().addHttpEventHandler("/api/allReports", reportTabble);
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/allFleetScans", fleetScanTable); //$NON-NLS-1$
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/allFleetScanShips", fleetScanShipTable); //$NON-NLS-1$
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/scansWithShip", scansWithShipTable); //$NON-NLS-1$
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/shipsForScan", shipsForScanTable); //$NON-NLS-1$
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/scoreboard", scoreboardTable); //$NON-NLS-1$
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/scoreboardDetail", scoreboardDetailTable); //$NON-NLS-1$
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/allReports", reportTabble); //$NON-NLS-1$
         
-        myPolly.webInterface().getServer().addHttpEventHandler("/api/reportAttackerShips", reportAttackerShipTable);
-        myPolly.webInterface().getServer().addHttpEventHandler("/api/reportDefenderShips", reportDefenderShipTable);
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/reportAttackerShips", reportAttackerShipTable); //$NON-NLS-1$
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/reportDefenderShips", reportDefenderShipTable); //$NON-NLS-1$
     }
     
     
@@ -230,41 +229,24 @@ public class MyPlugin extends PollyPlugin {
     @Override
     public void onLoad() throws PluginException {
         try {
-            final String category = "Revorix";
             this.getMyPolly().users().addAttribute(VENAD, 
-                new Types.StringType("<unbekannt>"), "Set your revorix Venad name", 
-                category);
+                new Types.StringType(VENAD_DEFAULT), 
+                MSG.pluginVenadDesc, 
+                MSG.httpRxCategory);
             this.getMyPolly().users().addAttribute(CRACKER, new Types.NumberType(0.0),
-                "Your polly crackers. Do not edit this if you are fair!", category,
-                Constraints.INTEGER);
-            this.getMyPolly().users().addAttribute(MAX_MONTHS, 
-                new Types.NumberType(24.0), 
-                "Maximum number of months to display in scoreboard graphic", category, 
-                new AttributeConstraint() {
-                @Override
-                public boolean accept(Types value) {
-                    if (value instanceof NumberType) {
-                        final NumberType nt = (NumberType) value;
-                        return nt.isInteger() && 
-                            nt.getValue() > 2.0 && 
-                            nt.getValue() <= 24.0;
-                    }
-                    return false;
-                }
-            });
+                MSG.pluginCrackerDesc, 
+                MSG.httpRxCategory, Constraints.INTEGER);
             this.getMyPolly().users().addAttribute(AUTO_REMIND, 
                     new Types.BooleanType(false), 
-                    "When posting a live KB, polly will automatically set a remind for you", 
-                    "Revorix");
+                    MSG.pluginAutoRemindDesc, 
+                    MSG.httpRxCategory);
             this.getMyPolly().users().addAttribute(AUTO_REMIND_AZ, 
-                    new Types.TimespanType(840), "Revorix AZ time for auto reminds", 
-                    "Revorix", Constraints.TIMESPAN);
+                    new Types.TimespanType(840), MSG.pluginAutoRemindAzDesc, 
+                    MSG.httpRxCategory, Constraints.TIMESPAN);
             this.getMyPolly().users().addAttribute(LOW_PZ_WARNING, 
                     new Types.NumberType(0.0), 
-                    "When using the live KB Greasemonkey script, your browser will show a "
-                    + "warning if one ship's PZ drops below this value. Set to 0 to "
-                    + "disable the warning", 
-                    "Revorix", Constraints.INTEGER);
+                    MSG.pluginLowPzWarningDesc, 
+                    MSG.httpRxCategory, Constraints.INTEGER);
         } catch (Exception ignore) {
             ignore.printStackTrace();
         }

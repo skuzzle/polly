@@ -4,8 +4,8 @@ package polly.rx.parsing;
 public class VenadHelper {
 
     private static String parseName(String name, boolean returnClan) {
-        String clan = "";
-        int i = name.indexOf("[");
+        String clan = ""; //$NON-NLS-1$
+        int i = name.indexOf("["); //$NON-NLS-1$
         if (i != -1) {
             clan = name.substring(i + 1, name.length() - 1);
             name = name.substring(0, name.length() - clan.length() - 2);
