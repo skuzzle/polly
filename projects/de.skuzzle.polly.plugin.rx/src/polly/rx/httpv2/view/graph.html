@@ -5,7 +5,7 @@
 </style>
 
 <div class="graphContainer">
-Select months to display:
+$MSG.htmlGraphSelectMonths:
 
 
 #if ($isCompare)
@@ -21,7 +21,7 @@ Select months to display:
     <option value="$m" #if ($selected) selected #end>$m</option>
     #end
 </select>
-<a href="/api/imageFromSession?imgName=$imgName">Link to image</a>
+<a href="/api/imageFromSession?imgName=$imgName">$MSG.htmlGraphLinkToImage</a>
 <ul id="data_$venad" style="
         list-style: none; 
         background: url('/api/imageFromSession?imgName=$imgName') no-repeat 0 0;

@@ -226,7 +226,7 @@ public class MSG extends Constants {
  // HTML
     public static String htmlDrop;
     public static String htmlAttackerFleet;
-    public static String htmlDefednerFleet;
+    public static String htmlDefenderFleet;
     public static String htmlFleetName;
     public static String htmlVenad;
     public static String htmlClan;
@@ -261,6 +261,68 @@ public class MSG extends Constants {
     public static String htmlReportStatsRepairCosts;
     public static String htmlReportStatsNote;
     public static String htmlReportStatsNoteAlienAttacks;
+
+    public static String htmlConfigAzCaption;
+    public static String htmlConfiAzDesc;
+    public static String htmlConfigAzDesc2;
+    public static String htmlConfigAzAz;
+    public static String htmlConfigAzAction;
+    public static String htmlConfigAzSubmit;
+    public static String htmlConfigAzDelete;
+
+    public static String htmlFleetScanDetailsCaption;
+    public static String htmlFleetScanDate;
+    public static String htmlFleetScanSens;
+    public static String htmlFleetScanName;
+    public static String htmlFleetScanOwner;
+    public static String htmlFleetScanClan;
+    public static String htmlFleetScanTag;
+    public static String htmlFleetScanLocation;
+    public static String htmlFleetScanMeta;
+    public static String htmlFleetScanContainedShipsCaption;
+    public static String htmlFleetScanOVerviewCaption;
+    public static String htmlFleetScanOverviewInfo;
+    public static String htmlFleetScanPostScanCaption;
+    public static String htmlFleetScanPasteLabel;
+    public static String htmlFleetScanQuadrantLabel;
+    public static String htmlFleetScanXLabel;
+    public static String htmlFleetScanYLabel;
+    public static String htmlFleetScanSubmit;
+
+    public static String htmlGMCaption;
+    public static String htmlGMScript;
+    public static String htmlGMDescription;
+    public static String htmlGMScoreboardPasterName;
+    public static String htmlGMScoreboardPasterDesc;
+    public static String htmlGMReportPasterName;
+    public static String htmlGMReportPasterDesc;
+
+    public static String htmlGraphSelectMonths;
+    public static String htmlGraphLinkToImage;
+
+    public static String htmlScanShipCaption;
+    public static String htmlScanShipId;
+    public static String htmlScanShipTL;
+    public static String htmlScanShipOwner;
+    public static String htmlScanShipClan;
+    public static String htmlScanShipNameWhenFirstSpotted;
+    public static String htmlScanShipHistoryCaption;
+    public static String htmlScanShipDate;
+    public static String htmlScanShipChanges;
+    public static String htmlScanShipFleetsWithShip;
+    public static String htmlScanShipAllCaption;
+    public static String htmlScanShipAllInfo;
+    public static String htmlScoreboardCmpCaption;
+    public static String htmlScoreboardVenad;
+    public static String htmlScoreboardDetailsFor;
+    public static String htmlScoreboardDetailsEntriesCaption;
+    public static String htmlScoreboardOverviewPostCaption;
+    public static String htmlScoreboardOverviewPostSubmit;
+    public static String htmlScoreboardOverviewCompareList;
+    public static String htmlScoreboardOverviewRemoveFromCompare;
+    public static String htmlScoreboardOverviewCompare;
+    public static String htmlScoreboardOverviewCompareTitle;
+    public static String htmlScoreboardOverviewEntries;
 
     static {
         Resources.init(FAMILY, MSG.class);

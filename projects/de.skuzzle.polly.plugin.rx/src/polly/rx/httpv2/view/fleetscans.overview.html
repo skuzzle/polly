@@ -1,6 +1,6 @@
 <div class="highlight contentBox">
-    #CONTENT_HEADER ("All Fleet Scans")
-    <p class="content">Click the fleet name for details about the scan</p>
+    #CONTENT_HEADER ($MSG.htmlFleetScanOVerviewCaption)
+    <p class="content">$MSG.htmlFleetScanOverviewInfo</p>
     <div class="content">
         <table id="fleetScans">
         </table>
@@ -8,24 +8,24 @@
 </div>
 
 <div class="highlight contentBox">
-    #CONTENT_HEADER ("Post Fleet Scans")
+    #CONTENT_HEADER ($MSG.htmlFleetScanPostScanCaption)
     <div class="content">
     <form id="postScan">
     <table>
-    <tr><td><label for="scan">Paste</label></td></tr>
+    <tr><td><label for="scan">$MSG.htmlFleetScanPasteLabel</label></td></tr>
     <tr><td><textarea name="scan" style="width: 100%; height:250px" class="textbox"></textarea></td></tr>
     
     <tr><td>
-        <label for="quadrant">Quadrant:</label>
+        <label for="quadrant">$MSG.htmlFleetScanQuadrantLabel:</label>
         <input type="text" class="textbox" name="quadrant"/>
-        <label for="x">X:</label>
+        <label for="x">$MSG.htmlFleetScanXLabel:</label>
         <input type="text" class="textbox" style="width:50px"; name="x"/>
-        <label for="y">Y:</label>
+        <label for="y">$MSG.htmlFleetScanYLabel:</label>
         <input type="text" class="textbox" style="width:50px" name="y"/>
     </td></tr>
-    <tr><td><label for="meta">Meta Information</label></td></tr>
+    <tr><td><label for="meta">$MSG.htmlFleetScanMeta</label></td></tr>
     <tr><td><textarea name="meta" style="width: 100%; height:100px" class="textbox"></textarea></td></tr>
-    <tr><td><input type="button" class="button" value="Submit Scan" onclick="submitScan()"/></td></tr>
+    <tr><td><input type="button" class="button" value="$MSG.htmlFleetScanSubmit" onclick="submitScan()"/></td></tr>
     </table>
     </form>
     </div>
