@@ -16,17 +16,17 @@ public class FooCommand extends Command {
 
     public FooCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "foo"); //$NON-NLS-1$
-        this.createSignature(MSG.fooSig0Desc, 
-            new Parameter(MSG.fooSigParam, Types.ANY));
-        this.createSignature(MSG.fooSig1Desc, 
-            new Parameter(MSG.fooSigParam, Types.ANY), 
-            new Parameter(MSG.fooSigParam, Types.ANY));
-        this.createSignature(MSG.fooSig2Desc, 
-            new Parameter(MSG.fooSigParam, Types.ANY), 
-            new Parameter(MSG.fooSigParam, Types.ANY), 
-            new Parameter(MSG.fooSigParam, Types.ANY));
-        this.createSignature(MSG.fooSig3Desc);
-        this.setHelpText(MSG.fooHelp);
+        this.createSignature(MSG.fooSig0Desc.s, 
+            new Parameter(MSG.fooSigParam.s, Types.ANY));
+        this.createSignature(MSG.fooSig1Desc.s, 
+            new Parameter(MSG.fooSigParam.s, Types.ANY), 
+            new Parameter(MSG.fooSigParam.s, Types.ANY));
+        this.createSignature(MSG.fooSig2Desc.s, 
+            new Parameter(MSG.fooSigParam.s, Types.ANY), 
+            new Parameter(MSG.fooSigParam.s, Types.ANY), 
+            new Parameter(MSG.fooSigParam.s, Types.ANY));
+        this.createSignature(MSG.fooSig3Desc.s);
+        this.setHelpText(MSG.fooHelp.s);
     }
 
     

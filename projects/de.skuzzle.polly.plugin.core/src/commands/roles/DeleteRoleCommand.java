@@ -21,11 +21,11 @@ public class DeleteRoleCommand extends Command {
     public DeleteRoleCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "deleterole"); //$NON-NLS-1$
         this.createSignature(
-            MSG.deleteRoleSig0Desc,
+            MSG.deleteRoleSig0Desc.s,
             MyPlugin.DELETE_ROLE_PERMISSION,
-            new Parameter(MSG.deleteRoleSig0Name, Types.STRING));
+            new Parameter(MSG.deleteRoleSig0Name.s, Types.STRING));
         
-        this.setHelpText(MSG.deleteRoleHelp);
+        this.setHelpText(MSG.deleteRoleHelp.s);
     }
 
     
@@ -39,7 +39,7 @@ public class DeleteRoleCommand extends Command {
             
             try {
                 this.getMyPolly().roles().deleteRole(roleName);
-                this.reply(channel, MSG.deleteRoleSuccess);
+                this.reply(channel, MSG.deleteRoleSuccess.s);
             } catch (RoleException e) {
                 throw new CommandException(e);
             } catch (DatabaseException e) {

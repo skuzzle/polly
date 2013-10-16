@@ -16,14 +16,14 @@ public class GetAttributeCommand extends Command {
 
     public GetAttributeCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "getattr"); //$NON-NLS-1$
-        this.createSignature(MSG.getAttributeSig0Desc, 
+        this.createSignature(MSG.getAttributeSig0Desc.s, 
     		MyPlugin.GET_USER_ATTRIBUTE_PERMISSION,
-            new Parameter(MSG.userName, Types.USER), 
-            new Parameter(MSG.getAttributeSigAttribute, Types.STRING));
-        this.createSignature(MSG.getAttributeSig1Desc, 
+            new Parameter(MSG.userName.s, Types.USER), 
+            new Parameter(MSG.getAttributeSigAttribute.s, Types.STRING));
+        this.createSignature(MSG.getAttributeSig1Desc.s, 
     		MyPlugin.GET_ATTRIBUTE_PERMISSION,
-    		new Parameter(MSG.getAttributeSigAttribute, Types.STRING));
-        this.setHelpText(MSG.getAttributeHelp);
+    		new Parameter(MSG.getAttributeSigAttribute.s, Types.STRING));
+        this.setHelpText(MSG.getAttributeHelp.s);
         this.setRegisteredOnly();
     }
 
@@ -52,15 +52,14 @@ public class GetAttributeCommand extends Command {
     private void getAttribute(User dest, String userName, String attribute, String channel) 
             throws CommandException {
         if (dest == null) {
-            throw new CommandException(MSG.bind(MSG.unknownUser, userName));
+            throw new CommandException(MSG.unknownUser.s(userName));
         }
         
         try {
-            this.reply(channel, MSG.bind(MSG.getAttributeValue, 
+            this.reply(channel, MSG.getAttributeValue.s( 
                 dest.getAttribute(attribute).valueString(this.getMyPolly().formatting())));
         } catch (UnknownAttributeException e) {
-            throw new CommandException(
-                    MSG.bind(MSG.getAttributeUnknownAttr, attribute));
+            throw new CommandException(MSG.getAttributeUnknownAttr.s(attribute));
         }
     }
 }

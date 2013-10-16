@@ -273,7 +273,7 @@ public class Types {
 		
 		@Override
         public String getSample() {
-            return Messages.typesStringSample;
+            return Messages.typesStringSample.s;
         }
 		
 		

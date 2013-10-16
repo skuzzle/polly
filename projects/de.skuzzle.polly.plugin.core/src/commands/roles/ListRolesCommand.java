@@ -23,13 +23,13 @@ public class ListRolesCommand extends Command {
     public ListRolesCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "listroles"); //$NON-NLS-1$
         this.createSignature(
-            MSG.listRolesSig0Desc,
+            MSG.listRolesSig0Desc.s,
             MyPlugin.LIST_ROLES_PERMISSION,
-            new Parameter(MSG.listRolesSig0User, Types.USER));
+            new Parameter(MSG.listRolesSig0User.s, Types.USER));
         this.createSignature(
-            MSG.listRolesSig1Desc,
+            MSG.listRolesSig1Desc.s,
             MyPlugin.LIST_ROLES_PERMISSION);
-        this.setHelpText(MSG.listRolesHelp);
+        this.setHelpText(MSG.listRolesHelp.s);
     }
 
 
@@ -44,7 +44,7 @@ public class ListRolesCommand extends Command {
             User user = this.getMyPolly().users().getUser(userName);
             
             if (user == null) {
-                throw new CommandException(MSG.bind(MSG.listRolesUnknownUser, userName));
+                throw new CommandException(MSG.listRolesUnknownUser.s(userName));
             }
             
             roles = this.getMyPolly().roles().getRoles(user);

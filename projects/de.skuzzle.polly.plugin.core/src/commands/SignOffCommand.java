@@ -13,9 +13,9 @@ public class SignOffCommand extends Command {
 
     public SignOffCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "signoff"); //$NON-NLS-1$
-        this.createSignature(MSG.signOffSig0Desc);
+        this.createSignature(MSG.signOffSig0Desc.s);
         this.setRegisteredOnly();
-        this.setHelpText(MSG.signOffHelp);
+        this.setHelpText(MSG.signOffHelp.s);
     }
 
     
@@ -25,7 +25,7 @@ public class SignOffCommand extends Command {
             Signature signature) {
         try {
             this.getMyPolly().users().logoff(executer);
-            this.reply(channel, MSG.signOffSuccess);
+            this.reply(channel, MSG.signOffSuccess.s);
         } catch (UnknownUserException e) {
             e.printStackTrace();
         }

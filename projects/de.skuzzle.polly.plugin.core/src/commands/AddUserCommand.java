@@ -18,12 +18,12 @@ public class AddUserCommand extends Command {
     
     public AddUserCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "adduser"); //$NON-NLS-1$
-        this.createSignature(MSG.addUserSig0Desc, 
+        this.createSignature(MSG.addUserSig0Desc.s, 
             MyPlugin.ADD_USER_PERMISSION,
-            new Parameter(MSG.userName, Types.USER),
-            new Parameter(MSG.addUserSig0Password, Types.STRING));
+            new Parameter(MSG.userName.s, Types.USER),
+            new Parameter(MSG.addUserSig0Password.s, Types.STRING));
         this.setRegisteredOnly();
-        this.setHelpText(MSG.addUserHelp);
+        this.setHelpText(MSG.addUserHelp.s);
         this.setQryCommand(true);
     }
     
@@ -40,7 +40,7 @@ public class AddUserCommand extends Command {
     @Override
     protected void executeOnChannel(User executer, String channel,
             Signature signature) {
-        this.reply(channel, MSG.addUserQryOnly);
+        this.reply(channel, MSG.addUserQryOnly.s);
     }
     
     
@@ -54,13 +54,13 @@ public class AddUserCommand extends Command {
             
             try {
                 this.getMyPolly().users().addUser(userName, password);
-                this.reply(executer, MSG.bind(MSG.addUserSuccess, userName));
+                this.reply(executer, MSG.addUserSuccess.s(userName));
             } catch (UserExistsException e) {
-                this.reply(executer, MSG.bind(MSG.addUserExists, userName));
+                this.reply(executer, MSG.addUserExists.s(userName));
             } catch (DatabaseException e)  {
                 throw new CommandException(e);
             } catch (InvalidUserNameException e) {
-                this.reply(executer, MSG.bind(MSG.addUserInvalid, userName));
+                this.reply(executer, MSG.addUserInvalid.s(userName));
             }
         }
     }

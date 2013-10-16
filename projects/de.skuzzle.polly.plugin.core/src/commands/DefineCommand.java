@@ -22,10 +22,10 @@ public class DefineCommand extends DelayedCommand {
     
     public DefineCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "define", 10000); //$NON-NLS-1$
-        this.createSignature(MSG.defineSig0Desc,
+        this.createSignature(MSG.defineSig0Desc.s,
             MyPlugin.DEFINE_PERMISSION,
-            new Parameter(MSG.defineSig0Term, Types.STRING));
-        this.setHelpText(MSG.defineHelp);
+            new Parameter(MSG.defineSig0Term.s, Types.STRING));
+        this.setHelpText(MSG.defineHelp.s);
     }
     
     
@@ -41,10 +41,10 @@ public class DefineCommand extends DelayedCommand {
             
             try {
                 this.reply(channel, wr.readFirstParagraph(article, lang));
-                this.reply(channel, MSG.bind(MSG.defineMoreInfo, 
+                this.reply(channel, MSG.defineMoreInfo.s( 
                         wr.getWikiLink(article, lang)));
             } catch (IOException e) {
-                throw new CommandException(MSG.bind(MSG.defineError, article));
+                throw new CommandException(MSG.defineError.s(article));
             }
         }
         return false;

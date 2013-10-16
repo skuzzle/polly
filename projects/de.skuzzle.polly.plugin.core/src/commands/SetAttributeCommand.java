@@ -19,17 +19,17 @@ public class SetAttributeCommand extends Command {
 
     public SetAttributeCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "setattr"); //$NON-NLS-1$
-        this.createSignature(MSG.setAttributeSig0Desc, 
+        this.createSignature(MSG.setAttributeSig0Desc.s, 
     		MyPlugin.SET_USER_ATTRIBUTE_PERMISSION,
-            new Parameter(MSG.setAttributeSig0User, Types.USER), 
-            new Parameter(MSG.setAttributeSig0Attr, Types.STRING), 
-            new Parameter(MSG.setAttributeSig0Value, Types.ANY));
-        this.createSignature(MSG.setAttributeSig1Desc,
+            new Parameter(MSG.setAttributeSig0User.s, Types.USER), 
+            new Parameter(MSG.setAttributeSig0Attr.s, Types.STRING), 
+            new Parameter(MSG.setAttributeSig0Value.s, Types.ANY));
+        this.createSignature(MSG.setAttributeSig1Desc.s,
             MyPlugin.SET_ATTRIBUTE_PERMISSION,
-            new Parameter(MSG.setAttributeSig1Attr, Types.STRING), 
-            new Parameter(MSG.setAttributSig1Value, Types.ANY));
+            new Parameter(MSG.setAttributeSig1Attr.s, Types.STRING), 
+            new Parameter(MSG.setAttributSig1Value.s, Types.ANY));
         this.setRegisteredOnly();
-        this.setHelpText(MSG.setAttributeHelp);
+        this.setHelpText(MSG.setAttributeHelp.s);
     }
 
     
@@ -63,18 +63,18 @@ public class SetAttributeCommand extends Command {
             String value, String channel) throws CommandException {
         
         if (dest == null) {
-            throw new CommandException(MSG.bind(MSG.setAttributeUnknownUser, userName));
+            throw new CommandException(MSG.setAttributeUnknownUser.s(userName));
         } 
         
         try {
             dest.getAttribute(attribute);
         } catch (UnknownAttributeException e) {
-            throw new CommandException(MSG.bind(MSG.setAttributeUnknownAttr, attribute));
+            throw new CommandException(MSG.setAttributeUnknownAttr.s(attribute));
         }
         
         try {
             this.getMyPolly().users().setAttributeFor(executor, dest, attribute, value);
-            this.reply(channel, MSG.setAttributeSuccess);
+            this.reply(channel, MSG.setAttributeSuccess.s);
         } catch (DatabaseException e) {
             throw new CommandException(e);
         } catch (ConstraintException e) {

@@ -20,11 +20,11 @@ public class SetMyPasswordCommand extends Command {
 
     public SetMyPasswordCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "setmypw"); //$NON-NLS-1$
-        this.createSignature(MSG.setMyPwSig0Desc, 
-        		new Parameter(MSG.setMyPwSig0CurrentPw, Types.STRING), 
-        		new Parameter(MSG.setMyPwSig0NewPw, Types.STRING));
+        this.createSignature(MSG.setMyPwSig0Desc.s, 
+        		new Parameter(MSG.setMyPwSig0CurrentPw.s, Types.STRING), 
+        		new Parameter(MSG.setMyPwSig0NewPw.s, Types.STRING));
         this.setRegisteredOnly();
-        this.setHelpText(MSG.setMyPwHelp);
+        this.setHelpText(MSG.setMyPwHelp.s);
         this.setQryCommand(true);
     }
 
@@ -41,7 +41,7 @@ public class SetMyPasswordCommand extends Command {
     @Override
     protected void executeOnChannel(User executer, String channel,
             Signature signature) {
-        this.reply(channel, MSG.setMyPwQryWarning);
+        this.reply(channel, MSG.setMyPwQryWarning.s);
     }
     
     
@@ -54,7 +54,7 @@ public class SetMyPasswordCommand extends Command {
             final String newPw = signature.getStringValue(1);
             
             if (!executer.checkPassword(oldPw)) {
-                this.reply(executer, MSG.setMyPwMismatch);
+                this.reply(executer, MSG.setMyPwMismatch.s);
                 return;
             }
             

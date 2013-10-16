@@ -16,12 +16,12 @@ public class RestartCommand extends Command {
 
     public RestartCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "restart"); //$NON-NLS-1$
-        this.createSignature(MSG.restartSig0Desc, 
+        this.createSignature(MSG.restartSig0Desc.s, 
             MyPlugin.RESTART_PERMISSION);
-        this.createSignature(MSG.restartSig1Desc,
+        this.createSignature(MSG.restartSig1Desc.s,
             MyPlugin.RESTART_PERMISSION,
-            new Parameter(MSG.restartSig1Params, Types.STRING));
-        this.setHelpText(MSG.restartHelp);
+            new Parameter(MSG.restartSig1Params.s, Types.STRING));
+        this.setHelpText(MSG.restartHelp.s);
         this.setRegisteredOnly();
     }
     
@@ -35,7 +35,6 @@ public class RestartCommand extends Command {
         } else if (this.match(signature, 1)) {
             this.getMyPolly().shutdownManager().restart(signature.getStringValue(0));
         }
-        
         return false;
     }
 

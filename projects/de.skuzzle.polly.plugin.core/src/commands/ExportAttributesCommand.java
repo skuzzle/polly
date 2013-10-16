@@ -23,12 +23,12 @@ public class ExportAttributesCommand extends Command {
     public ExportAttributesCommand(MyPolly polly) 
                 throws DuplicatedSignatureException {
         super(polly, "expattr"); //$NON-NLS-1$
-        this.createSignature(MSG.expAttributesSig0Desc, 
+        this.createSignature(MSG.expAttributesSig0Desc.s, 
             MyPlugin.EXPORT_ATTRIBUTES_PERMISSION);
-        this.createSignature(MSG.expAttributesSig1Desc,
+        this.createSignature(MSG.expAttributesSig1Desc.s,
             MyPlugin.EXPORT_USER_ATTRIBUTES_PERMISSION,
-            new Parameter(MSG.userName, Types.USER));
-        this.setHelpText(MSG.expAttributesHelp);
+            new Parameter(MSG.userName.s, Types.USER));
+        this.setHelpText(MSG.expAttributesHelp.s);
         this.setRegisteredOnly();
     }
     
@@ -42,8 +42,8 @@ public class ExportAttributesCommand extends Command {
         if (this.match(signature, 1)) {
             user = this.getMyPolly().users().getUser(signature.getStringValue(0));
             if (user == null) {
-                throw new CommandException(MSG.bind(
-                        MSG.unknownUser, signature.getStringValue(0)));
+                throw new CommandException(
+                        MSG.unknownUser.s(signature.getStringValue(0)));
             }
         }
         this.reply(channel, this.export(user));

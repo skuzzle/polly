@@ -21,17 +21,17 @@ public class CreateRoleCommand extends Command {
     public CreateRoleCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "createrole"); //$NON-NLS-1$
         this.createSignature(
-            MSG.createRoleSig0Desc, 
+            MSG.createRoleSig0Desc.s, 
             MyPlugin.CREATE_ROLE_PERMISSION,
-            new Parameter(MSG.createRoleSig0Name, Types.STRING));
+            new Parameter(MSG.createRoleSig0Name.s, Types.STRING));
         
         this.createSignature(
-            MSG.createRoleSig1Desc, 
+            MSG.createRoleSig1Desc.s, 
             MyPlugin.CREATE_ROLE_PERMISSION, 
-            new Parameter(MSG.createRoleSig1Base, Types.STRING),
-            new Parameter(MSG.createRoleSig1Name, Types.STRING));
+            new Parameter(MSG.createRoleSig1Base.s, Types.STRING),
+            new Parameter(MSG.createRoleSig1Name.s, Types.STRING));
         
-        this.setHelpText(MSG.createRoleHelp);
+        this.setHelpText(MSG.createRoleHelp.s);
     }
     
 
@@ -45,7 +45,7 @@ public class CreateRoleCommand extends Command {
             
             try {
                 this.getMyPolly().roles().createRole(newRoleName);
-                this.reply(channel, MSG.createRoleSuccess);
+                this.reply(channel, MSG.createRoleSuccess.s);
             } catch (DatabaseException e) {
                 throw new CommandException(e);
             }
@@ -55,7 +55,7 @@ public class CreateRoleCommand extends Command {
             
             try {
                 this.getMyPolly().roles().createRole(baseRoleName, newRoleName);
-                this.reply(channel, MSG.createRoleSuccess);
+                this.reply(channel, MSG.createRoleSuccess.s);
             } catch (DatabaseException e) {
                 throw new CommandException(e);
             } catch (RoleException e) {

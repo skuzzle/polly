@@ -17,15 +17,14 @@ public class VarCommand extends Command {
 
     public VarCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "var"); //$NON-NLS-1$
-        this.createSignature(MSG.varSig0Desc,
-            MyPlugin.LIST_VARS_PERMISSION);
-        this.createSignature(MSG.varSig1Desc,
+        this.createSignature(MSG.varSig0Desc.s,  MyPlugin.LIST_VARS_PERMISSION);
+        this.createSignature(MSG.varSig1Desc.s,
             MyPlugin.LIST_VARS_PERMISSION,
-            new Parameter(MSG.varSig1Namespace, Types.STRING));
-        this.createSignature(MSG.varSig2Desc,
+            new Parameter(MSG.varSig1Namespace.s, Types.STRING));
+        this.createSignature(MSG.varSig2Desc.s,
             MyPlugin.LIST_VARS_PERMISSION,
-            new Parameter(MSG.varSig2User, Types.USER));
-        this.setHelpText(MSG.varHelp);
+            new Parameter(MSG.varSig2User.s, Types.USER));
+        this.setHelpText(MSG.varHelp.s);
     }
     
     

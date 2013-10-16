@@ -16,13 +16,13 @@ public class HopCommand extends Command {
 
     public HopCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "hop"); //$NON-NLS-1$
-        this.createSignature(MSG.hopSig0Desc,
+        this.createSignature(MSG.hopSig0Desc.s,
             MyPlugin.HOP_PERMISSION);
-        this.createSignature(MSG.hopSig1Desc,
+        this.createSignature(MSG.hopSig1Desc.s,
             MyPlugin.HOP_PERMISSION,
-            new Parameter(MSG.hopSig1Channel, Types.CHANNEL));
+            new Parameter(MSG.hopSig1Channel.s, Types.CHANNEL));
         this.setRegisteredOnly();
-        this.setHelpText(MSG.hopHelp);
+        this.setHelpText(MSG.hopHelp.s);
     }
 
     
@@ -50,7 +50,7 @@ public class HopCommand extends Command {
     @Override
     protected void executeOnQuery(User executer, Signature signature) {
         if (this.match(signature, 0)) {
-            this.reply(executer, MSG.hopSpecifyChannel);
+            this.reply(executer, MSG.hopSpecifyChannel.s);
         } else if (this.match(signature, 1)) {
             this.rejoin(signature.getStringValue(0));
         }
@@ -59,7 +59,7 @@ public class HopCommand extends Command {
     
     
     private void rejoin(String channel) {
-        this.getMyPolly().irc().partChannel(channel, MSG.hopPartMessage);
+        this.getMyPolly().irc().partChannel(channel, MSG.hopPartMessage.s);
         this.getMyPolly().irc().joinChannel(channel, ""); //$NON-NLS-1$
     }
 }

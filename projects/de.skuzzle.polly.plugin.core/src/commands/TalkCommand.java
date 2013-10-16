@@ -15,13 +15,13 @@ public class TalkCommand extends Command {
 
     public TalkCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "talk"); //$NON-NLS-1$
-        this.createSignature(MSG.talkSig0Desc, 
+        this.createSignature(MSG.talkSig0Desc.s, 
             MyPlugin.TALK_PERMISSION,
-            new Parameter(MSG.talkSig0Msg, Types.STRING));
-        this.createSignature(MSG.talkSig1Desc,
+            new Parameter(MSG.talkSig0Msg.s, Types.STRING));
+        this.createSignature(MSG.talkSig1Desc.s,
             MyPlugin.TALK_PERMISSION,
-            new Parameter(MSG.talkSig1Channel, Types.CHANNEL), 
-            new Parameter(MSG.talkSig1Msg, Types.STRING));
+            new Parameter(MSG.talkSig1Channel.s, Types.CHANNEL), 
+            new Parameter(MSG.talkSig1Msg.s, Types.STRING));
         this.setRegisteredOnly();
     }
 
@@ -32,6 +32,7 @@ public class TalkCommand extends Command {
             Signature signature) {
         return true;
     }
+    
     
     
     @Override
@@ -46,6 +47,7 @@ public class TalkCommand extends Command {
             this.reply(c, m);
         }
     }
+    
     
     
     @Override

@@ -18,8 +18,8 @@ public class ShowCommandsCommand extends Command {
 
     public ShowCommandsCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "cmds"); //$NON-NLS-1$
-        this.createSignature(MSG.showCmdsSig0Desc);
-        this.setHelpText(MSG.showCmdsHelp);
+        this.createSignature(MSG.showCmdsSig0Desc.s);
+        this.setHelpText(MSG.showCmdsHelp.s);
     }
     
     
@@ -55,7 +55,7 @@ public class ShowCommandsCommand extends Command {
             }
         }
         
-        this.reply(channel, MSG.bind(MSG.showCmdsAvailable, b.toString()));
+        this.reply(channel, MSG.showCmdsAvailable.s(b.toString()));
         return false;
     }
 

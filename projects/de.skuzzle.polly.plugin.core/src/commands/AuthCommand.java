@@ -17,12 +17,12 @@ public class AuthCommand extends Command {
     
     public AuthCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "auth"); //$NON-NLS-1$
-        this.createSignature(MSG.authSig0Desc, 
-            new Parameter(MSG.userName, Types.USER),
-            new Parameter(MSG.authSigPassword, Types.STRING));
-        this.createSignature(MSG.authSig1Desc, 
-            new Parameter(MSG.authSigPassword, Types.STRING));
-        this.setHelpText(MSG.authHelp);
+        this.createSignature(MSG.authSig0Desc.s, 
+            new Parameter(MSG.userName.s, Types.USER),
+            new Parameter(MSG.authSigPassword.s, Types.STRING));
+        this.createSignature(MSG.authSig1Desc.s, 
+            new Parameter(MSG.authSigPassword.s, Types.STRING));
+        this.setHelpText(MSG.authHelp.s);
         this.setQryCommand(true);
     }
     
@@ -40,7 +40,7 @@ public class AuthCommand extends Command {
     protected void executeOnChannel(User executer, String channel,
             Signature signature) {
         
-        this.reply(channel, MSG.authQryWarning);
+        this.reply(channel, MSG.authQryWarning.s);
     }
     
     
@@ -62,14 +62,14 @@ public class AuthCommand extends Command {
                     userName, password);
             
             if (user == null) {
-                this.reply(executer, MSG.authWrongPw);
+                this.reply(executer, MSG.authWrongPw.s);
                 return;
             }
-            this.reply(executer, MSG.authSuccess);
+            this.reply(executer, MSG.authSuccess.s);
         } catch (UnknownUserException e) {
-            this.reply(executer, MSG.bind(MSG.unknownUser, userName));
+            this.reply(executer, MSG.unknownUser.s(userName));
         } catch (AlreadySignedOnException e) {
-            this.reply(executer, MSG.bind(MSG.authAlreadySignedOn, 
+            this.reply(executer, MSG.authAlreadySignedOn.s(
                     e.getUser().getCurrentNickName()));
         }
     }

@@ -22,11 +22,11 @@ public class ListPermissionsCommand extends Command {
     public ListPermissionsCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "listpermissions"); //$NON-NLS-1$
         this.createSignature(
-            MSG.listPermSig0Desc,
+            MSG.listPermSig0Desc.s,
             MyPlugin.LIST_PERMISSIONS_PERMISSION,
-            new Parameter(MSG.listPermSig0Name, Types.STRING));
+            new Parameter(MSG.listPermSig0Name.s, Types.STRING));
         
-        this.setHelpText(MSG.listPermHelp);
+        this.setHelpText(MSG.listPermHelp.s);
     }
 
     
@@ -39,7 +39,7 @@ public class ListPermissionsCommand extends Command {
             String roleName = signature.getStringValue(0);
             
             if (!this.getMyPolly().roles().roleExists(roleName)) {
-                throw new CommandException(MSG.bind(MSG.listPermUnknownRole, roleName));
+                throw new CommandException(MSG.bind(MSG.listPermUnknownRole.s, roleName));
             }
             
             StringBuilder result = new StringBuilder();

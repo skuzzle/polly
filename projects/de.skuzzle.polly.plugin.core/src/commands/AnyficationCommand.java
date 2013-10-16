@@ -35,14 +35,14 @@ public class AnyficationCommand extends DelayedCommand {
     
     public AnyficationCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "anyfication", DELAY); //$NON-NLS-1$
-        this.createSignature(MSG.anyficationSig0Desc, 
+        this.createSignature(MSG.anyficationSig0Desc.s, 
             MyPlugin.ANYFICATION_PERMISSION,
-            new Parameter(MSG.anyficationSig0Prefix, Types.STRING));
-        this.createSignature(MSG.anyficationSig1Desc,
+            new Parameter(MSG.anyficationSig0Prefix.s, Types.STRING));
+        this.createSignature(MSG.anyficationSig1Desc.s,
             MyPlugin.ANYFICATION_PERMISSION,
-            new Parameter(MSG.anyficationSig1Prefix, Types.STRING), 
-            new Parameter(MSG.anyficationSig1Timespan, Types.TIMESPAN));
-        this.setHelpText(MSG.anyficationHelp);
+            new Parameter(MSG.anyficationSig1Prefix.s, Types.STRING), 
+            new Parameter(MSG.anyficationSig1Timespan.s, Types.TIMESPAN));
+        this.setHelpText(MSG.anyficationHelp.s);
         this.anyficationTimer = new Timer("LORDIFICATION_TIMER", true); //$NON-NLS-1$
         this.channels = new HashSet<String>();
     }
@@ -79,7 +79,7 @@ public class AnyficationCommand extends DelayedCommand {
                 b.append(", "); //$NON-NLS-1$
             }
         }
-        final String info = MSG.bind(MSG.anyficationInfo, 
+        final String info = MSG.anyficationInfo.s( 
                 this.getMyPolly().formatting().formatTimeSpan(timeSpan / 1000));
         b.append(": "); //$NON-NLS-1$
         b.append(info);
@@ -96,7 +96,7 @@ public class AnyficationCommand extends DelayedCommand {
                 List<String> users = getMyPolly().irc().getChannelUser(chan);
                 for (String user : users) {
                     if (!user.startsWith(prefix)) {
-                        getMyPolly().irc().kick(chan, user, MSG.anyficationFail);
+                        getMyPolly().irc().kick(chan, user, MSG.anyficationFail.s);
                     }
                 }
                 getMyPolly().irc().setAndIdentifyDefaultNickname();

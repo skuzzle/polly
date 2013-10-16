@@ -11,10 +11,10 @@ public class DictCommand extends SearchEngineCommand {
 
     public DictCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "dict"); //$NON-NLS-1$
-        this.createSignature(MSG.dictSig0Desc, 
+        this.createSignature(MSG.dictSig0Desc.s, 
             MyPlugin.DICT_PERMISSION,
-            new Parameter(MSG.dictSig0Term, Types.STRING));
-        this.setHelpText(MSG.dictHelp);
+            new Parameter(MSG.dictSig0Term.s, Types.STRING));
+        this.setHelpText(MSG.dictHelp.s);
     }
 
     

@@ -15,11 +15,11 @@ public class RawIrcCommand extends Command {
 
     public RawIrcCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "raw"); //$NON-NLS-1$
-        this.createSignature(MSG.rawSig0Desc, 
+        this.createSignature(MSG.rawSig0Desc.s, 
                 MyPlugin.RAW_IRC_PERMISSION,
-                new Parameter(MSG.rawSig0Cmd, Types.STRING));
+                new Parameter(MSG.rawSig0Cmd.s, Types.STRING));
         this.setRegisteredOnly();
-        this.setHelpText(MSG.rawHelp);
+        this.setHelpText(MSG.rawHelp.s);
     }
 
     

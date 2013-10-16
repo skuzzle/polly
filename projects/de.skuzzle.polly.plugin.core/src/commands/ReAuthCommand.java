@@ -17,13 +17,13 @@ public class ReAuthCommand extends Command {
 
     public ReAuthCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "reauth"); //$NON-NLS-1$
-        this.createSignature(MSG.reAuthSig0Desc,
+        this.createSignature(MSG.reAuthSig0Desc.s,
         		MyPlugin.SET_AND_IDENTIFY_PERMISSION);
-        this.createSignature(MSG.reAuthSig1Desc,
+        this.createSignature(MSG.reAuthSig1Desc.s,
             MyPlugin.SET_AND_IDENTIFY_PERMISSION,
-            new Parameter(MSG.reAuthSig1Join, Types.BOOLEAN));
+            new Parameter(MSG.reAuthSig1Join.s, Types.BOOLEAN));
         
-        this.setHelpText(MSG.reAuthHelp);
+        this.setHelpText(MSG.reAuthHelp.s);
     }
     
     
