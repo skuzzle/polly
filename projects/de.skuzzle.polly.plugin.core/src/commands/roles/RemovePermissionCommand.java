@@ -20,11 +20,11 @@ public class RemovePermissionCommand extends Command {
     public RemovePermissionCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "removepermission"); //$NON-NLS-1$
         this.createSignature(
-            MSG.removePermSig0Desc.s, 
+            MSG.removePermSig0Desc, 
             MyPlugin.REMOVE_PERMISSION_PERMISSION, 
-            new Parameter(MSG.removePermSig0Role.s, Types.STRING), 
-            new Parameter(MSG.removePermSig0Perm.s, Types.STRING));
-        this.setHelpText(MSG.removePermHelp.s);
+            new Parameter(MSG.removePermSig0Role, Types.STRING), 
+            new Parameter(MSG.removePermSig0Perm, Types.STRING));
+        this.setHelpText(MSG.removePermHelp);
     }
 
     
@@ -39,7 +39,7 @@ public class RemovePermissionCommand extends Command {
             
             try {
                 this.getMyPolly().roles().removePermission(roleName, permissionname);
-                this.reply(channel, MSG.removePermSuccess.s);
+                this.reply(channel, MSG.removePermSuccess);
             } catch (DatabaseException e) {
                 throw new CommandException(e);
             } catch (RoleException e) {

@@ -1,7 +1,6 @@
 package polly.core;
 
 import de.skuzzle.polly.sdk.resources.Constants;
-import de.skuzzle.polly.sdk.resources.PString;
 import de.skuzzle.polly.sdk.resources.Resources;
 
 
@@ -10,393 +9,393 @@ public class MSG extends Constants {
     private final static String FAMILY = "polly.core.Translation"; //$NON-NLS-1$
     
     // General Strings
-    public static PString unknownUser;
-    public static PString userName;
-    public static PString password;
-    public static PString wrongPassword;
+    public static String unknownUser;
+    public static String userName;
+    public static String password;
+    public static String wrongPassword;
     
     // NewYearCountdown
-    public static PString newYearHappyNewYear;
+    public static String newYearHappyNewYear;
     
     // Attributes
-    public static PString attributeGreetingDescription;
+    public static String attributeGreetingDescription;
     
     // AddUser Command
-    public static PString addUserHelp;
-    public static PString addUserSig0Desc;
-    public static PString addUserSig0UserName;
-    public static PString addUserSig0Password;
-    public static PString addUserQryOnly;
-    public static PString addUserSuccess;
-    public static PString addUserExists;
-    public static PString addUserInvalid;
+    public static String addUserHelp;
+    public static String addUserSig0Desc;
+    public static String addUserSig0UserName;
+    public static String addUserSig0Password;
+    public static String addUserQryOnly;
+    public static String addUserSuccess;
+    public static String addUserExists;
+    public static String addUserInvalid;
     
     // Anyfication Command
-    public static PString anyficationHelp;
-    public static PString anyficationSig0Desc;
-    public static PString anyficationSig0Prefix;
-    public static PString anyficationSig1Desc;
-    public static PString anyficationSig1Prefix;
-    public static PString anyficationSig1Timespan;
-    public static PString anyficationFail;
-    public static PString anyficationInfo;
+    public static String anyficationHelp;
+    public static String anyficationSig0Desc;
+    public static String anyficationSig0Prefix;
+    public static String anyficationSig1Desc;
+    public static String anyficationSig1Prefix;
+    public static String anyficationSig1Timespan;
+    public static String anyficationFail;
+    public static String anyficationInfo;
     
     // Auth Command
-    public static PString authHelp;
-    public static PString authSig0Desc;
-    public static PString authSig1Desc;
-    public static PString authSigPassword;
-    public static PString authQryWarning;
-    public static PString authWrongPw;
-    public static PString authSuccess;
-    public static PString authAlreadySignedOn;
+    public static String authHelp;
+    public static String authSig0Desc;
+    public static String authSig1Desc;
+    public static String authSigPassword;
+    public static String authQryWarning;
+    public static String authWrongPw;
+    public static String authSuccess;
+    public static String authAlreadySignedOn;
 
     // Calendar Command
-    public static PString calendarHelp;
-    public static PString calendarSig0Desc;
-    public static PString calendarSig0Date;
-    public static PString calendarFor;
+    public static String calendarHelp;
+    public static String calendarSig0Desc;
+    public static String calendarSig0Date;
+    public static String calendarFor;
     
     // ClumBomb Command
-    public static PString clumBombHelp;
-    public static PString clumBombSig0Desc;
-    public static PString clumBombSig0Amount;
+    public static String clumBombHelp;
+    public static String clumBombSig0Desc;
+    public static String clumBombSig0Amount;
     
     // Define Command
-    public static PString defineHelp;
-    public static PString defineSig0Desc;
-    public static PString defineSig0Term;
-    public static PString defineMoreInfo;
-    public static PString defineError;
+    public static String defineHelp;
+    public static String defineSig0Desc;
+    public static String defineSig0Term;
+    public static String defineMoreInfo;
+    public static String defineError;
             
     // DeleteUser Command
-    public static PString deleteUserHelp;
-    public static PString deleteUserSig0Desc;
-    public static PString deleteUserSuccess;
+    public static String deleteUserHelp;
+    public static String deleteUserSig0Desc;
+    public static String deleteUserSuccess;
     
     // Dict Command
-    public static PString dictHelp;
-    public static PString dictSig0Desc;
-    public static PString dictSig0Term;
+    public static String dictHelp;
+    public static String dictSig0Desc;
+    public static String dictSig0Term;
     
     // Dito Command
-    public static PString ditoHelp;
-    public static PString ditoSig0Desc;
-    public static PString ditoNoCommand;
+    public static String ditoHelp;
+    public static String ditoSig0Desc;
+    public static String ditoNoCommand;
     
     // ExportAttributes Command
-    public static PString expAttributesHelp;
-    public static PString expAttributesSig0Desc;
-    public static PString expAttributesSig1Desc;
-    public static PString expAttributesSig1User;
+    public static String expAttributesHelp;
+    public static String expAttributesSig0Desc;
+    public static String expAttributesSig1Desc;
+    public static String expAttributesSig1User;
     
     // Foo Command
-    public static PString fooHelp;
-    public static PString fooSig0Desc;
-    public static PString fooSig1Desc;
-    public static PString fooSig2Desc;
-    public static PString fooSig3Desc;
-    public static PString fooSigParam;
+    public static String fooHelp;
+    public static String fooSig0Desc;
+    public static String fooSig1Desc;
+    public static String fooSig2Desc;
+    public static String fooSig3Desc;
+    public static String fooSigParam;
     
     // GetAttribute Command
-    public static PString getAttributeHelp;
-    public static PString getAttributeSig0Desc;
-    public static PString getAttributeSig0User;
-    public static PString getAttributeSigAttribute;
-    public static PString getAttributeSig1Desc;
-    public static PString getAttributeValue;
-    public static PString getAttributeUnknownAttr;
+    public static String getAttributeHelp;
+    public static String getAttributeSig0Desc;
+    public static String getAttributeSig0User;
+    public static String getAttributeSigAttribute;
+    public static String getAttributeSig1Desc;
+    public static String getAttributeValue;
+    public static String getAttributeUnknownAttr;
     
     // Ghost Command
-    public static PString ghostHelp;
-    public static PString ghostSig0Desc;
-    public static PString ghostSig0User;
-    public static PString ghostSig0Password;
-    public static PString ghostQryOnly;
-    public static PString ghostInvalidPw;
-    public static PString ghostNotLoggedIn;
-    public static PString ghostLoggedOut;
+    public static String ghostHelp;
+    public static String ghostSig0Desc;
+    public static String ghostSig0User;
+    public static String ghostSig0Password;
+    public static String ghostQryOnly;
+    public static String ghostInvalidPw;
+    public static String ghostNotLoggedIn;
+    public static String ghostLoggedOut;
     
     // GooglePics Command
-    public static PString pixHelp;
-    public static PString pixSig0Desc;
-    public static PString pixSig0Term;
+    public static String pixHelp;
+    public static String pixSig0Desc;
+    public static String pixSig0Term;
     
     // Greeting Command
-    public static PString greetingHelp;
-    public static PString greetingSig0Desc;
-    public static PString greetingSig0Greeting;
-    public static PString greetingStored;
+    public static String greetingHelp;
+    public static String greetingSig0Desc;
+    public static String greetingSig0Greeting;
+    public static String greetingStored;
     
     // Hop Command
-    public static PString hopHelp;
-    public static PString hopSig0Desc;
-    public static PString hopSig1Desc;
-    public static PString hopSig1Channel;
-    public static PString hopSpecifyChannel;
-    public static PString hopPartMessage;
+    public static String hopHelp;
+    public static String hopSig0Desc;
+    public static String hopSig1Desc;
+    public static String hopSig1Channel;
+    public static String hopSpecifyChannel;
+    public static String hopPartMessage;
     
     // Info Command
-    public static PString infoHelp;
-    public static PString infoSig0Desc;
-    public static PString infoSig0Command;
-    public static PString infoSig1Desc;
-    public static PString infoSig1User;
-    public static PString infoCommandInfo;
-    public static PString infoUnknownCommand;
-    public static PString infoUnknownUser;
-    public static PString infoUserInfo;
+    public static String infoHelp;
+    public static String infoSig0Desc;
+    public static String infoSig0Command;
+    public static String infoSig1Desc;
+    public static String infoSig1User;
+    public static String infoCommandInfo;
+    public static String infoUnknownCommand;
+    public static String infoUnknownUser;
+    public static String infoUserInfo;
     
     // IsDown Command
-    public static PString isDownHelp;
-    public static PString isDownSig0Desc;
-    public static PString isDownSig0Url;
-    public static PString isDownSig1Desc;
-    public static PString isDownSig1Url;
-    public static PString isDownSig1Timeout;
-    public static PString isDownReachable;
-    public static PString isDownInvalidUrl;
-    public static PString isDownUnknownHost;
-    public static PString isDownNotReachable;
+    public static String isDownHelp;
+    public static String isDownSig0Desc;
+    public static String isDownSig0Url;
+    public static String isDownSig1Desc;
+    public static String isDownSig1Url;
+    public static String isDownSig1Timeout;
+    public static String isDownReachable;
+    public static String isDownInvalidUrl;
+    public static String isDownUnknownHost;
+    public static String isDownNotReachable;
     
     // Join Command
-    public static PString joinHelp;
-    public static PString joinSig0Desc;
-    public static PString joinSig0Channel;
-    public static PString joinSig1Desc;
-    public static PString joinSig1Channels;
-    public static PString joinSig2Desc;
-    public static PString joinSig2Channel;
-    public static PString joinSig2Password;
+    public static String joinHelp;
+    public static String joinSig0Desc;
+    public static String joinSig0Channel;
+    public static String joinSig1Desc;
+    public static String joinSig1Channels;
+    public static String joinSig2Desc;
+    public static String joinSig2Channel;
+    public static String joinSig2Password;
     
     // Kick Command
-    public static PString kickHelp;
-    public static PString kickSig0Desc;
-    public static PString kickSig0User;
-    public static PString kickSig1Desc;
-    public static PString kickSig1User;
-    public static PString kickSig1Reason;
-    public static PString kickSig2Desc;
-    public static PString kickSig2Channel;
-    public static PString kickSig2User;
-    public static PString kickSig3Desc;
-    public static PString kickSig3Channel;
-    public static PString kickSig3User;
-    public static PString kickSig3Reason;
-    public static PString kickSig4Desc;
-    public static PString kickSig4Users;
-    public static PString kickSig5Desc;
-    public static PString kickSig5Users;
-    public static PString kickSig5Channel;
+    public static String kickHelp;
+    public static String kickSig0Desc;
+    public static String kickSig0User;
+    public static String kickSig1Desc;
+    public static String kickSig1User;
+    public static String kickSig1Reason;
+    public static String kickSig2Desc;
+    public static String kickSig2Channel;
+    public static String kickSig2User;
+    public static String kickSig3Desc;
+    public static String kickSig3Channel;
+    public static String kickSig3User;
+    public static String kickSig3Reason;
+    public static String kickSig4Desc;
+    public static String kickSig4Users;
+    public static String kickSig5Desc;
+    public static String kickSig5Users;
+    public static String kickSig5Channel;
     
     
     // ListAttributes Command
-    public static PString listAttributesHelp;
-    public static PString listAttributesSig0Desc;
+    public static String listAttributesHelp;
+    public static String listAttributesSig0Desc;
     
     // Lmgtfy Command
-    public static PString lmgtfyHelp;
-    public static PString lmgtfySig0Desc;
-    public static PString lmgtfySig0Term;
+    public static String lmgtfyHelp;
+    public static String lmgtfySig0Desc;
+    public static String lmgtfySig0Term;
     
     // Part Command
-    public static PString partHelp;
-    public static PString partSig0Desc;
-    public static PString partSig1Desc;
-    public static PString partSig1Channel;
-    public static PString partSpecifyChannel;
-    public static PString partMessage;
+    public static String partHelp;
+    public static String partSig0Desc;
+    public static String partSig1Desc;
+    public static String partSig1Channel;
+    public static String partSpecifyChannel;
+    public static String partMessage;
     
     // Quit Command
-    public static PString quitHelp;
-    public static PString quitSig0Desc;
-    public static PString quitSig1Desc;
-    public static PString quitSig1QuitMsg;
-    public static PString quitDefaultQuitMsg;
-    public static PString quitConfirm;
-    public static PString quitTimeout;
+    public static String quitHelp;
+    public static String quitSig0Desc;
+    public static String quitSig1Desc;
+    public static String quitSig1QuitMsg;
+    public static String quitDefaultQuitMsg;
+    public static String quitConfirm;
+    public static String quitTimeout;
     
     // Raw Command
-    public static PString rawHelp;
-    public static PString rawSig0Desc;
-    public static PString rawSig0Cmd;
+    public static String rawHelp;
+    public static String rawSig0Desc;
+    public static String rawSig0Cmd;
     
     // ReAuth Command
-    public static PString reAuthHelp;
-    public static PString reAuthSig0Desc;
-    public static PString reAuthSig1Desc;
-    public static PString reAuthSig1Join;
+    public static String reAuthHelp;
+    public static String reAuthSig0Desc;
+    public static String reAuthSig1Desc;
+    public static String reAuthSig1Join;
     
     // Register Command
-    public static PString registerHelp;
-    public static PString registerSig0Desc;
-    public static PString registerSig0Password;
-    public static PString registerQryWarning;
-    public static PString registerAlreadySignedOn;
-    public static PString registerSuccess;
-    public static PString registerAlreadyExists;
-    public static PString registerInvalidName;
+    public static String registerHelp;
+    public static String registerSig0Desc;
+    public static String registerSig0Password;
+    public static String registerQryWarning;
+    public static String registerAlreadySignedOn;
+    public static String registerSuccess;
+    public static String registerAlreadyExists;
+    public static String registerInvalidName;
     
     // Restart Command
-    public static PString restartHelp;
-    public static PString restartSig0Desc;
-    public static PString restartSig1Desc;
-    public static PString restartSig1Params;
+    public static String restartHelp;
+    public static String restartSig0Desc;
+    public static String restartSig1Desc;
+    public static String restartSig1Params;
     
     // SetAttribute Command
-    public static PString setAttributeHelp;
-    public static PString setAttributeSig0Desc;
-    public static PString setAttributeSig0User;
-    public static PString setAttributeSig0Attr;
-    public static PString setAttributeSig0Value;
-    public static PString setAttributeSig1Desc;
-    public static PString setAttributeSig1Attr;
-    public static PString setAttributSig1Value;
-    public static PString setAttributeUnknownUser;
-    public static PString setAttributeUnknownAttr;
-    public static PString setAttributeSuccess;
+    public static String setAttributeHelp;
+    public static String setAttributeSig0Desc;
+    public static String setAttributeSig0User;
+    public static String setAttributeSig0Attr;
+    public static String setAttributeSig0Value;
+    public static String setAttributeSig1Desc;
+    public static String setAttributeSig1Attr;
+    public static String setAttributSig1Value;
+    public static String setAttributeUnknownUser;
+    public static String setAttributeUnknownAttr;
+    public static String setAttributeSuccess;
     
     // SetMyPassword Command
-    public static PString setMyPwHelp;
-    public static PString setMyPwSig0Desc;
-    public static PString setMyPwSig0CurrentPw;
-    public static PString setMyPwSig0NewPw;
-    public static PString setMyPwQryWarning;
-    public static PString setMyPwMismatch;
+    public static String setMyPwHelp;
+    public static String setMyPwSig0Desc;
+    public static String setMyPwSig0CurrentPw;
+    public static String setMyPwSig0NewPw;
+    public static String setMyPwQryWarning;
+    public static String setMyPwMismatch;
     
     // SetPassword Command
-    public static PString setPasswordHelp;
-    public static PString setPasswordSig0Desc;
-    public static PString setPasswordSig0User;
-    public static PString setPasswordSig0Password;
-    public static PString setPasswordQryWarnning;
-    public static PString setPasswordUnknownUser;
-    public static PString setPasswordSuccess;
+    public static String setPasswordHelp;
+    public static String setPasswordSig0Desc;
+    public static String setPasswordSig0User;
+    public static String setPasswordSig0Password;
+    public static String setPasswordQryWarnning;
+    public static String setPasswordUnknownUser;
+    public static String setPasswordSuccess;
     
     // ShowCmds Command
-    public static PString showCmdsHelp;
-    public static PString showCmdsSig0Desc;
-    public static PString showCmdsAvailable;
+    public static String showCmdsHelp;
+    public static String showCmdsSig0Desc;
+    public static String showCmdsAvailable;
     
     // SignOff Command
-    public static PString signOffHelp;
-    public static PString signOffSig0Desc;
-    public static PString signOffSuccess;
+    public static String signOffHelp;
+    public static String signOffSig0Desc;
+    public static String signOffSuccess;
     
     // Talk Command
-    public static PString talkHelp;
-    public static PString talkSig0Desc;
-    public static PString talkSig0Msg;
-    public static PString talkSig1Desc;
-    public static PString talkSig1Channel;
-    public static PString talkSig1Msg;
+    public static String talkHelp;
+    public static String talkSig0Desc;
+    public static String talkSig0Msg;
+    public static String talkSig1Desc;
+    public static String talkSig1Channel;
+    public static String talkSig1Msg;
     
     // Uptime Command
-    public static PString uptimeHelp;
-    public static PString uptimeSig0Desc;
-    public static PString uptimeSig1Desc;
-    public static PString uptimeSig1Nick;
-    public static PString uptimeOnlineSince;
-    public static PString uptimeOffline;
+    public static String uptimeHelp;
+    public static String uptimeSig0Desc;
+    public static String uptimeSig1Desc;
+    public static String uptimeSig1Nick;
+    public static String uptimeOnlineSince;
+    public static String uptimeOffline;
     
     // Users Command
-    public static PString usersHelp;
-    public static PString usersSig0Desc;
-    public static PString usersSig1Desc;
-    public static PString usersSig1Pattern;
-    public static PString usersSig2Desc;
-    public static PString usersSig2Pattern;
-    public static PString usersSig2LoggedInOnly;
-    public static PString usersNoUsers;
+    public static String usersHelp;
+    public static String usersSig0Desc;
+    public static String usersSig1Desc;
+    public static String usersSig1Pattern;
+    public static String usersSig2Desc;
+    public static String usersSig2Pattern;
+    public static String usersSig2LoggedInOnly;
+    public static String usersNoUsers;
     
     // Var Command
-    public static PString varHelp;
-    public static PString varSig0Desc;
-    public static PString varSig1Desc;
-    public static PString varSig1Namespace;
-    public static PString varSig2Desc;
-    public static PString varSig2User;
-    public static PString varDeclarations;
+    public static String varHelp;
+    public static String varSig0Desc;
+    public static String varSig1Desc;
+    public static String varSig1Namespace;
+    public static String varSig2Desc;
+    public static String varSig2User;
+    public static String varDeclarations;
     
     // Version Command
-    public static PString versionHelp;
-    public static PString versionSig0Desc;
-    public static PString versionPollyVersion;
+    public static String versionHelp;
+    public static String versionSig0Desc;
+    public static String versionPollyVersion;
     
     // Webinterface Command
-    public static PString webHelp;
-    public static PString webSig0Desc;
-    public static PString webSig1Desc;
-    public static PString webSig1OnOff;
-    public static PString webShowUrl;
-    public static PString webOffline;
-    public static PString webTurnedOff;
-    public static PString webTurnedOn;
+    public static String webHelp;
+    public static String webSig0Desc;
+    public static String webSig1Desc;
+    public static String webSig1OnOff;
+    public static String webShowUrl;
+    public static String webOffline;
+    public static String webTurnedOff;
+    public static String webTurnedOn;
     
     // Wiki Command
-    public static PString wikiHelp;
-    public static PString wikiSig0Desc;
-    public static PString wikiSig0Term;
+    public static String wikiHelp;
+    public static String wikiSig0Desc;
+    public static String wikiSig0Term;
     
     // AssignPermission Command
-    public static PString assignPermHelp;
-    public static PString assignPermSig0Desc;
-    public static PString assignPermSig0Role;
-    public static PString assignPermSig0Perm;
-    public static PString assignPermSuccess;
+    public static String assignPermHelp;
+    public static String assignPermSig0Desc;
+    public static String assignPermSig0Role;
+    public static String assignPermSig0Perm;
+    public static String assignPermSuccess;
     
     // AssignRole Command
-    public static PString assignRoleHelp;
-    public static PString assignRoleSig0Desc;
-    public static PString assignRoleSig0User;
-    public static PString assignRoleSig0Role;
-    public static PString assignRoleUnknownUser;
-    public static PString assignRoleSuccess;
+    public static String assignRoleHelp;
+    public static String assignRoleSig0Desc;
+    public static String assignRoleSig0User;
+    public static String assignRoleSig0Role;
+    public static String assignRoleUnknownUser;
+    public static String assignRoleSuccess;
     
     // CreateRole Command
-    public static PString createRoleHelp;
-    public static PString createRoleSig0Desc;
-    public static PString createRoleSig0Name;
-    public static PString createRoleSig1Desc;
-    public static PString createRoleSig1Base;
-    public static PString createRoleSig1Name;
-    public static PString createRoleSuccess;
+    public static String createRoleHelp;
+    public static String createRoleSig0Desc;
+    public static String createRoleSig0Name;
+    public static String createRoleSig1Desc;
+    public static String createRoleSig1Base;
+    public static String createRoleSig1Name;
+    public static String createRoleSuccess;
     
     // DeleteRole Command
-    public static PString deleteRoleHelp;
-    public static PString deleteRoleSig0Desc;
-    public static PString deleteRoleSig0Name;
-    public static PString deleteRoleSuccess;
+    public static String deleteRoleHelp;
+    public static String deleteRoleSig0Desc;
+    public static String deleteRoleSig0Name;
+    public static String deleteRoleSuccess;
     
     // ListPermissions Command
-    public static PString listPermHelp;
-    public static PString listPermSig0Desc;
-    public static PString listPermSig0Name;
-    public static PString listPermUnknownRole;
+    public static String listPermHelp;
+    public static String listPermSig0Desc;
+    public static String listPermSig0Name;
+    public static String listPermUnknownRole;
     
     // ListRoles Command
-    public static PString listRolesHelp;
-    public static PString listRolesSig0Desc;
-    public static PString listRolesSig0User;
-    public static PString listRolesSig1Desc;
-    public static PString listRolesUnknownUser;
+    public static String listRolesHelp;
+    public static String listRolesSig0Desc;
+    public static String listRolesSig0User;
+    public static String listRolesSig1Desc;
+    public static String listRolesUnknownUser;
     
     // RemovePermission Command
-    public static PString removePermHelp;
-    public static PString removePermSig0Desc;
-    public static PString removePermSig0Role;
-    public static PString removePermSig0Perm;
-    public static PString removePermSuccess;
+    public static String removePermHelp;
+    public static String removePermSig0Desc;
+    public static String removePermSig0Role;
+    public static String removePermSig0Perm;
+    public static String removePermSuccess;
     
     // RemoveRole Command
-    public static PString removeRoleHelp;
-    public static PString removeRoleSig0Desc;
-    public static PString removeRoleSig0User;
-    public static PString removeRoleSig0Role;
-    public static PString removeRoleUnknownUser;
-    public static PString removeRoleSuccess;
+    public static String removeRoleHelp;
+    public static String removeRoleSig0Desc;
+    public static String removeRoleSig0User;
+    public static String removeRoleSig0Role;
+    public static String removeRoleUnknownUser;
+    public static String removeRoleSuccess;
     
     static {
-        Resources.initPString(FAMILY, MSG.class);
+        Resources.init(FAMILY, MSG.class);
     }
 }

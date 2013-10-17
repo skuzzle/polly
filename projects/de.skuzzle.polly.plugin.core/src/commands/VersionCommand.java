@@ -11,8 +11,8 @@ public class VersionCommand extends Command {
 
     public VersionCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "version"); //$NON-NLS-1$
-        this.createSignature(MSG.versionSig0Desc.s);
-        this.setHelpText(MSG.versionHelp.s);
+        this.createSignature(MSG.versionSig0Desc);
+        this.setHelpText(MSG.versionHelp);
     }
     
     
@@ -20,7 +20,7 @@ public class VersionCommand extends Command {
     @Override
     protected boolean executeOnBoth(User executer, String channel,
             Signature signature) {
-        this.reply(channel, MSG.versionPollyVersion.s( 
+        this.reply(channel, MSG.bind(MSG.versionPollyVersion, 
                 this.getMyPolly().getPollyVersion()));
         return false;
     }

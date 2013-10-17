@@ -19,9 +19,9 @@ public class RegisterCommand extends Command {
 
     public RegisterCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "register"); //$NON-NLS-1$
-        this.createSignature(MSG.registerSig0Desc.s, 
-    		new Parameter(MSG.registerSig0Password.s, Types.STRING));
-        this.setHelpText(MSG.registerHelp.s);
+        this.createSignature(MSG.registerSig0Desc, 
+    		new Parameter(MSG.registerSig0Password, Types.STRING));
+        this.setHelpText(MSG.registerHelp);
         this.setQryCommand(true);
     }
     
@@ -38,7 +38,7 @@ public class RegisterCommand extends Command {
     @Override
     protected void executeOnChannel(User executer, String channel,
             Signature signature) {
-        this.reply(channel, MSG.registerQryWarning.s);
+        this.reply(channel, MSG.registerQryWarning);
     }
     
     
@@ -46,7 +46,7 @@ public class RegisterCommand extends Command {
     @Override
     protected void executeOnQuery(User executer, Signature signature) throws CommandException {
         if (this.getMyPolly().users().isSignedOn(executer)) {
-            this.reply(executer, MSG.registerAlreadySignedOn.s);
+            this.reply(executer, MSG.registerAlreadySignedOn);
             return;
         }
         
@@ -59,14 +59,15 @@ public class RegisterCommand extends Command {
         try {
             this.getMyPolly().users().addUser(
                     userName, password);
-            this.reply(executer, MSG.registerSuccess.s(userName, password));
+            this.reply(executer, MSG.bind(
+                    MSG.registerSuccess, userName, password));
         } catch (UserExistsException e) {
-            this.reply(executer, MSG.registerAlreadyExists.s(userName));
+            this.reply(executer, MSG.bind(MSG.registerAlreadyExists, userName));
         } catch (DatabaseException e) {
             e.printStackTrace();
             throw new CommandException(e);
         } catch (InvalidUserNameException e) {
-            this.reply(executer, MSG.registerInvalidName.s(userName));
+            this.reply(executer, MSG.bind(MSG.registerInvalidName, userName));
         }
     }
 }

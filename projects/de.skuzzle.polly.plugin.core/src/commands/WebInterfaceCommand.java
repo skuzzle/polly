@@ -19,11 +19,11 @@ public class WebInterfaceCommand extends Command {
 
     public WebInterfaceCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "web"); //$NON-NLS-1$
-        this.createSignature(MSG.webSig0Desc.s);
-        this.createSignature(MSG.webSig1Desc.s, 
+        this.createSignature(MSG.webSig0Desc);
+        this.createSignature(MSG.webSig1Desc, 
             RoleManager.ADMIN_PERMISSION, 
-            new Parameter(MSG.webSig1OnOff.s, Types.BOOLEAN));
-        this.setHelpText(MSG.webHelp.s);
+            new Parameter(MSG.webSig1OnOff, Types.BOOLEAN));
+        this.setHelpText(MSG.webHelp);
     }
     
     
@@ -48,19 +48,19 @@ public class WebInterfaceCommand extends Command {
         
         if (this.match(signature, 0)) {
             if (this.getMyPolly().webInterface().getServer().isRunning()) {
-                this.reply(channel, MSG.webShowUrl.s(url));
+                this.reply(channel, MSG.bind(MSG.webShowUrl, url));
             } else {
-                this.reply(channel, MSG.webOffline.s);
+                this.reply(channel, MSG.webOffline);
             }
         } else if (this.match(signature, 1)) {
             boolean newState = signature.getBooleanValue(0);
             if (this.getMyPolly().webInterface().getServer().isRunning() && !newState) {
                 this.getMyPolly().webInterface().getServer().shutdown(0);
-                this.reply(channel, MSG.webTurnedOff.s);
+                this.reply(channel, MSG.webTurnedOff);
             } else if (!this.getMyPolly().webInterface().getServer().isRunning() && newState) {
                 try {
                     this.getMyPolly().webInterface().getServer().start();
-                    this.reply(channel, MSG.webTurnedOn.s(url));
+                    this.reply(channel, MSG.bind(MSG.webTurnedOn, url));
                 } catch (IOException e) {
                     throw new CommandException(e);
                 }

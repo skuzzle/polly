@@ -52,21 +52,21 @@ public class HTMLTable<T> implements HttpEventHandler {
                     .attr("name", name) //$NON-NLS-1$
                     .attr("class", "filter_input") //$NON-NLS-1$ //$NON-NLS-2$
                     .attr("value", "") //$NON-NLS-1$ //$NON-NLS-2$
-                    .content(Messages.tableFilterAll.s);
+                    .content(Messages.tableFilterAll);
                     
                 final HTMLElement selected = new HTMLElement("input") //$NON-NLS-1$
                     .attr("type", "radio") //$NON-NLS-1$ //$NON-NLS-2$
                     .attr("name", name) //$NON-NLS-1$
                     .attr("class", "filter_input") //$NON-NLS-1$ //$NON-NLS-2$
                     .attr("value", "true") //$NON-NLS-1$ //$NON-NLS-2$
-                    .content(Messages.tableFilterTrue.s);
+                    .content(Messages.tableFilterTrue);
                 
                 final HTMLElement unselected = new HTMLElement("input") //$NON-NLS-1$
                     .attr("type", "radio") //$NON-NLS-1$ //$NON-NLS-2$
                     .attr("name", name) //$NON-NLS-1$
                     .attr("class", "filter_input") //$NON-NLS-1$ //$NON-NLS-2$
                     .attr("value", "false") //$NON-NLS-1$ //$NON-NLS-2$
-                    .content(Messages.tableFilterFalse.s);
+                    .content(Messages.tableFilterFalse);
                 
                 final HTMLElement checked;
                 if (f.equals("")) { //$NON-NLS-1$
@@ -397,7 +397,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         final HttpSession s = e.getSession();
         final User user = (User) s.getAttached(WebinterfaceManager.USER);
         if (!this.myPolly.roles().canAccess(user, this.model)) {
-            final String permDenied = Messages.htmlTablePermDenied.s;
+            final String permDenied = Messages.htmlTablePermDenied;
             throw new AlternativeAnswerException(
                 HttpAnswers.newStringAnswer("<tr><th colspan=\"" +  //$NON-NLS-1$
                     this.model.getColumnCount() + "\">" + permDenied + "</th></tr>")); //$NON-NLS-1$ //$NON-NLS-2$

@@ -40,7 +40,7 @@ public class NewYearCountdown {
                 }
                 
                 for (final String channel : ircManager.getChannels()) {
-                    ircManager.sendMessage(channel, MSG.newYearHappyNewYear.s);
+                    ircManager.sendMessage(channel, MSG.newYearHappyNewYear);
                 }
             }
         }, delay, TimeUnit.MILLISECONDS);

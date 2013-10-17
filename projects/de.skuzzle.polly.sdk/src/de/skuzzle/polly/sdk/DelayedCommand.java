@@ -185,7 +185,7 @@ public abstract class DelayedCommand extends Command {
         
         final long remaining = Milliseconds.toSeconds(this.delay - diff); 
         final String f = this.getMyPolly().formatting().formatTimeSpan(remaining);
-        throw new CommandException(Messages.delayedCommandCantExecute.s(f));
+        throw new CommandException(Messages.bind(Messages.delayedCommandCantExecute, f));
     }
     
     

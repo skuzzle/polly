@@ -21,12 +21,12 @@ public class SetPasswordCommand extends Command {
 
     public SetPasswordCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "setpw"); //$NON-NLS-1$
-        this.createSignature(MSG.setPasswordSig0Desc.s,
+        this.createSignature(MSG.setPasswordSig0Desc,
                 MyPlugin.SET_PASSWORD_PERMISSION,
-        		new Parameter(MSG.setPasswordSig0User.s, Types.USER), 
-        		new Parameter(MSG.setPasswordSig0Password.s, Types.STRING));
+        		new Parameter(MSG.setPasswordSig0User, Types.USER), 
+        		new Parameter(MSG.setPasswordSig0Password, Types.STRING));
         this.setRegisteredOnly();
-        this.setHelpText(MSG.setPasswordHelp.s);
+        this.setHelpText(MSG.setPasswordHelp);
     }
 
     
@@ -42,7 +42,7 @@ public class SetPasswordCommand extends Command {
     @Override
     protected void executeOnChannel(User executer, String channel,
             Signature signature) {
-        this.reply(channel, MSG.setPasswordQryWarnning.s);
+        this.reply(channel, MSG.setPasswordQryWarnning);
     }
     
     
@@ -56,7 +56,7 @@ public class SetPasswordCommand extends Command {
             
             final User u = this.getMyPolly().users().getUser(userName);
             if (u == null) {
-                this.reply(executer, MSG.setPasswordUnknownUser.s(userName));
+                this.reply(executer, MSG.bind(MSG.setPasswordUnknownUser, userName));
                 return;
             }
             
@@ -69,7 +69,7 @@ public class SetPasswordCommand extends Command {
                         u.setPassword(newPw);
                     }
                 });
-                this.reply(executer, MSG.setPasswordSuccess.s);
+                this.reply(executer, MSG.setPasswordSuccess);
             } catch (DatabaseException e) {
                 throw new CommandException(e);
             }

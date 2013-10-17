@@ -17,8 +17,9 @@ public class DitoCommand extends Command {
 
     public DitoCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "dito"); //$NON-NLS-1$
-        this.createSignature(MSG.ditoSig0Desc.s, MyPlugin.DITO_PERMISSION);
-        this.setHelpText(MSG.ditoHelp.s);
+        this.createSignature(MSG.ditoSig0Desc,
+        		MyPlugin.DITO_PERMISSION);
+        this.setHelpText(MSG.ditoHelp);
     }
     
     
@@ -32,7 +33,7 @@ public class DitoCommand extends Command {
                 this.getMyPolly().commands().getLastCommand(channel);
             
             if (che == null) {
-                this.reply(channel, MSG.ditoNoCommand.s);
+                this.reply(channel, MSG.ditoNoCommand);
             } else {
                 boolean qry = channel.equals(executer.getCurrentNickName());
                 

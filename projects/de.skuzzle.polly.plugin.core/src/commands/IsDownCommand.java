@@ -24,14 +24,14 @@ public class IsDownCommand extends Command {
 
     public IsDownCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "isdown"); //$NON-NLS-1$
-        this.createSignature(MSG.isDownSig0Desc.s, 
+        this.createSignature(MSG.isDownSig0Desc, 
     		MyPlugin.ISDOWN_PERMISSION,
-    		new Parameter(MSG.isDownSig0Url.s, Types.STRING));
-        this.createSignature(MSG.isDownSig1Desc.s, 
+    		new Parameter(MSG.isDownSig0Url, Types.STRING));
+        this.createSignature(MSG.isDownSig1Desc, 
     		MyPlugin.ISDOWN_PERMISSION,
-    		new Parameter(MSG.isDownSig1Url.s, Types.STRING),
-    		new Parameter(MSG.isDownSig1Timeout.s, Types.NUMBER));
-        this.setHelpText(MSG.isDownHelp.s);
+    		new Parameter(MSG.isDownSig1Url, Types.STRING),
+    		new Parameter(MSG.isDownSig1Timeout, Types.NUMBER));
+        this.setHelpText(MSG.isDownHelp);
     }
     
     
@@ -53,14 +53,14 @@ public class IsDownCommand extends Command {
             URLConnection c = u.openConnection();
             c.setConnectTimeout(timeout);
             c.connect();
-            this.reply(channel, MSG.isDownReachable.s(url));
+            this.reply(channel, MSG.bind(MSG.isDownReachable, url));
         } catch (MalformedURLException e) {
-            this.reply(channel, MSG.isDownInvalidUrl.s(url));
+            this.reply(channel, MSG.bind(MSG.isDownInvalidUrl, url));
         } catch (UnknownHostException e) {
-            this.reply(channel, MSG.isDownUnknownHost.s(url));
+            this.reply(channel, MSG.bind(MSG.isDownUnknownHost, url));
         } catch (IOException e) {
             e.printStackTrace();
-            this.reply(channel, MSG.isDownNotReachable.s(url));
+            this.reply(channel, MSG.bind(MSG.isDownNotReachable, url));
         }
         return false;
     }

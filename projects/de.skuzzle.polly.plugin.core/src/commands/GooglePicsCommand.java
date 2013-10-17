@@ -11,9 +11,9 @@ public class GooglePicsCommand extends SearchEngineCommand {
 
     public GooglePicsCommand(MyPolly myPolly) throws DuplicatedSignatureException {
         super(myPolly, "pix"); //$NON-NLS-1$
-        this.createSignature(MSG.pixSig0Desc.s, 
-            new Parameter(MSG.pixSig0Term.s, Types.STRING));
-        this.setHelpText(MSG.pixHelp.s);
+        this.createSignature(MSG.pixSig0Desc, 
+            new Parameter(MSG.pixSig0Term, Types.STRING));
+        this.setHelpText(MSG.pixHelp);
     }
     
 

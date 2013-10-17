@@ -249,7 +249,7 @@ public class MyPlugin extends PollyPlugin {
 	public void onLoad() {
 	    try {
 	        this.getMyPolly().users().addAttribute(GREETING, Types.STRING, 
-	            MSG.attributeGreetingDescription.s, "Core"); //$NON-NLS-1$
+	            MSG.attributeGreetingDescription, "Core"); //$NON-NLS-1$
 	    } catch (Exception ignore) {
 	        ignore.printStackTrace();
 	    }

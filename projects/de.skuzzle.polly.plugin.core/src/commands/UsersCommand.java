@@ -23,17 +23,17 @@ public class UsersCommand extends Command {
     
     public UsersCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "users"); //$NON-NLS-1$
-        this.createSignature(MSG.usersSig0Desc.s,
+        this.createSignature(MSG.usersSig0Desc,
             MyPlugin.LIST_USERS_PERMISSION);
-        this.createSignature(MSG.usersSig1Desc.s,
+        this.createSignature(MSG.usersSig1Desc,
         		MyPlugin.LIST_USERS_PERMISSION,
-    		new Parameter(MSG.usersSig1Pattern.s, Types.STRING));
-        this.createSignature(MSG.usersSig2Desc.s,
+    		new Parameter(MSG.usersSig1Pattern, Types.STRING));
+        this.createSignature(MSG.usersSig2Desc,
     		MyPlugin.LIST_USERS_PERMISSION,
-    		new Parameter(MSG.usersSig2Pattern.s, Types.STRING), 
-    		new Parameter(MSG.usersSig2LoggedInOnly.s, Types.BOOLEAN));
+    		new Parameter(MSG.usersSig2Pattern, Types.STRING), 
+    		new Parameter(MSG.usersSig2LoggedInOnly, Types.BOOLEAN));
         this.setRegisteredOnly();
-        this.setHelpText(MSG.usersHelp.s);
+        this.setHelpText(MSG.usersHelp);
     }
 
     

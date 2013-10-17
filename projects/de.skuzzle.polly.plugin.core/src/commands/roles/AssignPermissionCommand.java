@@ -19,11 +19,11 @@ public class AssignPermissionCommand extends Command {
 
     public AssignPermissionCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "assignpermission"); //$NON-NLS-1$
-        this.createSignature(MSG.assignPermSig0Desc.s, 
+        this.createSignature(MSG.assignPermSig0Desc, 
             MyPlugin.ASSIGN_PERMISSION_PERMISSION, 
-            new Parameter(MSG.assignPermSig0Role.s, Types.STRING), 
-            new Parameter(MSG.assignPermSig0Perm.s, Types.STRING));
-        this.setHelpText(MSG.assignPermHelp.s);
+            new Parameter(MSG.assignPermSig0Role, Types.STRING), 
+            new Parameter(MSG.assignPermSig0Perm, Types.STRING));
+        this.setHelpText(MSG.assignPermHelp);
     }
 
     
@@ -38,7 +38,7 @@ public class AssignPermissionCommand extends Command {
             
             try {
                 this.getMyPolly().roles().assignPermission(roleName, permissionname);
-                this.reply(channel, MSG.assignPermSuccess.s);
+                this.reply(channel, MSG.assignPermSuccess);
             } catch (DatabaseException e) {
                 throw new CommandException(e);
             } catch (RoleException e) {

@@ -20,18 +20,18 @@ public class JoinCommand extends Command {
     
     public JoinCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "join"); //$NON-NLS-1$
-        this.createSignature(MSG.joinSig0Desc.s, 
+        this.createSignature(MSG.joinSig0Desc, 
             MyPlugin.JOIN_PERMISSION,
-                new Parameter(MSG.joinSig0Channel.s, Types.CHANNEL));
-        this.createSignature(MSG.joinSig1Desc.s,
+                new Parameter(MSG.joinSig0Channel, Types.CHANNEL));
+        this.createSignature(MSG.joinSig1Desc,
             MyPlugin.JOIN_PERMISSION,
-                new Parameter(MSG.joinSig1Channels.s, new ListType(Types.CHANNEL)));
-        this.createSignature(MSG.joinSig2Desc.s,
+                new Parameter(MSG.joinSig1Channels, new ListType(Types.CHANNEL)));
+        this.createSignature(MSG.joinSig2Desc,
             MyPlugin.JOIN_PERMISSION,
-            new Parameter(MSG.joinSig2Channel.s, Types.CHANNEL),
-            new Parameter(MSG.joinSig2Password.s, Types.STRING));
+            new Parameter(MSG.joinSig2Channel, Types.CHANNEL),
+            new Parameter(MSG.joinSig2Password, Types.STRING));
         this.setRegisteredOnly();
-        this.setHelpText(MSG.joinHelp.s);
+        this.setHelpText(MSG.joinHelp);
     }
     
     

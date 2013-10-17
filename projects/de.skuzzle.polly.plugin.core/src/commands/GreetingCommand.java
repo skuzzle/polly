@@ -18,9 +18,9 @@ public class GreetingCommand extends Command {
 
     public GreetingCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "greeting"); //$NON-NLS-1$
-        this.createSignature(MSG.greetingSig0Desc.s, 
-            new Parameter(MSG.greetingSig0Greeting.s, Types.STRING));
-        this.setHelpText(MSG.greetingHelp.s);
+        this.createSignature(MSG.greetingSig0Desc, 
+            new Parameter(MSG.greetingSig0Greeting, Types.STRING));
+        this.setHelpText(MSG.greetingHelp);
         this.setRegisteredOnly();
     }
 
@@ -36,7 +36,7 @@ public class GreetingCommand extends Command {
             try {
                 getMyPolly().users().setAttributeFor(executer, executer, 
                     MyPlugin.GREETING, greet);
-                this.reply(channel, MSG.greetingStored.s);
+                this.reply(channel, MSG.greetingStored);
             } catch (DatabaseException e) {
                 throw new CommandException(e);
             } catch (ConstraintException e) {

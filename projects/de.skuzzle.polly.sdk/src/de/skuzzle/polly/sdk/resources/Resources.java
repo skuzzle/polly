@@ -43,37 +43,6 @@ public class Resources {
     
     
     
-    public static void initPString(String family, Class<? extends Constants> constants) {
-        synchronized (initialized) {
-            if (!initialized.add(constants)) {
-                // have already been initialized
-                return;
-            }
-        }
-        
-        final PollyBundle bundle = get(family, constants.getClassLoader());
-        for (final Field f : constants.getFields()) {
-            if (Modifier.isStatic(f.getModifiers()) && 
-                Modifier.isPublic(f.getModifiers()) &&
-                !Modifier.isFinal(f.getModifiers()) && 
-                f.getType() == PString.class) {
-                
-                f.setAccessible(true);
-                // this is a public static string field, load value associated with the 
-                // field name from the resource bundle
-                final String value = bundle.get(f.getName());
-                try {
-                    f.set(null, new PString(value));
-                } catch (IllegalArgumentException | IllegalAccessException e) {
-                    throw new RuntimeException(
-                            "Resource initialization failed. Family: " + family +  //$NON-NLS-1$
-                            ", name = " + f.getName() + ", value = " + value, e); //$NON-NLS-1$ //$NON-NLS-2$
-                }
-            }
-        }
-    }
-    
-    
     public static void init(String family, Class<? extends Constants> constants) {
         synchronized (initialized) {
             if (!initialized.add(constants)) {

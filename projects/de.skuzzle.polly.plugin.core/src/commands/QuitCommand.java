@@ -32,12 +32,12 @@ public class QuitCommand extends Command {
     
     public QuitCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "flyaway"); //$NON-NLS-1$
-        this.createSignature(MSG.quitSig0Desc.s, MyPlugin.QUIT_PERMISSION);
-        this.createSignature(MSG.quitSig1Desc.s,
+        this.createSignature(MSG.quitSig0Desc, MyPlugin.QUIT_PERMISSION);
+        this.createSignature(MSG.quitSig1Desc,
                 MyPlugin.QUIT_PERMISSION,
-                new Parameter(MSG.quitSig1QuitMsg.s, Types.STRING));
+                new Parameter(MSG.quitSig1QuitMsg, Types.STRING));
         this.setRegisteredOnly();
-        this.setHelpText(MSG.quitHelp.s);
+        this.setHelpText(MSG.quitHelp);
     }
 
     
@@ -46,7 +46,7 @@ public class QuitCommand extends Command {
     protected boolean executeOnBoth(User executer, String channel,
             Signature signature) throws CommandException {
 
-        String message = MSG.quitDefaultQuitMsg.s;
+        String message = MSG.quitDefaultQuitMsg;
         if (this.match(signature, 1)) {
             message = signature.getStringValue(0);
         }
@@ -55,7 +55,7 @@ public class QuitCommand extends Command {
         Conversation c = null;
         try {
             c = this.createConversation(executer, channel);
-            c.writeLine(MSG.quitConfirm.s);
+            c.writeLine(MSG.quitConfirm);
             String a = c.readLine().getMessage();
             
             for (String ans : answers) {
@@ -66,7 +66,7 @@ public class QuitCommand extends Command {
                 }
             }
         } catch (InterruptedException e) {
-            throw new CommandException(MSG.quitTimeout.s);
+            throw new CommandException(MSG.quitTimeout);
         } catch (Exception e) {
             throw new CommandException(e);
         } finally {

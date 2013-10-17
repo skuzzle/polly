@@ -17,9 +17,9 @@ public class ListAttributesCommand extends Command {
 
     public ListAttributesCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "listattr"); //$NON-NLS-1$
-        this.createSignature(MSG.listAttributesSig0Desc.s, 
+        this.createSignature(MSG.listAttributesSig0Desc, 
                 MyPlugin.LIST_ATTRIBUTES_PERMISSION);
-        this.setHelpText(MSG.listAttributesHelp.s);
+        this.setHelpText(MSG.listAttributesHelp);
     }
     
     

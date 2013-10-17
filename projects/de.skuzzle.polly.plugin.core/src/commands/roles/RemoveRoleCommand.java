@@ -21,12 +21,12 @@ public class RemoveRoleCommand extends Command {
     public RemoveRoleCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "removerole"); //$NON-NLS-1$
         this.createSignature(
-            MSG.removeRoleSig0Desc.s, 
+            MSG.removeRoleSig0Desc, 
             MyPlugin.REMOVE_ROLE_PERMISSION, 
-            new Parameter(MSG.removeRoleSig0User.s, Types.USER),
-            new Parameter(MSG.removeRoleSig0Role.s, Types.STRING));
+            new Parameter(MSG.removeRoleSig0User, Types.USER),
+            new Parameter(MSG.removeRoleSig0Role, Types.STRING));
         
-        this.setHelpText(MSG.removeRoleHelp.s);
+        this.setHelpText(MSG.removeRoleHelp);
     }
     
     
@@ -41,12 +41,12 @@ public class RemoveRoleCommand extends Command {
             
             User user = this.getMyPolly().users().getUser(userName);
             if (user == null) {
-                throw new CommandException(MSG.removeRoleUnknownUser.s(userName));
+                throw new CommandException(MSG.bind(MSG.removeRoleUnknownUser, userName));
             }
             
             try {
                 this.getMyPolly().roles().removeRole(user, roleName);
-                this.reply(channel, MSG.removeRoleSuccess.s);
+                this.reply(channel, MSG.removeRoleSuccess);
             } catch (RoleException e) {
                 throw new CommandException(e);
             } catch (DatabaseException e) {

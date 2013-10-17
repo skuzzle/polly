@@ -14,12 +14,12 @@ public class ClumBombCommand extends Command {
 
 	public ClumBombCommand(MyPolly polly) throws DuplicatedSignatureException {
 		super(polly, "clumbomb"); //$NON-NLS-1$
-		this.createSignature(MSG.clumBombSig0Desc.s, 
+		this.createSignature(MSG.clumBombSig0Desc, 
 		    MyPlugin.CLUMBOMB_PERMISSION,
-		    new Parameter(MSG.userName.s, Types.USER), 
-		    new Parameter(MSG.clumBombSig0Amount.s, Types.NUMBER));
+		    new Parameter(MSG.userName,Types.USER), 
+		    new Parameter(MSG.clumBombSig0Amount, Types.NUMBER));
 		this.setRegisteredOnly();
-		this.setHelpText(MSG.clumBombHelp.s);
+		this.setHelpText(MSG.clumBombHelp);
 	}
 
 	

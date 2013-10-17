@@ -20,11 +20,11 @@ public class AssignRoleCommand extends Command {
     public AssignRoleCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "assignrole"); //$NON-NLS-1$
         this.createSignature(
-            MSG.assignRoleSig0Desc.s, 
+            MSG.assignRoleSig0Desc, 
             MyPlugin.ASSIGN_ROLE_PERMISSION, 
-            new Parameter(MSG.assignRoleSig0User.s, Types.USER),
-            new Parameter(MSG.assignRoleSig0Role.s, Types.STRING));
-        this.setHelpText(MSG.assignRoleHelp.s);
+            new Parameter(MSG.assignRoleSig0User, Types.USER),
+            new Parameter(MSG.assignRoleSig0Role, Types.STRING));
+        this.setHelpText(MSG.assignRoleHelp);
     }
     
     
@@ -39,12 +39,12 @@ public class AssignRoleCommand extends Command {
             
             User user = this.getMyPolly().users().getUser(userName);
             if (user == null) {
-                throw new CommandException(MSG.assignRoleUnknownUser.s(userName));
+                throw new CommandException(MSG.bind(MSG.assignRoleUnknownUser, userName));
             }
             
             try {
                 this.getMyPolly().roles().assignRole(user, roleName);
-                this.reply(channel, MSG.assignRoleSuccess.s);
+                this.reply(channel, MSG.assignRoleSuccess);
             } catch (RoleException e) {
                 throw new CommandException(e);
             } catch (DatabaseException e) {

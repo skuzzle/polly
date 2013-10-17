@@ -18,11 +18,11 @@ public class DeleteUserCommand extends Command {
 
     public DeleteUserCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "deluser"); //$NON-NLS-1$
-        this.createSignature(MSG.deleteUserSig0Desc.s, 
+        this.createSignature(MSG.deleteUserSig0Desc, 
             MyPlugin.DELETE_USER_PERMISSION,
-            new Parameter(MSG.userName.s, Types.USER));
+            new Parameter(MSG.userName, Types.USER));
         this.setRegisteredOnly();
-        this.setHelpText(MSG.deleteUserHelp.s);
+        this.setHelpText(MSG.deleteUserHelp);
     }
 
     
@@ -37,12 +37,12 @@ public class DeleteUserCommand extends Command {
             
             User user = um.getUser(name);
             if (user == null) {
-                this.reply(channel, MSG.unknownUser.s(name));
+                this.reply(channel, MSG.bind(MSG.unknownUser, name));
                 return false;
             }
             try {
                 this.getMyPolly().users().deleteUser(user);
-                this.reply(channel, MSG.deleteUserSuccess.s(name));
+                this.reply(channel, MSG.bind(MSG.deleteUserSuccess, name));
             } catch (UnknownUserException ignore) {
                 // can not happen
                 ignore.printStackTrace();

@@ -26,12 +26,12 @@ public class UptimeCommand extends Command {
                 throws DuplicatedSignatureException {
         super(polly, "uptime"); //$NON-NLS-1$
         this.joinTimeCollector = jtc;
-        this.createSignature(MSG.uptimeSig0Desc.s, 
+        this.createSignature(MSG.uptimeSig0Desc, 
             MyPlugin.UPTIME_PERMISSION);
-        this.createSignature(MSG.uptimeSig1Desc.s,
+        this.createSignature(MSG.uptimeSig1Desc,
             MyPlugin.UPTIME_PERMISSION,
-            new Parameter(MSG.uptimeSig1Nick.s, Types.USER));
-        this.setHelpText(MSG.uptimeHelp.s);
+            new Parameter(MSG.uptimeSig1Nick, Types.USER));
+        this.setHelpText(MSG.uptimeHelp);
     }
     
     
@@ -46,17 +46,17 @@ public class UptimeCommand extends Command {
         if (this.match(signature, 0)) {
             final long diff = now.getTime() - start.getTime();
             
-            result = MSG.uptimeOnlineSince.s(this.getMyPolly().irc().getNickname(),
+            result = MSG.bind(MSG.uptimeOnlineSince, this.getMyPolly().irc().getNickname(),
                     f.formatDate(start), f.formatTimeSpanMs(diff));
         } else if (this.match(signature, 1)) {
             String nickName = signature.getStringValue(0);
             Long joinTime = this.joinTimeCollector.getJoinTime(nickName);
             if (joinTime == null) {
-                result = MSG.uptimeOffline.s(nickName);
+                result = MSG.bind(MSG.uptimeOffline, nickName);
             } else {
                 start = new Date(joinTime);
                 final long diff = now.getTime() - start.getTime();
-                result = MSG.uptimeOnlineSince.s(nickName,
+                result = MSG.bind(MSG.uptimeOnlineSince, nickName,
                         f.formatDate(start), f.formatTimeSpanMs(diff));
             }
         }

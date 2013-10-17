@@ -168,7 +168,7 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 		this.commandName = commandName;
 		this.polly = polly;
 		this.signatures = new ArrayList<FormalSignature>();
-		this.helpText = Messages.commandNoDescription.s(commandName);
+		this.helpText = Messages.bind(Messages.commandNoDescription, commandName);
 		this.constants = new HashMap<String, Types>();
 		this.helpSignature0 = new FormalSignature(commandName, 0, "",  //$NON-NLS-1$
 		    new Parameter("", Types.HELP)); //$NON-NLS-1$
@@ -212,7 +212,8 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 	public String getHelpText() {
 		String help = this.helpText.endsWith(".")  //$NON-NLS-1$
 		    ? this.helpText + " " : this.helpText + ". "; //$NON-NLS-1$ //$NON-NLS-2$
-		help += Messages.commandSignatures.s(this.signatures.size(), this.commandName);
+		help += Messages.bind(Messages.commandSignatures, this.signatures.size(), 
+		        this.commandName);
 		return help;
 	}
 	
@@ -265,7 +266,7 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 			FormalSignature fs = this.signatures.get(signatureId);
 			return fs.getHelp();
 		}
-		return Messages.commandNoSignature.s(this.commandName, signatureId);
+		return Messages.bind(Messages.commandNoSignature, this.commandName, signatureId);
 	}
 	
 	
@@ -377,12 +378,12 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 		} else if (signature.equals(this.helpSignature1)) {
 		    int num = (int) signature.getNumberValue(1);
 		    if (num < 0 || num >= this.signatures.size()) {
-		        this.reply(channel, Messages.commandNoSignatureId.s(num)); 
+		        this.reply(channel, Messages.bind(Messages.commandNoSignatureId, num)); 
 		        return;
 		    }
 		    this.reply(channel, this.getHelpText(num));
-		    this.reply(channel, Messages.commandSample.s(
-		            this.commandName, this.signatures.get(num).getSample()));
+		    this.reply(channel, Messages.bind(Messages.commandSample, 
+		                    this.commandName, this.signatures.get(num).getSample()));
 		    return;
 		}
 

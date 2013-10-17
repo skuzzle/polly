@@ -12,9 +12,10 @@ public class WikiCommand extends SearchEngineCommand {
 
     public WikiCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "wiki"); //$NON-NLS-1$
-        this.createSignature(MSG.wikiSig0Desc.s, 
-            new Parameter(MSG.wikiSig0Term.s, Types.STRING));
-        this.setHelpText(MSG.wikiHelp.s);
+        this.createSignature(MSG.wikiSig0Desc, 
+            new Parameter(MSG.wikiSig0Term, Types.STRING));
+        
+        this.setHelpText(MSG.wikiHelp);
     }
 
     

@@ -16,10 +16,10 @@ public class GhostCommand extends Command {
 
     public GhostCommand(MyPolly polly) throws DuplicatedSignatureException {
         super(polly, "ghost"); //$NON-NLS-1$
-        this.createSignature(MSG.ghostSig0Desc.s, 
-            new Parameter(MSG.ghostSig0User.s, Types.USER), 
-            new Parameter(MSG.ghostSig0Password.s, Types.STRING));
-        this.setHelpText(MSG.ghostHelp.s);
+        this.createSignature(MSG.ghostSig0Desc, 
+            new Parameter(MSG.ghostSig0User, Types.USER), 
+            new Parameter(MSG.ghostSig0Password, Types.STRING));
+        this.setHelpText(MSG.ghostHelp);
         this.setQryCommand(true);
         
     }
@@ -37,7 +37,7 @@ public class GhostCommand extends Command {
     @Override
     protected void executeOnChannel(User executer, String channel,
         Signature signature) throws CommandException {
-        this.reply(channel, MSG.ghostQryOnly.s);
+        this.reply(channel, MSG.ghostQryOnly);
     }
     
     
@@ -51,13 +51,14 @@ public class GhostCommand extends Command {
             User user = this.getMyPolly().users().getUser(userName);
             
             if (user == null) {
-                this.reply(executer, MSG.ghostNotLoggedIn.s(userName));
+                this.reply(executer, MSG.bind(MSG.ghostNotLoggedIn, userName));
             } else if (!user.checkPassword(pw)) {
-                this.reply(executer, MSG.wrongPassword.s);
+                this.reply(executer, MSG.wrongPassword);
             } else {
                 try {
                     this.getMyPolly().users().logoff(user);
-                    this.reply(executer, MSG.ghostLoggedOut.s(user.getName()));
+                    this.reply(executer, MSG.bind(MSG.ghostLoggedOut, 
+                            user.getName()));
                 } catch (UnknownUserException e) {
                     throw new CommandException(e);
                 }
