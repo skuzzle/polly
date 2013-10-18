@@ -13,7 +13,7 @@
     <property name="combined.doc.dir"  value="${build.dir}/documentation"/>
 
     <!-- Dependency folder -->
-    <property name="lib.dir"          value="${root.dir}/dependency"/>
+    <property name="lib.dir"          value="/lib"/>
     
     
     

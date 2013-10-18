@@ -12,15 +12,15 @@
 	<classpathentry kind="src" path="/de.skuzzle.polly.process"/>
 	<classpathentry kind="src" path="/de.skuzzle.polly.sdk"/>
 	<classpathentry kind="src" path="/de.skuzzle.polly.tools"/>
-	<classpathentry kind="lib" path="C:/Users/Simon/Documents/Java/polly/dependency/commons-collections-3.2.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Simon/Documents/Java/polly/dependency/commons-lang-2.4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Simon/Documents/Java/polly/dependency/eclipselink.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Simon/Documents/Java/polly/dependency/gson-2.2.4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Simon/Documents/Java/polly/dependency/hsqldb.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Simon/Documents/Java/polly/dependency/javax.persistence_2.0.3.v201010191057.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Simon/Documents/Java/polly/dependency/log4j-1.2.16.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Simon/Documents/Java/polly/dependency/mail.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Simon/Documents/Java/polly/dependency/mysql-connector-java-5.1.17-bin.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Simon/Documents/Java/polly/dependency/velocity-1.7.jar"/>
+	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/commons-lang-2.4.jar"/>
+	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/eclipselink.jar"/>
+	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/gson-2.2.4.jar"/>
+	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/hsqldb.jar"/>
+	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/javax.persistence_2.0.3.v201010191057.jar"/>
+	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/log4j-1.2.16.jar"/>
+	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/mail.jar"/>
+	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/mysql-connector-java-5.1.17-bin.jar"/>
+	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/velocity-1.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

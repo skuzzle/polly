@@ -7,6 +7,9 @@
     -->
     <property name="root.dir"          value="../.."/>
     
+    <!-- Project directory relative to a single project -->
+    <property name="project.dir"       value=".."/>
+    
     <!-- Current version name. -->
     <property name="version.name"      value=" - Perky Parrot"/>
     
@@ -46,10 +49,10 @@
     <property name="doc.dir"           value="doc"/>
 
     <!-- Encoding of source files. -->
-    <property name="src.encoding"     value="ISO-8859-1"/>
+    <property name="src.encoding"      value="ISO-8859-1"/>
     
     <!-- Dependency folder -->
-    <property name="lib.dir"          value="${root.dir}/dependency"/>
+    <property name="lib.dir"          value="${project.dir}/lib"/>
     
     <!-- Target java version for compiler. -->
     <property name="target.version"   value="1.7"/>
