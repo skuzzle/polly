@@ -19,6 +19,8 @@
 package de.skuzzle.polly.http.api.handler;
 
 import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 import de.skuzzle.polly.http.api.DefaultFileResolver;
 import de.skuzzle.polly.http.api.FileResolver;
@@ -46,7 +48,14 @@ public class DirectoryEventHandler extends AbstractFileEventHandler {
     protected HttpAnswer handleHttpEvent(String registered, HttpEvent e) 
             throws FileNotFoundException, HttpException {
 
-        final String url = e.getPlainUri().substring(registered.length());
+        String url;
+        try {
+            url = URLDecoder.decode(
+                    e.getPlainUri().substring(registered.length()), "UTF-8");
+        } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
+            url = "";
+        }
         final FileResolver fr = new DefaultFileResolver();
         final ResolvedFile target = fr.resolve(this.rootDirectory, url);
 
