@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="de.skuzzle.polly.plugin.logging" basedir="." default="dist.debug">
+    
+    <!-- The name of the jar file created by the dist target. -->
+    <property name="jar.filename"      value="polly.mud"/>
+    
+    <!-- Jar file title. -->
+    <property name="jar.title"         value="polly.mud"/>
+    
+    <!-- The name of this projects main class. -->
+    <property name="jar.main"          value="polly.mud.MyPlugin"/>
+
+    <!-- 
+        Space-separated list of jar files relative to lib.dir to include 
+        in build-process
+    -->
+    <property name="dependencies" value="
+    NONE
+    "/>
+    
+    <!--
+        Space separated list of jar files relative to build.dir to include
+        in build process.
+    -->
+    <property name="dependencies.internal" value="
+        **/polly.sdk.jar
+        **/polly.http.jar
+        **/polly.http.annotations.jar
+        **/polly.tools.jar
+    "/>
+   
+    
+    
+    <!-- Import all important build targets. -->
+    <import file="../plugin.xml" as="base1"/>
+    <import file="../common.xml" as="base"/>
+    
+    <!-- Name of this plugin -->
+    <property name="plugin.name" value="PI 1 MUD Plugin"/>
+    
+    <!-- Description of this plugin -->
+    <property name="plugin.description" value="MUD IRC Forward"/>
+    
+    <!-- Developper name of this plugin -->
+    <property name="plugin.developer" value="Simon Taddiken"/>
+    
+    <!-- Version of this plugin -->
+    <property name="plugin.version" value="0.1"/>
+</project>
