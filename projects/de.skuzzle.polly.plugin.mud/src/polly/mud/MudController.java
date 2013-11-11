@@ -108,7 +108,13 @@ public class MudController implements ConnectionListener {
                     i + SAYS_PREFIX.length(), e.getMessage().length() - 1); // strip trailing '
             System.out.println("'" + message + "'");
             final Types t = this.myPolly.parse(message);
-            if (t != null && !(t instanceof StringType)) {
+            if (t != null) {
+                if (t instanceof StringType) {
+                    final StringType st = (StringType) t;
+                    if (st.getValue().equals(message)) {
+                        return;
+                    }
+                }
                 e.getSource().submit("say " + t.valueString(this.myPolly.formatting()));
             }
         }
