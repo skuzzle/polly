@@ -23,7 +23,7 @@ public class Token implements Serializable, Equatable, Location {
     public Token(TokenType type, Position position) {
         this.type = type;
         this.position = position;
-        this.stringValue = "";
+        this.stringValue = ""; //$NON-NLS-1$
         this.dateValue = new Date();
     }
     
@@ -153,7 +153,7 @@ public class Token implements Serializable, Equatable, Location {
                 value = this.dateValue.toString();
                 break;
             case NUMBER:
-                value = "" + this.floatValue;
+                value = "" + this.floatValue; //$NON-NLS-1$
                 break;
             default:    
         }
@@ -161,13 +161,13 @@ public class Token implements Serializable, Equatable, Location {
         result.append(this.type.toString());
         
         if (printValue) {
-            result.append("(");
+            result.append("("); //$NON-NLS-1$
             result.append(value);
-            result.append(")");
+            result.append(")"); //$NON-NLS-1$
         }
         
         if (printPosition) {
-            result.append(" @ ");
+            result.append(" @ "); //$NON-NLS-1$
             result.append(this.position.toString());
         }
         return result.toString();

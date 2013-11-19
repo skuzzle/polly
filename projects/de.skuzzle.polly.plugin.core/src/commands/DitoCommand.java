@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.CommandHistoryEntry;
@@ -15,12 +16,10 @@ import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 public class DitoCommand extends Command {
 
     public DitoCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "dito");
-        this.createSignature("Führt den letzten Befehl der im aktuellen Channel " +
-        		"ausgeführt wurde erneut aus.",
+        super(polly, "dito"); //$NON-NLS-1$
+        this.createSignature(MSG.ditoSig0Desc,
         		MyPlugin.DITO_PERMISSION);
-        this.setHelpText("Führt den letzten Befehl der im aktuellen Channel " +
-                "ausgeführt wurde erneut aus.");
+        this.setHelpText(MSG.ditoHelp);
     }
     
     
@@ -34,7 +33,7 @@ public class DitoCommand extends Command {
                 this.getMyPolly().commands().getLastCommand(channel);
             
             if (che == null) {
-                this.reply(channel, "Nothing to do here");
+                this.reply(channel, MSG.ditoNoCommand);
             } else {
                 boolean qry = channel.equals(executer.getCurrentNickName());
                 

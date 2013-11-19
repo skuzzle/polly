@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import core.filters.DateLogFilter;
+import polly.logging.MSG;
 import polly.logging.MyPlugin;
 import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.MailManager;
@@ -28,12 +29,9 @@ public class ForwardHighlightHandler extends MessageAdapter {
     
     private final static int HIGHLIGHT_DELAY = 30000; // 30s
     
-    private final static String SUBJECT = "[POLLY Highlight Forwarder] Highlight in %s";
+    private final static String SUBJECT = MSG.forwardSubject;
     
-    private final static String MESSAGE = "Hi %s,\n\nDu wurdest im Channel %s " +
-    		"von %s gehighlighted. Nachricht:\n%s\n\n " +
-    		"Channellog:\n%s\n\n" +
-    		"Bye\nPolly";
+    private final static String MESSAGE = MSG.forwardMessage;
     
     
     public final static long MAIL_DELAY = 30000; // 30 seconds
@@ -54,7 +52,7 @@ public class ForwardHighlightHandler extends MessageAdapter {
         
         
         public Highlight(MessageEvent e, User user) {
-            super("HL_FOR_" + e.getUser().getNickName());
+            super("HL_FOR_" + e.getUser().getNickName()); //$NON-NLS-1$
             this.e = e;
             this.user = user;
             e.getSource().addMessageListener(this);
@@ -74,7 +72,7 @@ public class ForwardHighlightHandler extends MessageAdapter {
             }
             
             try {
-                String mail = ((StringType) this.user.getAttribute("EMAIL")).getValue();
+                String mail = ((StringType) this.user.getAttribute("EMAIL")).getValue(); //$NON-NLS-1$
                 
                 List<LogEntry> prefiltered = logManager.preFilterChannel(
                     e.getChannel());
@@ -181,12 +179,12 @@ public class ForwardHighlightHandler extends MessageAdapter {
                 continue;
             }
             
-            String mail = ((StringType) user.getAttribute("EMAIL")).getValue();
+            String mail = ((StringType) user.getAttribute("EMAIL")).getValue(); //$NON-NLS-1$
             
             // forward if user is idle, wants forward and has a mail address set
             boolean fwd = user.isIdle() &&
-                user.getAttribute(MyPlugin.FORWARD_HIGHLIGHTS).equals("true") &&
-                !mail.equals("none");
+                user.getAttribute(MyPlugin.FORWARD_HIGHLIGHTS).equals("true") && //$NON-NLS-1$
+                !mail.equals("none"); //$NON-NLS-1$
 
             if (fwd && this.canSend(mail)) {
                 new Highlight(e, user).start();

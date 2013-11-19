@@ -67,7 +67,7 @@ public abstract class AbstractHTMLTableModel<T> implements HTMLTableModel<T> {
     @Override
     public SuccessResult setCellValue(int column, T element, String value, 
             User executor, MyPolly myPolly) {
-        return new SuccessResult(false, "Not implemented");
+        return new SuccessResult(false, "Not implemented"); //$NON-NLS-1$
     }
 
 

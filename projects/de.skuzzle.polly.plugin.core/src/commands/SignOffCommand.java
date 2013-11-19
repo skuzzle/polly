@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.MSG;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Signature;
@@ -11,10 +12,10 @@ import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
 public class SignOffCommand extends Command {
 
     public SignOffCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "signoff");
-        this.createSignature("Meldet den Benutzer ab.");
+        super(polly, "signoff"); //$NON-NLS-1$
+        this.createSignature(MSG.signOffSig0Desc);
         this.setRegisteredOnly();
-        this.setHelpText("Befehl um dich bei Polly abzumelden.");
+        this.setHelpText(MSG.signOffHelp);
     }
 
     
@@ -24,7 +25,7 @@ public class SignOffCommand extends Command {
             Signature signature) {
         try {
             this.getMyPolly().users().logoff(executer);
-            this.reply(channel, "Du wurdest abgemeldet.");
+            this.reply(channel, MSG.signOffSuccess);
         } catch (UnknownUserException e) {
             e.printStackTrace();
         }

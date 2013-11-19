@@ -29,7 +29,7 @@ public class PointSet implements Set<Point> {
     public PointSet(Color color) {
         this.backend = new TreeSet<Point>();
         this.color = color;
-        this.name = "";
+        this.name = ""; //$NON-NLS-1$
         this.strength = 1.f;
     }
 

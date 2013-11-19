@@ -17,7 +17,7 @@ import de.skuzzle.polly.sdk.Types;
 
 public class ResourcePriceGrabber {
 
-    private final static String API_URL = "http://qzone.servebbs.net/pollyPriceDaily.php";
+    private final static String API_URL = "http://qzone.servebbs.net/pollyPriceDaily.php"; //$NON-NLS-1$
 
     
     private String ts;
@@ -74,11 +74,11 @@ public class ResourcePriceGrabber {
                         return;
                     }
                     this.ts = line;
-                    final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    this.lastRefreshDate = df.parse(line.split(";")[1]);
+                    final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //$NON-NLS-1$
+                    this.lastRefreshDate = df.parse(line.split(";")[1]); //$NON-NLS-1$
                 case 5: break;
                 default:
-                    final String[] parts = line.split(";");
+                    final String[] parts = line.split(";"); //$NON-NLS-1$
                     result.put(parts[0], new Types.NumberType(
                         Double.parseDouble(parts[1])));
                     break;

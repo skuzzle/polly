@@ -1,12 +1,13 @@
 package commands;
 
+import polly.core.MSG;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
-import de.skuzzle.polly.sdk.UserManager;
+import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.InvalidUserNameException;
@@ -17,12 +18,10 @@ import de.skuzzle.polly.sdk.exceptions.UserExistsException;
 public class RegisterCommand extends Command {
 
     public RegisterCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "register");
-        this.createSignature("Gib dein gewünschtes Passwort ein. Als Benutzername wird " +
-        		"dein aktueller Nickname genutzt", 
-    		new Parameter("Passwort", Types.STRING));
-        this.setHelpText("Befehl um dich bei Polly zu registrieren.");
-        this.setUserLevel(UserManager.UNKNOWN);
+        super(polly, "register"); //$NON-NLS-1$
+        this.createSignature(MSG.registerSig0Desc, 
+    		new Parameter(MSG.registerSig0Password, Types.STRING));
+        this.setHelpText(MSG.registerHelp);
         this.setQryCommand(true);
     }
     
@@ -39,21 +38,20 @@ public class RegisterCommand extends Command {
     @Override
     protected void executeOnChannel(User executer, String channel,
             Signature signature) {
-        this.reply(channel, "Dieser Befehl ist nur im Query ausführbar. Zudem solltest " +
-        		"du jetzt ein anderes Passwort wählen.");
+        this.reply(channel, MSG.registerQryWarning);
     }
     
     
     
     @Override
-    protected void executeOnQuery(User executer, Signature signature) {
+    protected void executeOnQuery(User executer, Signature signature) throws CommandException {
         if (this.getMyPolly().users().isSignedOn(executer)) {
-            this.reply(executer, "Du bist bereits angemeldet.");
+            this.reply(executer, MSG.registerAlreadySignedOn);
             return;
         }
         
-        String userName = "";
-        String password = "";
+        String userName = ""; //$NON-NLS-1$
+        String password = ""; //$NON-NLS-1$
         if (this.match(signature, 0)) {
             userName = executer.getCurrentNickName();
             password = signature.getStringValue(0);
@@ -61,16 +59,15 @@ public class RegisterCommand extends Command {
         try {
             this.getMyPolly().users().addUser(
                     userName, password);
-            this.reply(executer, "Registrierung erfolgreich. Du kannst dich jetzt " +
-            		"mit \":auth @" + userName + " " + password + "\" anmelden.");
+            this.reply(executer, MSG.bind(
+                    MSG.registerSuccess, userName, password));
         } catch (UserExistsException e) {
-            this.reply(executer, "Der Benutzer '" + userName + 
-                    "' existiert bereits.");
+            this.reply(executer, MSG.bind(MSG.registerAlreadyExists, userName));
         } catch (DatabaseException e) {
-            this.reply(executer, "Interner Datenbankfehler!");
             e.printStackTrace();
+            throw new CommandException(e);
         } catch (InvalidUserNameException e) {
-            this.reply(executer, "'" + userName + "' is no valid user name");
+            this.reply(executer, MSG.bind(MSG.registerInvalidName, userName));
         }
     }
 }

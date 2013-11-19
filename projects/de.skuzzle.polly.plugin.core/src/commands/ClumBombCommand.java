@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -7,19 +8,18 @@ import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
-import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 
 public class ClumBombCommand extends Command {
 
 	public ClumBombCommand(MyPolly polly) throws DuplicatedSignatureException {
-		super(polly, "clumbomb");
-		this.createSignature("Highlightbombe!", 
+		super(polly, "clumbomb"); //$NON-NLS-1$
+		this.createSignature(MSG.clumBombSig0Desc, 
 		    MyPlugin.CLUMBOMB_PERMISSION,
-		    new Parameter("Benutzer",Types.USER), 
-		    new Parameter("Anzahl", Types.NUMBER));
+		    new Parameter(MSG.userName,Types.USER), 
+		    new Parameter(MSG.clumBombSig0Amount, Types.NUMBER));
 		this.setRegisteredOnly();
-		this.setUserLevel(UserManager.MEMBER);
+		this.setHelpText(MSG.clumBombHelp);
 	}
 
 	

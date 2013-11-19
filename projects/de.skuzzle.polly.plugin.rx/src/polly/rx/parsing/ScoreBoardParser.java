@@ -17,17 +17,17 @@ public class ScoreBoardParser {
             throw new ParseException();
         }
         
-        String[] lines = paste.split("[\n\r]+");
+        String[] lines = paste.split("[\n\r]+"); //$NON-NLS-1$
         
         ArrayIterator<String> it = ArrayIterator.get(lines);
-        while (it.peekNext().equals("")) {
+        while (it.peekNext().equals("")) { //$NON-NLS-1$
             it.next();
         }
         
-        if (it.peekNext().equals("Umgebungsliste")) {
+        if (it.peekNext().equals("Umgebungsliste")) { //$NON-NLS-1$
             it.next();
         }
-        if (it.peekNext().startsWith("Rang")) {
+        if (it.peekNext().startsWith("Rang")) { //$NON-NLS-1$
             it.next();
         }
         
@@ -35,15 +35,15 @@ public class ScoreBoardParser {
         while (it.hasNext()) {
             String line = it.next();
             
-            String[] parts = line.split("\\s+");
+            String[] parts = line.split("\\s+"); //$NON-NLS-1$
             
             if (parts.length != 3) {
                 continue;
             }
             int rank = Integer.parseInt(parts[0]);
             String venad = parts[1];
-            String clan = "";
-            int i = venad.indexOf("[");
+            String clan = ""; //$NON-NLS-1$
+            int i = venad.indexOf("["); //$NON-NLS-1$
             if (i != -1) {
                 clan = venad.substring(i + 1, venad.length() - 1);
                 venad = venad.substring(0, venad.length() - clan.length() - 2);

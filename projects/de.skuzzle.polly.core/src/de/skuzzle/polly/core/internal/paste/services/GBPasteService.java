@@ -12,7 +12,7 @@ public class GBPasteService extends AbstractPasteService {
     
 
     public GBPasteService() {
-        super("gbpaste");
+        super("gbpaste"); //$NON-NLS-1$
     }
     
     
@@ -21,14 +21,14 @@ public class GBPasteService extends AbstractPasteService {
     public String doPaste(String message) throws IOException {
         Map<String, String> properties = new HashMap<String, String>(10);
         
-        properties.put("nick", "polly");
-        properties.put("lang", "text");
-        properties.put("private", "1");
-        properties.put("desc", "polly log entries");
-        properties.put("code", message);
+        properties.put("nick", "polly"); //$NON-NLS-1$ //$NON-NLS-2$
+        properties.put("lang", "text"); //$NON-NLS-1$ //$NON-NLS-2$
+        properties.put("private", "1"); //$NON-NLS-1$ //$NON-NLS-2$
+        properties.put("desc", "polly log entries"); //$NON-NLS-1$ //$NON-NLS-2$
+        properties.put("code", message); //$NON-NLS-1$
         
         return this.postRequest(
-                new URL("http://gbpaste.org/upload"), properties).getResultURL();
+                new URL("http://gbpaste.org/upload"), properties).getResultURL(); //$NON-NLS-1$
     }
 
 }

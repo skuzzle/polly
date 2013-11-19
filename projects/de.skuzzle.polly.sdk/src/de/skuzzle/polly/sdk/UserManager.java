@@ -43,7 +43,7 @@ public interface UserManager {
      * @since 0.9.1
      */
     public final static Pattern USER_NAME_PATTERN = 
-            Pattern.compile("[^\\d-][\\w\\d-_\\[\\]{}\\\\`^\\.]+");
+            Pattern.compile("[^\\d-][\\w\\d-_\\[\\]{}\\\\`^\\.]+"); //$NON-NLS-1$
     
     /**
      * Maximum length of attribute parameter values.
@@ -53,21 +53,25 @@ public interface UserManager {
     
     /**
      * Classifies the userlevel 'unknown'
+     * @deprecated There are no user levels anymore
      */
     public final static int UNKNOWN = 0;
     
     /**
      * Classifies the userlevel 'registered'
+     * @deprecated There are no user levels anymore
      */
     public final static int REGISTERED = 10;
     
     /**
      * Classifies the userlevel 'member'
+     * @deprecated There are no user levels anymore
      */
     public final static int MEMBER = 100;
     
     /**
      * Classifies the userlevel 'admin'
+     * @deprecated There are no user levels anymore
      */
     public final static int ADMIN = 1000;
     

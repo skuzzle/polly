@@ -76,7 +76,7 @@ public class BattleReportShip {
     
     
     public BattleReportShip() {
-        this(0, "", "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        this(0, "", "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     

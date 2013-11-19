@@ -2,8 +2,8 @@ package commands;
 
 import java.util.List;
 
+import polly.logging.MSG;
 import polly.logging.MyPlugin;
-
 import core.PollyLoggingManager;
 import core.filters.AnyLogFilter;
 import core.filters.ChainedLogFilter;
@@ -24,32 +24,31 @@ public class UserLogCommand extends AbstractLogCommand {
 
     public UserLogCommand(MyPolly polly, PollyLoggingManager logManager) 
                 throws DuplicatedSignatureException {
-        super(polly, "ulog", logManager);
-        this.createSignature("Filtert Log Einträge eines Benutzers", 
+        super(polly, "ulog", logManager); //$NON-NLS-1$
+        this.createSignature(MSG.userLogSig0Desc, 
             MyPlugin.USER_LOG_PERMISSION,
-            new Parameter("Benutzername", Types.STRING));
-        this.createSignature("Filtert Log Einträge eines Benutzers mit bestimmten Inhalt",
+            new Parameter(MSG.userLogSig0User, Types.STRING));
+        this.createSignature(MSG.userLogSig1Desc,
             MyPlugin.USER_LOG_PERMISSION,
-            new Parameter("Benutzername", Types.STRING), 
-            new Parameter("Pattern", Types.STRING));
-        this.createSignature("Filtert Log Einträge eines Benutzers mit bestimmten Inhalt",
+            new Parameter(MSG.userLogSig1User, Types.STRING), 
+            new Parameter(MSG.userLogSig1Pattern, Types.STRING));
+        this.createSignature(MSG.userLogSig2Desc,
             MyPlugin.USER_LOG_PERMISSION,
-            new Parameter("Benutzername", Types.STRING), 
-            new Parameter("Pattern", Types.STRING),
-            new Parameter("Limit", Types.NUMBER));
-        this.createSignature("Filtert Log Einträge eines Benutzers mit bestimmten " +
-        		"Inhalt die nicht älter sind als das angegebne Datum", 
+            new Parameter(MSG.userLogSig2User, Types.STRING), 
+            new Parameter(MSG.userLogSig2Pattern, Types.STRING),
+            new Parameter(MSG.userLogSig2Limit, Types.NUMBER));
+        this.createSignature(MSG.userLogSig3Desc, 
     		MyPlugin.USER_LOG_PERMISSION,
-            new Parameter("Benutzername", Types.STRING), 
-            new Parameter("Pattern", Types.STRING),
-            new Parameter("Datum", Types.DATE));
-        this.createSignature("Filtert Log Einträge eines Benutzers mit bestimmten " +
-        		"Inhalt die zweichen den Angegebenen Zeitpunkten liegen",
+            new Parameter(MSG.userLogSig3User, Types.STRING), 
+            new Parameter(MSG.userLogSig3Pattern, Types.STRING),
+            new Parameter(MSG.userLogSig3Date, Types.DATE));
+        this.createSignature(MSG.userLogSig4Desc,
     		MyPlugin.USER_LOG_PERMISSION,
-            new Parameter("Benutzername", Types.STRING), 
-            new Parameter("Pattern", Types.STRING),
-            new Parameter("Von", Types.DATE),
-            new Parameter("Bis", Types.DATE));
+            new Parameter(MSG.userLogSig4User, Types.STRING), 
+            new Parameter(MSG.userLogSig4Pattern, Types.STRING),
+            new Parameter(MSG.userLogSig4From, Types.DATE),
+            new Parameter(MSG.userLogSig4To, Types.DATE));
+        this.setHelpText(MSG.userLogHelp);
     }
     
     

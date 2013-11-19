@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import polly.reminds.MSG;
 import core.RemindManager;
 import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -14,14 +15,25 @@ import de.skuzzle.polly.sdk.Types.DateType;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.httpv2.SuccessResult;
+import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.httpv2.html.AbstractHTMLTableModel;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLElement;
 import entities.RemindEntity;
 
 public class MyRemindTableModel extends AbstractHTMLTableModel<RemindEntity> {
 
-    private final static String[] COLUMNS = { "Id", "Message", "Due", "Left", "Type",
-            "For", "From", "Action" };
+    private final static String[] COLUMNS = { 
+        MSG.remindTableModelColId, 
+        MSG.remindTableModelColMessage, 
+        MSG.remindTableModelColDue, 
+        MSG.remindTableModelColLeft, 
+        MSG.remindTableModelColType,
+        MSG.remindTableModelColFor, 
+        MSG.remindTableModelColFrom, 
+        MSG.remindTableModelColAction 
+    };
+
+    private static final String NICKNAME_FIELD = "nickname"; //$NON-NLS-1$
 
     protected final RemindManager rm;
 
@@ -82,7 +94,7 @@ public class MyRemindTableModel extends AbstractHTMLTableModel<RemindEntity> {
         } else if (column == 2) {
             final Types d = myPolly.parse(value);
             if (!(d instanceof Types.DateType)) {
-                return new SuccessResult(false, "Not a valid date");
+                return new SuccessResult(false, MSG.remindTableModelInvalidDate);
             }
             final Date date = ((DateType) d).getValue();
             try {
@@ -104,15 +116,15 @@ public class MyRemindTableModel extends AbstractHTMLTableModel<RemindEntity> {
         case 1: return element.getMessage();
         case 2: return element.getDueDate();
         case 3: return element.getLeaveDate();
-        case 4: return "?";
+        case 4: return "?"; //$NON-NLS-1$ // TODO: remind type
         case 5: return element.getForUser();
         case 6: return element.getFromUser();
-        case 7: return new HTMLElement("input")
-            .attr("value", "Cancel")
-            .attr("type", "button")
-            .attr("class", "button")
-            .attr("onclick", "cancelRemind("+element.getId()+")");
-        default: return "";
+        case 7: return new HTMLElement("input") //$NON-NLS-1$
+            .attr("value", MSG.remindTableModelCancel) //$NON-NLS-1$
+            .attr("type", "button") //$NON-NLS-1$ //$NON-NLS-2$
+            .attr("class", "button") //$NON-NLS-1$ //$NON-NLS-2$
+            .attr("onclick", "cancelRemind("+element.getId()+")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        default: return ""; //$NON-NLS-1$
         }
     }
     
@@ -138,8 +150,8 @@ public class MyRemindTableModel extends AbstractHTMLTableModel<RemindEntity> {
     @Override
     public Map<String, String> getRequestParameters(HttpEvent e) {
         final Map<String, String> m = new HashMap<>();
-        final User user = (User) e.getSession().getAttached("user");
-        m.put("nickname", user.getName());
+        final User user = (User) e.getSession().getAttached(WebinterfaceManager.USER);
+        m.put(NICKNAME_FIELD, user.getName());
         return m;
     }
 
@@ -147,6 +159,6 @@ public class MyRemindTableModel extends AbstractHTMLTableModel<RemindEntity> {
     
     @Override
     public List<RemindEntity> getData(HttpEvent e) {
-        return this.rm.getDatabaseWrapper().getMyRemindsForUser(e.get("nickname"));
+        return this.rm.getDatabaseWrapper().getMyRemindsForUser(e.get(NICKNAME_FIELD));
     }
 }

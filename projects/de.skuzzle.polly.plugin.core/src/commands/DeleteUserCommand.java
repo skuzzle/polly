@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -8,6 +9,7 @@ import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
+import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
@@ -15,20 +17,19 @@ import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
 public class DeleteUserCommand extends Command {
 
     public DeleteUserCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "deluser");
-        this.createSignature("Löscht den angegebenen Benutzer.", 
+        super(polly, "deluser"); //$NON-NLS-1$
+        this.createSignature(MSG.deleteUserSig0Desc, 
             MyPlugin.DELETE_USER_PERMISSION,
-            new Parameter("User", Types.USER));
+            new Parameter(MSG.userName, Types.USER));
         this.setRegisteredOnly();
-        this.setUserLevel(UserManager.ADMIN);
-        this.setHelpText("Befehl zum Löschen von Benutzern.");
+        this.setHelpText(MSG.deleteUserHelp);
     }
 
     
     
     @Override
     protected boolean executeOnBoth(User executer, String channel,
-            Signature signature) {
+            Signature signature) throws CommandException {
      
         if (this.match(signature, 0)) {
             String name = signature.getStringValue(0);
@@ -36,17 +37,17 @@ public class DeleteUserCommand extends Command {
             
             User user = um.getUser(name);
             if (user == null) {
-                this.reply(channel, "Benutzer '" + name + "' existiert nicht.");
+                this.reply(channel, MSG.bind(MSG.unknownUser, name));
                 return false;
             }
             try {
                 this.getMyPolly().users().deleteUser(user);
-                this.reply(channel, "Benutzer '" + name + "' wurde gelöscht.");
+                this.reply(channel, MSG.bind(MSG.deleteUserSuccess, name));
             } catch (UnknownUserException ignore) {
                 // can not happen
                 ignore.printStackTrace();
             } catch (DatabaseException e) {
-                this.reply(channel, "Interner Datenbank Fehler: " + e.getMessage());
+                throw new CommandException(e);
             }
         }
         return false;

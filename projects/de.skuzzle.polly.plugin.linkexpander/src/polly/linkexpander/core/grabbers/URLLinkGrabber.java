@@ -12,7 +12,7 @@ import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
 public class URLLinkGrabber implements LinkGrabber {
 
     private final static Pattern URL_PATTERN = Pattern.compile(
-        "(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
+        "(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]"); //$NON-NLS-1$
     
     private List<MessageEvent> urls;
     

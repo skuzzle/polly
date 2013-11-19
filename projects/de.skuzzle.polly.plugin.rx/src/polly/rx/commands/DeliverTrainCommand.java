@@ -1,5 +1,6 @@
 package polly.rx.commands;
 
+import polly.rx.MSG;
 import polly.rx.MyPlugin;
 import polly.rx.core.TrainBillV2;
 import polly.rx.core.TrainManagerV2;
@@ -10,7 +11,6 @@ import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
-import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 
 public class DeliverTrainCommand extends Command {
@@ -19,17 +19,17 @@ public class DeliverTrainCommand extends Command {
     
     public DeliverTrainCommand(MyPolly polly, TrainManagerV2 trainManager) 
             throws DuplicatedSignatureException {
-        super(polly, "deliver");
-        this.createSignature("Liefert eine Capi-Train Rechnung aus.", 
+        super(polly, "deliver"); //$NON-NLS-1$
+        this.createSignature(MSG.deliverSig0Desc, 
             MyPlugin.DELIVER_TRAIN_PERMISSION,
-            new Parameter("User", Types.USER));
-        this.createSignature("Liefert eine Capi-Train Rechnung aus.",
+            new Parameter(MSG.deliverSig0User, Types.USER));
+        this.createSignature(MSG.deliverSig1Desc,
             MyPlugin.DELIVER_TRAIN_PERMISSION,
-            new Parameter("Benutzer", Types.USER), 
-            new Parameter("Empfänger", Types.USER));
+            new Parameter(MSG.deliverSig1User, Types.USER), 
+            new Parameter(MSG.deliverSig1Receiver, Types.USER));
 
+        this.setHelpText(MSG.deliverHelp);
         this.setRegisteredOnly();
-        this.setUserLevel(UserManager.ADMIN);
         this.trainManager = trainManager;
     }
 
@@ -39,8 +39,8 @@ public class DeliverTrainCommand extends Command {
     protected boolean executeOnBoth(User executer, String channel,
         Signature signature) {
         
-        String deliverTo = "";
-        String userName = "";
+        String deliverTo = ""; //$NON-NLS-1$
+        String userName = ""; //$NON-NLS-1$
         if (this.match(signature, 0)) {
             userName = signature.getStringValue(0);
             deliverTo = userName;
@@ -52,7 +52,7 @@ public class DeliverTrainCommand extends Command {
         for (TrainEntityV3 train : bill.getTrains()) {
             this.reply(deliverTo, train.format(this.getMyPolly().formatting()));
         }
-        this.reply(deliverTo, "=========================");
+        this.reply(deliverTo, "========================="); //$NON-NLS-1$
         
         this.reply(deliverTo, bill.toString());
         return false;

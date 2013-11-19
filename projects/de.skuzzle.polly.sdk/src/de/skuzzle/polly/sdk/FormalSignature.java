@@ -86,14 +86,14 @@ public class FormalSignature extends Signature implements SecurityObject {
 	 * @return The help text.
 	 */
 	public String getHelp() {
-		String help = this.help.endsWith(".") ? this.help + " " : this.help + ". ";
-		help += "Signatur: ";
+		String help = this.help.endsWith(".") ? this.help + " " : this.help + ". "; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		help += Messages.signature;
 		Iterator<Parameter> it = this.formalParameters.iterator();
 		while (it.hasNext()) {
 		    Parameter param = it.next();
 		    help += param.toString();
 		    if (it.hasNext()) {
-		        help += ", ";
+		        help += ", "; //$NON-NLS-1$
 		    }
 		    
 		}
@@ -109,7 +109,7 @@ public class FormalSignature extends Signature implements SecurityObject {
             Parameter param = it.next();
             result.append(param.getType().getSample());
             if (it.hasNext()) {
-                result.append(" ");
+                result.append(" "); //$NON-NLS-1$
             }
         }
         return result.toString();

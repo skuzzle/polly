@@ -94,22 +94,22 @@ public class InputScanner extends AbstractTokenStream {
     
     protected void prepareKeywords() {
         this.keywords = new HashMap<String, TokenType>();
-        this.keywords.put("xor", TokenType.XOR);
-        this.keywords.put("true", TokenType.TRUE);
-        this.keywords.put("false", TokenType.FALSE);
-        this.keywords.put("now", TokenType.DATETIME);
-        this.keywords.put("polly", TokenType.POLLY);
-        this.keywords.put("public", TokenType.PUBLIC);
-        this.keywords.put("temp", TokenType.TEMP);
-        this.keywords.put("help", TokenType.QUESTION);
-        this.keywords.put("if", TokenType.IF);
-        this.keywords.put("del", TokenType.DELETE);
-        this.keywords.put("inspect", TokenType.INSPECT);
-        this.keywords.put("list", TokenType.LIST);
-        this.keywords.put("delay", TokenType.DELAY);
-        this.keywords.put("reinterpret", TokenType.REINTERPRET);
+        this.keywords.put("xor", TokenType.XOR); //$NON-NLS-1$
+        this.keywords.put("true", TokenType.TRUE); //$NON-NLS-1$
+        this.keywords.put("false", TokenType.FALSE); //$NON-NLS-1$
+        this.keywords.put("now", TokenType.DATETIME); //$NON-NLS-1$
+        this.keywords.put("polly", TokenType.POLLY); //$NON-NLS-1$
+        this.keywords.put("public", TokenType.PUBLIC); //$NON-NLS-1$
+        this.keywords.put("temp", TokenType.TEMP); //$NON-NLS-1$
+        this.keywords.put("help", TokenType.QUESTION); //$NON-NLS-1$
+        this.keywords.put("if", TokenType.IF); //$NON-NLS-1$
+        this.keywords.put("del", TokenType.DELETE); //$NON-NLS-1$
+        this.keywords.put("inspect", TokenType.INSPECT); //$NON-NLS-1$
+        this.keywords.put("list", TokenType.LIST); //$NON-NLS-1$
+        this.keywords.put("delay", TokenType.DELAY); //$NON-NLS-1$
+        this.keywords.put("reinterpret", TokenType.REINTERPRET); //$NON-NLS-1$
         /* To avoid 1char identifiers "_" */
-        this.keywords.put("_", TokenType.UNKNOWN);
+        this.keywords.put("_", TokenType.UNKNOWN); //$NON-NLS-1$
     }
     
     
@@ -200,45 +200,45 @@ public class InputScanner extends AbstractTokenStream {
                 } else if (next == '@') {
                     return this.readUser();
                 } else if (next == ',') {
-                    return new Token(TokenType.COMMA, this.spanFrom(tokenStart), ",");
+                    return new Token(TokenType.COMMA, this.spanFrom(tokenStart), ","); //$NON-NLS-1$
                 } else if (next == '*') {
-                    return new Token(TokenType.MUL, this.spanFrom(tokenStart), "*");
+                    return new Token(TokenType.MUL, this.spanFrom(tokenStart), "*"); //$NON-NLS-1$
                 } else if (next == '/') {
                     state = 15;
                 } else if (next == '\\') {
                     state = 13;
                 } else if (next == '%') {
-                    return new Token(TokenType.MOD, this.spanFrom(tokenStart), "%");
+                    return new Token(TokenType.MOD, this.spanFrom(tokenStart), "%"); //$NON-NLS-1$
                 } else if (next == '$') {
-                    return new Token(TokenType.DOLLAR, this.spanFrom(tokenStart),"$");
+                    return new Token(TokenType.DOLLAR, this.spanFrom(tokenStart),"$"); //$NON-NLS-1$
                 } else if (next == '^') {
                     state = 14;
                 } else if (next == '!') {
                     state = 2;
                 } else if (next == '(') {
-                    return new Token(TokenType.OPENBR, this.spanFrom(tokenStart), "(");
+                    return new Token(TokenType.OPENBR, this.spanFrom(tokenStart), "("); //$NON-NLS-1$
                 } else if (next == ')') {
-                    return new Token(TokenType.CLOSEDBR, this.spanFrom(tokenStart), ")");
+                    return new Token(TokenType.CLOSEDBR, this.spanFrom(tokenStart), ")"); //$NON-NLS-1$
                 } else if (next == '[') {
-                    return new Token(TokenType.OPENSQBR, this.spanFrom(tokenStart), "[");
+                    return new Token(TokenType.OPENSQBR, this.spanFrom(tokenStart), "["); //$NON-NLS-1$
                 } else if (next == ']') {
-                    return new Token(TokenType.CLOSEDSQBR, this.spanFrom(tokenStart), "]");
+                    return new Token(TokenType.CLOSEDSQBR, this.spanFrom(tokenStart), "]"); //$NON-NLS-1$
                 } else if (next == '{') {
-                    return new Token(TokenType.OPENCURLBR, this.spanFrom(tokenStart), "{");
+                    return new Token(TokenType.OPENCURLBR, this.spanFrom(tokenStart), "{"); //$NON-NLS-1$
                 } else if (next == '}') {
-                    return new Token(TokenType.CLOSEDCURLBR, this.spanFrom(tokenStart), "}");
+                    return new Token(TokenType.CLOSEDCURLBR, this.spanFrom(tokenStart), "}"); //$NON-NLS-1$
                 } else if (next == '?') {
                     state = 12;
                 } else if (next == '~') {
-                    return new Token(TokenType.WAVE, this.spanFrom(tokenStart), "~");
+                    return new Token(TokenType.WAVE, this.spanFrom(tokenStart), "~"); //$NON-NLS-1$
                 } else if (next == ';') {
-                    return new Token(TokenType.SEMICOLON, this.spanFrom(tokenStart), ";");
+                    return new Token(TokenType.SEMICOLON, this.spanFrom(tokenStart), ";"); //$NON-NLS-1$
                 } else if (next == '&') {
                     state = 7;
                 } else if (next == '|') {
                     state = 6;
                 } else if (next == ':') {
-                    return new Token(TokenType.COLON, this.spanFrom(tokenStart), ":");
+                    return new Token(TokenType.COLON, this.spanFrom(tokenStart), ":"); //$NON-NLS-1$
                 } else if (next == '=') {
                     state = 5;
                 } else if (next == '<') {
@@ -266,11 +266,11 @@ public class InputScanner extends AbstractTokenStream {
                 int next = this.readChar();
                 
                 if (next == '=') {
-                    return new Token(TokenType.NEQ, this.spanFrom(tokenStart), "!=");
+                    return new Token(TokenType.NEQ, this.spanFrom(tokenStart), "!="); //$NON-NLS-1$
                 } else {
                     this.pushBack(next);
                     return new Token(
-                            TokenType.EXCLAMATION, this.spanFrom(tokenStart), "!");
+                            TokenType.EXCLAMATION, this.spanFrom(tokenStart), "!"); //$NON-NLS-1$
                 }
                 
             } else if (state == 3) {
@@ -280,20 +280,20 @@ public class InputScanner extends AbstractTokenStream {
                     state = 16;
                 } else if (next == '<') {
                     return new Token(
-                        TokenType.LEFT_SHIFT, this.spanFrom(tokenStart), "<<");
+                        TokenType.LEFT_SHIFT, this.spanFrom(tokenStart), "<<"); //$NON-NLS-1$
                 } else {
                     this.pushBack(next);
-                    return new Token(TokenType.LT, this.spanFrom(tokenStart), "<");
+                    return new Token(TokenType.LT, this.spanFrom(tokenStart), "<"); //$NON-NLS-1$
                 }
                 
             } else if (state == 4) {
                 int next = this.readChar();
                 
                 if (next == '=') {
-                    return new Token(TokenType.EGT, this.spanFrom(tokenStart), ">=");
+                    return new Token(TokenType.EGT, this.spanFrom(tokenStart), ">="); //$NON-NLS-1$
                 } else {
                     this.pushBack(next);
-                    return new Token(TokenType.GT, this.spanFrom(tokenStart), ">");
+                    return new Token(TokenType.GT, this.spanFrom(tokenStart), ">"); //$NON-NLS-1$
                 }
                 
             } else if (state == 5) {
@@ -314,29 +314,29 @@ public class InputScanner extends AbstractTokenStream {
                 int next = this.readChar();
                 
                 if (next == '|') {
-                    return new Token(TokenType.BOOLEAN_OR, this.spanFrom(tokenStart), "||");
+                    return new Token(TokenType.BOOLEAN_OR, this.spanFrom(tokenStart), "||"); //$NON-NLS-1$
                 } else {
                     this.pushBack(next);
-                    return new Token(TokenType.INT_OR, this.spanFrom(tokenStart), "|");
+                    return new Token(TokenType.INT_OR, this.spanFrom(tokenStart), "|"); //$NON-NLS-1$
                 }
                 
             } else if (state == 7) {
                 int next = this.readChar();
                 
                 if (next == '&') {
-                    return new Token(TokenType.BOOLEAN_AND, this.spanFrom(tokenStart), "&&");
+                    return new Token(TokenType.BOOLEAN_AND, this.spanFrom(tokenStart), "&&"); //$NON-NLS-1$
                 } else if (next == '|') {
-                    return new Token(TokenType.AND_OR, this.spanFrom(tokenStart), "&|");
+                    return new Token(TokenType.AND_OR, this.spanFrom(tokenStart), "&|"); //$NON-NLS-1$
                 } else {
                     this.pushBack(next);
-                    return new Token(TokenType.INT_AND, this.spanFrom(tokenStart), "&");
+                    return new Token(TokenType.INT_AND, this.spanFrom(tokenStart), "&"); //$NON-NLS-1$
                 }
                 
             } else if (state == 8) {
                 int next = this.readChar();
                 
                 if (next == '.') {
-                    return new Token(TokenType.DOTDOT, this.spanFrom(tokenStart), "..");
+                    return new Token(TokenType.DOTDOT, this.spanFrom(tokenStart), ".."); //$NON-NLS-1$
                 } else if (Character.isDigit(next)) {
                     this.pushBackArtificial('0');
                     this.pushBack('.');
@@ -344,48 +344,48 @@ public class InputScanner extends AbstractTokenStream {
                     return this.readNumber();
                 } else {
                     this.pushBack(next);
-                    return new Token(TokenType.DOT, this.spanFrom(tokenStart), ".");
+                    return new Token(TokenType.DOT, this.spanFrom(tokenStart), "."); //$NON-NLS-1$
                 }
             } else if (state == 9) {
                 int next = this.readChar();
                 
                 if (next == '~') {
-                    return new Token(TokenType.ADDWAVE, this.spanFrom(tokenStart), "+~");
+                    return new Token(TokenType.ADDWAVE, this.spanFrom(tokenStart), "+~"); //$NON-NLS-1$
                 } else if (next == '=') {
                     return new Token(TokenType.ADDEQUALS, this.spanFrom(tokenStart), 
-                        "+=");
+                        "+="); //$NON-NLS-1$
                 } else {
                     this.pushBack(next);
-                    return new Token(TokenType.ADD, this.spanFrom(tokenStart), "+");
+                    return new Token(TokenType.ADD, this.spanFrom(tokenStart), "+"); //$NON-NLS-1$
                 }
                 
             } else if (state == 10) {
                 int next = this.readChar();
                 
                 if (next == '>') {
-                    return new Token(TokenType.ASSIGNMENT, this.spanFrom(tokenStart), "->");
+                    return new Token(TokenType.ASSIGNMENT, this.spanFrom(tokenStart), "->"); //$NON-NLS-1$
                 } else if (next == '=') {
                     return new Token(TokenType.SUBEQUALS, this.spanFrom(tokenStart), 
-                        "-=");
+                        "-="); //$NON-NLS-1$
                 } else {
                     this.pushBack(next);
-                    return new Token(TokenType.SUB, this.spanFrom(tokenStart), "-");
+                    return new Token(TokenType.SUB, this.spanFrom(tokenStart), "-"); //$NON-NLS-1$
                 }
             } else if (state == 12) {
                 int next = this.readChar();
                 
                 if (next == '!') {
                     return new Token(TokenType.QUEST_EXCALAMTION, 
-                        this.spanFrom(tokenStart), "?!");
+                        this.spanFrom(tokenStart), "?!"); //$NON-NLS-1$
                 } else {
                     this.pushBack(next);
-                    return new Token(TokenType.QUESTION, this.spanFrom(tokenStart), "?");
+                    return new Token(TokenType.QUESTION, this.spanFrom(tokenStart), "?"); //$NON-NLS-1$
                 }
             } else if (state == 13) {
                 int next = this.readChar();
                 
                 if (next == '(') {
-                    return new Token(TokenType.LAMBDA, this.spanFrom(tokenStart), "\\(");
+                    return new Token(TokenType.LAMBDA, this.spanFrom(tokenStart), "\\("); //$NON-NLS-1$
                 } else {
                     this.pushBack(next);
                     final Token escaped = this.readToken();
@@ -395,21 +395,21 @@ public class InputScanner extends AbstractTokenStream {
                 int next = this.readChar();
                 
                 if (next == '^') {
-                    return new Token(TokenType.XOR, this.spanFrom(tokenStart), "^^");
+                    return new Token(TokenType.XOR, this.spanFrom(tokenStart), "^^"); //$NON-NLS-1$
                 } else if (next == 'T') {
-                    return new Token(TokenType.TRANSPOSE, this.spanFrom(tokenStart), "^T");
+                    return new Token(TokenType.TRANSPOSE, this.spanFrom(tokenStart), "^T"); //$NON-NLS-1$
                 } else {
                     this.pushBack(next);
-                    return new Token(TokenType.POWER, this.spanFrom(tokenStart), "^");
+                    return new Token(TokenType.POWER, this.spanFrom(tokenStart), "^"); //$NON-NLS-1$
                 }
             } else if (state == 15) {
                 int next = this.readChar();
                 
                 if (next == '/') {
-                    return new Token(TokenType.INTDIV, this.spanFrom(tokenStart), "//");
+                    return new Token(TokenType.INTDIV, this.spanFrom(tokenStart), "//"); //$NON-NLS-1$
                 } else {
                     this.pushBack(next);
-                    return new Token(TokenType.DIV, this.spanFrom(tokenStart), "/");
+                    return new Token(TokenType.DIV, this.spanFrom(tokenStart), "/"); //$NON-NLS-1$
                 }
             } else if (state == 16) {
                 int next = this.readChar();
@@ -421,7 +421,7 @@ public class InputScanner extends AbstractTokenStream {
                     return new Token(TokenType.ELT, this.spanFrom(tokenStart), "<=");
                 }
             } else {
-                throw new IllegalStateException("unhandled state: " + state);
+                throw new IllegalStateException("unhandled state: " + state); //$NON-NLS-1$
             }
         }
         
@@ -581,7 +581,7 @@ public class InputScanner extends AbstractTokenStream {
             } else {
                 this.pushBack(next);
                 return new Token(TokenType.CHANNEL, 
-                		this.spanFrom(tokenStart), "#" + lexem.toString());
+                		this.spanFrom(tokenStart), "#" + lexem.toString()); //$NON-NLS-1$
             }
         }
         
@@ -622,7 +622,7 @@ public class InputScanner extends AbstractTokenStream {
                     return new Token(TokenType.USER, 
                         this.spanFrom(tokenStart), lexem.toString());
                 } else {
-                    lexem.append("-");
+                    lexem.append("-"); //$NON-NLS-1$
                     this.pushBack(next);
                     state = 0;
                 }
@@ -926,7 +926,7 @@ public class InputScanner extends AbstractTokenStream {
             } // state
         } // while
         
-        throw new IllegalStateException("should not be reachable");
+        throw new IllegalStateException("should not be reachable"); //$NON-NLS-1$
     }
     
     
@@ -1199,7 +1199,7 @@ public class InputScanner extends AbstractTokenStream {
             case 'w': return 604800;
             case 'y': return 31536000;
             default:
-                throw new IllegalArgumentException("No valid time modifier char.");
+                throw new IllegalArgumentException("No valid time modifier char."); //$NON-NLS-1$
         }
     }
 }

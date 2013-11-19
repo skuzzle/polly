@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -14,18 +15,15 @@ import de.skuzzle.polly.sdk.exceptions.UnknownAttributeException;
 public class GetAttributeCommand extends Command {
 
     public GetAttributeCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "getattr");
-        this.createSignature("Liest den Wert eines Attributes eine Benutzers aus. " +
-        		"Dieser Befehl ist nur für Admins", 
+        super(polly, "getattr"); //$NON-NLS-1$
+        this.createSignature(MSG.getAttributeSig0Desc, 
     		MyPlugin.GET_USER_ATTRIBUTE_PERMISSION,
-            new Parameter("Benutzer", Types.USER), 
-            new Parameter("Attributename", Types.STRING));
-        this.createSignature("Liest ein Attribute des Benutzers aus, der den Befehl " +
-        		"ausführt.", 
+            new Parameter(MSG.userName, Types.USER), 
+            new Parameter(MSG.getAttributeSigAttribute, Types.STRING));
+        this.createSignature(MSG.getAttributeSig1Desc, 
     		MyPlugin.GET_ATTRIBUTE_PERMISSION,
-    		new Parameter("Attributname", Types.STRING));
-        this.setHelpText("Liest Benutzer-Attribute aus. Verfügbare Attribute können " +
-        		"mit :listattr angezeigt werden.");
+    		new Parameter(MSG.getAttributeSigAttribute, Types.STRING));
+        this.setHelpText(MSG.getAttributeHelp);
         this.setRegisteredOnly();
     }
 
@@ -54,14 +52,15 @@ public class GetAttributeCommand extends Command {
     private void getAttribute(User dest, String userName, String attribute, String channel) 
             throws CommandException {
         if (dest == null) {
-            throw new CommandException("Unbekannter Benutzer: " + userName);
+            throw new CommandException(MSG.bind(MSG.unknownUser, userName));
         }
         
         try {
-            this.reply(channel, "Attributwert: " + 
-                dest.getAttribute(attribute).valueString(this.getMyPolly().formatting()));
+            this.reply(channel, MSG.bind(MSG.getAttributeValue, 
+                dest.getAttribute(attribute).valueString(this.getMyPolly().formatting())));
         } catch (UnknownAttributeException e) {
-            throw new CommandException("Unbekanntes Attribut: " + attribute);
+            throw new CommandException(
+                    MSG.bind(MSG.getAttributeUnknownAttr, attribute));
         }
     }
 }

@@ -6,6 +6,7 @@ import java.util.Map;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
+import de.skuzzle.polly.sdk.time.Milliseconds;
 import de.skuzzle.polly.sdk.time.Time;
 
 
@@ -27,7 +28,7 @@ public abstract class DelayedCommand extends Command {
     private boolean quiet;
     private Map<User, Long> lastExecutions;
     
-    
+
     
     /**
      * Creates a new delayed Command. See the documentation of {@link Command} for 
@@ -182,10 +183,9 @@ public abstract class DelayedCommand extends Command {
             return false;
         }
         
-        long remaining = (this.delay - diff) / 1000; 
-        String f = this.getMyPolly().formatting().formatTimeSpan(remaining);
-        throw new CommandException("Du kannst den Befehl erst in " + f + 
-                " wieder ausführen.");
+        final long remaining = Milliseconds.toSeconds(this.delay - diff); 
+        final String f = this.getMyPolly().formatting().formatTimeSpan(remaining);
+        throw new CommandException(Messages.bind(Messages.delayedCommandCantExecute, f));
     }
     
     

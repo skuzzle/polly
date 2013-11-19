@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.time.Milliseconds;
 import de.skuzzle.polly.tools.iterators.ArrayIterator;
+import polly.rx.MSG;
 import polly.rx.entities.BattleReport;
 import polly.rx.entities.BattleDrop;
 import polly.rx.entities.BattleReportShip;
@@ -21,20 +22,20 @@ import polly.rx.entities.RxRessource;
 
 public class BattleReportParser {
     
-    private final static Pattern NUBER_PATTERN = Pattern.compile("\\d+"); 
+    private final static Pattern NUBER_PATTERN = Pattern.compile("\\d+");  //$NON-NLS-1$
     
     final static Pattern WHERE_PATTERN = Pattern.compile(
-        "Gefecht bei (.*) (\\d+),(\\d+)");
+        "Gefecht bei (.*) (\\d+),(\\d+)"); //$NON-NLS-1$
     final static int QUADRANT_GROUP = 1;
     final static int X_GROUP = 2;
     final static int Y_GROUP = 3;
     
     
     private final static Pattern HEADER_PATTERN = Pattern.compile(
-        "Die (Angreifer|Verteidiger) waren siegreich\\s+Gefechtstaktik\\s+([^\n]+)\n" +
-        "\\s*Bonus Angreifer\\s+(-?\\d+)%\\s+Bonus Verteidiger\\s+(-?\\d+)%\n\\s*" +
-        "Kampfwert Angreifer/XP-Mod\\s+(\\d+(?:\\.\\d+)?)/(\\d+(\\.\\d+)?)\\s+" +
-        "Kampfwert Verteidiger/XP-Mod\\s+(\\d+(?:\\.\\d+)?)/(\\d+(\\.\\d+)?)", 
+        "Die (Angreifer|Verteidiger) waren siegreich\\s+Gefechtstaktik\\s+([^\n]+)\n" + //$NON-NLS-1$
+        "\\s*Bonus Angreifer\\s+(-?\\d+)%\\s+Bonus Verteidiger\\s+(-?\\d+)%\n\\s*" + //$NON-NLS-1$
+        "Kampfwert Angreifer/XP-Mod\\s+(\\d+(?:\\.\\d+)?)/(\\d+(\\.\\d+)?)\\s+" + //$NON-NLS-1$
+        "Kampfwert Verteidiger/XP-Mod\\s+(\\d+(?:\\.\\d+)?)/(\\d+(\\.\\d+)?)",  //$NON-NLS-1$
         Pattern.DOTALL);
     private final static int TACTIC_GROUP = 2;
     private final static int ATTACKER_BONUS_GROUP = 3;
@@ -45,16 +46,16 @@ public class BattleReportParser {
     private final static int DEFENDER_XPMOD_GROUP = 9;
     
     
-    private final static Pattern FLEET_NAME_PATTERN = Pattern.compile("(Angreifer|Verteidiger) Flotte: ([^\\)]+)\\(([^\\)]+)\\)");
+    private final static Pattern FLEET_NAME_PATTERN = Pattern.compile("(Angreifer|Verteidiger) Flotte: ([^\\)]+)\\(([^\\)]+)\\)"); //$NON-NLS-1$
     private final static int FLEET_NAME_GROUP = 2;
     private final static int VENAD_NAME_GROUP = 3;
     
     
-    private final static Pattern SHIP_PATTERN = Pattern.compile("(.*?)\\s{2,}(.*?)\\s+" + 
-        "Angriffswert\\s+(\\d+) / (\\d+)(\\(-(\\d+)\\))?\\s+Captain\\s+(-?\\d+) / (\\d+)(\\(-(\\d+)\\))?\\s+XPs\\s+(\\d+)\\s+" + 
-        "Schild\\s+(\\d+) / (\\d+)(\\(-(\\d+)\\))?\\s+Crew\\s+(-?\\d+) / (\\d+)(\\(-(\\d+)\\))?\\s+XPs\\s+(\\d+)\\s+" +
-        "Panzerung\\s+(\\d+) / (\\d+)(\\(-(\\d+)\\))?\\s+Systeme\\s+(-?\\d+) / (\\d+)(\\(-(\\d+)\\))?\\s+" + 
-        "Struktur\\s+(\\d+) / (\\d+)(\\(-(\\d+)\\))?\\s*(?:ID:(\\d+)\\s+)?");
+    private final static Pattern SHIP_PATTERN = Pattern.compile("(.*?)\\s{2,}(.*?)\\s+" +  //$NON-NLS-1$
+        "Angriffswert\\s+(\\d+) / (\\d+)(\\(-(\\d+)\\))?\\s+Captain\\s+(-?\\d+) / (\\d+)(\\(-(\\d+)\\))?\\s+XPs\\s+(\\d+)\\s+" +  //$NON-NLS-1$
+        "Schild\\s+(\\d+) / (\\d+)(\\(-(\\d+)\\))?\\s+Crew\\s+(-?\\d+) / (\\d+)(\\(-(\\d+)\\))?\\s+XPs\\s+(\\d+)\\s+" + //$NON-NLS-1$
+        "Panzerung\\s+(\\d+) / (\\d+)(\\(-(\\d+)\\))?\\s+Systeme\\s+(-?\\d+) / (\\d+)(\\(-(\\d+)\\))?\\s+" +  //$NON-NLS-1$
+        "Struktur\\s+(\\d+) / (\\d+)(\\(-(\\d+)\\))?\\s*(?:ID:(\\d+)\\s+)?"); //$NON-NLS-1$
     private final static int SHIP_NAME_GROUP = 1;
     private final static int CAPI_NAME_GROUP = 2;
     private final static int AW_GROUP = 4;
@@ -79,7 +80,7 @@ public class BattleReportParser {
     
     
     private final static DateFormat getDateFormat() {
-        return new SimpleDateFormat("HH:mm dd-MM-yyyy");
+        return new SimpleDateFormat("HH:mm dd-MM-yyyy"); //$NON-NLS-1$
     }
     
     
@@ -92,14 +93,14 @@ public class BattleReportParser {
         try {
             return parseReportHelper(paste, submitter);
         } catch (Exception e) {
-            throw new ParseException("ungültiger Kampfbericht");
+            throw new ParseException(MSG.reportParserInvalid); 
         }
     }
     
     
     
     private static BattleReport parseReportHelper(String paste, User submitter) throws ParseException {
-        String[] lines = paste.split("[\n\r]+");
+        String[] lines = paste.split("[\n\r]+"); //$NON-NLS-1$
         
         ArrayIterator<String> it = ArrayIterator.get(lines);
         // KB date
@@ -110,7 +111,7 @@ public class BattleReportParser {
             long d = date.getTime() / Milliseconds.fromMinutes(1) * Milliseconds.fromMinutes(1);
             date = new Date(d);
         } catch (Exception e) {
-            throw new ParseException("invalid date: " + it.previous());
+            throw new ParseException(MSG.bind(MSG.reportParserInvalidDate, it.previous()));
         }
         
         // KB drop
@@ -120,21 +121,21 @@ public class BattleReportParser {
         int i = 0;
         while (numbers.find()) {
             int amount = Integer.parseInt(numbers.group());
-            RxRessource r = RxRessource.byOrdinal(i++);
+            RxRessource r = RxRessource.values()[i++];
             drops.add(new BattleDrop(r, amount));
         }
         
         // kb artifact
-        boolean artifact = it.peekNext().startsWith("1 Artefakt");
+        boolean artifact = it.peekNext().startsWith("1 Artefakt"); //$NON-NLS-1$
         
         // KB location
-        while (!it.peekNext().startsWith("Gefecht bei ")) {
+        while (!it.peekNext().startsWith("Gefecht bei ")) { //$NON-NLS-1$
             it.next();
         }
         String tmp = it.next();
         Matcher where = WHERE_PATTERN.matcher(tmp);
         if (!where.find()) {
-            throw new ParseException("Invalid Quadrant specification: " + tmp);
+            throw new ParseException(MSG.bind(MSG.reportParserInvalidLocation, tmp));
         }
         
         String quadrant = RegexUtils.substr(tmp, where, QUADRANT_GROUP);
@@ -143,7 +144,7 @@ public class BattleReportParser {
         
         // KB tactic
         StringBuilder kbheader = new StringBuilder();
-        while (it.hasNext() && !it.peekNext().startsWith("Angreifer")) {
+        while (it.hasNext() && !it.peekNext().startsWith("Angreifer")) { //$NON-NLS-1$
             kbheader.append(it.next());
             kbheader.append('\n');
         }
@@ -151,7 +152,7 @@ public class BattleReportParser {
         tmp = kbheader.toString();
         Matcher header = HEADER_PATTERN.matcher(tmp);
         if (!header.find()) {
-            throw new ParseException("Invalid header");
+            throw new ParseException(MSG.reportParserInvalidHeader);
         }
         BattleTactic tactic = BattleTactic.parseTactic(
             RegexUtils.substr(tmp, header, TACTIC_GROUP));
@@ -170,20 +171,20 @@ public class BattleReportParser {
         tmp = it.next();
         Matcher fleet = FLEET_NAME_PATTERN.matcher(tmp);
         if (!fleet.find()) {
-            throw new ParseException("Expected attacker fleet name: " + tmp);
+            throw new ParseException(MSG.bind(MSG.reportParserExpectedAttackerFleet, tmp));
         }
         
         String attackerVenad = RegexUtils.substr(tmp, fleet, VENAD_NAME_GROUP);
-        String attackerClan = "";
+        String attackerClan = ""; //$NON-NLS-1$
         String attackerFleetName = RegexUtils.substr(tmp, fleet, FLEET_NAME_GROUP);
-        i = attackerVenad.indexOf("[");
+        i = attackerVenad.indexOf("["); //$NON-NLS-1$
         if (i != -1) {
             attackerClan = attackerVenad.substring(i + 1, attackerVenad.length() - 1);
             attackerVenad = attackerVenad.substring(0, attackerVenad.length() - attackerClan.length() - 2);
         }
         
         StringBuilder b = new StringBuilder();
-        while (it.hasNext() && !it.peekNext().startsWith("Verteidiger Flotte")) {
+        while (it.hasNext() && !it.peekNext().startsWith("Verteidiger Flotte")) { //$NON-NLS-1$
             b.append(it.next());
             b.append('\n');
         }
@@ -192,12 +193,12 @@ public class BattleReportParser {
         tmp = it.next();
         fleet = FLEET_NAME_PATTERN.matcher(tmp);
         if (!fleet.find()) {
-            throw new ParseException("Expected defender fleet name:" + tmp);
+            throw new ParseException(MSG.bind(MSG.reportParserExpectedDefenderFleet, tmp));
         }
         String defenderVenad = RegexUtils.substr(tmp, fleet, VENAD_NAME_GROUP);
         String defenderFleetName = RegexUtils.substr(tmp, fleet, FLEET_NAME_GROUP);
-        String defenderClan = "";
-        i = defenderVenad.indexOf("[");
+        String defenderClan = ""; //$NON-NLS-1$
+        i = defenderVenad.indexOf("["); //$NON-NLS-1$
         if (i != -1) {
             defenderClan = defenderVenad.substring(i + 1, defenderVenad.length() - 1);
             defenderVenad = defenderVenad.substring(0, defenderVenad.length() - defenderClan.length() - 2);
@@ -205,7 +206,7 @@ public class BattleReportParser {
         List<BattleReportShip> attackerShips = parseShips(b.toString());
         
         if (attackerShips.isEmpty()) {
-            throw new ParseException("No attacker ships");
+            throw new ParseException(MSG.reportParserNoAttackerShips);
         }
         
         b = new StringBuilder();
@@ -216,7 +217,7 @@ public class BattleReportParser {
         List<BattleReportShip> defenderShips = parseShips(b.toString());
         
         if (defenderShips.isEmpty()) {
-            throw new ParseException("No defender ships");
+            throw new ParseException(MSG.reportParserNoDefenderShips);
         }
         
         return new BattleReport(submitter.getId(), quadrant, x, y, drops, artifact, date, 
@@ -264,7 +265,6 @@ public class BattleReportParser {
             BattleReportShip ship = new BattleReportShip(rxId, shipName, capiName, aw, 
                 shields, pz, structure, minCrew, maxCrew, systems, xpCapi, xpCrew, 
                 shieldsDmg, currentPz, pzDmg, structureDmg, systemsDmg, hp, hpDmg, awDmg, crewDmg);
-            System.out.println(ship);
             result.add(ship);
         }
         

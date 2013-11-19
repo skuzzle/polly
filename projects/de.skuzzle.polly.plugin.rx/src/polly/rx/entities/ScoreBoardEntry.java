@@ -1,6 +1,5 @@
 package polly.rx.entities;
 
-import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,22 +18,21 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import de.skuzzle.polly.sdk.CSVExportable;
 import de.skuzzle.polly.sdk.time.Milliseconds;
 
 
 @Entity
 @NamedQueries({
     @NamedQuery(
-        name = "ALL_SBE_DISTINCT",
+        name = ScoreBoardEntry.ALL_SBE_DISTINCT,
         query= "SELECT sbe FROM ScoreBoardEntry sbe GROUP BY sbe.venadName ORDER BY sbe.date, sbe.rank DESC"
     ),
     @NamedQuery(
-        name = "SBE_BY_USER",
+        name = ScoreBoardEntry.SBE_BY_USER,
         query = "SELECT sbe FROM ScoreBoardEntry sbe WHERE sbe.venadName = ?1 ORDER BY sbe.date, sbe.rank DESC"
     )
 })
-public class ScoreBoardEntry implements CSVExportable {
+public class ScoreBoardEntry {
     
     
     public final static Comparator<ScoreBoardEntry> BY_DATE = 
@@ -107,11 +105,11 @@ public class ScoreBoardEntry implements CSVExportable {
     
     
     
-    public final static String ALL_SBE_DISTINCT = "ALL_SBE_DISTINCT";
-    public final static String SBE_BY_USER = "SBE_BY_USER";
+    public final static String ALL_SBE_DISTINCT = "ALL_SBE_DISTINCT"; //$NON-NLS-1$
+    public final static String SBE_BY_USER = "SBE_BY_USER"; //$NON-NLS-1$
     
     public final static DateFormat getCSVDateFormat() {
-        return new SimpleDateFormat("dd.MM.yyyy");
+        return new SimpleDateFormat("dd.MM.yyyy"); //$NON-NLS-1$
     }
     
     @Id@GeneratedValue(strategy = GenerationType.TABLE)
@@ -241,35 +239,5 @@ public class ScoreBoardEntry implements CSVExportable {
     
     public void setDaysToPrevious(int daysToPrevious) {
         this.daysToPrevious = daysToPrevious;
-    }
-    
-    
-    
-    @Override
-    public void printBanner(PrintWriter writer, String separator) {
-        writer.print("date");
-        writer.print(separator);
-        writer.print("rank");
-        writer.print(separator);
-        writer.print("venad");
-        writer.print(separator);
-        writer.print("clan");
-        writer.print(separator);
-        writer.println("points");
-    }
-    
-
-
-    @Override
-    public void printCSVLine(PrintWriter writer, String separator) {
-        writer.print(getCSVDateFormat().format(this.date));
-        writer.print(separator);
-        writer.print(this.rank);
-        writer.print(separator);
-        writer.print(this.venadName);
-        writer.print(separator);
-        writer.print(this.clan);
-        writer.print(separator);
-        writer.println(this.points);
     }
 }

@@ -7,7 +7,11 @@ import de.skuzzle.polly.http.api.HttpServletServer;
 
 public interface WebinterfaceManager {
     
-    public final static String ADD_MENU_ENTRY = "ADD_MENU_ENTRY";
+    public final static String USER = "user"; //$NON-NLS-1$
+    
+    public final static String LOGIN_TIME = "loginTime"; //$NON-NLS-1$
+    
+    public final static String ADD_MENU_ENTRY = "ADD_MENU_ENTRY"; //$NON-NLS-1$
     
     public void addTopMenuEntry(MenuEntry me);
     

@@ -36,7 +36,7 @@ public class Version implements Comparable<Version> {
     public final static int BUILD = 2;
     
     private final static Pattern PATTERN = Pattern.compile(
-        "(\\d+).(\\d+).(\\d+)( - (.+))?");
+        "(\\d+).(\\d+).(\\d+)( - (.+))?"); //$NON-NLS-1$
     
     private int[] fields;
     private String versionString;
@@ -60,7 +60,7 @@ public class Version implements Comparable<Version> {
     public Version(String version) {
         Matcher m = PATTERN.matcher(version);
         if (!m.matches()) {
-            throw new IllegalArgumentException("misformatted version string: " + version);
+            throw new IllegalArgumentException("misformatted version string: " + version); //$NON-NLS-1$
         }
         String v1 = version.substring(m.start(1), m.end(1));
         String v2 = version.substring(m.start(2), m.end(2));
@@ -71,12 +71,12 @@ public class Version implements Comparable<Version> {
                                      Integer.parseInt(v2), 
                                      Integer.parseInt(v3)};
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("misformatted version string: " + version);
+            throw new IllegalArgumentException("misformatted version string: " + version); //$NON-NLS-1$
         }
         if (m.groupCount() >= 5) {
             this.name = version.substring(m.start(5), m.end(5));
         } else {
-            name = "";
+            name = ""; //$NON-NLS-1$
         }
 
         this.versionString = version;
@@ -92,7 +92,7 @@ public class Version implements Comparable<Version> {
      * @param build The BUILD part.
      */
     public Version(int version, int rev, int build) {
-        this(version, rev, build, "");
+        this(version, rev, build, ""); //$NON-NLS-1$
     }
     
     
@@ -108,9 +108,9 @@ public class Version implements Comparable<Version> {
      */
     public Version(int version, int rev, int build, String name) {
         this.fields = new int[] {version, rev, build};
-        String tmp = name == null ? "" : name;
-        tmp = tmp.equals("") ? "" : " - " + tmp;
-        this.versionString = version + "." + rev + "." + build + tmp;
+        String tmp = name == null ? "" : name; //$NON-NLS-1$
+        tmp = tmp.equals("") ? "" : " - " + tmp; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        this.versionString = version + "." + rev + "." + build + tmp; //$NON-NLS-1$ //$NON-NLS-2$
         this.name = name;
     }
     
@@ -125,7 +125,7 @@ public class Version implements Comparable<Version> {
      */
     public int get(int field) {
         if (field < VERSION || field > BUILD) {
-            throw new IndexOutOfBoundsException("" + field);
+            throw new IndexOutOfBoundsException("" + field); //$NON-NLS-1$
         }
         return this.fields[field];
     }

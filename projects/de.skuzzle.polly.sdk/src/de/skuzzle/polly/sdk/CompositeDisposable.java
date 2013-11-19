@@ -82,7 +82,7 @@ public class CompositeDisposable extends LinkedList<Disposable> implements Dispo
     @Override
     public synchronized void dispose() throws DisposingException {
         if (this.isDisposed()) {
-            throw new IllegalStateException("already disposed.");
+            throw new IllegalStateException("already disposed."); //$NON-NLS-1$
         }
         Exception error = null;
         for (Disposable disp : this) {
@@ -90,7 +90,6 @@ public class CompositeDisposable extends LinkedList<Disposable> implements Dispo
                 continue; 
             }
             try {
-                System.out.println("Disposing: " + disp.toString());
                 disp.dispose();
             } catch (Exception e) {
                 error = e;

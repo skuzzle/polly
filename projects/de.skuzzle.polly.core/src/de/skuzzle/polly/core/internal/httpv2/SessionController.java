@@ -19,8 +19,21 @@ import de.skuzzle.polly.sdk.roles.RoleManager;
 
 public class SessionController extends PollyController {
 
+    private final static String ADMIN_CATEGORY_KEY = "sessionAdminCategory"; //$NON-NLS-1$
+    private final static String SESSION_NAME_KEY = "sessionManagerPage"; //$NON-NLS-1$
+    private final static String SESSION_DESC_KEY = "sessionManagerDesc"; //$NON-NLS-1$
+    
+    public final static String PAGE_SESSION_MANAGER = "/pages/sessions"; //$NON-NLS-1$
+    
+    private final static String CONTENT_SESSION_MANAGER = "templatesv2/sessions.html"; //$NON-NLS-1$
+    
+    public final static String API_KILL_SESSION = "/api/killSession"; //$NON-NLS-1$
+    public final static String API_DETACH = "/api/detach"; //$NON-NLS-1$
+    public final static String API_GET_EVENTS = "/api/getEvents"; //$NON-NLS-1$
+    private static final String CONTENT_GET_EVENTS = "templatesv2/session.events.html"; //$NON-NLS-1$
     
     
+        
     public SessionController(MyPolly myPolly) {
         super(myPolly);
     }
@@ -34,61 +47,68 @@ public class SessionController extends PollyController {
 
     
     
-    @Get(value = "/pages/sessions", name = "Sessions")
+    @Get(value = PAGE_SESSION_MANAGER, name = SESSION_NAME_KEY)
     @OnRegister({
         WebinterfaceManager.ADD_MENU_ENTRY, 
-        "Admin", "List and manage currently active HTTP sessions",
+        MSG.FAMILY,
+        ADMIN_CATEGORY_KEY,
+        SESSION_DESC_KEY,
         RoleManager.ADMIN_PERMISSION
     })
     public HttpAnswer sessions() throws AlternativeAnswerException {
         this.requirePermissions(RoleManager.ADMIN_PERMISSION);
-        final Map<String, Object> c = this.createContext("templatesv2/sessions.html");
-        c.put("allSessions", this.getMyPolly().webInterface().getServer().getSessions());
+        final Map<String, Object> c = this.createContext(CONTENT_SESSION_MANAGER);
+        c.put("allSessions", this.getMyPolly().webInterface().getServer().getSessions()); //$NON-NLS-1$
         
         return this.makeAnswer(c);
     }
     
     
     
-    @Get("/api/killSession")
-    public HttpAnswer killSession(@Param("id") String id) {
+    @Get(API_KILL_SESSION)
+    public HttpAnswer killSession(@Param("id") String id) 
+            throws AlternativeAnswerException {
+        this.requirePermissions(RoleManager.ADMIN_PERMISSION);
         final HttpSession session = this.getServer().findSession(id);
         if (session != null) {
             session.kill();
-            return HttpAnswers.newStringAnswer("success");
+            return HttpAnswers.newStringAnswer("success"); //$NON-NLS-1$
         }
-        return HttpAnswers.newStringAnswer("fail");
+        return HttpAnswers.newStringAnswer("fail"); //$NON-NLS-1$
     }
     
     
-    @Get("/api/detach")
-    public HttpAnswer detachItem(@Param("id") String id, @Param("key") String key) {
+    
+    @Get(API_DETACH)
+    public HttpAnswer detachItem(@Param("id") String id, @Param("key") String key) 
+            throws AlternativeAnswerException {
+        this.requirePermissions(RoleManager.ADMIN_PERMISSION);
         final HttpSession session = this.getServer().findSession(id);
         if (session != null) {
             session.detach(key);
-            return HttpAnswers.newStringAnswer("success");
+            return HttpAnswers.newStringAnswer("success"); //$NON-NLS-1$
         }
-        return HttpAnswers.newStringAnswer("fail");
+        return HttpAnswers.newStringAnswer("fail"); //$NON-NLS-1$
     }
     
     
     
-    @Get("/api/getEvents")
+    @Get(API_GET_EVENTS)
     public HttpAnswer listSessions(@Param("id") String id) 
             throws AlternativeAnswerException {
         
         if (!this.getMyPolly().roles().hasPermission(
                 this.getSessionUser(), RoleManager.ADMIN_PERMISSION)) {
             
-            return HttpAnswers.newStringAnswer("Required permission: " + 
-                RoleManager.ADMIN_PERMISSION);
+            return HttpAnswers.newStringAnswer(MSG.bind(MSG.sessionRequiredPermission, 
+                    RoleManager.ADMIN_PERMISSION));
         }
         
         final HttpSession session = this.getServer().findSession(id);
         final Map<String, Object> c = new HashMap<>();
-        c.put("myPolly", this.getMyPolly());
-        c.put("ss", session);
+        c.put("myPolly", this.getMyPolly()); //$NON-NLS-1$
+        c.put("ss", session); //$NON-NLS-1$
         
-        return HttpAnswers.newTemplateAnswer("templatesv2/session.events.html", c);
+        return HttpAnswers.newTemplateAnswer(CONTENT_GET_EVENTS, c);
     }
 }

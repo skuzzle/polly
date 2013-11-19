@@ -10,7 +10,7 @@ public class HTMLElementGroup extends HTMLElement {
     
     
     public HTMLElementGroup() {
-        super("");
+        super(""); //$NON-NLS-1$
         this.group = new ArrayList<>();
     }
     
@@ -26,7 +26,7 @@ public class HTMLElementGroup extends HTMLElement {
         final StringBuilder b = new StringBuilder();
         for (final HTMLElement inp : this.group) {
             b.append(inp.toString());
-            b.append(" ");
+            b.append(" "); //$NON-NLS-1$
         }
         return b.toString();
     }

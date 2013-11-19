@@ -120,7 +120,7 @@ public class Types {
 		
 		@Override
         public String getSample() {
-            return "27.45";
+            return "27.45"; //$NON-NLS-1$
         };
 		
 		
@@ -164,11 +164,11 @@ public class Types {
 		}
 		public String toString(boolean withValue) {
 			StringBuilder b = new StringBuilder();
-			b.append("Number");
+			b.append("Number"); //$NON-NLS-1$
 			if (withValue) {
-				b.append(" (");
+				b.append(" ("); //$NON-NLS-1$
 				b.append(this.value);
-				b.append(")");
+				b.append(")"); //$NON-NLS-1$
 			}
 			return b.toString();
 		}
@@ -205,7 +205,7 @@ public class Types {
 		
 		@Override
         public String getSample() {
-            return "true";
+            return "true"; //$NON-NLS-1$
         };
 		
 		
@@ -233,11 +233,11 @@ public class Types {
 		}
 		public String toString(boolean withValue) {
 			StringBuilder b = new StringBuilder();
-			b.append("Boolean");
+			b.append("Boolean"); //$NON-NLS-1$
 			if (withValue) {
-				b.append(" (");
+				b.append(" ("); //$NON-NLS-1$
 				b.append(this.value);
-				b.append(")");
+				b.append(")"); //$NON-NLS-1$
 			}
 			return b.toString();
 		}
@@ -267,14 +267,14 @@ public class Types {
 		 * formal signature parameters.
 		 */
 		protected StringType() {
-			this("");
+			this(""); //$NON-NLS-1$
 		}
 		
 		
 		@Override
         public String getSample() {
-            return "\"Nur ein Beispiel\"";
-        };
+            return Messages.typesStringSample;
+        }
 		
 		
 		/**
@@ -301,11 +301,11 @@ public class Types {
 		}
 		public String toString(boolean withValue) {
 			StringBuilder b = new StringBuilder();
-			b.append("String");
+			b.append("String"); //$NON-NLS-1$
 			if (withValue) {
-				b.append(" (");
+				b.append(" ("); //$NON-NLS-1$
 				b.append(this.value);
-				b.append(")");
+				b.append(")"); //$NON-NLS-1$
 			}
 			return b.toString();
 		}
@@ -336,13 +336,13 @@ public class Types {
 		 * formal signature parameters.
 		 */
 		protected ChannelType() {
-			this("");
+			this(""); //$NON-NLS-1$
 		}
 		
 		
 		@Override
         public String getSample() {
-            return "#channel";
+            return "#channel"; //$NON-NLS-1$
         };
 		
 		
@@ -369,11 +369,11 @@ public class Types {
 		}
 		public String toString(boolean withValue) {
 			StringBuilder b = new StringBuilder();
-			b.append("Channel");
+			b.append("Channel"); //$NON-NLS-1$
 			if (withValue) {
-				b.append(" (");
+				b.append(" ("); //$NON-NLS-1$
 				b.append(this.value);
-				b.append(")");
+				b.append(")"); //$NON-NLS-1$
 			}
 			return b.toString();
 		}
@@ -403,14 +403,14 @@ public class Types {
 		 * formal signature parameters.
 		 */
 		protected UserType() {
-			this("");
+			this(""); //$NON-NLS-1$
 		}
 		
 		
 		
 		@Override
         public String getSample() {
-            return "@Hans";
+            return "@Hans"; //$NON-NLS-1$
         };
 		
 		
@@ -436,11 +436,11 @@ public class Types {
 		}
 		public String toString(boolean withValue) {
 			StringBuilder b = new StringBuilder();
-			b.append("User");
+			b.append("User"); //$NON-NLS-1$
 			if (withValue) {
-				b.append(" (");
+				b.append(" ("); //$NON-NLS-1$
 				b.append(this.value);
-				b.append(")");
+				b.append(")"); //$NON-NLS-1$
 			}
 			return b.toString();
 		}
@@ -477,7 +477,7 @@ public class Types {
 		
 		@Override
         public String getSample() {
-            return "24.12.2012@17:30";
+            return "24.12.2012@17:30"; //$NON-NLS-1$
         };
 		
 		
@@ -504,11 +504,11 @@ public class Types {
 		}
 		public String toString(boolean withValue) {
 			StringBuilder b = new StringBuilder();
-			b.append("Date");
+			b.append("Date"); //$NON-NLS-1$
 			if (withValue) {
-				b.append(" (");
+				b.append(" ("); //$NON-NLS-1$
 				b.append(this.value);
-				b.append(")");
+				b.append(")"); //$NON-NLS-1$
 			}
 			return b.toString();
 		}
@@ -561,7 +561,7 @@ public class Types {
 	    
 	    @Override
 	    public String getSample() {
-	        return "8h22m7s";
+	        return "8h22m7s"; //$NON-NLS-1$
 	    };
 	    
 	    
@@ -580,7 +580,7 @@ public class Types {
 	    
 	    
 	    public String toString() {
-	        return "Timespan";
+	        return "Timespan"; //$NON-NLS-1$
 	    }
 
         @Override
@@ -636,8 +636,12 @@ public class Types {
 		
 		@Override
 		public String getSample() {
-		    return "{" + this.subtype.getSample() + "}"; 
-		};
+		    return "{" +  //$NON-NLS-1$
+		            this.subtype.getSample() + "," +  //$NON-NLS-1$
+		            this.subtype.getSample() 
+		            + "}";  //$NON-NLS-1$
+		}
+		
 		
 		
 		/**
@@ -654,15 +658,15 @@ public class Types {
         @Override
         public String valueString(FormatManager formatter) {
             StringBuilder b = new StringBuilder();
-            b.append("{");
+            b.append("{"); //$NON-NLS-1$
             Iterator<Types> it = this.elements.iterator();
             while (it.hasNext()) {
                 b.append(it.next().valueString(formatter));
                 if (it.hasNext()) {
-                    b.append(", ");
+                    b.append(", "); //$NON-NLS-1$
                 }
             }
-            b.append("}");
+            b.append("}"); //$NON-NLS-1$
             return b.toString();
         }
 		
@@ -699,13 +703,13 @@ public class Types {
 		}
 		public String toString(boolean withValue) {
 			StringBuilder b = new StringBuilder();
-			b.append("List<");
+			b.append("List<"); //$NON-NLS-1$
 			b.append(this.getElementType().toString());
-			b.append(">");
+			b.append(">"); //$NON-NLS-1$
 			if (withValue) {
-				b.append(" (");
+				b.append(" ("); //$NON-NLS-1$
 				b.append(this.elements);
-				b.append(")");
+				b.append(")"); //$NON-NLS-1$
 			}
 			return b.toString();
 		}
@@ -729,13 +733,13 @@ public class Types {
 
 		@Override
 		public String toString() {
-			return "Any";
+			return "Any"; //$NON-NLS-1$
 		}
 		
 		
 		
 		public String getSample() {
-		    return "5.8";
+		    return "5.8"; //$NON-NLS-1$
 		};
 	}
 	
@@ -752,7 +756,7 @@ public class Types {
         protected HelpType() {}
         
         public String toString() {
-            return "?";
+            return "?"; //$NON-NLS-1$
         }
         
     }
@@ -775,7 +779,7 @@ public class Types {
 	
 	
 	public String valueString(FormatManager formatter) {
-	    return "";
+	    return ""; //$NON-NLS-1$
 	}
 	
 	
@@ -785,7 +789,7 @@ public class Types {
 	 * 
 	 * @return A String sample for this type.
 	 */
-	public String getSample() { return ""; };
+	public String getSample() { return ""; }; //$NON-NLS-1$
 	
 	
 	

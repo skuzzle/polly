@@ -73,7 +73,7 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
         
         private void checkClosed() {
             if (this.isDisposed()) {
-                throw new IllegalStateException("ConversationImpl closed");
+                throw new IllegalStateException("ConversationImpl closed"); //$NON-NLS-1$
             }
         }
         
@@ -96,7 +96,7 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
                 if (this.readThread == null) {
                     this.readThread = Thread.currentThread();
                 } else if (!this.readThread.equals(Thread.currentThread())) {
-                    throw new IOException("invalid cross thread read");
+                    throw new IOException("invalid cross thread read"); //$NON-NLS-1$
                 }
             }
             
@@ -129,7 +129,7 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
         
         
         private synchronized void onMessage(final MessageEvent e) {
-            assert !this.isDisposed() : "Listener should have been removed before closing";
+            assert !this.isDisposed() : "Listener should have been removed before closing"; //$NON-NLS-1$
             if (!e.getChannel().equals(this.channel) || 
                 !e.getUser().getNickName().equals(this.user.getCurrentNickName())) {
                 
@@ -143,7 +143,7 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
                     try {
                         ConversationImpl.this.readQueue.put(e);
                     } catch (InterruptedException e1) {
-                        logger.warn("Interrupted while reading", e1);
+                        logger.warn("Interrupted while reading", e1); //$NON-NLS-1$
                     }
                 }
             });
@@ -202,7 +202,7 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
                     this.dispose();
                 }
             } catch (DisposingException e) {
-                logger.error("Error while disposing", e);
+                logger.error("Error while disposing", e); //$NON-NLS-1$
             }
         }
         
@@ -233,7 +233,7 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
         
         @Override
         public String toString() {
-            return "CONV " + this.channel + ": " + this.user.getCurrentNickName(); 
+            return "CONV " + this.channel + ": " + this.user.getCurrentNickName();  //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
     
@@ -252,9 +252,9 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
     
     public ConversationManagerImpl() {
         this.convExecutor = Executors.newCachedThreadPool(
-            new ThreadFactoryBuilder("CONVERSATION_%n%"));
+            new ThreadFactoryBuilder("CONVERSATION_%n%")); //$NON-NLS-1$
         this.timeoutSched = Executors.newScheduledThreadPool(1, 
-            new ThreadFactoryBuilder("CONVERSATION_TIMEOUT"));
+            new ThreadFactoryBuilder("CONVERSATION_TIMEOUT")); //$NON-NLS-1$
         this.cache = Collections.synchronizedList(new LinkedList<Conversation>());
         
         
@@ -274,7 +274,7 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
                 synchronized (crossMutex) {
                     for (Conversation conv : cache) {
                         if (conv.isIdle()) {
-                            logger.warn("Auto closing idling conversation: " + conv);
+                            logger.warn("Auto closing idling conversation: " + conv); //$NON-NLS-1$
                             conv.close();
                         }
                     }
@@ -299,7 +299,7 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
             int idleTimeout) throws ConversationException {
         
         if (this.checkExisting(user, channel) != null) {
-            throw new ConversationException("Conversation already active");
+            throw new ConversationException("Conversation already active"); //$NON-NLS-1$
         }
         return this.createInternal(ircManager, user, channel, idleTimeout);
     }
@@ -309,7 +309,7 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
     private Conversation checkExisting(User user, String channel) {
         synchronized (crossMutex) {
             Conversation key = new ConversationImpl(null, user, channel, 0);
-            logger.info("Checking for existing conversation");
+            logger.info("Checking for existing conversation"); //$NON-NLS-1$
             int index = this.cache.indexOf(key);
             if (index != -1) {
                 this.cache.get(index);
@@ -328,8 +328,8 @@ public class ConversationManagerImpl extends AbstractDisposable implements Conve
                 ircManager, user, channel, idleTimeout * 1000); // calc timeout in seconds
             ircManager.addMessageListener(c);
             this.cache.add(c);
-            logger.debug("Created new conversation with " + user.getCurrentNickName() + 
-                    " on channel " + channel);
+            logger.debug("Created new conversation with " + user.getCurrentNickName() +  //$NON-NLS-1$
+                    " on channel " + channel); //$NON-NLS-1$
             return c;
         }
     }

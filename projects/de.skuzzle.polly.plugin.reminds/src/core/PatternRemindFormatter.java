@@ -40,7 +40,7 @@ public class PatternRemindFormatter extends RemindFormatter {
         if (!this.escape) {
             return other;
         }
-        return other.replaceAll("%s%|%m%|%r%|%dd%|%ld%|%c%", "");
+        return other.replaceAll("%s%|%m%|%r%|%dd%|%ld%|%c%", ""); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
 
@@ -61,13 +61,13 @@ public class PatternRemindFormatter extends RemindFormatter {
     
     
     private String parse(RemindEntity remind, FormatManager formatter) {
-        String tmp = this.pattern.replaceAll("%m%", this.escape(remind.getMessage()));
-        tmp = tmp.replaceAll("%s%", this.escape(remind.getFromUser()));
-        tmp = tmp.replaceAll("%r%", this.escape(remind.getForUser()));
-        tmp = tmp.replaceAll("%dd%", formatter.formatDate(remind.getDueDate()));
-        tmp = tmp.replaceAll("%ld%", formatter.formatDate(remind.getLeaveDate()));
-        tmp = tmp.replaceAll("%c%", this.escape(remind.getOnChannel()));
-        tmp = tmp.replaceAll("%id%", "" + remind.getId());
+        String tmp = this.pattern.replaceAll("%m%", this.escape(remind.getMessage())); //$NON-NLS-1$
+        tmp = tmp.replaceAll("%s%", this.escape(remind.getFromUser())); //$NON-NLS-1$
+        tmp = tmp.replaceAll("%r%", this.escape(remind.getForUser())); //$NON-NLS-1$
+        tmp = tmp.replaceAll("%dd%", formatter.formatDate(remind.getDueDate())); //$NON-NLS-1$
+        tmp = tmp.replaceAll("%ld%", formatter.formatDate(remind.getLeaveDate())); //$NON-NLS-1$
+        tmp = tmp.replaceAll("%c%", this.escape(remind.getOnChannel())); //$NON-NLS-1$
+        tmp = tmp.replaceAll("%id%", "" + remind.getId()); //$NON-NLS-1$ //$NON-NLS-2$
         return tmp;
     }
 }

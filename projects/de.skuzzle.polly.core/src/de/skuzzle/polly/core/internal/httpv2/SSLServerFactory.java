@@ -49,9 +49,9 @@ public class SSLServerFactory extends DefaultServerFactory {
         KeyManagerFactory kmf;
         KeyStore ks;
         try {
-            context = SSLContext.getInstance("SSLv3");
-            kmf = KeyManagerFactory.getInstance("SunX509");
-            ks = KeyStore.getInstance("JKS");
+            context = SSLContext.getInstance("SSLv3"); //$NON-NLS-1$
+            kmf = KeyManagerFactory.getInstance("SunX509"); //$NON-NLS-1$
+            ks = KeyStore.getInstance("JKS"); //$NON-NLS-1$
             ks.load(new FileInputStream(this.keyStore), this.keyStorePw.toCharArray());
             kmf.init(ks, this.keyPw.toCharArray());
             context.init(kmf.getKeyManagers(), null, null);

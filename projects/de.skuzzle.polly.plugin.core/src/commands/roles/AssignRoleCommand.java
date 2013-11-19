@@ -1,5 +1,6 @@
 package commands.roles;
 
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -17,14 +18,13 @@ import de.skuzzle.polly.sdk.exceptions.RoleException;
 public class AssignRoleCommand extends Command {
 
     public AssignRoleCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "assignrole");
+        super(polly, "assignrole"); //$NON-NLS-1$
         this.createSignature(
-            "Weist einem Benutzer eine neue Rolle zu", 
+            MSG.assignRoleSig0Desc, 
             MyPlugin.ASSIGN_ROLE_PERMISSION, 
-            new Parameter("Benutzer", Types.USER),
-            new Parameter("Rolle", Types.STRING));
-        
-        this.setHelpText("Weist einem Benutzer eine neue Rolle zu");
+            new Parameter(MSG.assignRoleSig0User, Types.USER),
+            new Parameter(MSG.assignRoleSig0Role, Types.STRING));
+        this.setHelpText(MSG.assignRoleHelp);
     }
     
     
@@ -39,12 +39,12 @@ public class AssignRoleCommand extends Command {
             
             User user = this.getMyPolly().users().getUser(userName);
             if (user == null) {
-                throw new CommandException("Unbekannter Benutzer: " + userName);
+                throw new CommandException(MSG.bind(MSG.assignRoleUnknownUser, userName));
             }
             
             try {
                 this.getMyPolly().roles().assignRole(user, roleName);
-                this.reply(channel, "Rolle erfolgreich zugewiesen");
+                this.reply(channel, MSG.assignRoleSuccess);
             } catch (RoleException e) {
                 throw new CommandException(e);
             } catch (DatabaseException e) {

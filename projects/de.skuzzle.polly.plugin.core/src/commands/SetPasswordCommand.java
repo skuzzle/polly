@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -19,13 +20,13 @@ import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 public class SetPasswordCommand extends Command {
 
     public SetPasswordCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "setpw");
-        this.createSignature("Setzt das Passwort eines Benutzers neu.",
+        super(polly, "setpw"); //$NON-NLS-1$
+        this.createSignature(MSG.setPasswordSig0Desc,
                 MyPlugin.SET_PASSWORD_PERMISSION,
-        		new Parameter("User", Types.USER), 
-        		new Parameter("Passwort", Types.STRING));
+        		new Parameter(MSG.setPasswordSig0User, Types.USER), 
+        		new Parameter(MSG.setPasswordSig0Password, Types.STRING));
         this.setRegisteredOnly();
-        this.setHelpText("Befehl um das Passwort eines Benutzers zu ändern.");
+        this.setHelpText(MSG.setPasswordHelp);
     }
 
     
@@ -41,8 +42,7 @@ public class SetPasswordCommand extends Command {
     @Override
     protected void executeOnChannel(User executer, String channel,
             Signature signature) {
-        this.reply(channel, "Dieser Befehl ist nur im Query ausführbar. " +
-        		"Du solltest zudem ein anderes Passwort wählen.");
+        this.reply(channel, MSG.setPasswordQryWarnning);
     }
     
     
@@ -56,7 +56,7 @@ public class SetPasswordCommand extends Command {
             
             final User u = this.getMyPolly().users().getUser(userName);
             if (u == null) {
-                this.reply(executer, "Benutzer '" + userName + "' existiert nicht.");
+                this.reply(executer, MSG.bind(MSG.setPasswordUnknownUser, userName));
                 return;
             }
             
@@ -69,6 +69,7 @@ public class SetPasswordCommand extends Command {
                         u.setPassword(newPw);
                     }
                 });
+                this.reply(executer, MSG.setPasswordSuccess);
             } catch (DatabaseException e) {
                 throw new CommandException(e);
             }

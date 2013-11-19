@@ -13,27 +13,32 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.time.Time;
 
 @Entity
 @NamedQueries({
     @NamedQuery(
-        name =  "ALL_REMINDS",
+        name =  RemindEntity.ALL_REMINDS,
         query = "SELECT r FROM RemindEntity r"),
     @NamedQuery(
-        name =  "REMIND_FOR_USER",
+        name =  RemindEntity.REMIND_FOR_USER,
         query = "SELECT r FROM RemindEntity r WHERE r.forUser = ?1"),
     @NamedQuery(
-        name =  "MY_REMIND_FOR_USER",
+        name =  RemindEntity.MY_REMIND_FOR_USER,
         query = "SELECT r FROM RemindEntity r WHERE r.forUser = ?1 OR r.fromUser = ?1"),
     @NamedQuery(
-        name =  "UNDELIVERED_FOR_USER",
+        name =  RemindEntity.UNDELIVERED_FOR_USER,
         query = "SELECT r FROM RemindEntity r WHERE r.forUser = ?1 AND " +
         		"r.isMessage = true")
 })
 public class RemindEntity implements Comparable<RemindEntity> {
+    
+    public final static String ALL_REMINDS = "ALL_REMINDS"; //$NON-NLS-1$
+    public final static String REMIND_FOR_USER = "REMIND_FOR_USER"; //$NON-NLS-1$
+    public final static String MY_REMIND_FOR_USER = "MY_REMIND_FOR_USER"; //$NON-NLS-1$
+    public final static String UNDELIVERED_FOR_USER = "UNDELIVERED_FOR_USER"; //$NON-NLS-1$
 
+    
     public static final Comparator<RemindEntity> BY_DUE_DATE = new Comparator<RemindEntity>() {
 
         @Override
@@ -201,12 +206,6 @@ public class RemindEntity implements Comparable<RemindEntity> {
     }
     
     
-    public String toString(FormatManager formatter) {
-        return "(" + this.id + ") Erinnerung von " + this.fromUser + " an " + 
-            this.message + " (" + formatter.formatDate(this.dueDate) + ")";
-    }
-    
-    
     
     public RemindEntity copyForNewDueDate(Date newDueDate) {
         RemindEntity copy = new RemindEntity(this.message, this.fromUser, this.forUser, 
@@ -219,7 +218,7 @@ public class RemindEntity implements Comparable<RemindEntity> {
     
     @Override
     public String toString() {
-        return "REMIND " + this.id + " for " + this.getForUser();
+        return "REMIND " + this.id + " for " + this.getForUser(); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
 

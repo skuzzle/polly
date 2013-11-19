@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -15,19 +16,14 @@ import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 public class ReAuthCommand extends Command {
 
     public ReAuthCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "reauth");
-        this.createSignature(
-                "Setzt den Standardnickname von polly und identifiziert " +
-        		"sich mit Nickserv", 
+        super(polly, "reauth"); //$NON-NLS-1$
+        this.createSignature(MSG.reAuthSig0Desc,
         		MyPlugin.SET_AND_IDENTIFY_PERMISSION);
-        this.createSignature(
-            "Setzt den Standardnickname von polly und identifiziert " +
-            "sich mit Nickserv. Zusätzlich werden alle Channels gejoined.",
+        this.createSignature(MSG.reAuthSig1Desc,
             MyPlugin.SET_AND_IDENTIFY_PERMISSION,
-            new Parameter("Join", Types.BOOLEAN));
+            new Parameter(MSG.reAuthSig1Join, Types.BOOLEAN));
         
-        this.setHelpText("Setzt den Standardnickname von polly und identifiziert " +
-            "sich mit Nickserv");
+        this.setHelpText(MSG.reAuthHelp);
     }
     
     

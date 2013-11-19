@@ -19,11 +19,7 @@ public class DailyGreeter {
     
     private final static Set<String> GREETINGS;
     static {
-        final String[] greetings = {
-            "Hallo", "gumo", "Morgen", "Nabend", "Moin", "Hi", "Servus",
-            "Sers", "Jo", "Hey", "Aloha", "puh", "Moin moin", "wb", "Guten Abend",
-            "huhu"
-        };
+        final String[] greetings = MSG.greeterGreetings.split(","); //$NON-NLS-1$
         GREETINGS = new HashSet<String>(Arrays.asList(greetings));
     }
     
@@ -67,10 +63,10 @@ public class DailyGreeter {
             }
             
             for (String greeting : GREETINGS) {
-            	String incomingGreet = greeting.toLowerCase() + " " + nick;
+            	String incomingGreet = greeting.toLowerCase() + " " + nick; //$NON-NLS-1$
                 if (msg.contains(incomingGreet)) {
                     greeted.add(e.getUser());
-                    String greet = greeting + " " + e.getUser().getNickName();
+                    String greet = greeting + " " + e.getUser().getNickName(); //$NON-NLS-1$
                     e.getSource().sendMessage(e.getChannel(), greet, this);
                     return;
                 }

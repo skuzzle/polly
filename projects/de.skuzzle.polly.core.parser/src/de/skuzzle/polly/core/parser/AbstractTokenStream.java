@@ -434,7 +434,7 @@ public abstract class AbstractTokenStream implements Iterable<Token>, TokenStrea
      */
     public void reset(boolean removeMark, boolean clearBuffer) {
         if (this.mark == -1) {
-            throw new IllegalStateException("no mark available");
+            throw new IllegalStateException("no mark available"); //$NON-NLS-1$
         }
         this.tokenIndex = this.mark;
         if (removeMark) {
@@ -512,7 +512,7 @@ public abstract class AbstractTokenStream implements Iterable<Token>, TokenStrea
             try {
                 return AbstractTokenStream.this.nextToken();
             } catch (ParseException e) {
-                throw new RuntimeException("ParseException occurred", e);
+                throw new RuntimeException("ParseException occurred", e); //$NON-NLS-1$
             }
         }
 

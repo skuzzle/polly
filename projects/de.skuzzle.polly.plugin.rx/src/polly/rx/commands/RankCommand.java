@@ -3,6 +3,7 @@ package polly.rx.commands;
 import java.util.Collections;
 import java.util.List;
 
+import polly.rx.MSG;
 import polly.rx.MyPlugin;
 import polly.rx.core.ScoreBoardManager;
 import polly.rx.entities.ScoreBoardEntry;
@@ -26,10 +27,10 @@ public class RankCommand extends Command {
     
     public RankCommand(MyPolly polly, ScoreBoardManager sbeManager) 
             throws DuplicatedSignatureException {
-        super(polly, "rank");
-        this.createSignature("Zeigt Rang und Punkte eines Venads", 
-            MyPlugin.RANK_PERMISSION, new Parameter("Venadname", Types.STRING));
-        this.setHelpText("Zeigt Rang und Punkte eines Venads");
+        super(polly, "rank"); //$NON-NLS-1$
+        this.createSignature(MSG.rankSig0Desc, 
+            MyPlugin.RANK_PERMISSION, new Parameter(MSG.rankSig0Name, Types.STRING));
+        this.setHelpText(MSG.rankHelp);
         this.sbeManager = sbeManager;
     }
     
@@ -43,8 +44,7 @@ public class RankCommand extends Command {
             List<ScoreBoardEntry> entries = this.sbeManager.getEntries(venadName);
             
             if (entries.isEmpty()) {
-                this.reply(channel, "Kein Eintrag für den Venad " + 
-                    venadName + " vorhanden");
+                this.reply(channel, MSG.bind(MSG.rankNoVenad, venadName));
                 return false;
             }
             
@@ -57,19 +57,13 @@ public class RankCommand extends Command {
             int pointDiff = youngest.getPoints() - oldest.getPoints();
             double pointsPerDay = (double) pointDiff / (double)days;
 
-            final StringBuilder b = new StringBuilder();
-            b.append("Rang: ");
-            b.append(youngest.getRank());
-            b.append(", Punkte: ");
-            b.append(youngest.getPoints());
-            b.append(" (");
-            b.append(this.getMyPolly().formatting().formatNumber(pointsPerDay));
-            b.append(" pro Tag innerhalb von ");
-            b.append(this.getMyPolly().formatting().formatTimeSpanMs(diff));
-            b.append("), Daten vom: ");
-            b.append(this.getMyPolly().formatting().formatDate(youngest.getDate()));
+            final String result = MSG.bind(MSG.rankSuccess, youngest.getRank(), 
+                    youngest.getPoints(), 
+                    this.getMyPolly().formatting().formatNumber(pointsPerDay),
+                    this.getMyPolly().formatting().formatTimeSpanMs(diff),
+                    this.getMyPolly().formatting().formatDate(youngest.getDate()));
 
-            this.reply(channel, b.toString());
+            this.reply(channel, result);
         }
         return false;
     }

@@ -57,6 +57,6 @@ public class NickChangeEvent extends IrcEvent {
      */
     @Override
     public String toString() {
-        return "*** NICK " + this.oldUser + " -> " + this.newUser;
+        return "*** NICK " + this.oldUser + " -> " + this.newUser; //$NON-NLS-1$ //$NON-NLS-2$
     }
 }

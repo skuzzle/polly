@@ -1,5 +1,5 @@
 <div class="highlight contentBox">
-    #CONTENT_HEADER ("Drop")
+    #CONTENT_HEADER ($MSG.htmlDrop)
     <div class="content">
     <table>
     <tr>
@@ -9,7 +9,7 @@
     </tr>
     <tr>
     #foreach ($drop in $report.getDrop())
-        <td style="text-align:center">$drop.getAmount()</td>    
+        <td style="text-align: center">$drop.getAmount()</td>    
     #end
     </tr>
     </table>
@@ -17,7 +17,7 @@
 </div>
 
 <div class="highlight contentBox">
-    #CONTENT_HEADER ("Attacker Fleet")
+    #CONTENT_HEADER ($MSG.htmlAttackerFleet)
     <div class="content">
 #PRINT_FLEET(
     "attackerShips",
@@ -49,7 +49,7 @@
 </div>
 
 <div class="highlight contentBox">
-    #CONTENT_HEADER ("Defender Fleet")
+    #CONTENT_HEADER ($MSG.htmlDefenderFleet)
     <div class="content">
 #PRINT_FLEET(
     "defenderShips",
@@ -86,48 +86,48 @@
     
 <table>
     <tr>
-    <td><b>Fleet name</b></td>
+    <td><b>$MSG.htmlFleetName</b></td>
     <td>$fleet</td>
     </tr>
     <tr>
-    <td><b>Venad</b></td>
+    <td><b>$MSG.htmlVenad</b></td>
     <td>$venad</td>
     </tr>
     <tr>
-    <td><b>Clan</b></td>
+    <td><b>$MSG.htmlClan</b></td>
     <td>$clan</td>
     </tr>
     <tr>
-    <td><b>Kw / Kw normalized</b></td>
+    <td><b>$MSG.htmlKw</b></td>
     #set ($normalized = $kw/$bonus )
     <td>$kw / $df.format($normalized)</td>
     </tr>
     <tr>
-    <td><b>Bonus (factor)</b></td>
+    <td><b>$MSG.htmlBonus</b></td>
     <td>$df.format($bonus)</td>
     </tr>
     <tr>
-    <td><b>XP-Mod</b></td>
+    <td><b>$MSG.htmlXPMod</b></td>
     <td>$xpmod</td>
     </tr>
     <tr>
-    <td><b>Shield damage (min/avg/max)</b></td>
+    <td><b>$MSG.htmlShieldDmg</b></td>
     <td>$shield ($minShield/$avgShield/$maxShield)</td>
     </tr>
     <tr>
-    <td><b>PZ damage (min/avg/max)</b></td>
+    <td><b>$MSG.htmlPzDmg</b></td>
     <td>$pz ($minPz/$avgPz/$maxPz)</td>
     </tr>
     <tr>
-    <td><b>Wend (max occurred / min occurred)</b></td>
+    <td><b>$MSG.htmlWend</b></td>
     <td>$maxWend / $minWend</td>
     </tr>
     <tr>
-    <td><b>Capi Xp (min/avg/max)</b></td>
+    <td><b>$MSG.htmlCapiXp</b></td>
     <td>$capiXp ($capiXpMin/$capiXpAvg/$capiXpMax)</td>
     </tr>
     <tr>
-    <td><b>Crew Xp (min/avg/max)</b></td>
+    <td><b>$MSG.htmlCrewXp</b></td>
     <td>$crewXp ($crewXpMin/$crewXpAvg/$crewXpMax)</td>
     </tr>
 </table>

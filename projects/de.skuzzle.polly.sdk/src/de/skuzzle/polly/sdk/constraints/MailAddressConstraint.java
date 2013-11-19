@@ -22,7 +22,7 @@ public class MailAddressConstraint implements AttributeConstraint {
      * A regex pattern that matches on valid formed mail addresses.
      */
     public final static Pattern MAIL_PATTERN = Pattern.compile(
-        "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$", Pattern.CASE_INSENSITIVE);
+        "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
     
     
     

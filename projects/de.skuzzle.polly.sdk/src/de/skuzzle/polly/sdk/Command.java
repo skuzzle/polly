@@ -97,7 +97,7 @@ import de.skuzzle.polly.sdk.roles.SecurityObject;
 public abstract class Command extends AbstractDisposable implements Comparable<Command>, 
         SecurityContainer, SecurityObject {
     
-
+    
 	/**
 	 * This commands name.
 	 */
@@ -168,14 +168,13 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 		this.commandName = commandName;
 		this.polly = polly;
 		this.signatures = new ArrayList<FormalSignature>();
-		this.userLevel = UserManager.UNKNOWN;
-		this.helpText = "Der Befehl '" + commandName + "' hat keine Beschreibung";
+		this.helpText = Messages.bind(Messages.commandNoDescription, commandName);
 		this.constants = new HashMap<String, Types>();
-		this.helpSignature0 = new FormalSignature(commandName, 0, "", 
-		    new Parameter("", Types.HELP));
-		this.helpSignature1 = new FormalSignature(commandName, 0, "", 
-		    new Parameter("", Types.HELP), 
-		    new Parameter("", Types.NUMBER));
+		this.helpSignature0 = new FormalSignature(commandName, 0, "",  //$NON-NLS-1$
+		    new Parameter("", Types.HELP)); //$NON-NLS-1$
+		this.helpSignature1 = new FormalSignature(commandName, 0, "",  //$NON-NLS-1$
+		    new Parameter("", Types.HELP),  //$NON-NLS-1$
+		    new Parameter("", Types.NUMBER)); //$NON-NLS-1$
 		this.containedPermissions = new HashSet<String>();
 	}
 	
@@ -211,11 +210,10 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 	 * @return A help text for this command.
 	 */
 	public String getHelpText() {
-		String help = this.helpText.endsWith(".") 
-		    ? this.helpText + " " : this.helpText + ". ";
-		help += "Verfügbare Signaturen: " + this.signatures.size();
-		help += ". Gib ':" + this.commandName + " ? <nr>' ein, um weitere Informationen " +
-				"zu erhalten."; 
+		String help = this.helpText.endsWith(".")  //$NON-NLS-1$
+		    ? this.helpText + " " : this.helpText + ". "; //$NON-NLS-1$ //$NON-NLS-2$
+		help += Messages.bind(Messages.commandSignatures, this.signatures.size(), 
+		        this.commandName);
 		return help;
 	}
 	
@@ -268,8 +266,7 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 			FormalSignature fs = this.signatures.get(signatureId);
 			return fs.getHelp();
 		}
-		return "Keine Signatur-Infos für den Befehl '" + this.commandName + 
-			"' und Signatur " + signatureId;
+		return Messages.bind(Messages.commandNoSignature, this.commandName, signatureId);
 	}
 	
 	
@@ -301,7 +298,9 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 	 * userlevel constants in {@link UserManager} or own values.
 	 * 
 	 * @param userLevel The new userlevel for this command.
+	 * @deprecated Userlevel has been replace by roles
 	 */
+	@Deprecated
 	public void setUserLevel(int userLevel) {
 	    this.userLevel = userLevel;
 	}
@@ -379,12 +378,12 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 		} else if (signature.equals(this.helpSignature1)) {
 		    int num = (int) signature.getNumberValue(1);
 		    if (num < 0 || num >= this.signatures.size()) {
-		        this.reply(channel, "Kein Signatur mit der Id " + num);
+		        this.reply(channel, Messages.bind(Messages.commandNoSignatureId, num)); 
 		        return;
 		    }
 		    this.reply(channel, this.getHelpText(num));
-		    this.reply(channel, "Beispiel: :" + this.commandName + " " + 
-		            this.signatures.get(num).getSample());
+		    this.reply(channel, Messages.bind(Messages.commandSample, 
+		                    this.commandName, this.signatures.get(num).getSample()));
 		    return;
 		}
 
@@ -741,17 +740,17 @@ public abstract class Command extends AbstractDisposable implements Comparable<C
 	    result.append(this.commandName);
 	    
 	    if (this.isRegisteredOnly() || this.isQryCommand()) {
-	        result.append("(");
+	        result.append("("); //$NON-NLS-1$
 	        if (this.registeredOnly) {
-	            result.append("R");
+	            result.append("R"); //$NON-NLS-1$
 	        } 
 	        if (this.isQryCommand()) {
 	            if (this.isRegisteredOnly()) {
-	                result.append(",");
+	                result.append(","); //$NON-NLS-1$
 	            }
-	            result.append("qry");
+	            result.append("qry"); //$NON-NLS-1$
 	        }
-	        result.append(")");
+	        result.append(")"); //$NON-NLS-1$
 	    }
 	    return result.toString();
 	}

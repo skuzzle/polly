@@ -3,10 +3,9 @@ package commands;
 
 import java.util.List;
 
+import polly.reminds.MSG;
 import polly.reminds.MyPlugin;
-
 import core.RemindManager;
-
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
@@ -26,23 +25,23 @@ public class LeaveCommand extends AbstractRemindCommand {
 
     public LeaveCommand(MyPolly polly, RemindManager manager) 
             throws DuplicatedSignatureException {
-        super(polly, manager, "leave");
-        this.createSignature("Hinterlässt eine Nachricht für einen Benutzer.", 
+        super(polly, manager, "leave"); //$NON-NLS-1$
+        this.createSignature(MSG.leaveSig0Desc, 
                 MyPlugin.LEAVE_PERMISSION,
-                new Parameter("User", Types.USER), 
-                new Parameter("Channel", Types.CHANNEL), 
-                new Parameter("Nachricht", Types.STRING));
-        this.createSignature("Hinterlässt eine Nachricht für eine Liste von Benutzern.",
+                new Parameter(MSG.leaveSig0User, Types.USER), 
+                new Parameter(MSG.leaveSig0Channel, Types.CHANNEL), 
+                new Parameter(MSG.leaveSig0Message, Types.STRING));
+        this.createSignature(MSG.leaveSig1Desc,
                 MyPlugin.LEAVE_PERMISSION,
-                new Parameter("Benutzerliste", new ListType(Types.USER)), 
-                new Parameter("Channel", Types.CHANNEL), 
-                new Parameter("Nachricht", Types.STRING));
-        this.createSignature("Hinterlässt eine private Nachricht für einen Benutzer.",
+                new Parameter(MSG.leaveSig1Users, new ListType(Types.USER)), 
+                new Parameter(MSG.leaveSig1Channel, Types.CHANNEL), 
+                new Parameter(MSG.leaveSig1Message, Types.STRING));
+        this.createSignature(MSG.leaveSig2Desc,
                 MyPlugin.LEAVE_PERMISSION,
-                new Parameter("User", Types.USER), 
-                new Parameter("Nachricht", Types.STRING));
+                new Parameter(MSG.leaveSig2User, Types.USER), 
+                new Parameter(MSG.leaveSig2Message, Types.STRING));
         this.setRegisteredOnly();
-        this.setHelpText("Befehl um Nachrichten für Benutzer zu hinterlassen.");
+        this.setHelpText(MSG.leaveHelp);
     }
     
     
@@ -76,8 +75,8 @@ public class LeaveCommand extends AbstractRemindCommand {
                 this.addRemind(executer, remind, false);
             }
             ListType tmp = (ListType) signature.getValue(0);
-            this.reply(channel, "Erinnerungen für die Benutzer " + 
-                    tmp.valueString(this.getMyPolly().formatting()) + " hinzugefügt.");
+            this.reply(channel,  MSG.bind(MSG.leaveMultipleSuccess, 
+                    tmp.valueString(this.getMyPolly().formatting()))); 
             
         } else if (this.match(signature, 2)) {
             String msg = signature.getStringValue(1);

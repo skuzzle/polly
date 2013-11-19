@@ -1,5 +1,6 @@
 package commands.roles;
 
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -17,13 +18,13 @@ import de.skuzzle.polly.sdk.exceptions.RoleException;
 public class RemovePermissionCommand extends Command {
 
     public RemovePermissionCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "removepermission");
+        super(polly, "removepermission"); //$NON-NLS-1$
         this.createSignature(
-            "Entfernt eine Berechtigung von einer Rolle", 
+            MSG.removePermSig0Desc, 
             MyPlugin.REMOVE_PERMISSION_PERMISSION, 
-            new Parameter("Rollenname", Types.STRING), 
-            new Parameter("Permission", Types.STRING));
-        this.setHelpText("Entfernt eine Berechtigung von einer Rolle.");
+            new Parameter(MSG.removePermSig0Role, Types.STRING), 
+            new Parameter(MSG.removePermSig0Perm, Types.STRING));
+        this.setHelpText(MSG.removePermHelp);
     }
 
     
@@ -38,7 +39,7 @@ public class RemovePermissionCommand extends Command {
             
             try {
                 this.getMyPolly().roles().removePermission(roleName, permissionname);
-                this.reply(channel, "Berechtigung erfolgreich entfernt");
+                this.reply(channel, MSG.removePermSuccess);
             } catch (DatabaseException e) {
                 throw new CommandException(e);
             } catch (RoleException e) {

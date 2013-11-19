@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.MSG;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -18,13 +19,12 @@ import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 public class SetMyPasswordCommand extends Command {
 
     public SetMyPasswordCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "setmypw");
-        this.createSignature("Setzt dein Passwort neu. Gib dein altes Passwort und " +
-        		"den gewünschtes Passwort an.", 
-        		new Parameter("Altes Passwort", Types.STRING), 
-        		new Parameter("Neues Passwort", Types.STRING));
+        super(polly, "setmypw"); //$NON-NLS-1$
+        this.createSignature(MSG.setMyPwSig0Desc, 
+        		new Parameter(MSG.setMyPwSig0CurrentPw, Types.STRING), 
+        		new Parameter(MSG.setMyPwSig0NewPw, Types.STRING));
         this.setRegisteredOnly();
-        this.setHelpText("Befehl um dein Passwort zu ändern.");
+        this.setHelpText(MSG.setMyPwHelp);
         this.setQryCommand(true);
     }
 
@@ -41,8 +41,7 @@ public class SetMyPasswordCommand extends Command {
     @Override
     protected void executeOnChannel(User executer, String channel,
             Signature signature) {
-        this.reply(channel, "Dieser Befehl ist nur im Query ausführbar. " +
-        		"Du solltest zudem ein anderes Passwort wählen.");
+        this.reply(channel, MSG.setMyPwQryWarning);
     }
     
     
@@ -55,8 +54,7 @@ public class SetMyPasswordCommand extends Command {
             final String newPw = signature.getStringValue(1);
             
             if (!executer.checkPassword(oldPw)) {
-                this.reply(executer, "Das aktuelle Passwort stimmt nicht mit dem " +
-                		"angegebenen Ã¼berein!");
+                this.reply(executer, MSG.setMyPwMismatch);
                 return;
             }
             

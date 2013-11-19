@@ -8,7 +8,7 @@ import de.skuzzle.polly.tools.math.MathUtil;
 
 public class ShipHelper {
     
-    private final static Pattern CLASS_PATTERN = Pattern.compile("\\(([XVICML]+)\\)");
+    private final static Pattern CLASS_PATTERN = Pattern.compile("\\(([XVICML]+)\\)"); //$NON-NLS-1$
 
     public static String getSimpleName(String shipName) {
         final int i = shipName.lastIndexOf(' ');

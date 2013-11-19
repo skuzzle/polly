@@ -27,7 +27,28 @@ import de.skuzzle.polly.sdk.time.Milliseconds;
 import de.skuzzle.polly.tools.concurrent.RunLater;
 
 public class IndexController extends PollyController {
-
+    
+    
+    private final static String ADMIN_CATEGORY_KEY = "indexAdminCategory"; //$NON-NLS-1$
+    private final static String GENERAL_CATEGORY_KEY = "indexGeneralCategory"; //$NON-NLS-1$
+    private final static String HOME_NAME_KEY = "indexHomePage"; //$NON-NLS-1$
+    private final static String HOME_DESC_KEY = "indexHomeDesc"; //$NON-NLS-1$
+    private final static String STATUS_NAME_KEY = "indexStatusPage"; //$NON-NLS-1$
+    private final static String STATUS_DESC_KEY = "indexStatusDesc"; //$NON-NLS-1$
+    
+    public final static String PAGE_INDEX = "/"; //$NON-NLS-1$
+    public final static String PAGE_STATUS = "/pages/status"; //$NON-NLS-1$
+    
+    private final static String CONTENT_INDEX = "templatesv2/home.html"; //$NON-NLS-1$
+    private static final String CONTENT_STATUS = "templatesv2/status.html"; //$NON-NLS-1$
+    
+    public final static String API_LOGIN = "/api/login"; //$NON-NLS-1$
+    public final static String API_CHECK_LOGIN = "/api/checkLogin";  //$NON-NLS-1$
+    public final static String API_LOGOUT = "/api/logout"; //$NON-NLS-1$
+    public final static String API_CALC_EXPRESSION = "/api/calculateExpression"; //$NON-NLS-1$
+    public final static String API_RUN_GC = "/api/runGC"; //$NON-NLS-1$
+    public final static String API_SHUTDOWN = "/api/shutdown"; //$NON-NLS-1$
+    
     
     
     public IndexController(MyPolly myPolly) {
@@ -54,32 +75,28 @@ public class IndexController extends PollyController {
     
     public final static class LoginResult {
         public boolean success;
-        public String contentPage;
         public String userName;
         
-        public LoginResult(boolean success, String contentPage, String userName) {
+        public LoginResult(boolean success, String userName) {
             super();
             this.success = success;
-            this.contentPage = contentPage;
             this.userName = userName;
         }
     }
     
     
     
-    @Post("/api/login")
+    @Post(API_LOGIN)
     public HttpAnswer login(
         @Param("name") String name, 
         @Param("pw") String pw) {
-        
-        System.out.println("Login attempt: " + name);
         
         final UserManager um = this.getMyPolly().users();
         final User user = um.getUser(name);
         
         if (user != null && user.checkPassword(pw)) {
-            this.getSession().set("user", user);
-            this.getSession().set("loginTime", new Date());
+            this.getSession().set(WebinterfaceManager.USER, user);
+            this.getSession().set(WebinterfaceManager.LOGIN_TIME, new Date());
             
             final Date now = new Date();
             this.getSession().setExpirationDate(
@@ -90,11 +107,11 @@ public class IndexController extends PollyController {
                 HttpServer.SESSION_ID_NAME, this.getSession().getId(), 
                 Milliseconds.toSeconds(this.getServer().sessionLiveTime()));
             
-            final LoginResult result = new LoginResult(true, "content/status", name);
+            final LoginResult result = new LoginResult(true, name);
             return new GsonHttpAnswer(200, result).addCookie(renewTimeout);
         }
         
-        return new GsonHttpAnswer(200, new LoginResult(false, "", ""));
+        return new GsonHttpAnswer(200, new LoginResult(false, "")); //$NON-NLS-1$
     }
     
     
@@ -116,12 +133,13 @@ public class IndexController extends PollyController {
     
     
     
-    @Get("/api/checkLogin")
+    @Get(API_CHECK_LOGIN)
     public HttpAnswer checkLogin() {
         final User user = this.getSessionUser();
         if (user != null) {
             final long now = new Date().getTime();
-            final long start = ((Date) this.getSession().getAttached("loginTime")).getTime();
+            final long start = ((Date) this.getSession().getAttached(
+                    WebinterfaceManager.LOGIN_TIME)).getTime();
             final long diff = now - start;
             long tl = this.getServer().sessionLiveTime() - diff;
             tl = (int) Math.ceil(tl / (double) 60000) * 60000; // round to minutes
@@ -131,7 +149,7 @@ public class IndexController extends PollyController {
             
             return new GsonHttpAnswer(200, result);
         } else {
-            return new GsonHttpAnswer(200, new SessionTimeResult("", "", false));
+            return new GsonHttpAnswer(200, new SessionTimeResult("", "", false)); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
     
@@ -139,28 +157,31 @@ public class IndexController extends PollyController {
     
     
     
-    @Get("/api/logout")
+    @Get(API_LOGOUT)
     public HttpAnswer logout() {
-        this.getSession().detach("user");
+        this.getSession().detach(WebinterfaceManager.USER);
         this.getSession().kill();
-        return HttpAnswers.newStringAnswer("").redirectTo("/");
+        return HttpAnswers.newRedirectAnswer(PAGE_INDEX);
     }
 
     
     
-    @Get(value = "/", name = "Home")
-    @OnRegister({ WebinterfaceManager.ADD_MENU_ENTRY, "General", 
-        "Shows your polly home page" 
+    @Get(value = PAGE_INDEX, name = HOME_NAME_KEY)
+    @OnRegister({ 
+        WebinterfaceManager.ADD_MENU_ENTRY, 
+        MSG.FAMILY,
+        GENERAL_CATEGORY_KEY, 
+        HOME_DESC_KEY
     })
     public HttpAnswer index() {
-        final Map<String, Object> c = this.createContext("templatesv2/home.html");
+        final Map<String, Object> c = this.createContext(CONTENT_INDEX);
         return this.makeAnswer(c);
     }
     
     
     
     
-    @Get("/api/calculateExpression")
+    @Get(API_CALC_EXPRESSION)
     public HttpAnswer calculateExpression(
             @Param(value = "expr", treatEmpty = true) String expression) {
         
@@ -171,38 +192,40 @@ public class IndexController extends PollyController {
     
     
     
-    @Get(value = "/pages/status", name = "Status")
-    @OnRegister({WebinterfaceManager.ADD_MENU_ENTRY, 
-        "Admin",
-        "Shows polly status information", 
+    @Get(value = PAGE_STATUS, name = STATUS_NAME_KEY)
+    @OnRegister({
+        WebinterfaceManager.ADD_MENU_ENTRY, 
+        MSG.FAMILY,
+        ADMIN_CATEGORY_KEY,
+        STATUS_DESC_KEY, 
         RoleManager.ADMIN_PERMISSION
     })
     public HttpAnswer statusPage() throws AlternativeAnswerException {
         this.requirePermissions(RoleManager.ADMIN_PERMISSION);
-        final Map<String, Object> c = this.createContext("templatesv2/status.html");
-        c.put("maxMemory", Runtime.getRuntime().maxMemory());
-        c.put("totalMemory", Runtime.getRuntime().totalMemory());
-        c.put("freeMemory", Runtime.getRuntime().freeMemory());
+        final Map<String, Object> c = this.createContext(CONTENT_STATUS);
+        c.put("maxMemory", Runtime.getRuntime().maxMemory()); //$NON-NLS-1$
+        c.put("totalMemory", Runtime.getRuntime().totalMemory()); //$NON-NLS-1$
+        c.put("freeMemory", Runtime.getRuntime().freeMemory()); //$NON-NLS-1$
         return this.makeAnswer(c);
     }
     
     
     
-    @Get("/api/runGC")
+    @Get(API_RUN_GC)
     public HttpAnswer runGC() throws AlternativeAnswerException {
         this.requirePermissions(RoleManager.ADMIN_PERMISSION);
         System.gc();
-        return HttpAnswers.newStringAnswer("").redirectTo("/pages/status");
+        return HttpAnswers.newRedirectAnswer(PAGE_STATUS);
     }
     
     
     
-    @Get("/api/shutdown")
+    @Get(API_SHUTDOWN)
     public HttpAnswer shutdownPolly(@Param("restart") final Boolean restart) 
             throws AlternativeAnswerException {
         this.requirePermissions(RoleManager.ADMIN_PERMISSION);
         final int shutdownTimeSeconds = 10;
-        new RunLater("SHUTDOWN_TIMER", Milliseconds.fromSeconds(shutdownTimeSeconds)) {
+        new RunLater("SHUTDOWN_TIMER", Milliseconds.fromSeconds(shutdownTimeSeconds)) { //$NON-NLS-1$
             @Override
             public void run() {
                 if (restart) {
@@ -212,8 +235,7 @@ public class IndexController extends PollyController {
                 }
             }
         }.start();
-        final String s = restart ? "Restart" : "Shutdown";
-        return HttpAnswers.newStringAnswer(s + " in " + 
-                shutdownTimeSeconds + " seconds");
+        final String s = restart ? MSG.indexRestart : MSG.indexShutdown;
+        return HttpAnswers.newStringAnswer(MSG.bind(s, shutdownTimeSeconds));
     }
 }

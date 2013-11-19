@@ -63,7 +63,7 @@ public class DeliverRemindHandler extends JoinPartAdapter implements MessageList
     
     private synchronized void deliverRemind(ChannelEvent e, boolean join, boolean signOn) {
         if (join && signOn) {
-            throw new IllegalArgumentException("cant be join and signon!");
+            throw new IllegalArgumentException("cant be join and signon!"); //$NON-NLS-1$
         }
         
         // if there are no new reminds, return
@@ -95,7 +95,7 @@ public class DeliverRemindHandler extends JoinPartAdapter implements MessageList
              *    when the user joins any channel.
              */
             boolean deliverLeave = (join || signOn) && 
-                    (!channel.startsWith("#") || 
+                    (!channel.startsWith("#") ||  //$NON-NLS-1$
                       channel.equals(remind.getOnChannel()));
 
             /*
@@ -123,7 +123,7 @@ public class DeliverRemindHandler extends JoinPartAdapter implements MessageList
     @Override
     public void userSignedOn(UserEvent e) {
         ChannelEvent c = new ChannelEvent(null, 
-                new IrcUser(e.getUser().getCurrentNickName(), "", ""), "");
+                new IrcUser(e.getUser().getCurrentNickName(), "", ""), ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         this.deliverRemind(c, false, true);
     }
 

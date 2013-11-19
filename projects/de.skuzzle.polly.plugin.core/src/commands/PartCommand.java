@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -7,7 +8,6 @@ import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
-import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 
 
@@ -15,15 +15,14 @@ import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 public class PartCommand extends Command {
 
     public PartCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "part");
-        this.createSignature("Polly verlässt den aktuellen Channel", 
+        super(polly, "part"); //$NON-NLS-1$
+        this.createSignature(MSG.partSig0Desc, 
             MyPlugin.PART_PERMISSION);
-        this.createSignature("Polly verlässt den angegebenen Channel.",
+        this.createSignature(MSG.partSig1Desc,
                 MyPlugin.PART_PERMISSION,
-                new Parameter("Channel", Types.CHANNEL));
+                new Parameter(MSG.partSig1Channel, Types.CHANNEL));
         this.setRegisteredOnly();
-        this.setUserLevel(UserManager.ADMIN);
-        this.setHelpText("Befehl um einen Channel zu verlassen.");
+        this.setHelpText(MSG.partHelp);
     }
     
     
@@ -51,7 +50,7 @@ public class PartCommand extends Command {
     @Override
     protected void executeOnQuery(User executer, Signature signature) {
         if (this.match(signature, 0)) {
-            this.reply(executer, "Bitte gib einen Channel an.");
+            this.reply(executer, MSG.partSpecifyChannel);
         } else if (this.match(signature, 1)) {
             this.part(signature.getStringValue(0));
         }
@@ -60,7 +59,6 @@ public class PartCommand extends Command {
     
     
     private void part(String channel) {
-        this.getMyPolly().irc().partChannel(channel, "byebye");
+        this.getMyPolly().irc().partChannel(channel, MSG.partMessage);
     }
-
 }

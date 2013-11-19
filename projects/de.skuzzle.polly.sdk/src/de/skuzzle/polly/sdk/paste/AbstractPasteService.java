@@ -89,11 +89,11 @@ public abstract class AbstractPasteService implements PasteService {
             while (it.hasNext()) {
                 Map.Entry<String, String> property = it.next();
                 
-                request.print(URLEncoder.encode(property.getKey(), "UTF-8"));
-                request.print("=");
-                request.print(URLEncoder.encode(property.getValue(), "UTF-8"));
+                request.print(URLEncoder.encode(property.getKey(), "UTF-8")); //$NON-NLS-1$
+                request.print("="); //$NON-NLS-1$
+                request.print(URLEncoder.encode(property.getValue(), "UTF-8")); //$NON-NLS-1$
                 if (it.hasNext()) {
-                    request.print("&");
+                    request.print("&"); //$NON-NLS-1$
                 }
             }
             

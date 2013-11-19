@@ -12,6 +12,7 @@ import polly.rx.entities.FleetScanShip;
 
 public class ShipsForScanTableModel extends FleetScanShipTableModel {
 
+    private final static String SCAN_ID = "SCAN_ID"; //$NON-NLS-1$
     
     public ShipsForScanTableModel(FleetDBManager fleetDb) {
         super(fleetDb);
@@ -22,7 +23,7 @@ public class ShipsForScanTableModel extends FleetScanShipTableModel {
     
     public Map<String, String> getRequestParameters(HttpEvent e) {
         final Map<String, String> result = new HashMap<>();
-        result.put("SCAN_ID", e.get("SCAN_ID"));
+        result.put(SCAN_ID, e.get(SCAN_ID));
         return result;
     }
     
@@ -30,7 +31,7 @@ public class ShipsForScanTableModel extends FleetScanShipTableModel {
     
     @Override
     public List<FleetScanShip> getData(HttpEvent e) {
-        final int scanId = Integer.parseInt(e.get("SCAN_ID"));
+        final int scanId = Integer.parseInt(e.get(SCAN_ID));
         final FleetScan fs = this.fleetDB.getScanById(scanId);
         return fs.getShips();
     }

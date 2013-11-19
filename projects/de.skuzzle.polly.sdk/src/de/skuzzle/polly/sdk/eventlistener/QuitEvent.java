@@ -57,7 +57,7 @@ public class QuitEvent extends IrcEvent {
     @Override
     public String toString() {
     	String message = this.quitMessage.length() == 0 
-    		? "" : "(" + this.quitMessage + ")";
-    	return "*** QUIT " + this.user + message;
+    		? "" : "(" + this.quitMessage + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    	return "*** QUIT " + this.user + message; //$NON-NLS-1$
     }
 }

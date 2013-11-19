@@ -1,11 +1,11 @@
 <div class="highlight contentBox">
-    #CONTENT_HEADER ("Compare View")
+    #CONTENT_HEADER ($MSG.htmlScoreboardCmpCaption)
     <div id="compare" class="content"></div>
 </div>
 
 #foreach ($v in $compareList.getEntries())
 <div class="highlight contentBox">
-    #CONTENT_HEADER ("Venad: $v")
+    #CONTENT_HEADER ($Constants.bind($MSG.htmlScoreboardVenad, $v))
     <div id="$v.hashCode()" class="content"></div>
 </div>
 #end

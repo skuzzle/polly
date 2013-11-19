@@ -59,7 +59,7 @@ public class PositioningReader extends LineNumberReader {
      */
     public int getCols(int lineNumber) {
         if (lineNumber < 0 || lineNumber > this.getLineNumber()) {
-            throw new IllegalArgumentException("invalid line number: " + lineNumber);
+            throw new IllegalArgumentException("invalid line number: " + lineNumber); //$NON-NLS-1$
         }
         return this.colLengths[lineNumber];
     }

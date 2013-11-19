@@ -3,6 +3,7 @@ package polly.rx.httpv2;
 import java.util.Date;
 import java.util.List;
 
+import polly.rx.MSG;
 import polly.rx.core.FleetDBManager;
 import polly.rx.entities.FleetScan;
 import de.skuzzle.polly.http.api.HttpEvent;
@@ -12,8 +13,7 @@ import de.skuzzle.polly.sdk.util.DirectedComparator.SortOrder;
 
 public class FleetScanTableModel extends AbstractHTMLTableModel<FleetScan> {
 
-    private final static String[] COLUMNS = { "Date", "Location", "Sens",
-            "Owner", "Clan", "Fleet Name", "Tag", "Ships" };
+    private final static String[] COLUMNS = MSG.scanModelColumns.split(","); //$NON-NLS-1$
 
     protected final FleetDBManager fleetDb;
 
@@ -58,16 +58,16 @@ public class FleetScanTableModel extends AbstractHTMLTableModel<FleetScan> {
     public Object getCellValue(int column, FleetScan element) {
         switch (column) {
         case 0: return element.getDate();
-        case 1: return element.getQuadrant() + " " + element.getX() + ", " + element.getY();
+        case 1: return element.getQuadrant() + " " + element.getX() + ", " + element.getY(); //$NON-NLS-1$ //$NON-NLS-2$
         case 2: return element.getLocalSens();
         case 3: return element.getOwnerName();
         case 4: return element.getOwnerClan();
-        case 5: return new HTMLElement("a")
-            .attr("href", "/pages/fleetScanDetails?scanId="+element.getId())
+        case 5: return new HTMLElement("a") //$NON-NLS-1$
+            .attr("href", RXController.PAGE_FLEET_SCAN_DETAILS + "?scanId="+element.getId()) //$NON-NLS-1$ //$NON-NLS-2$
             .content(element.getFleetName());
         case 6: return element.getFleetTag();
         case 7: return element.getShipCount();
-        default: return "";
+        default: return ""; //$NON-NLS-1$
         }
     }
 

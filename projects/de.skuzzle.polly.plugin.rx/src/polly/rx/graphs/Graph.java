@@ -37,13 +37,13 @@ public class Graph {
                 
                 String[] label = new String[24];
                 for (int i = 0; i < label.length; ++i) {
-                    label[i] = "" + (24 - i);
+                    label[i] = "" + (24 - i); //$NON-NLS-1$
                 }
                 
                 final PointSet set = new PointSet();
-                set.setName("Rot");
+                set.setName("Rot"); //$NON-NLS-1$
                 final PointSet set2 = new PointSet(Color.BLUE);
-                set2.setName("Blau");
+                set2.setName("Blau"); //$NON-NLS-1$
                 set.setColor(Color.RED);
                 graph.addPointSet(set);
                 graph.addPointSet(set2);
@@ -67,14 +67,14 @@ public class Graph {
                 
                 
                 PointSet test = new PointSet(Color.GREEN);
-                test.setName("Green");
+                test.setName("Green"); //$NON-NLS-1$
                 test.add(1, 2000, PointType.DOT);
                 test.add(1, 2500, PointType.DOT);
                 test.add(1, 3000, PointType.DOT);
                 test.add(1, 6000, PointType.DOT);
                 graph.addPointSet(test);
                 
-                graph.setRightScale(new YScale("Just a test", 0, 200, 20));
+                graph.setRightScale(new YScale("Just a test", 0, 200, 20)); //$NON-NLS-1$
                 PointSet rightSet = new PointSet(Color.BLACK);
                 for (int i = 0; i < 24; ++i) {
                     rightSet.add(i, Math.random() * 200, PointType.BOX);
@@ -82,7 +82,7 @@ public class Graph {
                 rightSet.setConnect(true);
                 rightSet.setConnectColor(Color.LIGHT_GRAY);
                 
-                graph.addHighlightArea(new HighlightArea("Test", 2, 5, new Color(0, 0, 0, 20)));
+                graph.addHighlightArea(new HighlightArea("Test", 2, 5, new Color(0, 0, 0, 20))); //$NON-NLS-1$
                 
                 frame.setLayout(new BorderLayout());
                 frame.add(p, BorderLayout.CENTER);
@@ -231,7 +231,7 @@ public class Graph {
                 g.drawLine(-2 + xOffset, newY, 2 + xOffset, newY);
             }
             
-            g.drawString("" + (y * scale.getStep() + scale.getMin()), newX, 
+            g.drawString("" + (y * scale.getStep() + scale.getMin()), newX,  //$NON-NLS-1$
                 newY + m.getAscent() / 2);
         }
         
@@ -252,7 +252,7 @@ public class Graph {
         final FontMetrics m = g.getFontMetrics();
         final double xLabelWidth = this.getLongestStringWidth(this.xLabels, m) + 10.0;
         final double leftYLabelWidth = Math.max(
-            m.stringWidth("" + this.left.getMax()), 
+            m.stringWidth("" + this.left.getMax()),  //$NON-NLS-1$
             m.stringWidth(this.left.getName())) + 10.0;
         
         double rightYLabelWidth;
@@ -262,7 +262,7 @@ public class Graph {
             rightYLabelWidth = Math.max(
                 Math.max(
                     (int)xLabelWidth, 
-                    m.stringWidth("" + this.right.getMax())), 
+                    m.stringWidth("" + this.right.getMax())),  //$NON-NLS-1$
                 m.stringWidth(this.right.getName())) + 10.0;
         }
         
@@ -360,7 +360,7 @@ public class Graph {
                     this.rawPoints.add(new NamedPoint(((NamedPoint) p).getName(), 
                         x + zeroX, y + zeroY, PointType.NONE));
                 } else {
-                    this.rawPoints.add(new NamedPoint(points.getName() + ": " + p.getY(), 
+                    this.rawPoints.add(new NamedPoint(points.getName() + ": " + p.getY(),  //$NON-NLS-1$
                         x + zeroX, y + zeroY, PointType.NONE));
                 }
                 lastX = x;
@@ -408,7 +408,7 @@ public class Graph {
         int legendY = -20;
 
         for (final PointSet points : this.data) {
-            if (!points.getName().equals("")) {
+            if (!points.getName().equals("")) { //$NON-NLS-1$
                 g.setColor(points.getColor());
                 g.fillRect(legendX, legendY, 10, 10);
                 g.drawString(points.getName(), legendX + 15, legendY + 10);

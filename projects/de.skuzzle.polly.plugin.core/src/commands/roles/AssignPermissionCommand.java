@@ -1,5 +1,6 @@
 package commands.roles;
 
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -17,13 +18,12 @@ import de.skuzzle.polly.sdk.exceptions.RoleException;
 public class AssignPermissionCommand extends Command {
 
     public AssignPermissionCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "assignpermission");
-        this.createSignature(
-            "Fügt einer Rolle eine weitere Berechtigung hinzu", 
+        super(polly, "assignpermission"); //$NON-NLS-1$
+        this.createSignature(MSG.assignPermSig0Desc, 
             MyPlugin.ASSIGN_PERMISSION_PERMISSION, 
-            new Parameter("Rollenname", Types.STRING), 
-            new Parameter("Permission", Types.STRING));
-        this.setHelpText("Fügt einer Rolle eine weitere Berechtigung hinzu.");
+            new Parameter(MSG.assignPermSig0Role, Types.STRING), 
+            new Parameter(MSG.assignPermSig0Perm, Types.STRING));
+        this.setHelpText(MSG.assignPermHelp);
     }
 
     
@@ -38,7 +38,7 @@ public class AssignPermissionCommand extends Command {
             
             try {
                 this.getMyPolly().roles().assignPermission(roleName, permissionname);
-                this.reply(channel, "Berechtigung erfolgreich zugewiesen");
+                this.reply(channel, MSG.assignPermSuccess);
             } catch (DatabaseException e) {
                 throw new CommandException(e);
             } catch (RoleException e) {

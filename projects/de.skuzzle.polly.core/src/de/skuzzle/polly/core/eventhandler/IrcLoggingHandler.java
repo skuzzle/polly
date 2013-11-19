@@ -20,16 +20,16 @@ import de.skuzzle.polly.sdk.eventlistener.NickChangeListener;
 public class IrcLoggingHandler implements MessageListener, NickChangeListener, 
         JoinPartListener {
     
-	private static Logger logger = Logger.getLogger("IRCLOGGER");
+	private static Logger logger = Logger.getLogger("IRCLOGGER"); //$NON-NLS-1$
     
 	private List<IrcLogFilter> filters;
    
 	public IrcLoggingHandler() {
-		logger.trace("");
-		logger.trace("----------------------------------------------");
-		logger.trace("new IRC Session started.");
-		logger.trace("----------------------------------------------");
-		logger.trace("");
+		logger.trace(""); //$NON-NLS-1$
+		logger.trace("----------------------------------------------"); //$NON-NLS-1$
+		logger.trace("new IRC Session started."); //$NON-NLS-1$
+		logger.trace("----------------------------------------------"); //$NON-NLS-1$
+		logger.trace(""); //$NON-NLS-1$
 		
 		this.filters = new LinkedList<IrcLogFilter>();
 	}
@@ -94,7 +94,7 @@ public class IrcLoggingHandler implements MessageListener, NickChangeListener,
     @Override
     public void channelJoined(ChannelEvent e) {
         if (!this.discardChannelEvent(e)) {
-            logger.trace("*** JOIN " + e);
+            logger.trace("*** JOIN " + e); //$NON-NLS-1$
         }
     }
 
@@ -103,7 +103,7 @@ public class IrcLoggingHandler implements MessageListener, NickChangeListener,
     @Override
     public void channelParted(ChannelEvent e) {
         if (!this.discardChannelEvent(e)) {
-            logger.trace("*** PART " + e);
+            logger.trace("*** PART " + e); //$NON-NLS-1$
         }
     }
     

@@ -40,6 +40,18 @@ public final class HttpAnswers {
     
     
     /**
+     * Creates an answer with no content which simply redirects to the provided URL.
+     * 
+     * @param target The target URL to redirect to
+     * @return A HttpAnswer
+     */
+    public final static HttpAnswer newRedirectAnswer(final String target) {
+        return newStringAnswer("").redirectTo(target);
+    }
+    
+    
+    
+    /**
      * Creates an answer which simply sends back the provided string to the client. After
      * calling this method, you may call <code>getCookies().add(...)</code> on the 
      * result to add some cookies that should be set at the client.

@@ -17,12 +17,12 @@ import javax.swing.text.html.parser.ParserDelegator;
 
 public class WikiReader {
     
-    private final static Pattern PARAGRAPH = Pattern.compile("<p>.*</p>");
+    private final static Pattern PARAGRAPH = Pattern.compile("<p>.*</p>"); //$NON-NLS-1$
     
     
     public String getWikiLink(String article, String lang) {
-        article = article.replaceAll(" ", "_");
-        return "http://" + lang + ".wikipedia.org/wiki/" + article;
+        article = article.replaceAll(" ", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+        return "http://" + lang + ".wikipedia.org/wiki/" + article; //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     
@@ -34,14 +34,14 @@ public class WikiReader {
         BufferedReader r = null;
         try {
             r = new BufferedReader(new InputStreamReader(connection.getInputStream(), 
-                    Charset.forName("UTF-8")));
+                    Charset.forName("UTF-8"))); //$NON-NLS-1$
             String line = null;
             StringBuilder b = new StringBuilder();
             while ((line = r.readLine()) != null) {
                 b.append(line);
-                b.append("\n");
+                b.append("\n"); //$NON-NLS-1$
                 
-                if (b.indexOf("</p>") != -1) {
+                if (b.indexOf("</p>") != -1) { //$NON-NLS-1$
                     // we read everything we needed
                     break;
                 }
@@ -50,7 +50,7 @@ public class WikiReader {
             String wikiText = b.toString();
             Matcher m = PARAGRAPH.matcher(wikiText);
             if (!m.find()) {
-                throw new IOException("Error while reading the first paragraph");
+                throw new IOException("Error while reading the first paragraph"); //$NON-NLS-1$
             }
             String result = wikiText.substring(m.start(), m.end());
             return this.removeHtml(result);

@@ -3,38 +3,35 @@ package commands;
 import java.util.Collections;
 import java.util.List;
 
+import polly.core.MSG;
 import polly.core.MyPlugin;
-
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
-import de.skuzzle.polly.sdk.User;
-import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.Types.ChannelType;
 import de.skuzzle.polly.sdk.Types.ListType;
+import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 
 public class JoinCommand extends Command {
 
     
-    
     public JoinCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "join");
-        this.createSignature("Lässt polly den angegebenen Channel betreten.", 
+        super(polly, "join"); //$NON-NLS-1$
+        this.createSignature(MSG.joinSig0Desc, 
             MyPlugin.JOIN_PERMISSION,
-                new Parameter("Channel", Types.CHANNEL));
-        this.createSignature("Lässt polly alle Channels in der Liste betreten.",
+                new Parameter(MSG.joinSig0Channel, Types.CHANNEL));
+        this.createSignature(MSG.joinSig1Desc,
             MyPlugin.JOIN_PERMISSION,
-                new Parameter("Channelliste", new ListType(Types.CHANNEL)));
-        this.createSignature("Lässt polly einen Channel mit Passwort betreten",
+                new Parameter(MSG.joinSig1Channels, new ListType(Types.CHANNEL)));
+        this.createSignature(MSG.joinSig2Desc,
             MyPlugin.JOIN_PERMISSION,
-            new Parameter("Channel", Types.CHANNEL),
-            new Parameter("Passwort", Types.STRING));
+            new Parameter(MSG.joinSig2Channel, Types.CHANNEL),
+            new Parameter(MSG.joinSig2Password, Types.STRING));
         this.setRegisteredOnly();
-        this.setUserLevel(UserManager.ADMIN);
-        this.setHelpText("Befehl zum joinen von Channels.");
+        this.setHelpText(MSG.joinHelp);
     }
     
     
@@ -58,12 +55,12 @@ public class JoinCommand extends Command {
         }
         
         if (channels == null) {
-            throw new RuntimeException("This should not have happened. Command was " +
-            		"called with illegal signature");
+            throw new RuntimeException(
+                "This should not have happened. Command was called with illegal signature"); //$NON-NLS-1$
         }
         
         for (ChannelType ct : channels) {
-            this.getMyPolly().irc().joinChannel(ct.getValue(), "");
+            this.getMyPolly().irc().joinChannel(ct.getValue(), ""); //$NON-NLS-1$
         }
         
         return false;

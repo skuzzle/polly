@@ -31,29 +31,29 @@ public interface RoleManager {
      * Constant for a permission name for which {@link #hasPermission(User, String)}
      * will always return <code>true</code>
      */
-    public final static String NONE_PERMISSION = "polly.permissions.NONE";
+    public final static String NONE_PERMISSION = "polly.permissions.NONE"; //$NON-NLS-1$
     
     /**
      * Constant for a permission that all registered users own.
      */
-    public final static String REGISTERED_PERMISSION = "polly.permissions.REGISTERED";
+    public final static String REGISTERED_PERMISSION = "polly.permissions.REGISTERED"; //$NON-NLS-1$
     
     /**
      * Constant for a permission that only admin users own.
      */
-    public final static String ADMIN_PERMISSION = "polly.permissions.ADMIN";
+    public final static String ADMIN_PERMISSION = "polly.permissions.ADMIN"; //$NON-NLS-1$
     
     /**
      * Constant for the admin role name. This role has permissions for accessing every 
      * {@link SecurityObject} within polly.
      */
-    public final static String ADMIN_ROLE = "polly.roles.ADMIN";
+    public final static String ADMIN_ROLE = "polly.roles.ADMIN"; //$NON-NLS-1$
     
     /**
      * Constant for the default role name. This role will be assigned to all registered 
      * users.
      */
-    public final static String DEFAULT_ROLE = "polly.roles.DEFAULT";
+    public final static String DEFAULT_ROLE = "polly.roles.DEFAULT"; //$NON-NLS-1$
     
     
     

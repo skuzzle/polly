@@ -3,8 +3,8 @@ package commands.roles;
 import java.util.Iterator;
 import java.util.Set;
 
+import polly.core.MSG;
 import polly.core.MyPlugin;
-
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -18,18 +18,18 @@ import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 
 public class ListRolesCommand extends Command {
 
-    public final static String LIST_ROLES_PERMISSION = "polly.permission.LIST_ROLES";
+    public final static String LIST_ROLES_PERMISSION = "polly.permission.LIST_ROLES"; //$NON-NLS-1$
     
     public ListRolesCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "listroles");
+        super(polly, "listroles"); //$NON-NLS-1$
         this.createSignature(
-            "Listet alle Rollen eines Benutzers auf",
+            MSG.listRolesSig0Desc,
             MyPlugin.LIST_ROLES_PERMISSION,
-            new Parameter("Benutzer", Types.USER));
+            new Parameter(MSG.listRolesSig0User, Types.USER));
         this.createSignature(
-            "Listet alle verfügbaren Rollen auf",
+            MSG.listRolesSig1Desc,
             MyPlugin.LIST_ROLES_PERMISSION);
-        this.setHelpText("Listet verfügbare Benutzer-Rollen auf");
+        this.setHelpText(MSG.listRolesHelp);
     }
 
 
@@ -44,14 +44,14 @@ public class ListRolesCommand extends Command {
             User user = this.getMyPolly().users().getUser(userName);
             
             if (user == null) {
-                throw new CommandException("Unbekannter Benutzer: " + userName);
+                throw new CommandException(MSG.bind(MSG.listRolesUnknownUser, userName));
             }
             
             roles = this.getMyPolly().roles().getRoles(user);
         } else if (this.match(signature, 1)) {
             roles = this.getMyPolly().roles().getRoles();
         } else {
-            throw new IllegalStateException("wrong signature passed to command");
+            throw new IllegalStateException("wrong signature passed to command"); //$NON-NLS-1$
         }
         
         
@@ -60,7 +60,7 @@ public class ListRolesCommand extends Command {
         while (it.hasNext()) {
             result.append(it.next());
             if (it.hasNext()) {
-                result.append(", ");
+                result.append(", "); //$NON-NLS-1$
             }
         }
         this.reply(channel, result.toString());

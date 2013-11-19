@@ -24,8 +24,8 @@ public interface User extends Comparable<User> {
     public final static Comparator<User> BY_NICKNAME = new Comparator<User>() {
         @Override
         public int compare(User o1, User o2) {
-            final String n1 = o1.getCurrentNickName() == null ? "" : o1.getCurrentNickName();
-            final String n2 = o2.getCurrentNickName() == null ? "" : o2.getCurrentNickName();
+            final String n1 = o1.getCurrentNickName() == null ? "" : o1.getCurrentNickName(); //$NON-NLS-1$
+            final String n2 = o2.getCurrentNickName() == null ? "" : o2.getCurrentNickName(); //$NON-NLS-1$
             return n1.compareToIgnoreCase(n2);
         }
     };

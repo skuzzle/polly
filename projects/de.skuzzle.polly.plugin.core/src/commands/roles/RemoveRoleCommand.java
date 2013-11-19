@@ -1,5 +1,6 @@
 package commands.roles;
 
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -18,14 +19,14 @@ public class RemoveRoleCommand extends Command {
     
     
     public RemoveRoleCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "removerole");
+        super(polly, "removerole"); //$NON-NLS-1$
         this.createSignature(
-            "Entfernt eine Rolle von einem Benutzer", 
+            MSG.removeRoleSig0Desc, 
             MyPlugin.REMOVE_ROLE_PERMISSION, 
-            new Parameter("Benutzer", Types.USER),
-            new Parameter("Rolle", Types.STRING));
+            new Parameter(MSG.removeRoleSig0User, Types.USER),
+            new Parameter(MSG.removeRoleSig0Role, Types.STRING));
         
-        this.setHelpText("Entfernt eine Rolle von einem Benutzer");
+        this.setHelpText(MSG.removeRoleHelp);
     }
     
     
@@ -40,12 +41,12 @@ public class RemoveRoleCommand extends Command {
             
             User user = this.getMyPolly().users().getUser(userName);
             if (user == null) {
-                throw new CommandException("Unbekannter Benutzer: " + userName);
+                throw new CommandException(MSG.bind(MSG.removeRoleUnknownUser, userName));
             }
             
             try {
                 this.getMyPolly().roles().removeRole(user, roleName);
-                this.reply(channel, "Rolle erfolgreich zugewiesen");
+                this.reply(channel, MSG.removeRoleSuccess);
             } catch (RoleException e) {
                 throw new CommandException(e);
             } catch (DatabaseException e) {

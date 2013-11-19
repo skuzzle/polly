@@ -14,11 +14,11 @@ import de.skuzzle.polly.sdk.paste.PostResult;
 public class NoPastePasteService extends AbstractPasteService {
     
     private final static Pattern PATTERN = Pattern.compile(
-        "http://nopaste.info/[0-9a-f]+\\.html");
+        "http://nopaste.info/[0-9a-f]+\\.html"); //$NON-NLS-1$
     
     
     public NoPastePasteService() {
-        super("nopaste");
+        super("nopaste"); //$NON-NLS-1$
     }
     
     
@@ -28,21 +28,21 @@ public class NoPastePasteService extends AbstractPasteService {
         Map<String, String> properties = new HashMap<String, String>(10);
         
 
-        properties.put("name", "polly");
-        properties.put("code_lang", "Plain Text");
-        properties.put("api_paste_name", "Polly Log output");
-        properties.put("tab_length", "4");
-        properties.put("description", "Polly Log");
-        properties.put("code", message);
-        properties.put("submit", "Add Entry");
+        properties.put("name", "polly"); //$NON-NLS-1$ //$NON-NLS-2$
+        properties.put("code_lang", "Plain Text"); //$NON-NLS-1$ //$NON-NLS-2$
+        properties.put("api_paste_name", "Polly Log output"); //$NON-NLS-1$ //$NON-NLS-2$
+        properties.put("tab_length", "4"); //$NON-NLS-1$ //$NON-NLS-2$
+        properties.put("description", "Polly Log"); //$NON-NLS-1$ //$NON-NLS-2$
+        properties.put("code", message); //$NON-NLS-1$
+        properties.put("submit", "Add Entry"); //$NON-NLS-1$ //$NON-NLS-2$
         
         
-        PostResult pr = this.postRequest(new URL("http://nopaste.info/index.html"), 
+        PostResult pr = this.postRequest(new URL("http://nopaste.info/index.html"),  //$NON-NLS-1$
             properties);
 
         Matcher m = PATTERN.matcher(pr.getResultString());
         if (!m.find()) {
-            throw new IOException("invalid result");
+            throw new IOException("invalid result"); //$NON-NLS-1$
         }
         
         return pr.getResultString().substring(m.start(), m.end());

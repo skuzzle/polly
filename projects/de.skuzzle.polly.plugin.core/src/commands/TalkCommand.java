@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -7,23 +8,21 @@ import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
-import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 
 
 public class TalkCommand extends Command {
 
     public TalkCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "talk");
-        this.createSignature("Spricht zum aktuellen Channel", 
+        super(polly, "talk"); //$NON-NLS-1$
+        this.createSignature(MSG.talkSig0Desc, 
             MyPlugin.TALK_PERMISSION,
-            new Parameter("Nachricht", Types.STRING));
-        this.createSignature("Spricht zum angegebenen Channel",
+            new Parameter(MSG.talkSig0Msg, Types.STRING));
+        this.createSignature(MSG.talkSig1Desc,
             MyPlugin.TALK_PERMISSION,
-            new Parameter("Channel", Types.CHANNEL), 
-            new Parameter("Nachricht", Types.STRING));
+            new Parameter(MSG.talkSig1Channel, Types.CHANNEL), 
+            new Parameter(MSG.talkSig1Msg, Types.STRING));
         this.setRegisteredOnly();
-        this.setUserLevel(UserManager.ADMIN);
     }
 
     

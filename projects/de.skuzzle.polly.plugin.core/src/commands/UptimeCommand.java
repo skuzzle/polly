@@ -2,10 +2,9 @@ package commands;
 
 import java.util.Date;
 
+import polly.core.MSG;
 import polly.core.MyPlugin;
-
 import core.JoinTimeCollector;
-
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -25,14 +24,14 @@ public class UptimeCommand extends Command {
     
     public UptimeCommand(MyPolly polly, JoinTimeCollector jtc) 
                 throws DuplicatedSignatureException {
-        super(polly, "uptime");
+        super(polly, "uptime"); //$NON-NLS-1$
         this.joinTimeCollector = jtc;
-        this.createSignature("Zeigt an wie lange polly schon läuft.", 
+        this.createSignature(MSG.uptimeSig0Desc, 
             MyPlugin.UPTIME_PERMISSION);
-        this.createSignature("Zeigt an wie lange der angegebene Benutzer schon online ist.",
+        this.createSignature(MSG.uptimeSig1Desc,
             MyPlugin.UPTIME_PERMISSION,
-            new Parameter("Nickname", Types.USER));
-        this.setHelpText("Zeigt an wie lange polly schon läuft.");
+            new Parameter(MSG.uptimeSig1Nick, Types.USER));
+        this.setHelpText(MSG.uptimeHelp);
     }
     
     
@@ -43,24 +42,23 @@ public class UptimeCommand extends Command {
         Date start = this.getMyPolly().getStartTime();
         Date now = Time.currentTime();
         FormatManager f = this.getMyPolly().formatting();
-        String result = "";
+        String result = ""; //$NON-NLS-1$
         if (this.match(signature, 0)) {
-            long diff = (now.getTime() - start.getTime()) / 1000;
-            result = this.getMyPolly().irc().getNickname() + " online seit: " + 
-                f.formatDate(start) + " (" + f.formatTimeSpan(diff) + ")";
+            final long diff = now.getTime() - start.getTime();
+            
+            result = MSG.bind(MSG.uptimeOnlineSince, this.getMyPolly().irc().getNickname(),
+                    f.formatDate(start), f.formatTimeSpanMs(diff));
         } else if (this.match(signature, 1)) {
             String nickName = signature.getStringValue(0);
             Long joinTime = this.joinTimeCollector.getJoinTime(nickName);
             if (joinTime == null) {
-                result = nickName + " ist nicht online.";
+                result = MSG.bind(MSG.uptimeOffline, nickName);
             } else {
                 start = new Date(joinTime);
-                long diff = (now.getTime() - start.getTime()) / 1000;
-                result = nickName + " online seit: " + 
-                    f.formatDate(start) + " (" + f.formatTimeSpan(diff) + ")";
+                final long diff = now.getTime() - start.getTime();
+                result = MSG.bind(MSG.uptimeOnlineSince, nickName,
+                        f.formatDate(start), f.formatTimeSpanMs(diff));
             }
-            
-            
         }
         this.reply(channel, result);
         return false;

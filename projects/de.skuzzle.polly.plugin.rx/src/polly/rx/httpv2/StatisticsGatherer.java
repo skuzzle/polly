@@ -9,6 +9,7 @@ import polly.rx.entities.BattleTactic;
 import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.http.api.HttpSession;
 import de.skuzzle.polly.sdk.User;
+import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLModelListener;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLTableModel;
 
@@ -44,8 +45,8 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
             List<BattleReport> data, HttpEvent e) {
         
         final HttpSession s = e.getSession();
-        final User user = (User) s.getAttached("user");
-        final String STATISTIC_KEY = "BR_STATS_" + user.getName();
+        final User user = (User) s.getAttached(WebinterfaceManager.USER);
+        final String STATISTIC_KEY = RXController.STATS_PREFIX + user.getName();
         
         final BattleReportStatistics stats = new BattleReportStatistics();
         s.set(STATISTIC_KEY, stats);

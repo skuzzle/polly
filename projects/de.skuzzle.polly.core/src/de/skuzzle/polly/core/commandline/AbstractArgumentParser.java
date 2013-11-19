@@ -8,7 +8,7 @@ import java.util.Set;
 public abstract class AbstractArgumentParser {
        
     protected Set<Argument> arguments;
-    private String canonical = "";
+    private String canonical = ""; //$NON-NLS-1$
     
     
     
@@ -20,7 +20,7 @@ public abstract class AbstractArgumentParser {
     
     public void addArgument(Argument a) {
         if (!this.arguments.add(a)) {
-            throw new IllegalArgumentException("argument already exists: " + a.getName());
+            throw new IllegalArgumentException("argument already exists: " + a.getName()); //$NON-NLS-1$
         }
     }
     
@@ -40,9 +40,9 @@ public abstract class AbstractArgumentParser {
                     
                     
                     if (!arg.filter() && !tmp.contains(arg.getName())) {
-                        this.canonical += arg.getName() + " ";
+                        this.canonical += arg.getName() + " "; //$NON-NLS-1$
                         for (int j = i; j < arg.getParameters() + i; ++j) {
-                            this.canonical += args[j] + " ";
+                            this.canonical += args[j] + " "; //$NON-NLS-1$
                         }
                     }
                     tmp.add(arg.getName());
@@ -57,7 +57,7 @@ public abstract class AbstractArgumentParser {
                 }
             }
             if (!found) {
-                throw new ParameterException("unknown parameter: " + param);
+                throw new ParameterException(MSG.bind(MSG.unknownParameter, param));
             }
         }
         
@@ -75,7 +75,7 @@ public abstract class AbstractArgumentParser {
     private static void checkParam(String[] args, int current, int expected) 
             throws ParameterException {
         if (args.length < current + expected) {
-            throw new ParameterException("further parameters expected");
+            throw new ParameterException(MSG.tooLessParameters);
         }
     }
     

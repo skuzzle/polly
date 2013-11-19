@@ -7,16 +7,15 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import polly.core.MSG;
 import polly.core.MyPlugin;
-
 import de.skuzzle.polly.sdk.DelayedCommand;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
-import de.skuzzle.polly.sdk.User;
-import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.Types.TimespanType;
+import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
@@ -35,16 +34,16 @@ public class AnyficationCommand extends DelayedCommand {
     
     
     public AnyficationCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "anyfication", DELAY);
-        this.createSignature("Anyfication!", 
+        super(polly, "anyfication", DELAY); //$NON-NLS-1$
+        this.createSignature(MSG.anyficationSig0Desc, 
             MyPlugin.ANYFICATION_PERMISSION,
-            new Parameter("Prefix", Types.STRING));
-        this.createSignature("Lordification innerhalb der angegebenen zeit!",
+            new Parameter(MSG.anyficationSig0Prefix, Types.STRING));
+        this.createSignature(MSG.anyficationSig1Desc,
             MyPlugin.ANYFICATION_PERMISSION,
-            new Parameter("Prefix", Types.STRING), 
-            new Parameter("Zeitspanne", Types.TIMESPAN));
-        this.setUserLevel(UserManager.ADMIN);
-        this.anyficationTimer = new Timer("LORDIFICATION_TIMER", true);
+            new Parameter(MSG.anyficationSig1Prefix, Types.STRING), 
+            new Parameter(MSG.anyficationSig1Timespan, Types.TIMESPAN));
+        this.setHelpText(MSG.anyficationHelp);
+        this.anyficationTimer = new Timer("LORDIFICATION_TIMER", true); //$NON-NLS-1$
         this.channels = new HashSet<String>();
     }
     
@@ -77,14 +76,15 @@ public class AnyficationCommand extends DelayedCommand {
         while (it.hasNext()) {
             b.append(it.next());
             if (it.hasNext()) {
-                b.append(", ");
+                b.append(", "); //$NON-NLS-1$
             }
         }
-        b.append(": ihr habt " + 
-            this.getMyPolly().formatting().formatTimeSpan(timeSpan / 1000) + 
-            " Zeit um euch zu lordifizieren.");
+        final String info = MSG.bind(MSG.anyficationInfo, 
+                this.getMyPolly().formatting().formatTimeSpan(timeSpan / 1000));
+        b.append(": "); //$NON-NLS-1$
+        b.append(info);
         this.reply(channel, b.toString());
-        this.getMyPolly().irc().setNickname(prefix + "-Polly");
+        this.getMyPolly().irc().setNickname(prefix + "-Polly"); //$NON-NLS-1$
         
         this.channels.add(channel);
         this.anyficationTimer.schedule(new TimerTask() {
@@ -96,7 +96,7 @@ public class AnyficationCommand extends DelayedCommand {
                 List<String> users = getMyPolly().irc().getChannelUser(chan);
                 for (String user : users) {
                     if (!user.startsWith(prefix)) {
-                        getMyPolly().irc().kick(chan, user, "Nicht lordifiziert!");
+                        getMyPolly().irc().kick(chan, user, MSG.anyficationFail);
                     }
                 }
                 getMyPolly().irc().setAndIdentifyDefaultNickname();

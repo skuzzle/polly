@@ -1,5 +1,6 @@
 package commands;
 
+import polly.core.MSG;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -13,15 +14,15 @@ import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
 
 
 public class AuthCommand extends Command {
-
+    
     public AuthCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "auth");
-        this.createSignature("Meldet den Benutzer bei Polly an", 
-            new Parameter("Username", Types.USER),
-            new Parameter("Passwort", Types.STRING));
-        this.createSignature("Meldet den Benutzer bei Polly an", 
-            new Parameter("Passwort", Types.STRING));
-        this.setHelpText("Befehl um dich bei Polly anzumelden.");
+        super(polly, "auth"); //$NON-NLS-1$
+        this.createSignature(MSG.authSig0Desc, 
+            new Parameter(MSG.userName, Types.USER),
+            new Parameter(MSG.authSigPassword, Types.STRING));
+        this.createSignature(MSG.authSig1Desc, 
+            new Parameter(MSG.authSigPassword, Types.STRING));
+        this.setHelpText(MSG.authHelp);
         this.setQryCommand(true);
     }
     
@@ -39,17 +40,15 @@ public class AuthCommand extends Command {
     protected void executeOnChannel(User executer, String channel,
             Signature signature) {
         
-        this.reply(channel, "Dieser Befehl ist nur im Query ausführbar. " +
-        		"Zudem solltest du dein Passwort ändern sofern du es hier für jeden " +
-        		"lesbar angegeben hast.");
+        this.reply(channel, MSG.authQryWarning);
     }
     
     
     
     @Override
     protected void executeOnQuery(User executer, Signature signature) {
-        String userName = "";
-        String password = "";
+        String userName = ""; //$NON-NLS-1$
+        String password = ""; //$NON-NLS-1$
         if (this.match(signature, 0)) {
             userName = signature.getStringValue(0);
             password = signature.getStringValue(1);
@@ -63,14 +62,15 @@ public class AuthCommand extends Command {
                     userName, password);
             
             if (user == null) {
-                this.reply(executer, "Falsches Passwort.");
+                this.reply(executer, MSG.authWrongPw);
                 return;
             }
-            this.reply(executer, "Du bist jetzt angemeldet.");
+            this.reply(executer, MSG.authSuccess);
         } catch (UnknownUserException e) {
-            this.reply(executer, "Unbekannter Benutzername: " + userName);
+            this.reply(executer, MSG.bind(MSG.unknownUser, userName));
         } catch (AlreadySignedOnException e) {
-            this.reply(executer, "Der Benutzer ist bereits angemeldet.");
+            this.reply(executer, MSG.bind(MSG.authAlreadySignedOn, 
+                    e.getUser().getCurrentNickName()));
         }
     }
 }

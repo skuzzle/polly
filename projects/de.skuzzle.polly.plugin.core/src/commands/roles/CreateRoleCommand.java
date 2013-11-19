@@ -1,5 +1,6 @@
 package commands.roles;
 
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -18,19 +19,19 @@ public class CreateRoleCommand extends Command {
 
     
     public CreateRoleCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "createrole");
+        super(polly, "createrole"); //$NON-NLS-1$
         this.createSignature(
-            "Erstellt eine neue Benutzer-Rolle", 
+            MSG.createRoleSig0Desc, 
             MyPlugin.CREATE_ROLE_PERMISSION,
-            new Parameter("Rollenname", Types.STRING));
+            new Parameter(MSG.createRoleSig0Name, Types.STRING));
         
         this.createSignature(
-            "Erstellt eine neue benutzerrolle basierend auf einer anderen Rolle", 
+            MSG.createRoleSig1Desc, 
             MyPlugin.CREATE_ROLE_PERMISSION, 
-            new Parameter("Basisrolle", Types.STRING),
-            new Parameter("Rollenname", Types.STRING));
+            new Parameter(MSG.createRoleSig1Base, Types.STRING),
+            new Parameter(MSG.createRoleSig1Name, Types.STRING));
         
-        this.setHelpText("Erstellt neue Benutzerrollen");
+        this.setHelpText(MSG.createRoleHelp);
     }
     
 
@@ -44,7 +45,7 @@ public class CreateRoleCommand extends Command {
             
             try {
                 this.getMyPolly().roles().createRole(newRoleName);
-                this.reply(channel, "Neue Rolle hinzugefügt");
+                this.reply(channel, MSG.createRoleSuccess);
             } catch (DatabaseException e) {
                 throw new CommandException(e);
             }
@@ -54,7 +55,7 @@ public class CreateRoleCommand extends Command {
             
             try {
                 this.getMyPolly().roles().createRole(baseRoleName, newRoleName);
-                this.reply(channel, "Neue Rolle hinzugefügt");
+                this.reply(channel, MSG.createRoleSuccess);
             } catch (DatabaseException e) {
                 throw new CommandException(e);
             } catch (RoleException e) {

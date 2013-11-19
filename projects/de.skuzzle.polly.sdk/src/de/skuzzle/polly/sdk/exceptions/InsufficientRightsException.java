@@ -22,9 +22,10 @@ public class InsufficientRightsException extends Exception {
 	
 	
 	public InsufficientRightsException(SecurityObject object) {
-	    super("");
+	    super(""); //$NON-NLS-1$
 	    this.object = object;
 	}
+	
 	
 	
 	/**

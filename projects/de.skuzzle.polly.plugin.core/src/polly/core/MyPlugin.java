@@ -2,7 +2,6 @@ package polly.core;
 
 
 import commands.AddUserCommand;
-import commands.AliasCommand;
 import commands.CalendarCommand;
 import commands.ClumBombCommand;
 import commands.DefineCommand;
@@ -71,49 +70,50 @@ import entities.TopicEntity;
  */
 public class MyPlugin extends PollyPlugin {
     
-    public final static String CASPER  = "polly.roles.CASPER";
+    public final static String CASPER  = "polly.roles.CASPER"; //$NON-NLS-1$
     
 
-    public final static String ADD_USER_PERMISSION               = "polly.permission.ADD_USER";
-    public final static String ALIAS_PERMISSION                  = "polly.permission.ALIAS";
-    public final static String ANYFICATION_PERMISSION            = "polly.permission.ANYFICATION";
-    public final static String CLUMBOMB_PERMISSION               = "polly.permission.CLUMBOMB";
-    public final static String DEFINE_PERMISSION                 = "polly.permission.DEFINE";
-    public final static String DELETE_USER_PERMISSION            = "polly.permission.DELETE_USER";
-    public final static String DICT_PERMISSION                   = "polly.permission.DICT";
-    public final static String DITO_PERMISSION                   = "polly.permission.DITO";
-    public final static String EXPORT_ATTRIBUTES_PERMISSION      = "polly.permission.EXPORT_ATTRIBUTES";
-    public final static String EXPORT_USER_ATTRIBUTES_PERMISSION = "polly.permission.EXPORT_USER_ATTRIBUTES";
-    public final static String GET_ATTRIBUTE_PERMISSION          = "polly.permission.GET_ATTRIBUTE";
-    public final static String GET_USER_ATTRIBUTE_PERMISSION     = "polly.permission.GET_USER_ATTRIBUTE";
-    public final static String HOP_PERMISSION                    = "polly.permission.HOP";
-    public final static String INFO_PERMISSION                   = "polly.permission.INFO";
-    public final static String ISDOWN_PERMISSION                 = "polly.permission.ISDOWN";
-    public final static String JOIN_PERMISSION                   = "polly.permission.JOIN";
-    public final static String KICK_PERMISSION                   = "polly.permission.KICK";
-    public final static String LIST_ATTRIBUTES_PERMISSION        = "polly.permission.LIST_ATTRIBUTES";
-    public final static String PART_PERMISSION                   = "polly.permission.PART";
-    public final static String QUIT_PERMISSION                   = "polly.permission.QUIT";
-    public final static String RAW_IRC_PERMISSION                = "polly.permission.RAW_IRC";
-    public final static String RESTART_PERMISSION                = "polly.permission.RESTART";
-    public final static String SET_ATTRIBUTE_PERMISSION          = "polly.permission.SET_ATTRIBUTE";
-    public final static String SET_USER_ATTRIBUTE_PERMISSION     = "polly.permission.SET_USER_ATTRIBUTE";
-    public final static String SET_PASSWORD_PERMISSION           = "polly.permission.SET_PASSWORD";
-    public final static String TALK_PERMISSION                   = "polly.permission.TALK";
-    public final static String UPTIME_PERMISSION                 = "polly.permission.UPTIME";
-    public final static String LIST_USERS_PERMISSION             = "polly.permission.LIST_USERS";
-    public final static String LIST_VARS_PERMISSION              = "polly.permission.LIST_VARS";
-    public final static String ASSIGN_PERMISSION_PERMISSION      = "polly.permission.ASSIGN_PERMISSION";
-    public final static String ASSIGN_ROLE_PERMISSION            = "polly.permission.ASSIGN_ROLE";
-    public final static String CREATE_ROLE_PERMISSION            = "polly.permission.CREATE_ROLE";
-    public final static String DELETE_ROLE_PERMISSION            = "polly.permission.DELETE_ROLE";
-    public final static String LIST_PERMISSIONS_PERMISSION       = "polly.permission.LIST_PERMISSIONS";
-    public final static String LIST_ROLES_PERMISSION             = "polly.permission.LIST_ROLES";
-    public final static String REMOVE_PERMISSION_PERMISSION      = "polly.permission.REMOVE_PERMISSION";
-    public final static String REMOVE_ROLE_PERMISSION            = "polly.permission.REMOVE_ROLE";
-    public final static String SET_AND_IDENTIFY_PERMISSION       = "polly.permission.SET_AND_IDENTIFY";
-    public final static String GREETING = "GREETING";
+    public final static String ADD_USER_PERMISSION               = "polly.permission.ADD_USER"; //$NON-NLS-1$
+    public final static String ALIAS_PERMISSION                  = "polly.permission.ALIAS"; //$NON-NLS-1$
+    public final static String ANYFICATION_PERMISSION            = "polly.permission.ANYFICATION"; //$NON-NLS-1$
+    public final static String CLUMBOMB_PERMISSION               = "polly.permission.CLUMBOMB"; //$NON-NLS-1$
+    public final static String DEFINE_PERMISSION                 = "polly.permission.DEFINE"; //$NON-NLS-1$
+    public final static String DELETE_USER_PERMISSION            = "polly.permission.DELETE_USER"; //$NON-NLS-1$
+    public final static String DICT_PERMISSION                   = "polly.permission.DICT"; //$NON-NLS-1$
+    public final static String DITO_PERMISSION                   = "polly.permission.DITO"; //$NON-NLS-1$
+    public final static String EXPORT_ATTRIBUTES_PERMISSION      = "polly.permission.EXPORT_ATTRIBUTES"; //$NON-NLS-1$
+    public final static String EXPORT_USER_ATTRIBUTES_PERMISSION = "polly.permission.EXPORT_USER_ATTRIBUTES"; //$NON-NLS-1$
+    public final static String GET_ATTRIBUTE_PERMISSION          = "polly.permission.GET_ATTRIBUTE"; //$NON-NLS-1$
+    public final static String GET_USER_ATTRIBUTE_PERMISSION     = "polly.permission.GET_USER_ATTRIBUTE"; //$NON-NLS-1$
+    public final static String HOP_PERMISSION                    = "polly.permission.HOP"; //$NON-NLS-1$
+    public final static String INFO_PERMISSION                   = "polly.permission.INFO"; //$NON-NLS-1$
+    public final static String ISDOWN_PERMISSION                 = "polly.permission.ISDOWN"; //$NON-NLS-1$
+    public final static String JOIN_PERMISSION                   = "polly.permission.JOIN"; //$NON-NLS-1$
+    public final static String KICK_PERMISSION                   = "polly.permission.KICK"; //$NON-NLS-1$
+    public final static String LIST_ATTRIBUTES_PERMISSION        = "polly.permission.LIST_ATTRIBUTES"; //$NON-NLS-1$
+    public final static String PART_PERMISSION                   = "polly.permission.PART"; //$NON-NLS-1$
+    public final static String QUIT_PERMISSION                   = "polly.permission.QUIT"; //$NON-NLS-1$
+    public final static String RAW_IRC_PERMISSION                = "polly.permission.RAW_IRC"; //$NON-NLS-1$
+    public final static String RESTART_PERMISSION                = "polly.permission.RESTART"; //$NON-NLS-1$
+    public final static String SET_ATTRIBUTE_PERMISSION          = "polly.permission.SET_ATTRIBUTE"; //$NON-NLS-1$
+    public final static String SET_USER_ATTRIBUTE_PERMISSION     = "polly.permission.SET_USER_ATTRIBUTE"; //$NON-NLS-1$
+    public final static String SET_PASSWORD_PERMISSION           = "polly.permission.SET_PASSWORD"; //$NON-NLS-1$
+    public final static String TALK_PERMISSION                   = "polly.permission.TALK"; //$NON-NLS-1$
+    public final static String UPTIME_PERMISSION                 = "polly.permission.UPTIME"; //$NON-NLS-1$
+    public final static String LIST_USERS_PERMISSION             = "polly.permission.LIST_USERS"; //$NON-NLS-1$
+    public final static String LIST_VARS_PERMISSION              = "polly.permission.LIST_VARS"; //$NON-NLS-1$
+    public final static String ASSIGN_PERMISSION_PERMISSION      = "polly.permission.ASSIGN_PERMISSION"; //$NON-NLS-1$
+    public final static String ASSIGN_ROLE_PERMISSION            = "polly.permission.ASSIGN_ROLE"; //$NON-NLS-1$
+    public final static String CREATE_ROLE_PERMISSION            = "polly.permission.CREATE_ROLE"; //$NON-NLS-1$
+    public final static String DELETE_ROLE_PERMISSION            = "polly.permission.DELETE_ROLE"; //$NON-NLS-1$
+    public final static String LIST_PERMISSIONS_PERMISSION       = "polly.permission.LIST_PERMISSIONS"; //$NON-NLS-1$
+    public final static String LIST_ROLES_PERMISSION             = "polly.permission.LIST_ROLES"; //$NON-NLS-1$
+    public final static String REMOVE_PERMISSION_PERMISSION      = "polly.permission.REMOVE_PERMISSION"; //$NON-NLS-1$
+    public final static String REMOVE_ROLE_PERMISSION            = "polly.permission.REMOVE_ROLE"; //$NON-NLS-1$
+    public final static String SET_AND_IDENTIFY_PERMISSION       = "polly.permission.SET_AND_IDENTIFY"; //$NON-NLS-1$
+    public final static String GREETING = "GREETING"; //$NON-NLS-1$
 
+    
     
     private GreetDeliverer greetDeliverer;
     private JoinTimeCollector joinTimeCollector;
@@ -171,15 +171,14 @@ public class MyPlugin extends PollyPlugin {
 		super(myPolly);
 		
 		this.addCommand(new AnyficationCommand(myPolly));
-		
-		//this.topicManager = new TopicManager(myPolly);
+
+		// HACK: better leave this here for compatibility
         this.getMyPolly().persistence().registerEntity(TopicEntity.class);
         
         this.greetDeliverer = new GreetDeliverer(myPolly);
         this.getMyPolly().users().addUserListener(this.greetDeliverer);
         this.addCommand(new GreetingCommand(myPolly));
         
-        this.addCommand(new AliasCommand(myPolly));
 		this.addCommand(new InfoCommand(myPolly));
 		this.addCommand(new QuitCommand(myPolly));
 		this.addCommand(new JoinCommand(myPolly));
@@ -250,7 +249,7 @@ public class MyPlugin extends PollyPlugin {
 	public void onLoad() {
 	    try {
 	        this.getMyPolly().users().addAttribute(GREETING, Types.STRING, 
-	            "Set a greeting which polly delivers you each time you log in", "Core");
+	            MSG.attributeGreetingDescription, "Core"); //$NON-NLS-1$
 	    } catch (Exception ignore) {
 	        ignore.printStackTrace();
 	    }

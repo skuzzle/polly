@@ -50,7 +50,7 @@ public class Point implements Comparable<Point> {
     
     @Override
     public String toString() {
-        return "[x=" + this.x + ", y=" + this.y + "]";
+        return "[x=" + this.x + ", y=" + this.y + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
 

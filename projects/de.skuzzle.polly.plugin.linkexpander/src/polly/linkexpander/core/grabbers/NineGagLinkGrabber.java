@@ -7,10 +7,10 @@ import java.util.regex.Pattern;
 public class NineGagLinkGrabber extends AbstractHttpRequestGrabber {
     
     private final static Pattern LINK_PATTERN = Pattern.compile(
-        "https?://9gag.com/gag/\\S+");
+        "https?://9gag.com/gag/\\S+"); //$NON-NLS-1$
     
     private final static Pattern TITLE_PATTERN = Pattern.compile(
-        "<title>([^<]+)</title>");
+        "<title>([^<]+)</title>"); //$NON-NLS-1$
     
     
     

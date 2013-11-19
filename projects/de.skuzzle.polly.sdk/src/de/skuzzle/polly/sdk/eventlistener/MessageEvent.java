@@ -47,6 +47,6 @@ public class MessageEvent extends ChannelEvent {
      */
     @Override
     public String toString() {
-        return super.toString() + ": " + this.message;
+        return super.toString() + ": " + this.message; //$NON-NLS-1$
     }
 }

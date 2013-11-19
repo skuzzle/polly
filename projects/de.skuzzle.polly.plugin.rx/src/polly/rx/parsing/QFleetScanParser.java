@@ -15,8 +15,8 @@ public class QFleetScanParser {
     // TEST
     public static void main(String[] args) throws IOException, ParseException {
         final InputStream s = QFleetScanParser.class
-                .getResourceAsStream("flottenscan.txt");
-        final String scan = FileUtil.readIntoString(s, "UTF-8");
+                .getResourceAsStream("flottenscan.txt"); //$NON-NLS-1$
+        final String scan = FileUtil.readIntoString(s, "UTF-8"); //$NON-NLS-1$
         // System.out.println("'" + scan + "'");
         parseFleetScan(scan);
     }
@@ -25,26 +25,26 @@ public class QFleetScanParser {
 
     public final static FleetScan parseFleetScan(String paste) throws ParseException {
         try (final Scanner s = new Scanner(paste)) {
-            s.useDelimiter(" X:\\d+");
+            s.useDelimiter(" X:\\d+"); //$NON-NLS-1$
             final String quad = s.next();
-            s.useDelimiter("\\D+");
+            s.useDelimiter("\\D+"); //$NON-NLS-1$
             final int x = s.nextInt();
             final int y = s.nextInt();
             final int sens = s.nextInt();
 
-            while (s.hasNext() && !s.nextLine().equals("Flotten Daten"));
+            while (s.hasNext() && !s.nextLine().equals("Flotten Daten")); //$NON-NLS-1$
             final String fleetName = s.nextLine();
             final String name = s.nextLine();
             final String venadName = VenadHelper.getName(name);
             final String clan = VenadHelper.getClan(name);
 
-            while (s.hasNext() && !s.nextLine().equals("NameTechlevelBesitzer"));
+            while (s.hasNext() && !s.nextLine().equals("NameTechlevelBesitzer")); //$NON-NLS-1$
 
             final List<FleetScanShip> ships = new ArrayList<>();
             while (s.hasNext()) {
                 final StringBuilder b = new StringBuilder();
                 b.append(s.nextLine().trim());
-                b.append(" ");
+                b.append(" "); //$NON-NLS-1$
                 b.append(s.nextLine().trim());
 
                 final String sl = b.toString();
@@ -68,7 +68,7 @@ public class QFleetScanParser {
             }
 
             return new FleetScan(sens, fleetName, venadName, 
-                    clan, "", ships, quad, x, y, "");
+                    clan, "", ships, quad, x, y, ""); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
 }

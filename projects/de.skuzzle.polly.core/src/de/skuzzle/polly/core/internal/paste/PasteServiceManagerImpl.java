@@ -44,7 +44,7 @@ public class PasteServiceManagerImpl implements PasteServiceManager {
             result = this.pasteServices.get(name);           
         }
         if (result == null) {
-            throw new PasteException("no PasteService for the name '" + name + "'");
+            throw new PasteException("no PasteService for the name '" + name + "'"); //$NON-NLS-1$ //$NON-NLS-2$
         }
         return result;
     }

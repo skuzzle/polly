@@ -18,7 +18,7 @@ public class IntegerConfigArgument extends ConfigArgument {
         try {
             this.config.setProperty(this.field, Integer.parseInt(parameter[0]));
         } catch (NumberFormatException e) {
-            throw new ParameterException("invalid integer: " + parameter[0]);
+            throw new ParameterException(MSG.bind(MSG.invalidInt, parameter[0]));
         }
     }
 

@@ -1,5 +1,6 @@
 package commands;
 
+import polly.reminds.MSG;
 import polly.reminds.MyPlugin;
 import core.RemindManager;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -18,14 +19,11 @@ public class ToggleMailCommand extends AbstractRemindCommand {
 
     public ToggleMailCommand(MyPolly polly, RemindManager manager) 
             throws DuplicatedSignatureException {
-        
-        super(polly, manager, "togglemail");
-        this.createSignature("Wandelt eine Erinnerung in eine E-Mail Benachrichtigung " +
-        		"um oder umgekehrt", 
+        super(polly, manager, "togglemail"); //$NON-NLS-1$
+        this.createSignature(MSG.toggleSig0Desc, 
     		MyPlugin.TOGGLE_MAIL_PERMISSION,
-            new Parameter("Remind Id", Types.NUMBER));
-        this.setHelpText("Wandelt eine Erinnerung in eine E-Mail Benachrichtigung um " +
-        		"oder umgekehrt");
+            new Parameter(MSG.toggleSig0Id, Types.NUMBER));
+        this.setHelpText(MSG.toggleHelp);
         this.setRegisteredOnly();
     }
     
@@ -40,16 +38,14 @@ public class ToggleMailCommand extends AbstractRemindCommand {
             try {
                 RemindEntity r = this.remindManager.toggleIsMail(executer, id);
                 if (r.isMail()) {
-                    this.reply(channel, "Typ geändert zu: E-Mail Benachrichtigung.");
+                    this.reply(channel, MSG.toggleToMail);
                 } else {
-                    this.reply(channel, "Typ geändert zu: IRC Benachrichtigung.");
+                    this.reply(channel, MSG.toggleToIrc);
                 }
             } catch (DatabaseException e) {
                 throw new CommandException(e);
             }
-            
         }
         return false;
     }
-
 }

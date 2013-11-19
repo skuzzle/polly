@@ -2,6 +2,7 @@ package commands;
 
 import java.util.Date;
 
+import polly.reminds.MSG;
 import polly.reminds.MyPlugin;
 import core.RemindManager;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -20,16 +21,13 @@ public class SnoozeCommand extends AbstractRemindCommand {
     
     public SnoozeCommand(MyPolly polly, RemindManager remindManager) 
             throws DuplicatedSignatureException {
-        super(polly, remindManager, "snooze");
-        this.createSignature("Verlängert die Erinnerung die dir zuletzt zugestellt wurde",
+        super(polly, remindManager, "snooze"); //$NON-NLS-1$
+        this.createSignature(MSG.snoozeSig0Desc,
             MyPlugin.SNOOZE_PERMISSION,
-            new Parameter("Neue Zeit", Types.DATE));
-        this.createSignature(
-            "Verlängert die Erinnerung die dir zuletzt zugestellt wurde. "
-            + "Wenn USE_SNOOZE_TIME false ist, wird die Erinnerung um ihre eigene "
-            + "Laufzeit verlängert, ansonsten um DEFAULT_REMIND_TIME");
+            new Parameter(MSG.snoozeSig0NewTime, Types.DATE));
+        this.createSignature(MSG.snoozeSig1Desc);
         this.setRegisteredOnly();
-        this.setHelpText("Verlängert Erinnerungen");
+        this.setHelpText(MSG.snoozeHelp);
     }
     
     
@@ -42,20 +40,19 @@ public class SnoozeCommand extends AbstractRemindCommand {
             Date dueDate = signature.getDateValue(0);
             
             try {
-                RemindEntity re = this.remindManager.snooze(executer, dueDate);
-                this.reply(channel, "Erinnerung wurde verlängert. Jetzt fällig: " 
-                    + this.getMyPolly().formatting().formatDate(dueDate) + 
-                    " (ID: " + re.getId() + ")");
+                final RemindEntity re = this.remindManager.snooze(executer, dueDate);
+                this.reply(channel, MSG.bind(MSG.snoozeSuccess, 
+                        this.getMyPolly().formatting().formatDate(dueDate), re.getId()));
                 
             } catch (DatabaseException e) {
                 throw new CommandException(e);
             }
         } else if (this.match(signature, 1)) {
             try {
-                RemindEntity re = this.remindManager.snooze(executer);
-                this.reply(channel, "Erinnerung wurde verlängert. Jetzt fällig: " 
-                    + this.getMyPolly().formatting().formatDate(re.getDueDate()) +
-                    " (ID: " + re.getId() + ")");
+                final RemindEntity re = this.remindManager.snooze(executer);
+                this.reply(channel, MSG.bind(MSG.snoozeSuccess, 
+                        this.getMyPolly().formatting().formatDate(re.getDueDate()), 
+                        re.getId()));
                 
             } catch (UnknownAttributeException e) {
                 throw new CommandException(e);
@@ -65,5 +62,4 @@ public class SnoozeCommand extends AbstractRemindCommand {
         }
         return false;
     }
-
 }

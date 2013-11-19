@@ -48,7 +48,7 @@ public class ImageGraph extends Graph {
     public InputStream getBytes() {
         final FastByteArrayOutputStream out = new FastByteArrayOutputStream();
         try {
-            ImageIO.write(this.image, "png", out);
+            ImageIO.write(this.image, "png", out); //$NON-NLS-1$
         } catch (IOException e1) {
             e1.printStackTrace();
         }

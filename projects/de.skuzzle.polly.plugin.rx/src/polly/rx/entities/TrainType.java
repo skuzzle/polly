@@ -2,6 +2,8 @@ package polly.rx.entities;
 
 import java.util.NoSuchElementException;
 
+import polly.rx.MSG;
+
 
 public enum TrainType {
     INTELLIGENCE, BODY, MODULE, CREW, TECH, COMMANDO, PAYMENT,
@@ -12,52 +14,52 @@ public enum TrainType {
     
     
     public static TrainType parse(String s) {
-        if (s.contains("intensives")) {
-            if (s.contains("Intelligenz")) {
+        if (s.contains("intensives")) { //$NON-NLS-1$
+            if (s.contains("Intelligenz")) { //$NON-NLS-1$
                 return INTESIVE_INTELLIGENCE;
-            } else if (s.contains("Kommandolimit")) {
+            } else if (s.contains("Kommandolimit")) { //$NON-NLS-1$
                 return INTESIVE_COMMANDO;
-            } else if (s.contains("Modullimit")) {
+            } else if (s.contains("Modullimit")) { //$NON-NLS-1$
                 return INTESIVE_MODULE;
-            } else if (s.contains("Körper")) {
+            } else if (s.contains("Kï¿½rper")) { //$NON-NLS-1$
                 return INTESIVE_BODY;
-            } else if (s.contains("Crewlimit")) {
+            } else if (s.contains("Crewlimit")) { //$NON-NLS-1$
                 return INTESIVE_CREW;
-            } else if (s.contains("Techlimit")) {
+            } else if (s.contains("Techlimit")) { //$NON-NLS-1$
                 return INTESIVE_TECH;
             }
-        } else if (s.contains("erweitertes")) {
-            if (s.contains("Intelligenz")) {
+        } else if (s.contains("erweitertes")) { //$NON-NLS-1$
+            if (s.contains("Intelligenz")) { //$NON-NLS-1$
                 return EXTENDED_INTELLIGENCE;
-            } else if (s.contains("Kommandolimit")) {
+            } else if (s.contains("Kommandolimit")) { //$NON-NLS-1$
                 return EXTENDED_COMMANDO;
-            } else if (s.contains("Modullimit")) {
+            } else if (s.contains("Modullimit")) { //$NON-NLS-1$
                 return EXTENDED_MODULE;
-            } else if (s.contains("Körper")) {
+            } else if (s.contains("Kï¿½rper")) { //$NON-NLS-1$
                 return EXTENDED_BODY;
-            } else if (s.contains("Crewlimit")) {
+            } else if (s.contains("Crewlimit")) { //$NON-NLS-1$
                 return EXTENDED_CREW;
-            } else if (s.contains("Techlimit")) {
+            } else if (s.contains("Techlimit")) { //$NON-NLS-1$
                 return EXTENDED_TECH;
             }
-        } else if (s.contains("Anzahlung")) {
+        } else if (s.contains("Anzahlung")) { //$NON-NLS-1$
             return PAYMENT;
         } else {
-            if (s.contains("Intelligenz")) {
+            if (s.contains("Intelligenz")) { //$NON-NLS-1$
                 return INTELLIGENCE;
-            } else if (s.contains("Kommandolimit")) {
+            } else if (s.contains("Kommandolimit")) { //$NON-NLS-1$
                 return COMMANDO;
-            } else if (s.contains("Modullimit")) {
+            } else if (s.contains("Modullimit")) { //$NON-NLS-1$
                 return MODULE;
-            } else if (s.contains("Körper")) {
+            } else if (s.contains("KÃ¶rper")) { //$NON-NLS-1$
                 return BODY;
-            } else if (s.contains("Crewlimit")) {
+            } else if (s.contains("Crewlimit")) { //$NON-NLS-1$
                 return CREW;
-            } else if (s.contains("Techlimit")) {
+            } else if (s.contains("Techlimit")) { //$NON-NLS-1$
                 return TECH;
             }
         }
-        throw new NoSuchElementException("unknown train type: " + s);
+        throw new NoSuchElementException("unknown train type: " + s); //$NON-NLS-1$
     }
     
     
@@ -66,27 +68,27 @@ public enum TrainType {
     public String toString() {
         switch (this) {
         default:
-        case INTELLIGENCE: return "Intelligenz Training";
-        case BODY: return "Körper Training";
-        case COMMANDO: return "Kommandolimit Training";
-        case MODULE: return "Modullimit Training";
-        case CREW: return "Crewlimit Training";
-        case TECH: return "Techlimit Training";
-        case PAYMENT: return "Anzahlung";
+        case INTELLIGENCE: return MSG.trainTypeIntelligence;
+        case BODY: return MSG.trainTypeBody;
+        case COMMANDO: return MSG.trainTypeCommando;
+        case MODULE: return MSG.trainTypeModule;
+        case CREW: return MSG.trainTypeCrew;
+        case TECH: return MSG.trainTypeTech;
+        case PAYMENT: return MSG.trainTypePayment;
         
-        case EXTENDED_INTELLIGENCE: return "erweitertes Intelligenz Training";
-        case EXTENDED_BODY: return "erweitertes Körper Training";
-        case EXTENDED_COMMANDO: return "erweitertes Kommandolimit Training";
-        case EXTENDED_MODULE: return "erweitertes Modullimit Training";
-        case EXTENDED_CREW: return "erweitertes Crewlimit Training";
-        case EXTENDED_TECH: return "erweitertes Techlimit Training";
+        case EXTENDED_INTELLIGENCE: return MSG.trainTypeExtendedIntelligence;
+        case EXTENDED_BODY: return MSG.trainTypeExtendedBody;
+        case EXTENDED_COMMANDO: return MSG.trainTypeExtendedCommand;
+        case EXTENDED_MODULE: return MSG.trainTypeExtendedModule;
+        case EXTENDED_CREW: return MSG.trainTypeExtendedCrew;
+        case EXTENDED_TECH: return MSG.trainTypeExtendedTech;
         
-        case INTESIVE_INTELLIGENCE: return "intensives Intelligenz Training";
-        case INTESIVE_BODY: return "intensives Körper Training";
-        case INTESIVE_COMMANDO: return "intensives Kommandolimit Training";
-        case INTESIVE_MODULE: return "intensives Modullimit Training";
-        case INTESIVE_CREW: return "intensives Crewlimit Training";
-        case INTESIVE_TECH: return "intensives Techlimit Training";
+        case INTESIVE_INTELLIGENCE: return MSG.trainTypeIntensiveIntelligence;
+        case INTESIVE_BODY: return MSG.trainTypeIntensiveBody;
+        case INTESIVE_COMMANDO: return MSG.trainTypeIntensiveCommand;
+        case INTESIVE_MODULE: return MSG.trainTypeIntensiveModule;
+        case INTESIVE_CREW: return MSG.trainTypeIntensiveCrew;
+        case INTESIVE_TECH: return MSG.trainTypeIntensiveTech;
         }
     }
 }

@@ -1,6 +1,7 @@
 package commands;
 
 
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.Conversation;
@@ -9,7 +10,6 @@ import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
-import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 
@@ -21,17 +21,23 @@ import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
  */
 public class QuitCommand extends Command {
 
-    private final static String[] answers = {"ja", "yo", "jup", "yes", "jo", "ack"};
+    private final static String[] answers = {
+        "ja",  //$NON-NLS-1$
+        "yo",  //$NON-NLS-1$
+        "jup",  //$NON-NLS-1$
+        "yes",  //$NON-NLS-1$
+        "jo",  //$NON-NLS-1$
+        "ack" //$NON-NLS-1$
+    };
     
     public QuitCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "flyaway");
-        this.createSignature("Beendet polly.", MyPlugin.QUIT_PERMISSION);
-        this.createSignature("Beendet polly mit der angegebenen Quit-Message",
+        super(polly, "flyaway"); //$NON-NLS-1$
+        this.createSignature(MSG.quitSig0Desc, MyPlugin.QUIT_PERMISSION);
+        this.createSignature(MSG.quitSig1Desc,
                 MyPlugin.QUIT_PERMISSION,
-                new Parameter("Quit-Message", Types.STRING));
+                new Parameter(MSG.quitSig1QuitMsg, Types.STRING));
         this.setRegisteredOnly();
-        this.setUserLevel(UserManager.ADMIN);
-        this.setHelpText("Befehl zum Beenden von Polly.");
+        this.setHelpText(MSG.quitHelp);
     }
 
     
@@ -40,7 +46,7 @@ public class QuitCommand extends Command {
     protected boolean executeOnBoth(User executer, String channel,
             Signature signature) throws CommandException {
 
-        String message = "*krächz* *krächz* *krächz*";
+        String message = MSG.quitDefaultQuitMsg;
         if (this.match(signature, 1)) {
             message = signature.getStringValue(0);
         }
@@ -49,7 +55,7 @@ public class QuitCommand extends Command {
         Conversation c = null;
         try {
             c = this.createConversation(executer, channel);
-            c.writeLine("Yo' serious?");
+            c.writeLine(MSG.quitConfirm);
             String a = c.readLine().getMessage();
             
             for (String ans : answers) {
@@ -60,7 +66,7 @@ public class QuitCommand extends Command {
                 }
             }
         } catch (InterruptedException e) {
-            throw new CommandException("Answer timeout");
+            throw new CommandException(MSG.quitTimeout);
         } catch (Exception e) {
             throw new CommandException(e);
         } finally {

@@ -17,19 +17,19 @@ import javax.persistence.TemporalType;
 @Entity
 @NamedQueries({
     @NamedQuery(
-        name = "ALL_LOG_ENTRIES",
+        name = LogEntry.ALL_LOG_ENTRIES,
         query = "SELECT e FROM LogEntry e ORDER BY e.date DESC"
     ),
     @NamedQuery(
-        name = "FIND_BY_USER",
+        name = LogEntry.FIND_BY_USER,
         query = "SELECT l FROM LogEntry l WHERE LOWER(l.nickname) LIKE LOWER(?1) ORDER BY l.date DESC"
     ),
     @NamedQuery(
-        name = "FIND_BY_CHANNEL",
+        name = LogEntry.FIND_BY_CHANNEL,
         query = "SELECT l FROM LogEntry l WHERE LOWER(l.channel) = LOWER(?1) ORDER BY l.date DESC"
     ),
     @NamedQuery(
-        name = "USER_SEEN",
+        name = LogEntry.USER_SEEN,
         query = "SELECT l FROM LogEntry l WHERE " +
         		    "LOWER(l.nickname) = LOWER(?1) AND " +
         		    "l.type = 0 " +
@@ -47,10 +47,10 @@ public class LogEntry {
     public final static int TYPE_NICKCHANGE = 8;
     public final static int TYPE_UNKNOWN = 16;
     
-    public final static String ALL_LOG_ENTRIES = "ALL_LOG_ENTRIES";
-    public final static String FIND_BY_USER = "FIND_BY_USER";
-    public final static String FIND_BY_CHANNEL = "FIND_BY_CHANNEL";
-    public final static String USER_SSEN = "USER_SEEN";
+    public final static String ALL_LOG_ENTRIES = "ALL_LOG_ENTRIES"; //$NON-NLS-1$
+    public final static String FIND_BY_USER = "FIND_BY_USER"; //$NON-NLS-1$
+    public final static String FIND_BY_CHANNEL = "FIND_BY_CHANNEL"; //$NON-NLS-1$
+    public final static String USER_SEEN = "USER_SEEN"; //$NON-NLS-1$
     
     
     
@@ -80,7 +80,7 @@ public class LogEntry {
     }
     
     public static LogEntry forUnknown(String nickname) {
-        return new LogEntry(nickname, "", "", null, TYPE_UNKNOWN);
+        return new LogEntry(nickname, "", "", null, TYPE_UNKNOWN);  //$NON-NLS-1$//$NON-NLS-2$
     }
     
     
@@ -162,6 +162,6 @@ public class LogEntry {
     
     @Override
     public String toString() {
-        return "[LogEntry: " + this.message + "]";
+        return "[LogEntry: " + this.message + "]"; //$NON-NLS-1$ //$NON-NLS-2$
     }
 }

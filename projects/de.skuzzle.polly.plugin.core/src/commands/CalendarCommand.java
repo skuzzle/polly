@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-
+import polly.core.MSG;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -22,10 +22,10 @@ public class CalendarCommand extends Command {
 
 
     public CalendarCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "cal");
-        this.createSignature("Zeigt den Kalender für ein angegebenes Datum an.", 
-            new Parameter("Datum", Types.DATE));
-        this.setHelpText("Zeigt den Kalender für ein angegebenes Datum an.");
+        super(polly, "cal"); //$NON-NLS-1$
+        this.createSignature(MSG.calendarSig0Desc, 
+            new Parameter(MSG.calendarSig0Date, Types.DATE));
+        this.setHelpText(MSG.calendarHelp);
     }
     
     
@@ -36,7 +36,7 @@ public class CalendarCommand extends Command {
         
         if (this.match(signature, 0)) {
             Date d = signature.getDateValue(0);
-            String[] lines = calendarString(d).split("\n");
+            String[] lines = calendarString(d).split("\n"); //$NON-NLS-1$
             for (String line : lines) {
                 this.reply(channel, line);
             }
@@ -72,35 +72,36 @@ public class CalendarCommand extends Command {
          */
         lastMonth.add(Calendar.DAY_OF_MONTH, -diff(firstDay.get(Calendar.DAY_OF_WEEK)));
         
-        SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy");
-        b.append("Kalender für: " + sdf.format(d) + "\n");
-        b.append("\u0002\u001fKW | Mo Di Mi Do Fr Sa So\n");
+        SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy"); //$NON-NLS-1$
+        b.append(MSG.bind(MSG.calendarFor, sdf.format(d)));
+        b.append("\n"); //$NON-NLS-1$
+        b.append("\u0002\u001fKW | Mo Di Mi Do Fr Sa So\n"); //$NON-NLS-1$
         
         System.out.println(lastMonth.getTime());
         for (int j = 0; j < 6; ++j) {
             b.append(pad(lastMonth.get(Calendar.WEEK_OF_YEAR)));
-            b.append(" | ");
+            b.append(" | "); //$NON-NLS-1$
             for (int i = 0; i < 7; ++i) {
-                String prefix = "";
-                String postfix = "";
+                String prefix = ""; //$NON-NLS-1$
+                String postfix = ""; //$NON-NLS-1$
                 if (lastMonth.before(firstDay) || 
                         lastMonth.get(Calendar.MONTH) > firstDay.get(Calendar.MONTH)) {
-                    prefix = "\u000314";
-                    postfix = "\u000f";
+                    prefix = "\u000314"; //$NON-NLS-1$
+                    postfix = "\u000f"; //$NON-NLS-1$
                 } else if (DateUtils.isToday(lastMonth.getTime())) {
-                    prefix = "\u0002\u000304";
-                    postfix = "\u000f";
+                    prefix = "\u0002\u000304"; //$NON-NLS-1$
+                    postfix = "\u000f"; //$NON-NLS-1$
                 } else if (DateUtils.isSameDay(lastMonth.getTime(), d)) {
-                    prefix = "\u0002";
-                    postfix = "\u000f";
+                    prefix = "\u0002"; //$NON-NLS-1$
+                    postfix = "\u000f"; //$NON-NLS-1$
                 }
                 b.append(prefix);
                 b.append(pad(lastMonth.get(Calendar.DAY_OF_MONTH)));
                 b.append(postfix);
-                b.append(" ");
+                b.append(" "); //$NON-NLS-1$
                 lastMonth.add(Calendar.DAY_OF_MONTH, 1);
             }
-            b.append("\n");
+            b.append("\n"); //$NON-NLS-1$
         }
         
         return b.toString();
@@ -123,7 +124,7 @@ public class CalendarCommand extends Command {
     
     private static String pad(int num) {
         if (num < 10) {
-            return "0" + Integer.toString(num);
+            return "0" + Integer.toString(num); //$NON-NLS-1$
         }
         return Integer.toString(num);
     }

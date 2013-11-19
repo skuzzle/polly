@@ -5,30 +5,31 @@ import java.net.URLDecoder;
 
 
 public enum ShipType {
-    ZERRI("Zerstˆrer"),
-    KREUZER("Kreuzer"),
-    KORVETTE("Korvette"),
-    FREGATTE("Fregatte"),
-    SCHLACHTKREUZER("Schlachtkreuzer"),
-    FRACHTER("Frachtschiff"),
-    TANKER("Tankschiff"),
-    BEGLEITER("Begleitschiff"),
-    KOMMANDO("Kommandoschiff"),
-    VERSORGER("Versorgungsschiff"),
-    TRANSPORTER("Transportschiff"),
-    UNKNOWN("Unbekannt");
+    ZERRI("Zerst√∂rer"), //$NON-NLS-1$
+    KREUZER("Kreuzer"), //$NON-NLS-1$
+    KORVETTE("Korvette"), //$NON-NLS-1$
+    FREGATTE("Fregatte"), //$NON-NLS-1$
+    SCHLACHTKREUZER("Schlachtkreuzer"), //$NON-NLS-1$
+    FRACHTER("Frachtschiff"), //$NON-NLS-1$
+    TANKER("Tankschiff"), //$NON-NLS-1$
+    BEGLEITER("Begleitschiff"), //$NON-NLS-1$
+    KOMMANDO("Kommandoschiff"), //$NON-NLS-1$
+    VERSORGER("Versorgungsschiff"), //$NON-NLS-1$
+    TRANSPORTER("Transportschiff"), //$NON-NLS-1$
+    UNKNOWN("Unbekannt"); //$NON-NLS-1$
     
     public static ShipType byPrefix(String shipName) {
         try {
-            shipName = URLDecoder.decode(shipName, "ISO-8859-1");
+            shipName = URLDecoder.decode(shipName, "ISO-8859-1"); //$NON-NLS-1$
         } catch (UnsupportedEncodingException e) {
             return UNKNOWN;
         }
-        if (shipName.startsWith("b‰‰hhhh")) {
+        // HACK: Evilest encoding hack of all times
+        if (shipName.startsWith("b√§√§hhhh")) { //$NON-NLS-1$
             return KREUZER;
-        } else if (shipName.contains("b‰‰hhhh")) {
+        } else if (shipName.contains("b√§√§hhhh")) { //$NON-NLS-1$
             return SCHLACHTKREUZER;
-        } else if (shipName.startsWith("Zerst")) {
+        } else if (shipName.startsWith("Zerst")) { //$NON-NLS-1$
             return ZERRI;
         }
         for (final ShipType st : ShipType.values()) {

@@ -12,6 +12,7 @@ import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
+import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import entities.LogEntry;
 
@@ -33,7 +34,7 @@ public class ReplayTableModel extends LogEntryTableModel {
     
     @Override
     public List<LogEntry> getData(HttpEvent e) {
-        final User u = (User) e.getSession().getAttached("user");
+        final User u = (User) e.getSession().getAttached(WebinterfaceManager.USER);
 
         if (!this.myPolly.users().isSignedOn(u)) {
             return Collections.emptyList();

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-
+import polly.rx.MSG;
 import polly.rx.MyPlugin;
 import polly.rx.core.ResourcePriceGrabber;
 import de.skuzzle.polly.sdk.Command;
@@ -26,23 +26,20 @@ public class RessComand extends Command {
     
     
     public RessComand(MyPolly myPolly) throws DuplicatedSignatureException {
-        super(myPolly, "ress");
-        this.createSignature("Rechnen mit aktuellen Resourcenpreisen", 
+        super(myPolly, "ress"); //$NON-NLS-1$
+        this.createSignature(MSG.ressSigDesc, 
             MyPlugin.RESSOURCES_PERMISSION,
-            new Parameter("Ausdruck", Types.ANY));
-        this.createSignature("Rechnen mit aktuellen Resourcenpreisen", 
+            new Parameter(MSG.ressSigExpression, Types.ANY));
+        this.createSignature(MSG.ressSigDesc, 
             MyPlugin.RESSOURCES_PERMISSION,
-            new Parameter("Ausdruck", Types.ANY),
-            new Parameter("Ausdruck", Types.ANY));
-        this.createSignature("Rechnen mit aktuellen Resourcenpreisen", 
+            new Parameter(MSG.ressSigExpression, Types.ANY),
+            new Parameter(MSG.ressSigExpression, Types.ANY));
+        this.createSignature(MSG.ressSigDesc, 
             MyPlugin.RESSOURCES_PERMISSION,
-            new Parameter("Ausdruck", Types.ANY),
-            new Parameter("Ausdruck", Types.ANY),
-            new Parameter("Ausdruck", Types.ANY));
-        this.setHelpText("Rechnen mit aktuellen Resourcenpreisen. Namen der Resourcen " +
-        		"können als Variablen benutzt werden " +
-        		"(cr, nrg, rek, erz, org, synth, fe, lm, sm, em, rad, es,eg,iso). " +
-        		"Z.b. :ress 5*iso 10*es");
+            new Parameter(MSG.ressSigExpression, Types.ANY),
+            new Parameter(MSG.ressSigExpression, Types.ANY),
+            new Parameter(MSG.ressSigExpression, Types.ANY));
+        this.setHelpText(MSG.ressHelp);
         this.setRegisteredOnly(true);
         this.rpgrabber = new ResourcePriceGrabber(REFRESH_THRESHOLD, myPolly);
     }
@@ -55,12 +52,12 @@ public class RessComand extends Command {
         map.putAll(prices);
         final List<Types> types = new ArrayList<Types>();
         for (final Entry<String, Types> e : prices.entrySet()) {
-            types.add(new Types.StringType(e.getKey() + ":" + e.getValue().valueString(
+            types.add(new Types.StringType(e.getKey() + ":" + e.getValue().valueString( //$NON-NLS-1$
                 this.getMyPolly().formatting())));
         }
         final Types.ListType lt = new Types.ListType(types);
-        map.put("all", lt);
-        map.put("time", new Types.DateType(this.rpgrabber.getlastRefreshDate()));
+        map.put("all", lt); //$NON-NLS-1$
+        map.put("time", new Types.DateType(this.rpgrabber.getlastRefreshDate())); //$NON-NLS-1$
     }
     
     
@@ -83,15 +80,15 @@ public class RessComand extends Command {
         } else if (this.match(signature, 1)) {
             Types t1 = signature.getValue(0);
             Types t2 = signature.getValue(1);
-            return t1.valueString(fm) + " " + t2.valueString(fm);
+            return t1.valueString(fm) + " " + t2.valueString(fm); //$NON-NLS-1$
         } else if (this.match(signature, 2)) {
             Types t1 = signature.getValue(0);
             Types t2 = signature.getValue(1);
             Types t3 = signature.getValue(2);
-            return t1.valueString(fm) + " " + t2.valueString(fm) + " " + 
+            return t1.valueString(fm) + " " + t2.valueString(fm) + " " +  //$NON-NLS-1$ //$NON-NLS-2$
                     t3.valueString(fm);
         }
         // unreachable
-        return "";
+        return ""; //$NON-NLS-1$
     }
 }

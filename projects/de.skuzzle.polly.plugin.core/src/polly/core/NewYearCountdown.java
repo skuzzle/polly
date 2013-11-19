@@ -35,12 +35,12 @@ public class NewYearCountdown {
                     }
                     
                     for (final String channel : ircManager.getChannels()) {
-                        ircManager.sendMessage(channel, "" + (COUNTDOWN - i));
+                        ircManager.sendMessage(channel, "" + (COUNTDOWN - i)); //$NON-NLS-1$
                     }
                 }
                 
                 for (final String channel : ircManager.getChannels()) {
-                    ircManager.sendMessage(channel, "Frohes Neues Jahr");
+                    ircManager.sendMessage(channel, MSG.newYearHappyNewYear);
                 }
             }
         }, delay, TimeUnit.MILLISECONDS);

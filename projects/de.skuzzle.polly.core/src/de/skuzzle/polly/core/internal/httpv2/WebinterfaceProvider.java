@@ -44,6 +44,8 @@ import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
 import de.skuzzle.polly.sdk.httpv2.MenuCategory;
 import de.skuzzle.polly.sdk.httpv2.MenuEntry;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
+import de.skuzzle.polly.sdk.resources.PollyBundle;
+import de.skuzzle.polly.sdk.resources.Resources;
 import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
 
 @Module(
@@ -61,14 +63,14 @@ public class WebinterfaceProvider extends AbstractProvider {
     private final static Logger logger = Logger.getLogger(WebinterfaceProvider.class
         .getName());
     
-    public final static String HTTP_CONFIG = "http.cfg";
+    public final static String HTTP_CONFIG = "http.cfg"; //$NON-NLS-1$
     private Configuration serverCfg;
     private HttpServletServer server;
     private WebInterfaceManagerImpl webinterface;
     
     
     public WebinterfaceProvider(ModuleLoader loader) {
-        super("WEBINTERFACE_PROVIDER", loader, false);
+        super("WEBINTERFACE_PROVIDER", loader, false); //$NON-NLS-1$
     }
 
     
@@ -88,7 +90,7 @@ public class WebinterfaceProvider extends AbstractProvider {
         int sessionTimeout = this.serverCfg.readInt(Configuration.HTTP_SESSION_TIMEOUT);
         
         final ExecutorService executor = Executors.newFixedThreadPool(15, 
-                new ThreadFactoryBuilder("HTTP_%n%"));
+                new ThreadFactoryBuilder("HTTP_%n%")); //$NON-NLS-1$
         
         final ServerFactory sf;
         final boolean useSSL = this.serverCfg.readBoolean(Configuration.HTTP_USE_SSL);
@@ -109,10 +111,10 @@ public class WebinterfaceProvider extends AbstractProvider {
             
             @Override
             public void onRequest(HttpEvent e) {
-                logger.debug("HTTP: " + e.getMode() + " " + 
+                logger.debug("HTTP: " + e.getMode() + " " +  //$NON-NLS-1$ //$NON-NLS-2$
                     e.getRequestURI().toString() + 
-                    " [ip: " + e.getClientIP() + ", " + 
-                    e.getSession().getAttached("user") + "], " + 
+                    " [ip: " + e.getClientIP() + ", " +  //$NON-NLS-1$ //$NON-NLS-2$
+                    e.getSession().getAttached("user") + "], " +  //$NON-NLS-1$ //$NON-NLS-2$
                     e.parameterMap());
             }
         });
@@ -142,18 +144,26 @@ public class WebinterfaceProvider extends AbstractProvider {
             public void handlerAdded(Controller c, String url, String name, String[] values) {
                 if (values.length < 1 || !values[0].equals(WebinterfaceManager.ADD_MENU_ENTRY)) {
                     return;
-                } else if (values.length < 2) {
-                    throw new RuntimeException("missing parameters");
+                } else if (values.length < 4) {
+                    logger.error("Ignoring 'ADD_MENU_EVENT' beacause of missing parameters"); //$NON-NLS-1$
+                    return;
                 }
                 
-                final String category = values[1];
-                final String description = values[2];
+                final String bundleFamily = values[1];
+                final String categoryKey = values[2];
+                final String descriptionKey = values[3];
                 final String[] permissions;
-                if (values.length == 3) {
+                if (values.length == 4) {
                     permissions = new String[0];
                 } else {
-                    permissions = Arrays.copyOfRange(values, 3, values.length);
+                    permissions = Arrays.copyOfRange(values, 4, values.length);
                 }
+                
+                final PollyBundle pb = Resources.get(bundleFamily, 
+                        c.getClass().getClassLoader());
+                final String description = pb.get(descriptionKey);
+                final String category = pb.get(categoryKey);
+                name = pb.get(name);
                 webinterface.addMenuEntry(category, 
                     new MenuEntry(name, url, description, permissions));
             }
@@ -168,8 +178,8 @@ public class WebinterfaceProvider extends AbstractProvider {
     public void run() throws Exception {
         final MyPolly myPolly = this.requireNow(MyPollyImpl.class, false);
         
-        this.webinterface.addCategory(new MenuCategory(Integer.MAX_VALUE, "Admin"));
-        this.webinterface.addCategory(new MenuCategory(-100, "General"));
+        this.webinterface.addCategory(new MenuCategory(Integer.MAX_VALUE, MSG.indexAdminCategory));
+        this.webinterface.addCategory(new MenuCategory(-100, MSG.indexGeneralCategory));
         this.server.addController(new IndexController(myPolly));
         this.server.addController(new SessionController(myPolly));
         this.server.addController(new UserController(myPolly));

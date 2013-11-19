@@ -16,7 +16,7 @@ import de.skuzzle.polly.sdk.exceptions.PasteException;
 public class PasteServiceManagerProvider extends AbstractProvider {
 
     public PasteServiceManagerProvider(ModuleLoader loader) {
-        super("PASTE_MANAGER_PROVIDER", loader, true);
+        super("PASTE_MANAGER_PROVIDER", loader, true); //$NON-NLS-1$
     }
 
     

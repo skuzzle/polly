@@ -38,24 +38,24 @@ import entities.LogEntry;
 
 public class MyPlugin extends PollyPlugin {
 
-    public final static String LOGGING_ROLE           = "polly.roles.LOGGING";
-    public final static String USER_LOG_PERMISSION    = "polly.permission.USER_LOG";
-    public final static String CHANNEL_LOG_PERMISSION = "polly.permission.CHANNEL_LOG";
-    public final static String REPLAY_PERMISSION      = "polly.permission.REPLAY";
-    public final static String SEEN_PERMISSION        = "polly.permission.SEEN";
+    public final static String LOGGING_ROLE           = "polly.roles.LOGGING"; //$NON-NLS-1$
+    public final static String USER_LOG_PERMISSION    = "polly.permission.USER_LOG"; //$NON-NLS-1$
+    public final static String CHANNEL_LOG_PERMISSION = "polly.permission.CHANNEL_LOG"; //$NON-NLS-1$
+    public final static String REPLAY_PERMISSION      = "polly.permission.REPLAY"; //$NON-NLS-1$
+    public final static String SEEN_PERMISSION        = "polly.permission.SEEN"; //$NON-NLS-1$
     
     
-    public final static String LOGGING_PLUGUIN_CFG = "plugin.logging.cfg";
+    public final static String LOGGING_PLUGUIN_CFG = "plugin.logging.cfg"; //$NON-NLS-1$
     
-    public final static String LOG_CACHE_SIZE     = "logCacheSize";
-    public final static String LOG_PASTE_TRESHOLD = "logPasteThreshold";
-    public final static String LOG_MAX_LOGS       = "logMaxLogs";
+    public final static String LOG_CACHE_SIZE     = "logCacheSize"; //$NON-NLS-1$
+    public final static String LOG_PASTE_TRESHOLD = "logPasteThreshold"; //$NON-NLS-1$
+    public final static String LOG_MAX_LOGS       = "logMaxLogs"; //$NON-NLS-1$
     
     public final static int DEFAULT_LOG_CACHE_SIZE  = 100;
     public final static int DEFAULT_LOG_THRESHOLD   = 10;
     public final static int DEFAULT_MAX_LOGS        = 100;
     
-    public final static String FORWARD_HIGHLIGHTS         = "FORWARD_HIGHLIGHTS";
+    public final static String FORWARD_HIGHLIGHTS         = "FORWARD_HIGHLIGHTS"; //$NON-NLS-1$
     public final static Types DEFAULT_FORWARD_HIGHLIGHTS  = new Types.BooleanType(false);
     
     private IrcLogCollector logCollector;
@@ -107,20 +107,20 @@ public class MyPlugin extends PollyPlugin {
         myPolly.irc().addMessageListener(this.highlightForwarder);
         
         
-        myPolly.webInterface().addCategory(new MenuCategory(1, "Logging"));
+        myPolly.webInterface().addCategory(new MenuCategory(1, MSG.httpLoggingCategory));
         myPolly.webInterface().getServer().addController(new LoggingController(myPolly, logManager));
         
         final HTMLTableModel<LogEntry> model = new LogEntryTableModel(logManager, myPolly);
         final HTMLTableModel<LogEntry> replayModel = new ReplayTableModel(logManager, myPolly);
         
-        final HTMLTable<LogEntry> logTable = new HTMLTable<LogEntry>("allLogs", model, myPolly);
-        final HTMLTable<LogEntry> replayTable = new HTMLTable<LogEntry>("replay", replayModel, myPolly);
+        final HTMLTable<LogEntry> logTable = new HTMLTable<LogEntry>("allLogs", model, myPolly); //$NON-NLS-1$
+        final HTMLTable<LogEntry> replayTable = new HTMLTable<LogEntry>("replay", replayModel, myPolly); //$NON-NLS-1$
         
         logTable.setFilter(new AllDayFilter(myPolly));
         replayTable.setFilter(new AllDayFilter(myPolly));
         
-        myPolly.webInterface().getServer().addHttpEventHandler("/api/allLogs", logTable);
-        myPolly.webInterface().getServer().addHttpEventHandler("/api/replay", replayTable);
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/allLogs", logTable); //$NON-NLS-1$
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/replay", replayTable); //$NON-NLS-1$
     }
     
     
@@ -130,8 +130,8 @@ public class MyPlugin extends PollyPlugin {
         try {
             this.getMyPolly().users().addAttribute(FORWARD_HIGHLIGHTS, 
                 DEFAULT_FORWARD_HIGHLIGHTS, 
-                "Send an email if polly notices that your nickname is mentioned", 
-                "Logging", Constraints.BOOLEAN);
+                MSG.forwardHLDesc, 
+                MSG.loggingAttributeCategory, Constraints.BOOLEAN);
         } catch (DatabaseException e) {
             e.printStackTrace();
         }

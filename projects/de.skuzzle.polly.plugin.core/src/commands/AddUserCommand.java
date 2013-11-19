@@ -1,7 +1,6 @@
 package commands;
 
-import java.util.Map;
-
+import polly.core.MSG;
 import polly.core.MyPlugin;
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -9,24 +8,22 @@ import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
-import de.skuzzle.polly.sdk.UserManager;
-import de.skuzzle.polly.sdk.Types.NumberType;
+import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.InvalidUserNameException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
 
 public class AddUserCommand extends Command {
-
+    
     public AddUserCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "adduser");
-        this.createSignature("Fügt einen neuen User hinzu.", 
+        super(polly, "adduser"); //$NON-NLS-1$
+        this.createSignature(MSG.addUserSig0Desc, 
             MyPlugin.ADD_USER_PERMISSION,
-            new Parameter("Username", Types.USER),
-            new Parameter("Passwort", Types.STRING));
+            new Parameter(MSG.userName, Types.USER),
+            new Parameter(MSG.addUserSig0Password, Types.STRING));
         this.setRegisteredOnly();
-        this.setUserLevel(UserManager.ADMIN);
-        this.setHelpText("Befehl zum registrieren neuer Benutzer bei Polly.");
+        this.setHelpText(MSG.addUserHelp);
         this.setQryCommand(true);
     }
     
@@ -43,36 +40,27 @@ public class AddUserCommand extends Command {
     @Override
     protected void executeOnChannel(User executer, String channel,
             Signature signature) {
-        this.reply(channel, "Dieser Befehl kann nur im Query ausgeführt werden.");
+        this.reply(channel, MSG.addUserQryOnly);
     }
     
     
     
     @Override
-    public void renewConstants(Map<String, Types> map) {
-        map.put("ADMIN", new NumberType(UserManager.ADMIN));
-        map.put("MEMBER", new NumberType(UserManager.MEMBER));
-        map.put("REG", new NumberType(UserManager.REGISTERED));
-        map.put("UNKNOWN", new NumberType(UserManager.UNKNOWN));
-    }
-    
-    
-    
-    @Override
-    protected void executeOnQuery(User executer, Signature signature) {
+    protected void executeOnQuery(User executer, Signature signature) 
+                throws CommandException {
         if (this.match(signature, 0)) {
             String userName = signature.getStringValue(0);
             String password = signature.getStringValue(1);
             
             try {
                 this.getMyPolly().users().addUser(userName, password);
-                this.reply(executer, "Benutzer '" + userName + "' angelegt.");
+                this.reply(executer, MSG.bind(MSG.addUserSuccess, userName));
             } catch (UserExistsException e) {
-                this.reply(executer, "Benutzer '" + userName + "' existiert bereits.");
+                this.reply(executer, MSG.bind(MSG.addUserExists, userName));
             } catch (DatabaseException e)  {
-                this.reply(executer, "Interner Datenbankfehler: " + e.getMessage());
+                throw new CommandException(e);
             } catch (InvalidUserNameException e) {
-                this.reply(executer, "'" + userName + "' is no valid user name");
+                this.reply(executer, MSG.bind(MSG.addUserInvalid, userName));
             }
         }
     }

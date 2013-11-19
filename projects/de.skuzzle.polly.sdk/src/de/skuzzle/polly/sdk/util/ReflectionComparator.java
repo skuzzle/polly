@@ -82,8 +82,8 @@ public class ReflectionComparator implements Comparator<Object>{
                 return result1.compareTo(result2);
             }
         } catch (NoSuchMethodException e) {
-            throw new CompareException("Specified getter '" + 
-        this.field + "' does not exist", e);
+            throw new CompareException("Specified getter '" +  //$NON-NLS-1$
+        this.field + "' does not exist", e); //$NON-NLS-1$
         } catch (SecurityException e) {
             throw new CompareException(e);
         } catch (IllegalAccessException e) {

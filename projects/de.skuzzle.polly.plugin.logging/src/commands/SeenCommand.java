@@ -2,8 +2,8 @@ package commands;
 
 import java.util.Collections;
 
+import polly.logging.MSG;
 import polly.logging.MyPlugin;
-
 import core.DefaultLogFormatter;
 import core.LogFormatter;
 import core.PollyLoggingManager;
@@ -25,11 +25,12 @@ public class SeenCommand extends Command {
     
     public SeenCommand(MyPolly polly, PollyLoggingManager logManager) 
             throws DuplicatedSignatureException {
-        super(polly, "seen");
+        super(polly, "seen"); //$NON-NLS-1$
         this.logManager = logManager;
-        this.createSignature("Zeigt an wann ein Benutzer das letzte mal gesehen wurde.", 
+        this.createSignature(MSG.seenSig0Desc, 
             MyPlugin.SEEN_PERMISSION,
-            new Parameter("User", Types.USER));
+            new Parameter(MSG.seendSig0User, Types.USER));
+        this.setHelpText(MSG.seenHelp);
     }
     
     
@@ -47,7 +48,7 @@ public class SeenCommand extends Command {
                 LogOutput lo = new IrcLogOutput();
                 if (!this.getMyPolly().irc().isOnChannel(le.getChannel(), 
                         executer.getCurrentNickName())) {
-                    le = LogEntry.forMessage(le.getNickname(), "<hidden>", 
+                    le = LogEntry.forMessage(le.getNickname(), MSG.seenHidden, 
                         le.getChannel(), le.getDate());
                 }
                 lo.outputLogs(this.getMyPolly().irc(), channel, 

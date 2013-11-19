@@ -25,7 +25,7 @@ public final class RegexUtils {
     
     public final static String substr(String orig, Matcher m, int groupId) {
         if (m.start(groupId) == -1) {
-            return "";
+            return ""; //$NON-NLS-1$
         }
         return substr(orig, m.start(groupId), m.end(groupId));
     }

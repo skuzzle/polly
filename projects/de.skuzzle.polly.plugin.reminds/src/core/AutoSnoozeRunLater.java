@@ -1,5 +1,6 @@
 package core;
 
+import polly.reminds.MSG;
 import polly.reminds.MyPlugin;
 import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.IrcManager;
@@ -38,10 +39,9 @@ public class AutoSnoozeRunLater extends RunLater {
                     if (e.getMessage().equals(indicator)) {
                         try {
                             RemindEntity re = remindManager.snooze(forUser);
-                            ircManager.sendMessage(
-                                nick, "Erinnerung wurde verlängert. Jetzt fällig: " + 
-                                    formatter.formatDate(re.getDueDate()) + 
-                                    " (ID: " + re.getId() + ")", this);
+                            ircManager.sendMessage(nick, MSG.bind(MSG.snoozeSuccess, 
+                                    formatter.formatDate(re.getDueDate()),
+                                    re.getId()), this);
                         } catch (Exception e1) {
                             e1.printStackTrace();
                         }
@@ -69,7 +69,7 @@ public class AutoSnoozeRunLater extends RunLater {
     @Override
     public void finished() {
         this.ircManager.sendMessage(this.forUser.getCurrentNickName(), 
-            "Auto Snooze deaktiviert.", this);
+            MSG.autoSnoozeOff, this);
         this.ircManager.removeMessageListener(this.listener);
     }
 }

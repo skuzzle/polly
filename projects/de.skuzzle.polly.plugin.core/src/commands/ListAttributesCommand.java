@@ -3,13 +3,12 @@ package commands;
 import java.util.Iterator;
 import java.util.Set;
 
+import polly.core.MSG;
 import polly.core.MyPlugin;
-
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Signature;
 import de.skuzzle.polly.sdk.User;
-import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 
@@ -17,10 +16,10 @@ import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 public class ListAttributesCommand extends Command {
 
     public ListAttributesCommand(MyPolly polly) throws DuplicatedSignatureException {
-        super(polly, "listattr");
-        this.createSignature("Listet die verfügbaren Attribute auf.", 
+        super(polly, "listattr"); //$NON-NLS-1$
+        this.createSignature(MSG.listAttributesSig0Desc, 
                 MyPlugin.LIST_ATTRIBUTES_PERMISSION);
-        this.setUserLevel(UserManager.ADMIN);
+        this.setHelpText(MSG.listAttributesHelp);
     }
     
     
@@ -36,12 +35,11 @@ public class ListAttributesCommand extends Command {
             String name = it.next();
             result.append(name);
             if (it.hasNext()) {
-                result.append(", ");
+                result.append(", "); //$NON-NLS-1$
             }
         }
         
         this.reply(channel, result.toString());
-        
         return false;
     }
 

@@ -33,7 +33,7 @@ public class ShutdownManagerImpl implements ShutdownManager {
      * Sun property pointing the main class and its arguments. 
      * Might not be defined on non Hotspot VM implementations.
      */
-    public static final String SUN_JAVA_COMMAND = "sun.java.command";
+    public static final String SUN_JAVA_COMMAND = "sun.java.command"; //$NON-NLS-1$
     
     
     private AtomicBoolean isSafeShutdown;
@@ -48,8 +48,8 @@ public class ShutdownManagerImpl implements ShutdownManager {
             @Override
             public void run() {
                 if (!ShutdownManagerImpl.this.isSafeShutdown.get()) {
-                    logger.warn("Unexpected shutdown. Trying to shutdown all " +
-                    		"resources properly.");
+                    logger.warn("Unexpected shutdown. Trying to shutdown all " + //$NON-NLS-1$
+                    		"resources properly."); //$NON-NLS-1$
                     ShutdownManagerImpl.this.emergencyShutdown();
                 }
             }
@@ -85,19 +85,19 @@ public class ShutdownManagerImpl implements ShutdownManager {
     public synchronized void restart(String commandLine) {
         // properly shutdown all loaded components
         this.shutdown(false);
-        logger.info("Preparing to restart...");
-        logger.debug("Commandline arguments: " + commandLine);
+        logger.info("Preparing to restart..."); //$NON-NLS-1$
+        logger.debug("Commandline arguments: " + commandLine); //$NON-NLS-1$
         
         try {
             final ProcessExecutor pe = JavaProcessExecutor.getCurrentInstance(false);
 
-            pe.addCommandsFromString("-jar polly.jar -returninfo \"Returned from restart\"");
+            pe.addCommandsFromString("-jar polly.jar -returninfo \"Returned from restart\""); //$NON-NLS-1$
 
-            if (commandLine != null && !commandLine.equals("")) {
+            if (commandLine != null && !commandLine.equals("")) { //$NON-NLS-1$
                 pe.addCommandsFromString(commandLine);
             }
             
-            logger.trace("Java command: '" + pe.toString() + "'");
+            logger.trace("Java command: '" + pe.toString() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
             // execute the command in a shutdown hook, to be sure that all the
             // resources have been disposed before restarting the application
             Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -105,19 +105,19 @@ public class ShutdownManagerImpl implements ShutdownManager {
                 public void run() {
                     try {
                         pe.start();
-                        logger.trace("Executed: " + pe.toString());
-                        logger.info("New polly instance initialized.");
+                        logger.trace("Executed: " + pe.toString()); //$NON-NLS-1$
+                        logger.info("New polly instance initialized."); //$NON-NLS-1$
                     } catch (IOException e) {
-                        logger.error("Could not start new polly instance.", e);
+                        logger.error("Could not start new polly instance.", e); //$NON-NLS-1$
                     }
                 }
             });
             
         } catch (Exception e) {
-            logger.error("Could not start new polly instance", e);
+            logger.error("Could not start new polly instance", e); //$NON-NLS-1$
         } finally {
             // All resources have been unloaded, so perform shutdown
-            logger.warn("Exiting current polly process.");
+            logger.warn("Exiting current polly process."); //$NON-NLS-1$
             System.exit(0);
         }
     }
@@ -126,20 +126,20 @@ public class ShutdownManagerImpl implements ShutdownManager {
     
     public synchronized void shutdown(boolean exit) {
         this.isSafeShutdown.set(true);
-        logger.info("Shutting down all components.");
+        logger.info("Shutting down all components."); //$NON-NLS-1$
         try {
             this.shutdownList.dispose();
         } catch (DisposingException e) {
-            logger.error("One or more components failed to properly unload. " +
-            		"Last exception trace:", e);
+            logger.error("One or more components failed to properly unload. " + //$NON-NLS-1$
+            		"Last exception trace:", e); //$NON-NLS-1$
         }
         
-        logger.trace("Remaining active threads: " + Thread.activeCount());
-        logger.trace("Remaining stacktraces:");
+        logger.trace("Remaining active threads: " + Thread.activeCount()); //$NON-NLS-1$
+        logger.trace("Remaining stacktraces:"); //$NON-NLS-1$
         this.printRemainingThreads();
         
         if (exit) {
-            logger.info("All connections closed. Now exiting the whole program. ByeBye");
+            logger.info("All connections closed. Now exiting the whole program. ByeBye"); //$NON-NLS-1$
             LogManager.shutdown();
             System.exit(0);
         }
@@ -168,9 +168,9 @@ public class ShutdownManagerImpl implements ShutdownManager {
         Thread[] active = new Thread[Thread.activeCount()];
         Thread.enumerate(active);
         for (Thread t : active) {
-            logger.trace("Thread: " + t.toString());
+            logger.trace("Thread: " + t.toString()); //$NON-NLS-1$
             for (StackTraceElement e : t.getStackTrace()) {
-                logger.trace("    " + e.toString());
+                logger.trace("    " + e.toString()); //$NON-NLS-1$
             }
         }
     }

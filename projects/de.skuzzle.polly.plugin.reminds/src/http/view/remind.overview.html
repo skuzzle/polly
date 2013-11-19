@@ -1,13 +1,13 @@
 #if ($snoozable)
 <div class="highlight contentBox" id="showSnooze">
-    #CONTENT_HEADER ("Snoozable Remind for you")
+    #CONTENT_HEADER ($MSG.htmlSnoozeCaption)
     <div class="content">
     <table style="table-layout: fixed;">
         <tr>
-            <th>From</th>
-            <th style="width: 30%">Message</th>
-            <th>Left</th>
-            <th style="width: 50%">Snooze</th>
+            <th>$MSG.htmlFrom</th>
+            <th style="width: 30%">$MSG.htmlMessage</th>
+            <th>$MSG.htmlLeft</th>
+            <th style="width: 50%">$MSG.htmlSnooze</th>
         </tr>
         
         <tr>
@@ -19,13 +19,13 @@
                     type="text" 
                     class="textbox" 
                     id="snooze_input"
-                    placeholder="Insert polly date expression" 
+                    placeholder="$MSG.htmlPlaceHolder" 
                     style="width: 50%"
                  />
-                <input type="button" class="button" value="Set" onclick="setInputSnooze()" title="Snooze by expression"/>
-                <input type="button" class="button" value="$runtime" onclick="setSnooze('$runtime')" title="Snooze by remind runtime"/>
-                <input type="button" class="button" value="$defaultRemindTime" onclick="setSnooze('$defaultRemindTime')" title="Snooze by default remind time"/>
-                <input type="button" class="button" value="Discard" onclick="discardSnooze()" title="Discard this remind"/>
+                <input type="button" class="button" value="$MSG.htmlOk" onclick="setInputSnooze()" title="$MSG.htmlSnoozeByExpression"/>
+                <input type="button" class="button" value="$runtime" onclick="setSnooze('$runtime')" title="$MSG.htmlSnoozeByRuntime"/>
+                <input type="button" class="button" value="$defaultRemindTime" onclick="setSnooze('$defaultRemindTime')" title="$MSG.htmlSnoozeByDefault"/>
+                <input type="button" class="button" value="$MSG.htmlSnoozeDiscard" onclick="discardSnooze()" title="$MSG.htmlSnoozeDiscard"/>
             </td>
             
         </tr>
@@ -66,7 +66,7 @@ function discardSnooze() {
 </script>
 
 <div class="highlight contentBox">
-    #CONTENT_HEADER ("Reminds from- and for you")
+    #CONTENT_HEADER ($MSG.htmlYourRemindsCaption)
     
     <div class="content">
         <table id="myReminds">
@@ -76,7 +76,7 @@ function discardSnooze() {
 
 
 <div class="highlight contentBox">
-    #CONTENT_HEADER ("Admin view - All reminds")
+    #CONTENT_HEADER ($MSG.htmlAdminViewCaption)
     
     <div class="content">
         <table id="allReminds">

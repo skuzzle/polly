@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import polly.core.MSG;
 import polly.core.MyPlugin;
-
 import de.skuzzle.polly.sdk.Command;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -22,14 +22,13 @@ public class ExportAttributesCommand extends Command {
 
     public ExportAttributesCommand(MyPolly polly) 
                 throws DuplicatedSignatureException {
-        super(polly, "expattr");
-        this.createSignature("Exportiert alle deine polly Attribute", 
+        super(polly, "expattr"); //$NON-NLS-1$
+        this.createSignature(MSG.expAttributesSig0Desc, 
             MyPlugin.EXPORT_ATTRIBUTES_PERMISSION);
-        this.createSignature("Exportiert alle polly Attribute des angegebenen Benutzers",
+        this.createSignature(MSG.expAttributesSig1Desc,
             MyPlugin.EXPORT_USER_ATTRIBUTES_PERMISSION,
-            new Parameter("Benutzer", Types.USER));
-        this.setHelpText("Mit diesem Befehl können die individuellen polly Attributes " +
-        		"eines Benutzers exportiert werden.");
+            new Parameter(MSG.userName, Types.USER));
+        this.setHelpText(MSG.expAttributesHelp);
         this.setRegisteredOnly();
     }
     
@@ -43,8 +42,8 @@ public class ExportAttributesCommand extends Command {
         if (this.match(signature, 1)) {
             user = this.getMyPolly().users().getUser(signature.getStringValue(0));
             if (user == null) {
-                throw new CommandException("Benutzer '" + signature.getStringValue(0) + 
-                    "' existiert nicht");
+                throw new CommandException(MSG.bind(
+                        MSG.unknownUser, signature.getStringValue(0)));
             }
         }
         this.reply(channel, this.export(user));
@@ -59,11 +58,11 @@ public class ExportAttributesCommand extends Command {
         List<String> names = new ArrayList<String>(user.getAttributeNames());
         Collections.sort(names);
         for (String att : names) {
-            b.append(":setattr \"");
+            b.append(":setattr \""); //$NON-NLS-1$
             b.append(att);
-            b.append("\" \"");
+            b.append("\" \""); //$NON-NLS-1$
             b.append(user.getAttribute(att));
-            b.append("\"\n");
+            b.append("\"\n"); //$NON-NLS-1$
         }
         
         try {
