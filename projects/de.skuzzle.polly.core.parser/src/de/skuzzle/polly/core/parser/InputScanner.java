@@ -277,7 +277,7 @@ public class InputScanner extends AbstractTokenStream {
                 int next = this.readChar();
                 
                 if (next == '=') {
-                    return new Token(TokenType.ELT, this.spanFrom(tokenStart), "<=");
+                    state = 16;
                 } else if (next == '<') {
                     return new Token(
                         TokenType.LEFT_SHIFT, this.spanFrom(tokenStart), "<<");
@@ -301,6 +301,9 @@ public class InputScanner extends AbstractTokenStream {
                 
                 if (next == '=') {
                     return new Token(TokenType.EQ, this.spanFrom(tokenStart), "==");
+                } else if (next == '>') {
+                        return new Token(TokenType.IMPLICATION, 
+                                this.spanFrom(tokenStart), "=>");
                 } else {
                     return this.parseException(
                         Problems.format(Problems.ILLEGAL_SYMBOL, (char) next),
@@ -407,6 +410,15 @@ public class InputScanner extends AbstractTokenStream {
                 } else {
                     this.pushBack(next);
                     return new Token(TokenType.DIV, this.spanFrom(tokenStart), "/");
+                }
+            } else if (state == 16) {
+                int next = this.readChar();
+                
+                if (next == '>') {
+                    return new Token(TokenType.EQUIVALENCE, this.spanFrom(tokenStart), "<=>");
+                } else {
+                    this.pushBack(next);
+                    return new Token(TokenType.ELT, this.spanFrom(tokenStart), "<=");
                 }
             } else {
                 throw new IllegalStateException("unhandled state: " + state);
@@ -752,7 +764,7 @@ public class InputScanner extends AbstractTokenStream {
                     return this.readTime(firstPart, tokenStart, true);
                 } else if (next == '.') {
                     state = 1;
-                } else if (next == '°') {  // degree character
+                } else if (next == 'ï¿½') {  // degree character
                     state = 4;
                 } else if (next == 'E' || next == 'e') {
                     state = 9;
@@ -794,7 +806,7 @@ public class InputScanner extends AbstractTokenStream {
                     state = 5;
                 } else if (next == 'E' || next == 'e') {
                     state = 9;
-                } else if (next == '°') { //degree character
+                } else if (next == 'ï¿½') { //degree character
                     state = 4;
                 } else {
                     this.pushBack(next);

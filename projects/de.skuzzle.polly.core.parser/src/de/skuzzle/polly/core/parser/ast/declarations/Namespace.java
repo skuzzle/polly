@@ -357,6 +357,8 @@ public class Namespace {
             NATIVE.declare(new BinaryBooleanArithmetic(OpType.BOOLEAN_AND).createDeclaration());
             NATIVE.declare(new BinaryBooleanArithmetic(OpType.XOR).createDeclaration());
             NATIVE.declare(new BinaryBooleanArithmetic(OpType.BOOLEAN_OR).createDeclaration());
+            NATIVE.declare(new BinaryBooleanArithmetic(OpType.IMPLICATION).createDeclaration());
+            NATIVE.declare(new BinaryBooleanArithmetic(OpType.EQUIVALENCE).createDeclaration());
             NATIVE.declare(new BinaryBooleanArithmetic(OpType.AND_OR).createDeclaration());
             
             // boolean unary

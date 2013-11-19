@@ -33,6 +33,8 @@ public class PrecedenceTable {
         this.add(PrecedenceLevel.RELATION, TokenType.NEQ);
         this.add(PrecedenceLevel.RELATION, TokenType.GT);
         this.add(PrecedenceLevel.RELATION, TokenType.LT);
+        this.add(PrecedenceLevel.RELATION, TokenType.EQUIVALENCE);
+        this.add(PrecedenceLevel.RELATION, TokenType.IMPLICATION);
         
         this.add(PrecedenceLevel.DISJUNCTION, TokenType.BOOLEAN_OR);
         this.add(PrecedenceLevel.DISJUNCTION, TokenType.INT_OR);

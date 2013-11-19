@@ -59,7 +59,7 @@ public enum TokenType {
     OPENCURLBR("{"), 
     CLOSEDCURLBR("}"), 
     INDEX("Indizierung"),
-    KEYWORD("Schlüsselwort"),
+    KEYWORD("Schlï¿½sselwort"),
     UNKNOWN("Unbekanntes Zeichen"),
     COMMAND("Befehl"),
     POLLY("Polly"),
@@ -72,7 +72,9 @@ public enum TokenType {
     INSPECT("inspect"),
     ESCAPED("\\"), 
     TRANSPOSE("^T"),
-    ERROR("Ungültiges Symbol"), 
+    IMPLICATION("=>"),
+    EQUIVALENCE("<=>"),
+    ERROR("Ungï¿½ltiges Symbol"), 
     DELAY("delay"),
     DIRECTIVE("directive"), // tagging type for error messages
     REINTERPRET("reinterpret"); 

@@ -43,6 +43,17 @@ public class BinaryBooleanArithmetic extends BinaryOperator<BooleanLiteral, Bool
                 new BooleanLiteral(resultPos, left.getValue() ^ right.getValue()));
             break;
         
+        case IMPLICATION:
+            stack.push(new BooleanLiteral(resultPos, 
+                    !(left.getValue() && !right.getValue())));
+            break;
+            
+        case EQUIVALENCE:
+            stack.push(new BooleanLiteral(resultPos, 
+                    left.getValue() == right.getValue()));
+            
+            break;
+            
         case AND_OR:
             BooleanLiteral result = null;
             if (RANDOM.nextFloat() > 0.8) {

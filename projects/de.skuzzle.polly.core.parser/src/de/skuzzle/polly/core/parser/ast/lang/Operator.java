@@ -91,7 +91,9 @@ public abstract class Operator extends Function {
         RADIX("0x:"), 
         RIGHT_SHIFT(">>"), 
         URIGHT_SHIFT(">>>"), 
-        WAVE("~"), 
+        WAVE("~"),
+        IMPLICATION("=>"),
+        EQUIVALENCE("<=>"),
         IF("if"); 
         
         private final String id;
@@ -150,6 +152,8 @@ public abstract class Operator extends Function {
             case OPENSQBR:    return OpType.INDEX;
             case IF:          return OpType.IF;
             case TRANSPOSE:   return OpType.TRANSPOSE;
+            case IMPLICATION: return OpType.IMPLICATION;
+            case EQUIVALENCE: return OpType.EQUIVALENCE;
             default:
                 throw new IllegalArgumentException("not a valid operator token: " + 
                     token);
