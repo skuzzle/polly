@@ -47,7 +47,7 @@ public class LoggingController extends PollyController {
     @Override
     protected Map<String, Object> createContext(String content) {
         final Map<String, Object> c = super.createContext(content);
-        final PollyBundle pb = Resources.get(MSG.FAMILY);
+        final PollyBundle pb = Resources.get(MSG.FAMILY, MyPlugin.class.getClassLoader());
         c.put("MSG", pb); //$NON-NLS-1$
         return c;
     }

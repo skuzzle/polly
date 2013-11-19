@@ -8,8 +8,6 @@ import java.util.ResourceBundle;
 import java.util.ResourceBundle.Control;
 import java.util.Set;
 
-import sun.reflect.Reflection;
-
 
 /**
  * @author Simon Taddiken
@@ -25,13 +23,6 @@ public class Resources {
     
     /** Contains {@link Constants} subclasses which have already been initialized */
     private static final Set<Class<? extends Constants>> initialized = new HashSet<>();
-    
-    
-    
-    public static PollyBundle get(String family) {
-        final Class<?> caller = Reflection.getCallerClass();
-        return get(family, caller.getClassLoader());
-    }
     
     
     

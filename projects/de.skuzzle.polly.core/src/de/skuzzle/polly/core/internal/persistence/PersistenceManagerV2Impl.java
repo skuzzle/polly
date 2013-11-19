@@ -17,7 +17,6 @@ import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
 
-import sun.reflect.Reflection;
 import de.skuzzle.polly.core.util.MillisecondStopwatch;
 import de.skuzzle.polly.core.util.Stopwatch;
 import de.skuzzle.polly.sdk.AbstractDisposable;
