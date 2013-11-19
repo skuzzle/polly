@@ -219,7 +219,7 @@ public class Declaration extends Node implements Comparable<Declaration> {
     
     @Override
     public String toString() {
-        return this.name + " [Type: " + this.getType() + "]";
+        return this.name + " [Type: " + this.getType() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
     }
 
 

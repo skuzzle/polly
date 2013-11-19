@@ -104,7 +104,7 @@ public class DeclarationReader implements Closeable {
         String line = this.reader.readLine();
         if (line == null) {
             return false;
-        } else if (line.equals("") || line.startsWith("#")) {
+        } else if (line.equals("") || line.startsWith("#")) { //$NON-NLS-1$ //$NON-NLS-2$
             // line to be skipped
             return true;
         }
