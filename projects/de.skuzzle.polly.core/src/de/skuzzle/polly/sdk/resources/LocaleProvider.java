@@ -23,6 +23,8 @@ public class LocaleProvider {
         logger.info("Using locale: '" + localeName + "'"); //$NON-NLS-1$ //$NON-NLS-2$
         
         final Locale locale = new Locale(localeName);
-        Resources.pollyLocale = locale;
+        synchronized (Resources.MUTEX) {
+            Resources.pollyLocale = locale;
+        }
     }
 }

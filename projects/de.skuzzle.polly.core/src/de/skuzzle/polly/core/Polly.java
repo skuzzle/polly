@@ -119,10 +119,15 @@ public class Polly {
         
         Configuration pollyCfg = null;
         try {
+            System.out.println("Loading main configuration file"); //$NON-NLS-1$
             pollyCfg = configurationProvider.open(CONFIG_FILE_NAME, true, 
                     ConfigurationProviderImpl.NOP_VALIDATOR);
+            
+            System.out.println("Configuring Logger..."); //$NON-NLS-1$
             PropertyConfigurator.configure(
                 pollyCfg.readString(Configuration.LOG_CONFIG_FILE));
+            
+            System.out.println("Logger configured. Switching to using logger"); //$NON-NLS-1$
             
             // initialize Locale as early as possible
             LocaleProvider.initLocale(pollyCfg);

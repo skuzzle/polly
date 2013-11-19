@@ -14,6 +14,9 @@ import java.util.Set;
  * @since 1.1
  */
 public class Resources {
+    
+    /** Lock object for locale initialization */
+    final static Object MUTEX = new Object();
 
     /** This field will be set by polly during initialization */
     static Locale pollyLocale;
@@ -71,6 +74,11 @@ public class Resources {
      * @return The polly locale.
      */
     public static Locale getLocale() {
-        return pollyLocale;
+        synchronized (MUTEX) {
+            if (pollyLocale == null) {
+                return Locale.getDefault();
+            }
+            return pollyLocale;
+        }
     }
 }
