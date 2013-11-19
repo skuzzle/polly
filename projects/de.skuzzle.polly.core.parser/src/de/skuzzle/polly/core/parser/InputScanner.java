@@ -764,7 +764,7 @@ public class InputScanner extends AbstractTokenStream {
                     return this.readTime(firstPart, tokenStart, true);
                 } else if (next == '.') {
                     state = 1;
-                } else if (next == '�') {  // degree character
+                } else if (next == '°') {  // degree character
                     state = 4;
                 } else if (next == 'E' || next == 'e') {
                     state = 9;
@@ -806,7 +806,7 @@ public class InputScanner extends AbstractTokenStream {
                     state = 5;
                 } else if (next == 'E' || next == 'e') {
                     state = 9;
-                } else if (next == '�') { //degree character
+                } else if (next == '°') { //degree character
                     state = 4;
                 } else {
                     this.pushBack(next);

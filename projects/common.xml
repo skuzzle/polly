@@ -49,7 +49,7 @@
     <property name="doc.dir"           value="doc"/>
 
     <!-- Encoding of source files. -->
-    <property name="src.encoding"      value="ISO-8859-1"/>
+    <property name="src.encoding"      value="UTF-8"/>
     
     <!-- Dependency folder -->
     <property name="lib.dir"          value="${project.dir}/lib"/>

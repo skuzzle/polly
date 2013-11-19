@@ -21,26 +21,26 @@ public final class Problems {
     
     
     // Lexical errors
-    public final static String ILLEGAL_SYMBOL = "Ungültiges Symbol: %s";
-    public final static String MISSING_RADIX = "Fehlende Radix Angabe für 0x: Operator";
-    public final static String HIGH_RADIX = "Angegebener Radix %d ist zu groß (max: %d)";
-    public final static String INVALID_0X = "Ungültiger '0x:' Operator";
-    public final static String INVALID_STRING = "Ungültiger String-Literal";
-    public final static String INVALID_ESCAPE = "Ungültige escape-Sequenz: %s";
+    public final static String ILLEGAL_SYMBOL = "UngÃ¼ltiges Symbol: %s";
+    public final static String MISSING_RADIX = "Fehlende Radix Angabe fÃ¼r 0x: Operator";
+    public final static String HIGH_RADIX = "Angegebener Radix %d ist zu groÃŸ (max: %d)";
+    public final static String INVALID_0X = "UngÃ¼ltiger '0x:' Operator";
+    public final static String INVALID_STRING = "UngÃ¼ltiger String-Literal";
+    public final static String INVALID_ESCAPE = "UngÃ¼ltige escape-Sequenz: %s";
     public final static String UNCLOSED_STRING = "Nicht geschlossenes String-Literal";
-    public final static String INVALID_CHANNEL = "Ungültiges Channel-Literal: %s";
-    public final static String INVALID_USER = "Ungültiges User-Literal: %s";
-    public final static String INVALID_IDENTIFIER = "Ungültiger Bezeichner";
-    public final static String INVALID_IDENTIFIER2 = "Ungültiger Bezeichner: %s";
+    public final static String INVALID_CHANNEL = "UngÃ¼ltiges Channel-Literal: %s";
+    public final static String INVALID_USER = "UngÃ¼ltiges User-Literal: %s";
+    public final static String INVALID_IDENTIFIER = "UngÃ¼ltiger Bezeichner";
+    public final static String INVALID_IDENTIFIER2 = "UngÃ¼ltiger Bezeichner: %s";
     public final static String MISSING_DECIMALS = "Fehlende Dezimalstellen";
-    public final static String INVALID_DATE_TIME = "Ungültiges DateTime-Literal";
-    public final static String INVALID_NUMBER = "Ungültige Zahl";
-    public final static String INVALID_RADIXED_INT = "Ungültige Zahl mit Radix";
+    public final static String INVALID_DATE_TIME = "UngÃ¼ltiges DateTime-Literal";
+    public final static String INVALID_NUMBER = "UngÃ¼ltige Zahl";
+    public final static String INVALID_RADIXED_INT = "UngÃ¼ltige Zahl mit Radix";
     
     
     
     // Syntactical errors
-    public final static String MISSING_OBR = "Fehlende öffnende Klammer";
+    public final static String MISSING_OBR = "Fehlende Ã¶ffnende Klammer";
     public final static String UNEXPECTED_TOKEN = "Unerwartetes Symbol: %s, erwartet: %s";
     
     
@@ -49,9 +49,9 @@ public final class Problems {
     public final static String NO_FUNCTION = "'%s' ist keine Funktion";
     public final static String UNKNOWN_FUNCTION = "Funktion '%s' existiert nicht";
     public final static String INCOMPATIBLE_OP = "Operator '%s' nicht kompatibel mit den angegebenen Typen";
-    public final static String INCOMPATIBLE_CALL = "Keine passende Deklaration für den Aufruf von %s gefunden";
+    public final static String INCOMPATIBLE_CALL = "Keine passende Deklaration fÃ¼r den Aufruf von %s gefunden";
     public final static String DUPLICATED_DECL = "Doppelte Deklaration von: %s";
-    public final static String EMPTY_LIST = "Listen müssen mind. ein Element enthalten";
+    public final static String EMPTY_LIST = "Listen mÃ¼ssen mind. ein Element enthalten";
     public final static String RECURSIVE_CALL = "Rekursive Aufrufe sind nicht erlaubt";
     public final static String ILLEGAL_NS_ACCESS = "Operand muss ein Bezeichner sein";
     public final static String UNKNOWN_NS = "Unbekannter Namespace: %s";
@@ -66,9 +66,9 @@ public final class Problems {
     
     // Runtime errors
     public static final String DIVISION_BY_ZERO = "Division durch 0";
-    public static final String ILLEGAL_MATRIX = "Ungültige Matrix";
+    public static final String ILLEGAL_MATRIX = "UngÃ¼ltige Matrix";
     public static final String INTEGER_REQUIRED = "Ganzzahl erwartet";
-    public static final String INDEX_OUT_OF_BOUNDS = "Index ausserhalb des gültigen Bereichs: %d";
-    public static final String ILLEGAL_INDIZES = "Ungültige Start- und Endindizes (von %d nach %d)";
-    public static final String LIST_SIZE = "Liste zu groß: %d, maximal erlaubt: %d";
+    public static final String INDEX_OUT_OF_BOUNDS = "Index ausserhalb des gÃ¼ltigen Bereichs: %d";
+    public static final String ILLEGAL_INDIZES = "UngÃ¼ltige Start- und Endindizes (von %d nach %d)";
+    public static final String LIST_SIZE = "Liste zu groÃŸ: %d, maximal erlaubt: %d";
 }

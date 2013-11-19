@@ -185,7 +185,7 @@ class FirstPassTypeResolver extends AbstractTypeResolver {
     public int after(final Assignment node) throws ASTTraversalException {
         if (node.isTemp()) {
             this.reportError(node, 
-                "Temporäre Deklarationen werden (noch?) nicht unterstützt.");
+                "TemporÃ¤re Deklarationen werden (noch?) nicht unterstÃ¼tzt.");
         }
         
         // deep transitive recursion check
