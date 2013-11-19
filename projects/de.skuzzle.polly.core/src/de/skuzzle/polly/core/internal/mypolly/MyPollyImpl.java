@@ -157,7 +157,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
             int m = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
             workingNs.declare(new Declaration(Position.NONE, new Identifier("morgen"), 
                 new DateLiteral(Position.NONE, DateUtils.getDayDate(m + 1))));
-            workingNs.declare(new Declaration(Position.NONE, new Identifier("übermorgen"), 
+            workingNs.declare(new Declaration(Position.NONE, new Identifier("Ã¼bermorgen"), 
                 new DateLiteral(Position.NONE, DateUtils.getDayDate(m + 2))));
             
             

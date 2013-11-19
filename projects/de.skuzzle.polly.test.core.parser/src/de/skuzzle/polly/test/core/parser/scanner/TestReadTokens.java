@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import de.skuzzle.polly.core.parser.AbstractTokenStream;
 import de.skuzzle.polly.core.parser.EscapedToken;
+import de.skuzzle.polly.core.parser.InputScanner;
 import de.skuzzle.polly.core.parser.ParseException;
 import de.skuzzle.polly.core.parser.Position;
 import de.skuzzle.polly.core.parser.Token;
@@ -129,14 +130,17 @@ public class TestReadTokens extends AbstractScannerTest {
     
     @Test
     public void testReadTokens7() throws ParseException {
-        final String input = "10 abc #channel%/!!=~;&&& |||==<<<=>=>>+~+=-=??!\\(^^^$&|§";
-        final AbstractTokenStream scanner = this.obtain(input);
+        final String input = "10 abc #channel%/!!=~;&&& |||== << <= >= >>+~+=-=??!\\(^^^$&|";
+        final InputScanner scanner = this.obtain(input);
         
         Assert.assertTrue(scanner.match(TokenType.NUMBER));
         Assert.assertTrue(scanner.match(TokenType.SEPERATOR));
         Assert.assertTrue(scanner.match(TokenType.IDENTIFIER));
         Assert.assertTrue(scanner.match(TokenType.SEPERATOR));
         Assert.assertTrue(scanner.match(TokenType.CHANNEL));
+        
+        scanner.setSkipWhiteSpaces(true);
+        
         Assert.assertTrue(scanner.match(TokenType.MOD));
         Assert.assertTrue(scanner.match(TokenType.DIV));
         Assert.assertTrue(scanner.match(TokenType.EXCLAMATION));
@@ -146,7 +150,6 @@ public class TestReadTokens extends AbstractScannerTest {
         Assert.assertTrue(scanner.match(TokenType.BOOLEAN_AND));
         Assert.assertTrue(scanner.match(TokenType.INT_AND));
         //HACK: and or operator interference  
-        Assert.assertTrue(scanner.match(TokenType.SEPERATOR)); 
         Assert.assertTrue(scanner.match(TokenType.BOOLEAN_OR));
         Assert.assertTrue(scanner.match(TokenType.INT_OR));
         Assert.assertTrue(scanner.match(TokenType.EQ));
@@ -165,7 +168,6 @@ public class TestReadTokens extends AbstractScannerTest {
         Assert.assertTrue(scanner.match(TokenType.POWER));
         Assert.assertTrue(scanner.match(TokenType.DOLLAR));
         Assert.assertTrue(scanner.match(TokenType.AND_OR));
-        Assert.assertTrue(scanner.match(TokenType.ERROR));
     }
     
     

@@ -5,6 +5,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import de.skuzzle.polly.core.parser.AbstractTokenStream;
+import de.skuzzle.polly.core.parser.InputScanner;
 import de.skuzzle.polly.core.parser.ParseException;
 import de.skuzzle.polly.core.parser.Token;
 import de.skuzzle.polly.core.parser.TokenType;
@@ -118,7 +119,7 @@ public class TestMarkReset extends AbstractScannerTest {
     @Test
     public final void testMark8() throws ParseException {
         final String input = ":foo 1 \"test\"";
-        final AbstractTokenStream scanner = this.obtain(input);
+        final InputScanner scanner = this.obtain(input);
         final Token la = scanner.lookAhead();
         scanner.consume();
         scanner.mark();

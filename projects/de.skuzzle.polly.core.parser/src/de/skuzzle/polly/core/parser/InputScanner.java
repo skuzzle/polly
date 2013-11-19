@@ -137,6 +137,17 @@ public class InputScanner extends AbstractTokenStream {
     
     
     @Override
+    public boolean match(TokenType type) throws ParseException {
+        if (type == TokenType.SEPERATOR && this.skipWhiteSpaces) {
+            throw new IllegalArgumentException(
+                    "can not match token type SEPARATOR while 'skipWhiteSpaces' is enabled");
+        }
+        return super.match(type);
+    }
+    
+    
+    
+    @Override
     protected synchronized Token readToken() throws ParseException {
         final Token next = this.readTokenInternal();
         if (ParserProperties.should(ParserProperties.ENABLE_SCANNER_DEBUGGING)) {

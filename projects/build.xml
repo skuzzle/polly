@@ -105,6 +105,7 @@
         <antcall target="all.plugins" inheritAll="true" inheritRefs="true"/>
         
         <ant dir="de.skuzzle.polly.core" target="${target}" inheritAll="false"/>
+        <ant dir="de.skuzzle.polly.test.core.parser" target="${target}" inheritAll="false"/>
     </target>
     
     

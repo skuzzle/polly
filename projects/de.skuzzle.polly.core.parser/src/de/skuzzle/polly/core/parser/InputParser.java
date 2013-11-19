@@ -396,7 +396,9 @@ public class InputParser {
      * @throws ParseException If parsing fails.
      */
     protected void allowSingleWhiteSpace() throws ParseException {
-        this.scanner.match(TokenType.SEPERATOR);
+        if (!this.scanner.skipWhiteSpaces()) {
+            this.scanner.match(TokenType.SEPERATOR);
+        }
     }
     
     

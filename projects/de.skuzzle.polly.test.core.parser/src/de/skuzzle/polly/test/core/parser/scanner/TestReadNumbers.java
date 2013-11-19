@@ -73,7 +73,7 @@ public class TestReadNumbers extends AbstractScannerTest {
     
     @Test
     public final void testReadNumber6() throws ParseException {
-        final String input = "10°";
+        final String input = "10Â°";
         final AbstractTokenStream scanner = this.obtain(input);
         final Token la = scanner.lookAhead();
 
@@ -293,7 +293,7 @@ public class TestReadNumbers extends AbstractScannerTest {
     
     @Test
     public final void testReadNumber24() throws ParseException {
-        final String input = "20°";
+        final String input = "20Â°";
         final AbstractTokenStream scanner = this.obtain(input);
         Token la = scanner.consume();
         Assert.assertTrue(la.getType() == TokenType.NUMBER);
