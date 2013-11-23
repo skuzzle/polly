@@ -71,7 +71,8 @@ public class RemindHttpController extends PollyController {
     
     
     @Get(FILES)
-    public HttpAnswer getFile() {
+    public HttpAnswer getFile() throws AlternativeAnswerException {
+        this.requirePermissions(MyPlugin.REMIND_PERMISSION);
         final ClassLoader cl = this.getClass().getClassLoader();
         return new HttpResourceAnswer(200, cl, this.getEvent().getPlainUri());
     }
