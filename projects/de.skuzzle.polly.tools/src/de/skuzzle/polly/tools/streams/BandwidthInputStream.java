@@ -23,6 +23,7 @@ public class BandwidthInputStream extends FilterInputStream {
             throw new NullPointerException();
         }
         this.provider = provider;
+        this.provider.getStrategy().registerConsumer(this);
     }
     
     
@@ -35,7 +36,7 @@ public class BandwidthInputStream extends FilterInputStream {
 
     @Override
     public int read() throws IOException {
-        if (this.strategy.allocate(this, 1) == 1) {
+        if (this.provider.getStrategy().allocate(this, 1) == 1) {
             return super.read();
         }
         return 0;
@@ -61,7 +62,7 @@ public class BandwidthInputStream extends FilterInputStream {
 
     @Override
     public void close() throws IOException {
-        this.provider.getStrategy().close();
+        this.provider.getStrategy().consumerFinished(this);
         super.close();
     }
 }

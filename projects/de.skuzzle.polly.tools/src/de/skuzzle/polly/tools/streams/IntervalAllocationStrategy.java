@@ -35,6 +35,18 @@ public class IntervalAllocationStrategy implements AllocationStrategy, Allocatio
     
     
     @Override
+    public void registerConsumer(Object obj) {
+    }
+    
+    
+    
+    @Override
+    public void consumerFinished(Object obj) {
+    }
+    
+    
+    
+    @Override
     public AllocationStrategy getStrategy() {
         return this;
     }
