@@ -6,9 +6,8 @@ import java.io.OutputStream;
 
 public class BandwidthOutputStream extends FilterOutputStream {
 
-    private final AllocationStrategy strategy;
-
-
+    private final AllocationStrategyProvider provider;
+    
 
     public BandwidthOutputStream(OutputStream stream, int maxBytesPerSecond) {
         this(stream, new IntervalAllocationStrategy(maxBytesPerSecond, 1000));
@@ -16,20 +15,26 @@ public class BandwidthOutputStream extends FilterOutputStream {
 
 
 
-    public BandwidthOutputStream(OutputStream stream, AllocationStrategy strategy) {
+    public BandwidthOutputStream(OutputStream stream, AllocationStrategyProvider provider) {
         super(stream);
-        if (strategy == null) {
+        if (provider == null) {
             throw new NullPointerException();
         }
-        this.strategy = strategy;
+        this.provider = provider;
     }
 
+    
+    
+    public double getSpeed() {
+        return this.provider.getStrategy().getSpeed();
+    }
 
+    
 
     @Override
     public void write(int b) throws IOException {
-        if (this.strategy.allocate(1) == 1) {
-            super.write(b);
+        if (this.provider.getStrategy().allocate(this, 1) == 1) {
+            this.out.write(b);
         }
     }
 
@@ -44,15 +49,20 @@ public class BandwidthOutputStream extends FilterOutputStream {
 
     @Override
     public void write(byte[] b, int off, int len) throws IOException {
-        len = this.strategy.allocate(len);
-        super.write(b, off, len);
+        int l = len;
+        int allocated = 0;
+        do {
+            l = this.provider.getStrategy().allocate(this, len - allocated);
+            this.out.write(b, off + allocated, l);
+            allocated += l;
+        } while (allocated < len);
     }
 
 
 
     @Override
     public void close() throws IOException {
-        this.strategy.close();
+        this.provider.getStrategy().close();
         super.close();
     }
 }
