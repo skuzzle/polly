@@ -43,7 +43,7 @@ public class WebInterfaceCommand extends Command {
         boolean appendPort = ssl && port != 443 || !ssl && port != 80;
         String url = "http" + (ssl ? "s" : ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         url += "://" + this.getMyPolly().webInterface().getPublicHost(); //$NON-NLS-1$
-        url += appendPort ? port : ""; //$NON-NLS-1$
+        url += appendPort ? ":" + port : ""; //$NON-NLS-1$
         
         
         if (this.match(signature, 0)) {
