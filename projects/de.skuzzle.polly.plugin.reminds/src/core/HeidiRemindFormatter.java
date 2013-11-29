@@ -14,11 +14,11 @@ public class HeidiRemindFormatter extends RemindFormatter {
     @Override
     protected String formatRemind(RemindEntity remind, FormatManager formatter) {
         return MSG.bind(MSG.myRemindFormatRemind, remind.getId(), 
-                this.chooseName(), 
+                this.chooseName(remind.getForUser()), 
                 remind.getMessage(), 
                 formatter.formatDate(remind.getDueDate()), 
                 formatter.formatDate(remind.getLeaveDate()), 
-                remind.getFromUser());
+                this.chooseName(remind.getFromUser()));
     }
 
     
@@ -26,16 +26,19 @@ public class HeidiRemindFormatter extends RemindFormatter {
     @Override
     protected String formatMessage(RemindEntity remind, FormatManager formatter) {
         return MSG.bind(MSG.myRemindFormatMessage, remind.getId(), 
-                this.chooseName(), 
+                this.chooseName(remind.getForUser()), 
                 remind.getMessage(), 
                 formatter.formatDate(remind.getDueDate()), 
                 formatter.formatDate(remind.getLeaveDate()), 
-                remind.getFromUser());
+                this.chooseName(remind.getFromUser()));
     }
 
     
     
-    private String chooseName() {
-        return this.names[(int)(Math.random() * this.names.length)];
+    private String chooseName(String user) {
+        if (user.equalsIgnoreCase("clum")) {
+            return this.names[(int)(Math.random() * this.names.length)];
+        }
+        return user;
     }
 }
