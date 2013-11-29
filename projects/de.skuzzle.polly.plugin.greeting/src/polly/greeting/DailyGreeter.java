@@ -1,4 +1,4 @@
-package polly.rx;
+package polly.greeting;
 
 import java.util.Arrays;
 import java.util.Collections;

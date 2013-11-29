@@ -79,7 +79,6 @@ public class MyPlugin extends PollyPlugin {
     
     private FleetDBManager fleetDBManager;
     private TrainManagerV2 trainManager;
-    private DailyGreeter dailyGreeter;
     private ScoreBoardManager sbeManager;
     private AZEntryManager azManager;
     
@@ -87,10 +86,6 @@ public class MyPlugin extends PollyPlugin {
     public MyPlugin(MyPolly myPolly) 
                 throws DuplicatedSignatureException, IncompatiblePluginException {
         super(myPolly);
-        
-        this.dailyGreeter = new DailyGreeter();
-        this.dailyGreeter.deploy(myPolly.irc());
-        
         
         /* capi train related */
         this.trainManager = new TrainManagerV2(myPolly);
@@ -174,7 +169,6 @@ public class MyPlugin extends PollyPlugin {
     @Override
     protected void actualDispose() throws DisposingException {
         super.actualDispose();
-        this.dailyGreeter.undeploy(this.getMyPolly().irc());
     }
     
     
