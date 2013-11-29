@@ -10,16 +10,13 @@ import javax.naming.ConfigurationException;
 
 import org.apache.log4j.Logger;
 
-
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.ConfigurationProvider;
 import de.skuzzle.polly.sdk.ConfigurationValidator;
 import de.skuzzle.polly.sdk.eventlistener.ConfigurationEvent;
 import de.skuzzle.polly.sdk.eventlistener.ConfigurationListener;
-import de.skuzzle.polly.tools.events.Dispatchable;
 import de.skuzzle.polly.tools.events.EventProvider;
 import de.skuzzle.polly.tools.events.EventProviders;
-import de.skuzzle.polly.tools.events.Listeners;
 
 
 public class ConfigurationProviderImpl implements ConfigurationProvider {
@@ -152,18 +149,7 @@ public class ConfigurationProviderImpl implements ConfigurationProvider {
     
     
     public void fireConfigurationChanged(ConfigurationEvent e) {
-        final Listeners<ConfigurationListener> listeners = 
-            this.eventProvider.getListeners(ConfigurationListener.class);
-        
-        Dispatchable<ConfigurationListener, ConfigurationEvent> d = 
-            new Dispatchable<ConfigurationListener, ConfigurationEvent>(listeners, e) {
-    
-                @Override
-                public void dispatch(ConfigurationListener listener,
-                        ConfigurationEvent event) {
-                    listener.configurationChange(event);
-                }
-        };
-        this.eventProvider.dispatchEvent(d);
+        this.eventProvider.dispatchEvent(ConfigurationListener.class, e, 
+                ConfigurationListener.CONFIGURATION_CHANGED);
     }
 }

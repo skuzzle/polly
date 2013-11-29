@@ -60,10 +60,13 @@ public interface EventProvider {
      * example, be run in a different thread.
      * 
      * @param d The Dispatchable to execute.
+     * @deprecated Use {@link #dispatchEvent(Class, Event, Dispatch)} instead
      */
+    @Deprecated
     public void dispatchEvent(Dispatchable<?, ?> d);
     
-    
+    public <L extends EventListener, E extends Event<?>> void dispatchEvent(
+            Class<L> listenerClass, E event, Dispatch<L, E> d);
     
     /**
      * Gets whether this EventProvider is ready for dispatching.

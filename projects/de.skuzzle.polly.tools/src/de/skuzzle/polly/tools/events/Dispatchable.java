@@ -25,6 +25,7 @@ import java.util.EventListener;
  *
  * @param <T> The type of the listeners that will be notified.
  * @param <E> The type of the event that the listeners are notified with.
+ * @deprecated Use {@link Dispatch} interface instead
  */
 public abstract class Dispatchable<T extends EventListener, E extends Event<?>> 
         implements Runnable {

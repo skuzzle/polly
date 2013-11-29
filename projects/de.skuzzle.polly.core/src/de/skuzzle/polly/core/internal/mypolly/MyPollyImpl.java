@@ -60,9 +60,7 @@ import de.skuzzle.polly.sdk.paste.PasteServiceManager;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.time.DateUtils;
 import de.skuzzle.polly.sdk.time.Time;
-import de.skuzzle.polly.tools.events.Dispatchable;
 import de.skuzzle.polly.tools.events.EventProvider;
-import de.skuzzle.polly.tools.events.Listeners;
 
 
 
@@ -348,17 +346,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 
     @Override
     public void fireGenericEvent(final GenericEvent e) {
-        Listeners<GenericListener> listeners = this.eventProvider.getListeners(
-            GenericListener.class);
-        
-        Dispatchable<GenericListener, GenericEvent> d = 
-            new Dispatchable<GenericListener, GenericEvent>(listeners, e) {
-                @Override
-                public void dispatch(GenericListener listener,
-                        GenericEvent event) {
-                    listener.genericEvent(e);
-                }
-        };
-        this.eventProvider.dispatchEvent(d);
+        this.eventProvider.dispatchEvent(GenericListener.class, e, 
+                GenericListener.GENERIC_EVENT);
     }
 }

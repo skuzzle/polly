@@ -1,5 +1,6 @@
 package de.skuzzle.polly.tools.events;
 
+import java.util.EventListener;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -31,6 +32,22 @@ class AsynchronousEventProvider extends AbstractEventProvider {
     
     
     @Override
+    public <L extends EventListener, E extends Event<?>> void dispatchEvent(
+            final Class<L> listenerClass, final E event, final Dispatch<L, E> d) {
+        if (this.canDispatch()) {
+            final Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    notifyListeners(listenerClass, event, d);
+                }
+            };
+            this.dispatchPool.execute(r);
+        }
+    }
+    
+    
+    
+    @Override
     public boolean canDispatch() {
         return !this.dispatchPool.isShutdown() && !this.dispatchPool.isTerminated();
     }
@@ -38,6 +55,7 @@ class AsynchronousEventProvider extends AbstractEventProvider {
 
 
     @Override
+    @Deprecated
     public void dispatchEvent(Dispatchable<?, ?> d) {
         if (this.canDispatch()) {
             this.dispatchPool.execute(d);

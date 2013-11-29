@@ -17,5 +17,4 @@ public interface OneTimeEventListener extends EventListener {
      * @return Whether to remove this listener from its parent after next notification.
      */
     public boolean workDone();
-    
 }

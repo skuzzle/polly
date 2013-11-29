@@ -36,11 +36,11 @@ import de.skuzzle.polly.sdk.Attribute;
 import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.PersistenceManagerV2.Atomic;
 import de.skuzzle.polly.sdk.PersistenceManagerV2.Param;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Read;
 import de.skuzzle.polly.sdk.PersistenceManagerV2.Write;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
-import de.skuzzle.polly.sdk.PersistenceManagerV2.Read;
 import de.skuzzle.polly.sdk.constraints.AttributeConstraint;
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
 import de.skuzzle.polly.sdk.eventlistener.UserEvent;
@@ -56,9 +56,7 @@ import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.time.Time;
-import de.skuzzle.polly.tools.events.Dispatchable;
 import de.skuzzle.polly.tools.events.EventProvider;
-import de.skuzzle.polly.tools.events.Listeners;
 
 
 
@@ -659,32 +657,14 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     
     protected void fireUserSignedOn(final UserEvent e) {
-        final Listeners<UserListener> listeners = 
-            this.eventProvider.getListeners(UserListener.class);
-        
-        Dispatchable<UserListener, UserEvent> d = 
-            new Dispatchable<UserListener, UserEvent>(listeners, e) {
-                @Override
-                public void dispatch(UserListener listener, UserEvent event) {
-                    listener.userSignedOn(event);
-                }
-        };
-        this.eventProvider.dispatchEvent(d);
+        this.eventProvider.dispatchEvent(UserListener.class, e, 
+                UserListener.SIGNED_ON);
     }
     
     
     
     protected void fireUserSignedOff(final UserEvent e) {
-        final Listeners<UserListener> listeners = 
-            this.eventProvider.getListeners(UserListener.class);
-        
-        Dispatchable<UserListener, UserEvent> d = 
-            new Dispatchable<UserListener, UserEvent>(listeners, e) {
-                @Override
-                public void dispatch(UserListener listener, UserEvent event) {
-                    listener.userSignedOff(event);
-                }
-        };
-        this.eventProvider.dispatchEvent(d);
+        this.eventProvider.dispatchEvent(UserListener.class, e, 
+                UserListener.SIGNED_OFF);
     }
 }

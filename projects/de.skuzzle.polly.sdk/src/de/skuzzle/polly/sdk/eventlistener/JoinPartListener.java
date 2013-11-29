@@ -1,5 +1,7 @@
 package de.skuzzle.polly.sdk.eventlistener;
 
+import de.skuzzle.polly.tools.events.Dispatch;
+
 /**
  * This listener listens for join- and part events.
  * 
@@ -8,6 +10,24 @@ package de.skuzzle.polly.sdk.eventlistener;
  * @version RC 1.0
  */
 public interface JoinPartListener extends IrcEventListener {
+    
+    public final static Dispatch<JoinPartListener, ChannelEvent> CHANNEL_JOINED = 
+            new Dispatch<JoinPartListener, ChannelEvent>() {
+        @Override
+        public void dispatch(JoinPartListener listener, ChannelEvent event) {
+            listener.channelJoined(event);
+        }
+    };
+    
+    public final static Dispatch<JoinPartListener, ChannelEvent> CHANNEL_PARTED = 
+            new Dispatch<JoinPartListener, ChannelEvent>() {
+        @Override
+        public void dispatch(JoinPartListener listener, ChannelEvent event) {
+            listener.channelParted(event);
+        }
+    };
+    
+    
     
 	/**
 	 * This method is called if a user joins a channel. Detailed information about

@@ -27,6 +27,7 @@ import de.skuzzle.polly.sdk.eventlistener.ChannelModeEvent;
 import de.skuzzle.polly.sdk.eventlistener.ChannelModeListener;
 import de.skuzzle.polly.sdk.eventlistener.ConnectionEvent;
 import de.skuzzle.polly.sdk.eventlistener.ConnectionListener;
+import de.skuzzle.polly.sdk.eventlistener.GenericListener;
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
 import de.skuzzle.polly.sdk.eventlistener.JoinPartListener;
 import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
@@ -40,7 +41,6 @@ import de.skuzzle.polly.sdk.eventlistener.QuitListener;
 import de.skuzzle.polly.sdk.eventlistener.SpotEvent;
 import de.skuzzle.polly.sdk.eventlistener.UserSpottedListener;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
-import de.skuzzle.polly.tools.events.Dispatchable;
 import de.skuzzle.polly.tools.events.EventProvider;
 import de.skuzzle.polly.tools.events.Listeners;
 import de.skuzzle.polly.tools.iterators.WrapIterator;
@@ -755,228 +755,103 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     
     
     protected void fireMessageSend(final OwnMessageEvent e) {
-        final Listeners<MessageSendListener> listeners = 
-            this.eventProvider.getListeners(MessageSendListener.class);
-    
-        Dispatchable<MessageSendListener, OwnMessageEvent> d = 
-            new Dispatchable<MessageSendListener, OwnMessageEvent>(listeners, e) {
-                @Override
-                public void dispatch(MessageSendListener listener, OwnMessageEvent event) {
-                    listener.messageSent(event);
-                }
-        };
-        this.eventProvider.dispatchEvent(d);
+        this.eventProvider.dispatchEvent(MessageSendListener.class, e, 
+                MessageSendListener.MESSAGE_SENT);
     }
    
     
     
     protected void fireNickChange(final NickChangeEvent e) {
-        final Listeners<NickChangeListener> listeners = 
-            this.eventProvider.getListeners(NickChangeListener.class);
-    
-        Dispatchable<NickChangeListener, NickChangeEvent> d = 
-            new Dispatchable<NickChangeListener, NickChangeEvent>(listeners, e) {
-                @Override
-                public void dispatch(NickChangeListener listener, NickChangeEvent event) {
-                    listener.nickChanged(event);
-                }
-        };
-        this.eventProvider.dispatchEvent(d);
+        this.eventProvider.dispatchEvent(NickChangeListener.class, e, 
+                NickChangeListener.NICK_CHANGED);
     }
     
     
     
     protected void fireJoin(final ChannelEvent e) {
-        final Listeners<JoinPartListener> listeners = 
-            this.eventProvider.getListeners(JoinPartListener.class);
-        
-        Dispatchable<JoinPartListener, ChannelEvent> d = 
-            new Dispatchable<JoinPartListener, ChannelEvent>(listeners, e) {
-                @Override
-                public void dispatch(JoinPartListener listener, ChannelEvent event) {
-                    listener.channelJoined(event);
-                }
-        };
-        this.eventProvider.dispatchEvent(d);
+        this.eventProvider.dispatchEvent(JoinPartListener.class, e, 
+                JoinPartListener.CHANNEL_JOINED);
     }
     
     
     
     protected void firePart(final ChannelEvent e) {
-        final Listeners<JoinPartListener> listeners = 
-            this.eventProvider.getListeners(JoinPartListener.class);
-    
-        Dispatchable<JoinPartListener, ChannelEvent> d = 
-            new Dispatchable<JoinPartListener, ChannelEvent>(listeners, e) {
-                @Override
-                public void dispatch(JoinPartListener listener, ChannelEvent event) {
-                    listener.channelParted(event);
-                }
-        };
-        this.eventProvider.dispatchEvent(d);
+        this.eventProvider.dispatchEvent(JoinPartListener.class, e, 
+                JoinPartListener.CHANNEL_PARTED);
     }
     
     
     
     protected void fireQuit(final QuitEvent e) {
-        final Listeners<QuitListener> listeners = 
-            this.eventProvider.getListeners(QuitListener.class);
-        
-        Dispatchable<QuitListener, QuitEvent> d = 
-            new Dispatchable<QuitListener, QuitEvent>(listeners, e) {
-                @Override
-                public void dispatch(QuitListener listener, QuitEvent event) {
-                    listener.quited(event);
-                }
-        };
-        this.eventProvider.dispatchEvent(d);
+        this.eventProvider.dispatchEvent(QuitListener.class, e, 
+                QuitListener.QUIT);
     }
     
     
     
     protected void firePublicMessageEvent(final MessageEvent e) {
-        final Listeners<MessageListener> listeners = 
-            this.eventProvider.getListeners(MessageListener.class);
-
-        Dispatchable<MessageListener, MessageEvent> d = 
-            new Dispatchable<MessageListener, MessageEvent>(listeners, e) {
-                @Override
-                public void dispatch(MessageListener listener, MessageEvent event) {
-                    listener.publicMessage(event);
-                }
-        };
-        this.eventProvider.dispatchEvent(d);
+        this.eventProvider.dispatchEvent(MessageListener.class, e, 
+                MessageListener.PUBLIC_MESSAGE);
     }
     
     
     
     protected void firePrivateMessageEvent(final MessageEvent e) {
-        final Listeners<MessageListener> listeners = 
-            this.eventProvider.getListeners(MessageListener.class);
-        
-        Dispatchable<MessageListener, MessageEvent> d = 
-            new Dispatchable<MessageListener, MessageEvent>(listeners, e) {
-                @Override
-                public void dispatch(MessageListener listener, MessageEvent event) {
-                    listener.privateMessage(event);
-                }
-        };
-        this.eventProvider.dispatchEvent(d);
+        this.eventProvider.dispatchEvent(MessageListener.class, e, 
+                MessageListener.PRIVATE_MESSAGE);
     }
     
     
     
     protected void fireActionMessageEvent(final MessageEvent e) {
-        final Listeners<MessageListener> listeners = 
-            this.eventProvider.getListeners(MessageListener.class);
-        
-        Dispatchable<MessageListener, MessageEvent> d = 
-            new Dispatchable<MessageListener, MessageEvent>(listeners, e) {
-                @Override
-                public void dispatch(MessageListener listener, MessageEvent event) {
-                    listener.actionMessage(event);
-                }
-        };
-        this.eventProvider.dispatchEvent(d);
+        this.eventProvider.dispatchEvent(MessageListener.class, e, 
+                MessageListener.ACTION_MESSAGE);
     }
     
     
     
     protected void fireNoticeMessageEvent(final MessageEvent e) {
-        final Listeners<MessageListener> listeners = 
-            this.eventProvider.getListeners(MessageListener.class);
-        
-        Dispatchable<MessageListener, MessageEvent> d = 
-            new Dispatchable<MessageListener, MessageEvent>(listeners, e) {
-                @Override
-                public void dispatch(MessageListener listener, MessageEvent event) {
-                    listener.noticeMessage(event);
-                }
-        };
-        this.eventProvider.dispatchEvent(d);
+        this.eventProvider.dispatchEvent(MessageListener.class, e, 
+                MessageListener.NOTICE_MESSAGE);
     }
     
     
     
     protected void fireChannelModeEvent(final ChannelModeEvent e) {
-        final Listeners<ChannelModeListener> listeners = 
-            this.eventProvider.getListeners(ChannelModeListener.class);
-        
-        Dispatchable<ChannelModeListener, ChannelModeEvent> d = 
-            new Dispatchable<ChannelModeListener, ChannelModeEvent>(listeners, e) {
-                @Override
-                public void dispatch(ChannelModeListener listener, ChannelModeEvent event) {
-                    listener.channelModeChanged(event);
-                }
-        };
-        this.eventProvider.dispatchEvent(d);
+        this.eventProvider.dispatchEvent(ChannelModeListener.class, e, 
+                ChannelModeListener.MODE_CHANGED);
     }
     
     
     
     protected void fireUserSpotted(final SpotEvent e) {
-        final Listeners<UserSpottedListener> listeners = 
-            this.eventProvider.getListeners(UserSpottedListener.class);
-        
-        Dispatchable<UserSpottedListener, SpotEvent> d = 
-            new Dispatchable<UserSpottedListener, SpotEvent>(listeners, e) {
-                @Override
-                public void dispatch(UserSpottedListener listener, SpotEvent event) {
-                    listener.userSpotted(event);
-                }
-        };
-        this.eventProvider.dispatchEvent(d);
+        this.eventProvider.dispatchEvent(UserSpottedListener.class, e, 
+                UserSpottedListener.USER_SPOTTED);
     }
     
     
     
     protected void fireUserLost(final SpotEvent e) {
-        final Listeners<UserSpottedListener> listeners = 
-            this.eventProvider.getListeners(UserSpottedListener.class);
-        
-        Dispatchable<UserSpottedListener, SpotEvent> d = 
-            new Dispatchable<UserSpottedListener, SpotEvent>(listeners, e) {
-                @Override
-                public void dispatch(UserSpottedListener listener, SpotEvent event) {
-                    listener.userLost(event);
-                }
-        };
-        this.eventProvider.dispatchEvent(d);
+        this.eventProvider.dispatchEvent(UserSpottedListener.class, e, 
+                UserSpottedListener.USER_LOST);
     }
     
     
     
     protected void fireConnectionEstablished(ConnectionEvent e) {
-        final Listeners<ConnectionListener> listeners = 
-            this.eventProvider.getListeners(ConnectionListener.class);
-        
-        Dispatchable<ConnectionListener, ConnectionEvent> d = 
-            new Dispatchable<ConnectionListener, ConnectionEvent>(listeners, e) {
-                @Override
-                public void dispatch(ConnectionListener listener, ConnectionEvent event) {
-                    listener.ircConnectionEstablished(event);
-                }
-        };
-        this.eventProvider.dispatchEvent(d);
+        this.eventProvider.dispatchEvent(ConnectionListener.class, e, 
+                ConnectionListener.CONNECTION_ESTABLISHED);
     }
     
     
     
     protected void fireConnectionLost(ConnectionEvent e) {
-        final Listeners<ConnectionListener> listeners = 
-            this.eventProvider.getListeners(ConnectionListener.class);
-        
-        Dispatchable<ConnectionListener, ConnectionEvent> d = 
-            new Dispatchable<ConnectionListener, ConnectionEvent>(listeners, e) {
-                @Override
-                public void dispatch(ConnectionListener listener, ConnectionEvent event) {
-                    listener.ircConnectionLost(event);
-                }
-        };
-        this.eventProvider.dispatchEvent(d);
+        this.eventProvider.dispatchEvent(ConnectionListener.class, e, 
+                ConnectionListener.CONNECTION_LOST);
     }
 
 
+    
     @Override
     protected void actualDispose() throws DisposingException {
         if (this.isConnected()) {

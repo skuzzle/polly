@@ -1,6 +1,7 @@
 package de.skuzzle.polly.tools.events;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.EventListener;
 
 import javax.swing.SwingUtilities;
 
@@ -31,6 +32,37 @@ class AWTEventProvider extends AbstractEventProvider {
     
     
     @Override
+    public <L extends EventListener, E extends Event<?>> void dispatchEvent(
+            final Class<L> listenerClass, final E event, final Dispatch<L, E> d) {
+        
+        final Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                notifyListeners(listenerClass, event, d);
+            }
+        };
+        
+        if (this.invokeNow) {
+            if (SwingUtilities.isEventDispatchThread()) {
+                r.run();
+            } else {
+                try {
+                    SwingUtilities.invokeAndWait(r);
+                } catch (InvocationTargetException e) {
+                    throw new RuntimeException(e);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        } else {
+            SwingUtilities.invokeLater(r);
+        }
+    }
+    
+    
+    
+    @Override
+    @Deprecated
     public void dispatchEvent(Dispatchable<?, ?> d) {
         if (this.invokeNow) {
             if (SwingUtilities.isEventDispatchThread()) {

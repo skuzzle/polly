@@ -7,10 +7,10 @@ package de.skuzzle.polly.tools.events;
  * been handled by one listener.</p>
  * 
  * <p>Events are used in conjunction with the {@link EventProvider} and an instance of
- * {@link Dispatchable}. A Dispatchable instance is executed by an EventProvider and
- * serves for notifying all listeners for a certain event. It will stop notifying further
- * listeners as soon as one listener sets this class' {@link #isHandled()} to 
- * <code>true</code>.</p>
+ * {@link Dispatch}. A Dispatch instance is used by an EventProvider and
+ * serves for notifying a single listener with a certain event. The EventProvider will 
+ * stop notifying further listeners as soon as one listener sets this class' 
+ * {@link #isHandled()} to <code>true</code>.</p>
  * 
  * @author Simon
  * @param <T> Type of the source of this event.

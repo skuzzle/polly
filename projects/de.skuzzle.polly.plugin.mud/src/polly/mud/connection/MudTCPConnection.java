@@ -9,10 +9,8 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import de.skuzzle.polly.tools.events.Dispatchable;
 import de.skuzzle.polly.tools.events.EventProvider;
 import de.skuzzle.polly.tools.events.EventProviders;
-import de.skuzzle.polly.tools.events.Listeners;
 
 
 public class MudTCPConnection implements Closeable {
@@ -98,51 +96,25 @@ public class MudTCPConnection implements Closeable {
     
     
     private void fireMessageReceived(final String s) {
-        final Listeners<ConnectionListener> listeners = 
-                this.events.getListeners(ConnectionListener.class);
-        
         final MudMessageEvent e = new MudMessageEvent(this, s);
-        final Dispatchable<ConnectionListener, MudEvent> d = 
-            new Dispatchable<ConnectionListener, MudEvent>(listeners, e) {
-
-            @Override
-            public void dispatch(ConnectionListener listener, MudEvent event) {
-                listener.received(e);
-            }
-        };
-        this.events.dispatchEvent(d);
+        this.events.dispatchEvent(ConnectionListener.class, e, 
+                ConnectionListener.RECEIVED);
     }
     
     
     
     private void fireConnected() {
-        final Listeners<ConnectionListener> listeners = 
-                this.events.getListeners(ConnectionListener.class);
-        final Dispatchable<ConnectionListener, MudEvent> d = 
-            new Dispatchable<ConnectionListener, MudEvent>(listeners, new MudEvent(this)) {
-
-            @Override
-            public void dispatch(ConnectionListener listener, MudEvent event) {
-                listener.connected(event);
-            }
-        };
-        this.events.dispatchEvent(d);
+        final MudEvent e = new MudEvent(this);
+        this.events.dispatchEvent(ConnectionListener.class, e, 
+                ConnectionListener.CONNECTED);
     }
     
     
     
     private void fireDiconnected() {
-        final Listeners<ConnectionListener> listeners = 
-                this.events.getListeners(ConnectionListener.class);
-        final Dispatchable<ConnectionListener, MudEvent> d = 
-            new Dispatchable<ConnectionListener, MudEvent>(listeners, new MudEvent(this)) {
-
-            @Override
-            public void dispatch(ConnectionListener listener, MudEvent event) {
-                listener.disconnected(event);
-            }
-        };
-        this.events.dispatchEvent(d);
+        final MudEvent e = new MudEvent(this);
+        this.events.dispatchEvent(ConnectionListener.class, e, 
+                ConnectionListener.DISCONNECTED);
     }
     
     
