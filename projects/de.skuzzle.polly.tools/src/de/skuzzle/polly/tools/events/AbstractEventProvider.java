@@ -19,8 +19,8 @@ public abstract class AbstractEventProvider implements EventProvider {
     public AbstractEventProvider() {
         this.listeners = new EventListenerList();
     }
-    
 
+    
     
     @Override
     public <T extends EventListener> Listeners<T> getListeners(Class<T> listenerClass) {
@@ -48,6 +48,26 @@ public abstract class AbstractEventProvider implements EventProvider {
             T listener) {
         synchronized (this.listeners) {
             this.listeners.remove(listenerClass, listener);
+        }
+    }
+    
+    
+    
+    protected <L extends EventListener, E extends Event<?>> void notifyListeners(
+            Class<L> listenerClass, E event, Dispatch<L, E> d) {
+        
+        final Listeners<L> listeners = this.getListeners(listenerClass);
+        for (L listener : listeners) {
+            if (event.isHandled()) {
+                return;
+            }
+            d.dispatch(listener, event);
+            if (listener instanceof OneTimeEventListener) {
+                final OneTimeEventListener otl = (OneTimeEventListener) listener;
+                if (otl.workDone()) {
+                    listeners.removeFromParent(listener);
+                }
+            }
         }
     }
 }

@@ -5,7 +5,21 @@ import java.io.Closeable;
 
 
 public interface AllocationStrategy extends Closeable {
-
+    
+    /**
+     * Records the given object as a consumer which will allocate bytes until 
+     * {@link #consumerFinished(Object)} with the same object has been called.
+     * 
+     * @param obj The object to register as consumer.
+     */
+    public void registerConsumer(Object obj);
+    
+    /**
+     * Records that the given consumer is done allocating bytes with this strategy.
+     * @param obj The consumer object which finished allocating.
+     */
+    public void consumerFinished(Object obj);
+    
     /**
      * Gets the speed in bytes per seconds at which this allocator currently allocates.
      * 

@@ -1,7 +1,7 @@
 package de.skuzzle.polly.tools.streams;
 
 
-public class IntervalAllocationStrategy implements AllocationStrategy, AllocationStrategyProvider {
+public class IntervalAllocationStrategy implements AllocationStrategy {
     
     protected final Object lock;
     private final int intervalLength;
@@ -35,21 +35,12 @@ public class IntervalAllocationStrategy implements AllocationStrategy, Allocatio
     
     
     @Override
-    public void registerConsumer(Object obj) {
-    }
+    public void registerConsumer(Object obj) {}
     
     
     
     @Override
-    public void consumerFinished(Object obj) {
-    }
-    
-    
-    
-    @Override
-    public AllocationStrategy getStrategy() {
-        return this;
-    }
+    public void consumerFinished(Object obj) {}
     
     
     

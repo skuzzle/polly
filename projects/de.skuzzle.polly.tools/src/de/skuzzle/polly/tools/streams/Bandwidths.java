@@ -37,6 +37,18 @@ public class Bandwidths {
     
     
     
+    public static AllocationStrategy bytesPerSecond(int bytes) {
+        return new IntervalAllocationStrategy(bytes, 1000);
+    }
+    
+    
+    
+    public static AllocationStrategy kBytesPerSecond(int kBytes) {
+        return new IntervalAllocationStrategy(kBytes * 1024, 1000);
+    }
+    
+    
+    
     public static long kiloBytesToBytes(int kb) {
         return kb * KILO_BYTE;
     }
