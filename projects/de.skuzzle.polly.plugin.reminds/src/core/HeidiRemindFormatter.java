@@ -7,7 +7,7 @@ import entities.RemindEntity;
 
 public class HeidiRemindFormatter extends RemindFormatter {
     
-    private String[] names = MSG.heidiNickNames.split(","); //$NON-NLS-1$
+    private final String[] names = MSG.heidiNickNames.split(","); //$NON-NLS-1$
     
     
     // "@%r%: %m%. (Hinterlassen von: %s% am %ld%)
