@@ -65,7 +65,7 @@ public abstract class AbstractEventProvider implements EventProvider {
             if (listener instanceof OneTimeEventListener) {
                 final OneTimeEventListener otl = (OneTimeEventListener) listener;
                 if (otl.workDone()) {
-                    listeners.removeFromParent(listener);
+                    this.listeners.remove(listenerClass, listener);
                 }
             }
         }
