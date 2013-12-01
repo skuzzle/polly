@@ -100,10 +100,10 @@ public class AddTrainCommand extends Command {
         try {
             TrainEntityV3 te = TrainEntityV3.parseString(trainer.getId(), forUser, mod, train);
             final TrainBillV2 bill = this.trainManager.addTrain(te, trainer);
-            
             if (te.getDuration() != 0) {
                 // HACK: this requires the Remind Plugin to be installed and running!
                 final String command = MSG.bind(MSG.addTrainRemind, 
+                        te.getForUser(),
                         bill.weightedSum(), Milliseconds.toSeconds(te.getDuration()));
                 this.getMyPolly().commands().executeString(
                         command, 
@@ -112,7 +112,7 @@ public class AddTrainCommand extends Command {
             }
             this.reply(channel, MSG.bind(MSG.addTrainSuccess, bill.weightedSum()));
         } catch (Exception e) {
-            throw new CommandException(MSG.addTrainFail);
+            throw new CommandException(MSG.addTrainFail, e);
         }
     }
 }

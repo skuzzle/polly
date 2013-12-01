@@ -488,6 +488,8 @@ public class HTMLTable<T> implements HttpEventHandler {
             settings.pageSize = pageSize;
             
             this.updateViewPort(settings, data);
+        } else {
+            this.updateViewPort(settings, data);
         }
         
         
