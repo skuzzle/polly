@@ -1,0 +1,6 @@
+eclipse.preferences.version=1
+encoding//src/de/skuzzle/polly/core/Translation.properties=UTF-8
+encoding//src/de/skuzzle/polly/core/commandline/Translation.properties=UTF-8
+encoding//src/de/skuzzle/polly/core/eventhandler/Translation.properties=UTF-8
+encoding//src/de/skuzzle/polly/core/internal/Translation.properties=UTF-8
+encoding//src/de/skuzzle/polly/core/internal/httpv2/Translation.properties=UTF-8
