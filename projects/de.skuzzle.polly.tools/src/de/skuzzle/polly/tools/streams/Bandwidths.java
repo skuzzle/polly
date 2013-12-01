@@ -14,11 +14,31 @@ public class Bandwidths {
         // create big test file
         final long bigTestFileSize = megaBytesToBytes(1000);
         final byte[] buffer = new byte[80000];
-        final int bytesPerSecond = 5242880;
+        final int bytesPerSecond = 524288;
         Arrays.fill(buffer, (byte) 65);
         
+        final AllocationStrategy as = new AllocationStrategy() {
+            @Override
+            public void close() throws IOException {
+            }
+            @Override
+            public void registerConsumer(Object obj) {
+            }
+            @Override
+            public double getSpeed() {
+                return 0;
+            }
+            @Override
+            public void consumerFinished(Object obj) {
+            }
+            @Override
+            public int allocate(Object source, int bytes) {
+                return bytes;
+            }
+        };
+        
         try (OutputStream out = new FileOutputStream(new File("C:\\Users\\Simon\\Desktop\\temp.txt"))) {
-            final BandwidthOutputStream bandOut = new BandwidthOutputStream(out, bytesPerSecond);
+            final BandwidthOutputStream bandOut = new BandwidthOutputStream(out, as);
             
             int written = 0;
             while (written < bigTestFileSize) {

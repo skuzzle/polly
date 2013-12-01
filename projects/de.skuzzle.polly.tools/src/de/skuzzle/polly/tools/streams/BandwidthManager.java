@@ -20,7 +20,8 @@ public class BandwidthManager {
     
     
 
-    public BandwidthOutputStream newManagedOutput(OutputStream out, AllocationStrategy subStrategy) {
+    public BandwidthOutputStream newManagedOutput(OutputStream out, 
+            AllocationStrategy subStrategy) {
         final BandwidthOutputStream r = new BandwidthOutputStream(out, this.outputStrategy);
         this.setSubStrategy(r, subStrategy);
         this.outputEvents.addListener(StrategyChangedListener.class, r);

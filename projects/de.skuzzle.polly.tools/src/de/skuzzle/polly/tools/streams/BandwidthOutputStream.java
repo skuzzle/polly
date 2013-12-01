@@ -36,6 +36,7 @@ public class BandwidthOutputStream extends FilterOutputStream
     }
     
     
+    
     @Override
     public void strategyChanged(StrategyChangedEvent e) {
         this.strategy.consumerFinished(this);

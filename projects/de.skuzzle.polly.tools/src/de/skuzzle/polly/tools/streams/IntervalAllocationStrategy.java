@@ -75,7 +75,7 @@ public class IntervalAllocationStrategy implements AllocationStrategy {
             final long timeUntilResetMs = Math.max(0, this.intervalLength - timePassedSinceResetMs);
             
             if (timePassedSinceResetMs > this.intervalLength) {
-                double bytesPerInterval = (double) (this.maxBytesPerInterval - this.bytesLeft);
+                final double bytesPerInterval = (double) (this.maxBytesPerInterval - this.bytesLeft);
                 
                 this.speed = timePassedSinceReset == 0 ? 0.f : bytesPerInterval / (double) timePassedSinceReset;
                 this.bytesLeft = this.maxBytesPerInterval;
