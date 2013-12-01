@@ -15,8 +15,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-import com.sun.org.apache.xerces.internal.impl.xs.identity.Selector.Matcher;
-
 import de.skuzzle.polly.http.api.AlternativeAnswerException;
 import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.http.api.HttpException;
@@ -148,13 +146,13 @@ public class HTMLTable<T> implements HttpEventHandler {
             if (cellValue == null) {
                 return ""; //$NON-NLS-1$
             } else {
-                String s = cellValue == null ? "" : cellValue.toString(); //$NON-NLS-1$
+                String s = cellValue.toString();
                 s = this.escape ? HTMLTools.html(s) : s;
                 final java.util.regex.Matcher m = URL_PATTERN.matcher(s);
                 final StringBuffer buff = new StringBuffer();
                 
                 while (m.find()) {
-                    m.appendReplacement(buff, "<a href=\"" + m.group() + "\">" + m.group() + "</a>");
+                    m.appendReplacement(buff, "<a href=\"" + m.group() + "\">" + m.group() + "</a>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 }
                 m.appendTail(buff);
                 s = buff.toString();
