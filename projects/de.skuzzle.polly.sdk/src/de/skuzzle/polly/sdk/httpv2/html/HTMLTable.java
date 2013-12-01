@@ -464,6 +464,7 @@ public class HTMLTable<T> implements HttpEventHandler {
             settings.filter[filterCol] = filterVal == null ? "" : filterVal; //$NON-NLS-1$
             
             this.updateFilter(settings, data);
+            this.updateSorting(settings, data);
             this.updateViewPort(settings, data);
             this.fireDataProcessed(data.view, e);
             
