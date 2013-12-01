@@ -5,7 +5,6 @@
 *.pdf
 *.bak
 *.properties
-*.prefs
 .metadata/*.*
 *.html
 *.tex
