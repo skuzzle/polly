@@ -2,10 +2,7 @@ package de.skuzzle.polly.core.internal.mypolly;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.log4j.Logger;
 
 import de.skuzzle.polly.core.Polly;
@@ -96,7 +93,6 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 	private WebInterfaceManagerImpl webInterfaceManager;
 	private RunOnceManagerImpl runOnceManager;
 	private EventProvider eventProvider;
-	private final Map<String, String> status;
 	
 	
 	public MyPollyImpl(CommandManagerImpl cmdMngr, 
@@ -114,8 +110,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 			WebInterfaceManagerImpl webInterfaceManager,
 			RunOnceManagerImpl runOnceManager,
 			EventProvider eventProvider) {
-	
-	    this.status = new HashMap<>();
+	    
 		this.commandManager = cmdMngr;
 		this.ircManager = ircMngr;
 		this.pluginManager = plgnMngr;
@@ -131,20 +126,6 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 		this.roleManager = roleManager;
 		this.webInterfaceManager = webInterfaceManager;
 		this.runOnceManager = runOnceManager;
-	}
-	
-	
-	
-	@Override
-	public void setStatus(String key, String status) {
-	    this.status.put(key, status);
-	}
-	
-	
-	
-	@Override
-	public Map<String, String> getStatusMap() {
-	    return this.status;
 	}
 	
 	

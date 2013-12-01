@@ -111,10 +111,6 @@ public class MyPollyProvider extends AbstractProvider {
             this.runOnceManager,
             this.eventProvider);
         this.provideComponent(myPolly);
-        
-        myPolly.setStatus(MSG.statusVersion, myPolly.getPollyVersion());
-        myPolly.setStatus(MSG.statusRuntime, 
-                myPolly.formatting().formatDate(myPolly.getStartTime()));
     }
     
     

@@ -1,7 +1,6 @@
 package de.skuzzle.polly.sdk;
 
 import java.util.Date;
-import java.util.Map;
 
 import de.skuzzle.polly.sdk.eventlistener.GenericEvent;
 import de.skuzzle.polly.sdk.eventlistener.GenericListener;
@@ -231,22 +230,4 @@ public interface MyPolly {
      * @return The result.
      */
     public Types parse(String value);
-
-
-    
-    /**
-     * Sets a status information with a name and status description.
-     * 
-     * @param key The name of the status.
-     * @param status Description for the status.
-     */
-    void setStatus(String key, String status);
-    
-    
-    
-    /**
-     * Gets a map of all stati that are set right now.
-     * @return Current status map
-     */
-    public Map<String, String> getStatusMap();
 }
