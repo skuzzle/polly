@@ -35,7 +35,7 @@ public enum TrainType {
                 return EXTENDED_COMMANDO;
             } else if (s.contains("Modullimit")) { //$NON-NLS-1$
                 return EXTENDED_MODULE;
-            } else if (s.contains("K�rper")) { //$NON-NLS-1$
+            } else if (s.contains("Körper")) { //$NON-NLS-1$
                 return EXTENDED_BODY;
             } else if (s.contains("Crewlimit")) { //$NON-NLS-1$
                 return EXTENDED_CREW;
