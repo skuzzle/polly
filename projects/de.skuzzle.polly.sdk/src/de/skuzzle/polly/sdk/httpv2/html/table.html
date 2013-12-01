@@ -5,7 +5,7 @@
 
 <tr>
     <th colspan="$model.getColumnCount()">
-    <a href="#" onclick="loadTable('$baseUrl', '$id')">$MSG.tableReload</a>
+    <a href="#" onclick="reloadAll('$baseUrl', '$id')">$MSG.tableReload</a>
     #if (!$noFilter)
 	    $MSG.tablePages: 
 	    #if ($settings.getPage() == 0)

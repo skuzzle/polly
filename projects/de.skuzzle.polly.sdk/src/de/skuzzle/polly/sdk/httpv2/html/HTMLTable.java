@@ -1,5 +1,6 @@
 package de.skuzzle.polly.sdk.httpv2.html;
 
+import java.lang.ref.WeakReference;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -234,6 +235,7 @@ public class HTMLTable<T> implements HttpEventHandler {
     
 
     private final static String SORT_COLUMN = "sort"; //$NON-NLS-1$
+    private final static String UPDATE_ALL = "updateAll"; //$NON-NLS-1$
     private final static String SET_PAGE = "page"; //$NON-NLS-1$
     private final static String SET_PAGE_SIZE = "pageSize"; //$NON-NLS-1$
     private final static String FILTER_VAL = "filterVal"; //$NON-NLS-1$
@@ -245,14 +247,24 @@ public class HTMLTable<T> implements HttpEventHandler {
     private final static int DEFAULT_PAGE_SIZE = 40;
     
     
+    private final class DataHolder {
+        private List<T> allData;
+        private List<T> filtered;
+        private List<T> view;
+    }
     
-    public static class TableSettings {
+    
+    
+    public class TableSettings {
         private int sortCol;
         private SortOrder[] order;
         private String[] filter;
         private int pageCount;
         private int pageSize = DEFAULT_PAGE_SIZE;
         private int page;
+        
+        private WeakReference<DataHolder> data = new WeakReference<DataHolder>(null); 
+        private Map<T, Integer> indexMap;
         
         public int getSortCol() {
             return this.sortCol;
@@ -283,23 +295,6 @@ public class HTMLTable<T> implements HttpEventHandler {
                 ", pageSize: " + this.pageSize +  //$NON-NLS-1$
                 ", sortOrder: " + Arrays.toString(this.order) +  //$NON-NLS-1$
                 ", filter: " + Arrays.toString(this.filter) + "]"; //$NON-NLS-1$ //$NON-NLS-2$
-        }
-    }
-    
-    
-    
-    private class FilterResult {
-        private final List<T> sided;
-        private final List<T> unsided;
-        private final int filteredSize;
-        private final Map<T, Integer> indexMap;
-        public FilterResult(List<T> sided, List<T> unsided, 
-                Map<T, Integer> indexMap, int filteredSize) {
-            super();
-            this.sided = sided;
-            this.unsided = unsided;
-            this.indexMap = indexMap;
-            this.filteredSize = filteredSize;
         }
     }
     
@@ -390,6 +385,7 @@ public class HTMLTable<T> implements HttpEventHandler {
     
     
     @Override
+    @SuppressWarnings("unchecked")
     public synchronized HttpAnswer handleHttpEvent(String registered, HttpEvent e,
                 HttpEventHandler next) throws HttpException {
         
@@ -423,8 +419,24 @@ public class HTMLTable<T> implements HttpEventHandler {
             }
         }
         
+        DataHolder data = settings.data.get();
+        if (data == null || e.get(UPDATE_ALL) != null) {
+            data = new DataHolder();
+            data.allData = this.model.getData(e);
+            data.view = data.allData;
+            data.filtered = data.view;
+            
+            settings.indexMap = new HashMap<>(data.allData.size());
+            settings.pageCount = (int) Math.ceil(data.allData.size() / (double) settings.pageSize);
+            int i = 0;
+            for (final T t : data.allData) {
+                settings.indexMap.put(t, i++);
+            }
+            
+            settings.data = new WeakReference<HTMLTable<T>.DataHolder>(data);
+            this.fireDataProcessed(data.view, e);
+        }
         
-        List<T> allData = null; 
         if (e.get(SORT_COLUMN) != null) {
             // this is a sorting request
             // column for which to sort
@@ -438,6 +450,11 @@ public class HTMLTable<T> implements HttpEventHandler {
             // update setting
             settings.order[newSortCol] = order;
             settings.sortCol = newSortCol;
+            
+            // sort data
+            this.updateSorting(settings, data);
+            this.updateViewPort(settings, data);
+            
         } else if (e.get(FILTER_COL) != null) {
             final int filterCol = Integer.parseInt(e.get(FILTER_COL));
             if (filterCol < 0 || filterCol >= this.model.getColumnCount()) {
@@ -445,16 +462,23 @@ public class HTMLTable<T> implements HttpEventHandler {
             }
             final String filterVal = e.get(FILTER_VAL);
             settings.filter[filterCol] = filterVal == null ? "" : filterVal; //$NON-NLS-1$
+            
+            this.updateFilter(settings, data);
+            this.updateViewPort(settings, data);
+            this.fireDataProcessed(data.view, e);
+            
         } else if (e.get(SET_PAGE) != null) {
             final int page = Integer.parseInt(e.get(SET_PAGE));
-            settings.page = page;
+            settings.page = MathUtil.limit(page, 0, Math.max(settings.pageCount - 1, 0));
+            
+            this.updateViewPort(settings, data);
+            
         } else if (e.get(SET_VALUE) != null) {
             final String value = e.get(SET_VALUE);
             final int col = Integer.parseInt(e.get(COLUMN));
             final int row = Integer.parseInt(e.get(ROW));
             
-            allData = this.model.getData(e);
-            final T element = allData.get(row);
+            final T element = this.model.getData(e).get(row);
             final SuccessResult r = this.model.setCellValue(col, element, 
                 value, user, this.myPolly);
             
@@ -462,8 +486,9 @@ public class HTMLTable<T> implements HttpEventHandler {
         } else if (e.get(SET_PAGE_SIZE) != null) {
             final int pageSize = Integer.parseInt(e.get(SET_PAGE_SIZE));
             settings.pageSize = pageSize;
+            
+            this.updateViewPort(settings, data);
         }
-        
         
         
         if (this.model.isFilterOnly()) {
@@ -474,75 +499,46 @@ public class HTMLTable<T> implements HttpEventHandler {
             }
             if (!hasFilter) {
                 // no filter is active and this is no filter request
-                final FilterResult fr = new FilterResult(new ArrayList<T>(), 
-                        new ArrayList<T>(), new HashMap<T, Integer>(), 0);
-                
-                final Map<String, Object> c = this.createContext(settings, 
-                    registered, fr, e, new ArrayList<T>());
+                final Map<String, Object> c = this.createContext(settings, registered, e);
                 c.put("noFilter", true); //$NON-NLS-1$
                 return HttpAnswers.newTemplateAnswer(
                         "de/skuzzle/polly/sdk/httpv2/html/table.html", c); //$NON-NLS-1$
             }
         }
         
-        
-        
-        if (allData == null) {
-            allData = this.model.getData(e);
-        }
-        
-        
-        
-        // get filtered elements
-        final FilterResult fr = this.getFilteredElements(settings, allData, e);
-        this.fireDataProcessed(fr.unsided, e);
-        
-        final Map<String, Object> c = this.createContext(settings, 
-            registered, fr, e, allData);
+        final Map<String, Object> c = this.createContext(settings, registered, e);
         return HttpAnswers.newTemplateAnswer(
                 "de/skuzzle/polly/sdk/httpv2/html/table.html", c); //$NON-NLS-1$
     }
     
     
     
-    private Map<String, Object> createContext(TableSettings settings, String registered, 
-            FilterResult fr, HttpEvent e, List<T> allData) {
-        final int minPage = Math.max(0, settings.page - 3);
-        final int maxPage = Math.max(0, Math.min(settings.pageCount - 1, Math.max(settings.page + 3, 6)));
-        
-        final Map<String, Object> c = new HashMap<>();
-        HTMLTools.gainFieldAccess(c, Messages.class, "MSG"); //$NON-NLS-1$
-        c.put("Messages", Constants.class); //$NON-NLS-1$
-        c.put("settings", settings); //$NON-NLS-1$
-        c.put("tableModel", this.model); //$NON-NLS-1$
-        c.put("colSorter", this.colSorter); //$NON-NLS-1$
-        c.put("renderers", this.renderers); //$NON-NLS-1$
-        c.put("filter", this.filter); //$NON-NLS-1$
-        c.put("editors", this.editors); //$NON-NLS-1$
-        c.put("baseUrl", makeUrl(registered, this.model.getRequestParameters(e))); //$NON-NLS-1$
-        c.put("tId", this.tableId); //$NON-NLS-1$
-        c.put("data", fr.sided); //$NON-NLS-1$
-        c.put("indexMap", fr.indexMap); //$NON-NLS-1$
-        c.put("requestParams", this.model.getRequestParameters(e)); //$NON-NLS-1$
-        c.put("minPage", minPage); //$NON-NLS-1$
-        c.put("maxPage", maxPage); //$NON-NLS-1$
-        c.put("all", allData.size()); //$NON-NLS-1$
-        c.put("filteredSize", fr.filteredSize); //$NON-NLS-1$
-        //c.put("MSG", pb); //$NON-NLS-1$
-        c.putAll(this.baseContext);
-        return c;
+    private void updateSorting(TableSettings settings, DataHolder data) {
+        if (settings.sortCol != -1 && this.model.isSortable(settings.sortCol)) {
+            if (settings.order[settings.sortCol] != SortOrder.UNDEFINED) {
+                final Comparator<? super T> c = 
+                        this.colSorter.getComparator(settings.sortCol, this.model);
+                Collections.sort(data.filtered, new DirectedComparator<>(settings.getOrder(), c));
+            }
+        }
     }
     
     
     
-    private FilterResult getFilteredElements(TableSettings s, List<T> data, 
-            HttpEvent e) {
-        
+    private void updateViewPort(TableSettings settings, DataHolder data) {
+        settings.pageCount = (int) Math.ceil(data.filtered.size() / (double) settings.pageSize);
+        final int firstIdx = MathUtil.limit(settings.page * settings.pageSize, 0, data.filtered.size()) ;
+        final int lastIdx = Math.min(data.filtered.size(), firstIdx + settings.pageSize);
+
+        data.view = data.filtered.subList(firstIdx, lastIdx);
+    }
+    
+    
+    
+    private void updateFilter(TableSettings s, DataHolder data) {
         // filter full data
         final int colCount = this.model.getColumnCount();
-        final Map<T, Integer> idxMap = new HashMap<>(data.size());
-        final List<T> unsided = new ArrayList<>(data.size());
-        
+        data.filtered = new ArrayList<>(data.allData.size());
         // preprocess filters: parse each filter string
         final Object[] filters = new Object[s.filter.length];
         for (int i = 0; i < filters.length; ++i) {
@@ -554,9 +550,8 @@ public class HTMLTable<T> implements HttpEventHandler {
         int originalIdx = -1;
         
         outer: 
-        for (final T element : data) {
+        for (final T element : data.allData) {
             ++originalIdx; // index of current element in the original data
-            
             
             for (int i = 0; i < colCount; ++i) {
                 final Object colFilter = filters[i];
@@ -573,37 +568,37 @@ public class HTMLTable<T> implements HttpEventHandler {
             
             // all filters applied, each accepted the element
             // map index within the filtered- to index in the full collection
-            idxMap.put(element, originalIdx); 
-            unsided.add(element);
+            s.indexMap.put(element, originalIdx); 
+            data.filtered.add(element);
         }
+    }
+    
+    
+    
+    private Map<String, Object> createContext(TableSettings settings, String registered, 
+            HttpEvent e) {
+        final int minPage = Math.max(0, settings.page - 3);
+        final int maxPage = Math.max(0, Math.min(settings.pageCount - 1, Math.max(settings.page + 3, 6)));
         
-        if (unsided.isEmpty()) {
-            return new FilterResult(unsided, unsided, idxMap, 0);
-        }
-        
-        
-        // sort view port
-        if (s.sortCol != -1 && this.model.isSortable(s.sortCol)) {
-            if (s.order[s.sortCol] != SortOrder.UNDEFINED) {
-                final Comparator<? super T> c = this.colSorter.getComparator(
-                    s.sortCol, this.model);
-                Collections.sort(unsided, new DirectedComparator<>(s.getOrder(), c));
-            }
-        }
-        
-        
-        int filteredSize = unsided.size();
-        
-        // get view port based on filtered data
-        s.pageCount = (int) Math.ceil(unsided.size() / (double) s.pageSize);
-        s.page = MathUtil.limit(s.page, 0, Math.max(s.pageCount - 1, 0));
-        final int firstIdx = s.page * s.pageSize;
-        final int lastIdx = Math.min(unsided.size(), firstIdx + s.pageSize);
-        
-        // Always copy the list to save memory. Resulting list is only 'pageSize' 
-        // element big
-        final List<T> sided = new ArrayList<T>(unsided.subList(firstIdx, lastIdx));
-
-        return new FilterResult(sided, unsided, idxMap, filteredSize);
+        final Map<String, Object> c = new HashMap<>();
+        HTMLTools.gainFieldAccess(c, Messages.class, "MSG"); //$NON-NLS-1$
+        c.put("Messages", Constants.class); //$NON-NLS-1$
+        c.put("settings", settings); //$NON-NLS-1$
+        c.put("tableModel", this.model); //$NON-NLS-1$
+        c.put("colSorter", this.colSorter); //$NON-NLS-1$
+        c.put("renderers", this.renderers); //$NON-NLS-1$
+        c.put("filter", this.filter); //$NON-NLS-1$
+        c.put("editors", this.editors); //$NON-NLS-1$
+        c.put("baseUrl", makeUrl(registered, this.model.getRequestParameters(e))); //$NON-NLS-1$
+        c.put("tId", this.tableId); //$NON-NLS-1$
+        c.put("data", settings.data.get().view); //$NON-NLS-1$
+        c.put("indexMap", settings.indexMap); //$NON-NLS-1$
+        c.put("requestParams", this.model.getRequestParameters(e)); //$NON-NLS-1$
+        c.put("minPage", minPage); //$NON-NLS-1$
+        c.put("maxPage", maxPage); //$NON-NLS-1$
+        c.put("all", settings.data.get().allData.size()); //$NON-NLS-1$
+        c.put("filteredSize", settings.data.get().filtered.size()); //$NON-NLS-1$
+        c.putAll(this.baseContext);
+        return c;
     }
 }

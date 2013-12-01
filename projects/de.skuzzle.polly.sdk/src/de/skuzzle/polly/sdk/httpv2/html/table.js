@@ -15,6 +15,10 @@ function sortTableRequest(url, id, col) {
 	var getUrl = makeUrl(url, {sort: col});
     loadTable(getUrl, id);
 }
+function reloadAll(url, id) {
+	var getUrl = makeUrl(url, {'updateAll' : 'yes'});
+	loadTable(getUrl, id);
+}
 function filterTableRequest(event) {
 	if (event.which != 13 && event.which != 27) {
 		return;
