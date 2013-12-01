@@ -13,6 +13,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
+
+import com.sun.org.apache.xerces.internal.impl.xs.identity.Selector.Matcher;
 
 import de.skuzzle.polly.http.api.AlternativeAnswerException;
 import de.skuzzle.polly.http.api.HttpEvent;
@@ -133,6 +136,8 @@ public class HTMLTable<T> implements HttpEventHandler {
     public static class ToStringCellRenderer implements CellRenderer {
         private final boolean escape;
         
+        private final static Pattern URL_PATTERN = Pattern.compile(
+                "(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]"); //$NON-NLS-1$
         
         public ToStringCellRenderer(boolean escape) {
             this.escape = escape;
@@ -143,9 +148,17 @@ public class HTMLTable<T> implements HttpEventHandler {
             if (cellValue == null) {
                 return ""; //$NON-NLS-1$
             } else {
-                return this.escape 
-                        ? HTMLTools.html(cellValue.toString()) 
-                        : cellValue.toString();
+                String s = cellValue == null ? "" : cellValue.toString(); //$NON-NLS-1$
+                s = this.escape ? HTMLTools.html(s) : s;
+                final java.util.regex.Matcher m = URL_PATTERN.matcher(s);
+                final StringBuffer buff = new StringBuffer();
+                
+                while (m.find()) {
+                    m.appendReplacement(buff, "<a href=\"" + m.group() + "\">" + m.group() + "</a>");
+                }
+                m.appendTail(buff);
+                s = buff.toString();
+                return s;
             }
         }
     }
