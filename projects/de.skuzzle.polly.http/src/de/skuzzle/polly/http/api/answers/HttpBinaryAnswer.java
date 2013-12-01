@@ -21,6 +21,8 @@ package de.skuzzle.polly.http.api.answers;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import de.skuzzle.polly.http.api.HttpServer;
+
 /**
  * <p>Most basic {@link HttpAnswer} subtype which is able to send binary data back to the
  * client. Instances of this type can automatically be handled by the server, so that
@@ -42,8 +44,9 @@ public abstract class HttpBinaryAnswer extends AbstractHttpAnswer {
     /**
      * Sends binary data back to the client.
      * 
+     * @param server The server which processes the answer
      * @param out Stream to write into the response body to send data to the client.
      * @throws IOException If writing into the stream fails.
      */
-    public abstract void getAnswer(OutputStream out) throws IOException;
+    public abstract void getAnswer(OutputStream out, HttpServer server) throws IOException;
 }

@@ -196,4 +196,18 @@ public interface HttpServer {
      * @return
      */
     public String esc(String s);
+
+    /**
+     * Sets the encoding to be used when receiving data or sending responses.
+     * 
+     * @param encoding the encoding name
+     */
+    public void setEncoding(String encoding);
+    
+    /**
+     * Gets the encoding which is used to receive data or to send responses.
+     * 
+     * @return The encoding name
+     */
+    public String getEncoding();
 }

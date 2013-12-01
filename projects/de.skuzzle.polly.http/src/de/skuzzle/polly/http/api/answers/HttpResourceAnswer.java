@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import de.skuzzle.polly.http.api.HttpServer;
+
 
 public class HttpResourceAnswer extends HttpBinaryAnswer {
 
@@ -40,7 +42,7 @@ public class HttpResourceAnswer extends HttpBinaryAnswer {
     
     
     @Override
-    public void getAnswer(OutputStream out) throws IOException {
+    public void getAnswer(OutputStream out, HttpServer server) throws IOException {
         InputStream in = null;
         try {
             final String path = this.resourcePath.startsWith("/") ?

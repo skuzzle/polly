@@ -18,6 +18,7 @@
  */
 package de.skuzzle.polly.http.api.answers;
 
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -25,6 +26,8 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
+
+import de.skuzzle.polly.http.api.HttpServer;
 
 
 
@@ -80,8 +83,9 @@ public final class HttpAnswers {
             final String message) {
         return new HttpBinaryAnswer(responseCode) {
             @Override
-            public void getAnswer(OutputStream out) throws IOException {
-                final Writer w = new BufferedWriter(new OutputStreamWriter(out));
+            public void getAnswer(OutputStream out, HttpServer server) throws IOException {
+                final Writer w = new BufferedWriter(new OutputStreamWriter(out, 
+                        server.getEncoding()));
                 w.write(message);
                 w.flush();
             }

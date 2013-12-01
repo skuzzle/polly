@@ -105,6 +105,7 @@ public class WebinterfaceProvider extends AbstractProvider {
         }
         this.server = HttpServerCreator.createServletServer(sf);
         this.server.setSessionLiveTime(sessionTimeout);
+        this.server.setEncoding("UTF-8"); //$NON-NLS-1$
         this.server.setSessionType(HttpServer.SESSION_TYPE_COOKIE);
         this.server.setAnswerHandler(GsonHttpAnswer.class, new GsonHttpAnswerHandler());
         this.server.addHttpEventListener(new HttpEventListener() {

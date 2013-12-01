@@ -39,6 +39,6 @@ public class BinaryAnswerHandler extends HttpAnswerHandler {
     public void handleAnswer(HttpAnswer answer, HttpEvent e, OutputStream out)
             throws IOException {
         final HttpBinaryAnswer binary = (HttpBinaryAnswer) answer;
-            binary.getAnswer(out);
+            binary.getAnswer(out, e.getSource());
     }
 }

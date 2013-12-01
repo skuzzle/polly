@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import de.skuzzle.polly.http.api.HttpServer;
+
 
 public class HttpInputStreamAnswer extends HttpBinaryAnswer {
     
@@ -38,7 +40,7 @@ public class HttpInputStreamAnswer extends HttpBinaryAnswer {
 
     
     @Override
-    public void getAnswer(OutputStream out) throws IOException {
+    public void getAnswer(OutputStream out, HttpServer server) throws IOException {
         try {
             final byte[] buffer = new byte[BUFFER_SIZE];
             int read = in.read(buffer, 0, buffer.length);

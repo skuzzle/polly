@@ -20,6 +20,7 @@ package de.skuzzle.polly.http.internal;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.charset.Charset;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -66,6 +67,7 @@ class HttpServerImpl implements HttpServer {
     private final ServerFactory factory;
     private int sessionType;
     private int sessionLiveTime;
+    private String encoding;
     private final TrafficInformationImpl traffic;
     
     
@@ -86,6 +88,7 @@ class HttpServerImpl implements HttpServer {
         this.factory = factory;
         this.sessionType = SESSION_TYPE_COOKIE;
         this.httpListeners = new ArrayList<>();
+        this.encoding = Charset.defaultCharset().name();
         
         // default handler
         this.setAnswerHandler(HttpBinaryAnswer.class, new BinaryAnswerHandler());
@@ -102,6 +105,21 @@ class HttpServerImpl implements HttpServer {
      */
     TrafficInformationImpl newTrafficInformation() {
         return new TrafficInformationImpl(this.traffic);
+    }
+    
+    
+    
+    @Override
+    public void setEncoding(String encoding) {
+        Charset.forName(encoding);
+        this.encoding = encoding;
+    }
+    
+    
+    
+    @Override
+    public String getEncoding() {
+        return this.encoding;
     }
     
     

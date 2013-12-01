@@ -63,7 +63,8 @@ public class TemplateAnswerHandler extends HttpAnswerHandler {
             template.getAnswer(mappings);
             
             final VelocityContext c = new VelocityContext(mappings);
-            final Writer w = new BufferedWriter(new OutputStreamWriter(out));
+            final Writer w = new BufferedWriter(new OutputStreamWriter(out, 
+                    e.getSource().getEncoding()));
             temp.merge(c, w);
             w.flush();
         } catch (Exception e1) {

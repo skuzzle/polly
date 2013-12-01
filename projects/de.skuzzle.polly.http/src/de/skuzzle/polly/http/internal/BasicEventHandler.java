@@ -76,7 +76,7 @@ class BasicEventHandler implements HttpHandler {
             final String key = in.substring(m.start(1), m.end(1));
             String value = in.substring(m.start(2), m.end(2));
             try {
-                value = URLDecoder.decode(value, "ISO-8859-1");
+                value = URLDecoder.decode(value, this.server.getEncoding());
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -96,7 +96,8 @@ class BasicEventHandler implements HttpHandler {
             throws IOException {
         BufferedReader r = null;
         try {
-            r = new BufferedReader(new InputStreamReader(t.getRequestBody(), "ISO-8859-1"));
+            r = new BufferedReader(new InputStreamReader(t.getRequestBody(), 
+                    this.server.getEncoding()));
             String line = null;
             while ((line = r.readLine()) != null) {
                 if (!line.equals("")) {
