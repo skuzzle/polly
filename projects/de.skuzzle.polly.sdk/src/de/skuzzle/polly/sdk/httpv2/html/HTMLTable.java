@@ -300,12 +300,15 @@ public class HTMLTable<T> implements HttpEventHandler {
         }
         @Override
         public String toString() {
+            final DataHolder data = this.data.get();
             return "[sortCol: " + this.sortCol +  //$NON-NLS-1$
                 ", page: " + this.page +  //$NON-NLS-1$
                 ", pageCount: " + this.pageCount +  //$NON-NLS-1$
                 ", pageSize: " + this.pageSize +  //$NON-NLS-1$
                 ", sortOrder: " + Arrays.toString(this.order) +  //$NON-NLS-1$
-                ", filter: " + Arrays.toString(this.filter) + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+                ", filter: " + Arrays.toString(this.filter) + "]" +  //$NON-NLS-1$ //$NON-NLS-2$
+                ", all elements: " + (data != null ? data.allData.size() : "0") +  //$NON-NLS-1$ //$NON-NLS-2$
+                ", filtered elements: " + (data != null ? data.filtered.size() : "0"); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
     

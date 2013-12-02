@@ -31,11 +31,13 @@ import polly.rx.httpv2.BattleReportShipModel;
 import polly.rx.httpv2.FleetScanShipTableModel;
 import polly.rx.httpv2.FleetScanTableModel;
 import polly.rx.httpv2.FleetScansWithShipModel;
+import polly.rx.httpv2.OpenTrainingsModel;
 import polly.rx.httpv2.RXController;
 import polly.rx.httpv2.ScoreboardDetailModel;
 import polly.rx.httpv2.ScoreboardTableModel;
 import polly.rx.httpv2.ShipsForScanTableModel;
 import polly.rx.httpv2.StatisticsGatherer;
+import polly.rx.httpv2.TrainingTableModel;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
 import de.skuzzle.polly.sdk.Types;
@@ -147,6 +149,12 @@ public class MyPlugin extends PollyPlugin {
         reportTabble.addModelListener(statsGatherer);
         
         
+        final HTMLTableModel<TrainEntityV3> trainingModel = new TrainingTableModel(trainManager);
+        final HTMLTable<TrainEntityV3> trainTable = new HTMLTable<>("closedTrainings", trainingModel, myPolly); //$NON-NLS-1$
+        
+        final HTMLTableModel<TrainEntityV3> openTrainingModel = new OpenTrainingsModel(trainManager);
+        final HTMLTable<TrainEntityV3> openTrainTable = new HTMLTable<>("openTrainings", openTrainingModel, myPolly); //$NON-NLS-1$
+        
         final HTMLTableModel<BattleReportShip> reportAttackerShipModel = new BattleReportShipModel(fleetDBManager, true);
         final HTMLTableModel<BattleReportShip> reportDefenderShipModel = new BattleReportShipModel(fleetDBManager, false);
         final HTMLTable<BattleReportShip> reportAttackerShipTable = new HTMLTable<>("attackerShips", reportAttackerShipModel, myPolly); //$NON-NLS-1$
@@ -162,6 +170,9 @@ public class MyPlugin extends PollyPlugin {
         
         myPolly.webInterface().getServer().addHttpEventHandler("/api/reportAttackerShips", reportAttackerShipTable); //$NON-NLS-1$
         myPolly.webInterface().getServer().addHttpEventHandler("/api/reportDefenderShips", reportDefenderShipTable); //$NON-NLS-1$
+        
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/closedTrainings", trainTable); //$NON-N //$NON-NLS-1$
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/openTrainings", openTrainTable); //$NON-N //$NON-NLS-1$
     }
     
     

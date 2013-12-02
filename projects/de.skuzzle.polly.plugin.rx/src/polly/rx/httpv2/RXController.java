@@ -72,6 +72,7 @@ public class RXController extends PollyController {
     public final static String PAGE_COMPARE_SCORES = "/pages/score/compare"; //$NON-NLS-1$
     public final static String PAGE_SCORE_DETAILS = "/pages/score/details"; //$NON-NLS-1$
     public final static String PAGE_REPORT_DETAILS = "/pages/reportDetails"; //$NON-NLS-1$
+    public final static String PAGE_TRAININGS = "/pages/trainings"; //$NON-NLS-1$
     
     
     public final static String API_ADD_TO_COMPARE = "/api/addToCompare"; //$NON-NLS-1$
@@ -111,7 +112,7 @@ public class RXController extends PollyController {
     private final static String CONTENT_REPORT_STATISTICS = "polly/rx/httpv2/view/battlereports.statistics.html"; //$NON-NLS-1$
     private final static String CONTENT_SCRAPE_SCOREBOARD = "polly/rx/httpv2/view/scrapescoreboarddata.user.js"; //$NON-NLS-1$
     private final static String CONTENT_KB_REPORT = "polly/rx/httpv2/view/kbreport.user.js"; //$NON-NLS-1$
-    
+    private final static String CONTENT_TRAININGS = "polly/rx/httpv2/view/trainings.html"; //$NON-NLS-1$
     
     private final static String REVORIX_CATEGORY_KEY = "httpRxCategory"; //$NON-NLS-1$
     private final static String FLEET_SCAN_NAME_KEY = "httpFleetScanMngr"; //$NON-NLS-1$
@@ -126,9 +127,10 @@ public class RXController extends PollyController {
     private final static String CONFIG_AZ_DESC_KEY = "httpAzMngrDesc"; //$NON-NLS-1$
     private final static String GM_SCRIPT_NAME_KEY = "httpGmScripts"; //$NON-NLS-1$
     private final static String GM_SCRIPT_DESC_KEY = "httpGmScriptsDesc"; //$NON-NLS-1$
+    private final static String TRAININGS_NAME_KEY = "htmlTrainingCaption"; //$NON-NLS-1$
+    private final static String TRAININGS_DESC_KEY = "htmlTrainingDescription"; //$NON-NLS-1$
     
     
-                    
     private final static String COMPARE_LIST_KEY = "COMPARE_LIST"; //$NON-NLS-1$
     private final static String MULTI_GRAPH_PREFIX = "graph_compare_mm_"; //$NON-NLS-1$
     private final static String SINGLE_GRAPH_PREFIX = "graph_"; //$NON-NLS-1$
@@ -137,6 +139,8 @@ public class RXController extends PollyController {
     private final FleetDBManager fleetDb;
     private final ScoreBoardManager sbManager;
     private final AZEntryManager azManager;
+    
+    
     
     public RXController(MyPolly myPolly, FleetDBManager fleetDb, 
                 ScoreBoardManager sbManager, AZEntryManager azManager) {
@@ -162,6 +166,21 @@ public class RXController extends PollyController {
         HTMLTools.gainFieldAccess(c, MSG.class, "MSG"); //$NON-NLS-1$
         return c;
     }
+    
+    
+    
+    @Get(value = PAGE_TRAININGS, name = TRAININGS_NAME_KEY)
+    @OnRegister({ 
+        WebinterfaceManager.ADD_MENU_ENTRY, 
+        MSG.FAMILY,
+        REVORIX_CATEGORY_KEY, 
+        TRAININGS_DESC_KEY,
+        RoleManager.REGISTERED_PERMISSION })
+    public HttpAnswer trainingsPage() throws AlternativeAnswerException {
+        this.requirePermissions(RoleManager.REGISTERED_PERMISSION);
+        return this.makeAnswer(this.createContext(CONTENT_TRAININGS));
+    }
+    
     
     
     @Get(value = PAGE_FLEET_SCAN_MANAGER, name = FLEET_SCAN_NAME_KEY)

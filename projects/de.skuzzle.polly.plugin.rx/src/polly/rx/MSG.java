@@ -182,6 +182,9 @@ public class MSG extends Constants {
     public static String reportModelDetailTitle;
     public static String reportModelDeleteTitle;
 
+    // TrainingTableModel
+    public static String trainingModelColumns;
+    
     // RXController
     public static String httpRxCategory;
     public static String httpFleetScanMngr;
@@ -324,6 +327,10 @@ public class MSG extends Constants {
     public static String htmlScoreboardOverviewCompareTitle;
     public static String htmlScoreboardOverviewEntries;
 
+    public static String htmlTrainingCaption;
+    public static String htmlOpenTrainings;
+    public static String htmlClosedTrainings;
+    
     // BattleReportParser
     public static String reportParserInvalid;
     public static String reportParserInvalidDate;

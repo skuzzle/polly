@@ -1,0 +1,21 @@
+<div class="highlight contentBox">
+    #CONTENT_HEADER ($MSG.htmlOpenTrainings)
+    <div class="content">
+        <table id="openTrainings">
+        </table>
+    </div>
+</div>
+<div class="highlight contentBox">
+    #CONTENT_HEADER ($MSG.htmlClosedTrainings)
+    <div class="content">
+        <table id="closedTrainings">
+        </table>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+	loadTable("/api/openTrainings?forUser=$user.getName()", "openTrainings");
+    loadTable("/api/closedTrainings?forUser=$user.getName()", "closedTrainings");
+});
+</script>
