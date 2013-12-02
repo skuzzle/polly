@@ -311,37 +311,41 @@ public class ScoreBoardManager {
 
 
     
-    public synchronized void addEntries(Collection<ScoreBoardEntry> entries) 
+    public synchronized void addEntries(final Collection<ScoreBoardEntry> entries) 
             throws DatabaseException {
         final List<ScoreBoardEntry> toAdd = new ArrayList<>(50);
-        try (final Read r = this.persistence.read()) {
-            for (final ScoreBoardEntry entry : entries) {
-                final Collection<ScoreBoardEntry> existing = r.findList(
-                        ScoreBoardEntry.class, ScoreBoardEntry.SBE_BY_USER,
-                        new Param(entry.getVenadName()));
-                
-                boolean exists = false;
-                for (final ScoreBoardEntry e : existing) {
-                    // skip entry if it is from same day and has identical points
-                    final boolean skip = e.getPoints() == entry.getPoints() && 
-                        DateUtils.isSameDay(e.getDate(), entry.getDate());
-                    exists |= skip;
-                    if (skip) {
-                        break;
+        final Atomic op = new Atomic() {
+            @Override
+            public void perform(Write write) throws DatabaseException {
+                final Read read = write.read();
+                for (final ScoreBoardEntry entry : entries) {
+                    final Collection<ScoreBoardEntry> existing = read.findList(
+                            ScoreBoardEntry.class, ScoreBoardEntry.SBE_BY_USER,
+                            new Param(entry.getVenadName()));
+                    
+                    boolean exists = false;
+                    for (final ScoreBoardEntry e : existing) {
+                        // skip entry if it is from same day and has identical points
+                        final boolean skip = e.getPoints() == entry.getPoints() && 
+                            DateUtils.isSameDay(e.getDate(), entry.getDate());
+                        exists |= skip;
+                        if (skip) {
+                            break;
+                        }
+                    }
+                    
+                    if (!exists) {
+                        toAdd.add(entry);
                     }
                 }
                 
-                if (!exists) {
-                    toAdd.add(entry);
+                if (!toAdd.isEmpty()) {
+                    write.all(toAdd);
                 }
             }
-        }
+        };
         
-        if (!toAdd.isEmpty()) {
-            try (final Write w = this.persistence.write()) {
-                w.all(toAdd);
-            }
-        }
+        this.persistence.writeAtomicParallel(op);
     }
     
     
