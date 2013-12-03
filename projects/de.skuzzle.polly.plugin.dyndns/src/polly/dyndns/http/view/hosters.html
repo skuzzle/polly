@@ -16,9 +16,9 @@
         </tr>
         #foreach ($account in $allAccounts)
         <tr>
-          <td>$account.getHoster().getName()</td>
-          <td>$account.getDomainName()</td>
-          <td>$account.getCurrentStatus()</td>
+          <td>$HTML.escape($account.getHoster().getName())</td>
+          <td>$HTML.escape($account.getDomainName())</td>
+          <td>$HTML.escape($account.getCurrentStatus())</td>
           <td>$myPolly.formatting().formatDate($account.getUpdateTime())</td>
           <td><form style="display:inline" method="get" action="$PAGE_DELETEACCOUNT"><input type="hidden" name="accountId" value="$account.getId()"/><input type="submit" value="$MSG.htmlDelete" class="button"/></form></td>
         </tr>
@@ -40,7 +40,7 @@
                 <td>
                     <select name="hosterId" size="1">
                     #foreach ($hoster in $allHosters)
-                    <option value="$hoster.getId()">$hoster.getName()</option>
+                    <option value="$hoster.getId()">$HTML.escape($hoster.getName())</option>
                     #end
                     </select>
                 </td>
@@ -103,7 +103,7 @@
         </tr>
         #foreach ($hoster in $allHosters)
         <tr>
-          <td>$hoster.getName()</td>
+          <td>$HTML.escape($hoster.getName())</td>
           <td>$HTML.escape($hoster.getBaseUrl())</td>
           <td><form style="display:inline" method="get" action="$PAGE_DELETEHOSTER"><input type="hidden" name="hosterId" value="$hoster.getId()"/><input type="submit" value="$MSG.htmlDelete" class="button"/></form></td>
         </tr>
