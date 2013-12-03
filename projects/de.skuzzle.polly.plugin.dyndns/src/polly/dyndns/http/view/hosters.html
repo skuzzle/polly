@@ -1,0 +1,61 @@
+<div class="highlight contentBox">
+    #CONTENT_HEADER ($MSG.htmlAddHoster)
+    <div class="content">
+    
+    <form action="$PAGE_ADDHOST" method="post">
+    <table>
+        <tr>
+            <td><b>$MSG.htmlHosterName</b></td>
+            <td><input type="text" class="textbox" placeholder="$MSG.htmlHosterName" name="hosterName"/>
+        </td>
+        <tr>
+            <td><b>$MSG.htmlHost</b></td>
+            <td><input type="text" class="textbox" placeholder="$MSG.htmlHost" name="hostName"/>
+        </td>
+        <tr>
+            <td><b>$MSG.htmlUserName</b></td>
+            <td><input type="text" class="textbox" placeholder="$MSG.htmlUserName" name="userName"/>
+        </td>
+        <tr>
+            <td><b>$MSG.htmlPassword</b></td>
+            <td><input type="password" class="textbox" name="password"/>
+        </td>
+        <tr>
+            <td><b>$MSG.htmlUpdateUrl</b></td>
+            <td><input type="text" class="textbox" placeholder="$MSG.htmlUpdateUrl" name="updateUrl"/><p>$MSG.htmlUrlDescription</p>
+        </td>
+        <tr>
+            <td></td>
+            <td><input type="submit" class="button" value="$MSG.htmlSubmit"/>
+        </td>
+    </table>
+    </form>
+    </div>
+</div>
+
+<div class="highlight contentBox">
+    #CONTENT_HEADER ($MSG.htmlAddHoster)
+    <p class="content">
+        $Constants.bind($MSG.htmlIpStatus, $myPolly.formatting().formatDate($lastUpdate), $currentIp)
+        <form style="display:inline" action="$PAGE_REFRESH" method="get">
+        <input type="submit" class="button" value="$MSG.htmlRefresh"/>
+        </form>
+    </p>
+    
+    <table class="content">
+    <tr>
+      <th>$MSG.htmlHosterName</th>
+      <th>$MSG.htmlHosterStatus</th>
+      <th>$MSG.htmlHosterTime</th>
+      <th></th>
+    </tr>
+    #foreach ($hoster in $allHosters)
+    <tr>
+      <td>$hoster.getName()</td>
+      <td>$hoster.getCurrentStatus()</td>
+      <td>$myPolly.formatting().formatDate($hoster.getUpdateTime())</td>
+      <td><form style="display:inline" method="get" action="$PAGE_DELETE?hosterId=$hoster.getId()"><input type="submit" value="$MSG.htmlDelete" class="button"/></form></td>
+    </tr>
+    #end
+    </table>
+</div>

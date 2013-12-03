@@ -66,13 +66,18 @@ public class WebInterfaceManagerImpl implements WebinterfaceManager {
 
     @Override
     public void addCategory(MenuCategory me) {
-        this.categories.put(me.getName(), me);
+        if (!categories.containsKey(me.getName())) {
+            this.categories.put(me.getName(), me);
+        }
     }
 
 
 
     @Override
     public void addMenuEntry(String category, MenuEntry me) {
+        if (!this.categories.containsKey(category)) {
+            this.categories.put(category, new MenuCategory(Integer.MAX_VALUE, category));
+        }
         this.categories.get(category).getContent().add(me);
     }
 
