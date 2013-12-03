@@ -12,6 +12,7 @@ public class MSG extends Constants {
     public static String hosterDescription;
     public static String hosterName;
     public static String htmlAddHoster;
+    public static String htmlAddAccount;
     public static String htmlAllHosters;
     public static String htmlHosterName;
     public static String htmlHost;
@@ -21,11 +22,20 @@ public class MSG extends Constants {
     public static String htmlUrlDescription;
     public static String htmlSubmit;
     public static String htmlIpStatus;
-    public static String htmlHosterStatus;
-    public static String htmlHosterTime;
+    public static String htmlAccountStatus;
+    public static String htmlAccountTime;
     public static String htmlDelete;
     public static String htmlRefresh;
+    public static String htmlNoHostersConfigured;
+    public static String htmlDomainName;
+    public static String htmlHoster;
+    public static String htmlAccounts;
+    public static String none;
+    public static String updateError;
+    public static String unknownAccountId;
+    public static String unknownHosterId;
 
+    
     
     static {
         Resources.init(FAMILY, MSG.class);

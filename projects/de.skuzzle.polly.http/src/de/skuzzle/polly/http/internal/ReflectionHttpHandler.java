@@ -30,7 +30,6 @@ import de.skuzzle.polly.http.api.HttpException;
 import de.skuzzle.polly.http.annotations.Param;
 import de.skuzzle.polly.http.api.ParameterHandler;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
-import de.skuzzle.polly.http.api.answers.HttpAnswers;
 
 
 class ReflectionHttpHandler implements HttpEventHandler {

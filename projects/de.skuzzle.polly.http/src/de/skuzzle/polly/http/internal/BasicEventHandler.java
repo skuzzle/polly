@@ -323,6 +323,9 @@ class BasicEventHandler implements HttpHandler {
                 }
                 handler.handleAnswer(answer, httpEvent, t.getResponseBody());
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
         } finally {
             t.close();
         }

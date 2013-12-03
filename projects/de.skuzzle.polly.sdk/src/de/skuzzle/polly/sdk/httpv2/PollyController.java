@@ -12,6 +12,7 @@ import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.User;
+import de.skuzzle.polly.sdk.httpv2.html.HTMLTools;
 import de.skuzzle.polly.sdk.resources.Constants;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.time.Time;
@@ -65,6 +66,7 @@ public abstract class PollyController extends Controller {
         c.put("executionTime",  //$NON-NLS-1$
             Time.currentTimeMillis() - this.getEvent().getEventTime().getTime());
         c.put("Constants", Constants.class); //$NON-NLS-1$
+        c.put("HTML", HTMLTools.class); //$NON-NLS-1$
         c.putAll(this.getServer().getHandledUrls());
         return c;
     }

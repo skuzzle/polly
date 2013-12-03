@@ -147,7 +147,7 @@ public class HTMLTable<T> implements HttpEventHandler {
                 return ""; //$NON-NLS-1$
             } else {
                 String s = cellValue.toString();
-                s = this.escape ? HTMLTools.html(s) : s;
+                s = this.escape ? HTMLTools.escape(s) : s;
                 final java.util.regex.Matcher m = URL_PATTERN.matcher(s);
                 final StringBuffer buff = new StringBuffer();
                 
@@ -218,7 +218,7 @@ public class HTMLTable<T> implements HttpEventHandler {
                 return ""; //$NON-NLS-1$
             }
             final Types t = (Types) cellValue;
-            return HTMLTools.html(t.valueString(this.formatter));
+            return HTMLTools.escape(t.valueString(this.formatter));
         }
     }
     

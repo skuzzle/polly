@@ -18,7 +18,7 @@ import de.skuzzle.polly.tools.events.EventProviders;
 
 public class PublicIpFinder {
 
-    private final static String API_URL = "http://www.skuzzle.de/ip.php";
+    private final static String API_URL = "http://www.skuzzle.de/ip.php"; //$NON-NLS-1$
     
     private volatile String lastKnownIp;
     private volatile long lastUpdate;
@@ -30,9 +30,20 @@ public class PublicIpFinder {
     
     
     private final class UpdateRunnable implements Runnable {
+        
+        private final boolean forceUpdate;
+        
+        
+        
+        public UpdateRunnable(boolean forceUpdate) {
+            this.forceUpdate = forceUpdate;
+        }
+        
+        
+        
         @Override
         public void run() {
-            logger.info("Obtaining new IP from '" + API_URL + "'");
+            logger.info("Obtaining new IP from '" + API_URL + "'"); //$NON-NLS-1$ //$NON-NLS-2$
             try {
                 final URL url = new URL(API_URL);
                 
@@ -42,9 +53,10 @@ public class PublicIpFinder {
                     
                     final String line = r.readLine();
                     synchronized (PublicIpFinder.this) {
-                        if (line != null && !line.equals(lastKnownIp)) {
-                            logger.info("Public IP has changed from " + 
-                                    lastKnownIp + " to " + line);
+                        if (this.forceUpdate || line != null && !line.equals(lastKnownIp)) {
+                            logger.info("Public IP has changed from " +  //$NON-NLS-1$
+                                    lastKnownIp + " to " + line + ", forced: " +  //$NON-NLS-1$ //$NON-NLS-2$
+                                    this.forceUpdate); 
                             final IPChangedEvent e = new IPChangedEvent(
                                     PublicIpFinder.this, line);
                             fireIPChangedEvent(e);
@@ -54,7 +66,8 @@ public class PublicIpFinder {
                     }
                 }
             } catch (Exception e) {
-                logger.error("Error while retrieving current public API", e);
+                logger.error("Error while retrieving current public API", e); //$NON-NLS-1$
+                e.printStackTrace();
             }
         }
     }
@@ -71,9 +84,9 @@ public class PublicIpFinder {
         this.logger = Logger.getLogger(loggerName);
         this.eventProvider = EventProviders.newDefaultEventProvider();
         this.updater = Executors.newScheduledThreadPool(1, 
-                new ThreadFactoryBuilder("DynDNS_Service").setDaemon(false));
+                new ThreadFactoryBuilder("DynDNS_Service").setDaemon(false)); //$NON-NLS-1$
         
-        this.updater.scheduleAtFixedRate(new UpdateRunnable(), updateInterval, 
+        this.updater.scheduleAtFixedRate(new UpdateRunnable(false), updateInterval, 
                 updateInterval, TimeUnit.MINUTES);
     }
     
@@ -92,7 +105,7 @@ public class PublicIpFinder {
     
     
     public void updateNow() {
-        new UpdateRunnable().run();
+        new UpdateRunnable(true).run();
     }
     
     

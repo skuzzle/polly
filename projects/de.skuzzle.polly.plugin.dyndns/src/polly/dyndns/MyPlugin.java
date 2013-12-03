@@ -5,6 +5,7 @@ import java.util.Set;
 import polly.dyndns.core.DynDNSUpdater;
 import polly.dyndns.core.HostManager;
 import polly.dyndns.core.PublicIpFinder;
+import polly.dyndns.entities.Account;
 import polly.dyndns.entities.Hoster;
 import polly.dyndns.http.HosterController;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -17,7 +18,7 @@ import de.skuzzle.polly.sdk.exceptions.PluginException;
 
 public class MyPlugin extends PollyPlugin {
     
-    public final static String DYN_DNS_PERMISSION = "polly.permission.dyndns";
+    public final static String DYN_DNS_PERMISSION = "polly.permission.dyndns"; //$NON-NLS-1$
     
     
     private PublicIpFinder ipFinder;
@@ -34,6 +35,7 @@ public class MyPlugin extends PollyPlugin {
         super(myPolly);
         
         myPolly.persistence().registerEntity(Hoster.class);
+        myPolly.persistence().registerEntity(Account.class);
     }
     
     

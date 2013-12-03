@@ -27,7 +27,7 @@ public class HTMLTools {
      * @param s The string to escape.
      * @return The escaped string.
      */
-    public static String html(String s) {
+    public static String escape(String s) {
         return UTIL.escape(s);
     }
     
