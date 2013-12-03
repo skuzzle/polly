@@ -1,7 +1,6 @@
 package polly.dyndns.core;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
@@ -16,7 +15,6 @@ import org.apache.log4j.Logger;
 import polly.dyndns.MSG;
 import polly.dyndns.entities.Account;
 import polly.dyndns.entities.Hoster;
-import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 import de.skuzzle.polly.sdk.time.Time;
 
@@ -88,7 +86,7 @@ public class DynDNSUpdater implements IPChangedListener {
             connection.setRequestProperty("Authorization", "Basic " + authorization); //$NON-NLS-1$ //$NON-NLS-2$
             
             int code = connection.getResponseCode();
-            logger.trace("Hoster Response: " + code + " " + connection.getResponseMessage()); //$NON-NLS-1$
+            logger.trace("Hoster Response: " + code + " " + connection.getResponseMessage()); //$NON-NLS-1$ //$NON-NLS-2$
             
             try (final BufferedReader r = new BufferedReader(
                     new InputStreamReader(connection.getInputStream()))) {
