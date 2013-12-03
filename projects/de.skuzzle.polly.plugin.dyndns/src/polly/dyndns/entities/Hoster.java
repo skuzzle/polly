@@ -6,99 +6,57 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 
-
 @Entity
 @NamedQuery(name = Hoster.QUERY_ALL_HOSTERS, query = "SELECT h FROM Hoster h")
 public class Hoster {
     
-    public final static String QUERY_ALL_HOSTERS = "ALL_HOSTERS";
+    public final static String QUERY_ALL_HOSTERS = "ALL_HOSTERS"; //$NON-NLS-1$
     
-    @Id@GeneratedValue(strategy = GenerationType.TABLE)
+    @Id
+    @GeneratedValue(strategy = GenerationType.TABLE)
     private int id;
     private String name;
-    private String userName;
-    private String hostName;
-    private String password;
-    protected String apiUrl;
-    
-    private transient String currentStatus;
-    private transient long updateTime;
-    
-    
+    private String baseUrl;
+
+
     
     public Hoster() {
-        this("", "", "", "", "");
+        this("", ""); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     
     
-    public Hoster(String name, String userName, String hostName, String password, String apiUrl) {
+    public Hoster(String name, String baseUrl) {
         this.name = name;
-        this.userName = userName;
-        this.hostName = hostName;
-        this.password = password;
-        this.apiUrl = apiUrl;
-    }
-    
-    
-    
-    public int getId() {
-        return this.id;
-    }
-    
-    
-    
-    
-    public String getName() {
-        return this.name;
-    }
-    
-    
-    
-    public String getUserName() {
-        return this.userName;
+        this.baseUrl = baseUrl;
     }
     
 
-    
-    public String getHostName() {
-        return this.hostName;
+    public String getName() {
+        return this.name;
     }
-    
-    
-    
-    public String getPassword() {
-        return this.password;
+
+
+
+    public void setName(String name) {
+        this.name = name;
     }
-    
-    
-    
-    public String getApiUrl() {
-        return this.apiUrl;
+
+
+
+    public String getBaseUrl() {
+        return this.baseUrl;
     }
-    
-    
-    
-    
-    public String getCurrentStatus() {
-        return this.currentStatus;
+
+
+
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
     }
-    
-    
-    
-    public long getUpdateTime() {
-        return this.updateTime;
-    }
-    
-    
-    
-    public void setCurrentStatus(String currentStatus) {
-        this.currentStatus = currentStatus;
-    }
-    
-    
-    
-    public void setUpdateTime(long updateTime) {
-        this.updateTime = updateTime;
+
+
+
+    public int getId() {
+        return this.id;
     }
 }
