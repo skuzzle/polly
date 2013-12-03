@@ -16,7 +16,7 @@
     -->
     <property name="dependencies" value="
         log4j-1.2.16.jar
-        javax.persistence_2.0.3.v201010191057
+        javax.persistence_2.0.3.v201010191057.jar
     "/>
     
     <!--
@@ -26,6 +26,8 @@
     <property name="dependencies.internal" value="
         **/polly.sdk.jar
         **/polly.tools.jar
+        **/polly.http.jar
+        **/polly.http.annotations.jar
     "/>
    
     
