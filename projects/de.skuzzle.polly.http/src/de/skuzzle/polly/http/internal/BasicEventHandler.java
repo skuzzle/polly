@@ -247,6 +247,8 @@ class BasicEventHandler implements HttpHandler {
         } catch (HttpException e) {
             // consume and send "file not found" below
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         
         // event could not be handled

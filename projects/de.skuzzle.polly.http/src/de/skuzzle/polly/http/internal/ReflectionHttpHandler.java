@@ -86,8 +86,8 @@ class ReflectionHttpHandler implements HttpEventHandler {
                 if (key.treatEmpty()) {
                     sValue = key.ifEmptyValue();
                 } else {
-                    return HttpAnswers.newStringAnswer("missing parameter: " + 
-                        key.value());
+                    // this handler does not match, try the next one
+                    return next.handleHttpEvent(registered, e, next);
                 }
             }
             
