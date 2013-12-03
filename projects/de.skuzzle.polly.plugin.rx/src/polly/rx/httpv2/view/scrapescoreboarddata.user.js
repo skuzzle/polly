@@ -5,12 +5,13 @@
 // @description Script um die Revorix-Umgebungsliste an den Polly-Bot zu schicken
 // @include     http://www.revorix.info/php/venad_list.php?pktsur=1
 // @include     http://www.revorix.info/php/venad_list.php?pkttop=1
-// @version     0.9
+// @version     1.0
 // ==/UserScript==
 
 var pollyUserName = "rxScoreBoardPaster"
 var pollyPassword = "TODO"
-var pollyUrl = "$host"
+var pollyUrl = "$host";
+var pollyAPI = "/api/postScoreboard";
 var verbose = true; // prints status message in table header
 
 
@@ -27,9 +28,7 @@ if (document.baseURI.indexOf("pktsur=1") != -1) {
 
 
 
-
 function getData() {
-
     var tableData = document.getElementsByTagName("td");
     var postData = "";
 
@@ -98,7 +97,7 @@ function sendData(postData) {
     GM_xmlhttpRequest({
         timeout: 25000,
         method: "POST",
-        url: pollyUrl + "/postScoreboard",
+        url: pollyUrl + pollyAPI,
         data: "user="+pollyUserName + "&pw="+pollyPassword + "&paste=" + encodeURI(postData),
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
