@@ -79,7 +79,7 @@ public class ScoreboardDetailModel extends ScoreboardTableModel {
     
     @Override
     public int getDefaultSortColumn() {
-        return 7;
+        return COLUMNS.length - 1; // last col
     }
     
     
