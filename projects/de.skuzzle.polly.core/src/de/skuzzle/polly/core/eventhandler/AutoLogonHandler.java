@@ -35,18 +35,12 @@ import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
 public class AutoLogonHandler extends AbstractDisposable
         implements UserSpottedListener, NickChangeListener, UserListener, 
                    ConnectionListener {
-    
-    //private final static User NICKSERV = new polly.core.users.User("NickServ", "", 0);
-    static {
-        //NICKSERV.setCurrentNickName("NickServ");
-    }
-    
-    
+
     
     private class AutoLogonRunnable implements Runnable {
         
-        private String forUser;
-        private boolean canceled;
+        private final String forUser;
+        private volatile boolean canceled;
         
         
         public AutoLogonRunnable(String forUser) {
@@ -64,14 +58,8 @@ public class AutoLogonHandler extends AbstractDisposable
             if (this.canceled) {
                 return;
             }
-            
             // ISSUE 0000091: request status for the user from nickserv
-            synchronized (scheduledLogons) {
-                if (scheduledLogons.containsKey(this.forUser)) {
-                    scheduledLogons.remove(this.forUser);
-                    ircManager.sendRawCommand("NICKSERV STATUS " + this.forUser); //$NON-NLS-1$
-                }
-            }
+            requestAuthStatus(this.forUser);
         }
     }
     
@@ -83,13 +71,14 @@ public class AutoLogonHandler extends AbstractDisposable
             if (!e.getUser().getNickName().equalsIgnoreCase("nickserv")) { //$NON-NLS-1$
                 return;
             }
-            String[] parts = e.getMessage().split(" "); //$NON-NLS-1$
+            final String[] parts = e.getMessage().split(" "); //$NON-NLS-1$
             if (parts.length != 3 || 
                     !parts[0].equalsIgnoreCase("status") ||  //$NON-NLS-1$
                     !parts[2].equals("3")) { //$NON-NLS-1$
                 return;
             }
-            String forUser = parts[1];
+            final String forUser = parts[1];
+            
             try {
                 userManager.logonWithoutPassword(forUser);
             } catch (AlreadySignedOnException e1) {
@@ -105,16 +94,16 @@ public class AutoLogonHandler extends AbstractDisposable
     private static Logger logger = Logger.getLogger(AutoLogonHandler.class.getName());
     
  
-    private IrcManagerImpl ircManager;
-    private UserManagerImpl userManager;
-    private ScheduledExecutorService autoLogonExecutor;
-    private Map<String, AutoLogonRunnable> scheduledLogons;
-    private int autoLoginTime;
+    private final IrcManagerImpl ircManager;
+    private final UserManagerImpl userManager;
+    private final ScheduledExecutorService autoLogonExecutor;
+    private final Map<String, AutoLogonRunnable> scheduledLogons;
+    private final int autoLoginDelay;
     
     
     
     public AutoLogonHandler(IrcManagerImpl ircManager, UserManagerImpl userManager, 
-            int autoLoginTime) {
+            int autoLoginDelay) {
         
         ircManager.addMessageListener(this.autoSignOnHandler);
         this.ircManager = ircManager;
@@ -122,7 +111,7 @@ public class AutoLogonHandler extends AbstractDisposable
         this.autoLogonExecutor = Executors.newScheduledThreadPool(1, 
                 new ThreadFactoryBuilder("LOGON")); //$NON-NLS-1$
         this.scheduledLogons = new HashMap<String, AutoLogonRunnable>();
-        this.autoLoginTime = autoLoginTime;
+        this.autoLoginDelay = autoLoginDelay;
     }
 
 
@@ -134,7 +123,7 @@ public class AutoLogonHandler extends AbstractDisposable
             // try instant login if user just spotted 
             this.ircManager.sendRawCommand("NICKSERV STATUS " + forUser); //$NON-NLS-1$
         }
-        this.scheduleAutoLogon(e.getUser().getNickName());
+        this.scheduleAutoLogon(forUser);
     }
 
     
@@ -147,7 +136,8 @@ public class AutoLogonHandler extends AbstractDisposable
          * currently not logged on, a new auto logon is scheduled for that user. 
          */
         synchronized (this.scheduledLogons) {
-            AutoLogonRunnable alr = this.scheduledLogons.get(e.getOldUser().getNickName());
+            final AutoLogonRunnable alr = this.scheduledLogons.get(
+                    e.getOldUser().getNickName());
             
             if (alr != null) {
                 alr.cancel();
@@ -155,21 +145,35 @@ public class AutoLogonHandler extends AbstractDisposable
                 logger.debug("Auto logon for " + e.getOldUser() + " canceled"); //$NON-NLS-1$ //$NON-NLS-2$
             }
             
-            User u = this.userManager.getUser(e.getNewUser().getNickName());
+            final User u = this.userManager.getUser(e.getNewUser().getNickName());
             if (u != null && !this.userManager.isSignedOn(u)) {
                 this.scheduleAutoLogon(e.getNewUser().getNickName());
             }
         }
     }
-
+    
+    
+    
+    private void requestAuthStatus(String forUser) {
+        synchronized (this.scheduledLogons) {
+            if (this.scheduledLogons.containsKey(forUser)) {
+                this.scheduledLogons.remove(forUser);
+                this.ircManager.sendRawCommand("NICKSERV STATUS " + forUser); //$NON-NLS-1$
+            }
+        }
+    }
+    
     
     
     private void scheduleAutoLogon(String forUser) {
         synchronized (this.scheduledLogons) {
+            if (this.scheduledLogons.containsKey(forUser)) {
+                return;
+            }
             if (this.userExists(forUser)) {
-                AutoLogonRunnable runMe = new AutoLogonRunnable(forUser);
+                final AutoLogonRunnable runMe = new AutoLogonRunnable(forUser);
                 this.scheduledLogons.put(forUser, runMe);
-                this.autoLogonExecutor.schedule(runMe, this.autoLoginTime, 
+                this.autoLogonExecutor.schedule(runMe, this.autoLoginDelay, 
                         TimeUnit.MILLISECONDS);
                 logger.debug("Auto logon for " + forUser + " scheduled"); //$NON-NLS-1$ //$NON-NLS-2$
             }
@@ -179,7 +183,7 @@ public class AutoLogonHandler extends AbstractDisposable
     
     
     private boolean userExists(String name) {
-        User user = this.userManager.getUser(name);
+       final  User user = this.userManager.getUser(name);
         if (user == null) {
             return false;
         }
@@ -193,7 +197,7 @@ public class AutoLogonHandler extends AbstractDisposable
     @Override
     public void userSignedOn(UserEvent e) {
         synchronized (this.scheduledLogons) {
-            AutoLogonRunnable alr = this.scheduledLogons.get(e.getUser().getName());
+            final AutoLogonRunnable alr = this.scheduledLogons.get(e.getUser().getName());
             if (alr != null) {
                 logger.trace("Removing scheduled auto logon for user " +  //$NON-NLS-1$
                     e.getUser().getName());
@@ -221,15 +225,9 @@ public class AutoLogonHandler extends AbstractDisposable
     @Override
     public void userLost(SpotEvent ignore) {}
 
-
+    @Override
+    public void ircConnectionEstablished(ConnectionEvent e) {}
 
     @Override
-    public void ircConnectionEstablished(ConnectionEvent e) {
-    }
-
-
-
-    @Override
-    public void ircConnectionLost(ConnectionEvent e) {
-    }
+    public void ircConnectionLost(ConnectionEvent e) {}
 }
