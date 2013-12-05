@@ -69,6 +69,7 @@
         **/*.gif
         **/*.jpg
         **/*.properties
+        **/*.tmpl
     "/>
     
     <!-- buildpath for javac -->
