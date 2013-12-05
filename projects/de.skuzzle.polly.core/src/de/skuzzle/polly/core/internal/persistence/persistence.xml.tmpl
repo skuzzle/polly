@@ -35,12 +35,8 @@
         <!-- batch writing -->
         <property name="eclipselink.jdbc.batch-writing" value="JDBC" />
         <property name="eclipselink.jdbc.batch-writing.size" value="1000" />
-        <!-- close EntityManager on commit, to avoid cost of resume -->
-        <property name="eclipselink.persistence-context.close-on-commit" value="true" />
         <!-- avoid auto flush cost on query execution -->
         <property name="eclipselink.persistence-context.flush-mode" value="commit" />
-        <!-- avoid cost of persist on commit -->
-        <property name="eclipselink.persistence-context.persist-on-commit" value="false" />
     </properties>
 </persistence-unit>
 </persistence>
