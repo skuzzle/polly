@@ -21,6 +21,34 @@ public class DatabaseProperties {
     
 
 
+    
+    public String getPassword() {
+        return this.password;
+    }
+
+
+
+    
+    public String getUser() {
+        return this.user;
+    }
+
+
+
+    
+    public String getDriver() {
+        return this.driver;
+    }
+
+
+
+    
+    public String getUrl() {
+        return this.url;
+    }
+
+
+
     public void toString(PrintStream s) {
         s.append("    <properties>\n");
         

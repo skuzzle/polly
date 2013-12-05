@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
+    http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+
+<persistence-unit name="$unitName" transaction-type="RESOURCE_LOCAL">
+
+    <!-- Internal settings -->
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <description>Auto generated persistence.xml file</description>
+    <exclude-unlisted-classes>false</exclude-unlisted-classes>
+
+    <!-- plugin jar file references -->
+    #foreach ($plugin in $plugins)
+    <jar-file>file:../$pluginFolder/$plugin.getJarName()</jar-file>
+    #end
+
+    <!-- plugin entity classes -->
+    #foreach ($entity in $entities)
+    <class>$entity.getName()</class>
+    #end
+
+    <!-- property settings -->
+    <properties>
+        <property name="javax.persistence.jdbc.password" value="$unitPassword"/>
+        <property name="javax.persistence.jdbc.user" value="$unitUser"/>
+        <property name="javax.persistence.jdbc.driver" value="$unitDriver"/>
+        <property name="javax.persistence.jdbc.url" value="$unitUrl"/>
+        <property name="eclipselink.ddl-generation" value="create-tables"/>
+        <property name="eclipselink.ddl-generation.output-mode" value="database"/>
+        
+        <!-- statement caching -->
+        <property name="eclipselink.jdbc.cache-statements" value="true" />
+        <!-- batch writing -->
+        <property name="eclipselink.jdbc.batch-writing" value="JDBC" />
+        <property name="eclipselink.jdbc.batch-writing.size" value="1000" />
+        <!-- close EntityManager on commit, to avoid cost of resume -->
+        <property name="eclipselink.persistence-context.close-on-commit" value="true" />
+        <!-- avoid auto flush cost on query execution -->
+        <property name="eclipselink.persistence-context.flush-mode" value="commit" />
+        <!-- avoid cost of persist on commit -->
+        <property name="eclipselink.persistence-context.persist-on-commit" value="false" />
+    </properties>
+</persistence-unit>
+</persistence>

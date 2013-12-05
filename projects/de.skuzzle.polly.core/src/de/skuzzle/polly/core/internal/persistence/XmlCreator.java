@@ -2,13 +2,22 @@ package de.skuzzle.polly.core.internal.persistence;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
+import java.io.PrintWriter;
 
-import de.skuzzle.polly.core.internal.plugins.Plugin;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
+
 import de.skuzzle.polly.core.internal.plugins.PluginManagerImpl;
 
 
 public class XmlCreator {
+    
+    private final static String TEMPLATE_NAME = "persistence.xml.tmpl"; //$NON-NLS-1$
+    private final static String TEMPLATE_PATH = 
+            XmlCreator.class.getPackage().getName().replace(".", "/") + "/" + TEMPLATE_NAME; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
     private EntityList entities;
     private DatabaseProperties properties;
@@ -34,51 +43,28 @@ public class XmlCreator {
         if (!folder.exists()) {
             folder.mkdirs();
         }
-        final File file = new File(folder, "persistence.xml");
+        final File file = new File(folder, "persistence.xml"); //$NON-NLS-1$
         if (file.exists()) {
             file.delete();
         }
-        PrintStream out = new PrintStream(file);
-        this.buildPersistenceXml(out);
-        out.flush();
-        out.close();
-    }
-
-
-    
-    private void buildPersistenceXml(PrintStream s) {
-        s.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-        s.append("<persistence version=\"1.0\" xmlns=\"http://java.sun.com/xml/ns/persistence\"\n");
-        s.append("    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
-        s.append("    xsi:schemaLocation=\"http://java.sun.com/xml/ns/persistence\n");
-        s.append("    http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd\">\n\n");
-        s.append("<persistence-unit name=\"");
-        s.append(this.persistenceUnit);
-        s.append("\" transaction-type=\"RESOURCE_LOCAL\">\n\n");
-        s.append("    <!-- Internal settings -->\n");
-        s.append("    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>\n");
-        s.append("    <description>Auto generated persistence.xml file</description>\n");
-        s.append("    <exclude-unlisted-classes>false</exclude-unlisted-classes>\n\n");
         
-        s.append("    <!-- plugin jar file references -->\n");
-        for (Plugin pluginCfg : this.pluginManager.loadedPlugins()) {
-            s.append("    <jar-file>file:");
-            s.append("../" + this.pluginFolder + "/"); 
-            s.append(pluginCfg.readString(Plugin.JAR_FILE));
-            s.append("</jar-file>\n");
+        final VelocityEngine velo = new VelocityEngine();
+        velo.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath"); //$NON-NLS-1$
+        velo.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName()); //$NON-NLS-1$
+        velo.init();
+        final Template tmpl = velo.getTemplate(TEMPLATE_PATH);
+        final VelocityContext c = new VelocityContext();
+        c.put("unitName", this.persistenceUnit); //$NON-NLS-1$
+        c.put("pluginFolder", this.pluginFolder); //$NON-NLS-1$
+        c.put("plugins", this.pluginManager.loadedPlugins()); //$NON-NLS-1$
+        c.put("entities", this.entities); //$NON-NLS-1$
+        c.put("unitPassword", this.properties.getPassword()); //$NON-NLS-1$
+        c.put("unitUser", this.properties.getUser()); //$NON-NLS-1$
+        c.put("unitDriver", this.properties.getDriver()); //$NON-NLS-1$
+        c.put("unitUrl", this.properties.getUrl()); //$NON-NLS-1$
+        
+        try (PrintWriter pw = new PrintWriter(file)) {
+            tmpl.merge(c, pw);
         }
-        s.append("\n");
-        
-        s.append("    <!-- plugin entity classes -->\n");
-        this.entities.toString(s);
-        s.append("\n");
-        
-        s.append("    <!-- property settings -->\n");
-        this.properties.toString(s);
-        s.append("</persistence-unit>\n");
-        s.append("</persistence>");
     }
-    
-    
-
 }

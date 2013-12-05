@@ -9,6 +9,11 @@ import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 
 public interface PersistenceManagerV2 {
     
+    /**
+     * Encapsulates parameters for a database query. 
+     * 
+     * @author Simon Taddiken
+     */
     public final static class Param {
         private final Object[] params;
         
@@ -138,6 +143,11 @@ public interface PersistenceManagerV2 {
     
     
     
+    /**
+     * Provides API to read objects from the database.
+     * 
+     * @author Simon Taddiken
+     */
     public interface Read extends AutoCloseable {
         
         /**
@@ -168,7 +178,7 @@ public interface PersistenceManagerV2 {
          * Retrieves a whole list of entities from the database using a named query.
          * 
          * @param type The entities type.
-         * @param query The name of the named query. The query may only use numbered 
+         * @param query The name of the named query. The query may1 only use numbered 
          *      parameters. 
          * @param params The parameter values for the query in order they appear in the
          *      query string.
@@ -305,6 +315,13 @@ public interface PersistenceManagerV2 {
      */
     public Read read();
     
+    /**
+     * Returns a {@link Read} Object which can be used to perform single queries without 
+     * the need of external synchronization. This, the returned Object must not 
+     * necessarily be used within a try-resource block.
+     * 
+     * @return Synchronized read access to the database
+     */
     public Read atomic();
     
     /**
@@ -343,7 +360,7 @@ public interface PersistenceManagerV2 {
     /**
      * Executes the changes performed by the passed {@link Atomic} instance within a new
      * thread. Information about whether the operation was successful are simply 
-     * ignored by this method.
+     * discarded by this method.
      * 
      * @param a The Atomic instance to execute.
      */

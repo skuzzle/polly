@@ -42,8 +42,13 @@ public class Plugin extends ConfigurationImpl implements Disposable {
         return this.readString(PLUGIN_NAME);
     }
 
+    
+    public String getJarName() {
+        return this.readString(JAR_FILE);
+    }
 
 
+    
     public String getDescription() {
         return this.readString(PLUGIN_DESCRIPTION);
     }
