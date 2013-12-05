@@ -29,6 +29,10 @@ public class EscapeProvider extends AbstractProvider {
                 return StringEscapeUtils.escapeHtml(s);
             }
             
+            @Override
+            public String unsecape(String s) {
+                return StringEscapeUtils.unescapeHtml(s);
+            }
             
             @Override
             public void gainFieldAccess(Map<String, Object> targetContext,

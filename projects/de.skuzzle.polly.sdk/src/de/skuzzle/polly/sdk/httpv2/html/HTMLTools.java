@@ -14,6 +14,8 @@ public class HTMLTools {
         
         public void gainFieldAccess(Map<String, Object> targetContext, 
                 Class<?> container, String key);
+
+        String unsecape(String s);
     }
     
     /** This field is initialized by polly.core. This is a dependency hack */
@@ -29,6 +31,17 @@ public class HTMLTools {
      */
     public static String escape(String s) {
         return UTIL.escape(s);
+    }
+    
+    
+    
+    /**
+     * Unescapes all escaped HTML characters within the provided string.
+     * @param s The string to unescape.
+     * @return The unescaped string
+     */
+    public static String unescape(String s) {
+        return UTIL.unsecape(s);
     }
     
     

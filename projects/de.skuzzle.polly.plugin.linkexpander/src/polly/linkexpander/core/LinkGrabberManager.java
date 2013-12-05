@@ -47,9 +47,9 @@ public class LinkGrabberManager {
         }
         
         for (LinkGrabber grabber : this.grabbers) {
-            Matcher m = grabber.getLinkPattern().matcher(e.getMessage());
+            final Matcher m = grabber.getLinkPattern().matcher(e.getMessage());
             if (m.find()) {
-                String r = grabber.processMatch(e, m);
+                final String r = grabber.processMatch(e, m);
                 if (r != null) {
                     e.getSource().sendMessage(e.getChannel(), r + 
                         " (" + grabber.getLink(e.getMessage(), m) + ")", this); //$NON-NLS-1$ //$NON-NLS-2$
