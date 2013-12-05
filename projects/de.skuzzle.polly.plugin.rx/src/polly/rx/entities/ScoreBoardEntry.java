@@ -25,7 +25,7 @@ import de.skuzzle.polly.sdk.time.Milliseconds;
 @NamedQueries({
     @NamedQuery(
         name = ScoreBoardEntry.ALL_SBE_DISTINCT,
-        query= "SELECT sbe FROM ScoreBoardEntry sbe GROUP BY sbe.venadName ORDER BY sbe.date, sbe.rank DESC"
+        query= "SELECT sbe FROM ScoreBoardEntry sbe GROUP BY sbe.id, sbe.venadName ORDER BY sbe.date, sbe.rank DESC"
     ),
     @NamedQuery(
         name = ScoreBoardEntry.SBE_BY_USER,
