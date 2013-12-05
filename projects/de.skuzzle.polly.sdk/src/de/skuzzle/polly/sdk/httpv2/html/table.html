@@ -20,14 +20,14 @@
 	        #if ($page == $settings.getPage())
 	            <b style="text-decoration:underline">$viewPage</b>
 	        #else
-	            <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$page')" title="$MSG.get('tableGotoPageTitle', "$viewPage")">$viewPage</a>
+	            <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$page')" title="$Messages.bind($MSG.tableGotoPageTitle, $viewPage)">$viewPage</a>
 	        #end
 	    #end
 	    #if ($settings.getPage() == $pageCount)
 	         &gt; <b>$MSG.tableGotoLast</b>
 	    #else
 	        <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$next')" title="$MSG.tableGotoNextTitle">&gt;</a>
-	        <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$pageCount')" title="$MSG.get('tableGotoLastTitle', "$settings.getPageCount()")">$MSG.tableGotoLast</a>
+	        <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$pageCount')" title="$Messages.bind($MSG.tableGotoLastTitle, $settings.getPageCount())">$MSG.tableGotoLast</a>
 	    #end
     #end
     
