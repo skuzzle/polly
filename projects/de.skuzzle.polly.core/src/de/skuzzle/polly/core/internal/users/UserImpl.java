@@ -44,7 +44,7 @@ public class UserImpl implements de.skuzzle.polly.sdk.User, Serializable {
     
     private static final long serialVersionUID = 1L;
     
-    public final static String ALL_USERS = "ALL_USERS";
+    public final static String ALL_USERS = "ALL_USERS"; //$NON-NLS-1$
     
    
     @Id@GeneratedValue(strategy = GenerationType.TABLE)
@@ -87,7 +87,7 @@ public class UserImpl implements de.skuzzle.polly.sdk.User, Serializable {
     private UserManagerImpl userManager;
     
     UserImpl() {
-        this("", "");
+        this("", ""); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     
@@ -107,6 +107,7 @@ public class UserImpl implements de.skuzzle.polly.sdk.User, Serializable {
         this.userManager = userManager;
         return this;
     }
+    
     
     
     public int getId() {
@@ -154,16 +155,20 @@ public class UserImpl implements de.skuzzle.polly.sdk.User, Serializable {
         this.name = name;
     }
 
+    
+    
     @Override
     public void setCurrentNickName(String nickName) {
         this.currentNickName = nickName;
     }
 
 
+    
     @Override
     public String getHashedPassword() {
         return this.password;
     }
+    
     
     
     @Override
