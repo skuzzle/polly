@@ -10,6 +10,7 @@ import de.skuzzle.polly.core.eventhandler.AutoLoginProvider;
 import de.skuzzle.polly.core.eventhandler.AutoLogoffHandler;
 import de.skuzzle.polly.core.eventhandler.AutoLogonHandler;
 import de.skuzzle.polly.core.eventhandler.EuIrcAutoLoginProvider;
+import de.skuzzle.polly.core.eventhandler.FreenodeAutoLoginProvider;
 import de.skuzzle.polly.core.eventhandler.GhostHandler;
 import de.skuzzle.polly.core.eventhandler.IrcLoggingHandler;
 import de.skuzzle.polly.core.eventhandler.MessageHandler;
@@ -56,6 +57,7 @@ public class IrcEventHandlerProvider extends AbstractProvider {
         super("IRC_EVENT_HANDLER_PROVIDER", loader, true);
         this.loginProviders = new ArrayList<>();
         this.loginProviders.add(new EuIrcAutoLoginProvider());
+        this.loginProviders.add(new FreenodeAutoLoginProvider());
     }
     
     
