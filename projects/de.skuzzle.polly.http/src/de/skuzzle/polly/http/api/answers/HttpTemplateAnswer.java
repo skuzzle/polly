@@ -36,6 +36,7 @@ public abstract class HttpTemplateAnswer extends AbstractHttpAnswer {
 
     public HttpTemplateAnswer(int responseCode) {
         super(responseCode);
+        this.addHeader("Content-Type", "charset=utf-8");
     }
 
     
