@@ -13,20 +13,34 @@ import de.skuzzle.polly.sdk.IrcManager;
  */
 public class MessageEvent extends ChannelEvent {
 
-    private String message;
+    private final String message;
+    private final MessageType type;
     
     
     /**
      * Creates a new MessageEvent.
      * @param source The source {@link IrcManager}.
      * @param user The user who caused this event.
+     * @param type The type of the message
      * @param channel The channel on which this event occurred.
      * @param message The message that was sent to the channel/query
      */
     public MessageEvent(IrcManager source, IrcUser user, 
-            String channel, String message) {
+            MessageType type, String channel, String message) {
         super(source, user, channel);
         this.message = message;
+        this.type = type;
+    }
+    
+    
+    
+    
+    /**
+     * Gets the type of the message.
+     * @return The message type
+     */
+    public MessageType getType() {
+        return this.type;
     }
     
     

@@ -21,13 +21,14 @@ public class OwnMessageEvent extends MessageEvent {
      * Creates a new MessageEvent.
      * @param source The source {@link IrcManager}.
      * @param user The user who caused this event.
+     * @param type The type of the message.
      * @param channel The channel on which this event occurred.
      * @param message The message that was sent to the channel/query
      * @param messageSource The Object from which this message has been sent.
      */
-    public OwnMessageEvent(IrcManager source, IrcUser user, String channel,
-        String message, Object messageSource) {
-        super(source, user, channel, message);
+    public OwnMessageEvent(IrcManager source, IrcUser user, MessageType type, 
+        String channel, String message, Object messageSource) {
+        super(source, user, type, channel, message);
         this.messageSource = messageSource;
     }
 

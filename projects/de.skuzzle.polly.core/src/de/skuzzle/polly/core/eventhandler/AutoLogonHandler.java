@@ -17,8 +17,8 @@ import de.skuzzle.polly.sdk.Types.BooleanType;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.eventlistener.ConnectionEvent;
 import de.skuzzle.polly.sdk.eventlistener.ConnectionListener;
-import de.skuzzle.polly.sdk.eventlistener.MessageAdapter;
 import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
+import de.skuzzle.polly.sdk.eventlistener.MessageListener;
 import de.skuzzle.polly.sdk.eventlistener.NickChangeEvent;
 import de.skuzzle.polly.sdk.eventlistener.NickChangeListener;
 import de.skuzzle.polly.sdk.eventlistener.SpotEvent;
@@ -65,30 +65,37 @@ public class AutoLogonHandler extends AbstractDisposable
     
     
     
-    private MessageAdapter autoSignOnHandler = new MessageAdapter() {
-        @Override
-        public void noticeMessage(MessageEvent e) {
-            if (!e.getUser().getNickName().equalsIgnoreCase("nickserv")) { //$NON-NLS-1$
-                return;
-            }
-            final String[] parts = e.getMessage().split(" "); //$NON-NLS-1$
-            if (parts.length != 3 || 
-                    !parts[0].equalsIgnoreCase("status") ||  //$NON-NLS-1$
-                    !parts[2].equals("3")) { //$NON-NLS-1$
-                return;
-            }
-            final String forUser = parts[1];
-            
+    private final MessageListener autoSignOnHandler = new MessageListener() {
+        private void process(MessageEvent e) {
             try {
-                userManager.logonWithoutPassword(forUser);
+                provider.processMessageEvent(e, userManager);
             } catch (AlreadySignedOnException e1) {
                 logger.trace("User logged in while waiting for auto logon"); //$NON-NLS-1$
             } catch (UnknownUserException e1) {
-                logger.error("Error while auto logon. User '" + forUser +  //$NON-NLS-1$
+                logger.error("Error while auto logon. User '" + e1.getMessage() +  //$NON-NLS-1$
                     "' unknown", e1); //$NON-NLS-1$
             }
         }
+        @Override
+        public void noticeMessage(MessageEvent e) {
+            this.process(e);
+        }
+        @Override
+        public void publicMessage(MessageEvent e) {
+            this.process(e);
+        }
+
+        @Override
+        public void privateMessage(MessageEvent e) {
+            this.process(e);
+        }
+
+        @Override
+        public void actionMessage(MessageEvent e) {
+            this.process(e);
+        }
     };
+    
     
 
     private static Logger logger = Logger.getLogger(AutoLogonHandler.class.getName());
@@ -99,13 +106,15 @@ public class AutoLogonHandler extends AbstractDisposable
     private final ScheduledExecutorService autoLogonExecutor;
     private final Map<String, AutoLogonRunnable> scheduledLogons;
     private final int autoLoginDelay;
+    private final AutoLoginProvider provider;
     
     
     
     public AutoLogonHandler(IrcManagerImpl ircManager, UserManagerImpl userManager, 
-            int autoLoginDelay) {
+            AutoLoginProvider provider, int autoLoginDelay) {
         
         ircManager.addMessageListener(this.autoSignOnHandler);
+        this.provider = provider;
         this.ircManager = ircManager;
         this.userManager = userManager;
         this.autoLogonExecutor = Executors.newScheduledThreadPool(1, 
@@ -122,6 +131,7 @@ public class AutoLogonHandler extends AbstractDisposable
         if (this.userExists(forUser)) {
             // try instant login if user just spotted 
             this.ircManager.sendRawCommand("NICKSERV STATUS " + forUser); //$NON-NLS-1$
+            this.provider.requestAuthentification(forUser, this.ircManager);
         }
         this.scheduleAutoLogon(forUser);
     }
@@ -158,7 +168,7 @@ public class AutoLogonHandler extends AbstractDisposable
         synchronized (this.scheduledLogons) {
             if (this.scheduledLogons.containsKey(forUser)) {
                 this.scheduledLogons.remove(forUser);
-                this.ircManager.sendRawCommand("NICKSERV STATUS " + forUser); //$NON-NLS-1$
+                this.provider.requestAuthentification(forUser, this.ircManager);
             }
         }
     }

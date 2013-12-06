@@ -32,6 +32,7 @@ import de.skuzzle.polly.sdk.eventlistener.JoinPartListener;
 import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
 import de.skuzzle.polly.sdk.eventlistener.MessageListener;
 import de.skuzzle.polly.sdk.eventlistener.MessageSendListener;
+import de.skuzzle.polly.sdk.eventlistener.MessageType;
 import de.skuzzle.polly.sdk.eventlistener.NickChangeEvent;
 import de.skuzzle.polly.sdk.eventlistener.NickChangeListener;
 import de.skuzzle.polly.sdk.eventlistener.OwnMessageEvent;
@@ -187,7 +188,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
             String nickName = IrcManagerImpl.this.stripNickname(sender);
             IrcUser user = new IrcUser(nickName, login, hostname);
             MessageEvent e = new MessageEvent(IrcManagerImpl.this, user, 
-                    channel, message);
+                MessageType.PUBLIC, channel, message);
             
             IrcManagerImpl.this.firePublicMessageEvent(e);
         }
@@ -200,7 +201,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
             String nickName = IrcManagerImpl.this.stripNickname(sourceNick);
             IrcUser user = new IrcUser(nickName, sourceLogin, sourceHostname);
             MessageEvent e = new MessageEvent(IrcManagerImpl.this, user, 
-                    target, notice);
+                    MessageType.NOTICE, target, notice);
             
             IrcManagerImpl.this.fireNoticeMessageEvent(e);
         };
@@ -214,7 +215,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
             String nickName = IrcManagerImpl.this.stripNickname(sender);
             IrcUser user = new IrcUser(nickName, login, hostname);
             MessageEvent e = new MessageEvent(IrcManagerImpl.this, user, 
-                    nickName, message);
+                    MessageType.PRIVATE, nickName, message);
             
             this.checkUserSpotted(nickName, nickName, SpotEvent.PRIVATE_MSG);
             
@@ -230,7 +231,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
             IrcUser user = new IrcUser(nickName, login, hostname);
 
             MessageEvent e = new MessageEvent(IrcManagerImpl.this, user,
-                    target, action);
+                    MessageType.ACTION, target, action);
             
             IrcManagerImpl.this.fireActionMessageEvent(e);
         }
@@ -535,7 +536,7 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
         }
         
         OwnMessageEvent e = new OwnMessageEvent(this, 
-            new IrcUser(this.getNickname(), "", ""), channel, message, source);
+            new IrcUser(this.getNickname(), "", ""), MessageType.OWN, channel, message, source);
         this.fireMessageSend(e);
     }
    

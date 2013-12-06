@@ -29,6 +29,7 @@ import de.skuzzle.polly.tools.events.EventProvider;
         @Require(state = ModuleStates.PERSISTENCE_READY) }, 
     provides = {
         @Provide(component = IrcManagerImpl.class),
+        @Provide(component = BotConnectionSettings.class),
         @Provide(state = ModuleStates.IRC_READY) })
 public class IrcManagerProvider extends AbstractProvider {
 
@@ -98,6 +99,7 @@ public class IrcManagerProvider extends AbstractProvider {
             ports, ident,
             channels, ircModes);
 
+        this.provideComponent(this.connectionSettings);
         this.shutdownManager.addDisposable(this.ircManager);
     }
 

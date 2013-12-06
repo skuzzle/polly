@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
+import de.skuzzle.polly.sdk.eventlistener.MessageType;
 
 
 
@@ -40,7 +41,7 @@ public class URLLinkGrabber implements LinkGrabber {
     @Override
     public String processMatch(MessageEvent matched, Matcher matcher) {
         MessageEvent e = new MessageEvent(
-            matched.getSource(), matched.getUser(), matched.getChannel(), 
+            matched.getSource(), matched.getUser(), MessageType.PUBLIC, matched.getChannel(), 
             this.getLink(matched.getMessage(), matcher));
         this.urls.add(e);
         

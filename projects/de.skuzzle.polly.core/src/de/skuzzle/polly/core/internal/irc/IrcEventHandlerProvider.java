@@ -1,11 +1,15 @@
 package de.skuzzle.polly.core.internal.irc;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 
 import de.skuzzle.polly.core.configuration.ConfigurationProviderImpl;
+import de.skuzzle.polly.core.eventhandler.AutoLoginProvider;
 import de.skuzzle.polly.core.eventhandler.AutoLogoffHandler;
 import de.skuzzle.polly.core.eventhandler.AutoLogonHandler;
+import de.skuzzle.polly.core.eventhandler.EuIrcAutoLoginProvider;
 import de.skuzzle.polly.core.eventhandler.GhostHandler;
 import de.skuzzle.polly.core.eventhandler.IrcLoggingHandler;
 import de.skuzzle.polly.core.eventhandler.MessageHandler;
@@ -21,6 +25,10 @@ import de.skuzzle.polly.core.moduleloader.annotations.Provide;
 import de.skuzzle.polly.core.moduleloader.annotations.Require;
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.ConfigurationProvider;
+import de.skuzzle.polly.sdk.IrcManager;
+import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
+import de.skuzzle.polly.sdk.exceptions.AlreadySignedOnException;
+import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
 import de.skuzzle.polly.tools.events.EventProvider;
 
 
@@ -35,15 +43,44 @@ import de.skuzzle.polly.tools.events.EventProvider;
         @Require(component = UserManagerImpl.class),
         @Require(component = CommandManagerImpl.class),
         @Require(component = ExecutorService.class),
+        @Require(component = BotConnectionSettings.class)
     },
     provides = @Provide(component = MessageHandler.class)
 )
 public class IrcEventHandlerProvider extends AbstractProvider {
 
+    private final Collection<AutoLoginProvider> loginProviders;
+    
+    
     public IrcEventHandlerProvider(ModuleLoader loader) {
         super("IRC_EVENT_HANDLER_PROVIDER", loader, true);
+        this.loginProviders = new ArrayList<>();
+        this.loginProviders.add(new EuIrcAutoLoginProvider());
     }
     
+    
+    
+    private AutoLoginProvider findProvider(String server) {
+        for (final AutoLoginProvider provider : this.loginProviders) {
+            if (provider.supportsNetwork(server)) {
+                return provider;
+            }
+        }
+        return new AutoLoginProvider() {
+            @Override
+            public boolean supportsNetwork(String server) {
+                return false;
+            }
+            @Override
+            public void requestAuthentification(String forUser, IrcManager irc) {
+            }
+            @Override
+            public boolean processMessageEvent(MessageEvent e, UserManagerImpl users)
+                    throws AlreadySignedOnException, UnknownUserException {
+                return false;
+            }
+        };
+    }
     
     
     @Override
@@ -99,8 +136,11 @@ public class IrcEventHandlerProvider extends AbstractProvider {
 
         // Setup auto login / logout handler
         if (autoLogin) {
+            final BotConnectionSettings settings = this.requireNow(
+                BotConnectionSettings.class, true);
+            final AutoLoginProvider provider = this.findProvider(settings.getHostName());
             AutoLogonHandler logonHandler = new AutoLogonHandler(
-                ircManager, userManager, autoLoginTime);
+                ircManager, userManager, provider, autoLoginTime);
 
             ircManager.addUserSpottedListener(logonHandler);
             ircManager.addNickChangeListener(logonHandler);

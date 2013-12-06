@@ -58,7 +58,7 @@ public class DefaultMessageScheduler extends Thread implements MessageScheduler 
 
     @Override
     public void addMessage(String channel, String message, Object source) {
-        MessageEvent e = new MessageEvent(null, null, channel, message);
+        MessageEvent e = new MessageEvent(null, null, null, channel, message);
         AtomicLong c = this.counter.get(source);
         if (c == null) {
             c = new AtomicLong();

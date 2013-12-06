@@ -51,7 +51,7 @@ public class RoundRobinScheduler extends Thread implements MessageScheduler {
                 this.messageQueue.put(source, msgs);
             }
             msgs.add(new MessageEvent(this.ircManager, new IrcUser("DEBUGGER",
-                "", ""), channel, message));
+                "", ""), null, channel, message));
             this.sema.release();
         } finally {
             this.lock.unlock();
