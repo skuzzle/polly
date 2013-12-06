@@ -81,6 +81,10 @@ public class IrcEventHandlerProvider extends AbstractProvider {
                     throws AlreadySignedOnException, UnknownUserException {
                 return false;
             }
+            @Override
+            public String toString() {
+                return "DefaultAutoLoginProvider"; //$NON-NLS-1$
+            }
         };
     }
     
@@ -141,6 +145,7 @@ public class IrcEventHandlerProvider extends AbstractProvider {
             final BotConnectionSettings settings = this.requireNow(
                 BotConnectionSettings.class, true);
             final AutoLoginProvider provider = this.findProvider(settings.getHostName());
+            logger.info("Chose auto login provider: " + provider);
             AutoLogonHandler logonHandler = new AutoLogonHandler(
                 ircManager, userManager, provider, autoLoginTime);
 

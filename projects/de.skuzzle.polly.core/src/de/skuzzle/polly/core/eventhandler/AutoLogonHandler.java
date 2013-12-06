@@ -130,7 +130,6 @@ public class AutoLogonHandler extends AbstractDisposable
         final String forUser = e.getUser().getNickName();
         if (this.userExists(forUser)) {
             // try instant login if user just spotted 
-            this.ircManager.sendRawCommand("NICKSERV STATUS " + forUser); //$NON-NLS-1$
             this.provider.requestAuthentification(forUser, this.ircManager);
         }
         this.scheduleAutoLogon(forUser);
@@ -152,7 +151,7 @@ public class AutoLogonHandler extends AbstractDisposable
             if (alr != null) {
                 alr.cancel();
                 this.scheduledLogons.remove(e.getOldUser().getNickName());
-                logger.debug("Auto logon for " + e.getOldUser() + " canceled"); //$NON-NLS-1$ //$NON-NLS-2$
+                logger.debug("Auto logon for " + e.getOldUser() + " canceled");   //$NON-NLS-1$//$NON-NLS-2$
             }
             
             final User u = this.userManager.getUser(e.getNewUser().getNickName());

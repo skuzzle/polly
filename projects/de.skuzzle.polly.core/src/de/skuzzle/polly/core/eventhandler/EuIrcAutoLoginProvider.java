@@ -41,5 +41,11 @@ public class EuIrcAutoLoginProvider implements AutoLoginProvider {
         users.logonWithoutPassword(forUser);
         return true;
     }
-
+    
+    
+    
+    @Override
+    public String toString() {
+        return "EuIRCAutoLoginProvider"; //$NON-NLS-1$
+    }
 }
