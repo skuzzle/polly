@@ -25,7 +25,7 @@ function filterTableRequest(event) {
 	}
 	var tId = $(event.target).attr("tableId");
 	var filterCol = $(event.target).attr("col");
-	var filterVal = encodeURIComponent($(event.target).val());
+	var filterVal = encodeURI($(event.target).val());
 	if (event.keyCode == 27) {
 		filterVal = "";
 	}
@@ -77,7 +77,7 @@ function tableEvents() {
 		var col = $(this).parent("td").attr("col");
 		var tId = $(this).parents("table").attr("id");
 		var baseUrl = $(this).parents("tr").attr("baseUrl");
-		var filterVal = $(this).val();
+		var filterVal = encodeURI($(this).val());
 		if (event.keyCode == 27) { // escape
 			filterVal = "";
 		}
@@ -94,7 +94,7 @@ function tableEvents() {
 		var col = $(this).parent("td").attr("col");
 		var tId = $(this).parents("table").attr("id");
 		var baseUrl = $(this).parents("tr").attr("baseUrl");
-		var filterVal = $(this).val();
+		var filterVal = encodeURI($(this).val());
 		var parameters = {
 				'filterVal': filterVal,
 				'filterCol': col
@@ -121,7 +121,7 @@ function tableEvents() {
 		var row = $this.parents("tr").attr("row");
 		var baseUrl = $this.parents("tr").attr("baseUrl");
 		var getUrl = makeUrl(baseUrl, {
-			'setValue': val,
+			'setValue': encodeURI(val),
 			'col': col,
 			'row': row
 		});

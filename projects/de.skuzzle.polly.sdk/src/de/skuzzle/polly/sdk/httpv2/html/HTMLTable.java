@@ -19,6 +19,7 @@ import de.skuzzle.polly.http.api.AlternativeAnswerException;
 import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.http.api.HttpException;
 import de.skuzzle.polly.http.api.HttpSession;
+import de.skuzzle.polly.http.api.HttpEvent.RequestMode;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.http.api.handler.HttpEventHandler;
@@ -403,6 +404,9 @@ public class HTMLTable<T> implements HttpEventHandler {
     public synchronized HttpAnswer handleHttpEvent(String registered, HttpEvent e,
                 HttpEventHandler next) throws HttpException {
         
+        
+        final Map<String, String> params = e.parameterMap(RequestMode.GET);
+        
         // current settings for requesting user
         final HttpSession s = e.getSession();
         final User user = (User) s.getAttached(WebinterfaceManager.USER);
@@ -434,7 +438,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         }
         
         DataHolder data = settings.data.get();
-        if (data == null || e.get(UPDATE_ALL) != null) {
+        if (data == null || params.get(UPDATE_ALL) != null) {
             data = new DataHolder();
             data.allData = this.model.getData(e);
             data.view = data.allData;
@@ -451,10 +455,10 @@ public class HTMLTable<T> implements HttpEventHandler {
             this.fireDataProcessed(data.view, e);
         }
         
-        if (e.get(SORT_COLUMN) != null) {
+        if (params.get(SORT_COLUMN) != null) {
             // this is a sorting request
             // column for which to sort
-            final int newSortCol = Integer.parseInt(e.get(SORT_COLUMN));
+            final int newSortCol = Integer.parseInt(params.get(SORT_COLUMN));
             if (newSortCol < 0 || newSortCol >= this.model.getColumnCount()) {
                 // TODO: error
             }
@@ -469,12 +473,12 @@ public class HTMLTable<T> implements HttpEventHandler {
             this.updateSorting(settings, data);
             this.updateViewPort(settings, data);
             
-        } else if (e.get(FILTER_COL) != null) {
-            final int filterCol = Integer.parseInt(e.get(FILTER_COL));
+        } else if (params.get(FILTER_COL) != null) {
+            final int filterCol = Integer.parseInt(params.get(FILTER_COL));
             if (filterCol < 0 || filterCol >= this.model.getColumnCount()) {
                 // TODO: error
             }
-            final String filterVal = e.get(FILTER_VAL);
+            final String filterVal = params.get(FILTER_VAL);
             settings.filter[filterCol] = filterVal == null ? "" : filterVal; //$NON-NLS-1$
             
             this.updateFilter(settings, data);
@@ -482,16 +486,16 @@ public class HTMLTable<T> implements HttpEventHandler {
             this.updateViewPort(settings, data);
             this.fireDataProcessed(data.view, e);
             
-        } else if (e.get(SET_PAGE) != null) {
-            final int page = Integer.parseInt(e.get(SET_PAGE));
+        } else if (params.get(SET_PAGE) != null) {
+            final int page = Integer.parseInt(params.get(SET_PAGE));
             settings.page = MathUtil.limit(page, 0, Math.max(settings.pageCount - 1, 0));
             
             this.updateViewPort(settings, data);
             
-        } else if (e.get(SET_VALUE) != null) {
-            final String value = e.get(SET_VALUE);
-            final int col = Integer.parseInt(e.get(COLUMN));
-            final int row = Integer.parseInt(e.get(ROW));
+        } else if (params.get(SET_VALUE) != null) {
+            final String value = params.get(SET_VALUE);
+            final int col = Integer.parseInt(params.get(COLUMN));
+            final int row = Integer.parseInt(params.get(ROW));
             
             final T element = this.model.getData(e).get(row);
             final SuccessResult r = this.model.setCellValue(col, element, 
@@ -504,6 +508,8 @@ public class HTMLTable<T> implements HttpEventHandler {
             
             this.updateViewPort(settings, data);
         } else {
+            this.updateFilter(settings, data);
+            this.updateSorting(settings, data);
             this.updateViewPort(settings, data);
         }
         
