@@ -20,13 +20,13 @@ function reloadAll(url, id) {
 	loadTable(getUrl, id);
 }
 function filterTableRequest(event) {
-	if (event.which != 13 && event.which != 27) {
+	if (event.keyCode != 13 && event.keyCode != 27) {
 		return;
 	}
 	var tId = $(event.target).attr("tableId");
 	var filterCol = $(event.target).attr("col");
 	var filterVal = encodeURIComponent($(event.target).val());
-	if (event.which == 27) {
+	if (event.keyCode == 27) {
 		filterVal = "";
 	}
 	var baseUrl = $(event.target).attr("filterUrl");
@@ -78,10 +78,10 @@ function tableEvents() {
 		var tId = $(this).parents("table").attr("id");
 		var baseUrl = $(this).parents("tr").attr("baseUrl");
 		var filterVal = $(this).val();
-		if (event.which == 0) {
+		if (event.keyCode == 27) { // escape
 			filterVal = "";
 		}
-		if (event.which == 0 || event.which == 13) {
+		if (event.keyCode == 27 || event.keyCode == 13) { // escape or return
 			var parameters = {
 					'filterVal': filterVal,
 					'filterCol': col
@@ -147,9 +147,9 @@ function tableEvents() {
 		}, 300)
 	});
 	$(".edit_input").keydown(function(event) {
-		if (event.which == 27) {
+		if (event.keyCode == 27) { // escape
 			blurEditor($(this));
-		} else if (event.which == 13) {
+		} else if (event.keyCode == 13) { // return
 			submitEdit($(this), $(this).val());
 		}
 	});
