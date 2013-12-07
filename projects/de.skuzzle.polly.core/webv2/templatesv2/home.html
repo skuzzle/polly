@@ -1,18 +1,45 @@
-<div class="highlight contentBox">
-#if (!$user)
-#CONTENT_HEADER("Home")
-<div class="content">
-<p>
-    Welcome to the new polly webinterface! Login to gain access to all available
-    functionality.
-</p>
-#else
-#CONTENT_HEADER("Welcome $user.getName()")
-<div class="content">
-<p>
-    At this point, there should probably some useful information or functions be
-    exposed
-</p>
+#if ($myPolly.roles().hasPermission($user, "polly.permission.ADD_NEWS_PERMISSION"))
+    <div class="highlight contentBox">
+        #CONTENT_HEADER("Neuer Newseintrag")
+        <div class="content">
+        <form action="$PAGE_POSTNEWS" method="post">
+        <table>
+            <tr>
+            <td><b>Überschrift:</b></td>
+            <td><input type="text" class="textbox" placeholder="Überschrift" name="caption"/></td>
+            </tr>
+            <tr>
+            <td><b>Inhalt:</b></td>
+            <td><textarea class="textbox" placeholder="Inhalt" name="body"></textarea></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td><input type="submit" class="button" value="Posten"/></td>
+            </tr>
+        </table>
+        </form>
+        </div>
+    </div>
 #end
+
+#if (!$user)
+<div class="highlight contentBox">
+    #CONTENT_HEADER("Home")
+    <p class="content">
+        Welcome to the new polly webinterface! Login to gain access to all available
+        functionality.
+    </p>
 </div>
+#elseif ($allNews.isEmpty())
+<div class="highlight contentBox">
+    #CONTENT_HEADER("Home")
+    <p class="content">Keine News</p>
 </div>
+#else
+    #foreach ($ne in $allNews)
+    <div class="highlight contentBox">
+        #CONTENT_HEADER("$ne.getCaption() <span style=""float:right;"">$myPolly.formatting().formatDate($ne.getDate()) #if ($myPolly.roles().hasPermission($user, ""polly.permission.DELETE_NEWS_PERMISSION"")) <a href=""$PAGE_DELETENEWS?newsId=$ne.getId()"">Delete</a> #end</span>")
+        <p class="content">$ne.getBody()</p>
+    </div>
+    #end
+#end

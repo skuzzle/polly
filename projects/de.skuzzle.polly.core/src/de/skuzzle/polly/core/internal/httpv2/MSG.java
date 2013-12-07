@@ -56,6 +56,8 @@ public class MSG extends Constants {
     public static String userTableEditTitle;
     public static String userTableDeleteTitle;
     
+    // NewsManage
+    public static String newsUnknownId;
     
     
     static {

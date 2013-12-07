@@ -11,6 +11,7 @@ import de.skuzzle.polly.http.annotations.Post;
 import de.skuzzle.polly.http.api.AlternativeAnswerException;
 import de.skuzzle.polly.http.api.Controller;
 import de.skuzzle.polly.http.api.HttpCookie;
+import de.skuzzle.polly.http.api.HttpException;
 import de.skuzzle.polly.http.api.HttpServer;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
@@ -18,6 +19,7 @@ import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
+import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
 import de.skuzzle.polly.sdk.httpv2.PollyController;
 import de.skuzzle.polly.sdk.httpv2.SuccessResult;
@@ -48,18 +50,22 @@ public class IndexController extends PollyController {
     public final static String API_CALC_EXPRESSION = "/api/calculateExpression"; //$NON-NLS-1$
     public final static String API_RUN_GC = "/api/runGC"; //$NON-NLS-1$
     public final static String API_SHUTDOWN = "/api/shutdown"; //$NON-NLS-1$
+    public final static String API_ADD_NEWS = "/api/postNews"; //$NON-NLS-1$
+    public final static String API_DELETE_NEWS = "/api/deleteNews"; //$NON-NLS-1$
+    
+    private final NewsManager newsManager;
     
     
-    
-    public IndexController(MyPolly myPolly) {
+    public IndexController(MyPolly myPolly, NewsManager newsManager) {
         super(myPolly);
+        this.newsManager = newsManager;
     }
     
     
     
     @Override
     protected Controller createInstance() {
-        return new IndexController(this.getMyPolly());
+        return new IndexController(this.getMyPolly(), this.newsManager);
     }
     
     
@@ -175,6 +181,7 @@ public class IndexController extends PollyController {
     })
     public HttpAnswer index() {
         final Map<String, Object> c = this.createContext(CONTENT_INDEX);
+        c.put("allNews", this.newsManager.getAllNews());
         return this.makeAnswer(c);
     }
     
@@ -216,6 +223,37 @@ public class IndexController extends PollyController {
         this.requirePermissions(RoleManager.ADMIN_PERMISSION);
         System.gc();
         return HttpAnswers.newRedirectAnswer(PAGE_STATUS);
+    }
+    
+    
+    
+    @Post(API_ADD_NEWS)
+    public HttpAnswer postNews(
+            @Param("caption") String caption, 
+            @Param("body") String body) throws HttpException {
+        
+        this.requirePermissions(NewsManager.ADD_NEWS_PERMISSION);
+        
+        try {
+            this.newsManager.addNewsEntry(this.getSessionUser(), caption, body);
+            return HttpAnswers.newRedirectAnswer(PAGE_INDEX);
+        } catch (DatabaseException e) {
+            throw new HttpException(e);
+        }
+    }
+    
+    
+    
+    @Get(API_DELETE_NEWS)
+    public HttpAnswer deleteNews(@Param("newsId") int newsId) throws HttpException {
+        this.requirePermissions(NewsManager.DELETE_NEWS_PERMISSION);
+        
+        try {
+            this.newsManager.deleteNewsEntry(newsId);
+            return HttpAnswers.newRedirectAnswer(PAGE_INDEX);
+        } catch (DatabaseException e) {
+            throw new HttpException(e);
+        }
     }
     
     

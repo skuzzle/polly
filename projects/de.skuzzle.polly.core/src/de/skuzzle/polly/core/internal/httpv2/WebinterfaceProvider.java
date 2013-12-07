@@ -53,6 +53,7 @@ import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
         @Require(component = ConfigurationProviderImpl.class),
         @Require(component = ShutdownManagerImpl.class),
         @Require(component = PluginManagerImpl.class),
+        @Require(component = NewsManager.class),
         @Require(state = ModuleStates.PERSISTENCE_READY),
         @Require(state = ModuleStates.PLUGINS_READY)
     },
@@ -67,6 +68,8 @@ public class WebinterfaceProvider extends AbstractProvider {
     private Configuration serverCfg;
     private HttpServletServer server;
     private WebInterfaceManagerImpl webinterface;
+    private NewsManager newsManager;
+    
     
     
     public WebinterfaceProvider(ModuleLoader loader) {
@@ -77,6 +80,7 @@ public class WebinterfaceProvider extends AbstractProvider {
     
     @Override
     public void setup() throws SetupException {
+        this.newsManager = this.requireNow(NewsManager.class, true);
         ConfigurationProvider configProvider = this.requireNow(
             ConfigurationProviderImpl.class, true);
     
@@ -181,7 +185,7 @@ public class WebinterfaceProvider extends AbstractProvider {
         
         this.webinterface.addCategory(new MenuCategory(Integer.MAX_VALUE, MSG.indexAdminCategory));
         this.webinterface.addCategory(new MenuCategory(-100, MSG.indexGeneralCategory));
-        this.server.addController(new IndexController(myPolly));
+        this.server.addController(new IndexController(myPolly, this.newsManager));
         this.server.addController(new SessionController(myPolly));
         this.server.addController(new UserController(myPolly));
         this.server.addController(new RoleController(myPolly));

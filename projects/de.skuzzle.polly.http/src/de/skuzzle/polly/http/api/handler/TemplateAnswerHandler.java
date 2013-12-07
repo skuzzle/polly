@@ -57,7 +57,7 @@ public class TemplateAnswerHandler extends HttpAnswerHandler {
             this.prepare(ve, template.getName());
             
             ve.init();
-            final Template temp = ve.getTemplate(template.getName());
+            final Template temp = ve.getTemplate(template.getName(), e.getSource().getEncoding());
             
             final Map<String, Object> mappings = new HashMap<>();
             template.getAnswer(mappings);
