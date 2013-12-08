@@ -446,11 +446,19 @@ public class RXController extends PollyController {
     
     
     @Post(API_POST_QFLEET_SCAN)
-    public HttpAnswer postQFleetScan(@Param("scan") String scan) 
+    public HttpAnswer postQFleetScan(@Param("scan") String scan, 
+            @Param("user") String user, @Param("pw") String pw) 
             throws AlternativeAnswerException {
         
-         // TODO: check permissions
-        this.requirePermissions(FleetDBManager.ADD_FLEET_SCAN_PERMISSION);
+        final User u = this.getMyPolly().users().getUser(user);
+        if (u == null || !u.checkPassword(pw)) {
+            return new GsonHttpAnswer(200, 
+                    new SuccessResult(false, MSG.httpIllegalLogin));
+        } else if (!this.getMyPolly().roles().hasPermission(u, 
+                    FleetDBManager.ADD_FLEET_SCAN_PERMISSION)) {
+            return new GsonHttpAnswer(200, 
+                    new SuccessResult(false, MSG.httpNoPermission));
+        }
         
         try {
             final FleetScan fs = QFleetScanParser.parseFleetScan(scan);
