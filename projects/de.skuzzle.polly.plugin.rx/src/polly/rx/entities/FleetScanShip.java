@@ -92,6 +92,7 @@ public class FleetScanShip {
         this.y = y;
         this.quadrant = quadrant;
         this.history.add(e);
+        this.postLoad();
     }
 
 
@@ -112,6 +113,9 @@ public class FleetScanShip {
 
 
     public ShipType getShipType() {
+        if (this.shipType == null) {
+            this.postLoad();
+        }
         return this.shipType;
     }
 
@@ -124,6 +128,9 @@ public class FleetScanShip {
     
     
     public String getSimpleName() {
+        if (this.simpleName == null) {
+            this.postLoad();
+        }
         return this.simpleName;
     }
 
@@ -214,7 +221,7 @@ public class FleetScanShip {
         }
         FleetScanHistoryEntry historyEntry = new FleetScanHistoryEntry();
         historyEntry.getChanges().add(
-                MSG.bind(MSG.scanShipSpotted, other.quadrant, other.x, other,y));
+                MSG.bind(MSG.scanShipSpotted, other.quadrant, other.x, other.y));
 
         if (!this.name.equals(other.name)) {
             historyEntry.getChanges().add(

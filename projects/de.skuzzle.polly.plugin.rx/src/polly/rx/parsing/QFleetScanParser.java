@@ -15,7 +15,7 @@ public class QFleetScanParser {
     // TEST
     public static void main(String[] args) throws IOException, ParseException {
         final InputStream s = QFleetScanParser.class
-                .getResourceAsStream("flottenscan.txt"); //$NON-NLS-1$
+                .getResourceAsStream("flottenscan2.txt"); //$NON-NLS-1$
         final String scan = FileUtil.readIntoString(s, "UTF-8"); //$NON-NLS-1$
         // System.out.println("'" + scan + "'");
         parseFleetScan(scan);
@@ -32,12 +32,15 @@ public class QFleetScanParser {
             final int y = s.nextInt();
             final int sens = s.nextInt();
 
-            while (s.hasNext() && !s.nextLine().equals("Flotten Daten")); //$NON-NLS-1$
-            final String fleetName = s.nextLine();
+            String fleetName = ""; //$NON-NLS-1$
+            while (fleetName.equals("")) { //$NON-NLS-1$
+                fleetName = s.nextLine();
+            }
+            
             final String name = s.nextLine();
             final String venadName = VenadHelper.getName(name);
             final String clan = VenadHelper.getClan(name);
-
+            final String tag = s.nextLine();
             while (s.hasNext() && !s.nextLine().equals("NameTechlevelBesitzer")); //$NON-NLS-1$
 
             final List<FleetScanShip> ships = new ArrayList<>();
@@ -68,7 +71,7 @@ public class QFleetScanParser {
             }
 
             return new FleetScan(sens, fleetName, venadName, 
-                    clan, "", ships, quad, x, y, ""); //$NON-NLS-1$ //$NON-NLS-2$
+                    clan, tag, ships, quad, x, y, ""); //$NON-NLS-1$
         }
     }
 }

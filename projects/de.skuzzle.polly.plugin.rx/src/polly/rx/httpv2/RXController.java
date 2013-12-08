@@ -92,6 +92,7 @@ public class RXController extends PollyController {
 
     public final static String GM_SCRAPE_SCOREBOARD = "/GM/scrapescoreboarddata.user.js"; //$NON-NLS-1$
     public final static String GM_KB_REPORT = "/GM/kbreport.user.js"; //$NON-NLS-1$
+    public final static String GM_FLEET_SCANS = "/GM/fleetscan.user.js"; //$NON-NLS-1$
     
     public final static String FILES_VIEW = "/polly/rx/httpv2/view"; //$NON-NLS-1$
     
@@ -112,6 +113,7 @@ public class RXController extends PollyController {
     private final static String CONTENT_REPORT_STATISTICS = "polly/rx/httpv2/view/battlereports.statistics.html"; //$NON-NLS-1$
     private final static String CONTENT_SCRAPE_SCOREBOARD = "polly/rx/httpv2/view/scrapescoreboarddata.user.js"; //$NON-NLS-1$
     private final static String CONTENT_KB_REPORT = "polly/rx/httpv2/view/kbreport.user.js"; //$NON-NLS-1$
+    private final static String CONTENT_FLEET_SCANS = "polly/rx/httpv2/view/fleetscan.user.js"; //$NON-NLS-1$
     private final static String CONTENT_TRAININGS = "polly/rx/httpv2/view/trainings.html"; //$NON-NLS-1$
     
     private final static String REVORIX_CATEGORY_KEY = "httpRxCategory"; //$NON-NLS-1$
@@ -882,5 +884,22 @@ public class RXController extends PollyController {
         c.put("api", API_POST_QREPORT); //$NON-NLS-1$
         c.put("host", host); //$NON-NLS-1$
         return HttpAnswers.newTemplateAnswer(CONTENT_KB_REPORT, c);
+    }
+    
+    
+    
+    @Get(GM_FLEET_SCANS)
+    public HttpAnswer installFleetScans() 
+            throws AlternativeAnswerException {
+        this.requirePermissions(FleetDBManager.ADD_FLEET_SCAN_PERMISSION);
+        final String prefix = this.getMyPolly().webInterface().isSSL() 
+                ? "https://" : "http://"; //$NON-NLS-1$ //$NON-NLS-2$
+        final String host = prefix + this.getMyPolly().webInterface().getPublicHost() + 
+                ":" + this.getMyPolly().webInterface().getPort(); //$NON-NLS-1$
+        
+        final Map<String, String> c = new HashMap<String, String>();
+        c.put("api", API_POST_QFLEET_SCAN); //$NON-NLS-1$
+        c.put("host", host); //$NON-NLS-1$
+        return HttpAnswers.newTemplateAnswer(CONTENT_FLEET_SCANS, c);
     }
 }
