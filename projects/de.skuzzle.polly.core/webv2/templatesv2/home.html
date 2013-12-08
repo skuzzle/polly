@@ -39,7 +39,7 @@
     #foreach ($ne in $allNews)
     <div class="highlight contentBox">
         #CONTENT_HEADER("$ne.getCaption() <span style=""float:right;"">$myPolly.formatting().formatDate($ne.getDate()) #if ($myPolly.roles().hasPermission($user, ""polly.permission.DELETE_NEWS_PERMISSION"")) <a href=""$PAGE_DELETENEWS?newsId=$ne.getId()"">Delete</a> #end</span>")
-        <p class="content">$ne.getBody()</p>
+        <div class="content">$ne.getBody()</div>
     </div>
     #end
 #end
