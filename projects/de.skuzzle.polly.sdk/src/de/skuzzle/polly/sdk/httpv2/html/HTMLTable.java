@@ -541,7 +541,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         
         if (this.model.isFilterOnly()) {
             // data should only be loaded if a filter is active
-            boolean hasFilter = false;
+            boolean hasFilter = !settings.filterAll.equals(""); //$NON-NLS-1$
             for (final String filter : settings.filter) {
                 hasFilter |= !filter.equals(""); //$NON-NLS-1$
             }
