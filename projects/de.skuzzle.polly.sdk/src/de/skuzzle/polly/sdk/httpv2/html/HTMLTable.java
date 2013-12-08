@@ -17,9 +17,9 @@ import java.util.regex.Pattern;
 
 import de.skuzzle.polly.http.api.AlternativeAnswerException;
 import de.skuzzle.polly.http.api.HttpEvent;
+import de.skuzzle.polly.http.api.HttpEvent.RequestMode;
 import de.skuzzle.polly.http.api.HttpException;
 import de.skuzzle.polly.http.api.HttpSession;
-import de.skuzzle.polly.http.api.HttpEvent.RequestMode;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.http.api.handler.HttpEventHandler;
@@ -434,6 +434,7 @@ public class HTMLTable<T> implements HttpEventHandler {
                 settings.sortCol = this.model.getDefaultSortColumn();
                 settings.filter = new String[this.model.getColumnCount()];
                 settings.order = new SortOrder[this.model.getColumnCount()];
+                settings.filterAll = ""; //$NON-NLS-1$
                 Arrays.fill(settings.filter, ""); //$NON-NLS-1$
                 Arrays.fill(settings.order, SortOrder.UNDEFINED);
                 if (settings.sortCol != -1) {
@@ -495,7 +496,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         } else if (params.get(FILTER) != null && Boolean.parseBoolean(params.get(FILTER))) { 
             for (int i = 0; i < this.model.getColumnCount(); ++i) {
                 if (params.get(Integer.toString(i)) != null) { 
-                    settings.filter[i] = params.get(Integer.toString(i)); 
+                    settings.filter[i] = params.get(Integer.toString(i));
                 } else {
                     settings.filter[i] = ""; //$NON-NLS-1$
                 }
@@ -589,17 +590,23 @@ public class HTMLTable<T> implements HttpEventHandler {
         
         // preprocess filters: parse each filter string
         final Object[] filters = new Object[s.filter.length];
+        final boolean[] negate = new boolean[s.filter.length];
         for (int i = 0; i < filters.length; ++i) {
             if (this.model.isFilterable(i) && !s.filter[i].equals("")) { //$NON-NLS-1$
-                filters[i] = this.filter.getAcceptor(i).parseFilter(s.filter[i]);
+                negate[i] = s.filter[i].startsWith("!"); //$NON-NLS-1$
+                String f = s.filter[i];
+                if (negate[i]) {
+                    f = f.substring(1); // strip ! off the beginning
+                }
+                filters[i] = this.filter.getAcceptor(i).parseFilter(f);
             }
         }
         
         Pattern FILTER_ALL;
-        final String filterAllString = s.filterAll == null 
-                ? ".*"  //$NON-NLS-1$
-                : ".*" + s.filterAll + ".*"; //$NON-NLS-1$ //$NON-NLS-2$
-        final boolean doFilterAll = s.filterAll != null && !s.filterAll.equals(""); //$NON-NLS-1$
+        final boolean negateFilterAll = s.filterAll.startsWith("!"); //$NON-NLS-1$
+        final String f = negateFilterAll ? s.filterAll.substring(1) : s.filterAll;
+        final String filterAllString = ".*" + f + ".*"; //$NON-NLS-1$ //$NON-NLS-2$
+        final boolean doFilterAll = !s.filterAll.equals(""); //$NON-NLS-1$
         
         try {
             FILTER_ALL = Pattern.compile(filterAllString, Pattern.CASE_INSENSITIVE);
@@ -616,7 +623,11 @@ public class HTMLTable<T> implements HttpEventHandler {
                 for (int i = 0; i < colCount; ++i) {
                     if (model.isFilterable(i)) {
                         final Object cellContent = this.model.getCellValue(i, element);
-                        acceptedByAll |=  FILTER_ALL.matcher(cellContent.toString()).find();
+                        boolean all = FILTER_ALL.matcher(cellContent.toString()).find();
+                        if (negateFilterAll) {
+                            all = !all;
+                        }
+                        acceptedByAll |=  all;
                         if (acceptedByAll) {
                             break;
                         }
@@ -642,6 +653,7 @@ public class HTMLTable<T> implements HttpEventHandler {
                         acceptCol = doFilterAll 
                                 ? acceptedByAll && acceptedByCol
                                 : acceptedByCol;
+                        acceptCol = negate[i] ? !acceptCol : acceptCol;
                     } else {
                         acceptCol = doFilterAll ? acceptedByAll : true;
                     }

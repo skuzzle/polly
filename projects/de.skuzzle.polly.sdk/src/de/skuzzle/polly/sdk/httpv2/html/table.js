@@ -19,30 +19,6 @@ function reloadAll(url, id) {
 	var getUrl = makeUrl(url, {'updateAll' : 'yes'});
 	loadTable(getUrl, id);
 }
-function filterTableRequest(event) {
-	if (event.keyCode != 13 && event.keyCode != 27) {
-		return;
-	}
-	var tId = $(event.target).attr("tableId");
-	var filters = $(".filter_input");
-	var s = "";
-	$.each(filters, function(idx) {
-		s = s + idx + ";" + $(filters[i]).val();
-	});
-	alert(s);
-	/*var filterCol = $(event.target).attr("col");
-	var filterVal = encodeURI($(event.target).val());
-	if (event.keyCode == 27) {
-		filterVal = "";
-	}
-	var baseUrl = $(event.target).attr("filterUrl");
-	var parameters = {
-			'filterVal': filterVal,
-			'filterCol': filterCol
-	};
-	var getUrl = makeUrl(baseUrl, parameters);*/
-	loadTable(getUrl, tId);
-}
 function setPageRequest(url, id, page) {
 	var getUrl = makeUrl(url, {'page': page})
 	loadTable(getUrl, id);
@@ -104,7 +80,6 @@ function tableEvents() {
 				}
 			});
 			var getUrl = makeUrl(baseUrl, params);
-			alert(getUrl);
 			loadTable(getUrl, tId);
 		}
 	});
