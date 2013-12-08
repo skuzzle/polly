@@ -83,6 +83,12 @@
 </tr>
 
 
+<tr baseUrl="$baseUrl">
+    <td col="filter_all" colspan="$model.getColumnCount()">
+        <input style="width: 100%" type="text" class="textbox filter_input" placeholder="$MSG.tableFilterFull" value="$!settings.getFilterAll()"/>
+    </td>
+</tr>
+
 
 ## Filter Row
 <tr baseUrl="$baseUrl">
@@ -92,7 +98,7 @@
             #set($editor = $editors.get($model.getColumnClass($col)))
             $editor.renderEditorCell($settings.filter[$col], true)
         #else
-            <span style="color: #cccccc">$MSG.get('tableNoFilter')</span>
+            <span style="color: #cccccc">$MSG.tableNoFilter</span>
         #end 
     </td>
     #end
@@ -105,7 +111,7 @@
 
 #if ($noFilter)
     <tr>
-        <td colspan="$model.getColumnCount()"><b>$MSG.get('tableSelectCriteria')</b></a></td>
+        <td colspan="$model.getColumnCount()"><b>$MSG.tableSelectCriteria</b></a></td>
     </tr>
 #else
 

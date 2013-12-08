@@ -252,6 +252,8 @@ public class HTMLTable<T> implements HttpEventHandler {
     private final static String SET_PAGE_SIZE = "pageSize"; //$NON-NLS-1$
     private final static String FILTER_VAL = "filterVal"; //$NON-NLS-1$
     private final static String FILTER_COL = "filterCol"; //$NON-NLS-1$
+    private final static String FILTER = "filter"; //$NON-NLS-1$
+    private final static String FILTER_ALL = "filter_all"; //$NON-NLS-1$
     private final static String SET_VALUE = "setValue"; //$NON-NLS-1$
     private final static String COLUMN = "col"; //$NON-NLS-1$
     private final static String ROW = "row"; //$NON-NLS-1$
@@ -271,6 +273,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         private int sortCol;
         private SortOrder[] order;
         private String[] filter;
+        private String filterAll;
         private int pageCount;
         private int pageSize = DEFAULT_PAGE_SIZE;
         private int page;
@@ -298,6 +301,9 @@ public class HTMLTable<T> implements HttpEventHandler {
         }
         public String[] getFilter() {
             return this.filter;
+        }
+        public String getFilterAll() {
+            return this.filterAll;
         }
         @Override
         public String toString() {
@@ -486,6 +492,24 @@ public class HTMLTable<T> implements HttpEventHandler {
             this.updateViewPort(settings, data);
             this.fireDataProcessed(data.view, e);
             
+        } else if (params.get(FILTER) != null && Boolean.parseBoolean(params.get(FILTER))) { 
+            for (int i = 0; i < this.model.getColumnCount(); ++i) {
+                if (params.get(Integer.toString(i)) != null) { 
+                    settings.filter[i] = params.get(Integer.toString(i)); 
+                } else {
+                    settings.filter[i] = ""; //$NON-NLS-1$
+                }
+            }
+            final String all = params.get(FILTER_ALL) == null 
+                    ? ""  //$NON-NLS-1$
+                    : params.get(FILTER_ALL); 
+            settings.filterAll = all;
+            
+            this.updateFilter(settings, data);
+            this.updateSorting(settings, data);
+            this.updateViewPort(settings, data);
+            this.fireDataProcessed(data.view, e);
+            
         } else if (params.get(SET_PAGE) != null) {
             final int page = Integer.parseInt(params.get(SET_PAGE));
             settings.page = MathUtil.limit(page, 0, Math.max(settings.pageCount - 1, 0));
@@ -562,6 +586,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         // filter full data
         final int colCount = this.model.getColumnCount();
         data.filtered = new ArrayList<>(data.allData.size());
+        
         // preprocess filters: parse each filter string
         final Object[] filters = new Object[s.filter.length];
         for (int i = 0; i < filters.length; ++i) {
@@ -570,29 +595,65 @@ public class HTMLTable<T> implements HttpEventHandler {
             }
         }
         
+        Pattern FILTER_ALL;
+        final String filterAllString = s.filterAll == null 
+                ? ".*"  //$NON-NLS-1$
+                : ".*" + s.filterAll + ".*"; //$NON-NLS-1$ //$NON-NLS-2$
+        final boolean doFilterAll = s.filterAll != null && !s.filterAll.equals(""); //$NON-NLS-1$
+        
+        try {
+            FILTER_ALL = Pattern.compile(filterAllString, Pattern.CASE_INSENSITIVE);
+        } catch (Exception e) {
+            FILTER_ALL = Pattern.compile(".*", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
+        }
         int originalIdx = -1;
         
-        outer: 
         for (final T element : data.allData) {
             ++originalIdx; // index of current element in the original data
             
-            for (int i = 0; i < colCount; ++i) {
-                final Object colFilter = filters[i];
-                if (colFilter == null) {
-                    // skip empty filter or non filterable column
-                    continue;
-                }
-                final Acceptor acceptor = this.filter.getAcceptor(i);
-                if (!acceptor.accept(colFilter, this.model.getCellValue(i, element))) {
-                    // discard this element
-                    continue outer;
+            boolean acceptedByAll = false;
+            if (doFilterAll) {
+                for (int i = 0; i < colCount; ++i) {
+                    if (model.isFilterable(i)) {
+                        final Object cellContent = this.model.getCellValue(i, element);
+                        acceptedByAll |=  FILTER_ALL.matcher(cellContent.toString()).find();
+                        if (acceptedByAll) {
+                            break;
+                        }
+                    }
                 }
             }
             
+            boolean acceptRow = true;
+            for (int i = 0; i < colCount; ++i) {
+                boolean acceptCol = true;
+                if (!this.model.isFilterable(i)) {
+                    // column is not filterable
+                    acceptCol = true;
+                } else {
+                    final Object cellContent = this.model.getCellValue(i, element);
+                    final Object colFilter = filters[i];
+                    final boolean doFilterCol = colFilter != null;
+                    
+                    if (doFilterCol) {
+                        final Acceptor acceptor = this.filter.getAcceptor(i);
+                        final boolean acceptedByCol = acceptor.accept(colFilter, cellContent);
+                        
+                        acceptCol = doFilterAll 
+                                ? acceptedByAll && acceptedByCol
+                                : acceptedByCol;
+                    } else {
+                        acceptCol = doFilterAll ? acceptedByAll : true;
+                    }
+                }
+                acceptRow &= acceptCol;
+            }
             // all filters applied, each accepted the element
             // map index within the filtered- to index in the full collection
-            s.indexMap.put(element, originalIdx); 
-            data.filtered.add(element);
+            if (acceptRow) {
+                s.indexMap.put(element, originalIdx); 
+                data.filtered.add(element);
+            }
         }
     }
     

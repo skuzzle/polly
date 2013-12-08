@@ -24,7 +24,13 @@ function filterTableRequest(event) {
 		return;
 	}
 	var tId = $(event.target).attr("tableId");
-	var filterCol = $(event.target).attr("col");
+	var filters = $(".filter_input");
+	var s = "";
+	$.each(filters, function(idx) {
+		s = s + idx + ";" + $(filters[i]).val();
+	});
+	alert(s);
+	/*var filterCol = $(event.target).attr("col");
 	var filterVal = encodeURI($(event.target).val());
 	if (event.keyCode == 27) {
 		filterVal = "";
@@ -34,7 +40,7 @@ function filterTableRequest(event) {
 			'filterVal': filterVal,
 			'filterCol': filterCol
 	};
-	var getUrl = makeUrl(baseUrl, parameters);
+	var getUrl = makeUrl(baseUrl, parameters);*/
 	loadTable(getUrl, tId);
 }
 function setPageRequest(url, id, page) {
@@ -74,19 +80,31 @@ function tableEvents() {
 		$(this).select();
 	});
 	$(".filter_input[type=text]").keypress(function(event) {
-		var col = $(this).parent("td").attr("col");
 		var tId = $(this).parents("table").attr("id");
 		var baseUrl = $(this).parents("tr").attr("baseUrl");
-		var filterVal = encodeURI($(this).val());
+		
 		if (event.keyCode == 27) { // escape
-			filterVal = "";
+			$(event.target).val("");
 		}
 		if (event.keyCode == 27 || event.keyCode == 13) { // escape or return
-			var parameters = {
-					'filterVal': filterVal,
-					'filterCol': col
+			var filters = $(".filter_input");
+			var s = "";
+			var params = {
+				'filter' : 'true'
 			};
-			var getUrl = makeUrl(baseUrl, parameters);
+			$.each(filters, function(idx) {
+				var element = $(filters[idx]);
+				if (element.attr("type") == "radio") {
+					return;
+				}
+				var val = encodeURI(element.val());
+				var c = $(element).parent("td").attr("col");
+				if (val != "") {
+					params[c] = val;
+				}
+			});
+			var getUrl = makeUrl(baseUrl, params);
+			alert(getUrl);
 			loadTable(getUrl, tId);
 		}
 	});
