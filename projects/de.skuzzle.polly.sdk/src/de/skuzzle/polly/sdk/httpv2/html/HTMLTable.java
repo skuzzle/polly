@@ -491,7 +491,7 @@ public class HTMLTable<T> implements HttpEventHandler {
             this.updateFilter(settings, data);
             this.updateSorting(settings, data);
             this.updateViewPort(settings, data);
-            this.fireDataProcessed(data.view, e);
+            this.fireDataProcessed(data.filtered, e);
             
         } else if (params.get(FILTER) != null && Boolean.parseBoolean(params.get(FILTER))) { 
             for (int i = 0; i < this.model.getColumnCount(); ++i) {
@@ -509,7 +509,7 @@ public class HTMLTable<T> implements HttpEventHandler {
             this.updateFilter(settings, data);
             this.updateSorting(settings, data);
             this.updateViewPort(settings, data);
-            this.fireDataProcessed(data.view, e);
+            this.fireDataProcessed(data.filtered, e);
             
         } else if (params.get(SET_PAGE) != null) {
             final int page = Integer.parseInt(params.get(SET_PAGE));
