@@ -10,7 +10,6 @@ function makeUrl(baseUrl, parameters){
 		qryPart += encodeURIComponent(key) + "=" + encodeURIComponent(value);
 		append ="&";
 	});
-	alert(qryPart);
 	return baseUrl + qryPart;
 }
 function sortTableRequest(url, id, col) {
