@@ -93,6 +93,9 @@ would like to thank the authors.
   JSON format.
   URL: http://code.google.com/p/google-gson/
   
+* GitHub Mylyn Connector to read latest commits from our own repository
+  URL: https://github.com/eclipse/egit-github
+  
 * By default, polly uses the lightweight SQL database HSQLDB 
   (http://hsqldb.org/) in conjunction with the eclipse link JPA 
   implementation (http://www.eclipse.org/eclipselink/).
