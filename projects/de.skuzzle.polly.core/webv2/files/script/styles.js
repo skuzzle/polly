@@ -1,4 +1,7 @@
 $(document).ready(function() {
+	// initially hide the menu
+	$("#menuContent").css({left: "-180px"});
+	
     // Mouseover for links in top bar
     $("#top a").mouseenter(function() {
         $(this).animate({borderBottomColor : '#3333ff'}, 300);
