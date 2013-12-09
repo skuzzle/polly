@@ -194,19 +194,21 @@ public class PollyLoggingManager extends AbstractDisposable {
     
     
     public void storeCache() throws DatabaseException {
+        final List<LogEntry> cpy;
         synchronized (this.cache) {
             if (this.cache.isEmpty()) {
                 return;
             }
-
-            this.persistence.writeAtomic(new Atomic() {
-                @Override
-                public void perform(Write write) {
-                    write.all(cache);
-                }
-            });
+            cpy = new ArrayList<>(this.cache);
             this.cache.clear();
         }
+
+        this.persistence.writeAtomic(new Atomic() {
+            @Override
+            public void perform(Write write) {
+                write.all(cpy);
+            }
+        });
     }
     
     
