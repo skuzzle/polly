@@ -1,1 +1,1 @@
-java -cp ..\dependency\hsqldb.jar org.hsqldb.util.DatabaseManagerSwing
+java -cp ..\projects\lib\hsqldb.jar org.hsqldb.util.DatabaseManagerSwing
