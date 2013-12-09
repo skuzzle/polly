@@ -345,12 +345,14 @@ public class MSG extends Constants {
 
     // FleetScanParser
     public static String fleetScanParserInvalid;
-
+    public static String fleetScanParserAlienScan;
+    
     // QReportParser
     public static String qreportParserResourceExpected;
     public static String qreportParserAttackAtExpected;
     public static String qreportParserInvalidLocation;
     public static String qreportParserFailedToParseAttr;
+    
 
     // MyPlugin
     public static String pluginVenadDesc;
