@@ -30,7 +30,7 @@ public class GitHubController extends PollyController {
     
     private final static String API_RECEIVE_EVENT = "/api/github/receive"; //$NON-NLS-1$
     
-    private final static int MAX_COMMITS = 10;
+    private final static int MAX_COMMITS = 15;
     private final static String GIT_HUB_OWNER = "skuzzle"; //$NON-NLS-1$
     private final static String GIT_HUB_REPO = "polly"; //$NON-NLS-1$
 
