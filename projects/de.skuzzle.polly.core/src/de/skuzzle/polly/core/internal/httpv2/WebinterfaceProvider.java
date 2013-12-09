@@ -81,6 +81,8 @@ public class WebinterfaceProvider extends AbstractProvider {
     @Override
     public void setup() throws SetupException {
         this.newsManager = this.requireNow(NewsManager.class, true);
+        GitHubController.refreshCommits();
+        
         ConfigurationProvider configProvider = this.requireNow(
             ConfigurationProviderImpl.class, true);
     
@@ -189,6 +191,7 @@ public class WebinterfaceProvider extends AbstractProvider {
         this.server.addController(new SessionController(myPolly));
         this.server.addController(new UserController(myPolly));
         this.server.addController(new RoleController(myPolly));
+        this.server.addController(new GitHubController(myPolly));
         UserController.createUserTable(myPolly);
         
         

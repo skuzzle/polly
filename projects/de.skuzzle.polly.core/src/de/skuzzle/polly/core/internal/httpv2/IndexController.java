@@ -181,7 +181,9 @@ public class IndexController extends PollyController {
     })
     public HttpAnswer index() {
         final Map<String, Object> c = this.createContext(CONTENT_INDEX);
-        c.put("allNews", this.newsManager.getAllNews());
+        c.put("allNews", this.newsManager.getAllNews()); //$NON-NLS-1$
+        c.put("commits", GitHubController.getLatestCommits()); //$NON-NLS-1$
+        c.put("lastRefresh", GitHubController.getLastRefresh()); //$NON-NLS-1$
         return this.makeAnswer(c);
     }
     
