@@ -22,5 +22,10 @@
 	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/mail.jar"/>
 	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/mysql-connector-java-5.1.17-bin.jar"/>
 	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/velocity-1.7.jar"/>
+	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/org.eclipse.egit.github.core-3.3.0-SNAPSHOT.jar" sourcepath="/de.skuzzle.polly.lib/org.eclipse.egit.github.core-3.3.0-SNAPSHOT-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/de.skuzzle.polly.lib/org.eclipse.egit.github.core-3.3.0-SNAPSHOT-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
