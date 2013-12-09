@@ -5,7 +5,7 @@
         <div class="content">
             <ol style="margin-left: 20px;">
             #foreach ($ci in $commits)
-            <li><a href="$ci.getCommit().getUrl()">$ci.getCommit().getMessage()</a> </li>
+            <li>$ci.getCommit().getMessage()</li>
             #end
             </ol>
             <p style="margin-top:5px;">Liste zuletzt aktualisiert: $myPolly.formatting().formatDate($lastRefresh)</p>

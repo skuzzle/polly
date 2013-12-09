@@ -105,8 +105,8 @@ public class GitHubController extends PollyController {
     
     @Post(API_RECEIVE_EVENT)
     public HttpAnswer receiveEvent() {
-        refreshCommits();
         logger.trace("GitHub API Post Request"); //$NON-NLS-1$
+        refreshCommits();
         return HttpAnswers.newStringAnswer("ok"); //$NON-NLS-1$
     }
 }
