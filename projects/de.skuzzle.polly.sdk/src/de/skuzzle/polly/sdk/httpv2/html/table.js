@@ -1,15 +1,17 @@
 function makeUrl(baseUrl, parameters){
 	var result = baseUrl;
+	var qryPart = "";
 	var append = "&";
 	if (baseUrl.search(/\?/) == -1) {
 		append = "?";
 	}
 	$.each(parameters, function(key, value) {
-		result += append;
-		result += key + "=" + value;
+		qryPart += append;
+		qryPart += encodeURIComponent(key) + "=" + encodeURIComponent(value);
 		append ="&";
 	});
-	return result;
+	alert(qryPart);
+	return baseUrl + qryPart;
 }
 function sortTableRequest(url, id, col) {
 	var getUrl = makeUrl(url, {sort: col});
@@ -73,7 +75,7 @@ function tableEvents() {
 				if (element.attr("type") == "radio") {
 					return;
 				}
-				var val = encodeURI(element.val());
+				var val = element.val();
 				var c = $(element).parent("td").attr("col");
 				if (val != "") {
 					params[c] = val;
@@ -87,7 +89,7 @@ function tableEvents() {
 		var col = $(this).parent("td").attr("col");
 		var tId = $(this).parents("table").attr("id");
 		var baseUrl = $(this).parents("tr").attr("baseUrl");
-		var filterVal = encodeURI($(this).val());
+		var filterVal = $(this).val();
 		var parameters = {
 				'filterVal': filterVal,
 				'filterCol': col
@@ -114,7 +116,7 @@ function tableEvents() {
 		var row = $this.parents("tr").attr("row");
 		var baseUrl = $this.parents("tr").attr("baseUrl");
 		var getUrl = makeUrl(baseUrl, {
-			'setValue': encodeURI(val),
+			'setValue': val,
 			'col': col,
 			'row': row
 		});
