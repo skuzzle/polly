@@ -30,6 +30,11 @@ public class MSG extends Constants {
     public static String addUserExists;
     public static String addUserInvalid;
     
+    // AmazonCommand
+    public static String amazonHelp;
+    public static String amazoneSig0Desc;
+    public static String amazonSig0Term;
+    
     // Anyfication Command
     public static String anyficationHelp;
     public static String anyficationSig0Desc;

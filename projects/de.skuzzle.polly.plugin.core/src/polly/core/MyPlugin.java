@@ -2,6 +2,7 @@ package polly.core;
 
 
 import commands.AddUserCommand;
+import commands.AmazonCommand;
 import commands.CalendarCommand;
 import commands.ClumBombCommand;
 import commands.DefineCommand;
@@ -194,6 +195,7 @@ public class MyPlugin extends PollyPlugin {
 		this.addCommand(new WikiCommand(myPolly));
 		this.addCommand(new DefineCommand(myPolly));
 		this.addCommand(new LmgtfyCommand(myPolly));
+		this.addCommand(new AmazonCommand(myPolly));
 		this.addCommand(new DictCommand(myPolly));
 		this.addCommand(new GooglePicsCommand(myPolly));
 		this.addCommand(new IsDownCommand(myPolly));
