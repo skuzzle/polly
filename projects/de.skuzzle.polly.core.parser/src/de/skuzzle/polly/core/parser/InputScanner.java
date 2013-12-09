@@ -584,16 +584,33 @@ public class InputScanner extends AbstractTokenStream {
         int tokenStart = this.getStreamIndex();
         StringBuilder lexem = new StringBuilder();
 
+        int state = 0;
         while (!this.eos()) {
             int next = this.readChar();
-        
-            if (InputScanner.isIdentifierPart(next) || next == '-') {
-                lexem.appendCodePoint(next);
-            } else {
-                this.pushBack(next);
-                return new Token(TokenType.CHANNEL, 
-                		this.spanFrom(tokenStart), "#" + lexem.toString()); //$NON-NLS-1$
+            
+            switch (state) {
+            case 0:
+                
+                if (InputScanner.isIdentifierPart(next) || next == '-') {
+                    this.pushBack(next);
+                    state = 1;
+                } else {
+                    return this.parseException(Problems.format(Problems.INVALID_CHANNEL, lexem), 
+                            tokenStart);
+                }
+                
+            case 1:
+                
+                if (InputScanner.isIdentifierPart(next) || next == '-') {
+                    lexem.appendCodePoint(next);
+                } else {
+                    this.pushBack(next);
+                    return new Token(TokenType.CHANNEL, 
+                            this.spanFrom(tokenStart), "#" + lexem.toString()); //$NON-NLS-1$
+                }
+                
             }
+        
         }
         
         return this.parseException(Problems.format(Problems.INVALID_CHANNEL, lexem), 
