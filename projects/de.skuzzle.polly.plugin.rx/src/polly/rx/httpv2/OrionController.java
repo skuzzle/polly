@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import polly.rx.MSG;
-import polly.rx.core.orion.Quadrant;
 import polly.rx.core.orion.QuadrantManager;
-import polly.rx.core.orion.Wormhole;
-import polly.rx.entities.QuadSector;
+import polly.rx.core.orion.model.Quadrant;
+import polly.rx.core.orion.model.Wormhole;
+import polly.rx.entities.DBSector;
 import de.skuzzle.polly.http.annotations.Get;
 import de.skuzzle.polly.http.annotations.OnRegister;
 import de.skuzzle.polly.http.annotations.Param;
@@ -102,7 +102,7 @@ public class OrionController extends PollyController {
         
         this.requirePermissions(VIEW_ORION_PREMISSION);
         
-        final QuadSector sector = this.qManager.getSector(quadrant, x, y);
+        final DBSector sector = this.qManager.getSector(quadrant, x, y);
         
         final Map<String, Object> c = this.createContext(CONTENT_SECTOR_INFO);
         if (sector != null) {

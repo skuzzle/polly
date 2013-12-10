@@ -15,15 +15,13 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import polly.rx.entities.QuadSector;
+import polly.rx.core.orion.model.LoadRequired;
+import polly.rx.core.orion.model.Sector;
+import polly.rx.core.orion.model.Wormhole;
 import polly.rx.parsing.RegexUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import de.skuzzle.polly.sdk.PersistenceManagerV2;
-import de.skuzzle.polly.sdk.PersistenceManagerV2.Param;
-import de.skuzzle.polly.sdk.PersistenceManagerV2.Read;
 
 
 public class WLSWormholeProvider implements WormholeProvider {
@@ -122,11 +120,9 @@ public class WLSWormholeProvider implements WormholeProvider {
     
     
     
-    private Wormhole convert(QuadSector source, WLSWormHole hole, Read read) {
-        final QuadSector target = read.findSingle(QuadSector.class, 
-                QuadSector.QUERY_FIND_SECTOR, 
-                new Param(hole.nach_quadrant, hole.nach_x, hole.nach_y));
-        
+    private Wormhole convert(Sector source, WLSWormHole hole, QuadrantProvider quads) {
+        final Sector target = quads.getQuadrant(hole.nach_quadrant).getSector(
+                hole.nach_x, hole.nach_y);
         final Wormhole result = new Wormhole();
         result.setSource(source);
         result.setName(hole.name);
@@ -144,14 +140,14 @@ public class WLSWormholeProvider implements WormholeProvider {
     
     
     
-    private String createCacheKey(QuadSector sector) {
+    private String createCacheKey(Sector sector) {
         return sector.getQuadName() + "_" +  //$NON-NLS-1$
                 sector.getX() + "_" + sector.getY(); //$NON-NLS-1$
     }
     
     
     
-    private List<WLSWormHole> cache(QuadSector sector, WLSQuadrant quad, 
+    private List<WLSWormHole> cache(Sector sector, WLSQuadrant quad, 
             boolean forceUpdate) {
         synchronized (this.holeCache) {
             final String cacheKey = this.createCacheKey(sector);
@@ -182,8 +178,8 @@ public class WLSWormholeProvider implements WormholeProvider {
     
     
     @Override
-    public List<Wormhole> getWormholesFrom(QuadSector sector, 
-            PersistenceManagerV2 persistence) {
+    public List<Wormhole> getWormholesFrom(Sector sector, 
+            QuadrantProvider quads) {
         final WLSQuadrant quad = this.getQuadrantByName(sector.getQuadName());
         if (quad == null) {
             return Collections.emptyList();
@@ -192,11 +188,9 @@ public class WLSWormholeProvider implements WormholeProvider {
         final List<WLSWormHole> wlsHoles = this.cache(sector, quad, false);
         final List<Wormhole> wormholes = new ArrayList<>(wlsHoles.size());
         
-        try (final Read read = persistence.read()) {
-            for (final WLSWormHole hole : wlsHoles) {
-                if (hole.von_x == sector.getX() && hole.von_y == sector.getY()) {
-                    wormholes.add(this.convert(sector, hole, read));
-                }
+        for (final WLSWormHole hole : wlsHoles) {
+            if (hole.von_x == sector.getX() && hole.von_y == sector.getY()) {
+                wormholes.add(this.convert(sector, hole, quads));
             }
         }
         return wormholes;

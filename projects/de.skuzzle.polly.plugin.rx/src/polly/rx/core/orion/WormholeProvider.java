@@ -2,11 +2,12 @@ package polly.rx.core.orion;
 
 import java.util.List;
 
-import de.skuzzle.polly.sdk.PersistenceManagerV2;
-import polly.rx.entities.QuadSector;
+import polly.rx.core.orion.model.Sector;
+import polly.rx.core.orion.model.Wormhole;
+
 
 
 public interface WormholeProvider {
 
-    public List<Wormhole> getWormholesFrom(QuadSector sector, PersistenceManagerV2 persistence);
+    public List<Wormhole> getWormholesFrom(Sector sector, QuadrantProvider quads);
 }

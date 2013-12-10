@@ -18,16 +18,16 @@ import polly.rx.core.FleetDBManager;
 import polly.rx.core.ScoreBoardManager;
 import polly.rx.core.TrainManagerV2;
 import polly.rx.core.orion.QuadrantManager;
+import polly.rx.core.orion.model.Production;
 import polly.rx.entities.AZEntry;
-import polly.rx.entities.AlienSpawn;
+import polly.rx.entities.DBSpawn;
 import polly.rx.entities.BattleDrop;
 import polly.rx.entities.BattleReport;
 import polly.rx.entities.BattleReportShip;
 import polly.rx.entities.FleetScan;
 import polly.rx.entities.FleetScanHistoryEntry;
 import polly.rx.entities.FleetScanShip;
-import polly.rx.entities.Production;
-import polly.rx.entities.QuadSector;
+import polly.rx.entities.DBSector;
 import polly.rx.entities.ScoreBoardEntry;
 import polly.rx.entities.TrainEntityV3;
 import polly.rx.httpv2.BattleReportModel;
@@ -128,8 +128,8 @@ public class MyPlugin extends PollyPlugin {
         
         // orion
         myPolly.persistence().registerEntity(Production.class);
-        myPolly.persistence().registerEntity(QuadSector.class);
-        myPolly.persistence().registerEntity(AlienSpawn.class);
+        myPolly.persistence().registerEntity(DBSector.class);
+        myPolly.persistence().registerEntity(DBSpawn.class);
         
         this.addCommand(new RankCommand(myPolly, this.sbeManager));
         

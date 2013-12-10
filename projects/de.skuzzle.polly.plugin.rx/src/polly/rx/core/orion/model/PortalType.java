@@ -1,4 +1,4 @@
-package polly.rx.core.orion;
+package polly.rx.core.orion.model;
 
 
 public enum PortalType {

@@ -20,21 +20,25 @@ import javax.persistence.TemporalType;
 @Entity
 @NamedQueries({ 
     @NamedQuery(
-        name = QuadSector.QUERY_FIND_SECTOR, 
+        name = DBSector.QUERY_FIND_SECTOR, 
         query = "SELECT qs FROM QuadSector qs WHERE qs.quadName = ?1 AND qs.x = ?2 AND qs.y = ?2"
     ),
     @NamedQuery(
-        name = QuadSector.QUERY_BY_QUADRANT, 
+        name = DBSector.QUERY_BY_QUADRANT, 
         query = "SELECT qs FROM QuadSector qs WHERE qs.quadName = ?1"
     ),
     @NamedQuery(
-        name = QuadSector.QUERY_DISTINCT_QUADS,
+        name = DBSector.QUERY_DISTINCT_QUADS,
         query = "SELECT DISTINCT(qs.quadName) FROM QuadSector qs"
+            ),
+    @NamedQuery(
+        name = DBSector.QUERY_ALL_SECTORS,
+        query = "SELECT qs.quadName FROM QuadSector qs"
     )
-    
 })
-public class QuadSector {
+public class DBSector {
 
+    public final static String QUERY_ALL_SECTORS = "ALL_SECTORS"; //$NON-NLS-1$
     public final static String QUERY_DISTINCT_QUADS = "DISTINCT_QUADS"; //$NON-NLS-1$
     public final static String QUERY_FIND_SECTOR = "FIND_SECTOR"; //$NON-NLS-1$
     public final static String QUERY_BY_QUADRANT = "SECTOR_BY_QUAD"; //$NON-NLS-1$
@@ -65,17 +69,17 @@ public class QuadSector {
     private SectorType type;
 
     @OneToMany
-    private Collection<Production> ressources;
+    private Collection<DBProduction> ressources;
     
     @OneToMany
-    private Collection<AlienSpawn> spawns;
+    private Collection<DBSpawn> spawns;
 
 
     
-    public QuadSector() {}
+    public DBSector() {}
     
     
-    public QuadSector(QuadSector src) {
+    public DBSector(DBSector src) {
         this.quadName = src.quadName;
         this.x = src.x;
         this.y = src.y;
@@ -149,26 +153,26 @@ public class QuadSector {
 
 
 
-    public Collection<Production> getRessources() {
+    public Collection<DBProduction> getRessources() {
         return this.ressources;
     }
 
 
 
-    public void setRessources(Collection<Production> ressources) {
+    public void setRessources(Collection<DBProduction> ressources) {
         this.ressources = ressources;
     }
     
     
     
     
-    public Collection<AlienSpawn> getSpawns() {
+    public Collection<DBSpawn> getSpawns() {
         return this.spawns;
     }
     
     
     
-    public void setSpawns(Collection<AlienSpawn> spawns) {
+    public void setSpawns(Collection<DBSpawn> spawns) {
         this.spawns = spawns;
     }
 

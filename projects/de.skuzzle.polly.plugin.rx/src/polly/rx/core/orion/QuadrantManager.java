@@ -8,7 +8,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import polly.rx.entities.QuadSector;
+import polly.rx.core.orion.model.Portal;
+import polly.rx.core.orion.model.Quadrant;
+import polly.rx.core.orion.model.Sector;
+import polly.rx.core.orion.model.Wormhole;
+import polly.rx.entities.DBSector;
 import de.skuzzle.polly.sdk.PersistenceManagerV2;
 import de.skuzzle.polly.sdk.PersistenceManagerV2.Param;
 import de.skuzzle.polly.sdk.PersistenceManagerV2.Read;
@@ -32,37 +36,37 @@ public class QuadrantManager {
     
     
     
-    public List<Wormhole> getWormholes(QuadSector sector) {
+    public List<Wormhole> getWormholes(DBSector sector) {
         return this.wormholeProvider.getWormholesFrom(sector, this.persistence);
     }
     
     
     
-    public List<Portal> getPortals(QuadSector sector) {
+    public List<Portal> getPortals(DBSector sector) {
         return this.portalProvider.getPortals(sector);
     }
     
     
     
-    public Universe getUniverse() {
+    public PathPlanner getUniverse() {
         final List<Quadrant> allQuads = new ArrayList<>();
         for (final String quadName : this.getQuadrants()) {
             allQuads.add(this.createQuadrant(quadName));
         }
-        return new Universe(allQuads, this);
+        return new PathPlanner(allQuads, this);
     }
     
     
     
     public Quadrant createQuadrant(String name) {
         try (final Read read = this.persistence.read()) {
-            final List<QuadSector> sectors = read.findList(QuadSector.class, 
-                    QuadSector.QUERY_BY_QUADRANT, new Param(name));
+            final List<DBSector> sectors = read.findList(DBSector.class, 
+                    DBSector.QUERY_BY_QUADRANT, new Param(name));
             
-            final Map<String, QuadSector> sectMap = new HashMap<>(sectors.size());
+            final Map<String, Sector> sectMap = new HashMap<>(sectors.size());
             int maxX = 0;
             int maxY = 0;
-            for (final QuadSector qs : sectors) {
+            for (final DBSector qs : sectors) {
                 maxX = Math.max(maxX, qs.getX());
                 maxY = Math.max(maxY, qs.getY());
                 sectMap.put(qs.getX() + "_" + qs.getY(), qs); //$NON-NLS-1$
@@ -75,11 +79,11 @@ public class QuadrantManager {
     
     public Collection<String> getQuadrants() {
         try (final Read read = this.persistence.read()) {
-            final List<QuadSector> sectors = read.findList(QuadSector.class, 
-                    QuadSector.QUERY_DISTINCT_QUADS);
+            final List<DBSector> sectors = read.findList(DBSector.class, 
+                    DBSector.QUERY_DISTINCT_QUADS);
             
             final Set<String> result = new TreeSet<>();
-            for (final QuadSector qs : sectors) {
+            for (final DBSector qs : sectors) {
                 result.add(qs.getQuadName());
             }
             return result;
@@ -88,19 +92,19 @@ public class QuadrantManager {
     
     
     
-    public QuadSector getSector(String quadName, int x, int y) {
-        return this.persistence.atomic().findSingle(QuadSector.class, 
-                QuadSector.QUERY_FIND_SECTOR, new Param(quadName, x, y));
+    public DBSector getSector(String quadName, int x, int y) {
+        return this.persistence.atomic().findSingle(DBSector.class, 
+                DBSector.QUERY_FIND_SECTOR, new Param(quadName, x, y));
     }
     
     
     
-    public void updateSector(QuadSector sector) throws DatabaseException {
+    public void updateSector(DBSector sector) throws DatabaseException {
         try (final Write write = this.persistence.write()) {
             final Read read = write.read();
             
-            final QuadSector existing = read.findSingle(QuadSector.class, 
-                    QuadSector.QUERY_FIND_SECTOR, 
+            final DBSector existing = read.findSingle(DBSector.class, 
+                    DBSector.QUERY_FIND_SECTOR, 
                     new Param(sector.getQuadName(), sector.getX(), sector.getY()));
             
             if (existing == null) {

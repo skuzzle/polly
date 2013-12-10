@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 
 @Entity
-public class AlienSpawn {
+public class DBSpawn {
 
     private final static String GENERATOR = "SPAWN_GEN"; //$NON-NLS-1$
 
@@ -20,7 +20,7 @@ public class AlienSpawn {
 
 
 
-    public AlienSpawn() {
+    public DBSpawn() {
     }
 
 

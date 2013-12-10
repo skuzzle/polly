@@ -1,24 +1,16 @@
-package polly.rx.core.orion;
+package polly.rx.core.orion.model;
 
 import java.util.Date;
-
-import polly.rx.entities.QuadSector;
 
 public class Wormhole {
 
     private String name;
-
     private Date date;
-
     private LoadRequired requiresLoad;
-    
     private int minUnload;
-
     private int maxUnload;
-
-    private QuadSector source;
-    
-    private QuadSector target;
+    private Sector source;
+    private Sector target;
 
 
 
@@ -72,25 +64,25 @@ public class Wormhole {
 
 
 
-    public QuadSector getTarget() {
+    public Sector getTarget() {
         return this.target;
     }
 
 
 
-    public void setTarget(QuadSector target) {
+    public void setTarget(Sector target) {
         this.target = target;
     }
 
     
     
-    public QuadSector getSource() {
+    public Sector getSource() {
         return this.source;
     }
     
     
     
-    public void setSource(QuadSector source) {
+    public void setSource(Sector source) {
         this.source = source;
     }
     
