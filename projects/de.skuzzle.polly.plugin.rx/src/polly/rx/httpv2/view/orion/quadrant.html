@@ -1,13 +1,26 @@
-<table id="quadrant_$quad.getName()" class="quadTable" style="width: auto">
-#foreach ($row in [1..$quad.getMaxY()])
-    <tr row="$row">
-    #foreach ($col in [1..$quad.getMaxX()])
-        <td col="$col" style="padding: 0">
-            #set ($sect = $quad.getSector($col, $row))
-            <img src="/polly/rx/httpv2/view/orion/$sect.getType().getImgName()" 
-                width="10" height="10"
-                quadName="$quad.getName()" row="$row" col="$col" class="sector"/>
-        </td>
+<p><b>$quad.getName()</b></p>
+
+<table id="quadrant_$quad.getName()" class="quad_Table" style="width: auto">
+#foreach ($row in [0..$quad.getMaxY()])
+    <tr>
+    #if ($row == 0)
+        <td></td> 
+        #foreach ($col in [1..$quad.getMaxX()])
+        <td>#if ($col == $hlX) <b>$col</b>#else $col #end</td>
+        #end
+    #else
+        #foreach ($col in [0..$quad.getMaxX()])
+            #if ($col == 0)
+            <td>#if ($row == $hlY) <b>$row</b>#else $row #end</td>
+            #else
+            <td>
+                #set ($sect = $quad.getSector($col, $row))
+                <img src="/polly/rx/httpv2/view/orion/$sect.getType().getImgName()" 
+                    width="10" height="10"
+                    quadName="$quad.getName()" row="$row" col="$col" class="sector"/>
+            </td>
+            #end
+        #end
     #end
     </tr>
 #end

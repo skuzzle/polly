@@ -102,6 +102,23 @@ public class OrionController extends PollyController {
     
     
     
+    @Get(API_GET_QUADRANT)
+    public HttpAnswer quadrant(
+            @Param("quadName") String name, 
+            @Param("hlX") int hlX, 
+            @Param("hlY") int hlY) throws AlternativeAnswerException {
+        this.requirePermissions(VIEW_ORION_PREMISSION);
+        final Quadrant q = this.quadProvider.getQuadrant(name);
+        q.highlight(hlX, hlY);
+        final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
+        c.put("quad", q); //$NON-NLS-1$
+        c.put("hlX", hlX);
+        c.put("hlY", hlY);
+        return HttpAnswers.newTemplateAnswer(CONTENT_QUADRANT, c);
+    }
+    
+    
+    
     @Get(API_GET_SECTOR_INFO)
     public HttpAnswer sectorInfo(
             @Param("quadrant") String quadrant, 
@@ -113,13 +130,14 @@ public class OrionController extends PollyController {
         final Sector sector = this.quadProvider.getQuadrant(quadrant).getSector(x, y);
         
         final Map<String, Object> c = this.createContext(CONTENT_SECTOR_INFO);
+        c.put("sector", sector); //$NON-NLS-1$
         if (sector != null) {
             final List<Wormhole> holes = this.holeProvider.getWormholes(
                     sector, this.quadProvider);
             c.put("holes", holes); //$NON-NLS-1$
         }
         
-        return this.makeAnswer(c);
+        return HttpAnswers.newTemplateAnswer(CONTENT_SECTOR_INFO, c);
     }
 
 }

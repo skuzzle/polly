@@ -3,7 +3,6 @@ package polly.rx.core.orion;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,11 +56,12 @@ public class WLSWormholeProvider implements WormholeProvider {
     }
     
     
-    private WeakReference<List<WLSQuadrant>> quadrants;
+    private final List<WLSQuadrant> quadrants;
     private final Map<String, List<WLSWormHole>> holeCache;
     
     
     public WLSWormholeProvider() {
+        this.quadrants = new ArrayList<>();
         this.holeCache = new HashMap<>();
     }
     
@@ -93,7 +93,7 @@ public class WLSWormholeProvider implements WormholeProvider {
     
     private List<WLSQuadrant> getQuadrants() {
         synchronized (this) {
-            if (this.quadrants == null) {
+            if (this.quadrants.isEmpty()) {
                 final String QUERY = "quadranten/json"; //$NON-NLS-1$
                 final String result = this.performRequest(QUERY);
                 if (result.equals("")) { //$NON-NLS-1$
@@ -101,9 +101,9 @@ public class WLSWormholeProvider implements WormholeProvider {
                 }
                 final Gson gson = new GsonBuilder().create();
                 final WLSQuadrant[] quads = gson.fromJson(result, WLSQuadrant[].class);
-                this.quadrants = new WeakReference<List<WLSQuadrant>>(Arrays.asList(quads));
+                this.quadrants.addAll(Arrays.asList(quads));
             }
-            return this.quadrants.get();
+            return this.quadrants;
         }
     }
     

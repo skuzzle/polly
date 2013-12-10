@@ -1,0 +1,26 @@
+<p><b>$sector.getType()</b></p>
+<p>$sector.getQuadName() $sector.getX(), $sector.getY()</p>
+
+<p><b>$MSG.htmlOrionBoni</b></p>
+
+<p><b>$MSG.htmlOrionResources</b></p>
+#if (!$sector.getRessources().isEmpty())
+<ul>
+    #foreach ($prod in $sector.getRessources())
+    <li>$prod.getRess() : $prod.getRate()</li>
+    #end
+</ul>
+#end
+
+#if (!$holes.isEmpty())
+<p><b>$MSG.htmlOrionWormholes</b></p>
+<ul>
+    #foreach ($wl in $holes)
+    <li>$wl.getName() $wl.requiresLoad() $wl.getMinUnload()-$wl.getMaxUnload() Min 
+        <a href="#" quadName="$wl.getTarget().getQuadName()" 
+            hlX="$wl.getTarget().getX()"
+            hlY="$wl.getTarget().getY()" 
+            class="load_quad_internal">$wl.getTarget().getQuadName() $wl.getTarget().getX(), $wl.getTarget().getY()</a></li>
+    #end
+</ul>
+#end

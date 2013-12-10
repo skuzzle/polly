@@ -1,7 +1,7 @@
 package polly.rx.core.orion.model;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,10 +18,16 @@ public class Quadrant {
     
     public Quadrant(String name, Map<String, Sector> sectors, int maxX, int maxY) {
         this.name = name;
-        this.highlights = Collections.emptySet();
+        this.highlights = new HashSet<>();
         this.sectors = sectors;
         this.maxX = maxX;
         this.maxY = maxY;
+    }
+    
+    
+    
+    public void highlight(int x, int y) {
+        this.highlights.add(this.createKey(x, y));
     }
     
     
@@ -43,6 +49,7 @@ public class Quadrant {
         Sector qs = this.sectors.get(key);
         if (qs == null) {
             qs = new Sector();
+            qs.setQuadName(this.name);
             qs.setX(x);
             qs.setY(y);
             qs.setType(SectorType.NONE);

@@ -78,10 +78,11 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider {
                 sector.setSectorGuardBonus(Integer.parseInt(parts[7]));
                 
                 final List<Production> production = new ArrayList<>();
+                sector.setRessources(production);
                 for (int i = 0; i < 14; ++i) {
                     final RxRessource ress = RxRessource.values()[i];
                     final float rate = Float.parseFloat(parts[i + 8]);
-                    if (rate != 0.f) {
+                    if (rate > 0.f) {
                         production.add(new Production(ress, rate));
                     }
                 }

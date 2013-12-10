@@ -395,7 +395,9 @@ public class MSG extends Constants {
     public static String htmlOrionName;
     public static String htmlpOrionDesc;
     public static String htmlAvailableQuads;
-    
+    public static String htmlOrionResources;
+    public static String htmlOrionWormholes;
+    public static String htmlOrionBoni;
     
 
     // MyPlugin
