@@ -1,4 +1,4 @@
-package polly.rx.entities;
+package polly.rx.core.orion.model;
 
 import java.util.Random;
 
@@ -8,7 +8,7 @@ import polly.rx.MSG;
 public enum SectorType {
     NONE("", 0, 1), //$NON-NLS-1$
     HIGHLIGHT("", 200), //$NON-NLS-1$
-    EMPTY(MSG.secTypeEmpty, 0, 9),
+    EMPTY(MSG.secTypeEmpty, 1, 9),
     BLAUER_STERN(MSG.secTypeBlauerStern, 11),
     BLAUER_RIESE(MSG.secTypeBlauerRiese, 12),
     ROTER_RIESE(MSG.secTypeRoterRiese, 13),
@@ -66,6 +66,12 @@ public enum SectorType {
         this.name = name;
         this.minId = minId;
         this.maxId = maxId;
+    }
+    
+    
+    
+    public int getId() {
+        return this.minId;
     }
     
     

@@ -178,7 +178,7 @@ public class WLSWormholeProvider implements WormholeProvider {
     
     
     @Override
-    public List<Wormhole> getWormholesFrom(Sector sector, 
+    public List<Wormhole> getWormholes(Sector sector, 
             QuadrantProvider quads) {
         final WLSQuadrant quad = this.getQuadrantByName(sector.getQuadName());
         if (quad == null) {

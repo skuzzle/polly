@@ -1,11 +1,12 @@
-<table id="quadrant_$quad.getName()">
+<table id="quadrant_$quad.getName()" class="quadTable" style="width: auto">
 #foreach ($row in [1..$quad.getMaxY()])
     <tr row="$row">
     #foreach ($col in [1..$quad.getMaxX()])
-        <td col="$col">
+        <td col="$col" style="padding: 0">
             #set ($sect = $quad.getSector($col, $row))
-            <img src="/polly/rx/httpv2/view/orion/$sect.getImgName()" 
-                quad="$quadrant.getName()" row="$row" col="$col" class="sector"/>
+            <img src="/polly/rx/httpv2/view/orion/$sect.getType().getImgName()" 
+                width="10" height="10"
+                quadName="$quad.getName()" row="$row" col="$col" class="sector"/>
         </td>
     #end
     </tr>

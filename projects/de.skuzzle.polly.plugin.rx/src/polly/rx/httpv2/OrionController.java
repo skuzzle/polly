@@ -5,16 +5,18 @@ import java.util.List;
 import java.util.Map;
 
 import polly.rx.MSG;
-import polly.rx.core.orion.QuadrantManager;
+import polly.rx.core.orion.QuadrantProvider;
+import polly.rx.core.orion.WormholeProvider;
 import polly.rx.core.orion.model.Quadrant;
+import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.Wormhole;
-import polly.rx.entities.DBSector;
 import de.skuzzle.polly.http.annotations.Get;
 import de.skuzzle.polly.http.annotations.OnRegister;
 import de.skuzzle.polly.http.annotations.Param;
 import de.skuzzle.polly.http.api.AlternativeAnswerException;
 import de.skuzzle.polly.http.api.Controller;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
+import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.httpv2.PollyController;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
@@ -41,18 +43,24 @@ public class OrionController extends PollyController {
     private final static String ORION_DESC_KEY = "httpOrionDesc"; //$NON-NLS-1$
     
     
-    private final QuadrantManager qManager;
+    private final QuadrantProvider quadProvider;
+    private final WormholeProvider holeProvider;
     
-    public OrionController(MyPolly myPolly, QuadrantManager qManager) {
+    
+    
+    public OrionController(MyPolly myPolly, QuadrantProvider quadProvider, 
+            WormholeProvider holeProvider) {
         super(myPolly);
-        this.qManager = qManager;
+        this.quadProvider = quadProvider;
+        this.holeProvider = holeProvider;
     }
     
     
 
     @Override
     protected Controller createInstance() {
-        return new OrionController(this.getMyPolly(), this.qManager);
+        return new OrionController(this.getMyPolly(), 
+                this.quadProvider, this.holeProvider);
     }
     
     
@@ -75,7 +83,7 @@ public class OrionController extends PollyController {
         VIEW_ORION_PREMISSION })
     public HttpAnswer orion() {
         final Map<String, Object> c = this.createContext(CONTENT_ORION);
-        final Collection<String> allQuads = this.qManager.getQuadrants();
+        final Collection<String> allQuads = this.quadProvider.getAllQuadrantNames();
         c.put("allQuads", allQuads); //$NON-NLS-1$
         return this.makeAnswer(c);
     }
@@ -83,13 +91,13 @@ public class OrionController extends PollyController {
     
     
     @Get(API_GET_QUADRANT)
-    public HttpAnswer quadrant(@Param("name") String name) 
+    public HttpAnswer quadrant(@Param("quadName") String name) 
             throws AlternativeAnswerException {
         this.requirePermissions(VIEW_ORION_PREMISSION);
-        final Quadrant q = this.qManager.createQuadrant(name);
-        final Map<String, Object> c = this.createContext(CONTENT_QUADRANT);
+        final Quadrant q = this.quadProvider.getQuadrant(name);
+        final Map<String, Object> c = this.createContext("");
         c.put("quad", q); //$NON-NLS-1$
-        return this.makeAnswer(c);
+        return HttpAnswers.newTemplateAnswer(CONTENT_QUADRANT, c);
     }
     
     
@@ -102,11 +110,12 @@ public class OrionController extends PollyController {
         
         this.requirePermissions(VIEW_ORION_PREMISSION);
         
-        final DBSector sector = this.qManager.getSector(quadrant, x, y);
+        final Sector sector = this.quadProvider.getQuadrant(quadrant).getSector(x, y);
         
         final Map<String, Object> c = this.createContext(CONTENT_SECTOR_INFO);
         if (sector != null) {
-            final List<Wormhole> holes = this.qManager.getWormholes(sector);
+            final List<Wormhole> holes = this.holeProvider.getWormholes(
+                    sector, this.quadProvider);
             c.put("holes", holes); //$NON-NLS-1$
         }
         

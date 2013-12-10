@@ -17,23 +17,25 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import polly.rx.core.orion.model.SectorType;
+
 @Entity
 @NamedQueries({ 
     @NamedQuery(
         name = DBSector.QUERY_FIND_SECTOR, 
-        query = "SELECT qs FROM QuadSector qs WHERE qs.quadName = ?1 AND qs.x = ?2 AND qs.y = ?2"
+        query = "SELECT qs FROM DBSector qs WHERE qs.quadName = ?1 AND qs.x = ?2 AND qs.y = ?2"
     ),
     @NamedQuery(
         name = DBSector.QUERY_BY_QUADRANT, 
-        query = "SELECT qs FROM QuadSector qs WHERE qs.quadName = ?1"
+        query = "SELECT qs FROM DBSector qs WHERE qs.quadName = ?1"
     ),
     @NamedQuery(
         name = DBSector.QUERY_DISTINCT_QUADS,
-        query = "SELECT DISTINCT(qs.quadName) FROM QuadSector qs"
+        query = "SELECT DISTINCT(qs.quadName) FROM DBSector qs"
             ),
     @NamedQuery(
         name = DBSector.QUERY_ALL_SECTORS,
-        query = "SELECT qs.quadName FROM QuadSector qs"
+        query = "SELECT qs.quadName FROM DBSector qs"
     )
 })
 public class DBSector {

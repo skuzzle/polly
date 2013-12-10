@@ -9,5 +9,5 @@ import polly.rx.core.orion.model.Wormhole;
 
 public interface WormholeProvider {
 
-    public List<Wormhole> getWormholesFrom(Sector sector, QuadrantProvider quads);
+    public List<Wormhole> getWormholes(Sector sector, QuadrantProvider quads);
 }

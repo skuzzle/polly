@@ -1,9 +1,9 @@
 <div class="highlight contentBox">
     #CONTENT_HEADER ($MSG.htmlOrionName)
     <div class="content">
-        $MSG.htmlpAvailableQuads
+        $MSG.htmlAvailableQuads
         #foreach ($quad in $allQuads)
-            <a href="" name="$quad" class="load_quad">$quad</a>
+            <a href="#" quadName="$quad" class="load_quad">$quad</a>
         #end
         <div id="quad_info"></div>
         <div>
@@ -14,26 +14,27 @@
 </div>
 
 <script>
-$(document).load(function() {
-	$(".load_quad").click(function() {
-		requestQuad();
+$(document).ready(function() {
+	$(".load_quad").click(function(event) {
+		requestQuad(event);
 	})
 });
 
-function requestQuad() {
-	var quadName = $(this).attr("name");
+function requestQuad(event) {
+	var quadName = $(event.target).attr("quadName");
 	var url = "$PAGE_QUADRANT?quadName=" + quadName;
 	$.get(url, function(data) {
 		$("#quadrant").html(data);
-		$("sector").click(function() {
-			requestSectorInfo();
+		$("sector").click(function(event) {
+			requestSectorInfo(event);
 		})
 	});
 }
 
-function requestSectorInfo() {
-	var ths = $(this);
-	var quadName = encodeURI(ths.attr("quad"));
+function requestSectorInfo(event) {
+	var ths = $(event.target);
+	var quadName = encodeURI(ths.attr("quadName"));
+	alert(quadName);
 	var x = ths.attr("col");
 	var y = ths.attr("row");
 	var url = "$PAGE_SECTORINFO?quadrant="+quadName+"&x="+x+"&y="+y;
@@ -43,14 +44,32 @@ function requestSectorInfo() {
 }
 </script>
 <style>
+.quad_table {
+    padding: 0;
+    width: auto;
+    border-spacing: 0px;
+    table-layout: fixed;
+    border-collapse: collapse;
+    border: none;
+}
+.quadTable td {
+    width: 10px;
+    height: 10px;
+    padding: 0;
+    margin:0;
+}
+.quadTable tr {
+    width: 10px;
+    height: 10px;
+    padding: 0;
+    margin:0;
+}
 #sector_info {
     float:right;
     margin: 0 10px 10px;
-    border: 1px solid black;
 }
 #quadrant {
     margin: 10px;
-    border: 2px solid black;
 }
 </style>
 

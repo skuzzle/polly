@@ -5,8 +5,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import polly.rx.entities.SectorType;
-
 
 public class Quadrant {
     

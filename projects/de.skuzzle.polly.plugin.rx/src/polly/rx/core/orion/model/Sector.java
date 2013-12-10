@@ -3,8 +3,6 @@ package polly.rx.core.orion.model;
 import java.util.Collection;
 import java.util.Date;
 
-import polly.rx.entities.SectorType;
-
 
 public class Sector {
     private String quadName;

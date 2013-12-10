@@ -1,19 +1,15 @@
 package polly.rx.core.orion;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import polly.rx.core.orion.Graph.LazyBuilder;
 import polly.rx.core.orion.Graph.Path;
 import polly.rx.core.orion.model.Quadrant;
 import polly.rx.core.orion.model.Sector;
+import polly.rx.core.orion.model.SectorType;
 import polly.rx.core.orion.model.Wormhole;
-import polly.rx.entities.DBSector;
-import polly.rx.entities.SectorType;
 
 
 public class PathPlanner {
@@ -34,23 +30,27 @@ public class PathPlanner {
         
 
         @Override
-        public void collectIncident(Graph<Sector> source, Sector data) {
-            if (this.done.add(data)) {
+        public void collectIncident(Graph<Sector> graph, Sector source) {
+            if (this.done.add(source)) {
                 // add wormhole edges
-                final List<Wormhole> holes = qManager.getWormholes(data);
+                final Collection<Wormhole> holes = holeProvider.getWormholes(
+                        source, quadProvider);
+                
                 for (final Wormhole hole : holes) {
-                    final Quadrant targetQuad = allQuads.get(hole.getTarget().getQuadName());
-                    addNeighbour(targetQuad, hole.getTarget().getX(), 
-                            hole.getTarget().getY(), costQuadrant, source, data);
+                    final Quadrant targetQuad = quadProvider.getQuadrant(
+                            hole.getTarget());
+                    
+                    this.addNeighbour(targetQuad, hole.getTarget().getX(), 
+                            hole.getTarget().getY(), costQuadrant, graph, source);
                 }
                 
                 // add direct neighbours
-                final int x = data.getX();
-                final int y = data.getY();
-                final Quadrant quad = allQuads.get(data.getQuadName());
+                final int x = source.getX();
+                final int y = source.getY();
+                final Quadrant quad = quadProvider.getQuadrant(source);
                 for (int i = -1; i < 2; ++i) {
                     for (int j = -1; j < 2; ++j) {
-                        addNeighbour(quad, x + i, y + j, costSector, source, data);
+                        this.addNeighbour(quad, x + i, y + j, costSector, graph, source);
                     }
                 }
             }
@@ -59,15 +59,15 @@ public class PathPlanner {
         
         
         private void addNeighbour(Quadrant quad, int x, int y, double costs,
-                Graph<Sector> graph, Sector sourceData) {
+                Graph<Sector> graph, Sector source) {
             if (x < 0 || x > quad.getMaxX() || y < 0 || y > quad.getMaxY()) {
                 return;
             }
             final Sector neighbour = quad.getSector(x, y);
             if (neighbour.getType() != SectorType.NONE) {
-                final Graph<Sector>.Node source = graph.getNode(sourceData);
-                final Graph<Sector>.Node target = graph.getNode(neighbour, neighbour); 
-                source.edgeTo(target, costs);
+                final Graph<Sector>.Node vSource = graph.getNode(source);
+                final Graph<Sector>.Node vTarget = graph.getNode(neighbour, neighbour); 
+                vSource.edgeTo(vTarget, costs);
             }
         }
     }

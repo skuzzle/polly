@@ -77,6 +77,13 @@ public class DatabaseQuadrantProvider implements QuadrantProvider {
     
     
     @Override
+    public Quadrant getQuadrant(Sector sector) {
+        return this.getQuadrant(sector.getQuadName());
+    }
+    
+    
+    
+    @Override
     public Quadrant getQuadrant(String name) {
         try (final Read read = this.persistence.read()) {
             final List<DBSector> sectors = read.findList(DBSector.class, 
