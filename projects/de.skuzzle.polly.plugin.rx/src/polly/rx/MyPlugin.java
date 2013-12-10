@@ -17,6 +17,7 @@ import polly.rx.core.AZEntryManager;
 import polly.rx.core.FleetDBManager;
 import polly.rx.core.ScoreBoardManager;
 import polly.rx.core.TrainManagerV2;
+import polly.rx.core.orion.QuadrantManager;
 import polly.rx.entities.AZEntry;
 import polly.rx.entities.BattleDrop;
 import polly.rx.entities.BattleReport;
@@ -83,6 +84,7 @@ public class MyPlugin extends PollyPlugin {
     private TrainManagerV2 trainManager;
     private ScoreBoardManager sbeManager;
     private AZEntryManager azManager;
+    private QuadrantManager quadrantManager;
     
     
     public MyPlugin(MyPolly myPolly) 
@@ -109,6 +111,7 @@ public class MyPlugin extends PollyPlugin {
         this.fleetDBManager = new FleetDBManager(myPolly.persistence());
         this.sbeManager = new ScoreBoardManager(myPolly.persistence());
         this.azManager = new AZEntryManager(myPolly);
+        this.quadrantManager = new QuadrantManager(myPolly.persistence());
         
         myPolly.persistence().registerEntity(BattleReport.class);
         myPolly.persistence().registerEntity(BattleReportShip.class);

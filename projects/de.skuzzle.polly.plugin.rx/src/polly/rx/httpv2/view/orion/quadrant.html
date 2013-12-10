@@ -4,7 +4,8 @@
     #foreach ($col in [1..$quad.getMaxX()])
         <td col="$col">
             #set ($sect = $quad.getSector($col, $row))
-            <img src="/polly/rx/httpv2/view/orion/$sect.getImgName()" row="$row" col="$col"/>
+            <img src="/polly/rx/httpv2/view/orion/$sect.getImgName()" 
+                row="$row" col="$col"/>
         </td>
     #end
     </tr>

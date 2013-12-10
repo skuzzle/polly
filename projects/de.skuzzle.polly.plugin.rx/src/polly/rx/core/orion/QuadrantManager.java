@@ -59,6 +59,13 @@ public class QuadrantManager {
     
     
     
+    public QuadSector getSector(String quadName, int x, int y) {
+        return this.persistence.atomic().findSingle(QuadSector.class, 
+                QuadSector.QUERY_FIND_SECTOR, new Param(quadName, x, y));
+    }
+    
+    
+    
     public void updateSector(QuadSector sector) throws DatabaseException {
         try (final Write write = this.persistence.write()) {
             final Read read = write.read();
