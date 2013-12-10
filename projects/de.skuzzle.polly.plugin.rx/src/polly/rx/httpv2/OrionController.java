@@ -39,8 +39,8 @@ public class OrionController extends PollyController {
     private final static String CONTENT_ORION = "/polly/rx/httpv2/view/orion/orion.html"; //$NON-NLS-1$
     
     private final static String REVORIX_CATEGORY_KEY = "httpRxCategory"; //$NON-NLS-1$
-    private final static String ORION_NAME_KEY = "httpOrionName"; //$NON-NLS-1$
-    private final static String ORION_DESC_KEY = "httpOrionDesc"; //$NON-NLS-1$
+    private final static String ORION_NAME_KEY = "htmlOrionName"; //$NON-NLS-1$
+    private final static String ORION_DESC_KEY = "htmlOrionDesc"; //$NON-NLS-1$
     
     
     private final QuadrantProvider quadProvider;
@@ -95,7 +95,7 @@ public class OrionController extends PollyController {
             throws AlternativeAnswerException {
         this.requirePermissions(VIEW_ORION_PREMISSION);
         final Quadrant q = this.quadProvider.getQuadrant(name);
-        final Map<String, Object> c = this.createContext("");
+        final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
         c.put("quad", q); //$NON-NLS-1$
         return HttpAnswers.newTemplateAnswer(CONTENT_QUADRANT, c);
     }
