@@ -353,6 +353,45 @@ public class MSG extends Constants {
     public static String qreportParserInvalidLocation;
     public static String qreportParserFailedToParseAttr;
     
+    // Orion related
+    public static String secTypeEmpty;
+    public static String secTypeBlauerStern;
+    public static String secTypeBlauerRiese;
+    public static String secTypeRoterRiese;
+    public static String secTypeWeisserZwerg;
+    public static String secTypeGelberZwerg;
+    public static String secTypeBraunerZwerg;
+    public static String secTypeSchwarzerZwerg;
+    public static String secTypePlanetTypA;
+    public static String secTypePlanetTypB;
+    public static String secTypePlanetTypC;
+    public static String secTypePlanetTypD;
+    public static String secTypePlanetTypE;
+    public static String secTypePlanetTypF;
+    public static String secTypePlanetTypG;
+    public static String secTypePlanetTypH;
+    public static String secTypePlanetTypI;
+    public static String secTypeSchwarzesLoch;
+    public static String secTypeSuperNovaTyp1;
+    public static String secTypeSuperNovaTyp2;
+    public static String secTypeNova;
+    public static String secTypeNeutronengestern;
+    public static String secTypeAsteroid;
+    public static String secTypeAsteroidenFeld;
+    public static String secTypeSternenNebel;
+    public static String secTypePlanetarischerNebel;
+    public static String secTypeHerbigHaroObjekt;
+    public static String secTypeMeteorit;
+    public static String secTypeSchwarzerStern;
+    public static String secTypeDoppelgestirn;
+    public static String secTypeDimensionsFalte;
+    public static String secTypeTruemmerfeld;
+    public static String secTypeMinenkolonie;
+    public static String secTypeFabrikanlage;
+    public static String secTypeKolonie;
+    public static String secTypeAndroidenKolonie;
+    public static String secTypePortal;
+
 
     // MyPlugin
     public static String pluginVenadDesc;
