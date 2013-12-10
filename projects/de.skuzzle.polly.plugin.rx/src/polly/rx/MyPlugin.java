@@ -19,12 +19,15 @@ import polly.rx.core.ScoreBoardManager;
 import polly.rx.core.TrainManagerV2;
 import polly.rx.core.orion.QuadrantManager;
 import polly.rx.entities.AZEntry;
+import polly.rx.entities.AlienSpawn;
 import polly.rx.entities.BattleDrop;
 import polly.rx.entities.BattleReport;
 import polly.rx.entities.BattleReportShip;
 import polly.rx.entities.FleetScan;
 import polly.rx.entities.FleetScanHistoryEntry;
 import polly.rx.entities.FleetScanShip;
+import polly.rx.entities.Production;
+import polly.rx.entities.QuadSector;
 import polly.rx.entities.ScoreBoardEntry;
 import polly.rx.entities.TrainEntityV3;
 import polly.rx.httpv2.BattleReportModel;
@@ -33,6 +36,7 @@ import polly.rx.httpv2.FleetScanShipTableModel;
 import polly.rx.httpv2.FleetScanTableModel;
 import polly.rx.httpv2.FleetScansWithShipModel;
 import polly.rx.httpv2.OpenTrainingsModel;
+import polly.rx.httpv2.OrionController;
 import polly.rx.httpv2.RXController;
 import polly.rx.httpv2.ScoreboardDetailModel;
 import polly.rx.httpv2.ScoreboardTableModel;
@@ -121,12 +125,20 @@ public class MyPlugin extends PollyPlugin {
         myPolly.persistence().registerEntity(FleetScanShip.class);
         myPolly.persistence().registerEntity(ScoreBoardEntry.class);
         myPolly.persistence().registerEntity(AZEntry.class);
+        
+        // orion
+        myPolly.persistence().registerEntity(Production.class);
+        myPolly.persistence().registerEntity(QuadSector.class);
+        myPolly.persistence().registerEntity(AlienSpawn.class);
+        
         this.addCommand(new RankCommand(myPolly, this.sbeManager));
         
         
         myPolly.webInterface().addCategory(new MenuCategory(0, MSG.httpRxCategory));
         myPolly.webInterface().getServer().addController(
                 new RXController(myPolly, fleetDBManager, sbeManager, azManager));
+        myPolly.webInterface().getServer().addController(
+                new OrionController(myPolly, quadrantManager));
         
         final HTMLTableModel<FleetScan> scanModel = new FleetScanTableModel(fleetDBManager);
         final HTMLTable<FleetScan> fleetScanTable = new HTMLTable<FleetScan>("fleetScans", scanModel, myPolly); //$NON-NLS-1$

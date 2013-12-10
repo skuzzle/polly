@@ -1,8 +1,12 @@
 package polly.rx.core.orion;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import polly.rx.entities.QuadSector;
 import de.skuzzle.polly.sdk.PersistenceManagerV2;
@@ -40,6 +44,16 @@ public class QuadrantManager {
     
     
     
+    public Universe getUniverse() {
+        final List<Quadrant> allQuads = new ArrayList<>();
+        for (final String quadName : this.getQuadrants()) {
+            allQuads.add(this.createQuadrant(quadName));
+        }
+        return new Universe(allQuads, this);
+    }
+    
+    
+    
     public Quadrant createQuadrant(String name) {
         try (final Read read = this.persistence.read()) {
             final List<QuadSector> sectors = read.findList(QuadSector.class, 
@@ -54,6 +68,21 @@ public class QuadrantManager {
                 sectMap.put(qs.getX() + "_" + qs.getY(), qs); //$NON-NLS-1$
             }
             return new Quadrant(name, sectMap, maxX, maxY);
+        }
+    }
+    
+    
+    
+    public Collection<String> getQuadrants() {
+        try (final Read read = this.persistence.read()) {
+            final List<QuadSector> sectors = read.findList(QuadSector.class, 
+                    QuadSector.QUERY_DISTINCT_QUADS);
+            
+            final Set<String> result = new TreeSet<>();
+            for (final QuadSector qs : sectors) {
+                result.add(qs.getQuadName());
+            }
+            return result;
         }
     }
     

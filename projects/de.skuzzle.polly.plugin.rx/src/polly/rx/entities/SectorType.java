@@ -7,7 +7,7 @@ import polly.rx.MSG;
 
 public enum SectorType {
     NONE("", 0, 1), //$NON-NLS-1$
-    HIGHLIGHT("", -1), //$NON-NLS-1$
+    HIGHLIGHT("", 200), //$NON-NLS-1$
     EMPTY(MSG.secTypeEmpty, 0, 9),
     BLAUER_STERN(MSG.secTypeBlauerStern, 11),
     BLAUER_RIESE(MSG.secTypeBlauerRiese, 12),

@@ -1,5 +1,6 @@
 package polly.rx.httpv2;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +18,7 @@ import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.httpv2.PollyController;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
+import de.skuzzle.polly.sdk.httpv2.html.HTMLTools;
 
 
 public class OrionController extends PollyController {
@@ -55,6 +57,15 @@ public class OrionController extends PollyController {
     
     
     
+    @Override
+    protected Map<String, Object> createContext(String content) {
+        final Map<String, Object> c = super.createContext(content);
+        HTMLTools.gainFieldAccess(c, MSG.class, "MSG"); //$NON-NLS-1$
+        return c;
+    }
+    
+    
+    
     @Get(value = PAGE_ORION, name = ORION_NAME_KEY)
     @OnRegister({ 
         WebinterfaceManager.ADD_MENU_ENTRY, 
@@ -63,7 +74,10 @@ public class OrionController extends PollyController {
         ORION_DESC_KEY,
         VIEW_ORION_PREMISSION })
     public HttpAnswer orion() {
-        return this.makeAnswer(this.createContext(CONTENT_ORION));
+        final Map<String, Object> c = this.createContext(CONTENT_ORION);
+        final Collection<String> allQuads = this.qManager.getQuadrants();
+        c.put("allQuads", allQuads); //$NON-NLS-1$
+        return this.makeAnswer(c);
     }
     
     

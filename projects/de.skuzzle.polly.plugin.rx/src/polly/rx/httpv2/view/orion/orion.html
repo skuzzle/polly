@@ -1,0 +1,56 @@
+<div class="highlight contentBox">
+    #CONTENT_HEADER ($MSG.htmlOrionName)
+    <div class="content">
+        $MSG.htmlpAvailableQuads
+        #foreach ($quad in $allQuads)
+            <a href="" name="$quad" class="load_quad">$quad</a>
+        #end
+        <div id="quad_info"></div>
+        <div>
+            <div id="sector_info">sector info</div>
+            <div id="quadrant">quadrant</div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).load(function() {
+	$(".load_quad").click(function() {
+		requestQuad();
+	})
+});
+
+function requestQuad() {
+	var quadName = $(this).attr("name");
+	var url = "$PAGE_QUADRANT?quadName=" + quadName;
+	$.get(url, function(data) {
+		$("#quadrant").html(data);
+		$("sector").click(function() {
+			requestSectorInfo();
+		})
+	});
+}
+
+function requestSectorInfo() {
+	var ths = $(this);
+	var quadName = encodeURI(ths.attr("quad"));
+	var x = ths.attr("col");
+	var y = ths.attr("row");
+	var url = "$PAGE_SECTORINFO?quadrant="+quadName+"&x="+x+"&y="+y;
+	$.get(url, function(data) {
+		$("#sector_info").html(data);
+	})
+}
+</script>
+<style>
+#sector_info {
+    float:right;
+    margin: 0 10px 10px;
+    border: 1px solid black;
+}
+#quadrant {
+    margin: 10px;
+    border: 2px solid black;
+}
+</style>
+

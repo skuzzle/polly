@@ -2,9 +2,7 @@ package polly.rx.core.orion;
 
 import java.util.Date;
 
-import javax.persistence.Entity;
 
-@Entity
 public class Portal {
 
     private PortalType type;

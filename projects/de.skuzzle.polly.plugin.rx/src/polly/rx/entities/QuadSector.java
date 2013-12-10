@@ -26,10 +26,16 @@ import javax.persistence.TemporalType;
     @NamedQuery(
         name = QuadSector.QUERY_BY_QUADRANT, 
         query = "SELECT qs FROM QuadSector qs WHERE qs.quadName = ?1"
+    ),
+    @NamedQuery(
+        name = QuadSector.QUERY_DISTINCT_QUADS,
+        query = "SELECT DISTINCT(qs.quadName) FROM QuadSector qs"
     )
+    
 })
 public class QuadSector {
 
+    public final static String QUERY_DISTINCT_QUADS = "DISTINCT_QUADS"; //$NON-NLS-1$
     public final static String QUERY_FIND_SECTOR = "FIND_SECTOR"; //$NON-NLS-1$
     public final static String QUERY_BY_QUADRANT = "SECTOR_BY_QUAD"; //$NON-NLS-1$
 

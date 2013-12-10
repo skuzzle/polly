@@ -5,7 +5,7 @@
         <td col="$col">
             #set ($sect = $quad.getSector($col, $row))
             <img src="/polly/rx/httpv2/view/orion/$sect.getImgName()" 
-                row="$row" col="$col"/>
+                quad="$quadrant.getName()" row="$row" col="$col" class="sector"/>
         </td>
     #end
     </tr>

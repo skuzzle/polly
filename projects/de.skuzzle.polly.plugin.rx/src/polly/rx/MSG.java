@@ -391,7 +391,12 @@ public class MSG extends Constants {
     public static String secTypeKolonie;
     public static String secTypeAndroidenKolonie;
     public static String secTypePortal;
-
+    
+    public static String htmlOrionName;
+    public static String htmlpOrionDesc;
+    public static String htmlAvailableQuads;
+    
+    
 
     // MyPlugin
     public static String pluginVenadDesc;
