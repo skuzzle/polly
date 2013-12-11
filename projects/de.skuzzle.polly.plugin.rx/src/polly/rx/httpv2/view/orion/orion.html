@@ -1,20 +1,15 @@
 <div class="highlight contentBox">
     #CONTENT_HEADER ($MSG.htmlOrionName)
     <div class="content">
-    <table id="orionTable">
-        <tr>
-            <td id="quadList" style="width: 20%">
-            $MSG.htmlAvailableQuads<br/>
+        <div id="quadList">
+            <b>$MSG.htmlAvailableQuads</b><br/>
             #foreach ($quad in $allQuads)
                 <a href="#" quadName="$quad" class="load_quad">$quad</a><br/>
             #end
-            </td>
-            <td>
-                <p id="quadrant"></p>
-                <p id="sector_info"></p>
-            </td>
-        </tr>
-    </table>
+            <br style="clear:both;" />
+        </div>
+        <div id="quadrant"></div>
+        <div id="sector_info"></div>
     </div>
 </div>
 
@@ -51,7 +46,10 @@ function requestQuad(event) {
 		$("#sector_info").html("");
 		$(".sector").click(function(event) {
 			requestSectorInfo(event);
-		})
+		});
+        $(".load_quad_internal_1").click(function(event) {
+            requestQuad(event);
+        });
 	});
 }
 
@@ -97,11 +95,16 @@ function requestSectorInfo(event) {
     padding: 0;
     margin:0;
 }
+#quadList {
+    float:left;
+}
 #sector_info {
-    margin: 0 10px 10px;
+    float: left;
+    margin-left: 30px;
 }
 #quadrant {
-    margin: 10px;
+    float:left;
+    margin-left: 30px;
 }
 </style>
 

@@ -25,3 +25,28 @@
     </tr>
 #end
 </table>
+
+#if (!$holes.isEmpty())
+<table style="margin-top: 10px;">
+    <tr>
+        <th colspan="4">$MSG.htmlOrionWormholes</th>
+    </tr>
+    <tr>
+        <th>$MSG.htmlOrionWLName</th>
+        <th>$MSG.htmlOrionWLLoad</th>
+        <th>$MSG.htmlOrionWLUnload</th>
+        <th>$MSG.htmlOrionWLTarget</th>
+    </tr>
+    #foreach ($wl in $holes)
+    <tr>
+        <td><a href="#" class="sector" quadName="$wl.getSource().getQuadName()" col="$wl.getSource().getX()" row="$wl.getSource().getY()">$wl.getName()</a></td>
+        <td>$wl.requiresLoad()</td>
+        <td>$wl.getMinUnload()-$wl.getMaxUnload() Min</td>
+        <td><a href="#" quadName="$wl.getTarget().getQuadName()" 
+            hlX="$wl.getTarget().getX()"
+            hlY="$wl.getTarget().getY()" 
+            class="load_quad_internal_1">$wl.getTarget().getQuadName() $wl.getTarget().getX(), $wl.getTarget().getY()</a></td>
+    </tr>
+    #end    
+</table>
+#end

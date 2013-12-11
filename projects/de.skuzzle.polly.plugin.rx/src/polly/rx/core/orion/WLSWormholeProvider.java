@@ -15,6 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import polly.rx.core.orion.model.LoadRequired;
+import polly.rx.core.orion.model.Quadrant;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.Wormhole;
 import polly.rx.parsing.RegexUtils;
@@ -58,10 +59,12 @@ public class WLSWormholeProvider implements WormholeProvider {
     
     private final List<WLSQuadrant> quadrants;
     private final Map<String, List<WLSWormHole>> holeCache;
+    private final Map<String, List<WLSWormHole>> quadHoleCache;
     
     
     public WLSWormholeProvider() {
         this.quadrants = new ArrayList<>();
+        this.quadHoleCache = new HashMap<>();
         this.holeCache = new HashMap<>();
     }
     
@@ -147,13 +150,13 @@ public class WLSWormholeProvider implements WormholeProvider {
     
     
     
-    private List<WLSWormHole> cache(Sector sector, WLSQuadrant quad, 
+    private List<WLSWormHole> wormholesBySector(Sector sector, WLSQuadrant quad, 
             boolean forceUpdate) {
         synchronized (this.holeCache) {
             final String cacheKey = this.createCacheKey(sector);
             List<WLSWormHole> cached = this.holeCache.get(cacheKey);
             if (cached == null || forceUpdate) {
-                cached = this.findWormholesFrom(quad, sector.getX(), sector.getY());
+                cached = this.findWormholesFrom(quad);
                 this.holeCache.put(cacheKey, cached);
             }
             return cached;
@@ -162,7 +165,21 @@ public class WLSWormholeProvider implements WormholeProvider {
     
     
     
-    private List<WLSWormHole> findWormholesFrom(WLSQuadrant quad, int x, int y) {
+    private List<WLSWormHole> wormholesByQuadrant(WLSQuadrant wlsQuad, 
+            boolean forceUpdate) {
+        synchronized (this.quadHoleCache) {
+            List<WLSWormHole> cached = this.quadHoleCache.get(wlsQuad.name);
+            if (cached == null || forceUpdate) {
+                cached = this.findWormholesFrom(wlsQuad);
+                this.quadHoleCache.put(wlsQuad.name, cached);
+            }
+            return cached;
+        }
+    }
+    
+    
+    
+    private List<WLSWormHole> findWormholesFrom(WLSQuadrant quad) {
         final String direction = "v"; //$NON-NLS-1$
         final String QUERY = String.format("%s/%s/%s/json", direction,  //$NON-NLS-1$
                 quad.id, quad.url);
@@ -178,6 +195,25 @@ public class WLSWormholeProvider implements WormholeProvider {
     
     
     @Override
+    public List<Wormhole> getWormholes(Quadrant quadrant, QuadrantProvider quads) {
+        final WLSQuadrant quad = this.getQuadrantByName(quadrant.getName());
+        if (quad == null) {
+            return Collections.emptyList();
+        }
+
+        final List<WLSWormHole> wlsHoles = this.wormholesByQuadrant(quad, false);
+        final List<Wormhole> wormholes = new ArrayList<>(wlsHoles.size());
+        
+        for (final WLSWormHole hole : wlsHoles) {
+            final Sector source = quadrant.getSector(hole.von_x, hole.von_y);
+            wormholes.add(this.convert(source, hole, quads));
+        }
+        return wormholes;
+    }
+    
+    
+    
+    @Override
     public List<Wormhole> getWormholes(Sector sector, 
             QuadrantProvider quads) {
         final WLSQuadrant quad = this.getQuadrantByName(sector.getQuadName());
@@ -185,12 +221,13 @@ public class WLSWormholeProvider implements WormholeProvider {
             return Collections.emptyList();
         }
 
-        final List<WLSWormHole> wlsHoles = this.cache(sector, quad, false);
+        final List<WLSWormHole> wlsHoles = this.wormholesBySector(sector, quad, false);
         final List<Wormhole> wormholes = new ArrayList<>(wlsHoles.size());
         
         for (final WLSWormHole hole : wlsHoles) {
             if (hole.von_x == sector.getX() && hole.von_y == sector.getY()) {
-                wormholes.add(this.convert(sector, hole, quads));
+                final Wormhole converted = this.convert(sector, hole, quads);
+                wormholes.add(converted);
             }
         }
         return wormholes;

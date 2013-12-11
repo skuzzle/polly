@@ -1,5 +1,6 @@
 package polly.rx.core.orion.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -50,6 +51,7 @@ public class Quadrant {
         if (qs == null) {
             qs = new Sector();
             qs.setQuadName(this.name);
+            qs.setRessources(new ArrayList<Production>());
             qs.setX(x);
             qs.setY(y);
             qs.setType(SectorType.NONE);

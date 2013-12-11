@@ -13,7 +13,6 @@ import polly.rx.core.orion.model.Wormhole;
 import de.skuzzle.polly.http.annotations.Get;
 import de.skuzzle.polly.http.annotations.OnRegister;
 import de.skuzzle.polly.http.annotations.Param;
-import de.skuzzle.polly.http.api.AlternativeAnswerException;
 import de.skuzzle.polly.http.api.Controller;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
@@ -90,13 +89,25 @@ public class OrionController extends PollyController {
     
     
     
-    @Get(API_GET_QUADRANT)
-    public HttpAnswer quadrant(@Param("quadName") String name) 
-            throws AlternativeAnswerException {
-        this.requirePermissions(VIEW_ORION_PREMISSION);
-        final Quadrant q = this.quadProvider.getQuadrant(name);
-        final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
+    private void fillQuadrantContext(String quadName, Map<String, Object> c) {
+        final Quadrant q = this.quadProvider.getQuadrant(quadName);
+        final List<Wormhole> holes = this.holeProvider.getWormholes(q, this.quadProvider);
         c.put("quad", q); //$NON-NLS-1$
+        c.put("holes", holes); //$NON-NLS-1$
+    }
+    
+    
+    
+    @Get(API_GET_QUADRANT)
+    public HttpAnswer quadrant(@Param("quadName") String name) {
+        
+        if (!this.getMyPolly().roles().hasPermission(this.getSessionUser(), 
+                VIEW_ORION_PREMISSION)) {
+            return HttpAnswers.newStringAnswer(403, MSG.httpNoPermission);
+        }
+
+        final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
+        this.fillQuadrantContext(name, c);
         return HttpAnswers.newTemplateAnswer(CONTENT_QUADRANT, c);
     }
     
@@ -106,14 +117,17 @@ public class OrionController extends PollyController {
     public HttpAnswer quadrant(
             @Param("quadName") String name, 
             @Param("hlX") int hlX, 
-            @Param("hlY") int hlY) throws AlternativeAnswerException {
-        this.requirePermissions(VIEW_ORION_PREMISSION);
-        final Quadrant q = this.quadProvider.getQuadrant(name);
-        q.highlight(hlX, hlY);
+            @Param("hlY") int hlY) {
+        
+        if (!this.getMyPolly().roles().hasPermission(this.getSessionUser(), 
+                VIEW_ORION_PREMISSION)) {
+            return HttpAnswers.newStringAnswer(403, MSG.httpNoPermission);
+        }
+        
         final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
-        c.put("quad", q); //$NON-NLS-1$
-        c.put("hlX", hlX);
-        c.put("hlY", hlY);
+        this.fillQuadrantContext(name, c);
+        c.put("hlX", hlX); //$NON-NLS-1$
+        c.put("hlY", hlY); //$NON-NLS-1$
         return HttpAnswers.newTemplateAnswer(CONTENT_QUADRANT, c);
     }
     
@@ -123,9 +137,12 @@ public class OrionController extends PollyController {
     public HttpAnswer sectorInfo(
             @Param("quadrant") String quadrant, 
             @Param("x") int x,
-            @Param("y") int y) throws AlternativeAnswerException {
+            @Param("y") int y) {
         
-        this.requirePermissions(VIEW_ORION_PREMISSION);
+        if (!this.getMyPolly().roles().hasPermission(this.getSessionUser(), 
+                VIEW_ORION_PREMISSION)) {
+            return HttpAnswers.newStringAnswer(MSG.httpNoPermission);
+        }
         
         final Sector sector = this.quadProvider.getQuadrant(quadrant).getSector(x, y);
         

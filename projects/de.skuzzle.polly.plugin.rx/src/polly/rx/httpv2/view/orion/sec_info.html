@@ -1,26 +1,70 @@
-<p><b>$sector.getType()</b></p>
-<p>$sector.getQuadName() $sector.getX(), $sector.getY()</p>
+<p><b>$MSG.htmlOrionSectorInfo</b></p>
 
-<p><b>$MSG.htmlOrionBoni</b></p>
+<p>
+$sector.getQuadName() $sector.getX(), $sector.getY()<br/>
+$sector.getType() 
+</p>
 
-<p><b>$MSG.htmlOrionResources</b></p>
+<div>
+    <input type="button" class="button" value="$MSG.htmlOrionToHere" name="toHere"/>
+    <input type="button" class="button" value="$MSG.htmlOrionFromHere" name="fromHere"/>
+</div>
+
+<table style="margin-top: 10px;">
+    <tr>
+        <th colspan="2">$MSG.htmlOrionBoni</th>
+    </tr>
+    <tr>
+        <td><b>$MSG.htmlOrionAttackerBonus</b></td>
+        <td>$sector.getAttackerBonus()%</td>
+    </tr>
+    <tr>
+        <td><b>$MSG.htmlOrionDefenderBonus</b></td>
+        <td>$sector.getDefenderBonus()%</td>
+    </tr>
+    <tr>
+        <td><b>$MSG.htmlOrionGuardBonus</b></td>
+        <td>$sector.getSectorGuardBonus()%</td>
+    </tr>
+</table>
+
 #if (!$sector.getRessources().isEmpty())
-<ul>
+<table style="margin-top: 10px;">
+    <tr>
+        <th colspan="2">$MSG.htmlOrionResources</th>
+    </tr>
     #foreach ($prod in $sector.getRessources())
-    <li>$prod.getRess() : $prod.getRate()</li>
+    <tr>
+        #set($ressId = ${prod.getRess().ordinal()}+1)
+        <td><b><img src="/polly/rx/httpv2/view/r${ressId}.gif"/></b></td>
+        <td>$prod.getRate()</td>
+    </tr>
     #end
-</ul>
+</table>
 #end
 
+
 #if (!$holes.isEmpty())
-<p><b>$MSG.htmlOrionWormholes</b></p>
-<ul>
+<table style="margin-top: 10px;">
+    <tr>
+        <th colspan="4">$MSG.htmlOrionWormholes</th>
+    </tr>
+    <tr>
+        <th>$MSG.htmlOrionWLName</th>
+        <th>$MSG.htmlOrionWLLoad</th>
+        <th>$MSG.htmlOrionWLUnload</th>
+        <th>$MSG.htmlOrionWLTarget</th>
+    </tr>
     #foreach ($wl in $holes)
-    <li>$wl.getName() $wl.requiresLoad() $wl.getMinUnload()-$wl.getMaxUnload() Min 
-        <a href="#" quadName="$wl.getTarget().getQuadName()" 
+    <tr>
+        <td>$wl.getName()</td>
+        <td>$wl.requiresLoad()</td>
+        <td>$wl.getMinUnload()-$wl.getMaxUnload() Min</td>
+        <td><a href="#" quadName="$wl.getTarget().getQuadName()" 
             hlX="$wl.getTarget().getX()"
             hlY="$wl.getTarget().getY()" 
-            class="load_quad_internal">$wl.getTarget().getQuadName() $wl.getTarget().getX(), $wl.getTarget().getY()</a></li>
-    #end
-</ul>
+            class="load_quad_internal">$wl.getTarget().getQuadName() $wl.getTarget().getX(), $wl.getTarget().getY()</a></td>
+    </tr>
+    #end    
+</table>
 #end

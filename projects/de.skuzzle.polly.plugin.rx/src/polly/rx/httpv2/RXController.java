@@ -824,6 +824,13 @@ public class RXController extends PollyController {
     
     @Get(API_REPORT_STATISTICS)
     public HttpAnswer battleReportStatistics() {
+        
+        if (!this.getMyPolly().roles().hasPermission(this.getSessionUser(), 
+                FleetDBManager.VIEW_BATTLE_REPORT_PERMISSION)) {
+            return new GsonHttpAnswer(200, 
+                    new SuccessResult(false, MSG.httpNoPermission));
+        }
+        
         final User user = this.getSessionUser();
         final String STATISTIC_KEY = STATS_PREFIX + user.getName();
         BattleReportStatistics stats = 
