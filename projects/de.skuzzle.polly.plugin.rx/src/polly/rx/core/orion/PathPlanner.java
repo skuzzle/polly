@@ -112,10 +112,14 @@ public class PathPlanner {
                 final double dx = v1.getX() - v2.getX();
                 final double dy = v1.getY() - v2.getY();
                 return Math.sqrt(dx * dx + dy * dy);
+            } else {
+                final Quadrant target = quadProvider.getQuadrant(v2);
+                // longest possible path in target quadrant
+                return Math.sqrt(target.getMaxX() * target.getMaxX() + target.getMaxY() * target.getMaxY());
             }
-            return Double.MAX_VALUE;
         }
     }
+    
     
     
     private final QuadrantProvider quadProvider;
