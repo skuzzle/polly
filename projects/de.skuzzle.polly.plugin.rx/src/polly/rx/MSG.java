@@ -411,7 +411,7 @@ public class MSG extends Constants {
     public static String htmlOrionRouting;
     public static String htmlOrionRouteStart;
     public static String htmlOrionRouteTarget;
-    public static String htmlOrionRefreshAction;
+    public static String htmlOrionRouteAction;
     public static String htmlOrionRefreshRoute;
     
     // MyPlugin
