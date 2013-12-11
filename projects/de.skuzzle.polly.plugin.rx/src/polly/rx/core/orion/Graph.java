@@ -73,7 +73,7 @@ public class Graph<V, E> {
             } else if (data == null) {
                 throw new NullPointerException("data"); //$NON-NLS-1$
             } else if (source == target) {
-                throw new IllegalArgumentException("reflexive edge");
+                throw new IllegalArgumentException("reflexive edge"); //$NON-NLS-1$
             }
             this.source = source;
             this.target = target;
@@ -104,6 +104,12 @@ public class Graph<V, E> {
     
     public interface LazyBuilder<V, E> {
         public void collectIncident(Graph<V, E> source, V currentNode);
+    }
+    
+    
+    
+    public interface Heuristic<V> {
+        public double calculate(V v1, V v2);
     }
     
     
@@ -165,10 +171,13 @@ public class Graph<V, E> {
     
     
     
-    public Path findShortestPath(V start, V target, LazyBuilder<V, E> builder) {
+    public Path findShortestPath(V start, V target, LazyBuilder<V, E> builder, 
+            Heuristic<V> heuristic) {
         final Node vStart = this.getNode(start, start);
         final Node vTarget = this.getNode(target, start);
-        final KnownNode node = this.shortestPathInternal(vStart, vTarget, builder);
+        
+        final KnownNode node = this.shortestPathInternal(vStart, vTarget, 
+                builder, heuristic);
         if (node == null) {
             return new Path(Collections.<Edge>emptyList(), 0.0);
         }
@@ -185,36 +194,38 @@ public class Graph<V, E> {
     
     private class KnownNode implements Comparable<KnownNode> {
         final Node wrapped;
+        final double heuristics;
         final KnownNode predecessor;
         final Edge takenEdge;
         final double costs;
         
         
         public KnownNode(Node wrapped, double costs, Edge takenEdge, 
-                KnownNode predecessor) {
+                KnownNode predecessor, double heuristics) {
             if (wrapped == null) {
                 throw new NullPointerException("wrapped"); //$NON-NLS-1$
             }
             this.wrapped = wrapped;
             this.costs = costs;
+            this.heuristics = heuristics;
             this.takenEdge = takenEdge;
             this.predecessor = predecessor;
         }
         
         @Override
         public int compareTo(KnownNode o) {
-            return Double.compare(costs, o.costs);
+            return Double.compare(this.costs + heuristics, o.costs + o.heuristics);
         }
     }
     
     
     
     private KnownNode shortestPathInternal(Node start, Node target, 
-            LazyBuilder<V, E> builder) {
+            LazyBuilder<V, E> builder, Heuristic<V> heuristic) {
         final PriorityQueue<KnownNode> q = new PriorityQueue<>(this.nodeMap.size());
         final Set<Node> closed = new HashSet<>();
         
-        q.add(new KnownNode(start, 0.0, null, null));
+        q.add(new KnownNode(start, 0.0, null, null, 0.0));
         while (!q.isEmpty()) {
             final KnownNode v = q.poll();
             
@@ -229,7 +240,8 @@ public class Graph<V, E> {
                     final Node v1 = edge.getTarget();
                     
                     if (!closed.contains(v1)) {
-                        q.add(new KnownNode(v1, v.costs + edge.costs, edge, v));
+                        final double h = heuristic.calculate(v.wrapped.getData(), v1.getData());
+                        q.add(new KnownNode(v1, v.costs + edge.costs, edge, v, h));
                     }
                 }
             }

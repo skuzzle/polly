@@ -224,7 +224,7 @@ public class OrionController extends PollyController {
         final PathPlanner planner = new PathPlanner(this.quadProvider, this.holeProvider);
         
         final Graph<Sector, EdgeData>.Path path = 
-                planner.findShortestPath(start, target, 10, 20);
+                planner.findShortestPath(start, target);
         s.set(ROUTE_KEY, path);
     }
     
