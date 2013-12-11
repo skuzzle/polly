@@ -1,14 +1,40 @@
-#foreach ($edge in $path.getPath()) 
-    #set($source = $edge.getSource().getData())
-    #set($target = $edge.getTarget().getData())
-    #set($data = $edge.getData())
-    
-    #if ($source)
-    <p>VON: $source.getQuadName() $source.getX(), $source.getY() NACH: $target.getQuadName() $target.getX(), $target.getY()
-    
-        #if ($data.isWormhole())
-            Wurmloch: $data.getWormhole().getName()
+<table>
+<tr>
+    <th colspan="2">$MSG.htmlOrionRouteInfo</th>
+</tr>
+<tr>
+    <td><b>$MSG.htmlOrionSectorJumps</b></td>
+    <td>$path.getSectorJumps()</td>
+</tr>
+<tr>
+    <td><b>$MSG.htmlOrionQuadJumps</b></td>
+    <td>$path.getQuadJumps()</td>
+</tr>
+<tr>
+    <td><b>$MSG.htmlOrionWLUnload</b></td>
+    <td>$path.getMinUnload()-$path.getMaxUnload() Min</td>
+</tr>
+#foreach ($group in $path.getGroups())
+<tr>
+    <th colspan="2">$group.getQuadName()</th>
+</tr>
+<tr>
+    <td>
+    #foreach ($edge in $group.getEdges()) 
+        #set($source = $edge.getSource().getData())
+        #set($target = $edge.getTarget().getData())
+        #set($data = $edge.getData())
+        
+        #if ($source)
+        VON: $source.getQuadName() $source.getX(), $source.getY() NACH: $target.getQuadName() $target.getX(), $target.getY()
+        
+            #if ($data.isWormhole())
+                Wurmloch: $data.getWormhole().getName()
+            #end
+        <br/>
         #end
-    </p>
     #end
+    </td>
+</tr>
 #end
+</table>

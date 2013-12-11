@@ -1,7 +1,9 @@
 package polly.rx.core.orion;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import polly.rx.core.orion.Graph.Heuristic;
@@ -115,7 +117,9 @@ public class PathPlanner {
             } else {
                 final Quadrant target = quadProvider.getQuadrant(v2);
                 // longest possible path in target quadrant
-                return Math.sqrt(target.getMaxX() * target.getMaxX() + target.getMaxY() * target.getMaxY());
+                return Math.sqrt(
+                        target.getMaxX() * target.getMaxX() + 
+                        target.getMaxY() * target.getMaxY());
             }
         }
     }
@@ -138,8 +142,98 @@ public class PathPlanner {
     
     
     
-    public Graph<Sector, EdgeData>.Path findShortestPath(Sector start, Sector target) {
+    
+    public final static class Group {
+        final String quadName;
+        final List<Graph<Sector, EdgeData>.Edge> edges;
+        
+        private Group(String quadName) {
+            super();
+            this.edges = new ArrayList<>();
+            this.quadName = quadName;
+        }
+        
+        public List<Graph<Sector, EdgeData>.Edge> getEdges() {
+            return this.edges;
+        }
+        
+        public String getQuadName() {
+            return this.quadName;
+        }
+    }
+    
+    
+    
+    public class UniversePath {
+
+        //private final Graph<Sector, EdgeData>.Path path;
+        private final List<Group> groups;
+        private final int sectorJumps;
+        private final int quadJumps;
+        private final int minUnload;
+        private final int maxUnload;
+        
+        private UniversePath(Graph<Sector, EdgeData>.Path path) {
+            int s = 0;
+            int q = 0;
+            int minUnload = 0;
+            int maxUnload = 0;
+            this.groups = new ArrayList<>();
+            String lastQuad = ""; //$NON-NLS-1$
+            Group currentGroup = null;
+            
+            for (final Graph<Sector, EdgeData>.Edge e : path.getPath()) {
+                final Sector source = e.getSource().getData();
+                
+                if (currentGroup == null || !source.getQuadName().equals(lastQuad)) {
+                    currentGroup = new Group(source.getQuadName());
+                    this.groups.add(currentGroup);
+                }
+                currentGroup.edges.add(e);
+                lastQuad = source.getQuadName();
+                
+                if (e.getData().isWormhole()) {
+                    ++q;
+                    minUnload += e.getData().getWormhole().getMinUnload();
+                    maxUnload += e.getData().getWormhole().getMaxUnload();
+                } else {
+                    ++s;
+                }
+            }
+            this.sectorJumps = s;
+            this.quadJumps = q;
+            this.minUnload = minUnload;
+            this.maxUnload = maxUnload;
+        }
+        
+        public int getMaxUnload() {
+            return this.maxUnload;
+        }
+        
+        public int getMinUnload() {
+            return this.minUnload;
+        }
+        
+        public int getSectorJumps() {
+            return this.sectorJumps;
+        }
+        
+        public int getQuadJumps() {
+            return this.quadJumps;
+        }
+        
+        public List<Group> getGroups() {
+            return this.groups;
+        }
+    }
+    
+    
+    
+    public UniversePath findShortestPath(Sector start, Sector target) {
         final LazyBuilder<Sector, EdgeData> builder = new UniverseBuilder();
-        return this.graph.findShortestPath(start, target, builder, this.heuristic);
+        final Graph<Sector, EdgeData>.Path path = this.graph.findShortestPath(
+                start, target, builder, this.heuristic);
+        final UniversePath result = new UniversePath(path);
+        return result;
     }
 }

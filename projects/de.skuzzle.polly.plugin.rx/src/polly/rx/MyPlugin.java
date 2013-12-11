@@ -18,6 +18,7 @@ import polly.rx.core.FleetDBManager;
 import polly.rx.core.ScoreBoardManager;
 import polly.rx.core.TrainManagerV2;
 import polly.rx.core.orion.EggiCSVQuadrantProvider;
+import polly.rx.core.orion.PathPlanner;
 import polly.rx.core.orion.QuadrantProvider;
 import polly.rx.core.orion.WLSWormholeProvider;
 import polly.rx.core.orion.WormholeProvider;
@@ -141,7 +142,9 @@ public class MyPlugin extends PollyPlugin {
         
         final QuadrantProvider quadProvider = new EggiCSVQuadrantProvider();
         final WormholeProvider holeProvider = new WLSWormholeProvider();
-        final OrionController oc = new OrionController(myPolly, quadProvider, holeProvider);
+        final PathPlanner pathPlanner = new PathPlanner(quadProvider, holeProvider);
+        final OrionController oc = new OrionController(myPolly, quadProvider, 
+                holeProvider, pathPlanner);
         
 
         myPolly.webInterface().getServer().addController(oc);

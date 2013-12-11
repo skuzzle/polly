@@ -183,7 +183,7 @@ public class Graph<V, E> {
         }
         final LinkedList<Edge> path = new LinkedList<>();
         KnownNode c = node;
-        while (c != null) {
+        while (c.predecessor != null) {
             path.addFirst(c.takenEdge);
             c = c.predecessor;
         }
@@ -223,7 +223,7 @@ public class Graph<V, E> {
     private KnownNode shortestPathInternal(Node start, Node target, 
             LazyBuilder<V, E> builder, Heuristic<V> heuristic) {
         final PriorityQueue<KnownNode> q = new PriorityQueue<>(this.nodeMap.size());
-        final Set<Node> closed = new HashSet<>();
+        final Set<Node> closed = new HashSet<>(this.nodeMap.size());
         
         q.add(new KnownNode(start, 0.0, null, null, 0.0));
         while (!q.isEmpty()) {
@@ -240,7 +240,8 @@ public class Graph<V, E> {
                     final Node v1 = edge.getTarget();
                     
                     if (!closed.contains(v1)) {
-                        final double h = heuristic.calculate(v.wrapped.getData(), v1.getData());
+                        final double h = heuristic.calculate(
+                                v.wrapped.getData(), v1.getData());
                         q.add(new KnownNode(v1, v.costs + edge.costs, edge, v, h));
                     }
                 }

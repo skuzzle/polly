@@ -5,9 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import polly.rx.MSG;
-import polly.rx.core.orion.Graph;
 import polly.rx.core.orion.PathPlanner;
-import polly.rx.core.orion.PathPlanner.EdgeData;
+import polly.rx.core.orion.PathPlanner.UniversePath;
 import polly.rx.core.orion.QuadrantProvider;
 import polly.rx.core.orion.WormholeProvider;
 import polly.rx.core.orion.model.Quadrant;
@@ -59,14 +58,16 @@ public class OrionController extends PollyController {
     
     private final QuadrantProvider quadProvider;
     private final WormholeProvider holeProvider;
+    private final PathPlanner pathPlanner;
     
     
     
     public OrionController(MyPolly myPolly, QuadrantProvider quadProvider, 
-            WormholeProvider holeProvider) {
+            WormholeProvider holeProvider, PathPlanner pathPlanner) {
         super(myPolly);
         this.quadProvider = quadProvider;
         this.holeProvider = holeProvider;
+        this.pathPlanner = pathPlanner;
     }
     
     
@@ -74,7 +75,7 @@ public class OrionController extends PollyController {
     @Override
     protected Controller createInstance() {
         return new OrionController(this.getMyPolly(), 
-                this.quadProvider, this.holeProvider);
+                this.quadProvider, this.holeProvider, this.pathPlanner);
     }
     
     
@@ -221,10 +222,8 @@ public class OrionController extends PollyController {
         }
         final Sector start = (Sector) s.getAttached(ROUTE_FROM_KEY);
         final Sector target = (Sector) s.getAttached(ROUTE_TO_KEY);
-        final PathPlanner planner = new PathPlanner(this.quadProvider, this.holeProvider);
         
-        final Graph<Sector, EdgeData>.Path path = 
-                planner.findShortestPath(start, target);
+        final UniversePath path = this.pathPlanner.findShortestPath(start, target);
         s.set(ROUTE_KEY, path);
     }
     

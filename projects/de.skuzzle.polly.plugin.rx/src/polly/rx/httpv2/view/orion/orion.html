@@ -50,7 +50,6 @@ $(document).ready(function() {
 function requesRoute() {
 	var url = "$PAGE_GETROUTE";
 	$.get(url, function(data) {
-		alert(data);
 		$("#route").html(data);
 	});
 }

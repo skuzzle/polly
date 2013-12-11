@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +30,8 @@ public class WLSWormholeProvider implements WormholeProvider {
     private final static Pattern COMMENT = Pattern.compile("<!--.*-->"); //$NON-NLS-1$
     
     
+    
+    @SuppressWarnings("unused")
     private class WLSQuadrant {
         public int id;
         public String name;
@@ -57,15 +57,19 @@ public class WLSWormholeProvider implements WormholeProvider {
     }
     
     
-    private final List<WLSQuadrant> quadrants;
-    private final Map<String, List<WLSWormHole>> holeCache;
+    
+    
+    private final Map<String, WLSQuadrant> quadrants;
     private final Map<String, List<WLSWormHole>> quadHoleCache;
+
     
     
     public WLSWormholeProvider() {
-        this.quadrants = new ArrayList<>();
+        this.quadrants = new HashMap<>();
         this.quadHoleCache = new HashMap<>();
-        this.holeCache = new HashMap<>();
+        
+        this.findQuadrants(this.quadrants);
+        this.findAllWormholes(this.quadHoleCache);
     }
     
     
@@ -94,31 +98,40 @@ public class WLSWormholeProvider implements WormholeProvider {
     
     
     
-    private List<WLSQuadrant> getQuadrants() {
-        synchronized (this) {
-            if (this.quadrants.isEmpty()) {
-                final String QUERY = "quadranten/json"; //$NON-NLS-1$
-                final String result = this.performRequest(QUERY);
-                if (result.equals("")) { //$NON-NLS-1$
-                    return Collections.emptyList();
-                }
-                final Gson gson = new GsonBuilder().create();
-                final WLSQuadrant[] quads = gson.fromJson(result, WLSQuadrant[].class);
-                this.quadrants.addAll(Arrays.asList(quads));
-            }
-            return this.quadrants;
+    private void findQuadrants(Map<String, WLSQuadrant> r) {
+        r.clear();
+        final String QUERY = "quadranten/json"; //$NON-NLS-1$
+        final String result = this.performRequest(QUERY);
+        if (result.equals("")) { //$NON-NLS-1$
+            return;
+        }
+        final Gson gson = new GsonBuilder().create();
+        final WLSQuadrant[] quads = gson.fromJson(result, WLSQuadrant[].class);
+        for (WLSQuadrant quad : quads) {
+            r.put(quad.name, quad);
         }
     }
     
-
     
-    private WLSQuadrant getQuadrantByName(String name) {
-        for (final WLSQuadrant quad : this.getQuadrants()) {
-            if (quad.name.equalsIgnoreCase(name)) {
-                return quad;
-            }
+    
+    private void findAllWormholes(Map<String, List<WLSWormHole>> r) {
+        r.clear();
+        final String QUERY = "v/0/alle/json/"; //$NON-NLS-1$
+        final String result = this.performRequest(QUERY);
+        if (result == "") { //$NON-NLS-1$
+            return;
         }
-        return null;
+        final Gson gson = new GsonBuilder().setDateFormat(API_DATE_FORMAT).create();
+        final WLSWormHole[] holes = gson.fromJson(result, WLSWormHole[].class);
+        
+        for (final WLSWormHole hole : holes) {
+            List<WLSWormHole> list = r.get(hole.von_quadrant);
+            if (list == null) {
+                list = new ArrayList<>();
+                r.put(hole.von_quadrant, list);
+            }
+            list.add(hole);
+        }
     }
     
     
@@ -140,68 +153,12 @@ public class WLSWormholeProvider implements WormholeProvider {
         
         return result;
     }
-    
-    
-    
-    private String createCacheKey(Sector sector) {
-        return sector.getQuadName() + "_" +  //$NON-NLS-1$
-                sector.getX() + "_" + sector.getY(); //$NON-NLS-1$
-    }
-    
-    
-    
-    private List<WLSWormHole> wormholesBySector(Sector sector, WLSQuadrant quad, 
-            boolean forceUpdate) {
-        synchronized (this.holeCache) {
-            final String cacheKey = this.createCacheKey(sector);
-            List<WLSWormHole> cached = this.holeCache.get(cacheKey);
-            if (cached == null || forceUpdate) {
-                cached = this.findWormholesFrom(quad);
-                this.holeCache.put(cacheKey, cached);
-            }
-            return cached;
-        }
-    }
-    
-    
-    
-    private List<WLSWormHole> wormholesByQuadrant(WLSQuadrant wlsQuad, 
-            boolean forceUpdate) {
-        synchronized (this.quadHoleCache) {
-            List<WLSWormHole> cached = this.quadHoleCache.get(wlsQuad.name);
-            if (cached == null || forceUpdate) {
-                cached = this.findWormholesFrom(wlsQuad);
-                this.quadHoleCache.put(wlsQuad.name, cached);
-            }
-            return cached;
-        }
-    }
-    
-    
-    
-    private List<WLSWormHole> findWormholesFrom(WLSQuadrant quad) {
-        final String direction = "v"; //$NON-NLS-1$
-        final String QUERY = String.format("%s/%s/%s/json", direction,  //$NON-NLS-1$
-                quad.id, quad.url);
-        final String result = this.performRequest(QUERY);
-        if (result == "") { //$NON-NLS-1$
-            return Collections.emptyList();
-        }
-        final Gson gson = new GsonBuilder().setDateFormat(API_DATE_FORMAT).create();
-        final WLSWormHole[] holes = gson.fromJson(result, WLSWormHole[].class);
-        return Arrays.asList(holes);
-    }
-    
+
     
     
     @Override
     public List<Wormhole> getWormholes(Quadrant quadrant, QuadrantProvider quads) {
-        final WLSQuadrant quad = this.getQuadrantByName(quadrant.getName());
-        if (quad == null) {
-            return Collections.emptyList();
-        }
-
-        final List<WLSWormHole> wlsHoles = this.wormholesByQuadrant(quad, false);
+        final List<WLSWormHole> wlsHoles = this.quadHoleCache.get(quadrant.getName());
         final List<Wormhole> wormholes = new ArrayList<>(wlsHoles.size());
         
         for (final WLSWormHole hole : wlsHoles) {
@@ -214,20 +171,16 @@ public class WLSWormholeProvider implements WormholeProvider {
     
     
     @Override
-    public List<Wormhole> getWormholes(Sector sector, 
-            QuadrantProvider quads) {
-        final WLSQuadrant quad = this.getQuadrantByName(sector.getQuadName());
-        if (quad == null) {
-            return Collections.emptyList();
-        }
-
-        final List<WLSWormHole> wlsHoles = this.wormholesBySector(sector, quad, false);
+    public List<Wormhole> getWormholes(Sector sector, QuadrantProvider quads) {
+        final String quadName = sector.getQuadName();
+        final Quadrant quadrant = quads.getQuadrant(sector);
+        final List<WLSWormHole> wlsHoles = this.quadHoleCache.get(quadName);
         final List<Wormhole> wormholes = new ArrayList<>(wlsHoles.size());
         
         for (final WLSWormHole hole : wlsHoles) {
             if (hole.von_x == sector.getX() && hole.von_y == sector.getY()) {
-                final Wormhole converted = this.convert(sector, hole, quads);
-                wormholes.add(converted);
+                final Sector source = quadrant.getSector(hole.von_x, hole.von_y);
+                wormholes.add(this.convert(source, hole, quads));
             }
         }
         return wormholes;
