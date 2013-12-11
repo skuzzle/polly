@@ -408,6 +408,11 @@ public class MSG extends Constants {
     public static String htmlOrionWLTarget;
     public static String htmlOrionToHere;
     public static String htmlOrionFromHere;
+    public static String htmlOrionRouting;
+    public static String htmlOrionRouteStart;
+    public static String htmlOrionRouteTarget;
+    public static String htmlOrionRefreshAction;
+    public static String htmlOrionRefreshRoute;
     
     // MyPlugin
     public static String pluginVenadDesc;

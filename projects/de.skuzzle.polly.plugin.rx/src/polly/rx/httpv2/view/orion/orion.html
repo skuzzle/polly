@@ -13,13 +13,77 @@
     </div>
 </div>
 
+<div class="highlight contentBox">
+    #CONTENT_HEADER ($MSG.htmlOrionRouting)
+    
+    <div class="content">
+    <table>
+        <tr>
+            <th>$MSG.htmlOrionRouteStart</th>
+            <th>$MSG.htmlOrionRouteTarget</th>
+            <th>$MSG.htmlOrionRouteAction</th>
+        </tr>
+        <tr>
+            <td id="routeStart">
+            #if ($routeStart)
+                $routeStart.getQuadName() $routeStart.getX(), routeStart.getY()
+            #end
+            </td>
+            <td id="routeTarget">
+            #if ($routeTarget)
+                $routeTarget.getQuadName() $routeTarget.getX(), routeTarget.getY()
+            #end
+            </td>
+            <td><a href="#" id="refreshRoute">$MSG.htmlOrionRefreshRoute</a></td>
+        </tr>
+    </table>
+    
+    <div id="route"></div>
+    </div>
+</div>
+
 <script>
 $(document).ready(function() {
-	$(".load_quad").click(function(event) {
-		requestQuad(event);
-	})
+	$(".load_quad").click(requestQuad);
+	$("#refreshRoute").click(requesRoute);
 });
-
+function requesRoute() {
+	var url = "$PAGE_GETROUTE";
+	$.get(url, function(data) {
+		alert(data);
+		$("#route").html(data);
+	});
+}
+function fromHere(event) {
+    var ths = $(event.target);
+    var quadName = encodeURI(ths.attr("quadName"));
+    var x = ths.attr("col");
+    var y = ths.attr("row");
+    var url = "$PAGE_SETROUTEFROM?quadrant="+quadName+"&x="+x+"&y="+y;
+    $.get(url, function(data) {
+        var result = JSON.parse(data);
+        if (result.success) {
+        	$("#routeStart").html(
+        			result.sector.quadName + " " + 
+        			result.sector.x + ", " + result.sector.y);
+        }
+    });
+}
+function toHere(event) {
+    var ths = $(event.target);
+    var quadName = encodeURI(ths.attr("quadName"));
+    var x = ths.attr("col");
+    var y = ths.attr("row");
+    var url = "$PAGE_SETROUTETO?quadrant="+quadName+"&x="+x+"&y="+y;
+    $.get(url, function(data) {
+    	var result = JSON.parse(data);
+        if (result.success) {
+            $("#routeTarget").html(
+                    result.sector.quadName + " " + 
+                    result.sector.x + ", " + result.sector.y);
+        }
+    });
+}
 function highlightSector(quad, x, y) {
 	if (x == "0" || y == "0") {
 		return;
@@ -47,9 +111,7 @@ function requestQuad(event) {
 		$(".sector").click(function(event) {
 			requestSectorInfo(event);
 		});
-        $(".load_quad_internal_1").click(function(event) {
-            requestQuad(event);
-        });
+        $(".load_quad_internal_1").click(requestQuad);
 	});
 }
 
@@ -62,9 +124,9 @@ function requestSectorInfo(event) {
 	var url = "$PAGE_SECTORINFO?quadrant="+quadName+"&x="+x+"&y="+y;
 	$.get(url, function(data) {
 		$("#sector_info").html(data);
-        $(".load_quad_internal").click(function(event) {
-            requestQuad(event);
-        });
+        $(".load_quad_internal").click(requestQuad);
+        $("input[name=toHere]").click(toHere);
+        $("input[name=fromHere]").click(fromHere);
 	})
 }
 </script>

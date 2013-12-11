@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import polly.rx.MSG;
+import polly.rx.core.orion.Graph;
+import polly.rx.core.orion.PathPlanner;
+import polly.rx.core.orion.PathPlanner.EdgeData;
 import polly.rx.core.orion.QuadrantProvider;
 import polly.rx.core.orion.WormholeProvider;
 import polly.rx.core.orion.model.Quadrant;
@@ -14,10 +17,13 @@ import de.skuzzle.polly.http.annotations.Get;
 import de.skuzzle.polly.http.annotations.OnRegister;
 import de.skuzzle.polly.http.annotations.Param;
 import de.skuzzle.polly.http.api.Controller;
+import de.skuzzle.polly.http.api.HttpSession;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
 import de.skuzzle.polly.sdk.httpv2.PollyController;
+import de.skuzzle.polly.sdk.httpv2.SuccessResult;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLTools;
 
@@ -26,20 +32,29 @@ public class OrionController extends PollyController {
     
     public final static String VIEW_ORION_PREMISSION = "polly.permission.VIEW_ORION"; //$NON-NLS-1$
     public final static String WRITE_ORION_PREMISSION = "polly.permission.WRITE_ORION"; //$NON-NLS-1$
+    public final static String ROUTE_ORION_PREMISSION = "polly.permission.ROUTE_ORION"; //$NON-NLS-1$
     
     
     public final static String PAGE_ORION = "/pages/orion"; //$NON-NLS-1$
     
     public final static String API_GET_QUADRANT = "/api/orion/quadrant"; //$NON-NLS-1$
     public final static String API_GET_SECTOR_INFO = "/api/orion/sector"; //$NON-NLS-1$
+    public final static String API_SET_ROUTE_TO = "/api/orion/routeTo"; //$NON-NLS-1$
+    public final static String API_SET_ROUTE_FROM = "/api/orion/routeFrom"; //$NON-NLS-1$
+    public final static String API_GET_ROUTE = "/api/orion/getRoute"; //$NON-NLS-1$
     
     private final static String CONTENT_QUADRANT = "/polly/rx/httpv2/view/orion/quadrant.html"; //$NON-NLS-1$
     private final static String CONTENT_SECTOR_INFO = "/polly/rx/httpv2/view/orion/sec_info.html"; //$NON-NLS-1$
     private final static String CONTENT_ORION = "/polly/rx/httpv2/view/orion/orion.html"; //$NON-NLS-1$
+    private final static String CONTENT_ROUTE = "/polly/rx/httpv2/view/orion/route.html"; //$NON-NLS-1$
     
     private final static String REVORIX_CATEGORY_KEY = "httpRxCategory"; //$NON-NLS-1$
     private final static String ORION_NAME_KEY = "htmlOrionName"; //$NON-NLS-1$
     private final static String ORION_DESC_KEY = "htmlOrionDesc"; //$NON-NLS-1$
+    
+    private final static String ROUTE_FROM_KEY = "routeFrom"; //$NON-NLS-1$
+    private final static String ROUTE_TO_KEY = "routeTo"; //$NON-NLS-1$
+    private final static String ROUTE_KEY = "route"; //$NON-NLS-1$
     
     
     private final QuadrantProvider quadProvider;
@@ -84,16 +99,24 @@ public class OrionController extends PollyController {
         final Map<String, Object> c = this.createContext(CONTENT_ORION);
         final Collection<String> allQuads = this.quadProvider.getAllQuadrantNames();
         c.put("allQuads", allQuads); //$NON-NLS-1$
+        c.put("routeStart", this.getSession().getAttached(ROUTE_FROM_KEY)); //$NON-NLS-1$
+        c.put("routeTarget", this.getSession().getAttached(ROUTE_TO_KEY)); //$NON-NLS-1$
         return this.makeAnswer(c);
     }
     
     
     
-    private void fillQuadrantContext(String quadName, Map<String, Object> c) {
+    private void fillQuadrantContext(String quadName, Map<String, Object> c, 
+            boolean showInfo) {
         final Quadrant q = this.quadProvider.getQuadrant(quadName);
-        final List<Wormhole> holes = this.holeProvider.getWormholes(q, this.quadProvider);
+        
+        if (showInfo) {
+            final List<Wormhole> holes = this.holeProvider.getWormholes(
+                    q, this.quadProvider);
+            c.put("holes", holes); //$NON-NLS-1$
+        }
+        c.put("showQuadInfo", showInfo); //$NON-NLS-1$
         c.put("quad", q); //$NON-NLS-1$
-        c.put("holes", holes); //$NON-NLS-1$
     }
     
     
@@ -107,7 +130,7 @@ public class OrionController extends PollyController {
         }
 
         final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
-        this.fillQuadrantContext(name, c);
+        this.fillQuadrantContext(name, c, true);
         return HttpAnswers.newTemplateAnswer(CONTENT_QUADRANT, c);
     }
     
@@ -125,7 +148,7 @@ public class OrionController extends PollyController {
         }
         
         final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
-        this.fillQuadrantContext(name, c);
+        this.fillQuadrantContext(name, c, true);
         c.put("hlX", hlX); //$NON-NLS-1$
         c.put("hlY", hlY); //$NON-NLS-1$
         return HttpAnswers.newTemplateAnswer(CONTENT_QUADRANT, c);
@@ -141,7 +164,7 @@ public class OrionController extends PollyController {
         
         if (!this.getMyPolly().roles().hasPermission(this.getSessionUser(), 
                 VIEW_ORION_PREMISSION)) {
-            return HttpAnswers.newStringAnswer(MSG.httpNoPermission);
+            return HttpAnswers.newStringAnswer(403, MSG.httpNoPermission);
         }
         
         final Sector sector = this.quadProvider.getQuadrant(quadrant).getSector(x, y);
@@ -157,4 +180,88 @@ public class OrionController extends PollyController {
         return HttpAnswers.newTemplateAnswer(CONTENT_SECTOR_INFO, c);
     }
 
+    
+    
+    public class SectorResult extends SuccessResult {
+        public final Sector sector;
+        
+        public SectorResult(Sector sector) {
+            super(true, ""); //$NON-NLS-1$
+            this.sector = sector;
+        }
+    }
+    
+    
+    
+    private HttpAnswer updateRouteInformation(String quadrant, int x, int y, String key) {
+        if (!this.getMyPolly().roles().hasPermission(this.getSessionUser(), 
+                ROUTE_ORION_PREMISSION)) {
+            return new GsonHttpAnswer(403, 
+                    new SuccessResult(false, MSG.httpNoPermission));
+        }
+        final Quadrant q = this.quadProvider.getQuadrant(quadrant);
+        final Sector sector = q.getSector(x, y);
+        if (sector != null) {
+            this.getSession().set(key, sector);
+            return new GsonHttpAnswer(200, 
+                new SectorResult(sector));
+        }
+        this.getSession().set(key, sector);
+        return new GsonHttpAnswer(200, 
+            new SuccessResult(false, "")); //$NON-NLS-1$
+    }
+    
+    
+    
+    private void recalculateRoute() {
+        final HttpSession s = this.getSession();
+        
+        if (!s.isSet(ROUTE_FROM_KEY) || !s.isSet(ROUTE_TO_KEY)) {
+            return;
+        }
+        final Sector start = (Sector) s.getAttached(ROUTE_FROM_KEY);
+        final Sector target = (Sector) s.getAttached(ROUTE_TO_KEY);
+        final PathPlanner planner = new PathPlanner(this.quadProvider, this.holeProvider);
+        
+        final Graph<Sector, EdgeData>.Path path = 
+                planner.findShortestPath(start, target, 10, 20);
+        s.set(ROUTE_KEY, path);
+    }
+    
+    
+    
+    @Get(API_SET_ROUTE_FROM)
+    public HttpAnswer setRouteFrom(
+            @Param("quadrant") String quadrant, 
+            @Param("x") int x,
+            @Param("y") int y) {
+        
+        return this.updateRouteInformation(quadrant, x, y, ROUTE_FROM_KEY);
+    }
+    
+    
+    
+    @Get(API_SET_ROUTE_TO)
+    public HttpAnswer setRouteTo(
+            @Param("quadrant") String quadrant, 
+            @Param("x") int x,
+            @Param("y") int y) {
+        
+        return this.updateRouteInformation(quadrant, x, y, ROUTE_TO_KEY);
+    }
+    
+    
+    
+    @Get(API_GET_ROUTE)
+    public HttpAnswer getRoute() {
+        if (!this.getMyPolly().roles().hasPermission(this.getSessionUser(), 
+                ROUTE_ORION_PREMISSION)) {
+            return HttpAnswers.newStringAnswer(403, MSG.httpNoPermission);
+        }
+        
+        final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
+        this.recalculateRoute();
+        c.put("path", this.getSession().getAttached(ROUTE_KEY)); //$NON-NLS-1$
+        return HttpAnswers.newTemplateAnswer(CONTENT_ROUTE, c);
+    }
 }

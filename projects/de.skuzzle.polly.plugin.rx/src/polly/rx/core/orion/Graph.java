@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
 
-public class Graph<V> {
+public class Graph<V, E> {
     
     public final class Node {
 
@@ -22,6 +22,9 @@ public class Graph<V> {
         
         
         public Node(V data) {
+            if (data == null) {
+                throw new NullPointerException("data"); //$NON-NLS-1$
+            }
             this.data = data;
             this.edges = new ArrayList<>();
             this.adjacent = new ArrayList<>();
@@ -29,8 +32,8 @@ public class Graph<V> {
         
         
         
-        public Edge edgeTo(Node target, double costs) {
-            final Edge newEdge = new Edge(this, target, costs);
+        public Edge edgeTo(Node target, double costs, E data) {
+            final Edge newEdge = new Edge(this, target, costs, data);
             this.edges.add(newEdge);
             this.adjacent.add(target);
             return newEdge;
@@ -49,7 +52,7 @@ public class Graph<V> {
         }
         
         
-        public V get() {
+        public V getData() {
             return this.data;
         }
     }
@@ -59,28 +62,38 @@ public class Graph<V> {
     public final class Edge {
         private final Node source;
         private final Node target;
+        private final E data;
         private final double costs;
         
-        public Edge(Node source, Node target, double costs) {
-            super();
+        public Edge(Node source, Node target, double costs, E data) {
+            if (source == null) {
+                throw new NullPointerException("source"); //$NON-NLS-1$
+            } else if (target == null) {
+                throw new NullPointerException("target"); //$NON-NLS-1$
+            } else if (data == null) {
+                throw new NullPointerException("data"); //$NON-NLS-1$
+            } else if (source == target) {
+                throw new IllegalArgumentException("reflexive edge");
+            }
             this.source = source;
             this.target = target;
+            this.data = data;
             this.costs = costs;
         }
         
-
         
         public Node getSource() {
             return this.source;
         }
         
         
-        
         public Node getTarget() {
             return this.target;
         }
         
-        
+        public E getData() {
+            return this.data;
+        }
         
         public double getCosts() {
             return this.costs;
@@ -89,8 +102,8 @@ public class Graph<V> {
     
     
     
-    public interface LazyBuilder<V> {
-        public void collectIncident(Graph<V> source, V data);
+    public interface LazyBuilder<V, E> {
+        public void collectIncident(Graph<V, E> source, V currentNode);
     }
     
     
@@ -126,29 +139,24 @@ public class Graph<V> {
         if (n == null) {
             return this.addNode(data);
         }
-        return null;
+        return n;
     }
     
     
 
-    public static class Path<T> {
-        private final List<T> nodes;
+    public class Path {
+        private final List<Edge> path;
         private final double costs;
         
         
-        public Path(List<T> nodes, double costs) {
-            this.nodes = nodes;
+        public Path(List<Edge> path, double costs) {
+            this.path = path;
             this.costs = costs;
         }
         
-        
-        
-        
-        public List<T> getNodes() {
-            return this.nodes;
+        public List<Edge> getPath() {
+            return this.path;
         }
-        
-        
         
         public double getCosts() {
             return this.costs;
@@ -157,23 +165,20 @@ public class Graph<V> {
     
     
     
-    public Path<V> findShortestPath(V start, V target, LazyBuilder<V> builder) {
-        final Node vStart = this.getNode(start);
-        final Node vTarget = this.getNode(target);
-        if (vStart  == null || vTarget == null) {
-            return new Path<V>(Collections.<V>emptyList(), 0.0);
-        }
+    public Path findShortestPath(V start, V target, LazyBuilder<V, E> builder) {
+        final Node vStart = this.getNode(start, start);
+        final Node vTarget = this.getNode(target, start);
         final KnownNode node = this.shortestPathInternal(vStart, vTarget, builder);
         if (node == null) {
-            return new Path<V>(Collections.<V>emptyList(), 0.0);
+            return new Path(Collections.<Edge>emptyList(), 0.0);
         }
-        final LinkedList<V> path = new LinkedList<>();
+        final LinkedList<Edge> path = new LinkedList<>();
         KnownNode c = node;
         while (c != null) {
-            path.addFirst(c.wrapped.get());
+            path.addFirst(c.takenEdge);
             c = c.predecessor;
         }
-        return new Path<V>(path, node.costs);
+        return new Path(path, node.costs);
     }
     
     
@@ -181,12 +186,18 @@ public class Graph<V> {
     private class KnownNode implements Comparable<KnownNode> {
         final Node wrapped;
         final KnownNode predecessor;
+        final Edge takenEdge;
         final double costs;
         
         
-        public KnownNode(Node wrapped, double costs, KnownNode predecessor) {
+        public KnownNode(Node wrapped, double costs, Edge takenEdge, 
+                KnownNode predecessor) {
+            if (wrapped == null) {
+                throw new NullPointerException("wrapped"); //$NON-NLS-1$
+            }
             this.wrapped = wrapped;
             this.costs = costs;
+            this.takenEdge = takenEdge;
             this.predecessor = predecessor;
         }
         
@@ -198,11 +209,12 @@ public class Graph<V> {
     
     
     
-    private KnownNode shortestPathInternal(Node start, Node target, LazyBuilder<V> builder) {
+    private KnownNode shortestPathInternal(Node start, Node target, 
+            LazyBuilder<V, E> builder) {
         final PriorityQueue<KnownNode> q = new PriorityQueue<>(this.nodeMap.size());
-        final Set<KnownNode> closed = new HashSet<>();
-        q.add(new KnownNode(start, 0.0, null));
+        final Set<Node> closed = new HashSet<>();
         
+        q.add(new KnownNode(start, 0.0, null, null));
         while (!q.isEmpty()) {
             final KnownNode v = q.poll();
             
@@ -210,13 +222,14 @@ public class Graph<V> {
                 return v;
             }
             
-            if (closed.add(v)) {
-                builder.collectIncident(this, v.wrapped.get());
+            if (closed.add(v.wrapped)) {
+                builder.collectIncident(this, v.wrapped.getData());
+                
                 for (final Edge edge : v.wrapped.getIncident()) {
                     final Node v1 = edge.getTarget();
                     
                     if (!closed.contains(v1)) {
-                        q.add(new KnownNode(v1, v.costs + edge.costs, v));
+                        q.add(new KnownNode(v1, v.costs + edge.costs, edge, v));
                     }
                 }
             }

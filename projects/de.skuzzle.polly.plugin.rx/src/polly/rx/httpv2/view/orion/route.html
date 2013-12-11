@@ -1,0 +1,14 @@
+#foreach ($edge in $path.getPath()) 
+    #set($source = $edge.getSource().getData())
+    #set($target = $edge.getTarget().getData())
+    #set($data = $edge.getData())
+    
+    #if ($source)
+    <p>VON: $source.getQuadName() $source.getX(), $source.getY() NACH: $target.getQuadName() $target.getX(), $target.getY()
+    
+        #if ($data.isWormhole())
+            Wurmloch: $data.getWormhole().getName()
+        #end
+    </p>
+    #end
+#end
