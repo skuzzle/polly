@@ -567,6 +567,9 @@ public class InputScanner extends AbstractTokenStream {
             if (next == '"') {
                 lexem.append('"');
                 return true;
+            } else if (next == 'n') {
+                lexem.append(System.lineSeparator());
+                return true;
             } else if (next == '\\') {
                 lexem.append('\\');
                 return true;
