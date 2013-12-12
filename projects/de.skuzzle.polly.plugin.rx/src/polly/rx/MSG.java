@@ -405,6 +405,7 @@ public class MSG extends Constants {
     public static String htmlOrionWLName;
     public static String htmlOrionWLLoad;
     public static String htmlOrionWLUnload;
+    public static String htmlOrionWLStart;
     public static String htmlOrionWLTarget;
     public static String htmlOrionToHere;
     public static String htmlOrionFromHere;

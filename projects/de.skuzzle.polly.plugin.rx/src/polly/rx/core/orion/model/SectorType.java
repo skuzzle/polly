@@ -7,7 +7,11 @@ import polly.rx.MSG;
 
 public enum SectorType {
     NONE("", 0, 1), //$NON-NLS-1$
-    HIGHLIGHT("", 200), //$NON-NLS-1$
+    HIGHLIGHT_SECTOR("", 200), //$NON-NLS-1$
+    HIGHLIGHT_START("", 201), //$NON-NLS-1$
+    HIGHLIGHT_TARGET("", 202), //$NON-NLS-1$
+    HIGHLIGHT_WH_DROP("", 203), //$NON-NLS-1$
+    HIGHLIGHT_WH_START("", 204), //$NON-NLS-1$
     EMPTY(MSG.secTypeEmpty, 1, 9),
     BLAUER_STERN(MSG.secTypeBlauerStern, 11),
     BLAUER_RIESE(MSG.secTypeBlauerRiese, 12),
@@ -59,7 +63,16 @@ public enum SectorType {
         this(name, id, id + 1);
     }
     
-    
+    public boolean isHighlight() {
+        switch (this) {
+        case HIGHLIGHT_SECTOR:
+        case HIGHLIGHT_START:
+        case HIGHLIGHT_WH_DROP:
+        case HIGHLIGHT_WH_START:
+            return true;
+        default: return false;
+        }
+    }
     
     private SectorType(String name, int minId, int maxId) {
         assert minId >= 0 && minId < maxId;

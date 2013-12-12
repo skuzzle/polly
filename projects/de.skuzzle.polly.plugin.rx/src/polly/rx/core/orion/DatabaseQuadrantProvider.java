@@ -12,6 +12,8 @@ import polly.rx.core.orion.model.Production;
 import polly.rx.core.orion.model.Quadrant;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.Spawn;
+import polly.rx.core.orion.model.impl.QuadrantImpl;
+import polly.rx.core.orion.model.impl.SectorImpl;
 import polly.rx.entities.DBProduction;
 import polly.rx.entities.DBSector;
 import polly.rx.entities.DBSpawn;
@@ -52,8 +54,8 @@ public class DatabaseQuadrantProvider implements QuadrantProvider {
     
     
     
-    private Sector fromDBSector(DBSector s) {
-        final Sector result = new Sector();
+    private SectorImpl fromDBSector(DBSector s) {
+        final SectorImpl result = new SectorImpl();
         result.setQuadName(s.getQuadName());
         result.setX(s.getX());
         result.setY(s.getY());
@@ -84,12 +86,12 @@ public class DatabaseQuadrantProvider implements QuadrantProvider {
     
     
     @Override
-    public Quadrant getQuadrant(String name) {
+    public QuadrantImpl getQuadrant(String name) {
         try (final Read read = this.persistence.read()) {
             final List<DBSector> sectors = read.findList(DBSector.class, 
                     DBSector.QUERY_BY_QUADRANT, new Param(name));
             
-            final Map<String, Sector> sectorMap = new HashMap<>();
+            final Map<String, SectorImpl> sectorMap = new HashMap<>();
             int maxX = 0;
             int maxY = 0;
             for (final DBSector s : sectors) {
@@ -97,15 +99,15 @@ public class DatabaseQuadrantProvider implements QuadrantProvider {
                 maxY = Math.max(maxY, s.getY());
                 sectorMap.put(createKey(s.getX(), s.getY()), this.fromDBSector(s));
             }
-            return new Quadrant(name, sectorMap, maxX, maxY);
+            return new QuadrantImpl(name, sectorMap, maxX, maxY);
         }
     }
     
     
     
     @Override
-    public Collection<Quadrant> getAllQuadrants() {
-        final List<Quadrant> result = new ArrayList<>();
+    public Collection<QuadrantImpl> getAllQuadrants() {
+        final List<QuadrantImpl> result = new ArrayList<>();
         for (final String quadName : this.getAllQuadrantNames()) {
             result.add(this.getQuadrant(quadName));
         }

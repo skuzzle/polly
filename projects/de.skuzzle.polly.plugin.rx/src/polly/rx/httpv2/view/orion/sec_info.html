@@ -1,3 +1,5 @@
+#parse ( "/polly/rx/httpv2/view/orion/orion.util.html" )
+
 <p><b>$MSG.htmlOrionSectorInfo</b></p>
 
 <p>
@@ -43,28 +45,4 @@ $sector.getType()
 </table>
 #end
 
-
-#if (!$holes.isEmpty())
-<table style="margin-top: 10px;">
-    <tr>
-        <th colspan="4">$MSG.htmlOrionWormholes</th>
-    </tr>
-    <tr>
-        <th>$MSG.htmlOrionWLName</th>
-        <th>$MSG.htmlOrionWLLoad</th>
-        <th>$MSG.htmlOrionWLUnload</th>
-        <th>$MSG.htmlOrionWLTarget</th>
-    </tr>
-    #foreach ($wl in $holes)
-    <tr>
-        <td>$wl.getName()</td>
-        <td>$wl.requiresLoad()</td>
-        <td>$wl.getMinUnload()-$wl.getMaxUnload() Min</td>
-        <td><a href="#" quadName="$wl.getTarget().getQuadName()" 
-            hlX="$wl.getTarget().getX()"
-            hlY="$wl.getTarget().getY()" 
-            class="load_quad_internal">$wl.getTarget().getQuadName() $wl.getTarget().getX(), $wl.getTarget().getY()</a></td>
-    </tr>
-    #end    
-</table>
-#end
+#WORMHOLES ( $holes )

@@ -1,0 +1,63 @@
+#macro (WORMHOLES $holes)
+#if (!$holes.isEmpty())
+<table style="margin-top: 10px;">
+    <tr>
+        <th colspan="5">$MSG.htmlOrionWormholes</th>
+    </tr>
+    <tr>
+        <th>$MSG.htmlOrionWLStart</th>
+        <th>$MSG.htmlOrionWLName</th>
+        <th>$MSG.htmlOrionWLLoad</th>
+        <th>$MSG.htmlOrionWLUnload</th>
+        <th>$MSG.htmlOrionWLTarget</th>
+    </tr>
+    #foreach ($wl in $holes)
+    <tr>
+        <td>
+            <a href="#" class="sector" quadName="$wl.getSource().getQuadName()" col="$wl.getSource().getX()" row="$wl.getSource().getY()">
+                $wl.getSource().getQuadName() $wl.getSource().getX(), $wl.getSource().getY()
+            </a>
+        </td>
+        <td>$wl.getName()</td>
+        <td>$wl.requiresLoad()</td>
+        <td>$wl.getMinUnload()-$wl.getMaxUnload() Min</td>
+        <td><a href="#" quadName="$wl.getTarget().getQuadName()" 
+            hlX="$wl.getTarget().getX()"
+            hlY="$wl.getTarget().getY()" 
+            class="load_quad_internal">$wl.getTarget().getQuadName() $wl.getTarget().getX(), $wl.getTarget().getY()</a></td>
+    </tr>
+    #end    
+</table>
+#end
+#end
+
+
+#macro (QUADRANT $quad)
+<p><b>$quad.getName()</b></p>
+
+<table id="quadrant_$quad.getName()" class="quad_Table" style="width: auto">
+#foreach ($row in [0..$quad.getMaxY()])
+    <tr>
+    #if ($row == 0)
+        <td></td> 
+        #foreach ($col in [1..$quad.getMaxX()])
+        <td>#if ($col == $hlX) <b>$col</b>#else $col #end</td>
+        #end
+    #else
+        #foreach ($col in [0..$quad.getMaxX()])
+            #if ($col == 0)
+            <td>#if ($row == $hlY) <b>$row</b>#else $row #end</td>
+            #else
+            #set ($sect = $quad.getSector($col, $row))
+            <td#if ($sect.getType().isHighlight()) style="border: 1px solid red" #end>
+                <img src="/polly/rx/httpv2/view/orion/$sect.getType().getImgName()" 
+                    width="10" height="10"
+                    quadName="$quad.getName()" row="$row" col="$col" class="sector"/>
+            </td>
+            #end
+        #end
+    #end
+    </tr>
+#end
+</table>
+#end

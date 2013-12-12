@@ -214,21 +214,6 @@ public class OrionController extends PollyController {
     
     
     
-    private void recalculateRoute() {
-        final HttpSession s = this.getSession();
-        
-        if (!s.isSet(ROUTE_FROM_KEY) || !s.isSet(ROUTE_TO_KEY)) {
-            return;
-        }
-        final Sector start = (Sector) s.getAttached(ROUTE_FROM_KEY);
-        final Sector target = (Sector) s.getAttached(ROUTE_TO_KEY);
-        
-        final UniversePath path = this.pathPlanner.findShortestPath(start, target);
-        s.set(ROUTE_KEY, path);
-    }
-    
-    
-    
     @Get(API_SET_ROUTE_FROM)
     public HttpAnswer setRouteFrom(
             @Param("quadrant") String quadrant, 
@@ -259,8 +244,16 @@ public class OrionController extends PollyController {
         }
         
         final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
-        this.recalculateRoute();
-        c.put("path", this.getSession().getAttached(ROUTE_KEY)); //$NON-NLS-1$
+        final HttpSession s = this.getSession();
+        
+        if (!s.isSet(ROUTE_FROM_KEY) || !s.isSet(ROUTE_TO_KEY)) {
+            return HttpAnswers.newStringAnswer(""); //$NON-NLS-1$
+        }
+        final Sector start = (Sector) s.getAttached(ROUTE_FROM_KEY);
+        final Sector target = (Sector) s.getAttached(ROUTE_TO_KEY);
+        
+        final UniversePath path = this.pathPlanner.findShortestPath(start, target);
+        c.put("path", path); //$NON-NLS-1$
         return HttpAnswers.newTemplateAnswer(CONTENT_ROUTE, c);
     }
 }

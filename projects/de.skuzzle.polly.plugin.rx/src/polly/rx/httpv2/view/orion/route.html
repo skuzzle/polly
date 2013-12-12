@@ -1,3 +1,5 @@
+#parse ( "/polly/rx/httpv2/view/orion/orion.util.html" )
+
 <table>
 <tr>
     <th colspan="2">$MSG.htmlOrionRouteInfo</th>
@@ -14,10 +16,16 @@
     <td><b>$MSG.htmlOrionWLUnload</b></td>
     <td>$path.getMinUnload()-$path.getMaxUnload() Min</td>
 </tr>
+</table>
+
+#WORMHOLES ( $path.getWormholes() )
+
+<table>
 #foreach ($group in $path.getGroups())
 <tr>
     <th colspan="2">$group.getQuadName()</th>
 </tr>
+
 <tr>
     <td>
     #foreach ($edge in $group.getEdges()) 
@@ -34,6 +42,9 @@
         <br/>
         #end
     #end
+    </td>
+    <td>
+    #QUADRANT ( $group.getQuadrant() )
     </td>
 </tr>
 #end

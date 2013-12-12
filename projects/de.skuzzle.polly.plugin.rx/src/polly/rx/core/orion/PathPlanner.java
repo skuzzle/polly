@@ -2,14 +2,19 @@ package polly.rx.core.orion;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import polly.rx.core.orion.Graph.Heuristic;
 import polly.rx.core.orion.Graph.LazyBuilder;
 import polly.rx.core.orion.model.Quadrant;
+import polly.rx.core.orion.model.QuadrantDelegate;
 import polly.rx.core.orion.model.Sector;
+import polly.rx.core.orion.model.SectorDelegate;
 import polly.rx.core.orion.model.SectorType;
 import polly.rx.core.orion.model.Wormhole;
 
@@ -142,23 +147,74 @@ public class PathPlanner {
     
     
     
+    private final static class HighlightedSector extends SectorDelegate {
+
+        private final SectorType highlight;
+        
+        public HighlightedSector(Sector wrapped, SectorType highlight) {
+            super(wrapped);
+            this.highlight = highlight;
+        }
+
+        @Override
+        public SectorType getType() {
+            return this.highlight;
+        }
+    }
+    
+    
+    
+    private final static class HighlightedQuadrant extends QuadrantDelegate {
+        
+        private final Map<String, SectorType> highlights;
+        
+        public HighlightedQuadrant(Quadrant wrapped) {
+            super(wrapped);
+            this.highlights = new HashMap<>();
+        }
+        
+        public void highlight(Sector sector, SectorType type) {
+            this.highlight(sector.getX(), sector.getY(), type);
+        }
+
+        public void highlight(int x, int y, SectorType type) {
+            this.highlights.put(x + "_" + y, type); //$NON-NLS-1$
+        }
+        
+        @Override
+        public Sector getSector(int x, int y) {
+            final String key = x + "_" + y; //$NON-NLS-1$
+            final Sector sector = super.getSector(x, y);
+            final SectorType type = this.highlights.get(key);
+            if (type != null) {
+                return new HighlightedSector(sector, type);
+            }
+            return sector;
+        }
+    }
+    
+    
     
     public final static class Group {
-        final String quadName;
         final List<Graph<Sector, EdgeData>.Edge> edges;
+        final HighlightedQuadrant quad;
         
-        private Group(String quadName) {
+        private Group(Quadrant quadrant) {
             super();
+            this.quad = new HighlightedQuadrant(quadrant);
             this.edges = new ArrayList<>();
-            this.quadName = quadName;
         }
         
         public List<Graph<Sector, EdgeData>.Edge> getEdges() {
             return this.edges;
         }
         
+        public Quadrant getQuadrant() {
+            return this.quad;
+        }
+        
         public String getQuadName() {
-            return this.quadName;
+            return this.quad.getName();
         }
     }
     
@@ -168,6 +224,7 @@ public class PathPlanner {
 
         //private final Graph<Sector, EdgeData>.Path path;
         private final List<Group> groups;
+        private final List<Wormhole> wormholes;
         private final int sectorJumps;
         private final int quadJumps;
         private final int minUnload;
@@ -175,33 +232,53 @@ public class PathPlanner {
         
         private UniversePath(Graph<Sector, EdgeData>.Path path) {
             int s = 0;
-            int q = 0;
             int minUnload = 0;
             int maxUnload = 0;
             this.groups = new ArrayList<>();
             String lastQuad = ""; //$NON-NLS-1$
             Group currentGroup = null;
+            this.wormholes = new ArrayList<>();
             
-            for (final Graph<Sector, EdgeData>.Edge e : path.getPath()) {
+            boolean first = true;
+            Graph<Sector, EdgeData>.Edge lastEdge = null;
+            final Iterator<Graph<Sector, EdgeData>.Edge> it = path.getPath().iterator();
+            while (it.hasNext()) {
+                final Graph<Sector, EdgeData>.Edge e = it.next();
                 final Sector source = e.getSource().getData();
+                SectorType highlight = SectorType.HIGHLIGHT_SECTOR;
                 
                 if (currentGroup == null || !source.getQuadName().equals(lastQuad)) {
-                    currentGroup = new Group(source.getQuadName());
+                    final Quadrant quad = quadProvider.getQuadrant(source.getQuadName());
+                    currentGroup = new Group(quad);
                     this.groups.add(currentGroup);
+                }
+                
+                if (lastEdge != null && lastEdge.getData().isWormhole()) {
+                    // if last edge was a WH, current source node is a WH drop
+                    highlight = SectorType.HIGHLIGHT_WH_DROP;
                 }
                 currentGroup.edges.add(e);
                 lastQuad = source.getQuadName();
                 
                 if (e.getData().isWormhole()) {
-                    ++q;
                     minUnload += e.getData().getWormhole().getMinUnload();
                     maxUnload += e.getData().getWormhole().getMaxUnload();
+                    this.wormholes.add(e.getData().getWormhole());
+                    highlight = SectorType.HIGHLIGHT_WH_START;
                 } else {
                     ++s;
                 }
+                if (first) {
+                    highlight = SectorType.HIGHLIGHT_START;
+                }
+                currentGroup.quad.highlight(e.getSource().getData(), highlight);
+                first = false;
+                lastEdge = e;
             }
+            currentGroup.quad.highlight(lastEdge.getTarget().getData(), 
+                    SectorType.HIGHLIGHT_TARGET);
             this.sectorJumps = s;
-            this.quadJumps = q;
+            this.quadJumps = wormholes.size();
             this.minUnload = minUnload;
             this.maxUnload = maxUnload;
         }
@@ -216,6 +293,10 @@ public class PathPlanner {
         
         public int getSectorJumps() {
             return this.sectorJumps;
+        }
+        
+        public List<Wormhole> getWormholes() {
+            return this.wormholes;
         }
         
         public int getQuadJumps() {

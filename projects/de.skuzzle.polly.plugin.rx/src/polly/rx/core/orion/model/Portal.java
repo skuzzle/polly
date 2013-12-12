@@ -6,9 +6,7 @@ import java.util.Date;
 public class Portal {
 
     private PortalType type;
-
     private String owner;
-
     private Date date;
 
 
