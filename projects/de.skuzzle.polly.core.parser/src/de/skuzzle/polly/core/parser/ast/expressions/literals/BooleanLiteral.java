@@ -55,6 +55,16 @@ public class BooleanLiteral extends Literal {
     }
     
     
+    
+    @Override
+    public int compareTo(Literal o) {
+        if (o instanceof BooleanLiteral) {
+            return Boolean.compare(this.value, ((BooleanLiteral) o).value);
+        }
+        return super.compareTo(o);
+    }
+    
+    
 
     @Override
     public String format(LiteralFormatter formatter) {

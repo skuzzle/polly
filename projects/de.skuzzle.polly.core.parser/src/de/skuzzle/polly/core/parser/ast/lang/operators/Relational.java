@@ -50,6 +50,17 @@ public class Relational extends BinaryOperator<Literal, Literal> {
             return;
         }
         
+        if (!left.getUnique().isComparable()) {
+            execVisitor.getReporter().runtimeProblem(Problems.NOT_COMPARABLE, 
+                left.getPosition(), left.getUnique().getName().getId());
+        }
+        if (!right.getUnique().isComparable()) {
+            execVisitor.getReporter().runtimeProblem(Problems.NOT_COMPARABLE, 
+                right.getPosition(), right.getUnique().getName().getId());
+        }
+        if (!left.getUnique().isComparable() || !right.getUnique().isComparable()) {
+            return;
+        }
         final int comp = left.compareTo(right);
         switch (this.getOp()) {
         case LT:

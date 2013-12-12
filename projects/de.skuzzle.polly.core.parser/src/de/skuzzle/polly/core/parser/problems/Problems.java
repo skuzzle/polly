@@ -71,4 +71,5 @@ public final class Problems {
     public static final String INDEX_OUT_OF_BOUNDS = "Index ausserhalb des gültigen Bereichs: %d";
     public static final String ILLEGAL_INDIZES = "Ungültige Start- und Endindizes (von %d nach %d)";
     public static final String LIST_SIZE = "Liste zu groß: %d, maximal erlaubt: %d";
+    public static final String NOT_COMPARABLE = "Typ %s ist vergleichbar";
 }
