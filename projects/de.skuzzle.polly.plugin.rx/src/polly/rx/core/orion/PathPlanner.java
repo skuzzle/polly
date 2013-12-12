@@ -74,7 +74,7 @@ public class PathPlanner {
                     
                     final EdgeData d = new EdgeData(hole);
                     this.addNeighbour(targetQuad, hole.getTarget().getX(), 
-                            hole.getTarget().getY(), COST_QUAD, graph, source, d);
+                            hole.getTarget().getY(), hole.getMinUnload(), graph, source, d);
                 }
                 
                 // add direct neighbours
@@ -115,7 +115,8 @@ public class PathPlanner {
         
         @Override
         public double calculate(Sector v1, Sector v2) {
-            if (v1.getQuadName().equals(v2.getQuadName())) {
+            return 0.0;
+            /*if (v1.getQuadName().equals(v2.getQuadName())) {
                 final double dx = v1.getX() - v2.getX();
                 final double dy = v1.getY() - v2.getY();
                 return Math.sqrt(dx * dx + dy * dy);
@@ -125,7 +126,7 @@ public class PathPlanner {
                 return Math.sqrt(
                         target.getMaxX() * target.getMaxX() + 
                         target.getMaxY() * target.getMaxY());
-            }
+            }*/
         }
     }
     
