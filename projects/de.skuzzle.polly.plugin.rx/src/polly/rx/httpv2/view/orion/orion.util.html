@@ -1,3 +1,13 @@
+#macro ( SECTOR_NO_LINK $sector )
+$sector.getQuadName() $sector.getX(), $sector.getY()
+#end
+
+#macro ( SECTOR_LINK $sector $quadId)
+<a href="#" class="sector" quadName="$quadId" col="$sector.getX()" row="$sector.getY()">
+    $sector.getQuadName() $sector.getX(), $sector.getY()
+</a>
+#end
+
 #macro (WORMHOLES $holes)
 #if (!$holes.isEmpty())
 <table style="margin-top: 10px;">
@@ -13,18 +23,14 @@
     </tr>
     #foreach ($wl in $holes)
     <tr>
-        <td>
-            <a href="#" class="sector" quadName="$wl.getSource().getQuadName()" col="$wl.getSource().getX()" row="$wl.getSource().getY()">
-                $wl.getSource().getQuadName() $wl.getSource().getX(), $wl.getSource().getY()
-            </a>
-        </td>
+        <td>#SECTOR_LINK ( $wl.getSource() $wl.getSource().getQuadId() )</td>
         <td>$wl.getName()</td>
         <td>$wl.requiresLoad()</td>
         <td>$wl.getMinUnload()-$wl.getMaxUnload() Min</td>
-        <td><a href="#" quadName="$wl.getTarget().getQuadName()" 
+        <td><a href="#" quadName="$wl.getTarget().getQuadId()" 
             hlX="$wl.getTarget().getX()"
             hlY="$wl.getTarget().getY()" 
-            class="load_quad_internal">$wl.getTarget().getQuadName() $wl.getTarget().getX(), $wl.getTarget().getY()</a></td>
+            class="load_quad_internal">#SECTOR_NO_LINK ( $wl.getTarget() )</a></td>
     </tr>
     #end    
 </table>
@@ -35,7 +41,7 @@
 #macro (QUADRANT $quad)
 <p><b>$quad.getName()</b></p>
 
-<table id="quadrant_$quad.getName()" class="quad_Table" style="width: auto">
+<table id="quadrant_$quad.getQuadId()" class="quad_Table" style="width: auto">
 #foreach ($row in [0..$quad.getMaxY()])
     <tr>
     #if ($row == 0)
@@ -52,7 +58,7 @@
             <td#if ($sect.getType().isHighlight()) style="border: 1px solid red" #end>
                 <img src="/polly/rx/httpv2/view/orion/$sect.getType().getImgName()" 
                     width="10" height="10"
-                    quadName="$quad.getName()" row="$row" col="$col" class="sector"/>
+                    quadName="$quad.getQuadId()" row="$row" col="$col" class="sector"/>
             </td>
             #end
         #end
@@ -61,3 +67,5 @@
 #end
 </table>
 #end
+
+

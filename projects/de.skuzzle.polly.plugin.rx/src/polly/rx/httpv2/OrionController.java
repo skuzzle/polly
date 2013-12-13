@@ -1,5 +1,6 @@
 package polly.rx.httpv2;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -8,10 +9,15 @@ import polly.rx.MSG;
 import polly.rx.core.orion.PathPlanner;
 import polly.rx.core.orion.PathPlanner.UniversePath;
 import polly.rx.core.orion.QuadrantProvider;
+import polly.rx.core.orion.QuadrantProviderDecorator;
 import polly.rx.core.orion.WormholeProvider;
+import polly.rx.core.orion.WormholeProviderDecorator;
 import polly.rx.core.orion.model.Quadrant;
+import polly.rx.core.orion.model.QuadrantDecorator;
 import polly.rx.core.orion.model.Sector;
+import polly.rx.core.orion.model.SectorDecorator;
 import polly.rx.core.orion.model.Wormhole;
+import polly.rx.core.orion.model.WormholeDecorator;
 import de.skuzzle.polly.http.annotations.Get;
 import de.skuzzle.polly.http.annotations.OnRegister;
 import de.skuzzle.polly.http.annotations.Param;
@@ -53,7 +59,109 @@ public class OrionController extends PollyController {
     
     private final static String ROUTE_FROM_KEY = "routeFrom"; //$NON-NLS-1$
     private final static String ROUTE_TO_KEY = "routeTo"; //$NON-NLS-1$
-    private final static String ROUTE_KEY = "route"; //$NON-NLS-1$
+    
+    
+    
+    public final static class DisplaySector extends SectorDecorator {
+
+        private DisplaySector(Sector wrapped) {
+            super(wrapped);
+        }
+        
+        public String getQuadId() {
+            return this.getQuadName().replace(" ", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+    }
+    
+
+    
+    public final static class DisplayQuadrant extends QuadrantDecorator {
+
+        private DisplayQuadrant(Quadrant wrapped) {
+            super(wrapped);
+        }
+        
+        
+        public String getQuadId() {
+            return this.getName().replace(" ", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        
+        @Override
+        public Sector getSector(int x, int y) {
+            return new DisplaySector(super.getSector(x, y));
+        }
+    }
+    
+    
+    
+    public final static class DisplayWormholeProvider extends WormholeProviderDecorator {
+
+        public DisplayWormholeProvider(WormholeProvider wrapped) {
+            super(wrapped);
+        }
+        
+        private List<Wormhole> decorate(List<Wormhole> holes) {
+            final List<Wormhole> result = new ArrayList<>(holes.size());
+            for (final Wormhole hole : holes) {
+                result.add(new WormholeDecorator(hole) { 
+                    @Override
+                    public Sector getSource() {
+                        return new DisplaySector(super.getSource());
+                    }
+                    
+                    @Override
+                    public Sector getTarget() {
+                        return new DisplaySector(super.getTarget());
+                    }
+                });
+            }
+            return result;
+        }
+        
+        @Override
+        public List<Wormhole> getWormholes(Quadrant quadrant, QuadrantProvider quads) {
+            return this.decorate(super.getWormholes(quadrant, quads));
+        }
+
+        @Override
+        public List<Wormhole> getWormholes(Sector sector, QuadrantProvider quads) {
+            return this.decorate(super.getWormholes(sector, quads));
+        }
+    }
+    
+    
+    
+    public final static class DisplayQuadrantProvider extends QuadrantProviderDecorator {
+
+        public DisplayQuadrantProvider(QuadrantProvider wrapped) {
+            super(wrapped);
+        }
+        
+        private Collection<Quadrant> decorate(Collection<Quadrant> quadrants) {
+            final List<Quadrant> result = new ArrayList<>();
+            for (final Quadrant quadrant : quadrants) {
+                result.add(new DisplayQuadrant(quadrant));
+            }
+            return result;
+        }
+        
+        @Override
+        public Collection<Quadrant> getAllQuadrants() {
+            return this.decorate(super.getAllQuadrants());
+        }
+        
+        @Override
+        public Quadrant getQuadrant(Sector sector) {
+            return new DisplayQuadrant(super.getQuadrant(sector));
+        }
+        
+        @Override
+        public Quadrant getQuadrant(String name) {
+            name = name.replace('_', ' ');
+            return new DisplayQuadrant(super.getQuadrant(name));
+        }
+    }
+    
     
     
     private final QuadrantProvider quadProvider;
@@ -98,7 +206,7 @@ public class OrionController extends PollyController {
         VIEW_ORION_PREMISSION })
     public HttpAnswer orion() {
         final Map<String, Object> c = this.createContext(CONTENT_ORION);
-        final Collection<String> allQuads = this.quadProvider.getAllQuadrantNames();
+        final Collection<Quadrant> allQuads = this.quadProvider.getAllQuadrants();
         c.put("allQuads", allQuads); //$NON-NLS-1$
         c.put("routeStart", this.getSession().getAttached(ROUTE_FROM_KEY)); //$NON-NLS-1$
         c.put("routeTarget", this.getSession().getAttached(ROUTE_TO_KEY)); //$NON-NLS-1$
@@ -169,7 +277,6 @@ public class OrionController extends PollyController {
         }
         
         final Sector sector = this.quadProvider.getQuadrant(quadrant).getSector(x, y);
-        
         final Map<String, Object> c = this.createContext(CONTENT_SECTOR_INFO);
         c.put("sector", sector); //$NON-NLS-1$
         if (sector != null) {

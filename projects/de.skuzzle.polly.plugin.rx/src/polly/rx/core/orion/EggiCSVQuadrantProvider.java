@@ -164,6 +164,11 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider {
         public boolean actualEquals(Equatable o) {
             return this.name.equals(((Quadrant) o).getName());
         }
+        
+        @Override
+        public String toString() {
+            return this.name;
+        }
     }
     
     

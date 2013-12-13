@@ -1,8 +1,10 @@
 package polly.rx.core.orion.model;
 
+import polly.rx.MSG;
+
 
 public enum LoadRequired {
-    NONE, PARTIAL, FULL;
+    NONE(MSG.loadNone), PARTIAL(MSG.loadPartial), FULL(MSG.loadFull);
     
     public static LoadRequired parse(String s) {
         if (s.equalsIgnoreCase("nein") || s.equalsIgnoreCase("keine")) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -13,5 +15,17 @@ public enum LoadRequired {
             return PARTIAL;
         }
         throw new IllegalArgumentException(s);
+    }
+    
+    private final String name;
+    
+    
+    private LoadRequired(String name) {
+        this.name = name;
+    }
+    
+    @Override
+    public String toString() {
+        return this.name;
     }
 }

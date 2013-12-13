@@ -13,9 +13,9 @@ import polly.rx.core.orion.Graph.EdgeCosts;
 import polly.rx.core.orion.Graph.Heuristic;
 import polly.rx.core.orion.Graph.LazyBuilder;
 import polly.rx.core.orion.model.Quadrant;
-import polly.rx.core.orion.model.QuadrantDelegate;
+import polly.rx.core.orion.model.QuadrantDecorator;
 import polly.rx.core.orion.model.Sector;
-import polly.rx.core.orion.model.SectorDelegate;
+import polly.rx.core.orion.model.SectorDecorator;
 import polly.rx.core.orion.model.SectorType;
 import polly.rx.core.orion.model.Wormhole;
 
@@ -167,7 +167,7 @@ public class PathPlanner {
     
     
     
-    private final static class HighlightedSector extends SectorDelegate {
+    private final static class HighlightedSector extends SectorDecorator {
 
         private final SectorType highlight;
         
@@ -184,7 +184,7 @@ public class PathPlanner {
     
     
     
-    public final static class HighlightedQuadrant extends QuadrantDelegate {
+    public final static class HighlightedQuadrant extends QuadrantDecorator {
         
         private static int IDS = 0;
         
@@ -250,7 +250,7 @@ public class PathPlanner {
     
     public class UniversePath {
 
-        //private final Graph<Sector, EdgeData>.Path path;
+        private final Graph<Sector, EdgeData>.Path path;
         private final List<Group> groups;
         private final List<Wormhole> wormholes;
         private final int sectorJumps;
@@ -259,6 +259,7 @@ public class PathPlanner {
         private final int maxUnload;
         
         private UniversePath(Graph<Sector, EdgeData>.Path path) {
+            this.path = path;
             int s = 0;
             int minUnload = 0;
             int maxUnload = 0;
@@ -303,12 +304,19 @@ public class PathPlanner {
                 first = false;
                 lastEdge = e;
             }
-            currentGroup.quad.highlight(lastEdge.getTarget().getData(), 
+            // lastEdge is null if no way was found
+            if (lastEdge != null) {
+                currentGroup.quad.highlight(lastEdge.getTarget().getData(), 
                     SectorType.HIGHLIGHT_TARGET);
+            }
             this.sectorJumps = s;
             this.quadJumps = wormholes.size();
             this.minUnload = minUnload;
             this.maxUnload = maxUnload;
+        }
+        
+        public boolean pathFound() {
+            return !this.path.getPath().isEmpty();
         }
         
         public int getMaxUnload() {

@@ -391,6 +391,9 @@ public class MSG extends Constants {
     public static String secTypeKolonie;
     public static String secTypeAndroidenKolonie;
     public static String secTypePortal;
+    public static String loadNone;
+    public static String loadPartial;
+    public static String loadFull;
     
     public static String htmlOrionName;
     public static String htmlpOrionDesc;
@@ -417,6 +420,7 @@ public class MSG extends Constants {
     public static String htmlOrionQuadJumps;
     public static String htmlOrionSectorJumps;
     public static String htmlOrionRouteInfo;
+    public static String htmlOrionNoRouteFound;
     
     // MyPlugin
     public static String pluginVenadDesc;

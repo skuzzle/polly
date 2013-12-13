@@ -4,6 +4,7 @@
 <tr>
     <th colspan="2">$MSG.htmlOrionRouteInfo</th>
 </tr>
+#if ( $path.pathFound() )
 <tr>
     <td><b>$MSG.htmlOrionSectorJumps</b></td>
     <td>$path.getSectorJumps()</td>
@@ -16,6 +17,11 @@
     <td><b>$MSG.htmlOrionWLUnload</b></td>
     <td>$path.getMinUnload()-$path.getMaxUnload() Min</td>
 </tr>
+#else
+<tr>
+    <td colspan="2">$MSG.htmlOrionNoRouteFound</td>
+</tr>
+#end
 </table>
 
 #WORMHOLES ( $path.getWormholes() )
@@ -47,5 +53,5 @@
     #QUADRANT ( $group.getQuadrant() )
     </td>
 </tr>
-#end
+#end        ## for each groups
 </table>

@@ -4,7 +4,7 @@
         <div id="quadList">
             <b>$MSG.htmlAvailableQuads</b><br/>
             #foreach ($quad in $allQuads)
-                <a href="#" quadName="$quad" class="load_quad">$quad</a><br/>
+                <a href="#" quadName="$quad.getQuadId()" class="load_quad">$quad.getName()</a><br/>
             #end
             <br style="clear:both;" />
         </div>
@@ -26,12 +26,12 @@
         <tr>
             <td id="routeStart">
             #if ($routeStart)
-                $routeStart.getQuadName() $routeStart.getX(), routeStart.getY()
+                #SECTOR_NO_LINK ( $routeStart )
             #end
             </td>
             <td id="routeTarget">
             #if ($routeTarget)
-                $routeTarget.getQuadName() $routeTarget.getX(), routeTarget.getY()
+                #SECTOR_NO_LINK ( $routeTarget )
             #end
             </td>
             <td><a href="#" id="refreshRoute">$MSG.htmlOrionRefreshRoute</a></td>
