@@ -11,9 +11,12 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
 
+import de.skuzzle.polly.tools.EqualsHelper;
+import de.skuzzle.polly.tools.Equatable;
+
 public class Graph<V, E> {
     
-    public final class Node {
+    public final class Node implements Equatable {
 
         private final V data;
         private final Collection<Edge> edges;
@@ -46,11 +49,27 @@ public class Graph<V, E> {
         public V getData() {
             return this.data;
         }
+        
+        @Override
+        public boolean equals(Object obj) {
+            return EqualsHelper.testEquality(this, obj);
+        }
+
+        @Override
+        public Class<?> getEquivalenceClass() {
+            return Node.class;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public boolean actualEquals(Equatable o) {
+            return this.data.equals(((Graph<V, E>.Node) o).data);
+        }
     }
     
     
     
-    public final class Edge {
+    public final class Edge implements Equatable {
         private final Node source;
         private final Node target;
         private final E data;
@@ -82,6 +101,22 @@ public class Graph<V, E> {
         
         public E getData() {
             return this.data;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return EqualsHelper.testEquality(this, obj);
+        }
+
+        @Override
+        public Class<?> getEquivalenceClass() {
+            return Edge.class;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public boolean actualEquals(Equatable o) {
+            return this.data.equals(((Graph<V, E>.Edge) o).data);
         }
     }
     
@@ -219,7 +254,7 @@ public class Graph<V, E> {
         while (!q.isEmpty()) {
             final KnownNode v = q.poll();
             
-            if (v.wrapped == target) {
+            if (v.wrapped.equals(target)) {
                 return v;
             }
             

@@ -291,11 +291,15 @@ public class OrionController extends PollyController {
     
     
     public class SectorResult extends SuccessResult {
-        public final Sector sector;
+        public final String quadName;
+        public final int x;
+        public final int y;
         
         public SectorResult(Sector sector) {
             super(true, ""); //$NON-NLS-1$
-            this.sector = sector;
+            this.quadName = sector.getQuadName();
+            this.x = sector.getX();
+            this.y = sector.getY();
         }
     }
     

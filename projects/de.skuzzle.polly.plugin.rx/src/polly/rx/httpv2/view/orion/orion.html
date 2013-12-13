@@ -63,8 +63,8 @@ function fromHere(event) {
         var result = JSON.parse(data);
         if (result.success) {
         	$("#routeStart").html(
-        			result.sector.quadName + " " + 
-        			result.sector.x + ", " + result.sector.y);
+        			result.quadName + " " + 
+        			result.x + ", " + result.y);
         }
     });
 }
@@ -78,8 +78,8 @@ function toHere(event) {
     	var result = JSON.parse(data);
         if (result.success) {
             $("#routeTarget").html(
-                    result.sector.quadName + " " + 
-                    result.sector.x + ", " + result.sector.y);
+                    result.quadName + " " + 
+                    result.x + ", " + result.y);
         }
     });
 }

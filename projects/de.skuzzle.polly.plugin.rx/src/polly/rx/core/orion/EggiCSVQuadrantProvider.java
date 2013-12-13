@@ -304,6 +304,7 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider {
                 }
             }
             quad = new EggiQuadrant(name, sectors, maxX, maxY);
+            this.quadMap.put(name, quad);
         }
         return quad;
     }
