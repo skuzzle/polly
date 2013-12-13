@@ -231,7 +231,8 @@ public class Graph<V, E> {
                     
                     if (!closed.contains(v1)) {
                         final double h = heuristic.calculate(
-                                v.wrapped.getData(), v1.getData());
+                                v.wrapped.getData(), 
+                                target.getData());
                         q.add(new KnownNode(v1, 
                                 v.costs + costs.calculate(edge.getData()), edge, v, h));
                     }
