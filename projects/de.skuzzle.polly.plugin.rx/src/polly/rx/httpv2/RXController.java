@@ -352,8 +352,11 @@ public class RXController extends PollyController {
     
     
     @Get(API_ADD_AZ_ENTRY)
-    public HttpAnswer addAzEntry(@Param("fleet") String fleet, @Param("az") String az) 
+    public HttpAnswer addAzEntry(@Param("fleet") String fleet, 
+            @Param("az") String az,
+            @Param("jumpTime") String jumpTime) 
             throws AlternativeAnswerException, DatabaseException {
+        
         this.requirePermissions(FleetDBManager.ADD_BATTLE_REPORT_PERMISSION);
         final User user = this.getSessionUser();
         final Types t = this.getMyPolly().parse(az);
@@ -363,7 +366,7 @@ public class RXController extends PollyController {
                     new SuccessResult(false, MSG.httpAddAzIllegalFormat));
         }
         
-        this.azManager.addEntry(user.getId(), fleet, az);
+        this.azManager.addEntry(user.getId(), fleet, az, jumpTime);
         return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
     }
     

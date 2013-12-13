@@ -34,7 +34,15 @@
                 #SECTOR_NO_LINK ( $routeTarget )
             #end
             </td>
-            <td><a href="#" id="refreshRoute">$MSG.htmlOrionRefreshRoute</a></td>
+            <td>
+                $MSG.htmlOrionSelectFleet
+                <select id="selectFleet" size="1">
+                    <option value="-1">Keine</option>
+                    #foreach ($entry in $entries) 
+                    <option value="$entry.getId()">$entry.getFleetName() ($!entry.getJumpTime())</option>
+                    #end
+                </select>
+                <a href="#" id="refreshRoute">$MSG.htmlOrionRefreshRoute</a></td>
         </tr>
     </table>
     
@@ -48,7 +56,8 @@ $(document).ready(function() {
 	$("#refreshRoute").click(requesRoute);
 });
 function requesRoute() {
-	var url = "$PAGE_GETROUTE";
+	var fleetId = $("#selectFleet option:selected").val()
+	var url = "$PAGE_GETROUTE?fleetId="+fleetId;
 	$.get(url, function(data) {
 		$("#route").html(data);
 	});

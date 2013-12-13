@@ -147,7 +147,7 @@ public class MyPlugin extends PollyPlugin {
         final PathPlanner pathPlanner = new PathPlanner(quadProvider, holeProvider);
         final OrionController oc = new OrionController(myPolly, 
                 new DisplayQuadrantProvider(quadProvider), 
-                new DisplayWormholeProvider(holeProvider), pathPlanner);
+                new DisplayWormholeProvider(holeProvider), pathPlanner, azManager);
         
 
         myPolly.webInterface().getServer().addController(oc);

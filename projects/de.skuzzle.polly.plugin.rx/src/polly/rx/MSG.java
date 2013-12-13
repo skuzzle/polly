@@ -269,6 +269,7 @@ public class MSG extends Constants {
     public static String htmlConfiAzDesc;
     public static String htmlConfigAzDesc2;
     public static String htmlConfigAzAz;
+    public static String htmlConfigAzJumpTime;
     public static String htmlConfigAzAction;
     public static String htmlConfigAzSubmit;
     public static String htmlConfigAzDelete;
@@ -421,6 +422,7 @@ public class MSG extends Constants {
     public static String htmlOrionSectorJumps;
     public static String htmlOrionRouteInfo;
     public static String htmlOrionNoRouteFound;
+    public static String htmlOrionSelectFleet;
     
     // MyPlugin
     public static String pluginVenadDesc;

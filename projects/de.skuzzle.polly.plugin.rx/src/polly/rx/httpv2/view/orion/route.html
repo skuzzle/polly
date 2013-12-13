@@ -34,19 +34,20 @@
 
 <tr>
     <td>
-    #foreach ($edge in $group.getEdges()) 
+    #foreach ($edge in $group.getEdges())
+        #set ( $ed = $edge.getData() )
         #set($source = $edge.getSource().getData())
         #set($target = $edge.getTarget().getData())
-        #set($data = $edge.getData())
         
-        #if ($source)
-        VON: $source.getQuadName() $source.getX(), $source.getY() NACH: $target.getQuadName() $target.getX(), $target.getY()
-        
-            #if ($data.isWormhole())
-                Wurmloch: $data.getWormhole().getName()
-            #end
-        <br/>
+        #if ($ed.isWormhole())
+        <p>
+            <b>Wurmloch: </b> $ed.getWormhole().getName()<br/>
+            Von: #SECTOR_NO_LINK ( $source ) <br/>
+            Nach: #SECTOR_NO_LINK ( $target ) <br/>
+            Wartezeit: $ed.getWaitMin()-$ed.getWaitMax() Min
+        </p>
         #end
+
     #end
     </td>
     <td>

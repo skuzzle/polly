@@ -12,6 +12,10 @@
         <td><label for="fleet">$MSG.htmlConfigAzAz:</label></td>
         <td><input id="az" name="az" type="text" class="textbox" placeholder="14m"/></td>
     </tr>
+<tr>
+        <td><label for="fleet">$MSG.htmlConfigAzJumpTime:</label></td>
+        <td><input id="jumpTime" name="jumpTime" type="text" class="textbox"/></td>
+    </tr>
     <tr>
         <td><input type="submit" class="button" value="$MSG.htmlConfigAzSubmit"
             onclick="addAzEntry()"/></td>
@@ -23,12 +27,14 @@
     <tr>
        <th>$MSG.htmlFleetName</th>
        <th>$MSG.htmlConfigAzAz</th>
+       <th>$MSG.htmlConfigAzJumpTime</th>
        <th>$MSG.htmlConfigAzAction</th>
     </tr>
     #foreach ($e in $entries)
     <tr>
         <td>$e.getFleetName()</td>
         <td>$e.getAz()</td>
+        <td>$!e.getJumpTime()</td>
         <td><input type="button" class="button" value="$MSG.htmlConfigAzDelete" 
             onclick="deleteAzEntry($e.getId())"/>
     </tr>
@@ -41,8 +47,10 @@
 function addAzEntry() {
 	var fleetname = $("#fleetName").val();
 	var az = $("#az").val();
+	var jt = $("#jumpTime").val();
 	
-    $.get("$PAGE_ADDAZENTRY?fleet="+fleetname+"&az="+az, function(data) {
+    $.get("$PAGE_ADDAZENTRY?fleet="+fleetname+"&az="+az+"&jumpTime="+jt, 
+    		function(data) {
         var result = JSON.parse(data);
         if (result.success) {
             location.reload();

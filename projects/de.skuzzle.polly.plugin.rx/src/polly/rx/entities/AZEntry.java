@@ -32,17 +32,20 @@ public class AZEntry {
     
     private String az;
     
+    private String jumpTime;
+    
     
     public AZEntry() {
-        this(1, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
+        this(1, "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
     
     
     
-    public AZEntry(int byUserId, String fleetName, String az) {
+    public AZEntry(int byUserId, String fleetName, String az, String jumpTime) {
         this.byUserId = byUserId;
         this.fleetName = fleetName;
         this.az = az;
+        this.jumpTime = jumpTime;
     }
 
 
@@ -63,6 +66,11 @@ public class AZEntry {
         return this.fleetName;
     }
 
+
+    
+    public String getJumpTime() {
+        return this.jumpTime;
+    }
 
 
     

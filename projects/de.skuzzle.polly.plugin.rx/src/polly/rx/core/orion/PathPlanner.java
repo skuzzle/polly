@@ -9,9 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import de.skuzzle.polly.sdk.Types.TimespanType;
 import polly.rx.core.orion.Graph.EdgeCosts;
 import polly.rx.core.orion.Graph.Heuristic;
 import polly.rx.core.orion.Graph.LazyBuilder;
+import polly.rx.core.orion.model.LoadRequired;
 import polly.rx.core.orion.model.Quadrant;
 import polly.rx.core.orion.model.QuadrantDecorator;
 import polly.rx.core.orion.model.Sector;
@@ -40,6 +42,8 @@ public class PathPlanner {
         private boolean isWormhole;
         private boolean isDiagonal;
         private Wormhole wormhole;
+        private int waitMin;
+        private int waitMax;
         
         private EdgeData() {}
         
@@ -53,6 +57,22 @@ public class PathPlanner {
         
         public Wormhole getWormhole() {
             return this.wormhole;
+        }
+        
+        public boolean doWaitFull() {
+            return this.isWormhole && this.wormhole.requiresLoad() == LoadRequired.FULL;
+        }
+        
+        public boolean mustWait() {
+            return this.waitMin != 0 || this.doWaitFull();
+        }
+        
+        public int getWaitMin() {
+            return this.waitMin;
+        }
+        
+        public int getWaitMax() {
+            return this.waitMax;
         }
     }
     
@@ -258,19 +278,26 @@ public class PathPlanner {
         private final int minUnload;
         private final int maxUnload;
         
-        private UniversePath(Graph<Sector, EdgeData>.Path path) {
+        private UniversePath(Graph<Sector, EdgeData>.Path path, TimespanType jumpTime) {
             this.path = path;
-            int s = 0;
-            int minUnload = 0;
-            int maxUnload = 0;
             this.groups = new ArrayList<>();
+            this.wormholes = new ArrayList<>();
+
             String lastQuad = ""; //$NON-NLS-1$
             Group currentGroup = null;
-            this.wormholes = new ArrayList<>();
+            
+            // always consider to be unloaded
+            int jtMinutes = (int) (jumpTime.getSpan() / 60);
+            int currentMinUnload = jtMinutes;
+            int currentMaxUnload = jtMinutes;
+            
+            int sumMinUnload = 0;
+            int sumMaxUnload = 0;
             
             boolean first = true;
             Graph<Sector, EdgeData>.Edge lastEdge = null;
             final Iterator<Graph<Sector, EdgeData>.Edge> it = path.getPath().iterator();
+
             while (it.hasNext()) {
                 final Graph<Sector, EdgeData>.Edge e = it.next();
                 final Sector source = e.getSource().getData();
@@ -290,12 +317,32 @@ public class PathPlanner {
                 lastQuad = source.getQuadName();
                 
                 if (e.getData().isWormhole()) {
-                    minUnload += e.getData().getWormhole().getMinUnload();
-                    maxUnload += e.getData().getWormhole().getMaxUnload();
-                    this.wormholes.add(e.getData().getWormhole());
+                    final Wormhole hole = e.getData().getWormhole();
+                    sumMinUnload += hole.getMinUnload();
+                    sumMaxUnload += hole.getMaxUnload();
+                    this.wormholes.add(hole);
                     highlight = SectorType.HIGHLIGHT_WH_START;
-                } else {
-                    ++s;
+                    
+                    switch (hole.requiresLoad()) {
+                    case FULL:
+                        e.getData().waitMin = currentMinUnload;
+                        e.getData().waitMax = currentMaxUnload;
+                        
+                        currentMinUnload = hole.getMinUnload();
+                        currentMaxUnload = hole.getMaxUnload();
+                        break;
+                    case PARTIAL:
+                        e.getData().waitMin = Math.max(currentMinUnload - (jtMinutes - hole.getMaxUnload()), 0);
+                        e.getData().waitMax = Math.max(currentMaxUnload - (jtMinutes - hole.getMaxUnload()), 0);
+                        
+                        currentMinUnload += Math.max(hole.getMinUnload() - e.getData().waitMin, 0);
+                        currentMaxUnload += Math.max(hole.getMaxUnload() - e.getData().waitMax, 0);
+                        break;
+                    case NONE:
+                        currentMinUnload += hole.getMinUnload();
+                        currentMaxUnload += hole.getMaxUnload();
+                    default:
+                    }
                 }
                 if (first) {
                     highlight = SectorType.HIGHLIGHT_START;
@@ -309,10 +356,10 @@ public class PathPlanner {
                 currentGroup.quad.highlight(lastEdge.getTarget().getData(), 
                     SectorType.HIGHLIGHT_TARGET);
             }
-            this.sectorJumps = s;
             this.quadJumps = wormholes.size();
-            this.minUnload = minUnload;
-            this.maxUnload = maxUnload;
+            this.sectorJumps = path.getPath().size() - this.quadJumps;
+            this.minUnload = sumMinUnload;
+            this.maxUnload = sumMaxUnload;
         }
         
         public boolean pathFound() {
@@ -346,11 +393,12 @@ public class PathPlanner {
     
     
     
-    public UniversePath findShortestPath(Sector start, Sector target) {
+    public UniversePath findShortestPath(Sector start, Sector target, 
+            TimespanType jumpTime) {
         final UniverseBuilder builder = new UniverseBuilder();
         final Graph<Sector, EdgeData>.Path path = this.graph.findShortestPath(
                 start, target, builder, this.heuristic, builder);
-        final UniversePath result = new UniversePath(path);
+        final UniversePath result = new UniversePath(path, jumpTime);
         return result;
     }
 }

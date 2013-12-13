@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import polly.rx.MSG;
+import polly.rx.core.AZEntryManager;
 import polly.rx.core.orion.PathPlanner;
 import polly.rx.core.orion.PathPlanner.UniversePath;
 import polly.rx.core.orion.QuadrantProvider;
@@ -21,11 +22,13 @@ import polly.rx.core.orion.model.WormholeDecorator;
 import de.skuzzle.polly.http.annotations.Get;
 import de.skuzzle.polly.http.annotations.OnRegister;
 import de.skuzzle.polly.http.annotations.Param;
+import de.skuzzle.polly.http.api.AlternativeAnswerException;
 import de.skuzzle.polly.http.api.Controller;
 import de.skuzzle.polly.http.api.HttpSession;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Types.TimespanType;
 import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
 import de.skuzzle.polly.sdk.httpv2.PollyController;
 import de.skuzzle.polly.sdk.httpv2.SuccessResult;
@@ -167,15 +170,17 @@ public class OrionController extends PollyController {
     private final QuadrantProvider quadProvider;
     private final WormholeProvider holeProvider;
     private final PathPlanner pathPlanner;
-    
+    private final AZEntryManager azManager;
     
     
     public OrionController(MyPolly myPolly, QuadrantProvider quadProvider, 
-            WormholeProvider holeProvider, PathPlanner pathPlanner) {
+            WormholeProvider holeProvider, PathPlanner pathPlanner, 
+            AZEntryManager azManager) {
         super(myPolly);
         this.quadProvider = quadProvider;
         this.holeProvider = holeProvider;
         this.pathPlanner = pathPlanner;
+        this.azManager = azManager;
     }
     
     
@@ -183,7 +188,7 @@ public class OrionController extends PollyController {
     @Override
     protected Controller createInstance() {
         return new OrionController(this.getMyPolly(), 
-                this.quadProvider, this.holeProvider, this.pathPlanner);
+                this.quadProvider, this.holeProvider, this.pathPlanner, this.azManager);
     }
     
     
@@ -204,12 +209,15 @@ public class OrionController extends PollyController {
         REVORIX_CATEGORY_KEY, 
         ORION_DESC_KEY,
         VIEW_ORION_PREMISSION })
-    public HttpAnswer orion() {
+    public HttpAnswer orion() throws AlternativeAnswerException {
+        this.requirePermissions(VIEW_ORION_PREMISSION);
+        
         final Map<String, Object> c = this.createContext(CONTENT_ORION);
         final Collection<Quadrant> allQuads = this.quadProvider.getAllQuadrants();
         c.put("allQuads", allQuads); //$NON-NLS-1$
         c.put("routeStart", this.getSession().getAttached(ROUTE_FROM_KEY)); //$NON-NLS-1$
         c.put("routeTarget", this.getSession().getAttached(ROUTE_TO_KEY)); //$NON-NLS-1$
+        c.put("entries", this.azManager.getEntries(this.getSessionUser().getId())); //$NON-NLS-1$
         return this.makeAnswer(c);
     }
     
@@ -348,7 +356,7 @@ public class OrionController extends PollyController {
     
     
     @Get(API_GET_ROUTE)
-    public HttpAnswer getRoute() {
+    public HttpAnswer getRoute(@Param("fleetId") int fleetId) {
         if (!this.getMyPolly().roles().hasPermission(this.getSessionUser(), 
                 ROUTE_ORION_PREMISSION)) {
             return HttpAnswers.newStringAnswer(403, MSG.httpNoPermission);
@@ -363,7 +371,14 @@ public class OrionController extends PollyController {
         final Sector start = (Sector) s.getAttached(ROUTE_FROM_KEY);
         final Sector target = (Sector) s.getAttached(ROUTE_TO_KEY);
         
-        final UniversePath path = this.pathPlanner.findShortestPath(start, target);
+        final TimespanType jumpTime;
+        if (fleetId == -1) {
+            jumpTime = new TimespanType(0);
+        } else {
+            jumpTime = this.azManager.getJumpTime(fleetId, this.getSessionUser());
+        }
+        final UniversePath path = this.pathPlanner.findShortestPath(start, target, 
+                jumpTime);
         c.put("path", path); //$NON-NLS-1$
         return HttpAnswers.newTemplateAnswer(CONTENT_ROUTE, c);
     }
