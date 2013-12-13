@@ -19,8 +19,6 @@ public class Graph<V, E> {
         private final Collection<Edge> edges;
         private final Collection<Node> adjacent;
         
-        
-        
         public Node(V data) {
             if (data == null) {
                 throw new NullPointerException("data"); //$NON-NLS-1$
@@ -30,27 +28,20 @@ public class Graph<V, E> {
             this.adjacent = new ArrayList<>();
         }
         
-        
-        
-        public Edge edgeTo(Node target, double costs, E data) {
-            final Edge newEdge = new Edge(this, target, costs, data);
+        public Edge edgeTo(Node target, E data) {
+            final Edge newEdge = new Edge(this, target, data);
             this.edges.add(newEdge);
             this.adjacent.add(target);
             return newEdge;
         }
         
-        
-        
         public Collection<Edge> getIncident() {
             return Collections.unmodifiableCollection(this.edges);
         }
         
-        
-
         public Collection<Node> getAdjacent() {
             return Collections.unmodifiableCollection(this.adjacent);
         }
-        
         
         public V getData() {
             return this.data;
@@ -63,9 +54,8 @@ public class Graph<V, E> {
         private final Node source;
         private final Node target;
         private final E data;
-        private final double costs;
         
-        public Edge(Node source, Node target, double costs, E data) {
+        public Edge(Node source, Node target, E data) {
             if (source == null) {
                 throw new NullPointerException("source"); //$NON-NLS-1$
             } else if (target == null) {
@@ -78,7 +68,6 @@ public class Graph<V, E> {
             this.source = source;
             this.target = target;
             this.data = data;
-            this.costs = costs;
         }
         
         
@@ -93,10 +82,6 @@ public class Graph<V, E> {
         
         public E getData() {
             return this.data;
-        }
-        
-        public double getCosts() {
-            return this.costs;
         }
     }
     
@@ -113,9 +98,14 @@ public class Graph<V, E> {
     }
     
     
+    
+    public interface EdgeCosts<E> {
+        public double calculate(E data);
+    }
+    
+    
+    
     private final Map<V, Node> nodeMap;
-    
-    
     
     public Graph() {
         this.nodeMap = new HashMap<>();
@@ -172,12 +162,12 @@ public class Graph<V, E> {
     
     
     public Path findShortestPath(V start, V target, LazyBuilder<V, E> builder, 
-            Heuristic<V> heuristic) {
+            Heuristic<V> heuristic, EdgeCosts<E> costs) {
         final Node vStart = this.getNode(start, start);
         final Node vTarget = this.getNode(target, start);
         
         final KnownNode node = this.shortestPathInternal(vStart, vTarget, 
-                builder, heuristic);
+                builder, heuristic, costs);
         if (node == null) {
             return new Path(Collections.<Edge>emptyList(), 0.0);
         }
@@ -221,7 +211,7 @@ public class Graph<V, E> {
     
     
     private KnownNode shortestPathInternal(Node start, Node target, 
-            LazyBuilder<V, E> builder, Heuristic<V> heuristic) {
+            LazyBuilder<V, E> builder, Heuristic<V> heuristic, EdgeCosts<E> costs) {
         final PriorityQueue<KnownNode> q = new PriorityQueue<>(this.nodeMap.size());
         final Set<Node> closed = new HashSet<>(this.nodeMap.size());
         
@@ -242,7 +232,8 @@ public class Graph<V, E> {
                     if (!closed.contains(v1)) {
                         final double h = heuristic.calculate(
                                 v.wrapped.getData(), v1.getData());
-                        q.add(new KnownNode(v1, v.costs + edge.costs, edge, v, h));
+                        q.add(new KnownNode(v1, 
+                                v.costs + costs.calculate(edge.getData()), edge, v, h));
                     }
                 }
             }

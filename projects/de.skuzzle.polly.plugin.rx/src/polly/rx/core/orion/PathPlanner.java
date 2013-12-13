@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import polly.rx.core.orion.Graph.EdgeCosts;
 import polly.rx.core.orion.Graph.Heuristic;
 import polly.rx.core.orion.Graph.LazyBuilder;
 import polly.rx.core.orion.model.Quadrant;
@@ -22,16 +23,28 @@ import polly.rx.core.orion.model.Wormhole;
 public class PathPlanner {
     
     public static class EdgeData {
-        private final boolean isWormhole;
-        private final Wormhole wormhole;
         
-        public EdgeData() {
-            this(null);
+        public static EdgeData wormhole(Wormhole wormhole) {
+            final EdgeData d = new EdgeData();
+            d.isWormhole = true;
+            d.wormhole = wormhole;
+            return d;
         }
         
-        public EdgeData( Wormhole wormhole) {
-            this.isWormhole = wormhole != null;
-            this.wormhole = wormhole;
+        public static EdgeData sector(boolean diagonal) {
+            final EdgeData d = new EdgeData();
+            d.isDiagonal = diagonal;
+            return d;
+        }
+        
+        private boolean isWormhole;
+        private boolean isDiagonal;
+        private Wormhole wormhole;
+        
+        private EdgeData() {}
+        
+        public boolean isDiagonal() {
+            return this.isDiagonal;
         }
         
         public boolean isWormhole() {
@@ -45,12 +58,11 @@ public class PathPlanner {
     
     
     
-    private class UniverseBuilder implements LazyBuilder<Sector, EdgeData> {
+    private class UniverseBuilder implements LazyBuilder<Sector, EdgeData>, 
+            EdgeCosts<EdgeData> {
         
         private final double COST_DIAGONAL = 1.0;
         private final double COST_NORMAL = 2.0;
-        private final double COST_QUAD = 5.0;
-        
         
         private final Set<Sector> done;
         
@@ -59,7 +71,15 @@ public class PathPlanner {
             this.done = new HashSet<>();
         }
         
-        
+        @Override
+        public double calculate(EdgeData data) {
+            if (data.isWormhole()) {
+                return data.getWormhole().getMinUnload();
+            } else if (data.isDiagonal()) {
+                return COST_DIAGONAL;
+            }
+            return COST_NORMAL;
+        }
 
         @Override
         public void collectIncident(Graph<Sector, EdgeData> graph, Sector source) {
@@ -72,9 +92,9 @@ public class PathPlanner {
                     final Quadrant targetQuad = quadProvider.getQuadrant(
                             hole.getTarget());
                     
-                    final EdgeData d = new EdgeData(hole);
+                    final EdgeData d = EdgeData.wormhole(hole);
                     this.addNeighbour(targetQuad, hole.getTarget().getX(), 
-                            hole.getTarget().getY(), hole.getMinUnload(), graph, source, d);
+                            hole.getTarget().getY(), graph, source, d);
                 }
                 
                 // add direct neighbours
@@ -83,10 +103,9 @@ public class PathPlanner {
                 final Quadrant quad = quadProvider.getQuadrant(source);
                 for (int i = -1; i < 2; ++i) {
                     for (int j = -1; j < 2; ++j) {
-                        final EdgeData d = new EdgeData();
                         final boolean diagonal = Math.abs(i) == 1 && Math.abs(j) == 1;
-                        final double costs = diagonal ? COST_DIAGONAL : COST_NORMAL;
-                        this.addNeighbour(quad, x + i, y + j, costs, graph, source, d);
+                        final EdgeData d = EdgeData.sector(diagonal);
+                        this.addNeighbour(quad, x + i, y + j, graph, source, d);
                     }
                 }
             }
@@ -94,7 +113,7 @@ public class PathPlanner {
         
         
         
-        private void addNeighbour(Quadrant quad, int x, int y, double costs,
+        private void addNeighbour(Quadrant quad, int x, int y, 
                 Graph<Sector, EdgeData> graph, Sector source, EdgeData edgeData) {
             if (x < 0 || x > quad.getMaxX() || y < 0 || y > quad.getMaxY() || 
                     (x == source.getX() && y == source.getY())) {
@@ -104,7 +123,7 @@ public class PathPlanner {
             if (neighbour.getType() != SectorType.NONE) {
                 final Graph<Sector, EdgeData>.Node vSource = graph.getNode(source);
                 final Graph<Sector, EdgeData>.Node vTarget = graph.getNode(neighbour, neighbour); 
-                vSource.edgeTo(vTarget, costs, edgeData);
+                vSource.edgeTo(vTarget, edgeData);
             }
         }
     }
@@ -165,13 +184,21 @@ public class PathPlanner {
     
     
     
-    private final static class HighlightedQuadrant extends QuadrantDelegate {
+    public final static class HighlightedQuadrant extends QuadrantDelegate {
+        
+        private static int IDS = 0;
         
         private final Map<String, SectorType> highlights;
+        private final int id;
         
         public HighlightedQuadrant(Quadrant wrapped) {
             super(wrapped);
             this.highlights = new HashMap<>();
+            this.id = IDS++;
+        }
+        
+        public int getId() {
+            return this.id;
         }
         
         public void highlight(Sector sector, SectorType type) {
@@ -312,9 +339,9 @@ public class PathPlanner {
     
     
     public UniversePath findShortestPath(Sector start, Sector target) {
-        final LazyBuilder<Sector, EdgeData> builder = new UniverseBuilder();
+        final UniverseBuilder builder = new UniverseBuilder();
         final Graph<Sector, EdgeData>.Path path = this.graph.findShortestPath(
-                start, target, builder, this.heuristic);
+                start, target, builder, this.heuristic, builder);
         final UniversePath result = new UniversePath(path);
         return result;
     }
