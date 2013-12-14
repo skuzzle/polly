@@ -13,6 +13,7 @@ public enum SectorType {
     HIGHLIGHT_WH_DROP("", 203), //$NON-NLS-1$
     HIGHLIGHT_WH_START("", 204), //$NON-NLS-1$
     HIGHLIGHT_SAFE_SPOT("", 205), //$NON-NLS-1$
+    HIGHLIGHT_SAFE_SPOT_WL("", 206), //$NON-NLS-1$
     EMPTY(MSG.secTypeEmpty, 1, 9),
     BLAUER_STERN(MSG.secTypeBlauerStern, 11),
     BLAUER_RIESE(MSG.secTypeBlauerRiese, 12),
@@ -71,6 +72,7 @@ public enum SectorType {
         case HIGHLIGHT_WH_DROP:
         case HIGHLIGHT_WH_START:
         case HIGHLIGHT_SAFE_SPOT:
+        case HIGHLIGHT_SAFE_SPOT_WL:
             return true;
         default: return false;
         }

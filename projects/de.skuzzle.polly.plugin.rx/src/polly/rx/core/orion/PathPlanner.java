@@ -409,8 +409,14 @@ public class PathPlanner {
                         for (int i = 0; i < bound; ++i) {
                             final Sector safeSpot = spots.get(i);
                             e.getData().waitSpots.add(safeSpot);
-                            currentGroup.quad.highlight(safeSpot, 
+                            
+                            if (safeSpot.equals(e.getSource())) {
+                                currentGroup.quad.highlight(safeSpot, 
+                                        SectorType.HIGHLIGHT_SAFE_SPOT_WL);
+                            } else {
+                                currentGroup.quad.highlight(safeSpot, 
                                     SectorType.HIGHLIGHT_SAFE_SPOT);
+                            }
                         }
                     }
                 }
