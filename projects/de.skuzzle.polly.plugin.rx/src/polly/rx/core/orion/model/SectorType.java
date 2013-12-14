@@ -7,13 +7,13 @@ import polly.rx.MSG;
 
 public enum SectorType {
     NONE("", 0, 1), //$NON-NLS-1$
-    HIGHLIGHT_SECTOR("", 200), //$NON-NLS-1$
-    HIGHLIGHT_START("", 201), //$NON-NLS-1$
-    HIGHLIGHT_TARGET("", 202), //$NON-NLS-1$
-    HIGHLIGHT_WH_DROP("", 203), //$NON-NLS-1$
-    HIGHLIGHT_WH_START("", 204), //$NON-NLS-1$
-    HIGHLIGHT_SAFE_SPOT("", 205), //$NON-NLS-1$
-    HIGHLIGHT_SAFE_SPOT_WL("", 206), //$NON-NLS-1$
+    HIGHLIGHT_SECTOR(MSG.secTypeHLRouteSector, 200),
+    HIGHLIGHT_START(MSG.secTypeHLRouteStart, 201), 
+    HIGHLIGHT_TARGET(MSG.secTypeHLRouteTarget, 202),
+    HIGHLIGHT_WH_DROP(MSG.secTypeHLWHDrop, 203),
+    HIGHLIGHT_WH_START(MSG.secTypeHLWHStart, 204),
+    HIGHLIGHT_SAFE_SPOT(MSG.secTypeHLSafeSpot, 205),
+    HIGHLIGHT_SAFE_SPOT_WL(MSG.secTypeHLSafeSpotWH, 206),
     EMPTY(MSG.secTypeEmpty, 1, 9),
     BLAUER_STERN(MSG.secTypeBlauerStern, 11),
     BLAUER_RIESE(MSG.secTypeBlauerRiese, 12),
@@ -52,6 +52,18 @@ public enum SectorType {
     ANDROIDENKOLONIE(MSG.secTypeAndroidenKolonie, 89),
     EINTRITTS_PORTAL(MSG.secTypePortal, 100),
     ;
+    
+    
+    public static SectorType[] HIGHLIGHTS = {
+        HIGHLIGHT_START,
+        HIGHLIGHT_TARGET,
+        HIGHLIGHT_SECTOR,
+        HIGHLIGHT_WH_START,
+        HIGHLIGHT_WH_DROP,
+        HIGHLIGHT_SAFE_SPOT,
+        HIGHLIGHT_SAFE_SPOT_WL
+    };
+    
     
     private final static Random RANDOM = new Random();
     

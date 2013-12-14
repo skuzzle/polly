@@ -30,6 +30,14 @@
 
 #WORMHOLES ( $path.getWormholes() )
 
+<p>
+#foreach ($hl in $legend)
+<img src="/polly/rx/httpv2/view/orion/$hl.getImgName()" width="10" height="10" 
+    style="border: 1px solid red;"/> $hl<br/>
+#end
+<br/>
+</p>
+
 <table>
 #foreach ($group in $path.getGroups())
 <tr>
@@ -50,6 +58,7 @@
                 $Constants.bind($MSG.htmlOrionSafeSpots, $path.getMaxSafeSpotDistance()):<br/>
                 #if ( $ed.hasWaitSpots() )
                 #foreach ($safeSpot in $ed.getWaitSpots() )
+                    <img src="/polly/rx/httpv2/view/orion/205.gif" width="10" height="10"/>
                     <img src="/polly/rx/httpv2/view/orion/$safeSpot.getType().getImgName()" width="10" height="10"/> #SECTOR_NO_LINK ( $safeSpot ): #BONUS_ALL ( $safeSpot )<br/>
                 #end
                 <br/>

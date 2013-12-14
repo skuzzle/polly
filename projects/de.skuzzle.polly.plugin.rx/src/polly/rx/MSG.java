@@ -355,6 +355,13 @@ public class MSG extends Constants {
     public static String qreportParserFailedToParseAttr;
     
     // Orion related
+    public static String secTypeHLRouteSector;
+    public static String secTypeHLRouteStart;
+    public static String secTypeHLRouteTarget;
+    public static String secTypeHLWHDrop;
+    public static String secTypeHLWHStart;
+    public static String secTypeHLSafeSpot;
+    public static String secTypeHLSafeSpotWH;
     public static String secTypeEmpty;
     public static String secTypeBlauerStern;
     public static String secTypeBlauerRiese;

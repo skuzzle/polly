@@ -30,11 +30,13 @@ public class PathPlanner {
         private final TimespanType totalJumpTime;
         private final TimespanType currentJumpTime;
         private final int maxWaitSpotDistance;
+        private final boolean avoidWormholes;
         
         public RouteOptions(TimespanType totalJumpTime, TimespanType currentJumpTime) {
             this.totalJumpTime = totalJumpTime;
             this.currentJumpTime = currentJumpTime;
             this.maxWaitSpotDistance = 3;
+            this.avoidWormholes = true;
         }
     }
     
@@ -108,15 +110,19 @@ public class PathPlanner {
         private final double COST_NORMAL = 2.0;
         
         private final Set<Sector> done;
+        private final RouteOptions options;
         
-        
-        public UniverseBuilder() {
+        public UniverseBuilder(RouteOptions options) {
             this.done = new HashSet<>();
+            this.options = options;
         }
         
         @Override
         public double calculate(EdgeData data) {
             if (data.isWormhole()) {
+                if (this.options.avoidWormholes) {
+                    return Double.MAX_VALUE;
+                }
                 return data.getWormhole().getMinUnload();
             } else if (data.isDiagonal()) {
                 return COST_DIAGONAL;
@@ -480,7 +486,7 @@ public class PathPlanner {
     
     public UniversePath findShortestPath(Sector start, Sector target, 
             RouteOptions options) {
-        final UniverseBuilder builder = new UniverseBuilder();
+        final UniverseBuilder builder = new UniverseBuilder(options);
         final Graph<Sector, EdgeData>.Path path = this.graph.findShortestPath(
                 start, target, builder, this.heuristic, builder);
         final UniversePath result = new UniversePath(path, options);

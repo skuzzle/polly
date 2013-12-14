@@ -18,6 +18,7 @@ import polly.rx.core.orion.model.Quadrant;
 import polly.rx.core.orion.model.QuadrantDecorator;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.SectorDecorator;
+import polly.rx.core.orion.model.SectorType;
 import polly.rx.core.orion.model.Wormhole;
 import polly.rx.core.orion.model.WormholeDecorator;
 import de.skuzzle.polly.http.annotations.Get;
@@ -388,6 +389,7 @@ public class OrionController extends PollyController {
         final UniversePath path = this.pathPlanner.findShortestPath(start, target, 
                 options);
         c.put("path", path); //$NON-NLS-1$
+        c.put("legend", SectorType.HIGHLIGHTS); //$NON-NLS-1$
         return HttpAnswers.newTemplateAnswer(CONTENT_ROUTE, c);
     }
     
