@@ -17,6 +17,10 @@
     <td><b>$MSG.htmlOrionWLUnload</b></td>
     <td>$path.getMinUnload()-$path.getMaxUnload() Min</td>
 </tr>
+<tr>
+    <td><b>$MSG.htmlOrionWaitingTime</b></td>
+    <td>$path.getMaxWaitTime() Min</td>
+</tr>
 #else
 <tr>
     <td colspan="2">$MSG.htmlOrionNoRouteFound</td>
@@ -40,11 +44,14 @@
         #set($target = $edge.getTarget().getData())
         
         #if ($ed.isWormhole())
-        <p>
+        <p style="margin-top:7px">
+            #if ( $ed.mustWait() )
+            <span style="color:red"><b>$MSG.htmlOrionWaitingTime: $ed.getWaitMin()-$ed.getWaitMax() Min</b></span><br/>
+            #end
             <b>Wurmloch: </b> $ed.getWormhole().getName()<br/>
             Von: #SECTOR_NO_LINK ( $source ) <br/>
             Nach: #SECTOR_NO_LINK ( $target ) <br/>
-            Wartezeit: $ed.getWaitMin()-$ed.getWaitMax() Min
+            Entladung: $ed.getWormhole().getMinUnload()-$ed.getWormhole().getMaxUnload()<br/>
         </p>
         #end
 

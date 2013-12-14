@@ -13,7 +13,6 @@ import de.skuzzle.polly.sdk.Types.TimespanType;
 import polly.rx.core.orion.Graph.EdgeCosts;
 import polly.rx.core.orion.Graph.Heuristic;
 import polly.rx.core.orion.Graph.LazyBuilder;
-import polly.rx.core.orion.model.LoadRequired;
 import polly.rx.core.orion.model.Quadrant;
 import polly.rx.core.orion.model.QuadrantDecorator;
 import polly.rx.core.orion.model.Sector;
@@ -59,12 +58,8 @@ public class PathPlanner {
             return this.wormhole;
         }
         
-        public boolean doWaitFull() {
-            return this.isWormhole && this.wormhole.requiresLoad() == LoadRequired.FULL;
-        }
-        
         public boolean mustWait() {
-            return this.waitMin != 0 || this.doWaitFull();
+            return this.waitMin > 0;
         }
         
         public int getWaitMin() {
@@ -277,6 +272,7 @@ public class PathPlanner {
         private final int quadJumps;
         private final int minUnload;
         private final int maxUnload;
+        private final int maxWaitTime;
         
         private UniversePath(Graph<Sector, EdgeData>.Path path, TimespanType jumpTime) {
             this.path = path;
@@ -293,6 +289,8 @@ public class PathPlanner {
             
             int sumMinUnload = 0;
             int sumMaxUnload = 0;
+            
+            int maximumWaitTime = 0;
             
             boolean first = true;
             Graph<Sector, EdgeData>.Edge lastEdge = null;
@@ -332,8 +330,8 @@ public class PathPlanner {
                         currentMaxUnload = hole.getMaxUnload();
                         break;
                     case PARTIAL:
-                        e.getData().waitMin = Math.max(currentMinUnload - (jtMinutes - hole.getMaxUnload()), 0);
-                        e.getData().waitMax = Math.max(currentMaxUnload - (jtMinutes - hole.getMaxUnload()), 0);
+                        e.getData().waitMin = currentMinUnload + hole.getMaxUnload() - jtMinutes;
+                        e.getData().waitMax = currentMaxUnload + hole.getMaxUnload() - jtMinutes;
                         
                         currentMinUnload += Math.max(hole.getMinUnload() - e.getData().waitMin, 0);
                         currentMaxUnload += Math.max(hole.getMaxUnload() - e.getData().waitMax, 0);
@@ -343,6 +341,7 @@ public class PathPlanner {
                         currentMaxUnload += hole.getMaxUnload();
                     default:
                     }
+                    maximumWaitTime = Math.max(maximumWaitTime, e.getData().waitMax);
                 }
                 if (first) {
                     highlight = SectorType.HIGHLIGHT_START;
@@ -360,6 +359,11 @@ public class PathPlanner {
             this.sectorJumps = path.getPath().size() - this.quadJumps;
             this.minUnload = sumMinUnload;
             this.maxUnload = sumMaxUnload;
+            this.maxWaitTime = maximumWaitTime;
+        }
+        
+        public int getMaxWaitTime() {
+            return this.maxWaitTime;
         }
         
         public boolean pathFound() {
