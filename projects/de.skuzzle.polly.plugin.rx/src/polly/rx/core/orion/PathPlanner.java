@@ -2,6 +2,8 @@ package polly.rx.core.orion;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -9,19 +11,34 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import de.skuzzle.polly.sdk.Types.TimespanType;
 import polly.rx.core.orion.Graph.EdgeCosts;
 import polly.rx.core.orion.Graph.Heuristic;
 import polly.rx.core.orion.Graph.LazyBuilder;
 import polly.rx.core.orion.model.Quadrant;
 import polly.rx.core.orion.model.QuadrantDecorator;
+import polly.rx.core.orion.model.QuadrantUtils;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.SectorDecorator;
 import polly.rx.core.orion.model.SectorType;
 import polly.rx.core.orion.model.Wormhole;
+import de.skuzzle.polly.sdk.Types.TimespanType;
 
 
 public class PathPlanner {
+    
+    public static class RouteOptions {
+        private final TimespanType totalJumpTime;
+        private final TimespanType currentJumpTime;
+        private final int maxWaitSpotDistance;
+        
+        public RouteOptions(TimespanType totalJumpTime, TimespanType currentJumpTime) {
+            this.totalJumpTime = totalJumpTime;
+            this.currentJumpTime = currentJumpTime;
+            this.maxWaitSpotDistance = 3;
+        }
+    }
+    
+    
     
     public static class EdgeData {
         
@@ -43,8 +60,19 @@ public class PathPlanner {
         private Wormhole wormhole;
         private int waitMin;
         private int waitMax;
+        private final List<Sector> waitSpots;
         
-        private EdgeData() {}
+        private EdgeData() {
+            this.waitSpots = new ArrayList<>(MAX_SAFE_SPOT_OUTPUT);
+        }
+        
+        public List<Sector> getWaitSpots() {
+            return this.waitSpots;
+        }
+        
+        public boolean hasWaitSpots() {
+            return !this.waitSpots.isEmpty();
+        }
         
         public boolean isDiagonal() {
             return this.isDiagonal;
@@ -166,6 +194,23 @@ public class PathPlanner {
     
     
     
+    private final static Comparator<Sector> SAFE_SPOT_COMP = new Comparator<Sector>() {
+        @Override
+        public int compare(Sector o1, Sector o2) {
+            // attacker bonus: the less, the better
+            int c = Integer.compare(o1.getAttackerBonus(), o2.getAttackerBonus());
+            if (c == 0) {
+                // defender bonus: the more, the better
+                c = Integer.compare(o2.getDefenderBonus(), o1.getDefenderBonus());
+            }
+            return c;
+        }
+    };
+    
+    
+    
+    private final static int MAX_SAFE_SPOT_OUTPUT = 2;
+    
     private final QuadrantProvider quadProvider;
     private final WormholeProvider holeProvider;
     private final Graph<Sector, EdgeData> graph;
@@ -221,7 +266,16 @@ public class PathPlanner {
         }
 
         public void highlight(int x, int y, SectorType type) {
-            this.highlights.put(x + "_" + y, type); //$NON-NLS-1$
+            final String key = x + "_" + y; //$NON-NLS-1$
+            SectorType st = this.highlights.get(key);
+            if (st == null) {
+                this.highlights.put(key, type);
+            } else {
+                // highlight for this sector already exists, keep the one with higher id
+                if (st.getId() < type.getId()) {
+                    this.highlights.put(key, type);
+                }
+            }
         }
         
         @Override
@@ -273,9 +327,11 @@ public class PathPlanner {
         private final int minUnload;
         private final int maxUnload;
         private final int maxWaitTime;
+        private final RouteOptions options;
         
-        private UniversePath(Graph<Sector, EdgeData>.Path path, TimespanType jumpTime) {
+        private UniversePath(Graph<Sector, EdgeData>.Path path, RouteOptions options) {
             this.path = path;
+            this.options = options;
             this.groups = new ArrayList<>();
             this.wormholes = new ArrayList<>();
 
@@ -283,7 +339,7 @@ public class PathPlanner {
             Group currentGroup = null;
             
             // always consider to be unloaded
-            int jtMinutes = (int) (jumpTime.getSpan() / 60);
+            int jtMinutes = (int) (options.totalJumpTime.getSpan() / 60);
             int currentMinUnload = jtMinutes;
             int currentMaxUnload = jtMinutes;
             
@@ -342,6 +398,21 @@ public class PathPlanner {
                     default:
                     }
                     maximumWaitTime = Math.max(maximumWaitTime, e.getData().waitMax);
+                    
+                    if (e.getData().mustWait()) {
+                        // find good spots
+                        final Quadrant quad = quadProvider.getQuadrant(source.getQuadName());
+                        final List<Sector> spots = QuadrantUtils.getNearSectors(source, 
+                                quad, options.maxWaitSpotDistance, QuadrantUtils.ACCEPT_ALL);
+                        Collections.sort(spots, SAFE_SPOT_COMP);
+                        final int bound = Math.min(spots.size(), MAX_SAFE_SPOT_OUTPUT);
+                        for (int i = 0; i < bound; ++i) {
+                            final Sector safeSpot = spots.get(i);
+                            e.getData().waitSpots.add(safeSpot);
+                            currentGroup.quad.highlight(safeSpot, 
+                                    SectorType.HIGHLIGHT_SAFE_SPOT);
+                        }
+                    }
                 }
                 if (first) {
                     highlight = SectorType.HIGHLIGHT_START;
@@ -360,6 +431,10 @@ public class PathPlanner {
             this.minUnload = sumMinUnload;
             this.maxUnload = sumMaxUnload;
             this.maxWaitTime = maximumWaitTime;
+        }
+        
+        public int getMaxSafeSpotDistance() {
+            return options.maxWaitSpotDistance;
         }
         
         public int getMaxWaitTime() {
@@ -398,11 +473,11 @@ public class PathPlanner {
     
     
     public UniversePath findShortestPath(Sector start, Sector target, 
-            TimespanType jumpTime) {
+            RouteOptions options) {
         final UniverseBuilder builder = new UniverseBuilder();
         final Graph<Sector, EdgeData>.Path path = this.graph.findShortestPath(
                 start, target, builder, this.heuristic, builder);
-        final UniversePath result = new UniversePath(path, jumpTime);
+        final UniversePath result = new UniversePath(path, options);
         return result;
     }
 }

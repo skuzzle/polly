@@ -35,14 +35,30 @@
             #end
             </td>
             <td>
-                $MSG.htmlOrionSelectFleet
-                <select id="selectFleet" size="1">
-                    <option value="-1">Keine</option>
-                    #foreach ($entry in $entries) 
-                    <option value="$entry.getId()">$entry.getFleetName() ($!entry.getJumpTime())</option>
-                    #end
-                </select>
-                <a href="#" id="refreshRoute">$MSG.htmlOrionRefreshRoute</a></td>
+                <table>
+                <tr>
+                    <td>$MSG.htmlOrionSelectFleet</td>
+                    <td>                
+                        <select id="selectFleet" size="1">
+                        <option value="-1">$MSG.htmlOrionNone</option>
+                        #foreach ($entry in $entries) 
+                        <option value="$entry.getId()">$entry.getFleetName() ($!entry.getJumpTime())</option>
+                        #end
+                        </select>
+                        $MSG.htmlOrionOrJumpTime
+                        <input id="jumpTime" type="text" class="textbox" placeholder="$MSG.htmlOrionOptional" style="width: 70px"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>$MSG.htmlOrionCurrentJumpTime</td>
+                    <td><input id="currentJumpTime" type="type" class="textbox" placeholder="$MSG.htmlOrionOptional" style="width: 70px;"/></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><a href="#" id="refreshRoute">$MSG.htmlOrionRefreshRoute</a></td>
+                </tr>
+                </table>
+            </td>
         </tr>
     </table>
     
@@ -57,7 +73,10 @@ $(document).ready(function() {
 });
 function requesRoute() {
 	var fleetId = $("#selectFleet option:selected").val()
-	var url = "$PAGE_GETROUTE?fleetId="+fleetId;
+	var jumpTime = encodeURI($("#jumpTime").val());
+	var currentJumpTime = encodeURI($("#currentJumpTime").val());
+	
+	var url = "$PAGE_GETROUTE?fleetId="+fleetId+"&jt="+jumpTime+"&cjt="+currentJumpTime;
 	$.get(url, function(data) {
 		$("#route").html(data);
 	});

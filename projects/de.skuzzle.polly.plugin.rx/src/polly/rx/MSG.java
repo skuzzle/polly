@@ -424,6 +424,11 @@ public class MSG extends Constants {
     public static String htmlOrionNoRouteFound;
     public static String htmlOrionSelectFleet;
     public static String htmlOrionWaitingTime;
+    public static String htmlOrionOptional;
+    public static String htmlOrionOrJumpTime;
+    public static String htmlOrionNone;
+    public static String htmlOrionCurrentJumpTime;
+    public static String htmlOrionSafeSpots;
     
     // MyPlugin
     public static String pluginVenadDesc;

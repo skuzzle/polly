@@ -44,9 +44,16 @@
         #set($target = $edge.getTarget().getData())
         
         #if ($ed.isWormhole())
-        <p style="margin-top:7px">
+        <p style="margin-top:20px">
             #if ( $ed.mustWait() )
             <span style="color:red"><b>$MSG.htmlOrionWaitingTime: $ed.getWaitMin()-$ed.getWaitMax() Min</b></span><br/>
+                $Constants.bind($MSG.htmlOrionSafeSpots, $path.getMaxSafeSpotDistance()):<br/>
+                #if ( $ed.hasWaitSpots() )
+                #foreach ($safeSpot in $ed.getWaitSpots() )
+                    <img src="/polly/rx/httpv2/view/orion/$safeSpot.getType().getImgName()" width="10" height="10"/> #SECTOR_NO_LINK ( $safeSpot ): #BONUS_ALL ( $safeSpot )<br/>
+                #end
+                <br/>
+                #end
             #end
             <b>Wurmloch: </b> $ed.getWormhole().getName()<br/>
             Von: #SECTOR_NO_LINK ( $source ) <br/>

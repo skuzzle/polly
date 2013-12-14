@@ -8,6 +8,7 @@ import java.util.Map;
 import polly.rx.MSG;
 import polly.rx.core.AZEntryManager;
 import polly.rx.core.orion.PathPlanner;
+import polly.rx.core.orion.PathPlanner.RouteOptions;
 import polly.rx.core.orion.PathPlanner.UniversePath;
 import polly.rx.core.orion.QuadrantProvider;
 import polly.rx.core.orion.QuadrantProviderDecorator;
@@ -28,6 +29,7 @@ import de.skuzzle.polly.http.api.HttpSession;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.Types.TimespanType;
 import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
 import de.skuzzle.polly.sdk.httpv2.PollyController;
@@ -356,7 +358,10 @@ public class OrionController extends PollyController {
     
     
     @Get(API_GET_ROUTE)
-    public HttpAnswer getRoute(@Param("fleetId") int fleetId) {
+    public HttpAnswer getRoute(
+            @Param("fleetId") int fleetId,
+            @Param(value = "jt", optional = true) String jt,
+            @Param(value = "cjt", optional = true) String cjt) {
         if (!this.getMyPolly().roles().hasPermission(this.getSessionUser(), 
                 ROUTE_ORION_PREMISSION)) {
             return HttpAnswers.newStringAnswer(403, MSG.httpNoPermission);
@@ -373,13 +378,26 @@ public class OrionController extends PollyController {
         
         final TimespanType jumpTime;
         if (fleetId == -1) {
-            jumpTime = new TimespanType(0);
+            jumpTime = this.parse(jt);
         } else {
             jumpTime = this.azManager.getJumpTime(fleetId, this.getSessionUser());
         }
+        final TimespanType currentJumpTime = this.parse(cjt);
+        
+        final RouteOptions options = new RouteOptions(jumpTime, currentJumpTime);
         final UniversePath path = this.pathPlanner.findShortestPath(start, target, 
-                jumpTime);
+                options);
         c.put("path", path); //$NON-NLS-1$
         return HttpAnswers.newTemplateAnswer(CONTENT_ROUTE, c);
+    }
+    
+    
+    
+    private TimespanType parse(String jumpTime) {
+        final Types types = this.getMyPolly().parse(jumpTime);
+        if (types == null || !(types instanceof TimespanType)) {
+            return new TimespanType(0);
+        }
+        return (TimespanType) types;
     }
 }

@@ -69,6 +69,9 @@ public class AZEntry {
 
     
     public String getJumpTime() {
+        if (this.jumpTime == null) {
+            return "0m"; //$NON-NLS-1$
+        }
         return this.jumpTime;
     }
 

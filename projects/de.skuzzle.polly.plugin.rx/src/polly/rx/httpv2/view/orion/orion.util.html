@@ -2,11 +2,32 @@
 $sector.getQuadName() $sector.getX(), $sector.getY()
 #end
 
+
+
 #macro ( SECTOR_LINK $sector $quadId)
 <a href="#" class="sector" quadName="$quadId" col="$sector.getX()" row="$sector.getY()">
     $sector.getQuadName() $sector.getX(), $sector.getY()
 </a>
 #end
+
+
+#macro ( BONUS $bonus)
+    #if ($bonus > 0)
+    +$bonus%
+    #else
+    $bonus%
+    #end
+#end
+
+
+
+#macro ( BONUS_ALL $sector) 
+    #BONUS ( $sector.getAttackerBonus() )
+    #BONUS ( $sector.getDefenderBonus() )
+    #BONUS ( $sector.getSectorGuardBonus() )
+#end
+
+
 
 #macro (WORMHOLES $holes)
 #if (!$holes.isEmpty())
@@ -36,6 +57,7 @@ $sector.getQuadName() $sector.getX(), $sector.getY()
 </table>
 #end
 #end
+
 
 
 #macro (QUADRANT $quad)

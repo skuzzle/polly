@@ -20,7 +20,6 @@ public class Graph<V, E> {
 
         private final V data;
         private final Collection<Edge> edges;
-        private final Collection<Node> adjacent;
         
         public Node(V data) {
             if (data == null) {
@@ -28,22 +27,16 @@ public class Graph<V, E> {
             }
             this.data = data;
             this.edges = new ArrayList<>();
-            this.adjacent = new ArrayList<>();
         }
         
         public Edge edgeTo(Node target, E data) {
             final Edge newEdge = new Edge(this, target, data);
             this.edges.add(newEdge);
-            this.adjacent.add(target);
             return newEdge;
         }
         
         public Collection<Edge> getIncident() {
             return Collections.unmodifiableCollection(this.edges);
-        }
-        
-        public Collection<Node> getAdjacent() {
-            return Collections.unmodifiableCollection(this.adjacent);
         }
         
         public V getData() {
@@ -136,6 +129,27 @@ public class Graph<V, E> {
     
     public interface EdgeCosts<E> {
         public double calculate(E data);
+    }
+    
+    
+    
+    public static <E> EdgeCosts<E> constantCosts(final double costs) {
+        return new EdgeCosts<E>() {
+            @Override
+            public double calculate(E data) {
+                return costs;
+            }
+        };
+    }
+
+    
+    public static <V> Heuristic<V> noHeuristic() {
+        return new Heuristic<V>() {
+            @Override
+            public double calculate(V v1, V v2) {
+                return 0;
+            }
+        };
     }
     
     

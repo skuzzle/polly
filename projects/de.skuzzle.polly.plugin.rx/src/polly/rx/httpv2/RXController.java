@@ -431,7 +431,7 @@ public class RXController extends PollyController {
             @Param("quadrant") String quadrant,
             @Param("x") int x,
             @Param("y") int y,
-            @Param(value = "meta", treatEmpty = true) String meta) 
+            @Param(value = "meta", optional = true) String meta) 
                     throws AlternativeAnswerException {
         
         this.requirePermissions(FleetDBManager.ADD_FLEET_SCAN_PERMISSION);
@@ -723,7 +723,7 @@ public class RXController extends PollyController {
     public HttpAnswer postQReport(
             @Param("user") String user, 
             @Param("pw") String pw, 
-            @Param(value = "isLive", treatEmpty = true, defaultValue = "false") Boolean isLive,
+            @Param(value = "isLive", optional = true, defaultValue = "false") Boolean isLive,
             @Param("report") String report) {
         
         final User u = this.getMyPolly().users().getUser(user);
