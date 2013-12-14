@@ -82,8 +82,8 @@ class ReflectionHttpHandler implements HttpEventHandler {
             // value associated with that key in the current request 
             String sValue = e.parameterMap(this.mode).get(key.value());
             if (sValue == null) {
-                if (key.treatEmpty()) {
-                    sValue = key.ifEmptyValue();
+                if (key.optional()) {
+                    sValue = key.defaultValue();
                 } else {
                     // this handler does not match, try the next one
                     return next.handleHttpEvent(registered, e, next);

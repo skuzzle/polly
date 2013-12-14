@@ -192,7 +192,7 @@ public class IndexController extends PollyController {
     
     @Get(API_CALC_EXPRESSION)
     public HttpAnswer calculateExpression(
-            @Param(value = "expr", treatEmpty = true) String expression) {
+            @Param(value = "expr", optional = true) String expression) {
         
         final Types result = this.getMyPolly().parse(expression);
         return new GsonHttpAnswer(200, 

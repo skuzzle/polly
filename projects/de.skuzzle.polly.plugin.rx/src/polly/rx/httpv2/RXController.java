@@ -723,7 +723,7 @@ public class RXController extends PollyController {
     public HttpAnswer postQReport(
             @Param("user") String user, 
             @Param("pw") String pw, 
-            @Param(value = "isLive", treatEmpty = true, ifEmptyValue = "false") Boolean isLive,
+            @Param(value = "isLive", treatEmpty = true, defaultValue = "false") Boolean isLive,
             @Param("report") String report) {
         
         final User u = this.getMyPolly().users().getUser(user);

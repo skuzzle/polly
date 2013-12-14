@@ -226,7 +226,7 @@ public class UserController extends PollyController {
     public HttpAnswer setAttribute(
         @Param("userId") int userId,
         @Param("attribute") String attribute, 
-        @Param(value = "value", treatEmpty = true, ifEmptyValue = "") String value) 
+        @Param(value = "value", optional = true, defaultValue = "") String value) 
             throws AlternativeAnswerException {
         
         final User user = this.getSessionUser();
