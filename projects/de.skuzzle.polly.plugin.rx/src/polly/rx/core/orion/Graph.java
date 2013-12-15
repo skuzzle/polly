@@ -238,7 +238,6 @@ public class Graph<V, E> {
         final Edge takenEdge;
         final double costs;
         
-        
         public KnownNode(Node wrapped, double costs, Edge takenEdge, 
                 KnownNode predecessor, double heuristics) {
             if (wrapped == null) {
@@ -253,7 +252,7 @@ public class Graph<V, E> {
         
         @Override
         public int compareTo(KnownNode o) {
-            return Double.compare(this.costs + heuristics, o.costs + o.heuristics);
+            return Double.compare(this.costs + this.heuristics, o.costs + o.heuristics);
         }
     }
     

@@ -44,28 +44,38 @@ public class PathPlanner {
     
     public static class EdgeData {
         
+        public static enum EdgeType {
+            NORMAL, DIAGONAL, WORMHOLE;
+        }
+        
         public static EdgeData wormhole(Wormhole wormhole) {
-            final EdgeData d = new EdgeData();
-            d.isWormhole = true;
+            final EdgeData d = new EdgeData(EdgeType.WORMHOLE);
             d.wormhole = wormhole;
             return d;
         }
         
         public static EdgeData sector(boolean diagonal) {
-            final EdgeData d = new EdgeData();
-            d.isDiagonal = diagonal;
-            return d;
+            if (diagonal) {
+                return new EdgeData(EdgeType.DIAGONAL);
+            }
+            return new EdgeData(EdgeType.NORMAL);
         }
         
-        private boolean isWormhole;
-        private boolean isDiagonal;
+        
+        private final EdgeType type;
         private Wormhole wormhole;
         private int waitMin;
         private int waitMax;
         private final List<Sector> waitSpots;
         
-        private EdgeData() {
+        private EdgeData(EdgeType type) {
+            this.type = type;
             this.waitSpots = new ArrayList<>(MAX_SAFE_SPOT_OUTPUT);
+        }
+        
+        
+        public EdgeType getType() {
+            return this.type;
         }
         
         public List<Sector> getWaitSpots() {
@@ -76,12 +86,8 @@ public class PathPlanner {
             return !this.waitSpots.isEmpty();
         }
         
-        public boolean isDiagonal() {
-            return this.isDiagonal;
-        }
-        
         public boolean isWormhole() {
-            return this.isWormhole;
+            return this.type == EdgeType.WORMHOLE;
         }
         
         public Wormhole getWormhole() {
@@ -106,8 +112,8 @@ public class PathPlanner {
     private class UniverseBuilder implements LazyBuilder<Sector, EdgeData>, 
             EdgeCosts<EdgeData> {
         
-        private final double COST_DIAGONAL = 1.0;
-        private final double COST_NORMAL = 2.0;
+        private final double COST_DIAGONAL = 0.5 / 60;
+        private final double COST_NORMAL = 1.0 / 60;
         
         private final Set<Sector> done;
         private final RouteOptions options;
@@ -119,15 +125,26 @@ public class PathPlanner {
         
         @Override
         public double calculate(EdgeData data) {
-            if (data.isWormhole()) {
+            switch (data.getType()) {
+            case NORMAL:   return COST_NORMAL;
+            case DIAGONAL: return COST_DIAGONAL;
+            case WORMHOLE:
+                final Wormhole hole = data.getWormhole();
+                double modifier = 1.0;
                 if (this.options.avoidWormholes) {
-                    return Double.MAX_VALUE;
+                    modifier = 10.0;
+                } else {
+                    switch (hole.requiresLoad()) {
+                    case FULL:
+                        modifier = 4.0;
+                    case PARTIAL:
+                        modifier = 2.0;
+                    case NONE:
+                    }
                 }
-                return data.getWormhole().getMinUnload();
-            } else if (data.isDiagonal()) {
-                return COST_DIAGONAL;
+                return modifier * data.getWormhole().getMaxUnload();
+            default: return Double.MAX_VALUE;
             }
-            return COST_NORMAL;
         }
 
         @Override
