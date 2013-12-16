@@ -32,7 +32,17 @@ class NativeHandlers {
         
         @Override
         public Object parse(String value) throws HttpException {
-            return Boolean.parseBoolean(value);
+            if (value == null) {
+                return false;
+            } else {
+                final String lc = value.toLowerCase();
+                if (lc.equals("true") || lc.equals("yes") || lc.equals("on")) {
+                    return true;
+                } else if (lc.equals("false") || lc.equals("no") || lc.equals("off")) {
+                    return false;
+                }
+                throw new IllegalArgumentException("invalid boolean: " + value);
+            }
         }
         
         
