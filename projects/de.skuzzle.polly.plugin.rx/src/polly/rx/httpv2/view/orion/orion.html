@@ -1,3 +1,5 @@
+#parse ( "/polly/rx/httpv2/view/orion/orion.util.html" )
+
 <div class="highlight contentBox">
     #CONTENT_HEADER ($MSG.htmlOrionName)
     <div class="content">
@@ -51,7 +53,11 @@
                 </tr>
                 <tr>
                     <td>$MSG.htmlOrionCurrentJumpTime</td>
-                    <td><input id="currentJumpTime" type="type" class="textbox" placeholder="$MSG.htmlOrionOptional" style="width: 70px;"/></td>
+                    <td><input id="currentJumpTime" type="text" class="textbox" placeholder="$MSG.htmlOrionOptional" style="width: 70px;"/></td>
+                </tr>
+                <tr>
+                    <td>$MSG.htmlOrionAvoidWormholes</td>
+                    <td><input id="avoidWormholes" type="checkbox"/></td>
                 </tr>
                 <tr>
                     <td></td>
@@ -75,8 +81,10 @@ function requesRoute() {
 	var fleetId = $("#selectFleet option:selected").val()
 	var jumpTime = encodeURI($("#jumpTime").val());
 	var currentJumpTime = encodeURI($("#currentJumpTime").val());
+	var avoidWormholes = $("#avoidWormholes").val();
 	
-	var url = "$PAGE_GETROUTE?fleetId="+fleetId+"&jt="+jumpTime+"&cjt="+currentJumpTime;
+	var url = "$PAGE_GETROUTE?fleetId="+fleetId+"&jt="+jumpTime+
+			"&cjt="+currentJumpTime+"&awh=" + avoidWormholes;
 	$.get(url, function(data) {
 		$("#route").html(data);
 	});
