@@ -45,11 +45,10 @@ class NativeHandlers {
             }
         }
         
-        
-        
         @Override
         public boolean canHandle(Class<?> type, Class<?> typeVar) {
-            return Boolean.class.isAssignableFrom(type);
+            return Boolean.class.isAssignableFrom(type) || 
+                    boolean.class.isAssignableFrom(type);
         }
     };
     
@@ -99,8 +98,6 @@ class NativeHandlers {
             return new ArrayList<String>(Arrays.asList(value.split(";")));
         }
         
-        
-        
         @Override
         public boolean canHandle(Class<?> type, Class<?> typeVar) {
             return List.class.isAssignableFrom(type) && typeVar != null && 
@@ -128,8 +125,6 @@ class NativeHandlers {
             }
             return result;
         }
-        
-        
         
         @Override
         public boolean canHandle(Class<?> type, Class<?> typeVar) {
