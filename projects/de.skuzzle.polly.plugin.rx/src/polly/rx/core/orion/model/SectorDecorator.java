@@ -71,7 +71,7 @@ public class SectorDecorator implements Sector {
     }
 
     @Override
-    public Collection<Production> getRessources() {
+    public Collection<? extends Production> getRessources() {
         return this.wrapped.getRessources();
     }
 }

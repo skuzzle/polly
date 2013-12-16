@@ -17,7 +17,12 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import polly.rx.core.orion.model.Production;
+import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.SectorType;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Write;
+import de.skuzzle.polly.sdk.time.Time;
+import de.skuzzle.polly.tools.Equatable;
 
 @Entity
 @NamedQueries({ 
@@ -38,7 +43,7 @@ import polly.rx.core.orion.model.SectorType;
         query = "SELECT qs.quadName FROM DBSector qs"
     )
 })
-public class DBSector {
+public class DBSector implements Sector {
 
     public final static String QUERY_ALL_SECTORS = "ALL_SECTORS"; //$NON-NLS-1$
     public final static String QUERY_DISTINCT_QUADS = "DISTINCT_QUADS"; //$NON-NLS-1$
@@ -73,28 +78,47 @@ public class DBSector {
     @OneToMany
     private Collection<DBProduction> ressources;
     
-    @OneToMany
-    private Collection<DBSpawn> spawns;
-
 
     
     public DBSector() {}
     
     
-    public DBSector(DBSector src) {
-        this.quadName = src.quadName;
-        this.x = src.x;
-        this.y = src.y;
-        this.attackerBonus = src.attackerBonus;
-        this.defenderBonus = src.defenderBonus;
-        this.sectorGuardBonus = src.sectorGuardBonus;
-        this.date = new Date(src.date.getTime());
-        this.type = src.type;
-        this.ressources = new ArrayList<>(src.ressources);
-        this.spawns = new ArrayList<>(src.spawns);
+    
+    public DBSector(Sector src) {
+        this.quadName = src.getQuadName();
+        this.x = src.getX();
+        this.y = src.getY();
+        this.attackerBonus = src.getAttackerBonus();
+        this.defenderBonus = src.getDefenderBonus();
+        this.sectorGuardBonus = src.getSectorGuardBonus();
+        this.date = new Date(src.getDate().getTime());
+        this.type = src.getType();
+        this.ressources = new ArrayList<>(src.getRessources().size());
+        for (final Production prod : src.getRessources()) {
+            this.ressources.add(new DBProduction(prod.getRess(), prod.getRate()));
+        }
     }
     
-
+    
+    
+    public void updateFrom(Sector other, Write write) {
+        this.attackerBonus = other.getAttackerBonus();
+        this.defenderBonus = other.getDefenderBonus();
+        this.sectorGuardBonus = other.getSectorGuardBonus();
+        this.date = Time.currentTime();
+        this.type = other.getType();
+        write.removeAll(this.ressources);
+        this.ressources.clear();
+        for (final Production prod : other.getRessources()) {
+            final DBProduction dbProd = new DBProduction(prod.getRess(), prod.getRate());
+            this.ressources.add(dbProd);
+            write.single(dbProd);
+        }
+    }
+    
+    
+    
+    @Override
     public String getQuadName() {
         return this.quadName;
     }
@@ -107,6 +131,7 @@ public class DBSector {
 
 
 
+    @Override
     public int getX() {
         return this.x;
     }
@@ -118,7 +143,8 @@ public class DBSector {
     }
 
 
-
+    
+    @Override
     public int getY() {
         return this.y;
     }
@@ -130,7 +156,8 @@ public class DBSector {
     }
 
 
-
+    
+    @Override
     public Date getDate() {
         return this.date;
     }
@@ -143,6 +170,7 @@ public class DBSector {
 
 
 
+    @Override
     public SectorType getType() {
         return this.type;
     }
@@ -164,19 +192,6 @@ public class DBSector {
     public void setRessources(Collection<DBProduction> ressources) {
         this.ressources = ressources;
     }
-    
-    
-    
-    
-    public Collection<DBSpawn> getSpawns() {
-        return this.spawns;
-    }
-    
-    
-    
-    public void setSpawns(Collection<DBSpawn> spawns) {
-        this.spawns = spawns;
-    }
 
 
 
@@ -186,7 +201,7 @@ public class DBSector {
 
     
 
-    
+    @Override
     public int getAttackerBonus() {
         return this.attackerBonus;
     }
@@ -200,7 +215,7 @@ public class DBSector {
 
 
 
-    
+    @Override
     public int getDefenderBonus() {
         return this.defenderBonus;
     }
@@ -214,7 +229,7 @@ public class DBSector {
 
 
 
-    
+    @Override
     public int getSectorGuardBonus() {
         return this.sectorGuardBonus;
     }
@@ -226,9 +241,25 @@ public class DBSector {
         this.sectorGuardBonus = sectorGuardBonus;
     }
 
-
+    
 
     public int getId() {
         return this.id;
+    }
+
+    
+
+    @Override
+    public Class<?> getEquivalenceClass() {
+        return Sector.class;
+    }
+
+
+    
+    @Override
+    public boolean actualEquals(Equatable o) {
+        final Sector other = (Sector) o;
+        return this.x == other.getX() && this.getY() == other.getY() && 
+                this.quadName.equals(other.getQuadName());
     }
 }

@@ -363,9 +363,10 @@ public class PathPlanner {
             Group currentGroup = null;
             
             // always consider to be unloaded
-            int jtMinutes = (int) (options.totalJumpTime.getSpan() / 60);
-            int currentMinUnload = jtMinutes;
-            int currentMaxUnload = jtMinutes;
+            final int jtMinutes = (int) (options.totalJumpTime.getSpan() / 60.0);
+            final int cjtMinutes = (int) (options.currentJumpTime.getSpan() / 60.0);
+            int currentMinUnload = cjtMinutes;
+            int currentMaxUnload = cjtMinutes;
             
             int sumMinUnload = 0;
             int sumMaxUnload = 0;

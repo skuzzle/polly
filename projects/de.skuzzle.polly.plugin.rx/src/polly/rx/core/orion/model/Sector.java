@@ -6,6 +6,7 @@ import java.util.Date;
 import de.skuzzle.polly.tools.Equatable;
 
 public interface Sector extends Equatable {
+    
     public abstract String getQuadName();
 
     public abstract int getX();
@@ -22,5 +23,5 @@ public interface Sector extends Equatable {
 
     public abstract SectorType getType();
 
-    public abstract Collection<Production> getRessources();
+    public abstract Collection<? extends Production> getRessources();
 }

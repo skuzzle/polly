@@ -2,37 +2,12 @@ package polly.rx.core.orion.model;
 
 import polly.rx.entities.RxRessource;
 
-public class Production {
+public interface Production {
 
-    private RxRessource ress;
-    private float rate;
-
-    
-    public Production(RxRessource ress, float rate) {
-        this.ress = ress;
-        this.rate = rate;
-    }
-
-
-    public RxRessource getRess() {
-        return this.ress;
-    }
+    public abstract RxRessource getRess();
 
 
 
-    public void setRess(RxRessource ress) {
-        this.ress = ress;
-    }
+    public abstract float getRate();
 
-
-
-    public float getRate() {
-        return this.rate;
-    }
-
-
-
-    public void setRate(float rate) {
-        this.rate = rate;
-    }
 }

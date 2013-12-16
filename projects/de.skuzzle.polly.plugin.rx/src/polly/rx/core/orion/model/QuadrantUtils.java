@@ -1,10 +1,14 @@
 package polly.rx.core.orion.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import de.skuzzle.polly.tools.Equatable;
 import polly.rx.core.orion.Graph;
 import polly.rx.core.orion.Graph.EdgeCosts;
 import polly.rx.core.orion.Graph.LazyBuilder;
@@ -46,6 +50,69 @@ public final class QuadrantUtils {
             return true;
         }
     };
+    
+    
+    
+    public static Sector noneSector(final String quadName, final int x, final int y) {
+        return new Sector() {
+            @Override
+            public Class<?> getEquivalenceClass() {
+                return Sector.class;
+            }
+            
+            @Override
+            public boolean actualEquals(Equatable o) {
+                final Sector other = (Sector) o;
+                return quadName.equals(quadName) && x == other.getX() && 
+                        y == other.getY();
+            }
+            
+            @Override
+            public int getY() {
+                return y;
+            }
+            
+            @Override
+            public int getX() {
+                return x;
+            }
+            
+            @Override
+            public SectorType getType() {
+                return SectorType.NONE;
+            }
+            
+            @Override
+            public int getSectorGuardBonus() {
+                return 0;
+            }
+            
+            @Override
+            public Collection<? extends Production> getRessources() {
+                return Collections.emptyList();
+            }
+            
+            @Override
+            public String getQuadName() {
+                return quadName;
+            }
+            
+            @Override
+            public int getDefenderBonus() {
+                return 0;
+            }
+            
+            @Override
+            public Date getDate() {
+                return new Date();
+            }
+            
+            @Override
+            public int getAttackerBonus() {
+                return 0;
+            }
+        };
+    }
     
     
     

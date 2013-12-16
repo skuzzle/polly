@@ -13,6 +13,7 @@ import java.util.Map;
 
 import polly.rx.core.orion.model.Production;
 import polly.rx.core.orion.model.Quadrant;
+import polly.rx.core.orion.model.QuadrantUtils;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.SectorType;
 import polly.rx.entities.RxRessource;
@@ -21,6 +22,31 @@ import de.skuzzle.polly.tools.Equatable;
 
 
 public class EggiCSVQuadrantProvider implements QuadrantProvider {
+    
+    
+    
+    private static class EggiProduction implements Production {
+
+        private final RxRessource ress;
+        private final float rate;
+
+        public EggiProduction(RxRessource ress, float rate) {
+            this.ress = ress;
+            this.rate = rate;
+        }
+
+        @Override
+        public RxRessource getRess() {
+            return this.ress;
+        }
+
+        @Override
+        public float getRate() {
+            return this.rate;
+        }
+    }
+    
+    
     
     private static class EggiSector implements Sector {
         
@@ -129,13 +155,7 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider {
             final String key = createKey(x, y);
             Sector qs = this.sectors.get(key);
             if (qs == null) {
-                final EggiSector es = new EggiSector();
-                es.quadName = name;
-                es.x = x;
-                es.y = y;
-                es.type = SectorType.NONE;
-                es.ressources = new ArrayList<>();
-                return es;
+                return QuadrantUtils.noneSector(this.name, x, y);
             }
             return qs;
         }
@@ -196,7 +216,7 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider {
     private String[] splitAndStrip(String line) {
         return line.replaceAll("\"", "").split(";"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
-    
+
     
     
     private Map<Integer, String> readQuadrants() {
@@ -246,7 +266,7 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider {
                     final RxRessource ress = RxRessource.values()[i];
                     final float rate = Float.parseFloat(parts[i + 8]);
                     if (rate > 0.f) {
-                        sector.ressources.add(new Production(ress, rate));
+                        sector.ressources.add(new EggiProduction(ress, rate));
                     }
                 }
                 

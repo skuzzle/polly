@@ -381,12 +381,11 @@ public class OrionController extends PollyController {
         
         final TimespanType jumpTime;
         if (fleetId == -1) {
-            jumpTime = this.parse(jt);
+            jumpTime = this.parse(jt, new TimespanType(0));
         } else {
             jumpTime = this.azManager.getJumpTime(fleetId, this.getSessionUser());
         }
-        final TimespanType currentJumpTime = this.parse(cjt);
-        
+        final TimespanType currentJumpTime = this.parse(cjt, jumpTime);
         final RouteOptions options = new RouteOptions(jumpTime, currentJumpTime, 
                 avoidWormholes);
         final UniversePath path = this.pathPlanner.findShortestPath(start, target, 
@@ -398,10 +397,10 @@ public class OrionController extends PollyController {
     
     
     
-    private TimespanType parse(String jumpTime) {
+    private TimespanType parse(String jumpTime, TimespanType alternative) {
         final Types types = this.getMyPolly().parse(jumpTime);
         if (types == null || !(types instanceof TimespanType)) {
-            return new TimespanType(0);
+            return alternative;
         }
         return (TimespanType) types;
     }
