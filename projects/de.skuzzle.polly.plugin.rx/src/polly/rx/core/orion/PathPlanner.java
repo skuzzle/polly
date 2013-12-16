@@ -32,11 +32,12 @@ public class PathPlanner {
         private final int maxWaitSpotDistance;
         private final boolean avoidWormholes;
         
-        public RouteOptions(TimespanType totalJumpTime, TimespanType currentJumpTime) {
+        public RouteOptions(TimespanType totalJumpTime, TimespanType currentJumpTime, 
+                boolean avoidWormholes) {
             this.totalJumpTime = totalJumpTime;
             this.currentJumpTime = currentJumpTime;
             this.maxWaitSpotDistance = 3;
-            this.avoidWormholes = true;
+            this.avoidWormholes = avoidWormholes;
         }
     }
     
@@ -112,7 +113,7 @@ public class PathPlanner {
     private class UniverseBuilder implements LazyBuilder<Sector, EdgeData>, 
             EdgeCosts<EdgeData> {
         
-        private final double COST_DIAGONAL = 0.5 / 60;
+        private final double COST_DIAGONAL = 1.5 / 60;
         private final double COST_NORMAL = 1.0 / 60;
         
         private final Set<Sector> done;

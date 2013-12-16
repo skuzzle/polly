@@ -362,7 +362,9 @@ public class OrionController extends PollyController {
     public HttpAnswer getRoute(
             @Param("fleetId") int fleetId,
             @Param(value = "jt", optional = true) String jt,
-            @Param(value = "cjt", optional = true) String cjt) {
+            @Param(value = "cjt", optional = true) String cjt,
+            @Param(value ="awh", optional = true, defaultValue = "false") boolean avoidWormholes) {
+        
         if (!this.getMyPolly().roles().hasPermission(this.getSessionUser(), 
                 ROUTE_ORION_PREMISSION)) {
             return HttpAnswers.newStringAnswer(403, MSG.httpNoPermission);
@@ -385,7 +387,8 @@ public class OrionController extends PollyController {
         }
         final TimespanType currentJumpTime = this.parse(cjt);
         
-        final RouteOptions options = new RouteOptions(jumpTime, currentJumpTime);
+        final RouteOptions options = new RouteOptions(jumpTime, currentJumpTime, 
+                avoidWormholes);
         final UniversePath path = this.pathPlanner.findShortestPath(start, target, 
                 options);
         c.put("path", path); //$NON-NLS-1$
