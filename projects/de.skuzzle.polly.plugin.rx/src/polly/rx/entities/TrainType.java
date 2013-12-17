@@ -21,7 +21,7 @@ public enum TrainType {
                 return INTESIVE_COMMANDO;
             } else if (s.contains("Modullimit")) { //$NON-NLS-1$
                 return INTESIVE_MODULE;
-            } else if (s.contains("K�rper")) { //$NON-NLS-1$
+            } else if (s.contains("Körper")) { //$NON-NLS-1$
                 return INTESIVE_BODY;
             } else if (s.contains("Crewlimit")) { //$NON-NLS-1$
                 return INTESIVE_CREW;
