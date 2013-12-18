@@ -63,9 +63,10 @@ class UnionFindTypeUnifier implements Unifier {
         UnionFindItem<Type> result = this.types.get(type);
         if (result == null) {
             result = new UnionFindItem<Type>(type);
-            this.types.put(type, result);
         }
-        return result.compress();
+        result = result.root();
+        this.types.put(type, result);
+        return result;
     }
     
 
@@ -127,7 +128,7 @@ class UnionFindTypeUnifier implements Unifier {
             Map<TypeVar, Type> subst) {
         
         assert s.isRoot() && t.isRoot();
-        final UnionFindItem<Type> rep = s.getValue() instanceof TypeVar ? s : t;
+        final UnionFindItem<Type> rep = s.getValue() instanceof TypeVar ? t : s;
         final UnionFindItem<Type> other = rep == s ? t : s;
         
         other.mergeInto(rep);
