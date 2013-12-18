@@ -5,7 +5,8 @@
         <div class="content">
             <ol style="margin-left: 20px;">
             #foreach ($ci in $commits)
-            <li><b>$myPolly.formatting().formatDate($ci.getCommit().getAuthor().getDate())</b> <em>$ci.getCommit().getMessage()</em></li>
+            #set ($ciUrl = "https://github.com/skuzzle/polly/commit/$ci.getSha()")
+            <li><b>$myPolly.formatting().formatDate($ci.getCommit().getAuthor().getDate())</b> <a href="$ciUrl"><em>$ci.getCommit().getMessage()</em></a></li>
             #end
             </ol>
             <p style="margin-top:5px;">Liste zuletzt aktualisiert: $myPolly.formatting().formatDate($lastRefresh)</p>
