@@ -27,6 +27,7 @@ import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.time.Milliseconds;
 import de.skuzzle.polly.tools.concurrent.RunLater;
+import de.skuzzle.polly.tools.strings.StringUtils;
 
 public class IndexController extends PollyController {
     
@@ -184,6 +185,7 @@ public class IndexController extends PollyController {
         c.put("allNews", this.newsManager.getAllNews()); //$NON-NLS-1$
         c.put("commits", GitHubController.getLatestCommits()); //$NON-NLS-1$
         c.put("lastRefresh", GitHubController.getLastRefresh()); //$NON-NLS-1$
+        c.put("Strings", StringUtils.class); //$NON-NLS-1$
         return this.makeAnswer(c);
     }
     

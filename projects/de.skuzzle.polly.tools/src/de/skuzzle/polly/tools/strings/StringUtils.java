@@ -2,6 +2,18 @@ package de.skuzzle.polly.tools.strings;
 
 public final class StringUtils {
 
+    
+    
+    public static String shorten(String s, int maxLength) {
+        if (s.length() < maxLength) {
+            return s;
+        }
+        final String dotdotdot = "...";
+        final int endIdx = Math.max(1, maxLength - dotdotdot.length());
+        return s.substring(0, endIdx) + dotdotdot;
+    }
+    
+    
     // Algorithm from: http://mrfoo.de/archiv/1176-Levenshtein-Distance-in-Java.html
     public static int getLevenshteinDistance(String s, String t) {
         if (s == null || t == null) {
