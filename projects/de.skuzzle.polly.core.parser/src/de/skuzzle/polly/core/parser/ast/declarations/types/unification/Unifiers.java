@@ -4,7 +4,7 @@ package de.skuzzle.polly.core.parser.ast.declarations.types.unification;
 public final class Unifiers {
     
     public final static Unifier newDefault(boolean subtyping) {
-        return new HashMapTypeUnifier(subtyping);
+        return newUnionFindUnifier(subtyping);
     }
 
     
@@ -19,6 +19,5 @@ public final class Unifiers {
     }
     
     
-    private Unifiers() {
-    }   
+    private Unifiers() {}   
 }
