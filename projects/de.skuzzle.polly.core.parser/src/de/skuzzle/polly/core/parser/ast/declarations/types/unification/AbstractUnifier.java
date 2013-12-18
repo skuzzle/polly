@@ -55,7 +55,6 @@ public abstract class AbstractUnifier implements Unifier {
     public boolean tryUnify(Type first, Type second) {
         return this.unifyInternal(first, second, new HashMap<TypeVar, Type>());
     }
-    
 
     /**
      * <p>Finds the representative of the equivalence class that <code>s</code> is in. If 
@@ -67,6 +66,17 @@ public abstract class AbstractUnifier implements Unifier {
      */
     protected abstract Type find(Type s);
     
+    /**
+     * Unions the two types into a single equivalence class. If the representative 
+     * <code>x</code> of the equivalence class of <code>m</code> is no {@link TypeVar}, 
+     * <code>x</code> is made the representative of the equivalence class that represents
+     * the union of <code>m</code> and <code>n</code>. Otherwise, the representative 
+     * <code>y</code> of the equivalence class of <code>n</code> is made the 
+     * representative of the united equivalence class.
+     * 
+     * @param m Type to union.
+     * @param n Type to union.
+     */
     protected abstract void union(Type s, Type t, Map<TypeVar, Type> subst);
     
     

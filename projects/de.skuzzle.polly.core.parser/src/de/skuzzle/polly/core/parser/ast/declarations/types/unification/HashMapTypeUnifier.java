@@ -98,18 +98,7 @@ final class HashMapTypeUnifier extends AbstractUnifier {
     }
     
     
-    
-    /**
-     * Unions the two types into a single equivalence class. If the representative 
-     * <code>x</code> of the equivalence class of <code>m</code> is no {@link TypeVar}, 
-     * <code>x</code> is made the representative of the equivalence class that represents
-     * the union of <code>m</code> and <code>n</code>. Otherwise, the representative 
-     * <code>y</code> of the equivalence class of <code>n</code> is made the representant
-     * of the united equivalence class.
-     * 
-     * @param m Type to union.
-     * @param n Type to union.
-     */
+
     @Override
     protected void union(Type m, Type n, Map<TypeVar, Type> subst) {
         final Type rep_m = this.find(m);
