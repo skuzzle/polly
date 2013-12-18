@@ -2,13 +2,8 @@ package de.skuzzle.polly.core.parser.ast.declarations.types.unification;
 
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
-import de.skuzzle.polly.core.parser.ast.declarations.types.ListType;
-import de.skuzzle.polly.core.parser.ast.declarations.types.MapType;
-import de.skuzzle.polly.core.parser.ast.declarations.types.MissingType;
-import de.skuzzle.polly.core.parser.ast.declarations.types.ProductType;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Substitution;
 import de.skuzzle.polly.core.parser.ast.declarations.types.Type;
 import de.skuzzle.polly.core.parser.ast.declarations.types.TypeVar;
@@ -20,12 +15,11 @@ import de.skuzzle.polly.core.parser.ast.declarations.types.TypeVar;
  * 
  * @author Simon Taddiken
  */
-final class HashMapTypeUnifier implements Unifier {
+final class HashMapTypeUnifier extends AbstractUnifier {
     
     
 
     private int classes;
-    private final boolean subTypeIncl;
     private final Map<Type, Integer> typeToClass;
     private final Map<Integer, Type> classToType;
     
@@ -38,7 +32,7 @@ final class HashMapTypeUnifier implements Unifier {
      *          primitives.
      */
     public HashMapTypeUnifier(boolean subTypeIncl) {
-        this.subTypeIncl = subTypeIncl;
+        super(subTypeIncl);
         this.typeToClass = new HashMap<Type, Integer>();
         this.classToType = new HashMap<Integer, Type>();
     }
@@ -57,105 +51,24 @@ final class HashMapTypeUnifier implements Unifier {
     
     
     
-    /**
-     * Tests for structural equality of the given type expression in the context of this 
-     * unifier instance.
-     * 
-     * @param first First type to check. 
-     * @param second Second type to check.
-     * @return A substitution for the type variables in first and second or 
-     *          <code>null</code> if unification was not successful.
-     */
     @Override
     public Substitution unify(Type first, Type second) {
         this.init();
-        final Map<TypeVar, Type> subst = new HashMap<TypeVar, Type>();
-        if (!unifyInternal(first, second, subst)) {
-            return null;
-        }
-        return new Substitution(subst);
+        return super.unify(first, second);
     }
     
     
-    
-    /**
-     * Tests for structural equality of the two given type expressions.
-     * 
-     * @param first First type.
-     * @param second Second type.
-     * @return Whether the first type is an instance of the second type
-     */
+
     @Override
     public boolean tryUnify(Type first, Type second) {
         this.init();
-        return this.unifyInternal(first, second, new HashMap<TypeVar, Type>());
+        return super.tryUnify(first, second);
     }
 
     
-    
-    private final boolean unifyInternal(Type m, Type n, Map<TypeVar, Type> subst) {
-        final Type s = this.find(m);
-        final Type t = this.find(n);
-        
-        if (this.subTypeIncl && s.isA(t) || s == t) {
-            return true;
-        } else if (s instanceof MissingType || t instanceof MissingType) {
-            // missing types are compatible to everything
-            this.union(s, t, subst);
-            return true;
-            
-        } else if (s instanceof MapType && t instanceof MapType) {
-            this.union(s, t, subst);
-            final MapType mc1 = (MapType) s;
-            final MapType mc2 = (MapType) t;
-            return unifyInternal(mc1.getSource(), mc2.getSource(), subst) && 
-                unifyInternal(mc1.getTarget(), mc2.getTarget(), subst);
-            
-        } else if (s instanceof ListType && t instanceof ListType) {
-            this.union(s, t, subst);
-            final ListType lc1 = (ListType) s;
-            final ListType lc2 = (ListType) t;
-            return this.unifyInternal(lc1.getSubType(), lc2.getSubType(), subst);
-            
-        } else if (s instanceof ProductType && 
-                    t instanceof ProductType) {
-            
-            // CONSIDER: unify single type Products with simple types?
-            
-            this.union(s, t, subst);
-            final ProductType pc1 = (ProductType) s;
-            final ProductType pc2 = (ProductType) t;
-            
-            if (pc1.getTypes().size() != pc2.getTypes().size()) {
-                return false;
-            }
-            final Iterator<Type> pc2It = pc2.getTypes().iterator();
-            for (final Type pc1T : pc1.getTypes()) {
-                if (!this.unifyInternal(pc1T, pc2It.next(), subst)) {
-                    return false;
-                }
-            }
-            return true;
-            
-        } else if (s instanceof TypeVar || t instanceof TypeVar) {
-            this.union(s, t, subst);
-            return true;
-        } else {
-            return false;
-        }
-    }
-    
-    
-    
-    /**
-     * <p>Finds the representative of the equivalence class that <code>s</code> is in. If 
-     * <code>s</code> was not yet assigned to a equivalence class, it is made the 
-     * representative of a new class.</p>
-     * 
-     * @param s Type which' equivalence class's type will be resolved.
-     * @return The representative type of the equivalence class that <code>s</code> is in.
-     */
-    private Type find(Type s) {
+
+    @Override
+    public Type find(Type s) {
         final int cls = this.getEquivClass(s);
         Type representant = this.classToType.get(cls);
         if (representant == null) {
@@ -197,7 +110,8 @@ final class HashMapTypeUnifier implements Unifier {
      * @param m Type to union.
      * @param n Type to union.
      */
-    private void union(Type m, Type n, Map<TypeVar, Type> subst) {
+    @Override
+    protected void union(Type m, Type n, Map<TypeVar, Type> subst) {
         final Type rep_m = this.find(m);
         final Type rep_n = this.find(n);
         
