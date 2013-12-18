@@ -1,6 +1,9 @@
 package polly.core;
 
 
+import java.util.Calendar;
+import java.util.Date;
+
 import commands.AddUserCommand;
 import commands.AmazonCommand;
 import commands.CalendarCommand;
@@ -61,6 +64,7 @@ import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.IncompatiblePluginException;
 import de.skuzzle.polly.sdk.exceptions.RoleException;
 import de.skuzzle.polly.sdk.roles.RoleManager;
+import de.skuzzle.polly.sdk.time.DateUtils;
 import entities.TopicEntity;
 
 
@@ -170,6 +174,12 @@ public class MyPlugin extends PollyPlugin {
 	            DuplicatedSignatureException {
 	    
 		super(myPolly);
+		
+		
+		// New YeaR!
+		Date newYear = DateUtils.dateFor(31, Calendar.DECEMBER, 2013);
+		newYear = DateUtils.timeFor(newYear, 24, 0, 0);
+		new NewYearCountdown(newYear, myPolly.irc());
 		
 		this.addCommand(new AnyficationCommand(myPolly));
 
