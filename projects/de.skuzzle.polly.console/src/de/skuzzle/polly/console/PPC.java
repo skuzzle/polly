@@ -27,7 +27,7 @@ import de.skuzzle.polly.tools.strings.StringUtils;
 
 
 
-public class Main {
+public class PPC {
     
     private final static String DOT_PATH = 
             "C:\\Program Files (x86)\\Graphviz 2.28\\bin\\dot.exe";
