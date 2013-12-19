@@ -9,7 +9,7 @@ import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
-import de.skuzzle.polly.tools.streams.FastByteArrayOutputStream;
+import de.skuzzle.polly.tools.io.FastByteArrayOutputStream;
 
 
 public class ImageGraph extends Graph {

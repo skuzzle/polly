@@ -1,4 +1,4 @@
-package de.skuzzle.polly.tools.streams;
+package de.skuzzle.polly.tools.io;
 
 import java.io.PrintStream;
 import java.nio.charset.Charset;

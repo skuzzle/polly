@@ -25,7 +25,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.literals.Literal;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.LiteralFormatter;
 import de.skuzzle.polly.core.parser.ast.expressions.literals.ProductLiteral;
 import de.skuzzle.polly.core.parser.ast.lang.Operator.OpType;
-import de.skuzzle.polly.tools.streams.StringBuilderWriter;
+import de.skuzzle.polly.tools.io.StringBuilderWriter;
 
 
 /**

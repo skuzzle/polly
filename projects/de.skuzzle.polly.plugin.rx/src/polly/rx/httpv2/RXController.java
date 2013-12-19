@@ -56,7 +56,7 @@ import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLTools;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.time.Time;
-import de.skuzzle.polly.tools.streams.FastByteArrayInputStream;
+import de.skuzzle.polly.tools.io.FastByteArrayInputStream;
 
 
 public class RXController extends PollyController {

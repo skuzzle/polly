@@ -23,7 +23,7 @@ import java.util.zip.ZipEntry;
 
 import org.apache.log4j.Logger;
 
-import de.skuzzle.polly.tools.streams.FastByteArrayOutputStream;
+import de.skuzzle.polly.tools.io.FastByteArrayOutputStream;
 
 
 

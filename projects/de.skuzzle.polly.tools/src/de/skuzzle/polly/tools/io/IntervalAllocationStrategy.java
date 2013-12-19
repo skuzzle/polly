@@ -1,4 +1,4 @@
-package de.skuzzle.polly.tools.streams;
+package de.skuzzle.polly.tools.io;
 
 
 public class IntervalAllocationStrategy implements AllocationStrategy {

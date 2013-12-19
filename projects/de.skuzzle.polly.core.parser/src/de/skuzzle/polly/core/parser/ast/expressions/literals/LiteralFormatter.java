@@ -13,7 +13,7 @@ import de.skuzzle.polly.core.parser.ast.expressions.Expression;
 import de.skuzzle.polly.core.parser.ast.lang.Function;
 import de.skuzzle.polly.core.parser.ast.visitor.Unparser;
 import de.skuzzle.polly.core.parser.util.TimeSpanFormat;
-import de.skuzzle.polly.tools.streams.StringBuilderWriter;
+import de.skuzzle.polly.tools.io.StringBuilderWriter;
 import de.skuzzle.polly.tools.strings.IteratorPrinter;
 import de.skuzzle.polly.tools.strings.IteratorPrinter.StringProvider;
 
