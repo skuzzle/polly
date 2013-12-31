@@ -2,16 +2,42 @@ package de.skuzzle.polly.tools.strings;
 
 public final class StringUtils {
 
-    
+    private final static String DOTS = " [...]";
     
     public static String shorten(String s, int maxLength) {
+        if (s == null) {
+            return "";
+        }
+        //maxLength = Math.min(maxLength, s.length() + DOTS.length());
         if (s.length() < maxLength) {
             return s;
         }
-        final String dotdotdot = "...";
-        final int endIdx = Math.max(1, maxLength - dotdotdot.length());
-        return s.substring(0, endIdx) + dotdotdot;
+        final int endIdx = Math.max(1, maxLength - DOTS.length());
+        return s.substring(0, endIdx) + DOTS;
     }
+    
+    
+    
+    public String firstParagraph(String s) {
+        if (s == null) {
+            return "";
+        }
+        return firstParagraph(s, s.length());
+    }
+    
+    
+    
+    public static String firstParagraph(String s, int maxLength) {
+        if (s == null) {
+            return "";
+        }
+        final int i = s.indexOf("\n");
+        final String firstParagraph = i == -1 
+                ? s 
+                : s.substring(0, i) + DOTS;
+        return shorten(firstParagraph, maxLength);
+    }
+    
     
     
     // Algorithm from: http://mrfoo.de/archiv/1176-Levenshtein-Distance-in-Java.html
