@@ -35,6 +35,7 @@ import de.skuzzle.polly.sdk.resources.Constants;
 import de.skuzzle.polly.sdk.util.DirectedComparator;
 import de.skuzzle.polly.sdk.util.DirectedComparator.SortOrder;
 import de.skuzzle.polly.tools.math.MathUtil;
+import de.skuzzle.polly.tools.strings.StringUtils;
 
 
 public class HTMLTable<T> implements HttpEventHandler {
@@ -304,6 +305,17 @@ public class HTMLTable<T> implements HttpEventHandler {
         }
         public String getFilterAll() {
             return this.filterAll;
+        }
+        public boolean isFilterSet() {
+            if (StringUtils.isValid(this.filterAll)) {
+                return true;
+            }
+            for (final String s : this.filter) {
+                if (StringUtils.isValid(s)) {
+                    return true;
+                }
+            }
+            return false;
         }
         @Override
         public String toString() {

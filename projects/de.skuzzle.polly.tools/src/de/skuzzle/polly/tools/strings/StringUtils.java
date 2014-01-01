@@ -40,6 +40,18 @@ public final class StringUtils {
     
     
     
+    /**
+     * Tests whether the provided String is not <code>null</code> and its length is 
+     * greater than 0.
+     * @param s The String to test.
+     * @return <code>true</code> iff the String is not <code>null</code> and its length
+     *          is greater than 0.
+     */
+    public static boolean isValid(String s) {
+        return s != null && s.length() > 0;
+    }
+    
+    
     // Algorithm from: http://mrfoo.de/archiv/1176-Levenshtein-Distance-in-Java.html
     public static int getLevenshteinDistance(String s, String t) {
         if (s == null || t == null) {
