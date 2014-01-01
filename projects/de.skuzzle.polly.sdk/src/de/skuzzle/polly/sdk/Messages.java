@@ -48,6 +48,7 @@ public class Messages extends Constants {
     public static String tableFilterFull;
     public static String tableFilter;
     public static String tableFilterActive;
+    public static String tableFilterClear;
     
     static {
         Resources.init(FAMILY, Messages.class);

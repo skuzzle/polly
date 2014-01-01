@@ -53,6 +53,24 @@ function tableEvents() {
 		var url = makeUrl(baseUrl, {filterToggle:"true"});
 		$.get(url, function(){});
 	});	
+	$(".clear_filter").click(function() {
+		var tId = $(this).attr("tId");
+		var baseUrl = $(this).attr("baseUrl");
+		var filters = $(".filter_input");
+		var params = {
+			'filter' : 'true'
+		};
+		$.each(filters, function(idx) {
+			var element = $(filters[idx]);
+			if (element.attr("type") == "radio") {
+				return;
+			}
+			var c = $(element).parent("td").attr("col");
+			params[c] = "";
+		});
+		var getUrl = makeUrl(baseUrl, params);
+		loadTable(getUrl, tId);
+	});
 	$(".select_pageSize").change(function() {
 		var val = $(this).find(":selected").val();
 		var tId = $(this).parents("table").attr("id");
