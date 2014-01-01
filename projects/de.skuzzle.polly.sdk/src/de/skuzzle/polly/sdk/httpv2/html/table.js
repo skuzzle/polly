@@ -56,9 +56,6 @@ function clearFilter(tId, baseUrl) {
 	};
 	$.each(filters, function(idx) {
 		var element = $(filters[idx]);
-		if (element.attr("type") == "radio") {
-			return;
-		}
 		var c = $(element).parent("td").attr("col");
 		params[c] = "";
 	});
