@@ -325,6 +325,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         public String toString() {
             final DataHolder data = this.data.get();
             return "[sortCol: " + this.sortCol +  //$NON-NLS-1$
+                ", filterRowShown: " + this.filterRowShown +  //$NON-NLS-1$
                 ", page: " + this.page +  //$NON-NLS-1$
                 ", pageCount: " + this.pageCount +  //$NON-NLS-1$
                 ", pageSize: " + this.pageSize +  //$NON-NLS-1$

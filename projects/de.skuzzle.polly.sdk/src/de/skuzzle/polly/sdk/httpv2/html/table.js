@@ -44,33 +44,28 @@ function loadTable(url, id) {
     	alert("Error while loading table contents");
     }
 }
-
-function tableEvents() {
-	$(".toggleFilterRow").click(function() {
-		var tId = $(this).attr("tId");
-		var baseUrl = $(this).attr("baseUrl");
-		$(".filter_row_"+tId).fadeToggle();
-		var url = makeUrl(baseUrl, {filterToggle:"true"});
-		$.get(url, function(){});
-	});	
-	$(".clear_filter").click(function() {
-		var tId = $(this).attr("tId");
-		var baseUrl = $(this).attr("baseUrl");
-		var filters = $(".filter_input");
-		var params = {
-			'filter' : 'true'
-		};
-		$.each(filters, function(idx) {
-			var element = $(filters[idx]);
-			if (element.attr("type") == "radio") {
-				return;
-			}
-			var c = $(element).parent("td").attr("col");
-			params[c] = "";
-		});
-		var getUrl = makeUrl(baseUrl, params);
-		loadTable(getUrl, tId);
+function toggleFilter(tId, baseUrl) {
+	$(".filter_row_"+tId).fadeToggle();
+	var url = makeUrl(baseUrl, {filterToggle:"true"});
+	$.get(url, function(){});
+}
+function clearFilter(tId, baseUrl) {
+	var filters = $(".filter_input");
+	var params = {
+		'filter' : 'true'
+	};
+	$.each(filters, function(idx) {
+		var element = $(filters[idx]);
+		if (element.attr("type") == "radio") {
+			return;
+		}
+		var c = $(element).parent("td").attr("col");
+		params[c] = "";
 	});
+	var getUrl = makeUrl(baseUrl, params);
+	loadTable(getUrl, tId);
+}
+function tableEvents() {
 	$(".select_pageSize").change(function() {
 		var val = $(this).find(":selected").val();
 		var tId = $(this).parents("table").attr("id");
