@@ -1,4 +1,4 @@
-#macro (PAGE_NAV $id $baseUrl $model $settings)
+#macro (PAGE_NAV $id $baseUrl $model $settings $top)
 #set ($pageCount = $settings.getPageCount() - 1)
 #set ($prev = $settings.getPage() - 1)
 #set ($next = $settings.getPage() + 1)
@@ -46,6 +46,13 @@
             #end
             <option value="1000" #if (1000 == $settings.getPageSize()) selected #end>1000</option>
             </select>
+            
+            #if ($top && !$noFilter)
+            <span style="margin-left:10px;">
+            <a baseUrl="$baseUrl" href="#" tId="$id" class="toggleFilterRow">$MSG.tableFilter</a>
+            <img title="$MSG.tableFilterActive" class="filter_set_$id" style="#if (!$settings.isFilterSet()) display:none; #end vertical-align:middle" src="/de/skuzzle/polly/sdk/httpv2/html/attention.png" height="16" width="16"/>
+            </span>
+            #end
         </span>
     </th>
 </tr>
@@ -57,7 +64,7 @@
 #macro (SORTABLE_TABLE $id $baseUrl $model $filter $editors $settings)
 #set ($colCount = $model.getColumnCount() - 1)
 <thead>
-#PAGE_NAV ($id, $baseUrl, $model, $settings)
+#PAGE_NAV ($id, $baseUrl, $model, $settings, true)
 <tr>
 #foreach ($col in [0..$colCount])
     <th>
@@ -83,7 +90,7 @@
 </tr>
 
 
-<tr baseUrl="$baseUrl">
+<tr baseUrl="$baseUrl" class="filter_row_$id" #if(!$settings.isFilterRowShown()) style="display:none"#end>
     <td col="filter_all" colspan="$model.getColumnCount()">
         <input style="width: 100%" type="text" class="textbox filter_input" placeholder="$MSG.tableFilterFull" value="$!settings.getFilterAll()"/>
     </td>
@@ -91,7 +98,7 @@
 
 
 ## Filter Row
-<tr baseUrl="$baseUrl">
+<tr baseUrl="$baseUrl" class="filter_row_$id" #if(!$settings.isFilterRowShown()) style="display:none"#end>
     #foreach ($col in [0..$colCount])
     <td col="$col">
         #if ($model.isFilterable($col))
@@ -139,7 +146,7 @@
 	</tr>
 	#end
 	
-	#PAGE_NAV ($tId, $baseUrl, $tableModel, $settings)
+	#PAGE_NAV ($tId, $baseUrl, $tableModel, $settings, false)
 	#end
 #end
 

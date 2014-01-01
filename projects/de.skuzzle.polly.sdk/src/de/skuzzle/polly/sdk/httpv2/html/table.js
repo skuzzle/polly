@@ -46,6 +46,13 @@ function loadTable(url, id) {
 }
 
 function tableEvents() {
+	$(".toggleFilterRow").click(function() {
+		var tId = $(this).attr("tId");
+		var baseUrl = $(this).attr("baseUrl");
+		$(".filter_row_"+tId).fadeToggle();
+		var url = makeUrl(baseUrl, {filterToggle:"true"});
+		$.get(url, function(){});
+	});	
 	$(".select_pageSize").change(function() {
 		var val = $(this).find(":selected").val();
 		var tId = $(this).parents("table").attr("id");

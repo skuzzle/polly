@@ -258,6 +258,7 @@ public class HTMLTable<T> implements HttpEventHandler {
     private final static String SET_VALUE = "setValue"; //$NON-NLS-1$
     private final static String COLUMN = "col"; //$NON-NLS-1$
     private final static String ROW = "row"; //$NON-NLS-1$
+    private final static String FILTER_TOGGLE = "filterToggle"; //$NON-NLS-1$
     
     private final static int DEFAULT_PAGE_SIZE = 40;
     
@@ -278,10 +279,13 @@ public class HTMLTable<T> implements HttpEventHandler {
         private int pageCount;
         private int pageSize = DEFAULT_PAGE_SIZE;
         private int page;
-        
+        private boolean filterRowShown;
         private WeakReference<DataHolder> data = new WeakReference<DataHolder>(null); 
         private Map<T, Integer> indexMap;
         
+        public boolean isFilterRowShown() {
+            return this.filterRowShown;
+        }
         public int getSortCol() {
             return this.sortCol;
         }
@@ -342,7 +346,6 @@ public class HTMLTable<T> implements HttpEventHandler {
     private final Map<Class<?>, CellRenderer> renderers;
     private final MyPolly myPolly;
     private final List<HTMLModelListener<T>> listeners;
-    
     
     
     public HTMLTable(String tableId, HTMLTableModel<T> model, MyPolly myPolly) {
@@ -422,7 +425,6 @@ public class HTMLTable<T> implements HttpEventHandler {
     public synchronized HttpAnswer handleHttpEvent(String registered, HttpEvent e,
                 HttpEventHandler next) throws HttpException {
         
-        
         final Map<String, String> params = e.parameterMap(RequestMode.GET);
         
         // current settings for requesting user
@@ -443,6 +445,7 @@ public class HTMLTable<T> implements HttpEventHandler {
                 settings = (TableSettings) s.getAttached(settingsKey);
             } else {
                 settings = new TableSettings();
+                settings.filterRowShown = true;
                 settings.sortCol = this.model.getDefaultSortColumn();
                 settings.filter = new String[this.model.getColumnCount()];
                 settings.order = new SortOrder[this.model.getColumnCount()];
@@ -454,6 +457,13 @@ public class HTMLTable<T> implements HttpEventHandler {
                 }
                 s.set(settingsKey, settings);
             }
+        }
+        
+        // check filter row toggle first because it requires no more data processing
+        if (params.get(FILTER_TOGGLE) != null) {
+            settings.filterRowShown = !settings.filterRowShown;
+            // just return junk answer
+            return HttpAnswers.newStringAnswer("ok"); //$NON-NLS-1$
         }
         
         DataHolder data = settings.data.get();
