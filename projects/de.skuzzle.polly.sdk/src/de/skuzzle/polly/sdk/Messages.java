@@ -47,6 +47,7 @@ public class Messages extends Constants {
     public static String tableFilterFalse;
     public static String tableFilterFull;
     public static String tableFilter;
+    public static String tableFilterToggle;
     public static String tableFilterActive;
     public static String tableFilterClear;
     
