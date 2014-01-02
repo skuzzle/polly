@@ -5,14 +5,14 @@
 
 <tr>
     <th colspan="$model.getColumnCount()">
-    <a href="#" onclick="reloadAll('$baseUrl', '$id')">$MSG.tableReload</a>
+    <a href="javascript:reloadAll('$baseUrl', '$id')">$MSG.tableReload</a>
     #if (!$noFilter)
 	    $MSG.tablePages: 
 	    #if ($settings.getPage() == 0)
 	        <b>$MSG.tableGotoFirst</b> &lt;
 	    #else
-	        <a href="#" onclick="setPageRequest('$baseUrl', '$id', '0')" title="$MSG.tableGotoFirstTitle">$MSG.tableGotoFirst</a>
-	        <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$prev')" title="$MSG.tableGotoPreviousTitle">&lt;</a>
+	        <a href="javascript:setPageRequest('$baseUrl', '$id', '0')" title="$MSG.tableGotoFirstTitle">$MSG.tableGotoFirst</a>
+	        <a href="javascript:setPageRequest('$baseUrl', '$id', '$prev')" title="$MSG.tableGotoPreviousTitle">&lt;</a>
 	    #end
 	    
 	    #foreach ($page in [$minPage..$maxPage])
@@ -20,14 +20,14 @@
 	        #if ($page == $settings.getPage())
 	            <b style="text-decoration:underline">$viewPage</b>
 	        #else
-	            <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$page')" title="$Messages.bind($MSG.tableGotoPageTitle, $viewPage)">$viewPage</a>
+	            <a href="javascript:setPageRequest('$baseUrl', '$id', '$page')" title="$Messages.bind($MSG.tableGotoPageTitle, $viewPage)">$viewPage</a>
 	        #end
 	    #end
 	    #if ($settings.getPage() == $pageCount)
 	         &gt; <b>$MSG.tableGotoLast</b>
 	    #else
-	        <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$next')" title="$MSG.tableGotoNextTitle">&gt;</a>
-	        <a href="#" onclick="setPageRequest('$baseUrl', '$id', '$pageCount')" title="$Messages.bind($MSG.tableGotoLastTitle, $settings.getPageCount())">$MSG.tableGotoLast</a>
+	        <a href="javascript:setPageRequest('$baseUrl', '$id', '$next')" title="$MSG.tableGotoNextTitle">&gt;</a>
+	        <a href="javascript:setPageRequest('$baseUrl', '$id', '$pageCount')" title="$Messages.bind($MSG.tableGotoLastTitle, $settings.getPageCount())">$MSG.tableGotoLast</a>
 	    #end
     #end
     
@@ -49,9 +49,9 @@
             
             #if ($top && !$noFilter)
             <span style="margin-left:10px;">
-            <a href="#" onclick="toggleFilter('$id', '$baseUrl')">$MSG.tableFilter</a>
+            <a href="javascript:toggleFilter('$id', '$baseUrl')">$MSG.tableFilter</a>
             <img title="$MSG.tableFilterActive" class="filter_set_$id" style="#if (!$settings.isFilterSet()) display:none; #end vertical-align:middle" src="/de/skuzzle/polly/sdk/httpv2/html/attention.png" height="16" width="16"/>
-            <a href="#" onclick="clearFilter('$tId', '$baseUrl')"><img baseUrl="$baseUrl" class="clear_filter" tId="$id" title="$MSG.tableFilterClear" src="/de/skuzzle/polly/sdk/httpv2/html/filter_delete.png" style="#if (!$settings.isFilterSet()) display:none; #end vertical-align:middle" width=16" height="16" /></a>
+            <a href="javascript:clearFilter('$tId', '$baseUrl')"><img baseUrl="$baseUrl" class="clear_filter" tId="$id" title="$MSG.tableFilterClear" src="/de/skuzzle/polly/sdk/httpv2/html/filter_delete.png" style="#if (!$settings.isFilterSet()) display:none; #end vertical-align:middle" width=16" height="16" /></a>
             </span>
             #end
         </span>
@@ -70,7 +70,7 @@
 #foreach ($col in [0..$colCount])
     <th>
      #if ($model.isSortable($col)) 
-         <a href="#" title="$MSG.get('tableSortBy') $model.getHeader($col)" onclick="sortTableRequest('$baseUrl', '$id', $col)">
+         <a href="javascript:sortTableRequest('$baseUrl', '$id', $col)" title="$MSG.get('tableSortBy') $model.getHeader($col)">
      #end
 
      #if ($col == $settings.getSortCol())
