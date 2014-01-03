@@ -65,6 +65,7 @@ public class MyPlugin extends PollyPlugin {
     public final static String FLEET_MANAGER_ROLE = "polly.roles.FLEET_MANAGER"; //$NON-NLS-1$
     public final static String TRAINER_ROLE       = "polly.roles.TRAINER"; //$NON-NLS-1$
     public final static String SBE_MANAGER_ROLE   = "polly.roles.SBE_MANAGER"; //$NON-NLS-1$
+    public final static String ORION_ROLE         = "polly.roles.ORION"; //$NON-NLS-1$
     
     public final static String RESSOURCES_PERMISSION             = "polly.permission.RESSOURCES"; //$NON-NLS-1$
     public final static String ADD_TRAIN_PERMISSION              = "polly.permission.ADD_TRAIN"; //$NON-NLS-1$
@@ -209,6 +210,9 @@ public class MyPlugin extends PollyPlugin {
         result.add(RESSOURCES_PERMISSION);
         result.add(SBE_PERMISSION);
         result.add(CRACKER_PERMISSION);
+        result.add(OrionController.VIEW_ORION_PREMISSION);
+        result.add(OrionController.WRITE_ORION_PREMISSION);
+        result.add(OrionController.ROUTE_ORION_PREMISSION);
         result.addAll(super.getContainedPermissions());
         return result;
     }
@@ -238,6 +242,12 @@ public class MyPlugin extends PollyPlugin {
         
         roleManager.assignPermission(RoleManager.DEFAULT_ROLE, IP_PERMISSION);
         roleManager.assignPermission(RoleManager.DEFAULT_ROLE, CRACKER_PERMISSION);
+        
+        roleManager.createRole(ORION_ROLE);
+        roleManager.assignPermission(ORION_ROLE, OrionController.VIEW_ORION_PREMISSION);
+        roleManager.assignPermission(ORION_ROLE, OrionController.WRITE_ORION_PREMISSION);
+        roleManager.assignPermission(ORION_ROLE, OrionController.ROUTE_ORION_PREMISSION);
+        
         super.assignPermissions(roleManager);
     }
 
