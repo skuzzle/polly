@@ -56,7 +56,7 @@ public final class QuadrantUtils {
     
     
     public static boolean sectorsEqual(Sector s1, Sector s2) {
-        return s1.getX() == s2.getX() && s1.getY() == s1.getY() && 
+        return s1.getX() == s2.getX() && s1.getY() == s2.getY() && 
                 s1.getQuadName().equals(s2.getQuadName());
     }
     
