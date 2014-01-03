@@ -85,6 +85,15 @@ public class MSG extends Constants {
     public static String ressSigDesc;
     public static String ressSigExpression;
 
+    // RouteCommand
+    public static String routeHelp;
+    public static String routeSig0Desc;
+    public static String routeSig0Start;
+    public static String routeSig0Ziel;
+    public static String routeParseError;
+    public static String routeInfo;
+    public static String routeNoRouteFound;
+    
     // VenadCommand
     public static String venadHelp;
     public static String venadSig0Desc;
@@ -184,7 +193,7 @@ public class MSG extends Constants {
 
     // TrainingTableModel
     public static String trainingModelColumns;
-    
+
     // RXController
     public static String httpRxCategory;
     public static String httpFleetScanMngr;
@@ -269,6 +278,7 @@ public class MSG extends Constants {
     public static String htmlConfiAzDesc;
     public static String htmlConfigAzDesc2;
     public static String htmlConfigAzAz;
+    public static String htmlConfigAzJumpTime;
     public static String htmlConfigAzAction;
     public static String htmlConfigAzSubmit;
     public static String htmlConfigAzDelete;
@@ -301,7 +311,7 @@ public class MSG extends Constants {
     public static String htmlGMReportPasterDesc;
     public static String htmlGMFleetScansName;
     public static String htmlGMFleetScansDesc;
-            
+
     public static String htmlGraphSelectMonths;
     public static String htmlGraphLinkToImage;
 
@@ -332,7 +342,7 @@ public class MSG extends Constants {
     public static String htmlTrainingCaption;
     public static String htmlOpenTrainings;
     public static String htmlClosedTrainings;
-    
+
     // BattleReportParser
     public static String reportParserInvalid;
     public static String reportParserInvalidDate;
@@ -346,13 +356,95 @@ public class MSG extends Constants {
     // FleetScanParser
     public static String fleetScanParserInvalid;
     public static String fleetScanParserAlienScan;
-    
+
     // QReportParser
     public static String qreportParserResourceExpected;
     public static String qreportParserAttackAtExpected;
     public static String qreportParserInvalidLocation;
     public static String qreportParserFailedToParseAttr;
-    
+
+    // Orion related
+    public static String secTypeHLRouteSector;
+    public static String secTypeHLRouteStart;
+    public static String secTypeHLRouteTarget;
+    public static String secTypeHLWHDrop;
+    public static String secTypeHLWHStart;
+    public static String secTypeHLSafeSpot;
+    public static String secTypeHLSafeSpotWH;
+    public static String secTypeEmpty;
+    public static String secTypeBlauerStern;
+    public static String secTypeBlauerRiese;
+    public static String secTypeRoterRiese;
+    public static String secTypeWeisserZwerg;
+    public static String secTypeGelberZwerg;
+    public static String secTypeBraunerZwerg;
+    public static String secTypeSchwarzerZwerg;
+    public static String secTypePlanetTypA;
+    public static String secTypePlanetTypB;
+    public static String secTypePlanetTypC;
+    public static String secTypePlanetTypD;
+    public static String secTypePlanetTypE;
+    public static String secTypePlanetTypF;
+    public static String secTypePlanetTypG;
+    public static String secTypePlanetTypH;
+    public static String secTypePlanetTypI;
+    public static String secTypeSchwarzesLoch;
+    public static String secTypeSuperNovaTyp1;
+    public static String secTypeSuperNovaTyp2;
+    public static String secTypeNova;
+    public static String secTypeNeutronengestern;
+    public static String secTypeAsteroid;
+    public static String secTypeAsteroidenFeld;
+    public static String secTypeSternenNebel;
+    public static String secTypePlanetarischerNebel;
+    public static String secTypeHerbigHaroObjekt;
+    public static String secTypeMeteorit;
+    public static String secTypeSchwarzerStern;
+    public static String secTypeDoppelgestirn;
+    public static String secTypeDimensionsFalte;
+    public static String secTypeTruemmerfeld;
+    public static String secTypeMinenkolonie;
+    public static String secTypeFabrikanlage;
+    public static String secTypeKolonie;
+    public static String secTypeAndroidenKolonie;
+    public static String secTypePortal;
+    public static String loadNone;
+    public static String loadPartial;
+    public static String loadFull;
+
+    public static String htmlOrionName;
+    public static String htmlpOrionDesc;
+    public static String htmlAvailableQuads;
+    public static String htmlOrionResources;
+    public static String htmlOrionWormholes;
+    public static String htmlOrionBoni;
+    public static String htmlOrionSectorInfo;
+    public static String htmlOrionAttackerBonus;
+    public static String htmlOrionDefenderBonus;
+    public static String htmlOrionGuardBonus;
+    public static String htmlOrionWLName;
+    public static String htmlOrionWLLoad;
+    public static String htmlOrionWLUnload;
+    public static String htmlOrionWLStart;
+    public static String htmlOrionWLTarget;
+    public static String htmlOrionToHere;
+    public static String htmlOrionFromHere;
+    public static String htmlOrionRouting;
+    public static String htmlOrionRouteStart;
+    public static String htmlOrionRouteTarget;
+    public static String htmlOrionRouteAction;
+    public static String htmlOrionRefreshRoute;
+    public static String htmlOrionQuadJumps;
+    public static String htmlOrionSectorJumps;
+    public static String htmlOrionRouteInfo;
+    public static String htmlOrionNoRouteFound;
+    public static String htmlOrionSelectFleet;
+    public static String htmlOrionWaitingTime;
+    public static String htmlOrionOptional;
+    public static String htmlOrionOrJumpTime;
+    public static String htmlOrionNone;
+    public static String htmlOrionCurrentJumpTime;
+    public static String htmlOrionSafeSpots;
 
     // MyPlugin
     public static String pluginVenadDesc;

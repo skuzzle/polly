@@ -49,6 +49,9 @@ public class HttpResourceAnswer extends HttpBinaryAnswer {
                 this.resourcePath.substring(1) : this.resourcePath;
             in = this.cl.getResourceAsStream(path);
             
+            if (in == null) {
+                return;
+            }
             final byte[] buffer = new byte[BUFFER_SIZE];
             int read = in.read(buffer, 0, buffer.length);
             

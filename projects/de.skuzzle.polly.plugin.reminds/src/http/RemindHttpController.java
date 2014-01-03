@@ -171,7 +171,7 @@ public class RemindHttpController extends PollyController {
     
     @Get(API_SET_SNOOZE)
     public HttpAnswer setSnooze(
-        @Param(value = "timespan", treatEmpty = true, ifEmptyValue = "") String exp) 
+        @Param(value = "timespan", optional = true, defaultValue = "") String exp) 
                 throws AlternativeAnswerException {
         
         this.requirePermissions(MyPlugin.REMIND_PERMISSION);
@@ -209,8 +209,8 @@ public class RemindHttpController extends PollyController {
     @Get(API_MODIFY_REMIND)
     public HttpAnswer modifyRemind(
         @Param("remindId") int id, 
-        @Param(value = "message", treatEmpty = true) String message, 
-        @Param(value = "dueDate", treatEmpty =  true) String dueDate) 
+        @Param(value = "message", optional = true) String message, 
+        @Param(value = "dueDate", optional =  true) String dueDate) 
                 throws AlternativeAnswerException {
         
         this.requirePermissions(MyPlugin.REMIND_PERMISSION);

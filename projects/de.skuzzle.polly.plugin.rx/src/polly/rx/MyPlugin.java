@@ -12,11 +12,16 @@ import polly.rx.commands.MyTrainsCommand;
 import polly.rx.commands.MyVenadCommand;
 import polly.rx.commands.RankCommand;
 import polly.rx.commands.RessComand;
+import polly.rx.commands.RouteCommand;
 import polly.rx.commands.VenadCommand;
 import polly.rx.core.AZEntryManager;
 import polly.rx.core.FleetDBManager;
 import polly.rx.core.ScoreBoardManager;
 import polly.rx.core.TrainManagerV2;
+import polly.rx.core.orion.EggiCSVQuadrantProvider;
+import polly.rx.core.orion.Orion;
+import polly.rx.core.orion.WLSWormholeProvider;
+import polly.rx.core.orion.WormholeProvider;
 import polly.rx.entities.AZEntry;
 import polly.rx.entities.BattleDrop;
 import polly.rx.entities.BattleReport;
@@ -32,6 +37,7 @@ import polly.rx.httpv2.FleetScanShipTableModel;
 import polly.rx.httpv2.FleetScanTableModel;
 import polly.rx.httpv2.FleetScansWithShipModel;
 import polly.rx.httpv2.OpenTrainingsModel;
+import polly.rx.httpv2.OrionController;
 import polly.rx.httpv2.RXController;
 import polly.rx.httpv2.ScoreboardDetailModel;
 import polly.rx.httpv2.ScoreboardTableModel;
@@ -59,6 +65,7 @@ public class MyPlugin extends PollyPlugin {
     public final static String FLEET_MANAGER_ROLE = "polly.roles.FLEET_MANAGER"; //$NON-NLS-1$
     public final static String TRAINER_ROLE       = "polly.roles.TRAINER"; //$NON-NLS-1$
     public final static String SBE_MANAGER_ROLE   = "polly.roles.SBE_MANAGER"; //$NON-NLS-1$
+    public final static String ORION_ROLE         = "polly.roles.ORION"; //$NON-NLS-1$
     
     public final static String RESSOURCES_PERMISSION             = "polly.permission.RESSOURCES"; //$NON-NLS-1$
     public final static String ADD_TRAIN_PERMISSION              = "polly.permission.ADD_TRAIN"; //$NON-NLS-1$
@@ -104,11 +111,10 @@ public class MyPlugin extends PollyPlugin {
         this.addCommand(new RessComand(myPolly));
         
         /* fleet db related */
-        
-        
         this.fleetDBManager = new FleetDBManager(myPolly.persistence());
         this.sbeManager = new ScoreBoardManager(myPolly.persistence());
         this.azManager = new AZEntryManager(myPolly);
+
         
         myPolly.persistence().registerEntity(BattleReport.class);
         myPolly.persistence().registerEntity(BattleReportShip.class);
@@ -118,12 +124,19 @@ public class MyPlugin extends PollyPlugin {
         myPolly.persistence().registerEntity(FleetScanShip.class);
         myPolly.persistence().registerEntity(ScoreBoardEntry.class);
         myPolly.persistence().registerEntity(AZEntry.class);
+        
+        // orion
+        //myPolly.persistence().registerEntity(Production.class);
+        //myPolly.persistence().registerEntity(DBSector.class);
+        //myPolly.persistence().registerEntity(DBSpawn.class);
+        
         this.addCommand(new RankCommand(myPolly, this.sbeManager));
         
         
         myPolly.webInterface().addCategory(new MenuCategory(0, MSG.httpRxCategory));
         myPolly.webInterface().getServer().addController(
                 new RXController(myPolly, fleetDBManager, sbeManager, azManager));
+        
         
         final HTMLTableModel<FleetScan> scanModel = new FleetScanTableModel(fleetDBManager);
         final HTMLTable<FleetScan> fleetScanTable = new HTMLTable<FleetScan>("fleetScans", scanModel, myPolly); //$NON-NLS-1$
@@ -197,6 +210,9 @@ public class MyPlugin extends PollyPlugin {
         result.add(RESSOURCES_PERMISSION);
         result.add(SBE_PERMISSION);
         result.add(CRACKER_PERMISSION);
+        result.add(OrionController.VIEW_ORION_PREMISSION);
+        result.add(OrionController.WRITE_ORION_PREMISSION);
+        result.add(OrionController.ROUTE_ORION_PREMISSION);
         result.addAll(super.getContainedPermissions());
         return result;
     }
@@ -226,6 +242,12 @@ public class MyPlugin extends PollyPlugin {
         
         roleManager.assignPermission(RoleManager.DEFAULT_ROLE, IP_PERMISSION);
         roleManager.assignPermission(RoleManager.DEFAULT_ROLE, CRACKER_PERMISSION);
+        
+        roleManager.createRole(ORION_ROLE);
+        roleManager.assignPermission(ORION_ROLE, OrionController.VIEW_ORION_PREMISSION);
+        roleManager.assignPermission(ORION_ROLE, OrionController.WRITE_ORION_PREMISSION);
+        roleManager.assignPermission(ORION_ROLE, OrionController.ROUTE_ORION_PREMISSION);
+        
         super.assignPermissions(roleManager);
     }
 
@@ -233,6 +255,23 @@ public class MyPlugin extends PollyPlugin {
     
     @Override
     public void onLoad() throws PluginException {
+        
+        // ORION
+        
+        final EggiCSVQuadrantProvider quadProvider = new EggiCSVQuadrantProvider(this.getPluginFolder());
+        final WormholeProvider holeProvider = new WLSWormholeProvider();
+        Orion.initialize(quadProvider, quadProvider, holeProvider);
+        
+        final OrionController oc = new OrionController(this.getMyPolly(), azManager);
+        this.getMyPolly().webInterface().getServer().addController(oc);
+        
+        try {
+            this.addCommand(new RouteCommand(this.getMyPolly()));
+        } catch (DuplicatedSignatureException e1) {
+            e1.printStackTrace();
+        }
+        
+        
         try {
             this.getMyPolly().users().addAttribute(VENAD, 
                 new Types.StringType(VENAD_DEFAULT), 

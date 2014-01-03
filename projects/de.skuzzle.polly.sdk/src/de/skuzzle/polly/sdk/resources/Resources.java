@@ -55,7 +55,7 @@ public class Resources {
                 f.setAccessible(true);
                 // this is a public static string field, load value associated with the 
                 // field name from the resource bundle
-                final String value = bundle.get(f.getName());
+                final String value = bundle.get(f.getName()).intern();
                 try {
                     f.set(null, value);
                 } catch (IllegalArgumentException | IllegalAccessException e) {

@@ -51,7 +51,8 @@ public class AZEntryManager {
     
     
     
-    public void addEntry(int byUserId, String fleet, String az) throws DatabaseException {
+    public void addEntry(int byUserId, String fleet, String az, String jumpTime) 
+            throws DatabaseException {
         try (final Write w = this.persistence.write()) {
             final AZEntry check = w.read().findSingle(AZEntry.class, 
                     AZEntry.AZ_ENTRY_BY_FLEET_AND_USER, new Param(fleet, byUserId));
@@ -60,7 +61,7 @@ public class AZEntryManager {
                 // user already has an entry for this fleet. remove and replace
                 w.remove(check);
             }
-            final AZEntry newEntry = new AZEntry(byUserId, fleet, az);
+            final AZEntry newEntry = new AZEntry(byUserId, fleet, az, jumpTime);
             w.single(newEntry);
         }
     }
@@ -77,6 +78,20 @@ public class AZEntryManager {
                 return (TimespanType) executor.getAttribute(MyPlugin.AUTO_REMIND_AZ);
             } else {
                 return (TimespanType) this.myPolly.parse(e.getAz());
+            }
+        }
+    }
+    
+    
+    
+    public TimespanType getJumpTime(int fleetId, User executor) {
+        try (final Read r = this.persistence.read()) {
+            final AZEntry e = r.find(AZEntry.class, fleetId);
+
+            if (e == null) {
+                return new TimespanType(0);
+            } else {
+                return (TimespanType) this.myPolly.parse(e.getJumpTime());
             }
         }
     }

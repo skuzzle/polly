@@ -1,0 +1,202 @@
+#parse ( "/polly/rx/httpv2/view/orion/orion.util.html" )
+
+<div class="highlight contentBox">
+    #CONTENT_HEADER ($MSG.htmlOrionName)
+    <div class="content">
+        <div id="quadList">
+            <b>$MSG.htmlAvailableQuads</b><br/>
+            #foreach ($quad in $allQuads)
+                <a href="#" quadName="$quad.getQuadId()" class="load_quad">$quad.getName()</a><br/>
+            #end
+            <br style="clear:both;" />
+        </div>
+        <div id="quadrant"></div>
+        <div id="sector_info"></div>
+    </div>
+</div>
+
+<div class="highlight contentBox">
+    #CONTENT_HEADER ($MSG.htmlOrionRouting)
+    
+    <div class="content">
+    <table>
+        <tr>
+            <th>$MSG.htmlOrionRouteStart</th>
+            <th>$MSG.htmlOrionRouteTarget</th>
+            <th>$MSG.htmlOrionRouteAction</th>
+        </tr>
+        <tr>
+            <td id="routeStart">
+            #if ($routeStart)
+                #SECTOR_NO_LINK ( $routeStart )
+            #end
+            </td>
+            <td id="routeTarget">
+            #if ($routeTarget)
+                #SECTOR_NO_LINK ( $routeTarget )
+            #end
+            </td>
+            <td>
+                <table>
+                <tr>
+                    <td>$MSG.htmlOrionSelectFleet</td>
+                    <td>                
+                        <select id="selectFleet" size="1">
+                        <option value="-1">$MSG.htmlOrionNone</option>
+                        #foreach ($entry in $entries) 
+                        <option value="$entry.getId()">$entry.getFleetName() ($!entry.getJumpTime())</option>
+                        #end
+                        </select>
+                        $MSG.htmlOrionOrJumpTime
+                        <input id="jumpTime" type="text" class="textbox" placeholder="$MSG.htmlOrionOptional" style="width: 70px"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>$MSG.htmlOrionCurrentJumpTime</td>
+                    <td><input id="currentJumpTime" type="text" class="textbox" placeholder="$MSG.htmlOrionOptional" style="width: 70px;"/></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><a href="javascript:requestRoute()">$MSG.htmlOrionRefreshRoute</a></td>
+                </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    
+    <div id="route"></div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+	$(".load_quad").click(requestQuad);
+});
+function requestRoute() {
+	var fleetId = $("#selectFleet option:selected").val()
+	var jumpTime = encodeURI($("#jumpTime").val());
+	var currentJumpTime = encodeURI($("#currentJumpTime").val());
+	var avoidWormholes = $("#avoidWormholes").val();
+	
+	var url = "$PAGE_GETROUTE?fleetId="+fleetId+"&jt="+jumpTime+
+			"&cjt="+currentJumpTime+"&awh=" + avoidWormholes;
+	$.get(url, function(data) {
+		$("#route").html(data);
+	});
+}
+function fromHere(event) {
+    var ths = $(event.target);
+    var quadName = encodeURI(ths.attr("quadName"));
+    var x = ths.attr("col");
+    var y = ths.attr("row");
+    var url = "$PAGE_SETROUTEFROM?quadrant="+quadName+"&x="+x+"&y="+y;
+    $.get(url, function(data) {
+        var result = JSON.parse(data);
+        if (result.success) {
+        	$("#routeStart").html(
+        			result.quadName + " " + 
+        			result.x + ", " + result.y);
+        }
+    });
+}
+function toHere(event) {
+    var ths = $(event.target);
+    var quadName = encodeURI(ths.attr("quadName"));
+    var x = ths.attr("col");
+    var y = ths.attr("row");
+    var url = "$PAGE_SETROUTETO?quadrant="+quadName+"&x="+x+"&y="+y;
+    $.get(url, function(data) {
+    	var result = JSON.parse(data);
+        if (result.success) {
+            $("#routeTarget").html(
+                    result.quadName + " " + 
+                    result.x + ", " + result.y);
+        }
+    });
+}
+function highlightSector(quad, x, y) {
+	if (x == "0" || y == "0") {
+		return;
+	}
+	// clear current highlight
+	$("#quadrant_" + quad + " td").css({border : "1px solid #333366"});
+	var select = "#quadrant_" + quad + " tr:eq(" + (y) + ") td:eq(" + (x) + ")";
+	var target = $(select);
+	target.css({border : "1px solid red"});
+};
+
+function requestQuad(event) {
+	var quadName = $(event.target).attr("quadName");
+	var hlX = $(event.target).attr("hlX");
+	var hlY = $(event.target).attr("hlY");
+	
+	var url = "$PAGE_QUADRANT?quadName=" + quadName;
+	if (hlX) {
+	    url += "&hlX="+hlX+"&hlY="+hlY;		
+	}
+	
+	$.get(url, function(data) {
+		$("#quadrant").html(data);
+		$("#sector_info").html("");
+		$(".sector").click(function(event) {
+			requestSectorInfo(event);
+		});
+        $(".load_quad_internal_1").click(requestQuad);
+	});
+}
+
+function requestSectorInfo(event) {
+	var ths = $(event.target);
+	var quadName = encodeURI(ths.attr("quadName"));
+	var x = ths.attr("col");
+	var y = ths.attr("row");
+	highlightSector(quadName, x, y);
+	var url = "$PAGE_SECTORINFO?quadrant="+quadName+"&x="+x+"&y="+y;
+	$.get(url, function(data) {
+		$("#sector_info").html(data);
+        $(".load_quad_internal").click(requestQuad);
+        $("input[name=toHere]").click(toHere);
+        $("input[name=fromHere]").click(fromHere);
+	})
+}
+</script>
+<style>
+#orionTable {
+    table-layout: fixed;
+}
+#content .quad_table {
+    padding: 0;
+    width: auto;
+    table-layout: fixed;
+    border: none;
+    font-size: 5pt;
+    background: #333366;
+    border-collapse: separate;
+    color: white;
+}
+#content .quad_Table td {
+    width: 10px;
+    height: 10px;
+    padding: 0;
+    margin:0;
+    border: 1px solid #333366;
+}
+#content .quad_Table tr {
+    width: 10px;
+    height: 10px;
+    padding: 0;
+    margin:0;
+}
+#quadList {
+    float:left;
+}
+#sector_info {
+    float: left;
+    margin-left: 30px;
+}
+#quadrant {
+    float:left;
+    margin-left: 30px;
+}
+</style>
+

@@ -1,0 +1,48 @@
+#parse ( "/polly/rx/httpv2/view/orion/orion.util.html" )
+
+<p><b>$MSG.htmlOrionSectorInfo</b></p>
+
+<p>
+$sector.getQuadName() $sector.getX(), $sector.getY()<br/>
+$sector.getType() 
+</p>
+
+<div>
+    <input type="button" class="button" value="$MSG.htmlOrionFromHere" name="fromHere" quadName="$sector.getQuadId()" row="$sector.getY()" col="$sector.getX()"/>
+    <input type="button" class="button" value="$MSG.htmlOrionToHere" name="toHere" quadName="$sector.getQuadId()" row="$sector.getY()" col="$sector.getX()"/>
+</div>
+
+<table style="margin-top: 10px;">
+    <tr>
+        <th colspan="2">$MSG.htmlOrionBoni</th>
+    </tr>
+    <tr>
+        <td><b>$MSG.htmlOrionAttackerBonus</b></td>
+        <td>#BONUS ( $sector.getAttackerBonus() )</td>
+    </tr>
+    <tr>
+        <td><b>$MSG.htmlOrionDefenderBonus</b></td>
+        <td>#BONUS ( $sector.getDefenderBonus() )</td>
+    </tr>
+    <tr>
+        <td><b>$MSG.htmlOrionGuardBonus</b></td>
+        <td>#BONUS ( $sector.getSectorGuardBonus() )</td>
+    </tr>
+</table>
+
+#if (!$sector.getRessources().isEmpty())
+<table style="margin-top: 10px;">
+    <tr>
+        <th colspan="2">$MSG.htmlOrionResources</th>
+    </tr>
+    #foreach ($prod in $sector.getRessources())
+    <tr>
+        #set($ressId = ${prod.getRess().ordinal()}+1)
+        <td><b><img src="/polly/rx/httpv2/view/r${ressId}.gif"/></b></td>
+        <td>$prod.getRate()</td>
+    </tr>
+    #end
+</table>
+#end
+
+#WORMHOLES ( $holes )

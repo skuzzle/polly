@@ -1,0 +1,93 @@
+#macro ( SECTOR_NO_LINK $sector )
+$sector.getQuadName() $sector.getX(), $sector.getY()
+#end
+
+
+
+#macro ( SECTOR_LINK $sector $quadId)
+<a href="#" class="sector" quadName="$quadId" col="$sector.getX()" row="$sector.getY()">
+    $sector.getQuadName() $sector.getX(), $sector.getY()
+</a>
+#end
+
+
+#macro ( BONUS $bonus)
+    #if ($bonus > 0)
+    +$bonus%
+    #else
+    $bonus%
+    #end
+#end
+
+
+
+#macro ( BONUS_ALL $sector) 
+    #BONUS ( $sector.getAttackerBonus() )
+    #BONUS ( $sector.getDefenderBonus() )
+    #BONUS ( $sector.getSectorGuardBonus() )
+#end
+
+
+
+#macro (WORMHOLES $holes)
+#if (!$holes.isEmpty())
+<table style="margin-top: 10px;">
+    <tr>
+        <th colspan="5">$MSG.htmlOrionWormholes</th>
+    </tr>
+    <tr>
+        <th>$MSG.htmlOrionWLStart</th>
+        <th>$MSG.htmlOrionWLName</th>
+        <th>$MSG.htmlOrionWLLoad</th>
+        <th>$MSG.htmlOrionWLUnload</th>
+        <th>$MSG.htmlOrionWLTarget</th>
+    </tr>
+    #foreach ($wl in $holes)
+    <tr>
+        <td>#SECTOR_LINK ( $wl.getSource() $wl.getSource().getQuadId() )</td>
+        <td>$wl.getName()</td>
+        <td>$wl.requiresLoad()</td>
+        <td>$wl.getMinUnload()-$wl.getMaxUnload() Min</td>
+        <td><a href="#" quadName="$wl.getTarget().getQuadId()" 
+            hlX="$wl.getTarget().getX()"
+            hlY="$wl.getTarget().getY()" 
+            class="load_quad_internal">#SECTOR_NO_LINK ( $wl.getTarget() )</a></td>
+    </tr>
+    #end    
+</table>
+#end
+#end
+
+
+
+#macro (QUADRANT $quad)
+<p><b>$quad.getName()</b></p>
+
+<table id="quadrant_$quad.getQuadId()" class="quad_Table" style="width: auto">
+#foreach ($row in [0..$quad.getMaxY()])
+    <tr>
+    #if ($row == 0)
+        <td></td> 
+        #foreach ($col in [1..$quad.getMaxX()])
+        <td>#if ($col == $hlX) <b>$col</b>#else $col #end</td>
+        #end
+    #else
+        #foreach ($col in [0..$quad.getMaxX()])
+            #if ($col == 0)
+            <td>#if ($row == $hlY) <b>$row</b>#else $row #end</td>
+            #else
+            #set ($sect = $quad.getSector($col, $row))
+            <td#if ($sect.getType().isHighlight()) style="border: 1px solid red" #end>
+                <img src="/polly/rx/httpv2/view/orion/$sect.getType().getImgName()" 
+                    width="10" height="10"
+                    quadName="$quad.getQuadId()" row="$row" col="$col" class="sector"/>
+            </td>
+            #end
+        #end
+    #end
+    </tr>
+#end
+</table>
+#end
+
+
