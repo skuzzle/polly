@@ -178,8 +178,13 @@ public final class QuadrantUtils {
                 }
             }
         };
-        return g.findShortestPath(source, target, builder, 
-                Graph.<Sector>noHeuristic(), COST_CALCULATOR).getPath().size();
+        final Graph<Sector, Costs>.Path path = g.findShortestPath(source, target, builder, 
+                Graph.<Sector>noHeuristic(), COST_CALCULATOR);
+        if (path.getPath().isEmpty() && !source.equals(target)) {
+            // no path found <=> max distance
+            return Integer.MAX_VALUE;
+        }
+        return path.getPath().size();
     }
     
     
