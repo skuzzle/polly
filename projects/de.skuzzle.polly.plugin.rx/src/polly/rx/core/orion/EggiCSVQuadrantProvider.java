@@ -402,6 +402,21 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider, QuadrantUpdate
 
     
     
+    public void removeQuadrant(String name) {
+        final Quadrant quad = this.getQuadrant(name);
+        this.allSectors.removeAll(quad.getSectors());
+        
+        final Integer id = this.nameToId.get(name);
+        this.nameToId.remove(name);
+        if (id != null) {
+            this.idToName.remove(id);
+        }
+        this.quadMap.remove(name);
+        this.store();
+    }
+    
+    
+    
     private EggiQuadrant getQuadrant(String name, boolean create) {
         if (!this.nameToId.containsKey(name) && create) {
             ++this.quadids;
