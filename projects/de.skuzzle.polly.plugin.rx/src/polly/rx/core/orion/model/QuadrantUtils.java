@@ -8,10 +8,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import de.skuzzle.polly.tools.Equatable;
 import polly.rx.core.orion.Graph;
 import polly.rx.core.orion.Graph.EdgeCosts;
 import polly.rx.core.orion.Graph.LazyBuilder;
+import de.skuzzle.polly.tools.Equatable;
 
 
 public final class QuadrantUtils {
@@ -51,6 +51,14 @@ public final class QuadrantUtils {
         }
     };
     
+    
+    
+    
+    
+    public static boolean sectorsEqual(Sector s1, Sector s2) {
+        return s1.getX() == s2.getX() && s1.getY() == s1.getY() && 
+                s1.getQuadName().equals(s2.getQuadName());
+    }
     
     
     

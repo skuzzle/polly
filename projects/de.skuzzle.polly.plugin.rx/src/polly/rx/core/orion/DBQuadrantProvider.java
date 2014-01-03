@@ -2,6 +2,7 @@ package polly.rx.core.orion;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -186,5 +187,12 @@ public class DBQuadrantProvider implements QuadrantProvider, QuadrantUpdater {
             result.add(this.getQuadrant(quadName));
         }
         return result;
+    }
+
+
+
+    @Override
+    public Collection<? extends Sector> getEntryPortals() {
+        return Collections.emptyList();
     }
 }

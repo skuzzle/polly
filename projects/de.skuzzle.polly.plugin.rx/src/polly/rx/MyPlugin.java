@@ -110,8 +110,6 @@ public class MyPlugin extends PollyPlugin {
         this.addCommand(new RessComand(myPolly));
         
         /* fleet db related */
-        
-        
         this.fleetDBManager = new FleetDBManager(myPolly.persistence());
         this.sbeManager = new ScoreBoardManager(myPolly.persistence());
         this.azManager = new AZEntryManager(myPolly);

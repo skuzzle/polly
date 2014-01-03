@@ -14,6 +14,7 @@ import java.util.Set;
 import polly.rx.core.orion.Graph.EdgeCosts;
 import polly.rx.core.orion.Graph.Heuristic;
 import polly.rx.core.orion.Graph.LazyBuilder;
+import polly.rx.core.orion.model.EntryPortalWormhole;
 import polly.rx.core.orion.model.Quadrant;
 import polly.rx.core.orion.model.QuadrantDecorator;
 import polly.rx.core.orion.model.QuadrantUtils;
@@ -25,6 +26,8 @@ import de.skuzzle.polly.sdk.Types.TimespanType;
 
 
 public class PathPlanner {
+    
+    
     
     public static class RouteOptions {
         private final TimespanType totalJumpTime;
@@ -46,12 +49,18 @@ public class PathPlanner {
     public static class EdgeData {
         
         public static enum EdgeType {
-            NORMAL, DIAGONAL, WORMHOLE;
+            NORMAL, DIAGONAL, WORMHOLE, ENTRYPORTAL;
         }
         
         public static EdgeData wormhole(Wormhole wormhole) {
             final EdgeData d = new EdgeData(EdgeType.WORMHOLE);
             d.wormhole = wormhole;
+            return d;
+        }
+        
+        public static EdgeData entryPortal(Sector source, Sector target) {
+            final EdgeData d = new EdgeData(EdgeType.ENTRYPORTAL);
+            d.wormhole = new EntryPortalWormhole(source, target);
             return d;
         }
         
@@ -88,7 +97,7 @@ public class PathPlanner {
         }
         
         public boolean isWormhole() {
-            return this.type == EdgeType.WORMHOLE;
+            return this.type == EdgeType.WORMHOLE || this.type == EdgeType.ENTRYPORTAL;
         }
         
         public Wormhole getWormhole() {
@@ -130,6 +139,7 @@ public class PathPlanner {
             switch (data.getType()) {
             case NORMAL:   return COST_NORMAL;
             case DIAGONAL: return COST_DIAGONAL;
+            case ENTRYPORTAL: return COST_NORMAL;
             case WORMHOLE:
                 final Wormhole hole = data.getWormhole();
                 double modifier = 1.0;
@@ -165,6 +175,14 @@ public class PathPlanner {
                     final EdgeData d = EdgeData.wormhole(hole);
                     this.addNeighbour(targetQuad, hole.getTarget().getX(), 
                             hole.getTarget().getY(), graph, source, d);
+                }
+                
+                // add entry portals
+                for (final Sector portal : quadProvider.getEntryPortals()) {
+                    final EdgeData d = EdgeData.entryPortal(source, portal);
+                    final Quadrant targetQuad = quadProvider.getQuadrant(portal);
+                    this.addNeighbour(targetQuad, portal.getX(), 
+                            portal.getY(), graph, source, d);
                 }
                 
                 // add direct neighbours

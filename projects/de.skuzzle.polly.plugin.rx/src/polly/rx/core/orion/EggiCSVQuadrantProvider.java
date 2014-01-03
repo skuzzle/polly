@@ -123,9 +123,7 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider, QuadrantUpdate
 
         @Override
         public boolean actualEquals(Equatable o) {
-            final Sector other = (Sector) o;
-            return this.x == other.getX() && this.getY() == other.getY() && 
-                    this.quadName.equals(other.getQuadName());
+            return QuadrantUtils.sectorsEqual(this, (Sector) o);
         }
         
         @Override
@@ -212,6 +210,7 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider, QuadrantUpdate
     private int quadids;
     private Map<String, Integer> nameToId;
     private Collection<EggiSector> allSectors;
+    private List<EggiSector> entryPortals;
     private Map<String, EggiQuadrant> quadMap;
     private final File pluginFolder;
     
@@ -223,9 +222,10 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider, QuadrantUpdate
         this.nameToId = new HashMap<>();
         this.quadMap = new HashMap<>();
         this.allSectors = new ArrayList<>();
+        this.entryPortals = new ArrayList<>();
         
         this.readQuadrants(this.idToName, this.nameToId);
-        this.readSectors(this.allSectors);
+        this.readSectors(this.allSectors, this.entryPortals);
         this.store();
     }
     
@@ -273,7 +273,8 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider, QuadrantUpdate
     
     
     
-    private void readSectors(Collection<EggiSector> sectors) {
+    private void readSectors(Collection<EggiSector> sectors, 
+            Collection<EggiSector> entryPortals) {
         sectors.clear();
         try (BufferedReader r = new BufferedReader(
                 new InputStreamReader(this.searchCsv(this.pluginFolder, SECTORS_FILE)))) {
@@ -303,6 +304,9 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider, QuadrantUpdate
                 final int type = Integer.parseInt(parts[4]);
                 sector.type = this.findType(type);
                 sectors.add(sector);
+                if (sector.type == SectorType.EINTRITTS_PORTAL) {
+                    entryPortals.add(sector);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -457,5 +461,12 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider, QuadrantUpdate
         this.allSectors.add(newEggiSector);
         quadrant.sectors.put(QuadrantUtils.createMapKey(newEggiSector), newEggiSector);
         this.store();
+    }
+
+
+
+    @Override
+    public Collection<? extends Sector> getEntryPortals() {
+        return this.entryPortals;
     }
 }

@@ -33,4 +33,9 @@ public class QuadrantProviderDecorator implements QuadrantProvider {
     public Collection<Quadrant> getAllQuadrants() {
         return this.wrapped.getAllQuadrants();
     }
+
+    @Override
+    public Collection<? extends Sector> getEntryPortals() {
+        return this.wrapped.getEntryPortals();
+    }
 }
