@@ -1,9 +1,6 @@
 package polly.rx.core.orion;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -21,6 +18,8 @@ import polly.rx.parsing.RegexUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import de.skuzzle.polly.tools.io.WebUtils;
 
 
 public class WLSWormholeProvider implements WormholeProvider {
@@ -121,21 +120,10 @@ public class WLSWormholeProvider implements WormholeProvider {
     
     private String performRequest(String query) {
         try {
-            final URL url = new URL(BASE_URL + query);
-            
-            try (final BufferedReader r = new BufferedReader(
-                    new InputStreamReader(url.openStream()))) {
-                final StringBuilder b = new StringBuilder();
-                String line = null;
-                while ((line = r.readLine()) != null) {
-                    b.append(line).append("\n"); //$NON-NLS-1$
-                }
-                
-                // remove comments
-                final String result = 
-                        COMMENT.matcher(b.toString()).replaceAll(""); //$NON-NLS-1$
-                return result;
-            }
+            final String response = WebUtils.getString(BASE_URL + query).toString();
+            final String result = 
+                    COMMENT.matcher(response.toString()).replaceAll(""); //$NON-NLS-1$
+            return result;
         } catch (IOException e) {
             return ""; //$NON-NLS-1$
         }

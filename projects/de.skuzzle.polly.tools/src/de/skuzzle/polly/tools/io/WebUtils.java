@@ -76,7 +76,10 @@ public final class WebUtils {
         final URL url = new URL(surl);
         
         final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        final String cs = connection.getContentEncoding();
+        String cs = connection.getContentEncoding();
+        if (cs == null) {
+            cs = DEFAULT_CHARSET;
+        }
         try (final BufferedReader r = new BufferedReader(
                 new InputStreamReader(connection.getInputStream(), cs))) {
             String line = null;
