@@ -61,7 +61,7 @@
                 </tr>
                 <tr>
                     <td></td>
-                    <td><a href="#" id="refreshRoute">$MSG.htmlOrionRefreshRoute</a></td>
+                    <td><a href="javascript:requestRoute()">$MSG.htmlOrionRefreshRoute</a></td>
                 </tr>
                 </table>
             </td>
@@ -75,9 +75,8 @@
 <script>
 $(document).ready(function() {
 	$(".load_quad").click(requestQuad);
-	$("#refreshRoute").click(requesRoute);
 });
-function requesRoute() {
+function requestRoute() {
 	var fleetId = $("#selectFleet option:selected").val()
 	var jumpTime = encodeURI($("#jumpTime").val());
 	var currentJumpTime = encodeURI($("#currentJumpTime").val());
