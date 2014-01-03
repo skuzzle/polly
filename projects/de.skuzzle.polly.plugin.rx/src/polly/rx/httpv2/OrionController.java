@@ -246,7 +246,7 @@ public class OrionController extends PollyController {
         final Collection<Quadrant> allQuads = new TreeSet<>(new Comparator<Quadrant>() {
                     @Override
                     public int compare(Quadrant o1, Quadrant o2) {
-                        return 0;
+                        return o1.getName().compareTo(o2.getName());
                     }
                 });
         allQuads.addAll(this.quadProvider.getAllQuadrants());
