@@ -8,7 +8,7 @@ import polly.rx.core.orion.PathPlanner.UniversePath;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.Wormhole;
 import polly.rx.httpv2.OrionController;
-import de.skuzzle.polly.sdk.Command;
+import de.skuzzle.polly.sdk.DelayedCommand;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
 import de.skuzzle.polly.sdk.Signature;
@@ -18,12 +18,13 @@ import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
+import de.skuzzle.polly.sdk.time.Milliseconds;
 
 
-public class RouteCommand extends Command {
+public class RouteCommand extends DelayedCommand {
 
     public RouteCommand(MyPolly polly) throws DuplicatedSignatureException {    
-        super(polly, "route"); //$NON-NLS-1$
+        super(polly, "route", (int) Milliseconds.fromSeconds(10)); //$NON-NLS-1$
         this.createSignature(MSG.routeSig0Desc, 
                 OrionController.ROUTE_ORION_PREMISSION, 
                 new Parameter(MSG.routeSig0Start, Types.STRING), 
