@@ -115,6 +115,7 @@ public class PathPlanner {
         
         private final double COST_DIAGONAL = 1.5 / 60;
         private final double COST_NORMAL = 1.0 / 60;
+        private final double WORMHOLE_OFFSET = 100000.0;
         
         private final Set<Sector> done;
         private final RouteOptions options;
@@ -133,17 +134,19 @@ public class PathPlanner {
                 final Wormhole hole = data.getWormhole();
                 double modifier = 1.0;
                 if (this.options.avoidWormholes) {
-                    modifier = 100.0;
+                    modifier = 1000.0;
                 } else {
                     switch (hole.requiresLoad()) {
                     case FULL:
-                        modifier = 4.0;
+                        modifier = 50.0;
+                        break;
                     case PARTIAL:
-                        modifier = 2.0;
+                        modifier = 10.0;
+                        break;
                     case NONE:
                     }
                 }
-                return modifier * Math.max(1, data.getWormhole().getMinUnload());
+                return WORMHOLE_OFFSET + modifier * Math.max(1, data.getWormhole().getMinUnload());
             default: return Double.MAX_VALUE;
             }
         }
