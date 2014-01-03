@@ -2,8 +2,10 @@ package polly.rx.httpv2;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 
 import polly.rx.MSG;
 import polly.rx.core.AZEntryManager;
@@ -240,7 +242,14 @@ public class OrionController extends PollyController {
         this.requirePermissions(VIEW_ORION_PREMISSION);
         
         final Map<String, Object> c = this.createContext(CONTENT_ORION);
-        final Collection<Quadrant> allQuads = this.quadProvider.getAllQuadrants();
+        
+        final Collection<Quadrant> allQuads = new TreeSet<>(new Comparator<Quadrant>() {
+                    @Override
+                    public int compare(Quadrant o1, Quadrant o2) {
+                        return 0;
+                    }
+                });
+        allQuads.addAll(this.quadProvider.getAllQuadrants());
         c.put("allQuads", allQuads); //$NON-NLS-1$
         c.put("routeStart", this.getSession().getAttached(ROUTE_FROM_KEY)); //$NON-NLS-1$
         c.put("routeTarget", this.getSession().getAttached(ROUTE_TO_KEY)); //$NON-NLS-1$
