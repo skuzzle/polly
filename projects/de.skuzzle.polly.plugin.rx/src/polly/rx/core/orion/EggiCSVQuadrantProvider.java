@@ -321,6 +321,9 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider, QuadrantUpdate
         try (PrintWriter w = new PrintWriter(quads)) {
             for (final String quadName : this.idToName.values()) {
                 final EggiQuadrant eq = this.getQuadrant(quadName);
+                if (eq.id < 0) {
+                    continue;
+                }
                 w.format("\"%d\";\"%s\";\"%d\";\"%d\"", eq.id, eq.name, eq.maxX, eq.maxY); //$NON-NLS-1$
                 w.println();
             }
@@ -394,7 +397,13 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider, QuadrantUpdate
 
     @Override
     public EggiQuadrant getQuadrant(String name) {
-        if (!this.nameToId.containsKey(name)) {
+        return this.getQuadrant(name, false);
+    }
+
+    
+    
+    private EggiQuadrant getQuadrant(String name, boolean create) {
+        if (!this.nameToId.containsKey(name) && create) {
             ++this.quadids;
             this.nameToId.put(name, this.quadids);
             this.idToName.put(this.quadids, name);
@@ -412,13 +421,17 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider, QuadrantUpdate
                     sectors.put(QuadrantUtils.createMapKey(sector), sector);
                 }
             }
-            final int id = this.nameToId.get(name);
+            
+            Integer id = this.nameToId.get(name);
+            if (id == null) {
+                id = -1; // qudrant did not exist and should not be created persistent
+            }
             quad = new EggiQuadrant(id, name, sectors, maxX, maxY);
             this.quadMap.put(name, quad);
         }
         return quad;
     }
-
+    
     
     
     @Override
