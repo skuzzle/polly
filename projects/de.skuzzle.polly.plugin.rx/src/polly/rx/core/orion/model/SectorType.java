@@ -7,6 +7,7 @@ import polly.rx.MSG;
 
 public enum SectorType {
     NONE("", 0, 1), //$NON-NLS-1$
+    UNKNOWN("", 300, 301), //$NON-NLS-1$
     HIGHLIGHT_SECTOR(MSG.secTypeHLRouteSector, 200),
     HIGHLIGHT_START(MSG.secTypeHLRouteStart, 201), 
     HIGHLIGHT_TARGET(MSG.secTypeHLRouteTarget, 202),
@@ -106,10 +107,12 @@ public enum SectorType {
     
     
     public String getImgName() {
-        if (this == NONE) {
-            return "n.gif"; //$NON-NLS-1$
+        switch (this) {
+        case NONE:    return "n.gif"; //$NON-NLS-1$
+        case UNKNOWN: return "u.gif"; //$NON-NLS-1$
+        default: 
+            return "" + (this.minId + RANDOM.nextInt(this.maxId - this.minId)) + ".gif";  //$NON-NLS-1$//$NON-NLS-2$
         } 
-        return "" + (this.minId + RANDOM.nextInt(this.maxId - this.minId)) + ".gif";  //$NON-NLS-1$//$NON-NLS-2$
     }
     
     

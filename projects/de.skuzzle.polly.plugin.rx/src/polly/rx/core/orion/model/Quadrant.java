@@ -10,7 +10,7 @@ public interface Quadrant extends Equatable {
 
     public abstract Sector getSector(int x, int y);
 
-    public abstract Collection<Sector> getSectors();
+    public abstract Collection<? extends Sector> getSectors();
 
     public abstract int getMaxX();
 

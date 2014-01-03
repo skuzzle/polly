@@ -41,7 +41,7 @@ public class QuadrantDecorator implements Quadrant {
     }
 
     @Override
-    public Collection<Sector> getSectors() {
+    public Collection<? extends Sector> getSectors() {
         return this.wrapped.getSectors();
     }
 

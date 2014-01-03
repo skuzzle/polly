@@ -138,19 +138,6 @@ public class MyPlugin extends PollyPlugin {
         myPolly.webInterface().getServer().addController(
                 new RXController(myPolly, fleetDBManager, sbeManager, azManager));
         
-        // ORION
-        
-        final EggiCSVQuadrantProvider quadProvider = new EggiCSVQuadrantProvider();
-        final WormholeProvider holeProvider = new WLSWormholeProvider();
-        Orion.initialize(quadProvider, quadProvider, holeProvider);
-        
-        final OrionController oc = new OrionController(myPolly, azManager);
-        
-
-        myPolly.webInterface().getServer().addController(oc);
-        this.addCommand(new RouteCommand(myPolly));
-        
-        
         
         final HTMLTableModel<FleetScan> scanModel = new FleetScanTableModel(fleetDBManager);
         final HTMLTable<FleetScan> fleetScanTable = new HTMLTable<FleetScan>("fleetScans", scanModel, myPolly); //$NON-NLS-1$
@@ -260,6 +247,23 @@ public class MyPlugin extends PollyPlugin {
     
     @Override
     public void onLoad() throws PluginException {
+        
+        // ORION
+        
+        final EggiCSVQuadrantProvider quadProvider = new EggiCSVQuadrantProvider(this.getPluginFolder());
+        final WormholeProvider holeProvider = new WLSWormholeProvider();
+        Orion.initialize(quadProvider, quadProvider, holeProvider);
+        
+        final OrionController oc = new OrionController(this.getMyPolly(), azManager);
+        this.getMyPolly().webInterface().getServer().addController(oc);
+        
+        try {
+            this.addCommand(new RouteCommand(this.getMyPolly()));
+        } catch (DuplicatedSignatureException e1) {
+            e1.printStackTrace();
+        }
+        
+        
         try {
             this.getMyPolly().users().addAttribute(VENAD, 
                 new Types.StringType(VENAD_DEFAULT), 
