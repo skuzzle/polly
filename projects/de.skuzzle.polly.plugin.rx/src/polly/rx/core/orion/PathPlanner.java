@@ -133,7 +133,7 @@ public class PathPlanner {
                 final Wormhole hole = data.getWormhole();
                 double modifier = 1.0;
                 if (this.options.avoidWormholes) {
-                    modifier = 10.0;
+                    modifier = 100.0;
                 } else {
                     switch (hole.requiresLoad()) {
                     case FULL:
@@ -143,7 +143,7 @@ public class PathPlanner {
                     case NONE:
                     }
                 }
-                return modifier * data.getWormhole().getMaxUnload();
+                return modifier * Math.max(1, data.getWormhole().getMinUnload());
             default: return Double.MAX_VALUE;
             }
         }

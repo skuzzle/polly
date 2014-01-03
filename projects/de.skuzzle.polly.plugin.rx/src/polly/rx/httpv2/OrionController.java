@@ -22,9 +22,12 @@ import polly.rx.core.orion.model.SectorDecorator;
 import polly.rx.core.orion.model.SectorType;
 import polly.rx.core.orion.model.Wormhole;
 import polly.rx.core.orion.model.WormholeDecorator;
+import polly.rx.parsing.ParseException;
+import polly.rx.parsing.QuadrantCnPParser;
 import de.skuzzle.polly.http.annotations.Get;
 import de.skuzzle.polly.http.annotations.OnRegister;
 import de.skuzzle.polly.http.annotations.Param;
+import de.skuzzle.polly.http.annotations.Post;
 import de.skuzzle.polly.http.api.AlternativeAnswerException;
 import de.skuzzle.polly.http.api.Controller;
 import de.skuzzle.polly.http.api.HttpSession;
@@ -48,13 +51,16 @@ public class OrionController extends PollyController {
     
     
     public final static String PAGE_ORION = "/pages/orion"; //$NON-NLS-1$
+    public final static String PAGE_QUAD_LAYOUT = "/pages/orion/quadlayout"; //$NON-NLS-1$
     
     public final static String API_GET_QUADRANT = "/api/orion/quadrant"; //$NON-NLS-1$
     public final static String API_GET_SECTOR_INFO = "/api/orion/sector"; //$NON-NLS-1$
     public final static String API_SET_ROUTE_TO = "/api/orion/routeTo"; //$NON-NLS-1$
     public final static String API_SET_ROUTE_FROM = "/api/orion/routeFrom"; //$NON-NLS-1$
     public final static String API_GET_ROUTE = "/api/orion/getRoute"; //$NON-NLS-1$
+    private final static String API_POST_LAYOUT = "/api/orion/postLayout"; //$NON-NLS-1$
     
+    private final static String CONTENT_QUAD_LAYOUT = "/polly/rx/httpv2/view/orion/quadlayout.html"; //$NON-NLS-1$
     private final static String CONTENT_QUADRANT = "/polly/rx/httpv2/view/orion/quadrant.html"; //$NON-NLS-1$
     private final static String CONTENT_SECTOR_INFO = "/polly/rx/httpv2/view/orion/sec_info.html"; //$NON-NLS-1$
     private final static String CONTENT_ORION = "/polly/rx/httpv2/view/orion/orion.html"; //$NON-NLS-1$
@@ -240,6 +246,32 @@ public class OrionController extends PollyController {
         c.put("routeTarget", this.getSession().getAttached(ROUTE_TO_KEY)); //$NON-NLS-1$
         c.put("entries", this.azManager.getEntries(this.getSessionUser().getId())); //$NON-NLS-1$
         return this.makeAnswer(c);
+    }
+    
+    
+    
+    @Get(PAGE_QUAD_LAYOUT)
+    public HttpAnswer quadLayout() throws AlternativeAnswerException {
+        this.requirePermissions(OrionController.WRITE_ORION_PREMISSION);
+        return this.makeAnswer(this.createContext(CONTENT_QUAD_LAYOUT));
+    }
+    
+    
+    
+    @Post(API_POST_LAYOUT)
+    public HttpAnswer postQuadLayout(@Param("quadName") String quadName, 
+            @Param("paste") String paste) {
+        
+        try {
+            final Collection<Sector> sectors = QuadrantCnPParser.parse(paste, quadName);
+            for (final Sector sector : sectors) {
+                Orion.INSTANCE.createQuadrantUpdater().updateSectorInformation(sector);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        
+        return HttpAnswers.newRedirectAnswer(PAGE_QUAD_LAYOUT);
     }
     
     

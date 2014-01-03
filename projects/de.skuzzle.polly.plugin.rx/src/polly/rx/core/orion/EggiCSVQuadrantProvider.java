@@ -10,7 +10,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -142,8 +141,8 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider, QuadrantUpdate
         private final int id;
         private final String name;
         private final Map<String, EggiSector> sectors;
-        private final int maxX;
-        private final int maxY;
+        private int maxX;
+        private int maxY;
         
         public EggiQuadrant(int id, String name, Map<String, EggiSector> sectors, 
                 int maxX, int maxY) {
@@ -210,6 +209,7 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider, QuadrantUpdate
     private final static String SECTORS_FILE = "sectors.csv"; //$NON-NLS-1$
     
     private Map<Integer, String> idToName;
+    private int quadids;
     private Map<String, Integer> nameToId;
     private Collection<EggiSector> allSectors;
     private Map<String, EggiQuadrant> quadMap;
@@ -260,6 +260,7 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider, QuadrantUpdate
             while ((line = r.readLine()) != null) {
                 final String[] parts = this.splitAndStrip(line);
                 final int id = Integer.parseInt(parts[0]);
+                this.quadids = Math.max(this.quadids, id);
                 final String name = parts[1];
                 
                 idToName.put(id, name);
@@ -390,9 +391,11 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider, QuadrantUpdate
     @Override
     public EggiQuadrant getQuadrant(String name) {
         if (!this.nameToId.containsKey(name)) {
-            return new EggiQuadrant(-1, name, 
-                    Collections.<String, EggiSector>emptyMap(), 1, 1);
+            ++this.quadids;
+            this.nameToId.put(name, this.quadids);
+            this.idToName.put(this.quadids, name);
         }
+        
         EggiQuadrant quad = this.quadMap.get(name);
         if (quad == null) {
             final Map<String, EggiSector> sectors = new HashMap<>();
@@ -436,8 +439,13 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider, QuadrantUpdate
         newEggiSector.quadName = sector.getQuadName();
         newEggiSector.x = sector.getX();
         newEggiSector.y = sector.getY();
+        newEggiSector.ressources = new ArrayList<>(sector.getRessources());
+
         
         final EggiQuadrant quadrant = this.getQuadrant(sector);
+        quadrant.maxX = Math.max(quadrant.maxX, newEggiSector.x);
+        quadrant.maxY = Math.max(quadrant.maxY, newEggiSector.y);
+        
         final EggiSector existing = quadrant.getSector(
                 sector.getX(), sector.getY());
         
