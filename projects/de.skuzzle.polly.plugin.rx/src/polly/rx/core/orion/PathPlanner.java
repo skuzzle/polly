@@ -33,14 +33,11 @@ public class PathPlanner {
         private final TimespanType totalJumpTime;
         private final TimespanType currentJumpTime;
         private final int maxWaitSpotDistance;
-        private final boolean avoidWormholes;
         
-        public RouteOptions(TimespanType totalJumpTime, TimespanType currentJumpTime, 
-                boolean avoidWormholes) {
+        public RouteOptions(TimespanType totalJumpTime, TimespanType currentJumpTime) {
             this.totalJumpTime = totalJumpTime;
             this.currentJumpTime = currentJumpTime;
             this.maxWaitSpotDistance = 3;
-            this.avoidWormholes = avoidWormholes;
         }
     }
     
@@ -128,11 +125,9 @@ public class PathPlanner {
         private final double WORMHOLE_OFFSET = 100000.0;
         
         private final Set<Sector> done;
-        private final RouteOptions options;
         
         public UniverseBuilder(RouteOptions options) {
             this.done = new HashSet<>();
-            this.options = options;
         }
         
         @Override
@@ -144,18 +139,14 @@ public class PathPlanner {
             case WORMHOLE:
                 final Wormhole hole = data.getWormhole();
                 double modifier = 1.0;
-                if (this.options.avoidWormholes) {
-                    modifier = 1000.0;
-                } else {
-                    switch (hole.requiresLoad()) {
-                    case FULL:
-                        modifier = 50.0;
-                        break;
-                    case PARTIAL:
-                        modifier = 10.0;
-                        break;
-                    case NONE:
-                    }
+                switch (hole.requiresLoad()) {
+                case FULL:
+                    modifier = 50.0;
+                    break;
+                case PARTIAL:
+                    modifier = 10.0;
+                    break;
+                case NONE:
                 }
                 return WORMHOLE_OFFSET + modifier * Math.max(1, data.getWormhole().getMinUnload());
             default: return Double.MAX_VALUE;

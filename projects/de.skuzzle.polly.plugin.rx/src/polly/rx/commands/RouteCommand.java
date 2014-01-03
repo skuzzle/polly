@@ -47,7 +47,7 @@ public class RouteCommand extends DelayedCommand {
             
             final PathPlanner planner = Orion.INSTANCE.getPathPlanner();
             final RouteOptions options = new RouteOptions(new TimespanType(0), 
-                    new TimespanType(0), false);
+                    new TimespanType(0));
             final UniversePath path = planner.findShortestPath(start, target, options);
             this.outputPath(channel, path);
         }
