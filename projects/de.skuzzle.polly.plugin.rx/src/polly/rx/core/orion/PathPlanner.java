@@ -322,6 +322,9 @@ public class PathPlanner {
             final SectorType type = this.highlights.get(key);
             if (type != null) {
                 return new HighlightedSector(sector, type);
+            } else if (sector.getType() != SectorType.NONE){
+                // render all unrelated sectors dark
+                return new HighlightedSector(sector, SectorType.UNKNOWN);
             }
             return sector;
         }
@@ -448,7 +451,7 @@ public class PathPlanner {
                             final Sector safeSpot = spots.get(i);
                             e.getData().waitSpots.add(safeSpot);
                             
-                            if (safeSpot.equals(e.getSource())) {
+                            if (safeSpot.equals(e.getSource().getData())) {
                                 currentGroup.quad.highlight(safeSpot, 
                                         SectorType.HIGHLIGHT_SAFE_SPOT_WL);
                             } else {
