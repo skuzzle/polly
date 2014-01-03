@@ -63,7 +63,7 @@ public class RouteCommand extends DelayedCommand {
             return;
         }
         for (final Wormhole hole : path.getWormholes()) {
-            final String s = String.format("von: %s %d,%d nach: %s %d, %d. Entladung: %d-%d. Triebwerke: %s",  //$NON-NLS-1$
+            final String s = String.format("von: %s %d,%d nach: %s %d,%d. Entladung: %d-%d. Triebwerke: %s",  //$NON-NLS-1$
                     hole.getSource().getQuadName(), hole.getSource().getX(), hole.getSource().getY(), 
                     hole.getTarget().getQuadName(), hole.getTarget().getX(), hole.getTarget().getY(), 
                     hole.getMinUnload(), hole.getMaxUnload(),
