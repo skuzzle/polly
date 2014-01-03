@@ -7,6 +7,7 @@ import java.util.Map;
 
 import polly.rx.MSG;
 import polly.rx.core.AZEntryManager;
+import polly.rx.core.orion.Orion;
 import polly.rx.core.orion.PathPlanner;
 import polly.rx.core.orion.PathPlanner.RouteOptions;
 import polly.rx.core.orion.PathPlanner.UniversePath;
@@ -176,13 +177,30 @@ public class OrionController extends PollyController {
     private final AZEntryManager azManager;
     
     
-    public OrionController(MyPolly myPolly, QuadrantProvider quadProvider, 
-            WormholeProvider holeProvider, PathPlanner pathPlanner, 
-            AZEntryManager azManager) {
+    public OrionController(MyPolly myPolly, AZEntryManager azManager) {
+        this(myPolly, 
+                new DisplayQuadrantProvider(Orion.INSTANCE.createQuadrantProvider()),
+                new DisplayWormholeProvider(Orion.INSTANCE.createWormholeProvider()),
+                Orion.INSTANCE.getPathPlanner(),
+                azManager);
+    }
+    
+    
+    
+    /**
+     * Copy Constructor for {@link #createInstance()}
+     * @param myPolly
+     * @param quadProvider
+     * @param holeProvider
+     * @param planner
+     * @param azManager
+     */
+    private OrionController(MyPolly myPolly, QuadrantProvider quadProvider, 
+            WormholeProvider holeProvider, PathPlanner planner, AZEntryManager azManager) {
         super(myPolly);
         this.quadProvider = quadProvider;
         this.holeProvider = holeProvider;
-        this.pathPlanner = pathPlanner;
+        this.pathPlanner = planner;
         this.azManager = azManager;
     }
     
@@ -190,8 +208,8 @@ public class OrionController extends PollyController {
 
     @Override
     protected Controller createInstance() {
-        return new OrionController(this.getMyPolly(), 
-                this.quadProvider, this.holeProvider, this.pathPlanner, this.azManager);
+        return new OrionController(this.getMyPolly(), this.quadProvider, 
+                this.holeProvider, this.pathPlanner, this.azManager);
     }
     
     

@@ -61,8 +61,8 @@ public class WLSWormholeProvider implements WormholeProvider {
         private transient int minUnload;
         private transient int maxUnload;
         private transient LoadRequired loadRequired;
-        private Sector source;
-        private Sector target;
+        private transient Sector source;
+        private transient Sector target;
         
         @Override
         public String getName() {
@@ -91,6 +91,14 @@ public class WLSWormholeProvider implements WormholeProvider {
         @Override
         public LoadRequired requiresLoad() {
             return this.loadRequired;
+        }
+        @Override
+        public String toString() {
+            return String.format("%s - von: %s %d,%d nach: %s %d, %d. Entladung: %d-%d",  //$NON-NLS-1$
+                    this.name, 
+                    this.von_quadrant, this.von_x, this.von_y, 
+                    this.nach_quadrant, this.nach_x, this.nach_y, 
+                    this.minUnload, this.maxUnload);
         }
     }
     

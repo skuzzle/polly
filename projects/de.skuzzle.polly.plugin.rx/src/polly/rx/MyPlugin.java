@@ -12,14 +12,14 @@ import polly.rx.commands.MyTrainsCommand;
 import polly.rx.commands.MyVenadCommand;
 import polly.rx.commands.RankCommand;
 import polly.rx.commands.RessComand;
+import polly.rx.commands.RouteCommand;
 import polly.rx.commands.VenadCommand;
 import polly.rx.core.AZEntryManager;
 import polly.rx.core.FleetDBManager;
 import polly.rx.core.ScoreBoardManager;
 import polly.rx.core.TrainManagerV2;
 import polly.rx.core.orion.EggiCSVQuadrantProvider;
-import polly.rx.core.orion.PathPlanner;
-import polly.rx.core.orion.QuadrantProvider;
+import polly.rx.core.orion.Orion;
 import polly.rx.core.orion.WLSWormholeProvider;
 import polly.rx.core.orion.WormholeProvider;
 import polly.rx.entities.AZEntry;
@@ -38,8 +38,6 @@ import polly.rx.httpv2.FleetScanTableModel;
 import polly.rx.httpv2.FleetScansWithShipModel;
 import polly.rx.httpv2.OpenTrainingsModel;
 import polly.rx.httpv2.OrionController;
-import polly.rx.httpv2.OrionController.DisplayQuadrantProvider;
-import polly.rx.httpv2.OrionController.DisplayWormholeProvider;
 import polly.rx.httpv2.RXController;
 import polly.rx.httpv2.ScoreboardDetailModel;
 import polly.rx.httpv2.ScoreboardTableModel;
@@ -142,16 +140,15 @@ public class MyPlugin extends PollyPlugin {
         
         // ORION
         
-        final QuadrantProvider quadProvider = new EggiCSVQuadrantProvider();
+        final EggiCSVQuadrantProvider quadProvider = new EggiCSVQuadrantProvider();
         final WormholeProvider holeProvider = new WLSWormholeProvider();
-        final PathPlanner pathPlanner = new PathPlanner(quadProvider, holeProvider);
-        final OrionController oc = new OrionController(myPolly, 
-                new DisplayQuadrantProvider(quadProvider), 
-                new DisplayWormholeProvider(holeProvider), pathPlanner, azManager);
+        Orion.initialize(quadProvider, quadProvider, holeProvider);
+        
+        final OrionController oc = new OrionController(myPolly, azManager);
         
 
         myPolly.webInterface().getServer().addController(oc);
-        
+        this.addCommand(new RouteCommand(myPolly));
         
         
         

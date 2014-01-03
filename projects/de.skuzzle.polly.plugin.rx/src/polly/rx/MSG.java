@@ -85,6 +85,15 @@ public class MSG extends Constants {
     public static String ressSigDesc;
     public static String ressSigExpression;
 
+    // RouteCommand
+    public static String routeHelp;
+    public static String routeSig0Desc;
+    public static String routeSig0Start;
+    public static String routeSig0Ziel;
+    public static String routeParseError;
+    public static String routeInfo;
+    public static String routeNoRouteFound;
+    
     // VenadCommand
     public static String venadHelp;
     public static String venadSig0Desc;
@@ -184,7 +193,7 @@ public class MSG extends Constants {
 
     // TrainingTableModel
     public static String trainingModelColumns;
-    
+
     // RXController
     public static String httpRxCategory;
     public static String httpFleetScanMngr;
@@ -302,7 +311,7 @@ public class MSG extends Constants {
     public static String htmlGMReportPasterDesc;
     public static String htmlGMFleetScansName;
     public static String htmlGMFleetScansDesc;
-            
+
     public static String htmlGraphSelectMonths;
     public static String htmlGraphLinkToImage;
 
@@ -333,7 +342,7 @@ public class MSG extends Constants {
     public static String htmlTrainingCaption;
     public static String htmlOpenTrainings;
     public static String htmlClosedTrainings;
-    
+
     // BattleReportParser
     public static String reportParserInvalid;
     public static String reportParserInvalidDate;
@@ -347,13 +356,13 @@ public class MSG extends Constants {
     // FleetScanParser
     public static String fleetScanParserInvalid;
     public static String fleetScanParserAlienScan;
-    
+
     // QReportParser
     public static String qreportParserResourceExpected;
     public static String qreportParserAttackAtExpected;
     public static String qreportParserInvalidLocation;
     public static String qreportParserFailedToParseAttr;
-    
+
     // Orion related
     public static String secTypeHLRouteSector;
     public static String secTypeHLRouteStart;
@@ -402,7 +411,7 @@ public class MSG extends Constants {
     public static String loadNone;
     public static String loadPartial;
     public static String loadFull;
-    
+
     public static String htmlOrionName;
     public static String htmlpOrionDesc;
     public static String htmlAvailableQuads;
@@ -437,7 +446,7 @@ public class MSG extends Constants {
     public static String htmlOrionCurrentJumpTime;
     public static String htmlOrionSafeSpots;
     public static String htmlOrionAvoidWormholes;
-    
+
     // MyPlugin
     public static String pluginVenadDesc;
     public static String pluginCrackerDesc;

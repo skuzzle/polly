@@ -21,13 +21,6 @@ import de.skuzzle.polly.tools.Equatable;
 public class DBQuadrantProvider implements QuadrantProvider, QuadrantUpdater {
     
     
-    
-    private static String createKey(int x, int y) {
-        return x + "_" + y; //$NON-NLS-1$
-    }
-    
-    
-    
     private static class QuadrantImpl implements Quadrant {
         
         private final String name;
@@ -50,7 +43,7 @@ public class DBQuadrantProvider implements QuadrantProvider, QuadrantUpdater {
         
         @Override
         public Sector getSector(int x, int y) {
-            final String key = createKey(x, y);
+            final String key = QuadrantUtils.createMapKey(x, y);
             Sector qs = this.sectors.get(key);
             if (qs == null) {
                 return QuadrantUtils.noneSector(this.name, x, y);
@@ -128,7 +121,7 @@ public class DBQuadrantProvider implements QuadrantProvider, QuadrantUpdater {
         synchronized (this.quadCache) {
             QuadrantImpl quad = this.quadCache.get(sector.getQuadName());
             if (quad != null) {
-                quad.sectors.put(createKey(sector.getX(), sector.getY()), updated);
+                quad.sectors.put(QuadrantUtils.createMapKey(sector), updated);
             }
         }
     }
@@ -148,7 +141,7 @@ public class DBQuadrantProvider implements QuadrantProvider, QuadrantUpdater {
                     int maxY = 0;
                     final Map<String, Sector> sectorMap = new HashMap<>(sectors.size());
                     for (final DBSector sector : sectors) {
-                        final String key = createKey(sector.getX(), sector.getY());
+                        final String key = QuadrantUtils.createMapKey(sector);
                         sectorMap.put(key, sector);
                         maxX = Math.max(maxX, sector.getX());
                         maxY = Math.max(maxY, sector.getY());

@@ -21,7 +21,7 @@ import de.skuzzle.polly.tools.EqualsHelper;
 import de.skuzzle.polly.tools.Equatable;
 
 
-public class EggiCSVQuadrantProvider implements QuadrantProvider {
+public class EggiCSVQuadrantProvider implements QuadrantProvider, QuadrantUpdater {
     
     
     
@@ -152,7 +152,7 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider {
         
         @Override
         public Sector getSector(int x, int y) {
-            final String key = createKey(x, y);
+            final String key = QuadrantUtils.createMapKey(x, y);
             Sector qs = this.sectors.get(key);
             if (qs == null) {
                 return QuadrantUtils.noneSector(this.name, x, y);
@@ -191,11 +191,6 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider {
         }
     }
     
-    
-    
-    private static String createKey(int x, int y) {
-        return x + "_" + y; //$NON-NLS-1$
-    }
     
     
     
@@ -320,7 +315,7 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider {
                 if (sector.getQuadName().equals(name)) {
                     maxX = Math.max(maxX, sector.getX());
                     maxY = Math.max(maxY, sector.getY());
-                    sectors.put(createKey(sector.getX(), sector.getY()), sector);
+                    sectors.put(QuadrantUtils.createMapKey(sector), sector);
                 }
             }
             quad = new EggiQuadrant(name, sectors, maxX, maxY);
@@ -338,5 +333,12 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider {
             result.add(this.getQuadrant(quadName));
         }
         return result;
+    }
+    
+    
+    
+    @Override
+    public void updateSectorInformation(Sector sector) {
+        // TODO: implement it or not
     }
 }

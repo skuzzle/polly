@@ -53,6 +53,19 @@ public final class QuadrantUtils {
     
     
     
+    
+    public static String createMapKey(int x, int y) {
+        return x + "_" + y; //$NON-NLS-1$
+    }
+    
+    
+    
+    public static String createMapKey(Sector sector) {
+        return createMapKey(sector.getX(), sector.getY());
+    }
+    
+    
+    
     public static Sector noneSector(final String quadName, final int x, final int y) {
         return new Sector() {
             @Override
