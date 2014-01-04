@@ -12,15 +12,10 @@ import java.util.Map;
 import java.util.Set;
 
 import polly.rx.core.orion.Graph;
+import polly.rx.core.orion.Graph.EdgeCosts;
+import polly.rx.core.orion.Graph.LazyBuilder;
 import polly.rx.core.orion.QuadrantProvider;
 import polly.rx.core.orion.WormholeProvider;
-import polly.rx.core.orion.Graph.Edge;
-import polly.rx.core.orion.Graph.EdgeCosts;
-import polly.rx.core.orion.Graph.Heuristic;
-import polly.rx.core.orion.Graph.LazyBuilder;
-import polly.rx.core.orion.Graph.Node;
-import polly.rx.core.orion.Graph.Path;
-import polly.rx.core.orion.model.EntryPortalWormhole;
 import polly.rx.core.orion.model.Quadrant;
 import polly.rx.core.orion.model.QuadrantDecorator;
 import polly.rx.core.orion.model.QuadrantUtils;
@@ -28,112 +23,9 @@ import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.SectorDecorator;
 import polly.rx.core.orion.model.SectorType;
 import polly.rx.core.orion.model.Wormhole;
-import de.skuzzle.polly.sdk.Types.TimespanType;
 
 
 public class PathPlanner {
-    
-    
-    
-    public static class RouteOptions {
-        private final TimespanType totalJumpTime;
-        private final TimespanType currentJumpTime;
-        private final int maxWaitSpotDistance;
-        
-        public RouteOptions(TimespanType totalJumpTime, TimespanType currentJumpTime) {
-            this.totalJumpTime = totalJumpTime;
-            this.currentJumpTime = currentJumpTime;
-            this.maxWaitSpotDistance = 3;
-        }
-        
-        public TimespanType getCurrentJumpTime() {
-            return this.currentJumpTime;
-        }
-        
-        public TimespanType getTotalJumpTime() {
-            return this.totalJumpTime;
-        }
-    }
-    
-    
-    
-    public static class EdgeData {
-        
-        public static enum EdgeType {
-            NORMAL, DIAGONAL, WORMHOLE, ENTRYPORTAL;
-        }
-        
-        public static EdgeData wormhole(Wormhole wormhole) {
-            final EdgeData d = new EdgeData(EdgeType.WORMHOLE);
-            d.wormhole = wormhole;
-            return d;
-        }
-        
-        public static EdgeData entryPortal(Sector source, Sector target) {
-            final EdgeData d = new EdgeData(EdgeType.ENTRYPORTAL);
-            d.wormhole = new EntryPortalWormhole(source, target);
-            return d;
-        }
-        
-        public static EdgeData sector(boolean diagonal) {
-            if (diagonal) {
-                return new EdgeData(EdgeType.DIAGONAL);
-            }
-            return new EdgeData(EdgeType.NORMAL);
-        }
-        
-        
-        private final EdgeType type;
-        private Wormhole wormhole;
-        private int waitMin;
-        private int waitMax;
-        private final List<Sector> waitSpots;
-        
-        private EdgeData(EdgeType type) {
-            this.type = type;
-            this.waitSpots = new ArrayList<>(MAX_SAFE_SPOT_OUTPUT);
-        }
-        
-        
-        private void clear() {
-            this.waitSpots.clear();
-            this.waitMax = 0;
-            this.waitMin = 0;
-        }
-        
-        public EdgeType getType() {
-            return this.type;
-        }
-        
-        public List<Sector> getWaitSpots() {
-            return this.waitSpots;
-        }
-        
-        public boolean hasWaitSpots() {
-            return !this.waitSpots.isEmpty();
-        }
-        
-        public boolean isWormhole() {
-            return this.type == EdgeType.WORMHOLE || this.type == EdgeType.ENTRYPORTAL;
-        }
-        
-        public Wormhole getWormhole() {
-            return this.wormhole;
-        }
-        
-        public boolean mustWait() {
-            return this.waitMin > 0;
-        }
-        
-        public int getWaitMin() {
-            return this.waitMin;
-        }
-        
-        public int getWaitMax() {
-            return this.waitMax;
-        }
-    }
-    
     
     
     private class UniverseBuilder implements LazyBuilder<Sector, EdgeData>, 
@@ -227,28 +119,7 @@ public class PathPlanner {
             }
         }
     }
-    
-    
-    
-    private class SectorHeuristic implements Heuristic<Sector> {
-        
-        @Override
-        public double calculate(Sector v1, Sector v2) {
-            return 0.0;
-            /*if (v1.getQuadName().equals(v2.getQuadName())) {
-                final double dx = v1.getX() - v2.getX();
-                final double dy = v1.getY() - v2.getY();
-                return Math.sqrt(dx * dx + dy * dy);
-            } else {
-                final Quadrant target = quadProvider.getQuadrant(v2);
-                // longest possible path in target quadrant
-                return Math.sqrt(
-                        target.getMaxX() * target.getMaxX() + 
-                        target.getMaxY() * target.getMaxY());
-            }*/
-        }
-    }
-    
+   
     
     
     private final static Comparator<Sector> SAFE_SPOT_COMP = new Comparator<Sector>() {
@@ -265,19 +136,16 @@ public class PathPlanner {
     };
     
     
-    
-    private final static int MAX_SAFE_SPOT_OUTPUT = 2;
+    public static final int MAX_SAFE_SPOT_OUTPUT = 2;
     
     private final QuadrantProvider quadProvider;
     private final WormholeProvider holeProvider;
     private final Graph<Sector, EdgeData> graph;
-    private final Heuristic<Sector> heuristic;
     
     
     
     public PathPlanner(QuadrantProvider quadProvider, WormholeProvider holeProvider) {
         this.graph = new Graph<>();
-        this.heuristic = new SectorHeuristic();
         this.quadProvider = quadProvider;
         this.holeProvider = holeProvider;
     }
@@ -378,7 +246,7 @@ public class PathPlanner {
     
     
     public class UniversePath {
-
+        
         private final Graph<Sector, EdgeData>.Path path;
         private final List<Group> groups;
         private final List<Wormhole> wormholes;
@@ -471,6 +339,7 @@ public class PathPlanner {
                         Collections.sort(spots, SAFE_SPOT_COMP);
                         final int bound = Math.min(spots.size(), MAX_SAFE_SPOT_OUTPUT);
                         for (int i = 0; i < bound; ++i) {
+                            
                             final Sector safeSpot = spots.get(i);
                             e.getData().waitSpots.add(safeSpot);
                             
@@ -546,7 +415,7 @@ public class PathPlanner {
             RouteOptions options) {
         final UniverseBuilder builder = new UniverseBuilder(options);
         final Graph<Sector, EdgeData>.Path path = this.graph.findShortestPath(
-                start, target, builder, this.heuristic, builder);
+                start, target, builder, Graph.<Sector>noHeuristic(), builder);
         final UniversePath result = new UniversePath(path, options);
         return result;
     }
@@ -558,7 +427,7 @@ public class PathPlanner {
         final int K = 5;
         final UniverseBuilder builder = new UniverseBuilder(options);
         final Set<Graph<Sector, EdgeData>.Path> paths = this.graph.findShortestPaths(
-                start, target, K, builder, this.heuristic, builder);
+                start, target, K, builder, Graph.<Sector>noHeuristic(), builder);
         final List<UniversePath> result = new ArrayList<>(paths.size());
         for (final Graph<Sector, EdgeData>.Path path : paths) {
             result.add(new UniversePath(path, options));
