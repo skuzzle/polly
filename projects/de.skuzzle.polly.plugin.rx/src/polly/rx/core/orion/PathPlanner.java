@@ -544,4 +544,19 @@ public class PathPlanner {
         final UniversePath result = new UniversePath(path, options);
         return result;
     }
+    
+    
+    
+    public Collection<UniversePath> findShortestPaths(Sector start, Sector target, 
+            RouteOptions options) {
+        final int K = 5;
+        final UniverseBuilder builder = new UniverseBuilder(options);
+        final Set<Graph<Sector, EdgeData>.Path> paths = this.graph.findShortestPaths(
+                start, target, K, builder, this.heuristic, builder);
+        final List<UniversePath> result = new ArrayList<>(paths.size());
+        for (final Graph<Sector, EdgeData>.Path path : paths) {
+            result.add(new UniversePath(path, options));
+        }
+        return result;
+    }
 }

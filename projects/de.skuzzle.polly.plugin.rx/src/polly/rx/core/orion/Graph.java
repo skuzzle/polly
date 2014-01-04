@@ -245,6 +245,23 @@ public class Graph<V, E> {
     
     
     
+    public SortedSet<Path> findShortestPaths(V start, V target, int k, 
+            LazyBuilder<V, E> builder, Heuristic<V> heuristic, EdgeCosts<E> costs) {
+        
+        final Node vStart = this.getNode(start, start);
+        final Node vTarget = this.getNode(target, target);
+        
+        final SortedSet<KnownPath> paths = this.kShortestPathsInternal(vStart, vTarget, k, 
+                builder, heuristic, costs);
+        final TreeSet<Path> result = new TreeSet<>();
+        for (final KnownPath kpath : paths) {
+            result.add(new Path(kpath.edges, kpath.costs));
+        }
+        return result;
+    }
+    
+    
+    
     private class KnownNode implements Comparable<KnownNode> {
         final Node wrapped;
         final double heuristics;
@@ -295,12 +312,19 @@ public class Graph<V, E> {
     
     
     private class KnownPath implements Comparable<KnownPath> {
-        private final List<Edge> edges = new ArrayList<>();
+        private final List<Edge> edges;
         private double costs;
         private Node target;
         private double heuristics;
         
+        public KnownPath(Collection<Edge> edges, double costs, double heuristics) {
+            this.edges = new ArrayList<>(edges);
+            this.costs = costs;
+            this.heuristics = heuristics;
+        }
+        
         public KnownPath(double costs, double heuristics) {
+            this.edges = new ArrayList<>();
             this.costs = costs;
             this.heuristics = heuristics;
         }
@@ -334,12 +358,12 @@ public class Graph<V, E> {
             }
             
             if (this.count(count, v) < k) {
+                builder.collectIncident(this, v.getData());
                 for (final Edge edge : v.getIncident()) {
                     final double heuristics = h.calculate(v.getData(), target.getData());
-                    final KnownPath newPath = new KnownPath(
+                    final KnownPath newPath = new KnownPath(next.edges,
                             next.costs + w.calculate(edge.getData()), 
                             heuristics);
-                    newPath.edges.addAll(next.edges);
                     newPath.edges.add(edge);
                     newPath.target = edge.getTarget();
                     q.add(newPath);
