@@ -89,6 +89,12 @@ public class PathPlanner {
         }
         
         
+        private void clear() {
+            this.waitSpots.clear();
+            this.waitMax = 0;
+            this.waitMin = 0;
+        }
+        
         public EdgeType getType() {
             return this.type;
         }
@@ -403,6 +409,9 @@ public class PathPlanner {
 
             while (it.hasNext()) {
                 final Graph<Sector, EdgeData>.Edge e = it.next();
+                // before processing edge, reset its data
+                e.getData().clear();
+                
                 final Sector source = e.getSource().getData();
                 SectorType highlight = SectorType.HIGHLIGHT_SECTOR;
                 
