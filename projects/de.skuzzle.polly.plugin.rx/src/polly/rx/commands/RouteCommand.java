@@ -2,12 +2,12 @@ package polly.rx.commands;
 
 import polly.rx.MSG;
 import polly.rx.core.orion.Orion;
-import polly.rx.core.orion.PathPlanner;
-import polly.rx.core.orion.PathPlanner.RouteOptions;
-import polly.rx.core.orion.PathPlanner.UniversePath;
 import polly.rx.core.orion.model.QuadrantUtils;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.Wormhole;
+import polly.rx.core.orion.pathplanning.PathPlanner;
+import polly.rx.core.orion.pathplanning.PathPlanner.RouteOptions;
+import polly.rx.core.orion.pathplanning.PathPlanner.UniversePath;
 import polly.rx.httpv2.OrionController;
 import polly.rx.parsing.ParseException;
 import de.skuzzle.polly.sdk.DelayedCommand;

@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ public class Graph<V, E> {
 
         private final V data;
         private final Collection<Edge> edges;
+        private final Collection<Node> edgesFrom;
         
         public Node(V data) {
             if (data == null) {
@@ -29,9 +31,30 @@ public class Graph<V, E> {
             }
             this.data = data;
             this.edges = new ArrayList<>();
+            this.edgesFrom = new HashSet<>();
+        }
+        
+        public void removeEdge(Node target) {
+            final Iterator<Edge> it = this.edges.iterator();
+            while (it.hasNext()) {
+                final Edge next = it.next();
+                if (next.getTarget().equals(target)) {
+                    it.remove();
+                    target.edgesFrom.remove(this);
+                    return;
+                }
+            }
         }
         
         public Edge edgeTo(Node target, E data) {
+            if (target == null) {
+                throw new NullPointerException("target"); //$NON-NLS-1$
+            } else if (data == null) {
+                throw new NullPointerException("data"); //$NON-NLS-1$
+            } else if (!target.edgesFrom.add(this)) {
+                throw new IllegalStateException("edge already exists"); //$NON-NLS-1$
+            }
+            
             final Edge newEdge = new Edge(this, target, data);
             this.edges.add(newEdge);
             return newEdge;
@@ -175,6 +198,19 @@ public class Graph<V, E> {
     
     
     
+    public void removeNode(V data) {
+        final Node n = this.getNode(data);
+        if (n == null) {
+            return;
+        }
+        for (final Node v : n.edgesFrom) {
+            v.removeEdge(n);
+        }
+        this.nodeMap.remove(data);
+    }
+    
+    
+    
     public Node getNode(V data) {
         return this.nodeMap.get(data);
     }
@@ -189,8 +225,8 @@ public class Graph<V, E> {
         return n;
     }
     
-    
 
+    
     public class Path implements Comparable<Path> {
         protected final List<Edge> path;
         protected final double costs;
@@ -346,8 +382,8 @@ public class Graph<V, E> {
         
         final KnownPath p = new KnownPath(0.0, 0.0);
         p.target = start;
-        
         q.add(p);
+        
         while (!q.isEmpty() && this.count(count, target) < k) {
             final KnownPath next = q.poll();
             final Node v = next.target;

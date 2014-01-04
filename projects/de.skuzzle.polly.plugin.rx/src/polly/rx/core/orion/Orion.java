@@ -1,5 +1,7 @@
 package polly.rx.core.orion;
 
+import polly.rx.core.orion.pathplanning.PathPlanner;
+
 
 public enum Orion implements UniverseFactory {
     INSTANCE;

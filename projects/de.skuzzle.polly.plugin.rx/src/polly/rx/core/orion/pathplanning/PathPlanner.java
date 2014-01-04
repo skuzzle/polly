@@ -1,4 +1,4 @@
-package polly.rx.core.orion;
+package polly.rx.core.orion.pathplanning;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,9 +11,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import polly.rx.core.orion.Graph;
+import polly.rx.core.orion.QuadrantProvider;
+import polly.rx.core.orion.WormholeProvider;
+import polly.rx.core.orion.Graph.Edge;
 import polly.rx.core.orion.Graph.EdgeCosts;
 import polly.rx.core.orion.Graph.Heuristic;
 import polly.rx.core.orion.Graph.LazyBuilder;
+import polly.rx.core.orion.Graph.Node;
+import polly.rx.core.orion.Graph.Path;
 import polly.rx.core.orion.model.EntryPortalWormhole;
 import polly.rx.core.orion.model.Quadrant;
 import polly.rx.core.orion.model.QuadrantDecorator;
@@ -150,7 +156,7 @@ public class PathPlanner {
             case NORMAL:   return COST_NORMAL;
             case DIAGONAL: return COST_DIAGONAL;
             case ENTRYPORTAL: return COST_ENTRYPORTAL;
-            case WORMHOLE:
+            case WORMHOLE: 
                 final Wormhole hole = data.getWormhole();
                 double modifier = 1.0;
                 switch (hole.requiresLoad()) {
