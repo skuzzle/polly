@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import de.skuzzle.polly.tools.EqualsHelper;
 import de.skuzzle.polly.tools.Equatable;
@@ -189,14 +191,21 @@ public class Graph<V, E> {
     
     
 
-    public class Path {
-        private final List<Edge> path;
-        private final double costs;
-        
+    public class Path implements Comparable<Path> {
+        protected final List<Edge> path;
+        protected final double costs;
+        protected int count;
         
         public Path(List<Edge> path, double costs) {
             this.path = path;
             this.costs = costs;
+        }
+        
+        public Node getTarget() {
+            if (this.path.isEmpty()) {
+                return null;
+            }
+            return this.path.get(this.path.size() - 1).getTarget();
         }
         
         public List<Edge> getPath() {
@@ -205,6 +214,11 @@ public class Graph<V, E> {
         
         public double getCosts() {
             return this.costs;
+        }
+
+        @Override
+        public int compareTo(Path o) {
+            return Double.compare(this.costs, o.costs);
         }
     }
     
@@ -254,6 +268,85 @@ public class Graph<V, E> {
         public int compareTo(KnownNode o) {
             return Double.compare(this.costs + this.heuristics, o.costs + o.heuristics);
         }
+    }
+    
+    
+    
+    private int count(Map<Node, Integer> count, Node node) {
+        Integer i = count.get(node);
+        if (i == null) {
+            count.put(node, 0);
+            i = 0;
+        }
+        return i;
+    }
+    
+    
+    
+    private void inc(Map<Node, Integer> count, Node node) {
+        Integer i = count.get(node);
+        if (i == null) {
+            i = 0;
+        }
+        i = i + 1;
+        count.put(node, i);
+    }
+    
+    
+    
+    private class KnownPath implements Comparable<KnownPath> {
+        private final List<Edge> edges = new ArrayList<>();
+        private double costs;
+        private Node target;
+        private double heuristics;
+        
+        public KnownPath(double costs, double heuristics) {
+            this.costs = costs;
+            this.heuristics = heuristics;
+        }
+        
+        @Override
+        public int compareTo(KnownPath o) {
+            return Double.compare(this.costs + this.heuristics, o.costs + o.heuristics);
+        }
+    }
+    
+    
+    
+    
+    private SortedSet<KnownPath> kShortestPathsInternal(Node start, Node target, int k, 
+            LazyBuilder<V, E> builder, Heuristic<V> h, EdgeCosts<E> w) {
+        final SortedSet<KnownPath> paths = new TreeSet<>();
+        final PriorityQueue<KnownPath> q = new PriorityQueue<>();
+        final Map<Node, Integer> count = new HashMap<>();
+        
+        final KnownPath p = new KnownPath(0.0, 0.0);
+        p.target = start;
+        
+        q.add(p);
+        while (!q.isEmpty() && this.count(count, target) < k) {
+            final KnownPath next = q.poll();
+            final Node v = next.target;
+            this.inc(count, v);
+            
+            if (v.equals(target)) {
+                paths.add(next);
+            }
+            
+            if (this.count(count, v) < k) {
+                for (final Edge edge : v.getIncident()) {
+                    final double heuristics = h.calculate(v.getData(), target.getData());
+                    final KnownPath newPath = new KnownPath(
+                            next.costs + w.calculate(edge.getData()), 
+                            heuristics);
+                    newPath.edges.addAll(next.edges);
+                    newPath.edges.add(edge);
+                    newPath.target = edge.getTarget();
+                    q.add(newPath);
+                }
+            }
+        }
+        return paths;
     }
     
     
