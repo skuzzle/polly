@@ -8,9 +8,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import polly.rx.MSG;
 import polly.rx.core.orion.Graph;
 import polly.rx.core.orion.Graph.EdgeCosts;
 import polly.rx.core.orion.Graph.LazyBuilder;
+import polly.rx.core.orion.Orion;
+import polly.rx.parsing.ParseException;
 import de.skuzzle.polly.tools.Equatable;
 
 
@@ -133,6 +136,32 @@ public final class QuadrantUtils {
                 return 0;
             }
         };
+    }
+    
+    
+    
+    /**
+     * Parses a Sector specification given as <tt>&lt;Quadname&gt; &lt;x&gt; &lt;y&gt;
+     * and returns the respective Sector instance retrieved from {@link Orion}.
+     * 
+     * @param s The String to parse.
+     * @return The Sector.
+     * @throws ParseException If the String has the wrong format.
+     */
+    public static Sector parse(String s) throws ParseException {
+        // parse backwards
+        try {
+            int i = s.lastIndexOf(' ');
+            final int y = Integer.parseInt(s.substring(i + 1));
+            s = s.substring(0, i);
+            i = s.lastIndexOf(' ');
+            final int x = Integer.parseInt(s.substring(i + 1));
+            final String quadName = s.substring(0, i);
+            return Orion.INSTANCE.createQuadrantProvider().getQuadrant(
+                    quadName).getSector(x, y);
+        } catch (Exception e) {
+            throw new ParseException(MSG.routeParseError, e);
+        }
     }
     
     

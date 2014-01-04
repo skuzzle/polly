@@ -5,9 +5,11 @@ import polly.rx.core.orion.Orion;
 import polly.rx.core.orion.PathPlanner;
 import polly.rx.core.orion.PathPlanner.RouteOptions;
 import polly.rx.core.orion.PathPlanner.UniversePath;
+import polly.rx.core.orion.model.QuadrantUtils;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.Wormhole;
 import polly.rx.httpv2.OrionController;
+import polly.rx.parsing.ParseException;
 import de.skuzzle.polly.sdk.DelayedCommand;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Parameter;
@@ -38,20 +40,23 @@ public class RouteCommand extends DelayedCommand {
     protected boolean executeOnBoth(User executer, String channel, Signature signature)
             throws CommandException, InsufficientRightsException {
         
-        if (this.match(signature, 0)) {
-            final String s = signature.getStringValue(0);
-            final String t = signature.getStringValue(1);
-            
-            final Sector start = this.parse(s);
-            final Sector target = this.parse(t);
-            
-            final PathPlanner planner = Orion.INSTANCE.getPathPlanner();
-            final RouteOptions options = new RouteOptions(new TimespanType(0), 
-                    new TimespanType(0));
-            final UniversePath path = planner.findShortestPath(start, target, options);
-            this.outputPath(channel, path);
+        try {
+            if (this.match(signature, 0)) {
+                final String s = signature.getStringValue(0);
+                final String t = signature.getStringValue(1);
+                
+                final Sector start = QuadrantUtils.parse(s);
+                final Sector target = QuadrantUtils.parse(t);
+                
+                final PathPlanner planner = Orion.INSTANCE.getPathPlanner();
+                final RouteOptions options = new RouteOptions(new TimespanType(0), 
+                        new TimespanType(0));
+                final UniversePath path = planner.findShortestPath(start, target, options);
+                this.outputPath(channel, path);
+            }
+        } catch (ParseException e) {
+            throw new CommandException(e.getMessage(), e);
         }
-        
         return super.executeOnBoth(executer, channel, signature);
     }
     
@@ -73,22 +78,4 @@ public class RouteCommand extends DelayedCommand {
         this.reply(channel, MSG.bind(MSG.routeInfo, path.getSectorJumps(), 
                 path.getQuadJumps()));
     }
-    
-    
-    
-    private Sector parse(String s) throws CommandException {
-        // parse backwards
-        try {
-            int i = s.lastIndexOf(' ');
-            final int y = Integer.parseInt(s.substring(i + 1));
-            s = s.substring(0, i);
-            i = s.lastIndexOf(' ');
-            final int x = Integer.parseInt(s.substring(i + 1));
-            final String quadName = s.substring(0, i);
-            return Orion.INSTANCE.createQuadrantProvider().getQuadrant(quadName).getSector(x, y);
-        } catch (Exception e) {
-            throw new CommandException(MSG.routeParseError, e);
-        }
-    }
-
 }

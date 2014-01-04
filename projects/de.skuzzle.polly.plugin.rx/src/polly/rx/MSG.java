@@ -445,7 +445,8 @@ public class MSG extends Constants {
     public static String htmlOrionNone;
     public static String htmlOrionCurrentJumpTime;
     public static String htmlOrionSafeSpots;
-
+    public static String htmlOrionShareRoute;
+    
     // MyPlugin
     public static String pluginVenadDesc;
     public static String pluginCrackerDesc;

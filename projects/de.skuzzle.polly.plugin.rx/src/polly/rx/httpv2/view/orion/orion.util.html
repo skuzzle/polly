@@ -91,3 +91,7 @@ $sector.getQuadName() $sector.getX(), $sector.getY()
 #end
 
 
+
+#macro (SHARE_ROUTE_URL $page $start $target $options)
+$page?startQuad=$start.getQuadName()&startX=$start.getX()&startY=$start.getY()&targetQuad=$target.getQuadName()&targetX=$target.getX()&targetY=$target.getY()&jt=$options.getTotalJumpTime()&cjt=$options.getCurrentJumpTime()
+#end

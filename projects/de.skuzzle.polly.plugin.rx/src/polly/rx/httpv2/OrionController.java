@@ -61,13 +61,15 @@ public class OrionController extends PollyController {
     public final static String API_SET_ROUTE_FROM = "/api/orion/routeFrom"; //$NON-NLS-1$
     public final static String API_GET_ROUTE = "/api/orion/getRoute"; //$NON-NLS-1$
     private final static String API_POST_LAYOUT = "/api/orion/postLayout"; //$NON-NLS-1$
+    private final static String API_SHARE_ROUTE = "/api/orion/share"; //$NON-NLS-1$
     
     private final static String CONTENT_QUAD_LAYOUT = "/polly/rx/httpv2/view/orion/quadlayout.html"; //$NON-NLS-1$
     private final static String CONTENT_QUADRANT = "/polly/rx/httpv2/view/orion/quadrant.html"; //$NON-NLS-1$
     private final static String CONTENT_SECTOR_INFO = "/polly/rx/httpv2/view/orion/sec_info.html"; //$NON-NLS-1$
     private final static String CONTENT_ORION = "/polly/rx/httpv2/view/orion/orion.html"; //$NON-NLS-1$
     private final static String CONTENT_ROUTE = "/polly/rx/httpv2/view/orion/route.html"; //$NON-NLS-1$
-    
+    private final static String CONTENT_SHARE_ROUTE = "/polly/rx/httpv2/view/orion/route.share.html"; //$NON-NLS-1$
+            
     private final static String REVORIX_CATEGORY_KEY = "httpRxCategory"; //$NON-NLS-1$
     private final static String ORION_NAME_KEY = "htmlOrionName"; //$NON-NLS-1$
     private final static String ORION_DESC_KEY = "htmlOrionDesc"; //$NON-NLS-1$
@@ -417,6 +419,40 @@ public class OrionController extends PollyController {
     
     
     
+    @Get(API_SHARE_ROUTE)
+    public HttpAnswer shareRoute(@Param("startQuad") String startQuad,
+            @Param("startX") int startX,
+            @Param("startY") int startY,
+            @Param("targetQuad") String targetQuad,
+            @Param("targetX") int targetX,
+            @Param("targetY") int targetY,
+            @Param(value = "jt", optional = true) String jumpTime,
+            @Param(value = "cjt", optional = true) String currentJumpTime) {
+        
+        final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
+        final Sector start = this.quadProvider.getQuadrant(
+                startQuad).getSector(startX, startY);
+        final Sector target = this.quadProvider.getQuadrant(
+                targetQuad).getSector(targetX, targetY);
+        
+        final TimespanType jt = this.parse(jumpTime, new TimespanType(0L));
+        final TimespanType cjt = this.parse(currentJumpTime, jt);
+        
+        final RouteOptions options = new RouteOptions(jt, cjt);
+        final UniversePath path = this.pathPlanner.findShortestPath(
+                start, target, options);
+        
+        c.put("start", start); //$NON-NLS-1$
+        c.put("target", target); //$NON-NLS-1$
+        c.put("options", options); //$NON-NLS-1$
+        c.put("path", path); //$NON-NLS-1$
+        c.put("legend", SectorType.HIGHLIGHTS); //$NON-NLS-1$
+        
+        return HttpAnswers.newTemplateAnswer(CONTENT_SHARE_ROUTE, c);
+    }
+    
+    
+    
     @Get(API_GET_ROUTE)
     public HttpAnswer getRoute(
             @Param("fleetId") int fleetId,
@@ -447,6 +483,10 @@ public class OrionController extends PollyController {
         final RouteOptions options = new RouteOptions(jumpTime, currentJumpTime);
         final UniversePath path = this.pathPlanner.findShortestPath(start, target, 
                 options);
+        
+        c.put("start", start); //$NON-NLS-1$
+        c.put("target", target); //$NON-NLS-1$
+        c.put("options", options); //$NON-NLS-1$
         c.put("path", path); //$NON-NLS-1$
         c.put("legend", SectorType.HIGHLIGHTS); //$NON-NLS-1$
         return HttpAnswers.newTemplateAnswer(CONTENT_ROUTE, c);

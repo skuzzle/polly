@@ -39,6 +39,14 @@ public class PathPlanner {
             this.currentJumpTime = currentJumpTime;
             this.maxWaitSpotDistance = 3;
         }
+        
+        public TimespanType getCurrentJumpTime() {
+            return this.currentJumpTime;
+        }
+        
+        public TimespanType getTotalJumpTime() {
+            return this.totalJumpTime;
+        }
     }
     
     
