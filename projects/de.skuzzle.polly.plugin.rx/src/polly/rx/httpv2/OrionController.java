@@ -266,6 +266,7 @@ public class OrionController extends PollyController {
         c.put("personalPortals", Orion.INSTANCE.getPersonalPortals(this.getSessionUser())); //$NON-NLS-1$
         c.put("entryPortals", this.quadProvider.getEntryPortals()); //$NON-NLS-1$
         c.put("entries", this.azManager.getEntries(this.getSessionUser().getId())); //$NON-NLS-1$
+        c.put("legend", SectorType.HIGHLIGHTS); //$NON-NLS-1$
         return this.makeAnswer(c);
     }
     
@@ -466,7 +467,6 @@ public class OrionController extends PollyController {
         c.put("target", target); //$NON-NLS-1$
         c.put("options", options); //$NON-NLS-1$
         c.put("path", path.iterator().next()); //$NON-NLS-1$
-        c.put("legend", SectorType.HIGHLIGHTS); //$NON-NLS-1$
         c.put("n", 1); //$NON-NLS-1$
         c.put("routeCount", path.size()); //$NON-NLS-1$
         
@@ -483,7 +483,6 @@ public class OrionController extends PollyController {
         c.put("target", s.getAttached(ROUTE_TO_KEY)); //$NON-NLS-1$
         c.put("options", s.getAttached(ROUTE_OPTIONS_KEY)); //$NON-NLS-1$
         c.put("path", s.getAttached(ROUTE_N_KEY + n)); //$NON-NLS-1$
-        c.put("legend", SectorType.HIGHLIGHTS); //$NON-NLS-1$
         c.put("n", n); //$NON-NLS-1$
         return HttpAnswers.newTemplateAnswer(CONTENT_ROUTE_SINGLE, c);
     }
@@ -543,7 +542,6 @@ public class OrionController extends PollyController {
         c.put("target", target); //$NON-NLS-1$
         c.put("options", options); //$NON-NLS-1$
         c.put("path", path.iterator().next()); //$NON-NLS-1$
-        c.put("legend", SectorType.HIGHLIGHTS); //$NON-NLS-1$
         c.put("n", 1); //$NON-NLS-1$
         c.put("routeCount", path.size()); //$NON-NLS-1$
         return HttpAnswers.newTemplateAnswer(CONTENT_ROUTE, c);

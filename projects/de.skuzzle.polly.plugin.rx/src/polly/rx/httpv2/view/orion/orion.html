@@ -15,6 +15,13 @@
     </div>
 </div>
 
+<div id="legend-dialog" title="$MSG.htmlOrionLegend" class="content">
+    #foreach ($hl in $legend)
+        <img src="/polly/rx/httpv2/view/orion/$hl.getImgName()" width="10" height="10" 
+            style="border: 1px solid red;"/> $hl<br/>
+    #end
+</div>
+
 <div class="highlight contentBox">
     #CONTENT_HEADER ($MSG.htmlOrionRouting)
     
@@ -64,6 +71,10 @@
                     <td>#foreach ($portal in $personalPortals) #SECTOR_NO_LINK ( $portal )<br/> #end</td>
                 </tr>
                 <tr>
+                    <td><a href="javascript:showLegend()">$MSG.htmlOrionLegend</a></td>
+                    <td></td>
+                </tr>
+                <tr>
                     <td></td>
                     <td><a href="javascript:requestRoute()">$MSG.htmlOrionRefreshRoute</a></td>
                 </tr>
@@ -84,7 +95,11 @@
 $(document).ready(function() {
 	$(".load_quad").click(requestQuad);
 	$("#progressbar").hide();
+	prepareLegend();
 });
+function showLegend() {
+	$("#legend-dialog").dialog("open");
+}
 function requestRoute() {
 	var fleetId = $("#selectFleet option:selected").val()
 	var jumpTime = encodeURI($("#jumpTime").val());
@@ -98,10 +113,16 @@ function requestRoute() {
 	$.get(url, function(data) {
 		$("#route").html(data);
 		prepareTabs();
+		prepareLegend();
 		$("#progressbar").fadeOut();
 	});
 }
-
+function prepareLegend() {
+	$("#legend-dialog").dialog({
+		autoOpen: false,
+		modal: true
+	});
+}
 function prepareTabs() {
 	$( "#tabs" ).tabs({
 		beforeLoad: function( event, ui ) {
