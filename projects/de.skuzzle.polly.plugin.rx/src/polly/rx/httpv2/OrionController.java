@@ -504,7 +504,17 @@ public class OrionController extends PollyController {
         final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
         final HttpSession s = this.getSession();
         
-        if (!s.isSet(ROUTE_FROM_KEY) || !s.isSet(ROUTE_TO_KEY)) {
+        final List<Sector> personalPortals = 
+                Orion.INSTANCE.getPersonalPortals(this.getSessionUser());
+        
+        if (!s.isSet(ROUTE_FROM_KEY)) {
+            if (!personalPortals.isEmpty()) {
+                s.set(ROUTE_FROM_KEY, personalPortals.iterator().next());
+            } else {
+                return HttpAnswers.newStringAnswer(""); //$NON-NLS-1$    
+            }
+        }
+        if (!s.isSet(ROUTE_TO_KEY)) {
             return HttpAnswers.newStringAnswer(""); //$NON-NLS-1$
         }
         final Sector start = (Sector) s.getAttached(ROUTE_FROM_KEY);
@@ -517,8 +527,6 @@ public class OrionController extends PollyController {
             jumpTime = this.azManager.getJumpTime(fleetId, this.getSessionUser());
         }
         final TimespanType currentJumpTime = this.parse(cjt, jumpTime);
-        final List<Sector> personalPortals = 
-                Orion.INSTANCE.getPersonalPortals(this.getSessionUser());
         final RouteOptions options = new RouteOptions(jumpTime, currentJumpTime, 
                 personalPortals);
         final Collection<UniversePath> path = this.pathPlanner.findShortestPaths(start, target, 
