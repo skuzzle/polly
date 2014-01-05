@@ -63,7 +63,8 @@ public class IPCommand extends Command {
                     this.reply(channel, MSG.ipNoIp);
                     return false;
                 }
-                
+                //ipResultWithClan = IP von %s[%s]: %s %d,%d (%s)
+                //        ipResult = IP von %s: %s %d,%d (%s)
                 String[] parts = line.split(";"); //$NON-NLS-1$
                 final String result;
                 if (!parts[CLAN].equals("")) { //$NON-NLS-1$
