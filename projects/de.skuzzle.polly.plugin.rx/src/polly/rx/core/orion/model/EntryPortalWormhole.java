@@ -3,6 +3,7 @@ package polly.rx.core.orion.model;
 import java.util.Date;
 
 import de.skuzzle.polly.sdk.time.Time;
+import de.skuzzle.polly.tools.Equatable;
 
 
 public class EntryPortalWormhole implements Wormhole {
@@ -50,5 +51,15 @@ public class EntryPortalWormhole implements Wormhole {
     @Override
     public LoadRequired requiresLoad() {
         return LoadRequired.NONE;
+    }
+
+    @Override
+    public Class<?> getEquivalenceClass() {
+        return Wormhole.class;
+    }
+
+    @Override
+    public boolean actualEquals(Equatable o) {
+        return QuadrantUtils.wormholesEqua(this, (Wormhole) o);
     }
 }

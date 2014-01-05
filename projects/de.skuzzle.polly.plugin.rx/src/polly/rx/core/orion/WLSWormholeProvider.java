@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 
 import polly.rx.core.orion.model.LoadRequired;
 import polly.rx.core.orion.model.Quadrant;
+import polly.rx.core.orion.model.QuadrantUtils;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.Wormhole;
 import polly.rx.parsing.RegexUtils;
@@ -19,6 +20,7 @@ import polly.rx.parsing.RegexUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import de.skuzzle.polly.tools.Equatable;
 import de.skuzzle.polly.tools.io.WebUtils;
 
 
@@ -98,6 +100,14 @@ public class WLSWormholeProvider implements WormholeProvider {
                     this.von_quadrant, this.von_x, this.von_y, 
                     this.nach_quadrant, this.nach_x, this.nach_y, 
                     this.minUnload, this.maxUnload);
+        }
+        @Override
+        public Class<?> getEquivalenceClass() {
+            return Wormhole.class;
+        }
+        @Override
+        public boolean actualEquals(Equatable o) {
+            return QuadrantUtils.wormholesEqua(this, (Wormhole) o);
         }
     }
     

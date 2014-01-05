@@ -1,4 +1,5 @@
 #parse ( "/polly/rx/httpv2/view/orion/orion.util.html" )
+<link href="/files/script/jquery-ui.css" rel="stylesheet" type="text/css">
 
 <div class="highlight contentBox">
     #CONTENT_HEADER ($MSG.htmlOrionName)
@@ -59,6 +60,10 @@
                     <td></td>
                     <td><a href="javascript:requestRoute()">$MSG.htmlOrionRefreshRoute</a></td>
                 </tr>
+                <tr>
+                    <td></td>
+                    <td><div id="progressbar"><img src="/de/skuzzle/polly/sdk/httpv2/html/loading.gif"/> $MSG.htmlOrionCalcRoute</div></td>
+                </tr>
                 </table>
             </td>
         </tr>
@@ -71,6 +76,7 @@
 <script>
 $(document).ready(function() {
 	$(".load_quad").click(requestQuad);
+	$("#progressbar").hide();
 });
 function requestRoute() {
 	var fleetId = $("#selectFleet option:selected").val()
@@ -80,10 +86,29 @@ function requestRoute() {
 	
 	var url = "$PAGE_GETROUTE?fleetId="+fleetId+"&jt="+jumpTime+
 			"&cjt="+currentJumpTime+"&awh=" + avoidWormholes;
+	
+	$("#progressbar").fadeIn();
 	$.get(url, function(data) {
 		$("#route").html(data);
+		prepareTabs();
+		$("#progressbar").fadeOut();
 	});
 }
+
+function prepareTabs() {
+	$( "#tabs" ).tabs({
+		beforeLoad: function( event, ui ) {
+			  if ( ui.tab.data( "loaded" ) ) {
+				  event.preventDefault();
+				  return;
+			  }
+			  ui.jqXHR.success(function() {
+				  ui.tab.data( "loaded", true );
+			  });
+		  }
+	});
+}
+
 function fromHere(event) {
     var ths = $(event.target);
     var quadName = encodeURI(ths.attr("quadName"));

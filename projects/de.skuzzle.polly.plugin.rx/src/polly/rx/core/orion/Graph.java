@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +21,7 @@ public class Graph<V, E> {
     public final class Node implements Equatable {
 
         private final V data;
-        private final Collection<Edge> edges;
+        private final Map<Node, Edge> edges;
         private final Collection<Node> edgesFrom;
         
         public Node(V data) {
@@ -30,20 +29,13 @@ public class Graph<V, E> {
                 throw new NullPointerException("data"); //$NON-NLS-1$
             }
             this.data = data;
-            this.edges = new ArrayList<>();
+            this.edges = new HashMap<>();
             this.edgesFrom = new HashSet<>();
         }
         
         public void removeEdge(Node target) {
-            final Iterator<Edge> it = this.edges.iterator();
-            while (it.hasNext()) {
-                final Edge next = it.next();
-                if (next.getTarget().equals(target)) {
-                    it.remove();
-                    target.edgesFrom.remove(this);
-                    return;
-                }
-            }
+            this.edges.remove(target);
+            target.edgesFrom.remove(this);
         }
         
         public Edge edgeTo(Node target, E data) {
@@ -52,16 +44,18 @@ public class Graph<V, E> {
             } else if (data == null) {
                 throw new NullPointerException("data"); //$NON-NLS-1$
             } else if (!target.edgesFrom.add(this)) {
-                throw new IllegalStateException("edge already exists"); //$NON-NLS-1$
+                //throw new IllegalStateException("edge already exists"); //$NON-NLS-1$
+                // return existing edge
+                return this.edges.get(target);
             }
             
             final Edge newEdge = new Edge(this, target, data);
-            this.edges.add(newEdge);
+            this.edges.put(target, newEdge);
             return newEdge;
         }
         
         public Collection<Edge> getIncident() {
-            return Collections.unmodifiableCollection(this.edges);
+            return Collections.unmodifiableCollection(this.edges.values());
         }
         
         public V getData() {
@@ -82,6 +76,11 @@ public class Graph<V, E> {
         @SuppressWarnings("unchecked")
         public boolean actualEquals(Equatable o) {
             return this.data.equals(((Graph<V, E>.Node) o).data);
+        }
+        
+        @Override
+        public String toString() {
+            return this.data.toString();
         }
     }
     
@@ -135,6 +134,11 @@ public class Graph<V, E> {
         @SuppressWarnings("unchecked")
         public boolean actualEquals(Equatable o) {
             return this.data.equals(((Graph<V, E>.Edge) o).data);
+        }
+        
+        @Override
+        public String toString() {
+            return "[" + this.source + "] TO [" + this.target + "]";  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
     }
     
@@ -199,6 +203,13 @@ public class Graph<V, E> {
     
     
     public void removeNode(V data) {
+        this.removeEdgesTo(data);
+        this.nodeMap.remove(data);
+    }
+    
+    
+    
+    public void removeEdgesTo(V data) {
         final Node n = this.getNode(data);
         if (n == null) {
             return;
@@ -206,7 +217,6 @@ public class Graph<V, E> {
         for (final Node v : n.edgesFrom) {
             v.removeEdge(n);
         }
-        this.nodeMap.remove(data);
     }
     
     

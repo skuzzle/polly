@@ -2,6 +2,8 @@ package polly.rx.core.orion.model;
 
 import java.util.Date;
 
+import de.skuzzle.polly.tools.Equatable;
+
 
 public class WormholeDecorator implements Wormhole {
 
@@ -44,5 +46,15 @@ public class WormholeDecorator implements Wormhole {
     @Override
     public LoadRequired requiresLoad() {
         return this.wrapped.requiresLoad();
+    }
+
+    @Override
+    public Class<?> getEquivalenceClass() {
+        return wrapped.getEquivalenceClass();
+    }
+
+    @Override
+    public boolean actualEquals(Equatable o) {
+        return wrapped.actualEquals(o);
     }
 }

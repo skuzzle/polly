@@ -65,6 +65,13 @@ public final class QuadrantUtils {
     
     
     
+    public static boolean wormholesEqua(Wormhole h1, Wormhole h2) {
+        return h1.getSource().equals(h2.getSource()) && 
+                h1.getTarget().equals(h2.getTarget());
+    }
+    
+    
+    
     public static String createMapKey(int x, int y) {
         return x + "_" + y; //$NON-NLS-1$
     }

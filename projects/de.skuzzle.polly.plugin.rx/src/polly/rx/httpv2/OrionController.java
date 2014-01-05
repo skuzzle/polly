@@ -3,6 +3,7 @@ package polly.rx.httpv2;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -43,6 +44,7 @@ import de.skuzzle.polly.sdk.httpv2.PollyController;
 import de.skuzzle.polly.sdk.httpv2.SuccessResult;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLTools;
+import de.skuzzle.polly.sdk.resources.Constants;
 
 
 public class OrionController extends PollyController {
@@ -60,14 +62,16 @@ public class OrionController extends PollyController {
     public final static String API_SET_ROUTE_TO = "/api/orion/routeTo"; //$NON-NLS-1$
     public final static String API_SET_ROUTE_FROM = "/api/orion/routeFrom"; //$NON-NLS-1$
     public final static String API_GET_ROUTE = "/api/orion/getRoute"; //$NON-NLS-1$
-    private final static String API_POST_LAYOUT = "/api/orion/postLayout"; //$NON-NLS-1$
-    private final static String API_SHARE_ROUTE = "/api/orion/share"; //$NON-NLS-1$
+    public final static String API_POST_LAYOUT = "/api/orion/postLayout"; //$NON-NLS-1$
+    public final static String API_SHARE_ROUTE = "/api/orion/share"; //$NON-NLS-1$
+    public final static String API_GET_NTH_ROUTE = "/api/orion/nthRoute";  //$NON-NLS-1$
     
     private final static String CONTENT_QUAD_LAYOUT = "/polly/rx/httpv2/view/orion/quadlayout.html"; //$NON-NLS-1$
     private final static String CONTENT_QUADRANT = "/polly/rx/httpv2/view/orion/quadrant.html"; //$NON-NLS-1$
     private final static String CONTENT_SECTOR_INFO = "/polly/rx/httpv2/view/orion/sec_info.html"; //$NON-NLS-1$
     private final static String CONTENT_ORION = "/polly/rx/httpv2/view/orion/orion.html"; //$NON-NLS-1$
     private final static String CONTENT_ROUTE = "/polly/rx/httpv2/view/orion/route.html"; //$NON-NLS-1$
+    private final static String CONTENT_ROUTE_SINGLE = "/polly/rx/httpv2/view/orion/route.single.html"; //$NON-NLS-1$
     private final static String CONTENT_SHARE_ROUTE = "/polly/rx/httpv2/view/orion/route.share.html"; //$NON-NLS-1$
             
     private final static String REVORIX_CATEGORY_KEY = "httpRxCategory"; //$NON-NLS-1$
@@ -76,6 +80,9 @@ public class OrionController extends PollyController {
     
     private final static String ROUTE_FROM_KEY = "routeFrom"; //$NON-NLS-1$
     private final static String ROUTE_TO_KEY = "routeTo"; //$NON-NLS-1$
+    private final static String ROUTE_N_KEY = "route_"; //$NON-NLS-1$
+    private final static String ROUTE_OPTIONS_KEY = "routeOptions"; //$NON-NLS-1$
+    private final static String ROUTE_COUNT_KEY = "routeCount"; //$NON-NLS-1$
     
     
     
@@ -228,6 +235,7 @@ public class OrionController extends PollyController {
     protected Map<String, Object> createContext(String content) {
         final Map<String, Object> c = super.createContext(content);
         HTMLTools.gainFieldAccess(c, MSG.class, "MSG"); //$NON-NLS-1$
+        c.put("Messages", Constants.class); //$NON-NLS-1$
         return c;
     }
     
@@ -439,16 +447,31 @@ public class OrionController extends PollyController {
         final TimespanType cjt = this.parse(currentJumpTime, jt);
         
         final RouteOptions options = new RouteOptions(jt, cjt);
-        final UniversePath path = this.pathPlanner.findShortestPath(
+        final Collection<UniversePath> paths = this.pathPlanner.findShortestPaths(
                 start, target, options);
         
         c.put("start", start); //$NON-NLS-1$
         c.put("target", target); //$NON-NLS-1$
         c.put("options", options); //$NON-NLS-1$
-        c.put("path", path); //$NON-NLS-1$
+        c.put("path", paths); //$NON-NLS-1$
         c.put("legend", SectorType.HIGHLIGHTS); //$NON-NLS-1$
         
         return HttpAnswers.newTemplateAnswer(CONTENT_SHARE_ROUTE, c);
+    }
+    
+    
+    
+    @Get(API_GET_NTH_ROUTE)
+    public HttpAnswer getNthRoute(@Param("n") int n) {
+        final HttpSession s = this.getSession();
+        final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
+        c.put("start", s.getAttached(ROUTE_FROM_KEY)); //$NON-NLS-1$
+        c.put("target", s.getAttached(ROUTE_TO_KEY)); //$NON-NLS-1$
+        c.put("options", s.getAttached(ROUTE_OPTIONS_KEY)); //$NON-NLS-1$
+        c.put("path", s.getAttached(ROUTE_N_KEY + n)); //$NON-NLS-1$
+        c.put("legend", SectorType.HIGHLIGHTS); //$NON-NLS-1$
+        c.put("n", n); //$NON-NLS-1$
+        return HttpAnswers.newTemplateAnswer(CONTENT_ROUTE_SINGLE, c);
     }
     
     
@@ -481,14 +504,23 @@ public class OrionController extends PollyController {
         }
         final TimespanType currentJumpTime = this.parse(cjt, jumpTime);
         final RouteOptions options = new RouteOptions(jumpTime, currentJumpTime);
-        final UniversePath path = this.pathPlanner.findShortestPath(start, target, 
+        final Collection<UniversePath> path = this.pathPlanner.findShortestPaths(start, target, 
                 options);
+        
+        final Iterator<UniversePath> it = path.iterator();
+        for (int i = 0; i < path.size(); ++i) {
+            s.set(ROUTE_N_KEY + (i + 1), it.next());
+        }
+        s.set(ROUTE_OPTIONS_KEY, options);
+        s.set(ROUTE_COUNT_KEY, path.size());
         
         c.put("start", start); //$NON-NLS-1$
         c.put("target", target); //$NON-NLS-1$
         c.put("options", options); //$NON-NLS-1$
-        c.put("path", path); //$NON-NLS-1$
+        c.put("path", path.iterator().next()); //$NON-NLS-1$
         c.put("legend", SectorType.HIGHLIGHTS); //$NON-NLS-1$
+        c.put("n", 1); //$NON-NLS-1$
+        c.put("routeCount", path.size()); //$NON-NLS-1$
         return HttpAnswers.newTemplateAnswer(CONTENT_ROUTE, c);
     }
     

@@ -2,7 +2,9 @@ package polly.rx.core.orion.model;
 
 import java.util.Date;
 
-public interface Wormhole {
+import de.skuzzle.polly.tools.Equatable;
+
+public interface Wormhole extends Equatable {
 
     public abstract String getName();
 

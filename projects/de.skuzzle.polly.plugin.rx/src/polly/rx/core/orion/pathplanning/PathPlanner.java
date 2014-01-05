@@ -37,9 +37,11 @@ public class PathPlanner {
         private final double WORMHOLE_OFFSET = 100000.0;
         
         private final Set<Sector> done;
+        private final Collection<Wormhole> block;
         
         public UniverseBuilder(RouteOptions options) {
             this.done = new HashSet<>();
+            this.block = new ArrayList<>();
         }
         
         @Override
@@ -73,6 +75,9 @@ public class PathPlanner {
                         source, quadProvider);
                 
                 for (final Wormhole hole : holes) {
+                    if (this.block.contains(hole)) {
+                        continue;
+                    }
                     final Quadrant targetQuad = quadProvider.getQuadrant(
                             hole.getTarget());
                     
@@ -140,12 +145,9 @@ public class PathPlanner {
     
     private final QuadrantProvider quadProvider;
     private final WormholeProvider holeProvider;
-    private final Graph<Sector, EdgeData> graph;
-    
     
     
     public PathPlanner(QuadrantProvider quadProvider, WormholeProvider holeProvider) {
-        this.graph = new Graph<>();
         this.quadProvider = quadProvider;
         this.holeProvider = holeProvider;
     }
@@ -372,6 +374,18 @@ public class PathPlanner {
             this.maxWaitTime = maximumWaitTime;
         }
         
+        public Wormhole getFirstWormhole() {
+            if (this.wormholes.isEmpty()) {
+                return null;
+            }
+            for (final Wormhole hole : this.wormholes) {
+                if (!hole.getName().equals(SectorType.EINTRITTS_PORTAL.toString())) {
+                    return hole;
+                }
+            }
+            return null;
+        }
+        
         public int getMaxSafeSpotDistance() {
             return options.maxWaitSpotDistance;
         }
@@ -414,7 +428,8 @@ public class PathPlanner {
     public UniversePath findShortestPath(Sector start, Sector target, 
             RouteOptions options) {
         final UniverseBuilder builder = new UniverseBuilder(options);
-        final Graph<Sector, EdgeData>.Path path = this.graph.findShortestPath(
+        final Graph<Sector, EdgeData> graph = new Graph<>();
+        final Graph<Sector, EdgeData>.Path path = graph.findShortestPath(
                 start, target, builder, Graph.<Sector>noHeuristic(), builder);
         final UniversePath result = new UniversePath(path, options);
         return result;
@@ -422,16 +437,42 @@ public class PathPlanner {
     
     
     
-    public Collection<UniversePath> findShortestPaths(Sector start, Sector target, 
+    public List<UniversePath> findShortestPaths(Sector start, Sector target, 
             RouteOptions options) {
         final int K = 5;
         final UniverseBuilder builder = new UniverseBuilder(options);
-        final Set<Graph<Sector, EdgeData>.Path> paths = this.graph.findShortestPaths(
-                start, target, K, builder, Graph.<Sector>noHeuristic(), builder);
-        final List<UniversePath> result = new ArrayList<>(paths.size());
-        for (final Graph<Sector, EdgeData>.Path path : paths) {
-            result.add(new UniversePath(path, options));
+        final Graph<Sector, EdgeData> graph = new Graph<>();
+        final List<UniversePath> result = new ArrayList<>(K);
+        
+        final Graph<Sector, EdgeData>.Path first = graph.findShortestPath(
+                start, target, builder, Graph.<Sector>noHeuristic(), builder);
+        
+        final UniversePath shortest = new UniversePath(first, options);
+        result.add(shortest);
+        
+        if (shortest.pathFound()) {
+            UniversePath last = shortest;
+            for (int i = 0; i < K; ++i) {
+                final Wormhole block = last.getFirstWormhole();
+                if (block != null) {
+                    builder.done.clear();
+                    builder.block.add(block);
+                    
+                    // remove edge belonging to blocked wormhole
+                    final Graph<Sector, EdgeData> g = new Graph<>();
+                    final Graph<Sector, EdgeData>.Path next = g.findShortestPath(
+                            start, target, builder, Graph.<Sector>noHeuristic(), builder);
+                    
+                    last = new UniversePath(next, options);
+                    if (last.pathFound()) {
+                        result.add(last);
+                    } else {
+                        break;
+                    }
+                }
+            }
         }
+        
         return result;
     }
 }

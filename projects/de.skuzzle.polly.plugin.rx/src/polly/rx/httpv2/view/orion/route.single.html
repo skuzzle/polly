@@ -1,0 +1,85 @@
+#parse ( "/polly/rx/httpv2/view/orion/orion.util.html" )
+<div id="tab-$n">
+<table>
+    <tr>
+        <th colspan="2">$MSG.htmlOrionRouteInfo</th>
+    </tr>
+    #if ( $path.pathFound() )
+    <tr>
+        <td><b>$MSG.htmlOrionSectorJumps</b></td>
+        <td>$path.getSectorJumps()</td>
+    </tr>
+    <tr>
+        <td><b>$MSG.htmlOrionQuadJumps</b></td>
+        <td>$path.getQuadJumps()</td>
+    </tr>
+    <tr>
+        <td><b>$MSG.htmlOrionWLUnload</b></td>
+        <td>$path.getMinUnload()-$path.getMaxUnload() Min</td>
+    </tr>
+    <tr>
+        <td><b>$MSG.htmlOrionWaitingTime</b></td>
+        <td>$path.getMaxWaitTime() Min</td>
+    </tr>
+    <tr>
+        <td colspan="2"><a href="#SHARE_ROUTE_URL( $PAGE_SHAREROUTE $start $target $options )">$MSG.htmlOrionShareRoute</a></td>
+    </tr>
+    #else
+    <tr>
+        <td colspan="2">$MSG.htmlOrionNoRouteFound</td>
+    </tr>
+    #end
+    </table>
+    
+    #WORMHOLES ( $path.getWormholes() )
+    
+    <p>
+    #foreach ($hl in $legend)
+    <img src="/polly/rx/httpv2/view/orion/$hl.getImgName()" width="10" height="10" 
+        style="border: 1px solid red;"/> $hl<br/>
+    #end
+    <br/>
+    </p>
+    
+    <table>
+    #foreach ($group in $path.getGroups())
+    <tr>
+        <th colspan="2">$group.getQuadName()</th>
+    </tr>
+    
+    <tr>
+        <td>
+        #foreach ($edge in $group.getEdges())
+            #set ( $ed = $edge.getData() )
+            #set($source = $edge.getSource().getData())
+            #set($target = $edge.getTarget().getData())
+            
+            #if ($ed.isWormhole())
+            <p style="margin-top:20px">
+                #if ( $ed.mustWait() )
+                <span style="color:red"><b>$MSG.htmlOrionWaitingTime: $ed.getWaitMin()-$ed.getWaitMax() Min</b></span><br/>
+                    $Constants.bind($MSG.htmlOrionSafeSpots, $path.getMaxSafeSpotDistance()):<br/>
+                    #if ( $ed.hasWaitSpots() )
+                    #foreach ($safeSpot in $ed.getWaitSpots() )
+                        <img src="/polly/rx/httpv2/view/orion/205.gif" width="10" height="10"/>
+                        <img src="/polly/rx/httpv2/view/orion/$safeSpot.getType().getImgName()" width="10" height="10"/> #SECTOR_NO_LINK ( $safeSpot ): #BONUS_ALL ( $safeSpot )<br/>
+                    #end
+                    <br/>
+                    #end
+                #end
+                <b>Wurmloch: </b> $ed.getWormhole().getName()<br/>
+                Von: #SECTOR_NO_LINK ( $source ) <br/>
+                Nach: #SECTOR_NO_LINK ( $target ) <br/>
+                Entladung: $ed.getWormhole().getMinUnload()-$ed.getWormhole().getMaxUnload()<br/>
+            </p>
+            #end
+    
+        #end
+        </td>
+        <td>
+        #QUADRANT ( $group.getQuadrant() )
+        </td>
+    </tr>
+    #end        ## for each groups
+</table>
+</div>
