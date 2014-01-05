@@ -83,6 +83,7 @@ public class MyPlugin extends PollyPlugin {
     public final static String AUTO_REMIND = "AUTO_REMIND"; //$NON-NLS-1$
     public final static String AUTO_REMIND_AZ = "AUTO_REMIND_AZ"; //$NON-NLS-1$
     public final static String LOW_PZ_WARNING = "LOW_PZ_WARNING"; //$NON-NLS-1$
+    public final static String PORTALS = "PORTALS"; //$NON-NLS-1$
     private static final String VENAD_DEFAULT = "<unbekannt>"; //$NON-NLS-1$
     
     
@@ -291,6 +292,10 @@ public class MyPlugin extends PollyPlugin {
                     new Types.NumberType(0.0), 
                     MSG.pluginLowPzWarningDesc, 
                     MSG.httpRxCategory, Constraints.INTEGER);
+            
+            this.getMyPolly().users().addAttribute(PORTALS, new Types.StringType(""),  //$NON-NLS-1$
+                    MSG.pluginPortalDesc, MSG.httpRxCategory, 
+                    new SectorListAttributeConstraint());
         } catch (Exception ignore) {
             ignore.printStackTrace();
         }

@@ -80,7 +80,7 @@
         id="inp_$attribute.getName()"
         type="checkbox" 
         name="$attribute.getName()" 
-        value="$editUser.getAttribute($attribute.getName()).valueString($myPolly.formatting())" #if ($tt.getValue()) checked #end />
+        value="$HTML.escape($editUser.getAttribute($attribute.getName()).valueString($myPolly.formatting()))" #if ($tt.getValue()) checked #end />
     </td>
     #else
     <td><input 
@@ -88,7 +88,7 @@
         class="textbox" style="width: 100%;" id="inp_$attribute.getName()" 
         type="text" 
         name="$attribute.getName()" 
-        value="$editUser.getAttribute($attribute.getName()).valueString($myPolly.formatting())"/>
+        value="$HTML.escape($editUser.getAttribute($attribute.getName()).valueString($myPolly.formatting()))"/>
     </td>
     
     #end
@@ -118,7 +118,7 @@
                         id="submit_$attribute.getName()" 
                         type="button" 
                         value="Set" 
-                        onclick="setAttr('$attribute.getName()', '$editUser.getAttribute($attribute.getName()).valueString($myPolly.formatting())', false)"/> 
+                        onclick="setAttr('$attribute.getName()', '$HTML.escape($editUser.getAttribute($attribute.getName()).valueString($myPolly.formatting()))', false)"/> 
                     <input 
                         class="button" 
                         id="submit_default_$attribute.getName()" 

@@ -22,6 +22,15 @@
         <td>$path.getMaxWaitTime() Min</td>
     </tr>
     <tr>
+        <td><b>$MSG.htmlOrionLegend</b></td>
+        <td>
+            #foreach ($hl in $legend)
+                <img src="/polly/rx/httpv2/view/orion/$hl.getImgName()" width="10" height="10" 
+                    style="border: 1px solid red;"/> $hl<br/>
+            #end
+        </td>
+    </tr>
+    <tr>
         <td colspan="2"><a href="#SHARE_ROUTE_URL( $PAGE_SHAREROUTE $start $target $options )">$MSG.htmlOrionShareRoute</a></td>
     </tr>
     #else
@@ -32,15 +41,6 @@
     </table>
     
     #WORMHOLES ( $path.getWormholes() )
-    
-    <p>
-    #foreach ($hl in $legend)
-    <img src="/polly/rx/httpv2/view/orion/$hl.getImgName()" width="10" height="10" 
-        style="border: 1px solid red;"/> $hl<br/>
-    #end
-    <br/>
-    </p>
-    
     <table>
     #foreach ($group in $path.getGroups())
     <tr>

@@ -447,7 +447,9 @@ public class OrionController extends PollyController {
         final TimespanType jt = this.parse(jumpTime, new TimespanType(0L));
         final TimespanType cjt = this.parse(currentJumpTime, jt);
         
-        final RouteOptions options = new RouteOptions(jt, cjt);
+        final List<Sector> personalPortals = 
+                Orion.INSTANCE.getPersonalPortals(this.getSessionUser());
+        final RouteOptions options = new RouteOptions(jt, cjt, personalPortals);
         final Collection<UniversePath> path = this.pathPlanner.findShortestPaths(
                 start, target, options);
         
@@ -513,7 +515,10 @@ public class OrionController extends PollyController {
             jumpTime = this.azManager.getJumpTime(fleetId, this.getSessionUser());
         }
         final TimespanType currentJumpTime = this.parse(cjt, jumpTime);
-        final RouteOptions options = new RouteOptions(jumpTime, currentJumpTime);
+        final List<Sector> personalPortals = 
+                Orion.INSTANCE.getPersonalPortals(this.getSessionUser());
+        final RouteOptions options = new RouteOptions(jumpTime, currentJumpTime, 
+                personalPortals);
         final Collection<UniversePath> path = this.pathPlanner.findShortestPaths(start, target, 
                 options);
         

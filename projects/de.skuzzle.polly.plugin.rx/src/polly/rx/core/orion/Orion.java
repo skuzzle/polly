@@ -1,6 +1,18 @@
 package polly.rx.core.orion;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import polly.rx.MyPlugin;
+import polly.rx.core.orion.model.QuadrantUtils;
+import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.pathplanning.PathPlanner;
+import polly.rx.parsing.ParseException;
+import de.skuzzle.polly.sdk.Types;
+import de.skuzzle.polly.sdk.Types.ListType;
+import de.skuzzle.polly.sdk.Types.StringType;
+import de.skuzzle.polly.sdk.User;
 
 
 public enum Orion implements UniverseFactory {
@@ -72,5 +84,30 @@ public enum Orion implements UniverseFactory {
     public PathPlanner getPathPlanner() {
         assert this.checkInitialized();
         return this.planner;
+    }
+    
+    
+    
+    public List<Sector> getPersonalPortals(User user) {
+        if (user == null) {
+            return Collections.emptyList();
+        }
+        final Types portals = user.getAttribute(MyPlugin.PORTALS);
+        if (portals instanceof ListType) {
+            final ListType lt = (ListType) portals;
+            final List<Sector> result = new ArrayList<>(lt.getElements().size());
+            for (final Types t : lt.getElements()) {
+                final StringType st = (StringType) t;
+                try {
+                    final Sector s = QuadrantUtils.parse(st.getValue());
+                    result.add(s);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    throw new RuntimeException(e);
+                }
+            }
+            return result;
+        }
+        return Collections.emptyList();
     }
 }

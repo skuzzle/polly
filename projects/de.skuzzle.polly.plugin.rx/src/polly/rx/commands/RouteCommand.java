@@ -1,5 +1,7 @@
 package polly.rx.commands;
 
+import java.util.List;
+
 import polly.rx.MSG;
 import polly.rx.core.orion.Orion;
 import polly.rx.core.orion.model.QuadrantUtils;
@@ -49,8 +51,10 @@ public class RouteCommand extends DelayedCommand {
                 final Sector target = QuadrantUtils.parse(t);
                 
                 final PathPlanner planner = Orion.INSTANCE.getPathPlanner();
+                final List<Sector> personalPortals = 
+                        Orion.INSTANCE.getPersonalPortals(executer);
                 final RouteOptions options = new RouteOptions(new TimespanType(0), 
-                        new TimespanType(0));
+                        new TimespanType(0), personalPortals);
                 final UniversePath path = planner.findShortestPath(start, target, options);
                 this.outputPath(channel, path);
             }

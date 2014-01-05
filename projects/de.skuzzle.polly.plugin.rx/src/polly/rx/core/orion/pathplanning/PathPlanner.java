@@ -38,8 +38,10 @@ public class PathPlanner {
         
         private final Set<Sector> done;
         private final Collection<Wormhole> block;
+        private final RouteOptions options;
         
         public UniverseBuilder(RouteOptions options) {
+            this.options = options;
             this.done = new HashSet<>();
             this.block = new ArrayList<>();
         }
@@ -92,6 +94,14 @@ public class PathPlanner {
                     final Quadrant targetQuad = quadProvider.getQuadrant(portal);
                     this.addNeighbour(targetQuad, portal.getX(), 
                             portal.getY(), graph, source, d);
+                }
+                
+                // add personal portals
+                for (final Sector personal : this.options.personalPortals) {
+                    final EdgeData d = EdgeData.entryPortal(source, personal);
+                    final Quadrant targetQuad = quadProvider.getQuadrant(personal);
+                    this.addNeighbour(targetQuad, personal.getX(), 
+                            personal.getY(), graph, source, d);
                 }
                 
                 // add direct neighbours

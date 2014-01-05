@@ -448,12 +448,15 @@ public class MSG extends Constants {
     public static String htmlOrionShareRoute;
     public static String htmlOrionCalcRoute;
     public static String htmlOrionRouteNr;
+    public static String htmlOrionLegend;
+    
     // MyPlugin
     public static String pluginVenadDesc;
     public static String pluginCrackerDesc;
     public static String pluginAutoRemindDesc;
     public static String pluginAutoRemindAzDesc;
     public static String pluginLowPzWarningDesc;
+    public static String pluginPortalDesc;
 
     static {
         Resources.init(FAMILY, MSG.class);
