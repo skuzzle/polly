@@ -437,6 +437,7 @@ public class OrionController extends PollyController {
             @Param(value = "jt", optional = true) String jumpTime,
             @Param(value = "cjt", optional = true) String currentJumpTime) {
         
+        final HttpSession s = this.getSession();
         final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
         final Sector start = this.quadProvider.getQuadrant(
                 startQuad).getSector(startX, startY);
@@ -447,14 +448,23 @@ public class OrionController extends PollyController {
         final TimespanType cjt = this.parse(currentJumpTime, jt);
         
         final RouteOptions options = new RouteOptions(jt, cjt);
-        final Collection<UniversePath> paths = this.pathPlanner.findShortestPaths(
+        final Collection<UniversePath> path = this.pathPlanner.findShortestPaths(
                 start, target, options);
+        
+        final Iterator<UniversePath> it = path.iterator();
+        for (int i = 0; i < path.size(); ++i) {
+            s.set(ROUTE_N_KEY + (i + 1), it.next());
+        }
+        s.set(ROUTE_OPTIONS_KEY, options);
+        s.set(ROUTE_COUNT_KEY, path.size());
         
         c.put("start", start); //$NON-NLS-1$
         c.put("target", target); //$NON-NLS-1$
         c.put("options", options); //$NON-NLS-1$
-        c.put("path", paths); //$NON-NLS-1$
+        c.put("path", path.iterator().next()); //$NON-NLS-1$
         c.put("legend", SectorType.HIGHLIGHTS); //$NON-NLS-1$
+        c.put("n", 1); //$NON-NLS-1$
+        c.put("routeCount", path.size()); //$NON-NLS-1$
         
         return HttpAnswers.newTemplateAnswer(CONTENT_SHARE_ROUTE, c);
     }
