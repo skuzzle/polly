@@ -291,7 +291,7 @@ public class Types {
          */
         @Override
         public String valueString(FormatManager formatter) {
-            return this.value;
+            return "\"" + this.value + "\""; //$NON-NLS-1$ //$NON-NLS-2$
         }
         
         
