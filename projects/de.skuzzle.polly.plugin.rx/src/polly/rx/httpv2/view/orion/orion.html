@@ -56,6 +56,14 @@
                     <td><input id="currentJumpTime" type="text" class="textbox" placeholder="$MSG.htmlOrionOptional" style="width: 70px;"/></td>
                 </tr>
                 <tr>
+                    <td>$MSG.htmlOrionEntryPortals</td>
+                    <td>#foreach ($portal in $entryPortals) #SECTOR_NO_LINK ( $portal )<br/> #end</td>
+                </tr>
+                <tr>
+                    <td>$MSG.htmlOrionPersonalPortals</td>
+                    <td>#foreach ($portal in $personalPortals) #SECTOR_NO_LINK ( $portal )<br/> #end</td>
+                </tr>
+                <tr>
                     <td></td>
                     <td><a href="javascript:requestRoute()">$MSG.htmlOrionRefreshRoute</a></td>
                 </tr>

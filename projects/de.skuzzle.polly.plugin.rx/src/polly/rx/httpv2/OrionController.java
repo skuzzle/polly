@@ -254,15 +254,17 @@ public class OrionController extends PollyController {
         final Map<String, Object> c = this.createContext(CONTENT_ORION);
         
         final Collection<Quadrant> allQuads = new TreeSet<>(new Comparator<Quadrant>() {
-                    @Override
-                    public int compare(Quadrant o1, Quadrant o2) {
-                        return o1.getName().compareTo(o2.getName());
-                    }
-                });
+            @Override
+            public int compare(Quadrant o1, Quadrant o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
         allQuads.addAll(this.quadProvider.getAllQuadrants());
         c.put("allQuads", allQuads); //$NON-NLS-1$
         c.put("routeStart", this.getSession().getAttached(ROUTE_FROM_KEY)); //$NON-NLS-1$
         c.put("routeTarget", this.getSession().getAttached(ROUTE_TO_KEY)); //$NON-NLS-1$
+        c.put("personalPortals", Orion.INSTANCE.getPersonalPortals(this.getSessionUser())); //$NON-NLS-1$
+        c.put("entryPortals", this.quadProvider.getEntryPortals()); //$NON-NLS-1$
         c.put("entries", this.azManager.getEntries(this.getSessionUser().getId())); //$NON-NLS-1$
         return this.makeAnswer(c);
     }
