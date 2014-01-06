@@ -524,7 +524,6 @@ public class RXController extends PollyController {
     
     
     
-    
     @Get(API_IMAGE_FROM_SESSION)
     public HttpAnswer imageFromSession(@Param("imgName") String imgName) 
             throws AlternativeAnswerException, IOException {
