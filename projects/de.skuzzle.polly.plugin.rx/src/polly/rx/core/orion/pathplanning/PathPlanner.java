@@ -18,6 +18,7 @@ import polly.rx.core.orion.model.SectorDecorator;
 import polly.rx.core.orion.model.SectorType;
 import polly.rx.core.orion.model.Wormhole;
 import polly.rx.core.orion.pathplanning.Graph.EdgeCosts;
+import polly.rx.core.orion.pathplanning.Graph.LazyBuilder;
 
 
 public class PathPlanner {
@@ -157,6 +158,13 @@ public class PathPlanner {
         private final int maxWaitTime;
         private final RouteOptions options;
         
+        /** Number used during path planning to block wormholes */
+        private int blockNr; 
+        /** States used during path planning to block wormholes */
+        private boolean done;
+        
+        
+        
         private UniversePath(Graph<Sector, EdgeData>.Path path, RouteOptions options) {
             this.path = path;
             this.options = options;
@@ -272,13 +280,17 @@ public class PathPlanner {
             this.maxWaitTime = maximumWaitTime;
         }
         
-        public Wormhole getFirstWormhole() {
+        public Wormhole getWormholeToBlock() {
             if (this.wormholes.isEmpty()) {
                 return null;
             }
+            int i = 0;
             for (final Wormhole hole : this.wormholes) {
                 if (!hole.getName().equals(SectorType.EINTRITTS_PORTAL.toString())) {
-                    return hole;
+                    if (i++ == this.blockNr) {
+                        ++this.blockNr;
+                        return hole;
+                    }
                 }
             }
             return null;
@@ -323,9 +335,9 @@ public class PathPlanner {
     
     
     
-    public UniversePath findShortestPath(Sector start, Sector target, 
-            RouteOptions options) {
-        final UniverseBuilder builder = new UniverseBuilder(options);
+    
+    private UniversePath findShortestPath(Sector start, Sector target, 
+            LazyBuilder<Sector, EdgeData> builder, RouteOptions options) {
         final Graph<Sector, EdgeData> graph = new Graph<>();
         final Graph<Sector, EdgeData>.Path path = graph.findShortestPath(
                 start, target, builder, Graph.<Sector>noHeuristic(), EDGE_COSTS);
@@ -335,36 +347,44 @@ public class PathPlanner {
     
     
     
+    public UniversePath findShortestPath(Sector start, Sector target, 
+            RouteOptions options) {
+        return this.findShortestPath(start, target, new UniverseBuilder(options), options);
+    }
+    
+    
+    
     public List<UniversePath> findShortestPaths(Sector start, Sector target, 
             RouteOptions options) {
-        final int K = 5;
+        final int K = 10;
         final UniverseBuilder builder = new UniverseBuilder(options);
-        final Graph<Sector, EdgeData> graph = new Graph<>();
         final List<UniversePath> result = new ArrayList<>(K);
         
-        final Graph<Sector, EdgeData>.Path first = graph.findShortestPath(
-                start, target, builder, Graph.<Sector>noHeuristic(), EDGE_COSTS);
         
-        final UniversePath shortest = new UniversePath(first, options);
+        final UniversePath shortest = this.findShortestPath(start, target, 
+                builder, options);
         result.add(shortest);
         
         if (shortest.pathFound()) {
-            UniversePath last = shortest;
-            for (int i = 0; i < K; ++i) {
-                final Wormhole block = last.getFirstWormhole();
+            
+            int nextPathIdx = -1;
+            int pathsDone = 0;
+            while (result.size() < K && pathsDone != result.size()) {
+                nextPathIdx = (nextPathIdx + 1) % result.size();
+                final UniversePath nextPath = result.get(nextPathIdx);
+                if (nextPath.done) continue;
+                
+                final Wormhole block = nextPath.getWormholeToBlock();
+                nextPath.done = block != null;
+                pathsDone += nextPath.done ? 1 : 0;
+                
                 if (block != null) {
                     builder.startOverAndBlock(block);
                     
-                    // remove edge belonging to blocked wormhole
-                    final Graph<Sector, EdgeData> g = new Graph<>();
-                    final Graph<Sector, EdgeData>.Path next = g.findShortestPath(
-                            start, target, builder, Graph.<Sector>noHeuristic(), EDGE_COSTS);
-                    
-                    last = new UniversePath(next, options);
-                    if (last.pathFound()) {
-                        result.add(last);
-                    } else {
-                        break;
+                    final UniversePath path = this.findShortestPath(start, target, 
+                            builder, options);
+                    if (path.pathFound()) {
+                        result.add(path);
                     }
                 }
             }
