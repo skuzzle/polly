@@ -439,6 +439,8 @@ public class MSG extends Constants {
     public static String htmlOrionRouteInfo;
     public static String htmlOrionNoRouteFound;
     public static String htmlOrionSelectFleet;
+    public static String htmlOrionTotalWaitingTime;
+    public static String htmlOrionMaxWaitingTime;
     public static String htmlOrionWaitingTime;
     public static String htmlOrionOptional;
     public static String htmlOrionOrJumpTime;

@@ -28,6 +28,13 @@ $sector.getQuadName() $sector.getX(), $sector.getY()
 #end
 
 
+#macro (TIME_RANGE $min $max)
+    #if ($min == $max) 
+        $min Min
+    #else
+        ${min}-$max Min
+    #end
+#end
 
 #macro (WORMHOLES $holes)
 #if (!$holes.isEmpty())
@@ -47,7 +54,7 @@ $sector.getQuadName() $sector.getX(), $sector.getY()
         <td>#SECTOR_LINK ( $wl.getSource() $wl.getSource().getQuadId() )</td>
         <td>$wl.getName()</td>
         <td>$wl.requiresLoad()</td>
-        <td>$wl.getMinUnload()-$wl.getMaxUnload() Min</td>
+        <td>#TIME_RANGE( $wl.getMinUnload(), $wl.getMaxUnload() )</td>
         <td><a href="#" quadName="$wl.getTarget().getQuadId()" 
             hlX="$wl.getTarget().getX()"
             hlY="$wl.getTarget().getY()" 

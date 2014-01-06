@@ -15,11 +15,15 @@
     </tr>
     <tr>
         <td><b>$MSG.htmlOrionWLUnload</b></td>
-        <td>$path.getMinUnload()-$path.getMaxUnload() Min</td>
+        <td>#TIME_RANGE ($path.getMinUnload(), $path.getMaxUnload() )</td>
     </tr>
     <tr>
-        <td><b>$MSG.htmlOrionWaitingTime</b></td>
-        <td>$path.getMaxWaitTime() Min</td>
+        <td><b>$MSG.htmlOrionMaxWaitingTime</b></td>
+        <td>$path.getMaxWaitingTime() Min</td>
+    </tr>
+    <tr>
+        <td><b>$MSG.htmlOrionTotalWaitingTime</b></td>
+        <td>#TIME_RANGE ( $path.getSumMinWaitingTime(), $path.getSumMaxWaitingTime() )</td>
     </tr>
     <tr>
         <td colspan="2"><a href="#SHARE_ROUTE_URL( $PAGE_SHAREROUTE $start $target $options )">$MSG.htmlOrionShareRoute</a></td>
@@ -48,7 +52,7 @@
             #if ($ed.isWormhole())
             <p style="margin-top:20px">
                 #if ( $ed.mustWait() )
-                <span style="color:red"><b>$MSG.htmlOrionWaitingTime: $ed.getWaitMin()-$ed.getWaitMax() Min</b></span><br/>
+                <span style="color:red"><b>$MSG.htmlOrionWaitingTime: #TIME_RANGE ( $ed.getWaitMin(), $ed.getWaitMax() )</b></span><br/>
                     $Constants.bind($MSG.htmlOrionSafeSpots, $path.getMaxSafeSpotDistance()):<br/>
                     #if ( $ed.hasWaitSpots() )
                     #foreach ($safeSpot in $ed.getWaitSpots() )
@@ -61,7 +65,7 @@
                 <b>Wurmloch: </b> $ed.getWormhole().getName()<br/>
                 Von: #SECTOR_NO_LINK ( $source ) <br/>
                 Nach: #SECTOR_NO_LINK ( $target ) <br/>
-                Entladung: $ed.getWormhole().getMinUnload()-$ed.getWormhole().getMaxUnload()<br/>
+                Entladung: #TIME_RANGE ( $ed.getWormhole().getMinUnload(), $ed.getWormhole().getMaxUnload())<br/>
             </p>
             #end
     

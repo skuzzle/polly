@@ -165,6 +165,8 @@ public class PathPlanner {
         private final int minUnload;
         private final int maxUnload;
         private final int maxWaitTime;
+        private final int sumMinWaitingTime;
+        private final int sumMaxWaitingTime;
         private final RouteOptions options;
         
         /** Number used during path planning to block wormholes */
@@ -191,7 +193,8 @@ public class PathPlanner {
             
             int sumMinUnload = 0;
             int sumMaxUnload = 0;
-            int sumWaitingTime = 0;
+            int sumMinWaitingTime = 0;
+            int sumMaxWaitingTime = 0;
             
             int maximumWaitTime = 0;
             
@@ -245,8 +248,12 @@ public class PathPlanner {
                     default:
                     }
                     maximumWaitTime = Math.max(maximumWaitTime, e.getData().waitMax);
+
                     
                     if (e.getData().mustWait()) {
+                        sumMinWaitingTime += e.getData().waitMin;
+                        sumMaxWaitingTime += e.getData().waitMax;
+                        
                         // find good spots
                         final Quadrant quad = quadProvider.getQuadrant(source.getQuadName());
                         final List<Sector> spots = QuadrantUtils.getNearSectors(source, 
@@ -285,6 +292,8 @@ public class PathPlanner {
             this.minUnload = sumMinUnload;
             this.maxUnload = sumMaxUnload;
             this.maxWaitTime = maximumWaitTime;
+            this.sumMinWaitingTime = sumMinWaitingTime;
+            this.sumMaxWaitingTime = sumMaxWaitingTime;
         }
         
         public Wormhole getWormholeToBlock() {
@@ -307,7 +316,7 @@ public class PathPlanner {
             return options.maxWaitSpotDistance;
         }
         
-        public int getMaxWaitTime() {
+        public int getMaxWaitingTime() {
             return this.maxWaitTime;
         }
         
@@ -321,6 +330,14 @@ public class PathPlanner {
         
         public int getMinUnload() {
             return this.minUnload;
+        }
+        
+        public int getSumMinWaitingTime() {
+            return this.sumMinWaitingTime;
+        }
+        
+        public int getSumMaxWaitingTime() {
+            return this.sumMaxWaitingTime;
         }
         
         public int getSectorJumps() {
