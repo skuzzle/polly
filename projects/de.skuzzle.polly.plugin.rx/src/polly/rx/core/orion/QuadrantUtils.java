@@ -1,5 +1,10 @@
 package polly.rx.core.orion;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -252,5 +257,37 @@ public final class QuadrantUtils {
             }
         }
         return result;
+    }
+    
+    
+    
+    public static BufferedImage createQuadImage(Quadrant quad) {
+        final int ss = 10; // sector size in pixels
+        final Color background = new Color(51, 51, 102, 255);
+        final BufferedImage img = new BufferedImage(quad.getMaxX() * ss, 
+                quad.getMaxY() * ss, BufferedImage.TYPE_INT_ARGB);
+        
+        final Graphics2D g = img.createGraphics();
+        g.setColor(background);
+        g.fillRect(0, 0, img.getWidth(), img.getHeight());
+        
+        final ImageObserver obs = new ImageObserver() {
+            @Override
+            public boolean imageUpdate(Image img, int infoflags, int x, int y, int width,
+                    int height) {
+                return false;
+            }
+        };
+        
+        for (int y = 0; y < quad.getMaxY(); ++ y) {
+            for (int x = 0; x < quad.getMaxX(); ++x) {
+                final Sector s = quad.getSector(x + 1, y + 1);
+                if (s.getType() != SectorType.NONE) {
+                    final BufferedImage sectorImage = s.getType().getImage();
+                    g.drawImage(sectorImage, x * ss, y * ss, ss, ss, obs);
+                }
+            }
+        }
+        return img;
     }
 }

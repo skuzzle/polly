@@ -1,8 +1,10 @@
 package polly.rx.core.orion.model;
 
+import java.awt.image.BufferedImage;
 import java.util.Random;
 
 import polly.rx.MSG;
+import polly.rx.httpv2.view.orion.Images;
 
 
 public enum SectorType {
@@ -53,7 +55,7 @@ public enum SectorType {
     ANDROIDENKOLONIE(MSG.secTypeAndroidenKolonie, 89),
     EINTRITTS_PORTAL(MSG.secTypePortal, 100),
     ;
-    
+
     
     public static SectorType[] HIGHLIGHTS = {
         HIGHLIGHT_START,
@@ -71,12 +73,23 @@ public enum SectorType {
     private final String name;
     private final int minId;
     private final int maxId;
-    
+    private BufferedImage image;
     
     
     private SectorType(String name, int id) {
         this(name, id, id + 1);
     }
+    
+    
+    
+    private SectorType(String name, int minId, int maxId) {
+        assert minId >= 0 && minId < maxId;
+        this.name = name;
+        this.minId = minId;
+        this.maxId = maxId;
+    }
+    
+    
     
     public boolean isHighlight() {
         switch (this) {
@@ -91,17 +104,16 @@ public enum SectorType {
         }
     }
     
-    private SectorType(String name, int minId, int maxId) {
-        assert minId >= 0 && minId < maxId;
-        this.name = name;
-        this.minId = minId;
-        this.maxId = maxId;
-    }
-    
     
     
     public int getId() {
         return this.minId;
+    }
+    
+    
+    
+    public int getMaxId() {
+        return this.maxId;
     }
     
     
@@ -113,6 +125,18 @@ public enum SectorType {
         default: 
             return "" + (this.minId + RANDOM.nextInt(this.maxId - this.minId)) + ".gif";  //$NON-NLS-1$//$NON-NLS-2$
         } 
+    }
+    
+    
+    
+    public synchronized BufferedImage getImage() {
+        if (this == EMPTY) {
+            final int r = RANDOM.nextInt(Images.EMPTY_ROOM.length);
+            return Images.EMPTY_ROOM[r];
+        } else if (this.image == null) {
+           this.image = Images.getImage(this.getImgName()); 
+        }
+        return this.image;
     }
     
     
