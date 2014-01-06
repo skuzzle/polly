@@ -19,6 +19,13 @@ public class FastByteArrayOutputStream extends OutputStream {
     
     
     
+    public FastByteArrayOutputStream copy() {
+        final FastByteArrayOutputStream result = new FastByteArrayOutputStream(this.size);
+        System.arraycopy(this.buffer, 0, result.buffer, 0, this.size);
+        return result;
+    }
+    
+    
     
     public FastByteArrayOutputStream(int bufferSize) {
         this.buffer = new byte[bufferSize];
@@ -92,5 +99,4 @@ public class FastByteArrayOutputStream extends OutputStream {
     public void close() {
         this.buffer = null;
     }
-
 }

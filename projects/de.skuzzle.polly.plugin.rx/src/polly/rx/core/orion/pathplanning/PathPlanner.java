@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import polly.rx.core.orion.QuadrantProvider;
 import polly.rx.core.orion.QuadrantUtils;
@@ -122,13 +123,21 @@ public class PathPlanner {
     
     
     public final static class Group {
+        final static AtomicInteger IDS = new AtomicInteger();
+        
+        final int id;
         final List<Graph<Sector, EdgeData>.Edge> edges;
         final HighlightedQuadrant quad;
         
         private Group(Quadrant quadrant) {
             super();
+            this.id = IDS.incrementAndGet();
             this.quad = new HighlightedQuadrant(quadrant);
             this.edges = new ArrayList<>();
+        }
+        
+        public int getId() {
+            return this.id;
         }
         
         public List<Graph<Sector, EdgeData>.Edge> getEdges() {

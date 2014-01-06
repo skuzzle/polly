@@ -1,5 +1,8 @@
 package polly.rx.httpv2;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -8,11 +11,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
+import javax.imageio.ImageIO;
+
 import polly.rx.MSG;
 import polly.rx.core.AZEntryManager;
 import polly.rx.core.orion.Orion;
 import polly.rx.core.orion.QuadrantProvider;
 import polly.rx.core.orion.QuadrantProviderDecorator;
+import polly.rx.core.orion.QuadrantUtils;
 import polly.rx.core.orion.WormholeProvider;
 import polly.rx.core.orion.WormholeProviderDecorator;
 import polly.rx.core.orion.model.Quadrant;
@@ -23,6 +29,7 @@ import polly.rx.core.orion.model.SectorType;
 import polly.rx.core.orion.model.Wormhole;
 import polly.rx.core.orion.model.WormholeDecorator;
 import polly.rx.core.orion.pathplanning.PathPlanner;
+import polly.rx.core.orion.pathplanning.PathPlanner.Group;
 import polly.rx.core.orion.pathplanning.PathPlanner.UniversePath;
 import polly.rx.core.orion.pathplanning.RouteOptions;
 import polly.rx.parsing.ParseException;
@@ -36,6 +43,7 @@ import de.skuzzle.polly.http.api.Controller;
 import de.skuzzle.polly.http.api.HttpSession;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
+import de.skuzzle.polly.http.api.answers.HttpInputStreamAnswer;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.Types.TimespanType;
@@ -45,6 +53,8 @@ import de.skuzzle.polly.sdk.httpv2.SuccessResult;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLTools;
 import de.skuzzle.polly.sdk.resources.Constants;
+import de.skuzzle.polly.tools.io.FastByteArrayInputStream;
+import de.skuzzle.polly.tools.io.FastByteArrayOutputStream;
 
 
 public class OrionController extends PollyController {
@@ -65,6 +75,7 @@ public class OrionController extends PollyController {
     public final static String API_POST_LAYOUT = "/api/orion/postLayout"; //$NON-NLS-1$
     public final static String API_SHARE_ROUTE = "/api/orion/share"; //$NON-NLS-1$
     public final static String API_GET_NTH_ROUTE = "/api/orion/nthRoute";  //$NON-NLS-1$
+    public final static String API_GET_GROUP_IMAGE = "/api/orion/groupImage"; //$NON-NLS-1$
     
     private final static String CONTENT_QUAD_LAYOUT = "/polly/rx/httpv2/view/orion/quadlayout.html"; //$NON-NLS-1$
     private final static String CONTENT_QUADRANT = "/polly/rx/httpv2/view/orion/quadrant.html"; //$NON-NLS-1$
@@ -83,6 +94,7 @@ public class OrionController extends PollyController {
     private final static String ROUTE_N_KEY = "route_"; //$NON-NLS-1$
     private final static String ROUTE_OPTIONS_KEY = "routeOptions"; //$NON-NLS-1$
     private final static String ROUTE_COUNT_KEY = "routeCount"; //$NON-NLS-1$
+    private final static String QUAD_IMAGE_KEY = "quadImg_"; //$NON-NLS-1$
     
     
     
@@ -528,12 +540,14 @@ public class OrionController extends PollyController {
         final TimespanType currentJumpTime = this.parse(cjt, jumpTime);
         final RouteOptions options = new RouteOptions(jumpTime, currentJumpTime, 
                 personalPortals);
-        final Collection<UniversePath> path = this.pathPlanner.findShortestPaths(start, target, 
-                options);
+        final Collection<UniversePath> path = this.pathPlanner.findShortestPaths(
+                start, target, options);
         
         final Iterator<UniversePath> it = path.iterator();
         for (int i = 0; i < path.size(); ++i) {
-            s.set(ROUTE_N_KEY + (i + 1), it.next());
+            final UniversePath p = it.next();
+            s.set(ROUTE_N_KEY + (i + 1), p);
+            this.createImages(p);
         }
         s.set(ROUTE_OPTIONS_KEY, options);
         s.set(ROUTE_COUNT_KEY, path.size());
@@ -545,6 +559,35 @@ public class OrionController extends PollyController {
         c.put("n", 1); //$NON-NLS-1$
         c.put("routeCount", path.size()); //$NON-NLS-1$
         return HttpAnswers.newTemplateAnswer(CONTENT_ROUTE, c);
+    }
+    
+    
+    
+    @Get(API_GET_GROUP_IMAGE)
+    public HttpAnswer getImageForGroup(@Param("grp") int id) {
+        final Object o = this.getSession().getAttached(QUAD_IMAGE_KEY + id);
+        if (o == null) {
+            return HttpAnswers.newStringAnswer(404, ""); //$NON-NLS-1$
+        }
+        final FastByteArrayOutputStream out = (FastByteArrayOutputStream) o;
+        final InputStream in = new FastByteArrayInputStream(out);
+        return new HttpInputStreamAnswer(200, in);
+    }
+
+    
+    
+    private void createImages(UniversePath path) {
+        for (final Group g : path.getGroups()) {
+            final BufferedImage quadImg = QuadrantUtils.createQuadImage(g.getQuadrant());
+            final FastByteArrayOutputStream out = new FastByteArrayOutputStream();
+            try {
+                ImageIO.write(quadImg, "png", out); //$NON-NLS-1$
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            
+            this.getSession().set(QUAD_IMAGE_KEY + g.getId(), out);
+        }
     }
     
     
