@@ -12,7 +12,6 @@ import java.util.regex.Pattern;
 
 import polly.rx.core.orion.model.LoadRequired;
 import polly.rx.core.orion.model.Quadrant;
-import polly.rx.core.orion.model.QuadrantUtils;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.Wormhole;
 import polly.rx.parsing.RegexUtils;

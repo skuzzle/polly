@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 
 import polly.rx.MyPlugin;
-import polly.rx.core.orion.model.QuadrantUtils;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.pathplanning.PathPlanner;
 import polly.rx.parsing.ParseException;

@@ -4,7 +4,7 @@ import java.util.List;
 
 import polly.rx.MSG;
 import polly.rx.core.orion.Orion;
-import polly.rx.core.orion.model.QuadrantUtils;
+import polly.rx.core.orion.QuadrantUtils;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.Wormhole;
 import polly.rx.core.orion.pathplanning.PathPlanner;

@@ -1,4 +1,4 @@
-package polly.rx.core.orion.model;
+package polly.rx.core.orion;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,10 +9,14 @@ import java.util.List;
 import java.util.Set;
 
 import polly.rx.MSG;
+import polly.rx.core.orion.model.Production;
+import polly.rx.core.orion.model.Quadrant;
+import polly.rx.core.orion.model.Sector;
+import polly.rx.core.orion.model.SectorType;
+import polly.rx.core.orion.model.Wormhole;
 import polly.rx.core.orion.pathplanning.Graph;
 import polly.rx.core.orion.pathplanning.Graph.EdgeCosts;
 import polly.rx.core.orion.pathplanning.Graph.LazyBuilder;
-import polly.rx.core.orion.Orion;
 import polly.rx.parsing.ParseException;
 import de.skuzzle.polly.tools.Equatable;
 

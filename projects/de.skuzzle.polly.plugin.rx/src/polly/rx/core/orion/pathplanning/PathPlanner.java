@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Map;
 
 import polly.rx.core.orion.QuadrantProvider;
+import polly.rx.core.orion.QuadrantUtils;
 import polly.rx.core.orion.WormholeProvider;
 import polly.rx.core.orion.model.Quadrant;
 import polly.rx.core.orion.model.QuadrantDecorator;
-import polly.rx.core.orion.model.QuadrantUtils;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.SectorDecorator;
 import polly.rx.core.orion.model.SectorType;

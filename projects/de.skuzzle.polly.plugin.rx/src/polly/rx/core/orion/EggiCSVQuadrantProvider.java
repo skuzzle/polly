@@ -18,7 +18,6 @@ import java.util.Map;
 
 import polly.rx.core.orion.model.Production;
 import polly.rx.core.orion.model.Quadrant;
-import polly.rx.core.orion.model.QuadrantUtils;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.SectorType;
 import polly.rx.entities.RxRessource;
