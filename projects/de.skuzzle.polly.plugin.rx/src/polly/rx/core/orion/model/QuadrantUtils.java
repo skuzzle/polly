@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Set;
 
 import polly.rx.MSG;
-import polly.rx.core.orion.Graph;
-import polly.rx.core.orion.Graph.EdgeCosts;
-import polly.rx.core.orion.Graph.LazyBuilder;
+import polly.rx.core.orion.pathplanning.Graph;
+import polly.rx.core.orion.pathplanning.Graph.EdgeCosts;
+import polly.rx.core.orion.pathplanning.Graph.LazyBuilder;
 import polly.rx.core.orion.Orion;
 import polly.rx.parsing.ParseException;
 import de.skuzzle.polly.tools.Equatable;

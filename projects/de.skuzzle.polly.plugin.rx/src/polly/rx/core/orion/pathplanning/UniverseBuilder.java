@@ -5,15 +5,14 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import polly.rx.core.orion.Graph;
 import polly.rx.core.orion.Orion;
 import polly.rx.core.orion.QuadrantProvider;
 import polly.rx.core.orion.WormholeProvider;
-import polly.rx.core.orion.Graph.LazyBuilder;
 import polly.rx.core.orion.model.Quadrant;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.SectorType;
 import polly.rx.core.orion.model.Wormhole;
+import polly.rx.core.orion.pathplanning.Graph.LazyBuilder;
 
 
 public class UniverseBuilder implements LazyBuilder<Sector, EdgeData> {

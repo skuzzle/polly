@@ -1,7 +1,7 @@
 package polly.rx.core.orion.pathplanning;
 
-import polly.rx.core.orion.Graph.EdgeCosts;
 import polly.rx.core.orion.model.Wormhole;
+import polly.rx.core.orion.pathplanning.Graph.EdgeCosts;
 
 
 public class PathCostCalculator implements EdgeCosts<EdgeData> {

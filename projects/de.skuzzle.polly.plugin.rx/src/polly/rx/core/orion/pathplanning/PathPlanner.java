@@ -8,8 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import polly.rx.core.orion.Graph;
-import polly.rx.core.orion.Graph.EdgeCosts;
 import polly.rx.core.orion.QuadrantProvider;
 import polly.rx.core.orion.WormholeProvider;
 import polly.rx.core.orion.model.Quadrant;
@@ -19,6 +17,7 @@ import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.SectorDecorator;
 import polly.rx.core.orion.model.SectorType;
 import polly.rx.core.orion.model.Wormhole;
+import polly.rx.core.orion.pathplanning.Graph.EdgeCosts;
 
 
 public class PathPlanner {
