@@ -191,6 +191,7 @@ public class PathPlanner {
             
             int sumMinUnload = 0;
             int sumMaxUnload = 0;
+            int sumWaitingTime = 0;
             
             int maximumWaitTime = 0;
             
@@ -200,9 +201,6 @@ public class PathPlanner {
 
             while (it.hasNext()) {
                 final Graph<Sector, EdgeData>.Edge e = it.next();
-                // before processing edge, reset its data
-                e.getData().clear();
-                
                 final Sector source = e.getSource().getData();
                 SectorType highlight = SectorType.HIGHLIGHT_SECTOR;
                 
@@ -238,8 +236,8 @@ public class PathPlanner {
                         e.getData().waitMin = currentMinUnload + hole.getMaxUnload() - jtMinutes;
                         e.getData().waitMax = currentMaxUnload + hole.getMaxUnload() - jtMinutes;
                         
-                        currentMinUnload += Math.max(hole.getMinUnload() - e.getData().waitMin, 0);
-                        currentMaxUnload += Math.max(hole.getMaxUnload() - e.getData().waitMax, 0);
+                        currentMinUnload += hole.getMinUnload() - e.getData().waitMin;
+                        currentMaxUnload += hole.getMaxUnload() - e.getData().waitMax;
                         break;
                     case NONE:
                         currentMinUnload += hole.getMinUnload();

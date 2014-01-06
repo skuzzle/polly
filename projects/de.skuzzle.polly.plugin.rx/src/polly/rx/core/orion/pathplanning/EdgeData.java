@@ -45,14 +45,7 @@ public class EdgeData {
         this.type = type;
         this.waitSpots = new ArrayList<>(PathPlanner.MAX_SAFE_SPOT_OUTPUT);
     }
-    
-    
-    public void clear() {
-        this.waitSpots.clear();
-        this.waitMax = 0;
-        this.waitMin = 0;
-    }
-    
+
     public EdgeType getType() {
         return this.type;
     }
