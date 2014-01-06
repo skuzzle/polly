@@ -470,7 +470,9 @@ public class OrionController extends PollyController {
         
         final Iterator<UniversePath> it = path.iterator();
         for (int i = 0; i < path.size(); ++i) {
-            s.set(ROUTE_N_KEY + (i + 1), it.next());
+            final UniversePath p = it.next();
+            s.set(ROUTE_N_KEY + (i + 1), p);
+            this.createImages(p);
         }
         s.set(ROUTE_OPTIONS_KEY, options);
         s.set(ROUTE_COUNT_KEY, path.size());

@@ -375,17 +375,14 @@ public class PathPlanner {
         result.add(shortest);
         
         if (shortest.pathFound()) {
-            
-            int nextPathIdx = -1;
             int pathsDone = 0;
+            int nextPathIdx = -1;
             while (result.size() < K && pathsDone != result.size()) {
                 nextPathIdx = (nextPathIdx + 1) % result.size();
                 final UniversePath nextPath = result.get(nextPathIdx);
                 if (nextPath.done) continue;
                 
                 final Wormhole block = nextPath.getWormholeToBlock();
-                nextPath.done = block != null;
-                pathsDone += nextPath.done ? 1 : 0;
                 
                 if (block != null) {
                     builder.startOverAndBlock(block);
@@ -394,7 +391,15 @@ public class PathPlanner {
                             builder, options);
                     if (path.pathFound()) {
                         result.add(path);
+                    } else {
+                        // if no path found yet, there will be no path when blocking 
+                        // further holes, so this one's done
+                        nextPath.done = true;
+                        pathsDone++;
                     }
+                } else {
+                    nextPath.done = true;
+                    pathsDone++;
                 }
             }
         }
