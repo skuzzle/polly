@@ -36,12 +36,14 @@ public class EdgeData {
     
     final EdgeType type;
     Wormhole wormhole;
-    int waitMin;
-    int waitMax;
+    TimeRange wait;
+    TimeRange unloadAfter;
     final List<Sector> waitSpots;
     
     private EdgeData(EdgeType type) {
         this.type = type;
+        this.wait = new TimeRange(0, 0);
+        this.unloadAfter = new TimeRange(0, 0);
         this.waitSpots = new ArrayList<>(PathPlanner.MAX_SAFE_SPOT_OUTPUT);
     }
 
@@ -66,14 +68,14 @@ public class EdgeData {
     }
     
     public boolean mustWait() {
-        return this.waitMin > 0;
+        return this.wait != null && this.wait.notEmpty();
     }
     
-    public int getWaitMin() {
-        return this.waitMin;
+    public TimeRange getWait() {
+        return this.wait;
     }
     
-    public int getWaitMax() {
-        return this.waitMax;
+    public TimeRange getUnloadAfter() {
+        return this.unloadAfter;
     }
 }

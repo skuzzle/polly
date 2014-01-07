@@ -52,7 +52,7 @@
             #if ($ed.isWormhole())
             <p style="margin-top:20px">
                 #if ( $ed.mustWait() )
-                <span style="color:red"><b>$MSG.htmlOrionWaitingTime: #TIME_RANGE ( $ed.getWaitMin(), $ed.getWaitMax() )</b></span><br/>
+                <span style="color:red"><b>$MSG.htmlOrionWaitingTime:  $ed.getWait()</b></span><br/>
                     $Constants.bind($MSG.htmlOrionSafeSpots, $path.getMaxSafeSpotDistance()):<br/>
                     #if ( $ed.hasWaitSpots() )
                     #foreach ($safeSpot in $ed.getWaitSpots() )
@@ -62,10 +62,11 @@
                     <br/>
                     #end
                 #end
-                <b>Wurmloch: </b> $ed.getWormhole().getName()<br/>
-                Von: #SECTOR_NO_LINK ( $source ) <br/>
-                Nach: #SECTOR_NO_LINK ( $target ) <br/>
-                Entladung: #TIME_RANGE ( $ed.getWormhole().getMinUnload(), $ed.getWormhole().getMaxUnload())<br/>
+                <b>$MSG.htmlOrionWormhole: </b> $ed.getWormhole().getName()<br/>
+                $MSG.htmlOrionFrom: #SECTOR_NO_LINK ( $source ) <br/>
+                $MSG.htmlOrionTo: #SECTOR_NO_LINK ( $target ) <br/>
+                $MSG.htmlOrionUnload: #TIME_RANGE ( $ed.getWormhole().getMinUnload(), $ed.getWormhole().getMaxUnload())<br/>
+                $MSG.htmlOrionRemainingJumpTime: $ed.getUnloadAfter()<br/>
             </p>
             #end
     

@@ -229,30 +229,31 @@ public class PathPlanner {
                     
                     switch (hole.requiresLoad()) {
                     case FULL:
-                        e.getData().waitMin = currentMinUnload;
-                        e.getData().waitMax = currentMaxUnload;
+                        e.getData().wait = new TimeRange(currentMinUnload, currentMaxUnload);
                         
                         currentMinUnload = hole.getMinUnload();
                         currentMaxUnload = hole.getMaxUnload();
                         break;
                     case PARTIAL:
-                        e.getData().waitMin = currentMinUnload + hole.getMaxUnload() - jtMinutes;
-                        e.getData().waitMax = currentMaxUnload + hole.getMaxUnload() - jtMinutes;
+                        final int waitMin = Math.max((jtMinutes - currentMinUnload) - (jtMinutes - hole.getMaxUnload()), 0);
+                        final int waitMax = Math.max((jtMinutes - currentMaxUnload) - (jtMinutes - hole.getMaxUnload()), 0);
+                        e.getData().wait = new TimeRange(waitMax, waitMin);
                         
-                        currentMinUnload += hole.getMinUnload() - e.getData().waitMin;
-                        currentMaxUnload += hole.getMaxUnload() - e.getData().waitMax;
+                        currentMinUnload += hole.getMinUnload() - e.getData().wait.getMin();
+                        currentMaxUnload += hole.getMaxUnload() - e.getData().wait.getMax();
                         break;
                     case NONE:
                         currentMinUnload += hole.getMinUnload();
                         currentMaxUnload += hole.getMaxUnload();
                     default:
                     }
-                    maximumWaitTime = Math.max(maximumWaitTime, e.getData().waitMax);
+                    maximumWaitTime = Math.max(maximumWaitTime, e.getData().wait.getMax());
 
+                    e.getData().unloadAfter = new TimeRange(currentMinUnload, currentMaxUnload);
                     
                     if (e.getData().mustWait()) {
-                        sumMinWaitingTime += e.getData().waitMin;
-                        sumMaxWaitingTime += e.getData().waitMax;
+                        sumMinWaitingTime += e.getData().wait.getMin();
+                        sumMaxWaitingTime += e.getData().wait.getMax();
                         
                         // find good spots
                         final Quadrant quad = quadProvider.getQuadrant(source.getQuadName());
