@@ -17,7 +17,7 @@ import de.skuzzle.polly.core.moduleloader.annotations.Require;
         @Require(component = ConfigurationProviderImpl.class),
         @Require(state = ModuleStates.USERS_READY),
         @Require(state = ModuleStates.PERSISTENCE_READY),
-        @Require(state = ModuleStates.PLUGINS_READY)
+        @Require(state = ModuleStates.PLUGINS_NOTIFIED)
     },
     provides = @Provide(component = RunOnceManagerImpl.class)
 )

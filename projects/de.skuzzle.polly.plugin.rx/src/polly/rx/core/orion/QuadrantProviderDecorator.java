@@ -38,4 +38,24 @@ public class QuadrantProviderDecorator implements QuadrantProvider {
     public Collection<? extends Sector> getEntryPortals() {
         return this.wrapped.getEntryPortals();
     }
+
+    @Override
+    public void quadrantDeleted(QuadrantEvent e) {
+        this.wrapped.quadrantDeleted(e);
+    }
+
+    @Override
+    public void quadrantAdded(QuadrantEvent e) {
+        this.wrapped.quadrantAdded(e);
+    }
+
+    @Override
+    public void sectorsAdded(QuadrantEvent e) {
+        this.wrapped.sectorsAdded(e);
+    }
+
+    @Override
+    public void sectorsUpdated(QuadrantEvent e) {
+        this.sectorsUpdated(e);
+    }
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -28,7 +29,7 @@ import de.skuzzle.polly.tools.Equatable;
 
 @Entity
 @NamedQueries({
-        @NamedQuery(name = DBSector.QUERY_FIND_SECTOR, query = "SELECT qs FROM DBSector qs WHERE qs.quadName = ?1 AND qs.x = ?2 AND qs.y = ?2"),
+        @NamedQuery(name = DBSector.QUERY_FIND_SECTOR, query = "SELECT qs FROM DBSector qs WHERE qs.quadName = ?1 AND qs.x = ?2 AND qs.y = ?3"),
         @NamedQuery(name = DBSector.QUERY_BY_QUADRANT, query = "SELECT qs FROM DBSector qs WHERE qs.quadName = ?1"),
         @NamedQuery(name = DBSector.QUERY_DISTINCT_QUADS, query = "SELECT DISTINCT(qs.quadName) FROM DBSector qs"),
         @NamedQuery(name = DBSector.QUERY_SECTOR_BY_TYPE, query = "SELECT s FROM DBSector s WHERE s.type = ?1"),
@@ -66,7 +67,7 @@ public class DBSector implements Sector {
     @Enumerated(EnumType.ORDINAL)
     private SectorType type;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.REMOVE)
     private Collection<DBProduction> ressources;
 
     
@@ -93,6 +94,12 @@ public class DBSector implements Sector {
 
 
     public void updateFrom(Sector other, Write write) {
+        if (!this.equals(other)) {
+            throw new IllegalArgumentException(); // can not update distinct sectors
+        } else if (other.getType() == SectorType.UNKNOWN) {
+            // do not update with unknown information
+            return;
+        }
         this.attackerBonus = other.getAttackerBonus();
         this.defenderBonus = other.getDefenderBonus();
         this.sectorGuardBonus = other.getSectorGuardBonus();

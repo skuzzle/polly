@@ -6,8 +6,8 @@ import polly.rx.core.orion.model.Quadrant;
 import polly.rx.core.orion.model.Sector;
 
 
-public interface QuadrantProvider {
-
+public interface QuadrantProvider extends QuadrantListener {
+    
     public Collection<String> getAllQuadrantNames();
     
     public Collection<? extends Sector> getEntryPortals();

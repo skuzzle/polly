@@ -2,7 +2,6 @@ package polly.rx.core.orion;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import polly.rx.core.orion.model.Sector;
@@ -57,7 +56,7 @@ public class DBQuadrantProvider implements QuadrantProvider {
                 DBQuadrant.QUERY_QUADRANT_BY_NAME, new Param(name));
         
         if (quad == null) {
-            quad = new DBQuadrant(name, 1, 1, Collections.<DBSector>emptyList());
+            quad = new DBQuadrant(name);
         }
         return quad;
     }
@@ -69,4 +68,24 @@ public class DBQuadrantProvider implements QuadrantProvider {
         return this.persistence.atomic().findList(DBQuadrant.class, 
                 DBQuadrant.QUERY_ALL_QUADRANTS);
     }
+
+
+
+    @Override
+    public void quadrantDeleted(QuadrantEvent e) {}
+
+
+
+    @Override
+    public void quadrantAdded(QuadrantEvent e) {}
+
+
+
+    @Override
+    public void sectorsAdded(QuadrantEvent e) {}
+
+
+
+    @Override
+    public void sectorsUpdated(QuadrantEvent e) {}
 }

@@ -196,6 +196,7 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider, QuadrantUpdate
                 qs.x = x;
                 qs.y = y;
                 qs.quadName = this.name;
+                qs.date = Time.currentTime();
                 qs.ressources = new ArrayList<>();
             }
             return qs;
@@ -325,6 +326,7 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider, QuadrantUpdate
                 final EggiSector sector = new EggiSector();
                 
                 final int quadId = Integer.parseInt(parts[1]);
+                sector.date = Time.currentTime();
                 sector.quadName = this.idToName.get(quadId);
                 sector.x = Integer.parseInt(parts[2]);
                 sector.y = Integer.parseInt(parts[3]);
@@ -486,7 +488,7 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider, QuadrantUpdate
     
     
     @Override
-    public void updateSectorInformation(Collection<Sector> sectors) {
+    public void updateSectorInformation(Collection<? extends Sector> sectors) {
         for (final Sector sector : sectors) {
             final EggiSector newEggiSector = new EggiSector();
             newEggiSector.attackerBonus = sector.getAttackerBonus();
@@ -546,5 +548,41 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider, QuadrantUpdate
     @Override
     public void deleteQuadrant(Quadrant quadrant) throws OrionException {
         this.deleteQuadrant(quadrant.getName());
+    }
+
+
+
+    @Override
+    public void addQuadrantListener(QuadrantListener listener) {
+    }
+
+
+
+    @Override
+    public void removeQuadrantListener(QuadrantListener listener) {
+    }
+
+
+
+    @Override
+    public void quadrantDeleted(QuadrantEvent e) {
+    }
+
+
+
+    @Override
+    public void quadrantAdded(QuadrantEvent e) {
+    }
+
+
+
+    @Override
+    public void sectorsAdded(QuadrantEvent e) {
+    }
+
+
+
+    @Override
+    public void sectorsUpdated(QuadrantEvent e) {
     }
 }

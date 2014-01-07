@@ -21,7 +21,9 @@ import javax.persistence.TemporalType;
 import polly.rx.core.orion.QuadrantUtils;
 import polly.rx.core.orion.model.OrionObjectUtil;
 import polly.rx.core.orion.model.Quadrant;
+import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.SectorType;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Write;
 import de.skuzzle.polly.sdk.time.Time;
 import de.skuzzle.polly.tools.EqualsHelper;
 import de.skuzzle.polly.tools.Equatable;
@@ -73,13 +75,33 @@ public class DBQuadrant implements Quadrant {
 
 
 
-    public DBQuadrant(String name, int maxX, int maxY, Collection<DBSector> sectors) {
-        this.sectorMap = new HashMap<>(sectors.size());
-        this.sectors = new ArrayList<>(sectors);
-        this.maxX = maxX;
-        this.maxY = maxY;
+    public DBQuadrant(String name) {
+        this.sectorMap = new HashMap<>();
+        this.sectors = new ArrayList<>();
         this.name = name;
-        this.createSectorMap();
+    }
+    
+    
+    
+    public DBSector updateFrom(Sector sector, Write write) {
+        if (!sector.getQuadName().equals(this.name)) {
+            throw new IllegalArgumentException();
+        } else if (sector.getType() == SectorType.NONE) {
+            return null;
+        }
+        // sector is a new sector!
+        assert !this.sectors.contains(sector);
+        
+        this.maxX = Math.max(this.maxX, sector.getX());
+        this.maxY = Math.max(this.maxY, sector.getY());
+        
+        final DBSector dbSector = new DBSector(sector);
+        write.single(dbSector);
+        write.all(dbSector.getRessources());
+        this.sectors.add(dbSector);
+        this.sectorMap.put(QuadrantUtils.createMapKey(dbSector), dbSector);
+        
+        return dbSector;
     }
 
 
@@ -87,6 +109,8 @@ public class DBQuadrant implements Quadrant {
     @PostLoad
     private void createSectorMap() {
         for (final DBSector s : this.sectors) {
+            this.maxX = Math.max(this.maxX, s.getX());
+            this.maxY = Math.max(this.maxY, s.getY());
             this.sectorMap.put(QuadrantUtils.createMapKey(s), s);
         }
     }
