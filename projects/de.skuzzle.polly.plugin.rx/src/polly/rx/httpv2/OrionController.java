@@ -22,6 +22,7 @@ import polly.rx.core.orion.QuadrantProviderDecorator;
 import polly.rx.core.orion.QuadrantUtils;
 import polly.rx.core.orion.WormholeProvider;
 import polly.rx.core.orion.WormholeProviderDecorator;
+import polly.rx.core.orion.model.Production;
 import polly.rx.core.orion.model.Quadrant;
 import polly.rx.core.orion.model.QuadrantDecorator;
 import polly.rx.core.orion.model.Sector;
@@ -78,6 +79,9 @@ public class OrionController extends PollyController {
     public final static String API_SHARE_ROUTE = "/api/orion/share"; //$NON-NLS-1$
     public final static String API_GET_NTH_ROUTE = "/api/orion/nthRoute";  //$NON-NLS-1$
     public final static String API_GET_GROUP_IMAGE = "/api/orion/groupImage"; //$NON-NLS-1$
+    public final static String API_JSON_QUADRANT = "/api/orion/json/quadrant"; //$NON-NLS-1$
+    public final static String API_JSON_SECTOR = "/api/orion/json/sector"; //$NON-NLS-1$
+    public final static String API_JSON_ROUTE = "/api/orion/json/route"; //$NON-NLS-1$
     
     private final static String CONTENT_QUAD_LAYOUT = "/polly/rx/httpv2/view/orion/quadlayout.html"; //$NON-NLS-1$
     private final static String CONTENT_QUADRANT = "/polly/rx/httpv2/view/orion/quadrant.html"; //$NON-NLS-1$
@@ -601,5 +605,94 @@ public class OrionController extends PollyController {
             return alternative;
         }
         return (TimespanType) types;
+    }
+    
+    
+    
+    public final static class JsonProduction {
+        public final String ress;
+        public final float rate;
+        
+        public JsonProduction(Production production) {
+            super();
+            this.ress = production.getRess().toString();
+            this.rate = production.getRate();
+        }
+    }
+    
+    
+    public final static class JsonSector {
+        public final String type;
+        public final int x;
+        public final int y;
+        public final String imgName;
+        public final int attacker;
+        public final int defender;
+        public final int guard;
+        public final JsonProduction[] production;
+        
+        public JsonSector(Sector src) {
+            this.type = src.getType().toString();
+            this.x = src.getX();
+            this.y = src.getY();
+            this.imgName = src.getType().getImgName();
+            this.attacker = src.getAttackerBonus();
+            this.defender = src.getDefenderBonus();
+            this.guard = src.getSectorGuardBonus();
+            this.production = new JsonProduction[src.getRessources().size()];
+            int i = 0;
+            for (final Production prod : src.getRessources()) {
+                this.production[i++] = new JsonProduction(prod);
+            }
+        }
+    }
+    
+    
+    
+    public final static class JsonQuadrant {
+        public final String name;
+        public final int maxX;
+        public final int maxY;
+        public final JsonSector[] sectors;
+        
+        public JsonQuadrant(Quadrant src) {
+            this.name = src.getName();
+            this.maxX = src.getMaxX();
+            this.maxY = src.getMaxY();
+            this.sectors = new JsonSector[src.getSectors().size()];
+            int i = 0;
+            for (final Sector s : src.getSectors()) {
+                this.sectors[i++] = new JsonSector(s);
+            }
+        }
+    }
+    
+    
+    
+    @Get(API_JSON_ROUTE)
+    public HttpAnswer getJsonRoute() {
+        return HttpAnswers.newStringAnswer(""); //$NON-NLS-1$
+    }
+    
+    
+    
+    @Get(API_JSON_SECTOR)
+    public HttpAnswer getJsonSector(@Param("q") String quadName,
+            @Param("x") int x,
+            @Param("y") int y) {
+        
+        final Quadrant quad = this.quadProvider.getQuadrant(quadName);
+        final Sector sector = quad.getSector(x, y);
+        final JsonSector jSector = new JsonSector(sector);
+        return new GsonHttpAnswer(200, jSector);
+    }
+    
+    
+    
+    @Get(API_JSON_QUADRANT)
+    public HttpAnswer getJsonQuadrant(@Param("q") String name) {
+        final Quadrant quad = this.quadProvider.getQuadrant(name);
+        final JsonQuadrant jQuad = new JsonQuadrant(quad);
+        return new GsonHttpAnswer(200, jQuad);
     }
 }
