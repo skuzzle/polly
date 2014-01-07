@@ -15,7 +15,7 @@ import polly.rx.core.orion.model.Wormhole;
 import polly.rx.core.orion.pathplanning.Graph.LazyBuilder;
 
 
-public class UniverseBuilder implements LazyBuilder<Sector, EdgeData> {
+class UniverseBuilder implements LazyBuilder<Sector, EdgeData> {
 
     private final Set<Sector> done;
     private final Collection<Wormhole> block;

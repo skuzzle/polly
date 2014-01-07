@@ -11,6 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import polly.rx.core.orion.model.LoadRequired;
+import polly.rx.core.orion.model.OrionObjectUtil;
 import polly.rx.core.orion.model.Quadrant;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.Wormhole;
@@ -19,6 +20,7 @@ import polly.rx.parsing.RegexUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import de.skuzzle.polly.tools.EqualsHelper;
 import de.skuzzle.polly.tools.Equatable;
 import de.skuzzle.polly.tools.io.WebUtils;
 
@@ -94,19 +96,26 @@ public class WLSWormholeProvider implements WormholeProvider {
         }
         @Override
         public String toString() {
-            return String.format("%s - von: %s %d,%d nach: %s %d, %d. Entladung: %d-%d",  //$NON-NLS-1$
-                    this.name, 
-                    this.von_quadrant, this.von_x, this.von_y, 
-                    this.nach_quadrant, this.nach_x, this.nach_y, 
-                    this.minUnload, this.maxUnload);
+            return OrionObjectUtil.wormholeString(this);
         }
+        
+        @Override
+        public int hashCode() {
+            return OrionObjectUtil.wormholeHash(this);
+        }
+        
+        @Override
+        public final boolean equals(Object obj) {
+            return EqualsHelper.testEquality(this, obj);
+        }
+        
         @Override
         public Class<?> getEquivalenceClass() {
             return Wormhole.class;
         }
         @Override
         public boolean actualEquals(Equatable o) {
-            return QuadrantUtils.wormholesEqua(this, (Wormhole) o);
+            return OrionObjectUtil.wormholesEquals(this, (Wormhole) o);
         }
     }
     

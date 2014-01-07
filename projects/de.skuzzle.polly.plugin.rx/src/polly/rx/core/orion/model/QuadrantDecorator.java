@@ -2,7 +2,6 @@ package polly.rx.core.orion.model;
 
 import java.util.Collection;
 
-import de.skuzzle.polly.tools.EqualsHelper;
 import de.skuzzle.polly.tools.Equatable;
 
 
@@ -12,12 +11,25 @@ public class QuadrantDecorator implements Quadrant {
     
     
     public QuadrantDecorator(Quadrant wrapped) {
+        if (wrapped == null) {
+            throw new NullPointerException();
+        }
         this.wrapped = wrapped;
+    }
+    
+    @Override
+    public String toString() {
+        return this.wrapped.toString();
+    }
+    
+    @Override
+    public int hashCode() {
+        return this.wrapped.hashCode();
     }
 
     @Override
     public final boolean equals(Object obj) {
-        return EqualsHelper.testEquality(this, obj);
+        return this.wrapped.equals(obj);
     }
     
     @Override

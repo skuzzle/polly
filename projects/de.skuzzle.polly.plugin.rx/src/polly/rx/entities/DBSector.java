@@ -17,38 +17,29 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import polly.rx.core.orion.model.OrionObjectUtil;
 import polly.rx.core.orion.model.Production;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.SectorType;
 import de.skuzzle.polly.sdk.PersistenceManagerV2.Write;
 import de.skuzzle.polly.sdk.time.Time;
+import de.skuzzle.polly.tools.EqualsHelper;
 import de.skuzzle.polly.tools.Equatable;
 
 @Entity
-@NamedQueries({ 
-    @NamedQuery(
-        name = DBSector.QUERY_FIND_SECTOR, 
-        query = "SELECT qs FROM DBSector qs WHERE qs.quadName = ?1 AND qs.x = ?2 AND qs.y = ?2"
-    ),
-    @NamedQuery(
-        name = DBSector.QUERY_BY_QUADRANT, 
-        query = "SELECT qs FROM DBSector qs WHERE qs.quadName = ?1"
-    ),
-    @NamedQuery(
-        name = DBSector.QUERY_DISTINCT_QUADS,
-        query = "SELECT DISTINCT(qs.quadName) FROM DBSector qs"
-            ),
-    @NamedQuery(
-        name = DBSector.QUERY_ALL_SECTORS,
-        query = "SELECT qs.quadName FROM DBSector qs"
-    )
-})
+@NamedQueries({
+        @NamedQuery(name = DBSector.QUERY_FIND_SECTOR, query = "SELECT qs FROM DBSector qs WHERE qs.quadName = ?1 AND qs.x = ?2 AND qs.y = ?2"),
+        @NamedQuery(name = DBSector.QUERY_BY_QUADRANT, query = "SELECT qs FROM DBSector qs WHERE qs.quadName = ?1"),
+        @NamedQuery(name = DBSector.QUERY_DISTINCT_QUADS, query = "SELECT DISTINCT(qs.quadName) FROM DBSector qs"),
+        @NamedQuery(name = DBSector.QUERY_SECTOR_BY_TYPE, query = "SELECT s FROM DBSector s WHERE s.type = ?1"),
+        @NamedQuery(name = DBSector.QUERY_ALL_SECTORS, query = "SELECT qs.quadName FROM DBSector qs") })
 public class DBSector implements Sector {
 
     public final static String QUERY_ALL_SECTORS = "ALL_SECTORS"; //$NON-NLS-1$
     public final static String QUERY_DISTINCT_QUADS = "DISTINCT_QUADS"; //$NON-NLS-1$
     public final static String QUERY_FIND_SECTOR = "FIND_SECTOR"; //$NON-NLS-1$
     public final static String QUERY_BY_QUADRANT = "SECTOR_BY_QUAD"; //$NON-NLS-1$
+    public final static String QUERY_SECTOR_BY_TYPE = "QUERY_SECTOR_BY_TYPE"; //$NON-NLS-1$
 
     private final static String GENERATOR = "SECT_GEN"; //$NON-NLS-1$
 
@@ -62,11 +53,11 @@ public class DBSector implements Sector {
     private int x;
 
     private int y;
-    
+
     private int attackerBonus;
-    
+
     private int defenderBonus;
-    
+
     private int sectorGuardBonus;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -77,13 +68,13 @@ public class DBSector implements Sector {
 
     @OneToMany
     private Collection<DBProduction> ressources;
-    
 
     
+
     public DBSector() {}
-    
-    
-    
+
+
+
     public DBSector(Sector src) {
         this.quadName = src.getQuadName();
         this.x = src.getX();
@@ -98,9 +89,9 @@ public class DBSector implements Sector {
             this.ressources.add(new DBProduction(prod.getRess(), prod.getRate()));
         }
     }
-    
-    
-    
+
+
+
     public void updateFrom(Sector other, Write write) {
         this.attackerBonus = other.getAttackerBonus();
         this.defenderBonus = other.getDefenderBonus();
@@ -115,9 +106,9 @@ public class DBSector implements Sector {
             write.single(dbProd);
         }
     }
-    
-    
-    
+
+
+
     @Override
     public String getQuadName() {
         return this.quadName;
@@ -143,7 +134,7 @@ public class DBSector implements Sector {
     }
 
 
-    
+
     @Override
     public int getY() {
         return this.y;
@@ -156,7 +147,7 @@ public class DBSector implements Sector {
     }
 
 
-    
+
     @Override
     public Date getDate() {
         return this.date;
@@ -199,7 +190,7 @@ public class DBSector implements Sector {
         return QUERY_FIND_SECTOR;
     }
 
-    
+
 
     @Override
     public int getAttackerBonus() {
@@ -208,7 +199,6 @@ public class DBSector implements Sector {
 
 
 
-    
     public void setAttackerBonus(int attackerBonus) {
         this.attackerBonus = attackerBonus;
     }
@@ -222,7 +212,6 @@ public class DBSector implements Sector {
 
 
 
-    
     public void setDefenderBonus(int defenderBonus) {
         this.defenderBonus = defenderBonus;
     }
@@ -236,18 +225,31 @@ public class DBSector implements Sector {
 
 
 
-    
     public void setSectorGuardBonus(int sectorGuardBonus) {
         this.sectorGuardBonus = sectorGuardBonus;
     }
 
-    
+
 
     public int getId() {
         return this.id;
     }
 
-    
+
+
+    @Override
+    public int hashCode() {
+        return OrionObjectUtil.sectorHash(this);
+    }
+
+
+
+    @Override
+    public final boolean equals(Object obj) {
+        return EqualsHelper.testEquality(this, obj);
+    }
+
+
 
     @Override
     public Class<?> getEquivalenceClass() {
@@ -255,11 +257,18 @@ public class DBSector implements Sector {
     }
 
 
-    
+
     @Override
     public boolean actualEquals(Equatable o) {
         final Sector other = (Sector) o;
-        return this.x == other.getX() && this.getY() == other.getY() && 
-                this.quadName.equals(other.getQuadName());
+        return this.x == other.getX() && this.getY() == other.getY()
+                && this.quadName.equals(other.getQuadName());
+    }
+
+
+
+    @Override
+    public String toString() {
+        return OrionObjectUtil.sectorString(this);
     }
 }

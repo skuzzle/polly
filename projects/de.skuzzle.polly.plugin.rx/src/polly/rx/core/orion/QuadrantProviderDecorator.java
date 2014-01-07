@@ -30,7 +30,7 @@ public class QuadrantProviderDecorator implements QuadrantProvider {
     }
 
     @Override
-    public Collection<Quadrant> getAllQuadrants() {
+    public Collection<? extends Quadrant> getAllQuadrants() {
         return this.wrapped.getAllQuadrants();
     }
 

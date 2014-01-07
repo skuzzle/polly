@@ -18,7 +18,6 @@ import polly.rx.core.orion.model.Production;
 import polly.rx.core.orion.model.Quadrant;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.SectorType;
-import polly.rx.core.orion.model.Wormhole;
 import polly.rx.core.orion.pathplanning.Graph;
 import polly.rx.core.orion.pathplanning.Graph.EdgeCosts;
 import polly.rx.core.orion.pathplanning.Graph.LazyBuilder;
@@ -62,22 +61,6 @@ public final class QuadrantUtils {
             return true;
         }
     };
-    
-    
-    
-    
-    
-    public static boolean sectorsEqual(Sector s1, Sector s2) {
-        return s1.getX() == s2.getX() && s1.getY() == s2.getY() && 
-                s1.getQuadName().equals(s2.getQuadName());
-    }
-    
-    
-    
-    public static boolean wormholesEqua(Wormhole h1, Wormhole h2) {
-        return h1.getSource().equals(h2.getSource()) && 
-                h1.getTarget().equals(h2.getTarget());
-    }
     
     
     

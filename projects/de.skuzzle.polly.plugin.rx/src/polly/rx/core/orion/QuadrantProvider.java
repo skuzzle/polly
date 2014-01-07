@@ -16,5 +16,5 @@ public interface QuadrantProvider {
     
     public Quadrant getQuadrant(String name);
     
-    public Collection<Quadrant> getAllQuadrants();
+    public Collection<? extends Quadrant> getAllQuadrants();
 }

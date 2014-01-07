@@ -3,7 +3,6 @@ package polly.rx.core.orion.model;
 import java.util.Collection;
 import java.util.Date;
 
-import de.skuzzle.polly.tools.EqualsHelper;
 import de.skuzzle.polly.tools.Equatable;
 
 
@@ -12,12 +11,25 @@ public class SectorDecorator implements Sector {
     private final Sector wrapped;
     
     public SectorDecorator(Sector wrapped) {
+        if (wrapped == null) {
+            throw new NullPointerException();
+        }
         this.wrapped = wrapped;
     }
     
     @Override
+    public int hashCode() {
+        return this.wrapped.hashCode();
+    }
+    
+    @Override
+    public String toString() {
+        return this.wrapped.toString();
+    }
+    
+    @Override
     public final boolean equals(Object obj) {
-        return EqualsHelper.testEquality(this, obj);
+        return this.wrapped.equals(obj);
     }
     
     @Override

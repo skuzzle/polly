@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import polly.rx.core.orion.model.OrionObjectUtil;
 import polly.rx.core.orion.model.Production;
 import polly.rx.core.orion.model.Quadrant;
 import polly.rx.core.orion.model.Sector;
@@ -48,6 +49,31 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider, QuadrantUpdate
         @Override
         public float getRate() {
             return this.rate;
+        }
+
+        @Override
+        public int hashCode() {
+            return OrionObjectUtil.productionHash(this);
+        }
+        
+        @Override
+        public boolean equals(Object obj) {
+            return EqualsHelper.testEquality(this, obj);
+        }
+        
+        @Override
+        public Class<?> getEquivalenceClass() {
+            return Production.class;
+        }
+
+        @Override
+        public boolean actualEquals(Equatable o) {
+            return OrionObjectUtil.productionEquals(this, (Production) o);
+        }
+        
+        @Override
+        public String toString() {
+            return OrionObjectUtil.productionString(this);
         }
     }
     
@@ -111,6 +137,11 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider, QuadrantUpdate
         }
         
         @Override
+        public int hashCode() {
+            return OrionObjectUtil.sectorHash(this);
+        }
+        
+        @Override
         public boolean equals(Object obj) {
             return EqualsHelper.testEquality(this, obj);
         }
@@ -122,12 +153,12 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider, QuadrantUpdate
 
         @Override
         public boolean actualEquals(Equatable o) {
-            return QuadrantUtils.sectorsEqual(this, (Sector) o);
+            return OrionObjectUtil.sectorsEqual(this, (Sector) o);
         }
         
         @Override
         public String toString() {
-            return String.format("%s %d, %d", this.quadName, this.x, this.y); //$NON-NLS-1$
+            return OrionObjectUtil.sectorString(this);
         }
     }
     
@@ -186,6 +217,16 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider, QuadrantUpdate
         }
 
         @Override
+        public int hashCode() {
+            return OrionObjectUtil.quadrantHash(this);
+        }
+        
+        @Override
+        public final boolean equals(Object obj) {
+            return EqualsHelper.testEquality(this, obj);
+        }
+        
+        @Override
         public Class<?> getEquivalenceClass() {
             return Quadrant.class;
         }
@@ -197,7 +238,7 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider, QuadrantUpdate
         
         @Override
         public String toString() {
-            return this.name;
+            return OrionObjectUtil.quadrantString(this);
         }
     }
     
@@ -401,21 +442,6 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider, QuadrantUpdate
 
     
     
-    public void removeQuadrant(String name) {
-        final Quadrant quad = this.getQuadrant(name);
-        this.allSectors.removeAll(quad.getSectors());
-        
-        final Integer id = this.nameToId.get(name);
-        this.nameToId.remove(name);
-        if (id != null) {
-            this.idToName.remove(id);
-        }
-        this.quadMap.remove(name);
-        this.store();
-    }
-    
-    
-    
     private EggiQuadrant getQuadrant(String name, boolean create) {
         if (!this.nameToId.containsKey(name) && create) {
             ++this.quadids;
@@ -460,33 +486,35 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider, QuadrantUpdate
     
     
     @Override
-    public void updateSectorInformation(Sector sector) {
-        final EggiSector newEggiSector = new EggiSector();
-        newEggiSector.attackerBonus = sector.getAttackerBonus();
-        newEggiSector.defenderBonus = sector.getDefenderBonus();
-        newEggiSector.sectorGuardBonus = sector.getSectorGuardBonus();
-        newEggiSector.date = Time.currentTime();
-        newEggiSector.type = sector.getType();
-        newEggiSector.quadName = sector.getQuadName();
-        newEggiSector.x = sector.getX();
-        newEggiSector.y = sector.getY();
-        newEggiSector.ressources = new ArrayList<>(sector.getRessources());
-
-        
-        final EggiQuadrant quadrant = this.getQuadrant(sector);
-        quadrant.maxX = Math.max(quadrant.maxX, newEggiSector.x);
-        quadrant.maxY = Math.max(quadrant.maxY, newEggiSector.y);
-        
-        final EggiSector existing = quadrant.getSector(
-                sector.getX(), sector.getY());
-        
-        if (sector.getType() == SectorType.UNKNOWN && existing.getType() != SectorType.NONE) {
-            // do not update existing sectors with unknown sectors
-            return;
+    public void updateSectorInformation(Collection<Sector> sectors) {
+        for (final Sector sector : sectors) {
+            final EggiSector newEggiSector = new EggiSector();
+            newEggiSector.attackerBonus = sector.getAttackerBonus();
+            newEggiSector.defenderBonus = sector.getDefenderBonus();
+            newEggiSector.sectorGuardBonus = sector.getSectorGuardBonus();
+            newEggiSector.date = Time.currentTime();
+            newEggiSector.type = sector.getType();
+            newEggiSector.quadName = sector.getQuadName();
+            newEggiSector.x = sector.getX();
+            newEggiSector.y = sector.getY();
+            newEggiSector.ressources = new ArrayList<>(sector.getRessources());
+    
+            
+            final EggiQuadrant quadrant = this.getQuadrant(sector);
+            quadrant.maxX = Math.max(quadrant.maxX, newEggiSector.x);
+            quadrant.maxY = Math.max(quadrant.maxY, newEggiSector.y);
+            
+            final EggiSector existing = quadrant.getSector(
+                    sector.getX(), sector.getY());
+            
+            if (sector.getType() == SectorType.UNKNOWN && existing.getType() != SectorType.NONE) {
+                // do not update existing sectors with unknown sectors
+                return;
+            }
+            this.allSectors.remove(existing);
+            this.allSectors.add(newEggiSector);
+            quadrant.sectors.put(QuadrantUtils.createMapKey(newEggiSector), newEggiSector);
         }
-        this.allSectors.remove(existing);
-        this.allSectors.add(newEggiSector);
-        quadrant.sectors.put(QuadrantUtils.createMapKey(newEggiSector), newEggiSector);
         this.store();
     }
 
@@ -495,5 +523,28 @@ public class EggiCSVQuadrantProvider implements QuadrantProvider, QuadrantUpdate
     @Override
     public Collection<? extends Sector> getEntryPortals() {
         return this.entryPortals;
+    }
+
+
+
+    @Override
+    public void deleteQuadrant(String quadName) throws OrionException {
+        final Quadrant quad = this.getQuadrant(quadName);
+        this.allSectors.removeAll(quad.getSectors());
+        
+        final Integer id = this.nameToId.get(quadName);
+        this.nameToId.remove(quadName);
+        if (id != null) {
+            this.idToName.remove(id);
+        }
+        this.quadMap.remove(quadName);
+        this.store();
+    }
+
+
+
+    @Override
+    public void deleteQuadrant(Quadrant quadrant) throws OrionException {
+        this.deleteQuadrant(quadrant.getName());
     }
 }

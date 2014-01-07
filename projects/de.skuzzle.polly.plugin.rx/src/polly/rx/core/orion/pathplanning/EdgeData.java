@@ -3,12 +3,11 @@ package polly.rx.core.orion.pathplanning;
 import java.util.ArrayList;
 import java.util.List;
 
-import polly.rx.core.orion.model.EntryPortalWormhole;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.Wormhole;
 
 
-public class EdgeData {
+class EdgeData {
     
     public static enum EdgeType {
         NORMAL, DIAGONAL, WORMHOLE, ENTRYPORTAL;

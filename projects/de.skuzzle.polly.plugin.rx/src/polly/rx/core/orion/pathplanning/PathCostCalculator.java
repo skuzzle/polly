@@ -4,7 +4,7 @@ import polly.rx.core.orion.model.Wormhole;
 import polly.rx.core.orion.pathplanning.Graph.EdgeCosts;
 
 
-public class PathCostCalculator implements EdgeCosts<EdgeData> {
+class PathCostCalculator implements EdgeCosts<EdgeData> {
     
     
     private final double COST_DIAGONAL = 1.5 / 60;

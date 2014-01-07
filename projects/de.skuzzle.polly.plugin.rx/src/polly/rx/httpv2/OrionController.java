@@ -16,6 +16,7 @@ import javax.imageio.ImageIO;
 import polly.rx.MSG;
 import polly.rx.core.AZEntryManager;
 import polly.rx.core.orion.Orion;
+import polly.rx.core.orion.OrionException;
 import polly.rx.core.orion.QuadrantProvider;
 import polly.rx.core.orion.QuadrantProviderDecorator;
 import polly.rx.core.orion.QuadrantUtils;
@@ -40,6 +41,7 @@ import de.skuzzle.polly.http.annotations.Param;
 import de.skuzzle.polly.http.annotations.Post;
 import de.skuzzle.polly.http.api.AlternativeAnswerException;
 import de.skuzzle.polly.http.api.Controller;
+import de.skuzzle.polly.http.api.HttpException;
 import de.skuzzle.polly.http.api.HttpSession;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
@@ -173,8 +175,8 @@ public class OrionController extends PollyController {
             super(wrapped);
         }
         
-        private Collection<Quadrant> decorate(Collection<Quadrant> quadrants) {
-            final List<Quadrant> result = new ArrayList<>();
+        private Collection<DisplayQuadrant> decorate(Collection<? extends Quadrant> quadrants) {
+            final List<DisplayQuadrant> result = new ArrayList<>();
             for (final Quadrant quadrant : quadrants) {
                 result.add(new DisplayQuadrant(quadrant));
             }
@@ -182,7 +184,7 @@ public class OrionController extends PollyController {
         }
         
         @Override
-        public Collection<Quadrant> getAllQuadrants() {
+        public Collection<DisplayQuadrant> getAllQuadrants() {
             return this.decorate(super.getAllQuadrants());
         }
         
@@ -294,15 +296,13 @@ public class OrionController extends PollyController {
     
     @Post(API_POST_LAYOUT)
     public HttpAnswer postQuadLayout(@Param("quadName") String quadName, 
-            @Param("paste") String paste) {
+            @Param("paste") String paste) throws HttpException {
         
         try {
             final Collection<Sector> sectors = QuadrantCnPParser.parse(paste, quadName);
-            for (final Sector sector : sectors) {
-                Orion.INSTANCE.createQuadrantUpdater().updateSectorInformation(sector);
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
+            Orion.INSTANCE.createQuadrantUpdater().updateSectorInformation(sectors);
+        } catch (ParseException | OrionException e) {
+            throw new HttpException(e);
         }
         
         return HttpAnswers.newRedirectAnswer(PAGE_QUAD_LAYOUT);

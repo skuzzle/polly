@@ -10,6 +10,9 @@ public class WormholeDecorator implements Wormhole {
     private final Wormhole wrapped;
     
     public WormholeDecorator(Wormhole wrapped) {
+        if (wrapped == null) {
+            throw new NullPointerException();
+        }
         this.wrapped = wrapped;
     }
     
@@ -47,7 +50,17 @@ public class WormholeDecorator implements Wormhole {
     public LoadRequired requiresLoad() {
         return this.wrapped.requiresLoad();
     }
+    
+    @Override
+    public int hashCode() {
+        return this.wrapped.hashCode();
+    }
 
+    @Override
+    public boolean equals(Object obj) {
+        return this.wrapped.equals(obj);
+    }
+    
     @Override
     public Class<?> getEquivalenceClass() {
         return wrapped.getEquivalenceClass();
@@ -56,5 +69,10 @@ public class WormholeDecorator implements Wormhole {
     @Override
     public boolean actualEquals(Equatable o) {
         return wrapped.actualEquals(o);
+    }
+    
+    @Override
+    public String toString() {
+        return this.wrapped.toString();
     }
 }

@@ -107,7 +107,7 @@ public class PathPlanner {
         
         @Override
         public Sector getSector(int x, int y) {
-            final String key = x + "_" + y; //$NON-NLS-1$
+            final String key = QuadrantUtils.createMapKey(x, y);
             final Sector sector = super.getSector(x, y);
             final SectorType type = this.highlights.get(key);
             if (type != null) {
