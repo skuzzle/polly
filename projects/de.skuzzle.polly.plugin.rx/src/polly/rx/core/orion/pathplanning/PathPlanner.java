@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -159,7 +160,7 @@ public class PathPlanner {
         
         private final Graph<Sector, EdgeData>.Path path;
         private final List<Group> groups;
-        private final List<Wormhole> wormholes;
+        private final LinkedList<Wormhole> wormholes;
         private final int sectorJumps;
         private final int quadJumps;
         private final int minUnload;
@@ -180,7 +181,7 @@ public class PathPlanner {
             this.path = path;
             this.options = options;
             this.groups = new ArrayList<>();
-            this.wormholes = new ArrayList<>();
+            this.wormholes = new LinkedList<>();
 
             String lastQuad = ""; //$NON-NLS-1$
             Group currentGroup = null;
@@ -297,12 +298,17 @@ public class PathPlanner {
             this.sumMaxWaitingTime = sumMaxWaitingTime;
         }
         
-        public Wormhole getWormholeToBlock() {
+        public Wormhole getWormholeToBlock(boolean blockTail) {
             if (this.wormholes.isEmpty()) {
                 return null;
             }
+            final Iterator<Wormhole> it = blockTail 
+                    ? this.wormholes.descendingIterator() 
+                    : this.wormholes.iterator();
+            
             int i = 0;
-            for (final Wormhole hole : this.wormholes) {
+            while (it.hasNext()) {
+                final Wormhole hole = it.next();
                 if (!hole.getName().equals(SectorType.EINTRITTS_PORTAL.toString())) {
                     if (i++ == this.blockNr) {
                         ++this.blockNr;
@@ -398,7 +404,7 @@ public class PathPlanner {
                 final UniversePath nextPath = result.get(nextPathIdx);
                 if (nextPath.done) continue;
                 
-                final Wormhole block = nextPath.getWormholeToBlock();
+                final Wormhole block = nextPath.getWormholeToBlock(options.blockTail);
                 
                 if (block != null) {
                     builder.startOverAndBlock(block);

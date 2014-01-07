@@ -63,6 +63,10 @@
                     <td><input id="currentJumpTime" type="text" class="textbox" placeholder="$MSG.htmlOrionOptional" style="width: 70px;"/></td>
                 </tr>
                 <tr>
+                    <td>$MSG.htmlOrionExpertSetting</td>
+                    <td><input id="blockTail" type="checkbox"/>$MSG.htmlOrionBlockTail</td>
+                </tr>
+                <tr>
                     <td>$MSG.htmlOrionEntryPortals</td>
                     <td>#foreach ($portal in $entryPortals) #SECTOR_NO_LINK ( $portal )<br/> #end</td>
                 </tr>
@@ -104,10 +108,10 @@ function requestRoute() {
 	var fleetId = $("#selectFleet option:selected").val()
 	var jumpTime = encodeURI($("#jumpTime").val());
 	var currentJumpTime = encodeURI($("#currentJumpTime").val());
-	var avoidWormholes = $("#avoidWormholes").val();
+	var blockTail = $("#blockTail").val();
 	
 	var url = "$PAGE_GETROUTE?fleetId="+fleetId+"&jt="+jumpTime+
-			"&cjt="+currentJumpTime+"&awh=" + avoidWormholes;
+			"&cjt="+currentJumpTime+"&bt="+blockTail;
 	
 	$("#progressbar").fadeIn();
 	$.get(url, function(data) {
