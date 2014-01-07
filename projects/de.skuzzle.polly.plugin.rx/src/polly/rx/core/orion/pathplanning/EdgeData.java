@@ -7,7 +7,7 @@ import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.Wormhole;
 
 
-class EdgeData {
+public class EdgeData {
     
     public static enum EdgeType {
         NORMAL, DIAGONAL, WORMHOLE, ENTRYPORTAL;
