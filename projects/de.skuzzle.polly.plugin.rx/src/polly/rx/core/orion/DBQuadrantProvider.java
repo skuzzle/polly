@@ -52,6 +52,7 @@ public class DBQuadrantProvider implements QuadrantProvider {
 
     @Override
     public DBQuadrant getQuadrant(String name) {
+        name = name.trim();
         DBQuadrant quad = this.persistence.atomic().findSingle(DBQuadrant.class, 
                 DBQuadrant.QUERY_QUADRANT_BY_NAME, new Param(name));
         

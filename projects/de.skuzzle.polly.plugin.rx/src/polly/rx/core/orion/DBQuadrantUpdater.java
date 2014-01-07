@@ -77,9 +77,9 @@ public class DBQuadrantUpdater implements QuadrantUpdater {
 
     @Override
     public void deleteQuadrant(String quadName) throws OrionException {
+        quadName = quadName.trim();
         try (final Write write = this.persistence.write()) {
             final Read read = write.read();
-            
             final DBQuadrant existing = read.findSingle(DBQuadrant.class, 
                     DBQuadrant.QUERY_QUADRANT_BY_NAME, new Param(quadName));
             
