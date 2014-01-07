@@ -92,18 +92,22 @@ class BasicEventHandler implements HttpHandler {
 
 
 
-    private final void parsePostParameters(HttpExchange t, Map<String, String> result) 
+    private final String parsePostParameters(HttpExchange t, Map<String, String> result) 
             throws IOException {
         BufferedReader r = null;
         try {
             r = new BufferedReader(new InputStreamReader(t.getRequestBody(), 
                     this.server.getEncoding()));
             String line = null;
+            final StringBuilder b = new StringBuilder();
             while ((line = r.readLine()) != null) {
+                b.append(line);
+                b.append("\n");
                 if (!line.equals("")) {
                     parseParameters(line, result);
                 }
             }
+            return b.toString();
         } finally {
             if (r != null) {
                 r.close();
@@ -156,7 +160,7 @@ class BasicEventHandler implements HttpHandler {
         }
         
         // extract POST parameters
-        this.parsePostParameters(t, post);
+        final String requestBody = this.parsePostParameters(t, post);
 
         // extract cookies
         final Map<String, String> cookies = this.parseCookies(t);
@@ -193,7 +197,7 @@ class BasicEventHandler implements HttpHandler {
         
         final HttpEventImpl event = new HttpEventImpl(this.server, mode, 
             t.getRequestURI(), t.getRemoteAddress(), plainUri, session, cookies, 
-            get, post) {
+            get, post, requestBody) {
             
             public void discard() {
                 super.discard();

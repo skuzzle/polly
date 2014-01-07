@@ -40,6 +40,7 @@ class HttpEventImpl implements HttpEvent {
     private final transient HttpServer source;
     private final URI requestUri;
     private final String plainUri;
+    private final String requestBody;
     private final InetSocketAddress clientIp;
     private final HttpSession session;
     private final Map<String, String> cookies;
@@ -57,7 +58,7 @@ class HttpEventImpl implements HttpEvent {
     public HttpEventImpl(HttpServer source, RequestMode mode, URI requestURI, 
         InetSocketAddress remoteAddress,
         String plainUri, HttpSession session, Map<String, String> cookies, 
-        Map<String, String> get, Map<String, String> post) {
+        Map<String, String> get, Map<String, String> post, String requestBody) {
         
         this.source = source;
         this.mode = mode;
@@ -65,6 +66,7 @@ class HttpEventImpl implements HttpEvent {
         this.plainUri = plainUri;
         this.clientIp = remoteAddress;
         this.session = session;
+        this.requestBody = requestBody;
         
         this.cookies = Collections.unmodifiableMap(cookies);
         this.get = Collections.unmodifiableMap(get);
@@ -79,7 +81,13 @@ class HttpEventImpl implements HttpEvent {
     
     public HttpEventImpl copy() {
         return new HttpEventImpl(this.source, this.mode, this.requestUri, this.clientIp,
-            this.plainUri, null, this.cookies, this.get, this.post);
+            this.plainUri, null, this.cookies, this.get, this.post, this.requestBody);
+    }
+    
+    
+    
+    public String getRequestBody() {
+        return this.requestBody;
     }
     
     

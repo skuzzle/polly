@@ -77,6 +77,13 @@ public class DBSector implements Sector {
 
 
     public DBSector(Sector src) {
+        if (src.getType() == null) {
+            throw new NullPointerException();
+        } else if (src.getRessources() == null) {
+            throw new NullPointerException();
+        } else if (src.getQuadName() == null) {
+            throw new NullPointerException();
+        }
         this.quadName = src.getQuadName();
         this.x = src.getX();
         this.y = src.getY();
@@ -94,7 +101,13 @@ public class DBSector implements Sector {
 
 
     public void updateFrom(Sector other, Write write) {
-        if (!this.equals(other)) {
+        if (other.getType() == null) {
+            throw new NullPointerException();
+        } else if (other.getRessources() == null) {
+            throw new NullPointerException();
+        } else if (other.getQuadName() == null) {
+            throw new NullPointerException();
+        } else if (!this.equals(other)) {
             throw new IllegalArgumentException(); // can not update distinct sectors
         } else if (other.getType() == SectorType.UNKNOWN) {
             // do not update with unknown information
@@ -105,12 +118,15 @@ public class DBSector implements Sector {
         this.sectorGuardBonus = other.getSectorGuardBonus();
         this.date = Time.currentTime();
         this.type = other.getType();
-        write.removeAll(this.ressources);
-        this.ressources.clear();
-        for (final Production prod : other.getRessources()) {
-            final DBProduction dbProd = new DBProduction(prod.getRess(), prod.getRate());
-            this.ressources.add(dbProd);
-            write.single(dbProd);
+        
+        if (!this.ressources.equals(other.getRessources())) {
+            write.removeAll(this.ressources);
+            this.ressources.clear();
+            for (final Production prod : other.getRessources()) {
+                final DBProduction dbProd = new DBProduction(prod.getRess(), prod.getRate());
+                this.ressources.add(dbProd);
+                write.single(dbProd);
+            }
         }
     }
 

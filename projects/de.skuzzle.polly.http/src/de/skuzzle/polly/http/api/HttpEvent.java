@@ -57,13 +57,18 @@ public interface HttpEvent {
     
     
     /**
+     * Gets the body of the incoming request.
+     * @return The request body.
+     */
+    public String getRequestBody();
+    
+    /**
      * Gets the time of when this event was created.
      * 
      * @return Event creation time.
      */
     public Date getEventTime() ;
     
-
     /**
      * Gets the {@link HttpServer} which received the event.
      * 

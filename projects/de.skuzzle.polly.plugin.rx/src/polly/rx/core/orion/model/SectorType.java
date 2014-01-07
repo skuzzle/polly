@@ -57,6 +57,18 @@ public enum SectorType {
     ;
 
     
+    
+    public static SectorType byName(String name) {
+        for (final SectorType type : SectorType.values()) {
+            if (type.toString().equals(name)) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException(name);
+    }
+    
+    
+    
     public static SectorType[] HIGHLIGHTS = {
         HIGHLIGHT_START,
         HIGHLIGHT_TARGET,
