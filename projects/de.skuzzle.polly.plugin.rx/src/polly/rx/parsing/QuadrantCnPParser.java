@@ -11,10 +11,12 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import polly.rx.core.orion.model.OrionObjectUtil;
 import polly.rx.core.orion.model.Production;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.SectorType;
 import de.skuzzle.polly.sdk.time.Time;
+import de.skuzzle.polly.tools.EqualsHelper;
 import de.skuzzle.polly.tools.Equatable;
 import de.skuzzle.polly.tools.FileUtil;
 
@@ -38,6 +40,15 @@ public class QuadrantCnPParser {
             this.date = Time.currentTime();
         }
 
+        @Override
+        public int hashCode() {
+            return OrionObjectUtil.sectorHash(this);
+        }
+        
+        @Override
+        public boolean equals(Object obj) {
+            return EqualsHelper.testEquality(this, obj);
+        }
         
         @Override
         public Class<?> getEquivalenceClass() {
@@ -46,9 +57,7 @@ public class QuadrantCnPParser {
 
         @Override
         public boolean actualEquals(Equatable o) {
-            final Sector other = (Sector) o;
-            return this.quadName.equals(other.getQuadName()) && this.x == other.getX() && 
-                    this.y == other.getY();
+            return OrionObjectUtil.sectorsEqual(this, (Sector) o);
         }
 
         @Override
@@ -95,10 +104,10 @@ public class QuadrantCnPParser {
         public Collection<? extends Production> getRessources() {
             return Collections.emptyList();
         }
-        
+
         @Override
         public String toString() {
-            return String.format("%s %d, %d", this.quadName, this.x, this.y); //$NON-NLS-1$
+            return OrionObjectUtil.sectorString(this);
         }
     }
     
