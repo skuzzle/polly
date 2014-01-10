@@ -395,6 +395,8 @@ public class MSG extends Constants {
     public static String secTypeSuperNovaTyp2;
     public static String secTypeNova;
     public static String secTypeNeutronengestern;
+    public static String secTypeKomet;
+    public static String secTypeRoterZwerg;
     public static String secTypeAsteroid;
     public static String secTypeAsteroidenFeld;
     public static String secTypeSternenNebel;
@@ -410,6 +412,10 @@ public class MSG extends Constants {
     public static String secTypeKolonie;
     public static String secTypeAndroidenKolonie;
     public static String secTypePortal;
+    public static String secTypePulsar;
+    public static String secTypeAlienKolonie;
+    public static String secTypeMeteorid;
+    public static String secTypeHandelszentrum;
     public static String loadNone;
     public static String loadPartial;
     public static String loadFull;
@@ -470,6 +476,7 @@ public class MSG extends Constants {
     public static String pluginAutoRemindAzDesc;
     public static String pluginLowPzWarningDesc;
     public static String pluginPortalDesc;
+
 
     static {
         Resources.init(FAMILY, MSG.class);

@@ -23,6 +23,7 @@ public enum SectorType {
     ROTER_RIESE(MSG.secTypeRoterRiese, 13),
     WEISSER_ZWERG(MSG.secTypeWeisserZwerg, 14),
     GELBER_ZWERG(MSG.secTypeGelberZwerg, 15),
+    ROTER_ZWERG(MSG.secTypeRoterZwerg, 16),
     BRAUNER_ZWERG(MSG.secTypeBraunerZwerg, 17),
     SCHWARZER_ZWERG(MSG.secTypeSchwarzerZwerg, 18),
     PLANET_TYP_A(MSG.secTypePlanetTypA, 30),
@@ -39,6 +40,9 @@ public enum SectorType {
     SUPER_NOVA_TYP_2(MSG.secTypeSuperNovaTyp2, 52),
     NOVA(MSG.secTypeNova, 53),
     NEUTRONENSTERN(MSG.secTypeNeutronengestern, 54),
+    PULSAR(MSG.secTypePulsar, 55),
+    KOMET(MSG.secTypeKomet, 60),
+    METEORID(MSG.secTypeMeteorid, 61),
     ASTEROID(MSG.secTypeAsteroid, 62),
     ASTEROIDENFELD(MSG.secTypeAsteroidenFeld, 63),
     STERNEN_NEBEL(MSG.secTypeSternenNebel, 70),
@@ -51,8 +55,10 @@ public enum SectorType {
     TRUEMMERFELD(MSG.secTypeTruemmerfeld, 84),
     MINENKOLONIE(MSG.secTypeMinenkolonie, 85),
     FABRIKANLAGE(MSG.secTypeFabrikanlage, 86),
+    ALIENKOLONIE(MSG.secTypeAlienKolonie, 87),
     KOLONIE(MSG.secTypeKolonie, 88),
     ANDROIDENKOLONIE(MSG.secTypeAndroidenKolonie, 89),
+    HANDELSZENTRUM(MSG.secTypeHandelszentrum, 90),
     EINTRITTS_PORTAL(MSG.secTypePortal, 100),
     ;
 
