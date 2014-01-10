@@ -12,7 +12,11 @@
 var POST_SECTOR_INFORMATION = true;
 
 // Deckt automatisch den gesamten Quadranten auf
-var AUTO_UNSCAN = true;
+var AUTO_UNVEIL = true;
+
+var POLLY_ACCOUNT = "TODO";
+var POLLY_PASSWORD = "TODO";
+
 
 
 // Do not modify the following part of the script
@@ -48,10 +52,10 @@ if (uri.indexOf("map.php") != -1) {
 var debug = true;
 
 // API URLs
-var POLLY_URL = "https://localhost:83";
-var SECTOR_API = "/api/orion/json/sector";
-var QUADRANT_API = "/api/orion/json/quadrant";
-var POST_SECTOR_API = "/api/orion/json/postSector";
+var POLLY_URL = "$host"
+var SECTOR_API = "$sectorApi"
+var QUADRANT_API = "$quadrantApi";
+var POST_SECTOR_API = "$postSectorApi";
 var IMG_URL = "http://www.revorix.info/gfx/q/";
 
 
@@ -116,7 +120,7 @@ case PAGE_SECTOR:
         $("a#showQuad").click(showQuad);
         $("a#hideQuad").click(hideQuad);
         
-        if (!AUTO_UNSCAN) {
+        if (!AUTO_UNVEIL) {
             // show link to manually unscan
             $("a#hideQuad").show();
         } else {
@@ -141,10 +145,7 @@ case PAGE_SECTOR:
 
     if (isFleetSelected) {
         fleets['currentFleet'] = selectedFleetName;
-    }    
-    console.log(JSON.stringify(fleets));
-    
-
+    }
     
     // Post current sector information back to polly
     if (POST_SECTOR_INFORMATION) {
