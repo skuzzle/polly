@@ -26,6 +26,8 @@ import polly.rx.core.orion.QuadrantUtils;
 import polly.rx.core.orion.WormholeProvider;
 import polly.rx.core.orion.WormholeProviderDecorator;
 import polly.rx.core.orion.model.OrionObjectUtil;
+import polly.rx.core.orion.model.Portal;
+import polly.rx.core.orion.model.PortalType;
 import polly.rx.core.orion.model.Production;
 import polly.rx.core.orion.model.Quadrant;
 import polly.rx.core.orion.model.QuadrantDecorator;
@@ -41,6 +43,7 @@ import polly.rx.core.orion.pathplanning.RouteOptions;
 import polly.rx.entities.RxRessource;
 import polly.rx.parsing.ParseException;
 import polly.rx.parsing.QuadrantCnPParser;
+import polly.rx.parsing.VenadHelper;
 
 import com.google.gson.Gson;
 
@@ -65,6 +68,7 @@ import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLTools;
 import de.skuzzle.polly.sdk.resources.Constants;
 import de.skuzzle.polly.sdk.time.Time;
+import de.skuzzle.polly.tools.Check;
 import de.skuzzle.polly.tools.EqualsHelper;
 import de.skuzzle.polly.tools.Equatable;
 import de.skuzzle.polly.tools.io.FastByteArrayInputStream;
@@ -797,6 +801,78 @@ public class OrionController extends PollyController {
     
     
     
+    private final static class PortalImpl implements Portal {
+
+        private final String ownerName;
+        private final String ownerClan;
+        private final Sector sector;
+        private final PortalType type;
+        private final Date date;
+        
+        public PortalImpl(String ownerName, String ownerClan, Sector sector, 
+                PortalType type) {
+            Check.notNull(ownerName, ownerClan, sector, type);
+            this.ownerName = ownerName;
+            this.ownerClan = ownerClan;
+            this.sector = sector;
+            this.type = type;
+            this.date = Time.currentTime();
+        }
+        
+        @Override
+        public String toString() {
+            return OrionObjectUtil.portalString(this);
+        }
+        
+        @Override
+        public int hashCode() {
+            return OrionObjectUtil.portalHash(this);
+        }
+        
+        @Override
+        public final boolean equals(Object obj) {
+            return EqualsHelper.testEquality(this, obj);
+        }
+        
+        @Override
+        public Class<?> getEquivalenceClass() {
+            return Portal.class;
+        }
+
+        @Override
+        public boolean actualEquals(Equatable o) {
+            return OrionObjectUtil.portalsEqual(this, (Portal) o);
+        }
+
+        @Override
+        public Sector getSector() {
+            return this.sector;
+        }
+
+        @Override
+        public String getOwner() {
+            return this.ownerName;
+        }
+
+        @Override
+        public String getOwnerClan() {
+            return this.ownerClan;
+        }
+
+        @Override
+        public PortalType getType() {
+            return this.type;
+        }
+
+        @Override
+        public Date getDate() {
+            return this.date;
+        }
+        
+    }
+    
+    
+    
     public final static class JsonQuadrant {
         public final String name;
         public final int maxX;
@@ -854,6 +930,21 @@ public class OrionController extends PollyController {
         if (jSector.type == null) {
             return new GsonHttpAnswer(200, new SuccessResult(false, "")); //$NON-NLS-1$
         }
+        final List<Portal> portals = new ArrayList<>();
+        if (jSector.personalPortals != null) {
+            for (final String portal : jSector.personalPortals) {
+                final String ownerName = VenadHelper.getName(portal);
+                final String ownerClan = VenadHelper.getClan(portal);
+                portals.add(new PortalImpl(ownerName, ownerClan, jSector, PortalType.PRIVATE));
+            }
+        }
+        if (jSector.clanportals != null) {
+            for (final String portal : jSector.clanportals) {
+                final String ownerName = VenadHelper.getName(portal);
+                final String ownerClan = VenadHelper.getClan(portal);
+                portals.add(new PortalImpl(ownerName, ownerClan, jSector, PortalType.CLAN));
+            }
+        }
         jSector.sectorType = SectorType.byName(jSector.type);
         for (final JsonProduction prod : jSector.production) {
             prod.rxRess = RxRessource.values()[prod.ressId - 1];
@@ -861,6 +952,9 @@ public class OrionController extends PollyController {
         try {
             Orion.INSTANCE.getQuadrantUpdater().updateSectorInformation(
                     Collections.singleton(jSector));
+            for (final Portal portal : portals) {
+                Orion.INSTANCE.getPortalUpdater().updatePortal(portal);
+            }
         } catch (OrionException e) {
             return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
         }

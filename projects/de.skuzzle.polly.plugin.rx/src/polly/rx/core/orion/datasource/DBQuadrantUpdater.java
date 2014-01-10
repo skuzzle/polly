@@ -1,5 +1,6 @@
 package polly.rx.core.orion.datasource;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -110,8 +111,8 @@ public class DBQuadrantUpdater implements QuadrantUpdater {
 
 
     @Override
-    public void updateSectorInformation(Collection<? extends Sector> sectors) 
-            throws OrionException {
+    public synchronized Collection<DBSector> updateSectorInformation(
+            Collection<? extends Sector> sectors) throws OrionException {
         
         final Map<String, DBQuadrant> quadCache = new HashMap<>();
         final Map<String, DBSector> sectorCache = new HashMap<>();
@@ -152,6 +153,11 @@ public class DBQuadrantUpdater implements QuadrantUpdater {
         }
         this.fireSectorsAdded(sectorCache.values());
         this.fireSectorsUpdated(updated);
+        final ArrayList<DBSector> result = new ArrayList<>(
+                sectorCache.values().size() + updated.size());
+        result.addAll(sectorCache.values());
+        result.addAll(updated);
+        return result;
     }
     
     

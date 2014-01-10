@@ -20,13 +20,14 @@ public enum Orion implements UniverseFactory {
     private WormholeProvider holeProvider;
     private QuadrantUpdater quadUpdater;
     private PortalProvider portalProvider;
+    private PortalUpdater portalUpdater;
     private PathPlanner planner;
 
 
 
     public static void initialize(QuadrantProvider quadProvider,
             QuadrantUpdater quadUpdater, WormholeProvider holeProvider,
-            PortalProvider portalProvider) {
+            PortalProvider portalProvider, PortalUpdater portalUpdater) {
 
         if (INSTANCE.quadProvider != null) {
             throw new IllegalStateException("already initialized"); //$NON-NLS-1$
@@ -38,12 +39,15 @@ public enum Orion implements UniverseFactory {
             throw new NullPointerException(QuadrantUpdater.class.getSimpleName());
         } else if (portalProvider == null) {
             throw new NullPointerException(PortalProvider.class.getSimpleName());
+        } else if (portalUpdater == null) {
+            throw new NullPointerException(PortalUpdater.class.getSimpleName());
         }
 
         INSTANCE.quadProvider = quadProvider;
         INSTANCE.holeProvider = holeProvider;
         INSTANCE.quadUpdater = quadUpdater;
         INSTANCE.portalProvider = portalProvider;
+        INSTANCE.portalUpdater = portalUpdater;
         INSTANCE.planner = new PathPlanner(quadProvider, holeProvider);
     }
 
@@ -89,7 +93,13 @@ public enum Orion implements UniverseFactory {
     }
 
 
+    
+    public PortalUpdater getPortalUpdater() {
+        return this.portalUpdater;
+    }
+    
 
+    
     public PathPlanner getPathPlanner() {
         assert this.checkInitialized();
         return this.planner;

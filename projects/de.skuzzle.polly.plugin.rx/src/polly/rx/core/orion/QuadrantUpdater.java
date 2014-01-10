@@ -16,5 +16,5 @@ public interface QuadrantUpdater {
     
     public void deleteQuadrant(Quadrant quadrant) throws OrionException;
 
-    public void updateSectorInformation(Collection<? extends Sector> sectors) throws OrionException;
+    public Collection<? extends Sector> updateSectorInformation(Collection<? extends Sector> sectors) throws OrionException;
 }
