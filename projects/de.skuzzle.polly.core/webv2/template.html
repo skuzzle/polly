@@ -252,7 +252,15 @@
             <h2>$mc.getName()</h2>
             <ul>
             #foreach ($me in $mc.getContent())
-            <li><a id="$me.hashCode()" href="$me.getUrl()" class="menuEntry">$me.getName()</a></li>
+            <li><a id="$me.hashCode()" href="$me.getUrl()" class="menuEntry">$me.getName()</a>
+            #if ($me.mustRenderSubEntries($user, $myPolly.roles())) 
+            <ul>
+                #foreach ($subMe in $me.getSubEntries())
+                <li><a id="$subMe.hashCode()" href="$subMe.getUrl()" class="menuEntry">$subMe.getName()</a></li>
+                #end
+            </ul>
+            #end
+            </li>
             #end
             </ul>
         </div>

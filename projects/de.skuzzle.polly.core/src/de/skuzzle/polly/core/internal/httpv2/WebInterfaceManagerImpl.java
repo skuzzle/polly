@@ -121,4 +121,19 @@ public class WebInterfaceManagerImpl implements WebinterfaceManager {
     public boolean isSSL() {
         return this.ssl;
     }
+
+
+    
+    @Override
+    public MenuEntry getMenuEntry(String name) {
+        // TODO: this is O(n) *urghs*
+        for (final MenuCategory c : this.categories.values()) {
+            for (MenuEntry e : c.getContent()) {
+                if (e.getName().equalsIgnoreCase(name)) {
+                    return e;
+                }
+            }
+        }
+        return null;
+    }
 }

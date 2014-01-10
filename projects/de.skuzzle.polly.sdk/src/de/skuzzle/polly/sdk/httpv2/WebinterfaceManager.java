@@ -12,11 +12,14 @@ public interface WebinterfaceManager {
     public final static String LOGIN_TIME = "loginTime"; //$NON-NLS-1$
     
     public final static String ADD_MENU_ENTRY = "ADD_MENU_ENTRY"; //$NON-NLS-1$
+    public final static String ADD_SUB_ENTRY = "ADD_SUB_ENTRY"; //$NON-NLS-1$
     
     public void addTopMenuEntry(MenuEntry me);
     
     public List<MenuEntry> getTopMenuEntries();
 
+    public MenuEntry getMenuEntry(String name);
+    
     public void addCategory(MenuCategory me);
     
     public void addMenuEntry(String category, MenuEntry me);

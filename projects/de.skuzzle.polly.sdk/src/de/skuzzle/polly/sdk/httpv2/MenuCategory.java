@@ -51,7 +51,10 @@ public class MenuCategory implements Comparable<MenuCategory> {
         return false;
     }
 
-
+    @Override
+    public int hashCode() {
+        return Math.abs(super.hashCode());
+    }
 
     @Override
     public int compareTo(MenuCategory o) {

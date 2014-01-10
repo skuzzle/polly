@@ -175,6 +175,37 @@ public class WebinterfaceProvider extends AbstractProvider {
                     new MenuEntry(name, url, description, permissions));
             }
         });
+        this.server.addAddHandlerListener(new AddHandlerListener() {
+            
+            @Override
+            public void handlerAdded(Controller c, String url, String name, String[] values) {
+                if (values.length < 1 || !values[0].equals(WebinterfaceManager.ADD_SUB_ENTRY)) {
+                    return;
+                } else if (values.length < 4) {
+                    logger.error("Ignoring 'ADD_SUB_ENTRY' beacause of missing parameters"); //$NON-NLS-1$
+                    return;
+                }
+                
+                final String parent = values[1];
+                final String bundleFamily = values[2];
+                final String descriptionKey = values[3];
+                final String[] permissions;
+                if (values.length == 4) {
+                    permissions = new String[0];
+                } else {
+                    permissions = Arrays.copyOfRange(values, 4, values.length);
+                }
+                
+                final PollyBundle pb = Resources.get(bundleFamily, 
+                        c.getClass().getClassLoader());
+                final String description = pb.get(descriptionKey);
+                name = pb.get(name);
+                final MenuEntry me = webinterface.getMenuEntry(parent);
+                if (me != null) {
+                    me.addSubEntry(new MenuEntry(name, url, description, permissions));
+                }
+            }
+        });
         
         this.provideComponent(this.webinterface);
     }
