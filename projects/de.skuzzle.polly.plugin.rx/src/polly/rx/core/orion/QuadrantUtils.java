@@ -156,7 +156,7 @@ public final class QuadrantUtils {
             i = s.lastIndexOf(' ');
             final int x = Integer.parseInt(s.substring(i + 1));
             final String quadName = s.substring(0, i);
-            return Orion.INSTANCE.createQuadrantProvider().getQuadrant(
+            return Orion.INSTANCE.getQuadrantProvider().getQuadrant(
                     quadName).getSector(x, y);
         } catch (Exception e) {
             throw new ParseException(MSG.routeParseError, e);

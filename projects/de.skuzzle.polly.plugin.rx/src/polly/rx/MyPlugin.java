@@ -20,13 +20,15 @@ import polly.rx.core.ScoreBoardManager;
 import polly.rx.core.TrainManagerV2;
 import polly.rx.core.orion.CSVToDBConverter;
 import polly.rx.core.orion.CachedQuadrantProvider;
-import polly.rx.core.orion.DBQuadrantProvider;
-import polly.rx.core.orion.DBQuadrantUpdater;
-import polly.rx.core.orion.EggiCSVQuadrantProvider;
 import polly.rx.core.orion.Orion;
+import polly.rx.core.orion.PortalProvider;
 import polly.rx.core.orion.QuadrantProvider;
-import polly.rx.core.orion.WLSWormholeProvider;
 import polly.rx.core.orion.WormholeProvider;
+import polly.rx.core.orion.datasource.DBPortalProvider;
+import polly.rx.core.orion.datasource.DBQuadrantProvider;
+import polly.rx.core.orion.datasource.DBQuadrantUpdater;
+import polly.rx.core.orion.datasource.EggiCSVQuadrantProvider;
+import polly.rx.core.orion.datasource.WLSWormholeProvider;
 import polly.rx.entities.AZEntry;
 import polly.rx.entities.BattleDrop;
 import polly.rx.entities.BattleReport;
@@ -276,11 +278,12 @@ public class MyPlugin extends PollyPlugin {
         dbQuadUpdater.addQuadrantListener(dbQuadProvider);
         
         final WormholeProvider holeProvider = new WLSWormholeProvider();
+        final PortalProvider portalProvider = new DBPortalProvider(this.getMyPolly().persistence());
         
         final CSVToDBConverter conv = new CSVToDBConverter(csvQuadProvider, dbQuadUpdater);
         this.getMyPolly().runOnce().registerAction(conv);
         
-        Orion.initialize(dbQuadProvider, dbQuadUpdater, holeProvider);
+        Orion.initialize(dbQuadProvider, dbQuadUpdater, holeProvider, portalProvider);
         
         final OrionController oc = new OrionController(this.getMyPolly(), azManager);
         this.getMyPolly().webInterface().getServer().addController(oc);

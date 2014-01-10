@@ -3,9 +3,11 @@ package polly.rx.core.orion;
 
 public interface UniverseFactory {
 
-    public WormholeProvider createWormholeProvider();
+    public WormholeProvider getWormholeProvider();
     
-    public QuadrantProvider createQuadrantProvider();
+    public QuadrantProvider getQuadrantProvider();
     
-    public QuadrantUpdater createQuadrantUpdater();
+    public QuadrantUpdater getQuadrantUpdater();
+    
+    public PortalProvider getPortalProvider();
 }

@@ -1,4 +1,4 @@
-package polly.rx.core.orion;
+package polly.rx.core.orion.datasource;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import polly.rx.core.orion.QuadrantProvider;
+import polly.rx.core.orion.WormholeProvider;
 import polly.rx.core.orion.model.LoadRequired;
 import polly.rx.core.orion.model.OrionObjectUtil;
 import polly.rx.core.orion.model.Quadrant;

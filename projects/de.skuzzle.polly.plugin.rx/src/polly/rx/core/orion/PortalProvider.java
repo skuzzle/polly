@@ -1,12 +1,16 @@
 package polly.rx.core.orion;
 
-import java.util.List;
+import java.util.Collection;
 
 import polly.rx.core.orion.model.Portal;
-import polly.rx.entities.DBSector;
+import polly.rx.core.orion.model.Sector;
 
 
 public interface PortalProvider {
 
-    public List<Portal> getPortals(DBSector sector);
+    public Collection<? extends Portal> getPortals(Sector sector);
+    
+    public Portal getPersonalPortal(String ownerName);
+    
+    public Portal getClanPortal(String nameOrTag);
 }

@@ -26,8 +26,8 @@ class UniverseBuilder implements LazyBuilder<Sector, EdgeData> {
     
     
     public UniverseBuilder(RouteOptions options) {
-        this.quadProvider = Orion.INSTANCE.createQuadrantProvider();
-        this.holeProvider = Orion.INSTANCE.createWormholeProvider();
+        this.quadProvider = Orion.INSTANCE.getQuadrantProvider();
+        this.holeProvider = Orion.INSTANCE.getWormholeProvider();
         
         this.options = options;
         this.done = new HashSet<>();

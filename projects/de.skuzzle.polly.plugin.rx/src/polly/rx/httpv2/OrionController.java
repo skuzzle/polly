@@ -226,8 +226,8 @@ public class OrionController extends PollyController {
     
     public OrionController(MyPolly myPolly, AZEntryManager azManager) {
         this(myPolly, 
-                new DisplayQuadrantProvider(Orion.INSTANCE.createQuadrantProvider()),
-                new DisplayWormholeProvider(Orion.INSTANCE.createWormholeProvider()),
+                new DisplayQuadrantProvider(Orion.INSTANCE.getQuadrantProvider()),
+                new DisplayWormholeProvider(Orion.INSTANCE.getWormholeProvider()),
                 Orion.INSTANCE.getPathPlanner(),
                 azManager);
     }
@@ -302,7 +302,13 @@ public class OrionController extends PollyController {
     
     
     
-    @Get(PAGE_QUAD_LAYOUT)
+    @Get(value = PAGE_QUAD_LAYOUT, name = ORION_NAME_KEY)
+    @OnRegister({ 
+        WebinterfaceManager.ADD_SUB_ENTRY, 
+        "Orion", 
+        MSG.FAMILY,
+        ORION_DESC_KEY,
+        VIEW_ORION_PREMISSION })
     public HttpAnswer quadLayout() throws AlternativeAnswerException {
         this.requirePermissions(OrionController.WRITE_ORION_PREMISSION);
         return this.makeAnswer(this.createContext(CONTENT_QUAD_LAYOUT));
@@ -316,7 +322,7 @@ public class OrionController extends PollyController {
         
         try {
             final Collection<Sector> sectors = QuadrantCnPParser.parse(paste, quadName);
-            Orion.INSTANCE.createQuadrantUpdater().updateSectorInformation(sectors);
+            Orion.INSTANCE.getQuadrantUpdater().updateSectorInformation(sectors);
         } catch (ParseException | OrionException e) {
             throw new HttpException(e);
         }
@@ -853,7 +859,7 @@ public class OrionController extends PollyController {
             prod.rxRess = RxRessource.values()[prod.ressId - 1];
         }
         try {
-            Orion.INSTANCE.createQuadrantUpdater().updateSectorInformation(
+            Orion.INSTANCE.getQuadrantUpdater().updateSectorInformation(
                     Collections.singleton(jSector));
         } catch (OrionException e) {
             return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
