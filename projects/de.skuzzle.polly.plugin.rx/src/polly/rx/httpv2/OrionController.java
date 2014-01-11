@@ -952,9 +952,7 @@ public class OrionController extends PollyController {
         try {
             Orion.INSTANCE.getQuadrantUpdater().updateSectorInformation(
                     Collections.singleton(jSector));
-            for (final Portal portal : portals) {
-                Orion.INSTANCE.getPortalUpdater().updatePortal(portal);
-            }
+            Orion.INSTANCE.getPortalUpdater().updatePortals(portals);
         } catch (OrionException e) {
             return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
         }
