@@ -1,31 +1,34 @@
 package polly.rx.core.orion.datasource;
 
+import polly.rx.core.orion.CachedQuadrantProvider;
+import polly.rx.core.orion.QuadrantProvider;
 import de.skuzzle.polly.sdk.PersistenceManagerV2;
 
 
 public final class DBOrionAccess {
 
     
-    private final DBQuadrantProvider quadProvider;
     private final DBQuadrantUpdater quadUpdater;
     private final DBPortalProvider portalProvider;
     private final DBPortalUpdater portalUpdater;
+    private final CachedQuadrantProvider cachedQuadProvider;
     
     
     public DBOrionAccess(PersistenceManagerV2 persistence) {
-        this.quadProvider = new DBQuadrantProvider(persistence);
+        final DBQuadrantProvider dbQuadProvider = new DBQuadrantProvider(persistence);
         this.quadUpdater = new DBQuadrantUpdater(persistence);
         this.portalProvider = new DBPortalProvider(persistence);
         this.portalUpdater = new DBPortalUpdater(persistence, this.quadUpdater);
-        
-        this.quadUpdater.addQuadrantListener(this.quadProvider);
+    
+        this.cachedQuadProvider = new CachedQuadrantProvider(dbQuadProvider);
+        this.quadUpdater.addQuadrantListener(this.cachedQuadProvider);
     }
     
     
     
     
-    public DBQuadrantProvider getQuadrantProvider() {
-        return this.quadProvider;
+    public QuadrantProvider getQuadrantProvider() {
+        return this.cachedQuadProvider;
     }
     
     
