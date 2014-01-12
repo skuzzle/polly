@@ -10,6 +10,7 @@ import de.skuzzle.polly.sdk.PersistenceManagerV2.Read;
 import polly.rx.core.orion.PortalProvider;
 import polly.rx.core.orion.model.Portal;
 import polly.rx.core.orion.model.PortalType;
+import polly.rx.core.orion.model.Quadrant;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.entities.DBPortal;
 import polly.rx.entities.DBSector;
@@ -25,6 +26,15 @@ public class DBPortalProvider implements PortalProvider {
     }
 
 
+    
+    @Override
+    public Collection<? extends Portal> getPortals(Quadrant quadrant, PortalType type) {
+        return this.persistence.atomic().findList(DBPortal.class, 
+                DBPortal.QUERY_PORTAL_BY_QUAD, 
+                new Param(type, quadrant.getName()));
+    }
+    
+    
 
     @Override
     public Collection<? extends Portal> getPortals(Sector sector) {

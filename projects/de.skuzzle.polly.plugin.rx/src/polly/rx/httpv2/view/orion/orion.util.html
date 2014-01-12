@@ -67,6 +67,30 @@ $sector.getQuadName() $sector.getX(), $sector.getY()
 
 
 
+#macro (PORTALS $portals $name)
+    #if (!$portals.isEmpty())
+        <table style="margin-top: 10px;">
+        <tr><th colspan="4">$name</th></tr>
+        <tr>
+            <th>Name</th>
+            <th>Clan</th>
+            <th>Sektor</th>
+            <th>Datum</th>
+        </tr>
+        #foreach ($portal in $portals)
+        <tr>
+            <td>$portal.getOwner()</td>
+            <td>$portal.getOwnerClan()</td>
+            <td>#SECTOR_NO_LINK ( $portal.getSector() )</td>
+            <td>$myPolly.formatting().formatDate($portal.getDate())</td>
+        </tr>
+        #end
+        </table>
+    #end
+#end
+
+
+
 #macro (QUADRANT $quad)
 <p><b>$quad.getName()</b></p>
 

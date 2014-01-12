@@ -20,6 +20,7 @@ import polly.rx.MSG;
 import polly.rx.core.AZEntryManager;
 import polly.rx.core.orion.Orion;
 import polly.rx.core.orion.OrionException;
+import polly.rx.core.orion.PortalProvider;
 import polly.rx.core.orion.QuadrantProvider;
 import polly.rx.core.orion.QuadrantProviderDecorator;
 import polly.rx.core.orion.QuadrantUtils;
@@ -339,11 +340,17 @@ public class OrionController extends PollyController {
     private void fillQuadrantContext(String quadName, Map<String, Object> c, 
             boolean showInfo) {
         final Quadrant q = this.quadProvider.getQuadrant(quadName);
-        
+        final PortalProvider pp = Orion.INSTANCE.getPortalProvider();
         if (showInfo) {
             final List<Wormhole> holes = this.holeProvider.getWormholes(
                     q, this.quadProvider);
+            final Collection<? extends Portal> pportals = 
+                    pp.getPortals(q, PortalType.PRIVATE);
+            final Collection<? extends Portal> cportals = 
+                    pp.getPortals(q, PortalType.CLAN);
             c.put("holes", holes); //$NON-NLS-1$
+            c.put("pportals", pportals); //$NON-NLS-1$
+            c.put("cportals", cportals); //$NON-NLS-1$
         }
         c.put("showQuadInfo", showInfo); //$NON-NLS-1$
         c.put("quad", q); //$NON-NLS-1$
@@ -397,13 +404,22 @@ public class OrionController extends PollyController {
             return HttpAnswers.newStringAnswer(403, MSG.httpNoPermission);
         }
         
-        final Sector sector = this.quadProvider.getQuadrant(quadrant).getSector(x, y);
+        final Quadrant q = this.quadProvider.getQuadrant(quadrant);
+        final Sector sector = q.getSector(x, y);
         final Map<String, Object> c = this.createContext(CONTENT_SECTOR_INFO);
         c.put("sector", sector); //$NON-NLS-1$
         if (sector != null) {
             final List<Wormhole> holes = this.holeProvider.getWormholes(
                     sector, this.quadProvider);
+            final PortalProvider pp = Orion.INSTANCE.getPortalProvider();
+            final Collection<? extends Portal> pportals = 
+                    pp.getPortals(q, PortalType.PRIVATE);
+            final Collection<? extends Portal> cportals = 
+                    pp.getPortals(q, PortalType.CLAN);
+            c.put("pportals", pportals); //$NON-NLS-1$
+            c.put("cportals", cportals); //$NON-NLS-1$
             c.put("holes", holes); //$NON-NLS-1$
+            
         }
         
         return HttpAnswers.newTemplateAnswer(CONTENT_SECTOR_INFO, c);
