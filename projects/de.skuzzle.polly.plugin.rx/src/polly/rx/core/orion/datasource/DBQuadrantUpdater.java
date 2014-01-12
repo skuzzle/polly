@@ -173,6 +173,7 @@ public class DBQuadrantUpdater implements QuadrantUpdater {
     }
     
     
+    
     private DBQuadrant findQuadrant(Read read, Map<String, DBQuadrant> tempCache, 
             String name) {
         DBQuadrant quad = tempCache.get(name);
@@ -183,5 +184,4 @@ public class DBQuadrantUpdater implements QuadrantUpdater {
         }
         return quad;
     }
-
 }

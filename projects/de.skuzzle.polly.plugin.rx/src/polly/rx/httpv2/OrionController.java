@@ -377,7 +377,6 @@ public class OrionController extends PollyController {
         final Map<String, Object> c = this.createContext(CONTENT_ORION);
 
         final Collection<Quadrant> allQuads = new TreeSet<>(new Comparator<Quadrant>() {
-
             @Override
             public int compare(Quadrant o1, Quadrant o2) {
                 return o1.getName().compareTo(o2.getName());
