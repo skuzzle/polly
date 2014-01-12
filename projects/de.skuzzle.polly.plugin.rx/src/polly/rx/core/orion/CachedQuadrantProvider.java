@@ -1,6 +1,7 @@
 package polly.rx.core.orion;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,9 +21,9 @@ public class CachedQuadrantProvider extends QuadrantProviderDecorator {
     
     public CachedQuadrantProvider(QuadrantProvider wrapped) {
         super(wrapped);
-        this.quadCache = new HashMap<>();
-        this.allQuadrants = new ArrayList<>();
-        this.entryPortals = new ArrayList<>();
+        this.quadCache = Collections.synchronizedMap(new HashMap<String, Quadrant>());
+        this.allQuadrants = Collections.synchronizedList(new ArrayList<Quadrant>());
+        this.entryPortals = Collections.synchronizedList(new ArrayList<Sector>());
     }
     
     
