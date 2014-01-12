@@ -81,7 +81,7 @@ $sector.getQuadName() $sector.getX(), $sector.getY()
         <tr>
             <td>$portal.getOwner()</td>
             <td>$portal.getOwnerClan()</td>
-            <td>#SECTOR_NO_LINK ( $portal.getSector() )</td>
+            <td>#SECTOR_LINK ( $portal.getSector() $portal.getSector().getQuadId())</td>
             <td>$myPolly.formatting().formatDate($portal.getDate())</td>
         </tr>
         #end

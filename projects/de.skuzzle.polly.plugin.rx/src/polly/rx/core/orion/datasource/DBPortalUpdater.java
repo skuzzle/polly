@@ -34,27 +34,27 @@ public class DBPortalUpdater implements PortalUpdater {
 
 
     @Override
-    public synchronized Collection<DBPortal> updatePortals(
+    public synchronized Collection<DBPortal> updatePortals(Sector sector,
             Collection<? extends Portal> portals) throws OrionException {
         try (final Write write = this.persistence.write()) {
             final Read read = write.read();
             final List<DBPortal> result = new ArrayList<>(portals.size());
             
+            DBSector existingSector = read.findSingle(DBSector.class, 
+                    DBSector.QUERY_FIND_SECTOR, 
+                    new Param(sector.getQuadName(), sector.getX(), sector.getY()));
+            
+            if (existingSector == null) {
+                // if target sector doesn't exist, create it
+                final Collection<DBSector> updates = 
+                        this.quadUpdater.updateSectorInformation(
+                                Collections.singleton(sector));
+                existingSector = updates.iterator().next();
+            }
+            
+            
+            // first step: add new portals
             for (final Portal newPortal : portals) {
-                final Sector current = newPortal.getSector();
-                DBSector sector = read.findSingle(DBSector.class, 
-                        DBSector.QUERY_FIND_SECTOR, 
-                        new Param(current.getQuadName(), current.getX(), current.getY()));
-                
-                if (sector == null) {
-                    // if target sector doesn't exist, create it
-                    final Collection<DBSector> updates = 
-                            this.quadUpdater.updateSectorInformation(
-                                    Collections.singleton(newPortal.getSector()));
-                    sector = updates.iterator().next();
-                }
-                
-                
                 final DBPortal existing = read.findSingle(DBPortal.class, 
                         DBPortal.QUERY_PORTAL_BY_TYPE_AND_OWNER, 
                         new Param(newPortal.getType(), newPortal.getOwner()));
@@ -62,14 +62,14 @@ public class DBPortalUpdater implements PortalUpdater {
                 if (existing != null && !existing.equals(newPortal)) {
                     // portal exists and differs from new portal
                     // move it to new sector
-                    existing.setSector(sector);
+                    existing.setSector(existingSector);
                 } else if (existing == null) {
                     // new portal needs to be added
                     final DBPortal portal = new DBPortal(
                             newPortal.getOwner(), 
                             newPortal.getOwnerClan(), 
                             newPortal.getType(), 
-                            sector, 
+                            existingSector, 
                             Time.currentTime());
                     write.single(portal);
                     result.add(portal);
@@ -77,6 +77,19 @@ public class DBPortalUpdater implements PortalUpdater {
     
                 result.add(existing);
             }
+            
+            // second step: remove portals that do not exist anymore
+            final Collection<DBPortal> currentPortals = 
+                    read.findList(DBPortal.class, 
+                            DBPortal.QUERY_PORTAL_BY_SECTOR, 
+                            new Param(existingSector));
+            
+            for (final DBPortal p : currentPortals) {
+                if (!portals.contains(p)) {
+                    write.remove(p);
+                }
+            }
+            
             return result;
         } catch (DatabaseException e) {
             throw new OrionException(e);

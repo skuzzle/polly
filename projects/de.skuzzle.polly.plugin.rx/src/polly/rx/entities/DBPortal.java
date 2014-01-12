@@ -27,6 +27,7 @@ import polly.rx.core.orion.model.PortalType;
     @NamedQuery(name = DBPortal.QUERY_PORTAL_BY_TYPE_AND_OWNER, query = "SELECT p FROM DBPortal p WHERE p.type = ?1 AND p.ownerName = ?2"),
     @NamedQuery(name = DBPortal.QUERY_PORTAL_BY_TYPE_AND_CLANTAG, query = "SELECT p FROM DBPortal p WHERE p.type = ?1 AND p.ownerClan = ?2"),
     @NamedQuery(name = DBPortal.QUERY_PORTAL_BY_SECTOR, query = "SELECT p FROM DBPortal p WHERE p.sector = ?1"),
+    @NamedQuery(name = DBPortal.QUERY_PORTAL_BY_TYPE_AND_SECTOR, query = "SELECT p FROM DBPortal p WHERE p.type = ?1 AND p.sector = ?2"),
     @NamedQuery(name = DBPortal.QUERY_PORTAL_BY_QUAD, query = "SELECT p FROM DBPortal p WHERE p.type = ?1 AND p.sector.quadName = ?2") })
 public class DBPortal implements Portal {
 
@@ -34,6 +35,7 @@ public class DBPortal implements Portal {
     public final static String QUERY_PORTAL_BY_TYPE_AND_CLANTAG = "QUERY_PORTAL_BY_TYPE_AND_CLANTAG"; //$NON-NLS-1$
     public static final String QUERY_PORTAL_BY_SECTOR = "QUERY_PORTAL_BY_SECTOR"; //$NON-NLS-1$
     public static final String QUERY_PORTAL_BY_QUAD = "QUERY_PORTAL_BY_QUAD"; //$NON-NLS-1$
+    public final static String QUERY_PORTAL_BY_TYPE_AND_SECTOR = "QUERY_PORTAL_BY_TYPE_AND_SECTOR"; //$NON-NLS-1$
     
     private final static String GENERATOR = "PORTAL_GEN"; //$NON-NLS-1$
 

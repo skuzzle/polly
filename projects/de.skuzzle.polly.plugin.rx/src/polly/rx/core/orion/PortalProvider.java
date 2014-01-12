@@ -12,6 +12,8 @@ public interface PortalProvider {
 
     public Collection<? extends Portal> getPortals(Sector sector);
     
+    public Collection<? extends Portal> getPortals(Sector sector, PortalType type);
+    
     public Portal getPersonalPortal(String ownerName);
     
     public Portal getClanPortal(String nameOrTag);

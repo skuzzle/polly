@@ -35,6 +35,25 @@ public class DBPortalProvider implements PortalProvider {
     }
     
     
+    
+    @Override
+    public Collection<? extends Portal> getPortals(Sector sector, PortalType type) {
+        try (final Read read = this.persistence.read()) {
+            final DBSector s = read.findSingle(DBSector.class, 
+                    DBSector.QUERY_FIND_SECTOR, 
+                    new Param(sector.getQuadName(), sector.getX(), sector.getY()));
+            
+            if (s == null) {
+                return Collections.emptyList();
+            }
+            final List<DBPortal> portals = read.findList(DBPortal.class, 
+                    DBPortal.QUERY_PORTAL_BY_TYPE_AND_SECTOR, 
+                    new Param(type, s));
+            return portals;
+        }
+    }
+    
+    
 
     @Override
     public Collection<? extends Portal> getPortals(Sector sector) {
