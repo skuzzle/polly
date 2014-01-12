@@ -416,6 +416,8 @@ public class MSG extends Constants {
     public static String secTypeAlienKolonie;
     public static String secTypeMeteorid;
     public static String secTypeHandelszentrum;
+    public static String secTypeGrumorian;
+    public static String secTypeNeutronenstern;
     public static String loadNone;
     public static String loadPartial;
     public static String loadFull;
