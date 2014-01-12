@@ -75,6 +75,7 @@ import de.skuzzle.polly.sdk.time.Time;
 import de.skuzzle.polly.tools.Check;
 import de.skuzzle.polly.tools.EqualsHelper;
 import de.skuzzle.polly.tools.Equatable;
+import de.skuzzle.polly.tools.concurrent.Parallel;
 import de.skuzzle.polly.tools.io.FastByteArrayInputStream;
 import de.skuzzle.polly.tools.io.FastByteArrayOutputStream;
 
@@ -1104,13 +1105,19 @@ public class OrionController extends PollyController {
         for (final JsonProduction prod : jSector.production) {
             prod.rxRess = RxRessource.values()[prod.ressId - 1];
         }
-        try {
-            Orion.INSTANCE.getQuadrantUpdater().updateSectorInformation(
-                    Collections.singleton(jSector));
-            Orion.INSTANCE.getPortalUpdater().updatePortals(jSector, portals);
-        } catch (OrionException e) {
-            return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
-        }
+        
+        Parallel.run(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Orion.INSTANCE.getQuadrantUpdater().updateSectorInformation(
+                            Collections.singleton(jSector));
+                    Orion.INSTANCE.getPortalUpdater().updatePortals(jSector, portals);
+                } catch (OrionException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
     }
