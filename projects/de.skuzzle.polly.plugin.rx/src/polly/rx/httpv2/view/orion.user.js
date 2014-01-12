@@ -57,10 +57,10 @@ if (uri.indexOf("map.php") != -1) {
 var debug = true;
 
 // API URLs
-var POLLY_URL = "$host"
-var SECTOR_API = "$sectorApi"
-var QUADRANT_API = "$quadrantApi";
-var POST_SECTOR_API = "$postSectorApi";
+var POLLY_URL = "https://projectpolly.de:443"
+var SECTOR_API = "/api/orion/json/sector"
+var QUADRANT_API = "/api/orion/json/quadrant";
+var POST_SECTOR_API = "/api/orion/json/postSector";
 var IMG_URL = "http://www.revorix.info/gfx/q/";
 
 
@@ -117,7 +117,7 @@ case PAGE_SECTOR:
     
     // Prepare GUI
     $("td[width='200']").append(
-        '<p><b>Orion</b><br/><input type="checkbox" id="autoUnveil"/> Karte aufdecken<br/><input type="checkbox" id="postInfos"> Informationen an polly senden</p>');
+        '<p><b>Orion</b><br/><input type="checkbox" id="autoUnveil"/> <a id="clearCache" href="#" title="Cache löschen">Karte aufdecken</a><br/><input type="checkbox" id="postInfos"> Informationen an polly senden</p>');
     $("#autoUnveil").change(checkAutoUnveil);
     $("#autoUnveil").attr("checked", AUTO_UNVEIL);
     
@@ -126,6 +126,12 @@ case PAGE_SECTOR:
         GM_setValue(PROPERTY_POST_SECTOR_INFOS, POST_SECTOR_INFORMATION);
     });
     $("#postInfos").attr("checked", POST_SECTOR_INFORMATION);
+    
+    $("#clearCache").click(function() {
+        GM_deleteValue(PROPERTY_QUADRANT_DATA+sector.quadName);
+        sectorInfosLoaded = false;
+        status("Cache für " + sector.quadName + " zurückgesetzt");
+    });
     
     if (AUTO_UNVEIL) {
         showQuad();
@@ -137,7 +143,7 @@ case PAGE_SECTOR:
     });
     
     $("td[width='200']").append('<p id="pollyStatus"></p>');
-    status('Aktuelle Flotte: <span id="currentFleet"></span> <a href="#" id="recheck">Update</a>');
+    status('Aktuelle Flotte: <a href="#" id="recheck" title="Flotte aktualisieren"><span id="currentFleet"></span></a>');
     $("#recheck").click(checkFleet);
     checkFleet();
     window.setTimeout(checkFleet, CHECK_FLEET_DELAY);
@@ -234,7 +240,7 @@ function unveil() {
                 $.each(sector.production, function(idx, value) {
                     production += value.ress + ": " + value.rate.toString() + "\n";
                 });
-                ths.attr("title", sector.type+"\n"+
+                ths.attr("title", "X:"+sector.x+" Y:"+sector.y+" "+sector.type+"\n"+
                     sector.attacker.toString()+
                     "%, "+sector.defender.toString()+
                     "%, "+sector.guard+"%".toString()+"\n\n"+
