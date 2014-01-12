@@ -1,6 +1,6 @@
 package polly.rx.core.orion;
 
-import java.util.Collection;
+import java.util.List;
 
 import polly.rx.core.orion.model.Quadrant;
 import polly.rx.core.orion.model.Sector;
@@ -15,7 +15,7 @@ public class QuadrantProviderDecorator implements QuadrantProvider {
     }
     
     @Override
-    public Collection<String> getAllQuadrantNames() {
+    public List<String> getAllQuadrantNames() {
         return this.wrapped.getAllQuadrantNames();
     }
 
@@ -30,12 +30,12 @@ public class QuadrantProviderDecorator implements QuadrantProvider {
     }
 
     @Override
-    public Collection<? extends Quadrant> getAllQuadrants() {
+    public List<? extends Quadrant> getAllQuadrants() {
         return this.wrapped.getAllQuadrants();
     }
 
     @Override
-    public Collection<? extends Sector> getEntryPortals() {
+    public List<? extends Sector> getEntryPortals() {
         return this.wrapped.getEntryPortals();
     }
 

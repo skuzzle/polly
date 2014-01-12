@@ -1,6 +1,6 @@
 package polly.rx.core.orion;
 
-import java.util.Collection;
+import java.util.List;
 
 import polly.rx.core.orion.model.Portal;
 import polly.rx.core.orion.model.PortalType;
@@ -10,13 +10,13 @@ import polly.rx.core.orion.model.Sector;
 
 public interface PortalProvider {
 
-    public Collection<? extends Portal> getPortals(Sector sector);
+    public List<? extends Portal> getPortals(Sector sector);
     
-    public Collection<? extends Portal> getPortals(Sector sector, PortalType type);
+    public List<? extends Portal> getPortals(Sector sector, PortalType type);
     
     public Portal getPersonalPortal(String ownerName);
     
     public Portal getClanPortal(String nameOrTag);
 
-    Collection<? extends Portal> getPortals(Quadrant quadrant, PortalType type);
+    public List<? extends Portal> getPortals(Quadrant quadrant, PortalType type);
 }

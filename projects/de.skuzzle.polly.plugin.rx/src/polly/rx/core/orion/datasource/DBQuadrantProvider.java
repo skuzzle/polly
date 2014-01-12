@@ -26,7 +26,7 @@ public class DBQuadrantProvider implements QuadrantProvider {
 
 
     @Override
-    public Collection<String> getAllQuadrantNames() {
+    public List<String> getAllQuadrantNames() {
         final Collection<DBQuadrant> quads = this.getAllQuadrants();
         final List<String> names = new ArrayList<>(quads.size());
         for (final DBQuadrant quad : quads) {
@@ -38,7 +38,7 @@ public class DBQuadrantProvider implements QuadrantProvider {
 
 
     @Override
-    public Collection<DBSector> getEntryPortals() {
+    public List<DBSector> getEntryPortals() {
             return this.persistence.atomic().findList(DBSector.class, 
                     DBSector.QUERY_SECTOR_BY_TYPE, new Param(SectorType.EINTRITTS_PORTAL));
     }
@@ -67,7 +67,7 @@ public class DBQuadrantProvider implements QuadrantProvider {
 
 
     @Override
-    public Collection<DBQuadrant> getAllQuadrants() {
+    public List<DBQuadrant> getAllQuadrants() {
         return this.persistence.atomic().findList(DBQuadrant.class, 
                 DBQuadrant.QUERY_ALL_QUADRANTS);
     }

@@ -1,8 +1,8 @@
 package polly.rx.core.orion;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import polly.rx.core.orion.model.Quadrant;
@@ -13,8 +13,8 @@ import polly.rx.core.orion.model.SectorType;
 public class CachedQuadrantProvider extends QuadrantProviderDecorator {
 
     private final Map<String, Quadrant> quadCache;
-    private final Collection<Sector> entryPortals;
-    private final Collection<Quadrant> allQuadrants;
+    private final List<Sector> entryPortals;
+    private final List<Quadrant> allQuadrants;
     
     
     
@@ -28,7 +28,7 @@ public class CachedQuadrantProvider extends QuadrantProviderDecorator {
     
     
     @Override
-    public Collection<? extends Sector> getEntryPortals() {
+    public List<? extends Sector> getEntryPortals() {
         if (this.entryPortals.isEmpty()) {
             this.entryPortals.addAll(super.getEntryPortals());
         }
@@ -45,7 +45,7 @@ public class CachedQuadrantProvider extends QuadrantProviderDecorator {
     
     
     @Override
-    public Collection<? extends Quadrant> getAllQuadrants() {
+    public List<? extends Quadrant> getAllQuadrants() {
         if (this.allQuadrants.isEmpty()) {
             this.allQuadrants.addAll(super.getAllQuadrants());
         }

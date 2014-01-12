@@ -1,6 +1,6 @@
 package polly.rx.core.orion;
 
-import java.util.Collection;
+import java.util.List;
 
 import polly.rx.core.orion.model.Portal;
 import polly.rx.core.orion.model.PortalType;
@@ -20,13 +20,13 @@ public class PortalProviderDecorator implements PortalProvider {
 
 
     @Override
-    public Collection<? extends Portal> getPortals(Sector sector) {
+    public List<? extends Portal> getPortals(Sector sector) {
         return this.wrapped.getPortals(sector);
     }
 
 
 
-    public Collection<? extends Portal> getPortals(Sector sector, PortalType type) {
+    public List<? extends Portal> getPortals(Sector sector, PortalType type) {
         return this.wrapped.getPortals(sector, type);
     }
 
@@ -47,7 +47,7 @@ public class PortalProviderDecorator implements PortalProvider {
 
 
     @Override
-    public Collection<? extends Portal> getPortals(Quadrant quadrant, PortalType type) {
+    public List<? extends Portal> getPortals(Quadrant quadrant, PortalType type) {
         return this.wrapped.getPortals(quadrant, type);
     }
 

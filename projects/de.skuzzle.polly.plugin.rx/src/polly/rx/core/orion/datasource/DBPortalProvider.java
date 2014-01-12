@@ -1,12 +1,8 @@
 package polly.rx.core.orion.datasource;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import de.skuzzle.polly.sdk.PersistenceManagerV2;
-import de.skuzzle.polly.sdk.PersistenceManagerV2.Param;
-import de.skuzzle.polly.sdk.PersistenceManagerV2.Read;
 import polly.rx.core.orion.PortalProvider;
 import polly.rx.core.orion.model.Portal;
 import polly.rx.core.orion.model.PortalType;
@@ -14,6 +10,9 @@ import polly.rx.core.orion.model.Quadrant;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.entities.DBPortal;
 import polly.rx.entities.DBSector;
+import de.skuzzle.polly.sdk.PersistenceManagerV2;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Param;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Read;
 
 public class DBPortalProvider implements PortalProvider {
 
@@ -28,7 +27,7 @@ public class DBPortalProvider implements PortalProvider {
 
     
     @Override
-    public Collection<? extends Portal> getPortals(Quadrant quadrant, PortalType type) {
+    public List<? extends Portal> getPortals(Quadrant quadrant, PortalType type) {
         return this.persistence.atomic().findList(DBPortal.class, 
                 DBPortal.QUERY_PORTAL_BY_QUAD, 
                 new Param(type, quadrant.getName()));
@@ -37,7 +36,7 @@ public class DBPortalProvider implements PortalProvider {
     
     
     @Override
-    public Collection<? extends Portal> getPortals(Sector sector, PortalType type) {
+    public List<? extends Portal> getPortals(Sector sector, PortalType type) {
         try (final Read read = this.persistence.read()) {
             final DBSector s = read.findSingle(DBSector.class, 
                     DBSector.QUERY_FIND_SECTOR, 
@@ -56,7 +55,7 @@ public class DBPortalProvider implements PortalProvider {
     
 
     @Override
-    public Collection<? extends Portal> getPortals(Sector sector) {
+    public List<? extends Portal> getPortals(Sector sector) {
         try (final Read read = this.persistence.read()) {
             final DBSector s = read.findSingle(DBSector.class, 
                     DBSector.QUERY_FIND_SECTOR, 

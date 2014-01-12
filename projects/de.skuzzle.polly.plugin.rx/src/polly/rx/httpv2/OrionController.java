@@ -3,6 +3,7 @@ package polly.rx.httpv2;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -119,6 +120,8 @@ public class OrionController extends PollyController {
     private final static String ROUTE_COUNT_KEY = "routeCount"; //$NON-NLS-1$
     private final static String QUAD_IMAGE_KEY = "quadImg_"; //$NON-NLS-1$
 
+    
+    
     public final static class DisplaySector extends SectorDecorator {
 
         private DisplaySector(Sector wrapped) {
@@ -132,19 +135,17 @@ public class OrionController extends PollyController {
         }
     }
 
+    
+    
     public final static class DisplayQuadrant extends QuadrantDecorator {
 
         private DisplayQuadrant(Quadrant wrapped) {
             super(wrapped);
         }
 
-
-
         public String getQuadId() {
             return this.getName().replace(" ", "_"); //$NON-NLS-1$ //$NON-NLS-2$
         }
-
-
 
         @Override
         public Sector getSector(int x, int y) {
@@ -152,13 +153,13 @@ public class OrionController extends PollyController {
         }
     }
 
+    
+    
     public final static class DisplayPortal extends PortalDecorator {
 
         public DisplayPortal(Portal wrapped) {
             super(wrapped);
         }
-
-
 
         @Override
         public Sector getSector() {
@@ -166,23 +167,28 @@ public class OrionController extends PollyController {
         }
     }
 
+    
+    
     public final static class DisplayPortalProvider extends PortalProviderDecorator {
 
         public DisplayPortalProvider(PortalProvider wrapped) {
             super(wrapped);
         }
 
+        private List<? extends Portal> decorate(
+                final List<? extends Portal> portals) {
+            return new AbstractList<Portal>() {
+                @Override
+                public Portal get(int idx) {
+                    return new DisplayPortal(portals.get(idx));
+                }
 
-
-        private Collection<? extends Portal> decorate(Collection<? extends Portal> portals) {
-            final List<DisplayPortal> result = new ArrayList<>(portals.size());
-            for (final Portal portal : portals) {
-                result.add(new DisplayPortal(portal));
-            }
-            return result;
+                @Override
+                public int size() {
+                    return portals.size();
+                }
+            };
         }
-
-
 
         @Override
         public Portal getClanPortal(String nameOrTag) {
@@ -193,8 +199,6 @@ public class OrionController extends PollyController {
             return new DisplayPortal(p);
         }
 
-
-
         @Override
         public Portal getPersonalPortal(String ownerName) {
             final Portal p = super.getPersonalPortal(ownerName);
@@ -204,27 +208,23 @@ public class OrionController extends PollyController {
             return new DisplayPortal(p);
         }
 
-
-
         @Override
-        public Collection<? extends Portal> getPortals(Sector sector, PortalType type) {
+        public List<? extends Portal> getPortals(Sector sector, PortalType type) {
             return this.decorate(super.getPortals(sector, type));
         }
 
-
-
         @Override
-        public Collection<? extends Portal> getPortals(Quadrant quadrant, PortalType type) {
+        public List<? extends Portal> getPortals(Quadrant quadrant, PortalType type) {
             return this.decorate(super.getPortals(quadrant, type));
         }
 
-
-
         @Override
-        public Collection<? extends Portal> getPortals(Sector sector) {
+        public List<? extends Portal> getPortals(Sector sector) {
             return this.decorate(super.getPortals(sector));
         }
     }
+    
+    
 
     public final static class DisplayWormholeProvider extends WormholeProviderDecorator {
 
@@ -232,43 +232,42 @@ public class OrionController extends PollyController {
             super(wrapped);
         }
 
+        private List<Wormhole> decorate(final List<Wormhole> holes) {
+            return new AbstractList<Wormhole>() {
+                @Override
+                public Wormhole get(int index) {
+                    return new WormholeDecorator(holes.get(index)) {
+                        @Override
+                        public Sector getSource() {
+                            return new DisplaySector(super.getSource());
+                        }
+                        
+                        @Override
+                        public Sector getTarget() {
+                            return new DisplaySector(super.getTarget());
+                        }
+                    };
+                }
 
-
-        private List<Wormhole> decorate(List<Wormhole> holes) {
-            final List<Wormhole> result = new ArrayList<>(holes.size());
-            for (final Wormhole hole : holes) {
-                result.add(new WormholeDecorator(hole) {
-
-                    @Override
-                    public Sector getSource() {
-                        return new DisplaySector(super.getSource());
-                    }
-
-
-
-                    @Override
-                    public Sector getTarget() {
-                        return new DisplaySector(super.getTarget());
-                    }
-                });
-            }
-            return result;
+                @Override
+                public int size() {
+                    return holes.size();
+                }
+            };
         }
-
-
 
         @Override
         public List<Wormhole> getWormholes(Quadrant quadrant, QuadrantProvider quads) {
             return this.decorate(super.getWormholes(quadrant, quads));
         }
 
-
-
         @Override
         public List<Wormhole> getWormholes(Sector sector, QuadrantProvider quads) {
             return this.decorate(super.getWormholes(sector, quads));
         }
     }
+    
+    
 
     public final static class DisplayQuadrantProvider extends QuadrantProviderDecorator {
 
@@ -276,32 +275,29 @@ public class OrionController extends PollyController {
             super(wrapped);
         }
 
+        private List<Quadrant> decorate(final List<? extends Quadrant> quadrants) {
+            return new AbstractList<Quadrant>() {
+                @Override
+                public Quadrant get(int index) {
+                    return new DisplayQuadrant(quadrants.get(index));
+                }
 
-
-        private Collection<DisplayQuadrant> decorate(
-                Collection<? extends Quadrant> quadrants) {
-            final List<DisplayQuadrant> result = new ArrayList<>();
-            for (final Quadrant quadrant : quadrants) {
-                result.add(new DisplayQuadrant(quadrant));
-            }
-            return result;
+                @Override
+                public int size() {
+                    return quadrants.size();
+                }
+            };
         }
-
-
 
         @Override
-        public Collection<DisplayQuadrant> getAllQuadrants() {
+        public List<Quadrant> getAllQuadrants() {
             return this.decorate(super.getAllQuadrants());
         }
-
-
 
         @Override
         public Quadrant getQuadrant(Sector sector) {
             return new DisplayQuadrant(super.getQuadrant(sector));
         }
-
-
 
         @Override
         public Quadrant getQuadrant(String name) {
@@ -309,6 +305,8 @@ public class OrionController extends PollyController {
             return new DisplayQuadrant(super.getQuadrant(name));
         }
     }
+    
+    
 
     private final QuadrantProvider quadProvider;
     private final WormholeProvider holeProvider;
