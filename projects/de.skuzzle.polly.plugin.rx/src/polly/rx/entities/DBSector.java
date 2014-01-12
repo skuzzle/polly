@@ -24,6 +24,7 @@ import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.SectorType;
 import de.skuzzle.polly.sdk.PersistenceManagerV2.Write;
 import de.skuzzle.polly.sdk.time.Time;
+import de.skuzzle.polly.tools.Check;
 import de.skuzzle.polly.tools.EqualsHelper;
 import de.skuzzle.polly.tools.Equatable;
 
@@ -77,13 +78,8 @@ public class DBSector implements Sector {
 
 
     public DBSector(Sector src) {
-        if (src.getType() == null) {
-            throw new NullPointerException();
-        } else if (src.getRessources() == null) {
-            throw new NullPointerException();
-        } else if (src.getQuadName() == null) {
-            throw new NullPointerException();
-        }
+        Check.notNull(src, src.getType(), src.getRessources(), src.getQuadName(), 
+                src.getDate());
         this.quadName = src.getQuadName();
         this.x = src.getX();
         this.y = src.getY();
@@ -101,13 +97,9 @@ public class DBSector implements Sector {
 
 
     public void updateFrom(Sector other, Write write) {
-        if (other.getType() == null) {
-            throw new NullPointerException();
-        } else if (other.getRessources() == null) {
-            throw new NullPointerException();
-        } else if (other.getQuadName() == null) {
-            throw new NullPointerException();
-        } else if (!this.equals(other)) {
+        Check.notNull(other, other.getType(), other.getRessources(), 
+                other.getQuadName(), other.getDate());
+         if (!this.equals(other)) {
             throw new IllegalArgumentException(); // can not update distinct sectors
         } else if (other.getType() == SectorType.UNKNOWN) {
             // do not update with unknown information

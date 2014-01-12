@@ -88,6 +88,7 @@ public class DBPortal implements Portal {
         this.sector = sector;
     }
 
+    
 
     @Override
     public String toString() {

@@ -721,6 +721,8 @@ public class OrionController extends PollyController {
         return (TimespanType) types;
     }
 
+    
+    
     public final static class JsonProduction implements Production {
 
         public final String ress;
@@ -730,8 +732,6 @@ public class OrionController extends PollyController {
         // for deserialization
         public transient RxRessource rxRess;
 
-
-
         public JsonProduction(Production production) {
             super();
             this.ress = production.getRess().toString();
@@ -739,49 +739,35 @@ public class OrionController extends PollyController {
             this.ressId = production.getRess().ordinal() + 1;
         }
 
-
-
         @Override
         public String toString() {
             return OrionObjectUtil.productionString(this);
         }
-
-
 
         @Override
         public int hashCode() {
             return OrionObjectUtil.productionHash(this);
         }
 
-
-
         @Override
         public final boolean equals(Object obj) {
             return EqualsHelper.testEquality(this, obj);
         }
-
-
 
         @Override
         public Class<?> getEquivalenceClass() {
             return Production.class;
         }
 
-
-
         @Override
         public boolean actualEquals(Equatable o) {
             return OrionObjectUtil.productionEquals(this, (Production) o);
         }
 
-
-
         @Override
         public RxRessource getRess() {
             return this.rxRess;
         }
-
-
 
         @Override
         public float getRate() {
@@ -789,6 +775,8 @@ public class OrionController extends PollyController {
         }
     }
 
+    
+    
     public final static class JsonSector implements Sector {
 
         public final String type;
@@ -810,8 +798,6 @@ public class OrionController extends PollyController {
         private transient Date date = Time.currentTime();
         private transient SectorType sectorType;
 
-
-
         public JsonSector(Sector src) {
             this.quadName = src.getQuadName();
             this.type = src.getType().toString();
@@ -832,84 +818,60 @@ public class OrionController extends PollyController {
             this.wormhole = null;
         }
 
-
-
         @Override
         public String toString() {
             return OrionObjectUtil.sectorString(this);
         }
-
-
 
         @Override
         public int hashCode() {
             return OrionObjectUtil.sectorHash(this);
         }
 
-
-
         @Override
         public final boolean equals(Object obj) {
             return EqualsHelper.testEquality(this, obj);
         }
-
-
 
         @Override
         public Class<?> getEquivalenceClass() {
             return Sector.class;
         }
 
-
-
         @Override
         public boolean actualEquals(Equatable o) {
             return OrionObjectUtil.sectorsEqual(this, (Sector) o);
         }
-
-
 
         @Override
         public String getQuadName() {
             return this.quadName;
         }
 
-
-
         @Override
         public int getX() {
             return this.x;
         }
-
-
 
         @Override
         public int getY() {
             return this.y;
         }
 
-
-
         @Override
         public int getAttackerBonus() {
             return this.attacker;
         }
-
-
 
         @Override
         public int getDefenderBonus() {
             return this.defender;
         }
 
-
-
         @Override
         public int getSectorGuardBonus() {
             return this.guard;
         }
-
-
 
         @Override
         public Date getDate() {
@@ -919,20 +881,18 @@ public class OrionController extends PollyController {
             return this.date;
         }
 
-
-
         @Override
         public SectorType getType() {
             return this.sectorType;
         }
-
-
 
         @Override
         public Collection<? extends Production> getRessources() {
             return Arrays.asList(this.production);
         }
     }
+    
+    
 
     private final static class PortalImpl implements Portal {
 
@@ -941,8 +901,6 @@ public class OrionController extends PollyController {
         private final Sector sector;
         private final PortalType type;
         private final Date date;
-
-
 
         public PortalImpl(String ownerName, String ownerClan, Sector sector,
                 PortalType type) {
@@ -954,78 +912,59 @@ public class OrionController extends PollyController {
             this.date = Time.currentTime();
         }
 
-
-
         @Override
         public String toString() {
             return OrionObjectUtil.portalString(this);
         }
-
-
 
         @Override
         public int hashCode() {
             return OrionObjectUtil.portalHash(this);
         }
 
-
-
         @Override
         public final boolean equals(Object obj) {
             return EqualsHelper.testEquality(this, obj);
         }
-
-
 
         @Override
         public Class<?> getEquivalenceClass() {
             return Portal.class;
         }
 
-
-
         @Override
         public boolean actualEquals(Equatable o) {
             return OrionObjectUtil.portalsEqual(this, (Portal) o);
         }
-
-
 
         @Override
         public Sector getSector() {
             return this.sector;
         }
 
-
-
         @Override
         public String getOwner() {
             return this.ownerName;
         }
-
-
 
         @Override
         public String getOwnerClan() {
             return this.ownerClan;
         }
 
-
-
         @Override
         public PortalType getType() {
             return this.type;
         }
 
-
-
         @Override
         public Date getDate() {
             return this.date;
         }
-
     }
 
+    
+    
     public final static class JsonQuadrant {
 
         public final String name;

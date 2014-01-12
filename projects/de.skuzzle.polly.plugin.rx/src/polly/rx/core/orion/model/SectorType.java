@@ -8,6 +8,8 @@ import polly.rx.httpv2.view.orion.Images;
 
 
 public enum SectorType {
+    // ALWAYS APPEND NEW TYPES AT THE END
+    // Ordinals are used as Database values!
     NONE("", 0, 1), //$NON-NLS-1$
     UNKNOWN("", 300, 301), //$NON-NLS-1$
     HIGHLIGHT_SECTOR(MSG.secTypeHLRouteSector, 200),
@@ -64,6 +66,10 @@ public enum SectorType {
     EINTRITTS_PORTAL(MSG.secTypePortal, 100),
     ;
 
+    
+    public static void main(String[] args) {
+        System.out.println(SUPER_NOVA_TYP_1.ordinal());
+    }
     
     
     public static SectorType byName(String name) {
