@@ -86,6 +86,7 @@ public class DBPortalUpdater implements PortalUpdater {
             
             for (final DBPortal p : currentPortals) {
                 if (!portals.contains(p)) {
+                    p.setSector(null);
                     write.remove(p);
                 }
             }
