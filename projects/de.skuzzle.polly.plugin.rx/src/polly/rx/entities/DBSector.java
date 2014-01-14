@@ -80,7 +80,7 @@ public class DBSector implements Sector {
     public DBSector(Sector src) {
         Check.notNull(src, src.getType(), src.getRessources(), src.getQuadName(), 
                 src.getDate());
-        this.quadName = src.getQuadName();
+        this.quadName = src.getQuadName().trim();
         this.x = src.getX();
         this.y = src.getY();
         this.attackerBonus = src.getAttackerBonus();

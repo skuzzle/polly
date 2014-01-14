@@ -25,6 +25,7 @@ import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.SectorType;
 import de.skuzzle.polly.sdk.PersistenceManagerV2.Write;
 import de.skuzzle.polly.sdk.time.Time;
+import de.skuzzle.polly.tools.Check;
 import de.skuzzle.polly.tools.EqualsHelper;
 import de.skuzzle.polly.tools.Equatable;
 
@@ -83,7 +84,8 @@ public class DBQuadrant implements Quadrant {
     
     
     
-    public DBSector updateFrom(Sector sector, Write write) {
+    public synchronized DBSector updateFrom(Sector sector, Write write) {
+        Check.notNull(sector, write);
         if (!sector.getQuadName().equals(this.name)) {
             throw new IllegalArgumentException("name mismatch: " + this.name +  //$NON-NLS-1$
                     " & " + sector.getQuadName()); //$NON-NLS-1$

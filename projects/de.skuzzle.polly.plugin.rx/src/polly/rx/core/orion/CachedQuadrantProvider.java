@@ -29,7 +29,7 @@ public class CachedQuadrantProvider extends QuadrantProviderDecorator {
     
     
     @Override
-    public List<? extends Sector> getEntryPortals() {
+    public synchronized List<? extends Sector> getEntryPortals() {
         if (this.entryPortals.isEmpty()) {
             this.entryPortals.addAll(super.getEntryPortals());
         }
@@ -39,14 +39,14 @@ public class CachedQuadrantProvider extends QuadrantProviderDecorator {
     
     
     @Override
-    public Quadrant getQuadrant(Sector sector) {
+    public synchronized Quadrant getQuadrant(Sector sector) {
         return this.getQuadrant(sector.getQuadName());
     }
     
     
     
     @Override
-    public List<? extends Quadrant> getAllQuadrants() {
+    public synchronized List<? extends Quadrant> getAllQuadrants() {
         if (this.allQuadrants.isEmpty()) {
             this.allQuadrants.addAll(super.getAllQuadrants());
         }
@@ -56,7 +56,7 @@ public class CachedQuadrantProvider extends QuadrantProviderDecorator {
     
     
     @Override
-    public Quadrant getQuadrant(String name) {
+    public synchronized Quadrant getQuadrant(String name) {
         Quadrant cached = this.quadCache.get(name);
         if (cached == null) {
             cached = super.getQuadrant(name);

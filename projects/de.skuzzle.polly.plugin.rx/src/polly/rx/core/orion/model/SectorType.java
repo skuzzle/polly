@@ -67,6 +67,7 @@ public enum SectorType {
     
     NEUTRONENGESTERN(MSG.secTypeNeutronengestern, 54),
     GRUMORIAN(MSG.secTypeGrumorian, 31),
+    Dreifachgestirn(MSG.secTypeDreifachgestirn, 82)
     ;
 
     

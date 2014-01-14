@@ -418,6 +418,7 @@ public class MSG extends Constants {
     public static String secTypeHandelszentrum;
     public static String secTypeGrumorian;
     public static String secTypeNeutronenstern;
+    public static String secTypeDreifachgestirn;
     public static String loadNone;
     public static String loadPartial;
     public static String loadFull;
@@ -480,6 +481,7 @@ public class MSG extends Constants {
     public static String pluginAutoRemindAzDesc;
     public static String pluginLowPzWarningDesc;
     public static String pluginPortalDesc;
+
 
 
     static {
