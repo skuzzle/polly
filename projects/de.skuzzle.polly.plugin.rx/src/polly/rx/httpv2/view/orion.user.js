@@ -13,12 +13,6 @@
 // ==/UserScript==
 
 
-// Optionen
-var POLLY_ACCOUNT = "TODO";
-var POLLY_PASSWORD = "TODO";
-
-
-
 // Do not modify the following part of the script
 // Setting keys
 var PROPERTY_SELECTED_FLEET = "polly.orion.selectedFleet";
@@ -26,13 +20,15 @@ var PROPERTY_SELECTED_FLEET_ID = "polly.orion.selectedFleetId";
 var PROPERTY_CONTROL_SHOWN = "polly.orion.controlShown";
 var PROPERTY_POST_SECTOR_INFOS = "polly.orion.postSectorInfos";
 var PROPERTY_AUTO_UNVEIL = "polly.orion.autoUnveil";
+var PROPERTY_LOCAL_CACHE = "polly.orion.localCache";
 var PROPERTY_QUADRANT_DATA = "polly.orion.quadrant.";
 
 // Deckt automatisch den gesamten Quadranten auf
 var AUTO_UNVEIL = GM_getValue(PROPERTY_AUTO_UNVEIL, false);
 // Wenn true werden alle aufgerufenen Sektoren an Polly übermittelt.
 var POST_SECTOR_INFORMATION = GM_getValue(PROPERTY_POST_SECTOR_INFOS, true);
-
+// Whether quadrant contents are cache locally
+var CACHE_QUADRANTS = GM_getValue(PROPERTY_LOCAL_CACHE, true);
 
 // Test which page has been loaded
 var PAGE_CONTROL = 0;
@@ -56,12 +52,15 @@ if (uri.indexOf("map.php") != -1) {
 // Shows additional debugging information if set to true
 var debug = true;
 
+
+
 // API URLs
 var POLLY_URL = "https://projectpolly.de:443"
 var SECTOR_API = "/api/orion/json/sector"
 var QUADRANT_API = "/api/orion/json/quadrant";
 var POST_SECTOR_API = "/api/orion/json/postSector";
 var IMG_URL = "http://www.revorix.info/gfx/q/";
+
 
 
 // Variables for PAGE_SECTOR:
@@ -85,6 +84,10 @@ var selectedFleetId = -1;
 var isFleetSelected = false;
 
 var CHECK_FLEET_DELAY = 500;
+
+// holds whether currently viewed quadrant is prescanned
+var PRESCANNED = false;
+
 
 
 switch (page) {
@@ -113,11 +116,14 @@ case PAGE_SECTOR:
     // parse current page info
     var sector = parseCurrentSectorInformation();
     var fleets = parseFleetInformation();
-    
-    
+    PRESCANNED = sector.sens == "vorgescannt";
+
     // Prepare GUI
     $("td[width='200']").append(
-        '<p><b>Orion</b><br/><input type="checkbox" id="autoUnveil"/> <a id="clearCache" href="#" title="Cache löschen">Karte aufdecken</a><br/><input type="checkbox" id="postInfos"> Informationen an polly senden</p>');
+        '<p><b>Orion</b><br/><input type="checkbox" id="autoUnveil"/> <a id="clearCache" href="#" title="Lokalen Cache für ' + sector.quadName + ' löschen">Karte aufdecken</a><br/>'+
+        '<input type="checkbox" id="localCache"/> Neu laden vermeiden<br/>'+
+        '<input type="checkbox" id="postInfos"> Informationen an polly senden</p>'
+        );
     $("#autoUnveil").change(checkAutoUnveil);
     $("#autoUnveil").attr("checked", AUTO_UNVEIL);
     
@@ -133,9 +139,12 @@ case PAGE_SECTOR:
         status("Cache für " + sector.quadName + " zurückgesetzt");
     });
     
-    if (AUTO_UNVEIL) {
-        showQuad();
-    }
+    $("#localCache").attr("checked", CACHE_QUADRANTS);
+    $("#localCache").change(function() {
+        CACHE_QUADRANTS = $("#localCache").is(":checked");
+        GM_setValue(PROPERTY_LOCAL_CACHE, CACHE_QUADRANTS);
+    });
+
     
     // Add check fleet action to fleet selection links
     $('table[class="wrpd full"]').find('a[target="rxqa"]').click(function() {
@@ -149,9 +158,11 @@ case PAGE_SECTOR:
     window.setTimeout(checkFleet, CHECK_FLEET_DELAY);
     
     
-    // Actual magic
-
-
+    // Actual magic   
+    if (AUTO_UNVEIL) {
+        showQuad();
+    }
+    
     if (isFleetSelected) {
         fleets['currentFleet'] = selectedFleetName;
     }
@@ -177,6 +188,7 @@ function checkAutoUnveil() {
         hideQuad();
     }
 }
+
 
 
 // Replaces all hidden sectors with information loaded from polly.
@@ -209,8 +221,8 @@ function hide() {
     $("a#showQuad").show();
     $("a#hideQuad").hide();
     var noneImg = img("u.gif");
-    $.each(modifiedImgs, function(idx, img) {
-        $(img).attr("src", noneImg);
+    $.each(modifiedImgs, function(idx, value) {
+        $(value.img).attr("src", value.src);
     });
     sectorsShown = false;
 }
@@ -221,20 +233,26 @@ function hide() {
 function unveil() {
     $("a#showQuad").hide();
     $("a#hideQuad").show();
-    
+
     var REGEX = /X:(\d+) Y:(\d+)/;
     $("img").each(function() {
         var ths = $(this);
         var alt = ths.attr("alt");
         var src = ths.attr("src");
-        if (alt && REGEX.test(alt) && src.indexOf("u.gif") != -1) {
+
+        if (alt && REGEX.test(alt)) {
             var x = RegExp.$1;
             var y = RegExp.$2;
             var k = key(x, y);
             var sector = sectorInfos[k];
             if (sector) {
-                modifiedImgs.push(this);
+                modifiedImgs.push({ img: this, src: src});
                 var newSrc = img(sector.imgName);
+
+                if (PRESCANNED && sector.type == "") {
+                    // black out images
+                    newSrc = img("u.gif");
+                }
                 ths.attr("src", newSrc);
                 var production = "";
                 $.each(sector.production, function(idx, value) {
@@ -384,15 +402,17 @@ function postSectorDetails(sector) {
 
 // Fordert Sektorinformationen von polly an
 function loadQuadrant(name, success) {
-    // check cache
-    var ckey = PROPERTY_QUADRANT_DATA+name;
-    var cstr = GM_getValue(ckey);
-    if (cstr) {
-        sectorInfos = JSON.parse(cstr); 
-        sectorInfosLoaded = true;
-        success();
-        status("Daten aus Cache geladen");
-        return;
+    if (CACHE_QUADRANTS) {
+        // check cache
+        var ckey = PROPERTY_QUADRANT_DATA+name;
+        var cstr = GM_getValue(ckey);
+        if (cstr) {
+            sectorInfos = JSON.parse(cstr); 
+            sectorInfosLoaded = true;
+            success();
+            status("Daten aus Cache geladen");
+            return;
+        }
     }
 
     var getUrl = POLLY_URL+QUADRANT_API+"?q="+name;
@@ -437,6 +457,7 @@ function checkFleet() {
     });
     $("#currentFleet").html(isFleetSelected ? selectedFleetName : "keine");
 }
+
 
 
 // HELPER functions
