@@ -108,7 +108,7 @@ function requestRoute() {
 	var fleetId = $("#selectFleet option:selected").val()
 	var jumpTime = encodeURI($("#jumpTime").val());
 	var currentJumpTime = encodeURI($("#currentJumpTime").val());
-	var blockTail = $("#blockTail").val();
+	var blockTail = $("#blockTail").is(":checked");
 	
 	var url = "$PAGE_GETROUTE?fleetId="+fleetId+"&jt="+jumpTime+
 			"&cjt="+currentJumpTime+"&bt="+blockTail;

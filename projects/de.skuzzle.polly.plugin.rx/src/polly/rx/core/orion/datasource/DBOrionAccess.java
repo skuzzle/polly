@@ -19,7 +19,6 @@ public final class DBOrionAccess {
         this.quadUpdater = new DBQuadrantUpdater(persistence);
         this.portalProvider = new DBPortalProvider(persistence);
         this.portalUpdater = new DBPortalUpdater(persistence, this.quadUpdater);
-    
         this.cachedQuadProvider = new CachedQuadrantProvider(dbQuadProvider);
         this.quadUpdater.addQuadrantListener(this.cachedQuadProvider);
     }
