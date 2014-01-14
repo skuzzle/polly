@@ -12,6 +12,7 @@ public enum SectorType {
     // Ordinals are used as Database values!
     NONE("", 0, 1), //$NON-NLS-1$
     UNKNOWN("", 300, 301), //$NON-NLS-1$
+    
     HIGHLIGHT_SECTOR(MSG.secTypeHLRouteSector, 200),
     HIGHLIGHT_START(MSG.secTypeHLRouteStart, 201), 
     HIGHLIGHT_TARGET(MSG.secTypeHLRouteTarget, 202),
@@ -19,6 +20,7 @@ public enum SectorType {
     HIGHLIGHT_WH_START(MSG.secTypeHLWHStart, 204),
     HIGHLIGHT_SAFE_SPOT(MSG.secTypeHLSafeSpot, 205),
     HIGHLIGHT_SAFE_SPOT_WL(MSG.secTypeHLSafeSpotWH, 206),
+    
     EMPTY(MSG.secTypeEmpty, 1, 9),
     BLAUER_STERN(MSG.secTypeBlauerStern, 11),
     BLAUER_RIESE(MSG.secTypeBlauerRiese, 12),
@@ -30,7 +32,6 @@ public enum SectorType {
     SCHWARZER_ZWERG(MSG.secTypeSchwarzerZwerg, 18),
     PLANET_TYP_A(MSG.secTypePlanetTypA, 30),
     PLANET_TYP_B(MSG.secTypePlanetTypB, 31),
-
     PLANET_TYP_C(MSG.secTypePlanetTypC, 32),
     PLANET_TYP_D(MSG.secTypePlanetTypD, 33),
     PLANET_TYP_E(MSG.secTypePlanetTypE, 34),
@@ -42,11 +43,10 @@ public enum SectorType {
     SUPER_NOVA_TYP_1(MSG.secTypeSuperNovaTyp1, 51),
     SUPER_NOVA_TYP_2(MSG.secTypeSuperNovaTyp2, 52),
     NOVA(MSG.secTypeNova, 53),
-
     NEUTRONENSTERN(MSG.secTypeNeutronenstern, 54),
     PULSAR(MSG.secTypePulsar, 55),
     KOMET(MSG.secTypeKomet, 60),
-    METEORID(MSG.secTypeMeteorid, 61),
+    METEOROID(MSG.secTypeMeteorid, 61),
     ASTEROID(MSG.secTypeAsteroid, 62),
     ASTEROIDENFELD(MSG.secTypeAsteroidenFeld, 63),
     STERNEN_NEBEL(MSG.secTypeSternenNebel, 70),
@@ -67,13 +67,9 @@ public enum SectorType {
     
     NEUTRONENGESTERN(MSG.secTypeNeutronengestern, 54),
     GRUMORIAN(MSG.secTypeGrumorian, 31),
-    Dreifachgestirn(MSG.secTypeDreifachgestirn, 82)
+    DREIFACHGESTIRN(MSG.secTypeDreifachgestirn, 82)
     ;
 
-    
-    public static void main(String[] args) {
-        System.out.println(SUPER_NOVA_TYP_1.ordinal());
-    }
     
     
     public static SectorType byName(String name) {
