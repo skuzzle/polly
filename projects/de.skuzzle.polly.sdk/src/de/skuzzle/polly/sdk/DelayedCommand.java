@@ -6,6 +6,7 @@ import java.util.Map;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
+import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.time.Milliseconds;
 import de.skuzzle.polly.sdk.time.Time;
 
@@ -169,6 +170,9 @@ public abstract class DelayedCommand extends Command {
      *          user how long he has to wait before executing the command again.
      */
     protected boolean checkDelay(User user) throws CommandException {
+        if (this.getMyPolly().roles().hasPermission(user, RoleManager.ADMIN_PERMISSION)) {
+            return true;
+        }
         Long i = null;
         synchronized (this.lastExecutions) {
             i = this.lastExecutions.get(user);
