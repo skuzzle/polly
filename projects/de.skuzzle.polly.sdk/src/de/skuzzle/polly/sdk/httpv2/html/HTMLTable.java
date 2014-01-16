@@ -482,6 +482,9 @@ public class HTMLTable<T> implements HttpEventHandler {
             }
             
             settings.data = new WeakReference<HTMLTable<T>.DataHolder>(data);
+            this.updateFilter(settings, data);
+            this.updateSorting(settings, data);
+            this.updateViewPort(settings, data);
             this.fireDataProcessed(data.view, e);
         }
         
