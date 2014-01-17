@@ -101,6 +101,25 @@ public final class OrionObjectUtil {
 
 
 
+    public static String fleetString(Fleet f) {
+        return f.getName() + " - " + f.getOwnerName(); //$NON-NLS-1$
+    }
+
+
+
+    public static int fleetHash(Fleet f) {
+        return Objects.hash(f.getOwnerName(), f.getName());
+    }
+
+
+
+    public static boolean fleetsEqual(Fleet f1, Fleet f2) {
+        return f1.getOwnerName().equals(f2.getOwnerName())
+                && f1.getName().equals(f2.getName());
+    }
+
+
+
     private OrionObjectUtil() {
     }
 }

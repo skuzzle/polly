@@ -2,8 +2,10 @@ package polly.rx.core.orion.model;
 
 import java.util.Date;
 
+import de.skuzzle.polly.tools.Equatable;
 
-public interface Fleet {
+
+public interface Fleet extends Equatable {
 
     public int getRevorixId();
     
