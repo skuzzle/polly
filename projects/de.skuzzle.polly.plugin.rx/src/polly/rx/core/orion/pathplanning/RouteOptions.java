@@ -12,15 +12,16 @@ public class RouteOptions {
     final int maxWaitSpotDistance;
     final List<Sector> personalPortals;
     final boolean blockTail;
-
+    final boolean blockEntryPortal;
 
 
     public RouteOptions(TimespanType totalJumpTime, TimespanType currentJumpTime,
-            List<Sector> personalPortals, boolean blockTail) {
+            List<Sector> personalPortals, boolean blockTail, boolean blockEntryPortals) {
         this.totalJumpTime = totalJumpTime;
         this.currentJumpTime = currentJumpTime;
         this.maxWaitSpotDistance = 3;
         this.blockTail = blockTail;
+        this.blockEntryPortal = blockEntryPortals;
         this.personalPortals = personalPortals;
     }
 
@@ -38,6 +39,12 @@ public class RouteOptions {
 
 
 
+    public boolean doBlockEntryPortal() {
+        return this.blockEntryPortal;
+    }
+    
+
+    
     public boolean doBlockTail() {
         return this.blockTail;
     }

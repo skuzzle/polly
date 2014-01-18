@@ -471,6 +471,7 @@ public class MSG extends Constants {
     public static String htmlOrionRemainingJumpTime;
     public static String htmlOrionExpertSetting;
     public static String htmlOrionBlockTail;
+    public static String htmlOrionBlockEntryPortal;
     public static String htmlOrionPersonalPortal;
     public static String htmlOrionClanPortal;
     

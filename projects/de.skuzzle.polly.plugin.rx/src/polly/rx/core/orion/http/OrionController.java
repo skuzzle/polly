@@ -1,4 +1,4 @@
-package polly.rx.httpv2;
+package polly.rx.core.orion.http;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -556,7 +556,8 @@ public class OrionController extends PollyController {
             @Param("targetY") int targetY,
             @Param(value = "jt", optional = true) String jumpTime,
             @Param(value = "cjt", optional = true) String currentJumpTime,
-            @Param(value = "bt", optional = true, defaultValue = "false") boolean blockTail) {
+            @Param(value = "bt", optional = true, defaultValue = "false") boolean blockTail,
+            @Param(value = "be", optional = true, defaultValue="false") boolean blockEntryPortals) {
 
         final HttpSession s = this.getSession();
         final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
@@ -570,7 +571,8 @@ public class OrionController extends PollyController {
 
         final List<Sector> personalPortals = Orion.INSTANCE.getPersonalPortals(this
                 .getSessionUser());
-        final RouteOptions options = new RouteOptions(jt, cjt, personalPortals, blockTail);
+        final RouteOptions options = new RouteOptions(jt, cjt, personalPortals, blockTail, 
+                blockEntryPortals);
         final Collection<UniversePath> path = this.pathPlanner.findShortestPaths(start,
                 target, options);
 
@@ -613,7 +615,8 @@ public class OrionController extends PollyController {
             @Param("fleetId") int fleetId,
             @Param(value = "jt", optional = true) String jt,
             @Param(value = "cjt", optional = true) String cjt,
-            @Param(value = "bt", optional = true, defaultValue = "false") boolean blockTail) {
+            @Param(value = "bt", optional = true, defaultValue = "false") boolean blockTail,
+            @Param(value = "be", optional = true, defaultValue="false") boolean blockEntryPortals) {
 
         if (!this.getMyPolly().roles()
                 .hasPermission(this.getSessionUser(), ROUTE_ORION_PREMISSION)) {
@@ -647,7 +650,7 @@ public class OrionController extends PollyController {
         }
         final TimespanType currentJumpTime = this.parse(cjt, jumpTime);
         final RouteOptions options = new RouteOptions(jumpTime, currentJumpTime,
-                personalPortals, blockTail);
+                personalPortals, blockTail, blockEntryPortals);
         final Collection<UniversePath> path = this.pathPlanner.findShortestPaths(start,
                 target, options);
 

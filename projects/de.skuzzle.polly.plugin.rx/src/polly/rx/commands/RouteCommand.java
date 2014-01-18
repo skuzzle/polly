@@ -5,12 +5,12 @@ import java.util.List;
 import polly.rx.MSG;
 import polly.rx.core.orion.Orion;
 import polly.rx.core.orion.QuadrantUtils;
+import polly.rx.core.orion.http.OrionController;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.Wormhole;
 import polly.rx.core.orion.pathplanning.PathPlanner;
 import polly.rx.core.orion.pathplanning.PathPlanner.UniversePath;
 import polly.rx.core.orion.pathplanning.RouteOptions;
-import polly.rx.httpv2.OrionController;
 import polly.rx.parsing.ParseException;
 import de.skuzzle.polly.sdk.DelayedCommand;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -54,7 +54,7 @@ public class RouteCommand extends DelayedCommand {
                 final List<Sector> personalPortals = 
                         Orion.INSTANCE.getPersonalPortals(executer);
                 final RouteOptions options = new RouteOptions(new TimespanType(0), 
-                        new TimespanType(0), personalPortals, false);
+                        new TimespanType(0), personalPortals, false, false);
                 final UniversePath path = planner.findShortestPath(start, target, options);
                 this.outputPath(channel, path);
             }

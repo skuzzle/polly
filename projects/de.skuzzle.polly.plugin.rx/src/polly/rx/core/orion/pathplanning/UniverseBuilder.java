@@ -1,6 +1,5 @@
 package polly.rx.core.orion.pathplanning;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,6 +18,7 @@ class UniverseBuilder implements LazyBuilder<Sector, EdgeData> {
 
     private final Set<Sector> done;
     private final Collection<Wormhole> block;
+    private final Collection<Sector> entryPortalBlock;
     private final RouteOptions options;
     private final QuadrantProvider quadProvider;
     private final WormholeProvider holeProvider;
@@ -31,14 +31,19 @@ class UniverseBuilder implements LazyBuilder<Sector, EdgeData> {
         
         this.options = options;
         this.done = new HashSet<>();
-        this.block = new ArrayList<>();
+        this.block = new HashSet<>();
+        this.entryPortalBlock = new HashSet<>();
     }
     
     
     
     public void startOverAndBlock(Wormhole hole) {
         this.done.clear();
-        this.block.add(hole);
+        if (hole instanceof EntryPortalWormhole) {
+            this.entryPortalBlock.add(hole.getTarget());
+        } else {
+            this.block.add(hole);
+        }
     }
     
 
@@ -64,6 +69,11 @@ class UniverseBuilder implements LazyBuilder<Sector, EdgeData> {
             
             // add entry portals
             for (final Sector portal : quadProvider.getEntryPortals()) {
+                if (this.options.doBlockEntryPortal()) {
+                    if (this.entryPortalBlock.contains(portal)) {
+                        continue;
+                    }
+                }
                 final EdgeData d = EdgeData.entryPortal(source, portal);
                 final Quadrant targetQuad = quadProvider.getQuadrant(portal);
                 this.addNeighbour(targetQuad, portal.getX(), 
@@ -72,6 +82,11 @@ class UniverseBuilder implements LazyBuilder<Sector, EdgeData> {
             
             // add personal portals
             for (final Sector personal : this.options.personalPortals) {
+                if (this.options.doBlockEntryPortal()) {
+                    if (this.entryPortalBlock.contains(personal)) {
+                        continue;
+                    }
+                }
                 final EdgeData d = EdgeData.entryPortal(source, personal);
                 final Quadrant targetQuad = quadProvider.getQuadrant(personal);
                 this.addNeighbour(targetQuad, personal.getX(), 

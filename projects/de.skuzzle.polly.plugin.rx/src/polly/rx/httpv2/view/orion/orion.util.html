@@ -124,5 +124,5 @@ $sector.getQuadName() $sector.getX(), $sector.getY()
 
 
 #macro (SHARE_ROUTE_URL $page $start $target $options)
-$page?startQuad=$start.getQuadName()&startX=$start.getX()&startY=$start.getY()&targetQuad=$target.getQuadName()&targetX=$target.getX()&targetY=$target.getY()&jt=$options.getTotalJumpTime().getSpan()s&cjt=$options.getCurrentJumpTime().getSpan()s&bt=$options.doBlockTail()
+$page?startQuad=$start.getQuadName()&startX=$start.getX()&startY=$start.getY()&targetQuad=$target.getQuadName()&targetX=$target.getX()&targetY=$target.getY()&jt=$options.getTotalJumpTime().getSpan()s&cjt=$options.getCurrentJumpTime().getSpan()s&bt=$options.doBlockTail()&be=$options.doBlockEntryPortal()
 #end

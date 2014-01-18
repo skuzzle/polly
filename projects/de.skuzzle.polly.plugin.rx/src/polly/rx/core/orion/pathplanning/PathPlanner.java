@@ -298,18 +298,19 @@ public class PathPlanner {
             this.sumMaxWaitingTime = sumMaxWaitingTime;
         }
         
-        public Wormhole getWormholeToBlock(boolean blockTail) {
+        public Wormhole getWormholeToBlock(RouteOptions options) {
             if (this.wormholes.isEmpty()) {
                 return null;
             }
-            final Iterator<Wormhole> it = blockTail 
+            final Iterator<Wormhole> it = options.doBlockTail()
                     ? this.wormholes.descendingIterator() 
                     : this.wormholes.iterator();
             
             int i = 0;
             while (it.hasNext()) {
                 final Wormhole hole = it.next();
-                if (!hole.getName().equals(SectorType.EINTRITTS_PORTAL.toString())) {
+                if (!hole.getName().equals(SectorType.EINTRITTS_PORTAL.toString()) 
+                        || options.doBlockEntryPortal()) {
                     if (i++ == this.blockNr) {
                         ++this.blockNr;
                         return hole;
@@ -404,7 +405,7 @@ public class PathPlanner {
                 final UniversePath nextPath = result.get(nextPathIdx);
                 if (nextPath.done) continue;
                 
-                final Wormhole block = nextPath.getWormholeToBlock(options.blockTail);
+                final Wormhole block = nextPath.getWormholeToBlock(options);
                 
                 if (block != null) {
                     builder.startOverAndBlock(block);

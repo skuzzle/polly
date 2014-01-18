@@ -17,6 +17,7 @@ import polly.rx.MyPlugin;
 import polly.rx.core.AZEntryManager;
 import polly.rx.core.FleetDBManager;
 import polly.rx.core.ScoreBoardManager;
+import polly.rx.core.orion.http.OrionController;
 import polly.rx.entities.AZEntry;
 import polly.rx.entities.BattleReport;
 import polly.rx.entities.BattleReportShip;
