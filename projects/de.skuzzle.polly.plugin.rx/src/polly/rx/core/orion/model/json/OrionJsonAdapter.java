@@ -28,7 +28,6 @@ public final class OrionJsonAdapter {
         builder.registerTypeAdapter(SectorJsonHandler.CLIENT_SECTOR_TYPE, SECTOR_HANDLER);
         builder.registerTypeAdapter(ProductionJsonHandler.PRODUCTION_TYPE, PRODUCTION_HANDLER);
         builder.registerTypeAdapter(QuadrantJsonHandler.QUADRANT_TYPE, QUADRANT_HANDLER);
-        builder.setPrettyPrinting();
         
         GSON = builder.create();
     }
@@ -36,23 +35,24 @@ public final class OrionJsonAdapter {
     
     
     public static FromClientSector readSectorFromClient(String json) {
-        return GSON.fromJson(json, SectorJsonHandler.SECTOR_TYPE);
+        return GSON.fromJson(json, SectorJsonHandler.CLIENT_SECTOR_TYPE);
         
     }
     
     
     
     public static HttpAnswer sectorAnswer(Sector s) {
-        final String json = GSON.toJson(s);
+        final String json = GSON.toJson(s, SectorJsonHandler.SECTOR_TYPE);
         return HttpAnswers.newStringAnswer(json);
     }
     
     
     
     public static HttpAnswer quadrantAnswer(Quadrant q) {
-        final String json = GSON.toJson(q);
+        final String json = GSON.toJson(q, QuadrantJsonHandler.QUADRANT_TYPE);
         return HttpAnswers.newStringAnswer(json);
     }
+    
     
     
     private OrionJsonAdapter() {}

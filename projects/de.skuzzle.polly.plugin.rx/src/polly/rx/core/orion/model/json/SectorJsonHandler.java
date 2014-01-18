@@ -48,8 +48,8 @@ class SectorJsonHandler implements JsonSerializer<Sector>,
     private final static String CLAN_PORTALS = "clanPortals"; //$NON-NLS-1$
     private final static String PERSONAL_PORTALS = "personalPortals"; //$NON-NLS-1$
     
-    private final static String REVORIX_ID = "rxId"; //$NON-NLS-1$
-    private final static String FLEET_NAME = "name"; //$NON-NLS-1$
+    private final static String REVORIX_ID = "fleetId"; //$NON-NLS-1$
+    private final static String FLEET_NAME = "fleetName"; //$NON-NLS-1$
     private final static String OWNER = "owner"; //$NON-NLS-1$
     
     final static Type CLIENT_SECTOR_TYPE = new TypeToken<FromClientSector>() {}.getType();
@@ -118,7 +118,8 @@ class SectorJsonHandler implements JsonSerializer<Sector>,
         for (int i = 0; i < array.size(); ++i) {
             final JsonObject obj = array.get(i).getAsJsonObject();
             
-            final int rxId = obj.get(REVORIX_ID).getAsInt();
+            final int rxId = obj.get(REVORIX_ID) != null 
+                    ? obj.get(REVORIX_ID).getAsInt() : -1;
             final String fleetName = obj.get(FLEET_NAME).getAsString();
             final String owner = obj.get(OWNER).getAsString();
             final String ownerName = VenadHelper.getName(owner);
