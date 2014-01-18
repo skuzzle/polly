@@ -4,12 +4,9 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -29,10 +26,8 @@ import polly.rx.core.orion.QuadrantProviderDecorator;
 import polly.rx.core.orion.QuadrantUtils;
 import polly.rx.core.orion.WormholeProvider;
 import polly.rx.core.orion.WormholeProviderDecorator;
-import polly.rx.core.orion.model.OrionObjectUtil;
 import polly.rx.core.orion.model.Portal;
 import polly.rx.core.orion.model.PortalType;
-import polly.rx.core.orion.model.Production;
 import polly.rx.core.orion.model.Quadrant;
 import polly.rx.core.orion.model.QuadrantDecorator;
 import polly.rx.core.orion.model.Sector;
@@ -40,17 +35,14 @@ import polly.rx.core.orion.model.SectorDecorator;
 import polly.rx.core.orion.model.SectorType;
 import polly.rx.core.orion.model.Wormhole;
 import polly.rx.core.orion.model.WormholeDecorator;
+import polly.rx.core.orion.model.json.FromClientSector;
+import polly.rx.core.orion.model.json.OrionJsonAdapter;
 import polly.rx.core.orion.pathplanning.PathPlanner;
 import polly.rx.core.orion.pathplanning.PathPlanner.Group;
 import polly.rx.core.orion.pathplanning.PathPlanner.UniversePath;
 import polly.rx.core.orion.pathplanning.RouteOptions;
-import polly.rx.entities.RxRessource;
 import polly.rx.parsing.ParseException;
 import polly.rx.parsing.QuadrantCnPParser;
-import polly.rx.parsing.VenadHelper;
-
-import com.google.gson.Gson;
-
 import de.skuzzle.polly.http.annotations.Get;
 import de.skuzzle.polly.http.annotations.OnRegister;
 import de.skuzzle.polly.http.annotations.Param;
@@ -71,10 +63,6 @@ import de.skuzzle.polly.sdk.httpv2.SuccessResult;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLTools;
 import de.skuzzle.polly.sdk.resources.Constants;
-import de.skuzzle.polly.sdk.time.Time;
-import de.skuzzle.polly.tools.Check;
-import de.skuzzle.polly.tools.EqualsHelper;
-import de.skuzzle.polly.tools.Equatable;
 import de.skuzzle.polly.tools.concurrent.Parallel;
 import de.skuzzle.polly.tools.io.FastByteArrayInputStream;
 import de.skuzzle.polly.tools.io.FastByteArrayOutputStream;
@@ -720,270 +708,6 @@ public class OrionController extends PollyController {
         return (TimespanType) types;
     }
 
-    
-    
-    public final static class JsonProduction implements Production {
-
-        public final String ress;
-        public final int ressId;
-        public final float rate;
-
-        // for deserialization
-        public transient RxRessource rxRess;
-
-        public JsonProduction(Production production) {
-            super();
-            this.ress = production.getRess().toString();
-            this.rate = production.getRate();
-            this.ressId = production.getRess().ordinal() + 1;
-        }
-
-        @Override
-        public String toString() {
-            return OrionObjectUtil.productionString(this);
-        }
-
-        @Override
-        public int hashCode() {
-            return OrionObjectUtil.productionHash(this);
-        }
-
-        @Override
-        public final boolean equals(Object obj) {
-            return EqualsHelper.testEquality(this, obj);
-        }
-
-        @Override
-        public Class<?> getEquivalenceClass() {
-            return Production.class;
-        }
-
-        @Override
-        public boolean actualEquals(Equatable o) {
-            return OrionObjectUtil.productionEquals(this, (Production) o);
-        }
-
-        @Override
-        public RxRessource getRess() {
-            return this.rxRess;
-        }
-
-        @Override
-        public float getRate() {
-            return this.rate;
-        }
-    }
-
-    
-    
-    public final static class JsonSector implements Sector {
-
-        public final String type;
-        public final int x;
-        public final int y;
-        public final String quadName;
-        public final String imgName;
-        public final int attacker;
-        public final int defender;
-        public final int guard;
-        public final JsonProduction[] production;
-
-        // only for deserialization
-        public final String[] personalPortals;
-        public final String[] clanportals;
-        public final String wormhole;
-
-        // helper fields
-        private transient Date date = Time.currentTime();
-        private transient SectorType sectorType;
-
-        public JsonSector(Sector src) {
-            this.quadName = src.getQuadName();
-            this.type = src.getType().toString();
-            this.x = src.getX();
-            this.y = src.getY();
-            this.imgName = src.getType().getImgName();
-            this.attacker = src.getAttackerBonus();
-            this.defender = src.getDefenderBonus();
-            this.guard = src.getSectorGuardBonus();
-            this.production = new JsonProduction[src.getRessources().size()];
-            this.sectorType = src.getType();
-            int i = 0;
-            for (final Production prod : src.getRessources()) {
-                this.production[i++] = new JsonProduction(prod);
-            }
-            this.personalPortals = new String[0];
-            this.clanportals = new String[0];
-            this.wormhole = null;
-        }
-
-        @Override
-        public String toString() {
-            return OrionObjectUtil.sectorString(this);
-        }
-
-        @Override
-        public int hashCode() {
-            return OrionObjectUtil.sectorHash(this);
-        }
-
-        @Override
-        public final boolean equals(Object obj) {
-            return EqualsHelper.testEquality(this, obj);
-        }
-
-        @Override
-        public Class<?> getEquivalenceClass() {
-            return Sector.class;
-        }
-
-        @Override
-        public boolean actualEquals(Equatable o) {
-            return OrionObjectUtil.sectorsEqual(this, (Sector) o);
-        }
-
-        @Override
-        public String getQuadName() {
-            return this.quadName;
-        }
-
-        @Override
-        public int getX() {
-            return this.x;
-        }
-
-        @Override
-        public int getY() {
-            return this.y;
-        }
-
-        @Override
-        public int getAttackerBonus() {
-            return this.attacker;
-        }
-
-        @Override
-        public int getDefenderBonus() {
-            return this.defender;
-        }
-
-        @Override
-        public int getSectorGuardBonus() {
-            return this.guard;
-        }
-
-        @Override
-        public Date getDate() {
-            if (this.date == null) {
-                this.date = Time.currentTime();
-            }
-            return this.date;
-        }
-
-        @Override
-        public SectorType getType() {
-            return this.sectorType;
-        }
-
-        @Override
-        public Collection<? extends Production> getRessources() {
-            return Arrays.asList(this.production);
-        }
-    }
-    
-    
-
-    private final static class PortalImpl implements Portal {
-
-        private final String ownerName;
-        private final String ownerClan;
-        private final Sector sector;
-        private final PortalType type;
-        private final Date date;
-
-        public PortalImpl(String ownerName, String ownerClan, Sector sector,
-                PortalType type) {
-            Check.notNull(ownerName, ownerClan, sector, type);
-            this.ownerName = ownerName;
-            this.ownerClan = ownerClan;
-            this.sector = sector;
-            this.type = type;
-            this.date = Time.currentTime();
-        }
-
-        @Override
-        public String toString() {
-            return OrionObjectUtil.portalString(this);
-        }
-
-        @Override
-        public int hashCode() {
-            return OrionObjectUtil.portalHash(this);
-        }
-
-        @Override
-        public final boolean equals(Object obj) {
-            return EqualsHelper.testEquality(this, obj);
-        }
-
-        @Override
-        public Class<?> getEquivalenceClass() {
-            return Portal.class;
-        }
-
-        @Override
-        public boolean actualEquals(Equatable o) {
-            return OrionObjectUtil.portalsEqual(this, (Portal) o);
-        }
-
-        @Override
-        public Sector getSector() {
-            return this.sector;
-        }
-
-        @Override
-        public String getOwner() {
-            return this.ownerName;
-        }
-
-        @Override
-        public String getOwnerClan() {
-            return this.ownerClan;
-        }
-
-        @Override
-        public PortalType getType() {
-            return this.type;
-        }
-
-        @Override
-        public Date getDate() {
-            return this.date;
-        }
-    }
-
-    
-    
-    public final static class JsonQuadrant {
-
-        public final String name;
-        public final int maxX;
-        public final int maxY;
-        public final JsonSector[] sectors;
-
-
-
-        public JsonQuadrant(Quadrant src) {
-            this.name = src.getName();
-            this.maxX = src.getMaxX();
-            this.maxY = src.getMaxY();
-            this.sectors = new JsonSector[src.getSectors().size()];
-            int i = 0;
-            for (final Sector s : src.getSectors()) {
-                this.sectors[i++] = new JsonSector(s);
-            }
-        }
-    }
 
 
 
@@ -1000,8 +724,7 @@ public class OrionController extends PollyController {
 
         final Quadrant quad = this.quadProvider.getQuadrant(quadName);
         final Sector sector = quad.getSector(x, y);
-        final JsonSector jSector = new JsonSector(sector);
-        return new GsonHttpAnswer(200, jSector);
+        return OrionJsonAdapter.sectorAnswer(sector);
     }
 
 
@@ -1009,8 +732,7 @@ public class OrionController extends PollyController {
     @Get(API_JSON_QUADRANT)
     public HttpAnswer getJsonQuadrant(@Param("q") String name) {
         final Quadrant quad = this.quadProvider.getQuadrant(name);
-        final JsonQuadrant jQuad = new JsonQuadrant(quad);
-        return new GsonHttpAnswer(200, jQuad);
+        return OrionJsonAdapter.quadrantAnswer(quad);
     }
 
 
@@ -1018,39 +740,18 @@ public class OrionController extends PollyController {
     @Post(API_JSON_POST_SECTOR)
     public HttpAnswer postJson() {
         final String json = this.getEvent().getRequestBody();
-        final Gson gson = new Gson();
-        final JsonSector jSector = gson.fromJson(json, JsonSector.class);
-        if (jSector.type == null) {
-            return new GsonHttpAnswer(200, new SuccessResult(false, "")); //$NON-NLS-1$
-        }
-        final List<Portal> portals = new ArrayList<>();
-        if (jSector.personalPortals != null) {
-            for (final String portal : jSector.personalPortals) {
-                final String ownerName = VenadHelper.getName(portal);
-                final String ownerClan = VenadHelper.getClan(portal);
-                portals.add(new PortalImpl(ownerName, ownerClan, jSector,
-                        PortalType.PRIVATE));
-            }
-        }
-        if (jSector.clanportals != null) {
-            for (final String portal : jSector.clanportals) {
-                final String ownerName = VenadHelper.getName(portal);
-                final String ownerClan = VenadHelper.getClan(portal);
-                portals.add(new PortalImpl(ownerName, ownerClan, jSector, PortalType.CLAN));
-            }
-        }
-        jSector.sectorType = SectorType.byName(jSector.type);
-        for (final JsonProduction prod : jSector.production) {
-            prod.rxRess = RxRessource.values()[prod.ressId - 1];
-        }
+        final FromClientSector sector = OrionJsonAdapter.readSectorFromClient(json);
         
         Parallel.run(new Runnable() {
             @Override
             public void run() {
                 try {
                     Orion.INSTANCE.getQuadrantUpdater().updateSectorInformation(
-                            Collections.singleton(jSector));
-                    Orion.INSTANCE.getPortalUpdater().updatePortals(jSector, portals);
+                            Collections.singleton(sector));
+                    Orion.INSTANCE.getPortalUpdater().updatePortals(sector, sector.getClanPortals());
+                    Orion.INSTANCE.getPortalUpdater().updatePortals(sector, sector.getPersonalPortals());
+                    Orion.INSTANCE.getFleetTracker().updateOwnFleets(sector.getOwnFleets());
+                    Orion.INSTANCE.getFleetTracker().updateFleets(sector.getFleets());
                 } catch (OrionException e) {
                     e.printStackTrace();
                 }
