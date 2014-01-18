@@ -33,7 +33,7 @@ public class DefaultFleet implements Fleet {
 
     public DefaultFleet(Fleet f) {
         this(f.getRevorixId(), f.getName(), f.getOwnerName(), f.getOwnerClan(), f
-                .getSpottedAt());
+                .getSector());
     }
 
 
@@ -74,7 +74,7 @@ public class DefaultFleet implements Fleet {
 
 
     @Override
-    public Sector getSpottedAt() {
+    public Sector getSector() {
         return this.sector;
     }
 

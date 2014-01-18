@@ -17,5 +17,5 @@ public interface Fleet extends Equatable {
     
     public Date getDate();
     
-    public Sector getSpottedAt();
+    public Sector getSector();
 }
