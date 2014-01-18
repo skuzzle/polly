@@ -85,11 +85,9 @@ public class DBQuadrant implements Quadrant {
     
     
     public synchronized DBSector updateFrom(Sector sector, Write write) {
-        Check.objects(sector, write).notNull();
-        if (!sector.getQuadName().equals(this.name)) {
-            throw new IllegalArgumentException("name mismatch: " + this.name +  //$NON-NLS-1$
-                    " & " + sector.getQuadName()); //$NON-NLS-1$
-        } else if (sector.getType() == SectorType.NONE) {
+        Check.objects(sector, write).notNull()
+            .andString(sector.getQuadName()).equal(this.name);
+        if (sector.getType() == SectorType.NONE) {
             return null;
         }
         // sector is a new sector!

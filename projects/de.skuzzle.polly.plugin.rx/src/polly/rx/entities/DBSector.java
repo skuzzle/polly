@@ -98,10 +98,10 @@ public class DBSector implements Sector {
 
     public void updateFrom(Sector other, Write write) {
         Check.objects(other, other.getType(), other.getRessources(), 
-                other.getQuadName(), other.getDate()).notNull();
-         if (!this.equals(other)) {
-            throw new IllegalArgumentException(); // can not update distinct sectors
-        } else if (other.getType() == SectorType.UNKNOWN) {
+                other.getQuadName(), other.getDate()).notNull().
+            andObjects(this).equal(other);
+        
+         if (other.getType() == SectorType.UNKNOWN) {
             // do not update with unknown information
             return;
         }
