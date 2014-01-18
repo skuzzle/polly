@@ -51,7 +51,6 @@ public final class OrionJsonAdapter {
     
     public static HttpAnswer quadrantAnswer(Quadrant q) {
         final String json = GSON.toJson(q);
-        System.out.println(json);
         return HttpAnswers.newStringAnswer(json);
     }
     
