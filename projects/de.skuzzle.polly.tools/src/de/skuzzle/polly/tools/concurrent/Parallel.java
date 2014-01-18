@@ -25,7 +25,7 @@ public final class Parallel {
     
     
     public static void setExecutor(ExecutorService executor) {
-        Check.notNull(executor);
+        Check.objects(executor).notNull();
         synchronized (LOCK) {
             Parallel.executor.shutdown();
             Parallel.executor = executor;

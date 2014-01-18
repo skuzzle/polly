@@ -67,7 +67,7 @@ public class DBPortal implements Portal {
     
     public DBPortal(String ownerName, String ownerClan, PortalType type, 
             DBSector sector, Date date) {
-        Check.notNull(ownerName, ownerClan, type, sector, date);
+        Check.objects(ownerName, ownerClan, type, sector, date).notNull();
         this.ownerName = ownerName;
         this.ownerClan = ownerClan;
         this.type = type;

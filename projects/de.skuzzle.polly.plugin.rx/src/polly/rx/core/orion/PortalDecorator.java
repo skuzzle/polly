@@ -15,7 +15,7 @@ public class PortalDecorator implements Portal {
 
 
     public PortalDecorator(Portal wrapped) {
-        Check.notNull(wrapped);
+        Check.objects(wrapped).notNull();
         this.wrapped = wrapped;
     }
 

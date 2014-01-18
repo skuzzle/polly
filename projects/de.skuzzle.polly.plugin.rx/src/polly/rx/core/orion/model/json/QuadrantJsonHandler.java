@@ -37,7 +37,7 @@ class QuadrantJsonHandler implements JsonSerializer<Quadrant>,
 
 
     public QuadrantJsonHandler(SectorJsonHandler sectorHandler) {
-        Check.notNull(sectorHandler);
+        Check.objects(sectorHandler).notNull();
         this.sectorHandler = sectorHandler;
     }
 

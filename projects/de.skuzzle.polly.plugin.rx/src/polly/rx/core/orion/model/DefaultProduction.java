@@ -13,7 +13,7 @@ public class DefaultProduction implements Production {
 
 
     public DefaultProduction(RxRessource ress, float rate) {
-        Check.notNull(ress);
+        Check.objects(ress).notNull();
         this.ress = ress;
         this.rate = rate;
     }

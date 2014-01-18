@@ -27,7 +27,7 @@ public class DefaultSector implements Sector {
     
     public DefaultSector(String quadName, int x, int y, int attacker, int defender,
             int guard, SectorType type, Collection<? extends Production> production) {
-        Check.notNull(quadName, production);
+        Check.objects(quadName, production).notNull();
         this.quadName = quadName;
         this.x = x;
         this.y = y;

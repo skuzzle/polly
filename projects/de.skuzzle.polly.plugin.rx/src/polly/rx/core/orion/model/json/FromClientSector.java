@@ -23,7 +23,7 @@ public class FromClientSector extends DefaultSector {
             Collection<? extends Fleet> fleets, Collection<? extends Portal> clanPortals,
             Collection<? extends Portal> personalPortals) {
         super(s);
-        Check.notNull(ownFleets, fleets, clanPortals, personalPortals);
+        Check.objects(ownFleets, fleets, clanPortals, personalPortals).notNull();
         this.ownFleets = Collections.unmodifiableCollection(new ArrayList<>(ownFleets));
         this.fleets = Collections.unmodifiableCollection(new ArrayList<>(fleets));
         this.clanPortals = Collections

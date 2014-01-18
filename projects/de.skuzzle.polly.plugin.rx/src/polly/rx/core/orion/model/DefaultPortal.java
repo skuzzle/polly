@@ -19,7 +19,7 @@ public class DefaultPortal implements Portal {
 
     public DefaultPortal(Sector sector, String ownerName, String ownerClan,
             PortalType type) {
-        Check.notNull(sector, ownerName, ownerClan, type);
+        Check.objects(sector, ownerName, ownerClan, type).notNull();
         this.sector = new DefaultSector(sector);
         this.ownerName = ownerName;
         this.ownerClan = ownerClan;

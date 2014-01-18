@@ -61,7 +61,7 @@ class SectorJsonHandler implements JsonSerializer<Sector>,
 
 
     public SectorJsonHandler(ProductionJsonHandler productionHandler) {
-        Check.notNull(productionHandler);
+        Check.objects(productionHandler).notNull();
         this.productionHandler = productionHandler;
     }
 

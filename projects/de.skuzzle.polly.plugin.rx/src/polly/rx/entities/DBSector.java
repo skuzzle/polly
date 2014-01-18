@@ -78,8 +78,8 @@ public class DBSector implements Sector {
 
 
     public DBSector(Sector src) {
-        Check.notNull(src, src.getType(), src.getRessources(), src.getQuadName(), 
-                src.getDate());
+        Check.objects(src, src.getType(), src.getRessources(), src.getQuadName(), 
+                src.getDate()).notNull();
         this.quadName = src.getQuadName().trim();
         this.x = src.getX();
         this.y = src.getY();
@@ -97,8 +97,8 @@ public class DBSector implements Sector {
 
 
     public void updateFrom(Sector other, Write write) {
-        Check.notNull(other, other.getType(), other.getRessources(), 
-                other.getQuadName(), other.getDate());
+        Check.objects(other, other.getType(), other.getRessources(), 
+                other.getQuadName(), other.getDate()).notNull();
          if (!this.equals(other)) {
             throw new IllegalArgumentException(); // can not update distinct sectors
         } else if (other.getType() == SectorType.UNKNOWN) {

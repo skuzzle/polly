@@ -28,7 +28,7 @@ public class DefaultQuadrant implements Quadrant {
 
     public DefaultQuadrant(String name, int maxX, int maxY,
             Collection<? extends Sector> sectors) {
-        Check.notNull(name, sectors);
+        Check.objects(name, sectors).notNull();
         this.name = name;
         this.maxX = maxX;
         this.maxY = maxY;

@@ -20,7 +20,7 @@ public class DefaultFleet implements Fleet {
 
     public DefaultFleet(int rxId, String name, String ownerName, String ownerClan,
             Sector sector) {
-        Check.notNull(name, ownerName, ownerClan, sector);
+        Check.objects(name, ownerName, ownerClan, sector).notNull();
         this.rxId = rxId;
         this.name = name;
         this.ownerName = ownerName;

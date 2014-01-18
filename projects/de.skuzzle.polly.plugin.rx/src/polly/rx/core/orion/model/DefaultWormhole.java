@@ -21,7 +21,7 @@ public class DefaultWormhole implements Wormhole {
 
     public DefaultWormhole(Sector source, Sector target, String name, int minUnload,
             int maxUnload, LoadRequired load) {
-        Check.notNull(source, target, name, load);
+        Check.objects(source, target, name, load).notNull();
         this.source = new DefaultSector(source);
         this.target = new DefaultSector(target);
         this.name = name;
