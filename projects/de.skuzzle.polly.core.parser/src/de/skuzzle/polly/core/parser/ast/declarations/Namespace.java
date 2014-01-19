@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
 import de.skuzzle.polly.core.parser.ParseException;
 import de.skuzzle.polly.core.parser.ParserProperties;
 import de.skuzzle.polly.core.parser.Position;
@@ -39,6 +38,7 @@ import de.skuzzle.polly.core.parser.ast.lang.operators.Conditional;
 import de.skuzzle.polly.core.parser.ast.lang.operators.DateArithmetic;
 import de.skuzzle.polly.core.parser.ast.lang.operators.DateTimespanArithmetic;
 import de.skuzzle.polly.core.parser.ast.lang.operators.ListIndex;
+import de.skuzzle.polly.core.parser.ast.lang.operators.NumberTimespanArithmetic;
 import de.skuzzle.polly.core.parser.ast.lang.operators.RandomListIndex;
 import de.skuzzle.polly.core.parser.ast.lang.operators.Relational;
 import de.skuzzle.polly.core.parser.ast.lang.operators.ReverseList;
@@ -371,6 +371,7 @@ public class Namespace {
             NATIVE.declare(new DateTimespanArithmetic(OpType.SUB).createDeclaration());
             NATIVE.declare(new DateArithmetic(OpType.SUB).createDeclaration());
             NATIVE.declare(new UnaryTimespan().createDeclaration());
+            NATIVE.declare(new NumberTimespanArithmetic().createDeclaration());
             
             // String operators
             NATIVE.declare(new BinaryStringArithmetic(OpType.ADD).createDeclaration());
