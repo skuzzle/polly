@@ -398,7 +398,7 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
     private final ExecutorService executor;
     private final EntityList entities;
     private final EntityConverterManagerImpl entityConverter;
-
+    private int enterCounter;
     
 
     public PersistenceManagerV2Impl() {
@@ -409,7 +409,7 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
         this.entityConverter = new EntityConverterManagerImpl(this);
     }
 
-
+    
     
     EntityList getEntities() {
         return this.entities;
@@ -446,7 +446,38 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
 
         logger.info("Database connection established.");
     }
-
+    
+    
+    
+    /**
+     * Notes that the current thread tried to obtain a write lock. 
+     * Returns <code>true</code> if this thread already holds the writelock
+     * @return Whether the thread already held the writelock
+     */
+    private boolean reenter() {
+        return this.enterCounter++ > 0;
+    }
+    
+    
+    
+    /**
+     * Notes that the current thread released one write lock. Returns <code>true</code> 
+     * if the thread released all previously reentered write locks.
+     * @return Whether the thread released all write locks it held.
+     */
+    private boolean leave() {
+        if (this.enterCounter == 0) {
+            throw new IllegalStateException("thread did not enter"); //$NON-NLS-1$
+        }
+        return --this.enterCounter == 0;
+    }
+    
+    
+    
+    private boolean threadMayCommit() {
+        return this.enterCounter == 1;
+    }
+    
 
 
     /**
@@ -457,12 +488,32 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
     private void startTransaction() {
         logger.trace("Acquiring write lock...");
         this.locker.writeLock().lock();
-        
-        logger.trace("Got write lock.");
-        logger.debug("Starting transaction...");
-        this.activeTransaction = this.em.getTransaction();
-        this.activeTransaction.begin();
-        logger.debug("Transaction started.");
+        try {
+            if (!this.reenter()) {
+                logger.trace("Got write lock.");
+                logger.debug("Starting transaction...");
+                this.activeTransaction = this.em.getTransaction();
+                this.activeTransaction.begin();
+                logger.debug("Transaction started.");
+            } else {
+                logger.warn("Thread is reentering! Reusing current transaction");
+            }
+        } catch (Exception e) {
+            logger.error("Critical error while starting transaction", e);
+            this.enterCounter = 0;
+            if (this.activeTransaction != null && this.activeTransaction.isActive()) {
+                logger.info("Transaction is active, trying to close it");
+                try {
+                    this.activeTransaction.rollback();
+                } catch (Exception e1) {
+                    logger.fatal("Error while closing active transaction", e1);
+                }
+            }
+            this.locker.writeLock().unlock();
+            throw new IllegalStateException("Serious internal database error. "
+                    + "Polly should be restarted in order to regain proper operational "
+                    + "state");
+        }
     }
 
 
@@ -476,11 +527,16 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
                 throw new DatabaseException("No transaction active.");
             }
             
-            tx.commit();
-            logger.debug("Transaction finished successful");
+            if (this.threadMayCommit()) {
+                tx.commit();
+                logger.debug("Transaction finished successful");
+            } else {
+                logger.trace("Postponing commit until all write attempts"
+                        + " of this thread finish");
+            }
         } catch (Exception e) {
             logger.error("Committing transaction failed.", e);
-            if (tx != null && tx.isActive()) {
+            if (tx != null && tx.isActive() && this.threadMayCommit()) {
                 try {
                     logger.debug("Trying to rollback transaction.");
                     tx.rollback();
@@ -489,10 +545,18 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
                     logger.fatal("Rollback failed!", e1);
                 }
             }
-            throw new DatabaseException("Transaction failed", e);
+            if (e instanceof DatabaseException) {
+                throw e;
+            } else {
+                throw new DatabaseException("Transaction failed", e);
+            }
         } finally {
-            logger.trace("Writelock released");
-            locker.writeLock().unlock();
+            if (this.leave()) {
+                logger.trace("Writelock released");
+                locker.writeLock().unlock();
+            } else {
+                logger.warn("Leaving one instance of reentered write locks");
+            }
         }
     }
 
