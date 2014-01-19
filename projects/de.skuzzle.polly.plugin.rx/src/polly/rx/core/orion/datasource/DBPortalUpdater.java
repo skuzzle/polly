@@ -80,6 +80,10 @@ public class DBPortalUpdater implements PortalUpdater {
                 // if target sector doesn't exist, create it
                 final Collection<DBSector> updates = this.quadUpdater
                         .updateSectorInformation(Collections.singleton(sector));
+                if (updates.isEmpty()) {
+                    // were not able to create sector, so better skip portals too
+                    return result;
+                }
                 existingSector = updates.iterator().next();
             }
 
