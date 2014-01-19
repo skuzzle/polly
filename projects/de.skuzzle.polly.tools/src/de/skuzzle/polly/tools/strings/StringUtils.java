@@ -1,5 +1,8 @@
 package de.skuzzle.polly.tools.strings;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public final class StringUtils {
 
     private final static String DOTS = " [...]";
@@ -16,6 +19,29 @@ public final class StringUtils {
         return s.substring(0, endIdx) + DOTS;
     }
     
+    
+    
+    public static String shortenWithBoundaries(String s, int maxLength) {
+        if (s == null) {
+            return "";
+        } else if (maxLength < 1) {
+            return "";
+        } else if (s.length() < maxLength) {
+            return s;
+        }
+        final int endIdx = Math.max(1, maxLength - DOTS.length());
+        
+        final String part = s.substring(0, endIdx);
+        final String reverse = new StringBuilder(part).reverse().toString();
+        final Matcher m = Pattern.compile("\\s+").matcher(reverse);
+        if (m.find()) {
+            final int start = m.start() + 1;
+            final int i = reverse.length() - start;
+            return s.substring(0, i) + DOTS;
+        }
+        return s.substring(0, endIdx) + DOTS;
+        
+    }
     
     
     public String firstParagraph(String s) {
