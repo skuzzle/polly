@@ -39,7 +39,7 @@ public final class Check {
         
         
         private ObjectChecker(Object[] o) {
-            if (this.o == null) {
+            if (o == null) {
                 throw new NullPointerException();
             }
             this.o = o;
@@ -287,7 +287,7 @@ public final class Check {
 
     
     
-    public static IntChecker integer(int... i) {
+    public static IntChecker number(int... i) {
         return new IntChecker(i);
     }
     
