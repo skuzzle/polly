@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -390,6 +391,7 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
     }
     
     
+    private final static int LOCK_TIMEOUT = 30; // 30 seconds
 
     private EntityManagerFactory emf;
     private EntityManager em;
@@ -485,34 +487,43 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
      * within the database. In order to do this, a WriteLock is acquired so that no other
      * thread can access the database while this transaction is active.
      */
-    private void startTransaction() {
+    private void startTransaction() throws DatabaseException {
         logger.trace("Acquiring write lock...");
-        this.locker.writeLock().lock();
         try {
-            if (!this.reenter()) {
-                logger.trace("Got write lock.");
-                logger.debug("Starting transaction...");
-                this.activeTransaction = this.em.getTransaction();
-                this.activeTransaction.begin();
-                logger.debug("Transaction started.");
-            } else {
-                logger.warn("Thread is reentering! Reusing current transaction");
-            }
-        } catch (Exception e) {
-            logger.error("Critical error while starting transaction", e);
-            this.enterCounter = 0;
-            if (this.activeTransaction != null && this.activeTransaction.isActive()) {
-                logger.info("Transaction is active, trying to close it");
+            if (this.locker.writeLock().tryLock(LOCK_TIMEOUT, TimeUnit.SECONDS)) {
                 try {
-                    this.activeTransaction.rollback();
-                } catch (Exception e1) {
-                    logger.fatal("Error while closing active transaction", e1);
+                    if (!this.reenter()) {
+                        logger.trace("Got write lock.");
+                        logger.debug("Starting transaction...");
+                        this.activeTransaction = this.em.getTransaction();
+                        this.activeTransaction.begin();
+                        logger.debug("Transaction started.");
+                    } else {
+                        logger.warn("Thread is reentering! Reusing current transaction");
+                    }
+                } catch (Exception e) {
+                    logger.error("Critical error while starting transaction", e);
+                    this.enterCounter = 0;
+                    if (this.activeTransaction != null && this.activeTransaction.isActive()) {
+                        logger.info("Transaction is active, trying to close it");
+                        try {
+                            this.activeTransaction.rollback();
+                        } catch (Exception e1) {
+                            logger.fatal("Error while closing active transaction", e1);
+                        }
+                    }
+                    this.locker.writeLock().unlock();
+                    throw new DatabaseException("Serious internal database error. "
+                            + "Polly should be restarted in order to regain proper operational "
+                            + "state");
                 }
+            } else {
+                logger.error("Could not obtain write lock within reasonable time");
+                throw new DatabaseException("Timeout while waiting for write access");
             }
-            this.locker.writeLock().unlock();
-            throw new IllegalStateException("Serious internal database error. "
-                    + "Polly should be restarted in order to regain proper operational "
-                    + "state");
+        } catch (InterruptedException e) {
+            logger.error("Thread interrupted while waiting for database write lock");
+            throw new DatabaseException(e);
         }
     }
 
@@ -599,7 +610,7 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
     
 
     @Override
-    public Write write() {
+    public Write write() throws DatabaseException {
         final Stopwatch watch = new MillisecondStopwatch();
         watch.start();
         

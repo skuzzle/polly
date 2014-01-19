@@ -344,8 +344,9 @@ public interface PersistenceManagerV2 {
      * {@link Write#read()}.</p>
      * 
      * @return Write access to the database.
+     * @throws DatabaseException If obtaining write access to the database failed.
      */
-    public Write write();
+    public Write write() throws DatabaseException;
 
     /**
      * This method atomically creates a new write-locked transaction, 
