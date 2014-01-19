@@ -39,7 +39,7 @@ public final class StringUtils {
             final int i = reverse.length() - start;
             return s.substring(0, i) + DOTS;
         }
-        return s.substring(0, endIdx) + DOTS;
+        return part + DOTS;
         
     }
     
