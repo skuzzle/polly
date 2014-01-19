@@ -3,7 +3,10 @@ package de.skuzzle.polly.core.parser;
 import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -75,12 +78,13 @@ public class InputScanner extends AbstractTokenStream {
 
     protected Map<String, TokenType> keywords;
     private boolean skipWhiteSpaces;
-    
+    private final Queue<Token> tokenBuffer;
     
     
     public InputScanner(String stream) {
         super(stream);
         this.prepareKeywords();
+        this.tokenBuffer = new LinkedList<>();
     }
     
     
@@ -88,6 +92,7 @@ public class InputScanner extends AbstractTokenStream {
     public InputScanner(String stream, Charset charset) {
         super(stream, charset);
         this.prepareKeywords();
+        this.tokenBuffer = new LinkedList<>();
     }
     
     
@@ -159,6 +164,10 @@ public class InputScanner extends AbstractTokenStream {
     
     
     protected final Token readTokenInternal() throws ParseException {
+        if (!this.tokenBuffer.isEmpty()) {
+            return this.tokenBuffer.poll();
+        }
+        
         int state = 0;
         int tokenStart = this.getStreamIndex();
         StringBuilder currentString = new StringBuilder();
@@ -962,11 +971,13 @@ public class InputScanner extends AbstractTokenStream {
     
     
 
-    private Token readTimeSpan(int value, int tokenStart) throws ParseException {
-        Set<Integer> odd = new TreeSet<Integer>();
+    private Token readTimeSpan(final int value, int tokenStart) throws ParseException {
+        final Set<Integer> odd = new TreeSet<Integer>();
+        final StringBuilder lexem = new StringBuilder();
+        int identifierStart = tokenStart;
         int state = 0;
         int tmp = value;
-        value = 0;
+        int val = 0;
         
         while (!this.eos()) {
             if (state == 0) {
@@ -979,12 +990,18 @@ public class InputScanner extends AbstractTokenStream {
                             Problems.format(Problems.INVALID_DATE_TIME), 
                             tokenStart);
                     }
+                    lexem.appendCodePoint(next);
                     odd.add(next);
-                    value += tmp * InputScanner.timeLiteralValue(next);
+                    val += tmp * InputScanner.timeLiteralValue(next);
                     tmp = 0;
+                   
                 } else if (Character.isDigit(next)) {
                     this.pushBack(next);
                     state = 1;
+                } else if (Character.isJavaIdentifierPart(next)) {
+                    this.pushBack(next);
+                    identifierStart = this.getStreamIndex();
+                    state = 2;
                 } else {
                     this.pushBack(next);
                     
@@ -993,7 +1010,7 @@ public class InputScanner extends AbstractTokenStream {
                     return new Token(TokenType.DATETIME, this.spanFrom(tokenStart),
                             c.getTime());*/
                     return new Token(TokenType.TIMESPAN, this.spanFrom(tokenStart),
-                        value);
+                            val);
                 }
                 
             } else if (state == 1) {
@@ -1004,6 +1021,18 @@ public class InputScanner extends AbstractTokenStream {
                     state = 0;
                 } else if (Character.isDigit(next)) {
                     tmp = tmp * 10 + Character.digit(next, 10);
+                }
+            } else if (state == 2) {
+                final int next = this.readChar();
+                
+                if (Character.isJavaIdentifierPart(next)) {
+                    lexem.appendCodePoint(next);
+                } else {
+                    this.pushBack(next);
+                    this.tokenBuffer.add(new Token(TokenType.IDENTIFIER, 
+                            this.spanFrom(identifierStart), lexem.toString()));
+                    return new Token(TokenType.NUMBER, 
+                            new Position(tokenStart, identifierStart), value + 0.0);
                 }
             }
         }
