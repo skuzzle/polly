@@ -16,8 +16,8 @@ import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 
 
-class ProductionJsonHandler implements JsonSerializer<Production>, 
-    JsonDeserializer<Production>{
+class ProductionJsonHandler extends AbstractJsonHandler implements 
+        JsonDeserializer<Production>, JsonSerializer<Production>{
 
     private final static String RESS_TYPE = "ress"; //$NON-NLS-1$
     private final static String RESS_ID = "ressId"; //$NON-NLS-1$
@@ -31,9 +31,10 @@ class ProductionJsonHandler implements JsonSerializer<Production>,
     @Override
     public Production deserialize(JsonElement json, Type typeOfT,
             JsonDeserializationContext context) throws JsonParseException {
+        
         final JsonObject obj = json.getAsJsonObject();
-        final int ressId = obj.get(RESS_ID).getAsInt() - 1;
-        final float rate = obj.get(RATE).getAsFloat();
+        final int ressId = this.getMemberOrThrow(obj, RESS_ID).getAsInt() - 1; 
+        final float rate = this.getMemberOrThrow(obj, RATE).getAsFloat(); 
         return new DefaultProduction(RxRessource.values()[ressId], rate);
     }
 

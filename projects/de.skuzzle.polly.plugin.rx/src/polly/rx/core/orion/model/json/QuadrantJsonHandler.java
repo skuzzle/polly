@@ -20,8 +20,8 @@ import com.google.gson.reflect.TypeToken;
 
 import de.skuzzle.polly.tools.Check;
 
-class QuadrantJsonHandler implements JsonSerializer<Quadrant>,
-        JsonDeserializer<Quadrant> {
+class QuadrantJsonHandler extends AbstractJsonHandler implements 
+        JsonDeserializer<Quadrant>, JsonSerializer<Quadrant>{
 
     private final static String NAME = "name"; //$NON-NLS-1$
     private final static String MAX_X = "maxX"; //$NON-NLS-1$
@@ -47,11 +47,12 @@ class QuadrantJsonHandler implements JsonSerializer<Quadrant>,
     public Quadrant deserialize(JsonElement json, Type typeOfT,
             JsonDeserializationContext context) throws JsonParseException {
         final JsonObject obj = json.getAsJsonObject();
-        final String name = obj.get(NAME).getAsString();
-        final int maxX = obj.get(MAX_X).getAsInt();
-        final int maxY = obj.get(MAX_Y).getAsInt();
+        final String name = this.getMemberOrThrow(obj, NAME).getAsString(); 
+        final int maxX = this.getMemberOrThrow(obj, MAX_X).getAsInt(); 
+        final int maxY = this.getMemberOrThrow(obj, MAX_Y).getAsInt();
         
-        final JsonArray sectors = obj.getAsJsonArray(SECTORS);
+        final JsonArray sectors = this.getMemberOrDefault(obj, SECTORS, 
+                new JsonArray()).getAsJsonArray();
         final Collection<Sector> sectorsC = new ArrayList<>(sectors.size());
         for (int i = 0; i < sectors.size(); ++i) {
             final JsonElement jSector = sectors.get(i);

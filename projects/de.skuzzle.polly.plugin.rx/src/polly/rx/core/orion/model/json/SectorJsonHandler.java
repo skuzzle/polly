@@ -24,20 +24,21 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 
 import de.skuzzle.polly.tools.Check;
 
-class SectorJsonHandler implements JsonSerializer<Sector>,
+class SectorJsonHandler extends AbstractJsonHandler implements JsonSerializer<Sector>,
         JsonDeserializer<FromClientSector> {
 
     private final static String QUAD_NAME = "quadName"; //$NON-NLS-1$
     private final static String X = "x"; //$NON-NLS-1$
     private final static String Y = "y"; //$NON-NLS-1$
     private final static String IMG_NAME = "imgName"; //$NON-NLS-1$
-    private final static String TYPE_NAME = "typeName"; //$NON-NLS-1$
+    private final static String TYPE_NAME = "type"; //$NON-NLS-1$
     private final static String ATTACKER = "attacker"; //$NON-NLS-1$
     private final static String DEFENDER = "defender"; //$NON-NLS-1$
     private final static String GUARD = "guard"; //$NON-NLS-1$
@@ -77,16 +78,18 @@ class SectorJsonHandler implements JsonSerializer<Sector>,
     public FromClientSector deserialize(JsonElement json, Type typeOfT,
             JsonDeserializationContext context) throws JsonParseException {
         final JsonObject obj = json.getAsJsonObject();
-        final String quadName = obj.get(QUAD_NAME).getAsString();
-        final int x = obj.get(X).getAsInt();
-        final int y = obj.get(Y).getAsInt();
-        final int attacker = obj.get(ATTACKER).getAsInt();
-        final int defender = obj.get(DEFENDER).getAsInt();
-        final int guard = obj.get(GUARD).getAsInt();
-        final String typeName = obj.get(TYPE_NAME) != null ? obj.get(TYPE_NAME).getAsString() : ""; //$NON-NLS-1$
+        final String quadName = this.getMemberOrThrow(obj, QUAD_NAME).getAsString(); 
+        final int x = this.getMemberOrThrow(obj, X).getAsInt(); 
+        final int y = this.getMemberOrThrow(obj, Y).getAsInt(); 
+        final int attacker = this.getMemberOrThrow(obj, ATTACKER).getAsInt(); 
+        final int defender = this.getMemberOrThrow(obj, DEFENDER).getAsInt(); 
+        final int guard = this.getMemberOrThrow(obj, GUARD).getAsInt(); 
+        final String typeName = this.getMemberOrDefault(obj, 
+                TYPE_NAME, new JsonPrimitive("")).getAsString();  //$NON-NLS-1$
         final SectorType type = SectorType.byName(typeName);
         
-        final JsonArray production = obj.get(PRODUCTION).getAsJsonArray();
+        final JsonArray production = this.getMemberOrDefault(obj, 
+                PRODUCTION, new JsonArray()).getAsJsonArray();
         final List<Production> productionC = new ArrayList<>(production.size());
         for (int i = 0; i < production.size(); ++i) {
             final Production prod = this.productionHandler.deserialize(production.get(i), 
@@ -118,8 +121,9 @@ class SectorJsonHandler implements JsonSerializer<Sector>,
         for (int i = 0; i < array.size(); ++i) {
             final JsonObject obj = array.get(i).getAsJsonObject();
             
-            final int rxId = obj.get(REVORIX_ID) != null 
-                    ? obj.get(REVORIX_ID).getAsInt() : -1;
+            // id will be -1 if no id is present,
+            final int rxId = this.getMemberOrDefault(
+                    obj, REVORIX_ID, new JsonPrimitive(-1)).getAsInt();
             final String fleetName = obj.get(FLEET_NAME).getAsString();
             final String owner = obj.get(OWNER).getAsString();
             final String ownerName = VenadHelper.getName(owner);

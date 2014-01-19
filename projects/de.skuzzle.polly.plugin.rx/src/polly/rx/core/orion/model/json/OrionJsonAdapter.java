@@ -13,17 +13,20 @@ import de.skuzzle.polly.http.api.answers.HttpAnswers;
 
 public final class OrionJsonAdapter {
 
+    private final static FleetJsonHandler FLEET_HANDLER;
     private final static ProductionJsonHandler PRODUCTION_HANDLER;
     private final static SectorJsonHandler SECTOR_HANDLER;
     private final static QuadrantJsonHandler QUADRANT_HANDLER;
     private final static Gson GSON;
     
     static {
+        FLEET_HANDLER = new FleetJsonHandler();
         PRODUCTION_HANDLER = new ProductionJsonHandler();
         SECTOR_HANDLER  = new SectorJsonHandler(PRODUCTION_HANDLER);
         QUADRANT_HANDLER = new QuadrantJsonHandler(SECTOR_HANDLER);
         
         final GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(FleetJsonHandler.FLEET_TYPE, FLEET_HANDLER);
         builder.registerTypeAdapter(SectorJsonHandler.SECTOR_TYPE, SECTOR_HANDLER);
         builder.registerTypeAdapter(SectorJsonHandler.CLIENT_SECTOR_TYPE, SECTOR_HANDLER);
         builder.registerTypeAdapter(ProductionJsonHandler.PRODUCTION_TYPE, PRODUCTION_HANDLER);
