@@ -61,7 +61,7 @@ public final class StringUtils {
         final String firstParagraph = i == -1 
                 ? s 
                 : s.substring(0, i) + DOTS;
-        return shorten(firstParagraph, maxLength);
+        return shortenWithBoundaries(firstParagraph, maxLength);
     }
     
     
