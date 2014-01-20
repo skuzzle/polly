@@ -12,6 +12,7 @@ import polly.rx.core.orion.FleetListener;
 import polly.rx.core.orion.FleetTracker;
 import polly.rx.core.orion.OrionException;
 import polly.rx.core.orion.model.Fleet;
+import polly.rx.core.orion.model.Quadrant;
 import de.skuzzle.polly.sdk.time.Milliseconds;
 import de.skuzzle.polly.sdk.time.Time;
 import de.skuzzle.polly.tools.Check;
@@ -86,8 +87,8 @@ public class MemoryFleetTracker implements FleetTracker {
     
 
     @Override
-    public Collection<? extends Fleet> getOrionUserFleets() {
-        return null;
+    public synchronized Collection<? extends Fleet> getOrionUserFleets() {
+        return this.orionFleets.values();
     }
 
 
@@ -103,4 +104,16 @@ public class MemoryFleetTracker implements FleetTracker {
     public void updateFleets(Collection<? extends Fleet> fleets) throws OrionException {
     }
 
+
+
+    @Override
+    public synchronized Collection<? extends Fleet> getFleets(Quadrant quadrant) {
+        final Collection<Fleet> result = new ArrayList<>();
+        for (final Fleet f : this.orionFleets.values()) {
+            if (f.getSector().getQuadName().equals(quadrant.getName())) {
+                result.add(f);
+            }
+        }
+        return result;
+    }
 }

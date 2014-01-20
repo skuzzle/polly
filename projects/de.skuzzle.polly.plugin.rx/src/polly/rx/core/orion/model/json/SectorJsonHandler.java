@@ -48,6 +48,7 @@ class SectorJsonHandler extends AbstractJsonHandler implements JsonSerializer<Se
     private final static String FLEETS = "fleets"; //$NON-NLS-1$
     private final static String CLAN_PORTALS = "clanPortals"; //$NON-NLS-1$
     private final static String PERSONAL_PORTALS = "personalPortals"; //$NON-NLS-1$
+    private final static String SHARE_FLEET_POSITION = "shareOwnFleets"; //$NON-NLS-1$
     
     private final static String REVORIX_ID = "fleetId"; //$NON-NLS-1$
     private final static String FLEET_NAME = "fleetName"; //$NON-NLS-1$
@@ -96,6 +97,9 @@ class SectorJsonHandler extends AbstractJsonHandler implements JsonSerializer<Se
                     ProductionJsonHandler.PRODUCTION_TYPE, context);
             productionC.add(prod);
         }
+        final boolean shareFleets = this.getMemberOrDefault(obj, SHARE_FLEET_POSITION, 
+                new JsonPrimitive(true)).getAsBoolean();
+        
         final Sector s = new DefaultSector(quadName, x, y, attacker, defender, guard, 
                 type, productionC);
         
@@ -107,7 +111,8 @@ class SectorJsonHandler extends AbstractJsonHandler implements JsonSerializer<Se
         final List<Portal> clan = this.readPortals(s, PortalType.CLAN, 
                 obj.get(CLAN_PORTALS));
         
-        return new FromClientSector(s, ownFleets, fleets, clan, personal);
+        return new FromClientSector(s, null, shareFleets, ownFleets, 
+                fleets, clan, personal);
     }
     
     
