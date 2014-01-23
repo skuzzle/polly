@@ -70,9 +70,9 @@
             <th>Action</th>
         </tr>
     #foreach ($ss in $allSessions)
-    #if ($ss.getAttached("user"))
+    #if ($ss.get("user"))
         <tr>
-            <td>$ss.getAttached("user")</td>
+            <td>$ss.get("user")</td>
             <td>$ss.getId()</td>
             <td>$ss.getEvents().iterator().next().getClientIP()</td>
             <td>$myPolly.formatting().formatDate($ss.getExpirationDate())</td>
@@ -117,7 +117,7 @@
                 <th>Action</th>
             </tr>
             #foreach ($ss in $allSessions)
-            #if (!$ss.getAttached("user"))
+            #if (!$ss.get("user"))
             <tr>
                 <td>$ss.getId()</td>
                 <td>$ss.getEvents().iterator().next().getClientIP()</td>
@@ -162,7 +162,7 @@
             </tr>
             #foreach ($ss in $httpServer.getSessionHistory())
             <tr>
-                <td>$!ss.getAttached("user")</td>
+                <td>$!ss.get("user")</td>
                 <td>$ss.getId()</td>
                 <td>$ss.getEvents().iterator().next().getClientIP()</td>
                 <td>$myPolly.formatting().formatDate($ss.getExpirationDate())</td>
