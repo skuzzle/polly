@@ -9,6 +9,7 @@ public class GsonHttpAnswer extends AbstractHttpAnswer {
 
     public GsonHttpAnswer(int responseCode, Object value) {
         super(responseCode);
+        this.addHeader("Content-Type", "charset=utf-8"); //$NON-NLS-1$ //$NON-NLS-2$
         this.value = value;
     }
     
