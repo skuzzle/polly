@@ -121,7 +121,7 @@ public class WebinterfaceProvider extends AbstractProvider {
                 logger.debug("HTTP: " + e.getMode() + " " +  //$NON-NLS-1$ //$NON-NLS-2$
                     e.getRequestURI().toString() + 
                     " [ip: " + e.getClientIP() + ", " +  //$NON-NLS-1$ //$NON-NLS-2$
-                    e.getSession().getAttached("user") + "], " +  //$NON-NLS-1$ //$NON-NLS-2$
+                    e.getSession().get("user") + "], " +  //$NON-NLS-1$ //$NON-NLS-2$
                     e.parameterMap());
             }
         });

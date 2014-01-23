@@ -86,7 +86,7 @@ public abstract class PollyController extends Controller {
 
 
     protected final User getSessionUser() {
-        return (User) this.getSession().getAttached(WebinterfaceManager.USER);
+        return (User) this.getSession().get(WebinterfaceManager.USER);
     }
 
 

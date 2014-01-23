@@ -430,7 +430,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         
         // current settings for requesting user
         final HttpSession s = e.getSession();
-        final User user = (User) s.getAttached(WebinterfaceManager.USER);
+        final User user = (User) s.get(WebinterfaceManager.USER);
         if (!this.myPolly.roles().canAccess(user, this.model)) {
             final String permDenied = Messages.htmlTablePermDenied;
             throw new AlternativeAnswerException(
@@ -443,7 +443,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         final TableSettings settings;
         synchronized (s) {
             if (s.isSet(settingsKey)) {
-                settings = (TableSettings) s.getAttached(settingsKey);
+                settings = (TableSettings) s.get(settingsKey);
             } else {
                 settings = new TableSettings();
                 settings.filterRowShown = true;

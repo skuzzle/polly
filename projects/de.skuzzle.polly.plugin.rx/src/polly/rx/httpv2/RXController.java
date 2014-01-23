@@ -271,7 +271,7 @@ public class RXController extends PollyController {
     public HttpAnswer addToCompare(@Param("venadName") String name) 
                 throws AlternativeAnswerException {
         this.requirePermissions(MyPlugin.SBE_PERMISSION);
-        CompareList cl = (CompareList) this.getSession().getAttached(COMPARE_LIST_KEY);
+        CompareList cl = (CompareList) this.getSession().get(COMPARE_LIST_KEY);
         if (cl == null) {
             cl = new CompareList();
             this.getSession().set(COMPARE_LIST_KEY, cl);
@@ -288,7 +288,7 @@ public class RXController extends PollyController {
     public HttpAnswer removeFromCompare(@Param("venadName") String name) 
             throws AlternativeAnswerException {
         this.requirePermissions(MyPlugin.SBE_PERMISSION);
-        CompareList cl = (CompareList) this.getSession().getAttached(COMPARE_LIST_KEY);
+        CompareList cl = (CompareList) this.getSession().get(COMPARE_LIST_KEY);
         if (cl != null) {
             synchronized (cl) {
                 cl.getEntries().remove(name);
@@ -309,7 +309,7 @@ public class RXController extends PollyController {
     public HttpAnswer scoreboardPage() throws AlternativeAnswerException {
         this.requirePermissions(MyPlugin.SBE_PERMISSION);
         final Map<String, Object> c = this.createContext(CONTENT_SCOREBOARD);
-        CompareList cl = (CompareList) this.getSession().getAttached(COMPARE_LIST_KEY);
+        CompareList cl = (CompareList) this.getSession().get(COMPARE_LIST_KEY);
         if (cl == null) {
             cl = new CompareList();
             this.getSession().set(COMPARE_LIST_KEY, cl);
@@ -410,7 +410,7 @@ public class RXController extends PollyController {
     public HttpAnswer compare() throws AlternativeAnswerException {
         this.requirePermissions(MyPlugin.SBE_PERMISSION);
         final Map<String, Object> c = this.createContext(CONTENT_COMPARE_SCORES);
-        CompareList cl = (CompareList) this.getSession().getAttached(COMPARE_LIST_KEY);
+        CompareList cl = (CompareList) this.getSession().get(COMPARE_LIST_KEY);
         c.put("compareList", cl); //$NON-NLS-1$
         return this.makeAnswer(c);
     }
@@ -481,7 +481,7 @@ public class RXController extends PollyController {
     public HttpAnswer graphCompare(@Param("maxMonth") int maxMonths) 
             throws AlternativeAnswerException {
         this.requirePermissions(MyPlugin.SBE_PERMISSION);
-        CompareList cl = (CompareList) this.getSession().getAttached(COMPARE_LIST_KEY);
+        CompareList cl = (CompareList) this.getSession().get(COMPARE_LIST_KEY);
         if (cl == null) {
             return HttpAnswers.newStringAnswer(""); //$NON-NLS-1$
         }
@@ -532,7 +532,7 @@ public class RXController extends PollyController {
             throws AlternativeAnswerException, IOException {
         this.requirePermissions(MyPlugin.SBE_PERMISSION);
         final FastByteArrayInputStream in = (FastByteArrayInputStream) 
-                this.getSession().getAttached(imgName);
+                this.getSession().get(imgName);
         synchronized (in) {
             in.reset();
         }
@@ -839,7 +839,7 @@ public class RXController extends PollyController {
         final User user = this.getSessionUser();
         final String STATISTIC_KEY = STATS_PREFIX + user.getName();
         BattleReportStatistics stats = 
-                (BattleReportStatistics) this.getSession().getAttached(STATISTIC_KEY);
+                (BattleReportStatistics) this.getSession().get(STATISTIC_KEY);
         
         if (stats == null) {
             stats = new BattleReportStatistics();

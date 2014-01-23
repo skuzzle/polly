@@ -45,7 +45,7 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
             List<BattleReport> data, HttpEvent e) {
         
         final HttpSession s = e.getSession();
-        final User user = (User) s.getAttached(WebinterfaceManager.USER);
+        final User user = (User) s.get(WebinterfaceManager.USER);
         final String STATISTIC_KEY = RXController.STATS_PREFIX + user.getName();
         
         final BattleReportStatistics stats = new BattleReportStatistics();

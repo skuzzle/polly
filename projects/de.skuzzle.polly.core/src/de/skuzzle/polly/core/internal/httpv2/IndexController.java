@@ -145,7 +145,7 @@ public class IndexController extends PollyController {
         final User user = this.getSessionUser();
         if (user != null) {
             final long now = new Date().getTime();
-            final long start = ((Date) this.getSession().getAttached(
+            final long start = ((Date) this.getSession().get(
                     WebinterfaceManager.LOGIN_TIME)).getTime();
             final long diff = now - start;
             long tl = this.getServer().sessionLiveTime() - diff;

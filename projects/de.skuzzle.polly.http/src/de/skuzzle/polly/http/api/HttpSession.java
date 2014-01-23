@@ -62,7 +62,7 @@ public interface HttpSession {
     
     public boolean isSet(String key);
     
-    public Object getAttached(String key);
+    public Object get(String key);
     
     /**
      * Gets information on how much bytes has been sent and received over this session.

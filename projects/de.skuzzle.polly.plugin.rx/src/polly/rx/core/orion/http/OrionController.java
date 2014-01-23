@@ -372,8 +372,8 @@ public class OrionController extends PollyController {
         });
         allQuads.addAll(this.quadProvider.getAllQuadrants());
         c.put("allQuads", allQuads); //$NON-NLS-1$
-        c.put("routeStart", this.getSession().getAttached(ROUTE_FROM_KEY)); //$NON-NLS-1$
-        c.put("routeTarget", this.getSession().getAttached(ROUTE_TO_KEY)); //$NON-NLS-1$
+        c.put("routeStart", this.getSession().get(ROUTE_FROM_KEY)); //$NON-NLS-1$
+        c.put("routeTarget", this.getSession().get(ROUTE_TO_KEY)); //$NON-NLS-1$
         c.put("personalPortals", Orion.INSTANCE.getPersonalPortals(this.getSessionUser())); //$NON-NLS-1$
         c.put("entryPortals", this.quadProvider.getEntryPortals()); //$NON-NLS-1$
         c.put("entries", this.azManager.getEntries(this.getSessionUser().getId())); //$NON-NLS-1$
@@ -600,10 +600,10 @@ public class OrionController extends PollyController {
     public HttpAnswer getNthRoute(@Param("n") int n) {
         final HttpSession s = this.getSession();
         final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
-        c.put("start", s.getAttached(ROUTE_FROM_KEY)); //$NON-NLS-1$
-        c.put("target", s.getAttached(ROUTE_TO_KEY)); //$NON-NLS-1$
-        c.put("options", s.getAttached(ROUTE_OPTIONS_KEY)); //$NON-NLS-1$
-        c.put("path", s.getAttached(ROUTE_N_KEY + n)); //$NON-NLS-1$
+        c.put("start", s.get(ROUTE_FROM_KEY)); //$NON-NLS-1$
+        c.put("target", s.get(ROUTE_TO_KEY)); //$NON-NLS-1$
+        c.put("options", s.get(ROUTE_OPTIONS_KEY)); //$NON-NLS-1$
+        c.put("path", s.get(ROUTE_N_KEY + n)); //$NON-NLS-1$
         c.put("n", n); //$NON-NLS-1$
         return HttpAnswers.newTemplateAnswer(CONTENT_ROUTE_SINGLE, c);
     }
@@ -639,8 +639,8 @@ public class OrionController extends PollyController {
         if (!s.isSet(ROUTE_TO_KEY)) {
             return HttpAnswers.newStringAnswer(""); //$NON-NLS-1$
         }
-        final Sector start = (Sector) s.getAttached(ROUTE_FROM_KEY);
-        final Sector target = (Sector) s.getAttached(ROUTE_TO_KEY);
+        final Sector start = (Sector) s.get(ROUTE_FROM_KEY);
+        final Sector target = (Sector) s.get(ROUTE_TO_KEY);
 
         final TimespanType jumpTime;
         if (fleetId == -1) {
@@ -676,7 +676,7 @@ public class OrionController extends PollyController {
 
     @Get(API_GET_GROUP_IMAGE)
     public HttpAnswer getImageForGroup(@Param("grp") int id) {
-        final Object o = this.getSession().getAttached(QUAD_IMAGE_KEY + id);
+        final Object o = this.getSession().get(QUAD_IMAGE_KEY + id);
         if (o == null) {
             return HttpAnswers.newStringAnswer(404, ""); //$NON-NLS-1$
         }

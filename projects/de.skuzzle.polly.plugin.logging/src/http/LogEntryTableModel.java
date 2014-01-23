@@ -109,7 +109,7 @@ public class LogEntryTableModel extends AbstractHTMLTableModel<LogEntry> {
 
     @Override
     public List<LogEntry> getData(HttpEvent e) {
-        final User executor = (User) e.getSession().getAttached(WebinterfaceManager.USER);
+        final User executor = (User) e.getSession().get(WebinterfaceManager.USER);
         List<LogEntry> logs = this.lm.getAllEntries();
         if (!this.myPolly.roles().hasPermission(executor, RoleManager.ADMIN_PERMISSION)) {
             logs = this.lm.postFilter(logs, new SecurityLogFilter(this.myPolly, executor));

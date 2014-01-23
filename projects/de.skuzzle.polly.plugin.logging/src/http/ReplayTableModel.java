@@ -34,7 +34,7 @@ public class ReplayTableModel extends LogEntryTableModel {
     
     @Override
     public List<LogEntry> getData(HttpEvent e) {
-        final User u = (User) e.getSession().getAttached(WebinterfaceManager.USER);
+        final User u = (User) e.getSession().get(WebinterfaceManager.USER);
 
         if (!this.myPolly.users().isSignedOn(u)) {
             return Collections.emptyList();

@@ -150,7 +150,7 @@ public class MyRemindTableModel extends AbstractHTMLTableModel<RemindEntity> {
     @Override
     public Map<String, String> getRequestParameters(HttpEvent e) {
         final Map<String, String> m = new HashMap<>();
-        final User user = (User) e.getSession().getAttached(WebinterfaceManager.USER);
+        final User user = (User) e.getSession().get(WebinterfaceManager.USER);
         m.put(NICKNAME_FIELD, user.getName());
         return m;
     }
