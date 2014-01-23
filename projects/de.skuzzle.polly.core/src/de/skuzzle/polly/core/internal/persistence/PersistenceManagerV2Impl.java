@@ -548,6 +548,7 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
             }
         } catch (Exception e) {
             logger.error("Committing transaction failed.", e);
+            
             if (tx != null && tx.isActive() && this.threadMayCommit()) {
                 try {
                     logger.debug("Trying to rollback transaction.");
@@ -563,12 +564,10 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
                 throw new DatabaseException("Transaction failed", e);
             }
         } finally {
-            if (this.leave()) {
-                logger.trace("Writelock released");
-                locker.writeLock().unlock();
-            } else {
-                logger.warn("Leaving one instance of reentered write locks");
-            }
+            logger.trace("Writelock released");
+            this.leave();
+            logger.warn(this.enterCounter + " nested write calls left");
+            locker.writeLock().unlock();
         }
     }
 
@@ -665,10 +664,10 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
             public void run() {
                 try (final Write w = write()) {
                     a.perform(w);
+                    cb.success();
                 } catch (DatabaseException e) {
                     cb.fail(e);
                 }
-                cb.success();
             }
         });
     }
