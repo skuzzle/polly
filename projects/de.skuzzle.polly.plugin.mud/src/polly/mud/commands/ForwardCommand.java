@@ -33,7 +33,7 @@ public class ForwardCommand extends Command {
         
         if (this.match(signature, 0)) {
             MudController.getInstance().activateForward(signature.getStringValue(0));
-        } else if (this.match(signature, 0)) {
+        } else if (this.match(signature, 1)) {
             MudController.getInstance().activateForward(null);
         }
         return false;
