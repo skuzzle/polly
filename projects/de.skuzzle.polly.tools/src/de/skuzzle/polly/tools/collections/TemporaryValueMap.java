@@ -1,7 +1,6 @@
 package de.skuzzle.polly.tools.collections;
 
 import java.util.AbstractSet;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -186,7 +185,7 @@ public class TemporaryValueMap<K, V> implements Map<K, V> {
     @Override
     public Collection<V> values() {
         synchronized (this.backend) {
-            final Collection<TaskValuePair> cpy = new ArrayList<>(this.backend.values());
+            final Collection<TaskValuePair> cpy = new HashSet<>(this.backend.values());
             final Iterator<TaskValuePair> it = cpy.iterator();
             final Iterator<V> newIt = new Iterator<V>() {
                 @Override
