@@ -55,8 +55,13 @@ import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.http.api.answers.HttpInputStreamAnswer;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.PersistenceManagerV2;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Atomic;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.TransactionCallback;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Write;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.Types.TimespanType;
+import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
 import de.skuzzle.polly.sdk.httpv2.PollyController;
 import de.skuzzle.polly.sdk.httpv2.SuccessResult;
@@ -750,9 +755,10 @@ public class OrionController extends PollyController {
         final String json = this.getEvent().getRequestBody();
         final FromClientSector sector = OrionJsonAdapter.readSectorFromClient(json);
         
-        Parallel.run(new Runnable() {
+        final PersistenceManagerV2 persistence = this.getMyPolly().persistence();
+        persistence.writeAtomicParallel(new Atomic() {
             @Override
-            public void run() {
+            public void perform(Write write) throws DatabaseException {
                 try {
                     Orion.INSTANCE.getQuadrantUpdater().updateSectorInformation(
                             Collections.singleton(sector));
@@ -761,8 +767,17 @@ public class OrionController extends PollyController {
                     Orion.INSTANCE.getFleetTracker().updateOwnFleets(sector.getOwnFleets());
                     Orion.INSTANCE.getFleetTracker().updateFleets(sector.getFleets());
                 } catch (OrionException e) {
-                    e.printStackTrace();
+                    throw new DatabaseException(e);
                 }
+            }
+        },
+        new TransactionCallback() {
+            @Override
+            public void success() {
+            }
+            @Override
+            public void fail(DatabaseException e) {
+                e.printStackTrace();
             }
         });
 

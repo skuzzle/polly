@@ -64,6 +64,10 @@ public class DBPortalUpdater implements PortalUpdater {
     public synchronized Collection<DBPortal> updatePortals(Sector sector,
             Collection<? extends Portal> portals) throws OrionException {
 
+        if (portals.isEmpty()) {
+            return Collections.emptyList();
+        }
+        
         final List<Portal> moved = new ArrayList<>();
         final List<Portal> created = new ArrayList<>();
         final List<Portal> removed = new ArrayList<>();
