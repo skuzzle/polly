@@ -503,7 +503,6 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
                     }
                 } catch (Exception e) {
                     logger.error("Critical error while starting transaction", e);
-                    this.enterCounter = 0;
                     if (this.activeTransaction != null && this.activeTransaction.isActive()) {
                         logger.info("Transaction is active, trying to close it");
                         try {
