@@ -86,10 +86,11 @@
         build order that respects all dependencies.
     -->
     <target name="all">
-        <ant dir="de.skuzzle.polly.http.annotations" target="${target}" inheritAll="false"/>
-        <ant dir="de.skuzzle.polly.http" target="${target}" inheritAll="false"/>
         <ant dir="de.skuzzle.polly.tools" target="${target}" 
             inheritAll="false"/>
+        <ant dir="de.skuzzle.polly.http.annotations" target="${target}" 
+            inheritAll="false"/>
+        <ant dir="de.skuzzle.polly.http" target="${target}" inheritAll="false"/>
         <ant dir="de.skuzzle.polly.sdk" target="${target}" inheritAll="false"/>
         <ant dir="de.skuzzle.polly.process" target="${target}" 
             inheritAll="false"/>

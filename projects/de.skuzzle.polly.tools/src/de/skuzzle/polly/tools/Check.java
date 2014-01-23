@@ -20,7 +20,7 @@ public final class Check {
         
         
         
-        public IntChecker andInts(int...i) {
+        public IntChecker andInts(long...i) {
             return new IntChecker(i);
         }
         
@@ -149,10 +149,10 @@ public final class Check {
     
     public static class IntChecker extends AbstractChecker {
         
-        private final int[] i;
+        private final long[] i;
         
         
-        private IntChecker(int[] i) {
+        private IntChecker(long[] i) {
             this.i = i;
         }
         
@@ -160,7 +160,7 @@ public final class Check {
         
         public IntChecker isBetween(int bound1, int bound2) {
             for (int j = 0; j < this.i.length; ++j) {
-                final int i = this.i[j];
+                final long i = this.i[j];
             
                 final int lower = Math.min(bound1, bound2);
                 final int upper = Math.max(bound1, bound2);
@@ -177,7 +177,7 @@ public final class Check {
         
         public IntChecker isLowerThan(int bound) {
             for (int j = 0; j < this.i.length; ++j) {
-                final int i = this.i[j];
+                final long i = this.i[j];
                 if (i < bound) {
                     throw new IllegalArgumentException(i + " < " + bound);
                 }
@@ -189,7 +189,7 @@ public final class Check {
         
         public IntChecker isPositiveOrZero() {
             for (int j = 0; j < this.i.length; ++j) {
-                final int i = this.i[j];
+                final long i = this.i[j];
                 if (i < 0) {
                     throw new IllegalArgumentException(i + " is < 0");
                 }
@@ -201,7 +201,7 @@ public final class Check {
         
         public IntChecker isPositive() {
             for (int j = 0; j < this.i.length; ++j) {
-                final int i = this.i[j];
+                final long i = this.i[j];
                 if (i <= 0) {
                     throw new IllegalArgumentException(i + " is <= 0");
                 }
@@ -213,7 +213,7 @@ public final class Check {
         
         public IntChecker isNegativeOrZero() {
             for (int j = 0; j < this.i.length; ++j) {
-                final int i = this.i[j];
+                final long i = this.i[j];
                 if (i >= 0) {
                     throw new IllegalArgumentException(i + " is >= 0");
                 }
@@ -225,7 +225,7 @@ public final class Check {
         
         public IntChecker isNegative() {
             for (int j = 0; j < this.i.length; ++j) {
-                final int i = this.i[j];
+                final long i = this.i[j];
                 if (i > 0) {
                     throw new IllegalArgumentException(i + " is > 0");
                 }
@@ -287,7 +287,7 @@ public final class Check {
 
     
     
-    public static IntChecker number(int... i) {
+    public static IntChecker number(long... i) {
         return new IntChecker(i);
     }
     

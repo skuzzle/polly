@@ -6,5 +6,6 @@
 	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/commons-collections-3.2.1.jar"/>
 	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/commons-lang-2.4.jar"/>
 	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/velocity-1.7.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/de.skuzzle.polly.tools"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

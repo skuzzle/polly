@@ -51,18 +51,66 @@ public interface HttpSession {
     public String getId();
 
     /**
-     * Attaches an abitrary object to this session.
+     * Attaches an arbitrary object to this session.
      * 
      * @param key Key for the object.
      * @param item The object to attach.
      */
     public void set(String key, Object item);
     
+    /**
+     * Attaches an arbitrary object to this session. The attached object will  
+     * automatically be removed after the provided caching time given in ms expired. If
+     * the cache time is negative, the object will be stored forever. After being 
+     * removed, the {@link #get(String) get} method will return <code>null</code> as if
+     * that object never has existed.
+     * 
+     * <p>If there is already an object stored with the given key, it will be replaced 
+     * and the task scheduled for deletion of that former object will be cancelled.</p>
+     * 
+     * @param key The key under which the object is stored.
+     * @param item The object to store.
+     * @param cacheTime The time in milliseconds after which the object will  
+     *      automatically be removed. 
+     */
+    public void set(String key, Object item, long cacheTimeMs);
+    
     public void detach(String key);
     
     public boolean isSet(String key);
     
-    public Object get(String key);
+    /**
+     * Gets the object assigned to the provided <tt>key</tt> or <code>null</code> if no 
+     * such object exists. If the object exists, this method will perform an unsafe
+     * type cast to the caller's target type. When used wrong, this will throw a 
+     * {@link ClassCastException}.
+     * 
+     * @param key The key of the object to retrieve
+     * @return The attached object or <code>null</code>.
+     */
+    public <T> T get(String key);
+    
+    /**
+     * Gets the object assigned to the provided <tt>key</tt> or <tt>backup</tt> if no such
+     * object is attached to this session. The backup element will <b>not</b> be stored 
+     * in the session.
+     *  
+     * @param key The key of the object to retrieve
+     * @param backup The element returned if no object is currently attached with 
+     *          provided key.
+     * @return The attached object or the provided backup.
+     */
+    public <T> T get(String key, T backup);
+    
+    /**
+     * Gets the object assigned to the provided <tt>key</tt> or <code>null</code> if no 
+     * such object exists. Additionally, if an object existed with the givem key, it 
+     * will be removed from this session.
+     * 
+     * @param key The key of the object to retrieve
+     * @return The attached object or <code>null</code>
+     */
+    public <T> T getOnce(String key);
     
     /**
      * Gets information on how much bytes has been sent and received over this session.

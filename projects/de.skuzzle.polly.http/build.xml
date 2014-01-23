@@ -26,6 +26,7 @@
     -->
     <property name="dependencies.internal" value="
         **/polly.http.annotations.jar
+        **/polly.tools.jar
     "/>
    
     

@@ -22,19 +22,22 @@ import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.Map;
 
 import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.http.api.HttpSession;
+import de.skuzzle.polly.tools.collections.TemporaryValueMap;
 
 class HttpSessionImpl implements HttpSession {
 
+    // negative means to cache forever
+    private final static long DEFAULT_ELEMENT_CACHE_TIME = -1l;
+    
     private final static int EVENTS_TO_BUFFER = 20;
 
     private final String id;
     private final long timestamp;
-    private final Map<String, Object> attached;
+    private final TemporaryValueMap<String, Object> attached;
     private final TrafficInformationImpl trafficInfo;
     private final Deque<HttpEvent> events;
     private Date lastAction;
@@ -48,7 +51,7 @@ class HttpSessionImpl implements HttpSession {
     public HttpSessionImpl(HttpServerImpl server, String id) {
         this.id = id;
         this.timestamp = System.currentTimeMillis();
-        this.attached = new HashMap<>();
+        this.attached = new TemporaryValueMap<>(DEFAULT_ELEMENT_CACHE_TIME);
         this.trafficInfo = server.newTrafficInformation();
         this.events = new ArrayDeque<>();
         // make sure session is initially unblocked
@@ -160,6 +163,14 @@ class HttpSessionImpl implements HttpSession {
             this.attached.put(key, item);
         }
     }
+    
+    
+    
+    public void set(String key, Object item, long cacheTime) {
+        synchronized (this.attached) {
+            this.attached.put(key, item, cacheTime);
+        }
+    }
 
 
 
@@ -182,14 +193,39 @@ class HttpSessionImpl implements HttpSession {
 
 
     @Override
-    public Object get(String key) {
+    @SuppressWarnings("unchecked")
+    public <T> T get(String key) {
         synchronized (this.attached) {
-            return this.attached.get(key);
+            return (T) this.attached.get(key);
         }
     }
 
 
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T get(String key, T backup) {
+        synchronized (this.attached) {
+            final T result = (T) this.attached.get(key);
+            if (result == null) {
+                return backup;
+            }
+            return result;
+        }
+    }
+    
+    
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T getOnce(String key) {
+        synchronized (this.attached) {
+            return (T) this.attached.remove(key);
+        }
+    }
+    
 
+    
     @Override
     public Map<String, Object> getAttached() {
         return Collections.unmodifiableMap(this.attached);

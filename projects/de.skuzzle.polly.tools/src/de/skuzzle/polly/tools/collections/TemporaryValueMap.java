@@ -12,6 +12,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import de.skuzzle.polly.tools.Check;
 import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
 
 
@@ -61,29 +62,53 @@ public class TemporaryValueMap<K, V> implements Map<K, V> {
     
     
     
+    private final static int DEFAULT_SIZE = 16;
+    
+    
     private final Map<K, TaskValuePair> backend;
     private final ScheduledExecutorService deletionService;
     private final long defaultCacheTime;
     
     
     
-    public TemporaryValueMap(long defaultCacheTime) {
+    public TemporaryValueMap(long defaultCacheTime, int size) {
+        Check.number(size).isPositiveOrZero();
         this.defaultCacheTime = defaultCacheTime;
-        this.backend = new HashMap<>();
+        this.backend = new HashMap<>(size);
         this.deletionService = Executors.newSingleThreadScheduledExecutor(
                 new ThreadFactoryBuilder().setDaemon(true));
     }
     
     
     
+    public TemporaryValueMap(long defaultCacheTime) {
+        this(defaultCacheTime, DEFAULT_SIZE);
+    }
+    
+    
+    
+    public TemporaryValueMap(long defaultCacheTime, Map<? extends K, ? extends V> m) {
+        this(defaultCacheTime, m.size());
+        this.putAll(m);
+    }
+    
+    
+    
     public V put(K key, V value, long cacheTimeMs) {
         synchronized (this.backend) {
-            final ScheduledFuture<?> future = this.deletionService.schedule(
+            final ScheduledFuture<?> future;
+            if (cacheTimeMs > 0) {
+                future = this.deletionService.schedule(
                     new DeletionTask(key), cacheTimeMs, TimeUnit.MILLISECONDS);
+            } else {
+                future = null;
+            }
             final TaskValuePair tvp = new TaskValuePair(future, value);
             final TaskValuePair result = this.backend.put(key, tvp);
             if (result != null) {
-                result.future.cancel(true);
+                if (result.future != null) {
+                    result.future.cancel(true);
+                }
                 return result.value;
             }
             return null;
@@ -103,7 +128,9 @@ public class TemporaryValueMap<K, V> implements Map<K, V> {
     public void clear() {
         synchronized (this.backend) {
             for (final TaskValuePair tvp : this.backend.values()) {
-                tvp.future.cancel(true);
+                if (tvp.future != null) {
+                    tvp.future.cancel(true);
+                }
             }
             this.backend.clear();
         }
@@ -260,7 +287,9 @@ public class TemporaryValueMap<K, V> implements Map<K, V> {
         synchronized (this.backend) {
             final TaskValuePair tvp = this.backend.get(key);
             if (tvp != null) {
-                tvp.future.cancel(true);
+                if (tvp.future != null) {
+                    tvp.future.cancel(true);
+                }
                 return tvp.value;
             }
         }
