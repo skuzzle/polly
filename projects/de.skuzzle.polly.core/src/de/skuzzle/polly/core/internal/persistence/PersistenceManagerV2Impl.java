@@ -512,6 +512,7 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
                             logger.fatal("Error while closing active transaction", e1);
                         }
                     }
+                    this.enterCounter = 0;
                     this.locker.writeLock().unlock();
                     throw new DatabaseException("Serious internal database error. "
                             + "Polly should be restarted in order to regain proper operational "
