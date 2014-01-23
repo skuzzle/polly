@@ -82,6 +82,11 @@ public final class HttpAnswers {
     public final static HttpAnswer newStringAnswer(int responseCode, 
             final String message) {
         return new HttpBinaryAnswer(responseCode) {
+            
+            {
+                this.addHeader("Content-Type", "charset=utf-8");
+            }
+            
             @Override
             public void getAnswer(OutputStream out, HttpServer server) throws IOException {
                 final Writer w = new BufferedWriter(new OutputStreamWriter(out, 
