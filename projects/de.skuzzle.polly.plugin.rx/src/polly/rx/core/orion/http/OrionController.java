@@ -63,6 +63,7 @@ import de.skuzzle.polly.sdk.httpv2.SuccessResult;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLTools;
 import de.skuzzle.polly.sdk.resources.Constants;
+import de.skuzzle.polly.sdk.time.Milliseconds;
 import de.skuzzle.polly.tools.concurrent.Parallel;
 import de.skuzzle.polly.tools.io.FastByteArrayInputStream;
 import de.skuzzle.polly.tools.io.FastByteArrayOutputStream;
@@ -294,6 +295,10 @@ public class OrionController extends PollyController {
             return new DisplayQuadrant(super.getQuadrant(name));
         }
     }
+    
+    
+    
+    private final static long QUAD_IMAGE_CACHE_TIME = Milliseconds.fromMinutes(30);
     
     
 
@@ -676,7 +681,7 @@ public class OrionController extends PollyController {
 
     @Get(API_GET_GROUP_IMAGE)
     public HttpAnswer getImageForGroup(@Param("grp") int id) {
-        final Object o = this.getSession().get(QUAD_IMAGE_KEY + id);
+        final Object o = this.getSession().getOnce(QUAD_IMAGE_KEY + id);
         if (o == null) {
             return HttpAnswers.newStringAnswer(404, ""); //$NON-NLS-1$
         }
@@ -697,7 +702,7 @@ public class OrionController extends PollyController {
                 e.printStackTrace();
             }
 
-            this.getSession().set(QUAD_IMAGE_KEY + g.getId(), out);
+            this.getSession().set(QUAD_IMAGE_KEY + g.getId(), out, QUAD_IMAGE_CACHE_TIME);
         }
     }
 

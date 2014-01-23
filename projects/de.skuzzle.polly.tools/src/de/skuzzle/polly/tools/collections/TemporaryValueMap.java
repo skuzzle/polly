@@ -201,7 +201,7 @@ public class TemporaryValueMap<K, V> implements Map<K, V> {
     
                 @Override
                 public int size() {
-                    return backend.size();
+                    return cpy.size();
                 }
             };
         }
@@ -285,7 +285,7 @@ public class TemporaryValueMap<K, V> implements Map<K, V> {
     @Override
     public V remove(Object key) {
         synchronized (this.backend) {
-            final TaskValuePair tvp = this.backend.get(key);
+            final TaskValuePair tvp = this.backend.remove(key);
             if (tvp != null) {
                 if (tvp.future != null) {
                     tvp.future.cancel(true);
