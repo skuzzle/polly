@@ -12,7 +12,7 @@ public final class Parallel {
     
     private volatile static ExecutorService executor;
     static {
-        executor = Executors.newCachedThreadPool(
+        executor = Executors.newSingleThreadExecutor(
                 new ThreadFactoryBuilder("PARALLEL_%n%"));
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override
