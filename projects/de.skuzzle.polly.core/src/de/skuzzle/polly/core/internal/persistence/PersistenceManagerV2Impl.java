@@ -565,7 +565,7 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
         } finally {
             logger.trace("Writelock released");
             this.leave();
-            logger.warn(this.enterCounter + " nested write calls left");
+            logger.trace(this.enterCounter + " nested write calls left");
             locker.writeLock().unlock();
         }
     }
