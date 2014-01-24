@@ -25,7 +25,9 @@ public class GsonHttpAnswerHandler extends HttpAnswerHandler {
             final GsonHttpAnswer gsonAnswer = (GsonHttpAnswer) answer;
             
             final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            final Writer w = new OutputStreamWriter(new BufferedOutputStream(out));
+            // TODO: hardcoded reference to encoding
+            final Writer w = new OutputStreamWriter(
+                    new BufferedOutputStream(out), "UTF-8"); //$NON-NLS-1$
             w.write(gson.toJson(gsonAnswer.getValue()));
             w.flush();
             
