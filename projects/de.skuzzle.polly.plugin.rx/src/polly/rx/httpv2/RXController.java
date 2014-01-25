@@ -1,7 +1,7 @@
 package polly.rx.httpv2;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,7 +57,7 @@ import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLTools;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.time.Time;
-import de.skuzzle.polly.tools.io.FastByteArrayInputStream;
+import de.skuzzle.polly.tools.io.FastByteArrayOutputStream;
 
 
 public class RXController extends PollyController {
@@ -486,9 +486,8 @@ public class RXController extends PollyController {
             return HttpAnswers.newStringAnswer(""); //$NON-NLS-1$
         }
         final Collection<NamedPoint> allPoints = new ArrayList<>();
-        final InputStream graph = this.sbManager.createMultiGraph(maxMonths, allPoints, 
+        final OutputStream graph = this.sbManager.createMultiGraph(maxMonths, allPoints, 
                 cl.getEntries().toArray(new String[0]));
-        graph.mark(Integer.MAX_VALUE);
         
         final String imgName = MULTI_GRAPH_PREFIX + maxMonths; 
         this.getSession().set(imgName, graph);
@@ -511,9 +510,8 @@ public class RXController extends PollyController {
         Collections.sort(entries, ScoreBoardEntry.BY_DATE);
         
         final Collection<NamedPoint> allPoints = new ArrayList<>();
-        final InputStream graph = this.sbManager.createLatestGraph(entries, maxMonths, 
+        final OutputStream graph = this.sbManager.createLatestGraph(entries, maxMonths, 
                 allPoints);
-        graph.mark(Integer.MAX_VALUE);
         
         final String imgName = SINGLE_GRAPH_PREFIX + name + maxMonths; 
         this.getSession().set(imgName, graph);
@@ -531,12 +529,8 @@ public class RXController extends PollyController {
     public HttpAnswer imageFromSession(@Param("imgName") String imgName) 
             throws AlternativeAnswerException, IOException {
         this.requirePermissions(MyPlugin.SBE_PERMISSION);
-        final FastByteArrayInputStream in = (FastByteArrayInputStream) 
-                this.getSession().get(imgName);
-        synchronized (in) {
-            in.reset();
-        }
-        return new HttpInputStreamAnswer(200, in);
+        final FastByteArrayOutputStream out = this.getSession().get(imgName);
+        return new HttpInputStreamAnswer(200, out.getInputStreamForBuffer());
     }
     
     

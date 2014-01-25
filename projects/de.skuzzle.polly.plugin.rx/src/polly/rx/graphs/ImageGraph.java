@@ -5,7 +5,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.OutputStream;
 
 import javax.imageio.ImageIO;
 
@@ -45,7 +45,7 @@ public class ImageGraph extends Graph {
     
     
     
-    public InputStream getBytes() {
+    public OutputStream getBytes() {
         final FastByteArrayOutputStream out = new FastByteArrayOutputStream();
         try {
             ImageIO.write(this.image, "png", out); //$NON-NLS-1$
@@ -53,6 +53,6 @@ public class ImageGraph extends Graph {
             e1.printStackTrace();
         }
         
-        return out.getInputStreamForBuffer();
+        return out;
     }
 }

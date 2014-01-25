@@ -1,7 +1,7 @@
 package polly.rx.core;
 
 import java.awt.Color;
-import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -66,7 +66,7 @@ public class ScoreBoardManager {
     
     
     
-    public InputStream createLatestGraph(List<ScoreBoardEntry> all, int maxMonths, 
+    public OutputStream createLatestGraph(List<ScoreBoardEntry> all, int maxMonths, 
             Collection<NamedPoint> allPoints) {
         if (all.isEmpty()) {
             return null;
@@ -133,7 +133,7 @@ public class ScoreBoardManager {
     
     
     
-    public InputStream createMultiGraph(int maxMonths, Collection<NamedPoint> allPoints, 
+    public OutputStream createMultiGraph(int maxMonths, Collection<NamedPoint> allPoints, 
             String...names) {
         ImageGraph g = new ImageGraph(850, 500);
         
