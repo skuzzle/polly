@@ -97,4 +97,11 @@ public abstract class AbstractHTMLTableModel<T> implements HTMLTableModel<T> {
     public SortOrder getDefaultSortOrder() {
         return SortOrder.UNDEFINED;
     }
+    
+    
+    
+    @Override
+    public String getRefreshKey() {
+        return null;
+    }
 }

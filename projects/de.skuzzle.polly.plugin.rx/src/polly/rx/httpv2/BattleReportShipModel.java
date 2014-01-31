@@ -132,4 +132,11 @@ public class BattleReportShipModel extends AbstractHTMLTableModel<BattleReportSh
             return br.getDefenderShips();
         }
     }
+    
+    
+    
+    @Override
+    public String getRefreshKey() {
+        return REPORT_ID;
+    }
 }

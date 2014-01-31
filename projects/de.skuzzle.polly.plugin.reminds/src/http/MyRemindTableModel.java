@@ -161,4 +161,11 @@ public class MyRemindTableModel extends AbstractHTMLTableModel<RemindEntity> {
     public List<RemindEntity> getData(HttpEvent e) {
         return this.rm.getDatabaseWrapper().getMyRemindsForUser(e.get(NICKNAME_FIELD));
     }
+    
+    
+    
+    @Override
+    public String getRefreshKey() {
+        return NICKNAME_FIELD;
+    }
 }

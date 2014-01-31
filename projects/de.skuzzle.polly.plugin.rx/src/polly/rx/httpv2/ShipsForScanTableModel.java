@@ -35,4 +35,11 @@ public class ShipsForScanTableModel extends FleetScanShipTableModel {
         final FleetScan fs = this.fleetDB.getScanById(scanId);
         return fs.getShips();
     }
+    
+    
+    
+    @Override
+    public String getRefreshKey() {
+        return SCAN_ID;
+    }
 }

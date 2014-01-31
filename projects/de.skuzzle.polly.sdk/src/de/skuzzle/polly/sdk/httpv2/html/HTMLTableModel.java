@@ -39,4 +39,6 @@ public interface HTMLTableModel<T> extends SecurityObject {
     public SortOrder getDefaultSortOrder();
     
     public int getDefaultSortColumn();
+    
+    public String getRefreshKey();
 }

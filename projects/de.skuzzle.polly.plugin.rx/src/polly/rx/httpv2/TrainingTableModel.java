@@ -124,4 +124,11 @@ public class TrainingTableModel extends AbstractHTMLTableModel<TrainEntityV3> {
         final String forUser = e.get(FOR_USER);
         return this.trainManager.getClosedTrains(forUser).getTrains();
     }
+    
+    
+    
+    @Override
+    public String getRefreshKey() {
+        return FOR_USER;
+    }
 }

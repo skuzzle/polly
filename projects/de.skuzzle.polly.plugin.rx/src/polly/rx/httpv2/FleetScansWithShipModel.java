@@ -33,4 +33,11 @@ public class FleetScansWithShipModel extends FleetScanTableModel {
         final int ship = Integer.parseInt(e.get(SHIP_ID));
         return this.fleetDb.getScanWithShip(ship);
     }
+    
+    
+    
+    @Override
+    public String getRefreshKey() {
+        return SHIP_ID;
+    }
 }

@@ -282,6 +282,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         private boolean filterRowShown;
         private WeakReference<DataHolder> data = new WeakReference<DataHolder>(null); 
         private Map<T, Integer> indexMap;
+        private String lastRefreshKeyValue;
         
         public boolean isFilterRowShown() {
             return this.filterRowShown;
@@ -467,8 +468,17 @@ public class HTMLTable<T> implements HttpEventHandler {
             return HttpAnswers.newStringAnswer("ok"); //$NON-NLS-1$
         }
         
+        
+        boolean forceRefresh = false;
+        if (this.model.getRefreshKey() != null) {
+            final String refreshValue = params.get(this.model.getRefreshKey());
+            forceRefresh = refreshValue != settings.lastRefreshKeyValue;
+            settings.lastRefreshKeyValue = refreshValue;
+        }
+        
         DataHolder data = settings.data.get();
-        if (data == null || params.get(UPDATE_ALL) != null) {
+        boolean mustRefilter = true;
+        if (data == null || params.get(UPDATE_ALL) != null || forceRefresh) {
             data = new DataHolder();
             data.allData = this.model.getData(e);
             data.view = data.allData;
@@ -482,10 +492,11 @@ public class HTMLTable<T> implements HttpEventHandler {
             }
             
             settings.data = new WeakReference<HTMLTable<T>.DataHolder>(data);
-            this.updateFilter(settings, data);
+            this.updateFilter(settings, data, e);
             this.updateSorting(settings, data);
             this.updateViewPort(settings, data);
-            this.fireDataProcessed(data.view, e);
+            
+            mustRefilter = false;
         }
         
         if (params.get(SORT_COLUMN) != null) {
@@ -514,10 +525,9 @@ public class HTMLTable<T> implements HttpEventHandler {
             final String filterVal = params.get(FILTER_VAL);
             settings.filter[filterCol] = filterVal == null ? "" : filterVal; //$NON-NLS-1$
             
-            this.updateFilter(settings, data);
+            this.updateFilter(settings, data, e);
             this.updateSorting(settings, data);
             this.updateViewPort(settings, data);
-            this.fireDataProcessed(data.filtered, e);
             
         } else if (params.get(FILTER) != null && Boolean.parseBoolean(params.get(FILTER))) { 
             for (int i = 0; i < this.model.getColumnCount(); ++i) {
@@ -532,10 +542,9 @@ public class HTMLTable<T> implements HttpEventHandler {
                     : params.get(FILTER_ALL); 
             settings.filterAll = all;
             
-            this.updateFilter(settings, data);
+            this.updateFilter(settings, data, e);
             this.updateSorting(settings, data);
             this.updateViewPort(settings, data);
-            this.fireDataProcessed(data.filtered, e);
             
         } else if (params.get(SET_PAGE) != null) {
             final int page = Integer.parseInt(params.get(SET_PAGE));
@@ -558,8 +567,8 @@ public class HTMLTable<T> implements HttpEventHandler {
             settings.pageSize = pageSize;
             
             this.updateViewPort(settings, data);
-        } else {
-            this.updateFilter(settings, data);
+        } else if (mustRefilter) {
+            this.updateFilter(settings, data, e);
             this.updateSorting(settings, data);
             this.updateViewPort(settings, data);
         }
@@ -609,7 +618,7 @@ public class HTMLTable<T> implements HttpEventHandler {
     
     
     
-    private void updateFilter(TableSettings s, DataHolder data) {
+    private void updateFilter(TableSettings s, DataHolder data, HttpEvent e) {
         // filter full data
         final int colCount = this.model.getColumnCount();
         data.filtered = new ArrayList<>(data.allData.size());
@@ -636,7 +645,7 @@ public class HTMLTable<T> implements HttpEventHandler {
         
         try {
             FILTER_ALL = Pattern.compile(filterAllString, Pattern.CASE_INSENSITIVE);
-        } catch (Exception e) {
+        } catch (Exception e1) {
             FILTER_ALL = Pattern.compile(".*", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
         }
         int originalIdx = -1;
@@ -693,6 +702,7 @@ public class HTMLTable<T> implements HttpEventHandler {
                 data.filtered.add(element);
             }
         }
+        this.fireDataProcessed(data.filtered, e);
     }
     
     
