@@ -2,6 +2,7 @@ package polly.rx.httpv2;
 
 import java.util.List;
 
+import polly.rx.core.ResourcePriceGrabber;
 import polly.rx.core.SumQueries;
 import polly.rx.entities.BattleDrop;
 import polly.rx.entities.BattleReport;
@@ -17,6 +18,8 @@ import de.skuzzle.polly.sdk.httpv2.html.HTMLTableModel;
 
 public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
     
+    private final static ResourcePriceGrabber GRABBER = new ResourcePriceGrabber(1);
+    
     public static class BattleReportStatistics {
         public final BattleDrop[] dropSum = new BattleDrop[14];
         public final BattleDrop[] dropMax = new BattleDrop[14];
@@ -24,6 +27,8 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
         public final BattleDrop[] repairCostAttacker = new BattleDrop[7];
         public final BattleDrop[] repairCostDefender = new BattleDrop[7];
         public final BattleDrop[] dropNetto = new BattleDrop[14];
+        public int[] dropPrices = new int[14];
+        public BattleDrop[] currentPrices = new BattleDrop[14];
         
         public double kwAttacker = 0;
         public double kwDefender = 0;
@@ -94,6 +99,19 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
     }
     
     
+    
+    static int[] inCr(BattleDrop[] drop, BattleDrop[] prices) {
+        assert drop.length == prices.length;
+        final int[] result = new int[drop.length];
+        for (int i = 0; i < drop.length; ++i) {
+            result[i] = drop[i] != null && prices[i] != null
+                    ? drop[i].getAmount() * prices[i].getAmount()
+                    : 0;
+        }
+        return result;
+    }
+    
+    
 
     @Override
     public void onDataProcessed(HTMLTableModel<BattleReport> source,
@@ -157,6 +175,8 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
         stats.reportSize = data.size();
         stats.kwAttacker /= data.size();
         stats.kwDefender /= data.size();
+        stats.currentPrices = GRABBER.getPricesAsDrop();
+        stats.dropPrices = inCr(stats.dropNetto, stats.currentPrices);
         stats.artifactChance = data.isEmpty() 
                 ? 0.0 : (double) stats.artifacts / (double) data.size();
     }

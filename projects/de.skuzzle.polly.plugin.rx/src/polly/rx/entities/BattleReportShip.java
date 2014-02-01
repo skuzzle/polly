@@ -128,7 +128,7 @@ public class BattleReportShip {
         this.repairCostOffset[0] = new BattleDrop(RxRessource.CR, (int)Math.round(CRED_FACTOR_PZ * this.pzDamage));
         this.repairCostOffset[1] = new BattleDrop(RxRessource.NRG, (int)Math.round(NRG_FACTOR_PZ * this.pzDamage));
         this.repairCostOffset[2] = new BattleDrop(RxRessource.ORG, (int)Math.round(ORG_FACTOR_PZ * this.pzDamage));
-        this.repairCostOffset[3] = new BattleDrop(RxRessource.SYNTH, 0);
+        this.repairCostOffset[3] = new BattleDrop(RxRessource.SYNT, 0);
         this.repairCostOffset[4] = new BattleDrop(RxRessource.FE, (int)Math.round(FE_FACTOR_PZ * this.pzDamage));
         this.repairCostOffset[5] = new BattleDrop(RxRessource.LM, (int)Math.round(LM_FACTOR_PZ * this.pzDamage));
         this.repairCostOffset[6] = new BattleDrop(RxRessource.SM, (int)Math.round(SM_FACTOR_PZ * this.pzDamage));

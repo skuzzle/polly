@@ -41,7 +41,7 @@ public class RessComand extends Command {
             new Parameter(MSG.ressSigExpression, Types.ANY));
         this.setHelpText(MSG.ressHelp);
         this.setRegisteredOnly(true);
-        this.rpgrabber = new ResourcePriceGrabber(REFRESH_THRESHOLD, myPolly);
+        this.rpgrabber = new ResourcePriceGrabber(REFRESH_THRESHOLD);
     }
 
     

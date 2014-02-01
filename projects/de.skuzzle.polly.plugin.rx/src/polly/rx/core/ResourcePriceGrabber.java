@@ -10,12 +10,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import de.skuzzle.polly.sdk.MyPolly;
+import polly.rx.entities.BattleDrop;
+import polly.rx.entities.RxRessource;
 import de.skuzzle.polly.sdk.Types;
+import de.skuzzle.polly.sdk.Types.NumberType;
 
 
-public class ResourcePriceGrabber {
+public final class ResourcePriceGrabber {
 
     private final static String API_URL = "http://qzone.servebbs.net/pollyPriceDaily.php"; //$NON-NLS-1$
 
@@ -28,7 +31,7 @@ public class ResourcePriceGrabber {
     
     
     
-    public ResourcePriceGrabber(int refreshThreshold, MyPolly myPolly) {
+    public ResourcePriceGrabber(int refreshThreshold) {
         this.refreshThreshold = refreshThreshold;
         this.refreshCounter = refreshThreshold;
     }
@@ -44,6 +47,19 @@ public class ResourcePriceGrabber {
             }
         }
         return this.prices;
+    }
+    
+    
+    
+    public synchronized BattleDrop[] getPricesAsDrop() {
+        final Map<String, Types> prices = this.getPrices();
+        final BattleDrop[] result = new BattleDrop[RxRessource.values().length];
+        for (final Entry<String, Types> e : prices.entrySet()) {
+            final RxRessource ress = RxRessource.parseRessource(e.getKey());
+            final int amount = (int)((NumberType) e.getValue()).getValue();
+            result[ress.ordinal()] = new BattleDrop(ress, amount);
+        }
+        return result;
     }
     
     
