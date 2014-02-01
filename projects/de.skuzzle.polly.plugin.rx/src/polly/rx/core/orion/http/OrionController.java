@@ -7,6 +7,7 @@ import java.util.AbstractList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import javax.imageio.ImageIO;
 
 import polly.rx.MSG;
 import polly.rx.core.AZEntryManager;
+import polly.rx.core.orion.LoginCode;
 import polly.rx.core.orion.Orion;
 import polly.rx.core.orion.OrionException;
 import polly.rx.core.orion.PortalDecorator;
@@ -69,7 +71,7 @@ import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLTools;
 import de.skuzzle.polly.sdk.resources.Constants;
 import de.skuzzle.polly.sdk.time.Milliseconds;
-import de.skuzzle.polly.tools.concurrent.Parallel;
+import de.skuzzle.polly.sdk.time.Time;
 import de.skuzzle.polly.tools.io.FastByteArrayInputStream;
 import de.skuzzle.polly.tools.io.FastByteArrayOutputStream;
 
@@ -95,7 +97,9 @@ public class OrionController extends PollyController {
     public final static String API_JSON_SECTOR = "/api/orion/json/sector"; //$NON-NLS-1$
     public final static String API_JSON_ROUTE = "/api/orion/json/route"; //$NON-NLS-1$
     public final static String API_JSON_POST_SECTOR = "/api/orion/json/postSector"; //$NON-NLS-1$
-
+    public final static String API_SUBMIT_CODE = "/api/orion/get/loginCode"; //$NON-NLS-1$
+    public final static String API_REQUEST_CODE = "/api/orion/json/requestCode"; //$NON-NLS-1$
+    
     private final static String CONTENT_QUAD_LAYOUT = "/polly/rx/httpv2/view/orion/quadlayout.html"; //$NON-NLS-1$
     private final static String CONTENT_QUADRANT = "/polly/rx/httpv2/view/orion/quadrant.html"; //$NON-NLS-1$
     private final static String CONTENT_SECTOR_INFO = "/polly/rx/httpv2/view/orion/sec_info.html"; //$NON-NLS-1$
@@ -362,6 +366,26 @@ public class OrionController extends PollyController {
         HTMLTools.gainFieldAccess(c, MSG.class, "MSG"); //$NON-NLS-1$
         c.put("Messages", Constants.class); //$NON-NLS-1$
         return c;
+    }
+    
+    
+    
+    @Get(API_SUBMIT_CODE)
+    public HttpAnswer submitCode(@Param("code") String code) {
+        Orion.INSTANCE.setLoginCode(code);
+        return HttpAnswers.newStringAnswer("ok"); //$NON-NLS-1$
+    }
+    
+    
+    
+    @Get(API_REQUEST_CODE)
+    public HttpAnswer requestCode() {
+        LoginCode code = Orion.INSTANCE.getLoginCode();
+        if (code == null) {
+            code = new LoginCode(Time.currentTime(), ""); //$NON-NLS-1$
+        }
+        
+        return new GsonHttpAnswer(200, code);
     }
 
 

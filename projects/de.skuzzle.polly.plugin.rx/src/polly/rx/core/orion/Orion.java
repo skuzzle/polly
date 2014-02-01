@@ -12,6 +12,7 @@ import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.Types.ListType;
 import de.skuzzle.polly.sdk.Types.StringType;
 import de.skuzzle.polly.sdk.User;
+import de.skuzzle.polly.sdk.time.Time;
 
 public enum Orion implements UniverseFactory {
     INSTANCE;
@@ -23,9 +24,10 @@ public enum Orion implements UniverseFactory {
     private PortalUpdater portalUpdater;
     private FleetTracker fleetTracker;
     private PathPlanner planner;
+    private LoginCode code;
 
 
-
+    
     public static void initialize(QuadrantProvider quadProvider,
             QuadrantUpdater quadUpdater, WormholeProvider holeProvider,
             PortalProvider portalProvider, PortalUpdater portalUpdater, 
@@ -116,6 +118,18 @@ public enum Orion implements UniverseFactory {
     public FleetTracker getFleetTracker() {
         assert this.checkInitialized();
         return this.fleetTracker;
+    }
+    
+    
+    
+    public synchronized void setLoginCode(String code) {
+        this.code = new LoginCode(Time.currentTime(), code);
+    }
+    
+    
+    
+    public synchronized LoginCode getLoginCode() {
+        return this.code;
     }
 
 
