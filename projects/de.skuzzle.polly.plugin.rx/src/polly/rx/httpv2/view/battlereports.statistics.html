@@ -44,7 +44,8 @@
     #end
         <td style="text-align:center">--</td>
 <tr>
-    <th colspan="15">$MSG.htmlReportStatsDropNetto</th>
+    <th colspan="14">$MSG.htmlReportStatsDropNetto</th>
+    <th style="text-align:center;">$MSG.htmlReportStatsSum</th>
     </tr>
     <tr>
     #foreach ($drop in $dropNetto)
@@ -54,9 +55,9 @@
     </tr>
     <tr>
     #foreach ($i in [0..13])
-        <td style="text-align:center;">$dropPrices[$i]</td>
+        <td style="text-align:center;">$df.format($dropPrices[$i])</td>
     #end
-        <td style="text-align:center"></td>
+        <td style="text-align:center">$dropPriceSum</td>
     </tr>
 </table>
 

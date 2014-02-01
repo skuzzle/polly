@@ -865,6 +865,7 @@ public class RXController extends PollyController {
             c.put("dropNetto", stats.dropNetto); //$NON-NLS-1$
             c.put("dropPrices", stats.dropPrices); //$NON-NLS-1$
             c.put("currentPrices", stats.currentPrices);  //$NON-NLS-1$
+            c.put("dropPriceSum", stats.dropPriceSum); //$NON-NLS-1$
             c.put("reportSize", stats.reportSize); //$NON-NLS-1$
             return HttpAnswers.newTemplateAnswer(CONTENT_REPORT_STATISTICS, c);
         }

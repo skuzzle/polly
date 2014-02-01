@@ -12,7 +12,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import polly.rx.entities.BattleDrop;
 import polly.rx.entities.RxRessource;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.Types.NumberType;
@@ -51,13 +50,14 @@ public final class ResourcePriceGrabber {
     
     
     
-    public synchronized BattleDrop[] getPricesAsDrop() {
+    public synchronized double[] getPricesAsArray() {
         final Map<String, Types> prices = this.getPrices();
-        final BattleDrop[] result = new BattleDrop[RxRessource.values().length];
+        final double[] result = new double[RxRessource.values().length];
+        result[0] = 1.0;
         for (final Entry<String, Types> e : prices.entrySet()) {
             final RxRessource ress = RxRessource.parseRessource(e.getKey());
-            final int amount = (int)((NumberType) e.getValue()).getValue();
-            result[ress.ordinal()] = new BattleDrop(ress, amount);
+            final double amount = ((NumberType) e.getValue()).getValue();
+            result[ress.ordinal()] = amount;
         }
         return result;
     }

@@ -266,6 +266,7 @@ public class MSG extends Constants {
     public static String htmlReportStatsMaxDrop;
     public static String htmlReportStatsMinDrop;
     public static String htmlReportStatsDropNetto;
+    public static String htmlReportStatsSum;
     public static String htmlReportStatsAvgKw;
     public static String htmlReportStatsCapiXp;
     public static String htmlReportStatsCrewXp;

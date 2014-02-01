@@ -1,5 +1,6 @@
 package polly.rx.httpv2;
 
+import java.util.Arrays;
 import java.util.List;
 
 import polly.rx.core.ResourcePriceGrabber;
@@ -27,8 +28,8 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
         public final BattleDrop[] repairCostAttacker = new BattleDrop[7];
         public final BattleDrop[] repairCostDefender = new BattleDrop[7];
         public final BattleDrop[] dropNetto = new BattleDrop[14];
-        public int[] dropPrices = new int[14];
-        public BattleDrop[] currentPrices = new BattleDrop[14];
+        public double[] dropPrices = new double[14];
+        public double[] currentPrices = new double[14];
         
         public double kwAttacker = 0;
         public double kwDefender = 0;
@@ -41,6 +42,7 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
         public int artifacts = 0;
         public int repairTimeAttacker = 0;
         public int repairTimeDefender = 0;
+        public int dropPriceSum;
         public double reportSize = 0; // as double for auto casting when calculating avg
         public double artifactChance = 0.0;
         
@@ -72,6 +74,7 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
             if (dropNetto[0] != null) {
                 BattleDrop.clear(dropNetto);
             }
+            Arrays.fill(dropPrices, 0);
         }
     }
     
@@ -100,15 +103,16 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
     
     
     
-    static int[] inCr(BattleDrop[] drop, BattleDrop[] prices) {
+    static double inCr(BattleDrop[] drop, double[] prices, double result[]) {
         assert drop.length == prices.length;
-        final int[] result = new int[drop.length];
+        double sum = 0;
         for (int i = 0; i < drop.length; ++i) {
-            result[i] = drop[i] != null && prices[i] != null
-                    ? drop[i].getAmount() * prices[i].getAmount()
+            result[i] = drop[i] != null
+                    ? drop[i].getAmount() * prices[i]
                     : 0;
+            sum += result[i];
         }
-        return result;
+        return sum;
     }
     
     
@@ -175,8 +179,8 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
         stats.reportSize = data.size();
         stats.kwAttacker /= data.size();
         stats.kwDefender /= data.size();
-        stats.currentPrices = GRABBER.getPricesAsDrop();
-        stats.dropPrices = inCr(stats.dropNetto, stats.currentPrices);
+        stats.currentPrices = GRABBER.getPricesAsArray();
+        stats.dropPriceSum = (int) inCr(stats.dropNetto, stats.currentPrices, stats.dropPrices);
         stats.artifactChance = data.isEmpty() 
                 ? 0.0 : (double) stats.artifacts / (double) data.size();
     }
