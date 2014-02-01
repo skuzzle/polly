@@ -6,6 +6,7 @@ import polly.rx.core.SumQueries;
 import polly.rx.entities.BattleDrop;
 import polly.rx.entities.BattleReport;
 import polly.rx.entities.BattleTactic;
+import polly.rx.entities.RxRessource;
 import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.http.api.HttpSession;
 import de.skuzzle.polly.sdk.User;
@@ -22,6 +23,7 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
         public final BattleDrop[] dropMin = new BattleDrop[14];
         public final BattleDrop[] repairCostAttacker = new BattleDrop[7];
         public final BattleDrop[] repairCostDefender = new BattleDrop[7];
+        public final BattleDrop[] dropNetto = new BattleDrop[14];
         
         public double kwAttacker = 0;
         public double kwDefender = 0;
@@ -36,6 +38,59 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
         public int repairTimeDefender = 0;
         public double reportSize = 0; // as double for auto casting when calculating avg
         public double artifactChance = 0.0;
+        
+        
+        void zero() {
+            kwAttacker = 0;
+            kwDefender = 0;
+            capiXpSumAttacker = 0;
+            crewXpSumAttacker = 0;
+            capiXpSumDefender = 0;
+            crewXpSumDefender = 0;
+            pzDamageAttacker = 0;
+            pzDamageDefender = 0;
+            artifacts = 0;
+            repairTimeAttacker = 0;
+            repairTimeDefender = 0;
+            reportSize = 0; 
+            artifactChance = 0.0;
+            BattleDrop.clear(dropSum);
+            BattleDrop.clear(dropMax);
+            BattleDrop.clear(dropMin);
+            // if first element is != null, every element is != null
+            if (repairCostAttacker[0] != null) {
+                BattleDrop.clear(repairCostAttacker);
+            }
+            if (repairCostDefender[0] != null) {
+                BattleDrop.clear(repairCostDefender);
+            }
+            if (dropNetto[0] != null) {
+                BattleDrop.clear(dropNetto);
+            }
+        }
+    }
+    
+    
+    
+    static void calculateNetto(BattleDrop[] dropSum, BattleDrop[] repairCost, 
+            BattleDrop[] result) {
+        assert dropSum.length == RxRessource.values().length && repairCost.length == 7 
+                && result.length == dropSum.length;
+        
+        outer: for (int i = 0; i < dropSum.length; ++i) {
+            assert dropSum[i] != null;
+            // find matching repair cost:
+            for (int j = 0; j < repairCost.length; ++j) {
+                assert repairCost[j] != null;
+                if (dropSum[i].getRessource() == repairCost[j].getRessource()) {
+                    result[i] = new BattleDrop(dropSum[i].getRessource(), 
+                            dropSum[i].getAmount() - repairCost[j].getAmount());
+                    continue outer;
+                }
+            }
+            // no value for this ress type
+            result[i] = dropSum[i];
+        }
     }
     
     
@@ -52,6 +107,8 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
         s.set(STATISTIC_KEY, stats);
 
         synchronized (stats) {
+            
+        stats.zero();
         for (BattleReport report : data) {
             // do some filtering according to current sessions filter settings
             if (report.getTactic() == BattleTactic.ALIEN) {
@@ -96,6 +153,7 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
             stats.artifacts += report.hasArtifact() ? 1 : 0;
         }
         
+        calculateNetto(stats.dropSum, stats.repairCostAttacker, stats.dropNetto);
         stats.reportSize = data.size();
         stats.kwAttacker /= data.size();
         stats.kwDefender /= data.size();

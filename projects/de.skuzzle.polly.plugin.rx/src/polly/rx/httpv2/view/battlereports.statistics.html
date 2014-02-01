@@ -43,6 +43,14 @@
         <td style="text-align:center;">$!drop.getAmount()</td>
     #end
         <td style="text-align:center">--</td>
+<tr>
+    <th colspan="15">$MSG.htmlReportStatsDropNetto</th>
+    </tr>
+    <tr>
+    #foreach ($drop in $dropNetto)
+        <td style="text-align:center;">$!drop.getAmount()</td>
+    #end
+        <td style="text-align:center">--</td>
     </tr>
 </table>
 

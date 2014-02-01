@@ -19,6 +19,22 @@ public class BattleDrop {
     private int amount;
     
     
+    public static void clear(BattleDrop[] array) {
+        for (int i = 0; i < array.length; ++i) {
+            final BattleDrop br = array[i];
+            RxRessource ress = null;
+            if (br == null && array.length != 14) {
+                throw new IllegalArgumentException("can not determine ress type"); //$NON-NLS-1$
+            } else if (br != null) {
+                ress = br.getRessource();
+            } else {
+                ress = RxRessource.values()[i];
+            }
+            array[i] = new BattleDrop(ress, 0);
+        }
+    }
+    
+    
     
     public final static void sumUp(BattleDrop[] result, BattleDrop[] values) {
         if (result.length != values.length) {
@@ -33,6 +49,22 @@ public class BattleDrop {
                 result[i].incAmout(d);
             }
         }
+    }
+    
+    
+    
+    public final static void diff(BattleDrop[] op1, BattleDrop[] op2, BattleDrop result[]) {
+        assert op1.length == op2.length && op1.length == result.length;
+        
+        for (int i = 0; i < result.length; ++i) {
+            assert op1[i] != null || op2[i] != null;
+            final RxRessource ress = op1[i] == null ? op2[i].getRessource() : op1[i].getRessource();
+            
+            final int op1Amount = op1[i] == null ? 0 : op1[i].getAmount();
+            final int op2Amount = op2[i] == null ? 0 : op2[i].getAmount();
+            result[i] = new BattleDrop(ress, op1Amount - op2Amount);
+        }
+        
     }
     
 
