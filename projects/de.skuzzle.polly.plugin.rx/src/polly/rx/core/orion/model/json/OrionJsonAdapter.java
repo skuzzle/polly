@@ -17,13 +17,15 @@ public final class OrionJsonAdapter {
     private final static ProductionJsonHandler PRODUCTION_HANDLER;
     private final static SectorJsonHandler SECTOR_HANDLER;
     private final static QuadrantJsonHandler QUADRANT_HANDLER;
-    private final static Gson GSON;
+    private final static PortalJsonHandler PORTAL_HANDLER;
+    public final static Gson GSON;
     
     static {
         FLEET_HANDLER = new FleetJsonHandler();
         PRODUCTION_HANDLER = new ProductionJsonHandler();
         SECTOR_HANDLER  = new SectorJsonHandler(PRODUCTION_HANDLER);
         QUADRANT_HANDLER = new QuadrantJsonHandler(SECTOR_HANDLER);
+        PORTAL_HANDLER = new PortalJsonHandler(SECTOR_HANDLER);
         
         final GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(FleetJsonHandler.FLEET_TYPE, FLEET_HANDLER);
@@ -31,6 +33,7 @@ public final class OrionJsonAdapter {
         builder.registerTypeAdapter(SectorJsonHandler.CLIENT_SECTOR_TYPE, SECTOR_HANDLER);
         builder.registerTypeAdapter(ProductionJsonHandler.PRODUCTION_TYPE, PRODUCTION_HANDLER);
         builder.registerTypeAdapter(QuadrantJsonHandler.QUADRANT_TYPE, QUADRANT_HANDLER);
+        builder.registerTypeAdapter(PortalJsonHandler.PORTAL_TYPE, PORTAL_HANDLER);
         
         GSON = builder.create();
     }

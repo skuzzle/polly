@@ -12,6 +12,7 @@ import polly.rx.core.orion.model.Sector;
 
 public class FromClientSector extends DefaultSector {
 
+    private final String self;
     private final Fleet selectedFleet;
     private final boolean shareFleets;
     private final Collection<? extends Fleet> ownFleets;
@@ -21,14 +22,15 @@ public class FromClientSector extends DefaultSector {
 
 
 
-    public FromClientSector(Sector s, Fleet selectedFleet, boolean shareFleets,
+    public FromClientSector(Sector s, String self, Fleet selectedFleet, boolean shareFleets,
             Collection<? extends Fleet> ownFleets,
             Collection<? extends Fleet> fleets, 
             Collection<? extends Portal> clanPortals,
             Collection<? extends Portal> personalPortals) {
         super(s);
-        Check.objects(ownFleets, fleets, clanPortals, 
+        Check.objects(self, ownFleets, fleets, clanPortals, 
                 personalPortals).notNull();
+        this.self = self;
         this.selectedFleet = selectedFleet;
         this.shareFleets = shareFleets;
         this.ownFleets = Collections.unmodifiableCollection(new ArrayList<>(ownFleets));
@@ -39,6 +41,12 @@ public class FromClientSector extends DefaultSector {
                 personalPortals));
     }
 
+    
+    
+    public String getSelf() {
+        return this.self;
+    }
+    
     
     
     public boolean doShareFleets() {

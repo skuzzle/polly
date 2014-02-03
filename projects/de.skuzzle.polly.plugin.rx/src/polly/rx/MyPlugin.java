@@ -25,6 +25,7 @@ import polly.rx.core.orion.datasource.DBOrionAccess;
 import polly.rx.core.orion.datasource.MemoryFleetTracker;
 import polly.rx.core.orion.datasource.WLSWormholeProvider;
 import polly.rx.core.orion.http.OrionController;
+import polly.rx.core.orion.http.OrionNewsProvider;
 import polly.rx.entities.AZEntry;
 import polly.rx.entities.BattleDrop;
 import polly.rx.entities.BattleReport;
@@ -279,7 +280,12 @@ public class MyPlugin extends PollyPlugin {
             );
         
         final OrionController oc = new OrionController(this.getMyPolly(), azManager);
+        final OrionNewsProvider newsProvider = new OrionNewsProvider(
+                Orion.INSTANCE.getFleetTracker(), 
+                Orion.INSTANCE.getPortalUpdater());
         this.getMyPolly().webInterface().getServer().addController(oc);
+        this.getMyPolly().webInterface().getServer().addHttpEventHandler(
+                OrionNewsProvider.NEWS_URL, newsProvider);
         
         try {
             this.addCommand(new RouteCommand(this.getMyPolly()));

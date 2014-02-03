@@ -7,7 +7,6 @@ import java.util.AbstractList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -388,6 +387,10 @@ public class OrionController extends PollyController {
         return new GsonHttpAnswer(200, code);
     }
 
+    
+    
+    
+    
 
 
     @Get(value = PAGE_ORION, name = ORION_NAME_KEY)
@@ -778,6 +781,7 @@ public class OrionController extends PollyController {
     public HttpAnswer postJson() {
         final String json = this.getEvent().getRequestBody();
         final FromClientSector sector = OrionJsonAdapter.readSectorFromClient(json);
+        final String reporter = sector.getSelf();
         
         final PersistenceManagerV2 persistence = this.getMyPolly().persistence();
         persistence.writeAtomicParallel(new Atomic() {
@@ -786,10 +790,10 @@ public class OrionController extends PollyController {
                 try {
                     Orion.INSTANCE.getQuadrantUpdater().updateSectorInformation(
                             Collections.singleton(sector));
-                    Orion.INSTANCE.getPortalUpdater().updatePortals(sector, sector.getClanPortals());
-                    Orion.INSTANCE.getPortalUpdater().updatePortals(sector, sector.getPersonalPortals());
-                    Orion.INSTANCE.getFleetTracker().updateOwnFleets(sector.getOwnFleets());
-                    Orion.INSTANCE.getFleetTracker().updateFleets(sector.getFleets());
+                    Orion.INSTANCE.getPortalUpdater().updatePortals(reporter, sector, sector.getClanPortals());
+                    Orion.INSTANCE.getPortalUpdater().updatePortals(reporter, sector, sector.getPersonalPortals());
+                    Orion.INSTANCE.getFleetTracker().updateOrionFleets(reporter, sector.getOwnFleets());
+                    Orion.INSTANCE.getFleetTracker().updateFleets(reporter, sector.getFleets());
                 } catch (OrionException e) {
                     throw new DatabaseException(e);
                 }

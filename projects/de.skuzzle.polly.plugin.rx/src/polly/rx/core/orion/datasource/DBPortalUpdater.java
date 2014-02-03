@@ -53,15 +53,16 @@ public class DBPortalUpdater implements PortalUpdater {
 
 
 
-    private void fire(List<Portal> portals, Dispatch<PortalListener, PortalEvent> d) {
-        this.events
-                .dispatchEvent(PortalListener.class, new PortalEvent(this, portals), d);
+    private void fire(String reporter, List<Portal> portals, Dispatch<PortalListener, 
+            PortalEvent> d) {
+        this.events.dispatchEvent(PortalListener.class, 
+                new PortalEvent(this, reporter, portals), d);
     }
 
 
 
     @Override
-    public synchronized Collection<DBPortal> updatePortals(Sector sector,
+    public synchronized Collection<DBPortal> updatePortals(String reporter, Sector sector,
             Collection<? extends Portal> portals) throws OrionException {
 
         if (portals.isEmpty()) {
@@ -132,9 +133,9 @@ public class DBPortalUpdater implements PortalUpdater {
             throw new OrionException(e);
         }
         
-        this.fire(created, PortalListener.PORTALS_ADDED);
-        this.fire(moved, PortalListener.PORTALS_MOVED);
-        this.fire(removed, PortalListener.PORTALS_REMOVED);
+        this.fire(reporter, created, PortalListener.PORTALS_ADDED);
+        this.fire(reporter, moved, PortalListener.PORTALS_MOVED);
+        this.fire(reporter, removed, PortalListener.PORTALS_REMOVED);
 
         return result;
     }

@@ -7,6 +7,10 @@ import polly.rx.core.orion.model.Quadrant;
 
 
 public interface FleetTracker {
+    
+    public void addFleetListener(FleetListener listener);
+    
+    public void removeFleetListener(FleetListener listener);
 
     public Collection<? extends Fleet> getOrionUserFleets();
     
@@ -14,8 +18,8 @@ public interface FleetTracker {
     
     public Collection<? extends Fleet> getFleets(Quadrant quadrant);
     
-    public void updateFleets(Collection<? extends Fleet> fleets) throws OrionException;
+    public void updateFleets(String reporter, Collection<? extends Fleet> fleets) throws OrionException;
 
-    public void updateOwnFleets(Collection<? extends Fleet> ownFleets) 
+    public void updateOrionFleets(String reporter, Collection<? extends Fleet> ownFleets) 
             throws OrionException;
 }

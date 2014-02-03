@@ -84,7 +84,8 @@ public final class OrionObjectUtil {
 
 
     public static boolean portalsEqual(Portal p1, Portal p2) {
-        return p1.getType() == p2.getType() && p1.getOwner().equals(p2.getOwner());
+        return p1.getType() == p2.getType() && p1.getOwner().equals(p2.getOwner()) && 
+                p1.getSector().equals(p2.getSector());
     }
 
 

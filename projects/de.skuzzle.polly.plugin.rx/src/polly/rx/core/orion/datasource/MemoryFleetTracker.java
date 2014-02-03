@@ -3,9 +3,9 @@ package polly.rx.core.orion.datasource;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.List;
 
 import polly.rx.core.orion.FleetEvent;
 import polly.rx.core.orion.FleetListener;
@@ -16,6 +16,7 @@ import polly.rx.core.orion.model.Quadrant;
 import de.skuzzle.polly.sdk.time.Milliseconds;
 import de.skuzzle.polly.sdk.time.Time;
 import de.skuzzle.polly.tools.Check;
+import de.skuzzle.polly.tools.collections.TemporaryValueMap;
 import de.skuzzle.polly.tools.events.EventProvider;
 import de.skuzzle.polly.tools.events.EventProviders;
 
@@ -23,12 +24,14 @@ public class MemoryFleetTracker implements FleetTracker {
     
     private final static long MAX_AGE = Milliseconds.fromHours(3);
 
-    private final Map<Integer, Fleet> orionFleets;
+    private final TemporaryValueMap<Integer, Fleet> orionFleets;
+    private final TemporaryValueMap<String, LinkedList<Fleet>> fleets;
     private final EventProvider events;
 
 
     public MemoryFleetTracker() {
-        this.orionFleets = new HashMap<>();
+        this.orionFleets = new TemporaryValueMap<>(MAX_AGE);
+        this.fleets = new TemporaryValueMap<>(MAX_AGE);
         this.events = EventProviders.newDefaultEventProvider();
     }
     
@@ -53,35 +56,29 @@ public class MemoryFleetTracker implements FleetTracker {
     
 
     @Override
-    public synchronized void updateOwnFleets(Collection<? extends Fleet> ownFleets)
-            throws OrionException {
-        
-        final Date threshold = this.getThresholdDate();
-        this.clearOldestFleets(this.orionFleets, threshold);
+    public synchronized void updateOrionFleets(String reporter, 
+            Collection<? extends Fleet> ownFleets) throws OrionException {
         
         for (final Fleet f : ownFleets) {
             Check.number(f.getRevorixId()).isPositiveOrZero();
             this.orionFleets.put(f.getRevorixId(), f);
         }
         this.events.dispatchEvent(FleetListener.class, 
-                new FleetEvent(this, new ArrayList<>(this.orionFleets.values())), 
+                new FleetEvent(this, reporter, new ArrayList<>(this.orionFleets.values())), 
                 FleetListener.OWN_FLEETS_UPDATED);
     }
 
 
     
-    private Collection<Fleet> clearOldestFleets(Map<Integer, Fleet> fleets, 
+    private void clearOldestFleets(Collection<Fleet> fleets, Fleet current,
             Date threshold) {
-        final Collection<Fleet> result = new ArrayList<>();
-        final Iterator<Fleet> it = fleets.values().iterator();
+        final Iterator<Fleet> it = fleets.iterator();
         while (it.hasNext()) {
             final Fleet f = it.next();
-            if (f.getDate().compareTo(threshold) < 0) {
-                result.add(f);
+            if (f.getDate().compareTo(threshold) < 0 || f.equals(current)) {
                 it.remove();
             }
         }
-        return result;
     }
     
     
@@ -95,13 +92,41 @@ public class MemoryFleetTracker implements FleetTracker {
 
     @Override
     public Collection<? extends Fleet> getFleets() {
-        return null;
+        final List<Fleet> result = new ArrayList<>();
+        synchronized (this.orionFleets) {
+            result.addAll(this.orionFleets.values());
+        }
+        synchronized (this.fleets) {
+            for (final LinkedList<Fleet> fleets : this.fleets.values()) {
+                result.addAll(fleets);
+            }
+        }
+        return result;
     }
 
 
 
     @Override
-    public void updateFleets(Collection<? extends Fleet> fleets) throws OrionException {
+    public void updateFleets(String reporter, 
+            Collection<? extends Fleet> fleets) throws OrionException {
+        final Date threshold = this.getThresholdDate();
+        synchronized (this.fleets) {
+            for (final Fleet fleet : fleets) {
+                LinkedList<Fleet> existing = this.fleets.get(fleet.getOwnerName());
+                if (existing == null) {
+                    existing = new LinkedList<>();
+                }
+                
+                this.clearOldestFleets(existing, fleet, threshold);
+                existing.addFirst(fleet);
+                // always put, to prevent automatic deletion 
+                this.fleets.put(fleet.getName(), existing);
+            }
+        }
+        
+        this.events.dispatchEvent(FleetListener.class, 
+                new FleetEvent(this, reporter, new ArrayList<>(fleets)), 
+                FleetListener.FLEETS_UPDATED);
     }
 
 
@@ -109,7 +134,7 @@ public class MemoryFleetTracker implements FleetTracker {
     @Override
     public synchronized Collection<? extends Fleet> getFleets(Quadrant quadrant) {
         final Collection<Fleet> result = new ArrayList<>();
-        for (final Fleet f : this.orionFleets.values()) {
+        for (final Fleet f : this.getFleets()) {
             if (f.getSector().getQuadName().equals(quadrant.getName())) {
                 result.add(f);
             }

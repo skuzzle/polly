@@ -12,6 +12,6 @@ public interface PortalUpdater {
     
     public void removePortalListener(PortalListener listener);
 
-    public Collection<? extends Portal> updatePortals(Sector sector,
+    public Collection<? extends Portal> updatePortals(String reporter, Sector sector,
             Collection<?extends Portal> portals) throws OrionException;
 }

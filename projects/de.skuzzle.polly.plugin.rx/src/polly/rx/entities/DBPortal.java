@@ -17,6 +17,7 @@ import javax.persistence.TemporalType;
 
 import de.skuzzle.polly.sdk.time.Time;
 import de.skuzzle.polly.tools.Check;
+import de.skuzzle.polly.tools.EqualsHelper;
 import de.skuzzle.polly.tools.Equatable;
 import polly.rx.core.orion.model.OrionObjectUtil;
 import polly.rx.core.orion.model.Portal;
@@ -106,7 +107,7 @@ public class DBPortal implements Portal {
 
     @Override
     public final boolean equals(Object obj) {
-        return super.equals(obj);
+        return EqualsHelper.testEquality(this, obj);
     }
 
 
