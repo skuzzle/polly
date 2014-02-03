@@ -3,6 +3,7 @@ package polly.rx.core;
 import java.util.List;
 
 import polly.rx.MSG;
+import polly.rx.core.TrainingEvent.TrainEventType;
 import polly.rx.entities.TrainEntityV3;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -15,6 +16,9 @@ import de.skuzzle.polly.sdk.UserManager;
 import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
+import de.skuzzle.polly.tools.concurrent.RunLater;
+import de.skuzzle.polly.tools.events.EventProvider;
+import de.skuzzle.polly.tools.events.EventProviders;
 
 
 /**
@@ -26,12 +30,26 @@ public class TrainManagerV2 extends AbstractDisposable {
 
     private PersistenceManagerV2 persistence;
     private UserManager userManager;
+    private final EventProvider events;
     
     
     
     public TrainManagerV2(MyPolly myPolly) {
         this.persistence = myPolly.persistence();
         this.userManager = myPolly.users();
+        events = EventProviders.newDefaultEventProvider();
+    }
+    
+    
+    
+    public void addTrainListener(TrainingListener listener) {
+        this.events.addListener(TrainingListener.class, listener);
+    }
+    
+    
+    
+    public void removeTrainingListener(TrainingListener listener) {
+        this.events.removeListener(TrainingListener.class, listener);
     }
     
     
@@ -93,6 +111,9 @@ public class TrainManagerV2 extends AbstractDisposable {
             @Override
             public void perform(Write write) {
                 bill.closeBill();
+                events.dispatchEvent(TrainingListener.class, 
+                        new TrainingEvent(TrainManagerV2.this, bill), 
+                        TrainingListener.BILL_CLOSED);
             }
         });
     }
@@ -128,10 +149,21 @@ public class TrainManagerV2 extends AbstractDisposable {
     
     public synchronized TrainBillV2 addTrain(final TrainEntityV3 e, User trainer) 
             throws DatabaseException {
+        events.dispatchEvent(TrainingListener.class, 
+                new TrainingEvent(TrainManagerV2.this, TrainEventType.TRAIN_ADDED, e), 
+                TrainingListener.TRAINING_ADDED);
         this.persistence.writeAtomic(new Atomic() {
             @Override
             public void perform(Write write) throws DatabaseException {
                 write.single(e);
+                new RunLater("TRAIN_EVENT", e.getTrainFinished()) { //$NON-NLS-1$
+                    @Override
+                    public void run() {
+                        events.dispatchEvent(TrainingListener.class, 
+                                new TrainingEvent(TrainManagerV2.this, TrainEventType.TRAIN_FINISHED, e), 
+                                TrainingListener.TRAINING_FINISHED);
+                    }
+                }.start();
             }
         });
         return this.getBill(trainer, e.getForUser());

@@ -1,10 +1,17 @@
 package polly.rx.core.orion.http;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import com.google.gson.Gson;
-
+import polly.rx.core.TrainManagerV2;
+import polly.rx.core.TrainingEvent;
+import polly.rx.core.TrainingListener;
 import polly.rx.core.orion.FleetEvent;
 import polly.rx.core.orion.FleetListener;
 import polly.rx.core.orion.FleetTracker;
@@ -20,37 +27,75 @@ import de.skuzzle.polly.http.api.HttpException;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.http.api.handler.HttpEventHandler;
-import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
+import de.skuzzle.polly.sdk.User;
+import de.skuzzle.polly.sdk.time.Time;
 
-public class OrionNewsProvider implements HttpEventHandler, FleetListener, PortalListener {
+public class OrionNewsProvider implements HttpEventHandler, FleetListener, PortalListener, 
+        TrainingListener {
 
     public final static String NEWS_URL = "/api/orion/json/news"; //$NON-NLS-1$
             
     private final static int MAX_NEWS = 20;
     private final Deque<NewsEntry> entries;
+    private final Map<String, Deque<NewsEntry>> forVenads;
 
     
 
     
-    public OrionNewsProvider(FleetTracker fleetTracker, PortalUpdater portalUpdater) {
+    public OrionNewsProvider(FleetTracker fleetTracker, PortalUpdater portalUpdater, 
+            TrainManagerV2 trainManager) {
         this.entries = new ArrayDeque<>();
+        this.forVenads = new HashMap<>();
         fleetTracker.addFleetListener(this);
         portalUpdater.addPortalListener(this);
+        trainManager.addTrainListener(this);
     }
-    
-    
     
     
     
     private void addNews(NewsEntry e) {
         synchronized (this.entries) {
-            if (this.entries.contains(e)) {
-                return;
+            this.addNews(this.entries, e);
+        }
+    }
+    
+    
+    
+    private void addNews(Deque<NewsEntry> entries, NewsEntry e) {
+        if (entries.contains(e)) {
+            return;
+        }
+        if (entries.size() == MAX_NEWS) {
+            entries.removeLast();
+        }
+        entries.addFirst(e);
+    }
+    
+    
+    
+    private void addNews(String forVenad, NewsEntry e) {
+        synchronized (this.forVenads) {
+            Deque<NewsEntry> entries = this.forVenads.get(forVenad);
+            if (entries == null) {
+                entries = new ArrayDeque<>();
+                this.forVenads.put(forVenad, entries);
             }
-            if (this.entries.size() == MAX_NEWS) {
-                this.entries.removeLast();
+            this.addNews(entries, e);
+        }
+    }
+    
+    
+    
+    private NewsEntry[] tailorFor(String venad) {
+        synchronized (this.entries) {
+            final List<NewsEntry> result = new ArrayList<>(this.entries);
+            final Collection<NewsEntry> forVenad = this.forVenads.get(venad);
+            if (forVenad != null) {
+                result.addAll(forVenad);
             }
-            this.entries.addFirst(e);
+            result.addAll(this.entries);
+            Collections.sort(result);
+            return result.toArray(new NewsEntry[result.size()]);
         }
     }
 
@@ -78,9 +123,8 @@ public class OrionNewsProvider implements HttpEventHandler, FleetListener, Porta
             HttpEventHandler next) throws HttpException {
         
         synchronized (this.entries) {
-            final NewsEntry[] entryArray = new NewsEntry[this.entries.size()];
-            this.entries.toArray(entryArray);
-            
+            final String venad = e.get("venad"); //$NON-NLS-1$
+            final NewsEntry[] entryArray = this.tailorFor(venad);
             return HttpAnswers.newStringAnswer(OrionJsonAdapter.GSON.toJson(entryArray));
         }
     }
@@ -119,6 +163,41 @@ public class OrionNewsProvider implements HttpEventHandler, FleetListener, Porta
                     p,
                     p.getDate()));
         }
+    }
+
+
+
+    @Override
+    public void trainingAdded(TrainingEvent e) {
+        final User trainer = e.getSource().getTrainer(e.getTraining().getTrainerId());
+        this.addNews(e.getTraining().getForUser(), new NewsEntry(trainer.getName(), 
+                NewsType.TRAINING_ADDED, e.getTraining(), 
+                e.getTraining().getTrainStart()));
+    }
+
+
+
+    @Override
+    public void trainingFinished(TrainingEvent e) {
+        final User trainer = e.getSource().getTrainer(e.getTraining().getTrainerId());
+        this.addNews(e.getTraining().getForUser(), new NewsEntry(trainer.getName(), 
+                NewsType.TRAINING_FINISHED, e.getTraining(), 
+                e.getTraining().getTrainStart()));
+    }
+
+
+
+    @Override
+    public void trainingClosed(TrainingEvent e) {
+    }
+
+
+
+    @Override
+    public void billClosed(TrainingEvent e) {
+        this.addNews("", new NewsEntry("", 
+                NewsType.BILL_CLOSED, null, 
+                Time.currentTime()));
     }
 
 }

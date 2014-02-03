@@ -282,7 +282,9 @@ public class MyPlugin extends PollyPlugin {
         final OrionController oc = new OrionController(this.getMyPolly(), azManager);
         final OrionNewsProvider newsProvider = new OrionNewsProvider(
                 Orion.INSTANCE.getFleetTracker(), 
-                Orion.INSTANCE.getPortalUpdater());
+                Orion.INSTANCE.getPortalUpdater(),
+                this.trainManager);
+        
         this.getMyPolly().webInterface().getServer().addController(oc);
         this.getMyPolly().webInterface().getServer().addHttpEventHandler(
                 OrionNewsProvider.NEWS_URL, newsProvider);
