@@ -1,8 +1,10 @@
 package de.skuzzle.polly.core.parser.dom;
 
+import de.skuzzle.polly.dom.ASTCallExpression;
 import de.skuzzle.polly.dom.ASTExpression;
 import de.skuzzle.polly.dom.ASTName;
 import de.skuzzle.polly.dom.ASTNodeFactory;
+import de.skuzzle.polly.dom.ASTProductExpression;
 import de.skuzzle.polly.dom.ASTQualifiedName;
 
 
@@ -64,5 +66,21 @@ public class DefaultASTNodeFactory implements ASTNodeFactory {
             prod.addExpression(expr);
         }
         return prod;
+    }
+    
+    
+    
+    @Override
+    public ASTIdExpressionImpl newIdExpression(ASTName name) {
+        final ASTIdExpressionImpl expr = new ASTIdExpressionImpl(name);
+        return expr;
+    }
+    
+    
+    
+    @Override
+    public ASTCallExpression newCall(ASTExpression lhs, ASTProductExpression rhs) {
+        final ASTCallExpressionImpl call = new ASTCallExpressionImpl(lhs, rhs);
+        return call;
     }
 }

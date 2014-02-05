@@ -174,10 +174,8 @@ public class ASTQualifiedNameImpl extends AbstractPollyNode implements ASTQualif
         }
 
         switch (visitor.visit(this)) {
-        case PROCESS_SKIP:
-            return true;
-        case PROCESS_ABORT:
-            return false;
+        case PROCESS_SKIP:  return true;
+        case PROCESS_ABORT: return false;
         default:
             break;
         }

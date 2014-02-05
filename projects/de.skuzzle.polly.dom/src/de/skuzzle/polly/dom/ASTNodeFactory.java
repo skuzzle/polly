@@ -46,4 +46,19 @@ public interface ASTNodeFactory {
      * @return The created node.
      */
     public ASTProductExpression newProduct(ASTExpression... expressions);
+    
+    /**
+     * Creates a new {@link ASTIdExpression} with the provided name.
+     * @param name The name for the id expression
+     * @return The created node.
+     */
+    public ASTIdExpression newIdExpression(ASTName name);
+    
+    /**
+     * Creates a new {@link ASTCallExpression}.
+     * @param lhs The left hand side of the call.
+     * @param rhs The actual parameters of the call.
+     * @return The created node
+     */
+    public ASTCallExpression newCall(ASTExpression lhs, ASTProductExpression rhs);
 }

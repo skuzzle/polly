@@ -16,7 +16,10 @@ public class ASTVisitor {
     
     public boolean shouldVisitNormalNames;
     public boolean shouldVisitQualifiedNames;
+    public boolean shouldVisitBraced;
     public boolean shouldVisitProducts;
+    public boolean shouldVisitIdExpressions;
+    public boolean shouldVisitCalls;
     
     
     
@@ -25,7 +28,10 @@ public class ASTVisitor {
     public ASTVisitor(boolean visitAll) {
         this.shouldVisitNormalNames = visitAll;
         this.shouldVisitQualifiedNames = visitAll;
+        this.shouldVisitBraced = visitAll;
         this.shouldVisitProducts = visitAll;
+        this.shouldVisitIdExpressions = visitAll;
+        this.shouldVisitCalls = visitAll;
     }
     
     
@@ -56,6 +62,36 @@ public class ASTVisitor {
     }
     
     public int leave(ASTProductExpression node) {
+        return PROCESS_CONTINUE;
+    }
+    
+    
+    
+    public int visit(ASTBracedExpression node) {
+        return PROCESS_CONTINUE;
+    }
+    
+    public int leave(ASTBracedExpression node) {
+        return PROCESS_CONTINUE;
+    }
+    
+    
+    
+    public int visit(ASTIdExpression node) {
+        return PROCESS_CONTINUE;
+    }
+    
+    public int leave(ASTIdExpression node) {
+        return PROCESS_CONTINUE;
+    }
+    
+    
+    
+    public int visit(ASTCallExpression node) {
+        return PROCESS_CONTINUE;
+    }
+    
+    public int leave(ASTCallExpression node) {
         return PROCESS_CONTINUE;
     }
 }

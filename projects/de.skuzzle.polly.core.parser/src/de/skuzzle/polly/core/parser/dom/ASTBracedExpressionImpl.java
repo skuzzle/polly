@@ -14,6 +14,9 @@ public class ASTBracedExpressionImpl extends AbstractASTExpression implements
 
 
     public ASTBracedExpressionImpl(ASTExpression braced) {
+        if (braced == null) {
+            throw new NullPointerException("braced"); //$NON-NLS-1$
+        }
         assertNotFrozen(braced);
         this.braced = braced;
         this.updateRelationships(false);
@@ -23,22 +26,18 @@ public class ASTBracedExpressionImpl extends AbstractASTExpression implements
 
     @Override
     public void resolveType() {
-        if (this.braced != null) {
-            this.braced.resolveType();
-        }
+        this.braced.resolveType();
     }
 
 
 
     @Override
     public void updateRelationships(boolean deep) {
-        if (this.braced != null) {
-            this.braced.setParent(this);
-            this.braced.setPropertyInParent(BRACED_EXPRESSION);
-            this.renewChildren(this.braced);
-            if (deep) {
-                this.braced.updateRelationships(deep);
-            }
+        this.braced.setParent(this);
+        this.braced.setPropertyInParent(BRACED_EXPRESSION);
+        this.renewChildren(this.braced);
+        if (deep) {
+            this.braced.updateRelationships(deep);
         }
     }
 
@@ -53,6 +52,8 @@ public class ASTBracedExpressionImpl extends AbstractASTExpression implements
             return;
         } else if (newChild == this) {
             throw new IllegalArgumentException(ERROR_SELF_AS_CHILD);
+        } else if (newChild == null) {
+            throw new NullPointerException("neWChild"); //$NON-NLS-1$
         } else if (this.getParent() != null && newChild == this.getParent()) {
             throw new IllegalArgumentException(ERROR_PARENT_AS_CHILD);
         } else if (!newChild.is(ASTExpression.class)) {
@@ -69,7 +70,19 @@ public class ASTBracedExpressionImpl extends AbstractASTExpression implements
 
     @Override
     public boolean accept(ASTVisitor visitor) {
-        return false;
+        if (!visitor.shouldVisitBraced) {
+            return true;
+        }
+        switch (visitor.visit(this)) {
+        case PROCESS_SKIP: return true;
+        case PROCESS_ABORT: return false;
+        }
+        
+        if (this.braced != null && !this.braced.accept(visitor)) {
+            return false;
+        }
+        
+        return visitor.leave(this) != PROCESS_ABORT;
     }
 
 
@@ -83,6 +96,9 @@ public class ASTBracedExpressionImpl extends AbstractASTExpression implements
 
     @Override
     public void setBracedExpression(ASTExpression expression) {
+        if (expression == null) {
+            throw new NullPointerException("expression"); //$NON-NLS-1$
+        }
         this.assertNotFrozen();
         this.assertNotFrozen(expression);
         this.braced = expression;
@@ -94,9 +110,7 @@ public class ASTBracedExpressionImpl extends AbstractASTExpression implements
     @Override
     public ASTBracedExpressionImpl copy() {
         ASTExpression bracedCopy = null; 
-        if (this.braced != null) {
-            bracedCopy = this.braced.copy();
-        }
+        bracedCopy = this.braced.copy();
         final ASTBracedExpressionImpl copy = new ASTBracedExpressionImpl(bracedCopy);
         copy.setLocation(this.getLocation());
         return copy;
