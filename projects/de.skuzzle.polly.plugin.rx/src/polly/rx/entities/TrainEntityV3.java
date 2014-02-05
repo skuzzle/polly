@@ -16,7 +16,6 @@ import javax.persistence.TemporalType;
 import polly.rx.MSG;
 import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.time.Time;
-import de.skuzzle.polly.tools.EqualsHelper;
 import de.skuzzle.polly.tools.Equatable;
 
 @Entity
