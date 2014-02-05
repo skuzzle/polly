@@ -4,5 +4,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="/de.skuzzle.polly.tools"/>
 	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/log4j-1.2.16.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/de.skuzzle.polly.dom"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/de.skuzzle.parser"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
