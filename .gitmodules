@@ -1,0 +1,3 @@
+[submodule "external/de.skuzzle.polly.parser"]
+	path = external/de.skuzzle.polly.parser
+	url = https://github.com/skuzzle/parser
