@@ -89,22 +89,21 @@ public class ASTUnaryExpressionImpl extends AbstractASTExpression implements
 
     @Override
     public boolean accept(ASTVisitor visitor) {
-        if (!visitor.shouldVisitUnaryExpressions) {
-            return true;
-        }
-        switch (visitor.visit(this)) {
-        case PROCESS_SKIP: return true;
-        case PROCESS_ABORT: return false;
+        if (visitor.shouldVisitUnaryExpressions) {
+            switch (visitor.visit(this)) {
+            case PROCESS_SKIP: return true;
+            case PROCESS_ABORT: return false;
+            }
         }
         
-        if (!this.operand.accept(visitor)) {
-            return false;
-        }
-        if (!this.operator.accept(visitor)) {
+        if (!(this.operand.accept(visitor) && this.operator.accept(visitor))) {
             return false;
         }
         
-        return visitor.leave(this) != PROCESS_ABORT;
+        if (visitor.shouldVisitUnaryExpressions) {
+            return visitor.leave(this) != PROCESS_ABORT;
+        }
+        return true;
     }
 
 

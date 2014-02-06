@@ -97,25 +97,21 @@ public class ASTCallExpressionImpl extends AbstractASTExpression implements
 
     @Override
     public boolean accept(ASTVisitor visitor) {
-        if (!visitor.shouldVisitCalls) {
-            return true;
+        if (visitor.shouldVisitCalls) {
+            switch (visitor.visit(this)) {
+            case PROCESS_SKIP:  return true;
+            case PROCESS_ABORT: return false;
+            }
         }
-        
-        switch (visitor.visit(this)) {
-        case PROCESS_SKIP:  return true;
-        case PROCESS_ABORT: return false;
-        default:
-            break;
-        }
-        
-        if (!this.lhs.accept(visitor)) {
-            return false;
-        }
-        if (!this.rhs.accept(visitor)) {
+
+        if (!(this.lhs.accept(visitor) && this.rhs.accept(visitor))) {
             return false;
         }
         
-        return visitor.leave(this) != PROCESS_ABORT;
+        if (visitor.shouldVisitCalls) {
+            return visitor.leave(this) != PROCESS_ABORT;
+        }
+        return true;
     }
 
 

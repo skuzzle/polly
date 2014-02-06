@@ -42,16 +42,15 @@ public class ASTStringLiteralImpl extends AbstractASTExpression implements
 
     @Override
     public boolean accept(ASTVisitor visitor) {
-        if (!visitor.shouldVisitStringLiterals) {
-            return true;
+        if (visitor.shouldVisitStringLiterals) {
+            switch (visitor.visit(this)) {
+            case PROCESS_SKIP: return true;
+            case PROCESS_ABORT: return false;
+            }
+            
+            return visitor.leave(this) != PROCESS_ABORT;
         }
-        
-        switch (visitor.visit(this)) {
-        case PROCESS_SKIP: return true;
-        case PROCESS_ABORT: return false;
-        }
-        
-        return visitor.leave(this) != PROCESS_ABORT;
+        return true;
     }
 
 

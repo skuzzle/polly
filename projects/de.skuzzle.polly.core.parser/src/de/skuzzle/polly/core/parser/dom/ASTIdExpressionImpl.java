@@ -68,16 +68,21 @@ public class ASTIdExpressionImpl extends AbstractASTExpression
 
     @Override
     public boolean accept(ASTVisitor visitor) {
-        switch (visitor.visit(this)) {
-        case PROCESS_SKIP:  return true;
-        case PROCESS_ABORT: return false;
+        if (visitor.shouldVisitIdExpressions) {
+            switch (visitor.visit(this)) {
+            case PROCESS_SKIP:  return true;
+            case PROCESS_ABORT: return false;
+            }
         }
         
         if (this.name != null && !this.name.accept(visitor)) {
             return false;
         }
         
-        return visitor.leave(this) != PROCESS_ABORT;
+        if (visitor.shouldVisitIdExpressions) {
+            return visitor.leave(this) != PROCESS_ABORT;
+        }
+        return true;
     }
 
 

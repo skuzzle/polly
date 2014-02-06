@@ -19,7 +19,7 @@ public class ASTBinaryExpressionImpl extends AbstractASTExpression implements
 
 
 
-    public ASTBinaryExpressionImpl(ASTOperator op, ASTExpression left, ASTExpression right) {
+    ASTBinaryExpressionImpl(ASTOperator op, ASTExpression left, ASTExpression right) {
         if (op == null) {
             throw new NullPointerException("op"); //$NON-NLS-1$
         } else if (left == null) {
@@ -118,25 +118,22 @@ public class ASTBinaryExpressionImpl extends AbstractASTExpression implements
 
     @Override
     public boolean accept(ASTVisitor visitor) {
-        if (!visitor.shouldVisitBinaryExpressions) {
-            return true;
+        if (visitor.shouldVisitBinaryExpressions) {
+            switch (visitor.visit(this)) {
+            case PROCESS_SKIP:  return true;
+            case PROCESS_ABORT: return false;
+            }
         }
-        switch (visitor.visit(this)) {
-        case PROCESS_SKIP:  return true;
-        case PROCESS_ABORT: return false;
-        }
-        
-        if (!this.left.accept(visitor)) {
+
+        if (!(this.left.accept(visitor) && this.right.accept(visitor) && 
+                this.op.accept(visitor))) {
             return false;
         }
-        if (!this.op.accept(visitor)) {
-            return false;
+
+        if (visitor.shouldVisitBinaryExpressions) {
+            return visitor.leave(this) != PROCESS_ABORT;
         }
-        if (!this.right.accept(visitor)) {
-            return false;
-        }
-        
-        return visitor.leave(this) != PROCESS_ABORT;
+        return true;
     }
 
 

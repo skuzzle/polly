@@ -76,15 +76,11 @@ public class ASTProductExpressionImpl extends AbstractASTExpression implements
 
     @Override
     public boolean accept(ASTVisitor visitor) {
-        if (!visitor.shouldVisitProducts) {
-            return true;
-        }
-
-        switch (visitor.visit(this)) {
-        case PROCESS_SKIP:  return true;
-        case PROCESS_ABORT: return false;
-        default:
-            break;
+        if (visitor.shouldVisitProducts) {
+            switch (visitor.visit(this)) {
+            case PROCESS_SKIP:  return true;
+            case PROCESS_ABORT: return false;
+            }
         }
 
         for (int i = 0; i < this.expressions.size(); ++i) {
@@ -94,7 +90,10 @@ public class ASTProductExpressionImpl extends AbstractASTExpression implements
             }
         }
 
-        return visitor.leave(this) != PROCESS_ABORT;
+        if (visitor.shouldVisitProducts) {
+            return visitor.leave(this) != PROCESS_ABORT;
+        }
+        return true;
     }
 
 

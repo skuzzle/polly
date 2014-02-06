@@ -70,19 +70,21 @@ public class ASTBracedExpressionImpl extends AbstractASTExpression implements
 
     @Override
     public boolean accept(ASTVisitor visitor) {
-        if (!visitor.shouldVisitBraced) {
-            return true;
+        if (visitor.shouldVisitBraced) {
+            switch (visitor.visit(this)) {
+            case PROCESS_SKIP: return true;
+            case PROCESS_ABORT: return false;
+            }
         }
-        switch (visitor.visit(this)) {
-        case PROCESS_SKIP: return true;
-        case PROCESS_ABORT: return false;
-        }
-        
-        if (this.braced != null && !this.braced.accept(visitor)) {
+
+        if (!this.braced.accept(visitor)) {
             return false;
         }
         
-        return visitor.leave(this) != PROCESS_ABORT;
+        if (visitor.shouldVisitBraced) {
+            return visitor.leave(this) != PROCESS_ABORT;
+        }
+        return true;
     }
 
 

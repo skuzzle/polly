@@ -33,17 +33,15 @@ public class ASTNameImpl extends AbstractPollyNode implements ASTName {
 
     @Override
     public boolean accept(ASTVisitor visitor) {
-        if (!visitor.shouldVisitNormalNames) {
-            return true;
+        if (visitor.shouldVisitNormalNames) {
+            switch (visitor.visit(this)) {
+            case PROCESS_SKIP:  return true;
+            case PROCESS_ABORT: return false;
+            }
+            
+            return visitor.leave(this) != PROCESS_ABORT;
         }
-        
-        switch (visitor.visit(this)) {
-        case PROCESS_SKIP:  return true;
-        case PROCESS_ABORT: return false;
-        default: break;
-        }
-        
-        return visitor.leave(this) != PROCESS_ABORT;
+        return true;
     }
 
 

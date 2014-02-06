@@ -183,15 +183,11 @@ public class ASTQualifiedNameImpl extends AbstractPollyNode implements ASTQualif
 
     @Override
     public boolean accept(ASTVisitor visitor) {
-        if (!visitor.shouldVisitQualifiedNames) {
-            return true;
-        }
-
-        switch (visitor.visit(this)) {
-        case PROCESS_SKIP:  return true;
-        case PROCESS_ABORT: return false;
-        default:
-            break;
+        if (visitor.shouldVisitQualifiedNames) {
+            switch (visitor.visit(this)) {
+            case PROCESS_SKIP:  return true;
+            case PROCESS_ABORT: return false;
+            }
         }
 
         for (int i = 0; i < this.names.size(); ++i) {
@@ -201,6 +197,9 @@ public class ASTQualifiedNameImpl extends AbstractPollyNode implements ASTQualif
             }
         }
 
-        return visitor.leave(this) != PROCESS_ABORT;
+        if (visitor.shouldVisitQualifiedNames) {
+            return visitor.leave(this) != PROCESS_ABORT;
+        }
+        return true;
     }
 }

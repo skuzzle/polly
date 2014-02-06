@@ -74,16 +74,15 @@ public class ASTOperatorImpl extends AbstractPollyNode implements ASTOperator {
 
     @Override
     public boolean accept(ASTVisitor visitor) {
-        if (!visitor.shouldVisitOperators) {
-            return true;
+        if (visitor.shouldVisitOperators) {
+            switch (visitor.visit(this)) {
+            case PROCESS_SKIP: return true;
+            case PROCESS_ABORT: return false;
+            }
+            
+            return visitor.leave(this) != PROCESS_ABORT;
         }
-        
-        switch (visitor.visit(this)) {
-        case PROCESS_SKIP: return true;
-        case PROCESS_ABORT: return false;
-        }
-        
-        return visitor.leave(this) != PROCESS_ABORT;
+        return true;
     }
 
 
