@@ -9,6 +9,19 @@ import de.skuzzle.parser.dom.ASTNode;
  */
 public interface ASTPollyNode extends ASTNode<ASTVisitor> {
     
+    /**
+     * Gets an {@link ASTNodeFactory} for creating new nodes.
+     * 
+     * @return The node factory.
+     */
+    public ASTNodeFactory getNodeFactory();
+    
+    @Override
+    public ASTPollyNode deepOrigin();
+    
+    @Override
+    public ASTPollyNode getOrigin();
+    
     @Override
     public ASTPollyNode copy();
 }

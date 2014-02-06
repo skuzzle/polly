@@ -10,7 +10,7 @@ public class ASTNameImpl extends AbstractPollyNode implements ASTName {
     
     
     
-    public ASTNameImpl(String name) {
+    ASTNameImpl(String name) {
         if (name == null) {
             throw new NullPointerException("name"); //$NON-NLS-1$
         }
@@ -61,11 +61,26 @@ public class ASTNameImpl extends AbstractPollyNode implements ASTName {
     }
     
 
-
+    
+    @Override
+    public ASTName getOrigin() {
+        return super.getOrigin().as(ASTName.class);
+    }
+    
+    
+    
+    @Override
+    public ASTName deepOrigin() {
+        return super.deepOrigin().as(ASTName.class);
+    }
+    
+    
+    
     @Override
     public ASTNameImpl copy() {
-        final ASTNameImpl result = new ASTNameImpl(this.getName());
+        final ASTNameImpl result = this.getNodeFactory().newName(this.name);
         result.setLocation(this.getLocation());
+        result.setOrigin(this);
         return result;
     }
 }

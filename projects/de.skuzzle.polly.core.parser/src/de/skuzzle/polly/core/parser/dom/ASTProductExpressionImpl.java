@@ -16,7 +16,7 @@ public class ASTProductExpressionImpl extends AbstractASTExpression implements
 
 
 
-    public ASTProductExpressionImpl() {
+    ASTProductExpressionImpl() {
         this.expressions = new ArrayList<>();
     }
 
@@ -128,14 +128,29 @@ public class ASTProductExpressionImpl extends AbstractASTExpression implements
     }
 
 
+    
+    @Override
+    public ASTProductExpression getOrigin() {
+        return super.getOrigin().as(ASTProductExpression.class);
+    }
+    
+    
+    
+    @Override
+    public ASTProductExpression deepOrigin() {
+        return super.deepOrigin().as(ASTProductExpression.class);
+    }
+    
+    
 
     @Override
     public ASTProductExpressionImpl copy() {
-        final ASTProductExpressionImpl copy = new ASTProductExpressionImpl();
+        final ASTProductExpressionImpl copy = getNodeFactory().newProduct();
         for (final ASTExpression expr : this.expressions) {
             copy.addExpression(expr.copy());
         }
         copy.setLocation(this.getLocation());
+        copy.setOrigin(this);
         return copy;
     }
 

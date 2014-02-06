@@ -4,7 +4,7 @@ import de.skuzzle.parser.dom.ASTNodeProperty;
 
 
 
-public interface ASTCallExpression extends ASTExpression {
+public interface ASTCallExpression extends ASTExpression, ASTCallable {
 
     /** Property for lhs node */
     public final static ASTNodeProperty LHS_EXPRESSION = 
@@ -42,6 +42,12 @@ public interface ASTCallExpression extends ASTExpression {
      * @param rhs The new parameters. Must not be <code>null</code>.
      */
     public void setRhs(ASTProductExpression rhs);
+    
+    @Override
+    public ASTCallExpression getOrigin();
+    
+    @Override
+    public ASTCallExpression deepOrigin();
     
     @Override
     public ASTCallExpression copy();

@@ -13,7 +13,7 @@ public class ASTBracedExpressionImpl extends AbstractASTExpression implements
 
 
 
-    public ASTBracedExpressionImpl(ASTExpression braced) {
+    ASTBracedExpressionImpl(ASTExpression braced) {
         if (braced == null) {
             throw new NullPointerException("braced"); //$NON-NLS-1$
         }
@@ -105,14 +105,29 @@ public class ASTBracedExpressionImpl extends AbstractASTExpression implements
         this.updateRelationships(false);
     }
 
-
+    
+    
+    @Override
+    public ASTBracedExpression getOrigin() {
+        return super.getOrigin().as(ASTBracedExpression.class);
+    }
+    
+    
+    
+    @Override
+    public ASTBracedExpression deepOrigin() {
+        return super.deepOrigin().as(ASTBracedExpression.class);
+    }
+    
+    
 
     @Override
     public ASTBracedExpressionImpl copy() {
         ASTExpression bracedCopy = null; 
         bracedCopy = this.braced.copy();
-        final ASTBracedExpressionImpl copy = new ASTBracedExpressionImpl(bracedCopy);
+        final ASTBracedExpressionImpl copy = this.getNodeFactory().newBraced(bracedCopy);
         copy.setLocation(this.getLocation());
+        copy.setOrigin(this);
         return copy;
     }
 

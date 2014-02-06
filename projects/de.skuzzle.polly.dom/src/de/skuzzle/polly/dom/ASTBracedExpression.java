@@ -28,5 +28,11 @@ public interface ASTBracedExpression extends ASTExpression {
     public void setBracedExpression(ASTExpression expression);
     
     @Override
+    public ASTBracedExpression getOrigin();
+    
+    @Override
+    public ASTBracedExpression deepOrigin();
+    
+    @Override
     public ASTBracedExpression copy();
 }

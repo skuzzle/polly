@@ -1,5 +1,7 @@
 package de.skuzzle.polly.dom;
 
+import de.skuzzle.polly.dom.ASTOperator.OperatorKind;
+
 /**
  * Factory for creating new AST nodes. Any created node will have no location and no
  * parent assigned and will not be frozen.
@@ -61,4 +63,44 @@ public interface ASTNodeFactory {
      * @return The created node
      */
     public ASTCallExpression newCall(ASTExpression lhs, ASTProductExpression rhs);
+    
+    /**
+     * Creates a new {@link ASTBinaryExpression} from the provided nodes.
+     * @param op The operator of the binary expression.
+     * @param left The left operand of the expression.
+     * @param right The right operand of the expression.
+     * @return The created node.
+     */
+    public ASTBinaryExpression newBinaryExpression(ASTOperator op, ASTExpression left, 
+            ASTExpression right);
+    
+    /**
+     * Creates a new {@link ASTBracedExpression} node.
+     * @param exp the expression in braces.
+     * @return The created node.
+     */
+    public ASTBracedExpression newBraced(ASTExpression exp);
+    
+    /**
+     * Creates a new {@link ASTOperator}.
+     * @param type The operator's type.
+     * @param kind The kind of the operator.
+     * @return The created node.
+     */
+    public ASTOperator newOperator(int type, OperatorKind kind);
+    
+    /**
+     * Creates a new {@link ASTUnaryExpression}.
+     * @param op The operator of the expression.
+     * @param operand The operand.
+     * @return The created node.
+     */
+    public ASTUnaryExpression newUnaryExpression(ASTOperator op, ASTExpression operand);
+    
+    /**
+     * Creates a new {@link ASTStringLiteral}.
+     * @param value The string value of the new literal
+     * @return The created node.
+     */
+    public ASTStringLiteral newStringLiteral(String value);
 }

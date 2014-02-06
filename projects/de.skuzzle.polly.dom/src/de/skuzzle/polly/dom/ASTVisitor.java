@@ -20,6 +20,10 @@ public class ASTVisitor {
     public boolean shouldVisitProducts;
     public boolean shouldVisitIdExpressions;
     public boolean shouldVisitCalls;
+    public boolean shouldVisitBinaryExpressions;
+    public boolean shouldVisitOperators;
+    public boolean shouldVisitUnaryExpressions;
+    public boolean shouldVisitStringLiterals;
     
     
     
@@ -32,6 +36,10 @@ public class ASTVisitor {
         this.shouldVisitProducts = visitAll;
         this.shouldVisitIdExpressions = visitAll;
         this.shouldVisitCalls = visitAll;
+        this.shouldVisitBinaryExpressions = visitAll;
+        this.shouldVisitOperators = visitAll;
+        this.shouldVisitUnaryExpressions = visitAll;
+        this.shouldVisitStringLiterals = visitAll;
     }
     
     
@@ -92,6 +100,47 @@ public class ASTVisitor {
     }
     
     public int leave(ASTCallExpression node) {
+        return PROCESS_CONTINUE;
+    }
+    
+    
+    
+    public int visit(ASTBinaryExpression node) {
+        return PROCESS_CONTINUE;
+    }
+    
+    public int leave(ASTBinaryExpression node) {
+        return PROCESS_CONTINUE;
+    }
+    
+    
+    
+    
+    public int visit(ASTOperator node) {
+        return PROCESS_CONTINUE;
+    }
+    
+    public int leave(ASTOperator node) {
+        return PROCESS_CONTINUE;
+    }
+    
+    
+    
+    public int visit(ASTUnaryExpression node) {
+        return PROCESS_CONTINUE;
+    }
+    
+    public int leave(ASTUnaryExpression node) {
+        return PROCESS_CONTINUE;
+    }
+    
+    
+    
+    public int visit(ASTStringLiteral node) {
+        return PROCESS_CONTINUE;
+    }
+    
+    public int leave(ASTStringLiteral node) {
         return PROCESS_CONTINUE;
     }
 }

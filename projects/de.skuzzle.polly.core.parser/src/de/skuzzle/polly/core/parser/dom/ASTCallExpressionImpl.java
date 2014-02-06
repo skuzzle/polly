@@ -14,12 +14,14 @@ public class ASTCallExpressionImpl extends AbstractASTExpression implements
 
 
     
-    public ASTCallExpressionImpl(ASTExpression lhs, ASTProductExpression rhs) {
+    ASTCallExpressionImpl(ASTExpression lhs, ASTProductExpression rhs) {
         if (lhs == null) {
             throw new NullPointerException("lhs"); //$NON-NLS-1$
         } else if (rhs == null) {
             throw new NullPointerException("rhs"); //$NON-NLS-1$
         }
+        this.assertNotFrozen(lhs);
+        this.assertNotFrozen(rhs);
         this.lhs = lhs;
         this.rhs = rhs;
         this.updateRelationships(false);
@@ -32,7 +34,14 @@ public class ASTCallExpressionImpl extends AbstractASTExpression implements
     }
 
 
+    
+    @Override
+    public ASTCallExpression asCall() {
+        return this;
+    }
+    
 
+    
     @Override
     public void updateRelationships(boolean deep) {
         this.lhs.setParent(this);
@@ -150,13 +159,28 @@ public class ASTCallExpressionImpl extends AbstractASTExpression implements
     }
 
 
+    
+    @Override
+    public ASTCallExpression getOrigin() {
+        return super.getOrigin().as(ASTCallExpression.class);
+    }
+    
+    
+    
+    @Override
+    public ASTCallExpression deepOrigin() {
+        return super.deepOrigin().as(ASTCallExpression.class);
+    }
+    
+    
 
     @Override
     public ASTCallExpressionImpl copy() {
         final ASTExpression lhsCopy = this.lhs.copy();
         final ASTProductExpression rhsCopy = this.rhs.copy();
-        final ASTCallExpressionImpl copy = new ASTCallExpressionImpl(lhsCopy, rhsCopy);
+        final ASTCallExpressionImpl copy = getNodeFactory().newCall(lhsCopy, rhsCopy);
         copy.setLocation(this.getLocation());
+        copy.setOrigin(this);
         return copy;
     }
 }

@@ -13,10 +13,11 @@ public class ASTIdExpressionImpl extends AbstractASTExpression
 
 
 
-    public ASTIdExpressionImpl(ASTName name) {
+    ASTIdExpressionImpl(ASTName name) {
         if (name == null) {
             throw new NullPointerException("name"); //$NON-NLS-1$
         }
+        this.assertNotFrozen(name);
         this.name = name;
         this.updateRelationships(false);
     }
@@ -29,7 +30,7 @@ public class ASTIdExpressionImpl extends AbstractASTExpression
     }
 
 
-
+    
     @Override
     public void updateRelationships(boolean deep) {
         this.name.setParent(this);
@@ -100,12 +101,28 @@ public class ASTIdExpressionImpl extends AbstractASTExpression
         this.updateRelationships(false);
     }
 
+    
+    
+    @Override
+    public ASTIdExpression getOrigin() {
+        return super.getOrigin().as(ASTIdExpression.class);
+    }
+    
 
+    
+    @Override
+    public ASTIdExpression deepOrigin() {
+        return super.deepOrigin().as(ASTIdExpression.class);
+    }
+    
+    
 
     @Override
     public ASTIdExpressionImpl copy() {
-        final ASTIdExpressionImpl copy = new ASTIdExpressionImpl(this.name.copy());
+        final ASTIdExpressionImpl copy = getNodeFactory().newIdExpression(
+                this.name.copy());
         copy.setLocation(this.getLocation());
+        copy.setOrigin(this);
         return copy;
     }
 }

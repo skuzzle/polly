@@ -34,5 +34,11 @@ public interface ASTQualifiedName extends ASTName {
     public ASTName getLastName();
     
     @Override
+    public ASTQualifiedName getOrigin();
+    
+    @Override
+    public ASTQualifiedName deepOrigin();
+    
+    @Override
     public ASTQualifiedName copy();
 }

@@ -42,7 +42,7 @@ public class ASTQualifiedNameImpl extends AbstractPollyNode implements ASTQualif
 
 
 
-    public ASTQualifiedNameImpl(ASTName firstName) {
+    ASTQualifiedNameImpl(ASTName firstName) {
         if (firstName == null) {
             throw new NullPointerException("firstName"); //$NON-NLS-1$
         }
@@ -60,16 +60,30 @@ public class ASTQualifiedNameImpl extends AbstractPollyNode implements ASTQualif
         this.names = new ArrayList<>();
     }
 
+    
+    @Override
+    public ASTQualifiedName getOrigin() {
+        return super.getOrigin().as(ASTQualifiedName.class);
+    }
+    
 
-
+    
+    @Override
+    public ASTQualifiedName deepOrigin() {
+        return super.deepOrigin().as(ASTQualifiedName.class);
+    }
+    
+    
+    
     @Override
     public ASTQualifiedNameImpl copy() {
+        // HACK: can not use node factory here
         final ASTQualifiedNameImpl result = new ASTQualifiedNameImpl();
         for (final ASTName name : this.names) {
             result.addName(name.copy());
         }
-        result.names.addAll(this.names);
         result.setLocation(this.getLocation());
+        result.setOrigin(this);
         return result;
     }
 

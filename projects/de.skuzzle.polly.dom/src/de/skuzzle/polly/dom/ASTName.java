@@ -21,5 +21,11 @@ public interface ASTName extends ASTPollyNode {
     public String getName();
     
     @Override
+    public ASTName getOrigin();
+    
+    @Override
+    public ASTName deepOrigin();
+    
+    @Override
     public ASTName copy();
 }

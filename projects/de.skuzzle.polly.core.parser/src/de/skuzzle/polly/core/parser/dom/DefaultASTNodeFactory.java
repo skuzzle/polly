@@ -1,11 +1,11 @@
 package de.skuzzle.polly.core.parser.dom;
 
-import de.skuzzle.polly.dom.ASTCallExpression;
 import de.skuzzle.polly.dom.ASTExpression;
 import de.skuzzle.polly.dom.ASTName;
 import de.skuzzle.polly.dom.ASTNodeFactory;
+import de.skuzzle.polly.dom.ASTOperator;
+import de.skuzzle.polly.dom.ASTOperator.OperatorKind;
 import de.skuzzle.polly.dom.ASTProductExpression;
-import de.skuzzle.polly.dom.ASTQualifiedName;
 
 
 public class DefaultASTNodeFactory implements ASTNodeFactory {
@@ -35,7 +35,7 @@ public class DefaultASTNodeFactory implements ASTNodeFactory {
     
 
     @Override
-    public ASTQualifiedName newQualifiedName(String... names) {
+    public ASTQualifiedNameImpl newQualifiedName(String... names) {
         if (names == null) {
             throw new NullPointerException("names"); //$NON-NLS-1$
         } else if (names.length == 0) {
@@ -79,8 +79,49 @@ public class DefaultASTNodeFactory implements ASTNodeFactory {
     
     
     @Override
-    public ASTCallExpression newCall(ASTExpression lhs, ASTProductExpression rhs) {
+    public ASTCallExpressionImpl newCall(ASTExpression lhs, ASTProductExpression rhs) {
         final ASTCallExpressionImpl call = new ASTCallExpressionImpl(lhs, rhs);
         return call;
+    }
+    
+    
+    
+    @Override
+    public ASTBinaryExpressionImpl newBinaryExpression(ASTOperator op, ASTExpression left,
+            ASTExpression right) {
+        final ASTBinaryExpressionImpl exp = new ASTBinaryExpressionImpl(op, left, right);
+        return exp;
+    }
+    
+    
+    
+    @Override
+    public ASTBracedExpressionImpl newBraced(ASTExpression exp) {
+        final ASTBracedExpressionImpl braced = new ASTBracedExpressionImpl(exp);
+        return braced;
+    }
+    
+    
+    
+    @Override
+    public ASTOperatorImpl newOperator(int type, OperatorKind kind) {
+        final ASTOperatorImpl op = new ASTOperatorImpl(type, kind);
+        return op;
+    }
+    
+    
+    
+    @Override
+    public ASTUnaryExpressionImpl newUnaryExpression(ASTOperator op, ASTExpression operand) {
+        final ASTUnaryExpressionImpl exp = new ASTUnaryExpressionImpl(op, operand);
+        return exp;
+    }
+    
+    
+    
+    @Override
+    public ASTStringLiteralImpl newStringLiteral(String value) {
+        final ASTStringLiteralImpl lit = new ASTStringLiteralImpl(value);
+        return lit;
     }
 }

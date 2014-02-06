@@ -23,5 +23,11 @@ public interface ASTIdExpression extends ASTExpression {
     public void setName(ASTName name);
     
     @Override
+    public ASTIdExpression getOrigin();
+    
+    @Override
+    public ASTIdExpression deepOrigin();
+    
+    @Override
     public ASTIdExpression copy();
 }

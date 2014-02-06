@@ -27,5 +27,11 @@ public interface ASTProductExpression extends ASTExpression {
     public void addExpression(ASTExpression expression);
     
     @Override
+    public ASTProductExpression getOrigin();
+    
+    @Override
+    public ASTProductExpression deepOrigin();
+    
+    @Override
     public ASTProductExpression copy();
 }

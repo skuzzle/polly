@@ -1,5 +1,6 @@
 package de.skuzzle.polly.core.parser.dom;
 
+import de.skuzzle.parser.dom.ASTNode;
 import de.skuzzle.parser.dom.AbstractASTNode;
 import de.skuzzle.polly.dom.ASTPollyNode;
 import de.skuzzle.polly.dom.ASTVisitor;
@@ -30,4 +31,36 @@ public abstract class AbstractPollyNode extends AbstractASTNode<ASTVisitor>
     
     /** Error message for when trying to replace a child with an invalid node */
     protected final static String ERROR_NOT_EXPECTED_TYPE = "provided node has not the expected type"; //$NON-NLS-1$
+    
+    
+    /** NodeFactory instance shared among all nodes */
+    private final static DefaultASTNodeFactory NODE_FACTORY = new DefaultASTNodeFactory();
+    
+    
+    
+    @Override
+    public DefaultASTNodeFactory getNodeFactory() {
+        return NODE_FACTORY;
+    }
+    
+    
+    
+    @Override
+    public void setOrigin(ASTNode<ASTVisitor> origin) {
+        super.setOrigin(origin);
+    }
+    
+    
+    
+    @Override
+    public ASTPollyNode getOrigin() {
+        return super.getOrigin().as(ASTPollyNode.class);
+    }
+    
+    
+    
+    @Override
+    public ASTPollyNode deepOrigin() {
+        return super.deepOrigin().as(ASTPollyNode.class);
+    }
 }
