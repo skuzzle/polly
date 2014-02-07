@@ -103,4 +103,11 @@ public interface ASTNodeFactory {
      * @return The created node.
      */
     public ASTStringLiteral newStringLiteral(String value);
+    
+    /**
+     * Creates a new {@link ASTChannelLiteral}.
+     * @param value The String representing the channel.
+     * @return The created node.
+     */
+    public ASTChannelLiteral newChannelLiteral(String value);
 }

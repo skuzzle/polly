@@ -100,6 +100,8 @@ public class ASTBracedExpressionImpl extends AbstractASTExpression implements
     public void setBracedExpression(ASTExpression expression) {
         if (expression == null) {
             throw new NullPointerException("expression"); //$NON-NLS-1$
+        } else if (braced == this) {
+            throw new IllegalArgumentException(ERROR_SELF_AS_CHILD);
         }
         this.assertNotFrozen();
         this.assertNotFrozen(expression);

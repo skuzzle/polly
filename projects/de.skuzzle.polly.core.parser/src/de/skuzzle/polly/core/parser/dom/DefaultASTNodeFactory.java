@@ -124,4 +124,12 @@ public class DefaultASTNodeFactory implements ASTNodeFactory {
         final ASTStringLiteralImpl lit = new ASTStringLiteralImpl(value);
         return lit;
     }
+    
+    
+    
+    @Override
+    public ASTChannelLiteralImpl newChannelLiteral(String value) {
+        final ASTChannelLiteralImpl channel = new ASTChannelLiteralImpl(value);
+        return channel;
+    }
 }
