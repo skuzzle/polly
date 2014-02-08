@@ -31,6 +31,7 @@ public class ASTChannelLiteralImpl extends ASTStringLiteralImpl implements
                 this.getValue());
         copy.setLocation(this.getLocation());
         copy.setOrigin(this);
+        copy.setSyntax(this.getSyntax());
         return copy;
     }
 }

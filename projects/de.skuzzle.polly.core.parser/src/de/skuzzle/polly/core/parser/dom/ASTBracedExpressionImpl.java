@@ -132,6 +132,7 @@ public class ASTBracedExpressionImpl extends AbstractASTExpression implements
         final ASTBracedExpressionImpl copy = this.getNodeFactory().newBraced(bracedCopy);
         copy.setLocation(this.getLocation());
         copy.setOrigin(this);
+        copy.setSyntax(this.getSyntax());
         return copy;
     }
 

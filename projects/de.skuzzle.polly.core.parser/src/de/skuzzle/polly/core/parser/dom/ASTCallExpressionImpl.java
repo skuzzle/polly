@@ -177,6 +177,7 @@ public class ASTCallExpressionImpl extends AbstractASTExpression implements
         final ASTCallExpressionImpl copy = getNodeFactory().newCall(lhsCopy, rhsCopy);
         copy.setLocation(this.getLocation());
         copy.setOrigin(this);
+        copy.setSyntax(this.getSyntax());
         return copy;
     }
 }

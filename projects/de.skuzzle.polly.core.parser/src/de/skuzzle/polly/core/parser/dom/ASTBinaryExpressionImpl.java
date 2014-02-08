@@ -149,6 +149,8 @@ public class ASTBinaryExpressionImpl extends AbstractASTExpression implements
     public void setLeftOperand(ASTExpression exp) {
         if (exp == null) {
             throw new NullPointerException("exp"); //$NON-NLS-1$
+        } else if (exp == this) {
+            throw new IllegalArgumentException(ERROR_SELF_AS_CHILD);
         }
         this.assertNotFrozen();
         this.assertNotFrozen(exp);
@@ -169,6 +171,8 @@ public class ASTBinaryExpressionImpl extends AbstractASTExpression implements
     public void setRightOperand(ASTExpression exp) {
         if (exp == null) {
             throw new NullPointerException("exp"); //$NON-NLS-1$
+        } else if (exp == this) {
+            throw new IllegalArgumentException(ERROR_SELF_AS_CHILD);
         }
         this.assertNotFrozen();
         this.assertNotFrozen(exp);
@@ -220,6 +224,7 @@ public class ASTBinaryExpressionImpl extends AbstractASTExpression implements
                 opCopy, leftCopy, rightCopy);
         copy.setLocation(this.getLocation());
         copy.setOrigin(this);
+        copy.setSyntax(this.getSyntax());
         return copy;
     }
 }

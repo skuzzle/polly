@@ -78,13 +78,14 @@ public class ASTQualifiedNameImpl extends AbstractPollyNode implements ASTQualif
     @Override
     public ASTQualifiedNameImpl copy() {
         // HACK: can not use node factory here
-        final ASTQualifiedNameImpl result = new ASTQualifiedNameImpl();
+        final ASTQualifiedNameImpl copy = new ASTQualifiedNameImpl();
         for (final ASTName name : this.names) {
-            result.addName(name.copy());
+            copy.addName(name.copy());
         }
-        result.setLocation(this.getLocation());
-        result.setOrigin(this);
-        return result;
+        copy.setLocation(this.getLocation());
+        copy.setOrigin(this);
+        copy.setSyntax(this.getSyntax());
+        return copy;
     }
 
 

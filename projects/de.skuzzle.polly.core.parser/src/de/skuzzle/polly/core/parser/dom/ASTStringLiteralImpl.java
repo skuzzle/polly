@@ -92,6 +92,7 @@ public class ASTStringLiteralImpl extends AbstractASTExpression implements
         final ASTStringLiteralImpl copy = getNodeFactory().newStringLiteral(this.value);
         copy.setLocation(this.getLocation());
         copy.setOrigin(this);
+        copy.setSyntax(this.getSyntax());
         return copy;
     }
 }

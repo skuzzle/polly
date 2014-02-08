@@ -121,6 +121,7 @@ public class ASTOperatorImpl extends AbstractPollyNode implements ASTOperator {
         final ASTOperatorImpl copy = getNodeFactory().newOperator(this.type, this.kind);
         copy.setLocation(this.getLocation());
         copy.setOrigin(this);
+        copy.setSyntax(this.getSyntax());
         return copy;
     }
 }

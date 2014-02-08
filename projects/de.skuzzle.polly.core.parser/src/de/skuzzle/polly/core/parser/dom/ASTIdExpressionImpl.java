@@ -128,6 +128,7 @@ public class ASTIdExpressionImpl extends AbstractASTExpression
                 this.name.copy());
         copy.setLocation(this.getLocation());
         copy.setOrigin(this);
+        copy.setSyntax(this.getSyntax());
         return copy;
     }
 }

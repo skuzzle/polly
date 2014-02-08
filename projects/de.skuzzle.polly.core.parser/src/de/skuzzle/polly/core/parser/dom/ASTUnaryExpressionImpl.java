@@ -113,11 +113,12 @@ public class ASTUnaryExpressionImpl extends AbstractASTExpression implements
         final ASTExpression lhs = getNodeFactory().newIdExpression(this.operator.copy());
         final ASTProductExpressionImpl rhs = getNodeFactory().newProduct(
                 this.operand.copy());
-        final ASTCallExpressionImpl call = getNodeFactory().newCall(lhs, rhs);
-        call.setParent(this.getParent());
-        call.setLocation(this.getLocation());
-        call.setOrigin(this);
-        return call;
+        final ASTCallExpressionImpl copy = getNodeFactory().newCall(lhs, rhs);
+        copy.setParent(this.getParent());
+        copy.setLocation(this.getLocation());
+        copy.setOrigin(this);
+        copy.setSyntax(this.getSyntax());
+        return copy;
     }
 
 

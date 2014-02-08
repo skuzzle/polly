@@ -150,6 +150,7 @@ public class ASTProductExpressionImpl extends AbstractASTExpression implements
         }
         copy.setLocation(this.getLocation());
         copy.setOrigin(this);
+        copy.setSyntax(this.getSyntax());
         return copy;
     }
 

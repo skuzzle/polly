@@ -76,9 +76,10 @@ public class ASTNameImpl extends AbstractPollyNode implements ASTName {
     
     @Override
     public ASTNameImpl copy() {
-        final ASTNameImpl result = this.getNodeFactory().newName(this.name);
-        result.setLocation(this.getLocation());
-        result.setOrigin(this);
-        return result;
+        final ASTNameImpl copy = this.getNodeFactory().newName(this.name);
+        copy.setLocation(this.getLocation());
+        copy.setOrigin(this);
+        copy.setSyntax(this.getSyntax());
+        return copy;
     }
 }
