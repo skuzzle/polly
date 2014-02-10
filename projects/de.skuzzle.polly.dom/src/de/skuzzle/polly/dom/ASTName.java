@@ -1,17 +1,12 @@
 package de.skuzzle.polly.dom;
 
-import de.skuzzle.parser.dom.ASTNodeProperty;
+import de.skuzzle.polly.dom.bindings.Binding;
+
 
 
 
 
 public interface ASTName extends ASTPollyNode {
-    
-    /** Property if this name is part of a qualified name */
-    public final static ASTNodeProperty PART_OF_QUALIFICATION = new ASTNodeProperty(
-            "PART_OF_QUALIFICATION");
-
-    
     
     /**
      * Gets the name as String which this node represents.
@@ -19,6 +14,13 @@ public interface ASTName extends ASTPollyNode {
      * @return The name
      */
     public String getName();
+    
+    /**
+     * Gets the binding which belongs to this name.
+     * 
+     * @return The name's binding.
+     */
+    public Binding getBinding();
     
     @Override
     public ASTName getOrigin();

@@ -1,12 +1,16 @@
 package de.skuzzle.polly.core.parser.dom;
 
 import de.skuzzle.parser.dom.ASTNode;
+import de.skuzzle.parser.dom.ASTUtil;
 import de.skuzzle.polly.dom.ASTName;
+import de.skuzzle.polly.dom.ASTScopeOwner;
 import de.skuzzle.polly.dom.ASTVisitor;
+import de.skuzzle.polly.dom.bindings.Binding;
 
 public class ASTNameImpl extends AbstractPollyNode implements ASTName {
 
     private String name;
+    private Binding binding;
     
     
     
@@ -42,6 +46,27 @@ public class ASTNameImpl extends AbstractPollyNode implements ASTName {
             return visitor.leave(this) != PROCESS_ABORT;
         }
         return true;
+    }
+    
+    
+    
+    @Override
+    public Binding getBinding() {
+        if (this.binding == null) {
+            this.resolveBinding();
+        }
+        return this.binding;
+    }
+    
+    
+    
+    public void resolveBinding() {
+        final ASTScopeOwner owner = ASTUtil.findAncestor(ASTScopeOwner.class, this);
+        if (owner == null) {
+            
+        } else {
+            this.binding = owner.getScope().findBinding(this);
+        }
     }
 
 

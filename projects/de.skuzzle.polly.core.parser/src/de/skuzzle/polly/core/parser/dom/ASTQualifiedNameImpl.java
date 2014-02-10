@@ -125,7 +125,7 @@ public class ASTQualifiedNameImpl extends AbstractPollyNode implements ASTQualif
         }
         
         this.names.add(name);
-        name.setPropertyInParent(PART_OF_QUALIFICATION);
+        name.setPropertyInParent(PART_OF_QUALIFIED_NAME);
         name.setParent(this);
         if (this.getLocation() != null && name.getLocation() != null) {
             this.setLocation(new Span(this.getLocation(), name.getLocation()));
@@ -144,7 +144,7 @@ public class ASTQualifiedNameImpl extends AbstractPollyNode implements ASTQualif
     @Override
     public void updateRelationships(boolean deep) {
         for (final ASTName name : this.names) {
-            name.setPropertyInParent(PART_OF_QUALIFICATION);
+            name.setPropertyInParent(PART_OF_QUALIFIED_NAME);
             name.setParent(this);
             if (deep) {
                 name.updateRelationships(deep);
@@ -171,7 +171,7 @@ public class ASTQualifiedNameImpl extends AbstractPollyNode implements ASTQualif
         for (int i = 0; i < this.names.size(); ++i) {
             if (this.names.get(i) == child) {
                 final ASTName nc = newChild.as(ASTName.class);
-                nc.setPropertyInParent(PART_OF_QUALIFICATION);
+                nc.setPropertyInParent(PART_OF_QUALIFIED_NAME);
                 nc.setParent(this);
                 this.names.set(i, nc);
                 return;

@@ -2,9 +2,19 @@ package de.skuzzle.polly.dom;
 
 import java.util.List;
 
+import de.skuzzle.parser.dom.ASTNodeProperty;
 
-public interface ASTFunctionExpression extends ASTExpression {
 
+public interface ASTFunctionExpression extends ASTExpression, ASTScopeOwner {
+    
+    /** Property for formal parameters */
+    public final static ASTNodeProperty PARAMETER = new ASTNodeProperty("PARAMETER");
+    
+    /** Property for a function's body */
+    public final static ASTNodeProperty BODY = new ASTNodeProperty("BODY");
+
+    
+    
     /**
      * Gets the formal parameters of this function. The returned list is read-only and 
      * provides random access to its elements.

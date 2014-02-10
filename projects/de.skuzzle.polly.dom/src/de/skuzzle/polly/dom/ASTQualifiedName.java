@@ -2,10 +2,17 @@ package de.skuzzle.polly.dom;
 
 import java.util.List;
 
+import de.skuzzle.parser.dom.ASTNodeProperty;
+
 
 
 public interface ASTQualifiedName extends ASTName {
 
+    /** Property for child names of this qualified name */
+    public final static ASTNodeProperty PART_OF_QUALIFIED_NAME = 
+            new ASTNodeProperty("PART_OF_QUALIFIED_NAME");
+    
+    
     @Override
     public List<ASTName> getChildren();
     

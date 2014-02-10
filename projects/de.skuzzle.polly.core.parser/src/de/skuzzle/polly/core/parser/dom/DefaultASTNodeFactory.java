@@ -132,4 +132,20 @@ public class DefaultASTNodeFactory implements ASTNodeFactory {
         final ASTChannelLiteralImpl channel = new ASTChannelLiteralImpl(value);
         return channel;
     }
+    
+    
+    
+    @Override
+    public ASTParameterImpl newParameter(ASTName typeName, ASTName name) {
+        final ASTParameterImpl param = new ASTParameterImpl(typeName, name);
+        return param;
+    }
+    
+    
+    
+    @Override
+    public ASTFunctionExpressionImpl newFunction(ASTExpression body) {
+        final ASTFunctionExpressionImpl fun = new ASTFunctionExpressionImpl(body);
+        return fun;
+    }
 }

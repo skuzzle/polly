@@ -1,9 +1,17 @@
 package de.skuzzle.polly.dom;
 
-import de.skuzzle.polly.dom.types.Type;
+import de.skuzzle.parser.dom.ASTNodeProperty;
+
 
 
 public interface ASTParameter extends ASTPollyNode {
+    
+    /** Property for the name of a parameter */
+    public final static ASTNodeProperty PARAMETER_NAME = 
+            new ASTNodeProperty("PARAMETER_NAME");
+    
+    /** Property for the type name of a parameter */
+    public final static ASTNodeProperty TYPE_NAME = new ASTNodeProperty("TYPE_NAME");
 
     /**
      * Gets the parameter's name.
@@ -20,18 +28,18 @@ public interface ASTParameter extends ASTPollyNode {
     public void setName(ASTName name);
     
     /**
-     * Gets the parameter's type.
+     * Gets the parameter's type name.
      * 
-     * @return The type.
+     * @return The type name.
      */
-    public Type getType();
+    public ASTName getTypeName();
     
     /**
-     * Sets the parameter's type.
+     * Sets the parameter's type name.
      * 
-     * @param type The new type.
+     * @param type The new type name.
      */
-    public void setType(Type type);
+    public void setTypeName(ASTName type);
     
     @Override
     public ASTParameter getOrigin();

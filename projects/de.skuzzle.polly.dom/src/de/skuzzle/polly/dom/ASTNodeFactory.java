@@ -110,4 +110,19 @@ public interface ASTNodeFactory {
      * @return The created node.
      */
     public ASTChannelLiteral newChannelLiteral(String value);
+    
+    /**
+     * Creates a new {@link ASTParameter}
+     * @param typeName The name of the type of this parameter.
+     * @param name The name of the parameter.
+     * @return The created node.
+     */
+    public ASTParameter newParameter(ASTName typeName, ASTName name);
+    
+    /**
+     * Creates a new {@link ASTFunctionExpression} with a body expression.
+     * @param body The function's body.
+     * @return The created node.
+     */
+    public ASTFunctionExpression newFunction(ASTExpression body);
 }

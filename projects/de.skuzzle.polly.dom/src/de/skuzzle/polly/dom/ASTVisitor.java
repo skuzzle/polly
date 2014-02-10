@@ -24,6 +24,8 @@ public class ASTVisitor {
     public boolean shouldVisitOperators;
     public boolean shouldVisitUnaryExpressions;
     public boolean shouldVisitStringLiterals;
+    public boolean shouldVisitParameters;
+    public boolean shouldVisitFunctions;
     
     
     
@@ -40,6 +42,8 @@ public class ASTVisitor {
         this.shouldVisitOperators = visitAll;
         this.shouldVisitUnaryExpressions = visitAll;
         this.shouldVisitStringLiterals = visitAll;
+        this.shouldVisitParameters = visitAll;
+        this.shouldVisitFunctions = visitAll;
     }
     
     
@@ -141,6 +145,26 @@ public class ASTVisitor {
     }
     
     public int leave(ASTStringLiteral node) {
+        return PROCESS_CONTINUE;
+    }
+    
+    
+    
+    public int visit(ASTParameter node) {
+        return PROCESS_CONTINUE;
+    }
+    
+    public int leave(ASTParameter node) {
+        return PROCESS_CONTINUE;
+    }
+    
+    
+    
+    public int visit(ASTFunctionExpression node) {
+        return PROCESS_CONTINUE;
+    }
+    
+    public int leave(ASTFunctionExpression node) {
         return PROCESS_CONTINUE;
     }
 }
