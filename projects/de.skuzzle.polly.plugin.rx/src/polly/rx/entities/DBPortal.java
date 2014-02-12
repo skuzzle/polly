@@ -127,7 +127,7 @@ public class DBPortal implements Portal {
 
 
     @Override
-    public String getOwner() {
+    public String getOwnerName() {
         return this.ownerName;
     }
 

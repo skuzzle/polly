@@ -30,7 +30,7 @@ public class DefaultPortal implements Portal {
 
 
     public DefaultPortal(Portal p) {
-        this(p.getSector(), p.getOwner(), p.getOwnerClan(), p.getType());
+        this(p.getSector(), p.getOwnerName(), p.getOwnerClan(), p.getType());
     }
 
 
@@ -78,7 +78,7 @@ public class DefaultPortal implements Portal {
 
 
     @Override
-    public String getOwner() {
+    public String getOwnerName() {
         return this.ownerName;
     }
 

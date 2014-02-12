@@ -96,7 +96,7 @@ public class DBPortalUpdater implements PortalUpdater {
             for (final Portal newPortal : portals) {
                 final DBPortal existing = read.findSingle(DBPortal.class,
                         DBPortal.QUERY_PORTAL_BY_TYPE_AND_OWNER,
-                        new Param(newPortal.getType(), newPortal.getOwner()));
+                        new Param(newPortal.getType(), newPortal.getOwnerName()));
 
                 if (existing != null && !existing.equals(newPortal)) {
                     // portal exists and differs from new portal
@@ -105,7 +105,7 @@ public class DBPortalUpdater implements PortalUpdater {
                     moved.add(existing);
                 } else if (existing == null) {
                     // new portal needs to be added
-                    final DBPortal portal = new DBPortal(newPortal.getOwner(),
+                    final DBPortal portal = new DBPortal(newPortal.getOwnerName(),
                             newPortal.getOwnerClan(), newPortal.getType(),
                             existingSector, Time.currentTime());
                     write.single(portal);

@@ -64,8 +64,8 @@ public class PortalDecorator implements Portal {
 
 
     @Override
-    public String getOwner() {
-        return this.wrapped.getOwner();
+    public String getOwnerName() {
+        return this.wrapped.getOwnerName();
     }
 
 

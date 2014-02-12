@@ -5,13 +5,9 @@ import java.util.Date;
 import de.skuzzle.polly.tools.Equatable;
 
 
-public interface Portal extends Equatable {
+public interface Portal extends Equatable, VenadOwner {
     
     public Sector getSector();
-    
-    public String getOwner();
-    
-    public String getOwnerClan();
     
     public PortalType getType();
 

@@ -5,15 +5,11 @@ import java.util.Date;
 import de.skuzzle.polly.tools.Equatable;
 
 
-public interface Fleet extends Equatable {
+public interface Fleet extends Equatable, VenadOwner {
 
     public int getRevorixId();
     
     public String getName();
-    
-    public String getOwnerName();
-    
-    public String getOwnerClan();
     
     public Date getDate();
     

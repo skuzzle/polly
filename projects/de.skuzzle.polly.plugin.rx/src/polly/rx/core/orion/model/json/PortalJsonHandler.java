@@ -37,7 +37,7 @@ public class PortalJsonHandler extends AbstractJsonHandler implements
             JsonSerializationContext context) {
         
         final JsonObject result = new JsonObject();
-        result.addProperty(OWNER, src.getOwner());
+        result.addProperty(OWNER, src.getOwnerName());
         result.addProperty(OWNER_CLAN, src.getOwnerClan());
         result.addProperty(DATE, src.getDate().toString());
         
