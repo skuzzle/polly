@@ -1,11 +1,9 @@
 package polly.rx.core.orion.model;
 
 import java.util.Collection;
-import java.util.Date;
-
 import de.skuzzle.polly.tools.Equatable;
 
-public interface Sector extends Equatable {
+public interface Sector extends Equatable, OrionObject {
     
     public abstract String getQuadName();
 
@@ -18,8 +16,6 @@ public interface Sector extends Equatable {
     public abstract int getDefenderBonus();
 
     public abstract int getSectorGuardBonus();
-
-    public abstract Date getDate();
 
     public abstract SectorType getType();
 
