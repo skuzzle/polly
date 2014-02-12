@@ -360,7 +360,7 @@ public class ScoreBoardManager {
                     Date prevDate = null;
                     boolean skip = false;
                     if (!existing.isEmpty()) {
-                        final ScoreBoardEntry latest = existing.get(existing.size() - 40);
+                        final ScoreBoardEntry latest = existing.get(existing.size() - 1);
                         previousRank = latest.getRank();
                         previousPoints = latest.getPoints();
                         prevDate = latest.getDate();
