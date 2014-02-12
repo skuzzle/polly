@@ -17,6 +17,7 @@ import polly.rx.MyPlugin;
 import polly.rx.core.AZEntryManager;
 import polly.rx.core.FleetDBManager;
 import polly.rx.core.ScoreBoardManager;
+import polly.rx.core.ScoreBoardManager.EntryResult;
 import polly.rx.core.orion.http.OrionController;
 import polly.rx.entities.AZEntry;
 import polly.rx.entities.BattleReport;
@@ -560,6 +561,17 @@ public class RXController extends PollyController {
     
     
     
+    public final class PostScoreBoardResult extends SuccessResult {
+        
+        public final EntryResult[] entries;
+        
+        public PostScoreBoardResult(String msg, EntryResult[] results) {
+            super(true, msg);
+            this.entries = results;
+        }
+    }
+    
+    
     @Post(API_POST_SCOREBOARD)
     public HttpAnswer postScoreboardExt(
             @Param("user") String user, 
@@ -578,10 +590,14 @@ public class RXController extends PollyController {
         try {
             final Collection<ScoreBoardEntry> entries =
                     ScoreBoardParser.parse(paste, Time.currentTime());
-            this.sbManager.addEntries(entries);
+            final List<EntryResult> results = this.sbManager.addEntries(entries);
+            final EntryResult[] resultsArr = new EntryResult[results.size()];
+            results.toArray(resultsArr);
+            
             return new GsonHttpAnswer(200, 
-                    new SuccessResult(true, 
-                            MSG.bind(MSG.httpPostScoreboardSuccess, entries.size())));
+                    new PostScoreBoardResult( 
+                            MSG.bind(MSG.httpPostScoreboardSuccess, entries.size()), 
+                            resultsArr));
         } catch (ParseException | DatabaseException e) {
             return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
         }

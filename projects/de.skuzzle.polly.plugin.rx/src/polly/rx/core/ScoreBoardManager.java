@@ -45,6 +45,10 @@ public class ScoreBoardManager {
     static {
         ((DecimalFormat) NUMBER_FORMAT).applyPattern("0.00"); //$NON-NLS-1$
     }
+    
+    private final static DateFormat getDateFormat() {
+        return new SimpleDateFormat("dd.MM.yyyy - HH:mm"); //$NON-NLS-1$
+    }
 
     
     private final static int AVERAGE_ELEMENTS = 10;
@@ -311,41 +315,78 @@ public class ScoreBoardManager {
 
 
     
-    public synchronized void addEntries(final Collection<ScoreBoardEntry> entries) 
-            throws DatabaseException {
-        final List<ScoreBoardEntry> toAdd = new ArrayList<>(50);
+    
+    public static class EntryResult {
+        public final int previousRank;
+        public final int previousPoints;
+        public final int currentRank;
+        public final int currentPoints;
+        public final String previousDate;
+        public final String venad;
+        
+        public EntryResult(String venad, int previousRank, int previousPoints, 
+                int currentRank, int currentPoints, Date previousDate) {
+            this.venad = venad;
+            this.previousRank = previousRank;
+            this.previousPoints = previousPoints;
+            this.currentRank = currentRank;
+            this.currentPoints = currentPoints;
+            if (previousDate == null) {
+                this.previousDate = ""; //$NON-NLS-1$
+            } else {
+                this.previousDate = getDateFormat().format(previousDate);
+            }
+        }
+    }
+    
+    
+    
+    public synchronized List<EntryResult> addEntries(
+            final Collection<ScoreBoardEntry> entries) throws DatabaseException {
+        final List<EntryResult> result = new ArrayList<>(50);
+        
         final Atomic op = new Atomic() {
             @Override
             public void perform(Write write) throws DatabaseException {
                 final Read read = write.read();
                 for (final ScoreBoardEntry entry : entries) {
-                    final Collection<ScoreBoardEntry> existing = read.findList(
+                    // find existing entries for this user. HINT: newest is first
+                    final List<ScoreBoardEntry> existing = read.findList(
                             ScoreBoardEntry.class, ScoreBoardEntry.SBE_BY_USER,
                             new Param(entry.getVenadName()));
                     
-                    boolean exists = false;
-                    for (final ScoreBoardEntry e : existing) {
-                        // skip entry if it is from same day and has identical points
-                        final boolean skip = e.getPoints() == entry.getPoints() && 
-                            DateUtils.isSameDay(e.getDate(), entry.getDate());
-                        exists |= skip;
-                        if (skip) {
-                            break;
-                        }
+                    int previousRank = -1;
+                    int previousPoints = -1;
+                    Date prevDate = null;
+                    boolean skip = false;
+                    if (!existing.isEmpty()) {
+                        final ScoreBoardEntry latest = existing.get(existing.size() - 40);
+                        previousRank = latest.getRank();
+                        previousPoints = latest.getPoints();
+                        prevDate = latest.getDate();
+                        
+                        skip = latest.getPoints() == entry.getPoints() &&
+                                latest.getRank() == entry.getRank() &&
+                                DateUtils.isSameDay(latest.getDate(), entry.getDate());
                     }
                     
-                    if (!exists) {
-                        toAdd.add(entry);
+                    // for result
+                    final EntryResult er = new EntryResult(
+                            entry.getVenadName(),
+                            previousRank, previousPoints, 
+                            entry.getRank(), entry.getPoints(), 
+                            prevDate);
+                    result.add(er);
+                    
+                    if (!skip) {
+                        write.single(entry);
                     }
-                }
-                
-                if (!toAdd.isEmpty()) {
-                    write.all(toAdd);
                 }
             }
         };
         
-        this.persistence.writeAtomicParallel(op);
+        this.persistence.writeAtomic(op);
+        return result;
     }
     
     
