@@ -84,20 +84,20 @@ public final class OrionObjectUtil {
 
 
     public static boolean portalsEqual(Portal p1, Portal p2) {
-        return p1.getType() == p2.getType() && p1.getOwner().equals(p2.getOwner()) && 
+        return p1.getType() == p2.getType() && p1.getOwnerName().equals(p2.getOwnerName()) && 
                 p1.getSector().equals(p2.getSector());
     }
 
 
 
     public static int portalHash(Portal p) {
-        return Objects.hash(p.getType(), p.getOwner());
+        return Objects.hash(p.getType(), p.getOwnerName());
     }
 
 
 
     public static String portalString(Portal p) {
-        return p.getType().toString() + " " + p.getOwner(); //$NON-NLS-1$
+        return p.getType().toString() + " " + p.getOwnerName(); //$NON-NLS-1$
     }
 
 

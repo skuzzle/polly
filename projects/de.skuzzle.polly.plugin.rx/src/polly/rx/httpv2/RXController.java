@@ -17,6 +17,7 @@ import polly.rx.MyPlugin;
 import polly.rx.core.AZEntryManager;
 import polly.rx.core.FleetDBManager;
 import polly.rx.core.ScoreBoardManager;
+import polly.rx.core.ScoreBoardManager.EntryResult;
 import polly.rx.core.orion.http.OrionController;
 import polly.rx.entities.AZEntry;
 import polly.rx.entities.BattleReport;
@@ -95,6 +96,7 @@ public class RXController extends PollyController {
     public final static String GM_KB_REPORT = "/GM/kbreport.user.js"; //$NON-NLS-1$
     public final static String GM_FLEET_SCANS = "/GM/fleetscan.user.js"; //$NON-NLS-1$
     public final static String GM_ORION = "/GM/orion.user.js"; //$NON-NLS-1$
+    public final static String GM_ORIONV2 = "/GM/orionv2.user.js"; //$NON-NLS-1$
     
     public final static String FILES_VIEW = "/polly/rx/httpv2/view"; //$NON-NLS-1$
     
@@ -118,6 +120,7 @@ public class RXController extends PollyController {
     private final static String CONTENT_FLEET_SCANS = "polly/rx/httpv2/view/fleetscan.user.js"; //$NON-NLS-1$
     private final static String CONTENT_TRAININGS = "polly/rx/httpv2/view/trainings.html"; //$NON-NLS-1$
     private final static String CONTENT_GM_ORION = "polly/rx/httpv2/view/orion.user.js"; //$NON-NLS-1$
+    private final static String CONTENT_GM_ORIONV2 = "polly/rx/httpv2/view/orionv2.user.js"; //$NON-NLS-1$
     
     private final static String REVORIX_CATEGORY_KEY = "httpRxCategory"; //$NON-NLS-1$
     private final static String FLEET_SCAN_NAME_KEY = "httpFleetScanMngr"; //$NON-NLS-1$
@@ -560,6 +563,17 @@ public class RXController extends PollyController {
     
     
     
+    public final class PostScoreBoardResult extends SuccessResult {
+        
+        public final EntryResult[] entries;
+        
+        public PostScoreBoardResult(String msg, EntryResult[] results) {
+            super(true, msg);
+            this.entries = results;
+        }
+    }
+    
+    
     @Post(API_POST_SCOREBOARD)
     public HttpAnswer postScoreboardExt(
             @Param("user") String user, 
@@ -578,10 +592,14 @@ public class RXController extends PollyController {
         try {
             final Collection<ScoreBoardEntry> entries =
                     ScoreBoardParser.parse(paste, Time.currentTime());
-            this.sbManager.addEntries(entries);
+            final List<EntryResult> results = this.sbManager.addEntries(entries);
+            final EntryResult[] resultsArr = new EntryResult[results.size()];
+            results.toArray(resultsArr);
+            
             return new GsonHttpAnswer(200, 
-                    new SuccessResult(true, 
-                            MSG.bind(MSG.httpPostScoreboardSuccess, entries.size())));
+                    new PostScoreBoardResult( 
+                            MSG.bind(MSG.httpPostScoreboardSuccess, entries.size()), 
+                            resultsArr));
         } catch (ParseException | DatabaseException e) {
             return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
         }
@@ -938,5 +956,23 @@ public class RXController extends PollyController {
         c.put("postSectorApi", OrionController.API_JSON_POST_SECTOR); //$NON-NLS-1$
         c.put("host", host); //$NON-NLS-1$
         return HttpAnswers.newTemplateAnswer(CONTENT_GM_ORION, c);
+    }
+    
+    
+    
+    @Get(GM_ORIONV2)
+    public HttpAnswer installOrionV2() throws AlternativeAnswerException {
+        this.requirePermissions(FleetDBManager.ADD_FLEET_SCAN_PERMISSION);
+        final String prefix = this.getMyPolly().webInterface().isSSL() 
+                ? "https://" : "http://"; //$NON-NLS-1$ //$NON-NLS-2$
+        final String host = prefix + this.getMyPolly().webInterface().getPublicHost() + 
+                ":" + this.getMyPolly().webInterface().getPort(); //$NON-NLS-1$
+        
+        final Map<String, String> c = new HashMap<String, String>();
+        c.put("sectorApi", OrionController.API_JSON_SECTOR); //$NON-NLS-1$
+        c.put("quadrantApi", OrionController.API_JSON_QUADRANT); //$NON-NLS-1$
+        c.put("postSectorApi", OrionController.API_JSON_POST_SECTOR); //$NON-NLS-1$
+        c.put("host", host); //$NON-NLS-1$
+        return HttpAnswers.newTemplateAnswer(CONTENT_GM_ORIONV2, c);
     }
 }

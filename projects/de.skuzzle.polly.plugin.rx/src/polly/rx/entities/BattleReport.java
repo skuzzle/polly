@@ -92,7 +92,7 @@ public class BattleReport {
     
     
     public final static BattleReport switchAttacker(BattleReport report) {
-        return new BattleReport(
+        final BattleReport br = new BattleReport(
             report.submitterId, report.quadrant, report.x, report.y, 
             report.battleDrops, report.artifact, report.date, report.tactic, 
             report.defenderBonus, report.attackerBonus, report.defenderKw, 
@@ -101,6 +101,9 @@ public class BattleReport {
             report.attackerFleetName, report.attackerVenadName, 
             report.defenderClan, report.attackerClan, report.defenderShips, 
             report.attackerShips);
+        
+        br.calculateRepairTimes();
+        return br;
     }
     
     
@@ -225,7 +228,7 @@ public class BattleReport {
     
     
     @PostLoad
-    public void calculateRepairTimes() {
+    public synchronized void calculateRepairTimes() {
         this.attackerRepairCostOffset = new BattleDrop[7];
         this.defenderRepairCostOffset = new BattleDrop[7];
         this.attackerRepairTimeOffset = this.calculateRepairValues(

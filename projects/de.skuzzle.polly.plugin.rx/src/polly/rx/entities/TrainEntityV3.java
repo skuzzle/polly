@@ -16,6 +16,7 @@ import javax.persistence.TemporalType;
 import polly.rx.MSG;
 import de.skuzzle.polly.sdk.FormatManager;
 import de.skuzzle.polly.sdk.time.Time;
+import de.skuzzle.polly.tools.Equatable;
 
 @Entity
 @NamedQueries({
@@ -41,7 +42,7 @@ import de.skuzzle.polly.sdk.time.Time;
         name =  TrainEntityV3.ALL_TE3,
         query = "SELECT t FROM TrainEntityV3 t")
 })
-public class TrainEntityV3 {
+public class TrainEntityV3 implements Equatable {
     
     public final static String OPEN_BY_USER_AND_TRAINER = "OPEN_BY_USER_AND_TRAINER"; //$NON-NLS-1$
     public final static String OPEN_BY_USER = "OPEN_BY_USER"; //$NON-NLS-1$
@@ -282,6 +283,27 @@ public class TrainEntityV3 {
     public String toString() {
         return "[Trainer: " + this.trainerId + ", Current:" + this.currentValue + ", " +  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             this.type + " " + this.costs + " Cr. Finish: " + this.trainFinished + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    }
+    
+    
+    
+    @Override
+    public final boolean equals(Object obj) {
+        return false;
+    }
+
+
+
+    @Override
+    public Class<?> getEquivalenceClass() {
+        return TrainEntityV3.class;
+    }
+
+
+
+    @Override
+    public boolean actualEquals(Equatable o) {
+        return false;
     }
 }
 

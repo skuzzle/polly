@@ -635,7 +635,7 @@ public class InputScanner extends AbstractTokenStream {
             if (state == 0) {
                 int next = this.readChar();
             
-                if (InputScanner.isIdentifierPart(next) || next == '[' || next == ']') {
+                if (InputScanner.isIdentifierPart(next) || next == '[' || next == ']' || next == ':') {
                     lexem.appendCodePoint(next);
                 } else if (next == '-') {
                     state = 1;
