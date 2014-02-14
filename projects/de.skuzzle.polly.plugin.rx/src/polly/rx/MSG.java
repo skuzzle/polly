@@ -315,6 +315,8 @@ public class MSG extends Constants {
     public static String htmlGMFleetScansDesc;
     public static String htmlGMOrionName;
     public static String htmlGMOrionDesc;
+    public static String htmlGMOrionV2Name;
+    public static String htmlGMOrionV2Desc;
     
     public static String htmlGraphSelectMonths;
     public static String htmlGraphLinkToImage;
