@@ -330,7 +330,7 @@ function showChanges(resultEntries, isTop50) {
             pointText = '<span style="color:green"> +' + pointsDiff +
                 ' (vorher: ' + entry.previousPoints + ')</span> ' + entry.previousDate;
         } else if (pointsDiff < 0) {
-            pointText = '<span style="color:red"> +' + pointsDiff +
+            pointText = '<span style="color:red"> ' + pointsDiff +
                 ' (vorher: ' + entry.previousPoints + ')</span> ' + entry.previousDate;
         }
 
