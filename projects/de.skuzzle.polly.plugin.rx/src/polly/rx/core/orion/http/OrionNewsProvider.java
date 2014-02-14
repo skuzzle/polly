@@ -90,13 +90,14 @@ public class OrionNewsProvider implements HttpEventHandler, FleetListener, Porta
         synchronized (this.entries) {
             final List<NewsEntry> result = new ArrayList<>(this.entries);
             final Collection<NewsEntry> forVenad = this.forVenads.get(venad);
-            if (forVenad != null) 
-                for (final NewsEntry ne : forVenad) {
-                    if (!result.contains(ne)) {
-                        result.add(ne);
+            if (forVenad != null) {
+                result.addAll(forVenad);
+            }
+            for (final NewsEntry ne : this.entries) {
+                if (!result.contains(ne)) {
+                    result.add(ne);
                 }
             }
-            result.addAll(this.entries);
             Collections.sort(result);
             return result.toArray(new NewsEntry[result.size()]);
         }
