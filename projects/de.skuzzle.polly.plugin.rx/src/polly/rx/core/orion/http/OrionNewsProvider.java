@@ -195,7 +195,7 @@ public class OrionNewsProvider implements HttpEventHandler, FleetListener, Porta
 
     @Override
     public void billClosed(TrainingEvent e) {
-        this.addNews("", new NewsEntry("", 
+        this.addNews("", new NewsEntry("",  //$NON-NLS-1$ //$NON-NLS-2$
                 NewsType.BILL_CLOSED, null, 
                 Time.currentTime()));
     }
