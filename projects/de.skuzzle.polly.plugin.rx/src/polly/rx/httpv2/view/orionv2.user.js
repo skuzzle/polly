@@ -855,7 +855,7 @@ function initProperties() {
     // scan script
     addSectorInfoListener(function(sector) {
         var position = sector.quadName + " X:" + sector.x + " Y:" + sector.y;
-        GM_setValue(PROPERTY_FLEET_POSITION, position, this);
+        GM_setValue(PROPERTY_FLEET_POSITION, position);
     });
     firePropertyChanged(this, PROPERTY_ORION_ON, false, getOrionActivated());
 }
