@@ -1223,6 +1223,7 @@ function postJson(api, obj, onSuccess) {
     checkCredentials();
     obj["user"] = getPollyUserName();
     obj["pw"] = getPollyPw();
+    obj["api"] = API_VERSION;
     post(api, JSON.stringify(obj), onSuccess);
 }
 // Posts the provided params like a serialized form
