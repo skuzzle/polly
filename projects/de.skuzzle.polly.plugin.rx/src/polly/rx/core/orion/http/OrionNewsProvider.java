@@ -69,11 +69,7 @@ public class OrionNewsProvider implements HttpEventHandler, FleetListener, Porta
     
     private void addNews(Deque<NewsEntry> entries, NewsEntry e) {
         if (entries.contains(e)) {
-            if (e.type == NewsType.ORION_FLEET) {
-                entries.remove(e);
-            } else {
-                return;
-            }
+            entries.remove(e);
         }
         if (entries.size() == MAX_NEWS) {
             entries.removeLast();
