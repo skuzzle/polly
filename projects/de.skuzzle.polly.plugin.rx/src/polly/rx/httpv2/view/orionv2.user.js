@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name       Polly Orion V2
-// @version    0.1
+// @version    0.2
 // @grant 	   GM_setValue
 // @grant 	   GM_getValue
 // @grant 	   GM_deleteValue
@@ -1230,7 +1230,6 @@ function postJson(api, obj, onSuccess) {
     checkCredentials();
     obj["user"] = getPollyUserName();
     obj["pw"] = getPollyPw();
-    obj["api"] = API_VERSION;
     post(api, JSON.stringify(obj), onSuccess);
 }
 // Posts the provided params like a serialized form
