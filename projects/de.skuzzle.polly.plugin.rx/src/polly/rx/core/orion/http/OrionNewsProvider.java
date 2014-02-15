@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import polly.rx.MSG;
 import polly.rx.core.TrainManagerV2;
 import polly.rx.core.TrainingEvent;
 import polly.rx.core.TrainingListener;
@@ -27,7 +28,10 @@ import de.skuzzle.polly.http.api.HttpException;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.http.api.handler.HttpEventHandler;
+import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.User;
+import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
+import de.skuzzle.polly.sdk.httpv2.SuccessResult;
 import de.skuzzle.polly.sdk.time.Time;
 
 public class OrionNewsProvider implements HttpEventHandler, FleetListener, PortalListener, 
@@ -35,15 +39,17 @@ public class OrionNewsProvider implements HttpEventHandler, FleetListener, Porta
 
     public final static String NEWS_URL = "/api/orion/json/news"; //$NON-NLS-1$
             
-    private final static int MAX_NEWS = 20;
+    private final static int MAX_NEWS = 100;
     private final Deque<NewsEntry> entries;
     private final Map<String, Deque<NewsEntry>> forVenads;
 
+    private final MyPolly myPolly;
     
 
     
-    public OrionNewsProvider(FleetTracker fleetTracker, PortalUpdater portalUpdater, 
-            TrainManagerV2 trainManager) {
+    public OrionNewsProvider(MyPolly myPolly, FleetTracker fleetTracker, 
+            PortalUpdater portalUpdater, TrainManagerV2 trainManager) {
+        this.myPolly = myPolly;
         this.entries = new ArrayDeque<>();
         this.forVenads = new HashMap<>();
         fleetTracker.addFleetListener(this);
@@ -63,7 +69,11 @@ public class OrionNewsProvider implements HttpEventHandler, FleetListener, Porta
     
     private void addNews(Deque<NewsEntry> entries, NewsEntry e) {
         if (entries.contains(e)) {
-            return;
+            if (e.type == NewsType.ORION_FLEET) {
+                entries.remove(e);
+            } else {
+                return;
+            }
         }
         if (entries.size() == MAX_NEWS) {
             entries.removeLast();
@@ -106,7 +116,12 @@ public class OrionNewsProvider implements HttpEventHandler, FleetListener, Porta
 
 
     @Override
-    public void ownFleetsUpdated(FleetEvent e) {}
+    public void ownFleetsUpdated(FleetEvent e) {
+        for (final Fleet fleet : e.getFleets()) {
+            this.addNews(new NewsEntry(e.getReporter(), NewsType.ORION_FLEET, fleet, 
+                    fleet.getDate()));
+        }
+    }
 
 
 
@@ -125,6 +140,18 @@ public class OrionNewsProvider implements HttpEventHandler, FleetListener, Porta
     @Override
     public HttpAnswer handleHttpEvent(String registered, HttpEvent e,
             HttpEventHandler next) throws HttpException {
+        
+        final String userName = e.get("user"); //$NON-NLS-1$
+        final User user = this.myPolly.users().getUser(userName);
+        final String password = e.get("pw"); //$NON-NLS-1$
+        
+        if (user == null || !user.checkPassword(password)) {
+            return new GsonHttpAnswer(200, 
+                    new SuccessResult(false, MSG.httpIllegalLogin));
+        } else if (!this.myPolly.roles().hasPermission(user, OrionController.VIEW_ORION_PREMISSION)) {
+            return new GsonHttpAnswer(200, 
+                    new SuccessResult(false, MSG.httpNoPermission));
+        }
         
         synchronized (this.entries) {
             final String venad = e.get("venad"); //$NON-NLS-1$

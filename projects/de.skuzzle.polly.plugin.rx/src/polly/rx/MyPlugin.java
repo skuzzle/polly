@@ -281,6 +281,7 @@ public class MyPlugin extends PollyPlugin {
         
         final OrionController oc = new OrionController(this.getMyPolly(), azManager);
         final OrionNewsProvider newsProvider = new OrionNewsProvider(
+                this.getMyPolly(),
                 Orion.INSTANCE.getFleetTracker(), 
                 Orion.INSTANCE.getPortalUpdater(),
                 this.trainManager);

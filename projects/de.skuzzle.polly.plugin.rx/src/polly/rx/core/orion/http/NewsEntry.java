@@ -16,6 +16,7 @@ public class NewsEntry implements Equatable, Comparable<NewsEntry> {
     
     
     public static enum NewsType {
+        ORION_FLEET,
         FLEET_SPOTTED,
         PORTAL_ADDED,
         PORTAL_REMOVED,
@@ -69,6 +70,10 @@ public class NewsEntry implements Equatable, Comparable<NewsEntry> {
     
     @Override
     public int compareTo(NewsEntry o) {
+        if (this.type == NewsType.ORION_FLEET) {
+            // show orion fleets on top
+            return -1;
+        }
         return -this.compDate.compareTo(o.compDate);
     }
 }

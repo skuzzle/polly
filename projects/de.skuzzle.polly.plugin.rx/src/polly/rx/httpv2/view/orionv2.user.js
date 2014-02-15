@@ -102,6 +102,7 @@ var PROPERTY_SHOW_SCOREBOARD_CHANGE = "polly.orion.showScoreboardChange";
 
 
 // Different kinds of news entries
+var NEWS_ORION_FLEET			  = "ORION_FLEET"
 var NEWS_FLEET_SPOTTED            = "FLEET_SPOTTED";
 var NEWS_PORTAL_ADDED             = "PORTAL_ADDED";
 var NEWS_PORTAL_MOVED             = "PORTAL_MOVED";
@@ -109,13 +110,14 @@ var NEWS_PORTAL_REMOVED           = "PORTAL_REMOVED";
 var NEWS_TRAINING_ADDED           = "TRAINING_ADDED";
 var NEWS_TRAINING_FINISHED        = "TRAINING_FINISHED";
 var NEWS_BILL_CLOSED              = "BILL_CLOSED";
-var ALL_NEWS                      = [ { key: NEWS_FLEET_SPOTTED,  desc: "Zeige gesichtete Flotten an" },
-                                      { key: NEWS_PORTAL_ADDED,   desc: "Zeige neue Portale an" },
-                                      { key: NEWS_PORTAL_MOVED,   desc: "Zeige Portale an die versetzt wurden" },
-                                      { key: NEWS_PORTAL_REMOVED, desc: "Zeige Portale an die nach Unbekannt versetzt wurden"},
-                                      { key: NEWS_TRAINING_ADDED, desc: "Zeige neue Capi Trainings"},
+var ALL_NEWS                      = [ { key: NEWS_FLEET_SPOTTED,     desc: "Zeige gesichtete Flotten an" },
+                                      { key: NEWS_ORION_FLEET,       desc: "Zeige Flottenposition von anderen Orion Nutzern an" },
+                                      { key: NEWS_PORTAL_ADDED,      desc: "Zeige neue Portale an" },
+                                      { key: NEWS_PORTAL_MOVED,      desc: "Zeige Portale an die versetzt wurden" },
+                                      { key: NEWS_PORTAL_REMOVED,    desc: "Zeige Portale an die nach Unbekannt versetzt wurden"},
+                                      { key: NEWS_TRAINING_ADDED,    desc: "Zeige neue Capi Trainings"},
                                       { key: NEWS_TRAINING_FINISHED, desc: "Zeige neue abgeschlossene Capi Trainings"},
-                                      { key: NEWS_BILL_CLOSED, desc: "Zeige bezahlte Capi Training Rechnungen"}
+                                      { key: NEWS_BILL_CLOSED,       desc: "Zeige bezahlte Capi Training Rechnungen"}
                                     ];
 
 
@@ -556,6 +558,9 @@ function requestNewsForQuadrant(maxEntries, quadName, onSuccess) {
 
 function getSubjectFromNewsEntry(entry) {
     switch (entry.type) {
+    case NEWS_ORION_FLEET:
+    	return "Orion Flotte: "+
+    		entry.subject.name+" - "+entry.subject.ownerName;
     case NEWS_FLEET_SPOTTED:
         return "Flotte gesichtet: "+
             entry.subject.name+" - "+entry.subject.ownerName;
@@ -575,6 +580,7 @@ function getSubjectFromNewsEntry(entry) {
 }
 function getDetailsFromNewsEntry(entry) {
     switch (entry.type) {
+    case NEWS_ORION_FLEET:
     case NEWS_FLEET_SPOTTED:
     case NEWS_PORTAL_ADDED:
     case NEWS_PORTAL_MOVED:
@@ -593,6 +599,7 @@ function getDetailsFromNewsEntry(entry) {
 
 function getSectorFromNewsEntry(entry) {
     switch (entry.type) {
+    case NEWS_ORION_FLEET:
     case NEWS_FLEET_SPOTTED:
     case NEWS_PORTAL_ADDED:
     case NEWS_PORTAL_MOVED:
