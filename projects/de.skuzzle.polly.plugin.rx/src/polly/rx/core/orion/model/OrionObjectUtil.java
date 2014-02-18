@@ -56,6 +56,16 @@ public final class OrionObjectUtil {
     public static String productionString(Production p) {
         return String.format("%s: %.2f", p.getRess(), p.getRate()); //$NON-NLS-1$
     }
+    
+    
+    
+    public static int compareProduction(Production prod1, Production prod2) {
+        int c = prod1.getRess().compareTo(prod2.getRess());
+        if (c == 0) {
+            return Float.compare(prod1.getRate(), prod2.getRate());
+        }
+        return c;
+    }
 
 
 

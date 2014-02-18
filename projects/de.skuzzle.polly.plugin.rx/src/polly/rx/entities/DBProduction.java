@@ -100,4 +100,11 @@ public class DBProduction implements Production {
     public String toString() {
         return OrionObjectUtil.productionString(this);
     }
+    
+    
+    
+    @Override
+    public int compareTo(Production o) {
+        return OrionObjectUtil.compareProduction(this, o);
+    }
 }

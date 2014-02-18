@@ -17,6 +17,7 @@ import de.skuzzle.polly.sdk.time.Time;
 public enum Orion implements UniverseFactory {
     INSTANCE;
 
+    private ResourcePriceProvider priceProvider;
     private QuadrantProvider quadProvider;
     private WormholeProvider holeProvider;
     private QuadrantUpdater quadUpdater;
@@ -31,7 +32,7 @@ public enum Orion implements UniverseFactory {
     public static void initialize(QuadrantProvider quadProvider,
             QuadrantUpdater quadUpdater, WormholeProvider holeProvider,
             PortalProvider portalProvider, PortalUpdater portalUpdater, 
-            FleetTracker fleetTracker) {
+            FleetTracker fleetTracker, ResourcePriceProvider priceProvider) {
 
         if (INSTANCE.quadProvider != null) {
             throw new IllegalStateException("already initialized"); //$NON-NLS-1$
@@ -47,6 +48,8 @@ public enum Orion implements UniverseFactory {
             throw new NullPointerException(PortalUpdater.class.getSimpleName());
         } else if (fleetTracker == null) {
             throw new NullPointerException(FleetTracker.class.getSimpleName());
+        } else if (priceProvider == null) {
+            throw new NullPointerException(ResourcePriceProvider.class.getSimpleName());
         }
 
         INSTANCE.quadProvider = quadProvider;
@@ -55,6 +58,7 @@ public enum Orion implements UniverseFactory {
         INSTANCE.portalProvider = portalProvider;
         INSTANCE.portalUpdater = portalUpdater;
         INSTANCE.fleetTracker = fleetTracker;
+        INSTANCE.priceProvider = priceProvider;
         INSTANCE.planner = new PathPlanner(quadProvider, holeProvider);
     }
 
@@ -103,6 +107,12 @@ public enum Orion implements UniverseFactory {
     
     public PortalUpdater getPortalUpdater() {
         return this.portalUpdater;
+    }
+    
+    
+    
+    public ResourcePriceProvider getPriceProvider() {
+        return this.priceProvider;
     }
     
 

@@ -72,4 +72,11 @@ public class DefaultProduction implements Production {
     public float getRate() {
         return this.rate;
     }
+
+
+
+    @Override
+    public int compareTo(Production prod) {
+        return OrionObjectUtil.compareProduction(this, prod);
+    }
 }
