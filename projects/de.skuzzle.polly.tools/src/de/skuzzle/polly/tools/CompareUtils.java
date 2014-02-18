@@ -104,7 +104,7 @@ public final class CompareUtils {
     /**
      * Creates a {@link Comparator} from a {@link Comparable} object. 
      * 
-     * @param type The comparable type of the elements to compre.
+     * @param type The comparable type of the elements to compare.
      * @return A new comparator that uses the {@link Comparable#compareTo(Object)} method
      *          to compare two elements.
      */
