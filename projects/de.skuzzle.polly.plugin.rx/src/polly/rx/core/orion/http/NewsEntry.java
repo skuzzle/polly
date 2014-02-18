@@ -70,6 +70,10 @@ public class NewsEntry implements Equatable, Comparable<NewsEntry> {
     
     @Override
     public int compareTo(NewsEntry o) {
-        return -this.compDate.compareTo(o.compDate);
+        final int c = this.type.compareTo(o.type);
+        if (c == 0) {
+            return -this.compDate.compareTo(o.compDate);
+        }
+        return c;
     }
 }
