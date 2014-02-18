@@ -87,6 +87,8 @@ public final class WebUtils {
                 redirect.append(line);
                 redirect.append(System.lineSeparator());
             }
+        } finally {
+            connection.disconnect();
         }
     }
     
