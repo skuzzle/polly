@@ -1,6 +1,7 @@
 package polly.rx.httpv2;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import polly.rx.core.SumQueries;
@@ -16,6 +17,7 @@ import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLModelListener;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLTableModel;
+import de.skuzzle.polly.tools.math.MathUtil;
 
 
 public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
@@ -28,6 +30,7 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
         public final BattleDrop[] repairCostDefender = new BattleDrop[7];
         public final BattleDrop[] dropNetto = new BattleDrop[14];
         public double[] dropPrices = new double[14];
+        public double[] dropPricesAtDropTime = new double[14];
         public double[] currentPrices = new double[14];
         
         public double kwAttacker = 0;
@@ -42,6 +45,7 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
         public int repairTimeAttacker = 0;
         public int repairTimeDefender = 0;
         public int dropPriceSum;
+        public int dropPriceSumAtDropTime;
         public double reportSize = 0; // as double for auto casting when calculating avg
         public double artifactChance = 0.0;
         
@@ -60,6 +64,8 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
             repairTimeDefender = 0;
             reportSize = 0; 
             artifactChance = 0.0;
+            dropPriceSum = 0;
+            dropPriceSumAtDropTime = 0;
             BattleDrop.clear(dropSum);
             BattleDrop.clear(dropMax);
             BattleDrop.clear(dropMin);
@@ -74,6 +80,7 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
                 BattleDrop.clear(dropNetto);
             }
             Arrays.fill(dropPrices, 0);
+            Arrays.fill(dropPricesAtDropTime, 0);
         }
     }
     
@@ -127,6 +134,8 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
         final BattleReportStatistics stats = new BattleReportStatistics();
         s.set(STATISTIC_KEY, stats);
 
+        Date youngest = new Date(0);
+        
         synchronized (stats) {
             
         stats.zero();
@@ -135,6 +144,10 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
             if (report.getTactic() == BattleTactic.ALIEN) {
                 report = BattleReport.switchAttacker(report);
             }
+            
+            youngest = youngest == null 
+                    ? report.getDate() 
+                    : MathUtil.max(youngest, report.getDate());
             
             for (int i = 0; i < 14; ++i) {
                 BattleDrop drop = report.getDrop().get(i);
@@ -178,8 +191,9 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
         stats.reportSize = data.size();
         stats.kwAttacker /= data.size();
         stats.kwDefender /= data.size();
-        stats.currentPrices = getPriceArray();
+        stats.currentPrices = getPriceArray(null); // null for today
         stats.dropPriceSum = (int) inCr(stats.dropNetto, stats.currentPrices, stats.dropPrices);
+        stats.dropPriceSumAtDropTime = (int) inCr(stats.dropNetto, getPriceArray(youngest), stats.dropPricesAtDropTime);
         stats.artifactChance = data.isEmpty() 
                 ? 0.0 : (double) stats.artifacts / (double) data.size();
     }
@@ -187,9 +201,9 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
     
     
     
-    private static double[] getPriceArray() {
+    private static double[] getPriceArray(Date date) {
         final double[] result = new double[RxRessource.values().length];
-        final List<? extends Production> prod = Orion.INSTANCE.getPriceProvider().getAllPrices();
+        final List<? extends Production> prod = Orion.INSTANCE.getPriceProvider().getAllPrices(date);
         int i = 0;
         for (final Production p : prod) {
             result[i++] = p.getRate();

@@ -59,8 +59,13 @@
     #end
         <td style="text-align:center">$dropPriceSum</td>
     </tr>
+    <tr>
+    #foreach ($i in [0..13])
+        <td style="text-align:center;">$df.format($dropPricesAtDropTime[$i])</td>
+    #end
+        <td style="text-align:center">$dropPriceSumAtDropTime</td>
+    </tr>
 </table>
-
 
 #macro (PRINT_STATS $caption $avgKw $attackerXp $crewXp $pzDmg $repairTime $repairCost)
 <h3 style="margin-bottom:5px;margin-top:5px">$caption</h3>
