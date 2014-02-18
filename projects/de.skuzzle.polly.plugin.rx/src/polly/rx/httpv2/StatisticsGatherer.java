@@ -3,8 +3,9 @@ package polly.rx.httpv2;
 import java.util.Arrays;
 import java.util.List;
 
-import polly.rx.core.ResourcePriceGrabber;
 import polly.rx.core.SumQueries;
+import polly.rx.core.orion.Orion;
+import polly.rx.core.orion.model.Production;
 import polly.rx.entities.BattleDrop;
 import polly.rx.entities.BattleReport;
 import polly.rx.entities.BattleTactic;
@@ -18,8 +19,6 @@ import de.skuzzle.polly.sdk.httpv2.html.HTMLTableModel;
 
 
 public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
-    
-    private final static ResourcePriceGrabber GRABBER = new ResourcePriceGrabber(1);
     
     public static class BattleReportStatistics {
         public final BattleDrop[] dropSum = new BattleDrop[14];
@@ -179,10 +178,22 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
         stats.reportSize = data.size();
         stats.kwAttacker /= data.size();
         stats.kwDefender /= data.size();
-        stats.currentPrices = GRABBER.getPricesAsArray();
+        stats.currentPrices = getPriceArray();
         stats.dropPriceSum = (int) inCr(stats.dropNetto, stats.currentPrices, stats.dropPrices);
         stats.artifactChance = data.isEmpty() 
                 ? 0.0 : (double) stats.artifacts / (double) data.size();
     }
+    }
+    
+    
+    
+    private static double[] getPriceArray() {
+        final double[] result = new double[RxRessource.values().length];
+        final List<? extends Production> prod = Orion.INSTANCE.getPriceProvider().getAllPrices();
+        int i = 0;
+        for (final Production p : prod) {
+            result[i++] = p.getRate();
+        }
+        return result;
     }
 }
