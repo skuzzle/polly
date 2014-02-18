@@ -79,7 +79,7 @@ $sector.getQuadName() $sector.getX(), $sector.getY()
         </tr>
         #foreach ($portal in $portals)
         <tr>
-            <td>$portal.getOwner()</td>
+            <td>$portal.getOwnerName()</td>
             <td>$portal.getOwnerClan()</td>
             <td>#SECTOR_LINK ( $portal.getSector() $portal.getSector().getQuadId())</td>
             <td>$myPolly.formatting().formatDate($portal.getDate())</td>
