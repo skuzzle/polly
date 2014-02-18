@@ -70,10 +70,6 @@ public class NewsEntry implements Equatable, Comparable<NewsEntry> {
     
     @Override
     public int compareTo(NewsEntry o) {
-        if (this.type == NewsType.ORION_FLEET) {
-            // show orion fleets on top
-            return -1;
-        }
         return -this.compDate.compareTo(o.compDate);
     }
 }
