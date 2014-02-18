@@ -6,15 +6,11 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import polly.rx.MSG;
-import polly.rx.core.orion.model.Production;
 import polly.rx.core.orion.model.Quadrant;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.SectorType;
@@ -22,7 +18,6 @@ import polly.rx.core.orion.pathplanning.Graph;
 import polly.rx.core.orion.pathplanning.Graph.EdgeCosts;
 import polly.rx.core.orion.pathplanning.Graph.LazyBuilder;
 import polly.rx.parsing.ParseException;
-import de.skuzzle.polly.tools.Equatable;
 
 
 public final class QuadrantUtils {
@@ -72,69 +67,6 @@ public final class QuadrantUtils {
     
     public static String createMapKey(Sector sector) {
         return createMapKey(sector.getX(), sector.getY());
-    }
-    
-    
-    
-    public static Sector noneSector(final String quadName, final int x, final int y) {
-        return new Sector() {
-            @Override
-            public Class<?> getEquivalenceClass() {
-                return Sector.class;
-            }
-            
-            @Override
-            public boolean actualEquals(Equatable o) {
-                final Sector other = (Sector) o;
-                return quadName.equals(quadName) && x == other.getX() && 
-                        y == other.getY();
-            }
-            
-            @Override
-            public int getY() {
-                return y;
-            }
-            
-            @Override
-            public int getX() {
-                return x;
-            }
-            
-            @Override
-            public SectorType getType() {
-                return SectorType.NONE;
-            }
-            
-            @Override
-            public int getSectorGuardBonus() {
-                return 0;
-            }
-            
-            @Override
-            public Collection<? extends Production> getRessources() {
-                return Collections.emptyList();
-            }
-            
-            @Override
-            public String getQuadName() {
-                return quadName;
-            }
-            
-            @Override
-            public int getDefenderBonus() {
-                return 0;
-            }
-            
-            @Override
-            public Date getDate() {
-                return new Date();
-            }
-            
-            @Override
-            public int getAttackerBonus() {
-                return 0;
-            }
-        };
     }
     
     
