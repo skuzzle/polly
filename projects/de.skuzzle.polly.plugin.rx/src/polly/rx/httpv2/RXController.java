@@ -97,6 +97,7 @@ public class RXController extends PollyController {
     public final static String GM_FLEET_SCANS = "/GM/fleetscan.user.js"; //$NON-NLS-1$
     public final static String GM_ORION = "/GM/orion.user.js"; //$NON-NLS-1$
     public final static String GM_ORIONV2 = "/GM/orionv2.user.js"; //$NON-NLS-1$
+    public final static String GM_ORIONV2_META = "/GM/orionv2.meta.js"; //$NON-NLS-1$
     
     public final static String FILES_VIEW = "/polly/rx/httpv2/view"; //$NON-NLS-1$
     
@@ -121,6 +122,7 @@ public class RXController extends PollyController {
     private final static String CONTENT_TRAININGS = "polly/rx/httpv2/view/trainings.html"; //$NON-NLS-1$
     private final static String CONTENT_GM_ORION = "polly/rx/httpv2/view/orion.user.js"; //$NON-NLS-1$
     private final static String CONTENT_GM_ORIONV2 = "polly/rx/httpv2/view/orionv2.user.js"; //$NON-NLS-1$
+    private final static String CONTENT_GM_ORIONV2_META = "polly/rx/httpv2/view/orionv2.meta.js"; //$NON-NLS-1$
     
     private final static String REVORIX_CATEGORY_KEY = "httpRxCategory"; //$NON-NLS-1$
     private final static String FLEET_SCAN_NAME_KEY = "httpFleetScanMngr"; //$NON-NLS-1$
@@ -897,10 +899,7 @@ public class RXController extends PollyController {
     public HttpAnswer installScoreboard() 
             throws AlternativeAnswerException {
         this.requirePermissions(MyPlugin.SBE_PERMISSION);
-        final String prefix = this.getMyPolly().webInterface().isSSL() 
-                ? "https://" : "http://"; //$NON-NLS-1$ //$NON-NLS-2$
-        final String host = prefix + this.getMyPolly().webInterface().getPublicHost() + 
-                ":" + this.getMyPolly().webInterface().getPort(); //$NON-NLS-1$
+        final String host = this.createPollyUrl();
         
         final Map<String, String> c = new HashMap<String, String>();
         c.put("host", host); //$NON-NLS-1$
@@ -913,10 +912,7 @@ public class RXController extends PollyController {
     public HttpAnswer installLiveKB() 
             throws AlternativeAnswerException {
         this.requirePermissions(FleetDBManager.ADD_BATTLE_REPORT_PERMISSION);
-        final String prefix = this.getMyPolly().webInterface().isSSL() 
-                ? "https://" : "http://"; //$NON-NLS-1$ //$NON-NLS-2$
-        final String host = prefix + this.getMyPolly().webInterface().getPublicHost() + 
-                ":" + this.getMyPolly().webInterface().getPort(); //$NON-NLS-1$
+        final String host = this.createPollyUrl();
         
         final Map<String, String> c = new HashMap<String, String>();
         c.put("api", API_POST_QREPORT); //$NON-NLS-1$
@@ -930,10 +926,7 @@ public class RXController extends PollyController {
     public HttpAnswer installFleetScans() 
             throws AlternativeAnswerException {
         this.requirePermissions(FleetDBManager.ADD_FLEET_SCAN_PERMISSION);
-        final String prefix = this.getMyPolly().webInterface().isSSL() 
-                ? "https://" : "http://"; //$NON-NLS-1$ //$NON-NLS-2$
-        final String host = prefix + this.getMyPolly().webInterface().getPublicHost() + 
-                ":" + this.getMyPolly().webInterface().getPort(); //$NON-NLS-1$
+        final String host = this.createPollyUrl();
         
         final Map<String, String> c = new HashMap<String, String>();
         c.put("api", API_POST_QFLEET_SCAN); //$NON-NLS-1$
@@ -947,10 +940,7 @@ public class RXController extends PollyController {
     @Get(GM_ORION)
     public HttpAnswer installOrion() throws AlternativeAnswerException {
         this.requirePermissions(FleetDBManager.ADD_FLEET_SCAN_PERMISSION);
-        final String prefix = this.getMyPolly().webInterface().isSSL() 
-                ? "https://" : "http://"; //$NON-NLS-1$ //$NON-NLS-2$
-        final String host = prefix + this.getMyPolly().webInterface().getPublicHost() + 
-                ":" + this.getMyPolly().webInterface().getPort(); //$NON-NLS-1$
+        final String host = this.createPollyUrl();
         
         final Map<String, String> c = new HashMap<String, String>();
         c.put("sectorApi", OrionController.API_JSON_SECTOR); //$NON-NLS-1$
@@ -962,19 +952,35 @@ public class RXController extends PollyController {
     
     
     
+    
+    @Get(GM_ORIONV2_META)
+    public HttpAnswer orionV2MetaData() {
+        final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
+        final String host = this.createPollyUrl();
+        c.put("host", host); //$NON-NLS-1$
+        return HttpAnswers.newTemplateAnswer(CONTENT_GM_ORIONV2_META, c);
+    }
+    
+    
+    
     @Get(GM_ORIONV2)
     public HttpAnswer installOrionV2() throws AlternativeAnswerException {
-        this.requirePermissions(FleetDBManager.ADD_FLEET_SCAN_PERMISSION);
-        final String prefix = this.getMyPolly().webInterface().isSSL() 
-                ? "https://" : "http://"; //$NON-NLS-1$ //$NON-NLS-2$
-        final String host = prefix + this.getMyPolly().webInterface().getPublicHost() + 
-                ":" + this.getMyPolly().webInterface().getPort(); //$NON-NLS-1$
-        
-        final Map<String, String> c = new HashMap<String, String>();
+        final String host = this.createPollyUrl();
+        final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
         c.put("sectorApi", OrionController.API_JSON_SECTOR); //$NON-NLS-1$
         c.put("quadrantApi", OrionController.API_JSON_QUADRANT); //$NON-NLS-1$
         c.put("postSectorApi", OrionController.API_JSON_POST_SECTOR); //$NON-NLS-1$
         c.put("host", host); //$NON-NLS-1$
         return HttpAnswers.newTemplateAnswer(CONTENT_GM_ORIONV2, c);
+    }
+    
+    
+    
+    private String createPollyUrl() {
+        final String prefix = this.getMyPolly().webInterface().isSSL() 
+                ? "https://" : "http://"; //$NON-NLS-1$ //$NON-NLS-2$
+        final String host = prefix + this.getMyPolly().webInterface().getPublicHost() + 
+                ":" + this.getMyPolly().webInterface().getPort(); //$NON-NLS-1$
+        return host;
     }
 }

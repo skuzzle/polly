@@ -1,22 +1,6 @@
-// ==UserScript==
-// @name       Polly Orion V2
-// @version    0.2
-// @grant 	   GM_setValue
-// @grant 	   GM_getValue
-// @grant 	   GM_deleteValue
-// @grant 	   GM_xmlhttpRequest
-// @namespace  projectpolly.de
-// @require    http://code.jquery.com/jquery-1.10.2.min.js
-// @include    http://www.revorix.info/*/map.php*
-// @include    http://www.revorix.info/*/news.php*
-// @include    http://www.revorix.info/*/rx.php?set=5&fid=*
-// @include    http://www.revorix.info/*/rx.php?set=6*
-// @include    http://www.revorix.de*
-// @include    http://www.revorix.info/login/
-// @include    http://www.revorix.info/php/map_fflotte.php?fid=*
-// @include    http://www.revorix.info/php/venad_list.php?pktsur=1
-// @include    http://www.revorix.info/php/venad_list.php?pkttop=1
-// ==/UserScript==
+#parse ( "/polly/rx/httpv2/view/orionv2.meta.js" )
+
+
 
 // Your User Data
 // Venad will be determined automatically.  With this setting you can override
