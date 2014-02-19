@@ -141,7 +141,7 @@ public class OrionNewsProvider implements HttpEventHandler, FleetListener, Porta
         final User user = this.myPolly.users().getUser(userName);
         final String password = e.get("pw"); //$NON-NLS-1$
         
-        if (user == null || !user.checkPassword(password)) {
+        if (user == null || !user.getHashedPassword().equalsIgnoreCase(password)) {
             return new GsonHttpAnswer(200, 
                     new SuccessResult(false, MSG.httpIllegalLogin));
         } else if (!this.myPolly.roles().hasPermission(user, OrionController.VIEW_ORION_PREMISSION)) {

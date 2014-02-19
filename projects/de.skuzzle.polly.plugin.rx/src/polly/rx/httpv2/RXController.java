@@ -461,11 +461,8 @@ public class RXController extends PollyController {
             @Param("user") String user, @Param("pw") String pw) 
             throws AlternativeAnswerException {
         
-        final User u = this.getMyPolly().users().getUser(user);
-        if (u == null || !u.checkPassword(pw)) {
-            return new GsonHttpAnswer(200, 
-                    new SuccessResult(false, MSG.httpIllegalLogin));
-        } else if (!this.getMyPolly().roles().hasPermission(u, 
+        final User u = this.checkLogin(user, pw);
+        if (!this.getMyPolly().roles().hasPermission(u, 
                     FleetDBManager.ADD_FLEET_SCAN_PERMISSION)) {
             return new GsonHttpAnswer(200, 
                     new SuccessResult(false, MSG.httpNoPermission));
@@ -582,11 +579,8 @@ public class RXController extends PollyController {
             @Param("pw") String pw,
             @Param("paste") String paste) throws AlternativeAnswerException {
         
-        final User u = this.getMyPolly().users().getUser(user);
-        if (u == null || !u.checkPassword(pw)) {
-            return new GsonHttpAnswer(200, 
-                    new SuccessResult(false, MSG.httpIllegalLogin));
-        } else if (!this.getMyPolly().roles().hasPermission(u, MyPlugin.SBE_PERMISSION)) {
+        final User u = this.checkLogin(user, pw);
+        if (!this.getMyPolly().roles().hasPermission(u, MyPlugin.SBE_PERMISSION)) {
             return new GsonHttpAnswer(200, 
                     new SuccessResult(false, MSG.httpNoPermission));
         }
@@ -742,6 +736,7 @@ public class RXController extends PollyController {
             @Param(value = "isLive", optional = true, defaultValue = "false") Boolean isLive,
             @Param("report") String report) {
         
+        // TODO: replace with this.checkLogin when battle reports are integrated in orion
         final User u = this.getMyPolly().users().getUser(user);
         if (u == null || !u.checkPassword(pw)) {
             return new GsonHttpAnswer(200, 
