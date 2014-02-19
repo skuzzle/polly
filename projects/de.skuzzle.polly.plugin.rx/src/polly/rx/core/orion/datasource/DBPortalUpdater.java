@@ -18,6 +18,7 @@ import polly.rx.core.orion.OrionException;
 import polly.rx.core.orion.PortalEvent;
 import polly.rx.core.orion.PortalListener;
 import polly.rx.core.orion.PortalUpdater;
+import polly.rx.core.orion.model.DefaultPortal;
 import polly.rx.core.orion.model.Portal;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.entities.DBPortal;
@@ -122,9 +123,10 @@ public class DBPortalUpdater implements PortalUpdater {
 
             for (final DBPortal p : currentPortals) {
                 if (!portals.contains(p)) {
+                    final DefaultPortal copy = new DefaultPortal(p);
                     p.setSector(null);
                     write.remove(p);
-                    removed.add(p);
+                    removed.add(copy);
                 }
             }
 
