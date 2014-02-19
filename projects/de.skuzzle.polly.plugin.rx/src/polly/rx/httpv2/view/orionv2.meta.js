@@ -1,6 +1,7 @@
 // ==UserScript==
 // @name        Polly Orion V2
 // @version     1.0a
+// @description Polly Revorix Integration
 // @grant 	    GM_setValue
 // @grant 	    GM_getValue
 // @grant 	    GM_deleteValue
