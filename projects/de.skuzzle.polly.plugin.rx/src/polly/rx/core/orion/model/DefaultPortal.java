@@ -30,7 +30,8 @@ public class DefaultPortal implements Portal {
 
 
     public DefaultPortal(Portal p) {
-        this(p.getSector(), p.getOwnerName(), p.getOwnerClan(), p.getType());
+        this(new DefaultSector(p.getSector()), p.getOwnerName(), 
+                p.getOwnerClan(), p.getType());
     }
 
 
