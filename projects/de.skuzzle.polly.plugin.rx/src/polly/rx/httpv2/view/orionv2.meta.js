@@ -10,6 +10,7 @@
 // @updateURL   ${host}$PAGE_ORIONV2METADATA
 // @namespace   projectpolly.de
 // @require     http://code.jquery.com/jquery-1.10.2.min.js
+// @require     http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/md5.js
 // @include     http://www.revorix.info/*/map.php*
 // @include     http://www.revorix.info/*/news.php*
 // @include     http://www.revorix.info/*/rx.php?set=5&fid=*

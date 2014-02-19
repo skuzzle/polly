@@ -10,6 +10,7 @@ import de.skuzzle.polly.http.api.AlternativeAnswerException;
 import de.skuzzle.polly.http.api.Controller;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
+import de.skuzzle.polly.sdk.Messages;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLTools;
@@ -104,5 +105,17 @@ public abstract class PollyController extends Controller {
             c.put("resource", this.getEvent().getPlainUri()); //$NON-NLS-1$
             throw new AlternativeAnswerException(this.makeAnswer(c));
         }
+    }
+    
+    
+    
+    protected User checkLogin(String userName, String pwHash) 
+            throws AlternativeAnswerException {
+        final User u = this.getMyPolly().users().getUser(userName);
+        if (u == null || !u.getHashedPassword().equalsIgnoreCase(pwHash)) {
+            throw new AlternativeAnswerException(new GsonHttpAnswer(200, 
+                    new SuccessResult(false, Messages.illegalLogin)));
+        }
+        return u;
     }
 }

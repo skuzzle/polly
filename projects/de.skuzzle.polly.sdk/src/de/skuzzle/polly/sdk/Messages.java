@@ -50,6 +50,7 @@ public class Messages extends Constants {
     public static String tableFilterToggle;
     public static String tableFilterActive;
     public static String tableFilterClear;
+    public static String illegalLogin;
     
     static {
         Resources.init(FAMILY, Messages.class);
