@@ -198,20 +198,23 @@ function settingIntegration() {
  content += '<td rowspan="2" style="vertical-align:middle; text-align:center"><input class="Button" type="button" id="savePolly" value="Speichern"/></td>';
  content += '</tr>';
  content += '<tr><td>Polly Passwort:</td><td><input class="text" type="password" id="pollyPw"/></td></tr>';
- content += '<tr><td colspan="3"><b>Achtung: Daten werden unverschlüsselt gespeichert und übertragen!</b></td></tr>';
  content += '</table></div></div></div>';
  body.append(content);
- 
+
  $("#savePolly").click(saveOrionSettings);
  $("#pollyName").val(getPollyUserName());
 }
 
 function saveOrionSettings() {
- var username = $("pollyName").val();
- var pw = $("pollyPw").val();
+ var userName = $("#pollyName").val();
+ var pw = $("#pollyPw").val();
  
- setProperty(PROPERTY_LOGIN_NAME, userName, this);
- setProperty(PROPERTY_LOGIN_PASSWORD, pw, this);
+ var hash = CryptoJS.MD5(pw).toString();
+ if (pw == "") {
+     hash = "";
+ }
+ GM_setProperty(PROPERTY_LOGIN_NAME, userName);
+ GM_setProperty(PROPERTY_LOGIN_PASSWORD, hash);
 }
 
 
