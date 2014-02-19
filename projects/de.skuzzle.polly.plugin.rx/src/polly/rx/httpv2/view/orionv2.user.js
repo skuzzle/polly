@@ -43,8 +43,8 @@ var DEFAULT_REQUEST_TIMEOUT = 5000;   // ms
 //API URLs
 var ORION_API_VERSION	 = 1;
 var POLLY_URL            = LOCAL_SERVER
-                      ? "https://localhost:83"
-                      : "https://projectpolly.de";
+                         ? "https://localhost:83"
+                         : "$host";
 var API_REQUEST_SECTOR   = "/api/orion/json/sector"
 var API_REQUEST_QUADRANT = "/api/orion/json/quadrant";
 var API_POST_SECTOR      = "/api/orion/json/postSector";
