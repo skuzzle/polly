@@ -35,7 +35,7 @@ public class NewModelReportParser {
     }
     
     
-    public static DefaultBattleReport parse(String report, int submitterId) throws ParseException {
+    public static DefaultBattleReport parse(String report) throws ParseException {
         try (Scanner s = new Scanner(report)) {
             final Pattern delimiter = s.delimiter();
             
@@ -121,7 +121,7 @@ public class NewModelReportParser {
             final List<ReportShip> attackerShips = new ArrayList<>(50);
             while (s.findInLine("Verteidiger Flotte: ") == null) { //$NON-NLS-1$
                 s.useDelimiter(delimiter);
-                final DefaultReportShip ship = findShip(s, attackerName, attackerClan);
+                final DefaultReportShip ship = findShip(s, date);
                 attackerShips.add(ship);
             }
 
@@ -142,7 +142,7 @@ public class NewModelReportParser {
             
             while (s.hasNext()) {
                 s.useDelimiter(delimiter);
-                final DefaultReportShip ship = findShip(s, defenderName, defenderClan);
+                final DefaultReportShip ship = findShip(s, date);
                 defenderShips.add(ship);
             }
             
@@ -157,7 +157,7 @@ public class NewModelReportParser {
             final DefaultSector location = new DefaultSector(q.getSector(x, y));
             
             final DefaultBattleReport result = new DefaultBattleReport(tactic, attacker, 
-                    defender, location, drop, Time.currentTime());
+                    defender, location, drop, date);
             return result;
         }
     }
@@ -165,8 +165,7 @@ public class NewModelReportParser {
     
     
     @SuppressWarnings("unused")
-    private static DefaultReportShip findShip(Scanner s, String ownerName, 
-            String ownerClan) throws ParseException {
+    private static DefaultReportShip findShip(Scanner s, Date date) throws ParseException {
         s.skip("\\s*"); //$NON-NLS-1$
         final String shipName = s.nextLine(); 
         final String capiName = s.nextLine();
@@ -226,8 +225,8 @@ public class NewModelReportParser {
         final int shipClass = ShipHelper.getShipClass(shipName);
         final String simpleName = ShipHelper.getSimpleName(shipName);
         
-        return new DefaultReportShip(type, simpleName, ownerName, ownerClan, capiName, 
-                stats, dmg, shipClass, id, crewXp, capiXp, Time.currentTime());
+        return new DefaultReportShip(type, simpleName, capiName, 
+                stats, dmg, shipClass, id, crewXp, capiXp, date);
     }
     
     

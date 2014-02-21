@@ -24,6 +24,7 @@ public enum Orion implements UniverseFactory {
     private PortalProvider portalProvider;
     private PortalUpdater portalUpdater;
     private FleetTracker fleetTracker;
+    private ShipProvider shipProvider;
     private PathPlanner planner;
     private LoginCode code;
 
@@ -50,7 +51,7 @@ public enum Orion implements UniverseFactory {
             throw new NullPointerException(FleetTracker.class.getSimpleName());
         } else if (priceProvider == null) {
             throw new NullPointerException(ResourcePriceProvider.class.getSimpleName());
-        }
+        } // TODO: ship provider
 
         INSTANCE.quadProvider = quadProvider;
         INSTANCE.holeProvider = holeProvider;
@@ -113,6 +114,13 @@ public enum Orion implements UniverseFactory {
     
     public ResourcePriceProvider getPriceProvider() {
         return this.priceProvider;
+    }
+    
+    
+    
+    public ShipProvider getShipProvider() {
+        this.checkInitialized();
+        return this.shipProvider;
     }
     
 

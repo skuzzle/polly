@@ -4,7 +4,7 @@ import polly.rx.entities.ShipType;
 import de.skuzzle.polly.tools.Equatable;
 
 
-public interface Ship extends OrionObject, Equatable {
+public interface Ship extends OrionObject, Equatable, VenadOwner {
 
     public String getShipName();
     

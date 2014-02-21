@@ -110,16 +110,16 @@ public class DefaultBattleReport implements BattleReport {
 
     @Override
     public BattleReportCompetitor getWinner() {
-        return this.attacker.getKw() >= this.defender.getKw() ? this.attacker
-                : this.defender;
+        return this.attacker.getKw() * this.sector.getAttackerBonus() >= this.defender.getKw() * this.sector.getDefenderBonus() 
+                ? this.attacker : this.defender;
     }
 
 
 
     @Override
     public BattleReportCompetitor getLoser() {
-        return this.attacker.getKw() >= this.defender.getKw() ? this.defender
-                : this.attacker;
+        return this.attacker.getKw() * this.sector.getAttackerBonus() >= this.defender.getKw() * this.sector.getDefenderBonus() 
+                ? this.defender : this.attacker;
     }
 
 

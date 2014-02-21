@@ -2,7 +2,7 @@ package polly.rx.core.orion.model;
 
 
 
-public interface ReportShip extends Ship, VenadOwner {
+public interface ReportShip extends Ship {
     
     public String getCapiName();
     
