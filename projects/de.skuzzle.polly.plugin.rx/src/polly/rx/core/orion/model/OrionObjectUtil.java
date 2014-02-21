@@ -1,6 +1,9 @@
 package polly.rx.core.orion.model;
 
+import java.util.Arrays;
 import java.util.Objects;
+
+import polly.rx.entities.RxRessource;
 
 public final class OrionObjectUtil {
 
@@ -56,9 +59,9 @@ public final class OrionObjectUtil {
     public static String productionString(Production p) {
         return String.format("%s: %.2f", p.getRess(), p.getRate()); //$NON-NLS-1$
     }
-    
-    
-    
+
+
+
     public static int compareProduction(Production prod1, Production prod2) {
         int c = prod1.getRess().compareTo(prod2.getRess());
         if (c == 0) {
@@ -94,8 +97,9 @@ public final class OrionObjectUtil {
 
 
     public static boolean portalsEqual(Portal p1, Portal p2) {
-        return p1.getType() == p2.getType() && p1.getOwnerName().equals(p2.getOwnerName()) && 
-                p1.getSector().equals(p2.getSector());
+        return p1.getType() == p2.getType()
+                && p1.getOwnerName().equals(p2.getOwnerName())
+                && p1.getSector().equals(p2.getSector());
     }
 
 
@@ -131,6 +135,131 @@ public final class OrionObjectUtil {
 
 
 
+    public static boolean dropEquals(Drop d1, Drop d2) {
+        if (d1.hasArtifact() != d2.hasArtifact()) {
+            return false;
+        }
+        for (final RxRessource ress : RxRessource.values()) {
+            if (d1.getAmount(ress) != d2.getAmount(ress)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+
+    public static String dropString(Drop drop) {
+        final StringBuilder b = new StringBuilder();
+        for (int i = 0; i < RxRessource.values().length; ++i) {
+            b.append(RxRessource.values()[i].toString());
+            b.append(": "); //$NON-NLS-1$
+            b.append(drop.getAmount(RxRessource.values()[i]));
+            if (i != RxRessource.values().length - 1) {
+                b.append(", "); //$NON-NLS-1$
+            }
+        }
+        if (drop.hasArtifact()) {
+            b.append(", Artifact: yes"); //$NON-NLS-1$
+        } else {
+            b.append(", Artifact: no"); //$NON-NLS-1$
+        }
+        return b.toString();
+    }
+
+
+
+    public static int dropHash(Drop drop) {
+        return Objects.hash(Arrays.hashCode(drop.getAmountArray()), drop.hasArtifact());
+    }
+
+
+
+    public static int competitorHash(BattleReportCompetitor competitor) {
+        return Objects.hash(competitor.getOwnerName(), competitor.getKw(),
+                competitor.getShips());
+    }
+
+
+
+    public static boolean competitorsEqual(BattleReportCompetitor c1,
+            BattleReportCompetitor c2) {
+        return c1.getOwnerName().equals(c2.getOwnerName()) && c1.getKw() == c2.getKw()
+                && c1.getShips().equals(c2.getShips());
+    }
+
+
+
+    public static String competitorString(BattleReportCompetitor c) {
+        final StringBuilder b = new StringBuilder();
+        b.append(c.getOwnerName());
+        b.append(c.getOwnerClan());
+        b.append(" "); //$NON-NLS-1$
+        b.append(c.getKw());
+        b.append("/"); //$NON-NLS-1$
+        b.append(c.getXpMod());
+        return b.toString();
+    }
+
+
+
+    public static int reportHash(BattleReport report) {
+        return Objects.hash(report.getTactic(), report.getAttacker(),
+                report.getDefender(), report.getDrop(), report.getDate());
+    }
+
+
+
+    public static boolean reportsEqual(BattleReport b1, BattleReport b2) {
+        return b1.getTactic() == b2.getTactic() && b1.getDate().equals(b2.getDate())
+                && b1.getAttacker().equals(b2.getAttacker())
+                && b1.getDefender().equals(b2.getDefender());
+    }
+
+
+
+    public static String reportString(BattleReport report) {
+        final StringBuilder b = new StringBuilder();
+        b.append(report.getAttacker());
+        b.append(" vs. "); //$NON-NLS-1$
+        b.append(report.getDefender());
+        return b.toString();
+    }
+
+
+
+    public static boolean statsEqual(ShipStats s1, ShipStats s2) {
+        return s1.getAw() == s2.getAw() && s1.getShields() == s2.getShields()
+                && s1.getPz() == s2.getPz() && s1.getStructure() == s2.getStructure()
+                && s1.getMinCrew() == s2.getMinCrew()
+                && s1.getMaxCrew() == s2.getMaxCrew();
+    }
+
+
+
+    public static int statsHash(ShipStats stats) {
+        return Objects.hash(stats.getAw(), stats.getShields(), stats.getPz(),
+                stats.getStructure(), stats.getMinCrew(), stats.getMaxCrew());
+    }
+
+
+
+    public static String statsString(ShipStats stats) {
+        final StringBuilder b = new StringBuilder();
+        b.append("aw: "); //$NON-NLS-1$
+        b.append(stats.getAw());
+        b.append(", sh: "); //$NON-NLS-1$
+        b.append(stats.getShields());
+        b.append(", pz: "); //$NON-NLS-1$
+        b.append(stats.getPz());
+        b.append(", str: "); //$NON-NLS-1$
+        b.append(stats.getStructure());
+        return b.toString();
+    }
+
+
+
     private OrionObjectUtil() {
     }
+
 }
