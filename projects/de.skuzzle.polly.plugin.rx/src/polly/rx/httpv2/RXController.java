@@ -91,6 +91,7 @@ public class RXController extends PollyController {
     public final static String API_POST_QREPORT = "/postQReport"; //$NON-NLS-1$
     public final static String API_DELETE_REPORT = "/api/deleteReport"; //$NON-NLS-1$
     public final static String API_REPORT_STATISTICS = "/api/battlereportStatistics"; //$NON-NLS-1$
+    public final static String API_TEST_LOGIN = "/api/testLogin"; //$NON-NLS-1$
 
     public final static String GM_SCRAPE_SCOREBOARD = "/GM/scrapescoreboarddata.user.js"; //$NON-NLS-1$
     public final static String GM_KB_REPORT = "/GM/kbreport.user.js"; //$NON-NLS-1$
@@ -967,6 +968,17 @@ public class RXController extends PollyController {
         c.put("postSectorApi", OrionController.API_JSON_POST_SECTOR); //$NON-NLS-1$
         c.put("host", host); //$NON-NLS-1$
         return HttpAnswers.newTemplateAnswer(CONTENT_GM_ORIONV2, c);
+    }
+    
+    
+    
+    @Get(API_TEST_LOGIN)
+    public HttpAnswer testLogin(@Param("user") String userName, @Param("pw") String pwHash) {
+        final User u = this.getMyPolly().users().getUser(userName);
+        if (u == null || !u.getHashedPassword().equalsIgnoreCase(pwHash)) {
+            return new GsonHttpAnswer(200, new SuccessResult(false, "")); //$NON-NLS-1$
+        }
+        return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$;
     }
     
     
