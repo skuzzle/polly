@@ -16,7 +16,7 @@ public interface Binding {
      * Gets the type of this binding.
      * @return The binding's type.
      */
-    public Type gettType();
+    public Type getType();
     
     /**
      * Gets the scope to which this binding belongs.

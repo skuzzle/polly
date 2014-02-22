@@ -3,6 +3,7 @@ package de.skuzzle.polly.core.parser.dom;
 import de.skuzzle.parser.dom.ASTNode;
 import de.skuzzle.polly.dom.ASTOperator;
 import de.skuzzle.polly.dom.ASTVisitor;
+import de.skuzzle.polly.dom.bindings.Binding;
 
 public class ASTOperatorImpl extends AbstractPollyNode implements ASTOperator {
 
@@ -123,5 +124,12 @@ public class ASTOperatorImpl extends AbstractPollyNode implements ASTOperator {
         copy.setOrigin(this);
         copy.setSyntax(this.getSyntax());
         return copy;
+    }
+
+
+
+    @Override
+    public Binding getBinding() {
+        return null;
     }
 }

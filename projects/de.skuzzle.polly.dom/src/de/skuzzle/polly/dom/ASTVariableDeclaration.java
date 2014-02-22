@@ -1,0 +1,28 @@
+package de.skuzzle.polly.dom;
+
+
+public interface ASTVariableDeclaration extends ASTDeclaration {
+
+    /**
+     * Gets the body of this declaration.
+     * 
+     * @return The body.
+     */
+    public ASTExpression getBody();
+    
+    /**
+     * Sets the provided expression as body of this declaration.
+     * 
+     * @param body The new body.
+     */
+    public void setBody(ASTExpression body);
+    
+    @Override
+    public ASTVariableDeclaration getOrigin();
+    
+    @Override
+    public ASTVariableDeclaration deepOrigin();
+    
+    @Override
+    public ASTVariableDeclaration copy();
+}

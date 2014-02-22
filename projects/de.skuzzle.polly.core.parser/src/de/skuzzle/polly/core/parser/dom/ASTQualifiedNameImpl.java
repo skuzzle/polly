@@ -10,6 +10,7 @@ import de.skuzzle.parser.dom.ASTNode;
 import de.skuzzle.polly.dom.ASTName;
 import de.skuzzle.polly.dom.ASTQualifiedName;
 import de.skuzzle.polly.dom.ASTVisitor;
+import de.skuzzle.polly.dom.bindings.Binding;
 
 public class ASTQualifiedNameImpl extends AbstractPollyNode implements ASTQualifiedName {
 
@@ -202,5 +203,12 @@ public class ASTQualifiedNameImpl extends AbstractPollyNode implements ASTQualif
             return visitor.leave(this) != PROCESS_ABORT;
         }
         return true;
+    }
+
+
+
+    @Override
+    public Binding getBinding() {
+        return this.getLastName().getBinding();
     }
 }

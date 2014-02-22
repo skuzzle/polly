@@ -7,5 +7,7 @@ package de.skuzzle.polly.dom.types;
  */
 public interface Type {
 
+    public String getName();
     
+    public boolean isComposite();
 }
