@@ -37,6 +37,15 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
     
     private abstract class WriteImpl implements Write {
         
+        private final EntityManager em;
+        
+        
+        public WriteImpl(EntityManager em) {
+            this.em = em;
+        }
+        
+        
+        
         @Override
         public <T> Write all(Iterable<T> list) {
             for (final T element : list) {
@@ -76,7 +85,7 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
         @Override
         public Read read() {
             // return new unlocked read instance
-            return new ReadImpl() {
+            return new ReadImpl(this.em) {
                 @Override
                 public void close() {
                     // do nothing
@@ -89,6 +98,15 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
     
     private abstract class ReadImpl implements Read {
 
+        private final EntityManager em;
+        
+        
+        public ReadImpl(EntityManager em) {
+            this.em = em;
+        }
+        
+        
+        
         @Override
         public <T> T find(Class<T> type, Object key) {
             logger.trace("Looking up primary key " + key + " in " + type.getName());
@@ -405,8 +423,8 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
 
     public PersistenceManagerV2Impl() {
         this.locker = new ReentrantReadWriteLock();
-        this.executor = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder(
-            "PERSISTENCE"));
+        this.executor = Executors.newSingleThreadExecutor(
+                new ThreadFactoryBuilder("PERSISTENCE")); //$NON-NLS-1$
         this.entities = new EntityList();
         this.entityConverter = new EntityConverterManagerImpl(this);
     }
@@ -588,7 +606,7 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
         this.locker.readLock().lock();
         logger.trace("Got read lock.");
         
-        return new ReadImpl() {
+        return new ReadImpl(this.em) {
             @Override
             public void close() {
                 logger.trace("Readlock released");
@@ -615,7 +633,7 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
         
         this.startTransaction();
         
-        return new WriteImpl() {
+        return new WriteImpl(this.em) {
             @Override
             public void close() throws DatabaseException {
                 try {
