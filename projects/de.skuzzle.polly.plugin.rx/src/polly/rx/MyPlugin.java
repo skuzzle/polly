@@ -21,6 +21,7 @@ import polly.rx.core.TrainManagerV2;
 import polly.rx.core.orion.FleetTracker;
 import polly.rx.core.orion.Orion;
 import polly.rx.core.orion.ResourcePriceProvider;
+import polly.rx.core.orion.VenadUserMapper;
 import polly.rx.core.orion.WormholeProvider;
 import polly.rx.core.orion.datasource.DBOrionAccess;
 import polly.rx.core.orion.datasource.MemoryFleetTracker;
@@ -272,6 +273,7 @@ public class MyPlugin extends PollyPlugin {
         final WormholeProvider holeProvider = new WLSWormholeProvider();
         final FleetTracker tracker = new MemoryFleetTracker();
         final ResourcePriceProvider priceProvider = new QZoneResourcePriceProvider();
+        final VenadUserMapper userMapper = new VenadUserMapper(this.getMyPolly().users());
         Orion.initialize(
                 dboa.getQuadrantProvider(), 
                 dboa.getQuadrantUpdater(), 
@@ -279,7 +281,8 @@ public class MyPlugin extends PollyPlugin {
                 dboa.getPortalProvider(),
                 dboa.getPortalUpdater(),
                 tracker, 
-                priceProvider
+                priceProvider,
+                userMapper
             );
         
         final OrionController oc = new OrionController(this.getMyPolly(), azManager);

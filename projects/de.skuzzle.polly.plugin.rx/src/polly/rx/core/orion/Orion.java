@@ -12,28 +12,28 @@ import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.Types.ListType;
 import de.skuzzle.polly.sdk.Types.StringType;
 import de.skuzzle.polly.sdk.User;
-import de.skuzzle.polly.sdk.time.Time;
 
 public enum Orion implements UniverseFactory {
     INSTANCE;
 
     private ResourcePriceProvider priceProvider;
+    private LoginCodeManager loginCodeManager;
     private QuadrantProvider quadProvider;
     private WormholeProvider holeProvider;
+    private VenadUserMapper userMapper;
     private QuadrantUpdater quadUpdater;
     private PortalProvider portalProvider;
     private PortalUpdater portalUpdater;
     private FleetTracker fleetTracker;
     private ShipProvider shipProvider;
     private PathPlanner planner;
-    private LoginCode code;
 
 
-    
     public static void initialize(QuadrantProvider quadProvider,
             QuadrantUpdater quadUpdater, WormholeProvider holeProvider,
-            PortalProvider portalProvider, PortalUpdater portalUpdater, 
-            FleetTracker fleetTracker, ResourcePriceProvider priceProvider) {
+            PortalProvider portalProvider, PortalUpdater portalUpdater,
+            FleetTracker fleetTracker, ResourcePriceProvider priceProvider,
+            VenadUserMapper userMapper) {
 
         if (INSTANCE.quadProvider != null) {
             throw new IllegalStateException("already initialized"); //$NON-NLS-1$
@@ -51,6 +51,8 @@ public enum Orion implements UniverseFactory {
             throw new NullPointerException(FleetTracker.class.getSimpleName());
         } else if (priceProvider == null) {
             throw new NullPointerException(ResourcePriceProvider.class.getSimpleName());
+        } else if (userMapper == null) {
+            throw new NullPointerException(VenadUserMapper.class.getSimpleName());
         } // TODO: ship provider
 
         INSTANCE.quadProvider = quadProvider;
@@ -60,7 +62,9 @@ public enum Orion implements UniverseFactory {
         INSTANCE.portalUpdater = portalUpdater;
         INSTANCE.fleetTracker = fleetTracker;
         INSTANCE.priceProvider = priceProvider;
+        INSTANCE.userMapper = userMapper;
         INSTANCE.planner = new PathPlanner(quadProvider, holeProvider);
+        INSTANCE.loginCodeManager = new LoginCodeManager();
     }
 
 
@@ -105,49 +109,50 @@ public enum Orion implements UniverseFactory {
     }
 
 
-    
+
     public PortalUpdater getPortalUpdater() {
         return this.portalUpdater;
     }
-    
-    
-    
+
+
+
     public ResourcePriceProvider getPriceProvider() {
         return this.priceProvider;
     }
-    
-    
-    
+
+
+
     public ShipProvider getShipProvider() {
         this.checkInitialized();
         return this.shipProvider;
     }
-    
 
-    
+
+
     public PathPlanner getPathPlanner() {
         assert this.checkInitialized();
         return this.planner;
     }
-    
-    
-    
-    
+
+
+
     public FleetTracker getFleetTracker() {
         assert this.checkInitialized();
         return this.fleetTracker;
     }
+
     
     
-    
-    public synchronized void setLoginCode(String code) {
-        this.code = new LoginCode(Time.currentTime(), code);
+    public LoginCodeManager getLoginCodeManager() {
+        assert this.checkInitialized();
+        return this.loginCodeManager;
     }
+
+
     
-    
-    
-    public synchronized LoginCode getLoginCode() {
-        return this.code;
+    public VenadUserMapper getUserMapper() {
+        this.checkInitialized();
+        return this.userMapper;
     }
 
 

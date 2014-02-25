@@ -371,19 +371,17 @@ public class OrionController extends PollyController {
     
     @Get(API_SUBMIT_CODE)
     public HttpAnswer submitCode(@Param("code") String code) {
-        Orion.INSTANCE.setLoginCode(code);
-        return HttpAnswers.newStringAnswer("ok"); //$NON-NLS-1$
+        if (Orion.INSTANCE.getLoginCodeManager().updateCurrentCode(code)) {
+            return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
+        }
+        return new GsonHttpAnswer(200, new SuccessResult(false, "")); //$NON-NLS-1$
     }
     
     
     
     @Get(API_REQUEST_CODE)
     public HttpAnswer requestCode() {
-        LoginCode code = Orion.INSTANCE.getLoginCode();
-        if (code == null) {
-            code = new LoginCode(Time.currentTime(), ""); //$NON-NLS-1$
-        }
-        
+        final LoginCode code = Orion.INSTANCE.getLoginCodeManager().getCurrentCode();
         return new GsonHttpAnswer(200, code);
     }
 
