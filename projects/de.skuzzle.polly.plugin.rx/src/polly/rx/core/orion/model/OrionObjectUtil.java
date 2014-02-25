@@ -133,12 +133,9 @@ public final class OrionObjectUtil {
                 && f1.getName().equals(f2.getName());
     }
 
-
-
-    public static boolean dropEquals(Drop d1, Drop d2) {
-        if (d1.hasArtifact() != d2.hasArtifact()) {
-            return false;
-        }
+    
+    
+    public static boolean resourcesEquals(Resources d1, Resources d2) {
         for (final RxRessource ress : RxRessource.values()) {
             if (d1.getAmount(ress) != d2.getAmount(ress)) {
                 return false;
@@ -149,7 +146,7 @@ public final class OrionObjectUtil {
 
 
 
-    public static String dropString(Drop drop) {
+    public static String resourcesString(Resources drop) {
         final StringBuilder b = new StringBuilder();
         for (int i = 0; i < RxRessource.values().length; ++i) {
             b.append(RxRessource.values()[i].toString());
@@ -159,6 +156,29 @@ public final class OrionObjectUtil {
                 b.append(", "); //$NON-NLS-1$
             }
         }
+        return b.toString();
+    }
+
+
+
+    public static int resourcesHash(Resources drop) {
+        return Arrays.hashCode(drop.getAmountArray());
+    }
+    
+
+
+    public static boolean dropEquals(Drop d1, Drop d2) {
+        if (d1.hasArtifact() != d2.hasArtifact()) {
+            return false;
+        }
+        return resourcesEquals(d1, d2);
+    }
+
+
+
+    public static String dropString(Drop drop) {
+        final StringBuilder b = new StringBuilder();
+        b.append(resourcesString(drop));
         if (drop.hasArtifact()) {
             b.append(", Artifact: yes"); //$NON-NLS-1$
         } else {
