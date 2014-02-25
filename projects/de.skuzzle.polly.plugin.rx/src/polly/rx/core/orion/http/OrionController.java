@@ -70,7 +70,6 @@ import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLTools;
 import de.skuzzle.polly.sdk.resources.Constants;
 import de.skuzzle.polly.sdk.time.Milliseconds;
-import de.skuzzle.polly.sdk.time.Time;
 import de.skuzzle.polly.tools.io.FastByteArrayInputStream;
 import de.skuzzle.polly.tools.io.FastByteArrayOutputStream;
 
@@ -370,7 +369,9 @@ public class OrionController extends PollyController {
     
     
     @Get(API_SUBMIT_CODE)
-    public HttpAnswer submitCode(@Param("code") String code) {
+    public HttpAnswer submitCode(@Param("code") String code, 
+            @Param("user") String user, @Param("pw") String pw) throws AlternativeAnswerException {
+        this.checkLogin(user, pw);
         if (Orion.INSTANCE.getLoginCodeManager().updateCurrentCode(code)) {
             return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
         }
@@ -380,7 +381,9 @@ public class OrionController extends PollyController {
     
     
     @Get(API_REQUEST_CODE)
-    public HttpAnswer requestCode() {
+    public HttpAnswer requestCode(@Param("user") String user, @Param("pw") String pw) 
+            throws AlternativeAnswerException {
+        this.checkLogin(user, pw);
         final LoginCode code = Orion.INSTANCE.getLoginCodeManager().getCurrentCode();
         return new GsonHttpAnswer(200, code);
     }
