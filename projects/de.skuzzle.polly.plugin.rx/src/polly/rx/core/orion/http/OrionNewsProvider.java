@@ -209,7 +209,7 @@ public class OrionNewsProvider implements HttpEventHandler, FleetListener, Porta
         final User trainer = e.getSource().getTrainer(e.getTraining().getTrainerId());
         this.addNews(e.getTraining().getForUser(), new NewsEntry(trainer.getName(), 
                 NewsType.TRAINING_FINISHED, e.getTraining(), 
-                e.getTraining().getTrainStart()));
+                e.getTraining().getTrainFinished()));
     }
 
 
