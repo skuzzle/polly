@@ -26,14 +26,16 @@ public enum Orion implements UniverseFactory {
     private PortalUpdater portalUpdater;
     private FleetTracker fleetTracker;
     private ShipProvider shipProvider;
+    private AlienManager alienManager;
     private PathPlanner planner;
+
 
 
     public static void initialize(QuadrantProvider quadProvider,
             QuadrantUpdater quadUpdater, WormholeProvider holeProvider,
-            PortalProvider portalProvider, PortalUpdater portalUpdater,
-            FleetTracker fleetTracker, ResourcePriceProvider priceProvider,
-            VenadUserMapper userMapper) {
+            PortalProvider portalProvider, AlienManager alienManager,
+            PortalUpdater portalUpdater, FleetTracker fleetTracker,
+            ResourcePriceProvider priceProvider, VenadUserMapper userMapper) {
 
         if (INSTANCE.quadProvider != null) {
             throw new IllegalStateException("already initialized"); //$NON-NLS-1$
@@ -51,6 +53,8 @@ public enum Orion implements UniverseFactory {
             throw new NullPointerException(FleetTracker.class.getSimpleName());
         } else if (priceProvider == null) {
             throw new NullPointerException(ResourcePriceProvider.class.getSimpleName());
+        } else if (alienManager == null) {
+            throw new NullPointerException(AlienManager.class.getSimpleName());
         } else if (userMapper == null) {
             throw new NullPointerException(VenadUserMapper.class.getSimpleName());
         } // TODO: ship provider
@@ -60,6 +64,7 @@ public enum Orion implements UniverseFactory {
         INSTANCE.quadUpdater = quadUpdater;
         INSTANCE.portalProvider = portalProvider;
         INSTANCE.portalUpdater = portalUpdater;
+        INSTANCE.alienManager = alienManager;
         INSTANCE.fleetTracker = fleetTracker;
         INSTANCE.priceProvider = priceProvider;
         INSTANCE.userMapper = userMapper;
@@ -122,6 +127,13 @@ public enum Orion implements UniverseFactory {
 
 
 
+    public AlienManager getAlienManager() {
+        assert this.checkInitialized();
+        return this.alienManager;
+    }
+
+
+
     public ShipProvider getShipProvider() {
         this.checkInitialized();
         return this.shipProvider;
@@ -141,15 +153,15 @@ public enum Orion implements UniverseFactory {
         return this.fleetTracker;
     }
 
-    
-    
+
+
     public LoginCodeManager getLoginCodeManager() {
         assert this.checkInitialized();
         return this.loginCodeManager;
     }
 
 
-    
+
     public VenadUserMapper getUserMapper() {
         this.checkInitialized();
         return this.userMapper;

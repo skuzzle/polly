@@ -133,8 +133,8 @@ public final class OrionObjectUtil {
                 && f1.getName().equals(f2.getName());
     }
 
-    
-    
+
+
     public static boolean resourcesEquals(Resources d1, Resources d2) {
         for (final RxRessource ress : RxRessource.values()) {
             if (d1.getAmount(ress) != d2.getAmount(ress)) {
@@ -164,7 +164,7 @@ public final class OrionObjectUtil {
     public static int resourcesHash(Resources drop) {
         return Arrays.hashCode(drop.getAmountArray());
     }
-    
+
 
 
     public static boolean dropEquals(Drop d1, Drop d2) {
@@ -279,6 +279,44 @@ public final class OrionObjectUtil {
 
 
 
+    public static boolean alienRaceEquals(AlienRace r1, AlienRace r2) {
+        return r1.isAggressive() == r2.isAggressive()
+                && r1.getName().equals(r2.getName())
+                && r1.getSubName().equals(r2.getSubName());
+    }
+
+
+
+    public static int alienRaceHash(AlienRace r) {
+        return Objects.hash(r.getName(), r.getSubName(), r.isAggressive());
+    }
+
+
+
+    public static String alienRaceString(AlienRace r) {
+        return r.getName() + " - " + r.getSubName(); //$NON-NLS-1$
+    }
+
+
+
+    public static String alienSpawnString(AlienSpawn spawn) {
+        return spawn.getName() + " - " + spawn.getRace().toString(); //$NON-NLS-1$
+    }
+
+
+
+    public static int alienSpawnHash(AlienSpawn spawn) {
+        return Objects.hash(spawn.getName(), spawn.getRace(), spawn.getSector());
+    }
+
+    
+
+    public static boolean alienSpawnsEqual(AlienSpawn s1, AlienSpawn s2) {
+        return s1.getName().equals(s2.getName()) && s1.getRace().equals(s2.getRace()) && 
+                s1.getSector().equals(s2.getSector());
+    }
+
+    
     private OrionObjectUtil() {
     }
 

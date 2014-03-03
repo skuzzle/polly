@@ -279,6 +279,7 @@ public class MyPlugin extends PollyPlugin {
                 dboa.getQuadrantUpdater(), 
                 holeProvider, 
                 dboa.getPortalProvider(),
+                dboa.getAlienManager(),
                 dboa.getPortalUpdater(),
                 tracker, 
                 priceProvider,
