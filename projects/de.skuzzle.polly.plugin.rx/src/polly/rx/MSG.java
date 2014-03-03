@@ -428,7 +428,7 @@ public class MSG extends Constants {
     public static String loadFull;
 
     public static String htmlOrionName;
-    public static String htmlpOrionDesc;
+    public static String htmlOrionDesc;
     public static String htmlAvailableQuads;
     public static String htmlOrionResources;
     public static String htmlOrionWormholes;
