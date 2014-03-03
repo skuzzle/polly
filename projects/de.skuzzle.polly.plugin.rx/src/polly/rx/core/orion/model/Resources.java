@@ -7,9 +7,9 @@ import polly.rx.entities.RxRessource;
 
 public interface Resources extends Equatable {
     
-    public Map<RxRessource, Integer> asMap();
+    public Map<RxRessource, ? extends Number> asMap();
 
-    public abstract int getAmount(RxRessource ress);
+    public abstract Number getAmount(RxRessource ress);
 
-    public abstract Integer[] getAmountArray();
+    public abstract Number[] getAmountArray();
 }

@@ -3,12 +3,14 @@ package polly.rx.core.orion.http;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.util.AbstractList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -31,6 +33,7 @@ import polly.rx.core.orion.model.Portal;
 import polly.rx.core.orion.model.PortalType;
 import polly.rx.core.orion.model.Quadrant;
 import polly.rx.core.orion.model.QuadrantDecorator;
+import polly.rx.core.orion.model.Resources;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.SectorDecorator;
 import polly.rx.core.orion.model.SectorType;
@@ -459,9 +462,16 @@ public class OrionController extends PollyController {
                     q, PortalType.PRIVATE);
             final Collection<? extends Portal> cportals = this.portalProvider.getPortals(
                     q, PortalType.CLAN);
+            
+            final Resources hourlyProduction = QuadrantUtils.calculateHourlyProduction(q);
+            final DecimalFormat nf = (DecimalFormat) DecimalFormat.getInstance(Locale.ENGLISH);
+            nf.applyPattern("0.00"); //$NON-NLS-1$
+            
             c.put("holes", holes); //$NON-NLS-1$
             c.put("pportals", pportals); //$NON-NLS-1$
             c.put("cportals", cportals); //$NON-NLS-1$
+            c.put("nf", nf); //$NON-NLS-1$
+            c.put("hourlyProduction", hourlyProduction.getAmountArray()); //$NON-NLS-1$
         }
         c.put("showQuadInfo", showInfo); //$NON-NLS-1$
         c.put("quad", q); //$NON-NLS-1$

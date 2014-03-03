@@ -2,7 +2,21 @@
 $sector.getQuadName() $sector.getX(), $sector.getY()
 #end
 
-
+#macro ( QUADRANT_PRODUCTION $resourceArr ) 
+<table style="margin-top: 10px;">
+  <tr><th colspan="14">$MSG.htmlOrionHourlyProduction</th></tr>
+  <tr>
+#foreach ($i in [1..14])
+  <th style="text-align: center"><img src="/polly/rx/httpv2/view/r${i}.gif"/></th>
+#end
+  </tr>
+  <tr>
+#foreach ($i in [0..13])
+  <td style="text-align: center">$nf.format($resourceArr[$i].floatValue())</td>
+#end
+  </tr>
+</table>
+#end
 
 #macro ( SECTOR_LINK $sector $quadId)
 <a href="#" class="sector" quadName="$quadId" col="$sector.getX()" row="$sector.getY()">

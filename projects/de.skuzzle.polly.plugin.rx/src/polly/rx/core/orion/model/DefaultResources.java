@@ -11,11 +11,11 @@ import polly.rx.entities.RxRessource;
 
 public class DefaultResources implements Resources {
 
-    private final Map<RxRessource, Integer> resources;
+    private final Map<RxRessource, Number> resources;
 
 
 
-    public DefaultResources(Map<RxRessource, Integer> drop) {
+    public DefaultResources(Map<RxRessource, ? extends Number> drop) {
         Check.objects(drop).notNull();
         this.resources = new EnumMap<>(RxRessource.class);
         this.resources.putAll(drop);
@@ -34,7 +34,7 @@ public class DefaultResources implements Resources {
 
 
     @Override
-    public Map<RxRessource, Integer> asMap() {
+    public Map<RxRessource, Number> asMap() {
         return Collections.unmodifiableMap(this.resources);
     }
 
@@ -76,8 +76,8 @@ public class DefaultResources implements Resources {
 
 
     @Override
-    public int getAmount(RxRessource ress) {
-        final Integer amount = this.resources.get(ress);
+    public Number getAmount(RxRessource ress) {
+        final Number amount = this.resources.get(ress);
         if (amount == null) {
             return 0;
         }
@@ -87,8 +87,8 @@ public class DefaultResources implements Resources {
 
 
     @Override
-    public Integer[] getAmountArray() {
-        final Integer[] values = new Integer[this.resources.size()];
+    public Number[] getAmountArray() {
+        final Number[] values = new Number[this.resources.size()];
         this.resources.values().toArray(values);
         return values;
     }

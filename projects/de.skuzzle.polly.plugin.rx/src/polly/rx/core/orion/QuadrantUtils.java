@@ -6,17 +6,23 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import polly.rx.MSG;
+import polly.rx.core.orion.model.DefaultResources;
+import polly.rx.core.orion.model.Production;
 import polly.rx.core.orion.model.Quadrant;
+import polly.rx.core.orion.model.Resources;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.SectorType;
 import polly.rx.core.orion.pathplanning.Graph;
 import polly.rx.core.orion.pathplanning.Graph.EdgeCosts;
 import polly.rx.core.orion.pathplanning.Graph.LazyBuilder;
+import polly.rx.entities.RxRessource;
 import polly.rx.parsing.ParseException;
 
 
@@ -145,6 +151,23 @@ public final class QuadrantUtils {
             return Integer.MAX_VALUE;
         }
         return path.getPath().size();
+    }
+    
+    
+    
+    public static Resources calculateHourlyProduction(Quadrant quad) {
+        final Map<RxRessource, Float> production = new EnumMap<>(RxRessource.class);
+        for (final RxRessource res : RxRessource.values()) {
+            production.put(res, 0.f);
+        }
+        for (final Sector sector : quad.getSectors()) {
+            for (final Production prod : sector.getRessources()) {
+                Float currentProd = production.get(prod.getRess());
+                currentProd += prod.getRate();
+                production.put(prod.getRess(), currentProd);
+            }
+        }
+        return new DefaultResources(production);
     }
     
     
