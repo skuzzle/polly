@@ -256,7 +256,7 @@
             #if ($me.mustRenderSubEntries($user, $myPolly.roles())) 
             <ul>
                 #foreach ($subMe in $me.getSubEntries())
-                <li><a id="$subMe.hashCode()" href="$subMe.getUrl()" class="menuEntry">$subMe.getName()</a></li>
+                <li><a id="$subMe.hashCode()" href="$subMe.getUrl()" class="menuEntry" style="padding-left:20px">$subMe.getName()</a></li>
                 #end
             </ul>
             #end
