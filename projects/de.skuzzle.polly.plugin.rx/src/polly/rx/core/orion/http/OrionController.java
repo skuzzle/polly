@@ -458,8 +458,8 @@ public class OrionController extends PollyController {
 
 
     @Get(value = PAGE_QUAD_LAYOUT, name = ORION_NAME_KEY)
-    @OnRegister({ WebinterfaceManager.ADD_SUB_ENTRY, "Orion", MSG.FAMILY, ORION_DESC_KEY,
-            VIEW_ORION_PREMISSION })
+    //@OnRegister({ WebinterfaceManager.ADD_SUB_ENTRY, "Orion", MSG.FAMILY, ORION_DESC_KEY,
+    //        VIEW_ORION_PREMISSION })
     public HttpAnswer quadLayout() throws AlternativeAnswerException {
         this.requirePermissions(OrionController.WRITE_ORION_PREMISSION);
         return this.makeAnswer(this.createContext(CONTENT_QUAD_LAYOUT));
