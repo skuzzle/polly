@@ -491,6 +491,12 @@ public class MSG extends Constants {
     public static String htmlAlienRaceAggressive;
     public static String htmlAlienRaceYes;
     public static String htmlAlienRaceNo;
+    public static String htmlAlienSpawns;
+    public static String htmlAlienSpawnColumns;
+    public static String htmlAlienSpawnAdd;
+    public static String htmlAlienSpawnSector;
+    public static String htmlAlienSpawnSectorHint;
+    public static String htmlAlienRace;
     
     // MyPlugin
     public static String pluginVenadDesc;

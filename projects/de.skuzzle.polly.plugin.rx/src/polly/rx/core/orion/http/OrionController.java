@@ -106,6 +106,7 @@ public class OrionController extends PollyController {
     public final static String API_REQUEST_CODE = "/api/orion/json/requestCode"; //$NON-NLS-1$
     public final static String API_REMOVE_RACE = "/api/removeRace"; //$NON-NLS-1$
     public final static String API_ADD_RACE = "/api/addRace"; //$NON-NLS-1$
+    public final static String API_ADD_SPAWN = "/api/addSpawn"; //$NON-NLS-1$
     
     private final static String CONTENT_QUAD_LAYOUT = "/polly/rx/httpv2/view/orion/quadlayout.html"; //$NON-NLS-1$
     private final static String CONTENT_QUADRANT = "/polly/rx/httpv2/view/orion/quadrant.html"; //$NON-NLS-1$
@@ -472,7 +473,9 @@ public class OrionController extends PollyController {
             ALIEN_MANAGEMENT_DESC_KEY, MANAGE_RACE_PERMISSION })
     public HttpAnswer alienManagement() throws AlternativeAnswerException {
         this.requirePermissions(OrionController.MANAGE_RACE_PERMISSION);
-        return this.makeAnswer(this.createContext(CONTENT_ALIEN_MANAGER));
+        final Map<String, Object> c = this.createContext(CONTENT_ALIEN_MANAGER);
+        c.put("allRaces", Orion.INSTANCE.getAlienManager().getAllRaces()); //$NON-NLS-1$
+        return this.makeAnswer(c);
     }
 
 
@@ -501,6 +504,23 @@ public class OrionController extends PollyController {
             Orion.INSTANCE.getAlienManager().addRace(name, type, aggressive);
             return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
         } catch (OrionException e) {
+            return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
+        }
+    }
+    
+    
+    
+    @Get(API_ADD_SPAWN)
+    public HttpAnswer addSpawn(@Param("name") String name, @Param("raceId") int raceId, 
+            @Param("sector") String sectorString) {
+        
+        try {
+            final Sector s = QuadrantUtils.parse(sectorString);
+            final AlienRace race = Orion.INSTANCE.getAlienManager().getRaceById(raceId);
+            
+            Orion.INSTANCE.getAlienManager().addSpawn(name, race, s);
+            return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
+        } catch (Exception e) {
             return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
         }
     }

@@ -30,6 +30,7 @@ import polly.rx.core.orion.datasource.WLSWormholeProvider;
 import polly.rx.core.orion.http.OrionController;
 import polly.rx.core.orion.http.OrionNewsProvider;
 import polly.rx.core.orion.model.AlienRace;
+import polly.rx.core.orion.model.AlienSpawn;
 import polly.rx.entities.AZEntry;
 import polly.rx.entities.BattleDrop;
 import polly.rx.entities.BattleReport;
@@ -44,6 +45,7 @@ import polly.rx.entities.FleetScanShip;
 import polly.rx.entities.ScoreBoardEntry;
 import polly.rx.entities.TrainEntityV3;
 import polly.rx.httpv2.AlienRaceModel;
+import polly.rx.httpv2.AlienSpawnModel;
 import polly.rx.httpv2.BattleReportModel;
 import polly.rx.httpv2.BattleReportShipModel;
 import polly.rx.httpv2.FleetScanShipTableModel;
@@ -189,6 +191,8 @@ public class MyPlugin extends PollyPlugin {
         
         final HTMLTableModel<AlienRace> alienRaceModel = new AlienRaceModel();
         final HTMLTable<AlienRace> alienRaceTable = new HTMLTable<>("alienRaces", alienRaceModel, myPolly); //$NON-NLS-1$
+        final HTMLTableModel<AlienSpawn> alienSpawnModel = new AlienSpawnModel();
+        final HTMLTable<AlienSpawn> alienSpawnTable = new HTMLTable<>("alienSpawns", alienSpawnModel, myPolly); //$NON-NLS-1$
         
         myPolly.webInterface().getServer().addHttpEventHandler("/api/allFleetScans", fleetScanTable); //$NON-NLS-1$
         myPolly.webInterface().getServer().addHttpEventHandler("/api/allFleetScanShips", fleetScanShipTable); //$NON-NLS-1$
@@ -202,6 +206,7 @@ public class MyPlugin extends PollyPlugin {
         myPolly.webInterface().getServer().addHttpEventHandler("/api/reportDefenderShips", reportDefenderShipTable); //$NON-NLS-1$
         
         myPolly.webInterface().getServer().addHttpEventHandler("/api/alienRaces", alienRaceTable); //$NON-NLS-1$
+        myPolly.webInterface().getServer().addHttpEventHandler("/api/alienSpawns", alienSpawnTable); //$NON-NLS-1$
         
         myPolly.webInterface().getServer().addHttpEventHandler("/api/closedTrainings", trainTable); //$NON-N //$NON-NLS-1$
         myPolly.webInterface().getServer().addHttpEventHandler("/api/openTrainings", openTrainTable); //$NON-N //$NON-NLS-1$

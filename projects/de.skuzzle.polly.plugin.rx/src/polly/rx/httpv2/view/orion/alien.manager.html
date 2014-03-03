@@ -5,6 +5,7 @@
     </div>
 </div>
 
+
 <div class="highlight contentBox">
     #CONTENT_HEADER ($MSG.htmlAlienRaceAdd)
     <div class="content">
@@ -30,9 +31,46 @@
     </div>
 </div>
 
+<div class="highlight contentBox">
+    #CONTENT_HEADER ($MSG.htmlAlienSpawns)
+    <div class="content">
+        <table id="alienSpawns"></table>
+    </div>
+</div>
+
+<div class="highlight contentBox">
+    #CONTENT_HEADER ($MSG.htmlAlienSpawnAdd)
+    <div class="content">
+    
+    <form id="addRace">
+    <table>
+    <tr>
+        <td>$MSG.htmlAlienRaceName</td><td><input type="text" style="textbox" id="spawnName"/></td>
+    </tr>
+    <tr>
+        <td>$MSG.htmlAlienSpawnSector</td><td><input type="text" style="textbox" id="sector"/><br/>$MSG.htmlAlienSpawnSectorHint</td>
+    </tr>
+    <tr>
+        <td>$MSG.htmlAlienRace</td><td>
+        <select size="1" id="spawnRace">
+        #foreach ($race in $allRaces)
+            <option value="$race.getId()">$race</option>
+        #end
+        </select>
+        </td>
+    </tr>
+    <tr>
+      <td colspan="2"><input type="button" value="Hinzufügen" class="button" id="addSpawn" onclick="addSpawn()" /></td>
+    </tr>
+    </table>
+    </form>
+    </div>
+</div>
+
 <script>
 $(document).ready(function() {
     loadTable("/api/alienRaces", "alienRaces");
+    loadTable("/api/alienSpawns", "alienSpawns");
 });
 function addRace() {
 	var name = $("#name");
@@ -57,6 +95,30 @@ function removeRace(id) {
         var result = JSON.parse(data);
         if (result.success) {
         	loadTable("/api/alienRaces?updateAll=true", "alienRaces");
+        } else {
+            alert(result.message);
+        }
+    });
+}
+function addSpawn() {
+    var name = $("#spawnName");
+    var raceId = $("#spawnRace");
+    $.get("$PAGE_ADDSPAWN?name="+name.val()+"&raceId="+raceId.val(), function(data) {
+        var result = JSON.parse(data);
+        if (result.success) {
+            name.val("");
+            raceId.val("");
+            loadTable("/api/alienSpawns?updateAll=true", "alienSpawns");
+        } else {
+            alert(result.message);
+        }
+    });
+}
+function removeSpawn(id) {
+    $.get("$PAGE_REMOVESPAWN?id="+id, function(data) {
+        var result = JSON.parse(data);
+        if (result.success) {
+        	loadTable("/api/alienSpawns?updateAll=true", "alienSpawns");
         } else {
             alert(result.message);
         }
