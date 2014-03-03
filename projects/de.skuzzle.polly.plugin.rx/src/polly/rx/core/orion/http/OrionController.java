@@ -29,6 +29,7 @@ import polly.rx.core.orion.QuadrantProviderDecorator;
 import polly.rx.core.orion.QuadrantUtils;
 import polly.rx.core.orion.WormholeProvider;
 import polly.rx.core.orion.WormholeProviderDecorator;
+import polly.rx.core.orion.model.AlienRace;
 import polly.rx.core.orion.model.Portal;
 import polly.rx.core.orion.model.PortalType;
 import polly.rx.core.orion.model.Quadrant;
@@ -82,8 +83,11 @@ public class OrionController extends PollyController {
     public final static String WRITE_ORION_PREMISSION = "polly.permission.WRITE_ORION"; //$NON-NLS-1$
     public final static String ROUTE_ORION_PREMISSION = "polly.permission.ROUTE_ORION"; //$NON-NLS-1$
 
+    public final static String MANAGE_RACE_PERMISSION = "polly.permission.MANAGE_ALIEN_RACES"; //$NON-NLS-1$
+
     public final static String PAGE_ORION = "/pages/orion"; //$NON-NLS-1$
     public final static String PAGE_QUAD_LAYOUT = "/pages/orion/quadlayout"; //$NON-NLS-1$
+    public final static String PAGE_ALIEN_MANAGEMENT = "/pages/orion/manageAliens"; //$NON-NLS-1$
 
     public final static String API_GET_QUADRANT = "/api/orion/quadrant"; //$NON-NLS-1$
     public final static String API_GET_SECTOR_INFO = "/api/orion/sector"; //$NON-NLS-1$
@@ -100,11 +104,14 @@ public class OrionController extends PollyController {
     public final static String API_JSON_POST_SECTOR = "/api/orion/json/postSector"; //$NON-NLS-1$
     public final static String API_SUBMIT_CODE = "/api/orion/get/loginCode"; //$NON-NLS-1$
     public final static String API_REQUEST_CODE = "/api/orion/json/requestCode"; //$NON-NLS-1$
+    public final static String API_REMOVE_RACE = "/api/removeRace"; //$NON-NLS-1$
+    public final static String API_ADD_RACE = "/api/addRace"; //$NON-NLS-1$
     
     private final static String CONTENT_QUAD_LAYOUT = "/polly/rx/httpv2/view/orion/quadlayout.html"; //$NON-NLS-1$
     private final static String CONTENT_QUADRANT = "/polly/rx/httpv2/view/orion/quadrant.html"; //$NON-NLS-1$
     private final static String CONTENT_SECTOR_INFO = "/polly/rx/httpv2/view/orion/sec_info.html"; //$NON-NLS-1$
     private final static String CONTENT_ORION = "/polly/rx/httpv2/view/orion/orion.html"; //$NON-NLS-1$
+    private final static String CONTENT_ALIEN_MANAGER = "/polly/rx/httpv2/view/orion/alien.manager.html"; //$NON-NLS-1$
     private final static String CONTENT_ROUTE = "/polly/rx/httpv2/view/orion/route.html"; //$NON-NLS-1$
     private final static String CONTENT_ROUTE_SINGLE = "/polly/rx/httpv2/view/orion/route.single.html"; //$NON-NLS-1$
     private final static String CONTENT_SHARE_ROUTE = "/polly/rx/httpv2/view/orion/route.share.html"; //$NON-NLS-1$
@@ -112,6 +119,8 @@ public class OrionController extends PollyController {
     private final static String REVORIX_CATEGORY_KEY = "httpRxCategory"; //$NON-NLS-1$
     private final static String ORION_NAME_KEY = "htmlOrionName"; //$NON-NLS-1$
     private final static String ORION_DESC_KEY = "htmlOrionDesc"; //$NON-NLS-1$
+    private final static String ALIEN_MANAGEMENT_NAME_KEY = "htmlOrionAlienManagement"; //$NON-NLS-1$
+    private final static String ALIEN_MANAGEMENT_DESC_KEY = "htmlOrionAlienManagementDesc"; //$NON-NLS-1$
 
     private final static String ROUTE_FROM_KEY = "routeFrom"; //$NON-NLS-1$
     private final static String ROUTE_TO_KEY = "routeTo"; //$NON-NLS-1$
@@ -120,8 +129,6 @@ public class OrionController extends PollyController {
     private final static String ROUTE_COUNT_KEY = "routeCount"; //$NON-NLS-1$
     private final static String QUAD_IMAGE_KEY = "quadImg_"; //$NON-NLS-1$
 
-    
-    
     public final static class DisplaySector extends SectorDecorator {
 
         private DisplaySector(Sector wrapped) {
@@ -135,17 +142,19 @@ public class OrionController extends PollyController {
         }
     }
 
-    
-    
     public final static class DisplayQuadrant extends QuadrantDecorator {
 
         private DisplayQuadrant(Quadrant wrapped) {
             super(wrapped);
         }
 
+
+
         public String getQuadId() {
             return this.getName().replace(" ", "_"); //$NON-NLS-1$ //$NON-NLS-2$
         }
+
+
 
         @Override
         public Sector getSector(int x, int y) {
@@ -153,13 +162,13 @@ public class OrionController extends PollyController {
         }
     }
 
-    
-    
     public final static class DisplayPortal extends PortalDecorator {
 
         public DisplayPortal(Portal wrapped) {
             super(wrapped);
         }
+
+
 
         @Override
         public Sector getSector() {
@@ -167,21 +176,23 @@ public class OrionController extends PollyController {
         }
     }
 
-    
-    
     public final static class DisplayPortalProvider extends PortalProviderDecorator {
 
         public DisplayPortalProvider(PortalProvider wrapped) {
             super(wrapped);
         }
 
-        private List<? extends Portal> decorate(
-                final List<? extends Portal> portals) {
+
+
+        private List<? extends Portal> decorate(final List<? extends Portal> portals) {
             return new AbstractList<Portal>() {
+
                 @Override
                 public Portal get(int idx) {
                     return new DisplayPortal(portals.get(idx));
                 }
+
+
 
                 @Override
                 public int size() {
@@ -189,6 +200,8 @@ public class OrionController extends PollyController {
                 }
             };
         }
+
+
 
         @Override
         public Portal getClanPortal(String nameOrTag) {
@@ -199,6 +212,8 @@ public class OrionController extends PollyController {
             return new DisplayPortal(p);
         }
 
+
+
         @Override
         public Portal getPersonalPortal(String ownerName) {
             final Portal p = super.getPersonalPortal(ownerName);
@@ -208,23 +223,27 @@ public class OrionController extends PollyController {
             return new DisplayPortal(p);
         }
 
+
+
         @Override
         public List<? extends Portal> getPortals(Sector sector, PortalType type) {
             return this.decorate(super.getPortals(sector, type));
         }
+
+
 
         @Override
         public List<? extends Portal> getPortals(Quadrant quadrant, PortalType type) {
             return this.decorate(super.getPortals(quadrant, type));
         }
 
+
+
         @Override
         public List<? extends Portal> getPortals(Sector sector) {
             return this.decorate(super.getPortals(sector));
         }
     }
-    
-    
 
     public final static class DisplayWormholeProvider extends WormholeProviderDecorator {
 
@@ -232,22 +251,30 @@ public class OrionController extends PollyController {
             super(wrapped);
         }
 
+
+
         private List<Wormhole> decorate(final List<Wormhole> holes) {
             return new AbstractList<Wormhole>() {
+
                 @Override
                 public Wormhole get(int index) {
                     return new WormholeDecorator(holes.get(index)) {
+
                         @Override
                         public Sector getSource() {
                             return new DisplaySector(super.getSource());
                         }
-                        
+
+
+
                         @Override
                         public Sector getTarget() {
                             return new DisplaySector(super.getTarget());
                         }
                     };
                 }
+
+
 
                 @Override
                 public int size() {
@@ -256,18 +283,20 @@ public class OrionController extends PollyController {
             };
         }
 
+
+
         @Override
         public List<Wormhole> getWormholes(Quadrant quadrant, QuadrantProvider quads) {
             return this.decorate(super.getWormholes(quadrant, quads));
         }
+
+
 
         @Override
         public List<Wormhole> getWormholes(Sector sector, QuadrantProvider quads) {
             return this.decorate(super.getWormholes(sector, quads));
         }
     }
-    
-    
 
     public final static class DisplayQuadrantProvider extends QuadrantProviderDecorator {
 
@@ -275,12 +304,17 @@ public class OrionController extends PollyController {
             super(wrapped);
         }
 
+
+
         private List<Quadrant> decorate(final List<? extends Quadrant> quadrants) {
             return new AbstractList<Quadrant>() {
+
                 @Override
                 public Quadrant get(int index) {
                     return new DisplayQuadrant(quadrants.get(index));
                 }
+
+
 
                 @Override
                 public int size() {
@@ -289,15 +323,21 @@ public class OrionController extends PollyController {
             };
         }
 
+
+
         @Override
         public List<Quadrant> getAllQuadrants() {
             return this.decorate(super.getAllQuadrants());
         }
 
+
+
         @Override
         public Quadrant getQuadrant(Sector sector) {
             return new DisplayQuadrant(super.getQuadrant(sector));
         }
+
+
 
         @Override
         public Quadrant getQuadrant(String name) {
@@ -305,12 +345,8 @@ public class OrionController extends PollyController {
             return new DisplayQuadrant(super.getQuadrant(name));
         }
     }
-    
-    
-    
+
     private final static long QUAD_IMAGE_CACHE_TIME = Milliseconds.fromMinutes(30);
-    
-    
 
     private final QuadrantProvider quadProvider;
     private final WormholeProvider holeProvider;
@@ -368,33 +404,29 @@ public class OrionController extends PollyController {
         c.put("Messages", Constants.class); //$NON-NLS-1$
         return c;
     }
-    
-    
-    
+
+
+
     @Get(API_SUBMIT_CODE)
-    public HttpAnswer submitCode(@Param("code") String code, 
-            @Param("user") String user, @Param("pw") String pw) throws AlternativeAnswerException {
+    public HttpAnswer submitCode(@Param("code") String code, @Param("user") String user,
+            @Param("pw") String pw) throws AlternativeAnswerException {
         this.checkLogin(user, pw);
         if (Orion.INSTANCE.getLoginCodeManager().updateCurrentCode(code)) {
             return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
         }
         return new GsonHttpAnswer(200, new SuccessResult(false, "")); //$NON-NLS-1$
     }
-    
-    
-    
+
+
+
     @Get(API_REQUEST_CODE)
-    public HttpAnswer requestCode(@Param("user") String user, @Param("pw") String pw) 
+    public HttpAnswer requestCode(@Param("user") String user, @Param("pw") String pw)
             throws AlternativeAnswerException {
         this.checkLogin(user, pw);
         final LoginCode code = Orion.INSTANCE.getLoginCodeManager().getCurrentCode();
         return new GsonHttpAnswer(200, code);
     }
 
-    
-    
-    
-    
 
 
     @Get(value = PAGE_ORION, name = ORION_NAME_KEY)
@@ -406,6 +438,7 @@ public class OrionController extends PollyController {
         final Map<String, Object> c = this.createContext(CONTENT_ORION);
 
         final Collection<Quadrant> allQuads = new TreeSet<>(new Comparator<Quadrant>() {
+
             @Override
             public int compare(Quadrant o1, Quadrant o2) {
                 return o1.getName().compareTo(o2.getName());
@@ -425,10 +458,8 @@ public class OrionController extends PollyController {
 
 
     @Get(value = PAGE_QUAD_LAYOUT, name = ORION_NAME_KEY)
-    /*
-     * @OnRegister({ WebinterfaceManager.ADD_SUB_ENTRY, "Orion", MSG.FAMILY,
-     * ORION_DESC_KEY, VIEW_ORION_PREMISSION })
-     */
+    @OnRegister({ WebinterfaceManager.ADD_SUB_ENTRY, "Orion", MSG.FAMILY, ORION_DESC_KEY,
+            VIEW_ORION_PREMISSION })
     public HttpAnswer quadLayout() throws AlternativeAnswerException {
         this.requirePermissions(OrionController.WRITE_ORION_PREMISSION);
         return this.makeAnswer(this.createContext(CONTENT_QUAD_LAYOUT));
@@ -436,6 +467,46 @@ public class OrionController extends PollyController {
 
 
 
+    @Get(value = PAGE_ALIEN_MANAGEMENT, name = ALIEN_MANAGEMENT_NAME_KEY)
+    @OnRegister({ WebinterfaceManager.ADD_SUB_ENTRY, "Orion", MSG.FAMILY,
+            ALIEN_MANAGEMENT_DESC_KEY, MANAGE_RACE_PERMISSION })
+    public HttpAnswer alienManagement() throws AlternativeAnswerException {
+        this.requirePermissions(OrionController.MANAGE_RACE_PERMISSION);
+        return this.makeAnswer(this.createContext(CONTENT_ALIEN_MANAGER));
+    }
+
+
+    
+    @Get(API_REMOVE_RACE)
+    public HttpAnswer removeRace(@Param("id") int id) throws AlternativeAnswerException {
+        this.requirePermissions(OrionController.MANAGE_RACE_PERMISSION);
+        final AlienRace ar = Orion.INSTANCE.getAlienManager().getRaceById(id);
+        
+        try {
+            Orion.INSTANCE.getAlienManager().removeRace(ar);
+            return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
+        } catch (OrionException e) {
+            return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
+        }
+    }
+
+    
+    
+    @Get(API_ADD_RACE)
+    public HttpAnswer addRace(@Param("name") String name, @Param("type") String type, 
+            @Param("aggr") boolean aggressive) throws AlternativeAnswerException {
+        this.requirePermissions(MANAGE_RACE_PERMISSION);
+        
+        try {
+            Orion.INSTANCE.getAlienManager().addRace(name, type, aggressive);
+            return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
+        } catch (OrionException e) {
+            return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
+        }
+    }
+
+
+    
     @Post(API_POST_LAYOUT)
     public HttpAnswer postQuadLayout(@Param("quadName") String quadName,
             @Param("paste") String paste) throws HttpException {
@@ -462,11 +533,12 @@ public class OrionController extends PollyController {
                     q, PortalType.PRIVATE);
             final Collection<? extends Portal> cportals = this.portalProvider.getPortals(
                     q, PortalType.CLAN);
-            
+
             final Resources hourlyProduction = QuadrantUtils.calculateHourlyProduction(q);
-            final DecimalFormat nf = (DecimalFormat) DecimalFormat.getInstance(Locale.ENGLISH);
+            final DecimalFormat nf = (DecimalFormat) DecimalFormat
+                    .getInstance(Locale.ENGLISH);
             nf.applyPattern("0.00"); //$NON-NLS-1$
-            
+
             c.put("holes", holes); //$NON-NLS-1$
             c.put("pportals", pportals); //$NON-NLS-1$
             c.put("cportals", cportals); //$NON-NLS-1$
@@ -528,10 +600,10 @@ public class OrionController extends PollyController {
         if (sector != null) {
             final List<Wormhole> holes = this.holeProvider.getWormholes(sector,
                     this.quadProvider);
-            final Collection<? extends Portal> pportals = this.portalProvider
-                    .getPortals(sector, PortalType.PRIVATE);
-            final Collection<? extends Portal> cportals = this.portalProvider
-                    .getPortals(sector, PortalType.CLAN);
+            final Collection<? extends Portal> pportals = this.portalProvider.getPortals(
+                    sector, PortalType.PRIVATE);
+            final Collection<? extends Portal> cportals = this.portalProvider.getPortals(
+                    sector, PortalType.CLAN);
             c.put("pportals", pportals); //$NON-NLS-1$
             c.put("cportals", cportals); //$NON-NLS-1$
             c.put("holes", holes); //$NON-NLS-1$
@@ -605,7 +677,7 @@ public class OrionController extends PollyController {
             @Param(value = "jt", optional = true) String jumpTime,
             @Param(value = "cjt", optional = true) String currentJumpTime,
             @Param(value = "bt", optional = true, defaultValue = "false") boolean blockTail,
-            @Param(value = "be", optional = true, defaultValue="false") boolean blockEntryPortals) {
+            @Param(value = "be", optional = true, defaultValue = "false") boolean blockEntryPortals) {
 
         final HttpSession s = this.getSession();
         final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
@@ -619,8 +691,8 @@ public class OrionController extends PollyController {
 
         final List<Sector> personalPortals = Orion.INSTANCE.getPersonalPortals(this
                 .getSessionUser());
-        final RouteOptions options = new RouteOptions(jt, cjt, personalPortals, blockTail, 
-                blockEntryPortals);
+        final RouteOptions options = new RouteOptions(jt, cjt, personalPortals,
+                blockTail, blockEntryPortals);
         final Collection<UniversePath> path = this.pathPlanner.findShortestPaths(start,
                 target, options);
 
@@ -664,7 +736,7 @@ public class OrionController extends PollyController {
             @Param(value = "jt", optional = true) String jt,
             @Param(value = "cjt", optional = true) String cjt,
             @Param(value = "bt", optional = true, defaultValue = "false") boolean blockTail,
-            @Param(value = "be", optional = true, defaultValue="false") boolean blockEntryPortals) {
+            @Param(value = "be", optional = true, defaultValue = "false") boolean blockEntryPortals) {
 
         if (!this.getMyPolly().roles()
                 .hasPermission(this.getSessionUser(), ROUTE_ORION_PREMISSION)) {
@@ -761,7 +833,6 @@ public class OrionController extends PollyController {
 
 
 
-
     @Get(API_JSON_ROUTE)
     public HttpAnswer getJsonRoute() {
         return HttpAnswers.newStringAnswer(""); //$NON-NLS-1$
@@ -793,27 +864,35 @@ public class OrionController extends PollyController {
         final String json = this.getEvent().getRequestBody();
         final FromClientSector sector = OrionJsonAdapter.readSectorFromClient(json);
         final String reporter = sector.getSelf();
-        
+
         final PersistenceManagerV2 persistence = this.getMyPolly().persistence();
         persistence.writeAtomicParallel(new Atomic() {
+
             @Override
             public void perform(Write write) throws DatabaseException {
                 try {
                     Orion.INSTANCE.getQuadrantUpdater().updateSectorInformation(
                             Collections.singleton(sector));
-                    Orion.INSTANCE.getPortalUpdater().updatePortals(reporter, sector, sector.getClanPortals());
-                    Orion.INSTANCE.getPortalUpdater().updatePortals(reporter, sector, sector.getPersonalPortals());
-                    Orion.INSTANCE.getFleetTracker().updateOrionFleets(reporter, sector.getOwnFleets());
-                    Orion.INSTANCE.getFleetTracker().updateFleets(reporter, sector.getFleets());
+                    Orion.INSTANCE.getPortalUpdater().updatePortals(reporter, sector,
+                            sector.getClanPortals());
+                    Orion.INSTANCE.getPortalUpdater().updatePortals(reporter, sector,
+                            sector.getPersonalPortals());
+                    Orion.INSTANCE.getFleetTracker().updateOrionFleets(reporter,
+                            sector.getOwnFleets());
+                    Orion.INSTANCE.getFleetTracker().updateFleets(reporter,
+                            sector.getFleets());
                 } catch (OrionException e) {
                     throw new DatabaseException(e);
                 }
             }
-        },
-        new TransactionCallback() {
+        }, new TransactionCallback() {
+
             @Override
             public void success() {
             }
+
+
+
             @Override
             public void fail(DatabaseException e) {
                 e.printStackTrace();

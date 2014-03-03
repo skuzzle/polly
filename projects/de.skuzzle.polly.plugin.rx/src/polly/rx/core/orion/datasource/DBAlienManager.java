@@ -82,6 +82,13 @@ public class DBAlienManager implements AlienManager {
 
 
     @Override
+    public AlienRace getRaceById(int id) {
+        return this.persistence.atomic().find(DBAlienRace.class, id);
+    }
+
+
+
+    @Override
     public AlienSpawn addSpawn(String name, AlienRace race, Sector sector)
             throws OrionException {
         try (final Write w = this.persistence.write()) {

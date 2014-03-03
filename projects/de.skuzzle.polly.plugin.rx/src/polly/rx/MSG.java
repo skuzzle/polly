@@ -429,6 +429,8 @@ public class MSG extends Constants {
 
     public static String htmlOrionName;
     public static String htmlOrionDesc;
+    public static String htmlOrionAlienManagement;
+    public static String htmlOrionAlienManagementDesc;
     public static String htmlAvailableQuads;
     public static String htmlOrionResources;
     public static String htmlOrionWormholes;
@@ -479,6 +481,16 @@ public class MSG extends Constants {
     public static String htmlOrionPersonalPortal;
     public static String htmlOrionClanPortal;
     public static String htmlOrionHourlyProduction;
+    
+    public static String htmlAlienRaces;
+    public static String htmlAlienRaceColumns;
+    public static String htmlAlienRaceRemove;
+    public static String htmlAlienRaceAdd;
+    public static String htmlAlienRaceName;
+    public static String htmlAlienRaceType;
+    public static String htmlAlienRaceAggressive;
+    public static String htmlAlienRaceYes;
+    public static String htmlAlienRaceNo;
     
     // MyPlugin
     public static String pluginVenadDesc;

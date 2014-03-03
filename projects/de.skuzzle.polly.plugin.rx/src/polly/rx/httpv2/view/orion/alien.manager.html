@@ -1,0 +1,65 @@
+<div class="highlight contentBox">
+    #CONTENT_HEADER ($MSG.htmlAlienRaces)
+    <div class="content">
+        <table id="alienRaces"></table>
+    </div>
+</div>
+
+<div class="highlight contentBox">
+    #CONTENT_HEADER ($MSG.htmlAlienRaceAdd)
+    <div class="content">
+    
+    <form id="addRace">
+    <table>
+    <tr>
+        <td>$MSG.htmlAlienRaceName</td><td><input type="text" style="textbox" id="name"/></td>
+    </tr>
+    <tr>
+        <td>$MSG.htmlAlienRaceType</td><td><input type="text" style="textbox" id="type"/></td>
+    </tr>
+    <tr>
+        <td>$MSG.htmlAlienRaceAggressive</td><td>
+          <input type="radio" style="textbox" id="yes" name="isaggro" checked/> $MSG.htmlAlienRaceYes<br/>
+          <input type="radio" style="textbox" id="no" name="isaggro"/> $MSG.htmlAlienRaceNo<br/>
+    </tr>
+    <tr>
+      <td colspan="2"><input type="button" value="Hinzufügen" class="button" id="add" onclick="addRace()"/></td>
+    </tr>
+    </table>
+    </form>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    loadTable("/api/alienRaces", "alienRaces");
+});
+function addRace() {
+	var name = $("#name");
+	var typ = $("#type");
+	var yes = $("#yes");
+	var no = $("#no");
+	$.get("$PAGE_ADDRACE?name="+name.val()+"&type="+typ.val()+"&aggr="+yes.is(":checked"), function(data) {
+		var result = JSON.parse(data);
+		if (result.success) {
+			name.val("");
+			typ.val("");
+			yes.addattr("selected");
+			no.removeattr("selected");
+			loadTable("/api/alienRaces?updateAll=true", "alienRaces");
+		} else {
+			alert(result.message);
+		}
+	});
+}
+function removeRace(id) {
+    $.get("$PAGE_REMOVERACE?id="+id, function(data) {
+        var result = JSON.parse(data);
+        if (result.success) {
+        	loadTable("/api/alienRaces?updateAll=true", "alienRaces");
+        } else {
+            alert(result.message);
+        }
+    });
+}
+</script>

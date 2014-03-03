@@ -12,6 +12,8 @@ public interface AlienManager {
     public AlienRace addRace(String name, String subName, boolean aggressive) 
             throws OrionException;
     
+    public AlienRace getRaceById(int id);
+    
     public AlienSpawn addSpawn(String name, AlienRace race, Sector sector) throws OrionException;
     
     public List<? extends AlienSpawn> getSpawnsByQuadrant(String quadName);

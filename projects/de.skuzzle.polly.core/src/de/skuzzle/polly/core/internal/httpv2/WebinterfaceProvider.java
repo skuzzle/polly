@@ -1,7 +1,11 @@
 package de.skuzzle.polly.core.internal.httpv2;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -145,6 +149,7 @@ public class WebinterfaceProvider extends AbstractProvider {
         this.webinterface = new WebInterfaceManagerImpl(this.server, "webv2", 
                 this.serverCfg.readString(Configuration.HTTP_PUBLIC_HOST), port, useSSL);
 
+        final Map<String, List<MenuEntry>> addLater = new HashMap<>();
         // Automatically collect all menu entries
         this.server.addAddHandlerListener(new AddHandlerListener() {
             @Override
@@ -171,8 +176,15 @@ public class WebinterfaceProvider extends AbstractProvider {
                 final String description = pb.get(descriptionKey);
                 final String category = pb.get(categoryKey);
                 name = pb.get(name);
-                webinterface.addMenuEntry(category, 
-                    new MenuEntry(name, url, description, permissions));
+                final MenuEntry me = new MenuEntry(name, url, description, permissions);
+                webinterface.addMenuEntry(category, me);
+                
+                final List<MenuEntry> addLaterEntries = addLater.get(name.toLowerCase());
+                if (addLaterEntries != null) {
+                    for (final MenuEntry subEntry : addLaterEntries) {
+                        me.addSubEntry(subEntry);
+                    }
+                }
             }
         });
         this.server.addAddHandlerListener(new AddHandlerListener() {
@@ -203,6 +215,13 @@ public class WebinterfaceProvider extends AbstractProvider {
                 final MenuEntry me = webinterface.getMenuEntry(parent);
                 if (me != null) {
                     me.addSubEntry(new MenuEntry(name, url, description, permissions));
+                } else {
+                    List<MenuEntry> entries = addLater.get(parent.toLowerCase());
+                    if (entries == null) {
+                        entries = new ArrayList<>();
+                        addLater.put(parent.toLowerCase(), entries);
+                    }
+                    entries.add(new MenuEntry(name, url, description, permissions));
                 }
             }
         });
