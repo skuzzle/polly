@@ -33,14 +33,16 @@ public class AlienRaceModel extends AbstractHTMLTableModel<AlienRace> {
 
     @Override
     public boolean isFilterable(int column) {
-        return true;
+        // all except the last
+        return column != COLUMNS.length - 1;
     }
 
 
 
     @Override
     public boolean isSortable(int column) {
-        return true;
+        // all except the last
+        return column != COLUMNS.length - 1;
     }
 
 
