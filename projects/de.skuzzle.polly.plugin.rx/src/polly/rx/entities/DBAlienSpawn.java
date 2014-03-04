@@ -34,12 +34,17 @@ import polly.rx.core.orion.model.Sector;
         name = DBAlienSpawn.FIND_SPAWN,
         query= "SELECT s FROM DBAlienSpawn s WHERE s.name = ?1 AND s.race = ?2 AND s.sector = ?3"
     ),
+    @NamedQuery(
+        name = DBAlienSpawn.FIND_SPAWN_BY_RACE,
+        query= "SELECT s FROM DBAlienSpawn s WHERE s.race = ?1"
+    ),
 })
 public class DBAlienSpawn implements AlienSpawn {
 
     public final static String FIND_SPAWN = "FIND_SPAWN"; //$NON-NLS-1$
     public final static String SPAWN_BY_QUADRANT = "SPAWN_BY_QUADRANT"; //$NON-NLS-1$
     public final static String SPAWN_BY_SECTOR = "SPAWN_BY_SECTOR"; //$NON-NLS-1$
+    public final static String FIND_SPAWN_BY_RACE = "SPAWN_BY_RACE"; //$NON-NLS-1$
     public final static String ALL_SPAWNS = "ALL_SPAWNS"; //$NON-NLS-1$
     private final static String GENERATOR = "ALIEN_SPAWN_GEN"; //$NON-NLS-1$
 

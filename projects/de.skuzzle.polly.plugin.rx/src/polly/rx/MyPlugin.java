@@ -237,6 +237,7 @@ public class MyPlugin extends PollyPlugin {
         result.add(OrionController.VIEW_ORION_PREMISSION);
         result.add(OrionController.WRITE_ORION_PREMISSION);
         result.add(OrionController.ROUTE_ORION_PREMISSION);
+        result.add(OrionController.MANAGE_RACE_PERMISSION);
         result.addAll(super.getContainedPermissions());
         return result;
     }
@@ -271,6 +272,7 @@ public class MyPlugin extends PollyPlugin {
         roleManager.assignPermission(ORION_ROLE, OrionController.VIEW_ORION_PREMISSION);
         roleManager.assignPermission(ORION_ROLE, OrionController.WRITE_ORION_PREMISSION);
         roleManager.assignPermission(ORION_ROLE, OrionController.ROUTE_ORION_PREMISSION);
+        roleManager.assignPermission(ORION_ROLE, OrionController.MANAGE_RACE_PERMISSION);
         
         super.assignPermissions(roleManager);
     }

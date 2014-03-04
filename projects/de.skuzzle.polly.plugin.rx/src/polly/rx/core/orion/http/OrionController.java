@@ -30,6 +30,7 @@ import polly.rx.core.orion.QuadrantUtils;
 import polly.rx.core.orion.WormholeProvider;
 import polly.rx.core.orion.WormholeProviderDecorator;
 import polly.rx.core.orion.model.AlienRace;
+import polly.rx.core.orion.model.AlienSpawn;
 import polly.rx.core.orion.model.Portal;
 import polly.rx.core.orion.model.PortalType;
 import polly.rx.core.orion.model.Quadrant;
@@ -46,6 +47,7 @@ import polly.rx.core.orion.pathplanning.PathPlanner;
 import polly.rx.core.orion.pathplanning.PathPlanner.Group;
 import polly.rx.core.orion.pathplanning.PathPlanner.UniversePath;
 import polly.rx.core.orion.pathplanning.RouteOptions;
+import polly.rx.entities.DBAlienRace;
 import polly.rx.parsing.ParseException;
 import polly.rx.parsing.QuadrantCnPParser;
 import de.skuzzle.polly.http.annotations.Get;
@@ -107,6 +109,7 @@ public class OrionController extends PollyController {
     public final static String API_REMOVE_RACE = "/api/removeRace"; //$NON-NLS-1$
     public final static String API_ADD_RACE = "/api/addRace"; //$NON-NLS-1$
     public final static String API_ADD_SPAWN = "/api/addSpawn"; //$NON-NLS-1$
+    public final static String API_REMOVE_SPAWN = "/api/orion/removeSpawn"; //$NON-NLS-1$
     
     private final static String CONTENT_QUAD_LAYOUT = "/polly/rx/httpv2/view/orion/quadlayout.html"; //$NON-NLS-1$
     private final static String CONTENT_QUADRANT = "/polly/rx/httpv2/view/orion/quadrant.html"; //$NON-NLS-1$
@@ -495,14 +498,26 @@ public class OrionController extends PollyController {
 
     
     
+    public final static class AddRaceResult extends SuccessResult {
+        public final int id;
+        
+        private AddRaceResult(int id) {
+            super(true, ""); //$NON-NLS-1$
+            this.id = id;
+        }
+    }
+    
+    
     @Get(API_ADD_RACE)
-    public HttpAnswer addRace(@Param("name") String name, @Param("type") String type, 
+    public HttpAnswer addRace(@Param("name") String name, 
+            @Param(value = "type", optional = true) String type, 
             @Param("aggr") boolean aggressive) throws AlternativeAnswerException {
         this.requirePermissions(MANAGE_RACE_PERMISSION);
         
         try {
-            Orion.INSTANCE.getAlienManager().addRace(name, type, aggressive);
-            return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
+            final DBAlienRace race = (DBAlienRace) Orion.INSTANCE.getAlienManager().addRace(
+                    name, type, aggressive);
+            return new GsonHttpAnswer(200, new AddRaceResult(race.getId()));
         } catch (OrionException e) {
             return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
         }
@@ -519,6 +534,20 @@ public class OrionController extends PollyController {
             final AlienRace race = Orion.INSTANCE.getAlienManager().getRaceById(raceId);
             
             Orion.INSTANCE.getAlienManager().addSpawn(name, race, s);
+            return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
+        } catch (Exception e) {
+            return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
+        }
+    }
+    
+    
+    
+    @Get(API_REMOVE_SPAWN)
+    public HttpAnswer removeSpawn(@Param("id") int spawnId) throws AlternativeAnswerException {
+        this.requirePermissions(MANAGE_RACE_PERMISSION);
+        try {
+            final AlienSpawn spawn = Orion.INSTANCE.getAlienManager().getSpawnById(spawnId);
+            Orion.INSTANCE.getAlienManager().removeAlienSpawn(spawn);
             return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
         } catch (Exception e) {
             return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));

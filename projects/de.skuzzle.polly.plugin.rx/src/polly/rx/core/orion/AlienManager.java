@@ -27,4 +27,6 @@ public interface AlienManager {
     public List<? extends AlienRace> getAllRaces();
     
     public List<? extends AlienSpawn> getAllSpawns();
+
+    public AlienSpawn getSpawnById(int spawnId);
 }

@@ -89,6 +89,13 @@ public class DBAlienManager implements AlienManager {
 
 
     @Override
+    public AlienSpawn getSpawnById(int spawnId) {
+        return this.persistence.atomic().find(DBAlienSpawn.class, spawnId);
+    }
+
+
+
+    @Override
     public AlienSpawn addSpawn(String name, AlienRace race, Sector sector)
             throws OrionException {
         try (final Write w = this.persistence.write()) {
@@ -137,7 +144,9 @@ public class DBAlienManager implements AlienManager {
     @Override
     public void removeAlienSpawn(AlienSpawn spawn) throws OrionException {
         try (final Write w = this.persistence.write()) {
-            final DBAlienSpawn dbas = this.findSpawn(w.read(), spawn);
+            final Read r = w.read();
+            final DBAlienSpawn dbas = this.findSpawn(r, spawn);
+
             if (dbas != null) {
                 w.remove(dbas);
             }
@@ -153,6 +162,14 @@ public class DBAlienManager implements AlienManager {
         try (final Write w = this.persistence.write()) {
             final Read r = w.read();
             final DBAlienRace dbas = this.findRace(r, race);
+
+            final List<DBAlienSpawn> spawns = r.findList(DBAlienSpawn.class,
+                    DBAlienSpawn.FIND_SPAWN_BY_RACE, new Param(dbas));
+
+            if (!spawns.isEmpty()) {
+                throw new OrionException("Please delete spawns for this race first");
+            }
+
             if (dbas != null) {
                 w.remove(dbas);
             }

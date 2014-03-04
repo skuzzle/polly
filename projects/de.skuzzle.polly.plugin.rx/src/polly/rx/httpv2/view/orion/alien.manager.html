@@ -5,6 +5,12 @@
     </div>
 </div>
 
+<div class="highlight contentBox">
+    #CONTENT_HEADER ($MSG.htmlAlienSpawns)
+    <div class="content">
+        <table id="alienSpawns"></table>
+    </div>
+</div>
 
 <div class="highlight contentBox">
     #CONTENT_HEADER ($MSG.htmlAlienRaceAdd)
@@ -19,51 +25,42 @@
         <td>$MSG.htmlAlienRaceType</td><td><input type="text" style="textbox" id="type"/></td>
     </tr>
     <tr>
-        <td>$MSG.htmlAlienRaceAggressive</td><td>
-          <input type="radio" style="textbox" id="yes" name="isaggro" checked/> $MSG.htmlAlienRaceYes<br/>
-          <input type="radio" style="textbox" id="no" name="isaggro"/> $MSG.htmlAlienRaceNo<br/>
+        <td></td><td><input type="checkbox" style="textbox" id="isaggro" name="isaggro" checked/> $MSG.htmlAlienRaceAggressive</td>
     </tr>
     <tr>
-      <td colspan="2"><input type="button" value="Hinzufügen" class="button" id="add" onclick="addRace()"/></td>
+      <td colspan="2"><input type="button" value="$MSG.htmlAlienRaceAdd" class="button" id="add" onclick="addRace()"/></td>
     </tr>
     </table>
     </form>
     </div>
 </div>
 
-<div class="highlight contentBox">
-    #CONTENT_HEADER ($MSG.htmlAlienSpawns)
-    <div class="content">
-        <table id="alienSpawns"></table>
-    </div>
-</div>
 
 <div class="highlight contentBox">
     #CONTENT_HEADER ($MSG.htmlAlienSpawnAdd)
     <div class="content">
-    
-    <form id="addRace">
-    <table>
-    <tr>
-        <td>$MSG.htmlAlienRaceName</td><td><input type="text" style="textbox" id="spawnName"/></td>
-    </tr>
-    <tr>
-        <td>$MSG.htmlAlienSpawnSector</td><td><input type="text" style="textbox" id="sector"/><br/>$MSG.htmlAlienSpawnSectorHint</td>
-    </tr>
-    <tr>
-        <td>$MSG.htmlAlienRace</td><td>
-        <select size="1" id="spawnRace">
-        #foreach ($race in $allRaces)
-            <option value="$race.getId()">$race</option>
-        #end
-        </select>
-        </td>
-    </tr>
-    <tr>
-      <td colspan="2"><input type="button" value="Hinzufügen" class="button" id="addSpawn" onclick="addSpawn()" /></td>
-    </tr>
-    </table>
-    </form>
+        <form id="addRace">
+        <table>
+        <tr>
+            <td>$MSG.htmlAlienRaceName</td><td><input type="text" style="textbox" id="spawnName"/></td>
+        </tr>
+        <tr>
+            <td>$MSG.htmlAlienSpawnSector</td><td><input type="text" style="textbox" id="sector"/><br/>$MSG.htmlAlienSpawnSectorHint</td>
+        </tr>
+        <tr>
+            <td>$MSG.htmlAlienRace</td><td>
+            <select size="1" id="spawnRace">
+            #foreach ($race in $allRaces)
+                <option value="$race.getId()">$race</option>
+            #end
+            </select>
+            </td>
+        </tr>
+        <tr>
+          <td colspan="2"><input type="button" value="Hinzufügen" class="button" onclick="addSpawn()" /></td>
+        </tr>
+        </table>
+        </form>
     </div>
 </div>
 
@@ -72,48 +69,50 @@ $(document).ready(function() {
     loadTable("/api/alienRaces", "alienRaces");
     loadTable("/api/alienSpawns", "alienSpawns");
 });
-function addRace() {
-	var name = $("#name");
-	var typ = $("#type");
-	var yes = $("#yes");
-	var no = $("#no");
-	$.get("$PAGE_ADDRACE?name="+name.val()+"&type="+typ.val()+"&aggr="+yes.is(":checked"), function(data) {
-		var result = JSON.parse(data);
-		if (result.success) {
-			name.val("");
-			typ.val("");
-			yes.addattr("selected");
-			no.removeattr("selected");
-			loadTable("/api/alienRaces?updateAll=true", "alienRaces");
-		} else {
-			alert(result.message);
-		}
-	});
-}
-function removeRace(id) {
-    $.get("$PAGE_REMOVERACE?id="+id, function(data) {
-        var result = JSON.parse(data);
-        if (result.success) {
-        	loadTable("/api/alienRaces?updateAll=true", "alienRaces");
-        } else {
-            alert(result.message);
-        }
-    });
-}
 function addSpawn() {
     var name = $("#spawnName");
+    var sector = $("#sector");
     var raceId = $("#spawnRace");
-    $.get("$PAGE_ADDSPAWN?name="+name.val()+"&raceId="+raceId.val(), function(data) {
+    $.get("$PAGE_ADDSPAWN?name="+name.val()+"&raceId="+raceId.val()+"&sector="+sector.val(), function(data) {
         var result = JSON.parse(data);
         if (result.success) {
             name.val("");
-            raceId.val("");
+            sector.val("");
             loadTable("/api/alienSpawns?updateAll=true", "alienSpawns");
         } else {
             alert(result.message);
         }
     });
-}
+};
+function addRace() {
+	var name = $("#name");
+	var typ = $("#type");
+	var isaggro = $("#isaggro");
+	$.get("$PAGE_ADDRACE?name="+name.val()+"&type="+typ.val()+"&aggr="+isaggro.is(":checked"), function(data) {
+		var result = JSON.parse(data);
+		if (result.success) {
+			var newOption = '<option value="'+result.id+'">'+name.val()+' - '+typ.val()+'</option>';
+			$("#spawnRace").append(newOption);
+            name.val("");
+            typ.val("");
+            isaggro.attr("checked", false);
+			loadTable("/api/alienRaces?updateAll=true", "alienRaces");
+		} else {
+			alert(result.message);
+		}
+	});
+};
+function removeRace(id) {
+    $.get("$PAGE_REMOVERACE?id="+id, function(data) {
+        var result = JSON.parse(data);
+        if (result.success) {
+        	$("#spawnRace").find('option[value="'+id+'"]').remove();
+        	loadTable("/api/alienRaces?updateAll=true", "alienRaces");
+        } else {
+            alert(result.message);
+        }
+    });
+};
 function removeSpawn(id) {
     $.get("$PAGE_REMOVESPAWN?id="+id, function(data) {
         var result = JSON.parse(data);
@@ -123,5 +122,5 @@ function removeSpawn(id) {
             alert(result.message);
         }
     });
-}
+};
 </script>
