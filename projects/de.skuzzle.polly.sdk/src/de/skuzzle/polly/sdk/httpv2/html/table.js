@@ -149,7 +149,7 @@ function tableEvents() {
 		});
 	}
 	$("a.submitEditor").click(function() {
-		submitEdit($(this), $this.siblings("input").val());
+		submitEdit($(this), $(this).siblings("input").val());
 	});
 	$(".edit_input").focusout(function() {
 		var $this = $(this);

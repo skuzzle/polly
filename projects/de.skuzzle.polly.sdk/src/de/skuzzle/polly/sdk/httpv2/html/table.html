@@ -134,10 +134,10 @@
 	            <span id="${tId}_${col}_${row}_valueX">$renderer.renderCellContent($col, $model.getCellValue($col, $element))</span>
 	        #if ($model.isEditable($col))
 	            #set($editor = $editors.get($model.getColumnClass($col)))
-	            <a class="showEditor" href="#" title="$MSG.get('tableEditTitle', "$model.getHeader($col)")">$editor.getEditIndicator()</a>
+	            <a class="showEditor" href="#" title="$Messages.bind($MSG.tableEditTitle, "$model.getHeader($col)")">$editor.getEditIndicator()</a>
 	        </span>
 	        <span id="${tId}_${col}_${row}_editor" class="edit">$editor.renderEditorCell($model.getCellValue($col, $element), false)
-	            <a class="submitEditor" href="#" title="$MSG.get('tableSubmitTitle')"><img src="/de/skuzzle/polly/sdk/httpv2/html/tick.png" style="vertical-align:middle" width="16" height="16"/></a>
+	            <a class="submitEditor" href="#" title="$MSG.tableSubmitEditTitle"><img src="/de/skuzzle/polly/sdk/httpv2/html/tick.png" style="vertical-align:middle" width="16" height="16"/></a>
 	        </span>
 	        #else
 	        </span>
