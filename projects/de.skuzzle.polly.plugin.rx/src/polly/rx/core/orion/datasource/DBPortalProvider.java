@@ -98,4 +98,10 @@ public class DBPortalProvider implements PortalProvider {
         }
     }
 
+    
+    
+    @Override
+    public List<? extends Portal> getAllPortals() {
+        return this.persistence.atomic().findList(DBPortal.class, DBPortal.QUERY_ALL_PORTALS);
+    }
 }

@@ -90,7 +90,8 @@ public class OrionController extends PollyController {
     public final static String PAGE_ORION = "/pages/orion"; //$NON-NLS-1$
     public final static String PAGE_QUAD_LAYOUT = "/pages/orion/quadlayout"; //$NON-NLS-1$
     public final static String PAGE_ALIEN_MANAGEMENT = "/pages/orion/manageAliens"; //$NON-NLS-1$
-
+    public final static String PAGE_PORTALS = "/pages/orion/portals"; //$NON-NLS-1$
+    
     public final static String API_GET_QUADRANT = "/api/orion/quadrant"; //$NON-NLS-1$
     public final static String API_GET_SECTOR_INFO = "/api/orion/sector"; //$NON-NLS-1$
     public final static String API_SET_ROUTE_TO = "/api/orion/routeTo"; //$NON-NLS-1$
@@ -119,13 +120,17 @@ public class OrionController extends PollyController {
     private final static String CONTENT_ROUTE = "/polly/rx/httpv2/view/orion/route.html"; //$NON-NLS-1$
     private final static String CONTENT_ROUTE_SINGLE = "/polly/rx/httpv2/view/orion/route.single.html"; //$NON-NLS-1$
     private final static String CONTENT_SHARE_ROUTE = "/polly/rx/httpv2/view/orion/route.share.html"; //$NON-NLS-1$
-
+    private final static String CONTENT_PORTALS = "/polly/rx/httpv2/view/portals.overview.html"; //$NON-NLS-1$
+    
     private final static String REVORIX_CATEGORY_KEY = "httpRxCategory"; //$NON-NLS-1$
     private final static String ORION_NAME_KEY = "htmlOrionName"; //$NON-NLS-1$
     private final static String ORION_DESC_KEY = "htmlOrionDesc"; //$NON-NLS-1$
     private final static String ALIEN_MANAGEMENT_NAME_KEY = "htmlOrionAlienManagement"; //$NON-NLS-1$
     private final static String ALIEN_MANAGEMENT_DESC_KEY = "htmlOrionAlienManagementDesc"; //$NON-NLS-1$
-
+    private final static String PORTALS_NAME_KEY = "htmlPortals"; //$NON-NLS-1$
+    private final static String PORTALS_DESC_KEY = "htmlPortalsDesc"; //$NON-NLS-1$
+    
+    
     private final static String ROUTE_FROM_KEY = "routeFrom"; //$NON-NLS-1$
     private final static String ROUTE_TO_KEY = "routeTo"; //$NON-NLS-1$
     private final static String ROUTE_N_KEY = "route_"; //$NON-NLS-1$
@@ -457,6 +462,16 @@ public class OrionController extends PollyController {
         c.put("entries", this.azManager.getEntries(this.getSessionUser().getId())); //$NON-NLS-1$
         c.put("legend", SectorType.HIGHLIGHTS); //$NON-NLS-1$
         return this.makeAnswer(c);
+    }
+    
+    
+    
+    @Get(value = PAGE_PORTALS, name = PORTALS_NAME_KEY)
+    @OnRegister({ WebinterfaceManager.ADD_MENU_ENTRY, MSG.FAMILY, REVORIX_CATEGORY_KEY,
+            PORTALS_DESC_KEY, VIEW_ORION_PREMISSION })
+    public HttpAnswer portals() throws AlternativeAnswerException {
+        this.requirePermissions(VIEW_ORION_PREMISSION);
+        return this.makeAnswer(this.createContext(CONTENT_PORTALS));
     }
 
 

@@ -51,4 +51,10 @@ public class PortalProviderDecorator implements PortalProvider {
         return this.wrapped.getPortals(quadrant, type);
     }
 
+    
+    
+    @Override
+    public List<? extends Portal> getAllPortals() {
+        return this.wrapped.getAllPortals();
+    }
 }

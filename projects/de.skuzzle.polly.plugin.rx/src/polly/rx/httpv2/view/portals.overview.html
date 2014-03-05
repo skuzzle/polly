@@ -1,0 +1,13 @@
+<div class="highlight contentBox">
+    #CONTENT_HEADER ($MSG.htmlPortals)
+    <div class="content">
+        <table id="portals">
+        </table>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    loadTable("/api/portals", "portals");
+});
+</script>

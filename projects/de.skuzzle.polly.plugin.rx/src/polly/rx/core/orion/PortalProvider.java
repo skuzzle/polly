@@ -19,4 +19,6 @@ public interface PortalProvider {
     public Portal getClanPortal(String nameOrTag);
 
     public List<? extends Portal> getPortals(Quadrant quadrant, PortalType type);
+    
+    public List<? extends Portal> getAllPortals();
 }
