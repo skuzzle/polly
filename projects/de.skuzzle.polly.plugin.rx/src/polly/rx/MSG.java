@@ -489,8 +489,6 @@ public class MSG extends Constants {
     public static String htmlAlienRaceName;
     public static String htmlAlienRaceType;
     public static String htmlAlienRaceAggressive;
-    public static String htmlAlienRaceYes;
-    public static String htmlAlienRaceNo;
     public static String htmlAlienSpawns;
     public static String htmlAlienSpawnColumns;
     public static String htmlAlienSpawnAdd;
