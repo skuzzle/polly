@@ -55,6 +55,15 @@ public class DBAlienRace implements AlienRace {
     }
 
     
+    
+    public void updateWith(AlienRace race) {
+        this.name = race.getName();
+        this.subName = race.getSubName();
+        this.aggressive = race.isAggressive();
+    }
+    
+    
+    
 
     public int getId() {
         return this.id;
@@ -102,11 +111,24 @@ public class DBAlienRace implements AlienRace {
         return this.name;
     }
 
-
+    
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    
 
     @Override
     public String getSubName() {
         return this.subName;
+    }
+    
+    
+    
+    
+    public void setSubName(String subName) {
+        this.subName = subName;
     }
 
 
@@ -114,5 +136,11 @@ public class DBAlienRace implements AlienRace {
     @Override
     public boolean isAggressive() {
         return this.aggressive;
+    }
+    
+    
+    
+    public void setAggressive(boolean aggressive) {
+        this.aggressive = aggressive;
     }
 }

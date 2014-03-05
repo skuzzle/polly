@@ -6,8 +6,14 @@ import java.util.List;
 import polly.rx.MSG;
 import polly.rx.core.orion.Orion;
 import polly.rx.core.orion.model.AlienRace;
+import polly.rx.core.orion.model.DefaultAlienRace;
 import polly.rx.entities.DBAlienRace;
 import de.skuzzle.polly.http.api.HttpEvent;
+import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Write;
+import de.skuzzle.polly.sdk.User;
+import de.skuzzle.polly.sdk.exceptions.DatabaseException;
+import de.skuzzle.polly.sdk.httpv2.SuccessResult;
 import de.skuzzle.polly.sdk.httpv2.html.AbstractHTMLTableModel;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLElement;
 
@@ -45,6 +51,42 @@ public class AlienRaceModel extends AbstractHTMLTableModel<AlienRace> {
         return column != COLUMNS.length - 1;
     }
 
+    
+    
+    @Override
+    public boolean isEditable(int column) {
+        return column == 1;
+    }
+    
+    
+    
+    @Override
+    public SuccessResult setCellValue(int column, AlienRace element, String value,
+            User executor, MyPolly myPolly) {
+        
+        final DBAlienRace dbar = (DBAlienRace) element;
+        AlienRace update = null;
+        switch (column) {
+        case 1:
+            update = new DefaultAlienRace(element.getName(), value, 
+                    element.isAggressive());
+            break;
+        default:
+            break;
+        }
+        
+        if (update != null) {
+            try (final Write w = myPolly.persistence().write()) {
+                dbar.updateWith(update);
+                return new SuccessResult(true, ""); //$NON-NLS-1$
+            } catch (DatabaseException e) {
+                return new SuccessResult(false, e.getMessage());
+            }
+        }
+        
+        return super.setCellValue(column, element, value, executor, myPolly);
+    }
+    
 
 
     @Override
