@@ -294,6 +294,9 @@ public final class OrionObjectUtil {
 
 
     public static String alienRaceString(AlienRace r) {
+        if (r.getSubName().isEmpty()) {
+            return r.getName();
+        }
         return r.getName() + " - " + r.getSubName(); //$NON-NLS-1$
     }
 

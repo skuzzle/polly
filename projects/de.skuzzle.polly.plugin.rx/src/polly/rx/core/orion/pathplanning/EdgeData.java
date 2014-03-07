@@ -3,6 +3,7 @@ package polly.rx.core.orion.pathplanning;
 import java.util.ArrayList;
 import java.util.List;
 
+import polly.rx.core.orion.model.AlienSpawn;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.core.orion.model.Wormhole;
 
@@ -39,6 +40,7 @@ public class EdgeData {
     TimeRange wait;
     TimeRange unloadAfter;
     final List<Sector> waitSpots;
+    List<? extends AlienSpawn> spawns;
     
     private EdgeData(EdgeType type) {
         this.type = type;
@@ -47,6 +49,15 @@ public class EdgeData {
         this.waitSpots = new ArrayList<>(PathPlanner.MAX_SAFE_SPOT_OUTPUT);
     }
 
+    
+    void setSpawns(List<? extends AlienSpawn> spawns) {
+        this.spawns = spawns;
+    }
+    
+    public List<? extends AlienSpawn> getSpawns() {
+        return this.spawns;
+    }
+    
     public EdgeType getType() {
         return this.type;
     }

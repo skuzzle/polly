@@ -67,7 +67,8 @@ public enum SectorType {
     
     NEUTRONENGESTERN(MSG.secTypeNeutronengestern, 54),
     GRUMORIAN(MSG.secTypeGrumorian, 31),
-    DREIFACHGESTIRN(MSG.secTypeDreifachgestirn, 82)
+    DREIFACHGESTIRN(MSG.secTypeDreifachgestirn, 82), 
+    HIGHLIGHT_ALIEN_SPAWN(MSG.secTypeHLAlienSpawn, 207)
     ;
 
     
@@ -90,7 +91,8 @@ public enum SectorType {
         HIGHLIGHT_WH_START,
         HIGHLIGHT_WH_DROP,
         HIGHLIGHT_SAFE_SPOT,
-        HIGHLIGHT_SAFE_SPOT_WL
+        HIGHLIGHT_SAFE_SPOT_WL,
+        HIGHLIGHT_ALIEN_SPAWN
     };
     
     

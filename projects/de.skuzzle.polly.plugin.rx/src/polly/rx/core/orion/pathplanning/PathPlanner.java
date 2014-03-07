@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import polly.rx.core.orion.QuadrantProvider;
 import polly.rx.core.orion.QuadrantUtils;
 import polly.rx.core.orion.WormholeProvider;
+import polly.rx.core.orion.model.AlienSpawn;
 import polly.rx.core.orion.model.Quadrant;
 import polly.rx.core.orion.model.QuadrantDecorator;
 import polly.rx.core.orion.model.Sector;
@@ -251,6 +252,15 @@ public class PathPlanner {
                     maximumWaitTime = Math.max(maximumWaitTime, e.getData().wait.getMax());
 
                     e.getData().unloadAfter = new TimeRange(currentMinUnload, currentMaxUnload);
+                    
+                    // find near aliens
+                    final List<? extends AlienSpawn> spawns = QuadrantUtils.reachableAliens(
+                            e.getSource().getData(), QuadrantUtils.AGGRESSIVE_ONLY);
+                    
+                    e.getData().setSpawns(spawns);
+                    for (final AlienSpawn spawn : e.getData().getSpawns()) {
+                        currentGroup.quad.highlight(spawn.getSector(), SectorType.HIGHLIGHT_ALIEN_SPAWN);
+                    }
                     
                     if (e.getData().mustWait()) {
                         sumMinWaitingTime += e.getData().wait.getMin();

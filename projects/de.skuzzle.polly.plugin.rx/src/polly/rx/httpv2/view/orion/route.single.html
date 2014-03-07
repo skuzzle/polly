@@ -51,9 +51,19 @@
             
             #if ($ed.isWormhole())
             <p style="margin-top:20px">
+            
+                #if ($ed.getSpawns())
+                <span style="color:red"><b>$MSG.htmlOrionAggressiveAliens</b></span><br/>
+                    #foreach ($spawn in $ed.getSpawns())
+                    <img src="/polly/rx/httpv2/view/orion/207.gif" width="10" height="10"/>
+                    <img src="/polly/rx/httpv2/view/orion/$spawn.getSector().getType().getImgName()" width="10" height="10"/>
+                    <em>$spawn.getRace()</em> $MSG.htmlOrionSpawnAt #SECTOR_NO_LINK ( $spawn.getSector() )<br/>
+                    #end
+                #end
                 #if ( $ed.mustWait() )
                 <span style="color:red"><b>$MSG.htmlOrionWaitingTime:  $ed.getWait()</b></span><br/>
                     $Constants.bind($MSG.htmlOrionSafeSpots, $path.getMaxSafeSpotDistance()):<br/>
+                    
                     #if ( $ed.hasWaitSpots() )
                     #foreach ($safeSpot in $ed.getWaitSpots() )
                         <img src="/polly/rx/httpv2/view/orion/205.gif" width="10" height="10"/>

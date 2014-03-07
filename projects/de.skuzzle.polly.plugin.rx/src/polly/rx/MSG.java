@@ -423,6 +423,7 @@ public class MSG extends Constants {
     public static String secTypeGrumorian;
     public static String secTypeNeutronenstern;
     public static String secTypeDreifachgestirn;
+    public static String secTypeHLAlienSpawn;
     public static String loadNone;
     public static String loadPartial;
     public static String loadFull;
@@ -481,6 +482,8 @@ public class MSG extends Constants {
     public static String htmlOrionPersonalPortal;
     public static String htmlOrionClanPortal;
     public static String htmlOrionHourlyProduction;
+    public static String htmlOrionSpawnAt;
+    public static String htmlOrionAggressiveAliens;
     
     public static String htmlAlienRaces;
     public static String htmlAlienRaceColumns;

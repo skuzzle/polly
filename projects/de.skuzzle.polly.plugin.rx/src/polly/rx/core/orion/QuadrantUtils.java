@@ -28,6 +28,9 @@ import polly.rx.parsing.ParseException;
 
 public final class QuadrantUtils {
 
+    /** Semantical constant for {@link #reachableAliens(Sector, boolean)} parameter */
+    public final static boolean AGGRESSIVE_ONLY = true;
+    
     /** A Builder which ignores wormholes */
     private final static class LocalBuilder implements LazyBuilder<Sector, Costs> {
 
@@ -190,10 +193,19 @@ public final class QuadrantUtils {
 
 
     public static List<AlienSpawn> reachableAliens(Sector source) {
+        return reachableAliens(source, false);
+    }
+
+    
+    
+    public static List<AlienSpawn> reachableAliens(Sector source, boolean aggressiveOnly) {
         final List<? extends AlienSpawn> spawns = Orion.INSTANCE.getAlienManager()
                 .getSpawnsByQuadrant(source.getQuadName());
         final List<AlienSpawn> result = new ArrayList<>(spawns.size());
         for (final AlienSpawn spawn : spawns) {
+            if (aggressiveOnly && !spawn.getRace().isAggressive()) {
+                continue;
+            }
             if (reachable(source, spawn.getSector())) {
                 result.add(spawn);
             }
