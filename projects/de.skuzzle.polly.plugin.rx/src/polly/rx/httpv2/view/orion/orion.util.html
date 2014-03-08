@@ -3,8 +3,7 @@ $sector.getQuadName() $sector.getX(), $sector.getY()
 #end
 
 #macro ( QUADRANT_PRODUCTION $resourceArr ) 
-<table style="margin-top: 10px;">
-  <tr><th colspan="14">$MSG.htmlOrionHourlyProduction</th></tr>
+#BEGIN_EXPAND_TABLE ( 14 "productionTable" $MSG.htmlOrionHourlyProduction false )
   <tr>
 #foreach ($i in [1..14])
   <th style="text-align: center"><img src="/polly/rx/httpv2/view/r${i}.gif"/></th>
@@ -15,7 +14,7 @@ $sector.getQuadName() $sector.getX(), $sector.getY()
   <td style="text-align: center">$nf.format($resourceArr[$i].floatValue())</td>
 #end
   </tr>
-</table>
+#END_EXPAND_TABLE
 #end
 
 #macro ( SECTOR_LINK $sector $quadId)
@@ -50,12 +49,9 @@ $sector.getQuadName() $sector.getX(), $sector.getY()
     #end
 #end
 
-#macro (WORMHOLES $holes)
+#macro (WORMHOLES $holes $id)
 #if (!$holes.isEmpty())
-<table style="margin-top: 10px;">
-    <tr>
-        <th colspan="5">$MSG.htmlOrionWormholes</th>
-    </tr>
+#BEGIN_EXPAND_TABLE ( 5 $id $MSG.htmlOrionWormholes true )
     <tr>
         <th>$MSG.htmlOrionWLStart</th>
         <th>$MSG.htmlOrionWLName</th>
@@ -75,16 +71,15 @@ $sector.getQuadName() $sector.getX(), $sector.getY()
             class="load_quad_internal">#SECTOR_NO_LINK ( $wl.getTarget() )</a></td>
     </tr>
     #end    
-</table>
+#END_EXPAND_TABLE
 #end
 #end
 
 
 
-#macro (PORTALS $portals $name)
+#macro (PORTALS $portals $name $id)
     #if (!$portals.isEmpty())
-        <table style="margin-top: 10px;">
-        <tr><th colspan="4">$name</th></tr>
+    #BEGIN_EXPAND_TABLE ( 4 $id $name true )
         <tr>
             <th>Name</th>
             <th>Clan</th>
@@ -99,7 +94,7 @@ $sector.getQuadName() $sector.getX(), $sector.getY()
             <td>$myPolly.formatting().formatDate($portal.getDate())</td>
         </tr>
         #end
-        </table>
+    #END_EXPAND_TABLE
     #end
 #end
 
@@ -139,4 +134,18 @@ $sector.getQuadName() $sector.getX(), $sector.getY()
 
 #macro (SHARE_ROUTE_URL $page $start $target $options)
 $page?startQuad=$start.getQuadName()&startX=$start.getX()&startY=$start.getY()&targetQuad=$target.getQuadName()&targetX=$target.getX()&targetY=$target.getY()&jt=$options.getTotalJumpTime().getSpan()s&cjt=$options.getCurrentJumpTime().getSpan()s&bt=$options.doBlockTail()&be=$options.doBlockEntryPortal()
+#end
+
+
+#macro (BEGIN_EXPAND_TABLE $colCount $tableId $headerText $closed)
+<table id="$tableId" style="margin-top:10px">
+  <thead><tr>
+    <th colspan="$colCount">$headerText <span style="float:right"><a name="$tableId" href="#$tableId" onclick="fadeToggleId('$tableId')">Toggle</a></span></th>
+  </tr></thead>
+  <tbody #if ($closed) style="display:none" #end>
+#end
+
+#macro (END_EXPAND_TABLE)
+  </tbody>
+  </table>
 #end
