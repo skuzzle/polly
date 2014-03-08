@@ -179,7 +179,7 @@ function highlightSector(quad, x, y) {
 		return;
 	}
 	// clear current highlight
-	$("#quadrant_" + quad + " td").css({border : "1px solid #333366"});
+	$("#quadrant_" + quad + " td").css({border : "0px"});
 	var select = "#quadrant_" + quad + " tr:eq(" + (y) + ") td:eq(" + (x) + ")";
 	var target = $(select);
 	target.css({border : "1px solid red"});
@@ -239,7 +239,6 @@ function requestSectorInfo(event) {
     height: 10px;
     padding: 0;
     margin:0;
-    border: 1px solid #333366;
 }
 #content .quad_Table tr {
     width: 10px;
