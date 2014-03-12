@@ -1,37 +1,43 @@
 #parse ( "/polly/rx/httpv2/view/orionv2.meta.js" )
+
+
 /* 
 Changelog
-[ CURRENT ] Version 1.2 - 12.03.2014
-Features:
- + support different sector sizes
- + integrated sending of battle reports
-Changes:
- + improved displaying of scoreboard changes. Date is now always included
+[ CURRENT ] Version 1.2a - 12.03.2014
+  Bug Fixes:
+    + Template Engine Fail in polly caused the whole script to fail
+
+Version 1.2 - 12.03.2014
+  Features:
+    + support different sector sizes
+    + integrated sending of battle reports
+  Changes:
+    + improved displaying of scoreboard changes. Date is now always included
  
 Version 1.1 - 23.02.2014
-Features:
- + add link to refresh sky news on rx news page
- + add link to show/hide orion control in map view
- + show fleets of orion users in same quadrant in flight news
- + add link to sector of corresponding news entry in flight news
- + add button to test polly login settings
- + if your browser does not insert revorix login name automatically, orion
-   will do it for you
-Bug Fixes:
- + score board changes were not displayed properly
-Changes:
- - venad can no longer be set in rx settings as it would have been overridden
-   on next login anyhow
+  Features:
+    + add link to refresh sky news on rx news page
+    + add link to show/hide orion control in map view
+    + show fleets of orion users in same quadrant in flight news
+    + add link to sector of corresponding news entry in flight news
+    + add button to test polly login settings
+    + if your browser does not insert revorix login name automatically, orion
+      will do it for you
+  Bug Fixes:
+    + score board changes were not displayed properly
+  Changes:
+    - venad can no longer be set in rx settings as it would have been overridden
+     on next login anyhow
 
 Version 1.0a - 19.02.2014
-Features:
- + store and transmit polly password as MD5
- + add Orion preferences to rx settings page
- + support GM auto update feature
-Misc:
- + externalize most string messages
- + pretty printed source
- + added changelog to script header :)
+  Features:
+    + store and transmit polly password as MD5
+    + add Orion preferences to rx settings page
+    + support GM auto update feature
+  Misc:
+    + externalize most string messages
+    + pretty printed source
+    + added changelog to script header :)
 */
 
 
