@@ -735,19 +735,9 @@ public class RXController extends PollyController {
             @Param("user") String user, 
             @Param("pw") String pw, 
             @Param(value = "isLive", optional = true, defaultValue = "false") Boolean isLive,
-            @Param("report") String report) {
+            @Param("report") String report) throws AlternativeAnswerException {
         
-        // TODO: replace with this.checkLogin when battle reports are integrated in orion
-        final User u = this.getMyPolly().users().getUser(user);
-        if (u == null || !u.checkPassword(pw)) {
-            return new GsonHttpAnswer(200, 
-                    new SuccessResult(false, MSG.httpIllegalLogin));
-        } else if (!this.getMyPolly().roles().hasPermission(u, 
-                    FleetDBManager.ADD_BATTLE_REPORT_PERMISSION)) {
-            return new GsonHttpAnswer(200, 
-                    new SuccessResult(false, MSG.httpNoPermission));
-        }
-        
+        final User u = this.checkLogin(user, pw);
         final BattleReport br;
         try {
             br = QBattleReportParser.parse(report, u.getId());
