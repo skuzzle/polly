@@ -88,3 +88,8 @@ function showMenu() {
 function hideMenu() {
 	$("#menuContent").animate({left: "-180px"}, 200);
 }
+
+
+function fadeToggleId(id) {
+	$("#"+id).find("tbody").fadeToggle();
+}
