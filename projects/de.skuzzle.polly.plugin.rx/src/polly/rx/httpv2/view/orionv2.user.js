@@ -3,7 +3,11 @@
 
 /* 
 Changelog
-[ CURRENT ] Version 1.2a - 12.03.2014
+[ CURRENT ] Version 1.2b - 12.03.2014
+  Bug Fixes:
+    + Added 2 missing @include directives
+    
+Version 1.2a - 12.03.2014
   Bug Fixes:
     + Template Engine Fail in polly caused the whole script to fail
 
