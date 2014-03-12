@@ -355,6 +355,9 @@ public class OrionController extends PollyController {
         }
     }
 
+    
+    
+
     private final static long QUAD_IMAGE_CACHE_TIME = Milliseconds.fromMinutes(30);
 
     private final QuadrantProvider quadProvider;
@@ -598,6 +601,11 @@ public class OrionController extends PollyController {
             final Collection<? extends Portal> cportals = this.portalProvider.getPortals(
                     q, PortalType.CLAN);
 
+            // TODO: this should use an alien manager which returns DisplaySectors within 
+            //       the alien spawns
+            final Collection<? extends AlienSpawn> spawns = 
+                    Orion.INSTANCE.getAlienManager().getSpawnsByQuadrant(q.getName());
+            
             final Resources hourlyProduction = QuadrantUtils.calculateHourlyProduction(q);
             final DecimalFormat nf = (DecimalFormat) DecimalFormat
                     .getInstance(Locale.ENGLISH);
@@ -606,6 +614,7 @@ public class OrionController extends PollyController {
             c.put("holes", holes); //$NON-NLS-1$
             c.put("pportals", pportals); //$NON-NLS-1$
             c.put("cportals", cportals); //$NON-NLS-1$
+            c.put("spawns", spawns); //$NON-NLS-1$
             c.put("nf", nf); //$NON-NLS-1$
             c.put("hourlyProduction", hourlyProduction.getAmountArray()); //$NON-NLS-1$
         }

@@ -2,6 +2,8 @@
 $sector.getQuadName() $sector.getX(), $sector.getY()
 #end
 
+
+
 #macro ( QUADRANT_PRODUCTION $resourceArr ) 
 #BEGIN_EXPAND_TABLE ( 14 "productionTable" $MSG.htmlOrionHourlyProduction false )
   <tr>
@@ -9,6 +11,7 @@ $sector.getQuadName() $sector.getX(), $sector.getY()
   <th style="text-align: center"><img src="/polly/rx/httpv2/view/r${i}.gif"/></th>
 #end
   </tr>
+#BEGIN_EXPAND_TABLE_CONTENT ( false )
   <tr>
 #foreach ($i in [0..13])
   <td style="text-align: center">$nf.format($resourceArr[$i].floatValue())</td>
@@ -17,11 +20,36 @@ $sector.getQuadName() $sector.getX(), $sector.getY()
 #END_EXPAND_TABLE
 #end
 
+
+
 #macro ( SECTOR_LINK $sector $quadId)
 <a href="#" class="sector" quadName="$quadId" col="$sector.getX()" row="$sector.getY()">
     $sector.getQuadName() $sector.getX(), $sector.getY()
 </a>
 #end
+
+
+
+#macro (SPAWN_POINTS $spawns $id)
+    #if (!$spawns.isEmpty())
+    #BEGIN_EXPAND_TABLE ( 3 $id $MSG.htmlAlienSpawns true )
+    <tr>
+        <th>Sektor</th>
+        <th>Rasse</th>
+        <th>Aggressiv</th>
+    </tr>
+    #BEGIN_EXPAND_TABLE_CONTENT ( true )
+        #foreach ($spawn in $spawns)
+            <tr>
+                <td>#SECTOR_NO_LINK ( $spawn.getSector() )</td>
+                <td>$spawn.getRace()</td>
+                <td>#if ($spawn.getRace().isAggressive()) Ja #else Nein #end</td>
+            </tr>
+        #end
+    #END_EXPAND_TABLE
+    #end
+#end
+
 
 
 #macro ( BONUS $bonus)
@@ -59,6 +87,7 @@ $sector.getQuadName() $sector.getX(), $sector.getY()
         <th>$MSG.htmlOrionWLUnload</th>
         <th>$MSG.htmlOrionWLTarget</th>
     </tr>
+#BEGIN_EXPAND_TABLE_CONTENT ( true )
     #foreach ($wl in $holes)
     <tr>
         <td>#SECTOR_LINK ( $wl.getSource() $wl.getSource().getQuadId() )</td>
@@ -86,6 +115,7 @@ $sector.getQuadName() $sector.getX(), $sector.getY()
             <th>Sektor</th>
             <th>Datum</th>
         </tr>
+    #BEGIN_EXPAND_TABLE_CONTENT( true ) 
         #foreach ($portal in $portals)
         <tr>
             <td>$portal.getOwnerName()</td>
@@ -144,6 +174,12 @@ $page?startQuad=$start.getQuadName()&startX=$start.getX()&startY=$start.getY()&t
   </tr></thead>
   <tbody #if ($closed) style="display:none" #end>
 #end
+
+
+#macro (BEGIN_EXPAND_TABLE_CONTENT $closed)
+
+#end
+
 
 #macro (END_EXPAND_TABLE)
   </tbody>
