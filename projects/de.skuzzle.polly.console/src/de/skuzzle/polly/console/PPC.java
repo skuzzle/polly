@@ -166,11 +166,10 @@ public class PPC {
         types[ProblemReporter.SEMATICAL] = "Semantical";
         types[ProblemReporter.RUNTIME] = "Runtime";
         int longestType = "Syntactical".length();
-        int longestMsg = 0;
-        
-        for (final Problem problem : problems) {
-            longestMsg = Math.max(longestMsg, problem.getMessage().length());
-        }
+        final int longestMsg = problems.stream()
+                .map(Problem::getMessage)
+                .mapToInt(String::length)
+                .max().getAsInt();
         
         StringBuilder header = new StringBuilder();
         header.append("Type");
