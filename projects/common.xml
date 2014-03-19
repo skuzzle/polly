@@ -55,7 +55,7 @@
     <property name="lib.dir"          value="${project.dir}/lib"/>
     
     <!-- Target java version for compiler. -->
-    <property name="target.version"   value="1.7"/>
+    <property name="target.version"   value="1.8"/>
     
     <!-- Additional classpath entry to add to MANIFEST file. -->
     <property name="custom.classpath" value=""/>
