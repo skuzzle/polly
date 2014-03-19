@@ -11,7 +11,7 @@ import java.util.EventListener;
  * 
  * @author Simon
  */
-public interface EventProvider {
+public interface EventProvider extends AutoCloseable {
     
     /**
      * Adds a listener which will be notified for every event represented by the
@@ -65,6 +65,27 @@ public interface EventProvider {
     @Deprecated
     public void dispatchEvent(Dispatchable<?, ?> d);
     
+    /**
+     * Notifies all listeners of a certain kind about an occurred event. Consider an 
+     * <tt>UserListener</tt> interface:
+     * <pre>
+     * public interface UserListener {
+     *     public void userAdded(UserEvent e);
+     *     
+     *     public void userDeleted(UserEvent e);
+     * }
+     * </pre>
+     * 
+     * Notifying all registered UserListeners about an added user is as easy as calling
+     * <pre>
+     * eventProvider.dispatchEvent(UserListener.class, event, UserListener::userAdded)
+     * </pre>
+     * 
+     * @param listenerClass The kind of listeners to notify.
+     * @param event The occurred event which shall be passed to each listener.
+     * @param d Function to delegate the event to the specific callback method of the 
+     *          listener.
+     */
     public <L extends EventListener, E extends Event<?>> void dispatchEvent(
             Class<L> listenerClass, E event, Dispatch<L, E> d);
     
@@ -76,11 +97,14 @@ public interface EventProvider {
      */
     public boolean canDispatch();
     
-    
-    
     /**
      * Closes this EventProvider. Depending on its implementation, it might not be 
      * able to dispatch further events after disposing.
      */
     public void dispose();
+    
+    @Override
+    public default void close() {
+        dispose();
+    }
 }
