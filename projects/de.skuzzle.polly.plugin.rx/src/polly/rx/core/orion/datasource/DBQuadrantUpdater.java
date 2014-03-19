@@ -53,7 +53,7 @@ public class DBQuadrantUpdater implements QuadrantUpdater {
     private void fireQuadrantDeleted(Quadrant quad) {
         final QuadrantEvent e = new QuadrantEvent(this, quad, quad.getSectors());
         this.eventProvider.dispatchEvent(QuadrantListener.class, e, 
-                QuadrantListener.QUADRANT_DELETED);
+                QuadrantListener::quadrantDeleted);
     }
     
     
@@ -61,7 +61,7 @@ public class DBQuadrantUpdater implements QuadrantUpdater {
     private void fireQuadrantAdded(Quadrant quad) {
         final QuadrantEvent e = new QuadrantEvent(this, quad, quad.getSectors());
         this.eventProvider.dispatchEvent(QuadrantListener.class, e, 
-                QuadrantListener.QUADRANT_ADDED);
+                QuadrantListener::quadrantAdded);
     }
     
     
@@ -69,7 +69,7 @@ public class DBQuadrantUpdater implements QuadrantUpdater {
     private void fireSectorsAdded(Collection<? extends Sector> sectors) {
         final QuadrantEvent e = new QuadrantEvent(this, null, sectors);
         this.eventProvider.dispatchEvent(QuadrantListener.class, e, 
-                QuadrantListener.SECTORS_ADDED);
+                QuadrantListener::sectorsAdded);
     }
     
     
@@ -77,7 +77,7 @@ public class DBQuadrantUpdater implements QuadrantUpdater {
     private void fireSectorsUpdated(Collection<? extends Sector> sectors) {
         final QuadrantEvent e = new QuadrantEvent(this, null, sectors);
         this.eventProvider.dispatchEvent(QuadrantListener.class, e, 
-                QuadrantListener.SECTORS_UPDATED);
+                QuadrantListener::sectorsUpdated);
     }
     
     
