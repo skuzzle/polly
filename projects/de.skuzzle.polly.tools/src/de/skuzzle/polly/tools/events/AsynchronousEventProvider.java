@@ -35,13 +35,7 @@ class AsynchronousEventProvider extends AbstractEventProvider {
     public <L extends EventListener, E extends Event<?>> void dispatchEvent(
             final Class<L> listenerClass, final E event, final Dispatch<L, E> d) {
         if (this.canDispatch()) {
-            final Runnable r = new Runnable() {
-                @Override
-                public void run() {
-                    notifyListeners(listenerClass, event, d);
-                }
-            };
-            this.dispatchPool.execute(r);
+            this.dispatchPool.execute(() -> notifyListeners(listenerClass, event, d));
         }
     }
     
