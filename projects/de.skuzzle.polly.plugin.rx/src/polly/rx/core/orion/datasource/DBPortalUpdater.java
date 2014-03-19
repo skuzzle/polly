@@ -134,10 +134,10 @@ public class DBPortalUpdater implements PortalUpdater {
         } catch (DatabaseException e) {
             throw new OrionException(e);
         }
-        
-        this.fire(reporter, created, PortalListener.PORTALS_ADDED);
-        this.fire(reporter, moved, PortalListener.PORTALS_MOVED);
-        this.fire(reporter, removed, PortalListener.PORTALS_REMOVED);
+
+        this.fire(reporter, created, PortalListener::portalsAdded);
+        this.fire(reporter, moved, PortalListener::portalsMoved);
+        this.fire(reporter, removed, PortalListener::portalsRemoved);
 
         return result;
     }
