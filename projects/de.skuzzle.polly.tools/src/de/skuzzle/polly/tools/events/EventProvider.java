@@ -23,8 +23,6 @@ public interface EventProvider extends AutoCloseable {
     public <T extends EventListener> void addListener(Class<T> listenerClass, 
             T listener);
     
-    
-    
     /**
      * Removes a listener. It will only be removed for the specified listener class and
      * can thus still be registered with this event provider if it was added for
@@ -37,8 +35,6 @@ public interface EventProvider extends AutoCloseable {
      */
     public <T extends EventListener> void removeListener(Class<T> listenerClass, 
             T listener);
-
-    
     
     /**
      * Gets all listeners that have been registered using 
@@ -51,8 +47,6 @@ public interface EventProvider extends AutoCloseable {
      */
     public <T extends EventListener> Listeners<T> getListeners(Class<T> listenerClass);
 
-    
-    
     /**
      * Executes the given {@link Dispatchable} which causes all listeners registered with
      * that <code>Dispatchable</code> to be notified about a certain event. The strategy
