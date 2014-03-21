@@ -826,7 +826,8 @@ public class OrionController extends PollyController {
             @Param(value = "jt", optional = true) String jt,
             @Param(value = "cjt", optional = true) String cjt,
             @Param(value = "bt", optional = true, defaultValue = "false") boolean blockTail,
-            @Param(value = "be", optional = true, defaultValue = "false") boolean blockEntryPortals) {
+            @Param(value = "be", optional = true, defaultValue = "false") boolean blockEntryPortals,
+            @Param(value = "re", optional = true, defaultValue = "true") boolean renderDark) {
 
         if (!this.getMyPolly().roles()
                 .hasPermission(this.getSessionUser(), ROUTE_ORION_PREMISSION)) {
@@ -860,7 +861,7 @@ public class OrionController extends PollyController {
         }
         final TimespanType currentJumpTime = this.parse(cjt, jumpTime);
         final RouteOptions options = new RouteOptions(jumpTime, currentJumpTime,
-                personalPortals, blockTail, blockEntryPortals);
+                personalPortals, blockTail, blockEntryPortals, renderDark);
         final List<UniversePath> path = this.pathPlanner.findShortestPaths(start,
                 target, options);
 
