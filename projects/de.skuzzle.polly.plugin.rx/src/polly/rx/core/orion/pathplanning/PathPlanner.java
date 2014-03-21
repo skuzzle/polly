@@ -79,11 +79,13 @@ public class PathPlanner {
         
         private final Map<String, SectorType> highlights;
         private final int id;
+        private final boolean renderDark;
         
-        public HighlightedQuadrant(Quadrant wrapped) {
+        public HighlightedQuadrant(Quadrant wrapped, boolean renderDark) {
             super(wrapped);
             this.highlights = new HashMap<>();
             this.id = IDS++;
+            this.renderDark = renderDark;
         }
         
         public int getId() {
@@ -114,7 +116,7 @@ public class PathPlanner {
             final SectorType type = this.highlights.get(key);
             if (type != null) {
                 return new HighlightedSector(sector, type);
-            } else if (sector.getType() != SectorType.NONE){
+            } else if (renderDark && sector.getType() != SectorType.NONE){
                 // render all unrelated sectors dark
                 return new HighlightedSector(sector, SectorType.UNKNOWN);
             }
@@ -131,10 +133,10 @@ public class PathPlanner {
         final List<Graph<Sector, EdgeData>.Edge> edges;
         final HighlightedQuadrant quad;
         
-        private Group(Quadrant quadrant) {
+        private Group(Quadrant quadrant, RouteOptions options) {
             super();
             this.id = IDS.incrementAndGet();
-            this.quad = new HighlightedQuadrant(quadrant);
+            this.quad = new HighlightedQuadrant(quadrant, options.doRenderDark());
             this.edges = new ArrayList<>();
         }
         
@@ -211,7 +213,7 @@ public class PathPlanner {
                 
                 if (currentGroup == null || !source.getQuadName().equals(lastQuad)) {
                     final Quadrant quad = quadProvider.getQuadrant(source.getQuadName());
-                    currentGroup = new Group(quad);
+                    currentGroup = new Group(quad, options);
                     this.groups.add(currentGroup);
                 }
                 

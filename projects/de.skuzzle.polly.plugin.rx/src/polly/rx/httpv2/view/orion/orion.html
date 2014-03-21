@@ -66,7 +66,8 @@
                     <td>$MSG.htmlOrionExpertSetting</td>
                     <td>
                       <input id="blockTail" type="checkbox"/> $MSG.htmlOrionBlockTail<br/>
-                      <input id="blockEntryPortals" type="checkbox"/> $MSG.htmlOrionBlockEntryPortal
+                      <input id="blockEntryPortals" type="checkbox"/> $MSG.htmlOrionBlockEntryPortal<br/>
+                      <input id="renderDark" type="checkbox" checked/> $MSG.htmlOrionRenderDark
                     </td>
                 </tr>
                 <tr>
@@ -113,8 +114,10 @@ function requestRoute() {
 	var currentJumpTime = encodeURI($("#currentJumpTime").val());
 	var blockTail = $("#blockTail").is(":checked");
 	var blockEntryPortal = $('#blockEntryPortals').is(":checked");
+	var renderDark = $('#renderDark').is(":checked");
 	var url = "$PAGE_GETROUTE?fleetId="+fleetId+"&jt="+jumpTime+
-			"&cjt="+currentJumpTime+"&bt="+blockTail+"&be="+blockEntryPortal;
+			"&cjt="+currentJumpTime+"&bt="+blockTail+"&be="+blockEntryPortal+
+			"&re="+renderDark;
 	
 	$("#progressbar").fadeIn();
 	$.get(url, function(data) {

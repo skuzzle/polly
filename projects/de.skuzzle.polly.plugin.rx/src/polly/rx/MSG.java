@@ -485,6 +485,7 @@ public class MSG extends Constants {
     public static String htmlOrionSpawnAt;
     public static String htmlOrionAggressiveAliens;
     public static String htmlOrionRouteTimeOut;
+    public static String htmlOrionRenderDark;
     
     public static String htmlAlienRaces;
     public static String htmlAlienRaceColumns;
