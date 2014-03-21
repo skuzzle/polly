@@ -79,27 +79,23 @@ public final class QuadrantUtils {
 
 
 
-    private QuadrantUtils() {
-    }
+    private QuadrantUtils() {}
 
-    private final static EdgeCosts<Costs> COST_CALCULATOR = new EdgeCosts<Costs>() {
-
-        @Override
-        public double calculate(Costs data) {
-            return data.isDiagonal ? 1.0 : 2.0;
-        }
-    };
+    
+    
+    private final static EdgeCosts<Costs> COST_CALCULATOR = 
+            data -> data.isDiagonal ? 1.0 : 2.0;
 
     private static class Costs {
 
         private final boolean isDiagonal;
 
-
-
         public Costs(boolean isDiagonal) {
             this.isDiagonal = isDiagonal;
         }
     }
+    
+    
 
     public interface SectorFilter {
 
