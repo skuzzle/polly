@@ -274,9 +274,7 @@ public class TemporaryValueMap<K, V> implements Map<K, V> {
     @Override
     public void putAll(Map<? extends K, ? extends V> m) {
         synchronized (this.backend) {
-            for (final Entry<? extends K, ? extends V> e : m.entrySet()) {
-                this.put(e.getKey(), e.getValue());
-            }
+            m.forEach(this::put);
         }
     }
 

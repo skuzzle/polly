@@ -8,10 +8,10 @@ import java.util.AbstractList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 import java.util.TreeSet;
 
 import javax.imageio.ImageIO;
@@ -64,7 +64,6 @@ import de.skuzzle.polly.http.api.answers.HttpInputStreamAnswer;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PersistenceManagerV2;
 import de.skuzzle.polly.sdk.PersistenceManagerV2.Atomic;
-import de.skuzzle.polly.sdk.PersistenceManagerV2.TransactionCallback;
 import de.skuzzle.polly.sdk.PersistenceManagerV2.Write;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.Types.TimespanType;
@@ -76,6 +75,7 @@ import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLTools;
 import de.skuzzle.polly.sdk.resources.Constants;
 import de.skuzzle.polly.sdk.time.Milliseconds;
+import de.skuzzle.polly.tools.collections.TemporaryValueMap;
 import de.skuzzle.polly.tools.io.FastByteArrayInputStream;
 import de.skuzzle.polly.tools.io.FastByteArrayOutputStream;
 
@@ -133,10 +133,8 @@ public class OrionController extends PollyController {
     
     private final static String ROUTE_FROM_KEY = "routeFrom"; //$NON-NLS-1$
     private final static String ROUTE_TO_KEY = "routeTo"; //$NON-NLS-1$
-    private final static String ROUTE_N_KEY = "route_"; //$NON-NLS-1$
     private final static String ROUTE_OPTIONS_KEY = "routeOptions"; //$NON-NLS-1$
     private final static String ROUTE_COUNT_KEY = "routeCount"; //$NON-NLS-1$
-    private final static String QUAD_IMAGE_KEY = "quadImg_"; //$NON-NLS-1$
 
     public final static class DisplaySector extends SectorDecorator {
 
@@ -357,8 +355,63 @@ public class OrionController extends PollyController {
 
     
     
+    
+    private class RouteContext {
+        private final String routeId;
+        private final Sector start;
+        private final Sector target;
+        private final RouteOptions options;
+        private final List<UniversePath> paths;
+        
+        public RouteContext(String routeId, Sector start, Sector target, RouteOptions options,
+                List<UniversePath> paths) {
+            super();
+            this.routeId = routeId;
+            this.start = start;
+            this.target = target;
+            this.options = options;
+            this.paths = paths;
+        }
+        
+        
+        
+        public FastByteArrayOutputStream getQuadImage(int n, final int groupId) {
+            final UniversePath p = this.paths.get(n - 1);
+            final Group g = p.getGroups().stream()
+                    .filter(grp -> grp.getId() == groupId)
+                    .findFirst().get();                    
+            
+            final BufferedImage quadImg = QuadrantUtils.createQuadImage(g.getQuadrant());
+            final FastByteArrayOutputStream out = new FastByteArrayOutputStream();
+            try {
+                ImageIO.write(quadImg, "png", out); //$NON-NLS-1$
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return out;
+        }
 
-    private final static long QUAD_IMAGE_CACHE_TIME = Milliseconds.fromMinutes(30);
+        
+
+        public void putInto(Map<String, Object> c, int n) {
+            c.put("routeId", this.routeId); //$NON-NLS-1$
+            c.put("start", this.start); //$NON-NLS-1$
+            c.put("target", this.target); //$NON-NLS-1$
+            c.put("options", this.options); //$NON-NLS-1$
+            c.put("path", this.paths.get(n - 1)); //$NON-NLS-1$
+            c.put("n", n); //$NON-NLS-1$
+            c.put("routeCount", this.paths.size()); //$NON-NLS-1$
+        }
+    }
+    
+    
+
+    private final static long ROUTE_CACHE_TIME = Milliseconds.fromMinutes(5);
+    private final static Random RANDOM = new Random();
+    
+    private final static TemporaryValueMap<String, RouteContext> ROUTES = 
+            new TemporaryValueMap<>(ROUTE_CACHE_TIME);
+    
 
     private final QuadrantProvider quadProvider;
     private final WormholeProvider holeProvider;
@@ -740,64 +793,28 @@ public class OrionController extends PollyController {
 
 
     @Get(API_SHARE_ROUTE)
-    public HttpAnswer shareRoute(
-            @Param("startQuad") String startQuad,
-            @Param("startX") int startX,
-            @Param("startY") int startY,
-            @Param("targetQuad") String targetQuad,
-            @Param("targetX") int targetX,
-            @Param("targetY") int targetY,
-            @Param(value = "jt", optional = true) String jumpTime,
-            @Param(value = "cjt", optional = true) String currentJumpTime,
-            @Param(value = "bt", optional = true, defaultValue = "false") boolean blockTail,
-            @Param(value = "be", optional = true, defaultValue = "false") boolean blockEntryPortals) {
-
-        final HttpSession s = this.getSession();
-        final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
-        final Sector start = this.quadProvider.getQuadrant(startQuad).getSector(startX,
-                startY);
-        final Sector target = this.quadProvider.getQuadrant(targetQuad).getSector(
-                targetX, targetY);
-
-        final TimespanType jt = this.parse(jumpTime, new TimespanType(0L));
-        final TimespanType cjt = this.parse(currentJumpTime, jt);
-
-        final List<Sector> personalPortals = Orion.INSTANCE.getPersonalPortals(this
-                .getSessionUser());
-        final RouteOptions options = new RouteOptions(jt, cjt, personalPortals,
-                blockTail, blockEntryPortals);
-        final Collection<UniversePath> path = this.pathPlanner.findShortestPaths(start,
-                target, options);
-
-        final Iterator<UniversePath> it = path.iterator();
-        for (int i = 0; i < path.size(); ++i) {
-            final UniversePath p = it.next();
-            s.set(ROUTE_N_KEY + (i + 1), p);
-            this.createImages(p);
+    public HttpAnswer shareRoute(@Param("routeId") String routeId) {
+        final RouteContext rc = ROUTES.get(routeId);
+        if (rc == null) {
+            return HttpAnswers.newStringAnswer(MSG.htmlOrionRouteTimeOut);
         }
-        s.set(ROUTE_OPTIONS_KEY, options);
-        s.set(ROUTE_COUNT_KEY, path.size());
-
-        c.put("start", start); //$NON-NLS-1$
-        c.put("target", target); //$NON-NLS-1$
-        c.put("options", options); //$NON-NLS-1$
-        c.put("path", path.iterator().next()); //$NON-NLS-1$
-        c.put("n", 1); //$NON-NLS-1$
-        c.put("routeCount", path.size()); //$NON-NLS-1$
+        
+        final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
+        rc.putInto(c, 1);
         return HttpAnswers.newTemplateAnswer(CONTENT_SHARE_ROUTE, c);
     }
 
 
 
     @Get(API_GET_NTH_ROUTE)
-    public HttpAnswer getNthRoute(@Param("n") int n) {
-        final HttpSession s = this.getSession();
+    public HttpAnswer getNthRoute(@Param("id") String routeId, @Param("n") int n) {
+        final RouteContext rc = ROUTES.get(routeId);
+        if (rc == null) {
+            return HttpAnswers.newStringAnswer(MSG.htmlOrionRouteTimeOut);
+        }
+        
         final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
-        c.put("start", s.get(ROUTE_FROM_KEY)); //$NON-NLS-1$
-        c.put("target", s.get(ROUTE_TO_KEY)); //$NON-NLS-1$
-        c.put("options", s.get(ROUTE_OPTIONS_KEY)); //$NON-NLS-1$
-        c.put("path", s.get(ROUTE_N_KEY + n)); //$NON-NLS-1$
-        c.put("n", n); //$NON-NLS-1$
+        rc.putInto(c, n);
         return HttpAnswers.newTemplateAnswer(CONTENT_ROUTE_SINGLE, c);
     }
 
@@ -844,54 +861,47 @@ public class OrionController extends PollyController {
         final TimespanType currentJumpTime = this.parse(cjt, jumpTime);
         final RouteOptions options = new RouteOptions(jumpTime, currentJumpTime,
                 personalPortals, blockTail, blockEntryPortals);
-        final Collection<UniversePath> path = this.pathPlanner.findShortestPaths(start,
+        final List<UniversePath> path = this.pathPlanner.findShortestPaths(start,
                 target, options);
 
-        final Iterator<UniversePath> it = path.iterator();
-        for (int i = 0; i < path.size(); ++i) {
-            final UniversePath p = it.next();
-            s.set(ROUTE_N_KEY + (i + 1), p);
-            this.createImages(p);
-        }
         s.set(ROUTE_OPTIONS_KEY, options);
         s.set(ROUTE_COUNT_KEY, path.size());
 
-        c.put("start", start); //$NON-NLS-1$
-        c.put("target", target); //$NON-NLS-1$
-        c.put("options", options); //$NON-NLS-1$
-        c.put("path", path.iterator().next()); //$NON-NLS-1$
-        c.put("n", 1); //$NON-NLS-1$
-        c.put("routeCount", path.size()); //$NON-NLS-1$
+        final String routeId = createRouteId(); 
+        final RouteContext rc = new RouteContext(routeId, start, target, options, 
+                path);
+        
+        rc.putInto(c, 1);
+        ROUTES.put(routeId, rc);
         return HttpAnswers.newTemplateAnswer(CONTENT_ROUTE, c);
     }
 
+    
+    
+    private static String createRouteId() {
+        synchronized (ROUTES) {
+            String s = ""; //$NON-NLS-1$
+            do {
+                final long l = RANDOM.nextLong();
+                s = Long.toHexString(l);
+            } while (ROUTES.containsKey(s));
+            return s;
+        }
+    }
+    
 
 
     @Get(API_GET_GROUP_IMAGE)
-    public HttpAnswer getImageForGroup(@Param("grp") int id) {
-        final Object o = this.getSession().getOnce(QUAD_IMAGE_KEY + id);
-        if (o == null) {
+    public HttpAnswer getImageForGroup(@Param("routeId") String routeId, 
+            @Param("n") int n, @Param("grp") int id) {
+        final RouteContext rc = ROUTES.get(routeId);
+        if (rc == null) {
             return HttpAnswers.newStringAnswer(404, ""); //$NON-NLS-1$
         }
-        final FastByteArrayOutputStream out = (FastByteArrayOutputStream) o;
+        
+        final FastByteArrayOutputStream out = rc.getQuadImage(n, id);
         final InputStream in = new FastByteArrayInputStream(out);
         return new HttpInputStreamAnswer(200, in);
-    }
-
-
-
-    private void createImages(UniversePath path) {
-        for (final Group g : path.getGroups()) {
-            final BufferedImage quadImg = QuadrantUtils.createQuadImage(g.getQuadrant());
-            final FastByteArrayOutputStream out = new FastByteArrayOutputStream();
-            try {
-                ImageIO.write(quadImg, "png", out); //$NON-NLS-1$
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            this.getSession().set(QUAD_IMAGE_KEY + g.getId(), out, QUAD_IMAGE_CACHE_TIME);
-        }
     }
 
 
@@ -957,18 +967,6 @@ public class OrionController extends PollyController {
                 } catch (OrionException e) {
                     throw new DatabaseException(e);
                 }
-            }
-        }, new TransactionCallback() {
-
-            @Override
-            public void success() {
-            }
-
-
-
-            @Override
-            public void fail(DatabaseException e) {
-                e.printStackTrace();
             }
         });
 
