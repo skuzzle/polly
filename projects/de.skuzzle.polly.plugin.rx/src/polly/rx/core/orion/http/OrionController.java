@@ -516,7 +516,6 @@ public class OrionController extends PollyController {
         c.put("personalPortals", Orion.INSTANCE.getPersonalPortals(this.getSessionUser())); //$NON-NLS-1$
         c.put("entryPortals", this.quadProvider.getEntryPortals()); //$NON-NLS-1$
         c.put("entries", this.azManager.getEntries(this.getSessionUser().getId())); //$NON-NLS-1$
-        c.put("legend", SectorType.HIGHLIGHTS); //$NON-NLS-1$
         return this.makeAnswer(c);
     }
     
@@ -801,6 +800,7 @@ public class OrionController extends PollyController {
         
         final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
         rc.putInto(c, 1);
+        c.put("legend", SectorType.HIGHLIGHTS); //$NON-NLS-1$
         return HttpAnswers.newTemplateAnswer(CONTENT_SHARE_ROUTE, c);
     }
 
@@ -873,6 +873,7 @@ public class OrionController extends PollyController {
                 path);
         
         rc.putInto(c, 1);
+        c.put("legend", SectorType.HIGHLIGHTS); //$NON-NLS-1$
         ROUTES.put(routeId, rc);
         return HttpAnswers.newTemplateAnswer(CONTENT_ROUTE, c);
     }

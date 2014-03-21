@@ -15,12 +15,6 @@
     </div>
 </div>
 
-<div id="legend-dialog" title="$MSG.htmlOrionLegend" class="content">
-    #foreach ($hl in $legend)
-        <img src="/polly/rx/httpv2/view/orion/$hl.getImgName()" width="10" height="10" 
-            style="border: 1px solid red;"/> $hl<br/>
-    #end
-</div>
 
 <div class="highlight contentBox">
     #CONTENT_HEADER ($MSG.htmlOrionRouting)
@@ -77,10 +71,6 @@
                 <tr>
                     <td>$MSG.htmlOrionPersonalPortals</td>
                     <td>#foreach ($portal in $personalPortals) #SECTOR_NO_LINK ( $portal )<br/> #end</td>
-                </tr>
-                <tr>
-                    <td><a href="javascript:showLegend()">$MSG.htmlOrionLegend</a></td>
-                    <td></td>
                 </tr>
                 <tr>
                     <td></td>
