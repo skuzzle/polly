@@ -166,6 +166,19 @@ $sector.getQuadName() $sector.getX(), $sector.getY()
 $page?routeId=$routeId
 #end
 
+#macro (LEGEND $legend)
+    #BEGIN_EXPAND_TABLE ( 2 "routeLegend" $MSG.htmlOrionLegend true )
+    #BEGIN_EXPAND_TABLE_CONTENT ( true )
+    #foreach ($hl in $legend)
+    <tr>
+        <td><img src="/polly/rx/httpv2/view/orion/$hl.getImgName()" width="10" height="10" 
+            style="border: 1px solid red;"/></td>
+        <td>$hl</td>    
+    </tr>
+    #end
+    
+    #END_EXPAND_TABLE
+#end
 
 #macro (BEGIN_EXPAND_TABLE $colCount $tableId $headerText $closed)
 <table id="$tableId" style="margin-top:10px">
