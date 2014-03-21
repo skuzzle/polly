@@ -10,6 +10,7 @@ import java.util.function.BiConsumer;
  * @param <L> Type of the listener to notify.
  * @param <E> Type of the event.
  */
+@FunctionalInterface
 public interface Dispatch<L extends EventListener, E extends Event<?>> 
         extends BiConsumer<L, E> {
 
