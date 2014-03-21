@@ -58,12 +58,7 @@ public final class IteratorPrinter {
      */
     public final static <T> void print(Iterator<T> it, String separator, 
             PrintWriter p) {
-        print(it, separator, new StringProvider<T>() {
-            @Override
-            public String toString(T o) {
-                return o.toString();
-            }
-        }, p);
+        print(it, separator, Object::toString, p);
     }
     
     

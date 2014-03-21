@@ -58,6 +58,7 @@ public interface PersistenceManagerV2 {
      * 
      * @author Simon Taddiken
      */
+    @FunctionalInterface
     public interface Atomic {
         /**
          * This method is called to perform all the write operations to the database. The
@@ -282,6 +283,7 @@ public interface PersistenceManagerV2 {
      * 
      * @author Simon Taddiken
      */
+    @FunctionalInterface
     public interface TransactionCallback {
         /**
          * This method is called when a database transaction could be committed without
@@ -294,7 +296,9 @@ public interface PersistenceManagerV2 {
          * 
          * @param e The exception which caused the transaction to fail.
          */
-        public void fail(DatabaseException e);
+        public default void fail(DatabaseException e) {
+            e.printStackTrace();
+        }
     }
     
     
