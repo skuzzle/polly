@@ -7,10 +7,10 @@ import polly.rx.core.orion.pathplanning.Graph.EdgeCosts;
 class PathCostCalculator implements EdgeCosts<EdgeData> {
     
     
-    private final double COST_DIAGONAL = 1.5 / 60;
-    private final double COST_NORMAL = 1.0 / 60;
-    private final double COST_ENTRYPORTAL = COST_DIAGONAL * 3.0;
-    private final double WORMHOLE_OFFSET = 100000.0;
+    private final static double COST_DIAGONAL = 1.5 / 60;
+    private final static double COST_NORMAL = 1.0 / 60;
+    private final static double COST_ENTRYPORTAL = COST_DIAGONAL * 3.0;
+    private final static double WORMHOLE_OFFSET = 100000.0;
     
     
     @Override
