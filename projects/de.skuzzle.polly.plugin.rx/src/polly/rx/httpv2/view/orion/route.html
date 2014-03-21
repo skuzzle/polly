@@ -5,7 +5,7 @@
     #if ($i == 1)
     <li><a href="#tab-1">$Messages.bind($MSG.htmlOrionRouteNr, $i)</a></li>
     #else
-    <li><a href="$PAGE_GETNTHROUTE?n=$i#tab-$i">$Messages.bind($MSG.htmlOrionRouteNr, $i)</a></li>
+    <li><a href="$PAGE_GETNTHROUTE?id=$routeId&n=$i#tab-$i">$Messages.bind($MSG.htmlOrionRouteNr, $i)</a></li>
     #end
     #end
     </ul>

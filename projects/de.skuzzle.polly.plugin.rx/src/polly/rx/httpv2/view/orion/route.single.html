@@ -26,7 +26,7 @@
         <td>#TIME_RANGE ( $path.getSumMinWaitingTime(), $path.getSumMaxWaitingTime() )</td>
     </tr>
     <tr>
-        <td colspan="2"><a href="#SHARE_ROUTE_URL( $PAGE_SHAREROUTE $start $target $options )">$MSG.htmlOrionShareRoute</a></td>
+        <td colspan="2"><a href="#SHARE_ROUTE_URL( $PAGE_SHAREROUTE $routeId )">$MSG.htmlOrionShareRoute</a></td>
     </tr>
     #else
     <tr>
@@ -52,12 +52,12 @@
             #if ($ed.isWormhole())
             <p style="margin-top:20px">
             
-                #if ($ed.getSpawns())
+                #if ($ed.getSpawns() && !$ed.getSpawns().isEmpty())
                 <span style="color:red"><b>$MSG.htmlOrionAggressiveAliens</b></span><br/>
                     #foreach ($spawn in $ed.getSpawns())
                     <img src="/polly/rx/httpv2/view/orion/207.gif" width="10" height="10"/>
                     <img src="/polly/rx/httpv2/view/orion/$spawn.getSector().getType().getImgName()" width="10" height="10"/>
-                    <em>$spawn.getRace()</em> $MSG.htmlOrionSpawnAt #SECTOR_NO_LINK ( $spawn.getSector() )<br/>
+                    <em>$spawn.getRace()</em> $MSG.htmlOrionSpawnAt #SECTOR_NO_LINK ( $spawn.getSector() ) ($spawn.getName())<br/>
                     #end
                 #end
                 #if ( $ed.mustWait() )
@@ -84,7 +84,7 @@
         </td>
         <td>
         ####QUADRANT ( $group.getQuadrant() )
-        <img src="$PAGE_GETIMAGEFORGROUP?grp=$group.getId()"/>
+        <img src="$PAGE_GETIMAGEFORGROUP?routeId=$routeId&n=$n&grp=$group.getId()"/>
         </td>
     </tr>
     #end        ## for each groups
