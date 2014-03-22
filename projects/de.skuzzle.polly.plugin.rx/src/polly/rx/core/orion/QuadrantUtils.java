@@ -5,12 +5,17 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
+import java.awt.image.RescaleOp;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.imageio.ImageIO;
 
 import polly.rx.MSG;
 import polly.rx.core.orion.model.AlienSpawn;
@@ -25,8 +30,18 @@ import polly.rx.core.orion.pathplanning.Graph.EdgeCosts;
 import polly.rx.core.orion.pathplanning.Graph.LazyBuilder;
 import polly.rx.entities.RxRessource;
 import polly.rx.parsing.ParseException;
+import de.skuzzle.polly.tools.io.FastByteArrayOutputStream;
 
 public final class QuadrantUtils {
+    
+    private final static ImageObserver NOP_IMAGE_OBSERVER = new ImageObserver() {
+        @Override
+        public boolean imageUpdate(Image img, int infoflags, int x, int y, int width,
+                int height) {
+            return false;
+        }
+    };
+    
 
     /** Semantical constant for {@link #reachableAliens(Sector, boolean)} parameter */
     public final static boolean AGGRESSIVE_ONLY = true;
@@ -253,6 +268,49 @@ public final class QuadrantUtils {
         }
         return result;
     }
+    
+    
+    
+    public static enum DrawSectorMode {
+        DARK(0.7f),
+        BRIGHT(1.3f);
+        
+        private final float factor;
+        
+        
+        private DrawSectorMode(float factor) {
+            this.factor = factor;
+        }
+    }
+    
+    
+    
+    public static OutputStream createSectorImageAsPNGStream(SectorType type, 
+            DrawSectorMode mode) {
+        
+        final BufferedImage img = createSectorImage(type, mode);
+        final OutputStream out = new FastByteArrayOutputStream();
+        try {
+            ImageIO.write(img, "png", out); //$NON-NLS-1$
+        } catch (IOException e) {
+            // should not be reachable
+            e.printStackTrace();
+        }
+        return out;
+    }
+    
+    
+    
+    public static BufferedImage createSectorImage(SectorType type, DrawSectorMode mode) {
+        final BufferedImage img = type.getImage();
+        final BufferedImage cpy = new BufferedImage(img.getWidth(), img.getHeight(), 
+                BufferedImage.TYPE_INT_RGB);
+        cpy.getGraphics().drawImage(img, 0, 0, img.getWidth(), img.getHeight(), 
+                NOP_IMAGE_OBSERVER);
+        final float scaleFactor = mode.factor;
+        final RescaleOp op = new RescaleOp(scaleFactor, 0, null);
+        return op.filter(cpy, null);
+    }
 
 
 
@@ -266,21 +324,12 @@ public final class QuadrantUtils {
         g.setColor(background);
         g.fillRect(0, 0, img.getWidth(), img.getHeight());
 
-        final ImageObserver obs = new ImageObserver() {
-
-            @Override
-            public boolean imageUpdate(Image img, int infoflags, int x, int y, int width,
-                    int height) {
-                return false;
-            }
-        };
-
         for (int y = 0; y < quad.getMaxY(); ++y) {
             for (int x = 0; x < quad.getMaxX(); ++x) {
                 final Sector s = quad.getSector(x + 1, y + 1);
                 if (s.getType() != SectorType.NONE) {
                     final BufferedImage sectorImage = s.getType().getImage();
-                    g.drawImage(sectorImage, x * ss, y * ss, ss, ss, obs);
+                    g.drawImage(sectorImage, x * ss, y * ss, ss, ss, NOP_IMAGE_OBSERVER);
                 }
             }
         }
