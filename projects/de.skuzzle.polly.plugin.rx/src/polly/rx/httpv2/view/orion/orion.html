@@ -109,7 +109,6 @@ function requestRoute() {
 	$.get(url, function(data) {
 		$("#route").html(data);
 		prepareTabs();
-		prepareLegend();
 		$("#progressbar").fadeOut();
 	});
 }
