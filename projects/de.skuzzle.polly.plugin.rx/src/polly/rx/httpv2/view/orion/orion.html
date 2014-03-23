@@ -93,11 +93,7 @@
 $(document).ready(function() {
 	$(".load_quad").click(requestQuad);
 	$("#progressbar").hide();
-	prepareLegend();
 });
-function showLegend() {
-	$("#legend-dialog").dialog("open");
-}
 function requestRoute() {
 	var fleetId = $("#selectFleet option:selected").val()
 	var jumpTime = encodeURI($("#jumpTime").val());
@@ -113,14 +109,7 @@ function requestRoute() {
 	$.get(url, function(data) {
 		$("#route").html(data);
 		prepareTabs();
-		prepareLegend();
 		$("#progressbar").fadeOut();
-	});
-}
-function prepareLegend() {
-	$("#legend-dialog").dialog({
-		autoOpen: false,
-		modal: true
 	});
 }
 function prepareTabs() {
