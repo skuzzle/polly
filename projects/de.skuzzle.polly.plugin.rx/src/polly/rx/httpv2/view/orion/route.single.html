@@ -25,9 +25,6 @@
         <td><b>$MSG.htmlOrionTotalWaitingTime</b></td>
         <td>#TIME_RANGE ( $path.getSumMinWaitingTime(), $path.getSumMaxWaitingTime() )</td>
     </tr>
-    <tr>
-        <td colspan="2"><a href="#SHARE_ROUTE_URL( $PAGE_SHAREROUTE $routeId )">$MSG.htmlOrionShareRoute</a></td>
-    </tr>
     #else
     <tr>
         <td colspan="2">$MSG.htmlOrionNoRouteFound</td>
@@ -35,7 +32,7 @@
     #end
     </table>
     
-    #WORMHOLES ( $path.getWormholes() "routeHoles" )
+    #WORMHOLES ( $path.getWormholes() "routeHoles_$n" )
     <table>
     #foreach ($group in $path.getGroups())
     <tr>
