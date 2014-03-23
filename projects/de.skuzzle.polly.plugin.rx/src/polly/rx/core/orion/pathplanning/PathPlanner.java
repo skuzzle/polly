@@ -224,6 +224,7 @@ public class PathPlanner {
                 }
                 currentGroup.edges.add(e);
                 
+                
                 if (e.getData().isWormhole()) {
                     final Wormhole hole = e.getData().getWormhole();
                     sumMinUnload += hole.getMinUnload();
