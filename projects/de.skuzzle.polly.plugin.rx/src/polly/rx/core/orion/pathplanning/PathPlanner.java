@@ -186,7 +186,6 @@ public class PathPlanner {
             this.groups = new ArrayList<>();
             this.wormholes = new LinkedList<>();
 
-            String lastQuad = ""; //$NON-NLS-1$
             Group currentGroup = null;
             
             // always consider to be unloaded
@@ -209,20 +208,21 @@ public class PathPlanner {
             while (it.hasNext()) {
                 final Graph<Sector, EdgeData>.Edge e = it.next();
                 final Sector source = e.getSource().getData();
+                final Sector target = e.getTarget().getData();
                 SectorType highlight = SectorType.HIGHLIGHT_SECTOR;
                 
-                if (currentGroup == null || !source.getQuadName().equals(lastQuad)) {
+                // initialize first group
+                if (first) {
                     final Quadrant quad = quadProvider.getQuadrant(source.getQuadName());
                     currentGroup = new Group(quad, options);
                     this.groups.add(currentGroup);
-                }
+                } 
                 
                 if (lastEdge != null && lastEdge.getData().isWormhole()) {
                     // if last edge was a WH, current source node is a WH drop
                     highlight = SectorType.HIGHLIGHT_WH_DROP;
                 }
                 currentGroup.edges.add(e);
-                lastQuad = source.getQuadName();
                 
                 if (e.getData().isWormhole()) {
                     final Wormhole hole = e.getData().getWormhole();
@@ -295,6 +295,14 @@ public class PathPlanner {
                 currentGroup.quad.highlight(e.getSource().getData(), highlight);
                 first = false;
                 lastEdge = e;
+                
+
+                // create new group if target is within a different quadrant
+                if (!source.getQuadName().equals(target.getQuadName())) {
+                    final Quadrant quad = quadProvider.getQuadrant(target.getQuadName());
+                    currentGroup = new Group(quad, options);
+                    this.groups.add(currentGroup);
+                }
             }
             // lastEdge is null if no way was found
             if (lastEdge != null) {
