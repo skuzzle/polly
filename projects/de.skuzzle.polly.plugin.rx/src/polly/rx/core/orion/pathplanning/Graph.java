@@ -1,17 +1,22 @@
 package polly.rx.core.orion.pathplanning;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import de.skuzzle.polly.tools.EqualsHelper;
 import de.skuzzle.polly.tools.Equatable;
@@ -266,6 +271,57 @@ public class Graph<V, E> {
         public int compareTo(Path o) {
             return Double.compare(this.costs, o.costs);
         }
+    }
+    
+    
+    
+    private void searchInternal(V start, Predicate<V> p, LazyBuilder<V, E> builder, 
+            Function<Deque<Node>, Node> pollOperation) {
+        final Deque<Node> queue = new ArrayDeque<>();
+        final Set<Node> visited = new HashSet<>();
+        final Node vStart = this.getNode(start, start);
+        queue.push(vStart);
+        while (!queue.isEmpty()) {
+            final Node next = pollOperation.apply(queue);
+            if (!p.test(next.getData())) {
+                return;
+            }
+            visited.add(next);
+            builder.collectIncident(this, next.getData());
+            next.getIncident().forEach(e -> {
+                final Node target = e.getTarget();
+                if (!visited.contains(target)) {
+                    queue.push(e.getTarget());
+                }
+            });
+        }
+    }
+    
+    
+    
+    public void depthFirstSearch(V start, Predicate<V> p, LazyBuilder<V, E> builder) {
+        this.searchInternal(start, p, builder, q -> q.pollLast());
+    }
+    
+    
+    
+    public void breadthFirstSearch(V start, Predicate<V> p, LazyBuilder<V, E> builder) {
+        this.searchInternal(start, p, builder, q -> q.pollFirst());
+    }
+    
+    
+    
+    public boolean isReachable(V start, V target, LazyBuilder<V, E> builder) {
+        final Object[] result = new Object[1];
+        final Predicate<V> p = v -> {
+            if (v.equals(target)) {
+                result[0] = v;
+                return false; // abort traversal
+            }
+            return true;
+        };
+        depthFirstSearch(start, p, builder);
+        return result[0] != null;
     }
     
     

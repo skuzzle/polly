@@ -153,6 +153,10 @@ public final class QuadrantUtils {
     public static Sector parse(String s) throws ParseException {
         // parse backwards
         try {
+            // prepare string
+            s = s.replace(",", " ");  //$NON-NLS-1$//$NON-NLS-2$
+            s = s.replaceAll("\\s{2,}", " ");  //$NON-NLS-1$//$NON-NLS-2$
+            
             int i = s.lastIndexOf(' ');
             final int y = Integer.parseInt(s.substring(i + 1));
             s = s.substring(0, i);
@@ -175,9 +179,7 @@ public final class QuadrantUtils {
         final Quadrant quad = Orion.INSTANCE.getQuadrantProvider().getQuadrant(source);
         final LocalBuilder builder = new LocalBuilder(quad);
         final Graph<Sector, Costs> g = new Graph<>();
-        final Graph<Sector, Costs>.Path path = g.findShortestPath(source, target, builder, 
-                Graph.<Sector> noHeuristic(), COST_CALCULATOR);
-        return !path.getPath().isEmpty();
+        return g.isReachable(source, target, builder);
     }
 
 
