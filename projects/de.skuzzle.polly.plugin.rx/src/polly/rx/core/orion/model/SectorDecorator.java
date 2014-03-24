@@ -17,6 +17,11 @@ public class SectorDecorator implements Sector {
         this.wrapped = wrapped;
     }
     
+    // compatibility to display sector
+    public String getQuadId() {
+        return this.getQuadName().replace(" ", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+    
     @Override
     public int hashCode() {
         return this.wrapped.hashCode();

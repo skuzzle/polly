@@ -45,6 +45,7 @@ import polly.rx.core.orion.model.json.FromClientSector;
 import polly.rx.core.orion.model.json.OrionJsonAdapter;
 import polly.rx.core.orion.pathplanning.PathPlanner;
 import polly.rx.core.orion.pathplanning.PathPlanner.Group;
+import polly.rx.core.orion.pathplanning.PathPlanner.HighlightedQuadrant;
 import polly.rx.core.orion.pathplanning.PathPlanner.UniversePath;
 import polly.rx.core.orion.pathplanning.RouteOptions;
 import polly.rx.entities.DBAlienRace;
@@ -643,8 +644,8 @@ public class OrionController extends PollyController {
 
 
     private void fillQuadrantContext(String quadName, Map<String, Object> c,
-            boolean showInfo) {
-        final Quadrant q = this.quadProvider.getQuadrant(quadName);
+            boolean showInfo, boolean abstractView) {
+        Quadrant q = this.quadProvider.getQuadrant(quadName);
         if (showInfo) {
             final List<Wormhole> holes = this.holeProvider.getWormholes(q,
                     this.quadProvider);
@@ -657,6 +658,11 @@ public class OrionController extends PollyController {
             //       the alien spawns
             final Collection<? extends AlienSpawn> spawns = 
                     Orion.INSTANCE.getAlienManager().getSpawnsByQuadrant(q.getName());
+            
+            if (abstractView) {
+                q = this.createAbstract(q, holes, spawns);
+            }
+            
             
             final Resources hourlyProduction = QuadrantUtils.calculateHourlyProduction(q);
             final DecimalFormat nf = (DecimalFormat) DecimalFormat
@@ -671,13 +677,25 @@ public class OrionController extends PollyController {
             c.put("hourlyProduction", hourlyProduction.getAmountArray()); //$NON-NLS-1$
         }
         c.put("showQuadInfo", showInfo); //$NON-NLS-1$
+        c.put("abstract", abstractView); //$NON-NLS-1$
         c.put("quad", q); //$NON-NLS-1$
+    }
+    
+    
+    
+    private Quadrant createAbstract(Quadrant quad, Collection<? extends Wormhole> holes, 
+            Collection<? extends AlienSpawn> spawns) {
+        final HighlightedQuadrant q = new HighlightedQuadrant(quad, true);
+        holes.forEach(h -> q.highlight(h.getSource(), SectorType.HIGHLIGHT_WH_START));
+        spawns.forEach(s -> q.highlight(s.getSector(), SectorType.HIGHLIGHT_ALIEN_SPAWN));
+        return q;
     }
 
 
 
     @Get(API_GET_QUADRANT)
-    public HttpAnswer quadrant(@Param("quadName") String name) {
+    public HttpAnswer quadrant(@Param("quadName") String name, 
+            @Param(value = "abstract", defaultValue = "false", optional = true) boolean renderAbstract) {
 
         if (!this.getMyPolly().roles()
                 .hasPermission(this.getSessionUser(), VIEW_ORION_PREMISSION)) {
@@ -685,7 +703,7 @@ public class OrionController extends PollyController {
         }
 
         final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
-        this.fillQuadrantContext(name, c, true);
+        this.fillQuadrantContext(name, c, true, renderAbstract);
         return HttpAnswers.newTemplateAnswer(CONTENT_QUADRANT, c);
     }
 
@@ -701,7 +719,7 @@ public class OrionController extends PollyController {
         }
 
         final Map<String, Object> c = this.createContext(""); //$NON-NLS-1$
-        this.fillQuadrantContext(name, c, true);
+        this.fillQuadrantContext(name, c, true, false);
         c.put("hlX", hlX); //$NON-NLS-1$
         c.put("hlY", hlY); //$NON-NLS-1$
         return HttpAnswers.newTemplateAnswer(CONTENT_QUADRANT, c);

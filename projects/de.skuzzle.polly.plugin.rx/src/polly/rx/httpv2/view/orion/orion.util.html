@@ -131,7 +131,7 @@ $sector.getQuadName() $sector.getX(), $sector.getY()
 
 
 #macro (QUADRANT $quad)
-<p><b>$quad.getName()</b></p>
+<p><b>$quad.getName()</b> <a href="#" quadName="$quad.getQuadId()" #if (!$abstract) abstract="true"#end class="load_quad_abstr">(abstrakt)</a></p>
 
 <table id="quadrant_$quad.getQuadId()" class="quad_Table" style="width: auto">
 #foreach ($row in [0..$quad.getMaxY()])
@@ -147,7 +147,7 @@ $sector.getQuadName() $sector.getX(), $sector.getY()
             <td>#if ($row == $hlY) <b>$row</b>#else $row #end</td>
             #else
             #set ($sect = $quad.getSector($col, $row))
-            <td#if ($sect.getType().isHighlight()) style="border: 1px solid red" #end>
+            <td>
                 <img src="/polly/rx/httpv2/view/orion/$sect.getType().getImgName()" 
                     width="10" height="10"
                     quadName="$quad.getQuadId()" row="$row" col="$col" class="sector"/>

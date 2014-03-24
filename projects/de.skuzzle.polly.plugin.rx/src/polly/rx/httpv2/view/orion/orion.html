@@ -6,7 +6,8 @@
         <div id="quadList">
             <b>$MSG.htmlAvailableQuads</b><br/>
             #foreach ($quad in $allQuads)
-                <a href="#" quadName="$quad.getQuadId()" class="load_quad">$quad.getName()</a><br/>
+                <a href="#" quadName="$quad.getQuadId()" class="load_quad">$quad.getName()</a>
+                <br/>
             #end
             <br style="clear:both;" />
         </div>
@@ -169,10 +170,14 @@ function highlightSector(quad, x, y) {
 
 function requestQuad(event) {
 	var quadName = $(event.target).attr("quadName");
+	var abstr = $(event.target).attr("abstract");
 	var hlX = $(event.target).attr("hlX");
 	var hlY = $(event.target).attr("hlY");
 	
 	var url = "$PAGE_QUADRANT?quadName=" + quadName;
+	if (abstr == "true") {
+		url += "&abstract=true";
+	}
 	if (hlX) {
 	    url += "&hlX="+hlX+"&hlY="+hlY;		
 	}
@@ -184,8 +189,10 @@ function requestQuad(event) {
 			requestSectorInfo(event);
 		});
         $(".load_quad_internal_1").click(requestQuad);
+        $(".load_quad_abstr").click(requestQuad);
 	});
 }
+
 
 function requestSectorInfo(event) {
 	var ths = $(event.target);

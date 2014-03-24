@@ -17,6 +17,11 @@ public class QuadrantDecorator implements Quadrant {
         this.wrapped = wrapped;
     }
     
+    // compatibility to DisplayQuadrant
+    public String getQuadId() {
+        return this.getName().replace(" ", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+    
     @Override
     public String toString() {
         return this.wrapped.toString();
