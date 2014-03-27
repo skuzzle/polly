@@ -1,0 +1,74 @@
+<div class="highlight contentBox">
+    #CONTENT_HEADER("Passwort zurücksetzen")
+    <div class="content">
+    <p>
+        Hier kannst du dein Passwort zurücksetzen lassen wenn du bei polly im IRC
+        angemeldet bist. Gib dazu einfach deinen IRC-Nickname ein.
+    </p> 
+    <form action="">
+        <table>
+        <tr class="unverify">
+            <td><b>IRC Nickname:</b></td><td><input type="text" class="textbox" placeholder="Nickname" name="nickname"/></td>
+        </tr>
+        <tr class="verify">
+            <td><b>Verifcation Code:</b></td><td><input type="text" class="textbox" placeholder="Code" name="vCode"/></td>
+        </tr>
+        <tr class="verify">
+            <td><b>Neues Passwort:</b></td><td><input type="password" class="textbox" placeholder="Passwort" name="newPw"/></td>
+        </tr>
+        <tr>
+            <td></td><td><input class="button unverify" type="button" value="Weiter" id="startRecover"/><input class="verify button" type="button" value="Passwort Zurücksetzen" id="finishRecover"/></td>
+        </tr>
+        </table>
+    </form>
+    </div>
+</div>
+<style>
+.verify {
+    display: none;
+}
+</style>
+<script>
+$(document).ready(function() {
+    $("#startRecover").click( function() { startRecoverPw(); } );
+    $("#finishRecover").click( function() { finishRecoverPw(); } );
+});
+
+function startRecoverPw() {
+	var nickName = $("input[name='nickname']").val();
+	if (nickName == "") {
+		alert("Bitte gib einen Namen ein.")
+		return;
+	}
+	$.get("$PAGE_STARTRECOVERPW?nickName="+nickName, function(data) {
+		var result = JSON.parse(data);
+		if (!result.success) {
+			alert(result.message);
+		} else {
+			$(".unverify").fadeOut(function() {
+			    $(".verify").fadeIn();
+			});
+		}
+	});
+}
+
+function finishRecoverPw() {
+	var nickName = $("input[name='nickname']").val();
+	var code = $("input[name='vCode']").val();
+	var newPw = $("input[name='newPw']").val();
+	
+	if (code == "" || newPw == "") {
+		alert("Bitte fülle beide Felder aus");
+		return;
+	}
+	$.get("$PAGE_FINISHRECOVERPW?nickName="+nickName+"&vCode="+code+"&pw="+newPw, function(data) {
+		var result = JSON.parse(data);
+		alert(result.message);
+		if (result.success) {
+			document.location.href="/";
+		} else {
+			document.location.href="$PAGE_RECOVERPW";
+		}
+	});
+}
+</script>

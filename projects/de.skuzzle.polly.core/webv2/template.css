@@ -16,6 +16,14 @@ body {
     height: 30px;
 }
 
+#recoverLink {
+    text-decoration: none;
+    font-size: x-small;
+    float:right;
+    padding-top: 4px;
+    padding-left: 5px;
+}
+
 #top .copyRight {
     font-size: x-small;
     float: left;
@@ -81,6 +89,7 @@ a.showContent:hover {
     float: right;
     padding-top: 2px;
     margin-right: 10px;
+    overflow: visible 
 }
 
 label {

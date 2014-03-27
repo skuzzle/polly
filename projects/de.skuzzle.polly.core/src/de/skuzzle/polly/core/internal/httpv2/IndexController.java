@@ -15,10 +15,12 @@ import de.skuzzle.polly.http.api.HttpException;
 import de.skuzzle.polly.http.api.HttpServer;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
+import de.skuzzle.polly.sdk.IrcManager;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
+import de.skuzzle.polly.sdk.eventlistener.IrcUser;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
 import de.skuzzle.polly.sdk.httpv2.PollyController;
@@ -41,9 +43,11 @@ public class IndexController extends PollyController {
     
     public final static String PAGE_INDEX = "/"; //$NON-NLS-1$
     public final static String PAGE_STATUS = "/pages/status"; //$NON-NLS-1$
+    public final static String PAGE_RECOVER_PW = "/pages/recover"; //$NON-NLS-1$
     
     private final static String CONTENT_INDEX = "templatesv2/home.html"; //$NON-NLS-1$
     private static final String CONTENT_STATUS = "templatesv2/status.html"; //$NON-NLS-1$
+    private final static String CONTENT_RECOVER_PW = "templatesv2/recover.pw.html"; //$NON-NLS-1$
     
     public final static String API_LOGIN = "/api/login"; //$NON-NLS-1$
     public final static String API_CHECK_LOGIN = "/api/checkLogin";  //$NON-NLS-1$
@@ -53,6 +57,10 @@ public class IndexController extends PollyController {
     public final static String API_SHUTDOWN = "/api/shutdown"; //$NON-NLS-1$
     public final static String API_ADD_NEWS = "/api/postNews"; //$NON-NLS-1$
     public final static String API_DELETE_NEWS = "/api/deleteNews"; //$NON-NLS-1$
+    public final static String API_RECOVER_PW = "/api/recoverPw"; //$NON-NLS-1$
+    public final static String API_VERIFY_RECOVERY = "/api/verifyRecovery"; //$NON-NLS-1$
+    
+    private final static PasswordRecoverer RECOVERER = new PasswordRecoverer();
     
     private final NewsManager newsManager;
     
@@ -189,6 +197,52 @@ public class IndexController extends PollyController {
         return this.makeAnswer(c);
     }
     
+    
+    
+    @Get(PAGE_RECOVER_PW)
+    public HttpAnswer recoverPw() {
+        final Map<String, Object> c = this.createContext(CONTENT_RECOVER_PW);
+        return this.makeAnswer(c);
+    }
+    
+    
+    
+    @Get(API_RECOVER_PW)
+    public HttpAnswer startRecoverPw(@Param("nickName") String nickName) {
+        final IrcManager irc = this.getMyPolly().irc();
+        
+        if (!irc.isOnline(nickName)) {
+            return new GsonHttpAnswer(200, new SuccessResult(false, 
+                    String.format("Nickname %s nicht online", nickName)));
+        } else if (!this.getMyPolly().users().isSignedOn(new IrcUser(nickName, "", ""))) { //$NON-NLS-1$ //$NON-NLS-2$
+            return new GsonHttpAnswer(200, new SuccessResult(false, 
+                    String.format("Benutzer %s ist nicht angemeldet", nickName))); 
+        }
+                
+        RECOVERER.startRecovery(this.getMyPolly().irc(), nickName);
+        return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
+    }
+    
+    
+    
+    @Get(API_VERIFY_RECOVERY)
+    public HttpAnswer finishRecoverPw(@Param("nickName") String nickName, 
+            @Param("vCode") String vCode, @Param("pw") String pw) {
+        
+        if (!RECOVERER.verifyRecovery(nickName, vCode)) {
+            return new GsonHttpAnswer(200, new SuccessResult(false, 
+                    vCode + " entspricht nicht dem erwarteten Code"));
+        }
+        final UserManager users = this.getMyPolly().users();
+        final User user = users.getUser(new IrcUser(nickName, "", "")); //$NON-NLS-1$ //$NON-NLS-2$
+        try {
+            this.getMyPolly().persistence().writeAtomic(write -> user.setPassword(pw));
+            return new GsonHttpAnswer(200, 
+                    new SuccessResult(true, "Passwort wurde geändert"));
+        } catch (DatabaseException e) {
+            return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
+        }
+    }
     
     
     

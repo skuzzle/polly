@@ -208,11 +208,12 @@
             Copyright 2013 Simon Taddiken
         </span>
         <div id="login" #if ($user) style="display: none" #end>
-            <form id="loginForm" method="post">
+            <form id="loginForm" method="post" style="display:inline">
                 <input class="textbox loginInput" type="text" name="name" placeholder=" Name"/>
                 <input class="textbox loginInput" type="password" name="pw" placeholder=" Password"/>
                 <input id="performLogin" class="button" type="submit" value="Login"/>
             </form>
+            <a id="recoverLink" href="$PAGE_RECOVERPW">Passwort vergessen?</a>
         </div>
         <ul #if (!$user) style="display: none" #end>
             <li class="loginStatus"><a id="performLogout" href="/" title="Logout">Logout</a></li>
