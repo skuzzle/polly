@@ -10,6 +10,33 @@ import de.skuzzle.polly.sdk.httpv2.html.AbstractHTMLTableModel;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLElement;
 
 public class FleetScanShipTableModel extends AbstractHTMLTableModel<FleetScanShip> {
+    
+    private class ShipId implements Comparable<ShipId> {
+
+        final int id;
+        
+        
+        public ShipId(int id) {
+            this.id = id;
+        }
+        
+        
+        
+        @Override
+        public String toString() {
+            final String href= RXController.PAGE_SCAN_SHIP_DETAILS + 
+                    "?shipId=" + id; //$NON-NLS-1$
+            return new HTMLElement("a").attr("href", href).content("" + id).toString(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$;
+        }
+        
+        
+        
+        @Override
+        public int compareTo(ShipId o) {
+            return Integer.compare(this.id, o.id);
+        }
+    }
+    
 
     private final static String COLUMNS[] = MSG.scanShipModelColumns.split(","); //$NON-NLS-1$
 
@@ -55,10 +82,8 @@ public class FleetScanShipTableModel extends AbstractHTMLTableModel<FleetScanShi
     
     @Override
     public Object getCellValue(int column, FleetScanShip element) {
-        final String href= RXController.PAGE_SCAN_SHIP_DETAILS + 
-                "?shipId=" + element.getRxId(); //$NON-NLS-1$
         switch (column) {
-        case 0: return new HTMLElement("a").attr("href", href).content("" + element.getRxId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        case 0: return new ShipId(element.getRxId());
         case 1: return element.getShipType();
         case 2: return element.getShipClass();
         case 3: return element.getSimpleName();
@@ -75,10 +100,11 @@ public class FleetScanShipTableModel extends AbstractHTMLTableModel<FleetScanShi
     
     @Override
     public Class<?> getColumnClass(int column) {
-        if (column == 6) {
-            return Boolean.class;
+        switch (column) {
+        case 0: return Object.class;
+        case 6: return Boolean.class;
+        default: return super.getColumnClass(column);
         }
-        return super.getColumnClass(column);
     }
     
     
