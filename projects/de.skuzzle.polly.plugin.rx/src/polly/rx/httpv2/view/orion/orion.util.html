@@ -32,7 +32,8 @@ $sector.getQuadName() $sector.getX(), $sector.getY()
 
 #macro (SPAWN_POINTS $spawns $id)
     #if (!$spawns.isEmpty())
-    #BEGIN_EXPAND_TABLE ( 3 $id $MSG.htmlAlienSpawns true )
+    #set ($temp = "$MSG.htmlAlienSpawns ($spawns.size())")
+    #BEGIN_EXPAND_TABLE ( 3 $id $temp true )
     <tr>
         <th>Sektor</th>
         <th>Rasse</th>
@@ -79,7 +80,8 @@ $sector.getQuadName() $sector.getX(), $sector.getY()
 
 #macro (WORMHOLES $holes $id)
 #if (!$holes.isEmpty())
-#BEGIN_EXPAND_TABLE ( 5 $id $MSG.htmlOrionWormholes true )
+#set ($temp = "$MSG.htmlOrionWormholes ($holes.size())")
+#BEGIN_EXPAND_TABLE ( 5 $id $temp true )
     <tr>
         <th>$MSG.htmlOrionWLStart</th>
         <th>$MSG.htmlOrionWLName</th>
@@ -108,7 +110,8 @@ $sector.getQuadName() $sector.getX(), $sector.getY()
 
 #macro (PORTALS $portals $name $id)
     #if (!$portals.isEmpty())
-    #BEGIN_EXPAND_TABLE ( 4 $id $name true )
+    #set ($temp = "$name ($portals.size())")
+    #BEGIN_EXPAND_TABLE ( 4 $id $temp true )
         <tr>
             <th>Name</th>
             <th>Clan</th>
