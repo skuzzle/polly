@@ -53,21 +53,29 @@ public abstract class AbstractEventProvider implements EventProvider {
     
     
     
-    protected <L extends EventListener, E extends Event<?>> void notifyListeners(
+    protected <L extends EventListener, E extends Event<?>> boolean notifyListeners(
             Class<L> listenerClass, E event, Dispatch<L, E> d) {
         
+        boolean result = true;
         final Listeners<L> listeners = this.getListeners(listenerClass);
         for (L listener : listeners) {
-            if (event.isHandled()) {
-                return;
-            }
-            d.dispatch(listener, event);
-            if (listener instanceof OneTimeEventListener) {
-                final OneTimeEventListener otl = (OneTimeEventListener) listener;
-                if (otl.workDone()) {
-                    this.listeners.remove(listenerClass, listener);
+            try {
+                if (event.isHandled()) {
+                    return result;
                 }
+                    
+                d.dispatch(listener, event);
+                if (listener instanceof OneTimeEventListener) {
+                    final OneTimeEventListener otl = (OneTimeEventListener) listener;
+                    if (otl.workDone()) {
+                        this.listeners.remove(listenerClass, listener);
+                    }
+                }
+            } catch (RuntimeException e) {
+                result = false;
+                e.printStackTrace();
             }
         }
+        return result;
     }
 }
