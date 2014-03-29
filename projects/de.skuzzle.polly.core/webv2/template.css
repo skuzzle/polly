@@ -147,7 +147,7 @@ label {
 
 #header #notification {
     float: right;
-    margin-right: 20px;
+    margin-right: 135px;
     background: url(files/imgv2/notification.png) no-repeat;
     display: none;
     font-size: x-small;
