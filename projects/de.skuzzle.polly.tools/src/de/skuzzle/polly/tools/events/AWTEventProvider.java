@@ -33,7 +33,7 @@ class AWTEventProvider extends AbstractEventProvider {
     
     
     @Override
-    public <L extends EventListener, E extends Event<?>> void dispatchEvent(
+    public <L extends EventListener, E extends Event<?>> void dispatch(
             final Class<L> listenerClass, final E event, final BiConsumer<L, E> bc) {
 
         if (this.invokeNow) {

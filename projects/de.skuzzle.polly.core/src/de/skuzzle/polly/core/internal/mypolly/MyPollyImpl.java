@@ -346,7 +346,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 
     @Override
     public void fireGenericEvent(final GenericEvent e) {
-        this.eventProvider.dispatchEvent(GenericListener.class, e, 
+        this.eventProvider.dispatch(GenericListener.class, e, 
                 GenericListener.GENERIC_EVENT);
     }
 }

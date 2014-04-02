@@ -56,7 +56,7 @@ public class DBPortalUpdater implements PortalUpdater {
 
     private void fire(String reporter, List<Portal> portals, Dispatch<PortalListener, 
             PortalEvent> d) {
-        this.events.dispatchEvent(PortalListener.class, 
+        this.events.dispatch(PortalListener.class, 
                 new PortalEvent(this, reporter, portals), d);
     }
 

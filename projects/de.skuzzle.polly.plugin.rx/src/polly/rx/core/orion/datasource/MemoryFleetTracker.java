@@ -63,7 +63,7 @@ public class MemoryFleetTracker implements FleetTracker {
             Check.number(f.getRevorixId()).isPositiveOrZero();
             this.orionFleets.put(f.getRevorixId(), f);
         }
-        this.events.dispatchEvent(FleetListener.class, 
+        this.events.dispatch(FleetListener.class, 
                 new FleetEvent(this, reporter, new ArrayList<>(this.orionFleets.values())), 
                 FleetListener.OWN_FLEETS_UPDATED);
     }
@@ -124,7 +124,7 @@ public class MemoryFleetTracker implements FleetTracker {
             }
         }
         
-        this.events.dispatchEvent(FleetListener.class, 
+        this.events.dispatch(FleetListener.class, 
                 new FleetEvent(this, reporter, new ArrayList<>(fleets)), 
                 FleetListener.FLEETS_UPDATED);
     }

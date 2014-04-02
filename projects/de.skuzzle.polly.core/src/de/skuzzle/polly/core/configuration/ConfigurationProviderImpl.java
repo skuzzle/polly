@@ -149,7 +149,7 @@ public class ConfigurationProviderImpl implements ConfigurationProvider {
     
     
     public void fireConfigurationChanged(ConfigurationEvent e) {
-        this.eventProvider.dispatchEvent(ConfigurationListener.class, e, 
+        this.eventProvider.dispatch(ConfigurationListener.class, e, 
                 ConfigurationListener.CONFIGURATION_CHANGED);
     }
 }

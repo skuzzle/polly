@@ -55,7 +55,7 @@ public abstract class AbstractEventProvider implements EventProvider {
     
     
     @Override
-    public <L extends EventListener, E extends Event<?>> void dispatchEvent(
+    public <L extends EventListener, E extends Event<?>> void dispatch(
             Class<L> listenerClass, E event, BiConsumer<L, E> bc) {
         if (this.canDispatch()) {
             this.notifyListeners(listenerClass, event, bc);

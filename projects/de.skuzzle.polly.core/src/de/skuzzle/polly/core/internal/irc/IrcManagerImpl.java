@@ -754,98 +754,98 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     
     
     protected void fireMessageSend(final OwnMessageEvent e) {
-        this.eventProvider.dispatchEvent(MessageSendListener.class, e, 
+        this.eventProvider.dispatch(MessageSendListener.class, e, 
                 MessageSendListener.MESSAGE_SENT);
     }
    
     
     
     protected void fireNickChange(final NickChangeEvent e) {
-        this.eventProvider.dispatchEvent(NickChangeListener.class, e, 
+        this.eventProvider.dispatch(NickChangeListener.class, e, 
                 NickChangeListener.NICK_CHANGED);
     }
     
     
     
     protected void fireJoin(final ChannelEvent e) {
-        this.eventProvider.dispatchEvent(JoinPartListener.class, e, 
+        this.eventProvider.dispatch(JoinPartListener.class, e, 
                 JoinPartListener.CHANNEL_JOINED);
     }
     
     
     
     protected void firePart(final ChannelEvent e) {
-        this.eventProvider.dispatchEvent(JoinPartListener.class, e, 
+        this.eventProvider.dispatch(JoinPartListener.class, e, 
                 JoinPartListener.CHANNEL_PARTED);
     }
     
     
     
     protected void fireQuit(final QuitEvent e) {
-        this.eventProvider.dispatchEvent(QuitListener.class, e, 
+        this.eventProvider.dispatch(QuitListener.class, e, 
                 QuitListener.QUIT);
     }
     
     
     
     protected void firePublicMessageEvent(final MessageEvent e) {
-        this.eventProvider.dispatchEvent(MessageListener.class, e, 
+        this.eventProvider.dispatch(MessageListener.class, e, 
                 MessageListener.PUBLIC_MESSAGE);
     }
     
     
     
     protected void firePrivateMessageEvent(final MessageEvent e) {
-        this.eventProvider.dispatchEvent(MessageListener.class, e, 
+        this.eventProvider.dispatch(MessageListener.class, e, 
                 MessageListener.PRIVATE_MESSAGE);
     }
     
     
     
     protected void fireActionMessageEvent(final MessageEvent e) {
-        this.eventProvider.dispatchEvent(MessageListener.class, e, 
+        this.eventProvider.dispatch(MessageListener.class, e, 
                 MessageListener.ACTION_MESSAGE);
     }
     
     
     
     protected void fireNoticeMessageEvent(final MessageEvent e) {
-        this.eventProvider.dispatchEvent(MessageListener.class, e, 
+        this.eventProvider.dispatch(MessageListener.class, e, 
                 MessageListener.NOTICE_MESSAGE);
     }
     
     
     
     protected void fireChannelModeEvent(final ChannelModeEvent e) {
-        this.eventProvider.dispatchEvent(ChannelModeListener.class, e, 
+        this.eventProvider.dispatch(ChannelModeListener.class, e, 
                 ChannelModeListener.MODE_CHANGED);
     }
     
     
     
     protected void fireUserSpotted(final SpotEvent e) {
-        this.eventProvider.dispatchEvent(UserSpottedListener.class, e, 
+        this.eventProvider.dispatch(UserSpottedListener.class, e, 
                 UserSpottedListener.USER_SPOTTED);
     }
     
     
     
     protected void fireUserLost(final SpotEvent e) {
-        this.eventProvider.dispatchEvent(UserSpottedListener.class, e, 
+        this.eventProvider.dispatch(UserSpottedListener.class, e, 
                 UserSpottedListener.USER_LOST);
     }
     
     
     
     protected void fireConnectionEstablished(ConnectionEvent e) {
-        this.eventProvider.dispatchEvent(ConnectionListener.class, e, 
+        this.eventProvider.dispatch(ConnectionListener.class, e, 
                 ConnectionListener.CONNECTION_ESTABLISHED);
     }
     
     
     
     protected void fireConnectionLost(ConnectionEvent e) {
-        this.eventProvider.dispatchEvent(ConnectionListener.class, e, 
+        this.eventProvider.dispatch(ConnectionListener.class, e, 
                 ConnectionListener.CONNECTION_LOST);
     }
 

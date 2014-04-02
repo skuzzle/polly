@@ -62,7 +62,7 @@ public class BandwidthManager {
     
     private void fireOutputStrategyChanged(AllocationStrategy newStrategy) {
         final StrategyChangedEvent e = new StrategyChangedEvent(this, newStrategy);
-        this.outputEvents.dispatchEvent(StrategyChangedListener.class, e, 
+        this.outputEvents.dispatch(StrategyChangedListener.class, e, 
                 StrategyChangedListener.STRATEY_CHANGED);
     }
 }

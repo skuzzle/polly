@@ -657,14 +657,14 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     
     protected void fireUserSignedOn(final UserEvent e) {
-        this.eventProvider.dispatchEvent(UserListener.class, e, 
+        this.eventProvider.dispatch(UserListener.class, e, 
                 UserListener.SIGNED_ON);
     }
     
     
     
     protected void fireUserSignedOff(final UserEvent e) {
-        this.eventProvider.dispatchEvent(UserListener.class, e, 
+        this.eventProvider.dispatch(UserListener.class, e, 
                 UserListener.SIGNED_OFF);
     }
 }

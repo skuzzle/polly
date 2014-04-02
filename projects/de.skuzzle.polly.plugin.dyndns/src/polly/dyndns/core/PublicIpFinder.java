@@ -123,7 +123,7 @@ public class PublicIpFinder {
     
     
     protected void fireIPChangedEvent(IPChangedEvent e) {
-        this.eventProvider.dispatchEvent(IPChangedListener.class, e, 
+        this.eventProvider.dispatch(IPChangedListener.class, e, 
                 IPChangedListener.IP_CHANGED);
     }
 }

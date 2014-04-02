@@ -81,7 +81,7 @@ public interface EventProvider extends AutoCloseable {
      * @param bc Function to delegate the event to the specific callback method of the 
      *          listener.
      */
-    public <L extends EventListener, E extends Event<?>> void dispatchEvent(
+    public <L extends EventListener, E extends Event<?>> void dispatch(
             Class<L> listenerClass, E event, BiConsumer<L, E> bc);
     
     /**

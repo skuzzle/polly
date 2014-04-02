@@ -97,7 +97,7 @@ public class MudTCPConnection implements Closeable {
     
     private void fireMessageReceived(final String s) {
         final MudMessageEvent e = new MudMessageEvent(this, s);
-        this.events.dispatchEvent(ConnectionListener.class, e, 
+        this.events.dispatch(ConnectionListener.class, e, 
                 ConnectionListener.RECEIVED);
     }
     
@@ -105,7 +105,7 @@ public class MudTCPConnection implements Closeable {
     
     private void fireConnected() {
         final MudEvent e = new MudEvent(this);
-        this.events.dispatchEvent(ConnectionListener.class, e, 
+        this.events.dispatch(ConnectionListener.class, e, 
                 ConnectionListener.CONNECTED);
     }
     
@@ -113,7 +113,7 @@ public class MudTCPConnection implements Closeable {
     
     private void fireDiconnected() {
         final MudEvent e = new MudEvent(this);
-        this.events.dispatchEvent(ConnectionListener.class, e, 
+        this.events.dispatch(ConnectionListener.class, e, 
                 ConnectionListener.DISCONNECTED);
     }
     

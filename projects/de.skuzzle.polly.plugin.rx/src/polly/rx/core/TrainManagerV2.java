@@ -111,7 +111,7 @@ public class TrainManagerV2 extends AbstractDisposable {
             @Override
             public void perform(Write write) {
                 bill.closeBill();
-                events.dispatchEvent(TrainingListener.class, 
+                events.dispatch(TrainingListener.class, 
                         new TrainingEvent(TrainManagerV2.this, bill), 
                         TrainingListener.BILL_CLOSED);
             }
@@ -149,7 +149,7 @@ public class TrainManagerV2 extends AbstractDisposable {
     
     public synchronized TrainBillV2 addTrain(final TrainEntityV3 e, User trainer) 
             throws DatabaseException {
-        events.dispatchEvent(TrainingListener.class, 
+        events.dispatch(TrainingListener.class, 
                 new TrainingEvent(TrainManagerV2.this, TrainEventType.TRAIN_ADDED, e), 
                 TrainingListener.TRAINING_ADDED);
         this.persistence.writeAtomic(new Atomic() {
@@ -159,7 +159,7 @@ public class TrainManagerV2 extends AbstractDisposable {
                 new RunLater("TRAIN_EVENT", e.getTrainFinished()) { //$NON-NLS-1$
                     @Override
                     public void run() {
-                        events.dispatchEvent(TrainingListener.class, 
+                        events.dispatch(TrainingListener.class, 
                                 new TrainingEvent(TrainManagerV2.this, TrainEventType.TRAIN_FINISHED, e), 
                                 TrainingListener.TRAINING_FINISHED);
                     }
