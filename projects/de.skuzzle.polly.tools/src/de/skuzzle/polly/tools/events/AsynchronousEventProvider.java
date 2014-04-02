@@ -1,6 +1,5 @@
 package de.skuzzle.polly.tools.events;
 
-import java.util.EventListener;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -27,16 +26,6 @@ class AsynchronousEventProvider extends AbstractEventProvider {
     public AsynchronousEventProvider(ExecutorService dispatcher) {
         super();
         this.dispatchPool = dispatcher;
-    }
-    
-    
-    
-    @Override
-    public <L extends EventListener, E extends Event<?>> void dispatchEvent(
-            final Class<L> listenerClass, final E event, final Dispatch<L, E> d) {
-        if (this.canDispatch()) {
-            this.dispatchPool.execute(() -> notifyListeners(listenerClass, event, d));
-        }
     }
     
     

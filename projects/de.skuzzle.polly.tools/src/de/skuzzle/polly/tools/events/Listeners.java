@@ -14,7 +14,7 @@ import java.util.List;
  * @author Simon
  * @param <T> Type of listeners that are contained in this collection.
  */
-public class Listeners<T extends EventListener> implements Collection<T> {
+class Listeners<T extends EventListener> implements Collection<T> {
 
     private final List<T> backend;
     private final Class<T> eventClass;

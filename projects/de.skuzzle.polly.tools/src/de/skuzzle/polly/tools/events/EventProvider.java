@@ -1,6 +1,7 @@
 package de.skuzzle.polly.tools.events;
 
 import java.util.EventListener;
+import java.util.function.BiConsumer;
 
 
 /**
@@ -77,11 +78,11 @@ public interface EventProvider extends AutoCloseable {
      * 
      * @param listenerClass The kind of listeners to notify.
      * @param event The occurred event which shall be passed to each listener.
-     * @param d Function to delegate the event to the specific callback method of the 
+     * @param bc Function to delegate the event to the specific callback method of the 
      *          listener.
      */
     public <L extends EventListener, E extends Event<?>> void dispatchEvent(
-            Class<L> listenerClass, E event, Dispatch<L, E> d);
+            Class<L> listenerClass, E event, BiConsumer<L, E> bc);
     
     /**
      * Gets whether this EventProvider is ready for dispatching.

@@ -2,6 +2,7 @@ package de.skuzzle.polly.tools.events;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.EventListener;
+import java.util.function.BiConsumer;
 
 import javax.swing.SwingUtilities;
 
@@ -33,21 +34,15 @@ class AWTEventProvider extends AbstractEventProvider {
     
     @Override
     public <L extends EventListener, E extends Event<?>> void dispatchEvent(
-            final Class<L> listenerClass, final E event, final Dispatch<L, E> d) {
-        
-        final Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                notifyListeners(listenerClass, event, d);
-            }
-        };
-        
+            final Class<L> listenerClass, final E event, final BiConsumer<L, E> bc) {
+
         if (this.invokeNow) {
             if (SwingUtilities.isEventDispatchThread()) {
-                r.run();
+                notifyListeners(listenerClass, event, bc);
             } else {
                 try {
-                    SwingUtilities.invokeAndWait(r);
+                    SwingUtilities.invokeAndWait(
+                            () -> notifyListeners(listenerClass, event, bc));
                 } catch (InvocationTargetException e) {
                     throw new RuntimeException(e);
                 } catch (InterruptedException e) {
@@ -55,7 +50,7 @@ class AWTEventProvider extends AbstractEventProvider {
                 }
             }
         } else {
-            SwingUtilities.invokeLater(r);
+            SwingUtilities.invokeLater(() -> notifyListeners(listenerClass, event, bc));
         }
     }
     

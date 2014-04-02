@@ -2,6 +2,7 @@ package de.skuzzle.polly.tools.events;
 
 import java.util.Arrays;
 import java.util.EventListener;
+import java.util.function.BiConsumer;
 
 import javax.swing.event.EventListenerList;
 
@@ -13,7 +14,7 @@ import javax.swing.event.EventListenerList;
  */
 public abstract class AbstractEventProvider implements EventProvider {
     
-    protected EventListenerList listeners;
+    protected final EventListenerList listeners;
     
     
     public AbstractEventProvider() {
@@ -53,8 +54,29 @@ public abstract class AbstractEventProvider implements EventProvider {
     
     
     
+    @Override
+    public <L extends EventListener, E extends Event<?>> void dispatchEvent(
+            Class<L> listenerClass, E event, BiConsumer<L, E> bc) {
+        if (this.canDispatch()) {
+            this.notifyListeners(listenerClass, event, bc);
+        }
+    }
+    
+    
+    
+    /**
+     * Notifies all listeners registered for the provided class with the provided event.
+     * This method is failure tolerant and will continue notifying listeners even if one
+     * of them threw an exception.
+     * 
+     * @param listenerClass The class of listeners that should be notified.
+     * @param event The event to pass to each listener.
+     * @param d The method of the listener to call.
+     * @return Returns <code>true</code> if all listeners have been notified successfully.
+     *          Return <code>false</code> if one listener threw an exception.
+     */
     protected <L extends EventListener, E extends Event<?>> boolean notifyListeners(
-            Class<L> listenerClass, E event, Dispatch<L, E> d) {
+            Class<L> listenerClass, E event, BiConsumer<L, E> bc) {
         
         boolean result = true;
         final Listeners<L> listeners = this.getListeners(listenerClass);
@@ -64,7 +86,7 @@ public abstract class AbstractEventProvider implements EventProvider {
                     return result;
                 }
                     
-                d.dispatch(listener, event);
+                bc.accept(listener, event);
                 if (listener instanceof OneTimeEventListener) {
                     final OneTimeEventListener otl = (OneTimeEventListener) listener;
                     if (otl.workDone()) {
