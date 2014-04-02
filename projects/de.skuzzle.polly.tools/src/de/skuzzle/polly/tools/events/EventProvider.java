@@ -76,13 +76,46 @@ public interface EventProvider extends AutoCloseable {
      * eventProvider.dispatchEvent(UserListener.class, event, UserListener::userAdded)
      * </pre>
      * 
+     * This method ignores exceptions thrown by notified listeners. If an exception 
+     * occurs, the next listener will be notified.
+     * 
      * @param listenerClass The kind of listeners to notify.
      * @param event The occurred event which shall be passed to each listener.
      * @param bc Function to delegate the event to the specific callback method of the 
      *          listener.
      */
+    public default <L extends EventListener, E extends Event<?>> void dispatch(
+            Class<L> listenerClass, E event, BiConsumer<L, E> bc) {
+        this.dispatch(listenerClass, event, bc, e -> e.printStackTrace());
+    }
+    
+    /**
+     * Notifies all listeners of a certain kind about an occurred event. Consider an 
+     * <tt>UserListener</tt> interface:
+     * <pre>
+     * public interface UserListener {
+     *     public void userAdded(UserEvent e);
+     *     
+     *     public void userDeleted(UserEvent e);
+     * }
+     * </pre>
+     * 
+     * Notifying all registered UserListeners about an added user is as easy as calling
+     * <pre>
+     * eventProvider.dispatchEvent(UserListener.class, event, UserListener::userAdded, e -> logger.error(e));
+     * </pre>
+     * 
+     * The {@link ExceptionCallback} gets notified when any of the listeners throws an
+     * unexpected exception.
+     * 
+     * @param listenerClass The kind of listeners to notify.
+     * @param event The occurred event which shall be passed to each listener.
+     * @param bc Function to delegate the event to the specific callback method of the 
+     *          listener.
+     * @param ec Callback to be notified when any of the listeners throws an exception.
+     */
     public <L extends EventListener, E extends Event<?>> void dispatch(
-            Class<L> listenerClass, E event, BiConsumer<L, E> bc);
+            Class<L> listenerClass, E event, BiConsumer<L, E> bc, ExceptionCallback ec);
     
     /**
      * Gets whether this EventProvider is ready for dispatching.

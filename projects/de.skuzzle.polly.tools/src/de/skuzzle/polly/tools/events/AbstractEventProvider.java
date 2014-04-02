@@ -56,9 +56,9 @@ public abstract class AbstractEventProvider implements EventProvider {
     
     @Override
     public <L extends EventListener, E extends Event<?>> void dispatch(
-            Class<L> listenerClass, E event, BiConsumer<L, E> bc) {
+            Class<L> listenerClass, E event, BiConsumer<L, E> bc, ExceptionCallback ec) {
         if (this.canDispatch()) {
-            this.notifyListeners(listenerClass, event, bc);
+            this.notifyListeners(listenerClass, event, bc, ec);
         }
     }
     
@@ -76,7 +76,7 @@ public abstract class AbstractEventProvider implements EventProvider {
      *          Return <code>false</code> if one listener threw an exception.
      */
     protected <L extends EventListener, E extends Event<?>> boolean notifyListeners(
-            Class<L> listenerClass, E event, BiConsumer<L, E> bc) {
+            Class<L> listenerClass, E event, BiConsumer<L, E> bc, ExceptionCallback ec) {
         
         boolean result = true;
         final Listeners<L> listeners = this.getListeners(listenerClass);
@@ -95,7 +95,12 @@ public abstract class AbstractEventProvider implements EventProvider {
                 }
             } catch (RuntimeException e) {
                 result = false;
-                e.printStackTrace();
+                try {
+                    ec.exception(e);
+                } catch (Exception e1) {
+                    // where is your god now?
+                    e1.printStackTrace();
+                }
             }
         }
         return result;

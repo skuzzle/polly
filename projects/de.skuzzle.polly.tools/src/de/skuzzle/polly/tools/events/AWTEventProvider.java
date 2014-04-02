@@ -34,15 +34,16 @@ class AWTEventProvider extends AbstractEventProvider {
     
     @Override
     public <L extends EventListener, E extends Event<?>> void dispatch(
-            final Class<L> listenerClass, final E event, final BiConsumer<L, E> bc) {
+            final Class<L> listenerClass, final E event, final BiConsumer<L, E> bc, 
+            ExceptionCallback ec) {
 
         if (this.invokeNow) {
             if (SwingUtilities.isEventDispatchThread()) {
-                notifyListeners(listenerClass, event, bc);
+                notifyListeners(listenerClass, event, bc, ec);
             } else {
                 try {
                     SwingUtilities.invokeAndWait(
-                            () -> notifyListeners(listenerClass, event, bc));
+                            () -> notifyListeners(listenerClass, event, bc, ec));
                 } catch (InvocationTargetException e) {
                     throw new RuntimeException(e);
                 } catch (InterruptedException e) {
@@ -50,7 +51,7 @@ class AWTEventProvider extends AbstractEventProvider {
                 }
             }
         } else {
-            SwingUtilities.invokeLater(() -> notifyListeners(listenerClass, event, bc));
+            SwingUtilities.invokeLater(() -> notifyListeners(listenerClass, event, bc, ec));
         }
     }
     
