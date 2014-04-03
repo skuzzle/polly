@@ -1,51 +1,12 @@
 package de.skuzzle.polly.core.internal.httpv2;
 
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.skuzzle.polly.sdk.IrcManager;
-import de.skuzzle.polly.sdk.eventlistener.MessageAdapter;
-import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
 import de.skuzzle.polly.sdk.time.Milliseconds;
 import de.skuzzle.polly.tools.collections.TemporaryValueMap;
-import de.skuzzle.polly.tools.events.OneTimeEventListener;
 
 public class PasswordRecoverer {
-
-    private class CodeListener extends MessageAdapter implements OneTimeEventListener {
-
-        private final String nickName;
-        private AtomicBoolean done = new AtomicBoolean();
-
-
-
-        public CodeListener(String nickName) {
-            this.nickName = nickName;
-        }
-
-
-
-        @Override
-        public void privateMessage(MessageEvent e) {
-            final String nick = e.getUser().getNickName().toLowerCase();
-            if (nick.equals(this.nickName)) {
-                this.done.set(true);
-                final String code = e.getMessage();
-                if (PasswordRecoverer.this.verifyRecovery(nick, code)) {
-                    
-                }
-            }
-        }
-
-
-
-        @Override
-        public boolean workDone() {
-            return done.get();
-        }
-    }
-    
-    
 
     private final static String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; //$NON-NLS-1$
     private final static int CODE_LENGTH = 6;

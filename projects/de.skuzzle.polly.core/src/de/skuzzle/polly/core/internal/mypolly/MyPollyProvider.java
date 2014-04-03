@@ -2,6 +2,7 @@ package de.skuzzle.polly.core.internal.mypolly;
 
 import java.util.concurrent.ExecutorService;
 
+import de.skuzzle.jeve.EventProvider;
 import de.skuzzle.polly.core.configuration.ConfigurationProviderImpl;
 import de.skuzzle.polly.core.internal.ShutdownManagerImpl;
 import de.skuzzle.polly.core.internal.commands.CommandManagerImpl;
@@ -21,7 +22,6 @@ import de.skuzzle.polly.core.moduleloader.ModuleLoader;
 import de.skuzzle.polly.core.moduleloader.annotations.Module;
 import de.skuzzle.polly.core.moduleloader.annotations.Provide;
 import de.skuzzle.polly.core.moduleloader.annotations.Require;
-import de.skuzzle.polly.tools.events.EventProvider;
 
 
 @Module(

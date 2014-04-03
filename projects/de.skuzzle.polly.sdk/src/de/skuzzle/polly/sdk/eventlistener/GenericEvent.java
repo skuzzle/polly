@@ -1,6 +1,6 @@
 package de.skuzzle.polly.sdk.eventlistener;
 
-import de.skuzzle.polly.tools.events.Event;
+import de.skuzzle.jeve.Event;
 
 
 public class GenericEvent extends Event<Object> {

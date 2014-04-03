@@ -10,10 +10,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
+import de.skuzzle.jeve.EventProvider;
 import de.skuzzle.polly.sdk.time.Time;
 import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
-import de.skuzzle.polly.tools.events.EventProvider;
-import de.skuzzle.polly.tools.events.EventProviders;
 
 
 public class PublicIpFinder {
@@ -82,7 +81,7 @@ public class PublicIpFinder {
      */
     public PublicIpFinder(String loggerName, int updateInterval) {
         this.logger = Logger.getLogger(loggerName);
-        this.eventProvider = EventProviders.newDefaultEventProvider();
+        this.eventProvider = EventProvider.newDefaultEventProvider();
         this.updater = Executors.newScheduledThreadPool(1, 
                 new ThreadFactoryBuilder("DynDNS_Service").setDaemon(false)); //$NON-NLS-1$
         
@@ -124,6 +123,6 @@ public class PublicIpFinder {
     
     protected void fireIPChangedEvent(IPChangedEvent e) {
         this.eventProvider.dispatch(IPChangedListener.class, e, 
-                IPChangedListener.IP_CHANGED);
+                IPChangedListener::ipChanged);
     }
 }

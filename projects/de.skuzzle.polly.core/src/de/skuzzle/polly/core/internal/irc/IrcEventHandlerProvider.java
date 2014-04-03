@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 
+import de.skuzzle.jeve.EventProvider;
 import de.skuzzle.polly.core.configuration.ConfigurationProviderImpl;
 import de.skuzzle.polly.core.eventhandler.AutoLoginProvider;
 import de.skuzzle.polly.core.eventhandler.AutoLogoffHandler;
@@ -30,8 +31,6 @@ import de.skuzzle.polly.sdk.IrcManager;
 import de.skuzzle.polly.sdk.eventlistener.MessageEvent;
 import de.skuzzle.polly.sdk.exceptions.AlreadySignedOnException;
 import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
-import de.skuzzle.polly.tools.events.EventProvider;
-
 
 
 

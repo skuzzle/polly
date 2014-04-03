@@ -14,7 +14,7 @@
         Space-separated list of jar files relative to lib.dir to include 
         in build-process
     -->
-    <property name="dependencies" value="NONE"/>
+    <property name="dependencies" value="jeve-1.0.0.jar"/>
    
     <!--
         Space separated list of jar files relative to dist.dir to include

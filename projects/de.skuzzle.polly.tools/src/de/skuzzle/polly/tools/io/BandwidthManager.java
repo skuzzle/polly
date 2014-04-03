@@ -2,8 +2,7 @@ package de.skuzzle.polly.tools.io;
 
 import java.io.OutputStream;
 
-import de.skuzzle.polly.tools.events.EventProvider;
-import de.skuzzle.polly.tools.events.EventProviders;
+import de.skuzzle.jeve.EventProvider;
 
 
 public class BandwidthManager {
@@ -15,7 +14,7 @@ public class BandwidthManager {
     
     public BandwidthManager() {
         this.outputStrategy = new ChainedAllocationStrategy(null);
-        this.outputEvents = EventProviders.newDefaultEventProvider();
+        this.outputEvents = EventProvider.newDefaultEventProvider();
     }
     
     
@@ -63,6 +62,6 @@ public class BandwidthManager {
     private void fireOutputStrategyChanged(AllocationStrategy newStrategy) {
         final StrategyChangedEvent e = new StrategyChangedEvent(this, newStrategy);
         this.outputEvents.dispatch(StrategyChangedListener.class, e, 
-                StrategyChangedListener.STRATEY_CHANGED);
+                StrategyChangedListener::strategyChanged);
     }
 }

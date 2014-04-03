@@ -16,13 +16,12 @@ import polly.rx.core.orion.model.Quadrant;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.entities.DBQuadrant;
 import polly.rx.entities.DBSector;
+import de.skuzzle.jeve.EventProvider;
 import de.skuzzle.polly.sdk.PersistenceManagerV2;
 import de.skuzzle.polly.sdk.PersistenceManagerV2.Param;
 import de.skuzzle.polly.sdk.PersistenceManagerV2.Read;
 import de.skuzzle.polly.sdk.PersistenceManagerV2.Write;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
-import de.skuzzle.polly.tools.events.EventProvider;
-import de.skuzzle.polly.tools.events.EventProviders;
 
 public class DBQuadrantUpdater implements QuadrantUpdater {
 
@@ -33,7 +32,7 @@ public class DBQuadrantUpdater implements QuadrantUpdater {
 
     public DBQuadrantUpdater(PersistenceManagerV2 persistence) {
         this.persistence = persistence;
-        this.eventProvider = EventProviders.newDefaultEventProvider();
+        this.eventProvider = EventProvider.newDefaultEventProvider();
     }
 
     

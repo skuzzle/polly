@@ -4,7 +4,7 @@ package de.skuzzle.polly.core.internal.irc;
 import java.io.IOException;
 import java.util.List;
 
-
+import de.skuzzle.jeve.EventProvider;
 import de.skuzzle.polly.core.configuration.ConfigurationProviderImpl;
 import de.skuzzle.polly.core.internal.ModuleStates;
 import de.skuzzle.polly.core.internal.ShutdownManagerImpl;
@@ -16,7 +16,6 @@ import de.skuzzle.polly.core.moduleloader.annotations.Provide;
 import de.skuzzle.polly.core.moduleloader.annotations.Require;
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.ConfigurationProvider;
-import de.skuzzle.polly.tools.events.EventProvider;
 
 
 

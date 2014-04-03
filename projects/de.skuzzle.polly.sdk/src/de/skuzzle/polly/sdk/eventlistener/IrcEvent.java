@@ -2,9 +2,9 @@ package de.skuzzle.polly.sdk.eventlistener;
 
 import java.util.Date;
 
+import de.skuzzle.jeve.Event;
 import de.skuzzle.polly.sdk.IrcManager;
 import de.skuzzle.polly.sdk.time.Time;
-import de.skuzzle.polly.tools.events.Event;
 
 /**
  * Base event class for all irc events.

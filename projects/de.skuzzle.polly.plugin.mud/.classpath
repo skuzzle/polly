@@ -5,5 +5,10 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/de.skuzzle.polly.lib"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/de.skuzzle.polly.sdk"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/de.skuzzle.polly.tools"/>
+	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/jeve-1.0.0.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/de.skuzzle.polly.lib/jeve-1.0.0-doc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,7 +1,5 @@
 package de.skuzzle.polly.sdk.eventlistener;
 
-import de.skuzzle.polly.tools.events.Dispatch;
-
 /**
  * This listener listens for message events on any channel.
  * 
@@ -10,39 +8,6 @@ import de.skuzzle.polly.tools.events.Dispatch;
  * @version RC 1.0
  */
 public interface MessageListener extends IrcEventListener {
-    
-    public final static Dispatch<MessageListener, MessageEvent> PUBLIC_MESSAGE = 
-            new Dispatch<MessageListener, MessageEvent>() {
-        @Override
-        public void dispatch(MessageListener listener, MessageEvent event) {
-            listener.publicMessage(event);
-        }
-    };
-    
-    public final static Dispatch<MessageListener, MessageEvent> PRIVATE_MESSAGE = 
-            new Dispatch<MessageListener, MessageEvent>() {
-        @Override
-        public void dispatch(MessageListener listener, MessageEvent event) {
-            listener.privateMessage(event);
-        }
-    };
-    
-    public final static Dispatch<MessageListener, MessageEvent> ACTION_MESSAGE = 
-            new Dispatch<MessageListener, MessageEvent>() {
-        @Override
-        public void dispatch(MessageListener listener, MessageEvent event) {
-            listener.actionMessage(event);
-        }
-    };
-    
-    public final static Dispatch<MessageListener, MessageEvent> NOTICE_MESSAGE = 
-            new Dispatch<MessageListener, MessageEvent>() {
-        @Override
-        public void dispatch(MessageListener listener, MessageEvent event) {
-            listener.noticeMessage(event);
-        }
-    };
-    
     
 	/**
 	 * This method is called whenever a message is send to a channel. Detailed 

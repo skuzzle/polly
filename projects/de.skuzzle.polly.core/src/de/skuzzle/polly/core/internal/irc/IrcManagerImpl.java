@@ -18,6 +18,7 @@ import org.jibble.pircbot.NickAlreadyInUseException;
 import org.jibble.pircbot.PircBot;
 import org.jibble.pircbot.User;
 
+import de.skuzzle.jeve.EventProvider;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.Disposable;
@@ -41,7 +42,6 @@ import de.skuzzle.polly.sdk.eventlistener.QuitListener;
 import de.skuzzle.polly.sdk.eventlistener.SpotEvent;
 import de.skuzzle.polly.sdk.eventlistener.UserSpottedListener;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
-import de.skuzzle.polly.tools.events.EventProvider;
 import de.skuzzle.polly.tools.iterators.WrapIterator;
 
 
@@ -755,98 +755,98 @@ public class IrcManagerImpl extends AbstractDisposable implements IrcManager, Di
     
     protected void fireMessageSend(final OwnMessageEvent e) {
         this.eventProvider.dispatch(MessageSendListener.class, e, 
-                MessageSendListener.MESSAGE_SENT);
+                MessageSendListener::messageSent);
     }
    
     
     
     protected void fireNickChange(final NickChangeEvent e) {
         this.eventProvider.dispatch(NickChangeListener.class, e, 
-                NickChangeListener.NICK_CHANGED);
+                NickChangeListener::nickChanged);
     }
     
     
     
     protected void fireJoin(final ChannelEvent e) {
         this.eventProvider.dispatch(JoinPartListener.class, e, 
-                JoinPartListener.CHANNEL_JOINED);
+                JoinPartListener::channelJoined);
     }
     
     
     
     protected void firePart(final ChannelEvent e) {
         this.eventProvider.dispatch(JoinPartListener.class, e, 
-                JoinPartListener.CHANNEL_PARTED);
+                JoinPartListener::channelParted);
     }
     
     
     
     protected void fireQuit(final QuitEvent e) {
         this.eventProvider.dispatch(QuitListener.class, e, 
-                QuitListener.QUIT);
+                QuitListener::quited);
     }
     
     
     
     protected void firePublicMessageEvent(final MessageEvent e) {
         this.eventProvider.dispatch(MessageListener.class, e, 
-                MessageListener.PUBLIC_MESSAGE);
+                MessageListener::publicMessage);
     }
     
     
     
     protected void firePrivateMessageEvent(final MessageEvent e) {
         this.eventProvider.dispatch(MessageListener.class, e, 
-                MessageListener.PRIVATE_MESSAGE);
+                MessageListener::privateMessage);
     }
     
     
     
     protected void fireActionMessageEvent(final MessageEvent e) {
         this.eventProvider.dispatch(MessageListener.class, e, 
-                MessageListener.ACTION_MESSAGE);
+                MessageListener::actionMessage);
     }
     
     
     
     protected void fireNoticeMessageEvent(final MessageEvent e) {
         this.eventProvider.dispatch(MessageListener.class, e, 
-                MessageListener.NOTICE_MESSAGE);
+                MessageListener::noticeMessage);
     }
     
     
     
     protected void fireChannelModeEvent(final ChannelModeEvent e) {
         this.eventProvider.dispatch(ChannelModeListener.class, e, 
-                ChannelModeListener.MODE_CHANGED);
+                ChannelModeListener::channelModeChanged);
     }
     
     
     
     protected void fireUserSpotted(final SpotEvent e) {
         this.eventProvider.dispatch(UserSpottedListener.class, e, 
-                UserSpottedListener.USER_SPOTTED);
+                UserSpottedListener::userSpotted);
     }
     
     
     
     protected void fireUserLost(final SpotEvent e) {
         this.eventProvider.dispatch(UserSpottedListener.class, e, 
-                UserSpottedListener.USER_LOST);
+                UserSpottedListener::userLost);
     }
     
     
     
     protected void fireConnectionEstablished(ConnectionEvent e) {
         this.eventProvider.dispatch(ConnectionListener.class, e, 
-                ConnectionListener.CONNECTION_ESTABLISHED);
+                ConnectionListener::ircConnectionEstablished);
     }
     
     
     
     protected void fireConnectionLost(ConnectionEvent e) {
         this.eventProvider.dispatch(ConnectionListener.class, e, 
-                ConnectionListener.CONNECTION_LOST);
+                ConnectionListener::ircConnectionLost);
     }
 
 

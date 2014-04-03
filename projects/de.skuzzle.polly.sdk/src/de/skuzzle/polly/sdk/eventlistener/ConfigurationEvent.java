@@ -1,8 +1,8 @@
 package de.skuzzle.polly.sdk.eventlistener;
 
 
+import de.skuzzle.jeve.Event;
 import de.skuzzle.polly.sdk.Configuration;
-import de.skuzzle.polly.tools.events.Event;
 
 /**
  * This event is raised when the configuration changes.

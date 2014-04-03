@@ -1,7 +1,5 @@
 package de.skuzzle.polly.sdk.eventlistener;
 
-import de.skuzzle.polly.tools.events.Dispatch;
-
 /**
  * This listener listens for nickchange events.
  * 
@@ -10,14 +8,6 @@ import de.skuzzle.polly.tools.events.Dispatch;
  * @version RC 1.0
  */
 public interface NickChangeListener extends IrcEventListener {
-    
-    public final static Dispatch<NickChangeListener, NickChangeEvent> NICK_CHANGED = 
-            new Dispatch<NickChangeListener, NickChangeEvent>() {
-        @Override
-        public void dispatch(NickChangeListener listener, NickChangeEvent event) {
-            listener.nickChanged(event);
-        }
-    };
     
 	/**
 	 * This method is called whenever a user changes his nickname. Detailed information

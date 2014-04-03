@@ -2,8 +2,8 @@ package polly.rx.core.orion;
 
 import java.util.Collection;
 
+import de.skuzzle.jeve.Event;
 import polly.rx.core.orion.model.Fleet;
-import de.skuzzle.polly.tools.events.Event;
 
 
 public class FleetEvent extends Event<FleetTracker> {

@@ -2,9 +2,6 @@ package de.skuzzle.polly.sdk.eventlistener;
 
 import java.util.EventListener;
 
-import de.skuzzle.polly.tools.events.Dispatch;
-
-
 /**
  * This listener listens for user spotted and user lost events. Those are fired when a
  * user is first seen by polly or leaves pollys sight.
@@ -13,24 +10,6 @@ import de.skuzzle.polly.tools.events.Dispatch;
  * @since 0.6.0
  */
 public interface UserSpottedListener extends EventListener {
-    
-    public final static Dispatch<UserSpottedListener, SpotEvent> USER_SPOTTED = 
-            new Dispatch<UserSpottedListener, SpotEvent>() {
-        @Override
-        public void dispatch(UserSpottedListener listener, SpotEvent event) {
-            listener.userSpotted(event);
-        }
-    };
-    
-    public final static Dispatch<UserSpottedListener, SpotEvent> USER_LOST = 
-            new Dispatch<UserSpottedListener, SpotEvent>() {
-        @Override
-        public void dispatch(UserSpottedListener listener, SpotEvent event) {
-            listener.userLost(event);
-        }
-    };
-    
-    
     
     /**
      * This event is fired when a user comes into pollys sight the first time (= he joins

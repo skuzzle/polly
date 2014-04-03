@@ -17,6 +17,7 @@
     <property name="dependencies" value="
         log4j-1.2.16.jar
         javax.persistence_2.0.3.v201010191057.jar
+        jeve-1.0.0.jar
     "/>
     
     <!--

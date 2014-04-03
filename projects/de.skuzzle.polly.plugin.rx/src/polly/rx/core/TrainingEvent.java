@@ -1,7 +1,7 @@
 package polly.rx.core;
 
+import de.skuzzle.jeve.Event;
 import polly.rx.entities.TrainEntityV3;
-import de.skuzzle.polly.tools.events.Event;
 
 public class TrainingEvent extends Event<TrainManagerV2> {
 

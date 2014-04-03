@@ -9,8 +9,7 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import de.skuzzle.polly.tools.events.EventProvider;
-import de.skuzzle.polly.tools.events.EventProviders;
+import de.skuzzle.jeve.EventProvider;
 
 
 public class MudTCPConnection implements Closeable {
@@ -33,7 +32,7 @@ public class MudTCPConnection implements Closeable {
     private BufferedReader in;
     private BufferedWriter out;
     private Thread receiver;
-    private final EventProvider events = EventProviders.newDefaultEventProvider();
+    private final EventProvider events = EventProvider.newDefaultEventProvider();
     private final String host;
     private final int port;
     
@@ -98,7 +97,7 @@ public class MudTCPConnection implements Closeable {
     private void fireMessageReceived(final String s) {
         final MudMessageEvent e = new MudMessageEvent(this, s);
         this.events.dispatch(ConnectionListener.class, e, 
-                ConnectionListener.RECEIVED);
+                ConnectionListener::received);
     }
     
     
@@ -106,7 +105,7 @@ public class MudTCPConnection implements Closeable {
     private void fireConnected() {
         final MudEvent e = new MudEvent(this);
         this.events.dispatch(ConnectionListener.class, e, 
-                ConnectionListener.CONNECTED);
+                ConnectionListener::connected);
     }
     
     
@@ -114,7 +113,7 @@ public class MudTCPConnection implements Closeable {
     private void fireDiconnected() {
         final MudEvent e = new MudEvent(this);
         this.events.dispatch(ConnectionListener.class, e, 
-                ConnectionListener.DISCONNECTED);
+                ConnectionListener::disconnected);
     }
     
     

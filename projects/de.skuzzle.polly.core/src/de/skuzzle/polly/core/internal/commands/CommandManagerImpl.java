@@ -16,6 +16,8 @@ import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
 
+import de.skuzzle.jeve.EventProvider;
+import de.skuzzle.jeve.OneTimeEventListener;
 import de.skuzzle.polly.core.parser.Evaluator;
 import de.skuzzle.polly.core.parser.InputScanner;
 import de.skuzzle.polly.core.parser.ParseException;
@@ -58,8 +60,6 @@ import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 import de.skuzzle.polly.sdk.exceptions.UnknownCommandException;
 import de.skuzzle.polly.sdk.exceptions.UnknownSignatureException;
 import de.skuzzle.polly.sdk.time.DateUtils;
-import de.skuzzle.polly.tools.events.OneTimeEventListener;
-
 
 
 public class CommandManagerImpl extends AbstractDisposable 
@@ -117,7 +117,7 @@ public class CommandManagerImpl extends AbstractDisposable
         
         
         @Override
-        public boolean workDone() {
+        public boolean workDone(EventProvider parent) {
             return this.done;
         }
         

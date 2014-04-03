@@ -12,5 +12,10 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/de.skuzzle.polly.lib/gson-2.2.4-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/jeve-1.0.0.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/de.skuzzle.polly.lib/jeve-1.0.0-doc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

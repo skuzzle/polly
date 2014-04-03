@@ -17,6 +17,7 @@
     <property name="dependencies" value="
         javax.persistence_2.0.3.v201010191057.jar
         gson-2.2.4.jar
+        jeve-1.0.0.jar
     "/>
     
     <!--

@@ -1,6 +1,6 @@
 package polly.dyndns.core;
 
-import de.skuzzle.polly.tools.events.Event;
+import de.skuzzle.jeve.Event;
 
 
 public class IPChangedEvent extends Event<PublicIpFinder> {

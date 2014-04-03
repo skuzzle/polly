@@ -2,8 +2,8 @@ package polly.rx.core.orion;
 
 import java.util.List;
 
+import de.skuzzle.jeve.Event;
 import polly.rx.core.orion.model.Portal;
-import de.skuzzle.polly.tools.events.Event;
 
 public class PortalEvent extends Event<PortalUpdater> {
 

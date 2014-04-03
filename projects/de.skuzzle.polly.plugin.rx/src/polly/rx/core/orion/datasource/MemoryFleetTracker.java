@@ -13,12 +13,11 @@ import polly.rx.core.orion.FleetTracker;
 import polly.rx.core.orion.OrionException;
 import polly.rx.core.orion.model.Fleet;
 import polly.rx.core.orion.model.Quadrant;
+import de.skuzzle.jeve.EventProvider;
 import de.skuzzle.polly.sdk.time.Milliseconds;
 import de.skuzzle.polly.sdk.time.Time;
 import de.skuzzle.polly.tools.Check;
 import de.skuzzle.polly.tools.collections.TemporaryValueMap;
-import de.skuzzle.polly.tools.events.EventProvider;
-import de.skuzzle.polly.tools.events.EventProviders;
 
 public class MemoryFleetTracker implements FleetTracker {
     
@@ -32,7 +31,7 @@ public class MemoryFleetTracker implements FleetTracker {
     public MemoryFleetTracker() {
         this.orionFleets = new TemporaryValueMap<>(MAX_AGE);
         this.fleets = new TemporaryValueMap<>(MAX_AGE);
-        this.events = EventProviders.newDefaultEventProvider();
+        this.events = EventProvider.newDefaultEventProvider();
     }
     
     
@@ -65,7 +64,7 @@ public class MemoryFleetTracker implements FleetTracker {
         }
         this.events.dispatch(FleetListener.class, 
                 new FleetEvent(this, reporter, new ArrayList<>(this.orionFleets.values())), 
-                FleetListener.OWN_FLEETS_UPDATED);
+                FleetListener::ownFleetsUpdated);
     }
 
 
@@ -126,7 +125,7 @@ public class MemoryFleetTracker implements FleetTracker {
         
         this.events.dispatch(FleetListener.class, 
                 new FleetEvent(this, reporter, new ArrayList<>(fleets)), 
-                FleetListener.FLEETS_UPDATED);
+                FleetListener::fleetsUpdated);
     }
 
 

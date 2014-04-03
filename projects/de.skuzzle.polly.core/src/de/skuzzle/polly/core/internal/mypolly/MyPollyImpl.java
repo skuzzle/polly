@@ -5,6 +5,7 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 
+import de.skuzzle.jeve.EventProvider;
 import de.skuzzle.polly.core.Polly;
 import de.skuzzle.polly.core.configuration.ConfigurationProviderImpl;
 import de.skuzzle.polly.core.internal.ShutdownManagerImpl;
@@ -60,7 +61,6 @@ import de.skuzzle.polly.sdk.paste.PasteServiceManager;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.time.DateUtils;
 import de.skuzzle.polly.sdk.time.Time;
-import de.skuzzle.polly.tools.events.EventProvider;
 
 
 
@@ -347,6 +347,6 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
     @Override
     public void fireGenericEvent(final GenericEvent e) {
         this.eventProvider.dispatch(GenericListener.class, e, 
-                GenericListener.GENERIC_EVENT);
+                GenericListener::genericEvent);
     }
 }

@@ -10,13 +10,12 @@ import javax.naming.ConfigurationException;
 
 import org.apache.log4j.Logger;
 
+import de.skuzzle.jeve.EventProvider;
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.ConfigurationProvider;
 import de.skuzzle.polly.sdk.ConfigurationValidator;
 import de.skuzzle.polly.sdk.eventlistener.ConfigurationEvent;
 import de.skuzzle.polly.sdk.eventlistener.ConfigurationListener;
-import de.skuzzle.polly.tools.events.EventProvider;
-import de.skuzzle.polly.tools.events.EventProviders;
 
 
 public class ConfigurationProviderImpl implements ConfigurationProvider {
@@ -48,7 +47,7 @@ public class ConfigurationProviderImpl implements ConfigurationProvider {
         this.configDir = configDir;
         this.pluginConfigDir = new File(configDir, "pluginconfigs"); //$NON-NLS-1$
         this.cfgCache = new WeakHashMap<File, ConfigurationImpl>();
-        this.eventProvider = EventProviders.newDefaultEventProvider();
+        this.eventProvider = EventProvider.newDefaultEventProvider();
     }
     
     
@@ -150,6 +149,6 @@ public class ConfigurationProviderImpl implements ConfigurationProvider {
     
     public void fireConfigurationChanged(ConfigurationEvent e) {
         this.eventProvider.dispatch(ConfigurationListener.class, e, 
-                ConfigurationListener.CONFIGURATION_CHANGED);
+                ConfigurationListener::configurationChange);
     }
 }

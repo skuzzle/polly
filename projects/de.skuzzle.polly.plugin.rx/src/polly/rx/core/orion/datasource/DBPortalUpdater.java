@@ -4,16 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiConsumer;
 
-import de.skuzzle.polly.sdk.PersistenceManagerV2;
-import de.skuzzle.polly.sdk.PersistenceManagerV2.Param;
-import de.skuzzle.polly.sdk.PersistenceManagerV2.Read;
-import de.skuzzle.polly.sdk.PersistenceManagerV2.Write;
-import de.skuzzle.polly.sdk.exceptions.DatabaseException;
-import de.skuzzle.polly.sdk.time.Time;
-import de.skuzzle.polly.tools.events.Dispatch;
-import de.skuzzle.polly.tools.events.EventProvider;
-import de.skuzzle.polly.tools.events.EventProviders;
 import polly.rx.core.orion.OrionException;
 import polly.rx.core.orion.PortalEvent;
 import polly.rx.core.orion.PortalListener;
@@ -23,6 +15,13 @@ import polly.rx.core.orion.model.Portal;
 import polly.rx.core.orion.model.Sector;
 import polly.rx.entities.DBPortal;
 import polly.rx.entities.DBSector;
+import de.skuzzle.jeve.EventProvider;
+import de.skuzzle.polly.sdk.PersistenceManagerV2;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Param;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Read;
+import de.skuzzle.polly.sdk.PersistenceManagerV2.Write;
+import de.skuzzle.polly.sdk.exceptions.DatabaseException;
+import de.skuzzle.polly.sdk.time.Time;
 
 public class DBPortalUpdater implements PortalUpdater {
 
@@ -35,7 +34,7 @@ public class DBPortalUpdater implements PortalUpdater {
     public DBPortalUpdater(PersistenceManagerV2 persistence, DBQuadrantUpdater quadUpdater) {
         this.persistence = persistence;
         this.quadUpdater = quadUpdater;
-        this.events = EventProviders.newDefaultEventProvider();
+        this.events = EventProvider.newDefaultEventProvider();
     }
 
 
@@ -54,7 +53,7 @@ public class DBPortalUpdater implements PortalUpdater {
 
 
 
-    private void fire(String reporter, List<Portal> portals, Dispatch<PortalListener, 
+    private void fire(String reporter, List<Portal> portals, BiConsumer<PortalListener, 
             PortalEvent> d) {
         this.events.dispatch(PortalListener.class, 
                 new PortalEvent(this, reporter, portals), d);

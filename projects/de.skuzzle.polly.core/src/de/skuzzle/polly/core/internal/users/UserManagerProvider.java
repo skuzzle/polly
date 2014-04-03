@@ -3,6 +3,7 @@ package de.skuzzle.polly.core.internal.users;
 
 import java.io.IOException;
 
+import de.skuzzle.jeve.EventProvider;
 import de.skuzzle.polly.core.configuration.ConfigurationProviderImpl;
 import de.skuzzle.polly.core.internal.ModuleStates;
 import de.skuzzle.polly.core.internal.ShutdownManagerImpl;
@@ -19,7 +20,6 @@ import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
 import de.skuzzle.polly.sdk.roles.RoleManager;
-import de.skuzzle.polly.tools.events.EventProvider;
 
 
 

@@ -5,6 +5,7 @@ import java.util.List;
 import polly.rx.MSG;
 import polly.rx.core.TrainingEvent.TrainEventType;
 import polly.rx.entities.TrainEntityV3;
+import de.skuzzle.jeve.EventProvider;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PersistenceManagerV2;
@@ -17,9 +18,6 @@ import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.tools.concurrent.RunLater;
-import de.skuzzle.polly.tools.events.EventProvider;
-import de.skuzzle.polly.tools.events.EventProviders;
-
 
 /**
  * 
@@ -37,7 +35,7 @@ public class TrainManagerV2 extends AbstractDisposable {
     public TrainManagerV2(MyPolly myPolly) {
         this.persistence = myPolly.persistence();
         this.userManager = myPolly.users();
-        events = EventProviders.newDefaultEventProvider();
+        events = EventProvider.newDefaultEventProvider();
     }
     
     
@@ -113,7 +111,7 @@ public class TrainManagerV2 extends AbstractDisposable {
                 bill.closeBill();
                 events.dispatch(TrainingListener.class, 
                         new TrainingEvent(TrainManagerV2.this, bill), 
-                        TrainingListener.BILL_CLOSED);
+                        TrainingListener::billClosed);
             }
         });
     }
@@ -151,7 +149,7 @@ public class TrainManagerV2 extends AbstractDisposable {
             throws DatabaseException {
         events.dispatch(TrainingListener.class, 
                 new TrainingEvent(TrainManagerV2.this, TrainEventType.TRAIN_ADDED, e), 
-                TrainingListener.TRAINING_ADDED);
+                TrainingListener::trainingAdded);
         this.persistence.writeAtomic(new Atomic() {
             @Override
             public void perform(Write write) throws DatabaseException {
@@ -161,7 +159,7 @@ public class TrainManagerV2 extends AbstractDisposable {
                     public void run() {
                         events.dispatch(TrainingListener.class, 
                                 new TrainingEvent(TrainManagerV2.this, TrainEventType.TRAIN_FINISHED, e), 
-                                TrainingListener.TRAINING_FINISHED);
+                                TrainingListener::trainingFinished);
                     }
                 }.start();
             }

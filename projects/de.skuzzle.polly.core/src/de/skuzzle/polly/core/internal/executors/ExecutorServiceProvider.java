@@ -3,6 +3,7 @@ package de.skuzzle.polly.core.internal.executors;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import de.skuzzle.jeve.EventProvider;
 import de.skuzzle.polly.core.configuration.ConfigurationProviderImpl;
 import de.skuzzle.polly.core.internal.ShutdownManagerImpl;
 import de.skuzzle.polly.core.moduleloader.AbstractProvider;
@@ -14,8 +15,6 @@ import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.Configuration;
 import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
-import de.skuzzle.polly.tools.events.EventProvider;
-import de.skuzzle.polly.tools.events.EventProviders;
 
 
 @Module(
@@ -43,7 +42,7 @@ public class ExecutorServiceProvider extends AbstractProvider {
         ExecutorService eventThreadPool = Executors.newFixedThreadPool(
             pollyCfg.readInt(Configuration.EVENT_THREADS),
             new ThreadFactoryBuilder("EVENT_THREAD_%n%")); //$NON-NLS-1$
-        final EventProvider eventProvider = EventProviders.newAsynchronousEventProvider(
+        final EventProvider eventProvider = EventProvider.newAsynchronousEventProvider(
             eventThreadPool);
 
         final ExecutorService commandExecutor = Executors.newFixedThreadPool(
@@ -58,7 +57,7 @@ public class ExecutorServiceProvider extends AbstractProvider {
         shutdownManager.addDisposable(new AbstractDisposable() {
             @Override
             protected void actualDispose() throws DisposingException {
-                eventProvider.dispose();
+                eventProvider.close();
                 commandExecutor.shutdown();
             }
         });

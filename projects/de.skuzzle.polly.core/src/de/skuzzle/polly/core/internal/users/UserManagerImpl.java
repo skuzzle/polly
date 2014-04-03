@@ -15,6 +15,7 @@ import java.util.regex.Matcher;
 
 import org.apache.log4j.Logger;
 
+import de.skuzzle.jeve.EventProvider;
 import de.skuzzle.polly.core.internal.persistence.PersistenceManagerV2Impl;
 import de.skuzzle.polly.core.parser.InputParser;
 import de.skuzzle.polly.core.parser.InputScanner;
@@ -56,7 +57,6 @@ import de.skuzzle.polly.sdk.exceptions.UnknownUserException;
 import de.skuzzle.polly.sdk.exceptions.UserExistsException;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.time.Time;
-import de.skuzzle.polly.tools.events.EventProvider;
 
 
 
@@ -658,13 +658,13 @@ public class UserManagerImpl extends AbstractDisposable implements UserManager {
     
     protected void fireUserSignedOn(final UserEvent e) {
         this.eventProvider.dispatch(UserListener.class, e, 
-                UserListener.SIGNED_ON);
+                UserListener::userSignedOn);
     }
     
     
     
     protected void fireUserSignedOff(final UserEvent e) {
         this.eventProvider.dispatch(UserListener.class, e, 
-                UserListener.SIGNED_OFF);
+                UserListener::userSignedOff);
     }
 }

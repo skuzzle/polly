@@ -2,10 +2,9 @@ package polly.rx.core.orion;
 
 import java.util.Collection;
 
+import de.skuzzle.jeve.Event;
 import polly.rx.core.orion.model.Quadrant;
 import polly.rx.core.orion.model.Sector;
-import de.skuzzle.polly.tools.events.Event;
-
 
 public class QuadrantEvent extends Event<QuadrantUpdater> {
 
