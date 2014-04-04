@@ -46,12 +46,8 @@ refer to the SDK documentation (http://www.polly.skuzzle.de/sdk/doc/) for latest
 information (*)
 
 ## Getting started
-Your first steps using polly are very simple, as the repository comes with 
-everything you could ever need to build polly. 
-Polly's build system is based on Apache Ant which comes shipped with checking 
-out the polly repository. There is no need to install additional software. 
-For each polly sub project there exists an eclipse project which can easily be
-imported:
+Your first steps using polly are very simple. For each polly sub project there 
+exists an eclipse project which can easily be imported:
 
 Steps to get working with polly:
 * check out the repository
