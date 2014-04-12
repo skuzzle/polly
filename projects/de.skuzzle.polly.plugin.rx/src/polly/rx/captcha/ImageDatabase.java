@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import polly.rx.captcha.ImgUtil.BoundingBox;
+import polly.rx.captcha.RxCaptchaKiller.CaptchaResult;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -57,7 +58,7 @@ public class ImageDatabase {
     }
     
     
-    private final static FileFilter PNG_FILES = new FileFilter() {
+    public final static FileFilter PNG_FILES = new FileFilter() {
         @Override
         public boolean accept(File pathname) {
             return pathname.toString().toLowerCase().endsWith(".png"); //$NON-NLS-1$
@@ -83,30 +84,59 @@ public class ImageDatabase {
     
     
     
-    public void needsClassification(File tempFile) {
+    public void needsClassification(CaptchaResult cr) {
         final File classifyFolder = new File(this.imgDir, "needsClassification"); //$NON-NLS-1$
         if (!classifyFolder.exists()) {
             classifyFolder.mkdirs();
         }
-        final File newFile = this.findFileName(classifyFolder, "classify_"); //$NON-NLS-1$
-        try {
-            FileUtil.copy(tempFile, newFile);
-            tempFile.delete();
-        } catch (IOException e) {
-            e.printStackTrace();
+        final File newFile = new File(classifyFolder, cr.captcha);
+        if (!newFile.exists()) {
+            try {
+                FileUtil.copy(cr.tempFile, newFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+        cr.tempFile.delete();
     }
     
     
-    private File findFileName(File folder, String prefix) {
-        int i = 0;
-        File newFile = new File(folder, prefix + i + ".png"); //$NON-NLS-1$
-        while (newFile.exists()) {
-            ++i;
-            newFile = new File(folder, prefix + i + ".png"); //$NON-NLS-1$
-        }
-        return newFile;
+    
+    public void learnSingle(IplImage img, BoundingBox box, String character) {
+        this.learnSingle(img, box, character, true);
     }
+    
+    
+    
+    private void learnSingle(IplImage img, BoundingBox box, String character, boolean store) {
+        final IplImage classifiedImg = ImgUtil.imageFromBoundingBox(box);
+        
+        final String tc = this.tryClassify(img, box);
+        if (tc.equals("?")) { //$NON-NLS-1$
+            System.out.println("    Processing new character: " + character); //$NON-NLS-1$
+        } else if (tc.equals(character)){
+            System.out.println("    Character " + character + " already exists. Skipping"); //$NON-NLS-1$ //$NON-NLS-2$
+            return;
+        }
+        
+        final boolean isLower = character.equals(character.toLowerCase());
+        final String postfix = isLower ? "_l" : "_u"; //$NON-NLS-1$ //$NON-NLS-2$
+        
+        final int centerX = (int) box.getCenterX();
+        final int centerY = (int) box.getCenterY();
+        final int integral = (int) box.getIntegral();
+        final int width = box.getWidth();
+        final int height = box.getHeight();
+        final DatabaseItem dbi = new DatabaseItem(centerX, centerY, integral, 
+                width, height, character + postfix + ".png", character); //$NON-NLS-1$
+        this.database.put(character, dbi);
+        opencv_highgui.cvSaveImage(this.imgDir + "/" + dbi.imgName, classifiedImg); //$NON-NLS-1$
+        
+        if (store) {
+            this.storeDatabase();
+        }
+    }
+    
     
     
     public void learnFrom(String directory) {
@@ -146,26 +176,7 @@ public class ImageDatabase {
                 final String character = "" + rawName.charAt(i); //$NON-NLS-1$
                 final IplImage classifiedImg = ImgUtil.imageFromBoundingBox(box);
                 
-                final String tc = this.tryClassify(classifiedImg, box);
-                if (tc.equals("?")) { //$NON-NLS-1$
-                    System.out.println("    Processing new character: " + character); //$NON-NLS-1$
-                } else if (tc.equals(character)){
-                    System.out.println("    Character " + character + " already exists. Skipping"); //$NON-NLS-1$ //$NON-NLS-2$
-                    continue;
-                }
-                
-                final boolean isLower = character.equals(character.toLowerCase());
-                final String postfix = isLower ? "_l" : "_u"; //$NON-NLS-1$ //$NON-NLS-2$
-                
-                final int centerX = (int) box.getCenterX();
-                final int centerY = (int) box.getCenterY();
-                final int integral = (int) box.getIntegral();
-                final int width = box.getWidth();
-                final int height = box.getHeight();
-                final DatabaseItem dbi = new DatabaseItem(centerX, centerY, integral, 
-                        width, height, character + postfix + ".png", character); //$NON-NLS-1$
-                this.database.put(character, dbi);
-                opencv_highgui.cvSaveImage(this.imgDir + "/" + dbi.imgName, classifiedImg); //$NON-NLS-1$
+                this.learnSingle(classifiedImg, box, character, false);
             }
         }
         this.storeDatabase();

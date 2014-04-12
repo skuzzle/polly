@@ -24,11 +24,12 @@ public class RxCaptchaKiller {
     private final ImageDatabase db;
     
     
-    private final static class CaptchaResult {
+    public final static class CaptchaResult {
         final File tempFile;
         final IplImage capthaImg;
+        String captcha;
         
-        public CaptchaResult(File tempFile, IplImage capthaImg) {
+        private CaptchaResult(File tempFile, IplImage capthaImg) {
             this.tempFile = tempFile;
             this.capthaImg = capthaImg;
         }
@@ -60,7 +61,8 @@ public class RxCaptchaKiller {
             b.append(c);
         }
         if (needClassification) {
-            this.db.needsClassification(captcha.tempFile);
+            captcha.captcha = b.toString();
+            this.db.needsClassification(captcha);
         }
         return b.toString();
     }
