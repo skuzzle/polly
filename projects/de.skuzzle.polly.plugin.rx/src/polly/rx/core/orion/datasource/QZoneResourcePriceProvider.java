@@ -39,7 +39,7 @@ public class QZoneResourcePriceProvider implements ResourcePriceProvider {
     
     
     
-    private final static String API_URL = "http://qzone.servebbs.net/pollyPriceDaily.php"; //$NON-NLS-1$
+    private final static String API_URL = "http://qzone.spdns.de/pollyPriceDaily.php"; //$NON-NLS-1$
     private Date refreshTime;
     
     
