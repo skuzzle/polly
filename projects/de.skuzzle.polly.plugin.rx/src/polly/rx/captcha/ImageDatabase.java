@@ -28,6 +28,8 @@ import com.google.gson.reflect.TypeToken;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 import com.googlecode.javacv.cpp.opencv_highgui;
 
+import de.skuzzle.polly.tools.FileUtil;
+
 
 public class ImageDatabase {
     
@@ -62,7 +64,7 @@ public class ImageDatabase {
         }
     };
     private final static int MAX_INTEGRAL_DIFF = 10; // pixels
-    private final static double MATCH_THRESHOLD = .8; // percent
+    private final static double MATCH_THRESHOLD = .85; // percent
     
     
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -81,13 +83,18 @@ public class ImageDatabase {
     
     
     
-    public void needsClassification(IplImage image) {
+    public void needsClassification(File tempFile) {
         final File classifyFolder = new File(this.imgDir, "needsClassification"); //$NON-NLS-1$
         if (!classifyFolder.exists()) {
             classifyFolder.mkdirs();
         }
         final File newFile = this.findFileName(classifyFolder, "classify_"); //$NON-NLS-1$
-        opencv_highgui.cvSaveImage(newFile.getPath(), image);
+        try {
+            FileUtil.copy(tempFile, newFile);
+            tempFile.delete();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
     

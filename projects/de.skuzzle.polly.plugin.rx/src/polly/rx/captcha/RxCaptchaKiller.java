@@ -24,6 +24,18 @@ public class RxCaptchaKiller {
     private final ImageDatabase db;
     
     
+    private final static class CaptchaResult {
+        final File tempFile;
+        final IplImage capthaImg;
+        
+        public CaptchaResult(File tempFile, IplImage capthaImg) {
+            this.tempFile = tempFile;
+            this.capthaImg = capthaImg;
+        }
+    }
+    
+    
+    
     public RxCaptchaKiller(ImageDatabase db) {
         this.db = db;
     }
@@ -31,29 +43,31 @@ public class RxCaptchaKiller {
     
     
     public String decodeCurrentCaptcha() {
-        final IplImage captcha = this.readCaptcha();
+        final CaptchaResult captcha = this.readCaptcha();
         final List<BoundingBox> boxes = new ArrayList<>();
-        ImgUtil.extractFeatures(captcha, boxes);
+        ImgUtil.extractFeatures(captcha.capthaImg, boxes);
         
         final StringBuilder b = new StringBuilder();
+        boolean needClassification = false;
         for (final BoundingBox bb : boxes) {
             final IplImage extracted = ImgUtil.imageFromBoundingBox(bb);
 
             final String c = this.db.tryClassify(extracted, bb);
             
-            // return empty string if unknown char occurred.
             if (c.equals("?")) { //$NON-NLS-1$
-                this.db.needsClassification(captcha);
-                return ""; //$NON-NLS-1$
+                needClassification = true;
             }
             b.append(c);
+        }
+        if (needClassification) {
+            this.db.needsClassification(captcha.tempFile);
         }
         return b.toString();
     }
     
     
     
-    private IplImage readCaptcha() {
+    private CaptchaResult readCaptcha() {
         try {
             // HACK: download captcha to file, because conversion to IplImage does
             // not work properly
@@ -61,6 +75,7 @@ public class RxCaptchaKiller {
             final byte[] buffer = new byte[1024];
             final File tempFile = File.createTempFile("captcha_",  //$NON-NLS-1$
                     "" + System.nanoTime());  //$NON-NLS-1$
+            tempFile.deleteOnExit();
             
             final HttpURLConnection c = Anonymizer.openConnection(url);
             try (final InputStream in = c.getInputStream(); 
@@ -74,9 +89,7 @@ public class RxCaptchaKiller {
             
             final IplImage serverImg = cvLoadImage(tempFile.getPath(), 
                     CV_LOAD_IMAGE_GRAYSCALE);
-            tempFile.deleteOnExit();
-            tempFile.delete();
-            return serverImg;
+            return new CaptchaResult(tempFile, serverImg);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
