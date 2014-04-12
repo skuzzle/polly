@@ -16,6 +16,7 @@ import polly.rx.commands.MyVenadCommand;
 import polly.rx.commands.RankCommand;
 import polly.rx.commands.RessComand;
 import polly.rx.commands.RouteCommand;
+import polly.rx.commands.UrlAnonymizationCommand;
 import polly.rx.commands.VenadCommand;
 import polly.rx.core.AZEntryManager;
 import polly.rx.core.FleetDBManager;
@@ -132,6 +133,7 @@ public class MyPlugin extends PollyPlugin {
         this.addCommand(new IPCommand(myPolly));
         this.addCommand(new CrackerCommand(myPolly));
         this.addCommand(new RessComand(myPolly));
+        this.addCommand(new UrlAnonymizationCommand(myPolly));
         
         /* fleet db related */
         this.fleetDBManager = new FleetDBManager(myPolly.persistence());

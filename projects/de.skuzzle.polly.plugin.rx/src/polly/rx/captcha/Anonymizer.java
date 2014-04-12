@@ -15,7 +15,7 @@ public class Anonymizer {
     private final static int DEFAULT_TIMEOUT = 5000; // milliseconds
     private final static List<Proxy> PROXYS;
     private final static Random RANDOM = new Random();
-    private static boolean anonymize = true;
+    private static boolean anonymize = false;
     
     static {
         PROXYS = new ArrayList<>();

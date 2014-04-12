@@ -24,6 +24,13 @@ public class MSG extends Constants {
     public static String addTrainSuccess;
     public static String addTrainFail;
     public static String addTrainRemind;
+    
+    // AnonymizationCommand
+    public static String anonymizationHelp;
+    public static String anonymizationSig0Desc;
+    public static String anonymizationSig0Name;
+    public static String anonymizationOn;
+    public static String anonymizationOff;
 
     // CLoseTrainCommand
     public static String closeTrainHelp;
