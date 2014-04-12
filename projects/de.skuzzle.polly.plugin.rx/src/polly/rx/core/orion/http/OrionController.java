@@ -487,8 +487,8 @@ public class OrionController extends PollyController {
 
 
     @Get(API_REQUEST_CODE)
-    public HttpAnswer requestCode() { //@Param("user") String user, @Param("pw") String pw)
-            //throws AlternativeAnswerException {
+    public HttpAnswer requestCode(@Param("user") String user, @Param("pw") String pw)
+            throws AlternativeAnswerException {
         //this.checkLogin(user, pw);
         final LoginCode code = Orion.INSTANCE.getLoginCodeManager().getCurrentCode();
         return new GsonHttpAnswer(200, code);
