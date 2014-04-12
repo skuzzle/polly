@@ -15,6 +15,8 @@ public class Anonymizer {
     private final static int DEFAULT_TIMEOUT = 5000; // milliseconds
     private final static List<Proxy> PROXYS;
     private final static Random RANDOM = new Random();
+    private static boolean anonymize = true;
+    
     static {
         PROXYS = new ArrayList<>();
         addProxy("212.144.254.122", 3128); //$NON-NLS-1$
@@ -38,7 +40,18 @@ public class Anonymizer {
     
     
     
+    public static void setAnonymize(boolean anonymize) {
+        Anonymizer.anonymize = anonymize;
+    }
+    
+    
+    
     public static HttpURLConnection openConnection(URL url) throws IOException {
+        if (!anonymize) {
+            final HttpURLConnection result = (HttpURLConnection) url.openConnection();
+            result.setConnectTimeout(DEFAULT_TIMEOUT);
+            return result;
+        }
         final Proxy proxy = randomProxy();
         final HttpURLConnection result = (HttpURLConnection) url.openConnection(proxy);
         result.setConnectTimeout(DEFAULT_TIMEOUT);
