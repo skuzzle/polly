@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,6 @@ import com.googlecode.javacv.cpp.opencv_core.IplImage;
 public class RxCaptchaKiller {
     
     private final static String CAPTCHA_URL = "http://www.revorix.info/gfx/code/code.png"; //$NON-NLS-1$
-    
     private final ImageDatabase db;
     
     
@@ -61,7 +61,9 @@ public class RxCaptchaKiller {
             final byte[] buffer = new byte[1024];
             final File tempFile = File.createTempFile("captcha_",  //$NON-NLS-1$
                     "" + System.nanoTime());  //$NON-NLS-1$
-            try (final InputStream in = url.openStream(); 
+            
+            final HttpURLConnection c = Anonymizer.openConnection(url);
+            try (final InputStream in = c.getInputStream(); 
                     OutputStream out = new FileOutputStream(tempFile)) {
                 int length = 0;
                 while ((length = in.read(buffer)) != -1) {
