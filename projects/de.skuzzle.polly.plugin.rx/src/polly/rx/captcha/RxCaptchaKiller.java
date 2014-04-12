@@ -29,7 +29,7 @@ public class RxCaptchaKiller {
         final IplImage capthaImg;
         String captcha;
         
-        private CaptchaResult(File tempFile, IplImage capthaImg) {
+        CaptchaResult(File tempFile, IplImage capthaImg) {
             this.tempFile = tempFile;
             this.capthaImg = capthaImg;
         }

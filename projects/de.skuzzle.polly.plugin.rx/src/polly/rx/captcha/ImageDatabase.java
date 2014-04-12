@@ -89,7 +89,13 @@ public class ImageDatabase {
         if (!classifyFolder.exists()) {
             classifyFolder.mkdirs();
         }
-        final File newFile = new File(classifyFolder, cr.captcha);
+        
+        final File newFile;
+        if (cr.captcha == null) {
+            newFile = this.findFileName(classifyFolder, "unknown_"); //$NON-NLS-1$
+        } else {
+            newFile = new File(classifyFolder, cr.captcha);
+        }
         if (!newFile.exists()) {
             try {
                 FileUtil.copy(cr.tempFile, newFile);
@@ -98,6 +104,18 @@ public class ImageDatabase {
             }
         }
         cr.tempFile.delete();
+    }
+    
+    
+    
+    private File findFileName(File folder, String prefix) {
+        int i = 0;
+        File newFile = new File(folder, prefix + i + ".png"); //$NON-NLS-1$
+        while (newFile.exists()) {
+            ++i;
+            newFile = new File(folder, prefix + i + ".png"); //$NON-NLS-1$
+        }
+        return newFile;
     }
     
     
@@ -166,7 +184,9 @@ public class ImageDatabase {
             ImgUtil.extractFeatures(image, boxes);
             
             if (boxes.size() != 4) {
-                System.out.println("   Image contains " + boxes.size() + " regions, skipping"); //$NON-NLS-1$ //$NON-NLS-2$
+                System.out.println("   Image contains " + boxes.size() + " regions, moving it to manual classificytion"); //$NON-NLS-1$ //$NON-NLS-2$
+                final CaptchaResult cr = new CaptchaResult(file, image);
+                this.needsClassification(cr);
                 continue;
             }
             
