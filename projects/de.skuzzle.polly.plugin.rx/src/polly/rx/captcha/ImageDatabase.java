@@ -62,7 +62,7 @@ public class ImageDatabase {
         }
     };
     private final static int MAX_INTEGRAL_DIFF = 10; // pixels
-    private final static double MATCH_THRESHOLD = .9; // percent
+    private final static double MATCH_THRESHOLD = .8; // percent
     
     
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -107,8 +107,8 @@ public class ImageDatabase {
         if (!dir.isDirectory()) {
             return;
         }
+        System.out.println("Deleting existing cached images"); //$NON-NLS-1$
         for (final File chr : new File(this.imgDir).listFiles()) {
-            System.out.println("Deleting existing cached images"); //$NON-NLS-1$
             chr.delete();
         }
         
@@ -142,7 +142,7 @@ public class ImageDatabase {
                 final String tc = this.tryClassify(classifiedImg, box);
                 if (tc.equals("?")) { //$NON-NLS-1$
                     System.out.println("    Processing new character: " + character); //$NON-NLS-1$
-                } else {
+                } else if (tc.equals(character)){
                     System.out.println("    Character " + character + " already exists. Skipping"); //$NON-NLS-1$ //$NON-NLS-2$
                     continue;
                 }
