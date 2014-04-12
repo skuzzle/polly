@@ -1,8 +1,11 @@
 package polly.rx;
 
+import java.io.File;
 import java.util.Set;
 import java.util.TreeSet;
 
+import polly.rx.captcha.ImageDatabase;
+import polly.rx.captcha.RxCaptchaKiller;
 import polly.rx.commands.AddTrainCommand;
 import polly.rx.commands.CloseTrainCommand;
 import polly.rx.commands.CrackerCommand;
@@ -19,6 +22,7 @@ import polly.rx.core.FleetDBManager;
 import polly.rx.core.ScoreBoardManager;
 import polly.rx.core.TrainManagerV2;
 import polly.rx.core.orion.FleetTracker;
+import polly.rx.core.orion.LoginCodeManager;
 import polly.rx.core.orion.Orion;
 import polly.rx.core.orion.ResourcePriceProvider;
 import polly.rx.core.orion.VenadUserMapper;
@@ -107,6 +111,8 @@ public class MyPlugin extends PollyPlugin {
     private TrainManagerV2 trainManager;
     private ScoreBoardManager sbeManager;
     private AZEntryManager azManager;
+    private ImageDatabase captchaDatabase;
+    private RxCaptchaKiller captchaKiller;
     
     
     public MyPlugin(MyPolly myPolly) 
@@ -289,12 +295,30 @@ public class MyPlugin extends PollyPlugin {
     @Override
     public void onLoad() throws PluginException {
         
+        // Create captcha database#
+        final File pluginFolder = this.getPluginFolder();
+        final File captchas = new File(pluginFolder, "captchas"); //$NON-NLS-1$
+        if (!captchas.exists()) {
+            captchas.mkdirs();
+        }
+        this.captchaDatabase = new ImageDatabase(captchas.getPath(), 
+                new File(captchas, "db.txt").getPath()); //$NON-NLS-1$
+        this.captchaKiller = new RxCaptchaKiller(this.captchaDatabase);
+        
+        // relearn database
+        final File learning = new File(pluginFolder, "learning"); //$NON-NLS-1$
+        if (learning.exists()) {
+            this.captchaDatabase.learnFrom(learning.getPath());
+        }
+        
+        
         // ORION
         final DBOrionAccess dboa = new DBOrionAccess(this.getMyPolly().persistence());
         final WormholeProvider holeProvider = new WLSWormholeProvider();
         final FleetTracker tracker = new MemoryFleetTracker();
         final ResourcePriceProvider priceProvider = new QZoneResourcePriceProvider();
         final VenadUserMapper userMapper = new VenadUserMapper(this.getMyPolly().users());
+        final LoginCodeManager loginCodeManager = new LoginCodeManager(this.captchaKiller);
         Orion.initialize(
                 dboa.getQuadrantProvider(), 
                 dboa.getQuadrantUpdater(), 
@@ -304,7 +328,8 @@ public class MyPlugin extends PollyPlugin {
                 dboa.getPortalUpdater(),
                 tracker, 
                 priceProvider,
-                userMapper
+                userMapper,
+                loginCodeManager
             );
         
         final OrionController oc = new OrionController(this.getMyPolly(), azManager);

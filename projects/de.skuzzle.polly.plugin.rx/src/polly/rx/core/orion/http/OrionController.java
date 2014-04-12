@@ -474,21 +474,22 @@ public class OrionController extends PollyController {
 
 
     @Get(API_SUBMIT_CODE)
+    @Deprecated
     public HttpAnswer submitCode(@Param("code") String code, @Param("user") String user,
             @Param("pw") String pw) throws AlternativeAnswerException {
         this.checkLogin(user, pw);
-        if (Orion.INSTANCE.getLoginCodeManager().updateCurrentCode(code)) {
+        /*if (Orion.INSTANCE.getLoginCodeManager().updateCurrentCode(code)) {
             return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
-        }
-        return new GsonHttpAnswer(200, new SuccessResult(false, "")); //$NON-NLS-1$
+        }*/
+        return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
     }
 
 
 
     @Get(API_REQUEST_CODE)
-    public HttpAnswer requestCode(@Param("user") String user, @Param("pw") String pw)
-            throws AlternativeAnswerException {
-        this.checkLogin(user, pw);
+    public HttpAnswer requestCode() { //@Param("user") String user, @Param("pw") String pw)
+            //throws AlternativeAnswerException {
+        //this.checkLogin(user, pw);
         final LoginCode code = Orion.INSTANCE.getLoginCodeManager().getCurrentCode();
         return new GsonHttpAnswer(200, code);
     }

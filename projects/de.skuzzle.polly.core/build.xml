@@ -27,6 +27,9 @@
         gson-2.2.4.jar
         org.eclipse.egit.github.core-3.3.0-SNAPSHOT.jar
         jeve-1.0.0.jar
+        javacpp.jar
+        javacv.jar
+        javacv-windows-x86_64.jar
     "/>
     
     <!--

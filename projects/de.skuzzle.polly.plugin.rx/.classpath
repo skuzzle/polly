@@ -17,5 +17,8 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/de.skuzzle.polly.lib/jeve-1.0.0-doc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/javacpp.jar"/>
+	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/javacv-windows-x86_64.jar"/>
+	<classpathentry kind="lib" path="/de.skuzzle.polly.lib/javacv.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

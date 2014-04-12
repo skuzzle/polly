@@ -35,7 +35,8 @@ public enum Orion implements UniverseFactory {
             QuadrantUpdater quadUpdater, WormholeProvider holeProvider,
             PortalProvider portalProvider, AlienManager alienManager,
             PortalUpdater portalUpdater, FleetTracker fleetTracker,
-            ResourcePriceProvider priceProvider, VenadUserMapper userMapper) {
+            ResourcePriceProvider priceProvider, VenadUserMapper userMapper,
+            LoginCodeManager loginCodeManager) {
 
         if (INSTANCE.quadProvider != null) {
             throw new IllegalStateException("already initialized"); //$NON-NLS-1$
@@ -57,6 +58,8 @@ public enum Orion implements UniverseFactory {
             throw new NullPointerException(AlienManager.class.getSimpleName());
         } else if (userMapper == null) {
             throw new NullPointerException(VenadUserMapper.class.getSimpleName());
+        } else if (loginCodeManager == null) {
+            throw new NullPointerException(LoginCodeManager.class.getSimpleName());
         } // TODO: ship provider
 
         INSTANCE.quadProvider = quadProvider;
@@ -69,7 +72,7 @@ public enum Orion implements UniverseFactory {
         INSTANCE.priceProvider = priceProvider;
         INSTANCE.userMapper = userMapper;
         INSTANCE.planner = new PathPlanner(quadProvider, holeProvider);
-        INSTANCE.loginCodeManager = new LoginCodeManager();
+        INSTANCE.loginCodeManager = loginCodeManager;
     }
 
 
