@@ -221,7 +221,7 @@ public class ScoreBoardManager {
                 x, entry.getPoints(), PointType.NONE);
             
             final Point rank = new NamedPoint(
-                MSG.bind(MSG.scoreboardDateRank, df.format(entry.getDate()), entry.getPoints()),
+                MSG.bind(MSG.scoreboardDateRank, df.format(entry.getDate()), entry.getRank()),
                 x, entry.getRank(), PointType.NONE);
             
             
