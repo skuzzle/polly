@@ -20,7 +20,7 @@ import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
 public class PeopleAnnoyer extends AbstractDisposable 
         implements PersonListener, JoinPartListener {
 
-    public final static long ANNOY_RATE = Milliseconds.fromSeconds(15);
+    public final static long ANNOY_RATE = Milliseconds.fromMinutes(5);
 
     private final static String[] RESS_NAMES = MSG.ressNames.split(";"); //$NON-NLS-1$
     private final static String[] AKTIEN_NAMES = MSG.aktienNames.split(";"); //$NON-NLS-1$
@@ -110,7 +110,7 @@ public class PeopleAnnoyer extends AbstractDisposable
                 final AnnoyingPerson rndPerson = annoyNames.get(
                         RANDOM.nextInt(annoyNames.size()));
                 
-                if (true || RANDOM.nextBoolean()) {
+                if (RANDOM.nextBoolean()) {
                     final String rndMsg = randomAnnoyingMessage(rndPerson.getName());
                     irc.sendMessage(rndPerson.getChannel(), rndMsg);
                 }
