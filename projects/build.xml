@@ -124,6 +124,7 @@
         <ant dir="de.skuzzle.polly.plugin.linkexpander" target="${target}" inheritAll="false"/>
         <ant dir="de.skuzzle.polly.plugin.mud" target="${target}" inheritAll="false"/>
         <ant dir="de.skuzzle.polly.plugin.dyndns" target="${target}" inheritAll="false"/>
+        <ant dir="de.skuzzle.polly.plugin.annoyingPeople" target="${target}" inheritAll="false"/>
     </target>
     
     
