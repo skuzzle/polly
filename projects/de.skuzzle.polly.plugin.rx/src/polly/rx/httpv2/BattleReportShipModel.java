@@ -70,7 +70,7 @@ public class BattleReportShipModel extends AbstractHTMLTableModel<BattleReportSh
                 return element.getRxId();
             } else {
                 return new HTMLElement("a").href(RXController.PAGE_SCAN_SHIP_DETAILS +  //$NON-NLS-1$
-                        "shipId=" + element.getRxId()).content("" + element.getRxId()); //$NON-NLS-1$ //$NON-NLS-2$
+                        "?shipId=" + element.getRxId()).content("" + element.getRxId()); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
         case 1: {
