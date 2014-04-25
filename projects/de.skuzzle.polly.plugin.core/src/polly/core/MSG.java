@@ -294,6 +294,8 @@ public class MSG extends Constants {
     public static String talkSig1Desc;
     public static String talkSig1Channel;
     public static String talkSig1Msg;
+    public static String talkSig2Desc;
+    public static String talkSig2User;
     
     // Uptime Command
     public static String uptimeHelp;

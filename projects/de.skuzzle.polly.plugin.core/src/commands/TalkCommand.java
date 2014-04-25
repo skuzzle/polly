@@ -22,6 +22,10 @@ public class TalkCommand extends Command {
             MyPlugin.TALK_PERMISSION,
             new Parameter(MSG.talkSig1Channel, Types.CHANNEL), 
             new Parameter(MSG.talkSig1Msg, Types.STRING));
+        this.createSignature(MSG.talkSig2Desc,
+                MyPlugin.TALK_PERMISSION,
+                new Parameter(MSG.talkSig2User, Types.USER), 
+                new Parameter(MSG.talkSig1Msg, Types.STRING));
         this.setRegisteredOnly();
     }
 
@@ -44,6 +48,10 @@ public class TalkCommand extends Command {
             String c = signature.getStringValue(0);
             String m = signature.getStringValue(1);
             this.reply(c, m);
+        } else if (this.match(signature, 2)) {
+            final String target = signature.getStringValue(0);
+            final String m = signature.getStringValue(1);
+            this.reply(target, m);
         }
     }
     
