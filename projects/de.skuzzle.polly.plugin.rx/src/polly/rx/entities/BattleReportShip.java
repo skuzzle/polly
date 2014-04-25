@@ -243,7 +243,7 @@ public class BattleReportShip {
     
     
     public int getMaxWend() {
-        return this.systems - this.shields;
+        return this.systems - this.shields - this.attack;
     }
 
     
