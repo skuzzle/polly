@@ -601,7 +601,7 @@ public class InputScanner extends AbstractTokenStream {
                     return this.parseException(Problems.format(Problems.INVALID_CHANNEL, lexem), 
                             tokenStart);
                 }
-                
+                break;
             case 1:
                 
                 if (InputScanner.isIdentifierPart(next) || next == '-') {
