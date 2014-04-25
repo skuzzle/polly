@@ -12,12 +12,12 @@ import javax.persistence.SequenceGenerator;
 @NamedQueries({
     @NamedQuery(
         name = AnnoyingPerson.PERSON_BY_NAME_AND_CHANNEL,
-        query= "SELECP ap FROM AnnoyingPattern ap WHERE LOWER(ap.name) = LOWER(?1) AND LOWER(ap.channel) = LOWER(?2)"
+        query= "SELECT ap FROM AnnoyingPerson ap WHERE LOWER(ap.name) = LOWER(?1) AND LOWER(ap.channel) = LOWER(?2)"
     )
 })
 public class AnnoyingPerson {
 
-    public final static String PERSON_BY_NAME_AND_CHANNEL = "PERSON_BY_NAME_AND_CHANNEL";
+    public final static String PERSON_BY_NAME_AND_CHANNEL = "PERSON_BY_NAME_AND_CHANNEL"; //$NON-NLS-1$
     private final static String GENERATOR = "ANNOYING_GEN"; //$NON-NLS-1$
 
     @Id

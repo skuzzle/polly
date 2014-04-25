@@ -23,6 +23,20 @@ public class DBPersonManager implements PersonManager {
     
     
     @Override
+    public void addPersonListener(PersonListener listener) {
+        this.eventProvider.addListener(PersonListener.class, listener);
+    }
+    
+    
+    
+    @Override
+    public void removePersonListener(PersonListener listener) {
+        this.eventProvider.removeListener(PersonListener.class, listener);
+    }
+    
+    
+    
+    @Override
     public AnnoyingPerson getAnnoyingPerson(String nickName, String channel) {
         return this.persistence.atomic().findSingle(AnnoyingPerson.class, 
                 AnnoyingPerson.PERSON_BY_NAME_AND_CHANNEL, 

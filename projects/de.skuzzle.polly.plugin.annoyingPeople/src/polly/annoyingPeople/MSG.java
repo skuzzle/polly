@@ -18,6 +18,13 @@ public class MSG extends Constants {
     public static String askForDirection;
     public static String askForKonstru;
     
+    public static String addPersonHelp;
+    public static String addPersonSig0Desc;
+    public static String addPersongSig0Name;
+    public static String addPersonSig0Channel;
+    public static String addPersonSuccess;
+    
+    
     static {
         Resources.init(FAMILY, MSG.class);
     }

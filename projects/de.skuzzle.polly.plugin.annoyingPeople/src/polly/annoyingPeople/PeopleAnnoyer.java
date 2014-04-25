@@ -9,18 +9,22 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import polly.annoyingPeople.entities.AnnoyingPerson;
+import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.IrcManager;
 import de.skuzzle.polly.sdk.eventlistener.ChannelEvent;
 import de.skuzzle.polly.sdk.eventlistener.JoinPartListener;
+import de.skuzzle.polly.sdk.exceptions.DisposingException;
 import de.skuzzle.polly.sdk.time.Milliseconds;
+import de.skuzzle.polly.tools.concurrent.ThreadFactoryBuilder;
 
-public class PeopleAnnoyer implements PersonListener, JoinPartListener {
+public class PeopleAnnoyer extends AbstractDisposable 
+        implements PersonListener, JoinPartListener {
 
-    public final static long ANNOY_RATE = Milliseconds.fromMinutes(5);
+    public final static long ANNOY_RATE = Milliseconds.fromSeconds(15);
 
-    private final static String[] RESS_NAMES = MSG.ressNames.split(";");
-    private final static String[] AKTIEN_NAMES = MSG.aktienNames.split(";");
-    private final static String[] QUAD_NAMES = MSG.quadNames.split(";");
+    private final static String[] RESS_NAMES = MSG.ressNames.split(";"); //$NON-NLS-1$
+    private final static String[] AKTIEN_NAMES = MSG.aktienNames.split(";"); //$NON-NLS-1$
+    private final static String[] QUAD_NAMES = MSG.quadNames.split(";"); //$NON-NLS-1$
     private final static Random RANDOM = new Random();
 
 
@@ -43,7 +47,7 @@ public class PeopleAnnoyer implements PersonListener, JoinPartListener {
 
     private static String askForRessPrice(String name) {
         final String rndRess = randomOf(RESS_NAMES);
-        final String clause = randomOf(MSG.askForRessPrice.split(";"));
+        final String clause = randomOf(MSG.askForRessPrice.split(";")); //$NON-NLS-1$
         return MSG.bind(clause, name, rndRess);
     }
 
@@ -51,7 +55,7 @@ public class PeopleAnnoyer implements PersonListener, JoinPartListener {
 
     private static String askForCourse(String name) {
         final String rndAktie = randomOf(AKTIEN_NAMES);
-        final String clause = randomOf(MSG.askForCourse.split(";"));
+        final String clause = randomOf(MSG.askForCourse.split(";")); //$NON-NLS-1$
         return MSG.bind(clause, name, rndAktie);
     }
     
@@ -59,29 +63,29 @@ public class PeopleAnnoyer implements PersonListener, JoinPartListener {
     
     private static String askForKonstru(String name) {
         final int rndLevel = 20 + RANDOM.nextInt(30);
-        final String clause = randomOf(MSG.askForKonstru.split(";"));
-        return MSG.bind(clause, name, "" + rndLevel);
+        final String clause = randomOf(MSG.askForKonstru.split(";")); //$NON-NLS-1$
+        return MSG.bind(clause, name, "" + rndLevel); //$NON-NLS-1$
     }
     
     
     
     private static String askForDirection(String name) {
         final String rndQuad = randomOf(QUAD_NAMES);
-        final String clause = randomOf(MSG.askForDirection.split(";"));
+        final String clause = randomOf(MSG.askForDirection.split(";")); //$NON-NLS-1$
         return MSG.bind(clause, name, rndQuad);
     }
     
     
     
     private static String askIfDown(String name) {
-        final String clause = randomOf(MSG.askIfDown.split(";"));
+        final String clause = randomOf(MSG.askIfDown.split(";")); //$NON-NLS-1$
         return MSG.bind(clause, name);
     }
     
     
     
     private static String askForCode(String name) {
-        final String clause = randomOf(MSG.askForCode.split(";"));
+        final String clause = randomOf(MSG.askForCode.split(";")); //$NON-NLS-1$
         return MSG.bind(clause, name);
     }
     
@@ -100,10 +104,13 @@ public class PeopleAnnoyer implements PersonListener, JoinPartListener {
         @Override
         public void run() {
             synchronized (annoyNames) {
+                if (annoyNames.isEmpty()) {
+                    return;
+                }
                 final AnnoyingPerson rndPerson = annoyNames.get(
                         RANDOM.nextInt(annoyNames.size()));
                 
-                if (RANDOM.nextBoolean()) {
+                if (true || RANDOM.nextBoolean()) {
                     final String rndMsg = randomAnnoyingMessage(rndPerson.getName());
                     irc.sendMessage(rndPerson.getChannel(), rndMsg);
                 }
@@ -121,7 +128,8 @@ public class PeopleAnnoyer implements PersonListener, JoinPartListener {
 
 
     public PeopleAnnoyer(PersonManager personManager, IrcManager irc) {
-        this.annoyService = Executors.newSingleThreadScheduledExecutor();
+        this.annoyService = Executors.newSingleThreadScheduledExecutor(
+                new ThreadFactoryBuilder("ANNOY_SERVICE")); //$NON-NLS-1$
         this.annoyService.scheduleAtFixedRate(new AnnoyTask(), ANNOY_RATE, ANNOY_RATE, 
                 TimeUnit.MILLISECONDS);
         this.personManager = personManager;
@@ -175,6 +183,13 @@ public class PeopleAnnoyer implements PersonListener, JoinPartListener {
         synchronized (this.annoyNames) {
             this.annoyNames.remove(e.getPerson());
         }
+    }
+
+
+
+    @Override
+    protected void actualDispose() throws DisposingException {
+        this.annoyService.shutdownNow();
     }
 
 }
