@@ -1,9 +1,9 @@
 package de.skuzzle.polly.sdk.eventlistener;
 
-import java.util.EventListener;
+import de.skuzzle.jeve.Listener;
 
 
-public interface GenericListener extends EventListener {
+public interface GenericListener extends Listener {
     
     public abstract void genericEvent(GenericEvent e);
 }

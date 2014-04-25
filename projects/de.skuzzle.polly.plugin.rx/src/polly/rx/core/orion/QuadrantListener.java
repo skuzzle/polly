@@ -1,10 +1,10 @@
 package polly.rx.core.orion;
 
-import java.util.EventListener;
+import de.skuzzle.jeve.Listener;
 
 
 
-public interface QuadrantListener extends EventListener {
+public interface QuadrantListener extends Listener {
 
     public void quadrantDeleted(QuadrantEvent e);
     

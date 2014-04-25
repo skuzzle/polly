@@ -24,8 +24,7 @@ public class DeliverRemindHandler extends JoinPartAdapter implements MessageList
         this.remindManager = remindManager;
         this.userManager = userManager;
     }
-    
-    
+
     
     @Override
     public void channelJoined(ChannelEvent e) {

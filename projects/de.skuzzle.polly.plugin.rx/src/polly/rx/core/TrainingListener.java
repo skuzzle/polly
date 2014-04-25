@@ -1,9 +1,9 @@
 package polly.rx.core;
 
-import java.util.EventListener;
+import de.skuzzle.jeve.Listener;
 
 
-public interface TrainingListener extends EventListener {
+public interface TrainingListener extends Listener {
     public void trainingAdded(TrainingEvent e);
     
     public void trainingFinished(TrainingEvent e);

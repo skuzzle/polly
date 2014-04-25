@@ -1,9 +1,9 @@
 package polly.dyndns.core;
 
-import java.util.EventListener;
+import de.skuzzle.jeve.Listener;
 
 
-public interface IPChangedListener extends EventListener {
+public interface IPChangedListener extends Listener {
 
     public void ipChanged(IPChangedEvent e);
 }

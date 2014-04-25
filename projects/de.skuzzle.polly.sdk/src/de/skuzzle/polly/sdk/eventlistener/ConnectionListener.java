@@ -1,6 +1,6 @@
 package de.skuzzle.polly.sdk.eventlistener;
 
-import java.util.EventListener;
+import de.skuzzle.jeve.Listener;
 
 /**
  * Listener for irc connection state changes.
@@ -8,7 +8,7 @@ import java.util.EventListener;
  * @author Simon
  * @since 0.6.1
  */
-public interface ConnectionListener extends EventListener {
+public interface ConnectionListener extends Listener {
     
     /**
      * This event is fired whenever a new irc connection is established (on startup or

@@ -1,6 +1,6 @@
 package de.skuzzle.polly.sdk.eventlistener;
 
-import java.util.EventListener;
+import de.skuzzle.jeve.Listener;
 
 /**
  * This listener listens for configuration changes to happen and can be registered
@@ -9,7 +9,7 @@ import java.util.EventListener;
  * @author Simon
  * @since 0.8
  */
-public interface ConfigurationListener extends EventListener {
+public interface ConfigurationListener extends Listener {
     
     /**
      * This method is called whenever reconfiguration is required. That is not everytime

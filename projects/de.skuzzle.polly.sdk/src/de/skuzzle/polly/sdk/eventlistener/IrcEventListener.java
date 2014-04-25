@@ -1,6 +1,6 @@
 package de.skuzzle.polly.sdk.eventlistener;
 
-import java.util.EventListener;
+import de.skuzzle.jeve.Listener;
 
 /**
  * This is a tagging interface for all irc events. Its compatible to 
@@ -10,4 +10,4 @@ import java.util.EventListener;
  * @since zero day
  * @version RC 1.0
  */
-public interface IrcEventListener extends EventListener {}
+public interface IrcEventListener extends Listener {}

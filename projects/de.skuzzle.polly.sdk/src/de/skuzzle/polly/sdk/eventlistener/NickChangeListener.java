@@ -1,5 +1,6 @@
 package de.skuzzle.polly.sdk.eventlistener;
 
+
 /**
  * This listener listens for nickchange events.
  * 

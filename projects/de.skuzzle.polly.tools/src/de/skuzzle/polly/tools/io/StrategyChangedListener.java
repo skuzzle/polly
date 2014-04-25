@@ -1,9 +1,10 @@
 package de.skuzzle.polly.tools.io;
 
-import java.util.EventListener;
+
+import de.skuzzle.jeve.Listener;
 
 
-public interface StrategyChangedListener extends EventListener {
+public interface StrategyChangedListener extends Listener {
     
     public void strategyChanged(StrategyChangedEvent e);
 }

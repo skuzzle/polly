@@ -1,6 +1,6 @@
 package de.skuzzle.polly.sdk.eventlistener;
 
-import java.util.EventListener;
+import de.skuzzle.jeve.Listener;
 
 /**
  * This listener gets notified when a user has been spotted for the first time or when
@@ -9,7 +9,7 @@ import java.util.EventListener;
  * @author Simon
  * @since 0.6.0
  */
-public interface IrcActionListener extends EventListener {
+public interface IrcActionListener extends Listener {
     
     /**
      * This event is fired when a user comes into pollys sight the first time since

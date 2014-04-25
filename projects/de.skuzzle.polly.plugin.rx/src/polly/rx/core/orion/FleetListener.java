@@ -1,9 +1,9 @@
 package polly.rx.core.orion;
 
-import java.util.EventListener;
+import de.skuzzle.jeve.Listener;
 
 
-public interface FleetListener extends EventListener {
+public interface FleetListener extends Listener {
     
     public void ownFleetsUpdated(FleetEvent e);
     

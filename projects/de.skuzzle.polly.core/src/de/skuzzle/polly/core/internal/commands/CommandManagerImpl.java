@@ -17,7 +17,6 @@ import java.util.TimerTask;
 import org.apache.log4j.Logger;
 
 import de.skuzzle.jeve.EventProvider;
-import de.skuzzle.jeve.OneTimeEventListener;
 import de.skuzzle.polly.core.parser.Evaluator;
 import de.skuzzle.polly.core.parser.InputScanner;
 import de.skuzzle.polly.core.parser.ParseException;
@@ -102,7 +101,7 @@ public class CommandManagerImpl extends AbstractDisposable
     
     
     
-    private class ReinterpretListener implements MessageSendListener, OneTimeEventListener {
+    private class ReinterpretListener implements MessageSendListener {
 
         private final User executor;
         private final Object source;

@@ -1,6 +1,6 @@
 package de.skuzzle.polly.sdk.eventlistener;
 
-import java.util.EventListener;
+import de.skuzzle.jeve.Listener;
 
 /**
  * This listener listens for user spotted and user lost events. Those are fired when a
@@ -9,7 +9,7 @@ import java.util.EventListener;
  * @author Simon
  * @since 0.6.0
  */
-public interface UserSpottedListener extends EventListener {
+public interface UserSpottedListener extends Listener {
     
     /**
      * This event is fired when a user comes into pollys sight the first time (= he joins

@@ -1,9 +1,9 @@
 package polly.mud.connection;
 
-import java.util.EventListener;
+import de.skuzzle.jeve.Listener;
 
 
-public interface ConnectionListener extends EventListener {
+public interface ConnectionListener extends Listener {
     
     public void received(MudMessageEvent e);
 
