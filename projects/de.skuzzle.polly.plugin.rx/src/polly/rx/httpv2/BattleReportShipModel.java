@@ -106,6 +106,18 @@ public class BattleReportShipModel extends AbstractHTMLTableModel<BattleReportSh
     @Override
     public Class<?> getColumnClass(int column) {
         switch (column) {
+        case 3:
+        case 5:
+        case 7:
+        case 8:
+        case 10:
+        case 11:
+        case 12:
+        case 13:
+        case 14:
+        case 15:
+        case 16:
+        case 17: return Integer.class;
         case 9: return Double.class;
         default: return super.getColumnClass(column);
         }

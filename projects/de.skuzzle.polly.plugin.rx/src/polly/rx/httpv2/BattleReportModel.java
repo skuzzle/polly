@@ -109,7 +109,7 @@ public class BattleReportModel extends AbstractHTMLTableModel<BattleReport> {
         case 6: 
         case 9: return String.class;
         case 3: 
-        case 4: return Double.class;
+        case 4: 
         case 7: 
         case 8: return Double.class;
         case 10: return Boolean.class;

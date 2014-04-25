@@ -11,8 +11,10 @@ import de.skuzzle.polly.sdk.httpv2.html.HTMLElement;
 
 public class FleetScanShipTableModel extends AbstractHTMLTableModel<FleetScanShip> {
     
-    private class ShipId implements Comparable<ShipId> {
+    private class ShipId extends Number implements Comparable<ShipId> {
 
+        private static final long serialVersionUID = 1L;
+        
         final int id;
         
         
@@ -34,6 +36,34 @@ public class FleetScanShipTableModel extends AbstractHTMLTableModel<FleetScanShi
         @Override
         public int compareTo(ShipId o) {
             return Integer.compare(this.id, o.id);
+        }
+
+
+
+        @Override
+        public int intValue() {
+            return this.id;
+        }
+
+
+
+        @Override
+        public long longValue() {
+            return this.id;
+        }
+
+
+
+        @Override
+        public float floatValue() {
+            return this.id;
+        }
+
+
+
+        @Override
+        public double doubleValue() {
+            return this.id;
         }
     }
     
@@ -101,8 +131,11 @@ public class FleetScanShipTableModel extends AbstractHTMLTableModel<FleetScanShi
     @Override
     public Class<?> getColumnClass(int column) {
         switch (column) {
-        case 0: return Object.class;
+        case 0: return Number.class;
+        case 2: return Integer.class;
+        case 4: return Integer.class;
         case 6: return Boolean.class;
+        case 8: return Integer.class;
         default: return super.getColumnClass(column);
         }
     }

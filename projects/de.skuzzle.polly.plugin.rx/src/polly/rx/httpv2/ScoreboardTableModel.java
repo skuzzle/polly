@@ -93,6 +93,9 @@ public class ScoreboardTableModel extends AbstractHTMLTableModel<ScoreBoardEntry
     @Override
     public Class<?> getColumnClass(int column) {
         switch (column) {
+        case 0: 
+        case 6:
+        case 3: return Integer.class;
         case 4: return Double.class;
         case 5: return Types.class;
         case 7: return Date.class;

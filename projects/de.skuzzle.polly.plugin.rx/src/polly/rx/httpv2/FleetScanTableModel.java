@@ -75,8 +75,10 @@ public class FleetScanTableModel extends AbstractHTMLTableModel<FleetScan> {
 
     @Override
     public Class<?> getColumnClass(int column) {
-        if (column == 0) {
-            return Date.class;
+        switch (column) {
+        case 0: return Date.class;
+        case 2: 
+        case 7: return Integer.class;
         }
         return super.getColumnClass(column);
     }

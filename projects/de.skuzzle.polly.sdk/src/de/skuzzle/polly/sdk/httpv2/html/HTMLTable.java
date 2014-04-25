@@ -202,7 +202,6 @@ public class HTMLTable<T> implements HttpEventHandler {
     }
     
     
-    
     public static class TypesCellRenderer implements CellRenderer {
         
         private final FormatManager formatter;
@@ -362,11 +361,13 @@ public class HTMLTable<T> implements HttpEventHandler {
         this.editors = new HashMap<>();
         this.editors.put(String.class, new TextCellEditor());
         this.editors.put(Object.class, new TextCellEditor());
+        this.editors.put(Number.class, new TextCellEditor());
         this.editors.put(Boolean.class, new BooleanCellEditor());
         this.editors.put(Date.class, new DateCellEditor());
         
         this.renderers = new HashMap<>();
         this.renderers.put(Object.class, new ToStringCellRenderer(false));
+        this.renderers.put(Number.class, new ToStringCellRenderer(false));
         this.renderers.put(String.class, new ToStringCellRenderer(true));
         this.renderers.put(Date.class, new DateCellRenderer());
         this.renderers.put(Boolean.class, new BooleanCellRenderer());

@@ -40,8 +40,23 @@ public class ScoreboardDetailModel extends ScoreboardTableModel {
         default: return ""; //$NON-NLS-1$
         }
     }
+    
+    
 
-
+    @Override
+    public Class<?> getColumnClass(int column) {
+        switch (column) {
+        case 0:
+        case 3:
+        case 4:
+        case 5: return Integer.class;
+        case 6: return Double.class;
+        case 7: return Date.class;
+        default: return Object.class;
+        }
+    }
+    
+    
     
     @Override
     public int getColumnCount() {
@@ -53,17 +68,6 @@ public class ScoreboardDetailModel extends ScoreboardTableModel {
     @Override
     public String getHeader(int column) {
         return COLUMNS[column];
-    }
-
-
-
-    @Override
-    public Class<?> getColumnClass(int column) {
-        switch (column) {
-        case 6: return Double.class;
-        case 7: return Date.class;
-        default: return Object.class;
-        }
     }
 
 

@@ -99,6 +99,7 @@ public class TrainingTableModel extends AbstractHTMLTableModel<TrainEntityV3> {
     public Class<?> getColumnClass(int column) {
         switch (column) {
         case 3: return Double.class;
+        case 4: return Integer.class;
         case 5: return Double.class;
         case 6: return Types.class;
         case 7: return Date.class;
