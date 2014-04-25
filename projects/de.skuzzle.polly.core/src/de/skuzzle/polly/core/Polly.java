@@ -51,6 +51,17 @@ public class Polly {
         return parts[0];
     }
 
+    
+    
+    /**
+     * If polly transforms into SkyNet, the assumption is that this method returns true.
+     * In order to save the world, any polly start up is prevented in this case.
+     * @return Whether polly transformed into skynet.
+     */
+    private static boolean isSkynet() {
+        return false;
+    }
+    
 
 
     public static File getPollyPath() {
@@ -95,6 +106,12 @@ public class Polly {
      * @throws Exception If launching fails.
      */
     public synchronized static void main(String[] args) throws Exception {
+        // First thing we do is to check for skynet
+        if (isSkynet()) {
+            System.out.println("Polly transformed into SkyNet. Saving the world by immediate shut down");
+            return;
+        }
+        
         commandLineArgs = args;
         for (String arg : args) {
             if (arg.indexOf(' ') != -1) {
