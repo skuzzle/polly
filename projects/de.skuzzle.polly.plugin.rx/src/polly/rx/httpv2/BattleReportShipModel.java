@@ -66,12 +66,7 @@ public class BattleReportShipModel extends AbstractHTMLTableModel<BattleReportSh
         switch (column) {
         case 0: { 
             final FleetScanShip fss = this.fleetDb.fleetScanShipById(element.getRxId());
-            if (fss == null) {
-                return element.getRxId();
-            } else {
-                return new HTMLElement("a").href(RXController.PAGE_SCAN_SHIP_DETAILS +  //$NON-NLS-1$
-                        "?shipId=" + element.getRxId()).content("" + element.getRxId()); //$NON-NLS-1$ //$NON-NLS-2$
-            }
+            return new ShipId(element.getRxId(), fss != null);
         }
         case 1: {
             final FleetScanShip fss = this.fleetDb.fleetScanShipById(element.getRxId());
@@ -106,6 +101,7 @@ public class BattleReportShipModel extends AbstractHTMLTableModel<BattleReportSh
     @Override
     public Class<?> getColumnClass(int column) {
         switch (column) {
+        case 0: return Object.class;
         case 3:
         case 5:
         case 7:

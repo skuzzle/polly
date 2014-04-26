@@ -191,12 +191,16 @@ public class HTMLTable<T> implements HttpEventHandler {
     
     
     
-    public static class DoubleCellRenderer implements CellRenderer {
+    public static class NumberCellRenderer implements CellRenderer {
 
         @Override
         public String renderCellContent(int column, Object cellValue) {
             final DecimalFormat nf = new DecimalFormat("0.##"); //$NON-NLS-1$
-            return nf.format((Double) cellValue);
+            final Number number = (Number) cellValue;
+            if (number instanceof Integer) {
+                return "" + number.intValue(); //$NON-NLS-1$
+            }
+            return nf.format(number.doubleValue());
         }
         
     }
@@ -371,7 +375,9 @@ public class HTMLTable<T> implements HttpEventHandler {
         this.renderers.put(String.class, new ToStringCellRenderer(true));
         this.renderers.put(Date.class, new DateCellRenderer());
         this.renderers.put(Boolean.class, new BooleanCellRenderer());
-        this.renderers.put(Double.class, new DoubleCellRenderer());
+        this.renderers.put(Double.class, new NumberCellRenderer());
+        this.renderers.put(Number.class, new NumberCellRenderer());
+        this.renderers.put(Integer.class, new NumberCellRenderer());
         this.renderers.put(Types.class, new TypesCellRenderer(myPolly.formatting()));
     }
     
