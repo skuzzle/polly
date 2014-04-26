@@ -6,7 +6,7 @@ import polly.rx.MSG;
 public enum BattleTactic {
     NORMAL, RAUBZUG, MACHTDEMO, TPT, SCHNITT, NAHKAMPF, SYSTEM, AUSWEICH, TT, ZANGE, 
     ABGESICHERT, SONDIERUNG, FERN, MULTIVEKTOR, KONZENTRIERT, VERTREIBEN, KRALLE, SICHEL, 
-    HITNRUN, HINTERHALT, STURM, DAUERBESCHUSS, ALIEN;
+    HITNRUN, HINTERHALT, STURM, DAUERBESCHUSS, ALIEN, SEKTOR_WACHE;
     
     public static BattleTactic parseTactic(String tactic) {
         tactic = tactic.trim();
@@ -34,6 +34,7 @@ public enum BattleTactic {
         else if(tactic.equals("Sturmangriff")) { return BattleTactic.STURM; } //$NON-NLS-1$
         else if(tactic.equals("Dauerbeschuss")) { return BattleTactic.DAUERBESCHUSS; } //$NON-NLS-1$
         else if(tactic.equals("Alien Angriff")) { return BattleTactic.ALIEN; } //$NON-NLS-1$
+        else if (tactic.equals("Sprungkampf - Eindringlingsgefecht")) { return BattleTactic.SEKTOR_WACHE; } //$NON-NLS-1$
         
         throw new IllegalArgumentException("invalid tactic: " + tactic); //$NON-NLS-1$
     }
@@ -67,6 +68,7 @@ public enum BattleTactic {
         case STURM:  return MSG.tacticSturm;
         case DAUERBESCHUSS: return MSG.tacticDauerbeschuss;
         case ALIEN: return MSG.tacticAlien;
+        case SEKTOR_WACHE: return MSG.tacticSekWache;
         }
     }
 }

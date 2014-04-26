@@ -155,7 +155,8 @@ public class MSG extends Constants {
     public static String tacticSturm;
     public static String tacticDauerbeschuss;
     public static String tacticAlien;
-
+    public static String tacticSekWache;
+    
     // FleetScanShip
     public static String scanShipSpotFirstTime;
     public static String scanShipSpotted;
