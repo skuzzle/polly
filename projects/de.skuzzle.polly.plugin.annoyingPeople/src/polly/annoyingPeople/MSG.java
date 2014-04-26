@@ -23,6 +23,12 @@ public class MSG extends Constants {
     public static String addPersongSig0Name;
     public static String addPersonSig0Channel;
     public static String addPersonSuccess;
+
+    public static String removePersonSig0Desc;
+    public static String removePersongSig0Name;
+    public static String removePersonSig0Channel;
+    public static String removePersonHelp;
+    public static String removePersonSuccess;
     
     
     static {

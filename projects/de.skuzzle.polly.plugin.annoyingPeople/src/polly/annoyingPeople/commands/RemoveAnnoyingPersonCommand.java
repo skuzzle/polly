@@ -15,18 +15,18 @@ import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
 
 
-public class AddAnnoyingPersonCommand extends Command {
+public class RemoveAnnoyingPersonCommand extends Command {
 
     private final PersonManager personManager;
     
-    public AddAnnoyingPersonCommand(MyPolly polly, PersonManager personManager) 
+    public RemoveAnnoyingPersonCommand(MyPolly polly, PersonManager personManager) 
             throws DuplicatedSignatureException {
-        super(polly, "addAnnoying"); //$NON-NLS-1$
-        this.createSignature(MSG.addPersonSig0Desc, 
+        super(polly, "removeAnnoying"); //$NON-NLS-1$
+        this.createSignature(MSG.removePersonSig0Desc, 
                 MyPlugin.PERMISSION_ADD_ANNOYING_PERSON,
-                new Parameter(MSG.addPersongSig0Name, Types.STRING), 
-                new Parameter(MSG.addPersonSig0Channel, Types.CHANNEL));
-        this.setHelpText(MSG.addPersonHelp);
+                new Parameter(MSG.removePersongSig0Name, Types.STRING), 
+                new Parameter(MSG.removePersonSig0Channel, Types.CHANNEL));
+        this.setHelpText(MSG.removePersonHelp);
      
         this.personManager = personManager;
     }
@@ -41,8 +41,8 @@ public class AddAnnoyingPersonCommand extends Command {
             final String person = signature.getStringValue(0);
             final String c = signature.getStringValue(1);
             try {
-                this.personManager.addAnnoyingPerson(person, c);
-                this.reply(channel, MSG.bind(MSG.addPersonSuccess, person, c));
+                this.personManager.removeAnnoyingPerson(person, c);
+                this.reply(channel, MSG.bind(MSG.removePersonSuccess, person, c));
             } catch (DatabaseException e) {
                 throw new CommandException(e);
             }      

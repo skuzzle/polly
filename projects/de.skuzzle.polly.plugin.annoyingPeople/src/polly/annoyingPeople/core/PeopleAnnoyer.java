@@ -1,4 +1,4 @@
-package polly.annoyingPeople;
+package polly.annoyingPeople.core;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +8,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
+import polly.annoyingPeople.MSG;
 import polly.annoyingPeople.entities.AnnoyingPerson;
 import de.skuzzle.polly.sdk.AbstractDisposable;
 import de.skuzzle.polly.sdk.IrcManager;

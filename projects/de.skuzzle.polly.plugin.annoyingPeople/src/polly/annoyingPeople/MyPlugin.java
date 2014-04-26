@@ -1,6 +1,10 @@
 package polly.annoyingPeople;
 
 import polly.annoyingPeople.commands.AddAnnoyingPersonCommand;
+import polly.annoyingPeople.commands.RemoveAnnoyingPersonCommand;
+import polly.annoyingPeople.core.DBPersonManager;
+import polly.annoyingPeople.core.PeopleAnnoyer;
+import polly.annoyingPeople.core.PersonManager;
 import polly.annoyingPeople.entities.AnnoyingPerson;
 import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PollyPlugin;
@@ -29,6 +33,7 @@ public class MyPlugin extends PollyPlugin {
         personManager.addPersonListener(annoyer);
         
         this.addCommand(new AddAnnoyingPersonCommand(myPolly, personManager));
+        this.addCommand(new RemoveAnnoyingPersonCommand(myPolly, personManager));
     }
 
     

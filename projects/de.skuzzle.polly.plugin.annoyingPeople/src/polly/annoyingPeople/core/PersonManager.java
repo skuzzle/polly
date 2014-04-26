@@ -1,4 +1,4 @@
-package polly.annoyingPeople;
+package polly.annoyingPeople.core;
 
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import polly.annoyingPeople.entities.AnnoyingPerson;

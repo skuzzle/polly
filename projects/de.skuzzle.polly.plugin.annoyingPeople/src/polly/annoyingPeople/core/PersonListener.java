@@ -1,4 +1,4 @@
-package polly.annoyingPeople;
+package polly.annoyingPeople.core;
 
 import de.skuzzle.jeve.Listener;
 

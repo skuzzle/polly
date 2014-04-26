@@ -1,4 +1,4 @@
-package polly.annoyingPeople;
+package polly.annoyingPeople.core;
 
 import polly.annoyingPeople.entities.AnnoyingPerson;
 import de.skuzzle.jeve.Event;
