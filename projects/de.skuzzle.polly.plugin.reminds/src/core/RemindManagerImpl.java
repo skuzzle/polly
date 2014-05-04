@@ -339,6 +339,7 @@ public class RemindManagerImpl extends AbstractDisposable implements RemindManag
             this.addRemind(forUser, r, true);
         } else {
             String subject = String.format(SUBJECT, 
+                remind.getMessage(),
                 this.formatter.formatDate(remind.getDueDate()));
             String message = MAIL_FORMAT.format(remind, this.formatter);
             
