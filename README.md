@@ -1,4 +1,4 @@
-#Polly - Java 1.7 IRC Framework
+#Polly - Java 1.8 IRC Framework
 
 Polly is an open source IRC bot available under GNU General Public License 
 (GPLv3). See the GPLv3.txt in this directory for detailed licensing information.
