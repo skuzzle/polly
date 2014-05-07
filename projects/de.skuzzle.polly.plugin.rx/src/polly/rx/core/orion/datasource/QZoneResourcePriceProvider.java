@@ -28,12 +28,12 @@ public class QZoneResourcePriceProvider implements ResourcePriceProvider {
     
     
     
-    private static Map<RxRessource, Float> zeroMap() {
-        final Map<RxRessource, Float> result = new EnumMap<>(RxRessource.class);
+    private static Map<RxRessource, Double> zeroMap() {
+        final Map<RxRessource, Double> result = new EnumMap<>(RxRessource.class);
         for (final RxRessource ress : RxRessource.values()) {
-            result.put(ress, 0.f);
+            result.put(ress, 0.);
         }
-        result.put(RxRessource.CR, 1.f);
+        result.put(RxRessource.CR, 1.);
         return result;
     }
     
@@ -58,14 +58,14 @@ public class QZoneResourcePriceProvider implements ResourcePriceProvider {
     
     
     @Override
-    public float getPrice(RxRessource resource) {
+    public double getPrice(RxRessource resource) {
         return this.getPrice(resource, null);
     }
 
     
     
     @Override
-    public float getPrice(RxRessource resource, Date time) {
+    public double getPrice(RxRessource resource, Date time) {
         return this.safeRequestPrices(time).get(resource);
     }
     
@@ -80,10 +80,10 @@ public class QZoneResourcePriceProvider implements ResourcePriceProvider {
     
     @Override
     public List<? extends Production> getAllPrices(Date time) {
-        final Map<RxRessource, Float> prices = this.safeRequestPrices(time);
+        final Map<RxRessource, Double> prices = this.safeRequestPrices(time);
         final List<DefaultProduction> result = new ArrayList<>(prices.size());
         
-        for (final Entry<RxRessource, Float> e : prices.entrySet()) {
+        for (final Entry<RxRessource, Double> e : prices.entrySet()) {
             result.add(new DefaultProduction(e.getKey(), e.getValue()));
         }
         
@@ -99,7 +99,7 @@ public class QZoneResourcePriceProvider implements ResourcePriceProvider {
     
     
     
-    private Map<RxRessource, Float> safeRequestPrices(Date date) {
+    private Map<RxRessource, Double> safeRequestPrices(Date date) {
         try {
             return this.requestPrices(date);
         } catch (IOException e) {
@@ -120,9 +120,9 @@ public class QZoneResourcePriceProvider implements ResourcePriceProvider {
     
     
     
-    private Map<RxRessource, Float> requestPrices(Date date) throws IOException {
+    private Map<RxRessource, Double> requestPrices(Date date) throws IOException {
         final String requestUrl;
-        final Map<RxRessource, Float> result = zeroMap();
+        final Map<RxRessource, Double> result = zeroMap();
         
         if (date != null) {
             requestUrl = API_URL + "?date=" + this.formatDate(date); //$NON-NLS-1$
@@ -143,7 +143,8 @@ public class QZoneResourcePriceProvider implements ResourcePriceProvider {
     
     
     
-    private boolean interpretResponseLine(String line, int lineNr, Map<RxRessource, Float> result, boolean dateGiven) {
+    private boolean interpretResponseLine(String line, int lineNr, 
+            Map<RxRessource, Double> result, boolean dateGiven) {
         final String[] parts = line.split(";"); //$NON-NLS-1$
         
         if (lineNr == 0) {
@@ -156,11 +157,13 @@ public class QZoneResourcePriceProvider implements ResourcePriceProvider {
         } else if (lineNr > 4 && !dateGiven) {
             //
             final int ordinal = lineNr - 4;
-            result.put(RxRessource.values()[ordinal], Float.parseFloat(parts[1]));
+            final double price = Math.round(Double.parseDouble(parts[1]) * 100.0) / 100.0;
+            result.put(RxRessource.values()[ordinal], price);
         } else if (lineNr > 1 && dateGiven) {
             // -2 would be Cr, so we start at nrg with -1
             final int ordinal = lineNr - 1;
-            result.put(RxRessource.values()[ordinal], Float.parseFloat(parts[1]));
+            final double price = Math.round(Float.parseFloat(parts[1]) * 100.0) / 100.0;
+            result.put(RxRessource.values()[ordinal], price);
         }
         return true;
     }

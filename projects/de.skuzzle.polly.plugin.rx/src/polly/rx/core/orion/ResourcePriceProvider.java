@@ -11,9 +11,9 @@ public interface ResourcePriceProvider {
     
     public Date getRefreshTime();
 
-    public float getPrice(RxRessource resource);
+    public double getPrice(RxRessource resource);
     
-    public float getPrice(RxRessource resource, Date time);
+    public double getPrice(RxRessource resource, Date time);
     
     public List<? extends Production> getAllPrices();
     

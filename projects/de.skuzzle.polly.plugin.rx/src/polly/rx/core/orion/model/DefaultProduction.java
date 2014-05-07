@@ -8,11 +8,11 @@ import de.skuzzle.polly.tools.Equatable;
 public class DefaultProduction implements Production {
 
     private final RxRessource ress;
-    private final float rate;
+    private final double rate;
 
 
 
-    public DefaultProduction(RxRessource ress, float rate) {
+    public DefaultProduction(RxRessource ress, double rate) {
         Check.objects(ress).notNull();
         this.ress = ress;
         this.rate = rate;
@@ -69,7 +69,7 @@ public class DefaultProduction implements Production {
 
 
     @Override
-    public float getRate() {
+    public double getRate() {
         return this.rate;
     }
 

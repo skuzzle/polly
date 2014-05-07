@@ -90,7 +90,7 @@ public class DBSector implements Sector {
         this.type = src.getType();
         this.ressources = new ArrayList<>(src.getRessources().size());
         for (final Production prod : src.getRessources()) {
-            this.ressources.add(new DBProduction(prod.getRess(), prod.getRate()));
+            this.ressources.add(new DBProduction(prod.getRess(), (float) prod.getRate()));
         }
     }
 
@@ -115,7 +115,7 @@ public class DBSector implements Sector {
             write.removeAll(this.ressources);
             this.ressources.clear();
             for (final Production prod : other.getRessources()) {
-                final DBProduction dbProd = new DBProduction(prod.getRess(), prod.getRate());
+                final DBProduction dbProd = new DBProduction(prod.getRess(), (float) prod.getRate());
                 this.ressources.add(dbProd);
                 write.single(dbProd);
             }

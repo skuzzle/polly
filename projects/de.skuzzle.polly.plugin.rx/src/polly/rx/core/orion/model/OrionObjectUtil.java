@@ -65,7 +65,7 @@ public final class OrionObjectUtil {
     public static int compareProduction(Production prod1, Production prod2) {
         int c = prod1.getRess().compareTo(prod2.getRess());
         if (c == 0) {
-            return Float.compare(prod1.getRate(), prod2.getRate());
+            return Double.compare(prod1.getRate(), prod2.getRate());
         }
         return c;
     }

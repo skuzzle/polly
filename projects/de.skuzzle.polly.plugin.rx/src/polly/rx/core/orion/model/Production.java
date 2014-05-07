@@ -7,5 +7,5 @@ public interface Production extends Equatable, Comparable<Production> {
 
     public abstract RxRessource getRess();
 
-    public abstract float getRate();
+    public abstract double getRate();
 }

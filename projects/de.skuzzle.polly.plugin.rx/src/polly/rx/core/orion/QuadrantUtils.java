@@ -229,13 +229,13 @@ public final class QuadrantUtils {
 
 
     public static Resources calculateHourlyProduction(Quadrant quad) {
-        final Map<RxRessource, Float> production = new EnumMap<>(RxRessource.class);
+        final Map<RxRessource, Double> production = new EnumMap<>(RxRessource.class);
         for (final RxRessource res : RxRessource.values()) {
-            production.put(res, 0.f);
+            production.put(res, 0.);
         }
         for (final Sector sector : quad.getSectors()) {
             for (final Production prod : sector.getRessources()) {
-                Float currentProd = production.get(prod.getRess());
+                Double currentProd = production.get(prod.getRess());
                 currentProd += prod.getRate();
                 production.put(prod.getRess(), currentProd);
             }

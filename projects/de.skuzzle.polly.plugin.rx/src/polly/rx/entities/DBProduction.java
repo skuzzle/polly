@@ -56,7 +56,7 @@ public class DBProduction implements Production {
 
 
     @Override
-    public float getRate() {
+    public double getRate() {
         return this.rate;
     }
 
