@@ -62,15 +62,28 @@ public abstract class AbstractTokenStream implements Iterable<Token>, TokenStrea
     protected int mark;
     
     
+    /**
+     * Creates a new TokenStream with the given PushbackReader as input. It will use the
+     * charset provided by the reader.
+     * 
+     * @param reader The PushbackReader to scan for tokens.
+     */
+    public AbstractTokenStream(PushbackReader reader){
+    	this.reader = reader;
+        this.pushbackBuffer = new LinkedList<Integer>();
+        this.tokenBuffer = new LinkedList<Token>();
+        this.consumedTokens = new ArrayList<Token>();
+        this.mark = -1;
+    }
     
     /**
-     * Creates a new TokenStream with the given String as input. It will use the
-     * systems default charset.
+     * Creates a new TokenStream with the given String as input. It will use UTF-8 as
+     * default charset.
      * 
      * @param stream The String to scan for tokens.
      */
     public AbstractTokenStream(String stream) {      
-        this(stream, Charset.defaultCharset());
+        this(stream,Charset.forName("UTF-8"));
     }
     
     
@@ -82,13 +95,8 @@ public abstract class AbstractTokenStream implements Iterable<Token>, TokenStrea
      * @param charset The charset in which the stream is encoded.
      */
     public AbstractTokenStream(String stream, Charset charset) {      
-        InputStream inp = new ByteArrayInputStream(stream.getBytes(charset));
-        this.reader = new PushbackReader(new BufferedReader(
-            new InputStreamReader(inp, charset)));
-        this.pushbackBuffer = new LinkedList<Integer>();
-        this.tokenBuffer = new LinkedList<Token>();
-        this.consumedTokens = new ArrayList<Token>();
-        this.mark = -1;
+        this(new PushbackReader(new BufferedReader(
+            new InputStreamReader(new ByteArrayInputStream(stream.getBytes(charset)), charset))));
     }    
     
     
@@ -102,11 +110,7 @@ public abstract class AbstractTokenStream implements Iterable<Token>, TokenStrea
      *      encoded.
      */
     public AbstractTokenStream(InputStream stream, Charset charset) {
-        this.reader = new PushbackReader(new InputStreamReader(stream, charset));
-        this.pushbackBuffer = new LinkedList<Integer>();
-        this.tokenBuffer = new LinkedList<Token>();
-        this.consumedTokens = new ArrayList<Token>();
-        this.mark = -1;
+        this(new PushbackReader(new InputStreamReader(stream, charset)));
     }
     
     
