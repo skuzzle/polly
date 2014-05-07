@@ -366,6 +366,8 @@ public class HTMLTable<T> implements HttpEventHandler {
         this.editors.put(String.class, new TextCellEditor());
         this.editors.put(Object.class, new TextCellEditor());
         this.editors.put(Number.class, new TextCellEditor());
+        this.editors.put(Integer.class, new TextCellEditor());
+        this.editors.put(Boolean.class, new TextCellEditor());
         this.editors.put(Boolean.class, new BooleanCellEditor());
         this.editors.put(Date.class, new DateCellEditor());
         
