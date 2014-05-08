@@ -23,6 +23,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
@@ -97,6 +98,26 @@ public final class HttpAnswers {
         };
     }
     
+    
+    
+    /**
+     * Creates a {@link HttpAnswer} which sends the stack trace of the provided exception 
+     * as plain text to the client.
+     *  
+     * @param responseCode HTTP response code of this answer
+     * @param e The exception of which the stacktrace should be sent
+     * @return An answer that sends back the stacktrace
+     */
+    public final static HttpAnswer newStackTraceAnswer(int responseCode, final Exception e) {
+        return new HttpBinaryAnswer(responseCode) {
+            @Override
+            public void getAnswer(OutputStream out, HttpServer server) throws IOException {
+                final PrintStream ps = new PrintStream(out);
+                e.printStackTrace(ps);
+                ps.flush();
+            }
+        };
+    }
     
     
     @SuppressWarnings("unchecked")

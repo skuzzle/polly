@@ -40,12 +40,12 @@ import com.sun.net.httpserver.HttpHandler;
 import de.skuzzle.polly.http.api.AlternativeAnswerException;
 import de.skuzzle.polly.http.api.HttpCookie;
 import de.skuzzle.polly.http.api.HttpEvent.RequestMode;
-import de.skuzzle.polly.http.api.handler.HttpEventHandler;
-import de.skuzzle.polly.http.api.HttpException;
 import de.skuzzle.polly.http.api.HttpServer;
 import de.skuzzle.polly.http.api.answers.DefaultAnswers;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswerHandler;
+import de.skuzzle.polly.http.api.answers.HttpAnswers;
+import de.skuzzle.polly.http.api.handler.HttpEventHandler;
 
 
 
@@ -248,11 +248,10 @@ class BasicEventHandler implements HttpHandler {
         } catch (AlternativeAnswerException e) {
             this.handleAnswer(e.getAnswer(), t, httpEvent);
             return;
-        } catch (HttpException e) {
-            // consume and send "file not found" below
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
+            this.handleAnswer(HttpAnswers.newStackTraceAnswer(200, e), t, httpEvent);
+            return;
         }
         
         // event could not be handled
