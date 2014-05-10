@@ -1,5 +1,7 @@
 package polly.rx.core.orion.model;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -323,4 +325,26 @@ public final class OrionObjectUtil {
     private OrionObjectUtil() {
     }
 
+
+
+    public static boolean chatEntriesEqual(OrionChatEntry ce1,
+            OrionChatEntry ce2) {
+        return ce1.getSender().equals(ce2.getSender()) && 
+                ce1.getMessage().equals(ce2.getMessage()) && 
+                ce1.getDate().equals(ce2.getDate());
+    }
+    
+    
+    
+    public static int chatEntryHashCode(OrionChatEntry oce) {
+        return Objects.hash(oce.getSender(), oce.getMessage(), oce.getDate());
+    }
+
+    
+    
+    public static String chatEntryString(OrionChatEntry oce) {
+        final DateFormat df = new SimpleDateFormat("HH:mm dd.MM.yyyy"); //$NON-NLS-1$
+        return String.format("[%s] <%s> %s", df.format(oce.getDate()), oce.getSender(),  //$NON-NLS-1$
+                oce.getMessage());
+    }
 }

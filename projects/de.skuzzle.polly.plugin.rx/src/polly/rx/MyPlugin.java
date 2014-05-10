@@ -32,6 +32,7 @@ import polly.rx.core.orion.datasource.DBOrionAccess;
 import polly.rx.core.orion.datasource.MemoryFleetTracker;
 import polly.rx.core.orion.datasource.QZoneResourcePriceProvider;
 import polly.rx.core.orion.datasource.WLSWormholeProvider;
+import polly.rx.core.orion.http.OrionChatController;
 import polly.rx.core.orion.http.OrionController;
 import polly.rx.core.orion.http.OrionNewsProvider;
 import polly.rx.core.orion.model.AlienRace;
@@ -333,6 +334,9 @@ public class MyPlugin extends PollyPlugin {
                 userMapper,
                 loginCodeManager
             );
+        
+        final OrionChatController chatController = new OrionChatController(this.getMyPolly());
+        this.getMyPolly().webInterface().getServer().addController(chatController);
         
         final OrionController oc = new OrionController(this.getMyPolly(), azManager);
         final OrionNewsProvider newsProvider = new OrionNewsProvider(
