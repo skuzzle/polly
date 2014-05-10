@@ -3,7 +3,17 @@
 
 /* 
 Changelog
-[ CURRENT ] Version 1.2b - 12.03.2014
+[ CURRENT ] Version 1.3 - 10.05.2014
+  Features:
+  	+ Add Orion In-Game chat
+    + Add possibility for the server to display certain warnings after any
+      request
+  Bug Fixes:
+    + Showing previous sector of portals that have been moved to unknown
+  Changes:
+    - Removed code sharing feature as it is not needed anymore
+    
+Version 1.2b - 12.03.2014
   Bug Fixes:
     + Added 2 missing @include directives
     
@@ -56,7 +66,7 @@ var FEATURE_NEWS_INTEGRATION = true; // showing flight news in news overview
 var FEATURE_SEND_FLEETSCANS = true; // send fleet scans to polly
 var FEATURE_SEND_SCOREBOARD = true; // send score board to polly
 var FEATURE_BATTLE_REPORTS = true; // send battle reports to polly
-
+var FEATURE_ORION_CHAT = true; // enable orion ingame chat
 
 
 //==== NO MANUAL MODIFICATIONS BEYOND THIS LINE ====
@@ -71,7 +81,7 @@ var DEFAULT_REQUEST_TIMEOUT = 5000; // ms
 
 //API URLs
 var ORION_API_VERSION = 1;
-var POLLY_URL = LOCAL_SERVER ? "https://localhost:83" : "$host";
+var POLLY_URL = LOCAL_SERVER ? "https://localhost:83" : "https://projectpolly.de:443";
 var API_REQUEST_SECTOR = "/api/orion/json/sector"
 var API_REQUEST_QUADRANT = "/api/orion/json/quadrant";
 var API_POST_SECTOR = "/api/orion/json/postSector";
@@ -104,11 +114,9 @@ var PROPERTY_ORION_ON = "polly.orion.on";
 var PROPERTY_ORION_SELF = "polly.orion.self";
 var PROPERTY_ORION_RX_LOGIN = "polly.orion.rxLoginName";
 var PROPERTY_CACHED_QUADRANT = "polly.orion.quad.";
-var PROPERTY_SHARE_CODE = "polly.orion.shareCode";
 var PROPERTY_FILL_IN_CODE = "polly.orion.fillInCode";
 var PROPERTY_MAX_NEWS_ENTRIES = "polly.orion.maxNewsEntries";
 var PROPERTY_FLEET_POSITION = "polly.orion.fleetPosition";
-var PROPERTY_TEMPORARY_CODE = "polly.orion.tempCode";
 var PROPERTY_NEWS_SUBSCRIPTION = "polly.orion.newsSubscription";
 var PROPERTY_CREDENTIAL_WARNING = "polly.orion.credentialWarning";
 var PROPERTY_SEND_SCOREBOARD = "polly.orion.sendScoreboard";
@@ -119,7 +127,12 @@ var PROPERTY_CLAN_TAG = "polly.orion.clanTag";
 var PROPERTY_DISPLAY_INSTALL_NOTE = "polly.orion.installNote";
 var PROPERTY_ORION_HIDDEN = "polly.orion.orionHidden";
 var PROPERTY_SECTOR_SIZE = "polly.orion.sectorSize";
+var PROPERTY_CHAT_ENTRIES = "polly.orion.chatEntries";
 
+
+// DEPRECATED PROPERTIES
+var PROPERTY_SHARE_CODE = "polly.orion.shareCode";
+var PROPERTY_TEMPORARY_CODE = "polly.orion.tempCode";
 
 //Strings
 //from: http://stackoverflow.com/questions/610406/javascript-equivalent-to-printf-string-format
@@ -197,7 +210,10 @@ var MSG_DATA_TRANSMITTED = "Sektordaten wurden gesendet";
 var MSG_NO_CREDENTIAL_WARNING = "Senden nicht möglich, da du deine Polly Logindaten nicht angegeben hast.\nDu kannst die Daten in den Revorix Einstellungen ändern\n\nDiese Warnung wird nur einmal angezeigt";
 var MSG_SHOW_ORION = "Einblenden";
 var MSG_HIDE_ORION = "Ausblenden";
-
+var MSG_CHAT_ENTRIES = "Chat Einträge";
+var MSG_ORION_CHAT = "OrionChat";
+var MSG_SEND = "Senden";
+var MSG_CHAT_IRC_COPY = "IRC";
 
 //Default clan tag
 var CLAN_TAG = "[Loki]";
@@ -258,10 +274,10 @@ main();
 //Main entry point of this script. Checks document uri to decide which actions
 //to perform
 function main() {
+  cleanUp();
  if (!FEATURE_ALL) {
      return;
  }
-
  var uri = document.baseURI;
 
  if (uri.indexOf("map.php") != -1) {
@@ -289,11 +305,11 @@ function main() {
      if (FEATURE_NEWS_INTEGRATION) {
          newsIntegration();
      }
-     if (FEATURE_LOGIN_INTEGRATION) {
-         // at this point, login was successful so send code to polly
-         sendCodeAndClear();
-     }
 
+     if (FEATURE_ORION_CHAT) {
+    	 orionChatIntegration();
+     }
+     
      // Show install note
      if (GM_getValue(PROPERTY_DISPLAY_INSTALL_NOTE, true)) {
          GM_setValue(PROPERTY_DISPLAY_INSTALL_NOTE, false);
@@ -332,6 +348,96 @@ function main() {
          battleReportIntegration(true); // live kb
      }
  }
+}
+
+// Cleans up deprecated settings
+function cleanUp() {
+    GM_deleteValue(PROPERTY_SHARE_CODE);
+    GM_deleteValue(PROPERTY_TEMPORARY_CODE);
+}
+
+
+//==== FEATURE: ORION CHAT ====
+function orionChatIntegration() {
+    $("html").css({paddingTop: "150px"});
+    var ad = $("#ad");
+    ad.css({
+        textAlign: "left",
+        height: "120px"
+    });
+    var tbl = "";
+    tbl += '<table class="wrpd full" id="orionChat">'
+    tbl += '<thead>';
+    tbl += '<tr><th class="nfo">{0}</th><th id="secondHead" colspan="2" style="text-align:right;width:100%" class="nfo"><a href="#" id="refreshChat">{1}</a></th></tr>'.format(MSG_ORION_CHAT, MSG_REFRESH);
+    tbl += '</thead>';
+    tbl +=  '<tbody>';
+    tbl += '</tbody>';
+    tbl += '<tfoot>';
+    tbl += '<tr><td><input type="text" id="chatText" style="width:590px"/><input id="ircCopy" type="checkbox" checked/> {0} <input style="width:60px" type="button" value="{1}" id="sendChat"/></td></tr>'.format(MSG_CHAT_IRC_COPY, MSG_SEND);
+    tbl += '</tfoot>';
+    tbl += '</table>';
+    ad.html(tbl);
+    
+    $("#orionChat").css({
+        width: "716px",
+        borderSpacing: "0"
+    });
+    $("#orionChat > tbody, thead tr").css({display:"block"});
+    $("#orionChat > tbody").css({
+        height: "90px",
+        overflowY: "auto",
+        overflowX: "hidden"
+    });
+    $("#sendChat").click(sendChatEntry);
+    $("#chatText").keypress(function(event) {
+        if (event.which == 13) {
+            sendChatEntry();
+        }
+    });
+    requestChatEntries();
+    $("#refreshChat").click(requestChatEntries);
+    window.setInterval(requestChatEntries, getChatRefreshInterval());
+}
+
+function scrollDownChat() {
+    var tbody = $("#orionChat > tbody");
+    var scrollTo = tbody.find("tr:last-child");
+    var top = scrollTo.offset().top - tbody.offset().top + tbody.scrollTop();
+    tbody.animate({
+        scrollTop: top
+    }, 1);
+}
+
+
+function requestChatEntries() {
+    var tbody = $("#orionChat > tbody");
+    requestJson(API_REQUEST_CHAT, {max: getMaxChatEntries()}, function(result) {
+        tbody.html("");
+        $.each(result, function(idx) {
+            var itm = result[idx];
+            tbody.append('<tr><td>'+itm.date+'</td><td>'+itm.sender+'</td><td>'+itm.message+'</td>')
+        });
+        $("#orionChat tr > :nth-child(1)").css({width:"110px"});
+        $("#orionChat tr > :nth-child(2)").css({width:"100px"});
+        $("#orionChat tr > :nth-child(3)").css({width:"490px"});
+        $("#secondHead").css({width:"100%"}); // HACK
+        scrollDownChat();
+    });
+}
+
+function sendChatEntry() {
+    var inp = $("#chatText");
+    var ircCopy = $("#ircCopy").is(":checked");
+    var txt = inp.val();
+    inp.val("");
+    inp.focus();
+    if (txt == "") {
+        return;
+    }
+    postJson(API_ADD_TO_CHAT, {sender: getSelf(), message: txt, irc: ircCopy}, 
+        function(result) {
+            requestChatEntries();
+        });    
 }
 
 
@@ -424,6 +530,7 @@ function sectorSizeIntegration() {
 
 
 
+//==== FEATURE: SETTINGS ====
 function settingIntegration() {
  var body = $('body');
  var content = "";
@@ -431,9 +538,10 @@ function settingIntegration() {
  content += '<tr><td class="nfo" colspan="3">Orion Einstellungen</td></tr>';
  content += '<tr>';
  content += '<td>{0}</td><td><input tabindex="255" class="text" type="text" id="pollyName"/></td>'.format(MSG_POLLY_USERNAME);
- content += '<td rowspan="3" style="vertical-align:middle; text-align:center"><input tabindex="300" class="Button" type="button" id="savePolly" value="{0}"/><br/><input tabindex="301" class="Button" type="button" id="testSettings" value="{1}"/></td>'.format(MSG_STORE_SETTINGS, MSG_TEST_SETTINGS);
+ content += '<td rowspan="4" style="vertical-align:middle; text-align:center"><input tabindex="300" class="Button" type="button" id="savePolly" value="{0}"/><br/><input tabindex="301" class="Button" type="button" id="testSettings" value="{1}"/></td>'.format(MSG_STORE_SETTINGS, MSG_TEST_SETTINGS);
  content += '</tr>';
  content += '<tr><td>{0}</td><td><input tabindex="256" class="text" type="password" id="pollyPw"/> ({1})</td></tr>'.format(MSG_POLLY_PW, MSG_LEAVE_EMPTY);
+ content += '<tr><td>{0}</td><td><input tabindex="256" class="text" type="text" id="maxChatEntries"/></td></tr>'.format(MSG_CHAT_ENTRIES);
  content += '<tr><td>{0}</td><td>{1}</td></tr>'.format(MSG_VENAD, getSelf());
  content += '<tr><td>{0}</td><td><input tabindex="258" class="text" type="text" id="clantag"/></td><td style="text-align:center"><span id="ok" style="display:none; color:green">OK</span></td></tr>'.format(MSG_CLAN_TAG);
  content += '</table></div></div></div>';
@@ -442,6 +550,7 @@ function settingIntegration() {
  $("#savePolly").click(saveOrionSettings);
  $("#testSettings").click(testSettings);
  $("#pollyName").val(getPollyUserName());
+ $("#maxChatEntries").val(getMaxChatEntries());
  $("#clantag").val(getClanTag());
 }
 
@@ -449,13 +558,15 @@ function saveOrionSettings() {
  var userName = $("#pollyName").val();
  var tag = $("#clantag").val();
  var pw = $("#pollyPw").val();
-
  var hash = CryptoJS.MD5(pw).toString();
  GM_setValue(PROPERTY_LOGIN_NAME, userName);
  if (pw != "") {
      GM_setValue(PROPERTY_LOGIN_PASSWORD, hash);
  }
  GM_setValue(PROPERTY_CLAN_TAG, tag);
+
+ var maxEntries = parseInt($("#maxChatEntries").val());
+ GM_setValue(PROPERTY_CHAT_ENTRIES, maxEntries);
 
  $("#ok").fadeIn(500, function () {
      $(this).fadeOut(1000);
@@ -879,6 +990,7 @@ function getSectorFromNewsEntry(entry) {
  case NEWS_FLEET_SPOTTED:
  case NEWS_PORTAL_ADDED:
  case NEWS_PORTAL_MOVED:
+ case NEWS_PORTAL_REMOVED:
      return entry.subject.sector;
  default:
      return {
@@ -926,12 +1038,7 @@ function loginIntegration(serverLogin) {
 
      // store rx user name
      setProperty(PROPERTY_ORION_RX_LOGIN, rxName.val(), this);
-     
-     if (getShareCode()) {
-         var code = inputUcode.val();
-         // store code temporarily
-         setProperty(PROPERTY_TEMPORARY_CODE, code, this);
-     }
+
      if (self != "" && self.toLowerCase() != getSelf().toLowerCase()) {
          alert(MSG_VENAD_SET.format(self));
      }
@@ -941,19 +1048,8 @@ function loginIntegration(serverLogin) {
  firePropertyChanged(this, PROPERTY_FILL_IN_CODE, false, getAutoFillInCode());
 }
 
-function sendCodeAndClear() {
- // read temp code, delete it and send it to polly
- var code = GM_getValue(PROPERTY_TEMPORARY_CODE, "");
- GM_deleteValue(PROPERTY_TEMPORARY_CODE);
- if (code != "") {
-     requestJson(API_SUBMIT_CODE, {
-         code: code
-     });
- }
-}
 
-
-//Adds checkboxes to login formulars
+//Adds checkbox to login formulars
 function loginGui(serverLogin, loginBtn) {
  if (serverLogin) {
      // remove <br>
@@ -968,13 +1064,9 @@ function loginGui(serverLogin, loginBtn) {
  }
 
  var append = "";
- append += createCheckBox(MSG_SHARE_CODE, PROPERTY_SHARE_CODE);
  append += createCheckBox(MSG_INSERT_CODE, PROPERTY_FILL_IN_CODE);
  loginBtn.before(append);
-
- initCheckbox(PROPERTY_SHARE_CODE);
  initCheckbox(PROPERTY_FILL_IN_CODE);
-
  addPropertyChangeListener(handleInsertCode);
 }
 //Handle the change of auto inserting the code
@@ -1630,6 +1722,9 @@ function requestJson(api, params, onSuccess) {
          }
          try {
              var json = JSON.parse(response.responseText);
+             if (typeof json.serverAlert != "undefined") {
+                alert(json.serverAlert);
+             }
              onSuccess(json);
          } catch (e) {
              log("error while processing server response");
@@ -1774,11 +1869,6 @@ function getSelf() {
  return GM_getValue(PROPERTY_ORION_SELF, "");
 }
 
-//Whether login code shall be shared with other orion users
-function getShareCode() {
- return GM_getValue(PROPERTY_SHARE_CODE, false);
-}
-
 //Whether to fill in the login code shared by others
 function getAutoFillInCode() {
  return GM_getValue(PROPERTY_FILL_IN_CODE, false);
@@ -1859,7 +1949,14 @@ function getRxLoginName() {
 function getSectorSize() {
  return GM_getValue(PROPERTY_SECTOR_SIZE, "Default");
 }
-
+// gets the maximum number of chat entries to display
+function getMaxChatEntries() {
+    return Math.min(GM_getValue(PROPERTY_CHAT_ENTRIES, 15), 100);
+}
+// returns the orion chat refresh interval in ms
+function getChatRefreshInterval() {
+    return 20000; // 20 seconds
+}
 
 
 //==== HELPER FUNCTIONS ====

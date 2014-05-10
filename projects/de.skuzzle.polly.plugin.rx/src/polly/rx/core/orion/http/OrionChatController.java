@@ -93,7 +93,6 @@ public class OrionChatController extends PollyController {
         final Gson gson = new GsonBuilder().setDateFormat("HH:mm dd.MM.yyyy").create(); //$NON-NLS-1$
         final List<? extends OrionChatEntry> oces = 
                 this.chatProvider.getYoungestEntries(max);
-        System.out.println(oces);
         return HttpAnswers.newStringAnswer(gson.toJson(oces));
     }
 }
