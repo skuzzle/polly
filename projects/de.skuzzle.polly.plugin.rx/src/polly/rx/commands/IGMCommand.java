@@ -13,6 +13,7 @@ import de.skuzzle.polly.sdk.exceptions.CommandException;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.exceptions.DuplicatedSignatureException;
 import de.skuzzle.polly.sdk.exceptions.InsufficientRightsException;
+import de.skuzzle.polly.sdk.httpv2.html.HTMLTools;
 import de.skuzzle.polly.sdk.roles.RoleManager;
 import de.skuzzle.polly.sdk.time.Time;
 
@@ -35,8 +36,9 @@ public class IGMCommand extends Command {
             throws CommandException, InsufficientRightsException {
         
         if (this.match(signature, 0)) {
-            final String msg = signature.getStringValue(0) + " " + //$NON-NLS-1$
-                    MSG.bind(MSG.igmViaIrcPostfix, channel);
+            final String msg = HTMLTools.escape(
+                    signature.getStringValue(0) + " " + //$NON-NLS-1$
+                    MSG.bind(MSG.igmViaIrcPostfix, channel));
             final DefaultOrionChatEntry oce = new DefaultOrionChatEntry(
                     executer.getCurrentNickName(), msg, Time.currentTime());
             try {

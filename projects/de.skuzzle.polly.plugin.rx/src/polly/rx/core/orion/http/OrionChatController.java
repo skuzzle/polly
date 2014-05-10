@@ -68,7 +68,8 @@ public class OrionChatController extends PollyController {
         
         this.checkLogin(ce.user, ce.pw);
         
-        final OrionChatEntry oce = new DefaultOrionChatEntry(ce.sender, ce.message, 
+        final String msg = getServer().esc(ce.message);
+        final OrionChatEntry oce = new DefaultOrionChatEntry(ce.sender, msg, 
                 Time.currentTime());
         
         try {
