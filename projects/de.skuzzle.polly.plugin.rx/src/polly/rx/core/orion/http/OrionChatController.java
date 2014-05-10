@@ -32,7 +32,7 @@ public class OrionChatController extends PollyController {
     private final OrionChatProvider chatProvider;
     
     public static volatile boolean enableIrcForwarding = true;
-    private static volatile String ircForwardChannel = "#debugging"; //$NON-NLS-1$
+    private static volatile String ircForwardChannel = "#regenbogen"; //$NON-NLS-1$
     
     
     
