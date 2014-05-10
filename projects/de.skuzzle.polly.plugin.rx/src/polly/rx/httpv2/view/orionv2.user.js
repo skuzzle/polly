@@ -1,9 +1,17 @@
 #parse ( "/polly/rx/httpv2/view/orionv2.meta.js" )
 
 
+
+
+
 /* 
 Changelog
-[ CURRENT ] Version 1.3 - 10.05.2014
+[ CURRENT ] Version 1.4 - 10.05.2014
+  Features:
+    + Show current HZ prices in ress bar
+    + OrionChat can bes disabled in Rx Settings
+
+Version 1.3 - 10.05.2014
   Features:
   	+ Add Orion In-Game chat
     + Add possibility for the server to display certain warnings after any
@@ -94,6 +102,7 @@ var API_POST_BATTLE_REPORT = "/postQReport";
 var API_TEST_LOGIN = "/api/testLogin";
 var API_ADD_TO_CHAT = "/orion/chat/add";
 var API_REQUEST_CHAT = "/orion/chat/request";
+var API_GET_PRICES = "/api/orion/prices";
 var IMG_URL_DEFAULT = "http://www.revorix.info/gfx/q/";
 var IMG_URL_8 = "http://www.revorix.info/gfx/q8/";
 var IMG_URL_15 = "http://www.revorix.info/gfx/q15/";
@@ -128,6 +137,7 @@ var PROPERTY_DISPLAY_INSTALL_NOTE = "polly.orion.installNote";
 var PROPERTY_ORION_HIDDEN = "polly.orion.orionHidden";
 var PROPERTY_SECTOR_SIZE = "polly.orion.sectorSize";
 var PROPERTY_CHAT_ENTRIES = "polly.orion.chatEntries";
+var PROPERTY_ENABLE_CHAT = "polly.orion.enableChat";
 
 
 // DEPRECATED PROPERTIES
@@ -214,6 +224,7 @@ var MSG_CHAT_ENTRIES = "Chat Einträge";
 var MSG_ORION_CHAT = "OrionChat";
 var MSG_SEND = "Senden";
 var MSG_CHAT_IRC_COPY = "IRC";
+var MSG_ACTIVATE_CHAT = "Orion Chat aktivieren";
 
 //Default clan tag
 var CLAN_TAG = "[Loki]";
@@ -294,6 +305,8 @@ function main() {
      if (FEATURE_MAP_INTEGRATION) {
          fleetControlIntegration();
      }
+ } else if (uri.indexOf("set=3") != -1) {
+    ressIntegration();
  } else if (uri.indexOf("set=6") != -1) {
      if (FEATURE_MAP_INTEGRATION) {
          // browsing quadrant without having a fleet selected
@@ -306,7 +319,7 @@ function main() {
          newsIntegration();
      }
 
-     if (FEATURE_ORION_CHAT) {
+     if (FEATURE_ORION_CHAT && getChatEnabled()) {
     	 orionChatIntegration();
      }
      
@@ -355,6 +368,19 @@ function cleanUp() {
     GM_deleteValue(PROPERTY_SHARE_CODE);
     GM_deleteValue(PROPERTY_TEMPORARY_CODE);
 }
+
+
+//==== FEATURE: Resource Prices ====
+function ressIntegration() {
+    requestJson(API_GET_PRICES, {}, function(result) {
+        $("img").filter(function(idx) {
+            return idx > 2 && idx < 17;
+        }).each(function(idx) {
+            $(this).attr("title", "Preis " + result.prices[idx] + " Cr ("+result.date+")");
+        });
+    });
+}
+
 
 
 //==== FEATURE: ORION CHAT ====
@@ -538,12 +564,13 @@ function settingIntegration() {
  content += '<tr><td class="nfo" colspan="3">Orion Einstellungen</td></tr>';
  content += '<tr>';
  content += '<td>{0}</td><td><input tabindex="255" class="text" type="text" id="pollyName"/></td>'.format(MSG_POLLY_USERNAME);
- content += '<td rowspan="4" style="vertical-align:middle; text-align:center"><input tabindex="300" class="Button" type="button" id="savePolly" value="{0}"/><br/><input tabindex="301" class="Button" type="button" id="testSettings" value="{1}"/></td>'.format(MSG_STORE_SETTINGS, MSG_TEST_SETTINGS);
+ content += '<td rowspan="5" style="vertical-align:middle; text-align:center"><input tabindex="300" class="Button" type="button" id="savePolly" value="{0}"/><br/><input tabindex="301" class="Button" type="button" id="testSettings" value="{1}"/></td>'.format(MSG_STORE_SETTINGS, MSG_TEST_SETTINGS);
  content += '</tr>';
  content += '<tr><td>{0}</td><td><input tabindex="256" class="text" type="password" id="pollyPw"/> ({1})</td></tr>'.format(MSG_POLLY_PW, MSG_LEAVE_EMPTY);
- content += '<tr><td>{0}</td><td><input tabindex="256" class="text" type="text" id="maxChatEntries"/></td></tr>'.format(MSG_CHAT_ENTRIES);
+ content += '<tr><td>{0}</td><td><input tabindex="257" type="checkBox" id="activateChat"/></td></tr>'.format(MSG_ACTIVATE_CHAT);
+ content += '<tr><td>{0}</td><td><input tabindex="258" class="text" type="text" id="maxChatEntries"/></td></tr>'.format(MSG_CHAT_ENTRIES);
  content += '<tr><td>{0}</td><td>{1}</td></tr>'.format(MSG_VENAD, getSelf());
- content += '<tr><td>{0}</td><td><input tabindex="258" class="text" type="text" id="clantag"/></td><td style="text-align:center"><span id="ok" style="display:none; color:green">OK</span></td></tr>'.format(MSG_CLAN_TAG);
+ content += '<tr><td>{0}</td><td><input tabindex="259" class="text" type="text" id="clantag"/></td><td style="text-align:center"><span id="ok" style="display:none; color:green">OK</span></td></tr>'.format(MSG_CLAN_TAG);
  content += '</table></div></div></div>';
  body.append(content);
 
@@ -551,6 +578,7 @@ function settingIntegration() {
  $("#testSettings").click(testSettings);
  $("#pollyName").val(getPollyUserName());
  $("#maxChatEntries").val(getMaxChatEntries());
+ $("#activateChat").attr("checked", getChatEnabled());
  $("#clantag").val(getClanTag());
 }
 
@@ -566,7 +594,9 @@ function saveOrionSettings() {
  GM_setValue(PROPERTY_CLAN_TAG, tag);
 
  var maxEntries = parseInt($("#maxChatEntries").val());
+ var chatEnabled = $("#activateChat").is(":checked");
  GM_setValue(PROPERTY_CHAT_ENTRIES, maxEntries);
+ GM_setValue(PROPERTY_ENABLE_CHAT, chatEnabled);
 
  $("#ok").fadeIn(500, function () {
      $(this).fadeOut(1000);
@@ -1957,6 +1987,11 @@ function getMaxChatEntries() {
 function getChatRefreshInterval() {
     return 20000; // 20 seconds
 }
+// Whether chat is enabled
+function getChatEnabled() {
+    return GM_getValue(PROPERTY_ENABLE_CHAT, true);
+}
+
 
 
 //==== HELPER FUNCTIONS ====
