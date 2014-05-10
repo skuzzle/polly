@@ -10,6 +10,7 @@ import polly.rx.commands.AddTrainCommand;
 import polly.rx.commands.CloseTrainCommand;
 import polly.rx.commands.CrackerCommand;
 import polly.rx.commands.DeliverTrainCommand;
+import polly.rx.commands.IGMCommand;
 import polly.rx.commands.IPCommand;
 import polly.rx.commands.MyTrainsCommand;
 import polly.rx.commands.MyVenadCommand;
@@ -25,10 +26,12 @@ import polly.rx.core.TrainManagerV2;
 import polly.rx.core.orion.FleetTracker;
 import polly.rx.core.orion.LoginCodeManager;
 import polly.rx.core.orion.Orion;
+import polly.rx.core.orion.OrionChatProvider;
 import polly.rx.core.orion.ResourcePriceProvider;
 import polly.rx.core.orion.VenadUserMapper;
 import polly.rx.core.orion.WormholeProvider;
 import polly.rx.core.orion.datasource.DBOrionAccess;
+import polly.rx.core.orion.datasource.DBOrionChatProvider;
 import polly.rx.core.orion.datasource.MemoryFleetTracker;
 import polly.rx.core.orion.datasource.QZoneResourcePriceProvider;
 import polly.rx.core.orion.datasource.WLSWormholeProvider;
@@ -115,11 +118,17 @@ public class MyPlugin extends PollyPlugin {
     private AZEntryManager azManager;
     private ImageDatabase captchaDatabase;
     private RxCaptchaKiller captchaKiller;
+    private OrionChatProvider chatProvider;
+    
     
     
     public MyPlugin(MyPolly myPolly) 
                 throws DuplicatedSignatureException, IncompatiblePluginException {
         super(myPolly);
+        
+        
+        this.chatProvider = new DBOrionChatProvider(myPolly.persistence());
+        this.addCommand(new IGMCommand(myPolly, chatProvider));
         
         /* capi train related */
         this.trainManager = new TrainManagerV2(myPolly);
@@ -335,7 +344,8 @@ public class MyPlugin extends PollyPlugin {
                 loginCodeManager
             );
         
-        final OrionChatController chatController = new OrionChatController(this.getMyPolly());
+        final OrionChatController chatController = new OrionChatController(
+                this.getMyPolly(), this.chatProvider);
         this.getMyPolly().webInterface().getServer().addController(chatController);
         
         final OrionController oc = new OrionController(this.getMyPolly(), azManager);

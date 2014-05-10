@@ -25,6 +25,12 @@ public class MSG extends Constants {
     public static String addTrainFail;
     public static String addTrainRemind;
     
+    // IGMCommand
+    public static String igmHelp;
+    public static String igmSig0Desc;
+    public static String igmSig0ParamMsg;
+    public static String igmViaIrcPostfix;
+    
     // AnonymizationCommand
     public static String anonymizationHelp;
     public static String anonymizationSig0Desc;

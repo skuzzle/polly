@@ -3,7 +3,6 @@ package polly.rx.core.orion.http;
 import java.util.List;
 
 import polly.rx.core.orion.OrionChatProvider;
-import polly.rx.core.orion.datasource.DBOrionChatProvider;
 import polly.rx.core.orion.model.DefaultOrionChatEntry;
 import polly.rx.core.orion.model.OrionChatEntry;
 
@@ -37,15 +36,7 @@ public class OrionChatController extends PollyController {
     
     
     
-    public OrionChatController(MyPolly myPolly) {
-        super(myPolly);
-        this.chatProvider = new DBOrionChatProvider(myPolly.persistence());
-    }
-    
-    
-    
-    /** Internal copy constructor for {@link #createInstance()} */
-    private OrionChatController(MyPolly myPolly, OrionChatProvider chatProvider) {
+    public OrionChatController(MyPolly myPolly, OrionChatProvider chatProvider) {
         super(myPolly);
         this.chatProvider = chatProvider;
     }
