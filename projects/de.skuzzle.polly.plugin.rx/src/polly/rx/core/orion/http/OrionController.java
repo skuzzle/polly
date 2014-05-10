@@ -4,7 +4,9 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.AbstractList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -13,6 +15,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
@@ -27,12 +30,15 @@ import polly.rx.core.orion.PortalProviderDecorator;
 import polly.rx.core.orion.QuadrantProvider;
 import polly.rx.core.orion.QuadrantProviderDecorator;
 import polly.rx.core.orion.QuadrantUtils;
+import polly.rx.core.orion.ResourcePriceProvider;
 import polly.rx.core.orion.WormholeProvider;
 import polly.rx.core.orion.WormholeProviderDecorator;
 import polly.rx.core.orion.model.AlienRace;
 import polly.rx.core.orion.model.AlienSpawn;
+import polly.rx.core.orion.model.Drop;
 import polly.rx.core.orion.model.Portal;
 import polly.rx.core.orion.model.PortalType;
+import polly.rx.core.orion.model.Production;
 import polly.rx.core.orion.model.Quadrant;
 import polly.rx.core.orion.model.QuadrantDecorator;
 import polly.rx.core.orion.model.Resources;
@@ -49,6 +55,7 @@ import polly.rx.core.orion.pathplanning.PathPlanner.HighlightedQuadrant;
 import polly.rx.core.orion.pathplanning.PathPlanner.UniversePath;
 import polly.rx.core.orion.pathplanning.RouteOptions;
 import polly.rx.entities.DBAlienRace;
+import polly.rx.entities.RxRessource;
 import polly.rx.parsing.ParseException;
 import polly.rx.parsing.QuadrantCnPParser;
 import de.skuzzle.polly.http.annotations.Get;
@@ -112,6 +119,7 @@ public class OrionController extends PollyController {
     public final static String API_ADD_RACE = "/api/addRace"; //$NON-NLS-1$
     public final static String API_ADD_SPAWN = "/api/addSpawn"; //$NON-NLS-1$
     public final static String API_REMOVE_SPAWN = "/api/orion/removeSpawn"; //$NON-NLS-1$
+    public final static String API_GET_PRICES = "/api/orion/prices"; //$NON-NLS-1$
     
     private final static String CONTENT_QUAD_LAYOUT = "/polly/rx/httpv2/view/orion/quadlayout.html"; //$NON-NLS-1$
     private final static String CONTENT_QUADRANT = "/polly/rx/httpv2/view/orion/quadrant.html"; //$NON-NLS-1$
@@ -992,5 +1000,34 @@ public class OrionController extends PollyController {
         });
 
         return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
+    }
+    
+    
+    
+    
+    private final class ResourcePrices {
+        public String date;
+        public String[] prices;
+        
+        public ResourcePrices(String date, String[] prices) {
+            this.date = date;
+            this.prices = prices;
+        }
+    }
+    
+    
+    
+    @Get(API_GET_PRICES)
+    public HttpAnswer getPrices(@Param("user") String user, @Param("pw") String pw) throws AlternativeAnswerException {
+        this.checkLogin(user, pw);
+        final NumberFormat nf = new DecimalFormat("0.00"); //$NON-NLS-1$
+        final ResourcePriceProvider rpp = Orion.INSTANCE.getPriceProvider();
+        final List<String> priceList = rpp.getAllPrices().stream()
+                .map(Production::getRate)
+                .map(nf::format)
+                .collect(Collectors.toList());
+        final String[] priceArray = priceList.toArray(new String[priceList.size()]);
+        final String date = this.getMyPolly().formatting().formatDate(rpp.getRefreshTime());
+        return new GsonHttpAnswer(200, new ResourcePrices(date, priceArray));
     }
 }
