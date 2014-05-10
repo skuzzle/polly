@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Polly Orion V2
-// @version     1.2b
+// @version     1.3
 // @description Polly Revorix Integration
 // @grant 	    GM_setValue
 // @grant 	    GM_getValue
@@ -24,3 +24,4 @@
 // @include     http://www.revorix.info/php/news_pop.php*
 // @include		http://www.revorix.info/php/map_attack.php?fida=*
 // ==/UserScript==
+
