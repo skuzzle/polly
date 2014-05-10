@@ -118,8 +118,10 @@ public class PollyLoggingManager extends AbstractDisposable {
     private List<LogEntry> preFilterQuery(String queryName, String...parameter) 
             throws DatabaseException {
         this.storeCache();
-        return this.persistence.atomic().findList(LogEntry.class, queryName,  
-             new Param(parameter));
+        final List<LogEntry> result = this.persistence.atomic().findList(LogEntry.class, 
+                queryName, new Param(parameter));
+        this.persistence.detachAll(result);
+        return result;
     }
     
     
@@ -127,8 +129,10 @@ public class PollyLoggingManager extends AbstractDisposable {
     private List<LogEntry> preFilterQuery(String queryName, int limit, String...parameter) 
         throws DatabaseException {
         this.storeCache();
-        return this.persistence.atomic().findList(LogEntry.class, queryName, limit,
-            new Param(parameter));
+        final List<LogEntry> result = this.persistence.atomic().findList(LogEntry.class, 
+                queryName, limit, new Param(parameter));
+        this.persistence.detachAll(result);
+        return result;
 }
     
     

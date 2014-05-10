@@ -1,6 +1,7 @@
 package de.skuzzle.polly.sdk;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
@@ -301,6 +302,12 @@ public interface PersistenceManagerV2 {
         }
     }
     
+    
+    /**
+     * Detaches all given objects from the current persistence context.
+     * @param entities Entities to detach.
+     */
+    public void detachAll(Collection<? extends Object> entities);
     
     
     /**

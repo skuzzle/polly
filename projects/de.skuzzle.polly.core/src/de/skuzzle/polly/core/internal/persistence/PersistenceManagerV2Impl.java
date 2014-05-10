@@ -617,7 +617,16 @@ public class PersistenceManagerV2Impl extends AbstractDisposable
         };
     }
 
+    
+    
+    @Override
+    public void detachAll(Collection<? extends Object> entities) {
+        for (final Object entity : entities) {
+            this.em.detach(entity);
+        }
+    }
 
+    
     
     @Override
     public Read atomic() {
