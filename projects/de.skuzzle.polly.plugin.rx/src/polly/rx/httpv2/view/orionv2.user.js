@@ -89,7 +89,7 @@ var FEATURE_ORION_CHAT = true; // enable orion ingame chat
 
 
 var DEBUG = false; // Whether debug output is shown on console
-var LOCAL_SERVER = true; // use local server for testing
+var LOCAL_SERVER = false; // use local server for testing
 var DEFAULT_REQUEST_TIMEOUT = 5000; // ms
 var VERSION = "1.5";
 
