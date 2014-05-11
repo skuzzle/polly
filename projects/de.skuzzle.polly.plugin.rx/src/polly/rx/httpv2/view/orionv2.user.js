@@ -3,10 +3,16 @@
 
 
 
-
 /* 
 Changelog
-[ CURRENT ] Version 1.4 - 10.05.2014
+[ CURRENT ] Version 1.5 - 11.05.2014
+  Features:
+    + Added nickname list for orion in game chat
+  Internal:
+    + Orion Script version is now included in server communication to allow 
+      server side backward compatibility
+      
+Version 1.4 - 10.05.2014
   Features:
     + Show current HZ prices in ress bar
     + OrionChat can bes disabled in Rx Settings
@@ -83,12 +89,12 @@ var FEATURE_ORION_CHAT = true; // enable orion ingame chat
 
 
 var DEBUG = false; // Whether debug output is shown on console
-var LOCAL_SERVER = false; // use local server for testing
+var LOCAL_SERVER = true; // use local server for testing
 var DEFAULT_REQUEST_TIMEOUT = 5000; // ms
+var VERSION = "1.5";
 
 
 //API URLs
-var ORION_API_VERSION = 1;
 var POLLY_URL = LOCAL_SERVER ? "https://localhost:83" : "https://projectpolly.de:443";
 var API_REQUEST_SECTOR = "/api/orion/json/sector"
 var API_REQUEST_QUADRANT = "/api/orion/json/quadrant";
@@ -388,11 +394,21 @@ function orionChatIntegration() {
     $("html").css({paddingTop: "150px"});
     var ad = $("#ad");
     ad.css({
+        margin: "0px",
+        left: "5px",
+        width: "900px",
         textAlign: "left",
         height: "120px"
     });
     var tbl = "";
-    tbl += '<table class="wrpd full" id="orionChat">'
+    tbl += '<table id="orionActive"  class="wrpd" style="float:right">';
+    tbl += '<thead>';
+    tbl += '<tr><th class="nfo">Orion Aktiv</th></tr>';
+    tbl += '</thead>';
+    tbl += '<tbody>';
+    tbl += '</tbody>';
+    tbl += '</table>';
+    tbl += '<table class="wrpd" id="orionChat">'
     tbl += '<thead>';
     tbl += '<tr><th class="nfo">{0}</th><th id="secondHead" colspan="2" style="text-align:right;width:100%" class="nfo"><a href="#" id="refreshChat">{1}</a></th></tr>'.format(MSG_ORION_CHAT, MSG_REFRESH);
     tbl += '</thead>';
@@ -402,6 +418,7 @@ function orionChatIntegration() {
     tbl += '<tr><td><input type="text" id="chatText" style="width:590px"/><input id="ircCopy" type="checkbox" checked/> {0} <input style="width:60px" type="button" value="{1}" id="sendChat"/></td></tr>'.format(MSG_CHAT_IRC_COPY, MSG_SEND);
     tbl += '</tfoot>';
     tbl += '</table>';
+
     ad.html(tbl);
     
     $("#orionChat").css({
@@ -420,9 +437,9 @@ function orionChatIntegration() {
             sendChatEntry();
         }
     });
-    requestChatEntries();
-    $("#refreshChat").click(requestChatEntries);
-    window.setInterval(requestChatEntries, getChatRefreshInterval());
+    requestChatEntries(false);
+    $("#refreshChat").click(function() { requestChatEntries(true); }) ;
+    window.setInterval(function() { requestChatEntries(true); /* true for polling */}, getChatRefreshInterval());
 }
 
 function scrollDownChat() {
@@ -435,13 +452,26 @@ function scrollDownChat() {
 }
 
 
-function requestChatEntries() {
+function requestChatEntries(polling) {
     var tbody = $("#orionChat > tbody");
-    requestJson(API_REQUEST_CHAT, {max: getMaxChatEntries()}, function(result) {
-        tbody.html("");
-        $.each(result, function(idx) {
-            var itm = result[idx];
+    var params = {
+        isPoll : polling,
+        max : getMaxChatEntries(),
+        venad : getSelf()
+    };
+    requestJson(API_REQUEST_CHAT, params, function(result) {
+        if (!polling) {
+            tbody.html("");
+        }
+        $.each(result.chat, function(idx) {
+            var itm = result.chat[idx];
             tbody.append('<tr><td>'+itm.date+'</td><td>'+itm.sender+'</td><td>'+itm.message+'</td>')
+        });
+        var nickBody = $("#orionActive > tbody");
+        nickBody.html("");
+        $.each(result.activeNicks, function(idx) {
+            var nick = result.activeNicks[idx];
+            nickBody.append('<tr><td>'+nick+'</td></tr>');
         });
         $("#orionChat tr > :nth-child(1)").css({width:"110px"});
         $("#orionChat tr > :nth-child(2)").css({width:"100px"});
@@ -462,7 +492,7 @@ function sendChatEntry() {
     }
     postJson(API_ADD_TO_CHAT, {sender: getSelf(), message: txt, irc: ircCopy}, 
         function(result) {
-            requestChatEntries();
+            requestChatEntries(true);
         });    
 }
 
@@ -1705,6 +1735,7 @@ function postJson(api, obj, onSuccess) {
  checkCredentials();
  obj["user"] = getPollyUserName();
  obj["pw"] = getPollyPw();
+ obj["version"] = VERSION;
  //obj["api"] = API_VERSION;
  post(api, JSON.stringify(obj), onSuccess);
 }
@@ -1713,6 +1744,7 @@ function postForm(api, params, onSuccess) {
  checkCredentials();
  params["user"] = getPollyUserName();
  params["pw"] = getPollyPw();
+ params["version"] = VERSION;
  var data = makeQueryPart(params);
  post(api, data, onSuccess);
 }
@@ -1798,6 +1830,7 @@ function makeApiUrl(api, needLogin, params) {
      params["user"] = getPollyUserName();
      params["pw"] = getPollyPw();
  }
+ params["version"] = VERSION;
  var query = makeQueryPart(params);
  return url += "?" + query;
 }
