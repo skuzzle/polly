@@ -1,6 +1,7 @@
 package polly.rx.core.orion.http;
 
 import java.util.List;
+import java.util.Set;
 
 import polly.rx.core.orion.OrionChatProvider;
 import polly.rx.core.orion.model.DefaultOrionChatEntry;
@@ -73,7 +74,7 @@ public class OrionChatController extends PollyController {
                 Time.currentTime());
         
         try {
-            this.chatProvider.addChatEntry(oce);
+            this.chatProvider.addChatEntry(oce, true);
             
             if (ce.irc) {
                 this.getMyPolly().irc().sendMessage(ircForwardChannel, 
@@ -87,13 +88,43 @@ public class OrionChatController extends PollyController {
     
     
     
+    public final class ChatResult {
+        public String[] activeNicks;
+        public DefaultOrionChatEntry chat[];
+        
+        private ChatResult(String[] nicks, DefaultOrionChatEntry chat[]) {
+            this.activeNicks = nicks;
+            this.chat = chat;
+        }
+    }
+    
+    
+    
     @Get(API_REQUEST_CHAT)
-    public HttpAnswer getchatEntries(@Param("user")String user, 
-            @Param("pw") String pw, @Param("max") int max) throws AlternativeAnswerException {
+    public HttpAnswer getchatEntries(@Param("user") String user, 
+            @Param("pw") String pw, @Param("max") int max,
+            @Param(value = "version", optional = true, defaultValue = "") String version,
+            @Param(value = "venad", optional = true, defaultValue = "") String venad,
+            @Param(value = "isPoll", optional = true, defaultValue = "false") boolean IsPoll)
+                    throws AlternativeAnswerException {
         this.checkLogin(user, pw);
+        
+        final String nickName = venad.equals("") ? user : venad; //$NON-NLS-1$
         final Gson gson = new GsonBuilder().setDateFormat("HH:mm dd.MM.yyyy").create(); //$NON-NLS-1$
-        final List<? extends OrionChatEntry> oces = 
-                this.chatProvider.getYoungestEntries(max);
-        return HttpAnswers.newStringAnswer(gson.toJson(oces));
+        
+        final List<DefaultOrionChatEntry> oces = 
+                this.chatProvider.getYoungestEntries(nickName, IsPoll, max);
+        
+        if (version.equals("")) { //$NON-NLS-1$
+            // backward compatibility to script version < 1.5
+            return HttpAnswers.newStringAnswer(gson.toJson(oces));
+        }
+        
+        final Set<String> activeNicks = this.chatProvider.getActiveNicknames();
+        final DefaultOrionChatEntry[] oceArray = oces.toArray(
+                new DefaultOrionChatEntry[oces.size()]);
+        final String[] nickArray = activeNicks.toArray(new String[activeNicks.size()]);
+        final ChatResult cr = new ChatResult(nickArray, oceArray);
+        return HttpAnswers.newStringAnswer(gson.toJson(cr));
     }
 }

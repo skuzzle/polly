@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.AbstractList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -35,7 +34,6 @@ import polly.rx.core.orion.WormholeProvider;
 import polly.rx.core.orion.WormholeProviderDecorator;
 import polly.rx.core.orion.model.AlienRace;
 import polly.rx.core.orion.model.AlienSpawn;
-import polly.rx.core.orion.model.Drop;
 import polly.rx.core.orion.model.Portal;
 import polly.rx.core.orion.model.PortalType;
 import polly.rx.core.orion.model.Production;
@@ -55,7 +53,6 @@ import polly.rx.core.orion.pathplanning.PathPlanner.HighlightedQuadrant;
 import polly.rx.core.orion.pathplanning.PathPlanner.UniversePath;
 import polly.rx.core.orion.pathplanning.RouteOptions;
 import polly.rx.entities.DBAlienRace;
-import polly.rx.entities.RxRessource;
 import polly.rx.parsing.ParseException;
 import polly.rx.parsing.QuadrantCnPParser;
 import de.skuzzle.polly.http.annotations.Get;
@@ -1005,11 +1002,11 @@ public class OrionController extends PollyController {
     
     
     
-    private final class ResourcePrices {
+    public final class ResourcePrices {
         public String date;
         public String[] prices;
         
-        public ResourcePrices(String date, String[] prices) {
+        private ResourcePrices(String date, String[] prices) {
             this.date = date;
             this.prices = prices;
         }

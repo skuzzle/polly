@@ -42,7 +42,7 @@ public class IGMCommand extends Command {
             final DefaultOrionChatEntry oce = new DefaultOrionChatEntry(
                     executer.getCurrentNickName(), msg, Time.currentTime());
             try {
-                this.chatProvider.addChatEntry(oce);
+                this.chatProvider.addChatEntry(oce, false);
             } catch (DatabaseException e) {
                 throw new CommandException(e);
             }

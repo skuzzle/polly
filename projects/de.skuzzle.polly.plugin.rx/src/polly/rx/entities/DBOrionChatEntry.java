@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
@@ -17,12 +18,15 @@ import polly.rx.core.orion.model.OrionChatEntry;
 import polly.rx.core.orion.model.OrionObjectUtil;
 
 @Entity
-@NamedQuery(
-    name = DBOrionChatEntry.YOUNGEST_ENTRIES,
-    query = "SELECT oce FROM DBOrionChatEntry oce ORDER BY oce.id DESC"
-)
+@NamedQueries({
+    @NamedQuery(
+        name = DBOrionChatEntry.YOUNGEST_ENTRIES,
+        query = "SELECT oce FROM DBOrionChatEntry oce ORDER BY oce.id DESC"
+    )
+})
 public class DBOrionChatEntry implements OrionChatEntry {
 
+    public final static String YOUNGEST_ENTRIES_BY_DATE = "OCE_YOUNGEST_BY_DATE"; //$NON-NLS-1$
     public final static String YOUNGEST_ENTRIES = "OCE_YOUNGEST_ENTRIES"; //$NON-NLS-1$
     private final static String GENERATOR = "CHAT_ENTRY_GEN"; //$NON-NLS-1$
 
