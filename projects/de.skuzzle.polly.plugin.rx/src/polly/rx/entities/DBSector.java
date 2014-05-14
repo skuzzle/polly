@@ -275,9 +275,7 @@ public class DBSector implements Sector {
 
     @Override
     public boolean actualEquals(Equatable o) {
-        final Sector other = (Sector) o;
-        return this.x == other.getX() && this.getY() == other.getY()
-                && this.quadName.equals(other.getQuadName());
+        return OrionObjectUtil.sectorsEqual(this, (Sector) o);
     }
 
 
@@ -285,5 +283,12 @@ public class DBSector implements Sector {
     @Override
     public String toString() {
         return OrionObjectUtil.sectorString(this);
+    }
+    
+    
+    
+    @Override
+    public int compareTo(Sector o) {
+        return SECTOR_COMPERATOR.compare(this, o);
     }
 }

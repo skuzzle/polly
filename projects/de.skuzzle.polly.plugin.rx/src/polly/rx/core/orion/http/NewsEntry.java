@@ -2,8 +2,10 @@ package polly.rx.core.orion.http;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 
+import de.skuzzle.polly.tools.Check;
 import de.skuzzle.polly.tools.EqualsHelper;
 import de.skuzzle.polly.tools.Equatable;
 
@@ -37,6 +39,7 @@ public class NewsEntry implements Equatable, Comparable<NewsEntry> {
     
     
     public NewsEntry(String reporter, NewsType type, Object subject, Date date) {
+        Check.objects(reporter, type, date).notNull();
         this.reporter = reporter;
         this.type = type;
         this.subject = subject;
@@ -60,6 +63,18 @@ public class NewsEntry implements Equatable, Comparable<NewsEntry> {
 
 
     
+    public NewsType getType() {
+        return this.type;
+    }
+    
+    
+    
+    public Date getCompDate() {
+        return this.compDate;
+    }
+    
+    
+    
     @Override
     public boolean actualEquals(Equatable o) {
         final NewsEntry entry = (NewsEntry) o;
@@ -69,11 +84,17 @@ public class NewsEntry implements Equatable, Comparable<NewsEntry> {
     
     
     @Override
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public int compareTo(NewsEntry o) {
-        final int c = this.type.compareTo(o.type);
-        if (c == 0) {
-            return -this.compDate.compareTo(o.compDate);
-        }
-        return c;
+        return Comparator.comparing(NewsEntry::getType)
+                .thenComparing(NewsEntry::getCompDate).reversed()
+                .thenComparing((n1, n2) -> {
+                    if (n1.subject instanceof Comparable && 
+                            n1.getClass() == n2.getClass()) {
+                        return ((Comparable) n1).compareTo(n2);
+                    }
+                    return 0;
+                })
+                .compare(this, o);
     }
 }

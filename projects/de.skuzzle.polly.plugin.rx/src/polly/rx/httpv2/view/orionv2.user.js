@@ -5,7 +5,12 @@
 
 /* 
 Changelog
-[ CURRENT ] Version 1.5 - 11.05.2014
+[ CURRENT ] Version 1.6 - TODO
+  Bug Fixes:
+    + Resource prices are now shown as tool tip correctly, no matter which
+      skin is selected
+      
+Version 1.5 - 11.05.2014
   Features:
     + Added nickname list for orion in game chat
   Internal:
@@ -81,17 +86,17 @@ var FEATURE_SEND_FLEETSCANS = true; // send fleet scans to polly
 var FEATURE_SEND_SCOREBOARD = true; // send score board to polly
 var FEATURE_BATTLE_REPORTS = true; // send battle reports to polly
 var FEATURE_ORION_CHAT = true; // enable orion ingame chat
-
+var FEATURE_RESOURCE_PRICES = true; // show prices in HZ and tooltip
 
 //==== NO MANUAL MODIFICATIONS BEYOND THIS LINE ====
 
 
 
 
-var DEBUG = false; // Whether debug output is shown on console
+var DEBUG = true; // Whether debug output is shown on console
 var LOCAL_SERVER = false; // use local server for testing
 var DEFAULT_REQUEST_TIMEOUT = 5000; // ms
-var VERSION = "1.5";
+var VERSION = "1.6";
 
 
 //API URLs
@@ -282,7 +287,6 @@ var PROPERTY_CHANGE_LISTENERS = new Array();
 var SECTOR_INFO_LISTENERS = new Array();
 
 
-
 //Execute the script
 main();
 
@@ -312,7 +316,9 @@ function main() {
          fleetControlIntegration();
      }
  } else if (uri.indexOf("set=3") != -1) {
-    ressIntegration();
+    if (FEATURE_RESOURCE_PRICES) {
+        ressIntegration();
+    }
  } else if (uri.indexOf("set=6") != -1) {
      if (FEATURE_MAP_INTEGRATION) {
          // browsing quadrant without having a fleet selected
@@ -366,7 +372,10 @@ function main() {
      if (FEATURE_BATTLE_REPORTS) {
          battleReportIntegration(true); // live kb
      }
- }
+ } else if (uri.indexOf("handel") != -1) {
+    if (FEATURE_RESOURCE_PRICES) {
+        ressIntegrationHz();
+    }
 }
 
 // Cleans up deprecated settings
@@ -378,13 +387,23 @@ function cleanUp() {
 
 //==== FEATURE: Resource Prices ====
 function ressIntegration() {
+    var regex = /.*\d+\.gif/;
     requestJson(API_GET_PRICES, {}, function(result) {
         $("img").filter(function(idx) {
-            return idx > 2 && idx < 17;
+            var src = $(this).attr("src");
+            return regex.test(src);
         }).each(function(idx) {
-            $(this).attr("title", "Preis " + result.prices[idx] + " Cr ("+result.date+")");
+            $(this).attr("title", "Preis " + result.prices[idx] + 
+                " Cr ("+result.date+")");
         });
     });
+}
+
+
+function ressIntegrationHz() {
+    var tbl = findLastTable();
+    alert("?");
+    $(tbl).before("<p>Test</p>");
 }
 
 
@@ -2100,6 +2119,11 @@ function img(name) {
      url = IMG_URL_15;
  }
  return url + name;
+}
+// gets the url for the resource with provided index (0-13)
+function ressImg(idx) {
+    var idxx = idx - 1;
+    return "1/res/r" + idxx + ".gif";
 }
 //creates a map key for a coordinate pair
 function key(x, y) {

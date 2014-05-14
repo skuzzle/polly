@@ -149,4 +149,11 @@ public class DefaultSector implements Sector {
     public Collection<? extends Production> getRessources() {
         return this.production;
     }
+    
+    
+    
+    @Override
+    public int compareTo(Sector o) {
+        return SECTOR_COMPERATOR.compare(this, o);
+    }
 }

@@ -22,26 +22,31 @@ import de.skuzzle.polly.tools.collections.TemporaryValueMap;
 public class MemoryFleetTracker implements FleetTracker {
     
     private final static long MAX_AGE = Milliseconds.fromHours(3);
+    private final static long ORION_MAX_AGE = Milliseconds.fromMinutes(1);
+    
 
     private final TemporaryValueMap<Integer, Fleet> orionFleets;
     private final TemporaryValueMap<String, LinkedList<Fleet>> fleets;
     private final EventProvider events;
 
+    
 
     public MemoryFleetTracker() {
-        this.orionFleets = new TemporaryValueMap<>(MAX_AGE);
+        this.orionFleets = new TemporaryValueMap<>(ORION_MAX_AGE);
         this.fleets = new TemporaryValueMap<>(MAX_AGE);
         this.events = EventProvider.newDefaultEventProvider();
     }
     
     
     
+    @Override
     public void addFleetListener(FleetListener listener) {
         this.events.addListener(FleetListener.class, listener);
     }
     
     
     
+    @Override
     public void removeFleetListener(FleetListener listener) {
         this.events.addListener(FleetListener.class, listener);
     }
@@ -63,7 +68,7 @@ public class MemoryFleetTracker implements FleetTracker {
             this.orionFleets.put(f.getRevorixId(), f);
         }
         this.events.dispatch(FleetListener.class, 
-                new FleetEvent(this, reporter, new ArrayList<>(this.orionFleets.values())), 
+                new FleetEvent(this, reporter, new ArrayList<>(ownFleets)), 
                 FleetListener::ownFleetsUpdated);
     }
 

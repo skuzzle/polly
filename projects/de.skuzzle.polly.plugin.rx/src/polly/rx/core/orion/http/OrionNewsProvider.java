@@ -8,6 +8,8 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import polly.rx.MSG;
 import polly.rx.core.TrainManagerV2;
@@ -16,6 +18,7 @@ import polly.rx.core.TrainingListener;
 import polly.rx.core.orion.FleetEvent;
 import polly.rx.core.orion.FleetListener;
 import polly.rx.core.orion.FleetTracker;
+import polly.rx.core.orion.Orion;
 import polly.rx.core.orion.PortalEvent;
 import polly.rx.core.orion.PortalListener;
 import polly.rx.core.orion.PortalUpdater;
@@ -33,6 +36,7 @@ import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
 import de.skuzzle.polly.sdk.httpv2.SuccessResult;
 import de.skuzzle.polly.sdk.time.Time;
+
 
 public class OrionNewsProvider implements HttpEventHandler, FleetListener, PortalListener, 
         TrainingListener {
@@ -99,6 +103,13 @@ public class OrionNewsProvider implements HttpEventHandler, FleetListener, Porta
             if (forVenad != null) {
                 result.addAll(forVenad);
             }
+            
+            // Manually add all orion fleets
+            Orion.INSTANCE.getFleetTracker().getOrionUserFleets().forEach(f -> {
+                result.add((new NewsEntry(f.getOwnerName(), NewsType.ORION_FLEET, f, 
+                            f.getDate())));
+                });
+            
             for (final NewsEntry ne : this.entries) {
                 if (!result.contains(ne)) {
                     result.add(ne);
@@ -114,8 +125,8 @@ public class OrionNewsProvider implements HttpEventHandler, FleetListener, Porta
     @Override
     public void ownFleetsUpdated(FleetEvent e) {
         for (final Fleet fleet : e.getFleets()) {
-            this.addNews(new NewsEntry(e.getReporter(), NewsType.ORION_FLEET, fleet, 
-                    fleet.getDate()));
+            //this.addNews(new NewsEntry(e.getReporter(), NewsType.ORION_FLEET, fleet, 
+            //        fleet.getDate()));
         }
     }
 

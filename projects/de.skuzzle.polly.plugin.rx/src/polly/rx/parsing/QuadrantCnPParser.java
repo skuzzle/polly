@@ -109,6 +109,11 @@ public class QuadrantCnPParser {
         public String toString() {
             return OrionObjectUtil.sectorString(this);
         }
+        
+        @Override
+        public int compareTo(Sector o) {
+            return SECTOR_COMPERATOR.compare(this, o);
+        }
     }
     
     

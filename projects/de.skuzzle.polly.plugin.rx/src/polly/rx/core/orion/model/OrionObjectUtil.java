@@ -8,7 +8,8 @@ import java.util.Objects;
 import polly.rx.entities.RxRessource;
 
 public final class OrionObjectUtil {
-
+    
+    
     public static boolean sectorsEqual(Sector s1, Sector s2) {
         return s1.getX() == s2.getX() && s1.getY() == s2.getY()
                 && s1.getQuadName().equals(s2.getQuadName());

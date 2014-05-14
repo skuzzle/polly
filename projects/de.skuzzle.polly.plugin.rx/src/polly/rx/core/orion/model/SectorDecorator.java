@@ -91,4 +91,9 @@ public class SectorDecorator implements Sector {
     public Collection<? extends Production> getRessources() {
         return this.wrapped.getRessources();
     }
+    
+    @Override
+    public int compareTo(Sector o) {
+        return this.wrapped.compareTo(o);
+    }
 }

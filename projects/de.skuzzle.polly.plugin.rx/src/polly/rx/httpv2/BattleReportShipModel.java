@@ -11,7 +11,6 @@ import polly.rx.entities.BattleReportShip;
 import polly.rx.entities.FleetScanShip;
 import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.sdk.httpv2.html.AbstractHTMLTableModel;
-import de.skuzzle.polly.sdk.httpv2.html.HTMLElement;
 
 
 public class BattleReportShipModel extends AbstractHTMLTableModel<BattleReportShip> {
