@@ -8,8 +8,6 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import polly.rx.MSG;
 import polly.rx.core.TrainManagerV2;
@@ -124,10 +122,6 @@ public class OrionNewsProvider implements HttpEventHandler, FleetListener, Porta
 
     @Override
     public void ownFleetsUpdated(FleetEvent e) {
-        for (final Fleet fleet : e.getFleets()) {
-            //this.addNews(new NewsEntry(e.getReporter(), NewsType.ORION_FLEET, fleet, 
-            //        fleet.getDate()));
-        }
     }
 
 
