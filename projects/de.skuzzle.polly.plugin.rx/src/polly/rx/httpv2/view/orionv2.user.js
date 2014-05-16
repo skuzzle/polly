@@ -3,9 +3,13 @@
 
 
 
+
+
 /* 
 Changelog
-[ CURRENT ] Version 1.6 - TODO
+[ CURRENT ] Version 1.6 - 16.05.2014
+  Features:
+    + Resource prices are shown in HZ
   Bug Fixes:
     + Resource prices are now shown as tool tip correctly, no matter which
       skin is selected
@@ -75,28 +79,38 @@ Version 1.0a - 19.02.2014
 
 
 
-//Features. Settings these to false will disable the corresponding feature
-//completely. Most features offer additional settings using the user interface
-//when enabled
-var FEATURE_ALL = true; // turns off all features completely when set to false
-var FEATURE_LOGIN_INTEGRATION = true; // login code sharing. WARNING: if you turn this off, your venad can not determined automatically
-var FEATURE_MAP_INTEGRATION = true; // unveiling map, sending fleet and sector data
-var FEATURE_NEWS_INTEGRATION = true; // showing flight news in news overview
-var FEATURE_SEND_FLEETSCANS = true; // send fleet scans to polly
-var FEATURE_SEND_SCOREBOARD = true; // send score board to polly
-var FEATURE_BATTLE_REPORTS = true; // send battle reports to polly
-var FEATURE_ORION_CHAT = true; // enable orion ingame chat
-var FEATURE_RESOURCE_PRICES = true; // show prices in HZ and tooltip
+// Features. Settings these to false will disable the corresponding feature
+// completely. Most features offer additional settings using the user interface
+// when enabled
+// WARNING: disabling one feature may result in undefined behavior for some 
+//          other feature
+var FEATURE_ALL               = true; // turns off all features completely 
+                                      // when set to false
+var FEATURE_LOGIN_INTEGRATION = true; // login code insertion. WARNING: if you 
+                                      // turn this off, your venad can not determined automatically
+var FEATURE_MAP_INTEGRATION   = true;   // unveiling map, sending fleet and 
+                                      // sector data
+var FEATURE_NEWS_INTEGRATION  = true; // showing flight news in news overview
+var FEATURE_SEND_FLEETSCANS   = true; // send fleet scans to polly
+var FEATURE_SEND_SCOREBOARD   = true; // send score board to polly
+var FEATURE_BATTLE_REPORTS    = true; // send battle reports to polly
+var FEATURE_ORION_CHAT        = true; // enable orion ingame chat and Orion 
+                                      // online list
+var FEATURE_RESOURCE_PRICES   = true; // show prices in HZ and tooltip
+
+
+
+
 
 //==== NO MANUAL MODIFICATIONS BEYOND THIS LINE ====
 
 
 
 
-var DEBUG = true; // Whether debug output is shown on console
+var DEBUG = false;        // Whether debug output is shown on console
 var LOCAL_SERVER = false; // use local server for testing
+var VERSION = "1.6";      // Expected API version of server responses
 var DEFAULT_REQUEST_TIMEOUT = 5000; // ms
-var VERSION = "1.6";
 
 
 //API URLs
@@ -376,6 +390,7 @@ function main() {
     if (FEATURE_RESOURCE_PRICES) {
         ressIntegrationHz();
     }
+ }
 }
 
 // Cleans up deprecated settings
@@ -402,8 +417,14 @@ function ressIntegration() {
 
 function ressIntegrationHz() {
     var tbl = findLastTable();
-    alert("?");
-    $(tbl).before("<p>Test</p>");
+    requestJson(API_GET_PRICES, {}, function(result) {
+        var html = "<p style='text-align:left;'>Preise von <b>"+result.date+"</b><br/>";
+        $.each(result.prices, function(idx) {
+            html += ' <img src="'+ressImg(idx)+'" /> ' + result.prices[idx];
+        });
+        html +="</p>";
+        $(tbl).before(html);
+    });
 }
 
 
@@ -2122,8 +2143,8 @@ function img(name) {
 }
 // gets the url for the resource with provided index (0-13)
 function ressImg(idx) {
-    var idxx = idx - 1;
-    return "1/res/r" + idxx + ".gif";
+    var idxx = idx + 1;
+    return "http://www.revorix.info/start/1/res/r" + idxx + ".gif";
 }
 //creates a map key for a coordinate pair
 function key(x, y) {

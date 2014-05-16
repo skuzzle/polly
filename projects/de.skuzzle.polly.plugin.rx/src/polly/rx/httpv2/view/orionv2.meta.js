@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name        Polly Orion V2
-// @version     1.5
+// @version     1.6
 // @description Polly Revorix Integration
 // @grant 	    GM_setValue
 // @grant 	    GM_getValue
 // @grant 	    GM_deleteValue
 // @grant 	    GM_xmlhttpRequest
-// @downloadURL ${host}$PAGE_INSTALLORIONV2
-// @updateURL   ${host}$PAGE_ORIONV2METADATA
+// @downloadURL https://projectpolly.de:443/GM/orionv2.user.js
+// @updateURL   https://projectpolly.de:443/GM/orionv2.meta.js
 // @namespace   projectpolly.de
 // @require     http://code.jquery.com/jquery-1.10.2.min.js
 // @require     http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/md5.js
@@ -24,5 +24,7 @@
 // @include     http://www.revorix.info/php/setup.php
 // @include     http://www.revorix.info/php/news_pop.php*
 // @include		http://www.revorix.info/php/map_attack.php?fida=*
+// @include		http://www.revorix.info/php/handel_all.php*
+// @include		http://www.revorix.info/php/handel_eigen.php*
 // ==/UserScript==
 
