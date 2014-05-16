@@ -99,6 +99,9 @@ public class RXController extends PollyController {
     public final static String GM_ORION = "/GM/orion.user.js"; //$NON-NLS-1$
     public final static String GM_ORIONV2 = "/GM/orionv2.user.js"; //$NON-NLS-1$
     public final static String GM_ORIONV2_META = "/GM/orionv2.meta.js"; //$NON-NLS-1$
+    public final static String GM_FLEET_PROFILES = "/GM/fleetprofiles.user.js"; //$NON-NLS-1$
+    public final static String GM_FLEET_PROFILES_META = "/GM/fleetprofiles.meta.js"; //$NON-NLS-1$
+    
     
     public final static String FILES_VIEW = "/polly/rx/httpv2/view"; //$NON-NLS-1$
     
@@ -124,6 +127,8 @@ public class RXController extends PollyController {
     private final static String CONTENT_GM_ORION = "polly/rx/httpv2/view/orion.user.js"; //$NON-NLS-1$
     private final static String CONTENT_GM_ORIONV2 = "polly/rx/httpv2/view/orionv2.user.js"; //$NON-NLS-1$
     private final static String CONTENT_GM_ORIONV2_META = "polly/rx/httpv2/view/orionv2.meta.js"; //$NON-NLS-1$
+    private final static String CONTENT_GM_FLEET_PROFILES = "polly/rx/httpv2/view/fleetprofiles.user.js"; //$NON-NLS-1$
+    private final static String CONTENT_GM_FLEET_PROFILES_META = "polly/rx/httpv2/view/fleetprofiles.meta.js"; //$NON-NLS-1$
     
     private final static String REVORIX_CATEGORY_KEY = "httpRxCategory"; //$NON-NLS-1$
     private final static String FLEET_SCAN_NAME_KEY = "httpFleetScanMngr"; //$NON-NLS-1$
@@ -945,6 +950,22 @@ public class RXController extends PollyController {
         final String host = this.createPollyUrl();
         c.put("host", host); //$NON-NLS-1$
         return HttpAnswers.newTemplateAnswer(CONTENT_GM_ORIONV2_META, c);
+    }
+    
+    
+    
+    @Get(GM_FLEET_PROFILES)
+    public HttpAnswer installFleetProfiles() throws AlternativeAnswerException {
+        return HttpAnswers.newTemplateAnswer(CONTENT_GM_FLEET_PROFILES, 
+                this.createContext("")); //$NON-NLS-1$
+    }
+    
+    
+    
+    @Get(GM_FLEET_PROFILES_META)
+    public HttpAnswer fleetProfilesMetaData() {
+        return HttpAnswers.newTemplateAnswer(CONTENT_GM_FLEET_PROFILES_META, 
+                this.createContext("")); //$NON-NLS-1$
     }
     
     
