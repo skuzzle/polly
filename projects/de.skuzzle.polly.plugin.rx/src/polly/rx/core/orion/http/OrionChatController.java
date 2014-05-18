@@ -1,7 +1,7 @@
 package polly.rx.core.orion.http;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import polly.rx.core.orion.OrionChatProvider;
@@ -121,10 +121,11 @@ public class OrionChatController extends PollyController {
             return HttpAnswers.newStringAnswer(gson.toJson(oces));
         }
         
-        final Set<String> activeNicks = this.chatProvider.getActiveNicknames();
+        final List<String> activeNicks = new ArrayList<>(
+                this.chatProvider.getActiveNicknames());
         activeNicks.addAll(this.getMyPolly().irc()
                 .getChannelUser(ircForwardChannel).stream()
-                .map(s -> s + " (IRC") //$NON-NLS-1$
+                .map(s -> s + " (IRC)") //$NON-NLS-1$
                 .collect(Collectors.toList())); 
         
         final DefaultOrionChatEntry[] oceArray = oces.toArray(
