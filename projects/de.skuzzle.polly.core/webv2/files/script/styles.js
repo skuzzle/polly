@@ -4,27 +4,18 @@ $(document).ready(function() {
 	
     // Mouseover for links in top bar
     $("#top a").mouseenter(function() {
-        $(this).animate({borderBottomColor : '#3333ff'}, 300);
+        //$(this).animate({borderBottomColor : '#a5ffff'}, 300);
+        $(this).animate({backgroundColor : '#dcdcdc'}, 300);
     });
     $("#top a").mouseleave(function() {
-        $(this).animate({borderBottomColor : 'transparent'}, 300);
+        //$(this).animate({borderBottomColor : 'transparent'}, 300);
+    	$(this).animate({backgroundColor : 'transparent'}, 300);
     });
-    
-    
-    
-    // Mouseover for social links in header
-    $("#headerContent a").mouseenter(function() {
-        $(this).animate({borderBottomColor : 'white'}, 300);
-    });
-    $("#headerContent a").mouseleave(function() {
-        $(this).animate({borderBottomColor : 'transparent'}, 300);
-    });
-    
     
     
     // Mouseover for in-header menu links
     $(".menuGroup a").mouseenter(function() {
-        $(this).animate({borderLeftColor : 'white'}, 300);
+        $(this).animate({borderLeftColor : '#bfbfbf'}, 300);
     });
     $(".menuGroup a").mouseleave(function() {
         $(this).animate({borderLeftColor : 'transparent'}, 300);

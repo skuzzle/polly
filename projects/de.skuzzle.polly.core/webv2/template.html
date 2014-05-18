@@ -199,14 +199,27 @@
 </head>
 <body>
     <div id="top">
-        <span class="copyRight">
-            #if ($myPolly.getPollyVersion()) 
-                Polly v. $myPolly.getPollyVersion(). 
-            #else 
-                <b>Development</b>. 
-            #end 
-            Copyright 2013 Simon Taddiken
-        </span>
+        
+        <div id="userMenu" #if (!$user) style="display: none" #end>
+        <ul class="loginStatus" >
+            <li class="loginStatus"><a id="performLogout" href="/" title="Logout">Logout</a></li>
+            <li class="loginStatus"><a href="/pages/editUser?userId=$user.getId()" title="Edit your settings">$user.getName()</a></li>
+        </ul>
+        </div>
+        <ul class="loginStatus" id="topMenu"  #if (!$user) style="display: none" #end>
+            #foreach ($me in $topMenu)
+                #if ($myPolly.roles().canAccess($user, $me))
+                    <li class="loginStatus">#if ($me.getUrl()) <a href="$me.getUrl()">$me.getName()</a> #else $me.getName() #end</li>
+                #end
+            #end
+            <li id="timeleft"></li>
+            <li class="loginStatus" id="progress"></li>
+        </ul>
+        <h1><a href="$PAGE_INDEXHOMEPAGE">Polly</a></h1>
+        <a href="https://twitter.com/ProjectPolly" title="Polly on Twitter"><img src="/files/imgv2/twitter.png" width="24" height="24" alt="Twitter"/></a>
+        <a href="https://github.com/skuzzle/polly" title="Polly on GitHub"><img src="/files/imgv2/github.png" width="24" height="24" alt="GitHub"/></a>
+
+        
         <div id="login" #if ($user) style="display: none" #end>
             <form id="loginForm" method="post" style="display:inline">
                 <input class="textbox loginInput" type="text" name="name" placeholder=" Name"/>
@@ -215,37 +228,10 @@
             </form>
             <a id="recoverLink" href="$PAGE_RECOVERPW">Passwort vergessen?</a>
         </div>
-        <ul #if (!$user) style="display: none" #end>
-            <li class="loginStatus"><a id="performLogout" href="/" title="Logout">Logout</a></li>
-            <li class="loginStatus"><a href="/pages/editUser?userId=$user.getId()" title="Edit your settings">$user.getName()</a></li>
-            #foreach ($me in $topMenu)
-                #if ($myPolly.roles().canAccess($user, $me))
-                    <li class="loginStatus">#if ($me.getUrl()) <a href="$me.getUrl()">$me.getName()</a> #else $me.getName() #end</li>
-                #end
-            #end
-            <li id="timeleft"></li>
-        </ul>
-    </div>
-    
-    <div id="header">
+        
         <div id="notification"></div>
-        <div id="headerContent">
-            <h1><a href="$PAGE_INDEXHOMEPAGE">Polly Webinterface v2</a></h1>
-            <a href="https://twitter.com/ProjectPolly" class="twitter" title="Polly on Twitter"></a>
-            <a href="https://github.com/skuzzle/polly" class="github" title="Polly on GitHub"></a>
-        </div>
     </div>
-    
-    <div id="heading">
-        <span id="progress"></span>
-        <span id="calculate">
-            <input 
-                id="calculate_polly" 
-                type="text" class="textbox" placeholder="Enter any polly expression here"
-            />
-        </span>
-    </div>
-    
+        
     <div id="menuContent">
         #foreach ($mc in $menu)
         #if ($mc.mustRender($user, $myPolly.roles()))

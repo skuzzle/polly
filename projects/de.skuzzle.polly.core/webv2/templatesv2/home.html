@@ -1,42 +1,5 @@
 
 
-    <div class="highlight contentBox">
-        #CONTENT_HEADER("Letzte Änderungen")
-        <div class="content">
-            <ol style="margin-left: 20px;">
-            #foreach ($ci in $commits)
-            #set ($ciUrl = "https://github.com/skuzzle/polly/commit/$ci.getSha()")
-            <li><b>$myPolly.formatting().formatDate($ci.getCommit().getAuthor().getDate())</b> <a href="$ciUrl" title="$HTML.escape($ci.getCommit().getMessage())"><em>$Strings.firstParagraph($HTML.escape($ci.getCommit().getMessage()), 100)</em></a></li>
-            #end
-            </ol>
-            <p style="margin-top:5px;">Liste zuletzt aktualisiert: $myPolly.formatting().formatDate($lastRefresh)</p>
-        </div>
-    </div>
-
-#if ($myPolly.roles().hasPermission($user, "polly.permission.ADD_NEWS_PERMISSION"))
-    <div class="highlight contentBox">
-        #CONTENT_HEADER("Neuer Newseintrag")
-        <div class="content">
-        <form action="$PAGE_POSTNEWS" method="post">
-        <table>
-            <tr>
-            <td><b>Überschrift:</b></td>
-            <td><input type="text" class="textbox" placeholder="Überschrift" name="caption"/></td>
-            </tr>
-            <tr>
-            <td><b>Inhalt:</b></td>
-            <td><textarea class="textbox" placeholder="Inhalt" name="body"></textarea></td>
-            </tr>
-            <tr>
-            <td></td>
-            <td><input type="submit" class="button" value="Posten"/></td>
-            </tr>
-        </table>
-        </form>
-        </div>
-    </div>
-#end
-
 #if (!$user)
 <div class="highlight contentBox">
     #CONTENT_HEADER("Home")
@@ -45,16 +8,16 @@
         functionality.
     </p>
 </div>
-#elseif ($allNews.isEmpty())
-<div class="highlight contentBox">
-    #CONTENT_HEADER("Home")
-    <p class="content">Keine News</p>
-</div>
-#else
-    #foreach ($ne in $allNews)
-    <div class="highlight contentBox">
-        #CONTENT_HEADER("$ne.getCaption() <span style=""float:right;"">$myPolly.formatting().formatDate($ne.getDate()) #if ($myPolly.roles().hasPermission($user, ""polly.permission.DELETE_NEWS_PERMISSION"")) <a href=""$PAGE_DELETENEWS?newsId=$ne.getId()"">Delete</a> #end</span>")
-        <div class="content">$ne.getBody()</div>
-    </div>
-    #end
 #end
+
+<div class="highlight contentBox">
+    <div class="content">
+        <ol style="font-size: 12pt">
+        #foreach ($ci in $commits)
+        #set ($ciUrl = "https://github.com/skuzzle/polly/commit/$ci.getSha()")
+        <li><b>$myPolly.formatting().formatDate($ci.getCommit().getAuthor().getDate())</b> <a href="$ciUrl" title="$HTML.escape($ci.getCommit().getMessage())"><em>$Strings.firstParagraph($HTML.escape($ci.getCommit().getMessage()), 80)</em></a></li>
+        #end
+        </ol>
+        <p style="margin-top:5px;">Liste zuletzt aktualisiert: $myPolly.formatting().formatDate($lastRefresh)</p>
+    </div>
+</div>
