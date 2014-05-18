@@ -3,11 +3,11 @@ $(document).ready(function() {
 	$("#menuContent").css({left: "-180px"});
 	
     // Mouseover for links in top bar
-    $("#top a").mouseenter(function() {
+    $("#userMenu a").mouseenter(function() {
         //$(this).animate({borderBottomColor : '#a5ffff'}, 300);
         $(this).animate({backgroundColor : '#dcdcdc'}, 300);
     });
-    $("#top a").mouseleave(function() {
+    $("#userMenu a").mouseleave(function() {
         //$(this).animate({borderBottomColor : 'transparent'}, 300);
     	$(this).animate({backgroundColor : 'transparent'}, 300);
     });
