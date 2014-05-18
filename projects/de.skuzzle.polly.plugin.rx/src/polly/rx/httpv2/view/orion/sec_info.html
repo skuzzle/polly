@@ -39,7 +39,7 @@ $sector.getType()
     <tr>
         #set($ressId = ${prod.getRess().ordinal()}+1)
         <td><b><img src="/polly/rx/httpv2/view/r${ressId}.gif"/></b></td>
-        <td>$prod.getRate()</td>
+        <td>$nf.format($prod.getRate())</td>
     </tr>
     #end
 </table>

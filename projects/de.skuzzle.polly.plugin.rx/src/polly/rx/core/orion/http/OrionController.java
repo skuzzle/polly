@@ -742,10 +742,12 @@ public class OrionController extends PollyController {
             return HttpAnswers.newStringAnswer(403, MSG.httpNoPermission);
         }
 
+        final NumberFormat nf = new DecimalFormat("0.00"); //$NON-NLS-1$
         final Quadrant q = this.quadProvider.getQuadrant(quadrant);
         final Sector sector = q.getSector(x, y);
         final Map<String, Object> c = this.createContext(CONTENT_SECTOR_INFO);
         c.put("sector", sector); //$NON-NLS-1$
+        c.put("nf", nf); //$NON-NLS-1$
         if (sector != null) {
             final List<Wormhole> holes = this.holeProvider.getWormholes(sector,
                     this.quadProvider);
