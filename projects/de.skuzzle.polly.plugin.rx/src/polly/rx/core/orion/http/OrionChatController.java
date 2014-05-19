@@ -19,6 +19,7 @@ import de.skuzzle.polly.http.api.Controller;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.eventlistener.IrcUser;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
 import de.skuzzle.polly.sdk.httpv2.PollyController;
@@ -125,7 +126,18 @@ public class OrionChatController extends PollyController {
                 this.chatProvider.getActiveNicknames());
         activeNicks.addAll(this.getMyPolly().irc()
                 .getChannelUser(ircForwardChannel).stream()
-                .map(s -> s + " (IRC)") //$NON-NLS-1$
+                .map(s -> {
+                    final IrcUser iu = new IrcUser(s, "", ""); //$NON-NLS-1$ //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-2$
+                    final boolean idle = getMyPolly().users().getUser(iu);
+                    final StringBuilder r = new StringBuilder();
+                    r.append(s);
+                    r.append("(IRC"); //$NON-NLS-1$
+                    if (idle) {
+                        r.append(", idle"); //$NON-NLS-1$ 
+                    }
+                    r.append(")"); //$NON-NLS-1$
+                    return r.toString();
+                }) 
                 .collect(Collectors.toList())); 
         
         final DefaultOrionChatEntry[] oceArray = oces.toArray(
