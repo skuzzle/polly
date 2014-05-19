@@ -19,6 +19,7 @@ import de.skuzzle.polly.http.api.Controller;
 import de.skuzzle.polly.http.api.answers.HttpAnswer;
 import de.skuzzle.polly.http.api.answers.HttpAnswers;
 import de.skuzzle.polly.sdk.MyPolly;
+import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.eventlistener.IrcUser;
 import de.skuzzle.polly.sdk.exceptions.DatabaseException;
 import de.skuzzle.polly.sdk.httpv2.GsonHttpAnswer;
@@ -128,7 +129,8 @@ public class OrionChatController extends PollyController {
                 .getChannelUser(ircForwardChannel).stream()
                 .map(s -> {
                     final IrcUser iu = new IrcUser(s, "", ""); //$NON-NLS-1$ //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-2$
-                    final boolean idle = getMyPolly().users().getUser(iu);
+                    final User u = getMyPolly().users().getUser(iu);
+                    final boolean idle = u.isIdle();
                     final StringBuilder r = new StringBuilder();
                     r.append(s);
                     r.append("(IRC"); //$NON-NLS-1$
