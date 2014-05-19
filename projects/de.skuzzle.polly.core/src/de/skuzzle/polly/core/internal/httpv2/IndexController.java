@@ -271,6 +271,9 @@ public class IndexController extends PollyController {
         c.put("maxMemory", Runtime.getRuntime().maxMemory()); //$NON-NLS-1$
         c.put("totalMemory", Runtime.getRuntime().totalMemory()); //$NON-NLS-1$
         c.put("freeMemory", Runtime.getRuntime().freeMemory()); //$NON-NLS-1$
+        
+        c.put("status", this.getMyPolly().status().getCurrentStatusMap()); //$NON-NLS-1$
+        
         return this.makeAnswer(c);
     }
     

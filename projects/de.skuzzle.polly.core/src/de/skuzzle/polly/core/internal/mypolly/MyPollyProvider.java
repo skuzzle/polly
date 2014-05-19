@@ -22,6 +22,7 @@ import de.skuzzle.polly.core.moduleloader.ModuleLoader;
 import de.skuzzle.polly.core.moduleloader.annotations.Module;
 import de.skuzzle.polly.core.moduleloader.annotations.Provide;
 import de.skuzzle.polly.core.moduleloader.annotations.Require;
+import de.skuzzle.polly.sdk.StatusManager;
 
 
 @Module(
@@ -43,8 +44,9 @@ import de.skuzzle.polly.core.moduleloader.annotations.Require;
         @Require(component = RunOnceManagerImpl.class),
         @Require(component = WebInterfaceManagerImpl.class),
     },
-    provides = 
-        @Provide(component = MyPollyImpl.class))
+    provides = {
+        @Provide(component = MyPollyImpl.class),
+        @Provide (component = StatusManager.class) })
 public class MyPollyProvider extends AbstractProvider {
 
     private CommandManagerImpl commandManager;
@@ -111,6 +113,7 @@ public class MyPollyProvider extends AbstractProvider {
             this.runOnceManager,
             this.eventProvider);
         this.provideComponent(myPolly);
+        this.provideComponentAs(StatusManager.class, myPolly.status());
     }
     
     

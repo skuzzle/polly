@@ -20,6 +20,7 @@ import de.skuzzle.polly.core.internal.persistence.PersistenceManagerV2Impl;
 import de.skuzzle.polly.core.internal.plugins.PluginManagerImpl;
 import de.skuzzle.polly.core.internal.roles.RoleManagerImpl;
 import de.skuzzle.polly.core.internal.runonce.RunOnceManagerImpl;
+import de.skuzzle.polly.core.internal.status.StatusManagerImpl;
 import de.skuzzle.polly.core.internal.users.UserManagerImpl;
 import de.skuzzle.polly.core.parser.InputParser;
 import de.skuzzle.polly.core.parser.InputScanner;
@@ -49,6 +50,7 @@ import de.skuzzle.polly.sdk.MyPolly;
 import de.skuzzle.polly.sdk.PersistenceManagerV2;
 import de.skuzzle.polly.sdk.PluginManager;
 import de.skuzzle.polly.sdk.RunOnceManager;
+import de.skuzzle.polly.sdk.StatusManager;
 import de.skuzzle.polly.sdk.Types;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.UserManager;
@@ -93,6 +95,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 	private WebInterfaceManagerImpl webInterfaceManager;
 	private RunOnceManagerImpl runOnceManager;
 	private EventProvider eventProvider;
+	private final StatusManager statusManager;
 	
 	
 	public MyPollyImpl(CommandManagerImpl cmdMngr, 
@@ -126,6 +129,7 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
 		this.roleManager = roleManager;
 		this.webInterfaceManager = webInterfaceManager;
 		this.runOnceManager = runOnceManager;
+		this.statusManager = new StatusManagerImpl(this);
 	}
 	
 	
@@ -178,6 +182,12 @@ public class MyPollyImpl extends AbstractDisposable implements MyPolly {
             // ignore the exception, just use plain value which was submitted
             return new Types.StringType(value);
         }
+	}
+	
+	
+	@Override
+	public StatusManager status() {
+	    return this.statusManager;
 	}
 	
 	

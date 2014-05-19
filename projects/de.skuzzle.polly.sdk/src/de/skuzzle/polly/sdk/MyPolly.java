@@ -230,4 +230,8 @@ public interface MyPolly {
      * @return The result.
      */
     public Types parse(String value);
+
+
+
+    StatusManager status();
 }
