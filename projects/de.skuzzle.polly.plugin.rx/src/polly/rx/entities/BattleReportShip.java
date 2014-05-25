@@ -62,7 +62,7 @@ public class BattleReportShip {
     private transient BattleDrop[] repairCostOffset;
 
     @Transient
-    private int repairTimeOffset;
+    private double repairTimeOffset;
 
     @Transient
     private transient ShipType shipType;
@@ -118,7 +118,7 @@ public class BattleReportShip {
     private final static double FE_FACTOR_PZ = 0.150401;
     private final static double LM_FACTOR_PZ = 0.084333;
     private final static double SM_FACTOR_PZ = 0.054408;
-    private final static double REPAIR_TIME_FACTOR_PZ = 18.0; // in pz / seconds
+    private final static double REPAIR_TIME_FACTOR_PZ = 1.0 / 18.0; // in pz / seconds
     
     
     
@@ -132,7 +132,7 @@ public class BattleReportShip {
         this.repairCostOffset[4] = new BattleDrop(RxRessource.FE, (int)Math.round(FE_FACTOR_PZ * this.pzDamage));
         this.repairCostOffset[5] = new BattleDrop(RxRessource.LM, (int)Math.round(LM_FACTOR_PZ * this.pzDamage));
         this.repairCostOffset[6] = new BattleDrop(RxRessource.SM, (int)Math.round(SM_FACTOR_PZ * this.pzDamage));
-        this.repairTimeOffset = (int)Math.round(REPAIR_TIME_FACTOR_PZ * this.pzDamage);
+        this.repairTimeOffset = this.pzDamage / REPAIR_TIME_FACTOR_PZ;
         this.shipType = ShipHelper.getShipType(this.name);
         this.shipClass = ShipHelper.getShipClass(this.name);
         this.simpleName = ShipHelper.getSimpleName(this.name);
@@ -170,7 +170,7 @@ public class BattleReportShip {
     
     
     
-    public int getRepairTimeOffset() {
+    public double getRepairTimeOffset() {
         return this.repairTimeOffset;
     }
 

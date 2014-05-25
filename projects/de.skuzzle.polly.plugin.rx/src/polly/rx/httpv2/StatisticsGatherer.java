@@ -17,6 +17,7 @@ import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLModelListener;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLTableModel;
+import de.skuzzle.polly.sdk.time.Time;
 import de.skuzzle.polly.tools.math.MathUtil;
 
 
@@ -42,15 +43,15 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
         public int pzDamageAttacker = 0;
         public int pzDamageDefender = 0;
         public int artifacts = 0;
-        public int repairTimeAttacker = 0;
-        public int repairTimeDefender = 0;
+        public double repairTimeAttacker = 0;
+        public double repairTimeDefender = 0;
         public int dropPriceSum;
         public int dropPriceSumAtDropTime;
         public double reportSize = 0; // as double for auto casting when calculating avg
         public double artifactChance = 0.0;
         
         
-        void zero() {
+        BattleReportStatistics() {
             kwAttacker = 0;
             kwDefender = 0;
             capiXpSumAttacker = 0;
@@ -69,16 +70,6 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
             BattleDrop.clear(dropSum);
             BattleDrop.clear(dropMax);
             BattleDrop.clear(dropMin);
-            // if first element is != null, every element is != null
-            if (repairCostAttacker[0] != null) {
-                BattleDrop.clear(repairCostAttacker);
-            }
-            if (repairCostDefender[0] != null) {
-                BattleDrop.clear(repairCostDefender);
-            }
-            if (dropNetto[0] != null) {
-                BattleDrop.clear(dropNetto);
-            }
             Arrays.fill(dropPrices, 0);
             Arrays.fill(dropPricesAtDropTime, 0);
         }
@@ -134,11 +125,9 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
         final BattleReportStatistics stats = new BattleReportStatistics();
         s.set(STATISTIC_KEY, stats);
 
-        Date youngest = new Date(0);
+        Date youngest = null;
         
         synchronized (stats) {
-            
-        stats.zero();
         for (BattleReport report : data) {
             // do some filtering according to current sessions filter settings
             if (report.getTactic() == BattleTactic.ALIEN) {
@@ -177,7 +166,7 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
             stats.pzDamageAttacker += report.querySumAttacker(SumQueries.PZ_DAMAGE);
             stats.pzDamageDefender += report.querySumDefender(SumQueries.PZ_DAMAGE);
             
-            report.calculateRepairTimes();
+            //report.calculateRepairTimes();
             stats.repairTimeAttacker += report.getAttackerRepairTimeOffset();
             stats.repairTimeDefender += report.getDefenderRepairTimeOffset();
             
@@ -191,6 +180,7 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
         stats.reportSize = data.size();
         stats.kwAttacker /= data.size();
         stats.kwDefender /= data.size();
+        
         stats.currentPrices = getPriceArray(null); // null for today
         stats.dropPriceSum = (int) inCr(stats.dropNetto, stats.currentPrices, stats.dropPrices);
         stats.dropPriceSumAtDropTime = (int) inCr(stats.dropNetto, getPriceArray(youngest), stats.dropPricesAtDropTime);

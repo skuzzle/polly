@@ -71,11 +71,13 @@ public final class WebUtils {
     
     
     
-    public static void getString(String targetUrl, Map<String, ? extends Object> parameters, String targetCharset, Appendable redirect) throws IOException {
+    public static void getString(String targetUrl, Map<String, ? extends Object> parameters, String targetCharset, Appendable redirect, int timeout) throws IOException {
         final String surl = appendUrlQueryPart(targetUrl, parameters, targetCharset);
         final URL url = new URL(surl);
-        
+
         final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setConnectTimeout(timeout);
+        connection.connect();
         String cs = connection.getContentEncoding();
         if (cs == null) {
             cs = DEFAULT_CHARSET;
@@ -95,21 +97,26 @@ public final class WebUtils {
     
     
     public static StringBuilder getString(String targetUrl, Map<String, ? extends Object> parameters, 
-            String targetCharset) throws IOException {
+            String targetCharset, int timeout) throws IOException {
         final StringBuilder b = new StringBuilder();
-        getString(targetUrl, parameters, targetCharset, b);
+        getString(targetUrl, parameters, targetCharset, b, timeout);
         return b;
     }
     
     
     
-    public static StringBuilder getString(String targetUrl) throws IOException {
+    public static StringBuilder getString(String targetUrl, int timeout) throws IOException {
         final String cs = DEFAULT_CHARSET;
         final Map<String, ? extends Object> m = Collections.emptyMap();
-        return getString(targetUrl, m, cs);
+        return getString(targetUrl, m, cs, timeout);
     }
 
     
     
+    public static StringBuilder getString(String targetUrl) throws IOException {
+        final String cs = DEFAULT_CHARSET;
+        final Map<String, ? extends Object> m = Collections.emptyMap();
+        return getString(targetUrl, m, cs, Integer.MAX_VALUE);
+    }
     private WebUtils() {}
 }

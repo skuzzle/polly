@@ -15,11 +15,14 @@ import polly.rx.core.orion.ResourcePriceProvider;
 import polly.rx.core.orion.model.DefaultProduction;
 import polly.rx.core.orion.model.Production;
 import polly.rx.entities.RxRessource;
+import de.skuzzle.polly.sdk.time.Milliseconds;
 import de.skuzzle.polly.sdk.time.Time;
 import de.skuzzle.polly.tools.io.WebUtils;
 
 
 public class QZoneResourcePriceProvider implements ResourcePriceProvider {
+    
+    private final int QZONE_TIMEOUT = (int) Milliseconds.fromSeconds(2);
     
     // TEST
     public static void main(String[] args) {
@@ -103,6 +106,7 @@ public class QZoneResourcePriceProvider implements ResourcePriceProvider {
         try {
             return this.requestPrices(date);
         } catch (IOException e) {
+            e.printStackTrace();
             return zeroMap();
         }
     }
@@ -129,7 +133,7 @@ public class QZoneResourcePriceProvider implements ResourcePriceProvider {
         } else {
             requestUrl = API_URL;
         }
-        final StringBuilder response = WebUtils.getString(requestUrl);
+        final StringBuilder response = WebUtils.getString(requestUrl, QZONE_TIMEOUT);
         
         int i = 0;
         final String rows[] = response.toString().split(System.lineSeparator());

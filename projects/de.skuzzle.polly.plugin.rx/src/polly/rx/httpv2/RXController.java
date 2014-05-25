@@ -860,8 +860,8 @@ public class RXController extends PollyController {
             c.put("crewXpSumDefender", stats.crewXpSumDefender); //$NON-NLS-1$
             c.put("pzDamageAttacker", stats.pzDamageAttacker); //$NON-NLS-1$
             c.put("pzDamageDefender", stats.pzDamageDefender); //$NON-NLS-1$
-            c.put("repairTimeAttacker", stats.repairTimeAttacker); //$NON-NLS-1$
-            c.put("repairTimeDefender", stats.repairTimeDefender); //$NON-NLS-1$
+            c.put("repairTimeAttacker", Math.round(stats.repairTimeAttacker)); //$NON-NLS-1$
+            c.put("repairTimeDefender", Math.round(stats.repairTimeDefender)); //$NON-NLS-1$
             c.put("repairCostDefender", stats.repairCostDefender); //$NON-NLS-1$
             c.put("repairCostAttacker", stats.repairCostAttacker); //$NON-NLS-1$
             c.put("kwAttacker", stats.kwAttacker); //$NON-NLS-1$

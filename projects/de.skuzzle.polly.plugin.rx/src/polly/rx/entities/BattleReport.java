@@ -21,7 +21,6 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import de.skuzzle.polly.sdk.time.Time;
-
 import polly.rx.core.SumQuery;
 
 
@@ -169,10 +168,13 @@ public class BattleReport {
     private transient BattleDrop[] attackerRepairCostOffset;
     
     @Transient
-    private transient int defenderRepairTimeOffset;
+    private transient double defenderRepairTimeOffset;
     
     @Transient
-    private transient int attackerRepairTimeOffset;
+    private transient double attackerRepairTimeOffset;
+    
+    @Transient
+    private transient boolean calculationDone;
     
     
     
@@ -229,18 +231,22 @@ public class BattleReport {
     
     @PostLoad
     public synchronized void calculateRepairTimes() {
+        if (calculationDone) {
+            throw new IllegalStateException();
+        }
         this.attackerRepairCostOffset = new BattleDrop[7];
         this.defenderRepairCostOffset = new BattleDrop[7];
         this.attackerRepairTimeOffset = this.calculateRepairValues(
             this.attackerRepairCostOffset, this.attackerShips);
         this.defenderRepairTimeOffset = this.calculateRepairValues(
             this.defenderRepairCostOffset, this.defenderShips);
+        this.calculationDone = true;
     }
     
     
     
-    private int calculateRepairValues(BattleDrop[] costs, List<BattleReportShip> ships) {
-        int repairTimeOffset = 0;
+    private double calculateRepairValues(BattleDrop[] costs, List<BattleReportShip> ships) {
+        double repairTimeOffset = 0;
         for (BattleReportShip ship : ships) {
             ship.calcCostOffset();
             repairTimeOffset = Math.max(
@@ -261,14 +267,24 @@ public class BattleReport {
     
     
     
+    private synchronized void checkCalculationDone() {
+        if (!this.calculationDone) {
+            throw new IllegalStateException();
+        }
+    }
+    
+    
+    
     public BattleDrop[] getAttackerRepairCostOffset() {
+        this.checkCalculationDone();
         return this.attackerRepairCostOffset;
     }
     
     
     
     
-    public int getAttackerRepairTimeOffset() {
+    public double getAttackerRepairTimeOffset() {
+        this.checkCalculationDone();
         return this.attackerRepairTimeOffset;
     }
     
@@ -281,12 +297,14 @@ public class BattleReport {
     
     
     public BattleDrop[] getDefenderRepairCostOffset() {
+        this.checkCalculationDone();
         return this.defenderRepairCostOffset;
     }
     
     
     
-    public int getDefenderRepairTimeOffset() {
+    public double getDefenderRepairTimeOffset() {
+        this.checkCalculationDone();
         return this.defenderRepairTimeOffset;
     }
     
