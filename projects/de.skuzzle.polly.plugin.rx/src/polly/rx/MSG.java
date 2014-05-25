@@ -526,6 +526,7 @@ public class MSG extends Constants {
     public static String pluginAutoRemindAzDesc;
     public static String pluginLowPzWarningDesc;
     public static String pluginPortalDesc;
+    public static String pluginDockLvlDescription;
 
 
 

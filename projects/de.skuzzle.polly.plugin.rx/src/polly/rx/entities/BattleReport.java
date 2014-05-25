@@ -101,7 +101,6 @@ public class BattleReport {
             report.defenderClan, report.attackerClan, report.defenderShips, 
             report.attackerShips);
         
-        br.calculateRepairTimes();
         return br;
     }
     
@@ -167,15 +166,6 @@ public class BattleReport {
     @Transient
     private transient BattleDrop[] attackerRepairCostOffset;
     
-    @Transient
-    private transient double defenderRepairTimeOffset;
-    
-    @Transient
-    private transient double attackerRepairTimeOffset;
-    
-    @Transient
-    private transient boolean calculationDone;
-    
     
     
     public BattleReport() {
@@ -231,27 +221,17 @@ public class BattleReport {
     
     @PostLoad
     public synchronized void calculateRepairTimes() {
-        if (calculationDone) {
-            throw new IllegalStateException();
-        }
         this.attackerRepairCostOffset = new BattleDrop[7];
         this.defenderRepairCostOffset = new BattleDrop[7];
-        this.attackerRepairTimeOffset = this.calculateRepairValues(
-            this.attackerRepairCostOffset, this.attackerShips);
-        this.defenderRepairTimeOffset = this.calculateRepairValues(
-            this.defenderRepairCostOffset, this.defenderShips);
-        this.calculationDone = true;
+        this.calculateRepairValues(this.attackerRepairCostOffset, this.attackerShips);
+        this.calculateRepairValues(this.defenderRepairCostOffset, this.defenderShips);
     }
     
     
     
-    private double calculateRepairValues(BattleDrop[] costs, List<BattleReportShip> ships) {
-        double repairTimeOffset = 0;
+    private void calculateRepairValues(BattleDrop[] costs, List<BattleReportShip> ships) {
         for (BattleReportShip ship : ships) {
             ship.calcCostOffset();
-            repairTimeOffset = Math.max(
-                ship.getRepairTimeOffset(), repairTimeOffset);
-            
             for (int i = 0; i < ship.getRepairCostOffset().length; ++i) {
                 BattleDrop d = ship.getRepairCostOffset()[i];
                 if (costs[i] == null) {
@@ -261,31 +241,30 @@ public class BattleReport {
                 }
             }
         }
+    }
+    
+    
+    
+    private double calculateRepairTime(int dockLevel, List<BattleReportShip> ships) {
+        double repairTimeOffset = 0;
+        for (final BattleReportShip ship : ships) {
+            repairTimeOffset = Math.max(
+                    ship.getRepairTimeOffset(dockLevel), repairTimeOffset);
+        }
         return repairTimeOffset;
     }
     
     
     
-    
-    private synchronized void checkCalculationDone() {
-        if (!this.calculationDone) {
-            throw new IllegalStateException();
-        }
-    }
-    
-    
-    
     public BattleDrop[] getAttackerRepairCostOffset() {
-        this.checkCalculationDone();
         return this.attackerRepairCostOffset;
     }
     
     
     
     
-    public double getAttackerRepairTimeOffset() {
-        this.checkCalculationDone();
-        return this.attackerRepairTimeOffset;
+    public double getAttackerRepairTimeOffset(int dockLevel) {
+        return this.calculateRepairTime(dockLevel, this.attackerShips);
     }
     
     
@@ -297,15 +276,13 @@ public class BattleReport {
     
     
     public BattleDrop[] getDefenderRepairCostOffset() {
-        this.checkCalculationDone();
         return this.defenderRepairCostOffset;
     }
     
     
     
-    public double getDefenderRepairTimeOffset() {
-        this.checkCalculationDone();
-        return this.defenderRepairTimeOffset;
+    public double getDefenderRepairTimeOffset(int dockLevel) {
+        return this.calculateRepairTime(dockLevel, defenderShips);
     }
     
     

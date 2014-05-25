@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import polly.rx.MyPlugin;
 import polly.rx.core.SumQueries;
 import polly.rx.core.orion.Orion;
 import polly.rx.core.orion.model.Production;
@@ -13,11 +14,11 @@ import polly.rx.entities.BattleTactic;
 import polly.rx.entities.RxRessource;
 import de.skuzzle.polly.http.api.HttpEvent;
 import de.skuzzle.polly.http.api.HttpSession;
+import de.skuzzle.polly.sdk.Types.NumberType;
 import de.skuzzle.polly.sdk.User;
 import de.skuzzle.polly.sdk.httpv2.WebinterfaceManager;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLModelListener;
 import de.skuzzle.polly.sdk.httpv2.html.HTMLTableModel;
-import de.skuzzle.polly.sdk.time.Time;
 import de.skuzzle.polly.tools.math.MathUtil;
 
 
@@ -122,6 +123,9 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
         final User user = (User) s.get(WebinterfaceManager.USER);
         final String STATISTIC_KEY = RXController.STATS_PREFIX + user.getName();
         
+        final int dockLevel = (int) 
+                ((NumberType) user.getAttribute(MyPlugin.DOCK_LEVEL)).getValue();
+        
         final BattleReportStatistics stats = new BattleReportStatistics();
         s.set(STATISTIC_KEY, stats);
 
@@ -166,9 +170,9 @@ public class StatisticsGatherer implements HTMLModelListener<BattleReport> {
             stats.pzDamageAttacker += report.querySumAttacker(SumQueries.PZ_DAMAGE);
             stats.pzDamageDefender += report.querySumDefender(SumQueries.PZ_DAMAGE);
             
-            //report.calculateRepairTimes();
-            stats.repairTimeAttacker += report.getAttackerRepairTimeOffset();
-            stats.repairTimeDefender += report.getDefenderRepairTimeOffset();
+            report.calculateRepairTimes();
+            stats.repairTimeAttacker += report.getAttackerRepairTimeOffset(dockLevel);
+            stats.repairTimeDefender += report.getDefenderRepairTimeOffset(dockLevel);
             
             BattleDrop.sumUp(stats.repairCostAttacker, report.getAttackerRepairCostOffset());
             BattleDrop.sumUp(stats.repairCostDefender, report.getDefenderRepairCostOffset());

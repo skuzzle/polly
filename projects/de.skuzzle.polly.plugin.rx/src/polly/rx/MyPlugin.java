@@ -110,6 +110,7 @@ public class MyPlugin extends PollyPlugin {
     public final static String LOW_PZ_WARNING = "LOW_PZ_WARNING"; //$NON-NLS-1$
     public final static String PORTALS = "PORTALS"; //$NON-NLS-1$
     private static final String VENAD_DEFAULT = "<unbekannt>"; //$NON-NLS-1$
+    public final static String DOCK_LEVEL = "DOCK_LEVEL"; //$NON-NLS-1$
     
     
     private FleetDBManager fleetDBManager;
@@ -389,6 +390,11 @@ public class MyPlugin extends PollyPlugin {
             this.getMyPolly().users().addAttribute(PORTALS, new Types.StringType(""),  //$NON-NLS-1$
                     MSG.pluginPortalDesc, MSG.httpRxCategory, 
                     new SectorListAttributeConstraint());
+            
+            this.getMyPolly().users().addAttribute(DOCK_LEVEL, 
+                    new Types.NumberType(1),
+                    MSG.pluginDockLvlDescription, MSG.httpRxCategory,
+                    new DockLevelConstraint());
         } catch (Exception ignore) {
             ignore.printStackTrace();
         }
