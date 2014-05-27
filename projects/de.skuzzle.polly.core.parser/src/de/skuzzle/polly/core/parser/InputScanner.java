@@ -909,13 +909,18 @@ public class InputScanner extends AbstractTokenStream {
                 }
                 
             } else if (state == 8) {
-                if (thirdPart < 1900 || thirdPart > 9999) {
+                Calendar c = Calendar.getInstance();
+                if (thirdPart < 100) {
+                    final int year = c.get(Calendar.YEAR);
+                    final int millenium = year - year % 1000;
+                    thirdPart += millenium;
+                }
+                if (thirdPart > 9999) {
                     return this.parseException(Problems.format(Problems.INVALID_DATE_TIME), 
                         tokenStart);
                 }
                 
                 // CONSIDER ISSUE 0000115
-                Calendar c = Calendar.getInstance();
                 c.setTime(timeToken.getDateValue());
                 c.set(thirdPart, secondPart - 1, firstPart);
                 return new Token(TokenType.DATETIME, this.spanFrom(tokenStart), 
