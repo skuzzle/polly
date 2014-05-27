@@ -131,7 +131,7 @@ public class TrainEntityV3 implements Equatable {
             long dur = seconds + minutes * 60 + hours * 60 * 60 + days * 24 * 60 * 60;
             return new Date(Time.currentTimeMillis() + dur * 1000);
         }
-        return null;
+        return Time.currentTime();
     }
     
     
