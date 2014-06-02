@@ -80,7 +80,7 @@ import de.skuzzle.polly.sdk.time.Time;
     )
 })
 public class BattleReport {
-
+    
     public static final String ALL_REPORTS = "ALL_REPORTS"; //$NON-NLS-1$
     public static final String UNIQUE_CHECK = "UNIQUE_CHECK"; //$NON-NLS-1$
     public static final String UNIQUE_CHECK_NO_DATE = "UNIQUE_CHECK_NO_DATE"; //$NON-NLS-1$
@@ -265,16 +265,26 @@ public class BattleReport {
     
     
     
-    public double getAttackerRepairTimeOffset(int dockLevel) {
+    public double getAttackerRepairTimeOffset(final int dockLevel) {
         return this.calculateRepairTime(dockLevel, this.attackerShips, 
-                (ship, dock) -> ship.getRepairTimeOffset(dockLevel));
+                new BiFunction<BattleReportShip, Integer, Double>() {
+                    @Override
+                    public Double apply(BattleReportShip t, Integer u) {
+                        return t.getRepairTimeOffset(dockLevel);
+                    }
+                });
     }
     
     
     
     public double getAttackerRepairTime(int dockLevel) {
         return this.calculateRepairTime(dockLevel, this.attackerShips, 
-                (ship, dock) -> ship.getAbsoluteRepairTime(dockLevel));
+                new BiFunction<BattleReportShip, Integer, Double>() {
+            @Override
+            public Double apply(BattleReportShip t, Integer u) {
+                return t.getAbsoluteRepairTime(dockLevel);
+            }
+        });
     }
     
     
@@ -292,14 +302,24 @@ public class BattleReport {
     
     
     public double getDefenderRepairTimeOffset(int dockLevel) {
-        return this.calculateRepairTime(dockLevel, this.defenderShips, 
-                (ship, dock) -> ship.getRepairTimeOffset(dockLevel));
+        return this.calculateRepairTime(dockLevel, this.defenderShips,  
+                new BiFunction<BattleReportShip, Integer, Double>() {
+            @Override
+            public Double apply(BattleReportShip t, Integer u) {
+                return t.getRepairTimeOffset(dockLevel);
+            }
+        });
     }
     
     
     public double getDefenderRepairTime(int dockLevel) {
-        return this.calculateRepairTime(dockLevel, this.defenderShips, 
-                (ship, dock) -> ship.getAbsoluteRepairTime(dockLevel));
+        return this.calculateRepairTime(dockLevel, this.defenderShips,  
+                new BiFunction<BattleReportShip, Integer, Double>() {
+            @Override
+            public Double apply(BattleReportShip t, Integer u) {
+                return t.getAbsoluteRepairTime(dockLevel);
+            }
+        });
     } 
     
     
