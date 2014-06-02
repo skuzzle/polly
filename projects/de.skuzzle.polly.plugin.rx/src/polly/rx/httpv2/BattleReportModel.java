@@ -61,7 +61,8 @@ public class BattleReportModel extends AbstractHTMLTableModel<BattleReport> {
     @Override
     public Object getCellValue(int column, BattleReport element) {
         switch (column) {
-        case 0: return element.getQuadrant();
+        case 0: return String.format("%s %d,%d", element.getQuadrant(), element.getX(),  //$NON-NLS-1$
+                element.getY());
         case 1: return element.getAttackerVenadName();
         case 2: return element.getAttackerClan();
         case 3: return element.getAttackerKw() / element.getAttackerBonus();
