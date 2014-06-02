@@ -3,6 +3,7 @@ package polly.rx.entities;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.BiFunction;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -20,8 +21,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import de.skuzzle.polly.sdk.time.Time;
 import polly.rx.core.SumQuery;
+import de.skuzzle.polly.sdk.time.Time;
 
 
 @Entity
@@ -245,11 +246,12 @@ public class BattleReport {
     
     
     
-    private double calculateRepairTime(int dockLevel, List<BattleReportShip> ships) {
+    private double calculateRepairTime(int dockLevel, List<BattleReportShip> ships, 
+            BiFunction<BattleReportShip, Integer, Double> shipRepairTime) {
         double repairTimeOffset = 0;
         for (final BattleReportShip ship : ships) {
-            repairTimeOffset = Math.max(
-                    ship.getRepairTimeOffset(dockLevel), repairTimeOffset);
+            repairTimeOffset = Math.max(shipRepairTime.apply(ship, dockLevel),
+                    repairTimeOffset);
         }
         return repairTimeOffset;
     }
@@ -264,7 +266,15 @@ public class BattleReport {
     
     
     public double getAttackerRepairTimeOffset(int dockLevel) {
-        return this.calculateRepairTime(dockLevel, this.attackerShips);
+        return this.calculateRepairTime(dockLevel, this.attackerShips, 
+                (ship, dock) -> ship.getRepairTimeOffset(dockLevel));
+    }
+    
+    
+    
+    public double getAttackerRepairTime(int dockLevel) {
+        return this.calculateRepairTime(dockLevel, this.attackerShips, 
+                (ship, dock) -> ship.getAbsoluteRepairTime(dockLevel));
     }
     
     
@@ -282,9 +292,15 @@ public class BattleReport {
     
     
     public double getDefenderRepairTimeOffset(int dockLevel) {
-        return this.calculateRepairTime(dockLevel, defenderShips);
+        return this.calculateRepairTime(dockLevel, this.defenderShips, 
+                (ship, dock) -> ship.getRepairTimeOffset(dockLevel));
     }
     
+    
+    public double getDefenderRepairTime(int dockLevel) {
+        return this.calculateRepairTime(dockLevel, this.defenderShips, 
+                (ship, dock) -> ship.getAbsoluteRepairTime(dockLevel));
+    } 
     
     
     public int getSubmitterId() {

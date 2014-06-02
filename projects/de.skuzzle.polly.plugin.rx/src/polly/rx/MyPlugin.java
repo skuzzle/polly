@@ -111,6 +111,7 @@ public class MyPlugin extends PollyPlugin {
     public final static String PORTALS = "PORTALS"; //$NON-NLS-1$
     private static final String VENAD_DEFAULT = "<unbekannt>"; //$NON-NLS-1$
     public final static String DOCK_LEVEL = "DOCK_LEVEL"; //$NON-NLS-1$
+    public static final String REPAIR_TIME_WARNING = "REPAIR_TIME_WARNING"; //$NON-NLS-1$
     
     
     private FleetDBManager fleetDBManager;
@@ -368,6 +369,9 @@ public class MyPlugin extends PollyPlugin {
         
         
         try {
+            this.getMyPolly().users().addAttribute(REPAIR_TIME_WARNING, 
+                    new Types.TimespanType(0), MSG.pluginRepairTimeWarning,
+                    MSG.httpRxCategory, Constraints.TIMESPAN);
             this.getMyPolly().users().addAttribute(VENAD, 
                 new Types.StringType(VENAD_DEFAULT), 
                 MSG.pluginVenadDesc, 
@@ -395,6 +399,8 @@ public class MyPlugin extends PollyPlugin {
                     new Types.NumberType(1),
                     MSG.pluginDockLvlDescription, MSG.httpRxCategory,
                     new DockLevelConstraint());
+            
+            
         } catch (Exception ignore) {
             ignore.printStackTrace();
         }

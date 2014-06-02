@@ -753,6 +753,12 @@ public class RXController extends PollyController {
         final NumberType pzWarning = (NumberType) 
                 u.getAttribute(MyPlugin.LOW_PZ_WARNING);
         
+        final NumberType dockLevel = (NumberType)
+                u.getAttribute(MyPlugin.DOCK_LEVEL);
+        final int dockLvlInt = (int) dockLevel.getValue();
+        final TimespanType repairTimeWarning = (TimespanType)
+                u.getAttribute(MyPlugin.REPAIR_TIME_WARNING);
+        
         List<BattleReportShip> lowPzShips = new ArrayList<>(40);
         if (pzWarning.getValue() > 0.0) {
             final List<BattleReportShip> ships = br.getTactic() == BattleTactic.ALIEN 
@@ -766,6 +772,12 @@ public class RXController extends PollyController {
             }
         }
         
+        final double seconds = br.getTactic() == BattleTactic.ALIEN 
+                ? br.getDefenderRepairTime(dockLvlInt)
+                : br.getAttackerRepairTime(dockLvlInt);
+        boolean doRepairTimeWarning = repairTimeWarning.getSpan() > 0 &&
+                seconds >= repairTimeWarning.getSpan();
+
         if (isLive && u.getCurrentNickName() != null) {
             final BooleanType autoRemind = (BooleanType) u.getAttribute(MyPlugin.AUTO_REMIND);
             if (autoRemind.getValue()) {
@@ -798,16 +810,24 @@ public class RXController extends PollyController {
         }
         
         
-        if (!lowPzShips.isEmpty()) {
+        if (!lowPzShips.isEmpty() || doRepairTimeWarning) {
             final StringBuilder b = new StringBuilder();
-            b.append(MSG.bind(MSG.httpShipsBelow, 
-                    pzWarning.valueString(this.getMyPolly().formatting())));
-            b.append("\n"); //$NON-NLS-1$
-            for (final BattleReportShip lowPz : lowPzShips) {
-                b.append(lowPz.getName());
-                b.append(" ("); //$NON-NLS-1$
-                b.append(lowPz.getCurrentPz());
-                b.append("pz)\n"); //$NON-NLS-1$
+            if (!lowPzShips.isEmpty()) {
+                b.append(MSG.bind(MSG.httpShipsBelow, 
+                        pzWarning.valueString(this.getMyPolly().formatting())));
+                b.append("\n"); //$NON-NLS-1$
+                for (final BattleReportShip lowPz : lowPzShips) {
+                    b.append(lowPz.getName());
+                    b.append(" ("); //$NON-NLS-1$
+                    b.append(lowPz.getCurrentPz());
+                    b.append("pz)\n"); //$NON-NLS-1$
+                }
+            }
+            if (doRepairTimeWarning) {
+                final String repTime = this.getMyPolly().formatting().formatTimeSpan(
+                        (int) seconds);
+                b.append(MSG.bind(MSG.httpRepairWarning, repTime));
+                b.append("\n"); //$NON-NLS-1$
             }
             return new GsonHttpAnswer(200, 
                     new QReportResult(true, message, b.toString()));

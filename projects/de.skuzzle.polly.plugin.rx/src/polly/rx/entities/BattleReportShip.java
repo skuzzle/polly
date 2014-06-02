@@ -167,10 +167,20 @@ public class BattleReportShip {
     
     
     public double getRepairTimeOffset(int dockLevel) {
-        final double pzPerSecond = 1.0/(1.0 - dockLevel / 200.0) * 200.0 / 60.0 / 60.0;
-        return this.pzDamage / pzPerSecond;
+        return this.calculateRepairTime(dockLevel, this.pzDamage);
+    }
+    
+    
+    public double getAbsoluteRepairTime(int dockLevel) {
+        final int pzDamage = this.pz - this.currentPz;
+        return this.calculateRepairTime(dockLevel, pzDamage);
     }
 
+    
+    private double calculateRepairTime(int dockLevel, int pzDamage) {
+        final double pzPerSecond = 1.0/(1.0 - dockLevel / 200.0) * 200.0 / 60.0 / 60.0;
+        return pzDamage / pzPerSecond;
+    }
     
     
     public int getCurrentPz() {

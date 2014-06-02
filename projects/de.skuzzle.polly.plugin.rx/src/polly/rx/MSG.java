@@ -230,6 +230,7 @@ public class MSG extends Constants {
     public static String httpPostReportSuccess;
     public static String httpAutoRemindCommand;
     public static String httpShipsBelow;
+    public static String httpRepairWarning;
 
     // BattleReportShipModel
     public static String reportShipModelColumns;
@@ -520,6 +521,7 @@ public class MSG extends Constants {
     public static String htmlPortalsDesc;
     
     // MyPlugin
+    public static String pluginRepairTimeWarning;
     public static String pluginVenadDesc;
     public static String pluginCrackerDesc;
     public static String pluginAutoRemindDesc;
