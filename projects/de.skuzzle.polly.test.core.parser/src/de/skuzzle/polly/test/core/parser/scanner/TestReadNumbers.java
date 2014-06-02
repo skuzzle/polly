@@ -354,16 +354,6 @@ public class TestReadNumbers extends AbstractScannerTest {
     
     
     @Test
-    public final void testReadNumber30() throws ParseException {
-        final String input = "10.12.1887";
-        final AbstractTokenStream scanner = this.obtain(input);
-        Token la = scanner.consume();
-        Assert.assertTrue(la.getType() == TokenType.ERROR);
-    }
-    
-    
-    
-    @Test
     public final void testReadNumber31() throws ParseException {
         final String input = "10.12.10000";
         final AbstractTokenStream scanner = this.obtain(input);
