@@ -76,7 +76,7 @@ public class FleetScanShipTableModel extends AbstractHTMLTableModel<FleetScanShi
     @Override
     public Class<?> getColumnClass(int column) {
         switch (column) {
-        case 0: return Number.class;
+        case 0: return Object.class;
         case 2: return Integer.class;
         case 4: return Integer.class;
         case 6: return Boolean.class;
