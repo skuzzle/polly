@@ -244,7 +244,6 @@ public class Graph<V, E> {
     public class Path implements Comparable<Path> {
         protected final List<Edge> path;
         protected final double costs;
-        protected int count;
         
         public Path(List<Edge> path, double costs) {
             this.path = path;
@@ -260,10 +259,6 @@ public class Graph<V, E> {
         
         public List<Edge> getPath() {
             return this.path;
-        }
-        
-        public double getCosts() {
-            return this.costs;
         }
 
         @Override
@@ -414,9 +409,9 @@ public class Graph<V, E> {
     
     private class KnownPath implements Comparable<KnownPath> {
         private final List<Edge> edges;
-        private double costs;
+        private final double costs;
         private Node target;
-        private double heuristics;
+        private final double heuristics;
         
         public KnownPath(Collection<Edge> edges, double costs, double heuristics) {
             this.edges = new ArrayList<>(edges);
