@@ -29,32 +29,32 @@ import de.skuzzle.polly.sdk.time.Time;
 
 
 public class OrionChatController extends PollyController {
-    
+
     public final static String API_ADD_TO_CHAT = "/orion/chat/add"; //$NON-NLS-1$
     public final static String API_REQUEST_CHAT = "/orion/chat/request"; //$NON-NLS-1$
-    
+
     private final OrionChatProvider chatProvider;
-    
+
     public static volatile boolean enableIrcForwarding = true;
     private static volatile String ircForwardChannel = "#regenbogen"; //$NON-NLS-1$
-    
-    
-    
+
+
+
     public OrionChatController(MyPolly myPolly, OrionChatProvider chatProvider) {
         super(myPolly);
         this.chatProvider = chatProvider;
     }
-    
-    
-    
+
+
+
 
     @Override
     protected Controller createInstance() {
-        return new OrionChatController(this.getMyPolly(), chatProvider);
+        return new OrionChatController(getMyPolly(), this.chatProvider);
     }
-    
-    
-    
+
+
+
     private final class ChatEntry {
         public String user;
         public String pw;
@@ -62,25 +62,25 @@ public class OrionChatController extends PollyController {
         public String sender;
         public boolean irc;
     }
-    
-    
-    
+
+
+
     @Post(API_ADD_TO_CHAT)
     public HttpAnswer addChatEntry() throws AlternativeAnswerException {
         final Gson gson = new Gson();
         final ChatEntry ce = gson.fromJson(getEvent().getRequestBody(), ChatEntry.class);
-        
-        this.checkLogin(ce.user, ce.pw);
-        
+
+        checkLogin(ce.user, ce.pw);
+
         final String msg = getServer().esc(ce.message);
-        final OrionChatEntry oce = new DefaultOrionChatEntry(ce.sender, msg, 
+        final OrionChatEntry oce = new DefaultOrionChatEntry(ce.sender, msg,
                 Time.currentTime());
-        
+
         try {
             this.chatProvider.addChatEntry(oce, true);
-            
+
             if (ce.irc) {
-                this.getMyPolly().irc().sendMessage(ircForwardChannel, 
+                getMyPolly().irc().sendMessage(ircForwardChannel,
                     oce.getSender() + ": " + oce.getMessage() + " (via Orion Chat)", this); //$NON-NLS-1$ //$NON-NLS-2$
             }
             return new GsonHttpAnswer(200, new SuccessResult(true, "")); //$NON-NLS-1$
@@ -88,60 +88,64 @@ public class OrionChatController extends PollyController {
             return new GsonHttpAnswer(200, new SuccessResult(false, e.getMessage()));
         }
     }
-    
-    
-    
+
+
+
     public final class ChatResult {
         public String[] activeNicks;
         public DefaultOrionChatEntry chat[];
-        
+
         private ChatResult(String[] nicks, DefaultOrionChatEntry chat[]) {
             this.activeNicks = nicks;
             this.chat = chat;
         }
     }
-    
-    
-    
+
+
+
     @Get(API_REQUEST_CHAT)
-    public HttpAnswer getchatEntries(@Param("user") String user, 
+    public HttpAnswer getchatEntries(@Param("user") String user,
             @Param("pw") String pw, @Param("max") int max,
             @Param(value = "version", optional = true, defaultValue = "") String version,
             @Param(value = "venad", optional = true, defaultValue = "") String venad,
             @Param(value = "isPoll", optional = true, defaultValue = "false") boolean IsPoll)
                     throws AlternativeAnswerException {
-        this.checkLogin(user, pw);
-        
+        checkLogin(user, pw);
+
         final String nickName = venad.equals("") ? user : venad; //$NON-NLS-1$
         final Gson gson = new GsonBuilder().setDateFormat("HH:mm dd.MM.yyyy").create(); //$NON-NLS-1$
-        
-        final List<DefaultOrionChatEntry> oces = 
+
+        final List<DefaultOrionChatEntry> oces =
                 this.chatProvider.getYoungestEntries(nickName, IsPoll, max);
-        
+
         if (version.equals("")) { //$NON-NLS-1$
             // backward compatibility to script version < 1.5
             return HttpAnswers.newStringAnswer(gson.toJson(oces));
         }
-        
+
         final List<String> activeNicks = new ArrayList<>(
                 this.chatProvider.getActiveNicknames());
-        activeNicks.addAll(this.getMyPolly().irc()
+        activeNicks.addAll(getMyPolly().irc()
                 .getChannelUser(ircForwardChannel).stream()
-                .map(s -> {
-                    final IrcUser iu = new IrcUser(s, "", ""); //$NON-NLS-1$ //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-2$
+                .filter(s -> {
+                    final IrcUser iu = new IrcUser(s, "", ""); //$NON-NLS-1$ //$NON-NLS-1$
+                    final User u = getMyPolly().users().getUser(iu);
+                    return u != null;
+                }).map(s -> {
+                    final IrcUser iu = new IrcUser(s, "", ""); //$NON-NLS-1$ //$NON-NLS-1$
                     final User u = getMyPolly().users().getUser(iu);
                     final boolean idle = u.isIdle();
                     final StringBuilder r = new StringBuilder();
                     r.append(s);
                     r.append("(IRC"); //$NON-NLS-1$
                     if (idle) {
-                        r.append(", idle"); //$NON-NLS-1$ 
+                        r.append(", idle"); //$NON-NLS-1$
                     }
                     r.append(")"); //$NON-NLS-1$
                     return r.toString();
-                }) 
-                .collect(Collectors.toList())); 
-        
+                })
+                .collect(Collectors.toList()));
+
         final DefaultOrionChatEntry[] oceArray = oces.toArray(
                 new DefaultOrionChatEntry[oces.size()]);
         final String[] nickArray = activeNicks.toArray(new String[activeNicks.size()]);
