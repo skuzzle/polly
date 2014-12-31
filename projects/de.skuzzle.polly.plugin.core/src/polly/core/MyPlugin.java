@@ -6,6 +6,8 @@ import java.util.Date;
 
 import commands.AddUserCommand;
 import commands.AmazonCommand;
+import commands.AnyficationCommand;
+import commands.AuthCommand;
 import commands.CalendarCommand;
 import commands.ClumBombCommand;
 import commands.DefineCommand;
@@ -19,12 +21,12 @@ import commands.GhostCommand;
 import commands.GooglePicsCommand;
 import commands.GreetingCommand;
 import commands.HopCommand;
+import commands.InfoCommand;
 import commands.IsDownCommand;
 import commands.JoinCommand;
 import commands.KickCommand;
 import commands.ListAttributesCommand;
 import commands.LmgtfyCommand;
-import commands.AnyficationCommand;
 import commands.PartCommand;
 import commands.QuitCommand;
 import commands.RawIrcCommand;
@@ -35,9 +37,7 @@ import commands.SetAttributeCommand;
 import commands.SetMyPasswordCommand;
 import commands.SetPasswordCommand;
 import commands.ShowCommandsCommand;
-import commands.InfoCommand;
 import commands.SignOffCommand;
-import commands.AuthCommand;
 import commands.TalkCommand;
 import commands.UptimeCommand;
 import commands.UsersCommand;
@@ -53,6 +53,7 @@ import commands.roles.ListPermissionsCommand;
 import commands.roles.ListRolesCommand;
 import commands.roles.RemovePermissionCommand;
 import commands.roles.RemoveRoleCommand;
+
 import core.GreetDeliverer;
 import core.JoinTimeCollector;
 import de.skuzzle.polly.sdk.MyPolly;
@@ -69,14 +70,14 @@ import entities.TopicEntity;
 
 
 /**
- * 
+ *
  * @author Simon
  * @version 27.07.2011 3851c1b
  */
 public class MyPlugin extends PollyPlugin {
-    
+
     public final static String CASPER  = "polly.roles.CASPER"; //$NON-NLS-1$
-    
+
 
     public final static String ADD_USER_PERMISSION               = "polly.permission.ADD_USER"; //$NON-NLS-1$
     public final static String ALIAS_PERMISSION                  = "polly.permission.ALIAS"; //$NON-NLS-1$
@@ -118,18 +119,18 @@ public class MyPlugin extends PollyPlugin {
     public final static String SET_AND_IDENTIFY_PERMISSION       = "polly.permission.SET_AND_IDENTIFY"; //$NON-NLS-1$
     public final static String GREETING = "GREETING"; //$NON-NLS-1$
 
-    
-    
-    private GreetDeliverer greetDeliverer;
-    private JoinTimeCollector joinTimeCollector;
-    
-    
-    
+
+
+    private final GreetDeliverer greetDeliverer;
+    private final JoinTimeCollector joinTimeCollector;
+
+
+
     @Override
-    public void assignPermissions(RoleManager roleManager) 
+    public void assignPermissions(RoleManager roleManager)
             throws RoleException, DatabaseException {
         super.assignPermissions(roleManager);
-        
+
         roleManager.assignPermission(RoleManager.ADMIN_ROLE, ADD_USER_PERMISSION);
         roleManager.assignPermission(RoleManager.ADMIN_ROLE, DELETE_USER_PERMISSION);
         roleManager.assignPermission(RoleManager.ADMIN_ROLE, TALK_PERMISSION);
@@ -153,11 +154,11 @@ public class MyPlugin extends PollyPlugin {
         roleManager.assignPermission(RoleManager.ADMIN_ROLE, REMOVE_PERMISSION_PERMISSION);
         roleManager.assignPermission(RoleManager.ADMIN_ROLE, REMOVE_ROLE_PERMISSION);
         roleManager.assignPermission(RoleManager.ADMIN_ROLE, SET_AND_IDENTIFY_PERMISSION);
-        
+
         roleManager.createRole(CASPER);
         roleManager.assignPermission(CASPER, CLUMBOMB_PERMISSION);
         roleManager.assignPermission(CASPER, ANYFICATION_PERMISSION);
-        
+
         roleManager.assignPermission(RoleManager.DEFAULT_ROLE, DEFINE_PERMISSION);
         roleManager.assignPermission(RoleManager.DEFAULT_ROLE, DICT_PERMISSION);
         roleManager.assignPermission(RoleManager.DEFAULT_ROLE, DITO_PERMISSION);
@@ -167,113 +168,113 @@ public class MyPlugin extends PollyPlugin {
         roleManager.assignPermission(RoleManager.DEFAULT_ROLE, ISDOWN_PERMISSION);
         roleManager.assignPermission(RoleManager.DEFAULT_ROLE, EXPORT_ATTRIBUTES_PERMISSION);
     }
-    
-    
-    
-	public MyPlugin(MyPolly myPolly) throws IncompatiblePluginException, 
+
+
+
+	public MyPlugin(MyPolly myPolly) throws IncompatiblePluginException,
 	            DuplicatedSignatureException {
-	    
+
 		super(myPolly);
-		
-		
+
+
 		// New YeaR!
-		Date newYear = DateUtils.dateFor(31, Calendar.DECEMBER, 2013);
+        Date newYear = DateUtils.dateFor(31, Calendar.DECEMBER, 2014);
 		newYear = DateUtils.timeFor(newYear, 24, 0, 0);
 		new NewYearCountdown(newYear, myPolly.irc());
-		
-		this.addCommand(new AnyficationCommand(myPolly));
+
+		addCommand(new AnyficationCommand(myPolly));
 
 		// HACK: better leave this here for compatibility
-        this.getMyPolly().persistence().registerEntity(TopicEntity.class);
-        
+        getMyPolly().persistence().registerEntity(TopicEntity.class);
+
         this.greetDeliverer = new GreetDeliverer(myPolly);
-        this.getMyPolly().users().addUserListener(this.greetDeliverer);
-        this.addCommand(new GreetingCommand(myPolly));
-        
-		this.addCommand(new InfoCommand(myPolly));
-		this.addCommand(new QuitCommand(myPolly));
-		this.addCommand(new JoinCommand(myPolly));
-		this.addCommand(new PartCommand(myPolly));
-		this.addCommand(new HopCommand(myPolly));
-		this.addCommand(new KickCommand(myPolly));
-		this.addCommand(new ClumBombCommand(myPolly));
-		this.addCommand(new TalkCommand(myPolly));
-		this.addCommand(new VersionCommand(myPolly));
-		this.addCommand(new ShowCommandsCommand(myPolly));
-		this.addCommand(new CalendarCommand(myPolly));
-		
-		this.addCommand(new WikiCommand(myPolly));
-		this.addCommand(new DefineCommand(myPolly));
-		this.addCommand(new LmgtfyCommand(myPolly));
-		this.addCommand(new AmazonCommand(myPolly));
-		this.addCommand(new DictCommand(myPolly));
-		this.addCommand(new GooglePicsCommand(myPolly));
-		this.addCommand(new IsDownCommand(myPolly));
-		this.addCommand(new WebInterfaceCommand(myPolly));
-		
-		this.addCommand(new UsersCommand(myPolly));
-		this.addCommand(new AuthCommand(myPolly));
-		this.addCommand(new ReAuthCommand(myPolly));
-		this.addCommand(new SignOffCommand(myPolly));
-		this.addCommand(new GhostCommand(myPolly));
-		this.addCommand(new AddUserCommand(myPolly));
-		this.addCommand(new DeleteUserCommand(myPolly));
-		this.addCommand(new SetMyPasswordCommand(myPolly));
-		this.addCommand(new SetPasswordCommand(myPolly));
-		this.addCommand(new RegisterCommand(myPolly));
-		this.addCommand(new RawIrcCommand(myPolly));
-		this.addCommand(new SetAttributeCommand(myPolly));
-		this.addCommand(new ListAttributesCommand(myPolly));
-		this.addCommand(new GetAttributeCommand(myPolly));
-		this.addCommand(new ExportAttributesCommand(myPolly));
-		
-		
-		
-		this.addCommand(new AssignRoleCommand(myPolly));
-		this.addCommand(new RemoveRoleCommand(myPolly));
-		this.addCommand(new CreateRoleCommand(myPolly));
-		this.addCommand(new DeleteRoleCommand(myPolly));
-		this.addCommand(new ListRolesCommand(myPolly));
-		this.addCommand(new AssignPermissionCommand(myPolly));
-		this.addCommand(new RemovePermissionCommand(myPolly));
-		this.addCommand(new ListPermissionsCommand(myPolly));
-		
-		
-		
+        getMyPolly().users().addUserListener(this.greetDeliverer);
+        addCommand(new GreetingCommand(myPolly));
+
+		addCommand(new InfoCommand(myPolly));
+		addCommand(new QuitCommand(myPolly));
+		addCommand(new JoinCommand(myPolly));
+		addCommand(new PartCommand(myPolly));
+		addCommand(new HopCommand(myPolly));
+		addCommand(new KickCommand(myPolly));
+		addCommand(new ClumBombCommand(myPolly));
+		addCommand(new TalkCommand(myPolly));
+		addCommand(new VersionCommand(myPolly));
+		addCommand(new ShowCommandsCommand(myPolly));
+		addCommand(new CalendarCommand(myPolly));
+
+		addCommand(new WikiCommand(myPolly));
+		addCommand(new DefineCommand(myPolly));
+		addCommand(new LmgtfyCommand(myPolly));
+		addCommand(new AmazonCommand(myPolly));
+		addCommand(new DictCommand(myPolly));
+		addCommand(new GooglePicsCommand(myPolly));
+		addCommand(new IsDownCommand(myPolly));
+		addCommand(new WebInterfaceCommand(myPolly));
+
+		addCommand(new UsersCommand(myPolly));
+		addCommand(new AuthCommand(myPolly));
+		addCommand(new ReAuthCommand(myPolly));
+		addCommand(new SignOffCommand(myPolly));
+		addCommand(new GhostCommand(myPolly));
+		addCommand(new AddUserCommand(myPolly));
+		addCommand(new DeleteUserCommand(myPolly));
+		addCommand(new SetMyPasswordCommand(myPolly));
+		addCommand(new SetPasswordCommand(myPolly));
+		addCommand(new RegisterCommand(myPolly));
+		addCommand(new RawIrcCommand(myPolly));
+		addCommand(new SetAttributeCommand(myPolly));
+		addCommand(new ListAttributesCommand(myPolly));
+		addCommand(new GetAttributeCommand(myPolly));
+		addCommand(new ExportAttributesCommand(myPolly));
+
+
+
+		addCommand(new AssignRoleCommand(myPolly));
+		addCommand(new RemoveRoleCommand(myPolly));
+		addCommand(new CreateRoleCommand(myPolly));
+		addCommand(new DeleteRoleCommand(myPolly));
+		addCommand(new ListRolesCommand(myPolly));
+		addCommand(new AssignPermissionCommand(myPolly));
+		addCommand(new RemovePermissionCommand(myPolly));
+		addCommand(new ListPermissionsCommand(myPolly));
+
+
+
 		this.joinTimeCollector = new JoinTimeCollector();
 		this.joinTimeCollector.addTo(myPolly.irc());
-		this.addCommand(new UptimeCommand(myPolly, this.joinTimeCollector));
-		
+		addCommand(new UptimeCommand(myPolly, this.joinTimeCollector));
 
-		this.addCommand(new FooCommand(myPolly));
-		this.addCommand(new VarCommand(myPolly));
-		
+
+		addCommand(new FooCommand(myPolly));
+		addCommand(new VarCommand(myPolly));
+
 
 		//this.addCommand(new AddTopicCommand(myPolly, this.topicManager));
-	        
-		this.addCommand(new RestartCommand(myPolly));
-		this.addCommand(new DitoCommand(myPolly));
+
+		addCommand(new RestartCommand(myPolly));
+		addCommand(new DitoCommand(myPolly));
 	}
-	
-	
-	
+
+
+
 	@Override
 	public void onLoad() {
 	    try {
-	        this.getMyPolly().users().addAttribute(GREETING, Types.STRING, 
+	        getMyPolly().users().addAttribute(GREETING, Types.STRING,
 	            MSG.attributeGreetingDescription, "Core"); //$NON-NLS-1$
 	    } catch (Exception ignore) {
 	        ignore.printStackTrace();
 	    }
 	}
-	
-	
-	
+
+
+
 	@Override
 	protected void actualDispose() throws DisposingException {
 	    super.actualDispose();
 	    //this.topicManager.dispose();
-	    this.getMyPolly().users().removeUserListener(this.greetDeliverer);
-	    this.joinTimeCollector.remove(this.getMyPolly().irc());
+	    getMyPolly().users().removeUserListener(this.greetDeliverer);
+	    this.joinTimeCollector.remove(getMyPolly().irc());
 	}
 }
