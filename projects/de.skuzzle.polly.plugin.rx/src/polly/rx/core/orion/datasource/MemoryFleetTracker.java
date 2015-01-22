@@ -23,7 +23,7 @@ import de.skuzzle.polly.tools.collections.TemporaryValueMap;
 public class MemoryFleetTracker implements FleetTracker {
 
     private final static long MAX_AGE = Milliseconds.fromHours(3);
-    private final static long ORION_MAX_AGE = Milliseconds.fromMinutes(1);
+    private final static long ORION_MAX_AGE = Milliseconds.fromDays(1);
 
 
     private final TemporaryValueMap<Integer, Fleet> orionFleets;
